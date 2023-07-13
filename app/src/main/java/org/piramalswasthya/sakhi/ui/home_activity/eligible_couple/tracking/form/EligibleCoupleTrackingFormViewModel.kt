@@ -108,8 +108,7 @@ class EligibleCoupleTrackingFormViewModel @Inject constructor(
 
                     dataset.mapValues(eligibleCoupleTracking, 1)
                     ecrRepo.saveEct(eligibleCoupleTracking)
-                    isPregnant = (eligibleCoupleTracking.isPregnant == "Yes") ||
-                            (eligibleCoupleTracking.pregnancyTestResult == "Positive")
+                    isPregnant = (eligibleCoupleTracking.isPregnant == "Yes")
                     if (isPregnant) {
                         ecrRepo.getBenFromId(benId)?.let {
                             dataset.updateBen(it)

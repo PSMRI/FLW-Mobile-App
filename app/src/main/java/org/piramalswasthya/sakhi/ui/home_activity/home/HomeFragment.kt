@@ -144,7 +144,7 @@ class HomeFragment : Fragment() {
         binding.vp2Home.adapter = HomePagerAdapter(this)
         TabLayoutMediator(binding.tlHomeViewpager, binding.vp2Home) { tab, position ->
             tab.text = when (position) {
-                0 -> requireActivity().getString(R.string.menu_home_scheduler)
+                0 -> requireActivity().getString(R.string.menu_home_home)
                 1 -> requireActivity().getString(R.string.menu_home_home)
                 else -> "NA"
             }

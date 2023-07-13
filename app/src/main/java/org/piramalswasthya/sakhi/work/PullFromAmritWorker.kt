@@ -16,7 +16,10 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.Konstants
+import org.piramalswasthya.sakhi.model.HouseholdCache
+import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.repositories.BenRepo
+import org.piramalswasthya.sakhi.repositories.HouseholdRepo
 import timber.log.Timber
 import java.lang.Integer.min
 import java.util.concurrent.TimeUnit
@@ -27,6 +30,7 @@ class PullFromAmritWorker @AssistedInject constructor(
     @Assisted params: WorkerParameters,
     private val benRepo: BenRepo,
     private val preferenceDao: PreferenceDao,
+    private val householdRepo: HouseholdRepo
 ) : CoroutineWorker(appContext, params) {
 
     companion object {

@@ -8,12 +8,12 @@ import timber.log.Timber
 
 class HomePagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 
-    override fun getItemCount() = 2
+    override fun getItemCount() = 1
 
     override fun createFragment(position: Int): Fragment {
         val fragment = when (position) {
-            1 -> HomeIconsFragment()
-            0 -> SchedulerFragment()
+            0 -> HomeIconsFragment()
+//            0 -> SchedulerFragment()
             else -> throw IllegalStateException("Index >1 called!")
 
         }

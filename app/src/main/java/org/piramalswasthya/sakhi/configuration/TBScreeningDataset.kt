@@ -161,6 +161,7 @@ class TBScreeningDataset (
         return if ( isCoughing.value == "Yes" ||
                 bloodInSputum.value == "Yes" ||
                 isFever.value == "Yes" ||
+                lossOfWeight.value == "Yes" ||
                 nightSweats.value == "Yes" ||
                 lossOfWeight.value == "Yes" ||
                 historyOfTB.value == "Yes")

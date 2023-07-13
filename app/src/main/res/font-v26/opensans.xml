@@ -3,9 +3,17 @@
     <font
         android:font="@font/opensans_regular"
         android:fontStyle="normal"
-        android:fontWeight="100" />
+        android:fontWeight="600" />
     <font
         android:font="@font/opensans_semibold"
         android:fontStyle="italic"
         android:fontWeight="600" />
+    <font
+        android:font="@font/loveline"
+        android:fontStyle="normal"
+        android:fontWeight="500" />
+    <font
+        android:font="@font/branda"
+        android:fontStyle="normal"
+        android:fontWeight="500" />
 </font-family>

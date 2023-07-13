@@ -58,6 +58,30 @@
             app:layout_constraintTop_toTopOf="@id/tv_title"
             app:required="@{form.doubleStar}" />
         <TextView
+            android:id="@+id/tv_high_risk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="High Risk"
+            android:layout_marginTop="@dimen/margin_normal"
+            android:padding="@dimen/padding_small"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="@color/design_default_color_error"
+            app:layout_constraintEnd_toStartOf="@+id/check_red"
+            app:layout_constraintTop_toTopOf="@id/cl_highlight"
+            app:required="@{form.showHighRisk}" />
+
+        <ImageView
+            android:id="@+id/check_red"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_normal"
+            android:src="@drawable/ic_check_circle_red"
+            android:padding="@dimen/padding_small"
+            app:imgRequired="@{form.showHighRisk}"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/cl_highlight"
+            />
+        <TextView
             android:id="@+id/tv_nullable"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

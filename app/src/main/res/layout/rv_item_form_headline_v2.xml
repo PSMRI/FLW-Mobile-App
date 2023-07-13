@@ -9,7 +9,8 @@
             type="org.piramalswasthya.sakhi.model.FormElement" />
     </data>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_highlight"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -19,7 +20,8 @@
 
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <TextView
             android:id="@+id/tv_title"
@@ -27,6 +29,7 @@
             android:layout_height="wrap_content"
             tools:text="TextView"
             android:text="@{form.title}"
+            app:layout_constraintTop_toTopOf="parent"
             android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall" />
 
         <TextView
@@ -34,8 +37,44 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@{form.subtitle}"
+            app:layout_constraintTop_toBottomOf="@id/tv_title"
             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
             tools:text="TextView" />
 
-    </LinearLayout>
+        <TextView
+            android:id="@+id/tv_high_risk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="High Risk"
+            android:layout_marginTop="@dimen/margin_huge"
+            android:padding="@dimen/padding_small"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="@color/design_default_color_error"
+            app:layout_constraintEnd_toStartOf="@+id/check_red"
+            app:layout_constraintTop_toTopOf="@id/cl_highlight"
+            app:required="@{form.showHighRisk}" />
+
+        <ImageView
+            android:id="@+id/check_red"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_huge"
+            android:src="@drawable/ic_check_circle_red"
+            android:padding="@dimen/padding_small"
+            app:imgRequired="@{form.showHighRisk}"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/cl_highlight"
+            />
+<!--        <ImageView-->
+<!--            android:id="@+id/check_green"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="@dimen/margin_huge"-->
+<!--            android:src="@drawable/ic_check_circle_green"-->
+<!--            android:padding="@dimen/padding_small"-->
+<!--            app:imgRequired="@{!form.showHighRisk}"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="@id/cl_highlight"-->
+<!--            />-->
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

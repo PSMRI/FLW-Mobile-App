@@ -319,7 +319,7 @@ abstract class Dataset(context: Context, currentLanguage: Languages) {
     }
 
 
-    private fun getDiffYears(a: Calendar, b: Calendar): Int {
+    protected fun getDiffYears(a: Calendar, b: Calendar): Int {
         var diff = b.get(Calendar.YEAR) - a.get(Calendar.YEAR)
         if (a.get(Calendar.MONTH) > b.get(Calendar.MONTH) || a.get(Calendar.MONTH) == b.get(
                 Calendar.MONTH
@@ -560,6 +560,22 @@ abstract class Dataset(context: Context, currentLanguage: Languages) {
     }
 
 
+    protected fun calculateAge(date: Long): Int {
+        val dob = Calendar.getInstance()
+        dob.timeInMillis = date
+        val today = Calendar.getInstance()
+        var age = today[Calendar.YEAR] - dob[Calendar.YEAR]
+        if (today[Calendar.DAY_OF_MONTH] < dob[Calendar.DAY_OF_MONTH]) {
+            age--
+        }
+        return age
+    }
+
+    protected fun calculateDob(age: Int): Long {
+        val dob = Calendar.getInstance()
+        dob.set(Calendar.YEAR, dob[Calendar.YEAR] - age)
+        return dob.timeInMillis
+    }
 
 
 }

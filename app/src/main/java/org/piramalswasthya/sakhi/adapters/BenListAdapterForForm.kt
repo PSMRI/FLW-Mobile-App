@@ -7,12 +7,15 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.RvItemBenWithFormBinding
 import org.piramalswasthya.sakhi.model.BenBasicDomainForForm
 
 class BenListAdapterForForm(
     private val clickListener: ClickListener? = null,
-    private vararg val formButtonText: String
+    private vararg val formButtonText: String,
+    private val role: Int? = 0
 ) :
     ListAdapter<BenBasicDomainForForm, BenListAdapterForForm.BenViewHolder>
         (BenDiffUtilCallBack) {
@@ -43,39 +46,89 @@ class BenListAdapterForForm(
             item: BenBasicDomainForForm,
             clickListener: ClickListener?,
             vararg btnText: String,
+            role: Int?
         ) {
             binding.ben = item
             binding.clickListener = clickListener
             if (btnText.isNotEmpty()) {
-                binding.btnForm1.text = btnText[0]
+
+                when(btnText.size) {
+                    1 -> {
+                        binding.btnForm1.text = btnText[0]
+                        binding.btnForm1Cho.text = btnText[0]
+                    }
+                    2 -> {
+                        binding.btnForm1.text = btnText[0]
+                        binding.btnForm1Cho.text = btnText[0]
+                        binding.btnForm2.text = btnText[1]
+                        binding.btnForm2Cho.text = btnText[1]
+                    }
+                    3 -> {
+                        binding.btnForm1.text = btnText[0]
+                        binding.btnForm1Cho.text = btnText[0]
+                        binding.btnForm2.text = btnText[1]
+                        binding.btnForm2Cho.text = btnText[1]
+                        binding.btnForm3.text = btnText[2]
+                        binding.btnForm3Cho.text = btnText[2]
+                    }
+                }
                 for (i in btnText.indices) {
-                    setFormButtonColor(i + 1, item)
+                    setFormButtonColor(i + 1, item, role)
                 }
             }
+            binding.role = role
             binding.executePendingBindings()
 
         }
 
-        private fun setFormButtonColor(formNumber: Int, item: BenBasicDomainForForm) {
+        private fun setFormButtonColor(formNumber: Int, item: BenBasicDomainForForm, role: Int?) {
             var hasForm: Boolean
             var formEnabled: Boolean
-            val formButton = when (formNumber) {
-                1 -> binding.btnForm1.also {
-                    hasForm = item.form1Filled
-                    formEnabled = item.form1Enabled
+            val formButton: MaterialButton
+            if (role == 1) {
+                formButton = when (formNumber) {
+                    1 -> {
+                        binding.btnForm1Cho.also {
+                            hasForm = item.form1Filled
+                            formEnabled = item.form1Enabled
+                        }
+                    }
+                    2 -> {
+                        binding.btnForm2Cho.also {
+                            hasForm = item.form2Filled
+                            formEnabled = item.form2Enabled
+                        }
+                    }
+                    3 -> {
+                        binding.btnForm3Cho.also {
+                            hasForm = item.form3Filled
+                            formEnabled = item.form3Enabled
+                        }
+                    }
+                    else -> throw IllegalStateException("FormNumber>3")
                 }
-
-                2 -> binding.btnForm2.also {
-                    hasForm = item.form2Filled
-                    formEnabled = item.form1Enabled
+            } else {
+                formButton = when (formNumber) {
+                    1 -> {
+                        binding.btnForm1.also {
+                            hasForm = item.form1Filled
+                            formEnabled = item.form1Enabled
+                        }
+                    }
+                    2 -> {
+                        binding.btnForm2.also {
+                            hasForm = item.form2Filled
+                            formEnabled = item.form2Enabled
+                        }
+                    }
+                    3 -> {
+                        binding.btnForm3.also {
+                            hasForm = item.form3Filled
+                            formEnabled = item.form3Enabled
+                        }
+                    }
+                    else -> throw IllegalStateException("FormNumber>3")
                 }
-
-                3 -> binding.btnForm3.also {
-                    hasForm = item.form3Filled
-                    formEnabled = item.form1Enabled
-                }
-
-                else -> throw IllegalStateException("FormNumber>3")
             }
             formButton.visibility = if (formEnabled) View.VISIBLE else View.GONE
 
@@ -103,6 +156,14 @@ class BenListAdapterForForm(
                             android.R.color.holo_red_light,
                         )
                     )
+
+            formButton.setTextColor(
+                binding.root.resources.getColor(
+                    R.color.secondaryColor,
+                    binding.root.context.theme
+                )
+            )
+
         }
     }
 
@@ -113,7 +174,7 @@ class BenListAdapterForForm(
         BenViewHolder.from(parent)
 
     override fun onBindViewHolder(holder: BenViewHolder, position: Int) {
-        holder.bind(getItem(position), clickListener, btnText = formButtonText)
+        holder.bind(getItem(position), clickListener, btnText = formButtonText, role = role)
     }
 
 

@@ -13,6 +13,9 @@
             name="clickListener"
             type="org.piramalswasthya.sakhi.adapters.BenListAdapterForForm.ClickListener" />
 
+        <variable
+            name="role"
+            type="Integer" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -36,6 +39,7 @@
                 android:layout_height="wrap_content"
                 android:background="?attr/colorOnPrimary"
                 android:paddingHorizontal="@dimen/padding_normal"
+                showLayout="@{((role == 1) ? false : true)}"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
@@ -91,7 +95,8 @@
                 android:layout_height="wrap_content"
                 android:onClick="@{()-> clickListener.onClickedBen(ben)}"
                 android:padding="@dimen/padding_small"
-                app:layout_constraintTop_toBottomOf="@id/ll_title_bar">
+                app:layout_constraintTop_toBottomOf="@id/ll_title_bar"
+                showLayout="@{((role == 1) ? false : true)}">
 
                 <LinearLayout
                     android:id="@+id/ll_row_1"
@@ -269,8 +274,144 @@
 
 
                 </LinearLayout>
+
             </RelativeLayout>
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                showLayout="@{(role == 1) ? true : false}">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/ll_title_bar_cho"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/colorSecondary"
+                    android:paddingHorizontal="@dimen/padding_tiny"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <TextView
+                        android:id="@+id/tv_hh_id_cho"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:text="@{ben.benName + ' ' +ben.benSurname}"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                        android:textColor="?attr/colorPrimaryVariant"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintHorizontal_chainStyle="spread_inside"
+                        app:layout_constraintStart_toStartOf="@+id/ll_title_bar_cho"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:layout_marginLeft="@dimen/margin_normal"
+                        tools:text="0104185765164225" />
+
+                    <ImageView
+                        android:id="@+id/iv_sync_state_cho"
+                        android:layout_width="24dp"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/iv_sync_state_tv"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_hh_id_cho"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintTop_toTopOf="@+id/tv_hh_id_cho"
+                        app:syncState="@{ben.syncState}"
+                        tools:src="@drawable/ic_synced" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="@{()-> clickListener.onClickedBen(ben)}"
+                    app:layout_constraintTop_toBottomOf="@id/ll_title_bar_cho">
+
+                    <LinearLayout
+                        android:id="@+id/ll_row_cho_1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal"
+                        android:weightSum="3"
+                        android:layout_alignParentTop="true">
+
+                        <include
+                            android:id="@+id/rl_ben_id_cho"
+                            style="@style/rv_item_ben_fields"
+                            layout="@layout/rv_item_ben_element"
+                            app:field="@{@string/long_to_string(ben.benId)}"
+                            app:fieldTitle="@{@string/tv_ben_id_ph}" />
+
+                        <include
+                            android:id="@+id/rl_family_head_name_cho"
+                            style="@style/rv_item_ben_fields"
+                            layout="@layout/rv_item_ben_element"
+                            app:field="@{ben.spouseName}"
+                            app:fieldTitle="@{@string/tv_spouse}"
+                            tools:ignore="IncludeLayoutParam" />
+
+                        <include
+                            android:id="@+id/rl_ben_mobile_no_cho"
+                            style="@style/rv_item_ben_fields"
+                            layout="@layout/rv_item_ben_element"
+                            app:field="@{ben.mobileNo}"
+                            app:fieldTitle="@{@string/tv_mob_no_ph}" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/ll_btn_row_cho"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ll_row_cho_1"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal"
+                        android:weightSum="3">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_form3_cho"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_margin="@dimen/margin_small"
+                            android:visibility="invisible"
+                            android:onClick="@{()-> clickListener.onClickForm3(ben)}"
+                            android:textColor="?attr/colorSecondary"
+                            tools:text="CBAC Form" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_form2_cho"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_margin="@dimen/margin_small"
+                            android:visibility="invisible"
+                            android:onClick="@{()-> clickListener.onClickForm2(ben)}"
+                            android:textColor="?attr/colorSecondary"
+                            tools:text="CBAC Form" />
+
+
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_form1_cho"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:onClick="@{()-> clickListener.onClickForm1(ben)}"
+                            android:layout_margin="@dimen/margin_small"
+                            android:visibility="invisible"
+                            android:textColor="?attr/colorSecondary"
+                            tools:text="CBAC Form" />
+
+
+                    </LinearLayout>
+                </RelativeLayout>
+
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

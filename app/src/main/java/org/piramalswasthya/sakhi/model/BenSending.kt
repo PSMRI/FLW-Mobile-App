@@ -304,4 +304,88 @@ fun BenRegCache.asNetworkSendingModel(
         )
 }
 
+fun BenRegCache.asNetworkSendingModelCHO(
+user: UserCache,
+context : Context
+): BenCHOPost {
+
+    return BenCHOPost(
+        benImage = ImageUtils.getEncodedStringForBenImage(context, beneficiaryId)
+            ?: "", //Base64.encodeToString(userImageBlob, Base64.DEFAULT),
+        firstName = firstName!!,
+        lastName = lastName,
+        dOB = getDateTimeStringFromLong(dob),
+        fatherName = fatherName,
+        motherName = motherName,
+        spouseName = genDetails?.spouseName,
+        govtIdentityNo = null,
+        govtIdentityTypeID = null,
+        titleId = null,
+        bankName = nameOfBank,
+        branchName = nameOfBranch,
+        ifscCode = ifscCode,
+        accountNo = bankAccount,
+        ageAtMarriage = null,
+        genderID = genderId,
+        genderName = when (gender) {
+            MALE -> "Male"
+            FEMALE -> "Female"
+            TRANSGENDER -> "Transgender"
+            null -> "NA"
+        },
+        maritalStatusID = 2,
+        maritalStatusName = "Married",
+        email = null,
+        providerServiceMapID = user.serviceMapId.toString(),
+        providerServiceMapId = user.serviceMapId.toString(),
+        benDemographics = BenDemographicsCHO(
+            communityID = null,
+            communityName = null,
+            religionID = null,
+            religionName = null,
+            countryID = 1,
+            countryName = "India",
+            stateID = locationRecord.state.id,
+            stateName = locationRecord.state.name,
+            districtID = locationRecord.district.id,
+            districtName = locationRecord.district.name,
+            blockID = locationRecord.block.id,
+            blockName = locationRecord.block.name,
+            districtBranchID = locationRecord.village.id,
+            districtBranchName = locationRecord.village.name,
+            parkingPlaceID = user.parkingPlaceId,
+            servicePointID = user.servicePointId.toString(),
+            servicePointName = user.servicePointName,
+            addressLine1 = null,
+            addressLine2 = null,
+            addressLine3 = null,
+        ),
+        benPhoneMaps = arrayOf(
+            BenPhoneMapCHO(
+                phoneNo = contactNumber.toString(),
+                createdBy = user.userName,
+                alternateContactNumber = null,
+                phoneTypeID = 1,
+                benRelationshipID = null,
+                vanID = user.vanId,
+                parkingPlaceID =user.parkingPlaceId,
+            )
+        ),
+        beneficiaryIdentities = arrayOf(
+//            BeneficiaryIdentitiesCHO(
+//                govtIdentityNo = 0,
+//                govtIdentityTypeName = "null",
+//                govtIdentityTypeID = 0,
+//                identityType = "National ID",
+//                createdBy = user.userName
+//            )
+        ),
+        vanID = user.vanId,
+        parkingPlaceID = user.parkingPlaceId,
+        createdBy = user.userName,
+        emergencyRegistration = false,
+        literacyStatus = null
+        )
+}
+
 

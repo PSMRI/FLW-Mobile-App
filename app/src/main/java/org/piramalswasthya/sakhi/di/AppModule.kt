@@ -1,6 +1,8 @@
 package org.piramalswasthya.sakhi.di
 
 import android.content.Context
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -19,6 +21,7 @@ import org.piramalswasthya.sakhi.network.interceptors.ContentTypeInterceptor
 import org.piramalswasthya.sakhi.network.interceptors.TokenInsertAbhaInterceptor
 import org.piramalswasthya.sakhi.network.interceptors.TokenInsertTmcInterceptor
 import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
@@ -38,6 +41,10 @@ object AppModule {
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
             .addInterceptor(ContentTypeInterceptor())
             .build()
+
+    val gson: Gson = GsonBuilder()
+        .serializeNulls()
+        .create()
 
     @Singleton
     @Provides
@@ -81,8 +88,8 @@ object AppModule {
         @Named("uatClient") httpClient: OkHttpClient
     ): AmritApiService {
         return Retrofit.Builder()
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
-            //.addConverterFactory(GsonConverterFactory.create())
+//            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .baseUrl(baseTmcUrl)
             .client(httpClient)
             .build()

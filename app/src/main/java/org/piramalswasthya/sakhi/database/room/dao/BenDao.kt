@@ -22,6 +22,12 @@ interface BenDao {
     @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage")
     fun getAllBen(selectedVillage: Int): Flow<List<BenBasicCache>>
 
+    @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage and gender = :gender")
+    fun getAllBenGender(selectedVillage: Int, gender : String): Flow<List<BenBasicCache>>
+
+    @Query("SELECT COUNT(*) FROM BEN_BASIC_CACHE where villageId = :selectedVillage and gender = :gender")
+    fun getAllBenGenderCount(selectedVillage: Int, gender : String): Flow<Int>
+
     @Query("SELECT COUNT(*) FROM BEN_BASIC_CACHE where villageId = :selectedVillage")
     fun getAllBenCount(selectedVillage: Int): Flow<Int>
 
@@ -95,8 +101,16 @@ interface BenDao {
 
     @Query("SELECT * FROM BEN_BASIC_CACHE  WHERE isDelivered = 1 and villageId=:selectedVillage")
     fun getAllDeliveredWomenList(selectedVillage: Int): Flow<List<BenBasicCache>>
+
     @Query("SELECT COUNT(*) FROM BEN_BASIC_CACHE WHERE isDelivered = 1 and villageId=:selectedVillage")
     fun getAllDeliveredWomenListCount(selectedVillage: Int): Flow<Int>
+
+    @Query("SELECT * FROM BEN_BASIC_CACHE WHERE reproductiveStatusId != 2 and gender = 'FEMALE' and villageId=:selectedVillage")
+    fun getAllNonPregnancyWomenList(selectedVillage: Int): Flow<List<BenBasicCache>>
+
+    @Query("SELECT COUNT(*) FROM BEN_BASIC_CACHE WHERE reproductiveStatusId != 2 and gender = 'FEMALE' and villageId=:selectedVillage")
+    fun getAllNonPregnancyWomenListCount(selectedVillage: Int): Flow<Int>
+
 
     @Query("SELECT pr.benId as benId, ben.firstName + ' ' + COALESCE(ben.lastName,'') as name, ben.dob as dob, ben.gen_spouseName as spouseName, pr.lmpDate as lmp FROM PREGNANCY_REGISTER pr INNER JOIN BENEFICIARY  ben ON pr.benId=ben.beneficiaryId where ben.loc_village_id=:selectedVillage and pr.active=1")
     fun getAllRegisteredPregnancyWomenList(selectedVillage: Int): Flow<List<PregnantWomenVisitCache>>
@@ -203,5 +217,18 @@ interface BenDao {
 
     @Query("select min(beneficiaryId) from beneficiary")
     suspend fun getMinBenId(): Long?
+
+
+    @Query("select * from BEN_BASIC_CACHE where villageId = :villageId and benId in (select benId from HRP_PREGNANT_ASSESS where isHighRisk = 1);" )
+    fun getAllHRPTrackingPregList(villageId: Int): Flow<List<BenBasicCache>>
+
+    @Query("select count(*) from BEN_BASIC_CACHE where villageId = :villageId and benId in (select benId from HRP_PREGNANT_ASSESS where isHighRisk = 1);" )
+    fun getAllHRPTrackingPregListCount(villageId: Int): Flow<Int>
+
+    @Query("select * from BEN_BASIC_CACHE where villageId = :villageId and benId in (select benId from HRP_NON_PREGNANT_ASSESS where isHighRisk = 1);" )
+    fun getAllHRPTrackingNonPregList(villageId: Int): Flow<List<BenBasicCache>>
+
+    @Query("select count(*) from BEN_BASIC_CACHE where villageId = :villageId and benId in (select benId from HRP_NON_PREGNANT_ASSESS where isHighRisk = 1);" )
+    fun getAllHRPTrackingNonPregListCount(villageId: Int): Flow<Int>
 
 }

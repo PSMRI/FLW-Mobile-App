@@ -4,6 +4,7 @@ import android.net.Uri
 import android.os.Build
 import android.text.InputType
 import android.view.View
+import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.LinearInterpolator
 import android.view.animation.RotateAnimation
@@ -138,7 +139,7 @@ fun Button.setVisibilityOfLayout(show: Boolean?) {
 }
 
 @BindingAdapter("showLayout")
-fun LinearLayout.setVisibilityOfLayout(show: Boolean?) {
+fun ViewGroup.setVisibilityOfLayout(show: Boolean?) {
     show?.let {
         visibility = if (it) View.VISIBLE else View.GONE
     }
@@ -235,7 +236,14 @@ fun ConstraintLayout.setItemsCheckBox(form: FormInputOld?) {
 @BindingAdapter("required")
 fun TextView.setRequired(required: Boolean?) {
     required?.let {
-        visibility = if (it) View.VISIBLE else View.INVISIBLE
+        visibility = if (it) View.VISIBLE else View.GONE
+    }
+}
+
+@BindingAdapter("imgRequired")
+fun ImageView.setRequired(required: Boolean?) {
+    required?.let {
+        visibility = if (it) View.VISIBLE else View.GONE
     }
 }
 

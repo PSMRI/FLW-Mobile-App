@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.transformLatest
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.ChildRegistrationDao
 import org.piramalswasthya.sakhi.database.room.dao.HouseholdDao
+import org.piramalswasthya.sakhi.database.room.dao.HrpDao
 import org.piramalswasthya.sakhi.database.room.dao.MaternalHealthDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import javax.inject.Inject
@@ -28,6 +29,9 @@ class RecordsRepo @Inject constructor(
     val allBenList =
         benDao.getAllBen(selectedVillage).map { list -> list.map { it.asBasicDomainModel() } }
     val allBenListCount = benDao.getAllBenCount(selectedVillage)
+    fun getBenList() = benDao.getAllBen(selectedVillage).map { list -> list.map { it.asBasicDomainModel() } }
+    fun getBenListCHO() = benDao.getAllBenGender(selectedVillage, "FEMALE").map { list -> list.map { it.asBasicDomainModelCHO() } }
+    fun getBenListCount() = benDao.getAllBenGenderCount(selectedVillage, "FEMALE")
 
     val pregnantList = benDao.getAllPregnancyWomenList(selectedVillage)
         .map { list -> list.map { it.asBenBasicDomainModelForPmsmaForm() } }
@@ -129,6 +133,24 @@ class RecordsRepo @Inject constructor(
 //    val deliveredWomenList = benDao.getAllEligibleTrackingList(selectedVillage)
 //        .map { list -> list.map { it.asBenBasicDomainModelECTForm() } }
 //    val deliveredWomenListCount = deliveredWomenList.map { it.size }
+
+    var hrpPregnantWomenList = benDao.getAllPregnancyWomenList(selectedVillage)
+        .map { list -> list.map { it.asBenBasicDomainModelForHRPPregAssessmentForm() } }
+    val hrpPregnantWomenListCount = benDao.getAllPregnancyWomenListCount(selectedVillage)
+
+    var hrpTrackingPregList = benDao.getAllHRPTrackingPregList(selectedVillage)
+        .map { list -> list.map { it.asBenBasicDomainModelForHRPPregTrackForm() } }
+    val hrpTrackingPregListCount = benDao.getAllHRPTrackingPregListCount(selectedVillage)
+
+//    val hrpTrackingPregHistCount = hrpDao.getHRPTrackHist(ben)
+
+    var hrpNonPregnantWomenList = benDao.getAllNonPregnancyWomenList(selectedVillage)
+        .map { list -> list.map { it.asBenBasicDomainModelForHRPNonPregAssessmentForm() } }
+    val hrpNonPregnantWomenListCount = benDao.getAllNonPregnancyWomenListCount(selectedVillage)
+
+    var hrpTrackingNonPregList = benDao.getAllHRPTrackingNonPregList(selectedVillage)
+        .map { list -> list.map { it.asBenBasicDomainModelForHRPNonPregTrackForm() } }
+    val hrpTrackingNonPregListCount = benDao.getAllHRPTrackingNonPregListCount(selectedVillage)
 
     fun getPregnantWomenList() = benDao.getAllPregnancyWomenList(selectedVillage)
         .map { list -> list.map { it.asBenBasicDomainModelForPregnantWomanRegistrationForm() } }

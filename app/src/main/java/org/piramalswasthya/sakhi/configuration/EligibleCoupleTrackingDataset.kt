@@ -151,18 +151,6 @@ class EligibleCoupleTrackingDataset (
                 )
             }
 
-            pregnancyTestResult.id -> {
-                if (pregnancyTestResult.value == "Positive") {
-                    isPregnant.value = "Yes"
-                    isPregnant.isEnabled = false
-                } else {
-                    isPregnant.value = null
-                    isPregnant.isEnabled = true
-                }
-                handleListOnValueChanged(isPregnant.id,0)
-
-            }
-
             isPregnant.id -> {
                 triggerDependants(
                     source = isPregnant,

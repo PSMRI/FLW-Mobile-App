@@ -1,19 +1,25 @@
 package org.piramalswasthya.sakhi.model
 
+import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class BenPost(
     @Json(name = "BenRegId")
+    @SerializedName("BenRegId")
     val benRegId: Long,
     @Json(name = "Countyid")
+    @SerializedName("Countyid")
     val countyid: Int = 0,
     @Json(name = "Processed")
+    @SerializedName("Processed")
     val processed: String? = null,
     @Json(name = "ProviderServiceMapID")
+    @SerializedName("ProviderServiceMapID")
     val providerServiceMapID: Int = 0,
     @Json(name = "VanID")
+    @SerializedName("VanID")
     val vanID: Int = 0,
     @Json(name = "aadhaNo")
     val aadhaNo: String,
@@ -30,8 +36,10 @@ data class BenPost(
     @Json(name = "ageUnitId")
     val age_unitId: Int,
     @Json(name = "ashaid")
+    @SerializedName("ashaid")
     val ashaId: Int,
     @Json(name = "benficieryid")
+    @SerializedName("benficieryid")
     val benId: Long,
     @Json(name = "childRegisteredAWCID")
     val childRegisteredAWCID: Int = 0,
@@ -56,12 +64,16 @@ data class BenPost(
     @Json(name = "guidelineId")
     val guidelineId: String,
     @Json(name = "houseoldId")
+    @SerializedName("houseoldId")
     val householdId: String,
     @Json(name = "hrpStatus")
+    @SerializedName("hrpStatus")
     val isHrpStatus: Boolean,
     @Json(name = "id")
+    @SerializedName("id")
     val dummyIdMayBe: Int = 1,
     @Json(name = "immunizationStatus")
+    @SerializedName("immunizationStatus")
     val isImmunizationStatus: Boolean = false,
     @Json(name = "lastDeliveryConducted")
     val lastDeliveryConducted: String? = null,
@@ -79,8 +91,10 @@ data class BenPost(
     @Json(name = "mobileOthers")
     val mobileOthers: String? = null,
     @Json(name = "mobilenoofRelation")
+    @SerializedName("mobilenoofRelation")
     val mobileNoOfRelation: String? = null,
     @Json(name = "mobilenoofRelationId")
+    @SerializedName("mobilenoofRelationId")
     val mobileNoOfRelationId: Int = 0,
     val motherName: String,
     @Json(name = "nayiPahalDeliveryStatus")
@@ -88,10 +102,13 @@ data class BenPost(
     @Json(name = "nayiPahalDeliveryStatusPosition")
     val nayiPahalDeliveryStatusPosition: Int = 0,
     @Json(name = "ncd_priority")
+    @SerializedName("ncd_priority")
     val ncdPriority: Int = 0,
     @Json(name = "need_opcare")
+    @SerializedName("need_opcare")
     val needOpCare: String,
     @Json(name = "need_opcareId")
+    @SerializedName("need_opcareId")
     val needOpCareId: Int = 0,
     @Json(name = "nishchayPregnancyStatus")
     val nishchayPregnancyStatus: String = "",
@@ -106,6 +123,7 @@ data class BenPost(
     @Json(name = "previousLiveBirth")
     val previousLiveBirth: String = "",
     @Json(name = "rchid")
+    @SerializedName("rchid")
     val rchId: String,
     @Json(name = "registrationDate")
     val registrationDate: String,
@@ -120,14 +138,19 @@ data class BenPost(
     @Json(name = "serverUpdatedStatus")
     val serverUpdatedStatus: Int,
     @Json(name = "spousename")
+    @SerializedName("spousename")
     val spouseName: String,
     @Json(name = "typeofSchoolID")
+    @SerializedName("typeofSchoolID")
     val typeOfSchoolId: Int,
     @Json(name = "user_image")
+    @SerializedName("user_image")
     val userImage: String,
     @Json(name = "villageid")
+    @SerializedName("villageid")
     val villageId: Int,
     @Json(name = "villagename")
+    @SerializedName("villagename")
     val villageName: String? = null,
     @Json(name = "whoConductedDeliveryID")
     val whoConductedDeliveryID: Int = 0,
@@ -175,6 +198,7 @@ data class BenPost(
     val childRegisteredSchool: String? = null,
 
     @Json(name = "TypeofSchool")
+    @SerializedName("TypeofSchool")
     val typeofSchool: String? = null,
 
     //these are new fields of registration for asha login

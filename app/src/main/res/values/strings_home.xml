@@ -49,6 +49,12 @@
     <string name="icon_title_ncd_priority_list">NCD Priority List</string>
     <string name="icon_title_ncd_tb_screening">TB Screening</string>
     <string name="icon_title_ncd_tb_suspected">Suspected TB cases</string>
+    <string name="icon_title_hrp_pregnant">HRP Pregnant Women</string>
+    <string name="icon_title_hrp_non_pregnant">HRP Non Pregnant Women</string>
+    <string name="icon_title_hrp_pregnant_assess">Assess for HRP</string>
+    <string name="icon_title_hrp_pregnant_track">Follow Up HRP Women</string>
+    <string name="icon_title_hrp_non_pregnant_assess">Assess for HRP</string>
+    <string name="icon_title_hrp_non_pregnant_track">Follow Up HR Non Preg Women</string>
 
     <string name="icon_title_sr">Survey Register</string>
 

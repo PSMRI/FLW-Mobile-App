@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="ben"
+            type="org.piramalswasthya.sakhi.model.BenBasicDomain" />
+
+        <variable
+            name="clickListener"
+            type="org.piramalswasthya.sakhi.adapters.BenListAdapter.BenClickListener" />
+
+        <variable
+            name="showAbha"
+            type="Boolean" />
+
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_normal"
+        android:elevation="@dimen/padding_normal"
+        android:backgroundTint="?attr/colorPrimary"
+        app:cardCornerRadius="@dimen/padding_normal"
+        app:cardElevation="@dimen/padding_normal">
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/ll_title_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/colorSecondary"
+                android:paddingHorizontal="@dimen/padding_tiny"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/tv_hh_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:text="@{ben.benName + ben.benSurname}"
+                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                    android:textColor="?attr/colorPrimaryVariant"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintHorizontal_chainStyle="spread_inside"
+                    app:layout_constraintStart_toStartOf="@+id/ll_title_bar"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="0104185765164225" />
+
+                <ImageView
+                    android:id="@+id/iv_sync_state"
+                    android:layout_width="24dp"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/iv_sync_state_tv"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_hh_id"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintTop_toTopOf="@+id/tv_hh_id"
+                    app:syncState="@{ben.syncState}"
+                    tools:src="@drawable/ic_synced" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="@{()-> clickListener.onClickedBen(ben)}"
+                app:layout_constraintTop_toBottomOf="@id/ll_title_bar">
+
+                <LinearLayout
+                    android:id="@+id/ll_row_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal"
+                    android:weightSum="3"
+                    android:layout_alignParentTop="true">
+
+                    <include
+                        android:id="@+id/rl_ben_id"
+                        style="@style/rv_item_ben_fields"
+                        layout="@layout/rv_item_ben_element"
+                        app:field="@{@string/long_to_string(ben.benId)}"
+                        app:fieldTitle="@{@string/tv_ben_id_ph}" />
+
+                    <include
+                        android:id="@+id/rl_family_head_name"
+                        style="@style/rv_item_ben_fields"
+                        layout="@layout/rv_item_ben_element"
+                        app:field="@{ben.familyHeadName}"
+                        app:fieldTitle="@{@string/tv_family_head_name_ph}"
+                        tools:ignore="IncludeLayoutParam" />
+
+                    <include
+                        android:id="@+id/rl_ben_mobile_no"
+                        style="@style/rv_item_ben_fields"
+                        layout="@layout/rv_item_ben_element"
+                        app:field="@{ben.mobileNo}"
+                        app:fieldTitle="@{@string/tv_mob_no_ph}" />
+                </LinearLayout>
+
+
+
+                <LinearLayout
+                    android:id="@+id/ll_row_5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal"
+                    android:weightSum="3"
+                    showLayout="@{showAbha}"
+                    android:layout_below="@id/ll_row_1">
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_abha"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:onClick="@{()-> clickListener.onClickABHA(ben)}"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                        app:cornerRadius="@dimen/padding_normal"
+                        android:layout_marginStart="@dimen/margin_small"
+                        android:text="ABHA"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_hh_id"
+                        android:textColor="@color/secondaryLightColor"
+                        android:backgroundTint="@color/green"
+                        app:strokeColor="?attr/colorPrimary" />
+                </LinearLayout>
+            </RelativeLayout>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+</layout>

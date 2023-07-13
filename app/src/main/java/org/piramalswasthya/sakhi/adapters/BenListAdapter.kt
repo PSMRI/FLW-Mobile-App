@@ -14,7 +14,7 @@ import org.piramalswasthya.sakhi.model.BenBasicDomain
 class BenListAdapter(
     private val clickListener: BenClickListener? = null,
     private val showAbha: Boolean = false
-) :
+, private val role: Int? = 0) :
     ListAdapter<BenBasicDomain, BenListAdapter.BenViewHolder>(BenDiffUtilCallBack) {
     private object BenDiffUtilCallBack : DiffUtil.ItemCallback<BenBasicDomain>() {
         override fun areItemsTheSame(
@@ -38,12 +38,13 @@ class BenListAdapter(
         }
 
         fun bind(
-            item: BenBasicDomain, clickListener: BenClickListener?, showAbha: Boolean
+            item: BenBasicDomain, clickListener: BenClickListener?, showAbha: Boolean, role: Int?
         ) {
             binding.ben = item
             binding.clickListener = clickListener
             binding.showAbha = showAbha
             binding.hasAbha = !item.abhaId.isNullOrEmpty()
+            binding.role = role
             binding.executePendingBindings()
 
         }
@@ -54,7 +55,7 @@ class BenListAdapter(
     ) = BenViewHolder.from(parent)
 
     override fun onBindViewHolder(holder: BenViewHolder, position: Int) {
-        holder.bind(getItem(position), clickListener, showAbha)
+        holder.bind(getItem(position), clickListener, showAbha, role)
     }
 
 

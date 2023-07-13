@@ -27,7 +27,7 @@
             android:text="@{fieldTitle}"
             android:textColor="?attr/colorOnPrimary"
             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-            android:textStyle="italic"
+            android:textStyle="bold"
             android:layout_alignParentTop="true" />
 
         <com.google.android.material.textview.MaterialTextView

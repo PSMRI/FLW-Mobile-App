@@ -53,6 +53,8 @@ enum class Gender {
             ", b.contactNumber as mobileNo, b.fatherName, h.fam_familyHeadName as familyHeadName, b.rchId" +
             ", b.isHrpStatus as hrpStatus, b.syncState, b.gen_reproductiveStatusId as reproductiveStatusId, b.isKid, b.immunizationStatus," +
             " b.loc_village_id as villageId, b.abha_healthIdNumber as abhaId," +
+            ", b.isHrpStatus as hrpStatus, b.syncState, b.gen_reproductiveStatusId as reproductiveStatusId,b.gen_spouseName as spouseName, b.isKid, b.immunizationStatus," +
+            " b.loc_village_id as villageId," +
             " cbac.benId is not null as cbacFilled, cbac.syncState as cbacSyncState," +
             " cdr.benId is not null as cdrFilled, cdr.syncState as cdrSyncState, " +
             " mdsr.benId is not null as mdsrFilled, mdsr.syncState as mdsrSyncState," +
@@ -69,6 +71,13 @@ enum class Gender {
             " ir.motherBenId is not null as irFilled, " +
             " cr.motherBenId is not null as crFilled, " +
             " do.benId is not null as doFilled " +
+            " tbsn.benId is not null as tbsnFilled, " +
+            " tbsp.benId is not null as tbspFilled, " +
+            " hrppa.benId is not null as hrppaFilled, " +
+            " hrpnpa.benId is not null as hrpnpaFilled, " +
+            " hrpmbp.benId is not null as hrpmbpFilled, " +
+            " hrpt.benId is not null as hrptFilled, " +
+            " hrnpt.benId is not null as hrnptFilled " +
             "from BENEFICIARY b " +
             "JOIN HOUSEHOLD h ON b.householdId = h.householdId " +
             "LEFT OUTER JOIN CBAC cbac on b.beneficiaryId = cbac.benId " +
@@ -83,6 +92,11 @@ enum class Gender {
             "LEFT OUTER JOIN ELIGIBLE_COUPLE_TRACKING ect on (b.beneficiaryId = ect.benId  and CAST((strftime('%s','now') - ect.visitDate/1000)/60/60/24 AS INTEGER) < 30 )" +
             "LEFT OUTER JOIN TB_SCREENING tbsn on b.beneficiaryId = tbsn.benId " +
             "LEFT OUTER JOIN TB_SUSPECTED tbsp on b.beneficiaryId = tbsp.benId " +
+            "LEFT OUTER JOIN HRP_PREGNANT_ASSESS hrppa on b.beneficiaryId = hrppa.benId " +
+            "LEFT OUTER JOIN HRP_NON_PREGNANT_ASSESS hrpnpa on b.beneficiaryId = hrpnpa.benId " +
+            "LEFT OUTER JOIN HRP_MICRO_BIRTH_PLAN hrpmbp on b.beneficiaryId = hrpmbp.benId " +
+            "LEFT OUTER JOIN HRP_NON_PREGNANT_TRACK hrnpt on b.beneficiaryId = hrnpt.benId " +
+            "LEFT OUTER JOIN HRP_PREGNANT_TRACK hrpt on b.beneficiaryId = hrpt.benId " +
             "LEFT OUTER JOIN DELIVERY_OUTCOME do on b.beneficiaryId = do.benId " +
             "LEFT OUTER JOIN INFANT_REG ir on b.beneficiaryId = ir.motherBenId " +
             "LEFT OUTER JOIN CHILD_REG cr on b.beneficiaryId = cr.motherBenId " +
@@ -94,6 +108,7 @@ data class BenBasicCache(
     val regDate: Long,
     val benName: String,
     val benSurname: String? = null,
+    val spouseName: String? = null,
     val gender: Gender,
     val dob: Long,
     val mobileNo: Long,
@@ -124,6 +139,11 @@ data class BenBasicCache(
     val tbsnSyncState: SyncState?,
     val tbspFilled: Boolean,
     val tbspSyncState: SyncState?,
+    val hrppaFilled: Boolean,
+    val hrpnpaFilled: Boolean,
+    val hrpmbpFilled: Boolean,
+    val hrptFilled: Boolean,
+    val hrnptFilled: Boolean,
     val isDelivered: Boolean,
     val irFilled: Boolean,
     val crFilled: Boolean,
@@ -202,6 +222,25 @@ data class BenBasicCache(
             familyHeadName = familyHeadName ?: "Not Available",
 //            typeOfList = typeOfList.name,
             rchId = rchId?.takeIf { it.isNotEmpty() } ?: "Not Available",
+            hrpStatus = hrpStatus,
+            syncState = syncState
+        )
+    }
+
+    fun asBasicDomainModelCHO(): BenBasicDomain {
+        return BenBasicDomain(
+            benId = benId,
+            hhId = hhId,
+            regDate = dateFormat.format(Date(regDate)),
+            benName = benName,
+            benSurname = benSurname ?: "",
+            spouseName =  spouseName?: "Not Available",
+            gender = gender.name,
+            dob = dob,
+            mobileNo = mobileNo.toString(),
+            fatherName = fatherName,
+            familyHeadName = familyHeadName ?: "",
+            rchId = rchId ?: "Not Available",
             hrpStatus = hrpStatus,
             syncState = syncState
         )
@@ -438,6 +477,97 @@ data class BenBasicCache(
         )
     }
 
+    fun asBenBasicDomainModelForHRPPregAssessmentForm(): BenBasicDomainForForm {
+
+        return BenBasicDomainForForm(
+            benId = benId,
+            hhId = hhId,
+            regDate = dateFormat.format(Date(regDate)),
+            benName = benName,
+            benSurname = benSurname ?: "",
+            gender = gender.name,
+            dob = dob,
+            mobileNo = mobileNo.toString(),
+            fatherName = fatherName,
+            familyHeadName = familyHeadName?: "",
+            spouseName = spouseName?: "",
+//            typeOfList = typeOfList.name,
+            rchId = rchId ?: "Not Available",
+            hrpStatus = hrpStatus,
+            form1Filled = hrppaFilled,
+            syncState = syncState,
+            form2Enabled = true,
+            form2Filled = hrpmbpFilled
+        )
+    }
+
+    fun asBenBasicDomainModelForHRPNonPregAssessmentForm(): BenBasicDomainForForm {
+        return BenBasicDomainForForm(
+            benId = benId,
+            hhId = hhId,
+            regDate = dateFormat.format(Date(regDate)),
+            benName = benName,
+            benSurname = benSurname ?: "",
+            spouseName = spouseName ?: "",
+            gender = gender.name,
+            dob = dob,
+            mobileNo = mobileNo.toString(),
+            fatherName = fatherName,
+            familyHeadName = familyHeadName ?: "Not Available",
+//            typeOfList = typeOfList.name,
+            rchId = rchId ?: "Not Available",
+            hrpStatus = hrpStatus,
+            form1Filled = hrpnpaFilled,
+            syncState = syncState
+        )
+    }
+
+    fun asBenBasicDomainModelForHRPNonPregTrackForm(): BenBasicDomainForForm {
+        return BenBasicDomainForForm(
+            benId = benId,
+            hhId = hhId,
+            regDate = dateFormat.format(Date(regDate)),
+            benName = benName,
+            benSurname = benSurname ?: "",
+            spouseName = spouseName ?: "",
+            gender = gender.name,
+            dob = dob,
+            mobileNo = mobileNo.toString(),
+            fatherName = fatherName,
+            familyHeadName = familyHeadName ?: "Not Available",
+//            typeOfList = typeOfList.name,
+            rchId = rchId ?: "Not Available",
+            hrpStatus = hrpStatus,
+            form1Filled = false,
+            form2Filled = hrnptFilled,
+            form2Enabled = hrnptFilled,
+            syncState = syncState
+        )
+    }
+
+    fun asBenBasicDomainModelForHRPPregTrackForm(): BenBasicDomainForForm {
+        return BenBasicDomainForForm(
+            benId = benId,
+            hhId = hhId,
+            regDate = dateFormat.format(Date(regDate)),
+            benName = benName,
+            benSurname = benSurname ?: "",
+            spouseName = spouseName ?: "",
+            gender = gender.name,
+            dob = dob,
+            mobileNo = mobileNo.toString(),
+            fatherName = fatherName,
+            familyHeadName = familyHeadName ?: "Not Available",
+//            typeOfList = typeOfList.name,
+            rchId = rchId ?: "Not Available",
+            hrpStatus = hrpStatus,
+            form1Filled = false,
+            form2Filled = hrptFilled,
+            form2Enabled = hrptFilled,
+            syncState = syncState
+        )
+    }
+
     fun asBenBasicDomainModelForInfantRegistrationForm(): BenBasicDomainForForm {
         return BenBasicDomainForForm(
             benId = benId,
@@ -504,7 +634,8 @@ data class BenBasicCache(
             hhId = hhId,
             regDate = dateFormat.format(Date(regDate)),
             benName = benName,
-            benSurname = benSurname ?: "Not Available",
+            benSurname = benSurname ?: "",
+            spouseName = spouseName ?: "",
             gender = gender.name,
             dob = dob,
             mobileNo = mobileNo.toString(),
@@ -548,6 +679,7 @@ data class BenBasicDomain(
     val benName: String,
     val benSurname: String? = null,
     val benFullName: String = "$benName $benSurname",
+    var spouseName: String? = null,
     val gender: String,
     val dob: Long,
     val ageInt: Int = getAgeFromDob(dob),
@@ -576,6 +708,7 @@ data class BenBasicDomainForForm(
     val age: String = "$ageInt $ageUnit",
     val mobileNo: String,
     val fatherName: String? = null,
+    val spouseName: String? = null,
     val familyHeadName: String,
 //    val typeOfList: String,
     val rchId: String,
@@ -586,6 +719,7 @@ data class BenBasicDomainForForm(
     val form1Enabled: Boolean = true,
     val form2Enabled: Boolean = true,
     val form3Enabled: Boolean = true,
+    val formsFilled: Int = 0,
     var syncState: SyncState?
 ) {
     companion object {

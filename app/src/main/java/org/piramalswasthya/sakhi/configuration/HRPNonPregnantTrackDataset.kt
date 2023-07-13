@@ -1,0 +1,204 @@
+package org.piramalswasthya.sakhi.configuration
+
+import android.content.Context
+import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.helpers.Languages
+import org.piramalswasthya.sakhi.model.*
+import org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.pregnant_women.assess.HRPNonPregnantAssessViewModel
+import timber.log.Timber
+import java.util.concurrent.TimeUnit
+
+class HRPNonPregnantTrackDataset(
+    context: Context, currentLanguage: Languages
+) : Dataset(context, currentLanguage) {
+
+    private var dateOfVisit = FormElement(
+        id = 1,
+        inputType = InputType.DATE_PICKER,
+        title = context.getString(R.string.tracking_date),
+        arrayId = -1,
+        required = true,
+        max = System.currentTimeMillis(),
+        hasDependants = true
+    )
+
+    private val anemia = FormElement(
+        id = 2,
+        inputType = InputType.RADIO,
+        title = "Visible signs of Anemia as per appearance",
+        entries = arrayOf("Yes", "No"),
+        required = true,
+        hasDependants = true
+    )
+
+    private val ancLabel = FormElement(
+        id = 3,
+        inputType = InputType.HEADLINE,
+        title = "For Clinical Assessment (to be filled consulting with ANM)",
+        required = false
+    )
+
+    private val hypertension = FormElement(
+        id = 4,
+        inputType = InputType.RADIO,
+        title = "Hypertension",
+        entries = arrayOf("Yes", "No"),
+        required = true,
+        hasDependants = true
+    )
+
+    private val diabetes = FormElement(
+        id = 5,
+        inputType = InputType.RADIO,
+        title = "Diabetes",
+        entries = arrayOf("Yes", "No"),
+        required = true,
+        hasDependants = true
+    )
+
+    private val severeAnemia = FormElement(
+        id = 6,
+        inputType = InputType.RADIO,
+        title = "Severe Anemia",
+        entries = arrayOf("Yes", "No"),
+        required = true,
+        hasDependants = true
+    )
+
+    private var pregLabel = FormElement(
+        id = 7,
+        inputType = InputType.HEADLINE,
+        title = "CURRENT FP/ PREGNANCY STATUS",
+        required = false
+    )
+
+    private val fp = FormElement(
+        id = 8,
+        inputType = InputType.RADIO,
+        title = "Adoption of Family Planning",
+        entries = arrayOf("Yes", "No"),
+        required = true,
+        hasDependants = true
+    )
+
+    private var lmp = FormElement(
+        id = 9,
+        inputType = InputType.DATE_PICKER,
+        title = "LMP",
+        arrayId = -1,
+        required = true,
+        max = System.currentTimeMillis(),
+        hasDependants = false
+    )
+
+    private val missedPeriod = FormElement(
+        id = 10,
+        inputType = InputType.RADIO,
+        title = "Missed Period",
+        entries = arrayOf("Yes", "No"),
+        required = true,
+        hasDependants = false
+    )
+
+    private val isPregnant = FormElement(
+        id = 11,
+        inputType = InputType.RADIO,
+        title = "Is Pregnant",
+        entries = arrayOf("Yes", "No"),
+        required = true,
+        hasDependants = false
+    )
+
+    private val riskStatus = FormElement(
+        id = 12,
+        inputType = InputType.HEADLINE,
+        title = "RISK STATUS",
+        required = false,
+        hasDependants = false
+    )
+
+    suspend fun setUpPage(ben: BenRegCache?, saved: HRPNonPregnantTrackCache?) {
+        val list = mutableListOf(
+            dateOfVisit,
+            anemia,
+            ancLabel,
+            hypertension,
+            diabetes,
+            severeAnemia,
+            riskStatus,
+            pregLabel,
+            fp,
+            lmp,
+            missedPeriod,
+            isPregnant
+        )
+
+        saved?.let {
+            dateOfVisit.value = it.dateOfVisit?.let { it1 -> getDateFromLong(it1) }
+            anemia.value = it.anemia
+            hypertension.value = it.hypertension
+            diabetes.value = it.diabetes
+            severeAnemia.value = it.severeAnemia
+            fp.value = it.fp
+            lmp.value = it.lmp?.let { it2 -> getDateFromLong(it2) }
+            missedPeriod.value = it.missedPeriod
+            isPregnant.value = it.isPregnant
+        }
+
+        lmp.min = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(40)
+        dateOfVisit.min = ben?.regDate
+
+        setUpPage(list)
+    }
+
+    override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
+        return when (formId) {
+            anemia.id -> {
+                anemia.showHighRisk = anemia.value == "Yes"
+                riskStatus.showHighRisk = (anemia.value == "Yes" || hypertension.value == "Yes"
+                        || diabetes.value == "Yes" || severeAnemia.value == "Yes")
+                -1
+            }
+
+            hypertension.id, diabetes.id, severeAnemia.id -> {
+                ancLabel.showHighRisk = (hypertension.value == "Yes"
+                        || diabetes.value == "Yes" || severeAnemia.value == "Yes")
+                riskStatus.showHighRisk = (anemia.value == "Yes" || hypertension.value == "Yes"
+                        || diabetes.value == "Yes" || severeAnemia.value == "Yes")
+                -1
+            }
+
+            else -> -1
+        }
+    }
+
+    override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
+        (cacheModel as HRPNonPregnantTrackCache).let { form ->
+            form.dateOfVisit = getLongFromDate(dateOfVisit.value)
+            form.anemia = anemia.value
+            form.hypertension = hypertension.value
+            form.diabetes = diabetes.value
+            form.severeAnemia = severeAnemia.value
+            form.fp = fp.value
+            form.lmp = getLongFromDate(lmp.value)
+            form.missedPeriod = missedPeriod.value
+            form.isPregnant = isPregnant.value
+            Timber.d("Form $form")
+        }
+    }
+
+    fun getIndexOfAncLabel() = getIndexById(ancLabel.id)
+
+    fun getIndexOfAnemia() = getIndexById(anemia.id)
+
+    fun getIndexOfRisk() = getIndexById(riskStatus.id)
+
+    fun updateBen(benRegCache: BenRegCache) {
+        benRegCache.genDetails?.let {
+            it.reproductiveStatus =
+                englishResources.getStringArray(R.array.nbr_reproductive_status_array)[1]
+            it.reproductiveStatusId = 2
+        }
+        benRegCache.processed = "U"
+    }
+}

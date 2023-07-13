@@ -8,6 +8,8 @@ import org.piramalswasthya.sakhi.model.Icon
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
 import org.piramalswasthya.sakhi.ui.home_activity.child_care.ChildCareFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.communicable_diseases.CdFragmentDirections
+import org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.non_pregnant_women.HRPNonPregnantFragmentDirections
+import org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.pregnant_women.HRPPregnantFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.eligible_couple.EligibleCoupleFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.home.HomeFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.immunization_due.ImmunizationDueTypeFragmentDirections
@@ -137,6 +139,57 @@ class IconDataset @Inject constructor(
         }
     }
 
+    fun getCHOIconDataset(resources: Resources) = listOf(
+        Icon(
+            R.drawable.ic__ben,
+            resources.getString(R.string.icon_title_ben),
+            recordsRepo.getBenListCount(),
+            HomeFragmentDirections.actionHomeFragmentToBenListCHOFragment()
+        ),
+        Icon(
+            R.drawable.ic__eligible_couple,
+            resources.getString(R.string.icon_title_hrp_pregnant),
+            recordsRepo.hrpPregnantWomenListCount,
+            HomeFragmentDirections.actionHomeFragmentToHRPPregnantFragment()
+        ),
+        Icon(
+            R.drawable.ic__maternal_health,
+            resources.getString(R.string.icon_title_hrp_non_pregnant),
+            recordsRepo.hrpNonPregnantWomenListCount,
+            HomeFragmentDirections.actionHomeFragmentToHRPNonPregnantFragment()
+        ),
+    )
+
+    fun getHRPPregnantWomenDataset(resources: Resources) = listOf(
+        Icon(
+            R.drawable.ic__eligible_couple,
+            resources.getString(R.string.icon_title_hrp_pregnant_assess),
+            recordsRepo.hrpPregnantWomenListCount,
+            HRPPregnantFragmentDirections.actionHRPPregnantFragmentToPregnantListFragment()
+        ),
+        Icon(
+            R.drawable.ic__eligible_couple,
+            resources.getString(R.string.icon_title_hrp_pregnant_track),
+            recordsRepo.hrpTrackingPregListCount,
+            HRPPregnantFragmentDirections.actionHRPPregnantFragmentToHRPPregnantListFragment()
+        )
+    )
+
+    fun getHRPNonPregnantWomenDataset(resources: Resources) = listOf(
+        Icon(
+            R.drawable.ic__eligible_couple,
+            resources.getString(R.string.icon_title_hrp_non_pregnant_assess),
+            recordsRepo.hrpNonPregnantWomenListCount,
+            HRPNonPregnantFragmentDirections.actionHRPNonPregnantFragmentToNonPregnantListFragment()
+        ),
+        Icon(
+            R.drawable.ic__eligible_couple,
+            resources.getString(R.string.icon_title_hrp_non_pregnant_track),
+            recordsRepo.hrpTrackingNonPregListCount,
+            HRPNonPregnantFragmentDirections.actionHRPNonPregnantFragmentToHRPNonPregnantListFragment()
+        )
+    )
+
     fun getChildCareDataset(resources: Resources) = listOf(
         Icon(
             R.drawable.ic__infant,
@@ -182,7 +235,7 @@ class IconDataset @Inject constructor(
         Icon(
             R.drawable.ic__pregnancy,
             resources.getString(R.string.icon_title_pmr),
-            recordsRepo.getPregnantWomenListCount(),
+            recordsRepo.hrpPregnantWomenListCount,
             MotherCareFragmentDirections.actionMotherCareFragmentToPwRegistrationFragment()
         ),
         Icon(

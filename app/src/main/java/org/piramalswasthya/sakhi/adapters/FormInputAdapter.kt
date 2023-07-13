@@ -585,8 +585,10 @@ class FormInputAdapter(
 
         fun bind(
             item: FormElement,
+            formValueListener: FormValueListener?,
         ) {
             binding.form = item
+            formValueListener?.onValueChanged(item, -1)
             binding.executePendingBindings()
 
         }
@@ -649,7 +651,7 @@ class FormInputAdapter(
             )
 
             TIME_PICKER -> (holder as TimePickerInputViewHolder).bind(item, isEnabled)
-            HEADLINE -> (holder as HeadlineViewHolder).bind(item)
+            HEADLINE -> (holder as HeadlineViewHolder).bind(item, formValueListener)
         }
     }
 

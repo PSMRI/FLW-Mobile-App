@@ -27,5 +27,6 @@ data class FormElement(
     var maxDecimal: Double? = null,
     val orientation: Int? = null,
     var hasSpeechToText: Boolean = false,
-    var isEnabled: Boolean = true
+    var isEnabled: Boolean = true,
+    var showHighRisk: Boolean = false
 )

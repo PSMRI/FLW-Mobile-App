@@ -1,15 +1,34 @@
 package org.piramalswasthya.sakhi.network
 
 import okhttp3.ResponseBody
+import org.piramalswasthya.sakhi.model.BenCHOPost
 import org.piramalswasthya.sakhi.model.*
 import retrofit2.Response
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.Headers
+import retrofit2.http.POST
+import retrofit2.http.Query
+import retrofit2.http.Url
 
 interface AmritApiService {
 
     @Headers("No-Auth: true")
     @POST("commonapi-v1.0/user/userAuthenticate/")
     suspend fun getJwtToken(@Body json: TmcAuthUserRequest): Response<ResponseBody>
+
+//    @Headers("No-Auth: true")
+//    @POST
+//    suspend fun getJwtToken(@Url url: String = "http://amritdemo.piramalswasthya.org:8080/commonapi-v1.0/user/userAuthenticate/",
+//                            @Body json: TmcAuthUserRequest): Response<ResponseBody>
+
+//    @Headers("No-Auth: true")
+//    @POST
+//    suspend fun getJwtToken(
+//        @Body json: TmcAuthUserRequest, @Url url: String = "http://192.168.1.37:8085/user/userAuthenticate/"): Response<ResponseBody>
+//
+//    @POST
+//    suspend fun getUserDetailsById(@Body userDetail: TmcUserDetailsRequest, @Url url: String = "http://192.168.1.37:8085/doortodoorapp/getUserDetails/") : Response<ResponseBody>
 
     @GET("flw-0.0.1/user/getUserDetail")
 //    @GET("user/getUserRole")
@@ -19,6 +38,9 @@ interface AmritApiService {
 
     @POST("tmapi-v1.0/registrar/registrarBeneficaryRegistrationNew")
     suspend fun getBenIdFromBeneficiarySending(@Body beneficiaryDataSending: BeneficiaryDataSending): Response<ResponseBody>
+
+    @POST("hwc-facility-service/registrar/registrarBeneficaryRegistrationNew")
+    suspend fun getBenIdFromBeneficiarySending(@Body benCHOPost: BenCHOPost): Response<ResponseBody>
 
     @POST("identity-0.0.1/rmnch/syncDataToAmrit")
     suspend fun submitRmnchDataAmrit(@Body sendingRMNCHData: SendingRMNCHData): Response<ResponseBody>

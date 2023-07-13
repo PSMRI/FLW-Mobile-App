@@ -76,6 +76,11 @@ import timber.log.Timber
         DeliveryOutcomeCache::class,
         InfantRegCache::class,
         ChildRegCache::class,
+        HRPPregnantAssessCache::class,
+        HRPNonPregnantAssessCache::class,
+        HRPPregnantTrackCache::class,
+        HRPNonPregnantTrackCache::class,
+        HRPMicroBirthPlanCache::class
     ],
     views = [BenBasicCache::class],
     version = 4, exportSchema = false
@@ -100,6 +105,7 @@ abstract class InAppDb : RoomDatabase() {
     abstract val vaccineDao: ImmunizationDao
     abstract val maternalHealthDao : MaternalHealthDao
     abstract val tbDao : TBDao
+    abstract val hrpDao : HrpDao
     abstract val deliveryOutcomeDao: DeliveryOutcomeDao
     abstract val infantRegDao: InfantRegDao
     abstract val childRegistrationDao : ChildRegistrationDao
@@ -121,14 +127,14 @@ abstract class InAppDb : RoomDatabase() {
                         "Sakhi-2.0-In-app-database"
                     )
                         .fallbackToDestructiveMigration()
-                        .setQueryCallback(
-                            object : QueryCallback {
-                                override fun onQuery(sqlQuery: String, bindArgs: List<Any?>) {
-                                    Timber.d("Query to Room : sqlQuery=$sqlQuery with arguments : $bindArgs")
-                                }
-                            },
-                            Dispatchers.IO.asExecutor()
-                        )
+//                        .setQueryCallback(
+//                            object : QueryCallback {
+//                                override fun onQuery(sqlQuery: String, bindArgs: List<Any?>) {
+//                                    Timber.d("Query to Room : sqlQuery=$sqlQuery with arguments : $bindArgs")
+//                                }
+//                            },
+//                            Dispatchers.IO.asExecutor()
+//                        )
                         .build()
 
                     INSTANCE = instance

@@ -25,6 +25,7 @@
     <string name="nbr_image_sub">Tap to use camera</string>
     <string name="nbr_dor">Date of Registration</string>
     <string name="nbr_nb_first_name">First Name</string>
+    <string name="nbr_nb_name">Name of Beneficiary</string>
     <string name="nbr_nb_last_name">Last Name / Surname</string>
     <string name="nbr_nb_age_unit">Age Unit</string>
     <string-array name="nbr_age_unit_array">
@@ -379,8 +380,9 @@
     <string name="tv_gender_ph">Gender</string>
     <string name="tv_father_name_ph">Father\'s Name</string>
     <string name="tv_family_head_name_ph">Family Head Name</string>
+    <string name="tv_spouse">Spouse</string>
     <string name="tv_ben_id_ph">Ben ID</string>
-    <string name="tv_mob_no_ph">Mobile Number</string>
+    <string name="tv_mob_no_ph">Mobile No.</string>
     <string name="tv_age_ph">Age</string>
     <string name="tv_suspected_hrp_ph">Suspected HRP</string>
     <string name="tv_imu_status_ph">Immunization Status</string>

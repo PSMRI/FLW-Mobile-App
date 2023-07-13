@@ -60,7 +60,8 @@ class HomeIconsFragment : Fragment() {
         binding.rvIconGrid.adapter = rvAdapter
         viewModel.devModeEnabled.observe(viewLifecycleOwner){
             Timber.d("update called!~~ $it")
-            rvAdapter.submitList(iconDataset.getHomeIconDataset(resources))
+//        rvAdapter.submitList(iconDataset.getHomeIconDataset(resources))
+            rvAdapter.submitList(iconDataset.getCHOIconDataset(resources))
         }
 //        binding.root.setOnLongClickListener {
 //            if (viewModel.getDebMode())
@@ -71,6 +72,5 @@ class HomeIconsFragment : Fragment() {
 //            }
 //            true
 //        }
-
     }
 }
