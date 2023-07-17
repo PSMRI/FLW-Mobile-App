@@ -4,6 +4,7 @@ import android.content.Context
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.*
+import java.util.Calendar
 
 class HRPPregnantTrackDataset (context: Context, currentLanguage: Languages
 ) : Dataset(context, currentLanguage) {
@@ -108,7 +109,7 @@ class HRPPregnantTrackDataset (context: Context, currentLanguage: Languages
         hasDependants = false
     )
 
-    suspend fun setUpPage(ben: BenRegCache?, saved: HRPPregnantTrackCache?) {
+    suspend fun setUpPage(ben: BenRegCache?, saved: HRPPregnantTrackCache?, dateOfVisitMin: Long?) {
         val list = mutableListOf(
             dateOfVisit,
             rdPmsa,
@@ -122,7 +123,19 @@ class HRPPregnantTrackDataset (context: Context, currentLanguage: Languages
             malPresentation,
             hivsyph
         )
-        dateOfVisit.min = ben?.regDate
+        ben?.let {
+            dateOfVisit.min = it.regDate
+            dateOfVisitMin?.let { dov ->
+                val cal = Calendar.getInstance()
+                cal.timeInMillis = dov
+                cal.set(Calendar.MONTH, cal.get(Calendar.MONTH) + 1)
+                cal.set(Calendar.DAY_OF_MONTH, 1)
+                if (cal.timeInMillis > it.regDate) {
+                    dateOfVisit.min = cal.timeInMillis
+                }
+            }
+        }
+
 
         saved?.let {
             dateOfVisit.value = it.dateOfVisit?.let { it1 -> getDateFromLong(it1) }

@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.repositories
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.database.room.InAppDb
+import org.piramalswasthya.sakhi.database.room.dao.HrpDao
 import org.piramalswasthya.sakhi.model.*
 import javax.inject.Inject
 
@@ -102,6 +103,24 @@ class HRPRepo @Inject constructor(
     suspend fun getHrNonPregTrackList(benId:Long) : List<HRPNonPregnantTrackCache>? {
         return withContext(Dispatchers.IO){
             database.hrpDao.getAllNonPregTrackforBen(benId)
+        }
+    }
+
+    suspend fun getMaxLmp(benId: Long): Long? {
+        return withContext(Dispatchers.IO) {
+            database.hrpDao.getMaxLmp(benId)
+        }
+    }
+
+    suspend fun getMaxDoV(benId: Long): Long? {
+        return withContext(Dispatchers.IO) {
+            database.hrpDao.getMaxDoV(benId)
+        }
+    }
+
+    suspend fun getMaxDoVhrp(benId: Long): Long? {
+        return withContext(Dispatchers.IO) {
+            database.hrpDao.getMaxDoVhrp(benId)
         }
     }
 }

@@ -712,7 +712,7 @@ data class BenBasicDomainForForm(
     val form1Filled: Boolean = false,
     val form2Filled: Boolean = false,
     val form3Filled: Boolean = false,
-    val form1Enabled: Boolean = true,
+    var form1Enabled: Boolean = true,
     val form2Enabled: Boolean = true,
     val form3Enabled: Boolean = true,
     val formsFilled: Int = 0,

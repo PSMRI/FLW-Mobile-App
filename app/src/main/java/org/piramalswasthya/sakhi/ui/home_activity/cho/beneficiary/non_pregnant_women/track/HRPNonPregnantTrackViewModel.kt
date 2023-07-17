@@ -86,9 +86,13 @@ constructor(
                 _recordExists.value = false
             }
 
+            val hist = hrpReo.getMaxLmp(benId)
+
             dataset.setUpPage(
                 ben,
-                if (recordExists.value == true) hrpNonPregnantTrackCache else null
+                if (recordExists.value == true) hrpNonPregnantTrackCache else null,
+                hrpReo.getMaxLmp(benId),
+                hrpReo.getMaxDoV(benId)
             )
 
 

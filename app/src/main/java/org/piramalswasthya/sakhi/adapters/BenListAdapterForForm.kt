@@ -130,7 +130,7 @@ class BenListAdapterForForm(
                     else -> throw IllegalStateException("FormNumber>3")
                 }
             }
-            formButton.visibility = if (formEnabled) View.VISIBLE else View.GONE
+            formButton.visibility = if (formEnabled) View.VISIBLE else View.INVISIBLE
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (hasForm)

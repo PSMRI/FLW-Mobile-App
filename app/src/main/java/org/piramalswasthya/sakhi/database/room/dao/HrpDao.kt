@@ -56,4 +56,12 @@ interface HrpDao {
 
     @Query("select * from HRP_NON_PREGNANT_TRACK where benId = :benId order by dateOfVisit desc")
     fun getAllNonPregTrackforBen(benId: Long) :List<HRPNonPregnantTrackCache>?
+
+    @Query("select max(lmp) from HRP_NON_PREGNANT_TRACK where benId = :benId")
+    fun getMaxLmp(benId: Long): Long?
+    @Query("select max(dateOfVisit) from HRP_NON_PREGNANT_TRACK where benId = :benId")
+    fun getMaxDoV(benId: Long) : Long?
+
+    @Query("select max(dateOfVisit) from HRP_PREGNANT_TRACK where benId = :benId")
+    fun getMaxDoVhrp(benId: Long) : Long?
 }

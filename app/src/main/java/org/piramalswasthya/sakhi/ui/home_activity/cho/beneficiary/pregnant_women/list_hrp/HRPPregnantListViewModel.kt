@@ -13,6 +13,7 @@ import org.piramalswasthya.sakhi.model.BenBasicDomainForForm
 import org.piramalswasthya.sakhi.model.HRPPregnantTrackCache
 import org.piramalswasthya.sakhi.repositories.HRPRepo
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
+import java.util.*
 
 @HiltViewModel
 class HRPPregnantListViewModel  @javax.inject.Inject
@@ -44,6 +45,19 @@ constructor(
             filter.emit(text)
         }
 
+    }
+
+    suspend fun updateBenWithForms(ben: BenBasicDomainForForm) {
+        hrpRepo.getHrPregTrackList(ben.benId)?.let {
+            val cal = Calendar.getInstance()
+            if(it.isNotEmpty()) {
+                it.first().dateOfVisit?.let { date ->
+                    cal.timeInMillis = date
+                    ben.form1Enabled = cal.get(Calendar.MONTH) != Calendar.getInstance().get(
+                        Calendar.MONTH)
+                }
+            }
+        }
     }
 
 }

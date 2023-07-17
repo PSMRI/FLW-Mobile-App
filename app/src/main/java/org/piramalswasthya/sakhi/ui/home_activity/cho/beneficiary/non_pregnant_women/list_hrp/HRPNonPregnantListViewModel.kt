@@ -9,12 +9,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.helpers.filterBenFormList
+import org.piramalswasthya.sakhi.model.BenBasicDomainForForm
 import org.piramalswasthya.sakhi.model.HRPNonPregnantTrackCache
 import org.piramalswasthya.sakhi.network.AmritApiService
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.HRPRepo
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
 import timber.log.Timber
+import java.util.Calendar
 import javax.inject.Inject
 
 @HiltViewModel
@@ -42,7 +44,7 @@ constructor(
     val benRegId: LiveData<Long?>
         get() = _benRegId
 
-    var allHRNonPregTrack : List<HRPNonPregnantTrackCache>? = null
+    var allHRNonPregTrack: List<HRPNonPregnantTrackCache>? = null
 
     private val allBenList = recordsRepo.hrpTrackingNonPregList
     private val filter = MutableStateFlow("")
@@ -55,19 +57,32 @@ constructor(
             allHRNonPregTrack = hrpRepo.getAllNonPregTrack()
         }
     }
+
     fun filterText(text: String) {
         viewModelScope.launch {
             filter.emit(text)
         }
     }
 
-    fun setBenId( benId : Long) {
+    fun setBenId(benId: Long) {
         _benId.value = benId
     }
 
-    suspend fun getTrackDetails() : List<HRPNonPregnantTrackCache>? {
-        Timber.d("ben value " + _benId.value )
+    suspend fun getTrackDetails(): List<HRPNonPregnantTrackCache>? {
+        Timber.d("ben value " + _benId.value)
         return _benId.value?.let { hrpRepo.getHrNonPregTrackList(it) }
+    }
+
+    suspend fun updateBenWithForms(ben: BenBasicDomainForForm) {
+        hrpRepo.getHrNonPregTrackList(ben.benId)?.let {
+            val cal = Calendar.getInstance()
+            if(it.isNotEmpty()) {
+                it.first().dateOfVisit?.let { date ->
+                        cal.timeInMillis = date
+                        ben.form1Enabled = cal.get(Calendar.MONTH) != Calendar.getInstance().get(Calendar.MONTH)
+                }
+            }
+        }
     }
 
 }

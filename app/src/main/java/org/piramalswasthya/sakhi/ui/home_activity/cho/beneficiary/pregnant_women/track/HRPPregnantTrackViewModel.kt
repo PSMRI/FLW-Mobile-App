@@ -101,7 +101,8 @@ constructor(
 
             dataset.setUpPage(
                 ben,
-                if (recordExists.value == true) hrpPregnantTrackCache else null
+                if (recordExists.value == true) hrpPregnantTrackCache else null,
+                hrpReo.getMaxDoVhrp(benId)
             )
 
 

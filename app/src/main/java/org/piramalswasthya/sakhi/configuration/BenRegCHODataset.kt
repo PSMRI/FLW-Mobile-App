@@ -113,7 +113,7 @@ class BenRegCHODataset (context: Context, currentLanguage: Languages
         val now = Calendar.getInstance()
         val past = Calendar.getInstance()
         past.set(Calendar.YEAR, now.get(Calendar.YEAR) - 88)
-        dob.min = System.currentTimeMillis() - past.timeInMillis
+        dob.min = past.timeInMillis
         setUpPage(list)
     }
 

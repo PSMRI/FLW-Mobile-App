@@ -4,8 +4,8 @@ import android.content.Context
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.*
-import org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.pregnant_women.assess.HRPNonPregnantAssessViewModel
 import timber.log.Timber
+import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
 class HRPNonPregnantTrackDataset(
@@ -117,7 +117,7 @@ class HRPNonPregnantTrackDataset(
         hasDependants = false
     )
 
-    suspend fun setUpPage(ben: BenRegCache?, saved: HRPNonPregnantTrackCache?) {
+    suspend fun setUpPage(ben: BenRegCache?, saved: HRPNonPregnantTrackCache?, lmpMin: Long?, dateOfVisitMin: Long?) {
         val list = mutableListOf(
             dateOfVisit,
             anemia,
@@ -146,7 +146,24 @@ class HRPNonPregnantTrackDataset(
         }
 
         lmp.min = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(40)
-        dateOfVisit.min = ben?.regDate
+        lmpMin?.let {
+            if (it > System.currentTimeMillis() - TimeUnit.DAYS.toMillis(40)) {
+                lmp.min = lmpMin
+            }
+        }
+
+        ben?.let {
+            dateOfVisit.min = it.regDate
+            dateOfVisitMin?.let { dov ->
+                val cal = Calendar.getInstance()
+                cal.timeInMillis = dov
+                cal.set(Calendar.MONTH, cal.get(Calendar.MONTH) + 1)
+                cal.set(Calendar.DAY_OF_MONTH, 1)
+                if (cal.timeInMillis > it.regDate) {
+                    dateOfVisit.min = cal.timeInMillis
+                }
+            }
+        }
 
         setUpPage(list)
     }

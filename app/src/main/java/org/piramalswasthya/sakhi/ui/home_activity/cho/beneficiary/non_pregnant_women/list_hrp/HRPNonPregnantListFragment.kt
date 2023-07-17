@@ -42,7 +42,7 @@ class HRPNonPregnantListFragment : Fragment() {
         val benAdapter = BenListAdapterForForm(
             clickListener = BenListAdapterForForm.ClickListener(
                 {
-                    Toast.makeText(context, "Ben : $it clicked", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(context, "Ben : $it clicked", Toast.LENGTH_SHORT).show()
                 },
                 { _, benId ->
                     findNavController().navigate(
@@ -69,6 +69,9 @@ class HRPNonPregnantListFragment : Fragment() {
                     binding.flEmpty.visibility = View.VISIBLE
                 else
                     binding.flEmpty.visibility = View.GONE
+                it.forEach { ben ->
+                    viewModel.updateBenWithForms(ben)
+                }
                 benAdapter.submitList(it)
             }
         }
