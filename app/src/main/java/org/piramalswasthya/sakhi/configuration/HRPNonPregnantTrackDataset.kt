@@ -117,6 +117,7 @@ class HRPNonPregnantTrackDataset(
         hasDependants = false
     )
 
+    private var lmpMinVar: Long? = null
     suspend fun setUpPage(ben: BenRegCache?, saved: HRPNonPregnantTrackCache?, lmpMin: Long?, dateOfVisitMin: Long?) {
         val list = mutableListOf(
             dateOfVisit,
@@ -143,25 +144,35 @@ class HRPNonPregnantTrackDataset(
             lmp.value = it.lmp?.let { it2 -> getDateFromLong(it2) }
             missedPeriod.value = it.missedPeriod
             isPregnant.value = it.isPregnant
+
+            anemia.showHighRisk = anemia.value == "Yes"
+
+            ancLabel.showHighRisk = (hypertension.value == "Yes"
+                    || diabetes.value == "Yes" || severeAnemia.value == "Yes")
+
+            riskStatus.showHighRisk = (anemia.value == "Yes" || hypertension.value == "Yes"
+                    || diabetes.value == "Yes" || severeAnemia.value == "Yes")
         }
 
         lmp.min = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(40)
         lmpMin?.let {
+            lmpMinVar = lmpMin
             if (it > System.currentTimeMillis() - TimeUnit.DAYS.toMillis(40)) {
                 lmp.min = lmpMin
             }
         }
 
         ben?.let {
-            dateOfVisit.min = it.regDate
+            dateOfVisit.min = it.regDate - TimeUnit.DAYS.toMillis(60)
             dateOfVisitMin?.let { dov ->
-                val cal = Calendar.getInstance()
-                cal.timeInMillis = dov
-                cal.set(Calendar.MONTH, cal.get(Calendar.MONTH) + 1)
-                cal.set(Calendar.DAY_OF_MONTH, 1)
-                if (cal.timeInMillis > it.regDate) {
-                    dateOfVisit.min = cal.timeInMillis
-                }
+//                val cal = Calendar.getInstance()
+//                cal.timeInMillis = dov
+//                cal.set(Calendar.MONTH, cal.get(Calendar.MONTH) + 1)
+//                cal.set(Calendar.DAY_OF_MONTH, 1)
+//                if (cal.timeInMillis > it.regDate) {
+//                    dateOfVisit.min = cal.timeInMillis
+//                }
+                if (dov > it.regDate - TimeUnit.DAYS.toMillis(60))  dateOfVisit.min = dov
             }
         }
 
@@ -185,6 +196,15 @@ class HRPNonPregnantTrackDataset(
                 -1
             }
 
+            dateOfVisit.id -> {
+                lmp.min = getLongFromDate(dateOfVisit.value) - TimeUnit.DAYS.toMillis(40)
+                lmpMinVar?.let {
+                    if (it > getLongFromDate(dateOfVisit.value) - TimeUnit.DAYS.toMillis(40)) {
+                        lmp.min = it
+                    }
+                }
+                -1
+            }
             else -> -1
         }
     }
@@ -209,6 +229,8 @@ class HRPNonPregnantTrackDataset(
     fun getIndexOfAnemia() = getIndexById(anemia.id)
 
     fun getIndexOfRisk() = getIndexById(riskStatus.id)
+
+    fun getIndexOfLmp() = getIndexById(lmp.id)
 
     fun updateBen(benRegCache: BenRegCache) {
         benRegCache.genDetails?.let {

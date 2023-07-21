@@ -3,8 +3,11 @@ package org.piramalswasthya.sakhi.configuration
 import android.content.Context
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Languages
-import org.piramalswasthya.sakhi.model.*
-import java.util.Calendar
+import org.piramalswasthya.sakhi.model.BenRegCache
+import org.piramalswasthya.sakhi.model.FormElement
+import org.piramalswasthya.sakhi.model.HRPPregnantTrackCache
+import org.piramalswasthya.sakhi.model.InputType
+import java.util.concurrent.TimeUnit
 
 class HRPPregnantTrackDataset (context: Context, currentLanguage: Languages
 ) : Dataset(context, currentLanguage) {
@@ -124,15 +127,16 @@ class HRPPregnantTrackDataset (context: Context, currentLanguage: Languages
             hivsyph
         )
         ben?.let {
-            dateOfVisit.min = it.regDate
+            dateOfVisit.min = it.regDate - TimeUnit.DAYS.toMillis(60)
             dateOfVisitMin?.let { dov ->
-                val cal = Calendar.getInstance()
-                cal.timeInMillis = dov
-                cal.set(Calendar.MONTH, cal.get(Calendar.MONTH) + 1)
-                cal.set(Calendar.DAY_OF_MONTH, 1)
-                if (cal.timeInMillis > it.regDate) {
-                    dateOfVisit.min = cal.timeInMillis
-                }
+//                val cal = Calendar.getInstance()
+//                cal.timeInMillis = dov
+//                cal.set(Calendar.MONTH, cal.get(Calendar.MONTH) + 1)
+//                cal.set(Calendar.DAY_OF_MONTH, 1)
+//                if (cal.timeInMillis > it.regDate) {
+//                    dateOfVisit.min = cal.timeInMillis
+//                }
+                if (dov > it.regDate - TimeUnit.DAYS.toMillis(60)) dateOfVisit.min = dov
             }
         }
 

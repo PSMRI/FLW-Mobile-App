@@ -1,11 +1,14 @@
 package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
-import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Languages
-import org.piramalswasthya.sakhi.model.*
+import org.piramalswasthya.sakhi.model.BenRegCache
+import org.piramalswasthya.sakhi.model.FormElement
+import org.piramalswasthya.sakhi.model.HRPNonPregnantAssessCache
+import org.piramalswasthya.sakhi.model.InputType
 
-class HRPNonPregnantAssessDataset (context: Context, currentLanguage: Languages
+class HRPNonPregnantAssessDataset(
+    context: Context, currentLanguage: Languages
 ) : Dataset(context, currentLanguage) {
 
 
@@ -135,28 +138,41 @@ class HRPNonPregnantAssessDataset (context: Context, currentLanguage: Languages
             homeDelivery.value = it.homeDelivery
             medicalIssues.value = it.medicalIssues
             pastCSection.value = it.pastCSection
+
+            infoChildLabel.showHighRisk =
+                (noOfDeliveries.value == "Yes" || timeLessThan18m.value == "Yes")
+
+            physicalObsLabel.showHighRisk =
+                (heightShort.value == "Yes" || age.value == "Yes")
+
+            obsHistoryLabel.showHighRisk =
+                (misCarriage.value == "Yes" || homeDelivery.value == "Yes"
+                        || medicalIssues.value == "Yes" || pastCSection.value == "Yes")
         }
 
         setUpPage(list)
     }
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
-        return when(formId) {
+        return when (formId) {
             noOfDeliveries.id, timeLessThan18m.id -> {
                 infoChildLabel.showHighRisk =
                     (noOfDeliveries.value == "Yes" || timeLessThan18m.value == "Yes")
                 -1
             }
+
             heightShort.id, age.id -> {
                 physicalObsLabel.showHighRisk =
                     (heightShort.value == "Yes" || age.value == "Yes")
                 -1
             }
+
             misCarriage.id, homeDelivery.id, medicalIssues.id, pastCSection.id -> {
                 obsHistoryLabel.showHighRisk =
                     (misCarriage.value == "Yes" || homeDelivery.value == "Yes"
                             || medicalIssues.value == "Yes" || pastCSection.value == "Yes")
                 -1
             }
+
             else -> -1
         }
     }
@@ -169,6 +185,7 @@ class HRPNonPregnantAssessDataset (context: Context, currentLanguage: Languages
             form.misCarriage = misCarriage.value
             form.homeDelivery = homeDelivery.value
             form.medicalIssues = medicalIssues.value
+            form.timeLessThan18m = timeLessThan18m.value
             form.pastCSection = pastCSection.value
         }
     }

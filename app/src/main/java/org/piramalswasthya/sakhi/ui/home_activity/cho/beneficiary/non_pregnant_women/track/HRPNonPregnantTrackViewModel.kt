@@ -140,4 +140,6 @@ constructor(
     fun getIndexOfAnemia() = dataset.getIndexOfAnemia()
 
     fun getIndexOfRisk() = dataset.getIndexOfRisk()
+
+    fun getIndexOfLmp() = dataset.getIndexOfLmp()
 }

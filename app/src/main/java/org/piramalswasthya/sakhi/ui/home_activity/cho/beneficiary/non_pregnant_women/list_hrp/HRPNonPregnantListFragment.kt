@@ -69,9 +69,9 @@ class HRPNonPregnantListFragment : Fragment() {
                     binding.flEmpty.visibility = View.VISIBLE
                 else
                     binding.flEmpty.visibility = View.GONE
-                it.forEach { ben ->
-                    viewModel.updateBenWithForms(ben)
-                }
+//                it.forEach { ben ->
+//                    viewModel.updateBenWithForms(ben)
+//                }
                 benAdapter.submitList(it)
             }
         }

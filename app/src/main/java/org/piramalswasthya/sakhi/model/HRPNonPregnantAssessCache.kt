@@ -23,7 +23,7 @@ data class HRPNonPregnantAssessCache (
     val id: Int = 0,
     val benId : Long,
     var noOfDeliveries : String? = null,
-    val timeLessThan18m : String? = null,
+    var timeLessThan18m : String? = null,
     var heightShort : String? = null,
     var age : String? = null,
     var misCarriage : String? = null,

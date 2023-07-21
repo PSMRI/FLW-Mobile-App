@@ -78,6 +78,7 @@ class HRPNonPregnantTrackFragment : Fragment() {
                         context, "Something wend wong! Contact testing!", Toast.LENGTH_LONG
                     ).show()
                 }
+
                 else -> {}
             }
         }
@@ -108,14 +109,17 @@ class HRPNonPregnantTrackFragment : Fragment() {
     private fun hardCodedListUpdate(formId: Int) {
         binding.form.rvInputForm.adapter?.apply {
             when (formId) {
-                 2 -> {
-                     notifyItemChanged(viewModel.getIndexOfAnemia())
-                     notifyItemChanged(viewModel.getIndexOfRisk())
-                 }
-                 4, 5, 6 -> {
-                     notifyItemChanged(viewModel.getIndexOfAncLabel())
-                     notifyItemChanged(viewModel.getIndexOfRisk())
-                 }
+                1 -> notifyItemChanged(viewModel.getIndexOfLmp())
+                2 -> {
+                    notifyItemChanged(viewModel.getIndexOfAnemia())
+                    notifyItemChanged(viewModel.getIndexOfRisk())
+                }
+
+                4, 5, 6 -> {
+                    notifyItemChanged(viewModel.getIndexOfAncLabel())
+                    notifyItemChanged(viewModel.getIndexOfRisk())
+                }
+
             }
         }
     }

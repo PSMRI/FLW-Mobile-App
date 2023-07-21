@@ -7,7 +7,6 @@ import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.HRPPregnantAssessCache
 import org.piramalswasthya.sakhi.model.InputType
 import java.util.concurrent.TimeUnit
-import kotlin.math.max
 
 class HRPPregnantAssessDataset(
     context: Context, currentLanguage: Languages
@@ -144,6 +143,7 @@ class HRPPregnantAssessDataset(
         title = "ASSESS FOR HIGH RISK CONDITIONS IN THE PREGNANT WOMEN",
         required = false
     )
+
     suspend fun setUpPage(ben: BenRegCache?, saved: HRPPregnantAssessCache?) {
         val list = mutableListOf(
             assesLabel,
@@ -175,9 +175,26 @@ class HRPPregnantAssessDataset(
             multiplePregnancy.value = saved.multiplePregnancy
             lmpDate.value = getDateFromLong(saved.lmpDate)
             edd.value = getDateFromLong(saved.edd)
+
+            childInfoLabel.showHighRisk = (
+                    noOfDeliveries.value.contentEquals("Yes") ||
+                            timeLessThan18m.value.contentEquals("Yes")
+                    )
+
+            physicalObservationLabel.showHighRisk = (
+                    heightShort.value.contentEquals("Yes") ||
+                            age.value.contentEquals("Yes")
+                    )
+
+            obstetricHistoryLabel.showHighRisk = (
+                    rhNegative.value.contentEquals("Yes") ||
+                            homeDelivery.value.contentEquals("Yes") ||
+                            badObstetric.value.contentEquals("Yes") ||
+                            multiplePregnancy.value.contentEquals("Yes")
+                    )
         }
 
-        lmpDate.min = (System.currentTimeMillis() - TimeUnit.DAYS.toMillis(40))
+        lmpDate.min = (System.currentTimeMillis() - TimeUnit.DAYS.toMillis(280))
         setUpPage(list)
     }
 
@@ -222,7 +239,8 @@ class HRPPregnantAssessDataset(
             }
 
             lmpDate.id -> {
-                edd.value = getDateFromLong(getLongFromDate(lmpDate.value) + TimeUnit.DAYS.toMillis(280))
+                edd.value =
+                    getDateFromLong(getLongFromDate(lmpDate.value) + TimeUnit.DAYS.toMillis(280))
                 -1
             }
             else -> -1

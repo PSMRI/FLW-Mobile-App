@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/aadhaarIdFragment"
         android:name="org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.AadhaarIdFragment"
-        android:label="Enter Aadhaar Number"
+        android:label="Generate ABHA Number"
         tools:layout="@layout/fragment_aadhaar_id">
         <action
             android:id="@+id/action_aadhaarIdFragment_to_aadhaarOtpFragment"

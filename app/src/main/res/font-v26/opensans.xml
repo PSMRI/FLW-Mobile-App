@@ -9,11 +9,7 @@
         android:fontStyle="italic"
         android:fontWeight="600" />
     <font
-        android:font="@font/loveline"
-        android:fontStyle="normal"
-        android:fontWeight="500" />
-    <font
-        android:font="@font/branda"
+        android:font="@font/roboto"
         android:fontStyle="normal"
         android:fontWeight="500" />
 </font-family>

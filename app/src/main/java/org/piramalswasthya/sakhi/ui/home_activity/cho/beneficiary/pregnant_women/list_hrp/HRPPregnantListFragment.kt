@@ -1,8 +1,5 @@
 package org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.pregnant_women.list_hrp
 
-import android.app.AlertDialog
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -10,25 +7,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
-import org.piramalswasthya.sakhi.R
-import org.piramalswasthya.sakhi.adapters.BenListAdapter
 import org.piramalswasthya.sakhi.adapters.BenListAdapterForForm
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
-import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
-import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
-import org.piramalswasthya.sakhi.ui.home_activity.all_ben.AllBenFragmentDirections
-import org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.list.BenListCHOFragmentDirections
-import org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.list.BenListCHOViewModel
-import org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.pregnant_women.list.PregnantListFragmentDirections
-import org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.pregnant_women.list.PregnantListViewModel
 
 @AndroidEntryPoint
 class HRPPregnantListFragment : Fragment() {
@@ -83,9 +69,9 @@ class HRPPregnantListFragment : Fragment() {
                 else
                     binding.flEmpty.visibility = View.GONE
 
-                it.forEach { ben ->
-                    viewModel.updateBenWithForms(ben)
-                }
+//                it.forEach { ben ->
+//                    viewModel.updateBenWithForms(ben)
+//                }
                 benAdapter.submitList(it)
             }
         }
