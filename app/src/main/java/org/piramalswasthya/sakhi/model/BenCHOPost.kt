@@ -54,20 +54,20 @@ data class BenCHOPost(
     val name: String? = null,
     @Json(name = "email")
     val email: String? = null,
-    @Json(name = "providerServiceMapId")
-    val providerServiceMapId: String,
-    @Json(name = "providerServiceMapID")
-    val providerServiceMapID: String,
+//    @Json(name = "providerServiceMapId")
+//    val providerServiceMapId: String,
+//    @Json(name = "providerServiceMapID")
+//    val providerServiceMapID: String,
     @SerializedName("i_bendemographics")
     val benDemographics: BenDemographicsCHO,
     @Json(name = "benPhoneMaps")
     val benPhoneMaps: Array<BenPhoneMapCHO>,
     @Json(name = "beneficiaryIdentities")
     val beneficiaryIdentities: Array<BeneficiaryIdentitiesCHO>? = null,
-    @Json(name = "vanID")
-    val vanID: Int,
-    @Json(name = "parkingPlaceID")
-    val parkingPlaceID: Int,
+//    @Json(name = "vanID")
+//    val vanID: Int,
+//    @Json(name = "parkingPlaceID")
+//    val parkingPlaceID: Int,
     @Json(name = "createdBy")
     val createdBy: String
 )
@@ -83,10 +83,10 @@ data class BenPhoneMapCHO(
     val phoneTypeID: Int? = null,
     @Json(name = "benRelationshipID")
     val benRelationshipID: String? = null,
-    @Json(name = "vanID")
-    val vanID: Int,
-    @Json(name = "parkingPlaceID")
-    val parkingPlaceID: Int,
+//    @Json(name = "vanID")
+//    val vanID: Int? = null,
+//    @Json(name = "parkingPlaceID")
+//    val parkingPlaceID: Int? = null,
     @Json(name = "createdBy")
     val createdBy: String
 )
@@ -149,12 +149,12 @@ data class BenDemographicsCHO(
     val districtBranchID: Int,
     @Json(name = "districtBranchName")
     val districtBranchName: String,
-    @Json(name = "parkingPlaceID")
-    val parkingPlaceID: Int,
-    @Json(name = "servicePointID")
-    val servicePointID: String,
-    @Json(name = "servicePointName")
-    val servicePointName: String,
+//    @Json(name = "parkingPlaceID")
+//    val parkingPlaceID: Int? = null,
+//    @Json(name = "servicePointID")
+//    val servicePointID: String? = null,
+//    @Json(name = "servicePointName")
+//    val servicePointName: String? = null,
     @Json(name = "habitation")
     val habitation: String? = null,
     @Json(name = "pinCode")

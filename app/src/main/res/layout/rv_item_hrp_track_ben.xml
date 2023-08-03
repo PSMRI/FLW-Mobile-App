@@ -37,7 +37,7 @@
         android:layout_marginEnd="@dimen/padding_normal"
         android:onClick="@{() -> clickListener.onClickedBen(track)}"
         android:text="Show Track"
-        android:textColor="@color/green"
+        android:textColor="?attr/colorOnPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"

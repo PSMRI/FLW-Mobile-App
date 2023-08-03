@@ -48,7 +48,7 @@
                 android:id="@+id/ll_title_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?attr/colorOnPrimary"
+                android:background="?attr/colorPrimary"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingHorizontal="@dimen/padding_tiny"
@@ -77,10 +77,9 @@
                     android:padding="@dimen/padding_small"
                     android:text="@{ben.familyHeadName}"
                     android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                    android:textColor="?attr/colorPrimaryVariant"
+                    android:textColor="?attr/colorOnPrimary"
                     tools:text="Hello Meister"
-                    app:drawableLeftCompat="@drawable/ic__hh"
-                    app:drawableTint="?attr/colorPrimary" />
+                    app:drawableLeftCompat="@drawable/ic__hh"/>
 
                 <Button
                     android:id="@+id/btn_new_ben"
@@ -384,7 +383,7 @@
                     android:layout_gravity="center_vertical"
                     android:text="@{ben.benName + ' ' +ben.benSurname}"
                     android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                    android:textColor="?attr/colorPrimaryVariant"
+                    android:textColor="?attr/colorOnPrimary"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintHorizontal_chainStyle="spread_inside"
@@ -410,6 +409,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="?attr/colorPrimary"
                 android:onClick="@{()-> clickListener.onClickedBen(ben)}"
                 app:layout_constraintTop_toBottomOf="@id/ll_title_bar_cho">
 
@@ -467,8 +467,8 @@
                         android:layout_marginStart="@dimen/margin_small"
                         android:text="ABHA"
                         app:layout_constraintBottom_toBottomOf="@+id/tv_hh_id"
-                        android:textColor="@color/secondaryLightColor"
-                        android:backgroundTint="@color/green"
+                        android:textColor="?attr/colorOnPrimary"
+                        android:backgroundTint="@android:color/holo_green_dark"
                         app:strokeColor="?attr/colorPrimary" />
                 </LinearLayout>
             </RelativeLayout>

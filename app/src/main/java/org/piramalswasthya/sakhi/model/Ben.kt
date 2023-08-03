@@ -51,10 +51,8 @@ enum class Gender {
     viewName = "BEN_BASIC_CACHE",
     value = "SELECT b.beneficiaryId as benId, b.householdId as hhId, b.regDate, b.firstName as benName, b.lastName as benSurname, b.gender, b.dob as dob" +
             ", b.contactNumber as mobileNo, b.fatherName, h.fam_familyHeadName as familyHeadName, b.rchId" +
-            ", b.isHrpStatus as hrpStatus, b.syncState, b.gen_reproductiveStatusId as reproductiveStatusId, b.isKid, b.immunizationStatus," +
+            ", b.isHrpStatus as hrpStatus, b.syncState, b.gen_reproductiveStatusId as reproductiveStatusId, b.isKid, b.immunizationStatus, b.gen_spouseName as spouseName," +
             " b.loc_village_id as villageId, b.abha_healthIdNumber as abhaId," +
-            ", b.isHrpStatus as hrpStatus, b.syncState, b.gen_reproductiveStatusId as reproductiveStatusId,b.gen_spouseName as spouseName, b.isKid, b.immunizationStatus," +
-            " b.loc_village_id as villageId," +
             " cbac.benId is not null as cbacFilled, cbac.syncState as cbacSyncState," +
             " cdr.benId is not null as cdrFilled, cdr.syncState as cdrSyncState, " +
             " mdsr.benId is not null as mdsrFilled, mdsr.syncState as mdsrSyncState," +
@@ -71,8 +69,6 @@ enum class Gender {
             " ir.motherBenId is not null as irFilled, " +
             " cr.motherBenId is not null as crFilled, " +
             " do.benId is not null as doFilled " +
-            " tbsn.benId is not null as tbsnFilled, " +
-            " tbsp.benId is not null as tbspFilled, " +
             " hrppa.benId is not null as hrppaFilled, " +
             " hrpnpa.benId is not null as hrpnpaFilled, " +
             " hrpmbp.benId is not null as hrpmbpFilled, " +

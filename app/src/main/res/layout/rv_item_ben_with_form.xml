@@ -297,7 +297,7 @@
                         android:layout_gravity="center_vertical"
                         android:text="@{ben.benName + ' ' +ben.benSurname}"
                         android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                        android:textColor="?attr/colorPrimaryVariant"
+                        android:textColor="?attr/colorOnPrimary"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintHorizontal_bias="0.5"
                         app:layout_constraintHorizontal_chainStyle="spread_inside"

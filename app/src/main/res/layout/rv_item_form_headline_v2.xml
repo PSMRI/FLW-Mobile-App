@@ -59,7 +59,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_huge"
-            android:src="@drawable/ic_check_circle_red"
+            android:src="@drawable/ic_check_circle_green"
             android:padding="@dimen/padding_small"
             app:imgRequired="@{form.showHighRisk}"
             app:layout_constraintTop_toTopOf="parent"

@@ -15,6 +15,7 @@ import org.piramalswasthya.sakhi.model.BenRegGen
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.HouseholdCache
 import org.piramalswasthya.sakhi.model.LocationRecord
+import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.model.UserDomain
 import org.piramalswasthya.sakhi.network.AmritApiService
 import org.piramalswasthya.sakhi.repositories.BenRepo
@@ -54,7 +55,9 @@ class BenRegisterCHOViewModel @Inject constructor(
     val recordExists: LiveData<Boolean>
         get() = _recordExists
 
-    private lateinit var user: UserDomain
+    private lateinit var user: User
+
+    private lateinit var locationRecord: LocationRecord
 
     private val dataset =
         BenRegCHODataset(context, preferenceDao.getCurrentLanguage())
@@ -66,7 +69,8 @@ class BenRegisterCHOViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             dataset.setUpPage()
-            user = userRepo.getLoggedInUser()!!
+            user = preferenceDao.getLoggedInUser()!!
+            locationRecord = preferenceDao.getLocationRecord()!!
             benRegCache = BenRegCache(
                 ashaId = user.userId,
                 beneficiaryId = -2,
@@ -99,13 +103,7 @@ class BenRegisterCHOViewModel @Inject constructor(
                         householdId = 0,
                         ashaId = user.userId,
                         processed = "P",
-                        locationRecord = LocationRecord(
-                            state = user.states[0],
-                            country = user.country,
-                            district = user.districts[0],
-                            block = user.blocks[0],
-                            village = user.villages[0]
-                        ),
+                        locationRecord = locationRecord,
                         isDraft = true
                     )
                     householdRepo.persistRecord(hh)

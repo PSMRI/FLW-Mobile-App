@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.helpers.filterBenList
+import org.piramalswasthya.sakhi.model.BenHealthIdDetails
 import org.piramalswasthya.sakhi.network.AmritApiService
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
@@ -57,14 +58,12 @@ class BenListCHOViewModel @Inject constructor(
         _benRegId.value = null
         _benId.value = benId
         viewModelScope.launch {
-            val result = benRepo.getBeneficiaryWithId(benId)
-            result?.let {
-                if (it.abhaDetails != null) {
-                    if (it.abhaDetails.isNotEmpty()) {
-                        _abha.value = it.abhaDetails.first().HealthIDNumber
-                    } else {
-                        _benRegId.value = it.benRegId
-                    }
+            benRepo.getBenFromId(benId)?.let {
+                val result = benRepo.getBeneficiaryWithId(it.benRegId)
+                if (result != null) {
+                    _abha.value = result.healthIdNumber
+                    it.healthIdDetails = BenHealthIdDetails(result.healthId, result.healthIdNumber)
+                    benRepo.updateRecord(it)
                 } else {
                     _benRegId.value = it.benRegId
                 }

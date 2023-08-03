@@ -7,6 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONException
 import org.json.JSONObject
+import org.piramalswasthya.sakhi.configuration.BenGenRegFormDataset
 import org.piramalswasthya.sakhi.database.room.BeneficiaryIdsAvail
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
@@ -111,18 +112,13 @@ class BenRepo @Inject constructor(
         withContext(Dispatchers.IO) {
             benDao.updateBen(ben)
         }
-    suspend fun updateRecord(ben: BenRegCache) {
-        withContext(Dispatchers.IO) {
-            benDao.updateBen(ben)
-        }
     }
-
     suspend fun persistBenGen1(
         hhId: Long, form: BenGenRegFormDataset, locationRecord: LocationRecord?
     ) {
 //        val draftBen = benDao.getDraftBenKidForHousehold(hhId)
 //            ?: throw IllegalStateException("no draft saved!!")
-        val user = userDao.getLoggedInUser() ?: throw IllegalStateException("No user logged in!!")
+        val user = preferenceDao.getLoggedInUser() ?: throw IllegalStateException("No user logged in!!")
 //        val ben = form.getBenForSecondPage(user.userId, hhId)
 
 //        locationRecord?.let {
@@ -645,19 +641,14 @@ class BenRepo @Inject constructor(
             val user =
                 preferenceDao.getLoggedInUser()
                     ?: throw IllegalStateException("No user logged in!!")
+            val locationRecord = preferenceDao.getLocationRecord()!!
             if (householdDao.getHousehold(0) == null) {
                 householdDao.upsert(
                     HouseholdCache(
                         householdId = 0,
                         ashaId = user.userId,
                         processed = "P",
-                        locationRecord = LocationRecord(
-                            state = user.states[0],
-                            country = user.country,
-                            district = user.districts[0],
-                            block = user.blocks[0],
-                            village = user.villages[0]
-                        ),
+                        locationRecord = locationRecord,
                         isDraft = true
                     )
                 )
@@ -895,90 +886,104 @@ class BenRepo @Inject constructor(
                             continue
                         }
 
-                    try {
-                        result.add(
-                            BenRegCache(
-                                householdId = jsonObject.getLong("houseoldId"),
-                                beneficiaryId = jsonObject.getLong("benficieryid"),
-                                ashaId = jsonObject.getInt("ashaId"),
-                                benRegId = jsonObject.getLong("BenRegId"),
-                                age = benDataObj.getInt("age"),
-                                ageUnit = if (benDataObj.has("gender")) {
-                                    when (benDataObj.getString("age_unit")) {
-                                        "Years" -> AgeUnit.YEARS
-                                        "Months" -> AgeUnit.MONTHS
-                                        "Days" -> AgeUnit.DAYS
-                                        else -> AgeUnit.YEARS
-                                    }
-                                } else null,
-                                ageUnitId = when (benDataObj.getString("age_unit")) {
-                                    "Years" -> 3
-                                    "Months" -> 2
-                                    "Days" -> 1
-                                    else -> 3
-                                },
-                                isKid = !(benDataObj.getString("age_unit") == "Years" && benDataObj.getInt(
-                                    "age"
-                                ) > 14),
-                                isAdult = (benDataObj.getString("age_unit") == "Years" && benDataObj.getInt(
-                                    "age"
-                                ) > 14),
+                        try {
+                            result.add(
+                                BenRegCache(
+                                    householdId = 0,
+                                    beneficiaryId = jsonObject.getLong("benficieryid"),
+                                    ashaId = jsonObject.getInt("ashaId"),
+                                    benRegId = jsonObject.getLong("BenRegId"),
+                                    age = benDataObj.getInt("age"),
+                                    ageUnit = if (benDataObj.has("gender")) {
+                                        when (benDataObj.getString("age_unit")) {
+                                            "Years" -> AgeUnit.YEARS
+                                            "Months" -> AgeUnit.MONTHS
+                                            "Days" -> AgeUnit.DAYS
+                                            else -> AgeUnit.YEARS
+                                        }
+                                    } else null,
+                                    ageUnitId = when (benDataObj.getString("age_unit")) {
+                                        "Years" -> 3
+                                        "Months" -> 2
+                                        "Days" -> 1
+                                        else -> 3
+                                    },
+                                    isKid = !(benDataObj.getString("age_unit") == "Years" && benDataObj.getInt(
+                                        "age"
+                                    ) > 14),
+                                    isAdult = (benDataObj.getString("age_unit") == "Years" && benDataObj.getInt(
+                                        "age"
+                                    ) > 14),
 //                                userImageBlob = getCompressedByteArray(benId, benDataObj),
-                                regDate = if (benDataObj.has("registrationDate")) getLongFromDate(
-                                    benDataObj.getString("registrationDate")
-                                ) else 0,
-                                firstName = if (benDataObj.has("firstName")) benDataObj.getString("firstName") else null,
-                                lastName = if (benDataObj.has("lastName")) benDataObj.getString("lastName") else null,
-                                genderId = benDataObj.getInt("genderId"),
-                                gender = if (benDataObj.has("gender")) {
-                                    when (benDataObj.getInt("genderId")) {
-                                        1 -> Gender.MALE
-                                        2 -> Gender.FEMALE
-                                        3 -> Gender.TRANSGENDER
-                                        else -> Gender.MALE
-                                    }
-                                } else null,
-                                dob = getLongFromDate(benDataObj.getString("dob")),
+                                    regDate = if (benDataObj.has("registrationDate")) getLongFromDate(
+                                        benDataObj.getString("registrationDate")
+                                    ) else 0,
+                                    firstName = if (benDataObj.has("firstName")) benDataObj.getString(
+                                        "firstName"
+                                    ) else null,
+                                    lastName = if (benDataObj.has("lastName")) benDataObj.getString(
+                                        "lastName"
+                                    ) else null,
+                                    genderId = benDataObj.getInt("genderId"),
+                                    gender = if (benDataObj.has("gender")) {
+                                        when (benDataObj.getInt("genderId")) {
+                                            1 -> Gender.MALE
+                                            2 -> Gender.FEMALE
+                                            3 -> Gender.TRANSGENDER
+                                            else -> Gender.MALE
+                                        }
+                                    } else null,
+                                    dob = getLongFromDate(benDataObj.getString("dob")),
 
-                                fatherName = if (benDataObj.has("fatherName")) benDataObj.getString(
-                                    "fatherName"
-                                ) else null,
-                                motherName = if (benDataObj.has("motherName")) benDataObj.getString(
-                                    "motherName"
-                                ) else null,
-                                familyHeadRelation = if (benDataObj.has("familyHeadRelation")) benDataObj.getString(
-                                    "familyHeadRelation"
-                                ) else null,
-                                familyHeadRelationPosition = benDataObj.getInt("familyHeadRelationPosition"),
+                                    fatherName = if (benDataObj.has("fatherName")) benDataObj.getString(
+                                        "fatherName"
+                                    ) else null,
+                                    motherName = if (benDataObj.has("motherName")) benDataObj.getString(
+                                        "motherName"
+                                    ) else null,
+                                    familyHeadRelation = if (benDataObj.has("familyHeadRelation")) benDataObj.getString(
+                                        "familyHeadRelation"
+                                    ) else null,
+                                    familyHeadRelationPosition = if (benDataObj.has("familyHeadRelationPosition")) benDataObj.getInt(
+                                        "familyHeadRelationPosition"
+                                    ) else 0,
 //                            familyHeadRelationOther = benDataObj.getString("familyHeadRelationOther"),
-                                mobileNoOfRelation = if (benDataObj.has("mobilenoofRelation")) benDataObj.getString(
-                                    "mobilenoofRelation"
-                                ) else null,
-                                mobileNoOfRelationId = if (benDataObj.has("mobilenoofRelationId")) benDataObj.getInt(
-                                    "mobilenoofRelationId"
-                                ) else 0,
-                                mobileOthers = if (benDataObj.has("mobileOthers") && benDataObj.getString(
+                                    mobileNoOfRelation = if (benDataObj.has("mobilenoofRelation")) benDataObj.getString(
+                                        "mobilenoofRelation"
+                                    ) else null,
+                                    mobileNoOfRelationId = if (benDataObj.has("mobilenoofRelationId")) benDataObj.getInt(
+                                        "mobilenoofRelationId"
+                                    ) else 0,
+                                    mobileOthers = if (benDataObj.has("mobileOthers") && benDataObj.getString(
+                                            "mobileOthers"
+                                        ).isNotEmpty()
+                                    ) benDataObj.getString(
                                         "mobileOthers"
-                                    ).isNotEmpty()
-                                ) benDataObj.getString(
-                                    "mobileOthers"
-                                ) else null,
-                                contactNumber = if (benDataObj.has("contact_number")) benDataObj.getString(
-                                    "contact_number"
-                                ).toLong() else 0,
+                                    ) else null,
+                                    contactNumber = if (benDataObj.has("contact_number")) benDataObj.getString(
+                                        "contact_number"
+                                    ).toLong() else 0,
 //                            literacy = literacy,
-                                literacyId = if (benDataObj.has("literacyId")) benDataObj.getInt("literacyId") else 0,
-                                communityId = if (benDataObj.has("communityId")) benDataObj.getInt("communityId") else 0,
-                                community = if (benDataObj.has("community")) benDataObj.getString("community") else null,
-                                religion = if (benDataObj.has("religion")) benDataObj.getString("religion") else null,
-                                religionId = if (benDataObj.has("religionID")) benDataObj.getInt("religionID") else 0,
-                                religionOthers = if (benDataObj.has("religionOthers") && benDataObj.getString(
+                                    literacyId = if (benDataObj.has("literacyId")) benDataObj.getInt(
+                                        "literacyId"
+                                    ) else 0,
+                                    communityId = if (benDataObj.has("communityId")) benDataObj.getInt("communityId"
+                                    ) else 0,
+                                    community = if (benDataObj.has("community")) benDataObj.getString("community"
+                                    ) else null,
+                                    religion = if (benDataObj.has("religion")) benDataObj.getString(
+                                        "religion"
+                                    ) else null,
+                                    religionId = if (benDataObj.has("religionID")) benDataObj.getInt(
+                                        "religionID"
+                                    ) else 0,
+                                    religionOthers = if (benDataObj.has("religionOthers") && benDataObj.getString(
+                                            "religionOthers"
+                                        ).isNotEmpty()
+                                    ) benDataObj.getString(
                                         "religionOthers"
-                                    ).isNotEmpty()
-                                ) benDataObj.getString(
-                                    "religionOthers"
-                                ) else null,
-                                rchId = if (benDataObj.has("rchid")) benDataObj.getString("rchid") else null,
+                                    ) else null,
+                                    rchId = if (benDataObj.has("rchid")) benDataObj.getString("rchid") else null,
 //                            registrationType = if (benDataObj.has("registrationType")) {
 //                                when (benDataObj.getString("registrationType")) {
 //                                    "NewBorn" -> {
@@ -1008,35 +1013,41 @@ class BenRepo @Inject constructor(
 //                                    else -> TypeOfList.GENERAL
 //                                }
 //                            } else TypeOfList.OTHER,
-                                latitude = benDataObj.getDouble("latitude"),
-                                longitude = benDataObj.getDouble("longitude"),
-                                aadharNum = if (benDataObj.has("aadhaNo")) benDataObj.getString("aadhaNo") else null,
-                                aadharNumId = benDataObj.getInt("aadha_noId"),
-                                hasAadhar = if (benDataObj.has("aadhaNo")) benDataObj.getString("aadhaNo") != "" else false,
-                                hasAadharId = if (benDataObj.getInt("aadha_noId") == 1) 1 else 0,
+                                    latitude = if (benDataObj.has("latitude")) benDataObj.getDouble("latitude") else 0.0,
+                                    longitude = if (benDataObj.has("longitude")) benDataObj.getDouble("longitude") else 0.0,
+                                    aadharNum = if (benDataObj.has("aadhaNo")) benDataObj.getString(
+                                        "aadhaNo"
+                                    ) else null,
+                                    aadharNumId = if (benDataObj.has("aadha_noId")) benDataObj.getInt("aadha_noId") else 0,
+                                    hasAadhar = if (benDataObj.has("aadhaNo")) benDataObj.getString(
+                                        "aadhaNo"
+                                    ) != "" else false,
+                                    hasAadharId = (if (benDataObj.has("aadha_noId")) (benDataObj.getInt("aadha_noId") == 1) else 0) as Int,
 //                            bankAccountId = benDataObj.getString("bank_accountId"),
-                                bankAccount = if (benDataObj.has("bankAccount")) benDataObj.getString(
-                                    "bankAccount"
-                                ) else null,
-                                nameOfBank = if (benDataObj.has("nameOfBank")) benDataObj.getString(
-                                    "nameOfBank"
-                                ) else null,
+                                    bankAccount = if (benDataObj.has("bankAccount")) benDataObj.getString(
+                                        "bankAccount"
+                                    ) else null,
+                                    nameOfBank = if (benDataObj.has("nameOfBank")) benDataObj.getString(
+                                        "nameOfBank"
+                                    ) else null,
 //                            nameOfBranch = benDataObj.getString("nameOfBranch"),
-                                ifscCode = if (benDataObj.has("ifscCode")) benDataObj.getString("ifscCode") else null,
+                                    ifscCode = if (benDataObj.has("ifscCode")) benDataObj.getString(
+                                        "ifscCode"
+                                    ) else null,
 //                            needOpCare = benDataObj.getString("need_opcare"),
-                                needOpCareId = if (benDataObj.has("need_opcareId")) benDataObj.getInt(
-                                    "need_opcareId"
-                                ) else 0,
-                                ncdPriority = if (benDataObj.has("ncd_priority")) benDataObj.getInt(
-                                    "ncd_priority"
-                                ) else 0,
+                                    needOpCareId = if (benDataObj.has("need_opcareId")) benDataObj.getInt(
+                                        "need_opcareId"
+                                    ) else 0,
+                                    ncdPriority = if (benDataObj.has("ncd_priority")) benDataObj.getInt(
+                                        "ncd_priority"
+                                    ) else 0,
 //                            cbacAvailable = cbacDataObj.length() != 0,
-                                guidelineId = if (benDataObj.has("guidelineId")) benDataObj.getString(
-                                    "guidelineId"
-                                ) else null,
-                                isHrpStatus = if (benDataObj.has("hrpStatus")) benDataObj.getBoolean(
-                                    "hrpStatus"
-                                ) else false,
+                                    guidelineId = if (benDataObj.has("guidelineId")) benDataObj.getString(
+                                        "guidelineId"
+                                    ) else null,
+                                    isHrpStatus = if (benDataObj.has("hrpStatus")) benDataObj.getBoolean(
+                                        "hrpStatus"
+                                    ) else false,
 //                            hrpIdentificationDate = hrp_identification_date,
 //                            hrpLastVisitDate = hrp_last_vist_date,
 //                            nishchayPregnancyStatus = nishchayPregnancyStatus,
@@ -1069,192 +1080,201 @@ class BenRepo @Inject constructor(
 //                            diagnosisStatus = if (cbacDataObj.has("diagnosis_status")) cbacDataObj.getString(
 //                                "diagnosis_status"
 //                            ) else null,
-                                locationRecord = LocationRecord(
-                                    country = preferenceDao.getLocationRecord()!!.country,
-                                    state = LocationEntity(
-                                        benDataObj.getInt("stateId"),
-                                        benDataObj.getString("stateName"),
+                                    locationRecord = LocationRecord(
+                                        country = preferenceDao.getLocationRecord()!!.country,
+                                        state = LocationEntity(
+                                            benDataObj.getInt("stateId"),
+                                            benDataObj.getString("stateName"),
+                                        ),
+                                        district = LocationEntity(
+                                            benDataObj.getInt("districtid"),
+                                            benDataObj.getString("districtname"),
+                                        ),
+                                        block = LocationEntity(
+                                            benDataObj.getInt("blockId"),
+                                            benDataObj.getString("blockName"),
+                                        ),
+                                        village = LocationEntity(
+                                            benDataObj.getInt("villageId"),
+                                            benDataObj.getString("villageName"),
+                                        ),
                                     ),
-                                    district = LocationEntity(
-                                        benDataObj.getInt("districtid"),
-                                        benDataObj.getString("districtname"),
+                                    processed = "P",
+                                    serverUpdatedStatus = 1,
+                                    createdBy = benDataObj.getString("createdBy"),
+                                    updatedBy = if (benDataObj.has("updatedBy")) benDataObj.getString(
+                                        "updatedBy"
+                                    ) else benDataObj.getString(
+                                        "createdBy"
                                     ),
-                                    block = LocationEntity(
-                                        benDataObj.getInt("blockId"),
-                                        benDataObj.getString("blockName"),
-                                    ),
-                                    village = LocationEntity(
-                                        benDataObj.getInt("villageId"),
-                                        benDataObj.getString("villageName"),
-                                    ),
-                                ),
-                                processed = "P",
-                                serverUpdatedStatus = 1,
-                                createdBy = benDataObj.getString("createdBy"),
-                                updatedBy = if (benDataObj.has("updatedBy")) benDataObj.getString("updatedBy") else benDataObj.getString(
-                                    "createdBy"
-                                ),
-                                createdDate = getLongFromDate(benDataObj.getString("createdDate")),
-                                updatedDate = getLongFromDate(
-                                    if (benDataObj.has("updatedDate")) benDataObj.getString("updatedDate") else benDataObj.getString(
-                                        "createdDate"
-                                    )
-                                ),
-                                userImage = if (benDataObj.has("user_image"))
-                                    ImageUtils.saveBenImageFromServerToStorage(
-                                        context,
-                                        benDataObj.getString("user_image"),
-                                        benId
-                                    ) else null,
-                                kidDetails = if (childDataObj.length() == 0) null else BenRegKid(
-                                    childRegisteredAWCId = if (benDataObj.has("childRegisteredAWCID")) benDataObj.getInt(
-                                        "childRegisteredAWCID"
-                                    ) else 0,
-                                    childRegisteredSchoolId = if (benDataObj.has("childRegisteredSchoolID")) benDataObj.getInt(
-                                        "childRegisteredSchoolID"
-                                    ) else 0,
-                                    typeOfSchoolId = if (benDataObj.has("typeofSchoolID")) benDataObj.getInt(
-                                        "typeofSchoolID"
-                                    ) else 0,
-                                    birthPlace = if (childDataObj.has("birthPlace")) childDataObj.getString(
-                                        "birthPlace"
-                                    ) else null,
-                                    birthPlaceId = if (childDataObj.has("birthPlaceid")) childDataObj.getInt(
-                                        "birthPlaceid"
-                                    ) else 0,
-                                    facilityName = if (childDataObj.has("facilityName")) childDataObj.getString(
-                                        "facilityName"
-                                    ) else null,
-                                    facilityId = if (childDataObj.has("facilityid")) childDataObj.getInt(
-                                        "facilityid"
-                                    ) else 0,
-                                    facilityOther = if (childDataObj.has("facilityOther")) childDataObj.getString(
-                                        "facilityOther"
-                                    ) else null,
-                                    placeName = if (childDataObj.has("placeName")) childDataObj.getString(
-                                        "placeName"
-                                    ) else null,
-                                    conductedDelivery = if (childDataObj.has("conductedDelivery")) childDataObj.getString(
-                                        "conductedDelivery"
-                                    ) else null,
-                                    conductedDeliveryId = if (childDataObj.has("conductedDeliveryid")) childDataObj.getInt(
-                                        "conductedDeliveryid"
-                                    ) else 0,
-                                    conductedDeliveryOther = if (childDataObj.has("conductedDeliveryOther")) childDataObj.getString(
-                                        "conductedDeliveryOther"
-                                    ) else null,
-                                    deliveryType = if (childDataObj.has("deliveryType")) childDataObj.getString(
-                                        "deliveryType"
-                                    ) else null,
-                                    deliveryTypeId = if (childDataObj.has("deliveryTypeid")) childDataObj.getInt(
-                                        "deliveryTypeid"
-                                    ) else 0,
-                                    complications = if (childDataObj.has("complecations")) childDataObj.getString(
-                                        "complecations"
-                                    ) else null,
-                                    complicationsId = if (childDataObj.has("complecationsid")) childDataObj.getInt(
-                                        "complecationsid"
-                                    ) else 0,
-                                    complicationsOther = if (childDataObj.has("complicationsOther")) childDataObj.getString(
-                                        "complicationsOther"
-                                    ) else null,
-                                    term = if (childDataObj.has("term")) childDataObj.getString("term") else null,
-                                    termId = if (childDataObj.has("termid")) childDataObj.getInt("termid") else 0,
+                                    createdDate = if (benDataObj.has("createdDate")) getLongFromDate(
+                                        benDataObj.getString("createdDate")
+                                    ) else System.currentTimeMillis(),
+                                    updatedDate =
+                                    if (benDataObj.has("updatedDate")) getLongFromDate(
+                                        benDataObj.getString(
+                                            "updatedDate"
+                                        )
+                                    ) else System.currentTimeMillis(),
+                                    userImage = if (benDataObj.has("user_image"))
+                                        ImageUtils.saveBenImageFromServerToStorage(
+                                            context,
+                                            benDataObj.getString("user_image"),
+                                            benId
+                                        ) else null,
+                                    kidDetails = if (childDataObj.length() == 0) null else BenRegKid(
+                                        childRegisteredAWCId = if (benDataObj.has("childRegisteredAWCID")) benDataObj.getInt(
+                                            "childRegisteredAWCID"
+                                        ) else 0,
+                                        childRegisteredSchoolId = if (benDataObj.has("childRegisteredSchoolID")) benDataObj.getInt(
+                                            "childRegisteredSchoolID"
+                                        ) else 0,
+                                        typeOfSchoolId = if (benDataObj.has("typeofSchoolID")) benDataObj.getInt(
+                                            "typeofSchoolID"
+                                        ) else 0,
+                                        birthPlace = if (childDataObj.has("birthPlace")) childDataObj.getString(
+                                            "birthPlace"
+                                        ) else null,
+                                        birthPlaceId = if (childDataObj.has("birthPlaceid")) childDataObj.getInt(
+                                            "birthPlaceid"
+                                        ) else 0,
+                                        facilityName = if (childDataObj.has("facilityName")) childDataObj.getString(
+                                            "facilityName"
+                                        ) else null,
+                                        facilityId = if (childDataObj.has("facilityid")) childDataObj.getInt(
+                                            "facilityid"
+                                        ) else 0,
+                                        facilityOther = if (childDataObj.has("facilityOther")) childDataObj.getString(
+                                            "facilityOther"
+                                        ) else null,
+                                        placeName = if (childDataObj.has("placeName")) childDataObj.getString(
+                                            "placeName"
+                                        ) else null,
+                                        conductedDelivery = if (childDataObj.has("conductedDelivery")) childDataObj.getString(
+                                            "conductedDelivery"
+                                        ) else null,
+                                        conductedDeliveryId = if (childDataObj.has("conductedDeliveryid")) childDataObj.getInt(
+                                            "conductedDeliveryid"
+                                        ) else 0,
+                                        conductedDeliveryOther = if (childDataObj.has("conductedDeliveryOther")) childDataObj.getString(
+                                            "conductedDeliveryOther"
+                                        ) else null,
+                                        deliveryType = if (childDataObj.has("deliveryType")) childDataObj.getString(
+                                            "deliveryType"
+                                        ) else null,
+                                        deliveryTypeId = if (childDataObj.has("deliveryTypeid")) childDataObj.getInt(
+                                            "deliveryTypeid"
+                                        ) else 0,
+                                        complications = if (childDataObj.has("complecations")) childDataObj.getString(
+                                            "complecations"
+                                        ) else null,
+                                        complicationsId = if (childDataObj.has("complecationsid")) childDataObj.getInt(
+                                            "complecationsid"
+                                        ) else 0,
+                                        complicationsOther = if (childDataObj.has("complicationsOther")) childDataObj.getString(
+                                            "complicationsOther"
+                                        ) else null,
+                                        term = if (childDataObj.has("term")) childDataObj.getString(
+                                            "term"
+                                        ) else null,
+                                        termId = if (childDataObj.has("termid")) childDataObj.getInt(
+                                            "termid"
+                                        ) else 0,
 //                                    gestationalAge  = if(childDataObj.has("gestationalAge")) childDataObj.getString("gestationalAge") else null,
-                                    gestationalAgeId = if (childDataObj.has("gestationalAgeid")) childDataObj.getInt(
-                                        "gestationalAgeid"
-                                    ) else 0,
+                                        gestationalAgeId = if (childDataObj.has("gestationalAgeid")) childDataObj.getInt(
+                                            "gestationalAgeid"
+                                        ) else 0,
 //                                    corticosteroidGivenMother  = if(childDataObj.has("corticosteroidGivenMother")) childDataObj.getString("corticosteroidGivenMother") else null,
-                                    corticosteroidGivenMotherId = if (childDataObj.has("corticosteroidGivenMotherid")) childDataObj.getInt(
-                                        "corticosteroidGivenMotherid"
-                                    ) else 0,
-                                    criedImmediately = if (childDataObj.has("criedImmediately")) childDataObj.getString(
-                                        "criedImmediately"
-                                    ) else null,
-                                    criedImmediatelyId = if (childDataObj.has("criedImmediatelyid")) childDataObj.getInt(
-                                        "criedImmediatelyid"
-                                    ) else 0,
-                                    birthDefects = if (childDataObj.has("birthDefects")) childDataObj.getString(
-                                        "birthDefects"
-                                    ) else null,
-                                    birthDefectsId = if (childDataObj.has("birthDefectsid")) childDataObj.getInt(
-                                        "birthDefectsid"
-                                    ) else 0,
-                                    birthDefectsOthers = if (childDataObj.has("birthDefectsOthers")) childDataObj.getString(
-                                        "birthDefectsOthers"
-                                    ) else null,
-                                    heightAtBirth = if (childDataObj.has("heightAtBirth")) childDataObj.getDouble(
-                                        "heightAtBirth"
-                                    ) else 0.0,
-                                    weightAtBirth = if (childDataObj.has("weightAtBirth")) childDataObj.getDouble(
-                                        "weightAtBirth"
-                                    ) else 0.0,
-                                    feedingStarted = if (childDataObj.has("feedingStarted")) childDataObj.getString(
-                                        "feedingStarted"
-                                    ) else null,
-                                    feedingStartedId = if (childDataObj.has("feedingStartedid")) childDataObj.getInt(
-                                        "feedingStartedid"
-                                    ) else 0,
-                                    birthDosage = if (childDataObj.has("birthDosage")) childDataObj.getString(
-                                        "birthDosage"
-                                    ) else null,
-                                    birthDosageId = if (childDataObj.has("birthDosageid")) childDataObj.getInt(
-                                        "birthDosageid"
-                                    ) else 0,
-                                    opvBatchNo = if (childDataObj.has("opvBatchNo")) childDataObj.getString(
-                                        "opvBatchNo"
-                                    ) else null,
+                                        corticosteroidGivenMotherId = if (childDataObj.has("corticosteroidGivenMotherid")) childDataObj.getInt(
+                                            "corticosteroidGivenMotherid"
+                                        ) else 0,
+                                        criedImmediately = if (childDataObj.has("criedImmediately")) childDataObj.getString(
+                                            "criedImmediately"
+                                        ) else null,
+                                        criedImmediatelyId = if (childDataObj.has("criedImmediatelyid")) childDataObj.getInt(
+                                            "criedImmediatelyid"
+                                        ) else 0,
+                                        birthDefects = if (childDataObj.has("birthDefects")) childDataObj.getString(
+                                            "birthDefects"
+                                        ) else null,
+                                        birthDefectsId = if (childDataObj.has("birthDefectsid")) childDataObj.getInt(
+                                            "birthDefectsid"
+                                        ) else 0,
+                                        birthDefectsOthers = if (childDataObj.has("birthDefectsOthers")) childDataObj.getString(
+                                            "birthDefectsOthers"
+                                        ) else null,
+                                        heightAtBirth = if (childDataObj.has("heightAtBirth")) childDataObj.getDouble(
+                                            "heightAtBirth"
+                                        ) else 0.0,
+                                        weightAtBirth = if (childDataObj.has("weightAtBirth")) childDataObj.getDouble(
+                                            "weightAtBirth"
+                                        ) else 0.0,
+                                        feedingStarted = if (childDataObj.has("feedingStarted")) childDataObj.getString(
+                                            "feedingStarted"
+                                        ) else null,
+                                        feedingStartedId = if (childDataObj.has("feedingStartedid")) childDataObj.getInt(
+                                            "feedingStartedid"
+                                        ) else 0,
+                                        birthDosage = if (childDataObj.has("birthDosage")) childDataObj.getString(
+                                            "birthDosage"
+                                        ) else null,
+                                        birthDosageId = if (childDataObj.has("birthDosageid")) childDataObj.getInt(
+                                            "birthDosageid"
+                                        ) else 0,
+                                        opvBatchNo = if (childDataObj.has("opvBatchNo")) childDataObj.getString(
+                                            "opvBatchNo"
+                                        ) else null,
 //                                opvGivenDueDate  = childDataObj.getString("opvGivenDueDate"),
 //                                opvDate  = childDataObj.getString("opvDate"),
-                                    bcdBatchNo = if (childDataObj.has("bcdBatchNo")) childDataObj.getString(
-                                        "bcdBatchNo"
-                                    ) else null,
+                                        bcdBatchNo = if (childDataObj.has("bcdBatchNo")) childDataObj.getString(
+                                            "bcdBatchNo"
+                                        ) else null,
 //                                bcgGivenDueDate  = childDataObj.getString("bcgGivenDueDate"),
 //                                bcgDate  = childDataObj.getString("bcgDate"),
-                                    hptBatchNo = if (childDataObj.has("hptdBatchNo")) childDataObj.getString(
-                                        "hptdBatchNo"
-                                    ) else null,
+                                        hptBatchNo = if (childDataObj.has("hptdBatchNo")) childDataObj.getString(
+                                            "hptdBatchNo"
+                                        ) else null,
 //                                hptGivenDueDate  = childDataObj.getString("hptGivenDueDate"),
 //                                hptDate  = childDataObj.getString("hptDate"),
-                                    vitaminKBatchNo = if (childDataObj.has("vitaminkBatchNo")) childDataObj.getString(
-                                        "vitaminkBatchNo"
-                                    ) else null,
+                                        vitaminKBatchNo = if (childDataObj.has("vitaminkBatchNo")) childDataObj.getString(
+                                            "vitaminkBatchNo"
+                                        ) else null,
 //                                vitaminKGivenDueDate  =  childDataObj.getString("vitaminKGivenDueDate"),
 //                                vitaminKDate =  childDataObj.getString("vitaminKDate"),
-                                    deliveryTypeOther = if (childDataObj.has("deliveryTypeOther")) childDataObj.getString(
-                                        "deliveryTypeOther"
-                                    ) else null,
+                                        deliveryTypeOther = if (childDataObj.has("deliveryTypeOther")) childDataObj.getString(
+                                            "deliveryTypeOther"
+                                        ) else null,
 
 //                                motherBenId =  childDataObj.getString("conductedDeliveryOther"),
 //                                childMotherName =  childDataObj.getString("conductedDeliveryOther"),
 //                                motherPosition =  childDataObj.getString("conductedDeliveryOther"),
-                                    birthBCG = if (childDataObj.has("birthBCG")) childDataObj.getBoolean(
-                                        "birthBCG"
-                                    ) else false,
-                                    birthHepB = if (childDataObj.has("birthHepB")) childDataObj.getBoolean(
-                                        "birthHepB"
-                                    ) else false,
-                                    birthOPV = if (childDataObj.has("birthOPV")) childDataObj.getBoolean(
-                                        "birthOPV"
-                                    ) else false,
-                                ),
-                                genDetails = if (childDataObj.length() != 0) null else BenRegGen(
-                                    maritalStatus = if (benDataObj.has("maritalstatus")) benDataObj.getString(
-                                        "maritalstatus"
-                                    ) else null,
-                                    maritalStatusId = if (benDataObj.has("maritalstatusId")) benDataObj.getInt(
-                                        "maritalstatusId"
-                                    ) else 0,
-                                    spouseName = if (benDataObj.has("spousename")) benDataObj.getString(
-                                        "spousename"
-                                    ) else null,
-                                    ageAtMarriage = if (benDataObj.has("ageAtMarriage")) benDataObj.getInt(
-                                        "ageAtMarriage"
-                                    ) else 0,
+                                        birthBCG = if (childDataObj.has("birthBCG")) childDataObj.getBoolean(
+                                            "birthBCG"
+                                        ) else false,
+                                        birthHepB = if (childDataObj.has("birthHepB")) childDataObj.getBoolean(
+                                            "birthHepB"
+                                        ) else false,
+                                        birthOPV = if (childDataObj.has("birthOPV")) childDataObj.getBoolean(
+                                            "birthOPV"
+                                        ) else false,
+                                    ),
+                                    genDetails = if (childDataObj.length() != 0) null else BenRegGen(
+                                        maritalStatus = if (benDataObj.has("maritalstatus")) benDataObj.getString(
+                                            "maritalstatus"
+                                        ) else null,
+                                        maritalStatusId = if (benDataObj.has("maritalstatusId")) benDataObj.getInt(
+                                            "maritalstatusId"
+                                        ) else 0,
+                                        spouseName = if (benDataObj.has("spousename")) benDataObj.getString(
+                                            "spousename"
+                                        ) else null,
+                                        ageAtMarriage = if (benDataObj.has("ageAtMarriage")) benDataObj.getInt(
+                                            "ageAtMarriage"
+                                        ) else 0,
 //                                dateOfMarriage = getLongFromDate(dateMarriage),
-                                    marriageDate = if (benDataObj.has("marriageDate")) getLongFromDate(
-                                        benDataObj.getString("marriageDate")
-                                    ) else null,
+                                        marriageDate = if (benDataObj.has("marriageDate")) getLongFromDate(
+                                            benDataObj.getString("marriageDate")
+                                        ) else null,
 //                                menstrualStatus = menstrualStatus,
 //                                menstrualStatusId = if (benDataObj.has("menstrualStatusId")) benDataObj.getInt(
 //                                    "menstrualStatusId"
@@ -1276,16 +1296,14 @@ class BenRepo @Inject constructor(
 //                                    "menstrualProblemId"
 //                                ) else 0,
 //                                lastMenstrualPeriod = lastMenstrualPeriod,
-                                    /**
+                                        /**
                                      * part of reproductive status id mapping on @since Aug 7
-                                     */
-                                    reproductiveStatus = if (benDataObj.has("reproductiveStatus")) benDataObj.getString(
-                                        "reproductiveStatus"
-                                    ) else null,
-                                    reproductiveStatusId = if (benDataObj.has("reproductiveStatusId")) {
-                                        val idFromServer = benDataObj.getInt(
-                                            "reproductiveStatusId"
-                                        )
+                                     */reproductiveStatus = if (benDataObj.has("reproductiveStatus")) benDataObj.getString(
+                                            "reproductiveStatus"
+                                        ) else null,
+                                        reproductiveStatusId = if (benDataObj.has("reproductiveStatusId")) {
+                                        val idFromServer =benDataObj.getInt(
+                                            "reproductiveStatusId")
                                         when (idFromServer) {
                                             0 -> 0
                                             1 -> 1
@@ -1295,7 +1313,7 @@ class BenRepo @Inject constructor(
                                             6 -> 5
                                             else -> 5
                                         }
-                                    } else 0,
+                                        } else 0,
 //                                lastDeliveryConducted = lastDeliveryConducted,
 //                                lastDeliveryConductedId = if (benDataObj.has("lastDeliveryConductedID")) benDataObj.getInt(
 //                                    "lastDeliveryConductedID"
@@ -1310,18 +1328,18 @@ class BenRepo @Inject constructor(
 //                                    benDataObj.getString("expectedDateOfDelivery")
 //                                ) else null,
 //                                noOfDaysForDelivery = noOfDaysForDelivery,
-                                ),
-                                healthIdDetails = if (jsonObject.has("healthId")) BenHealthIdDetails(
-                                    jsonObject.getString("healthId"),
-                                    jsonObject.getString("healthIdNumber")
-                                ) else null,
-                                syncState = SyncState.SYNCED,
-                                isDraft = false
+                                    ),
+                                    healthIdDetails = if (jsonObject.has("healthId")) BenHealthIdDetails(
+                                        jsonObject.getString("healthId"),
+                                        jsonObject.getString("healthIdNumber")
+                                    ) else null,
+                                    syncState = SyncState.SYNCED,
+                                    isDraft = false
+                                )
                             )
-                        )
 
 
-                        /*val registrationType = if (benDataObj.has("registrationType")) {
+                            /*val registrationType = if (benDataObj.has("registrationType")) {
                             when (benDataObj.getString("registrationType")) {
                                 "NewBorn" -> {
                                     if (benDataObj.getString("age_unit") != "Years" || benDataObj.getInt(
@@ -1355,10 +1373,11 @@ class BenRepo @Inject constructor(
                                 )
                             }, ${benDataObj.getString("reproductiveStatus")}"
                         )*/
-                    } catch (e: JSONException) {
-                        Timber.i("Beneficiary skipped: ${jsonObject.getLong("benficieryid")} with error $e")
-                    } catch (e: NumberFormatException) {
-                        Timber.i("Beneficiary skipped: ${jsonObject.getLong("benficieryid")} with error $e")
+                        } catch (e: JSONException) {
+                            Timber.i("Beneficiary skipped: ${jsonObject.getLong("benficieryid")} with error $e")
+                        } catch (e: NumberFormatException) {
+                            Timber.i("Beneficiary skipped: ${jsonObject.getLong("benficieryid")} with error $e")
+                        }
                     }
                 }
             }

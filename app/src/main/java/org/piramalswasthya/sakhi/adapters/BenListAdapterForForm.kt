@@ -159,7 +159,7 @@ class BenListAdapterForForm(
 
             formButton.setTextColor(
                 binding.root.resources.getColor(
-                    R.color.secondaryColor,
+                    R.color.seed,
                     binding.root.context.theme
                 )
             )

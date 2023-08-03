@@ -305,7 +305,7 @@ fun BenRegCache.asNetworkSendingModel(
 }
 
 fun BenRegCache.asNetworkSendingModelCHO(
-user: UserCache,
+user: User,
 context : Context
 ): BenCHOPost {
 
@@ -336,8 +336,8 @@ context : Context
         maritalStatusID = 2,
         maritalStatusName = "Married",
         email = null,
-        providerServiceMapID = user.serviceMapId.toString(),
-        providerServiceMapId = user.serviceMapId.toString(),
+//        providerServiceMapID = user.serviceMapId.toString(),
+//        providerServiceMapId = user.serviceMapId.toString(),
         benDemographics = BenDemographicsCHO(
             communityID = null,
             communityName = null,
@@ -353,9 +353,9 @@ context : Context
             blockName = locationRecord.block.name,
             districtBranchID = locationRecord.village.id,
             districtBranchName = locationRecord.village.name,
-            parkingPlaceID = user.parkingPlaceId,
-            servicePointID = user.servicePointId.toString(),
-            servicePointName = user.servicePointName,
+//            parkingPlaceID = user.parkingPlaceId,
+//            servicePointID = user.servicePointId.toString(),
+//            servicePointName = user.servicePointName,
             addressLine1 = null,
             addressLine2 = null,
             addressLine3 = null,
@@ -367,8 +367,8 @@ context : Context
                 alternateContactNumber = null,
                 phoneTypeID = 1,
                 benRelationshipID = null,
-                vanID = user.vanId,
-                parkingPlaceID =user.parkingPlaceId,
+//                vanID = user.vanId,
+//                parkingPlaceID =user.parkingPlaceId,
             )
         ),
         beneficiaryIdentities = arrayOf(
@@ -380,8 +380,8 @@ context : Context
 //                createdBy = user.userName
 //            )
         ),
-        vanID = user.vanId,
-        parkingPlaceID = user.parkingPlaceId,
+//        vanID = user.vanId,
+//        parkingPlaceID = user.parkingPlaceId,
         createdBy = user.userName,
         emergencyRegistration = false,
         literacyStatus = null
