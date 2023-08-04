@@ -678,16 +678,16 @@ class BenRepo @Inject constructor(
                                 val dataObj = jsonObj.getJSONObject("data")
                                 val pageSize = dataObj.getInt("totalPage")
 
-                                try {
-                                    householdDao.upsert(
-                                        *getHouseholdCacheFromServerResponse(
-                                            responseString
-                                        ).toTypedArray()
-                                    )
-                                } catch (e: Exception) {
-                                    Timber.d("HouseHold entries not synced $e")
-                                    return@withContext 0
-                                }
+//                                try {
+//                                    householdDao.upsert(
+//                                        *getHouseholdCacheFromServerResponse(
+//                                            responseString
+//                                        ).toTypedArray()
+//                                    )
+//                                } catch (e: Exception) {
+//                                    Timber.d("HouseHold entries not synced $e")
+//                                    return@withContext 0
+//                                }
                                 val benCacheList = getBenCacheFromServerResponse(responseString)
                                 benDao.upsert(*benCacheList.toTypedArray())
 //                                val cbacCacheList = getCbacCacheFromServerResponse(responseString)

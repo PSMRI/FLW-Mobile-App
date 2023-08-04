@@ -69,11 +69,11 @@ enum class Gender {
             " ir.motherBenId is not null as irFilled, " +
             " cr.motherBenId is not null as crFilled, " +
             " do.benId is not null as doFilled " +
-            " hrppa.benId is not null as hrppaFilled, " +
-            " hrpnpa.benId is not null as hrpnpaFilled, " +
-            " hrpmbp.benId is not null as hrpmbpFilled, " +
-            " hrpt.benId is not null as hrptFilled, " +
-            " hrnpt.benId is not null as hrnptFilled " +
+            " hrppa.benId is not null as hrppaFilled, hrppa.syncState as hrppaSyncState," +
+            " hrpnpa.benId is not null as hrpnpaFilled, hrpnpa.syncState as hrpnpaSyncState," +
+            " hrpmbp.benId is not null as hrpmbpFilled, hrpmbp.syncState as hrpmbpSyncState," +
+            " hrpt.benId is not null as hrptFilled, hrpt.syncState as hrptSyncState," +
+            " hrnpt.benId is not null as hrnptFilled, hrnpt.syncState as hrnptSyncState " +
             "from BENEFICIARY b " +
             "JOIN HOUSEHOLD h ON b.householdId = h.householdId " +
             "LEFT OUTER JOIN CBAC cbac on b.beneficiaryId = cbac.benId " +
@@ -91,8 +91,8 @@ enum class Gender {
             "LEFT OUTER JOIN HRP_PREGNANT_ASSESS hrppa on b.beneficiaryId = hrppa.benId " +
             "LEFT OUTER JOIN HRP_NON_PREGNANT_ASSESS hrpnpa on b.beneficiaryId = hrpnpa.benId " +
             "LEFT OUTER JOIN HRP_MICRO_BIRTH_PLAN hrpmbp on b.beneficiaryId = hrpmbp.benId " +
-            "LEFT OUTER JOIN HRP_NON_PREGNANT_TRACK hrnpt on b.beneficiaryId = hrnpt.benId " +
-            "LEFT OUTER JOIN HRP_PREGNANT_TRACK hrpt on b.beneficiaryId = hrpt.benId " +
+            "LEFT OUTER JOIN HRP_NON_PREGNANT_TRACK hrnpt on b.beneficiaryId = hrnpt.benId AND NOT EXISTS ( select 1 from HRP_NON_PREGNANT_TRACK hrnpt1 where hrnpt1.benId = b.beneficiaryId and hrnpt1.dateOfVisit > hrnpt.dateOfVisit) " +
+            "LEFT OUTER JOIN HRP_PREGNANT_TRACK hrpt on b.beneficiaryId = hrpt.benId AND NOT EXISTS ( select 1 from HRP_PREGNANT_TRACK hrpt1 where hrpt1.benId = b.beneficiaryId and hrpt1.dateOfVisit > hrpt.dateOfVisit) " +
             "LEFT OUTER JOIN DELIVERY_OUTCOME do on b.beneficiaryId = do.benId " +
             "LEFT OUTER JOIN INFANT_REG ir on b.beneficiaryId = ir.motherBenId " +
             "LEFT OUTER JOIN CHILD_REG cr on b.beneficiaryId = cr.motherBenId " +
@@ -140,6 +140,11 @@ data class BenBasicCache(
     val hrpmbpFilled: Boolean,
     val hrptFilled: Boolean,
     val hrnptFilled: Boolean,
+    val hrppaSyncState: SyncState?,
+    val hrpnpaSyncState: SyncState?,
+    val hrpmbpSyncState: SyncState?,
+    val hrptSyncState: SyncState?,
+    val hrnptSyncState: SyncState?,
     val isDelivered: Boolean,
     val irFilled: Boolean,
     val crFilled: Boolean,
@@ -491,7 +496,7 @@ data class BenBasicCache(
             rchId = rchId ?: "Not Available",
             hrpStatus = hrpStatus,
             form1Filled = hrppaFilled,
-            syncState = syncState,
+            syncState = hrppaSyncState,
             form2Enabled = true,
             form2Filled = hrpmbpFilled
         )
@@ -514,7 +519,7 @@ data class BenBasicCache(
             rchId = rchId ?: "Not Available",
             hrpStatus = hrpStatus,
             form1Filled = hrpnpaFilled,
-            syncState = syncState
+            syncState = hrpnpaSyncState
         )
     }
 
@@ -537,7 +542,7 @@ data class BenBasicCache(
             form1Filled = false,
             form2Filled = hrnptFilled,
             form2Enabled = hrnptFilled,
-            syncState = syncState
+            syncState = hrnptSyncState
         )
     }
 
@@ -560,7 +565,7 @@ data class BenBasicCache(
             form1Filled = false,
             form2Filled = hrptFilled,
             form2Enabled = hrptFilled,
-            syncState = syncState
+            syncState = hrptSyncState
         )
     }
 

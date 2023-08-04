@@ -5,6 +5,8 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import org.piramalswasthya.sakhi.configuration.FormDataModel
+import org.piramalswasthya.sakhi.database.room.SyncState
+import org.piramalswasthya.sakhi.network.HRPPregnantTrackDTO
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -12,20 +14,20 @@ import java.util.Locale
     tableName = "HRP_PREGNANT_TRACK",
     foreignKeys = [ForeignKey(
         entity = BenRegCache::class,
-        parentColumns = arrayOf("beneficiaryId",/* "householdId"*/),
-        childColumns = arrayOf("benId", /*"hhId"*/),
+        parentColumns = arrayOf("beneficiaryId"/* "householdId"*/),
+        childColumns = arrayOf("benId" /*"hhId"*/),
         onUpdate = ForeignKey.CASCADE,
         onDelete = ForeignKey.CASCADE
     )],
-    indices = [Index(name = "ind_hpt", value = ["benId",/* "hhId"*/])]
+    indices = [Index(name = "ind_hpt", value = ["benId"/* "hhId"*/])]
 )
 
-data class HRPPregnantTrackCache (
+data class HRPPregnantTrackCache(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    val benId : Long,
+    val benId: Long,
     var dateOfVisit: Long? = null,
-    var rdPmsa : String? = null,
+    var rdPmsa: String? = null,
     var severeAnemia: String? = null,
     var pregInducedHypertension: String? = null,
     var gestDiabetesMellitus: String? = null,
@@ -35,23 +37,44 @@ data class HRPPregnantTrackCache (
     var antepartumHem: String? = null,
     var malPresentation: String? = null,
     var hivsyph: String? = null,
-    var visit: String? = null
+    var visit: String? = null,
+    var syncState: SyncState = SyncState.UNSYNCED
 ) : FormDataModel {
 
     fun asDomainModel(): HRPPregnantTrackDomain {
         return HRPPregnantTrackDomain(
             id = id,
-            dateOfVisit = visit + " : " +getDateStringFromLong(dateOfVisit)
+            dateOfVisit = visit + " : " + getDateStringFromLong(dateOfVisit)
+        )
+    }
+
+    fun toDTO(): HRPPregnantTrackDTO {
+        return HRPPregnantTrackDTO(
+            id = 0,
+            benId = benId,
+            dateOfVisit = getDateTimeStringFromLong(dateOfVisit),
+            rdPmsa = rdPmsa,
+            severeAnemia = severeAnemia,
+            pregInducedHypertension = pregInducedHypertension,
+            gestDiabetesMellitus = gestDiabetesMellitus,
+            hypothyrodism = hypothyrodism,
+            polyhydromnios = polyhydromnios,
+            oligohydromnios = oligohydromnios,
+            antepartumHem = antepartumHem,
+            malPresentation = malPresentation,
+            hivsyph = hivsyph,
+            visit = visit
         )
     }
 }
 
-data class HRPPregnantTrackDomain (
+data class HRPPregnantTrackDomain(
     val id: Int = 0,
     val dateOfVisit: String?
-    )
+)
+
 data class HRPPregnantTrackBen(
-    val ben : BenBasicDomain,
+    val ben: BenBasicDomain,
     val trackList: List<HRPPregnantTrackCache>,
 //    val onClick: (Long, Int) -> Unit
 )

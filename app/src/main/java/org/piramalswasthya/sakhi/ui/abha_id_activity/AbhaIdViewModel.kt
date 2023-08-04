@@ -11,12 +11,14 @@ import org.piramalswasthya.sakhi.network.AbhaTokenResponse
 import org.piramalswasthya.sakhi.network.NetworkResult
 import org.piramalswasthya.sakhi.network.interceptors.TokenInsertAbhaInterceptor
 import org.piramalswasthya.sakhi.repositories.AbhaIdRepo
+import org.piramalswasthya.sakhi.repositories.UserRepo
 import javax.inject.Inject
 
 @HiltViewModel
 class AbhaIdViewModel @Inject constructor(
     private val abhaIdRepo: AbhaIdRepo,
-    private val prefDao: PreferenceDao
+    private val prefDao: PreferenceDao,
+    private val userRepo: UserRepo
 ) :
     ViewModel() {
 
@@ -38,6 +40,16 @@ class AbhaIdViewModel @Inject constructor(
     init {
         generateAccessToken()
         generatePublicKey()
+        generateRefreshToken()
+    }
+
+    private fun generateRefreshToken() {
+        val user = prefDao.getLoggedInUser()
+        viewModelScope.launch {
+            user?.let {
+                userRepo.refreshTokenTmc(user.userName, user.password)
+            }
+        }
     }
 
     private var _accessToken: AbhaTokenResponse? = null

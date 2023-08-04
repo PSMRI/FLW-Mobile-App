@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.model.*
 
 @Dao
@@ -12,11 +13,23 @@ interface HrpDao {
     @Query("select * from HRP_PREGNANT_ASSESS where benId = :benId")
     fun getPregnantAssess(benId: Long) : HRPPregnantAssessCache?
 
+    @Query("select * from HRP_PREGNANT_ASSESS where benId = :benId and visitDate = :visitDate")
+    fun getPregnantAssess(benId: Long, visitDate: Long) : HRPPregnantAssessCache?
+
+    @Query("select * from HRP_PREGNANT_ASSESS where syncState = :syncState")
+    fun getHRPAssess(syncState: SyncState) : List<HRPPregnantAssessCache>?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveRecord(hrpPregnantAssessCache: HRPPregnantAssessCache)
 
     @Query("select * from HRP_NON_PREGNANT_ASSESS where benId = :benId")
     fun getNonPregnantAssess(benId: Long) : HRPNonPregnantAssessCache?
+
+    @Query("select * from HRP_NON_PREGNANT_ASSESS where benId = :benId and visitDate = :visitDate")
+    fun getNonPregnantAssess(benId: Long, visitDate: Long) : HRPNonPregnantAssessCache?
+
+    @Query("select * from HRP_NON_PREGNANT_ASSESS where syncState = :syncState")
+    fun getNonPregnantAssess(syncState: SyncState) : List<HRPNonPregnantAssessCache>?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveRecord(hrpNonPregnantAssessCache: HRPNonPregnantAssessCache)
@@ -24,7 +37,7 @@ interface HrpDao {
     @Query("select * from HRP_NON_PREGNANT_TRACK where benId = :benId")
     fun getNonPregnantTrackList(benId: Long) : List<HRPNonPregnantTrackCache>?
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveRecord(hrpNonPregnantTrackCache: HRPNonPregnantTrackCache)
 
     @Query("select * from HRP_PREGNANT_TRACK where benId = :benId")
@@ -33,16 +46,28 @@ interface HrpDao {
     @Query("select * from HRP_PREGNANT_TRACK where id = :trackId")
     fun getHRPTrack(trackId: Long) : HRPPregnantTrackCache?
 
+    @Query("select * from HRP_PREGNANT_TRACK where benId = :benId and visit = :visit")
+    fun getHRPTrack(benId: Long, visit: String?) : HRPPregnantTrackCache?
+
+    @Query("select * from HRP_PREGNANT_TRACK where syncState = :syncState")
+    fun getHRPTrack(syncState: SyncState) : List<HRPPregnantTrackCache>?
+
     @Query("select * from HRP_NON_PREGNANT_TRACK where id = :trackId")
     fun getHRPNonTrack(trackId: Long) : HRPNonPregnantTrackCache?
 
-    @Insert
+    @Query("select * from HRP_NON_PREGNANT_TRACK where benId = :benId and dateOfVisit = :visitDate")
+    fun getHRPNonTrack(benId: Long, visitDate: Long) : HRPNonPregnantTrackCache?
+
+    @Query("select * from HRP_NON_PREGNANT_TRACK where syncState = :syncState")
+    fun getHRNonPTrack(syncState: SyncState) : List<HRPNonPregnantTrackCache>?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveRecord(hrpPregnantTrackCache: HRPPregnantTrackCache)
 
     @Query("select * from HRP_MICRO_BIRTH_PLAN where benId = :benId limit 1")
     fun getMicroBirthPlan(benId: Long) : HRPMicroBirthPlanCache?
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveRecord(hrpMicroBirthPlanCache: HRPMicroBirthPlanCache)
 
     @Query("select * from HRP_PREGNANT_TRACK order by dateOfVisit desc")

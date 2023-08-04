@@ -5,6 +5,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import org.piramalswasthya.sakhi.configuration.FormDataModel
+import org.piramalswasthya.sakhi.database.room.SyncState
 
 @Entity(
     tableName = "HRP_MICRO_BIRTH_PLAN",
@@ -38,5 +39,6 @@ data class HRPMicroBirthPlanCache (
     var careTaker: String? = null,
     var communityMember: String? = null,
     var communityMemberContact: String? = null,
-    var modeOfTransportation: String? = null
+    var modeOfTransportation: String? = null,
+    var syncState: SyncState? = SyncState.UNSYNCED
 ) : FormDataModel

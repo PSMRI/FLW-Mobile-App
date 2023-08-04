@@ -2,6 +2,10 @@ package org.piramalswasthya.sakhi.network
 
 import com.squareup.moshi.JsonClass
 import org.piramalswasthya.sakhi.database.room.SyncState
+import org.piramalswasthya.sakhi.model.HRPNonPregnantAssessCache
+import org.piramalswasthya.sakhi.model.HRPNonPregnantTrackCache
+import org.piramalswasthya.sakhi.model.HRPPregnantAssessCache
+import org.piramalswasthya.sakhi.model.HRPPregnantTrackCache
 import org.piramalswasthya.sakhi.model.TBScreeningCache
 import org.piramalswasthya.sakhi.model.TBSuspectedCache
 import java.text.SimpleDateFormat
@@ -341,6 +345,140 @@ data class TBScreeningRequestDTO(
     val tbScreeningList: List<TBScreeningDTO>
 )
 
+data class UserDataDTO(
+    val userId: Int,
+    val entries: List<Any>
+)
+
+data class HRPPregnantTrackDTO(
+    var id: Int = 0,
+    val benId : Long,
+    var dateOfVisit: String?,
+    var rdPmsa : String? = null,
+    var severeAnemia: String? = null,
+    var pregInducedHypertension: String? = null,
+    var gestDiabetesMellitus: String? = null,
+    var hypothyrodism: String? = null,
+    var polyhydromnios: String? = null,
+    var oligohydromnios: String? = null,
+    var antepartumHem: String? = null,
+    var malPresentation: String? = null,
+    var hivsyph: String? = null,
+    var visit: String?
+) {
+    fun toCache() : HRPPregnantTrackCache {
+        return HRPPregnantTrackCache(
+            benId = benId,
+            dateOfVisit = getLongFromDate(dateOfVisit),
+            rdPmsa = rdPmsa,
+            severeAnemia = severeAnemia,
+            pregInducedHypertension = pregInducedHypertension,
+            gestDiabetesMellitus = gestDiabetesMellitus,
+            hypothyrodism = hypothyrodism,
+            polyhydromnios = polyhydromnios,
+            oligohydromnios = oligohydromnios,
+            antepartumHem = antepartumHem,
+            malPresentation = malPresentation,
+            hivsyph = hivsyph,
+            visit = visit
+        )
+    }
+}
+data class HRPPregnantAssessDTO(
+    var id: Int = 0,
+    val benId : Long,
+    var noOfDeliveries : String? = null,
+    var timeLessThan18m : String? = null,
+    var heightShort : String? = null,
+    var age : String? = null,
+    var rhNegative : String? = null,
+    var homeDelivery : String? = null,
+    var badObstetric : String? = null,
+    var multiplePregnancy : String? = null,
+    var lmpDate: String?,
+    var edd: String?,
+    var isHighRisk: Boolean = false,
+    var visitDate: String?
+) {
+    fun toCache() : HRPPregnantAssessCache {
+        return HRPPregnantAssessCache(
+            benId = benId,
+            noOfDeliveries = noOfDeliveries,
+            timeLessThan18m = timeLessThan18m,
+            heightShort = heightShort,
+            age = age,
+            rhNegative = rhNegative,
+            homeDelivery = homeDelivery,
+            badObstetric = badObstetric,
+            multiplePregnancy = multiplePregnancy,
+            lmpDate = getLongFromDate(lmpDate),
+            edd = getLongFromDate(edd),
+            isHighRisk = isHighRisk,
+            visitDate = getLongFromDate(visitDate),
+            syncState = SyncState.SYNCED
+        )
+    }
+}
+data class  HRPNonPregnantTrackDTO(
+    var id: Int = 0,
+    val benId : Long,
+    var dateOfVisit: String?,
+    var anemia: String? = null,
+    var hypertension: String? = null,
+    var diabetes: String? = null,
+    var severeAnemia: String? = null,
+    var fp: String? = null,
+    var lmp: String?,
+    var missedPeriod: String? = null,
+    var isPregnant: String? = null,
+) {
+    fun toCache() : HRPNonPregnantTrackCache {
+        return HRPNonPregnantTrackCache(
+            benId = benId,
+            dateOfVisit = getLongFromDate(dateOfVisit),
+            anemia = anemia,
+            hypertension = hypertension,
+            diabetes = diabetes,
+            severeAnemia = severeAnemia,
+            fp = fp,
+            lmp = getLongFromDate(lmp),
+            missedPeriod = missedPeriod,
+            isPregnant = isPregnant,
+            syncState = SyncState.SYNCED
+        )
+    }
+}
+data class HRPNonPregnantAssessDTO(
+    val id: Int = 0,
+    val benId : Long,
+    var noOfDeliveries : String? = null,
+    var timeLessThan18m : String? = null,
+    var heightShort : String? = null,
+    var age : String? = null,
+    var misCarriage : String? = null,
+    var homeDelivery : String? = null,
+    var medicalIssues : String? = null,
+    var pastCSection : String? = null,
+    var isHighRisk: Boolean = false,
+    var visitDate: String?
+) {
+    fun toCache() : HRPNonPregnantAssessCache {
+        return HRPNonPregnantAssessCache(
+            benId = benId,
+            noOfDeliveries = noOfDeliveries,
+            timeLessThan18m = timeLessThan18m,
+            heightShort = heightShort,
+            age = age,
+            misCarriage = misCarriage,
+            homeDelivery = homeDelivery,
+            medicalIssues = medicalIssues,
+            pastCSection = pastCSection,
+            isHighRisk = isHighRisk,
+            visitDate = getLongFromDate(visitDate),
+            syncState = SyncState.SYNCED
+        )
+    }
+}
 data class TBScreeningDTO(
     val id: Long,
     val benId: Long,
