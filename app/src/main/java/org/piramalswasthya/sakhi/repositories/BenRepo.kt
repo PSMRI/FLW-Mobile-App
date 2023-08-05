@@ -723,6 +723,8 @@ class BenRepo @Inject constructor(
             } catch (e: java.lang.IllegalStateException) {
                 Timber.d("get_ben error : $e")
                 return@withContext -1
+            } catch (e: Exception) {
+                Timber.d("get_beneficiary error: $e")
             }
             -1
         }
@@ -879,7 +881,7 @@ class BenRepo @Inject constructor(
                     val hhId =
                         if (jsonObject.has("houseoldId")) jsonObject.getLong("houseoldId") else -1L
                     if (benId == -1L) continue
-                    if (hhId == -1L || hhId == 0L) {
+                    if (hhId == -1L || hhId == 0L || hhId > 0L) {
                         val benoExists = benDao.getBen(benId) != null
                         if (benoExists) {
                             Timber.d("skipping $benId")
@@ -1022,7 +1024,7 @@ class BenRepo @Inject constructor(
                                     hasAadhar = if (benDataObj.has("aadhaNo")) benDataObj.getString(
                                         "aadhaNo"
                                     ) != "" else false,
-                                    hasAadharId = (if (benDataObj.has("aadha_noId")) (benDataObj.getInt("aadha_noId") == 1) else 0) as Int,
+                                    hasAadharId = if (benDataObj.has("aadha_noId")) (benDataObj.getInt("aadha_noId")) else 0,
 //                            bankAccountId = benDataObj.getString("bank_accountId"),
                                     bankAccount = if (benDataObj.has("bankAccount")) benDataObj.getString(
                                         "bankAccount"

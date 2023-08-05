@@ -5,12 +5,10 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.AgeUnit
 import org.piramalswasthya.sakhi.model.BenRegCache
-import org.piramalswasthya.sakhi.model.EligibleCoupleTrackingCache
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.InputType
-import java.util.Calendar
+import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.math.min
 
 class BenRegCHODataset (context: Context, currentLanguage: Languages
 ) : Dataset(context, currentLanguage) {
@@ -114,6 +112,8 @@ class BenRegCHODataset (context: Context, currentLanguage: Languages
         val past = Calendar.getInstance()
         past.set(Calendar.YEAR, now.get(Calendar.YEAR) - 88)
         dob.min = past.timeInMillis
+        past.set(Calendar.YEAR, now.get(Calendar.YEAR) - 12)
+        dob.max = past.timeInMillis
         setUpPage(list)
     }
 
