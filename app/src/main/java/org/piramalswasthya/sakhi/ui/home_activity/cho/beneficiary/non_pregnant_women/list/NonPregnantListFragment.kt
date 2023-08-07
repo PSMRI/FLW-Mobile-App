@@ -62,7 +62,7 @@ class NonPregnantListFragment : Fragment() {
                     )
                 }
             ),
-            formButtonText =  arrayOf("Assess"),
+            formButtonText = arrayOf("Assess"),
             role = 1
         )
         binding.rvAny.adapter = benAdapter

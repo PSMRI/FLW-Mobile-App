@@ -13,8 +13,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
-import org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.pregnant_women.track.HRPPregnantTrackFragmentDirections
-import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -80,6 +78,7 @@ class HRPMicroBirthPlanFragment : Fragment() {
                         context, "Something wend wong! Contact testing!", Toast.LENGTH_LONG
                     ).show()
                 }
+
                 else -> {}
             }
         }

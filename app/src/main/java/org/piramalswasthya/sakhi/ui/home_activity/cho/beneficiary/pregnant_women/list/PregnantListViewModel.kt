@@ -10,8 +10,9 @@ import org.piramalswasthya.sakhi.helpers.filterBenFormList
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
 
 @HiltViewModel
-class PregnantListViewModel  @javax.inject.Inject
-constructor( private val recordsRepo: RecordsRepo
+class PregnantListViewModel @javax.inject.Inject
+constructor(
+    private val recordsRepo: RecordsRepo
 ) : ViewModel() {
     private val allBenList = recordsRepo.hrpPregnantWomenList
     private val filter = MutableStateFlow("")

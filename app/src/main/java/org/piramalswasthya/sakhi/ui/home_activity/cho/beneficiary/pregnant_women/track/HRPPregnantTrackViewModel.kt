@@ -1,16 +1,18 @@
 package org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.pregnant_women.track
 
 import android.content.Context
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.piramalswasthya.sakhi.configuration.HRPNonPregnantTrackDataset
 import org.piramalswasthya.sakhi.configuration.HRPPregnantTrackDataset
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
-import org.piramalswasthya.sakhi.model.HRPNonPregnantTrackCache
 import org.piramalswasthya.sakhi.model.HRPPregnantTrackCache
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.HRPRepo
@@ -80,7 +82,7 @@ constructor(
             }
 
             hrpReo.getHrPregTrackList(benId)?.let {
-                when(it.size) {
+                when (it.size) {
                     0 -> hrpPregnantTrackCache.visit = "1st ANC"
                     1 -> hrpPregnantTrackCache.visit = "1st PMSMA"
                     2 -> hrpPregnantTrackCache.visit = "2nd PMSMA"

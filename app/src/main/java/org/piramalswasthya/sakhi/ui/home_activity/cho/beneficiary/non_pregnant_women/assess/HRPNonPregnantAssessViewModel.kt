@@ -19,12 +19,13 @@ import org.piramalswasthya.sakhi.ui.home_activity.eligible_couple.tracking.form.
 import timber.log.Timber
 
 @HiltViewModel
-class HRPNonPregnantAssessViewModel  @javax.inject.Inject
-constructor(savedStateHandle: SavedStateHandle,
-            preferenceDao: PreferenceDao,
-            @ApplicationContext context: Context,
-            private val hrpReo: HRPRepo,
-            private val benRepo: BenRepo
+class HRPNonPregnantAssessViewModel @javax.inject.Inject
+constructor(
+    savedStateHandle: SavedStateHandle,
+    preferenceDao: PreferenceDao,
+    @ApplicationContext context: Context,
+    private val hrpReo: HRPRepo,
+    private val benRepo: BenRepo
 ) : ViewModel() {
     val benId =
         HRPNonPregnantAssessFragmentArgs.fromSavedStateHandle(savedStateHandle).benId

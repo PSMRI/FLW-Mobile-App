@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.pregnant_women.assess.HRPNonPregnantAssessViewModel
+import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -72,6 +73,7 @@ class HRPNonPregnantAssessFragment : Fragment() {
                         "Assessment form filled successfully",
                         Toast.LENGTH_SHORT
                     ).show()
+                    WorkerUtils.triggerAmritPushWorker(requireContext())
                     findNavController().navigateUp()
                     viewModel.resetState()
                 }
@@ -108,9 +110,11 @@ class HRPNonPregnantAssessFragment : Fragment() {
                 1, 2 -> {
                     notifyItemChanged(viewModel.getIndexOfChildLabel())
                 }
+
                 3, 4 -> {
                     notifyItemChanged(viewModel.getIndexOfPhysicalObservationLabel())
                 }
+
                 5, 6, 7, 8 -> {
                     notifyItemChanged(viewModel.getIndexOfObstetricHistoryLabel())
                 }

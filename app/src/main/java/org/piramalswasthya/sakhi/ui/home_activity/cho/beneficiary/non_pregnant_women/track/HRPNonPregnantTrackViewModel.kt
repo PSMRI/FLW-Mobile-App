@@ -1,4 +1,4 @@
-package org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.pregnant_women.track
+package org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.non_pregnant_women.track
 
 import android.content.Context
 import androidx.lifecycle.LiveData
@@ -17,7 +17,6 @@ import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.HRPNonPregnantTrackCache
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.HRPRepo
-import org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.non_pregnant_women.track.HRPNonPregnantTrackFragmentArgs
 import timber.log.Timber
 
 @HiltViewModel
@@ -63,7 +62,7 @@ constructor(
 
     private lateinit var hrpNonPregnantTrackCache: HRPNonPregnantTrackCache
 
-    private var ben : BenRegCache? = null
+    private var ben: BenRegCache? = null
 
     init {
         viewModelScope.launch {

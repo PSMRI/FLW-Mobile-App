@@ -1,28 +1,29 @@
 package org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.pregnant_women.micro_birth_plan
 
 import android.content.Context
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.configuration.HRPMicroBirthPlanDataset
-import org.piramalswasthya.sakhi.configuration.HRPPregnantTrackDataset
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.HRPMicroBirthPlanCache
-import org.piramalswasthya.sakhi.model.HRPPregnantTrackCache
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.HRPRepo
 import timber.log.Timber
 
 @HiltViewModel
-class HRPMicroBirthPlanViewModel  @javax.inject.Inject
-constructor(savedStateHandle: SavedStateHandle,
-            preferenceDao: PreferenceDao,
-            @ApplicationContext context: Context,
-            private val hrpReo: HRPRepo,
-            private val benRepo: BenRepo
+class HRPMicroBirthPlanViewModel @javax.inject.Inject
+constructor(
+    savedStateHandle: SavedStateHandle,
+    preferenceDao: PreferenceDao,
+    @ApplicationContext context: Context,
+    private val hrpReo: HRPRepo,
+    private val benRepo: BenRepo
 ) : ViewModel() {
     val benId = HRPMicroBirthPlanFragmentArgs
         .fromSavedStateHandle(savedStateHandle).benId
@@ -95,22 +96,22 @@ constructor(savedStateHandle: SavedStateHandle,
 
     fun saveForm() {
         viewModelScope.launch {
-                try {
-                    _state.postValue(State.SAVING)
+            try {
+                _state.postValue(State.SAVING)
 
-                    dataset.mapValues(microBirthPlanCache, 1)
-                    hrpReo.saveRecord(microBirthPlanCache)
-                    isHighRisk = true
-                    if (isHighRisk) {
-                        // save
-                    }
-
-                    _state.postValue(State.SAVE_SUCCESS)
-                } catch (e: Exception) {
-                    Timber.d("saving PWR data failed!!")
-                    _state.postValue(State.SAVE_FAILED)
+                dataset.mapValues(microBirthPlanCache, 1)
+                hrpReo.saveRecord(microBirthPlanCache)
+                isHighRisk = true
+                if (isHighRisk) {
+                    // save
                 }
+
+                _state.postValue(State.SAVE_SUCCESS)
+            } catch (e: Exception) {
+                Timber.d("saving PWR data failed!!")
+                _state.postValue(State.SAVE_FAILED)
             }
+        }
     }
 
     fun resetState() {

@@ -13,6 +13,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
+import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -72,11 +73,12 @@ class HRPPregnantAssessFragment : Fragment() {
             when (it) {
                 HRPPregnantAssessViewModel.State.SAVE_SUCCESS -> {
                     Toast.makeText(
-                            requireContext(),
-                            "Assessment form filled successfully",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        viewModel.resetState()
+                        requireContext(),
+                        "Assessment form filled successfully",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    viewModel.resetState()
+                    WorkerUtils.triggerAmritPushWorker(requireContext())
                     findNavController().navigateUp()
                 }
 
@@ -112,12 +114,15 @@ class HRPPregnantAssessFragment : Fragment() {
                 1, 2 -> {
                     notifyItemChanged(viewModel.getIndexOfChildLabel())
                 }
+
                 3, 4 -> {
                     notifyItemChanged(viewModel.getIndexOfPhysicalObservationLabel())
                 }
+
                 5, 6, 7, 8 -> {
                     notifyItemChanged(viewModel.getIndexOfObstetricHistoryLabel())
                 }
+
                 9 -> {
                     notifyItemChanged(viewModel.getIndexOfEdd())
                 }

@@ -29,6 +29,6 @@ class HRPNonPregnantViewModel @Inject constructor(
 
     }
 
-    val scope : CoroutineScope
+    val scope: CoroutineScope
         get() = viewModelScope
 }

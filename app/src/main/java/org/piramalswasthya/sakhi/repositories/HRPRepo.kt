@@ -13,6 +13,7 @@ import org.piramalswasthya.sakhi.model.*
 import org.piramalswasthya.sakhi.network.AmritApiService
 import org.piramalswasthya.sakhi.network.GetDataPaginatedRequest
 import org.piramalswasthya.sakhi.network.HRPNonPregnantAssessDTO
+import org.piramalswasthya.sakhi.network.HRPNonPregnantTrackDTO
 import org.piramalswasthya.sakhi.network.HRPPregnantAssessDTO
 import org.piramalswasthya.sakhi.network.HRPPregnantTrackDTO
 import org.piramalswasthya.sakhi.network.UserDataDTO
@@ -476,7 +477,7 @@ class HRPRepo @Inject constructor(
         val entries = requestDTO.getAsJsonArray("entries")
         for (dto in entries) {
             try {
-                val entry = Gson().fromJson(dto.toString(), HRPPregnantTrackDTO::class.java)
+                val entry = Gson().fromJson(dto.toString(), HRPNonPregnantTrackDTO::class.java)
                 entry.visitDate?.let {
                     val track = database
                         .hrpDao.getHRPNonTrack(entry.benId, getLongFromDate(it))

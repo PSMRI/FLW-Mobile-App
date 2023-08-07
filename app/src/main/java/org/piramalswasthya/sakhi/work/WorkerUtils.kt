@@ -84,7 +84,6 @@ object WorkerUtils {
         workManager
             .beginUniqueWork(syncWorkerUniqueName, ExistingWorkPolicy.APPEND_OR_REPLACE, pushWorkRequest)
 //            .then(pushCbacWorkRequest)
-//            .then(pullHRPWorkRequest)
             .then(pushHRPToAmritWorker)
 //            .then(pushTBWorkRequest)
             .enqueue()

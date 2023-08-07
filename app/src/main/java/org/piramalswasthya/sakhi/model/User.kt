@@ -257,7 +257,7 @@ data class User(
     val userName: String,
     val password: String,
     val serviceMapId : Int,
-    var vanId : Int = 0,
+    var vanId : Int = 4,
     val state: LocationEntity,
     val district: LocationEntity,
     val block: LocationEntity,

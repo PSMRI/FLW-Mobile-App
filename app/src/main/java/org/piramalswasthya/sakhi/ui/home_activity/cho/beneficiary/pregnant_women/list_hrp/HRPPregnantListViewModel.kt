@@ -11,10 +11,10 @@ import org.piramalswasthya.sakhi.model.BenBasicDomainForForm
 import org.piramalswasthya.sakhi.model.HRPPregnantTrackCache
 import org.piramalswasthya.sakhi.repositories.HRPRepo
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
-import java.util.*
+import java.util.Calendar
 
 @HiltViewModel
-class HRPPregnantListViewModel  @javax.inject.Inject
+class HRPPregnantListViewModel @javax.inject.Inject
 constructor(
     recordsRepo: RecordsRepo,
     val hrpRepo: HRPRepo
@@ -25,19 +25,21 @@ constructor(
         filterBenFormList(list, filter)
     }
 
-    var allHrpPregTrack : List<HRPPregnantTrackCache>? = null
+    var allHrpPregTrack: List<HRPPregnantTrackCache>? = null
 
     init {
         viewModelScope.launch {
             allHrpPregTrack = hrpRepo.getAllPregTrack()
         }
     }
-    var benId : Long = 0L
+
+    var benId: Long = 0L
 
 
-    suspend fun getTrackDetails() : List<HRPPregnantTrackCache>? {
+    suspend fun getTrackDetails(): List<HRPPregnantTrackCache>? {
         return hrpRepo.getHrPregTrackList(benId)
     }
+
     fun filterText(text: String) {
         viewModelScope.launch {
             filter.emit(text)
@@ -48,11 +50,12 @@ constructor(
     suspend fun updateBenWithForms(ben: BenBasicDomainForForm) {
         hrpRepo.getHrPregTrackList(ben.benId)?.let {
             val cal = Calendar.getInstance()
-            if(it.isNotEmpty()) {
+            if (it.isNotEmpty()) {
                 it.first().visitDate?.let { date ->
                     cal.timeInMillis = date
                     ben.form1Enabled = cal.get(Calendar.MONTH) != Calendar.getInstance().get(
-                        Calendar.MONTH)
+                        Calendar.MONTH
+                    )
                 }
             }
         }

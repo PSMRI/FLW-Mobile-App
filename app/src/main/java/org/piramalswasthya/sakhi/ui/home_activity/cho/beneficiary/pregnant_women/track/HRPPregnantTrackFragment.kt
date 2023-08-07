@@ -13,7 +13,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
-import org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.register.BenRegisterCHOFragmentDirections
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 
@@ -69,17 +68,18 @@ class HRPPregnantTrackFragment : Fragment() {
             submitTrackingForm()
         }
 
-        viewModel.trackingDone.observe(viewLifecycleOwner) {
-            trackingDone -> if (trackingDone) {
-            Toast.makeText(context, "Tracking is done", Toast.LENGTH_LONG).show()
-            findNavController().navigateUp()
-            viewModel.resetState()
-        }
+        viewModel.trackingDone.observe(viewLifecycleOwner) { trackingDone ->
+            if (trackingDone) {
+                Toast.makeText(context, "Tracking is done", Toast.LENGTH_LONG).show()
+                findNavController().navigateUp()
+                viewModel.resetState()
+            }
         }
         viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state!!) {
                 HRPPregnantTrackViewModel.State.SAVE_SUCCESS -> {
                     Toast.makeText(context, "Save Successful!!!", Toast.LENGTH_LONG).show()
+                    WorkerUtils.triggerAmritPushWorker(requireContext())
                     findNavController().navigateUp()
                     viewModel.resetState()
                 }
@@ -89,6 +89,7 @@ class HRPPregnantTrackFragment : Fragment() {
                         context, "Something wend wong! Contact testing!", Toast.LENGTH_LONG
                     ).show()
                 }
+
                 else -> {}
             }
         }
@@ -99,6 +100,7 @@ class HRPPregnantTrackFragment : Fragment() {
         super.onResume()
         viewModel.loadData()
     }
+
     private fun submitTrackingForm() {
         if (validateCurrentPage()) {
             viewModel.saveForm()

@@ -34,15 +34,16 @@ class HRNonPregnantTrackBottomSheet : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.rvHrpTract.adapter =
-            HRPPregTrackAdapter(HRPPregTrackAdapter.HRPTrackClickListener {
-                val benId = viewModel.benId.value!!
-                findNavController().navigate(
-                    HRPNonPregnantListFragmentDirections.actionHRPNonPregnantListFragmentToHRPNonPregnantTrackFragment(
-                        benId = benId, trackId = it
+            HRPPregTrackAdapter(
+                HRPPregTrackAdapter.HRPTrackClickListener {
+                    val benId = viewModel.benId.value!!
+                    findNavController().navigate(
+                        HRPNonPregnantListFragmentDirections.actionHRPNonPregnantListFragmentToHRPNonPregnantTrackFragment(
+                            benId = benId, trackId = it
+                        )
                     )
-                )
-                dismiss()
-            },
+                    dismiss()
+                },
                 visit = "Visit On "
             )
 
@@ -61,9 +62,9 @@ class HRNonPregnantTrackBottomSheet : BottomSheetDialogFragment() {
         Timber.d("Called list at bottom sheet   ${list.size}")
 
         (_binding?.rvHrpTract?.adapter as HRPPregTrackAdapter?)?.submitList(
-            list.map {
-                trackCache -> trackCache.asDomainModel()
-        })
+            list.map { trackCache ->
+                trackCache.asDomainModel()
+            })
     }
 
     override fun dismiss() {

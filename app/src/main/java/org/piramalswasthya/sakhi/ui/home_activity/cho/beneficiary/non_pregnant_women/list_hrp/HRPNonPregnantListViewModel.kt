@@ -76,10 +76,11 @@ constructor(
     suspend fun updateBenWithForms(ben: BenBasicDomainForForm) {
         hrpRepo.getHrNonPregTrackList(ben.benId)?.let {
             val cal = Calendar.getInstance()
-            if(it.isNotEmpty()) {
+            if (it.isNotEmpty()) {
                 it.first().visitDate?.let { date ->
-                        cal.timeInMillis = date
-                        ben.form1Enabled = cal.get(Calendar.MONTH) != Calendar.getInstance().get(Calendar.MONTH)
+                    cal.timeInMillis = date
+                    ben.form1Enabled =
+                        cal.get(Calendar.MONTH) != Calendar.getInstance().get(Calendar.MONTH)
                 }
             }
         }

@@ -58,7 +58,7 @@ class HRPNonPregnantListFragment : Fragment() {
                         bottomSheet.show(childFragmentManager, "Follow Up")
                 }
             ),
-            formButtonText =  arrayOf("Follow Up", "History"),
+            formButtonText = arrayOf("Follow Up", "History"),
             role = 1
         )
         binding.rvAny.adapter = benAdapter
@@ -101,6 +101,7 @@ class HRPNonPregnantListFragment : Fragment() {
     override fun onResume() {
         super.onResume()
     }
+
     override fun onDestroy() {
         super.onDestroy()
         _binding = null

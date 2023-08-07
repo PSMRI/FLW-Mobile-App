@@ -380,7 +380,8 @@ data class HRPPregnantTrackDTO(
             antepartumHem = antepartumHem,
             malPresentation = malPresentation,
             hivsyph = hivsyph,
-            visit = visit
+            visit = visit,
+            syncState = SyncState.SYNCED
         )
     }
 }

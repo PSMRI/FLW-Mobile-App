@@ -17,40 +17,40 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NonPregnantListViewModel @Inject
-    constructor(
-        recordsRepo: RecordsRepo
-    ) : ViewModel() {
+constructor(
+    recordsRepo: RecordsRepo
+) : ViewModel() {
 
 
-        private val allBenList = recordsRepo.hrpNonPregnantWomenList
-        private val filter = MutableStateFlow("")
-        val benList = allBenList.combine(filter){
-                list, filter -> filterBenFormList(list, filter)
-        }
+    private val allBenList = recordsRepo.hrpNonPregnantWomenList
+    private val filter = MutableStateFlow("")
+    val benList = allBenList.combine(filter) { list, filter ->
+        filterBenFormList(list, filter)
+    }
 
 
-        @Inject
-        lateinit var benRepo: BenRepo
+    @Inject
+    lateinit var benRepo: BenRepo
 
-        @Inject
-        lateinit var amritApiService: AmritApiService
+    @Inject
+    lateinit var amritApiService: AmritApiService
 
-        private val _abha = MutableLiveData<String?>()
-        val abha: LiveData<String?>
+    private val _abha = MutableLiveData<String?>()
+    val abha: LiveData<String?>
         get() = _abha
 
-        private val _benId = MutableLiveData<Long?>()
-        val benId: LiveData<Long?>
+    private val _benId = MutableLiveData<Long?>()
+    val benId: LiveData<Long?>
         get() = _benId
 
-        private val _benRegId = MutableLiveData<Long?>()
-        val benRegId: LiveData<Long?>
+    private val _benRegId = MutableLiveData<Long?>()
+    val benRegId: LiveData<Long?>
         get() = _benRegId
 
-        fun filterText(text: String) {
-            viewModelScope.launch {
-                filter.emit(text)
-            }
+    fun filterText(text: String) {
+        viewModelScope.launch {
+            filter.emit(text)
         }
+    }
 
 }

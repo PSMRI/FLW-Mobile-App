@@ -30,6 +30,6 @@ constructor(
 
     }
 
-    val scope : CoroutineScope
-    get() = viewModelScope
+    val scope: CoroutineScope
+        get() = viewModelScope
 }

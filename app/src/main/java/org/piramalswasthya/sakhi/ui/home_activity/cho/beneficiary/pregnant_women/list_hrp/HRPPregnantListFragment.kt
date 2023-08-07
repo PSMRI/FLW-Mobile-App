@@ -57,7 +57,7 @@ class HRPPregnantListFragment : Fragment() {
                         bottomSheet.show(childFragmentManager, "Follow Up")
                 }
             ),
-            formButtonText =  arrayOf("Follow Up", "History"),
+            formButtonText = arrayOf("Follow Up", "History"),
             role = 1
         )
         binding.rvAny.adapter = benAdapter

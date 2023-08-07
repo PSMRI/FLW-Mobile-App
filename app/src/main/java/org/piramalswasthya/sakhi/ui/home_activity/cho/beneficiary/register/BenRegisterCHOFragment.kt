@@ -77,6 +77,7 @@ class BenRegisterCHOFragment : Fragment() {
                         context, "Something wend wong! Contact testing!", Toast.LENGTH_LONG
                     ).show()
                 }
+
                 else -> {}
             }
         }
@@ -107,8 +108,8 @@ class BenRegisterCHOFragment : Fragment() {
     private fun hardCodedListUpdate(formId: Int) {
         binding.form.rvInputForm.adapter?.apply {
             when (formId) {
-               3 -> notifyItemChanged(viewModel.getIndexOfAge())
-               8 -> notifyItemChanged(viewModel.getIndexOfDob())
+                3 -> notifyItemChanged(viewModel.getIndexOfAge())
+                8 -> notifyItemChanged(viewModel.getIndexOfDob())
             }
         }
     }
