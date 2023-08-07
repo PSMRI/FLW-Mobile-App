@@ -24,7 +24,7 @@ data class HRPNonPregnantTrackCache(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val benId: Long,
-    var dateOfVisit: Long? = null,
+    var visitDate: Long? = null,
     var anemia: String? = null,
     var hypertension: String? = null,
     var diabetes: String? = null,
@@ -38,7 +38,7 @@ data class HRPNonPregnantTrackCache(
     fun asDomainModel(): HRPPregnantTrackDomain {
         return HRPPregnantTrackDomain(
             id = id,
-            dateOfVisit = getDateStringFromLong(dateOfVisit)
+            dateOfVisit = getDateStringFromLong(visitDate)
         )
     }
 
@@ -46,7 +46,7 @@ data class HRPNonPregnantTrackCache(
         return HRPNonPregnantTrackDTO(
             id = 0,
             benId = benId,
-            dateOfVisit = getDateTimeStringFromLong(dateOfVisit),
+            visitDate = getDateTimeStringFromLong(visitDate),
             anemia = anemia,
             hypertension = hypertension,
             diabetes = diabetes,

@@ -5,8 +5,6 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.helpers.filterBenFormList
 import org.piramalswasthya.sakhi.model.BenBasicDomainForForm
@@ -51,7 +49,7 @@ constructor(
         hrpRepo.getHrPregTrackList(ben.benId)?.let {
             val cal = Calendar.getInstance()
             if(it.isNotEmpty()) {
-                it.first().dateOfVisit?.let { date ->
+                it.first().visitDate?.let { date ->
                     cal.timeInMillis = date
                     ben.form1Enabled = cal.get(Calendar.MONTH) != Calendar.getInstance().get(
                         Calendar.MONTH)

@@ -142,7 +142,7 @@ class HRPPregnantTrackDataset (context: Context, currentLanguage: Languages
 
 
         saved?.let {
-            dateOfVisit.value = it.dateOfVisit?.let { it1 -> getDateFromLong(it1) }
+            dateOfVisit.value = it.visitDate?.let { it1 -> getDateFromLong(it1) }
             rdPmsa.value = it.rdPmsa
             severeAnemia.value = it.severeAnemia
             pregInducedHypertension.value = it.pregInducedHypertension
@@ -206,7 +206,7 @@ class HRPPregnantTrackDataset (context: Context, currentLanguage: Languages
 
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as HRPPregnantTrackCache).let { form ->
-            form.dateOfVisit = getLongFromDate(dateOfVisit.value)
+            form.visitDate = getLongFromDate(dateOfVisit.value)
             form.rdPmsa = rdPmsa.value
             form.severeAnemia = severeAnemia.value
             form.pregInducedHypertension = pregInducedHypertension.value

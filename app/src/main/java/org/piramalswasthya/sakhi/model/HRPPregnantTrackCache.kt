@@ -26,7 +26,7 @@ data class HRPPregnantTrackCache(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val benId: Long,
-    var dateOfVisit: Long? = null,
+    var visitDate: Long? = null,
     var rdPmsa: String? = null,
     var severeAnemia: String? = null,
     var pregInducedHypertension: String? = null,
@@ -44,7 +44,7 @@ data class HRPPregnantTrackCache(
     fun asDomainModel(): HRPPregnantTrackDomain {
         return HRPPregnantTrackDomain(
             id = id,
-            dateOfVisit = visit + " : " + getDateStringFromLong(dateOfVisit)
+            dateOfVisit = visit + " : " + getDateStringFromLong(visitDate)
         )
     }
 
@@ -52,7 +52,7 @@ data class HRPPregnantTrackCache(
         return HRPPregnantTrackDTO(
             id = 0,
             benId = benId,
-            dateOfVisit = getDateTimeStringFromLong(dateOfVisit),
+            visitDate = getDateTimeStringFromLong(visitDate),
             rdPmsa = rdPmsa,
             severeAnemia = severeAnemia,
             pregInducedHypertension = pregInducedHypertension,

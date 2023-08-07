@@ -5,7 +5,6 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.*
 import timber.log.Timber
-import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
 class HRPNonPregnantTrackDataset(
@@ -135,7 +134,7 @@ class HRPNonPregnantTrackDataset(
         )
 
         saved?.let {
-            dateOfVisit.value = it.dateOfVisit?.let { it1 -> getDateFromLong(it1) }
+            dateOfVisit.value = it.visitDate?.let { it1 -> getDateFromLong(it1) }
             anemia.value = it.anemia
             hypertension.value = it.hypertension
             diabetes.value = it.diabetes
@@ -211,7 +210,7 @@ class HRPNonPregnantTrackDataset(
 
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as HRPNonPregnantTrackCache).let { form ->
-            form.dateOfVisit = getLongFromDate(dateOfVisit.value)
+            form.visitDate = getLongFromDate(dateOfVisit.value)
             form.anemia = anemia.value
             form.hypertension = hypertension.value
             form.diabetes = diabetes.value

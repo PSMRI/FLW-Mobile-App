@@ -77,7 +77,7 @@ constructor(
         hrpRepo.getHrNonPregTrackList(ben.benId)?.let {
             val cal = Calendar.getInstance()
             if(it.isNotEmpty()) {
-                it.first().dateOfVisit?.let { date ->
+                it.first().visitDate?.let { date ->
                         cal.timeInMillis = date
                         ben.form1Enabled = cal.get(Calendar.MONTH) != Calendar.getInstance().get(Calendar.MONTH)
                 }

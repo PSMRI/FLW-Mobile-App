@@ -53,14 +53,14 @@ object WorkerUtils {
         val workManager = WorkManager.getInstance(context)
         workManager
             .beginUniqueWork(syncWorkerUniqueName, ExistingWorkPolicy.APPEND_OR_REPLACE, pullWorkRequest)
-            .then(pullCbacWorkRequest)
+//            .then(pullCbacWorkRequest)
             .then(pullHRPWorkRequest)
-            .then(pullTBWorkRequest)
+//            .then(pullTBWorkRequest)
             .then(pullECWorkRequest)
             .then(pushWorkRequest)
-            .then(pushCbacWorkRequest)
+//            .then(pushCbacWorkRequest)
             .then(pushHRPToAmritWorker)
-            .then(pushTBWorkRequest)
+//            .then(pushTBWorkRequest)
             .then(pushECWorkRequest)
             .enqueue()
     }
@@ -74,15 +74,19 @@ object WorkerUtils {
         val pushHRPToAmritWorker = OneTimeWorkRequestBuilder<PushHRPToAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
+        val pullHRPWorkRequest = OneTimeWorkRequestBuilder<PullHRPFromAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
         val pushTBWorkRequest = OneTimeWorkRequestBuilder<PushTBToAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
         val workManager = WorkManager.getInstance(context)
         workManager
             .beginUniqueWork(syncWorkerUniqueName, ExistingWorkPolicy.APPEND_OR_REPLACE, pushWorkRequest)
-            .then(pushCbacWorkRequest)
+//            .then(pushCbacWorkRequest)
+//            .then(pullHRPWorkRequest)
             .then(pushHRPToAmritWorker)
-            .then(pushTBWorkRequest)
+//            .then(pushTBWorkRequest)
             .enqueue()
     }
     fun triggerAmritPullWorker(context : Context){
@@ -103,9 +107,9 @@ object WorkerUtils {
         val workManager = WorkManager.getInstance(context)
         workManager
             .beginUniqueWork(syncWorkerUniqueName, ExistingWorkPolicy.APPEND_OR_REPLACE, pullWorkRequest)
-            .then(pullCbacWorkRequest)
+//            .then(pullCbacWorkRequest)
             .then(pullHRPWorkRequest)
-            .then(pullTBWorkRequest)
+//            .then(pullTBWorkRequest)
             .then(setSyncCompleteWorker)
             .enqueue()
     }

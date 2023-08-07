@@ -345,15 +345,15 @@ data class TBScreeningRequestDTO(
     val tbScreeningList: List<TBScreeningDTO>
 )
 
-data class UserDataDTO(
+data class UserDataDTO<T>(
     val userId: Int,
-    val entries: List<Any>
+    val entries: List<T>
 )
 
 data class HRPPregnantTrackDTO(
     var id: Int = 0,
     val benId : Long,
-    var dateOfVisit: String?,
+    var visitDate: String?,
     var rdPmsa : String? = null,
     var severeAnemia: String? = null,
     var pregInducedHypertension: String? = null,
@@ -369,7 +369,7 @@ data class HRPPregnantTrackDTO(
     fun toCache() : HRPPregnantTrackCache {
         return HRPPregnantTrackCache(
             benId = benId,
-            dateOfVisit = getLongFromDate(dateOfVisit),
+            visitDate = getLongFromDate(visitDate),
             rdPmsa = rdPmsa,
             severeAnemia = severeAnemia,
             pregInducedHypertension = pregInducedHypertension,
@@ -422,7 +422,7 @@ data class HRPPregnantAssessDTO(
 data class  HRPNonPregnantTrackDTO(
     var id: Int = 0,
     val benId : Long,
-    var dateOfVisit: String?,
+    var visitDate: String?,
     var anemia: String? = null,
     var hypertension: String? = null,
     var diabetes: String? = null,
@@ -435,7 +435,7 @@ data class  HRPNonPregnantTrackDTO(
     fun toCache() : HRPNonPregnantTrackCache {
         return HRPNonPregnantTrackCache(
             benId = benId,
-            dateOfVisit = getLongFromDate(dateOfVisit),
+            visitDate = getLongFromDate(visitDate),
             anemia = anemia,
             hypertension = hypertension,
             diabetes = diabetes,

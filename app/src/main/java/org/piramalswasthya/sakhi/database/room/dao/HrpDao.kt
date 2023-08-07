@@ -55,7 +55,7 @@ interface HrpDao {
     @Query("select * from HRP_NON_PREGNANT_TRACK where id = :trackId")
     fun getHRPNonTrack(trackId: Long) : HRPNonPregnantTrackCache?
 
-    @Query("select * from HRP_NON_PREGNANT_TRACK where benId = :benId and dateOfVisit = :visitDate")
+    @Query("select * from HRP_NON_PREGNANT_TRACK where benId = :benId and visitDate = :visitDate")
     fun getHRPNonTrack(benId: Long, visitDate: Long) : HRPNonPregnantTrackCache?
 
     @Query("select * from HRP_NON_PREGNANT_TRACK where syncState = :syncState")
@@ -70,23 +70,23 @@ interface HrpDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveRecord(hrpMicroBirthPlanCache: HRPMicroBirthPlanCache)
 
-    @Query("select * from HRP_PREGNANT_TRACK order by dateOfVisit desc")
+    @Query("select * from HRP_PREGNANT_TRACK order by visitDate desc")
     fun getAllPregTrack() : List<HRPPregnantTrackCache>?
 
-    @Query("select * from HRP_PREGNANT_TRACK where benId = :benId order by dateOfVisit desc")
+    @Query("select * from HRP_PREGNANT_TRACK where benId = :benId order by visitDate desc")
     fun getAllPregTrackforBen(benId: Long): List<HRPPregnantTrackCache>?
 
-    @Query("select * from HRP_NON_PREGNANT_TRACK order by dateOfVisit desc")
+    @Query("select * from HRP_NON_PREGNANT_TRACK order by visitDate desc")
     fun getAllNonPregTrack() : List<HRPNonPregnantTrackCache>?
 
-    @Query("select * from HRP_NON_PREGNANT_TRACK where benId = :benId order by dateOfVisit desc")
+    @Query("select * from HRP_NON_PREGNANT_TRACK where benId = :benId order by visitDate desc")
     fun getAllNonPregTrackforBen(benId: Long) :List<HRPNonPregnantTrackCache>?
 
     @Query("select max(lmp) from HRP_NON_PREGNANT_TRACK where benId = :benId")
     fun getMaxLmp(benId: Long): Long?
-    @Query("select max(dateOfVisit) from HRP_NON_PREGNANT_TRACK where benId = :benId")
+    @Query("select max(visitDate) from HRP_NON_PREGNANT_TRACK where benId = :benId")
     fun getMaxDoV(benId: Long) : Long?
 
-    @Query("select max(dateOfVisit) from HRP_PREGNANT_TRACK where benId = :benId")
+    @Query("select max(visitDate) from HRP_PREGNANT_TRACK where benId = :benId")
     fun getMaxDoVhrp(benId: Long) : Long?
 }

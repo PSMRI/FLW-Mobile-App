@@ -13,6 +13,10 @@ interface SyncDao {
                 + "UNION SELECT 'CBAC' as name,  c1.syncState as syncState, count(*) as count from cbac c1 group by c1.syncState "
                 + "UNION SELECT 'TB Screening' as name,  tbsn.syncState as syncState, count(*) as count from TB_SCREENING tbsn group by tbsn.syncState "
                 + "UNION SELECT 'TB Suspected' as name,  tbsp.syncState as syncState, count(*) as count from TB_SUSPECTED tbsp group by tbsp.syncState "
+                + "UNION SELECT 'HRP Assess' as name,  hrpa.syncState as syncState, count(*) as count from HRP_PREGNANT_ASSESS hrpa group by hrpa.syncState "
+                + "UNION SELECT 'HRP Track' as name,  hrpt.syncState as syncState, count(*) as count from HRP_PREGNANT_TRACK hrpt group by hrpt.syncState "
+                + "UNION SELECT 'HR NonPreg. Assess' as name,  hrnpa.syncState as syncState, count(*) as count from HRP_NON_PREGNANT_ASSESS hrnpa group by hrnpa.syncState "
+                + "UNION SELECT 'HR NonPreg Track' as name,  hrnpt.syncState as syncState, count(*) as count from HRP_NON_PREGNANT_TRACK hrnpt group by hrnpt.syncState "
     )
 //    @Query(
 //        "       SELECT count(*) as ben_synced from beneficiary b1 where b1.syncState = 2 union " +

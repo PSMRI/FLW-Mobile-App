@@ -91,8 +91,8 @@ enum class Gender {
             "LEFT OUTER JOIN HRP_PREGNANT_ASSESS hrppa on b.beneficiaryId = hrppa.benId " +
             "LEFT OUTER JOIN HRP_NON_PREGNANT_ASSESS hrpnpa on b.beneficiaryId = hrpnpa.benId " +
             "LEFT OUTER JOIN HRP_MICRO_BIRTH_PLAN hrpmbp on b.beneficiaryId = hrpmbp.benId " +
-            "LEFT OUTER JOIN HRP_NON_PREGNANT_TRACK hrnpt on b.beneficiaryId = hrnpt.benId AND NOT EXISTS ( select 1 from HRP_NON_PREGNANT_TRACK hrnpt1 where hrnpt1.benId = b.beneficiaryId and hrnpt1.dateOfVisit > hrnpt.dateOfVisit) " +
-            "LEFT OUTER JOIN HRP_PREGNANT_TRACK hrpt on b.beneficiaryId = hrpt.benId AND NOT EXISTS ( select 1 from HRP_PREGNANT_TRACK hrpt1 where hrpt1.benId = b.beneficiaryId and hrpt1.dateOfVisit > hrpt.dateOfVisit) " +
+            "LEFT OUTER JOIN HRP_NON_PREGNANT_TRACK hrnpt on b.beneficiaryId = hrnpt.benId AND NOT EXISTS ( select 1 from HRP_NON_PREGNANT_TRACK hrnpt1 where hrnpt1.benId = b.beneficiaryId and hrnpt1.visitDate > hrnpt.visitDate) " +
+            "LEFT OUTER JOIN HRP_PREGNANT_TRACK hrpt on b.beneficiaryId = hrpt.benId AND NOT EXISTS ( select 1 from HRP_PREGNANT_TRACK hrpt1 where hrpt1.benId = b.beneficiaryId and hrpt1.visitDate > hrpt.visitDate) " +
             "LEFT OUTER JOIN DELIVERY_OUTCOME do on b.beneficiaryId = do.benId " +
             "LEFT OUTER JOIN INFANT_REG ir on b.beneficiaryId = ir.motherBenId " +
             "LEFT OUTER JOIN CHILD_REG cr on b.beneficiaryId = cr.motherBenId " +

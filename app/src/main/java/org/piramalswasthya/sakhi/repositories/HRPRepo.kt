@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.repositories
 
 import com.google.gson.Gson
+import com.google.gson.JsonObject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
@@ -20,6 +21,7 @@ import java.net.SocketTimeoutException
 import java.text.SimpleDateFormat
 import java.util.Locale
 import javax.inject.Inject
+
 
 class HRPRepo @Inject constructor(
     private val database: InAppDb,
@@ -210,18 +212,24 @@ class HRPRepo @Inject constructor(
     }
 
     private fun saveHRPAssess(dataObj: String) {
-        val requestDTO = Gson().fromJson(dataObj, UserDataDTO::class.java)
-        requestDTO?.entries?.forEach { dto ->
-            val entry = dto as HRPPregnantAssessDTO
-            entry.visitDate?.let {
-                val hrpPregnantAssessCache = database
-                    .hrpDao.getPregnantAssess(entry.benId)
-                if (hrpPregnantAssessCache == null) {
-                    database.hrpDao.saveRecord(entry.toCache())
+        val requestDTO = Gson().fromJson(dataObj, JsonObject::class.java)
+        val entries = requestDTO.getAsJsonArray("entries")
+        for (dto in entries) {
+            try {
+                val entry = Gson().fromJson(dto.toString(), HRPPregnantAssessDTO::class.java)
+                entry.visitDate?.let {
+                    val hrpPregnantAssessCache = database
+                        .hrpDao.getPregnantAssess(entry.benId)
+                    if (hrpPregnantAssessCache == null) {
+                        database.hrpDao.saveRecord(entry.toCache())
+                    }
                 }
+            } catch (e: java.lang.Exception) {
+                Timber.d("cannot save entry $dto due to : $e")
             }
         }
     }
+
 
     suspend fun getHRPTrackDetailsFromServer(): Int {
         return withContext(Dispatchers.IO) {
@@ -291,16 +299,22 @@ class HRPRepo @Inject constructor(
     }
 
     private fun saveHRPTrack(dataObj: String) {
-        val requestDTO = Gson().fromJson(dataObj, UserDataDTO::class.java)
-        requestDTO?.entries?.forEach { dto ->
-            val entry = dto as HRPPregnantTrackDTO
-            entry.dateOfVisit?.let {
-                val track = database
-                    .hrpDao.getHRPTrack(entry.benId, entry.visit)
-                if (track == null) {
-                    database.hrpDao.saveRecord(dto.toCache())
+        val requestDTO = Gson().fromJson(dataObj, JsonObject::class.java)
+        val entries = requestDTO.getAsJsonArray("entries")
+        for (dto in entries) {
+            try {
+                val entry = Gson().fromJson(dto.toString(), HRPPregnantTrackDTO::class.java)
+                entry.visitDate?.let {
+                    val track = database
+                        .hrpDao.getHRPTrack(entry.benId, it)
+                    if (track == null) {
+                        database.hrpDao.saveRecord(entry.toCache())
+                    }
                 }
+            } catch (e: java.lang.Exception) {
+                Timber.d("couldn't save $dto due to $e")
             }
+
         }
     }
 
@@ -372,15 +386,20 @@ class HRPRepo @Inject constructor(
     }
 
     private fun saveHRNonPAssess(dataObj: String) {
-        val requestDTO = Gson().fromJson(dataObj, UserDataDTO::class.java)
-        requestDTO?.entries?.forEach { dto ->
-            val entry = dto as HRPNonPregnantAssessDTO
-            entry.visitDate?.let {
-                val hrpPregnantAssessCache = database
-                    .hrpDao.getNonPregnantAssess(entry.benId)
-                if (hrpPregnantAssessCache == null) {
-                    database.hrpDao.saveRecord(entry.toCache())
+        val requestDTO = Gson().fromJson(dataObj, JsonObject::class.java)
+        val entries = requestDTO.getAsJsonArray("entries")
+        for (dto in entries) {
+            try {
+                val entry = Gson().fromJson(dto.toString(), HRPNonPregnantAssessDTO::class.java)
+                entry.visitDate?.let {
+                    val hrpPregnantAssessCache = database
+                        .hrpDao.getNonPregnantAssess(entry.benId)
+                    if (hrpPregnantAssessCache == null) {
+                        database.hrpDao.saveRecord(entry.toCache())
+                    }
                 }
+            } catch (e: java.lang.Exception) {
+                Timber.d("couldn't save $dto due to $e")
             }
         }
     }
@@ -453,16 +472,22 @@ class HRPRepo @Inject constructor(
     }
 
     private fun saveHRNonPTrack(dataObj: String) {
-        val requestDTO = Gson().fromJson(dataObj, UserDataDTO::class.java)
-        requestDTO?.entries?.forEach { dto ->
-            val entry = dto as HRPPregnantTrackDTO
-            entry.dateOfVisit?.let {
-                val track = database
-                    .hrpDao.getHRPNonTrack(entry.benId, getLongFromDate(entry.dateOfVisit!!))
-                if (track == null) {
-                    database.hrpDao.saveRecord(dto.toCache())
+        val requestDTO = Gson().fromJson(dataObj, JsonObject::class.java)
+        val entries = requestDTO.getAsJsonArray("entries")
+        for (dto in entries) {
+            try {
+                val entry = Gson().fromJson(dto.toString(), HRPPregnantTrackDTO::class.java)
+                entry.visitDate?.let {
+                    val track = database
+                        .hrpDao.getHRPNonTrack(entry.benId, getLongFromDate(it))
+                    if (track == null) {
+                        database.hrpDao.saveRecord(entry.toCache())
+                    }
                 }
+            } catch (e: java.lang.Exception) {
+                Timber.d("couldn't save $dto due to $e")
             }
+
         }
     }
 
