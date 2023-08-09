@@ -68,7 +68,7 @@ enum class Gender {
             " tbsp.benId is not null as tbspFilled, tbsp.syncState as tbspSyncState, " +
             " ir.motherBenId is not null as irFilled, " +
             " cr.motherBenId is not null as crFilled, " +
-            " do.benId is not null as doFilled " +
+            " do.benId is not null as doFilled, " +
             " hrppa.benId is not null as hrppaFilled, hrppa.syncState as hrppaSyncState," +
             " hrpnpa.benId is not null as hrpnpaFilled, hrpnpa.syncState as hrpnpaSyncState," +
             " hrpmbp.benId is not null as hrpmbpFilled, hrpmbp.syncState as hrpmbpSyncState," +

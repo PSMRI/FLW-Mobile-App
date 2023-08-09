@@ -82,7 +82,7 @@ data class EligibleCoupleRegCache (
     fun asPostModel(): EcrPost {
         return EcrPost(
             benId = benId,
-            dateOfReg = getDateStringFromLong(dateOfReg),
+            dateOfReg = getDtStringFromLong(dateOfReg),
             rchId = rchId,
             name = name,
             husbandName = husbandName,
@@ -97,39 +97,39 @@ data class EligibleCoupleRegCache (
             noOfLiveChildren = noOfLiveChildren,
             noOfMaleChildren = noOfMaleChildren,
             noOfFemaleChildren = noOfFemaleChildren,
-            dob1 = getDateStringFromLong(dob1),
+            dob1 = getDtStringFromLong(dob1),
             age1 = age1,
             gender1 = gender1,
             marriageFirstChildGap = marriageFirstChildGap,
-            dob2 = getDateStringFromLong(dob2),
+            dob2 = getDtStringFromLong(dob2),
             age2 = age2,
             gender2 = gender2,
             firstAndSecondChildGap = firstAndSecondChildGap,
-            dob3 = getDateStringFromLong(dob3),
+            dob3 = getDtStringFromLong(dob3),
             age3 = age3,
             gender3 = gender3,
             secondAndThirdChildGap = secondAndThirdChildGap,
-            dob4 = getDateStringFromLong(dob4),
+            dob4 = getDtStringFromLong(dob4),
             age4 = age4,
             gender4 = gender4,
             thirdAndFourthChildGap = thirdAndFourthChildGap,
-            dob5 = getDateStringFromLong(dob5),
+            dob5 = getDtStringFromLong(dob5),
             age5 = age5,
             gender5 = gender5,
             fourthAndFifthChildGap = fourthAndFifthChildGap,
-            dob6 = getDateStringFromLong(dob6),
+            dob6 = getDtStringFromLong(dob6),
             age6 = age6,
             gender6 = gender6,
             fifthANdSixthChildGap = fifthANdSixthChildGap,
-            dob7 = getDateStringFromLong(dob7),
+            dob7 = getDtStringFromLong(dob7),
             age7 = age7,
             gender7 = gender7,
             sixthAndSeventhChildGap = sixthAndSeventhChildGap,
-            dob8 = getDateStringFromLong(dob8),
+            dob8 = getDtStringFromLong(dob8),
             age8 = age8,
             gender8 = gender8,
             seventhAndEighthChildGap = seventhAndEighthChildGap,
-            dob9 = getDateStringFromLong(dob9),
+            dob9 = getDtStringFromLong(dob9),
             age9 = age9,
             gender9 = gender9,
             eighthAndNinthChildGap = eighthAndNinthChildGap
@@ -137,7 +137,7 @@ data class EligibleCoupleRegCache (
     }
 }
 
-private fun getDateStringFromLong(dateLong: Long?): String? {
+private fun getDtStringFromLong(dateLong: Long?): String? {
     val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
     dateLong?.let {
         val dateString = dateFormat.format(dateLong)
