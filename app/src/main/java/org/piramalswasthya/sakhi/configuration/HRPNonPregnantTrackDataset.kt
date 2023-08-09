@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.*
 import timber.log.Timber
@@ -236,7 +237,9 @@ class HRPNonPregnantTrackDataset(
             it.reproductiveStatus =
                 englishResources.getStringArray(R.array.nbr_reproductive_status_array)[1]
             it.reproductiveStatusId = 2
+            it.lastMenstrualPeriod = getLongFromDate(lmp.value)
         }
         if (benRegCache.processed != "N") benRegCache.processed = "U"
+        benRegCache.syncState = SyncState.UNSYNCED
     }
 }

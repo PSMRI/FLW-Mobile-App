@@ -827,7 +827,7 @@
     <fragment
         android:id="@+id/HRPNonPregnantFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.non_pregnant_women.HRPNonPregnantFragment"
-        android:label="Non Pregnant" >
+        android:label="Non Pregnant Women" >
         <action
             android:id="@+id/action_HRPNonPregnantFragment_to_nonPregnantListFragment"
             app:destination="@id/nonPregnantListFragment" />
@@ -838,7 +838,7 @@
     <fragment
         android:id="@+id/HRPPregnantFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.pregnant_women.HRPPregnantFragment"
-        android:label="Pregnant" >
+        android:label="Pregnant Women" >
         <action
             android:id="@+id/action_HRPPregnantFragment_to_pregnantListFragment"
             app:destination="@id/pregnantListFragment" />
@@ -850,7 +850,7 @@
     <fragment
         android:id="@+id/HRPNonPregnantTrackFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.non_pregnant_women.track.HRPNonPregnantTrackFragment"
-        android:label="Risk Tracking" >
+        android:label="Follow Up- Non Pregnant" >
         <argument
             android:name="benId"
             app:argType="long" />
@@ -864,7 +864,7 @@
     <fragment
         android:id="@+id/HRPPregnantTrackFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.pregnant_women.track.HRPPregnantTrackFragment"
-        android:label="Risk Tracking" >
+        android:label="Follow Up- Pregnant" >
         <argument
             android:name="benId"
             app:argType="long" />
@@ -878,7 +878,7 @@
     <fragment
         android:id="@+id/nonPregnantListFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.non_pregnant_women.list.NonPregnantListFragment"
-        android:label="List" >
+        android:label="Non Pregnant List" >
         <action
             android:id="@+id/action_nonPregnantListFragment_to_HRPNonPregnantAssessFragment"
             app:destination="@id/HRPNonPregnantAssessFragment" />
@@ -897,7 +897,7 @@
     <fragment
         android:id="@+id/HRPNonPregnantListFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.non_pregnant_women.list_hrp.HRPNonPregnantListFragment"
-        android:label="High Risk List" >
+        android:label="High Risk List-NPW" >
         <action
             android:id="@+id/action_HRPNonPregnantListFragment_to_HRPNonPregnantTrackFragment"
             app:destination="@id/HRPNonPregnantTrackFragment" />
@@ -917,7 +917,7 @@
     <fragment
         android:id="@+id/HRPPregnantListFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.pregnant_women.list_hrp.HRPPregnantListFragment"
-        android:label="High Risk List" >
+        android:label="High Risk List-PW" >
         <action
             android:id="@+id/action_HRPPregnantListFragment_to_HRPPregnantTrackFragment"
             app:destination="@id/HRPPregnantTrackFragment" />
@@ -928,7 +928,7 @@
     <fragment
         android:id="@+id/pregnantListFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.pregnant_women.list.PregnantListFragment"
-        android:label="Pregnant List" >
+        android:label="Pregnant Women" >
         <action
             android:id="@+id/action_pregnantListFragment_to_HRPPregnantAssessFragment"
             app:destination="@id/HRPPregnantAssessFragment" />

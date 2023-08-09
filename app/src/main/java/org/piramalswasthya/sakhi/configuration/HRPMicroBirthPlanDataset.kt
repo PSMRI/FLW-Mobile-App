@@ -3,9 +3,13 @@ package org.piramalswasthya.sakhi.configuration
 import android.content.Context
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Languages
-import org.piramalswasthya.sakhi.model.*
+import org.piramalswasthya.sakhi.model.BenRegCache
+import org.piramalswasthya.sakhi.model.FormElement
+import org.piramalswasthya.sakhi.model.HRPMicroBirthPlanCache
+import org.piramalswasthya.sakhi.model.InputType
 
-class HRPMicroBirthPlanDataset  (context: Context, currentLanguage: Languages
+class HRPMicroBirthPlanDataset(
+    context: Context, currentLanguage: Languages
 ) : Dataset(context, currentLanguage) {
     private val name = FormElement(
         id = 1,
@@ -183,23 +187,23 @@ class HRPMicroBirthPlanDataset  (context: Context, currentLanguage: Languages
 
     suspend fun setUpPage(ben: BenRegCache?, saved: HRPMicroBirthPlanCache?) {
         val list = mutableListOf(
-                nearestSc,
-                bloodGroup,
-                contactNumber1,
-                contactNumber2,
-                scHosp,
-                usg,
-                block,
-                bankac,
-                nearestPhc,
-                nearestFru,
-                bloodDonors1,
-                bloodDonors2,
-                birthCompanion,
-                careTaker,
-                communityMember,
-                communityMemberContact,
-                modeOfTransportation
+            nearestSc,
+            bloodGroup,
+            contactNumber1,
+            contactNumber2,
+            scHosp,
+            usg,
+            block,
+            bankac,
+            nearestPhc,
+            nearestFru,
+            bloodDonors1,
+            bloodDonors2,
+            birthCompanion,
+            careTaker,
+            communityMember,
+            communityMemberContact,
+            modeOfTransportation
         )
 
         saved?.let {
@@ -225,7 +229,62 @@ class HRPMicroBirthPlanDataset  (context: Context, currentLanguage: Languages
     }
 
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
-        return -1
+        return when (formId) {
+            nearestSc.id -> {
+                validateAllAlphaNumericSpaceOnEditText(nearestSc)
+                -1
+            }
+
+            contactNumber1.id -> {
+                validateMobileNumberOnEditText(contactNumber1)
+                -1
+            }
+            contactNumber2.id -> {
+                validateMobileNumberOnEditText(contactNumber2)
+            }
+            scHosp.id -> {
+                validateAllAlphaNumericSpaceOnEditText(scHosp)
+            }
+            usg.id -> {
+                validateAllAlphaNumericSpaceOnEditText(usg)
+            }
+            block.id -> {
+                validateAllAlphaNumericSpaceOnEditText(block)
+            }
+            bankac.id -> {
+                validateIntMinMax(bankac)
+            }
+            nearestPhc.id -> {
+                validateAllAlphaNumericSpaceOnEditText(nearestPhc)
+            }
+            nearestFru.id -> {
+                validateAllAlphaNumericSpaceOnEditText(nearestFru)
+            }
+            bloodDonors1.id -> {
+                validateAllAlphabetsSpaceOnEditText(bloodDonors1)
+            }
+            bloodDonors2.id -> {
+                validateAllAlphabetsSpaceOnEditText(bloodDonors2)
+            }
+            birthCompanion.id -> {
+                validateAllAlphabetsSpaceOnEditText(birthCompanion)
+            }
+            careTaker.id -> {
+                validateAllAlphabetsSpaceOnEditText(careTaker)
+            }
+            communityMember.id -> {
+                validateAllAlphabetsSpaceOnEditText(communityMember)
+            }
+            communityMemberContact.id -> {
+                validateMobileNumberOnEditText(communityMemberContact)
+            }
+            modeOfTransportation.id -> {
+                validateAllAlphabetsSpaceOnEditText(modeOfTransportation)
+            }
+            else -> {
+                -1
+            }
+        }
     }
 
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {

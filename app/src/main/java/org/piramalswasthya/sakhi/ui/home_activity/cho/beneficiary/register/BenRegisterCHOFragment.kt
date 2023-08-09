@@ -44,6 +44,8 @@ class BenRegisterCHOFragment : Fragment() {
                 hardCodedListUpdate(formId)
             }, isEnabled = true
         )
+        binding.tvBenName.visibility = View.GONE
+        binding.tvAgeGender.visibility = View.GONE
         binding.btnSubmit.isEnabled = true
         binding.form.rvInputForm.adapter = adapter
         lifecycleScope.launch {

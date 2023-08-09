@@ -286,7 +286,7 @@
                     android:id="@+id/ll_title_bar_cho"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="?attr/colorSecondary"
+                    android:background="?attr/colorOnPrimary"
                     android:paddingHorizontal="@dimen/padding_tiny"
                     app:layout_constraintTop_toTopOf="parent">
 
@@ -297,7 +297,7 @@
                         android:layout_gravity="center_vertical"
                         android:text="@{ben.benName + ' ' +ben.benSurname}"
                         android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                        android:textColor="?attr/colorOnPrimary"
+                        android:textColor="?attr/colorPrimary"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintHorizontal_bias="0.5"
                         app:layout_constraintHorizontal_chainStyle="spread_inside"

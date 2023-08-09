@@ -35,6 +35,7 @@ fun filterForBen(
         ben.rchId.takeIf { it.isDigitsOnly() }?.contains(filterText) ?: false ||
         ben.mobileNo.lowercase().contains(filterText) ||
         ben.gender.lowercase().contains(filterText) ||
+        ben.spouseName?.lowercase()?.contains(filterText) == true ||
         ben.fatherName?.lowercase()?.contains(filterText) ?: false
 
 

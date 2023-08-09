@@ -23,58 +23,52 @@
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"/>
 
-        <TextView
-            android:id="@+id/tv_title"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:text="TextView"
-            android:text="@{form.title}"
-            app:layout_constraintTop_toTopOf="parent"
-            android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall" />
+            android:paddingTop="@dimen/padding_small"
+            android:id="@+id/ll_row_1"
+            app:layout_constraintTop_toTopOf="@+id/cl_highlight"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="TextView"
+                android:text="@{form.title}"
+                app:layout_constraintTop_toTopOf="parent"
+                android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall" />
+            <TextView
+                android:id="@+id/tv_high_risk"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_gravity="end|center_vertical"
+                android:gravity="end"
+                android:layout_height="wrap_content"
+                android:text="High Risk"
+                android:padding="@dimen/padding_small"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textColor="@color/design_default_color_error"
+                app:required="@{form.showHighRisk}" />
+
+            <ImageView
+                android:id="@+id/check_red"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_check_circle_red"
+                android:padding="@dimen/padding_small"
+                app:imgRequired="@{form.showHighRisk}"
+                />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/textView8"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@{form.subtitle}"
-            app:layout_constraintTop_toBottomOf="@id/tv_title"
+            app:layout_constraintTop_toBottomOf="@id/ll_row_1"
             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
             tools:text="TextView" />
-
-        <TextView
-            android:id="@+id/tv_high_risk"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="High Risk"
-            android:layout_marginTop="@dimen/margin_huge"
-            android:padding="@dimen/padding_small"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textColor="@color/design_default_color_error"
-            app:layout_constraintEnd_toStartOf="@+id/check_red"
-            app:layout_constraintTop_toTopOf="@id/cl_highlight"
-            app:required="@{form.showHighRisk}" />
-
-        <ImageView
-            android:id="@+id/check_red"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_huge"
-            android:src="@drawable/ic_check_circle_red"
-            android:padding="@dimen/padding_small"
-            app:imgRequired="@{form.showHighRisk}"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="@id/cl_highlight"
-            />
-<!--        <ImageView-->
-<!--            android:id="@+id/check_green"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginTop="@dimen/margin_huge"-->
-<!--            android:src="@drawable/ic_check_circle_green"-->
-<!--            android:padding="@dimen/padding_small"-->
-<!--            app:imgRequired="@{!form.showHighRisk}"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--            app:layout_constraintEnd_toEndOf="@id/cl_highlight"-->
 <!--            />-->
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

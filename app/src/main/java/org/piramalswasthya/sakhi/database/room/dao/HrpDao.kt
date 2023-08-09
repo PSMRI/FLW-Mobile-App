@@ -46,8 +46,8 @@ interface HrpDao {
     @Query("select * from HRP_PREGNANT_TRACK where id = :trackId")
     fun getHRPTrack(trackId: Long) : HRPPregnantTrackCache?
 
-    @Query("select * from HRP_PREGNANT_TRACK where benId = :benId and visit = :visit")
-    fun getHRPTrack(benId: Long, visit: String?) : HRPPregnantTrackCache?
+    @Query("select * from HRP_PREGNANT_TRACK where benId = :benId and visit = :visit and visitDate = :visitDate")
+    fun getHRPTrack(benId: Long, visit: String, visitDate: Long) : HRPPregnantTrackCache?
 
     @Query("select * from HRP_PREGNANT_TRACK where syncState = :syncState")
     fun getHRPTrack(syncState: SyncState) : List<HRPPregnantTrackCache>?

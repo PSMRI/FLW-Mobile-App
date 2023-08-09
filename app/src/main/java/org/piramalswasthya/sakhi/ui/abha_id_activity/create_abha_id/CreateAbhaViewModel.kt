@@ -102,7 +102,12 @@ class CreateAbhaViewModel @Inject constructor(
                 abhaIdRepo.mapHealthIDToBeneficiary(req)) {
                 is NetworkResult.Success -> {
                     ben?.let {
-                        _benMapped.value = ben.firstName + " " + ben.lastName
+                        ben.firstName?.let {
+                            firstName -> _benMapped.value = firstName
+                        }
+                        ben.lastName?.let {
+                            lastName -> _benMapped.value = ben.firstName + " $lastName"
+                        }
                         it.healthIdDetails = BenHealthIdDetails(healthId, healthIdNumber)
                         benRepo.updateRecord(ben)
                     }

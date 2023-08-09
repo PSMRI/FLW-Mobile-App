@@ -144,15 +144,25 @@ class HRPPregnantTrackDataset (context: Context, currentLanguage: Languages
         saved?.let {
             dateOfVisit.value = it.visitDate?.let { it1 -> getDateFromLong(it1) }
             rdPmsa.value = it.rdPmsa
+            rdPmsa.showHighRisk = it.rdPmsa == "Yes"
             severeAnemia.value = it.severeAnemia
+            severeAnemia.showHighRisk = it.severeAnemia == "Yes"
             pregInducedHypertension.value = it.pregInducedHypertension
+            pregInducedHypertension.showHighRisk = it.pregInducedHypertension == "Yes"
             gestDiabetesMellitus.value = it.gestDiabetesMellitus
+            gestDiabetesMellitus.showHighRisk = it.gestDiabetesMellitus == "Yes"
             hypothyrodism.value = it.hypothyrodism
+            hypothyrodism.showHighRisk = it.hypothyrodism == "Yes"
             polyhydromnios.value = it.polyhydromnios
+            polyhydromnios.showHighRisk = it.polyhydromnios == "Yes"
             oligohydromnios.value = it.oligohydromnios
+            oligohydromnios.showHighRisk = it.oligohydromnios == "Yes"
             antepartumHem.value = it.antepartumHem
+            antepartumHem.showHighRisk = it.antepartumHem == "Yes"
             malPresentation.value = it.malPresentation
+            malPresentation.showHighRisk = it.malPresentation == "Yes"
             hivsyph.value = it.hivsyph
+            hivsyph.showHighRisk = it.hivsyph == "Yes"
         }
         setUpPage(list)
     }

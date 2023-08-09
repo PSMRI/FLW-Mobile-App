@@ -306,8 +306,10 @@ class HRPRepo @Inject constructor(
             try {
                 val entry = Gson().fromJson(dto.toString(), HRPPregnantTrackDTO::class.java)
                 entry.visitDate?.let {
-                    val track = database
-                        .hrpDao.getHRPTrack(entry.benId, it)
+                    val track = entry.visit?.let { it1 ->
+                        database
+                            .hrpDao.getHRPTrack(entry.benId, it1, getLongFromDate(it))
+                    }
                     if (track == null) {
                         database.hrpDao.saveRecord(entry.toCache())
                     }

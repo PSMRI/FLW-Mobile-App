@@ -27,6 +27,7 @@ class BenRegCHODataset (context: Context, currentLanguage: Languages
         title = context.getString(R.string.nbr_nb_name),
         arrayId = -1,
         required = true,
+        allCaps = true,
         etInputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
     )
 
@@ -110,7 +111,7 @@ class BenRegCHODataset (context: Context, currentLanguage: Languages
         dateOfReg.min = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(365)
         val now = Calendar.getInstance()
         val past = Calendar.getInstance()
-        past.set(Calendar.YEAR, now.get(Calendar.YEAR) - 88)
+        past.set(Calendar.YEAR, now.get(Calendar.YEAR) - 99)
         dob.min = past.timeInMillis
         past.set(Calendar.YEAR, now.get(Calendar.YEAR) - 12)
         dob.max = past.timeInMillis
@@ -121,7 +122,15 @@ class BenRegCHODataset (context: Context, currentLanguage: Languages
         return when(formId) {
             dob.id -> {
                 age.value = calculateAge(getLongFromDate(dob.value)).toString()
-                -1
+                validateIntMinMax(age)
+            }
+
+            name.id -> {
+                validateAllCapsOrSpaceOnEditText(name)
+            }
+
+            husbandName.id -> {
+                validateAllCapsOrSpaceOnEditText(husbandName)
             }
             age.id -> {
                 age.value?.let {

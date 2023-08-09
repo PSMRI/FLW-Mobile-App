@@ -501,6 +501,9 @@
     <string name="resend_otp">Resend OTP</string>
     <string name="exit">Exit</string>
     <string name="no_records_found_hh">No Household records found. Please start registering households by clicking on the button below.</string>
+    <string name="abha_number">ABHA Number</string>
+    <string name="abha">ABHA</string>
+    <string name="high_risk">High Risk</string>
 
     <!-- Eligible couple registration -->
     <string-array name="ecr_gender_array">
