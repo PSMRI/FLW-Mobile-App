@@ -2,7 +2,6 @@ package org.piramalswasthya.sakhi.repositories
 
 import android.app.Application
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONException
@@ -44,6 +43,12 @@ class BenRepo @Inject constructor(
             val timeString = timeFormat.format(millis)
             return "${dateString}T${timeString}.000Z"
         }
+
+        fun getLongFromDateStr(dateString: String): Long {
+                val f = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ENGLISH)
+                val date = f.parse(dateString)
+                return date?.time ?: throw IllegalStateException("Invalid date for dateReg")
+            }
     }
 
     suspend fun getBenBasicDomainListFromHousehold(hhId: Long): List<BenBasicDomain> {
@@ -1297,7 +1302,7 @@ class BenRepo @Inject constructor(
 //                                menstrualProblemId = if (benDataObj.has("menstrualProblemId")) benDataObj.getInt(
 //                                    "menstrualProblemId"
 //                                ) else 0,
-//                                lastMenstrualPeriod = lastMenstrualPeriod,
+                                lastMenstrualPeriod = getDateFromJsonField(benDataObj),
                                         /**
                                      * part of reproductive status id mapping on @since Aug 7
                                      */reproductiveStatus = if (benDataObj.has("reproductiveStatus")) benDataObj.getString(
@@ -1385,6 +1390,19 @@ class BenRepo @Inject constructor(
             }
         }
         return result
+    }
+
+    private fun getDateFromJsonField(benDataObj: JSONObject): Long? {
+        if (benDataObj.has("lastMenstrualPeriod")) {
+            val dateStr = benDataObj.getString("lastMenstrualPeriod")
+            return if (dateStr.isNullOrEmpty()) {
+                null
+            } else {
+                getLongFromDateStr(dateStr)
+            }
+        }
+        return null
+
     }
 
 //    private suspend fun getCompressedByteArray(benId: Long, benDataObj: JSONObject) =

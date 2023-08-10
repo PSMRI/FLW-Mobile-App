@@ -32,17 +32,18 @@
             android:orientation="horizontal">
             <TextView
                 android:id="@+id/tv_title"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 tools:text="TextView"
+                android:layout_weight="6"
                 android:text="@{form.title}"
                 app:layout_constraintTop_toTopOf="parent"
                 android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall" />
             <TextView
                 android:id="@+id/tv_high_risk"
                 android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_gravity="end|center_vertical"
+                android:layout_weight="2"
+                android:layout_gravity="end"
                 android:gravity="end"
                 android:layout_height="wrap_content"
                 android:text="High Risk"
@@ -53,22 +54,23 @@
 
             <ImageView
                 android:id="@+id/check_red"
+                android:layout_weight="0.2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_check_circle_red"
-                android:padding="@dimen/padding_small"
+                android:paddingVertical="@dimen/padding_small"
                 app:imgRequired="@{form.showHighRisk}"
                 />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/textView8"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@{form.subtitle}"
-            app:layout_constraintTop_toBottomOf="@id/ll_row_1"
-            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-            tools:text="TextView" />
+<!--        <TextView-->
+<!--            android:id="@+id/textView8"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="@{form.subtitle}"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/ll_row_1"-->
+<!--            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"-->
+<!--            tools:text="TextView" />-->
 <!--            />-->
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -72,7 +72,7 @@ enum class Gender {
             " hrppa.benId is not null as hrppaFilled, hrppa.syncState as hrppaSyncState," +
             " hrpnpa.benId is not null as hrpnpaFilled, hrpnpa.syncState as hrpnpaSyncState," +
             " hrpmbp.benId is not null as hrpmbpFilled, hrpmbp.syncState as hrpmbpSyncState," +
-            " hrpt.benId is not null as hrptFilled, hrpt.syncState as hrptSyncState," +
+            " hrpt.benId is not null as hrptFilled, (count(hrpt.benId) > 3) as trackingDone, hrpt.syncState as hrptSyncState," +
             " hrnpt.benId is not null as hrnptFilled, hrnpt.syncState as hrnptSyncState " +
             "from BENEFICIARY b " +
             "JOIN HOUSEHOLD h ON b.householdId = h.householdId " +
@@ -91,8 +91,8 @@ enum class Gender {
             "LEFT OUTER JOIN HRP_PREGNANT_ASSESS hrppa on b.beneficiaryId = hrppa.benId " +
             "LEFT OUTER JOIN HRP_NON_PREGNANT_ASSESS hrpnpa on b.beneficiaryId = hrpnpa.benId " +
             "LEFT OUTER JOIN HRP_MICRO_BIRTH_PLAN hrpmbp on b.beneficiaryId = hrpmbp.benId " +
-            "LEFT OUTER JOIN HRP_NON_PREGNANT_TRACK hrnpt on b.beneficiaryId = hrnpt.benId AND NOT EXISTS ( select 1 from HRP_NON_PREGNANT_TRACK hrnpt1 where hrnpt1.benId = b.beneficiaryId and hrnpt1.visitDate > hrnpt.visitDate) " +
-            "LEFT OUTER JOIN HRP_PREGNANT_TRACK hrpt on b.beneficiaryId = hrpt.benId AND NOT EXISTS ( select 1 from HRP_PREGNANT_TRACK hrpt1 where hrpt1.benId = b.beneficiaryId and hrpt1.visitDate > hrpt.visitDate) " +
+            "LEFT OUTER JOIN HRP_NON_PREGNANT_TRACK hrnpt on b.beneficiaryId = hrnpt.benId " +
+            "LEFT OUTER JOIN HRP_PREGNANT_TRACK hrpt on b.beneficiaryId = hrpt.benId " +
             "LEFT OUTER JOIN DELIVERY_OUTCOME do on b.beneficiaryId = do.benId " +
             "LEFT OUTER JOIN INFANT_REG ir on b.beneficiaryId = ir.motherBenId " +
             "LEFT OUTER JOIN CHILD_REG cr on b.beneficiaryId = cr.motherBenId " +
@@ -139,6 +139,7 @@ data class BenBasicCache(
     val hrpnpaFilled: Boolean,
     val hrpmbpFilled: Boolean,
     val hrptFilled: Boolean,
+    val trackingDone: Boolean,
     val hrnptFilled: Boolean,
     val hrppaSyncState: SyncState?,
     val hrpnpaSyncState: SyncState?,
@@ -563,7 +564,8 @@ data class BenBasicCache(
 //            typeOfList = typeOfList.name,
             rchId = rchId ?: "Not Available",
             hrpStatus = hrpStatus,
-            form1Filled = false,
+            form1Filled = trackingDone,
+            form1Enabled = !trackingDone,
             form2Filled = hrptFilled,
             form2Enabled = hrptFilled,
             syncState = hrptSyncState
@@ -1162,7 +1164,7 @@ data class BenRegCache(
 //            lengthofMenstrualCycleId =  0,
 //            menstrualBFDId = 0,
 //            menstrualProblemId = 0,
-//            lastMenstrualPeriod = getDateTimeStringFromLong(genDetails?.lastMenstrualPeriod),
+            lastMenstrualPeriod = getDateTimeStringFromLong(genDetails?.lastMenstrualPeriod),
             /**
              * part of reproductive status id mapping on @since Aug 7
              */

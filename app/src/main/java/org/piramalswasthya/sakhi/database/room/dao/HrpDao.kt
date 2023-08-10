@@ -73,7 +73,7 @@ interface HrpDao {
     @Query("select * from HRP_PREGNANT_TRACK order by visitDate desc")
     fun getAllPregTrack() : List<HRPPregnantTrackCache>?
 
-    @Query("select * from HRP_PREGNANT_TRACK where benId = :benId order by visitDate desc")
+    @Query("select * from HRP_PREGNANT_TRACK where benId = :benId order by visit desc")
     fun getAllPregTrackforBen(benId: Long): List<HRPPregnantTrackCache>?
 
     @Query("select * from HRP_NON_PREGNANT_TRACK order by visitDate desc")
