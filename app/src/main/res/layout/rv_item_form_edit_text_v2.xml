@@ -57,6 +57,7 @@
             android:text="@string/tv_required_text_asterisk"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:textColor="@color/design_default_color_error"
+            android:paddingStart="@dimen/padding_small"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/til_edit_text"
             app:required="@{form.required}" />

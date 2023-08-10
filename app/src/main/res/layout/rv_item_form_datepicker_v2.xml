@@ -11,7 +11,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/padding_wide">
+        android:paddingVertical="@dimen/padding_normal">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_edit_text"
@@ -29,6 +29,7 @@
                 android:focusable="false"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_normal"
                 android:drawableEnd="@drawable/ic_calendar"
                 android:text="@{form.value}"
                 android:singleLine="true"

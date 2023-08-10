@@ -159,7 +159,7 @@ class BenListAdapterForForm(
 
             formButton.setTextColor(
                 binding.root.resources.getColor(
-                    R.color.seed,
+                    com.google.android.material.R.color.design_default_color_on_primary,
                     binding.root.context.theme
                 )
             )
