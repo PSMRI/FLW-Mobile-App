@@ -17,6 +17,7 @@ import org.piramalswasthya.sakhi.model.HRPPregnantTrackCache
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.HRPRepo
 import timber.log.Timber
+import kotlin.math.max
 
 @HiltViewModel
 class HRPPregnantTrackViewModel @javax.inject.Inject
@@ -101,10 +102,21 @@ constructor(
                 _recordExists.value = false
             }
 
+            val maxDovHrp = hrpReo.getMaxDoVHrp(benId)
+
+            val maxDovNonHrp = hrpReo.getMaxDoVNonHrp(benId)
+            val maxDov: Long? =
+                when {
+                    maxDovHrp != null && maxDovNonHrp != null -> max(maxDovHrp, maxDovNonHrp)
+                    maxDovHrp != null && maxDovNonHrp == null -> maxDovHrp
+                    maxDovHrp == null && maxDovNonHrp != null -> maxDovNonHrp
+                    else -> null
+                }
+
             dataset.setUpPage(
                 ben,
                 if (recordExists.value == true) hrpPregnantTrackCache else null,
-                hrpReo.getMaxDoVhrp(benId)
+                maxDov
             )
 
 

@@ -91,7 +91,7 @@ constructor(
                 ben,
                 if (recordExists.value == true) hrpNonPregnantTrackCache else null,
                 hrpReo.getMaxLmp(benId),
-                hrpReo.getMaxDoV(benId)
+                hrpReo.getMaxDoVNonHrp(benId)
             )
 
 

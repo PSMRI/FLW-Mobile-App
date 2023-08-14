@@ -72,7 +72,7 @@ enum class Gender {
             " hrppa.benId is not null as hrppaFilled, hrppa.syncState as hrppaSyncState," +
             " hrpnpa.benId is not null as hrpnpaFilled, hrpnpa.syncState as hrpnpaSyncState," +
             " hrpmbp.benId is not null as hrpmbpFilled, hrpmbp.syncState as hrpmbpSyncState," +
-            " hrpt.benId is not null as hrptFilled, (count(hrpt.benId) > 3) as trackingDone, hrpt.syncState as hrptSyncState," +
+            " hrpt.benId is not null as hrptFilled, (count(distinct hrpt.id) > 3) as trackingDone, hrpt.syncState as hrptSyncState," +
             " hrnpt.benId is not null as hrnptFilled, hrnpt.syncState as hrnptSyncState " +
             "from BENEFICIARY b " +
             "JOIN HOUSEHOLD h ON b.householdId = h.householdId " +

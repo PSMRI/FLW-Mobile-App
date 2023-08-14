@@ -33,9 +33,10 @@
                     android:layout_height="wrap_content">
                     <TextView
                         android:id="@+id/tv_title"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="8"
                         android:layout_height="wrap_content"
-                        android:text="@{form.title}"
+                        android:text="111111111111111111111111111111111111111asdasdasdasdsadasdsaddddddsas"
                         android:paddingVertical="@dimen/padding_small"
                         android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                         app:layout_constraintStart_toStartOf="parent"
@@ -44,7 +45,8 @@
 
                     <TextView
                         android:id="@+id/tv_nullable"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="0.5"
                         android:layout_height="wrap_content"
                         android:paddingStart="@dimen/padding_small"
                         android:text="@string/tv_required_text_asterisk"
@@ -54,7 +56,8 @@
 
                     <TextView
                         android:id="@+id/tv_ds"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="0.5"
                         android:layout_height="wrap_content"
                         android:text="@string/tv_required_text_asterisk"
                         android:textAppearance="@style/TextAppearance.AppCompat.Large"

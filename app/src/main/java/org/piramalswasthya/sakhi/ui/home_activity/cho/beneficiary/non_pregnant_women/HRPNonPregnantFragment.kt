@@ -1,7 +1,5 @@
 package org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.non_pregnant_women
 
-import org.piramalswasthya.sakhi.ui.home_activity.eligible_couple.EligibleCoupleViewModel
-
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +14,7 @@ import org.piramalswasthya.sakhi.adapters.IconGridAdapter
 import org.piramalswasthya.sakhi.configuration.IconDataset
 import org.piramalswasthya.sakhi.databinding.RvIconGridBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.home_activity.eligible_couple.EligibleCoupleViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.home.HomeViewModel
 import javax.inject.Inject
 

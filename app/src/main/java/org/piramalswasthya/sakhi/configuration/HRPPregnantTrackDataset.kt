@@ -9,7 +9,8 @@ import org.piramalswasthya.sakhi.model.HRPPregnantTrackCache
 import org.piramalswasthya.sakhi.model.InputType
 import java.util.concurrent.TimeUnit
 
-class HRPPregnantTrackDataset (context: Context, currentLanguage: Languages
+class HRPPregnantTrackDataset(
+    context: Context, currentLanguage: Languages
 ) : Dataset(context, currentLanguage) {
 
     private val rdPmsa = FormElement(
@@ -173,38 +174,47 @@ class HRPPregnantTrackDataset (context: Context, currentLanguage: Languages
                 rdPmsa.showHighRisk = rdPmsa.value == "Yes"
                 -1
             }
+
             severeAnemia.id -> {
                 severeAnemia.showHighRisk = severeAnemia.value == "Yes"
                 -1
             }
+
             pregInducedHypertension.id -> {
                 pregInducedHypertension.showHighRisk = pregInducedHypertension.value == "Yes"
                 -1
             }
+
             gestDiabetesMellitus.id -> {
                 gestDiabetesMellitus.showHighRisk = gestDiabetesMellitus.value == "Yes"
                 -1
             }
+
             hypothyrodism.id -> {
                 hypothyrodism.showHighRisk = hypothyrodism.value == "Yes"
                 -1
             }
+
             polyhydromnios.id -> {
                 polyhydromnios.showHighRisk = polyhydromnios.value == "Yes"
                 -1
             }
+
             oligohydromnios.id -> {
                 oligohydromnios.showHighRisk = oligohydromnios.value == "Yes"
                 -1
             }
+
             antepartumHem.id -> {
                 antepartumHem.showHighRisk = antepartumHem.value == "Yes"
                 -1
             }
+
             malPresentation.id -> {
                 malPresentation.showHighRisk = malPresentation.value == "Yes"
                 -1
             }
+
             hivsyph.id -> {
                 hivsyph.showHighRisk = hivsyph.value == "Yes"
                 -1

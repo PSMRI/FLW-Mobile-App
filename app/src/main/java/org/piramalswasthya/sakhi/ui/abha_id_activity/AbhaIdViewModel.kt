@@ -38,18 +38,9 @@ class AbhaIdViewModel @Inject constructor(
         get() = _errorMessage
 
     init {
+        generateAmritToken()
         generateAccessToken()
         generatePublicKey()
-        generateRefreshToken()
-    }
-
-    private fun generateRefreshToken() {
-        val user = prefDao.getLoggedInUser()
-        viewModelScope.launch {
-            user?.let {
-                userRepo.refreshTokenTmc(user.userName, user.password)
-            }
-        }
     }
 
     private var _accessToken: AbhaTokenResponse? = null
@@ -60,6 +51,20 @@ class AbhaIdViewModel @Inject constructor(
     private val authCert: String
         get() = _authCert!!
 
+
+    private fun generateAmritToken() {
+        val user = prefDao.getLoggedInUser()
+        viewModelScope.launch {
+            user?.let {
+                if (userRepo.refreshTokenTmc(user.userName, user.password)) {
+                    _state.value = State.LOADING_TOKEN
+                } else {
+                    _state.value = State.ERROR_SERVER
+                }
+            }
+        }
+    }
+
     fun generateAccessToken() {
         _state.value = State.LOADING_TOKEN
         viewModelScope.launch {
@@ -69,10 +74,12 @@ class AbhaIdViewModel @Inject constructor(
                     _state.value = State.SUCCESS
                     TokenInsertAbhaInterceptor.setToken(accessToken.accessToken)
                 }
+
                 is NetworkResult.Error -> {
                     _state.value = State.ERROR_SERVER
                     _errorMessage.value = result.message
                 }
+
                 is NetworkResult.NetworkError -> {
                     _state.value = State.ERROR_NETWORK
                 }
@@ -81,13 +88,14 @@ class AbhaIdViewModel @Inject constructor(
     }
 
     private fun generatePublicKey() {
-        var publicKey = prefDao.getPublicKeyForAbha()
+        val publicKey = prefDao.getPublicKeyForAbha()
         if (publicKey == null) {
             viewModelScope.launch {
                 when (val result = abhaIdRepo.getAuthCert()) {
                     is NetworkResult.Success -> {
                         prefDao.savePublicKeyForAbha(result.data)
                     }
+
                     is NetworkResult.Error -> {}
                     is NetworkResult.NetworkError -> {}
                 }

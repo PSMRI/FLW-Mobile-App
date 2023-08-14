@@ -203,6 +203,7 @@ class HRPNonPregnantTrackDataset(
                         lmp.min = it
                     }
                 }
+                lmp.max = getLongFromDate(dateOfVisit.value)
                 -1
             }
             else -> -1

@@ -25,6 +25,7 @@ import org.piramalswasthya.sakhi.network.TmcAuthUserRequest
 import org.piramalswasthya.sakhi.network.interceptors.TokenInsertTmcInterceptor
 import retrofit2.HttpException
 import timber.log.Timber
+import java.lang.Exception
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -482,6 +483,8 @@ class UserRepo @Inject constructor(
                 return@withContext refreshTokenTmc(userName, password)
             } catch (e: HttpException) {
                 Timber.d("Auth Failed!")
+                return@withContext false
+            } catch (e: Exception) {
                 return@withContext false
             }
 

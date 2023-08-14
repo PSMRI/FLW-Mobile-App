@@ -197,6 +197,8 @@ class HRPPregnantAssessDataset(
         ben?.genDetails?.lastMenstrualPeriod?.let {
             lmpDate.value = getDateFromLong(it)
             edd.value = getDateFromLong(it + TimeUnit.DAYS.toMillis(280))
+            lmpDate.isEnabled = false
+            edd.isEnabled = false
         }
         lmpDate.min = (System.currentTimeMillis() - TimeUnit.DAYS.toMillis(280))
         setUpPage(list)

@@ -24,7 +24,7 @@ constructor(
     savedStateHandle: SavedStateHandle,
     preferenceDao: PreferenceDao,
     @ApplicationContext context: Context,
-    private val hrpReo: HRPRepo,
+    private val hrpRepo: HRPRepo,
     private val benRepo: BenRepo
 ) : ViewModel() {
     val benId =
@@ -67,7 +67,7 @@ constructor(
                 )
             }
 
-            hrpReo.getPregnantAssess(benId)?.let {
+            hrpRepo.getPregnantAssess(benId)?.let {
                 hrpPregnantAssessCache = it
                 _recordExists.value = true
             } ?: run {
@@ -102,7 +102,7 @@ constructor(
 
                     dataset.mapValues(hrpPregnantAssessCache, 1)
                     hrpPregnantAssessCache.isHighRisk = isHighRisk()
-                    hrpReo.saveRecord(hrpPregnantAssessCache)
+                    hrpRepo.saveRecord(hrpPregnantAssessCache)
                     _state.postValue(State.SAVE_SUCCESS)
                 } catch (e: Exception) {
                     Timber.d("saving PWR data failed!!")

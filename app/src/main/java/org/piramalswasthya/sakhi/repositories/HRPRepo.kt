@@ -133,13 +133,13 @@ class HRPRepo @Inject constructor(
         }
     }
 
-    suspend fun getMaxDoV(benId: Long): Long? {
+    suspend fun getMaxDoVNonHrp(benId: Long): Long? {
         return withContext(Dispatchers.IO) {
             database.hrpDao.getMaxDoV(benId)
         }
     }
 
-    suspend fun getMaxDoVhrp(benId: Long): Long? {
+    suspend fun getMaxDoVHrp(benId: Long): Long? {
         return withContext(Dispatchers.IO) {
             database.hrpDao.getMaxDoVhrp(benId)
         }
