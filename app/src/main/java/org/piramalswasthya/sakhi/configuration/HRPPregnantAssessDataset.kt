@@ -207,46 +207,29 @@ class HRPPregnantAssessDataset(
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
         return when (formId) {
             noOfDeliveries.id, timeLessThan18m.id -> {
-                if (noOfDeliveries.value.contentEquals("Yes") ||
-                    timeLessThan18m.value.contentEquals("Yes")
-                ) {
-                    childInfoLabel.showHighRisk = true
-                    handleListOnValueChanged(childInfoLabel.id, 0)
-                } else {
-                    childInfoLabel.showHighRisk = false
-                    handleListOnValueChanged(childInfoLabel.id, 0)
-                }
+                childInfoLabel.showHighRisk = noOfDeliveries.value.contentEquals("Yes") ||
+                        timeLessThan18m.value.contentEquals("Yes")
+                -1
             }
 
             heightShort.id, age.id -> {
-                if (heightShort.value.contentEquals("Yes") ||
-                    age.value.contentEquals("Yes")
-                ) {
-                    physicalObservationLabel.showHighRisk = true
-                    handleListOnValueChanged(physicalObservationLabel.id, 0)
-                } else {
-                    physicalObservationLabel.showHighRisk = false
-                    handleListOnValueChanged(physicalObservationLabel.id, 0)
-                }
+                physicalObservationLabel.showHighRisk = heightShort.value.contentEquals("Yes") ||
+                        age.value.contentEquals("Yes")
+                -1
             }
 
             rhNegative.id, homeDelivery.id, badObstetric.id, multiplePregnancy.id -> {
-                if (rhNegative.value.contentEquals("Yes") ||
-                    homeDelivery.value.contentEquals("Yes") ||
-                    badObstetric.value.contentEquals("Yes") ||
-                    multiplePregnancy.value.contentEquals("Yes")
-                ) {
-                    obstetricHistoryLabel.showHighRisk = true
-                    handleListOnValueChanged(obstetricHistoryLabel.id, 0)
-                } else {
-                    obstetricHistoryLabel.showHighRisk = false
-                    handleListOnValueChanged(obstetricHistoryLabel.id, 0)
-                }
+                obstetricHistoryLabel.showHighRisk = rhNegative.value.contentEquals("Yes") ||
+                        homeDelivery.value.contentEquals("Yes") ||
+                        badObstetric.value.contentEquals("Yes") ||
+                        multiplePregnancy.value.contentEquals("Yes")
+                -1
             }
 
             lmpDate.id -> {
                 edd.value =
                     getDateFromLong(getLongFromDate(lmpDate.value) + TimeUnit.DAYS.toMillis(280))
+                validateEmptyOnEditText(edd)
                 -1
             }
             else -> -1

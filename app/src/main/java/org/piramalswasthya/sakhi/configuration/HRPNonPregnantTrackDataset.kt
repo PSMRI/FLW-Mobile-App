@@ -172,8 +172,10 @@ class HRPNonPregnantTrackDataset(
 //                if (cal.timeInMillis > it.regDate) {
 //                    dateOfVisit.min = cal.timeInMillis
 //                }
-                if (dov > it.regDate - TimeUnit.DAYS.toMillis(60))  dateOfVisit.min = dov
+                if (dov > it.regDate - TimeUnit.DAYS.toMillis(60))
+                    dateOfVisit.min = dov + TimeUnit.DAYS.toMillis(1)
             }
+            dateOfVisit.max = System.currentTimeMillis()
         }
 
         setUpPage(list)
@@ -203,6 +205,7 @@ class HRPNonPregnantTrackDataset(
                         lmp.min = it
                     }
                 }
+                lmp.value = null
                 lmp.max = getLongFromDate(dateOfVisit.value)
                 -1
             }
