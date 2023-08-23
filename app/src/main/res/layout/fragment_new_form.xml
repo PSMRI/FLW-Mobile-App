@@ -84,7 +84,7 @@
             app:backgroundTint="?attr/colorPrimary"
             android:layout_marginEnd="@dimen/padding_wide"
             android:layout_marginBottom="@dimen/padding_wide"
-            android:contentDescription="EDIT" />
+            android:contentDescription="@string/edit" />
 
 
     </LinearLayout>

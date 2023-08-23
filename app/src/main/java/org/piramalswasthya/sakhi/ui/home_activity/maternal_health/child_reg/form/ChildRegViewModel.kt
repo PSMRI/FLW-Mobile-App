@@ -11,25 +11,23 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.piramalswasthya.sakhi.configuration.InfantRegistrationDataset
-import org.piramalswasthya.sakhi.database.room.SyncState
+import org.piramalswasthya.sakhi.configuration.ChildRegistrationDataset
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
-import org.piramalswasthya.sakhi.model.InfantRegCache
 import org.piramalswasthya.sakhi.repositories.BenRepo
-import org.piramalswasthya.sakhi.repositories.InfantRegRepo
+import org.piramalswasthya.sakhi.repositories.ChildRegRepo
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class ChildRegViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    preferenceDao: PreferenceDao,
+    private val preferenceDao: PreferenceDao,
     @ApplicationContext context: Context,
-    private val infantRegRepo: InfantRegRepo,
+    private val childRegRepo: ChildRegRepo,
     private val benRepo: BenRepo
 ) : ViewModel() {
-    val benId = 0L
-//        ChildRegFragmentArgs.fromSavedStateHandle(savedStateHandle).benId
+    val motherBenId =
+        ChildRegFragmentArgs.fromSavedStateHandle(savedStateHandle).motherBenId
 
     enum class State {
         IDLE, SAVING, SAVE_SUCCESS, SAVE_FAILED
@@ -39,46 +37,24 @@ class ChildRegViewModel @Inject constructor(
     val state: LiveData<State>
         get() = _state
 
-    private val _benName = MutableLiveData<String>()
-    val benName: LiveData<String>
-        get() = _benName
-    private val _benAgeGender = MutableLiveData<String>()
-    val benAgeGender: LiveData<String>
-        get() = _benAgeGender
-
-    private val _recordExists = MutableLiveData<Boolean>()
+    private val _recordExists = MutableLiveData(false)
     val recordExists: LiveData<Boolean>
         get() = _recordExists
 
     private val dataset =
-        InfantRegistrationDataset(context, preferenceDao.getCurrentLanguage())
+        ChildRegistrationDataset(context, preferenceDao.getCurrentLanguage())
     val formList = dataset.listFlow
-
-    private lateinit var infantReg: InfantRegCache
 
     init {
         viewModelScope.launch {
-            val ben = benRepo.getBenFromId(benId)?.also { ben ->
-                _benName.value =
-                    "${ben.firstName} ${if (ben.lastName == null) "" else ben.lastName}"
-                _benAgeGender.value = "${ben.age} ${ben.ageUnit?.name} | ${ben.gender?.name}"
-                infantReg = InfantRegCache(
-                    motherBenId = ben.beneficiaryId,
-                    syncState = SyncState.UNSYNCED
-                )
-            }
-
-            infantRegRepo.getInfantReg(benId)?.let {
-                infantReg = it
-                _recordExists.value = true
-            } ?: run {
-                _recordExists.value = false
-            }
-
-//            dataset.setUpPage(
-//                ben,
-//                if (recordExists.value == true) infantReg else null
-//            )
+            val ben = benRepo.getBenFromId(motherBenId)
+            val deliveryOutcome = childRegRepo.getDeliveryOutcomeRepoFromMotherBenId(motherBenId = motherBenId)
+            val infantReg = childRegRepo.getInfantRegFromMotherBenId(motherBenId = motherBenId)
+            dataset.setUpPage(
+                motherBen = ben,
+                deliveryOutcomeCache = deliveryOutcome,
+                infantRegCache = infantReg,
+            )
 
         }
     }
@@ -95,11 +71,16 @@ class ChildRegViewModel @Inject constructor(
             withContext(Dispatchers.IO) {
                 try {
                     _state.postValue(State.SAVING)
-                    dataset.mapValues(infantReg, 1)
-                    infantRegRepo.saveInfantReg(infantReg)
+                    val motherBen = benRepo.getBenFromId(motherBenId)!!
+                    val childBen = dataset.mapAsBeneficiary(motherBen,preferenceDao.getLoggedInUser()!!, preferenceDao.getLocationRecord()!!)
+                    benRepo.substituteBenIdForDraft(childBen)
+                    benRepo.persistRecord(childBen)
+
+//                    dataset.mapValues(motherBenId, 1)
+//                    childRegRepo.saveChildReg(child)
                     _state.postValue(State.SAVE_SUCCESS)
                 } catch (e: Exception) {
-                    Timber.d("saving infant registration data failed!!")
+                    Timber.d("saving child registration data failed!!")
                     _state.postValue(State.SAVE_FAILED)
                 }
             }

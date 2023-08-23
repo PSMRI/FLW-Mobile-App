@@ -7,6 +7,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.Relation
 import org.piramalswasthya.sakhi.configuration.FormDataModel
+import org.piramalswasthya.sakhi.database.room.SyncState
 
 
 @Entity(
@@ -40,7 +41,8 @@ data class ChildRegCache(
     var opv0Dose: Long? = System.currentTimeMillis(),
     var bcgDose: Long? = System.currentTimeMillis(),
     var hepBDose: Long? = System.currentTimeMillis(),
-    var vitkDose: Long? = System.currentTimeMillis()
+    var vitkDose: Long? = System.currentTimeMillis(),
+    var syncState: SyncState
 ) : FormDataModel
 
 data class BenWithChildRegCache(

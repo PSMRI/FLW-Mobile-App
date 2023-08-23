@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="other_mobile_number_of_kid">"বাচৰ অন্য ম'বাইল নম্বৰ</string>
+    <!--    <string name="home_icon_title_child_care">Child Care</string>-->
+    <string name="child_care_icon_title_child_list">শিশুৰ তালিকা</string>
+    <string name="child_care_icon_title_infant_list">শিশুৰ তালিকা</string>
+    <string name="child_care_icon_title_adolescent_list">কিশোৰীৰ তালিকা</string>
+    <string name="nbr_child_awc">বাচৰ নিবন্ধন এটি AWC-ত কৰা হৈছে নেকি</string>
+    <string name="nbr_child_reg_school">বাচৰ নিবন্ধন এটি স্কুলত কৰা হৈছে নেকি</string>
+    <string name="nbr_child_type_school">শিক্ষালয়/প্ৰতিষ্ঠানৰ প্ৰকাৰ</string>
+    <string name="nbr_child_pob">জন্মৰ স্থান</string>
+    <string name="nbr_child_facility">স্বাস্থ্য সুবিধা</string>
+    <string name="nbr_child_pob_other_facility">অন্য সুবিধা</string>
+    <string name="nbr_child_pob_other">অন্য জন্মৰ স্থান</string>
+    <string name="nbr_child_who_cond_del">কায় জনৰ পৰিপৰ্যায় জনন কৰি হৈছে</string>
+    <string name="nbr_child_who_cond_del_other">অন্য - কায় জনৰ পৰিপৰ্যায় জনন কৰা হৈছে</string>
+    <string name="nbr_child_type_del">জননৰ প্ৰকাৰ</string>
+    <string name="nbr_child_comp_del">জননসময় সমস্যা</string>
+    <string name="nbr_child_feed_1_hr">জন্মৰ 1 ঘণ্টাত ব্ৰেষ্ট ফীডিং আৰম্ভ কৰা হৈছে নেকি</string>
+    <string name="nbr_child_birth_dose">জন্ম ডোচ</string>
+    <string name="nbr_child_birth_dose_details">জন্ম ডোচৰ বিবৰণ</string>
+    <string name="nbr_child_term">শাবলী</string>
+    <string name="nbr_child_gest_age">গৰ্ভাশয়ৰ বয়</string>
+    <string name="nbr_child_corticosteroid">জননসময় মাৰ্যাদিত কাৰ্টিক’ষ্টেৰোইড দেওৱা হৈছে নেকি</string>
+    <string name="nbr_child_cry_imm_birth">শিশুৰ জন্মত তলত কোৱা হৈছে নেকি</string>
+    <string name="nbr_child_defect_at_birth">জন্মৰ সময় কোনো দোষ দৃষ্টি যোৱা হৈছে নেকি</string>
+    <string name="child_immunization_list">শিশুৰ প্ৰতিৰক্ষণ তালিকা</string>
+    <string name="child_reg_list">শিশুৰ নিবন্ধন তালিকা</string>
+    <string name="child_reg">শিশুৰ নিবন্ধন</string>
+    <string name="weight_at_birth_kg">জন্মত মান ( কেজি )</string>
+    <string name="height_at_birth_cm">জন্মত উচ্চতা ( সেমি )</string>
+    <string name="mother_of_the_child">শিশুৰ মা</string>
+    <string name="mother_unselected">মা নিৰ্বাচিত হোৱা হৈছে</string>
+    <string name="birth_details">জন্মৰ বিবৰণ</string>
+    <string name="nbr_rel_to_head">পাৰিৱাৰ প্ৰধানলৈ সম্পৰ্ক</string>
+    <string name="nbr_rel_to_head_other">অন্য - পাৰিৱাৰ প্ৰধানলৈ সম্পৰ্ক লিখক</string>
+    <string name="nbr_community">সমাজ</string>
+    <string name="nbr_religion">ধৰ্ম</string>
+    <string name="nbr_religion_other">অন্য - ধৰ্ম লিখক</string>
+    <string name="nbr_rch_id">RCH ID</string>
+    <string name="nbr_father_name">পিতৃৰ নাম</string>
+    <string name="nbr_mother_name">মাতৃৰ নাম</string>
+    <string name="nbr_mobile_number_of">ৰ মোবাইল নম্বৰ</string>
+    <string name="nrb_contact_number">যোগাযোগ নম্বৰ</string>
+    <string name="nbr_nb_age_unit">বয়স একক</string>
+
+    <string-array name="nbr_age_unit_array">
+        <item name="nbr_age_unit_1">দিন</item>
+        <item name="nbr_age_unit_2">মাহ</item>
+        <item name="nbr_age_unit_3">বছৰ</item>
+    </string-array>
+    <string-array name="school_type_array">
+        <item>আঙ্গনৱাড়ী</item>
+        <item>প্ৰাথমিক</item>
+        <item>মাধ্যমিক</item>
+        <item>ব্যক্তিগত</item>
+    </string-array>
+
+    <string-array name="place_of_birth">
+        <item>ঘৰ</item>
+        <item>স্বাস্থ্য সুবিধা</item>
+        <item>অন্য কোনো স্থান</item>
+    </string-array>
+
+    <string-array name="facility_place">
+        <item>উপ কেন্দ্ৰ</item>
+        <item>PHC</item>
+        <item>CHC</item>
+        <item>উপ জিলা চিকিৎসালয়</item>
+        <item>জিলা চিকিৎসালয়</item>
+        <item>মেডিকেল কলেজ চিকিৎসালয়</item>
+        <item>মৰণৰ পৰা হেৰুৱালীলৈ</item>
+        <item>ব্যক্তিগত চিকিৎসালয়</item>
+    </string-array>
+
+    <string-array name="delivery_conducted">
+        <item>ANM</item>
+        <item>LHV</item>
+        <item>ডাক্তাৰ</item>
+        <item>ষ্টাফ নarse</item>
+        <item>আত্মীয়</item>
+        <item>TBA(অস্কিলড জন্ম উপস্থাপনকৰ্তা)</item>
+        <item>অন্য</item>
+    </string-array>
+
+
+    <string-array name="type_of_delivery">
+        <item>স্বাভাবিক জনন</item>
+        <item>C - ছেচন</item>
+        <item>সহাৱিত জনন</item>
+    </string-array>
+
+    <string-array name="defects">
+        <item>ক্ষণিৰ ঠোঁট / মোতৰ ঠোঁট</item>
+        <item>নিউৰেল টিউব দোষ (স্পাইনেল বিফিডা)</item>
+        <item>ক্লাব ফুট</item>
+        <item>হাইড্রচেফালাছ</item>
+        <item>অমূক নল</item>
+        <item>"ডাউন'ছ সিণ্ড্ৰোম</item>
+        <item>সমস্থ নহয়</item>
+    </string-array>
+
+    <string-array name="gest_age">
+        <item>24-34 সপ্তাহ</item>
+        <item>34-36 সপ্তাহ</item>
+        <item>36-38 সপ্তাহ</item>
+    </string-array>
+
+    <string-array name="term_array">
+        <item>পূৰ্ণ-সময়ী</item>
+        <item>পূৰ্ব-সময়ী</item>
+        <item>জানোৱা নাই</item>
+    </string-array>
+
+    <string-array name="complications_array">
+        <item>PPH (পোষ্ট পাৰ্টাম হেমৰেজ)</item>
+        <item>বাঁচন মাখৰী থকা</item>
+        <item>অবস্থিত জনন</item>
+        <item>পৰিভ্ৰমণ তুৰী</item>
+        <item>মৰণ</item>
+        <item>নাই</item>
+    </string-array>
+
+    <string-array name="given_array">
+        <item>দিয়া হৈছে</item>
+        <item>নদিয়া হৈনে</item>
+        <item>জানোৱা নাই</item>
+    </string-array>
+
+    <string-array name="birth_doses">
+        <item>BCG</item>
+        <item>হেপাটাইটিছ</item>
+        <item>OPV</item>
+    </string-array>
+</resources>

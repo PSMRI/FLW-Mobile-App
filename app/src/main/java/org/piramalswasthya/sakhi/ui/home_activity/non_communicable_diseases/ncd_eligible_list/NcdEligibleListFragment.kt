@@ -50,7 +50,7 @@ class NcdEligibleListFragment : Fragment() {
                         Timber.d("ClickListener Triggered!")
                         viewModel.setSelectedBenId(it)
                         if (!bottomSheet.isVisible)
-                            bottomSheet.show(childFragmentManager, "CBAC")
+                            bottomSheet.show(childFragmentManager, resources.getString(R.string.cbac))
                     },
                     clickedNew = {
                         findNavController().navigate(

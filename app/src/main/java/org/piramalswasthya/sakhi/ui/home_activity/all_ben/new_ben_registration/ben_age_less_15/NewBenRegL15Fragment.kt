@@ -23,6 +23,7 @@ import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.BuildConfig
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.databinding.FragmentInputFormPageHhBinding
@@ -87,14 +88,14 @@ class NewBenRegL15Fragment : Fragment() {
         val alertDialog: AlertDialog.Builder = AlertDialog.Builder(requireContext())
 
         // Setting Dialog Title
-        alertDialog.setTitle("Enable GPS")
+        alertDialog.setTitle(resources.getString(R.string.enable_gps))
 
         // Setting Dialog Message
-        alertDialog.setMessage("GPS is not enabled. Do you want to go to settings menu?")
+        alertDialog.setMessage(resources.getString(R.string.gps_is_not_enabled_do_you_want_to_go_to_settings_menu))
 
         // On pressing Settings button
         alertDialog.setPositiveButton(
-            "Settings"
+            resources.getString(R.string.settings)
         ) { _, _ ->
             val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
             startActivity(intent)
@@ -102,7 +103,7 @@ class NewBenRegL15Fragment : Fragment() {
 
         // on pressing cancel button
         alertDialog.setNegativeButton(
-            "Cancel"
+            resources.getString(R.string.cancel)
         ) { dialog, _ ->
             findNavController().navigateUp()
             dialog.cancel()
@@ -161,8 +162,8 @@ class NewBenRegL15Fragment : Fragment() {
         lifecycleScope.launch {
             viewModel.currentPage.collect {
                 binding.tvTitle.text = when (it) {
-                    1 -> "Beneficiary Details"
-                    2 -> "Birth Details"
+                    1 -> getString(R.string.beneficiary_details)
+                    2 -> getString(R.string.birth_details)
                     else -> null
                 }
 //                binding.tlNhhr.selectTab(binding.tlNhhr.getTabAt(it - 1), true)
@@ -261,7 +262,7 @@ class NewBenRegL15Fragment : Fragment() {
                 State.SAVE_SUCCESS -> {
                     binding.clContent.visibility = View.VISIBLE
                     binding.rlSaving.visibility = View.GONE
-                    Toast.makeText(context, "Save Successful!!!", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, resources.getString(R.string.save_successful), Toast.LENGTH_LONG).show()
                     WorkerUtils.triggerAmritPushWorker(requireContext())
 
 //                    when (viewModel.getNavPath()) {
@@ -281,7 +282,7 @@ class NewBenRegL15Fragment : Fragment() {
 
                 State.SAVE_FAILED -> {
                     Toast.makeText(
-                        context, "Something wend wong! Contact testing!", Toast.LENGTH_LONG
+                        context, resources.getString(R.string.something_wend_wong_contact_testing), Toast.LENGTH_LONG
                     ).show()
                     binding.clContent.visibility = View.VISIBLE
                     binding.rlSaving.visibility = View.GONE

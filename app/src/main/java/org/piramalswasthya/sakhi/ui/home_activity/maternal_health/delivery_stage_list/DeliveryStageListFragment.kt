@@ -54,7 +54,7 @@ class DeliveryStageListFragment : Fragment() {
                         hhId
                     )
                 )
-            }), "PMSMA Form")
+            }), resources.getString(R.string.pmsma_form))
         binding.rvAny.adapter = benAdapter
 
         lifecycleScope.launch {

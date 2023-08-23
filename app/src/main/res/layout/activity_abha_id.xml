@@ -27,7 +27,7 @@
                 android:textColor="?attr/colorOnPrimary"
                 android:layout_gravity="end"
                 android:paddingHorizontal="@dimen/padding_normal"
-                android:text="timer" />
+                android:text= "@string/timer" />
         </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -76,7 +76,8 @@
             app:layout_constraintBottom_toTopOf="@+id/textView5"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toEndOf="@+id/textView5"
-            app:layout_constraintStart_toStartOf="@+id/textView5" />
+            app:layout_constraintStart_toStartOf="@+id/textView5"
+            android:contentDescription="@string/offline" />
 
         <TextView
             android:id="@+id/textView5"
@@ -84,7 +85,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:padding="@dimen/padding_normal"
-            android:text="Something went wrong !\nUnable to connect to server !\nTry again later!"
+            android:text="@string/something_went_wrong_nunable_to_connect_to_server_ntry_again_later"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -100,7 +101,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_normal"
             android:padding="@dimen/padding_normal"
-            android:text="Try Again!"
+            android:text="@string/try_again"
             android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

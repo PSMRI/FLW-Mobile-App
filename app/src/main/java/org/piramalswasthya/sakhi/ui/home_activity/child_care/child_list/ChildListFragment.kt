@@ -60,7 +60,7 @@ class ChildListFragment : Fragment() {
                             benId = benId
                         )
                     )
-                }), "HBYC Form")
+                }), resources.getString(R.string.hbyc_form))
         binding.rvAny.adapter = benAdapter
 
         lifecycleScope.launch {

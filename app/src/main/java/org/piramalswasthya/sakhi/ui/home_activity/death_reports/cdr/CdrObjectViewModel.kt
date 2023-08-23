@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.ui.home_activity.death_reports.cdr
 
 import android.app.Application
+import android.content.res.Configuration
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -10,6 +11,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapterOld
 import org.piramalswasthya.sakhi.configuration.CDRFormDataset
 import org.piramalswasthya.sakhi.database.room.InAppDb
@@ -42,6 +44,12 @@ class CdrObjectViewModel @Inject constructor(
         LOADING,
         SUCCESS,
         FAIL
+    }
+
+    private val resources by lazy {
+        val configuration = Configuration(context.resources.configuration)
+        configuration.setLocale(Locale(preferenceDao.getCurrentLanguage().symbol))
+        context.createConfigurationContext(configuration).resources
     }
 
     private val benId = CdrObjectFragmentArgs.fromSavedStateHandle(state).benId
@@ -162,10 +170,10 @@ class CdrObjectViewModel @Inject constructor(
         dataset.address.value.value = it
         dataset.childName.value.value = ben.firstName
         dataset.gender.value.value = when (ben.gender){
-            Gender.MALE -> "Male"
-            Gender.FEMALE -> "Female"
-            Gender.TRANSGENDER -> "Transgender"
-            else -> "Other"
+            Gender.MALE -> resources.getString(R.string.male)
+            Gender.FEMALE -> resources.getString(R.string.female)
+            Gender.TRANSGENDER -> resources.getString(R.string.transgender)
+            else -> resources.getString(R.string.other)
         }
         dataset.age.value.value = "${ben.age} ${ben.ageUnit?.name}"
         dataset.dateOfBirth.value.value = getDateFromLong(ben.dob)

@@ -80,12 +80,20 @@ object WorkerUtils {
         val pushTBWorkRequest = OneTimeWorkRequestBuilder<PushTBToAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
+        val pushECToAmritWorker = OneTimeWorkRequestBuilder<PushECToAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pushPWWorkRequest = OneTimeWorkRequestBuilder<PushPWRToAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
         val workManager = WorkManager.getInstance(context)
         workManager
             .beginUniqueWork(syncWorkerUniqueName, ExistingWorkPolicy.APPEND_OR_REPLACE, pushWorkRequest)
 //            .then(pushCbacWorkRequest)
             .then(pushHRPToAmritWorker)
 //            .then(pushTBWorkRequest)
+            .then(pushECToAmritWorker)
+            .then(pushPWWorkRequest)
             .enqueue()
     }
     fun triggerAmritPullWorker(context : Context){
@@ -101,6 +109,12 @@ object WorkerUtils {
         val pullTBWorkRequest = OneTimeWorkRequestBuilder<PullTBFromAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
+        val pullECWorkRequest = OneTimeWorkRequestBuilder<PullECFromAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pullPWWorkRequest = OneTimeWorkRequestBuilder<PullPWRFromAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
         val setSyncCompleteWorker = OneTimeWorkRequestBuilder<UpdatePrefForPullCompleteWorker>()
             .build()
         val workManager = WorkManager.getInstance(context)
@@ -109,6 +123,8 @@ object WorkerUtils {
 //            .then(pullCbacWorkRequest)
             .then(pullHRPWorkRequest)
 //            .then(pullTBWorkRequest)
+            .then(pullECWorkRequest)
+            .then(pullPWWorkRequest)
             .then(setSyncCompleteWorker)
             .enqueue()
     }
@@ -143,6 +159,17 @@ object WorkerUtils {
         WorkManager.getInstance(context)
             .enqueueUniqueWork(
                 CbacPushToAmritWorker.name,
+                ExistingWorkPolicy.APPEND_OR_REPLACE,
+                workRequest
+            )
+    }
+    fun triggerECPushWorker(context: Context){
+        val workRequest = OneTimeWorkRequestBuilder<PushECToAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        WorkManager.getInstance(context)
+            .enqueueUniqueWork(
+                PushECToAmritWorker.name,
                 ExistingWorkPolicy.APPEND_OR_REPLACE,
                 workRequest
             )

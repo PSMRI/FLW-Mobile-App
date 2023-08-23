@@ -34,14 +34,14 @@ class AllHouseholdFragment : Fragment() {
 
     private val draftLoadAlert by lazy {
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Incomplete form found")
-            .setMessage("Do you want to continue with previous form, or create a new form and discard the previous form?")
-            .setPositiveButton("OPEN DRAFT"){
+            .setTitle(resources.getString(R.string.incomplete_form_found))
+            .setMessage(resources.getString(R.string.do_you_want_to_continue_with_previous_form_or_create_a_new_form_and_discard_the_previous_form))
+            .setPositiveButton(resources.getString(R.string.open_draft)){
                     dialog,_->
                 viewModel.navigateToNewHouseholdRegistration(false)
                 dialog.dismiss()
             }
-            .setNegativeButton("CREATE NEW"){
+            .setNegativeButton(resources.getString(R.string.create_new)){
                     dialog,_->
                 viewModel.navigateToNewHouseholdRegistration(true)
                 dialog.dismiss()
@@ -68,8 +68,8 @@ class AllHouseholdFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.btnNextPage.text = getString(R.string.btn_text_frag_home_nhhr)
-        binding.tvEmptyContent.text = getString(R.string.no_records_found_hh)
+        binding.btnNextPage.text = resources.getString(R.string.btn_text_frag_home_nhhr)
+        binding.tvEmptyContent.text = resources.getString(R.string.no_records_found_hh)
         val householdAdapter = HouseHoldListAdapter(HouseHoldListAdapter.HouseholdClickListener(
             {
             findNavController().navigate(AllHouseholdFragmentDirections.actionAllHouseholdFragmentToNewHouseholdFragment(it))

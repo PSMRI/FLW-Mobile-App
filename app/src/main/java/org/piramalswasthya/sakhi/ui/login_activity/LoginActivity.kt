@@ -47,10 +47,10 @@ class LoginActivity : AppCompatActivity() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = getString(R.string.notification_sync_channel_name)
-            val descriptionText = getString(R.string.notification_sync_channel_description)
+            val name = resources.getString(R.string.notification_sync_channel_name)
+            val descriptionText = resources.getString(R.string.notification_sync_channel_description)
             val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel(getString(R.string.notification_sync_channel_id), name, importance).apply {
+            val channel = NotificationChannel(resources.getString(R.string.notification_sync_channel_id), name, importance).apply {
                 description = descriptionText
             }
             // Register the channel with the system

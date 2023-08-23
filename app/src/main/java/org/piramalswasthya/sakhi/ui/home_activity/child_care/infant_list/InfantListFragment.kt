@@ -54,7 +54,7 @@ class InfantListFragment : Fragment() {
                             benId = benId
                         )
                     )
-                }), "HBNC Form")
+                }), resources.getString(R.string.hbnc_form))
         binding.rvAny.adapter = benAdapter
 
         lifecycleScope.launch {

@@ -35,12 +35,12 @@ class HomeFragment : Fragment() {
 
     private val exitAlert by lazy {
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Exit Application")
-            .setMessage("Do you want to exit application")
-            .setPositiveButton("Yes") { _, _ ->
+            .setTitle(resources.getString(R.string.exit_application))
+            .setMessage(resources.getString(R.string.do_you_want_to_exit_application))
+            .setPositiveButton(resources.getString(R.string.yes)) { _, _ ->
                 activity?.finish()
             }
-            .setNegativeButton("No") { d, _ ->
+            .setNegativeButton(resources.getString(R.string.no)) { d, _ ->
                 d.dismiss()
             }
             .create()
@@ -116,7 +116,7 @@ class HomeFragment : Fragment() {
                             val currentPage = progressData.getInt(PullFromAmritWorker.Progress, 0)
                             val totalPage = progressData.getInt(PullFromAmritWorker.NumPages, 0)
                             binding.llFullLoadProgress.visibility = View.VISIBLE
-                            binding.tvLoadProgress.text = "Downloading ..."
+                            binding.tvLoadProgress.text = resources.getString(R.string.downloading)
 
                             if (totalPage > 0) {
                                 if (binding.pbLoadProgress.isIndeterminate) {

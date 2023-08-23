@@ -53,7 +53,7 @@ class PncMotherListFragment : Fragment() {
 //                        benId
 //                    )
 //                )
-            }), "PMJAY Form")
+            }), resources.getString(R.string.pmjay_form))
         binding.rvAny.adapter = benAdapter
 
         lifecycleScope.launch {

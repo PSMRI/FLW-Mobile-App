@@ -80,29 +80,7 @@
                 android:layout_height="wrap_content"
                 android:indeterminate="true" />
 
-
         </LinearLayout>
-
-        <!--        <include android:id="@+id/rv_home_icon"-->
-<!--            layout="@layout/rv_icon_grid"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="0dp"-->
-<!--            app:layout_constraintTop_toBottomOf="@id/vp2_home"-->
-<!--            app:layout_constraintBottom_toBottomOf="parent"-->
-<!--            />-->
-
-      <!--  <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_nhhr"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/btn_text_frag_home_nhhr"
-            android:textColor="?attr/colorOnPrimary"
-            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-            android:padding="@dimen/padding_wide"
-            android:backgroundTint="?attr/colorPrimary"
-            android:backgroundTintMode="src_in"
-            android:layout_marginBottom="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"/>-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

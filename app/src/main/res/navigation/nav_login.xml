@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/signInFragment"
         android:name="org.piramalswasthya.sakhi.ui.login_activity.sign_in.SignInFragment"
-        android:label="fragment_sign_in"
+        android:label="@string/sign_in"
         tools:layout="@layout/fragment_sign_in" >
         <action
             android:id="@+id/action_signInFragment_to_homeActivity"
@@ -20,7 +20,7 @@
     <activity
         android:id="@+id/homeActivity"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.HomeActivity"
-        android:label="activity_home_content"
+        android:label="@string/home"
         tools:layout="@layout/activity_home_content" />
     <activity
         android:id="@+id/serviceLocationActivity"

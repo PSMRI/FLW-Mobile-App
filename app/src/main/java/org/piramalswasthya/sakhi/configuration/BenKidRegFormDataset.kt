@@ -55,8 +55,8 @@ class BenKidRegFormDataset(context: Context, language: Languages) : Dataset(cont
     private val pic = FormElement(
         id = 1,
         inputType = IMAGE_VIEW,
-        title = context.getString(R.string.nbr_image),
-        subtitle = context.getString(R.string.nbr_image_sub),
+        title = resources.getString(R.string.nbr_image),
+        subtitle = resources.getString(R.string.nbr_image_sub),
         arrayId = -1,
         required = false
     )
@@ -64,7 +64,7 @@ class BenKidRegFormDataset(context: Context, language: Languages) : Dataset(cont
     private val dateOfReg = FormElement(
         id = 2,
         inputType = DATE_PICKER,
-        title = context.getString(R.string.nbr_dor),
+        title = resources.getString(R.string.nbr_dor),
         arrayId = -1,
         required = true,
         min = getMinDateOfReg(),
@@ -73,7 +73,7 @@ class BenKidRegFormDataset(context: Context, language: Languages) : Dataset(cont
     private val firstName = FormElement(
         id = 3,
         inputType = EDIT_TEXT,
-        title = context.getString(R.string.nbr_nb_first_name),
+        title = resources.getString(R.string.nbr_nb_first_name),
         arrayId = -1,
         required = true,
         allCaps = true,
@@ -83,7 +83,7 @@ class BenKidRegFormDataset(context: Context, language: Languages) : Dataset(cont
     private val lastName = FormElement(
         id = 4,
         inputType = EDIT_TEXT,
-        title = context.getString(R.string.nbr_nb_last_name),
+        title = resources.getString(R.string.nbr_nb_last_name),
         arrayId = -1,
         required = true,
         allCaps = true,
@@ -93,7 +93,7 @@ class BenKidRegFormDataset(context: Context, language: Languages) : Dataset(cont
     val ageUnit = FormElement(
         id = 5,
         inputType = DROPDOWN,
-        title = context.getString(R.string.nbr_nb_age_unit),
+        title = resources.getString(R.string.nbr_nb_age_unit),
         arrayId = -1,
         entries = resources.getStringArray(R.array.nbr_age_unit_array),
         required = true,
@@ -102,7 +102,7 @@ class BenKidRegFormDataset(context: Context, language: Languages) : Dataset(cont
     val age = FormElement(
         id = 7,
         inputType = EDIT_TEXT,
-        title = context.getString(R.string.nbr_age),
+        title = resources.getString(R.string.nbr_age),
         arrayId = -1,
         required = true,
         hasDependants = true,
@@ -114,7 +114,7 @@ class BenKidRegFormDataset(context: Context, language: Languages) : Dataset(cont
     val dob = FormElement(
         id = 8,
         inputType = DATE_PICKER,
-        title = context.getString(R.string.nbr_dob),
+        title = resources.getString(R.string.nbr_dob),
         arrayId = -1,
         required = true,
         hasDependants = true,
@@ -124,7 +124,7 @@ class BenKidRegFormDataset(context: Context, language: Languages) : Dataset(cont
     val gender = FormElement(
         id = 9,
         inputType = RADIO,
-        title = context.getString(R.string.nbr_gender),
+        title = resources.getString(R.string.nbr_gender),
         arrayId = -1,
         entries = resources.getStringArray(R.array.nbr_gender_array),
         required = true,
@@ -133,7 +133,7 @@ class BenKidRegFormDataset(context: Context, language: Languages) : Dataset(cont
     private val fatherName = FormElement(
         id = 10,
         inputType = EDIT_TEXT,
-        title = context.getString(R.string.nbr_father_name),
+        title = resources.getString(R.string.nbr_father_name),
         arrayId = -1,
         required = true,
         allCaps = true,
@@ -143,7 +143,7 @@ class BenKidRegFormDataset(context: Context, language: Languages) : Dataset(cont
     private val motherName = FormElement(
         id = 11,
         inputType = EDIT_TEXT,
-        title = context.getString(R.string.nbr_mother_name),
+        title = resources.getString(R.string.nbr_mother_name),
         arrayId = -1,
         required = true,
         allCaps = true,
@@ -154,25 +154,23 @@ class BenKidRegFormDataset(context: Context, language: Languages) : Dataset(cont
     val mobileNoOfRelation = FormElement(
         id = 12,
         inputType = DROPDOWN,
-        title = context.getString(R.string.nbr_mobile_number_of),
-        arrayId = -1,
-        entries = arrayOf(
-            "Self", "Husband", "Mother", "Father", "Family Head", "Other"
-        ),
+        title = resources.getString(R.string.nbr_mobile_number_of),
+        arrayId = R.array.nbr_mobile_no_relation_array,
+        entries = resources.getStringArray(R.array.nbr_mobile_no_relation_array),
         required = true,
         hasDependants = true,
     )
     private val otherMobileNoOfRelation = FormElement(
         id = 13,
         inputType = EDIT_TEXT,
-        title = "Other - Mobile Number of",
+        title = resources.getString(R.string.other_mobile_number_of_kid),
         arrayId = -1,
         required = true
     )
     private val contactNumber = FormElement(
         id = 14,
         inputType = EDIT_TEXT,
-        title = context.getString(R.string.nrb_contact_number),
+        title = resources.getString(R.string.nrb_contact_number),
         arrayId = -1,
         required = true,
         etInputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_NORMAL,
@@ -184,65 +182,26 @@ class BenKidRegFormDataset(context: Context, language: Languages) : Dataset(cont
     private val contactNumberFamilyHead = FormElement(
         id = 114,
         inputType = TEXT_VIEW,
-        title = context.getString(R.string.nrb_contact_number),
+        title = resources.getString(R.string.nrb_contact_number),
         arrayId = -1,
         required = true,
         etInputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_NORMAL
     )
 
 
-    private val relationToHeadListDefault = arrayOf(
-        "Mother",
-        "Father",
-        "Brother",
-        "Sister",
-        "Wife",
-        "Husband",
-        "Nephew",
-        "Niece",
-        "Son",
-        "Daughter",
-        "Grand Father",
-        "Grand Mother",
-        "Father in Law",
-        "Mother in Law",
-        "Grand Son",
-        "Grand Daughter",
-        "Son in Law",
-        "Daughter in Law",
-        "Self",
-        "Other"
-    )
-    private val relationToHeadListMale = arrayOf(
-        "Father",
-        "Brother",
-        "Husband",
-        "Nephew",
-        "Son",
-        "Grand Father",
-        "Father in Law",
-        "Grand Son",
-        "Son in Law",
-        "Self",
-        "Other",
-    )
-    private val relationToHeadListFemale = arrayOf(
-        "Mother",
-        "Sister",
-        "Wife",
-        "Niece",
-        "Daughter",
-        "Grand Mother",
-        "Mother in Law",
-        "Grand Daughter",
-        "Daughter in Law",
-        "Self",
-        "Other"
-    )
+    private val relationToHeadListDefault = 
+        resources.getStringArray(R.array.nbr_relationship_to_head)
+    
+    private val relationToHeadListMale =
+        resources.getStringArray(R.array.nbr_relationship_to_head_male)
+    
+    private val relationToHeadListFemale =
+        resources.getStringArray(R.array.nbr_relationship_to_head_female)
+    
     private val relationToHead = FormElement(
         id = 15,
         inputType = DROPDOWN,
-        title = context.getString(R.string.nbr_rel_to_head),
+        title = resources.getString(R.string.nbr_rel_to_head),
         arrayId = -1,
         entries = relationToHeadListDefault,
         required = true,
@@ -251,7 +210,7 @@ class BenKidRegFormDataset(context: Context, language: Languages) : Dataset(cont
     private val otherRelationToHead = FormElement(
         id = 16,
         inputType = EDIT_TEXT,
-        title = context.getString(R.string.nbr_rel_to_head_other),
+        title = resources.getString(R.string.nbr_rel_to_head_other),
         arrayId = -1,
         required = true,
         allCaps = true,
@@ -260,42 +219,24 @@ class BenKidRegFormDataset(context: Context, language: Languages) : Dataset(cont
     private val community = FormElement(
         id = 17,
         inputType = DROPDOWN,
-        title = context.getString(R.string.nbr_community),
-        arrayId = -1,
-        entries = arrayOf(
-            "General",
-            "SC",
-            "ST",
-            "BC",
-            "OBC",
-            "OC",
-            "Not given",
-        ),
+        title = resources.getString(R.string.community),
+        arrayId = R.array.community_array,
+        entries = resources.getStringArray(R.array.community_array),
         required = true
     )
     val religion = FormElement(
         id = 18,
         inputType = DROPDOWN,
-        title = context.getString(R.string.nbr_religion),
-        arrayId = -1,
-        entries = arrayOf(
-            "Hindu",
-            "Muslim",
-            "Christen",
-            "Sikhism",
-            "Buddhism",
-            "Jainism",
-            "Parsi",
-            "Other",
-            "Not disclosed",
-        ),
+        title = resources.getString(R.string.religion),
+        arrayId = R.array.religion_array,
+        entries = resources.getStringArray(R.array.religion_array),
         required = true,
         hasDependants = true
     )
     private val otherReligion = FormElement(
         id = 19,
         inputType = EDIT_TEXT,
-        title = context.getString(R.string.nbr_religion_other),
+        title = resources.getString(R.string.nbr_religion_other),
         arrayId = -1,
         required = true,
         allCaps = true
@@ -304,22 +245,18 @@ class BenKidRegFormDataset(context: Context, language: Languages) : Dataset(cont
     private val childRegisteredAtAwc = FormElement(
         id = 20,
         inputType = DROPDOWN,
-        title = context.getString(R.string.nbr_child_awc),
-        arrayId = -1,
-        entries = arrayOf(
-            "Yes", "No"
-        ),
+        title = resources.getString(R.string.nbr_child_awc),
+        arrayId = R.array.yes_no,
+        entries = resources.getStringArray(R.array.yes_no),
         required = true
     )
 
     private val childRegisteredAtSchool = FormElement(
         id = 21,
         inputType = DROPDOWN,
-        title = context.getString(R.string.nbr_child_reg_school),
-        arrayId = -1,
-        entries = arrayOf(
-            "Yes", "No"
-        ),
+        title = resources.getString(R.string.nbr_child_reg_school),
+        arrayId = R.array.yes_no,
+        entries = resources.getStringArray(R.array.yes_no),
         required = true,
         hasDependants = true
     )
@@ -328,11 +265,9 @@ class BenKidRegFormDataset(context: Context, language: Languages) : Dataset(cont
     private val typeOfSchool = FormElement(
         id = 22,
         inputType = DROPDOWN,
-        title = context.getString(R.string.nbr_child_type_school),
-        arrayId = -1,
-        entries = arrayOf(
-            "Anganwadi", "Primary", "Secondary", "Private"
-        ),
+        title = resources.getString(R.string.nbr_child_type_school),
+        arrayId = R.array.school_type_array,
+        entries = resources.getStringArray(R.array.school_type_array),
         required = true
     )
 
@@ -340,7 +275,7 @@ class BenKidRegFormDataset(context: Context, language: Languages) : Dataset(cont
     val rchId = FormElement(
         id = 23,
         inputType = EDIT_TEXT,
-        title = context.getString(R.string.nbr_rch_id),
+        title = resources.getString(R.string.nbr_rch_id),
         arrayId = -1,
         required = false,
         etInputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_NORMAL,
@@ -373,7 +308,8 @@ class BenKidRegFormDataset(context: Context, language: Languages) : Dataset(cont
     suspend fun setFirstPage(ben: BenRegCache?, familyHeadPhoneNo: Long?) {
         val list = firstPage.toMutableList()
         this.familyHeadPhoneNo = familyHeadPhoneNo?.toString()
-        dateOfReg.value = getCurrentDateString()
+        if (dateOfReg.value == null)
+            dateOfReg.value = getCurrentDateString()
         contactNumberFamilyHead.value = familyHeadPhoneNo?.toString()
         ben?.takeIf { !it.isDraft }?.let { saved ->
             pic.value = saved.userImage
@@ -419,11 +355,17 @@ class BenKidRegFormDataset(context: Context, language: Languages) : Dataset(cont
                 TRANSGENDER -> relationToHeadListDefault
                 null -> null
             }
+            relationToHead.arrayId = when (saved.gender) {
+                MALE -> R.array.nbr_relationship_to_head_male
+                FEMALE -> R.array.nbr_relationship_to_head_female
+                TRANSGENDER -> R.array.nbr_relationship_to_head
+                null -> -1
+            }
         }
         if (mobileNoOfRelation.value == mobileNoOfRelation.entries!!.last()) {
             list.add(list.indexOf(mobileNoOfRelation) + 1, otherMobileNoOfRelation)
         }
-        if (mobileNoOfRelation.value == mobileNoOfRelation.entries!![2]) {
+        if (mobileNoOfRelation.value == mobileNoOfRelation.entries!![4]) {
             list.add(list.indexOf(mobileNoOfRelation) + 1, contactNumberFamilyHead)
         } else
             list.add(list.indexOf(community), contactNumber)
@@ -436,7 +378,7 @@ class BenKidRegFormDataset(context: Context, language: Languages) : Dataset(cont
 //        if (ageUnit.value == ageUnit.entries?.last() && (age.value?.toInt() ?: 0) in 3..5) {
 //            list.add((list.indexOf(rchId)), childRegisteredAtAwc)
 //        }
-        if (ageUnit.value == ageUnit.entries?.last() && (age.value?.toInt() ?: 0) in 3..14) {
+        if (ageUnit.value == ageUnit.entries?.last() && (age.value?.toInt() ?: 0) in 4..14) {
             list.add((list.indexOf(rchId)), childRegisteredAtSchool)
         }
         if (childRegisteredAtSchool.value == childRegisteredAtSchool.entries?.first()) list.add(
@@ -447,227 +389,105 @@ class BenKidRegFormDataset(context: Context, language: Languages) : Dataset(cont
         setUpPage(list)
     }
 
-
-    /*
-        fun loadFirstPageOnViewMode(): List<FormElement> {
-            val viewList = mutableListOf(
-                pic,
-                dateOfReg,
-                firstName,
-                lastName,
-                dob,
-                age,
-                ageUnit,
-                gender,
-                fatherName,
-                motherName,
-                relationToHead,
-                mobileNoOfRelation,
-                contactNumber,
-                community,
-                religion,
-                rchId,
-            )
-
-            ben?.let { benCache ->
-                dateOfReg.value = getDateFromLong(benCache.regDate)
-                firstName.value = benCache.firstName
-                lastName.value = benCache.lastName
-                ageUnit.value =
-                    resources.getStringArray(R.array.nbr_age_unit_array)[benCache.ageUnitId - 1]
-                age.value = benCache.age.toString()
-                dob.value = getDateFromLong(benCache.dob)
-                gender.value = resources.getStringArray(R.array.nbr_gender_array)[benCache.genderId - 1]
-                fatherName.value = benCache.fatherName
-                motherName.value = benCache.motherName
-                mobileNoOfRelation.value =
-                    mobileNoOfRelation.entries?.get(benCache.mobileNoOfRelationId - 1)
-                otherMobileNoOfRelation.value = benCache.mobileOthers
-                contactNumber.value = benCache.contactNumber.toString()
-                relationToHead.value =
-                    relationToHeadListDefault[benCache.familyHeadRelationPosition - 1]
-                community.value = community.entries?.get(benCache.communityId - 1)
-                religion.value = religion.entries?.get(benCache.religionId - 1)
-                otherReligion.value = benCache.religionOthers
-                childRegisteredAtAwc.value =
-                    benCache.kidDetails?.childRegisteredAWCId?.takeIf { it > 0 }
-                        ?.let { childRegisteredAtAwc.entries?.get(it - 1) }
-                childRegisteredAtSchool.value =
-                    benCache.kidDetails?.childRegisteredSchoolId?.takeIf { it > 0 }
-                        ?.let { childRegisteredAtSchool.entries?.get(it - 1) }
-                typeOfSchool.value = benCache.kidDetails?.typeOfSchoolId?.takeIf { it > 0 }
-                    ?.let { typeOfSchool.entries?.get(it - 1) }
-                rchId.value = benCache.rchId
-            }
-            otherRelationToHead.value?.let {
-                viewList.add(
-                    viewList.indexOf(relationToHead) + 1, otherRelationToHead
-                )
-            }
-            otherMobileNoOfRelation.value?.let {
-                viewList.add(
-                    viewList.indexOf(mobileNoOfRelation) + 1, otherMobileNoOfRelation
-                )
-            }
-            otherReligion.value?.let { viewList.add(viewList.indexOf(religion) + 1, otherReligion) }
-
-            childRegisteredAtAwc.value?.let {
-                viewList.add(
-                    viewList.indexOf(rchId), childRegisteredAtAwc
-                )
-            }
-            childRegisteredAtSchool.value?.let {
-                viewList.add(
-                    viewList.indexOf(rchId), childRegisteredAtSchool
-                )
-            }
-            typeOfSchool.value?.let { viewList.add(viewList.indexOf(rchId), typeOfSchool) }
-
-
-
-            return viewList
-
-        }
-    */
-
-
     //////////////////////////////////////////Second Page///////////////////////////////////////////
 
     private val placeOfBirth = FormElement(
         id = 24,
         inputType = DROPDOWN,
-        title = context.getString(R.string.nbr_child_pob),
-        arrayId = -1,
-        entries = arrayOf(
-            "Home", "Health Facility", "Any other Place"
-        ),
+        title = resources.getString(R.string.nbr_child_pob),
+        arrayId = R.array.place_of_birth,
+        entries = resources.getStringArray(R.array.place_of_birth),
         required = true,
         hasDependants = true
     )
     private val facility = FormElement(
         id = 25,
         inputType = DROPDOWN,
-        title = context.getString(R.string.nbr_child_facility),
-        arrayId = -1,
-        entries = arrayOf(
-            "Sub Centre",
-            "PHC",
-            "CHC",
-            "Sub District Hospital",
-            "District Hospital",
-            "Medical College Hospital",
-            "In Transit",
-            "Private Hospital",
-            "Accredited Private Hospital",
-            "Other",
-        ),
+        title = resources.getString(R.string.nbr_child_facility),
+        arrayId = R.array.facility_place,
+        entries = resources.getStringArray(R.array.facility_place),
         required = true,
         hasDependants = true
     )
     private val otherFacility = FormElement(
         id = 26,
         inputType = EDIT_TEXT,
-        title = context.getString(R.string.nbr_child_pob_other_facility),
+        title = resources.getString(R.string.nbr_child_pob_other_facility),
         arrayId = -1,
         required = true
     )
     private val otherPlaceOfBirth = FormElement(
         id = 27,
         inputType = EDIT_TEXT,
-        title = context.getString(R.string.nbr_child_pob_other),
+        title = resources.getString(R.string.nbr_child_pob_other),
         arrayId = -1,
         required = true
     )
     private val whoConductedDelivery = FormElement(
         id = 28,
         inputType = DROPDOWN,
-        title = context.getString(R.string.nbr_child_who_cond_del),
-        arrayId = -1,
-        entries = arrayOf(
-            "ANM",
-            "LHV",
-            "Doctor",
-            "Staff Nurse",
-            "Relative",
-            "TBA(Non-Skilled Birth Attendant)",
-            "Other",
-        ),
+        title = resources.getString(R.string.nbr_child_who_cond_del),
+        arrayId = R.array.delivery_conducted,
+        entries = resources.getStringArray(R.array.delivery_conducted),
         required = true,
         hasDependants = true
     )
     private val otherWhoConductedDelivery = FormElement(
         id = 29,
         inputType = EDIT_TEXT,
-        title = context.getString(R.string.nbr_child_who_cond_del_other),
+        title = resources.getString(R.string.nbr_child_who_cond_del_other),
         arrayId = -1,
         required = true
     )
     private val typeOfDelivery = FormElement(
         id = 30,
         inputType = DROPDOWN,
-        title = context.getString(R.string.nbr_child_type_del),
-        arrayId = -1,
-        entries = arrayOf(
-            "Normal Delivery", "C - Section", "Assisted"
-        ),
+        title = resources.getString(R.string.nbr_child_type_del),
+        arrayId = R.array.type_of_delivery,
+        entries = resources.getStringArray(R.array.type_of_delivery),
         required = true
     )
     private val complicationsDuringDelivery = FormElement(
         id = 31,
         inputType = DROPDOWN,
-        title = context.getString(R.string.nbr_child_comp_del),
-        arrayId = -1,
-        entries = arrayOf(
-            "PPH",
-            "Retained Placenta",
-            "Obstructed Delivery",
-            "Prolapsed cord",
-            "Death",
-            "None",
-        ),
+        title = resources.getString(R.string.nbr_child_comp_del),
+        arrayId = R.array.complications_array,
+        entries = resources.getStringArray(R.array.complications_array),
         required = true,
         hasDependants = true
     )
     private val breastFeedWithin1Hr = FormElement(
         id = 32,
         inputType = DROPDOWN,
-        title = context.getString(R.string.nbr_child_feed_1_hr),
-        arrayId = -1,
-        entries = arrayOf(
-            "Yes", "No", "Don't Know"
-        ),
+        title = resources.getString(R.string.nbr_child_feed_1_hr),
+        arrayId = R.array.yes_no_donno,
+        entries = resources.getStringArray(R.array.yes_no_donno),
         required = true
     )
     private val birthDose = FormElement(
         id = 33,
         inputType = DROPDOWN,
-        title = context.getString(R.string.nbr_child_birth_dose),
-        arrayId = -1,
-        entries = arrayOf(
-            "Given", "Not Given", "Don't Know"
-        ),
+        title = resources.getString(R.string.nbr_child_birth_dose),
+        arrayId = R.array.given_array,
+        entries = resources.getStringArray(R.array.given_array),
         required = true,
         hasDependants = true
     )
     private val birthDoseGiven = FormElement(
         id = 34,
         inputType = CHECKBOXES,
-        title = context.getString(R.string.nbr_child_birth_dose_details),
-        arrayId = -1,
-        entries = arrayOf(
-            "BCG", "Hepatitis", "OPV"
-        ),
+        title = resources.getString(R.string.nbr_child_birth_dose_details),
+        arrayId = R.array.birth_doses,
+        entries = resources.getStringArray(R.array.birth_doses),
         required = true
     )
 
     private val term = FormElement(
         id = 35,
         inputType = DROPDOWN,
-        title = context.getString(R.string.nbr_child_term),
-        arrayId = -1,
-        entries = arrayOf(
-            "Full-Term", "Pre-Term", "Don't Know"
-        ),
+        title = resources.getString(R.string.nbr_child_term),
+        arrayId = R.array.term_array,
+        entries = resources.getStringArray(R.array.term_array),
         required = true,
         hasDependants = true
     )
@@ -675,66 +495,48 @@ class BenKidRegFormDataset(context: Context, language: Languages) : Dataset(cont
     private val termGestationalAge = FormElement(
         id = 36,
         inputType = RADIO,
-        title = context.getString(R.string.nbr_child_gest_age),
-        arrayId = -1,
-        entries = arrayOf(
-            "24-34 Weeks",
-            "34-36 Weeks",
-            "36-38 Weeks",
-        ),
+        title = resources.getString(R.string.nbr_child_gest_age),
+        arrayId = R.array.gest_age,
+        entries = resources.getStringArray(R.array.gest_age),
         required = true,
         hasDependants = true
     )
     private val corticosteroidGivenAtLabor = FormElement(
         id = 37,
         inputType = DROPDOWN,
-        title = context.getString(R.string.nbr_child_corticosteroid),
-        arrayId = -1,
-        entries = arrayOf(
-            "Yes",
-            "No",
-            "Don't know",
-        ),
+        title = resources.getString(R.string.nbr_child_corticosteroid),
+        arrayId = R.array.yes_no_donno,
+        entries = resources.getStringArray(R.array.yes_no_donno),
         required = true
     )
     private val babyCriedImmediatelyAfterBirth = FormElement(
         id = 38,
         inputType = DROPDOWN,
-        title = context.getString(R.string.nbr_child_cry_imm_birth),
-        arrayId = -1,
-        entries = arrayOf(
-            "Yes", "No", "Don't Know"
-        ),
+        title = resources.getString(R.string.nbr_child_cry_imm_birth),
+        arrayId = R.array.yes_no_donno,
+        entries = resources.getStringArray(R.array.yes_no_donno),
         required = true
     )
     private val anyDefectAtBirth = FormElement(
         id = 39,
         inputType = DROPDOWN,
-        title = context.getString(R.string.nbr_child_defect_at_birth),
-        arrayId = -1,
-        entries = arrayOf(
-            "Cleft Lip / Cleft Palate",
-            "Neural Tube defect(Spinal Bifida)",
-            "Club Foot",
-            "Hydrocephalus",
-            "Imperforate Anus",
-            "Down's Syndrome",
-            "None"
-        ),
+        title = resources.getString(R.string.nbr_child_defect_at_birth),
+        arrayId = R.array.defects,
+        entries = resources.getStringArray(R.array.defects),
         required = true
     )
     private val motherUnselected = FormElement(
         id = 40,
         inputType = CHECKBOXES,
-        title = "Mother Unselected",
-        arrayId = -1,
-        entries = arrayOf("Yes"),
+        title = resources.getString(R.string.mother_unselected),
+        arrayId = R.array.yes,
+        entries = resources.getStringArray(R.array.yes),
         required = false,
         hasDependants = true,
         orientation = LinearLayout.HORIZONTAL
     )
     private val motherOfChild = FormElement(
-        id = 41, inputType = DROPDOWN, title = "Mother of the child",
+        id = 41, inputType = DROPDOWN, title = resources.getString(R.string.mother_of_the_child),
 //        entries = pncMotherList?.toTypedArray(),
         arrayId = -1,
         required = true
@@ -744,7 +546,7 @@ class BenKidRegFormDataset(context: Context, language: Languages) : Dataset(cont
     private val babyHeight = FormElement(
         id = 42,
         inputType = EDIT_TEXT,
-        title = "Height at birth ( cm )",
+        title = resources.getString(R.string.height_at_birth_cm),
         arrayId = -1,
         required = false,
         etInputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_NORMAL,
@@ -753,11 +555,11 @@ class BenKidRegFormDataset(context: Context, language: Languages) : Dataset(cont
     private val babyWeight = FormElement(
         id = 43,
         inputType = EDIT_TEXT,
-        title = "Weight at birth ( Kg )",
+        title = resources.getString(R.string.weight_at_birth_kg),
         arrayId = -1,
         required = false,
-        min = 0,
-        max = 10,
+        minDecimal = 0.0,
+        maxDecimal = 10.0,
         etInputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL,
         etMaxLength = 4
     )
@@ -812,7 +614,7 @@ class BenKidRegFormDataset(context: Context, language: Languages) : Dataset(cont
                 breastFeedWithin1Hr.getStringFromPosition(saved.kidDetails?.feedingStartedId ?: 0)
             birthDose.value = birthDose.getStringFromPosition(saved.kidDetails?.birthDosageId ?: 0)
             birthDoseGiven.value =
-                "${if (saved.kidDetails?.birthBCG == true) "BCG" else ""}${if (saved.kidDetails?.birthHepB == true) "Hepatitis" else ""}${if (saved.kidDetails?.birthOPV == true) "OPV" else ""}"
+                "${if (saved.kidDetails?.birthBCG == true) birthDoseGiven.entries?.get(0) else ""}${if (saved.kidDetails?.birthHepB == true) birthDoseGiven.entries?.get(1) else ""}${if (saved.kidDetails?.birthOPV == true) birthDoseGiven.entries?.get(2) else ""}"
             term.value = term.getStringFromPosition(saved.kidDetails?.termId ?: 0)
             termGestationalAge.value =
                 termGestationalAge.getStringFromPosition(saved.kidDetails?.gestationalAgeId ?: 0)
@@ -853,15 +655,6 @@ class BenKidRegFormDataset(context: Context, language: Languages) : Dataset(cont
 
         setUpPage(list)
     }
-
-//    private fun getTypeFromAge(age: Int, ageUnit: AgeUnit?): TypeOfList? {
-//        Timber.d("Values Here $age $ageUnit")
-//        return if (ageUnit == AgeUnit.DAYS || ageUnit == AgeUnit.MONTHS || (ageUnit == AgeUnit.YEARS && age < 2)) TypeOfList.INFANT
-//        else if (ageUnit == AgeUnit.YEARS && age < 6) TypeOfList.CHILD
-//        else if (ageUnit == AgeUnit.YEARS && age <= 15) TypeOfList.ADOLESCENT
-//        else null
-//
-//    }
 
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
         return when (formId) {
@@ -1204,72 +997,89 @@ class BenKidRegFormDataset(context: Context, language: Languages) : Dataset(cont
             ben.familyHeadRelationOther = otherRelationToHead.value
             ben.mobileNoOfRelationId = mobileNoOfRelation.getPosition()
             ben.mobileNoOfRelation =
-                mobileNoOfRelation.getStringFromPosition(ben.mobileNoOfRelationId)
+                mobileNoOfRelation.getEnglishStringFromPosition(ben.mobileNoOfRelationId)
             ben.mobileOthers = otherMobileNoOfRelation.value
             ben.contactNumber =
                 if (ben.mobileNoOfRelationId == 5) familyHeadPhoneNo!!.toLong() else contactNumber.value!!.toLong()
-            ben.community = community.value
             ben.communityId = community.getPosition()
-            ben.religion = religion.value
+            ben.community = community.getEnglishStringFromPosition(ben.communityId)
             ben.religionId = religion.getPosition()
+            ben.religion = religion.getEnglishStringFromPosition(ben.religionId)
             ben.religionOthers = otherReligion.value
 //            ben.kidDetails?.childRegisteredAWC = childRegisteredAtAwc.value
-//            ben.kidDetails?.childRegisteredAWCId = 
-            ben.kidDetails?.childRegisteredSchool = childRegisteredAtSchool.value
-            childRegisteredAtSchool.value
+//            ben.kidDetails?.childRegisteredAWCId =
             ben.kidDetails?.childRegisteredSchoolId = childRegisteredAtSchool.getPosition()
-            ben.kidDetails?.typeOfSchool = typeOfSchool.value
+            ben.kidDetails?.childRegisteredSchool =
+                childRegisteredAtSchool.getEnglishStringFromPosition(childRegisteredAtSchool.getPosition())
+
             ben.kidDetails?.typeOfSchoolId = typeOfSchool.getPosition()
+            ben.kidDetails?.typeOfSchool = typeOfSchool.getEnglishStringFromPosition(typeOfSchool.getPosition())
             ben.rchId = rchId.value
 
             // Page 002
-            ben.kidDetails?.birthPlace = placeOfBirth.value
+
             ben.kidDetails?.birthPlaceId =
                 placeOfBirth.getPosition()
+            ben.kidDetails?.birthPlace = placeOfBirth.getEnglishStringFromPosition(placeOfBirth.getPosition())
             ben.kidDetails?.placeName = otherPlaceOfBirth.value
             ben.kidDetails?.facilityId = facility.getPosition()
             ben.kidDetails?.facilityOther = otherFacility.value
-            ben.kidDetails?.conductedDelivery = whoConductedDelivery.value
+
             ben.kidDetails?.conductedDeliveryId =
                 whoConductedDelivery.getPosition()
+            ben.kidDetails?.conductedDelivery = whoConductedDelivery.getEnglishStringFromPosition(whoConductedDelivery.getPosition())
+
             ben.kidDetails?.conductedDeliveryOther =
                 otherWhoConductedDelivery.value
-            ben.kidDetails?.deliveryType = typeOfDelivery.value
+
             ben.kidDetails?.deliveryTypeId =
                 typeOfDelivery.getPosition()
-            ben.kidDetails?.complications = complicationsDuringDelivery.value
+            ben.kidDetails?.deliveryType =
+                typeOfDelivery.getEnglishStringFromPosition(typeOfDelivery.getPosition())
+
             ben.kidDetails?.complicationsId =
                 complicationsDuringDelivery.getPosition()
-            ben.kidDetails?.feedingStarted = breastFeedWithin1Hr.value
+            ben.kidDetails?.complications =
+                complicationsDuringDelivery.getEnglishStringFromPosition(complicationsDuringDelivery.getPosition())
+
             ben.kidDetails?.feedingStartedId =
                 breastFeedWithin1Hr.getPosition()
+            ben.kidDetails?.feedingStarted =
+                breastFeedWithin1Hr.getEnglishStringFromPosition(breastFeedWithin1Hr.getPosition())
+
             ben.kidDetails?.birthDosageId =
                 birthDose.getPosition()
             ben.kidDetails?.birthDosage =
-                birthDose.getStringFromPosition(ben.kidDetails!!.birthDosageId)
+                birthDose.getEnglishStringFromPosition(ben.kidDetails!!.birthDosageId)
+
             ben.kidDetails?.birthBCG =
                 birthDoseGiven.value?.contains(birthDoseGiven.entries!![0]) ?: false
             ben.kidDetails?.birthHepB =
                 birthDoseGiven.value?.contains(birthDoseGiven.entries!![1]) ?: false
             ben.kidDetails?.birthOPV =
                 birthDoseGiven.value?.contains(birthDoseGiven.entries!![2]) ?: false
-            ben.kidDetails?.term = term.value
             ben.kidDetails?.termId =
                 term.getPosition()
-            ben.kidDetails?.gestationalAge = termGestationalAge.value
+            ben.kidDetails?.term = term.getEnglishStringFromPosition(term.getPosition())
+
             ben.kidDetails?.gestationalAgeId =
                 termGestationalAge.getPosition()
-            ben.kidDetails?.corticosteroidGivenMother =
-                corticosteroidGivenAtLabor.value
+            ben.kidDetails?.gestationalAge =
+                termGestationalAge.getEnglishStringFromPosition(termGestationalAge.getPosition())
+
             ben.kidDetails?.corticosteroidGivenMotherId =
                 corticosteroidGivenAtLabor.getPosition()
-            ben.kidDetails?.criedImmediately =
-                babyCriedImmediatelyAfterBirth.value
+            ben.kidDetails?.corticosteroidGivenMother =
+                corticosteroidGivenAtLabor.getEnglishStringFromPosition(corticosteroidGivenAtLabor.getPosition())
+
             ben.kidDetails?.criedImmediatelyId =
                 babyCriedImmediatelyAfterBirth.getPosition()
-            ben.kidDetails?.birthDefects = anyDefectAtBirth.value
+            ben.kidDetails?.criedImmediately =
+                babyCriedImmediatelyAfterBirth.getEnglishStringFromPosition(babyCriedImmediatelyAfterBirth.getPosition())
             ben.kidDetails?.birthDefectsId =
                 anyDefectAtBirth.getPosition()
+            ben.kidDetails?.birthDefects = anyDefectAtBirth.getEnglishStringFromPosition(anyDefectAtBirth.getPosition())
+
             ben.kidDetails?.heightAtBirth =
                 babyHeight.value?.takeIf { it.isNotEmpty() }?.toDouble() ?: 0.0
             ben.kidDetails?.weightAtBirth =

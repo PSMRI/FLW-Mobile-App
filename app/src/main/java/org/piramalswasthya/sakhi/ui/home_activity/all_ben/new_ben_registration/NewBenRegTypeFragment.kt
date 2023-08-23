@@ -56,23 +56,23 @@ class NewBenRegTypeFragment : Fragment() {
                 viewModel.setConsentAgreed()
             }
             else
-                Toast.makeText(context,"Please tick the checkbox", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context,resources.getString(R.string.please_tick_the_checkbox), Toast.LENGTH_SHORT).show()
         }
         alertDialog
     }
 
     private val draftLoadAlert by lazy {
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Incomplete form found")
-            .setMessage("Do you want to continue with previous form, or create a new form and discard the previous form?")
-            .setPositiveButton("OPEN DRAFT"){
+            .setTitle(resources.getString(R.string.incomplete_form_found))
+            .setMessage(resources.getString(R.string.do_you_want_to_continue_with_previous_form_or_create_a_new_form_and_discard_the_previous_form))
+            .setPositiveButton(resources.getString(R.string.open_draft)){
                     dialog,_->
                 val isKid = binding.rgBenType.checkedRadioButtonId==binding.rbKidPath.id
                 viewModel.navigateToNewBenRegistration(hhId,false, isKid)
                 dialog.dismiss()
 
             }
-            .setNegativeButton("CREATE NEW") { dialog, _ ->
+            .setNegativeButton(resources.getString(R.string.create_new)) { dialog, _ ->
                 val isKid = binding.rgBenType.checkedRadioButtonId == binding.rbKidPath.id
                 viewModel.navigateToNewBenRegistration(hhId, true, isKid)
                 dialog.dismiss()
@@ -121,14 +121,14 @@ class NewBenRegTypeFragment : Fragment() {
                 when (it) {
                     in 1..Konstants.benIdWorkerTriggerLimit -> {
                         binding.errorText.text =
-                            "Warning : ID running low, connect to internet at the earliest"
+                            resources.getString(R.string.warning_id_running_low_connect_to_internet_at_the_earliest)
                         WorkerUtils.triggerGenBenIdWorker(requireContext())
 
                     }
                     0 -> {
                         binding.btnContinue.visibility = View.GONE
                         binding.errorText.text =
-                            "Error : No more ben Ids available. Connect to internet to get some."
+                            resources.getString(R.string.error_no_more_ben_ids_available_connect_to_internet_to_get_some)
                         WorkerUtils.triggerGenBenIdWorker(requireContext())
                     }
                     else -> {
@@ -177,7 +177,7 @@ class NewBenRegTypeFragment : Fragment() {
                 }
                 else -> Toast.makeText(
                     context,
-                    "Please select type of beneficiary",
+                    resources.getString(R.string.please_select_type_of_beneficiary),
                     Toast.LENGTH_SHORT
                 )
                     .show()

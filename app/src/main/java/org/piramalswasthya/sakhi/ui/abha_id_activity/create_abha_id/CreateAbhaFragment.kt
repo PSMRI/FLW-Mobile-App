@@ -77,12 +77,12 @@ class CreateAbhaFragment : Fragment() {
 
     private val exitAlert by lazy {
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Exit")
-            .setMessage("Do you want to go back?")
-            .setPositiveButton("Yes") { _, _ ->
+            .setTitle(resources.getString(R.string.exit))
+            .setMessage(resources.getString(R.string.do_you_want_to_go_back))
+            .setPositiveButton(resources.getString(R.string.yes)) { _, _ ->
                 activity?.finish()
             }
-            .setNegativeButton("No") { d, _ ->
+            .setNegativeButton(resources.getString(R.string.no)) { d, _ ->
                 d.dismiss()
             }
             .create()
@@ -123,7 +123,7 @@ class CreateAbhaFragment : Fragment() {
 
         viewModel.benMapped.observe(viewLifecycleOwner) {
             it?.let {
-                binding.abhBenMappedTxt.text = "Linked to Beneficiary: $it"
+                binding.abhBenMappedTxt.text = String.format("%s%s%s", resources.getString(R.string.linked_to_beneficiary), " ",it)
                 binding.llAbhaBenMapped.visibility = View.VISIBLE
             }
         }
@@ -328,8 +328,8 @@ class CreateAbhaFragment : Fragment() {
             notificationManager.createNotificationChannel(channel)
 
             val notification = NotificationCompat.Builder(requireContext(),channelId)
-                .setContentTitle("Downloading abha card")
-                .setContentText("Downloading")
+                .setContentTitle(resources.getString(R.string.downloading_abha_card))
+                .setContentText(resources.getString(R.string.downloading))
                 .setSmallIcon(R.drawable.ic_download)
                 .setProgress(100, 0, true)
                 .build()

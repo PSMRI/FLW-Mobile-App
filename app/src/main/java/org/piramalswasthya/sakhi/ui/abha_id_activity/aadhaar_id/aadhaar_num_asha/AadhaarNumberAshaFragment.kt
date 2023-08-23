@@ -34,9 +34,9 @@ class AadhaarNumberAshaFragment : Fragment() {
 
     private val aadhaarDisclaimer by lazy {
         AlertDialog.Builder(requireContext())
-            .setTitle("Individual’s consent for creation of ABHA Number.")
-            .setMessage(context?.getString(R.string.aadhar_disclaimer_consent_text))
-            .setPositiveButton("Ok") { dialog, _ -> dialog.dismiss() }
+            .setTitle(resources.getString(R.string.individual_s_consent_for_creation_of_abha_number))
+            .setMessage(resources.getString(R.string.aadhar_disclaimer_consent_text))
+            .setPositiveButton(resources.getString(R.string.ok)) { dialog, _ -> dialog.dismiss() }
             .create()
     }
 
@@ -79,10 +79,10 @@ class AadhaarNumberAshaFragment : Fragment() {
 
         parentViewModel.verificationType.observe(viewLifecycleOwner) {
             when (it) {
-                "OTP" -> binding.btnVerifyAadhaar.text = "Generate OTP"
+                "OTP" -> binding.btnVerifyAadhaar.text = resources.getString(R.string.generate_otp)
                 "FP" -> {
                     checkApp()
-                    binding.btnVerifyAadhaar.text = "Validate FP"
+                    binding.btnVerifyAadhaar.text = resources.getString(R.string.validate_fp)
                 }
             }
         }
@@ -102,7 +102,7 @@ class AadhaarNumberAshaFragment : Fragment() {
         viewModel.ben.observe(viewLifecycleOwner) {
             it?.let {
                 binding.benName.visibility = View.VISIBLE
-                binding.benName.text = "Generating ABHA for: $it"
+                binding.benName.text = String.format("%s%s%s",getString(R.string.generating_abha_for)," ",it)
             }
         }
 

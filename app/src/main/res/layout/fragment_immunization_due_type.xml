@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/padding_normal"
-        android:text="Select Immunization Category"
+        android:text="@string/select_immunization_category"
         android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="8dp" />
@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:buttonTint="?attr/colorPrimary"
             android:padding="@dimen/padding_normal"
-            android:text="Children"
+            android:text="@string/children"
             android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
 
         <RadioButton
@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:buttonTint="?attr/colorPrimary"
             android:padding="@dimen/padding_normal"
-            android:text="Mother"
+            android:text="@string/mother"
             android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
     </RadioGroup>
 

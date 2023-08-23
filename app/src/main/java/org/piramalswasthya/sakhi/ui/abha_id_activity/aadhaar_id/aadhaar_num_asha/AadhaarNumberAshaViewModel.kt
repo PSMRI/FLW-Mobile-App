@@ -108,7 +108,7 @@ class AadhaarNumberAshaViewModel @Inject constructor(
                         first -> _ben.value = first
                 }
                 it.lastName?.let {
-                    last -> _ben.value += last
+                    last -> _ben.value += " $last"
                 }
             }
         }

@@ -7,6 +7,9 @@ import androidx.room.PrimaryKey
 import org.piramalswasthya.sakhi.configuration.FormDataModel
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.getWeeksOfPregnancy
+import org.piramalswasthya.sakhi.network.getLongFromDate
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 
 data class PregnantWomenVisitCache(
@@ -35,12 +38,14 @@ data class PregnantWomenVisitDomain(
     val spouseName: String,
     val lmp: Long,
     val weeksOfPregnancy: Int,
+    val weeksOfPregnancyString: String = if(weeksOfPregnancy<=40) weeksOfPregnancy.toString() else "NA",
 )
 
 data class AncStatus(
     val benId: Long,
     val visitNumber: Int,
-    val formState: AncFormState
+    val formState: AncFormState,
+    val filledWeek : Int
 )
 
 enum class AncFormState {
@@ -63,10 +68,11 @@ enum class AncFormState {
 
 data class PregnantWomanRegistrationCache(
     @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    val id: Long = 0,
     val benId: Long,
     var dateOfRegistration: Long = System.currentTimeMillis(),
-    var mcpCardNumber: Long = 0,
+    var mcpCardNumber: Long? = 0,
+    var rchId: Long? = 0,
     var lmpDate: Long = 0,
 //    var weeksOfPregnancy : String,
 //    var weeksOfPregnancyId : Int,
@@ -97,8 +103,112 @@ data class PregnantWomanRegistrationCache(
     var isHrp: Boolean = false,
     var hrpIdBy: String? = null,
     var hrpIdById: Int = 0,
-    var active: Boolean = true
-) : FormDataModel
+    var active: Boolean = true,
+    var processed: String? = "N",
+    var createdBy: String,
+    val createdDate: Long = System.currentTimeMillis(),
+    var updatedBy: String,
+    val updatedDate: Long = System.currentTimeMillis(),
+    var syncState: SyncState
+) : FormDataModel {
+    fun asPwrPost() : PwrPost {
+        return PwrPost(
+            benId = benId,
+            registrationDate = getDateStringFromLong(dateOfRegistration),
+            rchId = rchId,
+            mcpCardId = mcpCardNumber,
+            lmpDate = getDateStringFromLong(lmpDate),
+            bloodGroup = bloodGroup,
+            weight = weight,
+            height = height,
+            rprTestResult = vdrlRprTestResult,
+            dateOfRprTest = getDateStringFromLong(dateOfVdrlRprTest),
+            hivTestResult = hivTestResult,
+            hbsAgTestResult = hbsAgTestResult,
+            dateOfHivTest = getDateStringFromLong(dateOfHivTest),
+            dateOfHbsAgTest = getDateStringFromLong(dateOfHbsAgTest),
+            pastIllness = pastIllness,
+            otherPastIllness = otherPastIllness,
+            isFirstPregnancyTest = is1st,
+            numPrevPregnancy = numPrevPregnancy,
+            pregComplication = complicationPrevPregnancy,
+            otherComplication = otherComplication,
+            createdDate = getDateStringFromLong(createdDate),
+            createdBy = createdBy,
+            updatedDate = getDateStringFromLong(updatedDate),
+            updatedBy = updatedBy
+        )
+    }
+}
+
+data class PwrPost (
+    val id: Long = 0,
+    val benId: Long = 0,
+    val registrationDate: String? = null,
+    val rchId: Long? = null,
+    val mcpCardId: Long? = null,
+    val lmpDate: String? = null,
+    val bloodGroup: String? = null,
+    val weight: Int? = null,
+    val height: Int? = null,
+    val rprTestResult: String? = null,
+    val dateOfRprTest: String? = null,
+    val hivTestResult: String? = null,
+    val hbsAgTestResult: String? = null,
+    val dateOfHivTest: String? = null,
+    val dateOfHbsAgTest: String? = null,
+    val pastIllness: String? = null,
+    val otherPastIllness: String? = null,
+    val isFirstPregnancyTest: Boolean = true,
+    val numPrevPregnancy: Int? = null,
+    val pregComplication: String? = null,
+    val otherComplication: String? = null,
+    val createdDate: String? = null,
+    val createdBy: String,
+    val updatedDate: String? = null,
+    val updatedBy: String
+) {
+    fun toPwrCache(): PregnantWomanRegistrationCache {
+        return PregnantWomanRegistrationCache(
+            id = id,
+            benId = benId,
+            dateOfRegistration = getLongFromDate(registrationDate),
+            mcpCardNumber = mcpCardId,
+            rchId = rchId,
+            lmpDate = getLongFromDate(lmpDate),
+            bloodGroup = bloodGroup,
+//            bloodGroupId =
+            weight = weight,
+            height = height,
+            vdrlRprTestResult = rprTestResult,
+//            vdrlRprTestResultId
+            dateOfVdrlRprTest = getLongFromDate(dateOfRprTest),
+            hivTestResult = hivTestResult,
+//            hivTestResultId
+            dateOfHivTest = getLongFromDate(dateOfHivTest),
+            hbsAgTestResult = hbsAgTestResult,
+//            hbsAgTestResultId
+            dateOfHbsAgTest = getLongFromDate(dateOfHbsAgTest),
+            pastIllness = pastIllness,
+            otherPastIllness = otherPastIllness,
+            is1st = isFirstPregnancyTest,
+            numPrevPregnancy = numPrevPregnancy,
+            complicationPrevPregnancy = pregComplication,
+//            complicationPrevPregnancyId = otherComplication,
+            otherComplication = otherComplication,
+//            isHrp =
+//            hrpIdBy
+//            hrpIdById
+            active = true,
+            processed = "P",
+            createdBy = createdBy,
+            createdDate = getLongFromDate(createdDate),
+            updatedBy = updatedBy,
+            updatedDate = getLongFromDate(updatedDate),
+            syncState = SyncState.SYNCED
+        )
+    }
+}
 
 
 @Entity(
@@ -115,7 +225,7 @@ data class PregnantWomanRegistrationCache(
 
 data class PregnantWomanAncCache(
     @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    val id: Long = 0,
     val benId: Long,
     val visitNumber: Int,
     var ancDate: Long = System.currentTimeMillis(),
@@ -156,5 +266,150 @@ data class PregnantWomanAncCache(
     var deathDate : Long? = null,
     var pregnantWomanDelivered : Boolean? = null,
     var processed: String? = "N",
+    var createdBy: String,
+    val createdDate: Long = System.currentTimeMillis(),
+    var updatedBy: String,
+    val updatedDate: Long = System.currentTimeMillis(),
     var syncState: SyncState
-) : FormDataModel
+) : FormDataModel {
+    fun asPostModel(): ANCPost {
+        return ANCPost(
+            benId = benId,
+            ancDate = getDateStringFromLong(ancDate),
+            ancVisit = visitNumber,
+            isAborted = isAborted,
+            abortionType = abortionType,
+            abortionFacility = abortionFacility,
+            abortionDate = getDateStringFromLong(abortionDate),
+            weightOfPW = weight,
+            bpSystolic = bpSystolic,
+            bpDiastolic = bpDiastolic,
+            pulseRate = pulseRate?.toInt(),
+            hb = hb,
+            fundalHeight = fundalHeight,
+            urineAlbuminPresent = urineAlbumin == "Present",
+            bloodSugarTestDone = randomBloodSugarTest == "Done",
+            tdDose1Date = getDateStringFromLong(tt1),
+            tdDose2Date = getDateStringFromLong(tt2),
+            tdDoseBoosterDate = getDateStringFromLong(ttBooster),
+            folicAcidTabs = numFolicAcidTabGiven,
+            ifaTabs = numIfaAcidTabGiven,
+            isHighRisk = anyHighRisk,
+            highRiskCondition = highRisk,
+            otherHighRiskCondition = otherHighRisk,
+            referralFacility = referralFacility,
+            isHrpConfirmed = hrpConfirmed,
+            hrpIdentifiedBy = hrpConfirmedBy,
+            isMaternalDeath = maternalDeath,
+            probableCauseOfDeath = maternalDeathProbableCause,
+            otherCauseOfDeath = otherMaternalDeathProbableCause,
+            deathDate = getDateStringFromLong(deathDate),
+            isBabyDelivered = pregnantWomanDelivered,
+            createdDate = getDateStringFromLong(createdDate),
+            createdBy = createdBy,
+            updatedDate = getDateStringFromLong(updatedDate),
+            updatedBy = updatedBy
+        )
+    }
+}
+
+private fun getDateStringFromLong(dateLong: Long?): String? {
+    val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+    dateLong?.let {
+        val dateString = dateFormat.format(dateLong)
+        return dateString
+    } ?: run {
+        return null
+    }
+
+}
+
+data class ANCPost (
+    val id: Long = 0,
+    val benId: Long = 0,
+    val ancDate: String? = null,
+    val ancVisit: Int,
+    val isAborted: Boolean = false,
+    val abortionType: String? = null,
+    val abortionFacility: String? = null,
+    val abortionDate: String? = null,
+    val weightOfPW: Int? = null,
+    val bpSystolic: Int? = null,
+    val bpDiastolic: Int? = null,
+    val pulseRate: Int? = null,
+    val hb: Double? = null,
+    val fundalHeight: Int? = null,
+    val urineAlbuminPresent: Boolean? = null,
+    val bloodSugarTestDone: Boolean? = null,
+    val tdDose1Date: String? = null,
+    val tdDose2Date: String? = null,
+    val tdDoseBoosterDate: String? = null,
+    val folicAcidTabs: Int = 0,
+    val ifaTabs: Int = 0,
+    val isHighRisk: Boolean = false,
+    val highRiskCondition: String? = null,
+    val otherHighRiskCondition: String? = null,
+    val referralFacility: String? = null,
+    val isHrpConfirmed: Boolean? = null,
+    val hrpIdentifiedBy: String? = null,
+    val isMaternalDeath: Boolean = false,
+    val probableCauseOfDeath: String? = null,
+    val otherCauseOfDeath: String? = null,
+    val deathDate: String? = null,
+    val isBabyDelivered: Boolean? = null,
+    val createdDate: String? = null,
+    val createdBy: String,
+    val updatedDate: String? = null,
+    val updatedBy: String
+        ) {
+    fun toAncCache(): PregnantWomanAncCache {
+        return PregnantWomanAncCache(
+            id = id,
+            benId = benId,
+            visitNumber = ancVisit,
+            ancDate = getLongFromDate(ancDate),
+            isAborted = isAborted,
+            abortionType = abortionType,
+//            abortionTypeId =
+            abortionFacility = abortionFacility,
+//            abortionFacilityId
+            abortionDate = getLongFromDate(abortionDate),
+            weight = weightOfPW,
+            bpSystolic = bpSystolic,
+            bpDiastolic = bpDiastolic,
+            pulseRate = pulseRate.toString(),
+            hb = hb,
+            fundalHeight = fundalHeight,
+            urineAlbumin = if(urineAlbuminPresent == true) "Present" else "Absent",
+//            urineAlbuminId
+            randomBloodSugarTest = if(bloodSugarTestDone == true) "Done" else "Not Done",
+//            randomBloodSugarTestId
+            tt1 = getLongFromDate(tdDose1Date),
+            tt2 = getLongFromDate(tdDose2Date),
+            ttBooster = getLongFromDate(tdDoseBoosterDate),
+            numFolicAcidTabGiven = folicAcidTabs,
+            numIfaAcidTabGiven = ifaTabs,
+            anyHighRisk = isHighRisk,
+            highRisk = highRiskCondition,
+//            highRiskId
+            otherHighRisk = otherHighRiskCondition,
+            referralFacility = referralFacility,
+//            referralFacilityId
+//            hrpConfirmed
+//            hrpConfirmedBy
+//            hrpConfirmedById
+            maternalDeath = isMaternalDeath,
+            maternalDeathProbableCause = probableCauseOfDeath,
+//            maternalDeathProbableCauseId
+            otherMaternalDeathProbableCause = otherCauseOfDeath,
+            deathDate = getLongFromDate(deathDate),
+            pregnantWomanDelivered = isBabyDelivered,
+            processed = "P",
+            createdBy = createdBy,
+            createdDate = getLongFromDate(createdDate),
+            updatedBy = updatedBy,
+            updatedDate = getLongFromDate(updatedDate),
+            syncState = SyncState.SYNCED
+        )
+    }
+}

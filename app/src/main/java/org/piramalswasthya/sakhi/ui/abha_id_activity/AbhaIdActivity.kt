@@ -100,13 +100,13 @@ class AbhaIdActivity : AppCompatActivity() {
 
     private val exitAlert by lazy {
         MaterialAlertDialogBuilder(this)
-            .setTitle("Exit")
-            .setMessage("Do you want to go back?")
-            .setPositiveButton("Yes") { _, _ ->
+            .setTitle(resources.getString(R.string.exit))
+            .setMessage(resources.getString(R.string.do_you_want_to_go_back))
+            .setPositiveButton(resources.getString(R.string.yes)) { _, _ ->
                 navController.popBackStack()
                 navController.navigate(R.id.aadhaarIdFragment)
             }
-            .setNegativeButton("No") { d, _ ->
+            .setNegativeButton(resources.getString(R.string.no)) { d, _ ->
                 d.dismiss()
             }
             .create()
@@ -114,12 +114,12 @@ class AbhaIdActivity : AppCompatActivity() {
 
     private val exitActivityAlert by lazy {
         MaterialAlertDialogBuilder(this)
-            .setTitle("Exit")
-            .setMessage("Do you want to go back?")
-            .setPositiveButton("Yes") { _, _ ->
+            .setTitle(resources.getString(R.string.exit))
+            .setMessage(resources.getString(R.string.do_you_want_to_go_back))
+            .setPositiveButton(resources.getString(R.string.yes)) { _, _ ->
                 finish()
             }
-            .setNegativeButton("No") { d, _ ->
+            .setNegativeButton(resources.getString(R.string.no)) { d, _ ->
                 d.dismiss()
             }
             .create()

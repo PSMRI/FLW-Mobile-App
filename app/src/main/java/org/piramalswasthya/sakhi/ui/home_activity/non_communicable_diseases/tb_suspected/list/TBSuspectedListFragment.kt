@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.BenListAdapterForForm
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
 
@@ -48,7 +49,7 @@ class TBSuspectedListFragment: Fragment() {
                             benId
                         )
                     )
-                }), "Track"
+                }), resources.getString(R.string.track)
         )
         binding.rvAny.adapter = benAdapter
 

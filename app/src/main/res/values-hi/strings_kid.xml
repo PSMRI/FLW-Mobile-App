@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="other_mobile_number_of_kid">अन्य - बच्चे का मोबाइल नंबर</string>
+    <!--    <string name="home_icon_title_child_care">बाल की देखभाल</string>-->
+    <string name="child_care_icon_title_child_list">बच्चे की सूची</string>
+    <string name="child_care_icon_title_infant_list">नवजात शिशु सूची</string>
+    <string name="child_care_icon_title_adolescent_list">किशोर सूची</string>
+    <string name="nbr_child_awc">क्या बच्चा एआईसी में पंजीकृत है</string>
+    <string name="nbr_child_reg_school">क्या बच्चा स्कूल में पंजीकृत है</string>
+    <string name="nbr_child_type_school">स्कूल/संस्था के प्रकार</string>
+    <string name="nbr_child_pob">जन्म स्थान</string>
+    <string name="nbr_child_facility">स्वास्थ्य सुविधा</string>
+    <string name="nbr_child_pob_other_facility">अन्य सुविधा</string>
+    <string name="nbr_child_pob_other">अन्य जन्म स्थान</string>
+    <string name="nbr_child_who_cond_del">जिसने प्रसव किया</string>
+    <string name="nbr_child_who_cond_del_other">अन्य - जिसने प्रसव किया वह दर्ज करें</string>
+    <string name="nbr_child_type_del">प्रसव के प्रकार</string>
+    <string name="nbr_child_comp_del">प्रसव के दौरान जटिलताएँ</string>
+    <string name="nbr_child_feed_1_hr">जन्म के 1 घंटे के भीतर स्तनपान शुरू किया गया</string>
+    <string name="nbr_child_birth_dose">जन्म डोज</string>
+    <string name="nbr_child_birth_dose_details">दी गई जन्म डोज विवरण</string>
+    <string name="nbr_child_term">शब्दक</string>
+    <string name="nbr_child_gest_age">गर्भावधि आयु</string>
+    <string name="nbr_child_corticosteroid">जनन प्रदर्शन के समय मां को कॉर्टिकोस्टेरॉयड दिया गया</string>
+    <string name="nbr_child_cry_imm_birth">बच्चा तुरंत जन्म के समय रोता है</string>
+    <string name="nbr_child_defect_at_birth">जन्म में कोई दोष दिखाई दिया</string>
+    <string name="child_immunization_list">बच्चे का टीकाकरण सूची</string>
+    <string name="child_reg_list">बच्चे की पंजीकरण सूची</string>
+    <string name="child_reg">बच्चे की पंजीकरण</string>
+    <string name="weight_at_birth_kg">जन्म पर वजन ( किलोग्राम )</string>
+    <string name="height_at_birth_cm">जन्म पर ऊँचाई ( सेंटीमीटर )</string>
+    <string name="mother_of_the_child">बच्चे की माँ</string>
+    <string name="mother_unselected">माँ चयनित नहीं की गई</string>
+    <string name="birth_details">जन्म विवरण</string>
+    <string name="nbr_rel_to_head">परिवार के मुखिया के साथ संबंध</string>
+    <string name="nbr_rel_to_head_other">अन्य - संबंध दर्ज करें</string>
+    <string name="nbr_community">समुदाय</string>
+    <string name="nbr_religion">धर्म</string>
+    <string name="nbr_religion_other">अन्य - धर्म दर्ज करें</string>
+    <string name="nbr_rch_id">RCH आईडी</string>
+    <string name="nbr_father_name">पिता का नाम</string>
+    <string name="nbr_mother_name">मां का नाम</string>
+    <string name="nbr_mobile_number_of">किसका मोबाइल नंबर</string>
+    <string name="nrb_contact_number">संपर्क नंबर</string>
+    <string name="nbr_nb_age_unit">आयु इकाई</string>
+
+    <string-array name="nbr_age_unit_array">
+        <item name="nbr_age_unit_1">दिन</item>
+        <item name="nbr_age_unit_2">महीना</item>
+        <item name="nbr_age_unit_3">वर्ष</item>
+    </string-array>
+    <string-array name="school_type_array">
+        <item>आंगनवाड़ी</item>
+        <item>प्राथमिक</item>
+        <item>माध्यमिक</item>
+        <item>निजी</item>
+    </string-array>
+
+    <string-array name="place_of_birth">
+        <item>घर</item>
+        <item>स्वास्थ्य सुविधा</item>
+        <item>किसी अन्य स्थान</item>
+    </string-array>
+
+    <string-array name="facility_place">
+        <item>सब सेंटर</item>
+        <item>आधारिक स्वास्थ्य केंद्र</item>
+        <item>केंद्रिय स्वास्थ्य केंद्र</item>
+        <item>उपजिला अस्पताल</item>
+        <item>जिला अस्पताल</item>
+        <item>मेडिकल कॉलेज अस्पताल</item>
+        <item>प्रवास में</item>
+        <item>निजी अस्पताल</item>
+    </string-array>
+
+    <string-array name="delivery_conducted">
+        <item>एएनएम</item>
+        <item>एलएचवी</item>
+        <item>डॉक्टर</item>
+        <item>स्टाफ नर्स</item>
+        <item>रिलेटिव</item>
+        <item>टीबीए (गैर-कुशल प्रसव सहायक)</item>
+        <item>अन्य</item>
+    </string-array>
+
+    <string-array name="type_of_delivery">
+        <item>सामान्य प्रसव</item>
+        <item>सी-सेक्शन</item>
+        <item>सहायित</item>
+    </string-array>
+
+    <string-array name="defects">
+        <item>क्लेफ्ट लिप / क्लेफ्ट पैलेट</item>
+        <item>न्यूरल ट्यूब दोष (स्पाइनल बिफिडा)</item>
+        <item>क्लब फुट</item>
+        <item>हाइड्रोसेफलस</item>
+        <item>अपर्फोरेट एनस</item>
+        <item>डाउन सिंड्रोम</item>
+        <item>कोई नहीं</item>
+    </string-array>
+
+    <string-array name="gest_age">
+        <item>24-34 हफ्ते</item>
+        <item>34-36 हफ्ते</item>
+        <item>36-38 हफ्ते</item>
+    </string-array>
+
+    <string-array name="term_array">
+        <item>पूरी अवधि</item>
+        <item>प्री-टर्म</item>
+        <item>नहीं पता</item>
+    </string-array>
+
+    <string-array name="complications_array">
+        <item>पीपीएच</item>
+        <item>रिटेन्ड प्लेसेंटा</item>
+        <item>बाधित प्रसव</item>
+        <item>प्रोलैप्स कोर्ड</item>
+        <item>मौत</item>
+        <item>कोई नहीं</item>
+    </string-array>
+
+    <string-array name="given_array">
+        <item>दिया गया</item>
+        <item>नहीं दिया गया</item>
+        <item>नहीं पता</item>
+    </string-array>
+
+    <string-array name="birth_doses">
+        <item>बीसीजी</item>
+        <item>हेपेटाइटिस</item>
+        <item>ओपीवी</item>
+    </string-array>
+</resources>

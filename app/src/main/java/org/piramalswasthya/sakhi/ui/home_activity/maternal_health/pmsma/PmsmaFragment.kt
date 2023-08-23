@@ -31,17 +31,17 @@ class PmsmaFragment : Fragment() {
     private val viewModel: PmsmaViewModel by viewModels()
     private val errorAlert by lazy {
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Alert")
+            .setTitle(resources.getString(R.string.alert))
             //.setMessage("Do you want to continue with previous form, or create a new form and discard the previous form?")
-            .setPositiveButton("OK") { dialog, _ ->
+            .setPositiveButton(resources.getString(R.string.ok)) { dialog, _ ->
                 dialog.dismiss()
             }
             .create()
     }
     private val consentAlert by lazy {
         val alertBinding = AlertConsentBinding.inflate(layoutInflater,binding.root,false)
-        alertBinding.textView4.text = getString(R.string.consent_alert_title)
-        alertBinding.checkBox.text = getString(R.string.consent_text)
+        alertBinding.textView4.text = resources.getString(R.string.consent_alert_title)
+        alertBinding.checkBox.text = resources.getString(R.string.consent_text)
         val alertDialog = MaterialAlertDialogBuilder(requireContext())
             .setView(alertBinding.root)
             .setCancelable(false)
@@ -56,7 +56,7 @@ class PmsmaFragment : Fragment() {
                 alertBinding.checkBox.isChecked = false
             }
             else
-                Toast.makeText(context,"Please tick the checkbox", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, resources.getString(R.string.please_tick_the_checkbox), Toast.LENGTH_SHORT).show()
         }
         alertDialog
     }
@@ -130,7 +130,7 @@ class PmsmaFragment : Fragment() {
                     binding.pbForm.visibility = View.GONE
                     Toast.makeText(
                         context,
-                        "Saving pmsma to database Failed!",
+                        resources.getString(R.string.saving_pmsma_to_database_failed),
                         Toast.LENGTH_LONG
                     ).show()
                 }

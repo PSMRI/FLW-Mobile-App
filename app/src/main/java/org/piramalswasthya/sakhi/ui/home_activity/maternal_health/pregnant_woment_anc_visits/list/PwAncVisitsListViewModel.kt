@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.helpers.filterBenFormList
 import org.piramalswasthya.sakhi.helpers.getAncStatusList
+import org.piramalswasthya.sakhi.helpers.setToStartOfTheDay
 import org.piramalswasthya.sakhi.model.AncStatus
 import org.piramalswasthya.sakhi.repositories.MaternalHealthRepo
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
@@ -43,13 +44,7 @@ class PwAncVisitsListViewModel @Inject constructor(
             val _list = mutableListOf<AncStatus>()
             val regis = maternalHealthRepo.getSavedRegistrationRecord(benId)!!
             val filledForms = maternalHealthRepo.getAllAncRecords(benId)
-            val millisToday = Calendar.getInstance().apply {
-                set(Calendar.MILLISECOND,0)
-                set(Calendar.SECOND,0)
-                set(Calendar.MINUTE,0)
-                set(Calendar.HOUR_OF_DAY,0)
-            }.timeInMillis
-
+            val millisToday = Calendar.getInstance().setToStartOfTheDay().timeInMillis
             val list = getAncStatusList(filledForms, regis.lmpDate, benId, millisToday)
 //                listOf(1, 2, 3, 4).map {
 //                getAncStatus(filledForms, regis.lmpDate, it, benId, millisToday)

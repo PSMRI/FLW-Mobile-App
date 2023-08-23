@@ -19,7 +19,7 @@ interface MaternalHealthDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveRecord(ancCache: PregnantWomanAncCache)
 
-    @Query("select benId, visitNumber, :filled as formState from pregnancy_anc where benId = :benId order by visitNumber")
+    @Query("select benId, visitNumber, :filled as formState, 0 as filledWeek from pregnancy_anc where benId = :benId order by visitNumber")
     suspend fun getAllAncRecordsFor(
         benId: Long,
         filled: AncFormState = AncFormState.ALREADY_FILLED
@@ -31,6 +31,11 @@ interface MaternalHealthDao {
     @Query("SELECT * FROM pregnancy_anc WHERE processed = 'N'")
     suspend fun getAllUnprocessedAncVisits(): List<PregnantWomanAncCache>
 
+    @Query("SELECT * FROM pregnancy_register WHERE processed = 'N'")
+    suspend fun getAllUnprocessedPWRs(): List<PregnantWomanRegistrationCache>
     @Update
     suspend fun updateANC(it: PregnantWomanAncCache)
+
+    @Update
+    suspend fun updatePwr(it: PregnantWomanRegistrationCache)
 }

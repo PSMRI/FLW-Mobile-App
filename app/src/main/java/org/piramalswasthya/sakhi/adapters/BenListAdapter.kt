@@ -67,7 +67,7 @@ class BenListAdapter(
         fun onClickedBen(item: BenBasicDomain) = clickedBen(
             item.hhId,
             item.benId,
-            (item.ageUnit != AgeUnit.YEARS || item.ageInt < Konstants.maxAgeForAdolescent)
+            (item.ageUnit != AgeUnit.YEARS || item.ageInt <= Konstants.maxAgeForAdolescent)
         )
 
         fun onClickedHouseHold(item: BenBasicDomain) = clickedHousehold(item.hhId)

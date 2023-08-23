@@ -24,7 +24,7 @@
             android:layout_below="@id/pb_saving"
             android:layout_centerHorizontal="true"
             android:padding="@dimen/padding_normal"
-            android:text="Saving Form ..."
+            android:text="@string/saving_form"
             android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
     </RelativeLayout>
 
@@ -80,7 +80,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/padding_normal"
-                android:contentDescription="PREVIOUS"
+                android:contentDescription="@string/previous"
                 android:src="@drawable/ic_arrow_back"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -91,7 +91,7 @@
                 android:id="@+id/btn_submit_form"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="SUBMIT"
+                android:text="@string/submit"
                 android:textColor="?attr/colorOnPrimary"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/btn_next"
@@ -103,7 +103,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/padding_normal"
-                android:contentDescription="NEXT"
+                android:contentDescription="@string/next"
                 android:src="@drawable/ic_arrow_next"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

@@ -11,6 +11,7 @@ import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.InfantRegCache
 import org.piramalswasthya.sakhi.model.InputType
 import org.piramalswasthya.sakhi.model.PregnantWomanRegistrationCache
+import java.util.concurrent.TimeUnit
 
 class InfantRegistrationDataset(
     context: Context, currentLanguage: Languages
@@ -47,7 +48,7 @@ class InfantRegistrationDataset(
         inputType = InputType.RADIO,
         title = "Sex of Infant",
         entries = resources.getStringArray(R.array.ecr_gender_array),
-        required = false,
+        required = true,
         hasDependants = true,
     )
 
@@ -91,8 +92,15 @@ class InfantRegistrationDataset(
         id = 9,
         inputType = InputType.DROPDOWN,
         title = "Defect seen at birth",
-        entries = arrayOf("Cleft Lip / Cleft Palate", "Club Foot", "Down's Syndrome", "Hydrrocephalus", "Imperforate Anus",
-                    "Neural Tube Defect (Spinal Bifida)", "Other"),
+        entries = arrayOf(
+            "Cleft Lip / Cleft Palate",
+            "Club Foot",
+            "Down's Syndrome",
+            "Hydrocephalus",
+            "Imperforate Anus",
+            "Neural Tube Defect (Spinal Bifida)",
+            "Other"
+        ),
         required = false,
         hasDependants = true
     )
@@ -164,9 +172,10 @@ class InfantRegistrationDataset(
     )
 
 
-
-    suspend fun setUpPage(ben: BenRegCache?, deliveryOutcomeCache: DeliveryOutcomeCache?,
-                          pwrCache: PregnantWomanRegistrationCache?, saved: InfantRegCache?) {
+    suspend fun setUpPage(
+        ben: BenRegCache?, deliveryOutcomeCache: DeliveryOutcomeCache?,
+        pwrCache: PregnantWomanRegistrationCache?, saved: InfantRegCache?
+    ) {
         var list = mutableListOf(
             babyName,
             infantTerm,
@@ -185,28 +194,29 @@ class InfantRegistrationDataset(
             hepBDose,
             vitkDose
         )
-        if(deliveryOutcomeCache != null) {
+        if (deliveryOutcomeCache != null) {
             opv0Dose.min = deliveryOutcomeCache.dateOfDelivery
             bcgDose.min = deliveryOutcomeCache.dateOfDelivery
             hepBDose.min = deliveryOutcomeCache.dateOfDelivery
             vitkDose.min = deliveryOutcomeCache.dateOfDelivery
             deliveryOutcomeCache.dateOfDelivery.let {
-                if(it + 15*24*60*60*1000 < System.currentTimeMillis())
-                    opv0Dose.max = it + 15*24*60*60*1000
-                if(it + 365*24*60*60*1000 < System.currentTimeMillis())
-                    bcgDose.max = it + 365*24*60*60*1000
-                if(it + 24*60*60*1000 < System.currentTimeMillis()) {
-                    hepBDose.max = it + 24*60*60*1000
-                    vitkDose.max = it + 24*60*60*1000
+                if (it + TimeUnit.DAYS.toMillis(15) < System.currentTimeMillis())
+                    opv0Dose.max = it + TimeUnit.DAYS.toMillis(15)
+                if (it + TimeUnit.DAYS.toMillis(365) < System.currentTimeMillis())
+                    bcgDose.max = it + TimeUnit.DAYS.toMillis(365)
+                if (it + 24 * 60 * 60 * 1000 < System.currentTimeMillis()) {
+                    hepBDose.max = it + TimeUnit.DAYS.toMillis(1)
+                    vitkDose.max = it + TimeUnit.DAYS.toMillis(1)
                 }
             }
         }
-        if(pwrCache != null && deliveryOutcomeCache != null) {
-            val weeksOfPregnancy = getWeeksOfPregnancy(deliveryOutcomeCache.dateOfDelivery, pwrCache.lmpDate);
-            if(weeksOfPregnancy < 42 || weeksOfPregnancy > 37 ) {
-                infantTerm.value = "Full Term"
-            } else if ( weeksOfPregnancy <= 37)
-                infantTerm.value = "Pre Trem"
+        if (pwrCache != null && deliveryOutcomeCache != null) {
+            val weeksOfPregnancy =
+                getWeeksOfPregnancy(deliveryOutcomeCache.dateOfDelivery, pwrCache.lmpDate)
+            if (weeksOfPregnancy in 38..41) {
+                infantTerm.value = infantTerm.entries!!.first()
+            } else if (weeksOfPregnancy <= 37)
+                infantTerm.value = infantTerm.entries!!.last()
         }
         if (saved == null) {
             if (ben != null) {
@@ -252,10 +262,11 @@ class InfantRegistrationDataset(
         setUpPage(list)
 
     }
+
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
         return when (formId) {
             babyCriedAtBirth.id -> {
-                if(index == 1) {
+                if (index == 1) {
                     triggerDependants(
                         source = babyCriedAtBirth,
                         addItems = listOf(resuscitation, referred),
@@ -269,6 +280,7 @@ class InfantRegistrationDataset(
                     )
                 }
             }
+
             hadBirthDefect.id -> {
                 triggerDependants(
                     source = hadBirthDefect,
@@ -278,6 +290,7 @@ class InfantRegistrationDataset(
                     targetSideEffect = listOf(otherDefect, birthDefect)
                 )
             }
+
             birthDefect.id -> {
                 triggerDependants(
                     source = birthDefect,
@@ -286,6 +299,7 @@ class InfantRegistrationDataset(
                     target = otherDefect
                 )
             }
+
             else -> -1
         }
     }
@@ -296,7 +310,7 @@ class InfantRegistrationDataset(
             form.infantTerm = infantTerm.value
             form.corticosteroidGiven = corticosteroidGiven.value
             form.gender = gender.value?.let {
-                Gender.values()[gender.getPosition()-1]
+                Gender.values()[gender.getPosition() - 1]
             }
             form.babyCriedAtBirth = babyCriedAtBirth.value == "Yes"
             form.resuscitation = resuscitation.value == "Yes"

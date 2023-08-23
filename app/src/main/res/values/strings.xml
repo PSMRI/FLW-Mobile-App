@@ -15,214 +15,7 @@
     <string name="PREF_current_saved_language" translatable="false">Locale.Helper.Selected.Language</string>
     <string name="PREF_current_dp_uri" translatable="false">DP_URI_cat</string>
 
-
-
-    <!-- HOME -->
-
-
-    <!-- BEN KID -->
-    <string name="nbr_image">Photo</string>
-    <string name="nbr_image_sub">Tap to use camera</string>
-    <string name="nbr_dor">Date of Registration</string>
-    <string name="nbr_nb_first_name">First Name</string>
-    <string name="nbr_nb_name">Name of Beneficiary</string>
-    <string name="nbr_nb_last_name">Last Name / Surname</string>
-    <string name="nbr_nb_age_unit">Age Unit</string>
-    <string-array name="nbr_age_unit_array">
-        <item name="nbr_age_unit_1">Day</item>
-        <item name="nbr_age_unit_2">Month</item>
-        <item name="nbr_age_unit_3">Year</item>
-    </string-array>
-    <string-array name="nbr_gender_array">
-        <item name="nbr_gender_1">Male</item>
-        <item name="nbr_gender_2">Female</item>
-        <item name="nbr_gender_3">Transgender</item>
-    </string-array>
-
     <string name="tracking_date">Date of Visit</string>
-
-    <!--    BEN GEN-->
-    <string-array name="nbr_reproductive_status_array">
-        <item>Eligible Couple</item>
-        <item>Pregnant Woman</item>
-        <item>Postnatal Mother</item>
-        <item>Elderly Woman</item>
-        <item>Adolescent Girl</item>
-        <item></item>
-    </string-array>
-
-
-    <!--   CBAC -->
-
-    <string name="cbac_ask_pat">Ask if Patient has any of these Symptoms</string>
-    <string name="cbac_early_detection">Part B1: Early Detection</string>
-    <string name="cbac_early_detection_2">Part B2: Women Only</string>
-    <string name="cbac_early_detection_3">Part B3: Elderly Specific</string>
-    <string name="cbac_hint_age">What is your age?</string>
-    <string name="cbac_hint_smoke">Do you smoke or consume smokeless products such as gutka or khaini?</string>
-    <string name="cbac_hint_alcohol">Do you consume alcohol daily?</string>
-    <string name="cbac_hint_waist">Measurement of waist (in cm)</string>
-    <string name="cbac_hint_pa">Do you undertake any physical activities for minimum of 150 minutes in a week?</string>
-    <string name="cbac_hint_fh">Do you have a family history (any one of your parents or siblings) of high blood pressure, diabetes and heart disease?</string>
-
-    <string name="cbac_ask_pat_note">Note :</string>
-    <string name="cbac_ast1">* If “Yes” is selected for any one of the questions below with “*” then show pop up message “Refer to MO and collect the Sputum sample”</string>
-    <string name="cbac_ast2">** If “Yes” is selected for any one of the questions below with “**” then show pop up message “Refer to MO orinform ANM/MPW to tracing of all family members”</string>
-    <string name="cbac_select">Select ...</string>
-    <string name="cbac_fh_tb">Anyone in family currently suffering from TB</string>
-    <string name="cbac_taking_tb_drug">Are you currently taking anti-TB drugs</string>
-    <string name="cbac_histb">History of TB</string>
-    <string name="cbac_coughing">Coughing more than 2 weeks</string>
-    <string name="cbac_blsputum">Blood in sputum</string>
-    <string name="cbac_feverwks">Fever for > 2 weeks</string>
-    <string name="cbac_lsweight">Loss of weight</string>
-    <string name="cbac_ntswets">Night Sweats</string>
-    <string name="cbac_recurrent_ulceration">Recurrent ulceration on palm or sole</string>
-    <string name="cbac_recurrent_tingling">Recurrent tingling on palm(s) or sole (s)</string>
-    <string name="cbac_recurrent_cloudy">Cloudy or blurred vision</string>
-    <string name="cbac_recurrent_diffculty_reading">Difficulty in reading</string>
-    <string name="cbac_recurrent_pain_eyes">Pain in eyes lasting for more than a week</string>
-    <string name="cbac_recurrent_redness_eyes">Redness in eyes lasting for more than a week</string>
-    <string name="cbac_recurrent_diff_hearing">Difficulty in hearing</string>
-    <string name="cbac_breath">Shortness of breath</string>
-    <string name="cbac_hifits">History of fits</string>
-    <string name="cbac_difmouth">Difficulty in opening mouth</string>
-    <string name="cbac_heald">Ulcers/patch/growth in mouth that has not healed in two weeks</string>
-    <string name="cbac_voice">Any change in the tone of your voice</string>
-    <string name="cbac_Any_Growth">Any Growth in the mouth that has not healed in 2 weeks</string>
-    <string name="cbac_Any_white">Any white or red patch in the mouth that has not healed in 2 weeks</string>
-    <string name="cbac_Pain_while_chewing">Pain while chewing</string>
-    <string name="cbac_Any_hyper_pigmented">Any hyper pigmented patch or discoloration on skin with loss of sensation</string>
-    <string name="cbac_any_thickend_skin">Any thickend skin</string>
-    <string name="cbac_any_nodules_skin">Any nodules on skin</string>
-    <string name="cbac_Recurrent_numbness">Recurrent numbness on palm(s) or sole(s)</string>
-    <string name="cbac_Clawing_of_fingers">Clawing of fingers in hand(s) or Feet</string>
-    <string name="cbac_Tingling_or_Numbness">Tingling or Numbness in hands and or Feet</string>
-    <string name="cbac_Inability_close_eyelid">Inability to close eyelid</string>
-    <string name="cbac_diff_holding_objects">Difficulty in holding objects with fingers</string>
-    <string name="cbac_Weekness_in_feet">Weakness in feet that causes difficulty in walking</string>
-
-    <string name="cbac_lumpbrest">Lump in the breast</string>
-    <string name="cbac_nipple">Blood stained discharge from the nipple</string>
-    <string name="cbac_breast">Change in shape and size of breast</string>
-    <string name="cbac_blperiods">Bleeding between periods</string>
-    <string name="cbac_blmenopause">Bleeding after menopause</string>
-    <string name="cbac_blintercorse">Bleeding after intercourse</string>
-    <string name="cbac_fouldis">Foul smelling vaginal discharge</string>
-
-
-    <string name="cbac_double_ast" translatable="false">**</string>
-    <string name="cbac_single_ast" translatable="false">* </string>
-    <string name="cbac_yes">Yes</string>
-    <string name="cbac_no">No</string>
-
-    <string name="cbac_risk_Factors_COPD">Part C: Risk factor for COPD</string>
-    <string name="cbac_occupational_exposure">Occupational exposure</string>
-    <string name="cbac_PHQ2">Part D: PHQ2</string>
-    <string name="cbac_last_two_weeks">Over the last two weeks how often have you been bothered by the following problems ?</string>
-    <string name="cbac_little_interest">Little interest or pleasure in doing things ?</string>
-    <string name="cbac_feeling_down">Feeling down, depressed, &amp; hopeless ?</string>
-
-
-    <string name="hrp_valid">HRP Case, Please visit the nearest HWC or call 104.</string>
-    <string name="hrp_sug_valid"> Suspected HRP Case, Please visit the nearest HWC or call 104.</string>
-    <string name="ncd_hyper">Related to NCD (Hypertension, DM), Please visit the nearest HWC or call 104.</string>
-    <string name="ncd_diab">Related to NCD (Diabetes), Please visit the nearest HWC or call 104.</string>
-    <string name="ncd_diabm">Related to NCD (Diabetes Mellitus), Please visit the nearest HWC or call 104.</string>
-    <string name="ncd_tb">Related to NCD (TB), Please visit the nearest HWC or call 104.</string>
-    <string name="ncd_oc">Related to NCD (Oral Cancer), Please visit the nearest HWC or call 104.</string>
-    <string name="ncd_bc">Related to NCD (Breast Cancer), Please visit the nearest HWC or call 104.</string>
-    <string name="ncd_cc">Related to NCD (Cervical Cancer), Please visit the nearest HWC or call 104.</string>
-    <string name="ncd_lep">Related to NCD (Leprosy), Please visit the nearest HWC or call 104.</string>
-    <string name="ncd_dia_lep">Related to NCD (Diabetes,Leprosy), Please visit the nearest HWC or call 104.</string>
-    <string name="ncd_can_thy">Related to NCD (Cancer,thyroid), Please visit the nearest HWC or call 104.</string>
-    <string name="ncd_dia_can">Related to NCD (Cancer), Please visit the nearest HWC or call 104.</string>
-    <string name="ncd_can_lep">Related to NCD (Cancer,Leprosy), Please visit the nearest HWC or call 104.</string>
-    <string name="ncd_all_display">Related to NCD (Oral cancer,TB) , Please visit the nearest HWC or call 104.</string>
-    <string name="ncd_hyper_stk_display">Related to NCD (Hypertension, Stroke), Please visit the nearest HWC or call 104.</string>
-    <string name="ncd_tb_can">Related to NCD (TB,cancer), Please visit the nearest HWC or call 104.</string>
-    <string name="ncd_hyper_only">Related to NCD (Hypertension), Please visit the nearest HWC or call 104.</string>
-    <string name="ncd_sus_valid"> Suspected NCD Case, Please visit the nearest HWC or call 104.</string>
-    <string name="hrpncd_sus_valid"> Suspected HRP &amp; NCD Case, Please visit the nearest HWC or call 104.</string>
-    <string name="ncd_hyperstroke">Related to NCD (Hypertension, Stroke), Please consult the doctor or Call 104</string>
-    <string name="ncd_tbcancer">Related to NCD (TB, Cancer), Please consult the doctor or Call 104</string>
-    <string name="ncd_cansthyroid">Related to NCD (Cancer,Thyroid), Please consult the doctor or Call 104</string>
-    <string name="ncd_diabcancer">Related to NCD (Diabetes, Cancer), Please consult the doctor or Call 104</string>
-    <string name="ncd_mentalhealth">Related to NCD (Mental Health Disorder), Please consult the doctor or Call 104</string>
-    <string name="cbac_tbcase">Suspected TB case, please collect the sputum sample and send it to nearest TB testing center. Also tracing of all family members need to be done. </string>
-    <string name="cbac_tb_collect_sputum">Suspected TB case, please collect the sputum sample and send it to nearest TB testing center. </string>
-    <string name="cbac_tv_moic_treat">Send the patient to MOIC of nearest health center for treatment </string>
-    <string name="cbac_unsteady">Feeling unsteady while standing or walking</string>
-    <string name="cbac_pd_rm">Suffering from any physical disability that restricts movement</string>
-    <string name="cbac_nhop">Needing help from others to perform everyday activities such as eating, getting dressed, grooming, bathing, walking, or using the toilet</string>
-    <string name="cbac_forget_names">Forgetting the names of your near ones or your own home address </string>
-
-    <!--TB Screening-->
-    <string name="tb_suspected_alert">Refer to MO and collect the Sputum sample</string>
-    <string name="tb_suspected_alert_positive">Refer to MO</string>
-    <string name="tb_suspected_family_alert">Refer to MO or inform ANM/MPW to tracing of all family members</string>
-
-
-    <!--Valdiateion mesages-->
-
-    <string name="cbac_validation_your_age">"Please Select age"</string>
-    <string name="cbac_validation_smoke">"Please select the consumption of smoke and smokeless products"</string>
-    <string name="cbac_validation_consume_alcohol">"Please Select alcohol consumption"</string>
-    <string name="cbac_validation_waist">"Please Select measurement of waist"</string>
-    <string name="cbac_validation_physical_activities">"Please Select physical activities"</string>
-    <string name="cbac_validation_heart_disease">"Please Select family history"</string>
-
-    <string name="cbac_validation_plsst">Please select anyone in family currently suffering from TB</string>
-    <string name="cbac_validation_plsatb">Please select Are you currently taking anti-TB</string>
-    <string name="cbac_validation_plshtb">Please select history of TB</string>
-    <string name="cbac_validation_plscoughh">Please select Coughing more than 2 weeks</string>
-    <string name="cbac_validation_plbls">Please select blood in sputum</string>
-    <string name="cbac_validation_plsfever">Please select fever for >2 weeks</string>
-    <string name="cbac_validation_plslweight">Please select loss of weight</string>
-    <string name="cbac_validation_plsnsw">Please select night sweats</string>
-    <string name="cbac_validation_rul">Please select recurrent ulceration</string>
-    <string name="cbac_validation_rtps">Please select recurrent tingling on palm or sole</string>
-    <string name="cbac_validation_cbv">Please select cloudy or blurred vision</string>
-    <string name="cbac_validation_dr">Please select difficulty in reading</string>
-    <string name="cbac_validation_pie">Please select pain in eyes lasting for more than a week</string>
-    <string name="cbac_validation_rie">Please select redness in eyes lasting for more than a week</string>
-    <string name="cbac_validation_dih">Please select difficulty in hearing</string>
-    <string name="cbac_validation_sob">Please select shortness of breath</string>
-    <string name="cbac_validation_hif">Please select history of fits</string>
-    <string name="cbac_validation_diom">Please select difficulty in opening mouth</string>
-    <string name="cbac_validation_upgm">Please select ulcer/patches/growth in mouth</string>
-    <string name="cbac_validation_tov">Please select change in tone of voice</string>
-    <string name="cbac_validation_gimh">Please select growth in mouth that has not healed in 2 weeks</string>
-    <string name="cbac_validation_wrp">Please select white or red patch in mouth that has not healed in 2 weeks</string>
-    <string name="cbac_validation_pwh">Please select pain while chewing</string>
-    <string name="cbac_validation_hpds">Please select any hyper pigmented patch or discoloration on skin</string>
-    <string name="cbac_validation_ts">Please select any thickened skin</string>
-    <string name="cbac_validation_ns">Please select any nodules on skin</string>
-    <string name="cbac_validation_rnps">Please select recurrent numbness on palm or sole</string>
-    <string name="cbac_validation_cfhf">Please select clawing of fingers in hand or feet</string>
-    <string name="cbac_validation_tnhf">Please select tingling or numbness in hand or feet</string>
-    <string name="cbac_validation_ice">Please select inability to close eyelid</string>
-    <string name="cbac_validation_dhof">Please select difficulty in holding objects with fingers</string>
-    <string name="cbac_validation_wfdw">Please select weakness in feet that causes difficulty in walking</string>
-    <string name="cbac_validation_lb">Please select lump in breast</string>
-    <string name="cbac_validation_bsdfn">Please select blood stained discharge from nipple</string>
-    <string name="cbac_validation_csb">Please select change in breast shape</string>
-    <string name="cbac_validation_bbp">Please select blood between periods</string>
-    <string name="cbac_validation_bam">Please select blood after menopause</string>
-    <string name="cbac_validation_bai">Please select blood after intercourse</string>
-    <string name="cbac_validation_fsvd">Please select foul smelling vaginal discharge</string>
-    <string name="cbac_validation_fuwsw">Please select Feeling unsteady while standing or walking</string>
-    <string name="cbac_validation_sapd">Please select Suffering from any physical disability that restrict movement</string>
-    <string name="cbac_validation_nhpa">Please select Needing help from others to perform every day activities such as eating, getting dressed, grooming, bathing, walking, or using the toilets</string>
-    <string name="cbac_validation_fn">Please select Forgetting names of yours, near ones or your own home address </string>
-    <string name="cbac_validation_fu">Please select fuel used for cooking</string>
-    <string name="cbac_validation_ox">Please select Occupational exposure </string>
-    <string name="cbac_validation_li">Please select Little Interest field! </string>
-    <string name="cbac_validation_fd">Please select Feeling down field! </string>
-
-
-    <!-- 32 33 MDSR-->
-
     <string name="mdsr_form">MDSR</string>
     <string name="mdsr_district">District</string>
     <string name="mdsr_state">State</string>
@@ -264,114 +57,24 @@
     <string name="hbnc_baby_weight_2_5_alert">Advise the mother to provide extra warmth to the baby and feed the baby more frequently. If the baby (low birth weight or normal) is not gaining weight then refer to SNCU at the nearest health facility.</string>
 
 
-    <string-array name="cbac_age">
-        <item>0-29 years</item>
-        <item>30-39 years</item>
-        <item>40-49 years</item>
-        <item>50-59 years</item>
-        <item>≥ 60 years</item>
-    </string-array>
-    <string-array name="cbac_smoke">
-        <item>Never</item>
-        <item>Used to consume in the past sometime</item>
-        <item>Daily</item>
-    </string-array>
-    <string-array name="cbac_alcohol">
-        <item>No</item>
-        <item>Yes</item>
-    </string-array>
-    <string-array name="cbac_waist_mes_female">
-        <item>80 cm or less</item>
-        <item>81-90 cm</item>
-        <item>More than 90 cm</item>
-    </string-array>
-    <string-array name="cbac_waist_mes_male">
-        <item>90 cm or less</item>
-        <item>91-100 cm</item>
-        <item>More than 100 cm</item>
-    </string-array>
-    <string-array name="cbac_pa">
-        <item>At least 150 minutes in a week</item>
-        <item>Less than 150 minutes in a week</item>
-    </string-array>
-    <string-array name="cbac_fh">
-        <item>No</item>
-        <item>Yes</item>
-    </string-array>
 
-    <string-array name="cbac_type_Cooking_fuel">
-        <item>Firewood</item>
-        <item>Crop Residue</item>
-        <item>Gobar Gas</item>
-        <item>Coal</item>
-        <item>Kerosene oil</item>
-        <item>LPG</item>
-    </string-array>
-    <string-array name="cbac_type_occupational_exposure">
-        <item>Crop residue burning</item>
-        <item>Burning of garbage – leaves</item>
-        <item>Working in industries with smoke, gas and dust exposure such as brick kilns and glass factories etc.</item>
-    </string-array>
-    <string-array name="cbac_li">
-        <item>Not at all</item>
-        <item>Several Days</item>
-        <item>More than half the days</item>
-        <item>Nearly everyday</item>
-    </string-array>
-    <string-array name="cbac_fd">
-        <item>Not at all</item>
-        <item>Several Days</item>
-        <item>More than half the days</item>
-        <item>Nearly everyday</item>
-    </string-array>
 
 
     <string name="title_activity_home" translatable="false">HomeActivity</string>
     <string name="nav_header_desc" translatable="false">Navigation header</string>
 
-
-    <!--    <string name="home_icon_title_all_ben">All Beneficiaries</string>-->
-    <!--    <string name="home_icon_title_elig_coup">Eligible Couples</string>-->
-    <!--    <string name="home_icon_title_child_care">Child Care</string>-->
-    <string name="child_care_icon_title_child_list">Child List</string>
-    <string name="child_care_icon_title_infant_list">Infant List</string>
-    <string name="child_care_icon_title_adolescent_list">Adolescent List</string>
-    <!--    <string name="home_icon_title_mother_care">Mother Care</string>-->
-    <!--    <string name="home_icon_title_death_rep">Death Reports</string>-->
-    <!--    <string name="home_icon_title_gen_op">General OP Care</string>-->
-    <!--    <string name="home_icon_title_hrp_cases">HRP Cases</string>-->
-    <!--    <string name="home_icon_title_imm_due">Immunization Due</string>-->
-    <!--    <string name="home_icon_title_menopause_stage_list">Menopause Stage List</string>-->
-    <!--    <string name="home_icon_title_ncd">NCD</string>-->
-    <!--    <string name="home_icon_title_village_lvl_forms">Village Level Forms</string>-->
-
     <string name="cd_icon_grid_icon">icon</string>
-
-
     <string name="nav_item_1_text">Name : <b>%s</b></string>
-    <string name="nav_item_2_text">Handle : <b>%s</b></string>
+    <string name="nav_item_2_text">Username : <b>%s</b></string>
     <string name="nav_item_3_text">User ID :  <b>%d</b></string>
     <string name="nav_item_4_text">Version : %s</string>
-
-
     <string name="tv_required_text_asterisk">*</string>
-
-
     <string name="rv_item_hh_entry_1">%1$d</string>
-
-
     <string name="notification_sync_channel_name">Sync Data</string>
     <string name="notification_sync_channel_description">Upload beneficiaries to Server</string>
     <string name="notification_sync_channel_id">sakhi-sync0</string>
-    <string name="download_abha_channel_id">downloading abha card</string>
-    <string name="consent_text">Consent:\nI have been explained by the ASHA, the purpose for which the information and measurement findings is being collected from me, in a language I understand and I give my consent to collect the information and measurement findings on my personal health profile.</string>
-    <string name="aadhar_consent_text">I hereby confirm that I have explained the below mentioned consent process to the individual for the creation of the ABHA Number using he individual\'s aadhar number</string>
-
     <string name="btn_submit">Submit</string>
-
     <string name="long_to_string">%d</string>
-
-
     <string name="tv_reg_date_ph">Registration Date</string>
     <string name="tv_ben_name_ph">Beneficiary Name</string>
     <string name="tv_type_of_list">Type of List</string>
@@ -390,19 +93,10 @@
     <string name="tv_tb_status_ph">TB Status</string>
     <string name="iv_sync_state_tv">SYNC STATE</string>
 
-    <string name="frag_new_ben_type_kid_text">New Born / Infant / Child / Adolescent\n( 0 - less than 15 years of age )</string>
-    <string name="frag_new_ben_type_adult_text">General Registration \n( 15 years and above )</string>
-    <string name="frag_new_ben_type_select_text">Select Beneficiary Type</string>
-    <string name="frag_new_ben_reg_type_title">Beneficiary Type for Registration</string>
+
     <string name="version">2.0.0</string>
-    <string name="cbac_Question">Question</string>
-    <string name="cbac_score">Score</string>
-    <string name="cbac_type_of_fuel">Type of fuel used for cooking</string>
-    <string name="cbac_remarks">Remarks</string>
-    <string name="cbac_risk_assessment_tv">Part A: Risk Assessment</string>
 
     <string name="evac_patient_info">Patient Information </string>
-    <string name="cbac_tv_bl_menopause">Inform ASHA Facilitator</string>
 
     <string name="immunization_dosage_count">%d/%d</string>
     <string name="select_death_type">Select Beneficiary Death Type</string>
@@ -437,47 +131,12 @@
         In case of any doubts and concerns, please write an e-mail to IT SUPPORT TEAM \n
         <b>it.support@piramalfoundation.org</b>
     </string>
-    <string name="nbr_age">Age</string>
-    <string name="nbr_dob">Date of Birth</string>
-    <string name="nbr_gender">Gender</string>
-    <string name="nbr_father_name">Father\'s Name</string>
-    <string name="nbr_mother_name">Mother\'s Name</string>
-    <string name="nbr_mobile_number_of">Mobile Number Of</string>
-    <string name="nrb_contact_number">Contact Number</string>
-    <string name="nbr_rel_to_head">Relation with head of family</string>
-    <string name="nbr_rel_to_head_other">Other - Enter relation to head</string>
-    <string name="nbr_community">Community</string>
-    <string name="nbr_religion">Religion</string>
-    <string name="nbr_religion_other">Other - Enter Religion</string>
-    <string name="nbr_child_awc">Is the Child registered at AWC</string>
-    <string name="nbr_child_reg_school">Is the Child registered at School</string>
-    <string name="nbr_child_type_school">Type of School/Institute</string>
-    <string name="nbr_rch_id">RCH ID</string>
-    <string name="nbr_child_pob">Place of birth</string>
-    <string name="nbr_child_facility">Health Facility</string>
-    <string name="nbr_child_pob_other_facility">Other Facility</string>
-    <string name="nbr_child_pob_other">Other Place of Birth</string>
-    <string name="nbr_child_who_cond_del">Who Conducted Delivery</string>
-    <string name="nbr_child_who_cond_del_other">Other - Enter who Conducted Delivery</string>
-    <string name="nbr_child_type_del">Type of Delivery</string>
-    <string name="nbr_child_comp_del">Complications during delivery</string>
-    <string name="nbr_child_feed_1_hr">Breast feeding started within 1 hr of birth</string>
-    <string name="nbr_child_birth_dose">Birth Dose</string>
-    <string name="nbr_child_birth_dose_details">Given birth dose details</string>
-    <string name="nbr_child_term">Term</string>
-    <string name="nbr_child_gest_age">Gestational Age</string>
-    <string name="nbr_child_corticosteroid">Corticosteroid given to mother at labor</string>
-    <string name="nbr_child_cry_imm_birth">Baby cried immediately at birth</string>
-    <string name="nbr_child_defect_at_birth">Any Defect Seen at Birth</string>
-
 
     <string name="hbnc_day_text">Day %1d</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="home_fragment_percent_download_text">%1d%% downloaded</string>
-    <string name="generate_abha_id">Create ABHA Number</string>
-    <string name="aadhar_disclaimer_consent_text">I, hereby declare that I am voluntarily sharing my Aadhaar Number and demographic information issued by UIDAI, with National Health Authority (NHA)for the sole purpose of creation of ABHA Number.I understand that my ABHA Number can be used and shared for purposes as may be notified by ABDM from time to time including provision of healthcare services. \n\nFurther,I am aware that my personal identifiable information (Name, Address, Age, Date of Birth, Gender and Photograph) may be made available to the entities working in the NationalDigital Health Ecosystem (NDHE)which inter alia includes stakeholders and entities such as healthcare professionals (e.g. doctors), facilities (e.g. hospitals, laboratories) and data fiduciaries (e.g. health programmers), which are registered with or linked to the Ayushman Bharat Digital Mission (ABDM), and various processes there under. I authorize NHA to use myAadhaar number for performing Aadhaar based authentication with UIDAI as per the provisions of the Aadhaar (Targeted Delivery of Financial and other Subsidies, Benefits and Services) Act, 2016 for the aforesaid purpose.I understand that UIDAI will share my e-KYC details, or response of “Yes” with NHA upon successful authentication. I have been duly informed about the option of using other IDs apart from Aadhaar; however,I consciously choose to use Aadhaar number for the purpose of availing benefits across the NDHE.I am aware that my personal identifiable information excluding Aadhaar number can be used and shared for purposes as mentioned above.I reserve the right to revoke the given consent at any point of time as per provisions of Aadhar Act and Regulations.</string>
-    <string name="aadhar_disclaimer_consent_disclaimer">Consent for the creation of ABHA Number</string>
+
     <string name="error_sign_in_invalid_u_p">Invalid Username / password !</string>
     <string name="error_sign_in_timeout">Server timed out, try again!</string>
     <string name="error_sign_in_disconnected_network">Unable to connect to network!</string>
@@ -488,22 +147,174 @@
     <string name="hbnc_baby_temp_99_alert">then look for signs of sepsis. In case signs of sepsis are not present manage only with 1/4th of a spoon of paracetamol and immediately refer to the SNCU at the nearest health facility.</string>
     <string name="form_input_empty_error">Required field cannot be empty !</string>
     <string name="form_input_upper_case_error">Only Alphabets in upper case allowed!</string>
+    <string name="form_input_missing_entry_error">Field must contain %1d digits.</string>
     <string name="form_input_alphabet_space_only_error">Only Alphabets and whitespace allowed!</string>
-    <string name="form_input_alph_numeric_space_only_error">Only Alphabets and Numerics allowed!</string>
     <string name="form_input_min_limit_error">%1s should be greater than or equal to %2d</string>
+
+    <string name="form_input_alph_numeric_space_only_error">Only Alphabets and Numerics allowed!</string>
+    <string name="form_input_min_limit_error_decimal">%1s should be greater than or equal to %2.1f</string>
     <string name="form_input_max_limit_error">%1s should be lesser than or equal to %2d</string>
+    <string name="form_input_max_limit_error_decimal">%1s should be lesser than or equal to %2.1f</string>
     <string name="form_input_error_invalid_mobile">Invalid Mobile Number !</string>
     <string name="form_input_error_invalid_rch">Invalid RCH ID !</string>
-    <string name="form_input_error_invalid_aadhar">Invalid Aadhar Number</string>
-    <string name="verify_aadhaar_number">Verify Aadhaar Number</string>
-    <string name="enter_otp">Enter OTP</string>
-    <string name="verify_otp">Verify OTP</string>
-    <string name="resend_otp">Resend OTP</string>
-    <string name="exit">Exit</string>
+    <string name="form_input_error_invalid_mcp">Invalid MCP Number !</string>
+    <string name="form_input_error_invalid_aadhar">Invalid Aadhaar Number</string>
     <string name="no_records_found_hh">No Household records found. Please start registering households by clicking on the button below.</string>
-    <string name="abha_number">ABHA Number</string>
-    <string name="abha">ABHA</string>
-    <string name="high_risk">High Risk</string>
+    <string name="something_went_wrong_nunable_to_connect_to_server_ntry_again_later">Something went wrong !\nUnable to connect to server !\nTry again later!</string>
+    <string name="try_again">Try Again!</string>
+    <string name="version_2_0_0">Version 2.0.0</string>
+<!--    <string name="disagree">DISAGREE</string>-->
+<!--    <string name="agree">AGREE</string>-->
+    <string name="enter_pin">Enter PIN</string>
+    <string name="sync_in_progress">Sync in progress ...</string>
+    <string name="full_name">Full Name</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="transgender">Transgender</string>
+    <string name="other">Other</string>
+    <string name="state">State</string>
+    <string name="district">District</string>
+
+    <string name="view_household_information">View Household Information</string>
+    <string name="hello">Hello</string>
+    <string name="select_immunization_category">Select Immunization Category</string>
+    <string name="children">Children</string>
+    <string name="mother">Mother</string>
+    <string name="patient_information">Patient Information</string>
+    <string name="mother_name">Mother Name</string>
+    <string name="date_of_birth">Date of Birth</string>
+    <string name="previous_vaccine_details">Previous Vaccine Details</string>
+    <string name="due_serial">Due Serial</string>
+    <string name="last_vaccination_date">Last Vaccination Date</string>
+    <string name="no_of_doses_taken">No of Doses Taken</string>
+    <string name="current_vaccine_details">Current Vaccine Details</string>
+    <string name="vaccine_name">Vaccine Name</string>
+    <string name="dose_number">Dose Number</string>
+    <string name="expected_date">Expected Date</string>
+    <string name="vaccination_date">Vaccination Date</string>
+    <string name="vaccination_place">Vaccination Place</string>
+    <string name="vaccinated_by">Vaccinated By</string>
+    <string name="saving_form">Saving Form ...</string>
+    <string name="previous">PREVIOUS</string>
+    <string name="next">NEXT</string>
+    <string name="edit">EDIT</string>
+    <string name="to_do_list">To Do List</string>
+    <string name="beneficiaries_due_for_anc">Beneficiaries due for ANC</string>
+    <string name="beneficiaries_due_for_immunization">Beneficiaries due for Immunization</string>
+    <string name="_0">0</string>
+    <string name="high_risk_cases">High Risk Cases</string>
+    <string name="high_risk_pregnant_women">High Risk Pregnant Women</string>
+    <string name="high_risk_babies">High Risk Babies</string>
+    <string name="low_birth_weight_babies">Low Birth Weight Babies</string>
+    <string name="age">Age</string>
+    <string name="gender">Gender</string>
+    <string name="registration_date">Registration Date</string>
+    <string name="beneficiary_id">Beneficiary ID</string>
+    <string name="rch_id">RCH ID</string>
+    <string name="sync_to_local">SYNC TO LOCAL</string>
+    <string name="beneficiary_name">Beneficiary Name</string>
+    <string name="husband_s_name">Husband\'s Name</string>
+    <string name="weeks_of_pregnancy">Weeks Of Pregnancy</string>
+    <string name="anc_visits">ANC VISITS</string>
+    <string name="id">ID</string>
+    <string name="no_of_children">No.of Children</string>
+    <string name="view_trackings">View Trackings</string>
+    <string name="add_tracking">Add Tracking</string>
+    <string name="household_id">Household ID</string>
+    <string name="contact_number">Contact Number</string>
+    <string name="kcuf">KCUF</string>
+    <string name="show_vaccines">Show Vaccines</string>
+    <string name="add_cbac">Add CBAC</string>
+    <string name="view_cbac">View CBAC</string>
+    <string name="view">VIEW</string>
+    <string name="home">Home</string>
+    <string name="sync_records">Sync Records</string>
+    <string name="about">About Us</string>
+
+    <string name="help">Help</string>
+    <string name="logout">Logout</string>
+    <string name="sync_status">Sync Status</string>
+    <string name="go_to_home">Go to Home</string>
+    <string name="change_language">Change Language</string>
+    <string name="kid_registration">Kid Registration</string>
+    <string name="adult_registration">Adult Registration</string>
+    <string name="pregnancy_list">Pregnancy List</string>
+    <string name="delivery_stage_list">Delivery Stage List</string>
+    <string name="pnc_mother_list">PNC Mother List</string>
+    <string name="reproductive_age_list">Reproductive Age List</string>
+    <string name="ncd_eligible_list">NCD Eligible List</string>
+    <string name="ncd_list">NCD List</string>
+    <string name="ncd_non_eligible_list">NCD Non-Eligible List</string>
+    <string name="ncd_priority_list">NCD Priority List</string>
+    <string name="all_household_list">All Household List</string>
+    <string name="beneficiaries_data">Beneficiaries Data</string>
+    <string name="cdr_list">CDR List</string>
+    <string name="mdsr_list">MDSR List</string>
+    <string name="mdsr">MDSR</string>
+    <string name="cdr">CDR</string>
+    <string name="pmsma">PMSMA</string>
+    <string name="pmjay_form">PMJAY Form</string>
+    <string name="household_members">Household Members</string>
+    <string name="fp_ot_register">FP-OT Register</string>
+    <string name="hbnc_day_list">Hbnc Day List</string>
+    <string name="hbnc">Hbnc</string>
+    <string name="visit_card">Visit Card</string>
+    <string name="hbnc_part_i">Hbnc Part I</string>
+    <string name="hbnc_part_ii">Hbnc Part II</string>
+    <string name="hbyc">HBYC</string>
+    <string name="hbyc_month_list">Hbyc Month List</string>
+    <string name="immunization">Immunization</string>
+<!--    <string name="child_immunization_list">Child Immunization List</string>-->
+    <string name="pregnancy_registration_form">Pregnancy Registration Form</string>
+    <string name="anc_visit">ANC Visit</string>
+    <string name="eligible_couple_list">Eligible Couple List</string>
+    <string name="eligible_couple_registration">Eligible Couple Registration</string>
+    <string name="eligible_couple_tracking_list">Eligible Couple Tracking List</string>
+    <string name="eligible_couple_tracking_form">Eligible Couple Tracking Form</string>
+    <string name="tb_screening_list">TB Screening List</string>
+    <string name="tb_suspected_list">TB Suspected List</string>
+    <string name="tb_screening_form">TB Screening Form</string>
+    <string name="tb_suspected_form">TB Suspected Form</string>
+    <string name="mother_immunization">Mother Immunization</string>
+    <string name="delivery_outcome">Delivery Outcome</string>
+    <string name="delivery_outcome_list">Delivery Outcome List</string>
+    <string name="infant_reg_list">Infant Reg List</string>
+    <string name="infant_reg">Infant Reg</string>
+<!--    <string name="child_reg_list">Child Reg List</string>-->
+<!--    <string name="child_reg">Child Reg.</string>-->
+    <string name="communicable_diseases">Communicable Diseases</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="sign_in">Sign In</string>
+    <string name="service_location">Service Location</string>
+
+<!--    <string name="wife_s_name">Wife\'s Name</string>-->
+<!--    <string name="spouse_s_name">Spouse\'s Name</string>-->
+<!--    <string name="age_at_marriage">Age At Marriage</string>-->
+<!--    <string name="date_of_marriage">Date of Marriage</string>-->
+<!--    <string name="father_s_name">Father\'s Name</string>-->
+<!--    <string name="mother_s_name">Mother\'s Name</string>-->
+<!--    <string name="mobile_number_of">Mobile Number Of</string>-->
+<!--    <string name="other_mobile_number_of">Other - Mobile Number of</string>-->
+<!--    <string name="form_name">Form Name</string>-->
+
+    <string name="save_successful">Save Successful!!!</string>
+    <string name="something_wend_wong_contact_testing">Something wend wong! Contact testing!</string>
+    <string name="error_input">Error Input</string>
+    <string name="exit_application">Exit Application</string>
+    <string name="do_you_want_to_exit_application">Do you want to exit application</string>
+    <string name="downloading">Downloading …</string>
+    <string name="choose_application_language">Choose Application Language</string>
+    <string name="english">English</string>
+    <string name="hindi">Hindi</string>
+    <string name="assamese">Assamese</string>
+    <string name="sync">SYNC</string>
+    <string name="tap_to_change">Tap to Change</string>
+    <string name="validate">Validate</string>
+    <string name="hbnc_daylist">Hbnc DayList</string>
+    <string name="hbyc_list">Hbyc List</string>
+    <string name="child_immunization">Child Immunization</string>
+    <string name="pregnancy_registration">Pregnancy Registration</string>
+    <string name="mother_immunizationlist">Mother ImmunizationList</string>
 
     <!-- Eligible couple registration -->
     <string-array name="ecr_gender_array">

@@ -15,6 +15,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.ui.home_activity.child_care.infant_list.hbnc_form.visit.HbncVisitViewModel.State
@@ -33,8 +34,8 @@ class HbncVisitFragment : Fragment() {
     private val viewModel: HbncVisitViewModel by viewModels()
 
     private val errorAlert by lazy {
-        AlertDialog.Builder(requireContext()).setTitle("Alert")
-            .setPositiveButton("Ok") { dialog, _ ->
+        AlertDialog.Builder(requireContext()).setTitle(resources.getString(R.string.alert))
+            .setPositiveButton(resources.getString(R.string.ok)) { dialog, _ ->
                 dialog.dismiss()
             }
             .setOnDismissListener {
@@ -118,7 +119,7 @@ class HbncVisitFragment : Fragment() {
                     binding.cvPatientInformation.visibility = View.VISIBLE
                     binding.pbForm.visibility = View.GONE
                     Toast.makeText(
-                        context, "Saving Mdsr to database Failed!", Toast.LENGTH_LONG
+                        context, resources.getString(R.string.saving_mdsr_to_database_failed), Toast.LENGTH_LONG
                     ).show()
                 }
                 else -> {

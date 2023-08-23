@@ -75,7 +75,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/margin_normal"
                     android:background="@android:color/white"
-                    android:hint="Date"
+                    android:hint="@string/date"
                     android:padding="@dimen/padding_normal">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -1353,7 +1353,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/margin_normal"
-                    android:text="Save"
+                    android:text="@string/save"
                     android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
                     android:textColor="?attr/colorOnPrimary" />
 

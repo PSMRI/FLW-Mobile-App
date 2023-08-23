@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.ui.home_activity.immunization_due.child_immunization.form.ImmunizationFormViewModel.State
@@ -62,15 +63,14 @@ class ImmunizationFormFragment : Fragment() {
                 State.SAVE_SUCCESS -> {
                     binding.llContent.visibility = View.VISIBLE
                     binding.pbForm.visibility = View.GONE
-                    Toast.makeText(context, "Save Successful!!!", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, resources.getString(R.string.save_successful), Toast.LENGTH_LONG).show()
 //                    WorkerUtils.triggerAmritSyncWorker(requireContext())
                     findNavController().navigateUp()
                 }
 
                 State.SAVE_FAILED -> {
                     Toast.makeText(
-
-                        context, "Something wend wong! Contact testing!", Toast.LENGTH_LONG
+                        context, resources.getString(R.string.something_wend_wong_contact_testing), Toast.LENGTH_LONG
                     ).show()
                     binding.llContent.visibility = View.VISIBLE
                     binding.pbForm.visibility = View.GONE

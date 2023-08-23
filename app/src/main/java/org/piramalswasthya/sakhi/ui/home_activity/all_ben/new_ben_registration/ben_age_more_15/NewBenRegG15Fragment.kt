@@ -25,6 +25,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.BuildConfig
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.databinding.FragmentInputFormPageHhBinding
@@ -86,14 +87,14 @@ class NewBenRegG15Fragment : Fragment() {
         val alertDialog: AlertDialog.Builder = AlertDialog.Builder(requireContext())
 
         // Setting Dialog Title
-        alertDialog.setTitle("Enable GPS")
+        alertDialog.setTitle(resources.getString(R.string.enable_gps))
 
         // Setting Dialog Message
-        alertDialog.setMessage("GPS is not enabled. Do you want to go to settings menu?")
+        alertDialog.setMessage(resources.getString(R.string.gps_is_not_enabled_do_you_want_to_go_to_settings_menu))
 
         // On pressing Settings button
         alertDialog.setPositiveButton(
-            "Settings"
+            resources.getString(R.string.settings)
         ) { _, _ ->
             val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
             startActivity(intent)
@@ -101,7 +102,7 @@ class NewBenRegG15Fragment : Fragment() {
 
         // on pressing cancel button
         alertDialog.setNegativeButton(
-            "Cancel"
+            resources.getString(R.string.cancel)
         ) { dialog, _ ->
             findNavController().navigateUp()
             dialog.cancel()
@@ -110,9 +111,9 @@ class NewBenRegG15Fragment : Fragment() {
     }
 
     private val errorAlert by lazy {
-        MaterialAlertDialogBuilder(requireContext()).setTitle("Error Input")
+        MaterialAlertDialogBuilder(requireContext()).setTitle(resources.getString(R.string.error_input))
             //.setMessage("Do you want to continue with previous form, or create a new form and discard the previous form?")
-            .setPositiveButton("OK") { dialog, _ ->
+            .setPositiveButton(resources.getString(R.string.ok)) { dialog, _ ->
                 dialog.dismiss()
             }
 
@@ -178,9 +179,9 @@ class NewBenRegG15Fragment : Fragment() {
         lifecycleScope.launch {
             viewModel.currentPage.collect {
                 binding.tvTitle.text = when (it) {
-                    1 -> "Beneficiary Details"
-                    2 -> "ID Details"
-                    3 -> "Reproductive Status"
+                    1 -> resources.getString(R.string.beneficiary_details_ben)
+                    2 -> resources.getString(R.string.id_details)
+                    3 -> resources.getString(R.string.reproductive_status_ben)
                     else -> null
                 }
 //                binding.tlNhhr.selectTab(binding.tlNhhr.getTabAt(it - 1), true)
@@ -276,7 +277,7 @@ class NewBenRegG15Fragment : Fragment() {
                 State.SAVE_SUCCESS -> {
                     binding.clContent.visibility = View.VISIBLE
                     binding.rlSaving.visibility = View.GONE
-                    Toast.makeText(context, "Save Successful!!!", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, resources.getString(R.string.save_successful), Toast.LENGTH_LONG).show()
                     WorkerUtils.triggerAmritPushWorker(requireContext())
                     findNavController().navigate(NewBenRegG15FragmentDirections.actionNewBenRegG15FragmentToHomeFragment())
                 }
@@ -284,7 +285,7 @@ class NewBenRegG15Fragment : Fragment() {
                 State.SAVE_FAILED -> {
                     Toast.makeText(
 
-                        context, "Something wend wong! Contact testing!", Toast.LENGTH_LONG
+                        context, resources.getString(R.string.something_wend_wong_contact_testing), Toast.LENGTH_LONG
                     ).show()
                     binding.clContent.visibility = View.VISIBLE
                     binding.rlSaving.visibility = View.GONE

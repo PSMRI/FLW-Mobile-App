@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.work.WorkerUtils
@@ -28,17 +29,17 @@ class TBScreeningFormFragment : Fragment() {
 
     private val tbSuspectedAlert by lazy {
         AlertDialog.Builder(requireContext())
-            .setTitle("TB Screening")
+            .setTitle(resources.getString(R.string.tb_screening))
             .setMessage("it")
-            .setPositiveButton("Ok") { dialog, _ -> dialog.dismiss() }
+            .setPositiveButton(resources.getString(R.string.ok)) { dialog, _ -> dialog.dismiss() }
             .create()
     }
 
     private val tbSuspectedFamilyAlert by lazy {
         AlertDialog.Builder(requireContext())
-            .setTitle("TB Screening")
+            .setTitle(resources.getString(R.string.tb_screening))
             .setMessage("it")
-            .setPositiveButton("Ok") { dialog, _ -> dialog.dismiss() }
+            .setPositiveButton(resources.getString(R.string.ok)) { dialog, _ -> dialog.dismiss() }
             .create()
     }
 
@@ -84,7 +85,7 @@ class TBScreeningFormFragment : Fragment() {
             when (it) {
                 TBScreeningFormViewModel.State.SAVE_SUCCESS -> {
                     Toast.makeText(requireContext(),
-                        "TB Screening submitted", Toast.LENGTH_SHORT).show()
+                        resources.getString(R.string.tb_screening_submitted), Toast.LENGTH_SHORT).show()
                     WorkerUtils.triggerAmritPushWorker(requireContext())
                     findNavController().navigateUp()
                 }

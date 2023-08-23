@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.databinding.RvItemPregnancyVisitBinding
 import org.piramalswasthya.sakhi.model.PregnantWomenVisitDomain
 
-class PregnancyVisitListAdapter(private val clickListener: PregnancyVisitClickListener? = null) :
-    ListAdapter<PregnantWomenVisitDomain, PregnancyVisitListAdapter.PregnancyVisitViewHolder>(
+class AncVisitListAdapter(private val clickListener: PregnancyVisitClickListener? = null) :
+    ListAdapter<PregnantWomenVisitDomain, AncVisitListAdapter.PregnancyVisitViewHolder>(
         MyDiffUtilCallBack
     ) {
     private object MyDiffUtilCallBack : DiffUtil.ItemCallback<PregnantWomenVisitDomain>() {

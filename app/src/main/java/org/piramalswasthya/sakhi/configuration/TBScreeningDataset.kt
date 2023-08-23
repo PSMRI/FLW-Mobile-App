@@ -23,8 +23,8 @@ class TBScreeningDataset (
     private val isCoughing = FormElement(
         id = 4,
         inputType = InputType.RADIO,
-        title = context.getString(R.string.cbac_coughing),
-        entries = arrayOf("Yes", "No"),
+        title = resources.getString(R.string.cbac_coughing),
+        entries = resources.getStringArray(R.array.yes_no),
         required = true,
         hasDependants = false
     )
@@ -32,8 +32,8 @@ class TBScreeningDataset (
     private var bloodInSputum = FormElement(
         id = 5,
         inputType = InputType.RADIO,
-        title = context.getString(R.string.cbac_blsputum),
-        entries = arrayOf("Yes", "No"),
+        title = resources.getString(R.string.cbac_blsputum),
+        entries = resources.getStringArray(R.array.yes_no),
         required = true,
         hasDependants = false
     )
@@ -41,8 +41,8 @@ class TBScreeningDataset (
     private var isFever = FormElement(
         id = 6,
         inputType = InputType.RADIO,
-        title = context.getString(R.string.cbac_feverwks),
-        entries = arrayOf("Yes", "No"),
+        title = resources.getString(R.string.cbac_feverwks),
+        entries = resources.getStringArray(R.array.yes_no),
         required = true,
         hasDependants = false
     )
@@ -50,8 +50,8 @@ class TBScreeningDataset (
     private var lossOfWeight = FormElement(
         id = 7,
         inputType = InputType.RADIO,
-        title = context.getString(R.string.cbac_lsweight),
-        entries = arrayOf("Yes", "No"),
+        title = resources.getString(R.string.cbac_lsweight),
+        entries = resources.getStringArray(R.array.yes_no),
         required = true,
         hasDependants = false
     )
@@ -59,8 +59,8 @@ class TBScreeningDataset (
     private var nightSweats = FormElement(
         id = 7,
         inputType = InputType.RADIO,
-        title = context.getString(R.string.cbac_ntswets),
-        entries = arrayOf("Yes", "No"),
+        title = resources.getString(R.string.cbac_ntswets),
+        entries = resources.getStringArray(R.array.yes_no),
         required = true,
         hasDependants = false
     )
@@ -68,8 +68,8 @@ class TBScreeningDataset (
     private var historyOfTB = FormElement(
         id = 7,
         inputType = InputType.RADIO,
-        title = context.getString(R.string.cbac_histb),
-        entries = arrayOf("Yes", "No"),
+        title = resources.getString(R.string.cbac_histb),
+        entries = resources.getStringArray(R.array.yes_no),
         required = true,
         hasDependants = false
     )
@@ -77,8 +77,8 @@ class TBScreeningDataset (
     private var currentlyTakingDrugs = FormElement(
         id = 7,
         inputType = InputType.RADIO,
-        title = context.getString(R.string.cbac_taking_tb_drug),
-        entries = arrayOf("Yes", "No"),
+        title = resources.getString(R.string.cbac_taking_tb_drug),
+        entries = resources.getStringArray(R.array.yes_no),
         required = true,
         doubleStar = true,
         hasDependants = false
@@ -87,8 +87,8 @@ class TBScreeningDataset (
     private var familyHistoryTB = FormElement(
         id = 7,
         inputType = InputType.RADIO,
-        title = context.getString(R.string.cbac_fh_tb),
-        entries = arrayOf("Yes", "No"),
+        title = resources.getString(R.string.cbac_fh_tb),
+        entries = resources.getStringArray(R.array.yes_no),
         doubleStar = true,
         required = true,
         hasDependants = false
@@ -110,14 +110,14 @@ class TBScreeningDataset (
             dateOfVisit.value = getDateFromLong(System.currentTimeMillis())
         } else {
             dateOfVisit.value = getDateFromLong(saved.visitDate)
-            isCoughing.value = if (saved.coughMoreThan2Weeks == true) "Yes" else "No"
-            bloodInSputum.value = if (saved.bloodInSputum == true) "Yes" else "No"
-            isFever.value = if (saved.feverMoreThan2Weeks == true) "Yes" else "No"
-            lossOfWeight.value = if (saved.lossOfWeight == true) "Yes" else "No"
-            nightSweats.value = if (saved.nightSweats == true) "Yes" else "No"
-            historyOfTB.value = if (saved.historyOfTb == true) "Yes" else "No"
-            currentlyTakingDrugs.value = if (saved.takingAntiTBDrugs == true) "Yes" else "No"
-            familyHistoryTB.value = if (saved.familySufferingFromTB == true) "Yes" else "No"
+            isCoughing.value = if (saved.coughMoreThan2Weeks == true) resources.getStringArray(R.array.yes_no)[0] else resources.getStringArray(R.array.yes_no)[1]
+            bloodInSputum.value = if (saved.bloodInSputum == true) resources.getStringArray(R.array.yes_no)[0] else resources.getStringArray(R.array.yes_no)[1]
+            isFever.value = if (saved.feverMoreThan2Weeks == true) resources.getStringArray(R.array.yes_no)[0] else resources.getStringArray(R.array.yes_no)[1]
+            lossOfWeight.value = if (saved.lossOfWeight == true) resources.getStringArray(R.array.yes_no)[0] else resources.getStringArray(R.array.yes_no)[1]
+            nightSweats.value = if (saved.nightSweats == true) resources.getStringArray(R.array.yes_no)[0] else resources.getStringArray(R.array.yes_no)[1]
+            historyOfTB.value = if (saved.historyOfTb == true) resources.getStringArray(R.array.yes_no)[0] else resources.getStringArray(R.array.yes_no)[1]
+            currentlyTakingDrugs.value = if (saved.takingAntiTBDrugs == true) resources.getStringArray(R.array.yes_no)[0] else resources.getStringArray(R.array.yes_no)[1]
+            familyHistoryTB.value = if (saved.familySufferingFromTB == true) resources.getStringArray(R.array.yes_no)[0] else resources.getStringArray(R.array.yes_no)[1]
         }
 
 
@@ -136,14 +136,14 @@ class TBScreeningDataset (
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as TBScreeningCache).let { form ->
             form.visitDate = getLongFromDate(dateOfVisit.value)
-            form.coughMoreThan2Weeks = isCoughing.value == "Yes"
-            form.bloodInSputum = bloodInSputum.value == "Yes"
-            form.feverMoreThan2Weeks = isFever.value == "Yes"
-            form.nightSweats = nightSweats.value == "Yes"
-            form.lossOfWeight = lossOfWeight.value == "Yes"
-            form.historyOfTb = historyOfTB.value == "Yes"
-            form.takingAntiTBDrugs = currentlyTakingDrugs.value == "Yes"
-            form.familySufferingFromTB = familyHistoryTB.value == "Yes"
+            form.coughMoreThan2Weeks = isCoughing.value == englishResources.getStringArray(R.array.yes_no)[0]
+            form.bloodInSputum = bloodInSputum.value == englishResources.getStringArray(R.array.yes_no)[0]
+            form.feverMoreThan2Weeks = isFever.value == englishResources.getStringArray(R.array.yes_no)[0]
+            form.nightSweats = nightSweats.value == englishResources.getStringArray(R.array.yes_no)[0]
+            form.lossOfWeight = lossOfWeight.value == englishResources.getStringArray(R.array.yes_no)[0]
+            form.historyOfTb = historyOfTB.value == englishResources.getStringArray(R.array.yes_no)[0]
+            form.takingAntiTBDrugs = currentlyTakingDrugs.value == englishResources.getStringArray(R.array.yes_no)[0]
+            form.familySufferingFromTB = familyHistoryTB.value == englishResources.getStringArray(R.array.yes_no)[0]
         }
     }
 
@@ -158,18 +158,18 @@ class TBScreeningDataset (
     }
 
     fun isTbSuspected(): String? {
-        return if ( isCoughing.value == "Yes" ||
-                bloodInSputum.value == "Yes" ||
-                isFever.value == "Yes" ||
+        return if ( isCoughing.value == resources.getStringArray(R.array.yes_no)[0] ||
+                bloodInSputum.value == resources.getStringArray(R.array.yes_no)[0] ||
+                isFever.value == resources.getStringArray(R.array.yes_no)[0] ||
                 lossOfWeight.value == "Yes" ||
-                nightSweats.value == "Yes" ||
-                lossOfWeight.value == "Yes" ||
-                historyOfTB.value == "Yes")
+                nightSweats.value == resources.getStringArray(R.array.yes_no)[0] ||
+                lossOfWeight.value == resources.getStringArray(R.array.yes_no)[0] ||
+                historyOfTB.value == resources.getStringArray(R.array.yes_no)[0])
             resources.getString(R.string.tb_suspected_alert) else null
     }
 
     fun isTbSuspectedFamily(): String? {
-        return if (currentlyTakingDrugs.value == "Yes" || familyHistoryTB.value == "Yes")
+        return if (currentlyTakingDrugs.value == resources.getStringArray(R.array.yes_no)[0] || familyHistoryTB.value == resources.getStringArray(R.array.yes_no)[0])
             resources.getString(R.string.tb_suspected_family_alert) else null
     }
 }

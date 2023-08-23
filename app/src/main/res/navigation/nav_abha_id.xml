@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/aadhaarIdFragment"
         android:name="org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.AadhaarIdFragment"
-        android:label="Generate ABHA Number"
+        android:label="@string/enter_aadhaar_number"
         tools:layout="@layout/fragment_aadhaar_id">
         <action
             android:id="@+id/action_aadhaarIdFragment_to_aadhaarOtpFragment"
@@ -23,7 +23,7 @@
     <fragment
         android:id="@+id/aadhaarOtpFragment"
         android:name="org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_otp.AadhaarOtpFragment"
-        android:label="Verify Aadhaar Number"
+        android:label="@string/verify_aadhaar_number"
         tools:layout="@layout/fragment_aadhaar_otp">
         <argument
             android:name="txnId"
@@ -40,7 +40,7 @@
     <fragment
         android:id="@+id/generateMobileOtpFragment"
         android:name="org.piramalswasthya.sakhi.ui.abha_id_activity.generate_mobile_otp.GenerateMobileOtpFragment"
-        android:label="Verify Mobile Number"
+        android:label="@string/verify_mobile_number"
         tools:layout="@layout/fragment_generate_mobile_otp">
         <action
             android:id="@+id/action_generateMobileOtpFragment_to_verifyMobileOtpFragment"
@@ -55,7 +55,7 @@
     <fragment
         android:id="@+id/verifyMobileOtpFragment"
         android:name="org.piramalswasthya.sakhi.ui.abha_id_activity.verify_mobile_otp.VerifyMobileOtpFragment"
-        android:label="Verify Mobile Number"
+        android:label="@string/verify_mobile_number"
         tools:layout="@layout/fragment_verify_mobile_otp">
         <action
             android:id="@+id/action_verifyMobileOtpFragment_to_createAbhaFragment"

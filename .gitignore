@@ -1,6 +1,6 @@
-/build/
+/build/*
 /.idea/
 /.gradle/
 *.bin
 *.lock
-
+/app/build/*

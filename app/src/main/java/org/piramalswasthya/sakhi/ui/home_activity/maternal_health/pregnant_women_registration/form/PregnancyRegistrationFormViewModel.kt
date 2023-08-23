@@ -12,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.configuration.PregnantWomanRegistrationDataset
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.PregnantWomanRegistrationCache
 import org.piramalswasthya.sakhi.repositories.BenRepo
@@ -61,12 +62,16 @@ class PregnancyRegistrationFormViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
+            val asha  = preferenceDao.getLoggedInUser()!!
             val ben = maternalHealthRepo.getBenFromId(benId)?.also { ben ->
                 _benName.value =
                     "${ben.firstName} ${if (ben.lastName == null) "" else ben.lastName}"
                 _benAgeGender.value = "${ben.age} ${ben.ageUnit?.name} | ${ben.gender?.name}"
                 pregnancyRegistrationForm = PregnantWomanRegistrationCache(
                     benId = ben.beneficiaryId,
+                    syncState = SyncState.UNSYNCED,
+                    createdBy = asha.userName,
+                    updatedBy = asha.userName
                 )
             }
 
@@ -108,7 +113,7 @@ class PregnancyRegistrationFormViewModel @Inject constructor(
                     maternalHealthRepo.getBenFromId(benId)?.let {
                         val hasBenUpdated = dataset.mapValueToBenRegId(it)
                         if (hasBenUpdated)
-                            benRepo.persistRecord(it)
+                            benRepo.updateRecord(it)
                     }
                     _state.postValue(State.SAVE_SUCCESS)
                 } catch (e: Exception) {

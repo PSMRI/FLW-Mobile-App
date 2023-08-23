@@ -12,7 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import org.piramalswasthya.sakhi.adapters.PregnancyVisitListAdapter
+import org.piramalswasthya.sakhi.adapters.AncVisitListAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
 
 @AndroidEntryPoint
@@ -38,8 +38,8 @@ class PwAncVisitsListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.btnNextPage.visibility = View.GONE
-        val benAdapter = PregnancyVisitListAdapter(
-            PregnancyVisitListAdapter.PregnancyVisitClickListener {
+        val benAdapter = AncVisitListAdapter(
+            AncVisitListAdapter.PregnancyVisitClickListener {
                 viewModel.updateBottomSheetData(it)
                 if (!bottomSheet.isVisible)
                     bottomSheet.show(childFragmentManager, "ANC")

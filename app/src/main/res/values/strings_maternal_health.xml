@@ -3,6 +3,12 @@
 
 
     <string name="anc_visit_number">ANC Visit %1d</string>
+    <string name="register">Register</string>
+    <string name="tracking_form_filled_successfully">Tracking form filled successfully</string>
+    <string name="pmsma_form">PMSMA Form</string>
+    <string name="general_op">General OP</string>
+    <string name="saving_pmsma_to_database_failed">Saving pmsma to database Failed!</string>
+    <string name="hrp_case_please_visit_the_nearest_hwc_or_call_104">HRP Case, please visit the nearest HWC or call 104</string>
 
     <string-array name="maternal_health_pregnancy_week">
         <item>12 weeks</item>
@@ -74,6 +80,7 @@
         <item>Feb</item>
         <item>Mar</item>
         <item>Apr</item>
+        <item>May</item>
         <item>Jun</item>
         <item>Jul</item>
         <item>Aug</item>

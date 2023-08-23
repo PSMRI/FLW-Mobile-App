@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.BenListAdapterForForm
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
 
@@ -47,7 +48,7 @@ class TBScreeningListFragment: Fragment() {
                         TBScreeningListFragmentDirections
                             .actionTBScreeningListFragmentToTBScreeningFormFragment(benId = benId)
                     )
-                }), "Screen"
+                }), resources.getString(R.string.screen)
         )
         binding.rvAny.adapter = benAdapter
 

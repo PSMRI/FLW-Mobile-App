@@ -9,6 +9,7 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.repositories.CbacRepo
+import timber.log.Timber
 
 @HiltWorker
 class CbacPullFromAmritWorker @AssistedInject constructor(
@@ -31,6 +32,7 @@ class CbacPullFromAmritWorker @AssistedInject constructor(
                 }
                 Result.success()
             } catch (e: Exception) {
+                Timber.d("cbac pull failed : $e")
                 Result.failure()
             }
         }

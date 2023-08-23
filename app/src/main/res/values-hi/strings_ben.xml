@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="marital_status">वैवाहिक स्थिति</string>
+    <string name="relation_with_family_head">परिवार के मुखिया के साथ संबंध</string>
+    <string name="other_enter_relation_to_head">अन्य - संबंध दर्ज करें</string>
+    <string name="community">समुदाय</string>
+    <string name="religion">धर्म</string>
+    <string name="other_enter_religion">अन्य - धर्म दर्ज करें</string>
+    <string name="has_aadhaar_number">आधार नंबर है</string>
+    <string name="enter_aadhaar_number_ben">आधार नंबर दर्ज करें</string>
+    <string name="reproductive_status">जननांग स्थिति</string>
+    <string name="beneficiary_details">लाभार्थी विवरण</string>
+    <string name="wife_s_name">पत्नी का नाम</string>
+    <string name="spouse_s_name">पति / पत्नी का नाम</string>
+    <string name="age_at_marriage">विवाह की आयु</string>
+    <string name="date_of_marriage">विवाह की तारीख</string>
+    <string name="father_s_name">पिता का नाम</string>
+    <string name="mother_s_name">मां का नाम</string>
+    <string name="mobile_number_of">किसका मोबाइल नंबर</string>
+    <string name="other_mobile_number_of">अन्य - मोबाइल नंबर किसका</string>
+    <string name="form_name">फ़ॉर्म का नाम</string>
+    <string name="rch_id_ben">RCH आईडी</string>
+    <string name="nbr_age">आयु</string>
+    <string name="nbr_dob">जन्म की तारीख</string>
+    <string name="nbr_gender">लिंग</string>
+    <string name="nbr_image">फ़ोटो</string>
+    <string name="nbr_image_sub">कैमरा का उपयोग करने के लिए टैप करें</string>
+    <string name="nbr_dor">पंजीकरण की तारीख</string>
+    <string name="nbr_nb_first_name">पहला नाम</string>
+    <string name="nbr_nb_last_name">अंतिम नाम / उपनाम</string>
+
+    <string-array name="nbr_gender_array">
+        <item name="nbr_gender_1">पुरुष</item>
+        <item name="nbr_gender_2">महिला</item>
+        <item name="nbr_gender_3">ट्रांसजेंडर</item>
+    </string-array>
+    <string-array name="nbr_reproductive_status_array">
+        <item>योग्य जोड़</item>
+        <item>गर्भवती महिला</item>
+        <item>पोस्टनेटल मां</item>
+        <item>वृद्ध महिला</item>
+        <item>किशोरी</item>
+    </string-array>
+
+    <string-array name="nbr_marital_status_male_array">
+        <item>अविवाहित</item>
+        <item>विवाहित</item>
+        <item>तलाकशुदा</item>
+        <item>अलग</item>
+        <item>विधवा</item>
+    </string-array>
+
+    <string-array name="nbr_marital_status_female_array">
+        <item>अविवाहित</item>
+        <item>विवाहित</item>
+        <item>तलाकशुदा</item>
+        <item>अलग</item>
+        <item>विधवा</item>
+    </string-array>
+
+    <string-array name="nbr_mobile_no_relation_array">
+        <item>स्वयं</item>
+        <item>पति</item>
+        <item>मां</item>
+        <item>पिता</item>
+        <item>परिवार के मुखिया</item>
+        <item>अन्य</item>
+    </string-array>
+
+    <string-array name="nbr_relationship_to_head">
+        <item>मां</item>
+        <item>पिता</item>
+        <item>भाई</item>
+        <item>बहन</item>
+        <item>पत्नी</item>
+        <item>पति</item>
+        <item>भतीजा</item>
+        <item>भतीजी</item>
+        <item>बेटा</item>
+        <item>बेटी</item>
+        <item>दादा</item>
+        <item>दादी</item>
+        <item>ससुर</item>
+        <item>सास</item>
+        <item>पोता</item>
+        <item>पोती</item>
+        <item>दामाद</item>
+        <item>नातनी</item>
+        <item>स्वयं</item>
+        <item>अन्य</item>
+    </string-array>
+
+    <string-array name="nbr_relationship_to_head_male">
+        <item>पिता</item>
+        <item>भाई</item>
+        <item>पति</item>
+        <item>भतीजा</item>
+        <item>बेटा</item>
+        <item>दादा</item>
+        <item>ससुर</item>
+        <item>पोता</item>
+        <item>दामाद</item>
+        <item>स्वयं</item>
+        <item>अन्य</item>
+    </string-array>
+
+    <string-array name="nbr_relationship_to_head_female">
+        <item>मां</item>
+        <item>बहन</item>
+        <item>पत्नी</item>
+        <item>भतीजी</item>
+        <item>बेटी</item>
+        <item>दादी</item>
+        <item>सास</item>
+        <item>पोती</item>
+        <item>नातनी</item>
+        <item>स्वयं</item>
+        <item>अन्य</item>
+    </string-array>
+
+    <string-array name="community_array">
+        <item>सामान्य</item>
+        <item>अनुसूचित जाति</item>
+        <item>अनुसूचित जनजाति</item>
+        <item>पिछड़ा वर्ग</item>
+        <item>अन्य पिछड़ा वर्ग</item>
+        <item>अन्य वर्ग</item>
+        <item>नहीं दिया गया</item>
+    </string-array>
+
+    <string-array name="religion_array">
+        <item>हिन्दू</item>
+        <item>मुस्लिम</item>
+        <item>ईसाई</item>
+        <item>सिख</item>
+        <item>बौद्ध</item>
+        <item>जैन</item>
+        <item>पारसी</item>
+        <item>अन्य</item>
+        <item>अप्रकटित</item>
+    </string-array>
+
+    <string-array name="yes_no_donno">
+        <item>हाँ</item>
+        <item>नहीं</item>
+        <item>मालूम नहीं</item>
+    </string-array>
+    <string-array name="yes_no">
+        <item>हाँ</item>
+        <item>नहीं</item>
+    </string-array>
+
+    <string-array name="yes">
+        <item>हाँ</item>
+    </string-array>
+</resources>

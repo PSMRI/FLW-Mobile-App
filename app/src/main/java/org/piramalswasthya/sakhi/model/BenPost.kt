@@ -20,7 +20,7 @@ data class BenPost(
     val providerServiceMapID: Int = 0,
     @Json(name = "VanID")
     @SerializedName("VanID")
-    val vanID: Int = 0,
+    val vanID: Int = 4,
     @Json(name = "aadhaNo")
     val aadhaNo: String,
     @Json(name = "aadha_no")
@@ -241,7 +241,5 @@ data class BenPost(
     @Json(name = "diagnosis_status")
     val diagnosis_status: String? = null,
 
-    @Json(name = "vanID")
-    val vanId: Int = 4,
 
     )

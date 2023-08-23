@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="other_mobile_number_of_kid">Other - Mobile Number of</string>
+    <!--    <string name="home_icon_title_child_care">Child Care</string>-->
+    <string name="child_care_icon_title_child_list">Child List</string>
+    <string name="child_care_icon_title_infant_list">Infant List</string>
+    <string name="child_care_icon_title_adolescent_list">Adolescent List</string>
+    <string name="nbr_child_awc">Is the Child registered at AWC</string>
+    <string name="nbr_child_reg_school">Is the Child registered at School</string>
+    <string name="nbr_child_type_school">Type of School/Institute</string>
+    <string name="nbr_child_pob">Place of birth</string>
+    <string name="nbr_child_facility">Health Facility</string>
+    <string name="nbr_child_pob_other_facility">Other Facility</string>
+    <string name="nbr_child_pob_other">Other Place of Birth</string>
+    <string name="nbr_child_who_cond_del">Who Conducted Delivery</string>
+    <string name="nbr_child_who_cond_del_other">Other - Enter who Conducted Delivery</string>
+    <string name="nbr_child_type_del">Type of Delivery</string>
+    <string name="nbr_child_comp_del">Complications during delivery</string>
+    <string name="nbr_child_feed_1_hr">Breast feeding started within 1 hr of birth</string>
+    <string name="nbr_child_birth_dose">Birth Dose</string>
+    <string name="nbr_child_birth_dose_details">Given birth dose details</string>
+    <string name="nbr_child_term">Term</string>
+    <string name="nbr_child_gest_age">Gestational Age</string>
+    <string name="nbr_child_corticosteroid">Corticosteroid given to mother at labor</string>
+    <string name="nbr_child_cry_imm_birth">Baby cried immediately at birth</string>
+    <string name="nbr_child_defect_at_birth">Any Defect Seen at Birth</string>
+    <string name="child_immunization_list">Child Immunization List</string>
+    <string name="child_reg_list">Child Reg List</string>
+    <string name="child_reg">Child Reg.</string>
+    <string name="weight_at_birth_kg">Weight at birth ( Kg )</string>
+    <string name="height_at_birth_cm">Height at birth ( cm )</string>
+    <string name="mother_of_the_child">Mother of the child</string>
+    <string name="mother_unselected">Mother Unselected</string>
+    <string name="birth_details">Birth Details</string>
+    <string name="nbr_rel_to_head">Relation with head of family</string>
+    <string name="nbr_rel_to_head_other">Other - Enter relation to head</string>
+    <string name="nbr_community">Community</string>
+    <string name="nbr_religion">Religion</string>
+    <string name="nbr_religion_other">Other - Enter Religion</string>
+    <string name="nbr_rch_id">RCH ID</string>
+    <string name="nbr_father_name">Father\'s Name</string>
+    <string name="nbr_mother_name">Mother\'s Name</string>
+    <string name="nbr_mobile_number_of">Mobile Number Of</string>
+    <string name="nrb_contact_number">Contact Number</string>
+    <string name="nbr_nb_age_unit">Age Unit</string>
+    <string name="saving_mdsr_to_database_failed">Saving Mdsr to database Failed!</string>
+    <string name="hbyc_form">HBYC Form</string>
+    <string name="saving_hbnc_part_ii_to_database_failed">Saving hbnc part II to database Failed!</string>
+    <string name="part_i">Part I</string>
+    <string name="part_ii">Part II</string>
+    <string name="hbnc_form">HBNC Form</string>
+
+    <string-array name="nbr_age_unit_array">
+        <item name="nbr_age_unit_1">Day</item>
+        <item name="nbr_age_unit_2">Month</item>
+        <item name="nbr_age_unit_3">Year</item>
+    </string-array>
+    <string-array name="school_type_array">
+        <item>Anganwadi</item>
+        <item>Primary</item>
+        <item>Secondary</item>
+        <item>Private</item>
+    </string-array>
+
+    <string-array name="place_of_birth">
+        <item>Home</item>
+        <item>Health Facility</item>
+        <item>Any other Place</item>
+    </string-array>
+
+    <string-array name="facility_place">
+        <item>Sub Centre</item>
+        <item>PHC</item>
+        <item>CHC</item>
+        <item>Sub District Hospital</item>
+        <item>District Hospital</item>
+        <item>Medical College Hospital</item>
+        <item>In Transit</item>
+        <item>Private Hospital</item>
+    </string-array>
+
+    <string-array name="delivery_conducted">
+        <item>ANM</item>
+        <item>LHV</item>
+        <item>Doctor</item>
+        <item>Staff Nurse</item>
+        <item>Relative</item>
+        <item>TBA(Non-Skilled Birth Attendant)</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="type_of_delivery">
+        <item>Normal Delivery</item>
+        <item>C - Section</item>
+        <item>Assisted</item>
+    </string-array>
+
+    <string-array name="defects">
+        <item>Cleft Lip / Cleft Palate</item>
+        <item>Neural Tube defect(Spinal Bifida)</item>
+        <item>Club Foot</item>
+        <item>Hydrocephalus</item>
+        <item>Imperforate Anus</item>
+        <item>Down\'s Syndrome</item>
+        <item>None"</item>
+    </string-array>
+
+    <string-array name="gest_age">
+        <item>24-34 Weeks</item>
+        <item>34-36 Weeks</item>
+        <item>36-38 Weeks</item>
+    </string-array>
+
+    <string-array name="term_array">
+        <item>Full-Term</item>
+        <item>Pre-Term</item>
+        <item>Don\'t Know</item>
+    </string-array>
+
+    <string-array name="complications_array">
+        <item>PPH</item>
+        <item>Retained Placenta</item>
+        <item>Obstructed Delivery</item>
+        <item>Prolapsed cord</item>
+        <item>Death</item>
+        <item>None</item>
+    </string-array>
+
+    <string-array name="given_array">
+        <item>Given</item>
+        <item>Not Given</item>
+        <item>Don\'t Know</item>
+    </string-array>
+
+    <string-array name="birth_doses">
+        <item>BCG</item>
+        <item>Hepatitis</item>
+        <item>OPV</item>
+    </string-array>
+</resources>

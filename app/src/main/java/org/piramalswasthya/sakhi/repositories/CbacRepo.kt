@@ -104,7 +104,10 @@ class CbacRepo @Inject constructor(
         val cbacList = body?.let {
             getCbacCacheFromServerResponse(it)
         }
-        cbacList?.filter { !database.cbacDao.sameCreateDateExists(it.createdDate) }?.let {
+        cbacList?.filter {
+            !database.cbacDao.sameCreateDateExists(it.createdDate)
+                    && database.benDao.getBen(it.benId) != null
+        }?.let {
             database.cbacDao.upsert(*it.toTypedArray())
         }
         return if (page == 0) body?.let { getNumPages(it) } ?: 0 else 0

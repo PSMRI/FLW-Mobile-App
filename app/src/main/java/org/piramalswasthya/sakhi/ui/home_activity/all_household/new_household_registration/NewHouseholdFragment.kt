@@ -65,20 +65,20 @@ class NewHouseholdFragment : Fragment() {
         val alertDialog: AlertDialog.Builder = AlertDialog.Builder(requireContext())
 
         // Setting Dialog Title
-        alertDialog.setTitle("Enable GPS")
+        alertDialog.setTitle(resources.getString(R.string.enable_gps))
 
         // Setting Dialog Message
-        alertDialog.setMessage("GPS is not enabled. Do you want to go to settings menu?")
+        alertDialog.setMessage(resources.getString(R.string.gps_is_not_enabled_do_you_want_to_go_to_settings_menu))
 
         // On pressing Settings button
-        alertDialog.setPositiveButton("Settings") { _, _ ->
+        alertDialog.setPositiveButton(resources.getString(R.string.settings)) { _, _ ->
             val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
             startActivity(intent)
         }
 
         // on pressing cancel button
         alertDialog.setNegativeButton(
-            "Cancel"
+            resources.getString(R.string.cancel)
         ) { dialog, _ ->
             findNavController().navigateUp()
             dialog.cancel()
@@ -88,8 +88,8 @@ class NewHouseholdFragment : Fragment() {
 
     private val consentAlert by lazy {
         val alertBinding = AlertConsentBinding.inflate(layoutInflater, binding.root, false)
-        alertBinding.textView4.text = getString(R.string.consent_alert_title)
-        alertBinding.checkBox.text = getString(R.string.consent_text)
+        alertBinding.textView4.text = resources.getString(R.string.consent_alert_title)
+        alertBinding.checkBox.text = resources.getString(R.string.consent_text)
         val alertDialog = MaterialAlertDialogBuilder(requireContext())
             .setView(alertBinding.root)
             .setCancelable(false)
@@ -104,7 +104,7 @@ class NewHouseholdFragment : Fragment() {
                 requestLocationPermission()
                 alertDialog.dismiss()
             } else
-                Toast.makeText(context, "Please tick the checkbox", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, resources.getString(R.string.please_tick_the_checkbox), Toast.LENGTH_SHORT).show()
         }
         alertDialog
     }
@@ -210,9 +210,9 @@ class NewHouseholdFragment : Fragment() {
         lifecycleScope.launch {
             viewModel.currentPage.collect {
                 binding.tvTitle.text = when (it) {
-                    1 -> getString(R.string.nhhr_title_page_1)
-                    2 -> getString(R.string.nhhr_title_page_2)
-                    3 -> getString(R.string.nhhr_title_page_3)
+                    1 -> resources.getString(R.string.nhhr_title_page_1)
+                    2 -> resources.getString(R.string.nhhr_title_page_2)
+                    3 -> resources.getString(R.string.nhhr_title_page_3)
                     else -> null
                 }
 //                binding.tlNhhr.selectTab(binding.tlNhhr.getTabAt(it - 1), true)
@@ -352,7 +352,7 @@ class NewHouseholdFragment : Fragment() {
                 State.SAVE_SUCCESS -> {
                     binding.clContent.visibility = View.VISIBLE
                     binding.rlSaving.visibility = View.GONE
-                    Toast.makeText(context, "Save Successful!!!", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, resources.getString(R.string.save_successful), Toast.LENGTH_LONG).show()
                     findNavController().navigate(
                         NewHouseholdFragmentDirections.actionNewHouseholdFragmentToNewBenRegTypeFragment(
                             viewModel.getHHId()
@@ -363,7 +363,7 @@ class NewHouseholdFragment : Fragment() {
                 State.SAVE_FAILED -> {
                     Toast.makeText(
                         context,
-                        "Something wend wong! Contact testing!",
+                        resources.getString(R.string.something_wend_wong_contact_testing),
                         Toast.LENGTH_LONG
                     ).show()
                     binding.clContent.visibility = View.VISIBLE

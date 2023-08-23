@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:drawableStart="@drawable/ic_search"
+        android:singleLine="true"
         android:drawablePadding="@dimen/padding_normal"
         android:hint="@string/household_search"
         app:layout_constraintTop_toTopOf="parent" />

@@ -14,6 +14,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.ui.home_activity.child_care.infant_list.hbnc_form.card.HbncVisitCardViewModel.State
@@ -97,7 +98,7 @@ class HbncVisitCardFragment : Fragment() {
                     binding.pbForm.visibility = View.GONE
                     Toast.makeText(
                         context,
-                        "Saving Mdsr to database Failed!",
+                        resources.getString(R.string.saving_mdsr_to_database_failed),
                         Toast.LENGTH_LONG
                     ).show()
                 }

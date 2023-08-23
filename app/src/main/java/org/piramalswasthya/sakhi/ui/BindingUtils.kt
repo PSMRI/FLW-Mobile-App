@@ -319,7 +319,7 @@ fun Button.setAncState(ancFormState: AncFormState?) {
     }
 }
 
-@BindingAdapter("cbac_list_avail")
+@BindingAdapter("list_avail")
 fun Button.setCbacListAvail(list: List<Any>?) {
     list?.let {
         if (list.isEmpty())

@@ -57,7 +57,7 @@ class DeathReportsFragment : Fragment() {
                 binding.rbMdsr.id -> {
                     viewModel.navigateToDeathReportList(isChild = false)
                 }
-                else -> Toast.makeText(context, "Please select type of beneficiary", Toast.LENGTH_SHORT).show()
+                else -> Toast.makeText(context, resources.getString(R.string.please_select_type_of_beneficiary), Toast.LENGTH_SHORT).show()
             }
 
         }

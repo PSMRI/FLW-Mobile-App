@@ -80,8 +80,7 @@ class FormInputAdapter(
                 binding.et.setText(item.value)
                 binding.executePendingBindings()
                 return
-            }
-            else {
+            } else {
                 binding.et.isClickable = true
                 binding.et.isFocusable = true
             }
@@ -112,6 +111,17 @@ class FormInputAdapter(
                 }
 
                 override fun afterTextChanged(editable: Editable?) {
+//                    editable?.length?.let {
+//                        if (it > item.etMaxLength) {
+////                            editable.delete(item.etMaxLength + 1, it)
+//                            "This field cannot have more than ${item.etMaxLength} characters".let {
+//                                item.errorText = it
+//                                binding.tilEditText.error = it
+//                            }
+//                            return
+//                        } else
+//                            item.errorText = null
+//                    }
                     item.value = editable?.toString()
                     Timber.d("editable : $editable Current value : ${item.value}  isNull: ${item.value == null} isEmpty: ${item.value == ""}")
                     formValueListener?.onValueChanged(item, -1)

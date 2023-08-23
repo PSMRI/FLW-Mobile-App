@@ -525,7 +525,12 @@ class BenRepo @Inject constructor(
                 householdNetworkPostList.add(
                     householdDao.getHousehold(it.householdId)!!.asNetworkModel()
                 )
-                if (it.isKid) kidNetworkPostList.add(it.asKidNetworkModel())
+                try {
+                    if (it.isKid) kidNetworkPostList.add(it.asKidNetworkModel())
+                } catch (e: java.lang.Exception) {
+                    Timber.d("caught error in adding kidDetails : $e")
+                }
+
 
             }
 //            val cbac = cbacDao.getAllUnprocessedCbac()
@@ -1381,9 +1386,9 @@ class BenRepo @Inject constructor(
                             }, ${benDataObj.getString("reproductiveStatus")}"
                         )*/
                         } catch (e: JSONException) {
-                            Timber.i("Beneficiary skipped: ${jsonObject.getLong("benficieryid")} with error $e")
+                            Timber.e("Beneficiary skipped: ${jsonObject.getLong("benficieryid")} with error $e")
                         } catch (e: NumberFormatException) {
-                            Timber.i("Beneficiary skipped: ${jsonObject.getLong("benficieryid")} with error $e")
+                            Timber.e("Beneficiary skipped: ${jsonObject.getLong("benficieryid")} with error $e")
                         }
                     }
                 }
@@ -1524,7 +1529,7 @@ class BenRepo @Inject constructor(
                             )
                         )
                     } catch (e: JSONException) {
-                        Timber.i("Household skipped: ${jsonObject.getLong("houseoldId")} with error $e")
+                        Timber.e("Household skipped: ${jsonObject.getLong("houseoldId")} with error $e")
                     }
                 }
             }

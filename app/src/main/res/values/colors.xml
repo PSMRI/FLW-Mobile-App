@@ -63,4 +63,6 @@
     <color name="md_theme_dark_scrim">#000000</color>
     <color name="Quartenary">#FD5901</color>
     <color name="Tertiary">#008083</color>
+
+    <color name="read_only">#D8D8D8</color>
 </resources>

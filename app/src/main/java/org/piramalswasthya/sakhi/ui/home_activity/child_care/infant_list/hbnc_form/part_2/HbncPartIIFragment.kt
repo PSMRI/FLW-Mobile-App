@@ -14,6 +14,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.ui.home_activity.child_care.infant_list.hbnc_form.part_2.HbncPartIIViewModel.State
@@ -89,7 +90,7 @@ class HbncPartIIFragment : Fragment() {
                     binding.cvPatientInformation.visibility = View.VISIBLE
                     binding.pbForm.visibility = View.GONE
                     Toast.makeText(
-                        context, "Saving hbnc part II to database Failed!", Toast.LENGTH_LONG
+                        context, resources.getString(R.string.saving_hbnc_part_ii_to_database_failed), Toast.LENGTH_LONG
                     ).show()
                 }
                 else -> {

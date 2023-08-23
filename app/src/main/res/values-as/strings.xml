@@ -11,8 +11,6 @@
     <string name="nav_header_desc" translatable="false">Navigation header</string>
 
 
-
-
     <string name="btn_continue_text">Continue</string>
 
     <string name="service_type_dd_state_text">State</string>
@@ -20,70 +18,54 @@
     <string name="service_type_dd_block_text">Block</string>
     <string name="service_type_dd_village_text">Village</string>
     <string name="til_hint_selected_village">Selected Village</string>
-<!--    <string name="home_icon_title_all_ben">All Beneficiaries</string>-->
-<!--    <string name="home_icon_title_elig_coup">Eligible Couples</string>-->
-<!--    <string name="home_icon_title_child_care">Child Care</string>-->
-    <string name="child_care_icon_title_child_list">Child List</string>
-    <string name="child_care_icon_title_infant_list">Infant List</string>
-    <string name="child_care_icon_title_adolescent_list">Adolescent List</string>
-<!--    <string name="home_icon_title_mother_care">Mother Care</string>-->
-<!--    <string name="home_icon_title_death_rep">Death Reports</string>-->
-<!--    <string name="home_icon_title_gen_op">General OP Care</string>-->
-<!--    <string name="home_icon_title_hrp_cases">HRP Cases</string>-->
-<!--    <string name="home_icon_title_imm_due">Immunization Due</string>-->
-<!--    <string name="home_icon_title_menopause_stage_list">Menopause Stage List</string>-->
-<!--    <string name="home_icon_title_ncd">NCD</string>-->
-<!--    <string name="home_icon_title_village_lvl_forms">Village Level Forms</string>-->
+    <!--    <string name="home_icon_title_all_ben">All Beneficiaries</string>-->
+    <!--    <string name="home_icon_title_elig_coup">Eligible Couples</string>-->
+    <!--    <string name="home_icon_title_child_care">Child Care</string>-->
+    <!--    <string name="child_care_icon_title_child_list">Child List</string>-->
+    <!--    <string name="child_care_icon_title_infant_list">Infant List</string>-->
+    <!--    <string name="child_care_icon_title_adolescent_list">Adolescent List</string>-->
+    <!--    <string name="home_icon_title_mother_care">Mother Care</string>-->
+    <!--    <string name="home_icon_title_death_rep">Death Reports</string>-->
+    <!--    <string name="home_icon_title_gen_op">General OP Care</string>-->
+    <!--    <string name="home_icon_title_hrp_cases">HRP Cases</string>-->
+    <!--    <string name="home_icon_title_imm_due">Immunization Due</string>-->
+    <!--    <string name="home_icon_title_menopause_stage_list">Menopause Stage List</string>-->
+    <!--    <string name="home_icon_title_ncd">NCD</string>-->
+    <!--    <string name="home_icon_title_village_lvl_forms">Village Level Forms</string>-->
     <string name="frag_service_type_title">Select Village</string>
 
-    <string name="home_icon_all_household">All Household List</string>
 
-    <string name="cd_icon_grid_icon">icon</string>
-
-
-    <string name="nav_item_1_text">Name : %s</string>
-    <string name="nav_item_2_text">Role : %s</string>
-    <string name="nav_item_3_text">ID : %d</string>
-    <string name="nav_item_4_text">Version : %s</string>
-
-
+    <string name="cd_icon_grid_icon">চিহ্ন</string>
+    <string name="nav_item_1_text">নাম : <b>%s</b></string>
+    <string name="nav_item_2_text">ব্যৱহাৰকাৰী নাম : <b>%s</b></string>
+    <string name="nav_item_3_text">ব্যৱহাৰকাৰী আইডি :  <b>%d</b></string>
+    <string name="nav_item_4_text">ভাৰ্সন : %s</string>
     <string name="tv_required_text_asterisk">*</string>
-
     <string name="rv_item_hh_entry_1">%1$d</string>
-
-
-    <string name="notification_sync_channel_name">Sync Data</string>
-    <string name="notification_sync_channel_description">Upload beneficiaries to Server</string>
+    <string name="notification_sync_channel_name">তথ্য সময়সৰণি</string>
+    <string name="notification_sync_channel_description">ডেটা সাৰ্ভাৰলৈ সমৰ্পণ কৰক</string>
     <string name="notification_sync_channel_id">sakhi-sync0</string>
-    <string name="consent_text">Consent:\nI have been explained by the ASHA, the purpose for which the information and measurement findings is being collected from me, in a language I understand and I give my consent to collect the information and measurement findings on my personal health profile.</string>
-    <string name="aadhar_consent_text">I hereby confirm that I have explained the below mentioned consent process to the individual for the creation of the ABHA Number using he individual\'s aadhar number</string>
-
+    <string name="btn_submit">জমা দিব</string>
     <string name="long_to_string">%d</string>
-
-
-    <string name="tv_reg_date_ph">Registration Date</string>
-    <string name="tv_ben_name_ph">Beneficiary Name</string>
-    <string name="tv_type_of_list">Type of List</string>
-    <string name="tv_rch_id">RCH ID</string>
-    <string name="tv_ben_surname">Beneficiary Surname</string>
-    <string name="tv_gender_ph">Gender</string>
-    <string name="tv_father_name_ph">Father\'s Name</string>
-    <string name="tv_family_head_name_ph">Family Head Name</string>
-    <string name="tv_ben_id_ph">Ben ID</string>
-    <string name="tv_mob_no_ph">Mobile Number</string>
-    <string name="tv_age_ph">Age</string>
-    <string name="tv_suspected_hrp_ph">Suspected HRP</string>
-    <string name="tv_imu_status_ph">Immunization Status</string>
-    <string name="tv_ncd_status_ph">NCD Status</string>
-    <string name="tv_tb_status_ph">TB Status</string>
-    <string name="iv_sync_state_tv">SYNC STATE</string>
-    <string name="frag_new_ben_type_kid_text">New Born / Infant / Child / Adolescent\n( 0 - less than 15 years of age )</string>
-    <string name="frag_new_ben_type_adult_text">General Registration \n( 15 years and above )</string>
-    <string name="frag_new_ben_type_select_text">Select Beneficiary Type</string>
-    <string name="frag_new_ben_reg_type_title">Beneficiary Type for Registration</string>
+    <string name="tv_reg_date_ph">নিবন্ধনৰ তাৰিখ</string>
+    <string name="tv_ben_name_ph">উপকাৰীৰ নাম</string>
+    <string name="tv_type_of_list">তালিকাৰ প্ৰকাৰ</string>
+    <string name="tv_rch_id">RCH আইডি</string>
+    <string name="tv_ben_surname">উপকাৰীৰ বৰ্গীকৰণ</string>
+    <string name="tv_gender_ph">লিংগ</string>
+    <string name="tv_father_name_ph">পিতৃৰ নাম</string>
+    <string name="tv_family_head_name_ph">পৰিৱাৰৰ প্ৰধানৰ নাম</string>
+    <string name="tv_ben_id_ph">উপকাৰী আইডি</string>
+    <string name="tv_mob_no_ph">"ম'বাইল নম্বৰ</string>
+    <string name="tv_age_ph">বয়স</string>
+    <string name="tv_suspected_hrp_ph">সন্দেহভাৱ হাৰ্প</string>
+    <string name="tv_imu_status_ph">পৰিস্কৃতি স্থিতি</string>
+    <string name="tv_ncd_status_ph">এনচিডি স্থিতি</string>
+    <string name="tv_tb_status_ph">টিবি স্থিতি</string>
+    <string name="iv_sync_state_tv">সময়সৰণি স্থিতি</string>
     <string name="version">2.0.0</string>
     <string name="tv_text_select_village">Please select the village below.</string>
-    <string name="form_input_empty_error">প্ৰয়োজনীয় ক্ষেত্ৰখন খালী হ’ব নোৱাৰে !</string>
+    <string name="form_input_empty_error">"প্ৰয়োজনীয় ক্ষেত্ৰখন খালী হ’ব নোৱাৰে !</string>
     <string name="form_input_upper_case_error">Only Alphabets in upper case allowed!</string>
     <string name="form_input_min_limit_error">%1s should be greater than or equal to %2d</string>
     <string name="form_input_max_limit_error">%1s should be lesser than or equal to %2d</string>
@@ -91,6 +73,122 @@
     <string name="form_input_error_invalid_rch">Invalid RCH ID !</string>
     <string name="form_input_error_invalid_aadhar">Invalid Aadhar Number</string>
 
+
+    <string name="tracking_date">দৰমাহাৰ তাৰিখ</string>
+    <string name="mdsr_form">MDSR</string>
+    <string name="mdsr_district">জিলা</string>
+    <string name="mdsr_state">ৰাজ্য</string>
+    <string name="mdsr_month">মাহ</string>
+    <string name="mdsr_year">বছৰ</string>
+    <string name="mdsr_name_deceased">মৃত্যুবৰণীৰ নাম</string>
+    <string name="mdsr_age">বয়স</string>
+    <string name="mdsr_date_of_deceased">মৃত্যুৰ তাৰিখ</string>
+    <string name="mdsr_address">ঠিকনা</string>
+    <string name="mdsr_husband_name">পৰাৰৰ নাম</string>
+    <string name="mdsr_cause">মৃত্যুৰ কাৰণ</string>
+    <string name="mdsr_maternal">মাতৃত্ব</string>
+    <string name="mdsr_non_maternal">মাতৃত্ব বয়স্ক নহয়</string>
+    <string name="mdsr_name_designation">নাম/পদবী</string>
+    <string name="mdsr_field_investigation">মাদক তথ্য জানোৱাকৈ তাৰিখ</string>
+    <string name="mdsr_signature">ব্লক MO I/Cৰ স্বাক্ষৰ:</string>
+    <string name="mdsr_ic_date">তাৰিখ</string>
+    <string name="mdsr_reason_death">কাৰণ নিৰ্দিষ্ট কৰক</string>
+    <string name="mdsr_action">পৰাৱৰ্তন কৰা হৈছে</string>
+
+    <string name="save_successful">সংরক্ষণ সফল!!!</string>
+    <string name="something_wend_wong_contact_testing">কিবা অশুদ্ধ! পৰীক্ষণ কৰক!</string>
+    <string name="error_input">ভুল ইনপুট</string>
+    <string name="exit_application">অ্যাপ্লিকেশন প্ৰস্থান কৰক</string>
+    <string name="do_you_want_to_exit_application">আপুনি অপৰ্যাপ্ত আছে আপুনি অ্যাপ্লিকেশন প্ৰস্থান কৰিব বিচাৰিছে নেকি?</string>
+    <string name="downloading">ডাউনলোড হৈছে …</string>
+    <string name="choose_application_language">অ্যাপ্লিকেশনৰ ভাষা চয়ন কৰক</string>
+    <string name="english">ইংৰাজী</string>
+    <string name="hindi">হিন্দী</string>
+    <string name="assamese">অসমীয়া</string>
+    <string name="sync">সময়সৰণি</string>
+    <string name="tap_to_change">স্পৰ্শ কৰক পৰিবৰ্তন কৰিবলৈ</string>
+    <string name="validate">যাচাই কৰক</string>
+    <string name="hbnc_daylist">HBNC দিনী তালিকা</string>
+    <string name="hbyc_list">HBYC তালিকা</string>
+    <string name="child_immunization">শিশু পৰিস্কৃতি</string>
+    <string name="pregnancy_registration">গৰ্ভাবস্থা নিবন্ধন</string>
+    <string name="mother_immunizationlist">মাতা পৰিস্কৃতি তালিকা</string>
+    <string name="age">বয়স</string>
+    <string name="gender">লিংগ</string>
+    <string name="registration_date">নিবন্ধনৰ তাৰিখ</string>
+    <string name="beneficiary_id">লাভকাৰী পৰিচয়পত্ৰ</string>
+    <string name="rch_id">RCH পৰিচয়পত্ৰ</string>
+    <string name="sync_to_local">স্থানীয়ত সমকৰণ কৰক</string>
+    <string name="beneficiary_name">লাভকাৰীৰ নাম</string>
+    <string name="husband_s_name">পৰাৰৰ নাম</string>
+    <string name="weeks_of_pregnancy">গৰ্ভাবস্থাৰ সপ্তাহ</string>
+    <string name="anc_visits">ANC দৰকাৰি</string>
+    <string name="id">পৰিচয়পত্ৰ</string>
+    <string name="no_of_children">শিশুৰ সংখ্যা</string>
+    <string name="view_trackings">ট্ৰেকিং চাবলৈ</string>
+    <string name="add_tracking">ট্ৰেকিং যোগ কৰক</string>
+    <string name="household_id">পৰাৰ পৰিচয়পত্ৰ</string>
+    <string name="contact_number">যোগাযোগ নম্বৰ</string>
+    <string name="kcuf">KCUF</string>
+    <string name="show_vaccines">পৰিস্কৃতি চাবলৈ</string>
+    <string name="add_cbac">CBAC যোগ কৰক</string>
+    <string name="view_cbac">CBAC চাবলৈ</string>
+    <string name="view">চাবলৈ</string>
+    <string name="home">ঘৰ</string>
+    <string name="sync_records">ৰেকৰ্ড সমকৰণ কৰক</string>
+    <string name="about">আমাৰ বিষয়ে</string>
+    <string name="help">সাহায্য</string>
+    <string name="logout">লগআউট</string>
+    <string name="sync_status">সিঙ্ক স্থিতি</string>
+    <string name="go_to_home">হোমলৈ যাওক</string>
+    <string name="change_language">ভাষা সলনি কৰক</string>
+    <string name="kid_registration">শিশু পঞ্জীকৰণ</string>
+    <string name="adult_registration">পৰাৰ্পৰ্ণৰ পঞ্জীকৰণ</string>
+    <string name="pregnancy_list">গৰ্ভাবস্থাৰ তালিকা</string>
+    <string name="delivery_stage_list">প্ৰসৱ প্ৰস্থান তালিকা</string>
+    <string name="pnc_mother_list">PNC মাৰ তালিকা</string>
+    <string name="reproductive_age_list">প্ৰজনন যোৱস্থ্য তালিকা</string>
+    <string name="ncd_eligible_list">NCD যোগ্য তালিকা</string>
+    <string name="ncd_list">NCD তালিকা</string>
+    <string name="ncd_non_eligible_list">NCD অযোগ্য তালিকা</string>
+    <string name="ncd_priority_list">NCD প্ৰাথমিকতা তালিকা</string>
+    <string name="all_household_list">সকলো পৰাৰ তালিকা</string>
+    <string name="beneficiaries_data">লাভকাৰীৰ ডাটা</string>
+    <string name="cdr_list">CDR তালিকা</string>
+    <string name="mdsr_list">MDSR তালিকা</string>
+    <string name="mdsr">MDSR</string>
+    <string name="cdr">CDR</string>
+    <string name="pmsma">PMSMA</string>
+    <string name="pmjay_form">PMJAY ফৰ্ম</string>
+    <string name="household_members">পৰাৰ সদস্য</string>
+    <string name="fp_ot_register">FP-OT ৰেজিষ্টাৰ</string>
+    <string name="hbnc_day_list">Hbnc দিনৰ তালিকা</string>
+    <string name="hbnc">Hbnc</string>
+    <string name="visit_card">দৰকাৰি কাৰ্ড</string>
+    <string name="hbnc_part_i">Hbnc পাৰ্ট I</string>
+    <string name="hbnc_part_ii">Hbnc পাৰ্ট II</string>
+    <string name="hbyc">HBYC</string>
+    <string name="hbyc_month_list">HBYC মাহৰ তালিকা</string>
+    <string name="immunization">পৰিস্কৃতি</string>
+    <string name="pregnancy_registration_form">গৰ্ভাবস্থাৰ পঞ্জীকৰণ ফৰ্ম</string>
+    <string name="anc_visit">ANC দৰকাৰি</string>
+    <string name="eligible_couple_list">যোগ্য জনপৰা পৰাৰ তালিকা</string>
+    <string name="eligible_couple_registration">যোগ্য জনপৰা পৰাৰ পঞ্জীকৰণ</string>
+    <string name="eligible_couple_tracking_list">যোগ্য জনপৰা পৰাৰ ট্ৰেকিং তালিকা</string>
+    <string name="eligible_couple_tracking_form">যোগ্য জনপৰা পৰাৰ ট্ৰেকিং ফৰ্ম</string>
+    <string name="tb_screening_list">TB স্ক্ৰীনিং তালিকা</string>
+    <string name="tb_suspected_list">TB সন্দেহভাৱিত তালিকা</string>
+    <string name="tb_screening_form">TB স্ক্ৰীনিং ফৰ্ম</string>
+    <string name="tb_suspected_form">TB সন্দেহভাৱিত ফৰ্ম</string>
+    <string name="mother_immunization">মাৰ পৰিস্কৃতি</string>
+    <string name="delivery_outcome">প্ৰসৱ সম্পূৰ্ণ হোৱাৰ ফল</string>
+    <string name="delivery_outcome_list">প্ৰসৱ সম্পূৰ্ণ হোৱাৰ ফল তালিকা</string>
+    <string name="infant_reg_list">শিশু পঞ্জীকৰণ তালিকা</string>
+    <string name="infant_reg">শিশু পঞ্জীকৰণ</string>
+    <string name="communicable_diseases">সংক্রামণ পৰামৰ্শযোগ্য পৰাৰ তালিকা</string>
+    <string name="dashboard">ডেশবৰ্ড</string>
+    <string name="sign_in">ছাইন ইন কৰক</string>
+    <string name="service_location">সেৱা অবস্থান</string>
 
     <string-array name="temp_array">
         <item>Item 1</item>

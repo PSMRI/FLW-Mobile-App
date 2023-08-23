@@ -2,12 +2,16 @@ package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Languages
-import org.piramalswasthya.sakhi.model.*
+import org.piramalswasthya.sakhi.model.BenRegCache
+import org.piramalswasthya.sakhi.model.EligibleCoupleTrackingCache
+import org.piramalswasthya.sakhi.model.FormElement
+import org.piramalswasthya.sakhi.model.InputType
 
-class EligibleCoupleTrackingDataset (
+class EligibleCoupleTrackingDataset(
     context: Context, currentLanguage: Languages
-    ) : Dataset(context, currentLanguage) {
+) : Dataset(context, currentLanguage) {
 
     private var dateOfVisit = FormElement(
         id = 1,
@@ -22,14 +26,14 @@ class EligibleCoupleTrackingDataset (
 
     private val financialYear = FormElement(
         id = 2,
-        inputType = InputType.EDIT_TEXT,
+        inputType = InputType.TEXT_VIEW,
         title = "Financial Year",
         required = false,
     )
 
     private val month = FormElement(
         id = 3,
-        inputType = InputType.DROPDOWN,
+        inputType = InputType.TEXT_VIEW,
         title = "Month",
         arrayId = R.array.visit_months,
         entries = resources.getStringArray(R.array.visit_months),
@@ -95,11 +99,11 @@ class EligibleCoupleTrackingDataset (
 
     fun getIndexOfIsPregnant() = getIndexById(isPregnant.id)
 
-    suspend fun setUpPage(ben: BenRegCache?, dateOfReg : Long, saved: EligibleCoupleTrackingCache?) {
+    suspend fun setUpPage(ben: BenRegCache?, dateOfReg: Long, saved: EligibleCoupleTrackingCache?) {
         val list = mutableListOf(
             dateOfVisit,
             financialYear,
-//            month,
+            month,
             isPregnancyTestDone,
             isPregnant,
 //            usingFamilyPlanning,
@@ -108,12 +112,16 @@ class EligibleCoupleTrackingDataset (
             dateOfVisit.value = getDateFromLong(System.currentTimeMillis())
             dateOfVisit.value?.let {
                 financialYear.value = getFinancialYear(it)
-                month.value = resources.getStringArray(R.array.visit_months)[Companion.getMonth(it)!!]
+                month.value =
+                    resources.getStringArray(R.array.visit_months)[Companion.getMonth(it)!!]
             }
 
             dateOfVisit.min = dateOfReg
         } else {
             dateOfVisit.value = getDateFromLong(saved.visitDate)
+            financialYear.value = getFinancialYear(dateString = dateOfVisit.value)
+            month.value =
+                resources.getStringArray(R.array.visit_months)[Companion.getMonth(dateOfVisit.value)!!]
             isPregnancyTestDone.value = saved.isPregnancyTestDone
             if (isPregnancyTestDone.value == "Yes") {
                 list.add(pregnancyTestResult)
@@ -122,26 +130,37 @@ class EligibleCoupleTrackingDataset (
             isPregnant.value = saved.isPregnant
             if (isPregnant.value == "No") {
                 list.add(usingFamilyPlanning)
+                saved.usingFamilyPlanning?.let {
+                    usingFamilyPlanning.value = if (it) "Yes" else "No"
+                }
                 usingFamilyPlanning.value = if (saved.usingFamilyPlanning == true) "Yes" else "No"
-                if (saved.methodOfContraception in resources.getStringArray(R.array.method_of_contraception)) {
+                if (saved.usingFamilyPlanning == true) {
                     list.add(methodOfContraception)
-                    methodOfContraception.value = saved.methodOfContraception
-                } else if (saved.methodOfContraception != null) {
-                    list.add(anyOtherMethod)
-                    anyOtherMethod.value = saved.methodOfContraception
+                    if (saved.methodOfContraception in resources.getStringArray(R.array.method_of_contraception)) {
+                        methodOfContraception.value = saved.methodOfContraception
+                    } else if (saved.methodOfContraception != null) {
+                        methodOfContraception.value =
+                            resources.getStringArray(R.array.method_of_contraception).last()
+                        list.add(anyOtherMethod)
+                        anyOtherMethod.value = saved.methodOfContraception
+                    }
                 }
             }
+
         }
         setUpPage(list)
 
     }
+
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
         return when (formId) {
             dateOfVisit.id -> {
                 financialYear.value = Companion.getFinancialYear(dateOfVisit.value)
-                month.value = resources.getStringArray(R.array.visit_months)[Companion.getMonth(dateOfVisit.value)!!]
+                month.value =
+                    resources.getStringArray(R.array.visit_months)[Companion.getMonth(dateOfVisit.value)!!]
                 -1
             }
+
             isPregnancyTestDone.id -> {
                 triggerDependants(
                     source = isPregnancyTestDone,
@@ -149,6 +168,18 @@ class EligibleCoupleTrackingDataset (
                     triggerIndex = 0,
                     target = pregnancyTestResult
                 )
+            }
+
+            pregnancyTestResult.id -> {
+                if (pregnancyTestResult.value == "Positive") {
+                    isPregnant.value = "Yes"
+                    isPregnant.isEnabled = false
+                } else {
+                    isPregnant.value = null
+                    isPregnant.isEnabled = true
+                }
+                handleListOnValueChanged(isPregnant.id, 0)
+
             }
 
             isPregnant.id -> {
@@ -160,6 +191,7 @@ class EligibleCoupleTrackingDataset (
                     targetSideEffect = listOf(methodOfContraception, anyOtherMethod)
                 )
             }
+
             usingFamilyPlanning.id -> {
                 triggerDependants(
                     source = usingFamilyPlanning,
@@ -178,6 +210,7 @@ class EligibleCoupleTrackingDataset (
                     target = anyOtherMethod
                 )
             }
+
             anyOtherMethod.id -> {
                 validateAllAlphabetsSpaceOnEditText(anyOtherMethod)
             }
@@ -190,8 +223,8 @@ class EligibleCoupleTrackingDataset (
         (cacheModel as EligibleCoupleTrackingCache).let { form ->
             form.visitDate = getLongFromDate(dateOfVisit.value)
             form.isPregnancyTestDone = isPregnancyTestDone.value
-            form.pregnancyTestResult= pregnancyTestResult.value
-            form.isPregnant= isPregnant.value
+            form.pregnancyTestResult = pregnancyTestResult.value
+            form.isPregnant = isPregnant.value
             form.usingFamilyPlanning = usingFamilyPlanning.value == "Yes"
             if (methodOfContraception.value == "Any Other Method") {
                 form.methodOfContraception = anyOtherMethod.value
@@ -208,5 +241,6 @@ class EligibleCoupleTrackingDataset (
             it.reproductiveStatusId = 2
         }
         if (benRegCache.processed != "N") benRegCache.processed = "U"
+        benRegCache.syncState = SyncState.UNSYNCED
     }
 }

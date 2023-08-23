@@ -35,9 +35,9 @@ class NcdListFragment : Fragment() {
 
     private val abhaDisclaimer by lazy {
         AlertDialog.Builder(requireContext())
-            .setTitle("Beneficiary ABHA Number.")
+            .setTitle(resources.getString(R.string.beneficiary_abha_number))
             .setMessage("it")
-            .setPositiveButton("Ok") { dialog, _ -> dialog.dismiss() }
+            .setPositiveButton(resources.getString(R.string.ok)) { dialog, _ -> dialog.dismiss() }
             .create()
     }
     override fun onCreateView(

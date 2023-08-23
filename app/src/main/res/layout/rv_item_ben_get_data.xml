@@ -237,7 +237,7 @@
                     android:textColor="?attr/colorPrimary"
                     android:backgroundTint="?attr/colorOnPrimary"
                     android:layout_marginHorizontal="@dimen/padding_small"
-                    android:text="SYNC TO LOCAL" />
+                    android:text="@string/sync_to_local" />
             </RelativeLayout>
 
 

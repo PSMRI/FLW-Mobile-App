@@ -42,7 +42,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="To Do List"
+                android:text="@string/to_do_list"
 
                 android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
 
@@ -73,7 +73,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textColor="?attr/colorOnPrimary"
-                            android:text="Beneficiaries due for ANC"
+                            android:text="@string/beneficiaries_due_for_anc"
                             android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
 
                         <TextView
@@ -112,7 +112,7 @@
                             android:layout_height="wrap_content"
                             android:textColor="?attr/colorOnPrimary"
 
-                            android:text="Beneficiaries due for Immunization"
+                            android:text="@string/beneficiaries_due_for_immunization"
                             android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
 
                         <TextView
@@ -123,7 +123,7 @@
                             android:layout_alignParentEnd="false"
                             android:layout_centerHorizontal="true"
 
-                            android:text="0"
+                            android:text="@string/_0"
                             android:textAppearance="@style/TextAppearance.Material3.DisplayMedium"
                             android:textColor="?attr/colorOnPrimary" />
                     </RelativeLayout>
@@ -133,7 +133,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="High Risk Cases"
+                android:text="@string/high_risk_cases"
 
                 android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
 
@@ -165,7 +165,7 @@
                             android:lines="3"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="High Risk Pregnant Women"
+                            android:text="@string/high_risk_pregnant_women"
                             android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
 
                         <TextView
@@ -203,7 +203,7 @@
                             android:lines="3"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="High Risk Babies"
+                            android:text="@string/high_risk_babies"
 
                             android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
 
@@ -215,7 +215,7 @@
                             android:layout_alignParentEnd="false"
                             android:layout_centerHorizontal="true"
 
-                            android:text="0"
+                            android:text="@string/_0"
                             android:textAppearance="@style/TextAppearance.Material3.DisplayMedium" />
                     </RelativeLayout>
                 </androidx.cardview.widget.CardView>
@@ -240,7 +240,7 @@
                             android:lines="3"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Low Birth Weight Babies"
+                            android:text="@string/low_birth_weight_babies"
 
                             android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
 
@@ -252,7 +252,7 @@
                             android:layout_alignParentEnd="false"
 
                             android:layout_centerHorizontal="true"
-                            android:text="0"
+                            android:text="@string/_0"
                             android:textAppearance="@style/TextAppearance.Material3.DisplayMedium" />
                     </RelativeLayout>
                 </androidx.cardview.widget.CardView>

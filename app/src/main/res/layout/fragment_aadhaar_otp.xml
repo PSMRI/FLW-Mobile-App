@@ -66,7 +66,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_small"
                     android:layout_weight="1"
-                    android:text="TextView"
+                    android:text="@string/textview"
                     android:textColor="@android:color/holo_red_light"
                     android:visibility="gone" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -104,7 +104,7 @@
                 android:id="@+id/timer_resend_otp"
                 android:layout_width="40dp"
                 android:layout_height="wrap_content"
-                android:text="30"
+                android:text="@string/_30"
                 android:padding="0dp"
                 app:cornerRadius="40dp"
                 android:textColor="?attr/colorOnPrimary"
@@ -149,7 +149,8 @@
                 app:layout_constraintBottom_toTopOf="@+id/textView5"
                 app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintEnd_toEndOf="@+id/textView5"
-                app:layout_constraintStart_toStartOf="@+id/textView5" />
+                app:layout_constraintStart_toStartOf="@+id/textView5"
+                android:contentDescription="@string/offline" />
 
             <TextView
                 android:id="@+id/textView5"
@@ -157,7 +158,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:padding="@dimen/padding_normal"
-                android:text="Something went wrong !\nUnable to connect to server !\nTry again later!"
+                android:text="@string/something_went_wrong_nunable_to_connect_to_server_ntry_again_later"
                 android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
                 app:layout_constraintBottom_toBottomOf="parent"

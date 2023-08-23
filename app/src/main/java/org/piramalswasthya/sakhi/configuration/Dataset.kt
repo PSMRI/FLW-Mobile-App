@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Languages
+import org.piramalswasthya.sakhi.helpers.setToStartOfTheDay
 import org.piramalswasthya.sakhi.model.FormElement
 import timber.log.Timber
 import java.text.SimpleDateFormat
@@ -30,7 +31,7 @@ abstract class Dataset(context: Context, currentLanguage: Languages) {
     protected var englishResources: Resources
 
     init {
-        englishResources = context.resources
+        englishResources = getLocalizedResources( context, Languages.ENGLISH)
         resources = getLocalizedResources(context, currentLanguage)
     }
 
@@ -53,11 +54,11 @@ abstract class Dataset(context: Context, currentLanguage: Languages) {
             return date?.time ?: 0L
         }
 
-        fun getFinancialYear(dateString: String?) : String? {
+        fun getFinancialYear(dateString: String?): String? {
             val f = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
             val date = dateString?.let { f.parse(it) }
             return date?.let {
-                if (it.month >=3) {
+                if (it.month >= 3) {
                     "" + (it.year + 1900) + " - " + (it.year + 1902)
                 } else {
                     "" + (it.year + 1899) + " - " + (it.year + 1901)
@@ -65,10 +66,14 @@ abstract class Dataset(context: Context, currentLanguage: Languages) {
             }
         }
 
-        fun getMonth(dateString: String?) : Int? {
+        fun getMonth(dateString: String?): Int? {
             val f = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
-            val date = dateString?.let { f.parse(it) }
-            return (date?.month?.minus(1))
+            dateString?.let {
+                val date = f.parse(it)
+                val cal = Calendar.getInstance().apply { time = date }
+                return cal.get(Calendar.MONTH)
+            } ?: kotlin.run { return null }
+
         }
 
         fun getDateFromLong(dateLong: Long): String? {
@@ -321,9 +326,8 @@ abstract class Dataset(context: Context, currentLanguage: Languages) {
 
     protected fun getDiffYears(a: Calendar, b: Calendar): Int {
         var diff = b.get(Calendar.YEAR) - a.get(Calendar.YEAR)
-        if (a.get(Calendar.MONTH) > b.get(Calendar.MONTH) || a.get(Calendar.MONTH) == b.get(
-                Calendar.MONTH
-            ) && a.get(
+        if (a.get(Calendar.MONTH) >= b.get(Calendar.MONTH)
+            && a.get(
                 Calendar.DAY_OF_MONTH
             ) > b.get(
                 Calendar.DAY_OF_MONTH
@@ -376,7 +380,6 @@ abstract class Dataset(context: Context, currentLanguage: Languages) {
         }.timeInMillis
 
 
-
     protected suspend fun emitAlertErrorMessage(
         @StringRes errorMessage: Int
     ) {
@@ -390,8 +393,8 @@ abstract class Dataset(context: Context, currentLanguage: Languages) {
         ageElement.errorText = null
         val calDob = Calendar.getInstance().apply {
             timeInMillis = dob
-        }
-        val calNow = Calendar.getInstance()
+        }.setToStartOfTheDay()
+        val calNow = Calendar.getInstance().setToStartOfTheDay()
         val yearsDiff = getDiffYears(calDob, calNow)
         if (yearsDiff > 0) {
             ageUnitElement.value = ageUnitElement.entries?.last()
@@ -422,12 +425,13 @@ abstract class Dataset(context: Context, currentLanguage: Languages) {
         ageElement.errorText = null
         val calDob = Calendar.getInstance().apply {
             timeInMillis = dob
-        }
-        val calNow = Calendar.getInstance()
+        }.setToStartOfTheDay()
+        val calNow = Calendar.getInstance().setToStartOfTheDay()
         val yearsDiff = getDiffYears(calDob, calNow)
         if (yearsDiff > 0) {
             ageElement.value = yearsDiff.toString()
-        }
+        } else
+            ageElement.value = "0"
         return -1
     }
 
@@ -453,7 +457,8 @@ abstract class Dataset(context: Context, currentLanguage: Languages) {
             ?: false
 
     private fun String.isAllAlphaNumericAndSpace() =
-        takeIf { it.isNotEmpty() }?.toCharArray()?.all { it.isWhitespace() || it.isLetter() || it.isDigit() }
+        takeIf { it.isNotEmpty() }?.toCharArray()
+            ?.all { it.isWhitespace() || it.isLetter() || it.isDigit() }
             ?: false
 
     protected fun validateAllCapsOrSpaceOnEditText(formElement: FormElement): Int {
@@ -465,6 +470,21 @@ abstract class Dataset(context: Context, currentLanguage: Languages) {
             } ?: run {
                 if (!formElement.required) formElement.errorText = null
             }
+        }
+        return -1
+    }
+
+    protected fun validateEditTextFullLengthOccupied(formElement: FormElement): Int {
+
+        formElement.value?.takeIf { it.isNotEmpty() }?.let {
+            Timber.d("length : ${it.length}")
+            formElement.errorText = if (it.length == formElement.etMaxLength) null
+            else resources.getString(
+                R.string.form_input_missing_entry_error,
+                formElement.etMaxLength
+            )
+        } ?: run {
+            formElement.errorText = null
         }
         return -1
     }
@@ -507,16 +527,20 @@ abstract class Dataset(context: Context, currentLanguage: Languages) {
     }
 
     protected fun validateDoubleMinMax(formElement: FormElement): Int {
-        formElement.errorText = formElement.value?.takeIf { it.isNotEmpty() }?.toDouble()?.let {
-            formElement.min?.let { min ->
-                formElement.max?.let { max ->
+        formElement.errorText = formElement.value?.takeIf { it.isNotEmpty() }?.let {
+            if (it.first() == '.')
+                "0$it"
+            else it
+        }?.toDouble()?.let {
+            formElement.minDecimal?.let { min ->
+                formElement.maxDecimal?.let { max ->
                     if (it < min) {
                         resources.getString(
-                            R.string.form_input_min_limit_error, formElement.title, min
+                            R.string.form_input_min_limit_error_decimal, formElement.title, min
                         )
                     } else if (it > max) {
                         resources.getString(
-                            R.string.form_input_max_limit_error, formElement.title, max
+                            R.string.form_input_max_limit_error_decimal, formElement.title, max
                         )
                     } else null
                 }
@@ -533,16 +557,44 @@ abstract class Dataset(context: Context, currentLanguage: Languages) {
         return -1
     }
 
+
     protected fun validateRchIdOnEditText(formElement: FormElement): Int {
+        formElement.errorText = formElement.value?.takeIf { it.isNotEmpty() }?.let { text ->
+            if (text.length < 12) resources.getString(R.string.form_input_error_invalid_rch) else {
+                val firstChar = text.first()
+                if (text.all { it == firstChar })
+                    "All digits cannot be $firstChar"
+                else
+                    null
+            }
+        }
+        return -1
+    }
+
+    protected fun validateAllZerosOnEditText(formElement: FormElement): Int {
+
+        formElement.value?.takeIf { it.isNotEmpty() }?.let {
+            if (it.all { it == '0' })
+                formElement.errorText = "Cannot be 0"
+            else
+                formElement.errorText = null
+        } ?: kotlin.run { formElement.errorText = null }
+        return -1
+    }
+
+
+    protected fun validateMcpOnEditText(formElement: FormElement): Int {
         formElement.errorText = formElement.value?.takeIf { it.isNotEmpty() }?.let {
-            if (it.length < 12) resources.getString(R.string.form_input_error_invalid_rch) else null
+            if (it.length < 12) resources.getString(R.string.form_input_error_invalid_mcp) else if (it.all { it == '0' }) {
+                "Cannot be 0"
+            } else null
         }
         return -1
     }
 
     protected fun validateAadharNoOnEditText(formElement: FormElement): Int {
-        formElement.errorText = formElement.value?.takeIf { it.isNotEmpty() }?.let {
-            if (it.length < 12 || (it.isNotEmpty() && it.first() == '0')) resources.getString(R.string.form_input_error_invalid_aadhar) else null
+        formElement.errorText = formElement.value?.takeIf { it.isNotEmpty() }?.let { text ->
+            if (text.length < 12 || text.all { it == '0' }) resources.getString(R.string.form_input_error_invalid_aadhar) else null
         }
         return -1
     }

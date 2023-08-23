@@ -45,7 +45,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="?attr/colorPrimary"
-            android:text="KCUF"
+            android:text="@string/kcuf"
             android:textColor="?attr/colorOnPrimary"
             android:onClick="@{()-> clickListener.onClickedVisit(visit)}"
             anc_state="@{visit.formState}"/>

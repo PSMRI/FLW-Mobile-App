@@ -17,7 +17,7 @@
             android:id="@+id/textView11"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Enter PIN"
+            android:text="@string/home"
 
             android:padding="@dimen/padding_normal"
             android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:padding="@dimen/padding_normal"
 
-            android:text="Validate" />
+            android:text="@string/validate" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.BenListAdapterForForm
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
 
@@ -47,7 +48,7 @@ class CdrListFragment : Fragment() {
                 findNavController().navigate(
                     CdrListFragmentDirections.actionCdrListFragmentToCdrObjectFragment(hhId, benId)
                 )
-            }), "CDR Form")
+            }), resources.getString(R.string.cdr_form))
         binding.rvAny.adapter = benAdapter
 
         lifecycleScope.launch {

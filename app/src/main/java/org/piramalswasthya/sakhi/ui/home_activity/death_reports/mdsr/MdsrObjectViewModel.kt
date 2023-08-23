@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.ui.home_activity.death_reports.mdsr
 
 import android.app.Application
+import android.content.res.Configuration
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -10,6 +11,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapterOld
 import org.piramalswasthya.sakhi.configuration.MDSRFormDataset
 import org.piramalswasthya.sakhi.database.room.InAppDb
@@ -44,6 +46,12 @@ class MdsrObjectViewModel @Inject constructor(
         FAIL
     }
 
+    private val resources by lazy {
+        val configuration = Configuration(context.resources.configuration)
+        configuration.setLocale(Locale(preferenceDao.getCurrentLanguage().symbol))
+        context.createConfigurationContext(configuration).resources
+    }
+
     private val benId = MdsrObjectFragmentArgs.fromSavedStateHandle(state).benId
     private val hhId = MdsrObjectFragmentArgs.fromSavedStateHandle(state).hhId
     private lateinit var ben: BenRegCache
@@ -76,7 +84,7 @@ class MdsrObjectViewModel @Inject constructor(
         adapter: FormInputAdapterOld
     ) {
         value?.let {
-            if (it == "Maternal") {
+            if (it == resources.getString(R.string.maternal)) {
                 val list = adapter.currentList.toMutableList()
                 if(!list.contains(effectField)) {
                     list.add(
@@ -180,10 +188,10 @@ class MdsrObjectViewModel @Inject constructor(
         dataset.dateOfDeath.value.value = getDateFromLong(mdsr?.dateOfDeath)
         dataset.address.value.value = mdsr?.address
         dataset.husbandName.value.value = mdsr?.husbandName
-        dataset.causeOfDeath.value.value = if(mdsr?.causeOfDeath == 1) "Maternal" else "Non-maternal"
+        dataset.causeOfDeath.value.value = if(mdsr?.causeOfDeath == 1) resources.getString(R.string.maternal) else resources.getString(R.string.non_maternal)
         dataset.reasonOfDeath.value.value = mdsr?.reasonOfDeath
         dataset.investigationDate.value.value = getDateFromLong(mdsr?.investigationDate)
-        dataset.actionTaken.value.value = if(mdsr?.actionTaken == 1) "Yes" else "No"
+        dataset.actionTaken.value.value = if(mdsr?.actionTaken == 1) resources.getString(R.string.yes) else resources.getString(R.string.no)
         dataset.blockMOSign.value.value = mdsr?.blockMOSign
         dataset.date.value.value = getDateFromLong(mdsr?.date)
     }

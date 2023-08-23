@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_narrow"
         android:padding="@dimen/padding_normal"
-        android:text="Ben "
+        android:text="@string/beneficiary_name"
         android:visibility="gone"
         android:textAppearance="?attr/textAppearanceHeadline6"
         app:layout_constraintStart_toStartOf="parent"
@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
-        android:text="Enter Aadhaar Number "
+        android:text="@string/enter_aadhaar_number"
         android:textAppearance="?attr/textAppearanceHeadline6"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -33,7 +33,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
-        android:hint="Aadhaar Number"
+        android:hint="@string/aadhaar_number"
         android:paddingTop="@dimen/padding_normal"
         android:paddingBottom="@dimen/padding_normal"
         app:layout_constraintEnd_toEndOf="parent"
@@ -55,7 +55,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_small"
             android:layout_weight="1"
-            android:text="TextView"
+            android:text="@string/textview"
             android:textColor="@android:color/holo_red_light"
             android:visibility="gone" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -89,7 +89,7 @@
             android:clickable="false"
             android:enabled="false"
             android:padding="@dimen/padding_normal"
-            android:text="Generate OTP"
+            android:text="@string/generate_otp"
             android:textAllCaps="false"
             android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
             android:textColor="?attr/colorOnPrimary"
@@ -105,7 +105,7 @@
         app:layout_constraintStart_toStartOf="parent"
         android:textIsSelectable="true"
         android:visibility="gone"
-        android:text="PID">
+        android:text="@string/pid">
     </TextView>
 
 

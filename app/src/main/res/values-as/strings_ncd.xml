@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cbac_ask_pat">বৃদ্ধি আছে কি বারংবার যোগ কৰিছে?</string>
+    <string name="cbac_early_detection">ভাগ B1: আদি শ্ৰেণী</string>
+    <string name="cbac_early_detection_2">ভাগ B2: কেৱল মহিলা সদস্যসকলৰ বাবে</string>
+    <string name="cbac_early_detection_3">ভাগ B3: বৃদ্ধ সদস্যসকলৰ বাবে</string>
+    <string name="cbac_hint_age">আপোনাৰ বয়স কি?</string>
+    <string name="cbac_hint_smoke">আপুনি ধোৱা অথবা গুঠকা, খাইনি ইত্যাদি ধোৱা পৰিণত কৰে?</string>
+    <string name="cbac_hint_alcohol">আপুনি প্ৰতিদিন মদ পোৱা নেকি?</string>
+    <string name="cbac_hint_waist">কমৰাৰ পৰা (সেমি) পৰা পৰা মাপ লওক</string>
+    <string name="cbac_hint_pa">আপুনি কোনো শাৰীৰিক কৰ্মসূচি প্ৰতিষ্ঠান কৰি আপোনাৰ সপ্তাহত ন্যূনতম ১৫০ মিনিট যতি শাৰীৰিক কৰ্ম কৰে?</string>
+    <string name="cbac_hint_fh">আপোনাৰ পৰিবাৰত কোনো পিতৃ অথবা ভ্ৰাতৃৰ উচ্চ রক্তচাপ, ডায়বেটিছ আৰু হাৰ্টৰ অসুখৰ গুৱাৰিও আছে নে?</string>
+    <string name="cbac_ask_pat_note">লক্ষ্য :</string>
+    <string name="cbac_ast1">* যদি নিম্নতম প্রশ্নসমূহৰ যেতিয়া "হোৱা" বাছনি হোৱা থাকে তেন্তে পপ আপ বার্তা "পৰৱানি মডলক যোৱা আৰু স্পুটাম নমূনা লওক"</string>
+    <string name="cbac_ast2">** যদি নিম্নতম প্রশ্নসমূহৰ যেতিয়া "হোৱা" বাছনি হোৱা থাকে তেন্তে পপ আপ বার্তা "পৰৱানি মডক বা তলত সকলো পৰিবাৰৰ সদস্যবোৰ নিকলেনি চিত্ৰানুপ্রাণনৰ বাবে পৰিচিত কৰক"</string>
+    <string name="cbac_select">বাছনি কৰক …</string>
+    <string name="cbac_fh_tb">কোনো পৰিবাৰত কোনো ব্যক্তি হালপৰাই হচ্ছে নে?</string>
+    <string name="cbac_taking_tb_drug">আপুনি মমহা অবস্থাৰ ঔষধ খোৱা হৈ আছে নে?</string>
+    <string name="cbac_histb">টিবিৰ ইতিহাস</string>
+    <string name="cbac_coughing">২ সপ্তাহৰ অধিক সময় খঁচি</string>
+    <string name="cbac_blsputum">স্বৰ্ণালিৰ পৰা থীত</string>
+    <string name="cbac_feverwks">২ সপ্তাহৰ অধিক সময় জৰতি</string>
+    <string name="cbac_lsweight">ওজনৰ ক্ষয়</string>
+    <string name="cbac_ntswets">আতিত্যৰ স্বলাপ</string>
+    <string name="cbac_recurrent_ulceration">বৰহিত বা পাৰমলৰ উপৰত পুনৰাবৃত্তি</string>
+    <string name="cbac_recurrent_tingling">হাতৰ বা পাৰমলৰ উপৰত পুনৰাবৃত্তি</string>
+    <string name="cbac_recurrent_cloudy">মেঘপৰা অথবা মিহিলৰ দৃষ্টি পৰা সমস্যা</string>
+    <string name="cbac_recurrent_diffculty_reading">পঢ়াত সমস্যা</string>
+    <string name="cbac_recurrent_pain_eyes">এটি সপ্তাহৰ অধিক সময় চকুৰ ব্যথা</string>
+    <string name="cbac_recurrent_redness_eyes">এটি সপ্তাহৰ অধিক সময় চকুৰ লালিত হচ্ছে</string>
+    <string name="cbac_recurrent_diff_hearing">শোনৰ সমস্যা</string>
+    <string name="cbac_breath">শ্বাসফুঁহলি</string>
+    <string name="cbac_hifits">দার ইতিহাস</string>
+    <string name="cbac_difmouth">মোখ খোলাৰ সমস্যা</string>
+    <string name="cbac_heald">মোখত বা পৰাকৰ উপৰত অথবা থীত বা গুছ যোৱা বা বৃদ্ধি</string>
+    <string name="cbac_voice">আপোনাৰ শব্দৰ টোনত কোনো সলনি</string>
+    <string name="cbac_Any_Growth">মোখত অথবা থীত অত্যাধিক সংখ্যক উদ্ভিদ</string>
+    <string name="cbac_Any_white">মোখত অথবা থীত অত্যাধিক সংখ্যক ধুৱা অথবা লাল ছোৱা</string>
+    <string name="cbac_Pain_while_chewing">মাখুৰি খোৱাৰ সময় ব্যথা</string>
+    <string name="cbac_Any_hyper_pigmented">স্বলয় বা শব্দে গুম হৈ অসমত চেমিকৈ সৰু চিতা অথবা রঙাঞ্চৰণ</string>
+    <string name="cbac_any_thickend_skin">স্কিনৰ বাজানো সমস্যা থাকিলে</string>
+    <string name="cbac_any_nodules_skin">স্কিনত কোনো গুৰু থাকিলে</string>
+    <string name="cbac_Recurrent_numbness">পলং (হাতৰ নকলত) অথবা পাৰমল (পাৰমলত) নিতৰালি শব্দ</string>
+    <string name="cbac_Clawing_of_fingers">হাতৰ পাঁজিত বা পলংত কৰলৈ ব্যথা</string>
+    <string name="cbac_Tingling_or_Numbness">হাত আৰু পাৰমলত অথবা নিতৰালি শব্দ</string>
+    <string name="cbac_Inability_close_eyelid">চকু পেখোৱানি</string>
+    <string name="cbac_diff_holding_objects">বস্তু ধৰি থাকাত সমস্যা</string>
+    <string name="cbac_Weekness_in_feet">পাৰমলত শক্তিৰ কমি থাকিলে যি সমস্যা আতাৰিলে</string>
+
+    <string name="cbac_lumpbrest">বৰসতৰ পৰা এখনও হোমৰ</string>
+    <string name="cbac_nipple">চুমীখনৰ পৰা অস্বৰ্ণালিৰ পৰা সালীৱ</string>
+    <string name="cbac_breast">ছেচেত আৰু আকাৰত পৰা সলোনিৰ বাজানো</string>
+    <string name="cbac_blperiods">আৰু আপয়ুক্তিৰ মধ্যত সলীৱৰ বাজানো</string>
+    <string name="cbac_blmenopause">আপয়ুক্তিৰ পিছত সলীৱৰ বাজানো</string>
+    <string name="cbac_blintercorse">আপয়ুক্তিৰ পিছত বাচনি সলীৱৰ বাজানো</string>
+    <string name="cbac_fouldis">দোষপূৰিত গন্ধযুক্ত যন্ত্ৰাংগীৰ নিতৰালি সালীৱ</string>
+
+    <string name="cbac_double_ast" translatable="false">**</string>
+    <string name="cbac_single_ast" translatable="false">* </string>
+    <string name="cbac_yes">হোৱা</string>
+    <string name="cbac_no">নহয়</string>
+
+    <string name="cbac_risk_Factors_COPD">অংশ C: COPDৰ বাৰৰ জোখম</string>
+    <string name="cbac_occupational_exposure">পেশৰ পৰিচয়</string>
+    <string name="cbac_PHQ2">অংশ D: PHQ2</string>
+    <string name="cbac_last_two_weeks">শেহতীয়া দুই সপ্তাহৰ বাবে কি অধিকাংশ সময়ত তলৰ সমস্যাসমূহে তৰলোৱা হৈছে ?</string>
+    <string name="cbac_little_interest">কোনো কাম কৰিবলৈ অথবা উপভোগ কৰিবলৈ অলপ আগৰ আগ্ৰহ ?</string>
+    <string name="cbac_feeling_down">মন ধৰি আগৰ আগ্ৰহ হোৱা, বিষাদিত আৰু আশা নহোৱা ?</string>
+    <string name="hrp_valid">HRP মৰামৰ প্ৰস্থা, অনুগত আকৌ সেৱা কেন্দ্ৰলৈ যাওক অথবা ১০৪ নম্বৰত কল কৰক।</string>
+    <string name="hrp_sug_valid"> সন্দেহ কৰা হৃদৰ প্ৰস্থা মৰামত হৈছে, অনুগত আকৌ সেৱা কেন্দ্ৰলৈ যাওক অথবা ১০৪ নম্বৰত কল কৰক।</string>
+    <string name="ncd_hyper">NCD-শ্বাসনাৰ সমস্যাবোৰ সম্পৰ্কে (Hypertension, DM), অনুগত আকৌ সেৱা কেন্দ্ৰলৈ যাওক অথবা ১০৪ নম্বৰত কল কৰক।</string>
+    <string name="ncd_diab">NCD-ডায়বেটিচ সমস্যাবোৰ সম্পৰ্কে (Diabetes), অনুগত আকৌ সেৱা কেন্দ্ৰলৈ যাওক অথবা ১০৪ নম্বৰত কল কৰক।</string>
+    <string name="ncd_diabm">NCD-ডায়বেটিচ সমস্যাবোৰ সম্পৰ্কে (Diabetes Mellitus), অনুগত আকৌ সেৱা কেন্দ্ৰলৈ যাওক অথবা ১০৪ নম্বৰত কল কৰক।</string>
+    <string name="ncd_tb">NCD-টিবিৰ সমস্যাবোৰ সম্পৰ্কে (TB), অনুগত আকৌ সেৱা কেন্দ্ৰলৈ যাওক অথবা ১০৪ নম্বৰত কল কৰক।</string>
+    <string name="ncd_oc">NCD-বৌকো কেন্চাৰীৰ সমস্যাবোৰ সম্পৰ্কে (মৌখিক কেন্চাৰী), অনুগত আকৌ সেৱা কেন্দ্ৰলৈ যাওক অথবা ১০৪ নম্বৰত কল কৰক।</string>
+    <string name="ncd_bc">NCD-ব্ৰেষ্ট কেন্চাৰীৰ সমস্যাবোৰ সম্পৰ্কে (স্তন কেন্চাৰী), অনুগত আকৌ সেৱা কেন্দ্ৰলৈ যাওক অথবা ১০৪ নম্বৰত কল কৰক।</string>
+    <string name="ncd_cc">NCD-চাৰ্বিকৰ কেন্চাৰীৰ সমস্যাবোৰ সম্পৰ্কে (গাৰ্ভাণী কেন্চাৰী), অনুগত আকৌ সেৱা কেন্দ্ৰলৈ যাওক অথবা ১০৪ নম্বৰত কল কৰক।</string>
+    <string name="ncd_lep">NCD-কুষ্ঠৰ সমস্যাবোৰ সম্পৰ্কে (Leprosy), অনুগত আকৌ সেৱা কেন্দ্ৰলৈ যাওক অথবা ১০৪ নম্বৰত কল কৰক।</string>
+    <string name="ncd_dia_lep">NCD-ডায়বেটিক আৰু কুষ্ঠৰ সমস্যাবোৰ সম্পৰ্কে (Diabetes, Leprosy), অনুগত আকৌ সেৱা কেন্দ্ৰলৈ যাওক অথবা ১০৪ নম্বৰত কল কৰক।</string>
+    <string name="ncd_can_thy">NCD-কেন্চাৰী আৰু থাইৰোইডৰ সমস্যাবোৰ সম্পৰ্কে (Cancer, Thyroid), অনুগত আকৌ সেৱা কেন্দ্ৰলৈ যাওক অথবা ১০৪ নম্বৰত কল কৰক।</string>
+    <string name="ncd_dia_can">NCD-কেন্চাৰী আৰু কেন্চাৰীৰ সমস্যাবোৰ সম্পৰ্কে (Cancer), অনুগত আকৌ সেৱা কেন্দ্ৰলৈ যাওক অথবা ১০৪ নম্বৰত কল কৰক।</string>
+    <string name="ncd_can_lep">NCD-কেন্চাৰী আৰু কুষ্ঠৰ সমস্যাবোৰ সম্পৰ্কে (Cancer, Leprosy), অনুগত আকৌ সেৱা কেন্দ্ৰলৈ যাওক অথবা ১০৪ নম্বৰত কল কৰক।</string>
+    <string name="ncd_all_display">NCD-বৌকো কেন্চাৰীৰ সম্পৰ্কে (মৌখিক কেন্চাৰী, টিবি), অনুগত আকৌ সেৱা কেন্দ্ৰলৈ যাওক অথবা ১০৪ নম্বৰত কল কৰক।</string>
+    <string name="ncd_hyper_stk_display">NCD-বৃদ্ধি চাকৰিকাৰী কৰিলো সম্পৰ্কে (Hypertension, Stroke), অনুগত আকৌ সেৱা কেন্দ্ৰলৈ যাওক অথবা ১০৪ নম্বৰত কল কৰক।</string>
+    <string name="ncd_tb_can">NCD-টিবি আৰু কেন্চাৰীৰ সমস্যাবোৰ সম্পৰ্কে (TB, Cancer), অনুগত আকৌ সেৱা কেন্দ্ৰলৈ যাওক অথবা ১০৪ নম্বৰত কল কৰক।</string>
+    <string name="ncd_hyper_only">NCD-শ্বাসনাৰ সমস্যাবোৰ সম্পৰ্কে (Hypertension), অনুগত আকৌ সেৱা কেন্দ্ৰলৈ যাওক অথবা ১০৪ নম্বৰত কল কৰক।</string>
+    <string name="ncd_sus_valid"> সন্দেহ কৰা NCD মৰামৰ প্ৰস্থা, অনুগত আকৌ সেৱা কেন্দ্ৰলৈ যাওক অথবা ১০৪ নম্বৰত কল কৰক।</string>
+    <string name="hrpncd_sus_valid"> সন্দেহ কৰা HRP আৰু NCD মৰামৰ প্ৰস্থা, অনুগত আকৌ সেৱা কেন্দ্ৰলৈ যাওক অথবা ১০৪ নম্বৰত কল কৰক।</string>
+    <string name="ncd_hyperstroke">NCD-শ্বাসনাৰ সমস্যাবোৰ সম্পৰ্কে (Hypertension, Stroke), ডাক্তৰৰ সোধা পৰা অথবা ১০৪ নম্বৰত কল কৰক</string>
+    <string name="ncd_tbcancer">NCD-টিবি আৰু কেন্চাৰীৰ সমস্যাবোৰ সম্পৰ্কে (TB, Cancer), ডাক্তৰৰ সোধা পৰা অথবা ১০৪ নম্বৰত কল কৰক</string>
+    <string name="ncd_cansthyroid">NCD-কেন্চাৰী আৰু থাইৰোইডৰ সম্পৰ্কে (Cancer, Thyroid), ডাক্তৰৰ সোধা পৰা অথবা ১০৪ নম্বৰত কল কৰক</string>
+    <string name="ncd_diabcancer">NCD-ডায়বেটিচ আৰু কেন্চাৰীৰ সম্পৰ্কে (Diabetes, Cancer), ডাক্তৰৰ সোধা পৰা অথবা ১০৪ নম্বৰত কল কৰক</string>
+    <string name="ncd_mentalhealth">NCD-মেণ্টেল স্বাস্থ্য সমস্যাৰ সম্পৰ্কে, ডাক্তৰৰ সোধা পৰা অথবা ১০৪ নম্বৰত কল কৰক</string>
+    <string name="cbac_tbcase">সন্দেহ কৰা টিবি মৰামৰ প্ৰস্থা, অনুগত আকৌ স্পুতুম নমূনা সংগ্ৰহ কৰক আৰু যিমানে টিবি পৰীক্ষণ কেন্দ্ৰলৈ পৰা হোৱা যাব। এটিয়াই সকলো পৰিবাৰিক সদস্যক সন্দেহবোৰ সন্ধান কৰিব পৰা যাব।</string>
+    <string name="cbac_tb_collect_sputum">সন্দেহ কৰা টিবি মৰামৰ প্ৰস্থা, অনুগত আকৌ স্পুতুম নমূনা সংগ্ৰহ কৰক আৰু যিমানে টিবি পৰীক্ষণ কেন্দ্ৰলৈ পৰা হোৱা যাব।</string>
+    <string name="cbac_tv_moic_treat">চিকিৎসাৰ বাবে পৰাৰ পৰা হৈছে নমূনা সংগ্ৰহ কৰক</string>
+    <string name="cbac_unsteady">দুৰ্বল অবস্থাত বা চলাৰ সময়ত অস্থিৰ অনুভব কৰা</string>
+
+    <string name="cbac_pd_rm">গতি সীমা সীমাৰ বাবে যিমানে দুৰহৰ আছে</string>
+    <string name="cbac_nhop">খাওঁ বাৰ্তা কৰা, বসা কৰা, সজনী কৰা, গুসুৱানী কৰা, চলা, টলেট ব্যৱহাৰ কৰা ইত্যাদি প্ৰতিদিনৰ কাম কৰিবলৈ অন্যকৈ সাহায্যৰ পৰা পৰা হৈছে</string>
+    <string name="cbac_forget_names">আপোনাৰ নিকট সকলৰ নাম বা আপোনাৰ স্বনিধিৰ ঠিকনা বিচাৰি যাওৱা হৈছে</string>
+
+    <string name="cbac_validation_your_age">"অনুগত আকৌ বয়স নিৰ্বাচন কৰক"</string>
+    <string name="cbac_validation_smoke">"ধোঁয়া আৰু ধোখ উৎপাদন কৰাৰ সংস্থা নিৰ্বাচন কৰক"</string>
+    <string name="cbac_validation_consume_alcohol">"অধীনস্থ বেৰৰ সেৱা নিৰ্বাচন কৰক"</string>
+    <string name="cbac_validation_waist">"কেমেটৰেণ্ট আৰু পৰিমাণ নিৰ্বাচন কৰক"</string>
+    <string name="cbac_validation_physical_activities">"শাৰীৰিক কার্যকলাপসমূহ নিৰ্বাচন কৰক"</string>
+    <string name="cbac_validation_heart_disease">"পাৰিবাৰিক ইতিহাস নিৰ্বাচন কৰক"</string>
+
+    <string name="cbac_validation_plsst">অনুগত আকৌ পৰিবাৰত বৰ্তমানস্থানে কোনোবৰ টিবিৰ সমস্যা আছে নেকি নোৱাৰি নিৰ্বাচন কৰক</string>
+    <string name="cbac_validation_plsatb">অনুগত আকৌ বৰ্তমানস্থানে এন্টি-টিবি ড্ৰাগ খোৱা হৈছে নেকি নোৱাৰি নিৰ্বাচন কৰক</string>
+    <string name="cbac_validation_plshtb">অনুগত আকৌ টিবিৰ সমস্যাৰ ইতিহাস নিৰ্বাচন কৰক</string>
+    <string name="cbac_validation_plscoughh">অনুগত আকৌ এখন ২ সপ্তাহত শুষ্ক বুঁটী গঢ় বাৰী আছে নেকি নোৱাৰি নিৰ্বাচন কৰক</string>
+    <string name="cbac_validation_plbls">অনুগত আকৌ শ্বষ্ক বুঁটী সৈতে আঁচলোয় খোৱা হৈছে নেকি নোৱাৰি নিৰ্বাচন কৰক</string>
+    <string name="cbac_validation_plsfever">অনুগত আকৌ ২ সপ্তাহত অধিক সময় বৰ্তমানস্থানে জ্বৰ আছে নেকি নোৱাৰি নিৰ্বাচন কৰক</string>
+    <string name="cbac_validation_plslweight">অনুগত আকৌ ওজনৰ হাৰ আছে নেকি নোৱাৰি নিৰ্বাচন কৰক</string>
+    <string name="cbac_validation_plsnsw">অনুগত আকৌ ৰাতিৰে চমু আচান আছে নেকি নোৱাৰি নিৰ্বাচন কৰক</string>
+    <string name="cbac_validation_rul">অনুগত আকৌ হাৰমৰ পৰা পাততোৰ মৰামৰ অনুভৱ আছে নেকি নোৱাৰি নিৰ্বাচন কৰক</string>
+    <string name="cbac_validation_rtps">অনুগত আকৌ হাতৰ পৰা অথবা বাটৰ পৰা দুবলীয়ে চমুৰ সন্ধান কৰা হৈছে নেকি নোৱাৰি নিৰ্বাচন কৰক</string>
+    <string name="cbac_validation_cbv">অনুগত আকৌ মানস আক্ষি যোন পৰা মগাইবোৰ অথবা মগাইবোৰ অন্ধতা সন্ধান কৰা হৈছে নেকি নোৱাৰি নিৰ্বাচন কৰক</string>
+    <string name="cbac_validation_dr">অনুগত আকৌ চিমল পঢ়িব বা পঢ়ি যাব নেকি নোৱাৰি নিৰ্বাচন কৰক</string>
+    <string name="cbac_validation_pie">অনুগত আকৌ ১ সপ্তাহৰেও বেছেহে চকুৰ পৰা ব্যথা আছে নেকি নোৱাৰি নিৰ্বাচন কৰক</string>
+    <string name="cbac_validation_rie">এটি পৰা বেছি সপ্তাহৰ ওপৰত আখ হলে লাল হোৱা</string>
+    <string name="cbac_validation_dih">শ্ৰোত শক্তিৰ অসুবিধা হৈছে বা শুনা দিলে</string>
+    <string name="cbac_validation_sob">শ্বাস লাভ কৰি আহিছে</string>
+    <string name="cbac_validation_hif">ফিট এখন ইতিহাস হৈছে</string>
+    <string name="cbac_validation_diom">বুকৰ মাজৰ খোলনাৰ অসুবিধা হৈছে</string>
+    <string name="cbac_validation_upgm">মোখৰ উল্কপত্তি / প্ৰদাহ / বৃদ্ধি হৈছে যি বেছি সপ্তাহবোৰ ঠিক হোৱা নাই</string>
+    <string name="cbac_validation_tov">আপোনাৰ আৱাজৰ শিলীয়ান এটি পৰা বেছি সপ্তাহৰ ওপৰত স্থায়ী পৰিবৰ্তন হৈছে</string>
+    <string name="cbac_validation_gimh">মোখত বেছি সপ্তাহবোৰ ঠিক হোৱা নাই এটি পৰা বেছি বৃদ্ধি</string>
+    <string name="cbac_validation_wrp">মোখত বেছি সপ্তাহবোৰ ঠিক হোৱা নাই এটি পৰা কমলা বা লাল ঠেঁলা</string>
+    <string name="cbac_validation_pwh">বখৰ মজৰ উপৰত এটি পৰা পিন হোৱা</string>
+    <string name="cbac_validation_hpds">চামকপীঠিৰ অংশত এটি পৰা হাইপাৰ পিগমেণ্টেড পৰ্চ অথবা আসমানয়া অৰ্থসহকৃত সাঁতি আছে</string>
+    <string name="cbac_validation_ts">যিকোনো শীতল আছে</string>
+    <string name="cbac_validation_ns">ত্বকত যিকোনো নোডুল আছে</string>
+    <string name="cbac_validation_rnps">তালপামৰ অথবা পাৰপামৰ উপৰত এটি পৰা পুনঃস্পষ্ট অববোধ</string>
+    <string name="cbac_validation_cfhf">বাচনীৰ অংশত এটি পৰা হাতৰ বা পদৰ আখ বাৰ অথবা বাৰৰ স্থিতি</string>
+    <string name="cbac_validation_tnhf">হাতৰ বা পদৰ আখ বাৰ অথবা বাৰৰ স্থিতি অথবা বাৰৰ স্থিতিৰ অববোধ</string>
+    <string name="cbac_validation_ice">আখ মূখৰ বন্ধ কৰিব নোৱা বা সম্ভব নহয়</string>
+    <string name="cbac_validation_dhof">আখ সৈতে বস্তু ধৰনে অসুবিধা</string>
+    <string name="cbac_validation_wfdw">পদৰ সহায়ক নহয় যিয়াতে চলাৰ সময় সমস্যা হৈছে</string>
+    <string name="cbac_validation_lb">স্তনসংকুচিত</string>
+    <string name="cbac_validation_bsdfn">আখৰ পৰা লবণ দৰে বহ হোৱা</string>
+    <string name="cbac_validation_csb">স্তনৰ আকৃতি সৈতে বদলি আহিছে</string>
+    <string name="cbac_validation_bbp">পিৰিয়ডৰ মাজৰ অংশত আহি</string>
+    <string name="cbac_validation_bam">মেন’প’জ পাছৱাৰ মাজৰ অংশত আহি</string>
+    <string name="cbac_validation_bai">যৌন সংবাদৰ পৰা বেছি সপ্তাহৰ ওপৰত আখ হলে লাল হোৱা</string>
+    <string name="cbac_validation_fsvd">মলতলীয়া মলৰ অতি মলিন ছৈতে এটি পৰা মলগন্ধ</string>
+    <string name="cbac_validation_fuwsw">স্থান পৰা স্থান লৈ যাওঁতে অস্থিৰ অবস্থা অথবা চলাৰ সময় অস্থিৰ অবস্থা</string>
+    <string name="cbac_validation_sapd">চলন সীমাবদ্ধ কৰা যোগ্য কোনো শাৰীৰিক অক্ষমতা অসুবিধা হোৱা</string>
+    <string name="cbac_validation_nhpa">খাদ্য খোৱা, পোকোৱা, নহয়, বা শৌচ কৰাৰ সময় অন্যজনৰ সাহায্য পৰা পৰ্যাপ্ত হোৱা আবশ্যক</string>
+    <string name="cbac_validation_fn">আপোনাৰ, আপোনাৰ নিকটস্থ ব্যক্তিসকলৰ নাম, অথবা আপোনাৰ নিজৰ গৃহৰ ঠিকন বুলি পৰা মাত্ৰাত</string>
+    <string name="cbac_validation_fu">পাককৃতি ব্যৱহাৰ কৰা জনক প্ৰমুখ প্ৰকাৰ বাচন কৰক</string>
+    <string name="cbac_validation_ox">চাকুৰ অতি মুখ্য ভূমিকা পৰা যাওঁতে</string>
+    <string name="cbac_validation_li">ব্যাবহাৰযোগ্য ক্ষেত্ৰত সৰু আগ্ৰহ বা আনন্দ অথবা কাম অধিষ্ঠান নাই!</string>
+    <string name="cbac_validation_fd">আপোনাৰ মনৰ স্থিতি যাচিল বা উদাসীন বা আশাৰ হোৱা</string>
+    <string name="cbac_Question">প্ৰশ্ন</string>
+    <string name="cbac_score">স্কোৰ</string>
+    <string name="cbac_type_of_fuel">পাককৃতি ব্যৱহাৰ কৰা প্ৰকাৰ</string>
+    <string name="cbac_remarks">মন্তব্য</string>
+    <string name="cbac_risk_assessment_tv">অংশ A: আপত্তি মূলনীতি</string>
+    <string name="cbac_tv_bl_menopause">ASHA ফেচিলিটেটৰলৈ জানাক</string>
+    <string name="cbac_form">CBAC ফর্ম</string>
+    <string name="alert">সতৰ্কতা!</string>
+    <string name="missing_field">অনুপস্থিত ক্ষেত্ৰ</string>
+    <string name="suspected_hrp_and_ncd_case">সন্দেহভৰা HRP আৰু NCD মৌখিক!</string>
+    <string name="ok">ঠিক</string>
+    <string name="suspected_hrp_case">সন্দেহভৰা HRP মৌখিক!</string>
+    <string name="suspected_ncd_case_please_visit_nearest_hwc_or_call">সন্দেহভৰা NCD মৌখিক, অনুগ্ৰহ কৰি নিকটস্থ HWC লৈ যাওক অথবা\n 104 নম্বৰত ফোন কৰক।</string>
+    <string name="refer_to_ncd_screening_day_vhsnd_hwc_for_ncd_screening_priority">NCD স্ক্ৰীনিং দিন / VHSND / HWC লৈ সূচনা কৰক NCD স্ক্ৰীনিং (প্ৰাথমিকতা)</string>
+    <string name="refer_to_ncd_screening_day_vhsnd_hwc_for_ncd_screening_less_priority">NCD স্ক্ৰীনিং দিন / VHSND / HWC লৈ সূচনা কৰক NCD স্ক্ৰীনিং (কম প্ৰাথমিকতা)</string>
+    <string name="send_the_patient_to_moic_of_nearest_health_center_for_treatment">নিকটস্থ স্বাস্থ্য কেন্দ্ৰৰ এমওআইচলৈ রোগী পঠাওক</string>
+    <string name="refer_to_mo_and_collect_the_sputum_sample">এমওলৈ সুস্পষ্ট তেজ ব্যক্তি গুটীৰ নম্বৰ পৰা পঠাওক</string>
+    <string name="inform_asha_facilitator">ASHA ফেচিলিটেটৰলৈ জানাওক।</string>
+    <string name="total_score_wihout_semi_colon">মোট স্কোৰ </string>
+    <string name="total_score">মোট স্কোৰ : </string>
+    <string name="refer_to_mo_or_inform_anm_mpw_to_tracing_of_all_family_members">সম্পূৰ্ণ পৰিৱাৰ সদস্যবোৰ অনুসৰণ কৰিবলৈ মও লৈ যাওক অথবা ANM/MPW লৈ জানাওক</string>
+    <string name="cbac">CBAC</string>
+    <string name="tb_screening">টিবি স্ক্ৰীনিং</string>
+    <string name="tb_screening_submitted">"টিবি স্ক্ৰীনিং প্ৰেৰণ কৰা হ'ল</string>
+    <string name="screen">স্ক্ৰীন</string>
+    <string name="tb_suspected_sputum_test">টিবি সন্দেহভৰা গুটিৰ পৰীক্ষা</string>
+    <string name="tb_tracking_submitted">"টিবি অনুসৰণ প্ৰেৰণ কৰা হ'ল</string>
+    <string name="tb_suspected_alert">MOলৈ গৈ স্পুতম নমুনা প্ৰাপ্ত কৰক</string>
+    <string name="tb_suspected_alert_positive">MOলৈ গৈ যাওক</string>
+    <string name="tb_suspected_family_alert">MOলৈ গৈ যাওক অথবা সকলো পৰিৱাৰ সদস্যৰ নমোলকৈ এএনএম/এমপিডবল জানাওক</string>
+    <string name="filled_on">"ভৰা হৈছে "</string>
+    <string name="save">সংৰক্ষণ কৰক</string>
+    <string name="track">অনুসৰণ</string>
+    <string name="is_sputum_sample_collected">স্পুটাম নমুনা সংগ্ৰহ হৈছে নেকি?</string>
+    <string name="sputum_sample_submitted_at">স্পুটাম নমুনা জমা দিয়া হৈছে</string>
+    <string name="nikshay_id">নিক্ষয় আইডি</string>
+    <string name="sputum_test_result">স্পুটাম পৰীক্ষা ফলাফল</string>
+    <string name="referred_to_facility">সুবিধাৰ পৰা উপযুক্ত স্থানলৈ উপস্থাপিত হৈছে</string>
+    <string name="facility_referral_follow_ups">সুবিধাৰ পৰা উপযুক্ত স্থানলৈ উপস্থাপন অনুসৰণ</string>
+    <string-array name="tb_submitted_yet">
+        <item>ডিএমচি</item>
+        <item>এসচি</item>
+        <item>পিএইচচি</item>
+    </string-array>
+    <string-array name="tb_test_result">
+        <item>ধনি</item>
+        <item>নেগেটিভ</item>
+    </string-array>
+
+    <string-array name="cbac_age">
+        <item>০-২৯ বছৰ</item>
+        <item>৩০-৩৯ বছৰ</item>
+        <item>৪০-৪৯ বছৰ</item>
+        <item>৫০-৫৯ বছৰ</item>
+        <item>৬০ বছৰ বা তাতোকৈ</item>
+    </string-array>
+    <string-array name="cbac_smoke">
+        <item>কখনও নহয়</item>
+        <item>পৰা সময় আগবা গৰম খোৱা পৰা বলি অধ্যায়ত</item>
+        <item>দিনত</item>
+    </string-array>
+    <string-array name="cbac_alcohol">
+        <item>নহয়</item>
+        <item>হয়</item>
+    </string-array>
+    <string-array name="cbac_waist_mes_female">
+        <item>৮০ ছে. মিটা অথবা তাতোকৈ</item>
+        <item>৮১-৯০ ছে. মিটা</item>
+        <item>৯০ ছে. মিটা বৰু</item>
+    </string-array>
+    <string-array name="cbac_waist_mes_male">
+        <item>৯০ ছে. মিটা অথবা তাতোকৈ</item>
+        <item>৯১-১০০ ছে. মিটা</item>
+        <item>১০০ ছে. মিটা বৰু</item>
+    </string-array>
+    <string-array name="cbac_pa">
+        <item>কমতি ১৫০ মিনিট অধিক পাৰ আছে</item>
+        <item>১৫০ মিনিটৰ তলত</item>
+    </string-array>
+    <string-array name="cbac_fh">
+        <item>নহয়</item>
+        <item>হয়</item>
+    </string-array>
+
+    <string-array name="cbac_type_Cooking_fuel">
+        <item>কাঠৰ কয়লি</item>
+        <item>ফসলৰ বাকহৰি</item>
+        <item>গোবৰ গেছ</item>
+        <item>"ক'য়াল</item>
+        <item>ক"েৰ'ছীনৰ তেল</item>
+        <item>LPG</item>
+    </string-array>
+    <string-array name="cbac_type_occupational_exposure">
+        <item>ফসলৰ বাকহৰি উত্পাদন</item>
+        <item>স্বাচ্ছিকৰ বাকহৰি উত্পাদন – পাতলি</item>
+        <item>ধুয়িৱালী, গেছ আৰু ধূলিৰ ব্যাবসাৰত কাম কৰা – শাৰীৰিক অক্ষমতা, গেছ, ধূমশালা উদ্যোগ যেনহে ইত্যাদি</item>
+    </string-array>
+    <string-array name="cbac_li">
+        <item>সম্পূৰ্ণ নহয়</item>
+        <item>চাবা দিন</item>
+        <item>আধাৰ দিনৰ তলত</item>
+        <item>দিন-এইটি প্ৰতিদিন</item>
+    </string-array>
+    <string-array name="cbac_fd">
+        <item>সম্পূৰ্ণ নহয়</item>
+        <item>চাবা দিন</item>
+        <item>আধাৰ দিনৰ তলত</item>
+        <item>দিন-এইটি প্ৰতিদিন</item>
+    </string-array>
+
+</resources>
+

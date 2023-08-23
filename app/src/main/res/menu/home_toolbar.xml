@@ -6,20 +6,20 @@
     <item
         android:id="@+id/sync_status"
         android:icon="@drawable/ic_synced"
-        android:title="Sync Status"
+        android:title="@string/sync_status"
         app:iconTint="@android:color/white"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/toolbar_menu_home"
         android:icon="@drawable/ic_home"
-        android:title="Go to Home"
+        android:title="@string/go_to_home"
         app:showAsAction="ifRoom" />
 
 
     <item
         android:id="@+id/toolbar_menu_language"
         android:icon="@drawable/ic_language"
-        android:title="Change Language"
+        android:title="@string/change_language"
         app:showAsAction="ifRoom" />
 
 

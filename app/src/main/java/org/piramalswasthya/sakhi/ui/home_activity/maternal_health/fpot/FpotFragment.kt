@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapterOld
 import org.piramalswasthya.sakhi.databinding.FragmentFpotBinding
 import org.piramalswasthya.sakhi.work.WorkerUtils
@@ -80,7 +81,7 @@ class FpotFragment : Fragment() {
                     binding.pbHbnc.visibility = View.GONE
                     Toast.makeText(
                         context,
-                        "Saving Mdsr to database Failed!",
+                        resources.getString(R.string.saving_mdsr_to_database_failed),
                         Toast.LENGTH_LONG
                     ).show()
                 }

@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pmjay
 
 import android.app.Application
+import android.content.res.Configuration
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -10,6 +11,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapterOld
 import org.piramalswasthya.sakhi.configuration.PMJAYFormDataset
 import org.piramalswasthya.sakhi.database.room.InAppDb
@@ -67,6 +69,12 @@ class PmjayViewModel @Inject constructor(
         get() = _exists
 
     private val dataset = PMJAYFormDataset(context)
+
+    private val resources by lazy {
+        val configuration = Configuration(context.resources.configuration)
+        configuration.setLocale(Locale(preferenceDao.getCurrentLanguage().symbol))
+        context.createConfigurationContext(configuration).resources
+    }
 
     fun submitForm() {
         _state.value = State.LOADING
@@ -128,7 +136,7 @@ class PmjayViewModel @Inject constructor(
         dataset.patientAddress.value.value = it
         dataset.contactNumber.value.value = ben.contactNumber.toString()
         dataset.familyId.value.value = hhId.toString()
-        dataset.patientType.value.value = "General OP"
+        dataset.patientType.value.value = resources.getString(R.string.general_op)
         dataset.scheme.value.value = "AB-PMJAY(S)"
         dataset.registrationDate.value.value = getDateFromLong(System.currentTimeMillis())
     }

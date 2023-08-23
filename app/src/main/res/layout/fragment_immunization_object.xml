@@ -46,7 +46,7 @@
                             android:fontFamily="@font/opensans_regular"
                             android:gravity="center"
                             android:id="@+id/ben_nameTv"
-                            android:layout_marginLeft="15dp"
+                            android:layout_marginStart="15dp"
                             android:textColor="@android:color/white"
                             android:textSize="16sp"
                             android:textStyle="bold" />
@@ -123,7 +123,7 @@
                             android:textColor="?attr/colorOnPrimary"
                             android:fontFamily="@font/opensans_regular"
                             android:textSize="20sp"
-                            android:text="Patient Information"
+                            android:text="@string/patient_information"
                             android:textStyle="bold" />
 
                         <LinearLayout
@@ -140,7 +140,7 @@
                                 android:layout_height="match_parent"
                                 android:layout_weight="0.95"
                                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                                android:hint="Mother Name">
+                                android:hint="@string/mother_name">
 
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/et_mothername"
@@ -182,7 +182,7 @@
                                 android:layout_height="match_parent"
                                 android:layout_weight="0.95"
                                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                                android:hint="Date of Birth" >
+                                android:hint="@string/date_of_birth" >
 
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/et_dob"
@@ -250,7 +250,7 @@
                                 android:layout_marginTop="5dp"
                                 android:layout_marginBottom="5dp"
                                 android:paddingLeft="5dp"
-                                android:text="Previous Vaccine Details"
+                                android:text="@string/previous_vaccine_details"
                                 android:textColor="?attr/colorOnPrimary"
                                 android:fontFamily="@font/opensans_regular"
                                 android:textSize="20sp"
@@ -271,7 +271,7 @@
                                 android:layout_height="match_parent"
                                 android:layout_weight="0.95"
                                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                                android:hint="Due Serial">
+                                android:hint="@string/due_serial">
 
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/et_due_seral_name"
@@ -315,7 +315,7 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                                    android:hint="Last Vaccination Date">
+                                    android:hint="@string/last_vaccination_date">
 
                                     <com.google.android.material.textfield.TextInputEditText
                                         android:id="@+id/et_last_vaccine_dates"
@@ -365,7 +365,7 @@
                                 android:layout_height="match_parent"
                                 android:layout_weight="0.95"
                                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                                android:hint="No of Doses Taken">
+                                android:hint="@string/no_of_doses_taken">
 
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/et_no_vaccine_taken"
@@ -474,7 +474,7 @@
                                 android:layout_weight="0.80"
                                 android:gravity="start"
                                 android:paddingLeft="5dp"
-                                android:text="Current Vaccine Details"
+                                android:text="@string/current_vaccine_details"
                                 android:textColor="?attr/colorOnPrimary"
                                 android:fontFamily="@font/opensans_regular"
                                 android:textSize="20sp"
@@ -495,7 +495,7 @@
                                 android:layout_height="match_parent"
                                 android:layout_weight="0.95"
                                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                                android:hint="Vaccine Name">
+                                android:hint="@string/vaccine_name">
 
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/et_vaccine_name"
@@ -537,7 +537,7 @@
                                 android:layout_height="match_parent"
                                 android:layout_weight="0.95"
                                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                                android:hint="Dose Number">
+                                android:hint="@string/dose_number">
 
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/et_dose_num"
@@ -579,7 +579,7 @@
                                 android:layout_height="match_parent"
                                 android:layout_weight="0.95"
                                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                                android:hint="Expected Date">
+                                android:hint="@string/expected_date">
 
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/et_excepted_dates"
@@ -619,7 +619,7 @@
                                 android:layout_height="match_parent"
                                 android:layout_weight="0.95"
                                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                                android:hint="Vaccination Date">
+                                android:hint="@string/vaccination_date">
 
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/et_vaccination_date"
@@ -660,7 +660,7 @@
                                 android:layout_height="match_parent"
                                 android:layout_weight="0.95"
                                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                                android:hint="Vaccination Place">
+                                android:hint="@string/vaccination_place">
 
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/et_vaccinated_place"
@@ -701,7 +701,7 @@
                                 android:layout_height="match_parent"
                                 android:layout_weight="0.95"
                                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                                android:hint="Vaccinated By">
+                                android:hint="@string/vaccinated_by">
 
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/et_vaccinated_by"
@@ -738,7 +738,7 @@
                     android:layout_margin="10dp"
                     android:layout_marginRight="10dp"
                     android:layout_marginBottom="10dp"
-                    android:text="Submit"
+                    android:text="@string/submit"
                     android:textColor="@android:color/white"
                     android:textStyle="bold" />
 

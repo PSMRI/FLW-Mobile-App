@@ -1,7 +1,11 @@
-package org.piramalswasthya.sakhi.ui.home_activity.eligible_couple.eligible_couple_reg
+package org.piramalswasthya.sakhi.ui.home_activity.eligible_couple.registration.eligible_couple_reg
 
 import android.content.Context
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -56,13 +60,16 @@ class EligibleCoupleRegViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
+            val asha  = preferenceDao.getLoggedInUser()!!
             val ben = ecrRepo.getBenFromId(benId)?.also { ben ->
                 _benName.value =
                     "${ben.firstName} ${if (ben.lastName == null) "" else ben.lastName}"
                 _benAgeGender.value = "${ben.age} ${ben.ageUnit?.name} | ${ben.gender?.name}"
                 ecrForm = EligibleCoupleRegCache(
                     benId = ben.beneficiaryId,
-                    syncState = SyncState.UNSYNCED
+                    syncState = SyncState.UNSYNCED,
+                    createdBy = asha.userName,
+                    updatedBy = asha.userName
                 )
             }
 
@@ -96,9 +103,11 @@ class EligibleCoupleRegViewModel @Inject constructor(
                     dataset.mapValues(ecrForm, 1)
                     ecrRepo.persistRecord(ecrForm)
                     ecrRepo.getBenFromId(benId)?.let {
-                        val hasBenUpdated = dataset.mapValueToBenRegId(it)
-                        if (hasBenUpdated)
-                            benRepo.persistRecord(it)
+                        val hasBenUpdated = dataset.mapValueToBen(it)
+                        if (hasBenUpdated) {
+                            benRepo.updateRecord(it)
+
+                        }
                     }
                     _state.postValue(State.SAVE_SUCCESS)
                 } catch (e: Exception) {

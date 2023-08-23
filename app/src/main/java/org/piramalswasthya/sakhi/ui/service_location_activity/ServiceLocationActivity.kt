@@ -116,9 +116,15 @@ class ServiceLocationActivity : AppCompatActivity() {
                             isEnabled = false
                             setText(viewModel.blockList.first())
                         }
-                        binding.actvVillageDropdown.setText(viewModel.selectedVillageName)
-                        binding.actvVillageDropdown.setOnItemClickListener { _, _, i, _ ->
-                            viewModel.setVillage(i)
+                        binding.actvVillageDropdown.apply {
+                            setText(viewModel.selectedVillageName)
+                            if (viewModel.villageList.size == 1) {
+                                setText(viewModel.villageList.first())
+                                viewModel.setVillage(0)
+                            }
+                            setOnItemClickListener { _, _, i, _ ->
+                                viewModel.setVillage(i)
+                            }
                         }
                     }
                 }

@@ -1,4 +1,4 @@
-package org.piramalswasthya.sakhi.ui.home_activity.eligible_couple.eligible_couple_list
+package org.piramalswasthya.sakhi.ui.home_activity.eligible_couple.registration.eligible_couple_list
 
 import android.os.Bundle
 import android.text.Editable
@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.BenListAdapterForForm
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
 
@@ -49,7 +50,7 @@ class EligibleCoupleListFragment : Fragment() {
                             benId
                         )
                     )
-                }), "Register"
+                }), resources.getString(R.string.register)
         )
         binding.rvAny.adapter = benAdapter
 

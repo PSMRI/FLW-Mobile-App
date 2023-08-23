@@ -10,7 +10,7 @@
     </data>
 
     <FrameLayout
-        tools:background="@color/green"
+        tools:background="@color/md_theme_dark_onTertiary"
         android:id="@+id/fl_aadhaar_id"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -45,7 +45,7 @@
                     app:layout_constraintTop_toTopOf="@id/cl_content_aadhar_id"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:hint="Aadhaar">
+                    android:hint="@string/aadhaar">
 
                     <com.google.android.material.textfield.MaterialAutoCompleteTextView
                         android:id="@+id/actv_aadhar_verification_dropdown"
@@ -74,14 +74,14 @@
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:checked="true"
-                        android:text="ASHA" />
+                        android:text="@string/asha" />
 
                     <RadioButton
                         android:id="@+id/rb_gov"
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:text="GOV" />
+                        android:text="@string/gov" />
                 </RadioGroup>
 
                 <androidx.fragment.app.FragmentContainerView
@@ -122,7 +122,8 @@
                     app:layout_constraintBottom_toTopOf="@+id/textView5"
                     app:layout_constraintDimensionRatio="1:1"
                     app:layout_constraintEnd_toEndOf="@+id/textView5"
-                    app:layout_constraintStart_toStartOf="@+id/textView5" />
+                    app:layout_constraintStart_toStartOf="@+id/textView5"
+                    android:contentDescription="@string/offline" />
 
                 <TextView
                     android:id="@+id/textView5"
@@ -130,7 +131,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:padding="@dimen/padding_normal"
-                    android:text="Something went wrong !\nUnable to connect to server !\nTry again later!"
+                    android:text="@string/something_went_wrong_nunable_to_connect_to_server_ntry_again_later"
                     android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
                     app:layout_constraintBottom_toBottomOf="parent"

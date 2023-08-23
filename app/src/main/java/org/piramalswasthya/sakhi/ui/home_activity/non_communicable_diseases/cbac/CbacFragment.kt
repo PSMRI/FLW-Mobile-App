@@ -42,31 +42,30 @@ class CbacFragment : Fragment() {
     private var ed2PopupShown: Boolean = false
 
     private val alertDialog by lazy {
-        AlertDialog.Builder(requireContext()).setTitle("MISSING FIELD").create()
+        AlertDialog.Builder(requireContext()).setTitle(getString(R.string.missing_field)).create()
     }
 
     private val raAlertDialog by lazy {
-        AlertDialog.Builder(requireContext()).setTitle("Alert !")
+        AlertDialog.Builder(requireContext()).setTitle(getString(R.string.alert))
 //            .setMessage(context?.getString(R.string.ncd_sus_valid))
-            .setPositiveButton("Ok") { dialog, _ -> dialog.dismiss() }.create()
+            .setPositiveButton(resources.getString(R.string.ok)) { dialog, _ -> dialog.dismiss() }.create()
     }
     private val ast1AlertDialog by lazy {
-        AlertDialog.Builder(requireContext()).setTitle("SUSPECTED HRP AND NCD CASE!")
-            .setMessage(context?.getString(R.string.tb_suspected_alert))
-            .setPositiveButton("Ok") { dialog, _ -> dialog.dismiss() }.create()
+        AlertDialog.Builder(requireContext()).setTitle(getString(R.string.suspected_hrp_and_ncd_case))
+            .setMessage(resources.getString(R.string.tb_suspected_alert))
+            .setPositiveButton(resources.getString(R.string.ok)) { dialog, _ -> dialog.dismiss() }.create()
     }
     private val ast2AlertDialog by lazy {
-        AlertDialog.Builder(requireContext()).setTitle("SUSPECTED HRP CASE!")
-            .setMessage(context?.getString(R.string.tb_suspected_family_alert))
-            .setPositiveButton("Ok") { dialog, _ -> dialog.dismiss() }.create()
+        AlertDialog.Builder(requireContext()).setTitle(getString(R.string.suspected_hrp_case))
+            .setMessage(resources.getString(R.string.tb_suspected_family_alert))
+            .setPositiveButton(resources.getString(R.string.ok)) { dialog, _ -> dialog.dismiss() }.create()
     }
     private val ast0AlertDialog by lazy {
-        AlertDialog.Builder(requireContext()).setTitle("Alert !")
+        AlertDialog.Builder(requireContext()).setTitle(getString(R.string.alert))
             .setMessage(
-                "Suspected NCD case, please visit nearest HWC or call\n" +
-                        "104."
+                resources.getString(R.string.suspected_ncd_case_please_visit_nearest_hwc_or_call)
             )
-            .setPositiveButton("Ok") { dialog, _ -> dialog.dismiss() }.create()
+            .setPositiveButton(resources.getString(R.string.ok)) { dialog, _ -> dialog.dismiss() }.create()
     }
 
     override fun onCreateView(
@@ -116,7 +115,7 @@ class CbacFragment : Fragment() {
                 CbacViewModel.State.MISSING_FIELD -> {
                     binding.llContent.visibility = View.VISIBLE
                     binding.pbCbac.visibility = View.GONE
-                    alertDialog.setTitle("MISSING FIELD")
+                    alertDialog.setTitle(resources.getString(R.string.missing_field))
                     alertDialog.setMessage(viewModel.missingFieldString)
                     alertDialog.show()
                 }
@@ -182,11 +181,11 @@ class CbacFragment : Fragment() {
         ) {
             if (score > 4) {
                 raAlertDialog.setMessage(
-                    "Refer to NCD screening day / VHSND/ HWC for NCD screening (Priority)"
+                    resources.getString(R.string.refer_to_ncd_screening_day_vhsnd_hwc_for_ncd_screening_priority)
                 )
             } else {
                 raAlertDialog.setMessage(
-                    "Refer to NCD screening day / VHSND/ HWC for NCD screening (Less Priority)"
+                    resources.getString(R.string.refer_to_ncd_screening_day_vhsnd_hwc_for_ncd_screening_less_priority)
                 )
             }
 //            if(!totalScorePopupShown)
@@ -203,7 +202,7 @@ class CbacFragment : Fragment() {
         ) {
             if (binding.cbacFhTb.rbYes.isChecked || binding.cbacTakingTbDrug.rbYes.isChecked) {
                 ast2AlertDialog.setMessage(
-                    "Refer to MO or inform ANM/MPW to tracing of all family members"
+                    resources.getString(R.string.refer_to_mo_or_inform_anm_mpw_to_tracing_of_all_family_members)
                 )
                 ast2AlertDialog.show()
             }
@@ -224,9 +223,9 @@ class CbacFragment : Fragment() {
                 binding.cbacNhop.rbYes.isChecked ||
                 binding.cbacForgetNames.rbYes.isChecked
             ) {
-                alertDialog.setTitle("Alert!")
+                alertDialog.setTitle(resources.getString(R.string.alert))
                 alertDialog.setMessage(
-                    "Send the patient to MOIC of nearest health center for treatment"
+                    resources.getString(R.string.send_the_patient_to_moic_of_nearest_health_center_for_treatment)
                 )
                 alertDialog.show()
             }
@@ -252,7 +251,7 @@ class CbacFragment : Fragment() {
                 binding.cbacNtswets.rbYes.isChecked
             ) {
                 ast1AlertDialog.setMessage(
-                    "Refer to MO and collect the Sputum sample"
+                    resources.getString(R.string.refer_to_mo_and_collect_the_sputum_sample)
                 )
                 ast1AlertDialog.show()
             }
@@ -277,7 +276,7 @@ class CbacFragment : Fragment() {
                 binding.cbacNtswets.rbYes.isChecked
             ) {
                 ast1AlertDialog.setMessage(
-                    "Refer to MO and collect the Sputum sample"
+                    resources.getString(R.string.refer_to_mo_and_collect_the_sputum_sample)
                 )
                 ast1AlertDialog.show()
             }
@@ -696,8 +695,8 @@ class CbacFragment : Fragment() {
             when (id) {
                 R.id.rb_yes -> {
                     viewModel.setBlM(1)
-                    alertDialog.setTitle("Alert!")
-                    alertDialog.setMessage("Inform ASHA Facilitator.")
+                    alertDialog.setTitle(resources.getString(R.string.alert))
+                    alertDialog.setMessage(resources.getString(R.string.inform_asha_facilitator))
                     alertDialog.show()
                     binding.tvBlMenopause.visibility = View.VISIBLE
                 }
@@ -899,7 +898,8 @@ class CbacFragment : Fragment() {
         binding.ddLiScore.text = cbac.cbac_little_interest_score.toString()
         binding.ddFdScore.text = cbac.cbac_feeling_down_score.toString()
         binding.cbacPhq2TotalScore.text =
-            "Total Score : ${cbac.cbac_little_interest_score + cbac.cbac_feeling_down_score}"
+            String.format("%s%s%s", resources.getString(R.string.total_score_wihout_semi_colon),
+                ": ", cbac.cbac_little_interest_score + cbac.cbac_feeling_down_score)
     }
 
 

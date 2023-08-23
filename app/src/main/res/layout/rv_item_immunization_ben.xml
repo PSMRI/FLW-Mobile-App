@@ -65,7 +65,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/padding_normal"
             android:onClick="@{() -> clickListener.onClickedBen(temp)}"
-            android:text="Show Vaccines"
+            android:text="@string/show_vaccines"
             android:textColor="?attr/colorOnPrimary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pmsma
 
 import android.app.Application
+import android.content.res.Configuration
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -11,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapterOld
 import org.piramalswasthya.sakhi.configuration.PMSMAFormDataset
 import org.piramalswasthya.sakhi.database.room.InAppDb
@@ -45,6 +47,12 @@ class PmsmaViewModel @Inject constructor(
         FAIL
     }
 
+    private val resources by lazy {
+        val configuration = Configuration(context.resources.configuration)
+        configuration.setLocale(Locale(preferenceDao.getCurrentLanguage().symbol))
+        context.createConfigurationContext(configuration).resources
+    }
+    
     private val benId = PmsmaFragmentArgs.fromSavedStateHandle(state).benId
     private val hhId = PmsmaFragmentArgs.fromSavedStateHandle(state).hhId
     private lateinit var ben: BenRegCache
@@ -184,7 +192,7 @@ class PmsmaViewModel @Inject constructor(
                             form.haveMCPCard,
                             form.givenMCPCard,
                             it,
-                            "No",
+                            resources.getString(R.string.no),
                             adapter
                         )
                     }
@@ -197,7 +205,7 @@ class PmsmaViewModel @Inject constructor(
                             form.highriskSymbols,
                             form.highRiskReason,
                             it,
-                            "Yes",
+                            resources.getString(R.string.yes),
                             adapter
                         )
                     }
@@ -214,7 +222,7 @@ class PmsmaViewModel @Inject constructor(
                     else false
                 }.collect{
                     if(it)
-                        _popupString.value = "HRP Case, please visit the nearest HWC or call 104"
+                        _popupString.value = resources.getString(R.string.hrp_case_please_visit_the_nearest_hwc_or_call_104)
                 }
             }
             launch {

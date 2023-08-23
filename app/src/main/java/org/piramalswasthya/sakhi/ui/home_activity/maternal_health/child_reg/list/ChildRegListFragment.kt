@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.BenListAdapterForForm
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
 
@@ -46,10 +47,10 @@ class ChildRegListFragment : Fragment() {
                 { hhId, benId ->
                     findNavController().navigate(
                         ChildRegListFragmentDirections.actionChildRegListFragmentToChildRegFragment(
-//                            benId
+                            benId
                         )
                     )
-                }), "Register"
+                }), resources.getString(R.string.register)
         )
         binding.rvAny.adapter = benAdapter
 

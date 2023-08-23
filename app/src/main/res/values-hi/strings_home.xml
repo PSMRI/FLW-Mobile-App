@@ -31,7 +31,7 @@
     <string name="icon_title_icc">शिशु सूची</string>
     <string name="icon_title_ccc">बाल सूची</string>
     <string name="icon_title_acc">किशोरों की सूची</string>
-    <string name="icon_title_pmc">गर्भावस्था सूची</string>
+<!--    <string name="icon_title_pmc">गर्भावस्था सूची</string>-->
     <string name="icon_title_dmc">प्रसव अवस्था सूची</string>
     <string name="icon_title_pncmc">प्रसवोत्तर माँ की सूची</string>
     <string name="icon_title_rmc">प्रजनन आयु सूची</string>

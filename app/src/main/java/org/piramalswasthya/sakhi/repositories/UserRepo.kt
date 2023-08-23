@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import org.piramalswasthya.sakhi.crypt.CryptoUtil
+import org.piramalswasthya.sakhi.database.room.InAppDb
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.ImmunizationDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
@@ -35,6 +36,7 @@ import javax.inject.Inject
 
 class UserRepo @Inject constructor(
     benDao: BenDao,
+    private val db : InAppDb,
     private val vaccineDao: ImmunizationDao,
     private val preferenceDao: PreferenceDao,
     private val amritApiService: AmritApiService
@@ -385,11 +387,11 @@ class UserRepo @Inject constructor(
                 return@withContext NetworkResponse.Error(message = "Server refused connection !")
             } catch (ue: UnknownHostException) {
                 return@withContext NetworkResponse.Error(message = "Unable to connect to server !")
-            } catch (ie: java.lang.IllegalStateException) {
+            } catch (ie: Exception) {
                 if (ie.message == "Invalid username / password")
                     return@withContext NetworkResponse.Error(message = "Invalid Username/password")
                 else
-                    return@withContext NetworkResponse.Error(message = "Unknown Exception : ${ie.message}")
+                    return@withContext NetworkResponse.Error(message = "Something went wrong... Try again later")
 
             }
         }
@@ -515,6 +517,7 @@ class UserRepo @Inject constructor(
             val data = responseBody.getJSONObject("data")
             val token = data.getString("key")
             val userId = data.getInt("userID")
+            db.clearAllTables()
             TokenInsertTmcInterceptor.setToken(token)
             preferenceDao.registerAmritToken(token)
             preferenceDao.lastAmritTokenFetchTimestamp = System.currentTimeMillis()

@@ -306,6 +306,7 @@ class PregnantWomanRegistrationDataset(
         }
         saved?.let {
             dateOfReg.value = getDateFromLong(it.dateOfRegistration)
+            rchId.value = it.rchId.toString()
             mcpCardNumber.value = it.mcpCardNumber.toString()
             lmp.value = getDateFromLong(it.lmpDate)
             weekOfPregnancy.value = getWeeksOfPregnancy(it.dateOfRegistration, it.lmpDate).toString()
@@ -369,7 +370,7 @@ class PregnantWomanRegistrationDataset(
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
         return when (formId) {
             rchId.id -> validateRchIdOnEditText(rchId)
-            mcpCardNumber.id -> validateRchIdOnEditText(mcpCardNumber)
+            mcpCardNumber.id -> validateMcpOnEditText(mcpCardNumber)
             dateOfReg.id ->{
                 dateOfReg.value?.let {
                     lmp.max = getLongFromDate(it)
@@ -504,6 +505,7 @@ class PregnantWomanRegistrationDataset(
         (cacheModel as PregnantWomanRegistrationCache).let {form ->
             form.dateOfRegistration = getLongFromDate(dateOfReg.value)
             form.mcpCardNumber = mcpCardNumber.value?.takeIf { it.isNotEmpty() }?.toLong()?:0
+            form.rchId = rchId.value?.takeIf { it.isNotEmpty() }?.toLong()?:0
             form.lmpDate = getLongFromDate(lmp.value)
             form.bloodGroup = bloodGroup.value
             form.bloodGroupId= bloodGroup.getPosition()
@@ -511,13 +513,13 @@ class PregnantWomanRegistrationDataset(
             form.height = height.value?.toInt()
             form.vdrlRprTestResult = vdrlrprTestResult.value
             form.vdrlRprTestResultId = vdrlrprTestResult.getPosition()
-            form.dateOfVdrlRprTest = getLongFromDate(dateOfVdrlTestDone.value)
+            form.dateOfVdrlRprTest = dateOfVdrlTestDone.value?.let { getLongFromDate(dateOfVdrlTestDone.value)}
             form.hivTestResult = hivTestResult.value
             form.hivTestResultId = hivTestResult.getPosition()
-            form.dateOfHivTest = getLongFromDate(dateOfhivTestDone.value)
+            form.dateOfHivTest = dateOfhivTestDone.value?.let { getLongFromDate(dateOfhivTestDone.value)}
             form.hbsAgTestResult = hbsAgTestResult.value
             form.hbsAgTestResultId = hbsAgTestResult.getPosition()
-            form.dateOfHbsAgTest = getLongFromDate(dateOfhbsAgTestDone.value)
+            form.dateOfHbsAgTest = dateOfhbsAgTestDone.value?.let {getLongFromDate(dateOfhbsAgTestDone.value)}
             form.pastIllness = pastIllness.value
             form.otherPastIllness = otherPastIllness.value
             form.is1st = isFirstPregnancy.value==isFirstPregnancy.entries!!.first()
@@ -528,9 +530,6 @@ class PregnantWomanRegistrationDataset(
             form.isHrp = isHrpCase.value == isHrpCase.entries!!.first()
             form.hrpIdBy = assignedAsHrpBy.value
             form.hrpIdById = assignedAsHrpBy.getPosition()
-
-
-            
         }
     }
 

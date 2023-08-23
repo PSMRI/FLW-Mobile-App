@@ -10,7 +10,7 @@ import org.piramalswasthya.sakhi.model.InfantRegCache
 interface InfantRegDao {
 
     @Query("SELECT * FROM INFANT_REG WHERE motherBenId =:benId limit 1")
-    fun getInfantReg(benId: Long) : InfantRegCache?
+    fun getInfantReg(benId: Long): InfantRegCache?
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun saveInfantReg(infantRegCache: InfantRegCache)

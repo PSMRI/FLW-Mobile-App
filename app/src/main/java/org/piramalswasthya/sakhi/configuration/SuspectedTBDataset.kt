@@ -12,7 +12,7 @@ class SuspectedTBDataset(
     private val dateOfVisit = FormElement(
         id = 1,
         inputType = InputType.DATE_PICKER,
-        title = context.getString(R.string.tracking_date),
+        title = resources.getString(R.string.tracking_date),
         arrayId = -1,
         required = true,
         max = System.currentTimeMillis(),
@@ -23,8 +23,8 @@ class SuspectedTBDataset(
     private val isSputumCollected = FormElement(
         id = 2,
         inputType = InputType.RADIO,
-        title = "Is Sputum sample collected?",
-        entries = arrayOf("Yes", "No"),
+        title = resources.getString(R.string.is_sputum_sample_collected),
+        entries = resources.getStringArray(R.array.yes_no),
         required = true,
         hasDependants = true
     )
@@ -32,8 +32,8 @@ class SuspectedTBDataset(
     private var sputumSubmittedAt = FormElement(
         id = 3,
         inputType = InputType.RADIO,
-        title = "Sputum sample submitted at",
-        entries = arrayOf("DMC", "SC", "PHC"),
+        title = resources.getString(R.string.sputum_sample_submitted_at),
+        entries = resources.getStringArray(R.array.tb_submitted_yet),
         required = false,
         hasDependants = false
     )
@@ -41,7 +41,7 @@ class SuspectedTBDataset(
     private var nikshayId = FormElement(
         id = 4,
         inputType = InputType.EDIT_TEXT,
-        title = "Nikshay ID",
+        title = resources.getString(R.string.nikshay_id),
         required = false,
         hasDependants = false
     )
@@ -49,8 +49,8 @@ class SuspectedTBDataset(
     private var sputumTestResult = FormElement(
         id = 5,
         inputType = InputType.RADIO,
-        title = "Sputum Test Result",
-        entries = arrayOf("Positive", "Negative"),
+        title = resources.getString(R.string.sputum_test_result),
+        entries = resources.getStringArray(R.array.tb_test_result),
         required = false,
         hasDependants = false
     )
@@ -58,8 +58,8 @@ class SuspectedTBDataset(
     private var referred = FormElement(
         id = 6,
         inputType = InputType.RADIO,
-        title = "Referred to Facility",
-        entries = arrayOf("Yes", "No"),
+        title = resources.getString(R.string.referred_to_facility),
+        entries = resources.getStringArray(R.array.yes_no),
         required = true,
         hasDependants = false
     )
@@ -67,8 +67,8 @@ class SuspectedTBDataset(
     private var followUps = FormElement(
         id = 7,
         inputType = InputType.EDIT_TEXT,
-        title = "Facility Referral follow-ups",
-        entries = arrayOf("Yes", "No"),
+        title = resources.getString(R.string.facility_referral_follow_ups),
+        entries = resources.getStringArray(R.array.yes_no),
         required = false,
         hasDependants = false
     )
@@ -97,16 +97,16 @@ class SuspectedTBDataset(
                     followUps
                 )
                 dateOfVisit.value = getDateFromLong(saved.visitDate)
-                isSputumCollected.value = if (saved.isSputumCollected == true) "Yes" else "No"
-                sputumSubmittedAt.value = saved.sputumSubmittedAt
+                isSputumCollected.value = if (saved.isSputumCollected == true) resources.getStringArray(R.array.yes_no)[0] else resources.getStringArray(R.array.yes_no)[1]
+                sputumSubmittedAt.value = resources.getStringArray(R.array.tb_submitted_yet)[englishResources.getStringArray(R.array.tb_submitted_yet).indexOf(saved.sputumSubmittedAt)]
                 nikshayId.value = saved.nikshayId
-                sputumTestResult.value = saved.sputumTestResult
-                referred.value = if (saved.referred == true) "Yes" else "No"
+                sputumTestResult.value = resources.getStringArray(R.array.tb_test_result)[englishResources.getStringArray(R.array.tb_test_result).indexOf(saved.sputumTestResult)]
+                referred.value = if (saved.referred == true) resources.getStringArray(R.array.yes_no)[0] else resources.getStringArray(R.array.yes_no)[1]
                 followUps.value = saved.followUps
             } else {
                 dateOfVisit.value = getDateFromLong(saved.visitDate)
-                isSputumCollected.value = if (saved.isSputumCollected == true) "Yes" else "No"
-                referred.value = if (saved.referred == true) "Yes" else "No"
+                isSputumCollected.value = if (saved.isSputumCollected == true) resources.getStringArray(R.array.yes_no)[0] else resources.getStringArray(R.array.yes_no)[1]
+                referred.value = if (saved.referred == true) resources.getStringArray(R.array.yes_no)[0] else resources.getStringArray(R.array.yes_no)[1]
                 followUps.value = saved.followUps
             }
         }
@@ -147,18 +147,18 @@ class SuspectedTBDataset(
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as TBSuspectedCache).let { form ->
             form.visitDate = getLongFromDate(dateOfVisit.value)
-            form.isSputumCollected = isSputumCollected.value == "Yes"
-            form.sputumSubmittedAt = sputumSubmittedAt.value
+            form.isSputumCollected = isSputumCollected.value == resources.getStringArray(R.array.yes_no)[0]
+            form.sputumSubmittedAt = englishResources.getStringArray(R.array.tb_submitted_yet)[sputumSubmittedAt.entries!!.indexOf(sputumSubmittedAt.value)]
             form.nikshayId = nikshayId.value
-            form.sputumTestResult = sputumTestResult.value
-            form.referred = referred.value == "Yes"
+            form.sputumTestResult = englishResources.getStringArray(R.array.tb_test_result)[sputumTestResult.entries!!.indexOf(sputumTestResult.value)]
+            form.referred = referred.value == resources.getStringArray(R.array.yes_no)[0]
             form.followUps = followUps.value
         }
     }
 
 
     fun isTestPositive(): String? {
-        return if ( sputumTestResult.value == "Positive" )
+        return if ( sputumTestResult.value == resources.getStringArray(R.array.tb_test_result)[0] )
             resources.getString(R.string.tb_suspected_alert_positive) else null
     }
 

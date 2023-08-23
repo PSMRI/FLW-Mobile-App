@@ -2,24 +2,31 @@ package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.Languages
+import org.piramalswasthya.sakhi.helpers.getMinAncFillDate
 import org.piramalswasthya.sakhi.helpers.getWeeksOfPregnancy
+import org.piramalswasthya.sakhi.helpers.setToStartOfTheDay
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.InputType
 import org.piramalswasthya.sakhi.model.PregnantWomanAncCache
 import org.piramalswasthya.sakhi.model.PregnantWomanRegistrationCache
+import java.util.Calendar
+import java.util.concurrent.TimeUnit
 
 class PregnantWomanAncVisitDataset(
     private val visitNumber: Int, context: Context, currentLanguage: Languages
 ) : Dataset(context, currentLanguage) {
+
+    private var lmp: Long = 0L
 
     private val ancDate = FormElement(
         id = 1,
         inputType = InputType.DATE_PICKER,
         title = "ANC Date",
         required = true,
-        max = System.currentTimeMillis(),
+        hasDependants = true,
     )
     private val weekOfPregnancy = FormElement(
         id = 2,
@@ -274,8 +281,12 @@ class PregnantWomanAncVisitDataset(
 
 
     suspend fun setUpPage(
-        ben: BenRegCache?, regis: PregnantWomanRegistrationCache, saved: PregnantWomanAncCache?
+        ben: BenRegCache?,
+        regis: PregnantWomanRegistrationCache,
+        lastAnc: PregnantWomanAncCache?,
+        saved: PregnantWomanAncCache?
     ) {
+        lmp = regis.lmpDate
         val list = mutableListOf(
             ancDate,
             weekOfPregnancy,
@@ -297,32 +308,64 @@ class PregnantWomanAncVisitDataset(
             anyHighRisk,
             highRiskReferralFacility,
             hrpConfirm,
-            maternalDeath,
-            deliveryDone
+            maternalDeath
 
         )
         ben?.let {
-            ancDate.min = it.regDate
+            if (visitNumber == 1) {
+                ancDate.min =
+                    (lmp + TimeUnit.DAYS.toMillis(Konstants.minAnc1Week * 7L+1L)).also {
+                        ancDate.value = getDateFromLong(it)
+                    }
+                ancDate.max = minOf(Calendar.getInstance().setToStartOfTheDay().timeInMillis,lmp + TimeUnit.DAYS.toMillis((Konstants.maxAnc1Week+1) * 7L-1))
+            } else {
+                lastAnc?.let {
+                    val minWeekInit = when (visitNumber) {
+                        2 -> Konstants.minAnc2Week
+                        3 -> Konstants.minAnc3Week
+                        4 -> Konstants.minAnc4Week
+                        else -> throw IllegalStateException("visit number not in [2,4]")
+                    }
+                    val maxWeek = when (visitNumber) {
+                        2 -> Konstants.maxAnc2Week
+                        3 -> Konstants.maxAnc3Week
+                        4 -> Konstants.maxAnc4Week
+                        else -> throw IllegalStateException("visit number not in [2,4]")
+                    }
+                    val minWeek = getMinAncFillDate(
+                        minWeekInit,
+                        getWeeksOfPregnancy(
+                            it.ancDate,
+                            lmp,
+
+                            )
+                    )
+                    ancDate.min = (lmp + TimeUnit.DAYS.toMillis(minWeek * 7L + 1L)).also {
+                        ancDate.value = getDateFromLong(it)
+                    }
+                    ancDate.max = minOf(Calendar.getInstance().setToStartOfTheDay().timeInMillis,lmp + TimeUnit.DAYS.toMillis((Konstants.maxAnc1Week+1) * 7L-1))
+                }
+            }
         }
-        ancDate.value = getDateFromLong(System.currentTimeMillis())
+//        ancDate.value = getDateFromLong(System.currentTimeMillis())
         weekOfPregnancy.value = ancDate.value?.let {
             val long = getLongFromDate(it)
-            val weeks = getWeeksOfPregnancy(long, regis.lmpDate)
-            if (saved == null && weeks <= 22) {
-                list.remove(deliveryDone)
+            val weeks = getWeeksOfPregnancy(long, lmp)
+            if (weeks > 22) {
+                list.add(deliveryDone)
             }
             weeks.toString()
         }
         ancVisit.value = visitNumber.toString()
-        if(visitNumber==1) {
+        if (visitNumber == 1) {
             list.remove(fundalHeight)
             list.remove(numIfaAcidTabGiven)
-        }else{
+        } else {
             list.remove(numFolicAcidTabGiven)
         }
         saved?.let {
             ancDate.value = getDateFromLong(it.ancDate)
-            weekOfPregnancy.value = getWeeksOfPregnancy(it.ancDate, regis.lmpDate).toString()
+            weekOfPregnancy.value = getWeeksOfPregnancy(it.ancDate, lmp).toString()
             isAborted.value =
                 if (it.isAborted) isAborted.entries!!.last() else isAborted.entries!!.first()
             if (it.isAborted) {
@@ -392,6 +435,28 @@ class PregnantWomanAncVisitDataset(
 
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
         return when (formId) {
+            ancDate.id -> {
+                ancDate.value?.let {
+                    val long = getLongFromDate(it)
+                    val weeks = getWeeksOfPregnancy(long, lmp)
+                    if (weeks > 22) {
+                        triggerDependants(
+                            source = maternalDeath,
+                            addItems = listOf(deliveryDone),
+                            removeItems = emptyList(),
+                        )
+                    } else {
+                        triggerDependants(
+                            source = maternalDeath,
+                            addItems = emptyList(),
+                            removeItems = listOf(deliveryDone),
+                        )
+                    }
+                    weekOfPregnancy.value = weeks.toString()
+                }
+                -1
+            }
+
             isAborted.id -> triggerDependants(
                 source = isAborted,
                 passedIndex = index,
@@ -411,18 +476,21 @@ class PregnantWomanAncVisitDataset(
             bpSystolic.id, bpDiastolic.id -> {
                 validateIntMinMax(bpSystolic)
                 validateIntMinMax(bpDiastolic)
-                if(bpSystolic.value?.isNotEmpty() == true || bpDiastolic.value?.isNotEmpty() == true){
+                if (bpSystolic.value?.isNotEmpty() == true || bpDiastolic.value?.isNotEmpty() == true) {
                     validateEmptyOnEditText(bpSystolic)
                     validateEmptyOnEditText(bpDiastolic)
                 }
                 -1
             }
+
             pulseRate.id -> {
                 validateAllAlphabetsSpaceOnEditText(pulseRate)
             }
+
             hb.id -> {
                 validateDoubleMinMax(hb)
             }
+
             numFolicAcidTabGiven.id -> validateIntMinMax(numFolicAcidTabGiven)
             numIfaAcidTabGiven.id -> validateIntMinMax(numIfaAcidTabGiven)
             anyHighRisk.id -> triggerDependants(
@@ -439,6 +507,7 @@ class PregnantWomanAncVisitDataset(
                 triggerIndex = highRiskCondition.entries!!.lastIndex,
                 target = otherHighRiskCondition,
             )
+
             otherHighRiskCondition.id -> {
                 validateEmptyOnEditText(otherHighRiskCondition)
                 validateAllAlphabetsSpaceOnEditText(otherHighRiskCondition)
@@ -465,6 +534,7 @@ class PregnantWomanAncVisitDataset(
                 triggerIndex = maternalDeathProbableCause.entries!!.lastIndex,
                 target = otherMaternalDeathProbableCause,
             )
+
             otherMaternalDeathProbableCause.id -> {
                 validateEmptyOnEditText(otherMaternalDeathProbableCause)
                 validateAllAlphabetsSpaceOnEditText(otherMaternalDeathProbableCause)

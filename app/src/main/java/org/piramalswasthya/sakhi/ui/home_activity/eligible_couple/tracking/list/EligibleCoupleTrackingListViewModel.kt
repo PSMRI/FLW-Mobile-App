@@ -6,32 +6,55 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.launch
-import org.piramalswasthya.sakhi.helpers.filterBenFormList
-import org.piramalswasthya.sakhi.model.BenBasicDomainForForm
-import org.piramalswasthya.sakhi.repositories.EcrRepo
+import org.piramalswasthya.sakhi.helpers.filterEcTrackingList
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
 import javax.inject.Inject
 
 @HiltViewModel
 class EligibleCoupleTrackingListViewModel @Inject constructor(
     recordsRepo: RecordsRepo,
-    private var ecrRepo: EcrRepo
+//    private var ecrRepo: EcrRepo
 ) : ViewModel() {
 
-    val scope : CoroutineScope
+    val scope: CoroutineScope
         get() = viewModelScope
 
     private val allBenList = recordsRepo.eligibleCoupleTrackingList
     private val filter = MutableStateFlow("")
+    private val selectedBenId = MutableStateFlow(0L)
     val benList = allBenList.combine(filter) { list, filter ->
-        filterBenFormList(list, filter)
+        list.filter { domainList ->
+            domainList.ben.benId in filterEcTrackingList(
+                list,
+                filter
+            ).map { it.ben.benId }
+        }
+    }
+
+    val bottomSheetList = allBenList.combineTransform(selectedBenId) { list, benId ->
+        if (benId != 0L) {
+            val emitList =
+                list.firstOrNull { it.ben.benId == benId }?.savedECTRecords?.toMutableList()
+                    ?.apply {
+                        sortByDescending { it.visited }
+                    }
+            if (!emitList.isNullOrEmpty()) emit(emitList.reversed())
+        }
     }
 
     fun filterText(text: String) {
         viewModelScope.launch {
             filter.emit(text)
         }
+    }
+
+    fun setClickedBenId(benId: Long) {
+        viewModelScope.launch {
+            selectedBenId.emit(benId)
+        }
+
     }
 
 

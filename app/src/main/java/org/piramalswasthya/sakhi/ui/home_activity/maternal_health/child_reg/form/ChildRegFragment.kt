@@ -12,6 +12,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
+import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -32,6 +33,7 @@ class ChildRegFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.cvPatientInformation.visibility = View.GONE
         viewModel.recordExists.observe(viewLifecycleOwner) { notIt ->
             notIt?.let { recordExists ->
                 val adapter = FormInputAdapter(
@@ -50,12 +52,6 @@ class ChildRegFragment : Fragment() {
                 }
             }
         }
-        viewModel.benName.observe(viewLifecycleOwner) {
-            binding.tvBenName.text = it
-        }
-        viewModel.benAgeGender.observe(viewLifecycleOwner) {
-            binding.tvAgeGender.text = it
-        }
         binding.btnSubmit.setOnClickListener {
             submitInfantRegForm()
         }
@@ -63,6 +59,7 @@ class ChildRegFragment : Fragment() {
         viewModel.state.observe(viewLifecycleOwner) {
             when (it) {
                 ChildRegViewModel.State.SAVE_SUCCESS -> {
+                    WorkerUtils.triggerAmritPushWorker(requireContext())
                     findNavController().navigateUp()
                 }
 

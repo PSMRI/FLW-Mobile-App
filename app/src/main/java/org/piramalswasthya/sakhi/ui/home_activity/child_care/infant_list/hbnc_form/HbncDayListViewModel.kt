@@ -1,24 +1,37 @@
 package org.piramalswasthya.sakhi.ui.home_activity.child_care.infant_list.hbnc_form
 
+import android.app.Application
+import android.content.res.Configuration
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.transform
+import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.model.HbncIcon
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.HbncRepo
+import java.util.Locale
 import javax.inject.Inject
 
 
 @HiltViewModel
 class HbncDayListViewModel @Inject constructor(
+    private val context: Application,
     benRepo : BenRepo,
     hbncRepo: HbncRepo,
+    preferenceDao: PreferenceDao,
     state: SavedStateHandle,
 
     ) : ViewModel() {
-
+    
+    private val resources by lazy {
+        val configuration = Configuration(context.resources.configuration)
+        configuration.setLocale(Locale(preferenceDao.getCurrentLanguage().symbol))
+        context.createConfigurationContext(configuration).resources
+    }
+    
     private val benId = HbncDayListFragmentArgs.fromSavedStateHandle(state).benId
     private val hhId = HbncDayListFragmentArgs.fromSavedStateHandle(state).hhId
 
@@ -30,7 +43,7 @@ class HbncDayListViewModel @Inject constructor(
             Konstants.hbncCardDay,
             daysList.contains(Konstants.hbncCardDay),
             dateList.firstOrNull { it.homeVisitDate == Konstants.hbncCardDay }?.syncState,
-            "Visit Card",
+            resources.getString(R.string.visit_card),
             HbncDayListFragmentDirections.actionHbncDayListFragmentToVisitCardFragment(
                 hhId = hhId, benId = benId,
             )
@@ -41,7 +54,7 @@ class HbncDayListViewModel @Inject constructor(
             Konstants.hbncPart1Day,
             daysList.contains(Konstants.hbncPart1Day),
             dateList.firstOrNull { it.homeVisitDate == Konstants.hbncPart1Day }?.syncState,
-            "Part I",
+            resources.getString(R.string.part_i),
             HbncDayListFragmentDirections.actionHbncDayListFragmentToHbncPartIFragment(
                 hhId, benId,
             )
@@ -52,7 +65,7 @@ class HbncDayListViewModel @Inject constructor(
             Konstants.hbncPart2Day,
             daysList.contains(Konstants.hbncPart2Day),
             dateList.firstOrNull { it.homeVisitDate == Konstants.hbncPart2Day }?.syncState,
-            "Part II",
+            resources.getString(R.string.part_ii),
             HbncDayListFragmentDirections.actionHbncDayListFragmentToHbncPartIIFragment(
                 hhId, benId
             )

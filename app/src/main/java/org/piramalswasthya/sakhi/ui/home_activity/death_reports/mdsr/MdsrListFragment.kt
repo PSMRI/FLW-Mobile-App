@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.BenListAdapterForForm
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
 
@@ -48,7 +49,7 @@ class MdsrListFragment : Fragment() {
                         benId
                     )
                 )
-            }), "MDSR Form")
+            }), resources.getString(R.string.mdsr_form))
         binding.rvAny.adapter = benAdapter
 
         lifecycleScope.launch {

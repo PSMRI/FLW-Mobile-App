@@ -50,7 +50,7 @@
                             android:id="@+id/tv_name_ph"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Name"
+                            android:text="@string/name"
                             android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
                             android:textColor="?attr/colorOnPrimary" />
 
@@ -75,7 +75,7 @@
                             android:id="@+id/tv_age_ph"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Age"
+                            android:text="@string/age"
                             android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
                             android:textColor="?attr/colorOnPrimary" />
 
@@ -99,7 +99,7 @@
                             android:id="@+id/tv_gender_ph"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Gender"
+                            android:text="@string/gender"
                             android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
                             android:textColor="?attr/colorOnPrimary" />
 
@@ -121,15 +121,15 @@
                     app:layout_constraintStart_toStartOf="parent"
                     style="@style/Widget.Material3.Button.TonalButton"
                     android:onClick="@{() -> clickListener.onClickedNew(benWithCbac)}"
-                    android:text="Add CBAC" />
+                    android:text="@string/add_cbac" />
 
                 <Button
                     style="@style/Widget.Material3.Button.TonalButton"
-                    cbac_list_avail="@{benWithCbac.savedCbacRecords}"
+                    list_avail="@{benWithCbac.savedCbacRecords}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:onClick="@{() -> clickListener.onClickedView(benWithCbac)}"
-                    android:text="View CBAC"
+                    android:text="@string/view_cbac"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/ll_content" />
 

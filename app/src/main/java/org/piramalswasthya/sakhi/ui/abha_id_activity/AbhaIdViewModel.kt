@@ -39,8 +39,8 @@ class AbhaIdViewModel @Inject constructor(
 
     init {
         generateAmritToken()
-        generateAccessToken()
-        generatePublicKey()
+//        generateAccessToken()
+//        generatePublicKey()
     }
 
     private var _accessToken: AbhaTokenResponse? = null
@@ -53,11 +53,12 @@ class AbhaIdViewModel @Inject constructor(
 
 
     private fun generateAmritToken() {
+        _state.value = State.LOADING_TOKEN
         val user = prefDao.getLoggedInUser()
         viewModelScope.launch {
             user?.let {
                 if (userRepo.refreshTokenTmc(user.userName, user.password)) {
-                    _state.value = State.LOADING_TOKEN
+                    generateAccessToken()
                 } else {
                     _state.value = State.ERROR_SERVER
                 }
@@ -71,6 +72,7 @@ class AbhaIdViewModel @Inject constructor(
             when (val result = abhaIdRepo.getAccessToken()) {
                 is NetworkResult.Success -> {
                     _accessToken = result.data
+                    generatePublicKey()
                     _state.value = State.SUCCESS
                     TokenInsertAbhaInterceptor.setToken(accessToken.accessToken)
                 }

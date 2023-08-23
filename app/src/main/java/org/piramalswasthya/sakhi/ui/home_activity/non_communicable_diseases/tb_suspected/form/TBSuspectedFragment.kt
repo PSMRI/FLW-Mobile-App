@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.work.WorkerUtils
@@ -28,9 +29,9 @@ class TBSuspectedFragment : Fragment() {
 
     private val tbSuspectedAlert by lazy {
         AlertDialog.Builder(requireContext())
-            .setTitle("TB Suspected Sputum Test")
+            .setTitle(resources.getString(R.string.tb_suspected_sputum_test))
             .setMessage("it")
-            .setPositiveButton("Ok") { dialog, _ -> dialog.dismiss() }
+            .setPositiveButton(resources.getString(R.string.ok)) { dialog, _ -> dialog.dismiss() }
             .create()
     }
 
@@ -76,7 +77,7 @@ class TBSuspectedFragment : Fragment() {
             when (it) {
                 TBSuspectedViewModel.State.SAVE_SUCCESS -> {
                     Toast.makeText(requireContext(),
-                        "TB Tracking submitted", Toast.LENGTH_SHORT).show()
+                        resources.getString(R.string.tb_tracking_submitted), Toast.LENGTH_SHORT).show()
                     WorkerUtils.triggerAmritPushWorker(requireContext())
                     findNavController().navigateUp()
                 }

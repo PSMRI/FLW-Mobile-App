@@ -20,13 +20,15 @@ class PushECToAmritWorker @AssistedInject constructor(
     private val preferenceDao: PreferenceDao,
 ) : CoroutineWorker(appContext, params) {
     companion object {
-        const val name = "PushTBToAmritWorker"
+        const val name = "PushEcToAmritWorker"
     }
+
     override suspend fun doWork(): Result {
         init()
         return try {
-            val workerResult = ecrRepo.processUnsyncedEcr()
-            val workerResult1 = ecrRepo.processNewEct()
+            Timber.d("EC Worker started!")
+            val workerResult = ecrRepo.pushAndUpdateEcrRecord()
+            val workerResult1 = ecrRepo.pushAndUpdateEctRecord()
             if (workerResult && workerResult1) {
                 Timber.d("Worker completed")
                 Result.success()
@@ -42,7 +44,7 @@ class PushECToAmritWorker @AssistedInject constructor(
 
     private fun init() {
         if (TokenInsertTmcInterceptor.getToken() == "")
-            preferenceDao.getAmritToken()?.let{
+            preferenceDao.getAmritToken()?.let {
                 TokenInsertTmcInterceptor.setToken(it)
             }
     }

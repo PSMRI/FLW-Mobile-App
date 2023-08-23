@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Sync in progress ..."
+            android:text="@string/sync_in_progress"
             android:padding="@dimen/padding_normal"
             android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
 
@@ -47,7 +47,7 @@
             android:gravity="center"
             android:padding="@dimen/padding_normal"
 
-            android:text="Form Name"
+            android:text="@string/form_name"
             android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
 
 

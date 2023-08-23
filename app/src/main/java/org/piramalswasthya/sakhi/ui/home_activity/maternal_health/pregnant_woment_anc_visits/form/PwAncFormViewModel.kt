@@ -63,6 +63,7 @@ class PwAncFormViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
+            val asha  = preferenceDao.getLoggedInUser()!!
             val ben = maternalHealthRepo.getBenFromId(benId)?.also { ben ->
                 _benName.value =
                     "${ben.firstName} ${if (ben.lastName == null) "" else ben.lastName}"
@@ -70,7 +71,9 @@ class PwAncFormViewModel @Inject constructor(
                 ancCache = PregnantWomanAncCache(
                     benId = ben.beneficiaryId,
                     visitNumber = visitNumber,
-                    syncState = SyncState.UNSYNCED
+                    syncState = SyncState.UNSYNCED,
+                    createdBy = asha.userName,
+                    updatedBy = asha.userName
                 )
             }
             val registerRecord = maternalHealthRepo.getSavedRegistrationRecord(benId)!!
@@ -80,10 +83,12 @@ class PwAncFormViewModel @Inject constructor(
             } ?: run {
                 _recordExists.value = false
             }
+            val lastAnc= maternalHealthRepo.getSavedAncRecord(benId, visitNumber-1)
 
             dataset.setUpPage(
                 ben,
                 registerRecord,
+                lastAnc,
                 if (recordExists.value == true) ancCache else null
             )
 
@@ -113,7 +118,7 @@ class PwAncFormViewModel @Inject constructor(
                         }
                         maternalHealthRepo.getBenFromId(benId)?.let {
                             dataset.updateBenRecordForDelivered(it)
-                            benRepo.persistRecord(it)
+                            benRepo.updateRecord(it)
                         }
                     }
                     _state.postValue(State.SAVE_SUCCESS)

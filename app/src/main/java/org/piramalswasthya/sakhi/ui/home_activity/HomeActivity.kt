@@ -80,9 +80,10 @@ class HomeActivity : AppCompatActivity() {
             Languages.HINDI -> 1
             Languages.ASSAMESE -> 2
         }
-        MaterialAlertDialogBuilder(this).setTitle("Choose Application Language")
+        MaterialAlertDialogBuilder(this).setTitle(resources.getString(R.string.choose_application_language))
             .setSingleChoiceItems(
-                arrayOf("English", "Hindi", "Assamese"), currentLanguageIndex
+                arrayOf(resources.getString(R.string.english), resources.getString(R.string.hindi), resources.getString(
+                                    R.string.assamese)), currentLanguageIndex
             ) { di, checkedItemIndex ->
                 val checkedLanguage = when (checkedItemIndex) {
                     0 -> Languages.ENGLISH
@@ -104,14 +105,14 @@ class HomeActivity : AppCompatActivity() {
 
 
     private val logoutAlert by lazy {
-        MaterialAlertDialogBuilder(this).setTitle("Logout")
+        MaterialAlertDialogBuilder(this).setTitle(resources.getString(R.string.logout))
             .setMessage("${if (viewModel.unprocessedRecords > 0) "${viewModel.unprocessedRecords} not Processed." else "All records synced"} Are you sure to logout?")
-            .setPositiveButton("YES") { dialog, _ ->
+            .setPositiveButton(resources.getString(R.string.yes)) { dialog, _ ->
                 viewModel.logout()
                 ImageUtils.removeAllBenImages(this)
                 WorkerUtils.cancelAllWork(this)
                 dialog.dismiss()
-            }.setNegativeButton("NO") { dialog, _ ->
+            }.setNegativeButton(resources.getString(R.string.no)) { dialog, _ ->
 
                 dialog.dismiss()
             }.create()
@@ -192,7 +193,7 @@ class HomeActivity : AppCompatActivity() {
                     }
                     R.id.sync_status -> {
                         if(!syncBottomSheet.isVisible)
-                            syncBottomSheet.show(supportFragmentManager, "SYNC")
+                            syncBottomSheet.show(supportFragmentManager, resources.getString(R.string.sync))
                         return true
                     }
                 }
@@ -206,7 +207,7 @@ class HomeActivity : AppCompatActivity() {
 
     fun addClickListenerToHomepageActionBarTitle() {
         binding.toolbar.setOnClickListener(onClickTitleBar)
-        binding.toolbar.subtitle = "Tap to Change"
+        binding.toolbar.subtitle = resources.getString(R.string.tap_to_change)
     }
 
     fun removeClickListenerToHomepageActionBarTitle() {
@@ -237,11 +238,11 @@ class HomeActivity : AppCompatActivity() {
 
         viewModel.currentUser?.let {
             headerView.findViewById<TextView>(R.id.tv_nav_name).text =
-                getString(R.string.nav_item_1_text, it.name)
+                resources.getString(R.string.nav_item_1_text, it.name)
             headerView.findViewById<TextView>(R.id.tv_nav_role).text =
-                getString(R.string.nav_item_2_text, it.userName)
+                resources.getString(R.string.nav_item_2_text, it.userName)
             headerView.findViewById<TextView>(R.id.tv_nav_id).text =
-                getString(R.string.nav_item_3_text, it.userId)
+                resources.getString(R.string.nav_item_3_text, it.userId)
 
 //                headerView.findViewById<TextView>(R.id.tv_nav_version).text =
 //                    getString(R.string.version)

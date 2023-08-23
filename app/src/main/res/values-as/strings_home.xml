@@ -8,6 +8,7 @@
     <string name="icon_title_ben">সমস্ত হিতাধিকাৰীৰ তালিকা</string>
     <string name="icon_title_ec">উপযুক্ত দম্পতিৰ তালিকা</string>
     <string name="icon_title_mc">মাকৰ যত্ন</string>
+    <string name="icon_title_cd">সংক্রামক রোগ</string>
     <string name="icon_title_cc">শিশুৰ যত্ন</string>
     <string name="icon_title_ncd">এনচিডি</string>
     <string name="icon_title_imm">টিকাকৰণৰ প্ৰাপ্য তালিকা</string>
@@ -16,21 +17,18 @@
     <string name="icon_title_msl">মেনোপজ দশা তালিকা</string>
     <string name="icon_title_dr">মৃত্যুৰ প্ৰতিবেদন</string>
     <string name="icon_title_vlf">গাওঁ স্তৰৰ প্ৰপত্ৰসমূহ</string>
-
     <string name="icon_title_icc">নৱজাতকৰ তালিকা</string>
     <string name="icon_title_ccc">শিশুৰ তালিকা</string>
     <string name="icon_title_acc">কিশোৰ তালিকা</string>
-    <string name="icon_title_pmc">গৰ্ভাৱস্থাৰ তালিকা</string>
     <string name="icon_title_dmc">প্ৰসবাৱস্থাৰ তালিকা</string>
     <string name="icon_title_pncmc">প্ৰসৱোত্তৰ মাত্ৰীৰ তালিকা</string>
     <string name="icon_title_rmc">প্ৰজননৰ আয়ুস তালিকা</string>
-
     <string name="icon_title_ncd_list">এন চি ডি  তালিকা </string>
     <string name="icon_title_ncd_eligible_list">এন চি ডি উপযুক্ত তালিকা</string>
     <string name="icon_title_ncd_non_eligible_list">এনচিডি অপ্ৰাথমিকতা তালিকা</string>
     <string name="icon_title_ncd_priority_list">এন চি ডি প্ৰাথমিকতাৰ তালিকা</string>
-
-
     <string name="icon_title_sr">জৰীপ পঞ্জী</string>
+    <string name="icon_title_ncd_tb_screening">টি.বি. স্ক্ৰীনিং</string>
+    <string name="icon_title_ncd_tb_suspected">সন্দেহিত টি.বি. মৰাত কেছব</string>
 
 </resources>

@@ -13,6 +13,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.FragmentVerifyMobileOtpBinding
 import org.piramalswasthya.sakhi.ui.abha_id_activity.verify_mobile_otp.VerifyMobileOtpViewModel.State
 
@@ -118,7 +119,7 @@ class VerifyMobileOtpFragment : Fragment() {
                     binding.clVerifyMobileOtp.visibility = View.VISIBLE
                     binding.pbVmotp.visibility = View.INVISIBLE
                     binding.clError.visibility = View.INVISIBLE
-                    Toast.makeText(activity, "OTP was resent.", Toast.LENGTH_LONG)
+                    Toast.makeText(activity, resources.getString(R.string.otp_was_resent), Toast.LENGTH_LONG)
                         .show()
                 }
                 State.ABHA_GENERATED_SUCCESS -> {
