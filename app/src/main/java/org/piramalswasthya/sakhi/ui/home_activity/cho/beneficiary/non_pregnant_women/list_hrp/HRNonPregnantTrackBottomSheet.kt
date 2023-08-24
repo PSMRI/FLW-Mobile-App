@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.HRPPregTrackAdapter
 import org.piramalswasthya.sakhi.databinding.BottomSheetHrpTrackBinding
 import org.piramalswasthya.sakhi.model.HRPNonPregnantTrackCache
@@ -44,7 +45,7 @@ class HRNonPregnantTrackBottomSheet : BottomSheetDialogFragment() {
                     )
                     dismiss()
                 },
-                visit = "Visit On "
+                visit = resources.getString(R.string.visit_on)
             )
 
         lifecycleScope.launch {

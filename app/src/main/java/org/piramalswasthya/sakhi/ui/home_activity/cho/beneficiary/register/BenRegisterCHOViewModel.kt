@@ -21,7 +21,6 @@ import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.network.AmritApiService
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.HouseholdRepo
-import org.piramalswasthya.sakhi.repositories.UserRepo
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -32,7 +31,6 @@ class BenRegisterCHOViewModel @Inject constructor(
     @ApplicationContext context: Context,
     private val benRepo: BenRepo,
     private val householdRepo: HouseholdRepo,
-    private val userRepo: UserRepo,
     amritApiService: AmritApiService
 ) : ViewModel() {
 

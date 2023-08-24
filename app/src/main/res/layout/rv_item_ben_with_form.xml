@@ -16,6 +16,10 @@
         <variable
             name="role"
             type="Integer" />
+
+        <variable
+            name="hasLmp"
+            type="Boolean" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -295,8 +299,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_gravity="center_vertical"
+                        android:textStyle="bold"
                         android:text="@{ben.benName + ' ' +ben.benSurname}"
-                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
                         android:textColor="?attr/colorPrimary"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintHorizontal_bias="0.5"
@@ -347,7 +352,7 @@
                             style="@style/rv_item_ben_fields"
                             layout="@layout/rv_item_ben_element"
                             app:field="@{ben.spouseName}"
-                            app:fieldTitle="@{@string/tv_spouse}"
+                            app:fieldTitle="@{@string/husband}"
                             tools:ignore="IncludeLayoutParam" />
 
                         <include
@@ -357,12 +362,34 @@
                             app:field="@{ben.mobileNo}"
                             app:fieldTitle="@{@string/tv_mob_no_ph}" />
                     </LinearLayout>
+                    <LinearLayout
+                        android:id="@+id/ll_row_cho_2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:baselineAligned="false"
+                        android:layout_below="@id/ll_row_cho_1"
+                        android:orientation="horizontal"
+                        showLayout="@{hasLmp ? true : false}"
+                        android:weightSum="3">
 
+                        <include
+                            android:id="@+id/rl_ben_lmp"
+                            style="@style/rv_item_ben_fields"
+                            layout="@layout/rv_item_ben_element"
+                            app:field="@{ben.lastMenstrualPeriod}"
+                            app:fieldTitle="@{@string/lmp_date}" />
+                        <include
+                            android:id="@+id/rl_ben_edd"
+                            style="@style/rv_item_ben_fields"
+                            layout="@layout/rv_item_ben_element"
+                            app:field="@{ben.edd}"
+                            app:fieldTitle="@{@string/edd}" />
+                    </LinearLayout>
                     <LinearLayout
                         android:id="@+id/ll_btn_row_cho"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/ll_row_cho_1"
+                        android:layout_below="@id/ll_row_cho_2"
                         android:baselineAligned="false"
                         android:orientation="horizontal"
                         android:weightSum="3">

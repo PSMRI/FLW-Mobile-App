@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.work.WorkerUtils
@@ -78,7 +79,11 @@ class HRPPregnantTrackFragment : Fragment() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state!!) {
                 HRPPregnantTrackViewModel.State.SAVE_SUCCESS -> {
-                    Toast.makeText(context, "Save Successful!!!", Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        context,
+                        resources.getString(R.string.save_successful),
+                        Toast.LENGTH_LONG
+                    ).show()
                     WorkerUtils.triggerAmritPushWorker(requireContext())
                     findNavController().navigateUp()
                     viewModel.resetState()
@@ -86,7 +91,9 @@ class HRPPregnantTrackFragment : Fragment() {
 
                 HRPPregnantTrackViewModel.State.SAVE_FAILED -> {
                     Toast.makeText(
-                        context, "Something wend wong! Contact testing!", Toast.LENGTH_LONG
+                        context,
+                        resources.getString(R.string.something_wend_wong_contact_testing),
+                        Toast.LENGTH_LONG
                     ).show()
                 }
 

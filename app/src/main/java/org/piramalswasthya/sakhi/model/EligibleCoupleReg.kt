@@ -128,9 +128,9 @@ data class EligibleCoupleRegCache(
             gender9 = gender9,
             eighthAndNinthChildGap = eighthAndNinthChildGap,
             createdBy = createdBy,
-            createdDate = getDateStringFromLong(createdDate)!!,
+            createdDate = getDtStringFromLong(createdDate)!!,
             updatedBy = updatedBy,
-            updatedDate = getDateStringFromLong(updatedDate)!!
+            updatedDate = getDtStringFromLong(updatedDate)!!
         )
     }
 }

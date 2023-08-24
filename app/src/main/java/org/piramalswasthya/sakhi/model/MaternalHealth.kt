@@ -313,7 +313,7 @@ data class PregnantWomanAncCache(
     }
 }
 
-private fun getDateStringFromLong(dateLong: Long?): String? {
+fun getDateStringFromLong(dateLong: Long?): String? {
     val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
     dateLong?.let {
         val dateString = dateFormat.format(dateLong)

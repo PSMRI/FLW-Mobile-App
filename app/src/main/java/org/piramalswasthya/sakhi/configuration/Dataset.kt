@@ -629,5 +629,18 @@ abstract class Dataset(context: Context, currentLanguage: Languages) {
         return dob.timeInMillis
     }
 
+    fun getLocalValueInArray(arrayId: Int, entry: String?): String? {
+        entry?.let {
+            return resources.getStringArray(arrayId)[englishResources.getStringArray(arrayId).indexOf(it)]
+        }
+        return null
+    }
+
+    fun getEnglishValueInArray(arrayId: Int, entry: String?): String? {
+        entry?.let {
+            return englishResources.getStringArray(arrayId)[resources.getStringArray(arrayId).indexOf(it)]
+        }
+        return null
+    }
 
 }

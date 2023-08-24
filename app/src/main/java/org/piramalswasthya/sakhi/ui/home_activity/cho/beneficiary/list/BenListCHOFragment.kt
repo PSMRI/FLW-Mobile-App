@@ -2,7 +2,6 @@ package org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.list
 
 import android.app.AlertDialog
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -10,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -23,7 +21,6 @@ import org.piramalswasthya.sakhi.adapters.BenListAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
-import org.piramalswasthya.sakhi.ui.home_activity.all_ben.AllBenFragmentDirections
 import timber.log.Timber
 
 
@@ -39,9 +36,9 @@ class BenListCHOFragment : Fragment() {
 
     private val abhaDisclaimer by lazy {
         AlertDialog.Builder(requireContext())
-            .setTitle("Beneficiary ABHA Number.")
+            .setTitle(resources.getString(R.string.beneficiary_abha_number))
             .setMessage("it")
-            .setPositiveButton("Ok") { dialog, _ -> dialog.dismiss() }
+            .setPositiveButton(resources.getString(R.string.ok)) { dialog, _ -> dialog.dismiss() }
             .create()
     }
 
@@ -74,7 +71,7 @@ class BenListCHOFragment : Fragment() {
         val benAdapter = BenListAdapter(
             BenListAdapter.BenClickListener(
                 { hhId, benId, isKid ->
-                    Toast.makeText(requireContext(), "ben clicked", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(requireContext(), "ben clicked", Toast.LENGTH_SHORT).show()
                 },
                 {
 
@@ -98,11 +95,11 @@ class BenListCHOFragment : Fragment() {
         }
 
         binding.btnNextPage.let {
-            it.text = "Add Beneficiary"
+            it.text = resources.getString(R.string.add_beneficiary)
             it.setBackgroundColor(
                 resources.getColor(android.R.color.holo_orange_dark, context?.theme)
 //                Color.rgb(252, 69, 19)
-                        )
+            )
         }
         binding.btnNextPage.setOnClickListener {
             findNavController().navigate(BenListCHOFragmentDirections.actionBenListCHOFragmentToBenRegisterCHOFragment())

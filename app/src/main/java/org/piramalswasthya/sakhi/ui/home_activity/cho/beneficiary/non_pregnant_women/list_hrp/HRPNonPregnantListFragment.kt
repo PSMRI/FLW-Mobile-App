@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.BenListAdapterForForm
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
 
@@ -54,10 +55,16 @@ class HRPNonPregnantListFragment : Fragment() {
                 { _, benId ->
                     viewModel.setBenId(benId)
                     if (!bottomSheet.isVisible)
-                        bottomSheet.show(childFragmentManager, "Follow Up")
+                        bottomSheet.show(
+                            childFragmentManager,
+                            resources.getString(R.string.follow_up)
+                        )
                 }
             ),
-            formButtonText = arrayOf("Follow Up", "History"),
+            formButtonText = arrayOf(
+                resources.getString(R.string.follow_up),
+                resources.getString(R.string.history)
+            ),
             role = 1
         )
         binding.rvAny.adapter = benAdapter
@@ -68,9 +75,6 @@ class HRPNonPregnantListFragment : Fragment() {
                     binding.flEmpty.visibility = View.VISIBLE
                 else
                     binding.flEmpty.visibility = View.GONE
-//                it.forEach { ben ->
-//                    viewModel.updateBenWithForms(ben)
-//                }
                 benAdapter.submitList(it)
             }
         }

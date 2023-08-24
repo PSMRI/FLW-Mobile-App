@@ -147,7 +147,7 @@ class IconDataset @Inject constructor(
             HomeFragmentDirections.actionHomeFragmentToBenListCHOFragment()
         ),
         Icon(
-            R.drawable.ic__eligible_couple,
+            R.drawable.ic__pregnancy,
             resources.getString(R.string.icon_title_hrp_pregnant),
             recordsRepo.hrpPregnantWomenListCount,
             HomeFragmentDirections.actionHomeFragmentToHRPPregnantFragment()

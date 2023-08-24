@@ -77,6 +77,7 @@ class BenListAdapterForForm(
                 }
             }
             binding.role = role
+            binding.hasLmp = !item.lastMenstrualPeriod.isNullOrEmpty()
             binding.executePendingBindings()
 
         }

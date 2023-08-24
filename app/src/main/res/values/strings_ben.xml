@@ -129,6 +129,7 @@
     <string name="marital_status">Marital Status</string>
     <string name="name_ben">Name</string>
     <string name="age_ben">Age</string>
+    <string name="nearest_sc_hwc">Nearest SC/HWC</string>
 
     <string-array name="nbr_relationship_to_head_female">
         <item>Mother</item>

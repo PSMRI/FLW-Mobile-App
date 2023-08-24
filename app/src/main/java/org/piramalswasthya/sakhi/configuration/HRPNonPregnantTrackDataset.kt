@@ -25,8 +25,8 @@ class HRPNonPregnantTrackDataset(
     private val anemia = FormElement(
         id = 2,
         inputType = InputType.RADIO,
-        title = "Visible signs of Anemia as per appearance",
-        entries = arrayOf("Yes", "No"),
+        title = resources.getString(R.string.visible_signs_of_anemia_as_per_appearance),
+        entries = resources.getStringArray(R.array.yes_no),
         required = true,
         hasDependants = true
     )
@@ -34,15 +34,15 @@ class HRPNonPregnantTrackDataset(
     private val ancLabel = FormElement(
         id = 3,
         inputType = InputType.HEADLINE,
-        title = "For Clinical Assessment (to be filled consulting with ANM)",
+        title = resources.getString(R.string.for_clinical_assessment_to_be_filled_consulting_with_anm),
         required = false
     )
 
     private val hypertension = FormElement(
         id = 4,
         inputType = InputType.RADIO,
-        title = "Hypertension",
-        entries = arrayOf("Yes", "No"),
+        title = resources.getString(R.string.hypertension),
+        entries = resources.getStringArray(R.array.yes_no),
         required = true,
         hasDependants = true
     )
@@ -50,8 +50,8 @@ class HRPNonPregnantTrackDataset(
     private val diabetes = FormElement(
         id = 5,
         inputType = InputType.RADIO,
-        title = "Diabetes",
-        entries = arrayOf("Yes", "No"),
+        title = resources.getString(R.string.diabetes),
+        entries = resources.getStringArray(R.array.yes_no),
         required = true,
         hasDependants = true
     )
@@ -59,8 +59,8 @@ class HRPNonPregnantTrackDataset(
     private val severeAnemia = FormElement(
         id = 6,
         inputType = InputType.RADIO,
-        title = "Severe Anemia",
-        entries = arrayOf("Yes", "No"),
+        title = resources.getString(R.string.severe_anemia),
+        entries = resources.getStringArray(R.array.yes_no),
         required = true,
         hasDependants = true
     )
@@ -68,15 +68,15 @@ class HRPNonPregnantTrackDataset(
     private var pregLabel = FormElement(
         id = 7,
         inputType = InputType.HEADLINE,
-        title = "CURRENT FP/ PREGNANCY STATUS",
+        title = resources.getString(R.string.current_fp_pregnancy_status),
         required = false
     )
 
     private val fp = FormElement(
         id = 8,
         inputType = InputType.RADIO,
-        title = "Adoption of Family Planning",
-        entries = arrayOf("Yes", "No"),
+        title = resources.getString(R.string.adoption_of_family_planning),
+        entries = resources.getStringArray(R.array.yes_no),
         required = true,
         hasDependants = true
     )
@@ -84,7 +84,7 @@ class HRPNonPregnantTrackDataset(
     private var lmp = FormElement(
         id = 9,
         inputType = InputType.DATE_PICKER,
-        title = "LMP",
+        title = resources.getString(R.string.lmp),
         arrayId = -1,
         required = true,
         max = System.currentTimeMillis(),
@@ -94,8 +94,8 @@ class HRPNonPregnantTrackDataset(
     private val missedPeriod = FormElement(
         id = 10,
         inputType = InputType.RADIO,
-        title = "Missed Period",
-        entries = arrayOf("Yes", "No"),
+        title = resources.getString(R.string.missed_period),
+        entries = resources.getStringArray(R.array.yes_no),
         required = true,
         hasDependants = false
     )
@@ -103,8 +103,8 @@ class HRPNonPregnantTrackDataset(
     private val isPregnant = FormElement(
         id = 11,
         inputType = InputType.RADIO,
-        title = "Is Pregnant",
-        entries = arrayOf("Yes", "No"),
+        title = resources.getString(R.string.is_pregnant),
+        entries = resources.getStringArray(R.array.yes_no),
         required = true,
         hasDependants = false
     )
@@ -112,14 +112,21 @@ class HRPNonPregnantTrackDataset(
     private val riskStatus = FormElement(
         id = 12,
         inputType = InputType.HEADLINE,
-        title = "RISK STATUS",
+        title = context.getString(R.string.risk_status),
         required = false,
         hasDependants = false
     )
 
+    private val followUpLabel = FormElement(
+        id = 13,
+        inputType = InputType.HEADLINE,
+        title = resources.getString(R.string.follow_up_for_high_risk_conditions_in_the_non_pregnant_women),
+        required = false
+    )
     private var lmpMinVar: Long? = null
     suspend fun setUpPage(ben: BenRegCache?, saved: HRPNonPregnantTrackCache?, lmpMin: Long?, dateOfVisitMin: Long?) {
         val list = mutableListOf(
+            followUpLabel,
             dateOfVisit,
             anemia,
             ancLabel,
@@ -136,22 +143,22 @@ class HRPNonPregnantTrackDataset(
 
         saved?.let {
             dateOfVisit.value = it.visitDate?.let { it1 -> getDateFromLong(it1) }
-            anemia.value = it.anemia
-            hypertension.value = it.hypertension
-            diabetes.value = it.diabetes
-            severeAnemia.value = it.severeAnemia
-            fp.value = it.fp
+            anemia.value = getLocalValueInArray(R.array.yes_no,it.anemia)
+            hypertension.value = getLocalValueInArray(R.array.yes_no,it.hypertension)
+            diabetes.value = getLocalValueInArray(R.array.yes_no,it.diabetes)
+            severeAnemia.value = getLocalValueInArray(R.array.yes_no,it.severeAnemia)
+            fp.value = getLocalValueInArray(R.array.yes_no,it.fp)
             lmp.value = it.lmp?.let { it2 -> getDateFromLong(it2) }
-            missedPeriod.value = it.missedPeriod
-            isPregnant.value = it.isPregnant
+            missedPeriod.value = getLocalValueInArray(R.array.yes_no,it.missedPeriod)
+            isPregnant.value = getLocalValueInArray(R.array.yes_no,it.isPregnant)
 
-            anemia.showHighRisk = anemia.value == "Yes"
+            anemia.showHighRisk = anemia.value == resources.getStringArray(R.array.yes_no)[0]
 
-            ancLabel.showHighRisk = (hypertension.value == "Yes"
-                    || diabetes.value == "Yes" || severeAnemia.value == "Yes")
+            ancLabel.showHighRisk = (hypertension.value == resources.getStringArray(R.array.yes_no)[0]
+                    || diabetes.value == resources.getStringArray(R.array.yes_no)[0] || severeAnemia.value == resources.getStringArray(R.array.yes_no)[0])
 
-            riskStatus.showHighRisk = (anemia.value == "Yes" || hypertension.value == "Yes"
-                    || diabetes.value == "Yes" || severeAnemia.value == "Yes")
+            riskStatus.showHighRisk = (anemia.value == resources.getStringArray(R.array.yes_no)[0] || hypertension.value == resources.getStringArray(R.array.yes_no)[0]
+                    || diabetes.value == resources.getStringArray(R.array.yes_no)[0] || severeAnemia.value == resources.getStringArray(R.array.yes_no)[0])
         }
 
         lmp.min = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(40)
@@ -184,17 +191,17 @@ class HRPNonPregnantTrackDataset(
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
         return when (formId) {
             anemia.id -> {
-                anemia.showHighRisk = anemia.value == "Yes"
-                riskStatus.showHighRisk = (anemia.value == "Yes" || hypertension.value == "Yes"
-                        || diabetes.value == "Yes" || severeAnemia.value == "Yes")
+                anemia.showHighRisk = anemia.value == resources.getStringArray(R.array.yes_no)[0]
+                riskStatus.showHighRisk = (anemia.value == resources.getStringArray(R.array.yes_no)[0] || hypertension.value == resources.getStringArray(R.array.yes_no)[0]
+                        || diabetes.value == resources.getStringArray(R.array.yes_no)[0] || severeAnemia.value == resources.getStringArray(R.array.yes_no)[0])
                 -1
             }
 
             hypertension.id, diabetes.id, severeAnemia.id -> {
-                ancLabel.showHighRisk = (hypertension.value == "Yes"
-                        || diabetes.value == "Yes" || severeAnemia.value == "Yes")
-                riskStatus.showHighRisk = (anemia.value == "Yes" || hypertension.value == "Yes"
-                        || diabetes.value == "Yes" || severeAnemia.value == "Yes")
+                ancLabel.showHighRisk = (hypertension.value == resources.getStringArray(R.array.yes_no)[0]
+                        || diabetes.value == resources.getStringArray(R.array.yes_no)[0] || severeAnemia.value == resources.getStringArray(R.array.yes_no)[0])
+                riskStatus.showHighRisk = (anemia.value == resources.getStringArray(R.array.yes_no)[0] || hypertension.value == resources.getStringArray(R.array.yes_no)[0]
+                        || diabetes.value == resources.getStringArray(R.array.yes_no)[0] || severeAnemia.value == resources.getStringArray(R.array.yes_no)[0])
                 -1
             }
 
@@ -216,14 +223,14 @@ class HRPNonPregnantTrackDataset(
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as HRPNonPregnantTrackCache).let { form ->
             form.visitDate = getLongFromDate(dateOfVisit.value)
-            form.anemia = anemia.value
-            form.hypertension = hypertension.value
-            form.diabetes = diabetes.value
-            form.severeAnemia = severeAnemia.value
-            form.fp = fp.value
+            form.anemia = getEnglishValueInArray(R.array.yes_no, anemia.value)
+            form.hypertension = getEnglishValueInArray(R.array.yes_no, hypertension.value)
+            form.diabetes = getEnglishValueInArray(R.array.yes_no, diabetes.value)
+            form.severeAnemia = getEnglishValueInArray(R.array.yes_no, severeAnemia.value)
+            form.fp = getEnglishValueInArray(R.array.yes_no, fp.value)
             form.lmp = getLongFromDate(lmp.value)
-            form.missedPeriod = missedPeriod.value
-            form.isPregnant = isPregnant.value
+            form.missedPeriod = getEnglishValueInArray(R.array.yes_no, missedPeriod.value)
+            form.isPregnant = getEnglishValueInArray(R.array.yes_no, isPregnant.value)
             Timber.d("Form $form")
         }
     }

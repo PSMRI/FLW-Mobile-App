@@ -97,7 +97,6 @@
                     android:textColor="?attr/colorPrimary"
                     app:backgroundTint="?attr/colorSecondary"
                     app:drawableTint="?attr/colorPrimary"
-                    android:drawableStart="@drawable/ic_person"
                     app:layout_constraintEnd_toStartOf="@+id/iv_sync_state"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toEndOf="@+id/tv_hh_id"
@@ -388,8 +387,9 @@
                         android:gravity="center_vertical"
                         android:layout_gravity="center_vertical"
                         android:text="@{ben.benName + ' ' +ben.benSurname}"
-                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
                         android:textColor="?attr/colorPrimary"
+                        android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintHorizontal_bias="0.5"
                         app:layout_constraintHorizontal_chainStyle="spread_inside"
@@ -433,7 +433,7 @@
                         style="@style/rv_item_ben_fields"
                         layout="@layout/rv_item_ben_element"
                         app:field="@{ben.spouseName}"
-                        app:fieldTitle="@{@string/tv_spouse}"
+                        app:fieldTitle="@{@string/husband}"
                         tools:ignore="IncludeLayoutParam" />
 
                     <include

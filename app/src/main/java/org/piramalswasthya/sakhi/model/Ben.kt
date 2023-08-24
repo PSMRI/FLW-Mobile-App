@@ -50,7 +50,7 @@ enum class Gender {
 @DatabaseView(
     viewName = "BEN_BASIC_CACHE",
     value = "SELECT b.beneficiaryId as benId, b.householdId as hhId, b.regDate, b.firstName as benName, b.lastName as benSurname, b.gender, b.dob as dob" +
-            ", b.contactNumber as mobileNo, b.fatherName, h.fam_familyHeadName as familyHeadName, b.rchId" +
+            ", b.contactNumber as mobileNo, b.fatherName, h.fam_familyHeadName as familyHeadName, b.rchId, b.gen_lastMenstrualPeriod as lastMenstrualPeriod" +
             ", b.isHrpStatus as hrpStatus, b.syncState, b.gen_reproductiveStatusId as reproductiveStatusId, b.isKid, b.immunizationStatus, b.gen_spouseName as spouseName," +
             " b.loc_village_id as villageId, b.abha_healthIdNumber as abhaId," +
             " cbac.benId is not null as cbacFilled, cbac.syncState as cbacSyncState," +
@@ -115,6 +115,7 @@ data class BenBasicCache(
     val hrpStatus: Boolean,
     val syncState: SyncState?,
     val reproductiveStatusId: Int,
+    val lastMenstrualPeriod: Long?,
     val isKid: Boolean,
     val immunizationStatus: Boolean,
     val villageId: Int,
@@ -495,6 +496,8 @@ data class BenBasicCache(
             fatherName = fatherName,
             familyHeadName = familyHeadName?: "",
             spouseName = spouseName?: "",
+            lastMenstrualPeriod = getDateStringFromLong(lastMenstrualPeriod),
+            edd = getEddFromLmp(lastMenstrualPeriod),
 //            typeOfList = typeOfList.name,
             rchId = rchId ?: "Not Available",
             hrpStatus = hrpStatus,
@@ -559,6 +562,8 @@ data class BenBasicCache(
             spouseName = spouseName ?: "",
             gender = gender.name,
             dob = dob,
+            lastMenstrualPeriod = getDateStringFromLong(lastMenstrualPeriod),
+            edd = getEddFromLmp(lastMenstrualPeriod),
             mobileNo = mobileNo.toString(),
             fatherName = fatherName,
             familyHeadName = familyHeadName ?: "Not Available",
@@ -715,6 +720,8 @@ data class BenBasicDomainForForm(
     val fatherName: String? = null,
     val spouseName: String? = null,
     val familyHeadName: String,
+    val lastMenstrualPeriod: String? = null,
+    val edd: String? = null,
 //    val typeOfList: String,
     val rchId: String,
     val hrpStatus: Boolean = false,
@@ -1316,6 +1323,16 @@ data class BenRegCache(
 
             )
     }
+}
+
+fun getEddFromLmp(dateLong: Long?): String? {
+    val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+    dateLong?.let {
+        return dateFormat.format(dateLong + TimeUnit.DAYS.toMillis(280))
+    } ?: run {
+        return null
+    }
+
 }
 
 fun getDateTimeStringFromLong(dateLong: Long?): String? {

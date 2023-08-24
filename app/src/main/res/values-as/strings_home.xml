@@ -30,5 +30,11 @@
     <string name="icon_title_sr">জৰীপ পঞ্জী</string>
     <string name="icon_title_ncd_tb_screening">টি.বি. স্ক্ৰীনিং</string>
     <string name="icon_title_ncd_tb_suspected">সন্দেহিত টি.বি. মৰাত কেছব</string>
+<string name="icon_title_hrp_pregnant">উচ্চ ঝুঁকি\nগর্ভবতী মহিলা</string>
+<string name="icon_title_hrp_non_pregnant">উচ্চ ঝুঁকি\nগর্ভাবস্থা নহয়ে মহিলা</string>
+<string name="icon_title_hrp_pregnant_assess">উচ্চ ঝুঁকি মূল্যায়ন কৰক</string>
+<string name="icon_title_hrp_pregnant_track">উচ্চ ঝুঁকি অনুসৰণ কৰক</string>
+<string name="icon_title_hrp_non_pregnant_assess">উচ্চ ঝুঁকি মূল্যায়ন কৰক</string>
+<string name="icon_title_hrp_non_pregnant_track">উচ্চ ঝুঁকি নহয়ে গৰ্ভাবস্থা নহয়ে মহিলা অনুসৰণ কৰক</string>
 
 </resources>

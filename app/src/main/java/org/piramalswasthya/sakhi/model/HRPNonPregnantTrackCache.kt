@@ -38,7 +38,7 @@ data class HRPNonPregnantTrackCache(
     fun asDomainModel(): HRPPregnantTrackDomain {
         return HRPPregnantTrackDomain(
             id = id,
-            dateOfVisit = getDateStringFromLong(visitDate)
+            dateOfVisit = getDateStrFromLong(visitDate)
         )
     }
 

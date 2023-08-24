@@ -1,6 +1,8 @@
 package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
+import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.FormElement
@@ -15,8 +17,8 @@ class HRPPregnantAssessDataset(
     private val noOfDeliveries = FormElement(
         id = 1,
         inputType = InputType.RADIO,
-        title = "No. of Deliveries is more than 3",
-        entries = arrayOf("Yes", "No"),
+        title = resources.getString(R.string.no_of_deliveries_is_more_than_3),
+        entries = resources.getStringArray(R.array.yes_no),
         required = true,
         hasDependants = true
     )
@@ -24,8 +26,8 @@ class HRPPregnantAssessDataset(
     private val timeLessThan18m = FormElement(
         id = 2,
         inputType = InputType.RADIO,
-        title = "Time from last delivery is less than 18 months",
-        entries = arrayOf("Yes", "No"),
+        title = resources.getString(R.string.time_from_last_delivery_is_less_than_18_months),
+        entries = resources.getStringArray(R.array.yes_no),
         required = true,
         hasDependants = true
     )
@@ -33,8 +35,8 @@ class HRPPregnantAssessDataset(
     private val heightShort = FormElement(
         id = 3,
         inputType = InputType.RADIO,
-        title = "Height is very short or less than 140 cms",
-        entries = arrayOf("Yes", "No"),
+        title = resources.getString(R.string.height_is_very_short_or_less_than_140_cms),
+        entries = resources.getStringArray(R.array.yes_no),
         required = true,
         hasDependants = true
     )
@@ -42,8 +44,8 @@ class HRPPregnantAssessDataset(
     private val age = FormElement(
         id = 4,
         inputType = InputType.RADIO,
-        title = "Age is less than 18 or more than 35 years",
-        entries = arrayOf("Yes", "No"),
+        title = resources.getString(R.string.age_is_less_than_18_or_more_than_35_years),
+        entries = resources.getStringArray(R.array.yes_no),
         required = true,
         hasDependants = true
     )
@@ -51,8 +53,8 @@ class HRPPregnantAssessDataset(
     private val rhNegative = FormElement(
         id = 5,
         inputType = InputType.RADIO,
-        title = "Rh Negative",
-        entries = arrayOf("Yes", "No"),
+        title = resources.getString(R.string.rh_negative),
+        entries = resources.getStringArray(R.array.yes_no),
         required = true,
         hasDependants = true
     )
@@ -60,8 +62,8 @@ class HRPPregnantAssessDataset(
     private val homeDelivery = FormElement(
         id = 6,
         inputType = InputType.RADIO,
-        title = "Home delivery of previous pregnancy",
-        entries = arrayOf("Yes", "No"),
+        title = resources.getString(R.string.home_delivery_of_previous_pregnancy),
+        entries = resources.getStringArray(R.array.yes_no),
         required = true,
         hasDependants = true
     )
@@ -69,8 +71,8 @@ class HRPPregnantAssessDataset(
     private val badObstetric = FormElement(
         id = 7,
         inputType = InputType.RADIO,
-        title = "Bad obstetric history",
-        entries = arrayOf("Yes", "No"),
+        title = resources.getString(R.string.bad_obstetric_history),
+        entries = resources.getStringArray(R.array.yes_no),
         required = true,
         hasDependants = true
     )
@@ -79,8 +81,8 @@ class HRPPregnantAssessDataset(
     private val multiplePregnancy = FormElement(
         id = 8,
         inputType = InputType.RADIO,
-        title = "Multiple Pregnancy",
-        entries = arrayOf("Yes", "No"),
+        title = resources.getString(R.string.multiple_pregnancy),
+        entries = resources.getStringArray(R.array.yes_no),
         required = true,
         hasDependants = true
     )
@@ -88,7 +90,7 @@ class HRPPregnantAssessDataset(
     private var lmpDate = FormElement(
         id = 9,
         inputType = InputType.DATE_PICKER,
-        title = "LMP Date",
+        title = resources.getString(R.string.lmp_date),
         arrayId = -1,
         required = true,
         max = System.currentTimeMillis(),
@@ -98,7 +100,7 @@ class HRPPregnantAssessDataset(
     private var edd = FormElement(
         id = 10,
         inputType = InputType.DATE_PICKER,
-        title = "EDD",
+        title = resources.getString(R.string.edd),
         arrayId = -1,
         required = true,
         min = System.currentTimeMillis(),
@@ -110,7 +112,7 @@ class HRPPregnantAssessDataset(
     private var childInfoLabel = FormElement(
         id = 11,
         inputType = InputType.HEADLINE,
-        title = "Information on children",
+        title = resources.getString(R.string.information_on_children),
         arrayId = -1,
         required = false,
         hasDependants = false,
@@ -120,7 +122,7 @@ class HRPPregnantAssessDataset(
     private var physicalObservationLabel = FormElement(
         id = 12,
         inputType = InputType.HEADLINE,
-        title = "Physical Observation",
+        title = resources.getString(R.string.physical_observation),
         arrayId = -1,
         required = false,
         hasDependants = false,
@@ -130,7 +132,7 @@ class HRPPregnantAssessDataset(
     private var obstetricHistoryLabel = FormElement(
         id = 13,
         inputType = InputType.HEADLINE,
-        title = "Obstetric History",
+        title = resources.getString(R.string.obstetric_history),
         arrayId = -1,
         required = false,
         hasDependants = false,
@@ -140,7 +142,7 @@ class HRPPregnantAssessDataset(
     private val assesLabel = FormElement(
         id = 14,
         inputType = InputType.HEADLINE,
-        title = "ASSESS FOR HIGH RISK CONDITIONS IN THE PREGNANT WOMEN",
+        title = resources.getString(R.string.assess_for_high_risk_conditions_in_the_pregnant_women),
         required = false
     )
 
@@ -165,32 +167,32 @@ class HRPPregnantAssessDataset(
         if (saved == null) {
             //
         } else {
-            noOfDeliveries.value = saved.noOfDeliveries
-            timeLessThan18m.value = saved.timeLessThan18m
-            heightShort.value = saved.heightShort
-            age.value = saved.age
-            rhNegative.value = saved.rhNegative
-            homeDelivery.value = saved.homeDelivery
-            badObstetric.value = saved.badObstetric
-            multiplePregnancy.value = saved.multiplePregnancy
+            noOfDeliveries.value = getLocalValueInArray(R.array.yes_no, saved.noOfDeliveries)
+            timeLessThan18m.value = getLocalValueInArray(R.array.yes_no, saved.timeLessThan18m)
+            heightShort.value = getLocalValueInArray(R.array.yes_no, saved.heightShort)
+            age.value = getLocalValueInArray(R.array.yes_no, saved.age)
+            rhNegative.value = getLocalValueInArray(R.array.yes_no, saved.rhNegative)
+            homeDelivery.value = getLocalValueInArray(R.array.yes_no, saved.homeDelivery)
+            badObstetric.value = getLocalValueInArray(R.array.yes_no, saved.badObstetric)
+            multiplePregnancy.value = getLocalValueInArray(R.array.yes_no, saved.multiplePregnancy)
             lmpDate.value = getDateFromLong(saved.lmpDate)
             edd.value = getDateFromLong(saved.edd)
 
             childInfoLabel.showHighRisk = (
-                    noOfDeliveries.value.contentEquals("Yes") ||
-                            timeLessThan18m.value.contentEquals("Yes")
+                    noOfDeliveries.value.contentEquals(resources.getStringArray(R.array.yes_no)[0]) ||
+                            timeLessThan18m.value.contentEquals(resources.getStringArray(R.array.yes_no)[0])
                     )
 
             physicalObservationLabel.showHighRisk = (
-                    heightShort.value.contentEquals("Yes") ||
-                            age.value.contentEquals("Yes")
+                    heightShort.value.contentEquals(resources.getStringArray(R.array.yes_no)[0]) ||
+                            age.value.contentEquals(resources.getStringArray(R.array.yes_no)[0])
                     )
 
             obstetricHistoryLabel.showHighRisk = (
-                    rhNegative.value.contentEquals("Yes") ||
-                            homeDelivery.value.contentEquals("Yes") ||
-                            badObstetric.value.contentEquals("Yes") ||
-                            multiplePregnancy.value.contentEquals("Yes")
+                    rhNegative.value.contentEquals(resources.getStringArray(R.array.yes_no)[0]) ||
+                            homeDelivery.value.contentEquals(resources.getStringArray(R.array.yes_no)[0]) ||
+                            badObstetric.value.contentEquals(resources.getStringArray(R.array.yes_no)[0]) ||
+                            multiplePregnancy.value.contentEquals(resources.getStringArray(R.array.yes_no)[0])
                     )
         }
 
@@ -207,22 +209,22 @@ class HRPPregnantAssessDataset(
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
         return when (formId) {
             noOfDeliveries.id, timeLessThan18m.id -> {
-                childInfoLabel.showHighRisk = noOfDeliveries.value.contentEquals("Yes") ||
-                        timeLessThan18m.value.contentEquals("Yes")
+                childInfoLabel.showHighRisk = noOfDeliveries.value.contentEquals(resources.getStringArray(R.array.yes_no)[0]) ||
+                        timeLessThan18m.value.contentEquals(resources.getStringArray(R.array.yes_no)[0])
                 -1
             }
 
             heightShort.id, age.id -> {
-                physicalObservationLabel.showHighRisk = heightShort.value.contentEquals("Yes") ||
-                        age.value.contentEquals("Yes")
+                physicalObservationLabel.showHighRisk = heightShort.value.contentEquals(resources.getStringArray(R.array.yes_no)[0]) ||
+                        age.value.contentEquals(resources.getStringArray(R.array.yes_no)[0])
                 -1
             }
 
             rhNegative.id, homeDelivery.id, badObstetric.id, multiplePregnancy.id -> {
-                obstetricHistoryLabel.showHighRisk = rhNegative.value.contentEquals("Yes") ||
-                        homeDelivery.value.contentEquals("Yes") ||
-                        badObstetric.value.contentEquals("Yes") ||
-                        multiplePregnancy.value.contentEquals("Yes")
+                obstetricHistoryLabel.showHighRisk = rhNegative.value.contentEquals(resources.getStringArray(R.array.yes_no)[0]) ||
+                        homeDelivery.value.contentEquals(resources.getStringArray(R.array.yes_no)[0]) ||
+                        badObstetric.value.contentEquals(resources.getStringArray(R.array.yes_no)[0]) ||
+                        multiplePregnancy.value.contentEquals(resources.getStringArray(R.array.yes_no)[0])
                 -1
             }
 
@@ -238,14 +240,14 @@ class HRPPregnantAssessDataset(
 
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as HRPPregnantAssessCache).let { form ->
-            form.noOfDeliveries = noOfDeliveries.value
-            form.timeLessThan18m = timeLessThan18m.value
-            form.heightShort = heightShort.value
-            form.age = age.value
-            form.rhNegative = rhNegative.value
-            form.homeDelivery = homeDelivery.value
-            form.badObstetric = badObstetric.value
-            form.multiplePregnancy = multiplePregnancy.value
+            form.noOfDeliveries = getEnglishValueInArray(R.array.yes_no, noOfDeliveries.value)
+            form.timeLessThan18m = getEnglishValueInArray(R.array.yes_no, timeLessThan18m.value)
+            form.heightShort = getEnglishValueInArray(R.array.yes_no, heightShort.value)
+            form.age = getEnglishValueInArray(R.array.yes_no, age.value)
+            form.rhNegative = getEnglishValueInArray(R.array.yes_no, rhNegative.value)
+            form.homeDelivery = getEnglishValueInArray(R.array.yes_no, homeDelivery.value)
+            form.badObstetric = getEnglishValueInArray(R.array.yes_no, badObstetric.value)
+            form.multiplePregnancy = getEnglishValueInArray(R.array.yes_no, multiplePregnancy.value)
             form.lmpDate = getLongFromDate(lmpDate.value)
             form.edd = getLongFromDate(edd.value)
         }
@@ -260,14 +262,21 @@ class HRPPregnantAssessDataset(
     fun getIndexOfEdd() = getIndexById(edd.id)
 
     fun isHighRisk(): Boolean {
-        return noOfDeliveries.value.contentEquals("Yes") ||
-                timeLessThan18m.value.contentEquals("Yes") ||
-                heightShort.value.contentEquals("Yes") ||
-                age.value.contentEquals("Yes") ||
-                rhNegative.value.contentEquals("Yes") ||
-                homeDelivery.value.contentEquals("Yes") ||
-                badObstetric.value.contentEquals("Yes") ||
-                multiplePregnancy.value.contentEquals("Yes")
+        return noOfDeliveries.value.contentEquals(resources.getStringArray(R.array.yes_no)[0]) ||
+                timeLessThan18m.value.contentEquals(resources.getStringArray(R.array.yes_no)[0]) ||
+                heightShort.value.contentEquals(resources.getStringArray(R.array.yes_no)[0]) ||
+                age.value.contentEquals(resources.getStringArray(R.array.yes_no)[0]) ||
+                rhNegative.value.contentEquals(resources.getStringArray(R.array.yes_no)[0]) ||
+                homeDelivery.value.contentEquals(resources.getStringArray(R.array.yes_no)[0]) ||
+                badObstetric.value.contentEquals(resources.getStringArray(R.array.yes_no)[0]) ||
+                multiplePregnancy.value.contentEquals(resources.getStringArray(R.array.yes_no)[0])
     }
 
+    fun updateBen(benRegCache: BenRegCache) {
+        benRegCache.genDetails?.let {
+            it.lastMenstrualPeriod = getLongFromDate(lmpDate.value)
+        }
+        if (benRegCache.processed != "N") benRegCache.processed = "U"
+        benRegCache.syncState = SyncState.UNSYNCED
+    }
 }

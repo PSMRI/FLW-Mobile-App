@@ -40,7 +40,7 @@
             android:layout_marginEnd="@dimen/padding_normal"
             android:backgroundTint="?attr/colorPrimary"
             android:onClick="@{() -> clickListener.onClickedBen(track)}"
-            android:text="Show Details"
+            android:text="@string/show_details"
             android:textColor="?attr/colorOnPrimary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

@@ -23,13 +23,13 @@ class BenListCHOViewModel @Inject constructor(
 
     private val allBenList = recordsRepo.getBenListCHO()
     private val filter = MutableStateFlow("")
-    val benList = allBenList.combine(filter){
-            list, filter -> filterBenList(list, filter)
+    val benList = allBenList.combine(filter) { list, filter ->
+        filterBenList(list, filter)
     }
 
 
     @Inject
-    lateinit var benRepo:BenRepo
+    lateinit var benRepo: BenRepo
 
     @Inject
     lateinit var amritApiService: AmritApiService

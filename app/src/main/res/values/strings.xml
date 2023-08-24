@@ -315,6 +315,7 @@
     <string name="child_immunization">Child Immunization</string>
     <string name="pregnancy_registration">Pregnancy Registration</string>
     <string name="mother_immunizationlist">Mother ImmunizationList</string>
+    <string name="nearest_usg_centre">Nearest USG centre:</string>
 
     <!-- Eligible couple registration -->
     <string-array name="ecr_gender_array">

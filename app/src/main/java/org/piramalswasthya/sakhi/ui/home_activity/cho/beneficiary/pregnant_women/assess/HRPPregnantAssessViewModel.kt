@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.configuration.HRPPregnantAssessDataset
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.HRPPregnantAssessCache
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.HRPRepo
@@ -55,10 +56,11 @@ constructor(
     val formList = dataset.listFlow
 
     private lateinit var hrpPregnantAssessCache: HRPPregnantAssessCache
+    private var ben: BenRegCache? = null
 
     init {
         viewModelScope.launch {
-            val ben = benRepo.getBenFromId(benId)?.also { ben ->
+            ben = benRepo.getBenFromId(benId)?.also { ben ->
                 _benName.value =
                     "${ben.firstName} ${if (ben.lastName == null) "" else ben.lastName}"
                 _benAgeGender.value = "${ben.age} ${ben.ageUnit?.name} | ${ben.gender?.name}"
@@ -103,6 +105,10 @@ constructor(
                     dataset.mapValues(hrpPregnantAssessCache, 1)
                     hrpPregnantAssessCache.isHighRisk = isHighRisk()
                     hrpRepo.saveRecord(hrpPregnantAssessCache)
+                    ben?.let {
+                        dataset.updateBen(it)
+                        benRepo.updateRecord(it)
+                    }
                     _state.postValue(State.SAVE_SUCCESS)
                 } catch (e: Exception) {
                     Timber.d("saving PWR data failed!!")

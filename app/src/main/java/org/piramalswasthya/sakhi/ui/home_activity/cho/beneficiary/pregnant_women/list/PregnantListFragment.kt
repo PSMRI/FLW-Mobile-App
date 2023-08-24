@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.BenListAdapterForForm
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
 
@@ -54,7 +55,11 @@ class PregnantListFragment : Fragment() {
                             benId
                         )
                     )
-                }), formButtonText = arrayOf("Assess", "Micro"),
+                }),
+            formButtonText = arrayOf(
+                resources.getString(R.string.assess),
+                resources.getString(R.string.micro)
+            ),
             role = 1
         )
         binding.rvAny.adapter = benAdapter

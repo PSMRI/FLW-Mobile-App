@@ -44,7 +44,7 @@ data class HRPPregnantTrackCache(
     fun asDomainModel(): HRPPregnantTrackDomain {
         return HRPPregnantTrackDomain(
             id = id,
-            dateOfVisit = visit + " : " + getDateStringFromLong(visitDate)
+            dateOfVisit = visit + " : " + getDateStrFromLong(visitDate)
         )
     }
 
@@ -79,7 +79,7 @@ data class HRPPregnantTrackBen(
 //    val onClick: (Long, Int) -> Unit
 )
 
-fun getDateStringFromLong(dateLong: Long?): String? {
+fun getDateStrFromLong(dateLong: Long?): String? {
     val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
     val timeFormat = SimpleDateFormat("HH:mm:ss", Locale.ENGLISH)
     dateLong?.let {

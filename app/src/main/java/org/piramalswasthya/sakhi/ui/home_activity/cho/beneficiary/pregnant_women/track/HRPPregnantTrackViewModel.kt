@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.pregnant_women.track
 
 import android.content.Context
+import android.content.res.Configuration
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -17,6 +18,7 @@ import org.piramalswasthya.sakhi.model.HRPPregnantTrackCache
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.HRPRepo
 import timber.log.Timber
+import java.util.Locale
 import kotlin.math.max
 
 @HiltViewModel
@@ -69,6 +71,12 @@ constructor(
 
     init {
         loadData()
+    }
+
+    private val resources by lazy {
+        val configuration = Configuration(context.resources.configuration)
+        configuration.setLocale(Locale(preferenceDao.getCurrentLanguage().symbol))
+        context.createConfigurationContext(configuration).resources
     }
 
     fun loadData() {

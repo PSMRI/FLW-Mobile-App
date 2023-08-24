@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.work.WorkerUtils
@@ -56,7 +57,7 @@ class BenRegisterCHOFragment : Fragment() {
         }
 
         viewModel.benName.observe(viewLifecycleOwner) {
-            binding.tvBenName.text = "Beneficiary Registration"
+            binding.tvBenName.text = resources.getString(R.string.beneficiary_registration)
         }
         viewModel.benAgeGender.observe(viewLifecycleOwner) {
             binding.tvAgeGender.text = "2"
@@ -68,7 +69,11 @@ class BenRegisterCHOFragment : Fragment() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state!!) {
                 BenRegisterCHOViewModel.State.SAVE_SUCCESS -> {
-                    Toast.makeText(context, "Save Successful!!!", Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        context,
+                        resources.getString(R.string.save_successful),
+                        Toast.LENGTH_LONG
+                    ).show()
                     WorkerUtils.triggerAmritSyncWorker(requireContext())
                     findNavController().navigateUp()
                     viewModel.resetState()
@@ -76,7 +81,9 @@ class BenRegisterCHOFragment : Fragment() {
 
                 BenRegisterCHOViewModel.State.SAVE_FAILED -> {
                     Toast.makeText(
-                        context, "Something wend wong! Contact testing!", Toast.LENGTH_LONG
+                        context,
+                        resources.getString(R.string.something_wend_wong_contact_testing),
+                        Toast.LENGTH_LONG
                     ).show()
                 }
 

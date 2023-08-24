@@ -16,7 +16,7 @@ class BenRegCHODataset (context: Context, currentLanguage: Languages
     private val dateOfReg = FormElement(
         id = 1,
         inputType = InputType.DATE_PICKER,
-        title = context.getString(R.string.nbr_dor),
+        title = resources.getString(R.string.hrp_dor),
         arrayId = -1,
         required = true,
         max = System.currentTimeMillis()
@@ -24,7 +24,7 @@ class BenRegCHODataset (context: Context, currentLanguage: Languages
     private val name = FormElement(
         id = 2,
         inputType = InputType.EDIT_TEXT,
-        title = context.getString(R.string.nbr_nb_name),
+        title = resources.getString(R.string.hrp_name),
         arrayId = -1,
         required = true,
         allCaps = true,
@@ -34,7 +34,7 @@ class BenRegCHODataset (context: Context, currentLanguage: Languages
     private val dob = FormElement(
         id = 3,
         inputType = InputType.DATE_PICKER,
-        title = "Date of Birth",
+        title = resources.getString(R.string.hrp_dob),
         arrayId = -1,
         required = true,
         max = System.currentTimeMillis(),
@@ -44,7 +44,7 @@ class BenRegCHODataset (context: Context, currentLanguage: Languages
     private val husbandName = FormElement(
         id = 4,
         inputType = InputType.EDIT_TEXT,
-        title = "Husband's Name",
+        title = resources.getString(R.string.husband_s_name),
         arrayId = -1,
         required = true,
         allCaps = true,
@@ -54,7 +54,7 @@ class BenRegCHODataset (context: Context, currentLanguage: Languages
     private val contactNumber = FormElement(
         id = 5,
         inputType = InputType.EDIT_TEXT,
-        title = "Contact Number",
+        title = resources.getString(R.string.contact_number),
         arrayId = -1,
         required = true,
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
@@ -67,7 +67,7 @@ class BenRegCHODataset (context: Context, currentLanguage: Languages
     private val rchId = FormElement(
         id = 6,
         inputType = InputType.EDIT_TEXT,
-        title = "RCH ID",
+        title = resources.getString(R.string.rch_id),
         arrayId = -1,
         required = false,
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
@@ -78,8 +78,8 @@ class BenRegCHODataset (context: Context, currentLanguage: Languages
     private val isPregnant = FormElement(
         id = 7,
         inputType = InputType.RADIO,
-        title = "Is Pregnant",
-        entries = arrayOf("Yes", "No"),
+        title = resources.getString(R.string.is_pregnant),
+        entries = resources.getStringArray(R.array.yes_no),
         required = true,
         hasDependants = false
     )
@@ -87,7 +87,7 @@ class BenRegCHODataset (context: Context, currentLanguage: Languages
     private val age = FormElement(
         id = 8,
         inputType = InputType.EDIT_TEXT,
-        title = "Age In Years",
+        title = resources.getString(R.string.age_in_years),
         arrayId = -1,
         required = true,
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
@@ -161,7 +161,7 @@ class BenRegCHODataset (context: Context, currentLanguage: Languages
             form.age = getDiffYears(calDob, calNow)
             form.ageUnit = AgeUnit.YEARS
             form.ageUnitId = 3
-            if (isPregnant.value == "Yes") {
+            if (isPregnant.value == resources.getStringArray(R.array.yes_no)[0]) {
                 form.genDetails?.let {
                     it.reproductiveStatus =
                         englishResources.getStringArray(R.array.nbr_reproductive_status_array)[1]
