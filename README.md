@@ -12,14 +12,11 @@
 
 **Configurations:**
 
-    - In AppModule class there is a variable declared for base URL pointing to amrit demo or uat or production, we can use the URL we need and comment the rest for required APK
+    - In AppModule class there is a variable declared for base URL, set the value to amrit demo or uat or prod values based on requirement
 
         `object AppModule {
 
-            private const val baseTmcUrl = 
-        //        "https://assamtmc.piramalswasthya.org/"
-        //        "http://uatamrit.piramalswasthya.org:8080/"
-        https://amritdemo.piramalswasthya.org/
+            private const val baseTmcUrl = "<add base url>"
         `
     - In IconDataset class we have the list of modules that we show on UI, we can comment, or un-comment modules based on requirement
 
