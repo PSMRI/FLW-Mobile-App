@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "289134290963",
-    "project_id": "sakhi-1e7d2",
-    "storage_bucket": "sakhi-1e7d2.appspot.com"
+    "project_number": "##",
+    "project_id": "##",
+    "storage_bucket": "##"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:289134290963:android:6cd51e6329b3816144f7e6",
+        "mobilesdk_app_id": "##",
         "android_client_info": {
           "package_name": "org.piramalswasthya.sakhi"
         }
       },
       "oauth_client": [
         {
-          "client_id": "289134290963-lskch73k1ujvh2ca3vgs09i2l7rqa4pd.apps.googleusercontent.com",
+          "client_id": "##",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBHMkDJkxWgtIZN_T0fQjh5EXFvvY-9DiA"
+          "current_key": "##"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "289134290963-lskch73k1ujvh2ca3vgs09i2l7rqa4pd.apps.googleusercontent.com",
+              "client_id": "##",
               "client_type": 3
             }
           ]

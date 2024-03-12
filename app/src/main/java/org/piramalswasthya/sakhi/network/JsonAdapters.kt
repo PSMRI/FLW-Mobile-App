@@ -105,11 +105,9 @@ data class BenAbhaResponse(
 
 @JsonClass(generateAdapter = true)
 data class AbhaTokenRequest(
-    val clientId: String = "SBX_001542",
-    val clientSecret: String = "87b7eb89-b236-43b6-82b0-6eef154a9b90",
+    val clientId: String = "##",
+    val clientSecret: String = "##",
     val grantType: String = "client_credentials"
-//    val clientId: String = "healthid-api",
-//    val clientSecret: String = "9042c774-f57b-46ba-bb11-796a4345ada1"
 )
 
 @JsonClass(generateAdapter = true)

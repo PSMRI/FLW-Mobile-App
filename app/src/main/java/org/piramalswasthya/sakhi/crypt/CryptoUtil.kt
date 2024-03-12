@@ -13,7 +13,7 @@ class CryptoUtil {
     private val keySize = 256
     private val ivSize = 128
     private val iterationCount = 1989
-    private val passPhrase = "Piramal12Piramal"
+    private val passPhrase = "##"
 
     private fun generateKey(
         salt: String,

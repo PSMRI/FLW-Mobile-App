@@ -4,7 +4,8 @@
 
 **Pre-Requesties:**
     - Clone the code repo into android studio and build the application
-
+**Password Encryption:**
+    - set passPhrase value in CryptoUtil file
 **Environments**:  We can generate the application for below environments based on requirements
     - Amrit Demo
     - UAT
@@ -21,6 +22,8 @@
     - In IconDataset class we have the list of modules that we show on UI, we can comment, or un-comment modules based on requirement
 
     - In AllBenFragment class we have a Boolean `showAbha` which can be used to toggle the visibility of abha button on beneficiary cards
+
+    - set ABHA client id and client secret in AbhaTokenRequest data class
 
 **APK Variants:** We can generate signed and un-signed apk’s for the application
 
