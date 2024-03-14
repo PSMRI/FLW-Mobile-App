@@ -5,6 +5,7 @@
     android:id="@+id/rv_icon_grid"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:splitMotionEvents="false"
     android:background="?attr/colorOnSecondary"
     android:padding="@dimen/padding_small"
     android:clipToPadding="false"

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cdr_form">CDR Form</string>
+    <string name="maternal">Maternal</string>
+    <string name="non_maternal">Non-maternal</string>
+</resources>

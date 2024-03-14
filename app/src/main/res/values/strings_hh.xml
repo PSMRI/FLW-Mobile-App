@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- HOUSEHOLD -->
+    <string name="btn_text_frag_home_nhhr">New Household Registration</string>
+    <string name="no_records_found">No Records Found</string>
+    <string name="household_search">Search</string>
+
+    <string name="rv_item_hh_ph_1">HHID : </string>
+    <string name="rv_item_hh_ph_2">Family Head Name :</string>
+    <string name="rv_item_hh_ph_3">Surname : </string>
+    <string name="hh_members_text">Members : %1d</string>
+    <string name="btn_rv_item_hh_add_ben">Add Beneficiary</string>
+
+    <string name="frag_nhhr_title">New Household Registration</string>
+
+    <string name="nhhr_title_page_1">Family Details</string>
+    <string name="nhhr_title_page_2">Household Details</string>
+    <string name="nhhr_title_page_3">Household Amenities</string>
+
+    <string name="nhhr_first_name_hof">First Name of Head of the family</string>
+    <string name="nhhr_last_name_hof">Last Name / Surname of head of the family</string>
+    <string name="nhhr_mob_no_hof">Mobile No of Head of Family</string>
+    <string name="nhhr_house_no">House No</string>
+    <string name="nhhr_ward_no">Ward No</string>
+    <string name="nhhr_ward_name">Ward Name</string>
+    <string name="nhhr_mohalla_name">Mohalla Name</string>
+    <string name="nhhr_poverty_line">Economic Status</string>
+    <string-array name="nhhr_poverty_line_array">
+        <item>APL</item>
+        <item>BPL</item>
+        <item>Don\'t Know</item>
+    </string-array>
+    <string name="btn_frag_nhhr_prev">previous</string>
+    <string name="btn_frag_nhhr_next">next</string>
+    <string name="nhhr_type_residential_area">Type of residential area</string>
+    <string name="nhhr_type_residential_area_1">Rural</string>
+    <string name="nhhr_type_residential_area_2">Urban</string>
+    <string name="nhhr_type_residential_area_3">Tribal</string>
+    <string name="nhhr_type_residential_area_4">Other</string>
+    <string name="nhhr_type_residential_area_5">Tea Garden</string>
+    <string-array name="nhhr_type_residential_area_array">
+        <item>@string/nhhr_type_residential_area_1</item>
+        <item>@string/nhhr_type_residential_area_2</item>
+        <item>@string/nhhr_type_residential_area_3</item>
+        <item>@string/nhhr_type_residential_area_4</item>
+        <item>@string/nhhr_type_residential_area_5</item>
+    </string-array>
+    <string name="nhhr_type_of_house">Type of house</string>
+    <string name="nhhr_type_of_house_1">None</string>
+    <string name="nhhr_type_of_house_2">Kuchha</string>
+    <string name="nhhr_type_of_house_3">Pucca</string>
+    <string name="nhhr_type_of_house_4">Other</string>
+    <string-array name="nhhr_type_of_house_array">
+        <item>@string/nhhr_type_of_house_1</item>
+        <item>@string/nhhr_type_of_house_2</item>
+        <item>@string/nhhr_type_of_house_3</item>
+        <item>@string/nhhr_type_of_house_4</item>
+    </string-array>
+    <string name="nhhr_house_own">House ownership</string>
+    <string-array name="nhhr_house_own_array">
+        <item>Yes</item>
+        <item>No</item>
+    </string-array>
+    <string name="nhhr_separate_kitchen">Separate Kitchen</string>
+    <string-array name="nhhr_separate_kitchen_array">
+        <item>Yes</item>
+        <item>No</item>
+    </string-array>
+    <string name="nhhr_fuel_cooking">Type of fuel used for Cooking</string>
+    <string name="nhhr_fuel_cooking_1">Firewood</string>
+    <string name="nhhr_fuel_cooking_2">Crop Residue</string>
+    <string name="nhhr_fuel_cooking_3">Cow dung cake</string>
+    <string name="nhhr_fuel_cooking_4">Coal</string>
+    <string name="nhhr_fuel_cooking_5">Kerosene</string>
+    <string name="nhhr_fuel_cooking_6">LPG</string>
+    <string name="nhhr_fuel_cooking_7">Other</string>
+    <string-array name="nhhr_fuel_cooking_array">
+        <item>@string/nhhr_fuel_cooking_1</item>
+        <item>@string/nhhr_fuel_cooking_2</item>
+        <item>@string/nhhr_fuel_cooking_3</item>
+        <item>@string/nhhr_fuel_cooking_4</item>
+        <item>@string/nhhr_fuel_cooking_5</item>
+        <item>@string/nhhr_fuel_cooking_6</item>
+        <item>@string/nhhr_fuel_cooking_7</item>
+    </string-array>
+    <string name="nhhr_primary_water">Primary Source of Water</string>
+    <string name="nhhr_primary_water_1">Tap Water</string>
+    <string name="nhhr_primary_water_2">Hand pump inside house</string>
+    <string name="nhhr_primary_water_3">Hand pump outside of house</string>
+    <string name="nhhr_primary_water_4">Well</string>
+    <string name="nhhr_primary_water_5">Tank</string>
+    <string name="nhhr_primary_water_6">River</string>
+    <string name="nhhr_primary_water_7">Pond</string>
+    <string name="nhhr_primary_water_8">Other</string>
+    <string-array name="nhhr_primary_water_array">
+        <item>@string/nhhr_primary_water_1</item>
+        <item>@string/nhhr_primary_water_2</item>
+        <item>@string/nhhr_primary_water_3</item>
+        <item>@string/nhhr_primary_water_4</item>
+        <item>@string/nhhr_primary_water_5</item>
+        <item>@string/nhhr_primary_water_6</item>
+        <item>@string/nhhr_primary_water_7</item>
+        <item>@string/nhhr_primary_water_8</item>
+    </string-array>
+
+    <string name="nhhr_avail_electricity">Availability of Electricity</string>
+    <string name="nhhr_avail_electricity_1">Electricity Supply</string>
+    <string name="nhhr_avail_electricity_2">Generator</string>
+    <string name="nhhr_avail_electricity_3">Solar Power</string>
+    <string name="nhhr_avail_electricity_4">Kerosene Lamp</string>
+    <string name="nhhr_avail_electricity_5">Other</string>
+    <string-array name="nhhr_avail_electricity_array">
+        <item>@string/nhhr_avail_electricity_1</item>
+        <item>@string/nhhr_avail_electricity_2</item>
+        <item>@string/nhhr_avail_electricity_3</item>
+        <item>@string/nhhr_avail_electricity_4</item>
+        <item>@string/nhhr_avail_electricity_5</item>
+    </string-array>
+    <string name="nhhr_avail_toilet">Availability of Toilet</string>
+    <string name="nhhr_avail_toilet_1">Flush toilet with running water</string>
+    <string name="nhhr_avail_toilet_2">Flush toilet without water</string>
+    <string name="nhhr_avail_toilet_3">Pit toilet with running water supply</string>
+    <string name="nhhr_avail_toilet_4">Pit toilet without water supply</string>
+    <string name="nhhr_avail_toilet_5">Other</string>
+    <string name="nhhr_avail_toilet_6">None</string>
+    <string-array name="nhhr_avail_toilet_array">
+        <item>@string/nhhr_avail_toilet_1</item>
+        <item>@string/nhhr_avail_toilet_2</item>
+        <item>@string/nhhr_avail_toilet_3</item>
+        <item>@string/nhhr_avail_toilet_4</item>
+        <item>@string/nhhr_avail_toilet_5</item>
+        <item>@string/nhhr_avail_toilet_6</item>
+    </string-array>
+    <string name="nhhr_type_residential_area_other">Other type of residential area</string>
+    <string name="nhhr_fuel_cooking_other">Other Type of fuel used for Cooking</string>
+    <string name="nhhr_primary_water_other">Other Primary Source of Water</string>
+    <string name="nhhr_avail_electricity_other">Other availability of Electricity</string>
+    <string name="nhhr_avail_toilet_other">Other Availability of Toilet</string>
+    <string name="btn_frag_nhhr_to_ben">Continue to Beneficiary</string>
+    <string name="consent_alert_title">Consent Form</string>
+    <string name="add_head_of_family">ADD Head Of Family</string>
+    <string name="hh_no_members">Household EMPTY!</string>
+    <string name="add_head_of_family_message">Would you like to add <b>%1s</b> as a HoF Beneficiary ?</string>
+
+
+</resources>

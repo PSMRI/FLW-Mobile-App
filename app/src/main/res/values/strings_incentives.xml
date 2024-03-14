@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="incentive_fragment_title">Incentives</string>
+    <string name="incentive_processed">Processed \nTotal : ₹ %1d</string>
+    <string name="incentive_pending">Pending \nTotal : ₹ %1d</string>
+    <string name="incentive_amount">₹ %1d</string>
+    <string name="incentive_ben_details">Ben ID: %1d\nName: %2s</string>
+    <string name="incentive_activity_details">Activity: %1s</string>
+    <string name="incentive_last_updated">Last Updated on %1s</string>
+    <string name="asha_incentive_master_claim_form">ASHA Incentive Master Claim Form</string>
+    <string name="to">To</string>
+    <string name="sdm_ho_or_i_c_block_phc"><![CDATA[SDM&HO or i/c Block PHC]]></string>
+    <string name="sub_submission_of_asha_incentive_claim_for_the_period_from">"Sub: Submission of ASHA incentive claim for the period from "</string>
+    <string name="for_the_period_from">"for the period from "</string>
+    <string name="as_per_statement_mentioned_below">" as per statement mentioned below."</string>
+    <string name="with_reference_to_">"With reference to the subject cited above, I have to the honour to submit the ASHA incentive claims for the period from "</string>
+    <string name="as_per_statement">" as per statement mentioned below."</string>
+    <string name="to_small">" to "</string>
+    <string name="sir_madam">Sir/Madam,</string>
+
+    <string-array name="months">
+        <item>January</item>
+        <item>February</item>
+        <item>March</item>
+        <item>April</item>
+        <item>May</item>
+        <item>June</item>
+        <item>July</item>
+        <item>August</item>
+        <item>September</item>
+        <item>October</item>
+        <item>November</item>
+        <item>December</item>
+    </string-array>
+</resources>

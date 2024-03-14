@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/padding_normal"
+    tools:context=".ui.home_activity.all_ben.new_ben_registration.NewBenRegTypeFragment">
+
+    <TextView
+        android:id="@+id/tv_type_title_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding_normal"
+        android:text="@string/select_immunization_category"
+        android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="8dp" />
+
+    <RadioGroup
+        android:id="@+id/rg_ben_type"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/tv_type_title_text"
+        android:padding="@dimen/padding_normal">
+
+        <RadioButton
+            android:id="@+id/rb_children_path"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:buttonTint="?attr/colorPrimary"
+            android:padding="@dimen/padding_normal"
+            android:text="@string/children"
+            android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+
+        <RadioButton
+            android:id="@+id/rb_mother_path"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:buttonTint="?attr/colorPrimary"
+            android:padding="@dimen/padding_normal"
+            android:text="@string/mother"
+            android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+    </RadioGroup>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_continue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/rg_ben_type"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/margin_normal"
+        android:text="@string/btn_continue_text"
+        android:textColor="?attr/colorOnPrimary" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

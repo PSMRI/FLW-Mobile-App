@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="btn_text_frag_home_nhhr">नया घरेलू पंजीकरण</string>
+    <string name="no_records_found">कोई लाभार्थी प्रदर्शित करने के लिए नहीं। कृपया लाभार्थियों का पंजीकरण शुरू करें</string>
+    <string name="household_search">घरेलू सर्च</string>
+
+    <string name="rv_item_hh_ph_1">H.H.I.D : </string>
+    <string name="rv_item_hh_ph_2">परिवार के मुखिया का नाम :</string>
+    <string name="rv_item_hh_ph_3">उपनाम : </string>
+    <string name="hh_members_text">सदस्यों</string>
+    <string name="btn_rv_item_hh_add_ben">लाभार्थी जोड़ें</string>
+
+    <string name="frag_nhhr_title">नया घरेलू पंजीकरण</string>
+
+    <string name="nhhr_title_page_1">पारिवारिक विवरण</string>
+    <string name="nhhr_title_page_2">घरेलू विवरण</string>
+    <string name="nhhr_title_page_3">घरेलू सुविधाएं</string>
+
+    <string name="nhhr_first_name_hof">परिवार के मुखिया का नाम</string>
+    <string name="nhhr_last_name_hof">अंतिम नाम / उपनाम</string>
+    <string name="nhhr_mob_no_hof">परिवार के मुखिया का मोबाइल नंबर</string>
+    <string name="nhhr_house_no">मकान नंबर</string>
+    <string name="nhhr_ward_no">वार्ड नंबर</string>
+    <string name="nhhr_ward_name">वार्ड का नाम</string>
+    <string name="nhhr_mohalla_name">मोहल्ला का नाम</string>
+    <string name="nhhr_poverty_line">गरीबी रेखा</string>
+    <string-array name="nhhr_poverty_line_array">
+        <item>एपीएल</item>
+        <item>बीपीएल</item>
+        <item>पता नहीं</item>
+    </string-array>
+    <string name="btn_frag_nhhr_prev">previous</string>
+    <string name="btn_frag_nhhr_next">next</string>
+    <string name="nhhr_type_residential_area">आवासीय क्षेत्र का प्रकार</string>
+    <string name="nhhr_type_residential_area_1">चयन कीजिए</string>
+    <string name="nhhr_type_residential_area_2">ग्रामीण</string>
+    <string name="nhhr_type_residential_area_3">शहरी</string>
+    <string name="nhhr_type_residential_area_4">आदिवासी</string>
+    <string name="nhhr_type_residential_area_5">Tea Garden</string>
+
+    <string-array name="nhhr_type_residential_area_array">
+        <item>@string/nhhr_type_residential_area_1</item>
+        <item>@string/nhhr_type_residential_area_2</item>
+        <item>@string/nhhr_type_residential_area_3</item>
+        <item>@string/nhhr_type_residential_area_4</item>
+        <item>@string/nhhr_type_residential_area_5</item>
+
+    </string-array>
+    <string name="nhhr_type_of_house">घर का प्रकार</string>
+    <string name="nhhr_type_of_house_1">इनमें से कोई भी नहीं</string>
+    <string name="nhhr_type_of_house_2">कच्चा घर</string>
+    <string name="nhhr_type_of_house_3">पक्का घर</string>
+    <string name="nhhr_type_of_house_4">अन्य</string>
+    <string-array name="nhhr_type_of_house_array">
+        <item>@string/nhhr_type_of_house_1</item>
+        <item>@string/nhhr_type_of_house_2</item>
+        <item>@string/nhhr_type_of_house_3</item>
+        <item>@string/nhhr_type_of_house_4</item>
+    </string-array>
+    <string name="nhhr_house_own">घर का स्वामित्व</string>
+    <string-array name="nhhr_house_own_array">
+        <item>हाँ</item>
+        <item>नहीं</item>
+    </string-array>
+    <string name="nhhr_separate_kitchen">अलग रसोई</string>
+    <string-array name="nhhr_separate_kitchen_array">
+        <item>हाँ</item>
+        <item>नहीं</item>
+    </string-array>
+    <string name="nhhr_fuel_cooking">खाना पकाने के लिए किस प्रकार के ईंधन का उपयोग किया जाता है ?</string>
+    <string name="nhhr_fuel_cooking_1">जलाने वाली लकड़ी</string>
+    <string name="nhhr_fuel_cooking_2">फसल के बचे हुए अवशेष</string>
+    <string name="nhhr_fuel_cooking_3">गोबर के उपले</string>
+    <string name="nhhr_fuel_cooking_4">कोयला</string>
+    <string name="nhhr_fuel_cooking_5">मिट्टी का तेल (केरोसिन)</string>
+    <string name="nhhr_fuel_cooking_6">रसोई गैस</string>
+    <string name="nhhr_fuel_cooking_7">अन्य</string>
+    <string-array name="nhhr_fuel_cooking_array">
+        <item>@string/nhhr_fuel_cooking_1</item>
+        <item>@string/nhhr_fuel_cooking_2</item>
+        <item>@string/nhhr_fuel_cooking_3</item>
+        <item>@string/nhhr_fuel_cooking_4</item>
+        <item>@string/nhhr_fuel_cooking_5</item>
+        <item>@string/nhhr_fuel_cooking_6</item>
+        <item>@string/nhhr_fuel_cooking_7</item>
+    </string-array>
+    <string name="nhhr_primary_water">पानी का प्राथमिक स्रोत</string>
+    <string name="nhhr_primary_water_1">नल का पानी</string>
+    <string name="nhhr_primary_water_2">घर के भीतर हैंडपंप</string>
+    <string name="nhhr_primary_water_3">घर के बाहर हैंडपंप</string>
+    <string name="nhhr_primary_water_4">कुंआ</string>
+    <string name="nhhr_primary_water_5">टंकी</string>
+    <string name="nhhr_primary_water_6">नदी</string>
+    <string name="nhhr_primary_water_7">तालाब</string>
+    <string name="nhhr_primary_water_8">अन्य</string>
+    <string-array name="nhhr_primary_water_array">
+        <item>@string/nhhr_primary_water_1</item>
+        <item>@string/nhhr_primary_water_2</item>
+        <item>@string/nhhr_primary_water_3</item>
+        <item>@string/nhhr_primary_water_4</item>
+        <item>@string/nhhr_primary_water_5</item>
+        <item>@string/nhhr_primary_water_6</item>
+        <item>@string/nhhr_primary_water_7</item>
+        <item>@string/nhhr_primary_water_8</item>
+    </string-array>
+
+    <string name="nhhr_avail_electricity">बिजली की उपलब्धता</string>
+    <string name="nhhr_avail_electricity_1">बिजली की आपूर्ति</string>
+    <string name="nhhr_avail_electricity_2">विद्युत जनरेटर</string>
+    <string name="nhhr_avail_electricity_3">सौर ऊर्जा</string>
+    <string name="nhhr_avail_electricity_4">मिट्टी तेल का लैंप/चिमनी/लालटेन</string>
+    <string name="nhhr_avail_electricity_5">अन्य</string>
+    <string-array name="nhhr_avail_electricity_array">
+        <item>@string/nhhr_avail_electricity_1</item>
+        <item>@string/nhhr_avail_electricity_2</item>
+        <item>@string/nhhr_avail_electricity_3</item>
+        <item>@string/nhhr_avail_electricity_4</item>
+        <item>@string/nhhr_avail_electricity_5</item>
+    </string-array>
+    <string name="nhhr_avail_toilet">शौचालय की उपलब्धता</string>
+    <string name="nhhr_avail_toilet_1">बहते पानी के साथ फ्लश शौचालय</string>
+    <string name="nhhr_avail_toilet_2">पानी के बिना फ्लश शौचालय</string>
+    <string name="nhhr_avail_toilet_3">पानी की आपूर्ति के साथ गड्ढा शौचालय</string>
+    <string name="nhhr_avail_toilet_4">पानी की आपूर्ति के बिना गड्ढे शौचालय</string>
+    <string name="nhhr_avail_toilet_5">अन्य</string>
+    <string name="nhhr_avail_toilet_6">इनमें से कोई भी नहीं</string>
+    <string-array name="nhhr_avail_toilet_array">
+        <item>@string/nhhr_avail_toilet_1</item>
+        <item>@string/nhhr_avail_toilet_2</item>
+        <item>@string/nhhr_avail_toilet_3</item>
+        <item>@string/nhhr_avail_toilet_4</item>
+        <item>@string/nhhr_avail_toilet_5</item>
+        <item>@string/nhhr_avail_toilet_6</item>
+    </string-array>
+    <string name="nhhr_type_residential_area_other">कृपया आवासीय क्षेत्र का प्रकार दर्ज करें</string>
+    <string name="nhhr_fuel_cooking_other">खाना पकाने के लिए किस प्रकार के ईंधन का उपयोग किया जाता है ?</string>
+    <string name="nhhr_primary_water_other">पीने के पानी के स्रोत में प्रवेश करें</string>
+    <string name="nhhr_avail_electricity_other">बिजली की उपलब्धता दर्ज करें</string>
+    <string name="nhhr_avail_toilet_other">शौचालय की उपलब्धता दर्ज करें</string>
+    <string name="btn_frag_nhhr_to_ben">लाभार्थी रजिस्टर करने के लिए जारी रखें</string>
+    <string name="consent_alert_title">कृपया सहमति फॉर्म की जांच करें</string>
+    <string name="add_head_of_family">ADD Head Of Family</string>
+    <string name="add_head_of_family_message">Would you like to add <b>%1s</b> as a HoF Beneficiary ?</string>
+
+
+</resources>

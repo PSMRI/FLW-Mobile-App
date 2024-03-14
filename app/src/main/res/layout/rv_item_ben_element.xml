@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="fieldTitle"
+            type="String" />
+        <variable
+            name="field"
+            type="String" />
+
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:showIn="@layout/rv_item_ben"
+        android:padding="@dimen/padding_small">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tv_ph"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{fieldTitle}"
+            android:textColor="?attr/colorOnPrimary"
+            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+            android:textStyle="italic"
+            android:layout_alignParentTop="true" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tv_val"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="?attr/colorOnPrimary"
+            android:text="@{field}"
+            android:layout_below="@id/tv_ph"
+            tools:text="01 Apr 2021" />
+
+    </RelativeLayout>
+</layout>
+            
+            
+            
+        

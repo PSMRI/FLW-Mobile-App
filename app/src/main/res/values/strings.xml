@@ -1,71 +1,113 @@
 <resources>
-    <string name="app_name">Sakhi</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_home">HomeActivity</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
-    <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
+    <string name="app_name" translatable="false">Sakhi</string>
 
-    <string name="menu_home">Home</string>
-    <string name="tv_text_welcome">Welcome</string>
-    <string name="tv_text_welcome_user">Welcome %s</string>
-    <string name="tv_text_sign_in">Log in to continue</string>
-    <string name="tv_text_select_language">Please Select Your language</string>
+    <!--    Pref-->
+    <string name="PREF_NAME" translatable="false">Sakhi-pref-1</string>
+    <string name="PREF_D2D_API_KEY" translatable="false">JWT-Token_A</string>
+    <string name="PREF_primary_API_KEY" translatable="false">JWT-Token_B</string>
+    <string name="PREF_rem_me_uname" translatable="false">user-name-local-saved</string>
+    <string name="PREF_rem_me_pwd" translatable="false">password-local-saved</string>
+    <string name="PREF_rem_me_state" translatable="false">state_user-local-saved</string>
+    <string name="PREF_location_record_entry" translatable="false">location-record</string>
+    <string name="PREF_user_entry" translatable="false">logged-in-user</string>
+    <string name="PREF_full_load_pull_progress" translatable="false">full_load_sync_pull_amrit</string>
+    <string name="PREF_first_pull_amrit_last_synced_page" translatable="false">full_load_sync_pull_amrit_first_sync_last_saved_page</string>
+    <string name="PREF_current_saved_language" translatable="false">Locale.Helper.Selected.Language</string>
+    <string name="PREF_current_dp_uri" translatable="false">DP_URI_cat</string>
 
-    <string name="text_english" translatable="false">English</string>
-    <string name="text_hindi" translatable="false">हिंदी</string>
-    <string name="text_assamese" translatable="false">অসমীয়া</string>
-    <string name="cd_assam_nhm_logo">ASSAM NHM_LOGO</string>
-    <string name="til_username_hint_text">Username</string>
-    <string name="til_password_hint_text">Password</string>
-    <string name="cb_login_remember_me_text">Remember me</string>
-    <string name="btn_login_forgot_password_text">Forgot Password?</string>
-    <string name="btn_login_text">Login</string>
-    <string name="btn_continue_text">Continue</string>
-    <string name="data_intent_login_2_home_new">NEW</string>
+    <string name="radio_title">%s<span> *</span></string>
+    <string name="radio_title_ds">%s<span> **</span></string>
+    <string name="tracking_date">Date of Visit</string>
+    <string name="mdsr_form">MDSR</string>
+    <string name="mdsr_district">District</string>
+    <string name="mdsr_state">State</string>
+    <string name="mdsr_month">Month</string>
+    <string name="mdsr_year">Year</string>
+    <string name="mdsr_name_deceased">Name of deceased</string>
+    <string name="mdsr_age">Age</string>
+    <string name="mdsr_date_of_deceased">Date of death</string>
+    <string name="mdsr_address">Address</string>
+    <string name="mdsr_husband_name">Husband’s name</string>
+    <string name="mdsr_cause">Cause of death</string>
+    <string name="mdsr_maternal">Maternal</string>
+    <string name="mdsr_non_maternal">Non-maternal</string>
+    <string name="mdsr_name_designation">Name/Designation</string>
+    <string name="mdsr_field_investigation">Date of field investigation</string>
+    <string name="mdsr_signature">Signature of MO I/C of the block:</string>
+    <string name="mdsr_ic_date">Date</string>
+    <string name="mdsr_reason_death">specify reasons</string>
+    <string name="mdsr_action">Action taken</string>
 
-    <string name="service_type_dd_state_text">State</string>
-    <string name="service_type_dd_district_text">District</string>
-    <string name="service_type_dd_block_text">Block</string>
-    <string name="service_type_dd_village_text">Village</string>
-    <string name="til_hint_selected_village">Selected Village</string>
-    <string name="home_icon_title_all_ben">All Beneficiaries</string>
-    <string name="home_icon_title_elig_coup">Eligible Couples</string>
-    <string name="home_icon_title_child_care">Child Care</string>
-    <string name="home_icon_title_mother_care">Mother Care</string>
-    <string name="home_icon_title_death_rep">Death Reports</string>
-    <string name="home_icon_title_gen_op">General OP Care</string>
-    <string name="home_icon_title_hrp_cases">HRP Cases</string>
-    <string name="home_icon_title_imm_due">Immunization Due</string>
-    <string name="home_icon_title_menopause_stage_list">Menopause Stage List</string>
-    <string name="home_icon_title_ncd">NCD</string>
-    <string name="home_icon_title_village_lvl_forms">Village Level Forms</string>
-    <string name="frag_service_type_title">Select Village</string>
-    <string name="frag_nhhr_title">New Household Registration</string>
-    <string name="home_icon_all_household">All Household List</string>
-    <string name="btn_text_frag_home_nhhr">New Household Registration</string>
+
+    <!--    HBNC-->
+    <string name="hbnc_baby_dead_alert">Cause of death to be reported to ANM/MPW/PHC for infant death review.</string>
+    <string name="hbnc_baby_gestational_age_alert">If child is born in less than 35 weeks, pay attention.</string>
+    <string name="hbnc_mother_dead_alert">Report to ANM/PHC for maternal death review.</string>
+    <string name="hbnc_mother_problem_alert">If yes, refer immediately to a hospital.</string>
+    <string name="hbnc_mother_num_eat_alert">If the mother does not eat full stomach or eat less than 4 times, advise mother to do so.</string>
+    <string name="hbnc_mother_num_pad_alert">If more than 5 pads, refer the mother to the hospital.</string>
+    <string name="hbnc_baby_warm_winter_alert">Advise the mother to do so, if not being done.</string>
+    <string name="hbnc_baby_fed_properly_alert">Advise the mother to do so, if not being done.</string>
+    <string name="hbnc_baby_cry_incessant_alert">Advise mother to feed the baby after every 2 hours.</string>
+    <string name="hbnc_baby_temp_alert">Temperature up to 102°F (38.9°C) - treat with paracetamol, and if the temperature is above it, refer to hospital.</string>
+    <string name="hbnc_mother_foul_discharge_alert">If yes, refer the mother to a hospital.</string>
+    <string name="hbnc_mother_speak_abnormal_fits_alert">If yes, refer the mother to a hospital.</string>
+    <string name="hbnc_mother_less_no_milk_alert">Ask the mother to feed the baby more often and counsel her for proper attachment and positioning during breastfeeding.</string>
+    <string name="hbnc_mother_breast_problem_alert">In case of cracked nipples, advise the mother to keep the breast clean and lubricated.</string>
+    <string name="hbnc_baby_eye_pus_alert">If there is pus in the eye then antibiotic ointment can be applied.</string>
+    <string name="hbnc_baby_weight_1_8_alert">Refer the baby to Sick New born care unit at the nearest health facility and also conduct extra home visits as per the high risk baby form. If the baby (low birth weight or normal) is not gaining weight then refer to SNCU at the nearest health facility.</string>
+    <string name="hbnc_baby_weight_2_5_alert">Advise the mother to provide extra warmth to the baby and feed the baby more frequently. If the baby (low birth weight or normal) is not gaining weight then refer to SNCU at the nearest health facility.</string>
+
+
+
+
+
+    <string name="title_activity_home" translatable="false">HomeActivity</string>
+    <string name="nav_header_desc" translatable="false">Navigation header</string>
+
     <string name="cd_icon_grid_icon">icon</string>
-    <string name="PREF_NAME">Sakhi-pref-1</string>
-    <string name="PREF_API_KEY">JWT-Token</string>
+    <string name="nav_item_1_text">Name : <b>%s</b></string>
+    <string name="nav_item_2_text">Username : <b>%s</b></string>
+    <string name="nav_item_3_text">User ID :  <b>%d</b></string>
+    <string name="nav_item_4_text">Version : %s</string>
     <string name="tv_required_text_asterisk">*</string>
+    <string name="rv_item_hh_entry_1">%1$d</string>
+    <string name="notification_sync_channel_name">Sync Data</string>
+    <string name="notification_sync_channel_description">Upload beneficiaries to Server</string>
+    <string name="notification_sync_channel_id">sakhi-sync0</string>
+    <string name="btn_submit">Submit</string>
+    <string name="long_to_string">%d</string>
+    <string name="ben_pending_sync">Pending Sync</string>
+    <string name="tv_reg_date_ph">Registration Date</string>
+    <string name="tv_ben_name_ph">Beneficiary Name</string>
+    <string name="tv_type_of_list">Type of List</string>
+    <string name="tv_rch_id">RCH ID</string>
+    <string name="tv_ben_surname">Beneficiary Surname</string>
+    <string name="tv_gender_ph">Gender</string>
+    <string name="tv_father_name_ph">Father Name</string>
+    <string name="tv_husband_name_ph">Husband Name</string>
+    <string name="tv_spouse_name_ph">Spouse Name</string>
+    <string name="tv_family_head_name_ph">Family Head Name</string>
+    <string name="tv_spouse">Spouse</string>
+    <string name="tv_ben_id_ph">Ben ID</string>
+    <string name="tv_mob_no_ph">Mobile Number</string>
+    <string name="tv_age_ph">Age</string>
+    <string name="tv_suspected_hrp_ph">Suspected HRP</string>
+    <string name="tv_imu_status_ph">Immunization Status</string>
+    <string name="tv_ncd_status_ph">NCD Status</string>
+    <string name="tv_tb_status_ph">TB Status</string>
+    <string name="iv_sync_state_tv">SYNC STATE</string>
 
 
-    <string name="rv_item_hh_entry_1">HHID \t\t\t\t\t\t\t\t\t\t\t\t: %1$d</string>
-    <string name="rv_item_hh_entry_2">Family Head Name \t: %1$s</string>
-    <string name="rv_item_hh_entry_3">Surname \t\t\t\t\t\t\t\t\t: %1$s</string>
-    <string name="nhhr_first_name_hof">First Name of Head of the family</string>
-    <string name="nhhr_last_name_hof">Last Name / Surname of head of the family</string>
-    <string name="nhhr_mob_no_hof">Mobile No of Head of Family</string>
-    <string name="nhhr_house_no">House No.</string>
-    <string name="nhhr_ward_no">Ward No.</string>
-    <string name="nhhr_ward_name">Ward Name</string>
-    <string name="nhhr_mohalla_name">Mohalla Name</string>
-    <string name="nhhr_poverty_line">Poverty Line</string>
+    <string name="version">2.0.0</string>
 
+    <string name="evac_patient_info">Patient Information </string>
+
+    <string name="immunization_dosage_count">%d/%d</string>
+    <string name="select_death_type">Select Beneficiary Death Type</string>
+    <string name="death_type_cdr">CDR (Child Death Review)</string>
+    <string name="death_type_mdsr">MDSR (Maternal Death Surveillance and Response)</string>
+    <string name="continue_button">CONTINUE</string>
 
     <string-array name="temp_array">
         <item>Item 1</item>
@@ -75,4 +117,227 @@
         <item>Item 5</item>
         <item>Item 6</item>
     </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+
+
+    <string name="about_us">Piramal Swasthya is focusing on bridging the gaps of Public Healthcare by supplementing and complementing Government of India’s vision to meet Universal Health Care for all. Piramal Swasthya is one of the largest not-for-profit organizations in India - in the primary public health care space with a focus on Maternal health, Child and Adolescent Health, Non-communicable diseases. Piramal Swasthya has over a decade-long experience in operating several healthcare innovations at scale, which are addressing the primary health care needs of most underserved and marginalized populations across India. Piramal Swasthya is operational in 20 states in India through 35 innovative public health care delivery programs and has served more than 10.7 Crore beneficiaries thus far, with its services designed to reach the last village and the last household. Piramal Swasthya employs 2260 employees including 250 medical doctors who work around the core value of Seva Bhav (beneficiary-centricity) through an outcome oriented approach. Over the last twelve years, the focus has been on, Building platforms for sustainable impact at scale, Innovations to scale as a journey, Influencing policies, governance, and accountability of the public health care system as a knowledge and implementation partner of the NITI Aayog. Innovation in the form of intervention design, modelling, piloting and scaling-up those pilots has been an approach at Piramal Swasthya. Piramal Swasthya is committed to make primary healthcare not only affordable, accessible and available to all, but also to ensure that it is complete, continuous and comprehensive.</string>
+    <string name="about_us_powered">Powered By</string>
+    <string name="text_help"> <b>Q - Is this app available offline?</b> \n Yes, once the app is downloaded and login is completed, you can use the app offline to collect the data. Please not for downloading and first login, internet is required. \n\n
+        <b>Q - Is it mandatory to fill all the details?</b> \n No, it is not mandatory to fill all the details. But there are few fields which are marked by asterisk (star-shaped symbol * ) and it is mandatory to fill them otherwise you will not be able submit the details. \n\n
+        <b>Q - What does Sync Back option do?</b> \n On clicking the Sync Back option, the screen will show household pending records, beneficiary pending records, and CBAC records which are not synced. After clicking on OK button all the data which have been collected will be automatically to the server for storage. \n\n
+        <b>Q - What do Sync Status option do?</b> \n On clicking the Sync Status option, it will show records which are synced by the user. \n\n
+        <b>Q - How to navigate to next tab?</b> \n To navigate the next tabs \n
+        1. You can click on the tab name at the top of the app \n
+        2. You can swipe the screen and the next tab will appear (Swiping left and right is enabled in the app) \n\n
+        <b>Q - After navigating to the next tab, can we edit the data entered in the previous tabs?</b> \n
+        Yes, you can edit the data entered in any of the previous tabs. Once the data is submitted, you cannot edit it. \n\n
+        <b>Q - How to navigate to Piramal Swasthya site?</b> \n
+        On clicking on Hamburger menu, please click on the \'About Us\' option. On selecting this option, the user will be navigated to the Piramal Swasthya\'s website inside the app. \n\n
+        In case of any doubts and concerns, please write an e-mail to IT SUPPORT TEAM \n
+        <b>it.support@piramalfoundation.org</b>
+    </string>
+
+    <string name="hbnc_day_text">Day %1d</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hbnc_mother_temp_case_1">Treat mother to paracetamol.</string>
+    <string name="hbnc_mother_temp_case_2">Refer mother to Hospital.</string>
+    <string name="hbnc_baby_temp_97_alert">advice the mother to keep the baby warm by increasing the room temperature, providing skin to skin contact, putting the baby in a warm bag and frequently feeding the baby.</string>
+    <string name="hbnc_baby_temp_96_alert">advice the mother to keep the baby warm by increasing the room temperature, providing skin to skin contact, putting the baby in a warm bag and frequently feeding the baby. once the baby is warmer then clothe the baby and place in a pre warmed bed close to the mother.</string>
+    <string name="hbnc_baby_temp_99_alert">then look for signs of sepsis. In case signs of sepsis are not present manage only with 1/4th of a spoon of paracetamol and immediately refer to the SNCU at the nearest health facility.</string>
+
+    <string name="form_input_empty_error">Required field cannot be empty !</string>
+    <string name="form_input_upper_case_error">Only Alphabets in upper case allowed!</string>
+    <string name="form_input_missing_entry_error">Field must contain %1d digits.</string>
+    <string name="form_input_alphabet_space_only_error">Only Alphabets and whitespace allowed!</string>
+    <string name="form_input_alphabet_special_only_error">Only Alphabets and special characters allowed!</string>
+    <string name="form_input_min_limit_error">%1s should be greater than or equal to %2d</string>
+    <string name="form_input_alph_numeric_space_only_error">Only Alphabets and Numerics allowed!</string>
+    <string name="form_input__no_alpha_space_error">No Alphabets or spaces allowed!</string>
+    <string name="form_input_digit_only_error">Only Digits allowed!</string>
+    <string name="form_input_min_limit_error_decimal">%1s should be greater than or equal to %2.1f</string>
+    <string name="form_input_max_limit_error">%1s should be lesser than or equal to %2d</string>
+    <string name="form_input_max_limit_error_decimal">%1s should be lesser than or equal to %2.1f</string>
+    <string name="form_input_error_invalid_mobile">Invalid Mobile Number !</string>
+    <string name="form_input_error_invalid_rch">Invalid RCH ID !</string>
+    <string name="form_input_error_invalid_mcp">Invalid MCP Number !</string>
+    <string name="form_input_error_invalid_aadhar">Invalid Aadhaar Number !</string>
+    <string name="no_records_found_hh">No Household records found. Please start registering households by clicking on the button below.</string>
+    <string name="something_went_wrong_nunable_to_connect_to_server_ntry_again_later">Something went wrong !\nUnable to connect to server !\nTry again later!</string>
+    <string name="try_again">Try Again!</string>
+    <string name="version_2_0_0">APK Version 7.1.35</string>
+<!--    <string name="disagree">DISAGREE</string>-->
+<!--    <string name="agree">AGREE</string>-->
+    <string name="enter_pin">Enter PIN</string>
+    <string name="sync_in_progress">Sync in progress ...</string>
+    <string name="full_name">Full Name</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="transgender">Transgender</string>
+    <string name="other">Other</string>
+    <string name="state">State</string>
+    <string name="district">District</string>
+
+    <string name="view_household_information">View Household Information</string>
+    <string name="hello">Hello</string>
+    <string name="select_immunization_category">Select Immunization Category</string>
+    <string name="children">Children</string>
+    <string name="mother">Mother</string>
+    <string name="patient_information">Patient Information</string>
+    <string name="mother_name">Mother Name</string>
+    <string name="date_of_birth">Date of Birth</string>
+    <string name="previous_vaccine_details">Previous Vaccine Details</string>
+    <string name="due_serial">Due Serial</string>
+    <string name="saving_form">Saving Form ...</string>
+    <string name="previous">PREVIOUS</string>
+    <string name="next">NEXT</string>
+    <string name="edit">EDIT</string>
+    <string name="to_do_list">To Do List</string>
+    <string name="beneficiaries_due_for_anc">Beneficiaries due for ANC</string>
+    <string name="beneficiaries_due_for_immunization">Beneficiaries due for Immunization</string>
+    <string name="_0">0</string>
+    <string name="high_risk_cases">High Risk Cases</string>
+    <string name="high_risk_pregnant_women">High Risk Pregnant Women</string>
+    <string name="high_risk_non_pregnant_women">High Risk Non Preg Women</string>
+    <string name="high_risk_babies">High Risk Babies</string>
+    <string name="low_birth_weight_babies">Low Birth Weight Babies</string>
+    <string name="age">Age</string>
+    <string name="gender">Gender</string>
+    <string name="registration_date">Registration Date</string>
+    <string name="beneficiary_id">Beneficiary ID</string>
+    <string name="rch_id">RCH ID</string>
+    <string name="sync_to_local">SYNC TO LOCAL</string>
+    <string name="beneficiary_name">Beneficiary Name</string>
+    <string name="husband_s_name">Husband\'s Name</string>
+    <string name="weeks_of_pregnancy">Weeks Of Pregnancy</string>
+    <string name="pregnancy_weeks">Weeks Of Pregnancy</string>
+    <string name="anc_visits">ANC VISITS</string>
+    <string name="pnc_visits">PNC VISITS</string>
+    <string name="add_anc_visits">Add ANC visit</string>
+    <string name="add_pnc_visits">Add PNC visit</string>
+    <string name="id">ID</string>
+    <string name="no_of_children">No.of Children</string>
+    <string name="view_visit">View Visit</string>
+    <string name="add_visit">Add Visit</string>
+    <string name="household_id">Household ID</string>
+    <string name="contact_number">Contact Number</string>
+    <string name="kcuf">KCUF</string>
+    <string name="show_vaccines">Show Vaccines</string>
+    <string name="add_cbac">Add CBAC</string>
+    <string name="view_cbac">View CBAC</string>
+    <string name="view">VIEW</string>
+    <string name="home">Home</string>
+    <string name="sync_records">Sync Records</string>
+    <string name="about">About Us</string>
+
+    <string name="help">Help</string>
+    <string name="logout">Logout</string>
+    <string name="sync_status">Sync Status</string>
+    <string name="go_to_home">Go to Home</string>
+    <string name="change_language">Change Language</string>
+    <string name="kid_registration">Kid Registration</string>
+    <string name="adult_registration">Adult Registration</string>
+    <string name="pregnancy_list">Pregnancy List</string>
+    <string name="delivery_stage_list">Delivery Stage List</string>
+    <string name="pnc_mother_list">PNC Mother List</string>
+    <string name="reproductive_age_list">Reproductive Age List</string>
+    <string name="ncd_eligible_list">NCD Eligible List</string>
+    <string name="ncd_list">NCD List</string>
+    <string name="ncd_non_eligible_list">NCD Non-Eligible List</string>
+    <string name="ncd_priority_list">NCD Priority List</string>
+    <string name="survey_register">Survey Register</string>
+    <string name="all_household_list">All Household List</string>
+    <string name="beneficiaries_data">Beneficiaries Data</string>
+    <string name="cdr_list">CDR List</string>
+    <string name="mdsr_list">MDSR List</string>
+    <string name="mdsr">MDSR</string>
+    <string name="cdr">CDR</string>
+    <string name="pmsma">PMSMA</string>
+    <string name="pmjay_form">PMJAY Form</string>
+    <string name="household_members">Household Members</string>
+    <string name="fp_ot_register">FP-OT Register</string>
+    <string name="hbnc_day_list">Hbnc Day List</string>
+    <string name="hbnc">Hbnc</string>
+    <string name="visit_card">Visit Card</string>
+    <string name="hbnc_part_i">Hbnc Part I</string>
+    <string name="hbnc_part_ii">Hbnc Part II</string>
+    <string name="hbyc">HBYC</string>
+    <string name="hbyc_month_list">Hbyc Month List</string>
+    <string name="immunization">Immunization</string>
+<!--    <string name="child_immunization_list">Child Immunization List</string>-->
+    <string name="pregnancy_registration_form">Pregnancy Registration Form</string>
+    <string name="anc_visit">ANC Visit</string>
+    <string name="eligible_couple_list">Eligible Couple List</string>
+    <string name="eligible_couple_registration">Eligible Couple Registration</string>
+    <string name="eligible_couple_tracking_list">Eligible Couple Tracking List</string>
+    <string name="eligible_couple_tracking_form">Eligible Couple Tracking Form</string>
+    <string name="tb_screening_list">TB Screening List</string>
+    <string name="tb_suspected_list">Suspected TB cases</string>
+    <string name="tb_screening_form">TB Screening Form</string>
+    <string name="tb_suspected_form">Suspected TB case</string>
+    <string name="mother_immunization">Mother Immunization</string>
+    <string name="delivery_outcome">Delivery Outcome</string>
+    <string name="delivery_outcome_list">Delivery Outcome List</string>
+    <string name="infant_reg_list">Infant Reg List</string>
+    <string name="infant_reg">Infant Reg</string>
+<!--    <string name="child_reg_list">Child Reg List</string>-->
+<!--    <string name="child_reg">Child Reg.</string>-->
+    <string name="communicable_diseases">Communicable Diseases</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="sign_in">Sign In</string>
+    <string name="service_location">Service Location</string>
+
+<!--    <string name="wife_s_name">Wife\'s Name</string>-->
+<!--    <string name="spouse_s_name">Spouse\'s Name</string>-->
+<!--    <string name="age_at_marriage">Age At Marriage</string>-->
+<!--    <string name="date_of_marriage">Date of Marriage</string>-->
+<!--    <string name="father_s_name">Father\'s Name</string>-->
+<!--    <string name="mother_s_name">Mother\'s Name</string>-->
+<!--    <string name="mobile_number_of">Mobile Number Of</string>-->
+<!--    <string name="other_mobile_number_of">Other - Mobile Number of</string>-->
+<!--    <string name="form_name">Form Name</string>-->
+
+    <string name="save_successful">Save Successful</string>
+    <string name="something_wend_wong_contact_testing">Something wend wong! Contact testing!</string>
+    <string name="error_input">Error Input</string>
+    <string name="exit_application">Exit Application</string>
+    <string name="do_you_want_to_exit_application">Do you want to exit application</string>
+    <string name="downloading">Downloading …</string>
+    <string name="choose_application_language">Choose Application Language</string>
+    <string name="english">English</string>
+    <string name="hindi">हिन्दी</string>
+    <string name="assamese">অসমীয়া</string>
+    <string name="sync">SYNC</string>
+    <string name="tap_to_change">Tap to Change</string>
+    <string name="validate">Validate</string>
+    <string name="hbnc_daylist">Hbnc DayList</string>
+    <string name="hbyc_list">Hbyc List</string>
+    <string name="child_immunization">Child Immunization</string>
+    <string name="pregnancy_registration">Pregnancy Registration</string>
+    <string name="mother_immunizationlist">Mother ImmunizationList</string>
+    <string name="family_member_registration">Family Member Registration</string>
+    <string name="relation_with_hof">Relation with HOF</string>
+    <string name="add_family_member">Add Family Member</string>
+    <string name="app_native_name">উৎপ্ৰেৰণা</string>
+    <string name="non_pregnant_women_eligible_couple_section">Non-Pregnant Women (Eligible Couple) section</string>
+    <string-array name="sync_records">
+        <item>Beneficiary</item>
+        <item>CBAC</item>
+        <item>TB Screening</item>
+        <item>TB Suspected</item>
+        <item>EC Registration</item>
+        <item>EC Tracking</item>
+        <item>PW Registration</item>
+        <item>PW ANC</item>
+        <item>HRP Assess</item>
+        <item>HRP Track</item>
+        <item>HR NonPreg. Assess</item>
+        <item>HR NonPreg Track</item>
+    </string-array>
+    <!-- Eligible couple registration -->
+    <string-array name="ecr_gender_array">
+        <item name="nbr_gender_1">Male</item>
+        <item name="nbr_gender_2">Female</item>
+    </string-array>
+
 </resources>

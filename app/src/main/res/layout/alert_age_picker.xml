@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/margin_normal"
+    android:elevation="@dimen/padding_normal"
+    android:orientation="vertical"
+    app:cardCornerRadius="@dimen/padding_normal"
+    app:cardElevation="@dimen/padding_normal">
+    
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        >
+
+
+    <LinearLayout
+        android:id="@+id/date_number_picker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:layout_margin="@dimen/margin_normal"
+            android:orientation="vertical">
+
+            <NumberPicker
+                android:id="@+id/dialog_number_picker_years"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/dialog_number_picker_years"
+                android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                android:layout_centerHorizontal="true"
+                
+                android:text="Years" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_margin="@dimen/margin_normal"
+
+            android:orientation="vertical">
+
+            <NumberPicker
+                android:id="@+id/dialog_number_picker_months"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/dialog_number_picker_months"
+                android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+
+                android:layout_centerHorizontal="true"
+                android:text="Months" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_margin="@dimen/margin_normal"
+
+            android:orientation="vertical">
+
+            <NumberPicker
+                android:id="@+id/dialog_number_picker_days"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/dialog_number_picker_days"
+                android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+
+                android:layout_centerHorizontal="true"
+                android:text="Days" />
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:padding="@dimen/padding_normal"
+        app:layout_constraintStart_toStartOf="@id/date_number_picker"
+        app:layout_constraintEnd_toEndOf="@id/date_number_picker"
+        app:layout_constraintTop_toBottomOf="@+id/date_number_picker">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_ok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:enabled="true"
+            android:text="@string/ok"
+            android:textColor="?attr/colorOnPrimary" 
+            android:layout_alignParentStart="true"/>
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel"
+            android:textColor="?attr/colorOnPrimary"
+            android:layout_alignParentEnd="true"
+
+ />
+    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

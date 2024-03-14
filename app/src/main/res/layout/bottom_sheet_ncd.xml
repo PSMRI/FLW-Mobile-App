@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_imm_cat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:itemCount="4"
+        tools:listitem="@layout/rv_item_ncd_cbac_element" />
+
+
+<!--    <Button-->
+<!--        android:id="@+id/btn_add_new"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:drawableLeft="@drawable/ic_add_circle"-->
+<!--        android:layout_gravity="center_horizontal"-->
+<!--        android:backgroundTint="?attr/colorPrimary"-->
+<!--        android:textColor="?attr/colorOnPrimary"-->
+<!--        app:drawableTint="?attr/colorOnPrimary"-->
+<!--        android:text="Add New"/>-->
+
+</FrameLayout>

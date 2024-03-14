@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="verify_aadhaar_number">আধাৰ নম্বৰ পৰীক্ষা কৰক</string>
+    <string name="verify_mobile_number">"ম'বাইল নম্বৰ পৰীক্ষা কৰক</string>
+    <string name="enter_otp">OTP ভৰ্তি কৰক</string>
+    <string name="verify_otp">OTP পৰীক্ষা কৰক</string>
+    <string name="resend_otp">OTP পুনৰ পঠিৱা দিয়ক</string>
+    <string name="exit">প্ৰস্থান</string>
+    <string name="timer">সময়মান</string>
+    <string name="something_went_wrong_nunable_to_connect_to_server_ntry_again_later">"এতিয়া হোৱা যায় নিষ্কৰ্ষ কৰিব পৰা নহয় !\nচাৰ্ভাৰলৈ সংযোগ নহ'ব পৰা আছে !\nপৰা পিছত চেষ্টা কৰক !</string>
+    <string name="try_again">পুনৰ চেষ্টা কৰক</string>
+    <string name="aadhaar">আধাৰ</string>
+    <string name="asha">আশা</string>
+    <string name="gov">সৰকাৰ</string>
+    <string name="enter_aadhaar_number">আধাৰ নম্বৰ ভৰ্তি কৰক</string>
+    <string name="aadhaar_number">আধাৰ নম্বৰ</string>
+    <string name="generate_otp">OTP উৎপন্ন কৰক</string>
+    <string name="pid">পিআইডি</string>
+    <string name="generate_abha">ABHA উৎপন্ন কৰক</string>
+    <string name="_30">৩০</string>
+    <string name="date">তাৰিখ</string>
+    <string name="abha_number_generated_successfully">"ABHA নম্বৰ সফলতাৰে উৎপন্ন কৰা হ'ল</string>
+    <string name="name">নাম :</string>
+    <string name="abha_number">ABHA নম্বৰ :</string>
+    <string name="linked_to_beneficiary">লাভানীৰ সৈতে সংযোজিত</string>
+    <string name="do_you_want_to_download_the_abha_card">আপুনি ABHA কাৰ্ড ডাউনলোড কৰিব বুলিলে?</string>
+    <string name="yes">হোৱ</string>
+    <string name="no">নহয়</string>
+    <string name="submit">জমা দিয়ক</string>
+    <string name="enter_mobile_number">"ম'বাইল নম্বৰ ভৰ্তি কৰক</string>
+    <string name="aadhaar_linked_mobile">"আধাৰ সংযোজিত ম'বাইল নম্বৰ অথবা অন্য ম'বাইল নম্বৰ</string>
+    <string name="mobile_number">"ম'বাইল নম্বৰ</string>
+    <string name="check_and_generate_otp">OTP পৰীক্ষা কৰি উৎপন্ন কৰক</string>
+    <string name="textview">টেক্সট ভিউ</string>
+    <string name="download_abha_channel_id">ABHA কাৰ্ড ডাউনলোড কৰা হৈছে</string>
+    <string name="generate_abha_id">ABHA নম্বৰ উৎপন্ন কৰক</string>
+    <string name="create_abha_number">ABHA নম্বৰ উৎপন্ন কৰক</string>
+    <string name="aadhar_consent_text">মই ইয়াত ঘোষণা কৰিছো যে মই এটা কৰণি প্ৰক্ৰিয়াৰ বাবে ব্যক্তিক আধাৰ নম্বৰ ব্যৱহাৰ কৰি এটা ABHA নম্বৰ সৃষ্টি কৰিবলৈ পৰা সম্মতি দিছো</string>
+    <string name="aadhar_disclaimer_consent_disclaimer">ABHA নম্বৰ সৃষ্টিৰ বাবে সম্মতি</string>
+    <string name="abha">ABHA</string>
+    <string name="aadhar_disclaimer_consent_text">"মই, ইয়াত ঘোষণা কৰিছো যে মই উপযুক্ত পৰা সময়ত আমাৰ বাংলাৰ পৰা আধাৰ নম্বৰ আৰু UIDAI দ্বাৰা প্ৰদান কৰা জনসংখ্যাত্তৰ তথ্য ABHA নম্বৰ সৃষ্টি কৰিবলৈ আমি স্বেচ্ছাসেয়া সম্মতি দিয়া। মোৰ ABHA নম্বৰটো আয়োগ সেৱাসমূহ বিসৰ্জন সম্মৰ্পকৰ বাবে ব্যৱহাৰ হব বিচাৰে।\n\nআগ্ৰনীত, মই জানিছো যে আমাৰ ব্যক্তিগত চিনসংখ্যাত্তৰ তথ্য (নাম, ঠাইবীয়া ঠিকনা, বয়স, জন্ম তাৰিখ, লিংগ আৰু ফটোগ্ৰাফ) ন্যাচণীয় হয় সেয়াকৈ ন্যাচণীয় হয়। এইটা হ'ল NDHE-ত কাম কৰা দলিল সৰম্পকীয় পৰ্যাপ্ত আইনী অনুমতিৰ অধীনত এটি বৰুয়াবোৰ অন্য চিনসংখ্যাত্তৰ সৈতে সংযোজন থাকা সকলো কাৰ্যৰ সম্মতিৰ অনুমতি দিয়া হ'ব বলে মই জানিছো।</string>
+    <string name="d_o_b">জন্ম তাৰিখ</string>
+    <string name="beneficiary_abha_number">সুবিধাভোগীৰ অভা নম্বৰ।</string>
+    <string name="offline">অফলাইন</string>
+    <string name="check_circle">চেক চিহ্ন</string>
+    <string name="name_">নাম :</string>
+    <string name="abha_number_">অভা নম্বৰ :</string>
+    <string name="aadhaar_linked_mobile_number_or_other_mobile_number">আধাৰ সংযুক্ত মোবাইল নম্বৰ অথবা অন্য মোবাইল নম্বৰ</string>
+    <string name="individual_s_consent_for_creation_of_abha_number">অভা নম্বৰৰ সৃষ্টি বাবে ব্যক্তিৰ সম্মতি।</string>
+    <string name="validate_fp">মান্যতা পৰীক্ষা কৰক</string>
+    <string name="generating_abha_for">"অভা নম্বৰ সৃষ্টি কৰা হ'ল:</string>
+    <string name="otp_sent_to">"OTP পঠাই দিয়া হ'ল "</string>
+    <string name="otp_was_resent">"OTP পুনঃপ্ৰেৰণ হ'ল।</string>
+    <string name="do_you_want_to_go_back">আপুনি পিছলৈ যাবলৈ বিচাৰে নেকি?</string>
+    <string name="downloading_abha_card">অভা কাৰ্ড ডাউনলোড হৈছে</string>
+
+</resources>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="hbycIcom"
+            type="org.piramalswasthya.sakhi.model.HbycIcon" />
+
+        <variable
+            name="clickListener"
+            type="org.piramalswasthya.sakhi.adapters.HbycMonthGridAdapter.HbycIconClickListener" />
+
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_icon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/padding_small"
+        android:padding="@dimen/padding_normal"
+        android:background="?attr/selectableItemBackground"
+
+        android:clickable="true"
+        android:elevation="@dimen/padding_normal"
+        android:focusable="true"
+        android:onClick="@{()-> clickListener.onClicked(hbycIcom)}"
+        app:cardCornerRadius="@dimen/padding_normal"
+        app:cardElevation="@dimen/padding_normal">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:orientation="vertical"
+                tools:background="@android:color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+
+                <ImageButton
+                    android:id="@+id/imageButton"
+                    syncState="@{hbycIcom.syncState}"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:scaleType="centerInside"
+                    android:layout_margin="@dimen/margin_normal"
+                    android:background="?attr/selectableItemBackground"
+                    android:layout_gravity="top|end"
+                    app:srcCompat="@drawable/ic_synced" />
+
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@{hbycIcom.title}"
+
+                    android:layout_gravity="center"
+                    android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+                    android:textColor="@android:color/white"
+                    tools:text="asdfsdfsdf 1" />
+            </LinearLayout>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.cardview.widget.CardView>
+</layout>

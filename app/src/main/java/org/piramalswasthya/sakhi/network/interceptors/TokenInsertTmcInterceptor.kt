@@ -4,7 +4,7 @@ import okhttp3.Interceptor
 import okhttp3.Response
 import timber.log.Timber
 
-class TokenInsertTmcInterceptor : Interceptor{
+class TokenInsertTmcInterceptor : Interceptor {
     companion object {
         private var TOKEN: String = ""
         fun setToken(iToken: String) {

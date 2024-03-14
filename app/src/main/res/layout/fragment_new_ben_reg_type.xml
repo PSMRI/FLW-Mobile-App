@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/padding_normal"
+    tools:context=".ui.home_activity.all_ben.new_ben_registration.NewBenRegTypeFragment">
+
+    <TextView
+        android:id="@+id/tv_type_title_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding_normal"
+        android:text="@string/frag_new_ben_type_select_text"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
+
+    <RadioGroup
+        android:id="@+id/rg_ben_type"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/tv_type_title_text"
+        android:padding="@dimen/padding_normal">
+
+        <RadioButton
+            android:id="@+id/rb_kid_path"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/padding_normal"
+            android:text="@string/frag_new_ben_type_kid_text"
+            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+            android:buttonTint="?attr/colorPrimary" />
+
+        <RadioButton
+            android:id="@+id/rb_adult_path"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/padding_normal"
+            android:text="@string/frag_new_ben_type_adult_text"
+            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+            android:buttonTint="?attr/colorPrimary" />
+    </RadioGroup>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_continue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/rg_ben_type"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/margin_normal"
+        android:text="@string/btn_continue_text"
+        android:textColor="?attr/colorOnPrimary" />
+
+    <TextView
+        android:id="@+id/error_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding_normal"
+        android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+        android:textColor="@android:color/holo_red_light"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rg_ben_type"
+        tools:text="Warning : ID running low, connect to internet at the earliest" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

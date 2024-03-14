@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="navigation_drawer_open">নেভিগেচন ড্ৰয়াৰ খোলক</string>
+    <string name="navigation_drawer_close">নেভিগেচন ড্ৰয়াৰ বন্ধ কৰক</string>
+    <!--   To Be Deleeted-->
+    <string name="title_activity_home" translatable="false">HomeActivity</string>
+    <string name="nav_header_desc" translatable="false">Navigation header</string>
+
+    <string name="btn_continue_text">অগ্রসৰ হৈ যাওক</string>
+    <string name="service_type_dd_state_text">ৰাজ্য</string>
+    <string name="service_type_dd_district_text">জিলা</string>
+    <string name="service_type_dd_block_text">ব্লক</string>
+    <string name="service_type_dd_village_text">গাঁও</string>
+    <string name="til_hint_selected_village">চয়ন কৰা গাঁও</string>
+    <string name="frag_service_type_title">গাঁওৰ নিৰ্বাচন কৰক</string>
+    <string name="about_us">প"িৰামল স্বাস্থ্য সার্বজনীন স্বাস্থ্য বৃদ্ধি কৰাৰ পৰা গড়কীৰাৱৰ ঘপট সন্দৰ্শন কৰা আছে, যিটো ভাৰত সৰকাৰৰ লক্ষ্য সকলৰ বাবে সামীপ্য স্বাস্থ্য দেখৰ সম্পূৰ্ণ হ'ল আৰু যোগদান কৰা হ'ল, যাতে সকলোৱে সামীপ্য স্বাস্থ্য দেখৰ পূৰ্তি কৰিব পাৰে। পিৰামল স্বাস্থ্য ভাৰতত সবুজীৰ লক্ষ্য নলাকৰী সংস্থাত এটি - মাতৃ স্বাস্থ্য, শিশু আৰু কিশোৰ স্বাস্থ্য, অসংক্রামক রোগ বাবে শ্ৰেণীবদ্ধ বাচবোৰ দিকৰি যাওৱা কাম কৰাৰ বাবে এটি এটি প্ৰাথমিক সার্বজনীন স্বাস্থ্য যোজনাৰ উপৰত কথাই অসংশয়ী। পিৰামল স্বাস্থ্য পৰা দশকীয়া অবস্থা অৱস্থান অসমৰ অধীনত বাজৰ বৰ্গীয় জনগণৰ প্ৰাথমিক স্বাস্থ্য আৱশ্যকতাৰ উপৰ স্থিতি সম্পৰ্কভাৱে সলনি সলাই পৰা পৰিযোজনাৰ স্থিতি বাৰ পৰা হ'ল, যি ভাৰতত সবলৈ ন্যায্যতা কৰা বৃদ্ধি কৰা নাইমকাৰী সংগঠনত - ২০ বছৰৰ অন্তৰ্গত বাজৰ আৰু ৩৫ নবাচাৰি সার্বজনীন স্বাস্থ্য সেৱা সমূহৰ মাধ্যমে কৰা হ'ল আৰু এই পৰা ১০.৭ কৰোড় শ্ৰীৰকাৰীৰ পৰা সেৱা কৰা হ'ল, যি তাতে গুৰুত্ব দিলে যে তেওঁৰ সেৱাবাবে শেষ গাঁও আৰু শেষ ঘৰৰ দিক পৰা পৰ্যাৱৰণৰ সম্পূৰ্ণ সেৱা নিশ্চিত হৈছে। পিৰামল স্বাস্থ্যৰ বাবে ২২৬০ কৰ্মচাৰী থাকে, যাতে ২৫০ চিকিৎসা ডাক্তৰ থাকে, যি লাভার্থী-মুখী মৌল্য স্থাপন সুচীকৰণৰ আৰু ফলাফল-উদ্দেশ্যবাদী উপায়ে কাম কৰে। গত বারো বছৰৰ দিশত লক্ষ্য স্থাপন কৰা হৈছে, স্থায়ী প্ৰভাৱ পৰা মঞ্চ বানাব বাবে, মডেলিং, পিলটিং আৰু উম্মূখন প্ৰযুক্তি, নীতি, শাসন আৰু সার্বজনীন স্বাস্থ্য প্ৰণালীৰ দায়িত্ব, জ্ঞান আৰু কৰ্মৰ অনুযায়ী সহযোগী হৈ পৰা মঞ্চ হিচাপে পিৰামল স্বাস্থ্য। পিৰামল স্বাস্থ্য প্ৰাথমিক স্বাস্থ্য যত্ন নোলোৱা, প্ৰাপ্য আৰু সকলৰ বাবে নিশ্চিত কৰাৰ বাবে মন্তৱ্য দিছে।</string>
+    <string name="about_us_powered">পৰায়ণীত দ্বাৰা </string>
+    <string name="text_help">
+        <b>Q - এই অ্যাপ অফলাইনে উপলব্ধ আছে কি?</b>
+        \n হ্যাঁ, অ্যাপটি ডাউনলোড করা এবং লগইন করা হলে, আপনি অফলাইনে ডেটা সংগ্রহ করতে পারেন। দয়া করে নোটিশ করুন যে ডাউনলোড এবং প্রথম লগইনের জন্য ইন্টারনেট প্রয়োজন। \n\n
+        <b>Q - সব বিবরণ পূরণ করা আবশ্যক কি?</b> \n না, সব বিবরণ পূরণ করা আবশ্যক নয়। কিন্তু কিছু ফিল্ড * (তারকা আকৃতি) দ্বারা চিহ্নিত হয়েছে এবং তাদের পূরণ করা আবশ্যক, অন্যথায় আপনি বিবরণ জমা দিতে পারবেন না। \n\n
+        <b>Q - সিংক ব্যাক বিকল্পটি কি কাজ করে?</b> \n সিংক ব্যাক বিকল্পে ক্লিক করলে, স্ক্রিনে বাসাগৃহে অপেক্ষমাণ রেকর্ড, লাভকারী অপেক্ষমাণ রেকর্ড এবং সিব্যাক রেকর্ড দেখাবে, যা সিংক হোয়া নেই। OK বাটনে ক্লিক করার পরে, যে সমস্ত ডেটা আপনি সংগ্রহ করেছেন, স্বয়ংক্রিয়ভাবে সার্ভারে স্টোর হয়ে যাবে। \n\n
+        <b>Q - সিংক স্থিতি বিকল্পটি কি কাজ করে?</b> \n সিংক স্থিতি বিকল্পে ক্লিক করলে, ব্যবহারকারী দ্বারা সিংক করা রেকর্ডগুলি দেখাবে। \n\n
+        <b>Q - পরবর্তী ট্যাবে নেভিগেট করতে কীভাবে?</b> \n পরবর্তী ট্যাবে নেভিগেট করতে \n
+        1. আপনি অ্যাপের শীর্ষে ট্যাবের নামে ক্লিক করতে পারেন \n
+        2. আপনি স্ক্রিন সোয়াইপ করতে পারেন এবং পরবর্তী ট্যাব দেখা দেবে (অ্যাপে বাম থেকে ডানে সোয়াইপ করানোর সুযোগ আছে) \n\n
+        <b>Q - পরবর্তী ট্যাবে নেভিগেট করার পর, আমরা পূর্বের ট্যাবে দিয়ে এন্ট্রি করা ডেটা সম্পাদনা করতে পারি কি?</b> \n
+        হ্যাঁ, আপনি যেকোনো পূর্ববর্তী ট্যাবে দিয়ে এন্ট্রি করা ডেটা সম্পাদনা করতে পারেন। ডেটা একবার সাবমিট হওয়ার পর, আপনি তা সম্পাদনা করতে পারবেন না। \n\n
+        <b>Q - Piramal Swasthya সাইটে নেভিগেট করার জন্য কীভাবে?</b> \n
+<!--        হ্যামবার মেনুতে ক্লিক করার পর, দয়া করে 'আমাদের সম্পর্কে' বিকল্পে ক্লিক করুন। এই বিকল্পটি নির্বাচন করার পর, ব্যবহারকারীকে ঐপে প্রমাণিত প্রতিরূপে পোঁচানো হয়। \n\n-->
+        যদি কোনও সন্দেহ এবং চিংতা থাকে, তবে দয়া করে আইটি সাপোর্ট টিমকে একটি ইমেল লেখুন \n
+        <b>it.support@piramalfoundation.org</b>
+    </string>
+
+
+    <string name="cd_icon_grid_icon">চিহ্ন</string>
+    <string name="nav_item_1_text">নাম : <b>%s</b></string>
+    <string name="nav_item_2_text">ব্যৱহাৰকাৰী : <b>%s</b></string>
+    <string name="nav_item_3_text">ব্যৱহাৰকাৰী আইডি :  <b>%d</b></string>
+    <string name="nav_item_4_text">ভাৰ্সন : %s</string>
+    <string name="tv_required_text_asterisk">*</string>
+    <string name="rv_item_hh_entry_1">%1$d</string>
+    <string name="notification_sync_channel_name">তথ্য সময়সৰণি</string>
+    <string name="notification_sync_channel_description">ডেটা সাৰ্ভাৰলৈ সমৰ্পণ কৰক</string>
+    <string name="notification_sync_channel_id">sakhi-sync0</string>
+    <string name="btn_submit">জমা দিব</string>
+    <string name="long_to_string">%d</string>
+    <string name="tv_reg_date_ph">নিবন্ধনৰ তাৰিখ</string>
+    <string name="tv_ben_name_ph">উপকাৰীৰ নাম</string>
+    <string name="tv_type_of_list">তালিকাৰ প্ৰকাৰ</string>
+    <string name="tv_rch_id">RCH আইডি</string>
+    <string name="tv_ben_surname">উপকাৰীৰ বৰ্গীকৰণ</string>
+    <string name="tv_gender_ph">লিংগ</string>
+    <string name="tv_father_name_ph">পিতৃৰ নাম</string>
+    <string name="tv_family_head_name_ph">পৰিৱাৰৰ প্ৰধানৰ নাম</string>
+    <string name="tv_ben_id_ph">উপকাৰী আইডি</string>
+    <string name="tv_mob_no_ph">"ম'বাইল নম্বৰ</string>
+    <string name="tv_age_ph">বয়স</string>
+    <string name="tv_suspected_hrp_ph">সন্দেহভাৱ হাৰ্প</string>
+    <string name="tv_imu_status_ph">পৰিস্কৃতি স্থিতি</string>
+    <string name="tv_ncd_status_ph">এনচিডি স্থিতি</string>
+    <string name="tv_tb_status_ph">টিবি স্থিতি</string>
+    <string name="iv_sync_state_tv">সময়সৰণি স্থিতি</string>
+    <string name="version">2.0.0</string>
+    <string name="tv_text_select_village">দয়া করে নীচের গ্রাম নির্বাচন করুন।</string>
+    <string name="form_input_empty_error">"প্ৰয়োজনীয় ক্ষেত্ৰখন খালী হ’ব নোৱাৰে !</string>
+    <string name="form_input_upper_case_error">শুধুমাত্র বড় অক্ষরে অক্ষর অনুমোদিত!</string>
+    <string name="form_input_missing_entry_error">ঘরে %1d টি সংখ্যা থাকা আবশ্যক।</string>
+    <string name="form_input_alphabet_space_only_error">শুধুমাত্র বর্ণমালা এবং শূন্যস্থানের অক্ষর অনুমোদিত!</string>
+    <string name="form_input_min_limit_error">%1s অবশ্যই %2d এর সমান অথবা বেশি হতে হবে</string>
+    <string name="form_input_alph_numeric_space_only_error">শুধুমাত্র বর্ণমালা এবং সংখ্যাগুলি অনুমোদিত!</string>
+    <string name="form_input_min_limit_error_decimal">%1s অবশ্যই %2.1f এর সমান অথবা বেশি হতে হবে</string>
+    <string name="form_input_max_limit_error">%1s অবশ্যই %2d এর সমান অথবা কম হতে হবে</string>
+    <string name="form_input_max_limit_error_decimal">%1s অবশ্যই %2.1f এর সমান অথবা কম হতে হবে</string>
+    <string name="form_input_error_invalid_mobile">অবৈধ মোবাইল নম্বর !</string>
+    <string name="form_input_error_invalid_rch">অবৈধ RCH আইডি !</string>
+    <string name="form_input_error_invalid_mcp">অবৈধ MCP নম্বর !</string>
+    <string name="form_input_error_invalid_aadhar">অবৈধ আধার নম্বর</string>
+    <string name="no_records_found_hh">কোনও পরিবারের রেকর্ড পাওয়া যায়নি। দয়া করে নীচের বোতামে ক্লিক করে পরিবার নিবন্ধন শুরু করুন।</string>
+
+
+    <string name="tracking_date">দৰমাহাৰ তাৰিখ</string>
+    <string name="mdsr_form">MDSR</string>
+    <string name="mdsr_district">জিলা</string>
+    <string name="mdsr_state">ৰাজ্য</string>
+    <string name="mdsr_month">মাহ</string>
+    <string name="mdsr_year">বছৰ</string>
+    <string name="mdsr_name_deceased">মৃত্যুবৰণীৰ নাম</string>
+    <string name="mdsr_age">বয়স</string>
+    <string name="mdsr_date_of_deceased">মৃত্যুৰ তাৰিখ</string>
+    <string name="mdsr_address">ঠিকনা</string>
+    <string name="mdsr_husband_name">পৰাৰৰ নাম</string>
+    <string name="mdsr_cause">মৃত্যুৰ কাৰণ</string>
+    <string name="mdsr_maternal">মাতৃত্ব</string>
+    <string name="mdsr_non_maternal">মাতৃত্ব বয়স্ক নহয়</string>
+    <string name="mdsr_name_designation">নাম/পদবী</string>
+    <string name="mdsr_field_investigation">মাদক তথ্য জানোৱাকৈ তাৰিখ</string>
+    <string name="mdsr_signature">ব্লক MO I/Cৰ স্বাক্ষৰ:</string>
+    <string name="mdsr_ic_date">তাৰিখ</string>
+    <string name="mdsr_reason_death">কাৰণ নিৰ্দিষ্ট কৰক</string>
+    <string name="mdsr_action">পৰাৱৰ্তন কৰা হৈছে</string>
+
+    <string name="save_successful">সংরক্ষণ সফল</string>
+    <string name="something_wend_wong_contact_testing">কিবা অশুদ্ধ! পৰীক্ষণ কৰক!</string>
+    <string name="error_input">ভুল ইনপুট</string>
+    <string name="exit_application">অ্যাপ্লিকেশন প্ৰস্থান কৰক</string>
+    <string name="do_you_want_to_exit_application">আপুনি অপৰ্যাপ্ত আছে আপুনি অ্যাপ্লিকেশন প্ৰস্থান কৰিব বিচাৰিছে নেকি?</string>
+    <string name="downloading">ডাউনলোড হৈছে …</string>
+    <string name="choose_application_language">অ্যাপ্লিকেশনৰ ভাষা চয়ন কৰক</string>
+    <string name="english">English</string>
+    <string name="hindi">हिन्दी</string>
+    <string name="assamese">অসমীয়া</string>
+    <string name="sync">সময়সৰণি</string>
+    <string name="tap_to_change">স্পৰ্শ কৰক পৰিবৰ্তন কৰিবলৈ</string>
+    <string name="validate">যাচাই কৰক</string>
+    <string name="hbnc_daylist">HBNC দিনী তালিকা</string>
+    <string name="hbyc_list">HBYC তালিকা</string>
+    <string name="child_immunization">শিশু পৰিস্কৃতি</string>
+    <string name="pregnancy_registration">গৰ্ভাবস্থা নিবন্ধন</string>
+    <string name="mother_immunizationlist">মাতা পৰিস্কৃতি তালিকা</string>
+    <string name="age">বয়স</string>
+    <string name="gender">লিংগ</string>
+    <string name="registration_date">নিবন্ধনৰ তাৰিখ</string>
+    <string name="beneficiary_id">লাভকাৰী পৰিচয়পত্ৰ</string>
+    <string name="rch_id">RCH পৰিচয়পত্ৰ</string>
+    <string name="sync_to_local">স্থানীয়ত সমকৰণ কৰক</string>
+    <string name="beneficiary_name">লাভকাৰীৰ নাম</string>
+    <string name="husband_s_name">পৰাৰৰ নাম</string>
+    <string name="weeks_of_pregnancy">গৰ্ভাবস্থাৰ সপ্তাহ</string>
+    <string name="anc_visits">ANC দৰকাৰি</string>
+    <string name="id">পৰিচয়পত্ৰ</string>
+    <string name="no_of_children">শিশুৰ সংখ্যা</string>
+<!--    <string name="view_trackings">ট্ৰেকিং চাবলৈ</string>-->
+<!--    <string name="add_tracking">ট্ৰেকিং যোগ কৰক</string>-->
+    <string name="household_id">পৰাৰ পৰিচয়পত্ৰ</string>
+    <string name="contact_number">যোগাযোগ নম্বৰ</string>
+    <string name="kcuf">KCUF</string>
+    <string name="show_vaccines">পৰিস্কৃতি চাবলৈ</string>
+    <string name="add_cbac">CBAC যোগ কৰক</string>
+    <string name="view_cbac">CBAC চাবলৈ</string>
+    <string name="view">চাবলৈ</string>
+    <string name="home">ঘৰ</string>
+    <string name="sync_records">ৰেকৰ্ড সমকৰণ কৰক</string>
+    <string name="about">আমাৰ বিষয়ে</string>
+    <string name="help">সাহায্য</string>
+    <string name="logout">লগআউট</string>
+    <string name="sync_status">সিঙ্ক স্থিতি</string>
+    <string name="go_to_home">হোমলৈ যাওক</string>
+    <string name="change_language">ভাষা সলনি কৰক</string>
+    <string name="kid_registration">শিশু পঞ্জীকৰণ</string>
+    <string name="adult_registration">পৰাৰ্পৰ্ণৰ পঞ্জীকৰণ</string>
+    <string name="pregnancy_list">গৰ্ভাবস্থাৰ তালিকা</string>
+    <string name="delivery_stage_list">প্ৰসৱ প্ৰস্থান তালিকা</string>
+    <string name="pnc_mother_list">PNC মাৰ তালিকা</string>
+    <string name="reproductive_age_list">প্ৰজনন যোৱস্থ্য তালিকা</string>
+    <string name="ncd_eligible_list">NCD যোগ্য তালিকা</string>
+    <string name="ncd_list">NCD তালিকা</string>
+    <string name="ncd_non_eligible_list">NCD অযোগ্য তালিকা</string>
+    <string name="ncd_priority_list">NCD প্ৰাথমিকতা তালিকা</string>
+    <string name="all_household_list">সকলো পৰাৰ তালিকা</string>
+    <string name="beneficiaries_data">লাভকাৰীৰ ডাটা</string>
+    <string name="cdr_list">CDR তালিকা</string>
+    <string name="mdsr_list">MDSR তালিকা</string>
+    <string name="mdsr">MDSR</string>
+    <string name="cdr">CDR</string>
+    <string name="pmsma">PMSMA</string>
+    <string name="pmjay_form">PMJAY ফৰ্ম</string>
+    <string name="household_members">পৰাৰ সদস্য</string>
+    <string name="fp_ot_register">FP-OT ৰেজিষ্টাৰ</string>
+    <string name="hbnc_day_list">Hbnc দিনৰ তালিকা</string>
+    <string name="hbnc">Hbnc</string>
+    <string name="visit_card">দৰকাৰি কাৰ্ড</string>
+    <string name="hbnc_part_i">Hbnc পাৰ্ট I</string>
+    <string name="hbnc_part_ii">Hbnc পাৰ্ট II</string>
+    <string name="hbyc">HBYC</string>
+    <string name="hbyc_month_list">HBYC মাহৰ তালিকা</string>
+    <string name="immunization">পৰিস্কৃতি</string>
+    <string name="pregnancy_registration_form">গৰ্ভাবস্থাৰ পঞ্জীকৰণ ফৰ্ম</string>
+    <string name="anc_visit">ANC দৰকাৰি</string>
+    <string name="eligible_couple_list">যোগ্য জনপৰা পৰাৰ তালিকা</string>
+    <string name="eligible_couple_registration">যোগ্য জনপৰা পৰাৰ পঞ্জীকৰণ</string>
+    <string name="eligible_couple_tracking_list">যোগ্য জনপৰা পৰাৰ ট্ৰেকিং তালিকা</string>
+    <string name="eligible_couple_tracking_form">যোগ্য জনপৰা পৰাৰ ট্ৰেকিং ফৰ্ম</string>
+    <string name="tb_screening_list">TB স্ক্ৰীনিং তালিকা</string>
+    <string name="tb_suspected_list">TB সন্দেহভাৱিত তালিকা</string>
+    <string name="tb_screening_form">TB স্ক্ৰীনিং ফৰ্ম</string>
+    <string name="tb_suspected_form">TB সন্দেহভাৱিত ফৰ্ম</string>
+    <string name="mother_immunization">মাৰ পৰিস্কৃতি</string>
+    <string name="delivery_outcome">প্ৰসৱ সম্পূৰ্ণ হোৱাৰ ফল</string>
+    <string name="delivery_outcome_list">প্ৰসৱ সম্পূৰ্ণ হোৱাৰ ফল তালিকা</string>
+    <string name="infant_reg_list">শিশু পঞ্জীকৰণ তালিকা</string>
+    <string name="infant_reg">শিশু পঞ্জীকৰণ</string>
+    <string name="communicable_diseases">সংক্রামণ পৰামৰ্শযোগ্য পৰাৰ তালিকা</string>
+    <string name="dashboard">ডেশবৰ্ড</string>
+    <string name="sign_in">ছাইন ইন কৰক</string>
+    <string name="service_location">সেৱা অবস্থান</string>
+    <string-array name="sync_records">
+        <item>লাভানী</item>
+        <item>সিবিএসি</item>
+        <item>টি বি স্ক্রীনিং</item>
+        <item>টি বি সন্দেহভবিত</item>
+        <item>ইসি নিবন্ধন</item>
+        <item>ইসি ট্র্যাকিং</item>
+        <item>পি ডাব্লু নিবন্ধন</item>
+        <item>পি ডাব্লু এ এন সি</item>
+        <item>এইচআরপি মূল্যায়ন</item>
+        <item>এইচআরপি ট্র্যাক</item>
+        <item>এইচআর গৈরগর্ভ মূল্যায়ন</item>
+        <item>এইচআর গৈরগর্ভ ট্র্যাক</item>
+    </string-array>
+
+    <string-array name="temp_array">
+        <item>Item 1</item>
+        <item>Item 2</item>
+        <item>Item 3</item>
+        <item>Item 4</item>
+        <item>Item 5</item>
+        <item>Item 6</item>
+    </string-array>
+
+
+</resources>

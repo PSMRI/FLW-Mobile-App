@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="vaccine"
+            type="org.piramalswasthya.sakhi.model.VaccineDomain" />
+
+        <variable
+            name="benId"
+            type="Long" />
+
+        <variable
+            name="clickListener"
+            type="org.piramalswasthya.sakhi.model.VaccineClickListener" />
+
+    </data>
+
+    <ImageButton
+        vaccineState="@{vaccine.state}"
+        android:layout_width="@dimen/status_button_width"
+        android:layout_height="@dimen/status_button_width"
+        android:contentDescription="BLAH BLAH BLACK SHEEP"
+        android:onClick="@{()-> clickListener.onClick(benId,vaccine)}"
+        android:scaleType="centerCrop"
+        tools:src="@drawable/ic_check_circle" />
+
+</layout>

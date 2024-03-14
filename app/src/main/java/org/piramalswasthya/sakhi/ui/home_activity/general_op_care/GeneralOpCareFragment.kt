@@ -1,12 +1,13 @@
 package org.piramalswasthya.sakhi.ui.home_activity.general_op_care
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 
 class GeneralOpCareFragment : Fragment() {
 
@@ -27,6 +28,16 @@ class GeneralOpCareFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this).get(GeneralOpCareViewModel::class.java)
         // TODO: Use the ViewModel
+    }
+
+    override fun onStart() {
+        super.onStart()
+        activity?.let {
+            (it as HomeActivity).updateActionBar(
+                R.drawable.ic__general_op,
+                getString(R.string.icon_title_gop)
+            )
+        }
     }
 
 }

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding_normal">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:textColor="?attr/colorOnPrimary"
+            android:layout_gravity="bottom|center_horizontal"
+            android:padding="@dimen/padding_normal"
+            android:text="@string/non_pregnant_women_eligible_couple_section"
+            android:textAppearance="@style/TextAppearance.Material3.TitleMedium">
+        </TextView>
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_icon_grid_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:splitMotionEvents="false"
+        android:background="?attr/colorOnSecondary"
+        android:padding="@dimen/padding_small"
+        android:clipToPadding="false"
+        tools:itemCount="1"
+        tools:listitem="@layout/rv_item_icon_grid" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding_normal">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:textColor="?attr/colorOnPrimary"
+            android:layout_gravity="bottom|center_horizontal"
+            android:padding="@dimen/padding_normal"
+            android:text="@string/pregnant_women_pw_section"
+            android:textAppearance="@style/TextAppearance.Material3.TitleMedium">
+        </TextView>
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_icon_grid_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:splitMotionEvents="false"
+        android:background="?attr/colorOnSecondary"
+        android:padding="@dimen/padding_small"
+        android:clipToPadding="false"
+        tools:itemCount="1"
+        tools:listitem="@layout/rv_item_icon_grid" />
+
+</LinearLayout>
+
+</ScrollView>

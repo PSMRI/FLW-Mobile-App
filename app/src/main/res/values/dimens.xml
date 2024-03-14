@@ -4,11 +4,18 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="nav_header_vertical_spacing">8dp</dimen>
     <dimen name="nav_header_height">176dp</dimen>
-    <dimen name="fab_margin">16dp</dimen>.
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="padding_tiny">2dp</dimen>
     <dimen name="padding_small">4dp</dimen>
     <dimen name="padding_normal">8dp</dimen>
     <dimen name="padding_wide">16dp</dimen>
     <dimen name="margin_huge">32dp</dimen>
+    <dimen name="margin_big">16dp</dimen>
     <dimen name="margin_normal">8dp</dimen>
+    <dimen name="margin_small">4dp</dimen>
+    <dimen name="margin_narrow">2dp</dimen>
+    <dimen name="status_name_width">100dp</dimen>
+    <dimen name="status_button_width">60dp</dimen>
+    <dimen name="bottom_sheet_height">500dp</dimen>
 
 </resources>

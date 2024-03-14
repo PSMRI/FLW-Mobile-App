@@ -7,8 +7,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/padding_normal"
+    android:focusableInTouchMode="true"
+    android:animateLayoutChanges="false"
     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-    tools:listitem="@layout/rv_item_edit_text"
+    tools:listitem="@layout/rv_item_form_edit_text"
 
 
     />

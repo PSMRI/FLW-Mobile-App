@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hrp_dor">নিবন্ধনৰ তাৰিখ</string>
+    <string name="hrp_name">উপকাৰীৰ নাম</string>
+    <string name="hrp_dob">জন্মৰ তাৰিখ</string>
+    <string name="high_risk">হাই ৰিস্ক</string>
+    <string name="is_pregnant">গৰ্ভৱতী হয়</string>
+    <string name="age_in_years">বয়স (বছৰত)</string>
+    <string name="name_of_the_pw">গৰ্ভৱতী মহিলাৰ নাম</string>
+    <string name="blood_group">ব্লাড গ্ৰুপ</string>
+    <string name="contact_number_1">যোগাযোগ নম্বৰ ১</string>
+    <string name="contact_number_2">যোগাযোগ নম্বৰ ২</string>
+    <string name="sc_hwc_tg_hosp">এসসি/এইচডব্লিউসি/টিজি হাসপাতাল</string>
+    <string name="block">ব্লক</string>
+    <string name="bank_acc_no">বেংক একাউণ্ট নং</string>
+    <string name="nearest_24x7_phc">নিকটতম ২৪x৭ পি এইচ চি</string>
+    <string name="nearest_fru">নিকটতম FRU</string>
+    <string name="nearest_usg_centre">নিকটতম USG কেন্দ্ৰ:</string>
+    <string name="nearest_sc_hwc">নিকটতম SC/HWC</string>
+    <string name="blood_donors_identified_1">ৰক্তদাতা চিনাক্ত কৰা হৈছে ১</string>
+    <string name="blood_donors_identified_2">ৰক্তদাতা চিনাক্ত কৰা হৈছে ২</string>
+    <string name="birth_companion">জন্ম সহযোগী</string>
+    <string name="person_who_will_take_care_of_children_if_any_when_the_pw_is_admitted_for_delivery">গৰ্ভৱতী মহিলাসকলক প্ৰসৱৰ বাবে ভৰ্তি কৰাৰ সময়ত সন্তানৰ যত্ন লোৱা ব্যক্তি, যদি আছে</string>
+    <string name="name_of_vhsnd_community_member_for_support_during_emergency">জৰুৰীকালীন সময়ত সহায়ৰ বাবে VHSND/সম্প্ৰদায়ৰ সদস্যৰ নাম</string>
+    <string name="contact_number_of_vhsnd_community_member_for_support_during_emergency">জৰুৰীকালীন সময়ত সহায়ৰ বাবে VHSND/সম্প্ৰদায়ৰ সদস্যৰ যোগাযোগ নম্বৰ</string>
+    <string name="mode_of_transportation_in_case_of_labour_pain">প্ৰসৱৰ বিষৰ ক্ষেত্ৰত পৰিবহণৰ ধৰণ</string>
+    <string name="no_of_deliveries_is_more_than_3">ডেলিভাৰীৰ সংখ্যা ৩ তকৈ অধিক</string>
+    <string name="time_from_last_delivery_is_less_than_18_months">শেষৰ প্ৰসৱৰ পৰা সময় ১৮ মাহতকৈ কম</string>
+    <string name="height_is_very_short_or_less_than_140_cms">উচ্চতা অতি চুটি বা ১৪০ চে.মি.তকৈ কম</string>
+    <string name="age_is_less_than_18_or_more_than_35_years">বয়স ১৮ বছৰৰ কম বা ৩৫ বছৰৰ অধিক</string>
+    <string name="miscarriage_abortion">গৰ্ভপাত</string>
+    <string name="home_delivery_of_previous_pregnancy">পূৰ্বৰ গৰ্ভাৱস্থাৰ ঘৰতে প্ৰসৱ কৰা</string>
+    <string name="during_pregnancy_or_delivery_you_faced_any_medical_issues">গৰ্ভাৱস্থা বা প্ৰসৱৰ সময়ত আপুনি যিকোনো চিকিৎসাজনিত সমস্যাৰ সন্মুখীন হৈছিল</string>
+    <string name="past_c_section_cs">অতীতৰ চিজাৰিয়ান অস্ত্ৰোপচাৰ (CS)</string>
+    <string name="information_on_children">শিশুৰ বিষয়ে তথ্য</string>
+    <string name="physical_observation">দশাৰীৰিক পৰ্যবেক্ষণ</string>
+    <string name="obstetric_history">প্ৰসূতিৰ ইতিহাস</string>
+    <string name="assess_for_high_risk_conditions_in_the_non_pregnant_women">অগৰ্ভৱতী মহিলাৰ উচ্চ বিপদজনক অৱস্থাৰ বাবে মূল্যায়ন কৰা</string>
+    <string name="visible_signs_of_anemia_as_per_appearance">শাৰীৰিক ৰূপ অনুসৰি ৰক্তহীনতাৰ দৃশ্যমান লক্ষণ</string>
+    <string name="for_clinical_assessment_to_be_filled_consulting_with_anm">ক্লিনিকেল মূল্যায়নৰ বাবে (ANM ৰ সৈতে পৰামৰ্শ কৰি পূৰণ কৰা হ’ব)</string>
+    <string name="hypertension">উচ্চ ৰক্তচাপ</string>
+    <string name="risk_status">ৰিস্কৰ অৱস্থা</string>
+    <string name="missed_period">মিছড পিৰিয়ড</string>
+    <string name="lmp">শেষ ঋতুস্ৰাৱৰ সময়</string>
+    <string name="adoption_of_family_planning">পৰিয়াল পৰিকল্পনা গ্ৰহণ কৰা</string>
+    <string name="current_fp_pregnancy_status">বৰ্তমান পৰিয়াল পৰিকল্পনা/ গৰ্ভাৱস্থাৰ অৱস্থা</string>
+    <string name="severe_anemia">গুৰুতৰ ৰক্তহীনতা</string>
+    <string name="diabetes">ডায়েবিটিছ</string>
+    <string name="rh_negative">Rh ঋনাত্মক</string>
+    <string name="bad_obstetric_history">বেয়া প্ৰসূতিৰ ইতিহাস</string>
+    <string name="multiple_pregnancy">একাধিক গৰ্ভধাৰণ</string>
+    <string name="lmp_date">শেষ ঋতুস্ৰাৱৰ তাৰিখ</string>
+    <string name="edd">ডেলিভাৰীৰ আনুমানিক তাৰিখ</string>
+    <string name="assess_for_high_risk_conditions_in_the_pregnant_women">গৰ্ভৱতী মহিলাৰ উচ্চ বিপদজনক অৱস্থাৰ বাবে মূল্যায়ন কৰা</string>
+    <string name="rd_pmsa">PMSAৰ তারিখ</string>
+    <string name="pregnancy_induced_hypertension">গৰ্ভাৱস্থাৰ ফলত হোৱা উচ্চ ৰক্তচাপ</string>
+    <string name="hiv_syphilis_hep_b">HIV/শিফিলিছ/হেপ B</string>
+    <string name="mal_presentation">দোষ প্ৰদৰ্শন</string>
+    <string name="antepartum_hemorrhage">পৰ্যাপ্ত সময়ৰ পৰ্যান্তৰ রক্তপ্ৰবাহ</string>
+    <string name="oligohydromnios">অলিগোহাইড্ৰোমনিওছ</string>
+    <string name="polyhydromnios">পলিহাইড্ৰোমনিওছ</string>
+    <string name="hypothyrodism">হাইপথাইৰৱদ্ধতা</string>
+    <string name="gestational_diabetes_mellitus">জেষ্টেশ্বৰ গাৰ্ভিক ডায়বেটিচ মেলাইটাছ</string>
+    <string name="register_new">নতুন পঞ্জীয়ন</string>
+    <string name="non_pregnant_women">গৰ্ভবতী নহয়ে মহিলা</string>
+    <string name="pregnant_women">গৰ্ভৱতী মহিলা</string>
+    <string name="follow_up_non_pregnant">অগৰ্ভবতী নহয়ে মহিলাৰ অনুসৰণ</string>
+    <string name="follow_up_pregnant">গৰ্ভবতী মহিলাৰ অনুসৰণ</string>
+    <string name="non_pregnant_list">অগৰ্ভবতী নহয়ে মহিলাৰ সূচী</string>
+    <string name="assess">মূল্যাংকন কৰা</string>
+    <string name="high_risk_list_npw">উচ্চ ঝুঁকিৰ সূচী - অগৰ্ভবতী নহয়ে মহিলা</string>
+    <string name="high_risk_list_pw">উচ্চ ঝুঁকিৰ সূচী - গৰ্ভিণী মহিলা</string>
+    <string name="micro_birth_plan">মাইক্ৰ’ বাৰ্থ প্লেন</string>
+    <string name="add_beneficiary">হিতাধিকাৰী যোগ কৰক</string>
+    <string name="assessment_form_filled_successfully">মূল্যায়ন প্ৰ-পত্ৰ সফলতাৰে পূৰণ কৰা হ’ল</string>
+    <string name="visit_on">"দিন যোগ দি"</string>
+    <string name="follow_up">অনুসৰণ</string>
+    <string name="history">ইতিহাস</string>
+    <string name="micro">মাইক্ৰ’</string>
+    <string name="_1st_anc">1ম এএনসি</string>
+    <string name="_1st_pmsma">1ম পিএমএসএমএ</string>
+    <string name="_2nd_pmsma">2য় পিএমএসএমএ</string>
+    <string name="_3rd_pmsma">3য় পিএমএসএমএ</string>
+    <string name="beneficiary_registration">হিতাধিকাৰী পঞ্জীয়ন</string>
+    <string name="show_details">বিৱৰণী দেখুওৱা</string>
+    <string name="husband">স্বামী</string>
+    <string name="micro_birth_plan_for_all_pregnant_women">MICRO BIRTH PLAN (সকলো গৰ্ভৱতী মহিলাৰ বাবে)</string>
+    <string name="follow_up_for_high_risk_conditions_in_the_non_pregnant_women">অগৰ্ভৱতী মহিলাৰ উচ্চ বিপদজনক অৱস্থাৰ বাবে অনুসৰণ কৰক</string>
+    <string name="follow_up_for_high_risk_conditions_in_the_pregnant_women">গৰ্ভৱতী মহিলাৰ উচ্চ বিপদজনক অৱস্থাৰ বাবে অনুসৰণ কৰক</string>
+    <string name="high_risk_conditions">High risk conditions</string>
+    <string name="beneficiaries">Beneficiaries</string>
+    <string name="blood_pressure">ৰক্তচাপ (BP)</string>
+    <string name="systolic">Systolic (mm Hg)</string>
+    <string name="diastolic">Diastolic (mm Hg)</string>
+    <string name="blood_glucose_test">Blood Glucose (Sugar) Test</string>
+    <string name="random_blood_glucose">Random blood Sugar (RBG) (mg/dL)</string>
+    <string name="fasting_glucose_test">Fasting Blood Sugar Test (FBG) (mg/dL)</string>
+    <string name="post_prandial_glucose_test">Post-Prandial Blood Sugar Test (PPBG) (mg/dL)</string>
+    <string name="hemoglobin_test">হিম’গ্লবিন (Hb) পৰীক্ষা (g/dl)</string>
+    <string name="whether_ifa_supplement_provided">আই এফ এ পৰিপূৰক প্ৰদান কৰা হৈছেনে?</string>
+    <string name="issued_quantity_ifa">আই এফ এৰ পৰিপূৰক জাৰি কৰা পৰিমাণ</string>
+    <string name="whether_ifa_supplement_or_folic_acid_provided">Whether IFA or Folic Acid supplement is provided?</string>
+    <string name="issued_quantity_ifa_or_folic_acid">Issued quantity of IFA or Folic Acid supplement</string>
+    <string name="using_75gm_ogtt">Using 75 gm OGTT</string>
+    <string name="after_2hrs">After 2 Hours (mg/dL)</string>
+
+    <string-array name="sugar_test_types">
+        <item>RBS</item>
+        <item>FBS &amp; PPBS</item>
+    </string-array>
+
+    <string-array name="sugar_test_preg_types">
+        <item>RBS</item>
+        <item>FBS &amp; PPBS</item>
+        <item>OGTT</item>
+    </string-array>
+</resources>

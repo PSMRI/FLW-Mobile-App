@@ -1,0 +1,8 @@
+
+<resources>
+    <attr name="colorQuartenary" format="color" />
+    <attr name="colorOnQuartenary" format="color" />
+    <attr name="colorQuartenaryContainer" format="color" />
+    <attr name="colorOnQuartenaryContainer" format="color" />
+    <attr name="harmonizeQuartenary" format="boolean" />
+</resources>
