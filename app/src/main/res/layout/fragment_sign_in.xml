@@ -191,6 +191,7 @@
                         android:layout_height="match_parent"
                         android:drawablePadding="@dimen/padding_normal"
                         android:inputType="textPassword"
+                        android:longClickable="false"
                         android:singleLine="true"
                         android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
 

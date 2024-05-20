@@ -189,8 +189,6 @@ class SignInFragment : Fragment() {
         val username = binding.etUsername.text.toString()
         val password = binding.etPassword.text.toString()
 
-        Timber.d("Username : $username \n Password : $password")
-
         val loggedInUser = viewModel.getLoggedInUser()
 
         if (loggedInUser == null) {

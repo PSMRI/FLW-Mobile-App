@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.core.view.MenuProvider
@@ -21,6 +22,8 @@ import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.firebase.crashlytics.internal.common.CommonUtils.isEmulator
+import com.google.firebase.crashlytics.internal.common.CommonUtils.isRooted
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
@@ -176,7 +179,14 @@ class HomeActivity : AppCompatActivity() {
         setUpFirstTimePullWorker()
         setUpMenu()
 
-
+        if (isDeviceRootedOrEmulator()) {
+            AlertDialog.Builder(this)
+                .setTitle("Unsupported Device")
+                .setMessage("This app cannot run on rooted devices or emulators.")
+                .setCancelable(false)
+                .setPositiveButton("Exit") { dialog, id -> finish() }
+                .show()
+        }
 
         viewModel.navigateToLoginPage.observe(this) {
             if (it) {
@@ -187,6 +197,17 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (isDeviceRootedOrEmulator()) {
+            AlertDialog.Builder(this)
+                .setTitle("Unsupported Device")
+                .setMessage("This app cannot run on rooted devices or emulators.")
+                .setCancelable(false)
+                .setPositiveButton("Exit") { dialog, id -> finish() }
+                .show()
+        }
+    }
     private fun setUpMenu() {
 
         val menu = object : MenuProvider {
@@ -343,4 +364,9 @@ class HomeActivity : AppCompatActivity() {
         super.onDestroy()
         _binding = null
     }
+
+    private fun isDeviceRootedOrEmulator(): Boolean {
+        return isRooted() || isEmulator()
+    }
+
 }
