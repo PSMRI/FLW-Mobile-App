@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.network
 
 import com.squareup.moshi.JsonClass
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.model.HRPNonPregnantAssessCache
 import org.piramalswasthya.sakhi.model.HRPNonPregnantTrackCache
@@ -105,8 +106,8 @@ data class BenAbhaResponse(
 
 @JsonClass(generateAdapter = true)
 data class AbhaTokenRequest(
-    val clientId: String = "##",
-    val clientSecret: String = "##",
+    val clientId: String = BuildConfig.ABHA_CLIENT_ID,
+    val clientSecret: String = BuildConfig.ABHA_CLIENT_SECRET,
     val grantType: String = "client_credentials"
 )
 

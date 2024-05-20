@@ -7,7 +7,7 @@ plugins {
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
     id 'kotlin-kapt'
-
+    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
 
 }
 
@@ -151,4 +151,9 @@ dependencies {
 
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
+}
+secrets {
+    propertiesFileName = "secrets.properties"
+    ignoreList.add("keyToIgnore")
+    ignoreList.add("sdk.*")
 }
