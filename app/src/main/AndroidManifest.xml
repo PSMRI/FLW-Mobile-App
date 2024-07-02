@@ -23,7 +23,6 @@
         android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/Theme.Sakhi"
-        android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
             android:name=".ui.service_location_activity.ServiceLocationActivity"

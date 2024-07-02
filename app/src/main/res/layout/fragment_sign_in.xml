@@ -179,6 +179,7 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:longClickable="false"
                     android:hint="@string/til_password_hint_text"
                     android:paddingTop="@dimen/padding_normal"
                     android:paddingBottom="@dimen/padding_normal"
@@ -191,6 +192,8 @@
                         android:layout_height="match_parent"
                         android:drawablePadding="@dimen/padding_normal"
                         android:inputType="textPassword"
+                        android:longClickable="false"
+                        android:textIsSelectable="false"
                         android:singleLine="true"
                         android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
 

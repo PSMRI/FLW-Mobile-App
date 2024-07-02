@@ -2,6 +2,8 @@ package org.piramalswasthya.sakhi.database.shared_preferences
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKeys
 import org.piramalswasthya.sakhi.R
 
 class PreferenceManager private constructor() {
@@ -15,13 +17,18 @@ class PreferenceManager private constructor() {
             synchronized(this) {
                 var instance = INSTANCE
                 if (instance == null) {
-                    instance = context.getSharedPreferences(
+                    val masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
+
+                    instance = EncryptedSharedPreferences.create(
                         context.resources.getString(R.string.PREF_NAME),
-                        Context.MODE_PRIVATE
+                        masterKeyAlias,
+                        context,
+                        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
                     )
                     INSTANCE = instance
                 }
-                return instance!!
+                return instance
             }
 
         }

@@ -5,12 +5,16 @@ import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.view.WindowManager
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.crashlytics.internal.common.CommonUtils
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.MyContextWrapper
@@ -42,10 +46,18 @@ class LoginActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         createSyncServiceNotificationChannel()
-
+        if (!BuildConfig.DEBUG && isDeviceRootedOrEmulator()) {
+            AlertDialog.Builder(this)
+                .setTitle("Unsupported Device")
+                .setMessage("This app cannot run on rooted devices or emulators.")
+                .setCancelable(false)
+                .setPositiveButton("Exit") { dialog, id -> finish() }
+                .show()
+        }
     }
 
     private fun createSyncServiceNotificationChannel() {
@@ -68,6 +80,10 @@ class LoginActivity : AppCompatActivity() {
                 getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
+    }
+
+    private fun isDeviceRootedOrEmulator(): Boolean {
+        return CommonUtils.isRooted() || CommonUtils.isEmulator()
     }
 
 
