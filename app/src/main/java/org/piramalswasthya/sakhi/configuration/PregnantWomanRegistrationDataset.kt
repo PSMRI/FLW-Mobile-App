@@ -438,15 +438,15 @@ class PregnantWomanRegistrationDataset(
         dateOfReg.value = getDateFromLong(System.currentTimeMillis())
         dateOfReg.value?.let {
             val long = getLongFromDate(it)
-            dateOfhivTestDone.min = long
-            dateOfVdrlTestDone.min = long
-            dateOfhbsAgTestDone.min = long
+            dateOfhivTestDone.min = long - TimeUnit.DAYS.toMillis(365)
+            dateOfVdrlTestDone.min = long - TimeUnit.DAYS.toMillis(365)
+            dateOfhbsAgTestDone.min = long - TimeUnit.DAYS.toMillis(365)
         }
 
         ben?.let {
             dateOfReg.min = it.regDate.also {
-                dateOfVdrlTestDone.min = it
-                dateOfhivTestDone.min = it
+                dateOfVdrlTestDone.min = it - TimeUnit.DAYS.toMillis(365)
+                dateOfhivTestDone.min = it - TimeUnit.DAYS.toMillis(365)
                 hbsAgTestResult.min = it
             }
             rchId.value = ben.rchId
@@ -549,9 +549,9 @@ class PregnantWomanRegistrationDataset(
             it.dateOfRegistration.let {
                 lmp.max = it
                 lmp.min = it - TimeUnit.DAYS.toMillis(280)
-                dateOfVdrlTestDone.min = it
-                dateOfhivTestDone.min = it
-                dateOfhbsAgTestDone.min = it
+                dateOfVdrlTestDone.min = it - TimeUnit.DAYS.toMillis(365)
+                dateOfhivTestDone.min = it - TimeUnit.DAYS.toMillis(365)
+                dateOfhbsAgTestDone.min = it - TimeUnit.DAYS.toMillis(365)
 
             }
             val eddFromLmp = getEddFromLmp(it.lmpDate)
@@ -692,9 +692,9 @@ class PregnantWomanRegistrationDataset(
                     val dateOfRegLong = getLongFromDate(it)
                     lmp.max = dateOfRegLong
                     lmp.min = getMinFromMaxForLmp(lmp.max!!)
-                    dateOfVdrlTestDone.min = dateOfRegLong
-                    dateOfhivTestDone.min = dateOfRegLong
-                    dateOfhbsAgTestDone.min = dateOfRegLong
+                    dateOfVdrlTestDone.min = dateOfRegLong - TimeUnit.DAYS.toMillis(365)
+                    dateOfhivTestDone.min = dateOfRegLong - TimeUnit.DAYS.toMillis(365)
+                    dateOfhbsAgTestDone.min = dateOfRegLong - TimeUnit.DAYS.toMillis(365)
                     updateAgeCheck(dateOfBirth, dateOfRegLong)
                     return handleListOnValueChanged(isHrpCase.id, 0)
                 }
@@ -723,9 +723,9 @@ class PregnantWomanRegistrationDataset(
                 }
                 edd.value = eddLong?.let { getDateFromLong(it) }
                 regLong?.let {
-                    dateOfhivTestDone.min = it
-                    dateOfVdrlTestDone.min = it
-                    dateOfhbsAgTestDone.min = it
+                    dateOfhivTestDone.min = it - TimeUnit.DAYS.toMillis(365)
+                    dateOfVdrlTestDone.min = it - TimeUnit.DAYS.toMillis(365)
+                    dateOfhbsAgTestDone.min = it - TimeUnit.DAYS.toMillis(365)
                 }
                 eddLong?.let {
                     val max = minOf(it, System.currentTimeMillis())
