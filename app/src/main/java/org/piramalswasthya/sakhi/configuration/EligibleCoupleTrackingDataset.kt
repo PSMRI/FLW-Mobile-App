@@ -1,8 +1,6 @@
 package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
-import android.util.Log
-import android.widget.Toast
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Languages
@@ -114,8 +112,6 @@ class EligibleCoupleTrackingDataset(
             financialYear,
             month,
             isPregnancyTestDone,
-//            isPregnant,
-//            usingFamilyPlanning,
         )
         if (saved == null) {
             dateOfVisit.value = getDateFromLong(System.currentTimeMillis())
@@ -151,9 +147,6 @@ class EligibleCoupleTrackingDataset(
                 pregnancyTestResult.value = saved.pregnancyTestResult
             }
             isPregnant.value = getLocalValueInArray(R.array.yes_no, saved.isPregnant)
-
-
-
             if (isPregnant.value == resources.getStringArray(R.array.yes_no)[1]) {
                 list.add(usingFamilyPlanning)
                 saved.usingFamilyPlanning?.let {
@@ -188,14 +181,11 @@ class EligibleCoupleTrackingDataset(
         return when (formId) {
             dateOfVisit.id -> {
                 financialYear.value = Companion.getFinancialYear(dateOfVisit.value)
-                month.value =
-                    resources.getStringArray(R.array.visit_months)[Companion.getMonth(dateOfVisit.value)!!]
+                month.value = resources.getStringArray(R.array.visit_months)[Companion.getMonth(dateOfVisit.value)!!]
                 -1
             }
-
             isPregnancyTestDone.id -> {
                 isPregnant.isEnabled = true
-
                 if (isPregnant.value==resources.getStringArray(R.array.yes_no_donno)[0])
                 {
                     triggerDependants(
@@ -229,7 +219,6 @@ class EligibleCoupleTrackingDataset(
                         triggerIndex = 0,
                         target = pregnancyTestResult
                     )
-
                     triggerforHide(
                         source = isPregnancyTestDone,
                         passedIndex = index,
@@ -244,14 +233,9 @@ class EligibleCoupleTrackingDataset(
             }
 
             pregnancyTestResult.id -> {
-
-
                 if (pregnancyTestResult.value == resources.getStringArray(R.array.ectdset_po_neg)[0]) {
                     isPregnant.value = resources.getStringArray(R.array.yes_no)[0]
                     isPregnant.isEnabled = false
-                    Log.e("Positive","$index ${pregnancyTestResult.value}")
-
-
                     triggerDependants(
                         source = pregnancyTestResult,
                         passedIndex = index,
@@ -284,11 +268,6 @@ class EligibleCoupleTrackingDataset(
                         target = usingFamilyPlanning,
                         targetSideEffect = listOf(methodOfContraception, anyOtherMethod)
                     )
-
-
-
-
-                    Log.e("PositiveB","$index ${pregnancyTestResult.value}")
 
                 }
                 else {
@@ -335,7 +314,6 @@ class EligibleCoupleTrackingDataset(
             }
 
             usingFamilyPlanning.id -> {
-                Log.e("INDEX",index.toString())
                 triggerDependants(
                     source = usingFamilyPlanning,
                     passedIndex = index,

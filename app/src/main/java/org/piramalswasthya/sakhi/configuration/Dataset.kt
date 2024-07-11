@@ -255,10 +255,7 @@ abstract class Dataset(context: Context, currentLanguage: Languages) {
         target: FormElement,
         targetSideEffect: List<FormElement>? = null
     ): Int {
-
-            val anyRemoved = list.remove(
-                target
-            )
+        val anyRemoved = list.remove(target)
           return if (anyRemoved) {
                 target.value = null
                 targetSideEffect?.let { sideEffectList ->

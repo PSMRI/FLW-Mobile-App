@@ -1,7 +1,6 @@
 package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
-import android.util.Log
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Konstants
@@ -29,12 +28,8 @@ class PregnantWomanRegistrationDataset(
             cal.add(Calendar.DAY_OF_YEAR, -1 * 280)
             return cal.timeInMillis
         }
-
         private fun pwRegisterBeforeoneYear(): Long {
-            Log.e("RegstrationDate:-" , registrationDate.toString())
             return   registrationDate-TimeUnit.DAYS.toMillis(365)
-           /* val calendar = Calendar.getInstance()
-            calendar.add(Calendar.YEAR, -1)*/
 
         }
     }
@@ -170,7 +165,7 @@ class PregnantWomanRegistrationDataset(
         title = resources.getString(R.string.pwrdst_vdrl_tst_done),
         arrayId = -1,
         required = false,
-        min=pwRegisterBeforeoneYear(),
+        min= pwRegisterBeforeoneYear(),
         max = System.currentTimeMillis(),
     )
     private val hivTestResult = FormElement(
