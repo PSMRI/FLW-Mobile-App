@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
+import android.util.Log
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Konstants
@@ -22,10 +23,19 @@ class PregnantWomanRegistrationDataset(
 ) : Dataset(context, currentLanguage) {
 
     companion object {
+        var registrationDate:Long = 0
         private fun getMinLmpMillis(): Long {
             val cal = Calendar.getInstance()
             cal.add(Calendar.DAY_OF_YEAR, -1 * 280)
             return cal.timeInMillis
+        }
+
+        private fun pwRegisterBeforeoneYear(): Long {
+            Log.e("RegstrationDate:-" , registrationDate.toString())
+            return   registrationDate-TimeUnit.DAYS.toMillis(365)
+           /* val calendar = Calendar.getInstance()
+            calendar.add(Calendar.YEAR, -1)*/
+
         }
     }
 
@@ -160,6 +170,7 @@ class PregnantWomanRegistrationDataset(
         title = resources.getString(R.string.pwrdst_vdrl_tst_done),
         arrayId = -1,
         required = false,
+        min=pwRegisterBeforeoneYear(),
         max = System.currentTimeMillis(),
     )
     private val hivTestResult = FormElement(
@@ -435,6 +446,7 @@ class PregnantWomanRegistrationDataset(
             multiplePregnancy,
             isHrpCase
         )
+
         dateOfReg.value = getDateFromLong(System.currentTimeMillis())
         dateOfReg.value?.let {
             val long = getLongFromDate(it)
@@ -442,6 +454,7 @@ class PregnantWomanRegistrationDataset(
             dateOfVdrlTestDone.min = long
             dateOfhbsAgTestDone.min = long
         }
+
 
         ben?.let {
             dateOfReg.min = it.regDate.also {
@@ -545,13 +558,16 @@ class PregnantWomanRegistrationDataset(
             dateOfReg.apply {
                 value = getDateFromLong(it.dateOfRegistration)
                 inputType = InputType.TEXT_VIEW
+
             }
+
             it.dateOfRegistration.let {
                 lmp.max = it
                 lmp.min = it - TimeUnit.DAYS.toMillis(280)
                 dateOfVdrlTestDone.min = it
                 dateOfhivTestDone.min = it
                 dateOfhbsAgTestDone.min = it
+
 
             }
             val eddFromLmp = getEddFromLmp(it.lmpDate)

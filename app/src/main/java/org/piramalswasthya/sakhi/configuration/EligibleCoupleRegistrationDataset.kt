@@ -157,7 +157,7 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
         required = false,
         etInputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_NORMAL,
         isMobileNumber = true,
-        etMaxLength = 18,
+        etMaxLength = 20,
         max = 999999999999999999L,
         min = 0L
     )

@@ -1,6 +1,8 @@
 package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
+import android.util.Log
+import android.widget.Toast
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Languages
@@ -112,7 +114,7 @@ class EligibleCoupleTrackingDataset(
             financialYear,
             month,
             isPregnancyTestDone,
-            isPregnant,
+//            isPregnant,
 //            usingFamilyPlanning,
         )
         if (saved == null) {
@@ -149,6 +151,9 @@ class EligibleCoupleTrackingDataset(
                 pregnancyTestResult.value = saved.pregnancyTestResult
             }
             isPregnant.value = getLocalValueInArray(R.array.yes_no, saved.isPregnant)
+
+
+
             if (isPregnant.value == resources.getStringArray(R.array.yes_no)[1]) {
                 list.add(usingFamilyPlanning)
                 saved.usingFamilyPlanning?.let {
@@ -190,37 +195,147 @@ class EligibleCoupleTrackingDataset(
 
             isPregnancyTestDone.id -> {
                 isPregnant.isEnabled = true
-                triggerDependants(
-                    source = isPregnancyTestDone,
-                    passedIndex = index,
-                    triggerIndex = 0,
-                    target = pregnancyTestResult
-                )
+
+                if (isPregnant.value==resources.getStringArray(R.array.yes_no_donno)[0])
+                {
+                    triggerDependants(
+                        source = isPregnancyTestDone,
+                        passedIndex = index,
+                        triggerIndex = 0,
+                        target = pregnancyTestResult
+                    )
+                }
+                else if (isPregnant.value==resources.getStringArray(R.array.yes_no_donno)[1])
+                {
+                    triggerDependants(
+                        source = isPregnancyTestDone,
+                        passedIndex = index,
+                        triggerIndex = 0,
+                        target = pregnancyTestResult
+                    )
+                    triggerforHide(
+                        source = isPregnancyTestDone,
+                        passedIndex = index,
+                        triggerIndex = 1,
+                        target = isPregnant,
+                        targetSideEffect = listOf(isPregnant,usingFamilyPlanning,methodOfContraception)
+                    )
+
+                }
+                else{
+                    triggerDependants(
+                        source = isPregnancyTestDone,
+                        passedIndex = index,
+                        triggerIndex = 0,
+                        target = pregnancyTestResult
+                    )
+
+                    triggerforHide(
+                        source = isPregnancyTestDone,
+                        passedIndex = index,
+                        triggerIndex = 1,
+                        target = isPregnant,
+                        targetSideEffect = listOf(isPregnant,usingFamilyPlanning,methodOfContraception)
+                    )
+                }
+                return 0
+
+
             }
 
             pregnancyTestResult.id -> {
+
+
                 if (pregnancyTestResult.value == resources.getStringArray(R.array.ectdset_po_neg)[0]) {
                     isPregnant.value = resources.getStringArray(R.array.yes_no)[0]
                     isPregnant.isEnabled = false
-                } else {
+                    Log.e("Positive","$index ${pregnancyTestResult.value}")
+
+
+                    triggerDependants(
+                        source = pregnancyTestResult,
+                        passedIndex = index,
+                        triggerIndex = 0,
+                        target = isPregnant,
+                        targetSideEffect = listOf(isPregnant,usingFamilyPlanning,methodOfContraception, anyOtherMethod)
+                    )
+                    triggerforHide(
+                        source = pregnancyTestResult,
+                        passedIndex = index,
+                        triggerIndex = 1,
+                        target = usingFamilyPlanning,
+                        targetSideEffect = listOf(usingFamilyPlanning,methodOfContraception)
+                    )
+                }
+               else if (pregnancyTestResult.value == resources.getStringArray(R.array.ectdset_po_neg)[1]) {
+                    isPregnant.isEnabled = true
+                    isPregnant.value = resources.getStringArray(R.array.yes_no)[1]
+                    triggerDependants(
+                        source = pregnancyTestResult,
+                        passedIndex = index,
+                        triggerIndex = 1,
+                        target = isPregnant,
+                        targetSideEffect = listOf(isPregnant,usingFamilyPlanning,methodOfContraception, anyOtherMethod)
+                    )
+                    triggerDependants(
+                        source = isPregnant,
+                        passedIndex = index,
+                        triggerIndex = 1,
+                        target = usingFamilyPlanning,
+                        targetSideEffect = listOf(methodOfContraception, anyOtherMethod)
+                    )
+
+
+
+
+                    Log.e("PositiveB","$index ${pregnancyTestResult.value}")
+
+                }
+                else {
                     isPregnant.value = null
                     isPregnant.isEnabled = true
                 }
-                handleListOnValueChanged(isPregnant.id, 0)
 
+               return 0
             }
 
             isPregnant.id -> {
-                triggerDependants(
-                    source = isPregnant,
-                    passedIndex = index,
-                    triggerIndex = 1,
-                    target = usingFamilyPlanning,
-                    targetSideEffect = listOf(methodOfContraception, anyOtherMethod)
-                )
+                if (isPregnant.value==resources.getStringArray(R.array.yes_no_donno)[0])
+                {
+                    triggerDependants(
+                        source = isPregnant,
+                        passedIndex = index,
+                        triggerIndex = 1,
+                        target = usingFamilyPlanning,
+                        targetSideEffect = listOf(methodOfContraception, anyOtherMethod)
+                    )
+                }
+                else if (isPregnant.value==resources.getStringArray(R.array.yes_no_donno)[1])
+                {
+                    triggerDependants(
+                        source = isPregnant,
+                        passedIndex = index,
+                        triggerIndex = 1,
+                        target = usingFamilyPlanning,
+                        targetSideEffect = listOf(methodOfContraception, anyOtherMethod)
+                    )
+                }
+                else{
+                    triggerDependants(
+                        source = isPregnant,
+                        passedIndex = index,
+                        triggerIndex = 2,
+                        target = usingFamilyPlanning,
+                        targetSideEffect = listOf(methodOfContraception, anyOtherMethod)
+                    )
+                }
+                return 0
+
+
             }
 
             usingFamilyPlanning.id -> {
+                Log.e("INDEX",index.toString())
                 triggerDependants(
                     source = usingFamilyPlanning,
                     passedIndex = index,
