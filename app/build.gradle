@@ -35,6 +35,25 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    flavorDimensions "default"
+
+    productFlavors {
+        staging {
+            applicationIdSuffix ".staging"
+            applicationId "org.piramalswasthya.sakhi"
+            resValue "string", "app_native_name", "উৎপ্ৰেৰণা-Stag"
+        }
+        uat {
+            applicationIdSuffix ".uat"
+            applicationId "org.piramalswasthya.sakhi"
+            resValue "string", "app_native_name", "উৎপ্ৰেৰণা-Uat"
+        }
+        production {
+            applicationId "org.piramalswasthya.sakhi"
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
