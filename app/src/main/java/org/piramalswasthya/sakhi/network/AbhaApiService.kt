@@ -6,6 +6,7 @@ import retrofit2.http.*
 
 interface AbhaApiService {
 
+    // Staging
     @Headers("No-Auth: true")
     @POST
     suspend fun getToken(
@@ -13,11 +14,22 @@ interface AbhaApiService {
         @Body request: AbhaTokenRequest = AbhaTokenRequest()
     ): Response<ResponseBody>
 
+    // Production
+//    @Headers("No-Auth: true")
+//    @POST
+//    suspend fun getToken(
+//        @Url url: String = "https://live.abdm.gov.in/gateway/v0.5/sessions",
+//        @Body request: AbhaTokenRequest = AbhaTokenRequest()
+//    ): Response<ResponseBody>
+
     @POST("v1/registration/aadhaar/generateOtp")
     suspend fun generateAadhaarOtp(@Body aadhaar: AbhaGenerateAadhaarOtpRequest): Response<ResponseBody>
 
     @POST("v2/registration/aadhaar/generateOtp")
     suspend fun generateAadhaarOtpV2(@Body aadhaar: AbhaGenerateAadhaarOtpRequest): Response<ResponseBody>
+
+    @POST("v3/enrollment/request/otp")
+    suspend fun generateAadhaarOtpV3(@Body aadhaar: AbhaGenerateAadhaarOtpRequest, @Header("REQUEST_ID") requestId: String, @Header("TIMESTAMP") timestamp: String): Response<ResponseBody>
 
     @POST("v1/registration/aadhaar/resendAadhaarOtp")
     suspend fun resendAadhaarOtp(@Body aadhaar: AbhaResendAadhaarOtpRequest): Response<ResponseBody>
@@ -46,10 +58,17 @@ interface AbhaApiService {
     @GET("v1/account/getPngCard")
     suspend fun getPngCard(): Response<ResponseBody>
 
+    // Staging RES Encryption API
     @GET
     suspend fun getAuthCert(
         @Url url: String = "https://healthidsbx.abdm.gov.in/api/v2/auth/cert"
     ): Response<ResponseBody>
+
+    // Production RES Encryption API
+//    @GET
+//    suspend fun getAuthCert(
+//        @Url url: String = "https://healthid.abdm.gov.in/api/v2/auth/cert"
+//    ): Response<ResponseBody>
 
     @GET("v2/ha/lgd/states")
     suspend fun getStateAndDistricts(): Response<ResponseBody>
