@@ -6,13 +6,12 @@ import java.io.File
 import java.io.InputStreamReader
 
 class RootedUtil {
-    // Check if the device is rooted
     fun isDeviceRooted(applicationContext: Context): Boolean {
-        return checkRootMethod1() || checkRootMethod2(applicationContext) || checkRootMethod3() || checkRootMethod4()
+        return checkSUBinary() || checkRootManagement(applicationContext) || checkProps() || checkBusyBox()
     }
 
     // Method 1: Check for the presence of su binary
-    private fun checkRootMethod1(): Boolean {
+    private fun checkSUBinary(): Boolean {
         val paths = arrayOf(
             "/sbin/su",
             "/system/bin/su",
@@ -31,8 +30,7 @@ class RootedUtil {
         return false
     }
 
-    // Method 2: Check for root management apps
-    private fun checkRootMethod2(applicationContext: Context): Boolean {
+    private fun checkRootManagement(applicationContext: Context): Boolean {
         val packages = arrayOf(
             "eu.chainfire.supersu",
             "com.noshufou.android.su",
@@ -51,8 +49,7 @@ class RootedUtil {
         return false
     }
 
-    // Method 3: Check for dangerous props
-    private fun checkRootMethod3(): Boolean {
+    private fun checkProps(): Boolean {
         var reader: BufferedReader? = null
         return try {
             val process = Runtime.getRuntime().exec("getprop")
@@ -71,8 +68,7 @@ class RootedUtil {
         }
     }
 
-    // Method 4: Check for the presence of BusyBox binary
-    private fun checkRootMethod4(): Boolean {
+    private fun checkBusyBox(): Boolean {
         return try {
             Runtime.getRuntime().exec("busybox").destroy()
             true
