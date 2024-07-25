@@ -18,6 +18,7 @@ import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.MyContextWrapper
+import org.piramalswasthya.sakhi.utils.RootedUtil
 import java.util.*
 
 
@@ -83,7 +84,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun isDeviceRootedOrEmulator(): Boolean {
-        return CommonUtils.isRooted() || CommonUtils.isEmulator()
+        return CommonUtils.isRooted() || CommonUtils.isEmulator() || RootedUtil().isDeviceRooted(applicationContext)
     }
 
 
