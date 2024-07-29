@@ -1,8 +1,10 @@
 package org.piramalswasthya.sakhi.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -37,11 +39,12 @@ class PncVisitListAdapter(private val clickListener: PncVisitClickListener? = nu
         fun bind(
             item: BenPncDomain, clickListener: PncVisitClickListener?
         ) {
+
             binding.visit = item
             binding.btnViewVisits.visibility =
                 if (item.savedPncRecords.isEmpty()) View.INVISIBLE else View.VISIBLE
             binding.btnAddPnc.visibility =
-                if (item.allowFill) View.INVISIBLE else View.VISIBLE
+                if (item.allowFill) View.VISIBLE else View.INVISIBLE
             binding.clickListener = clickListener
             binding.executePendingBindings()
 

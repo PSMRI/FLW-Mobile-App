@@ -4,6 +4,7 @@ import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -82,6 +83,10 @@ class HRPAdapter(
             var hasForm: Boolean = false
             var completelyFilled: Boolean = false
             var formEnabled: Boolean = false
+            (binding.btnForm2.layoutParams as LinearLayout.LayoutParams).weight=1.2f
+            (binding.btnForm1.layoutParams as LinearLayout.LayoutParams).weight=0.9f
+            (binding.btnForm3.layoutParams as LinearLayout.LayoutParams).weight=0.9f
+
             val formButton = when (formNumber) {
                 1 -> {
                     binding.btnForm1.also {
@@ -112,13 +117,29 @@ class HRPAdapter(
                 3 -> {
                     binding.btnForm3.also {
 //                        hasForm = item.assess.noOfDeliveries.form3Filled
-//                        formEnabled = item.ben.form3Enabled
+                        hasForm = item.mbp != null
+                        if (hasForm) {
+
+                            formEnabled = true
+                            (binding.btnForm2.layoutParams as LinearLayout.LayoutParams).weight=1.2f
+                            (binding.btnForm1.layoutParams as LinearLayout.LayoutParams).weight=0.9f
+                            (binding.btnForm3.layoutParams as LinearLayout.LayoutParams).weight=0.9f
+
+                        } else {
+
+                            formEnabled = false
+                            (binding.btnForm2.layoutParams as LinearLayout.LayoutParams).weight=1.8f
+                            (binding.btnForm1.layoutParams as LinearLayout.LayoutParams).weight=1.2f
+
+                        }
+
                     }
                 }
 
                 else -> throw IllegalStateException("FormNumber>3")
             }
-            formButton.visibility = if (formEnabled) View.VISIBLE else View.INVISIBLE
+            formButton.visibility = if (formEnabled) View.VISIBLE else View.GONE
+
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (hasForm) {
@@ -137,6 +158,12 @@ class HRPAdapter(
                             )
                         )
                     }
+                    binding.btnForm3.setBackgroundColor(
+                        binding.btnForm3.resources.getColor(
+                            android.R.color.holo_purple,
+                            binding.root.context.theme
+                        )
+                    )
 
                 } else {
                     formButton.setBackgroundColor(
