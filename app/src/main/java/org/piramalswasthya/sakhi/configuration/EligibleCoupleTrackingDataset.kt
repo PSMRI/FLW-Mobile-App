@@ -89,8 +89,19 @@ class EligibleCoupleTrackingDataset(
 
     )
 
-    private val anyOtherMethod = FormElement(
+    private val antraDoses = FormElement(
         id = 9,
+        inputType = InputType.DROPDOWN,
+        title = "Antra injection",
+        arrayId = R.array.antra_doses,
+        entries = resources.getStringArray(R.array.antra_doses),
+        required = false,
+        hasDependants = true
+
+    )
+
+    private val anyOtherMethod = FormElement(
+        id = 10,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.ectdset_other_mthd),
         required = true,
@@ -164,11 +175,21 @@ class EligibleCoupleTrackingDataset(
                     if (saved.methodOfContraception in resources.getStringArray(R.array.method_of_contraception)) {
                         methodOfContraception.value = saved.methodOfContraception
                     } else if (saved.methodOfContraception != null) {
-                        methodOfContraception.value =
-                            resources.getStringArray(R.array.method_of_contraception).last()
-                        list.add(anyOtherMethod)
-                        anyOtherMethod.value = saved.methodOfContraception
+                        if (saved.methodOfContraception!!.split("/")[0] == resources.getStringArray(R.array.method_of_contraception)[1]) {
+                            methodOfContraception.value =
+                                resources.getStringArray(R.array.method_of_contraception)[1]
+                            list.add(antraDoses)
+                            antraDoses.value = saved.methodOfContraception!!.split("/")[1]
+                        }
+                        else {
+                            methodOfContraception.value =
+                                resources.getStringArray(R.array.method_of_contraception).last()
+                            list.add(anyOtherMethod)
+                            anyOtherMethod.value = saved.methodOfContraception
+                        }
+
                     }
+
                 }
             }
 
@@ -186,8 +207,7 @@ class EligibleCoupleTrackingDataset(
             }
             isPregnancyTestDone.id -> {
                 isPregnant.isEnabled = true
-                if (isPregnant.value==resources.getStringArray(R.array.yes_no_donno)[0])
-                {
+                if (isPregnant.value == resources.getStringArray(R.array.yes_no_donno)[0]) {
                     triggerDependants(
                         source = isPregnancyTestDone,
                         passedIndex = index,
@@ -195,8 +215,7 @@ class EligibleCoupleTrackingDataset(
                         target = pregnancyTestResult
                     )
                 }
-                else if (isPregnant.value==resources.getStringArray(R.array.yes_no_donno)[1])
-                {
+                else if (isPregnant.value == resources.getStringArray(R.array.yes_no_donno)[1]) {
                     triggerDependants(
                         source = isPregnancyTestDone,
                         passedIndex = index,
@@ -208,11 +227,11 @@ class EligibleCoupleTrackingDataset(
                         passedIndex = index,
                         triggerIndex = 1,
                         target = isPregnant,
-                        targetSideEffect = listOf(isPregnant,usingFamilyPlanning,methodOfContraception)
+                        targetSideEffect = listOf(isPregnant,usingFamilyPlanning,methodOfContraception,antraDoses,anyOtherMethod)
                     )
 
                 }
-                else{
+                else {
                     triggerDependants(
                         source = isPregnancyTestDone,
                         passedIndex = index,
@@ -224,7 +243,7 @@ class EligibleCoupleTrackingDataset(
                         passedIndex = index,
                         triggerIndex = 1,
                         target = isPregnant,
-                        targetSideEffect = listOf(isPregnant,usingFamilyPlanning,methodOfContraception)
+                        targetSideEffect = listOf(isPregnant,usingFamilyPlanning,methodOfContraception,antraDoses,anyOtherMethod)
                     )
                 }
                 return 0
@@ -248,7 +267,7 @@ class EligibleCoupleTrackingDataset(
                         passedIndex = index,
                         triggerIndex = 1,
                         target = usingFamilyPlanning,
-                        targetSideEffect = listOf(usingFamilyPlanning,methodOfContraception)
+                        targetSideEffect = listOf(usingFamilyPlanning,methodOfContraception,antraDoses,anyOtherMethod)
                     )
                 }
                else if (pregnancyTestResult.value == resources.getStringArray(R.array.ectdset_po_neg)[1]) {
@@ -259,14 +278,14 @@ class EligibleCoupleTrackingDataset(
                         passedIndex = index,
                         triggerIndex = 1,
                         target = isPregnant,
-                        targetSideEffect = listOf(isPregnant,usingFamilyPlanning,methodOfContraception, anyOtherMethod)
+                        targetSideEffect = listOf(isPregnant,usingFamilyPlanning,methodOfContraception, anyOtherMethod,antraDoses)
                     )
                     triggerDependants(
                         source = isPregnant,
                         passedIndex = index,
                         triggerIndex = 1,
                         target = usingFamilyPlanning,
-                        targetSideEffect = listOf(methodOfContraception, anyOtherMethod)
+                        targetSideEffect = listOf(methodOfContraception, anyOtherMethod,antraDoses)
                     )
 
                 }
@@ -279,33 +298,31 @@ class EligibleCoupleTrackingDataset(
             }
 
             isPregnant.id -> {
-                if (isPregnant.value==resources.getStringArray(R.array.yes_no_donno)[0])
-                {
+                if (isPregnant.value == resources.getStringArray(R.array.yes_no_donno)[0]) {
                     triggerDependants(
                         source = isPregnant,
                         passedIndex = index,
                         triggerIndex = 1,
                         target = usingFamilyPlanning,
-                        targetSideEffect = listOf(methodOfContraception, anyOtherMethod)
+                        targetSideEffect = listOf(methodOfContraception, anyOtherMethod,antraDoses)
                     )
                 }
-                else if (isPregnant.value==resources.getStringArray(R.array.yes_no_donno)[1])
-                {
+                else if (isPregnant.value == resources.getStringArray(R.array.yes_no_donno)[1]) {
                     triggerDependants(
                         source = isPregnant,
                         passedIndex = index,
                         triggerIndex = 1,
                         target = usingFamilyPlanning,
-                        targetSideEffect = listOf(methodOfContraception, anyOtherMethod)
+                        targetSideEffect = listOf(methodOfContraception, anyOtherMethod,antraDoses)
                     )
                 }
-                else{
+                else {
                     triggerDependants(
                         source = isPregnant,
                         passedIndex = index,
                         triggerIndex = 2,
                         target = usingFamilyPlanning,
-                        targetSideEffect = listOf(methodOfContraception, anyOtherMethod)
+                        targetSideEffect = listOf(methodOfContraception, anyOtherMethod,antraDoses)
                     )
                 }
                 return 0
@@ -319,17 +336,45 @@ class EligibleCoupleTrackingDataset(
                     passedIndex = index,
                     triggerIndex = 0,
                     target = methodOfContraception,
-                    targetSideEffect = listOf(anyOtherMethod)
+                    targetSideEffect = listOf(anyOtherMethod,antraDoses)
                 )
             }
 
             methodOfContraception.id -> {
-                triggerDependants(
-                    source = methodOfContraception,
-                    passedIndex = index,
-                    triggerIndex = methodOfContraception.entries!!.lastIndex,
-                    target = anyOtherMethod
-                )
+
+                if (methodOfContraception.value == resources.getStringArray(R.array.method_of_contraception)[1]) {
+                    triggerDependants(
+                        source = methodOfContraception,
+                        passedIndex = index,
+                        triggerIndex = 1,
+                        target = antraDoses
+                    )
+                    triggerforHide(
+                        source = methodOfContraception,
+                        passedIndex = index,
+                        triggerIndex = 1,
+                        target = anyOtherMethod,
+                        targetSideEffect = listOf(anyOtherMethod)
+                    )
+                }
+                else {
+                    triggerDependants(
+                        source = methodOfContraception,
+                        passedIndex = index,
+                        triggerIndex = methodOfContraception.entries!!.lastIndex,
+                        target = anyOtherMethod
+                    )
+                    triggerforHide(
+                        source = methodOfContraception,
+                        passedIndex = index,
+                        triggerIndex = 1,
+                        target = antraDoses,
+                        targetSideEffect = listOf(antraDoses)
+                    )
+                }
+
+                return 0
+
             }
 
             anyOtherMethod.id -> {
@@ -346,13 +391,15 @@ class EligibleCoupleTrackingDataset(
             form.isPregnancyTestDone = isPregnancyTestDone.value
             form.pregnancyTestResult = pregnancyTestResult.value
             form.isPregnant = isPregnant.value
-            form.usingFamilyPlanning =
-                usingFamilyPlanning.value?.let { it == resources.getStringArray(R.array.yes_no)[0] }
+            form.usingFamilyPlanning = usingFamilyPlanning.value?.let { it == resources.getStringArray(R.array.yes_no)[0] }
             if (methodOfContraception.value == resources.getStringArray(R.array.method_of_contraception)
                     .last()
             ) {
                 form.methodOfContraception = anyOtherMethod.value
-            } else {
+            } else  if (methodOfContraception.value == resources.getStringArray(R.array.method_of_contraception)[1]) {
+                form.methodOfContraception = "${methodOfContraception.value}/${antraDoses.value}"
+            }
+            else {
                 form.methodOfContraception = methodOfContraception.value
             }
         }
