@@ -29,13 +29,16 @@ interface AbhaApiService {
     suspend fun generateAadhaarOtpV2(@Body aadhaar: AbhaGenerateAadhaarOtpRequest): Response<ResponseBody>
 
     @POST("v3/enrollment/request/otp")
-    suspend fun generateAadhaarOtpV3(@Body aadhaar: AbhaGenerateAadhaarOtpRequest, @Header("REQUEST_ID") requestId: String, @Header("TIMESTAMP") timestamp: String): Response<ResponseBody>
+    suspend fun generateAadhaarOtpV3(@Body aadhaar: AbhaGenerateAadhaarOtpRequest, @Header("REQUEST-ID") requestId: String, @Header("TIMESTAMP") timestamp: String): Response<ResponseBody>
 
     @POST("v1/registration/aadhaar/resendAadhaarOtp")
     suspend fun resendAadhaarOtp(@Body aadhaar: AbhaResendAadhaarOtpRequest): Response<ResponseBody>
 
     @POST("v1/registration/aadhaar/verifyOTP")
     suspend fun verifyAadhaarOtp(@Body request: AbhaVerifyAadhaarOtpRequest): Response<ResponseBody>
+
+    @POST("v3/enrollment/enrol/byAadhaar")
+    suspend fun verifyAadhaarOtp3(@Body request: AbhaVerifyAadhaarOtpRequest, @Header("REQUEST-ID") requestId: String, @Header("TIMESTAMP") timestamp: String): Response<ResponseBody>
 
     @POST("v1/registration/aadhaar/generateMobileOTP")
     suspend fun generateMobileOtp(@Body mobile: AbhaGenerateMobileOtpRequest): Response<ResponseBody>
@@ -45,6 +48,9 @@ interface AbhaApiService {
 
     @POST("v1/registration/aadhaar/verifyMobileOTP")
     suspend fun verifyMobileOtp(@Body request: AbhaVerifyMobileOtpRequest): Response<ResponseBody>
+
+    @POST("v3/enrollment/auth/byAbdm")
+    suspend fun verifyMobileOtp3(@Body request: AbhaVerifyMobileOtpRequest, @Header("REQUEST-ID") requestId: String, @Header("TIMESTAMP") timestamp: String): Response<ResponseBody>
 
     @POST("v1/registration/aadhaar/createHealthIdWithPreVerified")
     suspend fun createAbhaId(@Body request: CreateAbhaIdRequest): Response<ResponseBody>
@@ -61,7 +67,7 @@ interface AbhaApiService {
     // Staging RES Encryption API
     @GET
     suspend fun getAuthCert(
-        @Url url: String = "https://healthidsbx.abdm.gov.in/api/v2/auth/cert"
+        @Url url: String = "https://healthidsbx.abdm.gov.in/api/v1/auth/cert"
     ): Response<ResponseBody>
 
     // Production RES Encryption API

@@ -120,9 +120,21 @@ data class AbhaTokenResponse(
     val tokenType: String
 )
 
+// ABHA v1/v2 request
+//@JsonClass(generateAdapter = true)
+//data class AbhaGenerateAadhaarOtpRequest(
+//    var aadhaar: String
+//)
+
+// ABHA v3 request
 @JsonClass(generateAdapter = true)
 data class AbhaGenerateAadhaarOtpRequest(
-    var aadhaar: String
+//    var aadhaar: String
+    val txnId: String,
+    val scope: List<String>,
+    val loginHint: String,
+    var loginId: String,
+    var otpSystem: String
 )
 
 @JsonClass(generateAdapter = true)
@@ -148,19 +160,85 @@ data class AbhaResendAadhaarOtpRequest(
     val txnId: String
 )
 
+// ABHA v1/v2 request
+//@JsonClass(generateAdapter = true)
+//data class AbhaVerifyAadhaarOtpRequest(
+//    val otp: String,
+//    val txnId: String
+//)
 
+// ABHA v3 request
 @JsonClass(generateAdapter = true)
 data class AbhaVerifyAadhaarOtpRequest(
-    val otp: String,
-    val txnId: String
+    val authData: AuthData,
+    val consent: Consent
 )
-
 
 @JsonClass(generateAdapter = true)
-data class AbhaVerifyAadhaarOtpResponse(
-    val txnId: String
+data class AuthData(
+    val authMethods: List<String>,
+    val otp: Otp
 )
 
+@JsonClass(generateAdapter = true)
+data class Consent(
+    val code: String,
+    val version: String
+)
+
+@JsonClass(generateAdapter = true)
+data class Otp(
+    var timeStamp: String,
+    val txnId: String,
+    var otpValue: String,
+    var mobile: String
+)
+
+// ABHA v1/v2 request
+//@JsonClass(generateAdapter = true)
+//data class AbhaVerifyAadhaarOtpResponse(
+//    val txnId: String
+//)
+
+// ABHA v3 request
+@JsonClass(generateAdapter = true)
+data class AbhaVerifyAadhaarOtpResponse(
+    val message: String,
+    val txnId: String,
+    val tokens: Tokens,
+    val ABHAProfile: ABHAProfile,
+    val isNew: Boolean
+)
+
+@JsonClass(generateAdapter = true)
+data class Tokens(
+    val token: String,
+    val expiresIn: Int,
+    val refreshToken: String,
+    val refreshExpiresIn: Int
+)
+
+@JsonClass(generateAdapter = true)
+data class ABHAProfile(
+    val firstName: String,
+    val middleName: String,
+    val lastName: String,
+    val dob: String,
+    val gender: String,
+    val photo: String,
+    val mobile: String? = null,
+    val email: String? = null,
+    val phrAddress: List<String>,
+    val address: String,
+    val districtCode: String,
+    val stateCode: String,
+    val pinCode: String,
+    val abhaType: String,
+    val stateName: String,
+    val districtName: String,
+    val aBHANumber: String,
+    val abhaStatus: String
+)
 
 @JsonClass(generateAdapter = true)
 data class AbhaGenerateMobileOtpRequest(
@@ -179,10 +257,31 @@ data class AbhaCheckAndGenerateMobileOtpResponse(
 )
 
 
+// ABHA v1/v2 request
+//@JsonClass(generateAdapter = true)
+//data class AbhaVerifyMobileOtpRequest(
+//    val otp: String,
+//    val txnId: String
+//)
+
+// ABHA v3 request
 @JsonClass(generateAdapter = true)
 data class AbhaVerifyMobileOtpRequest(
-    val otp: String,
-    val txnId: String
+    val scope: List<String>,
+    val authData: AuthData2
+)
+
+@JsonClass(generateAdapter = true)
+data class AuthData2(
+    val authMethods: List<String>,
+    val otp: Otp2
+)
+
+@JsonClass(generateAdapter = true)
+data class Otp2(
+    var timeStamp: String,
+    val txnId: String,
+    var otpValue: String
 )
 
 
