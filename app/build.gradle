@@ -11,6 +11,8 @@ plugins {
 
 }
 
+
+
 android {
     namespace 'org.piramalswasthya.sakhi'
     compileSdk 34
@@ -166,13 +168,13 @@ dependencies {
 //    implementation 'org.bouncycastle:bcpkix-jdk15on:1.68'
 
 
+
     testImplementation "com.google.truth:truth:1.1.3"
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
     //Image compressor
     implementation 'id.zelory:compressor:3.0.1'
-
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
 }
