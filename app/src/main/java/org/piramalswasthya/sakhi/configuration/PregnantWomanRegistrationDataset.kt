@@ -22,10 +22,15 @@ class PregnantWomanRegistrationDataset(
 ) : Dataset(context, currentLanguage) {
 
     companion object {
+        var registrationDate:Long = 0
         private fun getMinLmpMillis(): Long {
             val cal = Calendar.getInstance()
             cal.add(Calendar.DAY_OF_YEAR, -1 * 280)
             return cal.timeInMillis
+        }
+        private fun pwRegisterBeforeoneYear(): Long {
+            return   registrationDate-TimeUnit.DAYS.toMillis(365)
+
         }
     }
 
@@ -160,6 +165,7 @@ class PregnantWomanRegistrationDataset(
         title = resources.getString(R.string.pwrdst_vdrl_tst_done),
         arrayId = -1,
         required = false,
+        min= pwRegisterBeforeoneYear(),
         max = System.currentTimeMillis(),
     )
     private val hivTestResult = FormElement(
@@ -435,6 +441,7 @@ class PregnantWomanRegistrationDataset(
             multiplePregnancy,
             isHrpCase
         )
+
         dateOfReg.value = getDateFromLong(System.currentTimeMillis())
         dateOfReg.value?.let {
             val long = getLongFromDate(it)
@@ -442,6 +449,7 @@ class PregnantWomanRegistrationDataset(
             dateOfVdrlTestDone.min = long - TimeUnit.DAYS.toMillis(365)
             dateOfhbsAgTestDone.min = long - TimeUnit.DAYS.toMillis(365)
         }
+
 
         ben?.let {
             dateOfReg.min = it.regDate.also {
@@ -545,13 +553,16 @@ class PregnantWomanRegistrationDataset(
             dateOfReg.apply {
                 value = getDateFromLong(it.dateOfRegistration)
                 inputType = InputType.TEXT_VIEW
+
             }
+
             it.dateOfRegistration.let {
                 lmp.max = it
                 lmp.min = it - TimeUnit.DAYS.toMillis(280)
                 dateOfVdrlTestDone.min = it - TimeUnit.DAYS.toMillis(365)
                 dateOfhivTestDone.min = it - TimeUnit.DAYS.toMillis(365)
                 dateOfhbsAgTestDone.min = it - TimeUnit.DAYS.toMillis(365)
+
 
             }
             val eddFromLmp = getEddFromLmp(it.lmpDate)

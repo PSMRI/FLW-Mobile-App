@@ -247,6 +247,28 @@ abstract class Dataset(context: Context, currentLanguage: Languages) {
         }
     }
 
+
+    protected fun triggerforHide(
+        source: FormElement,
+        passedIndex: Int,
+        triggerIndex: Int,
+        target: FormElement,
+        targetSideEffect: List<FormElement>? = null
+    ): Int {
+        val anyRemoved = list.remove(target)
+          return if (anyRemoved) {
+                target.value = null
+                targetSideEffect?.let { sideEffectList ->
+                    list.removeAll(sideEffectList)
+                    sideEffectList.forEach { it.value = null }
+                }
+                list.indexOf(source)
+            } else -1
+
+
+    }
+
+
     protected fun triggerDependants(
         age: Int,
 //        ageUnit: FormElement,

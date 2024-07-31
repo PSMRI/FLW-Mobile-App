@@ -70,10 +70,7 @@ class FormInputAdapter(
     private val isEnabled: Boolean = true
 ) : ListAdapter<FormElement, ViewHolder>(FormInputDiffCallBack) {
 
-    //    @Inject
-//    lateinit var preferenceDao: PreferenceDao
-//    @Inject
-//    lateinit var context: Context
+
     object FormInputDiffCallBack : DiffUtil.ItemCallback<FormElement>() {
         override fun areItemsTheSame(oldItem: FormElement, newItem: FormElement) =
             oldItem.id == newItem.id
