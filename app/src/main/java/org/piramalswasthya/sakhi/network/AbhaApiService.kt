@@ -73,7 +73,7 @@ interface AbhaApiService {
     // Production RES Encryption API
 //    @GET
 //    suspend fun getAuthCert(
-//        @Url url: String = "https://healthid.abdm.gov.in/api/v2/auth/cert"
+//        @Url url: String = "https://healthid.abdm.gov.in/api/v1/auth/cert"
 //    ): Response<ResponseBody>
 
     @GET("v2/ha/lgd/states")
