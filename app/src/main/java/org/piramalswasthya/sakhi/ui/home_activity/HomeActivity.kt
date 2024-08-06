@@ -172,6 +172,8 @@ class HomeActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // This will block user to cast app screen
+        // Toggle screencast mode for staging & production builds
         window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         super.onCreate(savedInstanceState)
         _binding = ActivityHomeBinding.inflate(layoutInflater)
@@ -200,6 +202,8 @@ class HomeActivity : AppCompatActivity() {
     }
 
     override fun onResume() {
+        // This will block user to cast app screen
+        // Toggle screencast mode for staging & production builds
         window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         super.onResume()
         if (isDeviceRootedOrEmulator()) {

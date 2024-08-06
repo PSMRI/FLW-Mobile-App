@@ -11,6 +11,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.configuration.HRPMicroBirthPlanDataset
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.model.BenRegGen
 import org.piramalswasthya.sakhi.model.HRPMicroBirthPlanCache
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.HRPRepo
@@ -39,6 +40,11 @@ constructor(
     private val _benName = MutableLiveData<String>()
     val benName: LiveData<String>
         get() = _benName
+
+    private var _benDetails =BenRegGen()
+    val benDetails: BenRegGen
+        get() = _benDetails
+
     private val _benAgeGender = MutableLiveData<String>()
     val benAgeGender: LiveData<String>
         get() = _benAgeGender
@@ -54,7 +60,7 @@ constructor(
 
     var isHighRisk: Boolean = false
 
-    private lateinit var microBirthPlanCache: HRPMicroBirthPlanCache
+    lateinit var _microBirthPlanCache: HRPMicroBirthPlanCache
 
     init {
         viewModelScope.launch {
@@ -62,13 +68,14 @@ constructor(
                 _benName.value =
                     "${ben.firstName} ${if (ben.lastName == null) "" else ben.lastName}"
                 _benAgeGender.value = "${ben.age} ${ben.ageUnit?.name} | ${ben.gender?.name}"
-                microBirthPlanCache = HRPMicroBirthPlanCache(
+                _benDetails= ben.genDetails!!
+                _microBirthPlanCache = HRPMicroBirthPlanCache(
                     benId = ben.beneficiaryId,
                 )
             }
 
             hrpReo.getMicroBirthPlan(benId)?.let {
-                microBirthPlanCache = it
+                _microBirthPlanCache = it
                 _recordExists.value = true
             } ?: run {
                 _recordExists.value = false
@@ -76,7 +83,7 @@ constructor(
 
             dataset.setUpPage(
                 ben,
-                if (recordExists.value == true) microBirthPlanCache else null
+                if (recordExists.value == true) _microBirthPlanCache else null
             )
 
 
@@ -95,8 +102,8 @@ constructor(
             try {
                 _state.postValue(State.SAVING)
 
-                dataset.mapValues(microBirthPlanCache, 1)
-                hrpReo.saveRecord(microBirthPlanCache)
+                dataset.mapValues(_microBirthPlanCache, 1)
+                hrpReo.saveRecord(_microBirthPlanCache)
                 isHighRisk = true
                 if (isHighRisk) {
                     // save
