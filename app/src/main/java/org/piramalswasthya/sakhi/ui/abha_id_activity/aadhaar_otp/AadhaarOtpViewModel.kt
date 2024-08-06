@@ -53,6 +53,14 @@ class AadhaarOtpViewModel @Inject constructor(
     val txnId: String
         get() = _txnId!!
 
+    private var _name: String? = null
+    val name: String
+        get() = _name!!
+
+    private var _abhaNumber: String? = null
+    val abhaNumber: String
+        get() = _abhaNumber!!
+
     private var _mobileNumber: String? = null
     val mobileNumber: String
         get() = _mobileNumber!!
@@ -93,6 +101,8 @@ class AadhaarOtpViewModel @Inject constructor(
                 is NetworkResult.Success -> {
                     _txnId = result.data.txnId
                     _mobileNumber = result.data.ABHAProfile.mobile
+                    _name = result.data.ABHAProfile.firstName
+                    _abhaNumber = result.data.ABHAProfile.ABHANumber
                     _state.value = State.OTP_VERIFY_SUCCESS
                 }
 

@@ -116,7 +116,7 @@ class AadhaarOtpFragment : Fragment() {
                     if (parentViewModel.mobileNumber == viewModel.mobileNumber) {
                         findNavController().navigate(
                             AadhaarOtpFragmentDirections.actionAadhaarOtpFragmentToCreateAbhaFragment(
-                                viewModel.txnId
+                                viewModel.txnId, viewModel.name, viewModel.abhaNumber
                             )
                         )
                     } else {
@@ -128,7 +128,7 @@ class AadhaarOtpFragment : Fragment() {
                 State.SUCCESS -> {
                     findNavController().navigate(
                         AadhaarOtpFragmentDirections.actionAadhaarOtpFragmentToVerifyMobileOtpFragment(
-                            viewModel.txnId, viewModel.mobileNumber
+                            viewModel.txnId, viewModel.mobileNumber, viewModel.name, viewModel.abhaNumber
                         )
                     )
                     viewModel.resetState()
