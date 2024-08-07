@@ -1,11 +1,15 @@
 package org.piramalswasthya.sakhi.ui.home_activity.incentives
 
+import android.Manifest
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.pdf.PdfDocument
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.text.Layout
@@ -17,6 +21,7 @@ import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -42,6 +47,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.util.Calendar
+import java.util.Objects
 
 
 @AndroidEntryPoint
@@ -59,6 +65,9 @@ class IncentivesFragment : Fragment() {
     var selectedMonth: String = ""
 
     var selectedYear: String = ""
+
+    private val PERMISSION_REQUEST_CODE = 792
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -169,7 +178,7 @@ class IncentivesFragment : Fragment() {
         }
 
         binding.tvTotalPending.setOnClickListener {
-            downloadPdf()
+            askPermissions()
         }
 
         binding.et1.setOnClickListener {
@@ -927,5 +936,39 @@ class IncentivesFragment : Fragment() {
 
     }
 
+    private fun askPermissions() {
+
+        val sdkversion = Build.VERSION.SDK_INT
+
+        if (sdkversion >= 33) {
+
+            downloadPdf()
+
+        } else {
+            val permissions = arrayOf(
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+            for (permission in permissions) {
+                if (ContextCompat.checkSelfPermission(
+                        Objects.requireNonNull<Any>(
+                            requireContext()
+                        ) as Context, permission
+                    ) == PackageManager.PERMISSION_DENIED
+                ) {
+                    requestPermissions(
+                        permissions,
+                        PERMISSION_REQUEST_CODE
+                    )
+                    return
+                } else {
+                    downloadPdf()
+                }
+            }
+
+        }
+    }
 
 }
+
+
