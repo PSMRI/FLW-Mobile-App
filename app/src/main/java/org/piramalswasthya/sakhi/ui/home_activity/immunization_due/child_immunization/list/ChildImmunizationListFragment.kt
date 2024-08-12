@@ -11,12 +11,13 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.ImmunizationBenListAdapter
+import org.piramalswasthya.sakhi.adapters.ImmunizationBirthDoseCategoryAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentChildImmunizationListBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import timber.log.Timber
 
 @AndroidEntryPoint
-class ChildImmunizationListFragment : Fragment() {
+class ChildImmunizationListFragment : Fragment(),ImmunizationBirthDoseCategoryAdapter.CategoryClickListener{
 
     private var _binding: FragmentChildImmunizationListBinding? = null
     private val binding: FragmentChildImmunizationListBinding
@@ -24,6 +25,7 @@ class ChildImmunizationListFragment : Fragment() {
 
 
     private val viewModel: ChildImmunizationListViewModel by viewModels()
+    private var catTxt = ""
 
     private val bottomSheet: ChildImmunizationVaccineBottomSheetFragment by lazy { ChildImmunizationVaccineBottomSheetFragment() }
     override fun onCreateView(
@@ -36,6 +38,8 @@ class ChildImmunizationListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.rvCat.adapter = ImmunizationBirthDoseCategoryAdapter(viewModel.categoryData(),this,viewModel)
+
         binding.rvList.adapter =
             ImmunizationBenListAdapter(ImmunizationBenListAdapter.VaccinesClickListener {
                 viewModel.updateBottomSheetData(it)
@@ -43,8 +47,9 @@ class ChildImmunizationListFragment : Fragment() {
                     bottomSheet.show(childFragmentManager, "ImM")
             })
 
+
         lifecycleScope.launch {
-            viewModel.benWithVaccineDetails.collect {
+            viewModel.immunizationBenList.collect {
                 Timber.d("Collecting list : $it")
                 binding.rvList.apply {
                     (adapter as ImmunizationBenListAdapter).submitList(it)
@@ -62,6 +67,21 @@ class ChildImmunizationListFragment : Fragment() {
                 getString(R.string.child_immunization_list)
             )
         }
+    }
+
+    override fun onClicked(catDataList: String) {
+
+        if (catDataList.contains("ALL")) {
+            viewModel.filterText("")
+        }
+        else {
+            catTxt = catDataList
+            viewModel.filterText(catTxt)
+
+        }
+
+
+
     }
 
 
