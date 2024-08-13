@@ -15,6 +15,7 @@ import org.piramalswasthya.sakhi.model.BenWithHRPTListDomain
 import org.piramalswasthya.sakhi.model.BenWithPwrDomain
 import org.piramalswasthya.sakhi.model.BenWithTbScreeningDomain
 import org.piramalswasthya.sakhi.model.BenWithTbSuspectedDomain
+import org.piramalswasthya.sakhi.model.ImmunizationDetailsDomain
 import org.piramalswasthya.sakhi.model.InfantRegDomain
 import org.piramalswasthya.sakhi.model.PregnantWomenVisitDomain
 import java.text.SimpleDateFormat
@@ -33,6 +34,7 @@ fun filterBenList(list: List<BenBasicDomain>, text: String): List<BenBasicDomain
         }
     }
 }
+
 
 fun filterForBen(
     ben: BenBasicDomain,
@@ -311,6 +313,58 @@ fun filterBenHRPTFormList(
         }
     }
 }
+
+
+fun filterImmunList(list: List<ImmunizationDetailsDomain>, text: String): List<ImmunizationDetailsDomain> {
+    if (text == "")
+        return list
+    else {
+        var filterText = text.lowercase()
+        var secondFilterText = ""
+        var thirdFilterText = ""
+        var fourthFilterText = ""
+
+        if (filterText.contains("5-6 years")) {
+            secondFilterText = "${filterText.split("-")[0]} years"
+            filterText = filterText.split("-")[1]
+        } else if (filterText.contains("16-24 months")) {
+            secondFilterText = "1 years"
+            filterText = "2 years"
+        } else if (filterText.contains("9-12 months")) {
+            secondFilterText = "${filterText.split("-")[0]} months"
+            thirdFilterText = "10 months"
+            fourthFilterText = "11 months"
+            filterText = filterText.split("-")[1]
+        } else if (filterText.contains("6 weeks")) {
+            secondFilterText = "1 months"
+            filterText = "2 months"
+        } else if (filterText.contains("10 weeks")) {
+            filterText = "3 months"
+        } else if (filterText.contains("14 weeks")) {
+            filterText = "4 months"
+        }
+        return list.filter {
+            filterForImm(
+                it,
+                filterText,
+                secondFilterText,
+                thirdFilterText,
+                fourthFilterText
+            )
+        }
+    }
+}
+
+fun filterForImm(
+    imm: ImmunizationDetailsDomain,
+    filterText: String,
+    firstVal: String,
+    secondVal: String,
+    thirdVal: String
+) = imm.ben.age.lowercase() == filterText ||
+        imm.ben.age.lowercase() == firstVal ||
+        imm.ben.age.lowercase() == secondVal ||
+        imm.ben.age.lowercase() == thirdVal
 
 fun filterBenHRNPTFormList(
     list: List<BenWithHRNPTListDomain>,
