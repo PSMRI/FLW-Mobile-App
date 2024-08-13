@@ -59,6 +59,14 @@
 
 
     <!--  PMSMA  -->
+    <string name="anc_visit_number">ANC %1d ভ্ৰমণ কৰক</string>
+    <string name="pnc_visit_number">%1d দিনত পিএনচি ভ্ৰমণ</string>
+    <string name="register">পঞ্জীয়ন কৰা</string>
+    <string name="tracking_form_filled_successfully">ট্ৰেকিং ফৰ্ম সফলতাৰে পূৰণ কৰা হৈছে</string>
+    <string name="pmsma_form">পিএমএছএমএ প্ৰ-পত্ৰ</string>
+    <string name="general_op">জেনেৰেল অ’ পি</string>
+    <string name="saving_pmsma_to_database_failed">pmsma ক ডাটাবেছত সংৰক্ষণ কৰা ব্যৰ্থ!</string>
+    <string name="hrp_case_please_visit_the_nearest_hwc_or_call_104">এইচ আৰ পি কেছ, অনুগ্ৰহ কৰি ওচৰৰ এইচ ডব্লিউ চিলৈ যাওক বা ১০৪ নম্বৰত ফোন কৰক</string>
     <string name="pmsma_mcts_rch_number">MCTS নম্বৰ / RCH নম্বৰ</string>
     <string name="pmsma_have_mcp_card">লাভকাৰীক কোৰকৈ এটি মুখ্যীয়া স্বাস্থ্য কাৰ্ড আছে?</string>
     <string name="pmsma_given_mcp_card">এটি মুখ্যীয়া স্বাস্থ্য কাৰ্ড প্ৰদান কৰা হৈছে</string>
@@ -90,6 +98,7 @@
     <string name="pmsma_calcium_supplementation">কেলচিয়াম সুপ্লিমেণ্টেচন</string>
     <string name="pmsma_tetanus_toxoid">টেটেনাছ ট’কচইড</string>
     <string name="pmsma_lmp">LMP (আদি মাসিকৰ দিন)</string>
+    <string name="pmsma_edd">প্ৰত্যাশিত ডেলিভাৰী</string>
     <string name="pmsma_last_mestrual_period">শেষ মাসিকৰ সময়</string>
     <string name="pmsma_expected_delivery_date">পৰামিতা ডেলিভাৰীৰ তাৰিখ</string>
     <string name="pmsma_high_risk_factors">উচ্চ আপাতকাৰী সাঁচ</string>

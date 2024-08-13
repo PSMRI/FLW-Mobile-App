@@ -140,4 +140,10 @@
         <item>হেপাটাইটিছ</item>
         <item>OPV</item>
     </string-array>
+    <string name="saving_mdsr_to_database_failed">ডাটাবেছত Mdsr সংৰক্ষণ কৰা ব্যৰ্থ!</string>
+    <string name="hbyc_form">এইচ বি ৱাই চি ফৰ্ম</string>
+    <string name="saving_hbnc_part_ii_to_database_failed">hbnc part II ডাটাবেছত সংৰক্ষণ কৰা ব্যৰ্থ!</string>
+    <string name="part_i">প্ৰথম খণ্ড</string>
+    <string name="part_ii">দ্বিতীয় খণ্ড</string>
+    <string name="hbnc_form">এইচ বি এন চি ফৰ্ম</string>
 </resources>

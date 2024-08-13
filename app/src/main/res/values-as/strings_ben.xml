@@ -203,4 +203,10 @@
     <string-array name="yes">
         <item>হয়</item>
     </string-array>
+    <string name="year">বছৰ</string>
+    <string name="years">বছৰবোৰ</string>
+    <string name="month">মাহ</string>
+    <string name="months">মাহ</string>
+    <string name="day">দিন</string>
+    <string name="days">দিন</string>
 </resources>

@@ -93,12 +93,12 @@
     <string name="high_risk_conditions">High risk conditions</string>
     <string name="beneficiaries">Beneficiaries</string>
     <string name="blood_pressure">ৰক্তচাপ (BP)</string>
-    <string name="systolic">Systolic (mm Hg)</string>
-    <string name="diastolic">Diastolic (mm Hg)</string>
-    <string name="blood_glucose_test">Blood Glucose (Sugar) Test</string>
-    <string name="random_blood_glucose">Random blood Sugar (RBG) (mg/dL)</string>
-    <string name="fasting_glucose_test">Fasting Blood Sugar Test (FBG) (mg/dL)</string>
-    <string name="post_prandial_glucose_test">Post-Prandial Blood Sugar Test (PPBG) (mg/dL)</string>
+    <string name="systolic">চিষ্টোলিক (মিমি Hg)</string>
+    <string name="diastolic">ডায়েষ্টোলিক (মিমি Hg)</string>
+    <string name="blood_glucose_test">তেজৰ গ্লুক’জ (চেনি) পৰীক্ষা</string>
+    <string name="random_blood_glucose">ৰেণ্ডম ব্লাড চুগাৰ (RBG) (mg/dL)</string>
+    <string name="fasting_glucose_test">উপবাসৰ সময়ত তেজৰ চেনি পৰীক্ষা (FBG) (mg/dL)</string>
+    <string name="post_prandial_glucose_test">খাদ্যৰ পিছৰ তেজৰ চেনি পৰীক্ষা (PPBG) (mg/dL)</string>
     <string name="hemoglobin_test">হিম’গ্লবিন (Hb) পৰীক্ষা (g/dl)</string>
     <string name="whether_ifa_supplement_provided">আই এফ এ পৰিপূৰক প্ৰদান কৰা হৈছেনে?</string>
     <string name="issued_quantity_ifa">আই এফ এৰ পৰিপূৰক জাৰি কৰা পৰিমাণ</string>
@@ -124,4 +124,8 @@
         <item>FBS &amp; PPBS</item>
         <item>OGTT</item>
     </string-array>
+    <string name="to_be_filled_consulting_with_anm">(এএনএমৰ সৈতে পৰামৰ্শ কৰি পূৰণ কৰা হ’ব)</string>
+    <string name="rd_dengue">আৰ ডি ডেংগু</string>
+    <string name="rd_filaria">আৰ ডি ফিলাৰিয়া</string>
+    <string name="pregnant_women_pw_section">গৰ্ভৱতী মহিলা (PW) অংশ</string>
 </resources>
