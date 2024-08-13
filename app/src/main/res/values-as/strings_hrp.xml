@@ -106,13 +106,13 @@
     <string name="issued_quantity_ifa_or_folic_acid">Issued quantity of IFA or Folic Acid supplement</string>
     <string name="using_75gm_ogtt">Using 75 gm OGTT</string>
     <string name="after_2hrs">After 2 Hours (mg/dL)</string>
-    <string name="pregnant_women_pw_section">Pregnant Women (PW) section</string>
     <string name="micro_birth_plan_table">Micro Birth Plan Table</string>
     <string name="share">Share</string>
     <string name="pw_name"><b>PW name:</b></string>
     <string name="b_age"><b>Age:</b></string>
     <string name="c_no"><b>Contact no:\n1-</b></string>
     <string name="b_blood_donor"><b>Blood donor identified\n1:</b></string>
+    <string name="pregnant_women_pw_section">গৰ্ভৱতী মহিলা (PW) অংশ</string>
 
     <string-array name="sugar_test_types">
         <item>RBS</item>
@@ -124,8 +124,4 @@
         <item>FBS &amp; PPBS</item>
         <item>OGTT</item>
     </string-array>
-    <string name="to_be_filled_consulting_with_anm">(এএনএমৰ সৈতে পৰামৰ্শ কৰি পূৰণ কৰা হ’ব)</string>
-    <string name="rd_dengue">আৰ ডি ডেংগু</string>
-    <string name="rd_filaria">আৰ ডি ফিলাৰিয়া</string>
-    <string name="pregnant_women_pw_section">গৰ্ভৱতী মহিলা (PW) অংশ</string>
 </resources>
