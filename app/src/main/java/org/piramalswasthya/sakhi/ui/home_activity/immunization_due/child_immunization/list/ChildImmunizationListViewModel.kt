@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.database.room.dao.ImmunizationDao
-import org.piramalswasthya.sakhi.helpers.filterBenList
 import org.piramalswasthya.sakhi.helpers.filterImmunList
 import org.piramalswasthya.sakhi.model.ImmunizationCategory
 import org.piramalswasthya.sakhi.model.ImmunizationDetailsDomain
