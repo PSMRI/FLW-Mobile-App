@@ -54,21 +54,11 @@ class ChildImmunizationListViewModel @Inject constructor(
                         vaccine.immunizationService,
                         if (cache.givenVaccines.any { it.vaccineId == vaccine.vaccineId }) VaccineState.DONE
                         else if (ageMillis <= (vaccine.minAllowedAgeInMillis)) {
-
                             VaccineState.PENDING
-
-                        }
-                        else if (ageMillis <= (vaccine.maxAllowedAgeInMillis)) {
-
+                        } else if (ageMillis <= (vaccine.maxAllowedAgeInMillis)) {
                             VaccineState.OVERDUE
-
-                        }
-
-                        else VaccineState.MISSED
-
-
+                        } else VaccineState.MISSED
                     )
-
                 })
         }
     }

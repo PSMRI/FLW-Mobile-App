@@ -320,68 +320,37 @@ fun filterImmunList(list: List<ImmunizationDetailsDomain>, text: String): List<I
         return list
     else {
         var filterText = text.lowercase()
-        var firstVal = ""
-        var secondVal = ""
-        var thirdVal = ""
-        var fourthVal = ""
-        var fifthVal = ""
-        var sixthVal = ""
-        var seventhVal = ""
-        var eighthVal = ""
+        var secondFilterText = ""
+        var thirdFilterText = ""
+        var fourthFilterText = ""
 
         if (filterText.contains("5-6 years")) {
-            firstVal =   "${filterText.split("-")[0]} years"
+            secondFilterText = "${filterText.split("-")[0]} years"
             filterText = filterText.split("-")[1]
-
         } else if (filterText.contains("16-24 months")) {
-            firstVal = "1 years"
-            /*secondVal = "17 months"
-            thirdVal = "18 months"
-            fourthVal = "19 months"
-            fifthVal = "20 months"
-            sixthVal = "21 months"
-            seventhVal = "22 months"
-            eighthVal = "23 months"*/
+            secondFilterText = "1 years"
             filterText = "2 years"
-
-        }
-        else if (filterText.contains("9-12 months")) {
-            firstVal = "${filterText.split("-")[0]} months"
-            secondVal = "10 months"
-            thirdVal = "11 months"
+        } else if (filterText.contains("9-12 months")) {
+            secondFilterText = "${filterText.split("-")[0]} months"
+            thirdFilterText = "10 months"
+            fourthFilterText = "11 months"
             filterText = filterText.split("-")[1]
-
-        }
-        else if (filterText.contains("6 weeks")) {
-            firstVal = "1 months"
+        } else if (filterText.contains("6 weeks")) {
+            secondFilterText = "1 months"
             filterText = "2 months"
-
-        }
-        else if (filterText.contains("10 weeks")) {
-
+        } else if (filterText.contains("10 weeks")) {
             filterText = "3 months"
-
-        }
-        else if (filterText.contains("14 weeks")) {
-
+        } else if (filterText.contains("14 weeks")) {
             filterText = "4 months"
-
         }
         return list.filter {
-
             filterForImm(
                 it,
                 filterText,
-                firstVal,
-                secondVal,
-                thirdVal,
-                fourthVal,
-                fifthVal,
-                sixthVal,
-                seventhVal,
-                eighthVal
+                secondFilterText,
+                thirdFilterText,
+                fourthFilterText
             )
-
         }
     }
 }
@@ -391,25 +360,11 @@ fun filterForImm(
     filterText: String,
     firstVal: String,
     secondVal: String,
-    thirdVal: String,
-    fourthVal: String,
-    fifthVal: String,
-    sixthVal: String,
-    seventhVal: String,
-    eighthVal: String
-) = (imm.ben.age.lowercase() == filterText ||
+    thirdVal: String
+) = imm.ben.age.lowercase() == filterText ||
         imm.ben.age.lowercase() == firstVal ||
         imm.ben.age.lowercase() == secondVal ||
-        imm.ben.age.lowercase() == thirdVal ||
-        imm.ben.age.lowercase() == fourthVal ||
-        imm.ben.age.lowercase() == fifthVal ||
-        imm.ben.age.lowercase() == sixthVal ||
-        imm.ben.age.lowercase() == seventhVal ||
-        imm.ben.age.lowercase() == eighthVal
-        )
-
-
-
+        imm.ben.age.lowercase() == thirdVal
 
 fun filterBenHRNPTFormList(
     list: List<BenWithHRNPTListDomain>,
