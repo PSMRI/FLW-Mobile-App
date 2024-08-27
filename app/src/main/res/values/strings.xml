@@ -15,7 +15,7 @@
     <string name="PREF_current_saved_language" translatable="false">Locale.Helper.Selected.Language</string>
     <string name="PREF_current_dp_uri" translatable="false">DP_URI_cat</string>
 
-    <string name="radio_title">%s<span> *</span></string>
+    <string name="radio_title" translatable="false">%s<span> *</span></string>
     <string name="radio_title_ds">%s<span> **</span></string>
     <string name="tracking_date">Date of Visit</string>
     <string name="mdsr_form">MDSR</string>
@@ -41,7 +41,7 @@
 
     <!--    HBNC-->
     <string name="hbnc_baby_dead_alert">Cause of death to be reported to ANM/MPW/PHC for infant death review.</string>
-    <string name="hbnc_baby_gestational_age_alert">If child is born in less than 35 weeks, pay attention.</string>
+    <string name="hbnc_baby_gestational_age_alert" translatable="false">If child is born in less than 35 weeks, pay attention.</string>
     <string name="hbnc_mother_dead_alert">Report to ANM/PHC for maternal death review.</string>
     <string name="hbnc_mother_problem_alert">If yes, refer immediately to a hospital.</string>
     <string name="hbnc_mother_num_eat_alert">If the mother does not eat full stomach or eat less than 4 times, advise mother to do so.</string>
