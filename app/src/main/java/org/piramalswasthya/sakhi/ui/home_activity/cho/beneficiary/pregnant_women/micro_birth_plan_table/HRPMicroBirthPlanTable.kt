@@ -67,7 +67,6 @@ class HRPMicroBirthPlanTable : Fragment() {
 
         }
 
-
         viewModel.benName.observe(viewLifecycleOwner) {
             binding.namePw.text = "${resources.getString(R.string.pw_name)} $it"
         }
@@ -162,13 +161,13 @@ class HRPMicroBirthPlanTable : Fragment() {
         }
 
     private fun shareImage(imageUri: Uri) {
-
         val intent = Intent(Intent.ACTION_SEND)
         intent.putExtra(Intent.EXTRA_STREAM, imageUri)
         intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.micro_birth_plan))
         intent.putExtra(Intent.EXTRA_SUBJECT, "Subject Here")
+        intent.setPackage("com.whatsapp")
         intent.setType("image/png")
-        startActivity(Intent.createChooser(intent, "Share Via"))
+        startActivity(intent)
 
     }
 

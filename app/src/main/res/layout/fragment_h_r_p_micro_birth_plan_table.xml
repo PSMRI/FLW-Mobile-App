@@ -282,12 +282,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:drawableRight="@drawable/icon_whatsapp"
                 android:layout_margin="@dimen/margin_normal"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/table_layout"
                 android:textColor="?attr/colorOnPrimary"
                 android:text="Share" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
