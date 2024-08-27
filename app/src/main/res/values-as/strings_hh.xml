@@ -133,13 +133,14 @@
         <item>@string/nhhr_avail_toilet_6</item>
     </string-array>
     <string name="nhhr_type_residential_area_other">আৱাসিক এলেকাৰ প্ৰকাৰ দাখিল কৰক</string>
-    <string name="nhhr_fuel_cooking_other">Other Type of fuel used for Cooking</string>
-    <string name="nhhr_primary_water_other">Other Primary Source of Water</string>
-    <string name="nhhr_avail_electricity_other">Other availability of Electricity</string>
-    <string name="nhhr_avail_toilet_other">Other Availability of Toilet</string>
+    <string name="nhhr_fuel_cooking_other">অন্যান্য ৰন্ধা-বঢ়াৰ বাবে ব্যৱহাৰ কৰা ইন্ধনৰ প্ৰকাৰ</string>
+    <string name="nhhr_primary_water_other">পানীৰ অন্যান্য প্ৰাথমিক উৎস</string>
+    <string name="nhhr_avail_electricity_other">বিদ্যুতৰ অন্যান্য উপলব্ধতা</string>
+    <string name="nhhr_avail_toilet_other">শৌচাগাৰৰ অন্যান্য উপলব্ধতা</string>
     <string name="btn_frag_nhhr_to_ben">হিতাধিকাৰীৰ পঞ্জীকৰন জাৰি ৰাখক</string>
     <string name="consent_alert_title">অনুগ্ৰহ কৰি সম্মতি পত্ৰ পৰীক্ষা কৰক</string>
-    <string name="add_head_of_family">ADD Head-of-Family</string>
+    <string name="add_head_of_family">এডিডি পৰিয়ালৰ মুৰব্বী</string>
+    <string name="hh_no_members">ঘৰুৱা খালী!</string>
     <string name="add_head_of_family_message">Would you like to add <b>%1s</b> as a Head-of-Family Beneficiary?</string>
 
 

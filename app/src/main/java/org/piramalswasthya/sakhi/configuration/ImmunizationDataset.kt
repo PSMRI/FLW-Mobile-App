@@ -107,7 +107,7 @@ class ImmunizationDataset(context: Context, language: Languages) : Dataset(conte
         vaccineName.value = vaccine.vaccineName.dropLastWhile { it.isDigit() }
         doseNumber.value = vaccine.vaccineName.takeLastWhile { it.isDigit() }
         expectedDate.value =
-            getDateFromLong(ben.dob + vaccine.minAllowedAgeInMillis + vaccine.overdueDurationSinceMinInMillis)
+            getDateFromLong(ben.dob + vaccine.maxAllowedAgeInMillis)
         dateOfVaccination.value = getDateFromLong(System.currentTimeMillis())
         dateOfVaccination.min = ben.dob + vaccine.minAllowedAgeInMillis
         if (System.currentTimeMillis() > ben.dob + vaccine.maxAllowedAgeInMillis) {
@@ -138,5 +138,7 @@ class ImmunizationDataset(context: Context, language: Languages) : Dataset(conte
         }
 
     }
+
+
 
 }

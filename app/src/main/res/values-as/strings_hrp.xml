@@ -93,12 +93,12 @@
     <string name="high_risk_conditions">High risk conditions</string>
     <string name="beneficiaries">Beneficiaries</string>
     <string name="blood_pressure">ৰক্তচাপ (BP)</string>
-    <string name="systolic">Systolic (mm Hg)</string>
-    <string name="diastolic">Diastolic (mm Hg)</string>
-    <string name="blood_glucose_test">Blood Glucose (Sugar) Test</string>
-    <string name="random_blood_glucose">Random blood Sugar (RBG) (mg/dL)</string>
-    <string name="fasting_glucose_test">Fasting Blood Sugar Test (FBG) (mg/dL)</string>
-    <string name="post_prandial_glucose_test">Post-Prandial Blood Sugar Test (PPBG) (mg/dL)</string>
+    <string name="systolic">চিষ্টোলিক (মিমি Hg)</string>
+    <string name="diastolic">ডায়েষ্টোলিক (মিমি Hg)</string>
+    <string name="blood_glucose_test">তেজৰ গ্লুক’জ (চেনি) পৰীক্ষা</string>
+    <string name="random_blood_glucose">ৰেণ্ডম ব্লাড চুগাৰ (RBG) (mg/dL)</string>
+    <string name="fasting_glucose_test">উপবাসৰ সময়ত তেজৰ চেনি পৰীক্ষা (FBG) (mg/dL)</string>
+    <string name="post_prandial_glucose_test">খাদ্যৰ পিছৰ তেজৰ চেনি পৰীক্ষা (PPBG) (mg/dL)</string>
     <string name="hemoglobin_test">হিম’গ্লবিন (Hb) পৰীক্ষা (g/dl)</string>
     <string name="whether_ifa_supplement_provided">আই এফ এ পৰিপূৰক প্ৰদান কৰা হৈছেনে?</string>
     <string name="issued_quantity_ifa">আই এফ এৰ পৰিপূৰক জাৰি কৰা পৰিমাণ</string>
@@ -106,13 +106,13 @@
     <string name="issued_quantity_ifa_or_folic_acid">Issued quantity of IFA or Folic Acid supplement</string>
     <string name="using_75gm_ogtt">Using 75 gm OGTT</string>
     <string name="after_2hrs">After 2 Hours (mg/dL)</string>
-    <string name="pregnant_women_pw_section">Pregnant Women (PW) section</string>
     <string name="micro_birth_plan_table">Micro Birth Plan Table</string>
     <string name="share">Share</string>
     <string name="pw_name"><b>PW name:</b></string>
     <string name="b_age"><b>Age:</b></string>
     <string name="c_no"><b>Contact no:\n1-</b></string>
     <string name="b_blood_donor"><b>Blood donor identified\n1:</b></string>
+    <string name="pregnant_women_pw_section">গৰ্ভৱতী মহিলা (PW) অংশ</string>
 
     <string-array name="sugar_test_types">
         <item>RBS</item>
