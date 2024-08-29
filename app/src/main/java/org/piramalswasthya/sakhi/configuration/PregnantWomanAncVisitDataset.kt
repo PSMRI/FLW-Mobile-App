@@ -133,6 +133,8 @@ class PregnantWomanAncVisitDataset(
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
         etMaxLength = 3,
         title = "Pulse Rate",
+        min = 1,
+        max = 999,
         required = false,
     )
 
@@ -633,6 +635,8 @@ class PregnantWomanAncVisitDataset(
             weight.id -> validateIntMinMax(weight)
 
             fundalHeight.id -> validateIntMinMax(fundalHeight)
+
+            pulseRate.id -> validateIntMinMax(pulseRate)
 
             hb.id -> {
                 validateDoubleUpto1DecimalPlaces(hb)
