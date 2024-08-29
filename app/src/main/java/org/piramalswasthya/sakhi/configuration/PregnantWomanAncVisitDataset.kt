@@ -153,6 +153,8 @@ class PregnantWomanAncVisitDataset(
         title = "Fundal Height / Size of the Uterus weeks",
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
         etMaxLength = 2,
+        min = 1,
+        max = 99,
         required = false,
     )
     private val urineAlbumin = FormElement(
@@ -629,6 +631,8 @@ class PregnantWomanAncVisitDataset(
             bp.id -> validateForBp(bp)
 
             weight.id -> validateIntMinMax(weight)
+
+            fundalHeight.id -> validateIntMinMax(fundalHeight)
 
             hb.id -> {
                 validateDoubleUpto1DecimalPlaces(hb)
