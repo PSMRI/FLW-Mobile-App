@@ -165,8 +165,8 @@ class HRPMicroBirthPlanTable : Fragment() {
 
     private fun shareImage(imageUri: Uri) {
         val captionText = " ${getString(R.string.micro_birth_plan)} " +
-                "\n ASHA Name :- ${viewModel.currentUser!!.name} " +
-                "\n Sub-center :- ${viewModel.currentLocation!!.village.name}"
+                "\n ASHA Name : ${viewModel.currentUser!!.name} " +
+                "\n Sub-center : ${viewModel.currentLocation!!.village.name}"
         val intent = Intent(Intent.ACTION_SEND)
         intent.putExtra(Intent.EXTRA_STREAM, imageUri)
         intent.putExtra(Intent.EXTRA_TEXT, captionText)
