@@ -45,6 +45,10 @@ constructor(
     val benDetails: BenRegGen
         get() = _benDetails
 
+    val currentUser = preferenceDao.getLoggedInUser()
+
+    val currentLocation = preferenceDao.getLocationRecord()
+
     private val _benAgeGender = MutableLiveData<String>()
     val benAgeGender: LiveData<String>
         get() = _benAgeGender

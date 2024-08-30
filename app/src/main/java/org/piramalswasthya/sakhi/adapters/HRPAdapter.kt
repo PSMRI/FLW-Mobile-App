@@ -84,9 +84,7 @@ class HRPAdapter(
             var hasForm: Boolean = false
             var completelyFilled: Boolean = false
             var formEnabled: Boolean = false
-            (binding.btnForm2.layoutParams as LinearLayout.LayoutParams).weight=1.2f
-            (binding.btnForm1.layoutParams as LinearLayout.LayoutParams).weight=0.8f
-            (binding.btnForm3.layoutParams as LinearLayout.LayoutParams).weight=1.0f
+            buttonFlexibleWidth()
             binding.btnForm3.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.icon_whatsapp, 0);
 
 
@@ -123,9 +121,7 @@ class HRPAdapter(
                         if (hasForm) {
 
                             formEnabled = true
-                            (binding.btnForm2.layoutParams as LinearLayout.LayoutParams).weight=1.2f
-                            (binding.btnForm1.layoutParams as LinearLayout.LayoutParams).weight=0.8f
-                            (binding.btnForm3.layoutParams as LinearLayout.LayoutParams).weight=1.0f
+                            buttonFlexibleWidth()
 
                         } else {
 
@@ -194,6 +190,12 @@ class HRPAdapter(
             )
 
         }
+
+        private fun buttonFlexibleWidth() {
+            (binding.btnForm2.layoutParams as LinearLayout.LayoutParams).weight=1.2f
+            (binding.btnForm1.layoutParams as LinearLayout.LayoutParams).weight=0.8f
+            (binding.btnForm3.layoutParams as LinearLayout.LayoutParams).weight=1.0f
+        }
     }
 
     override fun onCreateViewHolder(
@@ -214,7 +216,6 @@ class HRPAdapter(
         private val clickedForm3: ((hhId: Long, benId: Long) -> Unit)? = null
 
     ) {
-        //        fun onClickedBen(item: HRPAViewHolder) = clickedBen?.let { it() }(item.benId)
         fun onClickForm1(item: BenWithHRPADomain) =
             clickedForm1?.let { it(item.ben.hhId, item.ben.benId) }
 
