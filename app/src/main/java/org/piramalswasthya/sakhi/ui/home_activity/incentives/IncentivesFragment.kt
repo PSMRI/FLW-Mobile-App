@@ -46,7 +46,9 @@ import org.piramalswasthya.sakhi.utils.MonthYearPickerDialog
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 import java.util.Objects
 
 
@@ -214,18 +216,13 @@ class IncentivesFragment : Fragment() {
 
 
         val document = PdfDocument()
-
         val pageNumber = 1
-
-        incentiveDomainList.forEach {
-
-        }
-        val pageWidth = 300
+        val pageWidth = 345
         val pageHeight = 400
         var pageInfo = PdfDocument.PageInfo.Builder(pageWidth, pageHeight, 1).create()
         var page = document.startPage(pageInfo)
 
-        val canvas = page.canvas
+        var canvas = page.canvas
         val paint = Paint()
 //        paint.isAntiAlias = true
         paint.isSubpixelText = false
@@ -235,7 +232,7 @@ class IncentivesFragment : Fragment() {
         val textPaint = TextPaint()
         textPaint.color = Color.BLACK
         textPaint.textSize = 6f
-        textPaint.letterSpacing = 0.1f
+        textPaint.letterSpacing = 0.2f
 
 
         val boxPaint = Paint()
@@ -247,8 +244,8 @@ class IncentivesFragment : Fragment() {
 
         var x = 10
         var y = 50
-        val columnWidth = 100
-        val rowHeight = 15
+        val columnWidth = 130
+        val rowHeight = 20
 
         var maxPages = incentiveDomainList.size / 20 + 2
 
@@ -275,13 +272,6 @@ class IncentivesFragment : Fragment() {
             paint
         )
 
-        canvas.drawLine(
-            x.toFloat(), (pageHeight - lineGap).toFloat(),
-            (pageWidth - 2 * x).toFloat(), (pageHeight - lineGap).toFloat(),
-            paint
-        )
-
-        // MASTER CLAIM FORMAT FOR ASHAs
         y += lineGap
         canvas.drawText(
             "MASTER CLAIM FORMAT FOR ASHAs",
@@ -323,7 +313,7 @@ class IncentivesFragment : Fragment() {
 
         //Name of the ASHA:_____________________________
         canvas.drawText(
-            "Name of the ASHA:_____________________________",
+            "Name of the ASHA: ${viewModel.currentUser?.name}",
             (x + columnWidth).toFloat(),
             y.toFloat(),
             paint
@@ -395,7 +385,9 @@ class IncentivesFragment : Fragment() {
         y += lineGap
         //Claim from: _______________ to ___________________
         canvas.drawText(
-            "Claim from: _______________ to ___________________",
+            "Claim from: 01 - $selectedMonth - $selectedYear to ${
+                getCurrentDateString()
+            }",
             (x + columnWidth).toFloat(),
             y.toFloat(),
             paint
@@ -438,18 +430,146 @@ class IncentivesFragment : Fragment() {
 
         x = 10
         val items: List<IncentiveDomainDTO> = viewModel.mapToView(incentiveDomainList)
+        val activityItems = ArrayList<IncentiveDomainDTO>()
+        activityItems.add(0,addDataIntoIncentiveDomain("CHILD HEALTH","Providing HBNC up to 42 days after birth / discharge from SNCU"))
+        activityItems.add(1,addDataIntoIncentiveDomain("CHILD HEALTH","Incentive to ASHA for quarterly visits of HBYC"))
+        activityItems.add(2,addDataIntoIncentiveDomain("CHILD HEALTH","Incentive to ASHA for follow up of SNCU discharge babies and for follow up of LBW babies"))
+        activityItems.add(3,addDataIntoIncentiveDomain("CHILD HEALTH","ASHA incentive for referral of SAM cases to NRC and for follow up of discharged SAM children from NRC"))
+        activityItems.add(4,addDataIntoIncentiveDomain("CHILD HEALTH","Child Death Reporting"))
+        activityItems.add(5,addDataIntoIncentiveDomain("CHILD HEALTH","Incentive for quarterly mothers' meeting under MAA"))
+        activityItems.add(6,addDataIntoIncentiveDomain("CHILD HEALTH","Incentive for National Deworming Day for mobilising out of school children"))
+        activityItems.add(7,addDataIntoIncentiveDomain("CHILD HEALTH","Incentive for IDCF for prophylactic distribution of ORS to family with under-five children"))
+        activityItems.add(8,addDataIntoIncentiveDomain("CHILD HEALTH","National Iron Plus Incentive for mobilizing WRA (non pregnant & non lactating Women 20-49 years)"))
+        activityItems.add(9,addDataIntoIncentiveDomain("CHILD HEALTH","NIPI Incentive for mobilizing children and/or ensuring compliance and reporting (6-59 months"))
+        activityItems.add(10,addDataIntoIncentiveDomain("IMMUNIZATION","ASHA incentive for ensuring for full immunization(0-1 year)"))
+        activityItems.add(11,addDataIntoIncentiveDomain("IMMUNIZATION","Ensuring for complete immunization (1 - 2 years)"))
+        activityItems.add(12,addDataIntoIncentiveDomain("IMMUNIZATION","Ensuring for DPT immunization(5 years)"))
+        activityItems.add(13,addDataIntoIncentiveDomain("IMMUNIZATION","mobilization of children in every session site"))
+        activityItems.add(14,addDataIntoIncentiveDomain("MATERNAL HEALTH","ASHA incentive for ANC registration within 1st Trimester"))
+        activityItems.add(15,addDataIntoIncentiveDomain("MATERNAL HEALTH","ASHA incentive for ensuring Full ANC"))
+        activityItems.add(16,addDataIntoIncentiveDomain("MATERNAL HEALTH","ASHA incentive for Comprehensive Abortion Care"))
+        activityItems.add(17,addDataIntoIncentiveDomain("MATERNAL HEALTH","ASHA incentive for Community Based Distribution of Misoprostol"))
+        activityItems.add(18,addDataIntoIncentiveDomain("MATERNAL HEALTH","ASHA incentive for ensuring Institutional delivery of identified HRP"))
+        activityItems.add(19,addDataIntoIncentiveDomain("MATERNAL HEALTH","EPMSMA - instt delivery"))
+        activityItems.add(20,addDataIntoIncentiveDomain("MATERNAL HEALTH","EPMSMA - IF HRPW identified at PMSMA Site"))
+        activityItems.add(21,addDataIntoIncentiveDomain("MATERNAL HEALTH","ASHA Incentive for maternal death reporting "))
+        activityItems.add(22,addDataIntoIncentiveDomain("MATERNAL HEALTH","For ensuring early registration of pregnancy and opening of bank account of beneficiary"))
+        activityItems.add(23,addDataIntoIncentiveDomain("MATERNAL HEALTH","Rs. 100/ for ensuring one ANC by MO in the third trimester"))
+        activityItems.add(24,addDataIntoIncentiveDomain("MATERNAL HEALTH","For motivating Institutional delivery of the beneficiary"))
+        activityItems.add(25,addDataIntoIncentiveDomain("ASHA Incentive under JSY","JSY incentive for ASHA for 1st Delivery(Rural) for Antenatal Component"))
+        activityItems.add(26,addDataIntoIncentiveDomain("ASHA Incentive under JSY","JSY incentive for ASHA for 1st Delivery(Rural) for facilitating Institutional Delivery"))
+        activityItems.add(27,addDataIntoIncentiveDomain("ASHA Incentive under JSY","JSY incentive for ASHA for 2nd Delivery(Rural) for Antenatal Component"))
+        activityItems.add(28,addDataIntoIncentiveDomain("ASHA Incentive under JSY","JSY incentive for ASHA for 2nd Delivery(Rural) for facilitating Institutional Delivery"))
+        activityItems.add(29,addDataIntoIncentiveDomain("ASHA Incentive under JSY","JSY incentive for ASHA for 3rd Delivery(Rural) for Antenatal Component"))
+        activityItems.add(30,addDataIntoIncentiveDomain("ASHA Incentive under JSY","JSY incentive for ASHA for 3rd Delivery(Rural) for facilitating Institutional Delivery"))
+        activityItems.add(31,addDataIntoIncentiveDomain("ASHA Incentive under JSY","JSY incentive for ASHA for 4th Delivery(Rural) for Antenatal Component"))
+        activityItems.add(32,addDataIntoIncentiveDomain("ASHA Incentive under JSY","JSY incentive for ASHA for 4th Delivery(Rural) for facilitating Institutional Delivery"))
+        activityItems.add(33,addDataIntoIncentiveDomain("ASHA Incentive under JSY","JSY incentive(Urban) for Antenatal Component"))
+        activityItems.add(34,addDataIntoIncentiveDomain("ASHA Incentive under JSY","JSY incentive (Urban)for facilitating Institutional Delivery"))
+        activityItems.add(35,addDataIntoIncentiveDomain("FAMILY PLANNING","ASHA incentive for accompanying the client for Injectable MPA(Antara Prog)administration"))
+        activityItems.add(36,addDataIntoIncentiveDomain("FAMILY PLANNING","ASHA incentive for accompanying the client for Injectable MPA(Antara Prog)administration"))
+        activityItems.add(37,addDataIntoIncentiveDomain("FAMILY PLANNING","ASHA incentive for accompanying the client for Injectable MPA(Antara Prog)administration"))
+        activityItems.add(38,addDataIntoIncentiveDomain("FAMILY PLANNING","ASHA incentive for accompanying the client for Injectable MPA(Antara Prog)administration"))
+        activityItems.add(39,addDataIntoIncentiveDomain("FAMILY PLANNING","Ensuring 3 years gap between 1st and 2nd child birth"))
+        activityItems.add(40,addDataIntoIncentiveDomain("FAMILY PLANNING","Ensuring delaying 2 years for first child birth after marriage"))
+        activityItems.add(41,addDataIntoIncentiveDomain("FAMILY PLANNING","Ensuring limiting after 2 child"))
+        activityItems.add(42,addDataIntoIncentiveDomain("FAMILY PLANNING","For motivating a woman for PPIUCD insertion "))
+        activityItems.add(43,addDataIntoIncentiveDomain("FAMILY PLANNING","For motivating PAIUCD"))
+        activityItems.add(44,addDataIntoIncentiveDomain("FAMILY PLANNING","Home Delivery Contraceptive-Condom"))
+        activityItems.add(45,addDataIntoIncentiveDomain("FAMILY PLANNING","Home Delivery Contraceptive-Oral Pills"))
+        activityItems.add(46,addDataIntoIncentiveDomain("FAMILY PLANNING","Home Delivery Contraceptive-EC"))
+        activityItems.add(47,addDataIntoIncentiveDomain("FAMILY PLANNING","For motivating Female sterilization"))
+        activityItems.add(48,addDataIntoIncentiveDomain("FAMILY PLANNING","For motivating a woman for PPS"))
+        activityItems.add(49,addDataIntoIncentiveDomain("FAMILY PLANNING","For Motivating Minilap"))
+        activityItems.add(50,addDataIntoIncentiveDomain("FAMILY PLANNING","For motivating Male sterilization"))
+        activityItems.add(51,addDataIntoIncentiveDomain("FAMILY PLANNING","ASHA incentive for updation of EC survey before each MPV campaign"))
+        activityItems.add(52,addDataIntoIncentiveDomain("FAMILY PLANNING","Incentive to mobilize Saas Bahu Sammelan"))
+        activityItems.add(53,addDataIntoIncentiveDomain("FAMILY PLANNING","Incentive for Distributing Naye Pahel Kit"))
+        activityItems.add(54,addDataIntoIncentiveDomain("ADOLESCENT HEALTH","Menstrual Hygiene – For selling sanitary napkin."))
+        activityItems.add(55,addDataIntoIncentiveDomain("ADOLESCENT HEALTH","Incentive for selection and support of Peer Educator"))
+        activityItems.add(56,addDataIntoIncentiveDomain("ADOLESCENT HEALTH","Incentive for mobilizing adolescents and community for AHD"))
+        activityItems.add(57,addDataIntoIncentiveDomain("ASHA Monthly Routine Activities","a) Mobilizing and attending Village Health and Nutrition Day"))
+        activityItems.add(58,addDataIntoIncentiveDomain("ASHA Monthly Routine Activities","b) Convening and guiding monthly Village Health Sanitation and Nutrition meeting"))
+        activityItems.add(59,addDataIntoIncentiveDomain("ASHA Monthly Routine Activities","c)Attending PHC Review meeting"))
+        activityItems.add(60,addDataIntoIncentiveDomain("ASHA Monthly Routine Activities","Activities Like:\n" +
+                "I) Line listing of household done at beginning of the year and \n" +
+                "updated after every six months. \n" +
+                "II) Maintaining village health register and supporting universal \n" +
+                "registration of births and deaths"))
+        activityItems.add(61,addDataIntoIncentiveDomain("Umbrella Programmes","NPCB - For ensuring Treatment of Cataract surgery in Govt. facility"))
+        activityItems.add(62,addDataIntoIncentiveDomain("Umbrella Programmes","NPCB - For ensuring Treatment of Cataract surgery in Private facility"))
+        activityItems.add(63,addDataIntoIncentiveDomain("Umbrella Programmes","Incentive for completion of 6 month treatment of DSTB"))
+        activityItems.add(64,addDataIntoIncentiveDomain("Umbrella Programmes","Incentive for completion of 18 month treatment of DRTB"))
+        activityItems.add(65,addDataIntoIncentiveDomain("Umbrella Programmes","Informant incentive for active case finding"))
+        activityItems.add(66,addDataIntoIncentiveDomain("Umbrella Programmes","NLEP – Sensitization ASHA Incentive for training on Leprosy"))
+        activityItems.add(67,addDataIntoIncentiveDomain("Umbrella Programmes","NLEP - Incentive for case detection"))
+        activityItems.add(68,addDataIntoIncentiveDomain("Umbrella Programmes","NLEP - for ensuring complete treatment of PB cases."))
+        activityItems.add(69,addDataIntoIncentiveDomain("Umbrella Programmes","NLEP - for ensuring complete treatment of MB cases."))
+        activityItems.add(70,addDataIntoIncentiveDomain("Umbrella Programmes","Partial Incentives to the ASHAs for Leprosy suspects"))
+        activityItems.add(71,addDataIntoIncentiveDomain("Umbrella Programmes","NVBDCP -For malaria slide collection."))
+        activityItems.add(72,addDataIntoIncentiveDomain("Umbrella Programmes","NVBDCP -For ensuring treatment of Malaria positive cases"))
+        activityItems.add(73,addDataIntoIncentiveDomain("Umbrella Programmes","ASHA incentive for referral of AES/JE cases to the nearest CHC/DH/Medical College"))
+        activityItems.add(74,addDataIntoIncentiveDomain("Umbrella Programmes","ASHA Incentive for Dengue and Chikungunya"))
+        activityItems.add(75,addDataIntoIncentiveDomain("Umbrella Programmes","NIDDCP – For testing 50 salt samples per month"))
+        activityItems.add(76,addDataIntoIncentiveDomain("NCD","Incentive for population enumeration,CBAC filling and mobilizing for NCD screening "))
+        activityItems.add(77,addDataIntoIncentiveDomain("NCD","Incentive for follow up and treatment compliance for 6 months for patients diagnosed with Hypertension,Diabetes,Mellitus & 3 common cancers(Oral, Breast,Carvical)"))
+        activityItems.add(78,addDataIntoIncentiveDomain("ADDITIONAL INCENTIVE TO ASHA UNDER STATE GOVT. BUDGET","a) Line Listing of Adolscent and linkage with WIFS"))
+        activityItems.add(79,addDataIntoIncentiveDomain("ADDITIONAL INCENTIVE TO ASHA UNDER STATE GOVT. BUDGET","b) Line Listing of Adolscent and linkage with WIFS"))
+        activityItems.add(80,addDataIntoIncentiveDomain("ADDITIONAL INCENTIVE TO ASHA UNDER STATE GOVT. BUDGET","c)Line Listing of Screened children under RBSK by Mobile Health Team in her are"))
+        activityItems.add(81,addDataIntoIncentiveDomain("ADDITIONAL INCENTIVE TO ASHA UNDER STATE GOVT. BUDGET","d)Facilitation of High Risk Pregnancy identification and line listing"))
+        activityItems.add(82,addDataIntoIncentiveDomain("ADDITIONAL INCENTIVE TO ASHA UNDER STATE GOVT. BUDGET","e)Follow up of Full ANC with complete routine examination of each pregnant women"))
+        activityItems.add(83,addDataIntoIncentiveDomain("ADDITIONAL INCENTIVE TO ASHA UNDER STATE GOVT. BUDGET","f)Mobilizing for screening of HIV of all pregnant women"))
+        activityItems.add(84,addDataIntoIncentiveDomain("ADDITIONAL INCENTIVE TO ASHA UNDER STATE GOVT. BUDGET","g)Identification of Malaria/Dengue/JE cases and line listing"))
+        activityItems.add(85,addDataIntoIncentiveDomain("ADDITIONAL INCENTIVE TO ASHA UNDER STATE GOVT. BUDGET","h)Identification of TB Cases and line listing"))
+        activityItems.add(86,addDataIntoIncentiveDomain("ADDITIONAL INCENTIVE TO ASHA UNDER STATE GOVT. BUDGET","i)Updating of MCP Card and ensuring opening of bank A/C of beneficiary registered in her area"))
+        activityItems.add(87,addDataIntoIncentiveDomain("ADDITIONAL INCENTIVE TO ASHA UNDER STATE GOVT. BUDGET","j)Participating in NCD Screening in her area"))
+        activityItems.add(88,addDataIntoIncentiveDomain("ADDITIONAL INCENTIVE TO ASHA UNDER STATE GOVT. BUDGET","k)Ensuring supplement of IFA to under 5 children and line listing"))
+        activityItems.add(89,addDataIntoIncentiveDomain("ADDITIONAL INCENTIVE TO ASHA UNDER STATE GOVT. BUDGET","l)Follow-up of full immunization with JE,MR,Rota Virus, Vitamin A, etc and line listing"))
+        activityItems.add(90,addDataIntoIncentiveDomain("ADDITIONAL INCENTIVE TO ASHA UNDER STATE GOVT. BUDGET","m)Identification of number of under 5 children with diarrhea traced and distributed ORS during the month and line listing"))
+
+
+        for(i in activityItems.indices) {
+
+            for(j in items.indices) {
+                if (items[j].group == activityItems[i].group && items[j].description == activityItems[i].description) {
+                    activityItems[i] = items[j]
+                }
+            }
+        }
+
         var currentGroup = ""
         var slNo = 1
         y += rowHeight
 
+
+
         var total = 0L
-        items.forEach {
-            if (y > pageHeight) {
+        activityItems.forEach {
+            if (y > pageHeight-15) {
                 document.finishPage(page)
                 currentPage++
                 pageInfo = PdfDocument.PageInfo.Builder(pageWidth, pageHeight, currentPage).create()
                 page = document.startPage(pageInfo)
+                canvas = page.canvas
                 y = rowHeight
+                canvas.drawLine(
+                    x.toFloat(), y.toFloat(),
+                    (pageWidth - 2 * x).toFloat(), y.toFloat(),
+                    paint
+                )
+
+                canvas.drawLine(
+                    x.toFloat(), y.toFloat(),
+                    x.toFloat(), (pageHeight - lineGap).toFloat(),
+                    paint
+                )
+
+                canvas.drawLine(
+                    (pageWidth - 2 * x).toFloat(), y.toFloat(),
+                    (pageWidth - 2 * x).toFloat(), (pageHeight - lineGap).toFloat(),
+                    paint
+                )
+
             } else {
                 if (currentGroup.contentEquals(it.group)) {
                     //
@@ -463,7 +583,7 @@ class IncentivesFragment : Fragment() {
                         y = y.toFloat(),
                         start = 0
                     )
-                    y += rowHeight
+                    y += 10
                 }
 
                 drawItemBox(
@@ -480,12 +600,16 @@ class IncentivesFragment : Fragment() {
                     it.amountClaimed.toString(),
                     "",
                     it.fmrCode ?: "",
-                    "lia"
+                    ""
                 )
                 total += it.amountClaimed
-                y += rowHeight
                 currentGroup = it.group
-                slNo += 1
+                y += rowHeight
+                if (slNo != 75) {
+                    slNo += 1
+                }
+
+
             }
         }
 
@@ -571,7 +695,7 @@ class IncentivesFragment : Fragment() {
         y += rowHeight
 
         canvas1.drawMultilineText(
-            text = "Name of the ASHA",
+            text = "Name of the ASHA : ${viewModel.currentUser?.name}",
             textPaint = textPaint,
             alignment = Layout.Alignment.ALIGN_NORMAL,
             width = pageWidth - 2 * x,
@@ -614,7 +738,7 @@ class IncentivesFragment : Fragment() {
         )
         y += rowHeight
         canvas1.drawMultilineText(
-            text = "Village:",
+            text = "Village: ${viewModel.locationRecord!!.village.name}",
             textPaint = textPaint,
             alignment = Layout.Alignment.ALIGN_NORMAL,
             width = pageWidth - 2 * x,
@@ -712,6 +836,7 @@ class IncentivesFragment : Fragment() {
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
         val file = File(directory, fileName)
 
+
         try {
             document.writeTo(FileOutputStream(file))
             val snackbar = Snackbar.make(binding.root, "$fileName downloaded", Snackbar.LENGTH_LONG)
@@ -727,6 +852,10 @@ class IncentivesFragment : Fragment() {
         document.close()
 
 
+    }
+
+    private fun addDataIntoIncentiveDomain(groupName: String,description: String): IncentiveDomainDTO {
+        return  IncentiveDomainDTO(0,groupName,"",description,"",0,0,0,"")
     }
 
     private fun showFile(uri: Uri) {
@@ -766,7 +895,7 @@ class IncentivesFragment : Fragment() {
         s8: String
     ) {
         val colWidth = 15
-        val rowHeight = 15
+        val rowHeight = 20
         var x = 10
         canvas.drawMultilineText(
             text = s,
@@ -791,8 +920,8 @@ class IncentivesFragment : Fragment() {
         canvas.drawMultilineText(
             text = s1,
             textPaint = textPaint,
-            width = 5 * colWidth,
-            alignment = Layout.Alignment.ALIGN_CENTER,
+            width = 8 * colWidth,
+            alignment = Layout.Alignment.ALIGN_NORMAL,
             x = x.toFloat(),
             y = y.toFloat(),
             start = 0
@@ -800,11 +929,11 @@ class IncentivesFragment : Fragment() {
         canvas.drawRect(
             x.toFloat(),
             y.toFloat(),
-            (x + 5 * colWidth).toFloat(),
+            (x + 8 * colWidth).toFloat(),
             (y + rowHeight).toFloat(),
             boxPaint
         )
-        x += 5 * colWidth
+        x += 8 * colWidth
 
 
         canvas.drawMultilineText(
@@ -969,6 +1098,12 @@ class IncentivesFragment : Fragment() {
         }
     }
 
+}
+
+private fun getCurrentDateString(): String {
+    val calendar = Calendar.getInstance()
+    val mdFormat = SimpleDateFormat("dd - MMMM - yyyy", Locale.ENGLISH)
+    return mdFormat.format(calendar.time)
 }
 
 

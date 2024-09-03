@@ -176,7 +176,7 @@ class HomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         // This will block user to cast app screen
         // Toggle screencast mode for staging & production builds
-//        window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+        window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         super.onCreate(savedInstanceState)
         _binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -206,7 +206,7 @@ class HomeActivity : AppCompatActivity() {
     override fun onResume() {
         // This will block user to cast app screen
         // Toggle screencast mode for staging & production builds
-//        window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+        window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         super.onResume()
         if (isDeviceRootedOrEmulator()) {
             AlertDialog.Builder(this)
@@ -374,7 +374,8 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun isDeviceRootedOrEmulator(): Boolean {
-        return isRooted() || isEmulator() || RootedUtil().isDeviceRooted(applicationContext)
+//        return isRooted() || isEmulator() || RootedUtil().isDeviceRooted(applicationContext)
+        return isRooted() || isEmulator()
     }
 
 }

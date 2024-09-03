@@ -12,6 +12,7 @@ import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.setToStartOfTheDay
 import org.piramalswasthya.sakhi.model.IncentiveDomain
 import org.piramalswasthya.sakhi.model.IncentiveDomainDTO
+import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.model.getDateStrFromLong
 import org.piramalswasthya.sakhi.repositories.IncentiveRepo
 import java.util.Calendar
@@ -49,6 +50,10 @@ class IncentivesViewModel @Inject constructor(
 
 
     private val range = MutableStateFlow(Pair(initStart, initEnd))
+
+    val currentUser = pref.getLoggedInUser()
+
+    val locationRecord: LocationRecord? = pref.getLocationRecord()
 
     val incentiveList: Flow<List<IncentiveDomain>> =
         sourceIncentiveList.combine(range) { list, range ->
