@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.repositories
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.withContext
 import org.json.JSONException
@@ -93,6 +94,35 @@ class MaternalHealthRepo @Inject constructor(
     suspend fun updateAncRecord(ancCache: Array<PregnantWomanAncCache>) {
         withContext(Dispatchers.IO) {
             maternalHealthDao.updateANC(*ancCache)
+        }
+    }
+
+    suspend fun getAncDueCount(selectedDate: Long): Flow<Int> {
+        return withContext(Dispatchers.IO) {
+            maternalHealthDao.getAllPregnancyRecords().transformLatest {
+                Timber.d("From DB : ${it.count()}")
+                var count = 0
+                val notDeliveredList = it.filter { !it.value.any { it.pregnantWomanDelivered == true } }
+                notDeliveredList.keys.forEach { activePwrRecrod ->
+                    val savedAncRecords = it[activePwrRecrod] ?: emptyList()
+                    val isDue = if (savedAncRecords.isEmpty())
+                        TimeUnit.MILLISECONDS.toDays(
+                            selectedDate - activePwrRecrod.lmpDate
+                        ) >= Konstants.minAnc1Week * 7
+                    else {
+                        val lastAncRecord = savedAncRecords.maxBy { it.visitNumber }
+                        (activePwrRecrod.lmpDate + TimeUnit.DAYS.toMillis(280)) > (lastAncRecord.ancDate + TimeUnit.DAYS.toMillis(
+                            28
+                        )) &&
+                                lastAncRecord.visitNumber < 4 && TimeUnit.MILLISECONDS.toDays(
+                            getTodayMillis() - lastAncRecord.ancDate
+                        ) > 28
+                    }
+                    if (isDue)
+                        count++
+                }
+                emit(count)
+            }
         }
     }
 

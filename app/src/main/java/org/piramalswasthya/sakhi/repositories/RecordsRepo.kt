@@ -1,17 +1,25 @@
 package org.piramalswasthya.sakhi.repositories
 
 import dagger.hilt.android.scopes.ActivityRetainedScoped
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.forEach
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.transformLatest
+import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.ChildRegistrationDao
 import org.piramalswasthya.sakhi.database.room.dao.HouseholdDao
 import org.piramalswasthya.sakhi.database.room.dao.ImmunizationDao
 import org.piramalswasthya.sakhi.database.room.dao.MaternalHealthDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.Konstants
+import org.piramalswasthya.sakhi.helpers.getTodayMillis
 import org.piramalswasthya.sakhi.model.filterMdsr
+import timber.log.Timber
 import java.util.Calendar
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @ActivityRetainedScoped
@@ -115,6 +123,35 @@ class RecordsRepo @Inject constructor(
     val pncMotherList = benDao.getAllPNCMotherList(selectedVillage)
         .map { list -> list.map { it.asBasicDomainModelForPNC() } }
     val pncMotherListCount = pncMotherList.map { it.size }
+
+    suspend fun getPncDueCount(selectedDate: Long): Flow<Int> {
+        return withContext(Dispatchers.IO) {
+            maternalHealthDao.getAllPregnancyRecords().transformLatest {
+                Timber.d("From DB : ${it.count()}")
+                var count = 0
+                val deliveredList = it.filter { it.value.any { it.pregnantWomanDelivered == true } }
+                deliveredList.keys.forEach { activePwrRecrod ->
+                    val savedAncRecords = it[activePwrRecrod] ?: emptyList()
+                    val isDue = if (savedAncRecords.isEmpty())
+                        TimeUnit.MILLISECONDS.toDays(
+                            selectedDate - activePwrRecrod.lmpDate
+                        ) >= Konstants.minAnc1Week * 7
+                    else {
+                        val lastAncRecord = savedAncRecords.maxBy { it.visitNumber }
+                        (activePwrRecrod.lmpDate + TimeUnit.DAYS.toMillis(280)) > (lastAncRecord.ancDate + TimeUnit.DAYS.toMillis(
+                            28
+                        )) &&
+                                lastAncRecord.visitNumber < 4 && TimeUnit.MILLISECONDS.toDays(
+                            getTodayMillis() - lastAncRecord.ancDate
+                        ) > 28
+                    }
+                    if (isDue)
+                        count++
+                }
+                emit(count)
+            }
+        }
+    }
 
     val cdrList = benDao.getAllCDRList(selectedVillage)
         .map { list -> list.map { it.asBenBasicDomainModelForCdrForm() } }

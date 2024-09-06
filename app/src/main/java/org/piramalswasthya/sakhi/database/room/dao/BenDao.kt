@@ -203,6 +203,9 @@ interface BenDao {
         maxPncDate: Long = Konstants.pncEcGap
     ): Flow<List<BenWithDoAndPncCache>>
 
+    @Query("select count(*) as count from (select * from beneficiary b inner join vaccine v on  (strftime('%s', 'now') * 1000)  - b.dob between v.minAllowedAgeInMillis and v.overdueDurationSinceMinInMillis and v.vaccineId not in (select vaccineId from immunization i where i.beneficiaryId = b.beneficiaryId) group by b.beneficiaryId)")
+    fun getPncMotherDueListCount(): Flow<Int>
+
     @Query("SELECT * FROM BEN_BASIC_CACHE WHERE CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) <= :max and villageId=:selectedVillage")
     fun getAllInfantList(
         selectedVillage: Int, max: Int = Konstants.maxAgeForInfant

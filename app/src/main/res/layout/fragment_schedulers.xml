@@ -1,0 +1,925 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.home_activity.home.SchedulerFragment">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/rootScroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/rootLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ProgressBar
+                android:id="@+id/pbLoading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/contentLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/md_theme_dark_errorContainer"
+                android:elevation="@dimen/padding_normal"
+                android:layout_margin="8dp"
+                app:cardCornerRadius="@dimen/padding_normal"
+                app:cardElevation="@dimen/padding_normal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="12dp">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/clDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/btnBackDate"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:padding="2dp"
+                            android:layout_marginStart="4dp"
+                            android:background="?selectableItemBackgroundBorderless"
+                            android:src="@drawable/ic__arrow_back"
+                            android:tint="?attr/colorOnPrimary"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"/>
+
+                        <TextView
+                            android:id="@+id/textDateHeader"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="11/08/2024"
+                            android:gravity="center"
+                            android:includeFontPadding="false"
+                            android:layout_marginStart="8dp"
+                            android:textColor="?attr/colorOnPrimary"
+                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                            app:layout_constraintStart_toEndOf="@+id/btnBackDate"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"/>
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/btnFwdDate"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:padding="2dp"
+                            android:layout_marginStart="8dp"
+                            android:tint="?attr/colorOnPrimary"
+                            android:background="?selectableItemBackgroundBorderless"
+                            android:src="@drawable/ic__arrow_forward"
+                            app:layout_constraintStart_toEndOf="@+id/textDateHeader"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"/>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/clOverdue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintStart_toEndOf="@+id/clDate"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintHorizontal_bias="1.0"
+                        app:layout_constraintBottom_toBottomOf="parent">
+
+                        <TextView
+                            android:id="@+id/textOverdueHeader"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Overdue Task"
+                            android:gravity="center"
+                            android:layout_marginStart="8dp"
+                            android:textColor="?attr/colorOnPrimary"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:includeFontPadding="false"
+                            android:layout_marginEnd="8dp"
+                            app:layout_constraintEnd_toStartOf="@+id/textOverdueCount"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"/>
+
+                        <TextView
+                            android:id="@+id/textOverdueCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="(29)"
+                            android:gravity="center"
+                            android:layout_marginEnd="6dp"
+                            android:textColor="?attr/colorOnPrimary"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:includeFontPadding="false"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"/>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/txtToDoList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/to_do_list"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cvHeader"
+                android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvAnc"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:backgroundTint="?attr/colorPrimary"
+                android:elevation="@dimen/padding_normal"
+                app:cardCornerRadius="@dimen/padding_normal"
+                app:cardElevation="@dimen/padding_normal"
+                android:background="?selectableItemBackground"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent=".47"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txtToDoList">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/clAnc"
+                    android:padding="@dimen/padding_wide"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/tvAncHeader"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="ANC (ANC1, ANC2, ANC3, ANC4, PMSMA) Count"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:maxLines="3"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                        android:textColor="?attr/colorOnPrimary" />
+
+                    <TextView
+                        android:id="@+id/tvAnc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toBottomOf="@+id/tvAncHeader"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:textAppearance="@style/TextAppearance.Material3.DisplayMedium"
+                        android:textColor="?attr/colorOnPrimary"
+                        android:text="5" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvPnc"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="4dp"
+                android:backgroundTint="@android:color/holo_orange_light"
+                android:elevation="@dimen/padding_normal"
+                app:cardCornerRadius="@dimen/padding_normal"
+                app:cardElevation="@dimen/padding_normal"
+                android:background="?selectableItemBackground"
+                app:layout_constraintEnd_toStartOf="@+id/cvPwi"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cvAnc">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/clPnc"
+                    android:padding="@dimen/padding_wide"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/tvPncHeader"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="PNC"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:maxLines="3"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+
+                    <TextView
+                        android:id="@+id/tvPnc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toBottomOf="@+id/tvPncHeader"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:textAppearance="@style/TextAppearance.Material3.DisplayMedium"
+                        android:text="1" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvPwi"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="4dp"
+                android:backgroundTint="?attr/colorPrimary"
+                android:elevation="@dimen/padding_normal"
+                app:cardCornerRadius="@dimen/padding_normal"
+                app:cardElevation="@dimen/padding_normal"
+                android:background="?selectableItemBackground"
+                app:layout_constraintStart_toEndOf="@+id/cvPnc"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cvAnc">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/clPwi"
+                    android:padding="@dimen/padding_wide"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/tvPwiHeader"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="PW Immunization"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:maxLines="3"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                        android:textColor="?attr/colorOnPrimary"/>
+
+                    <TextView
+                        android:id="@+id/tvPwi"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toBottomOf="@+id/tvPwiHeader"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:textAppearance="@style/TextAppearance.Material3.DisplayMedium"
+                        android:text="12"
+                        android:textColor="?attr/colorOnPrimary"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvCi"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="4dp"
+                android:backgroundTint="?attr/colorPrimary"
+                android:elevation="@dimen/padding_normal"
+                app:cardCornerRadius="@dimen/padding_normal"
+                app:cardElevation="@dimen/padding_normal"
+                android:background="?selectableItemBackground"
+                app:layout_constraintEnd_toStartOf="@+id/cvMbp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cvPnc">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/clCi"
+                    android:padding="@dimen/padding_wide"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/tvCiHeader"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Child Immunization"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:maxLines="3"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                        android:textColor="?attr/colorOnPrimary"/>
+
+                    <TextView
+                        android:id="@+id/tvCi"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toBottomOf="@+id/tvCiHeader"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:textAppearance="@style/TextAppearance.Material3.DisplayMedium"
+                        android:text="2"
+                        android:textColor="?attr/colorOnPrimary"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvMbp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="4dp"
+                android:backgroundTint="@android:color/holo_orange_light"
+                android:elevation="@dimen/padding_normal"
+                app:cardCornerRadius="@dimen/padding_normal"
+                app:cardElevation="@dimen/padding_normal"
+                android:background="?selectableItemBackground"
+                app:layout_constraintStart_toEndOf="@+id/cvCi"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cvPnc">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/clMbp"
+                    android:padding="@dimen/padding_wide"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/tvMbpHeader"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Micro Birth Plan"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:maxLines="3"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"/>
+
+                    <TextView
+                        android:id="@+id/tvMbp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toBottomOf="@+id/tvMbpHeader"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:textAppearance="@style/TextAppearance.Material3.DisplayMedium"
+                        android:text="0"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvNcd"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="4dp"
+                android:backgroundTint="@android:color/holo_orange_light"
+                android:elevation="@dimen/padding_normal"
+                app:cardCornerRadius="@dimen/padding_normal"
+                app:cardElevation="@dimen/padding_normal"
+                android:background="?selectableItemBackground"
+                app:layout_constraintEnd_toStartOf="@+id/cvVhsnd"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cvCi">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/clNcd"
+                    android:padding="@dimen/padding_wide"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/tvNcdHeader"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="NCD"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:maxLines="3"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"/>
+
+                    <TextView
+                        android:id="@+id/tvNcd"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toBottomOf="@+id/tvNcdHeader"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:textAppearance="@style/TextAppearance.Material3.DisplayMedium"
+                        android:text="0"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvVhsnd"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="4dp"
+                android:backgroundTint="?attr/colorPrimary"
+                android:elevation="@dimen/padding_normal"
+                app:cardCornerRadius="@dimen/padding_normal"
+                app:cardElevation="@dimen/padding_normal"
+                android:background="?selectableItemBackground"
+                app:layout_constraintStart_toEndOf="@+id/cvNcd"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cvCi">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/clVhsnd"
+                    android:padding="@dimen/padding_wide"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/tvVhsndHeader"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="VHSND"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:maxLines="3"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                        android:textColor="?attr/colorOnPrimary"/>
+
+                    <TextView
+                        android:id="@+id/tvVhsnd"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toBottomOf="@+id/tvVhsndHeader"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:textAppearance="@style/TextAppearance.Material3.DisplayMedium"
+                        android:text="0"
+                        android:textColor="?attr/colorOnPrimary"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvTb"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="4dp"
+                android:backgroundTint="?attr/colorPrimary"
+                android:elevation="@dimen/padding_normal"
+                app:cardCornerRadius="@dimen/padding_normal"
+                app:cardElevation="@dimen/padding_normal"
+                android:background="?selectableItemBackground"
+                app:layout_constraintEnd_toStartOf="@+id/cvHrp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cvNcd">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/clTb"
+                    android:padding="@dimen/padding_wide"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/tvTbHeader"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="TB"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:maxLines="3"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                        android:textColor="?attr/colorOnPrimary"/>
+
+                    <TextView
+                        android:id="@+id/tvTb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toBottomOf="@+id/tvTbHeader"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:textAppearance="@style/TextAppearance.Material3.DisplayMedium"
+                        android:text="1"
+                        android:textColor="?attr/colorOnPrimary"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvHrp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="4dp"
+                android:backgroundTint="@android:color/holo_orange_light"
+                android:elevation="@dimen/padding_normal"
+                app:cardCornerRadius="@dimen/padding_normal"
+                app:cardElevation="@dimen/padding_normal"
+                android:background="?selectableItemBackground"
+                app:layout_constraintStart_toEndOf="@+id/cvTb"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cvNcd">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/clHrp"
+                    android:padding="@dimen/padding_wide"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/tvHrpHeader"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="HRP"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:maxLines="3"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"/>
+
+                    <TextView
+                        android:id="@+id/tvHrp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toBottomOf="@+id/tvHrpHeader"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:textAppearance="@style/TextAppearance.Material3.DisplayMedium"
+                        android:text="2"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvHrnp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="4dp"
+                android:backgroundTint="@android:color/holo_orange_light"
+                android:elevation="@dimen/padding_normal"
+                app:cardCornerRadius="@dimen/padding_normal"
+                app:cardElevation="@dimen/padding_normal"
+                android:background="?selectableItemBackground"
+                app:layout_constraintEnd_toStartOf="@+id/cvEc"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cvTb">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/clHrnp"
+                    android:padding="@dimen/padding_wide"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/tvHrnpHeader"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="HRNP"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:maxLines="3"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"/>
+
+                    <TextView
+                        android:id="@+id/tvHrnp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toBottomOf="@+id/tvHrnpHeader"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:textAppearance="@style/TextAppearance.Material3.DisplayMedium"
+                        android:text="1"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvEc"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="4dp"
+                android:backgroundTint="?attr/colorPrimary"
+                android:elevation="@dimen/padding_normal"
+                app:cardCornerRadius="@dimen/padding_normal"
+                app:cardElevation="@dimen/padding_normal"
+                android:background="?selectableItemBackground"
+                app:layout_constraintStart_toEndOf="@+id/cvHrnp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cvTb">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/clEc"
+                    android:padding="@dimen/padding_wide"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/tvEcHeader"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="EC Tracking"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:maxLines="3"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                        android:textColor="?attr/colorOnPrimary"/>
+
+                    <TextView
+                        android:id="@+id/tvEc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toBottomOf="@+id/tvEcHeader"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:textAppearance="@style/TextAppearance.Material3.DisplayMedium"
+                        android:text="5"
+                        android:textColor="?attr/colorOnPrimary"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/txtHrc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/high_risk_cases"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cvHrnp"
+                android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingVertical="@dimen/padding_wide"
+                android:orientation="horizontal"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txtHrc">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cv_hrp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_small"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/md_theme_light_error"
+                    android:elevation="@dimen/padding_normal"
+                    app:cardCornerRadius="@dimen/padding_normal"
+                    app:cardElevation="@dimen/padding_normal">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/padding_wide">
+
+                        <TextView
+                            android:id="@+id/tv_ph_hrp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:lines="3"
+                            android:text="@string/high_risk_pregnant_women"
+                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                            android:textColor="?attr/colorOnPrimary"/>
+
+                        <TextView
+                            android:id="@+id/tv_hrp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/tv_ph_hrp"
+                            android:layout_alignParentEnd="false"
+                            android:layout_centerHorizontal="true"
+                            android:textAppearance="@style/TextAppearance.Material3.DisplayMedium"
+                            android:text="45"
+                            android:textColor="?attr/colorOnPrimary"/>
+                    </RelativeLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cv_non_hrp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_small"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/md_theme_light_error"
+                    android:elevation="@dimen/padding_normal"
+                    app:cardCornerRadius="@dimen/padding_normal"
+                    app:cardElevation="@dimen/padding_normal">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/padding_wide">
+
+                        <TextView
+                            android:id="@+id/tv_hr_npw"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:lines="3"
+
+                            android:text="@string/high_risk_non_pregnant_women"
+                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                            android:textColor="?attr/colorOnPrimary"/>
+
+                        <TextView
+                            android:id="@+id/tv_hr_ec_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/tv_hr_npw"
+                            android:layout_alignParentEnd="false"
+                            android:layout_centerHorizontal="true"
+                            android:text="@string/_0"
+                            android:textAppearance="@style/TextAppearance.Material3.DisplayMedium"
+                            android:textColor="?attr/colorOnPrimary"/>
+                    </RelativeLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cv_hrb"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_small"
+                    android:layout_weight="1"
+                    android:backgroundTint="@android:color/holo_orange_light"
+                    android:elevation="@dimen/padding_normal"
+                    android:visibility="gone"
+                    app:cardCornerRadius="@dimen/padding_normal"
+                    app:cardElevation="@dimen/padding_normal">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="@dimen/padding_wide"
+                        android:textColor="?attr/colorOnPrimary">
+
+                        <TextView
+                            android:id="@+id/tv_ph_hrb"
+                            android:lines="3"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/high_risk_babies"
+
+                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                            android:textColor="?attr/colorOnPrimary"/>
+
+                        <TextView
+                            android:id="@+id/tv_hrb"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/tv_ph_hrb"
+                            android:layout_alignParentEnd="false"
+                            android:layout_centerHorizontal="true"
+
+                            android:text="@string/_0"
+                            android:textAppearance="@style/TextAppearance.Material3.DisplayMedium"
+                            android:textColor="?attr/colorOnPrimary"/>
+                    </RelativeLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cv_lwb"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_small"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/md_theme_light_error"
+                    android:elevation="@dimen/padding_normal"
+                    app:cardCornerRadius="@dimen/padding_normal"
+                    app:cardElevation="@dimen/padding_normal">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/padding_wide">
+
+                        <TextView
+                            android:id="@+id/tv_ph_lbwb"
+                            android:lines="3"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/low_birth_weight_babies"
+
+                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                            android:textColor="?attr/colorOnPrimary"/>
+
+                        <TextView
+                            android:id="@+id/tv_lbwb"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/tv_ph_lbwb"
+                            android:layout_alignParentEnd="false"
+
+                            android:layout_centerHorizontal="true"
+                            android:text="@string/_0"
+                            android:textAppearance="@style/TextAppearance.Material3.DisplayMedium"
+                            android:textColor="?attr/colorOnPrimary"/>
+                    </RelativeLayout>
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</FrameLayout>
