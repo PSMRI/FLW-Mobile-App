@@ -125,16 +125,16 @@ class CreateAbhaFragment : Fragment() {
         val benId = intent.getLongExtra("benId", 0)
         val benRegId = intent.getLongExtra("benRegId", 0)
 
-//        viewModel.createHID(benId, benRegId)
+        viewModel.createHID(benId, benRegId)
 
-        binding.pbCai.visibility = View.INVISIBLE
-        binding.clCreateAbhaId.visibility = View.VISIBLE
-        binding.clVerifyMobileOtp.visibility = View.INVISIBLE
-        binding.clError.visibility = View.INVISIBLE
-        binding.clDownloadAbha.visibility = View.GONE
+//        binding.pbCai.visibility = View.INVISIBLE
+//        binding.clCreateAbhaId.visibility = View.VISIBLE
+//        binding.clVerifyMobileOtp.visibility = View.INVISIBLE
+//        binding.clError.visibility = View.INVISIBLE
+//        binding.clDownloadAbha.visibility = View.GONE
 
-        binding.textView2.text = args.name
-        binding.textView4.text = args.abhaNumber
+//        binding.textView2.text = args.name
+//        binding.textView4.text = args.abhaNumber
 
         viewModel.benMapped.observe(viewLifecycleOwner) {
             it?.let {
