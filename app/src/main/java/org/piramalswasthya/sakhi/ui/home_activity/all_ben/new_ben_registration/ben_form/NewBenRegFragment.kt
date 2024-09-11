@@ -113,7 +113,11 @@ class NewBenRegFragment : Fragment() {
         alertDialog.setNegativeButton(
             resources.getString(R.string.cancel)
         ) { dialog, _ ->
-            findNavController().navigateUp()
+            try {
+                findNavController().navigateUp()
+            } catch (e:Exception){
+                dialog.cancel()
+            }
             dialog.cancel()
         }
         alertDialog.show()
@@ -140,7 +144,12 @@ class NewBenRegFragment : Fragment() {
         alertDialog.setNegativeButton(
             resources.getString(R.string.cancel)
         ) { dialog, _ ->
-            findNavController().navigateUp()
+            try {
+                findNavController().navigateUp()
+            } catch (e:Exception) {
+                dialog.cancel()
+            }
+
             dialog.cancel()
         }
         alertDialog.show()
@@ -156,7 +165,12 @@ class NewBenRegFragment : Fragment() {
             .create()
         alertBinding.btnNegative.setOnClickListener {
             alertDialog.dismiss()
-            findNavController().navigateUp()
+            try {
+                findNavController().navigateUp()
+            }catch (e:Exception){
+                alertDialog.dismiss()
+            }
+
         }
         alertBinding.btnPositive.setOnClickListener {
             if (alertBinding.checkBox.isChecked) {
