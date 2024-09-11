@@ -9,9 +9,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.network.AbhaGenerateMobileOtpRequest
 import org.piramalswasthya.sakhi.network.AbhaVerifyMobileOtpRequest
+import org.piramalswasthya.sakhi.network.AuthData2
 import org.piramalswasthya.sakhi.network.CreateAbhaIdRequest
 import org.piramalswasthya.sakhi.network.CreateAbhaIdResponse
 import org.piramalswasthya.sakhi.network.NetworkResult
+import org.piramalswasthya.sakhi.network.Otp2
 import org.piramalswasthya.sakhi.network.interceptors.TokenInsertAbhaInterceptor
 import org.piramalswasthya.sakhi.repositories.AbhaIdRepo
 import javax.inject.Inject
@@ -72,8 +74,11 @@ class VerifyMobileOtpViewModel @Inject constructor(
         viewModelScope.launch {
             val result = abhaIdRepo.verifyOtpForMobileNumber(
                 AbhaVerifyMobileOtpRequest(
-                    otp,
-                    txnIdFromArgs
+                    listOf<String>("abha-enrol", "mobile-verify"),
+                    AuthData2(
+                        listOf<String>("otp"),
+                        Otp2("timestamp", txnIdFromArgs, otp)
+                    )
                 )
             )
             when (result) {
