@@ -29,8 +29,6 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    private const val baseAbhaUrl = "https://healthidsbx.abdm.gov.in/api/"
-
     private val baseClient =
         OkHttpClient.Builder()
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
@@ -96,7 +94,7 @@ object AppModule {
         return Retrofit.Builder()
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             //.addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(baseAbhaUrl)
+            .baseUrl(BuildConfig.BASE_ABHA_URL)
             .client(httpClient)
             .build()
             .create(AbhaApiService::class.java)
