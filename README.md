@@ -3,9 +3,11 @@
     - Information for the steps followed during the generation of APK’s for Sakhi Application from code
 
 **Pre-Requesties:**
-    - Clone the code repo into android studio and build the application
+    - Clone the code of updated repo into android studio and build the application.
 **Secrets:**
-    - set ENCRYPTED_PASS_KEY, ABHA_CLIENT_ID, ABHA_CLIENT_SECRET values in secrets.properties file
+    - set ENCRYPTED_PASS_KEY, ABHA_CLIENT_ID, ABHA_CLIENT_SECRET values in secrets.properties file.
+**google-json**
+    - set google json file of required variant ie. uat, staging or production.
 **Environments**:  We can generate the application for below environments based on requirements
     - Amrit Demo
     - UAT
