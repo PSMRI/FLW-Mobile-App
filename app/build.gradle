@@ -23,6 +23,7 @@ android {
         versionName "2.0"
         resConfigs "en", "hi", "as"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField "String", "BASE_TMC_URL", "\"https://amritdemo.piramalswasthya.org/\""
     }
 
     buildTypes {
@@ -43,14 +44,17 @@ android {
             applicationIdSuffix ".staging"
             applicationId "org.piramalswasthya.sakhi"
             resValue "string", "app_native_name", "উৎপ্ৰেৰণা-Stag"
+            buildConfigField "String", "BASE_TMC_URL", "\"https://amritdemo.piramalswasthya.org/\""
         }
         uat {
             applicationIdSuffix ".uat"
             applicationId "org.piramalswasthya.sakhi"
             resValue "string", "app_native_name", "উৎপ্ৰেৰণা-Uat"
+            buildConfigField "String", "BASE_TMC_URL", "\"https://amritdemo.piramalswasthya.org/\""
         }
         production {
             applicationId "org.piramalswasthya.sakhi"
+            buildConfigField "String", "BASE_TMC_URL", "\"https://assamtmc.piramalswasthya.org/\""
         }
     }
 
