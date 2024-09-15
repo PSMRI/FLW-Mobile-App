@@ -72,7 +72,7 @@
                             app:layout_constraintEnd_toStartOf="@+id/tv_age_gender"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/tv_ben_name"
-                            tools:text="@string/beneficiary_id" />
+                            android:text="@string/beneficiary_id" />
 
                         <TextView
                             android:id="@+id/ben_id"
