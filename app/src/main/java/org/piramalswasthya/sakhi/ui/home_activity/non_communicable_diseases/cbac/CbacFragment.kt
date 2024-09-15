@@ -3,7 +3,6 @@ package org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.cba
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -86,7 +85,7 @@ class CbacFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.noneCheck.setOnCheckedChangeListener { buttonView, isChecked ->
+        binding.noneCheck.setOnCheckedChangeListener { _, isChecked ->
             isnoneOfThese = isChecked
             if (isChecked) {
                 binding.cbacHistb.rbNo.isChecked = isChecked
