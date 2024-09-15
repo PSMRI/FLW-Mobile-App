@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.cba
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,6 +36,8 @@ class CbacFragment : Fragment() {
     private val isInFillMode: Boolean by lazy {
         viewModel.cbacId == 0
     }
+
+    private var isnoneOfThese = false
 
     private var totalScorePopupShown: Boolean = false
 
@@ -82,6 +85,54 @@ class CbacFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.noneCheck.setOnCheckedChangeListener { buttonView, isChecked ->
+            isnoneOfThese = isChecked
+            if (isChecked) {
+                binding.cbacHistb.rbNo.isChecked = isChecked
+                binding.cbacCoughing.rbNo.isChecked = isChecked
+                binding.cbacBlsputum.rbNo.isChecked = isChecked
+                binding.cbacFeverwks.rbNo.isChecked = isChecked
+                binding.cbacLsweight.rbNo.isChecked = isChecked
+                binding.cbacNtswets.rbNo.isChecked = isChecked
+                binding.cbacFhTb.rbNo.isChecked = isChecked
+                binding.cbacTakingTbDrug.rbNo.isChecked = isChecked
+                binding.cbacRecurrentUlceration.rbNo.isChecked = isChecked
+                binding.cbacRecurrentTingling.rbNo.isChecked = isChecked
+                binding.cbacRecurrentCloudy.rbNo.isChecked = isChecked
+                binding.cbacRecurrentDiffcultyReading.rbNo.isChecked = isChecked
+                binding.cbacRecurrentPainEyes.rbNo.isChecked = isChecked
+                binding.cbacRecurrentRednessEyes.rbNo.isChecked = isChecked
+                binding.cbacRecurrentDiffHearing.rbNo.isChecked = isChecked
+                binding.cbacBreath.rbNo.isChecked = isChecked
+                binding.cbacHifits.rbNo.isChecked = isChecked
+                binding.cbacDifmouth.rbNo.isChecked = isChecked
+                binding.cbacHeald.rbNo.isChecked = isChecked
+                binding.cbacVoice.rbNo.isChecked = isChecked
+                binding.cbacAnyGrowth.rbNo.isChecked = isChecked
+                binding.cbacAnyWhite.rbNo.isChecked = isChecked
+                binding.cbacAnyThickendSkin.rbNo.isChecked = isChecked
+                binding.cbacAnyNodulesSkin.rbNo.isChecked = isChecked
+                binding.cbacRecurrentNumbness.rbNo.isChecked = isChecked
+                binding.cbacPainWhileChewing.rbNo.isChecked = isChecked
+                binding.cbacAnyHyperPigmented.rbNo.isChecked = isChecked
+                binding.cbacClawingOfFingers.rbNo.isChecked = isChecked
+                binding.cbacTinglingOrNumbness.rbNo.isChecked = isChecked
+                binding.cbacInabilityCloseEyelid.rbNo.isChecked = isChecked
+                binding.cbacDiffHoldingObjects.rbNo.isChecked = isChecked
+                binding.cbacWeeknessInFeet.rbNo.isChecked = isChecked
+                binding.cbacLumpbrest.rbNo.isChecked = isChecked
+                binding.cbacNipple.rbNo.isChecked = isChecked
+                binding.cbacBreast.rbNo.isChecked = isChecked
+                binding.cbacBlperiods.rbNo.isChecked = isChecked
+                binding.cbacBlmenopause.rbNo.isChecked = isChecked
+                binding.cbacBlintercorse.rbNo.isChecked = isChecked
+                binding.cbacFouldis.rbNo.isChecked = isChecked
+            }
+
+
+        }
+
 
         viewModel.state.observe(viewLifecycleOwner) {
             when (it) {
@@ -131,6 +182,9 @@ class CbacFragment : Fragment() {
                 }
             }
         }
+
+        binding.benId.text = viewModel.benId.toString()
+
         viewModel.benName.observe(viewLifecycleOwner) {
             binding.tvBenName.text = it
         }
@@ -293,6 +347,8 @@ class CbacFragment : Fragment() {
 
     private fun setUpView() {
         binding.btnSave.visibility = View.GONE
+        binding.noneCheck.visibility = View.GONE
+        binding.nonTxt.visibility = View.GONE
         viewModel.filledCbac.observe(viewLifecycleOwner) { cbac ->
             binding.etDate.setText(getDateFromLong(cbac.fillDate))
             setupRaView(cbac)
