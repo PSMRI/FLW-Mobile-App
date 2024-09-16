@@ -1,7 +1,6 @@
 package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
-import android.util.Log
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.BenRegCache
@@ -170,7 +169,7 @@ class HRPMicroBirthPlanDataset(
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.mode_of_transportation_in_case_of_labour_pain),
         required = false,
-        etMaxLength = 100,
+        etMaxLength = 20,
         etInputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
     )
     private val usg = FormElement(
@@ -311,9 +310,6 @@ class HRPMicroBirthPlanDataset(
                 validateMobileNumberOnEditText(communityMemberContact)
             }
 
-            modeOfTransportation.id -> {
-                validateAllAlphabetsSpaceOnEditText(modeOfTransportation)
-            }
 
             else -> {
                 -1
