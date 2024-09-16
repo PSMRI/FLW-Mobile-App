@@ -159,7 +159,7 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
         isMobileNumber = true,
         etMaxLength = 18,
         max = 999999999999999999L,
-        min = 0L
+        min = 10000000L
     )
 
     private val bankName = FormElement(
@@ -1142,7 +1142,7 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
             }
 
             bankAccount.id -> {
-                validateAllZerosOnEditText(bankAccount)
+                validateIntMinMax(bankAccount)
             }
 
             bankName.id -> {
