@@ -62,4 +62,25 @@ object Konstants {
 
 
     const val defaultTimeStamp = 1577817001000L
+
+    const val childHealth = "CHILD HEALTH"
+
+    const val immunization = "IMMUNIZATION"
+
+    const val maternalHealth = "MATERNAL HEALTH"
+
+    const val ashaIncetiveJSY = "ASHA Incentive under JSY"
+
+    const val familyPlanning = "FAMILY PLANNING"
+
+    const val adolescentHealth = "ADOLESCENT HEALTH"
+
+    const val ashaMonthlyRActivity = "ASHA Monthly Routine Activities"
+
+    const val umbrellaProgrames = "Umbrella Programmes"
+
+    const val ncd = "NCD"
+
+    const val additionalIncentivetoAshaSGovt = "ADDITIONAL INCENTIVE TO ASHA UNDER STATE GOVT. BUDGET"
+
 }
