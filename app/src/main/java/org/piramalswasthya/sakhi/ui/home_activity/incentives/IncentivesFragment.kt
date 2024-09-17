@@ -38,6 +38,7 @@ import org.piramalswasthya.sakhi.databinding.FragmentIncentivesBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.Konstants.additionalIncentivetoAshaSGovt
 import org.piramalswasthya.sakhi.helpers.Konstants.adolescentHealth
+import org.piramalswasthya.sakhi.helpers.Konstants.antaraProg
 import org.piramalswasthya.sakhi.helpers.Konstants.ashaIncetiveJSY
 import org.piramalswasthya.sakhi.helpers.Konstants.ashaMonthlyRActivity
 import org.piramalswasthya.sakhi.helpers.Konstants.childHealth
@@ -476,10 +477,10 @@ class IncentivesFragment : Fragment() {
         activityItems.add(32,addDataIntoIncentiveDomain(ashaIncetiveJSY,"JSY incentive for ASHA for 4th Delivery(Rural) for facilitating Institutional Delivery"))
         activityItems.add(33,addDataIntoIncentiveDomain(ashaIncetiveJSY,"JSY incentive(Urban) for Antenatal Component"))
         activityItems.add(34,addDataIntoIncentiveDomain(ashaIncetiveJSY,"JSY incentive (Urban)for facilitating Institutional Delivery"))
-        activityItems.add(35,addDataIntoIncentiveDomain(familyPlanning,"ASHA incentive for accompanying the client for Injectable MPA(Antara Prog)administration"))
-        activityItems.add(36,addDataIntoIncentiveDomain(familyPlanning,"ASHA incentive for accompanying the client for Injectable MPA(Antara Prog)administration"))
-        activityItems.add(37,addDataIntoIncentiveDomain(familyPlanning,"ASHA incentive for accompanying the client for Injectable MPA(Antara Prog)administration"))
-        activityItems.add(38,addDataIntoIncentiveDomain(familyPlanning,"ASHA incentive for accompanying the client for Injectable MPA(Antara Prog)administration"))
+        activityItems.add(35,addDataIntoIncentiveDomain(familyPlanning,antaraProg))
+        activityItems.add(36,addDataIntoIncentiveDomain(familyPlanning,antaraProg))
+        activityItems.add(37,addDataIntoIncentiveDomain(familyPlanning,antaraProg))
+        activityItems.add(38,addDataIntoIncentiveDomain(familyPlanning,antaraProg))
         activityItems.add(39,addDataIntoIncentiveDomain(familyPlanning,"Ensuring 3 years gap between 1st and 2nd child birth"))
         activityItems.add(40,addDataIntoIncentiveDomain(familyPlanning,"Ensuring delaying 2 years for first child birth after marriage"))
         activityItems.add(41,addDataIntoIncentiveDomain(familyPlanning,"Ensuring limiting after 2 child"))
