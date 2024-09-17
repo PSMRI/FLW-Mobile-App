@@ -222,6 +222,7 @@ class AbhaIdRepo @Inject constructor(
     suspend fun verifyOtpForAadhaar(req: AbhaVerifyAadhaarOtpRequest): NetworkResult<AbhaVerifyAadhaarOtpResponse> {
         return withContext(Dispatchers.IO) {
             try {
+                // ABHA v3
                 req.authData.otp.otpValue = encryptData(req.authData.otp.otpValue)
                 req.authData.otp.timeStamp = getCurrentTimestamp()
                 // ABHA v1/v2 API
@@ -281,6 +282,7 @@ class AbhaIdRepo @Inject constructor(
     suspend fun verifyOtpForMobileNumber(req: AbhaVerifyMobileOtpRequest): NetworkResult<AbhaVerifyMobileOtpResponse> {
         return withContext(Dispatchers.IO) {
             try {
+                // ABHA v3
                 req.authData.otp.otpValue = encryptData(req.authData.otp.otpValue)
                 req.authData.otp.timeStamp = getCurrentTimestamp()
                 // ABHA v1/v2 API
