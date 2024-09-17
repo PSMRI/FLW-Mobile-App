@@ -86,8 +86,9 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun isDeviceRootedOrEmulator(): Boolean {
-//        return CommonUtils.isRooted() || CommonUtils.isEmulator() || RootedUtil().isDeviceRooted(applicationContext)
+//      return CommonUtils.isRooted() || CommonUtils.isEmulator() || RootedUtil().isDeviceRooted(applicationContext)
         return CommonUtils.isRooted() || CommonUtils.isEmulator()
+
     }
 
 

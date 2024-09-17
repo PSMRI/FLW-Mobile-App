@@ -15,7 +15,7 @@
     <string name="bank_acc_no">Bank Acc No</string>
     <string name="nearest_24x7_phc">Nearest 24x7 PHC</string>
     <string name="nearest_fru">Nearest FRU</string>
-    <string name="nearest_usg_centre">Nearest USG centre:</string>
+    <string name="nearest_usg_centre">Nearest USG centre</string>
     <string name="nearest_sc_hwc">Nearest SC/HWC</string>
     <string name="blood_donors_identified_1">Blood donors identified 1</string>
     <string name="blood_donors_identified_2">Blood donors identified 2</string>
@@ -109,10 +109,10 @@
     <string name="pregnant_women_pw_section">Pregnant Women (PW) section</string>
     <string name="micro_birth_plan_table">Micro Birth Plan Table</string>
     <string name="share">Share</string>
-    <string name="pw_name"><b>PW name:</b></string>
-    <string name="b_age"><b>Age:</b></string>
-    <string name="c_no"><b>Contact no:\n1-</b></string>
-    <string name="b_blood_donor"><b>Blood donor identified\n1:</b></string>
+    <string name="pw_name"><b>PW name :</b></string>
+    <string name="b_age"><b>Age :</b></string>
+    <string name="c_no"><b>Contact no :\n1 -</b></string>
+    <string name="b_blood_donor"><b>Blood donor identified\n1 -</b></string>
 
 
     <string-array name="sugar_test_types">
