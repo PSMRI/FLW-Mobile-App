@@ -98,8 +98,9 @@ class CbacFragment : Fragment() {
                     ).show()
                     WorkerUtils.triggerAmritPushWorker(requireContext())
                 }
-
-                else -> {}
+                else -> {
+                    Timber.d("IDLE!")
+                }
             }
         }
 

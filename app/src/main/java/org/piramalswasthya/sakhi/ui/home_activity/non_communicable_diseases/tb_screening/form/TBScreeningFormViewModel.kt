@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -59,6 +60,8 @@ class TBScreeningFormViewModel @Inject constructor(
     var suspectedTBFamily: String? = null
 
     private lateinit var tbScreeningCache: TBScreeningCache
+
+    private val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO
 
     init {
         viewModelScope.launch {
@@ -117,7 +120,7 @@ class TBScreeningFormViewModel @Inject constructor(
 
     fun saveFormDirectlyfromCbac() {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
+            withContext(defaultDispatcher) {
                 try {
                     saveValues()
                     _state.postValue(State.SAVING)
