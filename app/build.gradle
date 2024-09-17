@@ -23,11 +23,12 @@ android {
         versionName "2.0"
         resConfigs "en", "hi", "as"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        // TMC Server Staging API Base URL
         buildConfigField "String", "BASE_TMC_URL", "\"https://amritdemo.piramalswasthya.org/\""
-        // ABHA v2 Base URL
-//        buildConfigField "String", "BASE_ABHA_URL", "\"https://healthidsbx.abdm.gov.in/api/\""
-        // ABHA v3 Base URL
-        buildConfigField "String", "BASE_ABHA_URL", "\"https://abhasbx.abdm.gov.in/abha/api/\""
+        // ABHA v1/v2 Staging Base URL
+        buildConfigField "String", "BASE_ABHA_URL", "\"https://healthidsbx.abdm.gov.in/api/\""
+        // ABHA v3 Staging Base URL
+//        buildConfigField "String", "BASE_ABHA_URL", "\"https://abhasbx.abdm.gov.in/abha/api/\""
     }
 
     buildTypes {
@@ -48,26 +49,29 @@ android {
             applicationIdSuffix ".staging"
             applicationId "org.piramalswasthya.sakhi"
             resValue "string", "app_native_name", "উৎপ্ৰেৰণা-Stag"
+            // TMC Server Staging API Base URL
             buildConfigField "String", "BASE_TMC_URL", "\"https://amritdemo.piramalswasthya.org/\""
-            // ABHA v2 Base URL
-//            buildConfigField "String", "BASE_ABHA_URL", "\"https://healthidsbx.abdm.gov.in/api/\""
-            // ABHA v3 Base URL
-            buildConfigField "String", "BASE_ABHA_URL", "\"https://abhasbx.abdm.gov.in/abha/api/\""
+            // ABHA v1/v2 Staging Base URL
+            buildConfigField "String", "BASE_ABHA_URL", "\"https://healthidsbx.abdm.gov.in/api/\""
+            // ABHA v3 Staging Base URL
+//            buildConfigField "String", "BASE_ABHA_URL", "\"https://abhasbx.abdm.gov.in/abha/api/\""
         }
         uat {
             applicationIdSuffix ".uat"
             applicationId "org.piramalswasthya.sakhi"
             resValue "string", "app_native_name", "উৎপ্ৰেৰণা-Uat"
+            // TMC Server Staging API Base URL
             buildConfigField "String", "BASE_TMC_URL", "\"https://amritdemo.piramalswasthya.org/\""
-            // ABHA v2 Base URL
-//            buildConfigField "String", "BASE_ABHA_URL", "\"https://healthidsbx.abdm.gov.in/api/\""
-            // ABHA v3 Base URL
-            buildConfigField "String", "BASE_ABHA_URL", "\"https://abhasbx.abdm.gov.in/abha/api/\""
+            // ABHA v1/v2 Staging Base URL
+            buildConfigField "String", "BASE_ABHA_URL", "\"https://healthidsbx.abdm.gov.in/api/\""
+            // ABHA v3 Staging Base URL
+//            buildConfigField "String", "BASE_ABHA_URL", "\"https://abhasbx.abdm.gov.in/abha/api/\""
         }
         production {
             applicationId "org.piramalswasthya.sakhi"
+            // TMC Server Production API Base URL
             buildConfigField "String", "BASE_TMC_URL", "\"https://assamtmc.piramalswasthya.org/\""
-            // ABHA v3 Base URL
+            // ABHA v3 Production Base URL
             buildConfigField "String", "BASE_ABHA_URL", "\"https://healthid.abdm.gov.in/api/\""
         }
     }
