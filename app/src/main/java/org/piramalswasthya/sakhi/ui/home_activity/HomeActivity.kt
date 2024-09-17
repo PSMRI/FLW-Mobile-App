@@ -374,8 +374,10 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun isDeviceRootedOrEmulator(): Boolean {
-//        return isRooted() || isEmulator() || RootedUtil().isDeviceRooted(applicationContext)
+
+//      return isRooted() || isEmulator() || RootedUtil().isDeviceRooted(applicationContext)
         return isRooted() || isEmulator()
+
     }
 
 }
