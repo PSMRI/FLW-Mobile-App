@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.RadioGroup
+import android.widget.Toast
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -18,6 +19,7 @@ import org.piramalswasthya.sakhi.databinding.FragmentCbacBinding
 import org.piramalswasthya.sakhi.model.CbacCache
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_screening.form.TBScreeningFormViewModel
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 import java.text.SimpleDateFormat
@@ -41,6 +43,10 @@ class CbacFragment : Fragment() {
     private var ed1PopupShown: Boolean = false
 
     private var ed2PopupShown: Boolean = false
+
+    private var isSuspected: Boolean = false
+
+    private val viewModelTbScreening: TBScreeningFormViewModel by viewModels()
 
     private val alertDialog by lazy {
         AlertDialog.Builder(requireContext()).setTitle(getString(R.string.missing_field)).create()
@@ -82,6 +88,20 @@ class CbacFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewModelTbScreening.state.observe(viewLifecycleOwner) {
+            when (it) {
+                TBScreeningFormViewModel.State.SAVE_SUCCESS -> {
+                    Toast.makeText(
+                        requireContext(),
+                        resources.getString(R.string.tb_screening_submitted), Toast.LENGTH_SHORT
+                    ).show()
+                    WorkerUtils.triggerAmritPushWorker(requireContext())
+                }
+
+                else -> {}
+            }
+        }
 
         viewModel.state.observe(viewLifecycleOwner) {
             when (it) {
@@ -244,10 +264,13 @@ class CbacFragment : Fragment() {
                 binding.cbacLsweight.rbYes.isChecked ||
                 binding.cbacNtswets.rbYes.isChecked
             ) {
+                isSuspected = true
                 ast1AlertDialog.setMessage(
                     resources.getString(R.string.refer_to_mo_and_collect_the_sputum_sample)
                 )
                 ast1AlertDialog.show()
+            } else {
+                isSuspected = false
             }
         }
 
@@ -323,6 +346,9 @@ class CbacFragment : Fragment() {
         binding.btnSave.setOnClickListener {
             viewModel.setFillDate(getLongFromDate(binding.etDate.text.toString()))
             viewModel.submitForm()
+            if (isSuspected) {
+                viewModelTbScreening.saveFormDirectlyfromCbac()
+            }
         }
         binding.etDate.setText(getDateFromLong(System.currentTimeMillis()))
         val today = Calendar.getInstance()

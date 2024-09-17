@@ -115,6 +115,34 @@ class TBScreeningFormViewModel @Inject constructor(
         }
     }
 
+    fun saveFormDirectlyfromCbac() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                try {
+                    saveValues()
+                    _state.postValue(State.SAVING)
+                    tbRepo.saveTBScreening(tbScreeningCache)
+                    _state.postValue(State.SAVE_SUCCESS)
+                } catch (e: Exception) {
+                    Timber.d("saving tb screening data failed!!")
+                    _state.postValue(State.SAVE_FAILED)
+                }
+            }
+        }
+    }
+
+    private suspend fun saveValues() {
+        tbScreeningCache = TBScreeningCache(
+            benId = benRepo.getBenFromId(benId)!!.beneficiaryId,
+            coughMoreThan2Weeks = true,
+            lossOfWeight = true,
+            feverMoreThan2Weeks = true,
+            nightSweats = true,
+            bloodInSputum = true,
+            historyOfTb = true,
+        )
+    }
+
     fun resetState() {
         _state.value = State.IDLE
     }
