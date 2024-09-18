@@ -51,6 +51,7 @@ object Konstants {
     const val minAnc4Week = 36
     const val maxAnc4Week = 40
 
+    const val english = "ENGLISH"
     const val minWeekToShowDelivered = 23
 
 

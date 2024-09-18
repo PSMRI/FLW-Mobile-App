@@ -7,6 +7,7 @@ import android.util.Range
 import android.widget.LinearLayout
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Konstants
+import org.piramalswasthya.sakhi.helpers.Konstants.english
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.setToStartOfTheDay
 import org.piramalswasthya.sakhi.model.AgeUnit
@@ -30,7 +31,7 @@ import java.util.Calendar
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
-class BenRegFormDataset(context: Context, language: Languages) : Dataset(context, language) {
+class BenRegFormDataset(context: Context,val language: Languages) : Dataset(context, language) {
 
 
     companion object {
@@ -1473,11 +1474,16 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         return when (formId) {
             firstName.id -> {
                 validateEmptyOnEditText(firstName)
-                validateAllCapsOrSpaceOnEditText(firstName)
+                if (language.toString() == english) {
+                    validateAllCapsOrSpaceOnEditText(firstName)
+                } else -1
+
             }
 
             lastName.id -> {
-                validateAllCapsOrSpaceOnEditText(lastName)
+                if (language.toString() == english) {
+                    validateAllCapsOrSpaceOnEditText(lastName)
+                } else -1
             }
 
             agePopup.id -> {
@@ -1661,27 +1667,37 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
             fatherName.id -> {
                 validateEmptyOnEditText(fatherName)
-                validateAllCapsOrSpaceOnEditText(fatherName)
+                if (language.toString() == english) {
+                    validateAllCapsOrSpaceOnEditText(fatherName)
+                } else -1
             }
 
             motherName.id -> {
                 validateEmptyOnEditText(motherName)
-                validateAllCapsOrSpaceOnEditText(motherName)
+                if (language.toString() == english) {
+                    validateAllCapsOrSpaceOnEditText(motherName)
+                } else -1
             }
 
             husbandName.id -> {
                 validateEmptyOnEditText(husbandName)
-                validateAllCapsOrSpaceOnEditText(husbandName)
+                if (language.toString() == english) {
+                    validateAllCapsOrSpaceOnEditText(husbandName)
+                } else -1
             }
 
             wifeName.id -> {
                 validateEmptyOnEditText(wifeName)
-                validateAllCapsOrSpaceOnEditText(wifeName)
+                if (language.toString() == english) {
+                    validateAllCapsOrSpaceOnEditText(wifeName)
+                } else -1
             }
 
             spouseName.id -> {
                 validateEmptyOnEditText(spouseName)
-                validateAllCapsOrSpaceOnEditText(spouseName)
+                if (language.toString() == english) {
+                    validateAllCapsOrSpaceOnEditText(spouseName)
+                } else -1
             }
 
             contactNumber.id -> {
