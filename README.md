@@ -9,40 +9,55 @@ process with increased ease and accuracy of data. We named it as SAKHI for Bihar
 Assam State.</li>
 </ul>
 
-<ul>
+
 This application provides below functional modules.
-<li>1. Household List</li>
-<li>2. New Household Registration</li>
-<li>3. All Beneficiaries List</li>
-<li>4. Beneficiary Registration</li>
-<li>5. Eligible Couple List</li>
-<li>6. Mother Care</li>
+1. Household List
+
+2. New Household Registration
+
+3. All Beneficiaries List
+
+4. Beneficiary Registration
+
+5. Eligible Couple List
+
+6. Mother Care
     • Pregnancy List (PMSMA Form: Pradhan Mantri Surakshit Matritva Abhiyan)
     • Delivery stage List
     • PNC Mother List
     • Reproductive Age List
-<li>7. Child Care</li>
+
+7. Child Care
     • Infant List
     • Child List
     • Adolescent List
-<li>8. NCD</li>
+
+8. NCD
     • NCD List
     • NCD Eligible List
     • NCD Priority List
     • NCD Non-Eligible List
-<li>9. Immunization due List</li>
-<li>10. HRP Cases</li>
-<li>11. General OP Care List</li>
-<li>12. Menopause Stage List</li>
-<li>13. Death Reports</li>
-<li>14. Village Level Forms</li>
-<li>15. ASHA Dashboard</li>
+
+9. Immunization due List
+
+10. HRP Cases
+
+11. General OP Care List
+
+12. Menopause Stage List
+
+13. Death Reports
+
+14. Village Level Forms
+
+15. ASHA Dashboard
     • Total ANC Women
     • Delivery due list
     • Total Delivery Women
     • Total PNC Women
-<li>16. ASHA To-do List (Scheduler)</li>
-</ul>
+
+16. ASHA To-do List (Scheduler)
+
 
 ## Features
 
