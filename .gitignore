@@ -5,6 +5,3 @@
 *.lock
 /app/build/*
 /app/release/*
-local.properties
-secrets.properties
-/app/google-services.json
