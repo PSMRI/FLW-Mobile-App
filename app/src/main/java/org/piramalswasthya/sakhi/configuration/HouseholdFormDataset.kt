@@ -4,7 +4,6 @@ package org.piramalswasthya.sakhi.configuration
 import android.content.Context
 import android.text.InputType
 import org.piramalswasthya.sakhi.R
-import org.piramalswasthya.sakhi.helpers.Konstants.english
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.HouseholdAmenities
@@ -21,7 +20,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-class HouseholdFormDataset(context: Context, val language: Languages) : Dataset(context, language) {
+class HouseholdFormDataset(context: Context, language: Languages) : Dataset(context, language) {
     companion object {
         private fun getCurrentDate(): String {
             val calendar = Calendar.getInstance()
@@ -436,16 +435,10 @@ class HouseholdFormDataset(context: Context, val language: Languages) : Dataset(
         return when (formId) {
             firstNameHeadOfFamily.id -> {
                 validateEmptyOnEditText(firstNameHeadOfFamily)
-                if (language.toString() == english) {
-                    validateAllCapsOrSpaceOnEditText(firstNameHeadOfFamily)
-                } else -1
+                validateAllCapsOrSpaceOnEditText(firstNameHeadOfFamily)
             }
 
-            lastNameHeadOfFamily.id -> {
-                if (language.toString() == english) {
-                    validateAllCapsOrSpaceOnEditText(lastNameHeadOfFamily)
-                } else -1
-            }
+            lastNameHeadOfFamily.id -> validateAllCapsOrSpaceOnEditText(lastNameHeadOfFamily)
             mobileNoHeadOfFamily.id -> {
                 validateEmptyOnEditText(mobileNoHeadOfFamily)
                 validateMobileNumberOnEditText(mobileNoHeadOfFamily)
