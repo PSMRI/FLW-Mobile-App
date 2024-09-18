@@ -125,7 +125,7 @@ class NcdEligibleListFragment : Fragment() , NCDCategoryAdapter.ClickListener {
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
-
+                Timber.d("Called here!")
             }
         }
         binding.searchView.setOnFocusChangeListener { searchView, b ->
