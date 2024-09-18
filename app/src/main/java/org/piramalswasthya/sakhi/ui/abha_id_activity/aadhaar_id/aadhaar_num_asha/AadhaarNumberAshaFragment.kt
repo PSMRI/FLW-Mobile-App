@@ -76,7 +76,6 @@ class AadhaarNumberAshaFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         var isValidAadhaar = false
-        var isValidMobile = false
 
         parentViewModel.verificationType.observe(viewLifecycleOwner) {
             when (it) {
@@ -128,7 +127,7 @@ class AadhaarNumberAshaFragment : Fragment() {
         }
 
         binding.aadharConsentCheckBox.setOnCheckedChangeListener { _, ischecked ->
-            binding.btnVerifyAadhaar.isEnabled = isValidAadhaar && isValidMobile && ischecked
+            binding.btnVerifyAadhaar.isEnabled = isValidAadhaar && ischecked
         }
 
         binding.aadharDisclaimer.setOnClickListener {
@@ -144,24 +143,7 @@ class AadhaarNumberAshaFragment : Fragment() {
 
             override fun afterTextChanged(s: Editable?) {
                 isValidAadhaar = (s != null) && (s.length == 12)
-                binding.btnVerifyAadhaar.isEnabled = isValidAadhaar && isValidMobile
-                        && binding.aadharConsentCheckBox.isChecked
-            }
-
-        })
-
-        binding.tietMobileNumber.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-                isValidMobile = (s != null) && (s.length == 10)
-                if (isValidMobile)
-                    parentViewModel.setMobileNumber(s.toString())
-                binding.btnVerifyAadhaar.isEnabled = isValidAadhaar && isValidMobile
+                binding.btnVerifyAadhaar.isEnabled = isValidAadhaar
                         && binding.aadharConsentCheckBox.isChecked
             }
 

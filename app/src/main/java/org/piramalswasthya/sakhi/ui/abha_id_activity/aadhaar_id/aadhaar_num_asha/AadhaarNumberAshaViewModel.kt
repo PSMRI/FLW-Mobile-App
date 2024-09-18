@@ -64,17 +64,10 @@ class AadhaarNumberAshaViewModel @Inject constructor(
     private fun generateAadhaarOtp(aadhaarNo: String) {
         viewModelScope.launch {
             when (val result =
-//                abhaIdRepo.generateOtpForAadhaarV2(AbhaGenerateAadhaarOtpRequest(aadhaarNo))) {
-                abhaIdRepo.generateOtpForAadhaarV2(AbhaGenerateAadhaarOtpRequest(
-                    "",
-                    listOf<String>("abha-enrol"),
-                    "aadhaar",
-                    aadhaarNo,
-                    "aadhaar"
-                ))) {
+                abhaIdRepo.generateOtpForAadhaarV2(AbhaGenerateAadhaarOtpRequest(aadhaarNo))) {
                 is NetworkResult.Success -> {
                     _txnId.value = result.data.txnId
-//                    _mobileNumber.value = result.data.mobileNumber
+                    _mobileNumber.value = result.data.mobileNumber
                     _state.value = AadhaarIdViewModel.State.SUCCESS
                 }
 

@@ -51,8 +51,7 @@
     <string name="individual_s_consent_for_creation_of_abha_number">Individual’s consent for creation of ABHA Number.</string>
     <string name="validate_fp">Validate FP</string>
     <string name="generating_abha_for">Generating ABHA for:</string>
-<!--    <string name="otp_sent_to">"OTP sent to "</string>-->
-    <string name="otp_sent_to">"OTP sent to Aadhaar linked mobile number"</string>
+    <string name="otp_sent_to">"OTP sent to "</string>
     <string name="otp_was_resent">OTP was resent.</string>
     <string name="do_you_want_to_go_back">Do you want to go back?</string>
     <string name="downloading_abha_card">Downloading abha card</string>
