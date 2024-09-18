@@ -25,7 +25,7 @@ import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import timber.log.Timber
 
 @AndroidEntryPoint
-class NcdEligibleListFragment : Fragment() , NCDCategoryAdapter.CategoryClickListener {
+class NcdEligibleListFragment : Fragment() , NCDCategoryAdapter.ClickListener {
 
 
 

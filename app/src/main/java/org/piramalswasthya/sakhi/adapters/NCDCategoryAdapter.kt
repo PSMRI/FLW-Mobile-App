@@ -8,28 +8,28 @@ import org.piramalswasthya.sakhi.databinding.RvTabBinding
 import org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.ncd_eligible_list.NcdEligibleListViewModel
 
 class NCDCategoryAdapter(
-    private val catDataList: ArrayList<String>,
-    private val clickListener: CategoryClickListener? = null,
+    private val dataList: ArrayList<String>,
+    private val listener: ClickListener? = null,
     var viewModel: NcdEligibleListViewModel
-) : RecyclerView.Adapter<NCDCategoryAdapter.CategoryViewHolder>(){
+) : RecyclerView.Adapter<NCDCategoryAdapter.ViewHolder>(){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-        CategoryViewHolder.from(parent)
+        ViewHolder.from(parent)
 
 
     override fun onBindViewHolder(
-        holder: CategoryViewHolder,
+        holder: ViewHolder,
         position: Int,
     ) {
 
-        holder.bind(catDataList[position])
+        holder.bind(dataList[position])
         holder.binding.cMainLayout.setOnClickListener {
-            viewModel.selectedPosition = position
-            clickListener?.onClicked(catDataList[position])
+            viewModel.clickedPosition = position
+            listener?.onClicked(dataList[position])
             notifyDataSetChanged()
 
         }
-        if (viewModel.selectedPosition == position) {
+        if (viewModel.clickedPosition == position) {
             holder.binding.cMainLayout.setBackgroundResource(R.drawable.tab_selection)
         } else {
             holder.binding.cMainLayout.setBackgroundResource(R.drawable.tab_unselection)
@@ -38,30 +38,30 @@ class NCDCategoryAdapter(
     }
 
 
-    class CategoryViewHolder private constructor(val binding: RvTabBinding) :
+    class ViewHolder private constructor(val binding: RvTabBinding) :
         RecyclerView.ViewHolder(binding.root) {
         companion object {
-            fun from(parent: ViewGroup): CategoryViewHolder {
+            fun from(parent: ViewGroup): ViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
                 val binding = RvTabBinding.inflate(layoutInflater, parent, false)
-                return CategoryViewHolder(binding)
+                return ViewHolder(binding)
             }
         }
 
         fun bind(
-            catDataList: String,
+            dataObject: String,
         ) {
 
-            binding.monthText.text = catDataList
+            binding.monthText.text = dataObject
 
         }
 
     }
     override fun getItemCount(): Int {
-        return catDataList.size
+        return dataList.size
     }
 
-    fun interface CategoryClickListener
+    fun interface ClickListener
     {
         fun onClicked(catDataList: String)
     }

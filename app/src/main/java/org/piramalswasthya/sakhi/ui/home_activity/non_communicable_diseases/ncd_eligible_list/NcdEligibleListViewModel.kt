@@ -22,7 +22,7 @@ class NcdEligibleListViewModel @Inject constructor(
 ) {
 
     private lateinit var asha: User
-    var selectedPosition = 0
+    var clickedPosition = 0
     var selectedText = "ALL"
 
     private val allBenList = recordsRepo.getNcdEligibleList
