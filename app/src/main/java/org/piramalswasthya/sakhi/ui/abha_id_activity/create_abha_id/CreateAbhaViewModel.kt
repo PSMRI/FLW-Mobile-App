@@ -54,7 +54,7 @@ class CreateAbhaViewModel @Inject constructor(
         get() = _errorMessage
 
     init {
-        _state.value = State.LOADING
+//        _state.value = State.LOADING
     }
 
     fun createHID(benId: Long, benRegId: Long) {
