@@ -7,39 +7,41 @@
 ultimately eliminates pen and paper work by ASHAs and carry out entering beneficiaries’ data in a digitalized
 process with increased ease and accuracy of data. We named it as SAKHI for Bihar State and Utprerona for
 Assam State.</li>
+</ul>
 
-<li>This application provides below functional modules.</li>
-    1. Household List
-    2. New Household Registration
-    3. All Beneficiaries List
-    4. Beneficiary Registration
-    5. Eligible Couple List
-    6. Mother Care
-        • Pregnancy List (PMSMA Form: Pradhan Mantri Surakshit Matritva Abhiyan)
-        • Delivery stage List
-        • PNC Mother List
-        • Reproductive Age List
-    7. Child Care
-        • Infant List
-        • Child List
-        • Adolescent List
-    8. NCD
-        • NCD List
-        • NCD Eligible List
-        • NCD Priority List
-        • NCD Non-Eligible List
-    9. Immunization due List
-    10. HRP Cases
-    11. General OP Care List
-    12. Menopause Stage List
-    13. Death Reports
-    14. Village Level Forms
-    15. ASHA Dashboard
-        • Total ANC Women
-        • Delivery due list
-        • Total Delivery Women
-        • Total PNC Women
-    16. ASHA To-do List (Scheduler)
+<ul>
+This application provides below functional modules.
+<li>1. Household List</li>
+<li>2. New Household Registration</li>
+<li>3. All Beneficiaries List</li>
+<li>4. Beneficiary Registration</li>
+<li>5. Eligible Couple List</li>
+<li>6. Mother Care</li>
+    • Pregnancy List (PMSMA Form: Pradhan Mantri Surakshit Matritva Abhiyan)
+    • Delivery stage List
+    • PNC Mother List
+    • Reproductive Age List
+<li>7. Child Care</li>
+    • Infant List
+    • Child List
+    • Adolescent List
+<li>8. NCD</li>
+    • NCD List
+    • NCD Eligible List
+    • NCD Priority List
+    • NCD Non-Eligible List
+<li>9. Immunization due List</li>
+<li>10. HRP Cases</li>
+<li>11. General OP Care List</li>
+<li>12. Menopause Stage List</li>
+<li>13. Death Reports</li>
+<li>14. Village Level Forms</li>
+<li>15. ASHA Dashboard</li>
+    • Total ANC Women
+    • Delivery due list
+    • Total Delivery Women
+    • Total PNC Women
+<li>16. ASHA To-do List (Scheduler)</li>
 </ul>
 
 ## Features
@@ -66,7 +68,8 @@ Make sure you have the following installed:
 
 To run this project, Follow these steps:
 
-1. Clone the repository to your local machine using `git clone https://github.com/PSMRI/FLW-Mobile-App`.
+1. Clone the repository to your local machine
+   using `git clone https://github.com/PSMRI/FLW-Mobile-App`.
 2. Open Android Studio.
 3. Click on 'Open an existing Android Studio project'.
 4. Navigate to the directory where you cloned the project and select the root folder.
@@ -74,6 +77,7 @@ To run this project, Follow these steps:
 6. Once the sync is done, you can run the project on an emulator or a physical device.
 
 ### Prerequisites
+
 <ul>
 <li>**Secrets:**
     - set ENCRYPTED_PASS_KEY, ABHA_CLIENT_ID, ABHA_CLIENT_SECRET values in secrets.properties file.</li>
@@ -97,7 +101,6 @@ To run this project, Follow these steps:
     - In IconDataset class we have the list of modules that we show on UI, we can comment, or un-comment modules based on requirement
 
     - In AllBenFragment class we have a Boolean `showAbha` which can be used to toggle the visibility of abha button on beneficiary cards
-
 
 **APK Variants:** We can generate signed and un-signed apk’s for the application
 
