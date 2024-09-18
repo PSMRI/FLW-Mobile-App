@@ -33,7 +33,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.FragmentCreateAbhaBinding
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
-import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_otp.AadhaarOtpFragmentArgs
 import org.piramalswasthya.sakhi.ui.abha_id_activity.create_abha_id.CreateAbhaViewModel.State
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
@@ -52,10 +51,6 @@ class CreateAbhaFragment : Fragment() {
     private val viewModel: CreateAbhaViewModel by viewModels()
 
     private val channelId = "download abha card"
-
-    val args: CreateAbhaFragmentArgs by lazy {
-        CreateAbhaFragmentArgs.fromBundle(requireArguments())
-    }
 
 
     private var timer = object : CountDownTimer(30000, 1000) {
@@ -125,16 +120,7 @@ class CreateAbhaFragment : Fragment() {
         val benId = intent.getLongExtra("benId", 0)
         val benRegId = intent.getLongExtra("benRegId", 0)
 
-//        viewModel.createHID(benId, benRegId)
-
-        binding.pbCai.visibility = View.INVISIBLE
-        binding.clCreateAbhaId.visibility = View.VISIBLE
-        binding.clVerifyMobileOtp.visibility = View.INVISIBLE
-        binding.clError.visibility = View.INVISIBLE
-        binding.clDownloadAbha.visibility = View.GONE
-
-        binding.textView2.text = args.name
-        binding.textView4.text = args.abhaNumber
+        viewModel.createHID(benId, benRegId)
 
         viewModel.benMapped.observe(viewLifecycleOwner) {
             it?.let {

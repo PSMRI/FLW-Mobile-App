@@ -236,7 +236,7 @@ data class ABHAProfile(
     val abhaType: String,
     val stateName: String,
     val districtName: String,
-    val ABHANumber: String,
+    val aBHANumber: String,
     val abhaStatus: String
 )
 

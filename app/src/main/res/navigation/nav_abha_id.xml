@@ -77,12 +77,6 @@
         <argument
             android:name="phoneNum"
             app:argType="string" />
-        <argument
-            android:name="name"
-            app:argType="string" />
-        <argument
-            android:name="abhaNumber"
-            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/createAbhaFragment"
@@ -91,12 +85,6 @@
         tools:layout="@layout/fragment_create_abha">
         <argument
             android:name="txnId"
-            app:argType="string" />
-        <argument
-            android:name="name"
-            app:argType="string" />
-        <argument
-            android:name="abhaNumber"
             app:argType="string" />
     </fragment>
 </navigation>
