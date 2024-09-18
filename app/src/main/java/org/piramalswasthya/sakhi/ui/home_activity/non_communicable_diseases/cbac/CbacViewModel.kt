@@ -106,7 +106,7 @@ class CbacViewModel @Inject constructor(
             cbac.cbac_age_posi = it + 1
         text
     }
-    private val benId = CbacFragmentArgs.fromSavedStateHandle(state).benId
+    val benId = CbacFragmentArgs.fromSavedStateHandle(state).benId
     val cbacId = CbacFragmentArgs.fromSavedStateHandle(state).cbacId
     private val ashaId = CbacFragmentArgs.fromSavedStateHandle(state).ashaId
     private lateinit var cbac: CbacCache
