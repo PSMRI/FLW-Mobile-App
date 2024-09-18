@@ -22,7 +22,7 @@ import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 class PMSMAFormDataset(
-    context: Context, val currentLanguage: Languages
+    context: Context,  currentLanguage: Languages
 ) : Dataset(context, currentLanguage) {
 
     companion object {

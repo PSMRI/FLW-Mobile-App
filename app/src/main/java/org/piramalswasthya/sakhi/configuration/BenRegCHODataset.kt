@@ -2,7 +2,6 @@ package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
 import org.piramalswasthya.sakhi.R
-import org.piramalswasthya.sakhi.helpers.Konstants.english
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.AgeUnit
 import org.piramalswasthya.sakhi.model.BenRegCache
@@ -13,7 +12,7 @@ import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
 class BenRegCHODataset(
-    context: Context, val currentLanguage: Languages
+    context: Context, currentLanguage: Languages
 ) : Dataset(context, currentLanguage) {
 
     private val dateOfReg = FormElement(
@@ -132,16 +131,11 @@ class BenRegCHODataset(
             }
 
             name.id -> {
-                if (currentLanguage.toString() == english) {
-                    validateAllCapsOrSpaceOnEditText(name)
-                } else -1
+                validateAllCapsOrSpaceOnEditText(name)
             }
 
             husbandName.id -> {
-                if (currentLanguage.toString() == english) {
-                    validateAllCapsOrSpaceOnEditText(husbandName)
-                } else -1
-                
+                validateAllCapsOrSpaceOnEditText(husbandName)
             }
 
             age.id -> {

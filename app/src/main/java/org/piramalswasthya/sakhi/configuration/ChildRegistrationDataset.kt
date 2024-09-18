@@ -3,8 +3,6 @@ package org.piramalswasthya.sakhi.configuration
 import android.content.Context
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.room.SyncState
-import org.piramalswasthya.sakhi.helpers.Konstants
-import org.piramalswasthya.sakhi.helpers.Konstants.english
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.BenBasicCache
 import org.piramalswasthya.sakhi.model.BenRegCache
@@ -18,7 +16,7 @@ import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.model.User
 
 class ChildRegistrationDataset(
-    context: Context, var currentLanguage: Languages
+    context: Context, currentLanguage: Languages
 ) : Dataset(context, currentLanguage) {
 
     private val dateOfReg = FormElement(
@@ -235,19 +233,11 @@ class ChildRegistrationDataset(
 
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
         return when (formId) {
-            childName.id -> {
-                if (currentLanguage.toString() == english) {
-                    validateAllCapsOrSpaceOnEditText(childName)
-                } else -1
-            }
+            childName.id -> validateAllCapsOrSpaceOnEditText(childName)
             rchId.id -> validateRchIdOnEditText(rchId)
             rchIdMother.id -> validateRchIdOnEditText(rchIdMother)
             mobileNumber.id -> validateMobileNumberOnEditText(mobileNumber)
-            fatherName.id -> {
-                if (currentLanguage.toString() == english) {
-                    validateAllCapsOrSpaceOnEditText(fatherName)
-                } else -1
-            }
+            fatherName.id -> validateAllCapsOrSpaceOnEditText(fatherName)
             weightAtBirth.id -> validateDoubleMinMax(weightAtBirth)
             birthCertificateNo.id -> validateNoAlphabetSpaceOnEditText(birthCertificateNo)
 

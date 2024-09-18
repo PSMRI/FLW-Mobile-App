@@ -7,6 +7,7 @@ import androidx.annotation.StringRes
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.helpers.Konstants.english
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.setToStartOfTheDay
 import org.piramalswasthya.sakhi.model.FormElement
@@ -24,7 +25,7 @@ import java.util.concurrent.TimeUnit
  * Base class to be extended to use as a sandwich between viewModel and repository objects.
  * @see org.piramalswasthya.sakhi.adapters.FormInputAdapter
  */
-abstract class Dataset(context: Context, currentLanguage: Languages) {
+abstract class Dataset(context: Context, val currentLanguage: Languages) {
 
     /**
      * Resource object of currently selected language. To be used to get language specific strings from strings.xml.
@@ -509,13 +510,15 @@ abstract class Dataset(context: Context, currentLanguage: Languages) {
             ?: false
 
     protected fun validateAllCapsOrSpaceOnEditText(formElement: FormElement): Int {
-        if (formElement.allCaps) {
-            formElement.value?.takeIf { it.isNotEmpty() }?.isAllUppercaseOrSpace()?.let {
-                Timber.d("Is ok : $it")
-                formElement.errorText = if (it) null
-                else resources.getString(R.string.form_input_upper_case_error)
-            } ?: run {
-                if (!formElement.required) formElement.errorText = null
+        if (currentLanguage.toString() == english) {
+            if (formElement.allCaps) {
+                formElement.value?.takeIf { it.isNotEmpty() }?.isAllUppercaseOrSpace()?.let {
+                    Timber.d("Is ok : $it")
+                    formElement.errorText = if (it) null
+                    else resources.getString(R.string.form_input_upper_case_error)
+                } ?: run {
+                    if (!formElement.required) formElement.errorText = null
+                }
             }
         }
         return -1
