@@ -41,8 +41,8 @@
     <string name="do_you_want_to_continue_with_previous_form_or_create_a_new_form_and_discard_the_previous_form">আপনি কি পূর্ববর্তী ফর্ম সঙ্গে চালিয়ে যেতে চান, অথবা পূর্ববর্তী ফর্ম ত্যাগ করে নতুন ফর্ম তৈরি করতে চান?</string>
     <string name="open_draft">ড্রাফট খোলুন</string>
     <string name="create_new">নতুন তৈরি করুন</string>
-    <string name="warning_id_running_low_connect_to_internet_at_the_earliest">সতর্কবার্তা: আইডি ঘাটতি হচ্ছে, সহযোগিতা ত্রৈমাসিক সংযোগ করুন</string>
-    <string name="error_no_more_ben_ids_available_connect_to_internet_to_get_some">ত্রুটি: আর কোন সুবিধানুগত আইডি প্রাপ্ত নেই। কিছু পেতে ইন্টারনেট সংযোগ করুন।</string>
+    <string name="warning_id_running_low_connect_to_internet_at_the_earliest">সতর্কবার্তা: ইণ্টাৰনেট সংযোগৰ অৱস্থা বেয়া</string>
+    <string name="error_no_more_ben_ids_available_connect_to_internet_to_get_some">ত্রুটি: বেন আইডি পাবলৈ ইন্টাৰনেট সংযোগ পৰীক্ষা কৰক</string>
     <string name="please_select_type_of_beneficiary">সুবিধানুগতের ধরন নির্বাচন করুন</string>
     <string name="frag_new_ben_type_kid_text">নতুন জন্ম / শিশু / শিশু / কিশোর\n( 0 - 15 বছর বয়সের মধ্যে )</string>
     <string name="frag_new_ben_type_adult_text">সাধারণ নিবন্ধন\n( 15 বছর এবং তার উপর )</string>
