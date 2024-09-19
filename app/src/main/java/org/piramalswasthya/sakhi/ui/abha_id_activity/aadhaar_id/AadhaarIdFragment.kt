@@ -108,7 +108,7 @@ class AadhaarIdFragment : Fragment() {
                         } else if (viewModel.verificationType.value == "FP") {
                             findNavController().navigate(
                                 AadhaarIdFragmentDirections.actionAadhaarIdFragmentToGenerateMobileOtpFragment(
-                                    viewModel.txnId, viewModel.mobileNumber
+                                    viewModel.txnId
                                 )
                             )
                         }
@@ -135,7 +135,7 @@ class AadhaarIdFragment : Fragment() {
                 State.ABHA_GENERATED_SUCCESS -> {
                     findNavController().navigate(
                         AadhaarIdFragmentDirections.actionAadhaarIdFragmentToCreateAbhaFragment(
-                            viewModel.txnId, "", ""
+                            viewModel.txnId
                         )
                     )
                 }

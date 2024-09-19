@@ -38,6 +38,8 @@ class CbacFragment : Fragment() {
         viewModel.cbacId == 0
     }
 
+    private var isnoneOfThese = false
+
     private var totalScorePopupShown: Boolean = false
 
     private var ed1PopupShown: Boolean = false
@@ -152,6 +154,9 @@ class CbacFragment : Fragment() {
                 }
             }
         }
+
+        binding.benId.text = viewModel.benId.toString()
+
         viewModel.benName.observe(viewLifecycleOwner) {
             binding.tvBenName.text = it
         }
@@ -317,6 +322,8 @@ class CbacFragment : Fragment() {
 
     private fun setUpView() {
         binding.btnSave.visibility = View.GONE
+        binding.noneCheck.visibility = View.GONE
+        binding.nonTxt.visibility = View.GONE
         viewModel.filledCbac.observe(viewLifecycleOwner) { cbac ->
             binding.etDate.setText(getDateFromLong(cbac.fillDate))
             setupRaView(cbac)

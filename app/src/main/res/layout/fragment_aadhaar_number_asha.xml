@@ -60,50 +60,6 @@
             android:visibility="gone" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="8dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/enter_mobile_number"
-        android:textAppearance="?attr/textAppearanceHeadline6"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/til_aadhaar_number" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/til_mobile_number"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="8dp"
-        android:hint="@string/mobile_number"
-        android:paddingTop="@dimen/padding_normal"
-        android:paddingBottom="@dimen/padding_normal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/tiet_mobile_number"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:inputType="number"
-            android:maxLength="12"
-            android:singleLine="true"
-            android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
-
-        <TextView
-            android:id="@+id/tv_error_text_mobile"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_small"
-            android:layout_weight="1"
-            android:text="@string/textview"
-            android:textColor="@android:color/holo_red_light"
-            android:visibility="gone" />
-    </com.google.android.material.textfield.TextInputLayout>
-
     <CheckBox
             android:id="@+id/aadharConsentCheckBox"
             android:layout_width="match_parent"
@@ -112,7 +68,7 @@
             android:gravity="start|top"
             android:text="@string/aadhar_consent_text"
             android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-            app:layout_constraintTop_toBottomOf="@+id/til_mobile_number" />
+            app:layout_constraintTop_toBottomOf="@+id/til_aadhaar_number" />
 
     <TextView
         android:id="@+id/aadharDisclaimer"
@@ -139,8 +95,6 @@
             android:textColor="?attr/colorOnPrimary"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintVertical_bias="0.0"
             app:layout_constraintTop_toBottomOf="@+id/aadharDisclaimer" />
 
     <TextView

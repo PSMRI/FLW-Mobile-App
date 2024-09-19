@@ -28,19 +28,10 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-//     Staging Base URL
     private const val baseTmcUrl =
         "https://amritdemo.piramalswasthya.org/"
 
-    // Production Base URL
-//    private const val baseTmcUrl =
-//        "https://assamtmc.piramalswasthya.org/"
-
-    // Staging ABHA URL
-//    private const val baseAbhaUrl = "https://healthidsbx.abdm.gov.in/api/"
-    private const val baseAbhaUrl = "https://abhasbx.abdm.gov.in/abha/api/"
-    // Production ABHA URL
-//    private const val baseAbhaUrl = "https://healthid.abdm.gov.in/api/"
+    private const val baseAbhaUrl = "https://healthidsbx.abdm.gov.in/api/"
 
     private val baseClient =
         OkHttpClient.Builder()

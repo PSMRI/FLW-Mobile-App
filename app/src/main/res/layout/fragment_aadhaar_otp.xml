@@ -21,7 +21,6 @@
                 android:layout_marginTop="@dimen/margin_big"
                 android:layout_weight="1"
                 android:textSize="14sp"
-                android:text="@string/otp_sent_to"
                 android:visibility="invisible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
