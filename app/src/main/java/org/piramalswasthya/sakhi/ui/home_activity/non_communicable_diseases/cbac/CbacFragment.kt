@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.RadioGroup
+import android.widget.Toast
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -18,6 +19,7 @@ import org.piramalswasthya.sakhi.databinding.FragmentCbacBinding
 import org.piramalswasthya.sakhi.model.CbacCache
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_screening.form.TBScreeningFormViewModel
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 import java.text.SimpleDateFormat
@@ -43,6 +45,10 @@ class CbacFragment : Fragment() {
     private var ed1PopupShown: Boolean = false
 
     private var ed2PopupShown: Boolean = false
+
+    private var isSuspected: Boolean = false
+
+    private val viewModelTbScreening: TBScreeningFormViewModel by viewModels()
 
     private val alertDialog by lazy {
         AlertDialog.Builder(requireContext()).setTitle(getString(R.string.missing_field)).create()
@@ -85,53 +91,20 @@ class CbacFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.noneCheck.setOnCheckedChangeListener { _, isChecked ->
-            isnoneOfThese = isChecked
-            if (isChecked) {
-                binding.cbacHistb.rbNo.isChecked = isChecked
-                binding.cbacCoughing.rbNo.isChecked = isChecked
-                binding.cbacBlsputum.rbNo.isChecked = isChecked
-                binding.cbacFeverwks.rbNo.isChecked = isChecked
-                binding.cbacLsweight.rbNo.isChecked = isChecked
-                binding.cbacNtswets.rbNo.isChecked = isChecked
-                binding.cbacFhTb.rbNo.isChecked = isChecked
-                binding.cbacTakingTbDrug.rbNo.isChecked = isChecked
-                binding.cbacRecurrentUlceration.rbNo.isChecked = isChecked
-                binding.cbacRecurrentTingling.rbNo.isChecked = isChecked
-                binding.cbacRecurrentCloudy.rbNo.isChecked = isChecked
-                binding.cbacRecurrentDiffcultyReading.rbNo.isChecked = isChecked
-                binding.cbacRecurrentPainEyes.rbNo.isChecked = isChecked
-                binding.cbacRecurrentRednessEyes.rbNo.isChecked = isChecked
-                binding.cbacRecurrentDiffHearing.rbNo.isChecked = isChecked
-                binding.cbacBreath.rbNo.isChecked = isChecked
-                binding.cbacHifits.rbNo.isChecked = isChecked
-                binding.cbacDifmouth.rbNo.isChecked = isChecked
-                binding.cbacHeald.rbNo.isChecked = isChecked
-                binding.cbacVoice.rbNo.isChecked = isChecked
-                binding.cbacAnyGrowth.rbNo.isChecked = isChecked
-                binding.cbacAnyWhite.rbNo.isChecked = isChecked
-                binding.cbacAnyThickendSkin.rbNo.isChecked = isChecked
-                binding.cbacAnyNodulesSkin.rbNo.isChecked = isChecked
-                binding.cbacRecurrentNumbness.rbNo.isChecked = isChecked
-                binding.cbacPainWhileChewing.rbNo.isChecked = isChecked
-                binding.cbacAnyHyperPigmented.rbNo.isChecked = isChecked
-                binding.cbacClawingOfFingers.rbNo.isChecked = isChecked
-                binding.cbacTinglingOrNumbness.rbNo.isChecked = isChecked
-                binding.cbacInabilityCloseEyelid.rbNo.isChecked = isChecked
-                binding.cbacDiffHoldingObjects.rbNo.isChecked = isChecked
-                binding.cbacWeeknessInFeet.rbNo.isChecked = isChecked
-                binding.cbacLumpbrest.rbNo.isChecked = isChecked
-                binding.cbacNipple.rbNo.isChecked = isChecked
-                binding.cbacBreast.rbNo.isChecked = isChecked
-                binding.cbacBlperiods.rbNo.isChecked = isChecked
-                binding.cbacBlmenopause.rbNo.isChecked = isChecked
-                binding.cbacBlintercorse.rbNo.isChecked = isChecked
-                binding.cbacFouldis.rbNo.isChecked = isChecked
+        viewModelTbScreening.state.observe(viewLifecycleOwner) {
+            when (it) {
+                TBScreeningFormViewModel.State.SAVE_SUCCESS -> {
+                    Toast.makeText(
+                        requireContext(),
+                        resources.getString(R.string.tb_screening_submitted), Toast.LENGTH_SHORT
+                    ).show()
+                    WorkerUtils.triggerAmritPushWorker(requireContext())
+                }
+                else -> {
+                    Timber.d("IDLE!")
+                }
             }
-
-
         }
-
 
         viewModel.state.observe(viewLifecycleOwner) {
             when (it) {
@@ -297,10 +270,13 @@ class CbacFragment : Fragment() {
                 binding.cbacLsweight.rbYes.isChecked ||
                 binding.cbacNtswets.rbYes.isChecked
             ) {
+                isSuspected = true
                 ast1AlertDialog.setMessage(
                     resources.getString(R.string.refer_to_mo_and_collect_the_sputum_sample)
                 )
                 ast1AlertDialog.show()
+            } else {
+                isSuspected = false
             }
         }
 
@@ -378,6 +354,9 @@ class CbacFragment : Fragment() {
         binding.btnSave.setOnClickListener {
             viewModel.setFillDate(getLongFromDate(binding.etDate.text.toString()))
             viewModel.submitForm()
+            if (isSuspected) {
+                viewModelTbScreening.saveFormDirectlyfromCbac()
+            }
         }
         binding.etDate.setText(getDateFromLong(System.currentTimeMillis()))
         val today = Calendar.getInstance()
