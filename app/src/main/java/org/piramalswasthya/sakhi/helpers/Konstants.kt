@@ -26,9 +26,9 @@ object Konstants {
     const val minAgeForNcd: Int = 30
     const val minAgeForReproductiveAge: Int = 15
     const val maxAgeForReproductiveAge: Int = 49
-    const val maxAgeForInfant: Int = 1
-    const val minAgeForChild: Int = 2
-    const val maxAgeForChild: Int = 5
+    const val maxAgeForInfant: Int = 42
+    const val minAgeForChild: Int = 92
+    const val maxAgeForChild: Int = 456
     const val minAgeForAdolescent: Int = 6
     const val maxAgeForAdolescent: Int = 14
     const val maxAgeForCdr: Int = 14
