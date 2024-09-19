@@ -10,7 +10,7 @@ Assam State.</li>
 </ul>
 
 
-This application provides below functional modules.
+**This application provides below functional modules:-**
 1. Household List
 
 2. New Household Registration
@@ -93,17 +93,15 @@ To run this project, Follow these steps:
 
 ### Prerequisites
 
-<ul>
-<li>**Secrets:**
-    - set ENCRYPTED_PASS_KEY, ABHA_CLIENT_ID, ABHA_CLIENT_SECRET values in secrets.properties file.</li>
-<li>**google-json**
-    - set Google JSON file of required variant ie. UAT, STAGING or PRODUCTION.
-</li>**Environments**:
-    -We can generate the application for below environments based on requirements
-        - Amrit Demo
-        - UAT
-        - Production
-</ul>
+- **Secrets**:- set ENCRYPTED_PASS_KEY, ABHA_CLIENT_ID, ABHA_CLIENT_SECRET values in secrets.properties file.
+
+- **google-json**:- set Google JSON file of required variant ie. UAT, STAGING or PRODUCTION.
+
+- **Environments**:- We can generate the application for below environments based on requirements
+        1.Amrit Demo.
+        2.UAT.
+        3.Production.
+
 
 **Configurations:**
 
