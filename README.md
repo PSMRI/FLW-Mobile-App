@@ -2,15 +2,16 @@
 
 ## Overview
 
-<ul>
-<li>The FLW Mobile App is designed for Healthcare programs and consultation services render by ASHAs’ to serve pregnant women, mothers and newborns in India. This
-ultimately eliminates pen and paper work by ASHAs and carry out entering beneficiaries’ data in a digitalized
+
+The FLW Mobile App is designed for healthcare programs and consultation services rendered by ASHAs’ to serve pregnant women, mothers, and newborns in India. This eliminates pen and paperwork by ASHAs and allows them to enter beneficiaries data in a digital
 process with increased ease and accuracy of data. We named it as SAKHI for Bihar State and Utprerona for
-Assam State.</li>
-</ul>
+Assam State.
 
 
-**This application provides below functional modules:-**
+
+## Functional Modules
+
+
 1. Household List
 
 2. New Household Registration
@@ -83,8 +84,8 @@ Make sure you have the following installed:
 
 To run this project, Follow these steps:
 
-1. Clone the repository to your local machine
-   using `git clone https://github.com/PSMRI/FLW-Mobile-App`.
+1. Clone the repository to your local machine,
+   using: `git clone https://github.com/PSMRI/FLW-Mobile-App`.
 2. Open Android Studio.
 3. Click on 'Open an existing Android Studio project'.
 4. Navigate to the directory where you cloned the project and select the root folder.
@@ -95,7 +96,7 @@ To run this project, Follow these steps:
 
 - **Secrets**:- set ENCRYPTED_PASS_KEY, ABHA_CLIENT_ID, ABHA_CLIENT_SECRET values in secrets.properties file.
 
-- **google-json**:- set Google JSON file of required variant ie. UAT, STAGING or PRODUCTION.
+- **google-json**:- set Google JSON file of required variant, i.e. UAT, STAGING or PRODUCTION.
 
 - **Environments**:- We can generate the application for below environments based on requirements
         1.Amrit Demo.
@@ -136,4 +137,4 @@ To run this project, Follow these steps:
         + https://developer.android.com/studio/publish/app-signing
 
         + Once the APK is generated android studio will notify with the location of APK, 
-            generally in release folder 
+             generally in release folder 
