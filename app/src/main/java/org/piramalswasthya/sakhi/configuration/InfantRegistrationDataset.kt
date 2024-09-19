@@ -111,12 +111,13 @@ class InfantRegistrationDataset(
     private var weight = FormElement(
         id = 11,
         inputType = InputType.EDIT_TEXT,
-        title = "Weight at Birth(kg)",
+        title = "Weight at Birth(gram)",
         required = false,
         hasDependants = false,
-        minDecimal = 0.5,
-        maxDecimal = 7.0,
-        etInputType = android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL,
+        etMaxLength = 5,
+        min = 1,
+        max = 7000,
+        etInputType = android.text.InputType.TYPE_CLASS_NUMBER,
     )
 
     private var breastFeedingStarted = FormElement(
@@ -301,9 +302,7 @@ class InfantRegistrationDataset(
             }
 
             weight.id -> {
-                validateDoubleUpto1DecimalPlaces(weight)
-                if (weight.errorText == null) validateDoubleMinMax(weight)
-                -1
+                validateWeightOnEditText(weight)
 
             }
 
