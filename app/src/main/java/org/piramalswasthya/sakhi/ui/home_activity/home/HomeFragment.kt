@@ -145,9 +145,10 @@ class HomeFragment : Fragment() {
             tab.text = when (position) {
                 0 -> requireActivity().getString(R.string.menu_home_scheduler)
                 1 -> requireActivity().getString(R.string.menu_home_home)
+                2 -> requireActivity().getString(R.string.dashboard)
                 else -> "NA"
             }
-            if (position == 1) {
+            if (position == 2) {
                 tab.view.setOnLongClickListener {
                     if (viewModel.getDebMode()) {
                         viewModel.setDevMode(false)

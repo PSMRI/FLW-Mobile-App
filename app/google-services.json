@@ -1,36 +1,26 @@
 {
   "project_info": {
-    "project_number": "##",
-    "project_id": "##",
-    "storage_bucket": "##"
+    "project_number": "904378085373",
+    "project_id": "saksham-assam",
+    "storage_bucket": "saksham-assam.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "##",
+        "mobilesdk_app_id": "1:904378085373:android:12b5e159aafe40543f3394",
         "android_client_info": {
           "package_name": "org.piramalswasthya.sakhi"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "##",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "##"
+          "current_key": "AIzaSyCLl34y0YsHdh7ueHjfozVe1VguekUYUR8"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "##",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

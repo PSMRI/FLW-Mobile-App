@@ -12,7 +12,7 @@
 
     <string name="menu_home">Home</string>
     <string name="menu_home_home">Home</string>
-    <string name="menu_home_scheduler">Scheduler</string>
+    <string name="menu_home_scheduler">Work Plan</string>
     <string name="til_hint_selected_village">Selected Village</string>
 
     <string name="icon_title_household">All\nHousehold</string>

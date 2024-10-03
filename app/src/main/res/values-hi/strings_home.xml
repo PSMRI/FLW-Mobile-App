@@ -12,7 +12,7 @@
 
     <string name="menu_home">मुखपृष्ठ</string>
     <string name="menu_home_home">मुखपृष्ठ</string>
-    <string name="menu_home_scheduler">अनुसूचक</string>
+    <string name="menu_home_scheduler">कार्ययोजना</string>
     <string name="til_hint_selected_village">Selected Village</string>
 
     <string name="icon_title_household">सभी घरेलू सूची</string>

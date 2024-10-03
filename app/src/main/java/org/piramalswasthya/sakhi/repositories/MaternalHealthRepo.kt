@@ -115,7 +115,133 @@ class MaternalHealthRepo @Inject constructor(
                             28
                         )) &&
                                 lastAncRecord.visitNumber < 4 && TimeUnit.MILLISECONDS.toDays(
-                            getTodayMillis() - lastAncRecord.ancDate
+                            selectedDate - lastAncRecord.ancDate
+                        ) > 28
+                    }
+                    if (isDue)
+                        count++
+                }
+                emit(count)
+            }
+        }
+    }
+
+
+    suspend fun getAncOneDueCount(selectedDate: Long): Flow<Int> {
+        return withContext(Dispatchers.IO) {
+            maternalHealthDao.getAllPregnancyRecords().transformLatest {
+                Timber.d("From DB : ${it.count()}")
+                var count = 0
+                val notDeliveredList = it.filter { !it.value.any { it.pregnantWomanDelivered == true } }
+                notDeliveredList.keys.forEach { activePwrRecrod ->
+                    val savedAncRecords = it[activePwrRecrod] ?: emptyList()
+                    val isDue = if (savedAncRecords.isEmpty())
+                        TimeUnit.MILLISECONDS.toDays(
+                            selectedDate - activePwrRecrod.lmpDate
+                        ) <= Konstants.maxAnc1Week * 7
+                    else {
+                        val lastAncRecord = savedAncRecords.maxBy { it.visitNumber }
+                        (activePwrRecrod.lmpDate + TimeUnit.DAYS.toMillis(280)) > (lastAncRecord.ancDate + TimeUnit.DAYS.toMillis(
+                            28
+                        )) &&
+                                lastAncRecord.visitNumber < 4 && TimeUnit.MILLISECONDS.toDays(
+                            selectedDate - lastAncRecord.ancDate
+                        ) > 28
+                    }
+                    if (isDue)
+                        count++
+                }
+                emit(count)
+            }
+        }
+    }
+
+    suspend fun getAncTwoDueCount(selectedDate: Long): Flow<Int> {
+        return withContext(Dispatchers.IO) {
+            maternalHealthDao.getAllPregnancyRecords().transformLatest {
+                Timber.d("From DB : ${it.count()}")
+                var count = 0
+                val notDeliveredList = it.filter { !it.value.any { it.pregnantWomanDelivered == true } }
+                notDeliveredList.keys.forEach { activePwrRecrod ->
+                    val savedAncRecords = it[activePwrRecrod] ?: emptyList()
+                    val isDue = if (savedAncRecords.isEmpty())
+                        TimeUnit.MILLISECONDS.toDays(
+                            selectedDate - activePwrRecrod.lmpDate
+                        ) >= Konstants.minAnc2Week * 7 && TimeUnit.MILLISECONDS.toDays(
+                            selectedDate - activePwrRecrod.lmpDate
+                        ) < Konstants.minAnc3Week * 7
+
+                    else {
+                        val lastAncRecord = savedAncRecords.maxBy { it.visitNumber }
+                        (activePwrRecrod.lmpDate + TimeUnit.DAYS.toMillis(280)) > (lastAncRecord.ancDate + TimeUnit.DAYS.toMillis(
+                            28
+                        )) &&
+                                lastAncRecord.visitNumber < 4 && TimeUnit.MILLISECONDS.toDays(
+                            selectedDate - lastAncRecord.ancDate
+                        ) > 28
+                    }
+                    if (isDue)
+                        count++
+                }
+                emit(count)
+            }
+        }
+    }
+
+    suspend fun getAncThreeDueCount(selectedDate: Long): Flow<Int> {
+        return withContext(Dispatchers.IO) {
+            maternalHealthDao.getAllPregnancyRecords().transformLatest {
+                Timber.d("From DB : ${it.count()}")
+                var count = 0
+                val notDeliveredList = it.filter { !it.value.any { it.pregnantWomanDelivered == true } }
+                notDeliveredList.keys.forEach { activePwrRecrod ->
+                    val savedAncRecords = it[activePwrRecrod] ?: emptyList()
+                    val isDue = if (savedAncRecords.isEmpty())
+                        TimeUnit.MILLISECONDS.toDays(
+                            selectedDate - activePwrRecrod.lmpDate
+                        ) >= Konstants.minAnc3Week * 7 && TimeUnit.MILLISECONDS.toDays(
+                            selectedDate - activePwrRecrod.lmpDate
+                        ) < Konstants.minAnc4Week * 7
+
+                    else {
+                        val lastAncRecord = savedAncRecords.maxBy { it.visitNumber }
+                        (activePwrRecrod.lmpDate + TimeUnit.DAYS.toMillis(280)) > (lastAncRecord.ancDate + TimeUnit.DAYS.toMillis(
+                            28
+                        )) &&
+                                lastAncRecord.visitNumber < 4 && TimeUnit.MILLISECONDS.toDays(
+                            selectedDate - lastAncRecord.ancDate
+                        ) > 28
+                    }
+                    if (isDue)
+                        count++
+                }
+                emit(count)
+            }
+        }
+    }
+
+    suspend fun getAncFourDueCount(selectedDate: Long): Flow<Int> {
+        return withContext(Dispatchers.IO) {
+            maternalHealthDao.getAllPregnancyRecords().transformLatest {
+                Timber.d("From DB : ${it.count()}")
+                var count = 0
+                val notDeliveredList = it.filter { !it.value.any { it.pregnantWomanDelivered == true } }
+                notDeliveredList.keys.forEach { activePwrRecrod ->
+                    val savedAncRecords = it[activePwrRecrod] ?: emptyList()
+                    val isDue = if (savedAncRecords.isEmpty())
+                        TimeUnit.MILLISECONDS.toDays(
+                            selectedDate - activePwrRecrod.lmpDate
+                        ) >= Konstants.minAnc4Week * 7 && TimeUnit.MILLISECONDS.toDays(
+                            selectedDate - activePwrRecrod.lmpDate
+                        ) <= Konstants.maxAnc4Week * 7
+
+                    else {
+                        val lastAncRecord = savedAncRecords.maxBy { it.visitNumber }
+                        (activePwrRecrod.lmpDate + TimeUnit.DAYS.toMillis(280)) > (lastAncRecord.ancDate + TimeUnit.DAYS.toMillis(
+                            28
+                        )) &&
+                                lastAncRecord.visitNumber < 4 && TimeUnit.MILLISECONDS.toDays(
+                            selectedDate - lastAncRecord.ancDate
                         ) > 28
                     }
                     if (isDue)

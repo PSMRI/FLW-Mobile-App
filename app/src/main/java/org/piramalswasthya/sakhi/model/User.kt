@@ -18,8 +18,8 @@ data class UserCache(
     @ColumnInfo(name = "Password")
     val password: String,
 
-//    @ColumnInfo(name = "service_map_id")
-//    val serviceMapId : Int,
+    @ColumnInfo(name = "service_map_id")
+    val serviceMapId : Int,
 
 //    @ColumnInfo(name = "service_id")
 //    val serviceId : Int,
@@ -211,7 +211,7 @@ data class UserNetwork(
             userId = userId,
             userName = userName,
             password = password,
-//            serviceMapId = serviceMapId,
+            serviceMapId = serviceMapId,
 //            servicePointId = servicePointId,
 //            serviceId = serviceId,
 //            servicePointName = servicePointName?:"",
@@ -245,7 +245,7 @@ data class UserNetwork(
 
             emergencyContactNo = emergencyContactNo ?: "",
             userType = userType ?: "",
-            loggedIn = loggedIn
+            loggedIn = loggedIn,
 
         )
     }

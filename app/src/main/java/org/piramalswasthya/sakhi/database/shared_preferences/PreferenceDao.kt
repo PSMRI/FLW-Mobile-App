@@ -158,6 +158,18 @@ class PreferenceDao @Inject constructor(@ApplicationContext private val context:
         return pref.getString(key, null)
     }
 
+    fun saveSelectedDay(dateKey: Int) {
+        val key = "selected_day"
+        val editor = pref.edit()
+        editor.putInt(key, dateKey)
+        editor.apply()
+    }
+
+    fun getSelectedDay(): Int {
+        val key = "selected_day"
+        return pref.getInt(key, 0)
+    }
+
     fun registerUser(user: User) {
         val editor = pref.edit()
         val prefKey = context.getString(R.string.PREF_user_entry)

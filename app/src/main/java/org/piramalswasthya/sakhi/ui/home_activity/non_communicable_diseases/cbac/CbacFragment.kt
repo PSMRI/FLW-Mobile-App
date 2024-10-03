@@ -137,7 +137,7 @@ class CbacFragment : Fragment() {
         viewModel.benAgeGender.observe(viewLifecycleOwner) {
             binding.tvAgeGender.text = it
         }
-
+        
         viewModel.raAgeScore.observe(viewLifecycleOwner) {
             binding.ddAgeScore.text = it
         }

@@ -1292,7 +1292,7 @@ data class BenRegCache(
         return TimeUnit.MILLISECONDS.toDays(cal.timeInMillis - millisCurrent).toInt()
     }
 
-    fun asKidNetworkModel(): BenRegKidNetwork {
+    fun asKidNetworkModel(user: User): BenRegKidNetwork {
         return BenRegKidNetwork(
             benficieryid = beneficiaryId,
             childName = firstName,
@@ -1342,7 +1342,7 @@ data class BenRegCache(
             Processed = processed,
             serverUpdatedStatus = serverUpdatedStatus,
             VanID = 4,
-//            ProviderServiceMapID = user.serviceMapId,
+            ProviderServiceMapID = user.serviceMapId,
             Countyid = locationRecord.country.id,
             stateid = locationRecord.state.id,
             districtid = locationRecord.district.id,

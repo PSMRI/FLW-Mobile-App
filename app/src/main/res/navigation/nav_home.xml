@@ -76,6 +76,48 @@
         <action
             android:id="@+id/action_homeFragment_to_childImmunizationListFragment"
             app:destination="@id/childImmunizationListFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_ANCategoryFragment"
+            app:destination="@id/ANCategoryFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_ncdEligibleListFragment"
+            app:destination="@id/ncdEligibleListFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_pwRegistrationFragment"
+            app:destination="@id/pwRegistrationFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_eligibleCoupleRegFragment"
+            app:destination="@id/eligibleCoupleListFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_TBScreeningListFragment"
+            app:destination="@id/TBScreeningListFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_HRPPregnantAssessFragment"
+            app:destination="@id/pregnantListFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_infantListFragment"
+            app:destination="@id/infantListFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_childListFragment"
+            app:destination="@id/childListFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_pncMotherListFragment"
+            app:destination="@id/pncMotherListFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_eligibleCoupleTrackingListFragment"
+            app:destination="@id/eligibleCoupleTrackingListFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_motherImmunizationListFragment"
+            app:destination="@id/motherImmunizationListFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_ncdPriorityListFragment"
+            app:destination="@id/ncdPriorityListFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_hbncDayListFragment"
+            app:destination="@id/hbncDayListFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_hbycMonthListFragment"
+            app:destination="@id/hbycMonthListFragment" />
     </fragment>
     <fragment
         android:id="@+id/allHouseholdFragment"
@@ -981,6 +1023,18 @@
         android:name="org.piramalswasthya.sakhi.ui.home_activity.incentives.IncentivesFragment"
         android:label="fragment_incentives"
         tools:layout="@layout/fragment_incentives" />
+    <fragment
+        android:id="@+id/HRDashboardFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.home.HRDashboardFragment"
+        android:label="HRDashboardFragment" />
+    <fragment
+        android:id="@+id/ANCategoryFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.catagories.ANCategoryFragment"
+        android:label="ANCategoryFragment" >
+        <action
+            android:id="@+id/action_ANCategoryFragment_to_pwAncVisitsFragment"
+            app:destination="@id/pwAncVisitsFragment" />
+    </fragment>
 
 
 </navigation>

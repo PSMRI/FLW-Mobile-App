@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import org.json.JSONException
 import org.json.JSONObject
-import org.piramalswasthya.sakhi.configuration.BenGenRegFormDataset
 import org.piramalswasthya.sakhi.database.room.BeneficiaryIdsAvail
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
@@ -240,10 +239,10 @@ class BenRepo @Inject constructor(
                 benDao.setSyncState(it.householdId, it.beneficiaryId, SyncState.SYNCING)
                 benNetworkPostList.add(it.asNetworkPostModel(context, user))
                 householdNetworkPostList.add(
-                    householdDao.getHousehold(it.householdId)!!.asNetworkModel()
+                    householdDao.getHousehold(it.householdId)!!.asNetworkModel(user)
                 )
                 try {
-                    if (it.ageUnitId != 3 || it.age < 15) kidNetworkPostList.add(it.asKidNetworkModel())
+                    if (it.ageUnitId != 3 || it.age < 15) kidNetworkPostList.add(it.asKidNetworkModel(user))
                 } catch (e: java.lang.Exception) {
                     Timber.d("caught error in adding kidDetails : $e")
                 }
