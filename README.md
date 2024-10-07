@@ -2,11 +2,9 @@
 
 ## Overview
 
-
 The FLW Mobile App is designed for healthcare programs and consultation services rendered by ASHAs’ to serve pregnant women, mothers, and newborns in India. This eliminates pen and paperwork by ASHAs and allows them to enter beneficiaries data in a digital
 process with increased ease and accuracy of data. We named it as SAKHI for Bihar State and Utprerona for
 Assam State.
-
 
 
 ## Functional Modules
