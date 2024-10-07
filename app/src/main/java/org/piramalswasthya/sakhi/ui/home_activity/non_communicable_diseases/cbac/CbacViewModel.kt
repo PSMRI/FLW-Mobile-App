@@ -151,6 +151,8 @@ class CbacViewModel @Inject constructor(
     private val _minDate = MutableLiveData<Long>()
 
 
+    val user = preferenceDao.getLoggedInUser()
+
     val minDate: LiveData<Long>
         get() = _minDate
 
@@ -593,6 +595,7 @@ class CbacViewModel @Inject constructor(
 //        cbac.districtname = ben.locationRecord
         cbac.villageid = ben.locationRecord.village.id
         cbac.cbac_reg_id = ben.benRegId
+        cbac.ProviderServiceMapID = user!!.serviceMapId
 
         viewModelScope.launch {
             val result = cbacRepo.saveCbacData(cbac, ben)
