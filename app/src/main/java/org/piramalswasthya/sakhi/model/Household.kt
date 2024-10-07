@@ -84,7 +84,7 @@ data class HouseholdCache(
         return HouseholdNetwork(
             Countyid = locationRecord.country.id,
             Processed = processed,
-            ProviderServiceMapID = user.serviceMapId,
+            providerServiceMapID = user.serviceMapId,
 //            VanID = userCache.vanId,
             ashaId = ashaId,
             availabilityOfToilet = amenities?.availabilityOfToilet,
@@ -235,7 +235,7 @@ data class HouseholdNetwork(
 
     @Json(name = "updatedDate") val updatedDate: String? = null,
 
-    @Json(name = "ProviderServiceMapID") val ProviderServiceMapID: Int,
+    @Json(name = "ProviderServiceMapID") val providerServiceMapID: Int,
 
 //    @Json(name = "VanID") val VanID: Int,
 
