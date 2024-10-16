@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -59,6 +60,8 @@ class TBScreeningFormViewModel @Inject constructor(
     var suspectedTBFamily: String? = null
 
     private lateinit var tbScreeningCache: TBScreeningCache
+
+    private val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO
 
     init {
         viewModelScope.launch {
@@ -113,6 +116,34 @@ class TBScreeningFormViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun saveFormDirectlyfromCbac() {
+        viewModelScope.launch {
+            withContext(defaultDispatcher) {
+                try {
+                    saveValues()
+                    _state.postValue(State.SAVING)
+                    tbRepo.saveTBScreening(tbScreeningCache)
+                    _state.postValue(State.SAVE_SUCCESS)
+                } catch (e: Exception) {
+                    Timber.d("saving tb screening data failed!!")
+                    _state.postValue(State.SAVE_FAILED)
+                }
+            }
+        }
+    }
+
+    private suspend fun saveValues() {
+        tbScreeningCache = TBScreeningCache(
+            benId = benRepo.getBenFromId(benId)!!.beneficiaryId,
+            coughMoreThan2Weeks = true,
+            lossOfWeight = true,
+            feverMoreThan2Weeks = true,
+            nightSweats = true,
+            bloodInSputum = true,
+            historyOfTb = true,
+        )
     }
 
     fun resetState() {

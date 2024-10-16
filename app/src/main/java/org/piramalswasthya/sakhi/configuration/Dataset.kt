@@ -714,6 +714,19 @@ abstract class Dataset(context: Context, currentLanguage: Languages) {
         return -1
     }
 
+    protected fun validateWeightOnEditText(formElement: FormElement): Int {
+
+        formElement.value?.takeIf { it.isNotEmpty() }?.let {
+            if (it.all { it == '0' })
+                formElement.errorText = "Weight Cannot be 0"
+            else if(it.toInt() > 7000)
+                formElement.errorText = "Weight Should not be greater than 7000 gram"
+            else
+                formElement.errorText = null
+        } ?: kotlin.run { formElement.errorText = null }
+        return -1
+    }
+
 
     protected fun validateMcpOnEditText(formElement: FormElement): Int {
         formElement.errorText = formElement.value?.takeIf { it.isNotEmpty() }?.let {
