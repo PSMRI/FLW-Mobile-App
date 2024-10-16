@@ -21,20 +21,31 @@ Assam State.
 5. Eligible Couple List
 
 6. Mother Care
+
     • Pregnancy List (PMSMA Form: Pradhan Mantri Surakshit Matritva Abhiyan)
+
     • Delivery stage List
+
     • PNC Mother List
+
     • Reproductive Age List
 
 7. Child Care
+
     • Infant List
+
     • Child List
+
     • Adolescent List
 
 8. NCD
+
     • NCD List
+
     • NCD Eligible List
+
     • NCD Priority List
+
     • NCD Non-Eligible List
 
 9. Immunization due List
@@ -50,9 +61,13 @@ Assam State.
 14. Village Level Forms
 
 15. ASHA Dashboard
+
     • Total ANC Women
+
     • Delivery due list
+
     • Total Delivery Women
+
     • Total PNC Women
 
 16. ASHA To-do List (Scheduler)
