@@ -111,7 +111,7 @@ class InfantRegistrationDataset(
     private var weight = FormElement(
         id = 11,
         inputType = InputType.EDIT_TEXT,
-        title = "Weight at Birth(gram)",
+        title = "Weight at Birth(kg)",
         required = false,
         hasDependants = false,
         etMaxLength = 5,
