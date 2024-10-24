@@ -202,6 +202,8 @@ data class BenBasicCache(
 
         }
 
+
+
         private fun getDiffYears(a: Calendar, b: Calendar): Int {
             var diff = b.get(Calendar.YEAR) - a.get(Calendar.YEAR)
             if (a.get(Calendar.MONTH) > b.get(Calendar.MONTH) || a.get(Calendar.MONTH) == b.get(
@@ -698,6 +700,7 @@ data class BenBasicDomain(
     val hrpStatus: Boolean = false,
     var syncState: SyncState?
 )
+
 
 data class BenBasicDomainForForm(
     val benId: Long,
