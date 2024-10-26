@@ -98,22 +98,15 @@ class SchedulerFragment : Fragment() {
             }
         }
 
-        binding.editIcon.setOnClickListener {
-            openDatePickerDialog()
-        }
-
-
-
-
-        if (viewModel.getSelectedDate == 0 ){
-            "${dateFormat.format(getFirstWednesdayOfMonth().time)}".also { binding.dueDate.text = it }
-            "${dateFormat.format(getFirstWednesdayOfMonth().time)}".also { binding.dueDate.text = it }
-
-        } else {
-            val currentMonth = calendar.get(Calendar.MONTH) + 1
-            val currentYear = calendar.get(Calendar.YEAR)
-            "${viewModel.getSelectedDate}-$currentMonth-$currentYear".also { binding.dueDate.text = it }
-        }
+//        if (viewModel.getSelectedDate == 0 ){
+//            "${dateFormat.format(getFirstWednesdayOfMonth().time)}".also { binding.dueDate.text = it }
+//            "${dateFormat.format(getFirstWednesdayOfMonth().time)}".also { binding.dueDate.text = it }
+//
+//        } else {
+//            val currentMonth = calendar.get(Calendar.MONTH) + 1
+//            val currentYear = calendar.get(Calendar.YEAR)
+//            "${viewModel.getSelectedDate}-$currentMonth-$currentYear".also { binding.dueDate.text = it }
+//        }
 
         binding.btnBackDate.setOnClickListener {
             val currentDay = Calendar.getInstance().timeInMillis
@@ -126,22 +119,22 @@ class SchedulerFragment : Fragment() {
 
         }
 
-        binding.textDateHeader.setOnClickListener {
-            val datePickerDialog = DatePickerDialog(
-                it.context, { _, year, month, day ->
-                    val millis = Calendar.getInstance().apply {
-                        set(Calendar.YEAR, year)
-                        set(Calendar.MONTH, month)
-                        set(Calendar.DAY_OF_MONTH, day)
-                    }.timeInMillis
-                    binding.textDateHeader.text = getDateString(millis)
-                    viewModel.setDate(millis)
-                }, viewModel.thisYear, viewModel.thisMonth, viewModel.thisDay
-            )
-
-            datePickerDialog.datePicker.maxDate = System.currentTimeMillis()
-            datePickerDialog.show()
-        }
+//        binding.textDateHeader.setOnClickListener {
+//            val datePickerDialog = DatePickerDialog(
+//                it.context, { _, year, month, day ->
+//                    val millis = Calendar.getInstance().apply {
+//                        set(Calendar.YEAR, year)
+//                        set(Calendar.MONTH, month)
+//                        set(Calendar.DAY_OF_MONTH, day)
+//                    }.timeInMillis
+//                    binding.textDateHeader.text = getDateString(millis)
+//                    viewModel.setDate(millis)
+//                }, viewModel.thisYear, viewModel.thisMonth, viewModel.thisDay
+//            )
+//
+//            datePickerDialog.datePicker.maxDate = System.currentTimeMillis()
+//            datePickerDialog.show()
+//        }
 
         binding.btnFwdDate.setOnClickListener {
             val lastDayOfMonth = viewModel.today.getActualMaximum(Calendar.DAY_OF_MONTH)
@@ -229,43 +222,43 @@ class SchedulerFragment : Fragment() {
         return calendar
     }
 
-    private fun openDatePickerDialog() {
-        val year = calendar.get(Calendar.YEAR)
-        val month = calendar.get(Calendar.MONTH)
-        val day = calendar.get(Calendar.DAY_OF_MONTH)
-
-        val datePickerDialog = DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
-            selectedDate = "${selectedDay}-${selectedMonth + 1}-${selectedYear}"
-        }, year, month, day)
-
-
-        datePickerDialog.setButton(DatePickerDialog.BUTTON_POSITIVE, "Set Date") { dialog, _ ->
-            val selectedYear = datePickerDialog.datePicker.year
-            val selectedMonth = datePickerDialog.datePicker.month
-            val selectedDay = datePickerDialog.datePicker.dayOfMonth
-            viewModel.saveSelectedDay(selectedDay)
-            "$selectedDay-${selectedMonth + 1}-$selectedYear".also { binding.dueDate.text = it }
-            dialog.dismiss()
-        }
-
-        datePickerDialog.setButton(DatePickerDialog.BUTTON_NEGATIVE, "Cancel") { dialog, _ ->
-            dialog.dismiss()
-        }
-
-        datePickerDialog.setOnShowListener {
-            val positiveButton = datePickerDialog.getButton(AlertDialog.BUTTON_POSITIVE)
-            val negativeButton = datePickerDialog.getButton(AlertDialog.BUTTON_NEGATIVE)
-
-            positiveButton.textSize = 16f
-            negativeButton.textSize = 16f
-
-            positiveButton.setTextColor(requireContext().getColor(R.color.md_theme_dark_inversePrimary))
-            negativeButton.setTextColor(requireContext().getColor(R.color.md_theme_dark_inversePrimary))
-        }
-
-        // Show the DatePickerDialog
-        datePickerDialog.show()
-    }
+//    private fun openDatePickerDialog() {
+//        val year = calendar.get(Calendar.YEAR)
+//        val month = calendar.get(Calendar.MONTH)
+//        val day = calendar.get(Calendar.DAY_OF_MONTH)
+//
+//        val datePickerDialog = DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
+//            selectedDate = "${selectedDay}-${selectedMonth + 1}-${selectedYear}"
+//        }, year, month, day)
+//
+//
+//        datePickerDialog.setButton(DatePickerDialog.BUTTON_POSITIVE, "Set Date") { dialog, _ ->
+//            val selectedYear = datePickerDialog.datePicker.year
+//            val selectedMonth = datePickerDialog.datePicker.month
+//            val selectedDay = datePickerDialog.datePicker.dayOfMonth
+//            viewModel.saveSelectedDay(selectedDay)
+//            "$selectedDay-${selectedMonth + 1}-$selectedYear".also { binding.dueDate.text = it }
+//            dialog.dismiss()
+//        }
+//
+//        datePickerDialog.setButton(DatePickerDialog.BUTTON_NEGATIVE, "Cancel") { dialog, _ ->
+//            dialog.dismiss()
+//        }
+//
+//        datePickerDialog.setOnShowListener {
+//            val positiveButton = datePickerDialog.getButton(AlertDialog.BUTTON_POSITIVE)
+//            val negativeButton = datePickerDialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+//
+//            positiveButton.textSize = 16f
+//            negativeButton.textSize = 16f
+//
+//            positiveButton.setTextColor(requireContext().getColor(R.color.md_theme_dark_inversePrimary))
+//            negativeButton.setTextColor(requireContext().getColor(R.color.md_theme_dark_inversePrimary))
+//        }
+//
+//        // Show the DatePickerDialog
+//        datePickerDialog.show()
+//    }
 
 
     override fun onDestroy() {

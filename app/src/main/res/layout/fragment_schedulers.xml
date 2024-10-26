@@ -201,7 +201,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         android:textAppearance="@style/TextAppearance.Material3.DisplayMedium"
                         android:textColor="?attr/colorOnPrimary"
-                        android:text="5" />
+                        tools:text="5" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -251,7 +251,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
                         android:textAppearance="@style/TextAppearance.Material3.DisplayMedium"
-                        android:text="1" />
+                        tools:text="1" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -302,7 +302,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
                         android:textAppearance="@style/TextAppearance.Material3.DisplayMedium"
-                        android:text="12"
+                        tools:text="12"
                         />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -348,7 +348,7 @@
                         android:id="@+id/tvCi"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="2"
+                        tools:text="2"
                         android:textAppearance="@style/TextAppearance.Material3.DisplayMedium"
                         android:textColor="?attr/colorOnPrimary"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -379,7 +379,7 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/clVhsnd"
-                    android:padding="@dimen/padding_normal"
+                    android:padding="@dimen/padding_wide"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
@@ -389,6 +389,7 @@
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_edit"
                         android:elevation="2dp"
+                        android:visibility="gone"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:tint="@color/md_theme_dark_shadow"/>
@@ -403,8 +404,7 @@
                         android:maxLines="3"
                         android:ellipsize="end"
                         android:gravity="center"
-                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                        />
+                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
 
                     <TextView
                         android:id="@+id/dueDate"
@@ -417,8 +417,8 @@
                         android:maxLines="3"
                         android:ellipsize="end"
                         android:gravity="center"
-                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                        />
+                        android:visibility="gone"
+                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
 
                     <TextView
                         android:id="@+id/tvVhsnd"
@@ -429,9 +429,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
                         android:textAppearance="@style/TextAppearance.Material3.DisplayMedium"
-                        android:text="20"
-                        android:textSize="35sp"
-                        />
+                        tools:text="20" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -482,7 +480,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
                         android:textAppearance="@style/TextAppearance.Material3.DisplayMedium"
-                        android:text="1"
+                        tools:text="1"
                         android:textColor="?attr/colorOnPrimary"/>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -533,7 +531,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
                         android:textAppearance="@style/TextAppearance.Material3.DisplayMedium"
-                        android:text="2"/>
+                        tools:text="2"/>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -585,7 +583,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         android:textColor="?attr/colorOnPrimary"
                         android:textAppearance="@style/TextAppearance.Material3.DisplayMedium"
-                        android:text="1"/>
+                        tools:text="1"/>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -625,8 +623,7 @@
                         android:maxLines="3"
                         android:ellipsize="end"
                         android:gravity="center"
-                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                       />
+                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
 
                     <TextView
                         android:id="@+id/tvEc"
@@ -637,8 +634,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
                         android:textAppearance="@style/TextAppearance.Material3.DisplayMedium"
-                        android:text="5"
-                        />
+                        tools:text="5" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
