@@ -1159,9 +1159,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             if (hoFSpouse1.isEmpty()) {
                 firstName.value = hoFSpouse.genDetails?.spouseName
                 firstName.inputType = TEXT_VIEW
-                if (hoFSpouse.gender == Gender.MALE) {
-                    lastName.value = hoFSpouse.lastName
-                }
+                lastName.value = hoFSpouse.lastName
                 lastName.inputType = EDIT_TEXT
             }
             if (hoFSpouse.gender == FEMALE) {
