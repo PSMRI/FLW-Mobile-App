@@ -10,6 +10,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.database.room.InAppDb
 import org.piramalswasthya.sakhi.database.room.dao.*
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
@@ -83,7 +84,7 @@ object AppModule {
         return Retrofit.Builder()
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             //.addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(baseTmcUrl)
+            .baseUrl(BuildConfig.BASE_TMC_URL)
             .client(httpClient)
             .build()
             .create(AmritApiService::class.java)
@@ -98,7 +99,7 @@ object AppModule {
         return Retrofit.Builder()
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             //.addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(baseAbhaUrl)
+            .baseUrl(BuildConfig.BASE_ABHA_URL)
             .client(httpClient)
             .build()
             .create(AbhaApiService::class.java)
