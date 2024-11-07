@@ -122,6 +122,47 @@
 
                 </RadioGroup>
 
+                <RadioGroup
+                    android:id="@+id/rg_user_type"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:checkedButton="@id/rb_eng"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:weightSum="2"
+                    android:background="@drawable/theme_out_line"
+                    app:layout_constraintTop_toBottomOf="@id/rg_lang_select">
+
+                    <com.google.android.material.radiobutton.MaterialRadioButton
+                        android:id="@+id/rb_asha"
+                        style="@style/radio_item_lang"
+                        android:button="@null"
+                        android:checked="true"
+                        android:gravity="center"
+                        android:layout_marginTop="1dp"
+                        android:layout_marginBottom="1dp"
+                        android:layout_marginStart="1dp"
+                        android:layout_weight="1.4"
+                        android:textColor="@color/md_theme_light_onSecondary"
+                        android:background="@drawable/toggle_widget_background"
+                        android:text="@string/asha" />
+
+                    <com.google.android.material.radiobutton.MaterialRadioButton
+                        android:id="@+id/rb_asha_facilator"
+                        style="@style/radio_item_lang"
+                        android:layout_marginEnd="1dp"
+                        android:layout_marginTop="1dp"
+                        android:gravity="center"
+                        android:layout_marginBottom="1dp"
+                        android:button="@null"
+                        android:layout_weight="0.6"
+                        android:textColor="@color/md_theme_light_onSecondary"
+                        android:background="@drawable/toggle_widget_background"
+                        android:text="@string/asha_facilitators" />
+
+
+                </RadioGroup>
+
                 <!--                    <com.google.android.material.button.MaterialButtonToggleGroup-->
                 <!--                        android:id="@+id/toggleStates"-->
                 <!--                        style="?attr/materialButtonToggleGroupStyle"-->
@@ -159,7 +200,7 @@
                     android:paddingBottom="@dimen/padding_normal"
                     app:endIconTint="?attr/colorOnPrimary"
 
-                    app:layout_constraintTop_toBottomOf="@id/rg_lang_select"
+                    app:layout_constraintTop_toBottomOf="@id/rg_user_type"
                     tools:layout_editor_absoluteX="16dp">
 
                     <com.google.android.material.textfield.TextInputEditText

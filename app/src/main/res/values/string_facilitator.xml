@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="search_asha">Date of Visit</string>
+    <string name="date_of_event">Date of Event</string>
+    <string name="date_of_visit">Date of Visit</string>
+    <string name="activity_heading">Activity Name</string>
+    <string name="activity_conducted">Activities Conducted</string>
+    <string name="follow_up_date">Follow Up Date</string>
+    <string name="sub_center">Sub centre</string>
+    <string name="asha_name">ASHA Name</string>
+    <string name="details_activity">Activity Details</string>
+    <string name="issues_identified">Issues Identified</string>
+    <string name="action_taken">Action Taken</string>
+    <string name="attendance">Attendance</string>
+    <string name="topic">Topic</string>
+    <string name="action_item">action Item</string>
+
+    <array name="activity_conducted_choice">
+        <item>Household Visit</item>
+        <item>Community Meeting</item>
+    </array>
+
+    <array name="present_absent">
+        <item>Present</item>
+        <item>Absent</item>
+    </array>
+
+
+    <string-array name="activity_names">
+        <item>Village Visit Log</item>
+        <item>Cluster Meeting</item>
+        <item>Training and capacity Building</item>
+        <item>Performance Monitoring</item>
+        <item>Marginalized Community</item>
+        <item>Greivence redressal</item>
+    </string-array>
+</resources>

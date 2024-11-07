@@ -27,9 +27,12 @@ import org.piramalswasthya.sakhi.databinding.RvItemFormEditTextBinding
 import org.piramalswasthya.sakhi.databinding.RvItemFormHeadlineBinding
 import org.piramalswasthya.sakhi.databinding.RvItemFormImageViewBinding
 import org.piramalswasthya.sakhi.databinding.RvItemFormRadioBinding
+import org.piramalswasthya.sakhi.databinding.RvItemFormTextHeadingV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormTextViewBinding
 import org.piramalswasthya.sakhi.databinding.RvItemFormTimepickerBinding
+import org.piramalswasthya.sakhi.databinding.RvItemTextHeadingBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
+import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.FormInputOld
 import org.piramalswasthya.sakhi.model.InputType.AGE_PICKER
 import org.piramalswasthya.sakhi.model.InputType.CHECKBOXES
@@ -39,6 +42,7 @@ import org.piramalswasthya.sakhi.model.InputType.EDIT_TEXT
 import org.piramalswasthya.sakhi.model.InputType.HEADLINE
 import org.piramalswasthya.sakhi.model.InputType.IMAGE_VIEW
 import org.piramalswasthya.sakhi.model.InputType.RADIO
+import org.piramalswasthya.sakhi.model.InputType.TEXT_HEADLINE
 import org.piramalswasthya.sakhi.model.InputType.TEXT_VIEW
 import org.piramalswasthya.sakhi.model.InputType.TIME_PICKER
 import org.piramalswasthya.sakhi.model.InputType.values
@@ -457,6 +461,22 @@ class FormInputAdapterOld(
         }
     }
 
+    class TextHeadlineViewHolder private constructor(private val binding: RvItemTextHeadingBinding) :
+        ViewHolder(binding.root) {
+        companion object {
+            fun from(parent: ViewGroup): ViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = RvItemTextHeadingBinding.inflate(layoutInflater, parent, false)
+                return TextHeadlineViewHolder(binding)
+            }
+        }
+
+        fun bind(item: FormInputOld) {
+            binding.form = item
+            binding.executePendingBindings()
+        }
+    }
+
     class ImageViewInputViewHolder private constructor(private val binding: RvItemFormImageViewBinding) :
         ViewHolder(binding.root) {
         companion object {
@@ -520,6 +540,7 @@ class FormInputAdapterOld(
             RADIO -> RadioInputViewHolder.from(parent)
             DATE_PICKER -> DatePickerInputViewHolder.from(parent)
             TEXT_VIEW -> TextViewInputViewHolder.from(parent)
+            TEXT_HEADLINE -> TextHeadlineViewHolder.from(parent)
             IMAGE_VIEW -> ImageViewInputViewHolder.from(parent)
             CHECKBOXES -> CheckBoxesInputViewHolder.from(parent)
             TIME_PICKER -> TimePickerInputViewHolder.from(parent)
@@ -536,6 +557,7 @@ class FormInputAdapterOld(
             RADIO -> (holder as RadioInputViewHolder).bind(item, isEnabled)
             DATE_PICKER -> (holder as DatePickerInputViewHolder).bind(item, isEnabled)
             TEXT_VIEW -> (holder as TextViewInputViewHolder).bind(item)
+            TEXT_HEADLINE -> (holder as TextViewInputViewHolder).bind(item)
             IMAGE_VIEW -> (holder as ImageViewInputViewHolder).bind(
                 item,
                 imageClickListener,

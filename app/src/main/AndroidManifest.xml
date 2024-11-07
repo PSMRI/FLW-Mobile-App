@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- <uses-permission android:name="android.permission.CAMERA" /> -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_SUPERUSER"/>
+    <uses-permission android:name="android.permission.ACCESS_SUPERUSER" />
 
     <uses-feature android:name="android.hardware.camera" />
 
@@ -25,6 +25,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/Theme.Sakhi"
         tools:targetApi="31">
+        <activity
+            android:name=".ui.asha_facilitator_activity.FacilitatorsHomeActivity"
+            android:exported="false" />
         <activity
             android:name=".ui.service_location_activity.ServiceLocationActivity"
             android:exported="false" />

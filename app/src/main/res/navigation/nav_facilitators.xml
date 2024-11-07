@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_facilitators"
+    app:startDestination="@id/facilitatorHomeFragment">
+
+    <fragment
+        android:id="@+id/facilitatorHomeFragment"
+        android:name="org.piramalswasthya.sakhi.ui.asha_facilitator_activity.facilitator_home.FacilitatorHomeFragment"
+        android:label="fragment_facilitator_home"
+        tools:layout="@layout/fragment_facilitator_home" />
+    <fragment
+        android:id="@+id/facilitatorFormFragment2"
+        android:name="org.piramalswasthya.sakhi.ui.asha_facilitator_activity.facilitator_home.form.FacilitatorFormFragment"
+        android:label="fragment_facilitator_form"
+        tools:layout="@layout/fragment_facilitator_form"/>
+
+</navigation>

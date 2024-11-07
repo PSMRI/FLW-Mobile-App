@@ -16,5 +16,6 @@
     <string name="btn_login_forgot_password_text">Forgot Password?</string>
     <string name="btn_login_text">Login</string>
     <string name="pwr_by_text" translatable="false">Powered by\n <b>Piramal Foundation</b></string>
+    <string name="asha_facilitators" translatable="false">ASHA FACILITATORS</string>
 
 </resources>

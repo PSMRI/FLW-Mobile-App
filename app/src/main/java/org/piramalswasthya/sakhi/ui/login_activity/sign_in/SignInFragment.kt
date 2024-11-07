@@ -23,6 +23,7 @@ import org.piramalswasthya.sakhi.helpers.Languages.ASSAMESE
 import org.piramalswasthya.sakhi.helpers.Languages.ENGLISH
 import org.piramalswasthya.sakhi.helpers.Languages.HINDI
 import org.piramalswasthya.sakhi.helpers.NetworkResponse
+import org.piramalswasthya.sakhi.helpers.UserType
 import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
@@ -120,6 +121,14 @@ class SignInFragment : Fragment() {
 
         }
 
+        binding.rgUserType?.setOnCheckedChangeListener { _, i ->
+            val currentUser = when (i) {
+                binding.rbAsha?.id -> UserType.ASHA
+                binding.rbAshaFacilator?.id -> UserType.FACILITATOR
+                else -> UserType.ASHA
+            }
+
+        }
 
         viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state) {
@@ -165,7 +174,7 @@ class SignInFragment : Fragment() {
                     WorkerUtils.triggerGenBenIdWorker(requireContext())
                     findNavController().navigate(
                         if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
-                        else SignInFragmentDirections.actionSignInFragmentToHomeActivity()
+                        else SignInFragmentDirections.actionSignInFragmentToFacilitatorsHomeActivity()
                     )
                     activity?.finish()
                 }

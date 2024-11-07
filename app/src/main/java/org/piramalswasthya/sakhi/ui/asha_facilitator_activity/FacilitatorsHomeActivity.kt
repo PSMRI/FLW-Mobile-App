@@ -1,4 +1,4 @@
-package org.piramalswasthya.sakhi.ui.home_activity
+package org.piramalswasthya.sakhi.ui.asha_facilitator_activity
 
 import android.content.Context
 import android.content.Intent
@@ -7,7 +7,6 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.PickVisualMediaRequest
@@ -23,33 +22,31 @@ import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.firebase.crashlytics.internal.common.CommonUtils.isEmulator
-import com.google.firebase.crashlytics.internal.common.CommonUtils.isRooted
+import com.google.firebase.crashlytics.internal.common.CommonUtils
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
-import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.databinding.ActivityFacilitatorsHomeAcivityBinding
 import org.piramalswasthya.sakhi.databinding.ActivityHomeBinding
 import org.piramalswasthya.sakhi.helpers.ImageUtils
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.MyContextWrapper
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
+import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.home.HomeViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.sync.SyncBottomSheetFragment
 import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
 import org.piramalswasthya.sakhi.ui.service_location_activity.ServiceLocationActivity
-import org.piramalswasthya.sakhi.utils.RootedUtil
 import org.piramalswasthya.sakhi.work.WorkerUtils
-import java.util.*
+import java.util.Locale
 import javax.inject.Inject
 
-
 @AndroidEntryPoint
-class HomeActivity : AppCompatActivity() {
+class FacilitatorsHomeActivity : AppCompatActivity() {
 
 
     @EntryPoint
@@ -67,15 +64,12 @@ class HomeActivity : AppCompatActivity() {
     @Inject
     lateinit var pref: PreferenceDao
 
-    private var _binding: ActivityHomeBinding? = null
+    private var _binding: ActivityFacilitatorsHomeAcivityBinding? = null
 
-    private val binding: ActivityHomeBinding
+    private val binding: ActivityFacilitatorsHomeAcivityBinding
         get() = _binding!!
 
 
-    private val syncBottomSheet: SyncBottomSheetFragment by lazy {
-        SyncBottomSheetFragment()
-    }
 
 
     private val viewModel: HomeViewModel by viewModels()
@@ -174,15 +168,11 @@ class HomeActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // This will block user to cast app screen
-        // Toggle screencast mode for staging & production builds
-//        window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         super.onCreate(savedInstanceState)
-        _binding = ActivityHomeBinding.inflate(layoutInflater)
+        _binding = ActivityFacilitatorsHomeAcivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setUpActionBar()
         setUpNavHeader()
-        setUpFirstTimePullWorker()
         setUpMenu()
 
         if (isDeviceRootedOrEmulator()) {
@@ -223,15 +213,17 @@ class HomeActivity : AppCompatActivity() {
                 menuInflater.inflate(R.menu.home_toolbar, menu)
                 val homeMenu = menu.findItem(R.id.toolbar_menu_home)
                 val langMenu = menu.findItem(R.id.toolbar_menu_language)
+                val syncStatus = menu.findItem(R.id.sync_status)
                 homeMenu.isVisible = showMenuHome
                 langMenu.isVisible = !showMenuHome
+                syncStatus.isVisible = false
 
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 when (menuItem.itemId) {
                     R.id.toolbar_menu_home -> {
-                        navController.popBackStack(R.id.homeFragment, false)
+                        navController.popBackStack(R.id.facilitatorHomeFragment, false)
                         return true
                     }
 
@@ -240,14 +232,6 @@ class HomeActivity : AppCompatActivity() {
                         return true
                     }
 
-                    R.id.sync_status -> {
-                        if (!syncBottomSheet.isVisible)
-                            syncBottomSheet.show(
-                                supportFragmentManager,
-                                resources.getString(R.string.sync)
-                            )
-                        return true
-                    }
                 }
                 return false
             }
@@ -279,12 +263,6 @@ class HomeActivity : AppCompatActivity() {
         invalidateOptionsMenu()
     }
 
-    private fun setUpFirstTimePullWorker() {
-        WorkerUtils.triggerPeriodicPncEcUpdateWorker(this)
-        if (!pref.isFullPullComplete)
-            WorkerUtils.triggerAmritPullWorker(this)
-//        WorkerUtils.triggerD2dSyncWorker(this)
-    }
 
     private fun setUpNavHeader() {
         val headerView = binding.navView.getHeaderView(0)
@@ -295,7 +273,7 @@ class HomeActivity : AppCompatActivity() {
             headerView.findViewById<TextView>(R.id.tv_nav_role).text =
                 resources.getString(R.string.nav_item_2_text, it.userName)
             headerView.findViewById<TextView>(R.id.tv_nav_id).text =
-                resources.getString(R.string.nav_item_3_text, it.userId)
+                resources.getString(R.string.nav_item_5_text, it.userId)
         }
         viewModel.profilePicUri?.let {
             Glide.with(this).load(it).placeholder(R.drawable.ic_person).circleCrop()
@@ -316,7 +294,7 @@ class HomeActivity : AppCompatActivity() {
 
         val appBarConfiguration = AppBarConfiguration.Builder(
             setOf(
-                R.id.homeFragment, R.id.allHouseholdFragment, R.id.allBenFragment
+                R.id.facilitatorHomeFragment
             )
         ).setOpenableLayout(binding.drawerLayout).build()
 
@@ -324,32 +302,18 @@ class HomeActivity : AppCompatActivity() {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
 
         binding.navView.menu.findItem(R.id.homeFragment).setOnMenuItemClickListener {
-            navController.popBackStack(R.id.homeFragment, false)
+            navController.popBackStack(R.id.facilitatorHomeFragment, false)
             binding.drawerLayout.close()
             true
 
         }
-        binding.navView.menu.findItem(R.id.sync_pending_records).setOnMenuItemClickListener {
-            WorkerUtils.triggerAmritPushWorker(this)
-            if (!pref.isFullPullComplete)
-                WorkerUtils.triggerAmritPullWorker(this)
-            binding.drawerLayout.close()
-            true
 
-        }
         binding.navView.menu.findItem(R.id.menu_logout).setOnMenuItemClickListener {
             logoutAlert.show()
             true
 
         }
 
-        binding.navView.menu.findItem(R.id.abha_id_activity).setOnMenuItemClickListener {
-            navController.popBackStack(R.id.homeFragment, false)
-            startActivity(Intent(this, AbhaIdActivity::class.java))
-            binding.drawerLayout.close()
-            true
-
-        }
     }
 
 
@@ -374,7 +338,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun isDeviceRootedOrEmulator(): Boolean {
-        return isRooted() || isEmulator()
+        return CommonUtils.isRooted() || CommonUtils.isEmulator()
 //                || RootedUtil().isDeviceRooted(applicationContext)
     }
 

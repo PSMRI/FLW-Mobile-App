@@ -981,6 +981,20 @@
         android:name="org.piramalswasthya.sakhi.ui.home_activity.incentives.IncentivesFragment"
         android:label="fragment_incentives"
         tools:layout="@layout/fragment_incentives" />
+    <fragment
+        android:id="@+id/facilitatorHomeFragment"
+        android:name="org.piramalswasthya.sakhi.ui.asha_facilitator_activity.facilitator_home.FacilitatorHomeFragment"
+        android:label="FacilitatorHomeFragment" />
+    <fragment
+        android:id="@+id/facilitatorFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.asha_facilitator_activity.facilitator_home.form.FacilitatorFormFragment"
+        android:label="fragment_facilitator_form"
+        tools:layout="@layout/fragment_facilitator_form" />
+    <fragment
+        android:id="@+id/facilitatorDashboardFragment"
+        android:name="org.piramalswasthya.sakhi.ui.asha_facilitator_activity.facilitator_home.FacilitatorDashboardFragment"
+        android:label="fragment_facilitator_dashboard"
+        tools:layout="@layout/fragment_facilitator_dashboard" />
 
 
 </navigation>

@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_signInFragment_to_serviceLocationActivity"
             app:destination="@id/serviceLocationActivity" />
+        <action
+            android:id="@+id/action_signInFragment_to_facilitatorsHomeActivity"
+            app:destination="@id/facilitatorsHomeActivity" />
     </fragment>
     <activity
         android:id="@+id/homeActivity"
@@ -27,4 +30,8 @@
         android:name="org.piramalswasthya.sakhi.ui.service_location_activity.ServiceLocationActivity"
         android:label="activity_service_location"
         tools:layout="@layout/activity_service_location" />
+    <activity
+        android:id="@+id/facilitatorsHomeActivity"
+        android:name="org.piramalswasthya.sakhi.ui.asha_facilitator_activity.FacilitatorsHomeActivity"
+        android:label="FacilitatorsHomeActivity" />
 </navigation>

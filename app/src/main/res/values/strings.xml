@@ -317,6 +317,9 @@
     <string name="add_family_member">Add Family Member</string>
     <string name="app_native_name">উৎপ্ৰেৰণা</string>
     <string name="non_pregnant_women_eligible_couple_section">Non-Pregnant Women (Eligible Couple) section</string>
+    <string name="nav_item_5_text">ASHA Facilitator ID : <b>%d</b></string>
+    <string name="activity_form">Activity Form</string>
+
     <string-array name="sync_records">
         <item>Beneficiary</item>
         <item>CBAC</item>

@@ -37,12 +37,14 @@ import org.piramalswasthya.sakhi.databinding.RvItemFormEditTextV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormHeadlineV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormImageViewV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormRadioV2Binding
+import org.piramalswasthya.sakhi.databinding.RvItemFormTextHeadingV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormTextViewV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormTimepickerV2Binding
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.getDateString
 import org.piramalswasthya.sakhi.model.AgeUnitDTO
 import org.piramalswasthya.sakhi.model.FormElement
+import org.piramalswasthya.sakhi.model.InputType
 import org.piramalswasthya.sakhi.model.InputType.AGE_PICKER
 import org.piramalswasthya.sakhi.model.InputType.CHECKBOXES
 import org.piramalswasthya.sakhi.model.InputType.DATE_PICKER
@@ -51,6 +53,7 @@ import org.piramalswasthya.sakhi.model.InputType.EDIT_TEXT
 import org.piramalswasthya.sakhi.model.InputType.HEADLINE
 import org.piramalswasthya.sakhi.model.InputType.IMAGE_VIEW
 import org.piramalswasthya.sakhi.model.InputType.RADIO
+import org.piramalswasthya.sakhi.model.InputType.TEXT_HEADLINE
 import org.piramalswasthya.sakhi.model.InputType.TEXT_VIEW
 import org.piramalswasthya.sakhi.model.InputType.TIME_PICKER
 import org.piramalswasthya.sakhi.model.InputType.values
@@ -835,6 +838,23 @@ class FormInputAdapter(
         }
     }
 
+
+    class TextHeadlineViewHolder private constructor(private val binding: RvItemFormTextHeadingV2Binding) :
+        ViewHolder(binding.root) {
+        companion object {
+            fun from(parent: ViewGroup): ViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = RvItemFormTextHeadingV2Binding.inflate(layoutInflater, parent, false)
+                return TextHeadlineViewHolder(binding)
+            }
+        }
+
+        fun bind(item: FormElement) {
+            binding.form = item
+            binding.executePendingBindings()
+        }
+    }
+
     class ImageClickListener(private val imageClick: (formId: Int) -> Unit) {
 
         fun onImageClick(form: FormElement) = imageClick(form.id)
@@ -869,6 +889,7 @@ class FormInputAdapter(
             CHECKBOXES -> CheckBoxesInputViewHolder.from(parent)
             TIME_PICKER -> TimePickerInputViewHolder.from(parent)
             HEADLINE -> HeadlineViewHolder.from(parent)
+            TEXT_HEADLINE -> TextHeadlineViewHolder.from(parent)
             AGE_PICKER -> AgePickerViewInputViewHolder.from(parent)
         }
     }
@@ -888,6 +909,7 @@ class FormInputAdapter(
             )
 
             TEXT_VIEW -> (holder as TextViewInputViewHolder).bind(item)
+            TEXT_HEADLINE -> (holder as TextHeadlineViewHolder).bind(item)
             IMAGE_VIEW -> (holder as ImageViewInputViewHolder).bind(
                 item, imageClickListener, isEnabled
             )
