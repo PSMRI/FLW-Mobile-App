@@ -152,7 +152,7 @@ class FormInputAdapter(
                         binding.tilEditText.isErrorEnabled = item.errorText != null
                         binding.tilEditText.error = item.errorText
                     }
-//                        binding.tilEditText.error = null
+//                    binding.tilEditText.error = null
 //                    else if(item.errorText!= null && binding.tilEditText.error==null)
 //                        binding.tilEditText.error = item.errorText
 
@@ -297,7 +297,13 @@ class FormInputAdapter(
             }
             if (!isEnabled) {
                 binding.tilRvDropdown.visibility = View.GONE
+                binding.ivIconBg.visibility = View.GONE
+                binding.ivIconTemperature.visibility = View.GONE
+
                 binding.tilEditText.visibility = View.VISIBLE
+                binding.ivIconBg1.visibility = View.VISIBLE
+                binding.ivIconTemperature1.visibility = View.VISIBLE
+
                 binding.et.isFocusable = false
                 binding.et.isClickable = false
                 binding.executePendingBindings()

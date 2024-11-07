@@ -178,6 +178,9 @@ dependencies {
     implementation 'id.zelory:compressor:3.0.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
+    //Dimens Library
+    implementation 'com.intuit.sdp:sdp-android:1.1.0'
+
 }
 secrets {
     propertiesFileName = "secrets.properties"

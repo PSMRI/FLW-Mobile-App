@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="android.view.View" />
         <variable
             name="form"
             type="org.piramalswasthya.sakhi.model.FormElement" />
@@ -31,6 +32,7 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_15sdp"
             asteriskRequired="@{form.required}"
             hintText="@{form.title}"
             app:endIconMode="custom"
@@ -45,6 +47,7 @@
                 android:layout_height="wrap_content"
                 android:imeOptions="actionDone"
                 android:hint=""
+                android:paddingLeft="@dimen/_20sdp"
                 android:inputType="@{form.etInputType}"
                 android:maxLength="@{form.etMaxLength}"
                 android:singleLine="true"
@@ -54,6 +57,30 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
+        <ImageView
+            android:id="@+id/ivIconBg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:imageResource="@{form.backgroundDrawable}"
+            android:visibility="@{form.showDrawable ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="@+id/til_edit_text"
+            app:layout_constraintEnd_toStartOf="@+id/til_edit_text"
+            app:layout_constraintStart_toStartOf="@+id/til_edit_text"
+            app:layout_constraintTop_toTopOf="@+id/til_edit_text"
+            app:tint="@color/md_theme_light_primary" />
+<!--        android:src="@drawable/ic_bg_circular"-->
+
+        <ImageView
+            android:id="@+id/ivIconTemperature"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:imageResource="@{form.iconDrawableRes}"
+            android:visibility="@{form.showDrawable ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="@+id/ivIconBg"
+            app:layout_constraintEnd_toEndOf="@+id/ivIconBg"
+            app:layout_constraintStart_toStartOf="@+id/ivIconBg"
+            app:layout_constraintTop_toTopOf="@+id/ivIconBg" />
+<!--        android:src="@drawable/ic_bmi"-->
 <!--        <TextView-->
 <!--            android:id="@+id/tv_nullable"-->
 <!--            android:layout_width="wrap_content"-->
