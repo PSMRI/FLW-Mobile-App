@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
 import android.text.InputType
+import android.util.Log
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.FormElement
@@ -10,6 +11,7 @@ import org.piramalswasthya.sakhi.model.HouseholdAmenities
 import org.piramalswasthya.sakhi.model.HouseholdCache
 import org.piramalswasthya.sakhi.model.HouseholdDetails
 import org.piramalswasthya.sakhi.model.HouseholdFamily
+import org.piramalswasthya.sakhi.model.InputType.BUTTON
 import org.piramalswasthya.sakhi.model.InputType.DROPDOWN
 import org.piramalswasthya.sakhi.model.InputType.EDIT_TEXT
 import org.piramalswasthya.sakhi.model.InputType.HEADLINE
@@ -85,6 +87,7 @@ class HouseholdFormDataset(context: Context, language: Languages) : Dataset(cont
         max = 9999999999,
         min = 6000000000
     )
+
     private val houseNo = FormElement(
         id = 3,
         inputType = EDIT_TEXT,
@@ -125,6 +128,30 @@ class HouseholdFormDataset(context: Context, language: Languages) : Dataset(cont
         entries = resources.getStringArray(R.array.nhhr_poverty_line_array),
         required = true
     )
+
+    private val sendOtpBtn = FormElement(
+        id = 8,
+        inputType = BUTTON,
+        title = resources.getString(R.string.generate_otp),
+        required = false,
+        isEnabled = true,
+        etInputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_NORMAL,
+        isMobileNumber = false,
+    )
+
+    private val otpField = FormElement(
+        id = 9,
+        inputType = EDIT_TEXT,
+        title = resources.getString(R.string.enter_otp),
+        arrayId = -1,
+        required = true,
+        etInputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_NORMAL,
+        isMobileNumber = false,
+        etMaxLength = 4,
+        max = 9999999999,
+        min = 6000000000
+    )
+
 
     suspend fun setupPage(hh: HouseholdCache?) {
 
@@ -439,9 +466,11 @@ class HouseholdFormDataset(context: Context, language: Languages) : Dataset(cont
             }
 
             lastNameHeadOfFamily.id -> validateAllCapsOrSpaceOnEditText(lastNameHeadOfFamily)
+
             mobileNoHeadOfFamily.id -> {
                 validateEmptyOnEditText(mobileNoHeadOfFamily)
                 validateMobileNumberOnEditText(mobileNoHeadOfFamily)
+
             }
 
             residentialArea.id -> triggerDependants(

@@ -7,6 +7,7 @@ import android.content.res.ColorStateList
 import android.content.res.Resources
 import android.graphics.Color
 import android.os.Build
+import android.os.CountDownTimer
 import android.text.Editable
 import android.text.Spannable
 import android.text.SpannableString
@@ -19,17 +20,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.Button
 import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.children
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.google.android.material.button.MaterialButton
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.RvItemFormAgePickerViewV2Binding
+import org.piramalswasthya.sakhi.databinding.RvItemFormBtnBinding
 import org.piramalswasthya.sakhi.databinding.RvItemFormCheckV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormDatepickerV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormDropdownV2Binding
@@ -44,6 +49,7 @@ import org.piramalswasthya.sakhi.helpers.getDateString
 import org.piramalswasthya.sakhi.model.AgeUnitDTO
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.InputType.AGE_PICKER
+import org.piramalswasthya.sakhi.model.InputType.BUTTON
 import org.piramalswasthya.sakhi.model.InputType.CHECKBOXES
 import org.piramalswasthya.sakhi.model.InputType.DATE_PICKER
 import org.piramalswasthya.sakhi.model.InputType.DROPDOWN
@@ -319,6 +325,57 @@ class FormInputAdapter(
 
         }
     }
+
+    class ButtonInputViewHolder private constructor(private val binding: RvItemFormBtnBinding) :
+        ViewHolder(binding.root) {
+        companion object {
+            fun from(parent: ViewGroup): ViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = RvItemFormBtnBinding.inflate(layoutInflater, parent, false)
+                return ButtonInputViewHolder(binding)
+            }
+        }
+
+        fun bind(item: FormElement, isEnabled: Boolean, formValueListener: FormValueListener?) {
+            binding.form = item
+            binding.generateOtp.isEnabled = isEnabled
+            binding.generateOtp.text = binding.generateOtp.resources.getString(R.string.generate_otp)
+            binding.generateOtp.setOnClickListener {
+                binding.generateOtp.isEnabled = !isEnabled
+                startTimer(binding.timerInSec,binding.generateOtp)
+                binding.tilEditText.visibility = View.VISIBLE
+            }
+
+
+        }
+
+         private lateinit var countDownTimer : CountDownTimer
+         private var countdownTimers : HashMap<Int, CountDownTimer> = HashMap()
+
+        private fun formatTimeInSeconds(millis: Long) : String {
+            val seconds = millis / 1000
+            return "${seconds} sec"
+        }
+        private fun startTimer(timerInSec: TextView, generateOtp: MaterialButton) {
+          countDownTimer =  object : CountDownTimer(60000, 1000) {
+                override fun onTick(millisUntilFinished: Long) {
+                    timerInSec.visibility = View.VISIBLE
+                    timerInSec.text = formatTimeInSeconds(millisUntilFinished)
+                }
+                override fun onFinish() {
+                    timerInSec.visibility = View.INVISIBLE
+                    timerInSec.text = ""
+                    generateOtp.isEnabled = true
+                    generateOtp.text = timerInSec.resources.getString(R.string.resend_otp)
+                }
+            }.start()
+
+            countdownTimers[adapterPosition] = countDownTimer
+
+        }
+    }
+
+
 
     class RadioInputViewHolder private constructor(private val binding: RvItemFormRadioV2Binding) :
         ViewHolder(binding.root) {
@@ -870,6 +927,7 @@ class FormInputAdapter(
             TIME_PICKER -> TimePickerInputViewHolder.from(parent)
             HEADLINE -> HeadlineViewHolder.from(parent)
             AGE_PICKER -> AgePickerViewInputViewHolder.from(parent)
+            BUTTON -> ButtonInputViewHolder.from(parent)
         }
     }
 
@@ -905,6 +963,8 @@ class FormInputAdapter(
                 isEnabled,
                 formValueListener
             )
+            BUTTON -> (holder as ButtonInputViewHolder).bind(item, isEnabled, formValueListener)
+
         }
     }
 
@@ -942,4 +1002,6 @@ class FormInputAdapter(
         }
         return retVal
     }
+
+
 }
