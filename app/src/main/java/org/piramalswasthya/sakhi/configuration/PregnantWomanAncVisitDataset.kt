@@ -156,7 +156,7 @@ class PregnantWomanAncVisitDataset(
         required = false,
         showDrawable = true,
         backgroundDrawable=R.drawable.ic_bg_circular,
-        iconDrawableRes=R.drawable.ic_bmi,
+        iconDrawableRes=R.drawable.ic_pulse_rate,
     )
 
     private val hb = FormElement(
@@ -170,7 +170,7 @@ class PregnantWomanAncVisitDataset(
         required = false,
         showDrawable = true,
         backgroundDrawable=R.drawable.ic_bg_circular,
-        iconDrawableRes=R.drawable.ic_bmi,
+        iconDrawableRes=R.drawable.ic_blood_test,
     )
 
     private val fundalHeight = FormElement(
@@ -184,7 +184,7 @@ class PregnantWomanAncVisitDataset(
         required = false,
         showDrawable = true,
         backgroundDrawable=R.drawable.ic_bg_circular,
-        iconDrawableRes=R.drawable.ic_bmi,
+        iconDrawableRes=R.drawable.ic_fundal_height,
     )
     private val urineAlbumin = FormElement(
         id = 14,
