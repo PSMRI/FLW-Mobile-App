@@ -1,45 +1,36 @@
 {
   "project_info": {
-    "project_number": "904378085373",
-    "project_id": "saksham-assam",
-    "storage_bucket": "saksham-assam.appspot.com"
+    "project_number": "##",
+    "project_id": "##",
+    "storage_bucket": "##"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:904378085373:android:12b5e159aafe40543f3394",
+        "mobilesdk_app_id": "##",
         "android_client_info": {
           "package_name": "org.piramalswasthya.sakhi"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "##",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyCLl34y0YsHdh7ueHjfozVe1VguekUYUR8"
+          "current_key": "##"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:904378085373:android:4cc1633bcf1d2b543f3394",
-        "android_client_info": {
-          "package_name": "org.piramalswasthya.sakhi.staging"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCLl34y0YsHdh7ueHjfozVe1VguekUYUR8"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "##",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
