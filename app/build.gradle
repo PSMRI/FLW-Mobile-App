@@ -73,7 +73,8 @@ android {
         production {
             applicationId "org.piramalswasthya.sakhi"
             // TMC Server Production API Base URL
-            buildConfigField "String", "BASE_TMC_URL", "\"https://assamtmc.piramalswasthya.org/\""
+            buildConfigField "String", "BASE_TMC_URL", "\"https://uatamrit.piramalswasthya.org/\""
+
             // ABHA v3 Production Base URL
             buildConfigField "String", "BASE_ABHA_URL", "\"https://healthid.abdm.gov.in/api/\""
         }
