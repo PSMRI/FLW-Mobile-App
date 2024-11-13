@@ -33,7 +33,7 @@ data class FormElement(
     var isEnabled: Boolean = true,
     var headingLine: Boolean = true,
     val showYearFirstInDatePicker: Boolean = false,
-    val backgroundDrawable: Int? = null,
-    val iconDrawableRes: Int? = null,
+    @DrawableRes val backgroundDrawable: Int? = null,
+    @DrawableRes val iconDrawableRes: Int? = null,
     val showDrawable: Boolean? = false
 )

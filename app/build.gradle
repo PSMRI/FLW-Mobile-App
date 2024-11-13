@@ -64,7 +64,8 @@ android {
             applicationId "org.piramalswasthya.sakhi"
             resValue "string", "app_native_name", "উৎপ্ৰেৰণা-Uat"
             // TMC Server Staging API Base URL
-            buildConfigField "String", "BASE_TMC_URL", "\"https://amritdemo.piramalswasthya.org/\""
+            buildConfigField "String", "BASE_TMC_URL", "\"https://uatamrit.piramalswasthya.org/\""
+
             // ABHA v1/v2 Staging Base URL
             buildConfigField "String", "BASE_ABHA_URL", "\"https://healthidsbx.abdm.gov.in/api/\""
             // ABHA v3 Staging Base URL
@@ -73,7 +74,7 @@ android {
         production {
             applicationId "org.piramalswasthya.sakhi"
             // TMC Server Production API Base URL
-            buildConfigField "String", "BASE_TMC_URL", "\"https://uatamrit.piramalswasthya.org/\""
+            buildConfigField "String", "BASE_TMC_URL", "\"https://assamtmc.piramalswasthya.org/\""
 
             // ABHA v3 Production Base URL
             buildConfigField "String", "BASE_ABHA_URL", "\"https://healthid.abdm.gov.in/api/\""

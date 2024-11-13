@@ -42,6 +42,7 @@
                         android:layout_height="wrap_content"
                         android:paddingVertical="@dimen/padding_small"
                         android:text="@{form.title}"
+                        android:layout_marginStart="@dimen/_15sdp"
                         android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
                         app:required="@{!form.required}"
                         app:layout_constraintEnd_toStartOf="@id/tv_nullable_hr"
@@ -59,20 +60,21 @@
                         app:layout_constraintStart_toEndOf="@id/tv_title_hr"
                         app:layout_constraintTop_toTopOf="@id/cl_text_hr"
                         android:paddingStart="@dimen/padding_small"
+
                         android:text="@{(form.doubleStar? @string/radio_title_ds(form.title) : @string/radio_title(form.title))}"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         app:required="@{form.required}" />
 
-<!--                    <TextView-->
-<!--                        android:id="@+id/tv_ds_hr"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:text="@string/tv_required_text_asterisk"-->
-<!--                        app:layout_constraintStart_toEndOf="@id/tv_nullable_hr"-->
-<!--                        app:layout_constraintTop_toTopOf="@id/cl_text_hr"-->
-<!--                        android:textAppearance="@style/TextAppearance.AppCompat.Large"-->
-<!--                        android:textColor="@color/design_default_color_error"-->
-<!--                        app:required="@{form.doubleStar}" />-->
+                    <!--                    <TextView-->
+                    <!--                        android:id="@+id/tv_ds_hr"-->
+                    <!--                        android:layout_width="wrap_content"-->
+                    <!--                        android:layout_height="wrap_content"-->
+                    <!--                        android:text="@string/tv_required_text_asterisk"-->
+                    <!--                        app:layout_constraintStart_toEndOf="@id/tv_nullable_hr"-->
+                    <!--                        app:layout_constraintTop_toTopOf="@id/cl_text_hr"-->
+                    <!--                        android:textAppearance="@style/TextAppearance.AppCompat.Large"-->
+                    <!--                        android:textColor="@color/design_default_color_error"-->
+                    <!--                        app:required="@{form.doubleStar}" />-->
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <TextView
@@ -113,6 +115,7 @@
                     android:paddingVertical="@dimen/padding_small"
                     android:text="@{form.title}"
                     android:maxWidth="300dp"
+                    android:layout_marginStart="@dimen/_15sdp"
                     android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
                     app:layout_constraintEnd_toStartOf="@id/tv_nullable_hr"
                     app:layout_constraintStart_toStartOf="parent"
@@ -132,16 +135,16 @@
                     android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
                     app:required2="@{form.required}" />
 
-<!--                <TextView-->
-<!--                    android:id="@+id/tv_ds"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:text="@string/tv_required_text_asterisk"-->
-<!--                    app:layout_constraintStart_toEndOf="@id/tv_nullable_hr"-->
-<!--                    app:layout_constraintTop_toTopOf="@id/cl_text_hr"-->
-<!--                    android:textAppearance="@style/TextAppearance.AppCompat.Large"-->
-<!--                    android:textColor="@color/design_default_color_error"-->
-<!--                    app:required="@{form.doubleStar}" />-->
+                <!--                <TextView-->
+                <!--                    android:id="@+id/tv_ds"-->
+                <!--                    android:layout_width="wrap_content"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:text="@string/tv_required_text_asterisk"-->
+                <!--                    app:layout_constraintStart_toEndOf="@id/tv_nullable_hr"-->
+                <!--                    app:layout_constraintTop_toTopOf="@id/cl_text_hr"-->
+                <!--                    android:textAppearance="@style/TextAppearance.AppCompat.Large"-->
+                <!--                    android:textColor="@color/design_default_color_error"-->
+                <!--                    app:required="@{form.doubleStar}" />-->
             </LinearLayout>
 
 
@@ -150,6 +153,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
+                android:layout_marginStart="@dimen/_15sdp"
                 android:backgroundTint="@{form.enabled ? @color/read_only : @color/md_theme_light_onPrimary}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_title">

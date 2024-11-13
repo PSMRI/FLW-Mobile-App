@@ -12,7 +12,6 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
-import android.text.style.RelativeSizeSpan
 import android.view.Gravity
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -31,14 +30,15 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.RvItemFormAgePickerViewV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormCheckV2Binding
-import org.piramalswasthya.sakhi.databinding.RvItemFormDatepickerV2Binding
-import org.piramalswasthya.sakhi.databinding.RvItemFormDropdownV2Binding
-import org.piramalswasthya.sakhi.databinding.RvItemFormEditTextV2Binding
+import org.piramalswasthya.sakhi.databinding.RvItemFormDatepickerWithBgIconBinding
+import org.piramalswasthya.sakhi.databinding.RvItemFormDropdownWithBgIconBinding
+import org.piramalswasthya.sakhi.databinding.RvItemFormEditTextWithBgIconBinding
 import org.piramalswasthya.sakhi.databinding.RvItemFormHeadlineV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormImageViewV2Binding
-import org.piramalswasthya.sakhi.databinding.RvItemFormRadioV2Binding
-import org.piramalswasthya.sakhi.databinding.RvItemFormTextViewV2Binding
-import org.piramalswasthya.sakhi.databinding.RvItemFormTimepickerV2Binding
+import org.piramalswasthya.sakhi.databinding.RvItemFormImageViewWithBgIconBinding
+import org.piramalswasthya.sakhi.databinding.RvItemFormRadioWithBgIconBinding
+import org.piramalswasthya.sakhi.databinding.RvItemFormTextViewWithBgIconBinding
+import org.piramalswasthya.sakhi.databinding.RvItemFormTimepickerWithBgIconBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.getDateString
 import org.piramalswasthya.sakhi.model.AgeUnitDTO
@@ -62,8 +62,7 @@ import org.piramalswasthya.sakhi.utils.HelperUtil.updateAgeDTO
 import timber.log.Timber
 import java.util.Calendar
 
-
-class FormInputAdapter(
+class FormInputAdapterWithBgIcon (
     private val imageClickListener: ImageClickListener? = null,
     private val ageClickListener: AgeClickListener? = null,
     private val formValueListener: FormValueListener? = null,
@@ -82,12 +81,12 @@ class FormInputAdapter(
     }
 
 
-    class EditTextInputViewHolder private constructor(private val binding: RvItemFormEditTextV2Binding) :
+    class EditTextInputViewHolder private constructor(private val binding: RvItemFormEditTextWithBgIconBinding) :
         ViewHolder(binding.root) {
         companion object {
             fun from(parent: ViewGroup): ViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = RvItemFormEditTextV2Binding.inflate(layoutInflater, parent, false)
+                val binding = RvItemFormEditTextWithBgIconBinding.inflate(layoutInflater, parent, false)
                 return EditTextInputViewHolder(binding)
             }
         }
@@ -123,7 +122,6 @@ class FormInputAdapter(
             }
 
 
-            //binding.et.setText(item.value.value)
             val textWatcher = object : TextWatcher {
                 override fun beforeTextChanged(
                     s: CharSequence?, start: Int, count: Int, after: Int
@@ -134,17 +132,7 @@ class FormInputAdapter(
                 }
 
                 override fun afterTextChanged(editable: Editable?) {
-//                    editable?.length?.let {
-//                        if (it > item.etMaxLength) {
-////                            editable.delete(item.etMaxLength + 1, it)
-//                            "This field cannot have more than ${item.etMaxLength} characters".let {
-//                                item.errorText = it
-//                                binding.tilEditText.error = it
-//                            }
-//                            return
-//                        } else
-//                            item.errorText = null
-//                    }
+
                     item.value = editable?.toString()
                     Timber.d("editable : $editable Current value : ${item.value}  isNull: ${item.value == null} isEmpty: ${item.value == ""}")
                     formValueListener?.onValueChanged(item, -1)
@@ -152,87 +140,6 @@ class FormInputAdapter(
                         binding.tilEditText.isErrorEnabled = item.errorText != null
                         binding.tilEditText.error = item.errorText
                     }
-//                    binding.tilEditText.error = null
-//                    else if(item.errorText!= null && binding.tilEditText.error==null)
-//                        binding.tilEditText.error = item.errorText
-
-
-//                    if(item.etInputType == InputType.TYPE_CLASS_NUMBER && (item.hasDependants|| item.hasAlertError)){
-//                        formValueListener?.onValueChanged(item,-1)
-//                    }
-
-//                    editable.let { item.value = it.toString() }
-//                    item.value = editable.toString()
-//                    Timber.d("Item ET : $item")
-//                    if (item.isMobileNumber) {
-//                        if (item.etMaxLength == 10) {
-//                            if (editable.first().toString()
-//                                    .toInt() < 6 || editable.length != item.etMaxLength
-//                            ) {
-//                                item.errorText = "Invalid Mobile Number !"
-//                                binding.tilEditText.error = item.errorText
-//                            } else {
-//                                item.errorText = null
-//                                binding.tilEditText.error = item.errorText
-//                            }
-//                        } else if (item.etMaxLength == 12) {
-//                            if (editable.first().toString()
-//                                    .toInt() == 0 || editable.length != item.etMaxLength
-//                            ) {
-//                                item.errorText = "Invalid ${item.title} !"
-//                                binding.tilEditText.error = item.errorText
-//                            } else {
-//                                item.errorText = null
-//                                binding.tilEditText.error = item.errorText
-//                            }
-//                        }
-//                    }
-//                else if (item.etInputType == InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL) {
-//                        val entered = editable.toString().toDouble()
-//                        item.minDecimal?.let {
-//                            if (entered < it) {
-//                                binding.tilEditText.error = "Field value has to be at least $it"
-//                                item.errorText = binding.tilEditText.error.toString()
-//                            }
-//                        }
-//                        item.maxDecimal?.let {
-//                            if (entered > it) {
-//                                binding.tilEditText.error =
-//                                    "Field value has to be less than $it"
-//                                item.errorText = binding.tilEditText.error.toString()
-//                            }
-//                        }
-//                        if (item.minDecimal != null && item.maxDecimal != null && entered >= item.minDecimal!! && entered <= item.maxDecimal!!) {
-//                            binding.tilEditText.error = null
-//                            item.errorText = null
-//                        }
-
-//                    } else if (item.etInputType == (InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_NORMAL)) {
-//                        val age = editable.toString().toLong()
-//                        item.min?.let {
-//                            if (age < it) {
-//                                binding.tilEditText.error = "Field value has to be at least $it"
-//                                item.errorText = binding.tilEditText.error.toString()
-//                            }
-//                        }
-//                        item.max?.let {
-//                            if (age > it) {
-//                                binding.tilEditText.error =
-//                                    "Field value has to be less than $it"
-//                                item.errorText = binding.tilEditText.error.toString()
-//                            }
-//                        }
-//                        if (item.min != null && item.max != null && age >= item.min!! && age <= item.max!!) {
-//                            binding.tilEditText.error = null
-//                            item.errorText = null
-//                        }
-//                    } else {
-//                        if (item.errorText != null && editable.isNotBlank()) {
-//                            item.errorText = null
-//                            binding.tilEditText.error = null
-//                        }
-
-//                    }
 
                 }
             }
@@ -252,17 +159,6 @@ class FormInputAdapter(
                 false
             })
 
-//            item.errorText?.also { binding.tilEditText.error = it }
-//                ?: run { binding.tilEditText.error = null }
-//            val etFilters = mutableListOf<InputFilter>(InputFilter.LengthFilter(item.etMaxLength))
-//            binding.et.inputType = item.etInputType
-//            if (item.etInputType == InputType.TYPE_CLASS_TEXT && item.allCaps) {
-//                etFilters.add(AllCaps())
-//                etFilters.add(FormEditTextDefaultInputFilter)
-//            }
-//            else if(item.etInputType == InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL)
-//                etFilters.add(DecimalDigitsInputFilter)
-//            binding.et.filters = etFilters.toTypedArray()
             binding.executePendingBindings()
         }
 
@@ -279,12 +175,12 @@ class FormInputAdapter(
         }
     }
 
-    class DropDownInputViewHolder private constructor(private val binding: RvItemFormDropdownV2Binding) :
+    class DropDownInputViewHolder private constructor(private val binding: RvItemFormDropdownWithBgIconBinding) :
         ViewHolder(binding.root) {
         companion object {
             fun from(parent: ViewGroup): ViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = RvItemFormDropdownV2Binding.inflate(layoutInflater, parent, false)
+                val binding = RvItemFormDropdownWithBgIconBinding.inflate(layoutInflater, parent, false)
                 return DropDownInputViewHolder(binding)
             }
         }
@@ -297,7 +193,13 @@ class FormInputAdapter(
             }
             if (!isEnabled) {
                 binding.tilRvDropdown.visibility = View.GONE
+//                binding.ivIconBg.visibility = View.GONE
+//                binding.ivIconTemperature.visibility = View.GONE
+
                 binding.tilEditText.visibility = View.VISIBLE
+                binding.ivIconBg1.visibility = View.VISIBLE
+                binding.ivIconTemperature1.visibility = View.VISIBLE
+
                 binding.et.isFocusable = false
                 binding.et.isClickable = false
                 binding.executePendingBindings()
@@ -307,9 +209,7 @@ class FormInputAdapter(
             binding.actvRvDropdown.setOnItemClickListener { _, _, index, _ ->
                 item.value = item.entries?.get(index)
                 Timber.d("Item DD : $item")
-//                if (item.hasDependants || item.hasAlertError) {
                 formValueListener?.onValueChanged(item, index)
-//                }
                 binding.tilRvDropdown.isErrorEnabled = item.errorText != null
                 binding.tilRvDropdown.error = item.errorText
             }
@@ -320,12 +220,12 @@ class FormInputAdapter(
         }
     }
 
-    class RadioInputViewHolder private constructor(private val binding: RvItemFormRadioV2Binding) :
+    class RadioInputViewHolder private constructor(private val binding: RvItemFormRadioWithBgIconBinding) :
         ViewHolder(binding.root) {
         companion object {
             fun from(parent: ViewGroup): ViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = RvItemFormRadioV2Binding.inflate(layoutInflater, parent, false)
+                val binding = RvItemFormRadioWithBgIconBinding.inflate(layoutInflater, parent, false)
                 return RadioInputViewHolder(binding)
             }
         }
@@ -337,7 +237,6 @@ class FormInputAdapter(
                 binding.rg.isClickable = false
                 binding.rg.isFocusable = false
             }
-//            binding.rg.isEnabled = isEnabled
             binding.invalidateAll()
             binding.form = item
 
@@ -413,14 +312,6 @@ class FormInputAdapter(
                             binding.llContent.setBackgroundResource(0)
                         }
                     }
-//                    item.value?.let { value ->
-//                        children.forEach {
-//                            if ((it as RadioButton).text == value) {
-//                                clearCheck()
-//                                check(it.id)
-//                            }
-//                        }
-//                    }
                 }
             }
 
@@ -432,14 +323,11 @@ class FormInputAdapter(
             if (item.errorText != null) binding.llContent.setBackgroundResource(R.drawable.state_errored)
             else binding.llContent.setBackgroundResource(0)
 
-            //item.errorText?.let { binding.rg.error = it }
             binding.executePendingBindings()
             val str = binding.tvNullable.text
-//            val str = binding.tvNullableHr.text
             val spannableString = SpannableString(str)
 
             val colorSpan = ForegroundColorSpan(Color.parseColor("#B00020"))
-            val sizeSpan = RelativeSizeSpan(1.2f)
 
             if (item.required && item.doubleStar) {
                 spannableString.setSpan(
@@ -448,7 +336,6 @@ class FormInputAdapter(
                     str.length,
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                 )
-//                spannableString.setSpan(sizeSpan, str.length - 2, str.length,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 binding.tvNullable.text = spannableString
                 binding.tvNullableHr.text = spannableString
             } else if (item.required) {
@@ -458,7 +345,6 @@ class FormInputAdapter(
                     str.length,
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                 )
-//                spannableString.setSpan(sizeSpan, str.length - 1, str.length,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 binding.tvNullableHr.text = spannableString
                 binding.tvNullable.text = spannableString
             }
@@ -519,9 +405,6 @@ class FormInputAdapter(
                                             )
                                         } $it"
                                     )
-//                                    formValueListener?.onValueChanged(
-//                                        item, item.entries!!.indexOf(it)
-//                                    )
                                 }
                             } else {
                                 if (item.value?.contains(it) == true) {
@@ -549,12 +432,12 @@ class FormInputAdapter(
         }
     }
 
-    class DatePickerInputViewHolder private constructor(private val binding: RvItemFormDatepickerV2Binding) :
+    class DatePickerInputViewHolder private constructor(private val binding: RvItemFormDatepickerWithBgIconBinding) :
         ViewHolder(binding.root) {
         companion object {
             fun from(parent: ViewGroup): ViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = RvItemFormDatepickerV2Binding.inflate(layoutInflater, parent, false)
+                val binding = RvItemFormDatepickerWithBgIconBinding.inflate(layoutInflater, parent, false)
                 return DatePickerInputViewHolder(binding)
             }
         }
@@ -614,12 +497,12 @@ class FormInputAdapter(
         }
     }
 
-    class TimePickerInputViewHolder private constructor(private val binding: RvItemFormTimepickerV2Binding) :
+    class TimePickerInputViewHolder private constructor(private val binding: RvItemFormTimepickerWithBgIconBinding) :
         ViewHolder(binding.root) {
         companion object {
             fun from(parent: ViewGroup): ViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = RvItemFormTimepickerV2Binding.inflate(layoutInflater, parent, false)
+                val binding = RvItemFormTimepickerWithBgIconBinding.inflate(layoutInflater, parent, false)
                 return TimePickerInputViewHolder(binding)
             }
         }
@@ -654,12 +537,12 @@ class FormInputAdapter(
         }
     }
 
-    class TextViewInputViewHolder private constructor(private val binding: RvItemFormTextViewV2Binding) :
+    class TextViewInputViewHolder private constructor(private val binding: RvItemFormTextViewWithBgIconBinding) :
         ViewHolder(binding.root) {
         companion object {
             fun from(parent: ViewGroup): ViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = RvItemFormTextViewV2Binding.inflate(layoutInflater, parent, false)
+                val binding = RvItemFormTextViewWithBgIconBinding.inflate(layoutInflater, parent, false)
                 return TextViewInputViewHolder(binding)
             }
         }
@@ -670,12 +553,12 @@ class FormInputAdapter(
         }
     }
 
-    class ImageViewInputViewHolder private constructor(private val binding: RvItemFormImageViewV2Binding) :
+    class ImageViewInputViewHolder private constructor(private val binding: RvItemFormImageViewWithBgIconBinding) :
         ViewHolder(binding.root) {
         companion object {
             fun from(parent: ViewGroup): ViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = RvItemFormImageViewV2Binding.inflate(layoutInflater, parent, false)
+                val binding = RvItemFormImageViewWithBgIconBinding.inflate(layoutInflater, parent, false)
                 return ImageViewInputViewHolder(binding)
             }
         }
@@ -935,11 +818,10 @@ class FormInputAdapter(
                     if (retVal == -1) retVal = index
                 }
             }
-            /*            if(it.regex!=null){
-                            Timber.d("Regex not null")
-                            retVal= false
-                        }*/
         }
         return retVal
     }
+
+
+
 }

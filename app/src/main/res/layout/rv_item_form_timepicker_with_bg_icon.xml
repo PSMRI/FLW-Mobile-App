@@ -19,6 +19,7 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_15sdp"
             asteriskRequired="@{form.required}"
             hintText="@{form.title}"
             app:layout_constraintEnd_toEndOf="parent"
@@ -28,27 +29,38 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawableEnd="@drawable/ic_calendar"
+                android:layout_height="match_parent"
+                android:drawableEnd="@drawable/ic_clock"
                 android:focusable="false"
-                android:singleLine="true"
                 android:paddingLeft="@dimen/_20sdp"
+                android:singleLine="true"
                 android:text="@{form.value}"
                 android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!--        <TextView-->
-<!--            android:id="@+id/tv_nullable"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_toEndOf="@id/til_edit_text"-->
-<!--            android:text="@string/tv_required_text_asterisk"-->
-<!--            android:textAppearance="@style/TextAppearance.AppCompat.Large"-->
-<!--            android:textColor="@color/design_default_color_error"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="@id/til_edit_text"-->
-<!--            app:required="@{form.required}" />-->
+        <ImageView
+            android:id="@+id/ivIconBg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:imageResource="@{form.backgroundDrawable}"
+            android:visibility="@{form.showDrawable ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="@+id/til_edit_text"
+            app:layout_constraintEnd_toStartOf="@+id/til_edit_text"
+            app:layout_constraintStart_toStartOf="@+id/til_edit_text"
+            app:layout_constraintTop_toTopOf="@+id/til_edit_text"
+            app:tint="@color/md_theme_light_primary" />
+
+        <ImageView
+            android:id="@+id/ivIconTemperature"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:imageResource="@{form.iconDrawableRes}"
+            android:visibility="@{form.showDrawable ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="@+id/ivIconBg"
+            app:layout_constraintEnd_toEndOf="@+id/ivIconBg"
+            app:layout_constraintStart_toStartOf="@+id/ivIconBg"
+            app:layout_constraintTop_toTopOf="@+id/ivIconBg" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
