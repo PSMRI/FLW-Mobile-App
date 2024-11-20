@@ -124,34 +124,34 @@ class RecordsRepo @Inject constructor(
         .map { list -> list.map { it.asBasicDomainModelForPNC() } }
     val pncMotherListCount = pncMotherList.map { it.size }
 
-    suspend fun getPncDueCount(selectedDate: Long): Flow<Int> {
-        return withContext(Dispatchers.IO) {
-            maternalHealthDao.getAllPregnancyRecords().transformLatest {
-                Timber.d("From DB : ${it.count()}")
-                var count = 0
-                val deliveredList = it.filter { it.value.any { it.pregnantWomanDelivered == true } }
-                deliveredList.keys.forEach { activePwrRecrod ->
-                    val savedAncRecords = it[activePwrRecrod] ?: emptyList()
-                    val isDue = if (savedAncRecords.isEmpty())
-                        TimeUnit.MILLISECONDS.toDays(
-                            selectedDate - activePwrRecrod.lmpDate
-                        ) >= Konstants.minAnc1Week * 7
-                    else {
-                        val lastAncRecord = savedAncRecords.maxBy { it.visitNumber }
-                        (activePwrRecrod.lmpDate + TimeUnit.DAYS.toMillis(280)) > (lastAncRecord.ancDate + TimeUnit.DAYS.toMillis(
-                            28
-                        )) &&
-                                lastAncRecord.visitNumber < 4 && TimeUnit.MILLISECONDS.toDays(
-                            getTodayMillis() - lastAncRecord.ancDate
-                        ) > 28
-                    }
-                    if (isDue)
-                        count++
-                }
-                emit(count)
-            }
-        }
-    }
+//    suspend fun getPncDueCount(selectedDate: Long): Flow<Int> {
+//        return withContext(Dispatchers.IO) {
+//            maternalHealthDao.getAllPregnancyRecords().transformLatest {
+//                Timber.d("From DB : ${it.count()}")
+//                var count = 0
+//                val deliveredList = it.filter { it.value.any { it.pregnantWomanDelivered == true } }
+//                deliveredList.keys.forEach { activePwrRecrod ->
+//                    val savedAncRecords = it[activePwrRecrod] ?: emptyList()
+//                    val isDue = if (savedAncRecords.isEmpty())
+//                        TimeUnit.MILLISECONDS.toDays(
+//                            selectedDate - activePwrRecrod.lmpDate
+//                        ) >= Konstants.minAnc1Week * 7
+//                    else {
+//                        val lastAncRecord = savedAncRecords.maxBy { it.visitNumber }
+//                        (activePwrRecrod.lmpDate + TimeUnit.DAYS.toMillis(280)) > (lastAncRecord.ancDate + TimeUnit.DAYS.toMillis(
+//                            28
+//                        )) &&
+//                                lastAncRecord.visitNumber < 4 && TimeUnit.MILLISECONDS.toDays(
+//                            getTodayMillis() - lastAncRecord.ancDate
+//                        ) > 28
+//                    }
+//                    if (isDue)
+//                        count++
+//                }
+//                emit(count)
+//            }
+//        }
+//    }
 
     val cdrList = benDao.getAllCDRList(selectedVillage)
         .map { list -> list.map { it.asBenBasicDomainModelForCdrForm() } }
@@ -177,7 +177,45 @@ class RecordsRepo @Inject constructor(
 
     val motherImmunizationList = benDao.getAllMotherImmunizationList(selectedVillage)
         .map { list -> list.map { it.asBasicDomainModel() } }
-    val motherImmunizationListCount = motherImmunizationList.map { it.size }
+
+    fun getPwImmunizationDueCount(selectedDate: Long): Flow<Int> {
+        return benDao.getAllMotherImmunizationListCount(selectedVillage, selectedDate)
+    }
+
+    fun getPncDueCount(selectedDate: Long): Flow<Int> {
+        return benDao.getPncListCount(selectedVillage, selectedDate)
+    }
+
+    fun getEcDueCount(selectedDate: Long): Flow<Int> {
+        return benDao.getEcListCount(selectedVillage, selectedDate)
+    }
+
+    fun getTdDueCount(selectedDate: Long): Flow<Int> {
+        return benDao.getTdDoseListCount(selectedVillage, selectedDate)
+    }
+
+    fun getChildrenImmunizationDueCount(selectedDate: Long): Flow<Int> {
+        return benDao.getChildrenImmunizationListCount(
+            minDob = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+            add(Calendar.YEAR, -16)
+        }.timeInMillis,
+            maxDob = System.currentTimeMillis(),
+            selectedVillage,
+            selectedDate
+        )
+    }
+
+    fun getPwAncDueCount(selectedDate: Long): Flow<Int> {
+        return benDao.getPwAncListCount(selectedVillage, selectedDate)
+    }
+
+//    val motherImmunizationListCount = benDao.getAllMotherImmunizationListCount(selectedVillage)
+
+//    val motherImmunizationListCount = motherImmunizationList.map { it.size }
 
     val eligibleCoupleList = benDao.getAllEligibleRegistrationList(selectedVillage)
         .map { list -> list.map { it.asDomainModel() } }
@@ -213,6 +251,18 @@ class RecordsRepo @Inject constructor(
 
 
     val lowWeightBabiesCount = benDao.getLowWeightBabiesCount(selectedVillage)
+
+//    val hbncDueCount = benDao.getHbncDueCount(selectedVillage)
+
+    fun getHbncDueCount(selectedDate: Long): Flow<Int> {
+        return benDao.getHbncDueCount(selectedVillage, selectedDate)
+    }
+
+//    val hbycDueCount = benDao.getHbycDueCount(selectedVillage)
+
+    fun getHbycDueCount(selectedDate: Long): Flow<Int> {
+        return benDao.getHbycDueCount(selectedVillage, selectedDate)
+    }
 
     fun getPregnantWomenList() = benDao.getAllPregnancyWomenList(selectedVillage)
         .map { list -> list.map { it.asPwrDomainModel() } }

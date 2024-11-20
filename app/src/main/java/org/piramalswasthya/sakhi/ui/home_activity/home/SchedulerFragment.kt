@@ -38,6 +38,11 @@ class SchedulerFragment : Fragment() {
 
     private var isOverdueTask = 0
 
+    private var countVhsnd = 0
+    private var tdCount = 0
+    private var immCount = 0
+    private var ancCount = 0
+
     private val calendar = Calendar.getInstance()
 
     private val viewModel: SchedulerViewModel by viewModels({ requireActivity() })
@@ -116,6 +121,7 @@ class SchedulerFragment : Fragment() {
                 binding.textDateHeader.text = getDateString(day)
                 viewModel.setDate(day!!)
             }
+            resetVhsndData()
 
         }
 
@@ -144,7 +150,7 @@ class SchedulerFragment : Fragment() {
                 binding.textDateHeader.text = getDateString(day)
                 viewModel.setDate(day!!)
             }
-
+            resetVhsndData()
 
         }
 
@@ -159,16 +165,46 @@ class SchedulerFragment : Fragment() {
             binding.tvAnc.text = it.toString()
         }
 
-        lifecycleScope.launch {
-            viewModel.childImmunizationDueCount.collect {
-                binding.tvCi.text = it.toString()
-            }
+        viewModel.pwImmunizationDueCount.observe(viewLifecycleOwner) {
+            binding.tvPwi.text = it.toString()
         }
 
-        lifecycleScope.launch {
-            viewModel.hrpDueCount.collect {
-                binding.tvHrp.text = it.toString()
-            }
+        viewModel.childImmunizationDueCount.observe(viewLifecycleOwner) {
+            binding.tvCi.text = it.toString()
+        }
+
+        viewModel.hbncDueCount.observe(viewLifecycleOwner) {
+            binding.tvHbnc.text = it.toString()
+        }
+
+        viewModel.hbycDueCount.observe(viewLifecycleOwner) {
+            binding.tvHbyc.text = it.toString()
+        }
+
+        viewModel.pncDueCount.observe(viewLifecycleOwner) {
+            binding.tvPnc.text = it.toString()
+        }
+
+        viewModel.ecDueCount.observe(viewLifecycleOwner) {
+            binding.tvEc.text = it.toString()
+        }
+
+        viewModel.tdDueCount.observe(viewLifecycleOwner) {
+            tdCount = it
+            countVhsnd += 1
+            setVhsndData()
+        }
+
+        viewModel.childrenImmunizationCount.observe(viewLifecycleOwner) {
+            immCount = it
+            countVhsnd += 1
+            setVhsndData()
+        }
+
+        viewModel.pwAncCount.observe(viewLifecycleOwner) {
+            ancCount = it
+            countVhsnd += 1
+            setVhsndData()
         }
 
 
@@ -196,15 +232,22 @@ class SchedulerFragment : Fragment() {
 
         }
 
-        binding.cvCbac.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToNcdEligibleListFragment())
-
-        }
         binding.cvEc.setOnClickListener {
             findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToEligibleCoupleTrackingListFragment())
         }
 
 
+    }
+
+    private fun setVhsndData() {
+        binding.tvVhsnd.text = (tdCount + immCount + ancCount).toString()
+    }
+
+    private fun resetVhsndData() {
+        countVhsnd = 0
+        tdCount = 0
+        immCount = 0
+        ancCount = 0
     }
 
 

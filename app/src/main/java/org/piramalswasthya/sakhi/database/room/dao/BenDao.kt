@@ -203,6 +203,42 @@ interface BenDao {
         maxPncDate: Long = Konstants.pncEcGap
     ): Flow<List<BenWithDoAndPncCache>>
 
+    @Query("SELECT count(*) AS BEN FROM BEN_BASIC_CACHE ben join delivery_outcome del on ben.benId = del.benId left outer join pnc_visit pnc on pnc.benId = ben.benId WHERE reproductiveStatusId = 3 and (pnc.isActive is null or pnc.isActive == 1) and CAST((strftime('%s','now') - del.dateOfDelivery/1000)/60/60/24 AS INTEGER) BETWEEN :minPncDate and :maxPncDate and (:selectedDate * 1000) <= (del.dateOfDelivery + 86400000) and villageId=:selectedVillage")
+    fun getPncListCount(
+        selectedVillage: Int,
+        selectedDate: Long,
+        minPncDate: Long = 0,
+        maxPncDate: Long = Konstants.pncEcGap
+    ): Flow<Int>
+
+    @Query("SELECT count(*) AS BEN FROM BEN_BASIC_CACHE ben left outer join eligible_couple_tracking r on ben.benId = r.benId WHERE CAST((strftime('%s','now') - ben.dob/1000)/60/60/24/365 AS INTEGER) BETWEEN :min and :max and (:selectedDate * 1000) <= (r.visitDate + 2592000000) and ben.reproductiveStatusId = 1 and  ben.villageId=:selectedVillage")
+    fun getEcListCount(
+        selectedVillage: Int,
+        selectedDate: Long,
+        min: Int = Konstants.minAgeForEligibleCouple,
+        max: Int = Konstants.maxAgeForEligibleCouple
+    ): Flow<Int>
+
+    @Query("SELECT count(distinct(ben.benId)) FROM BEN_BASIC_CACHE  ben inner join pregnancy_register pwr on pwr.benId = ben.benId where pwr.active = 1 and ben.reproductiveStatusId = 2 and pwr.tt1 = 0 and (:selectedDate * 1000) <= (pwr.lmpDate + 21772800596) and ben.villageId=:selectedVillage")
+    fun getTdDoseListCount(
+        selectedVillage: Int,
+        selectedDate: Long
+    ): Flow<Int>
+
+    @Query("SELECT count(*) FROM BEN_BASIC_CACHE ben LEFT OUTER JOIN IMMUNIZATION imm WHERE ben.dob BETWEEN :minDob AND :maxDob and (ben.dob + 504921600000) <= :selectedDate and ben.villageId=:selectedVillage")
+    fun getChildrenImmunizationListCount(
+        minDob: Long,
+        maxDob: Long,
+        selectedVillage: Int,
+        selectedDate: Long
+    ): Flow<Int>
+
+    @Query("SELECT count(distinct(ben.benId)) FROM BEN_BASIC_CACHE ben inner join pregnancy_register pwr on pwr.benId = ben.benId where pwr.active = 1 and :selectedDate <= (pwr.lmpDate + 7257600198) and ben.reproductiveStatusId = 2 and ben.villageId = :selectedVillage")
+    fun getPwAncListCount(
+        selectedVillage: Int,
+        selectedDate: Long
+    ): Flow<Int>
+
     @Query("select count(*) as count from (select * from beneficiary b inner join vaccine v on  (strftime('%s', 'now') * 1000)  - b.dob between v.minAllowedAgeInMillis and v.overdueDurationSinceMinInMillis and v.vaccineId not in (select vaccineId from immunization i where i.beneficiaryId = b.beneficiaryId) group by b.beneficiaryId)")
     fun getPncMotherDueListCount(): Flow<Int>
 
@@ -250,6 +286,12 @@ interface BenDao {
 
     @Query("SELECT * FROM BEN_BASIC_CACHE WHERE reproductiveStatusId = 4 and villageId=:selectedVillage")
     fun getAllMotherImmunizationList(selectedVillage: Int): Flow<List<BenBasicCache>>
+
+    @Query("SELECT count(*) FROM BEN_BASIC_CACHE ben left outer join pregnancy_register  pr on pr.benId = ben.benId and pr.active = 1 and (:selectedDate * 1000) > (pr.lmpDate + 21772800000) WHERE reproductiveStatusId = 4 and villageId=:selectedVillage and immunizationStatus = 0")
+    fun getAllMotherImmunizationListCount(
+        selectedVillage: Int,
+        selectedDate: Long
+    ): Flow<Int>
 
     @Query("select ben.* from ben_basic_cache ben inner join  pregnancy_register pwr on ben.benId = pwr.benId left  outer join pregnancy_anc pwa on ben.benId = pwa.benId where ben.villageId = :villageId and pwr.isHrp =1 or pwa.hrpConfirmed = 1 order by pwa.visitNumber desc ")
     fun getHrpCases(villageId: Int): Flow<List<BenBasicCache>>
@@ -299,6 +341,20 @@ interface BenDao {
     fun getLowWeightBabiesCount(
         villageId: Int,
         lowWeightLimit: Double = Konstants.babyLowWeight
+    ): Flow<Int>
+
+    @Query("select count(*) from INFANT_REG inf join ben_basic_cache ben on ben.benId = inf.motherBenId where isActive = 1 and hbncFilled = 0 and (:selectedDate * 1000) > (ben.dob + 3628800000) and ben.villageId = :villageId")
+    fun getHbncDueCount(
+        villageId: Int,
+        selectedDate: Long
+    ): Flow<Int>
+
+    @Query("SELECT count(*) FROM BEN_BASIC_CACHE WHERE  CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) BETWEEN :min and :max and (:selectedDate * 1000) > (dob + 7889400000) and villageId=:selectedVillage and hbycFilled = 0")
+    fun getHbycDueCount(
+        selectedVillage: Int,
+        selectedDate: Long,
+        min: Int = Konstants.minAgeForChild,
+        max: Int = Konstants.maxAgeForChild
     ): Flow<Int>
 
 }

@@ -34,6 +34,45 @@ class SchedulerViewModel @Inject constructor(
     val ancDueCount: LiveData<Int>
         get() = _ancDueCount
 
+    private val _pwImmunizationDueCount = MutableLiveData<Int>()
+    val pwImmunizationDueCount: LiveData<Int>
+        get() = _pwImmunizationDueCount
+
+    private val _childImmunizationDueCount = MutableLiveData<Int>()
+    val childImmunizationDueCount: LiveData<Int>
+        get() = _childImmunizationDueCount
+
+    private val _hbncDueCount = MutableLiveData<Int>()
+    val hbncDueCount: LiveData<Int>
+        get() = _hbncDueCount
+
+    private val _hbycDueCount = MutableLiveData<Int>()
+    val hbycDueCount: LiveData<Int>
+        get() = _hbycDueCount
+
+    private val _pncDueCount = MutableLiveData<Int>()
+    val pncDueCount: LiveData<Int>
+        get() = _pncDueCount
+
+    private val _ecDueCount = MutableLiveData<Int>()
+    val ecDueCount: LiveData<Int>
+        get() = _ecDueCount
+
+    private val _vhsndDueCount = MutableLiveData<Int>()
+    val vhsndDueCount: LiveData<Int>
+        get() = _vhsndDueCount
+
+    private val _tdDueCount = MutableLiveData<Int>()
+    val tdDueCount: LiveData<Int>
+        get() = _tdDueCount
+
+    private val _childrenImmunizationCount = MutableLiveData<Int>()
+    val childrenImmunizationCount: LiveData<Int>
+        get() = _childrenImmunizationCount
+
+    private val _pwAncCount = MutableLiveData<Int>()
+    val pwAncCount: LiveData<Int>
+        get() = _pwAncCount
 
     private val _ancOneCount = MutableLiveData<Int>()
     val ancOneCount: LiveData<Int>
@@ -51,10 +90,6 @@ class SchedulerViewModel @Inject constructor(
     private val _ancFourCount = MutableLiveData<Int>()
     val ancFourCount: LiveData<Int>
         get() = _ancFourCount
-
-    private val _pncDueCount = MutableLiveData<Int>()
-    val pncDueCount: LiveData<Int>
-        get() = _pncDueCount
 
     private val _date = MutableLiveData<Long>()
     val date: LiveData<Long>
@@ -118,24 +153,103 @@ class SchedulerViewModel @Inject constructor(
     }
 
     private fun fetchData() {
+
         viewModelScope.launch {
-
             val ancCount: Flow<Int> = maternalHealthRepo.getAncDueCount(date.value!!)
-
             ancCount.collectLatest {
                 _ancDueCount.value = it
             }
+        }
 
-            val pncCount: Flow<Int> = recordsRepo.pncMotherListCount
-            pncCount.collectLatest {
-                _ancDueCount.value = it
+        viewModelScope.launch {
+            val pwImmunizationCount: Flow<Int> = recordsRepo.getPwImmunizationDueCount(date.value!!)
+            pwImmunizationCount.collectLatest {
+                _pwImmunizationDueCount.value = it
             }
         }
+
+        viewModelScope.launch {
+            val childImmunizationCount: Flow<Int> = recordsRepo.getChildrenImmunizationDueCount(date.value!!)
+            childImmunizationCount.collectLatest {
+                _childImmunizationDueCount.value = it
+            }
+        }
+
+        viewModelScope.launch {
+            val hbncCount: Flow<Int> = recordsRepo.getHbncDueCount(date.value!!)
+            hbncCount.collectLatest {
+                _hbncDueCount.value = it
+            }
+        }
+
+        viewModelScope.launch {
+            val hbycCount: Flow<Int> = recordsRepo.getHbycDueCount(date.value!!)
+            hbycCount.collectLatest {
+                _hbycDueCount.value = it
+            }
+        }
+
+        viewModelScope.launch {
+            val pncCount: Flow<Int> = recordsRepo.getPncDueCount(date.value!!)
+            pncCount.collectLatest {
+                _pncDueCount.value = it
+            }
+        }
+
+        viewModelScope.launch {
+            val ecCount: Flow<Int> = recordsRepo.getEcDueCount(date.value!!)
+            ecCount.collectLatest {
+                _ecDueCount.value = it
+            }
+        }
+
+        val nextWed = getNextWednesdayInMillis(date.value!!)
+
+        viewModelScope.launch {
+            val tdCount: Flow<Int> = recordsRepo.getTdDueCount(nextWed)
+            tdCount.collectLatest {
+                _tdDueCount.value = it
+            }
+        }
+
+        viewModelScope.launch {
+            val childrenImmunizationCount: Flow<Int> = recordsRepo.getChildrenImmunizationDueCount(nextWed)
+            childrenImmunizationCount.collectLatest {
+                _childrenImmunizationCount.value = it
+            }
+        }
+
+        viewModelScope.launch {
+            val pwAncCount: Flow<Int> = recordsRepo.getPwAncDueCount(nextWed)
+            pwAncCount.collectLatest {
+                _pwAncCount.value = it
+            }
+        }
+
     }
 
-    val pwImmunizationDueCount: Flow<Int> = recordsRepo.motherImmunizationListCount
+    fun getNextWednesdayInMillis(currentMillis: Long): Long {
+        // Create a Calendar instance and set it to the given timestamp
+        val calendar = Calendar.getInstance().apply {
+            timeInMillis = currentMillis
+        }
 
-    val childImmunizationDueCount: Flow<Int> = recordsRepo.childrenImmunizationDueListCount
+        // Find the current day of the week
+        val currentDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
+
+        // Calculate how many days until the next Wednesday
+        val daysUntilWednesday = if (currentDayOfWeek <= Calendar.WEDNESDAY) {
+            Calendar.WEDNESDAY - currentDayOfWeek
+        } else {
+            7 - (currentDayOfWeek - Calendar.WEDNESDAY)
+        }
+
+        // Add the days to the current time
+        calendar.add(Calendar.DAY_OF_MONTH, daysUntilWednesday)
+
+        // Return the time in milliseconds
+        return calendar.timeInMillis
+    }
 
     val hrpDueCount: Flow<Int> = recordsRepo.hrpTrackingPregListCount
 
