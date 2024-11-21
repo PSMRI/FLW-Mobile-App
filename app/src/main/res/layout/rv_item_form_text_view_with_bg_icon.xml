@@ -15,48 +15,37 @@
         android:layout_height="wrap_content"
         android:padding="@dimen/padding_normal">
 
-        <TextView
-            android:id="@+id/tv_hint"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            tools:text="TextView"
-            android:text="@{form.title}"
-            android:visibility="gone"
-            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_edit_text"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_15sdp"
             asteriskRequired="@{form.required}"
             hintText="@{form.title}"
-            app:endIconMode="custom"
-            app:errorEnabled="false"
+            android:labelFor="@id/et"
+            app:boxBackgroundColor="@color/read_only"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_hint">
+            app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:imeOptions="actionDone"
-                android:hint=""
-                android:paddingLeft="@dimen/_20sdp"
-                android:inputType="@{form.etInputType}"
-                android:maxLength="@{form.etMaxLength}"
+                android:clickable="false"
+                android:focusable="false"
+                android:inputType="none"
                 android:singleLine="true"
+                android:paddingLeft="@dimen/_20sdp"
                 android:text="@{form.value}"
                 android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-                tools:text="lsdkfnsld" />
+                tools:text="Woo hoo" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
-<!--        <ImageView
+
+        <ImageView
             android:id="@+id/ivIconBg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -65,9 +54,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/til_edit_text"
             app:layout_constraintEnd_toStartOf="@+id/til_edit_text"
             app:layout_constraintStart_toStartOf="@+id/til_edit_text"
-            app:layout_constraintTop_toTopOf="@+id/til_edit_text"
-            app:tint="@color/md_theme_light_primary" />
-&lt;!&ndash;        android:src="@drawable/ic_bg_circular"&ndash;&gt;
+            app:layout_constraintTop_toTopOf="@+id/til_edit_text" />
 
         <ImageView
             android:id="@+id/ivIconTemperature"
@@ -78,19 +65,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/ivIconBg"
             app:layout_constraintEnd_toEndOf="@+id/ivIconBg"
             app:layout_constraintStart_toStartOf="@+id/ivIconBg"
-            app:layout_constraintTop_toTopOf="@+id/ivIconBg" />-->
-
-<!--        <TextView-->
-<!--            android:id="@+id/tv_nullable"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_toEndOf="@id/til_edit_text"-->
-<!--            android:text="@string/tv_required_text_asterisk"-->
-<!--            android:textAppearance="@style/TextAppearance.AppCompat.Large"-->
-<!--            android:textColor="@color/design_default_color_error"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="@id/til_edit_text"-->
-<!--            app:required="@{form.required}" />-->
+            app:layout_constraintTop_toTopOf="@+id/ivIconBg" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

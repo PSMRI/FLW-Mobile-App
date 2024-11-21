@@ -21,6 +21,7 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_15sdp"
             asteriskRequired="@{form.required}"
             hintText="@{form.title}"
             android:labelFor="@id/actv_rv_dropdown"
@@ -41,6 +42,30 @@
 
 
         </com.google.android.material.textfield.TextInputLayout>
+
+       <!-- <ImageView
+            android:id="@+id/ivIconBg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:imageResource="@{form.backgroundDrawable}"
+            android:visibility="@{form.showDrawable ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="@+id/til_rv_dropdown"
+            app:layout_constraintEnd_toStartOf="@+id/til_rv_dropdown"
+            app:layout_constraintStart_toStartOf="@+id/til_rv_dropdown"
+            app:layout_constraintTop_toTopOf="@+id/til_rv_dropdown" />
+
+        <ImageView
+            android:id="@+id/ivIconTemperature"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:imageResource="@{form.iconDrawableRes}"
+            android:visibility="@{form.showDrawable ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="@+id/ivIconBg"
+            app:layout_constraintEnd_toEndOf="@+id/ivIconBg"
+            app:layout_constraintStart_toStartOf="@+id/ivIconBg"
+            app:layout_constraintTop_toTopOf="@+id/ivIconBg" />
+-->
+
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_edit_text"
@@ -65,18 +90,28 @@
                 android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
 
         </com.google.android.material.textfield.TextInputLayout>
+        <ImageView
+            android:id="@+id/ivIconBg1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_bg_circular"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@+id/til_edit_text"
+            app:layout_constraintEnd_toStartOf="@+id/til_edit_text"
+            app:layout_constraintStart_toStartOf="@+id/til_edit_text"
+            app:layout_constraintTop_toTopOf="@+id/til_edit_text"
+            app:tint="@color/md_theme_light_primary" />
 
-        <!--        <TextView-->
-<!--            android:id="@+id/tv_nullable"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_toEndOf="@id/til_rv_dropdown"-->
-<!--            android:text="@string/tv_required_text_asterisk"-->
-<!--            android:textAppearance="@style/TextAppearance.AppCompat.Large"-->
-<!--            android:textColor="@color/design_default_color_error"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="@id/til_rv_dropdown"-->
-<!--            app:required="@{form.required}" />-->
+        <ImageView
+            android:id="@+id/ivIconTemperature1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:imageResource="@{form.iconDrawableRes}"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@+id/ivIconBg1"
+            app:layout_constraintEnd_toEndOf="@+id/ivIconBg1"
+            app:layout_constraintStart_toStartOf="@+id/ivIconBg1"
+            app:layout_constraintTop_toTopOf="@+id/ivIconBg1" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

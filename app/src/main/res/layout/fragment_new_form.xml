@@ -15,7 +15,6 @@
         android:padding="@dimen/padding_normal">
 
 
-
         <androidx.cardview.widget.CardView
             android:id="@+id/cv_patient_information"
             android:layout_width="match_parent"

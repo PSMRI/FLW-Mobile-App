@@ -32,6 +32,7 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_15sdp"
             asteriskRequired="@{form.required}"
             hintText="@{form.title}"
             app:endIconMode="custom"
@@ -56,7 +57,7 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-<!--        <ImageView
+        <ImageView
             android:id="@+id/ivIconBg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -67,7 +68,6 @@
             app:layout_constraintStart_toStartOf="@+id/til_edit_text"
             app:layout_constraintTop_toTopOf="@+id/til_edit_text"
             app:tint="@color/md_theme_light_primary" />
-&lt;!&ndash;        android:src="@drawable/ic_bg_circular"&ndash;&gt;
 
         <ImageView
             android:id="@+id/ivIconTemperature"
@@ -78,19 +78,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/ivIconBg"
             app:layout_constraintEnd_toEndOf="@+id/ivIconBg"
             app:layout_constraintStart_toStartOf="@+id/ivIconBg"
-            app:layout_constraintTop_toTopOf="@+id/ivIconBg" />-->
-
-<!--        <TextView-->
-<!--            android:id="@+id/tv_nullable"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_toEndOf="@id/til_edit_text"-->
-<!--            android:text="@string/tv_required_text_asterisk"-->
-<!--            android:textAppearance="@style/TextAppearance.AppCompat.Large"-->
-<!--            android:textColor="@color/design_default_color_error"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="@id/til_edit_text"-->
-<!--            app:required="@{form.required}" />-->
+            app:layout_constraintTop_toTopOf="@+id/ivIconBg" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
