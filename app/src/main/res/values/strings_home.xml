@@ -58,8 +58,8 @@
     <string name="error_sign_in_invalid_u_p">Invalid Username / password !</string>
     <string name="error_sign_in_timeout">Server timed out, try again!</string>
     <string name="error_sign_in_disconnected_network">Unable to connect to network!</string>
-    <string name="not_processed">" not Processed"</string>
+    <string name="not_processed">" Records Not Synced!"</string>
     <string name="all_records_synced">All records synced</string>
-    <string name="are_you_sure_to_logout">" Are you sure to logout?"</string>
+    <string name="are_you_sure_to_logout">" Are you sure you want to logout?"</string>
 
 </resources>
