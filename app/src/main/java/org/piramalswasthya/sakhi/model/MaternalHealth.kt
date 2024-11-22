@@ -538,14 +538,21 @@ data class BenWithAncVisitCache(
                 TimeUnit.MILLISECONDS.toDays(
                     getTodayMillis() - activePwrRecrod.lmpDate
                 ) >= Konstants.minAnc1Week * 7
+//            else
+//                lastAncRecord != null &&
+//                        (activePwrRecrod.lmpDate + TimeUnit.DAYS.toMillis(280)) > (lastAncRecord.ancDate + TimeUnit.DAYS.toMillis(
+//                    28
+//                )) &&
+//                        lastAncRecord.visitNumber < 4 && TimeUnit.MILLISECONDS.toDays(
+//                    getTodayMillis() - lastAncRecord.ancDate
+//                ) > 28,
             else
                 lastAncRecord != null &&
-                        (activePwrRecrod.lmpDate + TimeUnit.DAYS.toMillis(280)) > (lastAncRecord.ancDate + TimeUnit.DAYS.toMillis(
+                        (activePwrRecrod.lmpDate + TimeUnit.DAYS.toMillis(840)) > (lastAncRecord.ancDate + TimeUnit.DAYS.toMillis(
                     28
                 )) &&
-                        lastAncRecord.visitNumber < 4 && TimeUnit.MILLISECONDS.toDays(
-                    getTodayMillis() - lastAncRecord.ancDate
-                ) > 28,
+                        lastAncRecord.visitNumber < 8 &&
+                        lastAncRecord.ancDate + TimeUnit.DAYS.toMillis(28) < getTodayMillis(),
             syncState = if (activePmsma == null && savedAncRecords.isEmpty()) null else if (activePmsma?.syncState == SyncState.UNSYNCED || savedAncRecords.any { it.syncState != SyncState.SYNCED }) SyncState.UNSYNCED else SyncState.SYNCED
         )
 
