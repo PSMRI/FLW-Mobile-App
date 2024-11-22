@@ -25,7 +25,7 @@ class PregnantWomanRegistrationDataset(
         var registrationDate:Long = 0
         private fun getMinLmpMillis(): Long {
             val cal = Calendar.getInstance()
-            cal.add(Calendar.DAY_OF_YEAR, -1 * 280)
+            cal.add(Calendar.DAY_OF_YEAR, -1 * 400) //before it is 280
             return cal.timeInMillis
         }
         private fun pwRegisterBeforeoneYear(): Long {
@@ -442,7 +442,7 @@ class PregnantWomanRegistrationDataset(
             isHrpCase
         )
 
-        dateOfReg.value = getDateFromLong(System.currentTimeMillis())
+      //  dateOfReg.value = getDateFromLong(System.currentTimeMillis())
         dateOfReg.value?.let {
             val long = getLongFromDate(it)
             dateOfhivTestDone.min = long - TimeUnit.DAYS.toMillis(365)
@@ -558,7 +558,7 @@ class PregnantWomanRegistrationDataset(
 
             it.dateOfRegistration.let {
                 lmp.max = it
-                lmp.min = it - TimeUnit.DAYS.toMillis(280)
+                lmp.min = it - TimeUnit.DAYS.toMillis(400)
                 dateOfVdrlTestDone.min = it - TimeUnit.DAYS.toMillis(365)
                 dateOfhivTestDone.min = it - TimeUnit.DAYS.toMillis(365)
                 dateOfhbsAgTestDone.min = it - TimeUnit.DAYS.toMillis(365)
