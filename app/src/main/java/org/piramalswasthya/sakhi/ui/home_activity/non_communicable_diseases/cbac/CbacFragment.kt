@@ -515,8 +515,8 @@ class CbacFragment : Fragment() {
 
     private fun setUpView() {
         binding.btnSave.visibility = View.GONE
-        binding.noneCheck.visibility = View.GONE
-        binding.nonTxt.visibility = View.GONE
+//        binding.noneCheck.visibility = View.GONE
+//        binding.nonTxt.visibility = View.GONE
         viewModel.filledCbac.observe(viewLifecycleOwner) { cbac ->
             binding.etDate.setText(getDateFromLong(cbac.fillDate))
             setupRaView(cbac)

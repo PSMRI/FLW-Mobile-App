@@ -391,7 +391,7 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
 
         Calendar.getInstance().apply {
             timeInMillis = lmp
-            add(Calendar.WEEK_OF_YEAR, -40)
+            add(Calendar.WEEK_OF_YEAR, -57)
         }.timeInMillis
 
 
