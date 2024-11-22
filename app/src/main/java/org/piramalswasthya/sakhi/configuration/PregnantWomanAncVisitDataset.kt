@@ -355,18 +355,19 @@ class PregnantWomanAncVisitDataset(
         ben?.let {
             ancDate.min =
                 regis.lmpDate + TimeUnit.DAYS.toMillis(7 * Konstants.minAnc1Week.toLong() + 1)
-            ancVisit.entries = arrayOf("1", "2", "3", "4")
+            ancVisit.entries = arrayOf("1", "2", "3", "4", "5", "6", "7", "8")
             lastAnc?.let { last ->
                 ancDate.min = last.ancDate + TimeUnit.DAYS.toMillis(4 * 7)
-                ancVisit.entries = arrayOf(2, 3, 4).filter {
+                ancVisit.entries = arrayOf(2, 3, 4, 5, 6, 7 ,8).filter {
                     it > last.visitNumber
                 }.map { it.toString() }.toTypedArray()
 
                 lastAncVisitDate = last.ancDate
             }
-            ancDate.max =
-                minOf(getEddFromLmp(regis.lmpDate), System.currentTimeMillis())
-            ancDate.value = getDateFromLong(ancDate.max!!)
+//            ancDate.max =
+//                minOf(getEddFromLmp(regis.lmpDate), System.currentTimeMillis())
+            ancDate.max = System.currentTimeMillis()
+//            ancDate.value = getDateFromLong(ancDate.max!!)
             maternalDateOfDeath.min =
                 maxOf(regis.lmpDate, lastAncVisitDate) + TimeUnit.DAYS.toMillis(1)
             maternalDateOfDeath.max =
