@@ -114,8 +114,11 @@ To run this project, Follow these steps:
 - **Secrets**:- set ENCRYPTED_PASS_KEY, ABHA_CLIENT_ID, ABHA_CLIENT_SECRET values in secrets.properties file.
 
 - **Environments**:- We can generate the application for below environments (using Build Varients) based on requirements
+
   1.Amrit Demo.(stagingDebug, stagingRelease)
+
   2.UAT. (uatDebug, uatRelease)
+
   3.Production.(productionDebug, productionRelease)
 
 - **google-json**:-As per build variant, you want to work add folder in \app\src named production, uat or staging and add Google JSON file of required variant in it.
