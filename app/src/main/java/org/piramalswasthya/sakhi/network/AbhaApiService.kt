@@ -6,12 +6,21 @@ import retrofit2.http.*
 
 interface AbhaApiService {
 
+    // Token Fetching for Staging (v1/v2)
     @Headers("No-Auth: true")
     @POST
     suspend fun getToken(
         @Url url: String = "https://dev.abdm.gov.in/gateway/v0.5/sessions",
         @Body request: AbhaTokenRequest = AbhaTokenRequest()
     ): Response<ResponseBody>
+
+    // Token Fetching for Production (v1/v2)
+//    @Headers("No-Auth: true")
+//    @POST
+//    suspend fun getToken(
+//        @Url url: String = "https://live.abdm.gov.in/gateway/v0.5/sessions",
+//        @Body request: AbhaTokenRequest = AbhaTokenRequest()
+//    ): Response<ResponseBody>
 
     @POST("v1/registration/aadhaar/generateOtp")
     suspend fun generateAadhaarOtp(@Body aadhaar: AbhaGenerateAadhaarOtpRequest): Response<ResponseBody>
@@ -46,10 +55,17 @@ interface AbhaApiService {
     @GET("v1/account/getPngCard")
     suspend fun getPngCard(): Response<ResponseBody>
 
+    // Authentication Certificate for Staging (v1/v2)
     @GET
     suspend fun getAuthCert(
         @Url url: String = "https://healthidsbx.abdm.gov.in/api/v2/auth/cert"
     ): Response<ResponseBody>
+
+    // Authentication Certificate for Staging (v1/v2)
+//    @GET
+//    suspend fun getAuthCert(
+//        @Url url: String = "https://healthid.abdm.gov.in/api/v2/auth/cert"
+//    ): Response<ResponseBody>
 
     @GET("v2/ha/lgd/states")
     suspend fun getStateAndDistricts(): Response<ResponseBody>
