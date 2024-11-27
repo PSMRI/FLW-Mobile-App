@@ -8,6 +8,9 @@ import android.content.res.Resources
 import android.graphics.Color
 import android.os.Build
 import android.text.Editable
+import android.text.InputFilter
+import android.text.InputFilter.AllCaps
+import android.text.InputType
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.TextWatcher
@@ -105,6 +108,22 @@ class FormInputAdapter(
             } else {
                 binding.et.isClickable = true
                 binding.et.isFocusable = true
+            }
+            if (item.title.contains("first name", true) ||
+                item.title.contains("last name", true) ||
+                item.title.contains("father's name", true) ||
+                item.title.contains("mother's name", true)
+                ) {
+//                edittext.setFilters(arrayOf<InputFilter>(AllCaps()))
+                val editFilters = binding.et.filters
+                var newFilters = arrayOfNulls<InputFilter>(editFilters.size + 1)
+                editFilters.forEachIndexed { index, inputFilter ->
+                    newFilters[index] = editFilters[index]
+                }
+                newFilters[editFilters.size] = AllCaps()
+//                newFilters.set(editFilters.size, AllCaps())
+//                binding.et.filters = arrayOf<InputFilter>(AllCaps())
+                binding.et.filters = newFilters
             }
             binding.form = item
             if (item.errorText == null) binding.tilEditText.isErrorEnabled = false
