@@ -237,7 +237,7 @@ class PregnantWomanAncVisitDataset(
         backgroundDrawable=R.drawable.ic_bg_circular,
         iconDrawableRes=R.drawable.ic_bmi,
     )
-    private val numFolicAcidTabGiven = FormElement(
+   /* private val numFolicAcidTabGiven = FormElement(
         id = 19,
         inputType = InputType.EDIT_TEXT,
         title = "No. of Folic Acid Tabs given",
@@ -249,7 +249,7 @@ class PregnantWomanAncVisitDataset(
         showDrawable = true,
         backgroundDrawable=R.drawable.ic_bg_circular,
         iconDrawableRes=R.drawable.ic_tablets,
-    )
+    )*/
     private val numIfaAcidTabGiven = FormElement(
         id = 20,
         inputType = InputType.EDIT_TEXT,
@@ -397,7 +397,7 @@ class PregnantWomanAncVisitDataset(
             dateOfTTOrTd1,
             dateOfTTOrTd2,
             dateOfTTOrTdBooster,
-            numFolicAcidTabGiven,
+         //   numFolicAcidTabGiven,
             numIfaAcidTabGiven,
             anyHighRisk,
             highRiskReferralFacility,
@@ -451,7 +451,8 @@ class PregnantWomanAncVisitDataset(
                     list.remove(fundalHeight)
                     list.remove(numIfaAcidTabGiven)
                 } else {
-                    list.remove(numFolicAcidTabGiven)
+                 //   list.remove(numFolicAcidTabGiven)
+                    list.remove(numIfaAcidTabGiven)
                 }
                 weeks.toString()
             }
@@ -466,7 +467,8 @@ class PregnantWomanAncVisitDataset(
                 list.remove(fundalHeight)
                 list.remove(numIfaAcidTabGiven)
             } else {
-                list.remove(numFolicAcidTabGiven)
+              //  list.remove(numFolicAcidTabGiven)
+              //  list.remove(numIfaAcidTabGiven)
             }
             if (woP >= Konstants.minWeekToShowDelivered) {
                 if (!list.contains(deliveryDone)) list.add(deliveryDone)
@@ -499,7 +501,7 @@ class PregnantWomanAncVisitDataset(
             dateOfTTOrTd1.value = regis.tt1?.let { getDateFromLong(it) }
             dateOfTTOrTd2.value = regis.tt2?.let { getDateFromLong(it) }
             dateOfTTOrTdBooster.value = regis.ttBooster?.let { getDateFromLong(it) }
-            numFolicAcidTabGiven.value = savedAnc.numFolicAcidTabGiven.toString()
+       //     numFolicAcidTabGiven.value = savedAnc.numFolicAcidTabGiven.toString()
             numIfaAcidTabGiven.value = savedAnc.numIfaAcidTabGiven.toString()
             savedAnc.anyHighRisk?.let {
                 anyHighRisk.value =
@@ -609,14 +611,14 @@ class PregnantWomanAncVisitDataset(
                         val listChanged2 = if (weeks <= 12)
                             triggerDependants(
                                 source = ancVisit,
-                                addItems = listOf(numFolicAcidTabGiven),
+                                addItems = listOf(numIfaAcidTabGiven),
                                 removeItems = listOf(fundalHeight, numIfaAcidTabGiven),
                                 position = getIndexById(dateOfTTOrTdBooster.id) + 1
                             )
                         else {
                             triggerDependants(
                                 source = ancVisit,
-                                removeItems = listOf(numFolicAcidTabGiven),
+                                removeItems = listOf(numIfaAcidTabGiven),
                                 addItems = listOf(fundalHeight),
                                 position = getIndexById(hb.id) + 1
                             )
@@ -642,14 +644,14 @@ class PregnantWomanAncVisitDataset(
                 if (ancVisit.value == "1")
                     triggerDependants(
                         source = ancVisit,
-                        addItems = listOf(numFolicAcidTabGiven),
+                        addItems = listOf(numIfaAcidTabGiven),
                         removeItems = listOf(fundalHeight, numIfaAcidTabGiven),
                         position = getIndexById(dateOfTTOrTdBooster.id) + 1
                     )
                 else {
                     triggerDependants(
                         source = ancVisit,
-                        removeItems = listOf(numFolicAcidTabGiven),
+                        removeItems = listOf(numIfaAcidTabGiven),
                         addItems = listOf(fundalHeight),
                         position = getIndexById(hb.id) + 1
                     )
@@ -710,7 +712,7 @@ class PregnantWomanAncVisitDataset(
                 -1
             }
 
-            numFolicAcidTabGiven.id -> validateIntMinMax(numFolicAcidTabGiven)
+           // numFolicAcidTabGiven.id -> validateIntMinMax(numFolicAcidTabGiven)
             numIfaAcidTabGiven.id -> validateIntMinMax(numIfaAcidTabGiven)
             anyHighRisk.id -> triggerDependants(
                 source = anyHighRisk,
@@ -804,7 +806,7 @@ class PregnantWomanAncVisitDataset(
             cache.randomBloodSugarTest = randomBloodSugarTest.value
             cache.randomBloodSugarTestId = randomBloodSugarTest.getPosition()
             updateRegistrationForTdX()
-            cache.numFolicAcidTabGiven = numFolicAcidTabGiven.value?.toInt() ?: 0
+           // cache.numFolicAcidTabGiven = numFolicAcidTabGiven.value?.toInt() ?: 0
             cache.numIfaAcidTabGiven = numIfaAcidTabGiven.value?.toInt() ?: 0
             anyHighRisk.value?.let {
                 cache.anyHighRisk = it == anyHighRisk.entries!!.last()

@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.pregnant_wome
 
 import android.annotation.SuppressLint
 import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
@@ -11,6 +12,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,6 +29,7 @@ import org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.pregnant_women
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
+import java.util.Date
 
 
 @AndroidEntryPoint
@@ -39,8 +42,8 @@ class HRPMicroBirthPlanTable : Fragment() {
         get() = _binding!!
 
     private val viewModel: HRPMicroBirthPlanViewModel by viewModels()
-
-
+    var lastMenstrualPeriodString=""
+    var marriageDateString=""
 
 
     override fun onCreateView(
@@ -73,7 +76,8 @@ class HRPMicroBirthPlanTable : Fragment() {
 
 
         viewModel.currentLocation?.let {
-            binding.scHwc.text = "${resources.getString(R.string.sc_hwc_tg_hosp)} :\n${it.village.name}"
+            binding.scHwc.text =
+                "${resources.getString(R.string.sc_hwc_tg_hosp)} :\n${it.village.name}"
 
         }
 
@@ -84,24 +88,104 @@ class HRPMicroBirthPlanTable : Fragment() {
         viewModel.recordExists.observe(viewLifecycleOwner) {
             lifecycleScope.launch {
 
-                if (viewModel._microBirthPlanCache != null){
+                if (viewModel._microBirthPlanCache != null) {
 
-                    binding.contactNo.text = "${resources.getString(R.string.c_no)} ${viewModel._microBirthPlanCache.contactNumber1}\n2 - ${viewModel._microBirthPlanCache.contactNumber2}"
-                    binding.husbandName.text = "${resources.getString(R.string.husband_s_name)} :\n${viewModel.benDetails.spouseName}"
-                    binding.lmp.text = "${resources.getString(R.string.lmp)} :\n${viewModel.benDetails.lastMenstrualPeriod}"
-                    binding.nrScHwc.text = "${resources.getString(R.string.lmp)} :\n${viewModel._microBirthPlanCache.nearestSc}"
-                    binding.block.text = "${resources.getString(R.string.block)} :\n${viewModel._microBirthPlanCache.block}"
-                    binding.edd.text = "${resources.getString(R.string.edd)} :\n${viewModel.benDetails.marriageDate}"
-                    binding.nrPhc.text = "${resources.getString(R.string.nearest_24x7_phc)} :\n${viewModel._microBirthPlanCache.nearestPhc}"
-                    binding.bankAccNo.text = "${resources.getString(R.string.bank_acc_no)} :\n${viewModel._microBirthPlanCache.bankac}"
-                    binding.nrFru.text = "${resources.getString(R.string.nearest_fru)} :\n${viewModel._microBirthPlanCache.nearestFru}"
-                    binding.nrUsg.text = "${resources.getString(R.string.nearest_usg_centre)} :\n${viewModel._microBirthPlanCache.usg}"
-                    binding.bloodGrp.text = "${resources.getString(R.string.blood_group)} :\n${viewModel._microBirthPlanCache.bloodGroup}"
-                    binding.bloodDonr.text = "${resources.getString(R.string.b_blood_donor)} ${viewModel._microBirthPlanCache.bloodDonors1}\n2 - " + "${viewModel._microBirthPlanCache.bloodDonors2}"
-                    binding.birthComp.text = "${resources.getString(R.string.birth_companion)} :\n${viewModel._microBirthPlanCache.birthCompanion}"
-                    binding.prsonTkCare.text = "${resources.getString(R.string.person_who_will_take_care_of_children_if_any_when_the_pw_is_admitted_for_delivery)} :\n${viewModel._microBirthPlanCache.careTaker}"
-                    binding.nameOfContNo.text = "${resources.getString(R.string.name_of_vhsnd_community_member_for_support_during_emergency)} :\n${viewModel._microBirthPlanCache.communityMember}"
-                    binding.modeOfTrasp.text = "${resources.getString(R.string.mode_of_transportation_in_case_of_labour_pain)} :\n${viewModel._microBirthPlanCache.modeOfTransportation}"
+                    binding.contactNo.text =
+                        "${resources.getString(R.string.c_no)} ${viewModel._microBirthPlanCache.contactNumber1 ?: ""}\n2 - ${viewModel._microBirthPlanCache.contactNumber2 ?: ""}"
+                    binding.husbandName.text =
+                        "${resources.getString(R.string.husband_s_name)} :\n${viewModel.benDetails.spouseName ?: ""}"
+
+
+                    val lastMenstrualPeriodLong = viewModel.benDetails.lastMenstrualPeriod
+                    if(viewModel.benDetails.lastMenstrualPeriod!=null){
+                         lastMenstrualPeriodString =
+                            DateFormat.format("dd/MM/yyyy", lastMenstrualPeriodLong?.let { it1 -> Date(it1) })
+                                .toString()
+                    }
+
+                    if (viewModel._hRPPregnantAssessCache != null) {
+                        if (viewModel._hRPPregnantAssessCache?.lmpDate != null) {
+                            val lmpDateLong = viewModel._hRPPregnantAssessCache?.lmpDate
+                            val lmpDateString: String =
+                                DateFormat.format("dd/MM/yyyy", lmpDateLong?.let { it1 -> Date(it1) })
+                                    .toString()
+                            binding.lmp.text =
+                                "${resources.getString(R.string.lmp)} :\n${lmpDateString ?: ""}"
+                            binding.tvLmpDate.text =
+                                "${resources.getString(R.string.lmp)}:${lmpDateString ?: ""}"
+                        } else {
+                            binding.lmp.text =
+                                "${resources.getString(R.string.lmp)} :\n${lastMenstrualPeriodString?: ""}"
+                            binding.tvLmpDate.text = "${resources.getString(R.string.lmp)}:${lastMenstrualPeriodString ?: ""}"
+                        }
+                    }else{
+                        binding.lmp.text =
+                            "${resources.getString(R.string.lmp)} :\n${lastMenstrualPeriodString ?: ""}"
+                        binding.tvLmpDate.text = "${resources.getString(R.string.lmp)}:${lastMenstrualPeriodString  ?: ""}"
+                    }
+
+
+//                    binding.lmp.text =
+//                        "${resources.getString(R.string.lmp)} :\n${viewModel.benDetails.lastMenstrualPeriod ?: ""}"
+                    binding.nrScHwc.text =
+                        "${resources.getString(R.string.nearest_sc_hwc)} :\n${viewModel._microBirthPlanCache.nearestSc ?: ""}"
+                    binding.block.text =
+                        "${resources.getString(R.string.block)} :\n${viewModel._microBirthPlanCache.block ?: ""}"
+
+                    if(viewModel.benDetails.marriageDate!=null){
+                        val marriageDateLong = viewModel.benDetails.marriageDate
+                         marriageDateString =
+                            DateFormat.format("dd/MM/yyyy", marriageDateLong?.let { it1 -> Date(it1) })
+                                .toString()
+                    }
+
+
+                    if (viewModel._hRPPregnantAssessCache != null) {
+                        if (viewModel._hRPPregnantAssessCache?.edd != null) {
+                            val eddDateLong = viewModel._hRPPregnantAssessCache?.edd
+                            val eddDateString: String =
+                                DateFormat.format("dd/MM/yyyy", eddDateLong?.let { it1 -> Date(it1) })
+                                    .toString()
+                            binding.edd.text =
+                                "${resources.getString(R.string.edd)} :\n${eddDateString ?: ""}"
+                            binding.tvEddDate.text =
+                                "${resources.getString(R.string.edd)}:${eddDateString ?: ""}"
+                        } else {
+
+                            binding.edd.text =
+                                "${resources.getString(R.string.edd)} :\n${marriageDateString ?: ""}"
+                            binding.tvEddDate.text =
+                                "${resources.getString(R.string.edd)} :\n${marriageDateString ?: ""}"
+                        }
+                    }else{
+                        binding.tvEddDate.text =
+                            "${resources.getString(R.string.edd)} :\n${marriageDateString ?: ""}"
+                        binding.edd.text =
+                            "${resources.getString(R.string.edd)} :\n${marriageDateString?: ""}"
+                    }
+
+
+
+                    binding.nrPhc.text =
+                        "${resources.getString(R.string.nearest_24x7_phc)} :\n${viewModel._microBirthPlanCache.nearestPhc ?: ""}"
+                    binding.bankAccNo.text =
+                        "${resources.getString(R.string.bank_acc_no)} :\n${viewModel._microBirthPlanCache.bankac ?: ""}"
+                    binding.nrFru.text =
+                        "${resources.getString(R.string.nearest_fru)} :\n${viewModel._microBirthPlanCache.nearestFru ?: ""}"
+                    binding.nrUsg.text =
+                        "${resources.getString(R.string.nearest_usg_centre)} :\n${viewModel._microBirthPlanCache.usg ?: ""}"
+                    binding.bloodGrp.text =
+                        "${resources.getString(R.string.blood_group)} :\n${viewModel._microBirthPlanCache.bloodGroup ?: ""}"
+                    binding.bloodDonr.text =
+                        "${resources.getString(R.string.b_blood_donor)} ${viewModel._microBirthPlanCache.bloodDonors1 ?: ""}\n2 - " + "${viewModel._microBirthPlanCache.bloodDonors2 ?: ""}"
+                    binding.birthComp.text =
+                        "${resources.getString(R.string.birth_companion)} :\n${viewModel._microBirthPlanCache.birthCompanion ?: ""}"
+                    binding.prsonTkCare.text =
+                        "${resources.getString(R.string.person_who_will_take_care_of_children_if_any_when_the_pw_is_admitted_for_delivery)} :\n${viewModel._microBirthPlanCache.careTaker ?: ""}"
+                    binding.nameOfContNo.text =
+                        "${resources.getString(R.string.name_of_vhsnd_community_member_for_support_during_emergency)} :\n${viewModel._microBirthPlanCache.communityMember ?: ""}"
+                    binding.modeOfTrasp.text =
+                        "${resources.getString(R.string.mode_of_transportation_in_case_of_labour_pain)} :\n${viewModel._microBirthPlanCache.modeOfTransportation ?: ""}"
 
                 }
 
@@ -124,7 +208,8 @@ class HRPMicroBirthPlanTable : Fragment() {
     private fun getScreenShotFromView(v: View): Bitmap? {
         var screenshot: Bitmap? = null
         try {
-            screenshot = Bitmap.createBitmap(v.measuredWidth, v.measuredHeight, Bitmap.Config.ARGB_8888)
+            screenshot =
+                Bitmap.createBitmap(v.measuredWidth, v.measuredHeight, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(screenshot)
             v.draw(canvas)
         } catch (e: Exception) {
@@ -145,36 +230,52 @@ class HRPMicroBirthPlanTable : Fragment() {
                     put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
                 }
 
-                val imageUri: Uri? = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+                val imageUri: Uri? =
+                    resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
                 shareImage(imageUri!!)
                 fos = imageUri?.let { resolver.openOutputStream(it) }
             }
         } else {
-            val imagesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+            val imagesDir =
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
             val image = File(imagesDir, filename)
-            var uriFile=Uri.fromFile(image)
+            var uriFile = Uri.fromFile(image)
             shareImage(uriFile)
             fos = FileOutputStream(image)
         }
 
         fos?.use {
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)
-            Toast.makeText(activity , "Captured View and saved to Gallery" , Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, "Captured View and saved to Gallery", Toast.LENGTH_SHORT)
+                .show()
         }
-        }
+    }
 
     private fun shareImage(imageUri: Uri) {
-        val captionText = " ${getString(R.string.micro_birth_plan)} " +
-                "\n ASHA Name : ${viewModel.currentUser!!.name} " +
-                "\n Sub-center : ${viewModel.currentLocation!!.village.name}"
-        val intent = Intent(Intent.ACTION_SEND)
-        intent.putExtra(Intent.EXTRA_STREAM, imageUri)
-        intent.putExtra(Intent.EXTRA_TEXT, captionText)
-        intent.putExtra(Intent.EXTRA_SUBJECT, "Subject Here")
-        intent.setPackage("com.whatsapp")
-        intent.setType("image/png")
-        startActivity(intent)
+        if (isPackageExist(requireContext(), "com.whatsapp")) {
+            val captionText = " ${getString(R.string.micro_birth_plan)} " +
+                    "\n ASHA Name : ${viewModel.currentUser!!.name} " +
+                    "\n Sub-center : ${viewModel.currentLocation!!.village.name}"
+            val intent = Intent(Intent.ACTION_SEND)
+            intent.putExtra(Intent.EXTRA_STREAM, imageUri)
+            intent.putExtra(Intent.EXTRA_TEXT, captionText)
+            intent.putExtra(Intent.EXTRA_SUBJECT, "Subject Here")
+            intent.setPackage("com.whatsapp")
+            intent.setType("image/png")
+            startActivity(intent)
 
+        } else {
+            Toast.makeText(
+                requireContext(),
+                "Whats App is not installed in phone!",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    fun isPackageExist(context: Context, target: String): Boolean {
+        return context.packageManager.getInstalledApplications(0)
+            .find { info -> info.packageName == target } != null
     }
 
 
