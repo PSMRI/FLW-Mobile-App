@@ -10,7 +10,6 @@ import android.os.Build
 import android.text.Editable
 import android.text.InputFilter
 import android.text.InputFilter.AllCaps
-import android.text.InputType
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.TextWatcher
@@ -108,6 +107,7 @@ class FormInputAdapter(
             } else {
                 binding.et.isClickable = true
                 binding.et.isFocusable = true
+                binding.et.isFocusableInTouchMode = true
             }
             if (item.title.contains("first name", true) ||
                 item.title.contains("last name", true) ||
@@ -256,9 +256,15 @@ class FormInputAdapter(
                 }
             }
             binding.et.setOnFocusChangeListener { _, hasFocus ->
-                if (hasFocus) binding.et.addTextChangedListener(textWatcher)
-                else {
+                if (hasFocus){
+                    binding.et.requestFocus()
+                    binding.et.addTextChangedListener(textWatcher)
+                    val imm =
+                        binding.root.context.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager?
+                    imm!!.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+                } else {
                     binding.et.removeTextChangedListener(textWatcher)
+                    binding.et.clearFocus()
                     val imm =
                         binding.root.context.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager?
                     imm!!.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)

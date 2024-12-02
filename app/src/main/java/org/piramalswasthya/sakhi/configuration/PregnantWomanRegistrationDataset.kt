@@ -54,7 +54,7 @@ class PregnantWomanRegistrationDataset(
         isMobileNumber = true,
         etMaxLength = 12
     )
-    private val mcpCardNumber = FormElement(
+/*    private val mcpCardNumber = FormElement(
         id = 3,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.pwrdst_mcp_card_no),
@@ -62,7 +62,7 @@ class PregnantWomanRegistrationDataset(
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
         isMobileNumber = true,
         etMaxLength = 12
-    )
+    )*/
     private val name = FormElement(
         id = 4,
         inputType = InputType.TEXT_VIEW,
@@ -409,7 +409,7 @@ class PregnantWomanRegistrationDataset(
         val list = mutableListOf(
             dateOfReg,
             rchId,
-            mcpCardNumber,
+           // mcpCardNumber,
             name,
             husbandName,
             age,
@@ -571,7 +571,7 @@ class PregnantWomanRegistrationDataset(
                 dateOfhivTestDone.max = maxDate
                 dateOfhbsAgTestDone.max = maxDate
             }
-            mcpCardNumber.value = it.mcpCardNumber.toString()
+          //  mcpCardNumber.value = it.mcpCardNumber.toString()
             lmp.value = getDateFromLong(it.lmpDate)
             if (it.lmpDate > 0) {
                 lmp.isEnabled = false
@@ -697,7 +697,7 @@ class PregnantWomanRegistrationDataset(
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
         return when (formId) {
             rchId.id -> validateRchIdOnEditText(rchId)
-            mcpCardNumber.id -> validateMcpOnEditText(mcpCardNumber)
+          //  mcpCardNumber.id -> validateMcpOnEditText(mcpCardNumber)
             dateOfReg.id -> {
                 dateOfReg.value?.let {
                     val dateOfRegLong = getLongFromDate(it)
@@ -940,7 +940,7 @@ class PregnantWomanRegistrationDataset(
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as PregnantWomanRegistrationCache).let { form ->
             form.dateOfRegistration = getLongFromDate(dateOfReg.value)
-            form.mcpCardNumber = mcpCardNumber.value?.takeIf { it.isNotEmpty() }?.toLong() ?: 0
+           // form.mcpCardNumber = mcpCardNumber.value?.takeIf { it.isNotEmpty() }?.toLong() ?: 0
             form.rchId = rchId.value?.takeIf { it.isNotEmpty() }?.toLong() ?: 0
             form.lmpDate = getLongFromDate(lmp.value)
             form.bloodGroup =

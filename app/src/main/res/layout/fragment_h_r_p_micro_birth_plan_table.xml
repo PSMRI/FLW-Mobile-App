@@ -34,11 +34,12 @@
                         android:text="@string/micro_birth_plan"
                         android:gravity="center"
                         android:background="@color/md_theme_dark_error"
-                        android:layout_weight="2"
+                        android:layout_weight="1"
                         android:textStyle="bold"
                         android:padding="8dp"/>
 
                     <TextView
+                        android:id="@+id/tvLmpDate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/lmp"
@@ -49,6 +50,7 @@
                         android:padding="8dp"/>
 
                     <TextView
+                        android:id="@+id/tvEddDate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/edd"

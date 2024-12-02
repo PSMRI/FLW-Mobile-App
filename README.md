@@ -103,28 +103,33 @@ To run this project, Follow these steps:
 3. Click on 'Open an existing Android Studio project'.
 4. Navigate to the directory where you cloned the project and select the root folder.
 5. Wait for Android Studio to sync the project and download the dependencies.
-6. Once the sync is done, you can run the project on an emulator or a physical device.
+6. Once the sync is done, select build variant you want to work on like uatDebug, statingDebug or productionDebug
+7. create folder in \app\src named production, uat or staging as per build variant you want to work and add google JSON file in it.
+7. Clean Project and Rebuild and run project 
+8. you can run the project on an emulator or a physical device.
+9. Try to login with valid Credentials if everything is fine you able to login successfully
 
 ### Prerequisites
 
 - **Secrets**:- set ENCRYPTED_PASS_KEY, ABHA_CLIENT_ID, ABHA_CLIENT_SECRET values in secrets.properties file.
 
-- **google-json**:- set Google JSON file of required variant, i.e. UAT, STAGING or PRODUCTION.
+- **Environments**:- We can generate the application for below environments (using Build Varients) based on requirements
 
-- **Environments**:- We can generate the application for below environments based on requirements
-        1.Amrit Demo.
-        2.UAT.
-        3.Production.
+  1.Amrit Demo.(stagingDebug, stagingRelease)
+
+  2.UAT. (uatDebug, uatRelease)
+
+  3.Production.(productionDebug, productionRelease)
+
+- **google-json**:-As per build variant, you want to work add folder in \app\src named production, uat or staging and add Google JSON file of required variant in it.
+
+
 
 
 **Configurations:**
 
-    - In AppModule class there is a variable declared for base URL, set the value to amrit demo or uat or prod values based on requirement
+    - In App level build.gradle file productFlavors added. Based on which varient you want to work select build varient 
 
-        `object AppModule {
-
-            private const val baseTmcUrl = "<add base url>"
-        `
     - In IconDataset class we have the list of modules that we show on UI, we can comment, or un-comment modules based on requirement
 
     - In AllBenFragment class we have a Boolean `showAbha` which can be used to toggle the visibility of abha button on beneficiary cards

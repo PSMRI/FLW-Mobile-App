@@ -13,6 +13,7 @@ import org.piramalswasthya.sakhi.configuration.HRPMicroBirthPlanDataset
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.BenRegGen
 import org.piramalswasthya.sakhi.model.HRPMicroBirthPlanCache
+import org.piramalswasthya.sakhi.model.HRPPregnantAssessCache
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.HRPRepo
 import timber.log.Timber
@@ -65,6 +66,8 @@ constructor(
     var isHighRisk: Boolean = false
 
     lateinit var _microBirthPlanCache: HRPMicroBirthPlanCache
+    var _hRPPregnantAssessCache: HRPPregnantAssessCache?=null
+
 
     init {
         viewModelScope.launch {
@@ -77,6 +80,8 @@ constructor(
                     benId = ben.beneficiaryId,
                 )
             }
+            _hRPPregnantAssessCache = HRPPregnantAssessCache(benId = benId)
+            _hRPPregnantAssessCache= hrpReo.getPregnantAssess(benId)
 
             hrpReo.getMicroBirthPlan(benId)?.let {
                 _microBirthPlanCache = it
