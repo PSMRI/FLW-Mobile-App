@@ -64,8 +64,7 @@ android {
             applicationId "org.piramalswasthya.sakhi"
             resValue "string", "app_native_name", "উৎপ্ৰেৰণা-Uat"
             // TMC Server Staging API Base URL
-            buildConfigField "String", "BASE_TMC_URL", "\"https://uatamrit.piramalswasthya.org/\""
-
+            buildConfigField "String", "BASE_TMC_URL", "\"https://amritdemo.piramalswasthya.org/\""
             // ABHA v1/v2 Staging Base URL
             buildConfigField "String", "BASE_ABHA_URL", "\"https://healthidsbx.abdm.gov.in/api/\""
             // ABHA v3 Staging Base URL
@@ -74,8 +73,8 @@ android {
         production {
             applicationId "org.piramalswasthya.sakhi"
             // TMC Server Production API Base URL
-            buildConfigField "String", "BASE_TMC_URL", "\"https://assamtmc.piramalswasthya.org/\""
-
+         //   buildConfigField "String", "BASE_TMC_URL", "\"https://assamtmc.piramalswasthya.org/\""
+            buildConfigField "String", "BASE_TMC_URL", "\"https://amritdemo.piramalswasthya.org/\""
             // ABHA v3 Production Base URL
             buildConfigField "String", "BASE_ABHA_URL", "\"https://healthid.abdm.gov.in/api/\""
         }
@@ -127,6 +126,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation "androidx.recyclerview:recyclerview:1.3.1"
+    implementation 'com.google.android.material:material:1.3.0-alpha02'
 
     //Navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
@@ -201,9 +201,6 @@ dependencies {
     //Image compressor
     implementation 'id.zelory:compressor:3.0.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-
-    //Dimens Library
-    implementation 'com.intuit.sdp:sdp-android:1.1.0'
 
 }
 secrets {
