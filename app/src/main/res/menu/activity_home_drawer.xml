@@ -39,6 +39,10 @@
             android:id="@+id/incentivesFragment"
             android:icon="@drawable/ic__incentive"
             android:title="@string/incentive_fragment_title" />
+        <item
+            android:id="@+id/ChatFragment"
+            android:icon="@drawable/baseline_chat_24"
+            android:title="@string/help_and_support" />
     </group>
 
 
