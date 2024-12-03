@@ -2,13 +2,19 @@ package org.piramalswasthya.sakhi.ui.home_activity
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
+import android.webkit.WebResourceRequest
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -22,6 +28,8 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.crashlytics.internal.common.CommonUtils.isEmulator
 import com.google.firebase.crashlytics.internal.common.CommonUtils.isRooted
@@ -30,7 +38,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
-import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.ActivityHomeBinding
@@ -42,7 +49,6 @@ import org.piramalswasthya.sakhi.ui.home_activity.home.HomeViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.sync.SyncBottomSheetFragment
 import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
 import org.piramalswasthya.sakhi.ui.service_location_activity.ServiceLocationActivity
-import org.piramalswasthya.sakhi.utils.RootedUtil
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import java.util.*
 import javax.inject.Inject
@@ -76,6 +82,7 @@ class HomeActivity : AppCompatActivity() {
     private val syncBottomSheet: SyncBottomSheetFragment by lazy {
         SyncBottomSheetFragment()
     }
+
 
 
     private val viewModel: HomeViewModel by viewModels()
@@ -115,7 +122,6 @@ class HomeActivity : AppCompatActivity() {
 
             }.create()
     }
-
 
     private val logoutAlert by lazy {
         var str = ""
@@ -176,7 +182,7 @@ class HomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         // This will block user to cast app screen
         // Toggle screencast mode for staging & production builds
-        window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+        window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
         super.onCreate(savedInstanceState)
         _binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -184,6 +190,15 @@ class HomeActivity : AppCompatActivity() {
         setUpNavHeader()
         setUpFirstTimePullWorker()
         setUpMenu()
+        binding.addFab.setOnClickListener { this }
+
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+
+        binding.addFab.setOnClickListener {
+
+            displaychatdialog()
+
+        }
 
         if (isDeviceRootedOrEmulator()) {
             AlertDialog.Builder(this)
@@ -203,10 +218,89 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
+   private fun displaychatdialog() {
+
+        val dialog = BottomSheetDialog(this)
+
+        // on below line we are inflating a layout file which we have created.
+        val view = layoutInflater.inflate(R.layout.bottomsheet_chat_window, null)
+
+        val web = view.findViewById<WebView>(R.id.webv)
+        val progress = view.findViewById<ProgressBar>(R.id.progressBarv)
+
+
+
+// Enable JavaScript
+        web.settings.javaScriptEnabled = true
+        web.settings.javaScriptCanOpenWindowsAutomatically = true
+        web.isVerticalScrollBarEnabled = true
+
+
+
+
+// Load URL
+        web.loadUrl("https://aibot.helloyubo.com/piramal_bot_rag")
+
+
+// Handle WebView events
+        web.webViewClient = object : WebViewClient() {
+            override fun shouldOverrideUrlLoading(
+                view: WebView,
+                request: WebResourceRequest
+            ): Boolean {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    view.loadUrl(request.url.toString())
+                }
+                return true
+            }
+
+            override fun onPageStarted(webview: WebView, url: String, favicon: Bitmap?) {
+                super.onPageStarted(webview, url, favicon)
+                // Show ProgressBar when the page starts loading
+                progress.visibility = View.VISIBLE
+                web.visibility = View.GONE
+            }
+
+            override fun onPageFinished(webview: WebView, url: String) {
+                super.onPageFinished(webview, url)
+                // Hide ProgressBar when the page finishes loading
+                progress.visibility = View.GONE
+                web.visibility = View.VISIBLE
+            }
+        }
+
+
+        // on below line we are creating a variable for our button
+        // which we are using to dismiss our dialog.
+        // on below line we are adding on click listener
+        // for our dismissing the dialog button.
+
+        // below line is use to set cancelable to avoid
+        // closing of dialog box when clicking on the screen.
+        dialog.setCancelable(true)
+
+        // on below line we are setting
+        // content view to our view.
+        dialog.setContentView(view)
+       dialog.behavior.setPeekHeight(6000)
+
+
+        // on below line we are calling
+        // a show method to display a dialog.
+
+
+        dialog.show()
+
+
+        }
+
+
+
+
     override fun onResume() {
         // This will block user to cast app screen
         // Toggle screencast mode for staging & production builds
-        window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+       window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
         super.onResume()
         if (isDeviceRootedOrEmulator()) {
             AlertDialog.Builder(this)
@@ -346,6 +440,15 @@ class HomeActivity : AppCompatActivity() {
         binding.navView.menu.findItem(R.id.abha_id_activity).setOnMenuItemClickListener {
             navController.popBackStack(R.id.homeFragment, false)
             startActivity(Intent(this, AbhaIdActivity::class.java))
+            binding.drawerLayout.close()
+            true
+
+        }
+
+        binding.navView.menu.findItem(R.id.ChatFragment).setOnMenuItemClickListener {
+            displaychatdialog()
+            /*navController.popBackStack(R.id.homeFragment, false)
+            startActivity(Intent(this, ChatSupport::class.java))*/
             binding.drawerLayout.close()
             true
 
