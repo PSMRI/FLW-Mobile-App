@@ -22,7 +22,7 @@ android {
         minSdk 23
         targetSdk 33
         versionCode 2
-        versionName "2.0"
+        versionName "2.0.0"
         resConfigs "en", "hi", "as"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         // TMC Server Staging API Base URL
@@ -58,6 +58,10 @@ android {
             buildConfigField "String", "BASE_ABHA_URL", "\"https://healthidsbx.abdm.gov.in/api/\""
             // ABHA v3 Staging Base URL
 //            buildConfigField "String", "BASE_ABHA_URL", "\"https://abhasbx.abdm.gov.in/abha/api/\""
+            // ABHA v1/v2 Staging Session/Token URL
+            buildConfigField "String", "ABHA_TOKEN_URL", "\"https://dev.abdm.gov.in/gateway/v0.5/sessions\""
+            // ABHA v1/v2 Staging Auth Cert URL
+            buildConfigField "String", "ABHA_AUTH_URL", "\"https://healthidsbx.abdm.gov.in/api/v2/auth/cert\""
         }
         uat {
             applicationIdSuffix ".uat"
@@ -65,19 +69,25 @@ android {
             resValue "string", "app_native_name", "উৎপ্ৰেৰণা-Uat"
             // TMC Server Staging API Base URL
             buildConfigField "String", "BASE_TMC_URL", "\"https://uatamrit.piramalswasthya.org/\""
-
             // ABHA v1/v2 Staging Base URL
             buildConfigField "String", "BASE_ABHA_URL", "\"https://healthidsbx.abdm.gov.in/api/\""
             // ABHA v3 Staging Base URL
 //            buildConfigField "String", "BASE_ABHA_URL", "\"https://abhasbx.abdm.gov.in/abha/api/\""
+            // ABHA v1/v2 UAT Session/Token URL
+            buildConfigField "String", "ABHA_TOKEN_URL", "\"https://dev.abdm.gov.in/gateway/v0.5/sessions\""
+            // ABHA v1/v2 UAT Auth Cert URL
+            buildConfigField "String", "ABHA_AUTH_URL", "\"https://healthidsbx.abdm.gov.in/api/v2/auth/cert\""
         }
         production {
             applicationId "org.piramalswasthya.sakhi"
             // TMC Server Production API Base URL
             buildConfigField "String", "BASE_TMC_URL", "\"https://assamtmc.piramalswasthya.org/\""
-
-            // ABHA v3 Production Base URL
+            // ABHA v1/v2/v3 Production Base URL
             buildConfigField "String", "BASE_ABHA_URL", "\"https://healthid.abdm.gov.in/api/\""
+            // ABHA v1/v2 Production Session/Token URL
+            buildConfigField "String", "ABHA_TOKEN_URL", "\"https://live.abdm.gov.in/gateway/v0.5/sessions\""
+            // ABHA v1/v2 Production Auth Cert URL
+            buildConfigField "String", "ABHA_AUTH_URL", "\"https://healthid.abdm.gov.in/api/v2/auth/cert\""
         }
     }
 
