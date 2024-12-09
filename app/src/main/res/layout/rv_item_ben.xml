@@ -391,7 +391,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical"
-                        android:padding="@dimen/padding_small"></LinearLayout>
+                        android:padding="@dimen/padding_small"/>
 
                     <LinearLayout
                         showLayout="@{showAbha? !hasAbha : showAbha}"

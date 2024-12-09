@@ -342,6 +342,19 @@ fun filterImmunList(list: List<ImmunizationDetailsDomain>, text: String): List<I
             filterText = "3 months"
         } else if (filterText.contains("14 weeks")) {
             filterText = "4 months"
+        }else{
+
+                val filterText = text.lowercase()
+                return list.filter {
+                    filterForImm(
+                        it,
+                        filterText,
+                        secondFilterText,
+                        thirdFilterText,
+                        fourthFilterText
+                    )
+                }
+
         }
         return list.filter {
             filterForImm(
@@ -364,7 +377,8 @@ fun filterForImm(
 ) = imm.ben.age.lowercase() == filterText ||
         imm.ben.age.lowercase() == firstVal ||
         imm.ben.age.lowercase() == secondVal ||
-        imm.ben.age.lowercase() == thirdVal
+        imm.ben.age.lowercase() == thirdVal ||
+        imm.ben.benName.lowercase() ==filterText
 
 fun filterBenHRNPTFormList(
     list: List<BenWithHRNPTListDomain>,

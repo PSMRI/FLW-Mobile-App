@@ -1,9 +1,12 @@
 package org.piramalswasthya.sakhi.ui.home_activity.immunization_due.child_immunization.list
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -12,6 +15,7 @@ import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.ImmunizationBenListAdapter
 import org.piramalswasthya.sakhi.adapters.ImmunizationBirthDoseCategoryAdapter
+import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.databinding.FragmentChildImmunizationListBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import timber.log.Timber
@@ -26,6 +30,12 @@ class ChildImmunizationListFragment : Fragment(),ImmunizationBirthDoseCategoryAd
 
     private val viewModel: ChildImmunizationListViewModel by viewModels()
     private var catTxt = ""
+
+    private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
+        binding.searchView.setText(value)
+        binding.searchView.setSelection(value.length)
+        viewModel.filterText(value)
+    }
 
     private val bottomSheet: ChildImmunizationVaccineBottomSheetFragment by lazy { ChildImmunizationVaccineBottomSheetFragment() }
     override fun onCreateView(
@@ -51,11 +61,36 @@ class ChildImmunizationListFragment : Fragment(),ImmunizationBirthDoseCategoryAd
         lifecycleScope.launch {
             viewModel.immunizationBenList.collect {
                 Timber.d("Collecting list : $it")
+
                 binding.rvList.apply {
-                    (adapter as ImmunizationBenListAdapter).submitList(it)
+                    (adapter as ImmunizationBenListAdapter).submitList(it.sortedByDescending { it.ben.regDate })
                 }
             }
         }
+
+        val searchTextWatcher = object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun afterTextChanged(p0: Editable?) {
+                viewModel.filterText(p0?.toString() ?: "")
+            }
+
+        }
+        binding.searchView.setOnFocusChangeListener { searchView, b ->
+            if (b)
+                (searchView as EditText).addTextChangedListener(searchTextWatcher)
+            else
+                (searchView as EditText).removeTextChangedListener(searchTextWatcher)
+
+        }
+
+        binding.ibSearch.setOnClickListener { sttContract.launch(Unit) }
 
     }
 

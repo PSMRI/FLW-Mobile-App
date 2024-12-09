@@ -44,9 +44,9 @@ class HRPMicroBirthPlanFragment : Fragment() {
                 formValueListener = FormInputAdapter.FormValueListener { formId, index ->
                     viewModel.updateListOnValueChanged(formId, index)
                     hardCodedListUpdate(formId)
-                }, isEnabled = !it
+                }/*, isEnabled = !it*/
             )
-            binding.btnSubmit.isEnabled = !it
+           // binding.btnSubmit.isEnabled = !it
             binding.form.rvInputForm.adapter = adapter
             lifecycleScope.launch {
                 viewModel.formList.collect { list ->
@@ -94,9 +94,9 @@ class HRPMicroBirthPlanFragment : Fragment() {
     }
 
     private fun submitTrackingForm() {
-        if (validateCurrentPage()) {
+       // if (validateCurrentPage()) {
             viewModel.saveForm()
-        }
+        //}
     }
 
     private fun validateCurrentPage(): Boolean {
