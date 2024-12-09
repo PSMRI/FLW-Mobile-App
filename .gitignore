@@ -7,3 +7,5 @@
 /app/release/*
 **/google-services.json
 /app/src/staging/google-services.json
+/app/src/uat/google-services.json
+/app/src/production/google-services.json
