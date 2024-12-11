@@ -1197,7 +1197,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
     }
 
-    private fun isKid(): Boolean {
+    fun isKid(): Boolean {
         return ((getAgeFromDob(getLongFromDate(agePopup.value))) < 15)
     }
 

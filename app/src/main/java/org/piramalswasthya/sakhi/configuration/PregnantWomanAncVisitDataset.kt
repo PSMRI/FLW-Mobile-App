@@ -419,7 +419,7 @@ class PregnantWomanAncVisitDataset(
         setUpTdX()
         ben?.let {
             ancDate.min =
-                regis.lmpDate + TimeUnit.DAYS.toMillis(7 * Konstants.maxAnc4Week.toLong() + 1)
+                regis.lmpDate + TimeUnit.DAYS.toMillis(7 * Konstants.minAnc1Week.toLong() + 1)
             ancVisit.entries = arrayOf("1", "2", "3", "4", "5", "6", "7", "8")
             lastAnc?.let { last ->
                 ancDate.min = last.ancDate + TimeUnit.DAYS.toMillis(4 * 7)
@@ -431,7 +431,8 @@ class PregnantWomanAncVisitDataset(
             }
 //            ancDate.max =
 //                minOf(getEddFromLmp(regis.lmpDate), System.currentTimeMillis())
-            ancDate.max = System.currentTimeMillis()
+
+            ancDate.max = minOf(regis.lmpDate + TimeUnit.DAYS.toMillis(7 * Konstants.maxAnc4Week.toLong() + 1),System.currentTimeMillis())
 //            ancDate.value = getDateFromLong(ancDate.max!!)
             maternalDateOfDeath.min =
                 maxOf(regis.lmpDate, lastAncVisitDate) + TimeUnit.DAYS.toMillis(1)
