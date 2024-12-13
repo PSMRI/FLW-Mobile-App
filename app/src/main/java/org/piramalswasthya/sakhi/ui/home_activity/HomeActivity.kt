@@ -53,9 +53,10 @@ import org.piramalswasthya.sakhi.work.WorkerUtils
 import java.util.*
 import javax.inject.Inject
 
-
 @AndroidEntryPoint
 class HomeActivity : AppCompatActivity() {
+
+    var isChatSupportEnabled : Boolean = true
 
 
     @EntryPoint
@@ -190,15 +191,26 @@ class HomeActivity : AppCompatActivity() {
         setUpNavHeader()
         setUpFirstTimePullWorker()
         setUpMenu()
-        binding.addFab.setOnClickListener { this }
 
-        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+        if (isChatSupportEnabled)
+        {
+            binding.addFab.visibility = View.VISIBLE
+            binding.addFab.setOnClickListener { this }
 
-        binding.addFab.setOnClickListener {
+            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
-            displaychatdialog()
+            binding.addFab.setOnClickListener {
+
+                displaychatdialog()
+
+            }
 
         }
+        else
+        {
+            binding.addFab.visibility = View.GONE
+        }
+
 
         if (isDeviceRootedOrEmulator()) {
             AlertDialog.Builder(this)
@@ -239,7 +251,7 @@ class HomeActivity : AppCompatActivity() {
 
 
 // Load URL
-        web.loadUrl("https://aibot.helloyubo.com/piramal_bot_rag")
+        web.loadUrl(BuildConfig.CHAT_URL)
 
 
 // Handle WebView events
@@ -445,13 +457,16 @@ class HomeActivity : AppCompatActivity() {
 
         }
 
-        binding.navView.menu.findItem(R.id.ChatFragment).setOnMenuItemClickListener {
-            displaychatdialog()
-            /*navController.popBackStack(R.id.homeFragment, false)
+        if (isChatSupportEnabled) {
+            binding.navView.menu.findItem(R.id.ChatFragment).setVisible(true)
+            binding.navView.menu.findItem(R.id.ChatFragment).setOnMenuItemClickListener {
+                displaychatdialog()
+                /*navController.popBackStack(R.id.homeFragment, false)
             startActivity(Intent(this, ChatSupport::class.java))*/
-            binding.drawerLayout.close()
-            true
+                binding.drawerLayout.close()
+                true
 
+            }
         }
     }
 
