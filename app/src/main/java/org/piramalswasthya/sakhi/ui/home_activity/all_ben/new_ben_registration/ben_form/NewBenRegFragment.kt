@@ -175,7 +175,7 @@ class NewBenRegFragment : Fragment() {
         alertBinding.btnPositive.setOnClickListener {
             if (alertBinding.checkBox.isChecked) {
                 viewModel.setConsentAgreed()
-                requestLocationPermission()
+                //requestLocationPermission()
                 alertDialog.dismiss()
             } else
                 Toast.makeText(
@@ -368,7 +368,7 @@ class NewBenRegFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        requestLocationPermission()
+    //    requestLocationPermission()
         activity?.let {
             (it as HomeActivity).updateActionBar(
                 R.drawable.ic__ben,

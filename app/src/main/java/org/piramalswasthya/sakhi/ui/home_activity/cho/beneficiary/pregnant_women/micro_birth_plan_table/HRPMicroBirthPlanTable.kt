@@ -252,7 +252,7 @@ class HRPMicroBirthPlanTable : Fragment() {
     }
 
     private fun shareImage(imageUri: Uri) {
-        if (isPackageExist(requireContext(), "com.whatsapp")) {
+        if (isPackageExist(requireContext(), "com.whatsapp") || isPackageExist(requireContext(), "com.whatsapp.w4b")) {
             val captionText = " ${getString(R.string.micro_birth_plan)} " +
                     "\n ASHA Name : ${viewModel.currentUser!!.name} " +
                     "\n Sub-center : ${viewModel.currentLocation!!.village.name}"
@@ -273,7 +273,7 @@ class HRPMicroBirthPlanTable : Fragment() {
         }
     }
 
-    fun isPackageExist(context: Context, target: String): Boolean {
+    private fun isPackageExist(context: Context, target: String): Boolean {
         return context.packageManager.getInstalledApplications(0)
             .find { info -> info.packageName == target } != null
     }

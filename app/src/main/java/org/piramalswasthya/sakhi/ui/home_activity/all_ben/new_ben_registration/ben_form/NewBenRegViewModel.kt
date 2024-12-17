@@ -168,9 +168,9 @@ class NewBenRegViewModel @Inject constructor(
                             beneficiaryId = benIdToSet,
                             householdId = hhId,
                             isAdult = false,
-                            isKid = false,
+                            isKid = dataset.isKid(),
                             isDraft = true,
-                            kidDetails = BenRegKid(),
+                            kidDetails = if(dataset.isKid()) BenRegKid() else null,
                             genDetails = BenRegGen(),
                             syncState = SyncState.UNSYNCED,
                             locationRecord = locationRecord

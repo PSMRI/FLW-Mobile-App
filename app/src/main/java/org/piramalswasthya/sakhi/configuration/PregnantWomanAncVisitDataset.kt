@@ -431,12 +431,17 @@ class PregnantWomanAncVisitDataset(
             }
 //            ancDate.max =
 //                minOf(getEddFromLmp(regis.lmpDate), System.currentTimeMillis())
-            ancDate.max = System.currentTimeMillis()
+
+            ancDate.max = minOf(regis.lmpDate + TimeUnit.DAYS.toMillis(7 * Konstants.maxAnc4Week.toLong() + 1),System.currentTimeMillis())
 //            ancDate.value = getDateFromLong(ancDate.max!!)
             maternalDateOfDeath.min =
                 maxOf(regis.lmpDate, lastAncVisitDate) + TimeUnit.DAYS.toMillis(1)
             maternalDateOfDeath.max =
                 minOf(getEddFromLmp(regis.lmpDate), System.currentTimeMillis())
+
+            isAborted.value = resources.getStringArray(R.array.yes_no)[1]
+            maternalDeath.value = resources.getStringArray(R.array.yes_no)[1]
+
         }
 
 //        ancDate.value = getDateFromLong(System.currentTimeMillis())

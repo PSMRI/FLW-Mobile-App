@@ -434,7 +434,8 @@ data class ANCPost(
     val createdDate: String? = null,
     val createdBy: String,
     val updatedDate: String? = null,
-    val updatedBy: String
+    val updatedBy: String,
+    var providerServiceMapID :String?=null
 ) {
     fun toAncCache(): PregnantWomanAncCache {
         return PregnantWomanAncCache(

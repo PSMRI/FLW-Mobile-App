@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.ui.home_activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -37,14 +38,14 @@ import org.piramalswasthya.sakhi.databinding.ActivityHomeBinding
 import org.piramalswasthya.sakhi.helpers.ImageUtils
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.MyContextWrapper
+import org.piramalswasthya.sakhi.helpers.isInternetAvailable
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.home_activity.home.HomeViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.sync.SyncBottomSheetFragment
 import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
 import org.piramalswasthya.sakhi.ui.service_location_activity.ServiceLocationActivity
-import org.piramalswasthya.sakhi.utils.RootedUtil
 import org.piramalswasthya.sakhi.work.WorkerUtils
-import java.util.*
+import java.util.Locale
 import javax.inject.Inject
 
 
@@ -119,8 +120,8 @@ class HomeActivity : AppCompatActivity() {
 
     private val logoutAlert by lazy {
         var str = ""
-        if (viewModel.unprocessedRecords > 0) {
-            str += viewModel.unprocessedRecords
+        if (viewModel.unprocessedRecordsCount.value!! > 0) {
+            str += viewModel.unprocessedRecordsCount.value!!
             str += resources.getString(R.string.not_processed)
         } else {
             str += resources.getString(R.string.all_records_synced)
@@ -203,6 +204,14 @@ class HomeActivity : AppCompatActivity() {
                 startActivity(Intent(this, LoginActivity::class.java))
                 viewModel.navigateToLoginPageComplete()
                 finish()
+            }
+        }
+        viewModel.unprocessedRecordsCount.observe(this) {
+            if (it>0) {
+                if (isInternetAvailable(this)){
+                    Log.d("====12345@@","triggerAmritPushWorker called")
+                    WorkerUtils.triggerAmritPushWorker(this)
+                }
             }
         }
         binding.versionName.text = "APK Version ${BuildConfig.VERSION_NAME}"

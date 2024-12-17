@@ -102,7 +102,7 @@ class NewHouseholdFragment : Fragment() {
         alertBinding.btnPositive.setOnClickListener {
             if (alertBinding.checkBox.isChecked) {
                 viewModel.setConsentAgreed()
-                requestLocationPermission()
+             //   requestLocationPermission()
                 alertDialog.dismiss()
             } else
                 Toast.makeText(
