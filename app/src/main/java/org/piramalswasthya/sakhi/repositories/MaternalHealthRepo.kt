@@ -163,6 +163,10 @@ class MaternalHealthRepo @Inject constructor(
                 ?: throw IllegalStateException("No user logged in!!")
 
         try {
+//      Commented this below line for short time after changes in server
+//         ancPostList.forEach{
+//                it.providerServiceMapID = user.serviceMapId.toString()
+//            }
 
             val response = amritApiService.postAncForm(ancPostList.toList())
             val statusCode = response.code()

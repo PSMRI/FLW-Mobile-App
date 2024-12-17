@@ -1,5 +1,10 @@
 package org.piramalswasthya.sakhi.helpers
 
+import android.app.Activity
+import android.content.Context.CONNECTIVITY_SERVICE
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import androidx.core.text.isDigitsOnly
 import org.piramalswasthya.sakhi.model.AncStatus
 import org.piramalswasthya.sakhi.model.BenBasicDomain
@@ -23,6 +28,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
+
 
 fun filterBenList(list: List<BenBasicDomain>, text: String): List<BenBasicDomain> {
     if (text == "")
@@ -493,6 +499,23 @@ fun getDateString(dateLong: Long?): String? {
         return dateFormat.format(Date(dateLong))
     } ?: run {
         return null
+    }
+}
+
+
+@Suppress("deprecation")
+fun isInternetAvailable(activity: Activity): Boolean {
+    val conMgr = activity.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        val network = conMgr.activeNetwork
+        val networkCapabilities = conMgr.getNetworkCapabilities(network)
+        return networkCapabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+            ?: false
+    } else {
+        // below API Level 23
+        return (conMgr.activeNetworkInfo != null && conMgr.activeNetworkInfo!!.isAvailable
+                && conMgr.activeNetworkInfo!!.isConnected)
     }
 }
 
