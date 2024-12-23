@@ -13,12 +13,14 @@ import android.view.View
 import android.view.WindowManager
 import android.webkit.PermissionRequest
 import android.webkit.WebChromeClient
+import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -54,6 +56,7 @@ import org.piramalswasthya.sakhi.ui.home_activity.sync.SyncBottomSheetFragment
 import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
 import org.piramalswasthya.sakhi.ui.service_location_activity.ServiceLocationActivity
 import org.piramalswasthya.sakhi.work.WorkerUtils
+import java.net.URI
 import java.util.*
 import javax.inject.Inject
 
@@ -212,11 +215,9 @@ class HomeActivity : AppCompatActivity() {
             1010
         )
 
-
         if (isChatSupportEnabled)
         {
             binding.addFab.visibility = View.VISIBLE
-            binding.addFab.setOnClickListener { this }
 
             window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
@@ -285,16 +286,33 @@ class HomeActivity : AppCompatActivity() {
 
 
 // Handle WebView events
-        web.webViewClient = object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(
-                view: WebView,
-                request: WebResourceRequest
-            ): Boolean {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    view.loadUrl(request.url.toString())
-                }
-                return true
-            }
+       web.webViewClient = object : WebViewClient() {
+           override fun shouldOverrideUrlLoading(
+               view: WebView,
+               request: WebResourceRequest
+           ): Boolean {
+               return if (request.url.host == URI(BuildConfig.CHAT_URL).host) {
+                   false  // Let WebView handle same-origin URLs
+               } else {
+                   startActivity(Intent(Intent.ACTION_VIEW, request.url))
+                   true
+               }
+           }
+
+           override fun onReceivedError(
+               view: WebView?,
+               request: WebResourceRequest?,
+               error: WebResourceError?
+           ) {
+               super.onReceivedError(view, request, error)
+               progress.visibility = View.GONE
+               // Show error view
+               Toast.makeText(
+                   this@HomeActivity,
+                   R.string.chat_error,
+                   Toast.LENGTH_SHORT
+               ).show()
+           }
 
             override fun onPageStarted(webview: WebView, url: String, favicon: Bitmap?) {
                 super.onPageStarted(webview, url, favicon)
@@ -324,7 +342,11 @@ class HomeActivity : AppCompatActivity() {
         // on below line we are setting
         // content view to our view.
         dialog.setContentView(view)
-       dialog.behavior.setPeekHeight(6000)
+     //  dialog.behavior.setPeekHeight(6000)
+
+       val displayMetrics = resources.displayMetrics
+       val screenHeight = displayMetrics.heightPixels
+       dialog.behavior.setPeekHeight((screenHeight * 0.85).toInt())
 
 
         // on below line we are calling
@@ -491,6 +513,8 @@ class HomeActivity : AppCompatActivity() {
             binding.navView.menu.findItem(R.id.ChatFragment).setVisible(true)
             binding.navView.menu.findItem(R.id.ChatFragment).setOnMenuItemClickListener {
                 displaychatdialog()
+                /*navController.popBackStack(R.id.homeFragment, false)
+            startActivity(Intent(this, ChatSupport::class.java))*/
                 binding.drawerLayout.close()
                 true
 
