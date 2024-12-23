@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.ui.home_activity
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -10,6 +11,8 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
+import android.webkit.PermissionRequest
+import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -21,6 +24,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.MenuProvider
 import androidx.navigation.fragment.NavHostFragment
@@ -28,7 +32,6 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.crashlytics.internal.common.CommonUtils.isEmulator
@@ -38,6 +41,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.ActivityHomeBinding
@@ -53,10 +57,12 @@ import org.piramalswasthya.sakhi.work.WorkerUtils
 import java.util.*
 import javax.inject.Inject
 
+
 @AndroidEntryPoint
 class HomeActivity : AppCompatActivity() {
 
     var isChatSupportEnabled : Boolean = true
+
 
 
     @EntryPoint
@@ -192,6 +198,21 @@ class HomeActivity : AppCompatActivity() {
         setUpFirstTimePullWorker()
         setUpMenu()
 
+        val permissions = arrayOf<String>(
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.INTERNET,
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.CAMERA
+        )
+
+        ActivityCompat.requestPermissions(
+            this,
+            permissions,
+            1010
+        )
+
+
         if (isChatSupportEnabled)
         {
             binding.addFab.visibility = View.VISIBLE
@@ -230,6 +251,8 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
+
+
    private fun displaychatdialog() {
 
         val dialog = BottomSheetDialog(this)
@@ -239,6 +262,13 @@ class HomeActivity : AppCompatActivity() {
 
         val web = view.findViewById<WebView>(R.id.webv)
         val progress = view.findViewById<ProgressBar>(R.id.progressBarv)
+
+
+       web.setWebChromeClient(object : WebChromeClient() {
+           override fun onPermissionRequest(request: PermissionRequest) {
+               request.grant(request.resources)
+           }
+       })
 
 
 
@@ -461,8 +491,6 @@ class HomeActivity : AppCompatActivity() {
             binding.navView.menu.findItem(R.id.ChatFragment).setVisible(true)
             binding.navView.menu.findItem(R.id.ChatFragment).setOnMenuItemClickListener {
                 displaychatdialog()
-                /*navController.popBackStack(R.id.homeFragment, false)
-            startActivity(Intent(this, ChatSupport::class.java))*/
                 binding.drawerLayout.close()
                 true
 
