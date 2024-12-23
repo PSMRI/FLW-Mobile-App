@@ -32,7 +32,7 @@ android {
         // ABHA v3 Staging Base URL
 //        buildConfigField "String", "BASE_ABHA_URL", "\"https://abhasbx.abdm.gov.in/abha/api/\""
        
-        buildConfigField "String", "CHAT_URL", "\"https://aibot.helloyubo.com/piramal_bot_rag\""
+       buildConfigField "String", "CHAT_URL", "\"https://piramalvoicebot.yugasa.org/\""
     }
 
     buildTypes {
