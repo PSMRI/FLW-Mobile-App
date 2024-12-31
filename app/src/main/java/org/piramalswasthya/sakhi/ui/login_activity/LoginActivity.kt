@@ -18,7 +18,6 @@ import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.MyContextWrapper
-import org.piramalswasthya.sakhi.utils.RootedUtil
 import java.util.*
 
 
@@ -47,13 +46,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // This will block user to cast app screen
-        if (BuildConfig.FLAVOR.equals("production", true)) {
-            window.setFlags(
-                WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE
-            )
-        }
+//        window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         createSyncServiceNotificationChannel()
@@ -90,9 +83,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun isDeviceRootedOrEmulator(): Boolean {
-//      return CommonUtils.isRooted() || CommonUtils.isEmulator() || RootedUtil().isDeviceRooted(applicationContext)
         return CommonUtils.isRooted() || CommonUtils.isEmulator()
-
     }
 
 

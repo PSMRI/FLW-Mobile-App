@@ -45,6 +45,9 @@ interface AbhaApiService {
     @POST("v3/enrollment/enrol/byAadhaar")
     suspend fun verifyAadhaarOtp3(@Body request: AbhaVerifyAadhaarOtpRequest, @Header("REQUEST-ID") requestId: String, @Header("TIMESTAMP") timestamp: String): Response<ResponseBody>
 
+    @GET("v3/profile/account/abha-card")
+    suspend fun printAbhaCard(@Header("REQUEST-ID") requestId: String, @Header("TIMESTAMP") timestamp: String): Response<ResponseBody>
+
     @POST("v1/registration/aadhaar/generateMobileOTP")
     suspend fun generateMobileOtp(@Body mobile: AbhaGenerateMobileOtpRequest): Response<ResponseBody>
 

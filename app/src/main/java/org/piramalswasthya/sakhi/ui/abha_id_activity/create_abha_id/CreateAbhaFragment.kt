@@ -120,7 +120,12 @@ class CreateAbhaFragment : Fragment() {
         val benId = intent.getLongExtra("benId", 0)
         val benRegId = intent.getLongExtra("benRegId", 0)
 
-        viewModel.createHID(benId, benRegId)
+//        viewModel.createHID(benId, benRegId)
+
+        viewModel.mapBeneficiaryToHealthId(benId, benRegId)
+
+        binding.textView2.text = args.name
+        binding.textView4.text = args.abhaNumber
 
         viewModel.benMapped.observe(viewLifecycleOwner) {
             it?.let {
@@ -158,67 +163,67 @@ class CreateAbhaFragment : Fragment() {
             onBackPressedCallback
         )
 
-        viewModel.state.observe(viewLifecycleOwner) { state ->
-            when (state) {
-                State.IDLE -> {}
-                State.LOADING -> {
-                    binding.pbCai.visibility = View.VISIBLE
-                    binding.clCreateAbhaId.visibility = View.INVISIBLE
-                    binding.clError.visibility = View.INVISIBLE
-                }
-
-                State.ERROR_NETWORK -> {
-                    binding.pbCai.visibility = View.INVISIBLE
-                    binding.clCreateAbhaId.visibility = View.INVISIBLE
-                    binding.clError.visibility = View.VISIBLE
-                }
-
-                State.ERROR_SERVER -> {
-                    binding.pbCai.visibility = View.INVISIBLE
-                    binding.clError.visibility = View.INVISIBLE
-                    binding.tvErrorText.visibility = View.VISIBLE
-                }
-
-                State.ABHA_GENERATE_SUCCESS -> {
-                    binding.pbCai.visibility = View.INVISIBLE
-                    binding.clCreateAbhaId.visibility = View.VISIBLE
-                    binding.clVerifyMobileOtp.visibility = View.INVISIBLE
-                    binding.clError.visibility = View.INVISIBLE
-                }
-
-                State.OTP_GENERATE_SUCCESS -> {
-                    binding.clVerifyMobileOtp.visibility = View.VISIBLE
-                    binding.clDownloadAbha.visibility = View.GONE
-                    binding.clError.visibility = View.INVISIBLE
-                    startResendTimer()
-                }
-
-                State.OTP_VERIFY_SUCCESS -> {
-                    binding.pbCai.visibility = View.INVISIBLE
-                    binding.clCreateAbhaId.visibility = View.VISIBLE
-                    binding.clDownloadAbha.visibility = View.GONE
-                    binding.clVerifyMobileOtp.visibility = View.INVISIBLE
-                    binding.clError.visibility = View.INVISIBLE
-                }
-
-                State.DOWNLOAD_SUCCESS -> {
-                    binding.pbCai.visibility = View.INVISIBLE
-                    binding.clCreateAbhaId.visibility = View.VISIBLE
-                    binding.clError.visibility = View.INVISIBLE
-                }
-
-                State.DOWNLOAD_ERROR -> {
-                    binding.pbCai.visibility = View.INVISIBLE
-                    binding.clCreateAbhaId.visibility = View.VISIBLE
-                    binding.clDownloadAbha.visibility = View.GONE
-                    binding.clVerifyMobileOtp.visibility = View.VISIBLE
-                    binding.tvErrorTextVerify.visibility = View.VISIBLE
-                    startResendTimer()
-                }
-
-                State.ERROR_INTERNAL -> {}
-            }
-        }
+//        viewModel.state.observe(viewLifecycleOwner) { state ->
+//            when (state) {
+//                State.IDLE -> {}
+//                State.LOADING -> {
+//                    binding.pbCai.visibility = View.VISIBLE
+//                    binding.clCreateAbhaId.visibility = View.INVISIBLE
+//                    binding.clError.visibility = View.INVISIBLE
+//                }
+//
+//                State.ERROR_NETWORK -> {
+//                    binding.pbCai.visibility = View.INVISIBLE
+//                    binding.clCreateAbhaId.visibility = View.INVISIBLE
+//                    binding.clError.visibility = View.VISIBLE
+//                }
+//
+//                State.ERROR_SERVER -> {
+//                    binding.pbCai.visibility = View.INVISIBLE
+//                    binding.clError.visibility = View.INVISIBLE
+//                    binding.tvErrorText.visibility = View.VISIBLE
+//                }
+//
+//                State.ABHA_GENERATE_SUCCESS -> {
+//                    binding.pbCai.visibility = View.INVISIBLE
+//                    binding.clCreateAbhaId.visibility = View.VISIBLE
+//                    binding.clVerifyMobileOtp.visibility = View.INVISIBLE
+//                    binding.clError.visibility = View.INVISIBLE
+//                }
+//
+//                State.OTP_GENERATE_SUCCESS -> {
+//                    binding.clVerifyMobileOtp.visibility = View.VISIBLE
+//                    binding.clDownloadAbha.visibility = View.GONE
+//                    binding.clError.visibility = View.INVISIBLE
+//                    startResendTimer()
+//                }
+//
+//                State.OTP_VERIFY_SUCCESS -> {
+//                    binding.pbCai.visibility = View.INVISIBLE
+//                    binding.clCreateAbhaId.visibility = View.VISIBLE
+//                    binding.clDownloadAbha.visibility = View.GONE
+//                    binding.clVerifyMobileOtp.visibility = View.INVISIBLE
+//                    binding.clError.visibility = View.INVISIBLE
+//                }
+//
+//                State.DOWNLOAD_SUCCESS -> {
+//                    binding.pbCai.visibility = View.INVISIBLE
+//                    binding.clCreateAbhaId.visibility = View.VISIBLE
+//                    binding.clError.visibility = View.INVISIBLE
+//                }
+//
+//                State.DOWNLOAD_ERROR -> {
+//                    binding.pbCai.visibility = View.INVISIBLE
+//                    binding.clCreateAbhaId.visibility = View.VISIBLE
+//                    binding.clDownloadAbha.visibility = View.GONE
+//                    binding.clVerifyMobileOtp.visibility = View.VISIBLE
+//                    binding.tvErrorTextVerify.visibility = View.VISIBLE
+//                    startResendTimer()
+//                }
+//
+//                State.ERROR_INTERNAL -> {}
+//            }
+//        }
 
         viewModel.errorMessage.observe(viewLifecycleOwner) {
             it?.let {
@@ -233,9 +238,15 @@ class CreateAbhaFragment : Fragment() {
                 showFileNotification(it)
             }
         }
+        viewModel.byteImage.observe(viewLifecycleOwner) {
+            it?.let {
+                showFileNotification(it)
+            }
+        }
         binding.btnDownloadAbhaYes.setOnClickListener {
-            viewModel.generateOtp()
-            binding.clDownloadAbha.visibility = View.GONE
+            viewModel.printAbhaCard()
+//            viewModel.generateOtp()
+//            binding.clDownloadAbha.visibility = View.GONE
         }
 
         binding.resendOtp.setOnClickListener {
@@ -266,7 +277,8 @@ class CreateAbhaFragment : Fragment() {
         val directory =
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
         val file = File(directory, fileName)
-        val data: ByteArray = Base64.decode(fileStr, 0)
+//        val data: ByteArray = Base64.decode(fileStr, 0)
+        val data: ByteArray = fileStr.toByteArray()
         FileOutputStream(file).use { stream -> stream.write(data) }
         MediaScannerConnection.scanFile(
             requireContext(),

@@ -37,7 +37,7 @@ class TokenInsertAbhaInterceptor : Interceptor {
                 .build()
         }
         val url = request.url.toString()
-        if (url.contains("getCard") || url.contains("getPngCard")) {
+        if (url.contains("getCard") || url.contains("getPngCard") || url.contains("abha-card")) {
             request = request
                 .newBuilder()
                 .addHeader(
