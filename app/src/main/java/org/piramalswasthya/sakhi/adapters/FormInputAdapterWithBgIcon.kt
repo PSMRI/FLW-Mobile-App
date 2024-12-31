@@ -22,6 +22,7 @@ import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.children
 import androidx.recyclerview.widget.DiffUtil
@@ -490,7 +491,12 @@ class FormInputAdapterWithBgIcon (
                 datePickerDialog.datePicker.minDate = item.min ?: 0
                 if (item.showYearFirstInDatePicker)
                     datePickerDialog.datePicker.touchables[0].performClick()
-                datePickerDialog.show()
+                if (item.max!!> item.min!!){
+                    datePickerDialog.show()
+                }else{
+                    Toast.makeText(binding.root.context,"Something went wrong",Toast.LENGTH_SHORT).show()
+                }
+
             }
             binding.executePendingBindings()
 
