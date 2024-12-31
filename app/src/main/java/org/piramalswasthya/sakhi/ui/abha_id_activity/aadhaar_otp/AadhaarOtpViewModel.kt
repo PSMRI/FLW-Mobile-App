@@ -14,6 +14,7 @@ import org.piramalswasthya.sakhi.network.AuthData
 import org.piramalswasthya.sakhi.network.Consent
 import org.piramalswasthya.sakhi.network.NetworkResult
 import org.piramalswasthya.sakhi.network.Otp
+import org.piramalswasthya.sakhi.network.interceptors.TokenInsertAbhaInterceptor
 import org.piramalswasthya.sakhi.repositories.AbhaIdRepo
 import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.AadhaarIdViewModel
 import timber.log.Timber
@@ -61,6 +62,10 @@ class AadhaarOtpViewModel @Inject constructor(
     val abhaNumber: String
         get() = _abhaNumber!!
 
+    private var _phrAddress: String? = null
+    val phrAddress: String
+        get() = _phrAddress!!
+
     private var _mobileNumber: String? = null
     val mobileNumber: String
         get() = _mobileNumber!!
@@ -99,9 +104,15 @@ class AadhaarOtpViewModel @Inject constructor(
             )
             when (result) {
                 is NetworkResult.Success -> {
+                    TokenInsertAbhaInterceptor.setXToken(result.data.tokens.token)
                     _txnId = result.data.txnId
                     _mobileNumber = result.data.ABHAProfile.mobile
-                    _name = result.data.ABHAProfile.firstName
+                    if (result.data.ABHAProfile.middleName.isNotEmpty()) {
+                        _name = result.data.ABHAProfile.firstName + " " + result.data.ABHAProfile.middleName + " " + result.data.ABHAProfile.lastName
+                    } else {
+                        _name = result.data.ABHAProfile.firstName + " " + result.data.ABHAProfile.lastName
+                    }
+                    _phrAddress = result.data.ABHAProfile.phrAddress[0]
                     _abhaNumber = result.data.ABHAProfile.ABHANumber
                     _state.value = State.OTP_VERIFY_SUCCESS
                 }

@@ -166,6 +166,7 @@ class AbhaIdActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         TokenInsertAbhaInterceptor.setToken("")
+        TokenInsertAbhaInterceptor.setXToken("")
         intent.removeExtra("benId")
         intent.removeExtra("benRegId")
         countDownTimer?.cancel()

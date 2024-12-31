@@ -81,6 +81,9 @@
             android:name="name"
             app:argType="string" />
         <argument
+            android:name="phrAddress"
+            app:argType="string" />
+        <argument
             android:name="abhaNumber"
             app:argType="string" />
     </fragment>
@@ -94,6 +97,9 @@
             app:argType="string" />
         <argument
             android:name="name"
+            app:argType="string" />
+        <argument
+            android:name="phrAddress"
             app:argType="string" />
         <argument
             android:name="abhaNumber"
