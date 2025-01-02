@@ -31,6 +31,8 @@ android {
         buildConfigField "String", "BASE_ABHA_URL", "\"https://healthidsbx.abdm.gov.in/api/\""
         // ABHA v3 Staging Base URL
 //        buildConfigField "String", "BASE_ABHA_URL", "\"https://abhasbx.abdm.gov.in/abha/api/\""
+
+       buildConfigField "String", "CHAT_URL", "\"https://piramalvoicebot.yugasa.org/\""
     }
 
     buildTypes {

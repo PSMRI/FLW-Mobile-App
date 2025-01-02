@@ -94,6 +94,7 @@
     <string name="tv_ncd_status_ph">NCD Status</string>
     <string name="tv_tb_status_ph">TB Status</string>
     <string name="iv_sync_state_tv">SYNC STATE</string>
+    <string name="chat_error">There is some error in loading your chat bot</string>
 
 
     <string name="version">2.0.0</string>

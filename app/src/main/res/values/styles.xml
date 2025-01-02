@@ -84,19 +84,17 @@
         <item name="android:textColor">?attr/colorOnPrimary</item>
     </style>
 
-    <style name="TextInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-        <item name="boxStrokeColor">@color/box_stroke_color</item>
-        <item name="boxStrokeWidth">1dp</item>
-        <item name="fontFamily">@font/roboto_regular</item>
-        <item name="android:textColorHint">@color/md_theme_light_shadow</item>
-        <item name="helperTextTextColor">@color/md_theme_light_error</item>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
     </style>
 
-    <style name="TextInputLayoutStyle.ExposedDropdownMenu" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
-        <item name="boxStrokeColor">@color/box_stroke_color</item>
-        <item name="boxStrokeWidth">1dp</item>
-        <item name="fontFamily">@font/roboto_regular</item>
-        <item name="android:textColorHint">@color/md_theme_light_shadow</item>
-        <item name="helperTextTextColor">@color/md_theme_light_error</item>
+   <style name="AppBottomSheetDialogTheme"
+        parent="ThemeOverlay.Material3.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/AppModalStyle</item>
+    </style>
+
+    <style name="AppModalStyle"
+        parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/rounded_dialog</item>
     </style>
 </resources>

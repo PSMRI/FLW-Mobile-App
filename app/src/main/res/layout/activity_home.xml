@@ -51,6 +51,7 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
+
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/nav_host_fragment_home"
             android:name="androidx.navigation.fragment.NavHostFragment"
@@ -59,6 +60,23 @@
             android:paddingTop="?attr/actionBarSize"
             app:defaultNavHost="true"
             app:navGraph="@navigation/nav_home" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:layout_margin="20dp"
+            android:elevation="5dp">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/add_fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/baseline_chat_24"
+                android:elevation="8dp"
+                android:outlineSpotShadowColor="@color/cardview_dark_background"/>
+            
+        </RelativeLayout>
 
     </FrameLayout>
 
@@ -69,6 +87,8 @@
         android:layout_gravity="start"
         app:headerLayout="@layout/nav_header_home"
         app:menu="@menu/activity_home_drawer">
+
+
 
         <TextView
             android:id="@+id/versionName"
