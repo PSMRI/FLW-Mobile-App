@@ -432,7 +432,7 @@ class PregnantWomanAncVisitDataset(
 //            ancDate.max =
 //                minOf(getEddFromLmp(regis.lmpDate), System.currentTimeMillis())
 
-            ancDate.max = minOf(regis.lmpDate + TimeUnit.DAYS.toMillis(7 * Konstants.maxAnc4Week.toLong() + 1),System.currentTimeMillis())
+            ancDate.max = minOf(getEddFromLmp(regis.lmpDate),System.currentTimeMillis())
 //            ancDate.value = getDateFromLong(ancDate.max!!)
             maternalDateOfDeath.min =
                 maxOf(regis.lmpDate, lastAncVisitDate) + TimeUnit.DAYS.toMillis(1)
