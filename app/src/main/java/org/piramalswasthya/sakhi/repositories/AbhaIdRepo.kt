@@ -251,14 +251,14 @@ class AbhaIdRepo @Inject constructor(
 
     }
 
-    suspend fun printAbhaCard(): NetworkResult<String> {
+    suspend fun printAbhaCard(): NetworkResult<ResponseBody> {
         return withContext(Dispatchers.IO) {
             try {
                 val response = abhaApiService.printAbhaCard(generateUUID(), getCurrentTimestamp())
-                val responseBody = response.body()?.bytes()
+                val responseBody = response.body()
                 if (response.isSuccessful) {
                     NetworkResult.Success(
-                        responseBody.toString())
+                        responseBody!!)
                 } else {
                     sendErrorResponse(response)
                 }

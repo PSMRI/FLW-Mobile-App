@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import okhttp3.ResponseBody
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.BenHealthIdDetails
 import org.piramalswasthya.sakhi.network.AbhaVerifyAadhaarOtpRequest
@@ -62,7 +63,7 @@ class CreateAbhaViewModel @Inject constructor(
 
     val cardBase64 = MutableLiveData<String>(null)
 
-    val byteImage = MutableLiveData<String>(null)
+    val byteImage = MutableLiveData<ResponseBody>(null)
 
     private val _errorMessage = MutableLiveData<String?>(null)
     val errorMessage: LiveData<String?>
