@@ -82,13 +82,13 @@ interface AbhaApiService {
     // Staging RES Encryption API (v3)
     @GET
     suspend fun getAuthCert(
-        @Url url: String = "https://healthidsbx.abdm.gov.in/api/v1/auth/cert"
+        @Url url: String = "https://abhasbx.abdm.gov.in/abha/api/v3/profile/public/certificate"
     ): Response<ResponseBody>
 
     // Production RES Encryption API (v3)
 //    @GET
 //    suspend fun getAuthCert(
-//        @Url url: String = "https://healthid.abdm.gov.in/api/v1/auth/cert"
+//        @Url url: String = "https://abha.abdm.gov.in/api/abha/v3/profile/public/certificate"
 //    ): Response<ResponseBody>
 
     @GET("v2/ha/lgd/states")

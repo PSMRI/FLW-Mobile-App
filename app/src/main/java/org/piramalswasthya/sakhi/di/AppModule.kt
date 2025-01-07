@@ -40,7 +40,7 @@ object AppModule {
 //    private const val baseAbhaUrl = "https://healthidsbx.abdm.gov.in/api/"
     private const val baseAbhaUrl = "https://abhasbx.abdm.gov.in/abha/api/"
     // Production ABHA URL
-//    private const val baseAbhaUrl = "https://healthid.abdm.gov.in/api/"
+//    private const val baseAbhaUrl = "https://abha.abdm.gov.in/api/abha/"
 
     private val baseClient =
         OkHttpClient.Builder()
