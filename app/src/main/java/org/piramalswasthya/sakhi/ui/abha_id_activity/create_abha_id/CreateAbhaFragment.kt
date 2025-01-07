@@ -14,7 +14,6 @@ import android.os.CountDownTimer
 import android.os.Environment
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,15 +29,15 @@ import androidx.work.Operation
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import okhttp3.ResponseBody
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.FragmentCreateAbhaBinding
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
-import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_otp.AadhaarOtpFragmentArgs
-import org.piramalswasthya.sakhi.ui.abha_id_activity.create_abha_id.CreateAbhaViewModel.State
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
+
 
 @AndroidEntryPoint
 class CreateAbhaFragment : Fragment() {
@@ -52,6 +51,8 @@ class CreateAbhaFragment : Fragment() {
     private val viewModel: CreateAbhaViewModel by viewModels()
 
     private val channelId = "download abha card"
+
+    private var benId: Long = 0
 
     val args: CreateAbhaFragmentArgs by lazy {
         CreateAbhaFragmentArgs.fromBundle(requireArguments())
@@ -122,7 +123,7 @@ class CreateAbhaFragment : Fragment() {
 
         val intent = requireActivity().intent
 
-        val benId = intent.getLongExtra("benId", 0)
+        benId = intent.getLongExtra("benId", 0)
         val benRegId = intent.getLongExtra("benRegId", 0)
 
 //        viewModel.createHID(benId, benRegId)
@@ -247,11 +248,6 @@ class CreateAbhaFragment : Fragment() {
             }
         }
 
-        viewModel.cardBase64.observe(viewLifecycleOwner) {
-            it?.let {
-                showFileNotification(it)
-            }
-        }
         viewModel.byteImage.observe(viewLifecycleOwner) {
             it?.let {
                 showFileNotification(it)
@@ -276,9 +272,9 @@ class CreateAbhaFragment : Fragment() {
         _binding = null
     }
 
-    private fun showFileNotification(fileStr: String) {
+    private fun showFileNotification(fileStr: ResponseBody) {
         val fileName =
-            "${viewModel.hidResponse.value?.name}_${System.currentTimeMillis()}.png"
+            "${benId}_${System.currentTimeMillis()}.png"
         val notificationManager =
             requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -291,9 +287,7 @@ class CreateAbhaFragment : Fragment() {
         val directory =
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
         val file = File(directory, fileName)
-//        val data: ByteArray = Base64.decode(fileStr, 0)
-        val data: ByteArray = fileStr.toByteArray()
-        FileOutputStream(file).use { stream -> stream.write(data) }
+        FileOutputStream(file).use { stream -> stream.write(fileStr.bytes()) }
         MediaScannerConnection.scanFile(
             requireContext(),
             arrayOf(file.toString()),
