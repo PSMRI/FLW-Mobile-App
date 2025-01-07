@@ -63,7 +63,7 @@ class AadhaarOtpFragment : Fragment() {
             viewModel.verifyOtpClicked(binding.tietAadhaarOtp.text.toString(), parentViewModel.mobileNumber)
         }
         binding.resendOtp.setOnClickListener {
-            viewModel.resendOtp()
+            viewModel.generateOtpClicked("")
             startResendTimer()
         }
 

@@ -42,6 +42,10 @@ class AadhaarOtpViewModel @Inject constructor(
     val state: LiveData<State>
         get() = _state
 
+    private val _state2 = MutableLiveData(AadhaarIdViewModel.State.IDLE)
+    val state2: LiveData<AadhaarIdViewModel.State>
+        get() = _state2
+
     private val _errorMessage = MutableLiveData<String?>(null)
     val errorMessage: LiveData<String?>
         get() = _errorMessage
@@ -167,6 +171,10 @@ class AadhaarOtpViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun generateOtpClicked(aadhaarNo: String) {
+        _state2.value = AadhaarIdViewModel.State.LOADING
     }
 
     fun resendOtp() {
