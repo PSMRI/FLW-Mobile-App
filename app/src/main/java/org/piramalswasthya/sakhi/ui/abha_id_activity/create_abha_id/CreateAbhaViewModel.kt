@@ -97,7 +97,7 @@ class CreateAbhaViewModel @Inject constructor(
 
     fun mapBeneficiaryToHealthId(benId: Long, benRegId: Long) {
         viewModelScope.launch {
-            if ((benId != 0L) or (benRegId != 0L)) {
+            if ((benId != 0L) || (benRegId != 0L)) {
                 mapBeneficiary(
                     benId,
                     if (benRegId != 0L) benRegId else null,

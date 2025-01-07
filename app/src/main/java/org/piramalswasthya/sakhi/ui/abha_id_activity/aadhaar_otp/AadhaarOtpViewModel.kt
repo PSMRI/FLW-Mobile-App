@@ -62,9 +62,9 @@ class AadhaarOtpViewModel @Inject constructor(
     val abhaNumber: String
         get() = _abhaNumber!!
 
-    private var _phrAddress: String? = null
+    private var _phrAddress: String = ""
     val phrAddress: String
-        get() = _phrAddress!!
+        get() = _phrAddress
 
     private var _mobileNumber: String? = null
     val mobileNumber: String
