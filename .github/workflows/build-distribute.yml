@@ -88,7 +88,7 @@ jobs:
           export KEYSTORE_PATH=${{ secrets.KEYSTORE_PATH }}
           export KEYSTORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}
           export KEY_ALIAS=${{ secrets.KEY_ALIAS }}
-          export KEY_PASSWORD=${{ secrets.KEY_PASSWORD }
+          export KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}
           if [ "${{ inputs.build_type }}" == "debug" ]; then
           bundle exec fastlane build_and_distribute_debug variant:${{ inputs.variant }}
           elif [ "${{ inputs.build_type }}" == "release" ]; then
