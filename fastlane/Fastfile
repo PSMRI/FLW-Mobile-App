@@ -1,0 +1,36 @@
+
+default_platform(:android)
+platform :android do
+
+  desc "Build and Distribute an APK"
+  lane :build_and_distribute_apk_to_firebase do |options|
+#       gradle(task: "clean")
+      gradle(task: "assemble#{options[:variant]}")
+      firebase_app_distribution(
+        app: ENV['FIREBASE_APP_ID'],
+        firebase_cli_token: ENV['FIREBASE_CLI_TOKEN'],
+        groups: "kevaltesters",
+        release_notes: "Staging-Debug version out!",
+        debug: true
+      )
+  end
+
+
+
+#   desc "Increment Build Version in Codebase"
+#   lane :increment_version_staging_debug do
+#     latest_release = firebase_app_distribution_get_latest_release(
+#       app: ""
+#     )
+#     increment_version_code({ version_code: latest_release[:buildVersion].to_i + 1 })
+#   end
+#
+#
+#
+#   desc "Deploy a new version to the Google Play"
+#   lane :deploy do
+#     gradle(task: "clean assembleRelease")
+#     upload_to_play_store
+#   end
+
+end
