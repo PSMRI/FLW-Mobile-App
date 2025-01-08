@@ -1,0 +1,86 @@
+name: Build and Distribute
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      variant:
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v2
+
+      - name: Setup Android NDK
+        uses: nttld/setup-ndk@v1.5.0
+        with:
+          ndk-version: r27c
+          link-to-sdk: true
+
+      - name: Install CMake
+        uses: jwlawson/actions-setup-cmake@v1
+        with:
+          cmake-version: '3.31.1'
+
+      - name: Set up ruby env
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7.2
+          bundler-cache: true
+
+      - name: Verify Ruby installation
+        run: ruby -v
+
+      - name: Decode google-services.json from secret
+        run: |
+          echo ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }} | base64 --decode > ./app/google-services.json
+
+      - name: Decode GoogleServiceAccount.json from secret
+        run: |
+          echo ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }} | base64 --decode > ./fastlane/GoogleServiceAccount.json
+
+      - name: Set Environment Variables
+        run: |
+          echo "ENCRYPTED_PASS_KEY=${{ secrets.ENCRYPTED_PASS_KEY }}" >> $GITHUB_ENV
+          echo "ABHA_CLIENT_ID=${{ secrets.ABHA_CLIENT_ID }}" >> $GITHUB_ENV
+          echo "ABHA_CLIENT_SECRET=${{ secrets.ABHA_CLIENT_SECRET }}" >> $GITHUB_ENV
+          echo "BASE_TMC_URL=${{ secrets.BASE_TMC_URL }}" >> $GITHUB_ENV
+          echo "BASE_ABHA_URL=${{ secrets.BASE_ABHA_URL }}" >> $GITHUB_ENV
+          echo "ABHA_TOKEN_URL=${{ secrets.ABHA_TOKEN_URL }}" >> $GITHUB_ENV
+          echo "ABHA_AUTH_URL=${{ secrets.ABHA_AUTH_URL }}" >> $GITHUB_ENV
+          echo "FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }}" >> $GITHUB_ENV
+          echo "FIREBASE_CLI_TOKEN=${{ secrets.FIREBASE_CLI_TOKEN }}" >> $GITHUB_ENV
+
+      - name: Create local.properties
+        run: echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
+
+      - name: Build and Distribute app to Firebase
+        run: bundle exec fastlane android build_and_distribute_apk_to_firebase variant:${{ inputs.variant }}
+
+      - name: List APK files
+        run: |
+          echo "Listing APK files:"
+          ls -al app/build/outputs/apk/**/debug/
+
+      - name: Upload APKs
+        uses: actions/upload-artifact@v3
+        with:
+          name: FLW-Mobile-App - APK(s) ${{ inputs.variant }} generated
+          path: app/build/outputs/apk/**/debug/*.apk
