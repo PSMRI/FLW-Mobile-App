@@ -23,5 +23,7 @@ object KeyUtils {
 
     external fun abhaAuthUrl(): String
 
+    external fun chatUrl(): String
+
 
 }
