@@ -1,4 +1,4 @@
-name: Build and Distribute
+name: Build and Distribute to Firebase
 
 on:
   workflow_call:
@@ -7,6 +7,9 @@ on:
         required: true
         type: string
       variant:
+        required: true
+        type: string
+      build_type:
         required: true
         type: string
 
@@ -20,7 +23,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up JDK
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
@@ -48,39 +51,53 @@ jobs:
       - name: Verify Ruby installation
         run: ruby -v
 
-      - name: Decode google-services.json from secret
+      - name: Decode google-services.json for NIRAMAY_PRODUCTION
+        if: ${{ inputs.environment }} == 'NIRAMAY_PRODUCTION'
+        run: |
+          echo ${{ secrets.GOOGLE_SERVICES_JSON_NIRAMAY_PRODUCTION }} | base64 --decode > ./app/google-services.json 
+
+      - name: Decode google-services.json for XUSHRUKHA_PRODUCTION
+        if: ${{ inputs.environment }} == 'XUSHRUKHA_PRODUCTION'
+        run: |
+          echo ${{ secrets.GOOGLE_SERVICES_JSON_XUSHRUKHA_PRODUCTION }} | base64 --decode > ./app/google-services.json 
+
+      - name: Decode generic google-services.json for other environments
+        if: ${{ inputs.environment }} != 'NIRAMAY_PRODUCTION' && ${{ inputs.environment }} != 'XUSHRUKHA_PRODUCTION'
         run: |
           echo ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }} | base64 --decode > ./app/google-services.json
 
-      - name: Decode GoogleServiceAccount.json from secret
+      - name: Decode Google Play JSON key
         run: |
-          echo ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }} | base64 --decode > ./fastlane/GoogleServiceAccount.json
-
-      - name: Set Environment Variables
-        run: |
-          echo "ENCRYPTED_PASS_KEY=${{ secrets.ENCRYPTED_PASS_KEY }}" >> $GITHUB_ENV
-          echo "ABHA_CLIENT_ID=${{ secrets.ABHA_CLIENT_ID }}" >> $GITHUB_ENV
-          echo "ABHA_CLIENT_SECRET=${{ secrets.ABHA_CLIENT_SECRET }}" >> $GITHUB_ENV
-          echo "BASE_TMC_URL=${{ secrets.BASE_TMC_URL }}" >> $GITHUB_ENV
-          echo "BASE_ABHA_URL=${{ secrets.BASE_ABHA_URL }}" >> $GITHUB_ENV
-          echo "ABHA_TOKEN_URL=${{ secrets.ABHA_TOKEN_URL }}" >> $GITHUB_ENV
-          echo "ABHA_AUTH_URL=${{ secrets.ABHA_AUTH_URL }}" >> $GITHUB_ENV
-          echo "FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }}" >> $GITHUB_ENV
-          echo "FIREBASE_CLI_TOKEN=${{ secrets.FIREBASE_CLI_TOKEN }}" >> $GITHUB_ENV
+          echo "${{ secrets.GOOGLE_PLAY_JSON_KEY }}" | base64 --decode > ./fastlane/google_play_service_account.json
 
       - name: Create local.properties
         run: echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
 
       - name: Build and Distribute app to Firebase
-        run: bundle exec fastlane android build_and_distribute_apk_to_firebase variant:${{ inputs.variant }}
-
-      - name: List APK files
-        run: |
-          echo "Listing APK files:"
-          ls -al app/build/outputs/apk/**/debug/
+        run:
+          export ENCRYPTED_PASS_KEY=${{ secrets.ENCRYPTED_PASS_KEY }}
+          export ABHA_CLIENT_ID=${{ secrets.ABHA_CLIENT_ID }}
+          export ABHA_CLIENT_SECRET=${{ secrets.ABHA_CLIENT_SECRET }}
+          export BASE_TMC_URL=${{ secrets.BASE_TMC_URL }}
+          export BASE_ABHA_URL=${{ secrets.BASE_ABHA_URL }}
+          export ABHA_TOKEN_URL=${{ secrets.ABHA_TOKEN_URL }}
+          export ABHA_AUTH_URL=${{ secrets.ABHA_AUTH_URL }}
+          export FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }}
+          export FIREBASE_CLI_TOKEN=${{ secrets.FIREBASE_CLI_TOKEN }}
+          export GOOGLE_PLAY_JSON_KEY=${{ secrets.GOOGLE_PLAY_JSON_KEY }}
+          export KEYSTORE_PATH=${{ secrets.KEYSTORE_PATH }}
+          export KEYSTORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}
+          export KEY_ALIAS=${{ secrets.KEY_ALIAS }}
+          export KEY_PASSWORD=${{ secrets.KEY_PASSWORD }
+          if [ "${{ inputs.build_type }}" == "debug" ]; then
+          bundle exec fastlane build_and_distribute_debug variant:${{ inputs.variant }}
+          elif [ "${{ inputs.build_type }}" == "release" ]; then
+          bundle exec fastlane build_and_distribute_release variant:${{ inputs.variant }}
+          fi
 
       - name: Upload APKs
         uses: actions/upload-artifact@v3
         with:
           name: FLW-Mobile-App - APK(s) ${{ inputs.variant }} generated
           path: app/build/outputs/apk/**/debug/*.apk
+

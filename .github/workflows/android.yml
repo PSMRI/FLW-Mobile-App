@@ -19,14 +19,40 @@ jobs:
     uses: ./.github/workflows/build-distribute.yml
     with:
       environment: SAKSHAM_STAG
-      variant: SakshamStagDebug
+      variant: SakshamStag
+      build_type: debug
     secrets: inherit
 
   saksham_uat_job:
     uses: ./.github/workflows/build-distribute.yml
     with:
       environment: SAKSHAM_UAT
-      variant: SakshamUatDebug
+      variant: SakshamUat
+      build_type: debug
     secrets: inherit
+
+#  saksham_production_job:
+#    uses: ./.github/workflows/build-distribute.yml
+#    with:
+#      environment: SAKSHAM_PRODUCTION
+#      variant: Saksham
+#      build_type: release
+#    secrets: inherit
+#
+#  xushrukha_production_job:
+#    uses: ./.github/workflows/build-distribute.yml
+#    with:
+#      environment: XUSHRUKHA_PRODUCTION
+#      variant: Xushrukha
+#      build_type: release
+#    secrets: inherit
+#
+#  niramay_production_job:
+#    uses: ./.github/workflows/build-distribute.yml
+#    with:
+#      environment: NIRAMAY_PRODUCTION
+#      variant: Niramay
+#      build_type: release
+#    secrets: inherit
 
 
