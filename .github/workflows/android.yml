@@ -196,7 +196,7 @@ jobs:
 
       - name: List APK files
         run: |
-          echo "Listing sakshamStag APK files:"
+          echo "Listing sakshamUat APK files:"
           ls -al app/build/outputs/apk/sakshamUat/debug/app-sakshamUat-armeabi-v7a-debug.apk
           ls -al app/build/outputs/apk/sakshamUat/debug/app-sakshamUat-arm64-v8a-debug.apk
           ls -al app/build/outputs/apk/sakshamUat/debug/app-sakshamUat-x86-debug.apk
