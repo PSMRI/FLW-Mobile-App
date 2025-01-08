@@ -6,8 +6,14 @@ object KeyUtils {
     private const val NATIVE_JNI_LIB_NAME = "sakhi"
 
     init {
-        System.loadLibrary(NATIVE_JNI_LIB_NAME)
+        try {
+            System.loadLibrary(NATIVE_JNI_LIB_NAME)
+        } catch (e: UnsatisfiedLinkError) {
+            throw RuntimeException("Failed to load native library: $NATIVE_JNI_LIB_NAME")
+        }
+
     }
+
 
     external fun encryptedPassKey(): String
 
