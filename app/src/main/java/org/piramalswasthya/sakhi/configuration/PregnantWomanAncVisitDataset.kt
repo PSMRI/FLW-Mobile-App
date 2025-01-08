@@ -406,13 +406,18 @@ class PregnantWomanAncVisitDataset(
 
         )
         abortionDate.min = regis.lmpDate + TimeUnit.DAYS.toMillis(5 * 7 + 1)
-        dateOfTTOrTd1.min = abortionDate.min
-        dateOfTTOrTdBooster.min = abortionDate.min
+//        dateOfTTOrTd1.min = abortionDate.min
+        dateOfTTOrTd1.min = regis.lmpDate + TimeUnit.DAYS.toMillis(5 * 7)
+//        dateOfTTOrTdBooster.min = abortionDate.min
+        dateOfTTOrTdBooster.min = regis.lmpDate + TimeUnit.DAYS.toMillis(5 * 7)
         abortionDate.max =
             minOf(System.currentTimeMillis(), regis.lmpDate + TimeUnit.DAYS.toMillis(21 * 7))
-        dateOfTTOrTd1.max = abortionDate.max
-        dateOfTTOrTd2.max = abortionDate.max
-        dateOfTTOrTdBooster.max = abortionDate.max
+//        dateOfTTOrTd1.max = abortionDate.max
+        dateOfTTOrTd1.max = minOf(System.currentTimeMillis(), regis.lmpDate + TimeUnit.DAYS.toMillis(36 * 7))
+//        dateOfTTOrTd2.max = abortionDate.max
+        dateOfTTOrTd2.max = minOf(System.currentTimeMillis(), regis.lmpDate + TimeUnit.DAYS.toMillis(36 * 7))
+//        dateOfTTOrTdBooster.max = abortionDate.max
+        dateOfTTOrTdBooster.max = minOf(System.currentTimeMillis(), regis.lmpDate + TimeUnit.DAYS.toMillis(36 * 7))
 
         if (lastAnc == null)
             list.remove(dateOfTTOrTd2)
@@ -567,8 +572,9 @@ class PregnantWomanAncVisitDataset(
             dateOfTTOrTdBooster.inputType = InputType.TEXT_VIEW
             dateOfTTOrTd1.inputType = InputType.TEXT_VIEW
             if (regis.tt2 == null) {
-                dateOfTTOrTd2.min = regis.tt1!! + TimeUnit.DAYS.toMillis(28)
-                dateOfTTOrTd2.max = min(System.currentTimeMillis(), getEddFromLmp(regis.lmpDate))
+                dateOfTTOrTd2.min = regis.tt1!! + TimeUnit.DAYS.toMillis(4 * 7)
+//                dateOfTTOrTd2.max = min(System.currentTimeMillis(), getEddFromLmp(regis.lmpDate))
+                dateOfTTOrTd2.max = min(System.currentTimeMillis(), regis.lmpDate + TimeUnit.DAYS.toMillis(36 * 7))
             } else {
                 dateOfTTOrTd2.value = getDateFromLong(regis.tt2!!)
                 dateOfTTOrTd2.inputType = InputType.TEXT_VIEW
