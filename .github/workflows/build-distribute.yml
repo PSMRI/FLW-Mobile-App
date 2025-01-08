@@ -73,8 +73,9 @@ jobs:
       - name: Create local.properties
         run: echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
 
-      - name: Build and Distribute app to Firebase
-        run:
+
+      - name: Set Environment Variables
+        run: |
           export ENCRYPTED_PASS_KEY=${{ secrets.ENCRYPTED_PASS_KEY }}
           export ABHA_CLIENT_ID=${{ secrets.ABHA_CLIENT_ID }}
           export ABHA_CLIENT_SECRET=${{ secrets.ABHA_CLIENT_SECRET }}
@@ -89,11 +90,18 @@ jobs:
           export KEYSTORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}
           export KEY_ALIAS=${{ secrets.KEY_ALIAS }}
           export KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}
+
+
+
+      - name: Build and Distribute app to Firebase
+        run:
+
           if [ "${{ inputs.build_type }}" == "debug" ]; then
           bundle exec fastlane build_and_distribute_debug variant:${{ inputs.variant }}
           elif [ "${{ inputs.build_type }}" == "release" ]; then
           bundle exec fastlane build_and_distribute_release variant:${{ inputs.variant }}
           fi
+
 
       - name: Upload APKs
         uses: actions/upload-artifact@v3

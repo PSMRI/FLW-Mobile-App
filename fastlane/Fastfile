@@ -30,7 +30,7 @@ platform :android do
 
     # Sign the APK using the keystore
     gradle(
-      task: "signingReport"
+      task: "signingReport",
       keystore_path: ENV['KEYSTORE_PATH'],
       keystore_password: ENV['KEYSTORE_PASSWORD'],
       key_alias: ENV['KEY_ALIAS'],
