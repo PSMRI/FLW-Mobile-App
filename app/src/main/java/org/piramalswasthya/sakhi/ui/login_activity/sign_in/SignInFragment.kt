@@ -3,7 +3,9 @@ package org.piramalswasthya.sakhi.ui.login_activity.sign_in
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +17,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentSignInBinding
@@ -25,7 +28,6 @@ import org.piramalswasthya.sakhi.helpers.Languages.HINDI
 import org.piramalswasthya.sakhi.helpers.NetworkResponse
 import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
 import org.piramalswasthya.sakhi.work.WorkerUtils
-import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -49,16 +51,26 @@ class SignInFragment : Fragment() {
     }
 
     private val userChangeAlert by lazy {
-        var str = "previously logged in with " + viewModel.getLoggedInUser()?.userName + " do you" +
-                " want to override? "
+//        var str = "previously logged in with " + viewModel.getLoggedInUser()?.userName + " do you" +
+//                " want to override? "
+
+        var username = "<b>${viewModel.getLoggedInUser()?.userName}</b>"
+        var name = "<b>${viewModel.getLoggedInUser()?.name}</b>"
+        // var str = "You are previously logged in with Username: $username as $name, Do you want to Log in with another User?"
+
+        var str =
+            getString(R.string.login_diff_user).replace("@username", username).replace("asha", name)
+
         viewModel.unprocessedRecordsCount.value?.let {
             if (it > 0) {
-                str += "there are" + viewModel.unprocessedRecordsCount.value + " unprocessed records, wait till records are synced"
+                var count = viewModel.unprocessedRecordsCount.value
+                str += getString(R.string.unsync_record_count).replace(oldValue = "@count", newValue = count.toString())
+                //"there are" + viewModel.unprocessedRecordsCount.value + " unprocessed records, wait till records are synced"
             }
         }
 
         MaterialAlertDialogBuilder(requireContext()).setTitle(resources.getString(R.string.logout))
-            .setMessage(str)
+            .setMessage(Html.fromHtml(str))
             .setPositiveButton(resources.getString(R.string.yes)) { dialog, _ ->
                 viewModel.unprocessedRecordsCount.value?.let {
                     if (it > 0) {
@@ -118,6 +130,23 @@ class SignInFragment : Fragment() {
             activity?.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
 
 
+        }
+
+        binding.tvDeleteAccount?.setOnClickListener {
+            var url = ""
+
+            if (BuildConfig.FLAVOR.equals("production", true)) {
+                url = "https://forms.office.com/r/HkE3c0tGr6"
+            } else {
+                url =
+                    "https://forms.office.com/Pages/ResponsePage.aspx?id=jQ49md0HKEGgbxRJvtPnRISY9UjAA01KtsFKYKhp1nNURUpKQzNJUkE1OUc0SllXQ0IzRFVJNlM2SC4u"
+            }
+
+            if (url.isNotEmpty()){
+                val i = Intent(Intent.ACTION_VIEW)
+                i.setData(Uri.parse(url))
+                startActivity(i)
+            }
         }
 
 

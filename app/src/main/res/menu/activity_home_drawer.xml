@@ -71,6 +71,11 @@
         android:id="@+id/menu_group_bottom"
         android:checkableBehavior="single">
         <item
+            android:id="@+id/menu_delete_account"
+            android:checkable="false"
+            android:icon="@drawable/ic_delete_account"
+            android:title="@string/delete_my_account" />
+        <item
             android:id="@+id/menu_logout"
             android:checkable="false"
             android:icon="@drawable/ic_logout"
