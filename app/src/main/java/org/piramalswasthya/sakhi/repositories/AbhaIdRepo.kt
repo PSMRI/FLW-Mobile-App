@@ -39,6 +39,10 @@ import java.io.IOException
 import java.net.SocketTimeoutException
 import java.security.KeyFactory
 import java.security.spec.X509EncodedKeySpec
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.UUID
 import javax.crypto.Cipher
 import javax.inject.Inject
 
@@ -129,8 +133,14 @@ class AbhaIdRepo @Inject constructor(
     suspend fun generateOtpForAadhaarV2(req: AbhaGenerateAadhaarOtpRequest): NetworkResult<AbhaGenerateAadhaarOtpResponseV2> {
         return withContext(Dispatchers.IO) {
             try {
-                req.aadhaar = encryptData(req.aadhaar)
-                val response = abhaApiService.generateAadhaarOtpV2(req)
+                // ABHA v1/v2 encryption technique
+//                req.aadhaar = encryptData(req.aadhaar)
+                // ABHA v3 encryption technique
+                req.loginId = encryptData(req.loginId)
+                // ABHA v1/v2 API
+//                val response = abhaApiService.generateAadhaarOtpV2(req)
+                // ABHA v3 API
+                val response = abhaApiService.generateAadhaarOtpV3(req, generateUUID(), getCurrentTimestamp())
                 if (response.isSuccessful) {
                     val responseBody = response.body()?.string()
                     val result =
@@ -152,6 +162,14 @@ class AbhaIdRepo @Inject constructor(
         }
     }
 
+    private fun generateUUID(): String {
+        return UUID.randomUUID().toString()
+    }
+
+    private fun getCurrentTimestamp(): String {
+        return SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ENGLISH).format(Date()) as String
+    }
+
     private fun encryptData(txt: String): String {
         var encryptedTextBase64 = ""
         val publicKeyString = prefDao.getPublicKeyForAbha()!!
@@ -162,7 +180,10 @@ class AbhaIdRepo @Inject constructor(
             val publicKeySpec = X509EncodedKeySpec(publicKeyBytes)
             val publicKey = keyFactory.generatePublic(publicKeySpec)
 
-            val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
+            // Cipher used in ABHA v1/v2 APIs
+//            val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
+            // Cipher used in ABHA v3 APIs
+            val cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-1AndMGF1Padding")
             cipher.init(Cipher.ENCRYPT_MODE, publicKey)
             val encryptedText = cipher.doFinal(txt.toByteArray())
             encryptedTextBase64 =

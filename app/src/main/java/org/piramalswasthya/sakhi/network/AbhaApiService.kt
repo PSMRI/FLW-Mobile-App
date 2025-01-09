@@ -14,6 +14,7 @@ interface AbhaApiService {
         @Body request: AbhaTokenRequest = AbhaTokenRequest()
     ): Response<ResponseBody>
 
+    // Generate OTP (v1)
     @POST("v1/registration/aadhaar/generateOtp")
     suspend fun generateAadhaarOtp(@Body aadhaar: AbhaGenerateAadhaarOtpRequest): Response<ResponseBody>
 

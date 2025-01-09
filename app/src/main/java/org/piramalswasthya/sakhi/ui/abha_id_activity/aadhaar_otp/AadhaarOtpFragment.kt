@@ -15,7 +15,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.FragmentAadhaarOtpBinding
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
+import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.AadhaarIdViewModel
 import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_otp.AadhaarOtpViewModel.State
+import org.piramalswasthya.sakhi.ui.abha_id_activity.generate_mobile_otp.GenerateMobileOtpFragmentDirections
 
 @AndroidEntryPoint
 class AadhaarOtpFragment : Fragment() {
@@ -25,6 +27,8 @@ class AadhaarOtpFragment : Fragment() {
         get() = _binding!!
 
     private val viewModel: AadhaarOtpViewModel by viewModels()
+
+    private val parentViewModel: AadhaarIdViewModel by viewModels({ requireActivity() })
 
     val args: AadhaarOtpFragmentArgs by lazy {
         AadhaarOtpFragmentArgs.fromBundle(requireArguments())
@@ -56,7 +60,7 @@ class AadhaarOtpFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         startResendTimer()
         binding.btnVerifyOTP.setOnClickListener {
-            viewModel.verifyOtpClicked(binding.tietAadhaarOtp.text.toString())
+            viewModel.verifyOtpClicked(binding.tietAadhaarOtp.text.toString(), parentViewModel.mobileNumber)
         }
         binding.resendOtp.setOnClickListener {
             viewModel.generateOtpClicked("")
@@ -94,11 +98,11 @@ class AadhaarOtpFragment : Fragment() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state!!) {
                 State.IDLE -> {
-                    binding.tvOtpMsg.text = String.format(
-                        "%s%s",
-                        resources.getString(R.string.otp_sent_to),
-                        args.mobileNumber
-                    )
+//                    binding.tvOtpMsg.text = String.format(
+//                        "%s%s",
+//                        resources.getString(R.string.otp_sent_to),
+//                        args.mobileNumber
+//                    )
                     binding.tvOtpMsg.visibility = View.VISIBLE
                 }
 
@@ -164,6 +168,14 @@ class AadhaarOtpFragment : Fragment() {
                 viewModel.resetErrorMessage()
             }
         }
+
+        // Mobile Number observation for ABHA v1
+//        viewModel.mobileNumber.observe(viewLifecycleOwner) {
+//            it?.let {
+//                parentViewModel.setMobileNumber(it)
+//            }
+//        }
+
     }
 
     private fun startResendTimer() {

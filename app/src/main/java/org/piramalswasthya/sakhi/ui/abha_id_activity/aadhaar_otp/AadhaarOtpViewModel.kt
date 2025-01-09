@@ -7,12 +7,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.network.AbhaGenerateAadhaarOtpRequest
 import org.piramalswasthya.sakhi.network.AbhaResendAadhaarOtpRequest
 import org.piramalswasthya.sakhi.network.AbhaVerifyAadhaarOtpRequest
+import org.piramalswasthya.sakhi.network.AuthData
+import org.piramalswasthya.sakhi.network.Consent
 import org.piramalswasthya.sakhi.network.NetworkResult
 import org.piramalswasthya.sakhi.network.Otp
 import org.piramalswasthya.sakhi.network.interceptors.TokenInsertAbhaInterceptor
 import org.piramalswasthya.sakhi.repositories.AbhaIdRepo
+import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.AadhaarIdViewModel
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,11 +31,13 @@ class AadhaarOtpViewModel @Inject constructor(
         LOADING,
         ERROR_SERVER,
         ERROR_NETWORK,
+        SUCCESS,
         OTP_VERIFY_SUCCESS,
         OTP_GENERATED_SUCCESS
     }
 
     private var txnIdFromArgs = AadhaarOtpFragmentArgs.fromSavedStateHandle(savedStateHandle).txnId
+    private var mobileFromArgs = AadhaarOtpFragmentArgs.fromSavedStateHandle(savedStateHandle).mobileNumber
     private val _state = MutableLiveData(State.IDLE)
     val state: LiveData<State>
         get() = _state
@@ -69,7 +76,7 @@ class AadhaarOtpViewModel @Inject constructor(
 
     fun verifyOtpClicked(otp: String, mobile: String) {
         _state.value = State.LOADING
-        verifyAadhaarOtp(otp)
+        verifyAadhaarOtp(otp, mobile)
     }
 
     fun resetState() {
@@ -80,12 +87,23 @@ class AadhaarOtpViewModel @Inject constructor(
         _errorMessage.value = null
     }
 
-    private fun verifyAadhaarOtp(otp: String) {
+    private fun verifyAadhaarOtp(otp: String, mobile: String) {
         viewModelScope.launch {
             val result = abhaIdRepo.verifyOtpForAadhaar(
                 AbhaVerifyAadhaarOtpRequest(
-                    otp,
-                    txnIdFromArgs
+                    AuthData(
+                        listOf<String>("otp"),
+                        Otp(
+                            "",
+                            txnIdFromArgs,
+                            otp,
+                            mobile
+                        )
+                    ),
+                    Consent(
+                        "abha-enrollment",
+                        "1.4"
+                    )
                 )
             )
             when (result) {
@@ -130,12 +148,12 @@ class AadhaarOtpViewModel @Inject constructor(
 //                abhaIdRepo.generateOtpForAadhaarV2(AbhaGenerateAadhaarOtpRequest(aadhaarNo))) {
                 abhaIdRepo.generateOtpForAadhaarV2(
                     AbhaGenerateAadhaarOtpRequest(
-                    txnId,
-                    listOf<String>("abha-enrol", "mobile-verify"),
-                    "mobile",
-                    mobileFromArgs,
-                    "abdm"
-                )
+                        txnId,
+                        listOf<String>("abha-enrol", "mobile-verify"),
+                        "mobile",
+                        mobileFromArgs,
+                        "abdm"
+                    )
                 )) {
                 is NetworkResult.Success -> {
                     _txnId = result.data.txnId

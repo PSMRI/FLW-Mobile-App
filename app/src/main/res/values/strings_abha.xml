@@ -7,10 +7,10 @@
     <string name="verify_otp">Verify OTP</string>
     <string name="resend_otp">Resend OTP</string>
     <string name="exit">Exit</string>
-<!--    <string name="no_records_found_hh">No Household records found. Please start registering households by clicking on the button below.</string>-->
+    <!--    <string name="no_records_found_hh">No Household records found. Please start registering households by clicking on the button below.</string>-->
     <string name="timer">timer</string>
-<!--    <string name="something_went_wrong_nunable_to_connect_to_server_ntry_again_later">Something went wrong !\nUnable to connect to server !\nTry again later!</string>-->
-<!--    <string name="try_again">Try Again!</string>-->
+    <!--    <string name="something_went_wrong_nunable_to_connect_to_server_ntry_again_later">Something went wrong !\nUnable to connect to server !\nTry again later!</string>-->
+    <!--    <string name="try_again">Try Again!</string>-->
     <string name="aadhaar">Aadhaar</string>
     <string name="asha">ASHA</string>
     <string name="gov">GOV</string>
@@ -51,7 +51,8 @@
     <string name="individual_s_consent_for_creation_of_abha_number">Individual’s consent for creation of ABHA Number.</string>
     <string name="validate_fp">Validate FP</string>
     <string name="generating_abha_for">Generating ABHA for:</string>
-    <string name="otp_sent_to">"OTP sent to "</string>
+    <!--    <string name="otp_sent_to">"OTP sent to "</string>-->
+    <string name="otp_sent_to">"OTP sent to Aadhaar linked mobile number"</string>
     <string name="otp_was_resent">OTP was resent.</string>
     <string name="do_you_want_to_go_back">Do you want to go back?</string>
     <string name="downloading_abha_card">Downloading abha card</string>

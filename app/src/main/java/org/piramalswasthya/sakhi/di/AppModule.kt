@@ -29,11 +29,6 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    private const val baseTmcUrl ="https://uatamrit.piramalswasthya.org/"
-       // "https://amritdemo.piramalswasthya.org/"
-
-    private const val baseAbhaUrl = "https://healthidsbx.abdm.gov.in/api/"
-
     private val baseClient =
         OkHttpClient.Builder()
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
