@@ -231,6 +231,7 @@
 
     <string name="help">Help</string>
     <string name="logout">Logout</string>
+    <string name="delete_my_account">Request to delete my account</string>
     <string name="sync_status">Sync Status</string>
     <string name="go_to_home">Go to Home</string>
     <string name="change_language">Change Language</string>

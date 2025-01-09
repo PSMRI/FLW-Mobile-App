@@ -48,8 +48,9 @@
     <string name="error_sign_in_invalid_u_p">অবৈধ ব্যৱহাৰকাৰীনাম / পাছৱৰ্ড!</string>
     <string name="error_sign_in_timeout">সাৰ্ভাৰ সময় অতিবাহিত, পুনৰ চেষ্টা কৰক!</string>
     <string name="error_sign_in_disconnected_network">নেটওৱাৰ্কলৈ সংযোগ কৰিব পৰা হোৱা নাই!</string>
-    <string name="not_processed">প্ৰক্ৰিয়াকৃত নহয়</string>
     <string name="all_records_synced">সকলো ৰেকৰ্ড ছিংক কৰা হৈছে</string>
-    <string name="are_you_sure_to_logout">আপুনি নিশ্চিতভাৱে লগআউট কৰিবনে?</string>
+    <string name="are_you_sure_to_logout">আপুনি নিশ্চিত নেকি যে আপুনি লগআউট কৰিব বিচাৰে?</string>
+    <string name="not_processed">" ৰেকৰ্ডসমূহ সমন্বয় কৰা হোৱা নাই!"</string>
+
 
 </resources>

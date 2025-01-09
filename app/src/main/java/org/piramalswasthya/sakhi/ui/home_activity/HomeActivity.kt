@@ -4,7 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.os.Build
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -59,7 +59,6 @@ import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
 import org.piramalswasthya.sakhi.ui.service_location_activity.ServiceLocationActivity
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import java.net.URI
-import java.util.*
 import java.util.Locale
 import javax.inject.Inject
 
@@ -67,7 +66,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class HomeActivity : AppCompatActivity() {
 
-    var isChatSupportEnabled : Boolean = true
+    var isChatSupportEnabled : Boolean = false
 
 
 
@@ -526,6 +525,24 @@ class HomeActivity : AppCompatActivity() {
         binding.navView.menu.findItem(R.id.abha_id_activity).setOnMenuItemClickListener {
             navController.popBackStack(R.id.homeFragment, false)
             startActivity(Intent(this, AbhaIdActivity::class.java))
+            binding.drawerLayout.close()
+            true
+
+        }
+        binding.navView.menu.findItem(R.id.menu_delete_account).setOnMenuItemClickListener {
+            var url = ""
+            if (BuildConfig.FLAVOR.equals("production", true)) {
+                url = "https://forms.office.com/r/HkE3c0tGr6"
+            } else {
+                url =
+                    "https://forms.office.com/Pages/ResponsePage.aspx?id=jQ49md0HKEGgbxRJvtPnRISY9UjAA01KtsFKYKhp1nNURUpKQzNJUkE1OUc0SllXQ0IzRFVJNlM2SC4u"
+            }
+
+            if (url.isNotEmpty()){
+                val i = Intent(Intent.ACTION_VIEW)
+                i.setData(Uri.parse(url))
+                startActivity(i)
+            }
             binding.drawerLayout.close()
             true
 

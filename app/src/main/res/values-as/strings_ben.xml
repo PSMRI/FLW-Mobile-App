@@ -91,80 +91,80 @@
         <item>আত্ম</item>
         <item>গৰু</item>
         <item>মাতা</item>
-        <item>পিতা</item>
+        <item>পিতৃ</item>
         <item>পৰিৱাৰ প্ৰধান</item>
-        <item>অন্য</item>
+        <item>অন্যান্য</item>
     </string-array>
 
     <string-array name="nbr_relationship_to_head">
-        <item>মা</item>
-        <item>পিতা</item>
+        <item>মাতৃ</item>
+        <item>পিতৃ</item>
         <item>ভাই</item>
-        <item>বেহীৰ</item>
+        <item>ভণ্টি</item>
         <item>বউ</item>
         <item>গৰু</item>
-        <item>নেফিউ</item>
-        <item>নিচি</item>
-        <item>মাহ</item>
-        <item>মেহ</item>
+        <item>ভতিজী</item>
+        <item>ভতিজী</item>
+        <item>পুত্ৰ</item>
+        <item>জীয়ৰী</item>
         <item>পৰোৱা পিতা</item>
-        <item>পৰোৱা মা</item>
+        <item>আইতা</item>আইতা
         <item>বেহীৰীৰ পিতা</item>
         <item>বেহীৰীৰ মা</item>
-        <item>পৰোৱা গৰু</item>
-        <item>পৰোৱা গৰুৰ ভেবি</item>
-        <item>পৰোৱা পৰী</item>
-        <item>পৰোৱা পৰীৰ ভেবি</item>
-        <item>অন্য</item>
+        <item>ককা</item>
+        <item>শহুৰেক</item>
+        <item>নাতি</item>
+        <item>জোঁৱাই</item>
+        <item>অন্যান্য</item>
     </string-array>
 
     <string-array name="nbr_relationship_to_head_src">
-        <item>মা</item>
-        <item>পিতা</item>
+        <item>মাতৃ</item>
+        <item>পিতৃ</item>
         <item>ভাই</item>
-        <item>বেহীৰ</item>
+        <item>ভণ্টি</item>
         <item>বউ</item>
         <item>গৰু</item>
-        <item>নেফিউ</item>
-        <item>নিচি</item>
-        <item>মাহ</item>
-        <item>মেহ</item>
+        <item>ভতিজী</item>
+        <item>ভতিজী</item>
+        <item>পুত্ৰ</item>
+        <item>জীয়ৰী</item>
         <item>পৰোৱা পিতা</item>
-        <item>পৰোৱা মা</item>
+        <item>আইতা</item>
         <item>বেহীৰীৰ পিতা</item>
-        <item>বেহীৰীৰ মা</item>
-        <item>পৰোৱা গৰু</item>
-        <item>পৰোৱা গৰুৰ ভেবি</item>
-        <item>পৰোৱা পৰী</item>
-        <item>পৰোৱা পৰীৰ ভেবি</item>
+        <item>শাহুআই</item>
+        <item>ককা</item>
+        <item>শহুৰেক</item>
+        <item>নাতি</item>
+        <item>জোঁৱাই</item>
         <item>আত্ম</item>
-        <item>অন্য</item>
+        <item>অন্যান্য</item>
     </string-array>
 
     <string-array name="nbr_relationship_to_head_male">
-        <item>পিতা</item>
+        <item>পিতৃ</item>
         <item>ভাই</item>
         <item>গৰু</item>
-        <item>নেফিউ</item>
-        <item>মাহ</item>
-        <item>পৰোৱা গৰু</item>
-        <item>পৰোৱা গৰুৰ ভেবি</item>
-        <item>পৰোৱা পৰী</item>
-        <item>পৰোৱা পৰীৰ ভেবি</item>
-        <item>অন্য</item>
+        <item>ভতিজী</item>
+        <item>পুত্ৰ</item>
+        <item>ককা</item>
+        <item>শহুৰেক</item>
+        <item>নাতি</item>
+        <item>জোঁৱাই</item>
+        <item>অন্যান্য</item>
     </string-array>
 
     <string-array name="nbr_relationship_to_head_female">
-        <item>মা</item>
-        <item>বেহীৰ</item>
+        <item>মাতৃ</item>
+        <item>ভণ্টি</item>
         <item>বউ</item>
-        <item>নিচি</item>
-        <item>মাহ</item>
-        <item>বেহীৰীৰ মা</item>
-        <item>পৰোৱা বউ</item>
-        <item>পৰোৱা মাহ</item>
-        <item>পৰোৱা বেহীৰ</item>
-        <item>অন্য</item>
+        <item>ভতিজী</item>
+        <item>জীয়ৰী</item>
+        <item>আইতা</item>
+        <item>শাহুআই</item>
+        <item>নাতিনী</item>
+        <item>বোৱাৰী</item>
+        <item>অন্যান্য</item>
     </string-array>
 
 
@@ -186,7 +186,7 @@
         <item>বুদ্ধ</item>
         <item>জৈন</item>
         <item>পার্সী</item>
-        <item>অন্য</item>
+        <item>অন্যান্য</item>
         <item>প্ৰকাশন হোৱা নাই</item>
     </string-array>
 
