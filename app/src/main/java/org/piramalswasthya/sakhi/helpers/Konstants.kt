@@ -26,9 +26,9 @@ object Konstants {
     const val minAgeForNcd: Int = 30
     const val minAgeForReproductiveAge: Int = 15
     const val maxAgeForReproductiveAge: Int = 49
-    const val maxAgeForInfant: Int = 1
-    const val minAgeForChild: Int = 2
-    const val maxAgeForChild: Int = 5
+    const val maxAgeForInfant: Int = 61
+    const val minAgeForChild: Int = 92
+    const val maxAgeForChild: Int = 456
     const val minAgeForAdolescent: Int = 6
     const val maxAgeForAdolescent: Int = 14
     const val maxAgeForCdr: Int = 14
@@ -51,6 +51,7 @@ object Konstants {
     const val minAnc4Week = 36
     const val maxAnc4Week = 40
 
+    const val english = "ENGLISH"
     const val minWeekToShowDelivered = 23
 
 
@@ -62,4 +63,27 @@ object Konstants {
 
 
     const val defaultTimeStamp = 1577817001000L
+
+    const val childHealth = "CHILD HEALTH"
+
+    const val immunization = "IMMUNIZATION"
+
+    const val maternalHealth = "MATERNAL HEALTH"
+
+    const val ashaIncetiveJSY = "ASHA Incentive under JSY"
+
+    const val familyPlanning = "FAMILY PLANNING"
+
+    const val adolescentHealth = "ADOLESCENT HEALTH"
+
+    const val ashaMonthlyRActivity = "ASHA Monthly Routine Activities"
+
+    const val umbrellaProgrames = "Umbrella Programmes"
+
+    const val ncd = "NCD"
+
+    const val additionalIncentivetoAshaSGovt = "ADDITIONAL INCENTIVE TO ASHA UNDER STATE GOVT. BUDGET"
+
+    const val antaraProg = "ASHA incentive for accompanying the client for Injectable MPA(Antara Prog)administration"
+
 }

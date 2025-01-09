@@ -7,6 +7,7 @@ import androidx.annotation.StringRes
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.helpers.Konstants.english
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.setToStartOfTheDay
 import org.piramalswasthya.sakhi.model.FormElement
@@ -24,7 +25,7 @@ import java.util.concurrent.TimeUnit
  * Base class to be extended to use as a sandwich between viewModel and repository objects.
  * @see org.piramalswasthya.sakhi.adapters.FormInputAdapter
  */
-abstract class Dataset(context: Context, currentLanguage: Languages) {
+abstract class Dataset(context: Context, val currentLanguage: Languages) {
 
     /**
      * Resource object of currently selected language. To be used to get language specific strings from strings.xml.
@@ -247,6 +248,28 @@ abstract class Dataset(context: Context, currentLanguage: Languages) {
         }
     }
 
+
+    protected fun triggerforHide(
+        source: FormElement,
+        passedIndex: Int,
+        triggerIndex: Int,
+        target: FormElement,
+        targetSideEffect: List<FormElement>? = null
+    ): Int {
+        val anyRemoved = list.remove(target)
+          return if (anyRemoved) {
+                target.value = null
+                targetSideEffect?.let { sideEffectList ->
+                    list.removeAll(sideEffectList)
+                    sideEffectList.forEach { it.value = null }
+                }
+                list.indexOf(source)
+            } else -1
+
+
+    }
+
+
     protected fun triggerDependants(
         age: Int,
 //        ageUnit: FormElement,
@@ -368,7 +391,7 @@ abstract class Dataset(context: Context, currentLanguage: Languages) {
 
         Calendar.getInstance().apply {
             timeInMillis = lmp
-            add(Calendar.WEEK_OF_YEAR, -40)
+            add(Calendar.WEEK_OF_YEAR, -57)
         }.timeInMillis
 
 
@@ -487,13 +510,15 @@ abstract class Dataset(context: Context, currentLanguage: Languages) {
             ?: false
 
     protected fun validateAllCapsOrSpaceOnEditText(formElement: FormElement): Int {
-        if (formElement.allCaps) {
-            formElement.value?.takeIf { it.isNotEmpty() }?.isAllUppercaseOrSpace()?.let {
-                Timber.d("Is ok : $it")
-                formElement.errorText = if (it) null
-                else resources.getString(R.string.form_input_upper_case_error)
-            } ?: run {
-                if (!formElement.required) formElement.errorText = null
+        if (currentLanguage.toString() == english) {
+            if (formElement.allCaps) {
+                formElement.value?.takeIf { it.isNotEmpty() }?.isAllUppercaseOrSpace()?.let {
+                    Timber.d("Is ok : $it")
+                    formElement.errorText = if (it) null
+                    else resources.getString(R.string.form_input_upper_case_error)
+                } ?: run {
+                    if (!formElement.required) formElement.errorText = null
+                }
             }
         }
         return -1
@@ -686,6 +711,19 @@ abstract class Dataset(context: Context, currentLanguage: Languages) {
         formElement.value?.takeIf { it.isNotEmpty() }?.let {
             if (it.all { it == '0' })
                 formElement.errorText = "Cannot be 0"
+            else
+                formElement.errorText = null
+        } ?: kotlin.run { formElement.errorText = null }
+        return -1
+    }
+
+    protected fun validateWeightOnEditText(formElement: FormElement): Int {
+
+        formElement.value?.takeIf { it.isNotEmpty() }?.let {
+            if (it.all { it == '0' })
+                formElement.errorText = "Weight Cannot be 0"
+            else if(it.toInt() > 7000)
+                formElement.errorText = "Weight Should not be greater than 7000 gram"
             else
                 formElement.errorText = null
         } ?: kotlin.run { formElement.errorText = null }

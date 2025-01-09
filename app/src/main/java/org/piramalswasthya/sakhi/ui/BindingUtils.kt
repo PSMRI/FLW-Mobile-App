@@ -57,7 +57,10 @@ fun Button.setVaccineState(syncState: VaccineState?) {
     syncState?.let {
         visibility = View.VISIBLE
         when (it) {
-            PENDING,
+            PENDING -> {
+                text = "FILL"
+            }
+
             OVERDUE -> {
                 text = "FILL"
             }

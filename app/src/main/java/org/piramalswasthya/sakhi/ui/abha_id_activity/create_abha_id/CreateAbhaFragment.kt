@@ -131,15 +131,6 @@ class CreateAbhaFragment : Fragment() {
         binding.textView2.text = args.name
         binding.textView4.text = args.abhaNumber
 
-//        binding.pbCai.visibility = View.INVISIBLE
-//        binding.clCreateAbhaId.visibility = View.VISIBLE
-//        binding.clVerifyMobileOtp.visibility = View.INVISIBLE
-//        binding.clError.visibility = View.INVISIBLE
-//        binding.clDownloadAbha.visibility = View.GONE
-
-//        binding.textView2.text = args.name
-//        binding.textView4.text = args.abhaNumber
-
         viewModel.benMapped.observe(viewLifecycleOwner) {
             it?.let {
                 binding.abhBenMappedTxt.text = String.format(

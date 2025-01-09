@@ -8,6 +8,8 @@ import android.content.res.Resources
 import android.graphics.Color
 import android.os.Build
 import android.text.Editable
+import android.text.InputFilter
+import android.text.InputFilter.AllCaps
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.TextWatcher
@@ -70,10 +72,7 @@ class FormInputAdapter(
     private val isEnabled: Boolean = true
 ) : ListAdapter<FormElement, ViewHolder>(FormInputDiffCallBack) {
 
-    //    @Inject
-//    lateinit var preferenceDao: PreferenceDao
-//    @Inject
-//    lateinit var context: Context
+
     object FormInputDiffCallBack : DiffUtil.ItemCallback<FormElement>() {
         override fun areItemsTheSame(oldItem: FormElement, newItem: FormElement) =
             oldItem.id == newItem.id
@@ -108,6 +107,23 @@ class FormInputAdapter(
             } else {
                 binding.et.isClickable = true
                 binding.et.isFocusable = true
+                binding.et.isFocusableInTouchMode = true
+            }
+            if (item.title.contains("first name", true) ||
+                item.title.contains("last name", true) ||
+                item.title.contains("father's name", true) ||
+                item.title.contains("mother's name", true)
+                ) {
+//                edittext.setFilters(arrayOf<InputFilter>(AllCaps()))
+                val editFilters = binding.et.filters
+                var newFilters = arrayOfNulls<InputFilter>(editFilters.size + 1)
+                editFilters.forEachIndexed { index, inputFilter ->
+                    newFilters[index] = editFilters[index]
+                }
+                newFilters[editFilters.size] = AllCaps()
+//                newFilters.set(editFilters.size, AllCaps())
+//                binding.et.filters = arrayOf<InputFilter>(AllCaps())
+                binding.et.filters = newFilters
             }
             binding.form = item
             if (item.errorText == null) binding.tilEditText.isErrorEnabled = false
@@ -155,7 +171,7 @@ class FormInputAdapter(
                         binding.tilEditText.isErrorEnabled = item.errorText != null
                         binding.tilEditText.error = item.errorText
                     }
-//                        binding.tilEditText.error = null
+//                    binding.tilEditText.error = null
 //                    else if(item.errorText!= null && binding.tilEditText.error==null)
 //                        binding.tilEditText.error = item.errorText
 
@@ -240,9 +256,15 @@ class FormInputAdapter(
                 }
             }
             binding.et.setOnFocusChangeListener { _, hasFocus ->
-                if (hasFocus) binding.et.addTextChangedListener(textWatcher)
-                else {
+                if (hasFocus){
+                    binding.et.requestFocus()
+                    binding.et.addTextChangedListener(textWatcher)
+                    val imm =
+                        binding.root.context.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager?
+                    imm!!.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+                } else {
                     binding.et.removeTextChangedListener(textWatcher)
+                    binding.et.clearFocus()
                     val imm =
                         binding.root.context.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager?
                     imm!!.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)

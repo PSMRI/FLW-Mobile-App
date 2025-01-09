@@ -3,11 +3,13 @@ package org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.cba
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.RadioGroup
+import android.widget.Toast
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -18,11 +20,13 @@ import org.piramalswasthya.sakhi.databinding.FragmentCbacBinding
 import org.piramalswasthya.sakhi.model.CbacCache
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_screening.form.TBScreeningFormViewModel
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+
 
 @AndroidEntryPoint
 class CbacFragment : Fragment() {
@@ -36,11 +40,17 @@ class CbacFragment : Fragment() {
         viewModel.cbacId == 0
     }
 
+    private var isnoneOfThese = false
+
     private var totalScorePopupShown: Boolean = false
 
     private var ed1PopupShown: Boolean = false
 
     private var ed2PopupShown: Boolean = false
+
+    private var isSuspected: Boolean = false
+
+    private val viewModelTbScreening: TBScreeningFormViewModel by viewModels()
 
     private val alertDialog by lazy {
         AlertDialog.Builder(requireContext()).setTitle(getString(R.string.missing_field)).create()
@@ -82,6 +92,21 @@ class CbacFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewModelTbScreening.state.observe(viewLifecycleOwner) {
+            when (it) {
+                TBScreeningFormViewModel.State.SAVE_SUCCESS -> {
+                    Toast.makeText(
+                        requireContext(),
+                        resources.getString(R.string.tb_screening_submitted), Toast.LENGTH_SHORT
+                    ).show()
+                    WorkerUtils.triggerAmritPushWorker(requireContext())
+                }
+                else -> {
+                    Timber.d("IDLE!")
+                }
+            }
+        }
 
         viewModel.state.observe(viewLifecycleOwner) {
             when (it) {
@@ -131,6 +156,9 @@ class CbacFragment : Fragment() {
                 }
             }
         }
+
+        binding.benId.text = viewModel.benId.toString()
+
         viewModel.benName.observe(viewLifecycleOwner) {
             binding.tvBenName.text = it
         }
@@ -161,6 +189,197 @@ class CbacFragment : Fragment() {
             handleNcdSusBottomInfoDisplay(score)
             handleRaScoreAlert(score)
             binding.cbacTvRaTotalScore.text = it
+        }
+
+
+        binding.cbNoneOfThese.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                binding.cbacHistb.rbNo.isChecked = true
+                viewModel.setHisTb(2)
+                binding.cbacCoughing.rbNo.isChecked = true
+                viewModel.setCoughing(2)
+                binding.cbacBlsputum.rbNo.isChecked = true
+                viewModel.setBloodSputum(2)
+                binding.cbacFeverwks.rbNo.isChecked = true
+                viewModel.setFeverWks(2)
+                binding.cbacLsweight.rbNo.isChecked = true
+                viewModel.setLsWt(2)
+                binding.cbacNtswets.rbNo.isChecked = true
+                viewModel.setNtSwets(2)
+
+
+                binding.cbacRecurrentUlceration.rbNo.isChecked = true
+                viewModel.setRecurrentUlceration(2)
+                binding.cbacRecurrentCloudy.rbNo.isChecked = true
+                viewModel.setRecurrentCloudy(2)
+                binding.cbacRecurrentDiffcultyReading.rbNo.isChecked = true
+                viewModel.setDiffReading(2)
+                binding.cbacRecurrentPainEyes.rbNo.isChecked = true
+                viewModel.setPainEyes(2)
+                binding.cbacRecurrentRednessEyes.rbNo.isChecked = true
+                viewModel.setRedEyes(2)
+                binding.cbacRecurrentDiffHearing.rbNo.isChecked = true
+                viewModel.setDiffHearing(2)
+                binding.cbacBreath.rbNo.isChecked = true
+                viewModel.setBreathe(2)
+                binding.cbacRecurrentTingling.rbNo.isChecked = true
+                viewModel.setTing(2)
+                binding.cbacHifits.rbNo.isChecked = true
+                viewModel.setHisFits(2)
+                binding.cbacDifmouth.rbNo.isChecked = true
+                viewModel.setDiffMouth(2)
+                binding.cbacHeald.rbNo.isChecked = true
+                viewModel.setHealed(2)
+                binding.cbacVoice.rbNo.isChecked = true
+                viewModel.setVoice(2)
+                binding.cbacAnyGrowth.rbNo.isChecked = true
+                viewModel.setAnyGrowth(2)
+                binding.cbacAnyWhite.rbNo.isChecked = true
+                viewModel.setAnyWhite(2)
+                binding.cbacPainWhileChewing.rbNo.isChecked = true
+                viewModel.setPainChew(2)
+                binding.cbacAnyHyperPigmented.rbNo.isChecked = true
+                viewModel.setHyperPig(2)
+                binding.cbacAnyThickendSkin.rbNo.isChecked = true
+                viewModel.setThickSkin(2)
+                binding.cbacAnyNodulesSkin.rbNo.isChecked = true
+                viewModel.setNoduleSkin(2)
+                binding.cbacRecurrentNumbness.rbNo.isChecked = true
+                viewModel.setNumb(2)
+                binding.cbacClawingOfFingers.rbNo.isChecked = true
+                viewModel.setClaw(2)
+                binding.cbacTinglingOrNumbness.rbNo.isChecked = true
+                viewModel.setTingNumb(2)
+                binding.cbacInabilityCloseEyelid.rbNo.isChecked = true
+                viewModel.setCloseEyelid(2)
+                binding.cbacDiffHoldingObjects.rbNo.isChecked = true
+                viewModel.setHoldObj(2)
+                binding.cbacWeeknessInFeet.rbNo.isChecked = true
+                viewModel.setWeakFeet(2)
+                binding.cbacLumpbrest.rbNo.isChecked = true
+                viewModel.setLumpB(2)
+                binding.cbacNipple.rbNo.isChecked = true
+                viewModel.setNipple(2)
+                binding.cbacBreast.rbNo.isChecked = true
+                viewModel.setBreast(2)
+                binding.cbacBlperiods.rbNo.isChecked = true
+                viewModel.setBlP(2)
+
+                binding.cbacBlmenopause.rbNo.isChecked = true
+                viewModel.setBlM(2)
+                binding.tvBlMenopause.visibility = View.GONE
+
+                binding.cbacBlintercorse.rbNo.isChecked = true
+                viewModel.setBlI(2)
+                binding.cbacFouldis.rbNo.isChecked = true
+                viewModel.setFoulD(2)
+                binding.cbacUnsteady.rbNo.isChecked = true
+                viewModel.setUnsteady(2)
+                binding.cbacPdRm.rbNo.isChecked = true
+                viewModel.setPdRm(2)
+                binding.cbacNhop.rbNo.isChecked = true
+                viewModel.setNhop(2)
+                binding.cbacForgetNames.rbNo.isChecked = true
+                viewModel.setForgetNames(2)
+
+                binding.cbacFhTb.rbNo.isChecked = true
+                viewModel.setFhTb(2)
+                binding.cbacTakingTbDrug.rbNo.isChecked = true
+                viewModel.setTakingTbDrug(2)
+            }else{
+                binding.cbacHistb.cbacEdRg.clearCheck()
+                viewModel.setHisTb(0)
+                binding.cbacCoughing.cbacEdRg.clearCheck()
+                viewModel.setCoughing(0)
+                binding.cbacBlsputum.cbacEdRg.clearCheck()
+                viewModel.setBloodSputum(0)
+                binding.cbacFeverwks.cbacEdRg.clearCheck()
+                viewModel.setFeverWks(0)
+                binding.cbacLsweight.cbacEdRg.clearCheck()
+                viewModel.setLsWt(0)
+                binding.cbacNtswets.cbacEdRg.clearCheck()
+                viewModel.setNtSwets(0)
+
+                binding.cbacRecurrentUlceration.cbacEdRg.clearCheck()
+                viewModel.setRecurrentUlceration(0)
+                binding.cbacRecurrentCloudy.cbacEdRg.clearCheck()
+                viewModel.setRecurrentCloudy(0)
+                binding.cbacRecurrentDiffcultyReading.cbacEdRg.clearCheck()
+                viewModel.setDiffReading(0)
+                binding.cbacRecurrentPainEyes.cbacEdRg.clearCheck()
+                viewModel.setPainEyes(0)
+                binding.cbacRecurrentRednessEyes.cbacEdRg.clearCheck()
+                viewModel.setRedEyes(0)
+                binding.cbacRecurrentDiffHearing.cbacEdRg.clearCheck()
+                viewModel.setDiffHearing(0)
+                binding.cbacBreath.cbacEdRg.clearCheck()
+                viewModel.setBreathe(0)
+                binding.cbacRecurrentTingling.cbacEdRg.clearCheck()
+                viewModel.setTing(0)
+                binding.cbacHifits.cbacEdRg.clearCheck()
+                viewModel.setHisFits(0)
+                binding.cbacDifmouth.cbacEdRg.clearCheck()
+                viewModel.setDiffMouth(0)
+                binding.cbacHeald.cbacEdRg.clearCheck()
+                viewModel.setHealed(0)
+                binding.cbacVoice.cbacEdRg.clearCheck()
+                viewModel.setVoice(0)
+                binding.cbacAnyGrowth.cbacEdRg.clearCheck()
+                viewModel.setAnyGrowth(0)
+                binding.cbacAnyWhite.cbacEdRg.clearCheck()
+                viewModel.setAnyWhite(0)
+                binding.cbacPainWhileChewing.cbacEdRg.clearCheck()
+                viewModel.setPainChew(0)
+                binding.cbacAnyHyperPigmented.cbacEdRg.clearCheck()
+                viewModel.setHyperPig(0)
+                binding.cbacAnyThickendSkin.cbacEdRg.clearCheck()
+                viewModel.setThickSkin(0)
+                binding.cbacAnyNodulesSkin.cbacEdRg.clearCheck()
+                viewModel.setNoduleSkin(0)
+                binding.cbacRecurrentNumbness.cbacEdRg.clearCheck()
+                viewModel.setNumb(0)
+                binding.cbacClawingOfFingers.cbacEdRg.clearCheck()
+                viewModel.setClaw(0)
+                binding.cbacTinglingOrNumbness.cbacEdRg.clearCheck()
+                viewModel.setTingNumb(0)
+                binding.cbacInabilityCloseEyelid.cbacEdRg.clearCheck()
+                viewModel.setCloseEyelid(0)
+                binding.cbacDiffHoldingObjects.cbacEdRg.clearCheck()
+                viewModel.setHoldObj(0)
+                binding.cbacWeeknessInFeet.cbacEdRg.clearCheck()
+                viewModel.setWeakFeet(0)
+                binding.cbacLumpbrest.cbacEdRg.clearCheck()
+                viewModel.setLumpB(0)
+                binding.cbacNipple.cbacEdRg.clearCheck()
+                viewModel.setNipple(0)
+                binding.cbacBreast.cbacEdRg.clearCheck()
+                viewModel.setBreast(0)
+                binding.cbacBlperiods.cbacEdRg.clearCheck()
+                viewModel.setBlP(0)
+
+                binding.cbacBlmenopause.cbacEdRg.clearCheck()
+                viewModel.setBlM(0)
+                binding.tvBlMenopause.visibility = View.GONE
+
+                binding.cbacBlintercorse.cbacEdRg.clearCheck()
+                viewModel.setBlI(0)
+                binding.cbacFouldis.cbacEdRg.clearCheck()
+                viewModel.setFoulD(0)
+                binding.cbacUnsteady.cbacEdRg.clearCheck()
+                viewModel.setUnsteady(0)
+                binding.cbacPdRm.cbacEdRg.clearCheck()
+                viewModel.setPdRm(0)
+                binding.cbacNhop.cbacEdRg.clearCheck()
+                viewModel.setNhop(0)
+                binding.cbacForgetNames.cbacEdRg.clearCheck()
+                viewModel.setForgetNames(0)
+
+                binding.cbacFhTb.cbacEdRg.clearCheck()
+                viewModel.setFhTb(0)
+                binding.cbacTakingTbDrug.cbacEdRg.clearCheck()
+                viewModel.setTakingTbDrug(0)
+
+            }
         }
 
 
@@ -244,10 +463,13 @@ class CbacFragment : Fragment() {
                 binding.cbacLsweight.rbYes.isChecked ||
                 binding.cbacNtswets.rbYes.isChecked
             ) {
+                isSuspected = true
                 ast1AlertDialog.setMessage(
                     resources.getString(R.string.refer_to_mo_and_collect_the_sputum_sample)
                 )
                 ast1AlertDialog.show()
+            } else {
+                isSuspected = false
             }
         }
 
@@ -293,6 +515,8 @@ class CbacFragment : Fragment() {
 
     private fun setUpView() {
         binding.btnSave.visibility = View.GONE
+//        binding.noneCheck.visibility = View.GONE
+//        binding.nonTxt.visibility = View.GONE
         viewModel.filledCbac.observe(viewLifecycleOwner) { cbac ->
             binding.etDate.setText(getDateFromLong(cbac.fillDate))
             setupRaView(cbac)
@@ -323,6 +547,9 @@ class CbacFragment : Fragment() {
         binding.btnSave.setOnClickListener {
             viewModel.setFillDate(getLongFromDate(binding.etDate.text.toString()))
             viewModel.submitForm()
+            if (isSuspected) {
+                viewModelTbScreening.saveFormDirectlyfromCbac()
+            }
         }
         binding.etDate.setText(getDateFromLong(System.currentTimeMillis()))
         val today = Calendar.getInstance()

@@ -57,7 +57,7 @@
     <string name="cbac_blmenopause">Bleeding after menopause</string>
     <string name="cbac_blintercorse">Bleeding after intercourse</string>
     <string name="cbac_fouldis">Foul smelling vaginal discharge</string>
-
+    <string name="none_of">None of these</string>
 
     <string name="cbac_double_ast" translatable="false">**</string>
     <string name="cbac_single_ast" translatable="false">* </string>

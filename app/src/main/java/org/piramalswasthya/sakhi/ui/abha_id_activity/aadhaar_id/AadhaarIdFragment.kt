@@ -108,7 +108,7 @@ class AadhaarIdFragment : Fragment() {
                         } else if (viewModel.verificationType.value == "FP") {
                             findNavController().navigate(
                                 AadhaarIdFragmentDirections.actionAadhaarIdFragmentToGenerateMobileOtpFragment(
-                                    viewModel.txnId, viewModel.mobileNumber
+                                    viewModel.txnId
                                 )
                             )
                         }

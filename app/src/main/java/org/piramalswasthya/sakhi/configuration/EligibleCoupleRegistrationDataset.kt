@@ -63,7 +63,10 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
         required = true,
         max = System.currentTimeMillis(),
         min = 0L,
-        hasDependants = true
+        hasDependants = true,
+        backgroundDrawable=R.drawable.ic_bg_circular,
+        iconDrawableRes=R.drawable.ic_anc_date,
+        showDrawable = true
     )
 
     private val rchId = FormElement(
@@ -76,7 +79,10 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
         isMobileNumber = true,
         etMaxLength = 12,
         max = 999999999999L,
-        min = 0L
+        min = 0L,
+        backgroundDrawable=R.drawable.ic_bg_circular,
+        iconDrawableRes=R.drawable.ic_rch_id_no,
+        showDrawable = true
     )
 
     private val name = FormElement(
@@ -88,7 +94,10 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
         allCaps = true,
         hasSpeechToText = false,
         etInputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS,
-        isEnabled = false
+        isEnabled = false,
+        backgroundDrawable=R.drawable.ic_bg_circular,
+        iconDrawableRes=R.drawable.ic_women,
+        showDrawable = true
     )
 
     private val husbandName = FormElement(
@@ -100,7 +109,10 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
         allCaps = true,
         hasSpeechToText = false,
         etInputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS,
-        isEnabled = false
+        isEnabled = false,
+        backgroundDrawable=R.drawable.ic_bg_circular,
+        iconDrawableRes=R.drawable.ic_husbund,
+        showDrawable = true
     )
 
     private val age = FormElement(
@@ -113,6 +125,9 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
         etMaxLength = 2,
         max = Konstants.maxAgeForGenBen.toLong(),
         min = Konstants.minAgeForGenBen.toLong(),
+        backgroundDrawable=R.drawable.ic_bg_circular,
+        iconDrawableRes=R.drawable.ic__reproductive_age,
+        showDrawable = true
     )
 
     private val ageAtMarriage = FormElement(
@@ -125,7 +140,10 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
         etMaxLength = 2,
         max = Konstants.maxAgeForGenBen.toLong(),
         min = Konstants.minAgeForGenBen.toLong(),
-        isEnabled = false
+        isEnabled = false,
+        backgroundDrawable=R.drawable.ic_bg_circular,
+        iconDrawableRes=R.drawable.ic_age_of_women_at_marriage,
+        showDrawable = true
     )
 
     private val womanDetails = FormElement(
@@ -157,9 +175,12 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
         required = false,
         etInputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_NORMAL,
         isMobileNumber = true,
-        etMaxLength = 18,
+        etMaxLength = 20,
         max = 999999999999999999L,
-        min = 0L
+        min = 10000000L,
+        backgroundDrawable=R.drawable.ic_bg_circular,
+        iconDrawableRes=R.drawable.ic_bank_acc_no,
+        showDrawable = true
     )
 
     private val bankName = FormElement(
@@ -168,7 +189,10 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
         title = resources.getString(R.string.ecrdset_bank_name),
         arrayId = -1,
         required = false,
-        etMaxLength = 50
+        etMaxLength = 50,
+        backgroundDrawable=R.drawable.ic_bg_circular,
+        iconDrawableRes=R.drawable.ic_bank_name,
+        showDrawable = true
     )
 
     private val branchName = FormElement(
@@ -177,7 +201,10 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
         title = resources.getString(R.string.ecrdset_branch_name),
         arrayId = -1,
         required = false,
-        etMaxLength = 50
+        etMaxLength = 50,
+        backgroundDrawable=R.drawable.ic_bg_circular,
+        iconDrawableRes=R.drawable.ic_branch_name,
+        showDrawable = true
     )
 
     private val ifsc = FormElement(
@@ -187,6 +214,9 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
         arrayId = -1,
         required = false,
         etMaxLength = 11,
+        backgroundDrawable=R.drawable.ic_bg_circular,
+        iconDrawableRes=R.drawable.ic_ifsc_code,
+        showDrawable = true
     )
 
     private val noOfChildren = FormElement(
@@ -199,6 +229,9 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
         etMaxLength = 1,
         max = 9,
         min = 0,
+        backgroundDrawable=R.drawable.ic_bg_circular,
+        iconDrawableRes=R.drawable.ic_total_no_child_born,
+        showDrawable = true
     )
 
     private val noOfLiveChildren = FormElement(
@@ -210,7 +243,10 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
         etInputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_NORMAL,
         etMaxLength = 1,
         max = 9,
-        min = 0
+        min = 0,
+        backgroundDrawable=R.drawable.ic_bg_circular,
+        iconDrawableRes=R.drawable.ic_no_of_live_child,
+        showDrawable = true
     )
 
     private val numMale = FormElement(
@@ -223,6 +259,9 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
         etMaxLength = 1,
         max = 9,
         min = 0,
+        backgroundDrawable=R.drawable.ic_bg_circular,
+        iconDrawableRes=R.drawable.ic_male,
+        showDrawable = true
     )
 
     private val numFemale = FormElement(
@@ -235,6 +274,10 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
         etMaxLength = 1,
         max = 9,
         min = 0,
+        backgroundDrawable=R.drawable.ic_bg_circular,
+        iconDrawableRes=R.drawable.ic_female,
+        showDrawable = true
+
     )
 
     private val firstChildDetails = FormElement(
@@ -242,7 +285,8 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
         inputType = HEADLINE,
         title = resources.getString(R.string.ecrdset_dls_1_child),
         arrayId = -1,
-        required = false
+        required = false,
+
     )
 
     private val dob1 = FormElement(
@@ -254,6 +298,9 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
         hasDependants = true,
         max = getMaxDobMillis(),
         min = getMinDobMillis(),
+        backgroundDrawable=R.drawable.ic_bg_circular,
+        iconDrawableRes=R.drawable.ic_anc_date,
+        showDrawable = true
     )
 
     private val age1 = FormElement(
@@ -267,6 +314,9 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
         etMaxLength = 2,
         max = Konstants.maxAgeForAdolescent.toLong(),
         min = 0,
+        backgroundDrawable=R.drawable.ic_bg_circular,
+        iconDrawableRes=R.drawable.ic_no_of_live_child,
+        showDrawable = true
     )
 
     private val gender1 = FormElement(
@@ -289,6 +339,9 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
         etMaxLength = 2,
         max = 99,
         min = 0,
+        backgroundDrawable=R.drawable.ic_bg_circular,
+        iconDrawableRes=R.drawable.ic_gap_bet_marriage_child,
+        showDrawable = true
     )
 
     private val secondChildDetails = FormElement(
@@ -1142,7 +1195,7 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
             }
 
             bankAccount.id -> {
-                validateAllZerosOnEditText(bankAccount)
+                validateIntMinMax(bankAccount)
             }
 
             bankName.id -> {

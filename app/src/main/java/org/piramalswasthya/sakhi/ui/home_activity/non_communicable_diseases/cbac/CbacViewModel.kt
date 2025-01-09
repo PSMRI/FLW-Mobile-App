@@ -106,7 +106,7 @@ class CbacViewModel @Inject constructor(
             cbac.cbac_age_posi = it + 1
         text
     }
-    private val benId = CbacFragmentArgs.fromSavedStateHandle(state).benId
+    val benId = CbacFragmentArgs.fromSavedStateHandle(state).benId
     val cbacId = CbacFragmentArgs.fromSavedStateHandle(state).cbacId
     private val ashaId = CbacFragmentArgs.fromSavedStateHandle(state).ashaId
     private lateinit var cbac: CbacCache
@@ -150,6 +150,8 @@ class CbacViewModel @Inject constructor(
 
     private val _minDate = MutableLiveData<Long>()
 
+
+    val user = preferenceDao.getLoggedInUser()
 
     val minDate: LiveData<Long>
         get() = _minDate
@@ -593,6 +595,7 @@ class CbacViewModel @Inject constructor(
 //        cbac.districtname = ben.locationRecord
         cbac.villageid = ben.locationRecord.village.id
         cbac.cbac_reg_id = ben.benRegId
+        cbac.ProviderServiceMapID = user!!.serviceMapId
 
         viewModelScope.launch {
             val result = cbacRepo.saveCbacData(cbac, ben)

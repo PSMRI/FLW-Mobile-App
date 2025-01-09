@@ -26,7 +26,7 @@
             android:layout_marginTop="40dp"
             android:contentDescription="@string/cd_assam_nhm_logo"
             android:src="@drawable/logo_circle"
-           />
+            />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -222,6 +222,17 @@
                     android:checked="true"
                     app:layout_constraintTop_toBottomOf="@id/tv_error" />
 
+                <TextView
+                    android:id="@+id/tvDeleteAccount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/delete_my_account"
+                    android:textColor="@color/md_theme_light_error"
+                    android:fontFamily="@font/roboto_medium"
+                    android:paddingBottom="@dimen/_3sdp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/cb_remember"/>
+
                 <Button
                     android:id="@+id/tv_forgot_password"
                     android:layout_width="match_parent"
@@ -233,7 +244,7 @@
                     android:text="@string/btn_login_forgot_password_text"
                     android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
                     android:visibility="gone"
-                    app:layout_constraintTop_toBottomOf="@id/cb_remember" />
+                    app:layout_constraintTop_toBottomOf="@id/tvDeleteAccount" />
 
 
                 <com.google.android.material.button.MaterialButton

@@ -1,20 +1,33 @@
 package org.piramalswasthya.sakhi.ui.home_activity
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
+import android.webkit.PermissionRequest
+import android.webkit.WebChromeClient
+import android.webkit.WebResourceError
+import android.webkit.WebResourceRequest
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.MenuProvider
 import androidx.navigation.fragment.NavHostFragment
@@ -22,6 +35,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.crashlytics.internal.common.CommonUtils.isEmulator
 import com.google.firebase.crashlytics.internal.common.CommonUtils.isRooted
@@ -30,24 +44,30 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.ActivityHomeBinding
 import org.piramalswasthya.sakhi.helpers.ImageUtils
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.MyContextWrapper
+import org.piramalswasthya.sakhi.helpers.isInternetAvailable
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.home_activity.home.HomeViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.sync.SyncBottomSheetFragment
 import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
 import org.piramalswasthya.sakhi.ui.service_location_activity.ServiceLocationActivity
 import org.piramalswasthya.sakhi.work.WorkerUtils
-import java.util.*
+import java.net.URI
+import java.util.Locale
 import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class HomeActivity : AppCompatActivity() {
+
+    var isChatSupportEnabled : Boolean = false
+
 
 
     @EntryPoint
@@ -74,6 +94,7 @@ class HomeActivity : AppCompatActivity() {
     private val syncBottomSheet: SyncBottomSheetFragment by lazy {
         SyncBottomSheetFragment()
     }
+
 
 
     private val viewModel: HomeViewModel by viewModels()
@@ -117,8 +138,8 @@ class HomeActivity : AppCompatActivity() {
 
     private val logoutAlert by lazy {
         var str = ""
-        if (viewModel.unprocessedRecords > 0) {
-            str += viewModel.unprocessedRecords
+        if (viewModel.unprocessedRecordsCount.value!! > 0) {
+            str += viewModel.unprocessedRecordsCount.value!!
             str += resources.getString(R.string.not_processed)
         } else {
             str += resources.getString(R.string.all_records_synced)
@@ -172,7 +193,13 @@ class HomeActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+        // This will block user to cast app screen
+        if (BuildConfig.FLAVOR.equals("production", true)) {
+            window.setFlags(
+                WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE
+            )
+        }
         super.onCreate(savedInstanceState)
         _binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -180,6 +207,39 @@ class HomeActivity : AppCompatActivity() {
         setUpNavHeader()
         setUpFirstTimePullWorker()
         setUpMenu()
+
+        val permissions = arrayOf<String>(
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.INTERNET,
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.CAMERA
+        )
+
+        ActivityCompat.requestPermissions(
+            this,
+            permissions,
+            1010
+        )
+
+        if (isChatSupportEnabled)
+        {
+            binding.addFab.visibility = View.VISIBLE
+
+            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+
+            binding.addFab.setOnClickListener {
+
+                displaychatdialog()
+
+            }
+
+        }
+        else
+        {
+            binding.addFab.visibility = View.GONE
+        }
+
 
         if (isDeviceRootedOrEmulator()) {
             AlertDialog.Builder(this)
@@ -197,10 +257,134 @@ class HomeActivity : AppCompatActivity() {
                 finish()
             }
         }
+        viewModel.unprocessedRecordsCount.observe(this) {
+            if (it>0) {
+                if (isInternetAvailable(this)){
+                    Log.d("====12345@@","triggerAmritPushWorker called")
+                    WorkerUtils.triggerAmritPushWorker(this)
+                }
+            }
+        }
+        binding.versionName.text = "APK Version ${BuildConfig.VERSION_NAME}"
     }
 
+
+
+   private fun displaychatdialog() {
+
+        val dialog = BottomSheetDialog(this)
+
+        // on below line we are inflating a layout file which we have created.
+        val view = layoutInflater.inflate(R.layout.bottomsheet_chat_window, null)
+
+        val web = view.findViewById<WebView>(R.id.webv)
+        val progress = view.findViewById<ProgressBar>(R.id.progressBarv)
+
+
+       web.setWebChromeClient(object : WebChromeClient() {
+           override fun onPermissionRequest(request: PermissionRequest) {
+               request.grant(request.resources)
+           }
+       })
+
+
+
+// Enable JavaScript
+        web.settings.javaScriptEnabled = true
+        web.settings.javaScriptCanOpenWindowsAutomatically = true
+        web.isVerticalScrollBarEnabled = true
+
+
+
+
+// Load URL
+        web.loadUrl(BuildConfig.CHAT_URL)
+
+
+// Handle WebView events
+       web.webViewClient = object : WebViewClient() {
+           override fun shouldOverrideUrlLoading(
+               view: WebView,
+               request: WebResourceRequest
+           ): Boolean {
+               return if (request.url.host == URI(BuildConfig.CHAT_URL).host) {
+                   false  // Let WebView handle same-origin URLs
+               } else {
+                   startActivity(Intent(Intent.ACTION_VIEW, request.url))
+                   true
+               }
+           }
+
+           override fun onReceivedError(
+               view: WebView?,
+               request: WebResourceRequest?,
+               error: WebResourceError?
+           ) {
+               super.onReceivedError(view, request, error)
+               progress.visibility = View.GONE
+               // Show error view
+               Toast.makeText(
+                   this@HomeActivity,
+                   R.string.chat_error,
+                   Toast.LENGTH_SHORT
+               ).show()
+           }
+
+            override fun onPageStarted(webview: WebView, url: String, favicon: Bitmap?) {
+                super.onPageStarted(webview, url, favicon)
+                // Show ProgressBar when the page starts loading
+                progress.visibility = View.VISIBLE
+                web.visibility = View.GONE
+            }
+
+            override fun onPageFinished(webview: WebView, url: String) {
+                super.onPageFinished(webview, url)
+                // Hide ProgressBar when the page finishes loading
+                progress.visibility = View.GONE
+                web.visibility = View.VISIBLE
+            }
+        }
+
+
+        // on below line we are creating a variable for our button
+        // which we are using to dismiss our dialog.
+        // on below line we are adding on click listener
+        // for our dismissing the dialog button.
+
+        // below line is use to set cancelable to avoid
+        // closing of dialog box when clicking on the screen.
+        dialog.setCancelable(true)
+
+        // on below line we are setting
+        // content view to our view.
+        dialog.setContentView(view)
+     //  dialog.behavior.setPeekHeight(6000)
+
+       val displayMetrics = resources.displayMetrics
+       val screenHeight = displayMetrics.heightPixels
+       dialog.behavior.setPeekHeight((screenHeight * 0.85).toInt())
+
+
+        // on below line we are calling
+        // a show method to display a dialog.
+
+
+        dialog.show()
+
+
+        }
+
+
+
+
     override fun onResume() {
-        window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+        // This will block user to cast app screen
+        if (BuildConfig.FLAVOR.equals("production", true)) {
+            window.setFlags(
+                WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE
+            )
+        }
         super.onResume()
         if (isDeviceRootedOrEmulator()) {
             AlertDialog.Builder(this)
@@ -210,6 +394,7 @@ class HomeActivity : AppCompatActivity() {
                 .setPositiveButton("Exit") { dialog, id -> finish() }
                 .show()
         }
+        binding.versionName.text = "APK Version ${BuildConfig.VERSION_NAME}"
     }
     private fun setUpMenu() {
         val menu = object : MenuProvider {
@@ -344,6 +529,36 @@ class HomeActivity : AppCompatActivity() {
             true
 
         }
+        binding.navView.menu.findItem(R.id.menu_delete_account).setOnMenuItemClickListener {
+            var url = ""
+            if (BuildConfig.FLAVOR.equals("production", true)) {
+                url = "https://forms.office.com/r/HkE3c0tGr6"
+            } else {
+                url =
+                    "https://forms.office.com/Pages/ResponsePage.aspx?id=jQ49md0HKEGgbxRJvtPnRISY9UjAA01KtsFKYKhp1nNURUpKQzNJUkE1OUc0SllXQ0IzRFVJNlM2SC4u"
+            }
+
+            if (url.isNotEmpty()){
+                val i = Intent(Intent.ACTION_VIEW)
+                i.setData(Uri.parse(url))
+                startActivity(i)
+            }
+            binding.drawerLayout.close()
+            true
+
+        }
+
+        if (isChatSupportEnabled) {
+            binding.navView.menu.findItem(R.id.ChatFragment).setVisible(true)
+            binding.navView.menu.findItem(R.id.ChatFragment).setOnMenuItemClickListener {
+                displaychatdialog()
+                /*navController.popBackStack(R.id.homeFragment, false)
+            startActivity(Intent(this, ChatSupport::class.java))*/
+                binding.drawerLayout.close()
+                true
+
+            }
+        }
     }
 
 
@@ -368,7 +583,10 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun isDeviceRootedOrEmulator(): Boolean {
+
+//      return isRooted() || isEmulator() || RootedUtil().isDeviceRooted(applicationContext)
         return isRooted() || isEmulator()
+
     }
 
 }

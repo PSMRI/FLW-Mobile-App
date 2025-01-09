@@ -937,7 +937,23 @@
         <action
             android:id="@+id/action_pregnantListFragment_to_HRPMicroBirthPlanFragment"
             app:destination="@id/HRPMicroBirthPlanFragment" />
+        <action
+            android:id="@+id/action_pregnantListFragment_to_HRPMicroBirthPlanTable"
+            app:destination="@id/HRPMicroBirthPlanTable" />
     </fragment>
+    <fragment
+        android:id="@+id/HRPMicroBirthPlanTable"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.pregnant_women.micro_birth_plan_table.HRPMicroBirthPlanTable"
+        android:label="@string/micro_birth_plan_table" >
+        <argument
+            android:name="benId"
+            app:argType="long" />
+        <action
+            android:id="@+id/action_HRPMicroBirthPlanTable_to_pregnantListFragment"
+            app:destination="@id/pregnantListFragment" />
+
+    </fragment>
+
     <fragment
         android:id="@+id/HRPMicroBirthPlanFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.pregnant_women.micro_birth_plan.HRPMicroBirthPlanFragment"
@@ -965,5 +981,6 @@
         android:name="org.piramalswasthya.sakhi.ui.home_activity.incentives.IncentivesFragment"
         android:label="fragment_incentives"
         tools:layout="@layout/fragment_incentives" />
+
 
 </navigation>

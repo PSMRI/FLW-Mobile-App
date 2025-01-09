@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.ui.home_activity.home
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,8 +12,10 @@ import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.database.room.InAppDb
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.isInternetAvailable
 import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.repositories.UserRepo
+import org.piramalswasthya.sakhi.work.WorkerUtils
 import javax.inject.Inject
 
 @HiltViewModel
@@ -38,9 +41,13 @@ class HomeViewModel @Inject constructor(
 
     val scope: CoroutineScope
         get() = viewModelScope
-    private var _unprocessedRecords: Int = 0
-    val unprocessedRecords: Int
-        get() = _unprocessedRecords
+//    private var _unprocessedRecords: Int = 0
+//    val unprocessedRecords: Int
+//        get() = _unprocessedRecords
+
+    private var _unprocessedRecordsCount: MutableLiveData<Int> = MutableLiveData(0)
+    val unprocessedRecordsCount: LiveData<Int>
+        get() = _unprocessedRecordsCount
 
 
     val locationRecord: LocationRecord? = pref.getLocationRecord()
@@ -55,7 +62,7 @@ class HomeViewModel @Inject constructor(
 //            _user = pref.getLoggedInUser()!!
             launch {
                 userRepo.unProcessedRecordCount.collect { value ->
-                    _unprocessedRecords =
+                    _unprocessedRecordsCount.value =
                         value.filter { it.syncState != SyncState.SYNCED }.sumOf { it.count }
                 }
             }

@@ -202,6 +202,8 @@ data class BenBasicCache(
 
         }
 
+
+
         private fun getDiffYears(a: Calendar, b: Calendar): Int {
             var diff = b.get(Calendar.YEAR) - a.get(Calendar.YEAR)
             if (a.get(Calendar.MONTH) > b.get(Calendar.MONTH) || a.get(Calendar.MONTH) == b.get(
@@ -698,6 +700,7 @@ data class BenBasicDomain(
     val hrpStatus: Boolean = false,
     var syncState: SyncState?
 )
+
 
 data class BenBasicDomainForForm(
     val benId: Long,
@@ -1292,7 +1295,7 @@ data class BenRegCache(
         return TimeUnit.MILLISECONDS.toDays(cal.timeInMillis - millisCurrent).toInt()
     }
 
-    fun asKidNetworkModel(): BenRegKidNetwork {
+    fun asKidNetworkModel(user: User): BenRegKidNetwork {
         return BenRegKidNetwork(
             benficieryid = beneficiaryId,
             childName = firstName,
@@ -1342,7 +1345,7 @@ data class BenRegCache(
             Processed = processed,
             serverUpdatedStatus = serverUpdatedStatus,
             VanID = 4,
-//            ProviderServiceMapID = user.serviceMapId,
+            ProviderServiceMapID = user.serviceMapId,
             Countyid = locationRecord.country.id,
             stateid = locationRecord.state.id,
             districtid = locationRecord.district.id,

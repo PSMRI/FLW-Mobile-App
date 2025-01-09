@@ -16,7 +16,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.FragmentVerifyMobileOtpBinding
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
-import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_otp.AadhaarOtpFragmentArgs
 import org.piramalswasthya.sakhi.ui.abha_id_activity.verify_mobile_otp.VerifyMobileOtpViewModel.State
 
 @AndroidEntryPoint
@@ -29,10 +28,6 @@ class VerifyMobileOtpFragment : Fragment() {
     private lateinit var navController: NavController
 
     private val viewModel: VerifyMobileOtpViewModel by viewModels()
-
-    val args: VerifyMobileOtpFragmentArgs by lazy {
-        VerifyMobileOtpFragmentArgs.fromBundle(requireArguments())
-    }
 
 
     private var timer = object : CountDownTimer(30000, 1000) {

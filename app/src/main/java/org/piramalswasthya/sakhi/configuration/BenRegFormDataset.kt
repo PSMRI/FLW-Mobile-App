@@ -1160,7 +1160,10 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 firstName.value = hoFSpouse.genDetails?.spouseName
                 firstName.inputType = TEXT_VIEW
                 lastName.value = hoFSpouse.lastName
-                lastName.inputType = TEXT_VIEW
+                lastName.inputType = EDIT_TEXT
+            } else {
+                lastName.value = hoFSpouse.lastName
+                lastName.inputType = EDIT_TEXT
             }
             if (hoFSpouse.gender == FEMALE) {
                 wifeName.value = "${hoFSpouse.firstName} ${hoFSpouse.lastName ?: ""}"
@@ -1194,7 +1197,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
     }
 
-    private fun isKid(): Boolean {
+    fun isKid(): Boolean {
         return ((getAgeFromDob(getLongFromDate(agePopup.value))) < 15)
     }
 
