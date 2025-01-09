@@ -83,7 +83,6 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="@{viewModel.hidResponse.name}"
                             android:textSize="14sp" />
                     </LinearLayout>
 
@@ -109,7 +108,6 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="@{viewModel.hidResponse.healthIdNumber}"
                             android:textSize="14sp" />
                     </LinearLayout>
 
@@ -148,6 +146,7 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="50dp"
                 android:paddingRight="50dp"
+                android:visibility="visible"
                 app:layout_constraintTop_toBottomOf="@id/ll_abha_ben_mapped">
                 <TextView
                     android:id="@+id/txt_download_abha"
@@ -205,6 +204,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/padding_normal"
+                android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="@id/cl_download_abha">
                     <TextView
                         android:id="@+id/tv_otp_msg"

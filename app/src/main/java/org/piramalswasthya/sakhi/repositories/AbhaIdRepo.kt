@@ -201,7 +201,13 @@ class AbhaIdRepo @Inject constructor(
     suspend fun verifyOtpForAadhaar(req: AbhaVerifyAadhaarOtpRequest): NetworkResult<AbhaVerifyAadhaarOtpResponse> {
         return withContext(Dispatchers.IO) {
             try {
-                val response = abhaApiService.verifyAadhaarOtp(req)
+                // ABHA v3
+                req.authData.otp.otpValue = encryptData(req.authData.otp.otpValue)
+                req.authData.otp.timeStamp = getCurrentTimestamp()
+                // ABHA v1/v2 API
+//                val response = abhaApiService.verifyAadhaarOtp(req)
+                // ABHA v3 API
+                val response = abhaApiService.verifyAadhaarOtp3(req, generateUUID(), getCurrentTimestamp())
                 if (response.isSuccessful) {
                     val responseBody = response.body()?.string()
                     val result =
@@ -218,6 +224,30 @@ class AbhaIdRepo @Inject constructor(
                 NetworkResult.Error(-3, "Request Timed out! Please try again!")
             } catch (e: java.lang.Exception) {
                 e.printStackTrace()
+                NetworkResult.Error(-4, e.message ?: "Unknown Error")
+            }
+        }
+
+    }
+
+    suspend fun printAbhaCard(): NetworkResult<ResponseBody> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = abhaApiService.printAbhaCard(generateUUID(), getCurrentTimestamp())
+                val responseBody = response.body()
+                if (response.isSuccessful) {
+                    NetworkResult.Success(
+                        responseBody!!)
+                } else {
+                    sendErrorResponse(response)
+                }
+            } catch (e: IOException) {
+                NetworkResult.Error(-1, "Unable to connect to Internet!")
+            } catch (e: JSONException) {
+                NetworkResult.Error(-2, "Invalid response! Please try again!")
+            } catch (e: SocketTimeoutException) {
+                NetworkResult.Error(-3, "Request Timed out! Please try again!")
+            } catch (e: java.lang.Exception) {
                 NetworkResult.Error(-4, e.message ?: "Unknown Error")
             }
         }
@@ -255,7 +285,13 @@ class AbhaIdRepo @Inject constructor(
     suspend fun verifyOtpForMobileNumber(req: AbhaVerifyMobileOtpRequest): NetworkResult<AbhaVerifyMobileOtpResponse> {
         return withContext(Dispatchers.IO) {
             try {
-                val response = abhaApiService.verifyMobileOtp(req)
+                // ABHA v3
+                req.authData.otp.otpValue = encryptData(req.authData.otp.otpValue)
+                req.authData.otp.timeStamp = getCurrentTimestamp()
+                // ABHA v1/v2 API
+//                val response = abhaApiService.verifyMobileOtp(req)
+                // ABHA v3 API
+                val response = abhaApiService.verifyMobileOtp3(req, generateUUID(), getCurrentTimestamp())
                 if (response.isSuccessful) {
                     val responseBody = response.body()?.string()
                     val result =

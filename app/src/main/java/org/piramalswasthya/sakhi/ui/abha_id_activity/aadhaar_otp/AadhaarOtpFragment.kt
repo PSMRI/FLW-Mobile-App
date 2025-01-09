@@ -59,7 +59,7 @@ class AadhaarOtpFragment : Fragment() {
             viewModel.verifyOtpClicked(binding.tietAadhaarOtp.text.toString())
         }
         binding.resendOtp.setOnClickListener {
-            viewModel.resendOtp()
+            viewModel.generateOtpClicked("")
             startResendTimer()
         }
 
@@ -109,9 +109,22 @@ class AadhaarOtpFragment : Fragment() {
                 }
 
                 State.OTP_VERIFY_SUCCESS -> {
+                    if (parentViewModel.mobileNumber == viewModel.mobileNumber) {
+                        findNavController().navigate(
+                            AadhaarOtpFragmentDirections.actionAadhaarOtpFragmentToCreateAbhaFragment(
+                                viewModel.txnId, viewModel.name, viewModel.phrAddress, viewModel.abhaNumber
+                            )
+                        )
+                    } else {
+                        viewModel.generateOtpClicked()
+                    }
+                    viewModel.resetState()
+                }
+
+                State.SUCCESS -> {
                     findNavController().navigate(
-                        AadhaarOtpFragmentDirections.actionAadhaarOtpFragmentToGenerateMobileOtpFragment(
-                            viewModel.txnId
+                        AadhaarOtpFragmentDirections.actionAadhaarOtpFragmentToVerifyMobileOtpFragment(
+                            viewModel.txnId, viewModel.mobileNumber, viewModel.name, viewModel.phrAddress, viewModel.abhaNumber
                         )
                     )
                     viewModel.resetState()

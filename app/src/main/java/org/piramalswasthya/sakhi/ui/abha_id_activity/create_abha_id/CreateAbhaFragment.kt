@@ -14,7 +14,6 @@ import android.os.CountDownTimer
 import android.os.Environment
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,14 +29,15 @@ import androidx.work.Operation
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import okhttp3.ResponseBody
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.FragmentCreateAbhaBinding
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
-import org.piramalswasthya.sakhi.ui.abha_id_activity.create_abha_id.CreateAbhaViewModel.State
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
+
 
 @AndroidEntryPoint
 class CreateAbhaFragment : Fragment() {
@@ -51,6 +51,12 @@ class CreateAbhaFragment : Fragment() {
     private val viewModel: CreateAbhaViewModel by viewModels()
 
     private val channelId = "download abha card"
+
+    private var benId: Long = 0
+
+    val args: CreateAbhaFragmentArgs by lazy {
+        CreateAbhaFragmentArgs.fromBundle(requireArguments())
+    }
 
 
     private var timer = object : CountDownTimer(30000, 1000) {
@@ -117,10 +123,13 @@ class CreateAbhaFragment : Fragment() {
 
         val intent = requireActivity().intent
 
-        val benId = intent.getLongExtra("benId", 0)
+        benId = intent.getLongExtra("benId", 0)
         val benRegId = intent.getLongExtra("benRegId", 0)
 
-        viewModel.createHID(benId, benRegId)
+        viewModel.mapBeneficiaryToHealthId(benId, benRegId)
+
+        binding.textView2.text = args.name
+        binding.textView4.text = args.abhaNumber
 
         viewModel.benMapped.observe(viewLifecycleOwner) {
             it?.let {
@@ -158,68 +167,6 @@ class CreateAbhaFragment : Fragment() {
             onBackPressedCallback
         )
 
-        viewModel.state.observe(viewLifecycleOwner) { state ->
-            when (state) {
-                State.IDLE -> {}
-                State.LOADING -> {
-                    binding.pbCai.visibility = View.VISIBLE
-                    binding.clCreateAbhaId.visibility = View.INVISIBLE
-                    binding.clError.visibility = View.INVISIBLE
-                }
-
-                State.ERROR_NETWORK -> {
-                    binding.pbCai.visibility = View.INVISIBLE
-                    binding.clCreateAbhaId.visibility = View.INVISIBLE
-                    binding.clError.visibility = View.VISIBLE
-                }
-
-                State.ERROR_SERVER -> {
-                    binding.pbCai.visibility = View.INVISIBLE
-                    binding.clError.visibility = View.INVISIBLE
-                    binding.tvErrorText.visibility = View.VISIBLE
-                }
-
-                State.ABHA_GENERATE_SUCCESS -> {
-                    binding.pbCai.visibility = View.INVISIBLE
-                    binding.clCreateAbhaId.visibility = View.VISIBLE
-                    binding.clVerifyMobileOtp.visibility = View.INVISIBLE
-                    binding.clError.visibility = View.INVISIBLE
-                }
-
-                State.OTP_GENERATE_SUCCESS -> {
-                    binding.clVerifyMobileOtp.visibility = View.VISIBLE
-                    binding.clDownloadAbha.visibility = View.GONE
-                    binding.clError.visibility = View.INVISIBLE
-                    startResendTimer()
-                }
-
-                State.OTP_VERIFY_SUCCESS -> {
-                    binding.pbCai.visibility = View.INVISIBLE
-                    binding.clCreateAbhaId.visibility = View.VISIBLE
-                    binding.clDownloadAbha.visibility = View.GONE
-                    binding.clVerifyMobileOtp.visibility = View.INVISIBLE
-                    binding.clError.visibility = View.INVISIBLE
-                }
-
-                State.DOWNLOAD_SUCCESS -> {
-                    binding.pbCai.visibility = View.INVISIBLE
-                    binding.clCreateAbhaId.visibility = View.VISIBLE
-                    binding.clError.visibility = View.INVISIBLE
-                }
-
-                State.DOWNLOAD_ERROR -> {
-                    binding.pbCai.visibility = View.INVISIBLE
-                    binding.clCreateAbhaId.visibility = View.VISIBLE
-                    binding.clDownloadAbha.visibility = View.GONE
-                    binding.clVerifyMobileOtp.visibility = View.VISIBLE
-                    binding.tvErrorTextVerify.visibility = View.VISIBLE
-                    startResendTimer()
-                }
-
-                State.ERROR_INTERNAL -> {}
-            }
-        }
-
         viewModel.errorMessage.observe(viewLifecycleOwner) {
             it?.let {
                 binding.tvErrorTextVerify.text = it
@@ -228,14 +175,13 @@ class CreateAbhaFragment : Fragment() {
             }
         }
 
-        viewModel.cardBase64.observe(viewLifecycleOwner) {
+        viewModel.byteImage.observe(viewLifecycleOwner) {
             it?.let {
                 showFileNotification(it)
             }
         }
         binding.btnDownloadAbhaYes.setOnClickListener {
-            viewModel.generateOtp()
-            binding.clDownloadAbha.visibility = View.GONE
+            viewModel.printAbhaCard()
         }
 
         binding.resendOtp.setOnClickListener {
@@ -251,9 +197,9 @@ class CreateAbhaFragment : Fragment() {
         _binding = null
     }
 
-    private fun showFileNotification(fileStr: String) {
+    private fun showFileNotification(fileStr: ResponseBody) {
         val fileName =
-            "${viewModel.hidResponse.value?.name}_${System.currentTimeMillis()}.png"
+            "${benId}_${System.currentTimeMillis()}.png"
         val notificationManager =
             requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -266,8 +212,7 @@ class CreateAbhaFragment : Fragment() {
         val directory =
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
         val file = File(directory, fileName)
-        val data: ByteArray = Base64.decode(fileStr, 0)
-        FileOutputStream(file).use { stream -> stream.write(data) }
+        FileOutputStream(file).use { stream -> stream.write(fileStr.bytes()) }
         MediaScannerConnection.scanFile(
             requireContext(),
             arrayOf(file.toString()),

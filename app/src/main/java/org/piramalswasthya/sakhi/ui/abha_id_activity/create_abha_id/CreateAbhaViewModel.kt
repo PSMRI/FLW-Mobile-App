@@ -7,21 +7,29 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import okhttp3.ResponseBody
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.BenHealthIdDetails
+import org.piramalswasthya.sakhi.network.AbhaVerifyAadhaarOtpRequest
+import org.piramalswasthya.sakhi.network.AuthData
+import org.piramalswasthya.sakhi.network.Consent
 import org.piramalswasthya.sakhi.network.CreateAbhaIdResponse
 import org.piramalswasthya.sakhi.network.CreateHIDResponse
 import org.piramalswasthya.sakhi.network.CreateHealthIdRequest
 import org.piramalswasthya.sakhi.network.GenerateOtpHid
 import org.piramalswasthya.sakhi.network.MapHIDtoBeneficiary
 import org.piramalswasthya.sakhi.network.NetworkResult
+import org.piramalswasthya.sakhi.network.Otp
 import org.piramalswasthya.sakhi.network.ValidateOtpHid
 import org.piramalswasthya.sakhi.repositories.AbhaIdRepo
 import org.piramalswasthya.sakhi.repositories.BenRepo
+import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_otp.AadhaarOtpViewModel.State
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class CreateAbhaViewModel @Inject constructor(
+    private val pref: PreferenceDao,
     private val abhaIdRepo: AbhaIdRepo,
     private val benRepo: BenRepo,
     savedStateHandle: SavedStateHandle
@@ -45,9 +53,17 @@ class CreateAbhaViewModel @Inject constructor(
     private val txnId =
         CreateAbhaFragmentArgs.fromSavedStateHandle(savedStateHandle).txnId
 
+    private val hID =
+        CreateAbhaFragmentArgs.fromSavedStateHandle(savedStateHandle).phrAddress
+
+    private val healthIdNumber =
+        CreateAbhaFragmentArgs.fromSavedStateHandle(savedStateHandle).abhaNumber
+
     val otpTxnID = MutableLiveData<String?>(null)
 
     val cardBase64 = MutableLiveData<String>(null)
+
+    val byteImage = MutableLiveData<ResponseBody>(null)
 
     private val _errorMessage = MutableLiveData<String?>(null)
     val errorMessage: LiveData<String?>
@@ -57,6 +73,43 @@ class CreateAbhaViewModel @Inject constructor(
         _state.value = State.LOADING
     }
 
+    fun printAbhaCard() {
+        viewModelScope.launch {
+            val result = abhaIdRepo.printAbhaCard()
+            when (result) {
+                is NetworkResult.Success -> {
+                    byteImage.value = result.data
+                    _state.value = State.ABHA_GENERATE_SUCCESS
+                }
+
+                is NetworkResult.Error -> {
+                    _errorMessage.value = result.message
+                    _state.value = State.ERROR_SERVER
+                }
+
+                is NetworkResult.NetworkError -> {
+                    Timber.i(result.toString())
+                    _state.value = State.ERROR_NETWORK
+                }
+            }
+        }
+    }
+
+    fun mapBeneficiaryToHealthId(benId: Long, benRegId: Long) {
+        viewModelScope.launch {
+            if ((benId != 0L) || (benRegId != 0L)) {
+                mapBeneficiary(
+                    benId,
+                    if (benRegId != 0L) benRegId else null,
+                    hID,
+                    healthIdNumber
+                )
+            } else {
+                _state.value = State.ABHA_GENERATE_SUCCESS
+            }
+        }
+    }
+
     fun createHID(benId: Long, benRegId: Long) {
         viewModelScope.launch {
             when (val result =
@@ -64,7 +117,7 @@ class CreateAbhaViewModel @Inject constructor(
                     CreateHealthIdRequest(
                         "", txnId, "", "", "", "", "",
                         "", "", "", "", "", "",
-                        "", "", 0, "", 34, ""
+                        "", "", 0, "", pref.getLoggedInUser()?.serviceMapId, ""
                     )
                 )) {
                 is NetworkResult.Success -> {
