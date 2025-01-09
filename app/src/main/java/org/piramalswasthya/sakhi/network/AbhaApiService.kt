@@ -1,26 +1,18 @@
 package org.piramalswasthya.sakhi.network
 
 import okhttp3.ResponseBody
+import org.piramalswasthya.sakhi.BuildConfig
 import retrofit2.Response
 import retrofit2.http.*
 
 interface AbhaApiService {
 
-    // Staging (v1/v2/v3)
     @Headers("No-Auth: true")
     @POST
     suspend fun getToken(
-        @Url url: String = "https://dev.abdm.gov.in/gateway/v0.5/sessions",
+        @Url url: String = BuildConfig.ABHA_TOKEN_URL,
         @Body request: AbhaTokenRequest = AbhaTokenRequest()
     ): Response<ResponseBody>
-
-    // Production (v1/v2/v3)
-//    @Headers("No-Auth: true")
-//    @POST
-//    suspend fun getToken(
-//        @Url url: String = "https://live.abdm.gov.in/gateway/v0.5/sessions",
-//        @Body request: AbhaTokenRequest = AbhaTokenRequest()
-//    ): Response<ResponseBody>
 
     // Generate OTP (v1)
     @POST("v1/registration/aadhaar/generateOtp")
@@ -73,23 +65,10 @@ interface AbhaApiService {
     @GET("v1/account/getPngCard")
     suspend fun getPngCard(): Response<ResponseBody>
 
-    // Staging RES Encryption API (v1/v2)
-//    @GET
-//    suspend fun getAuthCert(
-//        @Url url: String = "https://healthidsbx.abdm.gov.in/api/v2/auth/cert"
-//    ): Response<ResponseBody>
-
-    // Staging RES Encryption API (v3)
     @GET
     suspend fun getAuthCert(
-        @Url url: String = "https://abhasbx.abdm.gov.in/abha/api/v3/profile/public/certificate"
+        @Url url: String = BuildConfig.ABHA_AUTH_URL
     ): Response<ResponseBody>
-
-    // Production RES Encryption API (v3)
-//    @GET
-//    suspend fun getAuthCert(
-//        @Url url: String = "https://abha.abdm.gov.in/api/abha/v3/profile/public/certificate"
-//    ): Response<ResponseBody>
 
     @GET("v2/ha/lgd/states")
     suspend fun getStateAndDistricts(): Response<ResponseBody>

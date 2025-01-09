@@ -10,6 +10,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.database.room.InAppDb
 import org.piramalswasthya.sakhi.database.room.dao.*
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
@@ -27,20 +28,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-
-//     Staging Base URL
-    private const val baseTmcUrl =
-        "https://amritdemo.piramalswasthya.org/"
-
-    // Production Base URL
-//    private const val baseTmcUrl =
-//        "https://assamtmc.piramalswasthya.org/"
-
-    // Staging ABHA URL
-//    private const val baseAbhaUrl = "https://healthidsbx.abdm.gov.in/api/"
-    private const val baseAbhaUrl = "https://abhasbx.abdm.gov.in/abha/api/"
-    // Production ABHA URL
-//    private const val baseAbhaUrl = "https://abha.abdm.gov.in/api/abha/"
 
     private val baseClient =
         OkHttpClient.Builder()
@@ -92,7 +79,7 @@ object AppModule {
         return Retrofit.Builder()
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             //.addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(baseTmcUrl)
+            .baseUrl(BuildConfig.BASE_TMC_URL)
             .client(httpClient)
             .build()
             .create(AmritApiService::class.java)
@@ -107,7 +94,7 @@ object AppModule {
         return Retrofit.Builder()
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             //.addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(baseAbhaUrl)
+            .baseUrl(BuildConfig.BASE_ABHA_URL)
             .client(httpClient)
             .build()
             .create(AbhaApiService::class.java)

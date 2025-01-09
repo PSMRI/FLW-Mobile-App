@@ -148,12 +148,12 @@ class AadhaarOtpViewModel @Inject constructor(
 //                abhaIdRepo.generateOtpForAadhaarV2(AbhaGenerateAadhaarOtpRequest(aadhaarNo))) {
                 abhaIdRepo.generateOtpForAadhaarV2(
                     AbhaGenerateAadhaarOtpRequest(
-                    txnId,
-                    listOf<String>("abha-enrol", "mobile-verify"),
-                    "mobile",
-                    mobileFromArgs,
-                    "abdm"
-                )
+                        txnId,
+                        listOf<String>("abha-enrol", "mobile-verify"),
+                        "mobile",
+                        mobileFromArgs,
+                        "abdm"
+                    )
                 )) {
                 is NetworkResult.Success -> {
                     _txnId = result.data.txnId
