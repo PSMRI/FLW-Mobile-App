@@ -6,15 +6,16 @@ platform :android do
   lane :build_and_distribute_debug do |options|
     # Build the debug variant
     gradle(
-      task: "assemble#{options[:variant]}Debug",
-      build_type: "Debug"
+      task: "assemble#{options[:variant]}Debug"
     )
+
+    puts "Testers group: #{ENV['TESTER_GROUPS']}"
 
     # Distribute to Firebase App Distribution for Stag and UAT
     firebase_app_distribution(
       app: ENV['FIREBASE_APP_ID'],
       firebase_cli_token: ENV['FIREBASE_CLI_TOKEN'],
-      groups: "kevaltesters",
+      groups: "#{ENV['TESTER_GROUPS']}",
       release_notes: "#{options[:variant]}-Debug version out!",
       debug: true
     )
@@ -24,8 +25,7 @@ platform :android do
   lane :build_and_distribute_release do |options|
     # Build the release variant
     gradle(
-      task: "assemble#{options[:variant]}Release",
-      build_type: "Release"
+      task: "assemble#{options[:variant]}Release"
     )
 
     # Sign the APK using the keystore
@@ -38,11 +38,11 @@ platform :android do
     )
 
     # Deploy to Google Play for Production
-    supply(
-      track: "internal",
-      aab: "app/build/outputs/bundle/#{options[:variant]}Release/app-#{options[:variant]}-release.aab"
-      json_key: "./google_play_service_account.json"
-    )
+#     supply(
+#       track: "internal",
+#       aab: "app/build/outputs/bundle/#{options[:variant]}Release/app-#{options[:variant]}-release.aab",
+#       json_key: "./google_play_service_account.json"
+#     )
   end
 
 
