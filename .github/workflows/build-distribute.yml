@@ -21,7 +21,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
+        
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
@@ -72,6 +72,22 @@ jobs:
       - name: Create local.properties
         run: echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
 
+      - name: Get app version
+        id: get-version 
+        run: | 
+          version=$(bundle exec fastlane get_app_version | grep "App version name" | awk '{print $NF}')
+          echo "version=$VERSION_NAME" >> $GITHUB_ENV 
+        env: 
+          GITHUB_ENV: $GITHUB_ENV
+
+      - name: Verify version 
+        run: | 
+          if [ -z "$VERSION_NAME" ]; then 
+            echo "Version name could not be extracted. Exiting." exit 1 
+          else 
+            echo "Version name is $VERSION_NAME" 
+          fi
+          
       - name: Build and Distribute app to Firebase
         id: build-and-distribute
         run: |
@@ -86,7 +102,7 @@ jobs:
           export ABHA_AUTH_URL=${{ secrets.ABHA_AUTH_URL }}
 
           # Set app release version signing credentials
-          export KEYSTORE_PATH=${{ secrets.KEYSTORE_PATH }}
+          export KEYSTORE_FILE=$(echo ${{ secrets.KEYSTORE_FILE }} | base64 --decode)
           export KEYSTORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}
           export KEY_ALIAS=${{ secrets.KEY_ALIAS }}
           export KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}
@@ -95,7 +111,7 @@ jobs:
           export FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }}
           export FIREBASE_CLI_TOKEN=${{ secrets.FIREBASE_CLI_TOKEN }}
           export TESTER_GROUPS=${{ secrets.TESTER_GROUPS }}
-          # export GOOGLE_PLAY_JSON_KEY=$(echo ${{ secrets.GOOGLE_PLAY_JSON_KEY }} | base64 --decode)
+          export GOOGLE_PLAY_JSON_KEY=$(echo ${{ secrets.GOOGLE_PLAY_JSON_KEY }} | base64 --decode)
 
           if [ "${{ inputs.build_type }}" == "debug" ]; then
             bundle exec fastlane build_and_distribute_debug variant:${{ inputs.variant }}
@@ -109,5 +125,12 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: FLW-Mobile-App - APK(s) ${{ inputs.variant }} generated
-          path: app/build/outputs/apk/**/debug/*.apk
+          path: app/build/outputs/apk/**/${{ inputs.build_type }}/*.apk
+      
+      - name: Push to Releases
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "app/build/outputs/apk/**/${{ inputs.build_type }}/*.apk"
+          tag: v${{ env.version }}-${{ inputs.environment }}-${{ github.run_number }}
+          token: ${{secrets.GITHUB_TOKEN}}
 

@@ -2,6 +2,12 @@
 default_platform(:android)
 platform :android do
 
+  desc "Get App Version" 
+  lane :get_app_version do 
+    app_version = android_get_version_name 
+    puts "App version name: #{app_version}" 
+  end
+
   desc "Build and Distribute Debug APK to Firebase"
   lane :build_and_distribute_debug do |options|
     # Build the debug variant
@@ -25,24 +31,26 @@ platform :android do
   lane :build_and_distribute_release do |options|
     # Build the release variant
     gradle(
-      task: "assemble#{options[:variant]}Release"
-    )
-
-    # Sign the APK using the keystore
-    gradle(
-      task: "signingReport",
-      keystore_path: ENV['KEYSTORE_PATH'],
-      keystore_password: ENV['KEYSTORE_PASSWORD'],
-      key_alias: ENV['KEY_ALIAS'],
-      key_password: ENV['KEY_PASSWORD']
-    )
+          task: "bundle#{options[:variant]}Release",
+          properties: {
+            "android.injected.signing.store.file" => ENV["KEYSTORE_FILE"],
+            "android.injected.signing.store.password" => ENV["KEYSTORE_PASSWORD"],
+            "android.injected.signing.key.alias" => ENV["KEY_ALIAS"],
+            "android.injected.signing.key.password" => ENV["KEY_PASSWORD"],
+          }
+        )
 
     # Deploy to Google Play for Production
 #     supply(
 #       track: "internal",
 #       aab: "app/build/outputs/bundle/#{options[:variant]}Release/app-#{options[:variant]}-release.aab",
-#       json_key: "./google_play_service_account.json"
+#       json_key: ENV["GOOGLE_PLAY_JSON_KEY"]
 #     )
+
+    upload_to_play_store(
+          track: "internal",
+          json_key: ENV["GOOGLE_PLAY_JSON_KEY"]
+    )
   end
 
 

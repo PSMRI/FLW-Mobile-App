@@ -4,7 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.os.Build
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -60,7 +60,6 @@ import org.piramalswasthya.sakhi.ui.service_location_activity.ServiceLocationAct
 import org.piramalswasthya.sakhi.utils.KeyUtils
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import java.net.URI
-import java.util.*
 import java.util.Locale
 import javax.inject.Inject
 
@@ -68,7 +67,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class HomeActivity : AppCompatActivity() {
 
-    var isChatSupportEnabled: Boolean = true
+    var isChatSupportEnabled : Boolean = false
 
 
 
@@ -224,7 +223,8 @@ class HomeActivity : AppCompatActivity() {
             1010
         )
 
-        if (isChatSupportEnabled) {
+        if (isChatSupportEnabled)
+        {
             binding.addFab.visibility = View.VISIBLE
 
             window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
@@ -235,7 +235,9 @@ class HomeActivity : AppCompatActivity() {
 
             }
 
-        } else {
+        }
+        else
+        {
             binding.addFab.visibility = View.GONE
         }
 
@@ -268,7 +270,8 @@ class HomeActivity : AppCompatActivity() {
     }
 
 
-    private fun displaychatdialog() {
+
+   private fun displaychatdialog() {
 
         val dialog = BottomSheetDialog(this)
 
@@ -279,11 +282,12 @@ class HomeActivity : AppCompatActivity() {
         val progress = view.findViewById<ProgressBar>(R.id.progressBarv)
 
 
-        web.setWebChromeClient(object : WebChromeClient() {
-            override fun onPermissionRequest(request: PermissionRequest) {
-                request.grant(request.resources)
-            }
-        })
+       web.setWebChromeClient(object : WebChromeClient() {
+           override fun onPermissionRequest(request: PermissionRequest) {
+               request.grant(request.resources)
+           }
+       })
+
 
 
 // Enable JavaScript
@@ -292,38 +296,40 @@ class HomeActivity : AppCompatActivity() {
         web.isVerticalScrollBarEnabled = true
 
 
+
+
 // Load URL
-        web.loadUrl(KeyUtils.chatUrl())
+       web.loadUrl(KeyUtils.chatUrl())
 
 
 // Handle WebView events
-        web.webViewClient = object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(
-                view: WebView,
-                request: WebResourceRequest
-            ): Boolean {
-                return if (request.url.host == URI(KeyUtils.chatUrl()).host) {
-                    false  // Let WebView handle same-origin URLs
-                } else {
-                    startActivity(Intent(Intent.ACTION_VIEW, request.url))
-                    true
-                }
-            }
+       web.webViewClient = object : WebViewClient() {
+           override fun shouldOverrideUrlLoading(
+               view: WebView,
+               request: WebResourceRequest
+           ): Boolean {
+               return if (request.url.host == URI(KeyUtils.chatUrl()).host) {
+                   false  // Let WebView handle same-origin URLs
+               } else {
+                   startActivity(Intent(Intent.ACTION_VIEW, request.url))
+                   true
+               }
+           }
 
-            override fun onReceivedError(
-                view: WebView?,
-                request: WebResourceRequest?,
-                error: WebResourceError?
-            ) {
-                super.onReceivedError(view, request, error)
-                progress.visibility = View.GONE
-                // Show error view
-                Toast.makeText(
-                    this@HomeActivity,
-                    R.string.chat_error,
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
+           override fun onReceivedError(
+               view: WebView?,
+               request: WebResourceRequest?,
+               error: WebResourceError?
+           ) {
+               super.onReceivedError(view, request, error)
+               progress.visibility = View.GONE
+               // Show error view
+               Toast.makeText(
+                   this@HomeActivity,
+                   R.string.chat_error,
+                   Toast.LENGTH_SHORT
+               ).show()
+           }
 
             override fun onPageStarted(webview: WebView, url: String, favicon: Bitmap?) {
                 super.onPageStarted(webview, url, favicon)
@@ -353,11 +359,11 @@ class HomeActivity : AppCompatActivity() {
         // on below line we are setting
         // content view to our view.
         dialog.setContentView(view)
-        //  dialog.behavior.setPeekHeight(6000)
+     //  dialog.behavior.setPeekHeight(6000)
 
-        val displayMetrics = resources.displayMetrics
-        val screenHeight = displayMetrics.heightPixels
-        dialog.behavior.setPeekHeight((screenHeight * 0.85).toInt())
+       val displayMetrics = resources.displayMetrics
+       val screenHeight = displayMetrics.heightPixels
+       dialog.behavior.setPeekHeight((screenHeight * 0.85).toInt())
 
 
         // on below line we are calling
@@ -367,7 +373,7 @@ class HomeActivity : AppCompatActivity() {
         dialog.show()
 
 
-    }
+        }
 
 
 
@@ -520,6 +526,24 @@ class HomeActivity : AppCompatActivity() {
         binding.navView.menu.findItem(R.id.abha_id_activity).setOnMenuItemClickListener {
             navController.popBackStack(R.id.homeFragment, false)
             startActivity(Intent(this, AbhaIdActivity::class.java))
+            binding.drawerLayout.close()
+            true
+
+        }
+        binding.navView.menu.findItem(R.id.menu_delete_account).setOnMenuItemClickListener {
+            var url = ""
+            if (BuildConfig.FLAVOR.equals("production", true)) {
+                url = "https://forms.office.com/r/HkE3c0tGr6"
+            } else {
+                url =
+                    "https://forms.office.com/Pages/ResponsePage.aspx?id=jQ49md0HKEGgbxRJvtPnRISY9UjAA01KtsFKYKhp1nNURUpKQzNJUkE1OUc0SllXQ0IzRFVJNlM2SC4u"
+            }
+
+            if (url.isNotEmpty()){
+                val i = Intent(Intent.ACTION_VIEW)
+                i.setData(Uri.parse(url))
+                startActivity(i)
+            }
             binding.drawerLayout.close()
             true
 
