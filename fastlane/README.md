@@ -16,13 +16,21 @@ _fastlane_](https://docs.fastlane.tools/#installing-fastlane)
 
 ## Android
 
-### android build_and_distribute_apk_to_firebase
+### android build_and_distribute_debug
 
 ```sh
-[bundle exec] fastlane android build_and_distribute_apk_to_firebase
+[bundle exec] fastlane android build_and_distribute_debug
 ```
 
-Build and Distribute an APK
+Build and Distribute Debug APK to Firebase
+
+### android build_and_distribute_release
+
+```sh
+[bundle exec] fastlane android build_and_distribute_release
+```
+
+Build, Sign, and Distribute Release APK to Play Store
 
 ----
 

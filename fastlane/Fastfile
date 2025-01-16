@@ -1,69 +1,119 @@
+def get_package_name(flavor)
+  base_package = "org.piramalswasthya.sakhi"
+  suffixes = {
+    "SakshamStag" => ".saksham.stag",
+    "SakshamUat" => ".saksham.uat",
+    "Saksham" => ".saksham",
+    "Xushrukha" => ".xushrukha",
+    "Niramay" => ".niramay"
+  }
+
+  suffix = suffixes[flavor] || ""
+  "#{base_package}#{suffix}"
+end
+
+def latest_googleplay_version_code(package_name)
+#   productionVersionCodes = google_play_track_version_codes(track: 'production', package_name: package_name)
+#   betaVersionCodes = google_play_track_version_codes(track: 'beta', package_name: package_name)
+#   alphaVersionCodes = google_play_track_version_codes(track: 'alpha', package_name: package_name)
+  internalVersionCodes = google_play_track_version_codes(track: 'internal', package_name: package_name)
+
+  # puts version codes from all tracks into the same array
+  versionCodes = [
+#     productionVersionCodes,
+#     betaVersionCodes,
+#     alphaVersionCodes,
+    internalVersionCodes
+  ].reduce([], :concat)
+
+  # returns the highest version code from array
+  return versionCodes.max
+end
+
 
 default_platform(:android)
 platform :android do
 
-  desc "Get App Version" 
-  lane :get_app_version do 
-    app_version = android_get_version_name 
-    puts "App version name: #{app_version}" 
-  end
-
   desc "Build and Distribute Debug APK to Firebase"
   lane :build_and_distribute_debug do |options|
+
+   latest_release = firebase_app_distribution_get_latest_release(
+      app: ENV['FIREBASE_APP_ID'],
+      service_credentials_file: "firebase_credentials.json"
+   )
+   new_version_code = latest_release[:buildVersion] + 1
+   current_version_name = android_get_version_name
+   new_version_name = "#{new_version_code}.0.0"
+
+    File.open("../version/version.properties", "w") do |file|
+        file.write("VERSION=#{new_version_name}")
+    end
+
     # Build the debug variant
     gradle(
-      task: "assemble#{options[:variant]}Debug"
+      task: "clean assemble#{options[:variant]}Debug"
     )
-
-    puts "Testers group: #{ENV['TESTER_GROUPS']}"
 
     # Distribute to Firebase App Distribution for Stag and UAT
     firebase_app_distribution(
       app: ENV['FIREBASE_APP_ID'],
-      firebase_cli_token: ENV['FIREBASE_CLI_TOKEN'],
-      groups: "#{ENV['TESTER_GROUPS']}",
-      release_notes: "#{options[:variant]}-Debug version out!",
+      service_credentials_file: "firebase_credentials.json",
+      release_notes_file: "FirebaseAppDistributionConfig/release_notes.txt",
+      groups_file: "FirebaseAppDistributionConfig/groups.txt",
       debug: true
     )
   end
 
   desc "Build, Sign, and Distribute Release APK to Play Store"
   lane :build_and_distribute_release do |options|
-    # Build the release variant
-    gradle(
-          task: "bundle#{options[:variant]}Release",
-          properties: {
-            "android.injected.signing.store.file" => ENV["KEYSTORE_FILE"],
-            "android.injected.signing.store.password" => ENV["KEYSTORE_PASSWORD"],
-            "android.injected.signing.key.alias" => ENV["KEY_ALIAS"],
-            "android.injected.signing.key.password" => ENV["KEY_PASSWORD"],
-          }
-        )
+    keystore_path = File.expand_path('../keystore.jks')
+    package_name = get_package_name(options[:variant])
+    new_version_code = latest_googleplay_version_code(package_name) + 1
+    current_version_name = android_get_version_name
+    new_version_name = "#{new_version_code}.0.0"
 
-    # Deploy to Google Play for Production
-#     supply(
-#       track: "internal",
-#       aab: "app/build/outputs/bundle/#{options[:variant]}Release/app-#{options[:variant]}-release.aab",
-#       json_key: ENV["GOOGLE_PLAY_JSON_KEY"]
-#     )
+
+    # Log the new version code and version name
+    puts "New version code: #{new_version_code}"
+    puts "New version name: #{new_version_name}"
+    # update version
+    File.open("../version/version.properties", "w") do |file|
+        file.write("VERSION=#{new_version_name}")
+    end
+
+    gradle(
+          task: "clean bundle#{options[:variant]}Release",
+          properties: {
+            "android.injected.signing.store.file" => keystore_path,
+            "android.injected.signing.store.password" => "#{ENV['KEYSTORE_PASSWORD']}",
+            "android.injected.signing.key.alias" => "#{ENV['KEY_ALIAS']}",
+            "android.injected.signing.key.password" => "#{ENV['KEY_PASSWORD']}",
+          }
+      )
 
     upload_to_play_store(
           track: "internal",
-          json_key: ENV["GOOGLE_PLAY_JSON_KEY"]
+          skip_upload_images: true,
+          skip_upload_screenshots: true,
+          release_status: "draft",
+          version_code: new_version_code,
+          package_name: package_name
     )
   end
 
 
 
 
-#   desc "Increment Build Version in Codebase"
-#   lane :increment_version_staging_debug do
-#     latest_release = firebase_app_distribution_get_latest_release(
-#       app: ""
-#     )
-#     increment_version_code({ version_code: latest_release[:buildVersion].to_i + 1 })
-#   end
-#
+  desc "Increment Build Version for firebase app distribution"
+  lane :increment_version_debug do
+    latest_release = firebase_app_distribution_get_latest_release(
+      app: ENV['FIREBASE_APP_ID']
+    )
+    increment_version_code({ version_code: latest_release[:buildVersion].to_i + 1 })
+  end
+
+
+
 
 
 end

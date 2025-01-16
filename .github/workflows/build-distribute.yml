@@ -21,7 +21,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
+
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
@@ -65,33 +65,44 @@ jobs:
         if: inputs.environment != 'NIRAMAY_PRODUCTION' && inputs.environment != 'XUSHRUKHA_PRODUCTION'
         run: |
           echo "${{ secrets.GOOGLE_SERVICES_JSON_GENERIC }}" | base64 --decode > ./app/google-services.json || exit 1
-      - name: Decode Google Play JSON key
+
+      - name: Decode Firebase Credentials
         run: |
-          echo "${{ secrets.GOOGLE_PLAY_JSON_KEY }}" | base64 --decode > ./fastlane/google_play_service_account.json
+          variant=${{ inputs.variant }}
+          case "$variant" in
+            SakshamStag|SakshamUat|Saksham)
+              echo "${{ secrets.FIREBASE_CREDENTIALS_JSON_SAKSHAM_ASSAM }}" | base64 --decode > firebase_credentials.json
+              ;;
+            Niramay)
+              echo "${{ secrets.FIREBASE_CREDENTIALS_JSON_UTPRERONA_NIRAMAY }}" | base64 --decode > firebase_credentials.json
+              ;;
+            Xushrukha)
+              echo "${{ secrets.FIREBASE_CREDENTIALS_JSON_UTPRERONA_XUSHRUKHA }}" | base64 --decode > firebase_credentials.json
+              ;;
+            *)
+              echo "Unknown variant: $variant"
+              exit 1
+              ;;
+          esac
+      
+
+      - name: Decode Google Play JSON key
+        if: ${{ inputs.build_type == 'release' }}
+        run: |
+          echo "${{ secrets.GOOGLE_PLAY_JSON_KEY }}" | base64 --decode > ./google_play_service_account.json
 
       - name: Create local.properties
         run: echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
 
-      - name: Get version from build.gradle 
-        id: get-version 
-        run: | 
-          VERSION_NAME=$(grep 'versionName' app/build.gradle | sed -E "s/.*versionName ['\"]([0-9.]+)['\"].*/\1/") 
-          echo "version=$VERSION_NAME" >> $GITHUB_ENV 
-        env: 
-          GITHUB_ENV: $GITHUB_ENV
+      - name: Decode keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_FILE }}" | base64 --decode > ${{ github.workspace }}/keystore.jks
+          echo "Keystore path: ${{ github.workspace }}/keystore.jks"
 
-      - name: Verify version 
-        run: | 
-          if [ -z "$VERSION_NAME" ]; then 
-            echo "Version name could not be extracted. Exiting." exit 1 
-          else 
-            echo "Version name is $VERSION_NAME" 
-          fi
-          
       - name: Build and Distribute app to Firebase
         id: build-and-distribute
         run: |
-
+          
           # Set app URLs used in the codebase
           export ENCRYPTED_PASS_KEY=${{ secrets.ENCRYPTED_PASS_KEY }}
           export ABHA_CLIENT_ID=${{ secrets.ABHA_CLIENT_ID }}
@@ -100,18 +111,17 @@ jobs:
           export BASE_ABHA_URL=${{ secrets.BASE_ABHA_URL }}
           export ABHA_TOKEN_URL=${{ secrets.ABHA_TOKEN_URL }}
           export ABHA_AUTH_URL=${{ secrets.ABHA_AUTH_URL }}
-
+          
           # Set app release version signing credentials
-          export KEYSTORE_FILE=$(echo ${{ secrets.KEYSTORE_FILE }} | base64 --decode)
-          export KEYSTORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}
+          export KEYSTORE_PASSWORD=$(echo ${{ secrets.KEYSTORE_PASSWORD }} | base64 --decode)
           export KEY_ALIAS=${{ secrets.KEY_ALIAS }}
-          export KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}
-
+          export KEY_PASSWORD=$(echo ${{ secrets.KEY_PASSWORD }} | base64 --decode)
+          
+          
           # Set Firebase App Distribution and Google Play authentication tokens
           export FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }}
           export FIREBASE_CLI_TOKEN=${{ secrets.FIREBASE_CLI_TOKEN }}
           export TESTER_GROUPS=${{ secrets.TESTER_GROUPS }}
-          export GOOGLE_PLAY_JSON_KEY=$(echo ${{ secrets.GOOGLE_PLAY_JSON_KEY }} | base64 --decode)
 
           if [ "${{ inputs.build_type }}" == "debug" ]; then
             bundle exec fastlane build_and_distribute_debug variant:${{ inputs.variant }}
@@ -119,18 +129,16 @@ jobs:
             bundle exec fastlane build_and_distribute_release variant:${{ inputs.variant }}
           fi
 
-
-
       - name: Upload APKs
         uses: actions/upload-artifact@v4
         with:
           name: FLW-Mobile-App - APK(s) ${{ inputs.variant }} generated
           path: app/build/outputs/apk/**/${{ inputs.build_type }}/*.apk
-      
+
       - name: Push to Releases
+        if: inputs.variant == 'release'
         uses: ncipollo/release-action@v1
         with:
           artifacts: "app/build/outputs/apk/**/${{ inputs.build_type }}/*.apk"
           tag: v${{ env.version }}-${{ inputs.environment }}-${{ github.run_number }}
-          token: ${{secrets.GITHUB_TOKEN}}
-
+          token: ${{ secrets.GITHUB_TOKEN }}
