@@ -41,7 +41,7 @@ platform :android do
       app: ENV['FIREBASE_APP_ID'],
       service_credentials_file: "firebase_credentials.json"
    )
-   new_version_code = latest_release[:buildVersion] + 1
+   new_version_code = latest_release[:buildVersion].to_i + 1
    current_version_name = android_get_version_name
    new_version_name = "#{new_version_code}.0.0"
 
