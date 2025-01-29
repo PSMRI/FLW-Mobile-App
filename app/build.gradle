@@ -9,7 +9,7 @@ plugins {
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
 }
 
-apply from: '../versioning.gradle'
+apply from: rootProject.file('versioning.gradle')
 
 android {
     namespace 'org.piramalswasthya.sakhi'
@@ -40,6 +40,7 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
         }
     }
 
