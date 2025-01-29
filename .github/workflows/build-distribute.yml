@@ -86,18 +86,19 @@ jobs:
           esac
       
 
+
       - name: Decode Google Play JSON key
         if: ${{ inputs.build_type == 'release' }}
         run: |
           echo "${{ secrets.GOOGLE_PLAY_JSON_KEY }}" | base64 --decode > ./google_play_service_account.json
 
-      - name: Create local.properties
-        run: echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
-
       - name: Decode keystore
         run: |
           echo "${{ secrets.KEYSTORE_FILE }}" | base64 --decode > ${{ github.workspace }}/keystore.jks
           echo "Keystore path: ${{ github.workspace }}/keystore.jks"
+
+      - name: Create local.properties
+        run: echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
 
       - name: Build and Distribute app to Firebase
         id: build-and-distribute
@@ -111,6 +112,7 @@ jobs:
           export BASE_ABHA_URL=${{ secrets.BASE_ABHA_URL }}
           export ABHA_TOKEN_URL=${{ secrets.ABHA_TOKEN_URL }}
           export ABHA_AUTH_URL=${{ secrets.ABHA_AUTH_URL }}
+          export CHAT_URL=${{secrets.CHAT_URL}}
           
           # Set app release version signing credentials
           export KEYSTORE_PASSWORD=$(echo ${{ secrets.KEYSTORE_PASSWORD }} | base64 --decode)
@@ -129,16 +131,19 @@ jobs:
             bundle exec fastlane build_and_distribute_release variant:${{ inputs.variant }}
           fi
 
-      - name: Upload APKs
+
+      - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: FLW-Mobile-App - APK(s) ${{ inputs.variant }} generated
-          path: app/build/outputs/apk/**/${{ inputs.build_type }}/*.apk
+          path: |
+            ${{ inputs.build_type == 'debug' && 'app/build/outputs/apk/**/' + inputs.build_type + '/*.apk' || 'app/build/outputs/bundle/**/' +inputs.build_type + /*.aab' }}
+
 
       - name: Push to Releases
         if: inputs.variant == 'release'
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "app/build/outputs/apk/**/${{ inputs.build_type }}/*.apk"
+          artifacts: "app/build/outputs/bundle/**/${{ inputs.build_type }}/release/*.aab"
           tag: v${{ env.version }}-${{ inputs.environment }}-${{ github.run_number }}
           token: ${{ secrets.GITHUB_TOKEN }}
