@@ -20,10 +20,10 @@ jobs:
       matrix:
         config:
           - environment: SAKSHAM_STAG
-            variant: sakshamStag
+            variant: SakshamStag
             build_type: debug
           - environment: SAKSHAM_UAT
-            variant: sakshamUat
+            variant: SakshamUat
             build_type: debug
           - environment: NIRAMAY_PRODUCTION
             variant: Niramay
