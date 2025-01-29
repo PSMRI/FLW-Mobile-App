@@ -1,4 +1,4 @@
-name: Build and Distribute to Firebase
+name: Build and Distribute to Firebase or PlayStore
 
 on:
   workflow_call:
@@ -66,10 +66,12 @@ jobs:
         run: |
           echo "${{ secrets.GOOGLE_SERVICES_JSON_GENERIC }}" | base64 --decode > ./app/google-services.json || exit 1
 
+      - name: Capitalize first letter of variant
+        run: echo "capitalizedVariant=$(echo '${{ inputs.variant }}' | awk '{print toupper(substr($0,1,1)) substr($0,2)}')" >> $GITHUB_ENV
       - name: Decode Firebase Credentials
         run: |
-          variant=${{ inputs.variant }}
-          case "$variant" in
+          
+          case "$capitalizedVariant" in
             SakshamStag|SakshamUat|Saksham)
               echo "${{ secrets.FIREBASE_CREDENTIALS_JSON_SAKSHAM_ASSAM }}" | base64 --decode > firebase_credentials.json
               ;;
@@ -100,10 +102,26 @@ jobs:
       - name: Create local.properties
         run: echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
 
+      - name: Get version from build.gradle
+        id: get-version
+        run: |
+          VERSION_NAME=$(grep VERSION version/version.properties | cut -d'=' -f2) 
+          echo "version=$VERSION_NAME" >> $GITHUB_ENV
+        env:
+          GITHUB_ENV: $GITHUB_ENV
+
+      - name: Verify version
+        run: |
+          if [ -z "$VERSION_NAME" ]; then 
+            echo "Version name could not be extracted. Exiting." exit 1 
+          else 
+            echo "Version name is $VERSION_NAME" 
+          fi
+
       - name: Build and Distribute app to Firebase
         id: build-and-distribute
         run: |
-          
+
           # Set app URLs used in the codebase
           export ENCRYPTED_PASS_KEY=${{ secrets.ENCRYPTED_PASS_KEY }}
           export ABHA_CLIENT_ID=${{ secrets.ABHA_CLIENT_ID }}
@@ -113,37 +131,59 @@ jobs:
           export ABHA_TOKEN_URL=${{ secrets.ABHA_TOKEN_URL }}
           export ABHA_AUTH_URL=${{ secrets.ABHA_AUTH_URL }}
           export CHAT_URL=${{secrets.CHAT_URL}}
-          
+
           # Set app release version signing credentials
           export KEYSTORE_PASSWORD=$(echo ${{ secrets.KEYSTORE_PASSWORD }} | base64 --decode)
           export KEY_ALIAS=${{ secrets.KEY_ALIAS }}
           export KEY_PASSWORD=$(echo ${{ secrets.KEY_PASSWORD }} | base64 --decode)
-          
-          
+
+
           # Set Firebase App Distribution and Google Play authentication tokens
           export FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }}
-          export FIREBASE_CLI_TOKEN=${{ secrets.FIREBASE_CLI_TOKEN }}
-          export TESTER_GROUPS=${{ secrets.TESTER_GROUPS }}
 
+          echo "Capitalized Variant: $capitalizedVariant"
           if [ "${{ inputs.build_type }}" == "debug" ]; then
-            bundle exec fastlane build_and_distribute_debug variant:${{ inputs.variant }}
+            bundle exec fastlane build_and_distribute_debug variant:"$capitalizedVariant"
           else
-            bundle exec fastlane build_and_distribute_release variant:${{ inputs.variant }}
+            bundle exec fastlane build_and_distribute_release variant:"$capitalizedVariant"
           fi
 
+
+      - name: Verify Output Files
+        run: |
+          echo "Checking output folder..."
+          if [ "${{ inputs.build_type }}" == "debug" ]; then
+            OUTPUT_PATH="app/build/outputs/apk/**/debug/*.apk"
+          else
+            OUTPUT_PATH="app/build/outputs/bundle/**/*.aab"
+          fi
+
+          FILES_FOUND=$(find $OUTPUT_PATH 2>/dev/null | wc -l)
+
+          if [ "$FILES_FOUND" -gt 0 ]; then
+            echo "✅ Found $FILES_FOUND file(s):"
+            find $OUTPUT_PATH
+          else
+            echo "⚠️ No files found at path: $OUTPUT_PATH"
+            exit 1
+          fi
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: FLW-Mobile-App - APK(s) ${{ inputs.variant }} generated
           path: |
-            ${{ inputs.build_type == 'debug' && 'app/build/outputs/apk/**/${{inputs.build_type}}/*.apk' || 'app/build/outputs/bundle/**/${{inputs.build_type}}/*.aab' }}
+            ${{ inputs.build_type == 'debug' && 'app/build/outputs/apk/**/debug/*.apk' || 'app/build/outputs/bundle/**/*.aab' }}
+          if-no-files-found: warn
+          compression-level: 6
+          overwrite: false
+          include-hidden-files: false
 
 
       - name: Push to Releases
         if: inputs.build_type == 'release'
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "app/build/outputs/bundle/**/${{ inputs.build_type }}/release/*.aab"
+          artifacts: "app/build/outputs/bundle/**/*.aab"
           tag: v${{ env.version }}-${{ inputs.environment }}-${{ github.run_number }}
           token: ${{ secrets.GITHUB_TOKEN }}
