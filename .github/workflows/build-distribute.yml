@@ -137,7 +137,7 @@ jobs:
         with:
           name: FLW-Mobile-App - APK(s) ${{ inputs.variant }} generated
           path: |
-            ${{ inputs.build_type == 'debug' && 'app/build/outputs/apk/**/' + inputs.build_type + '/*.apk' || 'app/build/outputs/bundle/**/' +inputs.build_type + /*.aab' }}
+            ${{ inputs.build_type == 'debug' && 'app/build/outputs/apk/**/${{inputs.build_type}}/*.apk' || 'app/build/outputs/bundle/**/${{inputs.build_type}}/*.aab' }}
 
 
       - name: Push to Releases
