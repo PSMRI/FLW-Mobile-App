@@ -3,13 +3,17 @@ fastlane documentation
 
 # Installation
 
-Make sure you have the latest version of the Xcode command line tools installed:
+# Prerequisites
 
-```sh
-xcode-select --install
-```
+Ensure you have the following tools installed:
 
-For _fastlane_ installation instructions, see [Installing
+- Java Development Kit (JDK) 17
+- Android SDK
+- Android NDK r27c
+- CMake
+- Ruby 3.2.2
+
+For detailed _fastlane_ installation instructions, see [Installing
 _fastlane_](https://docs.fastlane.tools/#installing-fastlane)
 
 # Available Actions
