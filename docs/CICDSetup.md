@@ -24,7 +24,7 @@ Our Continuous Integration and Continuous Deployment (CI-CD) pipeline is designe
 <a id="overview"></a>
 ## Overview
 
-The FLW Mobile App is built for modernizing healthcare processes by enabling ASHAs to provide efficient services to their communities. The app simplifies data collection and management, ensuring higher accuracy and ease of use.
+The FLW Mobile App is designed for healthcare programs and consultation services rendered by ASHAs’ to serve pregnant women, mothers, and newborns in India. This eliminates pen and paperwork by ASHAs and allows them to enter beneficiaries data in a digital process with increased ease and accuracy of data. We named it as SAKHI for Bihar State and Utprerona for Assam State.
 
 ---
 
