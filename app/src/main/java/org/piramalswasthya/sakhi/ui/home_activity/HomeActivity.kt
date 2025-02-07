@@ -4,8 +4,8 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -13,10 +13,11 @@ import android.view.View
 import android.view.WindowManager
 import android.webkit.PermissionRequest
 import android.webkit.WebChromeClient
-import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.ExpandableListView
+import android.widget.ExpandableListView.OnGroupClickListener
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -34,10 +35,12 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.crashlytics.internal.common.CommonUtils.isEmulator
 import com.google.firebase.crashlytics.internal.common.CommonUtils.isRooted
+import com.yugasa.exxonmobil.view.adapters.ExpandableNavigationListAdapter
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
@@ -50,6 +53,7 @@ import org.piramalswasthya.sakhi.databinding.ActivityHomeBinding
 import org.piramalswasthya.sakhi.helpers.ImageUtils
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.MyContextWrapper
+import org.piramalswasthya.sakhi.model.MenuModel
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.home_activity.home.HomeViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.sync.SyncBottomSheetFragment
@@ -63,11 +67,11 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeActivity : AppCompatActivity() {
-
-    var isChatSupportEnabled : Boolean = true
-
-
-
+    private val isChatSupportEnabled = true
+   private lateinit var expandableListView: ExpandableListView
+    private lateinit var expandableListAdapter: ExpandableNavigationListAdapter
+    private lateinit var headerList: MutableList<MenuModel>
+    private lateinit var childList: MutableMap<MenuModel, List<MenuModel>>
     @EntryPoint
     @InstallIn(SingletonComponent::class)
     interface WrapperEntryPoint {
@@ -192,7 +196,7 @@ class HomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         // This will block user to cast app screen
         // Toggle screencast mode for staging & production builds
-        window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
+     //   window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
         super.onCreate(savedInstanceState)
         _binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -223,7 +227,7 @@ class HomeActivity : AppCompatActivity() {
 
             binding.addFab.setOnClickListener {
 
-                displaychatdialog()
+                displaychatdialog(BuildConfig.CHAT_URL+"?lang="+pref.getCurrentLanguage().symbol)
 
             }
 
@@ -250,304 +254,353 @@ class HomeActivity : AppCompatActivity() {
                 finish()
             }
         }
+
+        initializeMenuData()
+        setupExpandableList()
+    }
+    private fun initializeMenuData() {
+        headerList = mutableListOf()
+        childList = mutableMapOf()
+
+        // Headers with no children
+        headerList.add(MenuModel("Home", false, R.drawable.ic_home))
+        headerList.add(MenuModel("Sync Records", false, R.drawable.ic_synced))
+        headerList.add(MenuModel("Create ABHA Number", false, R.drawable.ic_completed_tasks))
+        headerList.add(MenuModel("Incentives", false, R.drawable.ic__incentive))
+
+        // Header with children
+        val helpHeader = MenuModel("Help", true, R.drawable.baseline_chat_24)
+        val helpChildList = listOf(
+            MenuModel("EC Service (Family Planning)", false, R.drawable.family_planning_services),
+            MenuModel("ANC Services", false, R.drawable.anc_services),
+            MenuModel("PNC Services", false, R.drawable.pnc_services),
+            MenuModel("Infant and Child Services", false, R.drawable.infant___child_services),
+            MenuModel("Immunization Services", false, R.drawable.immunization_services),
+            MenuModel("NCD Services", false, R.drawable.ncd_services),
+            MenuModel("TB Services", false, R.drawable.tb_services)
+        )
+        headerList.add(helpHeader)
+        childList[helpHeader] = helpChildList
+
+        // Logout section (not expandable)
+        headerList.add(MenuModel("Logout", false, R.drawable.ic_logout))
     }
 
+private fun setupExpandableList() {
+   expandableListView = findViewById(R.id.expandableListView)
+   initializeMenuData()
+   expandableListAdapter = ExpandableNavigationListAdapter(this, headerList, childList)
+   expandableListView.setAdapter(expandableListAdapter)
 
+   expandableListView.setOnGroupClickListener { parent, v, groupPosition, id ->
+       val header = headerList[groupPosition]
+       if (!header.hasChildren) {
+           // Handle non-expandable items (e.g., navigate to a new activity)
+           handleNavigation(header.title, "")
+           return@setOnGroupClickListener true // Prevent expansion
+       }
+       else{
+           val imgSelection = v.findViewById<ImageView>(R.id.icon_start)
+           if (parent.isGroupExpanded(groupPosition)) {
+               imgSelection.setImageResource(R.drawable.ic_arrow_down) // Set down icon
+           } else {
+               imgSelection.setImageResource(R.drawable.ic_arrow_up) // Set up icon
+           }
+           return@setOnGroupClickListener false // Prevent expansion
+       }
+       false
+   }
 
-   private fun displaychatdialog() {
+    // Handle clicks on child items
+    expandableListView.setOnChildClickListener { _, _, groupPosition, childPosition, _ ->
+        val header = headerList[groupPosition] // Get parent header
+        val childItem = childList[header]?.get(childPosition) // Get child item
 
+        childItem?.let {
+            handleNavigation(header.title, childItem.title)
+
+            // Perform action based on child item
+        }
+        true
+    }
+}
+
+private fun handleNavigation(headerTitle: String, childTitle: String?) {
+   when (headerTitle) {
+       "Home" -> {
+           navController.popBackStack(R.id.homeFragment, false)
+           binding.drawerLayout.close()
+       }
+       "Sync Records" -> {
+           WorkerUtils.triggerAmritPushWorker(this)
+           if (!pref.isFullPullComplete)
+               WorkerUtils.triggerAmritPullWorker(this)
+           binding.drawerLayout.close()
+       }
+       "Create ABHA Number" -> {
+           navController.popBackStack(R.id.homeFragment, false)
+           startActivity(Intent(this, AbhaIdActivity::class.java))
+           binding.drawerLayout.close()
+       }
+       "Incentives" ->  {
+
+       }
+       "Help" -> {
+           when (childTitle) {
+               "EC Service (Family Planning)" ->  {
+                   displaychatdialog("https://piramalvoicebot.yugasa.org/?node=ec_services&lang="+pref.getCurrentLanguage().symbol)
+                   binding.drawerLayout.close()
+               }
+               "ANC Services" -> {
+                   displaychatdialog("https://piramalvoicebot.yugasa.org/?node=anc_services&lang="+pref.getCurrentLanguage().symbol)
+                   binding.drawerLayout.close()
+               }
+               "PNC Services" -> {
+                   displaychatdialog("https://piramalvoicebot.yugasa.org/?node=pnc_services&lang="+pref.getCurrentLanguage().symbol)
+                   binding.drawerLayout.close()
+               }
+               "Infant and Child Services" -> {
+                   displaychatdialog("https://piramalvoicebot.yugasa.org/?node=infant_child_services&lang="+pref.getCurrentLanguage().symbol)
+                   binding.drawerLayout.close()
+               }
+               "Immunization Services" -> {
+                   displaychatdialog("https://piramalvoicebot.yugasa.org/?node=immunization_services&lang="+pref.getCurrentLanguage().symbol)
+                   binding.drawerLayout.close()
+               }
+               "NCD Services" -> {
+                   displaychatdialog("https://piramalvoicebot.yugasa.org/?node=ncd_services&lang="+pref.getCurrentLanguage().symbol)
+                   binding.drawerLayout.close()
+               }
+               "TB Services" -> {
+                   displaychatdialog("https://piramalvoicebot.yugasa.org/?node=tb_services&lang="+pref.getCurrentLanguage().symbol)
+                   binding.drawerLayout.close()
+               }
+           }
+       }
+       "Logout" ->  logoutAlert.show()
+   }
+}
+
+private fun navigateActivity(activityClass: Class<*>, extraData: String) {
+   val intent = Intent(this, activityClass)
+   intent.putExtra("EXTRA_DATA", extraData)
+   startActivity(intent)
+}
+
+private fun logoutAlert() {
+   AlertDialog.Builder(this)
+       .setTitle("Logout")
+       .setMessage("Are you sure you want to logout?")
+       .setPositiveButton("Yes") { _, _ ->
+           // Perform logout logic here
+           Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show()
+       }
+       .setNegativeButton("Cancel", null)
+       .show()
+}
+
+    private fun displaychatdialog(url: String) {
         val dialog = BottomSheetDialog(this)
 
-        // on below line we are inflating a layout file which we have created.
         val view = layoutInflater.inflate(R.layout.bottomsheet_chat_window, null)
-
         val web = view.findViewById<WebView>(R.id.webv)
+        val ivBottom = view.findViewById<ImageView>(R.id.iv_bottom)
         val progress = view.findViewById<ProgressBar>(R.id.progressBarv)
 
-
-       web.setWebChromeClient(object : WebChromeClient() {
-           override fun onPermissionRequest(request: PermissionRequest) {
-               request.grant(request.resources)
-           }
-       })
-
-
-
-// Enable JavaScript
         web.settings.javaScriptEnabled = true
         web.settings.javaScriptCanOpenWindowsAutomatically = true
         web.isVerticalScrollBarEnabled = true
+        web.loadUrl(url)
 
+        web.webChromeClient = object : WebChromeClient() {
+            override fun onPermissionRequest(request: PermissionRequest) {
+                request.grant(request.resources)
+            }
+        }
 
-
-
-// Load URL
-        web.loadUrl(BuildConfig.CHAT_URL)
-
-
-// Handle WebView events
-       web.webViewClient = object : WebViewClient() {
-           override fun shouldOverrideUrlLoading(
-               view: WebView,
-               request: WebResourceRequest
-           ): Boolean {
-               return if (request.url.host == URI(BuildConfig.CHAT_URL).host) {
-                   false  // Let WebView handle same-origin URLs
-               } else {
-                   startActivity(Intent(Intent.ACTION_VIEW, request.url))
-                   true
-               }
-           }
-
-           override fun onReceivedError(
-               view: WebView?,
-               request: WebResourceRequest?,
-               error: WebResourceError?
-           ) {
-               super.onReceivedError(view, request, error)
-               progress.visibility = View.GONE
-               // Show error view
-               Toast.makeText(
-                   this@HomeActivity,
-                   R.string.chat_error,
-                   Toast.LENGTH_SHORT
-               ).show()
-           }
-
-            override fun onPageStarted(webview: WebView, url: String, favicon: Bitmap?) {
-                super.onPageStarted(webview, url, favicon)
-                // Show ProgressBar when the page starts loading
+        web.webViewClient = object : WebViewClient() {
+            override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
+                super.onPageStarted(view, url, favicon)
                 progress.visibility = View.VISIBLE
                 web.visibility = View.GONE
             }
 
-            override fun onPageFinished(webview: WebView, url: String) {
-                super.onPageFinished(webview, url)
-                // Hide ProgressBar when the page finishes loading
+            override fun onPageFinished(view: WebView, url: String) {
+                super.onPageFinished(view, url)
                 progress.visibility = View.GONE
                 web.visibility = View.VISIBLE
             }
         }
 
-
-        // on below line we are creating a variable for our button
-        // which we are using to dismiss our dialog.
-        // on below line we are adding on click listener
-        // for our dismissing the dialog button.
-
-        // below line is use to set cancelable to avoid
-        // closing of dialog box when clicking on the screen.
-        dialog.setCancelable(true)
-
-        // on below line we are setting
-        // content view to our view.
         dialog.setContentView(view)
-     //  dialog.behavior.setPeekHeight(6000)
+        dialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        dialog.behavior.isDraggable = true
 
-       val displayMetrics = resources.displayMetrics
-       val screenHeight = displayMetrics.heightPixels
-       dialog.behavior.setPeekHeight((screenHeight * 0.85).toInt())
+        val screenHeight = resources.displayMetrics.heightPixels
+        dialog.behavior.peekHeight = (screenHeight * 0.85).toInt()
 
+        dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 
-        // on below line we are calling
-        // a show method to display a dialog.
+        // Apply custom animation
+        dialog.window?.setWindowAnimations(R.style.DialogAnimation)
 
+        ivBottom.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        // Ensure smooth dismissal
+        dialog.setOnDismissListener {
+            web.loadUrl("about:blank")
+        }
 
         dialog.show()
-
-
-        }
-
-
-
-
-    override fun onResume() {
-        // This will block user to cast app screen
-        // Toggle screencast mode for staging & production builds
-       window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
-        super.onResume()
-        if (isDeviceRootedOrEmulator()) {
-            AlertDialog.Builder(this)
-                .setTitle("Unsupported Device")
-                .setMessage("This app cannot run on rooted devices or emulators.")
-                .setCancelable(false)
-                .setPositiveButton("Exit") { dialog, id -> finish() }
-                .show()
-        }
     }
-    private fun setUpMenu() {
-        val menu = object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.home_toolbar, menu)
-                val homeMenu = menu.findItem(R.id.toolbar_menu_home)
-                val langMenu = menu.findItem(R.id.toolbar_menu_language)
-                homeMenu.isVisible = showMenuHome
-                langMenu.isVisible = !showMenuHome
+override fun onResume() {
+   // This will block user to cast app screen
+   // Toggle screencast mode for staging & production builds
+//  window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
+   super.onResume()
+   if (isDeviceRootedOrEmulator()) {
+       AlertDialog.Builder(this)
+           .setTitle("Unsupported Device")
+           .setMessage("This is app cannot run on rooted devices or emulators.")
+           .setCancelable(false)
+           .setPositiveButton("Exit") { dialog, id -> finish() }
+           .show()
+   }
+}
+private fun setUpMenu() {
+   val menu = object : MenuProvider {
+       override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+           menuInflater.inflate(R.menu.home_toolbar, menu)
+           val homeMenu = menu.findItem(R.id.toolbar_menu_home)
+           val langMenu = menu.findItem(R.id.toolbar_menu_language)
+           homeMenu.isVisible = showMenuHome
+           langMenu.isVisible = !showMenuHome
 
-            }
+       }
 
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                when (menuItem.itemId) {
-                    R.id.toolbar_menu_home -> {
-                        navController.popBackStack(R.id.homeFragment, false)
-                        return true
-                    }
+       override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+           when (menuItem.itemId) {
+               R.id.toolbar_menu_home -> {
+                   navController.popBackStack(R.id.homeFragment, false)
+                   return true
+               }
 
-                    R.id.toolbar_menu_language -> {
-                        langChooseAlert.show()
-                        return true
-                    }
+               R.id.toolbar_menu_language -> {
+                   langChooseAlert.show()
+                   return true
+               }
 
-                    R.id.sync_status -> {
-                        if (!syncBottomSheet.isVisible)
-                            syncBottomSheet.show(
-                                supportFragmentManager,
-                                resources.getString(R.string.sync)
-                            )
-                        return true
-                    }
-                }
-                return false
-            }
+               R.id.sync_status -> {
+                   if (!syncBottomSheet.isVisible)
+                       syncBottomSheet.show(
+                           supportFragmentManager,
+                           resources.getString(R.string.sync)
+                       )
+                   return true
+               }
+           }
+           return false
+       }
 
-        }
-        addMenuProvider(menu)
+   }
+   addMenuProvider(menu)
 
-    }
+}
 
-    fun addClickListenerToHomepageActionBarTitle() {
-        binding.toolbar.setOnClickListener(onClickTitleBar)
+fun addClickListenerToHomepageActionBarTitle() {
+   binding.toolbar.setOnClickListener(onClickTitleBar)
 //        binding.toolbar.subtitle = resources.getString(R.string.tap_to_change)
-    }
+}
 
-    fun removeClickListenerToHomepageActionBarTitle() {
-        binding.toolbar.setOnClickListener(null)
-        binding.toolbar.subtitle = null
-    }
+fun removeClickListenerToHomepageActionBarTitle() {
+   binding.toolbar.setOnClickListener(null)
+   binding.toolbar.subtitle = null
+}
 
 
-    private fun finishAndStartServiceLocationActivity() {
-        val serviceLocationActivity = Intent(this, ServiceLocationActivity::class.java)
-        finish()
-        startActivity(serviceLocationActivity)
-    }
+private fun finishAndStartServiceLocationActivity() {
+   val serviceLocationActivity = Intent(this, ServiceLocationActivity::class.java)
+   finish()
+   startActivity(serviceLocationActivity)
+}
 
-    fun setHomeMenuItemVisibility(show: Boolean) {
-        showMenuHome = show
-        invalidateOptionsMenu()
-    }
+fun setHomeMenuItemVisibility(show: Boolean) {
+   showMenuHome = show
+   invalidateOptionsMenu()
+}
 
-    private fun setUpFirstTimePullWorker() {
-        WorkerUtils.triggerPeriodicPncEcUpdateWorker(this)
-        if (!pref.isFullPullComplete)
-            WorkerUtils.triggerAmritPullWorker(this)
+private fun setUpFirstTimePullWorker() {
+   WorkerUtils.triggerPeriodicPncEcUpdateWorker(this)
+   if (!pref.isFullPullComplete)
+       WorkerUtils.triggerAmritPullWorker(this)
 //        WorkerUtils.triggerD2dSyncWorker(this)
-    }
+}
 
-    private fun setUpNavHeader() {
-        val headerView = binding.navView.getHeaderView(0)
+private fun setUpNavHeader() {
+   val headerView = binding.navView.getHeaderView(0)
 
-        viewModel.currentUser?.let {
-            headerView.findViewById<TextView>(R.id.tv_nav_name).text =
-                resources.getString(R.string.nav_item_1_text, it.name)
-            headerView.findViewById<TextView>(R.id.tv_nav_role).text =
-                resources.getString(R.string.nav_item_2_text, it.userName)
-            headerView.findViewById<TextView>(R.id.tv_nav_id).text =
-                resources.getString(R.string.nav_item_3_text, it.userId)
-        }
-        viewModel.profilePicUri?.let {
-            Glide.with(this).load(it).placeholder(R.drawable.ic_person).circleCrop()
-                .into(binding.navView.getHeaderView(0).findViewById(R.id.iv_profile_pic))
-        }
+   viewModel.currentUser?.let {
+       headerView.findViewById<TextView>(R.id.tv_nav_name).text =
+           resources.getString(R.string.nav_item_1_text, it.name)
+       headerView.findViewById<TextView>(R.id.tv_nav_role).text =
+           resources.getString(R.string.nav_item_2_text, it.userName)
+       headerView.findViewById<TextView>(R.id.tv_nav_id).text =
+           resources.getString(R.string.nav_item_3_text, it.userId)
+   }
+   viewModel.profilePicUri?.let {
+       Glide.with(this).load(it).placeholder(R.drawable.ic_person).circleCrop()
+           .into(binding.navView.getHeaderView(0).findViewById(R.id.iv_profile_pic))
+   }
 //
 
-        binding.navView.getHeaderView(0).findViewById<ImageView>(R.id.iv_profile_pic)
-            .setOnClickListener {
-                imagePickerActivityResult.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-            }
-    }
+   binding.navView.getHeaderView(0).findViewById<ImageView>(R.id.iv_profile_pic)
+       .setOnClickListener {
+           imagePickerActivityResult.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+       }
+}
 
-    private fun setUpActionBar() {
-        setSupportActionBar(binding.toolbar)
+private fun setUpActionBar() {
+   setSupportActionBar(binding.toolbar)
 
-        binding.navView.setupWithNavController(navController)
+   binding.navView.setupWithNavController(navController)
 
-        val appBarConfiguration = AppBarConfiguration.Builder(
-            setOf(
-                R.id.homeFragment, R.id.allHouseholdFragment, R.id.allBenFragment
-            )
-        ).setOpenableLayout(binding.drawerLayout).build()
+   val appBarConfiguration = AppBarConfiguration.Builder(
+       setOf(
+           R.id.homeFragment, R.id.allHouseholdFragment, R.id.allBenFragment
+       )
+   ).setOpenableLayout(binding.drawerLayout).build()
 
-        NavigationUI.setupWithNavController(binding.toolbar, navController, appBarConfiguration)
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
-
-        binding.navView.menu.findItem(R.id.homeFragment).setOnMenuItemClickListener {
-            navController.popBackStack(R.id.homeFragment, false)
-            binding.drawerLayout.close()
-            true
-
-        }
-        binding.navView.menu.findItem(R.id.sync_pending_records).setOnMenuItemClickListener {
-            WorkerUtils.triggerAmritPushWorker(this)
-            if (!pref.isFullPullComplete)
-                WorkerUtils.triggerAmritPullWorker(this)
-            binding.drawerLayout.close()
-            true
-
-        }
-        binding.navView.menu.findItem(R.id.menu_logout).setOnMenuItemClickListener {
-            logoutAlert.show()
-            true
-
-        }
-
-        binding.navView.menu.findItem(R.id.abha_id_activity).setOnMenuItemClickListener {
-            navController.popBackStack(R.id.homeFragment, false)
-            startActivity(Intent(this, AbhaIdActivity::class.java))
-            binding.drawerLayout.close()
-            true
-
-        }
-
-        if (isChatSupportEnabled) {
-            binding.navView.menu.findItem(R.id.ChatFragment).setVisible(true)
-            binding.navView.menu.findItem(R.id.ChatFragment).setOnMenuItemClickListener {
-                displaychatdialog()
-                /*navController.popBackStack(R.id.homeFragment, false)
-            startActivity(Intent(this, ChatSupport::class.java))*/
-                binding.drawerLayout.close()
-                true
-
-            }
-        }
-    }
+   NavigationUI.setupWithNavController(binding.toolbar, navController, appBarConfiguration)
+   NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
+}
 
 
-    fun updateActionBar(logoResource: Int, title: String? = null) {
-        binding.ivToolbar.setImageResource(logoResource)
-//        binding.toolbar.setLogo(logoResource)
-        title?.let {
-            binding.toolbar.title = null
-            binding.tvToolbar.text = it
-        }
-    }
+fun updateActionBar(logoResource: Int, title: String? = null) {
+   binding.ivToolbar.setImageResource(logoResource)
+   title?.let {
+       binding.toolbar.title = null
+       binding.tvToolbar.text = it
+   }
+}
 
-    override fun onBackPressed() {
-        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START))
-            binding.drawerLayout.closeDrawer(GravityCompat.START)
-        else super.onBackPressed()
-    }
+override fun onBackPressed() {
+   if (binding.drawerLayout.isDrawerOpen(GravityCompat.START))
+       binding.drawerLayout.closeDrawer(GravityCompat.START)
+   else super.onBackPressed()
+}
 
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
-    }
+override fun onDestroy() {
+   super.onDestroy()
+   _binding = null
+}
 
-    private fun isDeviceRootedOrEmulator(): Boolean {
+private fun isDeviceRootedOrEmulator(): Boolean {
 
 //      return isRooted() || isEmulator() || RootedUtil().isDeviceRooted(applicationContext)
-        return isRooted() || isEmulator()
+   return isRooted() || isEmulator()
 
-    }
+}
 
 }
