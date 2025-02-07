@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:excludeFromRecents="true"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -41,16 +41,13 @@
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
-
                         android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
                         tools:text="Hellow!" />
                 </LinearLayout>
 
-
             </androidx.appcompat.widget.Toolbar>
 
         </com.google.android.material.appbar.AppBarLayout>
-
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/nav_host_fragment_home"
@@ -75,29 +72,44 @@
                 android:src="@drawable/baseline_chat_24"
                 android:elevation="8dp"
                 android:outlineSpotShadowColor="@color/cardview_dark_background"/>
-            
         </RelativeLayout>
-
     </FrameLayout>
 
+    <!-- Navigation View with Header and ExpandableListView -->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar"
         android:layout_gravity="start"
-        app:headerLayout="@layout/nav_header_home"
-        app:menu="@menu/activity_home_drawer">
+        app:headerLayout="@layout/nav_header_home">
 
+        <!-- LinearLayout to manage header and ExpandableListView -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
+            <!-- ExpandableListView -->
+            <ExpandableListView
+                android:id="@+id/expandableListView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:divider="@null"
+                android:layout_marginTop="@dimen/nav_header_height"
+                android:groupIndicator="@null" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center_horizontal"
-            android:layout_margin="@dimen/margin_normal"
-            android:padding="@dimen/padding_normal"
-            android:text="@string/version_2_0_0"
-            android:textAppearance="@style/TextAppearance.Material3.TitleSmall" />
+            <!-- Footer TextView -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_margin="@dimen/margin_normal"
+                android:padding="@dimen/padding_normal"
+                android:text="@string/version_2_0_0"
+                android:textAppearance="@style/TextAppearance.Material3.TitleSmall" />
 
+        </LinearLayout>
     </com.google.android.material.navigation.NavigationView>
 </androidx.drawerlayout.widget.DrawerLayout>
