@@ -32,7 +32,7 @@ android {
         // ABHA v3 Staging Base URL
 //        buildConfigField "String", "BASE_ABHA_URL", "\"https://abhasbx.abdm.gov.in/abha/api/\""
 
-       buildConfigField "String", "CHAT_URL", "\"https://piramalvoicebot.yugasa.org/\""
+        buildConfigField "String", "CHAT_URL", "\"https://piramalvoicebot.yugasa.org/\""
     }
 
     buildTypes {
@@ -64,11 +64,11 @@ android {
             // ABHA v1/v2 Staging Session/Token URL
 //            buildConfigField "String", "ABHA_TOKEN_URL", "\"https://dev.abdm.gov.in/gateway/v0.5/sessions\""
             // ABHA v3 Staging Session/Token URL
-            buildConfigField "String", "ABHA_TOKEN_URL", "\"https://dev.abdm.gov.in/gateway/v0.5/sessions\""
+            buildConfigField "String", "ABHA_TOKEN_URL", "\"https://dev.abdm.gov.in/api/hiecm/gateway/v3/sessions\""
             // ABHA v1/v2 Staging Auth Cert URL
 //            buildConfigField "String", "ABHA_AUTH_URL", "\"https://healthidsbx.abdm.gov.in/api/v2/auth/cert\""
             // ABHA v3 Staging Auth Cert URL
-            buildConfigField "String", "ABHA_AUTH_URL", "\"https://healthidsbx.abdm.gov.in/api/v1/auth/cert\""
+            buildConfigField "String", "ABHA_AUTH_URL", "\"https://abhasbx.abdm.gov.in/abha/api/v3/profile/public/certificate\""
         }
         sakshamUat {
             applicationIdSuffix ".saksham.uat"
@@ -83,11 +83,11 @@ android {
             // ABHA v1/v2 UAT Session/Token URL
 //            buildConfigField "String", "ABHA_TOKEN_URL", "\"https://dev.abdm.gov.in/gateway/v0.5/sessions\""
             // ABHA v3 UAT Session/Token URL
-            buildConfigField "String", "ABHA_TOKEN_URL", "\"https://dev.abdm.gov.in/gateway/v0.5/sessions\""
+            buildConfigField "String", "ABHA_TOKEN_URL", "\"https://dev.abdm.gov.in/api/hiecm/gateway/v3/sessions\""
             // ABHA v1/v2 UAT Auth Cert URL
 //            buildConfigField "String", "ABHA_AUTH_URL", "\"https://healthidsbx.abdm.gov.in/api/v2/auth/cert\""
             // ABHA v3 UAT Auth Cert URL
-            buildConfigField "String", "ABHA_AUTH_URL", "\"https://healthidsbx.abdm.gov.in/api/v1/auth/cert\""
+            buildConfigField "String", "ABHA_AUTH_URL", "\"https://abhasbx.abdm.gov.in/abha/api/v3/profile/public/certificate\""
         }
         sakshamProd {
             applicationIdSuffix ".saksham"
@@ -101,11 +101,11 @@ android {
             // ABHA v1/v2 Production Session/Token URL
 //            buildConfigField "String", "ABHA_TOKEN_URL", "\"https://live.abdm.gov.in/gateway/v0.5/sessions\""
             // ABHA v3 Production Session/Token URL
-            buildConfigField "String", "ABHA_TOKEN_URL", "\"https://live.abdm.gov.in/gateway/v0.5/sessions\""
+            buildConfigField "String", "ABHA_TOKEN_URL", "\"https://apis.abdm.gov.in/api/hiecm/gateway/v3/sessions\""
             // ABHA v1/v2 Production Auth Cert URL
 //            buildConfigField "String", "ABHA_AUTH_URL", "\"https://healthid.abdm.gov.in/api/v2/auth/cert\""
             // ABHA v3 Production Auth Cert URL
-            buildConfigField "String", "ABHA_AUTH_URL", "\"https://healthid.abdm.gov.in/api/v1/auth/cert\""
+            buildConfigField "String", "ABHA_AUTH_URL", "\"https://abha.abdm.gov.in/api/abha/v3/profile/public/certificate\""
         }
 
         niramayProd {
@@ -120,11 +120,11 @@ android {
             // ABHA v1/v2 Production Session/Token URL
 //            buildConfigField "String", "ABHA_TOKEN_URL", "\"https://live.abdm.gov.in/gateway/v0.5/sessions\""
             // ABHA v3 Production Session/Token URL
-            buildConfigField "String", "ABHA_TOKEN_URL", "\"https://live.abdm.gov.in/gateway/v0.5/sessions\""
+            buildConfigField "String", "ABHA_TOKEN_URL", "\"https://apis.abdm.gov.in/api/hiecm/gateway/v3/sessions\""
             // ABHA v1/v2 Production Auth Cert URL
 //            buildConfigField "String", "ABHA_AUTH_URL", "\"https://healthid.abdm.gov.in/api/v2/auth/cert\""
             // ABHA v3 Production Auth Cert URL
-            buildConfigField "String", "ABHA_AUTH_URL", "\"https://healthid.abdm.gov.in/api/v1/auth/cert\""
+            buildConfigField "String", "ABHA_AUTH_URL", "\"https://abha.abdm.gov.in/api/abha/v3/profile/public/certificate\""
         }
 
         xushrukhaProd {
@@ -139,11 +139,11 @@ android {
             // ABHA v1/v2 Production Session/Token URL
 //            buildConfigField "String", "ABHA_TOKEN_URL", "\"https://live.abdm.gov.in/gateway/v0.5/sessions\""
             // ABHA v3 Production Session/Token URL
-            buildConfigField "String", "ABHA_TOKEN_URL", "\"https://live.abdm.gov.in/gateway/v0.5/sessions\""
+            buildConfigField "String", "ABHA_TOKEN_URL", "\"https://apis.abdm.gov.in/api/hiecm/gateway/v3/sessions\""
             // ABHA v1/v2 Production Auth Cert URL
 //            buildConfigField "String", "ABHA_AUTH_URL", "\"https://healthid.abdm.gov.in/api/v2/auth/cert\""
             // ABHA v3 Production Auth Cert URL
-            buildConfigField "String", "ABHA_AUTH_URL", "\"https://healthid.abdm.gov.in/api/v1/auth/cert\""
+            buildConfigField "String", "ABHA_AUTH_URL", "\"https://abha.abdm.gov.in/api/abha/v3/profile/public/certificate\""
         }
 
     }

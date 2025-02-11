@@ -12,6 +12,8 @@ interface AbhaApiService {
     suspend fun getToken(
         @Url url: String = BuildConfig.ABHA_TOKEN_URL,
         @Header("X-CM-ID") id: String = "sbx",
+        @Header("REQUEST-ID") requestId: String,
+        @Header("TIMESTAMP") timestamp: String,
         @Body request: AbhaTokenRequest = AbhaTokenRequest()
     ): Response<ResponseBody>
 
