@@ -11,6 +11,7 @@ interface AbhaApiService {
     @POST
     suspend fun getToken(
         @Url url: String = BuildConfig.ABHA_TOKEN_URL,
+        @Header("X-CM-ID") id: String = "sbx",
         @Body request: AbhaTokenRequest = AbhaTokenRequest()
     ): Response<ResponseBody>
 
@@ -40,6 +41,15 @@ interface AbhaApiService {
     @GET("v3/profile/account/abha-card")
     suspend fun printAbhaCard(@Header("REQUEST-ID") requestId: String, @Header("TIMESTAMP") timestamp: String): Response<ResponseBody>
 
+    @POST("v3/profile/account/abha/search")
+    suspend fun searchAbha(@Body searchAbha: SearchAbhaRequest, @Header("REQUEST-ID") requestId: String, @Header("TIMESTAMP") timestamp: String): Response<ResponseBody>
+
+    @POST("v3/profile/login/request/otp")
+    suspend fun loginGenerateOtp(@Body loginOtp: LoginGenerateOtpRequest, @Header("REQUEST-ID") requestId: String, @Header("TIMESTAMP") timestamp: String): Response<ResponseBody>
+
+    @POST("v3/profile/login/verify")
+    suspend fun loginVerifyOtp(@Body loginOtp: LoginVerifyOtpRequest, @Header("REQUEST-ID") requestId: String, @Header("TIMESTAMP") timestamp: String): Response<ResponseBody>
+
     @POST("v1/registration/aadhaar/generateMobileOTP")
     suspend fun generateMobileOtp(@Body mobile: AbhaGenerateMobileOtpRequest): Response<ResponseBody>
 
@@ -67,7 +77,9 @@ interface AbhaApiService {
 
     @GET
     suspend fun getAuthCert(
-        @Url url: String = BuildConfig.ABHA_AUTH_URL
+        @Url url: String = BuildConfig.ABHA_AUTH_URL,
+        @Header("REQUEST-ID") requestId: String,
+        @Header("TIMESTAMP") timestamp: String
     ): Response<ResponseBody>
 
     @GET("v2/ha/lgd/states")

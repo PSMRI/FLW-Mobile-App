@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_find_abha"
+    app:startDestination="@id/findAbhaFragment">
+
+    <fragment
+        android:id="@+id/findAbhaFragment"
+        android:name="org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.find_abha.FindAbhaFragment"
+        android:label="FindAbhaFragment" />
+</navigation>

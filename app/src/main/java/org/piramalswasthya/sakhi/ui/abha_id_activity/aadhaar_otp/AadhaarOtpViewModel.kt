@@ -11,9 +11,13 @@ import org.piramalswasthya.sakhi.network.AbhaGenerateAadhaarOtpRequest
 import org.piramalswasthya.sakhi.network.AbhaResendAadhaarOtpRequest
 import org.piramalswasthya.sakhi.network.AbhaVerifyAadhaarOtpRequest
 import org.piramalswasthya.sakhi.network.AuthData
+import org.piramalswasthya.sakhi.network.AuthData3
 import org.piramalswasthya.sakhi.network.Consent
+import org.piramalswasthya.sakhi.network.LoginVerifyOtpRequest
+import org.piramalswasthya.sakhi.network.LoginVerifyOtpResponse
 import org.piramalswasthya.sakhi.network.NetworkResult
 import org.piramalswasthya.sakhi.network.Otp
+import org.piramalswasthya.sakhi.network.Otp3
 import org.piramalswasthya.sakhi.network.interceptors.TokenInsertAbhaInterceptor
 import org.piramalswasthya.sakhi.repositories.AbhaIdRepo
 import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.AadhaarIdViewModel
@@ -119,6 +123,52 @@ class AadhaarOtpViewModel @Inject constructor(
                     _phrAddress = result.data.ABHAProfile.phrAddress[0]
                     _abhaNumber = result.data.ABHAProfile.ABHANumber
                     _state.value = State.OTP_VERIFY_SUCCESS
+                }
+
+                is NetworkResult.Error -> {
+                    _errorMessage.value = result.message
+                    if (result.message.contains("exit your browser", true)) {
+                        _showExit.value = true
+                    }
+                    _state.value = State.ERROR_SERVER
+                }
+
+                is NetworkResult.NetworkError -> {
+                    _showExit.value = true
+                    _state.value = State.ERROR_NETWORK
+                }
+            }
+        }
+    }
+
+    fun verifyLoginOtpClicked(otp: String) {
+        _state.value = State.LOADING
+        verifyLoginOtp(otp)
+    }
+
+    private fun verifyLoginOtp(otp: String) {
+        viewModelScope.launch {
+            val result = abhaIdRepo.verifyAbhaOtp(
+                LoginVerifyOtpRequest(
+                    listOf<String>("abha-login", "mobile-verify"),
+                    AuthData3(
+                        listOf<String>("otp"),
+                        Otp3(
+                            txnIdFromArgs,
+                            otp
+                        )
+                    )
+                )
+            )
+            when (result) {
+                is NetworkResult.Success -> {
+                    TokenInsertAbhaInterceptor.setXToken(result.data.token)
+                    _txnId = result.data.txnId
+                    _name = result.data.accounts[0].name
+                    _abhaNumber = result.data.accounts[0].ABHANumber
+                    _state.value = State.OTP_VERIFY_SUCCESS
+                    _phrAddress = result.data.accounts[0].preferredAbhaAddress
+                    _mobileNumber = ""
                 }
 
                 is NetworkResult.Error -> {
