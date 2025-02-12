@@ -7,6 +7,7 @@ import android.content.res.ColorStateList
 import android.content.res.Resources
 import android.graphics.Color
 import android.os.Build
+import android.os.CountDownTimer
 import android.text.Editable
 import android.text.InputFilter
 import android.text.InputFilter.AllCaps
@@ -25,13 +26,17 @@ import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.children
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.google.android.material.button.MaterialButton
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.databinding.LayoutUploafFormBinding
 import org.piramalswasthya.sakhi.databinding.RvItemFormAgePickerViewV2Binding
+import org.piramalswasthya.sakhi.databinding.RvItemFormBtnBinding
 import org.piramalswasthya.sakhi.databinding.RvItemFormCheckV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormDatepickerV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormDropdownV2Binding
@@ -41,10 +46,13 @@ import org.piramalswasthya.sakhi.databinding.RvItemFormImageViewV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormRadioV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormTextViewV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormTimepickerV2Binding
+import org.piramalswasthya.sakhi.databinding.RvItemFormUploadImageBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.getDateString
+import org.piramalswasthya.sakhi.helpers.isInternetAvailable
 import org.piramalswasthya.sakhi.model.AgeUnitDTO
 import org.piramalswasthya.sakhi.model.FormElement
+import org.piramalswasthya.sakhi.model.InputType
 import org.piramalswasthya.sakhi.model.InputType.AGE_PICKER
 import org.piramalswasthya.sakhi.model.InputType.CHECKBOXES
 import org.piramalswasthya.sakhi.model.InputType.DATE_PICKER
@@ -69,7 +77,9 @@ class FormInputAdapter(
     private val imageClickListener: ImageClickListener? = null,
     private val ageClickListener: AgeClickListener? = null,
     private val formValueListener: FormValueListener? = null,
-    private val isEnabled: Boolean = true
+    private val isEnabled: Boolean = true,
+    private val selectImageClickListener: SelectUploadImageClickListener? = null,
+    private val viewDocumentListner: ViewDocumentOnClick? = null,
 ) : ListAdapter<FormElement, ViewHolder>(FormInputDiffCallBack) {
 
 
@@ -113,7 +123,7 @@ class FormInputAdapter(
                 item.title.contains("last name", true) ||
                 item.title.contains("father's name", true) ||
                 item.title.contains("mother's name", true)
-                ) {
+            ) {
 //                edittext.setFilters(arrayOf<InputFilter>(AllCaps()))
                 val editFilters = binding.et.filters
                 var newFilters = arrayOfNulls<InputFilter>(editFilters.size + 1)
@@ -574,6 +584,122 @@ class FormInputAdapter(
         }
     }
 
+    class ButtonInputViewHolder private constructor(private val binding: RvItemFormBtnBinding) :
+        ViewHolder(binding.root) {
+        companion object {
+            fun from(parent: ViewGroup): ViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = RvItemFormBtnBinding.inflate(layoutInflater, parent, false)
+                return ButtonInputViewHolder(binding)
+            }
+        }
+
+        fun bind(item: FormElement, isEnabled: Boolean, formValueListener: FormValueListener?) {
+            binding.form = item
+
+            if(isInternetAvailable(binding.root.context)){
+                binding.generateOtp.isEnabled = isEnabled
+            } else {
+                binding.generateOtp.isEnabled = !isEnabled
+            }
+            binding.generateOtp.text = binding.generateOtp.resources.getString(R.string.generate_otp)
+            binding.generateOtp.setOnClickListener {
+                binding.generateOtp.isEnabled = !isEnabled
+                startTimer(binding.timerInSec,binding.generateOtp)
+                binding.tilEditText.visibility = View.VISIBLE
+            }
+
+
+        }
+
+        private lateinit var countDownTimer : CountDownTimer
+        private var countdownTimers : HashMap<Int, CountDownTimer> = HashMap()
+
+        private fun formatTimeInSeconds(millis: Long) : String {
+            val seconds = millis / 1000
+            return "${seconds} sec"
+        }
+        private fun startTimer(timerInSec: TextView, generateOtp: MaterialButton) {
+            countDownTimer =  object : CountDownTimer(60000, 1000) {
+                override fun onTick(millisUntilFinished: Long) {
+                    timerInSec.visibility = View.VISIBLE
+                    timerInSec.text = formatTimeInSeconds(millisUntilFinished)
+                }
+                override fun onFinish() {
+                    timerInSec.visibility = View.INVISIBLE
+                    timerInSec.text = ""
+                    generateOtp.isEnabled = true
+                    generateOtp.text = timerInSec.resources.getString(R.string.resend_otp)
+                }
+            }.start()
+
+            countdownTimers[adapterPosition] = countDownTimer
+
+        }
+    }
+
+
+    class SelectUploadImageClickListener(private val selectImageClick: (formId: Int) -> Unit) {
+
+        fun onSelectImageClick(form: FormElement) = selectImageClick(form.id)
+
+    }
+
+    class ViewDocumentOnClick(private val viewDocument: () -> Unit) {
+
+        fun onViewDocumentClick() = viewDocument()
+
+    }
+    class FileUploadInputViewHolder private constructor(private val binding: LayoutUploafFormBinding) :
+        ViewHolder(binding.root) {
+        companion object {
+            fun from(parent: ViewGroup): ViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = LayoutUploafFormBinding.inflate(layoutInflater, parent, false)
+                return FileUploadInputViewHolder(binding)
+            }
+        }
+
+        fun bind(item: FormElement, clickListener: SelectUploadImageClickListener?, documentOnClick: ViewDocumentOnClick?, isEnabled: Boolean) {
+
+            binding.form = item
+            binding.tvTitle.text = item.title
+            binding.clickListener = clickListener
+            binding.documentclickListener = documentOnClick
+            if (item.value != null) binding.btnView.visibility = View.VISIBLE
+            else binding.btnView.visibility = View.GONE
+
+        }
+
+
+        private lateinit var countDownTimer : CountDownTimer
+        private var countdownTimers : HashMap<Int, CountDownTimer> = HashMap()
+
+        private fun formatTimeInSeconds(millis: Long) : String {
+            val seconds = millis / 1000
+            return "${seconds} sec"
+        }
+        private fun startTimer(timerInSec: TextView, generateOtp: MaterialButton) {
+            countDownTimer =  object : CountDownTimer(60000, 1000) {
+                override fun onTick(millisUntilFinished: Long) {
+                    timerInSec.visibility = View.VISIBLE
+                    timerInSec.text = formatTimeInSeconds(millisUntilFinished)
+                }
+                override fun onFinish() {
+                    timerInSec.visibility = View.INVISIBLE
+                    timerInSec.text = ""
+                    generateOtp.isEnabled = true
+                    generateOtp.text = timerInSec.resources.getString(R.string.resend_otp)
+                }
+            }.start()
+
+            countdownTimers[adapterPosition] = countDownTimer
+
+        }
+    }
+
+
+
     class DatePickerInputViewHolder private constructor(private val binding: RvItemFormDatepickerV2Binding) :
         ViewHolder(binding.root) {
         companion object {
@@ -895,6 +1021,8 @@ class FormInputAdapter(
             TIME_PICKER -> TimePickerInputViewHolder.from(parent)
             HEADLINE -> HeadlineViewHolder.from(parent)
             AGE_PICKER -> AgePickerViewInputViewHolder.from(parent)
+            InputType.BUTTON -> ButtonInputViewHolder.from(parent)
+            InputType.FILE_UPLOAD -> FileUploadInputViewHolder.from(parent)
         }
     }
 
@@ -930,6 +1058,9 @@ class FormInputAdapter(
                 isEnabled,
                 formValueListener
             )
+            InputType.BUTTON -> (holder as ButtonInputViewHolder).bind(item, isEnabled, formValueListener)
+            InputType.FILE_UPLOAD -> (holder as FileUploadInputViewHolder).bind(item,selectImageClickListener,viewDocumentListner, isEnabled)
+
         }
     }
 
@@ -967,4 +1098,7 @@ class FormInputAdapter(
         }
         return retVal
     }
+
+
+
 }

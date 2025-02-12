@@ -16,7 +16,7 @@
     <string name="gov">GOV</string>
     <string name="enter_aadhaar_number">Enter Aadhaar Number</string>
     <string name="aadhaar_number">Aadhaar Number</string>
-    <string name="generate_otp">Generate OTP</string>
+    <string name="generate_otp">Send OTP</string>
     <string name="pid">PID</string>
     <string name="generate_abha">Generate ABHA</string>
     <string name="_30">30</string>

@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.form
 
 import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -33,6 +34,8 @@ class PwAncFormViewModel @Inject constructor(
     enum class State {
         IDLE, SAVING, SAVE_SUCCESS, SAVE_FAILED
     }
+
+    private var lastDocumentFormId: Int = 0
 
     private val benId =
         PwAncFormFragmentArgs.fromSavedStateHandle(savedStateHandle).benId
@@ -99,6 +102,14 @@ class PwAncFormViewModel @Inject constructor(
         }
     }
 
+    fun setCurrentDocumentFormId(id: Int) {
+        lastDocumentFormId = id
+    }
+
+    fun setImageUriToFormElement(dpUri: Uri) {
+        dataset.setImageUriToFormElement(lastDocumentFormId, dpUri)
+
+    }
     fun updateListOnValueChanged(formId: Int, index: Int) {
         viewModelScope.launch {
             dataset.updateList(formId, index)

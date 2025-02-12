@@ -418,6 +418,43 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         arrayId = -1,
         required = false,
     )
+
+    private val sendOtpBtn = FormElement(
+        id = 42,
+        inputType = org.piramalswasthya.sakhi.model.InputType.BUTTON,
+        title = resources.getString(R.string.generate_otp),
+        required = true,
+        isEnabled = true,
+        etInputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_NORMAL,
+        isMobileNumber = false,
+    )
+
+    private val otpField = FormElement(
+        id = 43,
+        inputType = EDIT_TEXT,
+        title = resources.getString(R.string.enter_otp),
+        arrayId = -1,
+        required = false,
+        etInputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_NORMAL,
+        isMobileNumber = false,
+        etMaxLength = 4,
+        max = 9999999999,
+        min = 6000000000
+    )
+    private val tempraryContactNo = FormElement(
+        id = 44,
+        inputType = EDIT_TEXT,
+        title = resources.getString(R.string.contact_number),
+        arrayId = -1,
+        required = false,
+        etInputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_NORMAL,
+        isMobileNumber = true,
+        etMaxLength = 10,
+        max = 9999999999,
+        min = 6000000000
+    )
+
+
     val firstPage by lazy {
         listOf(
             pic,
@@ -659,6 +696,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             dateOfReg,
             firstName,
             lastName,
+            tempraryContactNo,
+            sendOtpBtn,
             agePopup,
 //            dob,
 //            age,
@@ -674,6 +713,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 //            hasAadharNo,
         )
         this.familyHeadPhoneNo = household.family?.familyHeadPhoneNo?.toString()
+        tempraryContactNo.value = familyHeadPhoneNo
         this.isHoF = true
         if (dateOfReg.value == null)
             dateOfReg.value = getCurrentDateString()
@@ -754,6 +794,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 mobileNoOfRelation.getStringFromPosition(saved.mobileNoOfRelationId)
             otherMobileNoOfRelation.value = saved.mobileOthers
             contactNumber.value = saved.contactNumber.toString()
+            tempraryContactNo.value = saved.contactNumber.toString()
             relationToHead.value = relationToHeadListDefault[saved.familyHeadRelationPosition - 1]
             otherRelationToHead.value = saved.familyHeadRelationOther
             community.value = community.getStringFromPosition(saved.communityId)
@@ -829,6 +870,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             dateOfReg,
             firstName,
             lastName,
+            tempraryContactNo,
+            sendOtpBtn,
             agePopup,
 //            dob,
 //            age,
@@ -852,6 +895,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 //            ageUnit.value = ageUnit.entries!!.last()
             mobileNoOfRelation.value = mobileNoOfRelation.entries!![4]
             contactNumber.value = familyHeadPhoneNo
+            tempraryContactNo.value = familyHeadPhoneNo
             community.value = hoF?.communityId?.let { community.getStringFromPosition(it) }
             religion.value = hoF?.religionId?.let { religion.getStringFromPosition(it) }
             gender.value = when (benGender) {
@@ -929,6 +973,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 mobileNoOfRelation.getStringFromPosition(saved.mobileNoOfRelationId)
             otherMobileNoOfRelation.value = saved.mobileOthers
             contactNumber.value = saved.contactNumber.toString()
+            tempraryContactNo.value = saved.contactNumber.toString()
 //            relationToHead.entries = relationToHeadListDefault
             relationToHead.value = relationToHead.getStringFromPosition(relationToHeadId + 1)
             if (relationToHeadId == relationToHead.entries!!.lastIndex) {
@@ -1687,9 +1732,49 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 validateAllCapsOrSpaceOnEditText(spouseName)
             }
 
+            tempraryContactNo.id -> {
+                validateEmptyOnEditText(contactNumber)
+                validateMobileNumberOnEditText(contactNumber)
+                if (tempraryContactNo.value!!.isEmpty()) {
+                    triggerforHide(
+                        source = tempraryContactNo,
+                        passedIndex = index,
+                        triggerIndex = index,
+                        target = sendOtpBtn
+                    )
+                } else if(tempraryContactNo.value!!.length >= 10){
+                    triggerDependants(
+                        source = tempraryContactNo,
+                        passedIndex = index,
+                        triggerIndex = index,
+                        target = sendOtpBtn
+                    )
+                } else {
+                    triggerforHide(
+                        source = tempraryContactNo,
+                        passedIndex = index,
+                        triggerIndex = index,
+                        target = sendOtpBtn
+                    )
+                }
+            }
+
             contactNumber.id -> {
                 validateEmptyOnEditText(contactNumber)
                 validateMobileNumberOnEditText(contactNumber)
+            }
+
+            sendOtpBtn.id -> {
+                if (sendOtpBtn.isEnabled) {
+                    triggerDependants(
+                        source = sendOtpBtn,
+                        passedIndex = index,
+                        triggerIndex = index,
+                        target = otpField
+                    )
+                }
+                return 0
+
             }
 
             mobileNoOfRelation.id -> {

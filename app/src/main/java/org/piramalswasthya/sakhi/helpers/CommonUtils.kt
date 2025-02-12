@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.helpers
 
 import android.app.Activity
+import android.content.Context
 import android.content.Context.CONNECTIVITY_SERVICE
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -350,16 +351,16 @@ fun filterImmunList(list: List<ImmunizationDetailsDomain>, text: String): List<I
             filterText = "4 months"
         }else{
 
-                val filterText = text.lowercase()
-                return list.filter {
-                    filterForImm(
-                        it,
-                        filterText,
-                        secondFilterText,
-                        thirdFilterText,
-                        fourthFilterText
-                    )
-                }
+            val filterText = text.lowercase()
+            return list.filter {
+                filterForImm(
+                    it,
+                    filterText,
+                    secondFilterText,
+                    thirdFilterText,
+                    fourthFilterText
+                )
+            }
 
         }
         return list.filter {
@@ -504,7 +505,7 @@ fun getDateString(dateLong: Long?): String? {
 
 
 @Suppress("deprecation")
-fun isInternetAvailable(activity: Activity): Boolean {
+fun isInternetAvailable(activity: Context): Boolean {
     val conMgr = activity.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

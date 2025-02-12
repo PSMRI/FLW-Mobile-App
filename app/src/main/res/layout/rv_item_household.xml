@@ -102,14 +102,14 @@
                 <!--                        tools:text="45 Years" />-->
                 <!--                </LinearLayout>-->
 
-                <LinearLayout
-                    android:layout_width="0dp"
+                <RelativeLayout
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:orientation="vertical"
                     android:padding="@dimen/padding_small">
 
                     <TextView
+                        android:id="@+id/contactNumber"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/contact_number"
@@ -120,11 +120,32 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@{household.contactNumber}"
+                        android:layout_below="@+id/contactNumber"
                         android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                         android:textColor="?attr/colorOnPrimary"
                         tools:text="65987506978" />
-                </LinearLayout>
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_check_circle"
+                        android:visibility="gone"
+                        android:layout_toRightOf="@+id/contactNumber"
+                        android:layout_marginStart="2dp"
+                        />
+                </RelativeLayout>
 
+                <Button
+                    android:id="@+id/verification_pending"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_marginBottom="@dimen/margin_normal"
+                    android:text="@string/verify_otp"
+                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                    android:backgroundTint="@android:color/holo_orange_dark"
+                    android:textColor="?attr/colorOnPrimary"
+                    app:drawableTint="@color/md_theme_light_onPrimary"
+                    />
             </LinearLayout>
 
             <com.google.android.material.button.MaterialButton
