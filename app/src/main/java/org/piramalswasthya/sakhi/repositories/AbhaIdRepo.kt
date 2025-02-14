@@ -18,6 +18,7 @@ import org.piramalswasthya.sakhi.network.AbhaGenerateAadhaarOtpRequest
 import org.piramalswasthya.sakhi.network.AbhaGenerateAadhaarOtpResponse
 import org.piramalswasthya.sakhi.network.AbhaGenerateAadhaarOtpResponseV2
 import org.piramalswasthya.sakhi.network.AbhaGenerateMobileOtpRequest
+import org.piramalswasthya.sakhi.network.AbhaPublicCertificateResponse
 import org.piramalswasthya.sakhi.network.AbhaResendAadhaarOtpRequest
 import org.piramalswasthya.sakhi.network.AbhaTokenResponse
 import org.piramalswasthya.sakhi.network.AbhaVerifyAadhaarOtpRequest
@@ -104,9 +105,11 @@ class AbhaIdRepo @Inject constructor(
                 )
                 if (response.isSuccessful) {
                     val responseBody = response.body()?.string()
-                    var key = responseBody!!
-                    key = key.replace("-----BEGIN PUBLIC KEY-----\n", "")
-                    key = key.replace("-----END PUBLIC KEY-----", "")
+                    val result =
+                        Gson().fromJson(responseBody, AbhaPublicCertificateResponse::class.java)
+                    var key = result.publicKey
+//                    key = key.replace("-----BEGIN PUBLIC KEY-----\n", "")
+//                    key = key.replace("-----END PUBLIC KEY-----", "")
                     key = key.trim()
                     NetworkResult.Success(key)
                 } else {

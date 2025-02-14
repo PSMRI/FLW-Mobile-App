@@ -366,6 +366,12 @@ data class AbhaVerifyMobileOtpResponse(
 )
 
 @JsonClass(generateAdapter = true)
+data class AbhaPublicCertificateResponse(
+    val publicKey: String,
+    val encryptionAlgorithm: String
+)
+
+@JsonClass(generateAdapter = true)
 data class StateCodeResponse(
     val code: String,
     val name: String,
