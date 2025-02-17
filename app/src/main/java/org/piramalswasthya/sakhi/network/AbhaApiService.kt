@@ -1,16 +1,21 @@
 package org.piramalswasthya.sakhi.network
 
 import okhttp3.ResponseBody
-import org.piramalswasthya.sakhi.BuildConfig
+import org.piramalswasthya.sakhi.utils.KeyUtils
 import retrofit2.Response
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.Headers
+import retrofit2.http.POST
+import retrofit2.http.Url
 
 interface AbhaApiService {
 
     @Headers("No-Auth: true")
     @POST
     suspend fun getToken(
-        @Url url: String = BuildConfig.ABHA_TOKEN_URL,
+        @Url url: String = KeyUtils.abhaTokenUrl(),
         @Body request: AbhaTokenRequest = AbhaTokenRequest()
     ): Response<ResponseBody>
 
@@ -67,7 +72,7 @@ interface AbhaApiService {
 
     @GET
     suspend fun getAuthCert(
-        @Url url: String = BuildConfig.ABHA_AUTH_URL
+        @Url url: String = KeyUtils.abhaAuthUrl()
     ): Response<ResponseBody>
 
     @GET("v2/ha/lgd/states")
