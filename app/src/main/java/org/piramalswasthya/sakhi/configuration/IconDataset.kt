@@ -1,7 +1,9 @@
 package org.piramalswasthya.sakhi.configuration
 
 import android.content.res.Resources
+import android.view.WindowManager
 import dagger.hilt.android.scopes.ActivityRetainedScoped
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.Icon
@@ -32,7 +34,12 @@ class IconDataset @Inject constructor(
     fun getHomeIconDataset(resources: Resources): List<Icon> {
         val showAll = preferenceDao.isDevModeEnabled
         Timber.d("currently : $showAll")
-        val showModules = Modules.ALL
+        lateinit var showModules:Modules
+        if (BuildConfig.FLAVOR.equals("xushrukhaProd", true)) {
+            showModules = Modules.HRP
+        }else{
+            showModules = Modules.ALL
+        }
         return when (showModules) {
             Modules.ALL -> listOf(
                 Icon(
