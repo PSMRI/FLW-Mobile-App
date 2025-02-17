@@ -25,12 +25,12 @@ jobs:
           - environment: SAKSHAM_UAT
             variant: SakshamUat
             build_type: debug
-          - environment: NIRAMAY_PRODUCTION
-            variant: Niramay
-            build_type: release
-          - environment: XUSHRUKHA_PRODUCTION
-            variant: Xushrukha
-            build_type: release
+    #          - environment: NIRAMAY_PRODUCTION
+    #            variant: Niramay
+    #            build_type: release
+    #          - environment: XUSHRUKHA_PRODUCTION
+    #            variant: Xushrukha
+    #            build_type: release
     uses: ./.github/workflows/build-distribute.yml
     with:
       environment: ${{ matrix.config.environment }}
