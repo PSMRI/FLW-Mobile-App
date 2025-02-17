@@ -131,7 +131,12 @@ class FindAbhaViewModel @Inject constructor(
 
     fun getBen(benId: Long) {
         viewModelScope.launch {
-            benRepo.getBenFromId(benId)?.let {
+            val beneficiary = benRepo.getBenFromId(benId)
+            if (beneficiary == null) {
+                _errorMessage.value = "Beneficiary not found"
+                return@launch
+            }
+            beneficiary.let {
                 it.firstName?.let { first ->
                     _ben.value = first
                 }

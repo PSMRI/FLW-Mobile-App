@@ -36,7 +36,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:inputType="number"
-            android:maxLength="12"
+            android:maxLength="10"
+            android:digits="0123456789"
             android:singleLine="true"
             android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
 
@@ -106,6 +107,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_normal"
         android:gravity="start|top"
+        android:contentDescription="@string/aadhar_consent_text"
         android:text="@string/aadhar_consent_text"
         android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
         app:layout_constraintTop_toBottomOf="@+id/til_select_abha" />

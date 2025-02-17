@@ -51,6 +51,7 @@ import java.security.spec.X509EncodedKeySpec
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 import java.util.UUID
 import javax.crypto.Cipher
 import javax.inject.Inject
@@ -274,10 +275,10 @@ class AbhaIdRepo @Inject constructor(
     }
 
     private fun getCurrentTimestamp(): String {
-        return SimpleDateFormat(
-            "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
-            Locale.ENGLISH
-        ).format(Date()) as String
+        val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ENGLISH).apply {
+            timeZone = TimeZone.getTimeZone("UTC")
+        }
+        return sdf.format(Date())
     }
 
     private fun encryptData(txt: String): String {
