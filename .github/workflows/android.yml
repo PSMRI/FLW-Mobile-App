@@ -12,7 +12,7 @@ on:
 env:
   main_project_module: app
   repository_name: FLW-Mobile-App
-  date_today: ${{ github.event.head_commit.timestamp }}
+  date_today: ${{ github.event.pull_request.updated_at || github.event.head_commit.timestamp }}
 
 jobs:
   build_and_distribute:
