@@ -1,0 +1,2 @@
+json_key_file("google_play_service_account.json")
+package_name("org.piramalswasthya.sakhi")

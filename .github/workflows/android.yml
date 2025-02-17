@@ -1,0 +1,40 @@
+name: Android Build and Distribute
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
+
+env:
+  main_project_module: app
+  repository_name: FLW-Mobile-App
+  date_today: ${{ github.event.pull_request.updated_at || github.event.head_commit.timestamp }}
+
+jobs:
+  build_and_distribute:
+    strategy:
+      matrix:
+        config:
+          - environment: SAKSHAM_STAG
+            variant: SakshamStag
+            build_type: debug
+          - environment: SAKSHAM_UAT
+            variant: SakshamUat
+            build_type: debug
+    #          - environment: NIRAMAY_PRODUCTION
+    #            variant: Niramay
+    #            build_type: release
+    #          - environment: XUSHRUKHA_PRODUCTION
+    #            variant: Xushrukha
+    #            build_type: release
+    uses: ./.github/workflows/build-distribute.yml
+    with:
+      environment: ${{ matrix.config.environment }}
+      variant: ${{ matrix.config.variant }}
+      build_type: ${{ matrix.config.build_type }}
+    secrets: inherit
+
