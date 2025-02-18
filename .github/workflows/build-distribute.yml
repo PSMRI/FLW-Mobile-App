@@ -1,0 +1,203 @@
+name: Build and Distribute to Firebase or PlayStore
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      variant:
+        required: true
+        type: string
+      build_type:
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v2
+
+      - name: Set up Android NDK
+        uses: nttld/setup-ndk@v1.5.0
+        with:
+          ndk-version: r27c
+          link-to-sdk: true
+
+      - name: Install CMake
+        uses: jwlawson/actions-setup-cmake@v1
+        with:
+          cmake-version: '3.31.1'
+
+      - name: Set up ruby env
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7.2
+          bundler-cache: true
+
+      - name: Verify Ruby installation
+        run: ruby -v
+
+      - name: Decode google-services.json for NIRAMAY_PRODUCTION
+        if: inputs.environment == 'NIRAMAY_PRODUCTION'
+        run: |
+          echo "${{ secrets.GOOGLE_SERVICES_JSON_NIRAMAY_PRODUCTION }}" | base64 --decode > ./app/google-services.json || exit 1
+
+      - name: Decode google-services.json for XUSHRUKHA_PRODUCTION
+        if: inputs.environment == 'XUSHRUKHA_PRODUCTION'
+        run: |
+          echo "${{ secrets.GOOGLE_SERVICES_JSON_XUSHRUKHA_PRODUCTION }}" | base64 --decode > ./app/google-services.json || exit 1
+
+      - name: Decode generic google-services.json for other environments
+        if: inputs.environment != 'NIRAMAY_PRODUCTION' && inputs.environment != 'XUSHRUKHA_PRODUCTION'
+        run: |
+          echo "${{ secrets.GOOGLE_SERVICES_JSON_GENERIC }}" | base64 --decode > ./app/google-services.json || exit 1
+
+      - name: Capitalize first letter of variant
+        run: echo "capitalizedVariant=$(echo '${{ inputs.variant }}' | awk '{print toupper(substr($0,1,1)) substr($0,2)}')" >> $GITHUB_ENV
+
+      - name: Decode Firebase Credentials
+        run: |
+          case "$capitalizedVariant" in
+            SakshamStag|SakshamUat|Saksham)
+              echo "${{ secrets.FIREBASE_CREDENTIALS_JSON_SAKSHAM_ASSAM }}" | base64 --decode > firebase_credentials.json
+              ;;
+            Niramay)
+              echo "${{ secrets.FIREBASE_CREDENTIALS_JSON_UTPRERONA_NIRAMAY }}" | base64 --decode > firebase_credentials.json
+              ;;
+            Xushrukha)
+              echo "${{ secrets.FIREBASE_CREDENTIALS_JSON_UTPRERONA_XUSHRUKHA }}" | base64 --decode > firebase_credentials.json
+              ;;
+            *)
+              echo "Unknown variant: $capitalizedVariant"
+              exit 1
+              ;;
+          esac
+      
+      
+
+      - name: Decode Google Play JSON key
+        if: ${{ inputs.build_type == 'release' }}
+        run: |
+          echo "${{ secrets.GOOGLE_PLAY_JSON_KEY }}" | base64 --decode > ./google_play_service_account.json
+
+      - name: Decode keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_FILE }}" | base64 --decode > ${{ github.workspace }}/keystore.jks
+      
+
+      - name: Create local.properties
+        run: echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
+
+      - name: Get version from build.gradle
+        id: get-version
+        run: |
+          VERSION_NAME=$(grep VERSION version/version.properties | cut -d'=' -f2) 
+          echo "version=$VERSION_NAME" >> $GITHUB_ENV
+        env:
+          GITHUB_ENV: $GITHUB_ENV
+
+      - name: Build and Distribute app to Firebase
+        id: build-and-distribute
+        run: |
+          
+          # Validate required secrets
+          required_secrets=(
+            "ENCRYPTED_PASS_KEY"
+            "ABHA_CLIENT_ID"
+            "ABHA_CLIENT_SECRET"
+            "BASE_TMC_URL"
+            "BASE_ABHA_URL"
+            "ABHA_TOKEN_URL"
+            "ABHA_AUTH_URL"
+            "CHAT_URL"
+            "KEYSTORE_PASSWORD"
+            "KEY_ALIAS"
+            "KEY_PASSWORD"
+            "FIREBASE_APP_ID"
+          )
+          for secret in "${required_secrets[@]}"; do
+            if [ -z "${!secret}" ]; then
+            echo "Error: Required secret $secret is not set"
+              exit 1
+            fi
+          done
+
+          # Set app URLs used in the codebase
+          export ENCRYPTED_PASS_KEY=${{ secrets.ENCRYPTED_PASS_KEY }}
+          export ABHA_CLIENT_ID=${{ secrets.ABHA_CLIENT_ID }}
+          export ABHA_CLIENT_SECRET=${{ secrets.ABHA_CLIENT_SECRET }}
+          export BASE_TMC_URL=${{ secrets.BASE_TMC_URL }}
+          export BASE_ABHA_URL=${{ secrets.BASE_ABHA_URL }}
+          export ABHA_TOKEN_URL=${{ secrets.ABHA_TOKEN_URL }}
+          export ABHA_AUTH_URL=${{ secrets.ABHA_AUTH_URL }}
+          export CHAT_URL=${{secrets.CHAT_URL}}
+
+          # Set app release version signing credentials
+          export KEYSTORE_PASSWORD=$(echo ${{ secrets.KEYSTORE_PASSWORD }} | base64 --decode)
+          export KEY_ALIAS=${{ secrets.KEY_ALIAS }}
+          export KEY_PASSWORD=$(echo ${{ secrets.KEY_PASSWORD }} | base64 --decode)
+
+
+          # Set Firebase App Distribution and Google Play authentication tokens
+          export FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }}
+
+          echo "Capitalized Variant: $capitalizedVariant"
+          if [ "${{ inputs.build_type }}" == "debug" ]; then
+            bundle exec fastlane build_and_distribute_debug variant:"$capitalizedVariant"
+          else
+            bundle exec fastlane build_and_distribute_release variant:"$capitalizedVariant"
+          fi
+
+
+      - name: Verify Output Files
+        run: |
+          echo "Checking output folder..."
+          if [ "${{ inputs.build_type }}" == "debug" ]; then
+            OUTPUT_PATH="app/build/outputs/apk/**/debug/*.apk"
+          else
+            OUTPUT_PATH="app/build/outputs/bundle/**/*.aab"
+          fi
+
+          FILES_FOUND=$(find $OUTPUT_PATH 2>/dev/null | wc -l)
+
+          if [ "$FILES_FOUND" -gt 0 ]; then
+            echo "✅ Found $FILES_FOUND file(s):"
+            find $OUTPUT_PATH
+          else
+            echo "⚠️ No files found at path: $OUTPUT_PATH"
+            exit 1
+          fi
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: FLW-Mobile-App - APK(s) ${{ inputs.variant }} generated
+          path: |
+            ${{ inputs.build_type == 'debug' && 'app/build/outputs/apk/**/debug/*.apk' || 'app/build/outputs/bundle/**/*.aab' }}
+          if-no-files-found: warn
+          compression-level: 6
+          overwrite: false
+          include-hidden-files: false
+
+
+      - name: Push to Releases
+        if: inputs.build_type == 'release'
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "app/build/outputs/bundle/**/*.aab"
+          tag: v${{ env.version }}-${{ inputs.environment }}-${{ github.run_number }}
+          token: ${{ secrets.GITHUB_TOKEN }}
