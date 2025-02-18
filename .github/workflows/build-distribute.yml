@@ -51,6 +51,22 @@ jobs:
       - name: Verify Ruby installation
         run: ruby -v
 
+      - name: Decode Network Security Config
+        run: |
+          CONFIG_PATH=$(echo "${{ secrets.NETWORK_SECURITY_CONFIG_PATH }}" | base64 --decode)
+
+          mkdir -p "$(dirname "$CONFIG_PATH")"
+          echo "${{ secrets.NETWORK_SECURITY_CONFIG }}" | base64 --decode > "$CONFIG_PATH"
+
+
+
+      - name: Decode Cert File
+        run: |
+          CERT_PATH=$(echo "${{ secrets.CERT_FILE_PATH }}" | base64 --decode)
+          mkdir -p "$(dirname "$CERT_PATH")"
+          echo "${{ secrets.CERT_FILE }}" | base64 --decode > "$CERT_PATH"
+
+
       - name: Decode google-services.json for NIRAMAY_PRODUCTION
         if: inputs.environment == 'NIRAMAY_PRODUCTION'
         run: |
@@ -113,28 +129,7 @@ jobs:
       - name: Build and Distribute app to Firebase
         id: build-and-distribute
         run: |
-          
-          # Validate required secrets
-          required_secrets=(
-            "ENCRYPTED_PASS_KEY"
-            "ABHA_CLIENT_ID"
-            "ABHA_CLIENT_SECRET"
-            "BASE_TMC_URL"
-            "BASE_ABHA_URL"
-            "ABHA_TOKEN_URL"
-            "ABHA_AUTH_URL"
-            "CHAT_URL"
-            "KEYSTORE_PASSWORD"
-            "KEY_ALIAS"
-            "KEY_PASSWORD"
-            "FIREBASE_APP_ID"
-          )
-          for secret in "${required_secrets[@]}"; do
-            if [ -z "${!secret}" ]; then
-            echo "Error: Required secret $secret is not set"
-              exit 1
-            fi
-          done
+
 
           # Set app URLs used in the codebase
           export ENCRYPTED_PASS_KEY=${{ secrets.ENCRYPTED_PASS_KEY }}
