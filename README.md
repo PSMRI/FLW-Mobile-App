@@ -111,17 +111,41 @@ To run this project, Follow these steps:
 
 ### Prerequisites
 
-- **Secrets**:- set ENCRYPTED_PASS_KEY, ABHA_CLIENT_ID, ABHA_CLIENT_SECRET values in secrets.properties file.
+- **Secrets**: Set the following secrets in your GitHub repository:
+    - `ENCODED_AES_KEY`
+    - `ENCODED_AES_IV`
+    - `GOOGLE_SERVICES_JSON_NIRAMAY_PRODUCTION`
+    - `GOOGLE_SERVICES_JSON_XUSHRUKHA_PRODUCTION`
+    - `GOOGLE_SERVICES_JSON_GENERIC`
+    - `FIREBASE_CREDENTIALS_JSON_SAKSHAM_ASSAM`
+    - `FIREBASE_CREDENTIALS_JSON_UTPRERONA_NIRAMAY`
+    - `FIREBASE_CREDENTIALS_JSON_UTPRERONA_XUSHRUKHA`
+    - `GOOGLE_PLAY_JSON_KEY`
+    - `KEYSTORE_FILE`
+    - `KEYSTORE_PASSWORD`
+    - `KEY_ALIAS`
+    - `KEY_PASSWORD`
+    - `FIREBASE_APP_ID`
+    - `BASE_TMC_URL`
+    - `ABHA_CLIENT_ID`
+    - `ABHA_CLIENT_SECRET`
+    - `BASE_ABHA_URL`
+    - `ABHA_TOKEN_URL`
+    - `ABHA_AUTH_URL`
+    - `CHAT_URL`
 
-- **Environments**:- We can generate the application for below environments (using Build Varients) based on requirements
+- **Environment Variables**:
+    - `environment` (e.g., `NIRAMAY_PRODUCTION`, `XUSHRUKHA_PRODUCTION`, or other environments)
 
-  1.Amrit Demo.(stagingDebug, stagingRelease)
+- **Build Configuration**:
+    - `variant` (e.g., `Saksham`, `Niramay`, `Xushrukha`)
+    - `build_type` (e.g., `debug`, `release`)
 
-  2.UAT. (uatDebug, uatRelease)
-
-  3.Production.(productionDebug, productionRelease)
-
-- **google-json**:-As per build variant, you want to work add folder in \app\src named production, uat or staging and add Google JSON file of required variant in it.
+- **Files**:
+    - `google-services.json` for various environments
+    - `firebase_credentials.json` for different variants
+    - `google_play_service_account.json` for release builds
+    - `keystore.jks`
 
 
 
@@ -156,3 +180,12 @@ To run this project, Follow these steps:
 
         + Once the APK is generated android studio will notify with the location of APK, 
              generally in release folder 
+
+## Filing Issues
+
+If you encounter any issues, bugs, or have feature requests, please file them in the [main AMRIT repository](https://github.com/PSMRI/AMRIT/issues). Centralizing all feedback helps us streamline improvements and address concerns efficiently.  
+
+## Join Our Community
+
+We’d love to have you join our community discussions and get real-time support!  
+Join our [Discord server](https://discord.gg/FVQWsf5ENS) to connect with contributors, ask questions, and stay updated.  

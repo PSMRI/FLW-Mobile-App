@@ -57,6 +57,7 @@ import org.piramalswasthya.sakhi.ui.home_activity.home.HomeViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.sync.SyncBottomSheetFragment
 import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
 import org.piramalswasthya.sakhi.ui.service_location_activity.ServiceLocationActivity
+import org.piramalswasthya.sakhi.utils.KeyUtils
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import java.net.URI
 import java.util.Locale
@@ -298,7 +299,7 @@ class HomeActivity : AppCompatActivity() {
 
 
 // Load URL
-        web.loadUrl(BuildConfig.CHAT_URL)
+       web.loadUrl(KeyUtils.chatUrl())
 
 
 // Handle WebView events
@@ -307,7 +308,7 @@ class HomeActivity : AppCompatActivity() {
                view: WebView,
                request: WebResourceRequest
            ): Boolean {
-               return if (request.url.host == URI(BuildConfig.CHAT_URL).host) {
+               return if (request.url.host == URI(KeyUtils.chatUrl()).host) {
                    false  // Let WebView handle same-origin URLs
                } else {
                    startActivity(Intent(Intent.ACTION_VIEW, request.url))
