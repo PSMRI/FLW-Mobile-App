@@ -24,12 +24,13 @@ class AadhaarIdFragment : Fragment() {
     private val binding: FragmentAadhaarIdBinding
         get() = _binding!!
 
-    private val viewModel: AadhaarIdViewModel by viewModels({ requireActivity() })
+    private lateinit var abhaMode: AadhaarIdViewModel.Abha
+    val viewModel: AadhaarIdViewModel by viewModels({ requireActivity() })
 
     private lateinit var navController: NavController
     private val aadhaarNavController by lazy {
         val navHostFragment: NavHostFragment =
-            childFragmentManager.findFragmentById(R.id.nav_host_fragment_aadhaar_id) as NavHostFragment
+            childFragmentManager.findFragmentById(R.id.nav_host_fragment_find_abha) as NavHostFragment
         navHostFragment.navController
     }
 
@@ -58,6 +59,25 @@ class AadhaarIdFragment : Fragment() {
             onBackPressedCallback
         )
 
+        binding.createToggle.setOnClickListener {
+            binding.createToggle.setBackgroundResource(R.drawable.background_rectangle_lightest_grey_20)
+            binding.searchToggle.setBackgroundResource(0)
+            binding.createToggle.setTypeface(resources.getFont(R.font.opensans_semibold))
+            binding.searchToggle.setTypeface(resources.getFont(R.font.opensans_regular))
+            binding.navHostFragmentFindAbha.visibility = View.GONE
+            binding.navHostFragmentAadhaarId.visibility = View.VISIBLE
+
+        }
+        binding.searchToggle.setOnClickListener {
+            binding.createToggle.setBackgroundResource(0)
+            binding.searchToggle.setBackgroundResource(R.drawable.background_rectangle_lightest_grey_20)
+            binding.createToggle.setTypeface(resources.getFont(R.font.opensans_regular))
+            binding.searchToggle.setTypeface(resources.getFont(R.font.opensans_semibold))
+            binding.navHostFragmentAadhaarId.visibility = View.GONE
+            binding.navHostFragmentFindAbha.visibility = View.VISIBLE
+
+        }
+
         binding.rgGovAsha.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_asha -> {
@@ -85,6 +105,10 @@ class AadhaarIdFragment : Fragment() {
                     binding.rgGovAsha.visibility = View.INVISIBLE
                 }
             }
+        }
+
+        viewModel.abhaMode.observe(viewLifecycleOwner) { mode->
+            abhaMode = mode
         }
 
         viewModel.state.observe(viewLifecycleOwner) { state ->
