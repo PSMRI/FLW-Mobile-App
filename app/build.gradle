@@ -52,7 +52,8 @@ android {
             applicationIdSuffix ".saksham.stag"
             applicationId "org.piramalswasthya.sakhi"
             resValue "string", "app_native_name", "উৎপ্ৰেৰণা-Stag"
-        }
+           }
+        
         sakshamUat {
             applicationIdSuffix ".saksham.uat"
             applicationId "org.piramalswasthya.sakhi"
@@ -64,11 +65,13 @@ android {
             applicationId "org.piramalswasthya.sakhi"
             resValue "string", "app_native_name", "উৎপ্ৰেৰণা"
         }
+        
         xushrukha {
             applicationIdSuffix ".xushrukha"
             applicationId "org.piramalswasthya.sakhi"
-            resValue "string", "app_native_name", "উৎপ্ৰেৰণা"
+             resValue "string", "app_native_name", "উৎপ্ৰেৰণা"
         }
+        
         niramay {
             applicationIdSuffix ".niramay"
             applicationId "org.piramalswasthya.sakhi"

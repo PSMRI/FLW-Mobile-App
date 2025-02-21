@@ -60,11 +60,22 @@ class AadhaarOtpFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         startResendTimer()
         binding.btnVerifyOTP.setOnClickListener {
-            viewModel.verifyOtpClicked(binding.tietAadhaarOtp.text.toString(), parentViewModel.mobileNumber)
+            if (parentViewModel.abhaMode.value == AadhaarIdViewModel.Abha.SEARCH) {
+                viewModel.verifyLoginOtpClicked(binding.tietAadhaarOtp.text.toString())
+            } else {
+                viewModel.verifyOtpClicked(
+                    binding.tietAadhaarOtp.text.toString(),
+                    parentViewModel.mobileNumber
+                )
+            }
         }
         binding.resendOtp.setOnClickListener {
             viewModel.generateOtpClicked("")
             startResendTimer()
+        }
+
+        if (parentViewModel.abhaMode.value == AadhaarIdViewModel.Abha.SEARCH) {
+            binding.textView6.text = "Verify Aadhaar OTP"
         }
 
         binding.tietAadhaarOtp.addTextChangedListener(object : TextWatcher {
@@ -113,7 +124,14 @@ class AadhaarOtpFragment : Fragment() {
                 }
 
                 State.OTP_VERIFY_SUCCESS -> {
-                    if (parentViewModel.mobileNumber == viewModel.mobileNumber) {
+                    if (parentViewModel.abhaMode.value == AadhaarIdViewModel.Abha.SEARCH) {
+                        findNavController().navigate(
+                            AadhaarOtpFragmentDirections.actionAadhaarOtpFragmentToCreateAbhaFragment(
+                                viewModel.txnId, viewModel.name, viewModel.phrAddress, viewModel.abhaNumber
+                            )
+                        )
+                    } else if (parentViewModel.abhaMode.value == AadhaarIdViewModel.Abha.CREATE &&
+                        parentViewModel.mobileNumber == viewModel.mobileNumber) {
                         findNavController().navigate(
                             AadhaarOtpFragmentDirections.actionAadhaarOtpFragmentToCreateAbhaFragment(
                                 viewModel.txnId, viewModel.name, viewModel.phrAddress, viewModel.abhaNumber
