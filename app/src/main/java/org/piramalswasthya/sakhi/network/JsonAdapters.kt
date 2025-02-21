@@ -175,6 +175,81 @@ data class AbhaVerifyAadhaarOtpRequest(
 )
 
 @JsonClass(generateAdapter = true)
+data class SearchAbhaRequest(
+    val scope: List<String>,
+    var mobile: String
+)
+
+@JsonClass(generateAdapter = true)
+data class SearchAbhaResponse(
+    val txnId: String,
+    val ABHA: List<Abha>
+)
+
+@JsonClass(generateAdapter = true)
+data class Abha(
+    val index: Int,
+    val ABHANumber: String,
+    val name: String,
+    val gender: String
+)
+
+@JsonClass(generateAdapter = true)
+data class LoginGenerateOtpRequest(
+    val scope: List<String>,
+    val loginHint: String,
+    var loginId: String,
+    val otpSystem: String,
+    val txnId: String
+)
+
+@JsonClass(generateAdapter = true)
+data class LoginGenerateOtpResponse(
+    val txnId: String,
+    val message: String
+)
+
+@JsonClass(generateAdapter = true)
+data class LoginVerifyOtpRequest(
+    val scope: List<String>,
+    val authData: AuthData3
+)
+
+@JsonClass(generateAdapter = true)
+data class AuthData3(
+    val authMethods: List<String>,
+    val otp: Otp3
+)
+
+@JsonClass(generateAdapter = true)
+data class Otp3(
+    val txnId: String,
+    var otpValue: String
+)
+
+@JsonClass(generateAdapter = true)
+data class LoginVerifyOtpResponse(
+    val txnId: String,
+    val authResult: String,
+    val message: String,
+    val token: String,
+    val expiresIn: Long,
+    val refreshToken: String,
+    val refreshExpiresIn: Long,
+    val accounts: List<Accounts>
+)
+
+@JsonClass(generateAdapter = true)
+data class Accounts(
+    val ABHANumber: String,
+    val preferredAbhaAddress: String,
+    val name: String,
+    val status: String,
+    val profilePhoto: String,
+    val mobileVerified: Boolean
+)
+
+@JsonClass(generateAdapter = true)
 data class AuthData(
     val authMethods: List<String>,
     val otp: Otp
@@ -288,6 +363,12 @@ data class Otp2(
 @JsonClass(generateAdapter = true)
 data class AbhaVerifyMobileOtpResponse(
     val txnId: String
+)
+
+@JsonClass(generateAdapter = true)
+data class AbhaPublicCertificateResponse(
+    val publicKey: String,
+    val encryptionAlgorithm: String
 )
 
 @JsonClass(generateAdapter = true)

@@ -112,6 +112,7 @@ class AadhaarNumberAshaFragment : Fragment() {
             if (it == AadhaarIdViewModel.State.SUCCESS) {
                 viewModel.resetState()
             }
+            parentViewModel.setAbhaMode(AadhaarIdViewModel.Abha.CREATE)
             parentViewModel.setState(it)
         }
 
