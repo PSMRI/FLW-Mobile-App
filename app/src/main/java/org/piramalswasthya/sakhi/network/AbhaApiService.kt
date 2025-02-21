@@ -15,7 +15,7 @@ interface AbhaApiService {
     @Headers("No-Auth: true")
     @POST
     suspend fun getToken(
-        @Url url: String = BuildConfig.ABHA_TOKEN_URL,
+        @Url url: String = KeyUtils.abhaTokenUrl(),//BuildConfig.ABHA_TOKEN_URL,
         @Header("X-CM-ID") id: String = "sbx",
         @Header("REQUEST-ID") requestId: String,
         @Header("TIMESTAMP") timestamp: String,
@@ -84,7 +84,7 @@ interface AbhaApiService {
 
     @GET
     suspend fun getAuthCert(
-        @Url url: String = BuildConfig.ABHA_AUTH_URL,
+        @Url url: String =KeyUtils.abhaAuthUrl(), //BuildConfig.ABHA_AUTH_URL,
         @Header("REQUEST-ID") requestId: String,
         @Header("TIMESTAMP") timestamp: String
     ): Response<ResponseBody>
