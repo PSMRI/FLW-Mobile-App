@@ -64,6 +64,14 @@ class AllBenViewModel @Inject constructor(
         }
     }
 
+    suspend fun getBenFromId(benId: Long):Long{
+        var benRegId = 0L
+             val result = benRepo.getBenFromId(benId)
+             if (result != null) {
+                 benRegId = result.benRegId
+             }
+         return benRegId
+    }
     fun resetBenRegId() {
         _benRegId.value = null
     }

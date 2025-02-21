@@ -21,7 +21,9 @@ add_definitions(
         -DABHA_TOKEN_URL=\"${ABHA_TOKEN_URL}\"
         -DABHA_AUTH_URL=\"${ABHA_AUTH_URL}\"
         -DCHAT_URL=\"${CHAT_URL}\"
+        -DIS_DEVELOPMENT=0
 )
+#DIS_DEVELOPMENT=0 -For Production use 0 , For Development use 1
 
 # Define the library name
 set(LIBRARY_NAME "sakhi")

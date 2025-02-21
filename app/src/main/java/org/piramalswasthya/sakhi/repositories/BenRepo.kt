@@ -19,6 +19,7 @@ import org.piramalswasthya.sakhi.helpers.ImageUtils
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.model.*
 import org.piramalswasthya.sakhi.network.*
+import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 import java.lang.Long.min
 import java.net.SocketTimeoutException
@@ -259,6 +260,7 @@ class BenRepo @Inject constructor(
                     benDao.benSyncWithServerFailed(*it.toLongArray())
                 }
             }
+            WorkerUtils.triggerAmritPullWorker(context)
             return@withContext true
         }
 
@@ -534,14 +536,14 @@ class BenRepo @Inject constructor(
                     if (benId == -1L || hhId == -1L) continue
                     val benExists = benDao.getBen(hhId, benId) != null
 
-                    if (benExists) {
+                   /* if (benExists) {
                         continue
                     }
                     val hhExists = householdDao.getHousehold(hhId) != null
 
                     if (!hhExists) {
                         continue
-                    }
+                    }*/
 
                     try {
                         result.add(
