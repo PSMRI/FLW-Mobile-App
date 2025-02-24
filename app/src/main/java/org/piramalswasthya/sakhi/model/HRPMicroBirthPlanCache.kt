@@ -6,6 +6,8 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import org.piramalswasthya.sakhi.configuration.FormDataModel
 import org.piramalswasthya.sakhi.database.room.SyncState
+import org.piramalswasthya.sakhi.network.HRPMicroBirthPlanDTO
+import org.piramalswasthya.sakhi.network.HRPPregnantAssessDTO
 
 @Entity(
     tableName = "HRP_MICRO_BIRTH_PLAN",
@@ -41,4 +43,28 @@ data class HRPMicroBirthPlanCache(
     var communityMemberContact: String? = null,
     var modeOfTransportation: String? = null,
     var syncState: SyncState? = SyncState.UNSYNCED
-) : FormDataModel
+) : FormDataModel{
+fun toDTO(): HRPMicroBirthPlanDTO {
+    return HRPMicroBirthPlanDTO(
+        id = 0,
+        benId = benId,
+        nearestSc = nearestSc,
+        bloodGroup = bloodGroup,
+        contactNumber1 = contactNumber1,
+        contactNumber2 = contactNumber2,
+        scHosp = scHosp,
+        usg = usg,
+        block = block,
+        bankac = bankac,
+        nearestPhc = nearestPhc,
+        nearestFru = nearestFru,
+        bloodDonors1 = bloodDonors1,
+        bloodDonors2 = bloodDonors2,
+        birthCompanion = birthCompanion,
+        careTaker = careTaker,
+        communityMember = communityMember,
+        communityMemberContact = communityMemberContact,
+        modeOfTransportation = modeOfTransportation
+    )
+}
+}
