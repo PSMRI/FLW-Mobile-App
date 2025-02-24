@@ -29,6 +29,12 @@ class SchedulerViewModel @Inject constructor(
 
     val ancDueCount: Flow<Int> = maternalHealthRepo.ancDueCount
 
+    val ancNonFollowUpCount: Flow<Int> = recordsRepo.getRegisteredPregnantWomanNonFollowUpListCount()
+
+    val pncNonFollowUpCount: Flow<Int> = recordsRepo.pncMotherNonFollowUpListCount
+
+    val ecNonFollowUpCount: Flow<Int> = recordsRepo.eligibleCoupleTrackingNonFollowUpListCount
+
     val hrpDueCount: Flow<Int> = recordsRepo.hrpTrackingPregListCount
 
     val hrpCountEC: Flow<Int> = recordsRepo.hrpTrackingNonPregListCount
@@ -36,6 +42,10 @@ class SchedulerViewModel @Inject constructor(
     val immunizationDue: Flow<Int> = recordsRepo.childrenImmunizationDueListCount
 
     val lowWeightBabiesCount: Flow<Int> = recordsRepo.lowWeightBabiesCount
+
+    val abhaGeneratedCount: Flow<Int> = recordsRepo.benWithAbhaListCount
+
+    val rchIdCount: Flow<Int> = recordsRepo.benWithRchListCount
 
     private val _date = MutableLiveData(
         Calendar.getInstance().apply {

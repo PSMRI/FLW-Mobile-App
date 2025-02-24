@@ -76,6 +76,9 @@
         <action
             android:id="@+id/action_homeFragment_to_childImmunizationListFragment"
             app:destination="@id/childImmunizationListFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_nonFollowUpFragment"
+            app:destination="@id/nonFollowUpFragment" />
     </fragment>
     <fragment
         android:id="@+id/allHouseholdFragment"
@@ -100,6 +103,10 @@
         <action
             android:id="@+id/action_allBenFragment_to_newBenRegFragment"
             app:destination="@id/newBenRegFragment" />
+        <argument
+            android:name="source"
+            android:defaultValue="0"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/eligibleCoupleFragment"
@@ -340,6 +347,10 @@
         <action
             android:id="@+id/action_pncMotherListFragment_to_pncFormFragment"
             app:destination="@id/pncFormFragment" />
+        <argument
+            android:name="source"
+            android:defaultValue="0"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/ncdEligibleListFragment"
@@ -592,6 +603,21 @@
             app:destination="@id/immunizationFormFragment" />
     </fragment>
     <fragment
+        android:id="@+id/nonFollowUpFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.home.NonFollowUpFragment"
+        android:label="@string/non_follow_up_cases"
+        tools:layout="@layout/fragment_non_follow_up">
+        <action
+            android:id="@+id/action_nonFollowUpFragment_to_pwAncVisitsFragment"
+            app:destination="@id/pwAncVisitsFragment" />
+        <action
+            android:id="@+id/action_nonFollowUpFragment_to_pncMotherListFragment"
+            app:destination="@id/pncMotherListFragment" />
+        <action
+            android:id="@+id/action_nonFollowUpFragment_to_eligibleCoupleTrackingListFragment"
+            app:destination="@id/eligibleCoupleTrackingListFragment" />
+    </fragment>
+    <fragment
         android:id="@+id/pwRegistrationFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_women_registration.list.PwRegistrationListFragment"
         android:label="@string/icon_title_pmr"
@@ -611,6 +637,10 @@
         <action
             android:id="@+id/action_pwAncVisitsFragment_to_pmsmaFragment"
             app:destination="@id/pmsmaFragment" />
+        <argument
+            android:name="source"
+            android:defaultValue="0"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/pregnancyRegistrationFormFragment"
@@ -657,6 +687,10 @@
         <action
             android:id="@+id/action_eligibleCoupleTrackingListFragment_to_eligibleCoupleTrackingFormFragment"
             app:destination="@id/eligibleCoupleTrackingFormFragment" />
+        <argument
+            android:name="source"
+            android:defaultValue="0"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/eligibleCoupleTrackingFormFragment"

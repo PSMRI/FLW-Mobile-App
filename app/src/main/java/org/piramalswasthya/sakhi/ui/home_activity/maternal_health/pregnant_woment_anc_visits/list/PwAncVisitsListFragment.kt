@@ -17,6 +17,7 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.AncVisitListAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.home_activity.all_ben.AllBenFragmentArgs
 
 @AndroidEntryPoint
 class PwAncVisitsListFragment : Fragment() {
@@ -24,6 +25,10 @@ class PwAncVisitsListFragment : Fragment() {
     private var _binding: FragmentDisplaySearchRvButtonBinding? = null
     private val binding: FragmentDisplaySearchRvButtonBinding
         get() = _binding!!
+
+    val args: PwAncVisitsListFragmentArgs by lazy {
+        PwAncVisitsListFragmentArgs.fromBundle(requireArguments())
+    }
 
     private val viewModel: PwAncVisitsListViewModel by viewModels()
 

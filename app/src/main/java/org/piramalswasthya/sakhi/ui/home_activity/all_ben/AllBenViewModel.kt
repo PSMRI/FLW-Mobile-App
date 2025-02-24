@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.ui.home_activity.all_ben
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,18 +13,37 @@ import org.piramalswasthya.sakhi.helpers.filterBenList
 import org.piramalswasthya.sakhi.model.BenHealthIdDetails
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
+import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_otp.AadhaarOtpFragmentArgs
 import javax.inject.Inject
 
 @HiltViewModel
 class AllBenViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     recordsRepo: RecordsRepo,
     private val benRepo: BenRepo
 ) : ViewModel() {
 
 
-    private val allBenList = recordsRepo.allBenList
+    private var sourceFromArgs = AllBenFragmentArgs.fromSavedStateHandle(savedStateHandle).source
+
+    private val allBenList = when (sourceFromArgs) {
+        1 -> {
+            recordsRepo.allBenWithAbhaList
+        }
+        2 -> {
+            recordsRepo.allBenWithRchList
+        }
+        else -> {
+            recordsRepo.allBenList
+        }
+    }
+
     private val filter = MutableStateFlow("")
-    val benList = allBenList.combine(filter) { list, filter ->
+    private val kind = MutableStateFlow(0)
+
+    val benList = allBenList.combine(kind) { list, kind ->
+        filterBenList(list, kind)
+    }.combine(filter) { list, filter ->
         filterBenList(list, filter)
     }
 
@@ -42,6 +62,13 @@ class AllBenViewModel @Inject constructor(
     fun filterText(text: String) {
         viewModelScope.launch {
             filter.emit(text)
+        }
+
+    }
+
+    fun filterType(type: Int) {
+        viewModelScope.launch {
+            kind.emit(type)
         }
 
     }

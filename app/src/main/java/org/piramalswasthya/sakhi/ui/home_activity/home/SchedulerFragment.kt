@@ -24,6 +24,10 @@ class SchedulerFragment : Fragment() {
     private val binding: FragmentSchedulerBinding
         get() = _binding!!
 
+    private var countNonFollowUpCases = 0
+    private var ancNonFollowUpCount = 0
+    private var pncNonFollowUpCount = 0
+    private var ecNonFollowUpCount = 0
 
     private val viewModel: SchedulerViewModel by viewModels({ requireActivity() })
 
@@ -86,6 +90,17 @@ class SchedulerFragment : Fragment() {
         binding.cvLwb.setOnClickListener {
             findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToInfantRegListFragment())
         }
+        binding.cvAbha.setOnClickListener {
+            findNavController().navigate(HomeFragmentDirections.actionNavHomeToAllBenFragment(1))
+//            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToHRPPregnantListFragment())
+        }
+        binding.cvRch.setOnClickListener {
+            findNavController().navigate(HomeFragmentDirections.actionNavHomeToAllBenFragment(2))
+//            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToHRPPregnantListFragment())
+        }
+        binding.cvNon.setOnClickListener {
+            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToNonFollowUpFragment())
+        }
         lifecycleScope.launch {
             viewModel.hrpDueCount.collect {
                 binding.tvHrp.text = it.toString()
@@ -96,6 +111,37 @@ class SchedulerFragment : Fragment() {
                 binding.tvHrEcCount.text = it.toString()
             }
         }
+        lifecycleScope.launch {
+            viewModel.abhaGeneratedCount.collect {
+                binding.tvAbha.text = it.toString()
+            }
+        }
+        lifecycleScope.launch {
+            viewModel.rchIdCount.collect {
+                binding.tvRch.text = it.toString()
+            }
+        }
+        lifecycleScope.launch {
+            viewModel.ancNonFollowUpCount.collect {
+                countNonFollowUpCases += 1
+                ancNonFollowUpCount = it
+                setNonFollowUpCount()
+            }
+        }
+        lifecycleScope.launch {
+            viewModel.pncNonFollowUpCount.collect {
+                countNonFollowUpCases += 1
+                pncNonFollowUpCount = it
+                setNonFollowUpCount()
+            }
+        }
+        lifecycleScope.launch {
+            viewModel.ecNonFollowUpCount.collect {
+                countNonFollowUpCases += 1
+                ecNonFollowUpCount = it
+                setNonFollowUpCount()
+            }
+        }
         binding.calendarView.setOnDateChangeListener { a, b, c, d ->
             val calLong = Calendar.getInstance().apply {
                 set(Calendar.YEAR, b)
@@ -103,6 +149,13 @@ class SchedulerFragment : Fragment() {
                 set(Calendar.DAY_OF_MONTH, d)
             }.timeInMillis
             viewModel.setDate(calLong)
+        }
+    }
+
+    private fun setNonFollowUpCount() {
+        if (countNonFollowUpCases == 3) {
+            val total = ancNonFollowUpCount + pncNonFollowUpCount + ecNonFollowUpCount
+            binding.tvNon.text = total.toString()
         }
     }
 

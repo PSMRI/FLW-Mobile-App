@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pnc.list
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -10,14 +11,22 @@ import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.helpers.filterPncDomainList
 import org.piramalswasthya.sakhi.model.PncDomain
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
+import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.list.PwAncVisitsListFragmentArgs
 import javax.inject.Inject
 
 @HiltViewModel
 class PncMotherListViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     recordsRepo: RecordsRepo
 ) : ViewModel() {
 
-    private val allBenList = recordsRepo.pncMotherList
+    private var sourceFromArgs = PncMotherListFragmentArgs.fromSavedStateHandle(savedStateHandle).source
+
+    private val allBenList = when (sourceFromArgs) {
+        1 -> recordsRepo.pncMotherNonFollowUpList
+        else -> recordsRepo.pncMotherList
+    }
+
     private val filter = MutableStateFlow("")
     val benList = allBenList.combine(filter) { list, filter ->
         filterPncDomainList(list, filter)
