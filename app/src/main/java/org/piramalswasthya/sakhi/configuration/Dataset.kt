@@ -49,6 +49,12 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
             return date?.time ?: 0L
         }
 
+        fun getMinLmpMillis(): Long {
+            val cal = Calendar.getInstance()
+            cal.add(Calendar.DAY_OF_YEAR, -1 * 400) //before it is 280
+            return cal.timeInMillis
+        }
+
         fun getFinancialYear(dateString: String?): String? {
             val f = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
             val date = dateString?.let { f.parse(it) }

@@ -17,9 +17,14 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.PncVisitListAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.list.PwAncVisitsListFragmentArgs
 
 @AndroidEntryPoint
 class PncMotherListFragment : Fragment() {
+
+    val args: PncMotherListFragmentArgs by lazy {
+        PncMotherListFragmentArgs.fromBundle(requireArguments())
+    }
 
     private val binding: FragmentDisplaySearchRvButtonBinding by lazy {
         FragmentDisplaySearchRvButtonBinding.inflate(layoutInflater)

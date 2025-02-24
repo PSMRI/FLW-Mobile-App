@@ -6,33 +6,72 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.PwRegistrationListAdapter
-import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
+import org.piramalswasthya.sakhi.databinding.AlertFilterBinding
+import org.piramalswasthya.sakhi.databinding.AlertNewBenBinding
+import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchAndToggleRvButtonBinding
+import org.piramalswasthya.sakhi.model.BenWithPwrDomain
+import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.home_activity.all_household.AllHouseholdFragmentDirections
+import timber.log.Timber
 
 @AndroidEntryPoint
 class PwRegistrationListFragment : Fragment() {
 
-    private var _binding: FragmentDisplaySearchRvButtonBinding? = null
-    private val binding: FragmentDisplaySearchRvButtonBinding
+    private var _binding: FragmentDisplaySearchAndToggleRvButtonBinding? = null
+    private val binding: FragmentDisplaySearchAndToggleRvButtonBinding
         get() = _binding!!
 
     private val viewModel: PwRegistrationListViewModel by viewModels()
+
+    private var showRchRecords = false
+    private lateinit var benAdapter: PwRegistrationListAdapter
+
+    private val filterAlert by lazy {
+        val filterAlertBinding = AlertFilterBinding.inflate(layoutInflater, binding.root, false)
+        filterAlertBinding.rgAbha.setOnCheckedChangeListener { radioGroup, i ->
+
+        }
+
+        filterAlertBinding.cbRch.setOnCheckedChangeListener { compoundButton, b ->
+            showRchRecords = b
+        }
+
+        filterAlertBinding.tvAbha.visibility = View.GONE
+        filterAlertBinding.rgAbha.visibility = View.GONE
+
+        val alert = MaterialAlertDialogBuilder(requireContext()).setView(filterAlertBinding.root)
+            .setOnCancelListener {
+            }.create()
+
+        filterAlertBinding.btnOk.setOnClickListener {
+            viewModel.filterType(showRchRecords.toString())
+            alert.cancel()
+        }
+        filterAlertBinding.btnCancel.setOnClickListener {
+            alert.cancel()
+        }
+
+        alert
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentDisplaySearchRvButtonBinding.inflate(layoutInflater, container, false)
+        _binding = FragmentDisplaySearchAndToggleRvButtonBinding.inflate(layoutInflater, container, false)
 
         return binding.root
     }
@@ -40,7 +79,12 @@ class PwRegistrationListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.btnNextPage.visibility = View.GONE
-        val benAdapter = PwRegistrationListAdapter(
+
+        binding.ibFilter.setOnClickListener {
+            filterAlert.show()
+        }
+
+        benAdapter = PwRegistrationListAdapter(
             PwRegistrationListAdapter.ClickListener(
                 {
                     Toast.makeText(context, "Ben : $it clicked", Toast.LENGTH_SHORT).show()

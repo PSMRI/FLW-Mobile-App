@@ -41,6 +41,34 @@ fun filterBenList(list: List<BenBasicDomain>, text: String): List<BenBasicDomain
     }
 }
 
+fun filterBenList(
+    list: List<BenBasicDomain>,
+    rchPresent: Boolean
+) =
+    if (rchPresent) {
+        list.filter {
+            it.rchId.takeIf { it1 -> it1.isDigitsOnly() }?.contains("") ?: false
+        }
+    } else {
+        list
+    }
+
+fun filterBenList(
+    list: List<BenBasicDomain>,
+    filterType: Int
+) =
+    if (filterType == 1) {
+        list.filter {
+            !it.abhaId.isNullOrEmpty()
+        }
+    } else if (filterType == 2) {
+        list.filter {
+            it.abhaId.isNullOrEmpty()
+        }
+    } else {
+        list
+    }
+
 
 fun filterForBen(
     ben: BenBasicDomain,
@@ -121,6 +149,19 @@ fun filterPwrRegistrationList(
                 it.ben.benId.toString().lowercase().contains(filterText) ||
                 it.ben.mobileNo.lowercase().contains(filterText) ||
                 it.ben.rchId.takeIf { it1 -> it1.isDigitsOnly() }?.contains(filterText) ?: false
+    }
+
+fun filterPwrRegistrationList(
+    list: List<BenWithPwrDomain>,
+    rchPresent: Boolean
+) =
+    if (rchPresent) {
+        list.filter {
+//            it.ben.rchId.isNotEmpty()
+            it.ben.rchId.takeIf { it1 -> it1.isDigitsOnly() }?.contains("") ?: false
+        }
+    } else {
+        list
     }
 
 
