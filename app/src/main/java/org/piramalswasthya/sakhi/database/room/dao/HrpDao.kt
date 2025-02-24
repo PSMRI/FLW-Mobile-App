@@ -19,8 +19,12 @@ interface HrpDao {
     @Query("select * from HRP_PREGNANT_ASSESS where syncState = :syncState")
     fun getHRPAssess(syncState: SyncState): List<HRPPregnantAssessCache>?
 
+    @Query("select * from HRP_MICRO_BIRTH_PLAN where syncState = :syncState")
+    fun getMicroBirthPlan(syncState: SyncState): List<HRPMicroBirthPlanCache>?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveRecord(hrpPregnantAssessCache: HRPPregnantAssessCache)
+
 
     @Query("select * from HRP_NON_PREGNANT_ASSESS where benId = :benId")
     fun getNonPregnantAssess(benId: Long): HRPNonPregnantAssessCache?
