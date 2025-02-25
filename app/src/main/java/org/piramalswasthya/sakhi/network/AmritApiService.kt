@@ -30,6 +30,15 @@ interface AmritApiService {
     @POST("flw-0.0.1/beneficiary/getBeneficiaryData")
     suspend fun getBeneficiaries(@Body userDetail: GetDataPaginatedRequest): Response<ResponseBody>
 
+    @POST("flw-0.0.1/beneficiary/sendOTP")
+    suspend fun sendOtp(@Query("phoneNumber") phoneNumber:String): Response<ResponseBody>
+
+    @POST("flw-0.0.1/beneficiary/resendOTP")
+    suspend fun resendOtp(@Query("phoneNumber") phoneNumber:String): Response<ResponseBody>
+
+    @POST("flw-0.0.1/beneficiary/validateOTP")
+    suspend fun validateOtp(@Body validateOtp: ValidateOtpRequest ): Response<ResponseBody>
+
     @POST("flw-0.0.1/cbac/getAll")
     suspend fun getCbacs(@Body userDetail: GetDataPaginatedRequest): Response<ResponseBody>
 

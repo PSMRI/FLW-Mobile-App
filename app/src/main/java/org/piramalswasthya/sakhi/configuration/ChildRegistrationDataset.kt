@@ -333,7 +333,8 @@ class ChildRegistrationDataset(
                 birthPlace = placeOfBirth.value,
                 birthPlaceId = placeOfBirth.getPosition(),
                 birthCertificateNumber = birthCertificateNo.value
-            )
+            ),
+            isVerified = false
         )
     }
 

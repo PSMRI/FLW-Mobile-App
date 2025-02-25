@@ -375,6 +375,8 @@ class PregnantWomanAncVisitDataset(
 
     private var toggleBp = false
 
+    fun getIndexOfFilePath() = getIndexById(fileUpload.id)
+
     fun resetBpToggle() {
         toggleBp = false
     }
@@ -487,6 +489,7 @@ class PregnantWomanAncVisitDataset(
             }
             ancDate.value = getDateFromLong(savedAnc.ancDate)
             weekOfPregnancy.value = woP.toString()
+            fileUpload.value = savedAnc.file_path
             isAborted.value =
                 if (savedAnc.isAborted) isAborted.entries!!.last() else isAborted.entries!!.first()
             if (savedAnc.isAborted) {
@@ -839,6 +842,7 @@ class PregnantWomanAncVisitDataset(
             deliveryDone.value?.let {
                 cache.pregnantWomanDelivered = it == deliveryDone.entries!!.first()
             }
+            cache.file_path = fileUpload.value.toString()
         }
     }
 

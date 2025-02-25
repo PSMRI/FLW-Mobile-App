@@ -63,8 +63,11 @@ class PwAncFormViewModel @Inject constructor(
         PregnantWomanAncVisitDataset(context, preferenceDao.getCurrentLanguage())
     val formList = dataset.listFlow
 
+    fun getIndexOfFile() = dataset.getIndexOfFilePath()
+
     private lateinit var ancCache: PregnantWomanAncCache
     private lateinit var registerRecord: PregnantWomanRegistrationCache
+
 
     init {
         viewModelScope.launch {
@@ -78,7 +81,8 @@ class PwAncFormViewModel @Inject constructor(
                     visitNumber = visitNumber,
                     syncState = SyncState.UNSYNCED,
                     createdBy = asha.userName,
-                    updatedBy = asha.userName
+                    updatedBy = asha.userName,
+                    file_path = ""
                 )
             }
             registerRecord = maternalHealthRepo.getSavedRegistrationRecord(benId)!!

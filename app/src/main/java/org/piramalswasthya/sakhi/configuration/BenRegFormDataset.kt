@@ -2,8 +2,11 @@ package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
 import android.net.Uri
+import android.text.Editable
 import android.text.InputType
+import android.text.TextWatcher
 import android.util.Range
+import android.widget.EditText
 import android.widget.LinearLayout
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Konstants
@@ -423,7 +426,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         id = 42,
         inputType = org.piramalswasthya.sakhi.model.InputType.BUTTON,
         title = resources.getString(R.string.generate_otp),
-        required = true,
+        required = false,
         isEnabled = true,
         etInputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_NORMAL,
         isMobileNumber = false,
@@ -1517,6 +1520,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         setUpPage(list)
     }
 
+
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
         return when (formId) {
             firstName.id -> {
@@ -1996,6 +2000,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
     fun getIndexOfAgeAtMarriage() = getIndexOfElement(ageAtMarriage)
     fun getIndexOfContactNumber() = getIndexOfElement(contactNumber)
     fun getIndexOfMaritalStatus() = getIndexOfElement(maritalStatus)
+    fun getTempMobileNoStatus() = getIndexOfElement(tempraryContactNo)
 
 
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {

@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -86,7 +87,7 @@ class PwAncFormFragment : Fragment() {
 
         val intent = Intent(Intent.ACTION_VIEW).apply {
             setDataAndType(pdfUri, "application/pdf")
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION) // Grant permission to read the file
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
         startActivity(Intent.createChooser(intent, "Open PDF with"))
 
@@ -116,14 +117,30 @@ class PwAncFormFragment : Fragment() {
                         chooseOptions()
                     },
                     viewDocumentListner = FormInputAdapterWithBgIcon.ViewDocumentOnClick {
-                        latestTmpUri?.let {
-                            if (it.toString().contains("document")) {
-                                displayPdf(it)
-                            } else {
-                                viewImage(it)
+                        if (!recordExists) {
+                            latestTmpUri?.let {
+                                if (it.toString().contains("document")) {
+                                    displayPdf(it)
+                                } else {
+                                    viewImage(it)
+                                }
+
+                            }
+                        } else {
+                            lifecycleScope.launch {
+                                viewModel.formList.collect{
+                                    it.get(viewModel.getIndexOfFile()).value.let {
+                                        if (it.toString().contains("document")) {
+                                            displayPdf(it!!.toUri())
+                                        } else {
+                                            viewImage(it!!.toUri())
+                                        }
+                                    }
+                                }
                             }
 
                         }
+
                     }
                 )
                 binding.form.rvInputForm.adapter = adapter

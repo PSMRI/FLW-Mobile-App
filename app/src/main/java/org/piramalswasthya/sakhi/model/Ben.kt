@@ -50,7 +50,7 @@ enum class Gender {
 
 @DatabaseView(
     viewName = "BEN_BASIC_CACHE",
-    value = "SELECT b.beneficiaryId as benId, b.householdId as hhId, b.regDate, b.firstName as benName, b.lastName as benSurname, b.gender, b.dob as dob, b.familyHeadRelationPosition as relToHeadId" +
+    value = "SELECT b.beneficiaryId as benId, b.isVerified as isVerified, b.householdId as hhId, b.regDate, b.firstName as benName, b.lastName as benSurname, b.gender, b.dob as dob, b.familyHeadRelationPosition as relToHeadId" +
             ", b.contactNumber as mobileNo, b.fatherName, h.fam_familyHeadName as familyHeadName, b.gen_spouseName as spouseName,b.rchId, b.gen_lastMenstrualPeriod as lastMenstrualPeriod" +
             ", b.isHrpStatus as hrpStatus, b.syncState, b.gen_reproductiveStatusId as reproductiveStatusId, b.isKid, b.immunizationStatus, b.gen_spouseName as spouseName," +
             " b.loc_village_id as villageId, b.abha_healthIdNumber as abhaId," +
@@ -162,6 +162,7 @@ data class BenBasicCache(
     val isMdsr: Boolean,
     val crFilled: Boolean,
     val doFilled: Boolean,
+    val isVerified: Boolean
 ) {
     companion object {
         val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
@@ -241,7 +242,9 @@ data class BenBasicCache(
             spouseName = spouseName?.takeIf { it.isNotEmpty() } ?: "Not Available",
             rchId = rchId?.takeIf { it.isNotEmpty() } ?: "Not Available",
             hrpStatus = hrpStatus,
-            syncState = syncState
+            syncState = syncState,
+            isVerified = isVerified
+
         )
     }
 
@@ -262,7 +265,8 @@ data class BenBasicCache(
             rchId = rchId ?: "Not Available",
             hrpStatus = hrpStatus,
             relToHeadId = 0,
-            syncState = syncState
+            syncState = syncState,
+            isVerified = false
         )
     }
 
@@ -284,7 +288,8 @@ data class BenBasicCache(
             hrpStatus = hrpStatus,
             form1Filled = tbsnFilled,
             syncState = tbsnSyncState
-                ?: throw IllegalStateException("Sync state for tbsn is null!!")
+                ?: throw IllegalStateException("Sync state for tbsn is null!!"),
+            isVerified = false
         )
     }
 
@@ -305,7 +310,8 @@ data class BenBasicCache(
             hrpStatus = hrpStatus,
             form1Filled = tbspFilled,
             syncState = tbspSyncState
-                ?: throw IllegalStateException("Sync state for tbsp is null!!")
+                ?: throw IllegalStateException("Sync state for tbsp is null!!"),
+            isVerified = false
         )
     }
 
@@ -326,7 +332,8 @@ data class BenBasicCache(
             hrpStatus = hrpStatus,
             form1Filled = cdrFilled,
             syncState = cdrSyncState
-                ?: throw IllegalStateException("Sync state for cbac is null!!")
+                ?: throw IllegalStateException("Sync state for cbac is null!!"),
+            isVerified = false
         )
     }
 
@@ -347,7 +354,8 @@ data class BenBasicCache(
             hrpStatus = hrpStatus,
             form1Filled = mdsrFilled,
             syncState = mdsrSyncState
-                ?: throw IllegalStateException("Sync state for mdsr is null!!")
+                ?: throw IllegalStateException("Sync state for mdsr is null!!"),
+            isVerified = false
         )
     }
 
@@ -367,7 +375,8 @@ data class BenBasicCache(
             rchId = rchId ?: "Not Available",
             hrpStatus = hrpStatus,
             form1Filled = pmsmaFilled,
-            syncState = syncState
+            syncState = syncState,
+            isVerified = false
         )
     }
 
@@ -387,7 +396,8 @@ data class BenBasicCache(
             rchId = rchId ?: "Not Available",
             hrpStatus = hrpStatus,
             form1Filled = ectFilled,
-            syncState = syncState
+            syncState = syncState,
+            isVerified = false
         )
     }
 
@@ -407,7 +417,8 @@ data class BenBasicCache(
             rchId = rchId ?: "Not Available",
             hrpStatus = hrpStatus,
             form1Filled = false,
-            syncState = syncState
+            syncState = syncState,
+            isVerified = false
         )
     }
 
@@ -430,7 +441,8 @@ data class BenBasicCache(
             form1Enabled = hbncFilled || dob > (System.currentTimeMillis() - TimeUnit.DAYS.toMillis(
                 42
             )),
-            syncState = syncState
+            syncState = syncState,
+            isVerified = false
         )
     }
 
@@ -454,6 +466,7 @@ data class BenBasicCache(
             form1Enabled = hbycFilled || dob > (System.currentTimeMillis() - TimeUnit.DAYS.toMillis(
                 490
             )),
+            isVerified = false
         )
     }
 
@@ -473,7 +486,8 @@ data class BenBasicCache(
             rchId = rchId ?: "Not Available",
             hrpStatus = hrpStatus,
             form1Filled = pwrFilled,
-            syncState = pwrSyncState
+            syncState = pwrSyncState,
+            isVerified = false
         )
     }
 
@@ -499,7 +513,8 @@ data class BenBasicCache(
             form1Filled = hrppaFilled,
             syncState = hrppaSyncState,
             form2Enabled = true,
-            form2Filled = hrpmbpFilled
+            form2Filled = hrpmbpFilled,
+            isVerified = false
         )
     }
 
@@ -520,7 +535,8 @@ data class BenBasicCache(
             rchId = rchId ?: "Not Available",
             hrpStatus = hrpStatus,
             form1Filled = hrpnpaFilled,
-            syncState = hrpnpaSyncState
+            syncState = hrpnpaSyncState,
+            isVerified = false
         )
     }
 
@@ -544,7 +560,8 @@ data class BenBasicCache(
             form1Enabled = !hrnptrackingDone,
             form2Filled = hrnptFilled,
             form2Enabled = hrnptFilled,
-            syncState = hrnptSyncState
+            syncState = hrnptSyncState,
+            isVerified = false
         )
     }
 
@@ -570,7 +587,8 @@ data class BenBasicCache(
             form1Enabled = !hrptrackingDone,
             form2Filled = hrptFilled,
             form2Enabled = hrptFilled,
-            syncState = hrptSyncState
+            syncState = hrptSyncState,
+            isVerified = false
         )
     }
 
@@ -590,7 +608,8 @@ data class BenBasicCache(
             rchId = rchId ?: "Not Available",
             hrpStatus = hrpStatus,
             form1Filled = irFilled,
-            syncState = irSyncState
+            syncState = irSyncState,
+            isVerified = false
         )
     }
 
@@ -610,7 +629,8 @@ data class BenBasicCache(
             rchId = rchId ?: "Not Available",
             hrpStatus = hrpStatus,
             form1Filled = irFilled,
-            syncState = crSyncState
+            syncState = crSyncState,
+            isVerified = false
         )
     }
 
@@ -630,7 +650,8 @@ data class BenBasicCache(
             rchId = rchId ?: "Not Available",
             hrpStatus = hrpStatus,
             form1Filled = doFilled,
-            syncState = doSyncState
+            syncState = doSyncState,
+            isVerified = false
         )
     }
 
@@ -650,7 +671,8 @@ data class BenBasicCache(
             rchId = rchId ?: "Not Available",
             hrpStatus = hrpStatus,
             form1Filled = ecrFilled,
-            syncState = syncState
+            syncState = syncState,
+            isVerified = false
         )
     }
 
@@ -670,7 +692,8 @@ data class BenBasicCache(
             rchId = rchId ?: "Not Available",
             hrpStatus = hrpStatus,
             form1Filled = false,
-            syncState = syncState
+            syncState = syncState,
+            isVerified = false
         )
     }
 
@@ -698,7 +721,8 @@ data class BenBasicDomain(
 //    val typeOfList: String,
     val rchId: String,
     val hrpStatus: Boolean = false,
-    var syncState: SyncState?
+    var syncState: SyncState?,
+    val isVerified: Boolean
 )
 
 
@@ -729,7 +753,9 @@ data class BenBasicDomainForForm(
     val form2Enabled: Boolean = true,
     val form3Enabled: Boolean = true,
     val formsFilled: Int = 0,
-    var syncState: SyncState?
+    var syncState: SyncState?,
+    val isVerified: Boolean
+
 ) {
     companion object
 }
@@ -793,6 +819,8 @@ data class BenRegKid(
     var birthBCG: Boolean = false,
     var birthHepB: Boolean = false,
     var birthOPV: Boolean = false,
+    val isVerified: Boolean = false
+
 )
 
 @JsonClass(generateAdapter = true)
@@ -871,8 +899,9 @@ data class BenRegKidNetwork(
     val birthBCG: Boolean? = null,
     val birthHepB: Boolean? = null,
     val birthOPV: Boolean? = null,
+    val isVerified: Boolean
 
-    )
+)
 
 data class BenHealthIdDetails(
     var healthId: String? = null,
@@ -1106,8 +1135,9 @@ data class BenRegCache(
     var syncState: SyncState,
 
     var isDraft: Boolean,
+    val isVerified: Boolean
 
-    ) : FormDataModel {
+) : FormDataModel {
 
     fun asNetworkPostModel(context: Context, user: User): BenPost {
         return BenPost(
@@ -1282,6 +1312,7 @@ data class BenRegCache(
             genderId = genderId,
             maritalStatusID = if (isKid) null else genDetails?.maritalStatusId?.toString() ?: "",
             maritalStatusName = if (isKid) null else genDetails?.maritalStatus ?: "",
+
         )
     }
 
@@ -1350,8 +1381,9 @@ data class BenRegCache(
             stateid = locationRecord.state.id,
             districtid = locationRecord.district.id,
             villageid = locationRecord.village.id,
+            isVerified = false
 
-            )
+        )
     }
 }
 

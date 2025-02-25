@@ -7,7 +7,6 @@ import android.content.res.ColorStateList
 import android.content.res.Resources
 import android.graphics.Color
 import android.os.Build
-import android.os.CountDownTimer
 import android.text.Editable
 import android.text.InputFilter
 import android.text.InputFilter.AllCaps
@@ -33,6 +32,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.LayoutUploafFormBinding
 import org.piramalswasthya.sakhi.databinding.RvItemFormAgePickerViewV2Binding
@@ -46,7 +47,6 @@ import org.piramalswasthya.sakhi.databinding.RvItemFormImageViewV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormRadioV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormTextViewV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormTimepickerV2Binding
-import org.piramalswasthya.sakhi.databinding.RvItemFormUploadImageBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.getDateString
 import org.piramalswasthya.sakhi.helpers.isInternetAvailable
@@ -76,6 +76,7 @@ import java.util.Calendar
 class FormInputAdapter(
     private val imageClickListener: ImageClickListener? = null,
     private val ageClickListener: AgeClickListener? = null,
+    private val sendOtpClickListener: SendOtpClickListener? = null,
     private val formValueListener: FormValueListener? = null,
     private val isEnabled: Boolean = true,
     private val selectImageClickListener: SelectUploadImageClickListener? = null,
@@ -594,7 +595,7 @@ class FormInputAdapter(
             }
         }
 
-        fun bind(item: FormElement, isEnabled: Boolean, formValueListener: FormValueListener?) {
+        fun bind(item: FormElement, isEnabled: Boolean, formValueListener: SendOtpClickListener?) {
             binding.form = item
 
             if(isInternetAvailable(binding.root.context)){
@@ -604,38 +605,14 @@ class FormInputAdapter(
             }
             binding.generateOtp.text = binding.generateOtp.resources.getString(R.string.generate_otp)
             binding.generateOtp.setOnClickListener {
-                binding.generateOtp.isEnabled = !isEnabled
-                startTimer(binding.timerInSec,binding.generateOtp)
-                binding.tilEditText.visibility = View.VISIBLE
+                formValueListener!!.onButtonClick(item,binding.generateOtp,binding.timerInSec,binding.tilEditText,isEnabled,adapterPosition,binding.et)
             }
 
 
-        }
-
-        private lateinit var countDownTimer : CountDownTimer
-        private var countdownTimers : HashMap<Int, CountDownTimer> = HashMap()
-
-        private fun formatTimeInSeconds(millis: Long) : String {
-            val seconds = millis / 1000
-            return "${seconds} sec"
-        }
-        private fun startTimer(timerInSec: TextView, generateOtp: MaterialButton) {
-            countDownTimer =  object : CountDownTimer(60000, 1000) {
-                override fun onTick(millisUntilFinished: Long) {
-                    timerInSec.visibility = View.VISIBLE
-                    timerInSec.text = formatTimeInSeconds(millisUntilFinished)
-                }
-                override fun onFinish() {
-                    timerInSec.visibility = View.INVISIBLE
-                    timerInSec.text = ""
-                    generateOtp.isEnabled = true
-                    generateOtp.text = timerInSec.resources.getString(R.string.resend_otp)
-                }
-            }.start()
-
-            countdownTimers[adapterPosition] = countDownTimer
 
         }
+
+
     }
 
 
@@ -672,30 +649,6 @@ class FormInputAdapter(
         }
 
 
-        private lateinit var countDownTimer : CountDownTimer
-        private var countdownTimers : HashMap<Int, CountDownTimer> = HashMap()
-
-        private fun formatTimeInSeconds(millis: Long) : String {
-            val seconds = millis / 1000
-            return "${seconds} sec"
-        }
-        private fun startTimer(timerInSec: TextView, generateOtp: MaterialButton) {
-            countDownTimer =  object : CountDownTimer(60000, 1000) {
-                override fun onTick(millisUntilFinished: Long) {
-                    timerInSec.visibility = View.VISIBLE
-                    timerInSec.text = formatTimeInSeconds(millisUntilFinished)
-                }
-                override fun onFinish() {
-                    timerInSec.visibility = View.INVISIBLE
-                    timerInSec.text = ""
-                    generateOtp.isEnabled = true
-                    generateOtp.text = timerInSec.resources.getString(R.string.resend_otp)
-                }
-            }.start()
-
-            countdownTimers[adapterPosition] = countDownTimer
-
-        }
     }
 
 
@@ -992,6 +945,20 @@ class FormInputAdapter(
 
     }
 
+    class SendOtpClickListener(private val btnClick: (formId: Int,generateOtp:MaterialButton,timerInsec: TextView,tilEditText:TextInputLayout, isEnabled: Boolean,adapterPosition:Int,otpField: TextInputEditText) -> Unit) {
+
+        fun onButtonClick(
+            form: FormElement,
+            generateOtp: MaterialButton,
+            timerInSec: TextView,
+            tilEditText: TextInputLayout,
+            isEnabled: Boolean,
+            adapterPosition: Int,
+            otpField: TextInputEditText
+        ) = btnClick(form.id,generateOtp,timerInSec,tilEditText,isEnabled,adapterPosition,otpField)
+
+    }
+
     class AgeClickListener(private val ageClick: (formId: Int) -> Unit) {
 
         fun onAgeClick(form: FormElement) = ageClick(form.id)
@@ -1058,7 +1025,7 @@ class FormInputAdapter(
                 isEnabled,
                 formValueListener
             )
-            InputType.BUTTON -> (holder as ButtonInputViewHolder).bind(item, isEnabled, formValueListener)
+            InputType.BUTTON -> (holder as ButtonInputViewHolder).bind(item, isEnabled, sendOtpClickListener)
             InputType.FILE_UPLOAD -> (holder as FileUploadInputViewHolder).bind(item,selectImageClickListener,viewDocumentListner, isEnabled)
 
         }
