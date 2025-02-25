@@ -557,7 +557,12 @@ class EcrRepo @Inject constructor(
                             "updatedDate"
                         ) else ecrJson.getString("createdDate")
                     ),
-                    syncState = SyncState.SYNCED
+                    syncState = SyncState.SYNCED,
+                    lmp_date = getLongFromDate(
+                        if (ecrJson.has("updatedDate")) ecrJson.getString(
+                            "updatedDate"
+                        ) else ecrJson.getString("createdDate")
+                    )
                 )
                 if (ecr.isRegistered) list.add(ecr)
             } catch (e: Exception) {
@@ -598,7 +603,8 @@ class EcrRepo @Inject constructor(
                     ) else ecrJson.getString("createdDate")
                 ),
                 processed = "P",
-                syncState = SyncState.SYNCED
+                syncState = SyncState.SYNCED,
+                lmp_date = ecrJson.getLong("benId")
             )
             list.add(ecr)
 

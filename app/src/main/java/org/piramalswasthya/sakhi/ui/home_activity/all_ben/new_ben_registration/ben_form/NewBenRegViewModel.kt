@@ -15,6 +15,7 @@ import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.configuration.BenRegFormDataset
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.model.BenHealthIdDetails
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.BenRegGen
 import org.piramalswasthya.sakhi.model.BenRegKid
@@ -22,9 +23,12 @@ import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.HouseholdCache
 import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.model.User
+import org.piramalswasthya.sakhi.network.AbhaGenerateAadhaarOtpRequest
+import org.piramalswasthya.sakhi.network.NetworkResult
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.HouseholdRepo
 import org.piramalswasthya.sakhi.repositories.UserRepo
+import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.AadhaarIdViewModel
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -62,6 +66,7 @@ class NewBenRegViewModel @Inject constructor(
 
     val isHoF = relToHeadId == 18
 
+    var isOtpVerified = false
     private val benIdFromArgs =
         NewBenRegFragmentArgs.fromSavedStateHandle(savedStateHandle).benId
 
@@ -95,6 +100,7 @@ class NewBenRegViewModel @Inject constructor(
     private lateinit var locationRecord: LocationRecord
 
     private var lastImageFormId: Int = 0
+    var otp = 1234
 
     init {
         viewModelScope.launch {
@@ -113,6 +119,7 @@ class NewBenRegViewModel @Inject constructor(
 
                 if (benIdFromArgs != 0L && recordExists.value == true) {
                     ben = benRepo.getBeneficiaryRecord(benIdFromArgs, hhId)!!
+                    isOtpVerified = ben.isVerified
                     dataset.setFirstPageToRead(
                         ben,
                         familyHeadPhoneNo = household.family?.familyHeadPhoneNo
@@ -173,7 +180,8 @@ class NewBenRegViewModel @Inject constructor(
                             kidDetails = if(dataset.isKid()) BenRegKid() else null,
                             genDetails = BenRegGen(),
                             syncState = SyncState.UNSYNCED,
-                            locationRecord = locationRecord
+                            locationRecord = locationRecord,
+                            isVerified = isOtpVerified
                         )
                     }
                     dataset.mapValues(ben, 2)
@@ -248,9 +256,51 @@ class NewBenRegViewModel @Inject constructor(
     fun getIndexOfAgeAtMarriage() = dataset.getIndexOfAgeAtMarriage()
     fun getIndexOfMaritalStatus() = dataset.getIndexOfMaritalStatus()
     fun getIndexOfContactNumber() = dataset.getIndexOfContactNumber()
+    fun getIndexofTempraryNumber() = dataset.getTempMobileNoStatus()
 
     fun setRecordExist(b: Boolean) {
         _recordExists.value = b
     }
 
+     fun sentOtp(mobileNo: String) {
+        viewModelScope.launch {
+            benRepo.sendOtp(mobileNo)?.let {
+                if (it.status == "Success") {
+
+                } else {
+
+
+                }
+            }
+            }
+    }
+
+    fun resendOtp(mobileNo: String) {
+        viewModelScope.launch {
+            benRepo.resendOtp(mobileNo)?.let {
+                if (it.status == "Success") {
+                    otp = it.data.response.toInt();
+                } else {
+
+
+                }
+            }
+        }
+    }
+
+
+    fun validateOtp(mobileNo: String,otp:Int) : Boolean {
+        viewModelScope.launch {
+            benRepo.verifyOtp(mobileNo,otp)?.let {
+                if (it.status.equals("Success")) {
+                    isOtpVerified = true
+
+                } else {
+
+                    isOtpVerified = false
+                }
+            }
+        }
+        return isOtpVerified
+    }
 }

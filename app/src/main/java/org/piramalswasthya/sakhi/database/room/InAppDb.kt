@@ -96,7 +96,7 @@ import org.piramalswasthya.sakhi.model.Vaccine
         IncentiveRecordCache::class,
     ],
     views = [BenBasicCache::class],
-    version = 14, exportSchema = false
+    version = 19, exportSchema = false
 )
 
 @TypeConverters(LocationEntityListConverter::class, SyncStateConverter::class)
@@ -133,8 +133,10 @@ abstract class InAppDb : RoomDatabase() {
 
         fun getInstance(appContext: Context): InAppDb {
 
-            val MIGRATION_1_2 = Migration(1, 2, migrate = {
-//                it.execSQL("select count(*) from beneficiary")
+            val MIGRATION_1_2 = Migration(18, 19, migrate = {
+                it.execSQL("alter table BEN_BASIC_CACHE add column isVerified BOOL")
+                it.execSQL("alter table BENEFICIARY add column isVerified BOOL")
+
             })
 
             val MIGRATION_13_14 = Migration(13, 14, migrate = {
@@ -171,7 +173,7 @@ abstract class InAppDb : RoomDatabase() {
                         "Sakhi-2.0-In-app-database"
                     )
                         .addMigrations(
-                            MIGRATION_13_14
+                            MIGRATION_1_2
                         )
                         .build()
 

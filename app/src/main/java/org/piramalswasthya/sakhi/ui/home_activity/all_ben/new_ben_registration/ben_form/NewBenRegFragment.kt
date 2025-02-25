@@ -7,10 +7,14 @@ import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.provider.Settings
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -19,6 +23,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -68,6 +73,7 @@ class NewBenRegFragment : Fragment() {
 
     private var latestTmpUri: Uri? = null
 
+    var isValidOtp = false
 
     private val takePicture =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { success: Boolean ->
@@ -223,7 +229,45 @@ class NewBenRegFragment : Fragment() {
                             }
                         }
 
-                    }, isEnabled = !recordExists
+                    }, sendOtpClickListener = FormInputAdapter.SendOtpClickListener{formId, button, timerInsec, tilEditText, isEnabled, position, otpField ->
+                       var tempContactNo = ""
+                        lifecycleScope.launch {
+                            viewModel.formList.collect {
+                              tempContactNo = it[viewModel.getIndexofTempraryNumber()].value.toString()
+                            }
+                        }
+                        if (button.text == "Resend OTP") {
+                            viewModel.resendOtp(tempContactNo)
+                        } else {
+                            viewModel.sentOtp(tempContactNo)
+                        }
+
+                        button.isEnabled = !isEnabled
+                        startTimer(timerInsec,button,position)
+                        tilEditText.visibility = View.VISIBLE
+                        otpField.addTextChangedListener(object : TextWatcher {
+                            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                            }
+
+                            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                            }
+
+                            override fun afterTextChanged(s: Editable?) {
+                                isValidOtp = (s != null) && (s.length == 4)
+                                if (isValidOtp)
+                                    viewModel.validateOtp(tempContactNo,s.toString().toInt()).let {
+                                        if (it) {
+                                            otpField.isEnabled = false
+                                            button.text = "Verified"
+                                        }
+                                    }
+
+
+                            }
+
+                        })
+                    },
+                        isEnabled = !recordExists
                     )
                 binding.form.rvInputForm.adapter = adapter
                 lifecycleScope.launch {
@@ -399,5 +443,28 @@ class NewBenRegFragment : Fragment() {
         _binding = null
     }
 
+    private lateinit var countDownTimer : CountDownTimer
+    private var countdownTimers : HashMap<Int, CountDownTimer> = HashMap()
 
+    private fun formatTimeInSeconds(millis: Long) : String {
+        val seconds = millis / 1000
+        return "${seconds} sec"
+    }
+    private fun startTimer(timerInSec: TextView, generateOtp: MaterialButton,position:Int) {
+        countDownTimer =  object : CountDownTimer(60000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                timerInSec.visibility = View.VISIBLE
+                timerInSec.text = formatTimeInSeconds(millisUntilFinished)
+            }
+            override fun onFinish() {
+                timerInSec.visibility = View.INVISIBLE
+                timerInSec.text = ""
+                generateOtp.isEnabled = true
+                generateOtp.text = timerInSec.resources.getString(R.string.resend_otp)
+            }
+        }.start()
+
+        countdownTimers[position] = countDownTimer
+
+    }
 }

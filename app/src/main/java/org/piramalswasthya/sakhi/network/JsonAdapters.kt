@@ -79,6 +79,12 @@ data class GetDataPaginatedRequest(
 )
 
 @JsonClass(generateAdapter = true)
+data class ValidateOtpRequest(
+    val otp: Int,
+    val mobNo: String,
+)
+
+@JsonClass(generateAdapter = true)
 data class BenResponse(
     val benId: String,
     val benRegId: Long,
@@ -153,6 +159,32 @@ data class AbhaGenerateAadhaarOtpResponse(
 data class AbhaGenerateAadhaarOtpResponseV2(
     val txnId: String,
     val mobileNumber: String
+)
+
+@JsonClass(generateAdapter = true)
+data class SendOtpResponse(
+    val data: Data,
+    val statusCode: Long,
+    val errorMessage: String,
+    val status: String,
+)
+
+data class Data(
+    val response: String,
+)
+
+@JsonClass(generateAdapter = true)
+
+data class ValidateOtpResponse(
+    val data: ResponseOtp,
+    val statusCode: Long,
+    val errorMessage: String,
+    val status: String,
+)
+
+data class ResponseOtp(
+    val userName: String,
+    val userId: String,
 )
 
 @JsonClass(generateAdapter = true)

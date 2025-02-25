@@ -41,7 +41,8 @@ data class EligibleCoupleTrackingCache(
     val updatedDate: Long = System.currentTimeMillis(),
     var processed: String? = "N",
     var isActive: Boolean = true,
-    var syncState: SyncState
+    var syncState: SyncState,
+    var lmp_date: Long
 ) : FormDataModel {
 
     fun asNetworkModel(): ECTNetwork {
@@ -58,6 +59,7 @@ data class EligibleCoupleTrackingCache(
             createdDate = getDateTimeStringFromLong(createdDate)!!,
             updatedBy = updatedBy,
             updatedDate = getDateTimeStringFromLong(updatedDate)!!,
+            lmp_date = benId,
         )
     }
 }
@@ -76,6 +78,7 @@ data class ECTNetwork(
     val createdDate: String,
     val updatedBy: String,
     val updatedDate: String,
+    val lmp_date: Long
 )
 
 data class BenWithEcTrackingCache(
