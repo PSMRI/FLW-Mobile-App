@@ -1,12 +1,14 @@
 package org.piramalswasthya.sakhi.adapters
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.databinding.RvItemEcTrackingListBinding
 import org.piramalswasthya.sakhi.model.BenWithEctListDomain
+import java.util.concurrent.TimeUnit
 
 class ECTrackingListAdapter(private val clickListener: ECTrackListClickListener) :
     ListAdapter<BenWithEctListDomain, ECTrackingListAdapter.ECTrackViewHolder>(
@@ -36,6 +38,12 @@ class ECTrackingListAdapter(private val clickListener: ECTrackListClickListener)
         fun bind(
             item: BenWithEctListDomain, clickListener: ECTrackListClickListener
         ) {
+            if (item.ectDate!! < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(90) &&
+                item.ectDate!! > System.currentTimeMillis() - TimeUnit.DAYS.toMillis(365)) {
+                binding.ivFollowState.visibility = View.GONE
+            } else {
+                binding.ivFollowState.visibility = View.VISIBLE
+            }
             binding.item = item
             binding.clickListener = clickListener
             binding.executePendingBindings()

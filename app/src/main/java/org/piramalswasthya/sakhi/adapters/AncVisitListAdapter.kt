@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.databinding.RvItemPregnancyVisitBinding
 import org.piramalswasthya.sakhi.model.BenWithAncListDomain
+import java.util.concurrent.TimeUnit
 
 class AncVisitListAdapter(private val clickListener: PregnancyVisitClickListener? = null) :
     ListAdapter<BenWithAncListDomain, AncVisitListAdapter.PregnancyVisitViewHolder>(
@@ -37,6 +38,12 @@ class AncVisitListAdapter(private val clickListener: PregnancyVisitClickListener
         fun bind(
             item: BenWithAncListDomain, clickListener: PregnancyVisitClickListener?
         ) {
+            if (item.ancDate!! < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(90) &&
+                item.ancDate!! > System.currentTimeMillis() - TimeUnit.DAYS.toMillis(365)) {
+                binding.ivFollowState.visibility = View.GONE
+            } else {
+                binding.ivFollowState.visibility = View.VISIBLE
+            }
             binding.visit = item
             binding.btnAddAnc.visibility = if (item.showAddAnc) View.VISIBLE else View.INVISIBLE
             binding.btnPmsma.visibility = if (item.pmsmaFillable) View.VISIBLE else View.INVISIBLE
