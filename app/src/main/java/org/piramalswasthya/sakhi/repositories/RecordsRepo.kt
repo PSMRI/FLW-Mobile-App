@@ -129,7 +129,7 @@ class RecordsRepo @Inject constructor(
         .map { list ->
             list.filter {
                 !it.savedPncRecords.any { it1 ->
-                    it1.pncDate + TimeUnit.DAYS.toMillis(90) < System.currentTimeMillis() &&
+                    it1.pncDate < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(90) &&
                             it1.pncDate > System.currentTimeMillis() - TimeUnit.DAYS.toMillis(365)
                 }
             }
@@ -177,7 +177,7 @@ class RecordsRepo @Inject constructor(
         .map { list ->
             list.filter {
                 !it.savedECTRecords.any { it1 ->
-                    it1.visitDate + TimeUnit.DAYS.toMillis(90) < System.currentTimeMillis() &&
+                    it1.visitDate < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(90) &&
                             it1.visitDate > System.currentTimeMillis() - TimeUnit.DAYS.toMillis(365)
                 }
             }
@@ -239,7 +239,7 @@ class RecordsRepo @Inject constructor(
             .map { list ->
                 list.filter {
                     !it.savedAncRecords.any { it1 ->
-                        it1.ancDate + TimeUnit.DAYS.toMillis(90) < System.currentTimeMillis() &&
+                        it1.ancDate < System.currentTimeMillis() + TimeUnit.DAYS.toMillis(90) &&
                                 it1.ancDate > System.currentTimeMillis() - TimeUnit.DAYS.toMillis(365)
                     }
                 }

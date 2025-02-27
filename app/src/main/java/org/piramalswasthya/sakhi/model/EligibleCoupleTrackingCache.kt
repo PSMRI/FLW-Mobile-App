@@ -119,6 +119,7 @@ data class BenWithEcTrackingCache(
             ben.asBasicDomainModel(),
             ecr.noOfLiveChildren.toString(),
             allowFill,
+            ectDate = recentFill?.visitDate ?: 0L,
             savedECTRecords.map {
                 ECTDomain(
                     it.benId,
@@ -145,6 +146,7 @@ data class BenWithEctListDomain(
     val ben: BenBasicDomain,
     val numChildren: String,
     val allowFill: Boolean,
+    val ectDate: Long? = 0L,
     val savedECTRecords: List<ECTDomain>,
     val allSynced: SyncState? = if (savedECTRecords.isEmpty()) null else
         if (savedECTRecords.map { it.syncState }

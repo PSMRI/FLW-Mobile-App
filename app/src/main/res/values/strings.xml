@@ -328,6 +328,7 @@
     <string name="all">All</string>
     <string name="with_abha">With ABHA</string>
     <string name="without_abha">Without ABHA</string>
+    <string name="no_visit_made">No Visit Made</string>
     <string-array name="sync_records">
         <item>Beneficiary</item>
         <item>CBAC</item>
