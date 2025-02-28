@@ -28,7 +28,6 @@ import org.piramalswasthya.sakhi.databinding.LayoutViewMediaBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.form.PwAncFormViewModel.State
-import org.piramalswasthya.sakhi.ui.setBenImage
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 import java.io.File
@@ -55,11 +54,12 @@ class PwAncFormFragment : Fragment() {
             if (success) {
                 latestTmpUri?.let { uri ->
                     viewModel.setImageUriToFormElement(uri)
-
                     binding.form.rvInputForm.apply {
                         val adapter = this.adapter as FormInputAdapterWithBgIcon
                         adapter.notifyDataSetChanged()
                     }
+//                    updateImageRecord()
+
                     Timber.d("Image saved at @ $uri")
                 }
             }
@@ -77,6 +77,7 @@ class PwAncFormFragment : Fragment() {
                         val adapter = this.adapter as FormInputAdapterWithBgIcon
                         adapter.notifyDataSetChanged()
                     }
+//                    updateImageRecord()
                     Timber.d("Image saved at @ $uri")
                 }
             }
@@ -84,13 +85,24 @@ class PwAncFormFragment : Fragment() {
     }
 
     private fun displayPdf(pdfUri: Uri) {
-
+        activity?.contentResolver?.takePersistableUriPermission(
+            pdfUri,
+            Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+        )
         val intent = Intent(Intent.ACTION_VIEW).apply {
             setDataAndType(pdfUri, "application/pdf")
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
         startActivity(Intent.createChooser(intent, "Open PDF with"))
 
+    }
+
+  private fun updateImageRecord() {
+        viewModel.recordExists.observe(viewLifecycleOwner) { notIt ->
+            notIt?.let { it ->
+                submitAncForm()
+            }
+        }
     }
 
     override fun onCreateView(

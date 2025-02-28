@@ -50,6 +50,9 @@ class ChildRegViewModel @Inject constructor(
 
     private lateinit var infantReg: InfantRegCache
 
+    fun getIndexOfBirthCertificateFront() = dataset.getIndexOfBirthCertificateFrontPath()
+    fun getIndexOfBirthCertificateBack() = dataset.getIndexOfBirthCertificateBackPath()
+
     private val dataset =
         ChildRegistrationDataset(context, preferenceDao.getCurrentLanguage())
     val formList = dataset.listFlow
@@ -74,6 +77,10 @@ class ChildRegViewModel @Inject constructor(
 
     fun setCurrentDocumentFormId(id: Int) {
         lastDocumentFormId = id
+    }
+
+    fun getDocumentFormId():Int {
+        return lastDocumentFormId
     }
 
     fun setImageUriToFormElement(dpUri: Uri) {

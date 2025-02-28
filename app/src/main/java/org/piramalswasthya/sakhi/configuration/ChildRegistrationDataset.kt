@@ -198,6 +198,9 @@ class ChildRegistrationDataset(
     )
 
 
+    fun getIndexOfBirthCertificateFrontPath() = getIndexById(fileUploadFront.id)
+    fun getIndexOfBirthCertificateBackPath() = getIndexById(fileUploadBack.id)
+
     suspend fun setUpPage(
         motherBen: BenRegCache?,
         deliveryOutcomeCache: DeliveryOutcomeCache?,
@@ -332,7 +335,9 @@ class ChildRegistrationDataset(
                 childName = childName.value,
                 birthPlace = placeOfBirth.value,
                 birthPlaceId = placeOfBirth.getPosition(),
-                birthCertificateNumber = birthCertificateNo.value
+                birthCertificateNumber = birthCertificateNo.value,
+                birthCertificateFileFrontView = fileUploadFront.value.toString(),
+                birthCertificateFileBackView = fileUploadBack.value.toString()
             ),
             isVerified = false
         )
@@ -353,12 +358,16 @@ class ChildRegistrationDataset(
     }
 
     fun setImageUriToFormElement(lastImageFormId: Int, dpUri: Uri) {
-        when (lastImageFormId) {
-            fileUploadFront.id -> {
+        if (lastImageFormId == 14) {
                 fileUploadFront.value = dpUri.toString()
                 fileUploadFront.errorText = null
-            }
+
+        } else {
+                fileUploadBack.value = dpUri.toString()
+                fileUploadBack.errorText = null
+
         }
+
 
     }
 }

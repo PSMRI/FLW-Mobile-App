@@ -65,6 +65,7 @@ import org.piramalswasthya.sakhi.model.InputType.TEXT_VIEW
 import org.piramalswasthya.sakhi.model.InputType.TIME_PICKER
 import org.piramalswasthya.sakhi.model.InputType.values
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.AgePickerDialog
+import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.NewBenRegViewModel.Companion.isOtpVerified
 import org.piramalswasthya.sakhi.utils.HelperUtil.getAgeStrFromAgeUnit
 import org.piramalswasthya.sakhi.utils.HelperUtil.getDobFromAge
 import org.piramalswasthya.sakhi.utils.HelperUtil.getLongFromDate
@@ -598,12 +599,23 @@ class FormInputAdapter(
         fun bind(item: FormElement, isEnabled: Boolean, formValueListener: SendOtpClickListener?) {
             binding.form = item
 
-            if(isInternetAvailable(binding.root.context)){
+            if(isInternetAvailable(binding.root.context)) {
                 binding.generateOtp.isEnabled = isEnabled
             } else {
                 binding.generateOtp.isEnabled = !isEnabled
             }
-            binding.generateOtp.text = binding.generateOtp.resources.getString(R.string.generate_otp)
+            if(isOtpVerified) {
+                binding.generateOtp.text = binding.generateOtp.resources.getString(R.string.verified)
+                binding.generateOtp.isEnabled = !isEnabled
+
+            } else {
+                binding.generateOtp.text = binding.generateOtp.resources.getString(R.string.generate_otp)
+
+                binding.generateOtp.isEnabled = isEnabled
+
+
+            }
+
             binding.generateOtp.setOnClickListener {
                 formValueListener!!.onButtonClick(item,binding.generateOtp,binding.timerInSec,binding.tilEditText,isEnabled,adapterPosition,binding.et)
             }
@@ -637,7 +649,8 @@ class FormInputAdapter(
             }
         }
 
-        fun bind(item: FormElement, clickListener: SelectUploadImageClickListener?, documentOnClick: ViewDocumentOnClick?, isEnabled: Boolean) {
+
+        fun bind(item: FormElement, clickListener: SelectUploadImageClickListener?, documentOnClick: ViewDocumentOnClick?, isEnabled: Int) {
 
             binding.form = item
             binding.tvTitle.text = item.title
@@ -645,6 +658,9 @@ class FormInputAdapter(
             binding.documentclickListener = documentOnClick
             if (item.value != null) binding.btnView.visibility = View.VISIBLE
             else binding.btnView.visibility = View.GONE
+
+
+
 
         }
 
@@ -1026,7 +1042,7 @@ class FormInputAdapter(
                 formValueListener
             )
             InputType.BUTTON -> (holder as ButtonInputViewHolder).bind(item, isEnabled, sendOtpClickListener)
-            InputType.FILE_UPLOAD -> (holder as FileUploadInputViewHolder).bind(item,selectImageClickListener,viewDocumentListner, isEnabled)
+            InputType.FILE_UPLOAD -> (holder as FileUploadInputViewHolder).bind(item,selectImageClickListener,viewDocumentListner, position)
 
         }
     }

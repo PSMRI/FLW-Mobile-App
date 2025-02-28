@@ -19,6 +19,7 @@ import org.piramalswasthya.sakhi.helpers.ImageUtils
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.model.*
 import org.piramalswasthya.sakhi.network.*
+import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.NewBenRegViewModel
 import timber.log.Timber
 import java.lang.Long.min
 import java.net.SocketTimeoutException
@@ -34,7 +35,7 @@ class BenRepo @Inject constructor(
     private val infantRegRepo: InfantRegRepo,
     private val preferenceDao: PreferenceDao,
     private val userRepo: UserRepo,
-    private val tmcNetworkApiService: AmritApiService
+    private val tmcNetworkApiService: AmritApiService,
 ) {
 
     companion object {
@@ -888,6 +889,12 @@ class BenRepo @Inject constructor(
                                     birthOPV = if (childDataObj.has("birthOPV")) childDataObj.getBoolean(
                                         "birthOPV"
                                     ) else false,
+                                    birthCertificateFileBackView = if (childDataObj.has("birthOPV")) childDataObj.getString(
+                                        "birthOPV"
+                                    ) else "",
+                                    birthCertificateFileFrontView = if (childDataObj.has("birthOPV")) childDataObj.getString(
+                                        "birthOPV"
+                                    ) else ""
                                 ),
                                 genDetails = if (childDataObj.length() != 0) null else BenRegGen(
                                     maritalStatus = if (benDataObj.has("maritalstatus")) benDataObj.getString(
@@ -1289,7 +1296,7 @@ class BenRepo @Inject constructor(
                         val jsonObj = JSONObject(responseBody)
                         val data = jsonObj.getJSONObject("data").toString()
                         val myresponse = Gson().fromJson(responseBody, ValidateOtpResponse::class.java)
-                        Toast.makeText(context,"Otp Verified",Toast.LENGTH_SHORT).show()
+                        NewBenRegViewModel.isOtpVerified = true
                         return myresponse
                     }
 

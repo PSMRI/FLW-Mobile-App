@@ -2,20 +2,24 @@ package org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.
 
 import android.content.Context
 import android.net.Uri
+import android.widget.Toast
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.textfield.TextInputEditText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.configuration.BenRegFormDataset
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
-import org.piramalswasthya.sakhi.model.BenHealthIdDetails
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.BenRegGen
 import org.piramalswasthya.sakhi.model.BenRegKid
@@ -23,12 +27,9 @@ import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.HouseholdCache
 import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.model.User
-import org.piramalswasthya.sakhi.network.AbhaGenerateAadhaarOtpRequest
-import org.piramalswasthya.sakhi.network.NetworkResult
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.HouseholdRepo
 import org.piramalswasthya.sakhi.repositories.UserRepo
-import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.AadhaarIdViewModel
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -66,7 +67,10 @@ class NewBenRegViewModel @Inject constructor(
 
     val isHoF = relToHeadId == 18
 
-    var isOtpVerified = false
+    companion object {
+        var isOtpVerified = false
+    }
+
     private val benIdFromArgs =
         NewBenRegFragmentArgs.fromSavedStateHandle(savedStateHandle).benId
 
@@ -126,7 +130,7 @@ class NewBenRegViewModel @Inject constructor(
                     )
                 } else if (benIdFromArgs != 0L && recordExists.value != true) {
                     ben = benRepo.getBeneficiaryRecord(benIdFromArgs, hhId)!!
-
+                    isOtpVerified = ben.isVerified
                     if (isHoF) dataset.setPageForHof(
                         if (this@NewBenRegViewModel::ben.isInitialized) ben else null,
                         household
@@ -142,6 +146,7 @@ class NewBenRegViewModel @Inject constructor(
                         )
                     }
                 } else {
+
                     if (isHoF) dataset.setPageForHof(
                         if (this@NewBenRegViewModel::ben.isInitialized) ben else null,
                         household
@@ -279,7 +284,7 @@ class NewBenRegViewModel @Inject constructor(
         viewModelScope.launch {
             benRepo.resendOtp(mobileNo)?.let {
                 if (it.status == "Success") {
-                    otp = it.data.response.toInt();
+
                 } else {
 
 
@@ -289,18 +294,27 @@ class NewBenRegViewModel @Inject constructor(
     }
 
 
-    fun validateOtp(mobileNo: String,otp:Int) : Boolean {
+    fun validateOtp(
+        mobileNo: String,
+        otp: Int,
+        context: FragmentActivity,
+        otpField: TextInputEditText,
+        button: MaterialButton
+    ) : Boolean {
+        var memberOtpVerified = false
         viewModelScope.launch {
             benRepo.verifyOtp(mobileNo,otp)?.let {
                 if (it.status.equals("Success")) {
-                    isOtpVerified = true
+                    Toast.makeText(context,"Otp Verified", Toast.LENGTH_SHORT).show()
+                    otpField.isEnabled = false
+                    button.text = context.resources.getString(R.string.verified)
 
                 } else {
 
-                    isOtpVerified = false
+                    memberOtpVerified = false
                 }
             }
         }
-        return isOtpVerified
+        return memberOtpVerified
     }
 }

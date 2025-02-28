@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.ui.home_activity.maternal_health.child_reg.form
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
@@ -9,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -26,7 +28,6 @@ import org.piramalswasthya.sakhi.databinding.LayoutMediaOptionsBinding
 import org.piramalswasthya.sakhi.databinding.LayoutViewMediaBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
-import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.form.PwAncFormFragment
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 import java.io.File
@@ -46,12 +47,12 @@ class ChildRegFragment : Fragment() {
 
     private val PICK_PDF_FILE = 1
 
+    @SuppressLint("NotifyDataSetChanged")
     private val takePicture =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { success: Boolean ->
             if (success) {
                 latestTmpUri?.let { uri ->
                     viewModel.setImageUriToFormElement(uri)
-
                     binding.form.rvInputForm.apply {
                         val adapter = this.adapter as FormInputAdapter
                         adapter.notifyDataSetChanged()
@@ -61,6 +62,7 @@ class ChildRegFragment : Fragment() {
             }
         }
 
+    @SuppressLint("NotifyDataSetChanged")
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -109,11 +111,26 @@ class ChildRegFragment : Fragment() {
                         chooseOptions()
                     },
                     viewDocumentListner = FormInputAdapter.ViewDocumentOnClick {
-                        latestTmpUri?.let {
-                            if (it.toString().contains("document")) {
-                                displayPdf(it)
-                            } else {
-                                viewImage(it)
+                        if (!recordExists) {
+                            latestTmpUri?.let {
+                                if (it.toString().contains("document")) {
+                                    displayPdf(it)
+                                } else {
+                                    viewImage(it)
+                                }
+
+                            }
+                        } else {
+                            lifecycleScope.launch {
+                                viewModel.formList.collect{
+                                    it.get(viewModel.getIndexOfBirthCertificateFront()).value.let {
+                                        if (it.toString().contains("document")) {
+                                            displayPdf(it!!.toUri())
+                                        } else {
+                                            viewImage(it!!.toUri())
+                                        }
+                                    }
+                                }
                             }
 
                         }
@@ -179,7 +196,7 @@ class ChildRegFragment : Fragment() {
     private fun takeImage() {
         lifecycleScope.launchWhenStarted {
             getTmpFileUri().let { uri ->
-                PwAncFormFragment.latestTmpUri = uri
+                latestTmpUri = uri
                 takePicture.launch(uri)
             }
         }

@@ -819,7 +819,9 @@ data class BenRegKid(
     var birthBCG: Boolean = false,
     var birthHepB: Boolean = false,
     var birthOPV: Boolean = false,
-    val isVerified: Boolean = false
+    val isVerified: Boolean = false,
+    val birthCertificateFileFrontView: String? = null,
+    val birthCertificateFileBackView: String? = null
 
 )
 
@@ -1135,7 +1137,7 @@ data class BenRegCache(
     var syncState: SyncState,
 
     var isDraft: Boolean,
-    val isVerified: Boolean
+    val isVerified: Boolean = false
 
 ) : FormDataModel {
 
