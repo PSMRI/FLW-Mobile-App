@@ -2,11 +2,8 @@ package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
 import android.net.Uri
-import android.text.Editable
 import android.text.InputType
-import android.text.TextWatcher
 import android.util.Range
-import android.widget.EditText
 import android.widget.LinearLayout
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Konstants

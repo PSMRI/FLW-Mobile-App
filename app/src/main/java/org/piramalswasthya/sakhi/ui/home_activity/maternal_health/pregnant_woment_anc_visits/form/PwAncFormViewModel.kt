@@ -113,6 +113,7 @@ class PwAncFormViewModel @Inject constructor(
     fun setImageUriToFormElement(dpUri: Uri) {
         dataset.setImageUriToFormElement(lastDocumentFormId, dpUri)
 
+
     }
     fun updateListOnValueChanged(formId: Int, index: Int) {
         viewModelScope.launch {

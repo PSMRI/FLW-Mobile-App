@@ -17,13 +17,11 @@ interface AmritApiService {
         @Query("userId") userId: Int
     ): UserNetworkResponse
 
-    @POST("tmapi-v1.0/registrar/registrarBeneficaryRegistrationNew")
-    suspend fun getBenIdFromBeneficiarySending(@Body beneficiaryDataSending: BeneficiaryDataSending): Response<ResponseBody>
 
     @POST("hwc-facility-service/registrar/registrarBeneficaryRegistrationNew")
     suspend fun getBenIdFromBeneficiarySending(@Body benCHOPost: BenCHOPost): Response<ResponseBody>
 
-    @POST("identity-0.0.1/rmnch/syncDataToAmrit")
+    @POST("identity-v3.0.0/rmnch/syncDataToAmrit")
     suspend fun submitRmnchDataAmrit(@Body sendingRMNCHData: SendingRMNCHData): Response<ResponseBody>
 
     //    @POST("beneficiary/getBeneficiaryData")
@@ -36,6 +34,8 @@ interface AmritApiService {
     @POST("flw-0.0.1/beneficiary/resendOTP")
     suspend fun resendOtp(@Query("phoneNumber") phoneNumber:String): Response<ResponseBody>
 
+    @POST("tmapi-v1.0/registrar/registrarBeneficaryRegistrationNew")
+    suspend fun getBenIdFromBeneficiarySending(@Body beneficiaryDataSending: BeneficiaryDataSending): Response<ResponseBody>
     @POST("flw-0.0.1/beneficiary/validateOTP")
     suspend fun validateOtp(@Body validateOtp: ValidateOtpRequest ): Response<ResponseBody>
 
@@ -103,7 +103,7 @@ interface AmritApiService {
 //    @POST("highRisk/nonPregnant/track/saveAll")
     suspend fun saveHRNonPTrackData(@Body userDataDTO: UserDataDTO<Any?>): Response<ResponseBody>
 
-    @POST("identity-0.0.1/id/getByBenId")
+    @POST("identity-v3.0.0/id/getByBenId")
     suspend fun getBeneficiaryWithId(@Query("benId") benId: Long): Response<ResponseBody>
 
     @POST("fhirapi-v1.0/healthIDWithUID/createHealthIDWithUID")
