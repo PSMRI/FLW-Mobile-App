@@ -10,7 +10,6 @@ import org.piramalswasthya.sakhi.model.HRPPregnantAssessCache
 import org.piramalswasthya.sakhi.model.HRPPregnantTrackCache
 import org.piramalswasthya.sakhi.model.TBScreeningCache
 import org.piramalswasthya.sakhi.model.TBSuspectedCache
-import org.piramalswasthya.sakhi.model.getDateTimeStringFromLong
 import java.text.SimpleDateFormat
 import java.util.Locale
 
