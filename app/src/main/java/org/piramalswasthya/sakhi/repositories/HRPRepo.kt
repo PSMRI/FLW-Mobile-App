@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.repositories
 
+import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import kotlinx.coroutines.Dispatchers
@@ -235,12 +236,11 @@ class HRPRepo @Inject constructor(
 
 
                 val response = tmcNetworkApiService.getMicroBirthPlanAssessData(
-                    HRPMicroBirthPlanDTO(
-                        user.userId,
-                        0,
-                        getCurrentDate(Konstants.defaultTimeStamp),
-                        getCurrentDate()
-                    )
+//                    HRPMicroBirthPlanDTO(
+                    user.userId
+
+
+//                    )
                 )
                 val statusCode = response.code()
                 if (statusCode == 200) {
@@ -285,7 +285,7 @@ class HRPRepo @Inject constructor(
 
             } catch (e: SocketTimeoutException) {
                 Timber.d("get data error : $e")
-                return@withContext getHighRiskAssessDetailsFromServer()
+                return@withContext getHighRiskAssessMicroBirthPlanDetailsFromServer()
 
             } catch (e: java.lang.IllegalStateException) {
                 Timber.d("get data error : $e")
@@ -350,8 +350,7 @@ class HRPRepo @Inject constructor(
             try {
                 val entry = Gson().fromJson(dto.toString(), HRPMicroBirthPlanDTO::class.java)
                 entry.nearestSc?.let {
-                    val hrpMicroBirthPlanCache = database
-                        .hrpDao.getMicroBirthPlan(entry.benId)
+                    val hrpMicroBirthPlanCache = database.hrpDao.getMicroBirthPlan(entry.benId)
                     if (hrpMicroBirthPlanCache == null) {
                         database.hrpDao.saveRecord(entry.toCache())
                     } else {
@@ -395,7 +394,6 @@ class HRPRepo @Inject constructor(
 
                         if (hrpMicroBirthPlanCache.modeOfTransportation == null) hrpMicroBirthPlanCache.modeOfTransportation =
                             entry.modeOfTransportation
-
 
 
 
@@ -536,7 +534,6 @@ class HRPRepo @Inject constructor(
             }
         }
     }
-
 
 
     suspend fun getHRPTrackDetailsFromServer(): Int {
@@ -910,6 +907,102 @@ class HRPRepo @Inject constructor(
             -1
         }
     }
+    private suspend fun pushUnSyncedRecordsHRPMicroBirthPlan(): Int {
+
+        return withContext(Dispatchers.IO) {
+            val user =
+                preferenceDao.getLoggedInUser()
+                    ?: throw IllegalStateException("No user logged in!!")
+
+            val entities = database.hrpDao.getMicroBirthPlan(SyncState.UNSYNCED)
+
+            val dtos = mutableListOf<Any>()
+            val dtos1 = mutableListOf<HRPMicroBirthPlanDTO>()
+            entities?.let {
+                it.forEach { cache ->
+                    dtos.add(cache.toDTO())
+                    dtos1.add(cache.toDTO())
+                    cache.syncState = SyncState.SYNCED
+                }
+            }
+
+            if (dtos.isEmpty()) return@withContext 1
+            try {
+                val response = tmcNetworkApiService.saveMicroBirthPlanAssessData(
+                    UserDataDTO(
+                        userId = user.userId,
+                        entries = dtos
+                    )
+                )
+                val statusCode = response.code()
+                if (statusCode == 200) {
+                    val responseString = response.body()?.string()
+                    if (responseString != null) {
+                        val jsonObj = JSONObject(responseString)
+
+                        val responseStatusCode = jsonObj.getInt("statusCode")
+                        Timber.d("Push to amrit hrp track data : $responseStatusCode")
+//                        dtos1.forEach { it2 ->
+//                            database.hrpDao.getSavedRecord(it2.benId)?.let { pwrCache ->
+//                                pwrCache.processed = "P"
+//                                pwrCache.syncState = SyncState.SYNCED
+//                                updateSyncStatusHrpMBP(pwrCache)
+//                            }
+//
+//                        }
+//                        updateSyncStatusHrpMBP(entities)
+                        when (responseStatusCode) {
+                            200 -> {
+                                try {
+
+                                    dtos1.forEach { it2 ->
+                                        database.hrpDao.getSavedRecord(it2.benId)?.let { pwrCache ->
+                                            pwrCache.processed = "P"
+                                            pwrCache.syncState = SyncState.SYNCED
+                                            updateSyncStatusHrpMBP(pwrCache)
+                                        }
+
+                                    }
+
+//
+                                    return@withContext 1
+                                } catch (e: Exception) {
+                                    Timber.d("HRP Track entries not synced $e")
+                                }
+
+                            }
+
+                            5002 -> {
+                                if (userRepo.refreshTokenTmc(
+                                        user.userName, user.password
+                                    )
+                                ) throw SocketTimeoutException("Refreshed Token!")
+                                else throw IllegalStateException("User Logged out!!")
+                            }
+
+                            5000 -> {
+                                val errorMessage = jsonObj.getString("errorMessage")
+                                if (errorMessage == "No record found") return@withContext 0
+                            }
+
+                            else -> {
+                                throw IllegalStateException("$responseStatusCode received, !?")
+                            }
+                        }
+                    }
+                }
+
+            } catch (e: SocketTimeoutException) {
+                Timber.d("get_tb error : $e")
+                return@withContext pushUnSyncedRecordsHRPMicroBirthPlan()
+
+            } catch (e: java.lang.IllegalStateException) {
+                Timber.d("get_tb error : $e")
+                return@withContext -1
+            }
+            -1
+        }
+    }
 
     private suspend fun pushUnSyncedRecordsHRPTrack(): Int {
 
@@ -986,81 +1079,7 @@ class HRPRepo @Inject constructor(
             -1
         }
     }
-    private suspend fun pushUnSyncedRecordsHRPMicroBirthPlan(): Int {
 
-        return withContext(Dispatchers.IO) {
-            val user =
-                preferenceDao.getLoggedInUser()
-                    ?: throw IllegalStateException("No user logged in!!")
-
-            val entities = database.hrpDao.getMicroBirthPlan(SyncState.UNSYNCED)
-
-            val dtos = mutableListOf<Any>()
-            entities?.let {
-                it.forEach { cache ->
-                    dtos.add(cache.toDTO())
-                    cache.syncState = SyncState.SYNCED
-                }
-            }
-
-            if (dtos.isEmpty()) return@withContext 1
-            try {
-                val response = tmcNetworkApiService.saveMicroBirthPlanAssessData(
-                    UserDataDTO(
-                        userId = user.userId,
-                        entries = dtos
-                    )
-                )
-                val statusCode = response.code()
-                if (statusCode == 200) {
-                    val responseString = response.body()?.string()
-                    if (responseString != null) {
-                        val jsonObj = JSONObject(responseString)
-
-                        val responseStatusCode = jsonObj.getInt("statusCode")
-                        Timber.d("Push to amrit hrp track data : $responseStatusCode")
-                        when (responseStatusCode) {
-                            200 -> {
-                                try {
-                                    updateSyncStatusHrpMBP(entities)
-                                    return@withContext 1
-                                } catch (e: Exception) {
-                                    Timber.d("HRP Track entries not synced $e")
-                                }
-
-                            }
-
-                            5002 -> {
-                                if (userRepo.refreshTokenTmc(
-                                        user.userName, user.password
-                                    )
-                                ) throw SocketTimeoutException("Refreshed Token!")
-                                else throw IllegalStateException("User Logged out!!")
-                            }
-
-                            5000 -> {
-                                val errorMessage = jsonObj.getString("errorMessage")
-                                if (errorMessage == "No record found") return@withContext 0
-                            }
-
-                            else -> {
-                                throw IllegalStateException("$responseStatusCode received, !?")
-                            }
-                        }
-                    }
-                }
-
-            } catch (e: SocketTimeoutException) {
-                Timber.d("get_tb error : $e")
-                return@withContext pushUnSyncedRecordsHRPTrack()
-
-            } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_tb error : $e")
-                return@withContext -1
-            }
-            -1
-        }
-    }
 
     private suspend fun pushUnSyncedRecordsHRNonPAssess(): Int {
 
@@ -1235,12 +1254,17 @@ class HRPRepo @Inject constructor(
             }
         }
     }
+
     private fun updateSyncStatusHrpMBP(entities: List<HRPMicroBirthPlanCache>?) {
         entities?.let {
             entities.forEach {
                 database.hrpDao.saveRecord(it)
             }
         }
+    }
+
+    private fun updateSyncStatusHrpMBP(entity: HRPMicroBirthPlanCache) {
+        database.hrpDao.saveRecord(entity)
     }
 
     private fun updateSyncStatusHrpa(entities: List<HRPPregnantAssessCache>?) {

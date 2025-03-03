@@ -7,6 +7,7 @@ import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.HRPMicroBirthPlanCache
 import org.piramalswasthya.sakhi.model.InputType
+import org.piramalswasthya.sakhi.model.InputType.TEXT_VIEW
 
 class HRPMicroBirthPlanDataset(
     context: Context, currentLanguage: Languages
@@ -38,7 +39,7 @@ class HRPMicroBirthPlanDataset(
 
     private val contactNumber1 = FormElement(
         id = 4,
-        inputType = InputType.EDIT_TEXT,
+        inputType = InputType.TEXT_VIEW,
         title = resources.getString(R.string.contact_number_1),
         required = true,
         isEnabled = false,
@@ -190,7 +191,7 @@ class HRPMicroBirthPlanDataset(
 
     private val husbandName = FormElement(
         id = 20,
-        inputType = InputType.EDIT_TEXT,
+        inputType = InputType.TEXT_VIEW,
         title = resources.getString(R.string.husband_s_name),
         required = true,
         isEnabled = false,
@@ -208,7 +209,6 @@ class HRPMicroBirthPlanDataset(
             usg,
             block,
             husbandName,
-            bankac,
             nearestPhc,
             nearestFru,
             bloodDonors1,
