@@ -25,6 +25,9 @@ interface HrpDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveRecord(hrpPregnantAssessCache: HRPPregnantAssessCache)
 
+    @Query("select * from HRP_MICRO_BIRTH_PLAN where benId = :benId limit 1")
+    fun getSavedRecord(benId: Long): HRPMicroBirthPlanCache?
+
 
     @Query("select * from HRP_NON_PREGNANT_ASSESS where benId = :benId")
     fun getNonPregnantAssess(benId: Long): HRPNonPregnantAssessCache?

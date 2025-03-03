@@ -593,6 +593,7 @@ data class HRPMicroBirthPlanDTO(
             communityMember = communityMember,
             communityMemberContact = communityMemberContact,
             modeOfTransportation = modeOfTransportation,
+            processed = "P",
             syncState = SyncState.SYNCED
         )
     }

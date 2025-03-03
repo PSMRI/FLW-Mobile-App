@@ -145,7 +145,6 @@ class PregnancyRegistrationFormViewModel @Inject constructor(
             withContext(Dispatchers.IO) {
                 try {
                     _state.postValue(State.SAVING)
-
                     dataset.mapValues(pregnancyRegistrationForm, 1)
                     pregnancyRegistrationForm.processed = "U"
                     pregnancyRegistrationForm.syncState = SyncState.UNSYNCED
