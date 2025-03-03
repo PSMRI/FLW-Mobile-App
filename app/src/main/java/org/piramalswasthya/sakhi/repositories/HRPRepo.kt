@@ -916,12 +916,10 @@ class HRPRepo @Inject constructor(
 
             val entities = database.hrpDao.getMicroBirthPlan(SyncState.UNSYNCED)
 
-            val dtos = mutableListOf<Any>()
-            val dtos1 = mutableListOf<HRPMicroBirthPlanDTO>()
+            val dtos = mutableListOf<HRPMicroBirthPlanDTO>()
             entities?.let {
                 it.forEach { cache ->
                     dtos.add(cache.toDTO())
-                    dtos1.add(cache.toDTO())
                     cache.syncState = SyncState.SYNCED
                 }
             }
@@ -942,20 +940,11 @@ class HRPRepo @Inject constructor(
 
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Push to amrit hrp track data : $responseStatusCode")
-//                        dtos1.forEach { it2 ->
-//                            database.hrpDao.getSavedRecord(it2.benId)?.let { pwrCache ->
-//                                pwrCache.processed = "P"
-//                                pwrCache.syncState = SyncState.SYNCED
-//                                updateSyncStatusHrpMBP(pwrCache)
-//                            }
-//
-//                        }
-//                        updateSyncStatusHrpMBP(entities)
                         when (responseStatusCode) {
                             200 -> {
                                 try {
 
-                                    dtos1.forEach { it2 ->
+                                    dtos.forEach { it2 ->
                                         database.hrpDao.getSavedRecord(it2.benId)?.let { pwrCache ->
                                             pwrCache.processed = "P"
                                             pwrCache.syncState = SyncState.SYNCED
