@@ -981,6 +981,13 @@
         android:name="org.piramalswasthya.sakhi.ui.home_activity.incentives.IncentivesFragment"
         android:label="fragment_incentives"
         tools:layout="@layout/fragment_incentives" />
+    <fragment
+        android:id="@+id/ashaProfileFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.asha_profile.AshaProfileFragment"
+        android:label="fragment_asha_profile"
+        tools:layout="@layout/fragment_asha_profile" >
+
+    </fragment>
 
 
 </navigation>

@@ -182,5 +182,9 @@ object AppModule {
     @Provides
     fun provideHBYCDao(database: InAppDb): HbycDao = database.hbycDao
 
+    @Singleton
+    @Provides
+    fun provideAshaProfileDao(database: InAppDb): ProfileDao = database.profileDao
+
 
 }
