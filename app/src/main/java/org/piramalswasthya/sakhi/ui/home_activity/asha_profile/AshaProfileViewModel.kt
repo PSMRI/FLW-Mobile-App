@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -61,23 +60,10 @@ class AshaProfileViewModel @Inject constructor(
 
 
 
-    suspend fun setUpPage() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-
-
-
-
-            }
-        }
-
-    }
-
     init {
         viewModelScope.launch {
             val asha = preferenceDao.getLoggedInUser()!!
             locationRecord = preferenceDao.getLocationRecord()!!
-
             ashaProfileRepo.pullAndSaveAshaProfile(asha)
             ashaProfileRepo.getSavedRecord(asha.userId.toLong())?.let {
                 Timber.d("Caught $it at profile!")

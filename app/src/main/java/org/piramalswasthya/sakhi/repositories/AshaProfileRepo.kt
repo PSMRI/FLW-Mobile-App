@@ -8,7 +8,6 @@ import org.json.JSONObject
 import org.piramalswasthya.sakhi.database.room.dao.ProfileDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.ProfileActivityCache
-import org.piramalswasthya.sakhi.model.ProfileActivityNetwork
 import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.network.AmritApiService
 import timber.log.Timber
@@ -36,7 +35,6 @@ class AshaProfileRepo @Inject constructor(
                 if (responseString != null) {
                     val jsonObj = JSONObject(responseString)
                     val responseStatusCode = jsonObj.getInt("statusCode")
-                    val errorMessage = jsonObj.getString("errorMessage")
                     if (responseStatusCode == 200) {
                         Timber.d("response : $jsonObj")
                         try {
@@ -139,14 +137,11 @@ class AshaProfileRepo @Inject constructor(
     }
     private suspend fun saveProfileData(dataObj: String) {
 
-        val activities =
-            Gson().fromJson(dataObj, ProfileActivityNetwork::class.java)
         val activitiesCache =
             Gson().fromJson(dataObj, ProfileActivityCache::class.java) as ProfileActivityCache
         if (activitiesCache != null) {
             profileDao.insert(activitiesCache)
         }
-
 
 
     }
