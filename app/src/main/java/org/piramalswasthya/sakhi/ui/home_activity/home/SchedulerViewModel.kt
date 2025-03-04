@@ -31,6 +31,10 @@ class SchedulerViewModel @Inject constructor(
 
     val ancNonFollowUpCount: Flow<Int> = recordsRepo.getRegisteredPregnantWomanNonFollowUpListCount()
 
+    val ecrMissedPeriodCount: Flow<Int> = recordsRepo.eligibleCoupleMissedPeriodListCount
+
+    val ectMissedPeriodCount: Flow<Int> = recordsRepo.eligibleCoupleTrackingMissedPeriodListCount
+
     val pncNonFollowUpCount: Flow<Int> = recordsRepo.pncMotherNonFollowUpListCount
 
     val ecNonFollowUpCount: Flow<Int> = recordsRepo.eligibleCoupleTrackingNonFollowUpListCount
