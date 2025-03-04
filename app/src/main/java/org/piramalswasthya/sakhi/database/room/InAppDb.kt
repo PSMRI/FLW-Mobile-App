@@ -28,6 +28,7 @@ import org.piramalswasthya.sakhi.database.room.dao.MdsrDao
 import org.piramalswasthya.sakhi.database.room.dao.PmjayDao
 import org.piramalswasthya.sakhi.database.room.dao.PmsmaDao
 import org.piramalswasthya.sakhi.database.room.dao.PncDao
+import org.piramalswasthya.sakhi.database.room.dao.ProfileDao
 import org.piramalswasthya.sakhi.database.room.dao.SyncDao
 import org.piramalswasthya.sakhi.database.room.dao.TBDao
 import org.piramalswasthya.sakhi.model.BenBasicCache
@@ -57,6 +58,7 @@ import org.piramalswasthya.sakhi.model.PMSMACache
 import org.piramalswasthya.sakhi.model.PNCVisitCache
 import org.piramalswasthya.sakhi.model.PregnantWomanAncCache
 import org.piramalswasthya.sakhi.model.PregnantWomanRegistrationCache
+import org.piramalswasthya.sakhi.model.ProfileActivityCache
 import org.piramalswasthya.sakhi.model.TBScreeningCache
 import org.piramalswasthya.sakhi.model.TBSuspectedCache
 import org.piramalswasthya.sakhi.model.Vaccine
@@ -94,9 +96,10 @@ import org.piramalswasthya.sakhi.model.Vaccine
         //INCENTIVES
         IncentiveActivityCache::class,
         IncentiveRecordCache::class,
+        ProfileActivityCache::class
     ],
     views = [BenBasicCache::class],
-    version = 14, exportSchema = false
+    version = 15, exportSchema = false
 )
 
 @TypeConverters(LocationEntityListConverter::class, SyncStateConverter::class)
@@ -124,6 +127,7 @@ abstract class InAppDb : RoomDatabase() {
     abstract val infantRegDao: InfantRegDao
     abstract val childRegistrationDao: ChildRegistrationDao
     abstract val incentiveDao: IncentiveDao
+    abstract val profileDao: ProfileDao
 
     abstract val syncDao: SyncDao
 
@@ -136,6 +140,10 @@ abstract class InAppDb : RoomDatabase() {
             val MIGRATION_1_2 = Migration(1, 2, migrate = {
 //                it.execSQL("select count(*) from beneficiary")
             })
+
+            val MIGRATION_2_3 = Migration(14, 15) {
+                it.execSQL("CREATE TABLE IF NOT EXISTS `PROFILE_ACTIVITY` (`id` INTEGER NOT NULL, 'name' TEXT NOT NULL,`village` TEXT NOT NULL,  `employeeId` INTEGER ,  `dob` TEXT,`age` INTEGER NOT NULL, `mobileNumber` TEXT, `alternateMobileNumber` TEXT, `fatherOrSpouseName` TEXT,`dateOfJoining` TEXT,`bankAccount` TEXT,`ifsc` TEXT,`populationCovered` INTEGER,`choName` TEXT,`choMobile` TEXT,`awwName` TEXT,`awwMobile` TEXT,`anm1Name` TEXT,`anm1Mobile` TEXT,`anm2Name` TEXT,`anm2Mobile` TEXT,`abhaNumber` TEXT,`ashaHouseholdRegistration` TEXT,`ashaFamilyMember` TEXT, PRIMARY KEY(`id`))")
+            }
 
             val MIGRATION_13_14 = Migration(13, 14, migrate = {
                 it.execSQL("alter table INCENTIVE_ACTIVITY add column fmrCode TEXT")
@@ -171,7 +179,7 @@ abstract class InAppDb : RoomDatabase() {
                         "Sakhi-2.0-In-app-database"
                     )
                         .addMigrations(
-                            MIGRATION_13_14
+                            MIGRATION_2_3
                         )
                         .build()
 
