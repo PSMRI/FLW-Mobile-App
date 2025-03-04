@@ -78,18 +78,6 @@ class HRPMicroBirthPlanDataset(
         etInputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
     )
 
-    private val bankac = FormElement(
-        id = 8,
-        inputType = InputType.EDIT_TEXT,
-        title = resources.getString(R.string.bank_acc_no),
-        required = false,
-        etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
-        isMobileNumber = true,
-        etMaxLength = 18,
-        max = 999999999999999999L,
-        min = 10000000L
-    )
-
     private val nearestPhc = FormElement(
         id = 9,
         inputType = InputType.EDIT_TEXT,
@@ -231,7 +219,6 @@ class HRPMicroBirthPlanDataset(
             contactNumber2.value = it.contactNumber2
             scHosp.value = it.scHosp
             block.value = it.block
-            bankac.value = it.bankac
             nearestPhc.value = it.nearestPhc
             nearestFru.value = it.nearestFru
             bloodDonors1.value = it.bloodDonors1
@@ -272,10 +259,6 @@ class HRPMicroBirthPlanDataset(
 
             block.id -> {
                 validateAllAlphaNumericSpaceOnEditText(block)
-            }
-
-            bankac.id -> {
-                validateIntMinMax(bankac)
             }
 
             nearestPhc.id -> {
@@ -326,7 +309,6 @@ class HRPMicroBirthPlanDataset(
             form.contactNumber2 = contactNumber2.value
             form.scHosp = scHosp.value
             form.block = block.value
-            form.bankac = bankac.value
             form.nearestPhc = nearestPhc.value
             form.nearestFru = nearestFru.value
             form.bloodDonors1 = bloodDonors1.value

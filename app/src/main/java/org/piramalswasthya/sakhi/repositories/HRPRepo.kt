@@ -354,70 +354,29 @@ class HRPRepo @Inject constructor(
                     if (hrpMicroBirthPlanCache == null) {
                         database.hrpDao.saveRecord(entry.toCache())
                     } else {
-                        if (hrpMicroBirthPlanCache.nearestSc == null) hrpMicroBirthPlanCache.nearestSc =
-                            entry.nearestSc
 
-                        if (hrpMicroBirthPlanCache.bloodGroup == null) hrpMicroBirthPlanCache.bloodGroup =
-                            entry.bloodGroup
-                        if (hrpMicroBirthPlanCache.contactNumber1 == null) hrpMicroBirthPlanCache.contactNumber1 =
-                            entry.contactNumber1
-
-                        if (hrpMicroBirthPlanCache.contactNumber2 == null) hrpMicroBirthPlanCache.contactNumber2 =
-                            entry.contactNumber2
-
-                        if (hrpMicroBirthPlanCache.scHosp == null) hrpMicroBirthPlanCache.scHosp =
-                            entry.scHosp
-
-                        if (hrpMicroBirthPlanCache.usg == null) hrpMicroBirthPlanCache.usg =
-                            entry.usg
-
-                        if (hrpMicroBirthPlanCache.block == null) hrpMicroBirthPlanCache.block =
-                            entry.block
-                        if (hrpMicroBirthPlanCache.bankac == null) hrpMicroBirthPlanCache.bankac =
-                            entry.bankac
-                        if (hrpMicroBirthPlanCache.nearestPhc == null) hrpMicroBirthPlanCache.nearestPhc =
-                            entry.nearestPhc
-                        if (hrpMicroBirthPlanCache.nearestFru == null) hrpMicroBirthPlanCache.nearestFru =
-                            entry.nearestFru
-                        if (hrpMicroBirthPlanCache.bloodDonors1 == null) hrpMicroBirthPlanCache.bloodDonors1 =
-                            entry.bloodDonors1
-                        if (hrpMicroBirthPlanCache.bloodDonors2 == null) hrpMicroBirthPlanCache.bloodDonors2 =
-                            entry.bloodDonors2
-                        if (hrpMicroBirthPlanCache.birthCompanion == null) hrpMicroBirthPlanCache.birthCompanion =
-                            entry.birthCompanion
-                        if (hrpMicroBirthPlanCache.careTaker == null) hrpMicroBirthPlanCache.careTaker =
-                            entry.careTaker
-                        if (hrpMicroBirthPlanCache.communityMember == null) hrpMicroBirthPlanCache.communityMember =
-                            entry.communityMember
-                        if (hrpMicroBirthPlanCache.communityMemberContact == null) hrpMicroBirthPlanCache.communityMemberContact =
-                            entry.communityMemberContact
-
-                        if (hrpMicroBirthPlanCache.modeOfTransportation == null) hrpMicroBirthPlanCache.modeOfTransportation =
-                            entry.modeOfTransportation
+                        hrpMicroBirthPlanCache.apply {
+                            nearestSc = nearestSc ?: entry.nearestSc
+                            bloodGroup = bloodGroup ?: entry.bloodGroup
+                            contactNumber1 = contactNumber1 ?: entry.contactNumber1
+                            contactNumber2 = contactNumber2 ?: entry.contactNumber2
+                            scHosp = scHosp ?: entry.scHosp
+                            usg = usg ?: entry.usg
+                            block = block ?: entry.block
+                            nearestPhc = nearestPhc ?: entry.nearestPhc
+                            nearestFru = nearestFru ?: entry.nearestFru
+                            bloodDonors1 = bloodDonors1 ?: entry.bloodDonors1
+                            bloodDonors2 = bloodDonors2 ?: entry.bloodDonors2
+                            birthCompanion = birthCompanion ?: entry.birthCompanion
+                            careTaker = careTaker ?: entry.careTaker
+                            communityMember = communityMember ?: entry.communityMember
+                            communityMemberContact = communityMemberContact ?: entry.communityMemberContact
+                            modeOfTransportation = modeOfTransportation ?: entry.modeOfTransportation
+                        }
 
 
-
-//                        isHighRisk(hrpPregnantAssessCache)
                         database.hrpDao.saveRecord(hrpMicroBirthPlanCache)
                     }
-
-//                    val hrpNonPregnantAssessCache = database
-//                        .hrpDao.getNonPregnantAssess(entry.benId)
-//                    if (hrpNonPregnantAssessCache == null) {
-//                        database.hrpDao.saveRecord(entry.toNonPregnantAssess())
-//                    } else {
-//                        if (hrpNonPregnantAssessCache.noOfDeliveries == null) hrpNonPregnantAssessCache.noOfDeliveries =
-//                            entry.noOfDeliveries
-//                        if (hrpNonPregnantAssessCache.timeLessThan18m == null) hrpNonPregnantAssessCache.timeLessThan18m =
-//                            entry.timeLessThan18m
-//                        if (hrpNonPregnantAssessCache.heightShort == null) hrpNonPregnantAssessCache.heightShort =
-//                            entry.heightShort
-//                        if (hrpNonPregnantAssessCache.age == null) hrpNonPregnantAssessCache.age =
-//                            entry.age
-//                        isHighRisk(hrpNonPregnantAssessCache)
-//                        database.hrpDao.saveRecord(hrpNonPregnantAssessCache)
-//                    }
-
                 }
             } catch (e: java.lang.Exception) {
                 Timber.d("cannot save entry $dto due to : $e")
