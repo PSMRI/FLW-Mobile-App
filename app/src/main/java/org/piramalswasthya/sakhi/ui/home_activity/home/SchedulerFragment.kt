@@ -29,6 +29,10 @@ class SchedulerFragment : Fragment() {
     private var pncNonFollowUpCount = 0
     private var ecNonFollowUpCount = 0
 
+    private var countMissedPeriodCases = 0
+    private var ecrMissedPeriodCount = 0
+    private var ectMissedPeriodCount = 0
+
     private val viewModel: SchedulerViewModel by viewModels({ requireActivity() })
 
     override fun onCreateView(
@@ -101,6 +105,9 @@ class SchedulerFragment : Fragment() {
         binding.cvNon.setOnClickListener {
             findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToNonFollowUpFragment())
         }
+        binding.cvMiss.setOnClickListener {
+            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToMissedPeriodFragment())
+        }
         lifecycleScope.launch {
             viewModel.hrpDueCount.collect {
                 binding.tvHrp.text = it.toString()
@@ -142,6 +149,23 @@ class SchedulerFragment : Fragment() {
                 setNonFollowUpCount()
             }
         }
+
+        lifecycleScope.launch {
+            viewModel.ecrMissedPeriodCount.collect {
+                countMissedPeriodCases += 1
+                ecrMissedPeriodCount = it
+                setMissedPeriodCount()
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.ectMissedPeriodCount.collect {
+                countMissedPeriodCases += 1
+                ectMissedPeriodCount = it
+                setMissedPeriodCount()
+            }
+        }
+
         binding.calendarView.setOnDateChangeListener { a, b, c, d ->
             val calLong = Calendar.getInstance().apply {
                 set(Calendar.YEAR, b)
@@ -156,6 +180,13 @@ class SchedulerFragment : Fragment() {
         if (countNonFollowUpCases == 3) {
             val total = ancNonFollowUpCount + pncNonFollowUpCount + ecNonFollowUpCount
             binding.tvNon.text = total.toString()
+        }
+    }
+
+    private fun setMissedPeriodCount() {
+        if (countMissedPeriodCases == 2) {
+            val total = ecrMissedPeriodCount + ectMissedPeriodCount
+            binding.tvMiss.text = total.toString()
         }
     }
 

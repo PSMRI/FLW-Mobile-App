@@ -79,6 +79,9 @@
         <action
             android:id="@+id/action_homeFragment_to_nonFollowUpFragment"
             app:destination="@id/nonFollowUpFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_missedPeriodFragment"
+            app:destination="@id/missedPeriodFragment" />
     </fragment>
     <fragment
         android:id="@+id/allHouseholdFragment"
@@ -618,6 +621,18 @@
             app:destination="@id/eligibleCoupleTrackingListFragment" />
     </fragment>
     <fragment
+        android:id="@+id/missedPeriodFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.home.MissedPeriodFragment"
+        android:label="@string/missed_period"
+        tools:layout="@layout/fragment_missed_period">
+        <action
+            android:id="@+id/action_missedPeriodFragment_to_eligibleCoupleListFragment"
+            app:destination="@id/eligibleCoupleListFragment" />
+        <action
+            android:id="@+id/action_missedPeriodFragment_to_eligibleCoupleTrackingListFragment"
+            app:destination="@id/eligibleCoupleTrackingListFragment" />
+    </fragment>
+    <fragment
         android:id="@+id/pwRegistrationFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_women_registration.list.PwRegistrationListFragment"
         android:label="@string/icon_title_pmr"
@@ -671,6 +686,10 @@
         <action
             android:id="@+id/action_eligibleCoupleListFragment_to_eligibleCoupleRegFragment"
             app:destination="@id/eligibleCoupleRegFragment" />
+        <argument
+            android:name="source"
+            android:defaultValue="0"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/eligibleCoupleRegFragment"

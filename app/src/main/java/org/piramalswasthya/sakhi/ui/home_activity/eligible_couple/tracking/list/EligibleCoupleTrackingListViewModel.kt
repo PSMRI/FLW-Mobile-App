@@ -28,6 +28,7 @@ class EligibleCoupleTrackingListViewModel @Inject constructor(
 
     private val allBenList = when (sourceFromArgs) {
         1 -> recordsRepo.eligibleCoupleTrackingNonFollowUpList
+        2 -> recordsRepo.eligibleCoupleTrackingMissedPeriodList
         else -> recordsRepo.eligibleCoupleTrackingList
     }
 

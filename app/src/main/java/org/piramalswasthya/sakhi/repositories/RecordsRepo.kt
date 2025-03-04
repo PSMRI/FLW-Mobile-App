@@ -167,6 +167,18 @@ class RecordsRepo @Inject constructor(
         .map { list -> list.map { it.asDomainModel() } }
     val eligibleCoupleListCount = eligibleCoupleList.map { it.size }
 
+    val eligibleCoupleMissedPeriodList = benDao.getAllEligibleRegistrationList(selectedVillage)
+        .map { list ->
+            list.filter {
+                if (it.ecr != null) {
+                    System.currentTimeMillis() - it.ecr.lmpDate > TimeUnit.DAYS.toMillis(35)
+                } else {
+                    true
+                }
+                }
+                .map { it.asDomainModel() } }
+    val eligibleCoupleMissedPeriodListCount = eligibleCoupleMissedPeriodList.map { it.size }
+
     val eligibleCoupleTrackingList = benDao.getAllEligibleTrackingList(selectedVillage)
         .map { list -> list.map { it.asDomainModel() } }
 
@@ -184,6 +196,20 @@ class RecordsRepo @Inject constructor(
                 .map { it.asDomainModel() } }
 
     val eligibleCoupleTrackingNonFollowUpListCount = eligibleCoupleTrackingNonFollowUpList.map { it.size }
+
+    val eligibleCoupleTrackingMissedPeriodList = benDao.getAllEligibleTrackingList(selectedVillage)
+        .map { list ->
+            list.filter {
+                !it.savedECTRecords.any { it1 ->
+                    if (it1.lmpDate != null) {
+                        System.currentTimeMillis() - it1.lmpDate!! > TimeUnit.DAYS.toMillis(35)
+                    } else {
+                        true
+                    }
+                }
+            }
+                .map { it.asDomainModel() } }
+    val eligibleCoupleTrackingMissedPeriodListCount = eligibleCoupleTrackingMissedPeriodList.map { it.size }
 
 //    val deliveredWomenList = benDao.getAllEligibleTrackingList(selectedVillage)
 //        .map { list -> list.map { it.asBenBasicDomainModelECTForm() } }
