@@ -120,8 +120,9 @@
 
                         <TextView
                             android:id="@+id/tv_ph_imm"
-                            android:layout_width="151dp"
-                            android:layout_height="50dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:maxWidth="151dp"
                             android:text="@string/beneficiaries_due_for_immunization"
                             android:layout_alignParentTop="true"
 
@@ -319,27 +320,6 @@
             android:paddingVertical="@dimen/padding_wide"
             android:orientation="horizontal">
 
-            <androidx.cardview.widget.CardView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_small"
-                android:layout_weight="1"
-                android:backgroundTint="@android:color/holo_orange_light"
-                android:elevation="@dimen/padding_normal"
-                app:cardCornerRadius="@dimen/padding_normal"
-                app:cardElevation="@dimen/padding_normal">
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_small"
-                android:layout_weight="1"
-                android:backgroundTint="@android:color/holo_orange_light"
-                android:elevation="@dimen/padding_normal"
-                app:cardCornerRadius="@dimen/padding_normal"
-                app:cardElevation="@dimen/padding_normal">
-            </androidx.cardview.widget.CardView>
         </LinearLayout>
         </LinearLayout>
     </ScrollView>

@@ -91,7 +91,7 @@ data class EligibleCoupleRegCache(
             bankName = bankName,
             branchName = branchName,
             ifsc = ifsc,
-            lmpDate = getDateStringFromLong(lmpDate)!!,
+            lmpDate = lmpDate.takeIf { it > 0 }?.let { getDateStringFromLong(it) } ?: "",
             numChildren = noOfChildren,
             numLiveChildren = noOfLiveChildren,
             numMaleChildren = noOfMaleChildren,

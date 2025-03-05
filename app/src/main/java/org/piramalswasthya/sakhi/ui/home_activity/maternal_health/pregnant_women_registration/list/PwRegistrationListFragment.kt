@@ -41,9 +41,6 @@ class PwRegistrationListFragment : Fragment() {
 
     private val filterAlert by lazy {
         val filterAlertBinding = AlertFilterBinding.inflate(layoutInflater, binding.root, false)
-        filterAlertBinding.rgAbha.setOnCheckedChangeListener { radioGroup, i ->
-
-        }
 
         filterAlertBinding.cbRch.setOnCheckedChangeListener { compoundButton, b ->
             showRchRecords = b

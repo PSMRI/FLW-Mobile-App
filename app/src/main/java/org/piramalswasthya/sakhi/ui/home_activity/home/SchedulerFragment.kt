@@ -9,11 +9,13 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.databinding.FragmentSchedulerBinding
 import org.piramalswasthya.sakhi.ui.home_activity.home.SchedulerViewModel.State.LOADED
 import org.piramalswasthya.sakhi.ui.home_activity.home.SchedulerViewModel.State.LOADING
 import java.util.Calendar
+import java.util.concurrent.atomic.AtomicInteger
 
 
 @AndroidEntryPoint
@@ -24,12 +26,7 @@ class SchedulerFragment : Fragment() {
     private val binding: FragmentSchedulerBinding
         get() = _binding!!
 
-    private var countNonFollowUpCases = 0
-    private var ancNonFollowUpCount = 0
-    private var pncNonFollowUpCount = 0
-    private var ecNonFollowUpCount = 0
-
-    private var countMissedPeriodCases = 0
+    private var countMissedPeriodCases = AtomicInteger(0)
     private var ecrMissedPeriodCount = 0
     private var ectMissedPeriodCount = 0
 
@@ -128,31 +125,22 @@ class SchedulerFragment : Fragment() {
                 binding.tvRch.text = it.toString()
             }
         }
+
         lifecycleScope.launch {
-            viewModel.ancNonFollowUpCount.collect {
-                countNonFollowUpCases += 1
-                ancNonFollowUpCount = it
-                setNonFollowUpCount()
-            }
-        }
-        lifecycleScope.launch {
-            viewModel.pncNonFollowUpCount.collect {
-                countNonFollowUpCases += 1
-                pncNonFollowUpCount = it
-                setNonFollowUpCount()
-            }
-        }
-        lifecycleScope.launch {
-            viewModel.ecNonFollowUpCount.collect {
-                countNonFollowUpCases += 1
-                ecNonFollowUpCount = it
-                setNonFollowUpCount()
+            combine(
+                viewModel.ancNonFollowUpCount,
+                viewModel.pncNonFollowUpCount,
+                viewModel.ecNonFollowUpCount
+            ) { anc, pnc, ec ->
+                anc + pnc + ec
+            }.collect { total ->
+                binding.tvNon.text = total.toString()
             }
         }
 
         lifecycleScope.launch {
             viewModel.ecrMissedPeriodCount.collect {
-                countMissedPeriodCases += 1
+                countMissedPeriodCases.incrementAndGet()
                 ecrMissedPeriodCount = it
                 setMissedPeriodCount()
             }
@@ -160,7 +148,7 @@ class SchedulerFragment : Fragment() {
 
         lifecycleScope.launch {
             viewModel.ectMissedPeriodCount.collect {
-                countMissedPeriodCases += 1
+                countMissedPeriodCases.incrementAndGet()
                 ectMissedPeriodCount = it
                 setMissedPeriodCount()
             }
@@ -176,15 +164,8 @@ class SchedulerFragment : Fragment() {
         }
     }
 
-    private fun setNonFollowUpCount() {
-        if (countNonFollowUpCases == 3) {
-            val total = ancNonFollowUpCount + pncNonFollowUpCount + ecNonFollowUpCount
-            binding.tvNon.text = total.toString()
-        }
-    }
-
     private fun setMissedPeriodCount() {
-        if (countMissedPeriodCases == 2) {
+        if (countMissedPeriodCases.get() == 2) {
             val total = ecrMissedPeriodCount + ectMissedPeriodCount
             binding.tvMiss.text = total.toString()
         }
