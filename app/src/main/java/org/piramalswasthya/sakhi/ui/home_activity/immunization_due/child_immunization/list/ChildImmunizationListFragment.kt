@@ -60,7 +60,7 @@ class ChildImmunizationListFragment : Fragment(),ImmunizationBirthDoseCategoryAd
 
         lifecycleScope.launch {
             viewModel.immunizationBenList.collect {
-                Timber.d("Collecting list : $it")
+               // Timber.d("Collecting list : $it")
 
                 binding.rvList.apply {
                     (adapter as ImmunizationBenListAdapter).submitList(it.sortedByDescending { it.ben.regDate })

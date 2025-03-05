@@ -65,7 +65,7 @@ class AadhaarNumberAshaViewModel @Inject constructor(
         viewModelScope.launch {
             when (val result =
 //                abhaIdRepo.generateOtpForAadhaarV2(AbhaGenerateAadhaarOtpRequest(aadhaarNo))) {
-                abhaIdRepo.generateOtpForAadhaarV2(AbhaGenerateAadhaarOtpRequest(
+                abhaIdRepo.generateAadhaarOtpV3(AbhaGenerateAadhaarOtpRequest(
                     "",
                     listOf<String>("abha-enrol"),
                     "aadhaar",

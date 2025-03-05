@@ -261,7 +261,6 @@ class HomeActivity : AppCompatActivity() {
         viewModel.unprocessedRecordsCount.observe(this) {
             if (it>0) {
                 if (isInternetAvailable(this)){
-                    Log.d("====12345@@","triggerAmritPushWorker called")
                     WorkerUtils.triggerAmritPushWorker(this)
                 }
             }

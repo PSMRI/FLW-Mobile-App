@@ -165,9 +165,9 @@ class MaternalHealthRepo @Inject constructor(
         try {
 //      FLW-144 - Implementing API change for addition of ProviderServiceMapID in ANC API
 //      This change will go one Tools upgrade builds to Production
-//         ancPostList.forEach{
-//                it.providerServiceMapID = user.serviceMapId.toString()
-//            }
+         ancPostList.forEach{
+                it.providerServiceMapID = user.serviceMapId.toString()
+            }
 
             val response = amritApiService.postAncForm(ancPostList.toList())
             val statusCode = response.code()

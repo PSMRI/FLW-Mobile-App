@@ -54,7 +54,7 @@ enum class Gender {
             ", b.contactNumber as mobileNo, b.fatherName, h.fam_familyHeadName as familyHeadName, b.gen_spouseName as spouseName,b.rchId, b.gen_lastMenstrualPeriod as lastMenstrualPeriod" +
             ", b.isHrpStatus as hrpStatus, b.syncState, b.gen_reproductiveStatusId as reproductiveStatusId, b.isKid, b.immunizationStatus, b.gen_spouseName as spouseName," +
             " b.loc_village_id as villageId, b.abha_healthIdNumber as abhaId," +
-            " cbac.benId is not null as cbacFilled, cbac.syncState as cbacSyncState," +
+            " b.isNewAbha, cbac.benId is not null as cbacFilled, cbac.syncState as cbacSyncState," +
             " cdr.benId is not null as cdrFilled, cdr.syncState as cdrSyncState, " +
             " mdsr.benId is not null as mdsrFilled, mdsr.syncState as mdsrSyncState," +
             " pmsma.benId is not null as pmsmaFilled, pmsma.syncState as pmsmaSyncState, " +
@@ -123,6 +123,7 @@ data class BenBasicCache(
     val immunizationStatus: Boolean,
     val villageId: Int,
     val abhaId: String?,
+    val isNewAbha: Boolean,
     val cbacFilled: Boolean,
     val cbacSyncState: SyncState?,
     val cdrFilled: Boolean,
@@ -233,6 +234,7 @@ data class BenBasicCache(
             gender = gender.name,
             dob = dob,
             abhaId = abhaId,
+            isNewAbha = isNewAbha,
             relToHeadId = relToHeadId,
             mobileNo = mobileNo.toString(),
             fatherName = fatherName?.takeIf { it.isNotEmpty() } ?: "Not Available",
@@ -692,6 +694,7 @@ data class BenBasicDomain(
     val relToHeadId: Int,
     val mobileNo: String,
     val abhaId: String? = null,
+    val isNewAbha: Boolean = false,
     val fatherName: String? = null,
     val familyHeadName: String,
     val spouseName: String? = null,
@@ -875,8 +878,9 @@ data class BenRegKidNetwork(
     )
 
 data class BenHealthIdDetails(
-    var healthId: String? = null,
-    var healthIdNumber: String? = null
+    var healthId: String = "",
+    var healthIdNumber: String = "",
+    var isNewAbha: Boolean= false
 )
 
 data class BenRegGen(
@@ -1106,6 +1110,8 @@ data class BenRegCache(
     var syncState: SyncState,
 
     var isDraft: Boolean,
+
+    var isNewAbha: Boolean=false,
 
     ) : FormDataModel {
 
