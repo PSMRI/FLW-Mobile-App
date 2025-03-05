@@ -1802,7 +1802,9 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as EligibleCoupleRegCache).let { ecr ->
             ecr.dateOfReg = getLongFromDate(dateOfReg.value!!)
-            ecr.lmpDate = getLongFromDate(lmpDate.value!!)
+            lmpDate.value?.let {
+                ecr.lmpDate = getLongFromDate(it)
+            }
             ecr.bankAccount = bankAccount.value?.takeIf { it.isNotBlank() }?.toLong()
             ecr.bankName = bankName.value
             ecr.branchName = branchName.value

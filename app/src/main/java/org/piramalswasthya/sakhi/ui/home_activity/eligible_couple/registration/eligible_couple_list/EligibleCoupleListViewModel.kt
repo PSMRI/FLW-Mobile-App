@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.helpers.filterEcRegistrationList
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
-import org.piramalswasthya.sakhi.ui.home_activity.eligible_couple.tracking.list.EligibleCoupleTrackingListFragmentArgs
 import javax.inject.Inject
 
 @HiltViewModel
@@ -18,10 +17,15 @@ class EligibleCoupleListViewModel @Inject constructor(
     recordsRepo: RecordsRepo
 ) : ViewModel() {
 
+    companion object {
+        const val SOURCE_DEFAULT = 1
+        const val SOURCE_MISSED_PERIOD = 2
+    }
+
     private var sourceFromArgs = EligibleCoupleListFragmentArgs.fromSavedStateHandle(savedStateHandle).source
 
     private val allBenList = when (sourceFromArgs) {
-        2 -> recordsRepo.eligibleCoupleMissedPeriodList
+        SOURCE_MISSED_PERIOD -> recordsRepo.eligibleCoupleMissedPeriodList
         else -> recordsRepo.eligibleCoupleList
     }
 
