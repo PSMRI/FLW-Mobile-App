@@ -165,9 +165,14 @@ class BenRepo @Inject constructor(
                 val responseStatusCode: Int = jsonObj.getInt("statusCode")
                 if (responseStatusCode == 200) {
                     val jsonObjectData: JSONObject = jsonObj.getJSONObject("data")
-                    val resBenId = jsonObjectData.getString("response")
-                    val benNumber = resBenId.substring(resBenId.length - 12)
-                    val newBenId = java.lang.Long.valueOf(benNumber)
+                    val response = jsonObjectData.getString("response")
+
+                  val newBenId= extractBenId(response)
+
+//                    val benNumber = resBenId.substring(resBenId.length - 12)
+//                    val newBenId = java.lang.Long.valueOf(benNumber)
+                    val newBenRegId = extractBenRegID(jsonObjectData.getString("response"))
+
                     //FIX TO UPDATE IMAGE-NAME WITH NEW BEN-ID
                     val infantReg = infantRegRepo.getInfantRegFromChildBenId(ben.beneficiaryId)
                     infantReg?.let {
@@ -178,12 +183,15 @@ class BenRepo @Inject constructor(
                     }
                     infantReg?.let { infantRegRepo.update(it) }
                     val photoUri = ImageUtils.renameImage(context, ben.beneficiaryId, newBenId)
-                    benDao.updateToFinalBenId(
-                        hhId = ben.householdId,
-                        oldId = ben.beneficiaryId,
-                        newId = newBenId,
-                        imageUri = photoUri
-                    )
+                    if (newBenRegId != null) {
+                        benDao.updateToFinalBenId(
+                            hhId = ben.householdId,
+                            oldId = ben.beneficiaryId,
+                            newBenRegId=newBenRegId,
+                            newId = newBenId,
+                            imageUri = photoUri
+                        )
+                    }
                     //FIX TO MAP UPDATED BEN-ID FOR HOF
                     householdDao.getHousehold(ben.householdId)
                         ?.takeIf { it.benId == ben.beneficiaryId }?.let {
@@ -215,6 +223,20 @@ class BenRepo @Inject constructor(
         }
 
     }
+
+    fun extractBenId(string:String): Long {
+        val regex =  """Beneficiary ID is :\s*(\d+)""".toRegex() //"BenRegID is :\\s*(\\d+)".toRegex()
+        val matchResult = regex.find(string)
+        var result =matchResult?.groupValues?.get(1)?.trim()?.toLongOrNull()
+        return result?:0L
+    }
+    fun extractBenRegID(json: String): Long? {
+        val regex = """BenRegID\s*is\s*:\s*(\d+)""".toRegex()
+        val matchResult = regex.find(json)
+        var result =matchResult?.groupValues?.get(1)?.trim()?.toLongOrNull()
+        return result
+    }
+
 
     suspend fun processNewBen(): Boolean {
         return withContext(Dispatchers.IO) {
@@ -260,7 +282,6 @@ class BenRepo @Inject constructor(
                     benDao.benSyncWithServerFailed(*it.toLongArray())
                 }
             }
-            WorkerUtils.triggerAmritPullWorker(context)
             return@withContext true
         }
 
@@ -526,6 +547,8 @@ class BenRepo @Inject constructor(
                 for (i in 0 until jsonArray.length()) {
                     val jsonObject = jsonArray.getJSONObject(i)
                     val benDataObj = jsonObject.getJSONObject("beneficiaryDetails")
+                    val abhaHealthDetailsObj = jsonObject.getJSONObject("abhaHealthDetails")
+
 //                    val houseDataObj = jsonObject.getJSONObject("householdDetails")
 //                    val cbacDataObj = jsonObject.getJSONObject("cbacDetails")
                     val childDataObj = jsonObject.getJSONObject("bornbirthDeatils")
@@ -536,14 +559,14 @@ class BenRepo @Inject constructor(
                     if (benId == -1L || hhId == -1L) continue
                     val benExists = benDao.getBen(hhId, benId) != null
 
-                   /* if (benExists) {
+                    if (benExists) {
                         continue
                     }
                     val hhExists = householdDao.getHousehold(hhId) != null
 
                     if (!hhExists) {
                         continue
-                    }*/
+                    }
 
                     try {
                         result.add(
@@ -961,10 +984,14 @@ class BenRepo @Inject constructor(
 //                                ) else null,
 //                                noOfDaysForDelivery = noOfDaysForDelivery,
                                 ),
-                                healthIdDetails = if (jsonObject.has("healthId")) BenHealthIdDetails(
-                                    jsonObject.getString("healthId"),
-                                    jsonObject.getString("healthIdNumber")
-                                ) else null,
+                                healthIdDetails =if(abhaHealthDetailsObj != null && abhaHealthDetailsObj.length() > 0){
+                                    BenHealthIdDetails(
+                                        healthIdNumber = abhaHealthDetailsObj.getString("HealthIdNumber"),
+                                        isNewAbha = abhaHealthDetailsObj.getBoolean("isNewAbha"),
+                                        healthId = abhaHealthDetailsObj.getString("HealthID")
+                                    )
+
+                                }else null,
                                 syncState = SyncState.SYNCED,
                                 isDraft = false
                             )

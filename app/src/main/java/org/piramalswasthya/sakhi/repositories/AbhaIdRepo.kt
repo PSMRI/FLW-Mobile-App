@@ -25,6 +25,7 @@ import org.piramalswasthya.sakhi.network.AbhaVerifyAadhaarOtpRequest
 import org.piramalswasthya.sakhi.network.AbhaVerifyAadhaarOtpResponse
 import org.piramalswasthya.sakhi.network.AbhaVerifyMobileOtpRequest
 import org.piramalswasthya.sakhi.network.AbhaVerifyMobileOtpResponse
+import org.piramalswasthya.sakhi.network.AddHealthIdRecord
 import org.piramalswasthya.sakhi.network.AmritApiService
 import org.piramalswasthya.sakhi.network.CreateAbhaIdGovRequest
 import org.piramalswasthya.sakhi.network.CreateAbhaIdRequest
@@ -156,7 +157,7 @@ class AbhaIdRepo @Inject constructor(
         }
     }
 
-    suspend fun generateOtpForAadhaarV2(req: AbhaGenerateAadhaarOtpRequest): NetworkResult<AbhaGenerateAadhaarOtpResponseV2> {
+    suspend fun generateAadhaarOtpV3(req: AbhaGenerateAadhaarOtpRequest): NetworkResult<AbhaGenerateAadhaarOtpResponseV2> {
         return withContext(Dispatchers.IO) {
             try {
                 // ABHA v1/v2 encryption technique
@@ -352,7 +353,10 @@ class AbhaIdRepo @Inject constructor(
             } catch (e: IOException) {
                 NetworkResult.Error(-1, "Unable to connect to Internet!")
             } catch (e: JSONException) {
-                NetworkResult.Error(-2, "Invalid response! Please try again!")
+                if (e.message.toString().contains("No value for details")){
+                    return@withContext NetworkResult.Error(-5, "Incorrect OTP, Please Enter Valid OTP")
+                }
+                NetworkResult.Error(-2, "SMS Gateway is unavailable! Please try again!")
             } catch (e: SocketTimeoutException) {
                 NetworkResult.Error(-3, "Request Timed out! Please try again!")
             } catch (e: java.lang.Exception) {
@@ -595,6 +599,46 @@ class AbhaIdRepo @Inject constructor(
                         ) {
                             userRepo.refreshTokenTmc(user.userName, user.password)
                             mapHealthIDToBeneficiary(mapHIDtoBeneficiary)
+                        } else {
+                            NetworkResult.Error(
+                                0,
+                                JSONObject(responseBody).getString("errorMessage")
+                            )
+                        }
+                    }
+
+                    else -> NetworkResult.Error(0, responseBody.toString())
+                }
+            } catch (e: IOException) {
+                NetworkResult.Error(-1, "Unable to connect to Internet!")
+            } catch (e: JSONException) {
+                NetworkResult.Error(-2, "Invalid response! Please try again!")
+            } catch (e: SocketTimeoutException) {
+                NetworkResult.Error(-3, "Request Timed out! Please try again!")
+            } catch (e: java.lang.Exception) {
+                NetworkResult.Error(-4, e.message ?: "Unknown Error")
+            }
+        }
+    }
+
+
+    suspend fun addHealthIdRecord(addHealthIdRecord: AddHealthIdRecord): NetworkResult<String> {
+        return withContext((Dispatchers.IO)) {
+            try {
+                val user =
+                    prefDao.getLoggedInUser() ?: throw IllegalStateException("No user logged in!!")
+                addHealthIdRecord.providerServiceMapId = user.serviceMapId
+                addHealthIdRecord.createdBy = user.userName
+                val response = amritApiService.addHealthIdRecord(addHealthIdRecord)
+                val responseBody = response.body()?.string()
+                when (responseBody?.let { JSONObject(it).getInt("statusCode") }) {
+                    200 -> NetworkResult.Success(responseBody)
+                    5000, 5002 -> {
+                        if (JSONObject(responseBody).getString("errorMessage")
+                                .contentEquals("Invalid login key or session is expired")
+                        ) {
+                            userRepo.refreshTokenTmc(user.userName, user.password)
+                            addHealthIdRecord(addHealthIdRecord)
                         } else {
                             NetworkResult.Error(
                                 0,
