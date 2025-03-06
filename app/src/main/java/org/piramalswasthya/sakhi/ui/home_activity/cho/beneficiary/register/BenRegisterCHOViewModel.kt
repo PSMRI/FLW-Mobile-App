@@ -82,7 +82,7 @@ class BenRegisterCHOViewModel @Inject constructor(
                 genDetails = BenRegGen(reproductiveStatus = "OTHER", reproductiveStatusId = 5),
                 syncState = SyncState.UNSYNCED,
                 locationRecord = preferenceDao.getLocationRecord()!!,
-                isVerified = false
+                isConsent = false
             )
 //            dataset.mapValues(benRegCache, 0)
         }

@@ -134,8 +134,8 @@ abstract class InAppDb : RoomDatabase() {
         fun getInstance(appContext: Context): InAppDb {
 
             val MIGRATION_1_2 = Migration(18, 19, migrate = {
-                it.execSQL("alter table BEN_BASIC_CACHE add column isVerified BOOL")
-                it.execSQL("alter table BENEFICIARY add column isVerified BOOL")
+                it.execSQL("alter table BEN_BASIC_CACHE add column isConsent BOOL")
+                it.execSQL("alter table BENEFICIARY add column isConsent BOOL")
 
             })
 
