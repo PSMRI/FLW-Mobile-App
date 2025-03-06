@@ -22,6 +22,7 @@ import org.piramalswasthya.sakhi.model.InputType.CHECKBOXES
 import org.piramalswasthya.sakhi.model.InputType.DATE_PICKER
 import org.piramalswasthya.sakhi.model.InputType.DROPDOWN
 import org.piramalswasthya.sakhi.model.InputType.EDIT_TEXT
+import org.piramalswasthya.sakhi.model.InputType.FILE_UPLOAD
 import org.piramalswasthya.sakhi.model.InputType.IMAGE_VIEW
 import org.piramalswasthya.sakhi.model.InputType.RADIO
 import org.piramalswasthya.sakhi.model.InputType.TEXT_VIEW
@@ -364,6 +365,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
     )
 
 
+
     val rchId = FormElement(
         id = 23,
         inputType = EDIT_TEXT,
@@ -454,6 +456,29 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         min = 6000000000
     )
 
+    private val headLine = FormElement(
+        id = 45,
+        inputType = org.piramalswasthya.sakhi.model.InputType.HEADLINE,
+        title = "Birth Certificates",
+        headingLine = false,
+        required = false,
+    )
+    private val fileUploadFront = FormElement(
+        id = 46,
+        inputType = FILE_UPLOAD,
+        title = "Front Side",
+        required = false,
+    )
+    private val fileUploadBack = FormElement(
+        id = 47,
+        inputType = FILE_UPLOAD,
+        title = "Back Side",
+        required = false,
+    )
+
+    fun getIndexOfBirthCertificateFrontPath() = getIndexById(fileUploadFront.id)
+    fun getIndexOfBirthCertificateBackPath() = getIndexById(fileUploadBack.id)
+
 
     val firstPage by lazy {
         listOf(
@@ -495,7 +520,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             contactNumber,
             community,
             religion,
-            rchId,
+            rchId
 //            hasAadharNo,
         )
         this.familyHeadPhoneNo = familyHeadPhoneNo?.toString()
@@ -505,6 +530,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             firstName.value = saved.firstName
             lastName.value = saved.lastName
             agePopup.value = getDateFromLong(saved.dob)
+            fileUploadFront.value = saved?.kidDetails?.birthCertificateFileFrontView
+            fileUploadBack.value = saved?.kidDetails?.birthCertificateFileBackView
 //            dob.value = getDateFromLong(saved.dob)
 //            age.value = getAgeFromDob(saved.dob).toString()
 //            ageUnit.value = ageUnit.getStringFromPosition(saved.ageUnitId)
@@ -653,6 +680,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 childRegisteredAtSchool
             ) + 1, typeOfSchool
         )
+
         birthCertificateNumber.value = ben?.kidDetails?.birthCertificateNumber
         placeOfBirth.value =
             ben?.kidDetails?.birthPlaceId?.let { placeOfBirth.getStringFromPosition(it) }
@@ -679,10 +707,16 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             list.addAll(
                 listOf(
                     birthCertificateNumber,
-                    placeOfBirth
+                    placeOfBirth,
+                    headLine,
+                    fileUploadFront,
+                    fileUploadBack
                 )
             )
         }
+
+
+
         if (!isKid() and !hasThirdPage()) {
             list.remove(rchId)
         }
@@ -760,6 +794,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             gender.value = gender.getStringFromPosition(saved.genderId)
             gender.inputType = TEXT_VIEW
             fatherName.value = saved.fatherName
+            fileUploadFront.value = saved.kidDetails?.birthCertificateFileFrontView
+            fileUploadBack.value = saved.kidDetails?.birthCertificateFileBackView
             saved.fatherName?.let {
                 if (it.isNotEmpty()) fatherName.inputType = TEXT_VIEW
             }
@@ -851,6 +887,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             ) + 1, typeOfSchool
         )
 
+
         if (!isKid() and !hasThirdPage()) {
             list.remove(rchId)
         }
@@ -885,7 +922,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             contactNumber,
             community,
             religion,
-            rchId,
+            rchId
 //            hasAadharNo,
         )
         this.familyHeadPhoneNo = household.family?.familyHeadPhoneNo?.toString()
@@ -949,6 +986,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             gender.value = gender.getStringFromPosition(saved.genderId)
             gender.inputType = TEXT_VIEW
             fatherName.value = saved.fatherName
+            fileUploadFront.value = saved.kidDetails?.birthCertificateFileFrontView
+            fileUploadBack.value = saved.kidDetails?.birthCertificateFileBackView
             saved.fatherName?.let {
                 if (it.isNotEmpty()) fatherName.inputType = TEXT_VIEW
             }
@@ -1123,7 +1162,10 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             list.addAll(
                 listOf(
                     birthCertificateNumber,
-                    placeOfBirth
+                    placeOfBirth,
+                    headLine,
+                    fileUploadFront,
+                    fileUploadBack
                 )
             )
         }
@@ -1146,6 +1188,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             motherName.value?.let {
                 if (it.isNotEmpty()) motherName.inputType = TEXT_VIEW
             }
+
         } else {
             motherName.value = "${hoF.firstName} ${hoF.lastName ?: ""}"
             fatherName.value = hoFSpouse?.let {
@@ -1158,6 +1201,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 if (it.isNotEmpty()) motherName.inputType = TEXT_VIEW
             }
         }
+        fileUploadFront.value = hof?.kidDetails?.birthCertificateFileFrontView
+        fileUploadBack.value = hof?.kidDetails?.birthCertificateFileBackView
         val hoFAge = getAgeFromDob(hoF.dob)
         val hoFSpouseAge = hoFSpouse?.dob?.let { getAgeFromDob(it) }
         val maxAge = (if (hoFSpouseAge == null) hoFAge else minOf(
@@ -1175,6 +1220,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             it.timeInMillis
         }
         maxAgeYear = maxAge
+
 
         lastName.value = hoF.lastName
     }
@@ -2184,6 +2230,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 babyWeight.value?.takeIf { it.isNotEmpty() }?.toDouble() ?: 0.0
 
 
+            ben.kidDetails!!.birthCertificateFileBackView = fileUploadBack.value
+            ben.kidDetails!!.birthCertificateFileFrontView = fileUploadFront.value
             ben.isDraft = false
 
         }

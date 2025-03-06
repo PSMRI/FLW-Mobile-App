@@ -106,6 +106,11 @@ class NewBenRegViewModel @Inject constructor(
     private var lastImageFormId: Int = 0
     var otp = 1234
 
+    fun getIndexOfBirthCertificateFront() = dataset.getIndexOfBirthCertificateFrontPath()
+
+    fun getIndexOfBirthCertificateBack() = dataset.getIndexOfBirthCertificateBackPath()
+
+
     init {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
@@ -123,14 +128,14 @@ class NewBenRegViewModel @Inject constructor(
 
                 if (benIdFromArgs != 0L && recordExists.value == true) {
                     ben = benRepo.getBeneficiaryRecord(benIdFromArgs, hhId)!!
-                    isOtpVerified = ben.isVerified
+                    isOtpVerified = ben.isConsent
                     dataset.setFirstPageToRead(
                         ben,
                         familyHeadPhoneNo = household.family?.familyHeadPhoneNo
                     )
                 } else if (benIdFromArgs != 0L && recordExists.value != true) {
                     ben = benRepo.getBeneficiaryRecord(benIdFromArgs, hhId)!!
-                    isOtpVerified = ben.isVerified
+                    isOtpVerified = ben.isConsent
                     if (isHoF) dataset.setPageForHof(
                         if (this@NewBenRegViewModel::ben.isInitialized) ben else null,
                         household
@@ -186,7 +191,7 @@ class NewBenRegViewModel @Inject constructor(
                             genDetails = BenRegGen(),
                             syncState = SyncState.UNSYNCED,
                             locationRecord = locationRecord,
-                            isVerified = isOtpVerified
+                            isConsent = isOtpVerified
                         )
                     }
                     dataset.mapValues(ben, 2)

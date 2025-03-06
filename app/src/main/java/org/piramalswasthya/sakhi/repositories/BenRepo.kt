@@ -470,7 +470,7 @@ class BenRepo @Inject constructor(
                                             syncState = if (benExists) SyncState.SYNCED else SyncState.SYNCING,
                                             dob = 0L,
                                             relToHeadId = 0,
-                                            isVerified = false
+                                            isConsent = false
                                         )
                                     )
                                 }
@@ -975,7 +975,7 @@ class BenRepo @Inject constructor(
                                 ) else null,
                                 syncState = SyncState.SYNCED,
                                 isDraft = false,
-                                isVerified = false
+                                isConsent = false
                             )
                         )
 

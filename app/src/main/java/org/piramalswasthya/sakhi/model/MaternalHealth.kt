@@ -210,7 +210,7 @@ data class BenWithPwrCache(
             syncState = ben.hrppaSyncState,
             form2Enabled = true,
             form2Filled = ben.hrpmbpFilled,
-            isVerified = false
+            isConsent = false
         )
     }
 

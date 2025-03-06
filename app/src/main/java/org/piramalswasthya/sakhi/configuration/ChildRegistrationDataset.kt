@@ -339,7 +339,7 @@ class ChildRegistrationDataset(
                 birthCertificateFileFrontView = fileUploadFront.value.toString(),
                 birthCertificateFileBackView = fileUploadBack.value.toString()
             ),
-            isVerified = false
+            isConsent = false
         )
     }
 

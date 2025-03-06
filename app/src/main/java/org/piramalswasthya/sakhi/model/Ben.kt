@@ -50,7 +50,7 @@ enum class Gender {
 
 @DatabaseView(
     viewName = "BEN_BASIC_CACHE",
-    value = "SELECT b.beneficiaryId as benId, b.isVerified as isVerified, b.householdId as hhId, b.regDate, b.firstName as benName, b.lastName as benSurname, b.gender, b.dob as dob, b.familyHeadRelationPosition as relToHeadId" +
+    value = "SELECT b.beneficiaryId as benId, b.isConsent as isConsent, b.householdId as hhId, b.regDate, b.firstName as benName, b.lastName as benSurname, b.gender, b.dob as dob, b.familyHeadRelationPosition as relToHeadId" +
             ", b.contactNumber as mobileNo, b.fatherName, h.fam_familyHeadName as familyHeadName, b.gen_spouseName as spouseName,b.rchId, b.gen_lastMenstrualPeriod as lastMenstrualPeriod" +
             ", b.isHrpStatus as hrpStatus, b.syncState, b.gen_reproductiveStatusId as reproductiveStatusId, b.isKid, b.immunizationStatus, b.gen_spouseName as spouseName," +
             " b.loc_village_id as villageId, b.abha_healthIdNumber as abhaId," +
@@ -162,7 +162,7 @@ data class BenBasicCache(
     val isMdsr: Boolean,
     val crFilled: Boolean,
     val doFilled: Boolean,
-    val isVerified: Boolean
+    val isConsent: Boolean
 ) {
     companion object {
         val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
@@ -243,7 +243,7 @@ data class BenBasicCache(
             rchId = rchId?.takeIf { it.isNotEmpty() } ?: "Not Available",
             hrpStatus = hrpStatus,
             syncState = syncState,
-            isVerified = isVerified
+            isConsent = isConsent
 
         )
     }
@@ -266,7 +266,7 @@ data class BenBasicCache(
             hrpStatus = hrpStatus,
             relToHeadId = 0,
             syncState = syncState,
-            isVerified = false
+            isConsent = false
         )
     }
 
@@ -289,7 +289,7 @@ data class BenBasicCache(
             form1Filled = tbsnFilled,
             syncState = tbsnSyncState
                 ?: throw IllegalStateException("Sync state for tbsn is null!!"),
-            isVerified = false
+            isConsent = false
         )
     }
 
@@ -311,7 +311,7 @@ data class BenBasicCache(
             form1Filled = tbspFilled,
             syncState = tbspSyncState
                 ?: throw IllegalStateException("Sync state for tbsp is null!!"),
-            isVerified = false
+            isConsent = false
         )
     }
 
@@ -333,7 +333,7 @@ data class BenBasicCache(
             form1Filled = cdrFilled,
             syncState = cdrSyncState
                 ?: throw IllegalStateException("Sync state for cbac is null!!"),
-            isVerified = false
+            isConsent = false
         )
     }
 
@@ -355,7 +355,7 @@ data class BenBasicCache(
             form1Filled = mdsrFilled,
             syncState = mdsrSyncState
                 ?: throw IllegalStateException("Sync state for mdsr is null!!"),
-            isVerified = false
+            isConsent = false
         )
     }
 
@@ -376,7 +376,7 @@ data class BenBasicCache(
             hrpStatus = hrpStatus,
             form1Filled = pmsmaFilled,
             syncState = syncState,
-            isVerified = false
+            isConsent = false
         )
     }
 
@@ -397,7 +397,7 @@ data class BenBasicCache(
             hrpStatus = hrpStatus,
             form1Filled = ectFilled,
             syncState = syncState,
-            isVerified = false
+            isConsent = false
         )
     }
 
@@ -418,7 +418,7 @@ data class BenBasicCache(
             hrpStatus = hrpStatus,
             form1Filled = false,
             syncState = syncState,
-            isVerified = false
+            isConsent = false
         )
     }
 
@@ -442,7 +442,7 @@ data class BenBasicCache(
                 42
             )),
             syncState = syncState,
-            isVerified = false
+            isConsent = false
         )
     }
 
@@ -466,7 +466,7 @@ data class BenBasicCache(
             form1Enabled = hbycFilled || dob > (System.currentTimeMillis() - TimeUnit.DAYS.toMillis(
                 490
             )),
-            isVerified = false
+            isConsent = false
         )
     }
 
@@ -487,7 +487,7 @@ data class BenBasicCache(
             hrpStatus = hrpStatus,
             form1Filled = pwrFilled,
             syncState = pwrSyncState,
-            isVerified = false
+            isConsent = false
         )
     }
 
@@ -514,7 +514,7 @@ data class BenBasicCache(
             syncState = hrppaSyncState,
             form2Enabled = true,
             form2Filled = hrpmbpFilled,
-            isVerified = false
+            isConsent = false
         )
     }
 
@@ -536,7 +536,7 @@ data class BenBasicCache(
             hrpStatus = hrpStatus,
             form1Filled = hrpnpaFilled,
             syncState = hrpnpaSyncState,
-            isVerified = false
+            isConsent = false
         )
     }
 
@@ -561,7 +561,7 @@ data class BenBasicCache(
             form2Filled = hrnptFilled,
             form2Enabled = hrnptFilled,
             syncState = hrnptSyncState,
-            isVerified = false
+            isConsent = false
         )
     }
 
@@ -588,7 +588,7 @@ data class BenBasicCache(
             form2Filled = hrptFilled,
             form2Enabled = hrptFilled,
             syncState = hrptSyncState,
-            isVerified = false
+            isConsent = false
         )
     }
 
@@ -609,7 +609,7 @@ data class BenBasicCache(
             hrpStatus = hrpStatus,
             form1Filled = irFilled,
             syncState = irSyncState,
-            isVerified = false
+            isConsent = false
         )
     }
 
@@ -630,7 +630,7 @@ data class BenBasicCache(
             hrpStatus = hrpStatus,
             form1Filled = irFilled,
             syncState = crSyncState,
-            isVerified = false
+            isConsent = false
         )
     }
 
@@ -651,7 +651,7 @@ data class BenBasicCache(
             hrpStatus = hrpStatus,
             form1Filled = doFilled,
             syncState = doSyncState,
-            isVerified = false
+            isConsent = false
         )
     }
 
@@ -672,7 +672,7 @@ data class BenBasicCache(
             hrpStatus = hrpStatus,
             form1Filled = ecrFilled,
             syncState = syncState,
-            isVerified = false
+            isConsent = false
         )
     }
 
@@ -693,7 +693,7 @@ data class BenBasicCache(
             hrpStatus = hrpStatus,
             form1Filled = false,
             syncState = syncState,
-            isVerified = false
+            isConsent = false
         )
     }
 
@@ -722,7 +722,7 @@ data class BenBasicDomain(
     val rchId: String,
     val hrpStatus: Boolean = false,
     var syncState: SyncState?,
-    val isVerified: Boolean
+    val isConsent: Boolean
 )
 
 
@@ -754,7 +754,7 @@ data class BenBasicDomainForForm(
     val form3Enabled: Boolean = true,
     val formsFilled: Int = 0,
     var syncState: SyncState?,
-    val isVerified: Boolean
+    val isConsent: Boolean
 
 ) {
     companion object
@@ -819,9 +819,9 @@ data class BenRegKid(
     var birthBCG: Boolean = false,
     var birthHepB: Boolean = false,
     var birthOPV: Boolean = false,
-    val isVerified: Boolean = false,
-    val birthCertificateFileFrontView: String? = null,
-    val birthCertificateFileBackView: String? = null
+    val isConsent: Boolean = false,
+    var birthCertificateFileFrontView: String? = null,
+    var birthCertificateFileBackView: String? = null
 
 )
 
@@ -901,7 +901,7 @@ data class BenRegKidNetwork(
     val birthBCG: Boolean? = null,
     val birthHepB: Boolean? = null,
     val birthOPV: Boolean? = null,
-    val isVerified: Boolean
+    val isConsent: Boolean
 
 )
 
@@ -1137,7 +1137,7 @@ data class BenRegCache(
     var syncState: SyncState,
 
     var isDraft: Boolean,
-    val isVerified: Boolean = false
+    val isConsent: Boolean = false
 
 ) : FormDataModel {
 
@@ -1315,6 +1315,8 @@ data class BenRegCache(
             maritalStatusID = if (isKid) null else genDetails?.maritalStatusId?.toString() ?: "",
             maritalStatusName = if (isKid) null else genDetails?.maritalStatus ?: "",
 
+
+
         )
     }
 
@@ -1383,7 +1385,7 @@ data class BenRegCache(
             stateid = locationRecord.state.id,
             districtid = locationRecord.district.id,
             villageid = locationRecord.village.id,
-            isVerified = false
+            isConsent = false,
 
         )
     }
