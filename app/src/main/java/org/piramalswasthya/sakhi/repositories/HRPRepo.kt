@@ -181,7 +181,7 @@ class HRPRepo @Inject constructor(
 
                         val errorMessage = jsonObj.getString("errorMessage")
                         val responseStatusCode = jsonObj.getInt("statusCode")
-                        Timber.d("Pull from amrit assess data : $responseStatusCode")
+                        Timber.d("Pull from amrit micro birth plan data: $responseStatusCode")
                         when (responseStatusCode) {
                             200 -> {
                                 try {
@@ -236,11 +236,7 @@ class HRPRepo @Inject constructor(
 
 
                 val response = tmcNetworkApiService.getMicroBirthPlanAssessData(
-//                    HRPMicroBirthPlanDTO(
                     user.userId
-
-
-//                    )
                 )
                 val statusCode = response.code()
                 if (statusCode == 200) {
@@ -277,7 +273,7 @@ class HRPRepo @Inject constructor(
                             }
 
                             else -> {
-                                throw IllegalStateException("$responseStatusCode received, dont know what todo!?")
+                                throw IllegalStateException("Unexpected response code: $responseStatusCode")
                             }
                         }
                     }
@@ -1202,16 +1198,7 @@ class HRPRepo @Inject constructor(
             }
         }
     }
-
-    private fun updateSyncStatusHrpMBP(entities: List<HRPMicroBirthPlanCache>?) {
-        entities?.let {
-            entities.forEach {
-                database.hrpDao.saveRecord(it)
-            }
-        }
-    }
-
-    private fun updateSyncStatusHrpMBP(entity: HRPMicroBirthPlanCache) {
+        private fun updateSyncStatusHrpMBP(entity: HRPMicroBirthPlanCache) {
         database.hrpDao.saveRecord(entity)
     }
 
