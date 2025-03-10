@@ -72,9 +72,9 @@ class AbhaIdViewModel @Inject constructor(
             when (val result = abhaIdRepo.getAccessToken()) {
                 is NetworkResult.Success -> {
                     _accessToken = result.data
+                    TokenInsertAbhaInterceptor.setToken(accessToken.accessToken)
                     generatePublicKey()
                     _state.value = State.SUCCESS
-                    TokenInsertAbhaInterceptor.setToken(accessToken.accessToken)
                 }
 
                 is NetworkResult.Error -> {

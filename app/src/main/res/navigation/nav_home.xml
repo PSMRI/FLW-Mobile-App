@@ -581,6 +581,9 @@
         <argument
             android:name="benId"
             app:argType="long" />
+        <argument
+            android:name="category"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/childImmunizationListFragment"

@@ -63,6 +63,7 @@ class BenListCHOViewModel @Inject constructor(
                 if (result != null) {
                     _abha.value = result.healthIdNumber
                     it.healthIdDetails = BenHealthIdDetails(result.healthId, result.healthIdNumber)
+                    it.isNewAbha = result.isNewAbha
                     benRepo.updateRecord(it)
                 } else {
                     _benRegId.value = it.benRegId

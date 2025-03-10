@@ -17,7 +17,6 @@ import org.piramalswasthya.sakhi.databinding.FragmentAadhaarOtpBinding
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.AadhaarIdViewModel
 import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_otp.AadhaarOtpViewModel.State
-import org.piramalswasthya.sakhi.ui.abha_id_activity.generate_mobile_otp.GenerateMobileOtpFragmentDirections
 
 @AndroidEntryPoint
 class AadhaarOtpFragment : Fragment() {
@@ -29,10 +28,6 @@ class AadhaarOtpFragment : Fragment() {
     private val viewModel: AadhaarOtpViewModel by viewModels()
 
     private val parentViewModel: AadhaarIdViewModel by viewModels({ requireActivity() })
-
-    val args: AadhaarOtpFragmentArgs by lazy {
-        AadhaarOtpFragmentArgs.fromBundle(requireArguments())
-    }
 
     private var timer = object : CountDownTimer(30000, 1000) {
         override fun onTick(millisUntilFinished: Long) {
@@ -60,11 +55,22 @@ class AadhaarOtpFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         startResendTimer()
         binding.btnVerifyOTP.setOnClickListener {
-            viewModel.verifyOtpClicked(binding.tietAadhaarOtp.text.toString(), parentViewModel.mobileNumber)
+            if (parentViewModel.abhaMode.value == AadhaarIdViewModel.Abha.SEARCH) {
+                viewModel.verifyLoginOtpClicked(binding.tietAadhaarOtp.text.toString())
+            } else {
+                viewModel.verifyOtpClicked(
+                    binding.tietAadhaarOtp.text.toString(),
+                    parentViewModel.mobileNumber
+                )
+            }
         }
         binding.resendOtp.setOnClickListener {
-            viewModel.generateOtpClicked("")
+            viewModel.resendAadhaarOtp(parentViewModel.aadhaarNumber)
             startResendTimer()
+        }
+
+        if (parentViewModel.abhaMode.value == AadhaarIdViewModel.Abha.SEARCH) {
+            binding.textView6.text = "Verify Aadhaar OTP"
         }
 
         binding.tietAadhaarOtp.addTextChangedListener(object : TextWatcher {
@@ -76,6 +82,7 @@ class AadhaarOtpFragment : Fragment() {
 
             override fun afterTextChanged(p0: Editable?) {
                 binding.btnVerifyOTP.isEnabled = p0 != null && p0.length == 6
+                binding.tvErrorText.visibility = View.GONE
             }
 
         })
@@ -113,10 +120,17 @@ class AadhaarOtpFragment : Fragment() {
                 }
 
                 State.OTP_VERIFY_SUCCESS -> {
-                    if (parentViewModel.mobileNumber == viewModel.mobileNumber) {
+                    if (parentViewModel.abhaMode.value == AadhaarIdViewModel.Abha.SEARCH) {
                         findNavController().navigate(
                             AadhaarOtpFragmentDirections.actionAadhaarOtpFragmentToCreateAbhaFragment(
-                                viewModel.txnId, viewModel.name, viewModel.phrAddress, viewModel.abhaNumber
+                                viewModel.txnId, viewModel.name, viewModel.phrAddress, viewModel.abhaNumber,""
+                            )
+                        )
+                    } else if (parentViewModel.abhaMode.value == AadhaarIdViewModel.Abha.CREATE &&
+                        parentViewModel.mobileNumber == viewModel.mobileNumber) {
+                        findNavController().navigate(
+                            AadhaarOtpFragmentDirections.actionAadhaarOtpFragmentToCreateAbhaFragment(
+                                viewModel.txnId, viewModel.name, viewModel.phrAddress, viewModel.abhaNumber,viewModel.abhaResponse
                             )
                         )
                     } else {
@@ -128,7 +142,7 @@ class AadhaarOtpFragment : Fragment() {
                 State.SUCCESS -> {
                     findNavController().navigate(
                         AadhaarOtpFragmentDirections.actionAadhaarOtpFragmentToVerifyMobileOtpFragment(
-                            viewModel.txnId, viewModel.mobileNumber, viewModel.name, viewModel.phrAddress, viewModel.abhaNumber
+                            viewModel.txnId, viewModel.mobileNumber, viewModel.mobileFromArgs,viewModel.name, viewModel.phrAddress, viewModel.abhaNumber,viewModel.abhaResponse
                         )
                     )
                     viewModel.resetState()

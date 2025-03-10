@@ -5,25 +5,23 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import okhttp3.ResponseBody
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.BenHealthIdDetails
-import org.piramalswasthya.sakhi.network.AbhaVerifyAadhaarOtpRequest
-import org.piramalswasthya.sakhi.network.AuthData
-import org.piramalswasthya.sakhi.network.Consent
+import org.piramalswasthya.sakhi.network.ABHAProfile
+import org.piramalswasthya.sakhi.network.AbhaVerifyAadhaarOtpResponse
+import org.piramalswasthya.sakhi.network.AddHealthIdRecord
 import org.piramalswasthya.sakhi.network.CreateAbhaIdResponse
 import org.piramalswasthya.sakhi.network.CreateHIDResponse
-import org.piramalswasthya.sakhi.network.CreateHealthIdRequest
 import org.piramalswasthya.sakhi.network.GenerateOtpHid
 import org.piramalswasthya.sakhi.network.MapHIDtoBeneficiary
 import org.piramalswasthya.sakhi.network.NetworkResult
-import org.piramalswasthya.sakhi.network.Otp
 import org.piramalswasthya.sakhi.network.ValidateOtpHid
 import org.piramalswasthya.sakhi.repositories.AbhaIdRepo
 import org.piramalswasthya.sakhi.repositories.BenRepo
-import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_otp.AadhaarOtpViewModel.State
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -53,6 +51,9 @@ class CreateAbhaViewModel @Inject constructor(
     private val txnId =
         CreateAbhaFragmentArgs.fromSavedStateHandle(savedStateHandle).txnId
 
+    private val abhaResponse =
+        CreateAbhaFragmentArgs.fromSavedStateHandle(savedStateHandle).abhaResponse
+
     private val hID =
         CreateAbhaFragmentArgs.fromSavedStateHandle(savedStateHandle).phrAddress
 
@@ -69,8 +70,18 @@ class CreateAbhaViewModel @Inject constructor(
     val errorMessage: LiveData<String?>
         get() = _errorMessage
 
+    private val _abhaResponseLiveData = MutableLiveData<AbhaVerifyAadhaarOtpResponse?>(null)
+    val abhaResponseLiveData: LiveData<AbhaVerifyAadhaarOtpResponse?>
+        get() = _abhaResponseLiveData
+
     init {
         _state.value = State.LOADING
+        if (abhaResponse!=null){
+            val response: AbhaVerifyAadhaarOtpResponse = Gson().fromJson(abhaResponse, AbhaVerifyAadhaarOtpResponse::class.java) ?: AbhaVerifyAadhaarOtpResponse()
+            if (response!=null){
+                _abhaResponseLiveData.value = response
+            }
+        }
     }
 
     fun printAbhaCard() {
@@ -79,7 +90,7 @@ class CreateAbhaViewModel @Inject constructor(
             when (result) {
                 is NetworkResult.Success -> {
                     byteImage.value = result.data
-                    _state.value = State.ABHA_GENERATE_SUCCESS
+                    _state.value = State.DOWNLOAD_SUCCESS
                 }
 
                 is NetworkResult.Error -> {
@@ -102,15 +113,17 @@ class CreateAbhaViewModel @Inject constructor(
                     benId,
                     if (benRegId != 0L) benRegId else null,
                     hID,
-                    healthIdNumber
+                    healthIdNumber,
+                    abhaResponseLiveData.value!!
                 )
             } else {
+                addHealthIdRecord(abhaResponseLiveData.value!!)
                 _state.value = State.ABHA_GENERATE_SUCCESS
             }
         }
     }
 
-    fun createHID(benId: Long, benRegId: Long) {
+  /*  fun createHID(benId: Long, benRegId: Long) {
         viewModelScope.launch {
             when (val result =
                 abhaIdRepo.createHealthIdWithUid(
@@ -146,7 +159,7 @@ class CreateAbhaViewModel @Inject constructor(
                 }
             }
         }
-    }
+    }*/
 
     fun resetState() {
         _state.value = State.IDLE
@@ -160,11 +173,42 @@ class CreateAbhaViewModel @Inject constructor(
         benId: Long,
         benRegId: Long?,
         healthId: String,
-        healthIdNumber: String?
+        healthIdNumber: String?,
+        response: AbhaVerifyAadhaarOtpResponse
     ) {
         val ben = benRepo.getBenFromId(benId)
+        val abhaProfile = ABHAProfile(
+            firstName = response.ABHAProfile.firstName,
+            middleName = response.ABHAProfile.middleName,
+            lastName = response.ABHAProfile.lastName,
+            dob = response.ABHAProfile.dob,
+            gender = response.ABHAProfile.gender,
+            mobile = response.ABHAProfile.mobile,
+            email = response.ABHAProfile.email,
+            phrAddress = response.ABHAProfile.phrAddress,
+            address = response.ABHAProfile.address,
+            districtCode = response.ABHAProfile.districtCode,
+            stateCode = response.ABHAProfile.stateCode,
+            pinCode = response.ABHAProfile.pinCode,
+            abhaType = response.ABHAProfile.abhaType,
+            stateName = response.ABHAProfile.stateName,
+            districtName = response.ABHAProfile.districtName,
+            ABHANumber = response.ABHAProfile.ABHANumber,
+            abhaStatus = response.ABHAProfile.abhaStatus
+        )
 
-        val req = MapHIDtoBeneficiary(benRegId, benId, healthId, healthIdNumber, 34, "")
+        val req = MapHIDtoBeneficiary(
+            beneficiaryRegID = benRegId,
+            beneficiaryID = benId,
+            healthId = healthId,
+            healthIdNumber = healthIdNumber,
+            providerServiceMapId = 34,
+            createdBy = "",
+            message =response.message,
+            txnId=response.txnId,
+            ABHAProfile = abhaProfile,
+            isNew = response.isNew
+        )
 
         viewModelScope.launch {
             when (val result =
@@ -177,9 +221,62 @@ class CreateAbhaViewModel @Inject constructor(
                         ben.lastName?.let { lastName ->
                             _benMapped.value = ben.firstName + " $lastName"
                         }
-                        it.healthIdDetails = BenHealthIdDetails(healthId, healthIdNumber)
+                        it.healthIdDetails = BenHealthIdDetails(healthId, healthIdNumber?:"", isNewAbha = response.isNew)
+                        it.isNewAbha =response.isNew
                         benRepo.updateRecord(ben)
                     }
+                    _state.value = State.ABHA_GENERATE_SUCCESS
+                }
+
+                is NetworkResult.Error -> {
+                    _errorMessage.value = result.message
+                    _state.value = State.ERROR_SERVER
+                }
+
+                is NetworkResult.NetworkError -> {
+                    Timber.i(result.toString())
+                    _state.value = State.ERROR_NETWORK
+                }
+            }
+        }
+    }
+
+    private suspend fun addHealthIdRecord(response: AbhaVerifyAadhaarOtpResponse) {
+        val abhaProfile = ABHAProfile(
+            firstName = response.ABHAProfile.firstName,
+            middleName = response.ABHAProfile.middleName,
+            lastName = response.ABHAProfile.lastName,
+            dob = response.ABHAProfile.dob,
+            gender = response.ABHAProfile.gender,
+            mobile = response.ABHAProfile.mobile,
+            email = response.ABHAProfile.email,
+            phrAddress = response.ABHAProfile.phrAddress,
+            address = response.ABHAProfile.address,
+            districtCode = response.ABHAProfile.districtCode,
+            stateCode = response.ABHAProfile.stateCode,
+            pinCode = response.ABHAProfile.pinCode,
+            abhaType = response.ABHAProfile.abhaType,
+            stateName = response.ABHAProfile.stateName,
+            districtName = response.ABHAProfile.districtName,
+            ABHANumber = response.ABHAProfile.ABHANumber,
+            abhaStatus = response.ABHAProfile.abhaStatus
+        )
+
+        val req = AddHealthIdRecord(
+            healthId = hID,
+            healthIdNumber = healthIdNumber,
+            providerServiceMapId = 34,
+            createdBy = "",
+            message =response.message,
+            txnId=response.txnId,
+            ABHAProfile = abhaProfile,
+            isNew = response.isNew
+        )
+
+        viewModelScope.launch {
+            when (val result =
+                abhaIdRepo.addHealthIdRecord(req)) {
+                is NetworkResult.Success -> {
                     _state.value = State.ABHA_GENERATE_SUCCESS
                 }
 
