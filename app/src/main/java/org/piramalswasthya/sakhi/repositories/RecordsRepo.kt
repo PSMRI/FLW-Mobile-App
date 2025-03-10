@@ -200,12 +200,10 @@ class RecordsRepo @Inject constructor(
     val eligibleCoupleTrackingMissedPeriodList = benDao.getAllEligibleTrackingList(selectedVillage)
         .map { list ->
             list.filter {
-                 it.savedECTRecords.any { it1 ->
-                    if (it1.lmpDate != null) {
-                        System.currentTimeMillis() - it1.lmpDate!! > TimeUnit.DAYS.toMillis(35)
-                    } else {
-                        true
-                    }
+                 it.savedECTRecords.any { record ->
+                     record.lmpDate?.let { it ->
+                         System.currentTimeMillis() - it > TimeUnit.DAYS.toMillis(35)
+                     } ?: false
                 }
             }
                 .map { it.asDomainModel() } }
