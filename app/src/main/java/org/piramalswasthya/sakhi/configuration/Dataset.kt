@@ -92,15 +92,18 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
 
         }
 
-        fun dateReverseFormate(dateStr: String): String? {
-            val inputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        fun dateReverseFormat(dateStr: String): String? {
+            if (dateStr.isEmpty()) return null
 
-            val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-
-            val dateResponse = inputFormat.parse(dateStr)
-            return outputFormat.format(dateResponse!!)
-
-
+            return try {
+                val inputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                
+                val dateResponse = inputFormat.parse(dateStr) ?: return null
+                outputFormat.format(dateResponse)
+            } catch (e: Exception) {
+                null
+            }
         }
 
         fun getMinDateOfReg(): Long {
