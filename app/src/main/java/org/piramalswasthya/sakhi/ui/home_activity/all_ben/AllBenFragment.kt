@@ -148,7 +148,18 @@ class AllBenFragment : Fragment() {
     }
 
     private fun checkAndGenerateABHA(benId: Long) {
-        viewModel.fetchAbha(benId)
+        lifecycleScope.launch {
+            if (viewModel.getBenFromId(benId) == 0L) {
+                androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                    .setTitle("Alert!")
+                    .setMessage("Please wait for the record to sync and try again.")
+                    .setCancelable(false)
+                    .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                    .show()
+            } else {
+                viewModel.fetchAbha(benId)
+            }
+        }
     }
 
     override fun onStart() {

@@ -14,6 +14,7 @@ import android.os.CountDownTimer
 import android.os.Environment
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,6 +34,7 @@ import okhttp3.ResponseBody
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.FragmentCreateAbhaBinding
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
+import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.AadhaarIdViewModel
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 import java.io.File
@@ -49,6 +51,8 @@ class CreateAbhaFragment : Fragment() {
     private val binding: FragmentCreateAbhaBinding
         get() = _binding!!
     private val viewModel: CreateAbhaViewModel by viewModels()
+
+    private val parentViewModel: AadhaarIdViewModel by viewModels({ requireActivity() })
 
     private val channelId = "download abha card"
 
@@ -126,26 +130,39 @@ class CreateAbhaFragment : Fragment() {
         benId = intent.getLongExtra("benId", 0)
         val benRegId = intent.getLongExtra("benRegId", 0)
 
-        viewModel.mapBeneficiaryToHealthId(benId, benRegId)
+        if (parentViewModel.abhaMode.value == AadhaarIdViewModel.Abha.SEARCH) {
+            binding.imageView.setImageResource(R.drawable.ic_exclamation_circle_green)
+            binding.textView7.text = "Here is your ABHA Number!"
+            binding.clDownloadAbha.visibility = View.INVISIBLE
+
+        }else{
+            viewModel.mapBeneficiaryToHealthId(benId, benRegId)
+        }
+
+
+
 
         binding.textView2.text = args.name
         binding.textView4.text = args.abhaNumber
 
-//        binding.pbCai.visibility = View.INVISIBLE
-//        binding.clCreateAbhaId.visibility = View.VISIBLE
-//        binding.clVerifyMobileOtp.visibility = View.INVISIBLE
-//        binding.clError.visibility = View.INVISIBLE
-//        binding.clDownloadAbha.visibility = View.GONE
-
-//        binding.textView2.text = args.name
-//        binding.textView4.text = args.abhaNumber
+        viewModel.abhaResponseLiveData.observe(viewLifecycleOwner) {
+            if (it != null) {
+                if (it.isNew == false) {
+                    binding.imageView.setImageResource(R.drawable.ic_exclamation_circle)
+                    binding.textView7.text = "This ABHA already exists!"
+                } else {
+                    binding.imageView.setImageResource(R.drawable.ic_check_circle)
+                    binding.textView7.text = "ABHA account successfully created!"
+                }
+            }
+        }
 
         viewModel.benMapped.observe(viewLifecycleOwner) {
             it?.let {
                 binding.abhBenMappedTxt.text = String.format(
                     "%s%s%s",
                     resources.getString(R.string.linked_to_beneficiary),
-                    " ",
+                    "\n",
                     it
                 )
                 binding.llAbhaBenMapped.visibility = View.VISIBLE
@@ -196,6 +213,18 @@ class CreateAbhaFragment : Fragment() {
         binding.resendOtp.setOnClickListener {
             viewModel.generateOtp()
             startResendTimer()
+        }
+
+        viewModel.state.observe(viewLifecycleOwner) {
+            if (it.name == "DOWNLOAD_SUCCESS") {
+                binding.clDownloadAbha.visibility = View.INVISIBLE
+                Snackbar.make(
+                    requireView(),
+                    "You can view Abha Card in download folder!!", Snackbar.LENGTH_INDEFINITE
+                ).setAction("OK") {
+                    requireActivity().finish()
+                }.show()
+            }
         }
     }
 
@@ -301,6 +330,13 @@ class CreateAbhaFragment : Fragment() {
 
         state.observe(viewLifecycleOwner) {
             when (it) {
+                is Operation.State.SUCCESS -> {
+                    binding.clDownloadAbha.visibility = View.INVISIBLE
+                    Snackbar.make(
+                        binding.root,
+                        "Downloading $fileName ", Snackbar.LENGTH_SHORT
+                    ).show()
+                }
                 is Operation.State.SUCCESS -> {
                     binding.clDownloadAbha.visibility = View.INVISIBLE
                     Snackbar.make(

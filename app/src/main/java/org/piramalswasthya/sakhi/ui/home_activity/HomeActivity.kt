@@ -57,6 +57,7 @@ import org.piramalswasthya.sakhi.ui.home_activity.home.HomeViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.sync.SyncBottomSheetFragment
 import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
 import org.piramalswasthya.sakhi.ui.service_location_activity.ServiceLocationActivity
+import org.piramalswasthya.sakhi.utils.KeyUtils
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import java.net.URI
 import java.util.Locale
@@ -194,7 +195,7 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // This will block user to cast app screen
-        if (BuildConfig.FLAVOR.equals("production", true)) {
+        if (BuildConfig.FLAVOR.equals("sakshamProd", true) ||BuildConfig.FLAVOR.equals("niramayProd", true) || BuildConfig.FLAVOR.equals("xushrukhaProd", true))  {
             window.setFlags(
                 WindowManager.LayoutParams.FLAG_SECURE,
                 WindowManager.LayoutParams.FLAG_SECURE
@@ -260,7 +261,6 @@ class HomeActivity : AppCompatActivity() {
         viewModel.unprocessedRecordsCount.observe(this) {
             if (it>0) {
                 if (isInternetAvailable(this)){
-                    Log.d("====12345@@","triggerAmritPushWorker called")
                     WorkerUtils.triggerAmritPushWorker(this)
                 }
             }
@@ -298,7 +298,7 @@ class HomeActivity : AppCompatActivity() {
 
 
 // Load URL
-        web.loadUrl(BuildConfig.CHAT_URL)
+       web.loadUrl(KeyUtils.chatUrl())
 
 
 // Handle WebView events
@@ -307,7 +307,7 @@ class HomeActivity : AppCompatActivity() {
                view: WebView,
                request: WebResourceRequest
            ): Boolean {
-               return if (request.url.host == URI(BuildConfig.CHAT_URL).host) {
+               return if (request.url.host == URI(KeyUtils.chatUrl()).host) {
                    false  // Let WebView handle same-origin URLs
                } else {
                    startActivity(Intent(Intent.ACTION_VIEW, request.url))
@@ -379,7 +379,7 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onResume() {
         // This will block user to cast app screen
-        if (BuildConfig.FLAVOR.equals("production", true)) {
+        if (BuildConfig.FLAVOR.equals("sakshamProd", true) ||BuildConfig.FLAVOR.equals("niramayProd", true) || BuildConfig.FLAVOR.equals("xushrukhaProd", true))  {
             window.setFlags(
                 WindowManager.LayoutParams.FLAG_SECURE,
                 WindowManager.LayoutParams.FLAG_SECURE
@@ -531,7 +531,7 @@ class HomeActivity : AppCompatActivity() {
         }
         binding.navView.menu.findItem(R.id.menu_delete_account).setOnMenuItemClickListener {
             var url = ""
-            if (BuildConfig.FLAVOR.equals("production", true)) {
+            if (BuildConfig.FLAVOR.equals("sakshamProd", true) ||BuildConfig.FLAVOR.equals("niramayProd", true) || BuildConfig.FLAVOR.equals("xushrukhaProd", true))  {
                 url = "https://forms.office.com/r/HkE3c0tGr6"
             } else {
                 url =
@@ -571,6 +571,7 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.START))
             binding.drawerLayout.closeDrawer(GravityCompat.START)

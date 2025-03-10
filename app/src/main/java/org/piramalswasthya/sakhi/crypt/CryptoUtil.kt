@@ -1,7 +1,7 @@
 package org.piramalswasthya.sakhi.crypt
 
 import android.util.Base64
-import org.piramalswasthya.sakhi.BuildConfig
+import org.piramalswasthya.sakhi.utils.KeyUtils
 import java.util.Random
 import javax.crypto.Cipher
 import javax.crypto.SecretKeyFactory
@@ -14,7 +14,7 @@ class CryptoUtil {
     private val keySize = 256
     private val ivSize = 128
     private val iterationCount = 1989
-    private val passPhrase = BuildConfig.ENCRYPTED_PASS_KEY
+    private val passPhrase = KeyUtils.encryptedPassKey()
 
     private fun generateKey(
         salt: String,
