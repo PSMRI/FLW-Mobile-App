@@ -21,6 +21,10 @@ import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 @AndroidEntryPoint
 class PncMotherListFragment : Fragment() {
 
+    val args: PncMotherListFragmentArgs by lazy {
+        PncMotherListFragmentArgs.fromBundle(requireArguments())
+    }
+
     private val binding: FragmentDisplaySearchRvButtonBinding by lazy {
         FragmentDisplaySearchRvButtonBinding.inflate(layoutInflater)
     }

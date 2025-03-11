@@ -433,6 +433,7 @@ class EcrRepo @Inject constructor(
                         ) else getLongFromDate(
                         ecrJson.getString("createdDate")
                     ),
+                    lmpDate = getLongFromDate(ecrJson.getString("lmpDate")),
                     bankAccount = if (ecrJson.has("bankAccountNumber")) ecrJson.getLong("bankAccountNumber") else null,
                     bankName = if (ecrJson.has("bankName")) ecrJson.getString("bankName") else null,
                     branchName = if (ecrJson.has("branchName")) ecrJson.getString("branchName") else null,
@@ -576,6 +577,7 @@ class EcrRepo @Inject constructor(
             val ecrJson = dataObj.getJSONObject(i)
             val ecr = EligibleCoupleTrackingCache(
                 benId = ecrJson.getLong("benId"),
+                lmpDate = getLongFromDate(ecrJson.getString("lmpDate")),
                 visitDate = getLongFromDate(ecrJson.getString("visitDate")),
                 isPregnancyTestDone = if (ecrJson.has("isPregnancyTestDone")) ecrJson.getString("isPregnancyTestDone") else null,
                 isActive = if (ecrJson.has("isActive")) ecrJson.getBoolean("isActive") else false,

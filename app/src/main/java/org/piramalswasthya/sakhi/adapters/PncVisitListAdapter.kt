@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.databinding.RvItemPncVisitBinding
 import org.piramalswasthya.sakhi.model.BenPncDomain
+import java.util.concurrent.TimeUnit
 
 class PncVisitListAdapter(private val clickListener: PncVisitClickListener? = null) :
     ListAdapter<BenPncDomain, PncVisitListAdapter.PregnancyVisitViewHolder>(
@@ -40,6 +41,12 @@ class PncVisitListAdapter(private val clickListener: PncVisitClickListener? = nu
             item: BenPncDomain, clickListener: PncVisitClickListener?
         ) {
 
+            if (item.pncDate!! < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(90) &&
+                item.pncDate!! > System.currentTimeMillis() - TimeUnit.DAYS.toMillis(365)) {
+                binding.ivFollowState.visibility = View.GONE
+            } else {
+                binding.ivFollowState.visibility = View.VISIBLE
+            }
             binding.visit = item
             binding.btnViewVisits.visibility =
                 if (item.savedPncRecords.isEmpty()) View.INVISIBLE else View.VISIBLE

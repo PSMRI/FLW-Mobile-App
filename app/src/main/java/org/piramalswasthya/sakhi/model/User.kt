@@ -281,7 +281,7 @@ data class UserDetailsInResponse(
     val stateName: String,
     val workingDistrictId: Int?=null,
     val workingDistrictName: String?=null,
-    val serviceProviderId: Int?=null,
+    val serviceProviderId: Int,
     val roleId: Int,
     val roleName: String,
     val providerServiceMapId: Int,

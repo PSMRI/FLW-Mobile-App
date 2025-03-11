@@ -52,7 +52,7 @@ class IconDataset @Inject constructor(
                     R.drawable.ic__ben,
                     resources.getString(R.string.icon_title_ben),
                     recordsRepo.allBenListCount,
-                    HomeFragmentDirections.actionNavHomeToAllBenFragment(),
+                    HomeFragmentDirections.actionNavHomeToAllBenFragment(0),
                 ),
                 Icon(
                     R.drawable.ic__eligible_couple,
@@ -130,7 +130,7 @@ class IconDataset @Inject constructor(
                     R.drawable.ic__ben,
                     resources.getString(R.string.icon_title_ben),
                     recordsRepo.allBenListCount,
-                    HomeFragmentDirections.actionNavHomeToAllBenFragment(),
+                    HomeFragmentDirections.actionNavHomeToAllBenFragment(0),
                 ),
                 Icon(
                     R.drawable.ic__eligible_couple,
