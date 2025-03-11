@@ -79,7 +79,7 @@
                             android:paddingTop="10dp"
                             android:paddingRight="30dp"
                             android:paddingBottom="10dp"
-                            android:text="Create ABHA"
+                            android:text="@string/str_create_abha"
                             android:textColor="@color/md_theme_dark_shadow"
                             android:textSize="14sp"
                             app:layout_constraintBottom_toBottomOf="parent"

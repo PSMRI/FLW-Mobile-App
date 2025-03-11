@@ -135,7 +135,7 @@ class SignInFragment : Fragment() {
         binding.tvDeleteAccount?.setOnClickListener {
             var url = ""
 
-            if (BuildConfig.FLAVOR.equals("sakshamProd", true) ||BuildConfig.FLAVOR.equals("niramayProd", true) || BuildConfig.FLAVOR.equals("xushrukhaProd", true)) {
+            if (BuildConfig.FLAVOR.equals("saksham", true) ||BuildConfig.FLAVOR.equals("niramay", true) || BuildConfig.FLAVOR.equals("xushrukha", true)) {
                 url = "https://forms.office.com/r/HkE3c0tGr6"
             } else {
                 url =

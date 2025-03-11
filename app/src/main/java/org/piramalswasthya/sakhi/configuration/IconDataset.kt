@@ -35,7 +35,7 @@ class IconDataset @Inject constructor(
         val showAll = preferenceDao.isDevModeEnabled
         Timber.d("currently : $showAll")
         lateinit var showModules:Modules
-        if (BuildConfig.FLAVOR.equals("xushrukhaProd", true)) {
+        if (BuildConfig.FLAVOR.equals("xushrukha", true)) {
             showModules = Modules.HRP
         }else{
             showModules = Modules.ALL
