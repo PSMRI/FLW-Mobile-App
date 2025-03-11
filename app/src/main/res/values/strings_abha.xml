@@ -57,4 +57,14 @@
     <string name="otp_was_resent">OTP was resent.</string>
     <string name="do_you_want_to_go_back">Do you want to go back?</string>
     <string name="downloading_abha_card">Downloading abha card</string>
+
+    <string name="str_create_abha">Create ABHA</string>
+    <string name="str_search_abha">Search ABHA</string>
+    <string name="str_invalid_aadhaar_no">Please Enter Valid Aadhaar Number</string>
+    <string name="str_invalid_mobile_no">Please Enter Valid Mobile Number</string>
+    <string name="str_here_abha_no">Here is your ABHA Number!</string>
+    <string name="str_abha_already_exist">This ABHA already exists!</string>
+    <string name="str_abha_successfully_created">ABHA account successfully created!</string>
+    <string name="str_abha_card_downloaded">You can view Abha Card in download folder!!</string>
+    <string name="ok">ঠিক</string>
 </resources>

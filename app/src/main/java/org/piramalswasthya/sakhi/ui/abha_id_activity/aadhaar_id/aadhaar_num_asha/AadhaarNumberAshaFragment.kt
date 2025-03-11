@@ -157,7 +157,7 @@ class AadhaarNumberAshaFragment : Fragment() {
                     binding.tvErrorText.text = ""
                 }else{
                     binding.tvErrorText.visibility = View.VISIBLE
-                    binding.tvErrorText.text = "Please Enter Valid Aadhaar Number"
+                    binding.tvErrorText.text = getString(R.string.str_invalid_aadhaar_no)
                 }
 
                 isValidAadhaar = (s != null) && AadhaarValidationUtils.isValidAadhaar(s.toString())
@@ -180,7 +180,7 @@ class AadhaarNumberAshaFragment : Fragment() {
                     binding.tvErrorTextMobile.text = ""
                 }else{
                     binding.tvErrorTextMobile.visibility = View.VISIBLE
-                    binding.tvErrorTextMobile.text = "Please Enter Valid Mobile Number"
+                    binding.tvErrorTextMobile.text = getString(R.string.str_invalid_mobile_no)
                 }
                 isValidMobile = (s != null) && isValidMobileNumber(s.toString())
                 if (isValidMobile)
