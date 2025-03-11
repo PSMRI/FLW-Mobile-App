@@ -23,7 +23,7 @@ interface AmritApiService {
     @POST("hwc-facility-service/registrar/registrarBeneficaryRegistrationNew")
     suspend fun getBenIdFromBeneficiarySending(@Body benCHOPost: BenCHOPost): Response<ResponseBody>
 
-    @POST("identity-0.0.1/rmnch/syncDataToAmrit")
+    @POST("identity-v3.0.0/rmnch/syncDataToAmrit")
     suspend fun submitRmnchDataAmrit(@Body sendingRMNCHData: SendingRMNCHData): Response<ResponseBody>
 
     //    @POST("beneficiary/getBeneficiaryData")
@@ -63,6 +63,13 @@ interface AmritApiService {
     @POST("flw-0.0.1/highRisk/assess/getAll")
 //    @POST("highRisk/pregnant/assess/getAll")
     suspend fun getHighRiskAssessData(@Body userDetail: GetDataPaginatedRequest): Response<ResponseBody>
+
+    @GET("flw-0.0.1/micro-birthPlan/getAll")
+    suspend fun getMicroBirthPlanAssessData(@Query("userId") userId: Int): Response<ResponseBody>
+
+    @POST("flw-0.0.1/micro-birthPlan/saveAll")
+    suspend fun saveMicroBirthPlanAssessData(@Body userDataDTO: UserDataDTO<Any?>): Response<ResponseBody>
+
 
     @POST("flw-0.0.1/highRisk/assess/saveAll")
 //    @POST("highRisk/pregnant/assess/saveAll")
