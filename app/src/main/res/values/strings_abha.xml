@@ -25,6 +25,8 @@
     <string name="abha_number_generated_successfully">ABHA number generated successfully</string>
     <string name="name">Name :</string>
     <string name="abha_number">ABHA Number :</string>
+    <string name="abha_id">ABHA ID</string>
+    <string name="linked_toO_beneficiary">Linked to Beneficiary</string>
     <string name="linked_to_beneficiary">This ABHA is successfully linked with the profile</string>
     <string name="do_you_want_to_download_the_abha_card">Do you want to download the ABHA card?</string>
     <string name="yes">Yes</string>
