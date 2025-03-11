@@ -83,6 +83,7 @@ class AllBenViewModel @Inject constructor(
                 if (result != null) {
                     _abha.value = result.healthIdNumber
                     it.healthIdDetails = BenHealthIdDetails(result.healthId, result.healthIdNumber)
+                    it.isNewAbha =result.isNewAbha
                     benRepo.updateRecord(it)
                 } else {
                     _benRegId.value = it.benRegId
@@ -91,6 +92,14 @@ class AllBenViewModel @Inject constructor(
         }
     }
 
+    suspend fun getBenFromId(benId: Long):Long{
+        var benRegId = 0L
+             val result = benRepo.getBenFromId(benId)
+             if (result != null) {
+                 benRegId = result.benRegId
+             }
+         return benRegId
+    }
     fun resetBenRegId() {
         _benRegId.value = null
     }

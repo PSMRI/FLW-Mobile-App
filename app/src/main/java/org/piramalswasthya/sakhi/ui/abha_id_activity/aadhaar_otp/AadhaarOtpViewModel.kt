@@ -5,15 +5,19 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.network.AbhaGenerateAadhaarOtpRequest
 import org.piramalswasthya.sakhi.network.AbhaResendAadhaarOtpRequest
 import org.piramalswasthya.sakhi.network.AbhaVerifyAadhaarOtpRequest
 import org.piramalswasthya.sakhi.network.AuthData
+import org.piramalswasthya.sakhi.network.AuthData3
 import org.piramalswasthya.sakhi.network.Consent
+import org.piramalswasthya.sakhi.network.LoginVerifyOtpRequest
 import org.piramalswasthya.sakhi.network.NetworkResult
 import org.piramalswasthya.sakhi.network.Otp
+import org.piramalswasthya.sakhi.network.Otp3
 import org.piramalswasthya.sakhi.network.interceptors.TokenInsertAbhaInterceptor
 import org.piramalswasthya.sakhi.repositories.AbhaIdRepo
 import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.AadhaarIdViewModel
@@ -37,7 +41,8 @@ class AadhaarOtpViewModel @Inject constructor(
     }
 
     private var txnIdFromArgs = AadhaarOtpFragmentArgs.fromSavedStateHandle(savedStateHandle).txnId
-    private var mobileFromArgs = AadhaarOtpFragmentArgs.fromSavedStateHandle(savedStateHandle).mobileNumber
+    var mobileFromArgs =
+        AadhaarOtpFragmentArgs.fromSavedStateHandle(savedStateHandle).mobileNumber
     private val _state = MutableLiveData(State.IDLE)
     val state: LiveData<State>
         get() = _state
@@ -56,7 +61,7 @@ class AadhaarOtpViewModel @Inject constructor(
 
     private var _txnId: String? = null
     val txnId: String
-        get() = _txnId!!
+        get() = _txnId?:""
 
     private var _name: String? = null
     val name: String
@@ -66,13 +71,18 @@ class AadhaarOtpViewModel @Inject constructor(
     val abhaNumber: String
         get() = _abhaNumber!!
 
+    private var _abhaResponse: String = ""
+    val abhaResponse: String
+        get() = _abhaResponse
+
     private var _phrAddress: String = ""
     val phrAddress: String
         get() = _phrAddress
 
     private var _mobileNumber: String? = null
     val mobileNumber: String
-        get() = _mobileNumber!!
+        get() = _mobileNumber ?: ""
+
 
     fun verifyOtpClicked(otp: String, mobile: String) {
         _state.value = State.LOADING
@@ -112,13 +122,65 @@ class AadhaarOtpViewModel @Inject constructor(
                     _txnId = result.data.txnId
                     _mobileNumber = result.data.ABHAProfile.mobile
                     if (result.data.ABHAProfile.middleName.isNotEmpty()) {
-                        _name = result.data.ABHAProfile.firstName + " " + result.data.ABHAProfile.middleName + " " + result.data.ABHAProfile.lastName
+                        _name =
+                            result.data.ABHAProfile.firstName + " " + result.data.ABHAProfile.middleName + " " + result.data.ABHAProfile.lastName
                     } else {
-                        _name = result.data.ABHAProfile.firstName + " " + result.data.ABHAProfile.lastName
+                        _name =
+                            result.data.ABHAProfile.firstName + " " + result.data.ABHAProfile.lastName
                     }
-                    _phrAddress = result.data.ABHAProfile.phrAddress[0]
+                    _phrAddress = result.data.ABHAProfile.phrAddress!![0]
                     _abhaNumber = result.data.ABHAProfile.ABHANumber
+
+                    val gsonData = Gson().toJson(result.data)
+                    _abhaResponse = gsonData
+
                     _state.value = State.OTP_VERIFY_SUCCESS
+                }
+
+                is NetworkResult.Error -> {
+                    _errorMessage.value = result.message
+                    if (result.message.contains("exit your browser", true)) {
+                        _showExit.value = true
+                    }
+                    _state.value = State.ERROR_SERVER
+                }
+
+                is NetworkResult.NetworkError -> {
+                    _showExit.value = true
+                    _state.value = State.ERROR_NETWORK
+                }
+            }
+        }
+    }
+
+    fun verifyLoginOtpClicked(otp: String) {
+        _state.value = State.LOADING
+        verifyLoginOtp(otp)
+    }
+
+    private fun verifyLoginOtp(otp: String) {
+        viewModelScope.launch {
+            val result = abhaIdRepo.verifyAbhaOtp(
+                LoginVerifyOtpRequest(
+                    listOf<String>("abha-login", "mobile-verify"),
+                    AuthData3(
+                        listOf<String>("otp"),
+                        Otp3(
+                            txnIdFromArgs,
+                            otp
+                        )
+                    )
+                )
+            )
+            when (result) {
+                is NetworkResult.Success -> {
+                    TokenInsertAbhaInterceptor.setXToken(result.data.token)
+                    _txnId = result.data.txnId
+                    _name = result.data.accounts[0].name
+                    _abhaNumber = result.data.accounts[0].ABHANumber
+                    _state.value = State.OTP_VERIFY_SUCCESS
+                    _phrAddress = result.data.accounts[0].preferredAbhaAddress
+                    _mobileNumber = ""
                 }
 
                 is NetworkResult.Error -> {
@@ -146,7 +208,7 @@ class AadhaarOtpViewModel @Inject constructor(
         viewModelScope.launch {
             when (val result =
 //                abhaIdRepo.generateOtpForAadhaarV2(AbhaGenerateAadhaarOtpRequest(aadhaarNo))) {
-                abhaIdRepo.generateOtpForAadhaarV2(
+                abhaIdRepo.generateAadhaarOtpV3(
                     AbhaGenerateAadhaarOtpRequest(
                         txnId,
                         listOf<String>("abha-enrol", "mobile-verify"),
@@ -158,6 +220,37 @@ class AadhaarOtpViewModel @Inject constructor(
                 is NetworkResult.Success -> {
                     _txnId = result.data.txnId
                     _state.value = State.SUCCESS
+                }
+
+                is NetworkResult.Error -> {
+                    _errorMessage.value = result.message
+                    _state.value = State.ERROR_SERVER
+                }
+
+                is NetworkResult.NetworkError -> {
+                    Timber.i(result.toString())
+                    _state.value = State.ERROR_NETWORK
+                }
+            }
+        }
+    }
+
+
+    fun resendAadhaarOtp(aadhaarNo:String) {
+        viewModelScope.launch {
+            when (val result = abhaIdRepo.generateAadhaarOtpV3(
+                AbhaGenerateAadhaarOtpRequest(
+                    "",
+                    listOf<String>("abha-enrol"),
+                    "aadhaar",
+                    aadhaarNo,
+                    "aadhaar"
+                )
+                )) {
+                is NetworkResult.Success -> {
+                    _txnId = result.data.txnId
+                    txnIdFromArgs = result.data.txnId
+                  //  _state.value = State.SUCCESS
                 }
 
                 is NetworkResult.Error -> {

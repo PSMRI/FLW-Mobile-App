@@ -69,3 +69,12 @@
 
 # Prevent warning for kotlinx.coroutines implementation details
 -dontwarn kotlinx.coroutines.**
+
+# Keep all classes in the JNI package
+-keep class org.piramalswasthya.sakhi.jni.** { *; }
+
+# Keep all native methods
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
+

@@ -68,8 +68,7 @@ class ImmunizationCategoryAdapter(private val clickListener: ImmunizationIconCli
         holder.bind(getItem(position), clickListener)
     }
 
-    class ImmunizationIconClickListener(val selectedListener: (vaccineId: Int) -> Unit) {
-        fun onClicked(vaccine: VaccineDomain) = selectedListener(vaccine.vaccineId)
-
+    class ImmunizationIconClickListener(val selectedListener: (vaccineId: VaccineDomain) -> Unit) {
+        fun onClicked(vaccine: VaccineDomain) = selectedListener(vaccine)
     }
 }

@@ -103,8 +103,12 @@ interface AmritApiService {
     @POST("fhirapi-v1.0/healthID/getBenhealthID")
     suspend fun getBenHealthID(@Body getBenHealthIdRequest: GetBenHealthIdRequest): Response<ResponseBody>
 
-    @POST("fhirapi-v1.0/healthID/mapHealthIDToBeneficiary")
+    //@POST("fhirapi-v1.0/healthID/mapHealthIDToBeneficiary")
+    @POST("fhirapi-v1.0/healthIDRecord/mapHealthIDToBeneficiary")
     suspend fun mapHealthIDToBeneficiary(@Body mapHIDtoBeneficiary: MapHIDtoBeneficiary): Response<ResponseBody>
+
+    @POST("fhirapi-v1.0/healthIDRecord/addHealthIdRecord")
+    suspend fun addHealthIdRecord(@Body addHealthIdRecord: AddHealthIdRecord): Response<ResponseBody>
 
     @POST("fhirapi-v1.0/healthIDCard/generateOTP")
     suspend fun generateOtpHealthId(@Body generateOtpHid: GenerateOtpHid): Response<ResponseBody>

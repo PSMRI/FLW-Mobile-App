@@ -23,6 +23,12 @@ AadhaarIdViewModel @Inject constructor(
         ABHA_GENERATED_SUCCESS
     }
 
+    enum class Abha {
+        NONE,
+        CREATE,
+        SEARCH
+    }
+
     //    val aadhaarVerificationTypeValues = arrayOf("Aadhaar ID", "Fingerprint")
     val aadhaarVerificationTypeValues = arrayOf("Aadhaar ID")
     private val _aadhaarVerificationTypes = MutableLiveData(aadhaarVerificationTypeValues[0])
@@ -45,6 +51,10 @@ AadhaarIdViewModel @Inject constructor(
     val userType: LiveData<String>
         get() = _userType
 
+    private var _abhaMode = MutableLiveData(Abha.NONE)
+    val abhaMode: LiveData<Abha>
+        get() = _abhaMode
+
     private var _verificationType = MutableLiveData("OTP")
     val verificationType: LiveData<String>
         get() = _verificationType
@@ -55,11 +65,15 @@ AadhaarIdViewModel @Inject constructor(
 
     private var _txnId: String? = null
     val txnId: String
-        get() = _txnId!!
+        get() = _txnId?:""
 
     private var _mobileNumber: String? = null
     val mobileNumber: String
-        get() = _mobileNumber!!
+        get() = _mobileNumber?:""
+
+    private var _aadhaarNumber: String? = null
+    val aadhaarNumber: String
+        get() = _aadhaarNumber?:""
 
     private val _errorMessage = MutableLiveData<String?>(null)
     val errorMessage: LiveData<String?>
@@ -81,8 +95,16 @@ AadhaarIdViewModel @Inject constructor(
         _state.value = state
     }
 
+    fun setAbhaMode(abha: Abha) {
+        _abhaMode.value = abha
+    }
+
     fun setMobileNumber(mobileNumber: String) {
         _mobileNumber = mobileNumber
+    }
+
+    fun setAadhaarNumber(aadhaarNumber: String) {
+        _aadhaarNumber = aadhaarNumber
     }
 
     fun setTxnId(txnId: String) {
