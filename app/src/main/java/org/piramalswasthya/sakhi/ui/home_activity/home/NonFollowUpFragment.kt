@@ -1,0 +1,89 @@
+package org.piramalswasthya.sakhi.ui.home_activity.home
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.databinding.FragmentNonFollowUpBinding
+import org.piramalswasthya.sakhi.ui.home_activity.home.SchedulerViewModel.State.LOADED
+import org.piramalswasthya.sakhi.ui.home_activity.home.SchedulerViewModel.State.LOADING
+
+
+@AndroidEntryPoint
+class NonFollowUpFragment : Fragment() {
+
+
+    private var _binding: FragmentNonFollowUpBinding? = null
+    private val binding: FragmentNonFollowUpBinding
+        get() = _binding!!
+
+
+    private val viewModel: SchedulerViewModel by viewModels({ requireActivity() })
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentNonFollowUpBinding.inflate(layoutInflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel.state.observe(viewLifecycleOwner) {
+            when (it) {
+                LOADING -> {
+                    binding.llContent.visibility = View.GONE
+                    binding.pbLoading.visibility = View.VISIBLE
+                }
+
+                LOADED -> {
+                    binding.pbLoading.visibility = View.GONE
+                    binding.llContent.visibility = View.VISIBLE
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.ancNonFollowUpCount.collect {
+                binding.tvAnc.text = it.toString()
+            }
+        }
+
+        binding.cvAnc.setOnClickListener {
+            findNavController().navigate(NonFollowUpFragmentDirections.actionNonFollowUpFragmentToPwAncVisitsFragment(1))
+        }
+
+        lifecycleScope.launch {
+            viewModel.pncNonFollowUpCount.collect {
+                binding.tvHrEcPnc.text = it.toString()
+            }
+        }
+
+        binding.cvNonPnc.setOnClickListener {
+            findNavController().navigate(NonFollowUpFragmentDirections.actionNonFollowUpFragmentToPncMotherListFragment(1))
+        }
+
+        lifecycleScope.launch {
+            viewModel.ecNonFollowUpCount.collect {
+                binding.tvLbwb.text = it.toString()
+            }
+        }
+
+        binding.cvLwb.setOnClickListener {
+            findNavController().navigate(NonFollowUpFragmentDirections.actionNonFollowUpFragmentToEligibleCoupleTrackingListFragment(1))
+        }
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
+}

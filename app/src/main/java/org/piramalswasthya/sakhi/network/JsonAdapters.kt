@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.network
 import android.os.Parcelable
 import com.squareup.moshi.JsonClass
 import org.piramalswasthya.sakhi.database.room.SyncState
+import org.piramalswasthya.sakhi.model.HRPMicroBirthPlanCache
 import org.piramalswasthya.sakhi.model.HRPNonPregnantAssessCache
 import org.piramalswasthya.sakhi.model.HRPNonPregnantTrackCache
 import org.piramalswasthya.sakhi.model.HRPPregnantAssessCache
@@ -650,6 +651,56 @@ data class HRPPregnantAssessDTO(
         )
     }
 }
+
+@JsonClass(generateAdapter = true)
+data class HRPMicroBirthPlanDTO(
+    val id: Int = 0,
+    val benId: Long,
+    var nearestSc: String? = null,
+    var bloodGroup: String? = null,
+    var contactNumber1: String? = null,
+    var contactNumber2: String? = null,
+    var scHosp: String? = null,
+    var usg: String? = null,
+    var block: String? = null,
+    var nearestPhc: String? = null,
+    var nearestFru: String? = null,
+    var bloodDonors1: String? = null,
+    var bloodDonors2: String? = null,
+    var birthCompanion: String? = null,
+    var careTaker: String? = null,
+    var communityMember: String? = null,
+    var communityMemberContact: String? = null,
+    var modeOfTransportation: String? = null,
+) {
+    fun toCache(): HRPMicroBirthPlanCache {
+        return HRPMicroBirthPlanCache(
+            id = 0,
+            benId = benId,
+            nearestSc = nearestSc,
+            bloodGroup = bloodGroup,
+            contactNumber1 = contactNumber1,
+            contactNumber2 = contactNumber2,
+            scHosp = scHosp,
+            usg = usg,
+            block = block,
+            nearestPhc = nearestPhc,
+            nearestFru = nearestFru,
+            bloodDonors1 = bloodDonors1,
+            bloodDonors2 = bloodDonors2,
+            birthCompanion = birthCompanion,
+            careTaker = careTaker,
+            communityMember = communityMember,
+            communityMemberContact = communityMemberContact,
+            modeOfTransportation = modeOfTransportation,
+            processed = "P",
+            syncState = SyncState.SYNCED
+        )
+    }
+}
+
+
+
 
 data class HRPNonPregnantTrackDTO(
     var id: Int = 0,

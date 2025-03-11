@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.list
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -11,13 +12,23 @@ import org.piramalswasthya.sakhi.helpers.filterPwAncList
 import org.piramalswasthya.sakhi.model.AncStatus
 import org.piramalswasthya.sakhi.repositories.MaternalHealthRepo
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
+import org.piramalswasthya.sakhi.ui.home_activity.all_ben.AllBenFragmentArgs
 import javax.inject.Inject
 
 @HiltViewModel
 class PwAncVisitsListViewModel @Inject constructor(
-    recordsRepo: RecordsRepo, private val maternalHealthRepo: MaternalHealthRepo
+    savedStateHandle: SavedStateHandle,
+    recordsRepo: RecordsRepo,
+    private val maternalHealthRepo: MaternalHealthRepo
 ) : ViewModel() {
-    private val allBenList = recordsRepo.getRegisteredPregnantWomanList()
+
+    private var sourceFromArgs = PwAncVisitsListFragmentArgs.fromSavedStateHandle(savedStateHandle).source
+
+    private val allBenList = when (sourceFromArgs) {
+        1 -> recordsRepo.getRegisteredPregnantWomanNonFollowUpList()
+        else -> recordsRepo.getRegisteredPregnantWomanList()
+    }
+
     private val filter = MutableStateFlow("")
     val benList = allBenList.combine(filter) { list, filter ->
         filterPwAncList(list, filter)

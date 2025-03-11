@@ -212,6 +212,7 @@
     <string name="pregnancy_weeks">Weeks Of Pregnancy</string>
     <string name="anc_visits">ANC VISITS</string>
     <string name="pnc_visits">PNC VISITS</string>
+    <string name="pnc">PNC</string>
     <string name="add_anc_visits">Add ANC visit</string>
     <string name="add_pnc_visits">Add PNC visit</string>
     <string name="id">ID</string>
@@ -268,7 +269,9 @@
     <!--    <string name="child_immunization_list">Child Immunization List</string>-->
     <string name="pregnancy_registration_form">Pregnancy Registration Form</string>
     <string name="anc_visit">ANC Visit</string>
+    <string name="anc">ANC</string>
     <string name="eligible_couple_list">Eligible Couple List</string>
+    <string name="ec">EC</string>
     <string name="eligible_couple_registration">Eligible Couple Registration</string>
     <string name="eligible_couple_tracking_list">Eligible Couple Tracking List</string>
     <string name="eligible_couple_tracking_form">Eligible Couple Tracking Form</string>
@@ -314,6 +317,7 @@
     <string name="hbnc_daylist">Hbnc DayList</string>
     <string name="hbyc_list">Hbyc List</string>
     <string name="child_immunization">Child Immunization</string>
+    <string name="non_follow_up_cases">Non Follow Up Cases</string>
     <string name="pregnancy_registration">Pregnancy Registration</string>
     <string name="mother_immunizationlist">Mother ImmunizationList</string>
     <string name="family_member_registration">Family Member Registration</string>
@@ -321,6 +325,13 @@
     <string name="add_family_member">Add Family Member</string>
     <string name="app_native_name">উৎপ্ৰেৰণা</string>
     <string name="non_pregnant_women_eligible_couple_section">Non-Pregnant Women (Eligible Couple) section</string>
+    <string name="text_kpis">Key Performance Indicator(KPIs)</string>
+    <string name="all">All</string>
+    <string name="with_abha">With ABHA</string>
+    <string name="without_abha">Without ABHA</string>
+    <string name="no_visit_made">No Visit Made</string>
+    <string name="filter_list">Filter List</string>
+    <string name="ben_with_rch_id">Ben With RCH ID</string>
     <string-array name="sync_records">
         <item>Beneficiary</item>
         <item>CBAC</item>

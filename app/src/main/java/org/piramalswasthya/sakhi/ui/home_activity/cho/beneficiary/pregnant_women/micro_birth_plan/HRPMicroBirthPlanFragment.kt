@@ -14,7 +14,10 @@ import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
+import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.work.PushHRPToAmritWorker
+import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -39,20 +42,27 @@ class HRPMicroBirthPlanFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.recordExists.observe(viewLifecycleOwner) {
-            val adapter = FormInputAdapter(
-                formValueListener = FormInputAdapter.FormValueListener { formId, index ->
-                    viewModel.updateListOnValueChanged(formId, index)
-                    hardCodedListUpdate(formId)
-                }/*, isEnabled = !it*/
-            )
-           // binding.btnSubmit.isEnabled = !it
-            binding.form.rvInputForm.adapter = adapter
-            lifecycleScope.launch {
-                viewModel.formList.collect { list ->
-                    if (list.isNotEmpty())
-                        adapter.submitList(list)
+        viewModel.recordExists.observe(viewLifecycleOwner) { notIt ->
+            notIt?.let { recordExists ->
+                binding.fabEdit.visibility = if (recordExists) View.VISIBLE else View.GONE
+                binding.btnSubmit.visibility = if (!recordExists) View.VISIBLE else View.GONE
 
+                val adapter = FormInputAdapter(
+                    formValueListener = FormInputAdapter.FormValueListener { formId, index ->
+                        viewModel.updateListOnValueChanged(formId, index)
+                        hardCodedListUpdate(formId)
+                    }
+                    ,isEnabled = !recordExists
+                )
+
+
+                binding.form.rvInputForm.adapter = adapter
+                lifecycleScope.launch {
+                    viewModel.formList.collect { list ->
+                        if (list.isNotEmpty())
+                            adapter.submitList(list)
+
+                    }
                 }
             }
         }
@@ -62,6 +72,9 @@ class HRPMicroBirthPlanFragment : Fragment() {
         }
         viewModel.benAgeGender.observe(viewLifecycleOwner) {
             binding.tvAgeGender.text = it
+        }
+        binding.fabEdit.setOnClickListener {
+            viewModel.setRecordExists(false)
         }
         binding.btnSubmit.setOnClickListener {
             submitTrackingForm()
@@ -77,6 +90,7 @@ class HRPMicroBirthPlanFragment : Fragment() {
                     ).show()
                     findNavController().navigateUp()
                     viewModel.resetState()
+                    WorkerUtils.triggerAmritPushWorker(requireContext())
                 }
 
                 HRPMicroBirthPlanViewModel.State.SAVE_FAILED -> {
@@ -117,8 +131,9 @@ class HRPMicroBirthPlanFragment : Fragment() {
     private fun hardCodedListUpdate(formId: Int) {
         binding.form.rvInputForm.adapter?.apply {
             when (formId) {
-                // if required
+
             }
+
         }
     }
 
