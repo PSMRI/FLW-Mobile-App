@@ -41,7 +41,7 @@ class ChildImmunizationVaccineBottomSheetFragment : BottomSheetDialogFragment() 
                 val benId = viewModel.getSelectedBenId()
                 findNavController().navigate(
                     ChildImmunizationListFragmentDirections.actionChildImmunizationListFragmentToImmunizationFormFragment(
-                        benId = benId, vaccineId = it
+                        benId = benId, vaccineId = it.vaccineId, category = it.vaccineCategory.name
                     )
                 )
                 dismiss()

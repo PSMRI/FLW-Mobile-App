@@ -17,6 +17,7 @@
     <string name="enter_aadhaar_number">Enter Aadhaar Number</string>
     <string name="aadhaar_number">Aadhaar Number</string>
     <string name="generate_otp">Generate OTP</string>
+    <string name="select_abha">Select ABHA</string>
     <string name="pid">PID</string>
     <string name="generate_abha">Generate ABHA</string>
     <string name="_30">30</string>
@@ -25,7 +26,8 @@
     <string name="name">Name :</string>
     <string name="abha_number">ABHA Number :</string>
     <string name="abha_id">ABHA ID</string>
-    <string name="linked_to_beneficiary">Linked to Beneficiary</string>
+    <string name="linked_toO_beneficiary">Linked to Beneficiary</string>
+    <string name="linked_to_beneficiary">This ABHA is successfully linked with the profile</string>
     <string name="do_you_want_to_download_the_abha_card">Do you want to download the ABHA card?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
@@ -51,7 +53,7 @@
     <string name="aadhaar_linked_mobile_number_or_other_mobile_number">Aadhaar linked mobile number or other mobile number</string>
     <string name="individual_s_consent_for_creation_of_abha_number">Individual’s consent for creation of ABHA Number.</string>
     <string name="validate_fp">Validate FP</string>
-    <string name="generating_abha_for">Generating ABHA for:</string>
+    <string name="generating_abha_for">Creating ABHA for:</string>
     <!--    <string name="otp_sent_to">"OTP sent to "</string>-->
     <string name="otp_sent_to">"OTP sent to Aadhaar linked mobile number"</string>
     <string name="otp_was_resent">OTP was resent.</string>

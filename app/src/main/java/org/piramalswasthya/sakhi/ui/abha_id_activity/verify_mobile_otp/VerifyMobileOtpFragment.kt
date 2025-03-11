@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -58,7 +59,6 @@ class VerifyMobileOtpFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = findNavController()
-
         startResendTimer()
         binding.btnVerifyOTP.setOnClickListener {
             viewModel.verifyOtpClicked(binding.tietVerifyMobileOtp.text.toString())
@@ -107,7 +107,7 @@ class VerifyMobileOtpFragment : Fragment() {
                 State.OTP_VERIFY_SUCCESS -> {
                     findNavController().navigate(
                         VerifyMobileOtpFragmentDirections.actionVerifyMobileOtpFragmentToCreateAbhaFragment(
-                            viewModel.txnID, args.name, args.phrAddress, args.abhaNumber
+                            viewModel.txnID, args.name, args.phrAddress, args.abhaNumber,viewModel.abhaResponse
                         )
                     )
                     viewModel.resetState()
@@ -141,7 +141,7 @@ class VerifyMobileOtpFragment : Fragment() {
                 State.ABHA_GENERATED_SUCCESS -> {
                     findNavController().navigate(
                         VerifyMobileOtpFragmentDirections.actionVerifyMobileOtpFragmentToCreateAbhaFragment(
-                            viewModel.txnID, args.name, args.phrAddress, args.abhaNumber
+                            viewModel.txnID, args.name, args.phrAddress, args.abhaNumber,viewModel.abhaResponse
                         )
                     )
                     viewModel.resetState()

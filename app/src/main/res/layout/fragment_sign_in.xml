@@ -210,9 +210,7 @@
                     android:visibility="gone"
                     app:layout_constraintTop_toBottomOf="@id/til_password"
                     tools:text="Hello"
-                    tools:visibility="visible"
-
-                    />
+                    tools:visibility="visible" />
 
                 <CheckBox
                     android:id="@+id/cb_remember"
@@ -227,8 +225,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/delete_my_account"
-                    android:textColor="@color/md_theme_light_error"
-                    android:fontFamily="@font/roboto_medium"
+                    android:textColor="@color/md_theme_light_shadow"
+                    android:fontFamily="@font/roboto_regular"
                     android:paddingBottom="@dimen/_3sdp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/cb_remember"/>
@@ -284,8 +282,7 @@
         android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cv_login_item_container" />
-
+        app:layout_constraintStart_toStartOf="parent" />
+<!--    app:layout_constraintTop_toBottomOf="@+id/cv_login_item_container"-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

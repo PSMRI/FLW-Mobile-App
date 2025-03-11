@@ -127,6 +127,7 @@ data class VaccineDomain(
     val vaccineName: String,
     val vaccineCategory: ChildImmunizationCategory,
     val state: VaccineState,
+    var isSwitchChecked:Boolean = false
 )
 
 class VaccineClickListener(private val clickListener: (benId: Long, vaccineId: Int) -> Unit) {

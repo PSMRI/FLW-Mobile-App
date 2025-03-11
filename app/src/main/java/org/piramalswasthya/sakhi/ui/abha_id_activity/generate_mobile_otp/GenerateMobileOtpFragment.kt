@@ -113,14 +113,14 @@ class GenerateMobileOtpFragment : Fragment() {
                     if (viewModel.apiResponse.mobileLinked) {
                         navController.navigate(
                             GenerateMobileOtpFragmentDirections.actionGenerateMobileOtpFragmentToCreateAbhaFragment(
-                                viewModel.txnIdFromArgs, "", "", ""
+                                viewModel.txnIdFromArgs, "", "", "",""
                             )
                         )
                     } else {
                         navController.navigate(
                             GenerateMobileOtpFragmentDirections.actionGenerateMobileOtpFragmentToVerifyMobileOtpFragment(
                                 viewModel.apiResponse.txnId,
-                                binding.tietMobileNumber.text!!.toString(), "", "", ""
+                                binding.tietMobileNumber.text!!.toString(), "", "", "","",""
                             )
                         )
                     }
@@ -143,7 +143,7 @@ class GenerateMobileOtpFragment : Fragment() {
                 State.ABHA_GENERATED_SUCCESS -> {
                     navController.navigate(
                         GenerateMobileOtpFragmentDirections.actionGenerateMobileOtpFragmentToCreateAbhaFragment(
-                            viewModel.txnIdFromArgs, "", "", ""
+                            viewModel.txnIdFromArgs, "", "", "",""
                         )
                     )
                 }
