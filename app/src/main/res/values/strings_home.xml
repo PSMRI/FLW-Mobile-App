@@ -27,6 +27,13 @@
     <string name="icon_title_msl">Menopause Stage List</string>
     <string name="icon_title_dr">Death Reports</string>
     <string name="icon_title_vlf">Village Level Forms</string>
+    <string name="icon_title_disease">Disease Control</string>
+    <string name="icon_title_maleria">Malaria</string>
+    <string name="icon_title_ka">Kala Azar</string>
+    <string name="icon_title_aes">AES/JE</string>
+    <string name="icon_title_filaria">Filaria</string>
+    <string name="icon_title_leprosy">Leprosy</string>
+    <string name="icon_title_dearming">Deworming</string>
     <string name="icon_title_icc">Infant List</string>
     <string name="icon_title_ccc">Child List</string>
     <string name="icon_title_acc">Adolescent List</string>

@@ -8,8 +8,11 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.Icon
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
+import org.piramalswasthya.sakhi.ui.home_activity.all_household.AllHouseholdViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.child_care.ChildCareFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.communicable_diseases.CdFragmentDirections
+import org.piramalswasthya.sakhi.ui.home_activity.disease_control.DiseaseControlFragment
+import org.piramalswasthya.sakhi.ui.home_activity.disease_control.DiseaseControlFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.eligible_couple.EligibleCoupleFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.home.HomeFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.hrp_cases.HrpCasesFragmentDirections
@@ -29,6 +32,10 @@ class IconDataset @Inject constructor(
     enum class Modules {
         ALL,
         HRP
+    }
+
+    enum class Disease {
+        MALARIA, KALA_AZAR, AES_JE, FILARIA, LEPROSY, DEWARMING
     }
 
     fun getHomeIconDataset(resources: Resources): List<Icon> {
@@ -116,6 +123,12 @@ class IconDataset @Inject constructor(
                     resources.getString(R.string.icon_title_vlf),
                     null,
                     HomeFragmentDirections.actionNavHomeToVillageLevelFormsFragment()
+                ),
+                Icon(
+                    R.drawable.ic__village_level_form,
+                    resources.getString(R.string.icon_title_disease),
+                    null,
+                    HomeFragmentDirections.actionHomeFragmentToDiseaseControlFragment()
                 ),
             )
 
@@ -261,6 +274,61 @@ class IconDataset @Inject constructor(
             resources.getString(R.string.icon_title_ect),
             recordsRepo.eligibleCoupleTrackingListCount,
             EligibleCoupleFragmentDirections.actionEligibleCoupleFragmentToEligibleCoupleTrackingListFragment()
+        )
+    ).apply {
+        forEachIndexed { index, icon ->
+            icon.colorPrimary = index % 2 == 0
+        }
+    }
+
+    fun getDiseaseControlDataset(resources: Resources) = listOf(
+        Icon(
+            R.drawable.ic__eligible_couple,
+            resources.getString(R.string.icon_title_maleria),
+            recordsRepo.eligibleCoupleListCount,
+            DiseaseControlFragmentDirections.actionDiseaseControlFragmentToAllHouseHoldDiseaseControlFragment(
+                Disease.MALARIA.toString()
+            )
+        ), Icon(
+            R.drawable.ic__eligible_couple,
+            resources.getString(R.string.icon_title_ka),
+            recordsRepo.eligibleCoupleTrackingListCount,
+            DiseaseControlFragmentDirections.actionDiseaseControlFragmentToAllHouseHoldDiseaseControlFragment(
+                Disease.KALA_AZAR.toString()
+            )
+        ),
+
+        Icon(
+            R.drawable.ic__eligible_couple,
+            resources.getString(R.string.icon_title_aes),
+            recordsRepo.eligibleCoupleTrackingListCount,
+            DiseaseControlFragmentDirections.actionDiseaseControlFragmentToAllHouseHoldDiseaseControlFragment(
+                Disease.AES_JE.toString()
+            )
+        ),
+        Icon(
+            R.drawable.ic__eligible_couple,
+            resources.getString(R.string.icon_title_filaria),
+            recordsRepo.eligibleCoupleTrackingListCount,
+            DiseaseControlFragmentDirections.actionDiseaseControlFragmentToAllHouseHoldDiseaseControlFragment(
+                Disease.FILARIA.toString()
+            )
+        ),
+        Icon(
+            R.drawable.ic__eligible_couple,
+            resources.getString(R.string.icon_title_leprosy),
+            recordsRepo.eligibleCoupleTrackingListCount,
+            DiseaseControlFragmentDirections.actionDiseaseControlFragmentToAllHouseHoldDiseaseControlFragment(
+                Disease.LEPROSY.toString()
+            )
+        ),
+        Icon(
+            R.drawable.ic__eligible_couple,
+            resources.getString(R.string.icon_title_dearming),
+            recordsRepo.eligibleCoupleTrackingListCount,
+            DiseaseControlFragmentDirections.actionDiseaseControlFragmentToAllHouseHoldDiseaseControlFragment(
+                Disease.DEWARMING.toString()
+            )
         )
     ).apply {
         forEachIndexed { index, icon ->
