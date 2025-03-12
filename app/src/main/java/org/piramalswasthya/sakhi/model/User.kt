@@ -298,7 +298,7 @@ data class UserDetailsInResponse(
             password = password,
             serviceMapId = providerServiceMapId,
             state = LocationEntity(id = stateId, name = stateName),
-            district = LocationEntity(id = 10, name = "as"),
+            district = LocationEntity(id = 1, name = workingDistrictName.toString()),
             block = LocationEntity(id = blockId, name = blockName),
             villages = getLocationEntityListForVillage(villageId, villageName),
         )

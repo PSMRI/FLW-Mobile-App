@@ -28,6 +28,7 @@ import org.piramalswasthya.sakhi.database.room.dao.MdsrDao
 import org.piramalswasthya.sakhi.database.room.dao.PmjayDao
 import org.piramalswasthya.sakhi.database.room.dao.PmsmaDao
 import org.piramalswasthya.sakhi.database.room.dao.PncDao
+import org.piramalswasthya.sakhi.database.room.dao.ProfileDao
 import org.piramalswasthya.sakhi.database.room.dao.SyncDao
 import org.piramalswasthya.sakhi.database.room.dao.TBDao
 import org.piramalswasthya.sakhi.model.BenBasicCache
@@ -57,6 +58,7 @@ import org.piramalswasthya.sakhi.model.PMSMACache
 import org.piramalswasthya.sakhi.model.PNCVisitCache
 import org.piramalswasthya.sakhi.model.PregnantWomanAncCache
 import org.piramalswasthya.sakhi.model.PregnantWomanRegistrationCache
+import org.piramalswasthya.sakhi.model.ProfileActivityCache
 import org.piramalswasthya.sakhi.model.TBScreeningCache
 import org.piramalswasthya.sakhi.model.TBSuspectedCache
 import org.piramalswasthya.sakhi.model.Vaccine
@@ -94,6 +96,7 @@ import org.piramalswasthya.sakhi.model.Vaccine
         //INCENTIVES
         IncentiveActivityCache::class,
         IncentiveRecordCache::class,
+        ProfileActivityCache::class
     ],
     views = [BenBasicCache::class],
     version = 15, exportSchema = false
@@ -124,6 +127,7 @@ abstract class InAppDb : RoomDatabase() {
     abstract val infantRegDao: InfantRegDao
     abstract val childRegistrationDao: ChildRegistrationDao
     abstract val incentiveDao: IncentiveDao
+    abstract val profileDao: ProfileDao
 
     abstract val syncDao: SyncDao
 

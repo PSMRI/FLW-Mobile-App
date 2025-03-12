@@ -49,11 +49,6 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
             return date?.time ?: 0L
         }
 
-        fun getMinLmpMillis(): Long {
-            val cal = Calendar.getInstance()
-            cal.add(Calendar.DAY_OF_YEAR, -1 * 400) //before it is 280
-            return cal.timeInMillis
-        }
 
         fun getFinancialYear(dateString: String?): String? {
             val f = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
@@ -85,6 +80,30 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
             return f.format(cal.time)
 
 
+        }
+
+        fun dateFormate(dateStr: String): String? {
+            val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val outputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+
+            val dateResponse = inputFormat.parse(dateStr)
+            return outputFormat.format(dateResponse!!)
+
+
+        }
+
+        fun dateReverseFormat(dateStr: String): String? {
+            if (dateStr.isEmpty()) return null
+
+            return try {
+                val inputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                
+                val dateResponse = inputFormat.parse(dateStr) ?: return null
+                outputFormat.format(dateResponse)
+            } catch (e: Exception) {
+                null
+            }
         }
 
         fun getMinDateOfReg(): Long {

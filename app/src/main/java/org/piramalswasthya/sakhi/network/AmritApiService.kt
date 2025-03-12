@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.network
 
 import okhttp3.ResponseBody
 import org.piramalswasthya.sakhi.model.*
+import org.piramalswasthya.sakhi.ui.home_activity.asha_profile.AshaProfileViewModel
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -25,6 +26,9 @@ interface AmritApiService {
 
     @POST("identity-v3.0.0/rmnch/syncDataToAmrit")
     suspend fun submitRmnchDataAmrit(@Body sendingRMNCHData: SendingRMNCHData): Response<ResponseBody>
+
+    @POST("flw-0.0.1/asha/editProfile")
+    suspend fun submitAshaProfileData(@Body sendAshaPost: ProfileActivityCache): Response<ResponseBody>
 
     //    @POST("beneficiary/getBeneficiaryData")
     @POST("flw-0.0.1/beneficiary/getBeneficiaryData")
@@ -197,6 +201,9 @@ interface AmritApiService {
 
     @POST("/flw-0.0.1/incentive/masterData/getAll")
     suspend fun getAllIncentiveActivities(@Body requestBody: IncentiveActivityListRequest): Response<ResponseBody>
+
+    @GET("/flw-0.0.1/asha/getProfile")
+    suspend fun getAshaProfileData(@Query("employeeId") userId: Int): Response<ResponseBody>
 
     @POST("/flw-0.0.1/incentive/fetchUserData")
     suspend fun getAllIncentiveRecords(@Body requestBody: IncentiveRecordListRequest): Response<ResponseBody>
