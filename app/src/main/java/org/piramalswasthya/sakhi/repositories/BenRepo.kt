@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.repositories
 
 import android.app.Application
+import android.widget.Toast
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -8,7 +9,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import org.json.JSONException
 import org.json.JSONObject
-import org.piramalswasthya.sakhi.configuration.BenGenRegFormDataset
 import org.piramalswasthya.sakhi.database.room.BeneficiaryIdsAvail
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
@@ -20,6 +20,7 @@ import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.model.*
 import org.piramalswasthya.sakhi.network.*
 import org.piramalswasthya.sakhi.work.WorkerUtils
+import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.NewBenRegViewModel
 import timber.log.Timber
 import java.lang.Long.min
 import java.net.SocketTimeoutException
@@ -491,7 +492,8 @@ class BenRepo @Inject constructor(
 //                                            typeOfList = benDataObj.getString("registrationType"),
                                             syncState = if (benExists) SyncState.SYNCED else SyncState.SYNCING,
                                             dob = 0L,
-                                            relToHeadId = 0
+                                            relToHeadId = 0,
+                                            isConsent = false
                                         )
                                     )
                                 }
@@ -910,6 +912,12 @@ class BenRepo @Inject constructor(
                                     birthOPV = if (childDataObj.has("birthOPV")) childDataObj.getBoolean(
                                         "birthOPV"
                                     ) else false,
+                                    birthCertificateFileBackView = if (childDataObj.has("birthOPV")) childDataObj.getString(
+                                        "birthOPV"
+                                    ) else "",
+                                    birthCertificateFileFrontView = if (childDataObj.has("birthOPV")) childDataObj.getString(
+                                        "birthOPV"
+                                    ) else ""
                                 ),
                                 genDetails = if (childDataObj.length() != 0) null else BenRegGen(
                                     maritalStatus = if (benDataObj.has("maritalstatus")) benDataObj.getString(
@@ -993,7 +1001,8 @@ class BenRepo @Inject constructor(
 
                                 }else null,
                                 syncState = SyncState.SYNCED,
-                                isDraft = false
+                                isDraft = false,
+                                isConsent = false
                             )
                         )
 
@@ -1224,6 +1233,125 @@ class BenRepo @Inject constructor(
         }
         return null
     }
+
+
+    suspend fun sendOtp(mobileNo: String): SendOtpResponse? {
+        try {
+            val response = tmcNetworkApiService.sendOtp(mobileNo)
+            if (response.isSuccessful) {
+                val responseBody = response.body()?.string()
+                when (responseBody?.let { JSONObject(it).getInt("statusCode") }) {
+                    200 -> {
+                        val jsonObj = JSONObject(responseBody)
+                        val data = jsonObj.getJSONObject("data").toString()
+                        val response = Gson().fromJson(data, SendOtpResponse::class.java)
+                        Toast.makeText(context,"Otp sent successfully",Toast.LENGTH_SHORT).show()
+                        return response
+                    }
+
+                    5000, 5002 -> {
+                        if (JSONObject(responseBody).getString("errorMessage")
+                                .contentEquals("Invalid login key or session is expired")
+                        ) {
+                            val user = preferenceDao.getLoggedInUser()!!
+                            userRepo.refreshTokenTmc(user.userName, user.password)
+
+                        } else {
+                            NetworkResult.Error(
+                                0,
+                                JSONObject(responseBody).getString("errorMessage")
+                            )
+                        }
+                    }
+
+                    else -> {
+                        NetworkResult.Error(0, responseBody.toString())
+                    }
+                }
+            }
+        } catch (_: java.lang.Exception) {
+        }
+        return null
+    }
+    suspend fun resendOtp(mobileNo: String): SendOtpResponse? {
+        try {
+            val response = tmcNetworkApiService.resendOtp(mobileNo)
+            if (response.isSuccessful) {
+                val responseBody = response.body()?.string()
+                when (responseBody?.let { JSONObject(it).getInt("statusCode") }) {
+                    200 -> {
+                        val jsonObj = JSONObject(responseBody)
+                        val data = jsonObj.getJSONObject("data").toString()
+                        val response = Gson().fromJson(data, SendOtpResponse::class.java)
+                        Toast.makeText(context,"Otp sent successfully",Toast.LENGTH_SHORT).show()
+                        return response
+                    }
+
+                    5000, 5002 -> {
+                        if (JSONObject(responseBody).getString("errorMessage")
+                                .contentEquals("Invalid login key or session is expired")
+                        ) {
+                            val user = preferenceDao.getLoggedInUser()!!
+                            userRepo.refreshTokenTmc(user.userName, user.password)
+
+                        } else {
+                            NetworkResult.Error(
+                                0,
+                                JSONObject(responseBody).getString("errorMessage")
+                            )
+                        }
+                    }
+
+                    else -> {
+                        NetworkResult.Error(0, responseBody.toString())
+                    }
+                }
+            }
+        } catch (_: java.lang.Exception) {
+        }
+        return null
+    }
+
+    suspend fun verifyOtp(mobileNo: String,otp:Int): ValidateOtpResponse? {
+
+            var validateOtp = ValidateOtpRequest(otp,mobileNo);
+            val response = tmcNetworkApiService.validateOtp(validateOtp)
+            if (response.isSuccessful) {
+                val responseBody = response.body()?.string()
+                when (responseBody?.let { JSONObject(it).getInt("statusCode") }) {
+                    200 -> {
+                        val jsonObj = JSONObject(responseBody)
+                        val data = jsonObj.getJSONObject("data").toString()
+                        val myresponse = Gson().fromJson(responseBody, ValidateOtpResponse::class.java)
+                        NewBenRegViewModel.isOtpVerified = true
+                        return myresponse
+                    }
+
+                    5000, 5002 -> {
+                        if (JSONObject(responseBody).getString("errorMessage")
+                                .contentEquals("Invalid login key or session is expired")
+                        ) {
+                            val user = preferenceDao.getLoggedInUser()!!
+                            userRepo.refreshTokenTmc(user.userName, user.password)
+
+                        } else {
+                            NetworkResult.Error(
+                                0,
+                                JSONObject(responseBody).getString("errorMessage")
+                            )
+                        }
+                    }
+
+                    else -> {
+                        NetworkResult.Error(0, responseBody.toString())
+                    }
+                }
+            }
+
+        return null
+    }
+
+
 
     suspend fun getMinBenId(): Long {
         return withContext(Dispatchers.IO) {

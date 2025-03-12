@@ -81,7 +81,8 @@ data class EligibleCoupleRegCache(
     var createdDate: Long = System.currentTimeMillis(),
     var updatedBy: String,
     val updatedDate: Long = System.currentTimeMillis(),
-    var syncState: SyncState
+    var syncState: SyncState,
+    var lmp_date:Long
 ) : FormDataModel {
     fun asPostModel(): EcrPost {
         return EcrPost(
@@ -136,6 +137,7 @@ data class EligibleCoupleRegCache(
             createdDate = getDateStringFromLong(createdDate)!!,
             updatedBy = updatedBy,
             updatedDate = getDateStringFromLong(updatedDate)!!
+
         )
     }
 }

@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
+import android.net.Uri
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Konstants
@@ -365,7 +366,16 @@ class PregnantWomanAncVisitDataset(
         required = false,
     )
 
+    private val fileUpload = FormElement(
+        id = 32,
+        inputType = InputType.FILE_UPLOAD,
+        title = "MCP card upload",
+        required = false,
+    )
+
     private var toggleBp = false
+
+    fun getIndexOfFilePath() = getIndexById(fileUpload.id)
 
     fun resetBpToggle() {
         toggleBp = false
@@ -402,7 +412,8 @@ class PregnantWomanAncVisitDataset(
             anyHighRisk,
             highRiskReferralFacility,
             hrpConfirm,
-            maternalDeath
+            maternalDeath,
+            fileUpload
 
         )
         abortionDate.min = regis.lmpDate + TimeUnit.DAYS.toMillis(5 * 7 + 1)
@@ -478,6 +489,7 @@ class PregnantWomanAncVisitDataset(
             }
             ancDate.value = getDateFromLong(savedAnc.ancDate)
             weekOfPregnancy.value = woP.toString()
+            fileUpload.value = savedAnc.file_path
             isAborted.value =
                 if (savedAnc.isAborted) isAborted.entries!!.last() else isAborted.entries!!.first()
             if (savedAnc.isAborted) {
@@ -830,6 +842,7 @@ class PregnantWomanAncVisitDataset(
             deliveryDone.value?.let {
                 cache.pregnantWomanDelivered = it == deliveryDone.entries!!.first()
             }
+            cache.file_path = fileUpload.value.toString()
         }
     }
 
@@ -878,5 +891,15 @@ class PregnantWomanAncVisitDataset(
         }
         if (it.processed != "N") it.processed = "U"
         it.syncState = SyncState.UNSYNCED
+    }
+
+    fun setImageUriToFormElement(lastImageFormId: Int, dpUri: Uri) {
+        when (lastImageFormId) {
+            fileUpload.id -> {
+                fileUpload.value = dpUri.toString()
+                fileUpload.errorText = null
+            }
+        }
+
     }
 }
