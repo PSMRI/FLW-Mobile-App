@@ -32,7 +32,6 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_15sdp"
             asteriskRequired="@{form.required}"
             hintText="@{form.title}"
             app:endIconMode="custom"
@@ -51,6 +50,7 @@
                 android:inputType="@{form.etInputType}"
                 android:maxLength="@{form.etMaxLength}"
                 android:singleLine="true"
+
                 android:text="@{form.value}"
                 android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
                 tools:text="lsdkfnsld" />

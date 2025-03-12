@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.model
 
+import android.content.Context
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
@@ -208,7 +209,8 @@ data class BenWithPwrCache(
             form1Filled = ben.hrppaFilled,
             syncState = ben.hrppaSyncState,
             form2Enabled = true,
-            form2Filled = ben.hrpmbpFilled
+            form2Filled = ben.hrpmbpFilled,
+            isConsent = false
         )
     }
 
@@ -358,7 +360,8 @@ data class PregnantWomanAncCache(
     val createdDate: Long = System.currentTimeMillis(),
     var updatedBy: String,
     var updatedDate: Long = System.currentTimeMillis(),
-    var syncState: SyncState
+    var syncState: SyncState,
+    var file_path : String
 ) : FormDataModel {
     fun asPostModel(): ANCPost {
         return ANCPost(
@@ -394,7 +397,9 @@ data class PregnantWomanAncCache(
             createdDate = getDateStringFromLong(createdDate),
             createdBy = createdBy,
             updatedDate = getDateStringFromLong(updatedDate),
-            updatedBy = updatedBy
+            updatedBy = updatedBy,
+            file_path = file_path
+
         )
     }
 }
@@ -435,9 +440,10 @@ data class ANCPost(
     val createdBy: String,
     val updatedDate: String? = null,
     val updatedBy: String,
-    var providerServiceMapID :String?=null
+    var providerServiceMapID :String?=null,
+    var file_path : String
 ) {
-    fun toAncCache(): PregnantWomanAncCache {
+    fun toAncCache(context : Context): PregnantWomanAncCache {
         return PregnantWomanAncCache(
             id = id,
             benId = benId,
@@ -481,7 +487,8 @@ data class ANCPost(
             createdDate = getLongFromDate(createdDate),
             updatedBy = updatedBy,
             updatedDate = getLongFromDate(updatedDate),
-            syncState = SyncState.SYNCED
+            syncState = SyncState.SYNCED,
+            file_path = file_path
         )
     }
 }
