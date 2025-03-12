@@ -76,6 +76,10 @@
         <action
             android:id="@+id/action_homeFragment_to_childImmunizationListFragment"
             app:destination="@id/childImmunizationListFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_diseaseControlFragment"
+            app:destination="@id/diseaseControlFragment" />
+
     </fragment>
     <fragment
         android:id="@+id/allHouseholdFragment"
@@ -458,6 +462,9 @@
         <argument
             android:name="hhId"
             app:argType="long" />
+        <argument
+            android:name="fromDisease"
+            app:argType="integer" />
         <action
             android:id="@+id/action_householdMembersFragment_to_newBenRegTypeFragment"
             app:destination="@id/newBenRegTypeFragment" />
@@ -984,6 +991,29 @@
         android:name="org.piramalswasthya.sakhi.ui.home_activity.incentives.IncentivesFragment"
         android:label="fragment_incentives"
         tools:layout="@layout/fragment_incentives" />
+    <fragment
+        android:id="@+id/diseaseControlFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.DiseaseControlFragment"
+        android:label="DiseaseControlFragment" >
+        <action
+            android:id="@+id/action_diseaseControlFragment_to_allHouseHoldDiseaseControlFragment"
+            app:destination="@id/allHouseHoldDiseaseControlFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/allHouseHoldDiseaseControlFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.AllHouseHoldDiseaseControlFragment"
+        android:label="fragment_all_house_hold_disease_control"
+        tools:layout="@layout/fragment_all_house_hold_disease_control"
+
+        >
+        <argument
+            android:name="diseaseType"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_allHouseHoldDiseaseControlFragment_to_householdMembersFragment"
+            app:destination="@id/householdMembersFragment" />
+
+    </fragment>
 
 
 </navigation>

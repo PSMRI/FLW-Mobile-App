@@ -52,18 +52,30 @@ class HouseholdMembersFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.btnNextPage.visibility = View.GONE
         binding.llSearch.visibility = View.GONE
+        if (viewModel.isFromDisease == 1) {
+            binding.switchButton.visibility = View.VISIBLE
+        } else {
+            binding.switchButton.visibility = View.GONE
+        }
+        binding.switchButton.text = if (binding.switchButton.isChecked) "ON" else "OFF"
+        binding.switchButton.setOnCheckedChangeListener { _, isChecked ->
+            binding.switchButton.text = if (isChecked) "ON" else "OFF"
+        }
+
         val benAdapter = BenListAdapter(
             clickListener = BenListAdapter.BenClickListener(
                 { hhId, benId, relToHeadId ->
-                    findNavController().navigate(
-                        HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToNewBenRegFragment(
-                            hhId = hhId,
-                            benId = benId,
-                            gender = 0,
-                            relToHeadId = relToHeadId
-                        )
+                    if (viewModel.isFromDisease == 0) {
+                        findNavController().navigate(
+                            HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToNewBenRegFragment(
+                                hhId = hhId,
+                                benId = benId,
+                                gender = 0,
+                                relToHeadId = relToHeadId
+                            )
 
-                    )
+                        )
+                    }
 
                 },
                 {

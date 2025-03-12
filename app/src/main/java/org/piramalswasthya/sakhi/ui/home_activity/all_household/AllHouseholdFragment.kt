@@ -35,6 +35,7 @@ class AllHouseholdFragment : Fragment() {
 
     private val viewModel: AllHouseholdViewModel by viewModels()
 
+
     private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
         binding.searchView.setText(value)
         binding.searchView.setSelection(value.length)
@@ -196,7 +197,7 @@ class AllHouseholdFragment : Fragment() {
         }, {
             findNavController().navigate(
                 AllHouseholdFragmentDirections.actionAllHouseholdFragmentToHouseholdMembersFragment(
-                    it
+                    it,0
                 )
             )
         }, {
