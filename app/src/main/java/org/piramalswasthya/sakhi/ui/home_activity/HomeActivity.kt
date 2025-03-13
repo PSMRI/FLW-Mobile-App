@@ -516,6 +516,15 @@ class HomeActivity : AppCompatActivity() {
             true
 
         }
+
+        binding.navView.menu.findItem(R.id.ChatFragment).setOnMenuItemClickListener {
+//            navController.popBackStack(R.id.lmsFragment, false)
+            navController.navigate(R.id.lmsFragment)
+
+            binding.drawerLayout.close()
+            true
+
+        }
         binding.navView.menu.findItem(R.id.menu_logout).setOnMenuItemClickListener {
             logoutAlert.show()
             true
