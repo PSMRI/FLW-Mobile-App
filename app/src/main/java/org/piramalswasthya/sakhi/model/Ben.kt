@@ -1141,7 +1141,7 @@ data class BenRegCache(
     var syncState: SyncState,
 
     var isDraft: Boolean,
-    val isConsent: Boolean = false
+    val isConsent: Boolean = false,
 
     var isNewAbha: Boolean=false,
 
