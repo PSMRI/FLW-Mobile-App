@@ -77,6 +77,10 @@
         <argument
             android:name="phoneNum"
             app:argType="string" />
+
+        <argument
+            android:name="alternatePhoneNumber"
+            app:argType="string" />
         <argument
             android:name="name"
             app:argType="string" />
@@ -85,6 +89,9 @@
             app:argType="string" />
         <argument
             android:name="abhaNumber"
+            app:argType="string" />
+        <argument
+            android:name="abhaResponse"
             app:argType="string" />
     </fragment>
     <fragment
@@ -103,6 +110,9 @@
             app:argType="string" />
         <argument
             android:name="abhaNumber"
+            app:argType="string" />
+        <argument
+            android:name="abhaResponse"
             app:argType="string" />
     </fragment>
 </navigation>

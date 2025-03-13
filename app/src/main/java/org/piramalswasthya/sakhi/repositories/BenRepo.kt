@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.repositories
 
 import android.app.Application
+import android.widget.Toast
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -8,7 +9,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import org.json.JSONException
 import org.json.JSONObject
-import org.piramalswasthya.sakhi.configuration.BenGenRegFormDataset
 import org.piramalswasthya.sakhi.database.room.BeneficiaryIdsAvail
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
@@ -19,6 +19,8 @@ import org.piramalswasthya.sakhi.helpers.ImageUtils
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.model.*
 import org.piramalswasthya.sakhi.network.*
+import org.piramalswasthya.sakhi.work.WorkerUtils
+import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.NewBenRegViewModel
 import timber.log.Timber
 import java.lang.Long.min
 import java.net.SocketTimeoutException
@@ -164,9 +166,14 @@ class BenRepo @Inject constructor(
                 val responseStatusCode: Int = jsonObj.getInt("statusCode")
                 if (responseStatusCode == 200) {
                     val jsonObjectData: JSONObject = jsonObj.getJSONObject("data")
-                    val resBenId = jsonObjectData.getString("response")
-                    val benNumber = resBenId.substring(resBenId.length - 12)
-                    val newBenId = java.lang.Long.valueOf(benNumber)
+                    val response = jsonObjectData.getString("response")
+
+                  val newBenId= extractBenId(response)
+
+//                    val benNumber = resBenId.substring(resBenId.length - 12)
+//                    val newBenId = java.lang.Long.valueOf(benNumber)
+                    val newBenRegId = extractBenRegID(jsonObjectData.getString("response"))
+
                     //FIX TO UPDATE IMAGE-NAME WITH NEW BEN-ID
                     val infantReg = infantRegRepo.getInfantRegFromChildBenId(ben.beneficiaryId)
                     infantReg?.let {
@@ -177,12 +184,15 @@ class BenRepo @Inject constructor(
                     }
                     infantReg?.let { infantRegRepo.update(it) }
                     val photoUri = ImageUtils.renameImage(context, ben.beneficiaryId, newBenId)
-                    benDao.updateToFinalBenId(
-                        hhId = ben.householdId,
-                        oldId = ben.beneficiaryId,
-                        newId = newBenId,
-                        imageUri = photoUri
-                    )
+                    if (newBenRegId != null) {
+                        benDao.updateToFinalBenId(
+                            hhId = ben.householdId,
+                            oldId = ben.beneficiaryId,
+                            newBenRegId=newBenRegId,
+                            newId = newBenId,
+                            imageUri = photoUri
+                        )
+                    }
                     //FIX TO MAP UPDATED BEN-ID FOR HOF
                     householdDao.getHousehold(ben.householdId)
                         ?.takeIf { it.benId == ben.beneficiaryId }?.let {
@@ -214,6 +224,20 @@ class BenRepo @Inject constructor(
         }
 
     }
+
+    fun extractBenId(string:String): Long {
+        val regex =  """Beneficiary ID is :\s*(\d+)""".toRegex() //"BenRegID is :\\s*(\\d+)".toRegex()
+        val matchResult = regex.find(string)
+        var result =matchResult?.groupValues?.get(1)?.trim()?.toLongOrNull()
+        return result?:0L
+    }
+    fun extractBenRegID(json: String): Long? {
+        val regex = """BenRegID\s*is\s*:\s*(\d+)""".toRegex()
+        val matchResult = regex.find(json)
+        var result =matchResult?.groupValues?.get(1)?.trim()?.toLongOrNull()
+        return result
+    }
+
 
     suspend fun processNewBen(): Boolean {
         return withContext(Dispatchers.IO) {
@@ -468,7 +492,8 @@ class BenRepo @Inject constructor(
 //                                            typeOfList = benDataObj.getString("registrationType"),
                                             syncState = if (benExists) SyncState.SYNCED else SyncState.SYNCING,
                                             dob = 0L,
-                                            relToHeadId = 0
+                                            relToHeadId = 0,
+                                            isConsent = false
                                         )
                                     )
                                 }
@@ -524,6 +549,8 @@ class BenRepo @Inject constructor(
                 for (i in 0 until jsonArray.length()) {
                     val jsonObject = jsonArray.getJSONObject(i)
                     val benDataObj = jsonObject.getJSONObject("beneficiaryDetails")
+                    val abhaHealthDetailsObj = jsonObject.getJSONObject("abhaHealthDetails")
+
 //                    val houseDataObj = jsonObject.getJSONObject("householdDetails")
 //                    val cbacDataObj = jsonObject.getJSONObject("cbacDetails")
                     val childDataObj = jsonObject.getJSONObject("bornbirthDeatils")
@@ -885,6 +912,12 @@ class BenRepo @Inject constructor(
                                     birthOPV = if (childDataObj.has("birthOPV")) childDataObj.getBoolean(
                                         "birthOPV"
                                     ) else false,
+                                    birthCertificateFileBackView = if (childDataObj.has("birthOPV")) childDataObj.getString(
+                                        "birthOPV"
+                                    ) else "",
+                                    birthCertificateFileFrontView = if (childDataObj.has("birthOPV")) childDataObj.getString(
+                                        "birthOPV"
+                                    ) else ""
                                 ),
                                 genDetails = if (childDataObj.length() != 0) null else BenRegGen(
                                     maritalStatus = if (benDataObj.has("maritalstatus")) benDataObj.getString(
@@ -959,12 +992,17 @@ class BenRepo @Inject constructor(
 //                                ) else null,
 //                                noOfDaysForDelivery = noOfDaysForDelivery,
                                 ),
-                                healthIdDetails = if (jsonObject.has("healthId")) BenHealthIdDetails(
-                                    jsonObject.getString("healthId"),
-                                    jsonObject.getString("healthIdNumber")
-                                ) else null,
+                                healthIdDetails =if(abhaHealthDetailsObj != null && abhaHealthDetailsObj.length() > 0){
+                                    BenHealthIdDetails(
+                                        healthIdNumber = abhaHealthDetailsObj.getString("HealthIdNumber"),
+                                        isNewAbha = abhaHealthDetailsObj.getBoolean("isNewAbha"),
+                                        healthId = abhaHealthDetailsObj.getString("HealthID")
+                                    )
+
+                                }else null,
                                 syncState = SyncState.SYNCED,
-                                isDraft = false
+                                isDraft = false,
+                                isConsent = false
                             )
                         )
 
@@ -1195,6 +1233,125 @@ class BenRepo @Inject constructor(
         }
         return null
     }
+
+
+    suspend fun sendOtp(mobileNo: String): SendOtpResponse? {
+        try {
+            val response = tmcNetworkApiService.sendOtp(mobileNo)
+            if (response.isSuccessful) {
+                val responseBody = response.body()?.string()
+                when (responseBody?.let { JSONObject(it).getInt("statusCode") }) {
+                    200 -> {
+                        val jsonObj = JSONObject(responseBody)
+                        val data = jsonObj.getJSONObject("data").toString()
+                        val response = Gson().fromJson(data, SendOtpResponse::class.java)
+                        Toast.makeText(context,"Otp sent successfully",Toast.LENGTH_SHORT).show()
+                        return response
+                    }
+
+                    5000, 5002 -> {
+                        if (JSONObject(responseBody).getString("errorMessage")
+                                .contentEquals("Invalid login key or session is expired")
+                        ) {
+                            val user = preferenceDao.getLoggedInUser()!!
+                            userRepo.refreshTokenTmc(user.userName, user.password)
+
+                        } else {
+                            NetworkResult.Error(
+                                0,
+                                JSONObject(responseBody).getString("errorMessage")
+                            )
+                        }
+                    }
+
+                    else -> {
+                        NetworkResult.Error(0, responseBody.toString())
+                    }
+                }
+            }
+        } catch (_: java.lang.Exception) {
+        }
+        return null
+    }
+    suspend fun resendOtp(mobileNo: String): SendOtpResponse? {
+        try {
+            val response = tmcNetworkApiService.resendOtp(mobileNo)
+            if (response.isSuccessful) {
+                val responseBody = response.body()?.string()
+                when (responseBody?.let { JSONObject(it).getInt("statusCode") }) {
+                    200 -> {
+                        val jsonObj = JSONObject(responseBody)
+                        val data = jsonObj.getJSONObject("data").toString()
+                        val response = Gson().fromJson(data, SendOtpResponse::class.java)
+                        Toast.makeText(context,"Otp sent successfully",Toast.LENGTH_SHORT).show()
+                        return response
+                    }
+
+                    5000, 5002 -> {
+                        if (JSONObject(responseBody).getString("errorMessage")
+                                .contentEquals("Invalid login key or session is expired")
+                        ) {
+                            val user = preferenceDao.getLoggedInUser()!!
+                            userRepo.refreshTokenTmc(user.userName, user.password)
+
+                        } else {
+                            NetworkResult.Error(
+                                0,
+                                JSONObject(responseBody).getString("errorMessage")
+                            )
+                        }
+                    }
+
+                    else -> {
+                        NetworkResult.Error(0, responseBody.toString())
+                    }
+                }
+            }
+        } catch (_: java.lang.Exception) {
+        }
+        return null
+    }
+
+    suspend fun verifyOtp(mobileNo: String,otp:Int): ValidateOtpResponse? {
+
+            var validateOtp = ValidateOtpRequest(otp,mobileNo);
+            val response = tmcNetworkApiService.validateOtp(validateOtp)
+            if (response.isSuccessful) {
+                val responseBody = response.body()?.string()
+                when (responseBody?.let { JSONObject(it).getInt("statusCode") }) {
+                    200 -> {
+                        val jsonObj = JSONObject(responseBody)
+                        val data = jsonObj.getJSONObject("data").toString()
+                        val myresponse = Gson().fromJson(responseBody, ValidateOtpResponse::class.java)
+                        NewBenRegViewModel.isOtpVerified = true
+                        return myresponse
+                    }
+
+                    5000, 5002 -> {
+                        if (JSONObject(responseBody).getString("errorMessage")
+                                .contentEquals("Invalid login key or session is expired")
+                        ) {
+                            val user = preferenceDao.getLoggedInUser()!!
+                            userRepo.refreshTokenTmc(user.userName, user.password)
+
+                        } else {
+                            NetworkResult.Error(
+                                0,
+                                JSONObject(responseBody).getString("errorMessage")
+                            )
+                        }
+                    }
+
+                    else -> {
+                        NetworkResult.Error(0, responseBody.toString())
+                    }
+                }
+            }
+
+        return null
+    }
+
+
 
     suspend fun getMinBenId(): Long {
         return withContext(Dispatchers.IO) {

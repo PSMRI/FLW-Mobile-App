@@ -11,5 +11,7 @@ enum class InputType {
     CHECKBOXES,
     TIME_PICKER,
     HEADLINE,
-    AGE_PICKER
+    AGE_PICKER,
+    BUTTON,
+    FILE_UPLOAD
 }

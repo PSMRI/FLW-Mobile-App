@@ -22,6 +22,7 @@ import org.piramalswasthya.sakhi.model.InputType.CHECKBOXES
 import org.piramalswasthya.sakhi.model.InputType.DATE_PICKER
 import org.piramalswasthya.sakhi.model.InputType.DROPDOWN
 import org.piramalswasthya.sakhi.model.InputType.EDIT_TEXT
+import org.piramalswasthya.sakhi.model.InputType.FILE_UPLOAD
 import org.piramalswasthya.sakhi.model.InputType.IMAGE_VIEW
 import org.piramalswasthya.sakhi.model.InputType.RADIO
 import org.piramalswasthya.sakhi.model.InputType.TEXT_VIEW
@@ -364,6 +365,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
     )
 
 
+
     val rchId = FormElement(
         id = 23,
         inputType = EDIT_TEXT,
@@ -418,6 +420,66 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         arrayId = -1,
         required = false,
     )
+
+    private val sendOtpBtn = FormElement(
+        id = 42,
+        inputType = org.piramalswasthya.sakhi.model.InputType.BUTTON,
+        title = resources.getString(R.string.generate_otp),
+        required = false,
+        isEnabled = true,
+        etInputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_NORMAL,
+        isMobileNumber = false,
+    )
+
+    private val otpField = FormElement(
+        id = 43,
+        inputType = EDIT_TEXT,
+        title = resources.getString(R.string.enter_otp),
+        arrayId = -1,
+        required = false,
+        etInputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_NORMAL,
+        isMobileNumber = false,
+        etMaxLength = 6,
+        max = 9999999999,
+        min = 6000000000
+    )
+    private val tempraryContactNo = FormElement(
+        id = 44,
+        inputType = EDIT_TEXT,
+        title = resources.getString(R.string.contact_number),
+        arrayId = -1,
+        required = false,
+        etInputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_NORMAL,
+        isMobileNumber = true,
+        etMaxLength = 10,
+        max = 9999999999,
+        min = 6000000000
+    )
+
+    private val headLine = FormElement(
+        id = 45,
+        inputType = org.piramalswasthya.sakhi.model.InputType.HEADLINE,
+        title = "Birth Certificates",
+        headingLine = false,
+        required = false,
+    )
+    private val fileUploadFront = FormElement(
+        id = 46,
+        inputType = FILE_UPLOAD,
+        title = "Front Side",
+        required = false,
+    )
+    private val fileUploadBack = FormElement(
+        id = 47,
+        inputType = FILE_UPLOAD,
+        title = "Back Side",
+        required = false,
+    )
+
+    fun getIndexOfBirthCertificateFrontPath() = getIndexById(fileUploadFront.id)
+    fun getIndexOfBirthCertificateBackPath() = getIndexById(fileUploadBack.id)
+
+
     val firstPage by lazy {
         listOf(
             pic,
@@ -458,7 +520,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             contactNumber,
             community,
             religion,
-            rchId,
+            rchId
 //            hasAadharNo,
         )
         this.familyHeadPhoneNo = familyHeadPhoneNo?.toString()
@@ -468,6 +530,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             firstName.value = saved.firstName
             lastName.value = saved.lastName
             agePopup.value = getDateFromLong(saved.dob)
+            fileUploadFront.value = saved?.kidDetails?.birthCertificateFileFrontView
+            fileUploadBack.value = saved?.kidDetails?.birthCertificateFileBackView
 //            dob.value = getDateFromLong(saved.dob)
 //            age.value = getAgeFromDob(saved.dob).toString()
 //            ageUnit.value = ageUnit.getStringFromPosition(saved.ageUnitId)
@@ -616,6 +680,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 childRegisteredAtSchool
             ) + 1, typeOfSchool
         )
+
         birthCertificateNumber.value = ben?.kidDetails?.birthCertificateNumber
         placeOfBirth.value =
             ben?.kidDetails?.birthPlaceId?.let { placeOfBirth.getStringFromPosition(it) }
@@ -642,10 +707,16 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             list.addAll(
                 listOf(
                     birthCertificateNumber,
-                    placeOfBirth
+                    placeOfBirth,
+                    headLine,
+                    fileUploadFront,
+                    fileUploadBack
                 )
             )
         }
+
+
+
         if (!isKid() and !hasThirdPage()) {
             list.remove(rchId)
         }
@@ -659,6 +730,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             dateOfReg,
             firstName,
             lastName,
+            tempraryContactNo,
+            sendOtpBtn,
             agePopup,
 //            dob,
 //            age,
@@ -674,6 +747,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 //            hasAadharNo,
         )
         this.familyHeadPhoneNo = household.family?.familyHeadPhoneNo?.toString()
+        tempraryContactNo.value = familyHeadPhoneNo
         this.isHoF = true
         if (dateOfReg.value == null)
             dateOfReg.value = getCurrentDateString()
@@ -720,6 +794,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             gender.value = gender.getStringFromPosition(saved.genderId)
             gender.inputType = TEXT_VIEW
             fatherName.value = saved.fatherName
+            fileUploadFront.value = saved.kidDetails?.birthCertificateFileFrontView
+            fileUploadBack.value = saved.kidDetails?.birthCertificateFileBackView
             saved.fatherName?.let {
                 if (it.isNotEmpty()) fatherName.inputType = TEXT_VIEW
             }
@@ -754,6 +830,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 mobileNoOfRelation.getStringFromPosition(saved.mobileNoOfRelationId)
             otherMobileNoOfRelation.value = saved.mobileOthers
             contactNumber.value = saved.contactNumber.toString()
+            tempraryContactNo.value = saved.contactNumber.toString()
             relationToHead.value = relationToHeadListDefault[saved.familyHeadRelationPosition - 1]
             otherRelationToHead.value = saved.familyHeadRelationOther
             community.value = community.getStringFromPosition(saved.communityId)
@@ -810,6 +887,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             ) + 1, typeOfSchool
         )
 
+
         if (!isKid() and !hasThirdPage()) {
             list.remove(rchId)
         }
@@ -829,6 +907,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             dateOfReg,
             firstName,
             lastName,
+            tempraryContactNo,
+            sendOtpBtn,
             agePopup,
 //            dob,
 //            age,
@@ -842,7 +922,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             contactNumber,
             community,
             religion,
-            rchId,
+            rchId
 //            hasAadharNo,
         )
         this.familyHeadPhoneNo = household.family?.familyHeadPhoneNo?.toString()
@@ -852,6 +932,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 //            ageUnit.value = ageUnit.entries!!.last()
             mobileNoOfRelation.value = mobileNoOfRelation.entries!![4]
             contactNumber.value = familyHeadPhoneNo
+            tempraryContactNo.value = familyHeadPhoneNo
             community.value = hoF?.communityId?.let { community.getStringFromPosition(it) }
             religion.value = hoF?.religionId?.let { religion.getStringFromPosition(it) }
             gender.value = when (benGender) {
@@ -905,6 +986,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             gender.value = gender.getStringFromPosition(saved.genderId)
             gender.inputType = TEXT_VIEW
             fatherName.value = saved.fatherName
+            fileUploadFront.value = saved.kidDetails?.birthCertificateFileFrontView
+            fileUploadBack.value = saved.kidDetails?.birthCertificateFileBackView
             saved.fatherName?.let {
                 if (it.isNotEmpty()) fatherName.inputType = TEXT_VIEW
             }
@@ -929,6 +1012,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 mobileNoOfRelation.getStringFromPosition(saved.mobileNoOfRelationId)
             otherMobileNoOfRelation.value = saved.mobileOthers
             contactNumber.value = saved.contactNumber.toString()
+            tempraryContactNo.value = saved.contactNumber.toString()
 //            relationToHead.entries = relationToHeadListDefault
             relationToHead.value = relationToHead.getStringFromPosition(relationToHeadId + 1)
             if (relationToHeadId == relationToHead.entries!!.lastIndex) {
@@ -1078,7 +1162,10 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             list.addAll(
                 listOf(
                     birthCertificateNumber,
-                    placeOfBirth
+                    placeOfBirth,
+                    headLine,
+                    fileUploadFront,
+                    fileUploadBack
                 )
             )
         }
@@ -1101,6 +1188,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             motherName.value?.let {
                 if (it.isNotEmpty()) motherName.inputType = TEXT_VIEW
             }
+
         } else {
             motherName.value = "${hoF.firstName} ${hoF.lastName ?: ""}"
             fatherName.value = hoFSpouse?.let {
@@ -1113,6 +1201,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 if (it.isNotEmpty()) motherName.inputType = TEXT_VIEW
             }
         }
+        fileUploadFront.value = hof?.kidDetails?.birthCertificateFileFrontView
+        fileUploadBack.value = hof?.kidDetails?.birthCertificateFileBackView
         val hoFAge = getAgeFromDob(hoF.dob)
         val hoFSpouseAge = hoFSpouse?.dob?.let { getAgeFromDob(it) }
         val maxAge = (if (hoFSpouseAge == null) hoFAge else minOf(
@@ -1130,6 +1220,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             it.timeInMillis
         }
         maxAgeYear = maxAge
+
 
         lastName.value = hoF.lastName
     }
@@ -1472,6 +1563,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         setUpPage(list)
     }
 
+
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
         return when (formId) {
             firstName.id -> {
@@ -1687,9 +1779,49 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 validateAllCapsOrSpaceOnEditText(spouseName)
             }
 
+            tempraryContactNo.id -> {
+                validateEmptyOnEditText(contactNumber)
+                validateMobileNumberOnEditText(contactNumber)
+                if (tempraryContactNo.value!!.isEmpty()) {
+                    triggerforHide(
+                        source = tempraryContactNo,
+                        passedIndex = index,
+                        triggerIndex = index,
+                        target = sendOtpBtn
+                    )
+                } else if(tempraryContactNo.value!!.length >= 10){
+                    triggerDependants(
+                        source = tempraryContactNo,
+                        passedIndex = index,
+                        triggerIndex = index,
+                        target = sendOtpBtn
+                    )
+                } else {
+                    triggerforHide(
+                        source = tempraryContactNo,
+                        passedIndex = index,
+                        triggerIndex = index,
+                        target = sendOtpBtn
+                    )
+                }
+            }
+
             contactNumber.id -> {
                 validateEmptyOnEditText(contactNumber)
                 validateMobileNumberOnEditText(contactNumber)
+            }
+
+            sendOtpBtn.id -> {
+                if (sendOtpBtn.isEnabled) {
+                    triggerDependants(
+                        source = sendOtpBtn,
+                        passedIndex = index,
+                        triggerIndex = index,
+                        target = otpField
+                    )
+                }
+                return 0
+
             }
 
             mobileNoOfRelation.id -> {
@@ -1911,6 +2043,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
     fun getIndexOfAgeAtMarriage() = getIndexOfElement(ageAtMarriage)
     fun getIndexOfContactNumber() = getIndexOfElement(contactNumber)
     fun getIndexOfMaritalStatus() = getIndexOfElement(maritalStatus)
+    fun getTempMobileNoStatus() = getIndexOfElement(tempraryContactNo)
 
 
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
@@ -2097,6 +2230,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 babyWeight.value?.takeIf { it.isNotEmpty() }?.toDouble() ?: 0.0
 
 
+            ben.kidDetails!!.birthCertificateFileBackView = fileUploadBack.value
+            ben.kidDetails!!.birthCertificateFileFrontView = fileUploadFront.value
             ben.isDraft = false
 
         }

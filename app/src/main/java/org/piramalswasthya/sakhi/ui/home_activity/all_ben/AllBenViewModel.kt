@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.ui.home_activity.all_ben
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,18 +13,37 @@ import org.piramalswasthya.sakhi.helpers.filterBenList
 import org.piramalswasthya.sakhi.model.BenHealthIdDetails
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
+import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_otp.AadhaarOtpFragmentArgs
 import javax.inject.Inject
 
 @HiltViewModel
 class AllBenViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     recordsRepo: RecordsRepo,
     private val benRepo: BenRepo
 ) : ViewModel() {
 
 
-    private val allBenList = recordsRepo.allBenList
+    private var sourceFromArgs = AllBenFragmentArgs.fromSavedStateHandle(savedStateHandle).source
+
+    private val allBenList = when (sourceFromArgs) {
+        1 -> {
+            recordsRepo.allBenWithAbhaList
+        }
+        2 -> {
+            recordsRepo.allBenWithRchList
+        }
+        else -> {
+            recordsRepo.allBenList
+        }
+    }
+
     private val filter = MutableStateFlow("")
-    val benList = allBenList.combine(filter) { list, filter ->
+    private val kind = MutableStateFlow(0)
+
+    val benList = allBenList.combine(kind) { list, kind ->
+        filterBenList(list, kind)
+    }.combine(filter) { list, filter ->
         filterBenList(list, filter)
     }
 
@@ -46,6 +66,13 @@ class AllBenViewModel @Inject constructor(
 
     }
 
+    fun filterType(type: Int) {
+        viewModelScope.launch {
+            kind.emit(type)
+        }
+
+    }
+
     fun fetchAbha(benId: Long) {
         _abha.value = null
         _benRegId.value = null
@@ -56,6 +83,7 @@ class AllBenViewModel @Inject constructor(
                 if (result != null) {
                     _abha.value = result.healthIdNumber
                     it.healthIdDetails = BenHealthIdDetails(result.healthId, result.healthIdNumber)
+                    it.isNewAbha =result.isNewAbha
                     benRepo.updateRecord(it)
                 } else {
                     _benRegId.value = it.benRegId
@@ -64,6 +92,14 @@ class AllBenViewModel @Inject constructor(
         }
     }
 
+    suspend fun getBenFromId(benId: Long):Long{
+        var benRegId = 0L
+             val result = benRepo.getBenFromId(benId)
+             if (result != null) {
+                 benRegId = result.benRegId
+             }
+         return benRegId
+    }
     fun resetBenRegId() {
         _benRegId.value = null
     }

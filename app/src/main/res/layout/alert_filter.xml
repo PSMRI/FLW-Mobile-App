@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="@dimen/padding_wide">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tv_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:gravity="center"
+        android:padding="@dimen/padding_normal"
+        android:text="@string/filter_list"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+        android:textColor="?attr/colorOnPrimary"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.45" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tv_rch"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:gravity="end|center_vertical"
+        android:includeFontPadding="false"
+        android:maxLines="2"
+        android:paddingStart="32dp"
+        android:paddingEnd="16dp"
+        android:text="@string/rch_id"
+        android:textAlignment="gravity"
+        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_header" />
+
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/cb_rch"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="start|center_vertical"
+        android:includeFontPadding="false"
+        android:paddingEnd="32dp"
+        android:layout_marginStart="12dp"
+        android:text="@string/ben_with_rch_id"
+        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_rch"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/guideline"
+        app:layout_constraintTop_toTopOf="@+id/tv_rch" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tv_abha"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:gravity="end|center_vertical"
+        android:includeFontPadding="false"
+        android:maxLines="2"
+        android:paddingStart="32dp"
+        android:paddingEnd="16dp"
+        android:text="@string/abha_id"
+        android:textAlignment="gravity"
+        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_rch" />
+
+    <RadioGroup
+        android:id="@+id/rgAbha"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:gravity="start|center_vertical"
+        android:includeFontPadding="false"
+        android:paddingEnd="32dp"
+        android:layout_marginTop="-16dp"
+        android:layout_marginStart="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/guideline"
+        app:layout_constraintTop_toTopOf="@+id/tv_abha">
+
+        <RadioButton
+            android:id="@+id/rbAll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/all"
+            android:checked="true"
+            android:includeFontPadding="false"
+            android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+
+        <RadioButton
+            android:id="@+id/rbWith"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/with_abha"
+            android:includeFontPadding="false"
+            android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+
+        <RadioButton
+            android:id="@+id/rbWithout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/without_abha"
+            android:includeFontPadding="false"
+            android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+
+    </RadioGroup>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_ok"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="@string/btn_submit"
+        android:textColor="?attr/colorOnPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/btn_cancel"
+        app:layout_constraintTop_toBottomOf="@+id/rgAbha" />
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cancel"
+        android:layout_marginTop="12dp"
+        android:textColor="?attr/colorOnPrimary"
+        app:layout_constraintEnd_toStartOf="@+id/btn_ok"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rgAbha" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

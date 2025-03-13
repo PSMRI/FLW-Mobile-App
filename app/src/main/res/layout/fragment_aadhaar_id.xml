@@ -33,9 +33,63 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:orientation="vertical"
-                    app:layout_constraintHeight_percent=".9"
-                    >
+                    android:orientation="vertical">
+
+<!--                    app:layout_constraintHeight_percent=".9"-->
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/cvHeader"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_margin="18dp"
+                        android:background="@drawable/background_rectangle_lighter_grey_30"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:id="@+id/searchToggle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="@color/md_theme_light_onPrimary"
+                            android:gravity="center"
+                            android:paddingLeft="30dp"
+                            android:paddingTop="10dp"
+                            android:paddingRight="30dp"
+                            android:paddingBottom="10dp"
+                            android:text="Search ABHA"
+                            android:textColor="@color/md_theme_dark_shadow"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toEndOf="@+id/createToggle"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/createToggle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/background_rectangle_lightest_grey_20"
+                            android:backgroundTint="@color/md_theme_light_onPrimary"
+                            android:gravity="center"
+                            android:paddingLeft="30dp"
+                            android:paddingTop="10dp"
+                            android:paddingRight="30dp"
+                            android:paddingBottom="10dp"
+                            android:text="Create ABHA"
+                            android:textColor="@color/md_theme_dark_shadow"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/searchToggle"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/til_aadhaar_verify_dropdown"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
@@ -91,11 +145,27 @@
                         android:layout_height="wrap_content"
                         android:text="Hello World!"
                         app:defaultNavHost="true"
+                        android:visibility="visible"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/rg_gov_asha"
+                        app:layout_constraintTop_toBottomOf="@+id/til_aadhaar_verify_dropdown"
                         app:navGraph="@navigation/nav_aadhaar_id"
                         tools:layout="@layout/fragment_aadhaar_number_asha" />
+
+                    <androidx.fragment.app.FragmentContainerView
+                        android:id="@+id/nav_host_fragment_find_abha"
+                        android:name="androidx.navigation.fragment.NavHostFragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Hello World!"
+                        app:defaultNavHost="true"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/til_aadhaar_verify_dropdown"
+                        app:navGraph="@navigation/nav_find_abha"
+                        tools:layout="@layout/fragment_find_abha" />
+
                 </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
