@@ -14,6 +14,7 @@ import org.piramalswasthya.sakhi.ui.home_activity.eligible_couple.EligibleCouple
 import org.piramalswasthya.sakhi.ui.home_activity.home.HomeFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.hrp_cases.HrpCasesFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.immunization_due.ImmunizationDueTypeFragmentDirections
+import org.piramalswasthya.sakhi.ui.home_activity.lms.LmsFragment
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.MotherCareFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.NcdFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.VillageLevelFormsFragmentDirections
@@ -29,6 +30,7 @@ class IconDataset @Inject constructor(
     enum class Modules {
         ALL,
         HRP
+
     }
 
     fun getHomeIconDataset(resources: Resources): List<Icon> {
@@ -154,6 +156,7 @@ class IconDataset @Inject constructor(
 
                 )
             )
+
         }.apply {
             forEachIndexed { index, icon ->
                 icon.colorPrimary = index % 2 == 0
@@ -244,6 +247,23 @@ class IconDataset @Inject constructor(
             recordsRepo.adolescentListCount,
             ChildCareFragmentDirections.actionChildCareFragmentToAdolescentListFragment()
         )
+    ).apply {
+        forEachIndexed { index, icon ->
+            icon.colorPrimary = index % 2 == 0
+        }
+    }
+
+    fun getLmsDataset(resources: Resources) = listOf(
+        Icon(
+            R.drawable.ic_guide_icon,
+            resources.getString(R.string.icon_title_user_guid),
+            null,
+            EligibleCoupleFragmentDirections.actionEligibleCoupleFragmentToEligibleCoupleListFragment()
+        ), Icon(
+            R.drawable.ic_video_icon,
+            resources.getString(R.string.icon_title_video_tutorial),
+            null,
+            ChildCareFragmentDirections.actionChildCareFragmentToAdolescentListFragment()        )
     ).apply {
         forEachIndexed { index, icon ->
             icon.colorPrimary = index % 2 == 0
@@ -350,7 +370,7 @@ class IconDataset @Inject constructor(
             ImmunizationDueTypeFragmentDirections.actionImmunizationDueTypeFragmentToChildImmunizationListFragment()
         ),
 
-    ).apply {
+        ).apply {
         forEachIndexed { index, icon ->
             icon.colorPrimary = index % 2 == 0
         }
