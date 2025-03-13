@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.configuration.PregnantWomanRegistrationDataset.Companion.getMinLmpMillis
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.setToStartOfTheDay
@@ -33,7 +34,7 @@ class EligibleCoupleTrackingDataset(
         arrayId = -1,
         required = true,
         max = System.currentTimeMillis(),
-        min = Companion.getMinLmpMillis(),
+        min = getMinLmpMillis(),
         hasDependants = true
     )
 
