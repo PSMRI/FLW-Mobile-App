@@ -258,7 +258,7 @@ class NewBenRegFragment : Fragment() {
                             }
 
                             override fun afterTextChanged(s: Editable?) {
-                                isValidOtp = (s != null) && (s.length == 4)
+                                isValidOtp = (s != null) && (s.length == 6)
                                 if (isValidOtp)
                                     viewModel.validateOtp(tempContactNo,s.toString().toInt(),requireActivity(),otpField,button)
 

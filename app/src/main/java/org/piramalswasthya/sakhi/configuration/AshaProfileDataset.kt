@@ -315,7 +315,7 @@ class AshaProfileDataset(
         (cacheModel).let { dataModel ->
             dataModel.name = ashaName.value
             dataModel.village = village.value
-            dataModel.dob = dateReverseFormate(dob.value.toString())
+            dataModel.dob = dateReverseFormat(dob.value.toString())
             dataModel.age = ages.value!!.toInt()
             dataModel.mobileNumber = mobileNumber.value
             dataModel.alternateMobileNumber = alternameMobileNumber.value

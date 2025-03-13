@@ -439,7 +439,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         required = false,
         etInputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_NORMAL,
         isMobileNumber = false,
-        etMaxLength = 4,
+        etMaxLength = 6,
         max = 9999999999,
         min = 6000000000
     )
