@@ -13,7 +13,7 @@ class ImmunizationDataset(context: Context, language: Languages) : Dataset(conte
 
     private var vaccineId: Int = 0
 
-    private val name = FormElement(
+    /*private val name = FormElement(
         id = 100,
         inputType = InputType.TEXT_VIEW,
         title = resources.getString(R.string.name_ben),
@@ -32,7 +32,7 @@ class ImmunizationDataset(context: Context, language: Languages) : Dataset(conte
         inputType = InputType.TEXT_VIEW,
         title = resources.getString(R.string.date_of_birth),
         required = false
-    )
+    )*/
 
     //    private val dateOfPrevVaccination = FormElement(
 //        id = 103,
@@ -90,20 +90,20 @@ class ImmunizationDataset(context: Context, language: Languages) : Dataset(conte
 
     suspend fun setFirstPage(ben: BenRegCache, vaccine: Vaccine, imm: ImmunizationCache?) {
         val list = listOf(
-            name,
-            motherName,
-            dateOfBirth,
-            vaccineName,
-            doseNumber,
-            expectedDate,
+//            name,
+//            motherName,
+//            dateOfBirth,
+//            vaccineName,
+//            doseNumber,
+//            expectedDate,
             dateOfVaccination,
             vaccinatedPlace,
             vaccinatedBy
         )
         vaccineId = vaccine.vaccineId
-        name.value = ben.firstName ?: "Baby of ${ben.motherName}"
-        motherName.value = ben.motherName
-        dateOfBirth.value = getDateFromLong(ben.dob)
+//        name.value = ben.firstName ?: "Baby of ${ben.motherName}"
+//        motherName.value = ben.motherName
+//        dateOfBirth.value = getDateFromLong(ben.dob)
         vaccineName.value = vaccine.vaccineName.dropLastWhile { it.isDigit() }
         doseNumber.value = vaccine.vaccineName.takeLastWhile { it.isDigit() }
         expectedDate.value =
@@ -128,7 +128,7 @@ class ImmunizationDataset(context: Context, language: Languages) : Dataset(conte
         (cacheModel as ImmunizationCache).let {
             it.date = dateOfVaccination.value?.let { getLongFromDate(it) }
 //            it.placeId= vaccinatedPlace.getPosition()
-            it.vaccineId = vaccineId
+       //     it.vaccineId = vaccineId
             it.place =
                 vaccinatedPlace.getEnglishStringFromPosition(vaccinatedPlace.getPosition()) ?: ""
 //            it.byWhoId= vaccinatedBy.getPosition()

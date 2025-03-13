@@ -27,6 +27,10 @@
     <string name="icon_title_msl">Menopause Stage List</string>
     <string name="icon_title_dr">Death Reports</string>
     <string name="icon_title_vlf">Village Level Forms</string>
+    <string name="icon_title_abha">ABHA Generated\nCount</string>
+    <string name="icon_title_rch">RCH ID\nCount</string>
+    <string name="icon_title_no_follow_up">No Visit in Last 3 Months</string>
+    <string name="icon_title_missed_period">Missed Period</string>
     <string name="icon_title_icc">Infant List</string>
     <string name="icon_title_ccc">Child List</string>
     <string name="icon_title_acc">Adolescent List</string>

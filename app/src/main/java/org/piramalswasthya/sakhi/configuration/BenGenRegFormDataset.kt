@@ -34,13 +34,13 @@ class BenGenRegFormDataset(context: Context, language: Languages) : Dataset(cont
         }
 
 
-        private fun getMinDobMillis(): Long {
+         fun getMinDobMillis(): Long {
             val cal = Calendar.getInstance()
             cal.add(Calendar.YEAR, -1 * maxAgeForGenBen)
             return cal.timeInMillis
         }
 
-        private fun getMaxDobMillis(): Long {
+         fun getMaxDobMillis(): Long {
             val cal = Calendar.getInstance()
             cal.add(Calendar.YEAR, -1 * minAgeForGenBen)
             return cal.timeInMillis

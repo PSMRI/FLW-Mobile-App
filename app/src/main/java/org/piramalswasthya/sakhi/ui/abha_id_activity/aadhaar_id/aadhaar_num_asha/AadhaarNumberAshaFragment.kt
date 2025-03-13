@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.aadhaar_num_ash
 import android.app.AlertDialog
 import android.os.Bundle
 import android.text.Editable
+import android.text.InputType
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
@@ -17,8 +18,11 @@ import org.piramalswasthya.sakhi.activity_contracts.RDServiceCapturePIDContract
 import org.piramalswasthya.sakhi.activity_contracts.RDServiceInfoContract
 import org.piramalswasthya.sakhi.activity_contracts.RDServiceInitContract
 import org.piramalswasthya.sakhi.databinding.FragmentAadhaarNumberAshaBinding
+import org.piramalswasthya.sakhi.helpers.AadhaarValidationUtils
 import org.piramalswasthya.sakhi.network.AadhaarVerifyBioRequest
 import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.AadhaarIdViewModel
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 
 @AndroidEntryPoint
@@ -104,7 +108,7 @@ class AadhaarNumberAshaFragment : Fragment() {
             it?.let {
                 binding.benName.visibility = View.VISIBLE
                 binding.benName.text =
-                    String.format("%s%s%s", getString(R.string.generating_abha_for), " ", it)
+                    String.format("%s%s%s", getString(R.string.generating_abha_for), "\n", it)
             }
         }
 
@@ -112,6 +116,7 @@ class AadhaarNumberAshaFragment : Fragment() {
             if (it == AadhaarIdViewModel.State.SUCCESS) {
                 viewModel.resetState()
             }
+            parentViewModel.setAbhaMode(AadhaarIdViewModel.Abha.CREATE)
             parentViewModel.setState(it)
         }
 
@@ -143,7 +148,19 @@ class AadhaarNumberAshaFragment : Fragment() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                isValidAadhaar = (s != null) && (s.length == 12)
+
+                if(s.toString().isNullOrBlank()){
+                    binding.tvErrorText.visibility = View.GONE
+                    binding.tvErrorText.text = ""
+                }else if(AadhaarValidationUtils.isValidAadhaar(s.toString())){
+                    binding.tvErrorText.visibility = View.GONE
+                    binding.tvErrorText.text = ""
+                }else{
+                    binding.tvErrorText.visibility = View.VISIBLE
+                    binding.tvErrorText.text = "Please Enter Valid Aadhaar Number"
+                }
+
+                isValidAadhaar = (s != null) && AadhaarValidationUtils.isValidAadhaar(s.toString())
                 binding.btnVerifyAadhaar.isEnabled = isValidAadhaar && isValidMobile
                         && binding.aadharConsentCheckBox.isChecked
             }
@@ -158,7 +175,14 @@ class AadhaarNumberAshaFragment : Fragment() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                isValidMobile = (s != null) && (s.length == 10)
+                if((s != null) && isValidMobileNumber(s.toString())){
+                    binding.tvErrorTextMobile.visibility = View.GONE
+                    binding.tvErrorTextMobile.text = ""
+                }else{
+                    binding.tvErrorTextMobile.visibility = View.VISIBLE
+                    binding.tvErrorTextMobile.text = "Please Enter Valid Mobile Number"
+                }
+                isValidMobile = (s != null) && isValidMobileNumber(s.toString())
                 if (isValidMobile)
                     parentViewModel.setMobileNumber(s.toString())
                 binding.btnVerifyAadhaar.isEnabled = isValidAadhaar && isValidMobile
@@ -175,15 +199,41 @@ class AadhaarNumberAshaFragment : Fragment() {
                 viewModel.resetErrorMessage()
             }
         }
+
+        binding.tilAadhaarNumber.setEndIconOnClickListener {
+            val currentInputType = binding.tietAadhaarNumber.inputType
+
+            if (currentInputType == (InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
+                // Show password when eye is OPEN
+                binding.tietAadhaarNumber.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+            } else {
+                // Hide password when eye is CROSSED
+                binding.tietAadhaarNumber.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+            }
+
+            // Keep cursor position at the end
+            binding.tietAadhaarNumber.setSelection(binding.tietAadhaarNumber.text?.length ?: 0)
+        }
     }
 
     private fun verifyAadhaar() {
         Toast.makeText(requireContext(), parentViewModel.verificationType.value, Toast.LENGTH_SHORT)
             .show()
+        parentViewModel.setAadhaarNumber(binding.tietAadhaarNumber.text.toString())
         when (parentViewModel.verificationType.value) {
             "OTP" -> viewModel.generateOtpClicked(binding.tietAadhaarNumber.text.toString())
             "FP" -> rdServiceCapturePIDContract.launch(Unit)
         }
+    }
+
+    fun isValidMobileNumber(str: String?): Boolean {
+        val regex = "(\\+91|0)?[1-9][0-9]{9}"
+        val p: Pattern = Pattern.compile(regex)
+        if (str == null) {
+            return false
+        }
+        val m: Matcher = p.matcher(str)
+        return m.matches()
     }
 
     private fun checkApp() {

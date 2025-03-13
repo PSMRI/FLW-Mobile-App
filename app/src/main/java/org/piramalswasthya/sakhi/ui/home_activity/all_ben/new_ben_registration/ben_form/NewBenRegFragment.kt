@@ -7,18 +7,25 @@ import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.provider.Settings
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -30,10 +37,12 @@ import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.databinding.AlertConsentBinding
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
+import org.piramalswasthya.sakhi.databinding.LayoutViewMediaBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.NewBenRegViewModel.State
+import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.child_reg.form.ChildRegFragment
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 import java.io.File
@@ -68,6 +77,7 @@ class NewBenRegFragment : Fragment() {
 
     private var latestTmpUri: Uri? = null
 
+    var isValidOtp = false
 
     private val takePicture =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { success: Boolean ->
@@ -223,7 +233,60 @@ class NewBenRegFragment : Fragment() {
                             }
                         }
 
-                    }, isEnabled = !recordExists
+                    },
+                        sendOtpClickListener = FormInputAdapter.SendOtpClickListener{formId, button, timerInsec, tilEditText, isEnabled, position, otpField ->
+                       var tempContactNo = ""
+                        lifecycleScope.launch {
+                            viewModel.formList.collect {
+                              tempContactNo = it[viewModel.getIndexofTempraryNumber()].value.toString()
+                            }
+                        }
+                        if (button.text == "Resend OTP") {
+                            viewModel.resendOtp(tempContactNo)
+                        } else {
+                            viewModel.sentOtp(tempContactNo)
+                        }
+
+                        button.isEnabled = !isEnabled
+                        startTimer(timerInsec,button,position)
+                        tilEditText.visibility = View.VISIBLE
+                        otpField.addTextChangedListener(object : TextWatcher {
+                            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                            }
+
+                            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                            }
+
+                            override fun afterTextChanged(s: Editable?) {
+                                isValidOtp = (s != null) && (s.length == 6)
+                                if (isValidOtp)
+                                    viewModel.validateOtp(tempContactNo,s.toString().toInt(),requireActivity(),otpField,button)
+
+
+                            }
+
+                        })
+                    },
+                        selectImageClickListener  = FormInputAdapter.SelectUploadImageClickListener {
+
+                        },
+                        viewDocumentListner = FormInputAdapter.ViewDocumentOnClick {
+                            if (recordExists) {
+                                lifecycleScope.launch {
+                                    viewModel.formList.collect{
+                                        it.get(viewModel.getIndexOfBirthCertificateFront()).value.let {
+                                            if (it.toString().contains("document")) {
+                                                displayPdf(it!!.toUri())
+                                            } else {
+                                                viewImage(it!!.toUri())
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                            isEnabled = !recordExists,
+
                     )
                 binding.form.rvInputForm.adapter = adapter
                 lifecycleScope.launch {
@@ -240,6 +303,7 @@ class NewBenRegFragment : Fragment() {
                 }
             }
         }
+
 
 
         viewModel.state.observe(viewLifecycleOwner) { state ->
@@ -332,6 +396,30 @@ class NewBenRegFragment : Fragment() {
         }
     }
 
+    private fun viewImage(imageUri: Uri) {
+        val viewImageBinding = LayoutViewMediaBinding.inflate(layoutInflater, binding.root, false)
+        val alertDialog = MaterialAlertDialogBuilder(requireContext())
+            .setView(viewImageBinding.root)
+            .setCancelable(true)
+            .create()
+        Glide.with(this).load(Uri.parse(imageUri.toString())).placeholder(R.drawable.ic_person)
+            .into(viewImageBinding.viewImage)
+        viewImageBinding.btnClose.setOnClickListener {
+            alertDialog.dismiss()
+        }
+        alertDialog.show()
+    }
+
+
+    private fun displayPdf(pdfUri: Uri) {
+
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(pdfUri, "application/pdf")
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION) // Grant permission to read the file
+        }
+        startActivity(Intent.createChooser(intent, "Open PDF with"))
+
+    }
     private fun getTmpFileUri(): Uri {
         val tmpFile =
             File.createTempFile(Konstants.tempBenImagePrefix, null, requireActivity().cacheDir)
@@ -399,5 +487,28 @@ class NewBenRegFragment : Fragment() {
         _binding = null
     }
 
+    private lateinit var countDownTimer : CountDownTimer
+    private var countdownTimers : HashMap<Int, CountDownTimer> = HashMap()
 
+    private fun formatTimeInSeconds(millis: Long) : String {
+        val seconds = millis / 1000
+        return "${seconds} sec"
+    }
+    private fun startTimer(timerInSec: TextView, generateOtp: MaterialButton,position:Int) {
+        countDownTimer =  object : CountDownTimer(60000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                timerInSec.visibility = View.VISIBLE
+                timerInSec.text = formatTimeInSeconds(millisUntilFinished)
+            }
+            override fun onFinish() {
+                timerInSec.visibility = View.INVISIBLE
+                timerInSec.text = ""
+                generateOtp.isEnabled = true
+                generateOtp.text = timerInSec.resources.getString(R.string.resend_otp)
+            }
+        }.start()
+
+        countdownTimers[position] = countDownTimer
+
+    }
 }

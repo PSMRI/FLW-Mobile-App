@@ -10,15 +10,33 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.database.room.InAppDb
-import org.piramalswasthya.sakhi.database.room.dao.*
+import org.piramalswasthya.sakhi.database.room.dao.BenDao
+import org.piramalswasthya.sakhi.database.room.dao.BeneficiaryIdsAvailDao
+import org.piramalswasthya.sakhi.database.room.dao.CbacDao
+import org.piramalswasthya.sakhi.database.room.dao.CdrDao
+import org.piramalswasthya.sakhi.database.room.dao.ChildRegistrationDao
+import org.piramalswasthya.sakhi.database.room.dao.DeliveryOutcomeDao
+import org.piramalswasthya.sakhi.database.room.dao.HbncDao
+import org.piramalswasthya.sakhi.database.room.dao.HbycDao
+import org.piramalswasthya.sakhi.database.room.dao.HouseholdDao
+import org.piramalswasthya.sakhi.database.room.dao.ImmunizationDao
+import org.piramalswasthya.sakhi.database.room.dao.IncentiveDao
+import org.piramalswasthya.sakhi.database.room.dao.InfantRegDao
+import org.piramalswasthya.sakhi.database.room.dao.MaternalHealthDao
+import org.piramalswasthya.sakhi.database.room.dao.MdsrDao
+import org.piramalswasthya.sakhi.database.room.dao.PmsmaDao
+import org.piramalswasthya.sakhi.database.room.dao.PncDao
+import org.piramalswasthya.sakhi.database.room.dao.ProfileDao
+import org.piramalswasthya.sakhi.database.room.dao.SyncDao
+import org.piramalswasthya.sakhi.database.room.dao.TBDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.network.AbhaApiService
 import org.piramalswasthya.sakhi.network.AmritApiService
 import org.piramalswasthya.sakhi.network.interceptors.ContentTypeInterceptor
 import org.piramalswasthya.sakhi.network.interceptors.TokenInsertAbhaInterceptor
 import org.piramalswasthya.sakhi.network.interceptors.TokenInsertTmcInterceptor
+import org.piramalswasthya.sakhi.utils.KeyUtils
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
@@ -79,7 +97,7 @@ object AppModule {
         return Retrofit.Builder()
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             //.addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(BuildConfig.BASE_TMC_URL)
+            .baseUrl(KeyUtils.baseTMCUrl())
             .client(httpClient)
             .build()
             .create(AmritApiService::class.java)
@@ -94,7 +112,7 @@ object AppModule {
         return Retrofit.Builder()
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             //.addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(BuildConfig.BASE_ABHA_URL)
+            .baseUrl(KeyUtils.baseAbhaUrl())
             .client(httpClient)
             .build()
             .create(AbhaApiService::class.java)
@@ -181,6 +199,10 @@ object AppModule {
     @Singleton
     @Provides
     fun provideHBYCDao(database: InAppDb): HbycDao = database.hbycDao
+
+    @Singleton
+    @Provides
+    fun provideAshaProfileDao(database: InAppDb): ProfileDao = database.profileDao
 
 
 }
