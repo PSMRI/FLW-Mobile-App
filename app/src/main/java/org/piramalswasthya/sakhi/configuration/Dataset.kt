@@ -692,6 +692,18 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
         return -1
     }
 
+//    protected fun validateNumberOnEditText(formElement: FormElement): Int {
+//        val input = formElement.value?.trim() ?: ""
+//
+//        formElement.errorText = when {
+////            input.isEmpty() -> resources.getString(R.string.form_input_error_mandatory)
+////            input.any { !it.isDigit() } -> resources.getString(R.string.form_input_error_numeric_only)
+//            input.length > 4 -> resources.getString(R.string.form_input_error_max_digits)
+//            else -> null
+//        }
+//
+//        return -1
+//    }
 
     protected fun validateRchIdOnEditText(formElement: FormElement): Int {
         formElement.errorText = formElement.value?.takeIf { it.isNotEmpty() }?.let { text ->

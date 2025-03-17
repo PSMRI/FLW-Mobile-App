@@ -72,8 +72,7 @@ constructor(
     init {
         viewModelScope.launch {
             val ben = benRepo.getBenFromId(benId)?.also { ben ->
-                _benName.value =
-                    "${ben.firstName} ${if (ben.lastName == null) "" else ben.lastName}"
+                _benName.value = "${ben.firstName} ${if (ben.lastName == null) "" else ben.lastName}"
                 _benAgeGender.value = "${ben.age} ${ben.ageUnit?.name} | ${ben.gender?.name}"
                 _benDetails= ben.genDetails!!
                 _microBirthPlanCache = HRPMicroBirthPlanCache(

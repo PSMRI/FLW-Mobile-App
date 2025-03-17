@@ -11,8 +11,10 @@ import androidx.recyclerview.widget.GridLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.IconGridAdapter
+import org.piramalswasthya.sakhi.configuration.IconDataset
 import org.piramalswasthya.sakhi.databinding.RvIconGridBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class VillageLevelFormsFragment : Fragment() {
@@ -20,7 +22,8 @@ class VillageLevelFormsFragment : Fragment() {
     companion object {
         fun newInstance() = VillageLevelFormsFragment()
     }
-
+    @Inject
+    lateinit var iconDataset: IconDataset
     private val viewModel: VillageLevelFormsViewModel by viewModels()
     private val binding by lazy { RvIconGridBinding.inflate(layoutInflater) }
 
@@ -43,13 +46,17 @@ class VillageLevelFormsFragment : Fragment() {
             requireContext().resources.getInteger(R.integer.icon_grid_span)
         )
         binding.rvIconGrid.layoutManager = rvLayoutManager
-        binding.rvIconGrid.adapter = IconGridAdapter(
-            //IconDataset.getVillageLevelFormsDataset(),
+
+
+        val rvAdapter1 = IconGridAdapter(
             IconGridAdapter.GridIconClickListener {
                 findNavController().navigate(it)
             },
             viewModel.scope
         )
+        binding.rvIconGrid.adapter = rvAdapter1
+        rvAdapter1.submitList(iconDataset.getVLFDataset(resources))
+
     }
 
     override fun onStart() {

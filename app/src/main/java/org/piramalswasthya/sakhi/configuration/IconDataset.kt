@@ -212,6 +212,27 @@ class IconDataset @Inject constructor(
         )
     )
 
+    fun getVLFDataset(resources: Resources) = listOf(
+        Icon(
+            R.drawable.ic__assess_high_risk,
+            resources.getString(R.string.vhnd),
+            null,
+            VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToVHNDListFragement()
+        ),
+        Icon(
+            R.drawable.ic__follow_up_hrp,
+            resources.getString(R.string.vnhc),
+            null,
+            HrpCasesFragmentDirections.actionHrpCasesFragmentToHRPPregnantListFragment()
+        ) ,
+        Icon(
+                R.drawable.ic__follow_up_hrp,
+        resources.getString(R.string.phc_review),
+            null,
+        HrpCasesFragmentDirections.actionHrpCasesFragmentToHRPPregnantListFragment()
+    )
+    )
+
     fun getHRPNonPregnantWomenDataset(resources: Resources) = listOf(
         Icon(
             R.drawable.ic__assess_high_risk,
