@@ -193,7 +193,8 @@ class AllHouseholdFragment : Fragment() {
                     it
                 )
             )
-        }, {
+        },
+            {
             findNavController().navigate(
                 AllHouseholdFragmentDirections.actionAllHouseholdFragmentToHouseholdMembersFragment(
                     it

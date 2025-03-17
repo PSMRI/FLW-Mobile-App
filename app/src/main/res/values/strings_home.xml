@@ -27,6 +27,8 @@
     <string name="icon_title_msl">Menopause Stage List</string>
     <string name="icon_title_dr">Death Reports</string>
     <string name="icon_title_vlf">Village Level Forms</string>
+    <string name="icon_title_vhnd">VHND Forms</string>
+    <string name="icon_title_vhnd_list">VHND FormsList</string>
     <string name="icon_title_icc">Infant List</string>
     <string name="icon_title_ccc">Child List</string>
     <string name="icon_title_acc">Adolescent List</string>
@@ -61,5 +63,11 @@
     <string name="not_processed">" Records Not Synced!"</string>
     <string name="all_records_synced">All records synced</string>
     <string name="are_you_sure_to_logout">" Are you sure you want to logout?"</string>
+
+    <string name="place">Place</string>
+    <string name="no_b_attended">No. of Beneficiaries Attended</string>
+    <string name="vhnd">VHND</string>
+    <string name="vnhc">VHNC</string>
+    <string name="phc_review">PHC Review Meeting</string>
 
 </resources>

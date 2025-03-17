@@ -29,6 +29,7 @@ import org.piramalswasthya.sakhi.database.room.dao.PmsmaDao
 import org.piramalswasthya.sakhi.database.room.dao.PncDao
 import org.piramalswasthya.sakhi.database.room.dao.SyncDao
 import org.piramalswasthya.sakhi.database.room.dao.TBDao
+import org.piramalswasthya.sakhi.database.room.dao.VLFDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.network.AbhaApiService
 import org.piramalswasthya.sakhi.network.AmritApiService
@@ -198,6 +199,11 @@ object AppModule {
     @Singleton
     @Provides
     fun provideHBYCDao(database: InAppDb): HbycDao = database.hbycDao
+
+    @Singleton
+    @Provides
+    fun provideVlfDao(database: InAppDb): VLFDao = database.vlfDao
+
 
 
 }

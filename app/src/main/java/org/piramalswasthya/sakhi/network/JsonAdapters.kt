@@ -13,6 +13,9 @@ import org.piramalswasthya.sakhi.utils.KeyUtils
 import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlinx.parcelize.Parcelize
+import org.piramalswasthya.sakhi.model.VHNDCache
+
+//import org.piramalswasthya.sakhi.model.VHNDCache
 
 @JsonClass(generateAdapter = true)
 data class D2DAuthUserRequest(
@@ -726,6 +729,27 @@ data class HRPNonPregnantAssessDTO(
             pastCSection = pastCSection,
             isHighRisk = isHighRisk,
             visitDate = getLongFromDate(visitDate),
+            syncState = SyncState.SYNCED
+        )
+    }
+}
+
+data class VHNDDTO(
+    val id: Int = 0,
+    var vhndDate: String?,
+    var Place: String? = null,
+    var noOfBeneficiariesAttended: Int? = null,
+    var Image1: String? = null,
+    var Image2: String? = null,
+) {
+    fun toCache(): VHNDCache {
+        return VHNDCache(
+            id = 0,
+            vhndDate = vhndDate!!,
+            place = Place,
+            noOfBeneficiariesAttended = noOfBeneficiariesAttended,
+            image1 = Image1,
+            image2 = Image2,
             syncState = SyncState.SYNCED
         )
     }
