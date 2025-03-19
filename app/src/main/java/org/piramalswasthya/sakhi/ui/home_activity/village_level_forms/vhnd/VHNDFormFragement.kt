@@ -104,6 +104,8 @@ class VHNDFormFragement:Fragment() {
     private fun hardCodedListUpdate(formId: Int) {
         binding.form.rvInputForm.adapter?.apply {
             when (formId) {
+               1-> Toast.makeText(context,"Img1$formId",Toast.LENGTH_LONG).show()
+               2-> Toast.makeText(context,"Img2$formId",Toast.LENGTH_LONG).show()
                 // if required
             }
         }

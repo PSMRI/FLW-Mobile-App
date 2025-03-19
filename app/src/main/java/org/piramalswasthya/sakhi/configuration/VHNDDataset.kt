@@ -45,23 +45,6 @@ class VHNDDataset(
 
     }
 
-    private val pic1 = FormElement(
-        id = 1,
-        inputType = IMAGE_VIEW,
-        title = resources.getString(R.string.nbr_image),
-        subtitle = resources.getString(R.string.nbr_image_sub),
-        arrayId = -1,
-        required = false
-    )
-    private val pic2 = FormElement(
-        id = 2,
-        inputType = IMAGE_VIEW,
-        title = resources.getString(R.string.nbr_image),
-        subtitle = resources.getString(R.string.nbr_image_sub),
-        arrayId = -1,
-        required = false
-    )
-
 
     private val vhndDate = FormElement(
         id = 2,
@@ -96,13 +79,30 @@ class VHNDDataset(
         min = 1
     )
 
+    private val pic1 = FormElement(
+        id = 1,
+        inputType = IMAGE_VIEW,
+        title = resources.getString(R.string.nbr_image),
+        subtitle = resources.getString(R.string.nbr_image_sub),
+        arrayId = -1,
+        required = false
+    )
+    private val pic2 = FormElement(
+        id = 2,
+        inputType = IMAGE_VIEW,
+        title = resources.getString(R.string.nbr_image),
+        subtitle = resources.getString(R.string.nbr_image_sub),
+        arrayId = -1,
+        required = false
+    )
+
     suspend fun setUpPage(vhnd: VHNDCache?) {
         val list = mutableListOf(
-            pic1,
-            pic2,
             vhndDate,
             place,
-            noOfBeneficiariesAttended
+            noOfBeneficiariesAttended,
+            pic1,
+            pic2
         )
 
         vhndDate.value = getCurrentDateString()
@@ -120,14 +120,15 @@ class VHNDDataset(
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
         return when (formId) {
             place.id -> {
+                validateEmptyOnEditText(place)
                 validateAllAlphaNumericSpaceOnEditText(place)
                 -1
             }
 
-//            noOfBeneficiariesAttended.id -> {
-//                validateNumberOnEditText(noOfBeneficiariesAttended)
-//                -1
-//            }
+            noOfBeneficiariesAttended.id -> {
+                validateEmptyOnEditText(noOfBeneficiariesAttended)
+                -1
+            }
 
             else -> {
                 -1
