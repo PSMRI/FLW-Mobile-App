@@ -2230,8 +2230,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 babyWeight.value?.takeIf { it.isNotEmpty() }?.toDouble() ?: 0.0
 
 
-            ben.kidDetails!!.birthCertificateFileBackView = fileUploadBack.value
-            ben.kidDetails!!.birthCertificateFileFrontView = fileUploadFront.value
+            ben.kidDetails?.birthCertificateFileBackView = fileUploadBack.value
+            ben.kidDetails?.birthCertificateFileFrontView = fileUploadFront.value
             ben.isDraft = false
 
         }

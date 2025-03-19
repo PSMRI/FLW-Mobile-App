@@ -82,8 +82,6 @@ class AshaProfileRepo @Inject constructor(
                     val responseString = response.body()?.string()
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
-
-                        val errorMessage = jsonObj.getString("errorMessage")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit asha profile data : $responseStatusCode")
                         when (responseStatusCode) {
@@ -107,7 +105,7 @@ class AshaProfileRepo @Inject constructor(
                             }
 
                             5000 -> {
-                                if (errorMessage == "No record found") return@withContext true
+                                return@withContext true
                             }
 
                             else -> {

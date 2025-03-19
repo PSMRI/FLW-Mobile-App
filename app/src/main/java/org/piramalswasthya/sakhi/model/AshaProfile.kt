@@ -33,6 +33,7 @@ data class ProfileActivityCache(
     var abhaNumber: String?=null,
     var ashaHouseholdRegistration: String?=null,
     var ashaFamilyMember: String?=null,
+    var providerServiceMapID: String?=null,
     )
 
 @JsonClass(generateAdapter = true)
@@ -61,6 +62,7 @@ data class ProfileActivityNetwork(
     val abhaNumber: String?=null,
     val ashaHouseholdRegistration: String?=null,
     val ashaFamilyMember: String?=null,
+    val providerServiceMapID: String?=null,
 ) {
     fun asCacheModel(): ProfileActivityCache {
         return ProfileActivityCache(
@@ -88,6 +90,7 @@ data class ProfileActivityNetwork(
             abhaNumber = abhaNumber,
             ashaHouseholdRegistration = ashaHouseholdRegistration,
             ashaFamilyMember = ashaFamilyMember,
+            providerServiceMapID = providerServiceMapID,
         )
     }
 }
@@ -97,7 +100,6 @@ data class ProfileActivityNetwork(
 data class ProfileActivityListResponse(
     val data: ProfileActivityNetwork,
     val statusCode: Int,
-    val errorMessage: String,
     val status: String
 )
 
@@ -143,6 +145,7 @@ data class ProfileDomainDTO(
     val abhaNumber: String,
     val ashaHouseholdRegistration: String,
     val ashaFamilyMember: String,
+    val providerServiceMapID: String,
 )
 
 
