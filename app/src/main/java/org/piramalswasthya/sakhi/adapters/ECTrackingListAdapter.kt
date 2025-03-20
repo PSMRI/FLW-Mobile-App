@@ -40,9 +40,9 @@ class ECTrackingListAdapter(private val clickListener: ECTrackListClickListener)
         ) {
             if (item.ectDate!! < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(90) &&
                 item.ectDate!! > System.currentTimeMillis() - TimeUnit.DAYS.toMillis(365)) {
-                binding.ivFollowState.visibility = View.GONE
-            } else {
                 binding.ivFollowState.visibility = View.VISIBLE
+            } else {
+                binding.ivFollowState.visibility = View.GONE
             }
 
             if (System.currentTimeMillis() - item.lmpDate!! > TimeUnit.DAYS.toMillis(35)) {
