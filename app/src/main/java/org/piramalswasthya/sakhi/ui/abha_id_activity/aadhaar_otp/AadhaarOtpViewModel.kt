@@ -14,6 +14,7 @@ import org.piramalswasthya.sakhi.network.AbhaVerifyAadhaarOtpRequest
 import org.piramalswasthya.sakhi.network.AuthData
 import org.piramalswasthya.sakhi.network.AuthData3
 import org.piramalswasthya.sakhi.network.Consent
+import org.piramalswasthya.sakhi.network.LoginGenerateOtpRequest
 import org.piramalswasthya.sakhi.network.LoginVerifyOtpRequest
 import org.piramalswasthya.sakhi.network.NetworkResult
 import org.piramalswasthya.sakhi.network.Otp
@@ -236,7 +237,7 @@ class AadhaarOtpViewModel @Inject constructor(
     }
 
 
-    fun resendAadhaarOtp(aadhaarNo:String) {
+    fun resendCreateAadhaarOtp(aadhaarNo:String) {
         viewModelScope.launch {
             when (val result = abhaIdRepo.generateAadhaarOtpV3(
                 AbhaGenerateAadhaarOtpRequest(
@@ -250,17 +251,48 @@ class AadhaarOtpViewModel @Inject constructor(
                 is NetworkResult.Success -> {
                     _txnId = result.data.txnId
                     txnIdFromArgs = result.data.txnId
-                  //  _state.value = State.SUCCESS
+                    _state2.value = AadhaarIdViewModel.State.SUCCESS
                 }
 
                 is NetworkResult.Error -> {
                     _errorMessage.value = result.message
-                    _state.value = State.ERROR_SERVER
+                    _state2.value = AadhaarIdViewModel.State.ERROR_SERVER
                 }
 
                 is NetworkResult.NetworkError -> {
                     Timber.i(result.toString())
-                    _state.value = State.ERROR_NETWORK
+                    _state2.value = AadhaarIdViewModel.State.ERROR_NETWORK
+                }
+            }
+        }
+    }
+
+    fun resendSearchAadhaarOtp(txnId: String, index: String) {
+        viewModelScope.launch {
+            when (val result =
+                abhaIdRepo.generateAbhaOtp(
+                    LoginGenerateOtpRequest(
+                        listOf<String>("abha-login", "search-abha", "mobile-verify"),
+                        "index",
+                        index,
+                        "abdm",
+                        txnId
+                    )
+                )) {
+                is NetworkResult.Success -> {
+                    _txnId = result.data.txnId
+                    txnIdFromArgs = result.data.txnId
+                    _state2.value = AadhaarIdViewModel.State.SUCCESS
+                }
+
+                is NetworkResult.Error -> {
+                    _errorMessage.value = result.message
+                    _state2.value = AadhaarIdViewModel.State.ERROR_SERVER
+                }
+
+                is NetworkResult.NetworkError -> {
+                    Timber.i(result.toString())
+                    _state2.value = AadhaarIdViewModel.State.ERROR_NETWORK
                 }
             }
         }

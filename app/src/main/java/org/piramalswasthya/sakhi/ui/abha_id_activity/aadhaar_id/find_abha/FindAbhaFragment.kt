@@ -108,12 +108,18 @@ class FindAbhaFragment : Fragment() {
             }
         }
 
+        viewModel.txnId.observe(viewLifecycleOwner) {
+            it?.let {
+                parentViewModel.setSearchTxnId(it)
+            }
+        }
+
         viewModel.abha.observe(viewLifecycleOwner) {
             it?.let {
                 binding.tilSelectAbha.isEnabled = true
                 abhaData.addAll(it)
                 it.forEach { abha ->
-                    abhaList.add(abha.name)
+                    abhaList.add(abha.name + " : " + abha.ABHANumber)
                 }
                 adapterType = ArrayAdapter<String>(
                     requireContext(),
@@ -154,6 +160,7 @@ class FindAbhaFragment : Fragment() {
         (binding.tilSelectAbha.getEditText() as AutoCompleteTextView).onItemClickListener =
             OnItemClickListener { adapterView, view, position, id ->
                 selectedAbhaIndex = abhaData[position].index
+                parentViewModel.setIndex(selectedAbhaIndex.toString())
                 isValidAbha = true
             }
 
