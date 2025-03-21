@@ -2,6 +2,9 @@ package org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.
 
 import android.content.Context
 import android.net.Uri
+import android.os.CountDownTimer
+import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LiveData
@@ -45,6 +48,8 @@ class NewBenRegViewModel @Inject constructor(
     enum class State {
         IDLE, SAVING, SAVE_SUCCESS, SAVE_FAILED
     }
+     lateinit var countDownTimer : CountDownTimer
+
 
     sealed class ListUpdateState {
         object Idle : ListUpdateState()
@@ -304,7 +309,8 @@ class NewBenRegViewModel @Inject constructor(
         otp: Int,
         context: FragmentActivity,
         otpField: TextInputEditText,
-        button: MaterialButton
+        button: MaterialButton,
+        timerInsec: TextView
     ) : Boolean {
         var memberOtpVerified = false
         viewModelScope.launch {
@@ -321,5 +327,11 @@ class NewBenRegViewModel @Inject constructor(
             }
         }
         return memberOtpVerified
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        isOtpVerified = false
+
     }
 }

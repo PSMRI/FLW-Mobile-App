@@ -354,7 +354,7 @@
                         <ImageView
                             android:layout_width="30dp"
                             android:layout_height="30dp"
-                            android:src="@{ben.isConsent ? @drawable/ic_check_circle : @drawable/ic_pendind_white}"
+                            android:src="@{ben.isConsent ? @drawable/ic_check_circle : @drawable/ic_close}"
                             android:layout_toRightOf="@+id/mob"
                             android:layout_marginStart="5dp"
                             />
