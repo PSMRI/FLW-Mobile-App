@@ -108,6 +108,10 @@ data class BeneficiaryDataSending(
     @Json(name = "maritalStatusName")
     val maritalStatusName: String? = null,
 
+
+    @Json(name = "beneficiaryConsent")
+    val beneficiaryConsent: Boolean = false,
+
     )
 
 data class BenDemographics(
@@ -301,6 +305,7 @@ fun BenRegCache.asNetworkSendingModel(
 //        vanID = user.vanId,
 //        parkingPlaceID = user.parkingPlaceId,
         createdBy = user.userName,
+        beneficiaryConsent = isConsent
 
 
         )
