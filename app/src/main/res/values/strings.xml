@@ -302,6 +302,7 @@
     <!--    <string name="form_name">Form Name</string>-->
 
     <string name="save_successful">Save Successful</string>
+    <string name="otp_resent">OTP Resent</string>
     <string name="something_wend_wong_contact_testing">Something wend wong! Contact testing!</string>
     <string name="error_input">Error Input</string>
     <string name="exit_application">Exit Application</string>
