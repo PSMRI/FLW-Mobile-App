@@ -268,7 +268,7 @@ data class BenBasicCache(
             hrpStatus = hrpStatus,
             relToHeadId = 0,
             syncState = syncState,
-            isConsent = false
+            isConsent = isConsent
         )
     }
 
@@ -291,7 +291,7 @@ data class BenBasicCache(
             form1Filled = tbsnFilled,
             syncState = tbsnSyncState
                 ?: throw IllegalStateException("Sync state for tbsn is null!!"),
-            isConsent = false
+            isConsent = isConsent
         )
     }
 
@@ -313,7 +313,7 @@ data class BenBasicCache(
             form1Filled = tbspFilled,
             syncState = tbspSyncState
                 ?: throw IllegalStateException("Sync state for tbsp is null!!"),
-            isConsent = false
+            isConsent = isConsent
         )
     }
 
@@ -335,7 +335,7 @@ data class BenBasicCache(
             form1Filled = cdrFilled,
             syncState = cdrSyncState
                 ?: throw IllegalStateException("Sync state for cbac is null!!"),
-            isConsent = false
+            isConsent = isConsent
         )
     }
 
@@ -357,7 +357,7 @@ data class BenBasicCache(
             form1Filled = mdsrFilled,
             syncState = mdsrSyncState
                 ?: throw IllegalStateException("Sync state for mdsr is null!!"),
-            isConsent = false
+            isConsent = isConsent
         )
     }
 
@@ -378,7 +378,7 @@ data class BenBasicCache(
             hrpStatus = hrpStatus,
             form1Filled = pmsmaFilled,
             syncState = syncState,
-            isConsent = false
+            isConsent = isConsent
         )
     }
 
@@ -399,7 +399,7 @@ data class BenBasicCache(
             hrpStatus = hrpStatus,
             form1Filled = ectFilled,
             syncState = syncState,
-            isConsent = false
+            isConsent = isConsent
         )
     }
 
@@ -420,7 +420,7 @@ data class BenBasicCache(
             hrpStatus = hrpStatus,
             form1Filled = false,
             syncState = syncState,
-            isConsent = false
+            isConsent = isConsent
         )
     }
 
@@ -653,7 +653,7 @@ data class BenBasicCache(
             hrpStatus = hrpStatus,
             form1Filled = doFilled,
             syncState = doSyncState,
-            isConsent = false
+            isConsent = isConsent
         )
     }
 
@@ -695,7 +695,7 @@ data class BenBasicCache(
             hrpStatus = hrpStatus,
             form1Filled = false,
             syncState = syncState,
-            isConsent = false
+            isConsent = isConsent
         )
     }
 
@@ -1141,7 +1141,8 @@ data class BenRegCache(
     var syncState: SyncState,
 
     var isDraft: Boolean,
-    val isConsent: Boolean = false,
+
+    var isConsent: Boolean = false,
 
     var isNewAbha: Boolean=false,
 
@@ -1149,6 +1150,7 @@ data class BenRegCache(
 
     fun asNetworkPostModel(context: Context, user: User): BenPost {
         return BenPost(
+
             householdId = householdId.toString(),
             benRegId = benRegId,
             countyid = locationRecord.country.id,
@@ -1391,7 +1393,7 @@ data class BenRegCache(
             stateid = locationRecord.state.id,
             districtid = locationRecord.district.id,
             villageid = locationRecord.village.id,
-            isConsent = false,
+            isConsent = isConsent,
 
         )
     }
