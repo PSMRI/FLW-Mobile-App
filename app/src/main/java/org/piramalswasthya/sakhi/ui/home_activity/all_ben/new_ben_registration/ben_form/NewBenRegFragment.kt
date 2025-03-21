@@ -41,8 +41,8 @@ import org.piramalswasthya.sakhi.databinding.LayoutViewMediaBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.NewBenRegViewModel.Companion.isOtpVerified
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.NewBenRegViewModel.State
-import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.child_reg.form.ChildRegFragment
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 import java.io.File
@@ -260,7 +260,7 @@ class NewBenRegFragment : Fragment() {
                             override fun afterTextChanged(s: Editable?) {
                                 isValidOtp = (s != null) && (s.length == 6)
                                 if (isValidOtp)
-                                    viewModel.validateOtp(tempContactNo,s.toString().toInt(),requireActivity(),otpField,button)
+                                    viewModel.validateOtp(tempContactNo,s.toString().toInt(),requireActivity(),otpField,button,timerInsec)
 
 
                             }
@@ -485,9 +485,9 @@ class NewBenRegFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+
     }
 
-    private lateinit var countDownTimer : CountDownTimer
     private var countdownTimers : HashMap<Int, CountDownTimer> = HashMap()
 
     private fun formatTimeInSeconds(millis: Long) : String {
@@ -495,7 +495,7 @@ class NewBenRegFragment : Fragment() {
         return "${seconds} sec"
     }
     private fun startTimer(timerInSec: TextView, generateOtp: MaterialButton,position:Int) {
-        countDownTimer =  object : CountDownTimer(60000, 1000) {
+        viewModel.countDownTimer =  object : CountDownTimer(60000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 timerInSec.visibility = View.VISIBLE
                 timerInSec.text = formatTimeInSeconds(millisUntilFinished)
@@ -504,11 +504,16 @@ class NewBenRegFragment : Fragment() {
                 timerInSec.visibility = View.INVISIBLE
                 timerInSec.text = ""
                 generateOtp.isEnabled = true
-                generateOtp.text = timerInSec.resources.getString(R.string.resend_otp)
+                if (isOtpVerified) {
+                    timerInSec.visibility = View.INVISIBLE
+                } else {
+                    generateOtp.text = timerInSec.resources.getString(R.string.resend_otp)
+                }
+
             }
         }.start()
 
-        countdownTimers[position] = countDownTimer
+        countdownTimers[position] = viewModel.countDownTimer
 
     }
 }
