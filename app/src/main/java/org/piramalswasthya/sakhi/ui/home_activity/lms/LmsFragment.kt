@@ -58,7 +58,7 @@ class LmsFragment: Fragment() {
         binding.rvIconGrid.layoutManager = rvLayoutManager
         val rvAdapter = IconGridAdapter(
             IconGridAdapter.GridIconClickListener {
-                if(it.toString().contains("2131361918"))
+                if(it.actionId.toString().contains("2131361919"))
                 {
                     val pdfFile = copyPdfToCache(requireContext(), "dummy.pdf", R.raw.dummy)
                     openPdfFile(requireContext(), pdfFile)

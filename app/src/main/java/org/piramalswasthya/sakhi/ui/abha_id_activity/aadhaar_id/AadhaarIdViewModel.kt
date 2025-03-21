@@ -67,6 +67,10 @@ AadhaarIdViewModel @Inject constructor(
     val txnId: String
         get() = _txnId?:""
 
+    private var _searchTxnId: String? = null
+    val searchTxnId: String
+        get() = _searchTxnId?:""
+
     private var _mobileNumber: String? = null
     val mobileNumber: String
         get() = _mobileNumber?:""
@@ -74,6 +78,10 @@ AadhaarIdViewModel @Inject constructor(
     private var _aadhaarNumber: String? = null
     val aadhaarNumber: String
         get() = _aadhaarNumber?:""
+
+    private var _index: String? = null
+    val index: String
+        get() = _index?:""
 
     private val _errorMessage = MutableLiveData<String?>(null)
     val errorMessage: LiveData<String?>
@@ -107,8 +115,16 @@ AadhaarIdViewModel @Inject constructor(
         _aadhaarNumber = aadhaarNumber
     }
 
+    fun setIndex(index: String) {
+        _index = index
+    }
+
     fun setTxnId(txnId: String) {
         _txnId = txnId
+    }
+
+    fun setSearchTxnId(txnId: String) {
+        _searchTxnId = txnId
     }
 
     fun setUserType(userType: String) {
