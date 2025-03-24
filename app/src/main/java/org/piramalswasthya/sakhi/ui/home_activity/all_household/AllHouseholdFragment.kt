@@ -197,7 +197,7 @@ class AllHouseholdFragment : Fragment() {
         }, {
             findNavController().navigate(
                 AllHouseholdFragmentDirections.actionAllHouseholdFragmentToHouseholdMembersFragment(
-                    it,0
+                    it,0,"No"
                 )
             )
         }, {
