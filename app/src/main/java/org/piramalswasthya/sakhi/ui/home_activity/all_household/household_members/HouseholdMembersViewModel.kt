@@ -23,6 +23,8 @@ class HouseholdMembersViewModel @Inject constructor(
 
     val isFromDisease = HouseholdMembersFragmentArgs.fromSavedStateHandle(savedStateHandle).fromDisease
 
+    val diseaseType = HouseholdMembersFragmentArgs.fromSavedStateHandle(savedStateHandle).diseaseType
+
     val benList = benRepo.getBenBasicListFromHousehold(hhId)
 
     private val _abha = MutableLiveData<String?>()

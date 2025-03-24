@@ -54,7 +54,7 @@ class AllHouseHoldDiseaseControlFragment : Fragment() {
         }, {
             findNavController().navigate(
                 AllHouseHoldDiseaseControlFragmentDirections.actionAllHouseHoldDiseaseControlFragmentToHouseholdMembersFragment(
-                    it,1
+                    it,1, viewModel.diseaseType
                 )
             )
         }, {

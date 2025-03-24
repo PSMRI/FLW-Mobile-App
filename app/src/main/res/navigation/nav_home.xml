@@ -465,6 +465,9 @@
         <argument
             android:name="fromDisease"
             app:argType="integer" />
+        <argument
+            android:name="diseaseType"
+            app:argType="string" />
         <action
             android:id="@+id/action_householdMembersFragment_to_newBenRegTypeFragment"
             app:destination="@id/newBenRegTypeFragment" />
@@ -998,6 +1001,9 @@
         <action
             android:id="@+id/action_diseaseControlFragment_to_allHouseHoldDiseaseControlFragment"
             app:destination="@id/allHouseHoldDiseaseControlFragment" />
+        <action
+            android:id="@+id/action_diseaseControlFragment_to_ncdFragment"
+            app:destination="@id/ncdFragment" />
     </fragment>
     <fragment
         android:id="@+id/allHouseHoldDiseaseControlFragment"

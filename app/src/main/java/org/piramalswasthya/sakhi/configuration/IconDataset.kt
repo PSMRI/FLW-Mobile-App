@@ -81,9 +81,9 @@ class IconDataset @Inject constructor(
                 ),
                 Icon(
                     R.drawable.ic__ncd,
-                    resources.getString(R.string.icon_title_ncd),
+                    resources.getString(R.string.icon_title_disease),
                     null,
-                    HomeFragmentDirections.actionNavHomeToNcdFragment(),
+                    HomeFragmentDirections.actionHomeFragmentToDiseaseControlFragment()
                 ),
                 Icon(
                     R.drawable.ic__ncd,
@@ -124,12 +124,7 @@ class IconDataset @Inject constructor(
                     null,
                     HomeFragmentDirections.actionNavHomeToVillageLevelFormsFragment()
                 ),
-                Icon(
-                    R.drawable.ic__village_level_form,
-                    resources.getString(R.string.icon_title_disease),
-                    null,
-                    HomeFragmentDirections.actionHomeFragmentToDiseaseControlFragment()
-                ),
+
             )
 
             Modules.HRP -> listOf(
@@ -282,6 +277,13 @@ class IconDataset @Inject constructor(
     }
 
     fun getDiseaseControlDataset(resources: Resources) = listOf(
+        Icon(
+            R.drawable.ic__ncd,
+            resources.getString(R.string.icon_title_ncd),
+            null,
+            DiseaseControlFragmentDirections.actionDiseaseControlFragmentToNcdFragment(),
+
+        ),
         Icon(
             R.drawable.ic__eligible_couple,
             resources.getString(R.string.icon_title_maleria),
