@@ -124,14 +124,7 @@
                         android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                         android:textColor="?attr/colorOnPrimary"
                         tools:text="65987506978" />
-                    <ImageView
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        app:tint="@color/material_dynamic_neutral80"
-                        android:src="@drawable/ic_pending_actions"
-                        android:layout_toRightOf="@+id/contactNumber"
-                        android:layout_marginStart="5dp"
-                        />
+
                 </RelativeLayout>
 
                 <Button

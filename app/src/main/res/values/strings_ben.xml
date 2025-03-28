@@ -90,6 +90,16 @@
         <item>Other</item>
     </string-array>
 
+    <string-array name="temp_mobile_no_relation_array">
+        <item>Family Head</item>
+        <item>Self</item>
+        <item>Spouse</item>
+        <item>Mother</item>
+        <item>Father</item>
+        <item>Neighbor</item>
+        <item>Friend/Relative</item>
+    </string-array>
+
     <string-array name="nbr_relationship_to_head_src">
         <item>Mother</item>
         <item>Father</item>
