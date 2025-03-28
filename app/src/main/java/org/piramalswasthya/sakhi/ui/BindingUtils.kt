@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.ui
 
+import android.content.Context
 import android.net.Uri
 import android.os.Build
 import android.text.Html
@@ -34,6 +35,7 @@ import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.VaccineState
 import org.piramalswasthya.sakhi.model.VaccineState.*
 import timber.log.Timber
+import java.text.DecimalFormat
 
 
 @BindingAdapter("vaccineState")
@@ -389,6 +391,33 @@ fun TextInputLayout.setAsteriskFormText(required: Boolean?, title: String?) {
     }
 }
 
+ fun getFileSize(uri: Uri,context: Context): Long {
+    val cursor = context.contentResolver.query(uri, null, null, null, null)
+    return cursor?.use {
+        val sizeIndex = it.getColumnIndex(android.provider.OpenableColumns.SIZE)
+        if (sizeIndex != -1 && it.moveToFirst()) {
+            it.getLong(sizeIndex)
+        } else {
+            0L
+        }
+    } ?: 0L
+}
+
+ fun formatSize(size: Long): String {
+    val df = DecimalFormat("#.##")
+    return when {
+        size < 1024 -> "$size B"
+        size < 1024 * 1024 -> "${df.format(size / 1024.0)} KB"
+        size < 1024 * 1024 * 1024 -> "${df.format(size / (1024.0 * 1024))} MB"
+        else -> "${df.format(size / (1024.0 * 1024 * 1024))} GB"
+    }
+}
+
+fun checkFileSize(uri: Uri,context:Context) : Boolean {
+    val size = getFileSize(uri, context)
+    return size > 5 * 1024 * 1024
+
+}
 @RequiresApi(Build.VERSION_CODES.N)
 @BindingAdapter("asteriskRequired", "hintText")
 fun TextView.setAsteriskTextView(required: Boolean?, title: String?) {

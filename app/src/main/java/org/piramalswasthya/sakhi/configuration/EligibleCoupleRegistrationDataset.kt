@@ -1233,6 +1233,7 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
                 validateAllAlphaNumericOnEditText(ifsc)
             }
 
+
             ageAtMarriage.id -> {
                 if (ageAtMarriage.value.isNullOrEmpty()) {
                     validateEmptyOnEditText(ageAtMarriage)
