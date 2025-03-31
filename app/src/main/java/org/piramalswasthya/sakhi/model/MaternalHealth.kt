@@ -321,7 +321,7 @@ data class PregnantWomanAncCache(
     val benId: Long,
     var visitNumber: Int,
     var isActive: Boolean = true,
-    var ancDate: Long = System.currentTimeMillis(),
+    var ancDate: Long = 0L,
     var isAborted: Boolean = false,
     var abortionType: String? = null,
     var abortionTypeId: Int = 0,
@@ -573,7 +573,7 @@ data class BenWithAncListDomain(
     val ben: BenBasicDomain,
     val pwr: PregnantWomanRegistrationCache,
     val anc: List<AncStatus>,
-    val ancDate: Long? = 0L,
+    val ancDate: Long = 0L,
     val lmpString: String? = getDateString(pwr.lmpDate),
     val eddString: String? = getDateString(pwr.lmpDate + TimeUnit.DAYS.toMillis(280)),
     val weeksOfPregnancy: String? = (TimeUnit.MILLISECONDS.toDays(getTodayMillis() - pwr.lmpDate) / 7).takeIf { it <= 40 }

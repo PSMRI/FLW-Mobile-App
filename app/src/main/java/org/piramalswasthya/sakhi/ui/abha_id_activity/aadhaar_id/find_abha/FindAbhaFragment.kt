@@ -19,6 +19,8 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.FragmentFindAbhaBinding
 import org.piramalswasthya.sakhi.network.Abha
 import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.AadhaarIdViewModel
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 
 @AndroidEntryPoint
@@ -146,13 +148,19 @@ class FindAbhaFragment : Fragment() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                isValidMobile = (s != null) && (s.length == 10)
-                if (isValidMobile) {
+                if((s != null) && isValidMobileNumber(s.toString())){
+                    binding.tvErrorTextMobile.visibility = View.GONE
+                    binding.tvErrorTextMobile.text = ""
+                }else{
+                    binding.tvErrorTextMobile.visibility = View.VISIBLE
+                    binding.tvErrorTextMobile.text = "Please Enter Valid Mobile Number"
+                }
+                isValidMobile = (s != null) && isValidMobileNumber(s.toString())
+                if (isValidMobile)
                     parentViewModel.setMobileNumber(s.toString())
                     binding.btnSearchAbha.isEnabled = isValidMobile
 //                    binding.btnSearchAbha.isEnabled = isValidAbha && isValidMobile
 //                            && binding.aadharConsentCheckBox.isChecked
-                }
             }
 
         })
@@ -168,10 +176,20 @@ class FindAbhaFragment : Fragment() {
         viewModel.errorMessage.observe(viewLifecycleOwner) {
             it?.let {
                 binding.tvErrorTextAbha.visibility = View.VISIBLE
-                binding.tvErrorTextAbha.text = it
+                binding.tvErrorTextAbha.text = "No ABHA Found"
                 viewModel.resetErrorMessage()
             }
         }
+    }
+
+    fun isValidMobileNumber(str: String?): Boolean {
+        val regex = "(\\+91|0)?[1-9][0-9]{9}"
+        val p: Pattern = Pattern.compile(regex)
+        if (str == null) {
+            return false
+        }
+        val m: Matcher = p.matcher(str)
+        return m.matches()
     }
 
     private fun searchAbha() {
