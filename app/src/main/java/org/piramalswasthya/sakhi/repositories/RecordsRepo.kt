@@ -128,9 +128,21 @@ class RecordsRepo @Inject constructor(
     val pncMotherNonFollowUpList = benDao.getAllPNCMotherList(selectedVillage)
         .map { list ->
             list.filter {
-                !it.savedPncRecords.any { it1 ->
-                    it1.pncDate < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(90) &&
-                            it1.pncDate > System.currentTimeMillis() - TimeUnit.DAYS.toMillis(365)
+                if (!it.savedPncRecords.isNullOrEmpty()) {
+                    it.savedPncRecords.last().pncDate != 0L &&
+                            it.savedPncRecords.last().pncDate < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(
+                        90
+                    ) &&
+                            it.savedPncRecords.last().pncDate > System.currentTimeMillis() - TimeUnit.DAYS.toMillis(
+                        365
+                    )
+//                it.savedPncRecords.any { it1 ->
+//                    it1.pncDate != 0L &&
+//                    it1.pncDate < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(90) &&
+//                            it1.pncDate > System.currentTimeMillis() - TimeUnit.DAYS.toMillis(365)
+//                }
+                } else {
+                    false
                 }
             }
                 .map { it.asBasicDomainModelForPNC() } }
@@ -170,11 +182,13 @@ class RecordsRepo @Inject constructor(
     val eligibleCoupleMissedPeriodList = benDao.getAllEligibleRegistrationList(selectedVillage)
         .map { list ->
             list.filter {
-                if (it.ecr != null) {
-                    System.currentTimeMillis() - it.ecr.lmpDate > TimeUnit.DAYS.toMillis(35)
-                } else {
-                    true
-                }
+                it.ecr != null && it.ecr.lmpDate != 0L &&
+                        System.currentTimeMillis() - it.ecr.lmpDate > TimeUnit.DAYS.toMillis(35)
+//                if (it.ecr != null && it.ecr.lmpDate != 0L) {
+//                    System.currentTimeMillis() - it.ecr.lmpDate > TimeUnit.DAYS.toMillis(35)
+//                } else {
+//                    true
+//                }
                 }
                 .map { it.asDomainModel() } }
     val eligibleCoupleMissedPeriodListCount = eligibleCoupleMissedPeriodList.map { it.size }
@@ -188,9 +202,21 @@ class RecordsRepo @Inject constructor(
     val eligibleCoupleTrackingNonFollowUpList = benDao.getAllEligibleTrackingList(selectedVillage)
         .map { list ->
             list.filter {
-                !it.savedECTRecords.any { it1 ->
-                    it1.visitDate < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(90) &&
-                            it1.visitDate > System.currentTimeMillis() - TimeUnit.DAYS.toMillis(365)
+                if (!it.savedECTRecords.isNullOrEmpty()) {
+                    it.savedECTRecords.last().visitDate != 0L &&
+                            it.savedECTRecords.last().visitDate < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(
+                        90
+                    ) &&
+                            it.savedECTRecords.last().visitDate > System.currentTimeMillis() - TimeUnit.DAYS.toMillis(
+                        365
+                    )
+//                it.savedECTRecords.any { it1 ->
+//                    it1.visitDate != 0L &&
+//                    it1.visitDate < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(90) &&
+//                            it1.visitDate > System.currentTimeMillis() - TimeUnit.DAYS.toMillis(365)
+//                }
+                } else {
+                    false
                 }
             }
                 .map { it.asDomainModel() } }
@@ -200,11 +226,18 @@ class RecordsRepo @Inject constructor(
     val eligibleCoupleTrackingMissedPeriodList = benDao.getAllEligibleTrackingList(selectedVillage)
         .map { list ->
             list.filter {
-                 it.savedECTRecords.any { record ->
-                     record.lmpDate?.let { it ->
-                         System.currentTimeMillis() - it > TimeUnit.DAYS.toMillis(35)
-                     } ?: false
+                if (!it.savedECTRecords.isNullOrEmpty() && it.savedECTRecords.last().lmpDate != 0L) {
+                    System.currentTimeMillis() - it.savedECTRecords.last().lmpDate > TimeUnit.DAYS.toMillis(35)
+                } else {
+                    false
                 }
+//                 it.savedECTRecords.any { record ->
+//                     if (record.lmpDate != 0L) {
+//                         System.currentTimeMillis() - record.lmpDate > TimeUnit.DAYS.toMillis(35)
+//                     } else {
+//                         false
+//                     }
+//                }
             }
                 .map { it.asDomainModel() } }
     val eligibleCoupleTrackingMissedPeriodListCount = eligibleCoupleTrackingMissedPeriodList.map { it.size }
@@ -262,9 +295,21 @@ class RecordsRepo @Inject constructor(
         benDao.getAllRegisteredPregnancyWomenList(selectedVillage)
             .map { list ->
                 list.filter {
-                    !it.savedAncRecords.any { it1 ->
-                        it1.ancDate < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(90) &&
-                                it1.ancDate > System.currentTimeMillis() - TimeUnit.DAYS.toMillis(365)
+                    if (!it.savedAncRecords.isNullOrEmpty()) {
+                        it.savedAncRecords.last().ancDate != 0L &&
+                                it.savedAncRecords.last().ancDate < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(
+                            90
+                        ) &&
+                                it.savedAncRecords.last().ancDate > System.currentTimeMillis() - TimeUnit.DAYS.toMillis(
+                            365
+                        )
+//                    it.savedAncRecords.any { it1 ->
+//                        it1.ancDate != 0L &&
+//                        it1.ancDate < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(90) &&
+//                                it1.ancDate > System.currentTimeMillis() - TimeUnit.DAYS.toMillis(365)
+//                    }
+                    } else {
+                        false
                     }
                 }
                     .map { it.asDomainModel() }
