@@ -16,10 +16,10 @@
     <string name="gov">GOV</string>
     <string name="enter_aadhaar_number">Enter Aadhaar Number</string>
     <string name="aadhaar_number">Aadhaar Number</string>
-    <string name="generate_otp">Generate OTP</string>
+    <string name="generate_otp">Send OTP</string><!--Generate OTP-->
     <string name="select_abha">Select ABHA</string>
     <string name="pid">PID</string>
-    <string name="generate_abha">Generate ABHA</string>
+    <string name="generate_abha">ABHA</string><!--Generate ABHA-->
     <string name="_30">30</string>
     <string name="date">Date</string>
     <string name="abha_number_generated_successfully">ABHA number generated successfully</string>
@@ -57,7 +57,6 @@
     <string name="otp_was_resent">OTP was resent.</string>
     <string name="do_you_want_to_go_back">Do you want to go back?</string>
     <string name="downloading_abha_card">Downloading abha card</string>
-
     <string name="str_create_abha">Create ABHA</string>
     <string name="str_search_abha">Search ABHA</string>
     <string name="str_invalid_aadhaar_no">Please Enter Valid Aadhaar Number</string>
@@ -66,4 +65,10 @@
     <string name="str_abha_already_exist">This ABHA already exists!</string>
     <string name="str_abha_successfully_created">ABHA account successfully created!</string>
     <string name="str_abha_card_downloaded">You can view Abha Card in download folder!!</string>
+
+
+    <string name="str_abha_otp_note">This OTP is valid for 10 minutes.</string>
+    <string name="str_enter_otp">Enter OTP:</string>
+    <string name="str_find_abha">Already have an ABHA?\nFind Out Now!</string>
+    <string name="str_get_your_abha">Get the ABHA number using the Mobile number.</string>
 </resources>

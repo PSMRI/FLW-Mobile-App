@@ -144,8 +144,11 @@ class FindAbhaFragment : Fragment() {
                 if (isValidMobile) {
                     parentViewModel.setMobileNumber(s.toString())
                     binding.btnSearchAbha.isEnabled = isValidMobile
+                    binding.ivValidMobile.setImageResource(R.drawable.ic_check_circle_green)
 //                    binding.btnSearchAbha.isEnabled = isValidAbha && isValidMobile
 //                            && binding.aadharConsentCheckBox.isChecked
+                }else{
+                    binding.ivValidMobile.setImageResource(R.drawable.ic_check_circle_grey)
                 }
             }
 

@@ -55,4 +55,14 @@
     <string name="do_you_want_to_go_back">আপুনি পিছলৈ যাবলৈ বিচাৰে নেকি?</string>
     <string name="downloading_abha_card">অভা কাৰ্ড ডাউনলোড হৈছে</string>
 
+
+    <string name="str_create_abha">ABHA সৃষ্টি কৰক</string>
+    <string name="str_search_abha">ABHA সন্ধান কৰক</string>
+    <string name="str_invalid_aadhaar_no">অনুগ্ৰহ কৰি বৈধ আধাৰ নম্বৰ দিয়ক</string>
+    <string name="str_invalid_mobile_no">অনুগ্ৰহ কৰি বৈধ মোবাইল নম্বৰ দিয়ক</string>
+    <string name="str_here_abha_no">ইয়াত আপোনাৰ ABHA Number!</string>
+    <string name="str_abha_already_exist">এই ABHA ইতিমধ্যে আছে!</string>
+    <string name="str_abha_successfully_created">সফলতাৰে সৃষ্টি হ\'ল ABHA একাউণ্ট!</string>
+    <string name="str_abha_card_downloaded"> আপুনি ABHA Card ডাউনলোড ফোল্ডাৰত চাব পাৰিব!!</string>
+
 </resources>

@@ -79,6 +79,11 @@ AadhaarIdViewModel @Inject constructor(
     val errorMessage: LiveData<String?>
         get() = _errorMessage
 
+
+    private var _otpMobileNumberMessage: String? = null
+    val otpMobileNumberMessage: String
+        get() = _otpMobileNumberMessage?:""
+
     fun resetState() {
         _state.value = State.IDLE
     }
@@ -110,6 +115,10 @@ AadhaarIdViewModel @Inject constructor(
     fun setTxnId(txnId: String) {
         _txnId = txnId
     }
+    fun setOTPMsg(msg: String) {
+        _otpMobileNumberMessage = msg
+    }
+
 
     fun setUserType(userType: String) {
         _userType.value = userType

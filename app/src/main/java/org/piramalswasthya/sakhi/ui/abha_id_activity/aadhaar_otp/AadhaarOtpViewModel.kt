@@ -83,6 +83,10 @@ class AadhaarOtpViewModel @Inject constructor(
     val mobileNumber: String
         get() = _mobileNumber ?: ""
 
+    private val _otpMobileNumberMessage = MutableLiveData<String?>(null)
+    val otpMobileNumberMessage: LiveData<String?>
+        get() = _otpMobileNumberMessage
+
 
     fun verifyOtpClicked(otp: String, mobile: String) {
         _state.value = State.LOADING
@@ -220,6 +224,7 @@ class AadhaarOtpViewModel @Inject constructor(
                 is NetworkResult.Success -> {
                     _txnId = result.data.txnId
                     _state.value = State.SUCCESS
+                    _otpMobileNumberMessage.value = result.data.message
                 }
 
                 is NetworkResult.Error -> {
