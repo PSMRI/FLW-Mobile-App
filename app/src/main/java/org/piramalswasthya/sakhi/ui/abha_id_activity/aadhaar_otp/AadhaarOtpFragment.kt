@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -32,7 +33,8 @@ class AadhaarOtpFragment : Fragment() {
     private var timer = object : CountDownTimer(30000, 1000) {
         override fun onTick(millisUntilFinished: Long) {
             val sec = millisUntilFinished / 1000 % 60
-            binding.timerResendOtp.text = sec.toString()
+          //  binding.timerResendOtp.text = "Resend OTP in 00:$sec"
+            binding.timerCount.text = "$sec"
         }
 
         // When the task is over it will print 00:00:00 there
@@ -56,10 +58,10 @@ class AadhaarOtpFragment : Fragment() {
         startResendTimer()
         binding.btnVerifyOTP.setOnClickListener {
             if (parentViewModel.abhaMode.value == AadhaarIdViewModel.Abha.SEARCH) {
-                viewModel.verifyLoginOtpClicked(binding.tietAadhaarOtp.text.toString())
+                viewModel.verifyLoginOtpClicked(binding.otpView.text.toString())
             } else {
                 viewModel.verifyOtpClicked(
-                    binding.tietAadhaarOtp.text.toString(),
+                    binding.otpView.text.toString(),
                     parentViewModel.mobileNumber
                 )
             }
@@ -73,7 +75,7 @@ class AadhaarOtpFragment : Fragment() {
             binding.textView6.text = "Verify Aadhaar OTP"
         }
 
-        binding.tietAadhaarOtp.addTextChangedListener(object : TextWatcher {
+       /* binding.tietAadhaarOtp.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
 
@@ -85,6 +87,19 @@ class AadhaarOtpFragment : Fragment() {
                 binding.tvErrorText.visibility = View.GONE
             }
 
+        })*/
+
+        binding.otpView.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                binding.btnVerifyOTP.isEnabled = s != null && s.length == 6
+                binding.tvErrorText.visibility = View.GONE
+            }
+
+            override fun afterTextChanged(s: Editable) {
+            }
         })
 
 
@@ -111,6 +126,8 @@ class AadhaarOtpFragment : Fragment() {
 //                        args.mobileNumber
 //                    )
                     binding.tvOtpMsg.visibility = View.VISIBLE
+                    binding.tvOtpMsg.text = parentViewModel.otpMobileNumberMessage
+                    binding.tvOTPNote.visibility = View.VISIBLE
                 }
 
                 State.LOADING -> {
@@ -189,6 +206,12 @@ class AadhaarOtpFragment : Fragment() {
 //                parentViewModel.setMobileNumber(it)
 //            }
 //        }
+
+        viewModel.otpMobileNumberMessage.observe(viewLifecycleOwner) {
+            it?.let {
+                parentViewModel.setOTPMsg(it)
+            }
+        }
 
     }
 
