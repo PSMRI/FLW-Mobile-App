@@ -58,7 +58,7 @@ class AdolescentListFragment : Fragment() {
                 {
 
                 },
-                { _, _ -> }
+                { _, _ -> }, {}
             ), showBeneficiaries = true)
         binding.rvAny.adapter = benAdapter
 

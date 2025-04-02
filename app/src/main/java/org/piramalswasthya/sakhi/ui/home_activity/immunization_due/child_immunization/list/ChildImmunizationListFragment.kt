@@ -1,5 +1,7 @@
 package org.piramalswasthya.sakhi.ui.home_activity.immunization_due.child_immunization.list
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -7,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -51,11 +54,25 @@ class ChildImmunizationListFragment : Fragment(),ImmunizationBirthDoseCategoryAd
         binding.rvCat.adapter = ImmunizationBirthDoseCategoryAdapter(viewModel.categoryData(),this,viewModel)
 
         binding.rvList.adapter =
-            ImmunizationBenListAdapter(ImmunizationBenListAdapter.VaccinesClickListener {
-                viewModel.updateBottomSheetData(it)
-                if (!bottomSheet.isVisible)
-                    bottomSheet.show(childFragmentManager, "ImM")
-            })
+            ImmunizationBenListAdapter(
+                ImmunizationBenListAdapter.VaccinesClickListener(clickedVaccine = {
+                    viewModel.updateBottomSheetData(it)
+                    if (!bottomSheet.isVisible)
+                        bottomSheet.show(childFragmentManager, "ImM")
+                }, callBen = {
+                    try {
+                        val callIntent = Intent(Intent.ACTION_CALL)
+                        callIntent.setData(Uri.parse("tel:${it.mobileNo}"))
+                        startActivity(callIntent)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        activity?.let {
+                            (it as HomeActivity).askForPermissions()
+                        }
+                        Toast.makeText(requireContext(), "Please allow permissions first", Toast.LENGTH_SHORT).show()
+                    }
+                })
+            )
 
 
         lifecycleScope.launch {
