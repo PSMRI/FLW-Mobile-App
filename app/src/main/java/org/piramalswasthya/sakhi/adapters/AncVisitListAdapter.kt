@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.databinding.RvItemPregnancyVisitBinding
+import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.model.BenWithAncListDomain
 import java.util.concurrent.TimeUnit
 
@@ -70,6 +71,7 @@ class AncVisitListAdapter(private val clickListener: PregnancyVisitClickListener
         private val showVisits: (benId: Long) -> Unit,
         private val addVisit: (benId: Long, visitNumber: Int) -> Unit,
         private val pmsma: (benId: Long, hhId: Long) -> Unit,
+        private val callBen: (ben: BenWithAncListDomain) -> Unit
 
         ) {
         fun showVisits(item: BenWithAncListDomain) = showVisits(
@@ -82,6 +84,8 @@ class AncVisitListAdapter(private val clickListener: PregnancyVisitClickListener
         fun pmsma(item: BenWithAncListDomain) = pmsma(
             item.ben.benId, item.ben.hhId
         )
+
+        fun onClickedForCall(item: BenWithAncListDomain) = callBen(item)
     }
 
 }
