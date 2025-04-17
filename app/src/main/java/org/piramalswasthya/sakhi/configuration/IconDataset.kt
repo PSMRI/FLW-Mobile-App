@@ -13,6 +13,7 @@ import org.piramalswasthya.sakhi.ui.home_activity.child_care.ChildCareFragmentDi
 import org.piramalswasthya.sakhi.ui.home_activity.communicable_diseases.CdFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.disease_control.DiseaseControlFragment
 import org.piramalswasthya.sakhi.ui.home_activity.disease_control.DiseaseControlFragmentDirections
+import org.piramalswasthya.sakhi.ui.home_activity.disease_control.malaria.form.MalariaIconsFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.eligible_couple.EligibleCoupleFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.home.HomeFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.hrp_cases.HrpCasesFragmentDirections
@@ -288,8 +289,8 @@ class IconDataset @Inject constructor(
             R.drawable.ic__eligible_couple,
             resources.getString(R.string.icon_title_maleria),
             recordsRepo.eligibleCoupleListCount,
-            DiseaseControlFragmentDirections.actionDiseaseControlFragmentToAllHouseHoldDiseaseControlFragment(
-                Disease.MALARIA.toString()
+            DiseaseControlFragmentDirections.actionDiseaseControlFragmentToMalariaIconsFragment(
+
             )
         ), Icon(
             R.drawable.ic__eligible_couple,
@@ -324,14 +325,14 @@ class IconDataset @Inject constructor(
                 Disease.LEPROSY.toString()
             )
         ),
-        Icon(
+        /*Icon(
             R.drawable.ic__eligible_couple,
             resources.getString(R.string.icon_title_dearming),
             recordsRepo.eligibleCoupleTrackingListCount,
             DiseaseControlFragmentDirections.actionDiseaseControlFragmentToAllHouseHoldDiseaseControlFragment(
                 Disease.DEWARMING.toString()
             )
-        )
+        )*/
     ).apply {
         forEachIndexed { index, icon ->
             icon.colorPrimary = index % 2 == 0
@@ -450,6 +451,25 @@ class IconDataset @Inject constructor(
             resources.getString(R.string.icon_title_ncd_tb_suspected),
             recordsRepo.tbSuspectedListCount,
             CdFragmentDirections.actionCdFragmentToTBSuspectedListFragment()
+
+        )
+    ).apply {
+        forEachIndexed { index, icon ->
+            icon.colorPrimary = index % 2 == 0
+        }
+    }
+
+    fun getMalariaDataset(resources: Resources) = listOf(
+        Icon(
+            R.drawable.ic__ncd_eligibility,
+            resources.getString(R.string.icon_title_maleria),
+            recordsRepo.tbScreeningListCount,
+            MalariaIconsFragmentDirections.actionMalariaIconsFragmentToAllHouseHoldDiseaseControlFragment(Disease.MALARIA.toString())
+        ), Icon(
+            R.drawable.ic__death,
+            resources.getString(R.string.icon_title_malaria_confirmed),
+            recordsRepo.malariaConfirmedCasesListCount,
+            MalariaIconsFragmentDirections.actionMalariaIconsFragmentToConfirmedMalariaLIstFragment()
 
         )
     ).apply {

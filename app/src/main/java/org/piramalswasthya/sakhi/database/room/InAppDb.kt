@@ -8,6 +8,7 @@ import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import org.piramalswasthya.sakhi.database.converters.LocationEntityListConverter
 import org.piramalswasthya.sakhi.database.converters.SyncStateConverter
+import org.piramalswasthya.sakhi.database.room.dao.AesDao
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.BeneficiaryIdsAvailDao
 import org.piramalswasthya.sakhi.database.room.dao.CbacDao
@@ -15,6 +16,7 @@ import org.piramalswasthya.sakhi.database.room.dao.CdrDao
 import org.piramalswasthya.sakhi.database.room.dao.ChildRegistrationDao
 import org.piramalswasthya.sakhi.database.room.dao.DeliveryOutcomeDao
 import org.piramalswasthya.sakhi.database.room.dao.EcrDao
+import org.piramalswasthya.sakhi.database.room.dao.FilariaDao
 import org.piramalswasthya.sakhi.database.room.dao.FpotDao
 import org.piramalswasthya.sakhi.database.room.dao.HbncDao
 import org.piramalswasthya.sakhi.database.room.dao.HbycDao
@@ -23,6 +25,9 @@ import org.piramalswasthya.sakhi.database.room.dao.HrpDao
 import org.piramalswasthya.sakhi.database.room.dao.ImmunizationDao
 import org.piramalswasthya.sakhi.database.room.dao.IncentiveDao
 import org.piramalswasthya.sakhi.database.room.dao.InfantRegDao
+import org.piramalswasthya.sakhi.database.room.dao.KalaAzarDao
+import org.piramalswasthya.sakhi.database.room.dao.LeprosyDao
+import org.piramalswasthya.sakhi.database.room.dao.MalariaDao
 import org.piramalswasthya.sakhi.database.room.dao.MaternalHealthDao
 import org.piramalswasthya.sakhi.database.room.dao.MdsrDao
 import org.piramalswasthya.sakhi.database.room.dao.PmjayDao
@@ -30,6 +35,7 @@ import org.piramalswasthya.sakhi.database.room.dao.PmsmaDao
 import org.piramalswasthya.sakhi.database.room.dao.PncDao
 import org.piramalswasthya.sakhi.database.room.dao.SyncDao
 import org.piramalswasthya.sakhi.database.room.dao.TBDao
+import org.piramalswasthya.sakhi.model.AESScreeningCache
 import org.piramalswasthya.sakhi.model.BenBasicCache
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.CDRCache
@@ -39,6 +45,7 @@ import org.piramalswasthya.sakhi.model.DeliveryOutcomeCache
 import org.piramalswasthya.sakhi.model.EligibleCoupleRegCache
 import org.piramalswasthya.sakhi.model.EligibleCoupleTrackingCache
 import org.piramalswasthya.sakhi.model.FPOTCache
+import org.piramalswasthya.sakhi.model.FilariaScreeningCache
 import org.piramalswasthya.sakhi.model.HBNCCache
 import org.piramalswasthya.sakhi.model.HBYCCache
 import org.piramalswasthya.sakhi.model.HRPMicroBirthPlanCache
@@ -51,7 +58,11 @@ import org.piramalswasthya.sakhi.model.ImmunizationCache
 import org.piramalswasthya.sakhi.model.IncentiveActivityCache
 import org.piramalswasthya.sakhi.model.IncentiveRecordCache
 import org.piramalswasthya.sakhi.model.InfantRegCache
+import org.piramalswasthya.sakhi.model.KalaAzarScreeningCache
+import org.piramalswasthya.sakhi.model.LeprosyScreeningCache
 import org.piramalswasthya.sakhi.model.MDSRCache
+import org.piramalswasthya.sakhi.model.MalariaConfirmedCasesCache
+import org.piramalswasthya.sakhi.model.MalariaScreeningCache
 import org.piramalswasthya.sakhi.model.PMJAYCache
 import org.piramalswasthya.sakhi.model.PMSMACache
 import org.piramalswasthya.sakhi.model.PNCVisitCache
@@ -94,6 +105,13 @@ import org.piramalswasthya.sakhi.model.Vaccine
         //INCENTIVES
         IncentiveActivityCache::class,
         IncentiveRecordCache::class,
+        MalariaScreeningCache::class,
+        AESScreeningCache::class,
+        KalaAzarScreeningCache::class,
+        FilariaScreeningCache::class,
+        LeprosyScreeningCache::class,
+        MalariaConfirmedCasesCache::class,
+
     ],
     views = [BenBasicCache::class],
     version = 15, exportSchema = false
@@ -124,7 +142,11 @@ abstract class InAppDb : RoomDatabase() {
     abstract val infantRegDao: InfantRegDao
     abstract val childRegistrationDao: ChildRegistrationDao
     abstract val incentiveDao: IncentiveDao
-
+    abstract val malariaDao: MalariaDao
+    abstract val aesDao: AesDao
+    abstract val kalaAzarDao: KalaAzarDao
+    abstract val leprosyDao: LeprosyDao
+    abstract val filariaDao: FilariaDao
     abstract val syncDao: SyncDao
 
     companion object {

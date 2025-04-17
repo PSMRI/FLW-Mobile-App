@@ -95,6 +95,9 @@
         <action
             android:id="@+id/action_allHouseholdFragment_to_newBenRegFragment"
             app:destination="@id/newBenRegFragment" />
+        <action
+            android:id="@+id/action_allHouseholdFragment_to_malariaSuspectedListFragment"
+            app:destination="@id/malariaSuspectedListFragment" />
     </fragment>
     <fragment
         android:id="@+id/allBenFragment"
@@ -480,6 +483,12 @@
         <action
             android:id="@+id/action_householdMembersFragment_to_newBenRegFragment"
             app:destination="@id/newBenRegFragment" />
+        <action
+            android:id="@+id/action_householdMembersFragment_to_malariaFormFragment"
+            app:destination="@id/malariaFormFragment" />
+        <action
+            android:id="@+id/action_householdMembersFragment_to_kalaAzarFormFragment"
+            app:destination="@id/kalaAzarFormFragment" />
     </fragment>
     <fragment
         android:id="@+id/hbncDayListFragment"
@@ -1004,6 +1013,9 @@
         <action
             android:id="@+id/action_diseaseControlFragment_to_ncdFragment"
             app:destination="@id/ncdFragment" />
+        <action
+            android:id="@+id/action_diseaseControlFragment_to_malariaIconsFragment"
+            app:destination="@id/malariaIconsFragment" />
     </fragment>
     <fragment
         android:id="@+id/allHouseHoldDiseaseControlFragment"
@@ -1018,7 +1030,179 @@
         <action
             android:id="@+id/action_allHouseHoldDiseaseControlFragment_to_householdMembersFragment"
             app:destination="@id/householdMembersFragment" />
+        <action
+            android:id="@+id/action_allHouseHoldDiseaseControlFragment_to_malariaSuspectedListFragment"
+            app:destination="@id/malariaSuspectedListFragment" />
+        <action
+            android:id="@+id/action_allHouseHoldDiseaseControlFragment_to_AESSuspectedListFragment"
+            app:destination="@id/AESSuspectedListFragment" />
+        <action
+            android:id="@+id/action_allHouseHoldDiseaseControlFragment_to_kalaAzarSuspectedListFragment"
+            app:destination="@id/kalaAzarSuspectedListFragment" />
+        <action
+            android:id="@+id/action_allHouseHoldDiseaseControlFragment_to_leprosySuspectedListFragment"
+            app:destination="@id/leprosySuspectedListFragment" />
+        <action
+            android:id="@+id/action_allHouseHoldDiseaseControlFragment_to_filariaSuspectedListFragment"
+            app:destination="@id/filariaSuspectedListFragment" />
 
+    </fragment>
+    <fragment
+        android:id="@+id/malariaFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.malaria.form.form.MalariaFormFragment"
+        android:label="MalariaFormFragment" >
+        <argument
+            android:name="benId"
+            app:argType="long" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/kalaAzarFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.kala_azar.form.KalaAzarFormFragment"
+        android:label="KalaAzarFormFragment" >
+        <argument
+            android:name="benId"
+            app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/malariaSuspectedListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.malaria.form.list.MalariaSuspectedListFragment"
+        android:label="MalariaSuspectedListFragment" >
+        <argument
+            android:name="hhId"
+            app:argType="long" />
+        <argument
+            android:name="fromDisease"
+            app:argType="integer" />
+        <argument
+            android:name="diseaseType"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_malariaSuspectedListFragment_to_malariaFormFragment"
+            app:destination="@id/malariaFormFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/AESSuspectedListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.aes_je.list.AESSuspectedListFragment"
+        android:label="AESSuspectedListFragment" >
+        <argument
+            android:name="hhId"
+            app:argType="long" />
+        <argument
+            android:name="fromDisease"
+            app:argType="integer" />
+        <argument
+            android:name="diseaseType"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_AESSuspectedListFragment_to_AEFFormFragment"
+            app:destination="@id/AEFFormFragment" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/AEFFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.aes_je.form.AEFFormFragment"
+        android:label="AEFFormFragment" >
+        <argument
+            android:name="benId"
+            app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/kalaAzarSuspectedListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.kala_azar.list.KalaAzarSuspectedListFragment"
+        android:label="KalaAzarSuspectedListFragment" >
+        <argument
+            android:name="hhId"
+            app:argType="long" />
+        <argument
+            android:name="fromDisease"
+            app:argType="integer" />
+        <argument
+            android:name="diseaseType"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_kalaAzarSuspectedListFragment_to_kalaAzarFormFragment"
+            app:destination="@id/kalaAzarFormFragment" >
+
+        </action>
+    </fragment>
+    <fragment
+        android:id="@+id/leprosySuspectedListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.leprosy.list.LeprosySuspectedListFragment"
+        android:label="LeprosySuspectedListFragment" >
+        <argument
+            android:name="hhId"
+            app:argType="long" />
+        <argument
+            android:name="fromDisease"
+            app:argType="integer" />
+        <argument
+            android:name="diseaseType"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_leprosySuspectedListFragment_to_leprosyFormFragment"
+            app:destination="@id/leprosyFormFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/leprosyFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.leprosy.form.LeprosyFormFragment"
+        android:label="LeprosyFormFragment">
+        <argument
+            android:name="benId"
+            app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/filariaSuspectedListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.filaria.list.FilariaSuspectedListFragment"
+        android:label="FilariaSuspectedListFragment" >
+        <argument
+            android:name="hhId"
+            app:argType="long" />
+        <argument
+            android:name="fromDisease"
+            app:argType="integer" />
+        <argument
+            android:name="diseaseType"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_filariaSuspectedListFragment_to_filariaFormFragment"
+            app:destination="@id/filariaFormFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/filariaFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.filaria.form.FilariaFormFragment"
+        android:label="FilariaFormFragment">
+        <argument
+            android:name="benId"
+            app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/malariaIconsFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.malaria.form.MalariaIconsFragment"
+        android:label="MalariaIconsFragment" >
+        <action
+            android:id="@+id/action_malariaIconsFragment_to_allHouseHoldDiseaseControlFragment"
+            app:destination="@id/allHouseHoldDiseaseControlFragment" />
+        <action
+            android:id="@+id/action_malariaIconsFragment_to_confirmedMalariaLIstFragment"
+            app:destination="@id/confirmedMalariaLIstFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/confirmedMalariaLIstFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.malaria.form.confirmed.list.ConfirmedMalariaLIstFragment"
+        android:label="ConfirmedMalariaLIstFragment" >
+
+        <action
+            android:id="@+id/action_confirmedMalariaLIstFragment_to_confirmedCaseFollowUpFormFragment"
+            app:destination="@id/confirmedCaseFollowUpFormFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/confirmedCaseFollowUpFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.malaria.form.confirmed.form.ConfirmedCaseFollowUpFormFragment"
+        android:label="ConfirmedCaseFollowUpFormFragment" >
+        <argument
+            android:name="benId"
+            app:argType="long" />
     </fragment>
 
 

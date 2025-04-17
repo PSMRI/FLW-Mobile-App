@@ -306,6 +306,24 @@ fun ImageView.setSyncState(syncState: SyncState?) {
     }
 }
 
+@BindingAdapter("caseStatus")
+fun ImageView.setCaseStatus(caseStatus: String) {
+    caseStatus.let {
+        visibility = View.VISIBLE
+        val drawable = when (it) {
+            "Suspected" -> R.drawable.ic_unsynced
+            "Confirmed" -> R.drawable.ic_syncing
+            "Not Confirmed" -> R.drawable.ic_synced
+            else -> {
+                R.drawable.ic_synced
+            }
+        }
+        setImageResource(drawable)
+    } ?: run {
+        visibility = View.INVISIBLE
+    }
+}
+
 
 @BindingAdapter("benImage")
 fun ImageView.setBenImage(uriString: String?) {

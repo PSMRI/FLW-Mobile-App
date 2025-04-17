@@ -82,6 +82,23 @@ class HouseholdMembersFragment : Fragment() {
                             )
 
                         )
+                    } else {
+                        if (viewModel.diseaseType == IconDataset.Disease.MALARIA.toString()) {
+
+                            findNavController().navigate(
+                                HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToMalariaFormFragment(
+                                    benId = benId,
+                                )
+
+                            )
+                        } else if (viewModel.diseaseType == IconDataset.Disease.KALA_AZAR.toString()) {
+                            findNavController().navigate(
+                                HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToKalaAzarFormFragment(
+                                    benId = benId,
+                                )
+
+                            )
+                        }
                     }
 
                 },

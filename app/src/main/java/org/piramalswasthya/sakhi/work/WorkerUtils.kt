@@ -40,6 +40,9 @@ object WorkerUtils {
         val pullTBWorkRequest = OneTimeWorkRequestBuilder<PullTBFromAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
+        val pullMalariaWorkRequest = OneTimeWorkRequestBuilder<PullMalariaFromAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
         val pullECWorkRequest = OneTimeWorkRequestBuilder<PullECFromAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
@@ -103,6 +106,7 @@ object WorkerUtils {
             .then(pushECWorkRequest)
 //            .then(pushChildHBYCToAmritWorker)
             .then(pushChildHBNCToAmritWorker)
+            .then(pullMalariaWorkRequest)
             .enqueue()
     }
 
@@ -117,6 +121,9 @@ object WorkerUtils {
             .setConstraints(networkOnlyConstraint)
             .build()
         val pushTBWorkRequest = OneTimeWorkRequestBuilder<PushTBToAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pushMalariaWorkRequest = OneTimeWorkRequestBuilder<PushMalariaAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
         val pushECToAmritWorker = OneTimeWorkRequestBuilder<PushECToAmritWorker>()
@@ -193,6 +200,8 @@ object WorkerUtils {
 //            .then(pushChildHBYCToAmritWorker)
             .then(pushChildHBNCToAmritWorker)
             .then(pullIncentiveActivityWorkRequest)
+            .then(pullIncentiveActivityWorkRequest)
+            .then(pushMalariaWorkRequest)
             .enqueue()
     }
 

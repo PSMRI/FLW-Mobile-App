@@ -11,18 +11,23 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.piramalswasthya.sakhi.database.room.InAppDb
+import org.piramalswasthya.sakhi.database.room.dao.AesDao
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.BeneficiaryIdsAvailDao
 import org.piramalswasthya.sakhi.database.room.dao.CbacDao
 import org.piramalswasthya.sakhi.database.room.dao.CdrDao
 import org.piramalswasthya.sakhi.database.room.dao.ChildRegistrationDao
 import org.piramalswasthya.sakhi.database.room.dao.DeliveryOutcomeDao
+import org.piramalswasthya.sakhi.database.room.dao.FilariaDao
 import org.piramalswasthya.sakhi.database.room.dao.HbncDao
 import org.piramalswasthya.sakhi.database.room.dao.HbycDao
 import org.piramalswasthya.sakhi.database.room.dao.HouseholdDao
 import org.piramalswasthya.sakhi.database.room.dao.ImmunizationDao
 import org.piramalswasthya.sakhi.database.room.dao.IncentiveDao
 import org.piramalswasthya.sakhi.database.room.dao.InfantRegDao
+import org.piramalswasthya.sakhi.database.room.dao.KalaAzarDao
+import org.piramalswasthya.sakhi.database.room.dao.LeprosyDao
+import org.piramalswasthya.sakhi.database.room.dao.MalariaDao
 import org.piramalswasthya.sakhi.database.room.dao.MaternalHealthDao
 import org.piramalswasthya.sakhi.database.room.dao.MdsrDao
 import org.piramalswasthya.sakhi.database.room.dao.PmsmaDao
@@ -190,6 +195,26 @@ object AppModule {
     @Singleton
     @Provides
     fun provideIncentiveDao(database: InAppDb): IncentiveDao = database.incentiveDao
+
+    @Singleton
+    @Provides
+    fun provideMalariaDao(database: InAppDb): MalariaDao = database.malariaDao
+
+    @Singleton
+    @Provides
+    fun provideKalaAzarDao(database: InAppDb): KalaAzarDao = database.kalaAzarDao
+
+    @Singleton
+    @Provides
+    fun provideFilariaDao(database: InAppDb): FilariaDao = database.filariaDao
+
+    @Singleton
+    @Provides
+    fun provideLeprosyDao(database: InAppDb): LeprosyDao = database.leprosyDao
+
+    @Singleton
+    @Provides
+    fun provideAESDao(database: InAppDb): AesDao = database.aesDao
 
     @Singleton
     @Provides
