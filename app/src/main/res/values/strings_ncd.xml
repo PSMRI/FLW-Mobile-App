@@ -23,6 +23,7 @@
     <string name="cbac_coughing">Coughing more than 2 weeks</string>
     <string name="cbac_blsputum">Blood in sputum</string>
     <string name="cbac_feverwks">Fever for > 2 weeks</string>
+    <string name="treatment_given">Treatment Given</string>
     <string name="cbac_lsweight">Loss of weight</string>
     <string name="cbac_ntswets">Night Sweats</string>
     <string name="cbac_recurrent_ulceration">Recurrent ulceration on palm or sole</string>
@@ -183,6 +184,10 @@
     <string name="cbac">CBAC</string>
     <string name="tb_screening">TB Screening</string>
     <string name="tb_screening_submitted">TB Screening submitted</string>
+    <string name="malaria_submitted">Malaria Form submitted</string>
+    <string name="aes_submitted">AES/JS Form submitted</string>
+    <string name="filaria_submitted">Filaria Form submitted</string>
+    <string name="leprosy_submitted">Leprosy Form submitted</string>
     <string name="screen">Screen</string>
     <string name="tb_suspected_sputum_test">TB Suspected Sputum Test</string>
     <string name="tb_tracking_submitted">TB Tracking submitted</string>
@@ -198,6 +203,23 @@
     <string name="sputum_test_result">Sputum Test Result</string>
     <string name="referred_to_facility">Referred to Facility</string>
     <string name="facility_referral_follow_ups">Facility Referral follow-ups</string>
+    <string name="flu_like_illness">Flu-like illness</string>
+    <string name="shakingchills">Shaking chills</string>
+    <string name="headache">Headache</string>
+    <string name="muscleaches">Muscle aches</string>
+    <string name="tiredness">Tiredness</string>
+    <string name="nausea">Nausea</string>
+    <string name="vomiting">Vomiting</string>
+    <string name="diarrhea">Diarrhea</string>
+    <string name="rapid_diagnostic">Rapid Diagnostic Test (RDT)</string>
+    <string name="rapid_diagnostic_kala">Kala Azar Rapid Diagnostic Test (RDT)</string>
+    <string name="slide_test_pf">Malaria Slide Test Pf</string>
+    <string name="slide_test_pv">Malaria Slide Test Pv</string>
+    <string name="malariacasecount">Malaria Case Count</string>
+    <string name="filariacasecount">Filaria Case Count</string>
+    <string name="suffering_from_filaries">Suffering from Filariasis</string>
+    <string name="leprosy_status">Leprosy Status</string>
+
     <string-array name="tb_submitted_yet">
         <item>DMC</item>
         <item>SC</item>

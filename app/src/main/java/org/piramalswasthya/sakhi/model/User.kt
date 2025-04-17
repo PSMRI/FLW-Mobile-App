@@ -279,7 +279,7 @@ data class UserDetailsInResponse(
     val userName: String,
     val stateId: Int,
     val stateName: String,
-    val workingDistrictId: Int?=null,
+    val workingDistrictId: Int?=0,
     val workingDistrictName: String?=null,
     val serviceProviderId: Int,
     val roleId: Int,

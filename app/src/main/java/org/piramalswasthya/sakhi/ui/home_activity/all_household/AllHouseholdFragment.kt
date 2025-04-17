@@ -45,6 +45,7 @@ class AllHouseholdFragment : Fragment() {
 
     private var hasDraft = false
 
+    private var isDisease = false
 
     private val draftLoadAlert by lazy {
         MaterialAlertDialogBuilder(requireContext()).setTitle(resources.getString(R.string.incomplete_form_found))
@@ -188,7 +189,7 @@ class AllHouseholdFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.btnNextPage.text = resources.getString(R.string.btn_text_frag_home_nhhr)
 //        binding.tvEmptyContent.text = resources.getString(R.string.no_records_found_hh)
-        val householdAdapter = HouseHoldListAdapter(HouseHoldListAdapter.HouseholdClickListener({
+        val householdAdapter = HouseHoldListAdapter(isDisease, HouseHoldListAdapter.HouseholdClickListener({
             findNavController().navigate(
                 AllHouseholdFragmentDirections.actionAllHouseholdFragmentToNewHouseholdFragment(
                     it

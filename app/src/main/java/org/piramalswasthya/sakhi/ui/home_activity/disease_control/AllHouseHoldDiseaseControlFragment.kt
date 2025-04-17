@@ -15,6 +15,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.HouseHoldListAdapter
+import org.piramalswasthya.sakhi.configuration.IconDataset
 import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.databinding.FragmentAllHouseHoldDiseaseControlBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
@@ -37,6 +38,7 @@ class AllHouseHoldDiseaseControlFragment : Fragment() {
         viewModel.filterText(value)
     }
 
+    var isDisease = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,14 +51,44 @@ class AllHouseHoldDiseaseControlFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val householdAdapter = HouseHoldListAdapter(HouseHoldListAdapter.HouseholdClickListener({
+        val householdAdapter = HouseHoldListAdapter(isDisease,HouseHoldListAdapter.HouseholdClickListener({
 
         }, {
-            findNavController().navigate(
-                AllHouseHoldDiseaseControlFragmentDirections.actionAllHouseHoldDiseaseControlFragmentToHouseholdMembersFragment(
-                    it,1, viewModel.diseaseType
+            if(viewModel.diseaseType == IconDataset.Disease.MALARIA.toString()){
+                findNavController().navigate(
+                    AllHouseHoldDiseaseControlFragmentDirections.actionAllHouseHoldDiseaseControlFragmentToMalariaSuspectedListFragment(
+                        it,1, viewModel.diseaseType
+                    )
                 )
-            )
+            } else if (viewModel.diseaseType == IconDataset.Disease.AES_JE.toString()){
+                findNavController().navigate(
+                    AllHouseHoldDiseaseControlFragmentDirections.actionAllHouseHoldDiseaseControlFragmentToAESSuspectedListFragment(
+                        it,3, viewModel.diseaseType
+                    )
+                )
+            }
+            else if (viewModel.diseaseType == IconDataset.Disease.KALA_AZAR.toString()){
+                findNavController().navigate(
+                    AllHouseHoldDiseaseControlFragmentDirections.actionAllHouseHoldDiseaseControlFragmentToKalaAzarSuspectedListFragment(
+                        it,2, viewModel.diseaseType
+                    )
+                )
+            }
+            else if (viewModel.diseaseType == IconDataset.Disease.FILARIA.toString()){
+                findNavController().navigate(
+                    AllHouseHoldDiseaseControlFragmentDirections.actionAllHouseHoldDiseaseControlFragmentToFilariaSuspectedListFragment(
+                        it,4, viewModel.diseaseType
+                    )
+                )
+            }
+            else if (viewModel.diseaseType == IconDataset.Disease.LEPROSY.toString()){
+                findNavController().navigate(
+                    AllHouseHoldDiseaseControlFragmentDirections.actionAllHouseHoldDiseaseControlFragmentToLeprosySuspectedListFragment(
+                        it,5, viewModel.diseaseType
+                    )
+                )
+            }
+
         }, {
 
         }))
