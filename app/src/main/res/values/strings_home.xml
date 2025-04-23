@@ -28,7 +28,11 @@
     <string name="icon_title_dr">Death Reports</string>
     <string name="icon_title_vlf">Village Level Forms</string>
     <string name="icon_title_vhnd">VHND Forms</string>
+    <string name="icon_title_vhnc">VHNC Forms</string>
+    <string name="icon_title_phc">PHC Review Meeting Forms</string>
     <string name="icon_title_vhnd_list">VHND FormsList</string>
+    <string name="icon_title_vhnc_list">VHNC FormsList</string>
+    <string name="icon_title_phc_list">PHC Review Meeting FormsList</string>
     <string name="icon_title_icc">Infant List</string>
     <string name="icon_title_ccc">Child List</string>
     <string name="icon_title_acc">Adolescent List</string>
@@ -69,5 +73,7 @@
     <string name="vhnd">VHND</string>
     <string name="vnhc">VHNC</string>
     <string name="phc_review">PHC Review Meeting</string>
+    <string name="ahd">AHD </string>
+    <string name="national_deworming_day">National Deworming Day </string>
 
 </resources>

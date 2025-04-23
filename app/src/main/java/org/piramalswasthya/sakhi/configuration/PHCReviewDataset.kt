@@ -11,12 +11,13 @@ import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.InputType.DATE_PICKER
 import org.piramalswasthya.sakhi.model.InputType.EDIT_TEXT
 import org.piramalswasthya.sakhi.model.InputType.IMAGE_VIEW
-import org.piramalswasthya.sakhi.model.VHNDCache
+import org.piramalswasthya.sakhi.model.PHCReviewMeetingCache
+import org.piramalswasthya.sakhi.model.VHNCCache
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
-class VHNDDataset(
+class PHCReviewDataset(
     context: Context, currentLanguage: Languages
 ) : Dataset(context, currentLanguage) {
 
@@ -30,10 +31,10 @@ class VHNDDataset(
     }
 
 
-    private val vhndDate = FormElement(
+    private val phcReviewDate = FormElement(
         id = 2,
         inputType = DATE_PICKER,
-        title = resources.getString(R.string.vhnd_date),
+        title = resources.getString(R.string.phc_review_meeting_date),
         arrayId = -1,
         required = true,
         min = System.currentTimeMillis(),
@@ -80,19 +81,19 @@ class VHNDDataset(
         required = false,
     )
 
-    suspend fun setUpPage(vhnd: VHNDCache?) {
+    suspend fun setUpPage(phc: PHCReviewMeetingCache?) {
 
         val list = mutableListOf(
-            vhndDate,
+            phcReviewDate,
             place,
             noOfBeneficiariesAttended,
             pic1,
             pic2
         )
 
-        vhndDate.value = getCurrentDateString()
-        vhnd?.let {
-            vhndDate.value = it.vhndDate
+        phcReviewDate.value = getCurrentDateString()
+        phc?.let {
+            phcReviewDate.value = it.phcReviewDate
             pic1.value = it.image1
             pic2.value = it.image2
             place.value = it.place
@@ -123,9 +124,9 @@ class VHNDDataset(
     }
 
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
-        (cacheModel as VHNDCache).let { form ->
+        (cacheModel as PHCReviewMeetingCache).let { form ->
 
-            form.vhndDate = vhndDate.value!!
+            form.phcReviewDate = phcReviewDate.value!!
             form.place = place.value
             form.noOfBeneficiariesAttended = noOfBeneficiariesAttended.value!!.toInt()
             form.image1 = pic1.value

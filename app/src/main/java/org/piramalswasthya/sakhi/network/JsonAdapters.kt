@@ -13,6 +13,8 @@ import org.piramalswasthya.sakhi.utils.KeyUtils
 import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlinx.parcelize.Parcelize
+import org.piramalswasthya.sakhi.model.PHCReviewMeetingCache
+import org.piramalswasthya.sakhi.model.VHNCCache
 import org.piramalswasthya.sakhi.model.VHNDCache
 
 //import org.piramalswasthya.sakhi.model.VHNDCache
@@ -754,6 +756,52 @@ data class VHNDDTO(
         )
     }
 }
+
+data class VHNCDTO(
+    val id: Int = 0,
+    var vhncDate: String?,
+    var Place: String? = null,
+    var noOfBeneficiariesAttended: Int? = null,
+    var Image1: String? = null,
+    var Image2: String? = null,
+) {
+    fun toCache(): VHNCCache {
+        return VHNCCache(
+            id = 0,
+            vhncDate = vhncDate!!,
+            place = Place,
+            noOfBeneficiariesAttended = noOfBeneficiariesAttended,
+            image1 = Image1,
+            image2 = Image2,
+            syncState = SyncState.SYNCED
+        )
+    }
+}
+
+data class PHCReviewDTO(
+    val id: Int = 0,
+    var phcReviewDate: String?,
+    var Place: String? = null,
+    var noOfBeneficiariesAttended: Int? = null,
+    var Image1: String? = null,
+    var Image2: String? = null,
+) {
+    fun toCache(): PHCReviewMeetingCache {
+        return PHCReviewMeetingCache(
+            id = 0,
+            phcReviewDate = phcReviewDate!!,
+            place = Place,
+            noOfBeneficiariesAttended = noOfBeneficiariesAttended,
+            image1 = Image1,
+            image2 = Image2,
+            syncState = SyncState.SYNCED
+        )
+    }
+}
+
+
+
+
 
 data class TBScreeningDTO(
     val id: Long,

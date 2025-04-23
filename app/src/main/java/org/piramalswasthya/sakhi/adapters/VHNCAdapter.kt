@@ -5,35 +5,35 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import org.piramalswasthya.sakhi.databinding.LayoutVhndItemBinding
-import org.piramalswasthya.sakhi.model.VHNDCache
+import org.piramalswasthya.sakhi.databinding.LayoutVhncItemBinding
+import org.piramalswasthya.sakhi.model.VHNCCache
 
-class VHNDAdapter(
-    private val clickListener: VHNDClickListener? = null,
+class VHNCAdapter(
+    private val clickListener: VHNCClickListener? = null,
 ) :
-    ListAdapter<VHNDCache, VHNDAdapter.VHNDViewHolder>
+    ListAdapter<VHNCCache, VHNCAdapter.VHNCViewHolder>
         (BenDiffUtilCallBack) {
-    private object BenDiffUtilCallBack : DiffUtil.ItemCallback<VHNDCache>() {
+    private object BenDiffUtilCallBack : DiffUtil.ItemCallback<VHNCCache>() {
         override fun areItemsTheSame(
-            oldItem: VHNDCache,
-            newItem: VHNDCache
+            oldItem: VHNCCache,
+            newItem: VHNCCache
         ) = oldItem.id == newItem.id
 
-        override fun areContentsTheSame(oldItem: VHNDCache, newItem: VHNDCache)= oldItem == newItem
+        override fun areContentsTheSame(oldItem: VHNCCache, newItem: VHNCCache)= oldItem == newItem
 
 
     }
 
-    class VHNDViewHolder private constructor(private val binding: LayoutVhndItemBinding) :
+    class VHNCViewHolder private constructor(private val binding: LayoutVhncItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         companion object {
-            fun from(parent: ViewGroup): VHNDViewHolder {
+            fun from(parent: ViewGroup): VHNCViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = LayoutVhndItemBinding.inflate(layoutInflater, parent, false)
-                return VHNDViewHolder(binding)
+                val binding = LayoutVhncItemBinding.inflate(layoutInflater, parent, false)
+                return VHNCViewHolder(binding)
             }
         }
-        fun bind(item: VHNDCache, clickListener: VHNDClickListener?,) {
+        fun bind(item: VHNCCache, clickListener: VHNCClickListener?,) {
             binding.vhnd = item
             binding.clickListener = clickListener
             binding.executePendingBindings()
@@ -164,17 +164,17 @@ class VHNDAdapter(
         parent: ViewGroup,
         viewType: Int
     ) =
-        VHNDViewHolder.from(parent)
+        VHNCViewHolder.from(parent)
 
-    override fun onBindViewHolder(holder: VHNDViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: VHNCViewHolder, position: Int) {
         holder.bind(getItem(position), clickListener)
     }
 
 
-    class VHNDClickListener(
+    class VHNCClickListener(
         private val clickedForm: ((id: Int) -> Unit)? = null
     ) {
-        fun onClickForm1(item: VHNDCache) = clickedForm?.let { it(item.id!!) }
+        fun onClickForm1(item: VHNCCache) = clickedForm?.let { it(item.id!!) }
     }
 
 }

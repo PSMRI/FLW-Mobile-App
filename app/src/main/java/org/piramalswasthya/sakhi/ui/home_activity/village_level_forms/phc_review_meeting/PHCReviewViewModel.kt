@@ -1,4 +1,4 @@
-package org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.vhnd
+package org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.phc_review_meeting
 
 import android.app.AlertDialog
 import android.content.Context
@@ -13,16 +13,14 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
-import org.piramalswasthya.sakhi.configuration.VHNDDataset
+import org.piramalswasthya.sakhi.configuration.PHCReviewDataset
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
-import org.piramalswasthya.sakhi.model.BenRegCache
-import org.piramalswasthya.sakhi.model.HRPMicroBirthPlanCache
-import org.piramalswasthya.sakhi.model.VHNDCache
+import org.piramalswasthya.sakhi.model.PHCReviewMeetingCache
 import org.piramalswasthya.sakhi.repositories.VLFRepo
 import timber.log.Timber
 
 @HiltViewModel
-class VHNDViewModel @javax.inject.Inject
+class PHCReviewViewModel @javax.inject.Inject
 constructor(
     savedStateHandle: SavedStateHandle,
     preferenceDao: PreferenceDao,
@@ -33,8 +31,8 @@ constructor(
         IDLE, SAVING, SAVE_SUCCESS, SAVE_FAILED
     }
 
-    val allVHNDList = vlfReo.vhndList
-    private val vhndId = VHNDFormFragementArgs.fromSavedStateHandle(savedStateHandle).id
+    val allPHCCList = vlfReo.phcList
+    private val phcReviewId = PHCReviewFormFragementArgs.fromSavedStateHandle(savedStateHandle).id
 
     //
     private var lastImageFormId: Int = 0
@@ -66,23 +64,23 @@ constructor(
     val recordExists: LiveData<Boolean>
         get() = _recordExists
     private val dataset =
-        VHNDDataset(context, preferenceDao.getCurrentLanguage())
+        PHCReviewDataset(context, preferenceDao.getCurrentLanguage())
     val formList = dataset.listFlow
-    lateinit var _vhndCache: VHNDCache
+    lateinit var _phcCache: PHCReviewMeetingCache
 
     init {
         viewModelScope.launch {
 
-            _vhndCache = VHNDCache(id = 0, vhndDate = "");
-            val vhndIds = vlfReo.getVHND(vhndId)
-            vlfReo.getVHND(vhndId)?.let {
-                _vhndCache = it
+            _phcCache = PHCReviewMeetingCache(id = 0, phcReviewDate = "");
+            val phcReviewIds = vlfReo.getPHC(phcReviewId)
+            vlfReo.getPHC(phcReviewId)?.let {
+                _phcCache = it
                 _recordExists.value = true
             } ?: run {
                 _recordExists.value = false
             }
             dataset.setUpPage(
-                if (recordExists.value == true) vhndIds else null
+                if (recordExists.value == true) phcReviewIds else null
             )
 
 
@@ -99,8 +97,8 @@ constructor(
         viewModelScope.launch {
             try {
                 _state.postValue(State.SAVING)
-                dataset.mapValues(_vhndCache, 1)
-                vlfReo.saveRecord(_vhndCache)
+                dataset.mapValues(_phcCache, 1)
+                vlfReo.saveRecord(_phcCache)
                 _state.postValue(State.SAVE_SUCCESS)
             } catch (e: Exception) {
                 Timber.d("saving VHND data failed!!")

@@ -1,4 +1,4 @@
-package org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.vhnd
+package org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.phc_review_meeting
 
 import android.app.Activity
 import android.app.AlertDialog
@@ -32,9 +32,9 @@ import timber.log.Timber
 import java.io.File
 
 @AndroidEntryPoint
-class VHNDFormFragement:Fragment() {
+class PHCReviewFormFragement:Fragment() {
     companion object {
-        fun newInstance() = VHNDFormFragement()
+        fun newInstance() = PHCReviewFormFragement()
     }
 
     private var _binding: FragmentNewFormBinding? = null
@@ -43,7 +43,7 @@ class VHNDFormFragement:Fragment() {
         get() = _binding!!
     private var latestTmpUri: Uri? = null
     private var imgValue=0
-    private val viewModel: VHNDViewModel by viewModels()
+    private val viewModel: PHCReviewViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -92,7 +92,7 @@ class VHNDFormFragement:Fragment() {
 
         viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state!!) {
-                VHNDViewModel.State.SAVE_SUCCESS -> {
+                PHCReviewViewModel.State.SAVE_SUCCESS -> {
                     Toast.makeText(
                         context,
                         resources.getString(R.string.save_successful),
@@ -102,7 +102,7 @@ class VHNDFormFragement:Fragment() {
                     viewModel.resetState()
                 }
 
-                VHNDViewModel.State.SAVE_FAILED -> {
+                PHCReviewViewModel.State.SAVE_FAILED -> {
                     Toast.makeText(
                         context,
                         resources.getString(R.string.something_wend_wong_contact_testing),

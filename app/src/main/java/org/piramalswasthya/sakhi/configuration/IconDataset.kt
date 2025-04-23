@@ -223,14 +223,29 @@ class IconDataset @Inject constructor(
             R.drawable.ic__follow_up_hrp,
             resources.getString(R.string.vnhc),
             null,
-            HrpCasesFragmentDirections.actionHrpCasesFragmentToHRPPregnantListFragment()
+            VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToVHNCListFragement()
         ) ,
         Icon(
                 R.drawable.ic__follow_up_hrp,
         resources.getString(R.string.phc_review),
             null,
-        HrpCasesFragmentDirections.actionHrpCasesFragmentToHRPPregnantListFragment()
+            VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToPHCReviewListFragement()
+
     )
+        ,
+        Icon(
+            R.drawable.ic__follow_up_hrp,
+            resources.getString(R.string.ahd),
+            null,
+            HrpCasesFragmentDirections.actionHrpCasesFragmentToHRPPregnantListFragment()
+        )
+        ,
+        Icon(
+            R.drawable.ic__follow_up_hrp,
+            resources.getString(R.string.national_deworming_day),
+            null,
+            HrpCasesFragmentDirections.actionHrpCasesFragmentToHRPPregnantListFragment()
+        )
     )
 
     fun getHRPNonPregnantWomenDataset(resources: Resources) = listOf(
