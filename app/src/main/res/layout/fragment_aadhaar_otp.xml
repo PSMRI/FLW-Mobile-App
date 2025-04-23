@@ -158,6 +158,8 @@
                 android:enabled="false"
                 android:padding="@dimen/padding_normal"
                 android:text="@string/verify_otp"
+                android:textSize="@dimen/_14sdp"
+                android:fontFamily="@font/roboto_bold"
                 android:textAllCaps="false"
                 android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
                 android:textColor="?attr/colorOnPrimary"
@@ -173,6 +175,8 @@
                 android:text="@string/resend_otp"
                 android:textAllCaps="false"
                 android:padding="@dimen/padding_normal"
+                android:textSize="@dimen/_14sdp"
+                android:fontFamily="@font/roboto_bold"
                 android:textColor="?attr/colorOnPrimary"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -185,7 +189,7 @@
                 android:textSize="@dimen/_12sdp"
                 android:gravity="center_vertical"
                 android:fontFamily="@font/roboto_medium"
-                android:text="Didn't receive OTP? Wait "
+                android:text="@string/str_didnt_receive_otp"
                 app:layout_constraintEnd_toStartOf="@+id/timer_count"
                 app:layout_constraintTop_toTopOf="@+id/timer_count"
                 app:layout_constraintBottom_toBottomOf="@+id/timer_count" />
@@ -214,7 +218,7 @@
                 android:layout_marginEnd="@dimen/_20sdp"
                 android:layout_marginTop="@dimen/_20sdp"
                 android:fontFamily="@font/roboto_medium"
-                android:text=" seconds"
+                android:text="@string/str_seconds"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/btn_verify_OTP"/>
 

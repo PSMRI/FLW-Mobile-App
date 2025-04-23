@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import java.util.concurrent.TimeUnit
+import kotlin.math.abs
 
 
 /**
@@ -865,6 +866,39 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
                 .indexOf(it)]
         }
         return null
+    }
+
+    fun isValidChildGap(formElement: FormElement, firstDobStr: String?/*, secondDobStr: String?*/): Int {
+        val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        try {
+            val firstDob = dateFormat.parse(firstDobStr)
+            val secondDob = dateFormat.parse(formElement.value)
+
+            if (firstDob == null || secondDob == null) {
+                formElement.errorText = null //return false
+            }
+
+            // If twins (same DOB), it's valid
+            if (firstDob == secondDob){
+                formElement.errorText = null
+                return -1
+            } //true
+
+            val diffInMillis = abs(secondDob.time - firstDob.time)
+            val diffInDays = diffInMillis / (1000 * 60 * 60 * 24)
+
+            // Valid if gap is 365 days (approx. 12 months) or more
+            if (diffInDays >= 365){
+                formElement.errorText = null
+            }else{
+                formElement.errorText = "Invalid date of birth! The minimum age difference should be at least 12 months."
+            }
+
+        } catch (e: Exception) {
+            formElement.errorText = "Invalid date format or parsing error"//null // Invalid date format or parsing error
+        }
+
+        return -1
     }
 
 }

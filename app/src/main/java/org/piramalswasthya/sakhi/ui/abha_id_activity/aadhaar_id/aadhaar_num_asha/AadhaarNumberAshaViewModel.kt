@@ -40,9 +40,7 @@ class AadhaarNumberAshaViewModel @Inject constructor(
     val mobileNumber: LiveData<String?>
         get() = _mobileNumber
 
-    private val _aadhaarNumber = MutableLiveData<String?>(null)
-    val aadhaarNumber: LiveData<String?>
-        get() = _aadhaarNumber
+    val aadhaarNumber = MutableLiveData<String>("")
 
     private val _errorMessage = MutableLiveData<String?>(null)
     val errorMessage: LiveData<String?>

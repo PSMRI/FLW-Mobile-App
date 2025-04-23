@@ -160,7 +160,9 @@ class VerifyMobileOtpFragment : Fragment() {
                 viewModel.resetErrorMessage()
             }
         }
-        binding.tvOtpMsg.text = parentViewModel.otpMobileNumberMessage
+
+        var string = getMobileNumber(parentViewModel.otpMobileNumberMessage) ?: ""
+        binding.tvOtpMsg.text = getString(R.string.str_otp_number_message).replace("@mobileNumber", string)
 
     }
 
@@ -186,4 +188,11 @@ class VerifyMobileOtpFragment : Fragment() {
         _binding = null
     }
 
+    private fun getMobileNumber(input: String): String? {
+        val regex = Regex("""\*+\d+""")
+        val matches = regex.findAll(input).toList()
+        val lastMatch = matches.lastOrNull()?.value
+        println("Extracted: $lastMatch") // Output: ******0180
+        return lastMatch
+    }
 }

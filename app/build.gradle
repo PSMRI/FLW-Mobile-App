@@ -70,7 +70,7 @@ android {
         xushrukha {
             applicationIdSuffix ".xushrukha"
             applicationId "org.piramalswasthya.sakhi"
-             resValue "string", "app_native_name", "উৎপ্ৰেৰণা"
+             resValue "string", "app_native_name", "Xushrukha - শুশ্ৰূষা"
         }
         
         niramay {
