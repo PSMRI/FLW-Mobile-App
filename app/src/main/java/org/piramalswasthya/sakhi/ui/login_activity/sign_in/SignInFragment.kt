@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -192,11 +193,34 @@ class SignInFragment : Fragment() {
                     binding.pbSignIn.visibility = View.VISIBLE
                     binding.tvError.visibility = View.GONE
                     WorkerUtils.triggerGenBenIdWorker(requireContext())
-                    findNavController().navigate(
-                        if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
-                        else SignInFragmentDirections.actionSignInFragmentToHomeActivity()
-                    )
-                    activity?.finish()
+
+                    if (BuildConfig.FLAVOR.equals("niramay", true))  {
+                        if (viewModel.getLoggedInUser()?.serviceMapId == 1718){
+                            findNavController().navigate(
+                                if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
+                                else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
+                            activity?.finish()
+                        }else{
+                                Toast.makeText(requireContext(),"This user is not from Niramay Project",Toast.LENGTH_SHORT).show()
+                        }
+
+                    }else if(BuildConfig.FLAVOR.equals("xushrukha", true)){
+                        if (viewModel.getLoggedInUser()?.serviceMapId == 1716){
+                            findNavController().navigate(
+                                if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
+                                else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
+                            activity?.finish()
+                        }else{
+                            Toast.makeText(requireContext(),"This user is not from Xushrukha Project",Toast.LENGTH_SHORT).show()
+                        }
+
+                    }else{
+                        findNavController().navigate(
+                            if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
+                            else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
+                        activity?.finish()
+                    }
+
                 }
             }
         }

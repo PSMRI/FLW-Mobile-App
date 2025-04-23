@@ -9,7 +9,7 @@
         android:id="@+id/tvFindOutAbha"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_25sdp"
+        android:layout_marginTop="@dimen/_23sdp"
         android:fontFamily="@font/roboto_bold"
         android:textSize="@dimen/_14sdp"
         android:gravity="center"
@@ -39,7 +39,7 @@
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="8dp"
+        android:layout_marginHorizontal="20dp"
         android:layout_marginTop="@dimen/_30sdp"
         android:text="@string/enter_mobile_number"
         android:textAppearance="?attr/textAppearanceHeadline6"
@@ -61,7 +61,7 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="8dp"
+        android:layout_marginHorizontal="20dp"
         android:hint="@string/mobile_number"
         android:paddingTop="@dimen/padding_normal"
         android:paddingBottom="@dimen/padding_normal"
@@ -139,11 +139,80 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clBenName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/til_select_abha">
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/enter_ben_name"
+            android:textAppearance="?attr/textAppearanceHeadline6"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/ivValidBenName"
+            android:layout_width="@dimen/_18sdp"
+            android:layout_height="@dimen/_18sdp"
+            android:layout_marginEnd="@dimen/_20sdp"
+            android:src="@drawable/ic_check_circle_grey"
+            app:layout_constraintBottom_toBottomOf="@+id/textView6"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/textView6" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_ben_name"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:hint="@string/tv_ben_name_ph"
+            android:paddingTop="@dimen/padding_normal"
+            android:paddingBottom="@dimen/padding_normal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView6">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tiet_ben_name"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:inputType="textCapWords"
+                android:singleLine="true"
+                android:textAllCaps="true"
+                android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+
+            <TextView
+                android:id="@+id/tv_error_text_ben_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_small"
+                android:layout_weight="1"
+                android:text="@string/textview"
+                android:textColor="@android:color/holo_red_light"
+                android:visibility="gone" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
     <CheckBox
         android:id="@+id/aadharConsentCheckBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_normal"
+        android:visibility="gone"
         android:gravity="start|top"
         android:contentDescription="@string/aadhar_consent_text"
         android:text="@string/aadhar_consent_text"
@@ -154,18 +223,23 @@
         android:id="@+id/aadharDisclaimer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_normal"
+        android:layout_marginTop="@dimen/margin_normal"
+        android:layout_marginBottom="@dimen/margin_normal"
+        android:layout_marginHorizontal="20dp"
         android:padding="@dimen/padding_normal"
+        android:fontFamily="@font/roboto_bold"
         android:text="@string/aadhar_disclaimer_consent_disclaimer"
         android:textColor="?attr/colorPrimary"
-        app:layout_constraintTop_toBottomOf="@id/aadharConsentCheckBox" />
+        app:layout_constraintTop_toBottomOf="@id/clBenName" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_generate_otp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_margin="@dimen/padding_normal"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="@dimen/_8sdp"
+        android:layout_marginBottom="@dimen/_8sdp"
         android:clickable="false"
         android:enabled="false"
         android:padding="@dimen/padding_normal"

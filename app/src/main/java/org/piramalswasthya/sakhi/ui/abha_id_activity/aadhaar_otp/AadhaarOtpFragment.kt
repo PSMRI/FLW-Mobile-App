@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -126,7 +125,9 @@ class AadhaarOtpFragment : Fragment() {
 //                        args.mobileNumber
 //                    )
                     binding.tvOtpMsg.visibility = View.VISIBLE
-                    binding.tvOtpMsg.text = parentViewModel.otpMobileNumberMessage
+                    var string = getMobileNumber(parentViewModel.otpMobileNumberMessage) ?: ""
+
+                    binding.tvOtpMsg.text = getString(R.string.str_aadhaar_otp_number).replace("@mobileNumber", string)
                     binding.tvOTPNote.visibility = View.VISIBLE
                 }
 
@@ -213,6 +214,14 @@ class AadhaarOtpFragment : Fragment() {
             }
         }
 
+    }
+
+    private fun getMobileNumber(input: String): String? {
+        val regex = Regex("""\*+\d+""")
+        val matches = regex.findAll(input).toList()
+        val lastMatch = matches.lastOrNull()?.value
+        println("Extracted: $lastMatch") // Output: ******0180
+        return lastMatch
     }
 
     private fun startResendTimer() {

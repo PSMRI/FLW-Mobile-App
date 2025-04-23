@@ -131,6 +131,10 @@ class PregnancyRegistrationFormFragment : Fragment() {
                     notifyItemChanged(viewModel.getIndexOfWeeksOfPregnancy())
                 }
 
+                21 -> {
+                   notifyDataSetChanged()
+                }
+
                 19 -> {
                     notifyItemChanged(viewModel.getIndexOfPastIllness())
                     notifyItemChanged(viewModel.getIndexOfHRP())
