@@ -863,6 +863,7 @@ class FormInputAdapter(
     class ImageClickListener(private val imageClick: (formId: Int) -> Unit) {
 
         fun onImageClick(form: FormElement) = imageClick(form.id)
+//        fun onImageClickForRef(form: FormElement) = imageClick(form.etInputType)
 
     }
 

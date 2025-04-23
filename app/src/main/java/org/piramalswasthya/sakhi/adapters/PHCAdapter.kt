@@ -5,36 +5,38 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import org.piramalswasthya.sakhi.databinding.LayoutVhndItemBinding
-import org.piramalswasthya.sakhi.model.VHNDCache
+import org.piramalswasthya.sakhi.databinding.LayoutPhcReviewItemBinding
+import org.piramalswasthya.sakhi.databinding.LayoutVhncItemBinding
+import org.piramalswasthya.sakhi.model.PHCReviewMeetingCache
+import org.piramalswasthya.sakhi.model.VHNCCache
 
-class VHNDAdapter(
-    private val clickListener: VHNDClickListener? = null,
+class PHCAdapter(
+    private val clickListener: PHCClickListener? = null,
 ) :
-    ListAdapter<VHNDCache, VHNDAdapter.VHNDViewHolder>
+    ListAdapter<PHCReviewMeetingCache, PHCAdapter.PHCViewHolder>
         (BenDiffUtilCallBack) {
-    private object BenDiffUtilCallBack : DiffUtil.ItemCallback<VHNDCache>() {
+    private object BenDiffUtilCallBack : DiffUtil.ItemCallback<PHCReviewMeetingCache>() {
         override fun areItemsTheSame(
-            oldItem: VHNDCache,
-            newItem: VHNDCache
+            oldItem: PHCReviewMeetingCache,
+            newItem: PHCReviewMeetingCache
         ) = oldItem.id == newItem.id
 
-        override fun areContentsTheSame(oldItem: VHNDCache, newItem: VHNDCache)= oldItem == newItem
+        override fun areContentsTheSame(oldItem: PHCReviewMeetingCache, newItem: PHCReviewMeetingCache)= oldItem == newItem
 
 
     }
 
-    class VHNDViewHolder private constructor(private val binding: LayoutVhndItemBinding) :
+    class PHCViewHolder private constructor(private val binding: LayoutPhcReviewItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         companion object {
-            fun from(parent: ViewGroup): VHNDViewHolder {
+            fun from(parent: ViewGroup): PHCViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = LayoutVhndItemBinding.inflate(layoutInflater, parent, false)
-                return VHNDViewHolder(binding)
+                val binding = LayoutPhcReviewItemBinding.inflate(layoutInflater, parent, false)
+                return PHCViewHolder(binding)
             }
         }
-        fun bind(item: VHNDCache, clickListener: VHNDClickListener?,) {
-            binding.vhnd = item
+        fun bind(item: PHCReviewMeetingCache, clickListener: PHCClickListener?,) {
+            binding.phc = item
             binding.clickListener = clickListener
             binding.executePendingBindings()
 
@@ -164,17 +166,17 @@ class VHNDAdapter(
         parent: ViewGroup,
         viewType: Int
     ) =
-        VHNDViewHolder.from(parent)
+        PHCViewHolder.from(parent)
 
-    override fun onBindViewHolder(holder: VHNDViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: PHCViewHolder, position: Int) {
         holder.bind(getItem(position), clickListener)
     }
 
 
-    class VHNDClickListener(
+    class PHCClickListener(
         private val clickedForm: ((id: Int) -> Unit)? = null
     ) {
-        fun onClickForm1(item: VHNDCache) = clickedForm?.let { it(item.id!!) }
+        fun onClickForm1(item: PHCReviewMeetingCache) = clickedForm?.let { it(item.id!!) }
     }
 
 }

@@ -5,26 +5,26 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import org.piramalswasthya.sakhi.configuration.FormDataModel
 import org.piramalswasthya.sakhi.database.room.SyncState
-import org.piramalswasthya.sakhi.network.VHNDDTO
+import org.piramalswasthya.sakhi.network.VHNCDTO
 import java.util.Date
 
-@Entity(tableName = "VHND",
+@Entity(tableName = "VHNC",
 )
 
-data class VHNDCache(
+data class VHNCCache(
     @PrimaryKey(autoGenerate = true)
     var id: Int ,
-    var vhndDate: String,
+    var vhncDate: String,
     var place: String? = null,
     var noOfBeneficiariesAttended: Int? = null,
     var image1: String? = null,
     var image2: String? = null,
     var syncState: SyncState = SyncState.UNSYNCED
 ) : FormDataModel {
-    fun toDTO(): VHNDDTO {
-        return VHNDDTO(
+    fun toDTO(): VHNCDTO {
+        return VHNCDTO(
             id = id,
-            vhndDate = (vhndDate),
+            vhncDate = (vhncDate),
             Place = place,
             noOfBeneficiariesAttended = noOfBeneficiariesAttended,
             Image1 = image1,
@@ -32,14 +32,14 @@ data class VHNDCache(
         )
     }
 
-    fun toVhndDTODTO(): VHNDCache {
-        return VHNDCache(
+    fun toVhncDTODTO(): VHNCCache {
+        return VHNCCache(
             id = id,
             place = place,
             noOfBeneficiariesAttended = noOfBeneficiariesAttended,
             image2 = image1,
             image1 = image2,
-            vhndDate = (vhndDate)
+            vhncDate = (vhncDate)
         )
     }
 }

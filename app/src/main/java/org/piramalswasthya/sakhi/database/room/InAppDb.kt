@@ -53,6 +53,7 @@ import org.piramalswasthya.sakhi.model.IncentiveActivityCache
 import org.piramalswasthya.sakhi.model.IncentiveRecordCache
 import org.piramalswasthya.sakhi.model.InfantRegCache
 import org.piramalswasthya.sakhi.model.MDSRCache
+import org.piramalswasthya.sakhi.model.PHCReviewMeetingCache
 import org.piramalswasthya.sakhi.model.PMJAYCache
 import org.piramalswasthya.sakhi.model.PMSMACache
 import org.piramalswasthya.sakhi.model.PNCVisitCache
@@ -60,6 +61,7 @@ import org.piramalswasthya.sakhi.model.PregnantWomanAncCache
 import org.piramalswasthya.sakhi.model.PregnantWomanRegistrationCache
 import org.piramalswasthya.sakhi.model.TBScreeningCache
 import org.piramalswasthya.sakhi.model.TBSuspectedCache
+import org.piramalswasthya.sakhi.model.VHNCCache
 import org.piramalswasthya.sakhi.model.Vaccine
 import org.piramalswasthya.sakhi.model.VHNDCache
 
@@ -97,6 +99,8 @@ import org.piramalswasthya.sakhi.model.VHNDCache
         IncentiveActivityCache::class,
         IncentiveRecordCache::class,
         VHNDCache::class,
+        VHNCCache::class,
+        PHCReviewMeetingCache::class,
     ],
     views = [BenBasicCache::class],
     version = 15, exportSchema = false

@@ -5,26 +5,27 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import org.piramalswasthya.sakhi.configuration.FormDataModel
 import org.piramalswasthya.sakhi.database.room.SyncState
-import org.piramalswasthya.sakhi.network.VHNDDTO
+import org.piramalswasthya.sakhi.network.PHCReviewDTO
+import org.piramalswasthya.sakhi.network.VHNCDTO
 import java.util.Date
 
-@Entity(tableName = "VHND",
+@Entity(tableName = "PHCReviewMeeting",
 )
 
-data class VHNDCache(
+data class PHCReviewMeetingCache(
     @PrimaryKey(autoGenerate = true)
     var id: Int ,
-    var vhndDate: String,
+    var phcReviewDate: String,
     var place: String? = null,
     var noOfBeneficiariesAttended: Int? = null,
     var image1: String? = null,
     var image2: String? = null,
     var syncState: SyncState = SyncState.UNSYNCED
 ) : FormDataModel {
-    fun toDTO(): VHNDDTO {
-        return VHNDDTO(
+    fun toDTO(): PHCReviewDTO {
+        return PHCReviewDTO(
             id = id,
-            vhndDate = (vhndDate),
+            phcReviewDate = (phcReviewDate),
             Place = place,
             noOfBeneficiariesAttended = noOfBeneficiariesAttended,
             Image1 = image1,
@@ -32,14 +33,14 @@ data class VHNDCache(
         )
     }
 
-    fun toVhndDTODTO(): VHNDCache {
-        return VHNDCache(
+    fun toPHCDTODTO(): PHCReviewMeetingCache {
+        return PHCReviewMeetingCache(
             id = id,
             place = place,
             noOfBeneficiariesAttended = noOfBeneficiariesAttended,
             image2 = image1,
             image1 = image2,
-            vhndDate = (vhndDate)
+            phcReviewDate = (phcReviewDate)
         )
     }
 }
