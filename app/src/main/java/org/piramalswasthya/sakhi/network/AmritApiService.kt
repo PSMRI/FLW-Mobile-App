@@ -67,6 +67,9 @@ interface AmritApiService {
 
     @POST("flw-0.0.1/disease/getAll")
     suspend fun getMalariaScreeningData(@Body userDetail: GetDataPaginatedRequestForDisease): Response<ResponseBody>
+
+    @GET("flw-0.0.1/irsRound/list")
+    suspend fun getScreeningData(@Query("householdId") householdId:Int): Response<ResponseBody>
     @POST("flw-0.0.1/tb/suspected/saveAll")
     suspend fun saveTBSuspectedData(@Body tbSuspectedRequestDTO: TBSuspectedRequestDTO): Response<ResponseBody>
 

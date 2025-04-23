@@ -185,6 +185,7 @@
     <string name="tb_screening">TB Screening</string>
     <string name="tb_screening_submitted">TB Screening submitted</string>
     <string name="malaria_submitted">Malaria Form submitted</string>
+    <string name="irs_submitted">IRS Form submitted</string>
     <string name="aes_submitted">AES/JS Form submitted</string>
     <string name="filaria_submitted">Filaria Form submitted</string>
     <string name="leprosy_submitted">Leprosy Form submitted</string>

@@ -53,6 +53,7 @@ class PullMalariaFromAmritWorker @AssistedInject constructor(
                     val result1 =
                         awaitAll(
                             async { getMalariaScreeningDetails() },
+                            async { getIRSScreeningDetails() },
                         )
 
                     val endTime = System.currentTimeMillis()
@@ -98,6 +99,18 @@ class PullMalariaFromAmritWorker @AssistedInject constructor(
         return withContext(Dispatchers.IO) {
             try {
                 val res = malariaRepo.getMalariaScreeningDetailsFromServer()
+                return@withContext res == 1
+            } catch (e: Exception) {
+                Timber.d("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
+            }
+            true
+        }
+    }
+
+    private suspend fun getIRSScreeningDetails(): Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                val res = malariaRepo.getIRSScreeningDetailsFromServer()
                 return@withContext res == 1
             } catch (e: Exception) {
                 Timber.d("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")

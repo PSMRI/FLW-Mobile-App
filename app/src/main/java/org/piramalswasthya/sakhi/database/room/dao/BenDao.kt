@@ -41,6 +41,10 @@ interface BenDao {
     fun getAllAESScreeningBen(selectedVillage: Int,hhId: Long): Flow<List<BenWithAESScreeningCache>>
 
     @Transaction
+    @Query("SELECT * FROM IRS_ROUND where householdId = :hhId")
+    fun getAllIRSRoundBen(hhId: Long): Flow<List<IRSRoundScreening>>
+
+    @Transaction
     @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage and hhId = :hhId")
     fun getAllKALAZARScreeningBen(selectedVillage: Int,hhId: Long): Flow<List<BenWithKALAZARScreeningCache>>
 

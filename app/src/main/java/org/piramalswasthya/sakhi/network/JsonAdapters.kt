@@ -15,6 +15,7 @@ import java.util.Locale
 import kotlinx.parcelize.Parcelize
 import org.piramalswasthya.sakhi.model.AESScreeningCache
 import org.piramalswasthya.sakhi.model.FilariaScreeningCache
+import org.piramalswasthya.sakhi.model.IRSRoundScreening
 import org.piramalswasthya.sakhi.model.KalaAzarScreeningCache
 import org.piramalswasthya.sakhi.model.LeprosyScreeningCache
 import org.piramalswasthya.sakhi.model.MalariaConfirmedCasesCache
@@ -574,6 +575,10 @@ data class MalariaScreeningRequestDTO(
     val malariaLists: List<MalariaScreeningDTO>
 )
 
+data class IRSScreeningRequestDTO(
+    val rounds: List<ScreeningRoundDTO>
+)
+
 data class LeprosyScreeningRequestDTO(
     val userId: Int,
     val leprosyLists: List<LeprosyScreeningDTO>
@@ -1083,6 +1088,20 @@ data class FilariaScreeningDTO(
             createdBy = createdBy.toString(),
             createdDate = getLongFromDate(createdDate),
 
+        )
+    }
+}
+
+data class ScreeningRoundDTO(
+    val date: String,
+    val rounds: Int,
+    val householdId: Long
+) {
+    fun toCache(): IRSRoundScreening {
+        return IRSRoundScreening(
+            date = getLongFromDate(date),
+            rounds = rounds,
+            householdId = householdId,
         )
     }
 }

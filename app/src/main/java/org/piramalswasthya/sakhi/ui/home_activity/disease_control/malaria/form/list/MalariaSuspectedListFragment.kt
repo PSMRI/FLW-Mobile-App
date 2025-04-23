@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -11,10 +12,15 @@ import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.adapters.FormInputAdapter
+import org.piramalswasthya.sakhi.adapters.IrsRoundListAdapter
 import org.piramalswasthya.sakhi.adapters.MalariaMemberListAdapter
 import org.piramalswasthya.sakhi.configuration.IconDataset
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.home_activity.disease_control.malaria.form.form.MalariaFormViewModel
+import org.piramalswasthya.sakhi.work.WorkerUtils
+import timber.log.Timber
 
 
 @AndroidEntryPoint
@@ -24,6 +30,8 @@ class MalariaSuspectedListFragment : Fragment() {
         get() = _binding!!
 
     private val viewModel: MalariaSuspectedViewModel by viewModels()
+    private val irsViewModel: MalariaIRSViewModel by viewModels()
+    private val irsListViewmodel: IRSRoundListViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,6 +55,7 @@ class MalariaSuspectedListFragment : Fragment() {
         binding.switchButton.text = if (binding.switchButton.isChecked) "ON" else "OFF"
         binding.switchButton.setOnCheckedChangeListener { _, isChecked ->
             binding.switchButton.text = if (isChecked) "ON" else "OFF"
+            binding.llContent.visibility = if (isChecked) View.VISIBLE else View.GONE
         }
 
         val benAdapter = MalariaMemberListAdapter(
@@ -60,6 +69,9 @@ class MalariaSuspectedListFragment : Fragment() {
         )
         binding.rvAny.adapter = benAdapter
 
+
+
+
         lifecycleScope.launch {
             viewModel.allBenList.collect {
                 if (it.isEmpty())
@@ -71,8 +83,69 @@ class MalariaSuspectedListFragment : Fragment() {
         }
 
 
+
+        val irsListAdapter = IrsRoundListAdapter()
+        binding.irsAny.adapter = irsListAdapter
+        lifecycleScope.launch {
+            irsListViewmodel.allBenList.collect {
+                irsListAdapter.submitList(it)
+            }
+        }
+
+                val adapter = FormInputAdapter(
+                    formValueListener = FormInputAdapter.FormValueListener { formId, index ->
+                        irsViewModel.updateListOnValueChanged(formId, index)
+                    }, isEnabled = true
+                )
+                binding.form.rvInputForm.adapter = adapter
+                lifecycleScope.launch {
+                    irsViewModel.formList.collect {
+                        if (it.isNotEmpty()) {
+                            adapter.notifyItemChanged(irsViewModel.getIndexOfDate())
+                            adapter.submitList(it)
+                        }
+
+                    }
+
+        }
+
+        binding.btnSubmit.setOnClickListener {
+            submitIRSScreeningForm()
+        }
+
+        irsViewModel.state.observe(viewLifecycleOwner) {
+            when (it) {
+                MalariaIRSViewModel.State.SAVE_SUCCESS -> {
+                    Toast.makeText(
+                        requireContext(),
+                        resources.getString(R.string.irs_submitted), Toast.LENGTH_SHORT
+                    ).show()
+                    WorkerUtils.triggerAmritPushWorker(requireContext())
+                    findNavController().navigateUp()
+                }
+
+                else -> {}
+            }
+        }
     }
 
+    private fun submitIRSScreeningForm() {
+        irsViewModel.saveForm()
+    }
+
+    private fun validateCurrentPage(): Boolean {
+        val result = binding.form.rvInputForm.adapter?.let {
+            (it as FormInputAdapter).validateInput(resources)
+        }
+        Timber.d("Validation : $result")
+        return if (result == -1) true
+        else {
+            if (result != null) {
+                binding.form.rvInputForm.scrollToPosition(result)
+            }
+            false
+        }
+    }
     override fun onStart() {
         super.onStart()
         activity?.let {

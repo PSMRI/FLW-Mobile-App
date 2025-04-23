@@ -9,11 +9,14 @@ import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.MalariaDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.Konstants
+import org.piramalswasthya.sakhi.model.IRSRoundScreening
 import org.piramalswasthya.sakhi.model.MalariaConfirmedCasesCache
 import org.piramalswasthya.sakhi.model.MalariaScreeningCache
+import org.piramalswasthya.sakhi.model.PregnantWomanAncCache
 import org.piramalswasthya.sakhi.network.AmritApiService
 import org.piramalswasthya.sakhi.network.GetDataPaginatedRequest
 import org.piramalswasthya.sakhi.network.GetDataPaginatedRequestForDisease
+import org.piramalswasthya.sakhi.network.IRSScreeningRequestDTO
 import org.piramalswasthya.sakhi.network.MalariaConfirmedDTO
 import org.piramalswasthya.sakhi.network.MalariaConfirmedRequestDTO
 import org.piramalswasthya.sakhi.network.MalariaScreeningDTO
@@ -56,6 +59,102 @@ class MalariaRepo @Inject constructor(
         }
     }
 
+
+    suspend fun getIRSScreening(benId: Long): IRSRoundScreening? {
+        return withContext(Dispatchers.IO) {
+            malariaDao.getIRSScreening(benId)
+        }
+    }
+
+    suspend fun saveIRSScreening(irsRoundScreening: IRSRoundScreening) {
+        withContext(Dispatchers.IO) {
+            if (irsRoundScreening.id == 0) {
+                malariaDao.saveIRSScreening(irsRoundScreening)
+
+            } else {
+                malariaDao.update(irsRoundScreening)
+
+            }
+        }
+    }
+
+    suspend fun updateIRSRecord(irsRoundScreening: Array<IRSRoundScreening>) {
+        withContext(Dispatchers.IO) {
+            malariaDao.updateIRS(*irsRoundScreening)
+        }
+    }
+
+    suspend fun getAllActiveIRSRecords(hhId: Long): List<IRSRoundScreening> {
+        return withContext(Dispatchers.IO) {
+            malariaDao.getAllActiveIRSRecords(hhId)
+        }
+    }
+
+
+    suspend fun getIRSScreeningDetailsFromServer(): Int {
+        return withContext(Dispatchers.IO) {
+            val user =
+                preferenceDao.getLoggedInUser()
+                    ?: throw IllegalStateException("No user logged in!!")
+            val lastTimeStamp = preferenceDao.getLastSyncedTimeStamp()
+            try {
+                val response = tmcNetworkApiService.getScreeningData(
+                   1
+                )
+                val statusCode = response.code()
+                if (statusCode == 200) {
+                    val responseString = response.body()?.string()
+                    if (responseString != null) {
+                        val jsonObj = JSONObject(responseString)
+
+                        val errorMessage = jsonObj.getString("errorMessage")
+                        val responseStatusCode = jsonObj.getInt("statusCode")
+                        Timber.d("Pull from amrit tb screening data : $responseStatusCode")
+                        when (responseStatusCode) {
+                            200 -> {
+                                try {
+                                    val dataObj = jsonObj.getString("data")
+                                    saveIRSScreeningCacheFromResponse(dataObj)
+                                } catch (e: Exception) {
+                                    Timber.d("IRS Screening entries not synced $e")
+                                    return@withContext 0
+                                }
+
+                                return@withContext 1
+                            }
+
+                            5002 -> {
+                                if (userRepo.refreshTokenTmc(
+                                        user.userName, user.password
+                                    )
+                                ) throw SocketTimeoutException("Refreshed Token!")
+                                else throw IllegalStateException("User Logged out!!")
+                            }
+
+                            5000 -> {
+                                if (errorMessage == "No record found") return@withContext 0
+                            }
+
+                            else -> {
+                                throw IllegalStateException("$responseStatusCode received, dont know what todo!?")
+                            }
+                        }
+                    }
+                }
+
+            } catch (e: SocketTimeoutException) {
+                Timber.d("get_tb error : $e")
+                return@withContext -2
+
+            } catch (e: java.lang.IllegalStateException) {
+                Timber.d("get_tb error : $e")
+                return@withContext -1
+            }
+            -1
+        }
+    }
+
+
     suspend fun getMalariaScreeningDetailsFromServer(): Int {
         return withContext(Dispatchers.IO) {
             val user =
@@ -85,7 +184,7 @@ class MalariaRepo @Inject constructor(
                             200 -> {
                                 try {
                                     val dataObj = jsonObj.getString("data")
-                                    saveTBScreeningCacheFromResponse(dataObj)
+                                    saveMalariaScreeningCacheFromResponse(dataObj)
                                 } catch (e: Exception) {
                                     Timber.d("TB Screening entries not synced $e")
                                     return@withContext 0
@@ -125,7 +224,7 @@ class MalariaRepo @Inject constructor(
         }
     }
 
-    private suspend fun saveTBScreeningCacheFromResponse(dataObj: String): MutableList<MalariaScreeningCache> {
+    private suspend fun saveMalariaScreeningCacheFromResponse(dataObj: String): MutableList<MalariaScreeningCache> {
         val malariaScreeningList = mutableListOf<MalariaScreeningCache>()
         var requestDTO = Gson().fromJson(dataObj, MalariaScreeningRequestDTO::class.java)
         requestDTO?.malariaLists?.forEach { malariaScreeningDTO ->
@@ -144,6 +243,25 @@ class MalariaRepo @Inject constructor(
             }
         }
         return malariaScreeningList
+    }
+
+    private suspend fun saveIRSScreeningCacheFromResponse(dataObj: String): MutableList<IRSRoundScreening> {
+        val irsScreeningList = mutableListOf<IRSRoundScreening>()
+        var requestDTO = Gson().fromJson(dataObj, IRSScreeningRequestDTO::class.java)
+        requestDTO?.rounds?.forEach { irsScreeningDTO ->
+            irsScreeningDTO.date?.let {
+                var iRsScreeningCache: IRSRoundScreening? =
+                    malariaDao.getIRSScreening(
+                        irsScreeningDTO.householdId,
+                    )
+                if (iRsScreeningCache == null) {
+                    benDao.getBen(irsScreeningDTO.householdId)?.let {
+                        malariaDao.saveIRSScreening(irsScreeningDTO.toCache())
+                    }
+                }
+            }
+        }
+        return irsScreeningList
     }
 
     suspend fun getTbSuspectedDetailsFromServer(): Int {
