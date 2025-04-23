@@ -46,6 +46,8 @@
     <string name="adoption_of_family_planning">Adoption of Family Planning</string>
     <string name="current_fp_pregnancy_status">CURRENT FP/ PREGNANCY STATUS</string>
     <string name="severe_anemia">Severe Anemia</string>
+    <string name="round">Rounds</string>
+    <string name="irs_round">IRS Rounds</string>
     <string name="diabetes">Diabetes</string>
     <string name="rh_negative">Rh Negative</string>
     <string name="bad_obstetric_history">Bad obstetric history</string>

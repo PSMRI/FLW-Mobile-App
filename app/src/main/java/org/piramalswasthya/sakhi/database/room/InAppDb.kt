@@ -54,6 +54,7 @@ import org.piramalswasthya.sakhi.model.HRPNonPregnantTrackCache
 import org.piramalswasthya.sakhi.model.HRPPregnantAssessCache
 import org.piramalswasthya.sakhi.model.HRPPregnantTrackCache
 import org.piramalswasthya.sakhi.model.HouseholdCache
+import org.piramalswasthya.sakhi.model.IRSRoundScreening
 import org.piramalswasthya.sakhi.model.ImmunizationCache
 import org.piramalswasthya.sakhi.model.IncentiveActivityCache
 import org.piramalswasthya.sakhi.model.IncentiveRecordCache
@@ -111,6 +112,7 @@ import org.piramalswasthya.sakhi.model.Vaccine
         FilariaScreeningCache::class,
         LeprosyScreeningCache::class,
         MalariaConfirmedCasesCache::class,
+        IRSRoundScreening::class,
 
     ],
     views = [BenBasicCache::class],

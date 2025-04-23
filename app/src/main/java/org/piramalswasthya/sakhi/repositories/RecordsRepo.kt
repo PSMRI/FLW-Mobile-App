@@ -74,6 +74,9 @@ class RecordsRepo @Inject constructor(
     fun aesScreeningList(hhId:Long) = benDao.getAllAESScreeningBen(selectedVillage, hhId = hhId)
         .map { list -> list.map { it.asAESScreeningDomainModel() } }
 
+    fun iRSRoundList(hhId:Long) = benDao.getAllIRSRoundBen(hhId = hhId)
+
+
     fun KalazarScreeningList(hhId:Long) = benDao.getAllKALAZARScreeningBen(selectedVillage, hhId = hhId)
         .map { list -> list.map { it.asKALAZARScreeningDomainModel() } }
 
