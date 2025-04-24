@@ -39,7 +39,7 @@ class AshaProfileDataset(
 
     private val village = FormElement(
         id = 2,
-        inputType = InputType.EDIT_TEXT,
+        inputType = InputType.TEXT_VIEW,
         title = resources.getString(R.string.village),
         required = false,
     )
@@ -260,7 +260,7 @@ class AshaProfileDataset(
     )
     private val  ashaHouseholdRegistrationNo = FormElement(
         id = 24,
-        inputType = InputType.EDIT_TEXT,
+        inputType = InputType.TEXT_VIEW,
         title = "Asha Household registration",
         required = false,
     )
@@ -443,7 +443,7 @@ class AshaProfileDataset(
             dataModel.dateOfJoining = dateOfJoining.value
             dataModel.bankAccount = bankAccount.value
             dataModel.ifsc = Ifsc.value
-            dataModel.populationCovered = populationCovered.value!!.toInt()
+            dataModel.populationCovered = populationCovered.value?.takeIf { it.isNotEmpty() }?.toIntOrNull()
             dataModel.choName = ChoName.value
             dataModel.choMobile = ChoMobileNo.value
             dataModel.awwName = nameOfAWW.value

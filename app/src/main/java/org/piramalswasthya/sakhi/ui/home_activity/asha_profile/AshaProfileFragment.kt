@@ -116,7 +116,7 @@ class AshaProfileFragment : Fragment() {
                     binding.llContent.visibility = View.VISIBLE
                     binding.pbForm.visibility = View.GONE
                     Toast.makeText(context, "Save Successful", Toast.LENGTH_LONG).show()
-                    findNavController().navigateUp()
+                    viewModel.setRecordExist(true)
                 }
 
                 AshaProfileViewModel.State.SAVE_FAILED -> {

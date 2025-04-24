@@ -296,7 +296,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal|bottom"
             android:layout_margin="@dimen/margin_small"
-            android:text="@string/btn_submit"
+            android:text="@string/save"
 
             android:textColor="@android:color/white" />
 
