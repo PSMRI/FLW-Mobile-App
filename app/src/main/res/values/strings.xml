@@ -60,6 +60,7 @@
 
 
     <string name="title_activity_home" translatable="false">HomeActivity</string>
+    <string name="title_activity_supervisor" translatable="false">SupervisorActivity</string>
     <string name="nav_header_desc" translatable="false">Navigation header</string>
 
     <string name="cd_icon_grid_icon">icon</string>
@@ -220,6 +221,17 @@
     <string name="view_visit">View Visit</string>
     <string name="add_visit">Add Visit</string>
     <string name="household_id">Household ID</string>
+    <string name="sup_households">Households</string>
+    <string name="sup_beneficiaries">Beneficiaries</string>
+    <string name="sup_eligible_couples">Eligible Couples</string>
+    <string name="sup_pregnant_women">Pregnant Women</string>
+    <string name="sup_anc_visits">ANC Visits</string>
+    <string name="sup_hrp_woman">HRP Woman</string>
+    <string name="sup_deliveries">Deliveries</string>
+    <string name="sup_routine_immunization">Routine Immunization</string>
+    <string name="sup_ncd_screened">NCD Screened</string>
+    <string name="sup_ncd_priority">NCD Priority</string>
+    <string name="sup_tb_cases">TB Cases</string>
     <string name="contact_number">Contact Number</string>
     <string name="kcuf">KCUF</string>
     <string name="show_vaccines">Show Vaccines</string>

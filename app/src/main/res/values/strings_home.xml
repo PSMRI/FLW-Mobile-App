@@ -11,6 +11,7 @@
     <string name="service_type_dd_village_text">Village</string>
     <string name="btn_continue_text">Continue</string>
     <string name="menu_home">Home</string>
+    <string name="menu_supervisor">ASHA Supervisor</string>
     <string name="menu_home_home">Home</string>
     <string name="menu_home_scheduler">Dashboard</string>
     <string name="til_hint_selected_village">Selected Village</string>

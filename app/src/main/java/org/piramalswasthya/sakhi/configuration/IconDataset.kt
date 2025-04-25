@@ -1,7 +1,6 @@
 package org.piramalswasthya.sakhi.configuration
 
 import android.content.res.Resources
-import android.view.WindowManager
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
@@ -14,7 +13,6 @@ import org.piramalswasthya.sakhi.ui.home_activity.eligible_couple.EligibleCouple
 import org.piramalswasthya.sakhi.ui.home_activity.home.HomeFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.hrp_cases.HrpCasesFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.immunization_due.ImmunizationDueTypeFragmentDirections
-import org.piramalswasthya.sakhi.ui.home_activity.lms.LmsFragment
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.MotherCareFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.NcdFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.VillageLevelFormsFragmentDirections
@@ -199,6 +197,79 @@ class IconDataset @Inject constructor(
             HomeFragmentDirections.actionHomeFragmentToHRPNonPregnantFragment()
         ),
     )
+
+    fun getSupervisorIconsDataset(resources: Resources) = listOf(
+        Icon(
+            R.drawable.ic__hh,
+            resources.getString(R.string.sup_households),
+            recordsRepo.hhListCount,
+            HomeFragmentDirections.actionNavHomeToAllHouseholdFragment()
+        ),
+        Icon(
+            R.drawable.ic__ben,
+            resources.getString(R.string.sup_beneficiaries),
+            recordsRepo.allBenListCount,
+            HomeFragmentDirections.actionNavHomeToAllBenFragment(0),
+        ),
+        Icon(
+            R.drawable.ic__eligible_couple,
+            resources.getString(R.string.sup_eligible_couples),
+            recordsRepo.eligibleCoupleTrackingListCount,
+            EligibleCoupleFragmentDirections.actionEligibleCoupleFragmentToEligibleCoupleTrackingListFragment()
+        ),
+        Icon(
+            R.drawable.ic__maternal_health,
+            resources.getString(R.string.sup_pregnant_women),
+            recordsRepo.getPregnantWomenListCount(),
+            MotherCareFragmentDirections.actionMotherCareFragmentToPwRegistrationFragment()
+        ),
+        Icon(
+            R.drawable.ic__anc_visit,
+            resources.getString(R.string.sup_anc_visits),
+            recordsRepo.getRegisteredPregnantWomanListCount(),
+            MotherCareFragmentDirections.actionMotherCareFragmentToPwAncVisitsFragment()
+        ),
+        Icon(
+            R.drawable.ic__hrp,
+            resources.getString(R.string.sup_hrp_woman),
+            recordsRepo.hrpPregnantWomenListCount,
+            HrpCasesFragmentDirections.actionHrpCasesFragmentToPregnantListFragment()
+        ),
+        Icon(
+            R.drawable.ic__delivery_outcome,
+            resources.getString(R.string.sup_deliveries),
+            recordsRepo.getDeliveredWomenListCount(),
+            MotherCareFragmentDirections.actionMotherCareFragmentToDeliveryOutcomeListFragment()
+        ),
+        Icon(
+            R.drawable.ic__immunization,
+            resources.getString(R.string.sup_routine_immunization),
+            recordsRepo.childrenImmunizationListCount,
+            ImmunizationDueTypeFragmentDirections.actionImmunizationDueTypeFragmentToChildImmunizationListFragment()
+        ),
+        Icon(
+            R.drawable.ic__ncd_list,
+            resources.getString(R.string.sup_ncd_screened),
+            recordsRepo.ncdListCount,
+            NcdFragmentDirections.actionNcdFragmentToNcdListFragment()
+        ),
+        Icon(
+            R.drawable.ic__ncd_priority,
+            resources.getString(R.string.sup_ncd_priority),
+            recordsRepo.getNcdPriorityListCount,
+            NcdFragmentDirections.actionNcdFragmentToNcdPriorityListFragment()
+        ),
+        Icon(
+            R.drawable.ic__death,
+            resources.getString(R.string.sup_tb_cases),
+            recordsRepo.tbSuspectedListCount,
+            CdFragmentDirections.actionCdFragmentToTBSuspectedListFragment()
+        )
+    ).apply {
+        forEachIndexed { index, icon ->
+            icon.colorPrimary = index % 3 == 0
+        }
+    }
 
     fun getHRPPregnantWomenDataset(resources: Resources) = listOf(
         Icon(
