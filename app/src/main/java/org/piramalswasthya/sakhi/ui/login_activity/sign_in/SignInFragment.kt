@@ -26,6 +26,10 @@ import org.piramalswasthya.sakhi.helpers.Languages.ASSAMESE
 import org.piramalswasthya.sakhi.helpers.Languages.ENGLISH
 import org.piramalswasthya.sakhi.helpers.Languages.HINDI
 import org.piramalswasthya.sakhi.helpers.NetworkResponse
+import org.piramalswasthya.sakhi.model.LocationEntity
+import org.piramalswasthya.sakhi.model.LocationRecord
+import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
+import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import javax.inject.Inject
@@ -191,12 +195,31 @@ class SignInFragment : Fragment() {
                     binding.clContent.visibility = View.INVISIBLE
                     binding.pbSignIn.visibility = View.VISIBLE
                     binding.tvError.visibility = View.GONE
-                    WorkerUtils.triggerGenBenIdWorker(requireContext())
-                    findNavController().navigate(
-                        if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
-                        else SignInFragmentDirections.actionSignInFragmentToHomeActivity()
-                    )
-                    activity?.finish()
+
+//                    activity?.finish()
+//                    val goToHome = Intent(requireContext(), SupervisorActivity::class.java)
+//                    startActivity(goToHome)
+                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+                        WorkerUtils.triggerGenBenIdWorker(requireContext())
+                        findNavController().navigate(
+                            if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
+                            else SignInFragmentDirections.actionSignInFragmentToHomeActivity()
+                        )
+                        activity?.finish()
+                    } else {
+                        val locationRecord = LocationRecord(
+                            LocationEntity(1, "India"),
+                            LocationEntity(prefDao.getLoggedInUser()!!.state.id, prefDao.getLoggedInUser()!!.state.name),
+                            LocationEntity(0, ""),
+                            LocationEntity(prefDao.getLoggedInUser()!!.block.id, prefDao.getLoggedInUser()!!.block.name),
+                            LocationEntity(prefDao.getLoggedInUser()!!.villages[0].id, prefDao.getLoggedInUser()!!.villages[0].name),
+                        )
+                        prefDao.saveLocationRecord(locationRecord)
+
+                        activity?.finish()
+                        val goToHome = Intent(requireContext(), SupervisorActivity::class.java)
+                        startActivity(goToHome)
+                    }
                 }
             }
         }

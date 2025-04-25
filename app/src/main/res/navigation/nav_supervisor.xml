@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/supervisor_navigation"
+    app:startDestination="@+id/supervisorFragment">
+
+
+    <fragment
+        android:id="@+id/supervisorFragment"
+        android:name="org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.SupervisorFragment"
+        android:label="@string/menu_supervisor"
+        tools:layout="@layout/fragment_supervisor">
+    </fragment>
+
+
+</navigation>
