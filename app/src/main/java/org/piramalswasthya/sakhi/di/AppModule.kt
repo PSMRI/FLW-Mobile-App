@@ -11,6 +11,7 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.piramalswasthya.sakhi.database.room.InAppDb
+import org.piramalswasthya.sakhi.database.room.dao.AdolescentHealthDao
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.BeneficiaryIdsAvailDao
 import org.piramalswasthya.sakhi.database.room.dao.CbacDao
@@ -129,6 +130,10 @@ object AppModule {
     @Singleton
     @Provides
     fun provideBenDao(database: InAppDb): BenDao = database.benDao
+
+    @Singleton
+    @Provides
+    fun provideAdolescentHealthDao(database: InAppDb): AdolescentHealthDao = database.adolescentHealthDao
 
 
     @Singleton

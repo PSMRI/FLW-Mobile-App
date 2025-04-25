@@ -82,6 +82,7 @@
         <action
             android:id="@+id/action_homeFragment_to_missedPeriodFragment"
             app:destination="@id/missedPeriodFragment" />
+
     </fragment>
     <fragment
         android:id="@+id/allHouseholdFragment"
@@ -137,6 +138,12 @@
         <action
             android:id="@+id/action_childCareFragment_to_childListFragment"
             app:destination="@id/childListFragment" />
+
+        <action
+            android:id="@+id/action_childCareFragment_to_adolescentHealthListFragment"
+            app:destination="@id/adolescentHealthListFragment" />
+
+
     </fragment>
     <fragment
         android:id="@+id/motherCareFragment"
@@ -330,9 +337,14 @@
     </fragment>
     <fragment
         android:id="@+id/adolescentListFragment"
-        android:name="org.piramalswasthya.sakhi.ui.home_activity.child_care.adolescent_list.AdolescentListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.child_care.adolescent_list.list.AdolescentListFragment"
         android:label="@string/child_care_icon_title_adolescent_list"
-        tools:layout="@layout/fragment_adolescent_list" />
+        tools:layout="@layout/fragment_adolescent_list" >
+
+        <action
+            android:id="@+id/action_adolescentListFragment_to_adolescentHealthFormFragment"
+            app:destination="@id/adolescentHealthFormFragment" />
+    </fragment>
     <fragment
         android:id="@+id/childListFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.child_care.child_list.ChildListFragment"
@@ -1052,6 +1064,19 @@
         tools:layout="@layout/fragment_asha_profile" >
 
     </fragment>
+    <fragment
+        android:id="@+id/adolescentHealthFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.adolescent_health.AdolescentHealthFormFragment"
+        android:label="AdolescentHealthFormFragment" >
+        <argument
+            android:name="benId"
+            android:defaultValue="0L"
+            app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/adolescentHealthListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.child_care.adolescent_list.AdolescentHealthListFragment"
+        android:label="AdolescentHealthListFragment" />
 
 
 </navigation>

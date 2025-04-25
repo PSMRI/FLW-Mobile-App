@@ -109,7 +109,7 @@ class RecordsRepo @Inject constructor(
 
     val adolescentList =
         benDao.getAllAdolescentList(selectedVillage)
-            .map { list -> list.map { it.asBasicDomainModel() } }
+            .map { list -> list.map { it.asAdolescentDomainModel() } }
     val adolescentListCount = adolescentList.map { it.size }
 
     val immunizationList = benDao.getAllImmunizationDueList(selectedVillage)

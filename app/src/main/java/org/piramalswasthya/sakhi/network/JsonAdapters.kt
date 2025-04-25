@@ -14,6 +14,8 @@ import org.piramalswasthya.sakhi.utils.KeyUtils
 import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlinx.parcelize.Parcelize
+import org.piramalswasthya.sakhi.model.AdolescentHealthCache
+import org.piramalswasthya.sakhi.model.getDateTimeStringFromLong
 
 @JsonClass(generateAdapter = true)
 data class D2DAuthUserRequest(
@@ -581,6 +583,11 @@ data class TBScreeningRequestDTO(
     val tbScreeningList: List<TBScreeningDTO>
 )
 
+data class AdolescentHealthRequestDTO(
+    val userId: Int,
+    val adolescentHealths: List<AdolscentHealthDTO>
+)
+
 data class UserDataDTO<T>(
     val userId: Int,
     val entries: List<T>
@@ -839,6 +846,45 @@ data class TBScreeningDTO(
             historyOfTb = historyOfTb,
             takingAntiTBDrugs = takingAntiTBDrugs,
             familySufferingFromTB = familySufferingFromTB,
+            syncState = SyncState.SYNCED
+        )
+    }
+}
+
+data class AdolscentHealthDTO(
+    var id :Int? = null,
+    var userID :Int? =null,
+    var benId:Long,
+    var visitDate: String,
+    var healthStatus: String? = null,
+    var ifaTabletDistributed: Boolean? = null,
+    var quantityOfIfaTablets: Int? = null,
+    var menstrualHygieneAwarenessGiven: Boolean? = null,
+    var sanitaryNapkinDistributed: Boolean? = null,
+    var noOfPacketsDistributed: Int? = null,
+    var place: String? = null,
+    var referredToHealthFacility: String? = null,
+    var counselingProvided: Boolean? = null,
+    var counselingType: String? = null,
+    var followUpDate: String? = null,
+    var referralStatus: String? = null,
+) {
+    fun toCache(): AdolescentHealthCache {
+        return AdolescentHealthCache(
+            benId = benId,
+            visitDate = getLongFromDate(visitDate),
+            healthStatus = healthStatus,
+            ifaTabletDistributed = ifaTabletDistributed,
+            quantityOfIfaTablets = quantityOfIfaTablets,
+            menstrualHygieneAwarenessGiven = menstrualHygieneAwarenessGiven,
+            sanitaryNapkinDistributed = sanitaryNapkinDistributed,
+            noOfPacketsDistributed = noOfPacketsDistributed,
+            place = place,
+            referredToHealthFacility = referredToHealthFacility,
+            counselingProvided = counselingProvided,
+            counselingType = counselingType,
+            followUpDate = getLongFromDate(followUpDate),
+            referralStatus = referralStatus,
             syncState = SyncState.SYNCED
         )
     }
