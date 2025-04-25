@@ -259,7 +259,7 @@ interface BenDao {
         selectedVillage: Int,
         min: Int = Konstants.minAgeForAdolescent,
         max: Int = Konstants.maxAgeForAdolescent
-    ): Flow<List<BenBasicCache>>
+    ): Flow<List<BenWithAdolescentCache>>
 
     @Query("SELECT * FROM BEN_BASIC_CACHE WHERE isKid = 1 or reproductiveStatusId in (2, 3) and villageId=:selectedVillage")
     fun getAllImmunizationDueList(selectedVillage: Int): Flow<List<BenBasicCache>>

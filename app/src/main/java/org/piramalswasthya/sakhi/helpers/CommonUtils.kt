@@ -11,6 +11,7 @@ import org.piramalswasthya.sakhi.model.AncStatus
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.model.BenBasicDomainForForm
 import org.piramalswasthya.sakhi.model.BenPncDomain
+import org.piramalswasthya.sakhi.model.BenWithAdolescentDomain
 import org.piramalswasthya.sakhi.model.BenWithAncListDomain
 import org.piramalswasthya.sakhi.model.BenWithEcrDomain
 import org.piramalswasthya.sakhi.model.BenWithEctListDomain
@@ -70,6 +71,17 @@ fun filterBenList(
         list
     }
 
+fun filterAdolesenctList(list: List<BenWithAdolescentDomain>, text: String): List<BenWithAdolescentDomain> {
+    if (text == "")
+        return list
+    else {
+        val filterText = text.lowercase()
+        return list.filter {
+            filterAdolesent(it, filterText)
+        }
+    }
+}
+
 
 fun filterForBen(
     ben: BenBasicDomain,
@@ -87,6 +99,12 @@ fun filterForBen(
         ben.gender.lowercase().contains(filterText) ||
         ben.spouseName?.lowercase()?.contains(filterText) == true ||
         ben.fatherName?.lowercase()?.contains(filterText) ?: false
+
+
+fun filterAdolesent(
+    ben: BenWithAdolescentDomain,
+    filterText: String
+) = ben.ben.benFullName.toString().lowercase().contains(filterText)
 
 
 fun filterBenFormList(

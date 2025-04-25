@@ -61,6 +61,16 @@ interface AmritApiService {
 //    @POST("tb/screening/saveAll")
     suspend fun saveTBScreeningData(@Body tbScreeningRequestDTO: TBScreeningRequestDTO): Response<ResponseBody>
 
+
+    @POST("flw-0.0.1/tb/suspected/getAll")
+//    @POST("tb/suspected/getAll")
+    suspend fun getAdolescentHealthData(@Body userDetail: GetDataPaginatedRequest): Response<ResponseBody>
+
+    @POST("flw-0.0.1/tb/screening/saveAll")
+//    @POST("tb/screening/saveAll")
+    suspend fun saveAdolescentHealthData(@Body adolescentHealthRequestDTO: AdolescentHealthRequestDTO): Response<ResponseBody>
+
+
     @POST("flw-0.0.1/tb/suspected/saveAll")
 //    @POST("tb/suspected/saveAll")
     suspend fun saveTBSuspectedData(@Body tbSuspectedRequestDTO: TBSuspectedRequestDTO): Response<ResponseBody>
