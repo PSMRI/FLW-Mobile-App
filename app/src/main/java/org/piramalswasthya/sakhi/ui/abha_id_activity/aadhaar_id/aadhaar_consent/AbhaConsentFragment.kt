@@ -96,7 +96,7 @@ class AbhaConsentFragment : Fragment() {
 
     fun getConsentList(): List<AadhaarConsentModel> {
         val consent6 = resources.getString(R.string.str_aadhaar_consent_6)
-        val userName = viewModel.currentUser?.userName ?: ""
+        val userName = viewModel.currentUser?.name ?: ""
         val updatedText = consent6.replace("@ashaName", userName)
         var usernameBoldItalic = formatUserNameBoldItalic(updatedText, userName)
 
