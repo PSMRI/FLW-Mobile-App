@@ -54,8 +54,8 @@
 
             <ImageView
                 android:id="@+id/ivValidAadhaar"
-                android:layout_width="@dimen/_18sdp"
-                android:layout_height="@dimen/_18sdp"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
                 android:src="@drawable/ic_check_circle_grey"
                 android:layout_marginEnd="@dimen/_20sdp"
                 app:layout_constraintTop_toTopOf="@+id/textView3"
@@ -148,8 +148,8 @@
 
             <ImageView
                 android:id="@+id/ivValidMobile"
-                android:layout_width="@dimen/_18sdp"
-                android:layout_height="@dimen/_18sdp"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
                 android:src="@drawable/ic_check_circle_grey"
                 android:layout_marginEnd="@dimen/_20sdp"
                 app:layout_constraintTop_toTopOf="@+id/textView4"
@@ -210,8 +210,8 @@
 
                 <ImageView
                     android:id="@+id/ivValidBenName"
-                    android:layout_width="@dimen/_18sdp"
-                    android:layout_height="@dimen/_18sdp"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
                     android:layout_marginEnd="@dimen/_20sdp"
                     android:src="@drawable/ic_check_circle_grey"
                     app:layout_constraintBottom_toBottomOf="@+id/textView6"
@@ -257,19 +257,21 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-            <CheckBox
-                android:id="@+id/aadharConsentCheckBox"
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/aadharDisclaimer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_normal"
-                android:layout_marginHorizontal="20dp"
-                android:gravity="start|top"
-                android:visibility="gone"
-                android:text="@string/aadhar_consent_text"
-                android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-                app:layout_constraintTop_toBottomOf="@+id/til_mobile_number" />
+                android:layout_marginTop="@dimen/margin_normal"
+                android:layout_marginHorizontal="@dimen/_20sdp"
+                android:visibility="visible"
+                android:enabled="false"
+                app:buttonTint="@color/md_theme_light_primary"
+                android:text="@string/aadhar_disclaimer_consent_disclaimer"
+                android:fontFamily="@font/roboto_bold"
+                android:textColor="?attr/colorPrimary"
+                app:layout_constraintTop_toBottomOf="@id/clBenName" />
 
-            <TextView
+           <!-- <TextView
                 android:id="@+id/aadharDisclaimer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -277,9 +279,10 @@
                 android:layout_marginHorizontal="@dimen/_20sdp"
                 android:fontFamily="@font/roboto_bold"
                 android:padding="@dimen/padding_normal"
+                android:visibility="gone"
                 android:text="@string/aadhar_disclaimer_consent_disclaimer"
                 android:textColor="?attr/colorPrimary"
-                app:layout_constraintTop_toBottomOf="@id/clBenName" />
+                app:layout_constraintTop_toBottomOf="@id/clBenName" />-->
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_verify_aadhaar"

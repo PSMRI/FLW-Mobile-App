@@ -148,9 +148,9 @@ class AadhaarNumberAshaFragment : Fragment() {
             }
         }
 
-        binding.aadharConsentCheckBox.setOnCheckedChangeListener { _, ischecked ->
+       /* binding.aadharConsentCheckBox.setOnCheckedChangeListener { _, ischecked ->
             binding.btnVerifyAadhaar.isEnabled = isValidAadhaar && isValidMobile && ischecked
-        }
+        }*/
 
         binding.aadharDisclaimer.setOnClickListener {
            if(parentViewModel.beneficiaryName.value!=null && !parentViewModel.beneficiaryName.value.isNullOrBlank()) {

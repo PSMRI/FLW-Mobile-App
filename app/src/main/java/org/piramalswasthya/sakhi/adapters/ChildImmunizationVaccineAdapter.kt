@@ -43,7 +43,7 @@ class ChildImmunizationVaccineAdapter (private val clickListener: ImmunizationCl
             binding.clickListener = clickListener
             binding.executePendingBindings()
 
-            if (item.state.name =="PENDING"||item.state.name =="OVERDUE"||item.state.name =="PENDING" ){
+            if (item.state.name =="PENDING"||item.state.name =="OVERDUE"){
                 binding.idSwitch.isEnabled = true
 
             }else if(item.state.name =="MISSED" ||item.state.name =="UNAVAILABLE"){
@@ -55,6 +55,7 @@ class ChildImmunizationVaccineAdapter (private val clickListener: ImmunizationCl
                 binding.idSwitch.isChecked = true
             }
 
+            binding.idSwitch.isChecked = item.isSwitchChecked
             binding.idSwitch.setOnCheckedChangeListener { compoundButton, b ->
                 if (b){
                     clickListener?.onClicked(item.apply {

@@ -48,8 +48,8 @@
 
     <ImageView
         android:id="@+id/ivValidMobile"
-        android:layout_width="@dimen/_18sdp"
-        android:layout_height="@dimen/_18sdp"
+        android:layout_width="@dimen/_20sdp"
+        android:layout_height="@dimen/_20sdp"
         android:src="@drawable/ic_check_circle_grey"
         android:layout_marginEnd="@dimen/_20sdp"
         app:layout_constraintTop_toTopOf="@+id/textView4"
@@ -160,8 +160,8 @@
 
         <ImageView
             android:id="@+id/ivValidBenName"
-            android:layout_width="@dimen/_18sdp"
-            android:layout_height="@dimen/_18sdp"
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
             android:layout_marginEnd="@dimen/_20sdp"
             android:src="@drawable/ic_check_circle_grey"
             app:layout_constraintBottom_toBottomOf="@+id/textView6"

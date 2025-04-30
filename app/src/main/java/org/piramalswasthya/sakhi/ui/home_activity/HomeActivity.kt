@@ -265,7 +265,7 @@ class HomeActivity : AppCompatActivity() {
                 }
             }
         }
-        binding.versionName.text = "APK Version 2.2.0" //${BuildConfig.VERSION_NAME}
+        binding.versionName.text = "APK Version 2.2.1" //${BuildConfig.VERSION_NAME}
     }
 
 
@@ -394,7 +394,7 @@ class HomeActivity : AppCompatActivity() {
                 .setPositiveButton("Exit") { dialog, id -> finish() }
                 .show()
         }
-        binding.versionName.text = "APK Version 2.2.0" //${BuildConfig.VERSION_NAME}
+        binding.versionName.text = "APK Version 2.2.1" //${BuildConfig.VERSION_NAME}
     }
     private fun setUpMenu() {
         val menu = object : MenuProvider {
