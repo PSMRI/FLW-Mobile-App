@@ -844,6 +844,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 mobileNoOfRelation.getStringFromPosition(saved.mobileNoOfRelationId)
             tempraryContactNoBelongsto.value =
                 tempraryContactNoBelongsto.getStringFromPosition(saved.tempMobileNoOfRelationId)
+            tempraryContactNoBelongsto.isEnabled = false
             otherMobileNoOfRelation.value = saved.mobileOthers
             contactNumber.value = saved.contactNumber.toString()
             tempraryContactNo.value = saved.contactNumber.toString()
@@ -1031,6 +1032,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 mobileNoOfRelation.getStringFromPosition(saved.mobileNoOfRelationId)
             tempraryContactNoBelongsto.value =
                 tempraryContactNoBelongsto.getStringFromPosition(saved.tempMobileNoOfRelationId)
+            tempraryContactNoBelongsto.isEnabled = false
             otherMobileNoOfRelation.value = saved.mobileOthers
             contactNumber.value = saved.contactNumber.toString()
             tempraryContactNo.value = saved.contactNumber.toString()
