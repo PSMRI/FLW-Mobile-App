@@ -73,6 +73,7 @@
     <string name="notification_sync_channel_description">Upload beneficiaries to Server</string>
     <string name="notification_sync_channel_id">sakhi-sync0</string>
     <string name="btn_submit">Submit</string>
+    <string name="btn_apply">Apply</string>
     <string name="long_to_string">%d</string>
     <string name="ben_pending_sync">Pending Sync</string>
     <string name="tv_reg_date_ph">Registration Date</string>
