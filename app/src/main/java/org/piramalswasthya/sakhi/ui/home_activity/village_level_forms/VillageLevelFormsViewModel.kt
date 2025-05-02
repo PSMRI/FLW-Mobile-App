@@ -44,7 +44,7 @@ class VillageLevelFormsViewModel @Inject constructor(
             val icons = iconDataset.getVLFDataset(resources)
             val currentDate = LocalDate.now() // Get current date
             val firstOfMonth = currentDate.withDayOfMonth(1)  // First day of the current month
-            val seventhOfMonth = currentDate.withDayOfMonth(2)  // Seventh day of the current month
+            val seventhOfMonth = currentDate.withDayOfMonth(7)  // Seventh day of the current month
             val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.getDefault())
 
             // Perform the overdue check only if the current date is 7th or later in the month
