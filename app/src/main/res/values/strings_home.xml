@@ -28,6 +28,7 @@
     <string name="icon_title_dr">Death Reports</string>
     <string name="icon_title_vlf">Village Level Forms</string>
     <string name="icon_title_vhnd">VHND Forms</string>
+    <string name="icon_title_ahd">AHD Forms</string>
     <string name="icon_title_vhnc">VHNC Forms</string>
     <string name="icon_title_phc">PHC Review Meeting Forms</string>
     <string name="icon_title_vhnd_list">VHND FormsList</string>
@@ -67,6 +68,9 @@
     <string name="not_processed">" Records Not Synced!"</string>
     <string name="all_records_synced">All records synced</string>
     <string name="are_you_sure_to_logout">" Are you sure you want to logout?"</string>
+
+
+    <string name="icon_title_ahd_list">AHD List</string>
 
     <string name="place">Place</string>
     <string name="no_b_attended">No. of Beneficiaries Attended</string>

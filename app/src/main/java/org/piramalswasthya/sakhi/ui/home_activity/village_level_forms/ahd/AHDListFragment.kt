@@ -1,11 +1,10 @@
-package org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.vhnd
+package org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.ahd
 
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -16,28 +15,24 @@ import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
-import org.piramalswasthya.sakhi.adapters.VHNDAdapter
-import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
+import org.piramalswasthya.sakhi.adapters.AHDAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentVhndListBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 
 @AndroidEntryPoint
-class VHNDListFragement : Fragment() {
+class AHDListFragment : Fragment() {
     companion object {
-        fun newInstance() = VHNDListFragement()
+        fun newInstance() = AHDListFragment()
     }
 
-    private val viewModel: VHNDViewModel by viewModels()
-
+    private val viewModel: AHDViewModel by viewModels()
     private var _binding: FragmentVhndListBinding? = null
     private val binding: FragmentVhndListBinding
         get() = _binding!!
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-
         _binding = FragmentVhndListBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -46,41 +41,32 @@ class VHNDListFragement : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.btnNextPage.visibility = View.VISIBLE
-        val vHNDAdapter = VHNDAdapter(
-        clickListener = VHNDAdapter.VHNDClickListener { id ->
-            findNavController().navigate(
-                VHNDListFragementDirections.actionVHNDListFragementToVHNDFormFragement(
-                    id
+        val ahdAdapter = AHDAdapter(
+            clickListener = AHDAdapter.AHDClickListener { id ->
+                findNavController().navigate(
+                    AHDListFragmentDirections.actionAHDListFragmentToAHDFormFragment(id)
                 )
-            )
-        })
-        binding.rvAny.adapter = vHNDAdapter
+            }
+        )
+        binding.rvAny.adapter = ahdAdapter
+        binding.btnNextPage.text = getString(R.string.icon_title_ahd)
         binding.btnNextPage.setOnClickListener {
-            findNavController().navigate(R.id.action_VHNDListFragement_to_VHNDFormFragement)
+            findNavController().navigate(R.id.action_AHDListFragment_to_AHDFormFragment)
         }
-
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.isCurrentMonthFormFilled.collect { statusMap ->
-                    val isVHNDDisabled = statusMap["VHND"] == true
-                    binding.btnNextPage.isEnabled = !isVHNDDisabled
+                    val isAHDDisabled = statusMap["AHD"] == true
+                    binding.btnNextPage.isEnabled = !isAHDDisabled
                 }
             }
         }
-
-
-
         lifecycleScope.launch {
-            viewModel.allVHNDList.collect {
-                if (it.isEmpty())
-                    binding.flEmpty.visibility = View.VISIBLE
-                else
-                    binding.flEmpty.visibility = View.GONE
-                vHNDAdapter.submitList(it)
+            viewModel.allAHDList.collect {
+                binding.flEmpty.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
+                ahdAdapter.submitList(it)
             }
         }
-
-
     }
 
     override fun onStart() {
@@ -88,8 +74,13 @@ class VHNDListFragement : Fragment() {
         activity?.let {
             (it as HomeActivity).updateActionBar(
                 R.drawable.ic__village_level_form,
-                getString(R.string.icon_title_vhnd_list)
+                getString(R.string.icon_title_ahd_list)
             )
         }
     }
+
+//    override fun onDestroyView() {
+//        super.onDestroyView()
+//        _binding = null
+//    }
 }

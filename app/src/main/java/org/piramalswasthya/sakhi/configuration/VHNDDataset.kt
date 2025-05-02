@@ -66,16 +66,14 @@ class VHNDDataset(
     private val pic1 = FormElement(
         id = 1,
         inputType = IMAGE_VIEW,
-        title = resources.getString(R.string.nbr_image),
-        subtitle = resources.getString(R.string.nbr_image_sub),
+        title = resources.getString(R.string.upload_image),
         arrayId = -1,
         required = false,
     )
     private val pic2 = FormElement(
         id = 2,
         inputType = IMAGE_VIEW,
-        title = resources.getString(R.string.nbr_image),
-        subtitle = resources.getString(R.string.nbr_image_sub),
+        title = resources.getString(R.string.upload_image),
         arrayId = -1,
         required = false,
     )

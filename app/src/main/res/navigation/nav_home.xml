@@ -243,8 +243,13 @@
         <action
             android:id="@+id/action_villageLevelFormsFragment_to_PHCReviewListFragement"
             app:destination="@id/PHCReviewListFragement" />
+        <action
+            android:id="@+id/action_villageLevelFormsFragment_to_AHDListFragment"
+            app:destination="@id/AHDListFragment" />
 
-
+        <action
+            android:id="@+id/action_villageLevelFormsFragment_to_DewormingListFragment"
+            app:destination="@id/DewormingListFragment" />
     </fragment>
     <fragment
         android:id="@+id/newHouseholdFragment"
@@ -1047,6 +1052,45 @@
         android:id="@+id/PHCReviewFormFragement"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.phc_review_meeting.PHCReviewFormFragement"
         android:label="PHCReviewFormFragement">
+        <argument
+            android:name="id"
+            android:defaultValue="0"
+            app:argType="integer" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/AHDListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.ahd.AHDListFragment"
+        android:label="AHD List">
+        <action
+            android:id="@+id/action_AHDListFragment_to_AHDFormFragment"
+            app:destination="@id/AHDFormFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/AHDFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.ahd.AHDFormFragment"
+        android:label="AHD Form">
+        <argument
+            android:name="id"
+            android:defaultValue="0"
+            app:argType="integer" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/DewormingListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.national_deworming_day.DewormingListFragment"
+        android:label="Deworming List">
+        <action
+            android:id="@+id/action_DewormingListFragment_to_DewormingFormFragment"
+            app:destination="@id/DewormingFormFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/DewormingFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.national_deworming_day.DewormingFormFragment"
+        android:label="Deworming Form">
         <argument
             android:name="id"
             android:defaultValue="0"

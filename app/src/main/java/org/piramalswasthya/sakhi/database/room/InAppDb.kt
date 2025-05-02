@@ -31,12 +31,14 @@ import org.piramalswasthya.sakhi.database.room.dao.PncDao
 import org.piramalswasthya.sakhi.database.room.dao.SyncDao
 import org.piramalswasthya.sakhi.database.room.dao.TBDao
 import org.piramalswasthya.sakhi.database.room.dao.VLFDao
+import org.piramalswasthya.sakhi.model.AHDCache
 import org.piramalswasthya.sakhi.model.BenBasicCache
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.CDRCache
 import org.piramalswasthya.sakhi.model.CbacCache
 import org.piramalswasthya.sakhi.model.ChildRegCache
 import org.piramalswasthya.sakhi.model.DeliveryOutcomeCache
+import org.piramalswasthya.sakhi.model.DewormingCache
 import org.piramalswasthya.sakhi.model.EligibleCoupleRegCache
 import org.piramalswasthya.sakhi.model.EligibleCoupleTrackingCache
 import org.piramalswasthya.sakhi.model.FPOTCache
@@ -101,6 +103,8 @@ import org.piramalswasthya.sakhi.model.VHNDCache
         VHNDCache::class,
         VHNCCache::class,
         PHCReviewMeetingCache::class,
+        AHDCache::class,
+        DewormingCache::class,
     ],
     views = [BenBasicCache::class],
     version = 15, exportSchema = false
