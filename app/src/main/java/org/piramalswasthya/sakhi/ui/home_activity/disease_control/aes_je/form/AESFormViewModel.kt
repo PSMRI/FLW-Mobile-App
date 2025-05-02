@@ -120,5 +120,8 @@ class AESFormViewModel @Inject constructor(
     fun getIndexOfDate(): Int {
         return dataset.getIndexOfDate()
     }
+    fun setRecordExist(b: Boolean) {
+        _recordExists.value = b
+    }
 
 }

@@ -38,6 +38,8 @@ class LeprosyFormFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.recordExists.observe(viewLifecycleOwner) { notIt ->
+            binding.fabEdit.visibility = if(notIt) View.VISIBLE else View.GONE
+            binding.btnSubmit.visibility = if (notIt) View.GONE else View.VISIBLE
             notIt?.let { recordExists ->
                 val adapter = FormInputAdapter(
                     formValueListener = FormInputAdapter.FormValueListener { formId, index ->
@@ -56,6 +58,9 @@ class LeprosyFormFragment : Fragment() {
                     }
                 }
             }
+        }
+        binding.fabEdit.setOnClickListener {
+            viewModel.setRecordExist(false)
         }
         viewModel.benName.observe(viewLifecycleOwner) {
             binding.tvBenName.text = it

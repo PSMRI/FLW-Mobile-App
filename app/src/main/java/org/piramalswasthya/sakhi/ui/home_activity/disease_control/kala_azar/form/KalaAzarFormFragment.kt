@@ -37,6 +37,8 @@ class KalaAzarFormFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.recordExists.observe(viewLifecycleOwner) { notIt ->
+            binding.fabEdit.visibility = if(notIt) View.VISIBLE else View.GONE
+            binding.btnSubmit.visibility = if (notIt) View.GONE else View.VISIBLE
             notIt?.let { recordExists ->
                 val adapter = FormInputAdapter(
                     formValueListener = FormInputAdapter.FormValueListener { formId, index ->
@@ -56,6 +58,9 @@ class KalaAzarFormFragment : Fragment() {
                 }
             }
         }
+        binding.fabEdit.setOnClickListener {
+            viewModel.setRecordExist(false)
+        }
         viewModel.benName.observe(viewLifecycleOwner) {
             binding.tvBenName.text = it
         }
@@ -71,7 +76,7 @@ class KalaAzarFormFragment : Fragment() {
                 KalaAzarFormViewModel.State.SAVE_SUCCESS -> {
                     Toast.makeText(
                         requireContext(),
-                        resources.getString(R.string.tb_screening_submitted), Toast.LENGTH_SHORT
+                        "Kala Azar Form submitted", Toast.LENGTH_SHORT
                     ).show()
 //                    WorkerUtils.triggerAmritPushWorker(requireContext())
                     findNavController().navigateUp()
@@ -93,10 +98,12 @@ class KalaAzarFormFragment : Fragment() {
     }
 
     private fun submitKalaAzarScreeningForm() {
+
         if (validateCurrentPage()) {
             viewModel.saveForm()
         }
     }
+
 
     private fun validateCurrentPage(): Boolean {
         val result = binding.form.rvInputForm.adapter?.let {

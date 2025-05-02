@@ -111,36 +111,14 @@ class KalaAzarFormViewModel @Inject constructor(
                     kalaAzarRepo.saveKalaAzarScreening(kalaazarScreeningCache)
                     _state.postValue(State.SAVE_SUCCESS)
                 } catch (e: Exception) {
-                    Timber.d("saving tb screening data failed!!")
+                    Timber.d("saving kala azar  data failed!! $e")
                     _state.postValue(State.SAVE_FAILED)
                 }
             }
         }
     }
 
-    fun saveFormDirectlyfromCbac() {
-        viewModelScope.launch {
-            withContext(defaultDispatcher) {
-                try {
-                    saveValues()
-                    _state.postValue(State.SAVING)
-                    kalaAzarRepo.saveKalaAzarScreening(kalaazarScreeningCache)
-                    _state.postValue(State.SAVE_SUCCESS)
-                } catch (e: Exception) {
-                    Timber.d("saving tb screening data failed!!")
-                    _state.postValue(State.SAVE_FAILED)
-                }
-            }
-        }
-    }
 
-    private suspend fun saveValues() {
-        kalaazarScreeningCache = KalaAzarScreeningCache(
-            benId = benRepo.getBenFromId(benId)!!.beneficiaryId,
-            houseHoldDetailsId = benRepo.getBenFromId(benId)!!.householdId,
-
-        )
-    }
 
     fun resetState() {
         _state.value = State.IDLE
@@ -148,6 +126,9 @@ class KalaAzarFormViewModel @Inject constructor(
 
     fun getIndexOfDate(): Int {
         return dataset.getIndexOfDate()
+    }
+    fun setRecordExist(b: Boolean) {
+        _recordExists.value = b
     }
 
 }

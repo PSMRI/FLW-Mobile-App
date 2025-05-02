@@ -288,14 +288,14 @@ class IconDataset @Inject constructor(
         Icon(
             R.drawable.ic__eligible_couple,
             resources.getString(R.string.icon_title_maleria),
-            recordsRepo.eligibleCoupleListCount,
+            recordsRepo.tbScreeningListCount,
             DiseaseControlFragmentDirections.actionDiseaseControlFragmentToMalariaIconsFragment(
 
             )
         ), Icon(
             R.drawable.ic__eligible_couple,
             resources.getString(R.string.icon_title_ka),
-            recordsRepo.eligibleCoupleTrackingListCount,
+            recordsRepo.tbScreeningListCount,
             DiseaseControlFragmentDirections.actionDiseaseControlFragmentToAllHouseHoldDiseaseControlFragment(
                 Disease.KALA_AZAR.toString()
             )
@@ -304,7 +304,7 @@ class IconDataset @Inject constructor(
         Icon(
             R.drawable.ic__eligible_couple,
             resources.getString(R.string.icon_title_aes),
-            recordsRepo.eligibleCoupleTrackingListCount,
+            recordsRepo.tbScreeningListCount,
             DiseaseControlFragmentDirections.actionDiseaseControlFragmentToAllHouseHoldDiseaseControlFragment(
                 Disease.AES_JE.toString()
             )
@@ -312,7 +312,7 @@ class IconDataset @Inject constructor(
         Icon(
             R.drawable.ic__eligible_couple,
             resources.getString(R.string.icon_title_filaria),
-            recordsRepo.eligibleCoupleTrackingListCount,
+            recordsRepo.tbScreeningListCount,
             DiseaseControlFragmentDirections.actionDiseaseControlFragmentToAllHouseHoldDiseaseControlFragment(
                 Disease.FILARIA.toString()
             )
@@ -320,7 +320,7 @@ class IconDataset @Inject constructor(
         Icon(
             R.drawable.ic__eligible_couple,
             resources.getString(R.string.icon_title_leprosy),
-            recordsRepo.eligibleCoupleTrackingListCount,
+            recordsRepo.tbScreeningListCount,
             DiseaseControlFragmentDirections.actionDiseaseControlFragmentToAllHouseHoldDiseaseControlFragment(
                 Disease.LEPROSY.toString()
             )
