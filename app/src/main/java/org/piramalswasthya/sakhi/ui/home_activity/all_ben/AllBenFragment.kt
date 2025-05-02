@@ -232,9 +232,9 @@ class AllBenFragment : Fragment() {
             (it as HomeActivity).updateActionBar(
                 R.drawable.ic__ben,
                 title = if (args.source == 1) {
-                    getString(R.string.icon_title_abha)
+                    getString(R.string.icon_title_abhas)
                 } else if (args.source == 2) {
-                    getString(R.string.icon_title_rch)
+                    getString(R.string.icon_title_rchs)
                 } else {
                     getString(R.string.icon_title_ben)
                 }
