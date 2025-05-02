@@ -237,14 +237,14 @@ class IconDataset @Inject constructor(
             R.drawable.ic__follow_up_hrp,
             resources.getString(R.string.ahd),
             null,
-            HrpCasesFragmentDirections.actionHrpCasesFragmentToHRPPregnantListFragment()
+            VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToAHDListFragment()
         )
         ,
         Icon(
             R.drawable.ic__follow_up_hrp,
             resources.getString(R.string.national_deworming_day),
             null,
-            HrpCasesFragmentDirections.actionHrpCasesFragmentToHRPPregnantListFragment()
+            VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToDewormingListFragment()
         )
     )
 

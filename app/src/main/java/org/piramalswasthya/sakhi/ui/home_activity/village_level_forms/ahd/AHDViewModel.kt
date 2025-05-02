@@ -1,12 +1,9 @@
-package org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.vhnd
+package org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.ahd
 
-import android.app.AlertDialog
 import android.content.Context
 import android.net.Uri
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -16,33 +13,37 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
-import org.piramalswasthya.sakhi.configuration.VHNDDataset
+import org.piramalswasthya.sakhi.configuration.AHDDataset
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
-import org.piramalswasthya.sakhi.model.BenRegCache
-import org.piramalswasthya.sakhi.model.HRPMicroBirthPlanCache
-import org.piramalswasthya.sakhi.model.VHNDCache
+import org.piramalswasthya.sakhi.model.AHDCache
+import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.repositories.VLFRepo
 import timber.log.Timber
+import javax.inject.Inject
 
 @HiltViewModel
-class VHNDViewModel @javax.inject.Inject
-constructor(
+class AHDViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     preferenceDao: PreferenceDao,
     @ApplicationContext context: Context,
-    private val vlfReo: VLFRepo,
+    private val vlfRepo: VLFRepo,
 ) : ViewModel() {
+
     enum class State {
         IDLE, SAVING, SAVE_SUCCESS, SAVE_FAILED
     }
 
-    val allVHNDList = vlfReo.vhndList
-    private val vhndId = VHNDFormFragementArgs.fromSavedStateHandle(savedStateHandle).id
-
+    // AHDViewModel.kt (already present, just ensure it's correct)
+    fun getCurrentFormList(): List<FormElement> {
+        return dataset.getFormElementList()
+    }
     @RequiresApi(Build.VERSION_CODES.O)
-    val isCurrentMonthFormFilled : Flow<Map<String, Boolean>> = vlfReo.isFormFilledForCurrentMonth()
+    val isCurrentMonthFormFilled : Flow<Map<String, Boolean>> = vlfRepo.isFormFilledForCurrentMonth()
 
-    //
+
+    val allAHDList = vlfRepo.ahdList
+    private val ahdId = AHDFormFragmentArgs.fromSavedStateHandle(savedStateHandle).id
+
     private var lastImageFormId: Int = 0
     fun setCurrentImageFormId(id: Int) {
         lastImageFormId = id
@@ -50,48 +51,33 @@ constructor(
 
     fun setImageUriToFormElement(dpUri: Uri) {
         dataset.setImageUriToFormElement(lastImageFormId, dpUri)
-//        Log.v("jnjdnjsadd>>","$dpUri")
     }
-//    private val _dateVHND = MutableLiveData<String>()
-//    val dateVHND: LiveData<String>
-//        get() = _dateVHND
-//
-//    private val _noOfBenAttVHND = MutableLiveData<String>()
-//    val noOfBenAttVHND: LiveData<String>
-//        get() = _noOfBenAttVHND
-//
-//    private val _placeVHND = MutableLiveData<String>()
-//    val placeVHND: LiveData<String>
-//        get() = _placeVHND
-
 
     private val _state = MutableLiveData(State.IDLE)
     val state: LiveData<State>
         get() = _state
+
     private val _recordExists = MutableLiveData<Boolean>()
     val recordExists: LiveData<Boolean>
         get() = _recordExists
-    private val dataset =
-        VHNDDataset(context, preferenceDao.getCurrentLanguage())
+
+    private val dataset = AHDDataset(context, preferenceDao.getCurrentLanguage())
     val formList = dataset.listFlow
-    lateinit var _vhndCache: VHNDCache
+    lateinit var _ahdCache: AHDCache
 
     init {
         viewModelScope.launch {
-
-            _vhndCache = VHNDCache(id = 0, vhndDate = "");
-            val vhndIds = vlfReo.getVHND(vhndId)
-            vlfReo.getVHND(vhndId)?.let {
-                _vhndCache = it
+            _ahdCache = AHDCache(id = 0, mobilizedForAHD = "")
+            val ahdRecord = vlfRepo.getAHD(ahdId)
+            vlfRepo.getAHD(ahdId)?.let {
+                _ahdCache = it
                 _recordExists.value = true
             } ?: run {
                 _recordExists.value = false
             }
             dataset.setUpPage(
-                if (recordExists.value == true) vhndIds else null
+                if (recordExists.value == true) ahdRecord else null
             )
-
-
         }
     }
 
@@ -105,11 +91,11 @@ constructor(
         viewModelScope.launch {
             try {
                 _state.postValue(State.SAVING)
-                dataset.mapValues(_vhndCache, 1)
-                vlfReo.saveRecord(_vhndCache)
+                dataset.mapValues(_ahdCache, 1)
+                vlfRepo.saveAHDRecord(_ahdCache)
                 _state.postValue(State.SAVE_SUCCESS)
             } catch (e: Exception) {
-                Timber.d("saving VHND data failed!!")
+                Timber.d("saving AHD data failed!!")
                 _state.postValue(State.SAVE_FAILED)
             }
         }
@@ -118,6 +104,4 @@ constructor(
     fun resetState() {
         _state.value = State.IDLE
     }
-
-
 }

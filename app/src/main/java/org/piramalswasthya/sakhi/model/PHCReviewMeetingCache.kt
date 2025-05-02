@@ -6,7 +6,6 @@ import androidx.room.PrimaryKey
 import org.piramalswasthya.sakhi.configuration.FormDataModel
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.network.PHCReviewDTO
-import org.piramalswasthya.sakhi.network.VHNCDTO
 import java.util.Date
 
 @Entity(tableName = "PHCReviewMeeting",
@@ -26,7 +25,7 @@ data class PHCReviewMeetingCache(
         return PHCReviewDTO(
             id = id,
             phcReviewDate = (phcReviewDate),
-            Place = place,
+            place = place,
             noOfBeneficiariesAttended = noOfBeneficiariesAttended,
             Image1 = image1,
             Image2 = image2

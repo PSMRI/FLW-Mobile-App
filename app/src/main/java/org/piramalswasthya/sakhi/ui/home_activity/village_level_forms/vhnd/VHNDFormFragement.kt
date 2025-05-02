@@ -87,7 +87,10 @@ class VHNDFormFragement:Fragment() {
 
 
         binding.btnSubmit.setOnClickListener {
-            viewModel.saveForm()
+            if(validateCurrentPage())
+            {
+                viewModel.saveForm()
+            }
         }
 
         viewModel.state.observe(viewLifecycleOwner) { state ->
@@ -159,12 +162,19 @@ class VHNDFormFragement:Fragment() {
             if (success) {
                 latestTmpUri?.let { uri ->
 
-                    viewModel.setCurrentImageFormId(imgValue)
-                    viewModel.setImageUriToFormElement(uri)
+                    if (isImageSizeValid(uri)){
+                        viewModel.setCurrentImageFormId(imgValue)
+                        viewModel.setImageUriToFormElement(uri)
 
-                    binding.form.rvInputForm.apply {
-                        (this.adapter as? FormInputAdapter)?.notifyItemChanged(if (imgValue == 1) 3 else 4)
+                        binding.form.rvInputForm.apply {
+                            (this.adapter as? FormInputAdapter)?.notifyItemChanged(if (imgValue == 1) 3 else 4)
+                        }
                     }
+                    else{
+                        Toast.makeText(requireContext(), "Image size should be less than 5 MB", Toast.LENGTH_LONG).show()
+
+                    }
+
                     Timber.d("Image saved at @ $uri")
                 }
             }
@@ -192,15 +202,42 @@ class VHNDFormFragement:Fragment() {
         if (result.resultCode == Activity.RESULT_OK) {
             val imageUri = result.data?.data
             imageUri?.let { uri ->
-                latestTmpUri = uri  // Save the selected image URI
-                // Use the URI as needed (e.g., display in an ImageView)
-                viewModel.setCurrentImageFormId(imgValue)
-                viewModel.setImageUriToFormElement(uri)
-                binding.form.rvInputForm.apply {
-                    (this.adapter as? FormInputAdapter)?.notifyItemChanged(if (imgValue == 1) 3 else 4)
+
+                if (isImageSizeValid(uri)){
+                    latestTmpUri = uri  // Save the selected image URI
+                    // Use the URI as needed (e.g., display in an ImageView)
+                    viewModel.setCurrentImageFormId(imgValue)
+                    viewModel.setImageUriToFormElement(uri)
+                    binding.form.rvInputForm.apply {
+                        (this.adapter as? FormInputAdapter)?.notifyItemChanged(if (imgValue == 1) 3 else 4)
+                    }
                 }
+                else{
+                    Toast.makeText(requireContext(), "Image size should be less than 5 MB", Toast.LENGTH_LONG).show()
+
+                }
+
 
             }
         }
+    }
+    private fun validateCurrentPage(): Boolean {
+        val result = binding.form.rvInputForm.adapter?.let {
+            (it as FormInputAdapter).validateInput(resources)
+        }
+        Timber.d("Validation : $result")
+        return if (result == -1) true
+        else {
+            if (result != null) {
+                binding.form.rvInputForm.scrollToPosition(result)
+            }
+            false
+        }
+    }
+
+    private fun isImageSizeValid(uri: Uri): Boolean {
+        val fileSizeInBytes = requireContext().contentResolver.openInputStream(uri)?.available() ?: 0
+        val fileSizeInMB = fileSizeInBytes / (1024.0 * 1024.0)
+        return fileSizeInMB <= 5
     }
 }

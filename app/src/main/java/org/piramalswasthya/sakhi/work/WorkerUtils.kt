@@ -37,6 +37,11 @@ object WorkerUtils {
         val pullHRPWorkRequest = OneTimeWorkRequestBuilder<PullHRPFromAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
+
+        val pullVLFWorkRequest = OneTimeWorkRequestBuilder<PullVLFFromAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+
         val pullTBWorkRequest = OneTimeWorkRequestBuilder<PullTBFromAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
@@ -68,6 +73,11 @@ object WorkerUtils {
         val pushHRPToAmritWorker = OneTimeWorkRequestBuilder<PushHRPToAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
+           val pushVLFToAmritWorker = OneTimeWorkRequestBuilder<PushVLFToAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+
+
         val pushTBWorkRequest = OneTimeWorkRequestBuilder<PushTBToAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
@@ -87,6 +97,7 @@ object WorkerUtils {
                 ExistingWorkPolicy.APPEND_OR_REPLACE,
                 pullWorkRequest
             )
+            .then(pullVLFWorkRequest)
             .then(pullIncentiveActivityWorkRequest)
             .then(pullCbacWorkRequest)
             .then(pullHRPWorkRequest)
@@ -99,6 +110,7 @@ object WorkerUtils {
             .then(pushCbacWorkRequest)
             .then(pushImmunizationWorkRequest)
             .then(pushHRPToAmritWorker)
+            .then(pushVLFToAmritWorker)
             .then(pushTBWorkRequest)
             .then(pushECWorkRequest)
 //            .then(pushChildHBYCToAmritWorker)
@@ -114,6 +126,9 @@ object WorkerUtils {
             .setConstraints(networkOnlyConstraint)
             .build()
         val pushHRPToAmritWorker = OneTimeWorkRequestBuilder<PushHRPToAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pushVLFToAmritWorker = OneTimeWorkRequestBuilder<PushVLFToAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
         val pushTBWorkRequest = OneTimeWorkRequestBuilder<PushTBToAmritWorker>()
@@ -180,6 +195,7 @@ object WorkerUtils {
             )
             .then(pushCbacWorkRequest)
             .then(pushHRPToAmritWorker)
+            .then(pushVLFToAmritWorker)
             .then(pushTBWorkRequest)
             .then(pushECToAmritWorker)
             .then(pushPWWorkRequest)
@@ -214,6 +230,10 @@ object WorkerUtils {
         val pullHRPWorkRequest = OneTimeWorkRequestBuilder<PullHRPFromAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
+         val pullVLFWorkRequest = OneTimeWorkRequestBuilder<PullVLFFromAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+
         val pullTBWorkRequest = OneTimeWorkRequestBuilder<PullTBFromAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
@@ -265,6 +285,7 @@ object WorkerUtils {
                 ExistingWorkPolicy.APPEND_OR_REPLACE,
                 pullWorkRequest
             )
+            .then(pullVLFWorkRequest)
             .then(pullIncentiveActivityWorkRequest)
             .then(pullCbacWorkRequest)
             .then(pullVaccineWorkRequest)

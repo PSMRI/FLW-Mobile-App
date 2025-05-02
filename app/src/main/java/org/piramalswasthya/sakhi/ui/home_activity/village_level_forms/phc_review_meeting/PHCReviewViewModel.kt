@@ -3,7 +3,9 @@ package org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.phc_revie
 import android.app.AlertDialog
 import android.content.Context
 import android.net.Uri
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -12,6 +14,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.configuration.PHCReviewDataset
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
@@ -55,6 +58,10 @@ constructor(
 //    private val _placeVHND = MutableLiveData<String>()
 //    val placeVHND: LiveData<String>
 //        get() = _placeVHND
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    val isCurrentMonthFormFilled : Flow<Map<String, Boolean>> = vlfReo.isFormFilledForCurrentMonth()
 
 
     private val _state = MutableLiveData(State.IDLE)

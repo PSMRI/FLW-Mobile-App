@@ -25,7 +25,7 @@ data class VHNCCache(
         return VHNCDTO(
             id = id,
             vhncDate = (vhncDate),
-            Place = place,
+            place = place,
             noOfBeneficiariesAttended = noOfBeneficiariesAttended,
             Image1 = image1,
             Image2 = image2

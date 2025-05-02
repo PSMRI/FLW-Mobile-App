@@ -74,6 +74,31 @@ interface SyncDao {
                 "    FROM HRP_PREGNANT_ASSESS hrpa " +
                 "    INNER JOIN beneficiary b ON b.beneficiaryId = hrpa.benId " +
 //                "    WHERE b.loc_village_id = :villageId " +
+                 "    UNION ALL " +
+                "    SELECT 21 as id, 'VHND' as name, vhnd.syncState as syncState " +
+                "    FROM VHND vhnd " +
+
+                "    UNION ALL " +
+                "    SELECT 22 as id, 'VHNC' as name, vhnc.syncState as syncState " +
+                "    FROM VHNC vhnc " +
+
+                "    UNION ALL " +
+                "    SELECT 23 as id, 'PHC' as name, phc.syncState as syncState " +
+                "    FROM PHCReviewMeeting phc " +
+
+                "    UNION ALL " +
+                "    SELECT 24 as id, 'AHD' as name, ahd.syncState as syncState " +
+                "    FROM AHDMeeting ahd " +
+
+                "    UNION ALL " +
+                "    SELECT 25 as id, 'Deworming' as name, deworming.syncState as syncState " +
+                "    FROM DewormingMeeting deworming " +
+
+//                "    INNER JOIN beneficiary b ON b.beneficiaryId = hrpa.benId " +
+//                "    WHERE b.loc_village_id = :villageId " +
+
+
+
                 "    UNION ALL " +
                 "    SELECT 14 as id, 'HRP Track' as name, hrpt.syncState as syncState " +
                 "    FROM HRP_PREGNANT_TRACK hrpt " +
