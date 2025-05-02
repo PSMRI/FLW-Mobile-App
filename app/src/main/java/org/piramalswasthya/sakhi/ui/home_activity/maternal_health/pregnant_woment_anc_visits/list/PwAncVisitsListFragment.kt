@@ -80,7 +80,7 @@ class PwAncVisitsListFragment : Fragment() {
                         }
                         Toast.makeText(requireContext(), "Please allow permissions first", Toast.LENGTH_SHORT).show()
                     }
-                })
+                }), true
         )
         binding.rvAny.adapter = benAdapter
         lifecycleScope.launch {
