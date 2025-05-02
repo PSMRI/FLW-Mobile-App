@@ -11,7 +11,8 @@ import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.model.BenWithAncListDomain
 import java.util.concurrent.TimeUnit
 
-class AncVisitListAdapter(private val clickListener: PregnancyVisitClickListener? = null) :
+class AncVisitListAdapter(private val clickListener: PregnancyVisitClickListener? = null,
+                          private val showCall: Boolean = false) :
     ListAdapter<BenWithAncListDomain, AncVisitListAdapter.PregnancyVisitViewHolder>(
         MyDiffUtilCallBack
     ) {
@@ -37,7 +38,7 @@ class AncVisitListAdapter(private val clickListener: PregnancyVisitClickListener
         }
 
         fun bind(
-            item: BenWithAncListDomain, clickListener: PregnancyVisitClickListener?
+            item: BenWithAncListDomain, clickListener: PregnancyVisitClickListener?, showCall: Boolean
         ) {
             if (item.ancDate!! < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(90) &&
                 item.ancDate!! > System.currentTimeMillis() - TimeUnit.DAYS.toMillis(365)) {
@@ -45,6 +46,13 @@ class AncVisitListAdapter(private val clickListener: PregnancyVisitClickListener
             } else {
                 binding.ivFollowState.visibility = View.VISIBLE
             }
+
+            if (showCall) {
+                binding.ivCall.visibility = View.VISIBLE
+            } else {
+                binding.ivCall.visibility = View.GONE
+            }
+
             binding.visit = item
             binding.btnAddAnc.visibility = if (item.showAddAnc) View.VISIBLE else View.INVISIBLE
             binding.btnPmsma.visibility = if (item.pmsmaFillable) View.VISIBLE else View.INVISIBLE
@@ -63,7 +71,7 @@ class AncVisitListAdapter(private val clickListener: PregnancyVisitClickListener
     ) = PregnancyVisitViewHolder.from(parent)
 
     override fun onBindViewHolder(holder: PregnancyVisitViewHolder, position: Int) {
-        holder.bind(getItem(position), clickListener)
+        holder.bind(getItem(position), clickListener, showCall)
     }
 
 
