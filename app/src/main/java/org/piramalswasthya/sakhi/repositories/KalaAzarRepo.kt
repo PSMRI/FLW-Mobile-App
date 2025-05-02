@@ -35,9 +35,9 @@ class KalaAzarRepo @Inject constructor(
         }
     }
 
-    suspend fun saveKalaAzarScreening(KalaAzarScreeningCache: KalaAzarScreeningCache) {
+    suspend fun saveKalaAzarScreening(kalaAzarScreeningCache: KalaAzarScreeningCache) {
         withContext(Dispatchers.IO) {
-            kalaAzarDao.saveKalaAzarScreening(KalaAzarScreeningCache)
+            kalaAzarDao.saveKalaAzarScreening(kalaAzarScreeningCache)
         }
     }
 

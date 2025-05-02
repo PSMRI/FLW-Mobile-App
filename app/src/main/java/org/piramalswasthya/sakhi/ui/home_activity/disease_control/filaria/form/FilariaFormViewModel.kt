@@ -121,4 +121,7 @@ class FilariaFormViewModel @Inject constructor(
         return dataset.getIndexOfDate()
     }
 
+    fun setRecordExist(b: Boolean) {
+        _recordExists.value = b
+    }
 }

@@ -21,7 +21,7 @@ class AESJEFormDataset(
         required = true,
         min = System.currentTimeMillis() -  (90L * 24 * 60 * 60 * 1000),
         max = System.currentTimeMillis(),
-        hasDependants = true
+        hasDependants = false
 
     )
     private val beneficiaryStatus = FormElement(
@@ -31,7 +31,7 @@ class AESJEFormDataset(
         arrayId = R.array.benificary_case_status_kalaazar,
         entries = resources.getStringArray(R.array.benificary_case_status_kalaazar),
         required = true,
-        hasDependants = true
+        hasDependants = false
 
     )
     private val dateOfDeath = FormElement(
@@ -76,7 +76,7 @@ class AESJEFormDataset(
 
     )
     private var otherReasonOfDeath = FormElement(
-        id = 5,
+        id = 7,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.other_reason),
         required = true,
@@ -85,7 +85,7 @@ class AESJEFormDataset(
 
 
     private val caseStatus = FormElement(
-        id = 16,
+        id = 8,
         inputType = InputType.DROPDOWN,
         title = resources.getString(R.string.aes_case_status_date),
         arrayId = R.array.dc_case_status,
@@ -96,7 +96,7 @@ class AESJEFormDataset(
     )
 
     private var followUpPoint = FormElement(
-        id = 22,
+        id = 9,
         inputType = InputType.DROPDOWN,
         title = resources.getString(R.string.follow_up),
         arrayId = R.array.follow_up_array,
@@ -106,7 +106,7 @@ class AESJEFormDataset(
     )
 
     private var referredTo = FormElement(
-        id = 22,
+        id = 10,
         inputType = InputType.DROPDOWN,
         title = resources.getString(R.string.refer_to),
         arrayId = R.array.dc_refer,
@@ -115,7 +115,7 @@ class AESJEFormDataset(
         hasDependants = true
     )
     private var other = FormElement(
-        id = 23,
+        id = 11,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.other),
         required = true,
@@ -287,7 +287,7 @@ class AESJEFormDataset(
             }
 
             else -> {
-                0
+                -1
             }
         }
     }
@@ -309,7 +309,8 @@ class AESJEFormDataset(
             form.otherReferredFacility = other.value
             form.diseaseTypeID = 3
             form.createdDate = getLongFromDate(dateOfCase.value)
-            form.followUpPoint = followUpPoint.value!!.toInt()
+            form.followUpPoint = followUpPoint.value?.toIntOrNull() ?: 0
+
         }
     }
 

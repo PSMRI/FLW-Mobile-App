@@ -8,6 +8,7 @@ import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.InputType
 import org.piramalswasthya.sakhi.model.MalariaScreeningCache
 import org.piramalswasthya.sakhi.model.TBScreeningCache
+import timber.log.Timber
 import java.util.Calendar
 
 class MalariaFormDataset(
@@ -181,7 +182,7 @@ class MalariaFormDataset(
         title = resources.getString(R.string.rapid_diagnostic),
         entries = resources.getStringArray(R.array.positive_negative),
         required = false,
-        hasDependants = false
+        hasDependants = true
     )
 
     private val dateOfTest = FormElement(
@@ -202,7 +203,7 @@ class MalariaFormDataset(
         title = resources.getString(R.string.slide_test_pf),
         entries = resources.getStringArray(R.array.positive_negative),
         required = false,
-        hasDependants = false
+        hasDependants = true
     )
 
     private var slideTestPv = FormElement(
@@ -211,7 +212,7 @@ class MalariaFormDataset(
         title = resources.getString(R.string.slide_test_pv),
         entries = resources.getStringArray(R.array.positive_negative),
         required = false,
-        hasDependants = false
+        hasDependants = true
     )
 
     private val dateOfSlidetest = FormElement(
@@ -529,7 +530,15 @@ class MalariaFormDataset(
             }
 
             slideTestPf.id -> {
-                if (slideTestPf.value != resources.getStringArray(R.array.positive_negative)[2]) {
+                slideTestPf.isEnabled = true
+                if (slideTestPf.value == resources.getStringArray(R.array.positive_negative)[0]) {
+                    triggerDependants(
+                        source = slideTestPf,
+                        addItems = listOf(dateOfSlidetest),
+                        removeItems = listOf()
+                    )
+                } else if (slideTestPf.value == resources.getStringArray(R.array.positive_negative)[1]) {
+
                     triggerDependants(
                         source = slideTestPf,
                         addItems = listOf(dateOfSlidetest),
@@ -541,6 +550,7 @@ class MalariaFormDataset(
                         addItems = listOf(),
                         removeItems = listOf(dateOfSlidetest)
                     )
+
                 }
                 0
             }

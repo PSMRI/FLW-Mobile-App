@@ -7,7 +7,6 @@ import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.InputType
 import org.piramalswasthya.sakhi.model.KalaAzarScreeningCache
-import org.piramalswasthya.sakhi.model.TBScreeningCache
 
 class KalaAzarFormDataset(
     context: Context, currentLanguage: Languages
@@ -21,7 +20,7 @@ class KalaAzarFormDataset(
         required = true,
         min = System.currentTimeMillis() -  (90L * 24 * 60 * 60 * 1000),
         max = System.currentTimeMillis(),
-        hasDependants = true
+        hasDependants = false
 
     )
     private val beneficiaryStatus = FormElement(
@@ -76,7 +75,7 @@ class KalaAzarFormDataset(
 
     )
     private var otherReasonOfDeath = FormElement(
-        id = 5,
+        id = 7,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.other_reason),
         required = true,
@@ -85,7 +84,7 @@ class KalaAzarFormDataset(
 
 
     private val caseStatus = FormElement(
-        id = 16,
+        id = 8,
         inputType = InputType.DROPDOWN,
         title = resources.getString(R.string.case_status),
         arrayId = R.array.dc_case_status,
@@ -95,27 +94,27 @@ class KalaAzarFormDataset(
 
     )
     private var rapidDiagnostic = FormElement(
-        id = 17,
+        id = 9,
         inputType = InputType.RADIO,
         title = resources.getString(R.string.rapid_diagnostic_kala),
         entries = resources.getStringArray(R.array.positive_negative),
         required = false,
-        hasDependants = false
+        hasDependants = true
     )
 
     private val dateOfTest = FormElement(
-        id = 18,
+        id = 10,
         inputType = InputType.DATE_PICKER,
         title = resources.getString(R.string.test_up_date),
         arrayId = -1,
         required = true,
-        min = System.currentTimeMillis(),
-        max = System.currentTimeMillis() - (90L * 24 * 60 * 60 * 1000),
+        max = System.currentTimeMillis(),
+        min = System.currentTimeMillis() - (90L * 24 * 60 * 60 * 1000),
         hasDependants = true
 
     )
     private var followUpPoint = FormElement(
-        id = 22,
+        id = 11,
         inputType = InputType.DROPDOWN,
         title = resources.getString(R.string.follow_up),
         arrayId = R.array.follow_up_array,
@@ -125,7 +124,7 @@ class KalaAzarFormDataset(
     )
 
     private var referredTo = FormElement(
-        id = 22,
+        id = 12,
         inputType = InputType.DROPDOWN,
         title = resources.getString(R.string.refer_to),
         arrayId = R.array.dc_refer,
@@ -134,7 +133,7 @@ class KalaAzarFormDataset(
         hasDependants = true
     )
     private var other = FormElement(
-        id = 23,
+        id = 13,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.other),
         required = true,
@@ -371,10 +370,12 @@ class KalaAzarFormDataset(
             form.rapidDiagnosticTest = rapidDiagnostic.value
             form.diseaseTypeID = 2
             form.createdDate = getLongFromDate(dateOfCase.value)
-            form.followUpPoint = followUpPoint.value!!.toInt()
+            form.followUpPoint = followUpPoint.value?.toIntOrNull() ?: 0
 
         }
     }
+
+
 
 
     fun updateBen(benRegCache: BenRegCache) {
