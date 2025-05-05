@@ -1,9 +1,11 @@
 package org.piramalswasthya.sakhi.model
 
+import android.content.Context
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.squareup.moshi.JsonClass
+import org.piramalswasthya.sakhi.helpers.ImageUtils
 
 
 @Entity(tableName = "PROFILE_ACTIVITY")
@@ -11,6 +13,7 @@ data class ProfileActivityCache(
     @PrimaryKey
     val id: Long,
     var name: String?="",
+    var profileImage: String? = null,
     var village:String?="",
     val employeeId:Int?=0,
     var dob:String?="",
@@ -34,12 +37,16 @@ data class ProfileActivityCache(
     var ashaHouseholdRegistration: String?=null,
     var ashaFamilyMember: String?=null,
     var providerServiceMapID: String?=null,
+    var isFatherOrSpouse: Boolean?=false,
+    var supervisorName: String?="",
+    var supervisorMobile: String?="",
     )
 
 @JsonClass(generateAdapter = true)
 data class ProfileActivityNetwork(
     val id: Long=0L,
     val name: String?=null,
+    var profileImage: String? = null,
     val village:String?=null,
     val employeeId:Int?=0,
     val dob:String?=null,
@@ -63,11 +70,15 @@ data class ProfileActivityNetwork(
     val ashaHouseholdRegistration: String?=null,
     val ashaFamilyMember: String?=null,
     val providerServiceMapID: String?=null,
+    val isFatherOrSpouse: Boolean?=null,
+    var supervisorName: String?="",
+    var supervisorMobile: String?="",
 ) {
     fun asCacheModel(): ProfileActivityCache {
         return ProfileActivityCache(
             id = id,
             name = name,
+            profileImage = profileImage,
             village = village,
             employeeId = employeeId,
             dob = dob,
@@ -91,6 +102,10 @@ data class ProfileActivityNetwork(
             ashaHouseholdRegistration = ashaHouseholdRegistration,
             ashaFamilyMember = ashaFamilyMember,
             providerServiceMapID = providerServiceMapID,
+            isFatherOrSpouse = isFatherOrSpouse,
+            supervisorName = supervisorName,
+            supervisorMobile = supervisorMobile,
+
         )
     }
 }
@@ -123,6 +138,7 @@ data class ProfileDomain(
 data class ProfileDomainDTO(
     val id: Long,
     val name: String,
+    var profileImage: String? = null,
     val village:String,
     val employeeId:Int,
     val dob:String,
@@ -146,6 +162,9 @@ data class ProfileDomainDTO(
     val ashaHouseholdRegistration: String,
     val ashaFamilyMember: String,
     val providerServiceMapID: String,
+    val isFatherOrSpouse: Boolean,
+    val supervisorName: String,
+    val supervisorMobile: String
 )
 
 

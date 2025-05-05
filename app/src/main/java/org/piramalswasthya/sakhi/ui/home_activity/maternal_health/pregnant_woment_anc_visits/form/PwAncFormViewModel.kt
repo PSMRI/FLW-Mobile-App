@@ -63,11 +63,11 @@ class PwAncFormViewModel @Inject constructor(
         PregnantWomanAncVisitDataset(context, preferenceDao.getCurrentLanguage())
     val formList = dataset.listFlow
 
-    fun getIndexOfFile() = dataset.getIndexOfFilePath()
-
     private lateinit var ancCache: PregnantWomanAncCache
     private lateinit var registerRecord: PregnantWomanRegistrationCache
 
+    fun getIndexOfMCPCardFront() = dataset.getIndexOfMCPCardFrontPath()
+    fun getIndexOfMCPCardBack() = dataset.getIndexOfMCPCardBackPath()
 
     init {
         viewModelScope.launch {
@@ -82,7 +82,8 @@ class PwAncFormViewModel @Inject constructor(
                     syncState = SyncState.UNSYNCED,
                     createdBy = asha.userName,
                     updatedBy = asha.userName,
-                    file_path = ""
+                    frontFilePath = "",
+                    backFilePath = ""
                 )
             }
             registerRecord = maternalHealthRepo.getSavedRegistrationRecord(benId)!!
@@ -108,6 +109,9 @@ class PwAncFormViewModel @Inject constructor(
 
     fun setCurrentDocumentFormId(id: Int) {
         lastDocumentFormId = id
+    }
+    fun getDocumentFormId():Int {
+        return lastDocumentFormId
     }
 
     fun setImageUriToFormElement(dpUri: Uri) {

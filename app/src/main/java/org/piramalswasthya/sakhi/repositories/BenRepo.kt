@@ -1328,18 +1328,8 @@ class BenRepo @Inject constructor(
                     }
 
                     5000, 5002 -> {
-                        if (JSONObject(responseBody).getString("errorMessage")
-                                .contentEquals("Invalid login key or session is expired")
-                        ) {
-                            val user = preferenceDao.getLoggedInUser()!!
-                            userRepo.refreshTokenTmc(user.userName, user.password)
+                        Toast.makeText(context,"Please enter valid OTP.",Toast.LENGTH_SHORT).show()
 
-                        } else {
-                            NetworkResult.Error(
-                                0,
-                                JSONObject(responseBody).getString("errorMessage")
-                            )
-                        }
                     }
 
                     else -> {

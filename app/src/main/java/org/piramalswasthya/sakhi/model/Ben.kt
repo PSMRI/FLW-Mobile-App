@@ -1024,6 +1024,8 @@ data class BenRegCache(
 
     var mobileNoOfRelationId: Int = 0,
 
+    var tempMobileNoOfRelationId: Int = 0,
+
     var mobileOthers: String? = null,
 
     var contactNumber: Long = 0,

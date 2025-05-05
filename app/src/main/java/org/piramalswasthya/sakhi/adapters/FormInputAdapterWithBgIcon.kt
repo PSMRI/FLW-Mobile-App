@@ -195,9 +195,9 @@ class FormInputAdapterWithBgIcon (
 
     }
 
-    class ViewDocumentOnClick(private val viewDocument: () -> Unit) {
+    class ViewDocumentOnClick(private val viewDocument: (formId: Int) -> Unit) {
 
-        fun onViewDocumentClick() = viewDocument()
+        fun onViewDocumentClick(form: FormElement) = viewDocument(form.id)
 
     }
 

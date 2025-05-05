@@ -13,6 +13,7 @@
     <string name="sc_hwc_tg_hosp">SC/HWC/TG Hosp</string>
     <string name="block">Block</string>
     <string name="bank_acc_no">Bank Acc No</string>
+    <string name="bank_acc">Bank Account</string>
     <string name="nearest_24x7_phc">Nearest 24x7 PHC</string>
     <string name="nearest_fru">Nearest FRU</string>
     <string name="nearest_usg_centre">Nearest USG centre</string>
