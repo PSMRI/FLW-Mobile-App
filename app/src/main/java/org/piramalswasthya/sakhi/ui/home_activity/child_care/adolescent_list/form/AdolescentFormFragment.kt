@@ -16,6 +16,7 @@ import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentAdolescentHealthBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.child_care.adolescent_list.form.AdolescentHealthFormViewModel
+import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -37,7 +38,6 @@ class AdolescentHealthFormFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Observe recordExists to toggle edit/submit modes
         viewModel.recordExists.observe(viewLifecycleOwner) { notIt ->
             notIt?.let { recordExists ->
                 binding.fabEdit.visibility = if (recordExists) View.VISIBLE else View.GONE
@@ -58,7 +58,6 @@ class AdolescentHealthFormFragment : Fragment() {
             }
         }
 
-        // Observe beneficiary name and age/gender
         viewModel.benName.observe(viewLifecycleOwner) {
             binding.tvBenName.text = it
         }
@@ -66,17 +65,14 @@ class AdolescentHealthFormFragment : Fragment() {
             binding.tvAgeGender.text = it
         }
 
-        // Submit button click
         binding.btnSubmit.setOnClickListener {
             submitAdolescentHealthForm()
         }
 
-        // Edit button click
         binding.fabEdit.setOnClickListener {
             viewModel.setRecordExist(false)
         }
 
-        // Observe save state
         viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state) {
                 AdolescentHealthFormViewModel.State.SAVING -> {
@@ -86,6 +82,7 @@ class AdolescentHealthFormFragment : Fragment() {
                 AdolescentHealthFormViewModel.State.SAVE_SUCCESS -> {
                     binding.btnSubmit.isEnabled = true
                     Toast.makeText(context, "Saved Successfully!", Toast.LENGTH_SHORT).show()
+                    WorkerUtils.triggerAmritPushWorker(requireContext())
                     findNavController().popBackStack()
                 }
                 AdolescentHealthFormViewModel.State.SAVE_FAILED -> {

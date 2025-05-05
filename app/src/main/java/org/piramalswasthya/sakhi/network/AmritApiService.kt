@@ -62,12 +62,10 @@ interface AmritApiService {
     suspend fun saveTBScreeningData(@Body tbScreeningRequestDTO: TBScreeningRequestDTO): Response<ResponseBody>
 
 
-    @POST("flw-0.0.1/tb/suspected/getAll")
-//    @POST("tb/suspected/getAll")
+    @POST("flw-0.0.1/adolescentHealth/getAll")
     suspend fun getAdolescentHealthData(@Body userDetail: GetDataPaginatedRequest): Response<ResponseBody>
 
-    @POST("flw-0.0.1/tb/screening/saveAll")
-//    @POST("tb/screening/saveAll")
+    @POST("flw-0.0.1/adolescentHealth/saveAll")
     suspend fun saveAdolescentHealthData(@Body adolescentHealthRequestDTO: AdolescentHealthRequestDTO): Response<ResponseBody>
 
 
