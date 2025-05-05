@@ -8,6 +8,7 @@ import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import org.piramalswasthya.sakhi.database.converters.LocationEntityListConverter
 import org.piramalswasthya.sakhi.database.converters.SyncStateConverter
+import org.piramalswasthya.sakhi.database.room.dao.AdolescentHealthDao
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.BeneficiaryIdsAvailDao
 import org.piramalswasthya.sakhi.database.room.dao.CbacDao
@@ -31,6 +32,7 @@ import org.piramalswasthya.sakhi.database.room.dao.PncDao
 import org.piramalswasthya.sakhi.database.room.dao.ProfileDao
 import org.piramalswasthya.sakhi.database.room.dao.SyncDao
 import org.piramalswasthya.sakhi.database.room.dao.TBDao
+import org.piramalswasthya.sakhi.model.AdolescentHealthCache
 import org.piramalswasthya.sakhi.model.BenBasicCache
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.CDRCache
@@ -96,7 +98,8 @@ import org.piramalswasthya.sakhi.model.Vaccine
         //INCENTIVES
         IncentiveActivityCache::class,
         IncentiveRecordCache::class,
-        ProfileActivityCache::class
+        ProfileActivityCache::class,
+        AdolescentHealthCache::class,
     ],
     views = [BenBasicCache::class],
     version = 15, exportSchema = false
@@ -109,6 +112,7 @@ abstract class InAppDb : RoomDatabase() {
     abstract val benIdGenDao: BeneficiaryIdsAvailDao
     abstract val householdDao: HouseholdDao
     abstract val benDao: BenDao
+    abstract val adolescentHealthDao: AdolescentHealthDao
     abstract val cbacDao: CbacDao
     abstract val cdrDao: CdrDao
     abstract val mdsrDao: MdsrDao
