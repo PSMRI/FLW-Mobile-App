@@ -87,4 +87,20 @@
         android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
         app:layout_constraintBottom_toBottomOf="parent" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+
+        android:layout_marginRight="20dp"
+        android:layout_gravity="bottom|end"
+        android:contentDescription="@string/edit"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_add_circle"
+        tools:visibility="gone" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
