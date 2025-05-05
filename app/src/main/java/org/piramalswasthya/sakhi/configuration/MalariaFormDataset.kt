@@ -86,6 +86,14 @@ class MalariaFormDataset(
         hasDependants = false
     )
 
+    private var headline = FormElement(
+        id = 27,
+        inputType = InputType.HEADLINE,
+        title = resources.getString(R.string.sympt),
+        required = false,
+        headingLine = false,
+        hasDependants = false
+    )
 
     private var isFever = FormElement(
         id = 7,
@@ -370,22 +378,23 @@ class MalariaFormDataset(
                     otherReasonOfDeath.value = saved.otherReasonForDeath
                 }
             } else {
-                list.add(list.indexOf(beneficiaryStatus) + 1, isFever)
-                list.add(list.indexOf(beneficiaryStatus) + 2, isFluLikeIllness)
-                list.add(list.indexOf(beneficiaryStatus) + 3, isShakingchills)
-                list.add(list.indexOf(beneficiaryStatus) + 4, isHeadache)
-                list.add(list.indexOf(beneficiaryStatus) + 5, isMuscleaches)
-                list.add(list.indexOf(beneficiaryStatus) + 6, isTiredness)
-                list.add(list.indexOf(beneficiaryStatus) + 7, isNausea)
-                list.add(list.indexOf(beneficiaryStatus) + 8, isVomiting)
-                list.add(list.indexOf(beneficiaryStatus) + 9, isDiarrhea)
-                list.add(list.indexOf(beneficiaryStatus) + 10, caseStatus)
-                list.add(list.indexOf(beneficiaryStatus) + 11, rapidDiagnostic)
-                list.add(list.indexOf(beneficiaryStatus) + 12, slideTestPf)
-                list.add(list.indexOf(beneficiaryStatus) + 13, slideTestPv)
-                list.add(list.indexOf(beneficiaryStatus) + 14, referredTo)
-                list.add(list.indexOf(beneficiaryStatus) + 15, remarks)
-                list.add(list.indexOf(beneficiaryStatus) + 16, dateOfVisitBySupervisor)
+                list.add(list.indexOf(beneficiaryStatus) + 1, headline)
+                list.add(list.indexOf(beneficiaryStatus) + 2, isFever)
+                list.add(list.indexOf(beneficiaryStatus) + 3, isFluLikeIllness)
+                list.add(list.indexOf(beneficiaryStatus) + 4, isShakingchills)
+                list.add(list.indexOf(beneficiaryStatus) + 5, isHeadache)
+                list.add(list.indexOf(beneficiaryStatus) + 6, isMuscleaches)
+                list.add(list.indexOf(beneficiaryStatus) + 7, isTiredness)
+                list.add(list.indexOf(beneficiaryStatus) + 8, isNausea)
+                list.add(list.indexOf(beneficiaryStatus) + 9, isVomiting)
+                list.add(list.indexOf(beneficiaryStatus) + 10, isDiarrhea)
+                list.add(list.indexOf(beneficiaryStatus) + 11, caseStatus)
+                list.add(list.indexOf(beneficiaryStatus) + 12, rapidDiagnostic)
+                list.add(list.indexOf(beneficiaryStatus) + 13, slideTestPf)
+                list.add(list.indexOf(beneficiaryStatus) + 14, slideTestPv)
+                list.add(list.indexOf(beneficiaryStatus) + 15, referredTo)
+                list.add(list.indexOf(beneficiaryStatus) + 16, remarks)
+                list.add(list.indexOf(beneficiaryStatus) + 17, dateOfVisitBySupervisor)
                 if (slideTestPf.value != "Not Performed") {
                     list.add(list.indexOf(slideTestPv) + 1, dateOfSlidetest)
                     dateOfSlidetest.value = getDateFromLong(saved.dateOfSlideTest)
@@ -448,7 +457,7 @@ class MalariaFormDataset(
                     triggerDependants(
                         source = beneficiaryStatus,
                         addItems = listOf(dateOfDeath,placeOfDeath,reasonOfDeath),
-                        removeItems = listOf(isFever,isFluLikeIllness,isShakingchills,isHeadache,
+                        removeItems = listOf(headline,isFever,isFluLikeIllness,isShakingchills,isHeadache,
                             isMuscleaches,isTiredness,isNausea,isVomiting,isDiarrhea,
                             caseStatus,rapidDiagnostic,slideTestPf,slideTestPv,referredTo,
                             remarks,dateOfVisitBySupervisor)
@@ -456,7 +465,7 @@ class MalariaFormDataset(
                 } else {
                     triggerDependants(
                         source = beneficiaryStatus,
-                        addItems = listOf(isFever,isFluLikeIllness,isShakingchills,isHeadache,
+                        addItems = listOf(headline,isFever,isFluLikeIllness,isShakingchills,isHeadache,
                             isMuscleaches,isTiredness,isNausea,isVomiting,isDiarrhea,
                             caseStatus,rapidDiagnostic,slideTestPf,slideTestPv,referredTo,
                             remarks,dateOfVisitBySupervisor),

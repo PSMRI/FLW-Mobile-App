@@ -15,19 +15,20 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.Konstants
-import org.piramalswasthya.sakhi.repositories.MalariaRepo
+import org.piramalswasthya.sakhi.repositories.LeprosyRepo
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
+
 @HiltWorker
-class PullMalariaFromAmritWorker @AssistedInject constructor(
+class PullLeprosyFormAmritWorker @AssistedInject constructor(
     @Assisted private val appContext: Context,
     @Assisted params: WorkerParameters,
-    private val malariaRepo: MalariaRepo,
+    private val leprosyRepo: LeprosyRepo,
     private val preferenceDao: PreferenceDao,
 ) : CoroutineWorker(appContext, params) {
 
     companion object {
-        const val name = "PullMalariaFromAmritWorker"
+        const val name = "PullLeprosyFromAmritWorker"
         const val Progress = "Progress"
 
     }
@@ -37,7 +38,7 @@ class PullMalariaFromAmritWorker @AssistedInject constructor(
         return try {
             try {
                 // This ensures that you waiting for the Notification update to be done.
-                setForeground(createForegroundInfo("Downloading Malaria Data"))
+                setForeground(createForegroundInfo("Downloading Filaria Data"))
             } catch (throwable: Throwable) {
                 // Handle this exception gracefully
                 Timber.d("FgLW", "Something bad happened", throwable)
@@ -53,10 +54,9 @@ class PullMalariaFromAmritWorker @AssistedInject constructor(
                 try {
                     val result1 =
                         awaitAll(
-                            async { getMalariaScreeningDetails() },
-                            async { getIRSScreeningDetails() },
-                            async { getMalariaConfirmedDetails() },
-                        )
+                            async { getLeprosyScreeningDetails() },
+
+                            )
 
                     val endTime = System.currentTimeMillis()
                     val timeTaken = TimeUnit.MILLISECONDS.toSeconds(endTime - startTime)
@@ -97,10 +97,10 @@ class PullMalariaFromAmritWorker @AssistedInject constructor(
     }
 
 
-    private suspend fun getMalariaScreeningDetails(): Boolean {
+    private suspend fun getLeprosyScreeningDetails(): Boolean {
         return withContext(Dispatchers.IO) {
             try {
-                val res = malariaRepo.getMalariaScreeningDetailsFromServer()
+                val res = leprosyRepo.getLeprosyScreeningDetailsFromServer()
                 return@withContext res == 1
             } catch (e: Exception) {
                 Timber.d("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
@@ -109,29 +109,7 @@ class PullMalariaFromAmritWorker @AssistedInject constructor(
         }
     }
 
-    private suspend fun getIRSScreeningDetails(): Boolean {
-        return withContext(Dispatchers.IO) {
-            try {
-                val res = malariaRepo.getIRSScreeningDetailsFromServer()
-                return@withContext res == 1
-            } catch (e: Exception) {
-                Timber.d("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
-            }
-            true
-        }
-    }
 
-    private suspend fun getMalariaConfirmedDetails(): Boolean {
-        return withContext(Dispatchers.IO) {
-            try {
-                val res = malariaRepo.getMalariaConfiremedDetailsFromServer()
-                return@withContext res == 1
-            } catch (e: Exception) {
-                Timber.d("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
-            }
-            true
-        }
-    }
 
 
 }

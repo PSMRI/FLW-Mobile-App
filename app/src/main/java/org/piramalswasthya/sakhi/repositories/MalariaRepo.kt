@@ -264,19 +264,20 @@ class MalariaRepo @Inject constructor(
         return irsScreeningList
     }
 
-    suspend fun getTbSuspectedDetailsFromServer(): Int {
+    suspend fun getMalariaConfiremedDetailsFromServer(): Int {
         return withContext(Dispatchers.IO) {
             val user =
                 preferenceDao.getLoggedInUser()
                     ?: throw IllegalStateException("No user logged in!!")
             val lastTimeStamp = preferenceDao.getLastSyncedTimeStamp()
             try {
-                val response = tmcNetworkApiService.getTBSuspectedData(
-                    GetDataPaginatedRequest(
+                val response = tmcNetworkApiService.getMalariaConfirmedData(
+                    GetDataPaginatedRequestForDisease(
                         ashaId = user.userId,
                         pageNo = 0,
                         fromDate = BenRepo.getCurrentDate(Konstants.defaultTimeStamp),
-                        toDate = getCurrentDate()
+                        toDate = getCurrentDate(),
+                        diseaseTypeID = 1
                     )
                 )
                 val statusCode = response.code()
@@ -287,14 +288,14 @@ class MalariaRepo @Inject constructor(
 
                         val errorMessage = jsonObj.getString("errorMessage")
                         val responseStatusCode = jsonObj.getInt("statusCode")
-                        Timber.d("Pull from amrit tb suspected data : $responseStatusCode")
+                        Timber.d("Pull from amrit malaria confirmed data : $responseStatusCode")
                         when (responseStatusCode) {
                             200 -> {
                                 try {
                                     val dataObj = jsonObj.getString("data")
-                                    saveTBSuspectedCacheFromResponse(dataObj)
+                                    saveMalariaConfirmedCacheFromResponse(dataObj)
                                 } catch (e: Exception) {
-                                    Timber.d("TB Suspected entries not synced $e")
+                                    Timber.d("Malaria Confirmed entries not synced $e")
                                     return@withContext 0
                                 }
 
@@ -332,7 +333,7 @@ class MalariaRepo @Inject constructor(
         }
     }
 
-    private suspend fun saveTBSuspectedCacheFromResponse(dataObj: String): MutableList<MalariaConfirmedCasesCache> {
+    private suspend fun saveMalariaConfirmedCacheFromResponse(dataObj: String): MutableList<MalariaConfirmedCasesCache> {
         val malariaConfirmedList = mutableListOf<MalariaConfirmedCasesCache>()
         val requestDTO = Gson().fromJson(dataObj, MalariaConfirmedRequestDTO::class.java)
         requestDTO?.malariaFollowListUp?.forEach { malariaConfirmedDTO ->
@@ -356,7 +357,7 @@ class MalariaRepo @Inject constructor(
     suspend fun pushUnSyncedRecords(): Boolean {
         val screeningResult = pushUnSyncedRecordsMalariaScreening()
         val suspectedResult = pushUnSyncedRecordsTBSuspected()
-        return (screeningResult == 1)
+        return (screeningResult == 1) && (suspectedResult == 1)
     }
 
     private suspend fun pushUnSyncedRecordsMalariaScreening(): Int {

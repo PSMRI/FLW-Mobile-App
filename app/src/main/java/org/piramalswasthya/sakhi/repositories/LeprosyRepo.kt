@@ -142,98 +142,9 @@ class LeprosyRepo @Inject constructor(
         return leprosyScreeningList
     }
 
-    /* suspend fun getTbSuspectedDetailsFromServer(): Int {
-         return withContext(Dispatchers.IO) {
-             val user =
-                 preferenceDao.getLoggedInUser()
-                     ?: throw IllegalStateException("No user logged in!!")
-             val lastTimeStamp = preferenceDao.getLastSyncedTimeStamp()
-             try {
-                 val response = tmcNetworkApiService.getTBSuspectedData(
-                     GetDataPaginatedRequest(
-                         ashaId = user.userId,
-                         pageNo = 0,
-                         fromDate = BenRepo.getCurrentDate(Konstants.defaultTimeStamp),
-                         toDate = getCurrentDate()
-                     )
-                 )
-                 val statusCode = response.code()
-                 if (statusCode == 200) {
-                     val responseString = response.body()?.string()
-                     if (responseString != null) {
-                         val jsonObj = JSONObject(responseString)
- 
-                         val errorMessage = jsonObj.getString("errorMessage")
-                         val responseStatusCode = jsonObj.getInt("statusCode")
-                         Timber.d("Pull from amrit tb suspected data : $responseStatusCode")
-                         when (responseStatusCode) {
-                             200 -> {
-                                 try {
-                                     val dataObj = jsonObj.getString("data")
-                                     saveTBSuspectedCacheFromResponse(dataObj)
-                                 } catch (e: Exception) {
-                                     Timber.d("TB Suspected entries not synced $e")
-                                     return@withContext 0
-                                 }
- 
-                                 return@withContext 1
-                             }
- 
-                             5002 -> {
-                                 if (userRepo.refreshTokenTmc(
-                                         user.userName, user.password
-                                     )
-                                 ) throw SocketTimeoutException("Refreshed Token!")
-                                 else throw IllegalStateException("User Logged out!!")
-                             }
- 
-                             5000 -> {
-                                 if (errorMessage == "No record found") return@withContext 0
-                             }
- 
-                             else -> {
-                                 throw IllegalStateException("$responseStatusCode received, don't know what todo!?")
-                             }
-                         }
-                     }
-                 }
- 
-             } catch (e: SocketTimeoutException) {
-                 Timber.d("get_tb error : $e")
-                 return@withContext -2
- 
-             } catch (e: java.lang.IllegalStateException) {
-                 Timber.d("get_tb error : $e")
-                 return@withContext -1
-             }
-             -1
-         }
-     }*/
-
-    /*  private suspend fun saveTBSuspectedCacheFromResponse(dataObj: String): MutableList<TBSuspectedCache> {
-          val tbSuspectedList = mutableListOf<TBSuspectedCache>()
-          val requestDTO = Gson().fromJson(dataObj, TBSuspectedRequestDTO::class.java)
-          requestDTO?.tbSuspectedList?.forEach { tbSuspectedDTO ->
-              tbSuspectedDTO.visitDate?.let {
-                  val tbSuspectedCache: TBSuspectedCache? =
-                      malariaDao.getTbSuspected(
-                          tbSuspectedDTO.benId,
-                          getLongFromDate(tbSuspectedDTO.visitDate),
-                          getLongFromDate(tbSuspectedDTO.visitDate) - 19_800_000
-                      )
-                  if (tbSuspectedCache == null) {
-                      benDao.getBen(tbSuspectedDTO.benId)?.let {
-                          malariaDao.saveTbSuspected(tbSuspectedDTO.toCache())
-                      }
-                  }
-              }
-          }
-          return tbSuspectedList
-      }*/
 
     suspend fun pushUnSyncedRecords(): Boolean {
         val screeningResult = pushUnSyncedRecordsLeprosyScreening()
-//        val suspectedResult = pushUnSyncedRecordsTBSuspected()
         return (screeningResult == 1)
     }
 
@@ -310,76 +221,6 @@ class LeprosyRepo @Inject constructor(
         }
     }
 
-    /* private suspend fun pushUnSyncedRecordsTBSuspected(): Int {
-         return withContext(Dispatchers.IO) {
-             val user =
-                 preferenceDao.getLoggedInUser()
-                     ?: throw IllegalStateException("No user logged in!!")
- 
-             val tbspList: List<TBSuspectedCache> = tbDao.getTbSuspected(SyncState.UNSYNCED)
- 
-             val tbspDtos = mutableListOf<TBSuspectedDTO>()
-             tbspList.forEach { cache ->
-                 tbspDtos.add(cache.toDTO())
-             }
-             if (tbspDtos.isEmpty()) return@withContext 1
-             try {
-                 val response = tmcNetworkApiService.saveTBSuspectedData(
-                     TBSuspectedRequestDTO(
-                         userId = user.userId,
-                         tbSuspectedList = tbspDtos
-                     )
-                 )
-                 val statusCode = response.code()
-                 if (statusCode == 200) {
-                     val responseString = response.body()?.string()
-                     if (responseString != null) {
-                         val jsonObj = JSONObject(responseString)
- 
-                         val errorMessage = jsonObj.getString("errorMessage")
-                         val responseStatusCode = jsonObj.getInt("statusCode")
-                         Timber.d("Push to amrit tb screening data : $responseStatusCode")
-                         when (responseStatusCode) {
-                             200 -> {
-                                 try {
-                                     updateSyncStatusSuspected(tbspList)
-                                     return@withContext 1
-                                 } catch (e: Exception) {
-                                     Timber.d("TB Screening entries not synced $e")
-                                 }
- 
-                             }
- 
-                             5002 -> {
-                                 if (userRepo.refreshTokenTmc(
-                                         user.userName, user.password
-                                     )
-                                 ) throw SocketTimeoutException("Refreshed Token!")
-                                 else throw IllegalStateException("User Logged out!!")
-                             }
- 
-                             5000 -> {
-                                 if (errorMessage == "No record found") return@withContext 0
-                             }
- 
-                             else -> {
-                                 throw IllegalStateException("$responseStatusCode received, dont know what todo!?")
-                             }
-                         }
-                     }
-                 }
- 
-             } catch (e: SocketTimeoutException) {
-                 Timber.d("get_tb error : $e")
-                 return@withContext -2
- 
-             } catch (e: java.lang.IllegalStateException) {
-                 Timber.d("get_tb error : $e")
-                 return@withContext -1
-             }
-             -1
-         }
-     }*/
 
 
     private suspend fun updateSyncStatusScreening(leprosysnList: List<LeprosyScreeningCache>) {
@@ -389,12 +230,6 @@ class LeprosyRepo @Inject constructor(
         }
     }
 
-    /* private suspend fun updateSyncStatusSuspected(tbspList: List<TBSuspectedCache>) {
-         tbspList.forEach {
-             it.syncState = SyncState.SYNCED
-             malariaDao.saveTbSuspected(it)
-         }
-     }*/
 
     companion object {
         private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)

@@ -83,6 +83,18 @@ object WorkerUtils {
         val pushChildHBNCToAmritWorker = OneTimeWorkRequestBuilder<PushChildHBNCFromAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
+        val pullAESToAmritWorker = OneTimeWorkRequestBuilder<pullAesFormAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pullkalaAzarToAmritWorker = OneTimeWorkRequestBuilder<PullKalaAzarFormAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pullLeprosyToAmritWorker = OneTimeWorkRequestBuilder<PullLeprosyFormAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pullFilariaToAmritWorker = OneTimeWorkRequestBuilder<PullFilariaFromAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
         val workManager = WorkManager.getInstance(context)
         workManager
             .beginUniqueWork(
@@ -107,6 +119,10 @@ object WorkerUtils {
 //            .then(pushChildHBYCToAmritWorker)
             .then(pushChildHBNCToAmritWorker)
             .then(pullMalariaWorkRequest)
+            .then(pullAESToAmritWorker)
+            .then(pullkalaAzarToAmritWorker)
+            .then(pullFilariaToAmritWorker)
+            .then(pullLeprosyToAmritWorker)
             .enqueue()
     }
 
@@ -178,6 +194,18 @@ object WorkerUtils {
             OneTimeWorkRequestBuilder<PullChildHBNCFromAmritWorker>()
                 .setConstraints(networkOnlyConstraint)
                 .build()
+        val pushAESToAmritWorker = OneTimeWorkRequestBuilder<pushAesAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pushkalaAzarToAmritWorker = OneTimeWorkRequestBuilder<pushKalaAzarAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pushLeprosyToAmritWorker = OneTimeWorkRequestBuilder<pushLeprosyAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pushFilariaToAmritWorker = OneTimeWorkRequestBuilder<PushFilariaAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
         val workManager = WorkManager.getInstance(context)
         workManager
             .beginUniqueWork(
@@ -202,6 +230,10 @@ object WorkerUtils {
             .then(pullIncentiveActivityWorkRequest)
             .then(pullIncentiveActivityWorkRequest)
             .then(pushMalariaWorkRequest)
+            .then(pushAESToAmritWorker)
+            .then(pushkalaAzarToAmritWorker)
+            .then(pushFilariaToAmritWorker)
+            .then(pushLeprosyToAmritWorker)
             .enqueue()
     }
 
@@ -267,6 +299,21 @@ object WorkerUtils {
                 .build()
         val setSyncCompleteWorker = OneTimeWorkRequestBuilder<UpdatePrefForPullCompleteWorker>()
             .build()
+        val pullMalariaWorkRequest = OneTimeWorkRequestBuilder<PullMalariaFromAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pullAESToAmritWorker = OneTimeWorkRequestBuilder<pullAesFormAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pullkalaAzarToAmritWorker = OneTimeWorkRequestBuilder<PullKalaAzarFormAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pullLeprosyToAmritWorker = OneTimeWorkRequestBuilder<PullLeprosyFormAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pullFilariaToAmritWorker = OneTimeWorkRequestBuilder<PullFilariaFromAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
         val workManager = WorkManager.getInstance(context)
         workManager
             .beginUniqueWork(
@@ -291,6 +338,11 @@ object WorkerUtils {
 //            .then(pullHBYCFromAmritWorker)
             .then(pullHBNCFromAmritWorker)
             .then(setSyncCompleteWorker)
+            .then(pullMalariaWorkRequest)
+            .then(pullAESToAmritWorker)
+            .then(pullkalaAzarToAmritWorker)
+            .then(pullFilariaToAmritWorker)
+            .then(pullLeprosyToAmritWorker)
             .enqueue()
     }
 

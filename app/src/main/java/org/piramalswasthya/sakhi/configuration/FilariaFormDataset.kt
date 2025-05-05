@@ -117,12 +117,11 @@ class FilariaFormDataset(
                 list.add(list.indexOf(isSuffering) + 1, if (isMale) whichPartOfBodyMale else whichPartOfBodyFemale)
                 list.add(list.indexOf(isSuffering) + 2, decAndAlbDoseStatus)
                 list.add(list.indexOf(isSuffering) + 3, medicineSideEffect)
-                if (isMale) {
-                    whichPartOfBodyMale.value = getLocalValueInArray(whichPartOfBodyMale.arrayId,saved.affectedBodyPart)
-                } else {
-                    whichPartOfBodyFemale.value = getLocalValueInArray(whichPartOfBodyFemale.arrayId,saved.affectedBodyPart)
 
-                }
+                if (isMale) whichPartOfBodyMale.value = getLocalValueInArray(whichPartOfBodyMale.arrayId,saved.affectedBodyPart)
+                else whichPartOfBodyFemale.value = getLocalValueInArray(whichPartOfBodyFemale.arrayId,saved.affectedBodyPart)
+
+
                 decAndAlbDoseStatus.value =
                     getLocalValueInArray(decAndAlbDoseStatus.arrayId, saved.doseStatus)
                 if (decAndAlbDoseStatus.value == decAndAlbDoseStatus.entries!!.last()) {
@@ -152,7 +151,7 @@ class FilariaFormDataset(
             isSuffering.id -> {
                 isSuffering.isEnabled = true
                 if (isSuffering.value == resources.getStringArray(R.array.yes_no)[0]) {
-                    if (isMale ){
+                    if (isMale ) {
                         triggerDependants(
                             source = isSuffering,
                             passedIndex = index,
@@ -171,13 +170,35 @@ class FilariaFormDataset(
                     }
 
                 } else {
-                    triggerforHide(
-                        source = isSuffering,
-                        passedIndex = index,
-                        triggerIndex = 1,
-                        target = whichPartOfBodyMale,
-                        targetSideEffect = listOf(whichPartOfBodyMale,decAndAlbDoseStatus,medicineSideEffect,other,sideEffectOther)
-                    )
+                    if (isMale ) {
+                        triggerforHide(
+                            source = isSuffering,
+                            passedIndex = index,
+                            triggerIndex = 1,
+                            target = whichPartOfBodyMale,
+                            targetSideEffect = listOf(
+                                whichPartOfBodyMale,
+                                decAndAlbDoseStatus,
+                                medicineSideEffect,
+                                other,
+                                sideEffectOther
+                            )
+                        )
+                    } else {
+                        triggerforHide(
+                            source = isSuffering,
+                            passedIndex = index,
+                            triggerIndex = 1,
+                            target = whichPartOfBodyFemale,
+                            targetSideEffect = listOf(
+                                whichPartOfBodyFemale,
+                                decAndAlbDoseStatus,
+                                medicineSideEffect,
+                                other,
+                                sideEffectOther
+                            )
+                        )
+                    }
                 }
 
                 return 0
@@ -230,7 +251,7 @@ class FilariaFormDataset(
             form.createdDate = getLongFromDate(dateOfCase.value)
             form.sufferingFromFilariasis = isSuffering()
             form.diseaseTypeID = 4
-            form.affectedBodyPart = whichPartOfBodyMale.value
+            form.affectedBodyPart = if (isMale) whichPartOfBodyMale.value else whichPartOfBodyFemale.value
             form.otherSideEffectDetails = sideEffectOther.value
             form.otherDoseStatusDetails = other.value
             form.doseStatus = getEnglishValueInArray(R.array.dec_albendazole_array, decAndAlbDoseStatus.value)

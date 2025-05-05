@@ -8,25 +8,25 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.network.interceptors.TokenInsertTmcInterceptor
-import org.piramalswasthya.sakhi.repositories.MalariaRepo
-import org.piramalswasthya.sakhi.repositories.TBRepo
+import org.piramalswasthya.sakhi.repositories.FilariaRepo
 import timber.log.Timber
 import java.net.SocketTimeoutException
+
 @HiltWorker
-class PushMalariaAmritWorker @AssistedInject constructor(
+class PushFilariaAmritWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted params: WorkerParameters,
-    private val malariaRepo: MalariaRepo,
+    private val filariaRepo: FilariaRepo,
     private val preferenceDao: PreferenceDao,
 ) : CoroutineWorker(appContext, params) {
     companion object {
-        const val name = "PushMalariaToAmritWorker"
+        const val name = "PushFilariaToAmritWorker"
     }
 
     override suspend fun doWork(): Result {
         init()
         return try {
-            val workerResult = malariaRepo.pushUnSyncedRecords()
+            val workerResult = filariaRepo.pushUnSyncedRecords()
             if (workerResult) {
                 Timber.d("Worker completed")
                 Result.success()
