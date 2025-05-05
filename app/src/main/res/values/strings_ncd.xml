@@ -24,6 +24,7 @@
     <string name="cbac_blsputum">Blood in sputum</string>
     <string name="cbac_feverwks">Fever for > 2 weeks</string>
     <string name="treatment_given">Treatment Given</string>
+    <string name="sympt">Symptoms</string>
     <string name="cbac_lsweight">Loss of weight</string>
     <string name="cbac_ntswets">Night Sweats</string>
     <string name="cbac_recurrent_ulceration">Recurrent ulceration on palm or sole</string>

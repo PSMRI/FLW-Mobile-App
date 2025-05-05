@@ -76,6 +76,9 @@ interface AmritApiService {
     @POST("flw-0.0.1/api/follow-up/save")
     suspend fun saveMalariaConfirmedData(@Body malariaConfirmedRequestDTO: MalariaConfirmedRequestDTO): Response<ResponseBody>
 
+    @POST("flw-0.0.1/api/follow-up/get")
+    suspend fun getMalariaConfirmedData(@Body malariaConfirmedRequestDTO: GetDataPaginatedRequestForDisease): Response<ResponseBody>
+
     @POST("flw-0.0.1/highRisk/pregnant/assess/getAll")
 //    @POST("highRisk/pregnant/assess/getAll")
     suspend fun getHRPAssessData(@Body userDetail: GetDataPaginatedRequest): Response<ResponseBody>

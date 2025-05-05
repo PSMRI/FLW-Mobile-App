@@ -233,7 +233,6 @@ class FilariaRepo @Inject constructor(
 
     suspend fun pushUnSyncedRecords(): Boolean {
         val screeningResult = pushUnSyncedRecordsMalariaScreening()
-//        val suspectedResult = pushUnSyncedRecordsTBSuspected()
         return (screeningResult == 1)
     }
 
