@@ -65,14 +65,14 @@ class AdolescentHealthRepo @Inject constructor(
 
                         val errorMessage = jsonObj.getString("errorMessage")
                         val responseStatusCode = jsonObj.getInt("statusCode")
-                        Timber.d("Pull from amrit tb screening data : $responseStatusCode")
+                        Timber.d("Pull from amrit adolescent screening data : $responseStatusCode")
                         when (responseStatusCode) {
                             200 -> {
                                 try {
                                     val dataObj = jsonObj.getString("data")
                                     saveadolescentHealthCacheFromResponse(dataObj)
                                 } catch (e: Exception) {
-                                    Timber.d("TB Screening entries not synced $e")
+                                    Timber.d("Adolescent Screening entries not synced $e")
                                     return@withContext 0
                                 }
 
@@ -132,11 +132,11 @@ class AdolescentHealthRepo @Inject constructor(
     }
 
     suspend fun pushUnSyncedRecords(): Boolean {
-        val screeningResult = pushUnSyncedRecordsTBScreening()
+        val screeningResult = pushUnSyncedRecordsAdolescentScreening()
         return (screeningResult == 1)
     }
 
-    private suspend fun pushUnSyncedRecordsTBScreening(): Int {
+    private suspend fun pushUnSyncedRecordsAdolescentScreening(): Int {
 
         return withContext(Dispatchers.IO) {
             val user =
