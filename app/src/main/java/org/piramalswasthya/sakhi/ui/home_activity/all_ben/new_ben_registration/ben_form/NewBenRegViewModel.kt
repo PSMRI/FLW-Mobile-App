@@ -115,7 +115,14 @@ class NewBenRegViewModel @Inject constructor(
 
     fun getIndexOfBirthCertificateBack() = dataset.getIndexOfBirthCertificateBackPath()
 
+    private var lastDocumentFormId: Int = 0
 
+    fun setCurrentDocumentFormId(id: Int) {
+        lastDocumentFormId = id
+    }
+    fun getDocumentFormId():Int {
+        return lastDocumentFormId
+    }
     init {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
@@ -319,10 +326,13 @@ class NewBenRegViewModel @Inject constructor(
                     Toast.makeText(context,"Otp Verified", Toast.LENGTH_SHORT).show()
                     otpField.isEnabled = false
                     button.text = context.resources.getString(R.string.verified)
+                    button.isEnabled = true
+                    isOtpVerified = true
 
                 } else {
-
+                    Toast.makeText(context,"Invalid Otp", Toast.LENGTH_SHORT).show()
                     memberOtpVerified = false
+                    isOtpVerified = false
                 }
             }
         }

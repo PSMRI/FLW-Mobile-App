@@ -1063,6 +1063,9 @@
         android:label="fragment_asha_profile"
         tools:layout="@layout/fragment_asha_profile" >
 
+        <action
+            android:id="@+id/action_ashaProfileFragment_to_newHouseholdFragment"
+            app:destination="@id/newHouseholdFragment" />
     </fragment>
     <fragment
         android:id="@+id/adolescentHealthFormFragment"

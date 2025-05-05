@@ -137,6 +137,10 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
         return if (position <= 0) null else entries?.get(position - 1)
     }
 
+    protected fun FormElement.getStringSpauseFromPosition(position: Int): String? {
+        return if (position <= 0) entries?.get(1) else entries?.get(position - 1)
+    }
+
     protected fun FormElement.getEnglishStringFromPosition(position: Int): String? {
         return if (position <= 0) null else englishResources.getStringArray(arrayId)[position - 1]
     }
@@ -600,6 +604,23 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
         }
         return -1
     }
+    fun String.isValid(): Boolean {
+        return this.matches(Regex("^\\d{14}$"))
+    }
+
+    protected fun validateABHANumberEditText(formElement: FormElement): Int {
+        formElement.value?.takeIf { it.isNotEmpty() }?.let {
+            val isValid = it.isValid()
+            if (formElement.errorText != null && formElement.errorText != resources.getString(R.string.abha_number_digit))
+                return@let
+            if (isValid) formElement.errorText = null
+            else formElement.errorText =
+                resources.getString(R.string.abha_number_digit)
+        } ?: kotlin.run {
+            formElement.errorText = null
+        }
+        return -1
+    }
 
     protected fun validateAllAlphaNumericOnEditText(formElement: FormElement): Int {
         formElement.value?.takeIf { it.isNotEmpty() }?.let {
@@ -609,6 +630,23 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
             if (isValid) formElement.errorText = null
             else formElement.errorText =
                 resources.getString(R.string.form_input_alph_numeric_space_only_error)
+        } ?: kotlin.run {
+            formElement.errorText = null
+        }
+        return -1
+    }
+    private fun String.isValidFormat() = takeIf {
+        matches(Regex("^[A-Z]{4}[0-9]{7}$"))
+    } != null
+
+    protected fun validateIFSCEditText(formElement: FormElement): Int {
+        formElement.value?.takeIf { it.isNotEmpty() }?.let {
+            val isValid = it.isValidFormat()
+            if (formElement.errorText != null && formElement.errorText != resources.getString(R.string.ifsc))
+                return@let
+            if (isValid) formElement.errorText = null
+            else formElement.errorText =
+                resources.getString(R.string.ifsc)
         } ?: kotlin.run {
             formElement.errorText = null
         }

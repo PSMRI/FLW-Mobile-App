@@ -152,6 +152,8 @@
     <string name="form_input_alphabet_special_only_error">Only Alphabets and special characters allowed!</string>
     <string name="form_input_min_limit_error">%1s should be greater than or equal to %2d</string>
     <string name="form_input_alph_numeric_space_only_error">Only Alphabets and Numerics allowed!</string>
+    <string name="abha_number_digit">ABHA number should be 14-digit long</string>
+    <string name="ifsc">4 letters followed by 7 digits (e.g., ABCD1234567)!</string>
     <string name="form_input__no_alpha_space_error">No Alphabets or spaces allowed!</string>
     <string name="form_input_digit_only_error">Only Digits allowed!</string>
     <string name="form_input_min_limit_error_decimal">%1s should be greater than or equal to %2.1f</string>
@@ -165,6 +167,7 @@
     <string name="something_went_wrong_nunable_to_connect_to_server_ntry_again_later">Something went wrong !\nUnable to connect to server !\nTry again later!</string>
     <string name="try_again">Try Again!</string>
     <string name="version_2_0_0">APK Version 2.0.0</string>
+    <string name="file_size">File size should be less than or equals to 5 MB.</string>
     <!--    <string name="disagree">DISAGREE</string>-->
     <!--    <string name="agree">AGREE</string>-->
     <string name="enter_pin">Enter PIN</string>

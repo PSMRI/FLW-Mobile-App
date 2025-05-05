@@ -5,6 +5,9 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="frag_service_type_title">Select Village</string>
     <string name="tv_text_select_village">Please select the village below.</string>
+    <string name="village">Village</string>
+    <string name="loginusername">Login Username</string>
+    <string name="asha_empid">ASHA Emp ID</string>
     <string name="service_type_dd_state_text">State</string>
     <string name="service_type_dd_district_text">District</string>
     <string name="service_type_dd_block_text">Block</string>
