@@ -17,7 +17,15 @@ class InfantListViewModel @Inject constructor(
 
     private val allBenList = recordsRepo.infantList
     private val filter = MutableStateFlow("")
-    val benList = allBenList.combine(filter) { list, filter ->
+    private val kind = MutableStateFlow("false")
+
+    val benList = allBenList.combine(kind) { list, kind ->
+        if (kind.equals("false", true)) {
+            filterBenList(list, false)
+        } else {
+            filterBenList(list, true)
+        }
+    }.combine(filter) { list, filter ->
         filterBenList(list, filter)
     }
 
@@ -27,4 +35,12 @@ class InfantListViewModel @Inject constructor(
         }
 
     }
+
+    fun filterType(type: String) {
+        viewModelScope.launch {
+            kind.emit(type)
+        }
+
+    }
+
 }

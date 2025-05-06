@@ -17,6 +17,7 @@ import org.piramalswasthya.sakhi.databinding.FragmentAadhaarOtpBinding
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.AadhaarIdViewModel
 import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_otp.AadhaarOtpViewModel.State
+import org.piramalswasthya.sakhi.ui.home_activity.all_ben.AllBenFragmentArgs
 
 @AndroidEntryPoint
 class AadhaarOtpFragment : Fragment() {
@@ -28,6 +29,10 @@ class AadhaarOtpFragment : Fragment() {
     private val viewModel: AadhaarOtpViewModel by viewModels()
 
     private val parentViewModel: AadhaarIdViewModel by viewModels({ requireActivity() })
+
+    val args: AadhaarOtpFragmentArgs by lazy {
+        AadhaarOtpFragmentArgs.fromBundle(requireArguments())
+    }
 
     private var timer = object : CountDownTimer(30000, 1000) {
         override fun onTick(millisUntilFinished: Long) {
@@ -65,7 +70,11 @@ class AadhaarOtpFragment : Fragment() {
             }
         }
         binding.resendOtp.setOnClickListener {
-            viewModel.resendAadhaarOtp(parentViewModel.aadhaarNumber)
+            if (parentViewModel.abhaMode.value == AadhaarIdViewModel.Abha.SEARCH) {
+                viewModel.resendSearchAadhaarOtp(parentViewModel.searchTxnId, parentViewModel.index)
+            } else {
+                viewModel.resendCreateAadhaarOtp(parentViewModel.aadhaarNumber)
+            }
             startResendTimer()
         }
 
@@ -100,6 +109,16 @@ class AadhaarOtpFragment : Fragment() {
 
         binding.exit.setOnClickListener {
             requireActivity().finish()
+        }
+
+        viewModel.state2.observe(viewLifecycleOwner) {
+            if (it == AadhaarIdViewModel.State.SUCCESS) {
+                Toast.makeText(
+                    context,
+                    resources.getString(R.string.otp_resent),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
 
         viewModel.state.observe(viewLifecycleOwner) { state ->

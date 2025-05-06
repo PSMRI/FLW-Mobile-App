@@ -13,6 +13,7 @@
     <string name="sc_hwc_tg_hosp">SC/HWC/TG Hosp</string>
     <string name="block">Block</string>
     <string name="bank_acc_no">Bank Acc No</string>
+    <string name="bank_acc">Bank Account</string>
     <string name="nearest_24x7_phc">Nearest 24x7 PHC</string>
     <string name="nearest_fru">Nearest FRU</string>
     <string name="nearest_usg_centre">Nearest USG centre</string>
@@ -118,6 +119,10 @@
     <string name="c_no"><b>Contact no :\n1 -</b></string>
     <string name="b_blood_donor"><b>Blood donor identified\n1 -</b></string>
 
+
+    <string name="help_support">Help &amp; Support</string>
+    <string name="user_guide">User Guide</string>
+    <string name="video_tutorial">Video Tutorial</string>
 
     <string-array name="sugar_test_types">
         <item>RBS</item>

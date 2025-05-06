@@ -25,6 +25,10 @@ class PwAncVisitsListFragment : Fragment() {
     private val binding: FragmentDisplaySearchRvButtonBinding
         get() = _binding!!
 
+    val args: PwAncVisitsListFragmentArgs by lazy {
+        PwAncVisitsListFragmentArgs.fromBundle(requireArguments())
+    }
+
     private val viewModel: PwAncVisitsListViewModel by viewModels()
 
     private val bottomSheet: AncBottomSheetFragment by lazy { AncBottomSheetFragment() }

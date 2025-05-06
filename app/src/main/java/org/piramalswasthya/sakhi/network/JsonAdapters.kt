@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.network
 import android.os.Parcelable
 import com.squareup.moshi.JsonClass
 import org.piramalswasthya.sakhi.database.room.SyncState
+import org.piramalswasthya.sakhi.model.HRPMicroBirthPlanCache
 import org.piramalswasthya.sakhi.model.HRPNonPregnantAssessCache
 import org.piramalswasthya.sakhi.model.HRPNonPregnantTrackCache
 import org.piramalswasthya.sakhi.model.HRPPregnantAssessCache
@@ -89,12 +90,17 @@ data class GetDataPaginatedRequest(
 )
 
 @JsonClass(generateAdapter = true)
+
 data class GetDataPaginatedRequestForDisease(
     val ashaId: Int,
     val pageNo: Int,
     val fromDate: String,
     val toDate: String,
     val diseaseTypeID: Int
+
+data class ValidateOtpRequest(
+    val otp: Int,
+    val mobNo: String,
 )
 
 @JsonClass(generateAdapter = true)
@@ -173,6 +179,32 @@ data class AbhaGenerateAadhaarOtpResponse(
 data class AbhaGenerateAadhaarOtpResponseV2(
     val txnId: String,
     val mobileNumber: String
+)
+
+@JsonClass(generateAdapter = true)
+data class SendOtpResponse(
+    val data: Data,
+    val statusCode: Long,
+    val errorMessage: String,
+    val status: String,
+)
+
+data class Data(
+    val response: String,
+)
+
+@JsonClass(generateAdapter = true)
+
+data class ValidateOtpResponse(
+    val data: ResponseOtp,
+    val statusCode: Long,
+    val errorMessage: String,
+    val status: String,
+)
+
+data class ResponseOtp(
+    val userName: String,
+    val userId: String,
 )
 
 @JsonClass(generateAdapter = true)
@@ -592,6 +624,10 @@ data class AESScreeningRequestDTO(
 data class FilariaScreeningRequestDTO(
     val userId: Int,
     val filariaLists: List<FilariaScreeningDTO>
+    
+data class AdolescentHealthRequestDTO(
+    val userId: Int,
+    val adolescentHealths: List<AdolscentHealthDTO>
 )
 
 data class UserDataDTO<T>(
@@ -696,6 +732,56 @@ data class HRPPregnantAssessDTO(
         )
     }
 }
+
+@JsonClass(generateAdapter = true)
+data class HRPMicroBirthPlanDTO(
+    val id: Int = 0,
+    val benId: Long,
+    var nearestSc: String? = null,
+    var bloodGroup: String? = null,
+    var contactNumber1: String? = null,
+    var contactNumber2: String? = null,
+    var scHosp: String? = null,
+    var usg: String? = null,
+    var block: String? = null,
+    var nearestPhc: String? = null,
+    var nearestFru: String? = null,
+    var bloodDonors1: String? = null,
+    var bloodDonors2: String? = null,
+    var birthCompanion: String? = null,
+    var careTaker: String? = null,
+    var communityMember: String? = null,
+    var communityMemberContact: String? = null,
+    var modeOfTransportation: String? = null,
+) {
+    fun toCache(): HRPMicroBirthPlanCache {
+        return HRPMicroBirthPlanCache(
+            id = 0,
+            benId = benId,
+            nearestSc = nearestSc,
+            bloodGroup = bloodGroup,
+            contactNumber1 = contactNumber1,
+            contactNumber2 = contactNumber2,
+            scHosp = scHosp,
+            usg = usg,
+            block = block,
+            nearestPhc = nearestPhc,
+            nearestFru = nearestFru,
+            bloodDonors1 = bloodDonors1,
+            bloodDonors2 = bloodDonors2,
+            birthCompanion = birthCompanion,
+            careTaker = careTaker,
+            communityMember = communityMember,
+            communityMemberContact = communityMemberContact,
+            modeOfTransportation = modeOfTransportation,
+            processed = "P",
+            syncState = SyncState.SYNCED
+        )
+    }
+}
+
+
+
 
 data class HRPNonPregnantTrackDTO(
     var id: Int = 0,
@@ -807,6 +893,44 @@ data class TBScreeningDTO(
     }
 }
 
+data class AdolscentHealthDTO(
+    var id :Int? = null,
+    var userID :Int? =null,
+    var benId:Long,
+    var visitDate: String,
+    var healthStatus: String? = null,
+    var ifaTabletDistributed: Boolean? = null,
+    var quantityOfIfaTablets: Int? = null,
+    var menstrualHygieneAwarenessGiven: Boolean? = null,
+    var sanitaryNapkinDistributed: Boolean? = null,
+    var noOfPacketsDistributed: Int? = null,
+    var place: String? = null,
+    var referredToHealthFacility: String? = null,
+    var counselingProvided: Boolean? = null,
+    var counselingType: String? = null,
+    var followUpDate: String? = null,
+    var referralStatus: String? = null,
+) {
+    fun toCache(): AdolescentHealthCache {
+        return AdolescentHealthCache(
+            benId = benId,
+            visitDate = getLongFromDate(visitDate),
+            healthStatus = healthStatus,
+            ifaTabletDistributed = ifaTabletDistributed,
+            quantityOfIfaTablets = quantityOfIfaTablets,
+            menstrualHygieneAwarenessGiven = menstrualHygieneAwarenessGiven,
+            sanitaryNapkinDistributed = sanitaryNapkinDistributed,
+            noOfPacketsDistributed = noOfPacketsDistributed,
+            place = place,
+            referredToHealthFacility = referredToHealthFacility,
+            counselingProvided = counselingProvided,
+            counselingType = counselingType,
+            followUpDate = getLongFromDate(followUpDate),
+            referralStatus = referralStatus,
+            syncState = SyncState.SYNCED
+        )
+    }
+}
 
 data class TBSuspectedDTO(
     val id: Long,

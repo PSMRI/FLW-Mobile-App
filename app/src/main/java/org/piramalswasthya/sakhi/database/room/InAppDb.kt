@@ -8,7 +8,6 @@ import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import org.piramalswasthya.sakhi.database.converters.LocationEntityListConverter
 import org.piramalswasthya.sakhi.database.converters.SyncStateConverter
-import org.piramalswasthya.sakhi.database.room.dao.AesDao
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.BeneficiaryIdsAvailDao
 import org.piramalswasthya.sakhi.database.room.dao.CbacDao
@@ -33,9 +32,11 @@ import org.piramalswasthya.sakhi.database.room.dao.MdsrDao
 import org.piramalswasthya.sakhi.database.room.dao.PmjayDao
 import org.piramalswasthya.sakhi.database.room.dao.PmsmaDao
 import org.piramalswasthya.sakhi.database.room.dao.PncDao
+import org.piramalswasthya.sakhi.database.room.dao.ProfileDao
 import org.piramalswasthya.sakhi.database.room.dao.SyncDao
 import org.piramalswasthya.sakhi.database.room.dao.TBDao
 import org.piramalswasthya.sakhi.model.AESScreeningCache
+import org.piramalswasthya.sakhi.model.AdolescentHealthCache
 import org.piramalswasthya.sakhi.model.BenBasicCache
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.CDRCache
@@ -69,6 +70,7 @@ import org.piramalswasthya.sakhi.model.PMSMACache
 import org.piramalswasthya.sakhi.model.PNCVisitCache
 import org.piramalswasthya.sakhi.model.PregnantWomanAncCache
 import org.piramalswasthya.sakhi.model.PregnantWomanRegistrationCache
+import org.piramalswasthya.sakhi.model.ProfileActivityCache
 import org.piramalswasthya.sakhi.model.TBScreeningCache
 import org.piramalswasthya.sakhi.model.TBSuspectedCache
 import org.piramalswasthya.sakhi.model.Vaccine
@@ -113,7 +115,8 @@ import org.piramalswasthya.sakhi.model.Vaccine
         LeprosyScreeningCache::class,
         MalariaConfirmedCasesCache::class,
         IRSRoundScreening::class,
-
+        ProfileActivityCache::class,
+        AdolescentHealthCache::class,
     ],
     views = [BenBasicCache::class],
     version = 15, exportSchema = false
@@ -126,6 +129,7 @@ abstract class InAppDb : RoomDatabase() {
     abstract val benIdGenDao: BeneficiaryIdsAvailDao
     abstract val householdDao: HouseholdDao
     abstract val benDao: BenDao
+    abstract val adolescentHealthDao: AdolescentHealthDao
     abstract val cbacDao: CbacDao
     abstract val cdrDao: CdrDao
     abstract val mdsrDao: MdsrDao
@@ -149,6 +153,7 @@ abstract class InAppDb : RoomDatabase() {
     abstract val kalaAzarDao: KalaAzarDao
     abstract val leprosyDao: LeprosyDao
     abstract val filariaDao: FilariaDao
+    abstract val profileDao: ProfileDao
     abstract val syncDao: SyncDao
 
     companion object {
@@ -157,8 +162,10 @@ abstract class InAppDb : RoomDatabase() {
 
         fun getInstance(appContext: Context): InAppDb {
 
-            val MIGRATION_1_2 = Migration(1, 2, migrate = {
-//                it.execSQL("select count(*) from beneficiary")
+            val MIGRATION_1_2 = Migration(18, 19, migrate = {
+                it.execSQL("alter table BEN_BASIC_CACHE add column isConsent BOOL")
+                it.execSQL("alter table BENEFICIARY add column isConsent BOOL")
+
             })
 
             val MIGRATION_14_15 = Migration(14, 15, migrate = {

@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
+import android.net.Uri
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Konstants
@@ -365,6 +366,27 @@ class PregnantWomanAncVisitDataset(
         required = false,
     )
 
+    private val headLine = FormElement(
+        id = 34,
+        inputType = InputType.HEADLINE,
+        title = "MCP Card Uploads",
+        headingLine = false,
+        required = false,
+    )
+    private val fileUploadFront = FormElement(
+        id = 31,
+        inputType = InputType.FILE_UPLOAD,
+        title = "Front Side",
+        required = false,
+    )
+
+    private val fileUploadBack = FormElement(
+        id = 32,
+        inputType = InputType.FILE_UPLOAD,
+        title = "Back Side",
+        required = false,
+    )
+
     private var toggleBp = false
 
     fun resetBpToggle() {
@@ -373,7 +395,8 @@ class PregnantWomanAncVisitDataset(
 
     fun triggerBpToggle() = toggleBp
 
-
+    fun getIndexOfMCPCardFrontPath() = getIndexById(fileUploadFront.id)
+    fun getIndexOfMCPCardBackPath() = getIndexById(fileUploadBack.id)
     suspend fun setUpPage(
         visitNumber: Int,
         ben: BenRegCache?,
@@ -386,6 +409,9 @@ class PregnantWomanAncVisitDataset(
             ancDate,
             weekOfPregnancy,
             ancVisit,
+            headLine,
+            fileUploadFront,
+            fileUploadBack,
             isAborted,
             weight,
             bp,
@@ -403,6 +429,7 @@ class PregnantWomanAncVisitDataset(
             highRiskReferralFacility,
             hrpConfirm,
             maternalDeath
+
 
         )
         abortionDate.min = regis.lmpDate + TimeUnit.DAYS.toMillis(5 * 7 + 1)
@@ -478,6 +505,8 @@ class PregnantWomanAncVisitDataset(
             }
             ancDate.value = getDateFromLong(savedAnc.ancDate)
             weekOfPregnancy.value = woP.toString()
+            fileUploadFront.value = savedAnc.frontFilePath
+            fileUploadBack.value = savedAnc.backFilePath
             isAborted.value =
                 if (savedAnc.isAborted) isAborted.entries!!.last() else isAborted.entries!!.first()
             if (savedAnc.isAborted) {
@@ -830,6 +859,8 @@ class PregnantWomanAncVisitDataset(
             deliveryDone.value?.let {
                 cache.pregnantWomanDelivered = it == deliveryDone.entries!!.first()
             }
+            cache.frontFilePath = fileUploadFront.value.toString()
+            cache.backFilePath = fileUploadBack.value.toString()
         }
     }
 
@@ -878,5 +909,18 @@ class PregnantWomanAncVisitDataset(
         }
         if (it.processed != "N") it.processed = "U"
         it.syncState = SyncState.UNSYNCED
+    }
+
+    fun setImageUriToFormElement(lastImageFormId: Int, dpUri: Uri) {
+        if (lastImageFormId == 31) {
+            fileUploadFront.value = dpUri.toString()
+            fileUploadFront.errorText = null
+
+        } else {
+            fileUploadBack.value = dpUri.toString()
+            fileUploadBack.errorText = null
+
+        }
+
     }
 }

@@ -7,6 +7,7 @@ import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.Icon
+import org.piramalswasthya.sakhi.repositories.AdolescentHealthRepo
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
 import org.piramalswasthya.sakhi.ui.home_activity.all_household.AllHouseholdViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.child_care.ChildCareFragmentDirections
@@ -18,6 +19,7 @@ import org.piramalswasthya.sakhi.ui.home_activity.eligible_couple.EligibleCouple
 import org.piramalswasthya.sakhi.ui.home_activity.home.HomeFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.hrp_cases.HrpCasesFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.immunization_due.ImmunizationDueTypeFragmentDirections
+import org.piramalswasthya.sakhi.ui.home_activity.lms.LmsFragment
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.MotherCareFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.NcdFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.VillageLevelFormsFragmentDirections
@@ -27,12 +29,14 @@ import javax.inject.Inject
 @ActivityRetainedScoped
 class IconDataset @Inject constructor(
     private val recordsRepo: RecordsRepo,
-    private val preferenceDao: PreferenceDao
+    private val preferenceDao: PreferenceDao,
+    private val adolescentHealthRepo: AdolescentHealthRepo
 ) {
 
     enum class Modules {
         ALL,
         HRP
+
     }
 
     enum class Disease {
@@ -60,7 +64,7 @@ class IconDataset @Inject constructor(
                     R.drawable.ic__ben,
                     resources.getString(R.string.icon_title_ben),
                     recordsRepo.allBenListCount,
-                    HomeFragmentDirections.actionNavHomeToAllBenFragment(),
+                    HomeFragmentDirections.actionNavHomeToAllBenFragment(0),
                 ),
                 Icon(
                     R.drawable.ic__eligible_couple,
@@ -139,7 +143,7 @@ class IconDataset @Inject constructor(
                     R.drawable.ic__ben,
                     resources.getString(R.string.icon_title_ben),
                     recordsRepo.allBenListCount,
-                    HomeFragmentDirections.actionNavHomeToAllBenFragment(),
+                    HomeFragmentDirections.actionNavHomeToAllBenFragment(0),
                 ),
                 Icon(
                     R.drawable.ic__eligible_couple,
@@ -163,6 +167,7 @@ class IconDataset @Inject constructor(
 
                 )
             )
+
         }.apply {
             forEachIndexed { index, icon ->
                 icon.colorPrimary = index % 2 == 0
@@ -252,7 +257,24 @@ class IconDataset @Inject constructor(
             resources.getString(R.string.icon_title_acc),
             recordsRepo.adolescentListCount,
             ChildCareFragmentDirections.actionChildCareFragmentToAdolescentListFragment()
-        )
+        ),
+    ).apply {
+        forEachIndexed { index, icon ->
+            icon.colorPrimary = index % 2 == 0
+        }
+    }
+
+    fun getLmsDataset(resources: Resources) = listOf(
+        Icon(
+            R.drawable.ic_guide_icon,
+            resources.getString(R.string.icon_title_user_guid),
+            null,
+            EligibleCoupleFragmentDirections.actionEligibleCoupleFragmentToEligibleCoupleListFragment()
+        ), Icon(
+            R.drawable.ic_video_icon,
+            resources.getString(R.string.icon_title_video_tutorial),
+            null,
+            ChildCareFragmentDirections.actionChildCareFragmentToAdolescentListFragment()        )
     ).apply {
         forEachIndexed { index, icon ->
             icon.colorPrimary = index % 2 == 0
@@ -421,7 +443,7 @@ class IconDataset @Inject constructor(
             ImmunizationDueTypeFragmentDirections.actionImmunizationDueTypeFragmentToChildImmunizationListFragment()
         ),
 
-    ).apply {
+        ).apply {
         forEachIndexed { index, icon ->
             icon.colorPrimary = index % 2 == 0
         }
