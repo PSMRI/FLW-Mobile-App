@@ -42,7 +42,7 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
      * Helper function to get resource instance chosen language.
      */
 
-    protected companion object {
+     companion object {
         fun getLongFromDate(dateString: String?): Long {
             val f = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
             val date = dateString?.let { f.parse(it) }

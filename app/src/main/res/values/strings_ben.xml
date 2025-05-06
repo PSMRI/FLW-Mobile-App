@@ -230,6 +230,17 @@
         <item>Spouse</item>
     </string-array>
 
+    <string-array name="pf_pv">
+        <item>Pf</item>
+        <item>Pv</item>
+    </string-array>
+
+    <string-array name="positive_negative">
+        <item>Positive</item>
+        <item>Negative</item>
+        <item>Not Performed</item>
+    </string-array>
+
     <string-array name="yes">
         <item>Yes</item>
     </string-array>
