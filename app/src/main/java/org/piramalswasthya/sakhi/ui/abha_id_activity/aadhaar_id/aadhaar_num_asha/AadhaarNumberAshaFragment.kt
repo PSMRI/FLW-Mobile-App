@@ -3,12 +3,12 @@ package org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.aadhaar_num_ash
 import android.app.AlertDialog
 import android.os.Bundle
 import android.text.Editable
-import android.text.InputType
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.google.gson.Gson
@@ -27,6 +27,12 @@ import java.util.regex.Pattern
 
 @AndroidEntryPoint
 class AadhaarNumberAshaFragment : Fragment() {
+
+    private var isPasswordVisible:Boolean = false
+
+    var isValidAadhaar = false
+    var isValidMobile = false
+    var isValidBenName = false
 
     private var _binding: FragmentAadhaarNumberAshaBinding? = null
     private val binding: FragmentAadhaarNumberAshaBinding
@@ -79,8 +85,6 @@ class AadhaarNumberAshaFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        var isValidAadhaar = false
-        var isValidMobile = false
 
         parentViewModel.verificationType.observe(viewLifecycleOwner) {
             when (it) {
@@ -105,11 +109,18 @@ class AadhaarNumberAshaFragment : Fragment() {
         }
 
         viewModel.ben.observe(viewLifecycleOwner) {
-            it?.let {
+            if(it!=null){
+                binding.benNameTitle.visibility = View.VISIBLE
                 binding.benName.visibility = View.VISIBLE
-                binding.benName.text =
-                    String.format("%s%s%s", getString(R.string.generating_abha_for), "\n", it)
+                binding.benName.text =it
+                parentViewModel.setBeneficiaryName(it)
+                binding.clBenName.visibility = View.GONE
+                // String.format("%s%s%s", getString(R.string.generating_abha_for), "\n", it)
+
+            }else{
+                binding.clBenName.visibility = View.VISIBLE
             }
+
         }
 
         viewModel.state.observe(viewLifecycleOwner) {
@@ -131,16 +142,60 @@ class AadhaarNumberAshaFragment : Fragment() {
                 parentViewModel.setTxnId(it)
             }
         }
-
-        binding.aadharConsentCheckBox.setOnCheckedChangeListener { _, ischecked ->
-            binding.btnVerifyAadhaar.isEnabled = isValidAadhaar && isValidMobile && ischecked
+        viewModel.otpMobileNumberMessage.observe(viewLifecycleOwner) {
+            it?.let {
+                parentViewModel.setOTPMsg(it)
+            }
         }
+
+       /* binding.aadharConsentCheckBox.setOnCheckedChangeListener { _, ischecked ->
+            binding.btnVerifyAadhaar.isEnabled = isValidAadhaar && isValidMobile && ischecked
+        }*/
 
         binding.aadharDisclaimer.setOnClickListener {
-            aadhaarDisclaimer.show()
+           if(parentViewModel.beneficiaryName.value!=null && !parentViewModel.beneficiaryName.value.isNullOrBlank()) {
+               viewModel.aadhaarNumber.value = binding.tietAadhaarNumber.text.toString()
+               parentViewModel.navigateToAadhaarConsent(true)
+            }else{
+                Toast.makeText(requireContext(),"Please Enter Beneficiary Name",Toast.LENGTH_SHORT).show()
+           }
+           // aadhaarDisclaimer.show()
         }
+        binding.tietAadhaarNumber.setEdiTextBackground(ContextCompat.getDrawable(requireContext(), R.drawable.selector_edittext_round_border_line))
 
-        binding.tietAadhaarNumber.addTextChangedListener(object : TextWatcher {
+        binding.tietAadhaarNumber.setTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+                if(s.toString().isNullOrBlank()){
+                    binding.tvErrorText.visibility = View.GONE
+                    binding.tvErrorText.text = ""
+                    binding.ivValidAadhaar.setImageResource(R.drawable.ic_check_circle_grey)
+                }else if(AadhaarValidationUtils.isValidAadhaar(s.toString())){
+                    binding.tvErrorText.visibility = View.GONE
+                    binding.tvErrorText.text = ""
+                    binding.ivValidAadhaar.setImageResource(R.drawable.ic_check_circle_green)
+                    binding.tietAadhaarNumber.setEdiTextBackground(ContextCompat.getDrawable(requireContext(), R.drawable.edit_text_round_border_line_green))
+
+                }else{
+                    binding.tvErrorText.visibility = View.VISIBLE
+                    binding.tvErrorText.text = getString(R.string.str_invalid_aadhaar_no)
+                    binding.ivValidAadhaar.setImageResource(R.drawable.ic_check_circle_grey)
+                    binding.tietAadhaarNumber.setEdiTextBackground(ContextCompat.getDrawable(requireContext(), R.drawable.edit_text_round_border_line))
+                }
+
+                isValidAadhaar = (s != null) && AadhaarValidationUtils.isValidAadhaar(s.toString())
+                binding.btnVerifyAadhaar.isEnabled = isValidAadhaar && isValidMobile
+                        && (parentViewModel.consentChecked.value==true)//binding.aadharConsentCheckBox.isChecked
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+            }
+
+        })
+        /*binding.tietAadhaarNumber.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
 
@@ -157,7 +212,7 @@ class AadhaarNumberAshaFragment : Fragment() {
                     binding.tvErrorText.text = ""
                 }else{
                     binding.tvErrorText.visibility = View.VISIBLE
-                    binding.tvErrorText.text = "Please Enter Valid Aadhaar Number"
+                    binding.tvErrorText.text = getString(R.string.str_invalid_aadhaar_no)
                 }
 
                 isValidAadhaar = (s != null) && AadhaarValidationUtils.isValidAadhaar(s.toString())
@@ -165,7 +220,7 @@ class AadhaarNumberAshaFragment : Fragment() {
                         && binding.aadharConsentCheckBox.isChecked
             }
 
-        })
+        })*/
 
         binding.tietMobileNumber.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -178,18 +233,49 @@ class AadhaarNumberAshaFragment : Fragment() {
                 if((s != null) && isValidMobileNumber(s.toString())){
                     binding.tvErrorTextMobile.visibility = View.GONE
                     binding.tvErrorTextMobile.text = ""
+                    binding.ivValidMobile.setImageResource(R.drawable.ic_check_circle_green)
+
                 }else{
                     binding.tvErrorTextMobile.visibility = View.VISIBLE
-                    binding.tvErrorTextMobile.text = "Please Enter Valid Mobile Number"
+                    binding.tvErrorTextMobile.text = getString(R.string.str_invalid_mobile_no)
+                    binding.ivValidMobile.setImageResource(R.drawable.ic_check_circle_grey)
                 }
                 isValidMobile = (s != null) && isValidMobileNumber(s.toString())
                 if (isValidMobile)
                     parentViewModel.setMobileNumber(s.toString())
                 binding.btnVerifyAadhaar.isEnabled = isValidAadhaar && isValidMobile
-                        && binding.aadharConsentCheckBox.isChecked
+                        && (parentViewModel.consentChecked.value==true) // binding.aadharConsentCheckBox.isChecked
             }
 
         })
+
+        binding.tietBenName.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                if((s != null)){
+                    binding.tvErrorTextBenName.visibility = View.GONE
+                    binding.tvErrorTextBenName.text = ""
+                    binding.ivValidBenName.setImageResource(R.drawable.ic_check_circle_green)
+
+                }else{
+                    binding.tvErrorTextBenName.visibility = View.VISIBLE
+                    binding.tvErrorTextBenName.text = getString(R.string.str_invalid_mobile_no)
+                    binding.ivValidBenName.setImageResource(R.drawable.ic_check_circle_grey)
+                }
+                isValidBenName = (s != null && s.length >= 3)
+                if (isValidBenName)
+                    parentViewModel.setBeneficiaryName(s.toString())
+                binding.btnVerifyAadhaar.isEnabled = isValidAadhaar && isValidMobile
+                        && (parentViewModel.consentChecked.value==true) //isValidBenName //binding.aadharConsentCheckBox.isChecked
+            }
+
+        })
+
 
         // observing error message from parent and updating error text field
         viewModel.errorMessage.observe(viewLifecycleOwner) {
@@ -200,19 +286,27 @@ class AadhaarNumberAshaFragment : Fragment() {
             }
         }
 
-        binding.tilAadhaarNumber.setEndIconOnClickListener {
-            val currentInputType = binding.tietAadhaarNumber.inputType
-
-            if (currentInputType == (InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
-                // Show password when eye is OPEN
-                binding.tietAadhaarNumber.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-            } else {
-                // Hide password when eye is CROSSED
-                binding.tietAadhaarNumber.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+        binding.tietAadhaarNumber.setInputType(android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_PASSWORD)
+        binding.ivShowText.setBackgroundResource(R.drawable.ic_hide)
+        binding.ivShowText.setOnClickListener {
+            if (isPasswordVisible) {
+                binding.tietAadhaarNumber.setInputType(android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD)
+                binding.ivShowText.setBackgroundResource(R.drawable.ic_show)
+            }else{
+                binding.tietAadhaarNumber.setInputType(android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_PASSWORD)
+                binding.ivShowText.setBackgroundResource(R.drawable.ic_hide)
             }
+            isPasswordVisible = !isPasswordVisible
+            binding.tietAadhaarNumber.setSelection(binding.tietAadhaarNumber.text?.length!!)
 
-            // Keep cursor position at the end
-            binding.tietAadhaarNumber.setSelection(binding.tietAadhaarNumber.text?.length ?: 0)
+        }
+
+        parentViewModel.consentChecked.observe(viewLifecycleOwner){
+            if (it ==true){
+                binding.tietAadhaarNumber.text= viewModel.aadhaarNumber.value
+                binding.btnVerifyAadhaar.isEnabled = isValidAadhaar && isValidMobile
+                        && (parentViewModel.consentChecked.value==true)
+            }
         }
     }
 

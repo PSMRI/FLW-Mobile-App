@@ -79,7 +79,7 @@ class MdsrRepo @Inject constructor(
 
                         val errormessage = jsonObj.getString("errorMessage")
                         if (jsonObj.isNull("statusCode")) throw IllegalStateException("Amrit server not responding properly, Contact Service Administrator!!")
-                        val responsestatuscode = jsonObj.getInt("responseStatusCode")
+                        val responsestatuscode = jsonObj.getInt("statusCode")
 
                         when (responsestatuscode) {
                             200 -> {

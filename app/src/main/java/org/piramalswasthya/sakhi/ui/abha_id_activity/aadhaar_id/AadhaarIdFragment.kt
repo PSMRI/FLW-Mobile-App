@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
@@ -60,21 +61,33 @@ class AadhaarIdFragment : Fragment() {
         )
 
         binding.createToggle.setOnClickListener {
+            binding.searchToggle.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_dark_shadow))
+            binding.createToggle.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_light_onSecondary))
             binding.createToggle.setBackgroundResource(R.drawable.background_rectangle_lightest_grey_20)
+            binding.tilAadhaarVerifyDropdown.visibility = View.VISIBLE
+            binding.actvAadharVerificationDropdown.visibility = View.VISIBLE
             binding.searchToggle.setBackgroundResource(0)
             binding.createToggle.setTypeface(resources.getFont(R.font.opensans_semibold))
             binding.searchToggle.setTypeface(resources.getFont(R.font.opensans_regular))
             binding.navHostFragmentFindAbha.visibility = View.GONE
             binding.navHostFragmentAadhaarId.visibility = View.VISIBLE
 
+            viewModel.selectedNavToggle = "navHostFragmentAadhaarId"
+
         }
         binding.searchToggle.setOnClickListener {
             binding.createToggle.setBackgroundResource(0)
+            binding.searchToggle.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_light_onSecondary))
+            binding.createToggle.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_dark_shadow))
+            binding.tilAadhaarVerifyDropdown.visibility = View.GONE
+            binding.actvAadharVerificationDropdown.visibility = View.GONE
+
             binding.searchToggle.setBackgroundResource(R.drawable.background_rectangle_lightest_grey_20)
             binding.createToggle.setTypeface(resources.getFont(R.font.opensans_regular))
             binding.searchToggle.setTypeface(resources.getFont(R.font.opensans_semibold))
             binding.navHostFragmentAadhaarId.visibility = View.GONE
             binding.navHostFragmentFindAbha.visibility = View.VISIBLE
+            viewModel.selectedNavToggle = "navHostFragmentFindAbha"
 
         }
 
@@ -165,6 +178,15 @@ class AadhaarIdFragment : Fragment() {
                 }
             }
         }
+
+        viewModel.navigateToAadhaarConsent.observe(viewLifecycleOwner){
+            if (it==true){
+                findNavController().navigate(
+                    AadhaarIdFragmentDirections.actionAadhaarIdFragmentToAadhaarConsentFragment()
+                )
+                viewModel.navigateToAadhaarConsent(false)
+            }
+        }
     }
 
     override fun onStart() {
@@ -180,6 +202,42 @@ class AadhaarIdFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+
+        if (viewModel.selectedNavToggle == "navHostFragmentAadhaarId"){
+            binding.searchToggle.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_dark_shadow))
+            binding.createToggle.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_light_onSecondary))
+            binding.createToggle.setBackgroundResource(R.drawable.background_rectangle_lightest_grey_20)
+            binding.tilAadhaarVerifyDropdown.visibility = View.VISIBLE
+            binding.actvAadharVerificationDropdown.visibility = View.VISIBLE
+            binding.searchToggle.setBackgroundResource(0)
+            binding.createToggle.setTypeface(resources.getFont(R.font.opensans_semibold))
+            binding.searchToggle.setTypeface(resources.getFont(R.font.opensans_regular))
+            binding.navHostFragmentFindAbha.visibility = View.GONE
+            binding.navHostFragmentAadhaarId.visibility = View.VISIBLE
+
+            viewModel.selectedNavToggle = "navHostFragmentAadhaarId"
+        }else{
+            binding.createToggle.setBackgroundResource(0)
+            binding.searchToggle.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_light_onSecondary))
+            binding.createToggle.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_dark_shadow))
+            binding.tilAadhaarVerifyDropdown.visibility = View.GONE
+            binding.actvAadharVerificationDropdown.visibility = View.GONE
+
+            binding.searchToggle.setBackgroundResource(R.drawable.background_rectangle_lightest_grey_20)
+            binding.createToggle.setTypeface(resources.getFont(R.font.opensans_regular))
+            binding.searchToggle.setTypeface(resources.getFont(R.font.opensans_semibold))
+            binding.navHostFragmentAadhaarId.visibility = View.GONE
+            binding.navHostFragmentFindAbha.visibility = View.VISIBLE
+            viewModel.selectedNavToggle = "navHostFragmentFindAbha"
+
+
+
+        }
     }
 
 }

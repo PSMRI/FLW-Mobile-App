@@ -435,12 +435,17 @@ class HouseholdFormDataset(context: Context, language: Languages) : Dataset(cont
         return when (formId) {
             firstNameHeadOfFamily.id -> {
                 validateEmptyOnEditText(firstNameHeadOfFamily)
-                //   validateAllCapsOrSpaceOnEditText(firstNameHeadOfFamily)
+                 //  validateAllCapsOrSpaceOnEditText(firstNameHeadOfFamily)
+                validateAllCapsOrSpaceOnEditTextWithHindiEnabled(firstNameHeadOfFamily)
             }
             /*These validations commented because Hindi and Asamese language name and sirname should store in db
             *
             * */
-            lastNameHeadOfFamily.id -> validateEmptyOnEditText(firstNameHeadOfFamily)// validateAllCapsOrSpaceOnEditText(lastNameHeadOfFamily)
+            lastNameHeadOfFamily.id ->{
+                validateEmptyOnEditText(lastNameHeadOfFamily)
+            // validateAllCapsOrSpaceOnEditText(lastNameHeadOfFamily)
+                validateAllCapsOrSpaceOnEditTextWithHindiEnabled(lastNameHeadOfFamily)
+            }
             mobileNoHeadOfFamily.id -> {
                 validateEmptyOnEditText(mobileNoHeadOfFamily)
                 validateMobileNumberOnEditText(mobileNoHeadOfFamily)
