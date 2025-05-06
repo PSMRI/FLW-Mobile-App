@@ -195,7 +195,7 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // This will block user to cast app screen
-        if (BuildConfig.FLAVOR.equals("sakshamProd", true) ||BuildConfig.FLAVOR.equals("niramayProd", true) || BuildConfig.FLAVOR.equals("xushrukhaProd", true))  {
+        if (BuildConfig.FLAVOR.equals("niramay", true) ||BuildConfig.FLAVOR.equals("xushrukha", true) || BuildConfig.FLAVOR.equals("saksham", true))  {
             window.setFlags(
                 WindowManager.LayoutParams.FLAG_SECURE,
                 WindowManager.LayoutParams.FLAG_SECURE
@@ -265,7 +265,7 @@ class HomeActivity : AppCompatActivity() {
                 }
             }
         }
-        binding.versionName.text = "APK Version ${BuildConfig.VERSION_NAME}"
+        binding.versionName.text = "APK Version 2.2.1" //${BuildConfig.VERSION_NAME}
     }
 
 
@@ -379,7 +379,7 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onResume() {
         // This will block user to cast app screen
-        if (BuildConfig.FLAVOR.equals("sakshamProd", true) ||BuildConfig.FLAVOR.equals("niramayProd", true) || BuildConfig.FLAVOR.equals("xushrukhaProd", true))  {
+        if (BuildConfig.FLAVOR.equals("niramay", true) ||BuildConfig.FLAVOR.equals("xushrukha", true) || BuildConfig.FLAVOR.equals("saksham", true))  {
             window.setFlags(
                 WindowManager.LayoutParams.FLAG_SECURE,
                 WindowManager.LayoutParams.FLAG_SECURE
@@ -394,7 +394,7 @@ class HomeActivity : AppCompatActivity() {
                 .setPositiveButton("Exit") { dialog, id -> finish() }
                 .show()
         }
-        binding.versionName.text = "APK Version ${BuildConfig.VERSION_NAME}"
+        binding.versionName.text = "APK Version 2.2.1" //${BuildConfig.VERSION_NAME}
     }
     private fun setUpMenu() {
         val menu = object : MenuProvider {
@@ -531,7 +531,7 @@ class HomeActivity : AppCompatActivity() {
         }
         binding.navView.menu.findItem(R.id.menu_delete_account).setOnMenuItemClickListener {
             var url = ""
-            if (BuildConfig.FLAVOR.equals("sakshamProd", true) ||BuildConfig.FLAVOR.equals("niramayProd", true) || BuildConfig.FLAVOR.equals("xushrukhaProd", true))  {
+            if (BuildConfig.FLAVOR.equals("saksham", true) ||BuildConfig.FLAVOR.equals("niramay", true) || BuildConfig.FLAVOR.equals("xushrukha", true))  {
                 url = "https://forms.office.com/r/HkE3c0tGr6"
             } else {
                 url =

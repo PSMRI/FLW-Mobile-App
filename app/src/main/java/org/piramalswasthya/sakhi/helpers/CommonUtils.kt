@@ -384,7 +384,7 @@ fun filterForImm(
         imm.ben.age.lowercase() == firstVal ||
         imm.ben.age.lowercase() == secondVal ||
         imm.ben.age.lowercase() == thirdVal ||
-        imm.ben.benName.lowercase() ==filterText
+        imm.ben.benFullName.lowercase() ==filterText
 
 fun filterBenHRNPTFormList(
     list: List<BenWithHRNPTListDomain>,

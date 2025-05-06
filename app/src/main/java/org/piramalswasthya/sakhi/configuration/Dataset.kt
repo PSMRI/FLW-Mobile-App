@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import java.util.concurrent.TimeUnit
+import kotlin.math.abs
 
 
 /**
@@ -524,6 +525,46 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
         return -1
     }
 
+    protected fun validateAllCapsOrSpaceOnEditTextWithHindiEnabled(formElement: FormElement): Int {
+        val value = formElement.value.orEmpty().trim()
+
+        // Function to check if a character is Hindi or Assamese
+        fun Char.isHindiOrAssamese(): Boolean {
+            return this in '\u0900'..'\u097F' || this in '\u0980'..'\u09FF'
+        }
+
+        // Function to check if a string contains only uppercase English letters or spaces
+        fun String.isAllUppercaseOrSpace(): Boolean {
+            return this.all { it.isUpperCase() || it.isWhitespace() || it.isHindiOrAssamese() }
+        }
+
+        if (formElement.allCaps) {
+            when {
+                value.isEmpty() -> {
+                    if (formElement.required) {
+                        formElement.errorText = resources.getString(R.string.form_input_empty_error)
+                    } else {
+                        formElement.errorText = null
+                    }
+                    return -1
+                }
+                !value.isAllUppercaseOrSpace() -> {
+                    formElement.errorText = resources.getString(R.string.form_input_upper_case_error)
+                    return -1
+                }
+            }
+
+            // Convert only English letters to uppercase, keep Hindi/Assamese as is
+            val transformedValue = value.map {
+                if (it.isLowerCase() && !it.isHindiOrAssamese()) it.uppercaseChar() else it
+            }.joinToString("")
+
+            formElement.value = transformedValue
+        }
+
+        return -1
+    }
+
     protected fun validateEditTextFullLengthOccupied(formElement: FormElement): Int {
 
         formElement.value?.takeIf { it.isNotEmpty() }?.let {
@@ -825,6 +866,39 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
                 .indexOf(it)]
         }
         return null
+    }
+
+    fun isValidChildGap(formElement: FormElement, firstDobStr: String?/*, secondDobStr: String?*/): Int {
+        val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        try {
+            val firstDob = dateFormat.parse(firstDobStr)
+            val secondDob = dateFormat.parse(formElement.value)
+
+            if (firstDob == null || secondDob == null) {
+                formElement.errorText = null //return false
+            }
+
+            // If twins (same DOB), it's valid
+            if (firstDob == secondDob){
+                formElement.errorText = null
+                return -1
+            } //true
+
+            val diffInMillis = abs(secondDob.time - firstDob.time)
+            val diffInDays = diffInMillis / (1000 * 60 * 60 * 24)
+
+            // Valid if gap is 365 days (approx. 12 months) or more
+            if (diffInDays >= 365){
+                formElement.errorText = null
+            }else{
+                formElement.errorText = "Invalid date of birth! The minimum age difference should be at least 12 months."
+            }
+
+        } catch (e: Exception) {
+            formElement.errorText = "Invalid date format or parsing error"//null // Invalid date format or parsing error
+        }
+
+        return -1
     }
 
 }

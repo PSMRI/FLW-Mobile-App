@@ -23,6 +23,12 @@ class ChildImmunizationVaccineAdapter (private val clickListener: ImmunizationCl
 
     }
 
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+        IconViewHolder.from(parent)
+
+    override fun onBindViewHolder(holder: IconViewHolder, position: Int) {
+        holder.bind(getItem(position), clickListener)
+    }
 
     class IconViewHolder private constructor(private val binding: ItemChildImmunizationDoseBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -43,7 +49,9 @@ class ChildImmunizationVaccineAdapter (private val clickListener: ImmunizationCl
             binding.clickListener = clickListener
             binding.executePendingBindings()
 
-            if (item.state.name =="PENDING"||item.state.name =="OVERDUE"||item.state.name =="PENDING" ){
+            binding.idSwitch.setOnCheckedChangeListener(null)
+            binding.idSwitch.isChecked = item.isSwitchChecked
+            if (item.state.name =="PENDING"||item.state.name =="OVERDUE"){
                 binding.idSwitch.isEnabled = true
 
             }else if(item.state.name =="MISSED" ||item.state.name =="UNAVAILABLE"){
@@ -54,6 +62,7 @@ class ChildImmunizationVaccineAdapter (private val clickListener: ImmunizationCl
                 binding.idSwitch.isEnabled = false
                 binding.idSwitch.isChecked = true
             }
+
 
             binding.idSwitch.setOnCheckedChangeListener { compoundButton, b ->
                 if (b){
@@ -70,12 +79,6 @@ class ChildImmunizationVaccineAdapter (private val clickListener: ImmunizationCl
 
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-        IconViewHolder.from(parent)
-
-    override fun onBindViewHolder(holder: IconViewHolder, position: Int) {
-        holder.bind(getItem(position), clickListener)
-    }
 
     class ImmunizationClickListener(val selectedListener: (vaccine: VaccineDomain) -> Unit) {
         fun onClicked(vaccine: VaccineDomain) = selectedListener(vaccine)
