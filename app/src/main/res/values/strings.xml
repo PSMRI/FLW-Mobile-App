@@ -176,6 +176,8 @@
     <string name="form_input_alphabet_special_only_error">Only Alphabets and special characters allowed!</string>
     <string name="form_input_min_limit_error">%1s should be greater than or equal to %2d</string>
     <string name="form_input_alph_numeric_space_only_error">Only Alphabets and Numerics allowed!</string>
+    <string name="abha_number_digit">ABHA number should be 14-digit long</string>
+    <string name="ifsc">4 letters followed by 7 digits (e.g., ABCD1234567)!</string>
     <string name="form_input__no_alpha_space_error">No Alphabets or spaces allowed!</string>
     <string name="form_input_digit_only_error">Only Digits allowed!</string>
     <string name="form_input_min_limit_error_decimal">%1s should be greater than or equal to %2.1f</string>
@@ -189,6 +191,7 @@
     <string name="something_went_wrong_nunable_to_connect_to_server_ntry_again_later">Something went wrong !\nUnable to connect to server !\nTry again later!</string>
     <string name="try_again">Try Again!</string>
     <string name="version_2_0_0">APK Version 2.0.0</string>
+    <string name="file_size">File size should be less than or equals to 5 MB.</string>
     <!--    <string name="disagree">DISAGREE</string>-->
     <!--    <string name="agree">AGREE</string>-->
     <string name="enter_pin">Enter PIN</string>
@@ -238,6 +241,7 @@
     <string name="pregnancy_weeks">Weeks Of Pregnancy</string>
     <string name="anc_visits">ANC VISITS</string>
     <string name="pnc_visits">PNC VISITS</string>
+    <string name="pnc">PNC</string>
     <string name="add_anc_visits">Add ANC visit</string>
     <string name="add_pnc_visits">Add PNC visit</string>
     <string name="id">ID</string>
@@ -252,6 +256,7 @@
     <string name="view_cbac">View CBAC</string>
     <string name="view">VIEW</string>
     <string name="home">Home</string>
+    <string name="asha_profile">Profile</string>
     <string name="sync_records">Sync Records</string>
     <string name="about">About Us</string>
 
@@ -293,7 +298,9 @@
     <!--    <string name="child_immunization_list">Child Immunization List</string>-->
     <string name="pregnancy_registration_form">Pregnancy Registration Form</string>
     <string name="anc_visit">ANC Visit</string>
+    <string name="anc">ANC</string>
     <string name="eligible_couple_list">Eligible Couple List</string>
+    <string name="ec">EC</string>
     <string name="eligible_couple_registration">Eligible Couple Registration</string>
     <string name="eligible_couple_tracking_list">Eligible Couple Tracking List</string>
     <string name="eligible_couple_tracking_form">Eligible Couple Tracking Form</string>
@@ -330,6 +337,7 @@
     <!--    <string name="form_name">Form Name</string>-->
 
     <string name="save_successful">Save Successful</string>
+    <string name="otp_resent">OTP Resent</string>
     <string name="something_wend_wong_contact_testing">Something wend wong! Contact testing!</string>
     <string name="error_input">Error Input</string>
     <string name="exit_application">Exit Application</string>
@@ -345,6 +353,7 @@
     <string name="hbnc_daylist">Hbnc DayList</string>
     <string name="hbyc_list">Hbyc List</string>
     <string name="child_immunization">Child Immunization</string>
+    <string name="non_follow_up_cases">Non Follow Up Cases</string>
     <string name="pregnancy_registration">Pregnancy Registration</string>
     <string name="mother_immunizationlist">Mother ImmunizationList</string>
     <string name="family_member_registration">Family Member Registration</string>
@@ -352,6 +361,13 @@
     <string name="add_family_member">Add Family Member</string>
     <string name="app_native_name">উৎপ্ৰেৰণা</string>
     <string name="non_pregnant_women_eligible_couple_section">Non-Pregnant Women (Eligible Couple) section</string>
+    <string name="text_kpis">Key Performance Indicator(KPIs)</string>
+    <string name="all">All</string>
+    <string name="with_abha">With ABHA</string>
+    <string name="without_abha">Without ABHA</string>
+    <string name="no_visit_made">No Visit Made</string>
+    <string name="filter_list">Filter List</string>
+    <string name="ben_with_rch_id">Ben With RCH ID</string>
     <string-array name="sync_records">
         <item>Beneficiary</item>
         <item>CBAC</item>
@@ -515,3 +531,4 @@
         <item>O (Other)</item>
     </string-array>
 </resources>
+

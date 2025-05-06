@@ -40,7 +40,7 @@
     <string name="nbr_rch_id">RCH ID</string>
     <string name="nbr_father_name">Father\'s Name</string>
     <string name="nbr_mother_name">Mother\'s Name</string>
-    <string name="nbr_mobile_number_of">Mobile Number Of</string>
+    <string name="nbr_mobile_number_of">Mobile Number belongs to</string>
     <string name="nrb_contact_number">Contact Number</string>
     <string name="nbr_nb_age_unit">Age Unit</string>
     <string name="saving_mdsr_to_database_failed">Saving Mdsr to database Failed!</string>

@@ -309,6 +309,265 @@
                     </RelativeLayout>
                 </androidx.cardview.widget.CardView>
             </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/text_kpis"
+                android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingVertical="@dimen/padding_wide"
+            android:orientation="horizontal">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_abha"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_small"
+                android:layout_weight="1"
+                android:backgroundTint="@android:color/holo_red_light"
+                android:elevation="@dimen/padding_normal"
+                app:cardCornerRadius="@dimen/padding_normal"
+                app:cardElevation="@dimen/padding_normal">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/padding_wide">
+
+                    <TextView
+                        android:id="@+id/tv_ph_abha"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:lines="3"
+                        android:text="@string/icon_title_abha"
+                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                        android:textColor="?attr/colorOnPrimary"/>
+
+                    <TextView
+                        android:id="@+id/tv_abha"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/tv_ph_abha"
+                        android:layout_alignParentEnd="false"
+                        android:layout_centerHorizontal="true"
+                        android:textAppearance="@style/TextAppearance.Material3.DisplayMedium"
+                        android:textColor="?attr/colorOnPrimary"
+                        tools:text="45" />
+
+                </RelativeLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_rch"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_small"
+                android:layout_weight="1"
+                android:backgroundTint="@android:color/holo_red_light"
+                android:elevation="@dimen/padding_normal"
+                app:cardCornerRadius="@dimen/padding_normal"
+                app:cardElevation="@dimen/padding_normal">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/padding_wide">
+
+                    <TextView
+                        android:id="@+id/tv_ph_rch"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:lines="3"
+                        android:textColor="?attr/colorOnPrimary"
+                        android:text="@string/icon_title_rch"
+                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+
+                    <TextView
+                        android:id="@+id/tv_rch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/tv_ph_rch"
+                        android:layout_alignParentEnd="false"
+                        android:layout_centerHorizontal="true"
+                        tools:text="@string/_0"
+                        android:textColor="?attr/colorOnPrimary"
+                        android:textAppearance="@style/TextAppearance.Material3.DisplayMedium" />
+                </RelativeLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_non"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_small"
+                android:layout_weight="1"
+                android:backgroundTint="@android:color/holo_red_light"
+                android:elevation="@dimen/padding_normal"
+                app:cardCornerRadius="@dimen/padding_normal"
+                app:cardElevation="@dimen/padding_normal">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/padding_wide">
+
+                    <TextView
+                        android:id="@+id/tv_ph_non"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:lines="3"
+                        android:textColor="?attr/colorOnPrimary"
+                        android:text="@string/icon_title_no_follow_up"
+                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+
+                    <TextView
+                        android:id="@+id/tv_non"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/tv_ph_non"
+                        android:layout_alignParentEnd="false"
+                        android:layout_centerHorizontal="true"
+                        tools:text="9"
+                        android:textColor="?attr/colorOnPrimary"
+                        android:textAppearance="@style/TextAppearance.Material3.DisplayMedium" />
+                </RelativeLayout>
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingVertical="@dimen/padding_wide"
+                android:orientation="horizontal">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cv_miss"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_small"
+                    android:layout_weight="1"
+                    android:backgroundTint="@android:color/holo_red_light"
+                    android:elevation="@dimen/padding_normal"
+                    app:cardCornerRadius="@dimen/padding_normal"
+                    app:cardElevation="@dimen/padding_normal">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/padding_wide">
+
+                        <TextView
+                            android:id="@+id/tv_ph_miss"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:lines="3"
+                            android:text="@string/icon_title_missed_period"
+                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                            android:textColor="?attr/colorOnPrimary"/>
+
+                        <TextView
+                            android:id="@+id/tv_miss"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/tv_ph_miss"
+                            android:layout_alignParentEnd="false"
+                            android:layout_centerHorizontal="true"
+                            android:textAppearance="@style/TextAppearance.Material3.DisplayMedium"
+                            android:textColor="?attr/colorOnPrimary"
+                            android:text="5" />
+
+                    </RelativeLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cv_rcha"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_small"
+                    android:layout_weight="1"
+                    android:visibility="invisible"
+                    android:backgroundTint="@android:color/holo_red_light"
+                    android:elevation="@dimen/padding_normal"
+                    app:cardCornerRadius="@dimen/padding_normal"
+                    app:cardElevation="@dimen/padding_normal">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/padding_wide">
+
+                        <TextView
+                            android:id="@+id/tv_ph_rcha"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:lines="3"
+                            android:textColor="?attr/colorOnPrimary"
+                            android:text="@string/icon_title_rch"
+                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+
+                        <TextView
+                            android:id="@+id/tv_rcha"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/tv_ph_rcha"
+                            android:layout_alignParentEnd="false"
+                            android:layout_centerHorizontal="true"
+                            android:text="@string/_0"
+                            android:textColor="?attr/colorOnPrimary"
+                            android:textAppearance="@style/TextAppearance.Material3.DisplayMedium" />
+                    </RelativeLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cv_nona"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_small"
+                    android:layout_weight="1"
+                    android:visibility="invisible"
+                    android:backgroundTint="@android:color/holo_red_light"
+                    android:elevation="@dimen/padding_normal"
+                    app:cardCornerRadius="@dimen/padding_normal"
+                    app:cardElevation="@dimen/padding_normal">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/padding_wide">
+
+                        <TextView
+                            android:id="@+id/tv_ph_nona"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:lines="3"
+                            android:textColor="?attr/colorOnPrimary"
+                            android:text="@string/icon_title_no_follow_up"
+                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+
+                        <TextView
+                            android:id="@+id/tv_nona"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/tv_ph_nona"
+                            android:layout_alignParentEnd="false"
+                            android:layout_centerHorizontal="true"
+                            android:text="9"
+                            android:textColor="?attr/colorOnPrimary"
+                            android:textAppearance="@style/TextAppearance.Material3.DisplayMedium" />
+                    </RelativeLayout>
+                </androidx.cardview.widget.CardView>
+
+            </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

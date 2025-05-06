@@ -5,6 +5,9 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="frag_service_type_title">Select Village</string>
     <string name="tv_text_select_village">Please select the village below.</string>
+    <string name="village">Village</string>
+    <string name="loginusername">Login Username</string>
+    <string name="asha_empid">ASHA Emp ID</string>
     <string name="service_type_dd_state_text">State</string>
     <string name="service_type_dd_district_text">District</string>
     <string name="service_type_dd_block_text">Block</string>
@@ -37,6 +40,10 @@
     <string name="icon_title_leprosy">Leprosy</string>
     <string name="icon_title_malaria_confirmed">Malaria Confirmed Cases</string>
     <string name="icon_title_dearming">Deworming</string>
+    <string name="icon_title_abha">ABHA Generated\nCount</string>
+    <string name="icon_title_rch">RCH ID\nCount</string>
+    <string name="icon_title_no_follow_up">No Visit in Last 3 Months</string>
+    <string name="icon_title_missed_period">Missed Period</string>
     <string name="icon_title_icc">Infant List</string>
     <string name="icon_title_ccc">Child List</string>
     <string name="icon_title_acc">Adolescent List</string>
@@ -47,7 +54,9 @@
     <string name="icon_title_pmir">Infant Registration</string>
     <string name="icon_title_pmcr">Child Registration</string>
     <string name="icon_title_ecr">Eligible Couple Registration</string>
+    <string name="icon_title_user_guid">User Guide</string>
     <string name="icon_title_ect">Eligible Couple Tracking</string>
+    <string name="icon_title_video_tutorial">Video Tutorial</string>
     <string name="icon_title_dmc">Delivery Stage List</string>
     <string name="icon_title_pncmc">PNC Mother List</string>
     <string name="icon_title_rmc">Reproductive Age List</string>

@@ -139,6 +139,7 @@
     <string name="btn_frag_nhhr_to_ben">Continue to Beneficiary</string>
     <string name="consent_alert_title">Consent Form</string>
     <string name="add_head_of_family">ADD Head Of Family</string>
+    <string name="add_asha_head">ADD ASHA Head Of Family</string>
     <string name="hh_no_members">Household EMPTY!</string>
     <string name="add_head_of_family_message">Would you like to add <b>%1s</b> as a HoF Beneficiary ?</string>
 

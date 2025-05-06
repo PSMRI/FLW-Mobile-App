@@ -166,7 +166,7 @@ class HRPAdapter(
                 } else {
                     formButton.setBackgroundColor(
                         binding.root.resources.getColor(
-                            android.R.color.holo_red_light,
+                            android.R.color.holo_red_dark,
                             binding.root.context.theme
                         )
                     )
@@ -178,7 +178,7 @@ class HRPAdapter(
                 else
                     formButton.setBackgroundColor(
                         binding.root.resources.getColor(
-                            android.R.color.holo_red_light,
+                            android.R.color.holo_red_dark,
                         )
                     )
 

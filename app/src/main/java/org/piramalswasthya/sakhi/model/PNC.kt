@@ -187,6 +187,7 @@ data class BenWithDoAndPncCache(
                 )
             } ?: "",
             availFillDates.isNotEmpty(),
+            pncDate = (latestPnc?.pncDate ?: 0L),
             savedPncRecords
         )
     }
@@ -198,6 +199,7 @@ data class BenPncDomain(
     val ben: BenBasicDomain,
     val deliveryDate: String,
     val allowFill: Boolean,
+    val pncDate: Long? = 0L,
     val savedPncRecords: List<PNCVisitCache>,
     val syncState: SyncState? = savedPncRecords.takeIf { it.isNotEmpty() }?.map { it.syncState }
         ?.let { syncStates ->

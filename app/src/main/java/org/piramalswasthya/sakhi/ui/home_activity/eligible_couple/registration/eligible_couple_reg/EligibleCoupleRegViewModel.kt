@@ -83,7 +83,8 @@ class EligibleCoupleRegViewModel @Inject constructor(
                     benId = ben.beneficiaryId,
                     syncState = SyncState.UNSYNCED,
                     createdBy = asha.userName,
-                    updatedBy = asha.userName
+                    updatedBy = asha.userName,
+                    lmp_date = calDob.timeInMillis
                 )
             }
 

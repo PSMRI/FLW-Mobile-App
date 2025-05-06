@@ -27,6 +27,9 @@ object WorkerUtils {
         val pullWorkRequest = OneTimeWorkRequestBuilder<PullFromAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
+        val pullAdolescentWorkRequest = OneTimeWorkRequestBuilder<PullAdolescentFromWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
         val pullIncentiveActivityWorkRequest =
             OneTimeWorkRequestBuilder<PullIncentiveWorker>()
                 .setConstraints(networkOnlyConstraint)
@@ -102,6 +105,7 @@ object WorkerUtils {
                 ExistingWorkPolicy.APPEND_OR_REPLACE,
                 pullWorkRequest
             )
+            .then(pullAdolescentWorkRequest)
             .then(pullIncentiveActivityWorkRequest)
             .then(pullCbacWorkRequest)
             .then(pullHRPWorkRequest)
@@ -128,6 +132,9 @@ object WorkerUtils {
 
     fun triggerAmritPushWorker(context: Context) {
         val pushWorkRequest = OneTimeWorkRequestBuilder<PushToAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pushAdolescentWorkRequest = OneTimeWorkRequestBuilder<PushAdolescentAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
         val pushCbacWorkRequest = OneTimeWorkRequestBuilder<CbacPushToAmritWorker>()
@@ -214,6 +221,7 @@ object WorkerUtils {
                 pushWorkRequest
             )
             .then(pushCbacWorkRequest)
+            .then(pushAdolescentWorkRequest)
             .then(pushHRPToAmritWorker)
             .then(pushTBWorkRequest)
             .then(pushECToAmritWorker)
@@ -239,6 +247,9 @@ object WorkerUtils {
 
     fun triggerAmritPullWorker(context: Context) {
         val pullWorkRequest = OneTimeWorkRequestBuilder<PullFromAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pulladolescentWorkRequest = OneTimeWorkRequestBuilder<PushAdolescentAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
 
@@ -321,6 +332,7 @@ object WorkerUtils {
                 ExistingWorkPolicy.APPEND_OR_REPLACE,
                 pullWorkRequest
             )
+            .then(pulladolescentWorkRequest)
             .then(pullIncentiveActivityWorkRequest)
             .then(pullCbacWorkRequest)
             .then(pullVaccineWorkRequest)
