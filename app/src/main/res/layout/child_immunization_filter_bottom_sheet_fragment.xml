@@ -6,6 +6,16 @@
     android:minHeight="@dimen/_200sdp"
     android:orientation="vertical">
 
+    <ImageView
+        android:id="@+id/ivClose"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginEnd="@dimen/_10sdp"
+        android:src="@drawable/ic_close"
+        android:layout_gravity="end"
+        app:tint="@color/box_stroke_color" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_cat"
         android:layout_width="match_parent"
