@@ -18,6 +18,21 @@
     <string name="radio_title" translatable="false">%s<span> *</span></string>
     <string name="radio_title_ds">%s<span> **</span></string>
     <string name="tracking_date">Date of Visit</string>
+    <string name="case_date">Malaria Screening Date</string>
+    <string name="start_t_date">Date of Starting Treatment</string>
+    <string name="date_of_completion">Date of Completion of Treatment</string>
+    <string name="date_of_referal">Date of Referral</string>
+    <string name="death_date">Date of death</string>
+    <string name="home_visit_date">Home Visit Date</string>
+    <string name="visit_date">Visit Date</string>
+    <string name="home_visit_date_mda_program">Home Visit Date(MDA Program)</string>
+    <string name="case_date_malaria">Malaria Case Status Date</string>
+    <string name="aes_case_status_date">AES / JE Case Status Date</string>
+    <string name="case_status">Case Status</string>
+    <string name="place_of_Death">Place of Death</string>
+    <string name="reason_of_Death">Reason for Death</string>
+    <string name="beneficiary_status">Beneficiary Status</string>
+    <string name="aes_case_status">AES / JE  Case Status</string>
     <string name="mdsr_form">MDSR</string>
     <string name="mdsr_district">District</string>
     <string name="mdsr_state">State</string>
@@ -37,6 +52,14 @@
     <string name="mdsr_ic_date">Date</string>
     <string name="mdsr_reason_death">specify reasons</string>
     <string name="mdsr_action">Action taken</string>
+    <string name="refer_to">Referred To</string>
+    <string name="day_wise_tracking_pf">Pf - Day-wise Tracking</string>
+    <string name="day_wise_tracking_pv">PV - Day-wise Tracking</string>
+    <string name="type_of_leprocy">Type of Leprocy</string>
+    <string name="dose_status">DEC and Albendazole Dose Status</string>
+    <string name="body_part">Which part of Body	</string>
+    <string name="follow_up">Follow up point</string>
+    <string name="medicine_side_effect">Medicine  Side Effect</string>
 
 
     <!--    HBNC-->
@@ -94,6 +117,7 @@
     <string name="tv_ncd_status_ph">NCD Status</string>
     <string name="tv_tb_status_ph">TB Status</string>
     <string name="iv_sync_state_tv">SYNC STATE</string>
+    <string name="iv_case_status_tv">CASE STATUS</string>
     <string name="chat_error">There is some error in loading your chat bot</string>
     <string name="help_and_support">Help &amp; Support</string>
 
@@ -177,6 +201,8 @@
     <string name="female">Female</string>
     <string name="transgender">Transgender</string>
     <string name="other">Other</string>
+    <string name="other_place">Other Place of Death</string>
+    <string name="other_reason">Other Reason of Death</string>
     <string name="state">State</string>
     <string name="district">District</string>
 
@@ -281,6 +307,12 @@
     <string name="tb_screening_list">TB Screening List</string>
     <string name="tb_suspected_list">Suspected TB cases</string>
     <string name="tb_screening_form">TB Screening Form</string>
+    <string name="maleria_screening_form">Maleria Form</string>
+    <string name="kala_screening_form">KALA Azar Form</string>
+    <string name="aes_screening_form">AES Form</string>
+    <string name="filaria_screening_form">Filaria Form</string>
+    <string name="leprosy_screening_form">Leprosy Form</string>
+    <string name="follow_up_form">Follow-up  Form</string>
     <string name="tb_suspected_form">Suspected TB case</string>
     <string name="mother_immunization">Mother Immunization</string>
     <string name="delivery_outcome">Delivery Outcome</string>
@@ -356,4 +388,147 @@
         <item name="nbr_gender_2">Female</item>
     </string-array>
 
+    <string-array name="dc_case_status">
+        <item name="dc_suspected">Suspected</item>
+        <item name="dc_confirmed">Confirmed</item>
+        <item name="dc_not_confirmed">Not Confirmed</item>
+        <item name="dc_treatment">Treatment Started</item>
+    </string-array>
+
+    <string-array name="leprosy_status">
+        <item >Screened</item>
+        <item >Denied</item>
+        <item >Not Screened</item>
+        <item >Suspected</item>
+        <item >Confirmed</item>
+        <item >Not Confirmed</item>
+    </string-array>
+
+    <string-array name="death_place">
+        <item name="home">Home</item>
+        <item name="facility">Facility</item>
+        <item name="other">Other</item>
+    </string-array>
+
+    <string-array name="reason_death">
+        <item name="fever">Fever</item>
+        <item name="other_disease">other Disease</item>
+        <item name="other">Other</item>
+    </string-array>
+
+    <string-array name="benificary_case_status">
+        <item name="dc_not">Not Applicable</item>
+        <item name="dc_cured">Cured</item>
+        <item name="dc_death">Death</item>
+    </string-array>
+
+    <string-array name="benificary_case_status_kalaazar">
+        <item name="dc_not_app">Not Applicable</item>
+        <item name="dc_recovering">Recovering</item>
+        <item name="dc_cured">Cured</item>
+        <item name="dc_death">Death</item>
+        <item name="dc_symp">Recurrence of Symptoms</item>
+    </string-array>
+
+    <string-array name="benificary_case_status_leprosy">
+        <item name="dc_not_app">Not Applicable</item>
+        <item name="dc_recovering">Recovering</item>
+        <item name="dc_cured">Cured</item>
+        <item name="dc_death">Death</item>
+        <item name="dc_symp">Recurrence of Symptoms</item>
+        <item name="dc_reg">Regularly taking medicine</item>
+        <item name="dc_n_Reg">Not regularly taking medicine</item>
+        <item name="dc_treatment">Treatment completed</item>
+        <item name="dc_other">Other</item>
+    </string-array>
+
+    <string-array name="kala_case_status">
+        <item name="dc_recovering">Recovering</item>
+        <item name="dc_cured">Cured</item>
+        <item name="dc_dead">Dead</item>
+        <item name="dc_r_symptoms">Recurrence of Symptoms</item>
+    </string-array>
+
+    <string-array name="type_of_leprocy">
+        <item name="mb">MB</item>
+        <item name="pb">PB</item>
+    </string-array>
+
+    <string-array name="dc_refer">
+        <item>Primary Health Centre</item>
+        <item>Community Health Centre</item>
+        <item>District Hospital</item>
+        <item>Medical College and Hospital</item>
+        <item>Referral Hospital</item>
+        <item>Other Private Hospital</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="daysPv">
+        <item>Day 1</item>
+        <item>Day 2</item>
+        <item>Day 3</item>
+        <item>Day 4</item>
+
+    </string-array>
+
+    <string-array name="daysPf">
+        <item>Day 1</item>
+        <item>Day 2</item>
+        <item>Day 3</item>
+
+    </string-array>
+
+    <string-array name="dec_albendazole_array">
+        <item>T</item>
+        <item>P</item>
+        <item>Y</item>
+        <item>S</item>
+        <item>H</item>
+        <item>A</item>
+        <item>R</item>
+        <item>L</item>
+        <item>O</item>
+    </string-array>
+
+    <string-array name="body_part_male">
+        <item>Right Hand</item>
+        <item>Left Hand</item>
+        <item>Right Leg</item>
+        <item>Left Leg</item>
+        <item>Hydrocele</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="body_part_female">
+        <item>Right Hand</item>
+        <item>Left Hand</item>
+        <item>Right Leg</item>
+        <item>Left Leg</item>
+        <item>Right Side Breast</item>
+        <item>Left Side Breast</item>
+        <item>Hydrocele</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="follow_up_array">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+
+
+    </string-array>
+
+    <string-array name="side_effect_of_medicine">
+        <item>F (Fever)</item>
+        <item>H (Headache)</item>
+        <item>B (Body Pain)</item>
+        <item>V (Vomiting)</item>
+        <item>N (Najala)</item>
+        <item>O (Other)</item>
+    </string-array>
 </resources>
+
