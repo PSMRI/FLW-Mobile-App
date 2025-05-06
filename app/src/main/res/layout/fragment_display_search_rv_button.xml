@@ -82,7 +82,7 @@
             android:id="@+id/question_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Is there a सुअर बाराह near the house?"
+            android:text="Is there a herd of pigs near the house?"
             android:textSize="16sp"
             />
 

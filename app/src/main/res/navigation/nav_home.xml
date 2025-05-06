@@ -79,7 +79,7 @@
         <action
             android:id="@+id/action_homeFragment_to_diseaseControlFragment"
             app:destination="@id/diseaseControlFragment" />
-
+        <action
             android:id="@+id/action_homeFragment_to_nonFollowUpFragment"
             app:destination="@id/nonFollowUpFragment" />
         <action
@@ -1296,7 +1296,10 @@
         android:id="@+id/adolescentHealthListFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.child_care.adolescent_list.AdolescentHealthListFragment"
         android:label="AdolescentHealthListFragment" />
-
+    <fragment
+        android:id="@+id/lmsFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.lms.LmsFragment"
+        android:label="LmsFragment" />
 
 
 </navigation>

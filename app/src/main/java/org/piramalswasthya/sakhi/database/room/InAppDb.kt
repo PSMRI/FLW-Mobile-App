@@ -8,6 +8,8 @@ import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import org.piramalswasthya.sakhi.database.converters.LocationEntityListConverter
 import org.piramalswasthya.sakhi.database.converters.SyncStateConverter
+import org.piramalswasthya.sakhi.database.room.dao.AdolescentHealthDao
+import org.piramalswasthya.sakhi.database.room.dao.AesDao
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.BeneficiaryIdsAvailDao
 import org.piramalswasthya.sakhi.database.room.dao.CbacDao

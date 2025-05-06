@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlinx.parcelize.Parcelize
 import org.piramalswasthya.sakhi.model.AESScreeningCache
+import org.piramalswasthya.sakhi.model.AdolescentHealthCache
 import org.piramalswasthya.sakhi.model.FilariaScreeningCache
 import org.piramalswasthya.sakhi.model.IRSRoundScreening
 import org.piramalswasthya.sakhi.model.KalaAzarScreeningCache
@@ -97,6 +98,7 @@ data class GetDataPaginatedRequestForDisease(
     val fromDate: String,
     val toDate: String,
     val diseaseTypeID: Int
+)
 
 data class ValidateOtpRequest(
     val otp: Int,
@@ -624,6 +626,7 @@ data class AESScreeningRequestDTO(
 data class FilariaScreeningRequestDTO(
     val userId: Int,
     val filariaLists: List<FilariaScreeningDTO>
+)
     
 data class AdolescentHealthRequestDTO(
     val userId: Int,
