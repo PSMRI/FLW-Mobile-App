@@ -122,7 +122,7 @@ class PHCReviewFormFragement:Fragment() {
         activity?.let {
             (it as HomeActivity).updateActionBar(
                 R.drawable.ic__village_level_form,
-                getString(R.string.icon_title_vhnd)
+                getString(R.string.icon_title_phc)
             )
         }
     }

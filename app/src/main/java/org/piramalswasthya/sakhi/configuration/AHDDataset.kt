@@ -65,6 +65,14 @@ class AHDDataset(
     )
 
     suspend fun setUpPage(ahd: AHDCache?) {
+
+        if (pic1.value.isNullOrBlank()) {
+            pic1.value = "default"
+        }
+
+        if (pic2.value.isNullOrBlank()) {
+            pic2.value = "default"
+        }
         formElementList.clear()
         val list = mutableListOf(
             mobilizedForAHD,

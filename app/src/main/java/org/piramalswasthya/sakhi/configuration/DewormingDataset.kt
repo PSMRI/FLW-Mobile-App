@@ -70,6 +70,14 @@ class DewormingDataset(
     )
 
     suspend fun setUpPage(deworming: DewormingCache?) {
+
+        if (pic1.value.isNullOrBlank()) {
+            pic1.value = "default"
+        }
+
+        if (pic2.value.isNullOrBlank()) {
+            pic2.value = "default"
+        }
         val list = mutableListOf(
             dewormingDone,
             ageGroup,

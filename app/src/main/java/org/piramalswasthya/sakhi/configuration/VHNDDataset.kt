@@ -80,6 +80,15 @@ class VHNDDataset(
 
     suspend fun setUpPage(vhnd: VHNDCache?) {
 
+
+        if (pic1.value.isNullOrBlank()) {
+            pic1.value = "default"
+        }
+
+        if (pic2.value.isNullOrBlank()) {
+            pic2.value = "default"
+        }
+
         val list = mutableListOf(
             vhndDate,
             place,
@@ -132,12 +141,14 @@ class VHNDDataset(
         }
 
     }
+
     fun setImageUriToFormElement(lastImageFormId: Int, dpUri: Uri) {
         when (lastImageFormId) {
             pic1.id -> {
                 pic1.value = dpUri.toString()
                 pic1.errorText = null
             }
+
             pic2.id -> {
                 pic2.value = dpUri.toString()
                 pic2.errorText = null
