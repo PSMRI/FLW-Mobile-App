@@ -58,8 +58,8 @@
     <string name="deworming_date">Date of Deworming</string>
     <string name="deworming_location">Location of Deworming</string>
     <string name="age_group">Age Group</string>
-    <string name="deworming_title">National Deworming Day</string>
-    <string name="deworming_list_title">Deworming List</string>
+    <string name="deworming_title">National Deworming Day Form</string>
+    <string name="deworming_list_title">National Deworming Day List</string>
     <string name="ndd_list_title">NDD Form</string>
 
     <string-array name="deworming_location_options">

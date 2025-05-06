@@ -66,8 +66,7 @@ class VHNCDataset(
     private val pic1 = FormElement(
         id = 1,
         inputType = IMAGE_VIEW,
-        title = resources.getString(R.string.nbr_image),
-        subtitle = resources.getString(R.string.upload_image),
+        title = resources.getString(R.string.upload_image),
         arrayId = -1,
         required = false,
     )
@@ -81,6 +80,14 @@ class VHNCDataset(
 
     suspend fun setUpPage(vhnd: VHNCCache?) {
 
+
+        if (pic1.value.isNullOrBlank()) {
+            pic1.value = "default"
+        }
+
+        if (pic2.value.isNullOrBlank()) {
+            pic2.value = "default"
+        }
         val list = mutableListOf(
             vhncDate,
             place,

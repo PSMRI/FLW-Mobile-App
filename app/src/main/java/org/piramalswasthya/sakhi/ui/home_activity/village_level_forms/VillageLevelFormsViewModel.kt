@@ -70,10 +70,10 @@ class VillageLevelFormsViewModel @Inject constructor(
                                 lastDate.isBefore(firstOfMonth) ||    // Submission before the 1st of the month
                                 lastDate.isAfter(seventhOfMonth)      // Submission after the 7th of the month
 
-                        Log.d(
-                            "OverdueCheck",
-                            "Is overdue: $isOverdue, lastDate: $lastDate, deadline: $firstOfMonth - $seventhOfMonth"
-                        )
+//                        Log.d(
+//                            "OverdueCheck",
+//                            "Is overdue: $isOverdue, lastDate: $lastDate, deadline: $firstOfMonth - $seventhOfMonth"
+//                        )
 
                         icon to isOverdue
                     }
@@ -86,36 +86,5 @@ class VillageLevelFormsViewModel @Inject constructor(
             _iconsWithRedFlags.value = result
         }
     }
-//    fun loadIcons(resources: Resources) {
-//        viewModelScope.launch {
-//            val icons = iconDataset.getVLFDataset(resources)
-//            val currentDate = LocalDate.now() // Get current date
-//            val firstOfMonth = currentDate.withDayOfMonth(1)  // First day of the current month
-//            val seventhOfMonth = currentDate.withDayOfMonth(7)  // Seventh day of the current month
-//            val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.getDefault())
-//            val result = icons.map { icon ->
-//                val formId = formIdMap[icon.title]
-////                val lastDateString = "01-04-2024"
-//                val lastDateString = formId?.let { vlfRepo.getLastSubmissionDate(it).firstOrNull() }
-//                Log.d("OverdueCheck", "Is overdue: $lastDateString")
-//                val lastDate = try {
-//                    lastDateString?.let { LocalDate.parse(it, formatter) }
-//                } catch (e: Exception) {
-//                    null
-//                }
-//                val isOverdue = lastDate == null || lastDate.isBefore(firstOfMonth) || lastDate.isAfter(seventhOfMonth)
-//
-////                val isOverdue = lastDate == null || lastDate.isBefore(deadline)
-////                Log.d("OverdueCheck", "Is overdue: $isOverdue, lastDate: $lastDate, deadline: $deadline")
-//
-//                icon to isOverdue
-//            }
-//
-//
-//            _iconsWithRedFlags.value = result
-//        }
-//    }
-//}
-//    val scope: CoroutineScope
-//        get() = viewModelScope
+
 }
