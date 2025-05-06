@@ -32,6 +32,10 @@ class ChildImmunizationFilterBottomSheetFragment : BottomSheetDialogFragment(),I
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.ivClose.setOnClickListener {
+            dismiss()
+        }
+
         val layoutManager= GridLayoutManager(context, requireContext().resources.getInteger(R.integer.icon_grid_span))
         binding.rvCat.setLayoutManager(layoutManager)
         binding.rvCat.adapter = ImmunizationBirthDoseCategoryAdapter(viewModel.categoryData(),this,viewModel)

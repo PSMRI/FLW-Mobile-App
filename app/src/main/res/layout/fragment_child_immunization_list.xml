@@ -41,9 +41,11 @@
                 android:orientation="horizontal"
                 android:visibility="visible"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/ivFilter"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent">
+<!--                app:layout_constraintEnd_toStartOf="@+id/ivFilter"-->
+
 
                 <EditText
                     android:id="@+id/searchView"
@@ -71,21 +73,22 @@
                         android:paddingHorizontal="12dp"
                         android:src="@drawable/ic_mic"
                         tools:visibility="visible" />
-                </androidx.cardview.widget.CardView>
-            </LinearLayout>
 
-            <ImageView
-                android:id="@+id/ivFilter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:minWidth="@dimen/_40sdp"
-                android:minHeight="@dimen/_40sdp"
-                android:padding="@dimen/_5sdp"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_filter"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                </androidx.cardview.widget.CardView>
+
+                <ImageView
+                    android:id="@+id/ivFilter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:minWidth="@dimen/_40sdp"
+                    android:minHeight="@dimen/_40sdp"
+                    android:padding="@dimen/_5sdp"
+                    android:src="@drawable/ic_filter"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
