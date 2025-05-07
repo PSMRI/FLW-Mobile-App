@@ -6,11 +6,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.RvItemPregnancyVisitBinding
 import org.piramalswasthya.sakhi.model.BenWithAncListDomain
 import java.util.concurrent.TimeUnit
 
-class AncVisitListAdapter(private val clickListener: PregnancyVisitClickListener? = null) :
+class AncVisitListAdapter(private val clickListener: PregnancyVisitClickListener? = null,
+                          private val pref: PreferenceDao? = null) :
     ListAdapter<BenWithAncListDomain, AncVisitListAdapter.PregnancyVisitViewHolder>(
         MyDiffUtilCallBack
     ) {
@@ -36,8 +38,17 @@ class AncVisitListAdapter(private val clickListener: PregnancyVisitClickListener
         }
 
         fun bind(
-            item: BenWithAncListDomain, clickListener: PregnancyVisitClickListener?
+            item: BenWithAncListDomain, clickListener: PregnancyVisitClickListener?, pref: PreferenceDao?
         ) {
+
+            if (pref?.getLoggedInUser()?.role.equals("asha", true)) {
+                binding.btnPmsma.visibility = View.VISIBLE
+                binding.btnAddAnc.visibility = View.VISIBLE
+            } else {
+                binding.btnPmsma.visibility = View.INVISIBLE
+                binding.btnAddAnc.visibility = View.INVISIBLE
+            }
+
             if (item.ancDate!! < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(90) &&
                 item.ancDate!! > System.currentTimeMillis() - TimeUnit.DAYS.toMillis(365)) {
                 binding.ivFollowState.visibility = View.GONE
@@ -62,7 +73,7 @@ class AncVisitListAdapter(private val clickListener: PregnancyVisitClickListener
     ) = PregnancyVisitViewHolder.from(parent)
 
     override fun onBindViewHolder(holder: PregnancyVisitViewHolder, position: Int) {
-        holder.bind(getItem(position), clickListener)
+        holder.bind(getItem(position), clickListener, pref)
     }
 
 

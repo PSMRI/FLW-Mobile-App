@@ -196,30 +196,40 @@ class SignInFragment : Fragment() {
                     binding.pbSignIn.visibility = View.VISIBLE
                     binding.tvError.visibility = View.GONE
 
-//                    activity?.finish()
-//                    val goToHome = Intent(requireContext(), SupervisorActivity::class.java)
-//                    startActivity(goToHome)
-                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
-                        WorkerUtils.triggerGenBenIdWorker(requireContext())
-                        findNavController().navigate(
-                            if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
-                            else SignInFragmentDirections.actionSignInFragmentToHomeActivity()
-                        )
-                        activity?.finish()
-                    } else {
-                        val locationRecord = LocationRecord(
-                            LocationEntity(1, "India"),
-                            LocationEntity(prefDao.getLoggedInUser()!!.state.id, prefDao.getLoggedInUser()!!.state.name),
-                            LocationEntity(0, ""),
-                            LocationEntity(prefDao.getLoggedInUser()!!.block.id, prefDao.getLoggedInUser()!!.block.name),
-                            LocationEntity(prefDao.getLoggedInUser()!!.villages[0].id, prefDao.getLoggedInUser()!!.villages[0].name),
-                        )
-                        prefDao.saveLocationRecord(locationRecord)
+                    val locationRecord = LocationRecord(
+                        LocationEntity(1, "India"),
+                        LocationEntity(prefDao.getLoggedInUser()!!.state.id, prefDao.getLoggedInUser()!!.state.name),
+                        LocationEntity(0, ""),
+                        LocationEntity(prefDao.getLoggedInUser()!!.block.id, prefDao.getLoggedInUser()!!.block.name),
+                        LocationEntity(prefDao.getLoggedInUser()!!.villages[0].id, prefDao.getLoggedInUser()!!.villages[0].name),
+                    )
+                    prefDao.saveLocationRecord(locationRecord)
 
-                        activity?.finish()
-                        val goToHome = Intent(requireContext(), SupervisorActivity::class.java)
-                        startActivity(goToHome)
-                    }
+                    activity?.finish()
+                    val goToHome = Intent(requireContext(), SupervisorActivity::class.java)
+                    startActivity(goToHome)
+
+//                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+//                        WorkerUtils.triggerGenBenIdWorker(requireContext())
+//                        findNavController().navigate(
+//                            if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
+//                            else SignInFragmentDirections.actionSignInFragmentToHomeActivity()
+//                        )
+//                        activity?.finish()
+//                    } else {
+//                        val locationRecord = LocationRecord(
+//                            LocationEntity(1, "India"),
+//                            LocationEntity(prefDao.getLoggedInUser()!!.state.id, prefDao.getLoggedInUser()!!.state.name),
+//                            LocationEntity(0, ""),
+//                            LocationEntity(prefDao.getLoggedInUser()!!.block.id, prefDao.getLoggedInUser()!!.block.name),
+//                            LocationEntity(prefDao.getLoggedInUser()!!.villages[0].id, prefDao.getLoggedInUser()!!.villages[0].name),
+//                        )
+//                        prefDao.saveLocationRecord(locationRecord)
+//
+//                        activity?.finish()
+//                        val goToHome = Intent(requireContext(), SupervisorActivity::class.java)
+//                        startActivity(goToHome)
+//                    }
                 }
             }
         }

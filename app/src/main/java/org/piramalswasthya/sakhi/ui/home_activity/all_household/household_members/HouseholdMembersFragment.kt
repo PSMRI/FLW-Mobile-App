@@ -14,12 +14,18 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.BenListAdapter
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
+import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class HouseholdMembersFragment : Fragment() {
+
+    @Inject
+    lateinit var prefDao: PreferenceDao
 
     private var _binding: FragmentDisplaySearchRvButtonBinding? = null
     private val binding: FragmentDisplaySearchRvButtonBinding
@@ -55,26 +61,30 @@ class HouseholdMembersFragment : Fragment() {
         val benAdapter = BenListAdapter(
             clickListener = BenListAdapter.BenClickListener(
                 { hhId, benId, relToHeadId ->
-                    findNavController().navigate(
-                        HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToNewBenRegFragment(
-                            hhId = hhId,
-                            benId = benId,
-                            gender = 0,
-                            relToHeadId = relToHeadId
+                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+                        findNavController().navigate(
+                            HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToNewBenRegFragment(
+                                hhId = hhId,
+                                benId = benId,
+                                gender = 0,
+                                relToHeadId = relToHeadId
+                            )
+
                         )
-
-                    )
-
+                    }
                 },
                 {
                 },
                 { benId, hhId ->
-                    checkAndGenerateABHA(benId)
+                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+                        checkAndGenerateABHA(benId)
+                    }
                 }
             ),
             showSyncIcon = true,
             showAbha = true,
-            showRegistrationDate = true
+            showRegistrationDate = true,
+            pref = prefDao
         )
         binding.rvAny.adapter = benAdapter
 
@@ -111,10 +121,21 @@ class HouseholdMembersFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            (it as HomeActivity).updateActionBar(
+            (it as SupervisorActivity).updateActionBar(
                 R.drawable.ic__hh,
                 getString(R.string.household_members)
             )
+//            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+//                (it as HomeActivity).updateActionBar(
+//                    R.drawable.ic__hh,
+//                    getString(R.string.household_members)
+//                )
+//            } else {
+//                (it as SupervisorActivity).updateActionBar(
+//                    R.drawable.ic__hh,
+//                    getString(R.string.household_members)
+//                )
+//            }
         }
     }
 

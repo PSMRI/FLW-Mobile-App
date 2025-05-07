@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.RvItemBenBinding
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 
@@ -16,7 +17,8 @@ class BenListAdapter(
     private val showRegistrationDate: Boolean = false,
     private val showSyncIcon: Boolean = false,
     private val showAbha: Boolean = false,
-    private val role: Int? = 0
+    private val role: Int? = 0,
+    private val pref: PreferenceDao? = null
 ) :
     ListAdapter<BenBasicDomain, BenListAdapter.BenViewHolder>(BenDiffUtilCallBack) {
     private object BenDiffUtilCallBack : DiffUtil.ItemCallback<BenBasicDomain>() {
@@ -46,8 +48,15 @@ class BenListAdapter(
             showAbha: Boolean,
             showSyncIcon: Boolean,
             showRegistrationDate: Boolean,
-            showBeneficiaries: Boolean, role: Int?
+            showBeneficiaries: Boolean, role: Int?,
+            pref: PreferenceDao?
         ) {
+
+            if (pref?.getLoggedInUser()?.role.equals("asha", true)) {
+                binding.btnAbha.visibility = View.VISIBLE
+            } else {
+                binding.btnAbha.visibility = View.GONE
+            }
             if (!showSyncIcon) item.syncState = null
             binding.ben = item
             binding.clickListener = clickListener
@@ -59,6 +68,10 @@ class BenListAdapter(
                 if (showRegistrationDate) View.VISIBLE else View.INVISIBLE
             binding.hasAbha = !item.abhaId.isNullOrEmpty()
             binding.role = role
+
+//            if () {
+//
+//            }
 
             if (showBeneficiaries) {
                 if (item.spouseName == "Not Available" && item.fatherName == "Not Available") {
@@ -110,7 +123,8 @@ class BenListAdapter(
             showSyncIcon,
             showRegistrationDate,
             showBeneficiaries,
-            role
+            role,
+            pref
         )
     }
 
