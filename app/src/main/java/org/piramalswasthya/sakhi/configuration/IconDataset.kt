@@ -7,6 +7,7 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.Icon
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
+import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.SupervisorFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.child_care.ChildCareFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.communicable_diseases.CdFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.eligible_couple.EligibleCoupleFragmentDirections
@@ -203,67 +204,67 @@ class IconDataset @Inject constructor(
             R.drawable.ic__hh,
             resources.getString(R.string.sup_households),
             recordsRepo.hhListCount,
-            HomeFragmentDirections.actionNavHomeToAllHouseholdFragment()
+            SupervisorFragmentDirections.actionNavSupervisorToAllHouseholdFragments()
         ),
         Icon(
             R.drawable.ic__ben,
             resources.getString(R.string.sup_beneficiaries),
             recordsRepo.allBenListCount,
-            HomeFragmentDirections.actionNavHomeToAllBenFragment(0),
+            SupervisorFragmentDirections.actionNavSupervisorToAllBenFragments(0)
         ),
         Icon(
             R.drawable.ic__eligible_couple,
             resources.getString(R.string.sup_eligible_couples),
             recordsRepo.eligibleCoupleTrackingListCount,
-            EligibleCoupleFragmentDirections.actionEligibleCoupleFragmentToEligibleCoupleTrackingListFragment()
+            SupervisorFragmentDirections.actionNavSupervisorToEligibleCoupleTrackingListFragments()
         ),
         Icon(
             R.drawable.ic__maternal_health,
             resources.getString(R.string.sup_pregnant_women),
             recordsRepo.getPregnantWomenListCount(),
-            MotherCareFragmentDirections.actionMotherCareFragmentToPwRegistrationFragment()
+            SupervisorFragmentDirections.actionNavSupervisorToPwRegistrationFragments()
         ),
         Icon(
             R.drawable.ic__anc_visit,
             resources.getString(R.string.sup_anc_visits),
             recordsRepo.getRegisteredPregnantWomanListCount(),
-            MotherCareFragmentDirections.actionMotherCareFragmentToPwAncVisitsFragment()
+            SupervisorFragmentDirections.actionNavSupervisorToPwAncVisitsFragments()
         ),
         Icon(
             R.drawable.ic__hrp,
             resources.getString(R.string.sup_hrp_woman),
             recordsRepo.hrpPregnantWomenListCount,
-            HrpCasesFragmentDirections.actionHrpCasesFragmentToPregnantListFragment()
+            SupervisorFragmentDirections.actionNavSupervisorToPregnantListFragments()
         ),
         Icon(
             R.drawable.ic__delivery_outcome,
             resources.getString(R.string.sup_deliveries),
             recordsRepo.getDeliveredWomenListCount(),
-            MotherCareFragmentDirections.actionMotherCareFragmentToDeliveryOutcomeListFragment()
+            SupervisorFragmentDirections.actionNavSupervisorToDeliveryOutcomeListFragments()
         ),
         Icon(
             R.drawable.ic__immunization,
             resources.getString(R.string.sup_routine_immunization),
             recordsRepo.childrenImmunizationListCount,
-            ImmunizationDueTypeFragmentDirections.actionImmunizationDueTypeFragmentToChildImmunizationListFragment()
+            SupervisorFragmentDirections.actionNavSupervisorToChildImmunizationListFragments()
         ),
         Icon(
             R.drawable.ic__ncd_list,
             resources.getString(R.string.sup_ncd_screened),
             recordsRepo.ncdListCount,
-            NcdFragmentDirections.actionNcdFragmentToNcdListFragment()
+            SupervisorFragmentDirections.actionNavSupervisorToNcdListFragments()
         ),
         Icon(
             R.drawable.ic__ncd_priority,
             resources.getString(R.string.sup_ncd_priority),
             recordsRepo.getNcdPriorityListCount,
-            NcdFragmentDirections.actionNcdFragmentToNcdPriorityListFragment()
+            SupervisorFragmentDirections.actionNavSupervisorToNcdPriorityListFragments()
         ),
         Icon(
             R.drawable.ic__death,
             resources.getString(R.string.sup_tb_cases),
             recordsRepo.tbSuspectedListCount,
-            CdFragmentDirections.actionCdFragmentToTBSuspectedListFragment()
+            SupervisorFragmentDirections.actionNavSupervisorToTBSuspectedListFragments()
         )
     ).apply {
         forEachIndexed { index, icon ->
