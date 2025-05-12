@@ -51,7 +51,7 @@ class HouseHoldListAdapter(private var isDisease: Boolean, private val clickList
                 binding.button5.visibility = View.GONE
             } else {
                 binding.button4.visibility = View.GONE
-                binding.button5.visibility = View.VISIBLE
+                binding.button5.visibility = View.GONE
             }
 
         }
