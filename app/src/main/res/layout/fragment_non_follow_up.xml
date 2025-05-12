@@ -161,6 +161,84 @@
                 android:orientation="horizontal">
 
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/cv_lwb"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_small"
+                    android:layout_weight="1"
+                    android:backgroundTint="@android:color/holo_red_light"
+                    android:elevation="@dimen/padding_normal"
+                    app:cardCornerRadius="@dimen/padding_normal"
+                    app:cardElevation="@dimen/padding_normal">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/padding_wide">
+
+                        <TextView
+                            android:id="@+id/tv_ph_lbwb"
+                            android:lines="3"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="?attr/colorOnPrimary"
+                            android:text="@string/ec"
+                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+
+                        <TextView
+                            android:id="@+id/tv_lbwb"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/tv_ph_lbwb"
+                            android:layout_alignParentEnd="false"
+                            android:textColor="?attr/colorOnPrimary"
+                            android:layout_centerHorizontal="true"
+                            tools:text="7"
+                            android:textAppearance="@style/TextAppearance.Material3.DisplayMedium" />
+                    </RelativeLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cv_ec"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_small"
+                    android:layout_weight="1"
+                    android:backgroundTint="@android:color/holo_orange_light"
+                    android:elevation="@dimen/padding_normal"
+                    android:visibility="gone"
+                    app:cardCornerRadius="@dimen/padding_normal"
+                    app:cardElevation="@dimen/padding_normal">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="@dimen/padding_wide"
+                        android:textColor="?attr/colorOnPrimary">
+
+                        <TextView
+                            android:id="@+id/tv_ph_ec"
+                            android:lines="3"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/high_risk_babies"
+
+                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+
+                        <TextView
+                            android:id="@+id/tv_ec"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/tv_ph_ec"
+                            android:layout_alignParentEnd="false"
+                            android:layout_centerHorizontal="true"
+
+                            android:text="@string/_0"
+                            android:textAppearance="@style/TextAppearance.Material3.DisplayMedium" />
+                    </RelativeLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
                     android:id="@+id/cv_anc"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -234,83 +312,6 @@
                     </RelativeLayout>
                 </androidx.cardview.widget.CardView>
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/cv_ec"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/margin_small"
-                    android:layout_weight="1"
-                    android:backgroundTint="@android:color/holo_orange_light"
-                    android:elevation="@dimen/padding_normal"
-                    android:visibility="gone"
-                    app:cardCornerRadius="@dimen/padding_normal"
-                    app:cardElevation="@dimen/padding_normal">
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:padding="@dimen/padding_wide"
-                        android:textColor="?attr/colorOnPrimary">
-
-                        <TextView
-                            android:id="@+id/tv_ph_ec"
-                            android:lines="3"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/high_risk_babies"
-
-                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
-
-                        <TextView
-                            android:id="@+id/tv_ec"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@id/tv_ph_ec"
-                            android:layout_alignParentEnd="false"
-                            android:layout_centerHorizontal="true"
-
-                            android:text="@string/_0"
-                            android:textAppearance="@style/TextAppearance.Material3.DisplayMedium" />
-                    </RelativeLayout>
-                </androidx.cardview.widget.CardView>
-
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/cv_lwb"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/margin_small"
-                    android:layout_weight="1"
-                    android:backgroundTint="@android:color/holo_orange_light"
-                    android:elevation="@dimen/padding_normal"
-                    app:cardCornerRadius="@dimen/padding_normal"
-                    app:cardElevation="@dimen/padding_normal">
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="@dimen/padding_wide">
-
-                        <TextView
-                            android:id="@+id/tv_ph_lbwb"
-                            android:lines="3"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/ec"
-
-                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
-
-                        <TextView
-                            android:id="@+id/tv_lbwb"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@id/tv_ph_lbwb"
-                            android:layout_alignParentEnd="false"
-
-                            android:layout_centerHorizontal="true"
-                            tools:text="7"
-                            android:textAppearance="@style/TextAppearance.Material3.DisplayMedium" />
-                    </RelativeLayout>
-                </androidx.cardview.widget.CardView>
             </LinearLayout>
 
         <LinearLayout
