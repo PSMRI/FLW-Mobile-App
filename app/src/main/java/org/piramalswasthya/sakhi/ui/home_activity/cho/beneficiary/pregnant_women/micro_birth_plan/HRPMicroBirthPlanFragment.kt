@@ -108,12 +108,13 @@ class HRPMicroBirthPlanFragment : Fragment() {
     }
 
     private fun submitTrackingForm() {
-       // if (validateCurrentPage()) {
+        if (validateCurrentPage()) {
             viewModel.saveForm()
-        //}
+
+        }
     }
 
-    private fun validateCurrentPage(): Boolean {
+     fun validateCurrentPage(): Boolean {
         val result = binding.form.rvInputForm.adapter?.let {
             (it as FormInputAdapter).validateInput(resources)
         }
