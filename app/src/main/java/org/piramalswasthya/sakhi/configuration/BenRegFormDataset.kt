@@ -1591,11 +1591,13 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         return when (formId) {
             firstName.id -> {
                 validateEmptyOnEditText(firstName)
-                validateAllCapsOrSpaceOnEditText(firstName)
+                validateAllCapsOrSpaceOnEditTextWithHindiEnabled(firstName)
+               // validateAllCapsOrSpaceOnEditText(firstName)
             }
 
             lastName.id -> {
-                validateAllCapsOrSpaceOnEditText(lastName)
+               // validateAllCapsOrSpaceOnEditText(lastName)
+                validateAllCapsOrSpaceOnEditTextWithHindiEnabled(lastName)
             }
 
             agePopup.id -> {
@@ -1779,27 +1781,32 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
             fatherName.id -> {
                 validateEmptyOnEditText(fatherName)
-                validateAllCapsOrSpaceOnEditText(fatherName)
+                //validateAllCapsOrSpaceOnEditText(fatherName)
+                validateAllCapsOrSpaceOnEditTextWithHindiEnabled(fatherName)
             }
 
             motherName.id -> {
                 validateEmptyOnEditText(motherName)
-                validateAllCapsOrSpaceOnEditText(motherName)
+                //validateAllCapsOrSpaceOnEditText(motherName)
+                validateAllCapsOrSpaceOnEditTextWithHindiEnabled(motherName)
             }
 
             husbandName.id -> {
                 validateEmptyOnEditText(husbandName)
-                validateAllCapsOrSpaceOnEditText(husbandName)
+                //validateAllCapsOrSpaceOnEditText(husbandName)
+                validateAllCapsOrSpaceOnEditTextWithHindiEnabled(husbandName)
             }
 
             wifeName.id -> {
                 validateEmptyOnEditText(wifeName)
-                validateAllCapsOrSpaceOnEditText(wifeName)
+               // validateAllCapsOrSpaceOnEditText(wifeName)
+                validateAllCapsOrSpaceOnEditTextWithHindiEnabled(wifeName)
             }
 
             spouseName.id -> {
                 validateEmptyOnEditText(spouseName)
-                validateAllCapsOrSpaceOnEditText(spouseName)
+                //validateAllCapsOrSpaceOnEditText(spouseName)
+                validateAllCapsOrSpaceOnEditTextWithHindiEnabled(spouseName)
             }
 
             tempraryContactNo.id -> {

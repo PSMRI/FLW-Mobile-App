@@ -12,6 +12,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
@@ -39,6 +40,9 @@ class FindAbhaFragment : Fragment() {
 
     private var selectedAbhaIndex = 0
 
+    var isValidMobile = false
+    var isValidAbha = false
+    var isValidBenName = false
     private val aadhaarDisclaimer by lazy {
         AlertDialog.Builder(requireContext())
             .setTitle(resources.getString(R.string.individual_s_consent_for_creation_of_abha_number))
@@ -56,8 +60,6 @@ class FindAbhaFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        var isValidMobile = false
-        var isValidAbha = false
 
         val intent = requireActivity().intent
 
@@ -131,11 +133,16 @@ class FindAbhaFragment : Fragment() {
         }
 
         binding.aadharConsentCheckBox.setOnCheckedChangeListener { _, ischecked ->
-            binding.btnGenerateOtp.isEnabled = isValidAbha && isValidMobile && ischecked
+            binding.btnGenerateOtp.isEnabled = isValidAbha && isValidMobile && (parentViewModel.consentChecked.value==true)
         }
 
         binding.aadharDisclaimer.setOnClickListener {
-            aadhaarDisclaimer.show()
+            if(parentViewModel.beneficiaryName.value!=null && !parentViewModel.beneficiaryName.value.isNullOrBlank()) {
+                parentViewModel.navigateToAadhaarConsent(true)
+            }else{
+                Toast.makeText(requireContext(),"Please Enter Beneficiary Name", Toast.LENGTH_SHORT).show()
+            }
+           // aadhaarDisclaimer.show()
         }
 
         binding.tietMobileNumber.addTextChangedListener(object : TextWatcher {
@@ -150,8 +157,11 @@ class FindAbhaFragment : Fragment() {
                 if (isValidMobile) {
                     parentViewModel.setMobileNumber(s.toString())
                     binding.btnSearchAbha.isEnabled = isValidMobile
+                    binding.ivValidMobile.setImageResource(R.drawable.ic_check_circle_green)
 //                    binding.btnSearchAbha.isEnabled = isValidAbha && isValidMobile
 //                            && binding.aadharConsentCheckBox.isChecked
+                }else{
+                    binding.ivValidMobile.setImageResource(R.drawable.ic_check_circle_grey)
                 }
             }
 
@@ -170,6 +180,50 @@ class FindAbhaFragment : Fragment() {
                 binding.tvErrorTextAbha.visibility = View.VISIBLE
                 binding.tvErrorTextAbha.text = it
                 viewModel.resetErrorMessage()
+            }
+        }
+
+        viewModel.ben.observe(viewLifecycleOwner) {
+            if(it!=null){
+                parentViewModel.setBeneficiaryName(it)
+                binding.clBenName.visibility = View.GONE
+
+            }else{
+                binding.clBenName.visibility = View.VISIBLE
+            }
+
+        }
+        binding.tietBenName.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                if((s != null)){
+                    binding.tvErrorTextBenName.visibility = View.GONE
+                    binding.tvErrorTextBenName.text = ""
+                    binding.ivValidBenName.setImageResource(R.drawable.ic_check_circle_green)
+
+                }else{
+                    binding.tvErrorTextBenName.visibility = View.VISIBLE
+                    binding.tvErrorTextBenName.text = getString(R.string.str_invalid_mobile_no)
+                    binding.ivValidBenName.setImageResource(R.drawable.ic_check_circle_grey)
+                }
+
+                isValidBenName = (s != null && s.length >= 3)
+                if (isValidBenName)
+                    parentViewModel.setBeneficiaryName(s.toString())
+                binding.btnGenerateOtp.isEnabled = isValidAbha && isValidMobile && (parentViewModel.consentChecked.value==true)
+
+            }
+
+        })
+
+        parentViewModel.consentChecked.observe(viewLifecycleOwner){
+            if (it ==true){
+                binding.btnGenerateOtp.isEnabled = isValidAbha && isValidMobile && (parentViewModel.consentChecked.value==true)
             }
         }
     }

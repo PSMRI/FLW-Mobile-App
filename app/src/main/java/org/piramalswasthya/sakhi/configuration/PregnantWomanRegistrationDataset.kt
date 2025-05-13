@@ -683,6 +683,10 @@ class PregnantWomanRegistrationDataset(
 //                list.add(assignedAsHrpBy)
 //            }
 //        }
+
+
+        noOfDeliveries.isEnabled=false
+        timeLessThan18m.isEnabled=false
         setUpPage(list)
 
     }

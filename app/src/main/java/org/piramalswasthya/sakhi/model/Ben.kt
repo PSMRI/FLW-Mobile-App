@@ -241,6 +241,7 @@ data class BenBasicCache(
             relToHeadId = relToHeadId,
             mobileNo = mobileNo.toString(),
             fatherName = fatherName?.takeIf { it.isNotEmpty() } ?: "Not Available",
+         /*   motherName = motherName,*/
             familyHeadName = familyHeadName ?: "Not Available",
 //            typeOfList = typeOfList.name,
             spouseName = spouseName?.takeIf { it.isNotEmpty() } ?: "Not Available",
@@ -721,6 +722,7 @@ data class BenBasicDomain(
     val abhaId: String? = null,
     val isNewAbha: Boolean = false,
     val fatherName: String? = null,
+    val motherName: String? = null,
     val familyHeadName: String,
     val spouseName: String? = null,
 //    val typeOfList: String,

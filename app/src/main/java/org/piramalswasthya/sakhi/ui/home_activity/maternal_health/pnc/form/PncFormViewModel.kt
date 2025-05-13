@@ -14,6 +14,7 @@ import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.configuration.PncFormDataset
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.model.DeliveryOutcomeCache
 import org.piramalswasthya.sakhi.model.PNCVisitCache
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.DeliveryOutcomeRepo
@@ -62,6 +63,7 @@ class PncFormViewModel @Inject constructor(
     val formList = dataset.listFlow
 
     private lateinit var pncCache: PNCVisitCache
+    var deliveryOutcome: DeliveryOutcomeCache?=null
 
     init {
         viewModelScope.launch {
@@ -79,7 +81,10 @@ class PncFormViewModel @Inject constructor(
                     updatedBy = asha.userName
                 )
             }
-            val outcomeRecord = deliveryOutcomeRepo.getDeliveryOutcome(benId)!!
+            val outcomeRecord = deliveryOutcomeRepo.getDeliveryOutcome(benId)
+//            if (outcomeRecord != null) {
+                deliveryOutcome =outcomeRecord
+           // }
             pncRepo.getSavedPncRecord(benId, visitNumber)?.let {
                 pncCache = it
                 _recordExists.value = true
@@ -89,12 +94,12 @@ class PncFormViewModel @Inject constructor(
             val lastPnc = pncRepo.getLastFilledPncRecord(benId)
 
             dataset.setUpPage(
-                visitNumber,
-                ben,
-                outcomeRecord,
-                lastPnc,
-                if (recordExists.value == true) pncCache else null
-            )
+                    visitNumber,
+                    ben,
+                    outcomeRecord,
+                    lastPnc,
+                    if (recordExists.value == true) pncCache else null
+                )
 
 
         }
@@ -115,6 +120,20 @@ class PncFormViewModel @Inject constructor(
                     _state.postValue(State.SAVING)
                     dataset.mapValues(pncCache, 1)
                     pncRepo.persistPncRecord(pncCache)
+
+
+                    if (deliveryOutcome?.dateOfDelivery == null || deliveryOutcome?.dateOfDelivery == 0L) {
+                        var saveDeliveryOutcome = DeliveryOutcomeCache(
+                            benId = pncCache.benId,
+                            syncState = SyncState.UNSYNCED,
+                            createdBy = pncCache.updatedBy,
+                            updatedBy = pncCache.updatedBy,
+                            dateOfDelivery = pncCache.dateOfDelivery,
+                            isActive = true
+                        )
+                        deliveryOutcomeRepo.saveDeliveryOutcome(saveDeliveryOutcome)
+                    }
+
                     _state.postValue(State.SAVE_SUCCESS)
                 } catch (e: Exception) {
                     Timber.d("saving PW-ANC data failed!! $e")
