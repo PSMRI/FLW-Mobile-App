@@ -207,7 +207,7 @@
     <string-array name="religion_array">
         <item>Hindu</item>
         <item>Muslim</item>
-        <item>Christen</item>
+        <item>Christian</item>
         <item>Sikhism</item>
         <item>Buddhism</item>
         <item>Jainism</item>

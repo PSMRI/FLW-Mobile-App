@@ -121,7 +121,7 @@ class IncentivesFragment : Fragment() {
                 myArrayList
             )
         fromYear.adapter = fromYearsAdapter
-        fromYear.setSelection(0)
+      //  fromYear.setSelection(0)
 
         val toMonth: Spinner = binding.toMonthsSpinner
         ArrayAdapter.createFromResource(
@@ -199,7 +199,7 @@ class IncentivesFragment : Fragment() {
             pd.setListener { picker, i, i2, i3 ->
                 run {
                     fromMonth.setSelection(i2)
-//                    fromYear.se
+                    fromYear.setSelection(myArrayList.indexOf(i))
                     binding.et1.setText("${resources.getStringArray(R.array.months)[i2]} $i")
                 }
             }

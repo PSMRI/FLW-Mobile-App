@@ -274,7 +274,7 @@
     <string name="reproductive_age_list">Reproductive Age List</string>
     <string name="ncd_eligible_list">NCD Eligible List</string>
     <string name="ncd_list">NCD List</string>
-    <string name="ncd_non_eligible_list">NCD Non-Eligible List</string>
+    <string name="ncd_non_eligible_list">NCD Non-Priority List</string>
     <string name="ncd_priority_list">NCD Priority List</string>
     <string name="survey_register">Survey Register</string>
     <string name="all_household_list">All Household List</string>

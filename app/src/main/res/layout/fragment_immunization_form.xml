@@ -284,6 +284,32 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
+                    <LinearLayout
+                        android:id="@+id/checkbox_row"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="end"
+                        android:padding="8dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Select All"
+                            android:fontFamily="@font/roboto_medium"
+                            android:textSize="@dimen/_14sdp"
+                            android:textColor="@color/md_theme_light_shadow"
+                            android:paddingEnd="8dp"/>
+
+                        <com.google.android.material.checkbox.MaterialCheckBox
+                            android:id="@+id/checkBox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:buttonTint="@color/md_theme_light_primary"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    </LinearLayout>
+
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_imm_cat"
                         android:layout_width="match_parent"

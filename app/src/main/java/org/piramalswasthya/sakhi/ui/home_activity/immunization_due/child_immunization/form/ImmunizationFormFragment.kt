@@ -1,34 +1,25 @@
 package org.piramalswasthya.sakhi.ui.home_activity.immunization_due.child_immunization.form
 
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.work.impl.utils.INITIAL_ID
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.ChildImmunizationVaccineAdapter
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
-import org.piramalswasthya.sakhi.adapters.ImmunizationCategoryAdapter
-import org.piramalswasthya.sakhi.adapters.ImmunizationVaccineAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentImmunizationFormBinding
-import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
-import org.piramalswasthya.sakhi.model.ChildImmunizationCategory
 import org.piramalswasthya.sakhi.model.ImmunizationDetailsDomain
-import org.piramalswasthya.sakhi.model.VaccineCategoryDomain
 import org.piramalswasthya.sakhi.model.VaccineDomain
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.immunization_due.child_immunization.form.ImmunizationFormViewModel.State
-import org.piramalswasthya.sakhi.ui.home_activity.immunization_due.child_immunization.list.ChildImmunizationListFragmentDirections
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 import java.text.SimpleDateFormat
@@ -58,7 +49,6 @@ class ImmunizationFormFragment : Fragment() {
         return binding.root
     }
 
-    @RequiresApi(Build.VERSION_CODES.N)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.benName.observe(viewLifecycleOwner) {
@@ -150,6 +140,7 @@ class ImmunizationFormFragment : Fragment() {
                 if (item.isSwitchChecked) {
                     viewModel.vaccinationDoneList.add(item)
                 } else {
+                    binding.checkBox.isChecked =false
                     viewModel.vaccinationDoneList.removeIf { it ->
                         it.vaccineName == item.vaccineName
                     }
@@ -162,6 +153,42 @@ class ImmunizationFormFragment : Fragment() {
                     submitListToVaccinationRv(it)
                 }
             }
+        }
+
+        binding.checkBox.setOnCheckedChangeListener { compoundButton, isChecked ->
+            if (isChecked){
+                list.forEach {item->
+                    if (item.state.name =="PENDING"||item.state.name =="OVERDUE"){
+                        item.isSwitchChecked = true
+
+                    }else if(item.state.name =="MISSED" ||item.state.name =="UNAVAILABLE"){
+                        item.isSwitchChecked = false
+
+                    }else{
+                        //If state is DONE
+                        item.isSwitchChecked = true
+                    }
+
+                }
+
+            }else{
+                list.forEach {item->
+                    if (item.state.name =="PENDING"||item.state.name =="OVERDUE"){
+                        item.isSwitchChecked = false
+
+                    }else if(item.state.name =="MISSED" ||item.state.name =="UNAVAILABLE"){
+                        item.isSwitchChecked = false
+
+                    }else{
+                        //If state is DONE
+                        item.isSwitchChecked = true
+                    }
+
+                }
+
+            }
+            (binding.rvImmCat.adapter as ChildImmunizationVaccineAdapter).notifyDataSetChanged()
+
         }
     }
 
