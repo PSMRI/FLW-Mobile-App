@@ -169,6 +169,7 @@
     <string name="form_input_missing_entry_error">Field must contain %1d digits.</string>
     <string name="form_input_alphabet_space_only_error">Only Alphabets and whitespace allowed!</string>
     <string name="form_input_alphabet_special_only_error">Only Alphabets and special characters allowed!</string>
+    <string name="form_input_alphabet_special__digit_only_error">Only Alphabets and special characters, digits allowed!</string>
     <string name="form_input_min_limit_error">%1s should be greater than or equal to %2d</string>
     <string name="form_input_alph_numeric_space_only_error">Only Alphabets and Numerics allowed!</string>
     <string name="form_input__no_alpha_space_error">No Alphabets or spaces allowed!</string>

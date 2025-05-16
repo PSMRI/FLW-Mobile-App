@@ -42,49 +42,32 @@ class VillageLevelFormsViewModel @Inject constructor(
     fun loadIcons(resources: Resources) {
         viewModelScope.launch {
             val icons = iconDataset.getVLFDataset(resources)
-            val currentDate = LocalDate.now() // Get current date
-            val firstOfMonth = currentDate.withDayOfMonth(1)  // First day of the current month
-            val seventhOfMonth = currentDate.withDayOfMonth(7)  // Seventh day of the current month
+            val currentDate = LocalDate.now()
             val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.getDefault())
 
-            // Perform the overdue check only if the current date is 7th or later in the month
-            val result =
-                if (currentDate.isAfter(seventhOfMonth) || currentDate.isEqual(seventhOfMonth)) {
-                    // If it's after the 7th, perform the overdue check
-                    icons.map { icon ->
-                        val formId = formIdMap[icon.title]
-                        val lastDateString =
-                            formId?.let { vlfRepo.getLastSubmissionDate(it).firstOrNull() }
-                        Log.d("OverdueCheck", "Last submission date: $lastDateString")
+            val result = icons.map { icon ->
+                val formId = formIdMap[icon.title]
+                val lastDateString = formId?.let { vlfRepo.getLastSubmissionDate(it).firstOrNull() }
 
-                        // Parse the date if it's not null
-                        val lastDate = try {
-                            lastDateString?.let { LocalDate.parse(it, formatter) }
-                        } catch (e: Exception) {
-                            null
-                        }
-
-                        // Check if there is no submission in the current month or if the submission date is outside the 1st-7th range
-                        val isOverdue = lastDate == null ||
-                                lastDate.month != currentDate.month || // No submission in current month
-                                lastDate.isBefore(firstOfMonth) ||    // Submission before the 1st of the month
-                                lastDate.isAfter(seventhOfMonth)      // Submission after the 7th of the month
-
-//                        Log.d(
-//                            "OverdueCheck",
-//                            "Is overdue: $isOverdue, lastDate: $lastDate, deadline: $firstOfMonth - $seventhOfMonth"
-//                        )
-
-                        icon to isOverdue
-                    }
-                } else {
-                    // If it's before the 7th, no overdue check, so return the icons without any overdue status
-                    icons.map { icon -> icon to false }
+                val lastDate = try {
+                    lastDateString?.let { LocalDate.parse(it, formatter) }
+                } catch (e: Exception) {
+                    null
                 }
 
-            // Update the live data with icons and their overdue status
+                // ✅ Overdue only if: today > 7th AND form NOT submitted in current month
+                val isOverdue = if (currentDate.dayOfMonth > 7) {
+                    lastDate == null || lastDate.month != currentDate.month || lastDate.year != currentDate.year
+                } else {
+                    false
+                }
+
+                icon to isOverdue
+            }
+
             _iconsWithRedFlags.value = result
         }
     }
+
 
 }

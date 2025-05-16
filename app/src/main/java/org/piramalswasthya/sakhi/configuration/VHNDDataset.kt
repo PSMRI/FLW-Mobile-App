@@ -46,6 +46,7 @@ class VHNDDataset(
         arrayId = -1,
         required = true,
         allCaps = true,
+        etMaxLength = 100,
         hasSpeechToText = true,
         etInputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
     )
@@ -114,7 +115,7 @@ class VHNDDataset(
         return when (formId) {
             place.id -> {
                 validateEmptyOnEditText(place)
-                validateAllAlphaNumericSpaceOnEditText(place)
+                validateAllAlphabetsSpecialAndNumericOnEditText(place)
                 -1
             }
 

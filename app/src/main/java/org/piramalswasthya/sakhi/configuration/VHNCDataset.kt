@@ -44,6 +44,7 @@ class VHNCDataset(
         inputType = EDIT_TEXT,
         title = resources.getString(R.string.place),
         arrayId = -1,
+        etMaxLength = 100,
         required = true,
         allCaps = true,
         hasSpeechToText = true,
@@ -113,7 +114,7 @@ class VHNCDataset(
         return when (formId) {
             place.id -> {
                 validateEmptyOnEditText(place)
-                validateAllAlphaNumericSpaceOnEditText(place)
+                validateAllAlphabetsSpecialAndNumericOnEditText(place)
                 -1
             }
 
