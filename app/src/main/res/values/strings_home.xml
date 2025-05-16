@@ -31,9 +31,9 @@
     <string name="icon_title_ahd">AHD Forms</string>
     <string name="icon_title_vhnc">VHNC Forms</string>
     <string name="icon_title_phc">PHC Review Meeting Forms</string>
-    <string name="icon_title_vhnd_list">VHND FormsList</string>
-    <string name="icon_title_vhnc_list">VHNC FormsList</string>
-    <string name="icon_title_phc_list">PHC Review Meeting FormsList</string>
+    <string name="icon_title_vhnd_list">VHND Forms List</string>
+    <string name="icon_title_vhnc_list">VHNC Forms List</string>
+    <string name="icon_title_phc_list">PHC Review Meeting Forms List</string>
     <string name="icon_title_icc">Infant List</string>
     <string name="icon_title_ccc">Child List</string>
     <string name="icon_title_acc">Adolescent List</string>
@@ -70,7 +70,7 @@
     <string name="are_you_sure_to_logout">" Are you sure you want to logout?"</string>
 
 
-    <string name="icon_title_ahd_list">AHD List</string>
+    <string name="icon_title_ahd_list">AHD Forms List</string>
 
     <string name="place">Place</string>
     <string name="no_b_attended">No. of Beneficiaries Attended</string>

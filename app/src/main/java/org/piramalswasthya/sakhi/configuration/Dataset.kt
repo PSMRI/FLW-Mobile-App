@@ -563,6 +563,21 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
         return -1
     }
 
+    protected fun validateAllAlphabetsSpecialAndNumericOnEditText(formElement: FormElement): Int {
+        formElement.value?.takeIf { it.isNotEmpty() }?.let { input ->
+            val regex = "^[a-zA-Z0-9\\s\\p{Punct}]+$".toRegex() // allows alphabets, numbers, spaces, and special characters
+
+            val isValid = regex.matches(input)
+            if (!isValid) {
+                formElement.errorText = resources.getString(R.string.form_input_alphabet_special__digit_only_error)
+            } else {
+                formElement.errorText = null
+            }
+        }
+        return -1
+    }
+
+
     protected fun validateAllAlphaNumericSpaceOnEditText(formElement: FormElement): Int {
         formElement.value?.takeIf { it.isNotEmpty() }?.let {
             val isValid = it.isAllAlphaNumericAndSpace()

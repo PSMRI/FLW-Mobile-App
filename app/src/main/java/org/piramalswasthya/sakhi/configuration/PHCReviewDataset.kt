@@ -44,6 +44,7 @@ class PHCReviewDataset(
         id = 3,
         inputType = EDIT_TEXT,
         title = resources.getString(R.string.place),
+        etMaxLength = 100,
         arrayId = -1,
         required = true,
         allCaps = true,
@@ -112,7 +113,7 @@ class PHCReviewDataset(
         return when (formId) {
             place.id -> {
                 validateEmptyOnEditText(place)
-                validateAllAlphaNumericSpaceOnEditText(place)
+                validateAllAlphabetsSpecialAndNumericOnEditText(place)
                 -1
             }
 
