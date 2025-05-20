@@ -7,5 +7,15 @@
     <fragment
         android:id="@+id/findAbhaFragment"
         android:name="org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.find_abha.FindAbhaFragment"
-        android:label="FindAbhaFragment" />
+        android:label="FindAbhaFragment">
+
+        <action
+            android:id="@+id/action_findAbhaFragment_to_aadhaarConsentFragment"
+            app:destination="@id/aadhaarConsentFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/aadhaarConsentFragment"
+        android:name="org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.aadhaar_consent.AbhaConsentFragment"
+        android:label="AbhaConsentFragment" />
 </navigation>

@@ -73,6 +73,13 @@ interface SyncDao {
                 "    SELECT 13 as id, 'HRP Assess' as name, hrpa.syncState as syncState " +
                 "    FROM HRP_PREGNANT_ASSESS hrpa " +
                 "    INNER JOIN beneficiary b ON b.beneficiaryId = hrpa.benId " +
+
+                "    UNION ALL " +
+                "    SELECT 20 as id, 'Micro Birth Plan' as name, hrpa.syncState as syncState " +
+                "    FROM HRP_MICRO_BIRTH_PLAN hrpa " +
+                "    INNER JOIN beneficiary b ON b.beneficiaryId = hrpa.benId " +
+
+
 //                "    WHERE b.loc_village_id = :villageId " +
                  "    UNION ALL " +
                 "    SELECT 21 as id, 'VHND' as name, vhnd.syncState as syncState " +

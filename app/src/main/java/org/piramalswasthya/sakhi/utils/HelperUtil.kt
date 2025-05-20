@@ -9,6 +9,7 @@ import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
 import android.text.TextUtils
+import android.util.TypedValue
 import androidx.collection.lruCache
 import androidx.core.graphics.withTranslation
 import org.piramalswasthya.sakhi.helpers.Languages
@@ -268,5 +269,13 @@ object HelperUtil {
         operator fun get(key: String): StaticLayout? {
             return cache[key]
         }
+    }
+
+    fun convertDpToPixel(dp: Float, context: Context): Float {
+        return TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            dp,
+            context.resources.displayMetrics
+        )
     }
 }

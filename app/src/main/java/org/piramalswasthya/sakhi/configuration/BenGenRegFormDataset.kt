@@ -34,13 +34,13 @@ class BenGenRegFormDataset(context: Context, language: Languages) : Dataset(cont
         }
 
 
-        private fun getMinDobMillis(): Long {
+         fun getMinDobMillis(): Long {
             val cal = Calendar.getInstance()
             cal.add(Calendar.YEAR, -1 * maxAgeForGenBen)
             return cal.timeInMillis
         }
 
-        private fun getMaxDobMillis(): Long {
+         fun getMaxDobMillis(): Long {
             val cal = Calendar.getInstance()
             cal.add(Calendar.YEAR, -1 * minAgeForGenBen)
             return cal.timeInMillis
@@ -517,11 +517,14 @@ class BenGenRegFormDataset(context: Context, language: Languages) : Dataset(cont
         return when (formId) {
             firstName.id -> {
                 validateEmptyOnEditText(firstName)
-                validateAllCapsOrSpaceOnEditText(firstName)
+                validateAllCapsOrSpaceOnEditTextWithHindiEnabled(firstName)
+               // validateAllCapsOrSpaceOnEditText(firstName)
+
             }
 
             lastName.id -> {
-                validateAllCapsOrSpaceOnEditText(lastName)
+               // validateAllCapsOrSpaceOnEditText(lastName)
+                validateAllCapsOrSpaceOnEditTextWithHindiEnabled(lastName)
             }
 
             dob.id -> {
@@ -685,27 +688,32 @@ class BenGenRegFormDataset(context: Context, language: Languages) : Dataset(cont
 
             fatherName.id -> {
                 validateEmptyOnEditText(fatherName)
-                validateAllCapsOrSpaceOnEditText(fatherName)
+                validateAllCapsOrSpaceOnEditTextWithHindiEnabled(fatherName)
+               // validateAllCapsOrSpaceOnEditText(fatherName)
             }
 
             motherName.id -> {
                 validateEmptyOnEditText(motherName)
-                validateAllCapsOrSpaceOnEditText(motherName)
+                validateAllCapsOrSpaceOnEditTextWithHindiEnabled(motherName)
+               // validateAllCapsOrSpaceOnEditText(motherName)
             }
 
             husbandName.id -> {
                 validateEmptyOnEditText(husbandName)
-                validateAllCapsOrSpaceOnEditText(husbandName)
+                validateAllCapsOrSpaceOnEditTextWithHindiEnabled(husbandName)
+               // validateAllCapsOrSpaceOnEditText(husbandName)
             }
 
             wifeName.id -> {
                 validateEmptyOnEditText(wifeName)
-                validateAllCapsOrSpaceOnEditText(wifeName)
+                validateAllCapsOrSpaceOnEditTextWithHindiEnabled(wifeName)
+              //  validateAllCapsOrSpaceOnEditText(wifeName)
             }
 
             spouseName.id -> {
                 validateEmptyOnEditText(spouseName)
-                validateAllCapsOrSpaceOnEditText(spouseName)
+                //validateAllCapsOrSpaceOnEditText(spouseName)
+                validateAllCapsOrSpaceOnEditTextWithHindiEnabled(spouseName)
             }
 
             contactNumber.id -> {

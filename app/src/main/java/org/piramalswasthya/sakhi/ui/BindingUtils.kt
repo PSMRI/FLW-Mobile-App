@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.ui
 
 import android.graphics.Color
+import android.content.Context
 import android.net.Uri
 import android.os.Build
 import android.text.Html
@@ -36,6 +37,10 @@ import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.VaccineState
 import org.piramalswasthya.sakhi.model.VaccineState.*
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.text.DecimalFormat
 
 
 @BindingAdapter("vaccineState")
@@ -43,13 +48,21 @@ fun ImageView.setVaccineState(syncState: VaccineState?) {
     syncState?.let {
 //        visibility = View.VISIBLE
         val drawable = when (it) {
-            DONE -> R.drawable.ic_check_circle
-            MISSED -> R.drawable.ic_close
+            DONE -> R.drawable.ic_check_circle_green
+            MISSED -> R.drawable.ic_crossed_circle
             PENDING -> R.drawable.ic_add_circle
-            OVERDUE -> R.drawable.ic_overdue
+            OVERDUE -> R.drawable.ic_event_available
             UNAVAILABLE -> null
         }
         drawable?.let { it1 -> setImageResource(it1) }
+    }
+}
+
+@BindingAdapter("formattedDate")
+fun setFormattedDate(view: TextView, timestamp: Long?) {
+    timestamp?.let {
+        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        view.text = sdf.format(Date(it))
     }
 }
 
@@ -308,6 +321,24 @@ fun ImageView.setSyncState(syncState: SyncState?) {
     }
 }
 
+@BindingAdapter("caseStatus")
+fun ImageView.setCaseStatus(caseStatus: String) {
+    caseStatus.let {
+        visibility = View.VISIBLE
+        val drawable = when (it) {
+            "Suspected" -> R.drawable.ic_unsynced
+            "Confirmed" -> R.drawable.ic_syncing
+            "Not Confirmed" -> R.drawable.ic_synced
+            else -> {
+                R.drawable.ic_synced
+            }
+        }
+        setImageResource(drawable)
+    } ?: run {
+        visibility = View.INVISIBLE
+    }
+}
+
 
 @BindingAdapter("benImage")
 fun ImageView.setBenImage(uriString: String?) {
@@ -400,6 +431,33 @@ fun TextInputLayout.setAsteriskFormText(required: Boolean?, title: String?) {
     }
 }
 
+ fun getFileSize(uri: Uri,context: Context): Long {
+    val cursor = context.contentResolver.query(uri, null, null, null, null)
+    return cursor?.use {
+        val sizeIndex = it.getColumnIndex(android.provider.OpenableColumns.SIZE)
+        if (sizeIndex != -1 && it.moveToFirst()) {
+            it.getLong(sizeIndex)
+        } else {
+            0L
+        }
+    } ?: 0L
+}
+
+ fun formatSize(size: Long): String {
+    val df = DecimalFormat("#.##")
+    return when {
+        size < 1024 -> "$size B"
+        size < 1024 * 1024 -> "${df.format(size / 1024.0)} KB"
+        size < 1024 * 1024 * 1024 -> "${df.format(size / (1024.0 * 1024))} MB"
+        else -> "${df.format(size / (1024.0 * 1024 * 1024))} GB"
+    }
+}
+
+fun checkFileSize(uri: Uri,context:Context) : Boolean {
+    val size = getFileSize(uri, context)
+    return size > 5 * 1024 * 1024
+
+}
 @RequiresApi(Build.VERSION_CODES.N)
 @BindingAdapter("asteriskRequired", "hintText")
 fun TextView.setAsteriskTextView(required: Boolean?, title: String?) {

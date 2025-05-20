@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.helpers
 
 import android.app.Activity
+import android.content.Context
 import android.content.Context.CONNECTIVITY_SERVICE
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -10,6 +11,7 @@ import org.piramalswasthya.sakhi.model.AncStatus
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.model.BenBasicDomainForForm
 import org.piramalswasthya.sakhi.model.BenPncDomain
+import org.piramalswasthya.sakhi.model.BenWithAdolescentDomain
 import org.piramalswasthya.sakhi.model.BenWithAncListDomain
 import org.piramalswasthya.sakhi.model.BenWithEcrDomain
 import org.piramalswasthya.sakhi.model.BenWithEctListDomain
@@ -17,6 +19,7 @@ import org.piramalswasthya.sakhi.model.BenWithHRNPADomain
 import org.piramalswasthya.sakhi.model.BenWithHRNPTListDomain
 import org.piramalswasthya.sakhi.model.BenWithHRPADomain
 import org.piramalswasthya.sakhi.model.BenWithHRPTListDomain
+import org.piramalswasthya.sakhi.model.BenWithMalariaConfirmedDomain
 import org.piramalswasthya.sakhi.model.BenWithPwrDomain
 import org.piramalswasthya.sakhi.model.BenWithTbScreeningDomain
 import org.piramalswasthya.sakhi.model.BenWithTbSuspectedDomain
@@ -41,6 +44,45 @@ fun filterBenList(list: List<BenBasicDomain>, text: String): List<BenBasicDomain
     }
 }
 
+fun filterBenList(
+    list: List<BenBasicDomain>,
+    rchPresent: Boolean
+) =
+    if (rchPresent) {
+        list.filter {
+            it.rchId.takeIf { it1 -> it1.isDigitsOnly() }?.contains("") ?: false
+        }
+    } else {
+        list
+    }
+
+fun filterBenList(
+    list: List<BenBasicDomain>,
+    filterType: Int
+) =
+    if (filterType == 1) {
+        list.filter {
+            !it.abhaId.isNullOrEmpty()
+        }
+    } else if (filterType == 2) {
+        list.filter {
+            it.abhaId.isNullOrEmpty()
+        }
+    } else {
+        list
+    }
+
+fun filterAdolesenctList(list: List<BenWithAdolescentDomain>, text: String): List<BenWithAdolescentDomain> {
+    if (text == "")
+        return list
+    else {
+        val filterText = text.lowercase()
+        return list.filter {
+            filterAdolesent(it, filterText)
+        }
+    }
+}
+
 
 fun filterForBen(
     ben: BenBasicDomain,
@@ -58,6 +100,12 @@ fun filterForBen(
         ben.gender.lowercase().contains(filterText) ||
         ben.spouseName?.lowercase()?.contains(filterText) == true ||
         ben.fatherName?.lowercase()?.contains(filterText) ?: false
+
+
+fun filterAdolesent(
+    ben: BenWithAdolescentDomain,
+    filterText: String
+) = ben.ben.benFullName.toString().lowercase().contains(filterText)
 
 
 fun filterBenFormList(
@@ -121,6 +169,19 @@ fun filterPwrRegistrationList(
                 it.ben.benId.toString().lowercase().contains(filterText) ||
                 it.ben.mobileNo.lowercase().contains(filterText) ||
                 it.ben.rchId.takeIf { it1 -> it1.isDigitsOnly() }?.contains(filterText) ?: false
+    }
+
+fun filterPwrRegistrationList(
+    list: List<BenWithPwrDomain>,
+    rchPresent: Boolean
+) =
+    if (rchPresent) {
+        list.filter {
+//            it.ben.rchId.isNotEmpty()
+            it.ben.rchId.takeIf { it1 -> it1.isDigitsOnly() }?.contains("") ?: false
+        }
+    } else {
+        list
     }
 
 
@@ -196,6 +257,24 @@ fun filterTbScreeningList(
 
 fun filterTbSuspectedList(
     list: List<BenWithTbSuspectedDomain>,
+    filterText: String
+) =
+    list.filter {
+        it.ben.benId.toString().lowercase().contains(filterText) ||
+                it.ben.age.lowercase().contains(filterText) ||
+                it.ben.familyHeadName.lowercase().contains(filterText) ||
+                it.ben.benFullName.lowercase().contains(filterText) ||
+                it.ben.spouseName?.lowercase()?.contains(filterText) ?: false ||
+                it.ben.fatherName?.lowercase()?.contains(filterText) ?: false ||
+                it.ben.benId.toString().lowercase().contains(filterText) ||
+                it.ben.mobileNo.lowercase().contains(filterText) ||
+                it.ben.gender.lowercase().contains(filterText) ||
+                it.ben.rchId.takeIf { it1 -> it1.isDigitsOnly() }?.contains(filterText) ?: false
+    }
+
+
+fun filterMalariaConfirmedList(
+    list: List<BenWithMalariaConfirmedDomain>,
     filterText: String
 ) =
     list.filter {
@@ -350,16 +429,16 @@ fun filterImmunList(list: List<ImmunizationDetailsDomain>, text: String): List<I
             filterText = "4 months"
         }else{
 
-                val filterText = text.lowercase()
-                return list.filter {
-                    filterForImm(
-                        it,
-                        filterText,
-                        secondFilterText,
-                        thirdFilterText,
-                        fourthFilterText
-                    )
-                }
+            val filterText = text.lowercase()
+            return list.filter {
+                filterForImm(
+                    it,
+                    filterText,
+                    secondFilterText,
+                    thirdFilterText,
+                    fourthFilterText
+                )
+            }
 
         }
         return list.filter {
@@ -384,7 +463,7 @@ fun filterForImm(
         imm.ben.age.lowercase() == firstVal ||
         imm.ben.age.lowercase() == secondVal ||
         imm.ben.age.lowercase() == thirdVal ||
-        imm.ben.benName.lowercase() ==filterText
+        imm.ben.benFullName.lowercase() ==filterText
 
 fun filterBenHRNPTFormList(
     list: List<BenWithHRNPTListDomain>,
@@ -504,7 +583,7 @@ fun getDateString(dateLong: Long?): String? {
 
 
 @Suppress("deprecation")
-fun isInternetAvailable(activity: Activity): Boolean {
+fun isInternetAvailable(activity: Context): Boolean {
     val conMgr = activity.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
