@@ -1,4 +1,4 @@
-package org.piramalswasthya.sakhi.ui.home_activity.child_care.adolescent_list
+package org.piramalswasthya.sakhi.ui.home_activity.child_care.adolescent_list.list
 
 import android.os.Bundle
 import android.text.Editable
@@ -10,10 +10,11 @@ import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
-import org.piramalswasthya.sakhi.adapters.BenListAdapter
+import org.piramalswasthya.sakhi.adapters.AdolescentHealthListAdapter
 import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
@@ -49,17 +50,15 @@ class AdolescentListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.btnNextPage.visibility = View.GONE
-        val benAdapter = BenListAdapter(
-            clickListener = BenListAdapter.BenClickListener(
-                { hhId, benId, isKid ->
-
-
-                },
-                {
-
-                },
-                { _, _ -> }
-            ), showBeneficiaries = true)
+        binding.fabEdit.visibility = View.GONE
+        val benAdapter = AdolescentHealthListAdapter(
+           AdolescentHealthListAdapter.ClickListener { hhId, benId ->
+               findNavController().navigate(
+                   AdolescentListFragmentDirections.actionAdolescentListFragmentToAdolescentHealthFormFragment(
+                       benId = benId
+                   )
+               )
+           }, showBeneficiaries = true, showAbha = true)
         binding.rvAny.adapter = benAdapter
 
         lifecycleScope.launch {
@@ -68,7 +67,7 @@ class AdolescentListFragment : Fragment() {
                     binding.flEmpty.visibility = View.VISIBLE
                 } else{
                     binding.flEmpty.visibility = View.GONE
-                    benAdapter.submitList(it.filter { it.ageInt in 10..19 })
+                    benAdapter.submitList(it.filter { it.ben.ageInt in 10..19 })
                 }
 
             }

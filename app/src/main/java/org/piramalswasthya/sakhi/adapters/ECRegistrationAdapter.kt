@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.databinding.RvItemBenEcWithFormBinding
 import org.piramalswasthya.sakhi.model.BenWithEcrDomain
+import java.util.concurrent.TimeUnit
 
 class ECRegistrationAdapter(
     private val clickListener: ClickListener? = null
@@ -42,6 +43,16 @@ class ECRegistrationAdapter(
             clickListener: ClickListener?,
         ) {
             binding.benWithEcr = item
+
+            if (item.ecr?.lmpDate != null) {
+                if (System.currentTimeMillis() - item.ecr.lmpDate > TimeUnit.DAYS.toMillis(35)) {
+                    binding.ivMissState.visibility = View.VISIBLE
+                } else {
+                    binding.ivMissState.visibility = View.GONE
+                }
+            } else {
+                binding.ivMissState.visibility = View.GONE
+            }
 
             binding.ivSyncState.visibility = if (item.ecr == null) View.INVISIBLE else View.VISIBLE
             binding.btnFormEc1.text = if (item.ecr == null) "Register" else "View"

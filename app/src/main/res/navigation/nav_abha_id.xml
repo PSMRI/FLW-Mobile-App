@@ -19,6 +19,10 @@
         <action
             android:id="@+id/action_aadhaarIdFragment_to_generateMobileOtpFragment"
             app:destination="@id/generateMobileOtpFragment" />
+
+        <action
+            android:id="@+id/action_aadhaarIdFragment_to_aadhaarConsentFragment"
+            app:destination="@id/aadhaarConsentFragment" />
     </fragment>
     <fragment
         android:id="@+id/aadhaarOtpFragment"
@@ -115,4 +119,8 @@
             android:name="abhaResponse"
             app:argType="string" />
     </fragment>
+    <fragment
+        android:id="@+id/aadhaarConsentFragment"
+        android:name="org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.aadhaar_consent.AbhaConsentFragment"
+        android:label="AbhaConsentFragment" />
 </navigation>

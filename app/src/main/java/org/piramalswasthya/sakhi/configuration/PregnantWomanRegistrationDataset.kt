@@ -23,7 +23,7 @@ class PregnantWomanRegistrationDataset(
 
     companion object {
         var registrationDate:Long = 0
-        private fun getMinLmpMillis(): Long {
+         fun getMinLmpMillis(): Long {
             val cal = Calendar.getInstance()
             cal.add(Calendar.DAY_OF_YEAR, -1 * 400) //before it is 280
             return cal.timeInMillis
@@ -683,6 +683,10 @@ class PregnantWomanRegistrationDataset(
 //                list.add(assignedAsHrpBy)
 //            }
 //        }
+
+
+        noOfDeliveries.isEnabled=false
+        timeLessThan18m.isEnabled=false
         setUpPage(list)
 
     }

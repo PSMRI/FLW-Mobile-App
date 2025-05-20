@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.configuration.PregnantWomanRegistrationDataset.Companion.getMinLmpMillis
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.setToStartOfTheDay
@@ -24,6 +25,17 @@ class EligibleCoupleTrackingDataset(
         max = System.currentTimeMillis(),
         hasDependants = true
 
+    )
+
+    private var lmpDate = FormElement(
+        id = 11,
+        inputType = InputType.DATE_PICKER,
+        title = resources.getString(R.string.lmp_date),
+        arrayId = -1,
+        required = true,
+        max = System.currentTimeMillis(),
+        min = getMinLmpMillis(),
+        hasDependants = true
     )
 
     private val financialYear = FormElement(
@@ -120,6 +132,7 @@ class EligibleCoupleTrackingDataset(
     ) {
         val list = mutableListOf(
             dateOfVisit,
+            lmpDate,
             financialYear,
             month,
             isPregnancyTestDone,
@@ -148,6 +161,11 @@ class EligibleCoupleTrackingDataset(
             } ?: dateOfReg
         } else {
             dateOfVisit.value = getDateFromLong(saved.visitDate)
+            if (saved.lmpDate != null) {
+                lmpDate.value = getDateFromLong(saved.lmpDate!!)
+            } else {
+                lmpDate.value = getDateFromLong(System.currentTimeMillis())
+            }
             financialYear.value = getFinancialYear(dateString = dateOfVisit.value)
             month.value =
                 resources.getStringArray(R.array.visit_months)[Companion.getMonth(dateOfVisit.value)!!]
@@ -388,6 +406,7 @@ class EligibleCoupleTrackingDataset(
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as EligibleCoupleTrackingCache).let { form ->
             form.visitDate = getLongFromDate(dateOfVisit.value)
+            form.lmpDate = getLongFromDate(lmpDate.value)
             form.isPregnancyTestDone = isPregnancyTestDone.value
             form.pregnancyTestResult = pregnancyTestResult.value
             form.isPregnant = isPregnant.value

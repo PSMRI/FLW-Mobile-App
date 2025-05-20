@@ -283,6 +283,8 @@ data class UserDetailsInResponse(
     val workingDistrictName: String? = null,
 //    val workingDistrictId: Int,
 //    val workingDistrictName: String,
+    val workingDistrictId: Int?=0,
+    val workingDistrictName: String?=null,
     val serviceProviderId: Int,
     val roleId: Int,
     val roleName: String,
@@ -302,6 +304,7 @@ data class UserDetailsInResponse(
             state = LocationEntity(id = stateId, name = stateName),
 //            district = LocationEntity(id = workingDistrictId, name = workingDistrictName),
             district = LocationEntity(id = 1, name = "workingDistrictName"),
+            district = LocationEntity(id = 1, name = workingDistrictName.toString()),
             block = LocationEntity(id = blockId, name = blockName),
             villages = getLocationEntityListForVillage(villageId, villageName),
         )

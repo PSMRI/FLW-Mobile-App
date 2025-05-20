@@ -18,9 +18,14 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.ECTrackingListAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pnc.list.PncMotherListFragmentArgs
 
 @AndroidEntryPoint
 class EligibleCoupleTrackingListFragment : Fragment() {
+
+    val args: EligibleCoupleTrackingListFragmentArgs by lazy {
+        EligibleCoupleTrackingListFragmentArgs.fromBundle(requireArguments())
+    }
 
     private var _binding: FragmentDisplaySearchRvButtonBinding? = null
     private val binding: FragmentDisplaySearchRvButtonBinding

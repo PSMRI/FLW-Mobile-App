@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.model
 
+import android.content.Context
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
@@ -208,7 +209,8 @@ data class BenWithPwrCache(
             form1Filled = ben.hrppaFilled,
             syncState = ben.hrppaSyncState,
             form2Enabled = true,
-            form2Filled = ben.hrpmbpFilled
+            form2Filled = ben.hrpmbpFilled,
+            isConsent = false
         )
     }
 
@@ -358,7 +360,9 @@ data class PregnantWomanAncCache(
     val createdDate: Long = System.currentTimeMillis(),
     var updatedBy: String,
     var updatedDate: Long = System.currentTimeMillis(),
-    var syncState: SyncState
+    var syncState: SyncState,
+    var frontFilePath : String,
+    var backFilePath : String
 ) : FormDataModel {
     fun asPostModel(): ANCPost {
         return ANCPost(
@@ -394,7 +398,10 @@ data class PregnantWomanAncCache(
             createdDate = getDateStringFromLong(createdDate),
             createdBy = createdBy,
             updatedDate = getDateStringFromLong(updatedDate),
-            updatedBy = updatedBy
+            updatedBy = updatedBy,
+            frontFilePath = frontFilePath,
+            backFilePath = backFilePath
+
         )
     }
 }
@@ -435,9 +442,12 @@ data class ANCPost(
     val createdBy: String,
     val updatedDate: String? = null,
     val updatedBy: String,
-    var providerServiceMapID :String?=null
+    var providerServiceMapID :String?=null,
+    var frontFilePath : String,
+    var backFilePath : String
+
 ) {
-    fun toAncCache(): PregnantWomanAncCache {
+    fun toAncCache(context : Context): PregnantWomanAncCache {
         return PregnantWomanAncCache(
             id = id,
             benId = benId,
@@ -481,7 +491,9 @@ data class ANCPost(
             createdDate = getLongFromDate(createdDate),
             updatedBy = updatedBy,
             updatedDate = getLongFromDate(updatedDate),
-            syncState = SyncState.SYNCED
+            syncState = SyncState.SYNCED,
+            frontFilePath = frontFilePath,
+            backFilePath = backFilePath
         )
     }
 }
@@ -533,6 +545,7 @@ data class BenWithAncVisitCache(
                     syncState = it.syncState
                 )
             }.sortedBy { it.visitNumber },
+            ancDate = lastAncRecord?.ancDate ?: 0L,
             pmsmaFillable = if (activePmsma == null) savedAncRecords.any { it.visitNumber == 1 } else true,
             hasPmsma = activePmsma != null,
             showAddAnc = if (savedAncRecords.isEmpty())
@@ -565,6 +578,7 @@ data class BenWithAncListDomain(
     val ben: BenBasicDomain,
     val pwr: PregnantWomanRegistrationCache,
     val anc: List<AncStatus>,
+    val ancDate: Long? = 0L,
     val lmpString: String? = getDateString(pwr.lmpDate),
     val eddString: String? = getDateString(pwr.lmpDate + TimeUnit.DAYS.toMillis(280)),
     val weeksOfPregnancy: String? = (TimeUnit.MILLISECONDS.toDays(getTodayMillis() - pwr.lmpDate) / 7).takeIf { it <= 40 }

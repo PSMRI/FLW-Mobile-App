@@ -105,6 +105,7 @@ class EligibleCoupleRegFragment : Fragment() {
         binding.form.rvInputForm.adapter?.apply {
             when (formId) {
                 17 -> {
+                    notifyDataSetChanged()
                     notifyItemChanged(viewModel.getIndexOfChildLabel())
                     notifyItemChanged(viewModel.getIndexOfAge1())
                     notifyItemChanged(viewModel.getIndexOfGap1())
@@ -112,6 +113,7 @@ class EligibleCoupleRegFragment : Fragment() {
                 }
 
                 22 -> {
+                    notifyDataSetChanged()
                     notifyItemChanged(viewModel.getIndexOfChildLabel())
                     notifyItemChanged(viewModel.getIndexOfAge2())
                     notifyItemChanged(viewModel.getIndexOfGap2())
@@ -119,6 +121,7 @@ class EligibleCoupleRegFragment : Fragment() {
                 }
 
                 27 -> {
+                    notifyDataSetChanged()
                     notifyItemChanged(viewModel.getIndexOfChildLabel())
                     notifyItemChanged(viewModel.getIndexOfAge3())
                     notifyItemChanged(viewModel.getIndexOfGap3())
@@ -126,6 +129,7 @@ class EligibleCoupleRegFragment : Fragment() {
                 }
 
                 32 -> {
+                    notifyDataSetChanged()
                     notifyItemChanged(viewModel.getIndexOfChildLabel())
                     notifyItemChanged(viewModel.getIndexOfAge4())
                     notifyItemChanged(viewModel.getIndexOfGap4())
@@ -133,6 +137,7 @@ class EligibleCoupleRegFragment : Fragment() {
                 }
 
                 37 -> {
+                    notifyDataSetChanged()
                     notifyItemChanged(viewModel.getIndexOfChildLabel())
                     notifyItemChanged(viewModel.getIndexOfAge5())
                     notifyItemChanged(viewModel.getIndexOfGap5())
@@ -140,6 +145,7 @@ class EligibleCoupleRegFragment : Fragment() {
                 }
 
                 42 -> {
+                    notifyDataSetChanged()
                     notifyItemChanged(viewModel.getIndexOfChildLabel())
                     notifyItemChanged(viewModel.getIndexOfAge6())
                     notifyItemChanged(viewModel.getIndexOfGap6())
@@ -147,6 +153,7 @@ class EligibleCoupleRegFragment : Fragment() {
                 }
 
                 47 -> {
+                    notifyDataSetChanged()
                     notifyItemChanged(viewModel.getIndexOfChildLabel())
                     notifyItemChanged(viewModel.getIndexOfAge7())
                     notifyItemChanged(viewModel.getIndexOfGap7())
@@ -154,6 +161,7 @@ class EligibleCoupleRegFragment : Fragment() {
                 }
 
                 52 -> {
+                    notifyDataSetChanged()
                     notifyItemChanged(viewModel.getIndexOfChildLabel())
                     notifyItemChanged(viewModel.getIndexOfAge8())
                     notifyItemChanged(viewModel.getIndexOfGap8())
@@ -161,6 +169,7 @@ class EligibleCoupleRegFragment : Fragment() {
                 }
 
                 57 -> {
+                    notifyDataSetChanged()
                     notifyItemChanged(viewModel.getIndexOfChildLabel())
                     notifyItemChanged(viewModel.getIndexOfAge9())
                     notifyItemChanged(viewModel.getIndexOfGap9())

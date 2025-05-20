@@ -77,6 +77,7 @@ class EligibleCoupleTrackingFormViewModel @Inject constructor(
                     syncState = SyncState.UNSYNCED,
                     createdBy = asha.userName,
                     updatedBy = asha.userName,
+                    lmp_date = ecrRepo.getBenFromId(benId)!!.benRegId
                 )
             }
 

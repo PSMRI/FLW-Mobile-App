@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.network
 
 import okhttp3.ResponseBody
 import org.piramalswasthya.sakhi.model.*
+import org.piramalswasthya.sakhi.ui.home_activity.asha_profile.AshaProfileViewModel
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -17,18 +18,30 @@ interface AmritApiService {
         @Query("userId") userId: Int
     ): UserNetworkResponse
 
-    @POST("tmapi-v1.0/registrar/registrarBeneficaryRegistrationNew")
-    suspend fun getBenIdFromBeneficiarySending(@Body beneficiaryDataSending: BeneficiaryDataSending): Response<ResponseBody>
 
     @POST("hwc-facility-service/registrar/registrarBeneficaryRegistrationNew")
     suspend fun getBenIdFromBeneficiarySending(@Body benCHOPost: BenCHOPost): Response<ResponseBody>
 
-    @POST("identity-0.0.1/rmnch/syncDataToAmrit")
+    @POST("identity-v3.0.0/rmnch/syncDataToAmrit")
     suspend fun submitRmnchDataAmrit(@Body sendingRMNCHData: SendingRMNCHData): Response<ResponseBody>
+
+    @POST("flw-0.0.1/asha/editProfile")
+    suspend fun submitAshaProfileData(@Body sendAshaPost: ProfileActivityCache): Response<ResponseBody>
 
     //    @POST("beneficiary/getBeneficiaryData")
     @POST("flw-0.0.1/beneficiary/getBeneficiaryData")
     suspend fun getBeneficiaries(@Body userDetail: GetDataPaginatedRequest): Response<ResponseBody>
+
+    @POST("flw-0.0.1/beneficiary/sendOTP")
+    suspend fun sendOtp(@Query("phoneNumber") phoneNumber:String): Response<ResponseBody>
+
+    @POST("flw-0.0.1/beneficiary/resendOTP")
+    suspend fun resendOtp(@Query("phoneNumber") phoneNumber:String): Response<ResponseBody>
+
+    @POST("tmapi-v1.0/registrar/registrarBeneficaryRegistrationNew")
+    suspend fun getBenIdFromBeneficiarySending(@Body beneficiaryDataSending: BeneficiaryDataSending): Response<ResponseBody>
+    @POST("flw-0.0.1/beneficiary/validateOTP")
+    suspend fun validateOtp(@Body validateOtp: ValidateOtpRequest ): Response<ResponseBody>
 
     @POST("flw-0.0.1/cbac/getAll")
     suspend fun getCbacs(@Body userDetail: GetDataPaginatedRequest): Response<ResponseBody>
@@ -40,6 +53,7 @@ interface AmritApiService {
     @POST("flw-0.0.1/tb/screening/getAll")
     suspend fun getTBScreeningData(@Body userDetail: GetDataPaginatedRequest): Response<ResponseBody>
 
+
     @POST("flw-0.0.1/tb/suspected/getAll")
 //    @POST("tb/suspected/getAll")
     suspend fun getTBSuspectedData(@Body userDetail: GetDataPaginatedRequest): Response<ResponseBody>
@@ -48,9 +62,45 @@ interface AmritApiService {
 //    @POST("tb/screening/saveAll")
     suspend fun saveTBScreeningData(@Body tbScreeningRequestDTO: TBScreeningRequestDTO): Response<ResponseBody>
 
+    @POST("flw-0.0.1/disease/KalaAzar/saveAll")
+    suspend fun saveKalaAzarScreeningData(@Body kalaAzarScreenRequestDTO: KalaAzarScreeningRequestDTO): Response<ResponseBody>
+
+    @POST("flw-0.0.1/disease/Malaria/saveAll")
+    suspend fun saveMalariaScreeningData(@Body malariaScreeningRequestDTO: MalariaScreeningRequestDTO): Response<ResponseBody>
+
+    @POST("flw-0.0.1/disease/Leprosy/saveAll")
+    suspend fun saveLeprosyScreeningData(@Body leprosyScreeningRequestDTO: LeprosyScreeningRequestDTO): Response<ResponseBody>
+
+
+    @POST("flw-0.0.1/disease/AesJe/saveAll")
+    suspend fun saveAESScreeningData(@Body aesScreeningRequestDTO: AESScreeningRequestDTO): Response<ResponseBody>
+
+    @POST("flw-0.0.1/disease/Filaria/saveAll")
+    suspend fun saveFilariaScreeningData(@Body filariaScreeningRequestDTO: FilariaScreeningRequestDTO): Response<ResponseBody>
+
+    @POST("flw-0.0.1/disease/getAll")
+    suspend fun getMalariaScreeningData(@Body userDetail: GetDataPaginatedRequestForDisease): Response<ResponseBody>
+
+    @GET("flw-0.0.1/irsRound/list")
+    suspend fun getScreeningData(@Query("householdId") householdId:Int): Response<ResponseBody>
+
+
+    @POST("flw-0.0.1/adolescentHealth/getAll")
+    suspend fun getAdolescentHealthData(@Body userDetail: GetDataPaginatedRequest): Response<ResponseBody>
+
+    @POST("flw-0.0.1/adolescentHealth/saveAll")
+    suspend fun saveAdolescentHealthData(@Body adolescentHealthRequestDTO: AdolescentHealthRequestDTO): Response<ResponseBody>
+
+
+
     @POST("flw-0.0.1/tb/suspected/saveAll")
-//    @POST("tb/suspected/saveAll")
     suspend fun saveTBSuspectedData(@Body tbSuspectedRequestDTO: TBSuspectedRequestDTO): Response<ResponseBody>
+
+    @POST("flw-0.0.1/api/follow-up/save")
+    suspend fun saveMalariaConfirmedData(@Body malariaConfirmedRequestDTO: MalariaConfirmedRequestDTO): Response<ResponseBody>
+
+    @POST("flw-0.0.1/api/follow-up/get")
+    suspend fun getMalariaConfirmedData(@Body malariaConfirmedRequestDTO: GetDataPaginatedRequestForDisease): Response<ResponseBody>
 
     @POST("flw-0.0.1/highRisk/pregnant/assess/getAll")
 //    @POST("highRisk/pregnant/assess/getAll")
@@ -88,6 +138,13 @@ interface AmritApiService {
 //    @POST("highRisk/pregnant/assess/getAll")
     suspend fun getHighRiskAssessData(@Body userDetail: GetDataPaginatedRequest): Response<ResponseBody>
 
+    @GET("flw-0.0.1/micro-birthPlan/getAll")
+    suspend fun getMicroBirthPlanAssessData(@Query("userId") userId: Int): Response<ResponseBody>
+
+    @POST("flw-0.0.1/micro-birthPlan/saveAll")
+    suspend fun saveMicroBirthPlanAssessData(@Body userDataDTO: UserDataDTO<Any?>): Response<ResponseBody>
+
+
     @POST("flw-0.0.1/highRisk/assess/saveAll")
 //    @POST("highRisk/pregnant/assess/saveAll")
     suspend fun saveHighRiskAssessData(@Body userDataDTO: UserDataDTO<Any?>): Response<ResponseBody>
@@ -118,7 +175,7 @@ interface AmritApiService {
 //    @POST("highRisk/nonPregnant/track/saveAll")
     suspend fun saveHRNonPTrackData(@Body userDataDTO: UserDataDTO<Any?>): Response<ResponseBody>
 
-    @POST("identity-0.0.1/id/getByBenId")
+    @POST("identity-v3.0.0/id/getByBenId")
     suspend fun getBeneficiaryWithId(@Query("benId") benId: Long): Response<ResponseBody>
 
     @POST("fhirapi-v1.0/healthIDWithUID/createHealthIDWithUID")
@@ -214,6 +271,9 @@ interface AmritApiService {
 
     @POST("/flw-0.0.1/incentive/masterData/getAll")
     suspend fun getAllIncentiveActivities(@Body requestBody: IncentiveActivityListRequest): Response<ResponseBody>
+
+    @GET("/flw-0.0.1/asha/getProfile")
+    suspend fun getAshaProfileData(@Query("employeeId") userId: Int): Response<ResponseBody>
 
     @POST("/flw-0.0.1/incentive/fetchUserData")
     suspend fun getAllIncentiveRecords(@Body requestBody: IncentiveRecordListRequest): Response<ResponseBody>

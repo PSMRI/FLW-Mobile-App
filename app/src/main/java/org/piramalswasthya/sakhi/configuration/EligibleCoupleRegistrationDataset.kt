@@ -41,6 +41,12 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
             return date?.time ?: throw IllegalStateException("Invalid date for dateReg")
         }
 
+        private fun getMinLmpMillis(): Long {
+            val cal = Calendar.getInstance()
+            cal.add(Calendar.DAY_OF_YEAR, -1 * 400) //before it is 280
+            return cal.timeInMillis
+        }
+
         private fun getMinDobMillis(): Long {
             val cal = Calendar.getInstance()
             cal.add(Calendar.YEAR, -15)
@@ -50,6 +56,28 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
 
         private fun getMaxDobMillis(): Long {
             return System.currentTimeMillis()
+        }
+
+        fun getMinimumSecondChildDob(firstChildDobStr: String?): String {
+
+            val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+            val firstChildDob = dateFormat.parse(firstChildDobStr)
+
+            val calendar = Calendar.getInstance()
+            calendar.time = firstChildDob!!
+
+            // Instead of adding 12 months as minimum, allow same day or after 12 months
+            // So minimum acceptable DOB is the same date
+            return dateFormat.format(calendar.time)
+
+           /* val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+            val firstChildDob = dateFormat.parse(firstChildDobStr)
+
+            val calendar = Calendar.getInstance()
+            calendar.time = firstChildDob!!
+            calendar.add(Calendar.DAY_OF_YEAR, 365) // Add 365 days (approx. 12 months)
+
+            return dateFormat.format(calendar.time)*/
         }
     }
 
@@ -143,6 +171,20 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
         isEnabled = false,
         backgroundDrawable=R.drawable.ic_bg_circular,
         iconDrawableRes=R.drawable.ic_age_of_women_at_marriage,
+        showDrawable = true
+    )
+
+    private var lmpDate = FormElement(
+        id = 73,
+        inputType = DATE_PICKER,
+        title = resources.getString(R.string.lmp_date),
+        arrayId = -1,
+        required = true,
+        max = System.currentTimeMillis(),
+        min = getMinLmpMillis(),
+        hasDependants = true,
+        backgroundDrawable=R.drawable.ic_bg_circular,
+        iconDrawableRes=R.drawable.ic_anc_date,
         showDrawable = true
     )
 
@@ -899,6 +941,7 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
             husbandName,
 //            age,
             ageAtMarriage,
+            lmpDate,
             womanDetails,
 //            aadharNo,
             bankAccount,
@@ -923,6 +966,7 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
             pastCSection,
         )
         dateOfReg.value = getDateFromLong(System.currentTimeMillis())
+//        lmpDate.value = getDateFromLong(1735237800000L)
 //        dateOfReg.value?.let {
 //            val long = Dataset.getLongFromDate(it)
 //            dateOfhivTestDone.min = long
@@ -982,6 +1026,7 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
             bankName.value = ecCache.bankName
             branchName.value = ecCache.branchName
             ifsc.value = ecCache.ifsc
+            lmpDate.value = getDateFromLong(ecCache.lmpDate)
             noOfChildren.value = ecCache.noOfChildren.toString()
             noOfLiveChildren.value = ecCache.noOfLiveChildren.toString()
             numMale.value = ecCache.noOfMaleChildren.toString()
@@ -1210,6 +1255,7 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
                 validateAllAlphaNumericOnEditText(ifsc)
             }
 
+
             ageAtMarriage.id -> {
                 if (ageAtMarriage.value.isNullOrEmpty()) {
                     validateEmptyOnEditText(ageAtMarriage)
@@ -1264,97 +1310,107 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
                     assignValuesToAgeFromDob(dob1Long, age1)
                     validateIntMinMax(age1)
                     setSiblingAgeDiff(timeAtMarriage, dob1Long, marriageFirstChildGap)
-                    dob2.min = dob1Long
+                 //   dob2.min = dob1Long
+                    dob2.min = getLongFromDate(getMinimumSecondChildDob(dob1.value))
                     updateTimeLessThan18()
                 }
                 -1
             }
 
             dob2.id -> {
+             //   dob2.inputType = EDIT_TEXT
+                isValidChildGap(dob2,dob1.value)
                 if (dob1.value != null && dob2.value != null) {
                     val dob2Long = getLongFromDate(dob2.value)
                     val dob1Long = getLongFromDate(dob1.value)
                     assignValuesToAgeFromDob(dob2Long, age2)
                     setSiblingAgeDiff(dob1Long, dob2Long, firstAndSecondChildGap)
-                    dob3.min = dob2Long
+                    dob3.min = getLongFromDate(getMinimumSecondChildDob(dob2.value)) //dob2Long
                     updateTimeLessThan18()
                 }
                 -1
             }
 
             dob3.id -> {
+                isValidChildGap(dob3,dob2.value)
                 if (dob2.value != null && dob3.value != null) {
                     val dob2Long = getLongFromDate(dob2.value)
                     val dob3Long = getLongFromDate(dob3.value)
                     assignValuesToAgeFromDob(dob3Long, age3)
                     setSiblingAgeDiff(dob2Long, dob3Long, secondAndThirdChildGap)
-                    dob4.min = dob3Long
+                    dob4.min = getLongFromDate(getMinimumSecondChildDob(dob3.value))//dob3Long
                     updateTimeLessThan18()
                 }
                 -1
             }
 
             dob4.id -> {
+                isValidChildGap(dob4,dob3.value)
                 if (dob3.value != null && dob4.value != null) {
                     val dob3Long = getLongFromDate(dob3.value)
                     val dob4Long = getLongFromDate(dob4.value)
                     assignValuesToAgeFromDob(dob4Long, age4)
                     setSiblingAgeDiff(dob3Long, dob4Long, thirdAndFourthChildGap)
-                    dob5.min = dob4Long
+                    dob5.min = getLongFromDate(getMinimumSecondChildDob(dob4.value))//dob4Long
                     updateTimeLessThan18()
                 }
                 -1
             }
 
             dob5.id -> {
+                isValidChildGap(dob5,dob4.value)
                 if (dob4.value != null && dob5.value != null) {
                     val dob4Long = getLongFromDate(dob4.value)
                     val dob5Long = getLongFromDate(dob5.value)
                     assignValuesToAgeFromDob(dob5Long, age5)
                     setSiblingAgeDiff(dob4Long, dob5Long, fourthAndFifthChildGap)
-                    dob6.min = dob5Long
+                    dob6.min = getLongFromDate(getMinimumSecondChildDob(dob5.value)) //dob5Long
                     updateTimeLessThan18()
                 }
                 -1
             }
 
             dob6.id -> {
+                isValidChildGap(dob6,dob5.value)
                 if (dob5.value != null && dob6.value != null) {
                     val dob5Long = getLongFromDate(dob5.value)
                     val dob6Long = getLongFromDate(dob6.value)
                     assignValuesToAgeFromDob(dob6Long, age6)
                     setSiblingAgeDiff(dob5Long, dob6Long, fifthAndSixthChildGap)
-                    dob7.min = dob6Long
+                    dob7.min = getLongFromDate(getMinimumSecondChildDob(dob6.value)) //dob6Long
                     updateTimeLessThan18()
                 }
                 -1
             }
 
             dob7.id -> {
+                isValidChildGap(dob7,dob6.value)
                 if (dob6.value != null && dob7.value != null) {
                     val dob6Long = getLongFromDate(dob6.value)
                     val dob7Long = getLongFromDate(dob7.value)
                     assignValuesToAgeFromDob(dob7Long, age7)
                     setSiblingAgeDiff(dob6Long, dob7Long, sixthAndSeventhChildGap)
-                    dob8.min = dob7Long
+                    dob8.min =getLongFromDate(getMinimumSecondChildDob(dob7.value))// dob7Long
                     updateTimeLessThan18()
                 }
                 -1
             }
 
             dob8.id -> {
+                isValidChildGap(dob8,dob7.value)
                 if (dob7.value != null && dob8.value != null) {
                     val dob7Long = getLongFromDate(dob7.value)
                     val dob8Long = getLongFromDate(dob8.value)
                     assignValuesToAgeFromDob(dob8Long, age8)
                     setSiblingAgeDiff(dob7Long, dob8Long, seventhAndEighthChildGap)
-                    dob9.min = dob8Long
+                    dob9.min =getLongFromDate(getMinimumSecondChildDob(dob8.value)) // dob8Long
                     updateTimeLessThan18()
                 }
                 -1
             }
 
             dob9.id -> {
+                isValidChildGap(dob9,dob8.value)
                 if (dob8.value != null && dob9.value != null) {
                     val dob8Long = getLongFromDate(dob8.value)
                     val dob9Long = getLongFromDate(dob9.value)
@@ -1779,6 +1835,9 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as EligibleCoupleRegCache).let { ecr ->
             ecr.dateOfReg = getLongFromDate(dateOfReg.value!!)
+            lmpDate.value?.let {
+                ecr.lmpDate = getLongFromDate(it)
+            }
             ecr.bankAccount = bankAccount.value?.takeIf { it.isNotBlank() }?.toLong()
             ecr.bankName = bankName.value
             ecr.branchName = branchName.value

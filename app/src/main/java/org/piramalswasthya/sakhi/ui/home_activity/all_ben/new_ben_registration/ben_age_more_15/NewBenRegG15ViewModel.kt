@@ -93,7 +93,8 @@ class NewBenRegG15ViewModel @Inject constructor(
                     isDraft = true,
                     genDetails = BenRegGen(),
                     syncState = SyncState.UNSYNCED,
-                    locationRecord = preferenceDao.getLocationRecord()!!
+                    locationRecord = preferenceDao.getLocationRecord()!!,
+                    isConsent = false
                 )
                 currentPage.collect {
                     when (it) {

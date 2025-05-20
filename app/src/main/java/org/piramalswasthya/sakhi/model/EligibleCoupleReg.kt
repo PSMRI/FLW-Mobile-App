@@ -7,6 +7,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.Relation
 import com.squareup.moshi.Json
+import org.piramalswasthya.sakhi.configuration.Dataset.Companion.getDateFromLong
 import org.piramalswasthya.sakhi.configuration.FormDataModel
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.utils.HelperUtil.getDateStringFromLong
@@ -33,6 +34,7 @@ data class EligibleCoupleRegCache(
     var bankName: String? = null,
     var branchName: String? = null,
     var ifsc: String? = null,
+    var lmpDate: Long = 0L,
     var noOfChildren: Int = 0,
     var noOfLiveChildren: Int = 0,
     var noOfMaleChildren: Int = 0,
@@ -79,7 +81,8 @@ data class EligibleCoupleRegCache(
     var createdDate: Long = System.currentTimeMillis(),
     var updatedBy: String,
     val updatedDate: Long = System.currentTimeMillis(),
-    var syncState: SyncState
+    var syncState: SyncState,
+    var lmp_date:Long
 ) : FormDataModel {
     fun asPostModel(): EcrPost {
         return EcrPost(
@@ -89,6 +92,7 @@ data class EligibleCoupleRegCache(
             bankName = bankName,
             branchName = branchName,
             ifsc = ifsc,
+            lmpDate = lmpDate.takeIf { it > 0 }?.let { getDateStringFromLong(it) } ?: "",
             numChildren = noOfChildren,
             numLiveChildren = noOfLiveChildren,
             numMaleChildren = noOfMaleChildren,
@@ -133,6 +137,7 @@ data class EligibleCoupleRegCache(
             createdDate = getDateStringFromLong(createdDate)!!,
             updatedBy = updatedBy,
             updatedDate = getDateStringFromLong(updatedDate)!!
+
         )
     }
 }
@@ -177,6 +182,7 @@ data class EcrPost(
     val dob1: String? = null,
     val age1: Int? = null,
     val gender1: Gender? = null,
+    val lmpDate: String? = null,
     val marriageFirstChildGap: Int? = null,
     val dob2: String? = null,
     val age2: Int? = null,
