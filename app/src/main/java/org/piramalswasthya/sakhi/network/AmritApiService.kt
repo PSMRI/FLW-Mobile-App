@@ -9,9 +9,11 @@ import retrofit2.http.*
 interface AmritApiService {
 
     @Headers("No-Auth: true")
-    @POST("commonapi-v1.0/user/userAuthenticate")
+    @POST("commonapi-v3.0.0/user/userAuthenticate")
     suspend fun getJwtToken(@Body json: TmcAuthUserRequest): Response<ResponseBody>
 
+    @POST("commonapi-v3.0.0/firebaseNotification/userToken")
+    suspend fun saveFirebaseToken(@Body json: Map<String, Any>): Response<ResponseBody>
     @GET("flw-0.0.1/user/getUserDetail")
 //    @GET("user/getUserRole")
     suspend fun getUserDetailsById(
