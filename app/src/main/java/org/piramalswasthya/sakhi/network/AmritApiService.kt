@@ -18,6 +18,8 @@ interface AmritApiService {
         @Query("userId") userId: Int
     ): UserNetworkResponse
 
+    @POST("commonapi-v3.0.0/firebaseNotification/userToken")
+    suspend fun saveFirebaseToken(@Body json: Map<String, Any>): Response<ResponseBody>
 
     @POST("hwc-facility-service/registrar/registrarBeneficaryRegistrationNew")
     suspend fun getBenIdFromBeneficiarySending(@Body benCHOPost: BenCHOPost): Response<ResponseBody>
