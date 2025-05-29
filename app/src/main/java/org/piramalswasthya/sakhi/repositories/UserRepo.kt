@@ -59,6 +59,30 @@ class UserRepo @Inject constructor(
         }
     }
 
+    suspend fun saveToken(userName: String, password: String): NetworkResponse<User?> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val userId = getTokenAmrit(userName, password)
+                val user = setUserRole(userId, password)
+                return@withContext NetworkResponse.Success(user)
+            } catch (se: SocketTimeoutException) {
+                return@withContext NetworkResponse.Error(message = "Server timed out !")
+            } catch (se: HttpException) {
+                return@withContext NetworkResponse.Error(message = "Unable to connect to server !")
+            } catch (ce: ConnectException) {
+                return@withContext NetworkResponse.Error(message = "Server refused connection !")
+            } catch (ue: UnknownHostException) {
+                return@withContext NetworkResponse.Error(message = "Unable to connect to server !")
+            } catch (ie: Exception) {
+                if (ie.message == "Invalid username / password")
+                    return@withContext NetworkResponse.Error(message = "Invalid Username/password")
+                else
+                    return@withContext NetworkResponse.Error(message = "Something went wrong... Try again later")
+
+            }
+        }
+    }
+
     private suspend fun setUserRole(userId: Int, password: String): User {
         val response = amritApiService.getUserDetailsById(userId = userId)
         val user = response.data.toUser(password)
@@ -166,5 +190,26 @@ class UserRepo @Inject constructor(
         }
     }
 
+    suspend fun saveFirebaseToken(userId: Int, token: String, updatedAt: String) {
+        withContext(Dispatchers.IO) {
+            try {
+                val requestBody = mapOf(
+                    "userId" to userId,
+                    "token" to token,
+                    "updatedAt" to updatedAt
+                )
+
+                val response = amritApiService.saveFirebaseToken(requestBody)
+
+                if (response.isSuccessful) {
+                    Timber.d("Firebase token saved successfully: ${response.body()?.string()}")
+                } else {
+                    Timber.e("Failed to save Firebase token: ${response.code()} ${response.errorBody()?.string()}")
+                }
+            } catch (e: Exception) {
+                Timber.e(e, "Exception while saving Firebase token")
+            }
+        }
+    }
 
 }
