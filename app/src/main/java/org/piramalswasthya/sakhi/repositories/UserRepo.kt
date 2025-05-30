@@ -139,6 +139,8 @@ class UserRepo @Inject constructor(
                 val responseStatusCode = responseBody.getInt("statusCode")
                 if (responseStatusCode == 200) {
                     val data = responseBody.getJSONObject("data")
+                    TokenInsertTmcInterceptor.setJwt(data.getString("jwtToken"))
+                    preferenceDao.registerJwtToken(data.getString("jwtToken"))
                     val token = data.getString("key")
                     TokenInsertTmcInterceptor.setToken(token)
                     preferenceDao.registerAmritToken(token)
@@ -182,6 +184,8 @@ class UserRepo @Inject constructor(
             if (statusCode == 5002)
                 throw IllegalStateException("Invalid username / password")
             val data = responseBody.getJSONObject("data")
+            TokenInsertTmcInterceptor.setJwt(data.getString("jwtToken"))
+            preferenceDao.registerJwtToken(data.getString("jwtToken"))
             val token = data.getString("key")
             val userId = data.getInt("userID")
             db.clearAllTables()
@@ -192,25 +196,4 @@ class UserRepo @Inject constructor(
         }
     }
 
-     suspend fun saveFirebaseToken(userId: Int, token: String, updatedAt: String) {
-        withContext(Dispatchers.IO) {
-            try {
-                val requestBody = mapOf(
-                    "userId" to userId,
-                    "token" to token,
-                    "updatedAt" to updatedAt
-                )
-
-                val response = amritApiService.saveFirebaseToken(requestBody)
-
-                if (response.isSuccessful) {
-                    Timber.d("Firebase token saved successfully: ${response.body()?.string()}")
-                } else {
-                    Timber.e("Failed to save Firebase token: ${response.code()} ${response.errorBody()?.string()}")
-                }
-            } catch (e: Exception) {
-                Timber.e(e, "Exception while saving Firebase token")
-            }
-        }
-    }
 }
