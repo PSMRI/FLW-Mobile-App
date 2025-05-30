@@ -23,7 +23,6 @@ import org.piramalswasthya.sakhi.work.WorkerUtils
 import java.time.Instant
 import javax.inject.Inject
 
-@RequiresApi(Build.VERSION_CODES.O)
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val database: InAppDb,
@@ -71,12 +70,6 @@ class HomeViewModel @Inject constructor(
                     _unprocessedRecordsCount.value =
                         value.filter { it.syncState != SyncState.SYNCED }.sumOf { it.count }
                 }
-            }
-            val firebaseToken = FirebaseMessaging.getInstance().token.await()
-            val userId = currentUser?.userId
-            val updatedAt = Instant.now().toString()
-            if (userId != null) {
-                userRepo.saveFirebaseToken(userId, firebaseToken, updatedAt)
             }
         }
     }
