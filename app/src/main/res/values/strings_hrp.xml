@@ -78,6 +78,7 @@
     <string name="assessment_form_filled_successfully">Assessment form filled successfully</string>
     <string name="visit_on">"Visit On "</string>
     <string name="follow_up">Follow Up</string>
+    <string name="follow_up_date">Follow Up Date</string>
     <string name="history">History</string>
     <string name="micro">Micro Birth Plan</string>
     <string name="_1st_anc">1st ANC</string>
