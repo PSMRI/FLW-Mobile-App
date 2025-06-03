@@ -197,6 +197,7 @@
     <string name="nikshay_id">Nikshay ID</string>
     <string name="sputum_test_result">Sputum Test Result</string>
     <string name="referred_to_facility">Referred to Facility</string>
+    <string name="referred_to">Referred to</string>
     <string name="facility_referral_follow_ups">Facility Referral follow-ups</string>
     <string-array name="tb_submitted_yet">
         <item>DMC</item>
