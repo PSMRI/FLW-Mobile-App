@@ -177,6 +177,19 @@ class CreateAbhaViewModel @Inject constructor(
         response: AbhaVerifyAadhaarOtpResponse
     ) {
         val ben = benRepo.getBenFromId(benId)
+        /*This change is urgent fix as api throwing let response*/
+        ben?.let {
+            ben.firstName?.let { firstName ->
+                _benMapped.value = firstName
+            }
+            ben.lastName?.let { lastName ->
+                _benMapped.value = ben.firstName + " $lastName"
+            }
+            it.healthIdDetails = BenHealthIdDetails(healthId, healthIdNumber?:"", isNewAbha = response.isNew)
+            it.isNewAbha =response.isNew
+            benRepo.updateRecord(ben)
+        }
+        /**/
         val abhaProfile = ABHAProfile(
             firstName = response.ABHAProfile.firstName,
             middleName = response.ABHAProfile.middleName,
@@ -214,17 +227,6 @@ class CreateAbhaViewModel @Inject constructor(
             when (val result =
                 abhaIdRepo.mapHealthIDToBeneficiary(req)) {
                 is NetworkResult.Success -> {
-                    ben?.let {
-                        ben.firstName?.let { firstName ->
-                            _benMapped.value = firstName
-                        }
-                        ben.lastName?.let { lastName ->
-                            _benMapped.value = ben.firstName + " $lastName"
-                        }
-                        it.healthIdDetails = BenHealthIdDetails(healthId, healthIdNumber?:"", isNewAbha = response.isNew)
-                        it.isNewAbha =response.isNew
-                        benRepo.updateRecord(ben)
-                    }
                     _state.value = State.ABHA_GENERATE_SUCCESS
                 }
 

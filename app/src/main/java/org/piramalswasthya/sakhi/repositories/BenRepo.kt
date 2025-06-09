@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import org.json.JSONException
 import org.json.JSONObject
-import org.piramalswasthya.sakhi.configuration.BenGenRegFormDataset
 import org.piramalswasthya.sakhi.database.room.BeneficiaryIdsAvail
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
@@ -19,7 +18,7 @@ import org.piramalswasthya.sakhi.helpers.ImageUtils
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.model.*
 import org.piramalswasthya.sakhi.network.*
-import org.piramalswasthya.sakhi.work.WorkerUtils
+import org.piramalswasthya.sakhi.utils.HelperUtil
 import timber.log.Timber
 import java.lang.Long.min
 import java.net.SocketTimeoutException
@@ -166,13 +165,8 @@ class BenRepo @Inject constructor(
                 if (responseStatusCode == 200) {
                     val jsonObjectData: JSONObject = jsonObj.getJSONObject("data")
                     val response = jsonObjectData.getString("response")
-
-                  val newBenId= extractBenId(response)
-
-//                    val benNumber = resBenId.substring(resBenId.length - 12)
-//                    val newBenId = java.lang.Long.valueOf(benNumber)
-                    val newBenRegId = extractBenRegID(jsonObjectData.getString("response"))
-
+                    val newBenId = jsonObjectData.getString("benGenId").toLong()
+                    val newBenRegId = jsonObjectData.getString("benRegId").toLong()
                     //FIX TO UPDATE IMAGE-NAME WITH NEW BEN-ID
                     val infantReg = infantRegRepo.getInfantRegFromChildBenId(ben.beneficiaryId)
                     infantReg?.let {
@@ -221,22 +215,7 @@ class BenRepo @Inject constructor(
             Timber.d("Caugnt error $e")
             return false
         }
-
     }
-
-    fun extractBenId(string:String): Long {
-        val regex =  """Beneficiary ID is :\s*(\d+)""".toRegex() //"BenRegID is :\\s*(\\d+)".toRegex()
-        val matchResult = regex.find(string)
-        var result =matchResult?.groupValues?.get(1)?.trim()?.toLongOrNull()
-        return result?:0L
-    }
-    fun extractBenRegID(json: String): Long? {
-        val regex = """BenRegID\s*is\s*:\s*(\d+)""".toRegex()
-        val matchResult = regex.find(json)
-        var result =matchResult?.groupValues?.get(1)?.trim()?.toLongOrNull()
-        return result
-    }
-
 
     suspend fun processNewBen(): Boolean {
         return withContext(Dispatchers.IO) {
@@ -253,7 +232,6 @@ class BenRepo @Inject constructor(
 //            val cbacPostList = mutableSetOf<CbacPost>()
 
             benList.forEach {
-//                val isSuccess =
                 createBenIdAtServerByBeneficiarySending(it, user, it.locationRecord)
                 Timber.d("YTR 429 $it")
             }
@@ -270,8 +248,6 @@ class BenRepo @Inject constructor(
                 } catch (e: java.lang.Exception) {
                     Timber.d("caught error in adding kidDetails : $e")
                 }
-
-
             }
 
             val uploadDone = postDataToAmritServer(
@@ -350,6 +326,7 @@ class BenRepo @Inject constructor(
     }
 
     suspend fun getBeneficiariesFromServerForWorker(pageNumber: Int): Int {
+        Timber.d("=====1234:getBeneficiariesFromServerForWorker : $pageNumber")
         return withContext(Dispatchers.IO) {
             val user =
                 preferenceDao.getLoggedInUser()
@@ -379,6 +356,10 @@ class BenRepo @Inject constructor(
                                 val dataObj = jsonObj.getJSONObject("data")
                                 val pageSize = dataObj.getInt("totalPage")
 
+//                                HelperUtil.allPagesContent.append("Page $pageNumber:\n")
+//                                HelperUtil.allPagesContent.append(responseString)
+//                                HelperUtil.allPagesContent.append("\n")
+
                                 try {
                                     householdDao.upsert(
                                         *getHouseholdCacheFromServerResponse(
@@ -390,6 +371,11 @@ class BenRepo @Inject constructor(
                                     return@withContext 0
                                 }
                                 val benCacheList = getBenCacheFromServerResponse(responseString)
+
+                                benCacheList.forEach {
+                                    Timber.d("-----123Inserting benId=${it.beneficiaryId}, isNewAbha=${it.healthIdDetails?.isNewAbha}")
+                                }
+
                                 benDao.upsert(*benCacheList.toTypedArray())
 //                                val cbacCacheList = getCbacCacheFromServerResponse(responseString)
 //                                cbacDao.upsert(*cbacCacheList.toTypedArray())
@@ -407,6 +393,8 @@ class BenRepo @Inject constructor(
                             }
 
                             5000 -> {
+                              //  HelperUtil.saveApiResponseToDownloads(context, "9864880049_getBeneficiaryData_response.txt", HelperUtil.allPagesContent.toString())
+
                                 if (errorMessage == "No record found") return@withContext 0
                             }
 
@@ -533,7 +521,7 @@ class BenRepo @Inject constructor(
         return localDateTime?.time ?: 0
     }
 
-
+    var count = 0
     private suspend fun getBenCacheFromServerResponse(response: String): MutableList<BenRegCache> {
         val jsonObj = JSONObject(response)
         val result = mutableListOf<BenRegCache>()
@@ -1032,6 +1020,11 @@ class BenRepo @Inject constructor(
                                 )
                             }, ${benDataObj.getString("reproductiveStatus")}"
                         )*/
+
+//                        if (benDataObj.has("benficieryid")){
+//                            count++
+//                            Timber.d("====050224,::$count")
+//                        }
                     } catch (e: JSONException) {
                         Timber.e("Beneficiary skipped: ${jsonObject.getLong("benficieryid")} with error $e")
                     } catch (e: NumberFormatException) {

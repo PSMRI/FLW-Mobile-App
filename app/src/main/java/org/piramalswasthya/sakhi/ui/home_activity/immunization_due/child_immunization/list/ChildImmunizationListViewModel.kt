@@ -1,5 +1,7 @@
 package org.piramalswasthya.sakhi.ui.home_activity.immunization_due.child_immunization.list
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,6 +41,7 @@ class ChildImmunizationListViewModel @Inject constructor(
 
     private val filter = MutableStateFlow("")
 
+    val selectedFilter=MutableLiveData<String?>("All")
     var selectedPosition = 0
 
     val benWithVaccineDetails = pastRecords.map { vaccineIdList ->

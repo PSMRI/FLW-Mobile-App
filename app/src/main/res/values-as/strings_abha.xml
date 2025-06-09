@@ -29,6 +29,7 @@
     <string name="no">নহয়</string>
     <string name="submit">জমা দিয়ক</string>
     <string name="enter_mobile_number">"ম'বাইল নম্বৰ ভৰ্তি কৰক</string>
+    <string name="enter_number_for_abha">আধাৰ নম্বৰ দিয়ক</string>
     <string name="aadhaar_linked_mobile">"আধাৰ সংযোজিত ম'বাইল নম্বৰ অথবা অন্য ম'বাইল নম্বৰ</string>
     <string name="mobile_number">"ম'বাইল নম্বৰ</string>
     <string name="check_and_generate_otp">OTP পৰীক্ষা কৰি উৎপন্ন কৰক</string>
@@ -49,7 +50,7 @@
     <string name="aadhaar_linked_mobile_number_or_other_mobile_number">আধাৰ সংযুক্ত মোবাইল নম্বৰ অথবা অন্য মোবাইল নম্বৰ</string>
     <string name="individual_s_consent_for_creation_of_abha_number">অভা নম্বৰৰ সৃষ্টি বাবে ব্যক্তিৰ সম্মতি।</string>
     <string name="validate_fp">মান্যতা পৰীক্ষা কৰক</string>
-    <string name="generating_abha_for">"অভা নম্বৰ সৃষ্টি কৰা হ'ল:</string>
+    <string name="generating_abha_for">ABHA পঞ্জীয়নৰ বাবে</string>    <!--"অভা নম্বৰ সৃষ্টি কৰা হ'ল:-->
     <string name="otp_sent_to">"OTP পঠাই দিয়া হ'ল "</string>
     <string name="otp_was_resent">"OTP পুনঃপ্ৰেৰণ হ'ল।</string>
     <string name="do_you_want_to_go_back">আপুনি পিছলৈ যাবলৈ বিচাৰে নেকি?</string>

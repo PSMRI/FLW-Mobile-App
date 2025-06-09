@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.di
 
 import android.content.Context
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -120,6 +121,12 @@ object AppModule {
     @Singleton
     @Provides
     fun provideRoomDatabase(@ApplicationContext context: Context) = InAppDb.getInstance(context)
+
+    @Provides
+    @Singleton
+    fun provideFirebaseAnalytics(@ApplicationContext context: Context): FirebaseAnalytics {
+        return FirebaseAnalytics.getInstance(context)
+    }
 
     @Singleton
     @Provides

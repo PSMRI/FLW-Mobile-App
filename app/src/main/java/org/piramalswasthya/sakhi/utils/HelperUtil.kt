@@ -5,15 +5,19 @@ import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Canvas
 import android.os.Build
+import android.os.Environment
 import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
 import android.text.TextUtils
+import android.util.Log
 import android.util.TypedValue
 import androidx.collection.lruCache
 import androidx.core.graphics.withTranslation
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.AgeUnitDTO
+import java.io.File
+import java.io.FileOutputStream
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -278,4 +282,76 @@ object HelperUtil {
             context.resources.displayMetrics
         )
     }
+
+    fun isValidName(name: String): Boolean {
+        val regex = Regex("^[a-zA-Z][a-zA-Z\\s'-]*[a-zA-Z]$")
+        return regex.matches(name.trim())
+    }
+
+
+    val allPagesContent = StringBuilder()
+    fun saveApiResponseToDownloads(context: Context, fileName: String, content: String) {
+        val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+        val file = File(downloadsDir, fileName)
+
+        try {
+            FileOutputStream(file).use { outputStream ->
+                outputStream.write(content.toByteArray())
+            }
+            Log.d("SAVE_FILE", "File saved to Downloads: ${file.absolutePath}")
+        } catch (e: Exception) {
+            Log.e("SAVE_FILE", "Error saving to Downloads: ${e.message}")
+        }
+    }
+
+    /*Delivery Outcome DB Check*/
+    val deliveryOutcomeDBLog = StringBuilder()
+    fun deliveryOutcomeDBLogMethod(context: Context, fileName: String, content: String) {
+        val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+        val file = File(downloadsDir, fileName)
+
+        try {
+            FileOutputStream(file).use { outputStream ->
+                outputStream.write(content.toByteArray())
+            }
+            Log.d("SAVE_FILE", "File saved to Downloads: ${file.absolutePath}")
+        } catch (e: Exception) {
+            Log.e("SAVE_FILE", "Error saving to Downloads: ${e.message}")
+        }
+    }
+    val deliveryOutcomeUpdatePNCWorker = StringBuilder()
+    fun deliveryOutcomeUpdatePNCWorkerMethod(context: Context, fileName: String, content: String) {
+        val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+        val file = File(downloadsDir, fileName)
+
+        try {
+            FileOutputStream(file).use { outputStream ->
+                outputStream.write(content.toByteArray())
+            }
+            Log.d("SAVE_FILE", "File saved to Downloads: ${file.absolutePath}")
+        } catch (e: Exception) {
+            Log.e("SAVE_FILE", "Error saving to Downloads: ${e.message}")
+        }
+    }
+    val deliveryOutcomeRepo = StringBuilder()
+    fun deliveryOutcomeRepoMethod(context: Context, fileName: String, content: String) {
+        val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+        val file = File(downloadsDir, fileName)
+
+        try {
+            FileOutputStream(file).use { outputStream ->
+                outputStream.write(content.toByteArray())
+            }
+            Log.d("SAVE_FILE", "File saved to Downloads: ${file.absolutePath}")
+        } catch (e: Exception) {
+            Log.e("SAVE_FILE", "Error saving to Downloads: ${e.message}")
+        }
+    }
+
+
+
+
+
+
+
 }

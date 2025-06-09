@@ -388,6 +388,13 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
             add(Calendar.WEEK_OF_YEAR, 40)
         }.timeInMillis
 
+    protected fun getANCMaxFromLmp(lmp: Long) =
+
+        Calendar.getInstance().apply {
+            timeInMillis = lmp
+            add(Calendar.WEEK_OF_YEAR, 42)
+        }.timeInMillis
+
     protected fun getMinFromMaxForLmp(lmp: Long) =
 
         Calendar.getInstance().apply {

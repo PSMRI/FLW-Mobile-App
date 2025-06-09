@@ -11,12 +11,14 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.hilt.android.AndroidEntryPoint
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.FragmentAadhaarOtpBinding
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.AadhaarIdViewModel
 import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_otp.AadhaarOtpViewModel.State
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class AadhaarOtpFragment : Fragment() {
@@ -26,6 +28,9 @@ class AadhaarOtpFragment : Fragment() {
         get() = _binding!!
 
     private val viewModel: AadhaarOtpViewModel by viewModels()
+
+    @Inject
+    lateinit var firebaseAnalytics: FirebaseAnalytics
 
     private val parentViewModel: AadhaarIdViewModel by viewModels({ requireActivity() })
 
@@ -40,6 +45,8 @@ class AadhaarOtpFragment : Fragment() {
         override fun onFinish() {
             binding.resendOtp.isEnabled = true
             binding.timerResendOtp.visibility = View.INVISIBLE
+            binding.timerCount.visibility = View.INVISIBLE
+            binding.timerSeconds.visibility = View.INVISIBLE
         }
     }
 
@@ -66,27 +73,21 @@ class AadhaarOtpFragment : Fragment() {
             }
         }
         binding.resendOtp.setOnClickListener {
-            viewModel.resendAadhaarOtp(parentViewModel.aadhaarNumber)
-            startResendTimer()
+            if (parentViewModel.abhaMode.value == AadhaarIdViewModel.Abha.CREATE && parentViewModel.mobileNumber == viewModel.mobileNumber) {
+                viewModel.resendAadhaarOtp(parentViewModel.aadhaarNumber)
+                startResendTimer()
+
+            } else {
+                viewModel.resendOtpForSearchAbha(parentViewModel.selectedAbhaIndex,parentViewModel.otpTxnId)
+                startResendTimer()
+
+            }
         }
 
         if (parentViewModel.abhaMode.value == AadhaarIdViewModel.Abha.SEARCH) {
-            binding.textView6.text = "Verify Aadhaar OTP"
+            binding.textView6.text = "Verify ABHA OTP"
         }
 
-       /* binding.tietAadhaarOtp.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-
-            override fun afterTextChanged(p0: Editable?) {
-                binding.btnVerifyOTP.isEnabled = p0 != null && p0.length == 6
-                binding.tvErrorText.visibility = View.GONE
-            }
-
-        })*/
 
         binding.otpView.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
@@ -127,8 +128,15 @@ class AadhaarOtpFragment : Fragment() {
                     binding.tvOtpMsg.visibility = View.VISIBLE
                     var string = getMobileNumber(parentViewModel.otpMobileNumberMessage) ?: ""
 
-                    binding.tvOtpMsg.text = getString(R.string.str_aadhaar_otp_number).replace("@mobileNumber", string)
-                    binding.tvOTPNote.visibility = View.VISIBLE
+                    if (parentViewModel.abhaMode.value == AadhaarIdViewModel.Abha.SEARCH) {
+                        binding.tvOtpMsg.text = getString(R.string.str_abha_otp_number).replace("@mobileNumber", string)
+                        binding.tvOTPNote.visibility = View.VISIBLE
+                    }else{
+                        binding.tvOtpMsg.text = getString(R.string.str_aadhaar_otp_number).replace("@mobileNumber", string)
+                        binding.tvOTPNote.visibility = View.VISIBLE
+                    }
+
+
                 }
 
                 State.LOADING -> {
@@ -146,6 +154,10 @@ class AadhaarOtpFragment : Fragment() {
                         )
                     } else if (parentViewModel.abhaMode.value == AadhaarIdViewModel.Abha.CREATE &&
                         parentViewModel.mobileNumber == viewModel.mobileNumber) {
+                        val timestamp = System.currentTimeMillis()
+                        firebaseAnalytics.logEvent("create_abha_reponse_timestamp", Bundle().apply {
+                            putLong("create_abha_response_time", timestamp)
+                        })
                         findNavController().navigate(
                             AadhaarOtpFragmentDirections.actionAadhaarOtpFragmentToCreateAbhaFragment(
                                 viewModel.txnId, viewModel.name, viewModel.phrAddress, viewModel.abhaNumber,viewModel.abhaResponse
@@ -188,14 +200,14 @@ class AadhaarOtpFragment : Fragment() {
                         activity,
                         resources.getString(R.string.otp_was_resent),
                         Toast.LENGTH_LONG
-                    )
-                        .show()
+                    ).show()
                 }
             }
         }
 
         viewModel.errorMessage.observe(viewLifecycleOwner) {
             it?.let {
+                binding.otpView.setText("")
                 binding.tvErrorText.text = it
                 viewModel.resetErrorMessage()
             }
@@ -216,17 +228,19 @@ class AadhaarOtpFragment : Fragment() {
 
     }
 
-    private fun getMobileNumber(input: String): String? {
+    private fun getMobileNumber(input: String): String {
         val regex = Regex("""\*+\d+""")
         val matches = regex.findAll(input).toList()
         val lastMatch = matches.lastOrNull()?.value
         println("Extracted: $lastMatch") // Output: ******0180
-        return lastMatch
+        return lastMatch?:""
     }
 
     private fun startResendTimer() {
         binding.resendOtp.isEnabled = false
         binding.timerResendOtp.visibility = View.VISIBLE
+        binding.timerCount.visibility = View.VISIBLE
+        binding.timerSeconds.visibility = View.VISIBLE
         timer.start()
     }
 

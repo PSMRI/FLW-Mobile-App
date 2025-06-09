@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.databinding.ItemChildImmunizationDoseBinding
 import org.piramalswasthya.sakhi.model.VaccineDomain
-import org.piramalswasthya.sakhi.model.VaccineState
+
 
 
 class ChildImmunizationVaccineAdapter (private val clickListener: ImmunizationClickListener? = null) :
@@ -47,7 +47,7 @@ class ChildImmunizationVaccineAdapter (private val clickListener: ImmunizationCl
         ) {
             binding.vaccine = item
             binding.clickListener = clickListener
-            binding.executePendingBindings()
+
 
             binding.idSwitch.setOnCheckedChangeListener(null)
             binding.idSwitch.isChecked = item.isSwitchChecked
@@ -66,13 +66,14 @@ class ChildImmunizationVaccineAdapter (private val clickListener: ImmunizationCl
 
             binding.idSwitch.setOnCheckedChangeListener { compoundButton, b ->
                 if (b){
-                    clickListener?.onClicked(item.apply {
+                    clickListener?.onClicked(position,item.apply {
                         isSwitchChecked = true })
                 }else{
-                    clickListener?.onClicked(item.apply { isSwitchChecked = false })
+                    clickListener?.onClicked(position,item.apply { isSwitchChecked = false })
                 }
 
             }
+            binding.executePendingBindings()
 
 
         }
@@ -80,8 +81,8 @@ class ChildImmunizationVaccineAdapter (private val clickListener: ImmunizationCl
     }
 
 
-    class ImmunizationClickListener(val selectedListener: (vaccine: VaccineDomain) -> Unit) {
-        fun onClicked(vaccine: VaccineDomain) = selectedListener(vaccine)
+    class ImmunizationClickListener(val selectedListener: (position:Int, vaccine: VaccineDomain) -> Unit) {
+        fun onClicked(position:Int,vaccine: VaccineDomain) = selectedListener(position,vaccine)
 
     }
 }

@@ -53,6 +53,10 @@ class FindAbhaViewModel @Inject constructor(
     val errorMessage: LiveData<String?>
         get() = _errorMessage
 
+    private val _otpMobileNumberMessage = MutableLiveData<String?>(null)
+    val otpMobileNumberMessage: LiveData<String?>
+        get() = _otpMobileNumberMessage
+
     fun resetState() {
         _state.value = AadhaarIdViewModel.State.IDLE
     }
@@ -114,6 +118,7 @@ class FindAbhaViewModel @Inject constructor(
                 is NetworkResult.Success -> {
                     _fnlTxnId.value = result.data.txnId
                     _fnlState.value = AadhaarIdViewModel.State.SUCCESS
+                    _otpMobileNumberMessage.value = result.data.message
                 }
 
                 is NetworkResult.Error -> {

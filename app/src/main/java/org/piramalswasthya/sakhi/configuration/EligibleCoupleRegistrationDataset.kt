@@ -1805,7 +1805,7 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
             timeInMillis = new
         }
         val diff = getDiffYears(calOld, calNew)
-        target.value = diff.toString()
+        target.value = "${diff.toString()} years"
     }
 
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {

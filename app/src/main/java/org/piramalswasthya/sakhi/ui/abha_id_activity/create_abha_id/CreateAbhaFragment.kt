@@ -29,6 +29,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.work.Operation
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.ResponseBody
 import org.piramalswasthya.sakhi.R
@@ -39,6 +40,7 @@ import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -57,6 +59,9 @@ class CreateAbhaFragment : Fragment() {
     private val channelId = "download abha card"
 
     private var benId: Long = 0
+
+    @Inject
+    lateinit var firebaseAnalytics: FirebaseAnalytics
 
     val args: CreateAbhaFragmentArgs by lazy {
         CreateAbhaFragmentArgs.fromBundle(requireArguments())
@@ -136,6 +141,10 @@ class CreateAbhaFragment : Fragment() {
             binding.clDownloadAbha.visibility = View.INVISIBLE
 
         }else{
+            val timestamp = System.currentTimeMillis()
+            firebaseAnalytics.logEvent("map_ben_to_health_id_request", Bundle().apply {
+                putLong("map_ben_to_health_id_request_time", timestamp)
+            })
             viewModel.mapBeneficiaryToHealthId(benId, benRegId)
         }
 
@@ -187,6 +196,7 @@ class CreateAbhaFragment : Fragment() {
         binding.btnDownloadAbhaNo.setOnClickListener {
             binding.txtDownloadAbha.visibility = View.INVISIBLE
             binding.clDownloadAbha.visibility = View.GONE
+            requireActivity().finish()
         }
         requireActivity().onBackPressedDispatcher.addCallback(
             viewLifecycleOwner,
@@ -216,6 +226,13 @@ class CreateAbhaFragment : Fragment() {
         }
 
         viewModel.state.observe(viewLifecycleOwner) {
+            if (it.name == "ABHA_GENERATE_SUCCESS"){
+                val timestamp = System.currentTimeMillis()
+                firebaseAnalytics.logEvent("map_ben_to_health_id_reponse", Bundle().apply {
+                    putLong("map_ben_to_health_id_reponse_time", timestamp)
+                })
+
+            }
             if (it.name == "DOWNLOAD_SUCCESS") {
                 binding.clDownloadAbha.visibility = View.INVISIBLE
                 Snackbar.make(
@@ -225,6 +242,7 @@ class CreateAbhaFragment : Fragment() {
                     requireActivity().finish()
                 }.show()
             }
+
         }
     }
 
