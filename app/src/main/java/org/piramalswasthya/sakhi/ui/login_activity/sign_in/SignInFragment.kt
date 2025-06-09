@@ -201,7 +201,11 @@ class SignInFragment : Fragment() {
                                 else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
                             activity?.finish()
                         }else{
-                                Toast.makeText(requireContext(),"This user is not from Niramay Project",Toast.LENGTH_SHORT).show()
+                            binding.clContent.visibility = View.VISIBLE
+                            binding.pbSignIn.visibility = View.GONE
+                            binding.tvError.visibility = View.GONE
+
+                            Toast.makeText(requireContext(),"This user is not from Niramay Project",Toast.LENGTH_LONG).show()
                         }
 
                     }else if(BuildConfig.FLAVOR.equals("xushrukha", true)){
@@ -211,7 +215,11 @@ class SignInFragment : Fragment() {
                                 else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
                             activity?.finish()
                         }else{
-                            Toast.makeText(requireContext(),"This user is not from Xushrukha Project",Toast.LENGTH_SHORT).show()
+                            binding.clContent.visibility = View.VISIBLE
+                            binding.pbSignIn.visibility = View.GONE
+                            binding.tvError.visibility = View.GONE
+
+                            Toast.makeText(requireContext(),"This user is not from Xushrukha Project",Toast.LENGTH_LONG).show()
                         }
 
                     }else{

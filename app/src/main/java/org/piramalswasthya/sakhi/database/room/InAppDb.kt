@@ -96,7 +96,7 @@ import org.piramalswasthya.sakhi.model.Vaccine
         IncentiveRecordCache::class,
     ],
     views = [BenBasicCache::class],
-    version = 15, exportSchema = false
+    version = 16, exportSchema = false
 )
 
 @TypeConverters(LocationEntityListConverter::class, SyncStateConverter::class)
@@ -137,12 +137,11 @@ abstract class InAppDb : RoomDatabase() {
 //                it.execSQL("select count(*) from beneficiary")
             })
 
-            val MIGRATION_14_15 = Migration(14, 15, migrate = {
-                it.execSQL("ALTER TABLE BENEFICIARY ADD COLUMN isNewAbha INTEGER NOT NULL DEFAULT 0")
+            val MIGRATION_15_16 = Migration(15, 16, migrate = {
+                //it.execSQL("ALTER TABLE BENEFICIARY ADD COLUMN isNewAbha INTEGER NOT NULL DEFAULT 0")
                 it.execSQL("DROP VIEW IF EXISTS BEN_BASIC_CACHE");
-              //  it.execSQL("CREATE VIEW BEN_BASIC_CACHE AS " +
-               //         "SELECT  benId,hhId,regDate,benName,benSurname,gender,dob,relToHeadId,mobileNo,fatherName,familyHeadName,spouseName,rchId,hrpStatus,syncState,reproductiveStatusId, lastMenstrualPeriod,isKid,immunizationStatus,villageId,abhaId,isNewAbha,cbacFilled,cbacSyncState,cdrFilled,cdrSyncState,mdsrFilled,mdsrSyncState,pmsmaSyncState,pmsmaFilled,hbncFilled,hbycFilled,pwrFilled,pwrSyncState,doSyncState,irSyncState,crSyncState,ecrFilled,ectFilled,tbsnFilled,tbsnSyncState,tbspFilled,tbspSyncState,hrppaFilled,hrpnpaFilled,hrpmbpFilled,hrptFilled,hrptrackingDone,hrnptrackingDone,hrnptFilled,hrppaSyncState,hrpnpaSyncState,hrpmbpSyncState,hrptSyncState,hrnptSyncState,isDelivered,pwHrp,irFilled,isMdsr,crFilled,doFilled FROM BENEFICIARY");
-                it.execSQL("CREATE VIEW BEN_BASIC_CACHE AS " +
+
+               /* it.execSQL("CREATE VIEW BEN_BASIC_CACHE AS " +
                         "SELECT b.beneficiaryId as benId, b.householdId as hhId, b.regDate, " +
                         "b.firstName as benName, b.lastName as benSurname, b.gender, b.dob as dob, " +
                         "b.familyHeadRelationPosition as relToHeadId, b.contactNumber as mobileNo, " +
@@ -150,12 +149,80 @@ abstract class InAppDb : RoomDatabase() {
                         "b.rchId, b.gen_lastMenstrualPeriod as lastMenstrualPeriod, b.isHrpStatus as hrpStatus, " +
                         "b.syncState, b.gen_reproductiveStatusId as reproductiveStatusId, b.isKid, b.immunizationStatus, " +
                         "b.loc_village_id as villageId, b.abha_healthIdNumber as abhaId, " +
-                        "b.isNewAbha, " + // Added the new column here
+                        "b.isNewAbha, " +
                         "cbac.benId is not null as cbacFilled, cbac.syncState as cbacSyncState " +
                         "FROM BENEFICIARY b " +
                         "JOIN HOUSEHOLD h ON b.householdId = h.householdId " +
-                        "LEFT OUTER JOIN CBAC cbac on b.beneficiaryId = cbac.benId " +
-                        "WHERE b.isDraft = 0 GROUP BY b.beneficiaryId ORDER BY b.updatedDate DESC")
+                        "WHERE b.isDraft = 0")*/
+
+                it.execSQL("""
+            CREATE TABLE IF NOT EXISTS BEN_BASIC_CACHE (
+                benId TEXT NOT NULL,
+                hhId TEXT,
+                regDate INTEGER,
+                benName TEXT,
+                benSurname TEXT,
+                gender TEXT,
+                dob INTEGER,
+                relToHeadId INTEGER,
+                mobileNo TEXT,
+                fatherName TEXT,
+                familyHeadName TEXT,
+                spouseName TEXT,
+                rchId TEXT,
+                lastMenstrualPeriod TEXT,
+                hrpStatus INTEGER,
+                syncState INTEGER,
+                reproductiveStatusId INTEGER,
+                isKid INTEGER,
+                immunizationStatus INTEGER,
+                villageId TEXT,
+                abhaId TEXT,
+                isNewAbha INTEGER,
+                cbacFilled INTEGER,
+                cbacSyncState INTEGER,
+                PRIMARY KEY(benId)
+            )
+        """.trimIndent())
+
+                // Step 2: Insert data from existing tables into BEN_BASIC_CACHE
+                it.execSQL("""
+            INSERT INTO BEN_BASIC_CACHE (
+                benId, hhId, regDate, benName, benSurname, gender, dob, relToHeadId, mobileNo, fatherName,
+                familyHeadName, spouseName, rchId, lastMenstrualPeriod, hrpStatus, syncState, reproductiveStatusId,
+                isKid, immunizationStatus, villageId, abhaId, isNewAbha, cbacFilled, cbacSyncState
+            )
+            SELECT
+                b.beneficiaryId,
+                b.householdId,
+                b.regDate,
+                b.firstName,
+                b.lastName,
+                b.gender,
+                b.dob,
+                b.familyHeadRelationPosition,
+                b.contactNumber,
+                b.fatherName,
+                h.fam_familyHeadName,
+                b.gen_spouseName,
+                b.rchId,
+                b.gen_lastMenstrualPeriod,
+                b.isHrpStatus,
+                b.syncState,
+                b.gen_reproductiveStatusId,
+                b.isKid,
+                b.immunizationStatus,
+                b.loc_village_id,
+                b.abha_healthIdNumber,
+                b.isNewAbha,
+                CASE WHEN cbac.benId IS NOT NULL THEN 1 ELSE 0 END,
+                cbac.syncState
+            FROM BENEFICIARY b
+            JOIN HOUSEHOLD h ON b.householdId = h.householdId
+            LEFT JOIN CBAC cbac ON b.beneficiaryId = cbac.benId
+            WHERE b.isDraft = 0
+        """.trimIndent())
+
 
             })
 
@@ -191,11 +258,9 @@ abstract class InAppDb : RoomDatabase() {
                         appContext,
                         InAppDb::class.java,
                         "Sakhi-2.0-In-app-database"
-                    )
-                        .addMigrations(
-                            MIGRATION_14_15
-                        )
-                        .build()
+                    ).addMigrations(
+                            MIGRATION_15_16
+                        ).build()
 
                     INSTANCE = instance
                 }

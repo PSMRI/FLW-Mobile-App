@@ -42,6 +42,7 @@ class ChildImmunizationFilterBottomSheetFragment : BottomSheetDialogFragment(),I
     }
 
     override fun onClicked(catDataList: String) {
+       viewModel.selectedFilter.value = catDataList
         if (catDataList.contains("ALL")) {
             viewModel.filterText("")
 

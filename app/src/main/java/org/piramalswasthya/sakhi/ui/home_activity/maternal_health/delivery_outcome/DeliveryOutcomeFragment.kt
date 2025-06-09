@@ -128,12 +128,14 @@ class DeliveryOutcomeFragment : Fragment() {
                 }
 
                 11, 12 -> {
-                    notifyItemChanged(10)
+                   // notifyItemChanged(10)
+                    notifyDataSetChanged()
                 }
 
                 10 -> {
-                    notifyItemChanged(11)
-                    notifyItemChanged(12)
+//                    notifyItemChanged(11)
+//                    notifyItemChanged(12)
+                    notifyDataSetChanged()
                 }
             }
         }

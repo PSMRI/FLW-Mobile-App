@@ -14,6 +14,7 @@ import org.piramalswasthya.sakhi.repositories.InfantRegRepo
 import org.piramalswasthya.sakhi.repositories.MaternalHealthRepo
 import org.piramalswasthya.sakhi.repositories.PmsmaRepo
 import org.piramalswasthya.sakhi.repositories.PncRepo
+import org.piramalswasthya.sakhi.utils.HelperUtil
 
 @HiltWorker
 class UpdatePNCToECWorker @AssistedInject constructor(
@@ -44,29 +45,43 @@ class UpdatePNCToECWorker @AssistedInject constructor(
     }
 
     private suspend fun updateBen(eligBenIds: Set<Long>) {
-        val now = System.currentTimeMillis()
-        eligBenIds.forEach {
-            val ben = benRepo.getBenFromId(it)
-            ben?.let {
-                it.updatedDate = now
-                it.genDetails?.reproductiveStatusId = 1
-                it.genDetails?.reproductiveStatus =
-                    applicationContext.resources.getStringArray(R.array.nbr_reproductive_status_array)[0]
-                if (it.processed != "N") it.processed = "U"
-                it.syncState = SyncState.UNSYNCED
+        try {
+            val now = System.currentTimeMillis()
+            eligBenIds.forEach {
+                val ben = benRepo.getBenFromId(it)
+                ben?.let {
+                    it.updatedDate = now
+                    it.genDetails?.reproductiveStatusId = 1
+                    it.genDetails?.reproductiveStatus =
+                        applicationContext.resources.getStringArray(R.array.nbr_reproductive_status_array)[0]
+                    if (it.processed != "N") it.processed = "U"
+                    it.syncState = SyncState.UNSYNCED
+                }
+                if (ben != null) {
+                    benRepo.updateRecord(ben)
+                }
             }
-            if (ben != null) {
-                benRepo.updateRecord(ben)
-            }
+        }catch (e:Exception){
+//            HelperUtil.deliveryOutcomeUpdatePNCWorker.append("updateBen::$e")
+//            HelperUtil.deliveryOutcomeUpdatePNCWorker.append("\n")
+//            HelperUtil.deliveryOutcomeUpdatePNCWorkerMethod(appContext, "deliveryOutcomeUpdatePNCWorkerMethod.txt", HelperUtil.deliveryOutcomeRepo.toString())
         }
+
     }
 
     private suspend fun setRecordsToInactive(eligBenIds: Set<Long>) {
+        try {
+            deliveryOutcomeRepo.setToInactive(eligBenIds)
+            maternalHealthRepo.setToInactive(eligBenIds)
+            pmsmaRepo.setToInactive(eligBenIds)
+            pncRepo.setToInactive(eligBenIds)
+            infantRepo.setToInactive(eligBenIds)
+        } catch (e: Exception) {
+//            HelperUtil.deliveryOutcomeUpdatePNCWorker.append("setRecordsToInactive::$e")
+//            HelperUtil.deliveryOutcomeUpdatePNCWorker.append("\n")
+//            HelperUtil.deliveryOutcomeUpdatePNCWorkerMethod(appContext, "deliveryOutcomeUpdatePNCWorkerMethod.txt", HelperUtil.deliveryOutcomeRepo.toString())
 
-        deliveryOutcomeRepo.setToInactive(eligBenIds)
-        maternalHealthRepo.setToInactive(eligBenIds)
-        pmsmaRepo.setToInactive(eligBenIds)
-        pncRepo.setToInactive(eligBenIds)
-        infantRepo.setToInactive(eligBenIds)
+        }
+
     }
 }

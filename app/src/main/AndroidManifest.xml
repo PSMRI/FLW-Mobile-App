@@ -35,7 +35,8 @@
             android:exported="false" />
         <activity
             android:name=".ui.abha_id_activity.AbhaIdActivity"
-            android:exported="false">
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" >
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />

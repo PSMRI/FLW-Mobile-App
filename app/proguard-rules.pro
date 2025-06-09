@@ -30,6 +30,7 @@
 -keep class androidx.work.** { *; }
 -keep class androidx.startup.** { *; }
 -keep class org.bouncycastle.** { *; }
+-keep class java.util.Locale { *; }
 -dontwarn org.conscrypt.**
 -dontwarn org.bouncycastle.**
 -dontwarn org.openjsse.**

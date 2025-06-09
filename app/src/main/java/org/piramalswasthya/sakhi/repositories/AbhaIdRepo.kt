@@ -53,6 +53,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
+import java.util.Timer
 import java.util.UUID
 import javax.crypto.Cipher
 import javax.inject.Inject
@@ -175,11 +176,21 @@ class AbhaIdRepo @Inject constructor(
                         Gson().fromJson(responseBody, AbhaGenerateAadhaarOtpResponseV2::class.java)
                     NetworkResult.Success(result)
                 } else {
+
+                    val errorString = response?.errorBody()?.string()
+                    val (code, message) = parseAbhaErrorString(errorString) ?: Pair("", "")
+
+                    if (message.contains("UIDAI Error code : 953")){
+                        return@withContext NetworkResult.Error(-5, "You have requested multiple OTPs in this transaction. Please try again in 30 minutes.")
+                    }
                     sendErrorResponse(response)
                 }
             } catch (e: IOException) {
                 NetworkResult.Error(-1, "Unable to connect to Internet!")
             } catch (e: JSONException) {
+                if (e.message.toString().contains("UIDAI Error code : 953")){
+                    return@withContext NetworkResult.Error(-5, "You have requested multiple OTPs in this transaction. Please try again in 30 minutes.")
+                }
                 NetworkResult.Error(-2, "Invalid response! Please try again!")
             } catch (e: SocketTimeoutException) {
                 NetworkResult.Error(-3, "Request Timed out! Please try again!")
@@ -202,11 +213,22 @@ class AbhaIdRepo @Inject constructor(
                         Gson().fromJson(responseBody, SearchAbhaResponse::class.java)
                     NetworkResult.Success(result)
                 } else {
+
+                    val errorString = response?.errorBody()?.string()
+                    val (code, message) = parseAbhaErrorString(errorString) ?: Pair("", "")
+
+                    if (message.contains("No value for details")){
+                        return@withContext NetworkResult.Error(-5, "User not found.")
+                    }
+
                     sendErrorResponse(response)
                 }
             } catch (e: IOException) {
                 NetworkResult.Error(-1, "Unable to connect to Internet!")
             } catch (e: JSONException) {
+                if (e.message.toString().contains("No value for details")){
+                    return@withContext NetworkResult.Error(-5, "User not found.")
+                }
                 NetworkResult.Error(-2, "Invalid response! Please try again!")
             } catch (e: SocketTimeoutException) {
                 NetworkResult.Error(-3, "Request Timed out! Please try again!")
@@ -331,7 +353,23 @@ class AbhaIdRepo @Inject constructor(
         }
     }
 
+
+    fun parseAbhaErrorString(errorString: String?): Pair<String, String>? {
+        return try {
+            if (errorString.isNullOrEmpty()) return null
+            val json = JSONObject(errorString)
+            val errorObj = json.optJSONObject("error")
+            val code = errorObj?.optString("code") ?: ""
+            val message = errorObj?.optString("message") ?: ""
+            Pair(code, message)
+        } catch (e: Exception) {
+            Timber.e("Error parsing error JSON: ${e.message}")
+            null
+        }
+    }
+
     suspend fun verifyOtpForAadhaar(req: AbhaVerifyAadhaarOtpRequest): NetworkResult<AbhaVerifyAadhaarOtpResponse> {
+        var response: Response<ResponseBody>? = null
         return withContext(Dispatchers.IO) {
             try {
                 // ABHA v3
@@ -340,22 +378,29 @@ class AbhaIdRepo @Inject constructor(
                 // ABHA v1/v2 API
 //                val response = abhaApiService.verifyAadhaarOtp(req)
                 // ABHA v3 API
-                val response =
-                    abhaApiService.verifyAadhaarOtp3(req, generateUUID(), getCurrentTimestamp())
-                if (response.isSuccessful) {
-                    val responseBody = response.body()?.string()
+                response = abhaApiService.verifyAadhaarOtp3(req, generateUUID(), getCurrentTimestamp())
+                if (response?.isSuccessful == true) {
+                    val responseBody = response?.body()?.string()
                     val result =
                         Gson().fromJson(responseBody, AbhaVerifyAadhaarOtpResponse::class.java)
                     NetworkResult.Success(result)
                 } else {
+                    val errorString = response?.errorBody()?.string()
+                    val (code, message) = parseAbhaErrorString(errorString) ?: Pair("", "")
+
+                    if (message.contains("The mobile number provided by you is already linked to 6 ABHA numbers. Please provide a different mobile number.")){
+                        return@withContext NetworkResult.Error(-5, "The mobile number provided by you is already linked to 6 ABHA numbers.\nPlease provide a different mobile number.")
+                    }
+
+                    if (message.contains("UIDAI Error code : 400 : OTP validation failed")){
+                        return@withContext NetworkResult.Error(-6, "Incorrect OTP, Please Enter Valid OTP")
+                    }
+
                     sendErrorResponse(response)
                 }
             } catch (e: IOException) {
                 NetworkResult.Error(-1, "Unable to connect to Internet!")
             } catch (e: JSONException) {
-                if (e.message.toString().contains("No value for details")){
-                    return@withContext NetworkResult.Error(-5, "Incorrect OTP, Please Enter Valid OTP")
-                }
                 NetworkResult.Error(-2, "SMS Gateway is unavailable! Please try again!")
             } catch (e: SocketTimeoutException) {
                 NetworkResult.Error(-3, "Request Timed out! Please try again!")
@@ -479,16 +524,16 @@ class AbhaIdRepo @Inject constructor(
         return abhaApiService.getPdfCard()
     }
 
-    private fun sendErrorResponse(response: Response<ResponseBody>): NetworkResult.Error {
-        return when (response.code()) {
+    private fun sendErrorResponse(response: Response<ResponseBody>?): NetworkResult.Error {
+        return when (response?.code()) {
             503 -> NetworkResult.Error(503, "Service Unavailable! Please try later!")
             else -> {
-                val errorBody = response.errorBody()?.string()
+                val errorBody = response?.errorBody()?.string()
                 val errorJson = JSONObject(errorBody.toString())
                 val detailsArray = errorJson.getJSONArray("details")
                 val detailsObject = detailsArray.getJSONObject(0)
                 val errorMessage = detailsObject.getString("message")
-                NetworkResult.Error(response.code(), errorMessage)
+                NetworkResult.Error(response?.code()!!, errorMessage)
             }
         }
     }
