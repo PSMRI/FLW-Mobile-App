@@ -25,7 +25,7 @@ import java.util.Locale
 
 object HelperUtil {
 
-    private val dateFormat = SimpleDateFormat("EEE, MMM dd yyyy", Locale.getDefault())
+    private val dateFormat = SimpleDateFormat("EEE, MMM dd yyyy", Locale.ENGLISH)
 
     fun getLocalizedResources(context: Context, currentLanguage: Languages): Resources {
         val desiredLocale = Locale(currentLanguage.symbol)
@@ -175,8 +175,8 @@ object HelperUtil {
      * get date string in yyyy-MM-dd format from given long date
      */
     fun getDateStrFromLong(dateLong: Long?): String? {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val timeFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+        val timeFormat = SimpleDateFormat("HH:mm:ss", Locale.ENGLISH)
         dateLong?.let {
             if (dateLong == 0L) return null
             val dateString = dateFormat.format(dateLong)
@@ -189,8 +189,8 @@ object HelperUtil {
     }
 
     fun getDateTimeStringFromLong(dateLong: Long?): String? {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val timeFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+        val timeFormat = SimpleDateFormat("HH:mm:ss", Locale.ENGLISH)
         dateLong?.let {
             if (dateLong == 0L) return null
             val dateString = dateFormat.format(dateLong)

@@ -54,7 +54,7 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
 
         fun getMinimumSecondChildDob(firstChildDobStr: String?): String {
 
-            val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+            val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
             val firstChildDob = dateFormat.parse(firstChildDobStr)
 
             val calendar = Calendar.getInstance()
