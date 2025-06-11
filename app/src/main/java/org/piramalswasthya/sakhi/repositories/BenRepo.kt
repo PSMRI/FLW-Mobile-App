@@ -372,10 +372,6 @@ class BenRepo @Inject constructor(
                                 }
                                 val benCacheList = getBenCacheFromServerResponse(responseString)
 
-                                benCacheList.forEach {
-                                    Timber.d("-----123Inserting benId=${it.beneficiaryId}, isNewAbha=${it.healthIdDetails?.isNewAbha}")
-                                }
-
                                 benDao.upsert(*benCacheList.toTypedArray())
 //                                val cbacCacheList = getCbacCacheFromServerResponse(responseString)
 //                                cbacDao.upsert(*cbacCacheList.toTypedArray())
@@ -563,6 +559,7 @@ class BenRepo @Inject constructor(
                                 beneficiaryId = jsonObject.getLong("benficieryid"),
                                 ashaId = jsonObject.getInt("ashaId"),
                                 benRegId = jsonObject.getLong("BenRegId"),
+                                isNewAbha = if (abhaHealthDetailsObj.has("isNewAbha")) abhaHealthDetailsObj.getBoolean("isNewAbha") else false,
                                 age = benDataObj.getInt("age"),
                                 ageUnit = if (benDataObj.has("gender")) {
                                     when (benDataObj.getString("age_unit")) {
@@ -975,7 +972,7 @@ class BenRepo @Inject constructor(
                                 healthIdDetails =if(abhaHealthDetailsObj != null && abhaHealthDetailsObj.length() > 0){
                                     BenHealthIdDetails(
                                         healthIdNumber = abhaHealthDetailsObj.getString("HealthIdNumber"),
-                                        isNewAbha = abhaHealthDetailsObj.getBoolean("isNewAbha"),
+                                        isNewAbha =  if (abhaHealthDetailsObj.has("isNewAbha")) abhaHealthDetailsObj.getBoolean("isNewAbha") else false,
                                         healthId = abhaHealthDetailsObj.getString("HealthID")
                                     )
 
