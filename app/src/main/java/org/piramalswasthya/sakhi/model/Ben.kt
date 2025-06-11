@@ -1376,8 +1376,8 @@ fun getEddFromLmp(dateLong: Long?): String? {
 }
 
 fun getDateTimeStringFromLong(dateLong: Long?): String? {
-    val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-    val timeFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+    val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+    val timeFormat = SimpleDateFormat("HH:mm:ss", Locale.ENGLISH)
     dateLong?.let {
         val dateString = dateFormat.format(dateLong)
         val timeString = timeFormat.format(dateLong)

@@ -876,7 +876,7 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
     }
 
     fun isValidChildGap(formElement: FormElement, firstDobStr: String?/*, secondDobStr: String?*/): Int {
-        val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
         try {
             val firstDob = dateFormat.parse(firstDobStr)
             val secondDob = dateFormat.parse(formElement.value)
