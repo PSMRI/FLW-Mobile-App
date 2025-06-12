@@ -150,7 +150,7 @@ interface BenDao {
     @Query("SELECT ben.* FROM BEN_BASIC_CACHE ben inner join delivery_outcome do on do.benId = ben.benId where do.isActive = 1 and villageId=:selectedVillage")
     fun getListForInfantRegister(selectedVillage: Int): Flow<List<BenWithDoAndIrCache>>
 
-    @Query("SELECT count(distinct(ben.benId)) FROM BEN_BASIC_CACHE ben inner join delivery_outcome do on do.benId = ben.benId where do.isActive = 1 and ben.villageId=:selectedVillage")
+    @Query("SELECT count(distinct(ben.benId)) FROM BEN_BASIC_CACHE ben inner join delivery_outcome do on do.benId = ben.benId where do.isActive = 1 and do.liveBirth = 1 and ben.villageId=:selectedVillage")
     fun getInfantRegisterCount(selectedVillage: Int): Flow<Int>
 
     @Query("SELECT * FROM BEN_BASIC_CACHE  WHERE pwHrp = 1 and villageId=:selectedVillage")
