@@ -1,9 +1,13 @@
 package org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor
 
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.Spinner
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -12,21 +16,27 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkQuery
+import com.google.android.material.datepicker.CalendarConstraints
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.IconGridAdapter
 import org.piramalswasthya.sakhi.configuration.IconDataset
 import org.piramalswasthya.sakhi.databinding.FragmentSupervisorBinding
+import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.Languages.ASSAMESE
 import org.piramalswasthya.sakhi.helpers.Languages.ENGLISH
 import org.piramalswasthya.sakhi.helpers.Languages.HINDI
+import org.piramalswasthya.sakhi.helpers.getDateString
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.home_activity.home.EnableDevModeBottomSheetFragment
 import org.piramalswasthya.sakhi.ui.service_location_activity.ServiceTypeViewModel
+import org.piramalswasthya.sakhi.utils.MonthYearPickerDialog
 import org.piramalswasthya.sakhi.work.PullFromAmritWorker
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
+import java.util.Calendar
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -71,6 +81,86 @@ class SupervisorFragment : Fragment() {
         super.onCreate(savedInstanceState)
         numCopies++
         Timber.d("onCreate() called! $numCopies")
+
+//        // from month
+//        val fromMonth: Spinner = binding.fromMonthsSpinner
+//        ArrayAdapter.createFromResource(
+//            requireContext(),
+//            R.array.months,
+//            android.R.layout.simple_spinner_item
+//        ).also { adapter ->
+//            // Specify the layout to use when the list of choices appears.
+//            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+//            // Apply the adapter to the spinner.
+//            fromMonth.adapter = adapter
+//        }
+//
+////        fromMonth.setSelection(0)
+//
+//        val myArrayList = ArrayList<Int>()
+//        val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+//        for (i in currentYear downTo 2020) {
+//            myArrayList.add(i)
+//        }
+//
+//        val fromYear: Spinner = binding.fromYearsSpinner
+//        val fromYearsAdapter: ArrayAdapter<Int> =
+//            ArrayAdapter<Int>(
+//                requireContext(),
+//                android.R.layout.simple_spinner_dropdown_item,
+//                myArrayList
+//            )
+//        fromYear.adapter = fromYearsAdapter
+//        fromYear.setSelection(0)
+//
+//        val toMonth: Spinner = binding.toMonthsSpinner
+//        ArrayAdapter.createFromResource(
+//            requireContext(),
+//            R.array.months,
+//            android.R.layout.simple_spinner_item
+//        ).also { adapter ->
+//            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+//            // Apply the adapter to the spinner.
+//            toMonth.adapter = adapter
+//        }
+////        toMonth.setSelection(0)
+//
+//        val toYear: Spinner = binding.toYearsSpinner
+//
+//        toYear.adapter = fromYearsAdapter
+//        toYear.setSelection(0)
+//
+//        val dateRangePicker =
+//            MaterialDatePicker.Builder.dateRangePicker()
+//                .setTitleText("Select dates")
+//                .setCalendarConstraints(
+//                    CalendarConstraints.Builder().setStart(Konstants.defaultTimeStamp)
+//                        .setEnd(System.currentTimeMillis())
+//                        .build()
+//                )
+//                .build()
+//
+//        dateRangePicker.addOnPositiveButtonClickListener {
+//            viewModel.setRange(it.first, it.second)
+//        }
+//
+//        val today = Calendar.getInstance()
+//        var thisYear = today.get(Calendar.YEAR)
+//        var thisMonth = today.get(Calendar.MONTH)
+//        var thisDay = today.get(Calendar.DAY_OF_MONTH)
+//
+//        binding.tietMonthYear.setOnClickListener {
+//            val pd = MonthYearPickerDialog()
+//            pd.setListener { picker, i, i2, i3 ->
+//                run {
+//                    fromMonth.setSelection(i2)
+////                    fromYear.se
+////                    binding.et1.setText("${resources.getStringArray(R.array.months)[i2]} $i")
+//                }
+//            }
+//            pd.show(requireFragmentManager(), "MonthYearPickerDialog1")
+//
+//        }
 
         viewModel.state.observe(this) {
             it?.let {

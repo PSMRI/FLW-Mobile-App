@@ -8,6 +8,8 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.database.room.InAppDb
@@ -16,11 +18,13 @@ import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.Languages.ASSAMESE
 import org.piramalswasthya.sakhi.helpers.Languages.ENGLISH
 import org.piramalswasthya.sakhi.helpers.Languages.HINDI
+import org.piramalswasthya.sakhi.helpers.setToStartOfTheDay
 import org.piramalswasthya.sakhi.model.LocationEntity
 import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.repositories.UserRepo
 import org.piramalswasthya.sakhi.ui.service_location_activity.ServiceTypeViewModel.State
+import java.util.Calendar
 import javax.inject.Inject
 
 @HiltViewModel
@@ -35,6 +39,34 @@ class SupervisorViewModel @Inject constructor(
     val devModeEnabled: LiveData<Boolean>
         get() = _devModeState
 
+    private val initStart = Calendar.getInstance().apply {
+        set(Calendar.DAY_OF_MONTH, 1)
+        setToStartOfTheDay()
+    }.timeInMillis
+
+    private val initEnd = Calendar.getInstance().apply {
+        setToStartOfTheDay()
+    }.timeInMillis
+
+    private val _from = MutableStateFlow(initStart)
+    val from: Flow<Long>
+        get() = _from
+
+    private val _to = MutableStateFlow(initEnd)
+
+    val to: Flow<Long>
+        get() = _to
+
+
+    private val range = MutableStateFlow(Pair(initStart, initEnd))
+
+    fun setRange(from: Long, to: Long) {
+        viewModelScope.launch {
+            range.emit(Pair(from, to))
+            _from.emit(from)
+            _to.emit(to)
+        }
+    }
 
     val currentUser = pref.getLoggedInUser()
 
