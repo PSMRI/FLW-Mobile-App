@@ -22,7 +22,7 @@ class TokenInsertTmcInterceptor : Interceptor {
             request = request
                 .newBuilder()
                 .addHeader("Authorization", TOKEN)
-                .addHeader("Cookie" , "Jwttoken=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI5OTAwMDAwMDAxIiwidXNlcklkIjoiMTIwNSIsInRva2VuX3R5cGUiOiJhY2Nlc3MiLCJqdGkiOiIwMWJlNWNkZC0zYmQ3LTQ3MGItOWZlOC1iMTYzOTZmNDc5MWUiLCJpYXQiOjE3NDYwMDYwNzMsImV4cCI6MTc0NjAwNjk3M30.420jSLBaHSmQLFlfSdytiUSQKgyQ9hgwkgCydzGGjJQ")
+//                .addHeader("Cookie" , "Jwttoken=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI5OTAwMDAwMDAxIiwidXNlcklkIjoiMTIwNSIsInRva2VuX3R5cGUiOiJhY2Nlc3MiLCJqdGkiOiIwMWJlNWNkZC0zYmQ3LTQ3MGItOWZlOC1iMTYzOTZmNDc5MWUiLCJpYXQiOjE3NDYwMDYwNzMsImV4cCI6MTc0NjAwNjk3M30.420jSLBaHSmQLFlfSdytiUSQKgyQ9hgwkgCydzGGjJQ")
                 .build()
         }
         Timber.d("Request : $request")
