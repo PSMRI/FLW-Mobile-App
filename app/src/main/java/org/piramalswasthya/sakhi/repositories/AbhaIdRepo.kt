@@ -217,7 +217,7 @@ class AbhaIdRepo @Inject constructor(
                     val errorString = response?.errorBody()?.string()
                     val (code, message) = parseAbhaErrorString(errorString) ?: Pair("", "")
 
-                    if (message.contains("No value for details")){
+                    if (message.contains("User not found.") || code.contains("ABDM-1114")){
                         return@withContext NetworkResult.Error(-5, "User not found.")
                     }
 

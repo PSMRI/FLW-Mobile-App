@@ -36,10 +36,16 @@ android {
         }
     }
 
+    bundle {
+        language {
+            enableSplit = false
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled true
-            shrinkResources true
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.debug
 
@@ -196,12 +202,7 @@ dependencies {
     //Flexbox
     implementation 'com.google.android.flexbox:flexbox:3.0.0'
 
-//    //Encryption
-////    implementation 'javax.xml.bind:jaxb-api:2.3.0'
-//    implementation('javax.xml.bind:jaxb-api:2.3.0')
-//    implementation('javax.activation:activation:1.1')
-//    implementation('org.glassfish.jaxb:jaxb-runtime:2.3.0')
-//    implementation 'org.bouncycastle:bcpkix-jdk15on:1.68'
+
 
 
 
