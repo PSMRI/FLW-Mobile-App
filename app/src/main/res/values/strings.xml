@@ -96,6 +96,7 @@
     <string name="notification_sync_channel_description">Upload beneficiaries to Server</string>
     <string name="notification_sync_channel_id">sakhi-sync0</string>
     <string name="btn_submit">Submit</string>
+    <string name="btn_apply">Apply</string>
     <string name="long_to_string">%d</string>
     <string name="ben_pending_sync">Pending Sync</string>
     <string name="tv_reg_date_ph">Registration Date</string>
@@ -366,7 +367,7 @@
     <string name="with_abha">With ABHA</string>
     <string name="without_abha">Without ABHA</string>
     <string name="no_visit_made">No Visit Made</string>
-    <string name="filter_list">Filter List</string>
+    <string name="filter_list">Filter</string>
     <string name="ben_with_rch_id">Ben With RCH ID</string>
     <string-array name="sync_records">
         <item>Beneficiary</item>

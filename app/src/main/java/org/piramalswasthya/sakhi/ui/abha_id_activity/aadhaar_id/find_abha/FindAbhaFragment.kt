@@ -20,6 +20,8 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.FragmentFindAbhaBinding
 import org.piramalswasthya.sakhi.network.Abha
 import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.AadhaarIdViewModel
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 
 @AndroidEntryPoint
@@ -42,7 +44,12 @@ class FindAbhaFragment : Fragment() {
 
     var isValidMobile = false
     var isValidAbha = false
+<<<<<<< work_build_issues
+    var isConsent = false
+
+=======
     var isValidBenName = false
+>>>>>>> flw_enhancements_3.0
     private val aadhaarDisclaimer by lazy {
         AlertDialog.Builder(requireContext())
             .setTitle(resources.getString(R.string.individual_s_consent_for_creation_of_abha_number))
@@ -117,6 +124,7 @@ class FindAbhaFragment : Fragment() {
         }
 
         viewModel.abha.observe(viewLifecycleOwner) {
+            binding.tvErrorTextAbha.visibility = View.GONE
             it?.let {
                 binding.tilSelectAbha.isEnabled = true
                 abhaData.addAll(it)
@@ -133,7 +141,13 @@ class FindAbhaFragment : Fragment() {
         }
 
         binding.aadharConsentCheckBox.setOnCheckedChangeListener { _, ischecked ->
+<<<<<<< work_build_issues
+            isConsent = ischecked
+            enableButton()
+//            binding.btnGenerateOtp.isEnabled = isValidAbha && isValidMobile && ischecked
+=======
             binding.btnGenerateOtp.isEnabled = isValidAbha && isValidMobile && (parentViewModel.consentChecked.value==true)
+>>>>>>> flw_enhancements_3.0
         }
 
         binding.aadharDisclaimer.setOnClickListener {
@@ -153,11 +167,22 @@ class FindAbhaFragment : Fragment() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                isValidMobile = (s != null) && (s.length == 10)
+                if((s != null) && isValidMobileNumber(s.toString())){
+                    binding.tvErrorTextMobile.visibility = View.GONE
+                    binding.tvErrorTextMobile.text = ""
+                }else{
+                    binding.tvErrorTextMobile.visibility = View.VISIBLE
+                    binding.tvErrorTextMobile.text = "Please Enter Valid Mobile Number"
+                }
+                isValidMobile = (s != null) && isValidMobileNumber(s.toString())
                 if (isValidMobile) {
                     parentViewModel.setMobileNumber(s.toString())
                     binding.btnSearchAbha.isEnabled = isValidMobile
+<<<<<<< work_build_issues
+                    enableButton()
+=======
                     binding.ivValidMobile.setImageResource(R.drawable.ic_check_circle_green)
+>>>>>>> flw_enhancements_3.0
 //                    binding.btnSearchAbha.isEnabled = isValidAbha && isValidMobile
 //                            && binding.aadharConsentCheckBox.isChecked
                 }else{
@@ -172,13 +197,14 @@ class FindAbhaFragment : Fragment() {
                 selectedAbhaIndex = abhaData[position].index
                 parentViewModel.setIndex(selectedAbhaIndex.toString())
                 isValidAbha = true
+                enableButton()
             }
 
         // observing error message from parent and updating error text field
         viewModel.errorMessage.observe(viewLifecycleOwner) {
             it?.let {
                 binding.tvErrorTextAbha.visibility = View.VISIBLE
-                binding.tvErrorTextAbha.text = it
+                binding.tvErrorTextAbha.text = "No ABHA Found"
                 viewModel.resetErrorMessage()
             }
         }
@@ -228,8 +254,26 @@ class FindAbhaFragment : Fragment() {
         }
     }
 
+    fun isValidMobileNumber(str: String?): Boolean {
+        val regex = "(\\+91|0)?[1-9][0-9]{9}"
+        val p: Pattern = Pattern.compile(regex)
+        if (str == null) {
+            return false
+        }
+        val m: Matcher = p.matcher(str)
+        return m.matches()
+    }
+
     private fun searchAbha() {
         viewModel.searchAbhaClicked(binding.tietMobileNumber.text.toString())
+    }
+
+    private fun enableButton() {
+        if (isValidAbha && isValidMobile && isConsent) {
+            binding.btnGenerateOtp.isEnabled = true
+        } else {
+            binding.btnGenerateOtp.isEnabled = false
+        }
     }
 
 }

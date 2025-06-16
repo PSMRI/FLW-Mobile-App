@@ -10,7 +10,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.FragmentNonFollowUpBinding
+import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.home.SchedulerViewModel.State.LOADED
 import org.piramalswasthya.sakhi.ui.home_activity.home.SchedulerViewModel.State.LOADING
 
@@ -80,6 +82,16 @@ class NonFollowUpFragment : Fragment() {
             findNavController().navigate(NonFollowUpFragmentDirections.actionNonFollowUpFragmentToEligibleCoupleTrackingListFragment(1))
         }
 
+    }
+
+    override fun onStart() {
+        super.onStart()
+        activity?.let {
+            (it as HomeActivity).updateActionBar(
+                R.drawable.ic_non_follow_up_head,
+                getString(R.string.non_follow_up_cases)
+            )
+        }
     }
 
     override fun onDestroy() {
