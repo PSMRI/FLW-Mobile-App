@@ -38,12 +38,16 @@ class AncVisitListAdapter(private val clickListener: PregnancyVisitClickListener
         fun bind(
             item: BenWithAncListDomain, clickListener: PregnancyVisitClickListener?
         ) {
-            if (item.ancDate!! < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(90) &&
-                item.ancDate!! > System.currentTimeMillis() - TimeUnit.DAYS.toMillis(365)) {
+
+            if (item.ancDate == 0L) {
                 binding.ivFollowState.visibility = View.GONE
-            } else {
+            } else if (item.ancDate < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(90) &&
+                item.ancDate > System.currentTimeMillis() - TimeUnit.DAYS.toMillis(365)) {
                 binding.ivFollowState.visibility = View.VISIBLE
+            } else {
+                binding.ivFollowState.visibility = View.GONE
             }
+
             binding.visit = item
             binding.btnAddAnc.visibility = if (item.showAddAnc) View.VISIBLE else View.INVISIBLE
             binding.btnPmsma.visibility = if (item.pmsmaFillable) View.VISIBLE else View.INVISIBLE

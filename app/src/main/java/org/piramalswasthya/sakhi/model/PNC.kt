@@ -33,7 +33,7 @@ data class PNCVisitCache(
     val benId: Long,
     var pncPeriod: Int,
     var isActive: Boolean,
-    var pncDate: Long = System.currentTimeMillis(),
+    var pncDate: Long = 0L,
     var ifaTabsGiven: Int? = 0,
     var anyContraceptionMethod: Boolean? = null,
     var contraceptionMethod: String? = null,
@@ -208,7 +208,7 @@ data class BenPncDomain(
     val ben: BenBasicDomain,
     val deliveryDate: String,
     val allowFill: Boolean,
-    val pncDate: Long? = 0L,
+    val pncDate: Long = 0L,
     val savedPncRecords: List<PNCVisitCache>,
     val syncState: SyncState? = savedPncRecords.takeIf { it.isNotEmpty() }?.map { it.syncState }
         ?.let { syncStates ->

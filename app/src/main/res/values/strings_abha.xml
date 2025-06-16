@@ -2,6 +2,7 @@
 <resources>
 
     <string name="verify_aadhaar_number">Verify Aadhaar Number</string>
+    <string name="verify_aadhaar_otp">Verify Aadhaar OTP</string>
     <string name="verify_mobile_number">Verify Mobile Number</string>
     <string name="enter_otp">Enter OTP</string>
     <string name="verify_otp">Verify OTP</string>

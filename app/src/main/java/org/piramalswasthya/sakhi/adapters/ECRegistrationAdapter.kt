@@ -44,7 +44,7 @@ class ECRegistrationAdapter(
         ) {
             binding.benWithEcr = item
 
-            if (item.ecr?.lmpDate != null) {
+            if (item.ecr?.lmpDate != null && item.ecr.lmpDate != 0L) {
                 if (System.currentTimeMillis() - item.ecr.lmpDate > TimeUnit.DAYS.toMillis(35)) {
                     binding.ivMissState.visibility = View.VISIBLE
                 } else {
