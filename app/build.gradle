@@ -19,7 +19,7 @@ android {
     defaultConfig {
         applicationId "org.piramalswasthya.sakhi"
         minSdk 23
-        targetSdk 33
+        targetSdk 34
         versionCode buildVersionCode()
         versionName buildVersionName()
         resConfigs "en", "hi", "as"
@@ -41,6 +41,7 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
 
         }
     }
@@ -70,7 +71,7 @@ android {
         xushrukha {
             applicationIdSuffix ".xushrukha"
             applicationId "org.piramalswasthya.sakhi"
-             resValue "string", "app_native_name", "উৎপ্ৰেৰণা"
+             resValue "string", "app_native_name", "Xushrukha - শুশ্ৰূষা"
         }
         
         niramay {
@@ -202,6 +203,7 @@ dependencies {
 //    implementation 'org.bouncycastle:bcpkix-jdk15on:1.68'
 
 
+    implementation("com.google.firebase:firebase-messaging:24.0.0")
 
     testImplementation "com.google.truth:truth:1.1.3"
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

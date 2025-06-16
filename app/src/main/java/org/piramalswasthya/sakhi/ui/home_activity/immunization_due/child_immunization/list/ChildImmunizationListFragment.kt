@@ -13,7 +13,8 @@ import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
-import org.piramalswasthya.sakhi.adapters.ImmunizationBenListAdapter
+import org.piramalswasthya.sakhi.adapters.BenChildImmunizationListAdapter
+//import org.piramalswasthya.sakhi.adapters.ImmunizationBenListAdapter
 import org.piramalswasthya.sakhi.adapters.ImmunizationBirthDoseCategoryAdapter
 import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.databinding.FragmentChildImmunizationListBinding
@@ -38,6 +39,7 @@ class ChildImmunizationListFragment : Fragment(),ImmunizationBirthDoseCategoryAd
     }
 
     private val bottomSheet: ChildImmunizationVaccineBottomSheetFragment by lazy { ChildImmunizationVaccineBottomSheetFragment() }
+    private val filterBottomSheet: ChildImmunizationFilterBottomSheetFragment by lazy { ChildImmunizationFilterBottomSheetFragment() }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -51,7 +53,7 @@ class ChildImmunizationListFragment : Fragment(),ImmunizationBirthDoseCategoryAd
         binding.rvCat.adapter = ImmunizationBirthDoseCategoryAdapter(viewModel.categoryData(),this,viewModel)
 
         binding.rvList.adapter =
-            ImmunizationBenListAdapter(ImmunizationBenListAdapter.VaccinesClickListener {
+            BenChildImmunizationListAdapter(BenChildImmunizationListAdapter.VaccinesClickListener {
                 viewModel.updateBottomSheetData(it)
                 if (!bottomSheet.isVisible)
                     bottomSheet.show(childFragmentManager, "ImM")
@@ -63,7 +65,7 @@ class ChildImmunizationListFragment : Fragment(),ImmunizationBirthDoseCategoryAd
                // Timber.d("Collecting list : $it")
 
                 binding.rvList.apply {
-                    (adapter as ImmunizationBenListAdapter).submitList(it.sortedByDescending { it.ben.regDate })
+                    (adapter as BenChildImmunizationListAdapter).submitList(it.sortedByDescending { it.ben.regDate })
                 }
             }
         }
@@ -92,6 +94,10 @@ class ChildImmunizationListFragment : Fragment(),ImmunizationBirthDoseCategoryAd
 
         binding.ibSearch.setOnClickListener { sttContract.launch(Unit) }
 
+        binding.ivFilter.setOnClickListener {
+            if (!filterBottomSheet.isVisible)
+                filterBottomSheet.show(childFragmentManager, "ImM")
+        }
     }
 
     override fun onStart() {
@@ -114,9 +120,6 @@ class ChildImmunizationListFragment : Fragment(),ImmunizationBirthDoseCategoryAd
             viewModel.filterText(catTxt)
 
         }
-
-
-
     }
 
 

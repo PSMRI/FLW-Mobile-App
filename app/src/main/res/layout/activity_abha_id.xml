@@ -37,6 +37,7 @@
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_bold"
                     android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
                     tools:text="Hellow!" />
             </LinearLayout>

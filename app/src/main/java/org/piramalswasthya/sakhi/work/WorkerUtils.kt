@@ -27,6 +27,9 @@ object WorkerUtils {
         val pullWorkRequest = OneTimeWorkRequestBuilder<PullFromAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
+        val pullAdolescentWorkRequest = OneTimeWorkRequestBuilder<PullAdolescentFromWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
         val pullIncentiveActivityWorkRequest =
             OneTimeWorkRequestBuilder<PullIncentiveWorker>()
                 .setConstraints(networkOnlyConstraint)
@@ -38,6 +41,9 @@ object WorkerUtils {
             .setConstraints(networkOnlyConstraint)
             .build()
         val pullTBWorkRequest = OneTimeWorkRequestBuilder<PullTBFromAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pullMalariaWorkRequest = OneTimeWorkRequestBuilder<PullMalariaFromAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
         val pullECWorkRequest = OneTimeWorkRequestBuilder<PullECFromAmritWorker>()
@@ -80,6 +86,18 @@ object WorkerUtils {
         val pushChildHBNCToAmritWorker = OneTimeWorkRequestBuilder<PushChildHBNCFromAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
+        val pullAESToAmritWorker = OneTimeWorkRequestBuilder<pullAesFormAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pullkalaAzarToAmritWorker = OneTimeWorkRequestBuilder<PullKalaAzarFormAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pullLeprosyToAmritWorker = OneTimeWorkRequestBuilder<PullLeprosyFormAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pullFilariaToAmritWorker = OneTimeWorkRequestBuilder<PullFilariaFromAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
         val workManager = WorkManager.getInstance(context)
         workManager
             .beginUniqueWork(
@@ -87,6 +105,7 @@ object WorkerUtils {
                 ExistingWorkPolicy.APPEND_OR_REPLACE,
                 pullWorkRequest
             )
+            .then(pullAdolescentWorkRequest)
             .then(pullIncentiveActivityWorkRequest)
             .then(pullCbacWorkRequest)
             .then(pullHRPWorkRequest)
@@ -103,11 +122,19 @@ object WorkerUtils {
             .then(pushECWorkRequest)
 //            .then(pushChildHBYCToAmritWorker)
             .then(pushChildHBNCToAmritWorker)
+            .then(pullMalariaWorkRequest)
+            .then(pullAESToAmritWorker)
+            .then(pullkalaAzarToAmritWorker)
+            .then(pullFilariaToAmritWorker)
+            .then(pullLeprosyToAmritWorker)
             .enqueue()
     }
 
     fun triggerAmritPushWorker(context: Context) {
         val pushWorkRequest = OneTimeWorkRequestBuilder<PushToAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pushAdolescentWorkRequest = OneTimeWorkRequestBuilder<PushAdolescentAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
         val pushCbacWorkRequest = OneTimeWorkRequestBuilder<CbacPushToAmritWorker>()
@@ -117,6 +144,9 @@ object WorkerUtils {
             .setConstraints(networkOnlyConstraint)
             .build()
         val pushTBWorkRequest = OneTimeWorkRequestBuilder<PushTBToAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pushMalariaWorkRequest = OneTimeWorkRequestBuilder<PushMalariaAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
         val pushECToAmritWorker = OneTimeWorkRequestBuilder<PushECToAmritWorker>()
@@ -171,6 +201,18 @@ object WorkerUtils {
             OneTimeWorkRequestBuilder<PullChildHBNCFromAmritWorker>()
                 .setConstraints(networkOnlyConstraint)
                 .build()
+        val pushAESToAmritWorker = OneTimeWorkRequestBuilder<pushAesAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pushkalaAzarToAmritWorker = OneTimeWorkRequestBuilder<pushKalaAzarAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pushLeprosyToAmritWorker = OneTimeWorkRequestBuilder<pushLeprosyAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pushFilariaToAmritWorker = OneTimeWorkRequestBuilder<PushFilariaAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
         val workManager = WorkManager.getInstance(context)
         workManager
             .beginUniqueWork(
@@ -179,6 +221,7 @@ object WorkerUtils {
                 pushWorkRequest
             )
             .then(pushCbacWorkRequest)
+            .then(pushAdolescentWorkRequest)
             .then(pushHRPToAmritWorker)
             .then(pushTBWorkRequest)
             .then(pushECToAmritWorker)
@@ -193,11 +236,20 @@ object WorkerUtils {
 //            .then(pushChildHBYCToAmritWorker)
             .then(pushChildHBNCToAmritWorker)
             .then(pullIncentiveActivityWorkRequest)
+            .then(pullIncentiveActivityWorkRequest)
+            .then(pushMalariaWorkRequest)
+            .then(pushAESToAmritWorker)
+            .then(pushkalaAzarToAmritWorker)
+            .then(pushFilariaToAmritWorker)
+            .then(pushLeprosyToAmritWorker)
             .enqueue()
     }
 
     fun triggerAmritPullWorker(context: Context) {
         val pullWorkRequest = OneTimeWorkRequestBuilder<PullFromAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pulladolescentWorkRequest = OneTimeWorkRequestBuilder<PushAdolescentAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
 
@@ -258,6 +310,21 @@ object WorkerUtils {
                 .build()
         val setSyncCompleteWorker = OneTimeWorkRequestBuilder<UpdatePrefForPullCompleteWorker>()
             .build()
+        val pullMalariaWorkRequest = OneTimeWorkRequestBuilder<PullMalariaFromAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pullAESToAmritWorker = OneTimeWorkRequestBuilder<pullAesFormAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pullkalaAzarToAmritWorker = OneTimeWorkRequestBuilder<PullKalaAzarFormAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pullLeprosyToAmritWorker = OneTimeWorkRequestBuilder<PullLeprosyFormAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pullFilariaToAmritWorker = OneTimeWorkRequestBuilder<PullFilariaFromAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
         val workManager = WorkManager.getInstance(context)
         workManager
             .beginUniqueWork(
@@ -265,6 +332,7 @@ object WorkerUtils {
                 ExistingWorkPolicy.APPEND_OR_REPLACE,
                 pullWorkRequest
             )
+            .then(pulladolescentWorkRequest)
             .then(pullIncentiveActivityWorkRequest)
             .then(pullCbacWorkRequest)
             .then(pullVaccineWorkRequest)
@@ -282,6 +350,11 @@ object WorkerUtils {
 //            .then(pullHBYCFromAmritWorker)
             .then(pullHBNCFromAmritWorker)
             .then(setSyncCompleteWorker)
+            .then(pullMalariaWorkRequest)
+            .then(pullAESToAmritWorker)
+            .then(pullkalaAzarToAmritWorker)
+            .then(pullFilariaToAmritWorker)
+            .then(pullLeprosyToAmritWorker)
             .enqueue()
     }
 
