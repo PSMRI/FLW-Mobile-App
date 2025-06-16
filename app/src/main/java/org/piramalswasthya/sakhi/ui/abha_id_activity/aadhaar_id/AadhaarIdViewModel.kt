@@ -30,7 +30,7 @@ AadhaarIdViewModel @Inject constructor(
     }
 
     //    val aadhaarVerificationTypeValues = arrayOf("Aadhaar ID", "Fingerprint")
-    val aadhaarVerificationTypeValues = arrayOf("Aadhaar ID")
+    val aadhaarVerificationTypeValues = arrayOf("Aadhaar No")
     private val _aadhaarVerificationTypes = MutableLiveData(aadhaarVerificationTypeValues[0])
     val aadhaarVerificationTypes: LiveData<String>
         get() = _aadhaarVerificationTypes
@@ -87,6 +87,25 @@ AadhaarIdViewModel @Inject constructor(
     val errorMessage: LiveData<String?>
         get() = _errorMessage
 
+    private val _beneficiaryName = MutableLiveData<String?>(null)
+    val beneficiaryName: LiveData<String?>
+        get() = _beneficiaryName
+
+    private val _navigateToAadhaarConsent = MutableLiveData<Boolean>(false)
+    val navigateToAadhaarConsent: LiveData<Boolean>
+        get() = _navigateToAadhaarConsent
+
+
+    private val _consentChecked = MutableLiveData<Boolean>(false)
+    val consentChecked: LiveData<Boolean>
+        get() = _consentChecked
+
+    private var _otpMobileNumberMessage: String? = null
+    val otpMobileNumberMessage: String
+        get() = _otpMobileNumberMessage?:""
+
+    var selectedNavToggle:String = "navHostFragmentAadhaarId"
+
     fun resetState() {
         _state.value = State.IDLE
     }
@@ -99,12 +118,24 @@ AadhaarIdViewModel @Inject constructor(
         _abhaResponse = abha
     }
 
+    fun setBeneficiaryName(name: String) {
+        _beneficiaryName.value = name
+    }
+
+    fun setConsentChecked(value: Boolean) {
+        _consentChecked.value = value
+    }
+
     fun setState(state: State) {
         _state.value = state
     }
 
     fun setAbhaMode(abha: Abha) {
         _abhaMode.value = abha
+    }
+
+    fun navigateToAadhaarConsent(value: Boolean) {
+        _navigateToAadhaarConsent.value = value
     }
 
     fun setMobileNumber(mobileNumber: String) {
@@ -122,6 +153,10 @@ AadhaarIdViewModel @Inject constructor(
     fun setTxnId(txnId: String) {
         _txnId = txnId
     }
+    fun setOTPMsg(msg: String) {
+        _otpMobileNumberMessage = msg
+    }
+
 
     fun setSearchTxnId(txnId: String) {
         _searchTxnId = txnId

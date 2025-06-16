@@ -14,6 +14,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.BenListAdapter
+import org.piramalswasthya.sakhi.configuration.IconDataset
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
@@ -27,6 +28,7 @@ class HouseholdMembersFragment : Fragment() {
 
     private val viewModel: HouseholdMembersViewModel by viewModels()
 
+    var showAbha = false
     private val abhaDisclaimer by lazy {
         AlertDialog.Builder(requireContext())
             .setTitle(resources.getString(R.string.beneficiary_abha_number))
@@ -52,18 +54,52 @@ class HouseholdMembersFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.btnNextPage.visibility = View.GONE
         binding.llSearch.visibility = View.GONE
+        if (viewModel.isFromDisease == 1 && viewModel.diseaseType == IconDataset.Disease.MALARIA.toString()) {
+            binding.switchButton.visibility = View.VISIBLE
+            showAbha = false
+        } else if(viewModel.isFromDisease == 1) {
+            binding.switchButton.visibility = View.GONE
+            showAbha = false
+        } else {
+            binding.switchButton.visibility = View.GONE
+            showAbha = true
+        }
+        binding.switchButton.text = if (binding.switchButton.isChecked) "ON" else "OFF"
+        binding.switchButton.setOnCheckedChangeListener { _, isChecked ->
+            binding.switchButton.text = if (isChecked) "ON" else "OFF"
+        }
+
         val benAdapter = BenListAdapter(
             clickListener = BenListAdapter.BenClickListener(
                 { hhId, benId, relToHeadId ->
-                    findNavController().navigate(
-                        HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToNewBenRegFragment(
-                            hhId = hhId,
-                            benId = benId,
-                            gender = 0,
-                            relToHeadId = relToHeadId
-                        )
+                    if (viewModel.isFromDisease == 0) {
+                        findNavController().navigate(
+                            HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToNewBenRegFragment(
+                                hhId = hhId,
+                                benId = benId,
+                                gender = 0,
+                                relToHeadId = relToHeadId
+                            )
 
-                    )
+                        )
+                    } else {
+                        if (viewModel.diseaseType == IconDataset.Disease.MALARIA.toString()) {
+
+                            findNavController().navigate(
+                                HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToMalariaFormFragment(
+                                    benId = benId,
+                                )
+
+                            )
+                        } else if (viewModel.diseaseType == IconDataset.Disease.KALA_AZAR.toString()) {
+                            findNavController().navigate(
+                                HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToKalaAzarFormFragment(
+                                    benId = benId,
+                                )
+
+                            )
+                        }
+                    }
 
                 },
                 {
@@ -73,7 +109,7 @@ class HouseholdMembersFragment : Fragment() {
                 }
             ),
             showSyncIcon = true,
-            showAbha = true,
+            showAbha = showAbha,
             showRegistrationDate = true
         )
         binding.rvAny.adapter = benAdapter

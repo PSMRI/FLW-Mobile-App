@@ -77,13 +77,38 @@ class RecordsRepo @Inject constructor(
 //        .map { list -> list.map { it.asBenBasicDomainModelForCbacForm() } }
 //    val ncdNonEligibleListCount = ncdNonEligibleList.map { it.size }
 
+     fun malariaScreeningList(hhId:Long) = benDao.getAllMalariaScreeningBen(selectedVillage, hhId = hhId)
+        .map { list -> list.map { it.asMalariaScreeningDomainModel() } }
+
+    fun aesScreeningList(hhId:Long) = benDao.getAllAESScreeningBen(selectedVillage, hhId = hhId)
+        .map { list -> list.map { it.asAESScreeningDomainModel() } }
+
+    fun iRSRoundList(hhId:Long) = benDao.getAllIRSRoundBen(hhId = hhId)
+
+
+    fun KalazarScreeningList(hhId:Long) = benDao.getAllKALAZARScreeningBen(selectedVillage, hhId = hhId)
+        .map { list -> list.map { it.asKALAZARScreeningDomainModel() } }
+
+    fun LeprosyScreeningList(hhId:Long) = benDao.getAllLeprosyScreeningBen(selectedVillage, hhId = hhId)
+        .map { list -> list.map { it.asLeprosyScreeningDomainModel() } }
+
+    fun filariaScreeningList(hhId:Long) = benDao.getAllFilariaScreeningBen(selectedVillage, hhId = hhId)
+        .map { list -> list.map { it.asFilariaScreeningDomainModel() } }
+
+
     val tbScreeningList = benDao.getAllTbScreeningBen(selectedVillage)
         .map { list -> list.map { it.asTbScreeningDomainModel() } }
     val tbScreeningListCount = tbScreeningList.map { it.size }
 
+
     val tbSuspectedList = benDao.getTbScreeningList(selectedVillage)
         .map { list -> list.map { it.asTbSuspectedDomainModel() } }
     val tbSuspectedListCount = tbSuspectedList.map { it.size }
+
+    val malariaConfirmedCasesList = benDao.getMalariaConfirmedCasesList(selectedVillage)
+        .map { list -> list.map { it.asMalariaConfirmedDomainModel() } }
+
+    val malariaConfirmedCasesListCount = malariaConfirmedCasesList.map { it.size }
 
     val menopauseList = benDao.getAllMenopauseStageList(selectedVillage)
         .map { list -> list.map { it.asBasicDomainModel() } }
@@ -109,7 +134,7 @@ class RecordsRepo @Inject constructor(
 
     val adolescentList =
         benDao.getAllAdolescentList(selectedVillage)
-            .map { list -> list.map { it.asBasicDomainModel() } }
+            .map { list -> list.map { it.asAdolescentDomainModel() } }
     val adolescentListCount = adolescentList.map { it.size }
 
     val immunizationList = benDao.getAllImmunizationDueList(selectedVillage)
