@@ -54,7 +54,7 @@ android {
             applicationId "org.piramalswasthya.sakhi"
             resValue "string", "app_native_name", "উৎপ্ৰেৰণা-Stag"
            }
-        
+
         sakshamUat {
             applicationIdSuffix ".saksham.uat"
             applicationId "org.piramalswasthya.sakhi"
@@ -66,13 +66,13 @@ android {
             applicationId "org.piramalswasthya.sakhi"
             resValue "string", "app_native_name", "উৎপ্ৰেৰণা"
         }
-        
+
         xushrukha {
             applicationIdSuffix ".xushrukha"
             applicationId "org.piramalswasthya.sakhi"
              resValue "string", "app_native_name", "উৎপ্ৰেৰণা"
         }
-        
+
         niramay {
             applicationIdSuffix ".niramay"
             applicationId "org.piramalswasthya.sakhi"
@@ -150,7 +150,7 @@ dependencies {
     kapt "androidx.room:room-compiler:$room_version"
 
     //firebase messaging
-    implementation 'com.google.firebase:firebase-messaging:24.0.0'
+    implementation 'com.google.firebase:firebase-messaging:21.0.1'
 //    implementation platform('com.google.firebase:firebase-bom:28.4.0')
     implementation 'com.google.firebase:firebase-analytics-ktx'
 

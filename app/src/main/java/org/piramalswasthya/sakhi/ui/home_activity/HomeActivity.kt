@@ -206,6 +206,7 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         }
         FirebaseApp.initializeApp(this)
         FBMessaging.messageUpdate = this
+        FirebaseMessaging.getInstance().subscribeToTopic("All")
         FirebaseMessaging.getInstance().subscribeToTopic("ANC${pref.getLoggedInUser()?.userId}")
         FirebaseMessaging.getInstance().subscribeToTopic("Immunization${pref.getLoggedInUser()?.userId}")
         super.onCreate(savedInstanceState)
