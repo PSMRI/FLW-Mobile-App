@@ -59,7 +59,7 @@ class NcdListFragment : Fragment() {
                 {
                 },
                 { benId, hhId ->
-                },
+                }, {}
 
                 ), true
         )

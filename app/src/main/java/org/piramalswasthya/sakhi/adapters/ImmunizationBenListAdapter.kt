@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.databinding.RvItemImmunizationBenBinding
 import org.piramalswasthya.sakhi.model.BenBasicDomain
+import org.piramalswasthya.sakhi.model.BenWithAncListDomain
 import org.piramalswasthya.sakhi.model.ImmunizationDetailsDomain
 
 class ImmunizationBenListAdapter(
@@ -60,11 +61,13 @@ class ImmunizationBenListAdapter(
 
     class VaccinesClickListener(
         private val clickedVaccine: (benId: Long) -> Unit,
+        private val callBen: (ben: BenBasicDomain) -> Unit
 
         ) {
         fun onClickedBen(item: BenBasicDomain) = clickedVaccine(
             item.benId
         )
+        fun onClickedForCall(item: BenBasicDomain) = callBen(item)
 
     }
 

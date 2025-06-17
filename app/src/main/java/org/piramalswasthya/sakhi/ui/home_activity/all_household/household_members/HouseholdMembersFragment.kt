@@ -2,10 +2,12 @@ package org.piramalswasthya.sakhi.ui.home_activity.all_household.household_membe
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -106,11 +108,25 @@ class HouseholdMembersFragment : Fragment() {
                 },
                 { benId, hhId ->
                     checkAndGenerateABHA(benId)
+                },
+                {
+                    try {
+                        val callIntent = Intent(Intent.ACTION_CALL)
+                        callIntent.setData(Uri.parse("tel:${it.mobileNo}"))
+                        startActivity(callIntent)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        activity?.let {
+                            (it as HomeActivity).askForPermissions()
+                        }
+                        Toast.makeText(requireContext(), "Please allow permissions first", Toast.LENGTH_SHORT).show()
+                    }
                 }
             ),
             showSyncIcon = true,
             showAbha = showAbha,
-            showRegistrationDate = true
+            showRegistrationDate = true,
+            showCall = true
         )
         binding.rvAny.adapter = benAdapter
 

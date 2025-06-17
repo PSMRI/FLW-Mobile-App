@@ -369,6 +369,7 @@
     <string name="no_visit_made">No Visit Made</string>
     <string name="filter_list">Filter</string>
     <string name="ben_with_rch_id">Ben With RCH ID</string>
+    <string name="call">Call</string>
     <string-array name="sync_records">
         <item>Beneficiary</item>
         <item>CBAC</item>
