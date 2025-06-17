@@ -26,6 +26,7 @@ import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.databinding.LayoutMediaOptionsBinding
 import org.piramalswasthya.sakhi.databinding.LayoutViewMediaBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
+import org.piramalswasthya.sakhi.ui.checkFileSize
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.form.PwAncFormViewModel.State
 import org.piramalswasthya.sakhi.work.WorkerUtils
@@ -43,7 +44,7 @@ class PwAncFormFragment : Fragment() {
 
     companion object {
         var latestTmpUri: Uri? = null
-    }
+        var backViewFileUri: Uri? = null    }
 
     private val PICK_PDF_FILE = 1
 
@@ -52,16 +53,36 @@ class PwAncFormFragment : Fragment() {
     private val takePicture =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { success: Boolean ->
             if (success) {
-                latestTmpUri?.let { uri ->
-                    viewModel.setImageUriToFormElement(uri)
-                    binding.form.rvInputForm.apply {
-                        val adapter = this.adapter as FormInputAdapterWithBgIcon
-                        adapter.notifyDataSetChanged()
-                    }
-//                    updateImageRecord()
+                if(viewModel.getDocumentFormId() == 31) {
+                    latestTmpUri?.let { uri ->
+                        if (checkFileSize(uri,requireContext())) {
+                            Toast.makeText(context, resources.getString(R.string.file_size), Toast.LENGTH_LONG).show()
 
-                    Timber.d("Image saved at @ $uri")
+                        } else {
+                            viewModel.setImageUriToFormElement(uri)
+                            binding.form.rvInputForm.apply {
+                                val adapter = this.adapter as FormInputAdapterWithBgIcon
+                                adapter.notifyDataSetChanged()
+                            }
+                        }
+
+                    }
+                } else {
+                    backViewFileUri?.let { uri ->
+                        if (checkFileSize(uri,requireContext())) {
+                            Toast.makeText(context, resources.getString(R.string.file_size), Toast.LENGTH_LONG).show()
+
+                        } else {
+                            viewModel.setImageUriToFormElement(uri)
+                            binding.form.rvInputForm.apply {
+                                val adapter = this.adapter as FormInputAdapterWithBgIcon
+                                adapter.notifyDataSetChanged()
+                            }
+                        }
+
+                    }
                 }
+
             }
         }
 
@@ -69,18 +90,44 @@ class PwAncFormFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == PICK_PDF_FILE && resultCode == Activity.RESULT_OK) {
-            data?.data?.let { pdfUri ->
-                latestTmpUri = pdfUri
-                latestTmpUri?.let { uri ->
-                    viewModel.setImageUriToFormElement(uri)
-                    binding.form.rvInputForm.apply {
-                        val adapter = this.adapter as FormInputAdapterWithBgIcon
-                        adapter.notifyDataSetChanged()
-                    }
+            if(viewModel.getDocumentFormId() == 31) {
+                data?.data?.let { pdfUri ->
+                    if (checkFileSize(pdfUri,requireContext())) {
+                        Toast.makeText(context, resources.getString(R.string.file_size), Toast.LENGTH_LONG).show()
+
+                    } else {
+                        latestTmpUri = pdfUri
+                        latestTmpUri?.let { uri ->
+                            viewModel.setImageUriToFormElement(uri)
+                            binding.form.rvInputForm.apply {
+                                val adapter = this.adapter as FormInputAdapterWithBgIcon
+                                adapter.notifyDataSetChanged()
+                            }
+                        }
+
 //                    updateImageRecord()
-                    Timber.d("Image saved at @ $uri")
+                    }
+                }
+            } else {
+                data?.data?.let { pdfUri ->
+                    if (checkFileSize(pdfUri,requireContext())) {
+                        Toast.makeText(context, resources.getString(R.string.file_size), Toast.LENGTH_LONG).show()
+
+                    } else {
+                        backViewFileUri = pdfUri
+                        backViewFileUri?.let { uri ->
+                            viewModel.setImageUriToFormElement(uri)
+                            binding.form.rvInputForm.apply {
+                                val adapter = this.adapter as FormInputAdapterWithBgIcon
+                                adapter.notifyDataSetChanged()
+                            }
+                        }
+
+//                    updateImageRecord()
+                    }
                 }
             }
+
         }
     }
 
@@ -130,24 +177,48 @@ class PwAncFormFragment : Fragment() {
                     },
                     viewDocumentListner = FormInputAdapterWithBgIcon.ViewDocumentOnClick {
                         if (!recordExists) {
-                            latestTmpUri?.let {
-                                if (it.toString().contains("document")) {
-                                    displayPdf(it)
-                                } else {
-                                    viewImage(it)
-                                }
+                            if (it == 31) {
+                                latestTmpUri?.let {
+                                    if (it.toString().contains("document")) {
+                                        displayPdf(it)
+                                    } else {
+                                        viewImage(it)
+                                    }
 
+                                }
+                            } else {
+                                backViewFileUri?.let {
+                                    if (it.toString().contains("document")) {
+                                        displayPdf(it)
+                                    } else {
+                                        viewImage(it)
+                                    }
+
+                                }
                             }
+
                         } else {
+                            val formId = it
                             lifecycleScope.launch {
                                 viewModel.formList.collect{
-                                    it.get(viewModel.getIndexOfFile()).value.let {
-                                        if (it.toString().contains("document")) {
-                                            displayPdf(it!!.toUri())
-                                        } else {
-                                            viewImage(it!!.toUri())
+                                    if (formId == 31) {
+                                        it.get(viewModel.getIndexOfMCPCardFront()).value.let {
+                                            if (it.toString().contains("document")) {
+                                                displayPdf(it!!.toUri())
+                                            } else {
+                                                viewImage(it!!.toUri())
+                                            }
+                                        }
+                                    } else {
+                                        it.get(viewModel.getIndexOfMCPCardBack()).value.let {
+                                            if (it.toString().contains("document")) {
+                                                displayPdf(it!!.toUri())
+                                            } else {
+                                                viewImage(it!!.toUri())
+                                            }
                                         }
                                     }
+
                                 }
                             }
 
@@ -288,14 +359,31 @@ class PwAncFormFragment : Fragment() {
     }
 
 
+
     private fun takeImage() {
         lifecycleScope.launchWhenStarted {
             getTmpFileUri().let { uri ->
-                latestTmpUri = uri
-                takePicture.launch(uri)
+                if(viewModel.getDocumentFormId() == 31) {
+                    latestTmpUri = uri
+                    if (checkFileSize(uri,requireContext())) {
+                        Toast.makeText(context, resources.getString(R.string.file_size), Toast.LENGTH_LONG).show()
+                    } else {
+                        takePicture.launch(latestTmpUri)
+                    }
+                } else {
+                    backViewFileUri = uri
+                    if (checkFileSize(uri,requireContext())) {
+                        Toast.makeText(context, resources.getString(R.string.file_size), Toast.LENGTH_LONG).show()
+                    } else {
+                        takePicture.launch(backViewFileUri)
+                    }
+                }
+
+
             }
         }
     }
+
 
     private fun getTmpFileUri(): Uri {
         val tmpFile =

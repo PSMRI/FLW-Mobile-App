@@ -57,6 +57,21 @@
                     tools:text="Hello Meister" />
 
                 <ImageView
+                    android:id="@+id/iv_call"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/ic_call_icon"
+                    android:layout_gravity="center"
+                    android:padding="4dp"
+                    android:visibility="gone"
+                    android:onClick="@{()->clickListener.onClickedForCall(visit)}"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintEnd_toEndOf="@+id/tv_hh_id"
+                    app:layout_constraintTop_toTopOf="@+id/tv_hh_id"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_hh_id"/>
+
+                <ImageView
                     android:id="@+id/iv_follow_state"
                     android:layout_width="24dp"
                     android:layout_height="wrap_content"

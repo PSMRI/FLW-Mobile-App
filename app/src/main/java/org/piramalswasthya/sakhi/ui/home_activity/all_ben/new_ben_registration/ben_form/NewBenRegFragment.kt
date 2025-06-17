@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -34,15 +35,20 @@ import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
+import org.piramalswasthya.sakhi.adapters.FormInputAdapterWithBgIcon
 import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.databinding.AlertConsentBinding
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
+import org.piramalswasthya.sakhi.databinding.LayoutMediaOptionsBinding
 import org.piramalswasthya.sakhi.databinding.LayoutViewMediaBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
+import org.piramalswasthya.sakhi.helpers.isInternetAvailable
 import org.piramalswasthya.sakhi.model.Gender
+import org.piramalswasthya.sakhi.ui.checkFileSize
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.NewBenRegViewModel.Companion.isOtpVerified
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.NewBenRegViewModel.State
+import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.form.PwAncFormFragment
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 import java.io.File
@@ -76,25 +82,100 @@ class NewBenRegFragment : Fragment() {
 
 
     private var latestTmpUri: Uri? = null
+    private var frontViewFileUri: Uri? = null
+    private  var backViewFileUri: Uri? = null
+
+
+    var isFavClick = false
 
     var isValidOtp = false
+
+    private val PICK_PDF_FILE = 1
+
 
     private val takePicture =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { success: Boolean ->
             if (success) {
-                latestTmpUri?.let { uri ->
-                    viewModel.setImageUriToFormElement(uri)
+                if(viewModel.getDocumentFormId() == 46) {
+                    frontViewFileUri?.let { uri ->
+                        viewModel.setImageUriToFormElement(uri)
 
-                    binding.form.rvInputForm.apply {
-                        val adapter = this.adapter as FormInputAdapter
-                        adapter.notifyItemChanged(0)
+                        binding.form.rvInputForm.apply {
+                            val adapter = this.adapter as FormInputAdapter
+                            adapter.notifyItemChanged(0)
+                        }
+                        Timber.d("Image saved at @ $uri")
                     }
-                    Timber.d("Image saved at @ $uri")
+                } else if(viewModel.getDocumentFormId() == 47) {
+                    backViewFileUri?.let { uri ->
+                        viewModel.setImageUriToFormElement(uri)
+
+                        binding.form.rvInputForm.apply {
+                            val adapter = this.adapter as FormInputAdapter
+                            adapter.notifyItemChanged(0)
+                        }
+                        Timber.d("Image saved at @ $uri")
+                    }
+                } else {
+                    latestTmpUri?.let { uri ->
+                        viewModel.setImageUriToFormElement(uri)
+
+                        binding.form.rvInputForm.apply {
+                            val adapter = this.adapter as FormInputAdapter
+                            adapter.notifyItemChanged(0)
+                        }
+                        Timber.d("Image saved at @ $uri")
+                    }
                 }
+
             }
         }
 
 
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == PICK_PDF_FILE && resultCode == Activity.RESULT_OK) {
+            if(viewModel.getDocumentFormId() == 46) {
+                data?.data?.let { pdfUri ->
+                    if (checkFileSize(pdfUri,requireContext())) {
+                        Toast.makeText(context, resources.getString(R.string.file_size), Toast.LENGTH_LONG).show()
+
+                    } else {
+                        frontViewFileUri = pdfUri
+                        frontViewFileUri?.let { uri ->
+                            viewModel.setImageUriToFormElement(uri)
+                            binding.form.rvInputForm.apply {
+                                val adapter = this.adapter as FormInputAdapter
+                                adapter.notifyDataSetChanged()
+                            }
+                        }
+
+//                    updateImageRecord()
+                    }
+                }
+            } else {
+                data?.data?.let { pdfUri ->
+                    if (checkFileSize(pdfUri,requireContext())) {
+                        Toast.makeText(context, resources.getString(R.string.file_size), Toast.LENGTH_LONG).show()
+
+                    } else {
+                        backViewFileUri = pdfUri
+                        backViewFileUri?.let { uri ->
+                            viewModel.setImageUriToFormElement(uri)
+                            binding.form.rvInputForm.apply {
+                                val adapter = this.adapter as FormInputAdapter
+                                adapter.notifyDataSetChanged()
+                            }
+                        }
+
+//                    updateImageRecord()
+                    }
+                }
+            }
+
+        }
+    }
     private fun showAddSpouseAlert() {
         val alertDialog = MaterialAlertDialogBuilder(requireContext()).setCancelable(false)
 
@@ -243,7 +324,7 @@ class NewBenRegFragment : Fragment() {
                         }
                         if (button.text == "Resend OTP") {
                             viewModel.resendOtp(tempContactNo)
-                        } else {
+                        } else if (button.text == "Send OTP") {
                             viewModel.sentOtp(tempContactNo)
                         }
 
@@ -258,9 +339,17 @@ class NewBenRegFragment : Fragment() {
                             }
 
                             override fun afterTextChanged(s: Editable?) {
-                                isValidOtp = (s != null) && (s.length == 6)
-                                if (isValidOtp)
-                                    viewModel.validateOtp(tempContactNo,s.toString().toInt(),requireActivity(),otpField,button,timerInsec)
+                                try {
+                                    isValidOtp = (s != null) && (s.length == 6)
+                                    if (isValidOtp && isInternetAvailable(binding.root.context)) {
+
+                                        viewModel.validateOtp(tempContactNo,s.toString().toInt(),requireActivity(),otpField,button,timerInsec)
+
+                                    }
+
+                                } catch (e:Exception) {
+                                    Timber.d("Called here! $e")
+                                }
 
 
                             }
@@ -268,20 +357,37 @@ class NewBenRegFragment : Fragment() {
                         })
                     },
                         selectImageClickListener  = FormInputAdapter.SelectUploadImageClickListener {
-
+                            isFavClick = false
+                            viewModel.setCurrentDocumentFormId(it)
+                            chooseOptions()
+                            Toast.makeText(requireContext(),it.toString(),Toast.LENGTH_LONG).show()
                         },
                         viewDocumentListner = FormInputAdapter.ViewDocumentOnClick {
                             if (recordExists) {
-                                lifecycleScope.launch {
-                                    viewModel.formList.collect{
-                                        it.get(viewModel.getIndexOfBirthCertificateFront()).value.let {
-                                            if (it.toString().contains("document")) {
-                                                displayPdf(it!!.toUri())
-                                            } else {
-                                                viewImage(it!!.toUri())
+                                viewDocuments(it)
+                            } else {
+                                if (isFavClick) {
+                                    viewDocuments(it)
+                                } else {
+                                        if (it == 46) {
+                                            frontViewFileUri?.let {
+                                                if (it.toString().contains("document")) {
+                                                    displayPdf(it)
+                                                } else {
+                                                    viewImage(it)
+                                                }
+
+                                            }
+                                        } else {
+                                            backViewFileUri?.let {
+                                                if (it.toString().contains("document")) {
+                                                    displayPdf(it)
+                                                } else {
+                                                    viewImage(it)
+                                                }
+
                                             }
                                         }
-                                    }
                                 }
                             }
                         },
@@ -346,7 +452,37 @@ class NewBenRegFragment : Fragment() {
 
         binding.fabEdit.setOnClickListener {
             viewModel.setRecordExist(false)
+            isFavClick = true
         }
+    }
+
+    private fun viewDocuments(it: Int) {
+        if (it == 46) {
+            lifecycleScope.launch {
+                viewModel.formList.collect{
+                    it.get(viewModel.getIndexOfBirthCertificateFront()).value.let {
+                        if (it.toString().contains("document")) {
+                            displayPdf(it!!.toUri())
+                        } else {
+                            viewImage(it!!.toUri())
+                        }
+                    }
+                }
+            }
+        } else {
+            lifecycleScope.launch {
+                viewModel.formList.collect{
+                    it.get(viewModel.getIndexOfBirthCertificateBack()).value.let {
+                        if (it.toString().contains("document")) {
+                            displayPdf(it!!.toUri())
+                        } else {
+                            viewImage(it!!.toUri())
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
     private fun hardCodedListUpdate(formId: Int) {
@@ -390,8 +526,17 @@ class NewBenRegFragment : Fragment() {
     private fun takeImage() {
         lifecycleScope.launchWhenStarted {
             getTmpFileUri().let { uri ->
-                latestTmpUri = uri
-                takePicture.launch(uri)
+                if (viewModel.getDocumentFormId() == 46) {
+                    frontViewFileUri = uri
+                    takePicture.launch(frontViewFileUri)
+                } else if (viewModel.getDocumentFormId() == 47) {
+                    backViewFileUri = uri
+                    takePicture.launch(backViewFileUri)
+                } else {
+                    latestTmpUri = uri
+                    takePicture.launch(latestTmpUri)
+                }
+
             }
         }
     }
@@ -499,21 +644,64 @@ class NewBenRegFragment : Fragment() {
             override fun onTick(millisUntilFinished: Long) {
                 timerInSec.visibility = View.VISIBLE
                 timerInSec.text = formatTimeInSeconds(millisUntilFinished)
+                if (isOtpVerified) {
+                    timerInSec.visibility = View.INVISIBLE
+                    countdownTimers.clear()
+                }
             }
             override fun onFinish() {
                 timerInSec.visibility = View.INVISIBLE
                 timerInSec.text = ""
                 generateOtp.isEnabled = true
-                if (isOtpVerified) {
-                    timerInSec.visibility = View.INVISIBLE
-                } else {
+                if (!isOtpVerified) {
                     generateOtp.text = timerInSec.resources.getString(R.string.resend_otp)
+
                 }
+
 
             }
         }.start()
 
         countdownTimers[position] = viewModel.countDownTimer
 
+    }
+
+    private fun chooseOptions() {
+        val alertBinding = LayoutMediaOptionsBinding.inflate(layoutInflater, binding.root, false)
+        val alertDialog = MaterialAlertDialogBuilder(requireContext())
+            .setView(alertBinding.root)
+            .setCancelable(true)
+            .create()
+        alertBinding.btnPdf.setOnClickListener {
+            alertDialog.dismiss()
+            selectPdf()
+        }
+        alertBinding.btnCamera.setOnClickListener {
+            alertDialog.dismiss()
+            takeImage()
+        }
+        alertBinding.btnGallery.setOnClickListener {
+            alertDialog.dismiss()
+            selectImage()
+        }
+        alertBinding.btnCancel.setOnClickListener {
+            alertDialog.dismiss()
+        }
+        alertDialog.show()
+    }
+
+    private fun selectPdf() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "application/pdf"
+        }
+        startActivityForResult(intent, PICK_PDF_FILE)
+    }
+
+    private fun selectImage() {
+        val intent = Intent(Intent.ACTION_PICK).apply {
+            type = "image/*"
+        }
+        startActivityForResult(intent, PICK_PDF_FILE)
     }
 }

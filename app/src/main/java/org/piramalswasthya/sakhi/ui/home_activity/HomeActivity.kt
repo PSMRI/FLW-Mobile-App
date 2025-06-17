@@ -198,7 +198,7 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // This will block user to cast app screen
-        if (BuildConfig.FLAVOR.equals("sakshamProd", true) ||BuildConfig.FLAVOR.equals("niramayProd", true) || BuildConfig.FLAVOR.equals("xushrukhaProd", true))  {
+        if (BuildConfig.FLAVOR.equals("niramay", true) ||BuildConfig.FLAVOR.equals("xushrukha", true) || BuildConfig.FLAVOR.equals("saksham", true))  {
             window.setFlags(
                 WindowManager.LayoutParams.FLAG_SECURE,
                 WindowManager.LayoutParams.FLAG_SECURE
@@ -217,19 +217,7 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         setUpFirstTimePullWorker()
         setUpMenu()
 
-        val permissions = arrayOf<String>(
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.INTERNET,
-            Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.CAMERA
-        )
-
-        ActivityCompat.requestPermissions(
-            this,
-            permissions,
-            1010
-        )
+        askForPermissions()
 
         if (isChatSupportEnabled)
         {
@@ -273,7 +261,26 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
                 }
             }
         }
-        binding.versionName.text = "APK Version ${BuildConfig.VERSION_NAME}"
+        binding.versionName.text = "APK Version 2.2.1" //${BuildConfig.VERSION_NAME}
+    }
+
+    fun askForPermissions() {
+
+        val permissions = arrayOf<String>(
+            Manifest.permission.CALL_PHONE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.INTERNET,
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.CAMERA
+        )
+
+        ActivityCompat.requestPermissions(
+            this,
+            permissions,
+            1010
+        )
+
     }
 
 
@@ -387,7 +394,7 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
     override fun onResume() {
         // This will block user to cast app screen
-        if (BuildConfig.FLAVOR.equals("sakshamProd", true) ||BuildConfig.FLAVOR.equals("niramayProd", true) || BuildConfig.FLAVOR.equals("xushrukhaProd", true))  {
+        if (BuildConfig.FLAVOR.equals("niramay", true) ||BuildConfig.FLAVOR.equals("xushrukha", true) || BuildConfig.FLAVOR.equals("saksham", true))  {
             window.setFlags(
                 WindowManager.LayoutParams.FLAG_SECURE,
                 WindowManager.LayoutParams.FLAG_SECURE
@@ -402,7 +409,7 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
                 .setPositiveButton("Exit") { dialog, id -> finish() }
                 .show()
         }
-        binding.versionName.text = "APK Version ${BuildConfig.VERSION_NAME}"
+        binding.versionName.text = "APK Version 2.2.1" //${BuildConfig.VERSION_NAME}
     }
     private fun setUpMenu() {
         val menu = object : MenuProvider {
@@ -548,7 +555,7 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         }
         binding.navView.menu.findItem(R.id.menu_delete_account).setOnMenuItemClickListener {
             var url = ""
-            if (BuildConfig.FLAVOR.equals("sakshamProd", true) ||BuildConfig.FLAVOR.equals("niramayProd", true) || BuildConfig.FLAVOR.equals("xushrukhaProd", true))  {
+            if (BuildConfig.FLAVOR.equals("saksham", true) ||BuildConfig.FLAVOR.equals("niramay", true) || BuildConfig.FLAVOR.equals("xushrukha", true))  {
                 url = "https://forms.office.com/r/HkE3c0tGr6"
             } else {
                 url =

@@ -17,5 +17,11 @@
     <dimen name="status_name_width">100dp</dimen>
     <dimen name="status_button_width">60dp</dimen>
     <dimen name="bottom_sheet_height">500dp</dimen>
+    <dimen name="pv_pin_view_item_size">48dp</dimen>
+    <dimen name="pv_pin_view_item_radius">5dp</dimen>
+    <dimen name="pv_pin_view_item_spacing">5dp</dimen>
+    <dimen name="pv_pin_view_item_line_width">2dp</dimen>
+    <dimen name="pv_pin_view_cursor_width">2dp</dimen>
 
+    <dimen name="password_toggle_size">30dp</dimen>
 </resources>

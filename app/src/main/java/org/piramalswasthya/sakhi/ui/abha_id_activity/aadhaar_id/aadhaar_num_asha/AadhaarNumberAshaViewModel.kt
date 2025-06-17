@@ -40,13 +40,15 @@ class AadhaarNumberAshaViewModel @Inject constructor(
     val mobileNumber: LiveData<String?>
         get() = _mobileNumber
 
-    private val _aadhaarNumber = MutableLiveData<String?>(null)
-    val aadhaarNumber: LiveData<String?>
-        get() = _aadhaarNumber
+    val aadhaarNumber = MutableLiveData<String>("")
 
     private val _errorMessage = MutableLiveData<String?>(null)
     val errorMessage: LiveData<String?>
         get() = _errorMessage
+
+    private val _otpMobileNumberMessage = MutableLiveData<String?>(null)
+    val otpMobileNumberMessage: LiveData<String?>
+        get() = _otpMobileNumberMessage
 
     fun resetState() {
         _state.value = AadhaarIdViewModel.State.IDLE
@@ -75,6 +77,7 @@ class AadhaarNumberAshaViewModel @Inject constructor(
                 is NetworkResult.Success -> {
                     _txnId.value = result.data.txnId
 //                    _mobileNumber.value = result.data.mobileNumber
+                    _otpMobileNumberMessage.value = result.data.message
                     _state.value = AadhaarIdViewModel.State.SUCCESS
                 }
 

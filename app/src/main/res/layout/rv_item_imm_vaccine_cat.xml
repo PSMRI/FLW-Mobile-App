@@ -32,11 +32,10 @@
             android:id="@+id/rv_vaccine"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             tools:itemCount="10"
-            android:clipToPadding="false"
             tools:listitem="@layout/rv_item_imm_vaccine" />
-
+       <!-- android:orientation="horizontal"
+        android:clipToPadding="false"-->
 
     </LinearLayout>
 
