@@ -192,7 +192,7 @@ class UserRepo @Inject constructor(
         }
     }
 
-     suspend fun saveFirebaseToken(userId: Int, token: String, updatedAt: String) {
+    suspend fun saveFirebaseToken(userId: Int, token: String, updatedAt: String) {
         withContext(Dispatchers.IO) {
             try {
                 val requestBody = mapOf(
