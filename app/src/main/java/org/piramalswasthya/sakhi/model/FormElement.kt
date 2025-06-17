@@ -35,5 +35,5 @@ data class FormElement(
     val showYearFirstInDatePicker: Boolean = false,
     @DrawableRes val backgroundDrawable: Int? = null,
     @DrawableRes val iconDrawableRes: Int? = null,
-    val showDrawable: Boolean? = false
+    val showDrawable: Boolean? = false,
 )
