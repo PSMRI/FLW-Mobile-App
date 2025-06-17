@@ -103,21 +103,17 @@ class ChildImmunizationListFragment : Fragment(),ImmunizationBirthDoseCategoryAd
     override fun onStart() {
         super.onStart()
         activity?.let {
-            (it as SupervisorActivity).updateActionBar(
-                R.drawable.ic__immunization,
-                getString(R.string.child_immunization_list)
-            )
-//            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
-//                (it as HomeActivity).updateActionBar(
-//                    R.drawable.ic__immunization,
-//                    getString(R.string.child_immunization_list)
-//                )
-//            } else {
-//                (it as SupervisorActivity).updateActionBar(
-//                    R.drawable.ic__immunization,
-//                    getString(R.string.child_immunization_list)
-//                )
-//            }
+            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+                (it as HomeActivity).updateActionBar(
+                    R.drawable.ic__immunization,
+                    getString(R.string.child_immunization_list)
+                )
+            } else {
+                (it as SupervisorActivity).updateActionBar(
+                    R.drawable.ic__immunization,
+                    getString(R.string.child_immunization_list)
+                )
+            }
         }
     }
 

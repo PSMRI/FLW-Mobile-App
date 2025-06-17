@@ -239,39 +239,29 @@ class AllBenFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            (it as SupervisorActivity).updateActionBar(
-                R.drawable.ic__ben,
-                title = if (args.source == 1) {
-                    getString(R.string.icon_title_abha)
-                } else if (args.source == 2) {
-                    getString(R.string.icon_title_rch)
-                } else {
-                    getString(R.string.icon_title_ben)
-                }
-            )
-//            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
-//                (it as HomeActivity).updateActionBar(
-//                    R.drawable.ic__ben,
-//                    title = if (args.source == 1) {
-//                        getString(R.string.icon_title_abha)
-//                    } else if (args.source == 2) {
-//                        getString(R.string.icon_title_rch)
-//                    } else {
-//                        getString(R.string.icon_title_ben)
-//                    }
-//                )
-//            } else {
-//                (it as SupervisorActivity).updateActionBar(
-//                    R.drawable.ic__ben,
-//                    title = if (args.source == 1) {
-//                        getString(R.string.icon_title_abha)
-//                    } else if (args.source == 2) {
-//                        getString(R.string.icon_title_rch)
-//                    } else {
-//                        getString(R.string.icon_title_ben)
-//                    }
-//                )
-//            }
+            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+                (it as HomeActivity).updateActionBar(
+                    R.drawable.ic__ben,
+                    title = if (args.source == 1) {
+                        getString(R.string.icon_title_abha)
+                    } else if (args.source == 2) {
+                        getString(R.string.icon_title_rch)
+                    } else {
+                        getString(R.string.icon_title_ben)
+                    }
+                )
+            } else {
+                (it as SupervisorActivity).updateActionBar(
+                    R.drawable.ic__ben,
+                    title = if (args.source == 1) {
+                        getString(R.string.icon_title_abha)
+                    } else if (args.source == 2) {
+                        getString(R.string.icon_title_rch)
+                    } else {
+                        getString(R.string.icon_title_ben)
+                    }
+                )
+            }
         }
     }
 

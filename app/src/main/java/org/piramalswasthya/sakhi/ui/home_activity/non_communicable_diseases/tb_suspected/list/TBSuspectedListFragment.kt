@@ -92,21 +92,17 @@ class TBSuspectedListFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            (it as SupervisorActivity).updateActionBar(
-                R.drawable.ic__ncd,
-                getString(R.string.tb_suspected_list)
-            )
-//            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
-//                (it as HomeActivity).updateActionBar(
-//                    R.drawable.ic__ncd,
-//                    getString(R.string.tb_suspected_list)
-//                )
-//            } else {
-//                (it as SupervisorActivity).updateActionBar(
-//                    R.drawable.ic__ncd,
-//                    getString(R.string.tb_suspected_list)
-//                )
-//            }
+            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+                (it as HomeActivity).updateActionBar(
+                    R.drawable.ic__ncd,
+                    getString(R.string.tb_suspected_list)
+                )
+            } else {
+                (it as SupervisorActivity).updateActionBar(
+                    R.drawable.ic__ncd,
+                    getString(R.string.tb_suspected_list)
+                )
+            }
         }
     }
 
