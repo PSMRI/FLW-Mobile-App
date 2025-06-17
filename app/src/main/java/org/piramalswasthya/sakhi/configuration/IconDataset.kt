@@ -226,6 +226,42 @@ class IconDataset @Inject constructor(
         )
     )
 
+    fun getVLFDataset(resources: Resources) = listOf(
+        Icon(
+            R.drawable.ic__assess_high_risk,
+            resources.getString(R.string.vhnd),
+            null,
+            VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToVHNDListFragement()
+        ),
+        Icon(
+            R.drawable.ic__follow_up_hrp,
+            resources.getString(R.string.vnhc),
+            null,
+            VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToVHNCListFragement()
+        ) ,
+        Icon(
+                R.drawable.ic__follow_up_hrp,
+        resources.getString(R.string.phc_review),
+            null,
+            VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToPHCReviewListFragement()
+
+    )
+        ,
+        Icon(
+            R.drawable.ic__follow_up_hrp,
+            resources.getString(R.string.ahd),
+            null,
+            VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToAHDListFragment()
+        )
+        ,
+        Icon(
+            R.drawable.ic__follow_up_hrp,
+            resources.getString(R.string.national_deworming_day),
+            null,
+            VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToDewormingListFragment()
+        )
+    )
+
     fun getHRPNonPregnantWomenDataset(resources: Resources) = listOf(
         Icon(
             R.drawable.ic__assess_high_risk,

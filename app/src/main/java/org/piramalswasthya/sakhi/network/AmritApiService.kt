@@ -108,6 +108,30 @@ interface AmritApiService {
 //    @POST("highRisk/pregnant/assess/getAll")
     suspend fun getHRPAssessData(@Body userDetail: GetDataPaginatedRequest): Response<ResponseBody>
 
+    @POST("flw-0.0.1/forms/villageLevel/getAll")
+    suspend fun getVLFData(@Body userDetail: GetVHNDRequest): Response<ResponseBody>
+
+    @POST("flw-0.0.1/forms/villageLevel/vhnd/saveAll")
+    suspend fun saveVHNDData(@Body userDataDTO: UserDataDTO<Any?>): Response<ResponseBody>
+
+    @POST("flw-0.0.1/forms/villageLevel/vhnc/saveAll")
+    suspend fun saveVHNCData(@Body userDataDTO: UserDataDTO<Any?>): Response<ResponseBody>
+
+
+    @POST("flw-0.0.1/forms/villageLevel/phc/saveAll")
+    suspend fun savePHCData(@Body userDataDTO: UserDataDTO<Any?>): Response<ResponseBody>
+
+
+
+    @POST("flw-0.0.1/forms/villageLevel/ahd/saveAll")
+    suspend fun saveAHDData(@Body userDataDTO: UserDataDTO<Any?>): Response<ResponseBody>
+
+
+    @POST("flw-0.0.1/forms/villageLevel/deworming/saveAll")
+    suspend fun saveDewormingData(@Body userDataDTO: UserDataDTO<Any?>): Response<ResponseBody>
+
+
+
     @POST("flw-0.0.1/highRisk/pregnant/assess/saveAll")
 //    @POST("highRisk/pregnant/assess/saveAll")
     suspend fun saveHRPAssessData(@Body userDataDTO: UserDataDTO<Any?>): Response<ResponseBody>
