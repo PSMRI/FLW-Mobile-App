@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.databinding.RvItemBenBinding
 import org.piramalswasthya.sakhi.model.BenBasicDomain
+import org.piramalswasthya.sakhi.model.HouseHoldBasicDomain
 
 
 class BenListAdapter(
@@ -16,6 +17,7 @@ class BenListAdapter(
     private val showRegistrationDate: Boolean = false,
     private val showSyncIcon: Boolean = false,
     private val showAbha: Boolean = false,
+    private val showCall: Boolean = false,
     private val role: Int? = 0
 ) :
     ListAdapter<BenBasicDomain, BenListAdapter.BenViewHolder>(BenDiffUtilCallBack) {
@@ -46,7 +48,8 @@ class BenListAdapter(
             showAbha: Boolean,
             showSyncIcon: Boolean,
             showRegistrationDate: Boolean,
-            showBeneficiaries: Boolean, role: Int?
+            showBeneficiaries: Boolean, role: Int?,
+            showCall: Boolean,
         ) {
             if (!showSyncIcon) item.syncState = null
             binding.ben = item
@@ -59,6 +62,12 @@ class BenListAdapter(
                 if (showRegistrationDate) View.VISIBLE else View.INVISIBLE
             binding.hasAbha = !item.abhaId.isNullOrEmpty()
             binding.role = role
+
+            if (showCall) {
+                binding.ivCall.visibility = View.VISIBLE
+            } else {
+                binding.ivCall.visibility = View.GONE
+            }
 
             if (showBeneficiaries) {
                 if (item.spouseName == "Not Available" && item.fatherName == "Not Available") {
@@ -110,7 +119,8 @@ class BenListAdapter(
             showSyncIcon,
             showRegistrationDate,
             showBeneficiaries,
-            role
+            role,
+            showCall
         )
     }
 
@@ -119,6 +129,7 @@ class BenListAdapter(
         private val clickedBen: (hhId: Long, benId: Long, relToHeadId: Int) -> Unit,
         private val clickedHousehold: (hhId: Long) -> Unit,
         private val clickedABHA: (benId: Long, hhId: Long) -> Unit,
+        private val callBen: (ben: BenBasicDomain) -> Unit
     ) {
         fun onClickedBen(item: BenBasicDomain) = clickedBen(
             item.hhId,
@@ -129,6 +140,8 @@ class BenListAdapter(
         fun onClickedHouseHold(item: BenBasicDomain) = clickedHousehold(item.hhId)
 
         fun onClickABHA(item: BenBasicDomain) = clickedABHA(item.benId, item.hhId)
+
+        fun onClickedForCall(item: BenBasicDomain) = callBen(item)
     }
 
 }
