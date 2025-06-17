@@ -172,6 +172,7 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
     }
 
     protected suspend fun setUpPage(mList: List<FormElement>) {
+
         list.clear()
         list.addAll(mList)
         _listFlow.emit(list.toMutableList())
@@ -632,6 +633,21 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
         return -1
     }
 
+    protected fun validateAllAlphabetsSpecialAndNumericOnEditText(formElement: FormElement): Int {
+        formElement.value?.takeIf { it.isNotEmpty() }?.let { input ->
+            val regex = "^[a-zA-Z0-9\\s\\p{Punct}]+$".toRegex() // allows alphabets, numbers, spaces, and special characters
+
+            val isValid = regex.matches(input)
+            if (!isValid) {
+                formElement.errorText = resources.getString(R.string.form_input_alphabet_special__digit_only_error)
+            } else {
+                formElement.errorText = null
+            }
+        }
+        return -1
+    }
+
+
     protected fun validateAllAlphaNumericSpaceOnEditText(formElement: FormElement): Int {
         formElement.value?.takeIf { it.isNotEmpty() }?.let {
             val isValid = it.isAllAlphaNumericAndSpace()
@@ -796,6 +812,18 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
         return -1
     }
 
+//    protected fun validateNumberOnEditText(formElement: FormElement): Int {
+//        val input = formElement.value?.trim() ?: ""
+//
+//        formElement.errorText = when {
+////            input.isEmpty() -> resources.getString(R.string.form_input_error_mandatory)
+////            input.any { !it.isDigit() } -> resources.getString(R.string.form_input_error_numeric_only)
+//            input.length > 4 -> resources.getString(R.string.form_input_error_max_digits)
+//            else -> null
+//        }
+//
+//        return -1
+//    }
 
     protected fun validateRchIdOnEditText(formElement: FormElement): Int {
         formElement.errorText = formElement.value?.takeIf { it.isNotEmpty() }?.let { text ->

@@ -133,6 +133,25 @@
     <string name="death_type_mdsr">MDSR (Maternal Death Surveillance and Response)</string>
     <string name="continue_button">CONTINUE</string>
 
+    <string name="please_select_value">Please select a value</string>
+
+    <string name="mobilized_for_ahd">Mobilized for AHD</string>
+    <string name="ahd_place">AHD Place</string>
+    <string name="ahd_date">AHD Date</string>
+    <string name="upload_image">Upload Image</string>
+    <string name="upload_image_sub">Upload JPEG or PNG file (Max: 5MB)</string>
+    <string-array name="yes_no_options">
+        <item>Yes</item>
+        <item>No</item>
+    </string-array>
+
+    <string-array name="ahd_place_options">
+        <item>School</item>
+        <item>Anganwadi Centre</item>
+        <item>Community center</item>
+    </string-array>
+
+
     <string-array name="temp_array">
         <item>Item 1</item>
         <item>Item 2</item>
@@ -175,6 +194,7 @@
     <string name="form_input_missing_entry_error">Field must contain %1d digits.</string>
     <string name="form_input_alphabet_space_only_error">Only Alphabets and whitespace allowed!</string>
     <string name="form_input_alphabet_special_only_error">Only Alphabets and special characters allowed!</string>
+    <string name="form_input_alphabet_special__digit_only_error">Only Alphabets and special characters, digits allowed!</string>
     <string name="form_input_min_limit_error">%1s should be greater than or equal to %2d</string>
     <string name="form_input_alph_numeric_space_only_error">Only Alphabets and Numerics allowed!</string>
     <string name="abha_number_digit">ABHA number should be 14-digit long</string>
@@ -326,6 +346,10 @@
     <string name="dashboard">Dashboard</string>
     <string name="sign_in">Sign In</string>
     <string name="service_location">Service Location</string>
+
+    //................VHND........................
+
+
 
     <!--    <string name="wife_s_name">Wife\'s Name</string>-->
     <!--    <string name="spouse_s_name">Spouse\'s Name</string>-->
