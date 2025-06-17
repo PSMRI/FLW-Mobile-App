@@ -14,6 +14,13 @@ import org.piramalswasthya.sakhi.utils.KeyUtils
 import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlinx.parcelize.Parcelize
+import org.piramalswasthya.sakhi.model.DewormingCache
+import org.piramalswasthya.sakhi.model.AHDCache
+import org.piramalswasthya.sakhi.model.PHCReviewMeetingCache
+import org.piramalswasthya.sakhi.model.VHNCCache
+import org.piramalswasthya.sakhi.model.VHNDCache
+
+//import org.piramalswasthya.sakhi.model.VHNDCache
 import org.piramalswasthya.sakhi.model.AESScreeningCache
 import org.piramalswasthya.sakhi.model.AdolescentHealthCache
 import org.piramalswasthya.sakhi.model.FilariaScreeningCache
@@ -88,6 +95,14 @@ data class GetDataPaginatedRequest(
     val pageNo: Int,
     val fromDate: String,
     val toDate: String
+)
+
+
+@JsonClass(generateAdapter = true)
+data class GetVHNDRequest(
+    val formType: String,
+    val userId: Int,
+
 )
 
 @JsonClass(generateAdapter = true)
@@ -866,6 +881,117 @@ data class HRPNonPregnantAssessDTO(
         )
     }
 }
+
+data class VHNDDTO(
+    val id: Int = 0,
+    var vhndDate: String?,
+    var place: String? = null,
+    var noOfBeneficiariesAttended: Int? = null,
+    var Image1: String? = null,
+    var Image2: String? = null,
+) {
+    fun toCache(): VHNDCache {
+        return VHNDCache(
+            id = 0,
+            vhndDate = vhndDate!!,
+            place = place,
+            noOfBeneficiariesAttended = noOfBeneficiariesAttended,
+            image1 = Image1,
+            image2 = Image2,
+            syncState = SyncState.SYNCED
+        )
+    }
+}
+
+data class VHNCDTO(
+    val id: Int = 0,
+    var vhncDate: String?,
+    var place: String? = null,
+    var noOfBeneficiariesAttended: Int? = null,
+    var Image1: String? = null,
+    var Image2: String? = null,
+) {
+    fun toCache(): VHNCCache {
+        return VHNCCache(
+            id = 0,
+            vhncDate = vhncDate!!,
+            place = place,
+            noOfBeneficiariesAttended = noOfBeneficiariesAttended,
+            image1 = Image1,
+            image2 = Image2,
+            syncState = SyncState.SYNCED
+        )
+    }
+}
+
+data class PHCReviewDTO(
+    val id: Int = 0,
+    var phcReviewDate: String?,
+    var place: String? = null,
+    var noOfBeneficiariesAttended: Int? = null,
+    var Image1: String? = null,
+    var Image2: String? = null
+) {
+    fun toCache(): PHCReviewMeetingCache {
+        return PHCReviewMeetingCache(
+            id = 0,
+            phcReviewDate = phcReviewDate!!,
+            place = place,
+            noOfBeneficiariesAttended = noOfBeneficiariesAttended,
+            image1 = Image1,
+            image2 = Image2,
+            syncState = SyncState.SYNCED
+        )
+    }
+}
+
+data class AHDDTO(
+    val id: Int = 0,
+    var mobilizedForAHD: String?,
+    var ahdPlace: String? = null,
+    var ahdDate: String? = null,
+    var image1: String? = null,
+    var image2: String? = null,
+) {
+    fun toCache(): AHDCache {
+        return AHDCache(
+            id = 0,
+            mobilizedForAHD = mobilizedForAHD!!,
+            ahdPlace = ahdPlace,
+            ahdDate = ahdDate,
+            image1 = image1,
+            image2 = image2,
+            syncState = SyncState.SYNCED
+        )
+    }
+}
+
+data class DewormingDTO(
+    var id: Int = 0,
+    var dewormingDone: String? = null,
+    var dewormingDate: String? = null,
+    var dewormingLocation: String? = null,
+    var ageGroup: Int? = null,
+    var image1: String? = null,
+    var image2: String? = null,
+    var regDate: String? = null,
+) {
+    fun toCache(): DewormingCache {
+        return DewormingCache(
+            id = id,
+            dewormingDone = dewormingDone,
+            dewormingDate = dewormingDate,
+            dewormingLocation = dewormingLocation,
+            ageGroup = ageGroup,
+            image1 = image1,
+            image2 = image2,
+            regDate = regDate,
+            syncState = SyncState.SYNCED
+        )
+    }
+}
+
+
 
 data class TBScreeningDTO(
     val id: Long,
