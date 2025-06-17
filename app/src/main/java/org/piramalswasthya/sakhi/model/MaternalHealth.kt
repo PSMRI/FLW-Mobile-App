@@ -321,7 +321,7 @@ data class PregnantWomanAncCache(
     val benId: Long,
     var visitNumber: Int,
     var isActive: Boolean = true,
-    var ancDate: Long = System.currentTimeMillis(),
+    var ancDate: Long = 0L,
     var isAborted: Boolean = false,
     var abortionType: String? = null,
     var abortionTypeId: Int = 0,
@@ -361,7 +361,8 @@ data class PregnantWomanAncCache(
     var updatedBy: String,
     var updatedDate: Long = System.currentTimeMillis(),
     var syncState: SyncState,
-    var file_path : String
+    var frontFilePath : String,
+    var backFilePath : String
 ) : FormDataModel {
     fun asPostModel(): ANCPost {
         return ANCPost(
@@ -398,7 +399,8 @@ data class PregnantWomanAncCache(
             createdBy = createdBy,
             updatedDate = getDateStringFromLong(updatedDate),
             updatedBy = updatedBy,
-            file_path = file_path
+            frontFilePath = frontFilePath,
+            backFilePath = backFilePath
 
         )
     }
@@ -441,7 +443,9 @@ data class ANCPost(
     val updatedDate: String? = null,
     val updatedBy: String,
     var providerServiceMapID :String?=null,
-    var file_path : String
+    var frontFilePath : String,
+    var backFilePath : String
+
 ) {
     fun toAncCache(context : Context): PregnantWomanAncCache {
         return PregnantWomanAncCache(
@@ -488,7 +492,8 @@ data class ANCPost(
             updatedBy = updatedBy,
             updatedDate = getLongFromDate(updatedDate),
             syncState = SyncState.SYNCED,
-            file_path = file_path
+            frontFilePath = frontFilePath,
+            backFilePath = backFilePath
         )
     }
 }
@@ -573,7 +578,7 @@ data class BenWithAncListDomain(
     val ben: BenBasicDomain,
     val pwr: PregnantWomanRegistrationCache,
     val anc: List<AncStatus>,
-    val ancDate: Long? = 0L,
+    val ancDate: Long = 0L,
     val lmpString: String? = getDateString(pwr.lmpDate),
     val eddString: String? = getDateString(pwr.lmpDate + TimeUnit.DAYS.toMillis(280)),
     val weeksOfPregnancy: String? = (TimeUnit.MILLISECONDS.toDays(getTodayMillis() - pwr.lmpDate) / 7).takeIf { it <= 40 }

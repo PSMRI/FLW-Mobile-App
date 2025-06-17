@@ -131,11 +131,13 @@ class BenRegCHODataset(
             }
 
             name.id -> {
-                validateAllCapsOrSpaceOnEditText(name)
+               // validateAllCapsOrSpaceOnEditText(name)
+                validateAllCapsOrSpaceOnEditTextWithHindiEnabled(name)
             }
 
             husbandName.id -> {
-                validateAllCapsOrSpaceOnEditText(husbandName)
+             //   validateAllCapsOrSpaceOnEditText(husbandName)
+                validateAllCapsOrSpaceOnEditTextWithHindiEnabled(husbandName)
             }
 
             age.id -> {

@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.ui.home_activity.all_ben
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -144,12 +146,26 @@ class AllBenFragment : Fragment() {
                 { benId, hhId ->
                     checkAndGenerateABHA(benId)
                 },
+                {
+                    try {
+                        val callIntent = Intent(Intent.ACTION_CALL)
+                        callIntent.setData(Uri.parse("tel:${it.mobileNo}"))
+                        startActivity(callIntent)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        activity?.let {
+                            (it as HomeActivity).askForPermissions()
+                        }
+                        Toast.makeText(requireContext(), "Please allow permissions first", Toast.LENGTH_SHORT).show()
+                    }
+                }
 
                 ),
             showAbha = true,
             showSyncIcon = true,
             showBeneficiaries = true,
-            showRegistrationDate = true
+            showRegistrationDate = true,
+            showCall = true
         )
         binding.rvAny.adapter = benAdapter
         lifecycleScope.launch {
@@ -232,9 +248,9 @@ class AllBenFragment : Fragment() {
             (it as HomeActivity).updateActionBar(
                 R.drawable.ic__ben,
                 title = if (args.source == 1) {
-                    getString(R.string.icon_title_abha)
+                    getString(R.string.icon_title_abhas)
                 } else if (args.source == 2) {
-                    getString(R.string.icon_title_rch)
+                    getString(R.string.icon_title_rchs)
                 } else {
                     getString(R.string.icon_title_ben)
                 }

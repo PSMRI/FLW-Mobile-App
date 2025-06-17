@@ -1,15 +1,17 @@
 package org.piramalswasthya.sakhi.adapters
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.RvItemHouseholdBinding
 import org.piramalswasthya.sakhi.model.HouseHoldBasicDomain
 
 
-class HouseHoldListAdapter(private val clickListener: HouseholdClickListener) :
+class HouseHoldListAdapter(private var isDisease: Boolean, private val clickListener: HouseholdClickListener) :
     ListAdapter<HouseHoldBasicDomain, HouseHoldListAdapter.HouseHoldViewHolder>(
         HouseHoldDiffUtilCallBack
     ) {
@@ -36,10 +38,21 @@ class HouseHoldListAdapter(private val clickListener: HouseholdClickListener) :
             }
         }
 
-        fun bind(item: HouseHoldBasicDomain, clickListener: HouseholdClickListener) {
+        fun bind(
+            item: HouseHoldBasicDomain,
+            clickListener: HouseholdClickListener,
+            isDisease: Boolean
+        ) {
             binding.household = item
             binding.clickListener = clickListener
             binding.executePendingBindings()
+            if (!isDisease) {
+                binding.button4.visibility = View.VISIBLE
+                binding.button5.visibility = View.GONE
+            } else {
+                binding.button4.visibility = View.GONE
+                binding.button5.visibility = View.GONE
+            }
 
         }
 
@@ -50,7 +63,7 @@ class HouseHoldListAdapter(private val clickListener: HouseholdClickListener) :
     }
 
     override fun onBindViewHolder(holder: HouseHoldViewHolder, position: Int) {
-        holder.bind(getItem(position), clickListener)
+        holder.bind(getItem(position), clickListener,isDisease)
     }
 
 

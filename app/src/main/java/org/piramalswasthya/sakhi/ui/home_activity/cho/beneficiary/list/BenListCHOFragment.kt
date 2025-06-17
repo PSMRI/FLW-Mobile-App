@@ -78,7 +78,7 @@ class BenListCHOFragment : Fragment() {
                 },
                 { benId, hhId ->
                     checkAndGenerateABHA(benId)
-                },
+                }, {}
 
                 ),
 //            showAbha = true,

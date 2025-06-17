@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.model
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.Relation
@@ -11,6 +12,7 @@ import org.piramalswasthya.sakhi.configuration.FormDataModel
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.setToStartOfTheDay
 import org.piramalswasthya.sakhi.network.getLongFromDate
+import timber.log.Timber
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
@@ -31,7 +33,7 @@ data class PNCVisitCache(
     val benId: Long,
     var pncPeriod: Int,
     var isActive: Boolean,
-    var pncDate: Long = System.currentTimeMillis(),
+    var pncDate: Long = 0L,
     var ifaTabsGiven: Int? = 0,
     var anyContraceptionMethod: Boolean? = null,
     var contraceptionMethod: String? = null,
@@ -50,8 +52,12 @@ data class PNCVisitCache(
     val createdDate: Long = System.currentTimeMillis(),
     var updatedBy: String,
     var updatedDate: Long = System.currentTimeMillis(),
-    var syncState: SyncState
+    var syncState: SyncState,
 ) : FormDataModel {
+
+    @Ignore
+    var dateOfDelivery: Long = 0L
+
     fun asDomainModel(): PncDomain = PncDomain(
         benId = benId,
         visitNumber = pncPeriod,
@@ -118,6 +124,7 @@ data class PNCNetwork(
             pncPeriod = pncPeriod,
             isActive = isActive,
             pncDate = getLongFromDate(pncDate),
+
             ifaTabsGiven = ifaTabsGiven,
             anyContraceptionMethod = anyContraceptionMethod,
             contraceptionMethod = contraceptionMethod,
@@ -158,12 +165,14 @@ data class BenWithDoAndPncCache(
     val savedPncRecords: List<PNCVisitCache>
 ) {
     fun asBasicDomainModelForPNC(): BenPncDomain {
-        val activeDo = deliveryOutcomeCache.first { it.isActive }
+        val activeDo = deliveryOutcomeCache.firstOrNull() { it.isActive }
         val latestPnc = savedPncRecords.maxByOrNull { it.pncPeriod }
         val daysSinceDeliveryMillis = Calendar.getInstance()
-            .setToStartOfTheDay().timeInMillis - activeDo.dateOfDelivery!!.let {
+            .setToStartOfTheDay().timeInMillis - activeDo?.dateOfDelivery.let {
             val cal = Calendar.getInstance()
-            cal.timeInMillis = it
+            if (it != null) {
+                cal.timeInMillis = it
+            }
             cal.setToStartOfTheDay()
             cal.timeInMillis
         }
@@ -181,7 +190,7 @@ data class BenWithDoAndPncCache(
                 .filter { it > (latestPnc?.pncPeriod ?: 0) }
         return BenPncDomain(
             ben.asBasicDomainModel(),
-            activeDo.dateOfDelivery?.let {
+            activeDo?.dateOfDelivery?.let {
                 getDateStrFromLong(
                     it
                 )
@@ -199,7 +208,7 @@ data class BenPncDomain(
     val ben: BenBasicDomain,
     val deliveryDate: String,
     val allowFill: Boolean,
-    val pncDate: Long? = 0L,
+    val pncDate: Long = 0L,
     val savedPncRecords: List<PNCVisitCache>,
     val syncState: SyncState? = savedPncRecords.takeIf { it.isNotEmpty() }?.map { it.syncState }
         ?.let { syncStates ->

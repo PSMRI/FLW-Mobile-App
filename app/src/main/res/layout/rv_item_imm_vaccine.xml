@@ -17,78 +17,156 @@
 
     </data>
 
-
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-        <androidx.cardview.widget.CardView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_normal"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:cardCornerRadius="@dimen/padding_normal"
-            app:cardElevation="@dimen/padding_small">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/_5sdp"
+        android:paddingTop="@dimen/_8sdp"
+        android:paddingEnd="@dimen/_5sdp">
 
-            <LinearLayout
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="@dimen/padding_normal"
+            app:cardElevation="@dimen/padding_small"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_height="wrap_content">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/linearLayout2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:minHeight="@dimen/_45sdp"
+                android:gravity="center_horizontal"
                 android:orientation="vertical"
                 android:padding="@dimen/padding_normal"
-                android:gravity="center_horizontal"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:id="@+id/tv_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:text="@{vaccine.vaccineName}"
-                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                        tools:text="Ebababebabisa" />
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_toEndOf="@+id/tv_name"
-                        vaccineState="@{vaccine.state}" />
-
-                </RelativeLayout>
-
                 <ImageView
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:padding="@dimen/padding_normal"
-                    android:visibility="gone"
-                    vaccineState="@{vaccine.state}" />
+                    android:id="@+id/imageView"
+                    vaccineState="@{vaccine.state}"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="@dimen/_5sdp"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_name"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/tv_name" />
+
+
+                <TextView
+                    android:id="@+id/tv_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:text="@{vaccine.vaccineName}"
+                    android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/imageView"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Ebababebabisa" />
+
+
+                <!--  <ImageView
+                      android:layout_width="60dp"
+                      android:layout_height="60dp"
+                      android:padding="@dimen/padding_normal"
+                      android:visibility="gone"
+                      vaccineState="@{vaccine.state}" />-->
 
                 <com.google.android.material.button.MaterialButton
+                    vaccineState="@{vaccine.state}"
                     android:layout_width="wrap_content"
-                    android:layout_height="40dp"
+                    android:layout_height="wrap_content"
                     android:backgroundTint="?attr/colorPrimary"
-                    android:text="@string/kcuf"
-                    android:textSize="12sp"
-                    android:gravity="center"
-                    android:layout_marginTop="@dimen/margin_small"
                     android:onClick="@{()-> clickListener.onClicked(vaccine)}"
+                    android:text="@string/kcuf"
                     android:textColor="?attr/colorOnPrimary"
-                    vaccineState="@{vaccine.state}" />
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_name"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/tv_name" />
 
                 <!--            android:onClick="@{()-> clickListener.onClick(vaccine)}"-->
-
-            </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.cardview.widget.CardView>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- <androidx.constraintlayout.widget.ConstraintLayout
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content">
+         <androidx.cardview.widget.CardView
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             tools:layout_height="wrap_content"
+             android:layout_margin="@dimen/margin_normal"
+             app:layout_constraintTop_toTopOf="parent"
+             app:layout_constraintEnd_toEndOf="parent"
+             app:layout_constraintBottom_toBottomOf="parent"
+             app:layout_constraintStart_toStartOf="parent"
+             app:cardCornerRadius="@dimen/padding_normal"
+             app:cardElevation="@dimen/padding_small">
+
+             <LinearLayout
+                 android:id="@+id/linearLayout2"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:orientation="vertical"
+                 android:padding="@dimen/padding_normal"
+                 android:gravity="center_horizontal"
+                 app:layout_constraintStart_toStartOf="parent"
+                 app:layout_constraintTop_toTopOf="parent">
+
+                 <RelativeLayout
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content">
+
+                     <TextView
+                         android:id="@+id/tv_name"
+                         android:layout_width="wrap_content"
+                         android:layout_height="wrap_content"
+                         android:layout_marginStart="10dp"
+                         android:text="@{vaccine.vaccineName}"
+                         android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                         tools:text="Ebababebabisa" />
+
+                     <ImageView
+                         android:layout_width="20dp"
+                         android:layout_height="20dp"
+                         android:layout_toEndOf="@+id/tv_name"
+                         vaccineState="@{vaccine.state}" />
+
+                 </RelativeLayout>
+
+                 <ImageView
+                     android:layout_width="60dp"
+                     android:layout_height="60dp"
+                     android:padding="@dimen/padding_normal"
+                     android:visibility="gone"
+                     vaccineState="@{vaccine.state}" />
+
+                 <com.google.android.material.button.MaterialButton
+                     android:layout_width="wrap_content"
+                     android:layout_height="40dp"
+                     android:backgroundTint="?attr/colorPrimary"
+                     android:text="@string/kcuf"
+                     android:textSize="12sp"
+                     android:gravity="center"
+                     android:layout_marginTop="@dimen/margin_small"
+                     android:onClick="@{()-> clickListener.onClicked(vaccine)}"
+                     android:textColor="?attr/colorOnPrimary"
+                     vaccineState="@{vaccine.state}" />
+
+                 &lt;!&ndash;            android:onClick="@{()-> clickListener.onClick(vaccine)}"&ndash;&gt;
+
+             </LinearLayout>
+
+         </androidx.cardview.widget.CardView>
+     </androidx.constraintlayout.widget.ConstraintLayout>-->
 
 
 
