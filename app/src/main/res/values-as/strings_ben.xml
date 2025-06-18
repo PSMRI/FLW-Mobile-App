@@ -3,7 +3,7 @@
     <string name="marital_status">বৈবাহিক স্থিতি</string>
     <string name="relation_with_family_head">পৰিৱাৰ প্ৰধানৰ সৈতে সম্পৰ্ক</string>
     <string name="other_enter_relation_to_head">অন্য - পৰিৱাৰ প্ৰধানলৈ সম্পৰ্ক লিখক</string>
-    <string name="community">সমাজ</string>
+    <string name="community">সমুদায়</string>
     <string name="religion">ধৰ্ম</string>
     <string name="other_enter_religion">অন্য - ধৰ্ম লিখক</string>
     <string name="has_aadhaar_number">আধাৰ নম্বৰ আছে</string>
@@ -18,7 +18,7 @@
     <string name="father_s_name">পিতৃৰ নাম</string>
     <string name="mother_s_name">মাতৃৰ নাম</string>
     <string name="mobile_number_of">ৰ মোবাইল নম্বৰ</string>
-    <string name="other_mobile_number_of">অন্য - ৰ মোবাইল নম্বৰ</string>
+    <string name="other_mobile_number_of">অন্যান্য - মোবাইল নম্বৰ</string>
     <string name="form_name">ফৰ্মৰ নাম</string>
     <string name="rch_id_ben">RCH ID</string>
     <string name="nbr_age">বয়স</string>
@@ -26,7 +26,7 @@
     <string name="nbr_gender">লিংগ</string>
     <string name="nbr_image">ফটো</string>
     <string name="nbr_image_sub">কেমেৰা ব্যৱহাৰ কৰিবলৈ টিপক</string>
-    <string name="nbr_dor">নিবন্ধনৰ তাৰিখ</string>
+    <string name="nbr_dor">পঞ্জীয়নৰ তাৰিখ</string>
     <string name="nbr_nb_first_name">প্ৰথম নাম</string>
     <string name="nbr_nb_last_name">শেষ নাম / উপনাম</string>
     <string name="beneficiary_details_ben">সুবিধানুগত তথ্য</string>
@@ -49,7 +49,7 @@
     <string name="frag_new_ben_type_select_text">সুবিধানুগতের ধরন নির্বাচন করুন</string>
     <string name="frag_new_ben_reg_type_title">নিবন্ধনের জন্য সুবিধানুগতের ধরন</string>
     <string name="consent_text">সন্মতি:\n
-    মোক আশা দ্বারা ব্যাখ্যা দিয়া হৈছে, যি উদ্দেশ্যৰ বাবে এই তথ্য আৰু পৰিমাপৰ ফলাফল মোৰ ব্যক্তিগত স্বাস্থ্য প্ৰোফাইলত সংগ্ৰহ কৰা হৈছে, সেয়া মোক বোজাবলৈ প্ৰদান কৰা হৈছে আৰু মোৰ সন্মতি প্ৰদান কৰোৱাৰ বাবে যি এটি সংগৰোহ কৰিব আৰু মোৰ ব্যক্তিগত স্বাস্থ্য প্ৰোফাইলত সংগ্ৰহ কৰিব সেয়া আমি মন্তব্য দিয়া হৈছে।</string>
+    আশাই মোক বুজাইছে, যিটো উদ্দেশ্যৰ বাবে মোৰ পৰা তথ্য আৰু জোখ-মাখৰ তথ্য সংগ্ৰহ কৰা হৈছে, মই বুজি পোৱা ভাষাত আৰু মই মোৰ ব্যক্তিগত স্বাস্থ্য প্ৰফাইলত তথ্য আৰু জোখ-মাখৰ তথ্য সংগ্ৰহ কৰিবলৈ মোৰ সন্মতি দিছো।</string>
     <string name="disagree">অসম্মত</string>
     <string name="agree">সম্মত</string>
     <string name="name_ben">নাম</string>
@@ -111,7 +111,7 @@
         <item>আইতা</item>আইতা
         <item>বেহীৰীৰ পিতা</item>
         <item>বেহীৰীৰ মা</item>
-        <item>ককা</item>
+        <item>ককাদেউতা</item>
         <item>শহুৰেক</item>
         <item>নাতি</item>
         <item>জোঁৱাই</item>
@@ -133,7 +133,7 @@
         <item>আইতা</item>
         <item>বেহীৰীৰ পিতা</item>
         <item>শাহুআই</item>
-        <item>ককা</item>
+        <item>ককাদেউতা</item>
         <item>শহুৰেক</item>
         <item>নাতি</item>
         <item>জোঁৱাই</item>
@@ -147,7 +147,7 @@
         <item>গৰু</item>
         <item>ভতিজী</item>
         <item>পুত্ৰ</item>
-        <item>ককা</item>
+        <item>ককাদেউতা</item>
         <item>শহুৰেক</item>
         <item>নাতি</item>
         <item>জোঁৱাই</item>
