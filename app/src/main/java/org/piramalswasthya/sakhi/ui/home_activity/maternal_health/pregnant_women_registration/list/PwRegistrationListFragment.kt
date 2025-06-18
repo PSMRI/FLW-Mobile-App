@@ -18,17 +18,23 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.PwRegistrationListAdapter
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.AlertFilterBinding
 import org.piramalswasthya.sakhi.databinding.AlertNewBenBinding
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchAndToggleRvButtonBinding
 import org.piramalswasthya.sakhi.model.BenWithPwrDomain
 import org.piramalswasthya.sakhi.model.Gender
+import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.all_household.AllHouseholdFragmentDirections
 import timber.log.Timber
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class PwRegistrationListFragment : Fragment() {
+
+    @Inject
+    lateinit var prefDao: PreferenceDao
 
     private var _binding: FragmentDisplaySearchAndToggleRvButtonBinding? = null
     private val binding: FragmentDisplaySearchAndToggleRvButtonBinding
@@ -131,10 +137,21 @@ class PwRegistrationListFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            (it as HomeActivity).updateActionBar(
+            (it as SupervisorActivity).updateActionBar(
                 R.drawable.ic__pwr,
                 getString(R.string.icon_title_pmr)
             )
+//            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+//                (it as HomeActivity).updateActionBar(
+//                    R.drawable.ic__pwr,
+//                    getString(R.string.icon_title_pmr)
+//                )
+//            } else {
+//                (it as SupervisorActivity).updateActionBar(
+//                    R.drawable.ic__pwr,
+//                    getString(R.string.icon_title_pmr)
+//                )
+//            }
         }
     }
 

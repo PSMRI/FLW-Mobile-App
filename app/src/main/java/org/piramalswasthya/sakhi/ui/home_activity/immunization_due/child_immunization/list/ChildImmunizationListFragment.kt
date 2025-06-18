@@ -21,12 +21,18 @@ import org.piramalswasthya.sakhi.adapters.ImmunizationBenListAdapter
 //import org.piramalswasthya.sakhi.adapters.ImmunizationBenListAdapter
 import org.piramalswasthya.sakhi.adapters.ImmunizationBirthDoseCategoryAdapter
 import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentChildImmunizationListBinding
+import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import timber.log.Timber
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class ChildImmunizationListFragment : Fragment(),ImmunizationBirthDoseCategoryAdapter.CategoryClickListener{
+class ChildImmunizationListFragment : Fragment(),ImmunizationBirthDoseCategoryAdapter.CategoryClickListener {
+
+    @Inject
+    lateinit var prefDao: PreferenceDao
 
     private var _binding: FragmentChildImmunizationListBinding? = null
     private val binding: FragmentChildImmunizationListBinding
@@ -127,10 +133,21 @@ class ChildImmunizationListFragment : Fragment(),ImmunizationBirthDoseCategoryAd
     override fun onStart() {
         super.onStart()
         activity?.let {
-            (it as HomeActivity).updateActionBar(
+            (it as SupervisorActivity).updateActionBar(
                 R.drawable.ic__immunization,
                 getString(R.string.child_immunization_list)
             )
+//            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+//                (it as HomeActivity).updateActionBar(
+//                    R.drawable.ic__immunization,
+//                    getString(R.string.child_immunization_list)
+//                )
+//            } else {
+//                (it as SupervisorActivity).updateActionBar(
+//                    R.drawable.ic__immunization,
+//                    getString(R.string.child_immunization_list)
+//                )
+//            }
         }
     }
 

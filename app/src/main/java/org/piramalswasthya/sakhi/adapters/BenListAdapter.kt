@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.RvItemBenBinding
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.model.HouseHoldBasicDomain
@@ -18,7 +19,8 @@ class BenListAdapter(
     private val showSyncIcon: Boolean = false,
     private val showAbha: Boolean = false,
     private val showCall: Boolean = false,
-    private val role: Int? = 0
+    private val role: Int? = 0,
+    private val pref: PreferenceDao? = null
 ) :
     ListAdapter<BenBasicDomain, BenListAdapter.BenViewHolder>(BenDiffUtilCallBack) {
     private object BenDiffUtilCallBack : DiffUtil.ItemCallback<BenBasicDomain>() {
@@ -50,7 +52,14 @@ class BenListAdapter(
             showRegistrationDate: Boolean,
             showBeneficiaries: Boolean, role: Int?,
             showCall: Boolean,
+            pref: PreferenceDao?
         ) {
+
+            if (pref?.getLoggedInUser()?.role.equals("asha", true)) {
+                binding.btnAbha.visibility = View.VISIBLE
+            } else {
+                binding.btnAbha.visibility = View.GONE
+            }
             if (!showSyncIcon) item.syncState = null
             binding.ben = item
             binding.clickListener = clickListener
@@ -120,7 +129,8 @@ class BenListAdapter(
             showRegistrationDate,
             showBeneficiaries,
             role,
-            showCall
+            showCall,
+            pref
         )
     }
 

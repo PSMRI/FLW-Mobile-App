@@ -328,6 +328,10 @@ object WorkerUtils {
             OneTimeWorkRequestBuilder<PullChildHBNCFromAmritWorker>()
                 .setConstraints(networkOnlyConstraint)
                 .build()
+        val pullAshaWorkRequest =
+            OneTimeWorkRequestBuilder<PullIncentiveWorker>()
+                .setConstraints(networkOnlyConstraint)
+                .build()
         val setSyncCompleteWorker = OneTimeWorkRequestBuilder<UpdatePrefForPullCompleteWorker>()
             .build()
         val pullMalariaWorkRequest = OneTimeWorkRequestBuilder<PullMalariaFromAmritWorker>()
