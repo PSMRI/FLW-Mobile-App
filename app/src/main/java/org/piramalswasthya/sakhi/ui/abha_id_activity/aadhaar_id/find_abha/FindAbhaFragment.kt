@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +21,9 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.FragmentFindAbhaBinding
 import org.piramalswasthya.sakhi.network.Abha
 import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.AadhaarIdViewModel
+import org.piramalswasthya.sakhi.utils.HelperUtil
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 
 @AndroidEntryPoint
@@ -110,6 +114,12 @@ class FindAbhaFragment : Fragment() {
             }
         }
 
+        viewModel.txnId.observe(viewLifecycleOwner) {
+            it?.let {
+                parentViewModel.setOtpTxnId(it)
+            }
+        }
+
         viewModel.abha.observe(viewLifecycleOwner) {
             it?.let {
                 binding.tilSelectAbha.isEnabled = true
@@ -126,9 +136,6 @@ class FindAbhaFragment : Fragment() {
             }
         }
 
-        binding.aadharConsentCheckBox.setOnCheckedChangeListener { _, ischecked ->
-            binding.btnGenerateOtp.isEnabled = isValidAbha && isValidMobile && (parentViewModel.consentChecked.value==true)
-        }
 
         binding.aadharDisclaimer.setOnClickListener {
             if(parentViewModel.beneficiaryName.value!=null && !parentViewModel.beneficiaryName.value.isNullOrBlank()) {
@@ -147,16 +154,23 @@ class FindAbhaFragment : Fragment() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                isValidMobile = (s != null) && (s.length == 10)
+                isValidMobile = (s != null) && isValidMobileNumber(s.toString())
+
                 if (isValidMobile) {
                     parentViewModel.setMobileNumber(s.toString())
+                    binding.tilMobileNumber.error = null
                     binding.btnSearchAbha.isEnabled = isValidMobile
                     binding.ivValidMobile.setImageResource(R.drawable.ic_check_circle_green)
-//                    binding.btnSearchAbha.isEnabled = isValidAbha && isValidMobile
-//                            && binding.aadharConsentCheckBox.isChecked
+
                 }else{
+                    binding.tilMobileNumber.error = getString(R.string.str_invalid_mobile_no)
+                    binding.btnSearchAbha.isEnabled = isValidMobile
                     binding.ivValidMobile.setImageResource(R.drawable.ic_check_circle_grey)
                 }
+                if(s.isNullOrEmpty()){
+                    binding.tilMobileNumber.error = null
+                }
+                binding.tvErrorTextAbha.visibility = View.GONE
             }
 
         })
@@ -164,7 +178,10 @@ class FindAbhaFragment : Fragment() {
         (binding.tilSelectAbha.getEditText() as AutoCompleteTextView).onItemClickListener =
             OnItemClickListener { adapterView, view, position, id ->
                 selectedAbhaIndex = abhaData[position].index
+                parentViewModel.setSelectedAbhaIndex(selectedAbhaIndex.toString())
                 isValidAbha = true
+                binding.btnGenerateOtp.isEnabled = isValidAbha && isValidMobile
+
             }
 
         // observing error message from parent and updating error text field
@@ -182,7 +199,7 @@ class FindAbhaFragment : Fragment() {
                 binding.clBenName.visibility = View.GONE
 
             }else{
-                binding.clBenName.visibility = View.VISIBLE
+              //  binding.clBenName.visibility = View.VISIBLE
             }
 
         }
@@ -194,7 +211,7 @@ class FindAbhaFragment : Fragment() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                if((s != null)){
+                if((s != null&& HelperUtil.isValidName(s.toString()))){
                     binding.tvErrorTextBenName.visibility = View.GONE
                     binding.tvErrorTextBenName.text = ""
                     binding.ivValidBenName.setImageResource(R.drawable.ic_check_circle_green)
@@ -205,18 +222,17 @@ class FindAbhaFragment : Fragment() {
                     binding.ivValidBenName.setImageResource(R.drawable.ic_check_circle_grey)
                 }
 
-                isValidBenName = (s != null && s.length >= 3)
+                isValidBenName = (s != null && s.length >= 3 && HelperUtil.isValidName(s.toString()))
                 if (isValidBenName)
                     parentViewModel.setBeneficiaryName(s.toString())
-                binding.btnGenerateOtp.isEnabled = isValidAbha && isValidMobile && (parentViewModel.consentChecked.value==true)
+                binding.btnGenerateOtp.isEnabled = isValidAbha && isValidMobile //&& (parentViewModel.consentChecked.value==true)
 
             }
 
         })
-
-        parentViewModel.consentChecked.observe(viewLifecycleOwner){
-            if (it ==true){
-                binding.btnGenerateOtp.isEnabled = isValidAbha && isValidMobile && (parentViewModel.consentChecked.value==true)
+        viewModel.otpMobileNumberMessage.observe(viewLifecycleOwner) {
+            it?.let {
+                parentViewModel.setOTPMsg(it)
             }
         }
     }
@@ -225,4 +241,13 @@ class FindAbhaFragment : Fragment() {
         viewModel.searchAbhaClicked(binding.tietMobileNumber.text.toString())
     }
 
+    fun isValidMobileNumber(str: String?): Boolean {
+        val regex = "^(\\+91[\\-\\s]?|0)?[6-9]\\d{9}$"
+        val p: Pattern = Pattern.compile(regex)
+        if (str == null) {
+            return false
+        }
+        val m: Matcher = p.matcher(str)
+        return m.matches()
+    }
 }
