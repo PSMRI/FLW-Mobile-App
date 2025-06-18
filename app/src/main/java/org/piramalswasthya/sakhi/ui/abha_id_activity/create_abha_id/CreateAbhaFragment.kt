@@ -34,6 +34,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.ResponseBody
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.FragmentCreateAbhaBinding
+import org.piramalswasthya.sakhi.helpers.AnalyticsHelper
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.AadhaarIdViewModel
 import org.piramalswasthya.sakhi.work.WorkerUtils
@@ -60,8 +61,7 @@ class CreateAbhaFragment : Fragment() {
 
     private var benId: Long = 0
 
-    @Inject
-    lateinit var firebaseAnalytics: FirebaseAnalytics
+    @Inject lateinit var analyticsHelper: AnalyticsHelper
 
     val args: CreateAbhaFragmentArgs by lazy {
         CreateAbhaFragmentArgs.fromBundle(requireArguments())
@@ -142,9 +142,7 @@ class CreateAbhaFragment : Fragment() {
 
         }else{
             val timestamp = System.currentTimeMillis()
-            firebaseAnalytics.logEvent("map_ben_to_health_id_request", Bundle().apply {
-                putLong("map_ben_to_health_id_request_time", timestamp)
-            })
+            analyticsHelper.logCustomTimestampEvent("map_ben_to_health_id_request",timestamp)
             viewModel.mapBeneficiaryToHealthId(benId, benRegId)
         }
 
@@ -228,10 +226,7 @@ class CreateAbhaFragment : Fragment() {
         viewModel.state.observe(viewLifecycleOwner) {
             if (it.name == "ABHA_GENERATE_SUCCESS"){
                 val timestamp = System.currentTimeMillis()
-                firebaseAnalytics.logEvent("map_ben_to_health_id_reponse", Bundle().apply {
-                    putLong("map_ben_to_health_id_reponse_time", timestamp)
-                })
-
+                analyticsHelper.logCustomTimestampEvent("map_ben_to_health_id_reponse",timestamp)
             }
             if (it.name == "DOWNLOAD_SUCCESS") {
                 binding.clDownloadAbha.visibility = View.INVISIBLE

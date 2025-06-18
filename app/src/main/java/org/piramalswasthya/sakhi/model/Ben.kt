@@ -1290,8 +1290,8 @@ data class BenRegCache(
             dob = getDateStringFromLong(dob) ?: "",
             gender = gender.toString(),
             genderId = genderId,
-            maritalStatusID = if (isKid) null else genDetails?.maritalStatusId?.toString() ?: "",
-            maritalStatusName = if (isKid) null else genDetails?.maritalStatus ?: "",
+            maritalStatusID = if (isKid) null else genDetails?.maritalStatusId?.toString() ?: null,
+            maritalStatusName = if (isKid) null else genDetails?.maritalStatus ?: null,
         )
     }
 
