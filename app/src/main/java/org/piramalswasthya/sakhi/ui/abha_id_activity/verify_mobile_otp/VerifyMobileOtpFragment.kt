@@ -37,7 +37,7 @@ class VerifyMobileOtpFragment : Fragment() {
     }
 
 
-    private var timer = object : CountDownTimer(30000, 1000) {
+    private var timer = object : CountDownTimer(60000, 1000) {
         override fun onTick(millisUntilFinished: Long) {
             val sec = millisUntilFinished / 1000 % 60
           //  binding.timerResendOtp.text = "Didn't receive OTP? Wait 00:$sec seconds"

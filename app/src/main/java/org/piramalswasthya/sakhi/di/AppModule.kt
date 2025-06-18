@@ -31,6 +31,8 @@ import org.piramalswasthya.sakhi.database.room.dao.PncDao
 import org.piramalswasthya.sakhi.database.room.dao.SyncDao
 import org.piramalswasthya.sakhi.database.room.dao.TBDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.AnalyticsHelper
+import org.piramalswasthya.sakhi.helpers.ApiAnalyticsInterceptor
 import org.piramalswasthya.sakhi.network.AbhaApiService
 import org.piramalswasthya.sakhi.network.AmritApiService
 import org.piramalswasthya.sakhi.network.interceptors.ContentTypeInterceptor
@@ -64,13 +66,14 @@ object AppModule {
     @Singleton
     @Provides
     @Named("uatClient")
-    fun provideTmcHttpClient(): OkHttpClient {
+    fun provideTmcHttpClient(apiAnalyticsInterceptor: ApiAnalyticsInterceptor): OkHttpClient {
         return baseClient
             .newBuilder()
             .connectTimeout(60, TimeUnit.SECONDS)
             .readTimeout(60, TimeUnit.SECONDS)
             .writeTimeout(60, TimeUnit.SECONDS)
             .addInterceptor(TokenInsertTmcInterceptor())
+            .addInterceptor(apiAnalyticsInterceptor)
             .build()
     }
 
@@ -124,8 +127,18 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideFirebaseAnalytics(@ApplicationContext context: Context): FirebaseAnalytics {
-        return FirebaseAnalytics.getInstance(context)
+    fun provideAnalyticsHelper(
+        @ApplicationContext context: Context
+    ): AnalyticsHelper {
+        return AnalyticsHelper(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideApiAnalyticsInterceptor(
+        @ApplicationContext context: Context
+    ): ApiAnalyticsInterceptor {
+        return ApiAnalyticsInterceptor(context)
     }
 
     @Singleton

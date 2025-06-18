@@ -15,6 +15,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.hilt.android.AndroidEntryPoint
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.FragmentAadhaarOtpBinding
+import org.piramalswasthya.sakhi.helpers.AnalyticsHelper
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.AadhaarIdViewModel
 import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_otp.AadhaarOtpViewModel.State
@@ -29,12 +30,11 @@ class AadhaarOtpFragment : Fragment() {
 
     private val viewModel: AadhaarOtpViewModel by viewModels()
 
-    @Inject
-    lateinit var firebaseAnalytics: FirebaseAnalytics
+    @Inject lateinit var analyticsHelper: AnalyticsHelper
 
     private val parentViewModel: AadhaarIdViewModel by viewModels({ requireActivity() })
 
-    private var timer = object : CountDownTimer(30000, 1000) {
+    private var timer = object : CountDownTimer(60000, 1000) {
         override fun onTick(millisUntilFinished: Long) {
             val sec = millisUntilFinished / 1000 % 60
           //  binding.timerResendOtp.text = "Resend OTP in 00:$sec"
@@ -155,9 +155,7 @@ class AadhaarOtpFragment : Fragment() {
                     } else if (parentViewModel.abhaMode.value == AadhaarIdViewModel.Abha.CREATE &&
                         parentViewModel.mobileNumber == viewModel.mobileNumber) {
                         val timestamp = System.currentTimeMillis()
-                        firebaseAnalytics.logEvent("create_abha_reponse_timestamp", Bundle().apply {
-                            putLong("create_abha_response_time", timestamp)
-                        })
+                        analyticsHelper.logCustomTimestampEvent("create_abha_reponse",timestamp)
                         findNavController().navigate(
                             AadhaarOtpFragmentDirections.actionAadhaarOtpFragmentToCreateAbhaFragment(
                                 viewModel.txnId, viewModel.name, viewModel.phrAddress, viewModel.abhaNumber,viewModel.abhaResponse
