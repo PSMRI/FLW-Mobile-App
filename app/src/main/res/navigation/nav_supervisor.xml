@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/supervisor_navigation"
+    app:startDestination="@+id/supervisorFragment">
+
+
+    <fragment
+        android:id="@+id/supervisorFragment"
+        android:name="org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.SupervisorFragment"
+        android:label="@string/menu_supervisor"
+        tools:layout="@layout/fragment_supervisor">
+        <action
+            android:id="@+id/action_nav_supervisor_to_allHouseholdFragments"
+            app:destination="@id/allHouseholdFragments" />
+        <action
+            android:id="@+id/action_nav_supervisor_to_allBenFragments"
+            app:destination="@id/allBenFragments" />
+        <action
+            android:id="@+id/action_nav_supervisor_to_eligibleCoupleTrackingListFragments"
+            app:destination="@id/eligibleCoupleTrackingListFragments" />
+        <action
+            android:id="@+id/action_nav_supervisor_to_pwRegistrationFragments"
+            app:destination="@id/pwRegistrationFragments" />
+        <action
+            android:id="@+id/action_nav_supervisor_to_pwAncVisitsFragments"
+            app:destination="@id/pwAncVisitsFragments" />
+        <action
+            android:id="@+id/action_nav_supervisor_to_pregnantListFragments"
+            app:destination="@id/pregnantListFragments" />
+        <action
+            android:id="@+id/action_nav_supervisor_to_deliveryOutcomeListFragments"
+            app:destination="@id/deliveryOutcomeListFragments" />
+        <action
+            android:id="@+id/action_nav_supervisor_to_childImmunizationListFragments"
+            app:destination="@id/childImmunizationListFragments" />
+        <action
+            android:id="@+id/action_nav_supervisor_to_ncdListFragments"
+            app:destination="@id/ncdListFragments" />
+        <action
+            android:id="@+id/action_nav_supervisor_to_ncdPriorityListFragments"
+            app:destination="@id/ncdPriorityListFragments" />
+        <action
+            android:id="@+id/action_nav_supervisor_to_TBSuspectedListFragments"
+            app:destination="@id/TBSuspectedListFragments" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/allHouseholdFragments"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.all_household.AllHouseholdFragment"
+        android:label="@string/icon_title_household"
+        tools:layout="@layout/fragment_display_search_rv_button">
+    </fragment>
+
+    <fragment
+        android:id="@+id/householdMembersFragments"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.all_household.household_members.HouseholdMembersFragment"
+        android:label="@string/household_members"
+        tools:layout="@layout/fragment_display_search_rv_button">
+        <argument
+            android:name="hhId"
+            app:argType="long" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/allBenFragments"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.all_ben.AllBenFragment"
+        android:label="@string/icon_title_ben"
+        tools:layout="@layout/fragment_all_ben">
+        <argument
+            android:name="source"
+            android:defaultValue="0"
+            app:argType="integer" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/eligibleCoupleTrackingListFragments"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.eligible_couple.tracking.list.EligibleCoupleTrackingListFragment"
+        android:label="@string/eligible_couple_tracking_list">
+        <argument
+            android:name="source"
+            android:defaultValue="0"
+            app:argType="integer" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/pwRegistrationFragments"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_women_registration.list.PwRegistrationListFragment"
+        android:label="@string/icon_title_pmr"
+        tools:layout="@layout/fragment_display_search_rv_button">
+    </fragment>
+
+    <fragment
+        android:id="@+id/pwAncVisitsFragments"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.list.PwAncVisitsListFragment"
+        android:label="@string/icon_title_pmt"
+        tools:layout="@layout/fragment_display_search_rv_button">
+        <argument
+            android:name="source"
+            android:defaultValue="0"
+            app:argType="integer" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/pregnantListFragments"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.pregnant_women.list.PregnantListFragment"
+        android:label="@string/pregnant_women">
+    </fragment>
+
+    <fragment
+        android:id="@+id/deliveryOutcomeListFragments"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.maternal_health.delivery_outcome.list.DeliveryOutcomeListFragment"
+        android:label="@string/delivery_outcome_list">
+    </fragment>
+
+    <fragment
+        android:id="@+id/childImmunizationListFragments"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.immunization_due.child_immunization.list.ChildImmunizationListFragment"
+        android:label="@string/child_immunization"
+        tools:layout="@layout/fragment_child_immunization_list">
+    </fragment>
+
+    <fragment
+        android:id="@+id/ncdListFragments"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.ncd_list.NcdListFragment"
+        android:label="@string/ncd_list"
+        tools:layout="@layout/fragment_ncd_list" />
+
+    <fragment
+        android:id="@+id/ncdPriorityListFragments"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.ncd_priority_list.NcdPriorityListFragment"
+        android:label="@string/ncd_priority_list"
+        tools:layout="@layout/fragment_ncd_priority_list" />
+
+    <fragment
+        android:id="@+id/TBSuspectedListFragments"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_suspected.list.TBSuspectedListFragment"
+        android:label="@string/tb_suspected_list">
+    </fragment>
+
+</navigation>

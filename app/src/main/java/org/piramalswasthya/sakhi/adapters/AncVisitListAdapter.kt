@@ -6,13 +6,15 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.RvItemPregnancyVisitBinding
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.model.BenWithAncListDomain
 import java.util.concurrent.TimeUnit
 
 class AncVisitListAdapter(private val clickListener: PregnancyVisitClickListener? = null,
-                          private val showCall: Boolean = false) :
+                          private val showCall: Boolean = false,
+                          private val pref: PreferenceDao? = null) :
     ListAdapter<BenWithAncListDomain, AncVisitListAdapter.PregnancyVisitViewHolder>(
         MyDiffUtilCallBack
     ) {
@@ -38,8 +40,17 @@ class AncVisitListAdapter(private val clickListener: PregnancyVisitClickListener
         }
 
         fun bind(
-            item: BenWithAncListDomain, clickListener: PregnancyVisitClickListener?, showCall: Boolean
+            item: BenWithAncListDomain, clickListener: PregnancyVisitClickListener?, showCall: Boolean, pref: PreferenceDao?
         ) {
+
+            if (pref?.getLoggedInUser()?.role.equals("asha", true)) {
+                binding.btnPmsma.visibility = View.VISIBLE
+                binding.btnAddAnc.visibility = View.VISIBLE
+            } else {
+                binding.btnPmsma.visibility = View.INVISIBLE
+                binding.btnAddAnc.visibility = View.INVISIBLE
+            }
+
             if (item.ancDate == 0L) {
                 binding.ivFollowState.visibility = View.GONE
             } else if (item.ancDate < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(90) &&
@@ -48,7 +59,6 @@ class AncVisitListAdapter(private val clickListener: PregnancyVisitClickListener
             } else {
                 binding.ivFollowState.visibility = View.GONE
             }
-
 
             if (showCall) {
                 binding.ivCall.visibility = View.VISIBLE
@@ -74,7 +84,7 @@ class AncVisitListAdapter(private val clickListener: PregnancyVisitClickListener
     ) = PregnancyVisitViewHolder.from(parent)
 
     override fun onBindViewHolder(holder: PregnancyVisitViewHolder, position: Int) {
-        holder.bind(getItem(position), clickListener, showCall)
+        holder.bind(getItem(position), clickListener, showCall, pref)
     }
 
 

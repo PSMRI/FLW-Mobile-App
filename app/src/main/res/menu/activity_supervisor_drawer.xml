@@ -5,13 +5,8 @@
 
     <group
         android:id="@+id/menu_group_top"
-
         android:checkableBehavior="single">
 
-        <item
-            android:id="@+id/homeFragment"
-            android:icon="@drawable/ic_home"
-            android:title="@string/home" />
         <item
             android:id="@+id/supervisorFragment"
             android:icon="@drawable/ic_home"
@@ -20,64 +15,44 @@
             android:id="@+id/ashaProfileFragment"
             android:icon="@drawable/ic_person"
             android:title="@string/asha_profile" />
+
     </group>
 
     <group>
+
         <item
             android:id="@+id/sync_pending_records"
             android:checkable="false"
             android:icon="@drawable/ic_synced"
             android:title="@string/sync_records" />
+
     </group>
 
-    <!--        <item-->
-    <!--            android:id="@+id/dashboardFragment"-->
-    <!--            android:icon="@drawable/ic_dashboard"-->
-    <!--            android:title="Dashboard" />-->
     <group>
+
         <item
             android:id="@+id/abha_id_activity"
             android:checkable="false"
             android:icon="@drawable/ic_completed_tasks"
             android:title="@string/create_abha_number" />
+
     </group>
+
     <group
         android:checkableBehavior="single">
-        <item
-            android:id="@+id/incentivesFragment"
-            android:icon="@drawable/ic__incentive"
-            android:title="@string/incentive_fragment_title" />
+
         <item
             android:id="@+id/ChatFragment"
             android:icon="@drawable/baseline_chat_24"
             android:visible="true"
             android:title="@string/help_and_support" />
+
     </group>
 
-
-    <!--        <item-->
-    <!--            android:id="@+id/getBenFragment"-->
-    <!--            android:icon="@drawable/ic_synced"-->
-    <!--            android:title="Get Data" />-->
-
-
-    <!--    <group-->
-    <!--        android:id="@+id/menu_group_middle"-->
-    <!--        android:checkableBehavior="single">-->
-    <!--        <item-->
-    <!--            android:id="@+id/aboutUsFragment"-->
-    <!--            android:icon="@drawable/ic_info"-->
-    <!--            android:title="@string/about" />-->
-
-    <!--        <item-->
-    <!--            android:id="@+id/helpFragment"-->
-    <!--            android:icon="@drawable/ic_help"-->
-    <!--            android:title="@string/help" />-->
-    <!--    </group>-->
     <group
-
         android:id="@+id/menu_group_bottom"
         android:checkableBehavior="single">
+
         <item
             android:id="@+id/menu_delete_account"
             android:checkable="false"
@@ -88,6 +63,7 @@
             android:checkable="false"
             android:icon="@drawable/ic_logout"
             android:title="@string/logout" />
+
     </group>
 
 
