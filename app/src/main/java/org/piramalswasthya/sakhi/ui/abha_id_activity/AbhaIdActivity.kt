@@ -158,7 +158,7 @@ class AbhaIdActivity : AppCompatActivity() {
 
     private fun setUpActionBar() {
         setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
 //        NavigationUI.setupWithNavController(binding.toolbar, navController)
         NavigationUI.setupActionBarWithNavController(this, navController)
     }

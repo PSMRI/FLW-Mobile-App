@@ -4,6 +4,7 @@ import android.annotation.TargetApi
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.res.Configuration
+import android.content.res.Resources
 import android.os.Build
 import java.util.*
 
@@ -12,7 +13,8 @@ import java.util.*
 class MyContextWrapper(base: Context) : ContextWrapper(base) {
     companion object {
         fun wrap(context: Context, applicationContext: Context, language: String): ContextWrapper {
-            val config: Configuration = context.resources.configuration
+            updateBaseContextLocale(language,context)
+          /*  val config: Configuration = context.resources.configuration
             val sysLocale: Locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 getSystemLocale(config)
             } else {
@@ -30,7 +32,10 @@ class MyContextWrapper(base: Context) : ContextWrapper(base) {
                     .updateConfiguration(config, context.resources.displayMetrics)
                 applicationContext.resources
                     .updateConfiguration(config, applicationContext.resources.displayMetrics)
-            }
+            }*/
+
+
+
             return MyContextWrapper(context)
         }
 
@@ -51,6 +56,35 @@ class MyContextWrapper(base: Context) : ContextWrapper(base) {
         private fun setSystemLocale(config: Configuration, locale: Locale?) {
             config.setLocale(locale)
         }
+
+
+
+        fun updateBaseContextLocale(selectedLang:String,context: Context): Context? {
+            val locale = Locale(selectedLang)
+            Locale.setDefault(locale)
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                updateResourcesLocale(context, locale)
+            } else updateResourcesLocaleLegacy(context, locale)
+        }
+
+        @TargetApi(Build.VERSION_CODES.N)
+        fun updateResourcesLocale(context: Context, locale: Locale): Context? {
+            val configuration = context.resources.configuration
+            configuration.setLocale(locale)
+            return context.createConfigurationContext(configuration)
+
+        }
+
+        fun updateResourcesLocaleLegacy(context: Context, locale: Locale): Context? {
+            val resources: Resources = context.resources
+            val configuration: Configuration = resources.configuration
+            configuration.locale = locale
+            resources.updateConfiguration(configuration, resources.displayMetrics)
+            return context
+        }
+
+
+
     }
 
 }

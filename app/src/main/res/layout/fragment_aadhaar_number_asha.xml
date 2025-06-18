@@ -35,6 +35,8 @@
                 android:padding="@dimen/padding_normal"
                 android:visibility="gone"
                 android:fontFamily="@font/roboto_italic"
+                android:textStyle="bold"
+                android:textAllCaps="true"
                 android:textColor="?attr/colorPrimary"
                 android:textAppearance="?attr/textAppearanceHeadline6"
                 app:layout_constraintStart_toStartOf="parent"
@@ -43,12 +45,14 @@
 
             <TextView
                 android:id="@+id/textView3"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="20dp"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:text="@string/enter_aadhaar_number"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:text="@string/enter_number_for_abha"
                 android:textAppearance="?attr/textAppearanceHeadline6"
+                app:layout_constraintEnd_toStartOf="@+id/ivValidAadhaar"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/ben_name" />
 
@@ -62,11 +66,11 @@
                 app:layout_constraintBottom_toBottomOf="@+id/textView3"
                 app:layout_constraintEnd_toEndOf="parent"/>
 
-            <com.example.myapplication.addharEditText.BlockEditText
+            <org.piramalswasthya.sakhi.helpers.addharEditText.BlockEditText
                 android:id="@+id/tiet_aadhaar_number"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="@dimen/_15sdp"
                 android:layout_marginHorizontal="20dp"
                 app:defaultLength="4"
                 app:inputType="Integer"
@@ -100,50 +104,17 @@
                 app:layout_constraintStart_toStartOf="@+id/tiet_aadhaar_number"
                 app:layout_constraintTop_toBottomOf="@+id/tiet_aadhaar_number"/>
 
-            <!--     <com.google.android.material.textfield.TextInputLayout
-                  android:id="@+id/til_aadhaar_number"
-                  style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:layout_marginHorizontal="8dp"
-                  android:hint="@string/aadhaar_number"
-                  android:paddingTop="@dimen/padding_normal"
-                  android:paddingBottom="@dimen/padding_normal"
-                  app:passwordToggleEnabled="true"
-                  app:layout_constraintEnd_toEndOf="parent"
-                  app:layout_constraintStart_toStartOf="parent"
-                  app:layout_constraintTop_toBottomOf="@+id/textView3">
-
-
-               <com.google.android.material.textfield.TextInputEditText
-                      android:id="@+id/tiet_aadhaar_number"
-                      android:layout_width="match_parent"
-                      android:layout_height="match_parent"
-                      android:inputType="textPassword"
-                      android:maxLength="12"
-                      android:singleLine="true"
-                      android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
-
-                  <TextView
-                      android:id="@+id/tv_error_text"
-                      android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:layout_marginTop="@dimen/margin_small"
-                      android:layout_weight="1"
-                      android:text="@string/textview"
-                      android:textColor="@android:color/holo_red_light"
-                      android:visibility="gone" />
-              </com.google.android.material.textfield.TextInputLayout>-->
-
             <TextView
                 android:id="@+id/textView4"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="20dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_15sdp"
                 android:text="@string/enter_mobile_number"
                 android:textAppearance="?attr/textAppearanceHeadline6"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/ivValidMobile"
                 app:layout_constraintTop_toBottomOf="@+id/tv_error_text" />
 
             <ImageView
@@ -163,8 +134,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20dp"
                 android:hint="@string/mobile_number"
-                android:paddingTop="@dimen/padding_normal"
-                android:paddingBottom="@dimen/padding_normal"
+                android:layout_marginTop="@dimen/_15sdp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView4">
@@ -174,19 +144,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:inputType="number"
-                    android:maxLength="12"
+                    android:maxLength="10"
                     android:singleLine="true"
                     android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
 
-                <TextView
-                    android:id="@+id/tv_error_text_mobile"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin_small"
-                    android:layout_weight="1"
-                    android:text="@string/textview"
-                    android:textColor="@android:color/holo_red_light"
-                    android:visibility="gone" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -202,7 +163,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="20dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="@dimen/_15sdp"
                     android:text="@string/enter_ben_name"
                     android:textAppearance="?attr/textAppearanceHeadline6"
                     app:layout_constraintStart_toStartOf="parent"
@@ -224,10 +185,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="20dp"
-                    android:layout_marginTop="@dimen/_10sdp"
                     android:hint="@string/tv_ben_name_ph"
-                    android:paddingTop="@dimen/padding_normal"
-                    android:paddingBottom="@dimen/padding_normal"
+                    android:layout_marginTop="@dimen/_15sdp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textView6">
@@ -248,7 +207,6 @@
                         android:layout_marginTop="@dimen/margin_small"
                         android:layout_weight="1"
                         android:text="@string/textview"
-
                         android:textColor="@android:color/holo_red_light"
                         android:visibility="gone" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -256,33 +214,41 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <View
+                android:id="@+id/clickview"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="@dimen/margin_normal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/clBenName"/>
 
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/aadharDisclaimer"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin_normal"
-                android:layout_marginHorizontal="@dimen/_20sdp"
+                android:layout_marginStart="@dimen/_10sdp"
                 android:visibility="visible"
                 android:enabled="false"
-                app:buttonTint="@color/md_theme_light_primary"
-                android:text="@string/aadhar_disclaimer_consent_disclaimer"
+                android:clickable="false"
+                android:focusableInTouchMode="false"
+                app:buttonTint="@color/color_consent_text"
                 android:fontFamily="@font/roboto_bold"
-                android:textColor="?attr/colorPrimary"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/clBenName" />
 
-           <!-- <TextView
-                android:id="@+id/aadharDisclaimer"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/aadharDisclaimerText"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_normal"
-                android:layout_marginHorizontal="@dimen/_20sdp"
-                android:fontFamily="@font/roboto_bold"
-                android:padding="@dimen/padding_normal"
-                android:visibility="gone"
+                android:layout_marginStart="-10dp"
                 android:text="@string/aadhar_disclaimer_consent_disclaimer"
-                android:textColor="?attr/colorPrimary"
-                app:layout_constraintTop_toBottomOf="@id/clBenName" />-->
+                android:fontFamily="@font/roboto_bold"
+                android:textColor="@color/color_consent_text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/aadharDisclaimer"
+                app:layout_constraintTop_toTopOf="@+id/aadharDisclaimer"
+                app:layout_constraintBottom_toBottomOf="@+id/aadharDisclaimer"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_verify_aadhaar"
