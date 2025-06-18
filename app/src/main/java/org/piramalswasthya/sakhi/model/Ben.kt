@@ -189,6 +189,22 @@ data class BenBasicCache(
 
         }
 
+        fun getYearsFromDate(dateString: String): Int {
+            val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
+            val inputDate = sdf.parse(dateString) ?: return -1
+
+            val dobCalendar = Calendar.getInstance()
+            dobCalendar.time = inputDate
+            val today = Calendar.getInstance()
+            var years = today.get(Calendar.YEAR) - dobCalendar.get(Calendar.YEAR)
+            if (today.get(Calendar.DAY_OF_YEAR) < dobCalendar.get(Calendar.DAY_OF_YEAR)) {
+                years--
+            }
+
+            return years
+        }
+
+
         fun getAgeUnitFromDob(dob: Long): AgeUnit {
             val calDob = Calendar.getInstance().apply {
                 timeInMillis = dob

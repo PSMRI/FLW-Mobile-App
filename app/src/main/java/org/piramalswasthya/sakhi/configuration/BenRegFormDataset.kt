@@ -11,6 +11,7 @@ import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.setToStartOfTheDay
 import org.piramalswasthya.sakhi.model.AgeUnit
 import org.piramalswasthya.sakhi.model.BenBasicCache.Companion.getAgeFromDob
+import org.piramalswasthya.sakhi.model.BenBasicCache.Companion.getYearsFromDate
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.Gender
@@ -1885,7 +1886,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         ) != -1
         val listChanged3 =
             if (maritalStatus.inputType == TEXT_VIEW) -1 else {
-                if (getAgeFromDob(getLongFromDate(agePopup.value)) <= Konstants.maxAgeForAdolescent) triggerDependants(
+                if (getYearsFromDate(agePopup.value.toString()) <= Konstants.maxAgeForAdolescent) triggerDependants(
                     source = rchId,
                     addItems = listOf(birthCertificateNumber, placeOfBirth),
                     removeItems = listOf(
