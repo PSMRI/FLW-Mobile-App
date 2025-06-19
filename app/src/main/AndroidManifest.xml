@@ -12,8 +12,12 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.ACCESS_SUPERUSER" />
+    <uses-permission android:name="android.permission.CALL_PHONE"/>
 
     <uses-feature android:name="android.hardware.camera" />
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="true" />
 
     <application
         android:name=".SakhiApplication"
@@ -51,6 +55,17 @@
                 android:value="" />
         </activity>
         <activity
+            android:name=".ui.asha_supervisor.SupervisorActivity"
+            android:exported="false"
+            android:label="@string/title_activity_supervisor"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan"
+            tools:ignore="LockedOrientationActivity">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".ui.login_activity.LoginActivity"
             android:exported="true"
             android:screenOrientation="portrait"
@@ -66,6 +81,18 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
+        <service
+            android:name=".ui.home_activity.FBMessaging"
+            android:exported="false" >
+            <intent-filter>
+
+                <!-- <action android:name="com.google.android.c2dm.intent.RECEIVE" /> -->
+
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
 
         <provider
             android:name="androidx.startup.InitializationProvider"

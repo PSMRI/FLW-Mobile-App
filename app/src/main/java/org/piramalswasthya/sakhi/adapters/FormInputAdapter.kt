@@ -121,6 +121,11 @@ class FormInputAdapter(
                 binding.et.isFocusable = true
                 binding.et.isFocusableInTouchMode = true
             }
+            if (isOtpVerified && item.id == 44 && item.title.equals("Contact Number")) {
+                binding.et.isClickable = false
+                binding.et.isFocusable = false
+            }
+
             if (item.title.contains("first name", true) ||
                 item.title.contains("last name", true) ||
                 item.title.contains("father's name", true) ||
@@ -598,23 +603,7 @@ class FormInputAdapter(
 
         fun bind(item: FormElement, isEnabled: Boolean, formValueListener: SendOtpClickListener?) {
             binding.form = item
-
-            if(isInternetAvailable(binding.root.context)) {
-                binding.generateOtp.isEnabled = isEnabled
-            } else {
-                binding.generateOtp.isEnabled = !isEnabled
-            }
-            if(isOtpVerified) {
-                binding.generateOtp.text = binding.generateOtp.resources.getString(R.string.verified)
-                binding.generateOtp.isEnabled = !isEnabled
-
-            } else {
-                binding.generateOtp.text = binding.generateOtp.resources.getString(R.string.generate_otp)
-
-                binding.generateOtp.isEnabled = isEnabled
-
-
-            }
+            isOtpVerified(isEnabled, isInternetAvailable(binding.root.context))
 
             binding.generateOtp.setOnClickListener {
                 formValueListener!!.onButtonClick(item,binding.generateOtp,binding.timerInSec,binding.tilEditText,isEnabled,adapterPosition,binding.et)
@@ -624,8 +613,27 @@ class FormInputAdapter(
 
         }
 
+        private fun isOtpVerified(isEnabled: Boolean, internetAvailable: Boolean) {
+            if(isOtpVerified) {
+                binding.generateOtp.text = binding.generateOtp.resources.getString(R.string.verified)
+                binding.generateOtp.isEnabled = isEnabled
+
+            } else {
+                binding.generateOtp.text = binding.generateOtp.resources.getString(R.string.send_otp)
+                if (internetAvailable){
+                    binding.generateOtp.isEnabled = isEnabled
+
+                } else {
+                    binding.generateOtp.isEnabled = !isEnabled
+
+                }
+
+            }
+        }
+
 
     }
+
 
 
     class SelectUploadImageClickListener(private val selectImageClick: (formId: Int) -> Unit) {
@@ -634,9 +642,9 @@ class FormInputAdapter(
 
     }
 
-    class ViewDocumentOnClick(private val viewDocument: () -> Unit) {
+    class ViewDocumentOnClick(private val viewDocument: (formId: Int) -> Unit) {
 
-        fun onViewDocumentClick() = viewDocument()
+        fun onViewDocumentClick(form: FormElement) = viewDocument(form.id)
 
     }
     class FileUploadInputViewHolder private constructor(private val binding: LayoutUploafFormBinding) :
@@ -958,6 +966,7 @@ class FormInputAdapter(
     class ImageClickListener(private val imageClick: (formId: Int) -> Unit) {
 
         fun onImageClick(form: FormElement) = imageClick(form.id)
+//        fun onImageClickForRef(form: FormElement) = imageClick(form.etInputType)
 
     }
 

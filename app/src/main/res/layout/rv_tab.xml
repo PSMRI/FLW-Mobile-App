@@ -16,7 +16,7 @@
         android:id="@+id/cMainLayout"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
+        android:layout_margin="15dp"
         android:background="@drawable/tab_selection"
        >
 

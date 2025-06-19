@@ -100,6 +100,8 @@
                         android:padding="@dimen/padding_small"
                         android:text="@{ben.benFullName}"
                         android:textStyle="bold"
+                        android:ellipsize="end"
+                        android:layout_marginEnd="@dimen/padding_small"
                         android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                         android:textColor="?attr/colorPrimaryVariant"
                         app:drawableLeftCompat="@drawable/ic_person"
@@ -120,6 +122,21 @@
                         android:visibility="gone"
                         app:cornerRadius="@dimen/padding_small"
                         app:layout_constraintBottom_toBottomOf="@+id/tv_hh_id" />
+
+                    <ImageView
+                        android:id="@+id/iv_call"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:padding="4dp"
+                        android:visibility="gone"
+                        android:src="@drawable/ic_call_icon"
+                        android:layout_gravity="center"
+                        android:onClick="@{()->clickListener.onClickedForCall(ben)}"
+                        android:background="?selectableItemBackgroundBorderless"
+                        android:layout_marginEnd="4dp"
+                        app:layout_constraintEnd_toEndOf="@+id/tv_hh_id"
+                        app:layout_constraintTop_toTopOf="@+id/tv_hh_id"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_hh_id"/>
 
                     <ImageView
                         android:id="@+id/iv_sync_state"

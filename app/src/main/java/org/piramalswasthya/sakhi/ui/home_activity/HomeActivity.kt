@@ -37,8 +37,11 @@ import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.firebase.FirebaseApp
 import com.google.firebase.crashlytics.internal.common.CommonUtils.isEmulator
 import com.google.firebase.crashlytics.internal.common.CommonUtils.isRooted
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.FirebaseMessagingService
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
@@ -65,7 +68,7 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class HomeActivity : AppCompatActivity() {
+class HomeActivity : AppCompatActivity(), MessageUpdate {
 
     var isChatSupportEnabled : Boolean = false
 
@@ -195,12 +198,17 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // This will block user to cast app screen
-        if (BuildConfig.FLAVOR.equals("sakshamProd", true) ||BuildConfig.FLAVOR.equals("niramayProd", true) || BuildConfig.FLAVOR.equals("xushrukhaProd", true))  {
+        if (BuildConfig.FLAVOR.equals("niramay", true) ||BuildConfig.FLAVOR.equals("xushrukha", true) || BuildConfig.FLAVOR.equals("saksham", true))  {
             window.setFlags(
                 WindowManager.LayoutParams.FLAG_SECURE,
                 WindowManager.LayoutParams.FLAG_SECURE
             )
         }
+        FirebaseApp.initializeApp(this)
+        FBMessaging.messageUpdate = this
+        FirebaseMessaging.getInstance().subscribeToTopic("All")
+//        FirebaseMessaging.getInstance().subscribeToTopic("ANC${pref.getLoggedInUser()?.userId}")
+//        FirebaseMessaging.getInstance().subscribeToTopic("Immunization${pref.getLoggedInUser()?.userId}")
         super.onCreate(savedInstanceState)
         _binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -209,19 +217,7 @@ class HomeActivity : AppCompatActivity() {
         setUpFirstTimePullWorker()
         setUpMenu()
 
-        val permissions = arrayOf<String>(
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.INTERNET,
-            Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.CAMERA
-        )
-
-        ActivityCompat.requestPermissions(
-            this,
-            permissions,
-            1010
-        )
+        askForPermissions()
 
         if (isChatSupportEnabled)
         {
@@ -265,7 +261,26 @@ class HomeActivity : AppCompatActivity() {
                 }
             }
         }
-        binding.versionName.text = "APK Version ${BuildConfig.VERSION_NAME}"
+        binding.versionName.text = "APK Version 2.2.1" //${BuildConfig.VERSION_NAME}
+    }
+
+    fun askForPermissions() {
+
+        val permissions = arrayOf<String>(
+            Manifest.permission.CALL_PHONE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.INTERNET,
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.CAMERA
+        )
+
+        ActivityCompat.requestPermissions(
+            this,
+            permissions,
+            1010
+        )
+
     }
 
 
@@ -379,7 +394,7 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onResume() {
         // This will block user to cast app screen
-        if (BuildConfig.FLAVOR.equals("sakshamProd", true) ||BuildConfig.FLAVOR.equals("niramayProd", true) || BuildConfig.FLAVOR.equals("xushrukhaProd", true))  {
+        if (BuildConfig.FLAVOR.equals("niramay", true) ||BuildConfig.FLAVOR.equals("xushrukha", true) || BuildConfig.FLAVOR.equals("saksham", true))  {
             window.setFlags(
                 WindowManager.LayoutParams.FLAG_SECURE,
                 WindowManager.LayoutParams.FLAG_SECURE
@@ -394,7 +409,7 @@ class HomeActivity : AppCompatActivity() {
                 .setPositiveButton("Exit") { dialog, id -> finish() }
                 .show()
         }
-        binding.versionName.text = "APK Version ${BuildConfig.VERSION_NAME}"
+        binding.versionName.text = "APK Version 2.2.1" //${BuildConfig.VERSION_NAME}
     }
     private fun setUpMenu() {
         val menu = object : MenuProvider {
@@ -540,7 +555,7 @@ class HomeActivity : AppCompatActivity() {
         }
         binding.navView.menu.findItem(R.id.menu_delete_account).setOnMenuItemClickListener {
             var url = ""
-            if (BuildConfig.FLAVOR.equals("sakshamProd", true) ||BuildConfig.FLAVOR.equals("niramayProd", true) || BuildConfig.FLAVOR.equals("xushrukhaProd", true))  {
+            if (BuildConfig.FLAVOR.equals("saksham", true) ||BuildConfig.FLAVOR.equals("niramay", true) || BuildConfig.FLAVOR.equals("xushrukha", true))  {
                 url = "https://forms.office.com/r/HkE3c0tGr6"
             } else {
                 url =
@@ -615,7 +630,16 @@ class HomeActivity : AppCompatActivity() {
             permissions,
             1010
         )
+    }
 
+    override fun ApiUpdate() {
+        try {
+            Log.e("AAAAAMessage","ApiUpdate")
+//            mChatMessageUpdate.apiUpdate()
+        } catch (e: Exception) {
+            Log.e("AAAAAMessage","ApiUpdate $e")
+        }
+        
     }
 
 }

@@ -13,6 +13,7 @@
     <string name="sc_hwc_tg_hosp">SC/HWC/TG Hosp</string>
     <string name="block">Block</string>
     <string name="bank_acc_no">Bank Acc No</string>
+    <string name="bank_acc">Bank Account</string>
     <string name="nearest_24x7_phc">Nearest 24x7 PHC</string>
     <string name="nearest_fru">Nearest FRU</string>
     <string name="nearest_usg_centre">Nearest USG centre</string>
@@ -46,6 +47,8 @@
     <string name="adoption_of_family_planning">Adoption of Family Planning</string>
     <string name="current_fp_pregnancy_status">CURRENT FP/ PREGNANCY STATUS</string>
     <string name="severe_anemia">Severe Anemia</string>
+    <string name="round">Rounds</string>
+    <string name="irs_round">IRS Rounds</string>
     <string name="diabetes">Diabetes</string>
     <string name="rh_negative">Rh Negative</string>
     <string name="bad_obstetric_history">Bad obstetric history</string>
@@ -79,6 +82,9 @@
     <string name="visit_on">"Visit On "</string>
     <string name="follow_up">Follow Up</string>
     <string name="follow_up_date">Follow Up Date</string>
+    <string name="follow_up_date">Follow Up Date</string>
+    <string name="supervisor_visit_date">Date of Visit by Supervisor</string>
+    <string name="test_up_date">Date of Test</string>
     <string name="history">History</string>
     <string name="micro">Micro Birth Plan</string>
     <string name="_1st_anc">1st ANC</string>

@@ -139,10 +139,20 @@ class SchedulerFragment : Fragment() {
         }
 
         lifecycleScope.launch {
+            combine(
+                viewModel.ecrMissedPeriodCount,
+                viewModel.ectMissedPeriodCount
+            ) { ecr, ect ->
+                ecr + ect
+            }.collect { total ->
+                binding.tvMiss.text = total.toString()
+            }
+        }
+
+        lifecycleScope.launch {
             viewModel.ecrMissedPeriodCount.collect {
                 countMissedPeriodCases.incrementAndGet()
                 ecrMissedPeriodCount = it
-                setMissedPeriodCount()
             }
         }
 
@@ -150,7 +160,6 @@ class SchedulerFragment : Fragment() {
             viewModel.ectMissedPeriodCount.collect {
                 countMissedPeriodCases.incrementAndGet()
                 ectMissedPeriodCount = it
-                setMissedPeriodCount()
             }
         }
 
@@ -161,13 +170,6 @@ class SchedulerFragment : Fragment() {
                 set(Calendar.DAY_OF_MONTH, d)
             }.timeInMillis
             viewModel.setDate(calLong)
-        }
-    }
-
-    private fun setMissedPeriodCount() {
-        if (countMissedPeriodCases.get() == 2) {
-            val total = ecrMissedPeriodCount + ectMissedPeriodCount
-            binding.tvMiss.text = total.toString()
         }
     }
 

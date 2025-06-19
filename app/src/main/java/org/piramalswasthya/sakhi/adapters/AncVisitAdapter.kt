@@ -1,14 +1,16 @@
 package org.piramalswasthya.sakhi.adapters
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.RvItemPregnancyAncBinding
 import org.piramalswasthya.sakhi.model.AncStatus
 
-class AncVisitAdapter(private val clickListener: AncVisitClickListener) :
+class AncVisitAdapter(private val clickListener: AncVisitClickListener, private val pref: PreferenceDao? = null) :
     ListAdapter<AncStatus, AncVisitAdapter.AncViewHolder>(
         MyDiffUtilCallBack
     ) {
@@ -34,8 +36,15 @@ class AncVisitAdapter(private val clickListener: AncVisitClickListener) :
         }
 
         fun bind(
-            item: AncStatus, clickListener: AncVisitClickListener
+            item: AncStatus, clickListener: AncVisitClickListener, pref: PreferenceDao?
         ) {
+
+            if (pref?.getLoggedInUser()?.role.equals("asha", true)) {
+                binding.btnView.visibility = View.VISIBLE
+            } else {
+                binding.btnView.visibility = View.GONE
+            }
+
             binding.visit = item
             binding.clickListener = clickListener
             binding.executePendingBindings()
@@ -48,7 +57,7 @@ class AncVisitAdapter(private val clickListener: AncVisitClickListener) :
     ) = AncViewHolder.from(parent)
 
     override fun onBindViewHolder(holder: AncViewHolder, position: Int) {
-        holder.bind(getItem(position), clickListener)
+        holder.bind(getItem(position), clickListener, pref)
     }
 
 

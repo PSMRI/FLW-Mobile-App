@@ -38,15 +38,22 @@ class ECTrackingListAdapter(private val clickListener: ECTrackListClickListener)
         fun bind(
             item: BenWithEctListDomain, clickListener: ECTrackListClickListener
         ) {
-            if (item.ectDate!! < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(90) &&
-                item.ectDate!! > System.currentTimeMillis() - TimeUnit.DAYS.toMillis(365)) {
+
+            if (item.ectDate == 0L) {
+                binding.ivFollowState.visibility = View.GONE
+            } else if (item.ectDate < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(90) &&
+                item.ectDate > System.currentTimeMillis() - TimeUnit.DAYS.toMillis(365)) {
                 binding.ivFollowState.visibility = View.VISIBLE
             } else {
                 binding.ivFollowState.visibility = View.GONE
             }
 
-            if (System.currentTimeMillis() - item.lmpDate!! > TimeUnit.DAYS.toMillis(35)) {
-                binding.ivMissState.visibility = View.VISIBLE
+            if (item.lmpDate != 0L) {
+                if (System.currentTimeMillis() - item.lmpDate > TimeUnit.DAYS.toMillis(35)) {
+                    binding.ivMissState.visibility = View.VISIBLE
+                } else {
+                    binding.ivMissState.visibility = View.GONE
+                }
             } else {
                 binding.ivMissState.visibility = View.GONE
             }

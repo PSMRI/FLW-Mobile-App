@@ -42,7 +42,6 @@ class ChildCareFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // TODO: Use the ViewModel
         setUpChildCareIconRvAdapter()
     }
 
@@ -58,6 +57,7 @@ class ChildCareFragment : Fragment() {
             },
             viewModel.scope
         )
+
         binding.rvIconGrid.adapter = iconAdapter
         iconAdapter.submitList(iconDataset.getChildCareDataset(resources))
     }
