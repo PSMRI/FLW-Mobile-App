@@ -24,6 +24,7 @@ interface MalariaDao {
 
     @Query("SELECT * FROM MALARIA_SCREENING WHERE  syncState = :syncState")
     suspend fun getMalariaScreening(syncState: SyncState): List<MalariaScreeningCache>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveMalariaScreening(malariaScreeningCache: MalariaScreeningCache)
 

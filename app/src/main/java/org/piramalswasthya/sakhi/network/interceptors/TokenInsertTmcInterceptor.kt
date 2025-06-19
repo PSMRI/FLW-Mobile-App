@@ -36,7 +36,7 @@ class TokenInsertTmcInterceptor : Interceptor {
             request = request
                 .newBuilder()
                 .addHeader("Authorization", TOKEN)
-                .addHeader("Jwttoken" , JWT)
+//                .addHeader("Jwttoken" , JWT)
                 .build()
         }
         Timber.d("Request : $request")

@@ -109,8 +109,6 @@ class GeneralOpCareFragment : Fragment() {
 
         }
 
-        viewModel = ViewModelProvider(this).get(GeneralOpCareViewModel::class.java)
-
     }
 
     override fun onStart() {
