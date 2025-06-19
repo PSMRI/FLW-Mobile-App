@@ -63,57 +63,63 @@ interface AmritApiService {
 //    @POST("tb/screening/saveAll")
     suspend fun saveTBScreeningData(@Body tbScreeningRequestDTO: TBScreeningRequestDTO): Response<ResponseBody>
 
-    @POST("flw-0.0.1/disease/KalaAzar/saveAll")
+    @POST("flw-api/disease/KalaAzar/saveAll")
     suspend fun saveKalaAzarScreeningData(@Body kalaAzarScreenRequestDTO: KalaAzarScreeningRequestDTO): Response<ResponseBody>
 
-    @POST("flw-0.0.1/disease/Malaria/saveAll")
+    @POST("flw-api/disease/Malaria/saveAll")
     suspend fun saveMalariaScreeningData(@Body malariaScreeningRequestDTO: MalariaScreeningRequestDTO): Response<ResponseBody>
 
-    @POST("flw-0.0.1/disease/Leprosy/saveAll")
+    @POST("flw-api/disease/Leprosy/saveAll")
     suspend fun saveLeprosyScreeningData(@Body leprosyScreeningRequestDTO: LeprosyScreeningRequestDTO): Response<ResponseBody>
 
 
-    @POST("flw-0.0.1/disease/AesJe/saveAll")
+    @POST("flw-api/disease/AesJe/saveAll")
     suspend fun saveAESScreeningData(@Body aesScreeningRequestDTO: AESScreeningRequestDTO): Response<ResponseBody>
 
-    @POST("flw-0.0.1/disease/Filaria/saveAll")
+    @POST("flw-api/disease/Filaria/saveAll")
     suspend fun saveFilariaScreeningData(@Body filariaScreeningRequestDTO: FilariaScreeningRequestDTO): Response<ResponseBody>
 
-    @POST("flw-0.0.1/disease/getAll")
+    @POST("flw-api/disease/getAll")
     suspend fun getMalariaScreeningData(@Body userDetail: GetDataPaginatedRequestForDisease): Response<ResponseBody>
 
-    @GET("flw-0.0.1/irsRound/list")
+    @GET("flw-api/irsRound/list")
     suspend fun getScreeningData(@Query("householdId") householdId:Int): Response<ResponseBody>
 
-    @POST("flw-0.0.1/adolescentHealth/getAll")
+    @POST("flw-api/adolescentHealth/getAll")
     suspend fun getAdolescentHealthData(@Body userDetail: GetDataPaginatedRequest): Response<ResponseBody>
 
-    @POST("flw-0.0.1/adolescentHealth/saveAll")
+    @POST("flw-api/adolescentHealth/saveAll")
     suspend fun saveAdolescentHealthData(@Body adolescentHealthRequestDTO: AdolescentHealthRequestDTO): Response<ResponseBody>
 
     @POST("flw-api/tb/suspected/saveAll")
     suspend fun saveTBSuspectedData(@Body tbSuspectedRequestDTO: TBSuspectedRequestDTO): Response<ResponseBody>
 
+    @POST("flw-0.0.1/api/follow-up/save")
+    suspend fun saveMalariaConfirmedData(@Body malariaConfirmedRequestDTO: MalariaConfirmedRequestDTO): Response<ResponseBody>
+
+    @POST("flw-0.0.1/api/follow-up/get")
+    suspend fun getMalariaConfirmedData(@Body malariaConfirmedRequestDTO: GetDataPaginatedRequestForDisease): Response<ResponseBody>
+
     @POST("flw-api/highRisk/pregnant/assess/getAll")
 //    @POST("highRisk/pregnant/assess/getAll")
     suspend fun getHRPAssessData(@Body userDetail: GetDataPaginatedRequest): Response<ResponseBody>
 
-    @POST("flw-0.0.1/forms/villageLevel/getAll")
+    @POST("flw-api/forms/villageLevel/getAll")
     suspend fun getVLFData(@Body userDetail: GetVHNDRequest): Response<ResponseBody>
 
-    @POST("flw-0.0.1/forms/villageLevel/vhnd/saveAll")
+    @POST("flw-api/forms/villageLevel/vhnd/saveAll")
     suspend fun saveVHNDData(@Body userDataDTO: UserDataDTO<Any?>): Response<ResponseBody>
 
-    @POST("flw-0.0.1/forms/villageLevel/vhnc/saveAll")
+    @POST("flw-api/forms/villageLevel/vhnc/saveAll")
     suspend fun saveVHNCData(@Body userDataDTO: UserDataDTO<Any?>): Response<ResponseBody>
 
-    @POST("flw-0.0.1/forms/villageLevel/phc/saveAll")
+    @POST("flw-api/forms/villageLevel/phc/saveAll")
     suspend fun savePHCData(@Body userDataDTO: UserDataDTO<Any?>): Response<ResponseBody>
 
-    @POST("flw-0.0.1/forms/villageLevel/ahd/saveAll")
+    @POST("flw-api/forms/villageLevel/ahd/saveAll")
     suspend fun saveAHDData(@Body userDataDTO: UserDataDTO<Any?>): Response<ResponseBody>
 
-    @POST("flw-0.0.1/forms/villageLevel/deworming/saveAll")
+    @POST("flw-api/forms/villageLevel/deworming/saveAll")
     suspend fun saveDewormingData(@Body userDataDTO: UserDataDTO<Any?>): Response<ResponseBody>
 
     @POST("flw-api/highRisk/pregnant/assess/saveAll")
