@@ -103,7 +103,7 @@ data class BenWithEcTrackingCache(
 ) {
 
     companion object {
-        private val dateFormat = SimpleDateFormat("EEE, MMM dd yyyy", Locale.getDefault())
+        private val dateFormat = SimpleDateFormat("EEE, MMM dd yyyy", Locale.ENGLISH)
 
         private fun getECTFilledDateFromLong(long: Long): String {
             return "Visited on ${dateFormat.format(long)}"

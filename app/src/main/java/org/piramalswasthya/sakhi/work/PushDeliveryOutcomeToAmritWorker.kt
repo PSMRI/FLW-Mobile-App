@@ -27,6 +27,7 @@ class PushDeliveryOutcomeToAmritWorker @AssistedInject constructor(
         init()
         return try {
             Timber.d("DeliveryOutcome Worker started!")
+
             val workerResult = deliveryOutcomeRepo.processNewDeliveryOutcome()
             if (workerResult) {
                 Timber.d("Delivery Outcome Push Worker completed")

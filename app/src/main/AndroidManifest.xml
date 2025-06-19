@@ -29,6 +29,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_native_name"
         android:largeHeap="true"
+        android:localeConfig="@xml/locales_config"
+        android:supportsRtl="true"
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/Theme.Sakhi"
@@ -38,7 +40,8 @@
             android:exported="false" />
         <activity
             android:name=".ui.abha_id_activity.AbhaIdActivity"
-            android:exported="false">
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" >
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />

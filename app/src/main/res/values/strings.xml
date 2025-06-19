@@ -5,7 +5,7 @@
     <string name="PREF_NAME" translatable="false">Sakhi-pref-1</string>
     <string name="PREF_D2D_API_KEY" translatable="false">JWT-Token_A</string>
     <string name="PREF_primary_API_KEY" translatable="false">JWT-Token_B</string>
-    <string name="PREF_primary_JWT_TOKEN" translatable="false">JWT-Token_C</string>
+    <string name="PREF_primary_JWT_API_KEY" translatable="false">JWT-Token_N</string>
     <string name="PREF_rem_me_uname" translatable="false">user-name-local-saved</string>
     <string name="PREF_rem_me_pwd" translatable="false">password-local-saved</string>
     <string name="PREF_rem_me_state" translatable="false">state_user-local-saved</string>
@@ -296,6 +296,7 @@
     <string name="help">Help</string>
     <string name="logout">Logout</string>
     <string name="delete_my_account">Request to delete my account</string>
+    <string name="support">Support</string>
     <string name="sync_status">Sync Status</string>
     <string name="go_to_home">Go to Home</string>
     <string name="change_language">Change Language</string>

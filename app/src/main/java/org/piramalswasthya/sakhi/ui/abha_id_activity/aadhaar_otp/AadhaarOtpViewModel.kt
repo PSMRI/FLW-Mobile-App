@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_otp
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -179,13 +180,18 @@ class AadhaarOtpViewModel @Inject constructor(
             )
             when (result) {
                 is NetworkResult.Success -> {
-                    TokenInsertAbhaInterceptor.setXToken(result.data.token)
-                    _txnId = result.data.txnId
-                    _name = result.data.accounts[0].name
-                    _abhaNumber = result.data.accounts[0].ABHANumber
-                    _state.value = State.OTP_VERIFY_SUCCESS
-                    _phrAddress = result.data.accounts[0].preferredAbhaAddress
-                    _mobileNumber = ""
+                    if (result.data?.token?.isNullOrEmpty() == false){
+                        TokenInsertAbhaInterceptor.setXToken(result.data.token)
+                        _txnId = result.data.txnId
+                        _name = result.data.accounts[0].name
+                        _abhaNumber = result.data.accounts[0].ABHANumber
+                        _state.value = State.OTP_VERIFY_SUCCESS
+                        _phrAddress = result.data.accounts[0].preferredAbhaAddress
+                        _mobileNumber = ""
+                    }else{
+                        _errorMessage.value = result.data.message
+                        _state.value = State.ERROR_SERVER
+                    }
                 }
 
                 is NetworkResult.Error -> {
@@ -256,52 +262,56 @@ class AadhaarOtpViewModel @Inject constructor(
                 is NetworkResult.Success -> {
                     _txnId = result.data.txnId
                     txnIdFromArgs = result.data.txnId
-                    _state2.value = AadhaarIdViewModel.State.SUCCESS
+                    _otpMobileNumberMessage.value = result.data.message
+                  //  _state.value = State.SUCCESS
                 }
 
                 is NetworkResult.Error -> {
                     _errorMessage.value = result.message
-                    _state2.value = AadhaarIdViewModel.State.ERROR_SERVER
+                    _state.value = State.ERROR_SERVER
                 }
 
                 is NetworkResult.NetworkError -> {
                     Timber.i(result.toString())
-                    _state2.value = AadhaarIdViewModel.State.ERROR_NETWORK
+                    _state.value = State.ERROR_NETWORK
                 }
             }
         }
     }
 
-    fun resendSearchAadhaarOtp(txnId: String, index: String) {
-        viewModelScope.launch {
-            when (val result =
-                abhaIdRepo.generateAbhaOtp(
-                    LoginGenerateOtpRequest(
-                        listOf<String>("abha-login", "search-abha", "mobile-verify"),
-                        "index",
-                        index,
-                        "abdm",
-                        txnId
-                    )
-                )) {
-                is NetworkResult.Success -> {
-                    _txnId = result.data.txnId
-                    txnIdFromArgs = result.data.txnId
-                    _state2.value = AadhaarIdViewModel.State.SUCCESS
-                }
+    //Resend OTP Functionality NExt Release Plan
+    fun resendOtpForSearchAbha(selectedAbhaIndex:String,txnId:String){
+            viewModelScope.launch {
+                when (val result =
+                    abhaIdRepo.generateAbhaOtp(
+                        LoginGenerateOtpRequest(
+                            listOf<String>("abha-login", "search-abha", "mobile-verify"),
+                            "index",
+                            selectedAbhaIndex,
+                            "abdm",
+                            txnId
+                        )
+                    )) {
+                    is NetworkResult.Success -> {
+                        _txnId = result.data.txnId
+                        txnIdFromArgs = result.data.txnId
+                      //  _state.value = State.SUCCESS
+                    }
 
-                is NetworkResult.Error -> {
-                    _errorMessage.value = result.message
-                    _state2.value = AadhaarIdViewModel.State.ERROR_SERVER
-                }
+                    is NetworkResult.Error -> {
+                        _errorMessage.value = result.message
+                        _state.value = State.ERROR_SERVER
+                    }
 
-                is NetworkResult.NetworkError -> {
-                    Timber.i(result.toString())
-                    _state2.value = AadhaarIdViewModel.State.ERROR_NETWORK
+                    is NetworkResult.NetworkError -> {
+                        Timber.i(result.toString())
+                        _state.value =State.ERROR_NETWORK
+                    }
                 }
             }
-        }
+
     }
+
 
     fun generateOtpClicked(aadhaarNo: String) {
         _state2.value = AadhaarIdViewModel.State.LOADING

@@ -6,6 +6,7 @@ import android.os.StrictMode.VmPolicy
 import android.util.Log
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
+import com.google.firebase.FirebaseApp
 import dagger.hilt.android.HiltAndroidApp
 import org.piramalswasthya.sakhi.utils.KeyUtils
 import timber.log.Timber
@@ -35,6 +36,7 @@ class SakhiApplication : Application(), Configuration.Provider {
         KeyUtils.abhaClientID()
         KeyUtils.abhaClientSecret()
         KeyUtils.abhaTokenUrl()
+        FirebaseApp.initializeApp(this)
     }
 
 }

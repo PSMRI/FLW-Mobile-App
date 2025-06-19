@@ -11,6 +11,7 @@ import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.setToStartOfTheDay
 import org.piramalswasthya.sakhi.model.AgeUnit
 import org.piramalswasthya.sakhi.model.BenBasicCache.Companion.getAgeFromDob
+import org.piramalswasthya.sakhi.model.BenBasicCache.Companion.getYearsFromDate
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.Gender
@@ -770,9 +771,9 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             firstName.value = it.familyHeadName?.also {
                 firstName.inputType = TEXT_VIEW
             }
-            lastName.value = it.familyName/*?.also {
+            lastName.value = it.familyName?.also {
                 lastName.inputType = TEXT_VIEW
-            }*/
+            }
             contactNumber.value = it.familyHeadPhoneNo?.toString()?.also {
                 contactNumber.inputType = TEXT_VIEW
             }
@@ -1148,10 +1149,16 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         if (relationToHeadId == 8 || relationToHeadId == 9) hoF?.let {
             val hoFAge = getAgeFromDob(it.dob)
             val hoFSpouseAge = hoFSpouse.firstOrNull()?.dob?.let { h -> getAgeFromDob(h) }
-            val maxAge = (if (hoFSpouseAge == null) hoFAge else minOf(
-                hoFAge,
-                hoFSpouseAge
-            )) - Konstants.minAgeForGenBen
+
+            val validHoFAge = hoFAge.takeIf { it >= 18 } ?: 18
+            val validSpouseAge = hoFSpouseAge?.takeIf { it >= 18 }
+
+            val maxAge = (validSpouseAge?.let { minOf(validHoFAge, it) } ?: validHoFAge) - Konstants.minAgeForGenBen
+
+            /* val maxAge = (if (hoFSpouseAge == null) hoFAge else minOf(
+                 hoFAge,
+                 hoFSpouseAge
+             )) - Konstants.minAgeForGenBen*/
 
             agePopup.min = Calendar.getInstance().setToStartOfTheDay().let { cal ->
                 cal.add(Calendar.YEAR, -1 * maxAge)
@@ -1228,10 +1235,18 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         fileUploadBack.value = hof?.kidDetails?.birthCertificateFileBackView
         val hoFAge = getAgeFromDob(hoF.dob)
         val hoFSpouseAge = hoFSpouse?.dob?.let { getAgeFromDob(it) }
-        val maxAge = (if (hoFSpouseAge == null) hoFAge else minOf(
+        /*val maxAge = (if (hoFSpouseAge == null) hoFAge else minOf(
             hoFAge,
             hoFSpouseAge
-        )) - Konstants.minAgeForGenBen
+        )) - Konstants.minAgeForGenBen*/
+
+        val validHoFAge = hoFAge.takeIf { it >= 18 } ?: 18
+        val validSpouseAge = hoFSpouseAge?.takeIf { it >= 18 }
+
+        val maxAge = (validSpouseAge?.let { minOf(validHoFAge, it) } ?: validHoFAge) - 15
+
+
+
 //        age.max = maxAge.toLong()
 //        dob.min = Calendar.getInstance().setToStartOfTheDay().let {
 //            it.add(Calendar.YEAR, -1 * maxAge)
@@ -1597,6 +1612,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
             lastName.id -> {
                // validateAllCapsOrSpaceOnEditText(lastName)
+                validateEmptyOnEditText(lastName)
                 validateAllCapsOrSpaceOnEditTextWithHindiEnabled(lastName)
             }
 
@@ -1724,6 +1740,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                         }
                         husbandName.required = true
                         wifeName.required = true
+                        wifeName.allCaps = true
                         return triggerDependants(
                             source = maritalStatus, addItems = when (gender.value) {
                                 gender.entries!![0] -> listOf(wifeName, ageAtMarriage)
@@ -1748,6 +1765,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     else -> {
                         husbandName.required = maritalStatus.value != maritalStatus.entries!![2]
                         wifeName.required = maritalStatus.value != maritalStatus.entries!![2]
+                        wifeName.allCaps = true
                         fatherName.required = true
                         motherName.required = true
 //                            ().let {
@@ -2025,7 +2043,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         ) != -1
         val listChanged3 =
             if (maritalStatus.inputType == TEXT_VIEW) -1 else {
-                if (getAgeFromDob(getLongFromDate(agePopup.value)) <= Konstants.maxAgeForAdolescent) triggerDependants(
+                if (getYearsFromDate(agePopup.value.toString()) <= Konstants.maxAgeForAdolescent) triggerDependants(
                     source = rchId,
                     addItems = listOf(birthCertificateNumber, placeOfBirth),
                     removeItems = listOf(

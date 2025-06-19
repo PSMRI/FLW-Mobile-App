@@ -20,7 +20,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/verify_aadhaar_number"
                 android:fontFamily="@font/roboto_bold"
-                android:layout_marginTop="@dimen/_50sdp"
+                android:layout_marginTop="@dimen/_45sdp"
                 android:textAppearance="?attr/textAppearanceHeadline6"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -106,48 +106,16 @@
 
             <TextView
                 android:id="@+id/tv_error_text"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin_small"
-                android:layout_weight="1"
                 android:text="@string/textview"
                 android:textColor="@android:color/holo_red_light"
                 android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="@+id/otpView"
                 app:layout_constraintStart_toStartOf="@+id/otpView"
                 app:layout_constraintTop_toBottomOf="@+id/otpView"/>
 
-           <!-- <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/textInputLayout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/margin_normal"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.45"
-                tools:layout_editor_absoluteX="16dp">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/tiet_aadhaar_otp"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:hint="@string/enter_otp"
-                    android:inputType="number"
-                    android:maxLength="6"
-                    android:singleLine="true"
-                    android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
-
-                <TextView
-                    android:id="@+id/tv_error_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin_small"
-                    android:layout_weight="1"
-                    android:text="@string/textview"
-                    android:textColor="@android:color/holo_red_light"
-                    android:visibility="gone" />
-            </com.google.android.material.textfield.TextInputLayout>
--->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_verify_OTP"
                 android:layout_width="match_parent"
@@ -191,7 +159,10 @@
                 android:textSize="@dimen/_12sdp"
                 android:gravity="center_vertical"
                 android:fontFamily="@font/roboto_medium"
+                android:layout_marginEnd="@dimen/_3sdp"
+                android:layout_marginStart="@dimen/_15sdp"
                 android:text="@string/str_didnt_receive_otp"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/timer_count"
                 app:layout_constraintTop_toTopOf="@+id/timer_count"
                 app:layout_constraintBottom_toBottomOf="@+id/timer_count" />
@@ -204,6 +175,7 @@
                    android:padding="0dp"
                    app:cornerRadius="40dp"
                    android:textColor="?attr/colorOnPrimary"
+                   app:layout_constraintStart_toEndOf="@+id/timer_resend_otp"
                    app:layout_constraintBottom_toBottomOf="@+id/timer_seconds"
                    app:layout_constraintEnd_toStartOf="@+id/timer_seconds"
                    app:layout_constraintTop_toTopOf="@+id/timer_seconds" />
@@ -216,11 +188,12 @@
                 android:textSize="@dimen/_12sdp"
                 android:drawableEnd="@drawable/ic_hourglass"
                 android:gravity="center_vertical"
-                android:drawablePadding="@dimen/_5sdp"
+                android:drawablePadding="@dimen/_2sdp"
                 android:layout_marginEnd="@dimen/_20sdp"
                 android:layout_marginTop="@dimen/_20sdp"
                 android:fontFamily="@font/roboto_medium"
                 android:text="@string/str_seconds"
+                app:layout_constraintStart_toEndOf="@+id/timer_count"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/btn_verify_OTP"/>
 
@@ -279,8 +252,5 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.7" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-
     </androidx.cardview.widget.CardView>
-
-
 </layout>

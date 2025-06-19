@@ -92,7 +92,10 @@ class ChildImmunizationListFragment : Fragment(),ImmunizationBirthDoseCategoryAd
 
         lifecycleScope.launch {
             viewModel.immunizationBenList.collect {
-               // Timber.d("Collecting list : $it")
+                if (it.isEmpty())
+                    binding.flEmpty.visibility = View.VISIBLE
+                else
+                    binding.flEmpty.visibility = View.GONE
 
                 binding.rvList.apply {
                     (adapter as BenChildImmunizationListAdapter).submitList(it.sortedByDescending { it.ben.regDate })
@@ -127,6 +130,12 @@ class ChildImmunizationListFragment : Fragment(),ImmunizationBirthDoseCategoryAd
         binding.ivFilter.setOnClickListener {
             if (!filterBottomSheet.isVisible)
                 filterBottomSheet.show(childFragmentManager, "ImM")
+        }
+
+        viewModel.selectedFilter.observe(viewLifecycleOwner){
+            if (it!=null){
+                binding.tvSelectedFilter.text = it
+            }
         }
     }
 

@@ -79,15 +79,16 @@ class AllBenViewModel @Inject constructor(
         _benId.value = benId
         viewModelScope.launch {
             benRepo.getBenFromId(benId)?.let {
-                val result = benRepo.getBeneficiaryWithId(it.benRegId)
-                if (result != null) {
+                _benRegId.value = it.benRegId
+               // val result = benRepo.getBeneficiaryWithId(it.benRegId)
+               /* if (result != null) {
                     _abha.value = result.healthIdNumber
                     it.healthIdDetails = BenHealthIdDetails(result.healthId, result.healthIdNumber)
                     it.isNewAbha =result.isNewAbha
                     benRepo.updateRecord(it)
                 } else {
                     _benRegId.value = it.benRegId
-                }
+                }*/
             }
         }
     }

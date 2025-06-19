@@ -30,6 +30,41 @@
 -keep class androidx.work.** { *; }
 -keep class androidx.startup.** { *; }
 -keep class org.bouncycastle.** { *; }
+-keep class java.util.Locale { *; }
+# Prevent removal of resources used via reflection or dynamic access
+-keepclassmembers class ** {
+    public static <fields>;
+}
+# Keep all string resource IDs and names
+-keepclassmembers class **.R$string {
+    *;
+}
+
+# --- ContextWrapper ---
+-keep class org.piramalswasthya.sakhi.** extends android.content.ContextWrapper { *; }
+
+# --- Assemblers ---
+-keep class org.piramalswasthya.sakhi.**Assembler { *; }
+-keepnames class org.piramalswasthya.sakhi.**Assembler
+
+# --- Hilt / DI Support ---
+-keep @dagger.hilt.EntryPoint interface * { *; }
+-keep class dagger.hilt.EntryPoints { *; }
+-keep class dagger.hilt.EntryPoint { *; }
+-keep class dagger.hilt.android.EntryPointAccessors { *; }
+-keep class **_HiltModules* { *; }
+-keep class *Module* { *; }
+
+# --- Annotations ---
+-keep @androidx.annotation.Keep class * { *; }
+-keepclassmembers class * {
+    @androidx.annotation.Keep *;
+}
+
+# --- Reflection Safety ---
+-keep class org.piramalswasthya.sakhi.** { *; }
+-keepnames class org.piramalswasthya.sakhi.**
+
 -dontwarn org.conscrypt.**
 -dontwarn org.bouncycastle.**
 -dontwarn org.openjsse.**

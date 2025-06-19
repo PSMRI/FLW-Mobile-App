@@ -110,7 +110,7 @@ class PregnantWomanAncVisitDataset(
         title = "BP of PW – Systolic/ Diastolic (mm Hg) ",
 //        etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
         etMaxLength = 7,
-        required = false,
+        required = true,
         showDrawable = true,
         backgroundDrawable=R.drawable.ic_bg_circular,
         iconDrawableRes=R.drawable.ic_blood_pressure,
@@ -168,7 +168,7 @@ class PregnantWomanAncVisitDataset(
         etMaxLength = 4,
         minDecimal = 2.0,
         maxDecimal = 15.0,
-        required = false,
+        required = true,
         showDrawable = true,
         backgroundDrawable=R.drawable.ic_bg_circular,
         iconDrawableRes=R.drawable.ic_blood_test,
@@ -459,8 +459,10 @@ class PregnantWomanAncVisitDataset(
 //            ancDate.max =
 //                minOf(getEddFromLmp(regis.lmpDate), System.currentTimeMillis())
 
-            ancDate.max = minOf(getEddFromLmp(regis.lmpDate),System.currentTimeMillis())
-//            ancDate.value = getDateFromLong(ancDate.max!!)
+            /*This change is done to test working as per Madhava*/
+            ancDate.max = getANCMaxFromLmp(regis.lmpDate) //minOf(getEddFromLmp(regis.lmpDate),System.currentTimeMillis())
+
+//          ancDate.value = getDateFromLong(ancDate.max!!)
             maternalDateOfDeath.min =
                 maxOf(regis.lmpDate, lastAncVisitDate) + TimeUnit.DAYS.toMillis(1)
             maternalDateOfDeath.max =

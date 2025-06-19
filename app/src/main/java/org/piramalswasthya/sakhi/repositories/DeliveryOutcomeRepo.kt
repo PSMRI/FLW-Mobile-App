@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.repositories
 
+import android.app.Application
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -15,6 +16,7 @@ import org.piramalswasthya.sakhi.model.DeliveryOutcomeCache
 import org.piramalswasthya.sakhi.model.DeliveryOutcomePost
 import org.piramalswasthya.sakhi.network.AmritApiService
 import org.piramalswasthya.sakhi.network.GetDataPaginatedRequest
+import org.piramalswasthya.sakhi.utils.HelperUtil
 import timber.log.Timber
 import java.io.IOException
 import java.net.SocketTimeoutException
@@ -25,6 +27,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class DeliveryOutcomeRepo @Inject constructor(
+    private val context: Application,
     private val preferenceDao: PreferenceDao,
     private val amritApiService: AmritApiService,
     private val userRepo: UserRepo,
@@ -53,13 +56,16 @@ class DeliveryOutcomeRepo @Inject constructor(
 
             val deliveryOutcomePostList = mutableSetOf<DeliveryOutcomePost>()
 
-            deliveryOutcomeList.forEach {
+            try {
+                deliveryOutcomeList.forEach {
                 deliveryOutcomePostList.clear()
                 val ben = benDao.getBen(it.benId)
                     ?: throw IllegalStateException("No beneficiary exists for benId: ${it.benId}!!")
                 deliveryOutcomePostList.add(it.asPostModel())
                 it.syncState = SyncState.SYNCING
                 deliveryOutcomeDao.updateDeliveryOutcome(it)
+//                    HelperUtil.deliveryOutcomeRepo.append("postDataToAmritServer\n")
+//                    HelperUtil.deliveryOutcomeRepo.append("\n")
                 val uploadDone = postDataToAmritServer(deliveryOutcomePostList)
                 if (uploadDone) {
                     it.processed = "P"
@@ -68,9 +74,19 @@ class DeliveryOutcomeRepo @Inject constructor(
                     it.syncState = SyncState.UNSYNCED
                 }
                 deliveryOutcomeDao.updateDeliveryOutcome(it)
+
+
                 if (!uploadDone)
                     return@withContext false
             }
+
+            }catch (e:Exception){
+//                HelperUtil.deliveryOutcomeRepo.append("Error $e\n")
+//                HelperUtil.deliveryOutcomeRepo.append("\n")
+//                HelperUtil.deliveryOutcomeRepoMethod(context, "deliveryOutcomeRepoMethod.txt", HelperUtil.deliveryOutcomeRepo.toString())
+
+            }
+
 
             return@withContext true
         }
@@ -83,6 +99,8 @@ class DeliveryOutcomeRepo @Inject constructor(
                 ?: throw IllegalStateException("No user logged in!!")
 
         try {
+//            HelperUtil.deliveryOutcomeRepo.append("API getCalled with request ${deliveryOutcomePostList.toList()}\n")
+//            HelperUtil.deliveryOutcomeRepo.append("\n")
 
             val response = amritApiService.postDeliveryOutcomeForm(deliveryOutcomePostList.toList())
             val statusCode = response.code()
@@ -100,10 +118,18 @@ class DeliveryOutcomeRepo @Inject constructor(
                         when (responsestatuscode) {
                             200 -> {
                                 Timber.d("Saved Successfully to server")
+//                                HelperUtil.deliveryOutcomeRepo.append("Throwing 200:$responseString\n")
+//                                HelperUtil.deliveryOutcomeRepo.append("\n")
+//                                HelperUtil.deliveryOutcomeRepoMethod(context, "deliveryOutcomeRepoMethod.txt", HelperUtil.deliveryOutcomeRepo.toString())
+
                                 return true
                             }
 
                             5002 -> {
+//                                HelperUtil.deliveryOutcomeRepo.append("Throwing 5002\n")
+//                                HelperUtil.deliveryOutcomeRepo.append("\n")
+//                                HelperUtil.deliveryOutcomeRepoMethod(context, "deliveryOutcomeRepoMethod.txt", HelperUtil.deliveryOutcomeRepo.toString())
+
                                 if (userRepo.refreshTokenTmc(
                                         user.userName,
                                         user.password
@@ -112,28 +138,56 @@ class DeliveryOutcomeRepo @Inject constructor(
                             }
 
                             else -> {
+//                                HelperUtil.deliveryOutcomeRepo.append("Throwing away IO eXcEpTiOn\n")
+//                                HelperUtil.deliveryOutcomeRepo.append("\n")
+//                                HelperUtil.deliveryOutcomeRepoMethod(context, "deliveryOutcomeRepoMethod.txt", HelperUtil.deliveryOutcomeRepo.toString())
+
                                 throw IOException("Throwing away IO eXcEpTiOn")
                             }
                         }
                     }
                 } catch (e: SocketTimeoutException) {
                     Timber.d("Caught exception $e here")
+//                    HelperUtil.deliveryOutcomeRepo.append("Caught exception:SocketTimeoutException $e \n")
+//                    HelperUtil.deliveryOutcomeRepo.append("\n")
+//                    HelperUtil.deliveryOutcomeRepoMethod(context, "deliveryOutcomeRepoMethod.txt", HelperUtil.deliveryOutcomeRepo.toString())
+
                     return postDataToAmritServer(deliveryOutcomePostList)
                 } catch (e: IOException) {
+//                    HelperUtil.deliveryOutcomeRepo.append("Caught exception:IOException $e \n")
+//                    HelperUtil.deliveryOutcomeRepo.append("\n")
+//                    HelperUtil.deliveryOutcomeRepoMethod(context, "deliveryOutcomeRepoMethod.txt", HelperUtil.deliveryOutcomeRepo.toString())
+
                     e.printStackTrace()
                 } catch (e: Exception) {
+//                    HelperUtil.deliveryOutcomeRepo.append("Caught exception:Exception $e \n")
+//                    HelperUtil.deliveryOutcomeRepo.append("\n")
+//                    HelperUtil.deliveryOutcomeRepoMethod(context, "deliveryOutcomeRepoMethod.txt", HelperUtil.deliveryOutcomeRepo.toString())
+
                     e.printStackTrace()
                 }
             } else {
                 //server_resp5();
             }
+//            HelperUtil.deliveryOutcomeRepo.append("Bad Response from server, need to check $deliveryOutcomePostList $response\n")
+//            HelperUtil.deliveryOutcomeRepo.append("\n")
+//            HelperUtil.deliveryOutcomeRepoMethod(context, "deliveryOutcomeRepoMethod.txt", HelperUtil.deliveryOutcomeRepo.toString())
+
             Timber.w("Bad Response from server, need to check $deliveryOutcomePostList $response ")
             return false
         } catch (e: SocketTimeoutException) {
             Timber.d("Caught exception $e here")
+//            HelperUtil.deliveryOutcomeRepo.append("Caught exception SocketTimeOut $e \n")
+//            HelperUtil.deliveryOutcomeRepo.append("\n")
+//            HelperUtil.deliveryOutcomeRepoMethod(context, "deliveryOutcomeRepoMethod.txt", HelperUtil.deliveryOutcomeRepo.toString())
+
             return postDataToAmritServer(deliveryOutcomePostList)
         } catch (e: JSONException) {
             Timber.d("Caught exception $e here")
+//            HelperUtil.deliveryOutcomeRepo.append("Caught exception JSONException $e \n")
+//            HelperUtil.deliveryOutcomeRepo.append("\n")
+//            HelperUtil.deliveryOutcomeRepoMethod(context, "deliveryOutcomeRepoMethod.txt", HelperUtil.deliveryOutcomeRepo.toString())
+
             return false
         }
     }
@@ -253,3 +307,6 @@ class DeliveryOutcomeRepo @Inject constructor(
         }
     }
 }
+
+
+

@@ -67,21 +67,21 @@ AadhaarIdViewModel @Inject constructor(
     val txnId: String
         get() = _txnId?:""
 
-    private var _searchTxnId: String? = null
-    val searchTxnId: String
-        get() = _searchTxnId?:""
+    private var _otpTxnId: String? = null
+    val otpTxnId: String
+        get() = _otpTxnId?:""
 
     private var _mobileNumber: String? = null
     val mobileNumber: String
         get() = _mobileNumber?:""
 
+    private var _selectedAbhaIndex: String? = null
+    val selectedAbhaIndex: String
+        get() = _selectedAbhaIndex?:""
+
     private var _aadhaarNumber: String? = null
     val aadhaarNumber: String
         get() = _aadhaarNumber?:""
-
-    private var _index: String? = null
-    val index: String
-        get() = _index?:""
 
     private val _errorMessage = MutableLiveData<String?>(null)
     val errorMessage: LiveData<String?>
@@ -146,8 +146,12 @@ AadhaarIdViewModel @Inject constructor(
         _aadhaarNumber = aadhaarNumber
     }
 
-    fun setIndex(index: String) {
-        _index = index
+    fun setSelectedAbhaIndex(abhaIndex: String) {
+        _selectedAbhaIndex = abhaIndex
+    }
+
+    fun setOtpTxnId(txnId: String) {
+        _otpTxnId = txnId
     }
 
     fun setTxnId(txnId: String) {
@@ -157,10 +161,6 @@ AadhaarIdViewModel @Inject constructor(
         _otpMobileNumberMessage = msg
     }
 
-
-    fun setSearchTxnId(txnId: String) {
-        _searchTxnId = txnId
-    }
 
     fun setUserType(userType: String) {
         _userType.value = userType
