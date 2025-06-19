@@ -145,10 +145,6 @@
             android:id="@+id/action_childCareFragment_to_childListFragment"
             app:destination="@id/childListFragment" />
 
-        <action
-            android:id="@+id/action_childCareFragment_to_adolescentHealthListFragment"
-            app:destination="@id/adolescentHealthListFragment" />
-
 
     </fragment>
     <fragment
@@ -1179,7 +1175,7 @@
             android:defaultValue="0"
             app:argType="integer" />
     </fragment>
-=======
+    <fragment
         android:id="@+id/diseaseControlFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.DiseaseControlFragment"
         android:label="DiseaseControlFragment" >
@@ -1397,17 +1393,13 @@
     </fragment>
     <fragment
         android:id="@+id/adolescentHealthFormFragment"
-        android:name="org.piramalswasthya.sakhi.ui.home_activity.adolescent_health.AdolescentHealthFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.child_care.adolescent_list.form.AdolescentHealthFormFragment"
         android:label="AdolescentHealthFormFragment" >
         <argument
             android:name="benId"
             android:defaultValue="0L"
             app:argType="long" />
     </fragment>
-    <fragment
-        android:id="@+id/adolescentHealthListFragment"
-        android:name="org.piramalswasthya.sakhi.ui.home_activity.child_care.adolescent_list.AdolescentHealthListFragment"
-        android:label="AdolescentHealthListFragment" />
     <fragment
         android:id="@+id/lmsFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.lms.LmsFragment"

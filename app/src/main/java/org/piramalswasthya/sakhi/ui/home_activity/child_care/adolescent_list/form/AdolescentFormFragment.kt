@@ -1,4 +1,4 @@
-package org.piramalswasthya.sakhi.ui.home_activity.adolescent_health
+package org.piramalswasthya.sakhi.ui.home_activity.child_care.adolescent_list.form
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,7 +15,6 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentAdolescentHealthBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
-import org.piramalswasthya.sakhi.ui.home_activity.child_care.adolescent_list.form.AdolescentHealthFormViewModel
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 

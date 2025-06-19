@@ -44,12 +44,8 @@ class FindAbhaFragment : Fragment() {
 
     var isValidMobile = false
     var isValidAbha = false
-<<<<<<< work_build_issues
     var isConsent = false
-
-=======
     var isValidBenName = false
->>>>>>> flw_enhancements_3.0
     private val aadhaarDisclaimer by lazy {
         AlertDialog.Builder(requireContext())
             .setTitle(resources.getString(R.string.individual_s_consent_for_creation_of_abha_number))
@@ -141,13 +137,9 @@ class FindAbhaFragment : Fragment() {
         }
 
         binding.aadharConsentCheckBox.setOnCheckedChangeListener { _, ischecked ->
-<<<<<<< work_build_issues
             isConsent = ischecked
             enableButton()
 //            binding.btnGenerateOtp.isEnabled = isValidAbha && isValidMobile && ischecked
-=======
-            binding.btnGenerateOtp.isEnabled = isValidAbha && isValidMobile && (parentViewModel.consentChecked.value==true)
->>>>>>> flw_enhancements_3.0
         }
 
         binding.aadharDisclaimer.setOnClickListener {
@@ -178,11 +170,8 @@ class FindAbhaFragment : Fragment() {
                 if (isValidMobile) {
                     parentViewModel.setMobileNumber(s.toString())
                     binding.btnSearchAbha.isEnabled = isValidMobile
-<<<<<<< work_build_issues
                     enableButton()
-=======
                     binding.ivValidMobile.setImageResource(R.drawable.ic_check_circle_green)
->>>>>>> flw_enhancements_3.0
 //                    binding.btnSearchAbha.isEnabled = isValidAbha && isValidMobile
 //                            && binding.aadharConsentCheckBox.isChecked
                 }else{

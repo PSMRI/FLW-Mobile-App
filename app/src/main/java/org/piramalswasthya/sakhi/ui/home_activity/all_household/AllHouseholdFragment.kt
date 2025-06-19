@@ -218,6 +218,8 @@ class AllHouseholdFragment : Fragment() {
         }, {
 //            val bundle = Bundle()
 //            bundle.putLong("hhId", it)
+//            bundle.putString("diseaseType", "No")
+//            bundle.putInt("fromDisease", 0)
 //            findNavController().navigate(R.id.householdMembersFragments, bundle)
             findNavController().navigate(
                 AllHouseholdFragmentDirections.actionAllHouseholdFragmentToHouseholdMembersFragment(

@@ -235,6 +235,8 @@ object AppModule {
     @Provides
     fun provideVlfDao(database: InAppDb): VLFDao = database.vlfDao
 
+    @Singleton
+    @Provides
     fun provideAshaProfileDao(database: InAppDb): ProfileDao = database.profileDao
 
 
