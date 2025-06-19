@@ -252,7 +252,6 @@ object WorkerUtils {
 //            .then(pushChildHBYCToAmritWorker)
             .then(pushChildHBNCToAmritWorker)
             .then(pullIncentiveActivityWorkRequest)
-            .then(pullIncentiveActivityWorkRequest)
             .then(pushMalariaWorkRequest)
             .then(pushAESToAmritWorker)
             .then(pushkalaAzarToAmritWorker)
