@@ -48,5 +48,9 @@ class PushPmsmaToAmritWorker @AssistedInject constructor(
             preferenceDao.getAmritToken()?.let {
                 TokenInsertTmcInterceptor.setToken(it)
             }
+        if (TokenInsertTmcInterceptor.getJwt() == "")
+            preferenceDao.getJwtToken()?.let {
+                TokenInsertTmcInterceptor.setJwt(it)
+            }
     }
 }

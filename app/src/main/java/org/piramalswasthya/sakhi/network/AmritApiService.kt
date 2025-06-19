@@ -91,16 +91,10 @@ interface AmritApiService {
     @POST("flw-0.0.1/adolescentHealth/saveAll")
     suspend fun saveAdolescentHealthData(@Body adolescentHealthRequestDTO: AdolescentHealthRequestDTO): Response<ResponseBody>
 
-    @POST("flw-0.0.1/tb/suspected/saveAll")
+    @POST("flw-api/tb/suspected/saveAll")
     suspend fun saveTBSuspectedData(@Body tbSuspectedRequestDTO: TBSuspectedRequestDTO): Response<ResponseBody>
 
-    @POST("flw-0.0.1/api/follow-up/save")
-    suspend fun saveMalariaConfirmedData(@Body malariaConfirmedRequestDTO: MalariaConfirmedRequestDTO): Response<ResponseBody>
-
-    @POST("flw-0.0.1/api/follow-up/get")
-    suspend fun getMalariaConfirmedData(@Body malariaConfirmedRequestDTO: GetDataPaginatedRequestForDisease): Response<ResponseBody>
-
-    @POST("flw-0.0.1/highRisk/pregnant/assess/getAll")
+    @POST("flw-api/highRisk/pregnant/assess/getAll")
 //    @POST("highRisk/pregnant/assess/getAll")
     suspend fun getHRPAssessData(@Body userDetail: GetDataPaginatedRequest): Response<ResponseBody>
 
@@ -122,7 +116,7 @@ interface AmritApiService {
     @POST("flw-0.0.1/forms/villageLevel/deworming/saveAll")
     suspend fun saveDewormingData(@Body userDataDTO: UserDataDTO<Any?>): Response<ResponseBody>
 
-    @POST("flw-0.0.1/highRisk/pregnant/assess/saveAll")
+    @POST("flw-api/highRisk/pregnant/assess/saveAll")
 //    @POST("highRisk/pregnant/assess/saveAll")
     suspend fun saveHRPAssessData(@Body userDataDTO: UserDataDTO<Any?>): Response<ResponseBody>
 

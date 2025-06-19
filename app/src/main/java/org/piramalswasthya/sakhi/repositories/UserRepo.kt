@@ -144,6 +144,8 @@ class UserRepo @Inject constructor(
                 val responseStatusCode = responseBody.getInt("statusCode")
                 if (responseStatusCode == 200) {
                     val data = responseBody.getJSONObject("data")
+                    TokenInsertTmcInterceptor.setJwt(data.getString("jwtToken"))
+                    preferenceDao.registerJwtToken(data.getString("jwtToken"))
                     val token = data.getString("key")
                     TokenInsertTmcInterceptor.setToken(token)
                     preferenceDao.registerAmritToken(token)
@@ -187,6 +189,8 @@ class UserRepo @Inject constructor(
             if (statusCode == 5002)
                 throw IllegalStateException("Invalid username / password")
             val data = responseBody.getJSONObject("data")
+            TokenInsertTmcInterceptor.setJwt(data.getString("jwtToken"))
+            preferenceDao.registerJwtToken(data.getString("jwtToken"))
             val token = data.getString("key")
             val userId = data.getInt("userID")
             db.clearAllTables()
@@ -218,4 +222,5 @@ class UserRepo @Inject constructor(
             }
         }
     }
+
 }
