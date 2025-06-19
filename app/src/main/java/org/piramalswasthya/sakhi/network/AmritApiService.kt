@@ -11,9 +11,6 @@ interface AmritApiService {
     @Headers("No-Auth: true", "User-Agent: okhttp")
     @POST("common-api/user/userAuthenticate")
     suspend fun getJwtToken(@Body json: TmcAuthUserRequest): Response<ResponseBody>
-  
-    @POST("commonapi-v3.0.0/firebaseNotification/userToken")
-    suspend fun saveFirebaseToken(@Body json: Map<String, Any>): Response<ResponseBody>
 
     @GET("flw-api/user/getUserDetail")
 //    @GET("user/getUserRole")
