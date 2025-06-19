@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.ui.home_activity.all_ben
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -19,17 +21,23 @@ import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.BenListAdapter
 import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.AlertFilterBinding
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchAndToggleRvButtonBinding
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
+import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.all_household.AllHouseholdFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.home.HomeViewModel
 import timber.log.Timber
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class AllBenFragment : Fragment() {
+
+    @Inject
+    lateinit var prefDao: PreferenceDao
 
     private var _binding: FragmentDisplaySearchAndToggleRvButtonBinding? = null
 
@@ -129,27 +137,45 @@ class AllBenFragment : Fragment() {
             clickListener = BenListAdapter.BenClickListener(
                 { hhId, benId, relToHeadId ->
 
-                    findNavController().navigate(
-                        AllBenFragmentDirections.actionAllBenFragmentToNewBenRegFragment(
-                            hhId = hhId,
-                            benId = benId,
-                            relToHeadId = relToHeadId,
-                            gender = 0
+                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+                        findNavController().navigate(
+                            AllBenFragmentDirections.actionAllBenFragmentToNewBenRegFragment(
+                                hhId = hhId,
+                                benId = benId,
+                                relToHeadId = relToHeadId,
+                                gender = 0
 
+                            )
                         )
-                    )
+                    }
+
                 },
                 {
                 },
                 { benId, hhId ->
                     checkAndGenerateABHA(benId)
                 },
+                {
+                    try {
+                        val callIntent = Intent(Intent.ACTION_CALL)
+                        callIntent.setData(Uri.parse("tel:${it.mobileNo}"))
+                        startActivity(callIntent)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        activity?.let {
+                            (it as HomeActivity).askForPermissions()
+                        }
+                        Toast.makeText(requireContext(), "Please allow permissions first", Toast.LENGTH_SHORT).show()
+                    }
+                }
 
                 ),
             showAbha = true,
             showSyncIcon = true,
             showBeneficiaries = true,
-            showRegistrationDate = true
+            showRegistrationDate = true,
+            showCall = true,
+            pref = prefDao
         )
         binding.rvAny.adapter = benAdapter
         lifecycleScope.launch {
@@ -229,16 +255,29 @@ class AllBenFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            (it as HomeActivity).updateActionBar(
-                R.drawable.ic__ben,
-                title = if (args.source == 1) {
-                    getString(R.string.icon_title_abha)
-                } else if (args.source == 2) {
-                    getString(R.string.icon_title_rch)
-                } else {
-                    getString(R.string.icon_title_ben)
-                }
-            )
+            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+                (it as HomeActivity).updateActionBar(
+                    R.drawable.ic__ben,
+                    title = if (args.source == 1) {
+                        getString(R.string.icon_title_abhas)
+                    } else if (args.source == 2) {
+                        getString(R.string.icon_title_rchs)
+                    } else {
+                        getString(R.string.icon_title_ben)
+                    }
+                )
+            } else {
+                (it as SupervisorActivity).updateActionBar(
+                    R.drawable.ic__ben,
+                    title = if (args.source == 1) {
+                        getString(R.string.icon_title_abhas)
+                    } else if (args.source == 2) {
+                        getString(R.string.icon_title_rchs)
+                    } else {
+                        getString(R.string.icon_title_ben)
+                    }
+                )
+            }
         }
     }
 

@@ -16,12 +16,18 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.ECTrackingListAdapter
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
+import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pnc.list.PncMotherListFragmentArgs
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class EligibleCoupleTrackingListFragment : Fragment() {
+
+    @Inject
+    lateinit var prefDao: PreferenceDao
 
     val args: EligibleCoupleTrackingListFragmentArgs by lazy {
         EligibleCoupleTrackingListFragmentArgs.fromBundle(requireArguments())
@@ -51,21 +57,26 @@ class EligibleCoupleTrackingListFragment : Fragment() {
 
         binding.btnNextPage.visibility = View.GONE
         val benAdapter = ECTrackingListAdapter(
-            ECTrackingListAdapter.ECTrackListClickListener(addNewTrack = { benId, canAdd ->
-                if (canAdd)
-                    findNavController().navigate(
-                        EligibleCoupleTrackingListFragmentDirections.actionEligibleCoupleTrackingListFragmentToEligibleCoupleTrackingFormFragment(
-                            benId
-                        )
-                    ) else
-                    Toast.makeText(
-                        requireContext(),
-                        "Already filled for this Month!",
-                        Toast.LENGTH_LONG
-                    ).show()
+            ECTrackingListAdapter.ECTrackListClickListener(
+                addNewTrack = { benId, canAdd ->
+                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+                        if (canAdd)
+                            findNavController().navigate(
+                                EligibleCoupleTrackingListFragmentDirections.actionEligibleCoupleTrackingListFragmentToEligibleCoupleTrackingFormFragment(
+                                    benId
+                                )
+                            ) else
+                            Toast.makeText(
+                                requireContext(),
+                                "Already filled for this Month!",
+                                Toast.LENGTH_LONG
+                            ).show()
+                    }
             }, showAllTracks = {
-                viewModel.setClickedBenId(it)
-                bottomSheet.show(childFragmentManager, "ECT")
+                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+                        viewModel.setClickedBenId(it)
+                        bottomSheet.show(childFragmentManager, "ECT")
+                    }
             })
         )
         binding.rvAny.adapter = benAdapter
@@ -105,10 +116,21 @@ class EligibleCoupleTrackingListFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            (it as HomeActivity).updateActionBar(
+            (it as SupervisorActivity).updateActionBar(
                 R.drawable.ic__eligible_couple,
                 getString(R.string.eligible_couple_tracking_list)
             )
+//            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+//                (it as HomeActivity).updateActionBar(
+//                    R.drawable.ic__eligible_couple,
+//                    getString(R.string.eligible_couple_tracking_list)
+//                )
+//            } else {
+//                (it as SupervisorActivity).updateActionBar(
+//                    R.drawable.ic__eligible_couple,
+//                    getString(R.string.eligible_couple_tracking_list)
+//                )
+//            }
         }
     }
 

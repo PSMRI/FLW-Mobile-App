@@ -30,8 +30,8 @@ data class EligibleCoupleTrackingCache(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val benId: Long,
-    var lmpDate: Long? = 0L,
-    var visitDate: Long = System.currentTimeMillis(),
+    var lmpDate: Long = 0L,
+    var visitDate: Long = 0L,
     var isPregnancyTestDone: String? = null,
     var pregnancyTestResult: String? = null,
     var isPregnant: String? = null,
@@ -154,8 +154,8 @@ data class BenWithEctListDomain(
     val ben: BenBasicDomain,
     val numChildren: String,
     val allowFill: Boolean,
-    val ectDate: Long? = 0L,
-    val lmpDate: Long? = 0L,
+    val ectDate: Long = 0L,
+    val lmpDate: Long = 0L,
     val savedECTRecords: List<ECTDomain>,
     val allSynced: SyncState? = if (savedECTRecords.isEmpty()) null else
         if (savedECTRecords.map { it.syncState }

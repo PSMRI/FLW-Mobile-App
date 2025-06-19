@@ -21,9 +21,11 @@ class HouseholdMembersViewModel @Inject constructor(
 
     val hhId = HouseholdMembersFragmentArgs.fromSavedStateHandle(savedStateHandle).hhId
 
-    val isFromDisease = HouseholdMembersFragmentArgs.fromSavedStateHandle(savedStateHandle).fromDisease
+//    val isFromDisease = HouseholdMembersFragmentArgs.fromSavedStateHandle(savedStateHandle).fromDisease
+    val isFromDisease = 0
 
-    val diseaseType = HouseholdMembersFragmentArgs.fromSavedStateHandle(savedStateHandle).diseaseType
+//    val diseaseType = HouseholdMembersFragmentArgs.fromSavedStateHandle(savedStateHandle).diseaseType
+    val diseaseType = "No"
 
     val benList = benRepo.getBenBasicListFromHousehold(hhId)
 

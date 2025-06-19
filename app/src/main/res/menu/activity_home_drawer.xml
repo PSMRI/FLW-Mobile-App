@@ -13,6 +13,10 @@
             android:icon="@drawable/ic_home"
             android:title="@string/home" />
         <item
+            android:id="@+id/supervisorFragment"
+            android:icon="@drawable/ic_home"
+            android:title="@string/menu_supervisor" />
+        <item
             android:id="@+id/ashaProfileFragment"
             android:icon="@drawable/ic_person"
             android:title="@string/asha_profile" />

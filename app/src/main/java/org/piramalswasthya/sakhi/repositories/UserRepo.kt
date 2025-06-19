@@ -42,6 +42,7 @@ class UserRepo @Inject constructor(
             try {
                 val userId = getTokenAmrit(userName, password)
                 val user = setUserRole(userId, password)
+                getAllUser()
                 return@withContext NetworkResponse.Success(user)
             } catch (se: SocketTimeoutException) {
                 return@withContext NetworkResponse.Error(message = "Server timed out !")
@@ -90,6 +91,10 @@ class UserRepo @Inject constructor(
         val user = response.data.toUser(password)
         preferenceDao.registerUser(user)
         return user
+    }
+
+    private suspend fun getAllUser() {
+//        val response = amritApiService.getAllUser(villageId = preferenceDao.getLoggedInUser()!!.villages[0].id)
     }
 
     private fun offlineLogin(userName: String, password: String): Boolean {
@@ -193,6 +198,28 @@ class UserRepo @Inject constructor(
             preferenceDao.registerAmritToken(token)
             preferenceDao.lastAmritTokenFetchTimestamp = System.currentTimeMillis()
             return@withContext userId
+        }
+    }
+
+    suspend fun saveFirebaseToken(userId: Int, token: String, updatedAt: String) {
+        withContext(Dispatchers.IO) {
+            try {
+                val requestBody = mapOf(
+                    "userId" to userId,
+                    "token" to token,
+                    "updatedAt" to updatedAt
+                )
+
+                val response = amritApiService.saveFirebaseToken(requestBody)
+
+                if (response.isSuccessful) {
+                    Timber.d("Firebase token saved successfully: ${response.body()?.string()}")
+                } else {
+                    Timber.e("Failed to save Firebase token: ${response.code()} ${response.errorBody()?.string()}")
+                }
+            } catch (e: Exception) {
+                Timber.e(e, "Exception while saving Firebase token")
+            }
         }
     }
 
