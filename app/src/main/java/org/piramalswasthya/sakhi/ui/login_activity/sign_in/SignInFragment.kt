@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -26,6 +27,10 @@ import org.piramalswasthya.sakhi.helpers.Languages.ASSAMESE
 import org.piramalswasthya.sakhi.helpers.Languages.ENGLISH
 import org.piramalswasthya.sakhi.helpers.Languages.HINDI
 import org.piramalswasthya.sakhi.helpers.NetworkResponse
+import org.piramalswasthya.sakhi.model.LocationEntity
+import org.piramalswasthya.sakhi.model.LocationRecord
+import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
+import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import javax.inject.Inject
@@ -135,7 +140,7 @@ class SignInFragment : Fragment() {
         binding.tvDeleteAccount?.setOnClickListener {
             var url = ""
 
-            if (BuildConfig.FLAVOR.equals("sakshamProd", true) ||BuildConfig.FLAVOR.equals("niramayProd", true) || BuildConfig.FLAVOR.equals("xushrukhaProd", true)) {
+            if (BuildConfig.FLAVOR.equals("saksham", true) ||BuildConfig.FLAVOR.equals("niramay", true) || BuildConfig.FLAVOR.equals("xushrukha", true)) {
                 url = "https://forms.office.com/r/HkE3c0tGr6"
             } else {
                 url =
@@ -191,12 +196,49 @@ class SignInFragment : Fragment() {
                     binding.clContent.visibility = View.INVISIBLE
                     binding.pbSignIn.visibility = View.VISIBLE
                     binding.tvError.visibility = View.GONE
-                    WorkerUtils.triggerGenBenIdWorker(requireContext())
-                    findNavController().navigate(
-                        if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
-                        else SignInFragmentDirections.actionSignInFragmentToHomeActivity()
-                    )
-                    activity?.finish()
+
+                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+                        WorkerUtils.triggerGenBenIdWorker(requireContext())
+                        if (BuildConfig.FLAVOR.equals("niramay", true))  {
+                            if (viewModel.getLoggedInUser()?.serviceMapId == 1718){
+                                findNavController().navigate(
+                                    if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
+                                    else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
+                                activity?.finish()
+                            }else{
+                                Toast.makeText(requireContext(),"This user is not from Niramay Project",Toast.LENGTH_SHORT).show()
+                            }
+
+                        }else if(BuildConfig.FLAVOR.equals("xushrukha", true)){
+                            if (viewModel.getLoggedInUser()?.serviceMapId == 1716){
+                                findNavController().navigate(
+                                    if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
+                                    else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
+                                activity?.finish()
+                            }else{
+                                Toast.makeText(requireContext(),"This user is not from Xushrukha Project",Toast.LENGTH_SHORT).show()
+                            }
+
+                        }else{
+                            findNavController().navigate(
+                                if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
+                                else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
+                            activity?.finish()
+                        }
+                    } else {
+                        val locationRecord = LocationRecord(
+                            LocationEntity(1, "India"),
+                            LocationEntity(prefDao.getLoggedInUser()!!.state.id, prefDao.getLoggedInUser()!!.state.name),
+                            LocationEntity(0, ""),
+                            LocationEntity(prefDao.getLoggedInUser()!!.block.id, prefDao.getLoggedInUser()!!.block.name),
+                            LocationEntity(prefDao.getLoggedInUser()!!.villages[0].id, prefDao.getLoggedInUser()!!.villages[0].name),
+                        )
+                        prefDao.saveLocationRecord(locationRecord)
+
+                        activity?.finish()
+                        val goToHome = Intent(requireContext(), SupervisorActivity::class.java)
+                        startActivity(goToHome)
+                    }
                 }
             }
         }

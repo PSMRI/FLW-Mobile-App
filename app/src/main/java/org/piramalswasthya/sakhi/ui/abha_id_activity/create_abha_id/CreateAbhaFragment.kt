@@ -132,7 +132,7 @@ class CreateAbhaFragment : Fragment() {
 
         if (parentViewModel.abhaMode.value == AadhaarIdViewModel.Abha.SEARCH) {
             binding.imageView.setImageResource(R.drawable.ic_exclamation_circle_green)
-            binding.textView7.text = "Here is your ABHA Number!"
+            binding.textView7.text = getString(R.string.str_here_abha_no)
             binding.clDownloadAbha.visibility = View.INVISIBLE
 
         }else{
@@ -149,10 +149,10 @@ class CreateAbhaFragment : Fragment() {
             if (it != null) {
                 if (it.isNew == false) {
                     binding.imageView.setImageResource(R.drawable.ic_exclamation_circle)
-                    binding.textView7.text = "This ABHA already exists!"
+                    binding.textView7.text = getString(R.string.str_abha_already_exist)
                 } else {
                     binding.imageView.setImageResource(R.drawable.ic_check_circle)
-                    binding.textView7.text = "ABHA account successfully created!"
+                    binding.textView7.text = getString(R.string.str_abha_successfully_created)
                 }
             }
         }
@@ -220,8 +220,8 @@ class CreateAbhaFragment : Fragment() {
                 binding.clDownloadAbha.visibility = View.INVISIBLE
                 Snackbar.make(
                     requireView(),
-                    "You can view Abha Card in download folder!!", Snackbar.LENGTH_INDEFINITE
-                ).setAction("OK") {
+                    getString(R.string.str_abha_card_downloaded), Snackbar.LENGTH_INDEFINITE
+                ).setAction(getString(R.string.ok)) {
                     requireActivity().finish()
                 }.show()
             }

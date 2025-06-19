@@ -481,7 +481,8 @@ class PMSMAFormDataset(
             mobileNumber.id -> validateMobileNumberOnEditText(mobileNumber)
             husbandName.id -> {
                 if (currentLanguage.toString() == english) {
-                    validateAllCapsOrSpaceOnEditText(husbandName)
+                   // validateAllCapsOrSpaceOnEditText(husbandName)
+                    validateAllCapsOrSpaceOnEditTextWithHindiEnabled(husbandName)
                 } else -1
             }
             bp.id -> validateForBp(bp)

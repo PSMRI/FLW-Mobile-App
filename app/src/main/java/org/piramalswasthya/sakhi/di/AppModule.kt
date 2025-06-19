@@ -11,18 +11,24 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.piramalswasthya.sakhi.database.room.InAppDb
+import org.piramalswasthya.sakhi.database.room.dao.AdolescentHealthDao
+import org.piramalswasthya.sakhi.database.room.dao.AesDao
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.BeneficiaryIdsAvailDao
 import org.piramalswasthya.sakhi.database.room.dao.CbacDao
 import org.piramalswasthya.sakhi.database.room.dao.CdrDao
 import org.piramalswasthya.sakhi.database.room.dao.ChildRegistrationDao
 import org.piramalswasthya.sakhi.database.room.dao.DeliveryOutcomeDao
+import org.piramalswasthya.sakhi.database.room.dao.FilariaDao
 import org.piramalswasthya.sakhi.database.room.dao.HbncDao
 import org.piramalswasthya.sakhi.database.room.dao.HbycDao
 import org.piramalswasthya.sakhi.database.room.dao.HouseholdDao
 import org.piramalswasthya.sakhi.database.room.dao.ImmunizationDao
 import org.piramalswasthya.sakhi.database.room.dao.IncentiveDao
 import org.piramalswasthya.sakhi.database.room.dao.InfantRegDao
+import org.piramalswasthya.sakhi.database.room.dao.KalaAzarDao
+import org.piramalswasthya.sakhi.database.room.dao.LeprosyDao
+import org.piramalswasthya.sakhi.database.room.dao.MalariaDao
 import org.piramalswasthya.sakhi.database.room.dao.MaternalHealthDao
 import org.piramalswasthya.sakhi.database.room.dao.MdsrDao
 import org.piramalswasthya.sakhi.database.room.dao.PmsmaDao
@@ -30,6 +36,7 @@ import org.piramalswasthya.sakhi.database.room.dao.PncDao
 import org.piramalswasthya.sakhi.database.room.dao.ProfileDao
 import org.piramalswasthya.sakhi.database.room.dao.SyncDao
 import org.piramalswasthya.sakhi.database.room.dao.TBDao
+import org.piramalswasthya.sakhi.database.room.dao.VLFDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.network.AbhaApiService
 import org.piramalswasthya.sakhi.network.AmritApiService
@@ -130,6 +137,10 @@ object AppModule {
     @Provides
     fun provideBenDao(database: InAppDb): BenDao = database.benDao
 
+    @Singleton
+    @Provides
+    fun provideAdolescentHealthDao(database: InAppDb): AdolescentHealthDao = database.adolescentHealthDao
+
 
     @Singleton
     @Provides
@@ -194,11 +205,35 @@ object AppModule {
 
     @Singleton
     @Provides
+    fun provideMalariaDao(database: InAppDb): MalariaDao = database.malariaDao
+
+    @Singleton
+    @Provides
+    fun provideKalaAzarDao(database: InAppDb): KalaAzarDao = database.kalaAzarDao
+
+    @Singleton
+    @Provides
+    fun provideFilariaDao(database: InAppDb): FilariaDao = database.filariaDao
+
+    @Singleton
+    @Provides
+    fun provideLeprosyDao(database: InAppDb): LeprosyDao = database.leprosyDao
+
+    @Singleton
+    @Provides
+    fun provideAESDao(database: InAppDb): AesDao = database.aesDao
+
+    @Singleton
+    @Provides
     fun provideHBNCDao(database: InAppDb): HbncDao = database.hbncDao
 
     @Singleton
     @Provides
     fun provideHBYCDao(database: InAppDb): HbycDao = database.hbycDao
+
+    @Singleton
+    @Provides
+    fun provideVlfDao(database: InAppDb): VLFDao = database.vlfDao
 
     @Singleton
     @Provides

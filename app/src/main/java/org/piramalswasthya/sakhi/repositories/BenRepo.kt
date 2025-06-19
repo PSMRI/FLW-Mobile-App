@@ -168,11 +168,14 @@ class BenRepo @Inject constructor(
                     val jsonObjectData: JSONObject = jsonObj.getJSONObject("data")
                     val response = jsonObjectData.getString("response")
 
-                  val newBenId= extractBenId(response)
+                    val newBenId = jsonObjectData.getString("benGenId").toLong()
+                    val newBenRegId = jsonObjectData.getString("benRegId").toLong()
+
+//                  val newBenId= extractBenId(response)
 
 //                    val benNumber = resBenId.substring(resBenId.length - 12)
 //                    val newBenId = java.lang.Long.valueOf(benNumber)
-                    val newBenRegId = extractBenRegID(jsonObjectData.getString("response"))
+//                    val newBenRegId = extractBenRegID(jsonObjectData.getString("response"))
 
                     //FIX TO UPDATE IMAGE-NAME WITH NEW BEN-ID
                     val infantReg = infantRegRepo.getInfantRegFromChildBenId(ben.beneficiaryId)
@@ -1328,18 +1331,8 @@ class BenRepo @Inject constructor(
                     }
 
                     5000, 5002 -> {
-                        if (JSONObject(responseBody).getString("errorMessage")
-                                .contentEquals("Invalid login key or session is expired")
-                        ) {
-                            val user = preferenceDao.getLoggedInUser()!!
-                            userRepo.refreshTokenTmc(user.userName, user.password)
+                        Toast.makeText(context,"Please enter valid OTP.",Toast.LENGTH_SHORT).show()
 
-                        } else {
-                            NetworkResult.Error(
-                                0,
-                                JSONObject(responseBody).getString("errorMessage")
-                            )
-                        }
                     }
 
                     else -> {

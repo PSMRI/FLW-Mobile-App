@@ -108,6 +108,9 @@ class GeneralOpCareFragment : Fragment() {
                 (searchView as EditText).removeTextChangedListener(searchTextWatcher)
 
         }
+
+        viewModel = ViewModelProvider(this).get(GeneralOpCareViewModel::class.java)
+
     }
 
     override fun onStart() {

@@ -90,6 +90,8 @@ enum class Gender {
             "LEFT OUTER JOIN ELIGIBLE_COUPLE_TRACKING ect on (b.beneficiaryId = ect.benId  and CAST((strftime('%s','now') - ect.visitDate/1000)/60/60/24 AS INTEGER) < 30 )" +
             "LEFT OUTER JOIN TB_SCREENING tbsn on b.beneficiaryId = tbsn.benId " +
             "LEFT OUTER JOIN TB_SUSPECTED tbsp on b.beneficiaryId = tbsp.benId " +
+            "LEFT OUTER JOIN MALARIA_SCREENING masp on b.beneficiaryId = masp.benId " +
+            "LEFT OUTER JOIN MALARIA_CONFIRMED macp on b.beneficiaryId = macp.benId " +
             "LEFT OUTER JOIN HRP_PREGNANT_ASSESS hrppa on b.beneficiaryId = hrppa.benId " +
             "LEFT OUTER JOIN HRP_NON_PREGNANT_ASSESS hrpnpa on b.beneficiaryId = hrpnpa.benId " +
             "LEFT OUTER JOIN HRP_MICRO_BIRTH_PLAN hrpmbp on b.beneficiaryId = hrpmbp.benId " +
@@ -239,6 +241,7 @@ data class BenBasicCache(
             relToHeadId = relToHeadId,
             mobileNo = mobileNo.toString(),
             fatherName = fatherName?.takeIf { it.isNotEmpty() } ?: "Not Available",
+         /*   motherName = motherName,*/
             familyHeadName = familyHeadName ?: "Not Available",
 //            typeOfList = typeOfList.name,
             spouseName = spouseName?.takeIf { it.isNotEmpty() } ?: "Not Available",
@@ -719,6 +722,7 @@ data class BenBasicDomain(
     val abhaId: String? = null,
     val isNewAbha: Boolean = false,
     val fatherName: String? = null,
+    val motherName: String? = null,
     val familyHeadName: String,
     val spouseName: String? = null,
 //    val typeOfList: String,
@@ -1023,6 +1027,8 @@ data class BenRegCache(
     var mobileNoOfRelation: String? = null,
 
     var mobileNoOfRelationId: Int = 0,
+
+    var tempMobileNoOfRelationId: Int = 0,
 
     var mobileOthers: String? = null,
 

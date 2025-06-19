@@ -35,7 +35,34 @@ class UserRepo @Inject constructor(
 
     val unProcessedRecordCount: Flow<List<SyncStatusCache>> = syncDao.getSyncStatus()
 
+
+
     suspend fun authenticateUser(userName: String, password: String): NetworkResponse<User?> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val userId = getTokenAmrit(userName, password)
+                val user = setUserRole(userId, password)
+                getAllUser()
+                return@withContext NetworkResponse.Success(user)
+            } catch (se: SocketTimeoutException) {
+                return@withContext NetworkResponse.Error(message = "Server timed out !")
+            } catch (se: HttpException) {
+                return@withContext NetworkResponse.Error(message = "Unable to connect to server !")
+            } catch (ce: ConnectException) {
+                return@withContext NetworkResponse.Error(message = "Server refused connection !")
+            } catch (ue: UnknownHostException) {
+                return@withContext NetworkResponse.Error(message = "Unable to connect to server !")
+            } catch (ie: Exception) {
+                if (ie.message == "Invalid username / password")
+                    return@withContext NetworkResponse.Error(message = "Invalid Username/password")
+                else
+                    return@withContext NetworkResponse.Error(message = "Something went wrong... Try again later")
+
+            }
+        }
+    }
+
+    suspend fun saveToken(userName: String, password: String): NetworkResponse<User?> {
         return withContext(Dispatchers.IO) {
             try {
                 val userId = getTokenAmrit(userName, password)
@@ -64,6 +91,10 @@ class UserRepo @Inject constructor(
         val user = response.data.toUser(password)
         preferenceDao.registerUser(user)
         return user
+    }
+
+    private suspend fun getAllUser() {
+//        val response = amritApiService.getAllUser(villageId = preferenceDao.getLoggedInUser()!!.villages[0].id)
     }
 
     private fun offlineLogin(userName: String, password: String): Boolean {
@@ -113,6 +144,8 @@ class UserRepo @Inject constructor(
                 val responseStatusCode = responseBody.getInt("statusCode")
                 if (responseStatusCode == 200) {
                     val data = responseBody.getJSONObject("data")
+                    TokenInsertTmcInterceptor.setJwt(data.getString("jwtToken"))
+                    preferenceDao.registerJwtToken(data.getString("jwtToken"))
                     val token = data.getString("key")
                     TokenInsertTmcInterceptor.setToken(token)
                     preferenceDao.registerAmritToken(token)
@@ -156,6 +189,8 @@ class UserRepo @Inject constructor(
             if (statusCode == 5002)
                 throw IllegalStateException("Invalid username / password")
             val data = responseBody.getJSONObject("data")
+            TokenInsertTmcInterceptor.setJwt(data.getString("jwtToken"))
+            preferenceDao.registerJwtToken(data.getString("jwtToken"))
             val token = data.getString("key")
             val userId = data.getInt("userID")
             db.clearAllTables()
@@ -166,5 +201,26 @@ class UserRepo @Inject constructor(
         }
     }
 
+    suspend fun saveFirebaseToken(userId: Int, token: String, updatedAt: String) {
+        withContext(Dispatchers.IO) {
+            try {
+                val requestBody = mapOf(
+                    "userId" to userId,
+                    "token" to token,
+                    "updatedAt" to updatedAt
+                )
+
+                val response = amritApiService.saveFirebaseToken(requestBody)
+
+                if (response.isSuccessful) {
+                    Timber.d("Firebase token saved successfully: ${response.body()?.string()}")
+                } else {
+                    Timber.e("Failed to save Firebase token: ${response.code()} ${response.errorBody()?.string()}")
+                }
+            } catch (e: Exception) {
+                Timber.e(e, "Exception while saving Firebase token")
+            }
+        }
+    }
 
 }

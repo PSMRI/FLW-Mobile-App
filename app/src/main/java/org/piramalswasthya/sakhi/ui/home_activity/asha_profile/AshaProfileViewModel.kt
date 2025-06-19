@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.ui.home_activity.asha_profile
 
 import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -24,7 +25,7 @@ import javax.inject.Inject
 class AshaProfileViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     preferenceDao: PreferenceDao,
-    @ApplicationContext context: Context,
+    @ApplicationContext var context: Context,
     private val ashaProfileRepo: AshaProfileRepo,
 ) : ViewModel() {
 
@@ -58,6 +59,7 @@ class AshaProfileViewModel @Inject constructor(
 
     private lateinit var locationRecord: LocationRecord
 
+    private var lastImageFormId: Int = 0
 
 
     init {
@@ -71,7 +73,7 @@ class AshaProfileViewModel @Inject constructor(
                 _recordExists.value = true
                 currentUser?.let {
                     dataset.setUpPage(
-                        it,
+                        asha,
                         profileActivityCache
                     )
                 }
@@ -97,7 +99,7 @@ class AshaProfileViewModel @Inject constructor(
             withContext(Dispatchers.IO) {
                 try {
                     _state.postValue(State.SAVING)
-                    dataset.mapProfileValues(profileActivityCache)
+                    dataset.mapProfileValues(profileActivityCache,context)
                     _state.postValue(State.SAVE_SUCCESS)
 
                 } catch (e: IllegalAccessError) {
@@ -119,4 +121,11 @@ class AshaProfileViewModel @Inject constructor(
 
     }
 
+    fun setCurrentImageFormId(id: Int) {
+        lastImageFormId = id
+    }
+    fun setImageUriToFormElement(dpUri: Uri) {
+        dataset.setImageUriToFormElement(lastImageFormId, dpUri)
+
+    }
 }

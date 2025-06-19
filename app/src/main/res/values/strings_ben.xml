@@ -26,6 +26,9 @@
     <string name="nbr_image">Photo</string>
     <string name="nbr_image_sub">Tap to use camera</string>
     <string name="nbr_dor">Date of Registration</string>
+    <string name="vhnd_date">VHND Date</string>
+    <string name="vhnc_date">VHNC Date</string>
+    <string name="phc_review_meeting_date">PHC Review Meeting Date</string>
     <string name="nbr_nb_first_name">First Name</string>
     <string name="nbr_nb_last_name">Last Name / Surname</string>
     <string name="beneficiary_details_ben">Beneficiary Details</string>
@@ -49,6 +52,22 @@
     <string name="frag_new_ben_reg_type_title">Beneficiary Type for Registration</string>
     <string name="consent_text">Consent:\nI have been explained by the ASHA, the purpose for which the information and measurement findings is being collected from me, in a language I understand and I give my consent to collect the information and measurement findings on my personal health profile.</string>
     <string name="disagree">DISAGREE</string>
+
+
+    <string name="deworming_done">Deworming Round Done?</string>
+    <string name="deworming_date">Date of Deworming</string>
+    <string name="deworming_location">Location of Deworming</string>
+    <string name="age_group">Age Group</string>
+    <string name="deworming_title">National Deworming Day Form</string>
+    <string name="deworming_list_title">National Deworming Day Forms List</string>
+    <string name="ndd_list_title">NDD Form</string>
+
+    <string-array name="deworming_location_options">
+        <item>School</item>
+        <item>Home Visit</item>
+    </string-array>
+
+
     <string name="agree">AGREE</string>
     <string-array name="nbr_gender_array">
         <item name="nbr_gender_1">Male</item>
@@ -88,6 +107,16 @@
         <item>Father</item>
         <item>Family Head</item>
         <item>Other</item>
+    </string-array>
+
+    <string-array name="temp_mobile_no_relation_array">
+        <item>Family Head</item>
+        <item>Self</item>
+        <item>Spouse</item>
+        <item>Mother</item>
+        <item>Father</item>
+        <item>Neighbor</item>
+        <item>Friend/Relative</item>
     </string-array>
 
     <string-array name="nbr_relationship_to_head_src">
@@ -197,7 +226,7 @@
     <string-array name="religion_array">
         <item>Hindu</item>
         <item>Muslim</item>
-        <item>Christen</item>
+        <item>Christian</item>
         <item>Sikhism</item>
         <item>Buddhism</item>
         <item>Jainism</item>
@@ -218,6 +247,17 @@
     <string-array name="fathers_spouse">
         <item>Father</item>
         <item>Spouse</item>
+    </string-array>
+
+    <string-array name="pf_pv">
+        <item>Pf</item>
+        <item>Pv</item>
+    </string-array>
+
+    <string-array name="positive_negative">
+        <item>Positive</item>
+        <item>Negative</item>
+        <item>Not Performed</item>
     </string-array>
 
     <string-array name="yes">
