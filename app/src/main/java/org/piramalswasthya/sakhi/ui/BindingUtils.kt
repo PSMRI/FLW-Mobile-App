@@ -1,10 +1,12 @@
 package org.piramalswasthya.sakhi.ui
 
+import android.graphics.Color
 import android.content.Context
 import android.net.Uri
 import android.os.Build
 import android.text.Html
 import android.text.InputType
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
@@ -340,11 +342,20 @@ fun ImageView.setCaseStatus(caseStatus: String) {
 
 @BindingAdapter("benImage")
 fun ImageView.setBenImage(uriString: String?) {
-    if (uriString == null) setImageResource(R.drawable.ic_person)
-    else {
-        Glide.with(this).load(Uri.parse(uriString)).placeholder(R.drawable.ic_person).circleCrop()
+
+    if(uriString.equals("default"))
+    {
+        Glide.with(this).load(R.drawable.img_dummy).placeholder(R.drawable.img_dummy)
             .into(this)
     }
+    else{
+        if (uriString == null) setImageResource(R.drawable.ic_person)
+        else {
+            Glide.with(this).load(Uri.parse(uriString)).placeholder(R.drawable.ic_person).circleCrop()
+                .into(this)
+        }
+    }
+
 }
 
 

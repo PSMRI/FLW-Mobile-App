@@ -37,8 +37,11 @@ import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.firebase.FirebaseApp
 import com.google.firebase.crashlytics.internal.common.CommonUtils.isEmulator
 import com.google.firebase.crashlytics.internal.common.CommonUtils.isRooted
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.FirebaseMessagingService
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
@@ -65,7 +68,7 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class HomeActivity : AppCompatActivity() {
+class HomeActivity : AppCompatActivity(), MessageUpdate {
 
     var isChatSupportEnabled : Boolean = false
 
@@ -201,6 +204,11 @@ class HomeActivity : AppCompatActivity() {
                 WindowManager.LayoutParams.FLAG_SECURE
             )
         }
+        FirebaseApp.initializeApp(this)
+        FBMessaging.messageUpdate = this
+        FirebaseMessaging.getInstance().subscribeToTopic("All")
+//        FirebaseMessaging.getInstance().subscribeToTopic("ANC${pref.getLoggedInUser()?.userId}")
+//        FirebaseMessaging.getInstance().subscribeToTopic("Immunization${pref.getLoggedInUser()?.userId}")
         super.onCreate(savedInstanceState)
         _binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -209,19 +217,7 @@ class HomeActivity : AppCompatActivity() {
         setUpFirstTimePullWorker()
         setUpMenu()
 
-        val permissions = arrayOf<String>(
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.INTERNET,
-            Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.CAMERA
-        )
-
-        ActivityCompat.requestPermissions(
-            this,
-            permissions,
-            1010
-        )
+        askForPermissions()
 
         if (isChatSupportEnabled)
         {
@@ -266,6 +262,25 @@ class HomeActivity : AppCompatActivity() {
             }
         }
         binding.versionName.text = "APK Version 2.2.1" //${BuildConfig.VERSION_NAME}
+    }
+
+    fun askForPermissions() {
+
+        val permissions = arrayOf<String>(
+            Manifest.permission.CALL_PHONE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.INTERNET,
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.CAMERA
+        )
+
+        ActivityCompat.requestPermissions(
+            this,
+            permissions,
+            1010
+        )
+
     }
 
 
@@ -597,6 +612,15 @@ class HomeActivity : AppCompatActivity() {
 //      return isRooted() || isEmulator() || RootedUtil().isDeviceRooted(applicationContext)
         return isRooted() || isEmulator()
 
+    }
+
+    override fun ApiUpdate() {
+        try {
+            Log.e("AAAAAMessage","ApiUpdate")
+//            mChatMessageUpdate.apiUpdate()
+        } catch (e: Exception) {
+            Log.e("AAAAAMessage","ApiUpdate $e")
+        }
     }
 
 }

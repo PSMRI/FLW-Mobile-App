@@ -211,4 +211,11 @@ class PreferenceDao @Inject constructor(@ApplicationContext private val context:
         set(value) {
             pref.edit().putLong("last incentive update timestamp ", value).apply()
         }
+
+    var lastAshaPullTimestamp: Long
+        get() = pref.getLong("last asha update timestamp ", Konstants.defaultTimeStamp)
+        set(value) {
+            pref.edit().putLong("last asha update timestamp ", value).apply()
+        }
+
 }

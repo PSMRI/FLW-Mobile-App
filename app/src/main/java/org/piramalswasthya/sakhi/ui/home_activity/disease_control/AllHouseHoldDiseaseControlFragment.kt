@@ -17,8 +17,10 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.HouseHoldListAdapter
 import org.piramalswasthya.sakhi.configuration.IconDataset
 import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentAllHouseHoldDiseaseControlBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -29,6 +31,8 @@ class AllHouseHoldDiseaseControlFragment : Fragment() {
     private val binding: FragmentAllHouseHoldDiseaseControlBinding
         get() = _binding!!
 
+    @Inject
+    lateinit var prefDao: PreferenceDao
 
     private val viewModel: AllHouseHoldDiseaseControlViewModel by viewModels()
 
@@ -51,7 +55,7 @@ class AllHouseHoldDiseaseControlFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val householdAdapter = HouseHoldListAdapter(isDisease,HouseHoldListAdapter.HouseholdClickListener({
+        val householdAdapter = HouseHoldListAdapter(isDisease, prefDao, HouseHoldListAdapter.HouseholdClickListener({
 
         }, {
             if(viewModel.diseaseType == IconDataset.Disease.MALARIA.toString()){

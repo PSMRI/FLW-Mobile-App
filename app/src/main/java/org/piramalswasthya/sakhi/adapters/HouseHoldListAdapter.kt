@@ -7,14 +7,17 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.RvItemHouseholdBinding
 import org.piramalswasthya.sakhi.model.HouseHoldBasicDomain
+import javax.inject.Inject
 
 
-class HouseHoldListAdapter(private var isDisease: Boolean, private val clickListener: HouseholdClickListener) :
+class HouseHoldListAdapter(private var isDisease: Boolean, val pref: PreferenceDao, private val clickListener: HouseholdClickListener) :
     ListAdapter<HouseHoldBasicDomain, HouseHoldListAdapter.HouseHoldViewHolder>(
         HouseHoldDiffUtilCallBack
     ) {
+
     private object HouseHoldDiffUtilCallBack : DiffUtil.ItemCallback<HouseHoldBasicDomain>() {
         override fun areItemsTheSame(
             oldItem: HouseHoldBasicDomain,
@@ -41,7 +44,8 @@ class HouseHoldListAdapter(private var isDisease: Boolean, private val clickList
         fun bind(
             item: HouseHoldBasicDomain,
             clickListener: HouseholdClickListener,
-            isDisease: Boolean
+            isDisease: Boolean,
+            pref: PreferenceDao
         ) {
             binding.household = item
             binding.clickListener = clickListener
@@ -54,6 +58,12 @@ class HouseHoldListAdapter(private var isDisease: Boolean, private val clickList
                 binding.button5.visibility = View.GONE
             }
 
+            if (pref.getLoggedInUser()?.role.equals("asha", true)) {
+                binding.button4.visibility = View.VISIBLE
+            } else {
+                binding.button4.visibility = View.GONE
+            }
+
         }
 
     }
@@ -63,7 +73,7 @@ class HouseHoldListAdapter(private var isDisease: Boolean, private val clickList
     }
 
     override fun onBindViewHolder(holder: HouseHoldViewHolder, position: Int) {
-        holder.bind(getItem(position), clickListener,isDisease)
+        holder.bind(getItem(position), clickListener,isDisease, pref)
     }
 
 
