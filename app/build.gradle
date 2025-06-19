@@ -36,10 +36,16 @@ android {
         }
     }
 
+    bundle {
+        language {
+            enableSplit = false
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled true
-            shrinkResources true
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.debug
 
@@ -115,13 +121,14 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:31.2.2')
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
     implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-config-ktx'
     implementation 'androidx.room:room-testing:2.6.0'
     implementation 'androidx.test.ext:junit-ktx:1.1.5'
     implementation "androidx.security:security-crypto:1.0.0"
     implementation "com.google.crypto.tink:tink-android:1.8.0"
     def nav_version = "2.5.3"
     def frag_version = "1.5.5"
-    def room_version = "2.5.0"
+    def room_version = "2.6.1"
     def lifecycle_version = "2.5.1"
     def coroutine_version = "1.6.4"
     def work_version = "2.8.0"
@@ -200,12 +207,7 @@ dependencies {
     //Flexbox
     implementation 'com.google.android.flexbox:flexbox:3.0.0'
 
-//    //Encryption
-////    implementation 'javax.xml.bind:jaxb-api:2.3.0'
-//    implementation('javax.xml.bind:jaxb-api:2.3.0')
-//    implementation('javax.activation:activation:1.1')
-//    implementation('org.glassfish.jaxb:jaxb-runtime:2.3.0')
-//    implementation 'org.bouncycastle:bcpkix-jdk15on:1.68'
+
 
 
     implementation("com.google.firebase:firebase-messaging:24.0.0")
@@ -221,5 +223,8 @@ dependencies {
     //Dimens Library
     implementation 'com.intuit.sdp:sdp-android:1.1.0'
 
+    //In App Update
+    //implementation 'com.google.android.play:core:1.10.3'
+    implementation 'com.google.android.play:app-update:2.1.0'
 }
 

@@ -7,6 +7,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.os.SystemClock
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -38,6 +39,7 @@ import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.FirebaseApp
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.internal.common.CommonUtils.isEmulator
 import com.google.firebase.crashlytics.internal.common.CommonUtils.isRooted
 import com.google.firebase.messaging.FirebaseMessaging
@@ -51,7 +53,9 @@ import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.ActivityHomeBinding
+import org.piramalswasthya.sakhi.helpers.AnalyticsHelper
 import org.piramalswasthya.sakhi.helpers.ImageUtils
+import org.piramalswasthya.sakhi.helpers.InAppUpdateHelper
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.MyContextWrapper
 import org.piramalswasthya.sakhi.helpers.isInternetAvailable
@@ -71,8 +75,12 @@ import javax.inject.Inject
 class HomeActivity : AppCompatActivity(), MessageUpdate {
 
     var isChatSupportEnabled : Boolean = false
+    private lateinit var updateHelper: InAppUpdateHelper
+    @Inject lateinit var analyticsHelper: AnalyticsHelper
 
+    private lateinit var inAppUpdateHelper: InAppUpdateHelper
 
+    var lastClickTime: Long = 0L
 
     @EntryPoint
     @InstallIn(SingletonComponent::class)
@@ -129,11 +137,12 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
                     di.dismiss()
                 } else {
                     pref.saveSetLanguage(checkedLanguage)
-                    Locale.setDefault(Locale(checkedLanguage.symbol))
-
-                    val restart = Intent(this, HomeActivity::class.java)
-                    finish()
+                    di.dismiss()
+                    val restart = Intent(this, HomeActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                    }
                     startActivity(restart)
+                    finish()
                 }
 
             }.create()
@@ -261,7 +270,19 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
                 }
             }
         }
-        binding.versionName.text = "APK Version 2.2.1" //${BuildConfig.VERSION_NAME}
+        binding.versionName.text = "${BuildConfig.VERSION_NAME}"//"APK Version 2.2.3"
+
+        inAppUpdateHelper = InAppUpdateHelper(this)
+        inAppUpdateHelper.checkForUpdate()
+
+        viewModel.currentUser?.let {
+            analyticsHelper.setUserId(it.userId.toString())
+            val params = Bundle().apply {
+                putString(FirebaseAnalytics.Param.VALUE, "${it.userId}")
+            }
+            analyticsHelper.logEvent(FirebaseAnalytics.Event.APP_OPEN, params)
+        }
+
     }
 
     fun askForPermissions() {
@@ -409,8 +430,11 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
                 .setPositiveButton("Exit") { dialog, id -> finish() }
                 .show()
         }
-        binding.versionName.text = "APK Version 2.2.1" //${BuildConfig.VERSION_NAME}
+        binding.versionName.text ="${BuildConfig.VERSION_NAME}" //"APK Version 2.2.3"
+        inAppUpdateHelper.resumeUpdateIfNeeded()
     }
+
+
     private fun setUpMenu() {
         val menu = object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -524,6 +548,14 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
         }
         binding.navView.menu.findItem(R.id.sync_pending_records).setOnMenuItemClickListener {
+            if (SystemClock.elapsedRealtime() - lastClickTime < 900000L) {
+                Toast.makeText(this, "Please wait Syncing in Progress", Toast.LENGTH_SHORT).show()
+                return@setOnMenuItemClickListener true
+            }
+
+            // Save the click time
+            lastClickTime = SystemClock.elapsedRealtime()
+
             WorkerUtils.triggerAmritPushWorker(this)
             if (!pref.isFullPullComplete)
                 WorkerUtils.triggerAmritPullWorker(this)
@@ -572,6 +604,18 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
         }
 
+        binding.navView.menu.findItem(R.id.menu_support).setOnMenuItemClickListener {
+            var url = "https://forms.office.com/r/AqY1KqAz3v"
+            if (url.isNotEmpty()){
+                val i = Intent(Intent.ACTION_VIEW)
+                i.setData(Uri.parse(url))
+                startActivity(i)
+            }
+            binding.drawerLayout.close()
+            true
+
+        }
+
         if (isChatSupportEnabled) {
             binding.navView.menu.findItem(R.id.ChatFragment).setVisible(true)
             binding.navView.menu.findItem(R.id.ChatFragment).setOnMenuItemClickListener {
@@ -604,6 +648,7 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
     override fun onDestroy() {
         super.onDestroy()
+        inAppUpdateHelper.unregisterListener()
         _binding = null
     }
 
@@ -621,7 +666,16 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         } catch (e: Exception) {
             Log.e("AAAAAMessage","ApiUpdate $e")
         }
-        
+
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (inAppUpdateHelper.onActivityResult(requestCode, resultCode)) {
+            // Handled update result
+            return
+        }
+        // Handle other activity results here if needed
     }
 
 }

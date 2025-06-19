@@ -37,6 +37,7 @@
     <string name="no">No</string>
     <string name="submit">SUBMIT</string>
     <string name="enter_mobile_number">Enter Mobile Number</string>
+    <string name="enter_number_for_abha">Aadhaar Number for ABHA Registration</string>
     <string name="aadhaar_linked_mobile">Aadhaar linked mobile number or other mobile number</string>
     <string name="mobile_number">Mobile Number</string>
     <string name="check_and_generate_otp">Check and Generate OTP</string>
@@ -57,7 +58,7 @@
     <string name="aadhaar_linked_mobile_number_or_other_mobile_number">Aadhaar linked mobile number or other mobile number</string>
     <string name="individual_s_consent_for_creation_of_abha_number">Individual’s consent for creation of ABHA Number.</string>
     <string name="validate_fp">Validate FP</string>
-    <string name="generating_abha_for">Creating ABHA for:</string>
+    <string name="generating_abha_for">Enter</string>  <!--Creating ABHA for:-->
     <!--    <string name="otp_sent_to">"OTP sent to "</string>-->
     <string name="otp_sent_to">"OTP sent to Aadhaar linked mobile number"</string>
     <string name="otp_was_resent">OTP was resent.</string>
@@ -67,6 +68,7 @@
     <string name="str_search_abha">Search ABHA</string>
     <string name="str_invalid_aadhaar_no">Please Enter Valid Aadhaar Number</string>
     <string name="str_invalid_mobile_no">Please Enter Valid Mobile Number</string>
+    <string name="str_invalid_ben_name">Please Enter Valid Beneficiary name</string>
     <string name="str_here_abha_no">Here is your ABHA Number!</string>
     <string name="str_abha_already_exist">This ABHA already exists!</string>
     <string name="str_abha_successfully_created">ABHA account successfully created!</string>
@@ -97,6 +99,7 @@
     <string name="str_aadhaar_consent_7">I, @beneficiaryName, have been explained about the consent as stated above and hereby provide my consent for the aforementioned purposes.</string>
     <string name="str_seconds">" seconds"</string>
     <string name="str_aadhaar_otp_number">"OTP sent to Aadhaar registered mobile number ending with @mobileNumber"</string>
+    <string name="str_abha_otp_number">"OTP sent to ABHA registered mobile number ending with @mobileNumber"</string>
     <string name="str_otp_number_message">"An OTP has been sent to the mobile number ending with @mobileNumber."</string>
 
 

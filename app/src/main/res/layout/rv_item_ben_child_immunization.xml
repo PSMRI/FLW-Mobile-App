@@ -205,6 +205,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical"
+                        android:visibility="gone"
                         android:padding="@dimen/padding_small">
 
                         <TextView
@@ -316,6 +317,9 @@
                             android:layout_height="0dp"
                             android:layout_marginStart="@dimen/margin_small"
                             android:layout_weight="1"
+                            android:includeFontPadding="false"
+                            android:drawablePadding="0dp"
+                            android:drawableLeft="@drawable/ic_vaccines"
                             android:backgroundTint="@android:color/holo_green_dark"
                             android:onClick="@{() -> clickListener.onClickedBen(temp)}"
                             android:text="@string/show_vaccines"

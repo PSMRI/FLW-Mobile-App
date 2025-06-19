@@ -16,7 +16,7 @@ data class FormElement(
     val hasAlertError: Boolean = false,
     var value: String? = null,
     val regex: String? = null,
-    val allCaps: Boolean = false,
+    var allCaps: Boolean = false,
     val etInputType: Int = android.text.InputType.TYPE_CLASS_TEXT,
     val isMobileNumber: Boolean = false,
     val etMaxLength: Int = 50,

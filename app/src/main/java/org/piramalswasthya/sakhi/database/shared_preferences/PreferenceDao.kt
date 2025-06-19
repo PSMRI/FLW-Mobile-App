@@ -36,14 +36,15 @@ class PreferenceDao @Inject constructor(@ApplicationContext private val context:
         editor.apply()
     }
 
-    fun getJwtToken(): String? {
-        val prefKey = context.getString(R.string.PREF_primary_JWT_TOKEN)
+
+    fun getJWTAmritToken(): String? {
+        val prefKey = context.getString(R.string.PREF_primary_JWT_API_KEY)
         return pref.getString(prefKey, null)
     }
 
-    fun registerJwtToken(token: String) {
+    fun registerJWTAmritToken(token: String) {
         val editor = pref.edit()
-        val prefKey = context.getString(R.string.PREF_primary_JWT_TOKEN)
+        val prefKey = context.getString(R.string.PREF_primary_JWT_API_KEY)
         editor.putString(prefKey, token)
         editor.apply()
     }

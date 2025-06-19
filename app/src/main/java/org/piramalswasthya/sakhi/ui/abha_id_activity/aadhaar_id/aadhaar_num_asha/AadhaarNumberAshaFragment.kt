@@ -21,6 +21,7 @@ import org.piramalswasthya.sakhi.databinding.FragmentAadhaarNumberAshaBinding
 import org.piramalswasthya.sakhi.helpers.AadhaarValidationUtils
 import org.piramalswasthya.sakhi.network.AadhaarVerifyBioRequest
 import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.AadhaarIdViewModel
+import org.piramalswasthya.sakhi.utils.HelperUtil
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -148,11 +149,7 @@ class AadhaarNumberAshaFragment : Fragment() {
             }
         }
 
-       /* binding.aadharConsentCheckBox.setOnCheckedChangeListener { _, ischecked ->
-            binding.btnVerifyAadhaar.isEnabled = isValidAadhaar && isValidMobile && ischecked
-        }*/
-
-        binding.aadharDisclaimer.setOnClickListener {
+        binding.clickview.setOnClickListener {
            if(parentViewModel.beneficiaryName.value!=null && !parentViewModel.beneficiaryName.value.isNullOrBlank()) {
                viewModel.aadhaarNumber.value = binding.tietAadhaarNumber.text.toString()
                parentViewModel.navigateToAadhaarConsent(true)
@@ -195,32 +192,7 @@ class AadhaarNumberAshaFragment : Fragment() {
             }
 
         })
-        /*binding.tietAadhaarNumber.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
 
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-
-                if(s.toString().isNullOrBlank()){
-                    binding.tvErrorText.visibility = View.GONE
-                    binding.tvErrorText.text = ""
-                }else if(AadhaarValidationUtils.isValidAadhaar(s.toString())){
-                    binding.tvErrorText.visibility = View.GONE
-                    binding.tvErrorText.text = ""
-                }else{
-                    binding.tvErrorText.visibility = View.VISIBLE
-                    binding.tvErrorText.text = getString(R.string.str_invalid_aadhaar_no)
-                }
-
-                isValidAadhaar = (s != null) && AadhaarValidationUtils.isValidAadhaar(s.toString())
-                binding.btnVerifyAadhaar.isEnabled = isValidAadhaar && isValidMobile
-                        && binding.aadharConsentCheckBox.isChecked
-            }
-
-        })*/
 
         binding.tietMobileNumber.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -231,14 +203,15 @@ class AadhaarNumberAshaFragment : Fragment() {
 
             override fun afterTextChanged(s: Editable?) {
                 if((s != null) && isValidMobileNumber(s.toString())){
-                    binding.tvErrorTextMobile.visibility = View.GONE
-                    binding.tvErrorTextMobile.text = ""
+                    binding.tilMobileNumber.error = null
                     binding.ivValidMobile.setImageResource(R.drawable.ic_check_circle_green)
 
                 }else{
-                    binding.tvErrorTextMobile.visibility = View.VISIBLE
-                    binding.tvErrorTextMobile.text = getString(R.string.str_invalid_mobile_no)
+                    binding.tilMobileNumber.error = getString(R.string.str_invalid_mobile_no)
                     binding.ivValidMobile.setImageResource(R.drawable.ic_check_circle_grey)
+                }
+                if(s.isNullOrEmpty()){
+                    binding.tilMobileNumber.error = null
                 }
                 isValidMobile = (s != null) && isValidMobileNumber(s.toString())
                 if (isValidMobile)
@@ -257,17 +230,17 @@ class AadhaarNumberAshaFragment : Fragment() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                if((s != null)){
+                if((s != null) && HelperUtil.isValidName(s.toString())){
                     binding.tvErrorTextBenName.visibility = View.GONE
                     binding.tvErrorTextBenName.text = ""
                     binding.ivValidBenName.setImageResource(R.drawable.ic_check_circle_green)
 
                 }else{
                     binding.tvErrorTextBenName.visibility = View.VISIBLE
-                    binding.tvErrorTextBenName.text = getString(R.string.str_invalid_mobile_no)
+                    binding.tvErrorTextBenName.text = getString(R.string.str_invalid_ben_name)
                     binding.ivValidBenName.setImageResource(R.drawable.ic_check_circle_grey)
                 }
-                isValidBenName = (s != null && s.length >= 3)
+                isValidBenName = (s != null && s.length >= 3 && HelperUtil.isValidName(s.toString()))
                 if (isValidBenName)
                     parentViewModel.setBeneficiaryName(s.toString())
                 binding.btnVerifyAadhaar.isEnabled = isValidAadhaar && isValidMobile
@@ -306,6 +279,7 @@ class AadhaarNumberAshaFragment : Fragment() {
                 binding.tietAadhaarNumber.text= viewModel.aadhaarNumber.value
                 binding.btnVerifyAadhaar.isEnabled = isValidAadhaar && isValidMobile
                         && (parentViewModel.consentChecked.value==true)
+                binding.aadharDisclaimer.isChecked = true
             }
         }
     }
@@ -321,7 +295,7 @@ class AadhaarNumberAshaFragment : Fragment() {
     }
 
     fun isValidMobileNumber(str: String?): Boolean {
-        val regex = "(\\+91|0)?[1-9][0-9]{9}"
+        val regex = "^(\\+91[\\-\\s]?|0)?[6-9]\\d{9}$"
         val p: Pattern = Pattern.compile(regex)
         if (str == null) {
             return false
