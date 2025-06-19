@@ -80,6 +80,8 @@
     <string name="add_beneficiary">Add Beneficiary</string>
     <string name="assessment_form_filled_successfully">Assessment form filled successfully</string>
     <string name="visit_on">"Visit On "</string>
+    <string name="follow_up">Follow Up</string>
+    <string name="follow_up_date">Follow Up Date</string>
     <string name="follow_up_date">Follow Up Date</string>
     <string name="supervisor_visit_date">Date of Visit by Supervisor</string>
     <string name="test_up_date">Date of Test</string>
