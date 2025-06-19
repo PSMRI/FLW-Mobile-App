@@ -614,6 +614,24 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
     }
 
+    fun askForPermissions() {
+
+        val permissions = arrayOf<String>(
+            Manifest.permission.CALL_PHONE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.INTERNET,
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.CAMERA
+        )
+
+        ActivityCompat.requestPermissions(
+            this,
+            permissions,
+            1010
+        )
+    }
+
     override fun ApiUpdate() {
         try {
             Log.e("AAAAAMessage","ApiUpdate")
@@ -621,6 +639,7 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         } catch (e: Exception) {
             Log.e("AAAAAMessage","ApiUpdate $e")
         }
+        
     }
 
 }
