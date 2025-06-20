@@ -1189,6 +1189,7 @@ data class BenRegCache(
                     else -> 6
                 }
             } ?: 0,
+
             reproductiveStatus = genDetails?.reproductiveStatusId?.let {
                 when (it) {
                     0 -> ""
