@@ -3,8 +3,10 @@ package org.piramalswasthya.sakhi.configuration
 import android.content.Context
 import android.net.Uri
 import android.text.InputType
+import android.util.Log
 import android.util.Range
 import android.widget.LinearLayout
+import android.widget.Toast
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.Languages
@@ -65,6 +67,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
     private var isHoF: Boolean = false
 
     private var hof: BenRegCache? = null
+    private var benIfDataExist: BenRegCache? = null
 
     private var minAgeYear: Int = 0
     private var maxAgeYear: Int = Konstants.maxAgeForGenBen
@@ -847,6 +850,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         )
         this.familyHeadPhoneNo = household.family?.familyHeadPhoneNo?.toString()
         this.hof = hoF
+        this.benIfDataExist = ben
         if (ben == null) {
             dateOfReg.value = getCurrentDateString()
 //            ageUnit.value = ageUnit.entries!!.last()
@@ -893,6 +897,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
 
         ben?.takeIf { !it.isDraft }?.let { saved ->
+            handleForAgeDob(formId = agePopup.id)
             pic.value = saved.userImage
             dateOfReg.value = getDateFromLong(saved.regDate)
             firstName.value = saved.firstName
@@ -1033,8 +1038,15 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
         if (relationToHeadId == 4 || relationToHeadId == 5) hoF?.let {
             if (it.genDetails?.maritalStatusId == 2) {
-                agePopup.min = getHoFMinDobMillis()
-                agePopup.max = getHofMaxDobMillis()
+                if(benIfDataExist!=null)
+                {
+                    handleForAgeDob(formId = agePopup.id)
+                }
+                else{
+                    agePopup.min = getHoFMinDobMillis()
+                    agePopup.max = getHofMaxDobMillis()
+                }
+
             }
         }
 
@@ -1493,6 +1505,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     ageAtMarriage,
                     timeStampDateOfMarriageFromSpouse
                 )
+
                 handleForAgeDob(formId = agePopup.id)
 
             }
@@ -1765,86 +1778,74 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
             otherReligion.id -> validateEmptyOnEditText(otherReligion)
             rchId.id -> validateRchIdOnEditText(rchId)
-
-//            hasAadharNo.id -> triggerDependants(
-//                source = hasAadharNo, passedIndex = index, triggerIndex = 0, target = aadharNo
-//            )
-//
-//            aadharNo.id -> validateAadharNoOnEditText(aadharNo)
             birthCertificateNumber.id -> validateNoAlphabetSpaceOnEditText(birthCertificateNumber)
 
             else -> -1
         }
     }
-
     private fun handleForAgeDob(formId: Int): Int {
         if (formId == agePopup.id) {
-//            when (ageUnit.value) {
-//                ageUnit.entries?.get(0) -> {
-//                    age.min = 0
-//                    age.max = 31
-//                }
-//
-//                ageUnit.entries?.get(1) -> {
-//                    age.min = 1
-//                    age.max = 11
-//                }
-//
-//                ageUnit.entries?.get(2) -> {
-//                    age.min = minAgeYear.toLong()
-//                    age.max = maxAgeYear.toLong()
-//                }
-//
-//                else -> return -1
-//            }
-
-//            validateIntMinMax(age)
             if (agePopup.errorText == null) {
                 ageAtMarriage.value = null
                 val ageAtMarriageMax = if (isBenParentOfHoF())
-                    getAgeFromDob(getLongFromDate(agePopup.value)) - getAgeFromDob(
-                        hof!!.dob
-                    ) else getAgeFromDob(getLongFromDate(agePopup.value))
+                    getAgeFromDob(getLongFromDate(agePopup.value)) - getAgeFromDob(hof!!.dob)
+                else
+                    getAgeFromDob(getLongFromDate(agePopup.value))
                 ageAtMarriage.max = ageAtMarriageMax.toLong()
-
             }
 
-//                when (ageUnit.value) {
-//                    ageUnit.entries?.get(2) -> {
-//                        ageAtMarriage.value = null
-//                        ageAtMarriage.max =
-//                            if (isBenParentOfHoF())
-//                                age.value!!.toLong() - getAgeFromDob(
-//                                    hof!!.dob
-//                                ) else age.value!!.toLong()
-//                        cal.add(
-//                            Calendar.YEAR, -1 * age.value!!.toInt()
-//                        )
-//                    }
-//
-//                    ageUnit.entries?.get(1) -> {
-//                        cal.add(
-//                            Calendar.MONTH, -1 * age.value!!.toInt()
-//                        )
-//                    }
-//
-//                    ageUnit.entries?.get(0) -> {
-//                        cal.add(
-//                            Calendar.DAY_OF_YEAR, -1 * age.value!!.toInt()
-//                        )
+            val age = getAgeFromDob(getLongFromDate(agePopup.value))
+            val genderIsFemale = gender.value == gender.entries?.get(1)
+            if (benIfDataExist == null) {
+                reproductiveStatus.isEnabled = true
+                val updatedReproductiveOptions = when {
+                    !genderIsFemale -> emptyList()
+                    age in 15..19 -> listOf(
+                        "Adolescent Girl", "Eligible Couple", "Pregnant Woman",
+                        "Postnatal Care", "Permanently Sterilised"
+                    )
+                    age in 20..49 -> listOf(
+                        "Eligible Couple", "Pregnant Woman",
+                        "Postnatal Care", "Permanently Sterilised"
+                    )
+                    age >= 50 -> listOf("Elderly Woman")
+                    else -> emptyList()
+                }
+
+                reproductiveStatus.entries = updatedReproductiveOptions.toTypedArray()
+                reproductiveStatus.value = null
+            } else {
+                val saved = benIfDataExist
+                reproductiveStatus.isEnabled = false
+                if (saved != null) {
+                    reproductiveStatus.value = saved.genDetails?.reproductiveStatusId?.let {
+                        reproductiveStatus.getStringFromPosition(it)
+                    }
+                }
+
+                when (reproductiveStatus.value) {
+                        "Adolescent Girl" -> {
+                            agePopup.max = yearsAgo(15)
+                            agePopup.min = yearsAgo(19)
+                        }
+                        "Eligible Couple", "Pregnant Woman", "Postnatal Care", "Permanently Sterilised" -> {
+                            agePopup.max = yearsAgo(20)
+                            agePopup.min = yearsAgo(49)
+                        }
+                        "Elderly Woman" -> {
+                            agePopup.max = yearsAgo(50)
+                            agePopup.min = yearsAgo(100)
+                        }
+//                        else -> {
+//                            agePopup.min = yearsAgo(99)
+//                            agePopup.max = yearsAgo(15)
+//                        }
+                }
+
+
+            }
         }
-//                }
-//                val year = cal.get(Calendar.YEAR)
-//                val month = cal.get(Calendar.MONTH) + 1
-//                val day = cal.get(Calendar.DAY_OF_MONTH)
-//                val newDob =
-//                    "${if (day > 9) day else "0$day"}-${if (month > 9) month else "0$month"}-$year"
-//                if (dob.value != newDob) {
-//                    dob.value = newDob
-//                    dob.errorText = null
-//                }
-//            }
-//        }
+
         val listChanged = if (hasThirdPage()) triggerDependants(
             source = rchId,
             addItems = listOf(reproductiveStatus),
@@ -1857,15 +1858,15 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 addItems = emptyList()
             )
         } != -1
+
         val listChanged2 = triggerDependants(
             age = getAgeFromDob(getLongFromDate(agePopup.value)),
-//            ageUnit = ageUnit,
             ageTriggerRange = Range(4, 14),
-//            ageUnitTriggerIndex = 2,
             target = childRegisteredAtSchool,
             placeAfter = religion,
             targetSideEffect = listOf(typeOfSchool)
         ) != -1
+
         val listChanged3 =
             if (maritalStatus.inputType == TEXT_VIEW) -1 else {
                 if (getAgeFromDob(getLongFromDate(agePopup.value)) <= Konstants.maxAgeForAdolescent) triggerDependants(
@@ -1906,10 +1907,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     )
                 }
             } != -1
-        return if (listChanged || listChanged2 || listChanged3 || listChanged4)
-            1
-        else
-            -1
+
+        return if (listChanged || listChanged2 || listChanged3 || listChanged4) 1 else -1
     }
 
     private fun isBenParentOfHoF() =
@@ -2023,9 +2022,20 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 }
 
             ben.genDetails?.let { gen ->
-                gen.reproductiveStatusId = reproductiveStatus.getPosition()
-                gen.reproductiveStatus =
-                    reproductiveStatus.getEnglishStringFromPosition(gen.reproductiveStatusId)
+                val selectedValue = reproductiveStatus.value?.trim() ?: ""
+                val reproductiveMap = mapOf(
+                    "Eligible Couple" to 1,
+                    "Pregnant Woman" to 2,
+                    "Postnatal Mother" to 3,
+                    "Elderly Woman" to 4,
+                    "Adolescent Girl" to 5,
+                    "Permanently Sterilised" to 6
+                )
+
+                val selectedId = reproductiveMap[selectedValue] ?: 0
+
+                gen.reproductiveStatusId = selectedId
+                gen.reproductiveStatus = selectedValue
             }
 
             ben.kidDetails?.birthCertificateNumber =
@@ -2124,5 +2134,12 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
     }
 
-
+ 
+    fun yearsAgo(years: Int): Long {
+        return Calendar.getInstance().apply {
+            val today = Calendar.getInstance().setToStartOfTheDay()
+            timeInMillis = today.timeInMillis
+            add(Calendar.YEAR, -years)
+        }.timeInMillis
+    }
 }
