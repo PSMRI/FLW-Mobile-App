@@ -1802,11 +1802,11 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     !genderIsFemale -> emptyList()
                     age in 15..19 -> listOf(
                         "Adolescent Girl", "Eligible Couple", "Pregnant Woman",
-                        "Postnatal Care", "Permanently Sterilised"
+                        "Postnatal Mother", "Permanently Sterilised"
                     )
                     age in 20..49 -> listOf(
                         "Eligible Couple", "Pregnant Woman",
-                        "Postnatal Care", "Permanently Sterilised"
+                        "Postnatal Mother", "Permanently Sterilised"
                     )
                     age >= 50 -> listOf("Elderly Woman")
                     else -> emptyList()
@@ -1828,7 +1828,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                             agePopup.max = yearsAgo(15)
                             agePopup.min = yearsAgo(19)
                         }
-                        "Eligible Couple", "Pregnant Woman", "Postnatal Care", "Permanently Sterilised" -> {
+                        "Eligible Couple", "Pregnant Woman", "Postnatal Mother", "Permanently Sterilised" -> {
                             agePopup.max = yearsAgo(20)
                             agePopup.min = yearsAgo(49)
                         }
