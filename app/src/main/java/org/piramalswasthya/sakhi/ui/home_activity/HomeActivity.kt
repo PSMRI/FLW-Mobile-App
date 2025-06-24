@@ -6,7 +6,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
+import android.os.SystemClock
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -37,6 +37,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.internal.common.CommonUtils.isEmulator
 import com.google.firebase.crashlytics.internal.common.CommonUtils.isRooted
 import dagger.hilt.EntryPoint
@@ -48,7 +49,9 @@ import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.ActivityHomeBinding
+import org.piramalswasthya.sakhi.helpers.AnalyticsHelper
 import org.piramalswasthya.sakhi.helpers.ImageUtils
+import org.piramalswasthya.sakhi.helpers.InAppUpdateHelper
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.MyContextWrapper
 import org.piramalswasthya.sakhi.helpers.isInternetAvailable
@@ -60,7 +63,6 @@ import org.piramalswasthya.sakhi.ui.service_location_activity.ServiceLocationAct
 import org.piramalswasthya.sakhi.utils.KeyUtils
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import java.net.URI
-import java.util.Locale
 import javax.inject.Inject
 
 
@@ -68,8 +70,12 @@ import javax.inject.Inject
 class HomeActivity : AppCompatActivity() {
 
     var isChatSupportEnabled : Boolean = false
+    private lateinit var updateHelper: InAppUpdateHelper
+    @Inject lateinit var analyticsHelper: AnalyticsHelper
 
+    private lateinit var inAppUpdateHelper: InAppUpdateHelper
 
+    var lastClickTime: Long = 0L
 
     @EntryPoint
     @InstallIn(SingletonComponent::class)
@@ -126,11 +132,12 @@ class HomeActivity : AppCompatActivity() {
                     di.dismiss()
                 } else {
                     pref.saveSetLanguage(checkedLanguage)
-                    Locale.setDefault(Locale(checkedLanguage.symbol))
-
-                    val restart = Intent(this, HomeActivity::class.java)
-                    finish()
+                    di.dismiss()
+                    val restart = Intent(this, HomeActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                    }
                     startActivity(restart)
+                    finish()
                 }
 
             }.create()
@@ -208,7 +215,6 @@ class HomeActivity : AppCompatActivity() {
         setUpNavHeader()
         setUpFirstTimePullWorker()
         setUpMenu()
-
         val permissions = arrayOf<String>(
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -265,7 +271,19 @@ class HomeActivity : AppCompatActivity() {
                 }
             }
         }
-        binding.versionName.text = "APK Version 2.2.1" //${BuildConfig.VERSION_NAME}
+        binding.versionName.text = "${BuildConfig.VERSION_NAME}"//"APK Version 2.2.3"
+
+        inAppUpdateHelper = InAppUpdateHelper(this)
+        inAppUpdateHelper.checkForUpdate()
+
+        viewModel.currentUser?.let {
+            analyticsHelper.setUserId(it.userId.toString())
+            val params = Bundle().apply {
+                putString(FirebaseAnalytics.Param.VALUE, "${it.userId}")
+            }
+            analyticsHelper.logEvent(FirebaseAnalytics.Event.APP_OPEN, params)
+        }
+
     }
 
 
@@ -394,8 +412,11 @@ class HomeActivity : AppCompatActivity() {
                 .setPositiveButton("Exit") { dialog, id -> finish() }
                 .show()
         }
-        binding.versionName.text = "APK Version 2.2.1" //${BuildConfig.VERSION_NAME}
+        binding.versionName.text ="${BuildConfig.VERSION_NAME}" //"APK Version 2.2.3"
+        inAppUpdateHelper.resumeUpdateIfNeeded()
     }
+
+
     private fun setUpMenu() {
         val menu = object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -509,6 +530,14 @@ class HomeActivity : AppCompatActivity() {
 
         }
         binding.navView.menu.findItem(R.id.sync_pending_records).setOnMenuItemClickListener {
+            if (SystemClock.elapsedRealtime() - lastClickTime < 900000L) {
+                Toast.makeText(this, "Please wait Syncing in Progress", Toast.LENGTH_SHORT).show()
+                return@setOnMenuItemClickListener true
+            }
+
+            // Save the click time
+            lastClickTime = SystemClock.elapsedRealtime()
+
             WorkerUtils.triggerAmritPushWorker(this)
             if (!pref.isFullPullComplete)
                 WorkerUtils.triggerAmritPullWorker(this)
@@ -538,6 +567,18 @@ class HomeActivity : AppCompatActivity() {
                     "https://forms.office.com/Pages/ResponsePage.aspx?id=jQ49md0HKEGgbxRJvtPnRISY9UjAA01KtsFKYKhp1nNURUpKQzNJUkE1OUc0SllXQ0IzRFVJNlM2SC4u"
             }
 
+            if (url.isNotEmpty()){
+                val i = Intent(Intent.ACTION_VIEW)
+                i.setData(Uri.parse(url))
+                startActivity(i)
+            }
+            binding.drawerLayout.close()
+            true
+
+        }
+
+        binding.navView.menu.findItem(R.id.menu_support).setOnMenuItemClickListener {
+            var url = "https://forms.office.com/r/AqY1KqAz3v"
             if (url.isNotEmpty()){
                 val i = Intent(Intent.ACTION_VIEW)
                 i.setData(Uri.parse(url))
@@ -580,6 +621,7 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        inAppUpdateHelper.unregisterListener()
         _binding = null
     }
 
@@ -588,6 +630,15 @@ class HomeActivity : AppCompatActivity() {
 //      return isRooted() || isEmulator() || RootedUtil().isDeviceRooted(applicationContext)
         return isRooted() || isEmulator()
 
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (inAppUpdateHelper.onActivityResult(requestCode, resultCode)) {
+            // Handled update result
+            return
+        }
+        // Handle other activity results here if needed
     }
 
 }

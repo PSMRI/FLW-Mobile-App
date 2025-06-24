@@ -1,10 +1,11 @@
 package org.piramalswasthya.sakhi.ui.home_activity.immunization_due.child_immunization.form
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CompoundButton
+import android.widget.CompoundButton.OnCheckedChangeListener
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -17,7 +18,6 @@ import org.piramalswasthya.sakhi.adapters.ChildImmunizationVaccineAdapter
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentImmunizationFormBinding
 import org.piramalswasthya.sakhi.model.ImmunizationDetailsDomain
-import org.piramalswasthya.sakhi.model.VaccineDomain
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.immunization_due.child_immunization.form.ImmunizationFormViewModel.State
 import org.piramalswasthya.sakhi.work.WorkerUtils
@@ -27,7 +27,7 @@ import java.util.Calendar
 import java.util.Locale
 
 @AndroidEntryPoint
-class ImmunizationFormFragment : Fragment() {
+class ImmunizationFormFragment : Fragment(), OnCheckedChangeListener {
     //  private var _binding: FragmentNewFormBinding? = null
 
 //    private val binding: FragmentNewFormBinding
@@ -37,6 +37,7 @@ class ImmunizationFormFragment : Fragment() {
     private val binding: FragmentImmunizationFormBinding
         get() = _binding!!
 
+    var selectAll = false
 
     private val viewModel: ImmunizationFormViewModel by viewModels()
 
@@ -51,6 +52,8 @@ class ImmunizationFormFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.checkBox.setOnCheckedChangeListener(this)
         viewModel.benName.observe(viewLifecycleOwner) {
             binding.tvBenName.text = it
         }
@@ -136,15 +139,36 @@ class ImmunizationFormFragment : Fragment() {
         }
 
         binding.rvImmCat.adapter =
-            ChildImmunizationVaccineAdapter(ChildImmunizationVaccineAdapter.ImmunizationClickListener { item ->
+            ChildImmunizationVaccineAdapter(ChildImmunizationVaccineAdapter.ImmunizationClickListener { position, item ->
                 if (item.isSwitchChecked) {
                     viewModel.vaccinationDoneList.add(item)
+                    viewModel.list[position].isSwitchChecked = item.isSwitchChecked
+                    var count = 0
+                    viewModel.list.forEach {it->
+                          if (it.state.name == "PENDING" || it.state.name == "OVERDUE") {
+                             count++
+                         }
+                    }
+
+                    if (count == viewModel.vaccinationDoneList.size){
+                        binding.checkBox.setOnCheckedChangeListener(null)
+                        binding.checkBox.isChecked = true
+                        selectAll = true
+                        binding.checkBox.setOnCheckedChangeListener(this)
+                    }
                 } else {
-                    binding.checkBox.isChecked =false
                     viewModel.vaccinationDoneList.removeIf { it ->
                         it.vaccineName == item.vaccineName
                     }
+                    viewModel.list[position].isSwitchChecked = item.isSwitchChecked
+
+                    binding.checkBox.setOnCheckedChangeListener(null)
+                    binding.checkBox.isChecked = false
+                    binding.checkBox.setOnCheckedChangeListener(this)
                 }
+                (binding.rvImmCat.adapter as ChildImmunizationVaccineAdapter).notifyItemChanged(
+                    position
+                )
             })
 
         lifecycleScope.launch {
@@ -155,48 +179,13 @@ class ImmunizationFormFragment : Fragment() {
             }
         }
 
-        binding.checkBox.setOnCheckedChangeListener { compoundButton, isChecked ->
-            if (isChecked){
-                list.forEach {item->
-                    if (item.state.name =="PENDING"||item.state.name =="OVERDUE"){
-                        item.isSwitchChecked = true
-
-                    }else if(item.state.name =="MISSED" ||item.state.name =="UNAVAILABLE"){
-                        item.isSwitchChecked = false
-
-                    }else{
-                        //If state is DONE
-                        item.isSwitchChecked = true
-                    }
-
-                }
-
-            }else{
-                list.forEach {item->
-                    if (item.state.name =="PENDING"||item.state.name =="OVERDUE"){
-                        item.isSwitchChecked = false
-
-                    }else if(item.state.name =="MISSED" ||item.state.name =="UNAVAILABLE"){
-                        item.isSwitchChecked = false
-
-                    }else{
-                        //If state is DONE
-                        item.isSwitchChecked = true
-                    }
-
-                }
-
-            }
-            (binding.rvImmCat.adapter as ChildImmunizationVaccineAdapter).notifyDataSetChanged()
-
-        }
     }
 
-    lateinit var list: List<VaccineDomain>
+
     private fun submitListToVaccinationRv(detail: ImmunizationDetailsDomain) {
-        list =
+        viewModel.list =
             detail.vaccineStateList.filter { it.vaccineCategory.name == viewModel.vaccineCategory }
-        (_binding?.rvImmCat?.adapter as ChildImmunizationVaccineAdapter?)?.submitList(list)
+        (_binding?.rvImmCat?.adapter as ChildImmunizationVaccineAdapter?)?.submitList(viewModel.list)
     }
 
 
@@ -238,6 +227,35 @@ class ImmunizationFormFragment : Fragment() {
         cal.timeInMillis = dateLong
         val f = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
         return f.format(cal.time)
+    }
+
+    override fun onCheckedChanged(p0: CompoundButton?, isChecked: Boolean) {
+        if (isChecked) {
+            viewModel.list.forEach { item ->
+                if (item.state.name == "PENDING" || item.state.name == "OVERDUE") {
+                    item.isSwitchChecked = true
+                    viewModel.vaccinationDoneList.add(item)
+                }
+            }
+            selectAll = true
+
+        } else {
+            if (selectAll) {
+                viewModel.list.forEach { item ->
+                    if (item.state.name == "PENDING" || item.state.name == "OVERDUE") {
+                        item.isSwitchChecked = false
+
+                        viewModel.vaccinationDoneList.removeIf { it ->
+                            it.vaccineName == item.vaccineName
+                        }
+
+                    }
+                    selectAll = false
+                }
+            }
+
+        }
+        (binding.rvImmCat.adapter as ChildImmunizationVaccineAdapter).notifyDataSetChanged()
     }
 
 }

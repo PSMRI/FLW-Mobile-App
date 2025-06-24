@@ -67,9 +67,17 @@ AadhaarIdViewModel @Inject constructor(
     val txnId: String
         get() = _txnId?:""
 
+    private var _otpTxnId: String? = null
+    val otpTxnId: String
+        get() = _otpTxnId?:""
+
     private var _mobileNumber: String? = null
     val mobileNumber: String
         get() = _mobileNumber?:""
+
+    private var _selectedAbhaIndex: String? = null
+    val selectedAbhaIndex: String
+        get() = _selectedAbhaIndex?:""
 
     private var _aadhaarNumber: String? = null
     val aadhaarNumber: String
@@ -136,6 +144,14 @@ AadhaarIdViewModel @Inject constructor(
 
     fun setAadhaarNumber(aadhaarNumber: String) {
         _aadhaarNumber = aadhaarNumber
+    }
+
+    fun setSelectedAbhaIndex(abhaIndex: String) {
+        _selectedAbhaIndex = abhaIndex
+    }
+
+    fun setOtpTxnId(txnId: String) {
+        _otpTxnId = txnId
     }
 
     fun setTxnId(txnId: String) {

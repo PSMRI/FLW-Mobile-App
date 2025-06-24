@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +17,6 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.FragmentVerifyMobileOtpBinding
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.AadhaarIdViewModel
-import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_otp.AadhaarOtpFragmentArgs
 import org.piramalswasthya.sakhi.ui.abha_id_activity.verify_mobile_otp.VerifyMobileOtpViewModel.State
 
 @AndroidEntryPoint
@@ -39,7 +37,7 @@ class VerifyMobileOtpFragment : Fragment() {
     }
 
 
-    private var timer = object : CountDownTimer(30000, 1000) {
+    private var timer = object : CountDownTimer(60000, 1000) {
         override fun onTick(millisUntilFinished: Long) {
             val sec = millisUntilFinished / 1000 % 60
           //  binding.timerResendOtp.text = "Didn't receive OTP? Wait 00:$sec seconds"
@@ -49,6 +47,8 @@ class VerifyMobileOtpFragment : Fragment() {
         override fun onFinish() {
             binding.resendOtp.isEnabled = true
             binding.timerResendOtp.visibility = View.INVISIBLE
+            binding.timerCount.visibility = View.INVISIBLE
+            binding.timerSeconds.visibility = View.INVISIBLE
         }
     }
 
@@ -179,6 +179,8 @@ class VerifyMobileOtpFragment : Fragment() {
     private fun startResendTimer() {
         binding.resendOtp.isEnabled = false
         binding.timerResendOtp.visibility = View.VISIBLE
+        binding.timerCount.visibility = View.VISIBLE
+        binding.timerSeconds.visibility = View.VISIBLE
         timer.start()
     }
 
