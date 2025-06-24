@@ -1,7 +1,6 @@
 package org.piramalswasthya.sakhi.repositories
 
 import android.util.Base64
-import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
@@ -13,7 +12,6 @@ import org.json.JSONException
 import org.json.JSONObject
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
-import org.piramalswasthya.sakhi.model.BenHealthIdDetails
 import org.piramalswasthya.sakhi.network.AadhaarVerifyBioRequest
 import org.piramalswasthya.sakhi.network.AbhaApiService
 import org.piramalswasthya.sakhi.network.AbhaCheckAndGenerateMobileOtpResponse
@@ -56,7 +54,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
-import java.util.Timer
 import java.util.UUID
 import javax.crypto.Cipher
 import javax.inject.Inject
@@ -631,63 +628,63 @@ class AbhaIdRepo @Inject constructor(
         }
     }
 
-//    suspend fun mapHealthIDToBeneficiary(mapHIDtoBeneficiary: MapHIDtoBeneficiary): NetworkResult<String> {
-//        return withContext((Dispatchers.IO)) {
-//            try {
-//                val user =
-//                    prefDao.getLoggedInUser() ?: throw IllegalStateException("No user logged in!!")
-//                mapHIDtoBeneficiary.providerServiceMapId = user.serviceMapId
-//                mapHIDtoBeneficiary.createdBy = user.userName
-//                val response = amritApiService.mapHealthIDToBeneficiary(mapHIDtoBeneficiary)
-//                val responseBody = response.body()?.string()
-//                when (responseBody?.let { JSONObject(it).getInt("statusCode") }) {
-//                    200 -> {
-//                        val json = JSONObject(responseBody)
-//                        val data = json.optJSONObject("data")
-//                        Timber.d("Checkbox values : ${data}")
-//                        if (data != null && data.has("benHealthID") && data.has("healthId")) {
-//                            NetworkResult.Success(responseBody)
-//
-//                        }
-//
-//                        else if (data != null && data.has("response")) {
-//                            val message = data.getString("response")
-//                            abhaGenerated.deleteAbhaByBenId(mapHIDtoBeneficiary.beneficiaryID!!)
-//                            NetworkResult.Error(0, message)
-//                        }
-//
-//                        else {
-//                            NetworkResult.Error(0, "Unknown response format")
-//                        }
-//                    }
-//
-//                    5000, 5002 -> {
-//                        if (JSONObject(responseBody).getString("errorMessage")
-//                                .contentEquals("Invalid login key or session is expired")
-//                        ) {
-//                            userRepo.refreshTokenTmc(user.userName, user.password)
-//                            mapHealthIDToBeneficiary(mapHIDtoBeneficiary)
-//                        } else {
-//                            NetworkResult.Error(
-//                                0,
-//                                JSONObject(responseBody).getString("errorMessage")
-//                            )
-//                        }
-//                    }
-//
-//                    else -> NetworkResult.Error(0, responseBody.toString())
-//                }
-//            } catch (e: IOException) {
-//                NetworkResult.Error(-1, "Unable to connect to Internet!")
-//            } catch (e: JSONException) {
-//                NetworkResult.Error(-2, "Invalid response! Please try again!")
-//            } catch (e: SocketTimeoutException) {
-//                NetworkResult.Error(-3, "Request Timed out! Please try again!")
-//            } catch (e: java.lang.Exception) {
-//                NetworkResult.Error(-4, e.message ?: "Unknown Error")
-//            }
-//        }
-//    }
+   /* suspend fun mapHealthIDToBeneficiary(mapHIDtoBeneficiary: MapHIDtoBeneficiary): NetworkResult<String> {
+        return withContext((Dispatchers.IO)) {
+            try {
+                val user =
+                    prefDao.getLoggedInUser() ?: throw IllegalStateException("No user logged in!!")
+                mapHIDtoBeneficiary.providerServiceMapId = user.serviceMapId
+                mapHIDtoBeneficiary.createdBy = user.userName
+                val response = amritApiService.mapHealthIDToBeneficiary(mapHIDtoBeneficiary)
+                val responseBody = response.body()?.string()
+                when (responseBody?.let { JSONObject(it).getInt("statusCode") }) {
+                    200 -> {
+                        val json = JSONObject(responseBody)
+                        val data = json.optJSONObject("data")
+                        Timber.d("Checkbox values : ${data}")
+                        if (data != null && data.has("benHealthID") && data.has("healthId")) {
+                            NetworkResult.Success(responseBody)
+
+                        }
+
+                        else if (data != null && data.has("response")) {
+                            val message = data.getString("response")
+                            abhaGenerated.deleteAbhaByBenId(mapHIDtoBeneficiary.beneficiaryID!!)
+                            NetworkResult.Error(0, message)
+                        }
+
+                        else {
+                            NetworkResult.Error(0, "Unknown response format")
+                        }
+                    }
+
+                    5000, 5002 -> {
+                        if (JSONObject(responseBody).getString("errorMessage")
+                                .contentEquals("Invalid login key or session is expired")
+                        ) {
+                            userRepo.refreshTokenTmc(user.userName, user.password)
+                            mapHealthIDToBeneficiary(mapHIDtoBeneficiary)
+                        } else {
+                            NetworkResult.Error(
+                                0,
+                                JSONObject(responseBody).getString("errorMessage")
+                            )
+                        }
+                    }
+
+                    else -> NetworkResult.Error(0, responseBody.toString())
+                }
+            } catch (e: IOException) {
+                NetworkResult.Error(-1, "Unable to connect to Internet!")
+            } catch (e: JSONException) {
+                NetworkResult.Error(-2, "Invalid response! Please try again!")
+            } catch (e: SocketTimeoutException) {
+                NetworkResult.Error(-3, "Request Timed out! Please try again!")
+            } catch (e: java.lang.Exception) {
+                NetworkResult.Error(-4, e.message ?: "Unknown Error")
+            }
+        }
+    }*/
 
     suspend fun mapHealthIDToBeneficiary(
         mapHIDtoBeneficiary: MapHIDtoBeneficiary
