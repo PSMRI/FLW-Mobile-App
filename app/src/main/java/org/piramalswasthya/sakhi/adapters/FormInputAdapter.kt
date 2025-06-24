@@ -884,7 +884,9 @@ class FormInputAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inputTypes = values()
-        return when (inputTypes[viewType]) {
+        val safeType = inputTypes.getOrNull(viewType) ?: TEXT_VIEW
+
+        return when (safeType) {
             EDIT_TEXT -> EditTextInputViewHolder.from(parent)
             DROPDOWN -> DropDownInputViewHolder.from(parent)
             RADIO -> RadioInputViewHolder.from(parent)
@@ -933,8 +935,16 @@ class FormInputAdapter(
         }
     }
 
-    override fun getItemViewType(position: Int) = getItem(position).inputType.ordinal
+    //override fun getItemViewType(position: Int) = getItem(position).inputType.ordinal
+    //THis changes done to solve crashalytics issue
+    override fun getItemViewType(position: Int): Int {
+        if (position < 0 || position >= itemCount) {
+            return TEXT_VIEW.ordinal // fallback view type
+        }
 
+        val item = getItem(position) ?: return TEXT_VIEW.ordinal
+        return item.inputType.ordinal
+    }
     /**
      * Validation Result : -1 -> all good
      * else index of element creating trouble

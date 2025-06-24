@@ -281,7 +281,10 @@ class HomeActivity : AppCompatActivity() {
             val params = Bundle().apply {
                 putString(FirebaseAnalytics.Param.VALUE, "${it.userId}")
             }
+            analyticsHelper.setUserProperty("user_role", "asha")
+            analyticsHelper.setUserProperty("app_version", BuildConfig.VERSION_NAME)
             analyticsHelper.logEvent(FirebaseAnalytics.Event.APP_OPEN, params)
+
         }
 
     }

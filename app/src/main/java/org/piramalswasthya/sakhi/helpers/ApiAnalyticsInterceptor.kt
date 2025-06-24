@@ -43,7 +43,7 @@ class ApiAnalyticsInterceptor @Inject constructor(
         responseCode: Int?,
         errorMessage: String?
     ) {
-        val endpoint = request.url.encodedPath // e.g., "/user/profile"
+        val endpoint = request.url.encodedPath
 
         val bundle = Bundle().apply {
             putString("api_name", endpoint)

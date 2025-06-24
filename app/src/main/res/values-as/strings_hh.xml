@@ -37,7 +37,7 @@
     <string name="nhhr_type_residential_area_2">নগৰ</string>
     <string name="nhhr_type_residential_area_3">জনজাতীয়</string>
     <string name="nhhr_type_residential_area_4">অন্যান্য</string>
-    <string name="nhhr_type_residential_area_5">Tea Garden</string>
+    <string name="nhhr_type_residential_area_5">চাহ বাগিচা</string>
 
     <string-array name="nhhr_type_residential_area_array">
         <item>@string/nhhr_type_residential_area_1</item>

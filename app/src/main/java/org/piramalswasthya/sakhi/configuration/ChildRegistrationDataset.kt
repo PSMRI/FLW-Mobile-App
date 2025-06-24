@@ -62,7 +62,7 @@ class ChildRegistrationDataset(
         id = 5,
         inputType = InputType.RADIO,
         title = "Sex of Child",
-        entries = arrayOf("Male", "Female"),
+        entries = arrayOf(resources.getString(R.string.male), resources.getString(R.string.female)),
         isEnabled = false,
         required = false,
         hasDependants = false
