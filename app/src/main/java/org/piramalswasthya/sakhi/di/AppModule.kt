@@ -12,6 +12,7 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.piramalswasthya.sakhi.database.room.InAppDb
+import org.piramalswasthya.sakhi.database.room.dao.ABHAGenratedDao
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.BeneficiaryIdsAvailDao
 import org.piramalswasthya.sakhi.database.room.dao.CbacDao
@@ -218,6 +219,10 @@ object AppModule {
     @Singleton
     @Provides
     fun provideHBYCDao(database: InAppDb): HbycDao = database.hbycDao
+
+    @Singleton
+    @Provides
+    fun provideABHAGenDao(database: InAppDb): ABHAGenratedDao = database.abhaGenratedDao
 
 
 }

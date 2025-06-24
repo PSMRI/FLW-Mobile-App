@@ -26,6 +26,7 @@
     <string name="name">Name :</string>
     <string name="abha_number">ABHA Number :</string>
     <string name="linked_to_beneficiary">This ABHA is successfully linked to the record of</string>
+    <string name="not_linked_to_beneficiary">This ABHA No is already linked to some one, please try again using correct Aadhaar No</string>
     <string name="do_you_want_to_download_the_abha_card">Do you want to download the ABHA card?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
