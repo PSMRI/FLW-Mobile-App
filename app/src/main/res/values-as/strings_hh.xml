@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="btn_text_frag_home_nhhr">নতুন পাৰিবাৰিক নিবন্ধন</string>
-    <string name="no_records_found">কোনো রেকর্ড পোৱা নগল</string>
-    <string name="household_search">ঘৰুৱা সন্ধান</string>
+    <string name="btn_text_frag_home_nhhr">নতুন Household পঞ্জীয়ন</string>
+    <string name="no_records_found">কোনো ৰেকৰ্ড পোৱা নগল</string>
+    <string name="household_search">সন্ধান</string>
 
-    <string name="rv_item_hh_ph_1">এইচ এইচ আই ডি : </string>
-    <string name="rv_item_hh_ph_2">পৰিয়াল মুৰব্বীৰ নাম :</string>
+    <string name="rv_item_hh_ph_1">HHID : </string>
+    <string name="rv_item_hh_ph_2">পৰিয়ালৰ মূৰব্বীৰ নাম :</string>
     <string name="rv_item_hh_ph_3">উপাধি/ উপনাম : </string>
     <string name="hh_members_text">সদস্যসকল : %1d</string>
-    <string name="btn_rv_item_hh_add_ben">যোগ কৰক</string>
+    <string name="btn_rv_item_hh_add_ben">হিতাধিকাৰী যোগ কৰক</string>
 
     <string name="frag_nhhr_title">নতুন পাৰিবাৰিক নিবন্ধন</string>
 
@@ -18,13 +18,13 @@
     <string name="nhhr_title_page_3">পাৰিবাৰিক সুবিধা</string>
 
     <string name="nhhr_first_name_hof">পৰিয়ালৰ মুৰব্বীৰ নাম</string>
-    <string name="nhhr_last_name_hof">উপাধি/ উপনাম</string>
+    <string name="nhhr_last_name_hof">পৰিয়ালৰ মুৰব্বীৰ শেষ নাম / উপাধি</string>
     <string name="nhhr_mob_no_hof">পৰিয়ালৰ মুৰব্বীৰ মোবাইল নম্বৰ</string>
     <string name="nhhr_house_no">ঘৰ নম্বৰ</string>
     <string name="nhhr_ward_no">ৱাৰ্ড নম্বৰ</string>
     <string name="nhhr_ward_name">ৱাৰ্ডনাম</string>
     <string name="nhhr_mohalla_name">মহল্লা নাম</string>
-    <string name="nhhr_poverty_line">দৰিদ্ৰতা ৰেখা</string>
+    <string name="nhhr_poverty_line">অৰ্থনৈতিক অৱস্থা</string>
     <string-array name="nhhr_poverty_line_array">
         <item>এপিএল</item>
         <item>বিপিএল</item>
@@ -34,7 +34,7 @@
     <string name="btn_frag_nhhr_next">next</string>
     <string name="nhhr_type_residential_area">আৱাসিক এলেকাৰ প্ৰকাৰ</string>
     <string name="nhhr_type_residential_area_1">গ্ৰাম্য</string>
-    <string name="nhhr_type_residential_area_2">নগৰীয়া</string>
+    <string name="nhhr_type_residential_area_2">নগৰ</string>
     <string name="nhhr_type_residential_area_3">জনজাতীয়</string>
     <string name="nhhr_type_residential_area_4">অন্যান্য</string>
     <string name="nhhr_type_residential_area_5">Tea Garden</string>
@@ -57,18 +57,18 @@
         <item>@string/nhhr_type_of_house_3</item>
         <item>@string/nhhr_type_of_house_4</item>
     </string-array>
-    <string name="nhhr_house_own">ঘৰৰ মালীক</string>
+    <string name="nhhr_house_own">ঘৰৰ মালিকীস্বত্ব</string>
     <string-array name="nhhr_house_own_array">
         <item>হয়</item>
         <item>নহয়</item>
     </string-array>
-    <string name="nhhr_separate_kitchen">বেলেগ পাকঘৰ নিৰ্বাচন কৰক</string>
+    <string name="nhhr_separate_kitchen">পৃথক পাকঘৰ</string>
     <string-array name="nhhr_separate_kitchen_array">
         <item>হয়</item>
         <item>নহয়</item>
     </string-array>
-    <string name="nhhr_fuel_cooking">ৰন্ধনত ব্যৱহৃত ইন্ধনৰ প্ৰকাৰ নিৰ্বাচন কৰক</string>
-    <string name="nhhr_fuel_cooking_1">জুইৰ কাঠ</string>
+    <string name="nhhr_fuel_cooking">ৰন্ধা-বঢ়াৰ বাবে ব্যৱহাৰ কৰা ইন্ধনৰ প্ৰকাৰ *</string>
+    <string name="nhhr_fuel_cooking_1">খৰি</string>
     <string name="nhhr_fuel_cooking_2">শস্যৰ অৱশিষ্টাংশ</string>
     <string name="nhhr_fuel_cooking_3">গৰুৰ গোবৰৰ পিঠা</string>
     <string name="nhhr_fuel_cooking_4">কয়লা</string>
@@ -107,7 +107,7 @@
     <string name="nhhr_avail_electricity">বিদ্যুতৰ উপলব্ধতা</string>
     <string name="nhhr_avail_electricity_1">বিদ্যুৎ যোগান</string>
     <string name="nhhr_avail_electricity_2">জেনেৰেটৰ</string>
-    <string name="nhhr_avail_electricity_3">সৌৰ যোগান</string>
+    <string name="nhhr_avail_electricity_3">সৌৰশক্তি</string>
     <string name="nhhr_avail_electricity_4">কেৰাচিনৰ চাকি</string>
     <string name="nhhr_avail_electricity_5">অন্য</string>
     <string-array name="nhhr_avail_electricity_array">
@@ -118,10 +118,10 @@
         <item>@string/nhhr_avail_electricity_5</item>
     </string-array>
     <string name="nhhr_avail_toilet">শৌচাগাৰৰ উপলব্ধতা</string>
-    <string name="nhhr_avail_toilet_1">চলমান পানীৰে শৌচাগাৰ ফ্লাশ কৰে</string>
-    <string name="nhhr_avail_toilet_2">পানী অবিহনে শৌচাগাৰ ফ্লাশ কৰে</string>
-    <string name="nhhr_avail_toilet_3">চলমান পানী যোগানৰ সৈতে পিট টয়লেট</string>
-    <string name="nhhr_avail_toilet_4">পানী যোগান অবিহনে পিট টয়লেট</string>
+    <string name="nhhr_avail_toilet_1">বৈ যোৱা পানীৰ যোগান থকা শৌচাগাৰ</string>
+    <string name="nhhr_avail_toilet_2">বৈ যোৱা পানীৰ যোগান নথকা শৌচাগাৰ</string>
+    <string name="nhhr_avail_toilet_3">চলি থকা পানীৰ যোগান থকা কেছা শৌচাগাৰ</string>
+    <string name="nhhr_avail_toilet_4">পানী যোগান নথকা কেছা শৌচাগাৰ</string>
     <string name="nhhr_avail_toilet_5">অন্য</string>
     <string name="nhhr_avail_toilet_6">একো নহয়</string>
     <string-array name="nhhr_avail_toilet_array">
@@ -137,8 +137,8 @@
     <string name="nhhr_primary_water_other">পানীৰ অন্যান্য প্ৰাথমিক উৎস</string>
     <string name="nhhr_avail_electricity_other">বিদ্যুতৰ অন্যান্য উপলব্ধতা</string>
     <string name="nhhr_avail_toilet_other">শৌচাগাৰৰ অন্যান্য উপলব্ধতা</string>
-    <string name="btn_frag_nhhr_to_ben">হিতাধিকাৰীৰ পঞ্জীকৰন জাৰি ৰাখক</string>
-    <string name="consent_alert_title">অনুগ্ৰহ কৰি সম্মতি পত্ৰ পৰীক্ষা কৰক</string>
+    <string name="btn_frag_nhhr_to_ben">হিতাধিকাৰীলৈ আগবাঢ়ি যাওক</string>
+    <string name="consent_alert_title">সন্মতি প্ৰ-পত্ৰ</string>
     <string name="add_head_of_family">এডিডি পৰিয়ালৰ মুৰব্বী</string>
     <string name="hh_no_members">ঘৰুৱা খালী!</string>
     <string name="add_head_of_family_message">Would you like to add <b>%1s</b> as a Head-of-Family Beneficiary?</string>

@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.di
 
 import android.content.Context
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -30,6 +31,8 @@ import org.piramalswasthya.sakhi.database.room.dao.PncDao
 import org.piramalswasthya.sakhi.database.room.dao.SyncDao
 import org.piramalswasthya.sakhi.database.room.dao.TBDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.AnalyticsHelper
+import org.piramalswasthya.sakhi.helpers.ApiAnalyticsInterceptor
 import org.piramalswasthya.sakhi.network.AbhaApiService
 import org.piramalswasthya.sakhi.network.AmritApiService
 import org.piramalswasthya.sakhi.network.interceptors.ContentTypeInterceptor
@@ -63,13 +66,14 @@ object AppModule {
     @Singleton
     @Provides
     @Named("uatClient")
-    fun provideTmcHttpClient(): OkHttpClient {
+    fun provideTmcHttpClient(apiAnalyticsInterceptor: ApiAnalyticsInterceptor): OkHttpClient {
         return baseClient
             .newBuilder()
             .connectTimeout(60, TimeUnit.SECONDS)
             .readTimeout(60, TimeUnit.SECONDS)
             .writeTimeout(60, TimeUnit.SECONDS)
             .addInterceptor(TokenInsertTmcInterceptor())
+            .addInterceptor(apiAnalyticsInterceptor)
             .build()
     }
 
@@ -120,6 +124,22 @@ object AppModule {
     @Singleton
     @Provides
     fun provideRoomDatabase(@ApplicationContext context: Context) = InAppDb.getInstance(context)
+
+    @Provides
+    @Singleton
+    fun provideAnalyticsHelper(
+        @ApplicationContext context: Context
+    ): AnalyticsHelper {
+        return AnalyticsHelper(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideApiAnalyticsInterceptor(
+        @ApplicationContext context: Context
+    ): ApiAnalyticsInterceptor {
+        return ApiAnalyticsInterceptor(context)
+    }
 
     @Singleton
     @Provides

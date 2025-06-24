@@ -75,22 +75,35 @@
                         tools:visibility="visible" />
 
                 </androidx.cardview.widget.CardView>
-
-                <ImageView
-                    android:id="@+id/ivFilter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_vertical"
-                    android:minWidth="@dimen/_40sdp"
-                    android:minHeight="@dimen/_40sdp"
-                    android:padding="@dimen/_5sdp"
-                    android:src="@drawable/ic_filter"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
             </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <TextView
+                android:id="@+id/tvSelectedFilter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:fontFamily="@font/roboto_medium"
+                android:text="6-13 Weeks"
+                android:textColor="@color/md_theme_light_shadow" />
+
+            <ImageView
+                android:id="@+id/ivFilter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="@dimen/_25sdp"
+                android:minHeight="@dimen/_25sdp"
+                android:src="@drawable/ic_filter"
+                android:layout_marginEnd="@dimen/_10sdp"/>
+
+        </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_list"
@@ -101,5 +114,21 @@
             tools:itemCount="5"
             tools:listitem="@layout/rv_item_immunization_ben" />
 
+        <FrameLayout
+            android:id="@+id/fl_empty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toTopOf="@id/btn_next_page"
+            app:layout_constraintTop_toBottomOf="@+id/ll_search">
+
+            <TextView
+                android:id="@+id/tv_empty_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="@dimen/padding_normal"
+                android:text="@string/no_records_found"
+                android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
+        </FrameLayout>
     </LinearLayout>
 </layout>

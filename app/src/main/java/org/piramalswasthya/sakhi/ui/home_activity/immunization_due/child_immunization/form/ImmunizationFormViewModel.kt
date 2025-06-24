@@ -48,6 +48,7 @@ class ImmunizationFormViewModel @Inject constructor(
     }
 
     var vaccinationDoneList = arrayListOf<VaccineDomain>()
+    lateinit var list: List<VaccineDomain>
 
     private val _state = MutableLiveData(State.IDLE)
     val state: LiveData<State>
