@@ -635,6 +635,11 @@
         <argument
             android:name="visitNumber"
             app:argType="integer" />
+
+        <argument
+            android:name="lastItemClick"
+            app:argType="boolean"
+            android:defaultValue="false" />
     </fragment>
 
     <fragment

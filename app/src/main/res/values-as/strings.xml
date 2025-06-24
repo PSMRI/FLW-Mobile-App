@@ -218,5 +218,24 @@
         <item>Item 6</item>
     </string-array>
 
+    <string name="delete_my_account">মোৰ একাউণ্টটো ডিলিট কৰিবলৈ অনুৰোধ</string>
+    <string name="support">সহায়</string>
+    <string name="to_do_list">কৰণীয়ৰ তালিকা</string>
+    <string name="beneficiaries_due_for_anc">গৰ্ভাৱস্থাৰ যত্ন (ANC) লৈ বঁটা পাবলগীয়া लाभান্বিত</string>
+    <string name="beneficiaries_due_for_immunization">টিকাকৰণৰ বাবে বঁটা পাবলগীয়া লাভান্বিত</string>
+    <string name="high_risk_cases">উচ্চ ঝুঁকিপূৰ্ণ কেচ</string>
+    <string name="high_risk_pregnant_women">উচ্চ ঝুঁকিপূৰ্ণ গৰ্ভৱতী মহিলা</string>
+    <string name="high_risk_non_pregnant_women">উচ্চ ঝুঁকিপূৰ্ণ অগৰ্ভৱতী মহিলা</string>
+    <string name="low_birth_weight_babies">কম ওজনৰ নবজাত শিশুসকল</string>
+    <string name="str_add_member">সদস্য যোগ কৰক</string>
+    <string name="relation_with_hof">গৃহমুৰব্বীৰ সৈতে সম্পৰ্ক</string>
+    <string name="str_not_available">উপলব্ধ নহয়</string>
+    <string name="death_type_cdr">শিশুমৃত্যু পৰ্যালোচনা</string>
+    <string name="add_family_member">পৰিয়ালৰ সদস্য যোগ কৰক</string>
+
+    <string name="male">পুৰুষ</string>
+    <string name="female">মহিলা</string>
+    <string name="transgender">ৰূপান্তৰিত লিংগ</string>
+
 
 </resources>

@@ -233,6 +233,8 @@
     <string name="help">Help</string>
     <string name="logout">Logout</string>
     <string name="delete_my_account">Request to delete my account</string>
+    <string name="str_add_member">Add Member</string>
+    <string name="str_not_available">Not Available</string>
     <string name="support">Support</string>
     <string name="sync_status">Sync Status</string>
     <string name="go_to_home">Go to Home</string>

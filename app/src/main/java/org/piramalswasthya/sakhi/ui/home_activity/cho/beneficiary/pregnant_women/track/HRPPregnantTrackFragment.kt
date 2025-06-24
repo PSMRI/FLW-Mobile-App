@@ -71,7 +71,7 @@ class HRPPregnantTrackFragment : Fragment() {
                 binding.llPatientInformation2.visibility = View.VISIBLE
                 binding.husbandName.text = it.ben.spouseName
                 binding.benId.text = it.ben.benId.toString()
-                binding.rchId.text = it.ben.rchId ?: "Not Available"
+                binding.rchId.text = it.ben.rchId ?: resources.getString(R.string.str_not_available)
                 binding.mobileNumber.text = it.ben.mobileNo.toString()
                 binding.lmp.text = it.asDomainModel().lmpString
                 binding.edd.text = it.asDomainModel().eddString
