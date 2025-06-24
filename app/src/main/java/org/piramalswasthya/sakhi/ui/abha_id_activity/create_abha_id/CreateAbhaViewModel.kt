@@ -10,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import okhttp3.ResponseBody
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.model.ABHAModel
 import org.piramalswasthya.sakhi.model.BenHealthIdDetails
 import org.piramalswasthya.sakhi.network.ABHAProfile
 import org.piramalswasthya.sakhi.network.AbhaVerifyAadhaarOtpResponse
@@ -20,6 +21,7 @@ import org.piramalswasthya.sakhi.network.GenerateOtpHid
 import org.piramalswasthya.sakhi.network.MapHIDtoBeneficiary
 import org.piramalswasthya.sakhi.network.NetworkResult
 import org.piramalswasthya.sakhi.network.ValidateOtpHid
+import org.piramalswasthya.sakhi.repositories.ABHAGenratedRepo
 import org.piramalswasthya.sakhi.repositories.AbhaIdRepo
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import timber.log.Timber
@@ -30,6 +32,7 @@ class CreateAbhaViewModel @Inject constructor(
     private val pref: PreferenceDao,
     private val abhaIdRepo: AbhaIdRepo,
     private val benRepo: BenRepo,
+    private val abhaGenratedRepo: ABHAGenratedRepo,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     enum class State {
@@ -187,7 +190,21 @@ class CreateAbhaViewModel @Inject constructor(
             }
             it.healthIdDetails = BenHealthIdDetails(healthId, healthIdNumber?:"", isNewAbha = response.isNew)
             it.isNewAbha =response.isNew
-            benRepo.updateRecord(ben)
+//            benRepo.updateRecord(ben)
+            val abha = ABHAModel(
+                benId = it.beneficiaryId,
+                hhId = it.householdId,
+                benName = it.firstName.toString(),
+                benSurname = it.lastName,
+                gender = it.gender!!,
+                dob = it.dob,
+                abhaId = healthIdNumber,
+                healthId = healthId,
+                healthIdNumber = healthIdNumber.toString(),
+                isNewAbha = response.isNew
+            )
+            abhaGenratedRepo.saveAbhaGenrated(abha)
+
         }
         /**/
         val abhaProfile = ABHAProfile(
@@ -228,6 +245,22 @@ class CreateAbhaViewModel @Inject constructor(
                 abhaIdRepo.mapHealthIDToBeneficiary(req)) {
                 is NetworkResult.Success -> {
                     _state.value = State.ABHA_GENERATE_SUCCESS
+                    val ben = benRepo.getBenFromId(benId)
+                    ben?.let {
+                        ben.firstName?.let { firstName ->
+                            _benMapped.value = firstName
+                        }
+                        ben.lastName?.let { lastName ->
+                            _benMapped.value = ben.firstName + " $lastName"
+                        }
+                        it.healthIdDetails = BenHealthIdDetails(
+                            healthId,
+                            healthIdNumber ?: "",
+                            isNewAbha = response.isNew
+                        )
+                        it.isNewAbha = response.isNew
+                        benRepo.updateRecord(ben)
+                    }
                 }
 
                 is NetworkResult.Error -> {

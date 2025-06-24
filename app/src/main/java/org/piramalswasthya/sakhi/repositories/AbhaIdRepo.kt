@@ -4,6 +4,7 @@ import android.util.Base64
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
 import org.json.JSONArray
@@ -53,7 +54,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
-import java.util.Timer
 import java.util.UUID
 import javax.crypto.Cipher
 import javax.inject.Inject
@@ -62,6 +62,7 @@ class AbhaIdRepo @Inject constructor(
     private val abhaApiService: AbhaApiService,
     private val amritApiService: AmritApiService,
     private val userRepo: UserRepo,
+    private val abhaGenerated: ABHAGenratedRepo,
     private val prefDao: PreferenceDao
 ) {
     suspend fun getAccessToken(): NetworkResult<AbhaTokenResponse> {
@@ -627,7 +628,7 @@ class AbhaIdRepo @Inject constructor(
         }
     }
 
-    suspend fun mapHealthIDToBeneficiary(mapHIDtoBeneficiary: MapHIDtoBeneficiary): NetworkResult<String> {
+   /* suspend fun mapHealthIDToBeneficiary(mapHIDtoBeneficiary: MapHIDtoBeneficiary): NetworkResult<String> {
         return withContext((Dispatchers.IO)) {
             try {
                 val user =
@@ -637,7 +638,26 @@ class AbhaIdRepo @Inject constructor(
                 val response = amritApiService.mapHealthIDToBeneficiary(mapHIDtoBeneficiary)
                 val responseBody = response.body()?.string()
                 when (responseBody?.let { JSONObject(it).getInt("statusCode") }) {
-                    200 -> NetworkResult.Success(responseBody)
+                    200 -> {
+                        val json = JSONObject(responseBody)
+                        val data = json.optJSONObject("data")
+                        Timber.d("Checkbox values : ${data}")
+                        if (data != null && data.has("benHealthID") && data.has("healthId")) {
+                            NetworkResult.Success(responseBody)
+
+                        }
+
+                        else if (data != null && data.has("response")) {
+                            val message = data.getString("response")
+                            abhaGenerated.deleteAbhaByBenId(mapHIDtoBeneficiary.beneficiaryID!!)
+                            NetworkResult.Error(0, message)
+                        }
+
+                        else {
+                            NetworkResult.Error(0, "Unknown response format")
+                        }
+                    }
+
                     5000, 5002 -> {
                         if (JSONObject(responseBody).getString("errorMessage")
                                 .contentEquals("Invalid login key or session is expired")
@@ -664,8 +684,82 @@ class AbhaIdRepo @Inject constructor(
                 NetworkResult.Error(-4, e.message ?: "Unknown Error")
             }
         }
-    }
+    }*/
 
+    suspend fun mapHealthIDToBeneficiary(
+        mapHIDtoBeneficiary: MapHIDtoBeneficiary
+    ): NetworkResult<String> = withContext(Dispatchers.IO) {
+        val user = prefDao.getLoggedInUser() ?: return@withContext NetworkResult.Error(-99, "No user logged in!")
+        mapHIDtoBeneficiary.providerServiceMapId = user.serviceMapId
+        mapHIDtoBeneficiary.createdBy = user.userName
+
+        while (true) {
+            try {
+                val response = amritApiService.mapHealthIDToBeneficiary(mapHIDtoBeneficiary)
+                val responseBody = response.body()?.string()
+
+                if (responseBody == null) {
+                    delay(2000)
+                    continue
+                }
+
+                val statusCode = JSONObject(responseBody).optInt("statusCode")
+
+                when (statusCode) {
+                    200 -> {
+                        val json = JSONObject(responseBody)
+                        val data = json.optJSONObject("data")
+
+                        return@withContext when {
+                            data != null && data.has("benHealthID") && data.has("healthId") -> {
+                                NetworkResult.Success(responseBody)
+                            }
+
+                            data != null && data.has("response") -> {
+                                val message = data.getString("response")
+                                abhaGenerated.deleteAbhaByBenId(mapHIDtoBeneficiary.beneficiaryID!!)
+                                NetworkResult.Error(0, message)
+
+                            }
+
+                            else -> NetworkResult.Error(0, "Unknown response format")
+                        }
+                    }
+
+                    5000, 5002 -> {
+                        val errorMsg = JSONObject(responseBody).optString("errorMessage")
+                        if (errorMsg == "Invalid login key or session is expired") {
+                            userRepo.refreshTokenTmc(user.userName, user.password)
+                            delay(2000)
+                            continue
+                        } else {
+                            return@withContext NetworkResult.Error(0, errorMsg)
+                        }
+                    }
+
+                    else -> {
+                        Timber.w("Unexpected status code $statusCode, retrying in 2 seconds...")
+                        delay(2000)
+                        continue
+                    }
+                }
+
+            } catch (e: IOException) {
+                Timber.e(e, "IO Exception: retrying...")
+                delay(2000)
+            } catch (e: SocketTimeoutException) {
+                Timber.e(e, "Socket Timeout: retrying...")
+                delay(2000)
+            } catch (e: JSONException) {
+                return@withContext NetworkResult.Error(-2, "Invalid response! Please try again!")
+            } catch (e: Exception) {
+                return@withContext NetworkResult.Error(-4, e.message ?: "Unknown Error")
+            }
+        }
+
+        @Suppress("UNREACHABLE_CODE")
+        NetworkResult.Error(-100, "Unexpected end of retry loop")
+    }
 
     suspend fun addHealthIdRecord(addHealthIdRecord: AddHealthIdRecord): NetworkResult<String> {
         return withContext((Dispatchers.IO)) {
