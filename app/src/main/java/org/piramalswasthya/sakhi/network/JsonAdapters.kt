@@ -13,6 +13,8 @@ import org.piramalswasthya.sakhi.utils.KeyUtils
 import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlinx.parcelize.Parcelize
+import org.piramalswasthya.sakhi.model.ABHAModel
+import org.piramalswasthya.sakhi.model.Gender
 
 @JsonClass(generateAdapter = true)
 data class D2DAuthUserRequest(
@@ -757,6 +759,38 @@ data class TBScreeningDTO(
             historyOfTb = historyOfTb,
             takingAntiTBDrugs = takingAntiTBDrugs,
             familySufferingFromTB = familySufferingFromTB,
+            syncState = SyncState.SYNCED
+        )
+    }
+}
+
+
+data class ABHAGeneratedDTO(
+    val id: Int = 0,
+    val benId: Long,
+    val hhId: Long,
+    val benName: String,
+    val benSurname: String? = null,
+    val gender: Gender,
+    val dob: Long,
+    val abhaId: String?,
+    var healthId: String = "",
+    var healthIdNumber: String = "",
+    var isNewAbha: Boolean= false,
+
+) {
+    fun toCache(): ABHAModel {
+        return ABHAModel(
+            benId = benId,
+            hhId = hhId,
+            benName = benName,
+            benSurname = benSurname,
+            gender = gender,
+            dob = dob,
+            abhaId = abhaId,
+            healthId = healthId,
+            healthIdNumber = healthIdNumber,
+            isNewAbha = isNewAbha,
             syncState = SyncState.SYNCED
         )
     }
