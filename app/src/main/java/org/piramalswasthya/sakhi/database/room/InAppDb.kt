@@ -9,6 +9,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import org.piramalswasthya.sakhi.database.converters.LocationEntityListConverter
 import org.piramalswasthya.sakhi.database.converters.SyncStateConverter
+import org.piramalswasthya.sakhi.database.room.dao.ABHAGenratedDao
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.BeneficiaryIdsAvailDao
 import org.piramalswasthya.sakhi.database.room.dao.CbacDao
@@ -31,6 +32,7 @@ import org.piramalswasthya.sakhi.database.room.dao.PmsmaDao
 import org.piramalswasthya.sakhi.database.room.dao.PncDao
 import org.piramalswasthya.sakhi.database.room.dao.SyncDao
 import org.piramalswasthya.sakhi.database.room.dao.TBDao
+import org.piramalswasthya.sakhi.model.ABHAModel
 import org.piramalswasthya.sakhi.model.BenBasicCache
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.CDRCache
@@ -95,6 +97,7 @@ import org.piramalswasthya.sakhi.model.Vaccine
         //INCENTIVES
         IncentiveActivityCache::class,
         IncentiveRecordCache::class,
+        ABHAModel::class,
     ],
     views = [BenBasicCache::class],
     version = 16, exportSchema = false
@@ -125,6 +128,7 @@ abstract class InAppDb : RoomDatabase() {
     abstract val infantRegDao: InfantRegDao
     abstract val childRegistrationDao: ChildRegistrationDao
     abstract val incentiveDao: IncentiveDao
+    abstract val abhaGenratedDao: ABHAGenratedDao
 
     abstract val syncDao: SyncDao
 
