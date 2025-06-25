@@ -115,24 +115,25 @@
         app:layout_constraintTop_toBottomOf="@+id/date_number_picker">
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel"
+            android:textColor="?attr/colorOnPrimary"
+            android:layout_alignParentStart="true"
+
+            />
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_ok"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:enabled="true"
             android:text="@string/ok"
             android:textColor="?attr/colorOnPrimary" 
-            android:layout_alignParentStart="true"/>
+            android:layout_alignParentEnd="true"/>
 
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_cancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/cancel"
-            android:textColor="?attr/colorOnPrimary"
-            android:layout_alignParentEnd="true"
 
- />
     </RelativeLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>
