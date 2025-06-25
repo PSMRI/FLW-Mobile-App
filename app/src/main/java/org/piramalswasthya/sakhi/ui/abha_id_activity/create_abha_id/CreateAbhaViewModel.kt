@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import okhttp3.ResponseBody
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
@@ -38,6 +40,9 @@ class CreateAbhaViewModel @Inject constructor(
     enum class State {
         IDLE, LOADING, ERROR_NETWORK, ERROR_SERVER, ERROR_INTERNAL, DOWNLOAD_SUCCESS, ABHA_GENERATE_SUCCESS, OTP_GENERATE_SUCCESS, OTP_VERIFY_SUCCESS, DOWNLOAD_ERROR
     }
+
+    private val _uiEvent = MutableSharedFlow<UIEvent>()
+    val uiEvent = _uiEvent.asSharedFlow()
 
     private val _state = MutableLiveData<State>()
     val state: LiveData<State>
@@ -264,8 +269,14 @@ class CreateAbhaViewModel @Inject constructor(
                 }
 
                 is NetworkResult.Error -> {
-                    _errorMessage.value = result.message
-                    _state.value = State.ERROR_SERVER
+                    if (result.code == 0){
+                        _uiEvent.emit(UIEvent.ShowDialog("This ABHA No is already linked to some one, please try again using correct Aadhaar No , ${ben?.firstName} ${ben?.lastName}" ?: "Something went wrong"))
+
+                    } else {
+                        _errorMessage.value = result.message
+                        _state.value = State.ERROR_SERVER
+                    }
+
                 }
 
                 is NetworkResult.NetworkError -> {
@@ -393,4 +404,8 @@ class CreateAbhaViewModel @Inject constructor(
             }
         }
     }
+}
+
+sealed class UIEvent {
+    data class ShowDialog(val message: String) : UIEvent()
 }
