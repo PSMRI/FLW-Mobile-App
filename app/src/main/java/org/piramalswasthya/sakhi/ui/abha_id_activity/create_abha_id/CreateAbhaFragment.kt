@@ -1,11 +1,14 @@
 package org.piramalswasthya.sakhi.ui.abha_id_activity.create_abha_id
 
 import android.app.AlertDialog
+import android.app.Dialog
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
@@ -15,15 +18,20 @@ import android.os.Environment
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.app.NotificationCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.work.Operation
@@ -93,7 +101,7 @@ class CreateAbhaFragment : Fragment() {
 
     private val exitAlert by lazy {
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle(resources.getString(R.string.exit))
+            .setTitle(resources.getString(R.string.exit)).setCancelable(false)
             .setMessage(resources.getString(R.string.do_you_want_to_go_back))
             .setPositiveButton(resources.getString(R.string.yes)) { _, _ ->
                 activity?.finish()
@@ -154,17 +162,16 @@ class CreateAbhaFragment : Fragment() {
 
         viewModel.abhaResponseLiveData.observe(viewLifecycleOwner) {
             if (it != null) {
-                if (it.isNew == false) {
+                if (!it.isNew) {
                     binding.imageView.setImageResource(R.drawable.ic_exclamation_circle)
                     binding.textView7.text = getString(R.string.str_abha_already_exist)
-                    binding.clDownloadAbha.visibility = View.GONE
+                    binding.clDownloadAbha.visibility = View.VISIBLE
                     binding.abhBenMappedTxt.text = resources.getString(R.string.not_linked_to_beneficiary)
                 } else {
                     binding.imageView.setImageResource(R.drawable.ic_check_circle)
                     binding.textView7.text = getString(R.string.str_abha_successfully_created)
                     binding.clDownloadAbha.visibility = View.VISIBLE
                     binding.llAbhaBenMapped.visibility = View.VISIBLE
-
 
                 }
             }
@@ -227,6 +234,17 @@ class CreateAbhaFragment : Fragment() {
         binding.resendOtp.setOnClickListener {
             viewModel.generateOtp()
             startResendTimer()
+        }
+
+        lifecycleScope.launchWhenStarted {
+            viewModel.uiEvent.collect { event ->
+                when (event) {
+                    is UIEvent.ShowDialog -> {
+                       showDialog(event.message)
+                    }
+
+                }
+            }
         }
 
         viewModel.state.observe(viewLifecycleOwner) {
@@ -370,5 +388,28 @@ class CreateAbhaFragment : Fragment() {
                 }
             }
         }
+
+
+    }
+
+    private fun showDialog(message: String) {
+        val dialog = Dialog(requireContext(), android.R.style.Theme_DeviceDefault_Light_NoActionBar_Fullscreen)
+        dialog.setContentView(R.layout.dialog_abha_error)
+        dialog.setCancelable(false)
+        val window = dialog.window
+        window?.setLayout(
+            (resources.displayMetrics.widthPixels * 0.85).toInt(),
+            (resources.displayMetrics.heightPixels * 0.55).toInt()
+        )
+        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        window?.setGravity(Gravity.CENTER)
+        val tvMessage = dialog.findViewById<TextView>(R.id.tvMessage)
+        val btnOk = dialog.findViewById<Button>(R.id.btnOk)
+        tvMessage.text = message
+        btnOk.setOnClickListener {
+            dialog.dismiss()
+            exitAlert.show()
+        }
+        dialog.show()
     }
 }
