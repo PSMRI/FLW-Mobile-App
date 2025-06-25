@@ -79,7 +79,7 @@ class AadhaarOtpFragment : Fragment() {
         }
         binding.resendOtp.setOnClickListener {
             if (parentViewModel.abhaMode.value == AadhaarIdViewModel.Abha.CREATE && parentViewModel.mobileNumber == viewModel.mobileNumber) {
-                viewModel.resendAadhaarOtp(parentViewModel.aadhaarNumber)
+                viewModel.resendCreateAadhaarOtp(parentViewModel.aadhaarNumber)
                 startResendTimer()
 
             } else {

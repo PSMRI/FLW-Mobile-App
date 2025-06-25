@@ -67,7 +67,7 @@ class PushToD2DWorker @AssistedInject constructor(
         if (TokenInsertTmcInterceptor.getToken() == "")
             TokenInsertTmcInterceptor.setToken(preferenceDao.getAmritToken()!!)
         if (TokenInsertTmcInterceptor.getJwt() == "")
-            preferenceDao.getJwtToken()?.let {
+            preferenceDao.getJWTAmritToken()?.let {
                 TokenInsertTmcInterceptor.setJwt(it)
             }
     }

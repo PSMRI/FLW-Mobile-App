@@ -42,6 +42,7 @@ interface AmritApiService {
 
     @POST("tm-api/registrar/registrarBeneficaryRegistrationNew")
     suspend fun getBenIdFromBeneficiarySending(@Body beneficiaryDataSending: BeneficiaryDataSending): Response<ResponseBody>
+
     @POST("flw-api/beneficiary/validateOTP")
     suspend fun validateOtp(@Body validateOtp: ValidateOtpRequest ): Response<ResponseBody>
 
