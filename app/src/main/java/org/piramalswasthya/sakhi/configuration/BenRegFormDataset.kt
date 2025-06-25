@@ -1895,7 +1895,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                         spouseName,
                         ageAtMarriage,
                         dateOfMarriage,
-                        maritalStatus
+                        maritalStatus,
+                        reproductiveStatus
                     ),
                     position = -2
                 ) else {
@@ -1903,14 +1904,14 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     triggerDependants(
                         source = gender,
                         removeItems = listOf(birthCertificateNumber, placeOfBirth),
-                        addItems = listOf(maritalStatus)
+                        addItems = listOf(maritalStatus,reproductiveStatus)
                     )
                 }
             } != -1
 
         val listChanged4 =
             if (maritalStatus.inputType == TEXT_VIEW) -1 else {
-                if (getAgeFromDob(getLongFromDate(agePopup.value)) <= Konstants.maxAgeForAdolescent || gender.value == gender.entries!![1]) {
+                if (getYearsFromDate(agePopup.value.toString()) <= Konstants.maxAgeForAdolescent || gender.value == gender.entries!![1]) {
                     triggerDependants(
                         source = religion,
                         removeItems = emptyList(),
