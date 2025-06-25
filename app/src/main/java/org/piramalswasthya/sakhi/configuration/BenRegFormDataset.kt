@@ -1721,7 +1721,12 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     triggerDependants(
                         source = gender,
                         removeItems = listOf(birthCertificateNumber, placeOfBirth),
-                        addItems = listOf(maritalStatus,reproductiveStatus)
+                        addItems = listOf(maritalStatus)
+                    )
+                    triggerDependants(
+                        source = rchId,
+                        removeItems = listOf(),
+                        addItems = listOf(reproductiveStatus)
                     )
                 }
             } != -1
