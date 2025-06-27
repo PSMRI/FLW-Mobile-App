@@ -47,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:imeOptions="actionDone"
                 android:hint=""
-                android:paddingLeft="@dimen/_20sdp"
+                android:paddingStart="@dimen/_20sdp"
                 android:inputType="@{form.etInputType}"
                 android:maxLength="@{form.etMaxLength}"
                 android:singleLine="true"

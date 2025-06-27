@@ -32,7 +32,7 @@
                 android:layout_height="match_parent"
                 android:drawableEnd="@drawable/ic_clock"
                 android:focusable="false"
-                android:paddingLeft="@dimen/_20sdp"
+                android:paddingStart="@dimen/_20sdp"
                 android:singleLine="true"
                 android:text="@{form.value}"
                 android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />

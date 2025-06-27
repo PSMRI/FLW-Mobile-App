@@ -996,9 +996,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         val validHoFAge = hoFAge.takeIf { it >= 18 } ?: 18
         val validSpouseAge = hoFSpouseAge?.takeIf { it >= 18 }
 
-        val maxAge = (validSpouseAge?.let { minOf(validHoFAge, it) } ?: validHoFAge) - 15
-
-
+        val maxAge = validHoFAge -15 //(validSpouseAge?.let { minOf(validHoFAge, it) } ?: validHoFAge) - 15
 
 //        age.max = maxAge.toLong()
 //        dob.min = Calendar.getInstance().setToStartOfTheDay().let {
