@@ -6,7 +6,6 @@ import android.text.InputType
 import android.util.Log
 import android.util.Range
 import android.widget.LinearLayout
-import android.widget.Toast
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.Languages
@@ -515,6 +514,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 ageAtMarriage
             )
         }
+
         if (maritalStatus.value == maritalStatus.entries!![1] && gender.value == gender.entries!![1]) {
             fatherName.required = false
             motherName.required = false
@@ -1349,7 +1349,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             }
 
             lastName.id -> {
-               // validateAllCapsOrSpaceOnEditText(lastName)
+                // validateAllCapsOrSpaceOnEditText(lastName)
                 validateEmptyOnEditText(lastName)
                 validateAllCapsOrSpaceOnEditTextWithHindiEnabled(lastName)
             }
@@ -1414,12 +1414,18 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     1 -> relationToHeadListFemale
                     else -> relationToHeadListDefault
                 }
-                val listChanged = if (hasThirdPage()) triggerDependants(
-                    source = rchId,
-                    addItems = listOf(reproductiveStatus),
-                    removeItems = emptyList(),
-                    position = -2
-                ) else {
+                val listChanged = if (hasThirdPage()) {
+
+                    updateReproductiveOptionsBasedOnAgeGender()
+                    triggerDependants(
+                        source = rchId,
+                        addItems = listOf(reproductiveStatus),
+                        removeItems = emptyList(),
+                        position = -2
+                    )} else {
+                    fatherName.required = true
+                    motherName.required = true
+
                     triggerDependants(
                         source = rchId,
                         removeItems = listOf(reproductiveStatus),
@@ -1441,6 +1447,9 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 if (index == 0 && isBenParentOfHoF()) {
                     maritalStatus.errorText = "Parents cannot be unmarried!"
                 }
+
+
+
                 when (maritalStatus.value) {
 
                     maritalStatus.entries!![0] -> {
@@ -1662,18 +1671,18 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 }
 
                 when (reproductiveStatus.value) {
-                        "Adolescent Girl" -> {
-                            agePopup.max = yearsAgo(15)
-                            agePopup.min = yearsAgo(19)
-                        }
-                        "Eligible Couple", "Pregnant Woman", "Postnatal Mother", "Permanently Sterilised" -> {
-                            agePopup.max = yearsAgo(20)
-                            agePopup.min = yearsAgo(49)
-                        }
-                        "Elderly Woman" -> {
-                            agePopup.max = yearsAgo(50)
-                            agePopup.min = yearsAgo(100)
-                        }
+                    "Adolescent Girl" -> {
+                        agePopup.max = yearsAgo(15)
+                        agePopup.min = yearsAgo(19)
+                    }
+                    "Eligible Couple", "Pregnant Woman", "Postnatal Mother", "Permanently Sterilised" -> {
+                        agePopup.max = yearsAgo(20)
+                        agePopup.min = yearsAgo(49)
+                    }
+                    "Elderly Woman" -> {
+                        agePopup.max = yearsAgo(50)
+                        agePopup.min = yearsAgo(100)
+                    }
                 }
 
 
@@ -1686,6 +1695,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             removeItems = emptyList(),
             position = -2
         ) else {
+            fatherName.required = true
+            motherName.required = true
             triggerDependants(
                 source = rchId,
                 removeItems = listOf(reproductiveStatus),
@@ -1703,31 +1714,50 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
         val listChanged3 =
             if (maritalStatus.inputType == TEXT_VIEW) -1 else {
-                if (getYearsFromDate(agePopup.value.toString()) <= Konstants.maxAgeForAdolescent) triggerDependants(
-                    source = rchId,
-                    addItems = listOf(birthCertificateNumber, placeOfBirth),
-                    removeItems = listOf(
-                        husbandName,
-                        wifeName,
-                        spouseName,
-                        ageAtMarriage,
-                        dateOfMarriage,
-                        maritalStatus,
-                        reproductiveStatus
-                    ),
-                    position = -2
-                ) else {
+
+                if (getYearsFromDate(agePopup.value.toString()) <= Konstants.maxAgeForAdolescent)
+
+                {
+                    fatherName.required = true
+                    motherName.required = true
+
+                    triggerDependants(
+                        source = rchId,
+                        addItems = listOf(birthCertificateNumber, placeOfBirth),
+                        removeItems = listOf(
+                            husbandName,
+                            wifeName,
+                            spouseName,
+                            ageAtMarriage,
+                            dateOfMarriage,
+                            maritalStatus,
+                            reproductiveStatus
+                        ),
+                        position = -2
+                    )
+
+                } else {
                     maritalStatus.value = null
                     triggerDependants(
                         source = gender,
                         removeItems = listOf(birthCertificateNumber, placeOfBirth),
                         addItems = listOf(maritalStatus)
                     )
-                    triggerDependants(
-                        source = rchId,
-                        removeItems = listOf(),
-                        addItems = listOf(reproductiveStatus)
-                    )
+                    if (gender.value == "Female") {
+                        triggerDependants(
+                            source = rchId,
+                            removeItems = listOf(),
+                            addItems = listOf(reproductiveStatus),
+                            position = -2
+                        )
+
+                    } else {
+                        triggerDependants(
+                            source = rchId,
+                            removeItems = listOf(reproductiveStatus),
+                            addItems = listOf()
+                        )
+                    }
                 }
             } != -1
 
@@ -1949,7 +1979,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
     }
 
- 
+
     fun yearsAgo(years: Int): Long {
         return Calendar.getInstance().apply {
             val today = Calendar.getInstance().setToStartOfTheDay()
@@ -1957,4 +1987,52 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             add(Calendar.YEAR, -years)
         }.timeInMillis
     }
+    private fun updateReproductiveOptionsBasedOnAgeGender() {
+        val age = getAgeFromDob(getLongFromDate(agePopup.value))
+        val genderIsFemale = gender.value == gender.entries?.get(1)
+
+        if (benIfDataExist == null) {
+            reproductiveStatus.isEnabled = genderIsFemale
+
+            val updatedReproductiveOptions = when {
+                !genderIsFemale -> emptyList()
+                age in 15..19 -> listOf(
+                    "Adolescent Girl", "Eligible Couple", "Pregnant Woman",
+                    "Postnatal Mother", "Permanently Sterilised"
+                )
+                age in 20..49 -> listOf(
+                    "Eligible Couple", "Pregnant Woman",
+                    "Postnatal Mother", "Permanently Sterilised"
+                )
+                age >= 50 -> listOf("Elderly Woman")
+                else -> emptyList()
+            }
+
+            reproductiveStatus.entries = updatedReproductiveOptions.toTypedArray()
+            reproductiveStatus.value = null
+        } else {
+            // If data is pre-filled, disable the field and set value from saved data
+            reproductiveStatus.isEnabled = false
+            reproductiveStatus.value = benIfDataExist?.genDetails?.reproductiveStatusId?.let {
+                reproductiveStatus.getStringFromPosition(it)
+            }
+
+            // Set DOB constraints based on existing reproductive status
+            when (reproductiveStatus.value) {
+                "Adolescent Girl" -> {
+                    agePopup.max = yearsAgo(15)
+                    agePopup.min = yearsAgo(19)
+                }
+                "Eligible Couple", "Pregnant Woman", "Postnatal Mother", "Permanently Sterilised" -> {
+                    agePopup.max = yearsAgo(20)
+                    agePopup.min = yearsAgo(49)
+                }
+                "Elderly Woman" -> {
+                    agePopup.max = yearsAgo(50)
+                    agePopup.min = yearsAgo(100)
+                }
+            }
+        }
+    }
+
 }
