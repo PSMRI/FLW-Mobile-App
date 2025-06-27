@@ -240,7 +240,7 @@ class CreateAbhaFragment : Fragment() {
             viewModel.uiEvent.collect { event ->
                 when (event) {
                     is UIEvent.ShowDialog -> {
-                       showDialog(event.message)
+                       showDialog(event.message,event.s)
                     }
 
                 }
@@ -392,7 +392,7 @@ class CreateAbhaFragment : Fragment() {
 
     }
 
-    private fun showDialog(message: String) {
+    private fun showDialog(message: String,surname:String) {
         val dialog = Dialog(requireContext(), android.R.style.Theme_DeviceDefault_Light_NoActionBar_Fullscreen)
         dialog.setContentView(R.layout.dialog_abha_error)
         dialog.setCancelable(false)
@@ -405,10 +405,10 @@ class CreateAbhaFragment : Fragment() {
         window?.setGravity(Gravity.CENTER)
         val tvMessage = dialog.findViewById<TextView>(R.id.tvMessage)
         val btnOk = dialog.findViewById<Button>(R.id.btnOk)
-        tvMessage.text = message
+        tvMessage.text = requireContext().getString(R.string.abha_already_linked_message, message,surname)
         btnOk.setOnClickListener {
             dialog.dismiss()
-            exitAlert.show()
+            activity?.finish()
         }
         dialog.show()
     }

@@ -66,6 +66,9 @@
     <string name="str_invalid_ben_name">Please Enter Valid Beneficiary name</string>
     <string name="str_here_abha_no">Here is your ABHA Number!</string>
     <string name="str_abha_already_exist">This ABHA already exists!</string>
+    <string name="abha_already_linked_message">
+    This ABHA No is already linked to someone, please try again using correct Aadhaar No of \n <b>%1$s %2$s</b>
+</string>
     <string name="str_abha_successfully_created">ABHA account successfully created!</string>
     <string name="str_abha_card_downloaded">You can view Abha Card in download folder!!</string>
 
