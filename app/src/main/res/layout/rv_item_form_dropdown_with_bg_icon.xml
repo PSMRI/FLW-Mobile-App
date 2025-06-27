@@ -35,7 +35,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="none"
-                android:paddingLeft="@dimen/_20sdp"
+                android:paddingStart="@dimen/_20sdp"
                 android:text="@{form.value}"
                 app:listItems="@{form.entries}"
                 tools:ignore="SpeakableTextPresentCheck" />
@@ -85,7 +85,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@{form.value}"
-                android:paddingLeft="@dimen/_20sdp"
+                android:paddingStart="@dimen/_20sdp"
                 android:singleLine="true"
                 android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
 
