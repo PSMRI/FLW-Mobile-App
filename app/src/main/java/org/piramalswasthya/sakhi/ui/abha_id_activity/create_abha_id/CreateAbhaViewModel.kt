@@ -270,7 +270,7 @@ class CreateAbhaViewModel @Inject constructor(
 
                 is NetworkResult.Error -> {
                     if (result.code == 0){
-                        _uiEvent.emit(UIEvent.ShowDialog("This ABHA No is already linked to some one, please try again using correct Aadhaar No , ${ben?.firstName} ${ben?.lastName}" ?: "Something went wrong"))
+                        _uiEvent.emit(UIEvent.ShowDialog("${ben?.firstName}", "${ben?.lastName}"))
 
                     } else {
                         _errorMessage.value = result.message
@@ -407,5 +407,5 @@ class CreateAbhaViewModel @Inject constructor(
 }
 
 sealed class UIEvent {
-    data class ShowDialog(val message: String) : UIEvent()
+    data class ShowDialog(val message: String, val s: String) : UIEvent()
 }
