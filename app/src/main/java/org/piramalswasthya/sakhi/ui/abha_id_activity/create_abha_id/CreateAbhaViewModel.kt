@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import okhttp3.ResponseBody
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
-import org.piramalswasthya.sakhi.model.ABHAModel
 import org.piramalswasthya.sakhi.model.BenHealthIdDetails
 import org.piramalswasthya.sakhi.network.ABHAProfile
 import org.piramalswasthya.sakhi.network.AbhaVerifyAadhaarOtpResponse
@@ -196,19 +195,7 @@ class CreateAbhaViewModel @Inject constructor(
             it.healthIdDetails = BenHealthIdDetails(healthId, healthIdNumber?:"", isNewAbha = response.isNew)
             it.isNewAbha =response.isNew
 //            benRepo.updateRecord(ben)
-            val abha = ABHAModel(
-                benId = it.beneficiaryId,
-                hhId = it.householdId,
-                benName = it.firstName.toString(),
-                benSurname = it.lastName,
-                gender = it.gender!!,
-                dob = it.dob,
-                abhaId = healthIdNumber,
-                healthId = healthId,
-                healthIdNumber = healthIdNumber.toString(),
-                isNewAbha = response.isNew
-            )
-            abhaGenratedRepo.saveAbhaGenrated(abha)
+
 
         }
         /**/
@@ -237,7 +224,7 @@ class CreateAbhaViewModel @Inject constructor(
             beneficiaryID = benId,
             healthId = healthId,
             healthIdNumber = healthIdNumber,
-            providerServiceMapId = 34,
+            providerServiceMapId = pref.getLoggedInUser()?.serviceMapId,
             createdBy = "",
             message =response.message,
             txnId=response.txnId,
@@ -247,7 +234,7 @@ class CreateAbhaViewModel @Inject constructor(
 
         viewModelScope.launch {
             when (val result =
-                abhaIdRepo.mapHealthIDToBeneficiary(req)) {
+                abhaIdRepo.mapHealthIDToBeneficiary(req,ben)) {
                 is NetworkResult.Success -> {
                     _state.value = State.ABHA_GENERATE_SUCCESS
                     val ben = benRepo.getBenFromId(benId)
