@@ -80,6 +80,9 @@ object WorkerUtils {
         val pushChildHBNCToAmritWorker = OneTimeWorkRequestBuilder<PushChildHBNCFromAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
+        val pushAbhaWorkRequest = OneTimeWorkRequestBuilder<PushMapAbhatoBenficiaryWorker>()
+            .setConstraints(networkOnlyConstraint) // if you have constraints
+            .build()
         val workManager = WorkManager.getInstance(context)
         workManager
             .beginUniqueWork(
@@ -103,6 +106,7 @@ object WorkerUtils {
             .then(pushECWorkRequest)
 //            .then(pushChildHBYCToAmritWorker)
             .then(pushChildHBNCToAmritWorker)
+            .then(pushAbhaWorkRequest)
             .enqueue()
     }
 
@@ -171,6 +175,10 @@ object WorkerUtils {
             OneTimeWorkRequestBuilder<PullChildHBNCFromAmritWorker>()
                 .setConstraints(networkOnlyConstraint)
                 .build()
+
+        val pushAbhaWorkRequest = OneTimeWorkRequestBuilder<PushMapAbhatoBenficiaryWorker>()
+            .setConstraints(networkOnlyConstraint) // if you have constraints
+            .build()
         val workManager = WorkManager.getInstance(context)
         workManager
             .beginUniqueWork(
@@ -193,6 +201,7 @@ object WorkerUtils {
 //            .then(pushChildHBYCToAmritWorker)
             .then(pushChildHBNCToAmritWorker)
             .then(pullIncentiveActivityWorkRequest)
+            .then(pushAbhaWorkRequest)
             .enqueue()
     }
 
