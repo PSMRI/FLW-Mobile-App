@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.helpers.filterBenList
 import org.piramalswasthya.sakhi.model.BenHealthIdDetails
+import org.piramalswasthya.sakhi.repositories.ABHAGenratedRepo
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
 import javax.inject.Inject
@@ -17,6 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AllBenViewModel @Inject constructor(
     recordsRepo: RecordsRepo,
+    abhaGenratedRepo: ABHAGenratedRepo,
     private val benRepo: BenRepo
 ) : ViewModel() {
 

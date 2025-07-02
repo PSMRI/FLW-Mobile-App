@@ -20,4 +20,5 @@ class ABHAGenratedRepo @Inject constructor(
             abhaGenratedDao.deleteAbhaByBenId(benId)
         }
     }
+
 }
