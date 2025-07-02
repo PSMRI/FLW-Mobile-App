@@ -19,8 +19,7 @@ class AbhaIdViewModel @Inject constructor(
     private val abhaIdRepo: AbhaIdRepo,
     private val prefDao: PreferenceDao,
     private val userRepo: UserRepo
-) :
-    ViewModel() {
+) : ViewModel() {
 
     enum class State {
         LOADING_TOKEN,

@@ -73,6 +73,7 @@ class AadhaarOtpFragment : Fragment() {
             }
         }
         binding.resendOtp.setOnClickListener {
+            binding.tvErrorText.visibility = View.GONE
             if (parentViewModel.abhaMode.value == AadhaarIdViewModel.Abha.CREATE && parentViewModel.mobileNumber == viewModel.mobileNumber) {
                 viewModel.resendAadhaarOtp(parentViewModel.aadhaarNumber)
                 startResendTimer()

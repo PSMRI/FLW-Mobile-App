@@ -44,9 +44,11 @@ class ApiAnalyticsInterceptor @Inject constructor(
         errorMessage: String?
     ) {
         val endpoint = request.url.encodedPath
+        val body = request.body
 
         val bundle = Bundle().apply {
             putString("api_name", endpoint)
+            putString("api_request_body", body.toString())
             putLong("response_time_ms", durationMs)
             putString("status", if (isSuccess) "success" else "failure")
             responseCode?.let { putInt("response_code", it) }

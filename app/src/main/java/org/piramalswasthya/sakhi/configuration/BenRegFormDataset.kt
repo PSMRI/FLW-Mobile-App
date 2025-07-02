@@ -906,10 +906,13 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             val hoFAge = getAgeFromDob(it.dob)
             val hoFSpouseAge = hoFSpouse.firstOrNull()?.dob?.let { h -> getAgeFromDob(h) }
 
-            val validHoFAge = hoFAge.takeIf { it >= 18 } ?: 18
-            val validSpouseAge = hoFSpouseAge?.takeIf { it >= 18 }
+//            val validHoFAge = hoFAge.takeIf { it >= 18 } ?: 18
+//            val validSpouseAge = hoFSpouseAge?.takeIf { it >= 18 }
 
-            val maxAge = (validSpouseAge?.let { minOf(validHoFAge, it) } ?: validHoFAge) - Konstants.minAgeForGenBen
+            val minAge =(hoFSpouseAge?.let { minOf(hoFAge, it) } ?: hoFAge)
+            val maxAge = minAge -(hof?.genDetails?.ageAtMarriage?.plus(7)?:0)
+
+           //(validSpouseAge?.let { minOf(validHoFAge, it) } ?: validHoFAge) - Konstants.minAgeForGenBen
 
             /* val maxAge = (if (hoFSpouseAge == null) hoFAge else minOf(
                  hoFAge,
@@ -993,16 +996,19 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
         )) - Konstants.minAgeForGenBen*/
 
-        val validHoFAge = hoFAge.takeIf { it >= 18 } ?: 18
+      /*  val validHoFAge = hoFAge.takeIf { it >= 18 } ?: 18
         val validSpouseAge = hoFSpouseAge?.takeIf { it >= 18 }
 
-        val maxAge = validHoFAge -15 //(validSpouseAge?.let { minOf(validHoFAge, it) } ?: validHoFAge) - 15
+        val maxAge = validHoFAge -15 *///(validSpouseAge?.let { minOf(validHoFAge, it) } ?: validHoFAge) - 15
 
 //        age.max = maxAge.toLong()
 //        dob.min = Calendar.getInstance().setToStartOfTheDay().let {
 //            it.add(Calendar.YEAR, -1 * maxAge)
 //            it.timeInMillis
 //        }
+
+        val minAge =(hoFSpouseAge?.let { minOf(hoFAge, it) } ?: hoFAge)
+        val maxAge = minAge -(hof?.genDetails?.ageAtMarriage?.plus(7)?:0)
 
         agePopup.min = Calendar.getInstance().setToStartOfTheDay().let {
             it.add(Calendar.YEAR, -1 * maxAge)

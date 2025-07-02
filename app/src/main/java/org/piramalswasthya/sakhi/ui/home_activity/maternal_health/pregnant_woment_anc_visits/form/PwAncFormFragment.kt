@@ -68,6 +68,7 @@ class PwAncFormFragment : Fragment() {
             submitAncForm()
         }
         binding.fabEdit.setOnClickListener {
+            binding.fabEdit.visibility = View.GONE
             viewModel.setRecordExist(false)
         }
         viewModel.state.observe(viewLifecycleOwner) { state ->
