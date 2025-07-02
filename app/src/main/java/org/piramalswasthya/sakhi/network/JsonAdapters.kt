@@ -767,31 +767,32 @@ data class TBScreeningDTO(
 
 data class ABHAGeneratedDTO(
     val id: Int = 0,
-    val benId: Long,
-    val hhId: Long,
+    val beneficiaryID: Long,
+    val beneficiaryRegID: Long,
     val benName: String,
+    val createdBy: String,
+    val message: String,
+    val txnId: String,
     val benSurname: String? = null,
-    val gender: Gender,
-    val dob: Long,
-    val abhaId: String?,
     var healthId: String = "",
     var healthIdNumber: String = "",
     var isNewAbha: Boolean= false,
+    val providerServiceMapId: Int,
 
 ) {
     fun toCache(): ABHAModel {
         return ABHAModel(
-            benId = benId,
-            hhId = hhId,
+            beneficiaryID = beneficiaryID,
+            beneficiaryRegID = beneficiaryRegID,
             benName = benName,
             benSurname = benSurname,
-            gender = gender,
-            dob = dob,
-            abhaId = abhaId,
             healthId = healthId,
+            txnId = txnId,
+            message = message,
+            createdBy = createdBy,
             healthIdNumber = healthIdNumber,
             isNewAbha = isNewAbha,
-            syncState = SyncState.SYNCED
+            providerServiceMapId = providerServiceMapId
         )
     }
 }
