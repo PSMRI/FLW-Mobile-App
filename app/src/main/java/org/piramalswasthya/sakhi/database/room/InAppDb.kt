@@ -100,7 +100,7 @@ import org.piramalswasthya.sakhi.model.Vaccine
         ABHAModel::class,
     ],
     views = [BenBasicCache::class],
-    version = 17, exportSchema = false
+    version = 19, exportSchema = false
 )
 
 @TypeConverters(LocationEntityListConverter::class, SyncStateConverter::class)
@@ -143,7 +143,39 @@ abstract class InAppDb : RoomDatabase() {
             })
 
 
-            val MIGRATION_16_17 = object : Migration(16, 17) {
+            val MIGRATION_17_18 = object : Migration(18, 19) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("""
+            ALTER TABLE ABHA_GENERATED ADD COLUMN abhaProfileJson TEXT NOT NULL DEFAULT ''
+        """.trimIndent())
+                }
+            }
+            val MIGRATION_16_17 = object : Migration(17, 18) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("""
+            CREATE TABLE IF NOT EXISTS `ABHA_GENERATED` (
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                `beneficiaryID` INTEGER NOT NULL,
+                `beneficiaryRegID` INTEGER NOT NULL,
+                `benName` TEXT NOT NULL,
+                `benSurname` TEXT,
+                `createdBy` TEXT NOT NULL,
+                `message` TEXT NOT NULL,
+                `txnId` TEXT NOT NULL,
+                `healthId` TEXT NOT NULL,
+                `healthIdNumber` TEXT NOT NULL,
+                `isNewAbha` INTEGER NOT NULL,
+                `providerServiceMapId` INTEGER NOT NULL,
+                `syncState` INTEGER NOT NULL,
+                FOREIGN KEY(`beneficiaryID`) REFERENCES `BENEFICIARY`(`beneficiaryId`) ON UPDATE CASCADE ON DELETE CASCADE
+            );
+        """.trimIndent())
+
+                    database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_ABHA_GENERATED_beneficiaryID` ON `ABHA_GENERATED` (`beneficiaryID`)")
+                }
+            }
+
+          /*  val MIGRATION_16_17 = object : Migration(16, 17) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     database.execSQL("""
             CREATE TABLE IF NOT EXISTS `ABHA_GENERATED` (
@@ -165,7 +197,7 @@ abstract class InAppDb : RoomDatabase() {
 
                     database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_ABHA_GENERATED_benId` ON `ABHA_GENERATED` (`benId`)")
                 }
-            }
+            }*/
 
             val MIGRATION_15_16 = object : Migration(15, 16) {
                 override fun migrate(db: SupportSQLiteDatabase) {
@@ -285,7 +317,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_13_14,
                         MIGRATION_14_15,
                         MIGRATION_15_16,
-                        MIGRATION_16_17
+                        MIGRATION_16_17,
+                        MIGRATION_17_18
                         ).build()
 
                     INSTANCE = instance

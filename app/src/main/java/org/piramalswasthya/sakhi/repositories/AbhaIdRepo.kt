@@ -12,6 +12,8 @@ import org.json.JSONException
 import org.json.JSONObject
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.model.ABHAModel
+import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.network.AadhaarVerifyBioRequest
 import org.piramalswasthya.sakhi.network.AbhaApiService
 import org.piramalswasthya.sakhi.network.AbhaCheckAndGenerateMobileOtpResponse
@@ -628,7 +630,7 @@ class AbhaIdRepo @Inject constructor(
         }
     }
 
-   /* suspend fun mapHealthIDToBeneficiary(mapHIDtoBeneficiary: MapHIDtoBeneficiary): NetworkResult<String> {
+    suspend fun mapHealthIDToBeneficiary(mapHIDtoBeneficiary: MapHIDtoBeneficiary, ben: BenRegCache?): NetworkResult<String> {
         return withContext((Dispatchers.IO)) {
             try {
                 val user =
@@ -639,9 +641,12 @@ class AbhaIdRepo @Inject constructor(
                 val responseBody = response.body()?.string()
                 when (responseBody?.let { JSONObject(it).getInt("statusCode") }) {
                     200 -> {
+
                         val json = JSONObject(responseBody)
                         val data = json.optJSONObject("data")
                         Timber.d("Checkbox values : ${data}")
+                        abhaGenerated.deleteAbhaByBenId(mapHIDtoBeneficiary.beneficiaryID!!)
+
                         if (data != null && data.has("benHealthID") && data.has("healthId")) {
                             NetworkResult.Success(responseBody)
 
@@ -649,7 +654,7 @@ class AbhaIdRepo @Inject constructor(
 
                         else if (data != null && data.has("response")) {
                             val message = data.getString("response")
-                            abhaGenerated.deleteAbhaByBenId(mapHIDtoBeneficiary.beneficiaryID!!)
+
                             NetworkResult.Error(0, message)
                         }
 
@@ -659,11 +664,12 @@ class AbhaIdRepo @Inject constructor(
                     }
 
                     5000, 5002 -> {
+                        saveAbhaModelFromRequest(mapHIDtoBeneficiary,ben)
                         if (JSONObject(responseBody).getString("errorMessage")
                                 .contentEquals("Invalid login key or session is expired")
                         ) {
                             userRepo.refreshTokenTmc(user.userName, user.password)
-                            mapHealthIDToBeneficiary(mapHIDtoBeneficiary)
+                            mapHealthIDToBeneficiary(mapHIDtoBeneficiary,ben)
                         } else {
                             NetworkResult.Error(
                                 0,
@@ -675,90 +681,19 @@ class AbhaIdRepo @Inject constructor(
                     else -> NetworkResult.Error(0, responseBody.toString())
                 }
             } catch (e: IOException) {
+                saveAbhaModelFromRequest(mapHIDtoBeneficiary,ben)
                 NetworkResult.Error(-1, "Unable to connect to Internet!")
             } catch (e: JSONException) {
+                saveAbhaModelFromRequest(mapHIDtoBeneficiary,ben)
                 NetworkResult.Error(-2, "Invalid response! Please try again!")
             } catch (e: SocketTimeoutException) {
+                saveAbhaModelFromRequest(mapHIDtoBeneficiary,ben)
                 NetworkResult.Error(-3, "Request Timed out! Please try again!")
             } catch (e: java.lang.Exception) {
+                saveAbhaModelFromRequest(mapHIDtoBeneficiary,ben)
                 NetworkResult.Error(-4, e.message ?: "Unknown Error")
             }
         }
-    }*/
-
-    suspend fun mapHealthIDToBeneficiary(
-        mapHIDtoBeneficiary: MapHIDtoBeneficiary
-    ): NetworkResult<String> = withContext(Dispatchers.IO) {
-        val user = prefDao.getLoggedInUser() ?: return@withContext NetworkResult.Error(-99, "No user logged in!")
-        mapHIDtoBeneficiary.providerServiceMapId = user.serviceMapId
-        mapHIDtoBeneficiary.createdBy = user.userName
-
-        while (true) {
-            try {
-                val response = amritApiService.mapHealthIDToBeneficiary(mapHIDtoBeneficiary)
-                val responseBody = response.body()?.string()
-
-                if (responseBody == null) {
-                    delay(2000)
-                    continue
-                }
-
-                val statusCode = JSONObject(responseBody).optInt("statusCode")
-
-                when (statusCode) {
-                    200 -> {
-                        val json = JSONObject(responseBody)
-                        val data = json.optJSONObject("data")
-
-                        return@withContext when {
-                            data != null && data.has("benHealthID") && data.has("healthId") -> {
-                                NetworkResult.Success(responseBody)
-                            }
-
-                            data != null && data.has("response") -> {
-                                val message = data.getString("response")
-                                abhaGenerated.deleteAbhaByBenId(mapHIDtoBeneficiary.beneficiaryID!!)
-                                NetworkResult.Error(0, message)
-
-                            }
-
-                            else -> NetworkResult.Error(0, "Unknown response format")
-                        }
-                    }
-
-                    5000, 5002 -> {
-                        val errorMsg = JSONObject(responseBody).optString("errorMessage")
-                        if (errorMsg == "Invalid login key or session is expired") {
-                            userRepo.refreshTokenTmc(user.userName, user.password)
-                            delay(2000)
-                            continue
-                        } else {
-                            return@withContext NetworkResult.Error(0, errorMsg)
-                        }
-                    }
-
-                    else -> {
-                        Timber.w("Unexpected status code $statusCode, retrying in 2 seconds...")
-                        delay(2000)
-                        continue
-                    }
-                }
-
-            } catch (e: IOException) {
-                Timber.e(e, "IO Exception: retrying...")
-                delay(2000)
-            } catch (e: SocketTimeoutException) {
-                Timber.e(e, "Socket Timeout: retrying...")
-                delay(2000)
-            } catch (e: JSONException) {
-                return@withContext NetworkResult.Error(-2, "Invalid response! Please try again!")
-            } catch (e: Exception) {
-                return@withContext NetworkResult.Error(-4, e.message ?: "Unknown Error")
-            }
-        }
-
-        @Suppress("UNREACHABLE_CODE")
-        NetworkResult.Error(-100, "Unexpected end of retry loop")
     }
 
     suspend fun addHealthIdRecord(addHealthIdRecord: AddHealthIdRecord): NetworkResult<String> {
@@ -873,5 +808,27 @@ class AbhaIdRepo @Inject constructor(
                 NetworkResult.Error(-4, e.message ?: "Unknown Error")
             }
         }
+    }
+
+    suspend fun saveAbhaModelFromRequest(
+        mapHIDtoBeneficiary: MapHIDtoBeneficiary,
+        ben: BenRegCache?
+    ) {
+        val abhaProfileJson = Gson().toJson(mapHIDtoBeneficiary.ABHAProfile)
+        val abha = ABHAModel(
+            beneficiaryID = mapHIDtoBeneficiary.beneficiaryID!!,
+            beneficiaryRegID = mapHIDtoBeneficiary.beneficiaryRegID!!,
+            benName = ben?.firstName.toString(),
+            benSurname = ben?.lastName,
+            healthId = mapHIDtoBeneficiary.healthId!!,
+            txnId = mapHIDtoBeneficiary.txnId!!,
+            message = mapHIDtoBeneficiary.message!!,
+            createdBy = "",
+            providerServiceMapId = prefDao.getLoggedInUser()?.serviceMapId!!,
+            abhaProfileJson = abhaProfileJson,
+            healthIdNumber = mapHIDtoBeneficiary.healthIdNumber.toString(),
+            isNewAbha = mapHIDtoBeneficiary.isNew!!
+        )
+        abhaGenerated.saveAbhaGenrated(abha)
     }
 }
