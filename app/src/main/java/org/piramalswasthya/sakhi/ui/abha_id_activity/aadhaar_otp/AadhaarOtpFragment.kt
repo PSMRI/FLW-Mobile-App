@@ -11,7 +11,6 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.hilt.android.AndroidEntryPoint
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.FragmentAadhaarOtpBinding
@@ -37,11 +36,9 @@ class AadhaarOtpFragment : Fragment() {
     private var timer = object : CountDownTimer(60000, 1000) {
         override fun onTick(millisUntilFinished: Long) {
             val sec = millisUntilFinished / 1000 % 60
-          //  binding.timerResendOtp.text = "Resend OTP in 00:$sec"
             binding.timerCount.text = "$sec"
         }
 
-        // When the task is over it will print 00:00:00 there
         override fun onFinish() {
             binding.resendOtp.isEnabled = true
             binding.timerResendOtp.visibility = View.INVISIBLE
@@ -74,7 +71,7 @@ class AadhaarOtpFragment : Fragment() {
         }
         binding.resendOtp.setOnClickListener {
             binding.tvErrorText.visibility = View.GONE
-            if (parentViewModel.abhaMode.value == AadhaarIdViewModel.Abha.CREATE && parentViewModel.mobileNumber == viewModel.mobileNumber) {
+            if (parentViewModel.abhaMode.value == AadhaarIdViewModel.Abha.CREATE) {
                 viewModel.resendAadhaarOtp(parentViewModel.aadhaarNumber)
                 startResendTimer()
 
@@ -121,11 +118,6 @@ class AadhaarOtpFragment : Fragment() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state!!) {
                 State.IDLE -> {
-//                    binding.tvOtpMsg.text = String.format(
-//                        "%s%s",
-//                        resources.getString(R.string.otp_sent_to),
-//                        args.mobileNumber
-//                    )
                     binding.tvOtpMsg.visibility = View.VISIBLE
                     var string = getMobileNumber(parentViewModel.otpMobileNumberMessage) ?: ""
 
@@ -211,14 +203,6 @@ class AadhaarOtpFragment : Fragment() {
                 viewModel.resetErrorMessage()
             }
         }
-
-        // Mobile Number observation for ABHA v1
-//        viewModel.mobileNumber.observe(viewLifecycleOwner) {
-//            it?.let {
-//                parentViewModel.setMobileNumber(it)
-//            }
-//        }
-
         viewModel.otpMobileNumberMessage.observe(viewLifecycleOwner) {
             it?.let {
                 parentViewModel.setOTPMsg(it)

@@ -260,7 +260,7 @@ data class BenBasicCache(
             familyHeadName = familyHeadName ?: "Not Available",
 //            typeOfList = typeOfList.name,
             spouseName = spouseName?.takeIf { it.isNotEmpty() } ?: "Not Available",
-            rchId = rchId?.takeIf { it.isNotEmpty() } ?: "Not Available",
+            rchId = rchId?.takeIf { it.isNotEmpty() },
             hrpStatus = hrpStatus,
             syncState = syncState
         )
@@ -280,7 +280,7 @@ data class BenBasicCache(
             mobileNo = mobileNo.toString(),
             fatherName = fatherName,
             familyHeadName = familyHeadName ?: "",
-            rchId = rchId ?: "Not Available",
+            rchId = rchId,
             hrpStatus = hrpStatus,
             relToHeadId = 0,
             syncState = syncState
@@ -301,7 +301,7 @@ data class BenBasicCache(
             fatherName = fatherName,
             familyHeadName = familyHeadName ?: "Not Available",
 //            typeOfList = typeOfList.name,
-            rchId = rchId ?: "Not Available",
+            rchId = rchId,
             hrpStatus = hrpStatus,
             form1Filled = tbsnFilled,
             syncState = tbsnSyncState
@@ -322,7 +322,7 @@ data class BenBasicCache(
             fatherName = fatherName,
             familyHeadName = familyHeadName ?: "Not Available",
 //            typeOfList = typeOfList.name,
-            rchId = rchId ?: "Not Available",
+            rchId = rchId,
             hrpStatus = hrpStatus,
             form1Filled = tbspFilled,
             syncState = tbspSyncState
@@ -343,7 +343,7 @@ data class BenBasicCache(
             fatherName = fatherName,
             familyHeadName = familyHeadName ?: "Not Available",
 //            typeOfList = typeOfList.name,
-            rchId = rchId ?: "Not Available",
+            rchId = rchId,
             hrpStatus = hrpStatus,
             form1Filled = cdrFilled,
             syncState = cdrSyncState
@@ -364,7 +364,7 @@ data class BenBasicCache(
             fatherName = fatherName,
             familyHeadName = familyHeadName ?: "Not Available",
 //            typeOfList = typeOfList.name,
-            rchId = rchId ?: "Not Available",
+            rchId = rchId,
             hrpStatus = hrpStatus,
             form1Filled = mdsrFilled,
             syncState = mdsrSyncState
@@ -385,7 +385,7 @@ data class BenBasicCache(
             fatherName = fatherName,
             familyHeadName = familyHeadName ?: "Not Available",
 //            typeOfList = typeOfList.name,
-            rchId = rchId ?: "Not Available",
+            rchId = rchId,
             hrpStatus = hrpStatus,
             form1Filled = pmsmaFilled,
             syncState = syncState
@@ -405,7 +405,7 @@ data class BenBasicCache(
             fatherName = fatherName,
             familyHeadName = familyHeadName ?: "Not Available",
 //            typeOfList = typeOfList.name,
-            rchId = rchId ?: "Not Available",
+            rchId = rchId,
             hrpStatus = hrpStatus,
             form1Filled = ectFilled,
             syncState = syncState
@@ -425,7 +425,7 @@ data class BenBasicCache(
             fatherName = fatherName,
             familyHeadName = familyHeadName ?: "Not Available",
 //            typeOfList = typeOfList.name,
-            rchId = rchId ?: "Not Available",
+            rchId = rchId,
             hrpStatus = hrpStatus,
             form1Filled = false,
             syncState = syncState
@@ -445,7 +445,7 @@ data class BenBasicCache(
             fatherName = fatherName,
             familyHeadName = familyHeadName ?: "Not Available",
 //            typeOfList = typeOfList.name,
-            rchId = rchId ?: "Not Available",
+            rchId = rchId,
             hrpStatus = hrpStatus,
             form1Filled = false,
             form1Enabled = hbncFilled || dob > (System.currentTimeMillis() - TimeUnit.DAYS.toMillis(
@@ -468,7 +468,7 @@ data class BenBasicCache(
             fatherName = fatherName,
             familyHeadName = familyHeadName ?: "Not Available",
 //            typeOfList = typeOfList.name,
-            rchId = rchId ?: "Not Available",
+            rchId = rchId,
             hrpStatus = hrpStatus,
             syncState = syncState,
             form1Filled = false,
@@ -491,7 +491,7 @@ data class BenBasicCache(
             fatherName = fatherName,
             familyHeadName = familyHeadName ?: "Not Available",
 //            typeOfList = typeOfList.name,
-            rchId = rchId ?: "Not Available",
+            rchId = rchId ,
             hrpStatus = hrpStatus,
             form1Filled = pwrFilled,
             syncState = pwrSyncState
@@ -515,7 +515,7 @@ data class BenBasicCache(
             lastMenstrualPeriod = getDateStringFromLong(lastMenstrualPeriod),
             edd = getEddFromLmp(lastMenstrualPeriod),
 //            typeOfList = typeOfList.name,
-            rchId = rchId ?: "Not Available",
+            rchId = rchId ,
             hrpStatus = hrpStatus,
             form1Filled = hrppaFilled,
             syncState = hrppaSyncState,
@@ -538,7 +538,7 @@ data class BenBasicCache(
             fatherName = fatherName,
             familyHeadName = familyHeadName ?: "Not Available",
 //            typeOfList = typeOfList.name,
-            rchId = rchId ?: "Not Available",
+            rchId = rchId ,
             hrpStatus = hrpStatus,
             form1Filled = hrpnpaFilled,
             syncState = hrpnpaSyncState
@@ -559,7 +559,7 @@ data class BenBasicCache(
             fatherName = fatherName,
             familyHeadName = familyHeadName ?: "Not Available",
 //            typeOfList = typeOfList.name,
-            rchId = rchId ?: "Not Available",
+            rchId = rchId,
             hrpStatus = hrpStatus,
             form1Filled = hrnptrackingDone,
             form1Enabled = !hrnptrackingDone,
@@ -585,7 +585,7 @@ data class BenBasicCache(
             fatherName = fatherName,
             familyHeadName = familyHeadName ?: "Not Available",
 //            typeOfList = typeOfList.name,
-            rchId = rchId ?: "Not Available",
+            rchId = rchId ,
             hrpStatus = hrpStatus,
             form1Filled = hrptrackingDone,
             form1Enabled = !hrptrackingDone,
@@ -608,7 +608,7 @@ data class BenBasicCache(
             fatherName = fatherName,
             familyHeadName = familyHeadName ?: "Not Available",
 //            typeOfList = typeOfList.name,
-            rchId = rchId ?: "Not Available",
+            rchId = rchId ,
             hrpStatus = hrpStatus,
             form1Filled = irFilled,
             syncState = irSyncState
@@ -628,7 +628,7 @@ data class BenBasicCache(
             fatherName = fatherName,
             familyHeadName = familyHeadName ?: "Not Available",
 //            typeOfList = typeOfList.name,
-            rchId = rchId ?: "Not Available",
+            rchId = rchId,
             hrpStatus = hrpStatus,
             form1Filled = irFilled,
             syncState = crSyncState
@@ -648,7 +648,7 @@ data class BenBasicCache(
             fatherName = fatherName,
             familyHeadName = familyHeadName ?: "Not Available",
 //            typeOfList = typeOfList.name,
-            rchId = rchId ?: "Not Available",
+            rchId = rchId,
             hrpStatus = hrpStatus,
             form1Filled = doFilled,
             syncState = doSyncState
@@ -668,7 +668,7 @@ data class BenBasicCache(
             fatherName = fatherName,
             familyHeadName = familyHeadName ?: "Not Available",
 //            typeOfList = typeOfList.name,
-            rchId = rchId ?: "Not Available",
+            rchId = rchId ,
             hrpStatus = hrpStatus,
             form1Filled = ecrFilled,
             syncState = syncState
@@ -688,7 +688,7 @@ data class BenBasicCache(
             fatherName = fatherName,
             familyHeadName = familyHeadName ?: "Not Available",
 //            typeOfList = typeOfList.name,
-            rchId = rchId ?: "Not Available",
+            rchId = rchId,
             hrpStatus = hrpStatus,
             form1Filled = false,
             syncState = syncState
@@ -719,7 +719,7 @@ data class BenBasicDomain(
     val familyHeadName: String,
     val spouseName: String? = null,
 //    val typeOfList: String,
-    val rchId: String,
+    val rchId: String?=null,
     val hrpStatus: Boolean = false,
     var syncState: SyncState?
 )
@@ -743,7 +743,7 @@ data class BenBasicDomainForForm(
     val lastMenstrualPeriod: String? = null,
     val edd: String? = null,
 //    val typeOfList: String,
-    val rchId: String,
+    val rchId: String?=null,
     val hrpStatus: Boolean = false,
     val form1Filled: Boolean = false,
     val form2Filled: Boolean = false,

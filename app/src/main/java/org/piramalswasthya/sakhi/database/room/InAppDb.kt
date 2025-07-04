@@ -100,7 +100,7 @@ import org.piramalswasthya.sakhi.model.Vaccine
         ABHAModel::class,
     ],
     views = [BenBasicCache::class],
-    version = 19, exportSchema = false
+    version = 18, exportSchema = false
 )
 
 @TypeConverters(LocationEntityListConverter::class, SyncStateConverter::class)
@@ -142,62 +142,75 @@ abstract class InAppDb : RoomDatabase() {
 //                it.execSQL("select count(*) from beneficiary")
             })
 
-
-            val MIGRATION_17_18 = object : Migration(18, 19) {
+            val MIGRATION_17_18 = object : Migration(17, 18) {
                 override fun migrate(database: SupportSQLiteDatabase) {
+                    // 1. Create new table with updated schema
                     database.execSQL("""
-            ALTER TABLE ABHA_GENERATED ADD COLUMN abhaProfileJson TEXT NOT NULL DEFAULT ''
-        """.trimIndent())
-                }
-            }
-            val MIGRATION_16_17 = object : Migration(17, 18) {
-                override fun migrate(database: SupportSQLiteDatabase) {
-                    database.execSQL("""
-            CREATE TABLE IF NOT EXISTS `ABHA_GENERATED` (
+            CREATE TABLE IF NOT EXISTS `ABHA_GENERATED_NEW` (
                 `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 `beneficiaryID` INTEGER NOT NULL,
                 `beneficiaryRegID` INTEGER NOT NULL,
                 `benName` TEXT NOT NULL,
-                `benSurname` TEXT,
                 `createdBy` TEXT NOT NULL,
                 `message` TEXT NOT NULL,
                 `txnId` TEXT NOT NULL,
+                `benSurname` TEXT,
                 `healthId` TEXT NOT NULL,
                 `healthIdNumber` TEXT NOT NULL,
+                `abhaProfileJson` TEXT NOT NULL,
                 `isNewAbha` INTEGER NOT NULL,
                 `providerServiceMapId` INTEGER NOT NULL,
                 `syncState` INTEGER NOT NULL,
                 FOREIGN KEY(`beneficiaryID`) REFERENCES `BENEFICIARY`(`beneficiaryId`) ON UPDATE CASCADE ON DELETE CASCADE
-            );
+            )
         """.trimIndent())
 
+                    // 2. Copy existing data into new table (with default/placeholder values for new fields)
+                    database.execSQL("""
+            INSERT INTO ABHA_GENERATED_NEW (
+                id,
+                beneficiaryID,
+                beneficiaryRegID,
+                benName,
+                createdBy,
+                message,
+                txnId,
+                benSurname,
+                healthId,
+                healthIdNumber,
+                abhaProfileJson,
+                isNewAbha,
+                providerServiceMapId,
+                syncState
+            )
+            SELECT
+                id,
+                benId AS beneficiaryID,
+                hhId AS beneficiaryRegID,
+                benName,
+                '' AS createdBy,
+                '' AS message,
+                '' AS txnId,
+                benSurname,
+                healthId,
+                healthIdNumber,
+                '' AS abhaProfileJson,
+                isNewAbha,
+                0 ,
+             0 
+            FROM ABHA_GENERATED
+        """.trimIndent())
+
+                    // 3. Drop old table
+                    database.execSQL("DROP TABLE ABHA_GENERATED")
+
+                    // 4. Rename new table
+                    database.execSQL("ALTER TABLE ABHA_GENERATED_NEW RENAME TO ABHA_GENERATED")
+
+                    // 5. Recreate index
                     database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_ABHA_GENERATED_beneficiaryID` ON `ABHA_GENERATED` (`beneficiaryID`)")
                 }
             }
-
-          /*  val MIGRATION_16_17 = object : Migration(16, 17) {
-                override fun migrate(database: SupportSQLiteDatabase) {
-                    database.execSQL("""
-            CREATE TABLE IF NOT EXISTS `ABHA_GENERATED` (
-                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                `benId` INTEGER NOT NULL,
-                `hhId` INTEGER NOT NULL,
-                `benName` TEXT NOT NULL,
-                `benSurname` TEXT,
-                `gender` TEXT NOT NULL,
-                `dob` INTEGER NOT NULL,
-                `abhaId` TEXT,
-                `healthId` TEXT NOT NULL,
-                `healthIdNumber` TEXT NOT NULL,
-                `isNewAbha` INTEGER NOT NULL,
-                `syncState` INTEGER NOT NULL,
-                FOREIGN KEY(`benId`) REFERENCES `BENEFICIARY`(`beneficiaryId`) ON UPDATE CASCADE ON DELETE CASCADE
-            );
-        """.trimIndent())
-
-                    database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_ABHA_GENERATED_benId` ON `ABHA_GENERATED` (`benId`)")
-                }
-            }*/
 
             val MIGRATION_15_16 = object : Migration(15, 16) {
                 override fun migrate(db: SupportSQLiteDatabase) {
@@ -317,7 +330,6 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_13_14,
                         MIGRATION_14_15,
                         MIGRATION_15_16,
-                        MIGRATION_16_17,
                         MIGRATION_17_18
                         ).build()
 
