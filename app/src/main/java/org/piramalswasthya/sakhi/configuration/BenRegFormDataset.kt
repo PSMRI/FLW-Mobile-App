@@ -3,7 +3,6 @@ package org.piramalswasthya.sakhi.configuration
 import android.content.Context
 import android.net.Uri
 import android.text.InputType
-import android.util.Log
 import android.util.Range
 import android.widget.LinearLayout
 import org.piramalswasthya.sakhi.R
@@ -36,6 +35,24 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
 
     companion object {
+        fun calculateMaxSonAge(
+            parentYears: Int,
+            parentMonths: Int,
+            marriageYears: Int,
+            marriageMonths: Int
+        ): Pair<Int, Int> {
+            val parentTotalMonths = parentYears * 12 + parentMonths
+            val bufferTotalMonths = marriageYears * 12 + marriageMonths
+
+            val diffMonths = (parentTotalMonths - bufferTotalMonths).coerceAtLeast(0)
+
+            val years = diffMonths / 12
+            val months = diffMonths % 12
+
+            return Pair(years, months)
+        }
+
+
         private fun getCurrentDateString(): String {
             val calendar = Calendar.getInstance()
             val mdFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
@@ -903,27 +920,30 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         }
 
         if (relationToHeadId == 8 || relationToHeadId == 9) hoF?.let {
-            val hoFAge = getAgeFromDob(it.dob)
+
+            val hoFAge = getAgeFromDob(hoF.dob)
             val hoFSpouseAge = hoFSpouse.firstOrNull()?.dob?.let { h -> getAgeFromDob(h) }
+            val minParentAge = hoFSpouseAge?.let { minOf(hoFAge, it) } ?: hoFAge
 
-//            val validHoFAge = hoFAge.takeIf { it >= 18 } ?: 18
-//            val validSpouseAge = hoFSpouseAge?.takeIf { it >= 18 }
+            val hofAgeAtMarriage = hoF.genDetails?.ageAtMarriage ?: 0
+            var hoFSpouseAgeAtMarriage=  hoFSpouse.firstOrNull()?.genDetails?.ageAtMarriage
+            val minAgeAtMarriage = hoFSpouseAgeAtMarriage?.let { minOf(hofAgeAtMarriage, it) } ?: hofAgeAtMarriage
 
-            val minAge =(hoFSpouseAge?.let { minOf(hoFAge, it) } ?: hoFAge)
-            val maxAge = minAge -(hof?.genDetails?.ageAtMarriage?.plus(7)?:0)
+            val (maxSonYears, maxSonMonths) = calculateMaxSonAge(
+                parentYears = minParentAge,
+                parentMonths = 0,
+                marriageYears = minAgeAtMarriage,
+                marriageMonths = 7
+            )
 
-           //(validSpouseAge?.let { minOf(validHoFAge, it) } ?: validHoFAge) - Konstants.minAgeForGenBen
+            val totalMonthsToSubtract = maxSonYears * 12 + maxSonMonths
+            val maxAllowedDobMillis = Calendar.getInstance().setToStartOfTheDay().apply {
+                add(Calendar.MONTH, -totalMonthsToSubtract)
+            }.timeInMillis
 
-            /* val maxAge = (if (hoFSpouseAge == null) hoFAge else minOf(
-                 hoFAge,
-                 hoFSpouseAge
-             )) - Konstants.minAgeForGenBen*/
+            agePopup.min = maxAllowedDobMillis
 
-            agePopup.min = Calendar.getInstance().setToStartOfTheDay().let { cal ->
-                cal.add(Calendar.YEAR, -1 * maxAge)
-                cal.timeInMillis
-            }
-            maxAgeYear = maxAge
+            maxAgeYear = maxSonYears
 
         }
         if (relationToHeadId == 0 || relationToHeadId == 1) hoF?.let {
@@ -986,35 +1006,31 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 if (it.isNotEmpty()) motherName.inputType = TEXT_VIEW
             }
         }
+
+
         val hoFAge = getAgeFromDob(hoF.dob)
-        val hoFSpouseAge = hoFSpouse?.dob?.let { getAgeFromDob(it) }
-        /*val maxAge = (if (hoFSpouseAge == null) hoFAge else minOf(
-            hoFAge,
-            hoFSpouseAge
+        val hoFSpouseAge = hoFSpouse?.dob?.let { h -> getAgeFromDob(h) }
+        val minParentAge = hoFSpouseAge?.let { minOf(hoFAge, it) } ?: hoFAge
 
-    
+        val hofAgeAtMarriage = hoF.genDetails?.ageAtMarriage ?: 0
+        var hoFSpouseAgeAtMarriage=  hoFSpouse?.genDetails?.ageAtMarriage
+        val minAgeAtMarriage = hoFSpouseAgeAtMarriage?.let { minOf(hofAgeAtMarriage, it) } ?: hofAgeAtMarriage
 
-        )) - Konstants.minAgeForGenBen*/
 
-      /*  val validHoFAge = hoFAge.takeIf { it >= 18 } ?: 18
-        val validSpouseAge = hoFSpouseAge?.takeIf { it >= 18 }
+        val (maxSonYears, maxSonMonths) = calculateMaxSonAge(
+            parentYears = minParentAge,
+            parentMonths = 0,
+            marriageYears = minAgeAtMarriage,
+            marriageMonths = 7
+        )
 
-        val maxAge = validHoFAge -15 *///(validSpouseAge?.let { minOf(validHoFAge, it) } ?: validHoFAge) - 15
+        val totalMonthsToSubtract = maxSonYears * 12 + maxSonMonths
+        val maxAllowedDobMillis = Calendar.getInstance().setToStartOfTheDay().apply {
+            add(Calendar.MONTH, -totalMonthsToSubtract)
+        }.timeInMillis
+        agePopup.min = maxAllowedDobMillis
 
-//        age.max = maxAge.toLong()
-//        dob.min = Calendar.getInstance().setToStartOfTheDay().let {
-//            it.add(Calendar.YEAR, -1 * maxAge)
-//            it.timeInMillis
-//        }
-
-        val minAge =(hoFSpouseAge?.let { minOf(hoFAge, it) } ?: hoFAge)
-        val maxAge = minAge -(hof?.genDetails?.ageAtMarriage?.plus(7)?:0)
-
-        agePopup.min = Calendar.getInstance().setToStartOfTheDay().let {
-            it.add(Calendar.YEAR, -1 * maxAge)
-            it.timeInMillis
-        }
-        maxAgeYear = maxAge
+        maxAgeYear = maxSonYears
 
         lastName.value = hoF.lastName
     }

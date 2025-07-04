@@ -164,13 +164,7 @@ class AbhaIdRepo @Inject constructor(
     suspend fun generateAadhaarOtpV3(req: AbhaGenerateAadhaarOtpRequest): NetworkResult<AbhaGenerateAadhaarOtpResponseV2> {
         return withContext(Dispatchers.IO) {
             try {
-                // ABHA v1/v2 encryption technique
-//                req.aadhaar = encryptData(req.aadhaar)
-                // ABHA v3 encryption technique
                 req.loginId = encryptData(req.loginId)
-                // ABHA v1/v2 API
-//                val response = abhaApiService.generateAadhaarOtpV2(req)
-                // ABHA v3 API
                 val response =
                     abhaApiService.generateAadhaarOtpV3(req, generateUUID(), getCurrentTimestamp())
                 if (response.isSuccessful) {
@@ -317,8 +311,6 @@ class AbhaIdRepo @Inject constructor(
             val publicKeySpec = X509EncodedKeySpec(publicKeyBytes)
             val publicKey = keyFactory.generatePublic(publicKeySpec)
 
-            // Cipher used in ABHA v1/v2 APIs
-//            val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
             // Cipher used in ABHA v3 APIs
             val cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-1AndMGF1Padding")
             cipher.init(Cipher.ENCRYPT_MODE, publicKey)
@@ -378,8 +370,7 @@ class AbhaIdRepo @Inject constructor(
                 // ABHA v3
                 req.authData.otp.otpValue = encryptData(req.authData.otp.otpValue)
                 req.authData.otp.timeStamp = getCurrentTimestamp()
-                // ABHA v1/v2 API
-//                val response = abhaApiService.verifyAadhaarOtp(req)
+
                 // ABHA v3 API
                 response = abhaApiService.verifyAadhaarOtp3(req, generateUUID(), getCurrentTimestamp())
                 if (response?.isSuccessful == true) {

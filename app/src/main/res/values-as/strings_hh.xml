@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="btn_text_frag_home_nhhr">নতুন Household পঞ্জীয়ন</string>
+    <string name="btn_text_frag_home_nhhr">নতুন গৃহস্থালী পঞ্জীয়ন</string>
     <string name="no_records_found">কোনো ৰেকৰ্ড পোৱা নগল</string>
     <string name="household_search">সন্ধান</string>
 
