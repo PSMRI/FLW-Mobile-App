@@ -32,6 +32,10 @@ import org.piramalswasthya.sakhi.database.room.dao.PmsmaDao
 import org.piramalswasthya.sakhi.database.room.dao.PncDao
 import org.piramalswasthya.sakhi.database.room.dao.SyncDao
 import org.piramalswasthya.sakhi.database.room.dao.TBDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseJsonDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormSchemaDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.InfantDao
 import org.piramalswasthya.sakhi.model.ABHAModel
 import org.piramalswasthya.sakhi.model.BenBasicCache
 import org.piramalswasthya.sakhi.model.BenRegCache
@@ -63,6 +67,9 @@ import org.piramalswasthya.sakhi.model.PregnantWomanRegistrationCache
 import org.piramalswasthya.sakhi.model.TBScreeningCache
 import org.piramalswasthya.sakhi.model.TBSuspectedCache
 import org.piramalswasthya.sakhi.model.Vaccine
+import org.piramalswasthya.sakhi.model.dynamicEntity.FormResponseJsonEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.InfantEntity
 
 @Database(
     entities = [
@@ -98,6 +105,10 @@ import org.piramalswasthya.sakhi.model.Vaccine
         IncentiveActivityCache::class,
         IncentiveRecordCache::class,
         ABHAModel::class,
+        //Dynamic Data
+        InfantEntity::class,
+        FormSchemaEntity::class,
+        FormResponseJsonEntity::class
     ],
     views = [BenBasicCache::class],
     version = 18, exportSchema = false
@@ -129,6 +140,11 @@ abstract class InAppDb : RoomDatabase() {
     abstract val childRegistrationDao: ChildRegistrationDao
     abstract val incentiveDao: IncentiveDao
     abstract val abhaGenratedDao: ABHAGenratedDao
+
+    abstract fun infantDao(): InfantDao
+    abstract fun formSchemaDao(): FormSchemaDao
+    abstract fun formResponseDao(): FormResponseDao
+    abstract fun formResponseJsonDao(): FormResponseJsonDao
 
     abstract val syncDao: SyncDao
 
