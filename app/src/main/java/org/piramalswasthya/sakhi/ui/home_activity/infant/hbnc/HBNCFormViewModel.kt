@@ -36,13 +36,15 @@ class HBNCFormViewModel @Inject constructor(private val repository: FormReposito
     val syncedVisitList: StateFlow<List<FormResponseJsonEntity>> = _syncedVisitList
 
     private var rchId: String = ""
+    private var benId: Long = 0L
+    private var hhId: Long = 0L
     var visitDay: String = ""
     private var isViewMode: Boolean = false
 
     // 🔁 Load synced visits from local Room DB
-    fun loadSyncedVisitList(rchId: String) {
+    fun loadSyncedVisitList(benId: Long) {
         viewModelScope.launch {
-            _syncedVisitList.value = repository.getSyncedVisitsByRchId(rchId)
+            _syncedVisitList.value = repository.getSyncedVisitsByRchId(benId)
         }
     }
 
@@ -65,7 +67,7 @@ class HBNCFormViewModel @Inject constructor(private val repository: FormReposito
                     val body = response.body()
                     if (body != null && body.statusCode == 200) {
                         repository.saveDownloadedVisitList(body.data)
-                        loadSyncedVisitList(rchId) // 🔁 re-fetch from Room after saving
+                        loadSyncedVisitList(benId) // 🔁 re-fetch from Room after saving
                     }
                 } else {
                     Log.e("DownSync", "API error: ${response.code()} ${response.message()}")
@@ -77,8 +79,8 @@ class HBNCFormViewModel @Inject constructor(private val repository: FormReposito
         }
     }
 
-    fun loadFormSchema(formId: String, rchId: String, visitDay: String, viewMode: Boolean) {
-        this.rchId = rchId
+    fun loadFormSchema(formId: String, visitDay: String, viewMode: Boolean) {
+
         this.visitDay = visitDay
         this.isViewMode = viewMode
 
@@ -89,7 +91,7 @@ class HBNCFormViewModel @Inject constructor(private val repository: FormReposito
                 return@launch
             }
 
-            val savedJson = repository.loadFormResponseJson(rchId, visitDay)
+            val savedJson = repository.loadFormResponseJson(benId, visitDay)
             val savedFieldValues: Map<String, Any?> = try {
                 val root = JSONObject(savedJson ?: "")
                 val fieldsJson = root.optJSONObject("fields") ?: JSONObject()
@@ -163,7 +165,8 @@ class HBNCFormViewModel @Inject constructor(private val repository: FormReposito
             }
 
             val entity = FormResponseJsonEntity(
-                rchId = rchId,
+                benId = benId,
+                hhId = hhId,
                 visitDay = visitDay,
                 formId = formId,
                 version = version,
@@ -173,15 +176,17 @@ class HBNCFormViewModel @Inject constructor(private val repository: FormReposito
             )
 
             repository.insertFormResponse(entity)
-            loadSyncedVisitList(rchId) // ✅ update list post-save
+            loadSyncedVisitList(benId) // ✅ update list post-save
 
             Log.d("FormSave", "💾 Saved form to Room:\n$wrappedJson")
         }
     }
 
-    fun loadInfant(rchId: String) {
+    fun loadInfant(benId: Long,hhId:Long) {
+        this.benId = benId
+        this.hhId = hhId
         viewModelScope.launch {
-            _infant.value = repository.getInfantByRchId(rchId).firstOrNull()
+            _infant.value = repository.getInfantByRchId(benId).firstOrNull()
         }
     }
 
@@ -290,7 +295,7 @@ class HBNCFormViewModel @Inject constructor(private val repository: FormReposito
 
     fun loadVisitHistory(rchId: String) {
         viewModelScope.launch {
-            _syncedVisitList.value = repository.getSyncedVisitsByRchId(rchId)
+            _syncedVisitList.value = repository.getSyncedVisitsByRchId(benId)
         }
     }
 }

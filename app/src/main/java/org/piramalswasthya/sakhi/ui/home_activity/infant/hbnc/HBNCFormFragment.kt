@@ -42,6 +42,7 @@ class HBNCFormFragment : Fragment() {
     private val dob = "01-07-2024"
     private val args: HBNCFormFragmentArgs by navArgs()
 
+
     private val viewModel: HBNCFormViewModel by viewModels()
 
     private lateinit var adapter: FormRendererAdapter
@@ -115,7 +116,7 @@ class HBNCFormFragment : Fragment() {
         // ✅ Updated to use formId for API fetch
         val formId = "hbnc_form_001"
 //        viewModel.loadFormSchema(formId, rchId, visitDay)
-        viewModel.loadFormSchema(formId, rchId, visitDay,  true) // or false
+        viewModel.loadFormSchema(formId, visitDay,  true) // or false
 
 
         lifecycleScope.launch {

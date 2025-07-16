@@ -34,6 +34,8 @@ class InfantFormFragment : Fragment() {
 
     private val rchId = "1"
 
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -43,8 +45,9 @@ class InfantFormFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         FormSyncWorker.enqueue(requireContext())
-
-        viewModel.loadInfant(rchId)
+         val benId = args.benId
+         val hhId = args.hhId
+        viewModel.loadInfant(benId,hhId)
 
         // Observe infant basic info
         viewLifecycleOwner.lifecycleScope.launch {
@@ -53,7 +56,7 @@ class InfantFormFragment : Fragment() {
                 infant?.let {
 //                    binding.tvName?.text = it.name ?: "Baby of ${it.motherName}"
 //                    binding.tvDob?.text = it.dob ?: "-"
-                    binding.tvRchId?.text = it.rchId ?: "-"
+                    binding.tvRchId?.text = it.benId.toString() ?: "-"
                 }
             }
         }
@@ -61,7 +64,7 @@ class InfantFormFragment : Fragment() {
         // ✅ Observe visits and refresh on resume
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.loadSyncedVisitList(rchId) // Load fresh every time fragment resumes
+                viewModel.loadSyncedVisitList(benId) // Load fresh every time fragment resumes
 
                 viewModel.syncedVisitList.collectLatest { visits ->
                     Log.d("InfantForm", "📄 Synced visits: ${visits.size}")

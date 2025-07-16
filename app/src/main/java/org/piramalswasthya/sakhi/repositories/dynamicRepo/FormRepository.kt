@@ -79,12 +79,12 @@ class FormRepository @Inject constructor(
 
     suspend fun getSavedSchema(formId: String) = formSchemaDao.getSchema(formId)
 
-    suspend fun getInfantByRchId(rchId: String) = jsonResponseDao.getSyncedVisitsByRchId(rchId)
+    suspend fun getInfantByRchId(benId: Long) = jsonResponseDao.getSyncedVisitsByRchId(benId)
 
 //    suspend fun insertInfant(infant: InfantEntity) = infantDao.insertInfant(infant)
 
-    suspend fun getSyncedVisitsByRchId(rchId: String): List<FormResponseJsonEntity> =
-        jsonResponseDao.getSyncedVisitsByRchId(rchId)
+    suspend fun getSyncedVisitsByRchId(benId: Long): List<FormResponseJsonEntity> =
+        jsonResponseDao.getSyncedVisitsByRchId(benId)
 
     suspend fun getAllHbncVisits(request: HBNCVisitRequest): Response<HBNCVisitListResponse> {
         return amritApiService.getAllHbncVisits(request)
@@ -95,9 +95,10 @@ class FormRepository @Inject constructor(
             try {
                 val visitDay = item.fields["visit_day"]?.asString?.trim() ?: ""
                 val visitDate = item.visitDate ?: "-"
-                val rchId = item.beneficiaryId.toString()
+                val benId = item.beneficiaryId
+                val hhId = item.houseHoldId
 
-                if (visitDay.isBlank() || rchId.isBlank()) {
+                if (visitDay.isBlank()) {
                     Log.w("SkipVisit", "⚠️ Skipping entry at index $index: visitDay or rchId is missing.")
                     continue
                 }
@@ -122,13 +123,15 @@ class FormRepository @Inject constructor(
 
                 val fullJson = JSONObject().apply {
                     put("formId", "hbnc_form_001")
-                    put("beneficiaryId", rchId)
+                    put("beneficiaryId", benId)
+                    put("houseHoldId", hhId)
                     put("visitDate", visitDate)
                     put("fields", fieldsJson)
                 }
 
                 val entity = FormResponseJsonEntity(
-                    rchId = rchId,
+                    benId = benId,
+                    hhId = hhId,
                     visitDay = visitDay,
                     formId = "hbnc_form_001",
                     version = 1,
@@ -137,7 +140,7 @@ class FormRepository @Inject constructor(
                 )
 
                 insertOrUpdateFormResponse(entity)
-                Log.d("DownSync", "✅ Saved visit [$index]: $visitDay | RCH: $rchId")
+                Log.d("DownSync", "✅ Saved visit [$index]: $visitDay | RCH: $benId")
 
             } catch (e: Exception) {
                 Log.e("DownSync", "❌ Error saving visit at index $index: ${e.message}", e)
@@ -146,7 +149,7 @@ class FormRepository @Inject constructor(
     }
 
     suspend fun insertOrUpdateFormResponse(entity: FormResponseJsonEntity) {
-        val existing = jsonResponseDao.getFormResponse(entity.rchId, entity.visitDay)
+        val existing = jsonResponseDao.getFormResponse(entity.benId, entity.visitDay)
         val updated = existing?.let { entity.copy(id = it.id) } ?: entity
         jsonResponseDao.insertFormResponse(updated)
     }
@@ -154,8 +157,8 @@ class FormRepository @Inject constructor(
     suspend fun insertFormResponse(entity: FormResponseJsonEntity) =
         jsonResponseDao.insertFormResponse(entity)
 
-    suspend fun loadFormResponseJson(rchId: String, visitDay: String): String? =
-        jsonResponseDao.getFormResponse(rchId, visitDay)?.formDataJson
+    suspend fun loadFormResponseJson(benId:Long, visitDay: String): String? =
+        jsonResponseDao.getFormResponse(benId, visitDay)?.formDataJson
 
     suspend fun getUnsyncedForms(): List<FormResponseJsonEntity> =
         jsonResponseDao.getUnsyncedForms()

@@ -25,8 +25,8 @@ object FormSubmitRequestMapper {
 
             FormSubmitRequest(
                 formId = jsonObj.optString("formId"),
-                beneficiaryId = jsonObj.optInt("beneficiaryId"),
-                houseHoldId = jsonObj.optInt("houseHoldId"),
+                beneficiaryId = jsonObj.optLong("beneficiaryId"),
+                houseHoldId = jsonObj.optLong("houseHoldId"),
                 visitDate = jsonObj.optString("visitDate"),
                 fields = fieldsMap
             )
