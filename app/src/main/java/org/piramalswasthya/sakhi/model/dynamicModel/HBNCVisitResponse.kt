@@ -7,8 +7,12 @@ data class HBNCVisitResponse(
     @SerializedName("id")
     val id: Int,
 
-    @SerializedName("beneficiaryId")
-    val beneficiaryId: Int,
+    @SerializedName("houseHoldId")
+    val houseHoldId: Long,
+
+  @SerializedName("beneficiaryId")
+    val beneficiaryId: Long,
+
 
     @SerializedName("visitDate")
     val visitDate: String,

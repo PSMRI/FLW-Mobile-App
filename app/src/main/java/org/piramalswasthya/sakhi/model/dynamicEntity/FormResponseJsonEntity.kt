@@ -6,11 +6,12 @@ import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "all_visit_history",
-    indices = [Index(value = ["rchId", "visitDay", "formId"], unique = true)]
+    indices = [Index(value = ["benId","hhId", "visitDay", "formId"], unique = true)]
 )
 data class FormResponseJsonEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val rchId: String,
+    val benId: Long,
+    val hhId: Long,
     val visitDay: String,
     val formId: String,
     val version: Int,

@@ -53,8 +53,8 @@ class InfantListFragment : Fragment() {
                     InfantListFragmentDirections.actionInfantListFragmentToInfantFormFragment(
 //                        benId = benId,
 //                        hhId = hhId,
-                        benId = 1,
-                        hhId = 1
+                        benId = 1L,
+                        hhId = 1L
                     )
                 )
 
