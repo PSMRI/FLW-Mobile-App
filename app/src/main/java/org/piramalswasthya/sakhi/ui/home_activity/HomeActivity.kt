@@ -634,7 +634,8 @@ class HomeActivity : AppCompatActivity() {
 
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    @Deprecated("will fix this implementation")
+    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (inAppUpdateHelper.onActivityResult(requestCode, resultCode)) {
             // Handled update result
