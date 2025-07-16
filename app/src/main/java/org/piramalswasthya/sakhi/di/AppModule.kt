@@ -41,6 +41,7 @@ import org.piramalswasthya.sakhi.network.interceptors.TokenInsertAbhaInterceptor
 import org.piramalswasthya.sakhi.network.interceptors.TokenInsertTmcInterceptor
 import org.piramalswasthya.sakhi.utils.KeyUtils
 import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
@@ -63,6 +64,22 @@ object AppModule {
             .add(KotlinJsonAdapterFactory())
             .build()
     }
+
+    // for dynamic data
+    @Singleton
+    @Provides
+    @Named("gsonAmritApi")
+    fun provideGsonBasedAmritApiService(
+        @Named("uatClient") httpClient: OkHttpClient
+    ): AmritApiService {
+        return Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create()) // ✅ Only for this API
+            .baseUrl(KeyUtils.baseTMCUrl())
+            .client(httpClient)
+            .build()
+            .create(AmritApiService::class.java)
+    }
+
 
     @Singleton
     @Provides

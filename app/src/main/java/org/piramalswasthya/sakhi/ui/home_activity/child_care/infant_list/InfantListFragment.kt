@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -41,14 +42,30 @@ class InfantListFragment : Fragment() {
         binding.btnNextPage.visibility = View.GONE
         val benAdapter = InfantListAdapter(
             InfantListAdapter.InfantListClickListener { benId, hhId ->
+                Toast.makeText(requireContext(), "Click", Toast.LENGTH_LONG).show()
+//                findNavController().navigate(
+//                    InfantListFragmentDirections.actionInfantListFragmentToHbncDayListFragment(
+//                        benId = benId,
+//                        hhId = hhId
+//                    )
+//                )
                 findNavController().navigate(
-                    InfantListFragmentDirections.actionInfantListFragmentToHbncDayListFragment(
-                        benId = benId,
-                        hhId = hhId
+                    InfantListFragmentDirections.actionInfantListFragmentToInfantFormFragment(
+//                        benId = benId,
+//                        hhId = hhId,
+                        benId = 1,
+                        hhId = 1
                     )
                 )
+
             }
         )
+//        findNavController().navigate(
+//            InfantListFragmentDirections.actionInfantListFragmentToInfantFormFragment(
+//                benId = benId,
+//                hhId = hhId
+//            )
+//        )
         binding.rvAny.adapter = benAdapter
 
         lifecycleScope.launch {
