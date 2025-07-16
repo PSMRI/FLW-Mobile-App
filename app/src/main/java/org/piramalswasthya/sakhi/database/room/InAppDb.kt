@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.database.room
 
 import android.content.Context
+import android.util.Log
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -142,7 +143,7 @@ abstract class InAppDb : RoomDatabase() {
 //                it.execSQL("select count(*) from beneficiary")
             })
 
-            val MIGRATION_17_18 = object : Migration(17, 18) {
+            val MIGRATION_16_18 = object : Migration(16, 18) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     // 1. Create new table with updated schema
                     database.execSQL("""
@@ -164,45 +165,51 @@ abstract class InAppDb : RoomDatabase() {
                 FOREIGN KEY(`beneficiaryID`) REFERENCES `BENEFICIARY`(`beneficiaryId`) ON UPDATE CASCADE ON DELETE CASCADE
             )
         """.trimIndent())
-
                     // 2. Copy existing data into new table (with default/placeholder values for new fields)
-                    database.execSQL("""
-            INSERT INTO ABHA_GENERATED_NEW (
-                id,
-                beneficiaryID,
-                beneficiaryRegID,
-                benName,
-                createdBy,
-                message,
-                txnId,
-                benSurname,
-                healthId,
-                healthIdNumber,
-                abhaProfileJson,
-                isNewAbha,
-                providerServiceMapId,
-                syncState
-            )
-            SELECT
-                id,
-                benId AS beneficiaryID,
-                hhId AS beneficiaryRegID,
-                benName,
-                '' AS createdBy,
-                '' AS message,
-                '' AS txnId,
-                benSurname,
-                healthId,
-                healthIdNumber,
-                '' AS abhaProfileJson,
-                isNewAbha,
-                0 ,
-             0 
-            FROM ABHA_GENERATED
-        """.trimIndent())
+                    try {
+                        database.execSQL("""
+                INSERT INTO ABHA_GENERATED_NEW (
+                    id,
+                    beneficiaryID,
+                    beneficiaryRegID,
+                    benName,
+                    createdBy,
+                    message,
+                    txnId,
+                    benSurname,
+                    healthId,
+                    healthIdNumber,
+                    abhaProfileJson,
+                    isNewAbha,
+                    providerServiceMapId,
+                    syncState
+                )
+                SELECT
+                    id,
+                    benId AS beneficiaryID,
+                    hhId AS beneficiaryRegID,
+                    benName,
+                    '' AS createdBy,
+                    '' AS message,
+                    '' AS txnId,
+                    benSurname,
+                    healthId,
+                    healthIdNumber,
+                    '' AS abhaProfileJson,
+                    isNewAbha,
+                    0,
+                    0
+                FROM ABHA_GENERATED
+            """.trimIndent())
+                    } catch (e: Exception) {
+                        // Table might not exist on some devices — log and continue
+                        Log.w("RoomMigration", "Skipping data copy: ABHA_GENERATED table not found", e)
+                    }
 
                     // 3. Drop old table
-                    database.execSQL("DROP TABLE ABHA_GENERATED")
+                    try {
+                        database.execSQL("DROP TABLE IF EXISTS ABHA_GENERATED")
+                    } catch (_: Exception) {}
 
                     // 4. Rename new table
                     database.execSQL("ALTER TABLE ABHA_GENERATED_NEW RENAME TO ABHA_GENERATED")
@@ -330,8 +337,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_13_14,
                         MIGRATION_14_15,
                         MIGRATION_15_16,
-                        MIGRATION_17_18
-                        ).build()
+                        MIGRATION_16_18
+                    ).build()
 
                     INSTANCE = instance
                 }
