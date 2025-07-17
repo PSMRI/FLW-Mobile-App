@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.ui.home_activity.incentives
 
 import android.Manifest
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -12,6 +13,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.provider.MediaStore
 import android.text.Layout
 import android.text.TextPaint
 import android.view.LayoutInflater
@@ -840,26 +842,59 @@ class IncentivesFragment : Fragment() {
         document.finishPage(page1)
 
         // You can continue with more pages if needed
-
-        // Save the PDF file
         val fileName = "Incentives_" + selectedMonth + "_" + selectedYear + ".pdf"
-        val directory =
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val contentValues = ContentValues().apply {
+                put(MediaStore.Downloads.DISPLAY_NAME, fileName)
+                put(MediaStore.Downloads.MIME_TYPE, "application/pdf")
+                put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+            }
+
+            val resolver = requireContext().contentResolver
+            val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues)
+
+            if (uri != null) {
+                try {
+                    resolver.openOutputStream(uri)?.use { outputStream ->
+                        document.writeTo(outputStream)
+                        document.close()
+
+                        Snackbar.make(binding.root, "$fileName downloaded", Snackbar.LENGTH_LONG)
+                            .setAction("Show File") {
+                                showFile(uri)
+                            }
+                            .show()
+                    }
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                    Toast.makeText(context, "Failed to save file: ${e.message}", Toast.LENGTH_LONG).show()
+                }
+            } else {
+                Toast.makeText(context, "Failed to create file URI", Toast.LENGTH_LONG).show()
+            }
+        } else {
+             val directory =
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-        val file = File(directory, fileName)
+            val file = File(directory, fileName)
 
-
-        try {
+             try {
+            directory.mkdirs()
             document.writeTo(FileOutputStream(file))
-            val snackbar = Snackbar.make(binding.root, "$fileName downloaded", Snackbar.LENGTH_LONG)
+            document.close()
 
+            val snackbar = Snackbar.make(binding.root, "$fileName downloaded", Snackbar.LENGTH_LONG)
             snackbar.setAction("Show File") {
                 showFile(file.toUri())
             }
-
             snackbar.show()
+
         } catch (e: IOException) {
             e.printStackTrace()
+            Toast.makeText(context, " ${e.message}", Toast.LENGTH_LONG).show()
         }
+        }
+
         document.close()
 
 
@@ -870,16 +905,16 @@ class IncentivesFragment : Fragment() {
     }
 
     private fun showFile(uri: Uri) {
-        // Create an Intent to open the file
         val openFileIntent = Intent(Intent.ACTION_VIEW)
         openFileIntent.setDataAndType(
             uri,
             "application/*"
-        ) // Adjust the MIME type as per your file type
+        )
+        openFileIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_GRANT_READ_URI_PERMISSION
+        val chooser = Intent.createChooser(openFileIntent, "Open with")
 
-        // Check if there's an app to handle this intent
         if (openFileIntent.resolveActivity(requireActivity().packageManager) != null) {
-            startActivity(openFileIntent)
+            startActivity(chooser)
         } else {
             Toast.makeText(
                 requireContext(),
