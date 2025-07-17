@@ -67,7 +67,8 @@ class NcdListFragment : Fragment() {
                 { benId, hhId ->
                 }, {}
 
-                ), true
+                ), true,
+            pref = prefDao
         )
         binding.rvAny.adapter = benAdapter
         lifecycleScope.launch {
@@ -129,12 +130,11 @@ class NcdListFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            (it as SupervisorActivity).updateActionBar(R.drawable.ic__ben, getString(R.string.ncd_list))
-//            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
-//                (it as HomeActivity).updateActionBar(R.drawable.ic__ben, getString(R.string.ncd_list))
-//            } else {
-//                (it as SupervisorActivity).updateActionBar(R.drawable.ic__ben, getString(R.string.ncd_list))
-//            }
+            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+                (it as HomeActivity).updateActionBar(R.drawable.ic__ben, getString(R.string.ncd_list))
+            } else {
+                (it as SupervisorActivity).updateActionBar(R.drawable.ic__ben, getString(R.string.ncd_list))
+            }
         }
     }
 

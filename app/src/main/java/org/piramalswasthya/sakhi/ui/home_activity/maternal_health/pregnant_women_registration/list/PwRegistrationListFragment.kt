@@ -98,7 +98,7 @@ class PwRegistrationListFragment : Fragment() {
                             benId
                         )
                     )
-                })
+                }), prefDao
         )
         binding.rvAny.adapter = benAdapter
 
@@ -137,21 +137,17 @@ class PwRegistrationListFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            (it as SupervisorActivity).updateActionBar(
-                R.drawable.ic__pwr,
-                getString(R.string.icon_title_pmr)
-            )
-//            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
-//                (it as HomeActivity).updateActionBar(
-//                    R.drawable.ic__pwr,
-//                    getString(R.string.icon_title_pmr)
-//                )
-//            } else {
-//                (it as SupervisorActivity).updateActionBar(
-//                    R.drawable.ic__pwr,
-//                    getString(R.string.icon_title_pmr)
-//                )
-//            }
+            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+                (it as HomeActivity).updateActionBar(
+                    R.drawable.ic__pwr,
+                    getString(R.string.icon_title_pmr)
+                )
+            } else {
+                (it as SupervisorActivity).updateActionBar(
+                    R.drawable.ic__pwr,
+                    getString(R.string.icon_title_pmr)
+                )
+            }
         }
     }
 

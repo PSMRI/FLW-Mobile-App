@@ -34,16 +34,16 @@ interface AmritApiService {
     @POST("flw-api/beneficiary/getBeneficiaryData")
     suspend fun getBeneficiaries(@Body userDetail: GetDataPaginatedRequest): Response<ResponseBody>
 
-    @POST("flw-api/beneficiary/sendOTP")
+    @POST("common-api/beneficiaryConsent/sendConsent")
     suspend fun sendOtp(@Query("phoneNumber") phoneNumber:String): Response<ResponseBody>
 
-    @POST("flw-api/beneficiary/resendOTP")
+    @POST("common-api/beneficiaryConsent/resendConsent")
     suspend fun resendOtp(@Query("phoneNumber") phoneNumber:String): Response<ResponseBody>
 
     @POST("tm-api/registrar/registrarBeneficaryRegistrationNew")
     suspend fun getBenIdFromBeneficiarySending(@Body beneficiaryDataSending: BeneficiaryDataSending): Response<ResponseBody>
 
-    @POST("flw-api/beneficiary/validateOTP")
+    @POST("common-api/beneficiaryConsent/validateConsent")
     suspend fun validateOtp(@Body validateOtp: ValidateOtpRequest ): Response<ResponseBody>
 
     @POST("flw-api/cbac/getAll")

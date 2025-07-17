@@ -57,7 +57,7 @@ class DeliveryOutcomeListFragment : Fragment() {
                             benId
                         )
                     )
-                }), resources.getString(R.string.register)
+                }), resources.getString(R.string.register), pref = prefDao
         )
         binding.rvAny.adapter = benAdapter
 
@@ -96,21 +96,17 @@ class DeliveryOutcomeListFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            (it as SupervisorActivity).updateActionBar(
-                R.drawable.ic__delivery_outcome,
-                getString(R.string.delivery_outcome_list)
-            )
-//            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
-//                (it as HomeActivity).updateActionBar(
-//                    R.drawable.ic__delivery_outcome,
-//                    getString(R.string.delivery_outcome_list)
-//                )
-//            } else {
-//                (it as SupervisorActivity).updateActionBar(
-//                    R.drawable.ic__delivery_outcome,
-//                    getString(R.string.delivery_outcome_list)
-//                )
-//            }
+            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+                (it as HomeActivity).updateActionBar(
+                    R.drawable.ic__delivery_outcome,
+                    getString(R.string.delivery_outcome_list)
+                )
+            } else {
+                (it as SupervisorActivity).updateActionBar(
+                    R.drawable.ic__delivery_outcome,
+                    getString(R.string.delivery_outcome_list)
+                )
+            }
         }
     }
 
