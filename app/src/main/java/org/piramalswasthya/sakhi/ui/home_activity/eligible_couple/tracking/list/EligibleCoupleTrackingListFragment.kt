@@ -116,21 +116,17 @@ class EligibleCoupleTrackingListFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            (it as SupervisorActivity).updateActionBar(
-                R.drawable.ic__eligible_couple,
-                getString(R.string.eligible_couple_tracking_list)
-            )
-//            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
-//                (it as HomeActivity).updateActionBar(
-//                    R.drawable.ic__eligible_couple,
-//                    getString(R.string.eligible_couple_tracking_list)
-//                )
-//            } else {
-//                (it as SupervisorActivity).updateActionBar(
-//                    R.drawable.ic__eligible_couple,
-//                    getString(R.string.eligible_couple_tracking_list)
-//                )
-//            }
+            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+                (it as HomeActivity).updateActionBar(
+                    R.drawable.ic__eligible_couple,
+                    getString(R.string.eligible_couple_tracking_list)
+                )
+            } else {
+                (it as SupervisorActivity).updateActionBar(
+                    R.drawable.ic__eligible_couple,
+                    getString(R.string.eligible_couple_tracking_list)
+                )
+            }
         }
     }
 

@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import org.piramalswasthya.sakhi.adapters.BenListAdapter
 import org.piramalswasthya.sakhi.adapters.GetBenPageNumberAdapter
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentGetBenBinding
 import org.piramalswasthya.sakhi.ui.home_activity.get_ben_data.GetBenViewModel.State.ERROR_NETWORK
 import org.piramalswasthya.sakhi.ui.home_activity.get_ben_data.GetBenViewModel.State.ERROR_SERVER
@@ -17,9 +18,13 @@ import org.piramalswasthya.sakhi.ui.home_activity.get_ben_data.GetBenViewModel.S
 import org.piramalswasthya.sakhi.ui.home_activity.get_ben_data.GetBenViewModel.State.LOADING
 import org.piramalswasthya.sakhi.ui.home_activity.get_ben_data.GetBenViewModel.State.SUCCESS
 import timber.log.Timber
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class GetBenFragment : Fragment() {
+
+    @Inject
+    lateinit var prefDao: PreferenceDao
 
     private var _binding: FragmentGetBenBinding? = null
     private val binding: FragmentGetBenBinding
@@ -38,7 +43,7 @@ class GetBenFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val benAdapter = BenListAdapter()
+        val benAdapter = BenListAdapter(pref = prefDao)
         binding.rvBenServer.adapter = benAdapter
 
         viewModel.state.observe(viewLifecycleOwner) {
