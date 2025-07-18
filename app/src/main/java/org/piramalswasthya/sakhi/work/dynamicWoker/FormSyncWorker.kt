@@ -44,6 +44,9 @@ class FormSyncWorker @AssistedInject constructor(
             // ✅ 2. UpSync: Push local unsynced forms
             val unsyncedForms = repository.getUnsyncedForms()
             Log.d("FormSyncWorker", "🔼 Unsynced forms: ${unsyncedForms.size}")
+            unsyncedForms.forEach {
+                Log.d("FormSyncWorkerss", "🧾 Form: ${it.id} | Processed: ${it.isSynced}")
+            }
 
             for (form in unsyncedForms) {
                 val success = repository.syncFormToServer(form)

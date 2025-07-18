@@ -93,13 +93,19 @@ class FormRepository @Inject constructor(
     suspend fun saveDownloadedVisitList(list: List<HBNCVisitResponse>) {
         for ((index, item) in list.withIndex()) {
             try {
+                // ✅ Check if fields is null
+                if (item.fields == null) {
+                    Log.w("SkipVisit", "⚠️ Skipping entry at index $index: fields is null.")
+                    continue
+                }
+
                 val visitDay = item.fields["visit_day"]?.asString?.trim() ?: ""
                 val visitDate = item.visitDate ?: "-"
                 val benId = item.beneficiaryId
                 val hhId = item.houseHoldId
 
                 if (visitDay.isBlank()) {
-                    Log.w("SkipVisit", "⚠️ Skipping entry at index $index: visitDay or rchId is missing.")
+                    Log.w("SkipVisit", "⚠️ Skipping entry at index $index: visitDay is blank.")
                     continue
                 }
 
@@ -136,7 +142,7 @@ class FormRepository @Inject constructor(
                     formId = "hbnc_form_001",
                     version = 1,
                     formDataJson = fullJson.toString(),
-                    isSynced = true
+                    isSynced = true  // 👈 true will become `1` in DB
                 )
 
                 insertOrUpdateFormResponse(entity)
@@ -147,6 +153,7 @@ class FormRepository @Inject constructor(
             }
         }
     }
+
 
     suspend fun insertOrUpdateFormResponse(entity: FormResponseJsonEntity) {
         val existing = jsonResponseDao.getFormResponse(entity.benId, entity.visitDay)

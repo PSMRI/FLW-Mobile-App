@@ -18,6 +18,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.FormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.InfantEntity
 import org.piramalswasthya.sakhi.model.dynamicModel.HBNCVisitRequest
+import org.piramalswasthya.sakhi.model.dynamicModel.VisitCard
 import org.piramalswasthya.sakhi.work.dynamicWoker.FormSyncWorker
 import java.text.SimpleDateFormat
 import java.util.*
@@ -44,7 +45,10 @@ class HBNCFormViewModel @Inject constructor(private val repository: FormReposito
     // 🔁 Load synced visits from local Room DB
     fun loadSyncedVisitList(benId: Long) {
         viewModelScope.launch {
-            _syncedVisitList.value = repository.getSyncedVisitsByRchId(benId)
+            val list = repository.getSyncedVisitsByRchId(benId)
+            Log.d("SyncedVisitCheck", "Found ${list.size} visits: ${list.map { it.visitDay }}")
+            _syncedVisitList.value = list
+
         }
     }
 
@@ -122,7 +126,10 @@ class HBNCFormViewModel @Inject constructor(private val repository: FormReposito
         }
     }
 
-    private fun evaluateFieldVisibility(field: FormFieldDto, allFields: List<FormFieldDto>): Boolean {
+    private fun evaluateFieldVisibility(
+        field: FormFieldDto,
+        allFields: List<FormFieldDto>
+    ): Boolean {
         val cond = field.conditional
         return if (cond != null && !cond.dependsOn.isNullOrBlank()) {
             val dependsOnField = allFields.find { it.fieldId == cond.dependsOn }
@@ -150,7 +157,8 @@ class HBNCFormViewModel @Inject constructor(private val repository: FormReposito
             val formId = currentSchema.formId
             val version = currentSchema.version
             val beneficiaryId = rchId.toIntOrNull() ?: 0
-            val visitDate = calculateDueDate(_infant.value?.visitDay ?: "", visitDay) ?: "2025-07-10"
+            val visitDate =
+                calculateDueDate(_infant.value?.visitDay ?: "", visitDay) ?: "2025-07-10"
 
             val fieldMap = currentSchema.sections.orEmpty()
                 .flatMap { it.fields.orEmpty() }
@@ -174,7 +182,7 @@ class HBNCFormViewModel @Inject constructor(private val repository: FormReposito
                 isSynced = false,
                 syncedAt = null
             )
-
+            Log.d("FormSave", "Saving for benId=$benId, visitDay=$visitDay")
             repository.insertFormResponse(entity)
             loadSyncedVisitList(benId) // ✅ update list post-save
 
@@ -182,7 +190,7 @@ class HBNCFormViewModel @Inject constructor(private val repository: FormReposito
         }
     }
 
-    fun loadInfant(benId: Long,hhId:Long) {
+    fun loadInfant(benId: Long, hhId: Long) {
         this.benId = benId
         this.hhId = hhId
         viewModelScope.launch {
@@ -205,9 +213,25 @@ class HBNCFormViewModel @Inject constructor(private val repository: FormReposito
     }
 
     fun getNextEligibleVisitDay(): String? {
-        val visitOrder = listOf("1st Day", "3rd Day", "7th Day", "14th Day", "21st Day", "28th Day", "42nd Day")
+        val visitOrder =
+            listOf("1st Day", "3rd Day", "7th Day", "14th Day", "21st Day", "28th Day", "42nd Day")
         val completed = _syncedVisitList.value.map { it.visitDay }
-        return visitOrder.firstOrNull { it !in completed && isVisitDayEnabled(it) }
+        Log.d("NextVisitCalc", "✅ Completed visits: $completed")
+
+        return visitOrder.firstOrNull { day ->
+            when (day) {
+                "1st Day", "3rd Day", "7th Day" ->
+                    day !in completed && previousDayCompleted(day, completed)
+
+                "14th Day", "21st Day", "28th Day" ->
+                    "7th Day" in completed && day !in completed
+
+                "42nd Day" ->
+                    "7th Day" in completed && "28th Day" in completed && day !in completed
+
+                else -> false
+            }
+        }?.also { Log.d("NextVisitCalc", "➡️ Next visit day: $it") }
     }
 
     fun calculateDueDate(dob: String, visitDay: String): String? {
@@ -296,6 +320,49 @@ class HBNCFormViewModel @Inject constructor(private val repository: FormReposito
     fun loadVisitHistory(rchId: String) {
         viewModelScope.launch {
             _syncedVisitList.value = repository.getSyncedVisitsByRchId(benId)
+        }
+    }
+    fun getVisitCardList(): List<VisitCard> {
+        val visitOrder = listOf("1st Day", "3rd Day", "7th Day", "14th Day", "21st Day", "28th Day", "42nd Day")
+        val completed = _syncedVisitList.value.map { it.visitDay }.toSet()
+        val dob = infant.value?.visitDay ?: "-"
+
+        return visitOrder.map { day ->
+            val isCompleted = completed.contains(day)
+            val isEditable = when (day) {
+                "1st Day" -> !isCompleted
+                "3rd Day" -> !isCompleted && completed.contains("1st Day")
+                "7th Day" -> !isCompleted && completed.contains("3rd Day")
+                "14th Day", "21st Day", "28th Day" -> !isCompleted && completed.contains("7th Day")
+                "42nd Day" -> !isCompleted && completed.contains("28th Day")
+                else -> false
+            }
+
+            val visit = _syncedVisitList.value.find { it.visitDay == day }
+            val visitDate = visit?.let {
+                try {
+                    val json = JSONObject(it.formDataJson)
+                    json.optString("visitDate", "-")
+                } catch (e: Exception) {
+                    "-"
+                }
+            } ?: calculateDueDate(dob, day) ?: "-"
+
+            VisitCard(
+                visitDay = day,
+                visitDate = visitDate,
+                isCompleted = isCompleted,
+                isEditable = isEditable
+            )
+        }
+    }
+
+
+    private fun previousDayCompleted(day: String, completed: List<String>): Boolean {
+        return when (day) {
+            "3rd Day" -> "1st Day" in completed
+            "7th Day" -> "3rd Day" in completed
+            else -> true // for "1st Day"
         }
     }
 }
