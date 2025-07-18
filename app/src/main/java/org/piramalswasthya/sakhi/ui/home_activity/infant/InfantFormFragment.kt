@@ -40,10 +40,10 @@ class InfantFormFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-//        FormSyncWorker.enqueue(requireContext())
+        FormSyncWorker.enqueue(requireContext())
 
-//        val benId = args.benId
-//        val hhId = args.hhId
+        val benId = args.benId
+        val hhId = args.hhId
 
 
         // Load infant and synced visits

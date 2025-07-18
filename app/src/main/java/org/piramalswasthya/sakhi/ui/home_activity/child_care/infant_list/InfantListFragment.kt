@@ -44,10 +44,10 @@ class InfantListFragment : Fragment() {
             InfantListAdapter.InfantListClickListener { benId, hhId ->
                 findNavController().navigate(
                     InfantListFragmentDirections.actionInfantListFragmentToInfantFormFragment(
-//                        benId = benId,
-//                        hhId = hhId,
-                        benId = 0L,
-                        hhId = 0L
+                        benId = benId,
+                        hhId = hhId,
+//                        benId = 0L,
+//                        hhId = 0L
                     )
                 )
 

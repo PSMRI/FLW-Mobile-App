@@ -1,6 +1,5 @@
 package org.piramalswasthya.sakhi.ui.home_activity.infant.hbnc
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.work.*
@@ -17,7 +16,6 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.FormFieldDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.InfantEntity
-import org.piramalswasthya.sakhi.model.dynamicModel.HBNCVisitRequest
 import org.piramalswasthya.sakhi.model.dynamicModel.VisitCard
 import org.piramalswasthya.sakhi.work.dynamicWoker.FormSyncWorker
 import java.text.SimpleDateFormat
@@ -42,58 +40,20 @@ class HBNCFormViewModel @Inject constructor(private val repository: FormReposito
     var visitDay: String = ""
     private var isViewMode: Boolean = false
 
-    // 🔁 Load synced visits from local Room DB
     fun loadSyncedVisitList(benId: Long) {
         viewModelScope.launch {
             val list = repository.getSyncedVisitsByRchId(benId)
-            Log.d("SyncedVisitCheck", "Found ${list.size} visits: ${list.map { it.visitDay }}")
             _syncedVisitList.value = list
-
-        }
-    }
-
-    // ✅ Download visits from API and refresh synced list
-    fun syncVisitsFromApi(rchId: String) {
-        viewModelScope.launch {
-            try {
-                val request = HBNCVisitRequest(
-                    villageID = 0,
-                    fromDate = "2025-07-01T00:00:00.000Z",
-                    toDate = "2025-07-31T23:59:59.999Z",
-                    pageNo = 0,
-                    userId = 0,
-                    userName = "asha1",
-                    ashaId = 123
-                )
-
-                val response = repository.getAllHbncVisits(request)
-                if (response.isSuccessful) {
-                    val body = response.body()
-                    if (body != null && body.statusCode == 200) {
-                        repository.saveDownloadedVisitList(body.data)
-                        loadSyncedVisitList(benId) // 🔁 re-fetch from Room after saving
-                    }
-                } else {
-                    Log.e("DownSync", "API error: ${response.code()} ${response.message()}")
-                }
-
-            } catch (e: Exception) {
-                Log.e("DownSync", "❌ Sync failed: ${e.message}", e)
-            }
         }
     }
 
     fun loadFormSchema(formId: String, visitDay: String, viewMode: Boolean) {
-
         this.visitDay = visitDay
         this.isViewMode = viewMode
 
         viewModelScope.launch {
             val apiSchema = repository.getFormSchema(formId)
-            if (apiSchema == null) {
-                Log.e("HBNCFormViewModel", "Schema load failed")
-                return@launch
-            }
+            if (apiSchema == null) return@launch
 
             val savedJson = repository.loadFormResponseJson(benId, visitDay)
             val savedFieldValues: Map<String, Any?> = try {
@@ -157,8 +117,7 @@ class HBNCFormViewModel @Inject constructor(private val repository: FormReposito
             val formId = currentSchema.formId
             val version = currentSchema.version
             val beneficiaryId = rchId.toIntOrNull() ?: 0
-            val visitDate =
-                calculateDueDate(_infant.value?.visitDay ?: "", visitDay) ?: "2025-07-10"
+            val visitDate = calculateDueDate(_infant.value?.visitDay ?: "", visitDay) ?: "2025-07-10"
 
             val fieldMap = currentSchema.sections.orEmpty()
                 .flatMap { it.fields.orEmpty() }
@@ -182,11 +141,9 @@ class HBNCFormViewModel @Inject constructor(private val repository: FormReposito
                 isSynced = false,
                 syncedAt = null
             )
-            Log.d("FormSave", "Saving for benId=$benId, visitDay=$visitDay")
-            repository.insertFormResponse(entity)
-            loadSyncedVisitList(benId) // ✅ update list post-save
 
-            Log.d("FormSave", "💾 Saved form to Room:\n$wrappedJson")
+            repository.insertFormResponse(entity)
+            loadSyncedVisitList(benId)
         }
     }
 
@@ -213,25 +170,20 @@ class HBNCFormViewModel @Inject constructor(private val repository: FormReposito
     }
 
     fun getNextEligibleVisitDay(): String? {
-        val visitOrder =
-            listOf("1st Day", "3rd Day", "7th Day", "14th Day", "21st Day", "28th Day", "42nd Day")
+        val visitOrder = listOf("1st Day", "3rd Day", "7th Day", "14th Day", "21st Day", "28th Day", "42nd Day")
         val completed = _syncedVisitList.value.map { it.visitDay }
-        Log.d("NextVisitCalc", "✅ Completed visits: $completed")
 
         return visitOrder.firstOrNull { day ->
             when (day) {
                 "1st Day", "3rd Day", "7th Day" ->
                     day !in completed && previousDayCompleted(day, completed)
-
                 "14th Day", "21st Day", "28th Day" ->
                     "7th Day" in completed && day !in completed
-
                 "42nd Day" ->
                     "7th Day" in completed && "28th Day" in completed && day !in completed
-
                 else -> false
             }
-        }?.also { Log.d("NextVisitCalc", "➡️ Next visit day: $it") }
+        }
     }
 
     fun calculateDueDate(dob: String, visitDay: String): String? {
@@ -261,9 +213,6 @@ class HBNCFormViewModel @Inject constructor(private val repository: FormReposito
                 val success = repository.syncFormToServer(form)
                 if (success) {
                     repository.markFormAsSynced(form.id)
-                    Log.d("FormSync", "✅ Synced form ID=${form.id}")
-                } else {
-                    Log.e("FormSync", "❌ Failed to sync form ID=${form.id}")
                 }
             }
         }
@@ -306,8 +255,8 @@ class HBNCFormViewModel @Inject constructor(private val repository: FormReposito
                     conditional = field.conditional?.let {
                         if (!it.dependsOn.isNullOrBlank() && !it.expectedValue.isNullOrBlank()) {
                             ConditionalLogic(
-                                dependsOn = it.dependsOn!!,
-                                expectedValue = it.expectedValue!!
+                                dependsOn = it.dependsOn,
+                                expectedValue = it.expectedValue
                             )
                         } else null
                     },
@@ -322,6 +271,7 @@ class HBNCFormViewModel @Inject constructor(private val repository: FormReposito
             _syncedVisitList.value = repository.getSyncedVisitsByRchId(benId)
         }
     }
+
     fun getVisitCardList(): List<VisitCard> {
         val visitOrder = listOf("1st Day", "3rd Day", "7th Day", "14th Day", "21st Day", "28th Day", "42nd Day")
         val completed = _syncedVisitList.value.map { it.visitDay }.toSet()
@@ -357,12 +307,11 @@ class HBNCFormViewModel @Inject constructor(private val repository: FormReposito
         }
     }
 
-
     private fun previousDayCompleted(day: String, completed: List<String>): Boolean {
         return when (day) {
             "3rd Day" -> "1st Day" in completed
             "7th Day" -> "3rd Day" in completed
-            else -> true // for "1st Day"
+            else -> true
         }
     }
 }
