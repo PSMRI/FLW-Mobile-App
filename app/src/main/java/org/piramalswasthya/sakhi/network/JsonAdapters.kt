@@ -120,6 +120,11 @@ data class ValidateOtpRequest(
     val mobNo: String,
 )
 
+
+data class sendOtpRequest(
+    val mobNo: String,
+)
+
 @JsonClass(generateAdapter = true)
 data class BenResponse(
     val benId: String,

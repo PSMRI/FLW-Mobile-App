@@ -35,10 +35,10 @@ interface AmritApiService {
     suspend fun getBeneficiaries(@Body userDetail: GetDataPaginatedRequest): Response<ResponseBody>
 
     @POST("common-api/beneficiaryConsent/sendConsent")
-    suspend fun sendOtp(@Query("phoneNumber") phoneNumber:String): Response<ResponseBody>
+    suspend fun sendOtp(@Body sendOtpRequest: sendOtpRequest): Response<ResponseBody>
 
     @POST("common-api/beneficiaryConsent/resendConsent")
-    suspend fun resendOtp(@Query("phoneNumber") phoneNumber:String): Response<ResponseBody>
+    suspend fun resendOtp(@Body sendOtpRequest: sendOtpRequest): Response<ResponseBody>
 
     @POST("tm-api/registrar/registrarBeneficaryRegistrationNew")
     suspend fun getBenIdFromBeneficiarySending(@Body beneficiaryDataSending: BeneficiaryDataSending): Response<ResponseBody>
