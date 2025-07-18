@@ -109,7 +109,7 @@ class HBNCFormFragment : Fragment() {
         val visitDay = args.visitDay
         val isViewMode = args.isViewMode
         val request = viewModel.createFormSyncRequest()
-        WorkManager.getInstance(requireContext()).enqueue(request)
+//        WorkManager.getInstance(requireContext()).enqueue(request)
 
         Log.d("HBNCFormFragment", "visitDay=$visitDay, isViewMode=$isViewMode")
 
@@ -255,20 +255,12 @@ class HBNCFormFragment : Fragment() {
         Log.d("FormSubmit", "🟢 Calling saveFormResponses() from Fragment")
         viewModel.saveFormResponses()
 
-        // ❌ REMOVE VisitHistoryEntity saving
-        // viewModel.saveVisit(
-        //     VisitHistoryEntity(
-        //         rchId = rchId,
-        //         visitDay = currentVisitDay,
-        //         visitDate = viewModel.calculateDueDate(dob, currentVisitDay) ?: "Unknown",
-        //         formDataJson = currentSchema.toJson()
-        //     )
-        // )
-
         // 🔄 Enqueue sync worker
         FormSyncWorker.enqueue(requireContext())
-
-        Toast.makeText(requireContext(), "Form saved for $currentVisitDay", Toast.LENGTH_SHORT).show()
+        findNavController().previousBackStackEntry
+            ?.savedStateHandle
+            ?.set("form_submitted", true)
+//        Toast.makeText(requireContext(), "Form saved for $currentVisitDay", Toast.LENGTH_SHORT).show()
         findNavController().popBackStack()
     }
 
@@ -371,7 +363,7 @@ class HBNCFormFragment : Fragment() {
         activity?.let {
             (it as HomeActivity).updateActionBar(
                 R.drawable.ic__child,
-                getString(R.string.hbnc_day_list)
+                getString(R.string.hbnc_form)
             )
         }
 

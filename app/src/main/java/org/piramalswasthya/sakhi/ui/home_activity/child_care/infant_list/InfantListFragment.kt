@@ -42,30 +42,17 @@ class InfantListFragment : Fragment() {
         binding.btnNextPage.visibility = View.GONE
         val benAdapter = InfantListAdapter(
             InfantListAdapter.InfantListClickListener { benId, hhId ->
-                Toast.makeText(requireContext(), "Click", Toast.LENGTH_LONG).show()
-//                findNavController().navigate(
-//                    InfantListFragmentDirections.actionInfantListFragmentToHbncDayListFragment(
-//                        benId = benId,
-//                        hhId = hhId
-//                    )
-//                )
                 findNavController().navigate(
                     InfantListFragmentDirections.actionInfantListFragmentToInfantFormFragment(
 //                        benId = benId,
 //                        hhId = hhId,
-                        benId = 1L,
-                        hhId = 1L
+                        benId = 0L,
+                        hhId = 0L
                     )
                 )
 
             }
         )
-//        findNavController().navigate(
-//            InfantListFragmentDirections.actionInfantListFragmentToInfantFormFragment(
-//                benId = benId,
-//                hhId = hhId
-//            )
-//        )
         binding.rvAny.adapter = benAdapter
 
         lifecycleScope.launch {
@@ -83,9 +70,7 @@ class InfantListFragment : Fragment() {
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
             }
-
             override fun afterTextChanged(p0: Editable?) {
                 viewModel.filterText(p0?.toString() ?: "")
             }

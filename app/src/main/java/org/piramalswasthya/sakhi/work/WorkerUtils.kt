@@ -109,7 +109,6 @@ object WorkerUtils {
             .then(formSyncWorkerRequest) // ✅ HBNC Form Sync added at the end
             .enqueue()
 
-        Log.d("WorkerUtils", "✅ triggerAmritSyncWorker: All sync tasks enqueued including HBNC Form")
     }
 
 
