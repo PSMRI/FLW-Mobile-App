@@ -1229,7 +1229,8 @@ class BenRepo @Inject constructor(
 
     suspend fun sendOtp(mobileNo: String): SendOtpResponse? {
         try {
-            val response = tmcNetworkApiService.sendOtp(mobileNo)
+            var sendOtp = sendOtpRequest(mobileNo);
+            val response = tmcNetworkApiService.sendOtp(sendOtp)
             if (response.isSuccessful) {
                 val responseBody = response.body()?.string()
                 when (responseBody?.let { JSONObject(it).getInt("statusCode") }) {
@@ -1267,7 +1268,8 @@ class BenRepo @Inject constructor(
     }
     suspend fun resendOtp(mobileNo: String): SendOtpResponse? {
         try {
-            val response = tmcNetworkApiService.resendOtp(mobileNo)
+            var sendOtp = sendOtpRequest(mobileNo);
+            val response = tmcNetworkApiService.resendOtp(sendOtp)
             if (response.isSuccessful) {
                 val responseBody = response.body()?.string()
                 when (responseBody?.let { JSONObject(it).getInt("statusCode") }) {
