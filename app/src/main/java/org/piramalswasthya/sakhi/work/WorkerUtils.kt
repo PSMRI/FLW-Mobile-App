@@ -164,6 +164,10 @@ object WorkerUtils {
         val pushChildHBNCToAmritWorker = OneTimeWorkRequestBuilder<PushChildHBNCFromAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
+
+        val formSyncWorkerRequest  = OneTimeWorkRequestBuilder<FormSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
         //Always at last - INCENTIVES
         val pullIncentiveActivityWorkRequest =
             OneTimeWorkRequestBuilder<PullIncentiveWorker>()
@@ -182,6 +186,8 @@ object WorkerUtils {
         val pushAbhaWorkRequest = OneTimeWorkRequestBuilder<PushMapAbhatoBenficiaryWorker>()
             .setConstraints(networkOnlyConstraint) // if you have constraints
             .build()
+
+
         val workManager = WorkManager.getInstance(context)
         workManager
             .beginUniqueWork(
@@ -205,6 +211,7 @@ object WorkerUtils {
             .then(pushChildHBNCToAmritWorker)
             .then(pullIncentiveActivityWorkRequest)
             .then(pushAbhaWorkRequest)
+            .then(formSyncWorkerRequest)
             .enqueue()
     }
 

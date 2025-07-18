@@ -256,7 +256,7 @@ class HBNCFormFragment : Fragment() {
         viewModel.saveFormResponses()
 
         // 🔄 Enqueue sync worker
-        FormSyncWorker.enqueue(requireContext())
+//        FormSyncWorker.enqueue(requireContext())
         findNavController().previousBackStackEntry
             ?.savedStateHandle
             ?.set("form_submitted", true)
