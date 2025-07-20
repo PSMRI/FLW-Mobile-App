@@ -16,8 +16,8 @@ data class FormResponseJsonEntity(
     val formId: String,
     val version: Int,
     val formDataJson: String,
-    val isSynced: Boolean = false,                // false = not yet synced
-    val createdAt: Long = System.currentTimeMillis(),  // when form was filled
+    val isSynced: Boolean = false,
+    val createdAt: Long = System.currentTimeMillis(),
     val syncedAt: Long? = null
 )
 

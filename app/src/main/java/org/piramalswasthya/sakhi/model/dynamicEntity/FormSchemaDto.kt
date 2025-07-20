@@ -14,7 +14,7 @@ data class FormSchemaDto(
     val version: Int = 1,
 
     @SerializedName("sections")
-    val sections: List<FormSectionDto> = emptyList() // ✅ default to avoid null
+    val sections: List<FormSectionDto> = emptyList()
 ) {
     companion object {
         fun fromJson(json: String): FormSchemaDto = Gson().fromJson(json, FormSchemaDto::class.java)
@@ -31,7 +31,7 @@ data class FormSectionDto(
     val sectionTitle: String = "",
 
     @SerializedName("fields")
-    val fields: List<FormFieldDto> = emptyList() // ✅ default to avoid null
+    val fields: List<FormFieldDto> = emptyList()
 )
 
 data class FormFieldDto(
@@ -45,7 +45,7 @@ data class FormFieldDto(
     val type: String = "",
 
     @SerializedName("options")
-    val options: List<String>? = null, // Use OptionItem if using label/value model
+    val options: List<String>? = null,
 
     @SerializedName("isRequired")
     val required: Boolean = false,
@@ -65,7 +65,6 @@ data class FormFieldDto(
     @SerializedName("value")
     var value: Any? = null,
 
-    // Runtime-only
     @Transient var visible: Boolean = true,
     @Transient var errorMessage: String? = null,
     @Transient var isEditable: Boolean = true

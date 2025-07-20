@@ -79,7 +79,6 @@ object WorkerUtils {
             .setConstraints(networkOnlyConstraint)
             .build()
 
-        // ✅ Add FormSyncWorker
         val formSyncWorkerRequest = OneTimeWorkRequestBuilder<FormSyncWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
@@ -106,7 +105,7 @@ object WorkerUtils {
             .then(pushECWorkRequest)
             .then(pushChildHBNCToAmritWorker)
             .then(pushAbhaWorkRequest)
-            .then(formSyncWorkerRequest) // ✅ HBNC Form Sync added at the end
+            .then(formSyncWorkerRequest)
             .enqueue()
 
     }
@@ -184,7 +183,7 @@ object WorkerUtils {
                 .build()
 
         val pushAbhaWorkRequest = OneTimeWorkRequestBuilder<PushMapAbhatoBenficiaryWorker>()
-            .setConstraints(networkOnlyConstraint) // if you have constraints
+            .setConstraints(networkOnlyConstraint)
             .build()
 
 
