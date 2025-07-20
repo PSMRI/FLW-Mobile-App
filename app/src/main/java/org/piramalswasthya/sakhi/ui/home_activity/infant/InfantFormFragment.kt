@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -30,8 +31,8 @@ class InfantFormFragment : Fragment() {
     private val binding get() = _binding!!
     private val args: InfantFormFragmentArgs by navArgs()
     private val viewModel: HBNCFormViewModel by viewModels()
-    val benId = 0L
-    val hhId = 0L
+//    val benId = 0L
+//    val hhId = 0L
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -44,6 +45,7 @@ class InfantFormFragment : Fragment() {
 
         val benId = args.benId
         val hhId = args.hhId
+        Toast.makeText(requireContext(), " Infant $benId and hhId: $hhId", Toast.LENGTH_LONG).show()
 
 
         // Load infant and synced visits
@@ -54,11 +56,8 @@ class InfantFormFragment : Fragment() {
         savedStateHandle?.getLiveData<Boolean>("form_submitted")
             ?.observe(viewLifecycleOwner) { submitted ->
                 if (submitted == true) {
-                    // 🔄 Refresh your visit list
                     viewModel.loadInfant(benId, hhId)
                     viewModel.loadSyncedVisitList(benId)
-
-                    // 🧹 Clear the flag
                     savedStateHandle.remove<Boolean>("form_submitted")
                 }
             }
@@ -82,10 +81,12 @@ class InfantFormFragment : Fragment() {
                     val cards = viewModel.getVisitCardList()
                     Log.d("InfantForm", "✅ VisitCards: $cards")
 
-                    binding.recyclerVisitCards.layoutManager = GridLayoutManager(requireContext(), 3)
+                    binding.recyclerVisitCards.layoutManager =
+                        GridLayoutManager(requireContext(), 3)
                     binding.recyclerVisitCards.adapter = VisitCardAdapter(cards) { card ->
                         val action = InfantFormFragmentDirections
                             .actionInfantFormFragmentToHbncFormFragment(
+                                benId,hhId,
                                 visitDay = card.visitDay,
                                 isViewMode = !card.isEditable,
                                 formId = "hbnc_form_001"

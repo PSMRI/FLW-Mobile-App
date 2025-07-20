@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardVisit"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
+    android:focusable="true"
+    android:importantForAccessibility="yes"
     card_view:cardBackgroundColor="@color/Quartenary"
     card_view:cardElevation="4dp"
     card_view:cardCornerRadius="12dp">
@@ -18,7 +21,7 @@
             android:id="@+id/tvVisitDay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Visit Day"
+            android:text="@string/visit_day"
             android:textColor="@color/md_theme_light_onPrimary"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -27,8 +30,9 @@
             android:id="@+id/tvVisitDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Visit Date"
+            android:text="@string/visit_date"
             android:textSize="14sp"
+            android:visibility="gone"
             android:textColor="@color/md_theme_light_onPrimary"
             android:layout_marginTop="4dp" />
 
@@ -36,10 +40,9 @@
             android:id="@+id/tvVisitStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Status"
+            android:text="@string/status"
             android:textSize="14sp"
             android:textColor="@color/md_theme_light_onPrimary"
-            android:layout_marginTop="4dp"
-            />
+            android:layout_marginTop="4dp" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

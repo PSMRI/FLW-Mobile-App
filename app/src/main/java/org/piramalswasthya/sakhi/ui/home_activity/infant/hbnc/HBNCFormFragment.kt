@@ -29,6 +29,7 @@ import org.piramalswasthya.sakhi.adapters.dynamicAdapter.FormRendererAdapter
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.utils.dynamicFiledValidator.FieldValidator
+import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.HBNC_FORM_ID
 import org.piramalswasthya.sakhi.work.dynamicWoker.FormSyncWorker
 import java.io.File
 
@@ -38,18 +39,17 @@ class HBNCFormFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var saveButton: Button
 
-    private val rchId = "1"
     private val dob = "01-07-2024"
     private val args: HBNCFormFragmentArgs by navArgs()
 
 
     private val viewModel: HBNCFormViewModel by viewModels()
-
+    var benId=0L
+    var hhId= 0L
     private lateinit var adapter: FormRendererAdapter
     private var currentImageField: FormField? = null
     private var tempCameraUri: Uri? = null
 
-    // GALLERY LAUNCHER ✅
     private val galleryLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
@@ -71,8 +71,6 @@ class HBNCFormFragment : Fragment() {
             }
         }
 
-
-    // CAMERA LAUNCHER ✅
     private val cameraLauncher =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
             if (success && tempCameraUri != null) {
@@ -93,10 +91,6 @@ class HBNCFormFragment : Fragment() {
                 adapter.notifyDataSetChanged()
             }
         }
-
-
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View = inflater.inflate(R.layout.fragment_hbnc_form, container, false)
@@ -108,24 +102,16 @@ class HBNCFormFragment : Fragment() {
 
         val visitDay = args.visitDay
         val isViewMode = args.isViewMode
-        val request = viewModel.createFormSyncRequest()
-//        WorkManager.getInstance(requireContext()).enqueue(request)
-
-        Log.d("HBNCFormFragment", "visitDay=$visitDay, isViewMode=$isViewMode")
-
-        // ✅ Updated to use formId for API fetch
-        val formId = "hbnc_form_001"
-//        viewModel.loadFormSchema(formId, rchId, visitDay)
-        viewModel.loadFormSchema(formId, visitDay,  true) // or false
-
+         benId=args.benId
+         hhId= args.hhId
+        val formId = HBNC_FORM_ID
+        viewModel.loadFormSchema(benId,formId, visitDay,  true)
 
         lifecycleScope.launch {
             viewModel.schema.collectLatest { schema ->
                 if (schema == null) {
-                    Log.e("SchemaDebug", "Schema is null")
                     return@collectLatest
                 }
-
                 val visibleFields = viewModel.getVisibleFields().toMutableList()
                     adapter = FormRendererAdapter(visibleFields, isViewOnly = isViewMode) { field, value ->
                     if (value == "pick_image") {
@@ -134,8 +120,6 @@ class HBNCFormFragment : Fragment() {
                     } else {
                         field.value = value
                         viewModel.updateFieldValue(field.fieldId, value)
-
-                        // ✅ Update visible fields after any value change
                         val updatedVisibleFields = viewModel.getVisibleFields()
                         adapter.updateFields(updatedVisibleFields)
                     }
@@ -186,7 +170,6 @@ class HBNCFormFragment : Fragment() {
         val currentVisitDay = viewModel.visitDay
 
         if (currentSchema == null || currentVisitDay.isBlank()) {
-//            Toast.makeText(requireContext(), "Form schema or visit day not loaded", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -202,7 +185,6 @@ class HBNCFormFragment : Fragment() {
                     schemaField.errorMessage = updated.errorMessage
 
                     if (!result.isValid) {
-                        Log.d("ValidationError", "Field: ${schemaField.label}, Error: ${updated.errorMessage}")
                     }
                 }
             }
@@ -243,120 +225,15 @@ class HBNCFormFragment : Fragment() {
         }
 
         if (errorFields.isNotEmpty()) {
-//            Toast.makeText(
-//                requireContext(),
-//                "Please fix the following fields:\n${errorFields.joinToString("\n")}",
-//                Toast.LENGTH_LONG
-//            ).show()
             return
         }
 
-        // ✅ Save the form
-        Log.d("FormSubmit", "🟢 Calling saveFormResponses() from Fragment")
-        viewModel.saveFormResponses()
-
-        // 🔄 Enqueue sync worker
-//        FormSyncWorker.enqueue(requireContext())
+        viewModel.saveFormResponses(benId, hhId )
         findNavController().previousBackStackEntry
             ?.savedStateHandle
             ?.set("form_submitted", true)
-//        Toast.makeText(requireContext(), "Form saved for $currentVisitDay", Toast.LENGTH_SHORT).show()
         findNavController().popBackStack()
     }
-
-//    private fun handleFormSubmission() {
-//        val currentSchema = viewModel.schema.value
-//        val currentVisitDay = viewModel.visitDay
-//
-//        if (currentSchema == null || currentVisitDay.isBlank()) {
-//            Toast.makeText(requireContext(), "Form schema or visit day not loaded", Toast.LENGTH_SHORT).show()
-//            return
-//        }
-//
-//        // 🔄 Sync adapter field values back to schema
-//        val updatedFields = adapter.getUpdatedFields()
-//
-//        currentSchema.sections.orEmpty().forEach { section ->
-//            section.fields.orEmpty().forEach { schemaField ->
-//                updatedFields.find { it.fieldId == schemaField.fieldId }?.let { updated ->
-//                    schemaField.value = updated.value
-//
-//                    val result = FieldValidator.validate(updated, dob)
-//                    updated.errorMessage = if (!result.isValid) result.errorMessage else null
-//                    schemaField.errorMessage = updated.errorMessage
-//
-//                    if (!result.isValid) {
-//                        Log.d("ValidationError", "Field: ${schemaField.label}, Error: ${updated.errorMessage}")
-//                    }
-//                }
-//            }
-//        }
-//
-//        // 🧠 🔁 Copy error messages back from schema to adapter fields
-//        updatedFields.forEach { adapterField ->
-//            currentSchema.sections.orEmpty().flatMap { it.fields.orEmpty() }
-//                .find { it.fieldId == adapterField.fieldId }
-//                ?.let { schemaField ->
-//                    adapterField.errorMessage = schemaField.errorMessage
-//                }
-//        }
-//
-//        val copiedFields = updatedFields.map { updated ->
-//            val matchingSchemaField = currentSchema.sections.orEmpty()
-//                .flatMap { it.fields.orEmpty() }
-//                .find { it.fieldId == updated.fieldId }
-//
-//            updated.copy(errorMessage = matchingSchemaField?.errorMessage)
-//        }
-//
-//        adapter.updateFields(copiedFields)
-//        adapter.notifyDataSetChanged()
-//
-//        val errorFields = currentSchema.sections.orEmpty().flatMap { section ->
-//            section.fields.orEmpty().filter { it.visible && !it.errorMessage.isNullOrBlank() }
-//                .map { "${section.sectionTitle}: ${it.label}" }
-//        }
-//
-//        val firstErrorFieldId = currentSchema.sections.orEmpty()
-//            .flatMap { it.fields.orEmpty() }
-//            .firstOrNull { it.visible && !it.errorMessage.isNullOrBlank() }
-//            ?.fieldId
-//
-//        val errorIndex = copiedFields.indexOfFirst { it.fieldId == firstErrorFieldId }
-//        if (errorIndex >= 0) {
-//            recyclerView.scrollToPosition(errorIndex)
-//        }
-//
-//        if (errorFields.isNotEmpty()) {
-//            Toast.makeText(
-//                requireContext(),
-//                "Please fix the following fields:\n${errorFields.joinToString("\n")}",
-//                Toast.LENGTH_LONG
-//            ).show()
-//            return
-//        }
-//
-//        // ✅ Save the form
-//        val formJson = currentSchema.toJson()
-//        val visitDate = viewModel.calculateDueDate(dob, currentVisitDay) ?: "Unknown"
-//        Log.d("FormSubmit", "🟢 Calling saveFormResponses() from Fragment")
-//        viewModel.saveFormResponses()
-//        viewModel.saveVisit(
-//            VisitHistoryEntity(
-//                rchId = rchId,
-//                visitDay = currentVisitDay,
-//                visitDate = visitDate,
-//                formDataJson = formJson
-//            )
-//        )
-//
-//        // 🔄 NEW: Enqueue sync worker for background sync
-//        FormSyncWorker.enqueue(requireContext())
-//
-//        Toast.makeText(requireContext(), "Form saved for $currentVisitDay", Toast.LENGTH_SHORT).show()
-//        findNavController().popBackStack()
-//    }
-
 
     override fun onStart() {
         super.onStart()
@@ -375,22 +252,17 @@ class HBNCFormFragment : Fragment() {
         return try {
             contentResolver.openFileDescriptor(uri, "r")?.use { pfd ->
                 val sizeInBytes = pfd.statSize
-                Log.d("ImageSize", "URI: $uri, Size in bytes: $sizeInBytes")
 
                 if (sizeInBytes > 0) {
                     val sizeInMB = sizeInBytes / (1024.0 * 1024.0)
-                    Log.d("ImageSize", "Size in MB: $sizeInMB")
                     sizeInMB
                 } else {
-                    Log.w("ImageSize", "Size is zero or invalid for uri: $uri")
                     null
                 }
             } ?: run {
-                Log.e("ImageSize", "openFileDescriptor returned null for uri: $uri")
                 null
             }
         } catch (e: Exception) {
-            Log.e("ImageSize", "Exception reading file size for uri: $uri", e)
             null
         }
     }
