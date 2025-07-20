@@ -2,12 +2,10 @@ package org.piramalswasthya.sakhi.adapters.dynamicAdapter
 
 import android.app.AlertDialog
 import android.app.DatePickerDialog
-import android.content.Context
 import android.graphics.Color
 import android.net.Uri
 import android.text.*
 import android.text.style.ForegroundColorSpan
-import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.appcompat.content.res.AppCompatResources
@@ -17,7 +15,6 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
-import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -40,7 +37,6 @@ class FormRendererAdapter(
         newFields.forEachIndexed { index, newField ->
             val oldField = fields.getOrNull(index)
 
-            // Compare visibility, value, error message
             val shouldUpdate = oldField == null ||
                     oldField.value != newField.value ||
                     oldField.errorMessage != newField.errorMessage ||
@@ -48,7 +44,6 @@ class FormRendererAdapter(
 
             if (shouldUpdate) {
                 fields[index] = newField
-                Log.d("NotifyUpdate", "Updating field: ${newField.fieldId}, visible=${newField.visible}, error=${newField.errorMessage}")
                 notifyItemChanged(index)
             }
         }
@@ -63,11 +58,10 @@ class FormRendererAdapter(
 
     override fun onBindViewHolder(holder: FormViewHolder, position: Int) {
         val field = fields[position]
-        holder.itemView.visibility = View.VISIBLE // Always let bind() control it
+        holder.itemView.visibility = View.VISIBLE
         try {
             holder.bind(field)
         } catch (e: Exception) {
-            Log.e("FormAdapter", "Error binding fieldId=${field.fieldId}: ${e.message}")
         }
     }
 
@@ -78,7 +72,6 @@ class FormRendererAdapter(
         private val inputContainer: ViewGroup = view.findViewById(R.id.inputContainer)
 
         fun bind(field: FormField) {
-//            itemView.visibility = if (field.visible || isViewOnly) View.VISIBLE else View.GONE
 
             itemView.visibility = View.VISIBLE
             if (!field.visible) {
@@ -89,7 +82,6 @@ class FormRendererAdapter(
             }
             if (field.isRequired) {
                 val labelText = "${field.label} *"
-                Log.d("BindLabel", "Label yes: ${label.text}")
                 val spannable = SpannableString(labelText)
                 spannable.setSpan(
                     ForegroundColorSpan(Color.RED),
@@ -99,7 +91,6 @@ class FormRendererAdapter(
                 )
                 label.text = spannable
             } else {
-                Log.d("BindLabel", "Label no: ${label.text}")
                 label.text = field.label
             }
 
@@ -129,7 +120,6 @@ class FormRendererAdapter(
                 inputContainer.removeAllViews()
                 inputContainer.addView(wrapper)
 
-                Log.d("RenderError", "Field: ${field.label}, Error: ${field.errorMessage}")
             }
 
             when (field.type) {
@@ -278,8 +268,6 @@ class FormRendererAdapter(
                         setTextColor(ContextCompat.getColor(context, android.R.color.black))
                         setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodyLarge)
                         setPadding(16, 24, 16, 24)
-
-                        // 🟡 Show dropdown icon in active or gray state
                         val dropdownIcon = AppCompatResources.getDrawable(
                             context,
                             R.drawable.ic_arrow_drop_down
@@ -320,7 +308,6 @@ class FormRendererAdapter(
                     val today = Calendar.getInstance().time
                     val todayStr = sdf.format(today)
 
-                    // Set default today's date for visit_date if blank
                     if (field.fieldId == "visit_date" && (field.value == null || (field.value as? String)?.isBlank() == true)) {
                         field.value = todayStr
                     }
@@ -441,7 +428,6 @@ class FormRendererAdapter(
                             isChecked = field.value == option
                             isEnabled = !isViewOnly
 
-                            // 🟡 Add horizontal spacing between buttons
                             layoutParams = LinearLayout.LayoutParams(
                                 LinearLayout.LayoutParams.WRAP_CONTENT,
                                 LinearLayout.LayoutParams.WRAP_CONTENT
@@ -482,12 +468,10 @@ class FormRendererAdapter(
                             try {
                                 val uri = Uri.parse(filePath)
                                 setImageURI(uri)
-                                Log.d("ImageLoad", "Loaded image from URI: $filePath")
                             } catch (e: Exception) {
-                                Log.e("ImageLoad", "Failed to load image from URI: $filePath", e)
                             }
                         } else {
-                            setImageResource(R.drawable.ic_person) // Optional fallback
+                            setImageResource(R.drawable.ic_person)
                         }
                     }
 
@@ -515,22 +499,6 @@ class FormRendererAdapter(
                     })
                 }
             }
-        }
-    }
-    private fun createOutlinedInputLayout(context: Context, hint: String): TextInputLayout {
-        return TextInputLayout(context, null, com.google.android.material.R.style.Widget_Material3_TextInputLayout_OutlinedBox).apply {
-            layoutParams = LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            ).apply {
-                setMargins(0, 8, 0, 8)
-            }
-            this.hint = hint
-            boxBackgroundMode = TextInputLayout.BOX_BACKGROUND_OUTLINE
-            boxStrokeColor = ContextCompat.getColor(context, R.color.md_theme_light_primary)
-            boxStrokeWidthFocused = 2
-            setBoxCornerRadii(12f, 12f, 12f, 12f) // rounded corners
-            setPadding(12, 12, 12, 12)
         }
     }
 

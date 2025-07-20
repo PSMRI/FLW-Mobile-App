@@ -11,7 +11,7 @@ data class InfantEntity(
     val name: String,
     val motherName: String,
     val fatherName: String?,
-    val dob: String,                 // yyyy-MM-dd
+    val dob: String,
     val gender: String,
     val phoneNumber: String,
     val sncuDischarged: Boolean = false

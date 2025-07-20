@@ -1,7 +1,6 @@
 package org.piramalswasthya.sakhi.ui.home_activity.infant
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +21,7 @@ import org.piramalswasthya.sakhi.adapters.dynamicAdapter.VisitCardAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentInfantFormBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.infant.hbnc.HBNCFormViewModel
+import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.HBNC_FORM_ID
 import org.piramalswasthya.sakhi.work.dynamicWoker.FormSyncWorker
 
 @AndroidEntryPoint
@@ -31,8 +31,6 @@ class InfantFormFragment : Fragment() {
     private val binding get() = _binding!!
     private val args: InfantFormFragmentArgs by navArgs()
     private val viewModel: HBNCFormViewModel by viewModels()
-//    val benId = 0L
-//    val hhId = 0L
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -48,7 +46,6 @@ class InfantFormFragment : Fragment() {
         Toast.makeText(requireContext(), " Infant $benId and hhId: $hhId", Toast.LENGTH_LONG).show()
 
 
-        // Load infant and synced visits
         viewModel.loadInfant(benId, hhId)
         viewModel.loadSyncedVisitList(benId)
 
@@ -62,24 +59,18 @@ class InfantFormFragment : Fragment() {
                 }
             }
 
-        // Show infant details
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.infant.collectLatest { infant ->
-                Log.d("InfantForm", "👶 Infant loaded: $infant")
                 infant?.let {
                     binding.tvRchId?.text = it.benId.toString()
                 }
             }
         }
 
-        // Observe visit list and show visit cards
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.syncedVisitList.collectLatest {
-                    Log.d("InfantForm", "📄 Synced visits changed")
-
                     val cards = viewModel.getVisitCardList()
-                    Log.d("InfantForm", "✅ VisitCards: $cards")
 
                     binding.recyclerVisitCards.layoutManager =
                         GridLayoutManager(requireContext(), 3)
@@ -89,7 +80,7 @@ class InfantFormFragment : Fragment() {
                                 benId,hhId,
                                 visitDay = card.visitDay,
                                 isViewMode = !card.isEditable,
-                                formId = "hbnc_form_001"
+                                formId = HBNC_FORM_ID
                             )
                         findNavController().navigate(action)
                     }
