@@ -1017,6 +1017,16 @@
         android:label="HBNC Visit Form">
 
         <!-- Required arguments passed via Safe Args -->
+
+        <argument
+            android:name="benId"
+            app:argType="long" />
+
+        <argument
+            android:name="hhId"
+            app:argType="long" />
+
+
         <argument
             android:name="visitDay"
             app:argType="string"

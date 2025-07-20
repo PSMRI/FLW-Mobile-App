@@ -324,6 +324,9 @@
     <string name="add_family_member">Add Family Member</string>
     <string name="app_native_name">উৎপ্ৰেৰণা</string>
     <string name="non_pregnant_women_eligible_couple_section">Non-Pregnant Women (Eligible Couple) section</string>
+    <string name="status">Status</string>
+    <string name="visit_date">Visit Date</string>
+    <string name="visit_day">Visit Day</string>
     <string-array name="sync_records">
         <item>Beneficiary</item>
         <item>CBAC</item>

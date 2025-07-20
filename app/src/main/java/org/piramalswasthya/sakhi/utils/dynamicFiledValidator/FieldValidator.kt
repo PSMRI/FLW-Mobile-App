@@ -17,8 +17,6 @@ object FieldValidator {
         val rules = field.validation ?: return ValidationResult(true)
 
         return when (field.type) {
-
-            // ✅ Text validation using regex
             "text" -> {
                 val regex = rules.regex
                 if (regex != null && !regex.toRegex().matches(valueStr)) {
@@ -27,8 +25,6 @@ object FieldValidator {
                     ValidationResult(true)
                 }
             }
-
-            // ✅ Number validation
             "number" -> {
                 val num = valueStr.toFloatOrNull()
                     ?: return ValidationResult(false, "${field.label} must be a number")
@@ -45,7 +41,6 @@ object FieldValidator {
                 ValidationResult(true)
             }
 
-            // ✅ Date validation
             "date" -> {
                 val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
                 val valueDate = runCatching { sdf.parse(valueStr) }.getOrNull()

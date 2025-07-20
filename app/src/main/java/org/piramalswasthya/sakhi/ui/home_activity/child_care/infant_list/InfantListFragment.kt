@@ -50,6 +50,7 @@ class InfantListFragment : Fragment() {
 //                        hhId = 0L
                     )
                 )
+//                Toast.makeText(requireContext(),"$benId and hhId: $hhId",Toast.LENGTH_LONG).show()
 
             }
         )
