@@ -25,6 +25,9 @@ import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.utils.dynamicFiledValidator.FieldValidator
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.HBNC_FORM_ID
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @AndroidEntryPoint
 class HBNCFormFragment : Fragment() {
@@ -32,7 +35,8 @@ class HBNCFormFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var saveButton: Button
 
-    private val dob = "01-07-2024"
+    val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+    val dob = dateFormat.format(Date())
     private val args: HBNCFormFragmentArgs by navArgs()
 
 
