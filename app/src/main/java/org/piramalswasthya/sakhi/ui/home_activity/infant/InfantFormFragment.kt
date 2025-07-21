@@ -43,8 +43,6 @@ class InfantFormFragment : Fragment() {
 
         val benId = args.benId
         val hhId = args.hhId
-        Toast.makeText(requireContext(), " Infant $benId and hhId: $hhId", Toast.LENGTH_LONG).show()
-
 
         viewModel.loadInfant(benId, hhId)
         viewModel.loadSyncedVisitList(benId)
