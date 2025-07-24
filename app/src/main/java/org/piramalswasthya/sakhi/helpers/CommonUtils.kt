@@ -95,7 +95,7 @@ fun filterForBen(
         ben.benFullName.lowercase().contains(filterText) ||
         ben.familyHeadName.lowercase().contains(filterText) ||
         ben.benSurname?.lowercase()?.contains(filterText) ?: false ||
-        ben.rchId.takeIf { it.isDigitsOnly() }?.contains(filterText) ?: false ||
+        ben.rchId.takeIf { it?.isDigitsOnly() == true }?.contains(filterText) ?: false ||
         ben.mobileNo.lowercase().contains(filterText) ||
         ben.gender.lowercase().contains(filterText) ||
         ben.spouseName?.lowercase()?.contains(filterText) == true ||
@@ -134,7 +134,7 @@ fun filterEcTrackingList(
                 it.ben.spouseName?.lowercase()?.contains(filterText) ?: false ||
                 it.ben.benId.toString().lowercase().contains(filterText) ||
                 it.ben.mobileNo.lowercase().contains(filterText) ||
-                it.ben.rchId.takeIf { it1 -> it1.isDigitsOnly() }?.contains(filterText) ?: false
+                it.ben.rchId.takeIf { it1 -> it1?.isDigitsOnly() == true }?.contains(filterText) ?: false
     }
 
 fun filterEcRegistrationList(
@@ -149,7 +149,7 @@ fun filterEcRegistrationList(
                 it.ben.spouseName?.lowercase()?.contains(filterText) ?: false ||
                 it.ben.benId.toString().lowercase().contains(filterText) ||
                 it.ben.mobileNo.lowercase().contains(filterText) ||
-                it.ben.rchId.takeIf { it1 -> it1.isDigitsOnly() }?.contains(filterText) ?: false
+                it.ben.rchId.takeIf { it1 -> it1?.isDigitsOnly() == true }?.contains(filterText) ?: false
 
 
 //                ||
@@ -168,7 +168,7 @@ fun filterPwrRegistrationList(
                 it.ben.spouseName?.lowercase()?.contains(filterText) ?: false ||
                 it.ben.benId.toString().lowercase().contains(filterText) ||
                 it.ben.mobileNo.lowercase().contains(filterText) ||
-                it.ben.rchId.takeIf { it1 -> it1.isDigitsOnly() }?.contains(filterText) ?: false
+                it.ben.rchId.takeIf { it1 -> it1?.isDigitsOnly() == true }?.contains(filterText) ?: false
     }
 
 fun filterPwrRegistrationList(
@@ -200,7 +200,7 @@ fun filterPwAncList(
                 it.lmpString?.contains(filterText) ?: false ||
                 it.eddString?.contains(filterText) ?: false ||
                 it.weeksOfPregnancy?.contains(filterText) ?: false ||
-                it.ben.rchId.takeIf { it1 -> it1.isDigitsOnly() }?.contains(filterText) ?: false
+                it.ben.rchId.takeIf { it1 -> it1?.isDigitsOnly() == true }?.contains(filterText) ?: false
 
     }
 
@@ -217,7 +217,7 @@ fun filterPncDomainList(
                 it.ben.benId.toString().lowercase().contains(filterText) ||
                 it.ben.mobileNo.lowercase().contains(filterText) ||
                 it.deliveryDate.contains(filterText) ||
-                it.ben.rchId.takeIf { it1 -> it1.isDigitsOnly() }?.contains(filterText) ?: false
+                it.ben.rchId.takeIf { it1 -> it1?.isDigitsOnly() == true }?.contains(filterText) ?: false
     }
 
 fun filterInfantDomainList(
@@ -233,7 +233,7 @@ fun filterInfantDomainList(
                 it.motherBen.benId.toString().lowercase().contains(filterText) ||
                 it.motherBen.mobileNo.lowercase().contains(filterText) ||
                 it.babyName.contains(filterText) ||
-                it.motherBen.rchId.takeIf { it1 -> it1.isDigitsOnly() }
+                it.motherBen.rchId.takeIf { it1 -> it1?.isDigitsOnly() == true }
                     ?.contains(filterText) ?: false
     }
 
@@ -252,7 +252,7 @@ fun filterTbScreeningList(
                 it.ben.benId.toString().lowercase().contains(filterText) ||
                 it.ben.mobileNo.lowercase().contains(filterText) ||
                 it.ben.gender.lowercase().contains(filterText) ||
-                it.ben.rchId.takeIf { it1 -> it1.isDigitsOnly() }?.contains(filterText) ?: false
+                it.ben.rchId.takeIf { it1 -> it1?.isDigitsOnly() == true }?.contains(filterText) ?: false
     }
 
 fun filterTbSuspectedList(
@@ -269,7 +269,7 @@ fun filterTbSuspectedList(
                 it.ben.benId.toString().lowercase().contains(filterText) ||
                 it.ben.mobileNo.lowercase().contains(filterText) ||
                 it.ben.gender.lowercase().contains(filterText) ||
-                it.ben.rchId.takeIf { it1 -> it1.isDigitsOnly() }?.contains(filterText) ?: false
+                it.ben.rchId.takeIf { it1 -> it1?.isDigitsOnly() == true }?.contains(filterText) ?: false
     }
 
 
@@ -304,7 +304,7 @@ fun filterBenFormList(
                     it.benId.toString().lowercase().contains(filterText) ||
                     it.regDate.lowercase().contains((filterText)) ||
                     it.age.lowercase().contains(filterText) ||
-                    it.rchId.takeIf { it1 -> it1.isDigitsOnly() }?.contains(filterText) ?: false ||
+                    it.rchId.takeIf { it1 -> it1?.isDigitsOnly() == true }?.contains(filterText) ?: false ||
                     it.benName.lowercase().contains(filterText) ||
                     it.familyHeadName.lowercase().contains(filterText) ||
                     it.spouseName?.lowercase()?.contains(filterText) == true ||
@@ -331,7 +331,7 @@ fun filterBenHRPFormList(
                     it.ben.benId.toString().lowercase().contains(filterText) ||
                     it.ben.regDate.lowercase().contains((filterText)) ||
                     it.ben.age.lowercase().contains(filterText) ||
-                    it.ben.rchId.takeIf { it1 -> it1.isDigitsOnly() }
+                    it.ben.rchId.takeIf { it1 -> it1?.isDigitsOnly() == true }
                         ?.contains(filterText) ?: false ||
                     it.ben.benName.lowercase().contains(filterText) ||
                     it.ben.familyHeadName.lowercase().contains(filterText) ||
@@ -358,7 +358,7 @@ fun filterBenHRNPFormList(
                     it.ben.benId.toString().lowercase().contains(filterText) ||
                     it.ben.regDate.lowercase().contains((filterText)) ||
                     it.ben.age.lowercase().contains(filterText) ||
-                    it.ben.rchId.takeIf { it1 -> it1.isDigitsOnly() }
+                    it.ben.rchId.takeIf { it1 -> it1?.isDigitsOnly() == true }
                         ?.contains(filterText) ?: false ||
                     it.ben.benName.lowercase().contains(filterText) ||
                     it.ben.familyHeadName.lowercase().contains(filterText) ||
@@ -385,7 +385,7 @@ fun filterBenHRPTFormList(
                     it.ben.benId.toString().lowercase().contains(filterText) ||
                     it.ben.regDate.lowercase().contains((filterText)) ||
                     it.ben.age.lowercase().contains(filterText) ||
-                    it.ben.rchId.takeIf { it1 -> it1.isDigitsOnly() }
+                    it.ben.rchId.takeIf { it1 -> it1?.isDigitsOnly() == true }
                         ?.contains(filterText) ?: false ||
                     it.ben.benName.lowercase().contains(filterText) ||
                     it.ben.familyHeadName.lowercase().contains(filterText) ||
@@ -480,7 +480,7 @@ fun filterBenHRNPTFormList(
                     it.ben.benId.toString().lowercase().contains(filterText) ||
                     it.ben.regDate.lowercase().contains((filterText)) ||
                     it.ben.age.lowercase().contains(filterText) ||
-                    it.ben.rchId.takeIf { it1 -> it1.isDigitsOnly() }
+                    it.ben.rchId.takeIf { it1 -> it1?.isDigitsOnly() == true }
                         ?.contains(filterText) ?: false ||
                     it.ben.benName.lowercase().contains(filterText) ||
                     it.ben.familyHeadName.lowercase().contains(filterText) ||

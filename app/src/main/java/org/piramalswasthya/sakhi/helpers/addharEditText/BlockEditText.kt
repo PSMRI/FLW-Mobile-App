@@ -644,7 +644,15 @@ class BlockEditText : FrameLayout {
                         val temp = editable.toString().substring(0, length)
                         editable = editable.delete(0, length)
                         editText.append(temp)
-                        editText.setSelection(selection)
+
+                        val safeSelection = selection.coerceIn(0, editText.text.length)
+                        try {
+                            editText.setSelection(safeSelection)
+                        } catch (e: IndexOutOfBoundsException) {
+                            // fallback to end of text as last resort
+                            editText.setSelection(editText.text.length)
+                        }
+
                         nextView.text = editable
                     }
                 }

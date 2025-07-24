@@ -138,7 +138,7 @@ class PreferenceDao @Inject constructor(@ApplicationContext private val context:
         val key = context.getString(R.string.PREF_current_saved_language)
         return when (pref.getString(key, null)) {
             Languages.ASSAMESE.symbol -> Languages.ASSAMESE
-            Languages.HINDI.symbol -> Languages.HINDI
+         /*   Languages.HINDI.symbol -> Languages.HINDI*/
             Languages.ENGLISH.symbol -> Languages.ENGLISH
             else -> Languages.ENGLISH
         }

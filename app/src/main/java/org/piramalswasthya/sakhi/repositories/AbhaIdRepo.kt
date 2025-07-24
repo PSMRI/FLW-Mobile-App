@@ -4,6 +4,7 @@ import android.util.Base64
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
 import org.json.JSONArray
@@ -11,6 +12,8 @@ import org.json.JSONException
 import org.json.JSONObject
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.model.ABHAModel
+import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.network.AadhaarVerifyBioRequest
 import org.piramalswasthya.sakhi.network.AbhaApiService
 import org.piramalswasthya.sakhi.network.AbhaCheckAndGenerateMobileOtpResponse
@@ -53,7 +56,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
-import java.util.Timer
 import java.util.UUID
 import javax.crypto.Cipher
 import javax.inject.Inject
@@ -62,6 +64,7 @@ class AbhaIdRepo @Inject constructor(
     private val abhaApiService: AbhaApiService,
     private val amritApiService: AmritApiService,
     private val userRepo: UserRepo,
+    private val abhaGenerated: ABHAGenratedRepo,
     private val prefDao: PreferenceDao
 ) {
     suspend fun getAccessToken(): NetworkResult<AbhaTokenResponse> {
@@ -161,13 +164,7 @@ class AbhaIdRepo @Inject constructor(
     suspend fun generateAadhaarOtpV3(req: AbhaGenerateAadhaarOtpRequest): NetworkResult<AbhaGenerateAadhaarOtpResponseV2> {
         return withContext(Dispatchers.IO) {
             try {
-                // ABHA v1/v2 encryption technique
-//                req.aadhaar = encryptData(req.aadhaar)
-                // ABHA v3 encryption technique
                 req.loginId = encryptData(req.loginId)
-                // ABHA v1/v2 API
-//                val response = abhaApiService.generateAadhaarOtpV2(req)
-                // ABHA v3 API
                 val response =
                     abhaApiService.generateAadhaarOtpV3(req, generateUUID(), getCurrentTimestamp())
                 if (response.isSuccessful) {
@@ -314,8 +311,6 @@ class AbhaIdRepo @Inject constructor(
             val publicKeySpec = X509EncodedKeySpec(publicKeyBytes)
             val publicKey = keyFactory.generatePublic(publicKeySpec)
 
-            // Cipher used in ABHA v1/v2 APIs
-//            val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
             // Cipher used in ABHA v3 APIs
             val cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-1AndMGF1Padding")
             cipher.init(Cipher.ENCRYPT_MODE, publicKey)
@@ -375,8 +370,7 @@ class AbhaIdRepo @Inject constructor(
                 // ABHA v3
                 req.authData.otp.otpValue = encryptData(req.authData.otp.otpValue)
                 req.authData.otp.timeStamp = getCurrentTimestamp()
-                // ABHA v1/v2 API
-//                val response = abhaApiService.verifyAadhaarOtp(req)
+
                 // ABHA v3 API
                 response = abhaApiService.verifyAadhaarOtp3(req, generateUUID(), getCurrentTimestamp())
                 if (response?.isSuccessful == true) {
@@ -627,7 +621,7 @@ class AbhaIdRepo @Inject constructor(
         }
     }
 
-    suspend fun mapHealthIDToBeneficiary(mapHIDtoBeneficiary: MapHIDtoBeneficiary): NetworkResult<String> {
+    suspend fun mapHealthIDToBeneficiary(mapHIDtoBeneficiary: MapHIDtoBeneficiary, ben: BenRegCache?): NetworkResult<String> {
         return withContext((Dispatchers.IO)) {
             try {
                 val user =
@@ -637,13 +631,36 @@ class AbhaIdRepo @Inject constructor(
                 val response = amritApiService.mapHealthIDToBeneficiary(mapHIDtoBeneficiary)
                 val responseBody = response.body()?.string()
                 when (responseBody?.let { JSONObject(it).getInt("statusCode") }) {
-                    200 -> NetworkResult.Success(responseBody)
+                    200 -> {
+
+                        val json = JSONObject(responseBody)
+                        val data = json.optJSONObject("data")
+                        Timber.d("Checkbox values : ${data}")
+                        abhaGenerated.deleteAbhaByBenId(mapHIDtoBeneficiary.beneficiaryID!!)
+
+                        if (data != null && data.has("benHealthID") && data.has("healthId")) {
+                            NetworkResult.Success(responseBody)
+
+                        }
+
+                        else if (data != null && data.has("response")) {
+                            val message = data.getString("response")
+
+                            NetworkResult.Error(0, message)
+                        }
+
+                        else {
+                            NetworkResult.Error(0, "Unknown response format")
+                        }
+                    }
+
                     5000, 5002 -> {
+                        saveAbhaModelFromRequest(mapHIDtoBeneficiary,ben)
                         if (JSONObject(responseBody).getString("errorMessage")
                                 .contentEquals("Invalid login key or session is expired")
                         ) {
                             userRepo.refreshTokenTmc(user.userName, user.password)
-                            mapHealthIDToBeneficiary(mapHIDtoBeneficiary)
+                            mapHealthIDToBeneficiary(mapHIDtoBeneficiary,ben)
                         } else {
                             NetworkResult.Error(
                                 0,
@@ -655,17 +672,20 @@ class AbhaIdRepo @Inject constructor(
                     else -> NetworkResult.Error(0, responseBody.toString())
                 }
             } catch (e: IOException) {
+                saveAbhaModelFromRequest(mapHIDtoBeneficiary,ben)
                 NetworkResult.Error(-1, "Unable to connect to Internet!")
             } catch (e: JSONException) {
+                saveAbhaModelFromRequest(mapHIDtoBeneficiary,ben)
                 NetworkResult.Error(-2, "Invalid response! Please try again!")
             } catch (e: SocketTimeoutException) {
+                saveAbhaModelFromRequest(mapHIDtoBeneficiary,ben)
                 NetworkResult.Error(-3, "Request Timed out! Please try again!")
             } catch (e: java.lang.Exception) {
+                saveAbhaModelFromRequest(mapHIDtoBeneficiary,ben)
                 NetworkResult.Error(-4, e.message ?: "Unknown Error")
             }
         }
     }
-
 
     suspend fun addHealthIdRecord(addHealthIdRecord: AddHealthIdRecord): NetworkResult<String> {
         return withContext((Dispatchers.IO)) {
@@ -779,5 +799,27 @@ class AbhaIdRepo @Inject constructor(
                 NetworkResult.Error(-4, e.message ?: "Unknown Error")
             }
         }
+    }
+
+    suspend fun saveAbhaModelFromRequest(
+        mapHIDtoBeneficiary: MapHIDtoBeneficiary,
+        ben: BenRegCache?
+    ) {
+        val abhaProfileJson = Gson().toJson(mapHIDtoBeneficiary.ABHAProfile)
+        val abha = ABHAModel(
+            beneficiaryID = mapHIDtoBeneficiary.beneficiaryID!!,
+            beneficiaryRegID = mapHIDtoBeneficiary.beneficiaryRegID!!,
+            benName = ben?.firstName.toString(),
+            benSurname = ben?.lastName,
+            healthId = mapHIDtoBeneficiary.healthId!!,
+            txnId = mapHIDtoBeneficiary.txnId!!,
+            message = mapHIDtoBeneficiary.message!!,
+            createdBy = "",
+            providerServiceMapId = prefDao.getLoggedInUser()?.serviceMapId!!,
+            abhaProfileJson = abhaProfileJson,
+            healthIdNumber = mapHIDtoBeneficiary.healthIdNumber.toString(),
+            isNewAbha = mapHIDtoBeneficiary.isNew!!
+        )
+        abhaGenerated.saveAbhaGenrated(abha)
     }
 }

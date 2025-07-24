@@ -52,7 +52,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="?attr/colorPrimary"
-            android:onClick="@{()-> clickListener.onClickedVisit(visit)}"
             android:text="@string/view"
             android:textColor="?attr/colorOnPrimary" />
 

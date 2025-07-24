@@ -30,6 +30,8 @@ import org.piramalswasthya.sakhi.model.LeprosyScreeningCache
 import org.piramalswasthya.sakhi.model.MalariaConfirmedCasesCache
 import org.piramalswasthya.sakhi.model.MalariaScreeningCache
 import org.piramalswasthya.sakhi.model.getDateTimeStringFromLong
+import org.piramalswasthya.sakhi.model.ABHAModel
+import org.piramalswasthya.sakhi.model.Gender
 
 @JsonClass(generateAdapter = true)
 data class D2DAuthUserRequest(
@@ -648,7 +650,7 @@ data class FilariaScreeningRequestDTO(
     val userId: Int,
     val filariaLists: List<FilariaScreeningDTO>
 )
-    
+
 data class AdolescentHealthRequestDTO(
     val userId: Int,
     val adolescentHealths: List<AdolscentHealthDTO>
@@ -1063,6 +1065,39 @@ data class AdolscentHealthDTO(
             followUpDate = getLongFromDate(followUpDate),
             referralStatus = referralStatus,
             syncState = SyncState.SYNCED
+        )
+    }
+}
+
+
+data class ABHAGeneratedDTO(
+    val id: Int = 0,
+    val beneficiaryID: Long,
+    val beneficiaryRegID: Long,
+    val benName: String,
+    val createdBy: String,
+    val message: String,
+    val txnId: String,
+    val benSurname: String? = null,
+    var healthId: String = "",
+    var healthIdNumber: String = "",
+    var isNewAbha: Boolean= false,
+    val providerServiceMapId: Int,
+
+) {
+    fun toCache(): ABHAModel {
+        return ABHAModel(
+            beneficiaryID = beneficiaryID,
+            beneficiaryRegID = beneficiaryRegID,
+            benName = benName,
+            benSurname = benSurname,
+            healthId = healthId,
+            txnId = txnId,
+            message = message,
+            createdBy = createdBy,
+            healthIdNumber = healthIdNumber,
+            isNewAbha = isNewAbha,
+            providerServiceMapId = providerServiceMapId
         )
     }
 }

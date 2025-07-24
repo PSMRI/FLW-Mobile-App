@@ -1,6 +1,5 @@
 package org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.aadhaar_num_asha
 
-import android.app.AlertDialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -15,8 +14,6 @@ import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.activity_contracts.RDServiceCapturePIDContract
-import org.piramalswasthya.sakhi.activity_contracts.RDServiceInfoContract
-import org.piramalswasthya.sakhi.activity_contracts.RDServiceInitContract
 import org.piramalswasthya.sakhi.databinding.FragmentAadhaarNumberAshaBinding
 import org.piramalswasthya.sakhi.helpers.AadhaarValidationUtils
 import org.piramalswasthya.sakhi.network.AadhaarVerifyBioRequest
@@ -43,14 +40,6 @@ class AadhaarNumberAshaFragment : Fragment() {
 
     private val viewModel: AadhaarNumberAshaViewModel by viewModels()
 
-    private val aadhaarDisclaimer by lazy {
-        AlertDialog.Builder(requireContext())
-            .setTitle(resources.getString(R.string.individual_s_consent_for_creation_of_abha_number))
-            .setMessage(resources.getString(R.string.aadhar_disclaimer_consent_text))
-            .setPositiveButton(resources.getString(R.string.ok)) { dialog, _ -> dialog.dismiss() }
-            .create()
-    }
-
     private val rdServiceCapturePIDContract =
         registerForActivityResult(RDServiceCapturePIDContract()) {
             Toast.makeText(requireContext(), "pid captured $it", Toast.LENGTH_SHORT).show()
@@ -64,18 +53,6 @@ class AadhaarNumberAshaFragment : Fragment() {
             binding.pid.text = Gson().toJson(viewModel.responseData)
         }
 
-    private val rdServiceDeviceInfoContract = registerForActivityResult(RDServiceInfoContract()) {
-        binding.pid.text = Gson().toJson(
-            AadhaarVerifyBioRequest(
-                binding.tietAadhaarNumber.toString(),
-                "FMR", it.toString()
-            )
-        )
-        viewModel.verifyBio(binding.tietAadhaarNumber.text.toString(), it)
-    }
-    private val rdServiceInitContract = registerForActivityResult(RDServiceInitContract()) {
-
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -116,7 +93,6 @@ class AadhaarNumberAshaFragment : Fragment() {
                 binding.benName.text =it
                 parentViewModel.setBeneficiaryName(it)
                 binding.clBenName.visibility = View.GONE
-                // String.format("%s%s%s", getString(R.string.generating_abha_for), "\n", it)
 
             }else{
                 binding.clBenName.visibility = View.VISIBLE
@@ -156,7 +132,6 @@ class AadhaarNumberAshaFragment : Fragment() {
             }else{
                 Toast.makeText(requireContext(),"Please Enter Beneficiary Name",Toast.LENGTH_SHORT).show()
            }
-           // aadhaarDisclaimer.show()
         }
         binding.tietAadhaarNumber.setEdiTextBackground(ContextCompat.getDrawable(requireContext(), R.drawable.selector_edittext_round_border_line))
 
@@ -244,13 +219,12 @@ class AadhaarNumberAshaFragment : Fragment() {
                 if (isValidBenName)
                     parentViewModel.setBeneficiaryName(s.toString())
                 binding.btnVerifyAadhaar.isEnabled = isValidAadhaar && isValidMobile
-                        && (parentViewModel.consentChecked.value==true) //isValidBenName //binding.aadharConsentCheckBox.isChecked
+                        && (parentViewModel.consentChecked.value==true)
             }
 
         })
 
 
-        // observing error message from parent and updating error text field
         viewModel.errorMessage.observe(viewLifecycleOwner) {
             it?.let {
                 binding.tvErrorText.visibility = View.VISIBLE

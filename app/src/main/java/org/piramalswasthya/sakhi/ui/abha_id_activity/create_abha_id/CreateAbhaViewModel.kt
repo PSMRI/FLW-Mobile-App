@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import okhttp3.ResponseBody
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
@@ -20,6 +22,7 @@ import org.piramalswasthya.sakhi.network.GenerateOtpHid
 import org.piramalswasthya.sakhi.network.MapHIDtoBeneficiary
 import org.piramalswasthya.sakhi.network.NetworkResult
 import org.piramalswasthya.sakhi.network.ValidateOtpHid
+import org.piramalswasthya.sakhi.repositories.ABHAGenratedRepo
 import org.piramalswasthya.sakhi.repositories.AbhaIdRepo
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import timber.log.Timber
@@ -30,11 +33,15 @@ class CreateAbhaViewModel @Inject constructor(
     private val pref: PreferenceDao,
     private val abhaIdRepo: AbhaIdRepo,
     private val benRepo: BenRepo,
+    private val abhaGenratedRepo: ABHAGenratedRepo,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     enum class State {
         IDLE, LOADING, ERROR_NETWORK, ERROR_SERVER, ERROR_INTERNAL, DOWNLOAD_SUCCESS, ABHA_GENERATE_SUCCESS, OTP_GENERATE_SUCCESS, OTP_VERIFY_SUCCESS, DOWNLOAD_ERROR
     }
+
+    private val _uiEvent = MutableSharedFlow<UIEvent>()
+    val uiEvent = _uiEvent.asSharedFlow()
 
     private val _state = MutableLiveData<State>()
     val state: LiveData<State>
@@ -187,7 +194,9 @@ class CreateAbhaViewModel @Inject constructor(
             }
             it.healthIdDetails = BenHealthIdDetails(healthId, healthIdNumber?:"", isNewAbha = response.isNew)
             it.isNewAbha =response.isNew
-            benRepo.updateRecord(ben)
+//            benRepo.updateRecord(ben)
+
+
         }
         /**/
         val abhaProfile = ABHAProfile(
@@ -215,7 +224,7 @@ class CreateAbhaViewModel @Inject constructor(
             beneficiaryID = benId,
             healthId = healthId,
             healthIdNumber = healthIdNumber,
-            providerServiceMapId = 34,
+            providerServiceMapId = pref.getLoggedInUser()?.serviceMapId,
             createdBy = "",
             message =response.message,
             txnId=response.txnId,
@@ -225,14 +234,36 @@ class CreateAbhaViewModel @Inject constructor(
 
         viewModelScope.launch {
             when (val result =
-                abhaIdRepo.mapHealthIDToBeneficiary(req)) {
+                abhaIdRepo.mapHealthIDToBeneficiary(req,ben)) {
                 is NetworkResult.Success -> {
                     _state.value = State.ABHA_GENERATE_SUCCESS
+                    val ben = benRepo.getBenFromId(benId)
+                    ben?.let {
+                        ben.firstName?.let { firstName ->
+                            _benMapped.value = firstName
+                        }
+                        ben.lastName?.let { lastName ->
+                            _benMapped.value = ben.firstName + " $lastName"
+                        }
+                        it.healthIdDetails = BenHealthIdDetails(
+                            healthId,
+                            healthIdNumber ?: "",
+                            isNewAbha = response.isNew
+                        )
+                        it.isNewAbha = response.isNew
+                        benRepo.updateRecord(ben)
+                    }
                 }
 
                 is NetworkResult.Error -> {
-                    _errorMessage.value = result.message
-                    _state.value = State.ERROR_SERVER
+                    if (result.code == 0){
+                        _uiEvent.emit(UIEvent.ShowDialog("${ben?.firstName}", "${ben?.lastName}"))
+
+                    } else {
+                        _errorMessage.value = result.message
+                        _state.value = State.ERROR_SERVER
+                    }
+
                 }
 
                 is NetworkResult.NetworkError -> {
@@ -360,4 +391,8 @@ class CreateAbhaViewModel @Inject constructor(
             }
         }
     }
+}
+
+sealed class UIEvent {
+    data class ShowDialog(val message: String, val s: String) : UIEvent()
 }

@@ -67,8 +67,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:visibility="gone"
-                    android:padding="@dimen/padding_normal"
-                    >
+                    android:padding="@dimen/padding_normal">
                     <LinearLayout
                         android:id="@+id/ll_ben_pwr_tracking_details_1"
                         android:layout_width="match_parent"
@@ -280,12 +279,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end"
-                android:visibility="gone"
-                tools:visibility="visible"
-                app:srcCompat="@drawable/ic_edit"
                 android:layout_marginEnd="@dimen/padding_wide"
                 android:layout_marginBottom="@dimen/padding_wide"
-                android:contentDescription="@string/edit" />
+                android:contentDescription="@string/edit"
+                android:visibility="gone"
+                app:backgroundTint="@color/md_theme_light_primary"
+                app:srcCompat="@drawable/ic_edit"
+                app:tint="@color/md_theme_light_onTertiary"
+                tools:visibility="visible" />
 
         </FrameLayout>
 

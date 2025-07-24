@@ -96,7 +96,7 @@ class IconDataset @Inject constructor(
                     HomeFragmentDirections.actionHomeFragmentToCdFragment()
                 ),
                 Icon(
-                    R.drawable.ic__immunization,
+                    R.drawable.ic_vaccines,
                     resources.getString(R.string.icon_title_imm),
                     null,
                     HomeFragmentDirections.actionNavHomeToImmunizationDueFragment(),

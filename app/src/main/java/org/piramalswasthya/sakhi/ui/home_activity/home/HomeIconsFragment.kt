@@ -50,8 +50,25 @@ class HomeIconsFragment : Fragment() {
             requireContext().resources.getInteger(R.integer.icon_grid_span)
         )
         binding.rvIconGrid.layoutManager = rvLayoutManager
-        val rvAdapter = IconGridAdapter(IconGridAdapter.GridIconClickListener {
-            findNavController().navigate(it)
+        val rvAdapter = IconGridAdapter(IconGridAdapter.GridIconClickListener { navDirections ->
+            val navController = findNavController()
+
+            try {
+                val currentDestinationId = navController.currentDestination?.id
+
+                // Skip navigation if already on destination
+                if (currentDestinationId == R.id.villageLevelFormsFragment &&
+                    navDirections == HomeFragmentDirections.actionNavHomeToVillageLevelFormsFragment()
+                ) {
+                    Timber.d("Already at destination: skipping navigation.")
+                    return@GridIconClickListener
+                }
+
+                navController.navigate(navDirections)
+            } catch (e: Exception) {
+                Timber.e(e, "Navigation failed")
+            }
+           // findNavController().navigate(it)
         }, viewModel.scope)
         binding.rvIconGrid.adapter = rvAdapter
         viewModel.devModeEnabled.observe(viewLifecycleOwner) {

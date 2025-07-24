@@ -42,10 +42,10 @@ class AncBottomSheetFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.rvAnc.adapter =
-            AncVisitAdapter(AncVisitAdapter.AncVisitClickListener { benId, visitNumber ->
+            AncVisitAdapter(AncVisitAdapter.AncVisitClickListener { benId, visitNumber,isLast ->
                 findNavController().navigate(
                     PwAncVisitsListFragmentDirections.actionPwAncVisitsFragmentToPwAncFormFragment(
-                        benId, visitNumber
+                        benId, visitNumber,isLast
                     )
                 )
                 this.dismiss()

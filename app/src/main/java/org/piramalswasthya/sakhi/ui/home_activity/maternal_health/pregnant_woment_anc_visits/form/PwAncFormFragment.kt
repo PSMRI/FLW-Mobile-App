@@ -164,7 +164,6 @@ class PwAncFormFragment : Fragment() {
 
         viewModel.recordExists.observe(viewLifecycleOwner) { notIt ->
             notIt?.let { recordExists ->
-                binding.fabEdit.visibility = /*if (recordExists) View.VISIBLE else */View.GONE
                 binding.btnSubmit.visibility = if (recordExists) View.GONE else View.VISIBLE
                 val adapter = FormInputAdapterWithBgIcon(
                     formValueListener = FormInputAdapterWithBgIcon.FormValueListener { formId, index ->
@@ -247,6 +246,7 @@ class PwAncFormFragment : Fragment() {
             submitAncForm()
         }
         binding.fabEdit.setOnClickListener {
+            binding.fabEdit.visibility = View.GONE
             viewModel.setRecordExist(false)
         }
         viewModel.state.observe(viewLifecycleOwner) { state ->
@@ -277,6 +277,11 @@ class PwAncFormFragment : Fragment() {
                 }
             }
         }
+
+        if (viewModel.lastItemClick) binding.fabEdit.visibility = View.VISIBLE else View.GONE
+
+
+
     }
 
     private fun viewImage(imageUri: Uri) {

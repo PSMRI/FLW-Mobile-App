@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="btn_text_frag_home_nhhr">নতুন Household পঞ্জীয়ন</string>
+    <string name="btn_text_frag_home_nhhr">নতুন গৃহস্থালী পঞ্জীয়ন</string>
     <string name="no_records_found">কোনো ৰেকৰ্ড পোৱা নগল</string>
     <string name="household_search">সন্ধান</string>
 
@@ -37,7 +37,7 @@
     <string name="nhhr_type_residential_area_2">নগৰ</string>
     <string name="nhhr_type_residential_area_3">জনজাতীয়</string>
     <string name="nhhr_type_residential_area_4">অন্যান্য</string>
-    <string name="nhhr_type_residential_area_5">Tea Garden</string>
+    <string name="nhhr_type_residential_area_5">চাহ বাগিচা</string>
 
     <string-array name="nhhr_type_residential_area_array">
         <item>@string/nhhr_type_residential_area_1</item>

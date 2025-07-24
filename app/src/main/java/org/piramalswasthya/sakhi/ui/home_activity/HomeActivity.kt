@@ -114,23 +114,22 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
     private val langChooseAlert by lazy {
         val currentLanguageIndex = when (pref.getCurrentLanguage()) {
             Languages.ENGLISH -> 0
-            Languages.HINDI -> 1
-            Languages.ASSAMESE -> 2
+            Languages.ASSAMESE -> 1
+         /*   Languages.HINDI -> 2*/
+
         }
         MaterialAlertDialogBuilder(this).setTitle(resources.getString(R.string.choose_application_language))
             .setSingleChoiceItems(
                 arrayOf(
                     resources.getString(R.string.english),
-                    resources.getString(R.string.hindi),
-                    resources.getString(
-                        R.string.assamese
-                    )
+                  /*  resources.getString(R.string.hindi),*/
+                    resources.getString(R.string.assamese)
                 ), currentLanguageIndex
             ) { di, checkedItemIndex ->
                 val checkedLanguage = when (checkedItemIndex) {
                     0 -> Languages.ENGLISH
-                    1 -> Languages.HINDI
-                    2 -> Languages.ASSAMESE
+               /*     2 -> Languages.HINDI*/
+                    1 -> Languages.ASSAMESE
                     else -> throw IllegalStateException("yoohuulanguageindexunkonwn $checkedItemIndex")
                 }
                 if (checkedItemIndex == currentLanguageIndex) {
@@ -280,7 +279,10 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
             val params = Bundle().apply {
                 putString(FirebaseAnalytics.Param.VALUE, "${it.userId}")
             }
+            analyticsHelper.setUserProperty("user_role", "asha")
+            analyticsHelper.setUserProperty("app_version", BuildConfig.VERSION_NAME)
             analyticsHelper.logEvent(FirebaseAnalytics.Event.APP_OPEN, params)
+
         }
 
     }

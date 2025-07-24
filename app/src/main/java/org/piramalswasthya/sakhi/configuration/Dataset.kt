@@ -259,25 +259,29 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
         return if (passedIndex == triggerIndex) {
             if (!list.contains(target)) {
                 val listIndex = list.indexOf(source)
-                list.add(
-                    listIndex + 1, target
-                )
+                val safeIndex = (listIndex + 1).coerceAtMost(list.size)
+                list.add(safeIndex, target)
                 listIndex
-            } else -1
+            } else {
+                -1
+            }
         } else {
-            val anyRemoved = list.remove(
-                target
-            )
+            val anyRemoved = list.remove(target)
             if (anyRemoved) {
                 target.value = null
-                targetSideEffect?.let { sideEffectList ->
-                    list.removeAll(sideEffectList)
-                    sideEffectList.forEach { it.value = null }
+                targetSideEffect?.forEach { element ->
+                    if (list.contains(element)) {
+                        list.remove(element)
+                        element.value = null
+                    }
                 }
                 list.indexOf(source)
-            } else -1
+            } else {
+                -1
+            }
         }
     }
+
 
 
     protected fun triggerforHide(
@@ -422,7 +426,8 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
 
         Calendar.getInstance().apply {
             timeInMillis = lmp
-            add(Calendar.WEEK_OF_YEAR, 42)
+            add(Calendar.DAY_OF_YEAR, 294)
+           // add(Calendar.WEEK_OF_YEAR, 42)
         }.timeInMillis
 
     protected fun getMinFromMaxForLmp(lmp: Long) =

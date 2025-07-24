@@ -1853,8 +1853,8 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
                 gender1.entries!![1] -> Gender.FEMALE
                 else -> null
             }
-            ecr.marriageFirstChildGap =
-                marriageFirstChildGap.value?.takeIf { it.isNotBlank() }?.toInt()
+            ecr.marriageFirstChildGap =marriageFirstChildGap.value?.filter { it.isDigit() }?.toIntOrNull() ?: 0
+              //  marriageFirstChildGap.value?.takeIf { it.isNotBlank() }?.toInt()
             if (noOfLiveChildren.value?.toInt()!! > 1) {
                 ecr.dob2 = getLongFromDate(dob2.value)
                 ecr.age2 = age2.value?.toInt()
@@ -1863,8 +1863,7 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
                     gender2.entries!![1] -> Gender.FEMALE
                     else -> null
                 }
-                ecr.firstAndSecondChildGap =
-                    firstAndSecondChildGap.value?.takeIf { it.isNotBlank() }?.toInt()
+                ecr.firstAndSecondChildGap =firstAndSecondChildGap.value?.filter { it.isDigit() }?.toIntOrNull() ?: 0
             }
             if (noOfLiveChildren.value?.toInt()!! > 2) {
                 ecr.dob3 = getLongFromDate(dob3.value)
@@ -1874,8 +1873,7 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
                     gender3.entries!![1] -> Gender.FEMALE
                     else -> null
                 }
-                ecr.secondAndThirdChildGap =
-                    secondAndThirdChildGap.value?.takeIf { it.isNotBlank() }?.toInt()
+                ecr.secondAndThirdChildGap =secondAndThirdChildGap.value?.filter { it.isDigit() }?.toIntOrNull() ?: 0
             }
             if (noOfLiveChildren.value?.toInt()!! > 3) {
                 ecr.dob4 = getLongFromDate(dob4.value)
@@ -1885,8 +1883,7 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
                     gender4.entries!![1] -> Gender.FEMALE
                     else -> null
                 }
-                ecr.thirdAndFourthChildGap =
-                    thirdAndFourthChildGap.value?.takeIf { it.isNotBlank() }?.toInt()
+                ecr.thirdAndFourthChildGap =thirdAndFourthChildGap.value?.filter { it.isDigit() }?.toIntOrNull() ?: 0
             }
             if (noOfLiveChildren.value?.toInt()!! > 4) {
                 ecr.dob5 = getLongFromDate(dob5.value)
@@ -1896,8 +1893,7 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
                     gender5.entries!![1] -> Gender.FEMALE
                     else -> null
                 }
-                ecr.fourthAndFifthChildGap =
-                    fourthAndFifthChildGap.value?.takeIf { it.isNotBlank() }?.toInt()
+                ecr.fourthAndFifthChildGap =fourthAndFifthChildGap.value?.filter { it.isDigit() }?.toIntOrNull() ?: 0
             }
             if (noOfLiveChildren.value?.toInt()!! > 5) {
                 ecr.dob6 = getLongFromDate(dob6.value)
@@ -1907,8 +1903,7 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
                     gender6.entries!![1] -> Gender.FEMALE
                     else -> null
                 }
-                ecr.fifthANdSixthChildGap =
-                    fifthAndSixthChildGap.value?.takeIf { it.isNotBlank() }?.toInt()
+                ecr.fifthANdSixthChildGap =fifthAndSixthChildGap.value?.filter { it.isDigit() }?.toIntOrNull() ?: 0
             }
             if (noOfLiveChildren.value?.toInt()!! > 6) {
                 ecr.dob7 = getLongFromDate(dob7.value)
@@ -1918,8 +1913,7 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
                     gender7.entries!![1] -> Gender.FEMALE
                     else -> null
                 }
-                ecr.sixthAndSeventhChildGap =
-                    sixthAndSeventhChildGap.value?.takeIf { it.isNotBlank() }?.toInt()
+                ecr.sixthAndSeventhChildGap =sixthAndSeventhChildGap.value?.filter { it.isDigit() }?.toIntOrNull() ?: 0
             }
             if (noOfLiveChildren.value?.toInt()!! > 7) {
                 ecr.dob8 = getLongFromDate(dob8.value)
@@ -1929,8 +1923,7 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
                     gender8.entries!![1] -> Gender.FEMALE
                     else -> null
                 }
-                ecr.seventhAndEighthChildGap =
-                    seventhAndEighthChildGap.value?.takeIf { it.isNotBlank() }?.toInt()
+                ecr.seventhAndEighthChildGap = seventhAndEighthChildGap.value?.filter { it.isDigit() }?.toIntOrNull() ?: 0
             }
             if (noOfLiveChildren.value?.toInt()!! > 8) {
                 ecr.dob9 = getLongFromDate(dob9.value)
@@ -1940,8 +1933,7 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
                     gender9.entries!![1] -> Gender.FEMALE
                     else -> null
                 }
-                ecr.eighthAndNinthChildGap =
-                    eighthAndNinthChildGap.value?.takeIf { it.isNotBlank() }?.toInt()
+                ecr.eighthAndNinthChildGap = eighthAndNinthChildGap.value?.filter { it.isDigit() }?.toIntOrNull() ?: 0
             }
         }
     }
