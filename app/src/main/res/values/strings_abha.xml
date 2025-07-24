@@ -32,6 +32,7 @@
     <string name="abha_id">ABHA ID</string>
     <string name="linked_toO_beneficiary">Linked to Beneficiary</string>
     <string name="linked_to_beneficiary">This ABHA is successfully linked to the record of</string>
+    <string name="not_linked_to_beneficiary">This ABHA No is already linked to some one, please try again using correct Aadhaar No</string>
     <string name="do_you_want_to_download_the_abha_card">Do you want to download the ABHA card?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
@@ -71,6 +72,9 @@
     <string name="str_invalid_ben_name">Please Enter Valid Beneficiary name</string>
     <string name="str_here_abha_no">Here is your ABHA Number!</string>
     <string name="str_abha_already_exist">This ABHA already exists!</string>
+    <string name="abha_already_linked_message">
+    This ABHA No is already linked to someone, please try again using correct Aadhaar No of \n <b>%1$s %2$s</b>
+</string>
     <string name="str_abha_successfully_created">ABHA account successfully created!</string>
     <string name="str_abha_card_downloaded">You can view Abha Card in download folder!!</string>
 

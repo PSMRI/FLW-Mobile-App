@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.helpers.filterBenList
 import org.piramalswasthya.sakhi.model.BenHealthIdDetails
+import org.piramalswasthya.sakhi.repositories.ABHAGenratedRepo
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
 import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_otp.AadhaarOtpFragmentArgs
@@ -20,6 +21,7 @@ import javax.inject.Inject
 class AllBenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     recordsRepo: RecordsRepo,
+    abhaGenratedRepo: ABHAGenratedRepo,
     private val benRepo: BenRepo
 ) : ViewModel() {
 

@@ -511,11 +511,10 @@ class NewBenRegFragment : Fragment() {
 
                 }
 
-                9 -> {
-                    viewModel.getIndexOfMaritalStatus().takeIf { it != -1 }?.let {
-                        notifyItemChanged(it)
-                    }
-                }
+                9 -> notifyDataSetChanged()
+
+                115 -> notifyDataSetChanged()
+
 
                 12 -> notifyDataSetChanged()
 //notifyItemChanged(viewModel.getIndexOfContactNumber())

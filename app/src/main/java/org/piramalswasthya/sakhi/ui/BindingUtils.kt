@@ -178,7 +178,7 @@ fun LinearLayout.showRchIdOrNot(ben: BenBasicDomain?) {
 @BindingAdapter("textBasedOnNumMembers")
 fun TextView.textBasedOnNumMembers(numMembers: Int?) {
     numMembers?.let {
-        text = if (it > 0) "Add Member" else "Add Head of Family"
+        text = if (it > 0) resources.getString(R.string.str_add_member)  else resources.getString(R.string.add_family_member)
     }
 }
 

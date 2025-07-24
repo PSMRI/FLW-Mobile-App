@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.database.room
 
 import android.content.Context
+import android.util.Log
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -11,6 +12,7 @@ import org.piramalswasthya.sakhi.database.converters.LocationEntityListConverter
 import org.piramalswasthya.sakhi.database.converters.SyncStateConverter
 import org.piramalswasthya.sakhi.database.room.dao.AdolescentHealthDao
 import org.piramalswasthya.sakhi.database.room.dao.AesDao
+import org.piramalswasthya.sakhi.database.room.dao.ABHAGenratedDao
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.BeneficiaryIdsAvailDao
 import org.piramalswasthya.sakhi.database.room.dao.CbacDao
@@ -44,6 +46,7 @@ import org.piramalswasthya.sakhi.model.AHDCache
 import org.piramalswasthya.sakhi.model.AESScreeningCache
 import org.piramalswasthya.sakhi.model.AdolescentHealthCache
 
+import org.piramalswasthya.sakhi.model.ABHAModel
 import org.piramalswasthya.sakhi.model.BenBasicCache
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.CDRCache
@@ -133,9 +136,10 @@ import org.piramalswasthya.sakhi.model.VHNDCache
         IRSRoundScreening::class,
         ProfileActivityCache::class,
         AdolescentHealthCache::class,
+        ABHAModel::class,
     ],
     views = [BenBasicCache::class],
-    version = 16, exportSchema = false
+    version = 18, exportSchema = false
 )
 
 @TypeConverters(LocationEntityListConverter::class, SyncStateConverter::class)
@@ -171,6 +175,8 @@ abstract class InAppDb : RoomDatabase() {
     abstract val leprosyDao: LeprosyDao
     abstract val filariaDao: FilariaDao
     abstract val profileDao: ProfileDao
+    abstract val abhaGenratedDao: ABHAGenratedDao
+
     abstract val syncDao: SyncDao
 
     companion object {
@@ -184,6 +190,82 @@ abstract class InAppDb : RoomDatabase() {
                 it.execSQL("alter table BENEFICIARY add column isConsent BOOL")
 
             })
+
+            val MIGRATION_16_18 = object : Migration(16, 18) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    // 1. Create new table with updated schema
+                    database.execSQL("""
+            CREATE TABLE IF NOT EXISTS `ABHA_GENERATED_NEW` (
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                `beneficiaryID` INTEGER NOT NULL,
+                `beneficiaryRegID` INTEGER NOT NULL,
+                `benName` TEXT NOT NULL,
+                `createdBy` TEXT NOT NULL,
+                `message` TEXT NOT NULL,
+                `txnId` TEXT NOT NULL,
+                `benSurname` TEXT,
+                `healthId` TEXT NOT NULL,
+                `healthIdNumber` TEXT NOT NULL,
+                `abhaProfileJson` TEXT NOT NULL,
+                `isNewAbha` INTEGER NOT NULL,
+                `providerServiceMapId` INTEGER NOT NULL,
+                `syncState` INTEGER NOT NULL,
+                FOREIGN KEY(`beneficiaryID`) REFERENCES `BENEFICIARY`(`beneficiaryId`) ON UPDATE CASCADE ON DELETE CASCADE
+            )
+        """.trimIndent())
+                    // 2. Copy existing data into new table (with default/placeholder values for new fields)
+                    try {
+                        database.execSQL("""
+                INSERT INTO ABHA_GENERATED_NEW (
+                    id,
+                    beneficiaryID,
+                    beneficiaryRegID,
+                    benName,
+                    createdBy,
+                    message,
+                    txnId,
+                    benSurname,
+                    healthId,
+                    healthIdNumber,
+                    abhaProfileJson,
+                    isNewAbha,
+                    providerServiceMapId,
+                    syncState
+                )
+                SELECT
+                    id,
+                    benId AS beneficiaryID,
+                    hhId AS beneficiaryRegID,
+                    benName,
+                    '' AS createdBy,
+                    '' AS message,
+                    '' AS txnId,
+                    benSurname,
+                    healthId,
+                    healthIdNumber,
+                    '' AS abhaProfileJson,
+                    isNewAbha,
+                    0,
+                    0
+                FROM ABHA_GENERATED
+            """.trimIndent())
+                    } catch (e: Exception) {
+                        // Table might not exist on some devices — log and continue
+                        Log.w("RoomMigration", "Skipping data copy: ABHA_GENERATED table not found", e)
+                    }
+
+                    // 3. Drop old table
+                    try {
+                        database.execSQL("DROP TABLE IF EXISTS ABHA_GENERATED")
+                    } catch (_: Exception) {}
+
+                    // 4. Rename new table
+                    database.execSQL("ALTER TABLE ABHA_GENERATED_NEW RENAME TO ABHA_GENERATED")
+
+                    // 5. Recreate index
+                    database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_ABHA_GENERATED_beneficiaryID` ON `ABHA_GENERATED` (`beneficiaryID`)")
+                }
+            }
 
             val MIGRATION_15_16 = object : Migration(15, 16) {
                 override fun migrate(db: SupportSQLiteDatabase) {
@@ -302,8 +384,9 @@ abstract class InAppDb : RoomDatabase() {
                     ).addMigrations(
                         MIGRATION_13_14,
                         MIGRATION_14_15,
-                        MIGRATION_15_16
-                        ).build()
+                        MIGRATION_15_16,
+                        MIGRATION_16_18
+                    ).build()
 
                     INSTANCE = instance
                 }

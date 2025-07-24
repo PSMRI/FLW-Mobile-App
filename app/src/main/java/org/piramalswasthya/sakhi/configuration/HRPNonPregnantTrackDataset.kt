@@ -163,7 +163,7 @@ class HRPNonPregnantTrackDataset(
         inputType = InputType.RADIO,
         title = resources.getString(R.string.blood_glucose_test),
         entries = resources.getStringArray(R.array.sugar_test_types),
-        required = false,
+        required = true,
         hasDependants = true
     )
 

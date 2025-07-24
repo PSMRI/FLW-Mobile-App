@@ -36,7 +36,7 @@ class AncVisitAdapter(private val clickListener: AncVisitClickListener, private 
         }
 
         fun bind(
-            item: AncStatus, clickListener: AncVisitClickListener, pref: PreferenceDao?
+            item: AncStatus, clickListener: AncVisitClickListener, pref: PreferenceDao?, isLastItem: Boolean
         ) {
 
             if (pref?.getLoggedInUser()?.role.equals("asha", true)) {
@@ -49,6 +49,10 @@ class AncVisitAdapter(private val clickListener: AncVisitClickListener, private 
             binding.clickListener = clickListener
             binding.executePendingBindings()
 
+            binding.btnView.setOnClickListener {
+                clickListener.onClickedVisit(item, isLastItem)
+            }
+
         }
     }
 
@@ -57,16 +61,16 @@ class AncVisitAdapter(private val clickListener: AncVisitClickListener, private 
     ) = AncViewHolder.from(parent)
 
     override fun onBindViewHolder(holder: AncViewHolder, position: Int) {
-        holder.bind(getItem(position), clickListener, pref)
+        val isLastItem = position == itemCount - 1
+        holder.bind(getItem(position), clickListener, pref, isLastItem)
     }
 
 
     class AncVisitClickListener(
-        private val clickedForm: (benId: Long, visitNumber: Int) -> Unit,
-
+        private val clickedForm: (benId: Long, visitNumber: Int, isLast: Boolean) -> Unit
         ) {
-        fun onClickedVisit(item: AncStatus) = clickedForm(
-            item.benId, item.visitNumber
+        fun onClickedVisit(item: AncStatus, isLast: Boolean) = clickedForm(
+            item.benId, item.visitNumber, isLast
         )
     }
 
