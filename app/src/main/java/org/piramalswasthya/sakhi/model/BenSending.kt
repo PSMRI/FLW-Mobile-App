@@ -17,6 +17,34 @@ data class BeneficiaryDataSending(
     @Json(name = "benImage")
     val benImage: String,
 
+    @Json(name = "isDeath")
+    val isDeath: Boolean,
+
+    @Json(name = "isDeathValue")
+    val isDeathValue: String,
+
+    @Json(name = "dateOfDeath")
+    val dateOfDeath: String,
+
+    @Json(name = "timeOfDeath")
+    val timeOfDeath: String,
+
+    @Json(name = "reasonOfDeath")
+    val reasonOfDeath: String,
+
+    @Json(name = "reasonOfDeathId")
+    val reasonOfDeathId: Int,
+
+    @Json(name = "placeOfDeath")
+    val placeOfDeath: String,
+
+    @Json(name = "placeOfDeathId")
+    val placeOfDeathId: Int,
+
+    @Json(name = "otherPlaceOfDeath")
+    val otherPlaceOfDeath: String,
+
+
     @Json(name = "benPhoneMaps")
     val benPhoneMaps: Array<BenPhoneMaps>,
 
@@ -227,6 +255,17 @@ fun BenRegCache.asNetworkSendingModel(
     val isKid = (ageUnit != null && (ageUnit != AgeUnit.YEARS || age < 15))
 
     return BeneficiaryDataSending(
+
+        isDeath=isDeath,
+        isDeathValue=isDeathValue?: "",
+        dateOfDeath=dateOfDeath?: "",
+        timeOfDeath=timeOfDeath?: "",
+        reasonOfDeath=reasonOfDeath?: "",
+        reasonOfDeathId=reasonOfDeathId?: 0,
+        placeOfDeath=placeOfDeath?: "",
+        placeOfDeathId=placeOfDeathId?: 0,
+        otherPlaceOfDeath=otherPlaceOfDeath?: "",
+
         benImage = ImageUtils.getEncodedStringForBenImage(context, beneficiaryId)
             ?: "", //Base64.encodeToString(userImageBlob, Base64.DEFAULT),
         firstName = firstName!!,
