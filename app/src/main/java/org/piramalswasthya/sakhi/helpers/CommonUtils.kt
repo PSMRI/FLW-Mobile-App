@@ -50,7 +50,7 @@ fun filterBenList(
 ) =
     if (rchPresent) {
         list.filter {
-            it.rchId.takeIf { it1 -> it1.isDigitsOnly() }?.contains("") ?: false
+            it.rchId.takeIf { it1 -> it1.toString().isDigitsOnly() }?.contains("") ?: false
         }
     } else {
         list
@@ -178,7 +178,7 @@ fun filterPwrRegistrationList(
     if (rchPresent) {
         list.filter {
 //            it.ben.rchId.isNotEmpty()
-            it.ben.rchId.takeIf { it1 -> it1.isDigitsOnly() }?.contains("") ?: false
+            it.ben.rchId.takeIf { it1 -> it1.toString().isDigitsOnly() }?.contains("") ?: false
         }
     } else {
         list
@@ -287,7 +287,7 @@ fun filterMalariaConfirmedList(
                 it.ben.benId.toString().lowercase().contains(filterText) ||
                 it.ben.mobileNo.lowercase().contains(filterText) ||
                 it.ben.gender.lowercase().contains(filterText) ||
-                it.ben.rchId.takeIf { it1 -> it1.isDigitsOnly() }?.contains(filterText) ?: false
+                it.ben.rchId.takeIf { it1 -> it1.toString().isDigitsOnly() }?.contains(filterText) ?: false
     }
 
 @JvmName("filterBenList1")

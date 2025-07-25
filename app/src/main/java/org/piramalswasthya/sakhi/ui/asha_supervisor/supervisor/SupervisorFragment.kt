@@ -27,7 +27,6 @@ import org.piramalswasthya.sakhi.databinding.FragmentSupervisorBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.Languages.ASSAMESE
 import org.piramalswasthya.sakhi.helpers.Languages.ENGLISH
-import org.piramalswasthya.sakhi.helpers.Languages.HINDI
 import org.piramalswasthya.sakhi.helpers.getDateString
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.home_activity.home.EnableDevModeBottomSheetFragment
@@ -279,7 +278,7 @@ class SupervisorFragment : Fragment() {
                 homeActivity.updateActionBar(
                     R.drawable.ic_home, when (viewModel.currentLanguage) {
                         ENGLISH -> it.name
-                        HINDI -> it.nameHindi ?: it.name
+//                        HINDI -> it.nameHindi ?: it.name
                         ASSAMESE -> it.nameAssamese ?: it.name
                     }
                 )

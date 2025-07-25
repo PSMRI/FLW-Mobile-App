@@ -17,7 +17,6 @@ import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.Languages.ASSAMESE
 import org.piramalswasthya.sakhi.helpers.Languages.ENGLISH
-import org.piramalswasthya.sakhi.helpers.Languages.HINDI
 import org.piramalswasthya.sakhi.helpers.setToStartOfTheDay
 import org.piramalswasthya.sakhi.model.LocationEntity
 import org.piramalswasthya.sakhi.model.LocationRecord
@@ -104,7 +103,7 @@ class SupervisorViewModel @Inject constructor(
     val selectedVillageName: String?
         get() = when (pref.getCurrentLanguage()) {
             ENGLISH -> selectedVillage?.name
-            HINDI -> selectedVillage?.nameHindi ?: selectedVillage?.name
+//            HINDI -> selectedVillage?.nameHindi ?: selectedVillage?.name
             ASSAMESE -> selectedVillage?.nameAssamese ?: selectedVillage?.name
         }
 
@@ -141,10 +140,10 @@ class SupervisorViewModel @Inject constructor(
 
                     }
 
-                    HINDI -> {
-                        villageDropdownEntries =
-                            user.villages.map { it.nameHindi ?: it.name }.toTypedArray()
-                    }
+//                    HINDI -> {
+//                        villageDropdownEntries =
+//                            user.villages.map { it.nameHindi ?: it.name }.toTypedArray()
+//                    }
 
                     ASSAMESE -> {
                         villageDropdownEntries =

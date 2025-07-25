@@ -92,7 +92,7 @@ class SupervisorActivity : AppCompatActivity() {
     private val langChooseAlert by lazy {
         val currentLanguageIndex = when (pref.getCurrentLanguage()) {
             Languages.ENGLISH -> 0
-            Languages.HINDI -> 1
+//            Languages.HINDI -> 1
             Languages.ASSAMESE -> 2
         }
         MaterialAlertDialogBuilder(this).setTitle(resources.getString(R.string.choose_application_language))
@@ -107,7 +107,7 @@ class SupervisorActivity : AppCompatActivity() {
             ) { di, checkedItemIndex ->
                 val checkedLanguage = when (checkedItemIndex) {
                     0 -> Languages.ENGLISH
-                    1 -> Languages.HINDI
+//                    1 -> Languages.HINDI
                     2 -> Languages.ASSAMESE
                     else -> throw IllegalStateException("yoohuulanguageindexunkonwn $checkedItemIndex")
                 }
