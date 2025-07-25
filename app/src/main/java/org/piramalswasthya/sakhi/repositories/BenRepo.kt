@@ -557,6 +557,16 @@ class BenRepo @Inject constructor(
                             BenRegCache(
                                 householdId = jsonObject.getLong("houseoldId"),
                                 beneficiaryId = jsonObject.getLong("benficieryid"),
+                                isDeath  = jsonObject.getBoolean("isDeath"),
+                                isDeathValue  = jsonObject.getString("isDeathValue"),
+                                dateOfDeath  = jsonObject.getString("dateOfDeath"),
+                                timeOfDeath  = jsonObject.getString("timeOfDeath"),
+                                reasonOfDeath  = jsonObject.getString("reasonOfDeath"),
+                                reasonOfDeathId  = jsonObject.getInt("reasonOfDeathId"),
+                                placeOfDeath  = jsonObject.getString("placeOfDeath"),
+                                placeOfDeathId  = jsonObject.getInt("placeOfDeathId"),
+                                otherPlaceOfDeath  = jsonObject.getString("otherPlaceOfDeath"),
+
                                 ashaId = jsonObject.getInt("ashaId"),
                                 benRegId = jsonObject.getLong("BenRegId"),
                                 isNewAbha = if (abhaHealthDetailsObj.has("isNewAbha")) abhaHealthDetailsObj.getBoolean("isNewAbha") else false,
@@ -978,7 +988,8 @@ class BenRepo @Inject constructor(
 
                                 }else null,
                                 syncState = SyncState.SYNCED,
-                                isDraft = false
+                                isDraft = false,
+
                             )
                         )
 

@@ -101,7 +101,7 @@ import org.piramalswasthya.sakhi.model.Vaccine
         ABHAModel::class,
     ],
     views = [BenBasicCache::class],
-    version = 18, exportSchema = false
+    version = 19, exportSchema = false
 )
 
 @TypeConverters(LocationEntityListConverter::class, SyncStateConverter::class)
@@ -142,6 +142,51 @@ abstract class InAppDb : RoomDatabase() {
             val MIGRATION_1_2 = Migration(1, 2, migrate = {
 //                it.execSQL("select count(*) from beneficiary")
             })
+                val MIGRATION_18_19 = object : Migration(18, 19) {
+                    override fun migrate(database: SupportSQLiteDatabase) {
+                        val columns = listOf(
+                            "isDeath INTEGER",
+                            "isDeathValue TEXT",
+                            "dateOfDeath TEXT",
+                            "timeOfDeath TEXT",
+                            "reasonOfDeath TEXT",
+                            "reasonOfDeathId INTEGER",
+                            "placeOfDeath TEXT",
+                            "placeOfDeathId INTEGER",
+                            "otherPlaceOfDeath TEXT"
+                        )
+
+                        for (column in columns) {
+                            database.execSQL("ALTER TABLE BENEFICIARY ADD COLUMN $column")
+                        }
+
+
+
+                        // 🔹 Columns for PREGNANCY_ANC table
+                        val pregnancyAncColumns = listOf(
+                            "serialNo TEXT",
+                            "methodOfTermination TEXT",
+                            "methodOfTerminationId INTEGER DEFAULT 0 NOT NULL",
+                            "terminationDoneBy TEXT",
+                            "terminationDoneById INTEGER DEFAULT 0 NOT NULL",
+                            "isPaiucdId INTEGER DEFAULT 0 NOT NULL",
+                            "isPaiucd TEXT",
+                            "remarks TEXT",
+                            "abortionImg1 TEXT",
+                            "abortionImg2 TEXT",
+                            "placeOfDeath TEXT",
+                            "placeOfDeathId INTEGER DEFAULT 0 NOT NULL",
+                            "otherPlaceOfDeath TEXT"
+                        )
+
+                        for (column in pregnancyAncColumns) {
+                            database.execSQL("ALTER TABLE PREGNANCY_ANC ADD COLUMN $column")
+                        }
+
+                    }
+                }
+
+
 
             val MIGRATION_16_18 = object : Migration(16, 18) {
                 override fun migrate(database: SupportSQLiteDatabase) {
@@ -337,7 +382,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_13_14,
                         MIGRATION_14_15,
                         MIGRATION_15_16,
-                        MIGRATION_16_18
+                        MIGRATION_16_18,
+                        MIGRATION_18_19
                     ).build()
 
                     INSTANCE = instance

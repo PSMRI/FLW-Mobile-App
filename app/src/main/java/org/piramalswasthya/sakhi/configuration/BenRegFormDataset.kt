@@ -3,8 +3,10 @@ package org.piramalswasthya.sakhi.configuration
 import android.content.Context
 import android.net.Uri
 import android.text.InputType
+import android.util.Log
 import android.util.Range
 import android.widget.LinearLayout
+import android.widget.Toast
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.Languages
@@ -13,6 +15,7 @@ import org.piramalswasthya.sakhi.model.AgeUnit
 import org.piramalswasthya.sakhi.model.BenBasicCache.Companion.getAgeFromDob
 import org.piramalswasthya.sakhi.model.BenBasicCache.Companion.getYearsFromDate
 import org.piramalswasthya.sakhi.model.BenRegCache
+import org.piramalswasthya.sakhi.model.BenStatus
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.Gender.FEMALE
@@ -64,6 +67,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             cal.add(Calendar.YEAR, -1 * Konstants.maxAgeForGenBen)
             return cal.timeInMillis
         }
+
+
 
         private fun getHoFMinDobMillis(): Long {
             val cal = Calendar.getInstance()
@@ -446,6 +451,39 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         this.familyHeadPhoneNo = familyHeadPhoneNo?.toString()
 
         ben?.takeIf { !it.isDraft }?.let { saved ->
+
+            if(ben.isDeath)
+            {
+
+                list.add(list.indexOf(lastName) + 1 ,beneficiaryStatus)
+                if(saved.isDeath)
+                {
+                    list.add(list.indexOf(beneficiaryStatus) + 1 ,dateOfDeath)
+                    list.add(list.indexOf(dateOfDeath) + 1 ,timeOfDeath)
+                    list.add(list.indexOf(timeOfDeath) + 1 ,reasonOfDeath)
+                    list.add(list.indexOf(reasonOfDeath) + 1 ,placeOfDeath)
+                    placeOfDeath.entries?.indexOf(saved.placeOfDeath)?.takeIf { it >= 0 }?.let { index ->
+                        if (index == 8) {
+                            list.add(list.indexOf(placeOfDeath) + 1, otherPlaceOfDeath)
+                        }
+                    }
+
+
+                }
+
+                beneficiaryStatus.value = when (saved.isDeath) {
+                    true -> BenStatus.Death.name
+                    false -> BenStatus.Alive.name
+                    null -> null
+                }
+                dateOfDeath.value=saved.dateOfDeath
+                timeOfDeath.value=saved.timeOfDeath
+                reasonOfDeath.value=saved.reasonOfDeath
+                placeOfDeath.value=saved.placeOfDeath
+                otherPlaceOfDeath.value=saved.otherPlaceOfDeath
+
+            }
+
             pic.value = saved.userImage
             dateOfReg.value = getDateFromLong(saved.regDate)
             firstName.value = saved.firstName
@@ -575,6 +613,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             list.add(schoolIndex + 1, typeOfSchool)
         }
 
+
         birthCertificateNumber.value = ben?.kidDetails?.birthCertificateNumber
         placeOfBirth.value = ben?.kidDetails?.birthPlaceId?.let { placeOfBirth.getStringFromPosition(it) }
 
@@ -641,6 +680,35 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         agePopup.min = getHoFMinDobMillis()
         agePopup.max = getHofMaxDobMillis()
         ben?.takeIf { !it.isDraft }?.let { saved ->
+            list.add(list.indexOf(lastName) + 1 ,beneficiaryStatus)
+            if(saved.isDeath)
+            {
+                list.add(list.indexOf(beneficiaryStatus) + 1 ,dateOfDeath)
+                list.add(list.indexOf(dateOfDeath) + 1 ,timeOfDeath)
+                list.add(list.indexOf(timeOfDeath) + 1 ,reasonOfDeath)
+                list.add(list.indexOf(reasonOfDeath) + 1 ,placeOfDeath)
+                placeOfDeath.entries?.indexOf(saved.placeOfDeath)?.takeIf { it >= 0 }?.let { index ->
+                    if (index == 8) {
+                        list.add(list.indexOf(placeOfDeath) + 1, otherPlaceOfDeath)
+                    }
+                }
+
+
+            }
+
+            beneficiaryStatus.value = when (saved.isDeath) {
+                true -> BenStatus.Death.name
+                false -> BenStatus.Alive.name
+                null -> null
+            }
+            dateOfDeath.value=saved.dateOfDeath
+            timeOfDeath.value=saved.timeOfDeath
+            reasonOfDeath.value=saved.reasonOfDeath
+            placeOfDeath.value=saved.placeOfDeath
+            otherPlaceOfDeath.value=saved.otherPlaceOfDeath
+
+
+
             pic.value = saved.userImage
             dateOfReg.value = getDateFromLong(saved.regDate)
             firstName.value = saved.firstName
@@ -792,6 +860,34 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
 
         ben?.takeIf { !it.isDraft }?.let { saved ->
+            list.add(list.indexOf(lastName) + 1 ,beneficiaryStatus)
+
+            if(saved.isDeath)
+            {
+                list.add(list.indexOf(beneficiaryStatus) + 1 ,dateOfDeath)
+                list.add(list.indexOf(dateOfDeath) + 1 ,timeOfDeath)
+                list.add(list.indexOf(timeOfDeath) + 1 ,reasonOfDeath)
+                list.add(list.indexOf(reasonOfDeath) + 1 ,placeOfDeath)
+                placeOfDeath.entries?.indexOf(saved.placeOfDeath)?.takeIf { it >= 0 }?.let { index ->
+                    if (index == 8) {
+                        list.add(list.indexOf(placeOfDeath) + 1, otherPlaceOfDeath)
+                    }
+                }
+
+
+            }
+
+            beneficiaryStatus.value = when (saved.isDeath) {
+                true -> BenStatus.Death.name
+                false -> BenStatus.Alive.name
+                null -> null
+            }
+            dateOfDeath.value=saved.dateOfDeath
+            timeOfDeath.value=saved.timeOfDeath
+            reasonOfDeath.value=saved.reasonOfDeath
+            placeOfDeath.value=saved.placeOfDeath
+            otherPlaceOfDeath.value=saved.otherPlaceOfDeath
+
             handleForAgeDob(formId = agePopup.id)
             pic.value = saved.userImage
             dateOfReg.value = getDateFromLong(saved.regDate)
@@ -1268,6 +1364,60 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         etInputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL,
         etMaxLength = 4
     )
+    private val beneficiaryStatus = FormElement(
+        id = 50,
+        inputType = RADIO,
+        title = context.getString(R.string.beneficiary_status),
+        arrayId = R.array.beneficiary_status,
+        entries = resources.getStringArray(R.array.beneficiary_status),
+        required = false,
+        hasDependants = true,
+    )
+
+    private val dateOfDeath = FormElement(
+        id = 51,
+        inputType = DATE_PICKER,
+        title = context.getString(R.string.date_of_death),
+        max = System.currentTimeMillis(),
+        required = true,
+    )
+
+    private val timeOfDeath = FormElement(
+        id = 52,
+        inputType = org.piramalswasthya.sakhi.model.InputType.TIME_PICKER,
+        title = context.getString(R.string.time_of_death),
+        required = false,
+    )
+
+    private val reasonOfDeath = FormElement(
+        id = 53,
+        inputType = DROPDOWN,
+        title = context.getString(R.string.reason_for_death),
+        arrayId = R.array.reason_of_death_array,
+        entries = resources.getStringArray(R.array.reason_of_death_array),
+        required = true
+    )
+
+
+    private val placeOfDeath = FormElement(
+        id = 54,
+        inputType = DROPDOWN,
+        title = context.getString(R.string.place_of_death),
+        arrayId = R.array.death_place_array,
+        entries = resources.getStringArray(R.array.death_place_array),
+        required = true,
+    )
+
+    private val otherPlaceOfDeath = FormElement(
+        id = 55,
+        inputType = EDIT_TEXT,
+        title = context.getString(R.string.other_place_of_death),
+        required = true,
+        hasDependants = true,
+    )
+
+
+
 
     private val deathRemoveList by lazy {
         listOf(
@@ -1367,9 +1517,49 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
         return when (formId) {
+
+
             firstName.id -> {
                 validateEmptyOnEditText(firstName)
                 validateAllCapsOrSpaceOnEditTextWithHindiEnabled(firstName)
+            }
+            beneficiaryStatus.id -> {
+                val isDeath = beneficiaryStatus.value == BenStatus.Death.name
+
+                if (isDeath) {
+                  dateOfDeath.min= getMinDateFromRegistration(dateOfReg.value!!)
+                    val gender = gender.value
+                    val age = agePopup.value
+                    val showMaternal = shouldShowMaternalDeath(gender, age)
+                    reasonOfDeath.entries = if (showMaternal) {
+                        resources.getStringArray(R.array.reason_of_death_array_with_maternal)
+                    } else {
+                        resources.getStringArray(R.array.reason_of_death_array)
+                    }
+                }
+
+                return triggerDependants(
+                    source = beneficiaryStatus,
+                    passedIndex = if (isDeath) 1 else 0,
+                    triggerIndex = 1,
+                    target = if (isDeath) {
+                        listOf(dateOfDeath,timeOfDeath, reasonOfDeath, placeOfDeath)
+                    } else {
+                        listOf(dateOfDeath, timeOfDeath,reasonOfDeath, placeOfDeath, otherPlaceOfDeath)
+                    }
+                )
+            }
+
+
+            placeOfDeath.id -> {
+                val index = placeOfDeath.entries?.indexOf(placeOfDeath.value).takeIf { it!! >= 0 } ?: return -1
+                val triggerIndex = 8
+                return triggerDependants(
+                    source = placeOfDeath,
+                    passedIndex = index,
+                    triggerIndex = triggerIndex,
+                    target = otherPlaceOfDeath
+                )
             }
 
             lastName.id -> {
@@ -1816,6 +2006,17 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as BenRegCache).let { ben ->
             // Page 001
+            ben.isDeathValue=beneficiaryStatus.value
+            ben.isDeath = beneficiaryStatus.entries?.indexOf(beneficiaryStatus.value ?: "") == 1
+            ben.dateOfDeath=dateOfDeath.value
+            ben.timeOfDeath=timeOfDeath.value
+            ben.reasonOfDeath=reasonOfDeath.value
+            ben.reasonOfDeathId = reasonOfDeath.entries?.indexOf(reasonOfDeath.value ?: "")?.takeIf { it != -1 } ?: -1
+            ben.placeOfDeath=placeOfDeath.value
+            ben.placeOfDeathId = placeOfDeath.entries?.indexOf(placeOfDeath.value ?: "")?.takeIf { it != -1 } ?: -1
+            ben.otherPlaceOfDeath=otherPlaceOfDeath.value
+
+
             ben.userImage = pic.value
             ben.regDate = getLongFromDate(dateOfReg.value!!)
             ben.firstName = firstName.value
@@ -2056,6 +2257,33 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     agePopup.min = yearsAgo(100)
                 }
             }
+        }
+    }
+    private fun shouldShowMaternalDeath(gender: String?, dob: String?): Boolean {
+        Log.v("valuesOfData","dob:$dob")
+
+        if (gender != "Female") return false
+        val age = dob?.let { dobString ->
+            val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+            try {
+                val date = sdf.parse(dobString)
+                val dobInMillis = date?.time ?: return false
+                getAgeFromDob(dobInMillis)
+            } catch (e: Exception) {
+                return false
+            }
+        } ?: return false
+        return age in 15..49
+    }
+
+    private fun getMinDateFromRegistration(registrationDate: String): Long {
+        return try {
+
+            val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.US)
+            val date = sdf.parse(registrationDate)
+            date?.time ?: 0L
+        } catch (e: Exception) {
+            0L
         }
     }
 

@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -48,6 +49,8 @@ class BenListAdapter(
             showRegistrationDate: Boolean,
             showBeneficiaries: Boolean, role: Int?
         ) {
+            Log.v("IsvisibleOfDeat","Death: ${item.isDeath}")
+//            if(item.isDeath)View.VISIBLE else View.GONE
             if (!showSyncIcon) item.syncState = null
             binding.ben = item
             binding.clickListener = clickListener

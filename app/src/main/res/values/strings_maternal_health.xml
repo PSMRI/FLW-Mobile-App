@@ -113,7 +113,26 @@
     <string-array name="anc_abortion_type_array">
         <item>Induced</item>
         <item>Spontaneous</item>
+        <item>Incomplete</item>
     </string-array>
+
+    <string-array name="anc_termination_done_by">
+        <item>Doctor</item>
+        <item>Nurse</item>
+    </string-array>
+    <string-array name="anc_is_paiucd">
+        <item>Doctor</item>
+        <item>Nurse</item>
+    </string-array>
+
+    <string-array name="anc_method_of_termination">
+        <item>MVA</item>
+        <item>EVA</item>
+        <item>MMA</item>
+        <item>Others</item>
+
+    </string-array>
+
     <string-array name="anc_abortion_facility_array">
         <item>Govt. Hospital</item>
         <item>Pvt. Hospital</item>

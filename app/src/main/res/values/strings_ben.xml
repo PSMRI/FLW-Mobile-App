@@ -24,6 +24,8 @@
     <string name="nbr_dob">Date of Birth</string>
     <string name="nbr_gender">Gender</string>
     <string name="nbr_image">Photo</string>
+    <string name="nbr_abortion_image">Abortion Discharge</string>
+    <string name="nbr_image_cam_gal">Tap to use camera/Gallery</string>
     <string name="nbr_image_sub">Tap to use camera</string>
     <string name="nbr_dor">Date of Registration</string>
     <string name="nbr_nb_first_name">First Name</string>
@@ -49,6 +51,7 @@
     <string name="frag_new_ben_reg_type_title">Beneficiary Type for Registration</string>
     <string name="consent_text">Consent:\nI have been explained by the ASHA, the purpose for which the information and measurement findings is being collected from me, in a language I understand and I give my consent to collect the information and measurement findings on my personal health profile.</string>
     <string name="disagree">DISAGREE</string>
+    <string name="other_place_of_death">Other Place of Death</string>
     <string name="agree">AGREE</string>
     <string-array name="nbr_gender_array">
         <item name="nbr_gender_1">Male</item>
@@ -220,4 +223,50 @@
     <string-array name="yes">
         <item>Yes</item>
     </string-array>
+
+    <string-array name="death_reason_array">
+        <item>Maternal Death</item>
+        <item>Natural Death</item>
+        <item>Accident</item>
+        <item>Infectious Disease</item>
+        <item>Animal Bite Death</item>
+        <item>Suicide</item>
+        <item>Undetermined</item>
+    </string-array>
+    <string-array name="death_place_array">
+        <item>Home</item>
+        <item>Subcenter</item>
+        <item>PHC</item>
+        <item>CHC</item>
+        <item>District Hospital</item>
+        <item>Medical College Hospital</item>
+        <item>Private Hospital</item>
+        <item>In Transit</item>
+        <item>Other Place of Death</item>
+    </string-array>
+    <string-array name="reason_of_death_array">
+        <item>Natural Death</item>
+        <item>Accident</item>
+        <item>Infectious Disease</item>
+        <item>Animal Bite Death</item>
+        <item>Suicide</item>
+        <item>Undetermined</item>
+    </string-array>
+    <string-array name="reason_of_death_array_with_maternal">
+        <item>Natural Death</item>
+        <item>Accident</item>
+        <item>Infectious Disease</item>
+        <item>Animal Bite Death</item>
+        <item>Suicide</item>
+        <item>Undetermined</item>
+        <item>Maternal Death</item>
+
+    </string-array>
+
+    <string-array name="beneficiary_status">
+        <item>Alive</item>
+        <item>Death</item>
+    </string-array>
+
+
 </resources>
