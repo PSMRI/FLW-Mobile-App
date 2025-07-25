@@ -1,23 +1,40 @@
 package org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.form
 
+import android.Manifest
+import android.content.ContentValues
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.LocationManager
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapterWithBgIcon
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
+import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.form.PwAncFormViewModel.State
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
+import java.io.File
 
 @AndroidEntryPoint
 class PwAncFormFragment : Fragment() {
@@ -26,6 +43,35 @@ class PwAncFormFragment : Fragment() {
     private val binding: FragmentNewFormBinding
         get() = _binding!!
 
+
+    private val takePictureLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+        if (success) {
+            latestTmpUri?.let { uri ->
+                val resolver = requireContext().contentResolver
+
+                // ✅ Clear IS_PENDING
+                val values = ContentValues().apply {
+                    put(MediaStore.Images.Media.IS_PENDING, 0)
+                }
+                resolver.update(uri, values, null, null)
+
+                // ✅ Now it's safe to access the image
+                handleSelectedImage(uri)
+            }
+        } else {
+            latestTmpUri = null // Clean up
+        }
+    }
+
+    private val pickFromGalleryLauncher =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            uri?.let {
+                handleSelectedImage(it)
+            }
+        }
+
+
+    private var latestTmpUri: Uri? = null
     private val viewModel: PwAncFormViewModel by viewModels()
 
     override fun onCreateView(
@@ -42,6 +88,10 @@ class PwAncFormFragment : Fragment() {
             notIt?.let { recordExists ->
                 binding.btnSubmit.visibility = if (recordExists) View.GONE else View.VISIBLE
                 val adapter = FormInputAdapterWithBgIcon(
+                    imageClickListener = FormInputAdapterWithBgIcon.ImageClickListener {
+                        viewModel.setCurrentImageFormId(it)
+                        takeImage()
+                    },
                     formValueListener = FormInputAdapterWithBgIcon.FormValueListener { formId, index ->
                         viewModel.updateListOnValueChanged(formId, index)
                         hardCodedListUpdate(formId)
@@ -125,6 +175,49 @@ class PwAncFormFragment : Fragment() {
             false
         }
     }
+    private fun takeImage() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Select Image")
+            .setItems(arrayOf("Camera", "Gallery")) { _, which ->
+                when (which) {
+                    0 -> {
+                        lifecycleScope.launchWhenStarted {
+                            getTmpFileUri().let { uri ->
+                                latestTmpUri = uri
+                                takePictureLauncher.launch(uri)
+                            }
+                        }
+                    }
+
+                    1 -> {
+                        pickFromGalleryLauncher.launch("image/*")
+                    }
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+    private  fun getTmpFileUri(): Uri {
+        val filename = "tmp_image_file_${System.currentTimeMillis()}.jpg"
+        val contentValues = ContentValues().apply {
+            put(MediaStore.Images.Media.DISPLAY_NAME, filename)
+            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+            put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/Saksham")
+        }
+
+        val resolver = requireContext().contentResolver
+        val collection = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+
+        val uri = resolver.insert(collection, contentValues)
+            ?: throw IllegalStateException("Failed to create new MediaStore record.")
+
+        resolver.openOutputStream(uri)?.use {
+            it.write(byteArrayOf(0xFF.toByte(), 0xD8.toByte(), 0xFF.toByte())) // JPEG header
+        }
+
+        return uri
+    }
+
 
 
     private fun hardCodedListUpdate(formId: Int) {
@@ -162,5 +255,19 @@ class PwAncFormFragment : Fragment() {
         super.onDestroy()
         _binding = null
     }
+
+    private fun handleSelectedImage(uri: Uri) {
+        try {
+            viewModel.setImageUriToFormElement(uri)
+            binding.form.rvInputForm.post {
+                binding.form.rvInputForm.adapter?.notifyDataSetChanged()
+            }
+            Timber.d("Image selected: $uri")
+        } catch (e: Exception) {
+            Timber.e("Error setting image: ${e.message}")
+            Toast.makeText(requireContext(), "Failed to set image", Toast.LENGTH_SHORT).show()
+        }
+    }
+
 
 }
