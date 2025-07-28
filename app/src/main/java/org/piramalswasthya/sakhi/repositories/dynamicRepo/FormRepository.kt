@@ -129,6 +129,7 @@ class FormRepository @Inject constructor(
                     benId = benId,
                     hhId = hhId,
                     visitDay = visitDay,
+                    visitDate = visitDate,
                     formId = HBNC_FORM_ID,
                     version = 1,
                     formDataJson = fullJson.toString(),

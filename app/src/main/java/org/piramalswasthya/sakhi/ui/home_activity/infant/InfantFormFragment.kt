@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.ui.home_activity.infant
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +21,7 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.dynamicAdapter.VisitCardAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentInfantFormBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.home_activity.child_care.infant_list.InfantListViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.infant.hbnc.HBNCFormViewModel
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.HBNC_FORM_ID
 import org.piramalswasthya.sakhi.work.dynamicWoker.FormSyncWorker
@@ -31,6 +33,8 @@ class InfantFormFragment : Fragment() {
     private val binding get() = _binding!!
     private val args: InfantFormFragmentArgs by navArgs()
     private val viewModel: HBNCFormViewModel by viewModels()
+    var dob=0L
+    private val infantListViewModel: InfantListViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -64,11 +68,15 @@ class InfantFormFragment : Fragment() {
                 }
             }
         }
-
+        infantListViewModel.getDobByBenIdAsync(benId) { dobMillis ->
+            if (dobMillis != null) {
+                dob=dobMillis
+            }
+        }
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.syncedVisitList.collectLatest {
-                    val cards = viewModel.getVisitCardList()
+                    val cards = viewModel.getVisitCardList(dob)
 
                     binding.recyclerVisitCards.layoutManager =
                         GridLayoutManager(requireContext(), 3)

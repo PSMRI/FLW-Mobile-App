@@ -21,6 +21,16 @@ class InfantListViewModel @Inject constructor(
         filterBenList(list, filter)
     }
 
+    fun getDobByBenIdAsync(benId: Long, onResult: (Long?) -> Unit) {
+        viewModelScope.launch {
+            allBenList.collect { list ->
+                val dob = list.find { it.benId == benId }?.dob
+                onResult(dob)
+                return@collect
+            }
+        }
+    }
+
     fun filterText(text: String) {
         viewModelScope.launch {
             filter.emit(text)

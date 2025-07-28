@@ -58,11 +58,27 @@ object FieldValidator {
                     else -> rules.maxDate?.let { runCatching { sdf.parse(it) }.getOrNull() }
                 }
 
-                if (minDate != null && valueDate.before(minDate))
-                    return ValidationResult(false, "${field.label} cannot be before ${rules.minDate}")
+//                if (minDate != null && valueDate.before(minDate))
+//                    return ValidationResult(false, "${field.label} cannot be before ${rules.minDate}")
+//
+//                if (maxDate != null && valueDate.after(maxDate))
+//                    return ValidationResult(false, "${field.label} cannot be after ${rules.maxDate}")
 
-                if (maxDate != null && valueDate.after(maxDate))
-                    return ValidationResult(false, "${field.label} cannot be after ${rules.maxDate}")
+                if (minDate != null && valueDate.before(minDate)) {
+                    return ValidationResult(
+                        false,
+                        if (field.fieldId == "due_date") "${field.label} cannot be before Date of Delivery"
+                        else "${field.label} cannot be before ${rules.minDate}"
+                    )
+                }
+
+                if (maxDate != null && valueDate.after(maxDate)) {
+                    return ValidationResult(
+                        false,
+                        if (field.fieldId == "due_date") "${field.label} cannot be after today"
+                        else "${field.label} cannot be after ${rules.maxDate}"
+                    )
+                }
 
                 ValidationResult(true)
             }

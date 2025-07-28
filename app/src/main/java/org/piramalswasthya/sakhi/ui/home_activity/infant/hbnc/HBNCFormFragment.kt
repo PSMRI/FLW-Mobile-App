@@ -6,6 +6,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
@@ -23,6 +24,7 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.dynamicAdapter.FormRendererAdapter
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.home_activity.child_care.infant_list.InfantListViewModel
 import org.piramalswasthya.sakhi.utils.dynamicFiledValidator.FieldValidator
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.HBNC_FORM_ID
 import java.text.SimpleDateFormat
@@ -36,13 +38,14 @@ class HBNCFormFragment : Fragment() {
     private lateinit var saveButton: Button
 
     val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-    val dob = dateFormat.format(Date())
+//    val dob = dateFormat.format(Date())
     private val args: HBNCFormFragmentArgs by navArgs()
 
-
+    private val infantListViewModel: InfantListViewModel by viewModels()
     private val viewModel: HBNCFormViewModel by viewModels()
     var benId=0L
     var hhId= 0L
+    var dob= 0L
     private lateinit var adapter: FormRendererAdapter
     private var currentImageField: FormField? = null
     private var tempCameraUri: Uri? = null
@@ -102,15 +105,52 @@ class HBNCFormFragment : Fragment() {
          benId=args.benId
          hhId= args.hhId
         val formId = HBNC_FORM_ID
-        viewModel.loadFormSchema(benId,formId, visitDay,  true)
+        viewModel.loadVisitDates(benId)
+
+        infantListViewModel.getDobByBenIdAsync(benId) { dobMillis ->
+            if (dobMillis != null) {
+                dob=dobMillis
+                viewModel.loadFormSchema(benId, formId, visitDay, true, dob)
+
+                // Use dobMillis here
+                Log.d("DOB", "DOB in millis = $dobMillis")
+            } else {
+                viewModel.loadFormSchema(benId, formId, visitDay, true, dob)
+
+                Log.d("DOB", "DOB not found for benId = $benId")
+            }
+        }
+
 
         lifecycleScope.launch {
             viewModel.schema.collectLatest { schema ->
                 if (schema == null) {
                     return@collectLatest
                 }
+//                val visibleFields = viewModel.getVisibleFields().toMutableList()
+//                val minVisitDate = viewModel.getMinVisitDate() // yeh Date? return kare
+//                val maxVisitDate = viewModel.getMaxVisitDate()
+//                    adapter = FormRendererAdapter(visibleFields, isViewOnly = isViewMode) { field, value ->
+//                    if (value == "pick_image") {
+//                        currentImageField = field
+//                        showImagePickerDialog()
+//                    } else {
+//                        field.value = value
+//                        viewModel.updateFieldValue(field.fieldId, value)
+//                        val updatedVisibleFields = viewModel.getVisibleFields()
+//                        adapter.updateFields(updatedVisibleFields)
+//                    }
+//                }
                 val visibleFields = viewModel.getVisibleFields().toMutableList()
-                    adapter = FormRendererAdapter(visibleFields, isViewOnly = isViewMode) { field, value ->
+                val minVisitDate = viewModel.getMinVisitDate()  // e.g., delivery date
+                val maxVisitDate = viewModel.getMaxVisitDate()  // usually today
+
+                adapter = FormRendererAdapter(
+                    visibleFields,
+                    isViewOnly = isViewMode,
+                    minVisitDate = minVisitDate,
+                    maxVisitDate = maxVisitDate
+                ) { field, value ->
                     if (value == "pick_image") {
                         currentImageField = field
                         showImagePickerDialog()
@@ -162,75 +202,180 @@ class HBNCFormFragment : Fragment() {
     }
 
 
-    private fun handleFormSubmission() {
-        val currentSchema = viewModel.schema.value
-        val currentVisitDay = viewModel.visitDay
+//    private fun handleFormSubmission() {
+//        val currentSchema = viewModel.schema.value
+//        val currentVisitDay = viewModel.visitDay
+//
+//        if (currentSchema == null || currentVisitDay.isBlank()) {
+//            return
+//        }
+//
+//        val updatedFields = adapter.getUpdatedFields()
+//
+//        currentSchema.sections.orEmpty().forEach { section ->
+//            section.fields.orEmpty().forEach { schemaField ->
+//                updatedFields.find { it.fieldId == schemaField.fieldId }?.let { updated ->
+//                    schemaField.value = updated.value
+//                    val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+//                    val dobString = sdf.format(Date(dob))
+//                    val result = FieldValidator.validate(updated, dobString)
+//                    updated.errorMessage = if (!result.isValid) result.errorMessage else null
+//                    schemaField.errorMessage = updated.errorMessage
+//
+//                    if (!result.isValid) {
+//                    }
+//                }
+//            }
+//        }
+//
+//        updatedFields.forEach { adapterField ->
+//            currentSchema.sections.orEmpty().flatMap { it.fields.orEmpty() }
+//                .find { it.fieldId == adapterField.fieldId }
+//                ?.let { schemaField ->
+//                    adapterField.errorMessage = schemaField.errorMessage
+//                }
+//        }
+//
+//        val copiedFields = updatedFields.map { updated ->
+//            val matchingSchemaField = currentSchema.sections.orEmpty()
+//                .flatMap { it.fields.orEmpty() }
+//                .find { it.fieldId == updated.fieldId }
+//
+//            updated.copy(errorMessage = matchingSchemaField?.errorMessage)
+//        }
+//
+//        adapter.updateFields(copiedFields)
+//        adapter.notifyDataSetChanged()
+//
+//        val errorFields = currentSchema.sections.orEmpty().flatMap { section ->
+//            section.fields.orEmpty().filter { it.visible && !it.errorMessage.isNullOrBlank() }
+//                .map { "${section.sectionTitle}: ${it.label}" }
+//        }
+//
+//        val firstErrorFieldId = currentSchema.sections.orEmpty()
+//            .flatMap { it.fields.orEmpty() }
+//            .firstOrNull { it.visible && !it.errorMessage.isNullOrBlank() }
+//            ?.fieldId
+//
+//        val errorIndex = copiedFields.indexOfFirst { it.fieldId == firstErrorFieldId }
+//        if (errorIndex >= 0) {
+//            recyclerView.scrollToPosition(errorIndex)
+//        }
+//
+//        if (errorFields.isNotEmpty()) {
+//            return
+//        }
+//
+//        viewModel.saveFormResponses(benId, hhId )
+//        findNavController().previousBackStackEntry
+//            ?.savedStateHandle
+//            ?.set("form_submitted", true)
+//        findNavController().popBackStack()
+//    }
+private fun handleFormSubmission() {
+    val currentSchema = viewModel.schema.value ?: return
+    val currentVisitDay = viewModel.visitDay
+    val previousVisitDate = viewModel.previousVisitDate
+    val deliveryDate = dob ?: return
+    val dobString = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(Date(deliveryDate))
 
-        if (currentSchema == null || currentVisitDay.isBlank()) {
-            return
-        }
+    if (currentVisitDay.isBlank()) return
 
-        val updatedFields = adapter.getUpdatedFields()
+    val updatedFields = adapter.getUpdatedFields()
+    val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+    val today = Date()
 
-        currentSchema.sections.orEmpty().forEach { section ->
-            section.fields.orEmpty().forEach { schemaField ->
-                updatedFields.find { it.fieldId == schemaField.fieldId }?.let { updated ->
-                    schemaField.value = updated.value
+    currentSchema.sections.orEmpty().forEach { section ->
+        section.fields.orEmpty().forEach { schemaField ->
+            updatedFields.find { it.fieldId == schemaField.fieldId }?.let { updated ->
+                schemaField.value = updated.value
 
-                    val result = FieldValidator.validate(updated, dob)
-                    updated.errorMessage = if (!result.isValid) result.errorMessage else null
-                    schemaField.errorMessage = updated.errorMessage
+                val result = FieldValidator.validate(updated, dobString)
+                updated.errorMessage = if (!result.isValid) result.errorMessage else null
+                schemaField.errorMessage = updated.errorMessage
 
-                    if (!result.isValid) {
+                // Visit Date custom validation
+                if (schemaField.fieldId == "visit_date" && schemaField.value is String) {
+                    val visitDateStr = schemaField.value as String
+                    val visitDate = try {
+                        sdf.parse(visitDateStr)
+                    } catch (e: Exception) {
+                        null
                     }
+
+                    val minVisitDate = viewModel.calculateDueDate(deliveryDate, currentVisitDay)?.let { Date(it) }
+                    Log.d("HBNCDatess", "visitDate: $visitDate, previousVisitDate: $previousVisitDate")
+
+                    if (visitDate != null && previousVisitDate != null) {
+                        Log.d("HBNCDatess", "visitDate.after(previousVisitDate): ${visitDate.after(previousVisitDate)}")
+                    } else {
+                        Log.d("HBNCDatess", "Either visitDate or previousVisitDate is null, so cannot compare.")
+                    }//                     Log.v("LastVisitDate","Last: $minVisitDate deliveryDate:$deliveryDate currentVisitDay:$currentVisitDay ")
+                    val errorMessage = when {
+                        visitDate == null -> "Invalid visit date"
+                        today != null && visitDate.after(today) -> "Visit Date cannot be after today's date"
+                        deliveryDate == null -> "Delivery date is missing"
+                        visitDate.before(Date(deliveryDate)) -> "Visit Date cannot be before delivery date"
+                        minVisitDate != null && visitDate.before(minVisitDate) ->
+                            "Visit Date should be on or after due date (${sdf.format(minVisitDate)})"
+                        previousVisitDate != null && !visitDate.after(previousVisitDate) ->
+                            "Visit Date must be after previous visit (${sdf.format(previousVisitDate)})"
+                        else -> null
+                    }
+
+
+
+
+                    schemaField.errorMessage = errorMessage
+                    updated.errorMessage = errorMessage
                 }
             }
         }
-
-        updatedFields.forEach { adapterField ->
-            currentSchema.sections.orEmpty().flatMap { it.fields.orEmpty() }
-                .find { it.fieldId == adapterField.fieldId }
-                ?.let { schemaField ->
-                    adapterField.errorMessage = schemaField.errorMessage
-                }
-        }
-
-        val copiedFields = updatedFields.map { updated ->
-            val matchingSchemaField = currentSchema.sections.orEmpty()
-                .flatMap { it.fields.orEmpty() }
-                .find { it.fieldId == updated.fieldId }
-
-            updated.copy(errorMessage = matchingSchemaField?.errorMessage)
-        }
-
-        adapter.updateFields(copiedFields)
-        adapter.notifyDataSetChanged()
-
-        val errorFields = currentSchema.sections.orEmpty().flatMap { section ->
-            section.fields.orEmpty().filter { it.visible && !it.errorMessage.isNullOrBlank() }
-                .map { "${section.sectionTitle}: ${it.label}" }
-        }
-
-        val firstErrorFieldId = currentSchema.sections.orEmpty()
-            .flatMap { it.fields.orEmpty() }
-            .firstOrNull { it.visible && !it.errorMessage.isNullOrBlank() }
-            ?.fieldId
-
-        val errorIndex = copiedFields.indexOfFirst { it.fieldId == firstErrorFieldId }
-        if (errorIndex >= 0) {
-            recyclerView.scrollToPosition(errorIndex)
-        }
-
-        if (errorFields.isNotEmpty()) {
-            return
-        }
-
-        viewModel.saveFormResponses(benId, hhId )
-        findNavController().previousBackStackEntry
-            ?.savedStateHandle
-            ?.set("form_submitted", true)
-        findNavController().popBackStack()
     }
+
+    // Sync error messages back to adapter fields
+    updatedFields.forEach { adapterField ->
+        currentSchema.sections.orEmpty().flatMap { it.fields.orEmpty() }
+            .find { it.fieldId == adapterField.fieldId }
+            ?.let { schemaField ->
+                adapterField.errorMessage = schemaField.errorMessage
+            }
+    }
+
+    // Update adapter with copied error states
+    val copiedFields = updatedFields.map { updated ->
+        val error = currentSchema.sections.orEmpty()
+            .flatMap { it.fields.orEmpty() }
+            .find { it.fieldId == updated.fieldId }
+            ?.errorMessage
+        updated.copy(errorMessage = error)
+    }
+
+    adapter.updateFields(copiedFields)
+    adapter.notifyDataSetChanged()
+
+    // Scroll to first error
+    val firstErrorFieldId = currentSchema.sections.orEmpty()
+        .flatMap { it.fields.orEmpty() }
+        .firstOrNull { it.visible && !it.errorMessage.isNullOrBlank() }
+        ?.fieldId
+
+    val errorIndex = copiedFields.indexOfFirst { it.fieldId == firstErrorFieldId }
+    if (errorIndex >= 0) recyclerView.scrollToPosition(errorIndex)
+
+    // Stop if there are any errors
+    val hasErrors = currentSchema.sections.orEmpty().any { section ->
+        section.fields.orEmpty().any { it.visible && !it.errorMessage.isNullOrBlank() }
+    }
+    if (hasErrors) return
+
+    // No errors → Save form
+    viewModel.saveFormResponses(benId, hhId)
+    findNavController().previousBackStackEntry?.savedStateHandle?.set("form_submitted", true)
+    findNavController().popBackStack()
+}
+
+
 
     override fun onStart() {
         super.onStart()
