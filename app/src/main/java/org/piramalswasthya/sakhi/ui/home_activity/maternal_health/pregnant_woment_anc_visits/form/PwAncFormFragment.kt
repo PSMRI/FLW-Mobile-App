@@ -98,6 +98,7 @@ class PwAncFormFragment : Fragment() {
                     }, isEnabled = !recordExists
                 )
                 binding.form.rvInputForm.adapter = adapter
+                binding.form.rvInputForm.itemAnimator = null
                 lifecycleScope.launch {
                     viewModel.formList.collect {
                         if (it.isNotEmpty())
