@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.ui.home_activity.infant.hbnc
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.work.*
@@ -29,9 +30,15 @@ class HBNCFormViewModel @Inject constructor(private val repository: FormReposito
 
     private val _infant = MutableStateFlow<FormResponseJsonEntity?>(null)
     val infant: StateFlow<FormResponseJsonEntity?> = _infant
+    // Holds the delivery/birth date of the baby
+    var lastVisitDay: String? = null
+
+    // Holds the last submitted visit date (null if 1st visit)
+    var previousVisitDate: Date? = null
 
     private val _syncedVisitList = MutableStateFlow<List<FormResponseJsonEntity>>(emptyList())
     val syncedVisitList: StateFlow<List<FormResponseJsonEntity>> = _syncedVisitList
+    private val visitOrder = listOf("1st Day", "3rd Day", "7th Day", "14th Day", "21st Day", "28th Day", "42nd Day")
 
     private var benId: Long = 0L
     private var hhId: Long = 0L
@@ -47,52 +54,126 @@ class HBNCFormViewModel @Inject constructor(private val repository: FormReposito
     }
 
 
-    fun loadFormSchema(benId: Long, formId: String, visitDay: String, viewMode: Boolean) {
+//    fun loadFormSchema(benId: Long, formId: String, visitDay: String, viewMode: Boolean,dob:Long) {
+//
+//        this.visitDay = visitDay
+//        this.isViewMode = viewMode
+//
+//        viewModelScope.launch {
+//            val apiSchema = repository.getFormSchema(formId)
+//            if (apiSchema == null) {
+//                return@launch
+//            }
+//            val savedJson = repository.loadFormResponseJson(benId, visitDay)
+//
+//            val savedFieldValues: Map<String, Any?> = if (!savedJson.isNullOrBlank()) {
+//                try {
+//                    val root = JSONObject(savedJson)
+//                    val fieldsJson = root.optJSONObject("fields") ?: JSONObject()
+//                    fieldsJson.keys().asSequence().associateWith { fieldsJson.opt(it) }
+//                } catch (e: Exception) {
+//                    emptyMap()
+//                }
+//            } else {
+//                emptyMap()
+//            }
+//
+//
+//            val allFields = apiSchema.sections.flatMap { it.fields.orEmpty() }
+//
+//            apiSchema.sections.orEmpty().forEach { section ->
+//                section.fields.orEmpty().forEach { field ->
+////                    field.value = when (field.fieldId) {
+////                        "visit_day" -> visitDay
+////                        else -> savedFieldValues[field.fieldId] ?: field.defaultValue
+////                    }
+////                    field.isEditable = field.fieldId != "visit_day" && !isViewMode
+//
+//
+//
+//
+//                    field.value = when (field.fieldId) {
+//                        "visit_day" -> visitDay
+//                        "due_date" -> calculateDueDate(dob, visitDay)?.let { formatDate(it) } ?: ""
+//                        else -> savedFieldValues[field.fieldId] ?: field.defaultValue
+//                    }
+//
+//                    field.isEditable = when (field.fieldId) {
+//                        "visit_day" -> false
+//                        "due_date" -> false // Non-editable due date
+//                        else -> !isViewMode
+//                    }
+//
+//                }
+//            }
+//
+//            apiSchema.sections.orEmpty().forEach { section ->
+//                section.fields.orEmpty().forEach { field ->
+//                    field.visible = evaluateFieldVisibility(field, allFields)
+//                }
+//            }
+//
+//            _schema.value = apiSchema
+//        }
+//    }
+fun loadFormSchema(
+    benId: Long,
+    formId: String,
+    visitDay: String,
+    viewMode: Boolean,
+    dob: Long
+) {
+    this.visitDay = visitDay
+    this.isViewMode = viewMode
 
-        this.visitDay = visitDay
-        this.isViewMode = viewMode
+    viewModelScope.launch {
+        val apiSchema = repository.getFormSchema(formId) ?: return@launch
+        val savedJson = repository.loadFormResponseJson(benId, visitDay)
 
-        viewModelScope.launch {
-            val apiSchema = repository.getFormSchema(formId)
-            if (apiSchema == null) {
-                return@launch
-            }
-            val savedJson = repository.loadFormResponseJson(benId, visitDay)
-
-            val savedFieldValues: Map<String, Any?> = if (!savedJson.isNullOrBlank()) {
-                try {
-                    val root = JSONObject(savedJson)
-                    val fieldsJson = root.optJSONObject("fields") ?: JSONObject()
-                    fieldsJson.keys().asSequence().associateWith { fieldsJson.opt(it) }
-                } catch (e: Exception) {
-                    emptyMap()
-                }
-            } else {
+        val savedFieldValues: Map<String, Any?> = if (!savedJson.isNullOrBlank()) {
+            try {
+                val root = JSONObject(savedJson)
+                val fieldsJson = root.optJSONObject("fields") ?: JSONObject()
+                fieldsJson.keys().asSequence().associateWith { fieldsJson.opt(it) }
+            } catch (e: Exception) {
                 emptyMap()
             }
-
-
-            val allFields = apiSchema.sections.flatMap { it.fields.orEmpty() }
-
-            apiSchema.sections.orEmpty().forEach { section ->
-                section.fields.orEmpty().forEach { field ->
-                    field.value = when (field.fieldId) {
-                        "visit_day" -> visitDay
-                        else -> savedFieldValues[field.fieldId] ?: field.defaultValue
-                    }
-                    field.isEditable = field.fieldId != "visit_day" && !isViewMode
-                }
-            }
-
-            apiSchema.sections.orEmpty().forEach { section ->
-                section.fields.orEmpty().forEach { field ->
-                    field.visible = evaluateFieldVisibility(field, allFields)
-                }
-            }
-
-            _schema.value = apiSchema
+        } else {
+            emptyMap()
         }
+
+        val allFields = apiSchema.sections.flatMap { it.fields.orEmpty() }
+
+        apiSchema.sections.orEmpty().forEach { section ->
+            section.fields.orEmpty().forEach { field ->
+
+                // Value set karna
+                field.value = when (field.fieldId) {
+                    "visit_day" -> visitDay
+                    "due_date" -> calculateDueDate(dob, visitDay)?.let { formatDate(it) } ?: ""
+                    else -> savedFieldValues[field.fieldId] ?: field.defaultValue
+                }
+
+                // Editable flag set karna
+                field.isEditable = when (field.fieldId) {
+                    "visit_day", "due_date" -> false // Always non-editable
+                    else -> !viewMode // Baaki fields only editable in edit mode
+                }
+            }
+        }
+
+        // Conditional visibility
+        apiSchema.sections.orEmpty().forEach { section ->
+            section.fields.orEmpty().forEach { field ->
+                field.visible = evaluateFieldVisibility(field, allFields)
+            }
+        }
+
+        _schema.value = apiSchema
     }
+}
+
+
 
     private fun evaluateFieldVisibility(
         field: FormFieldDto,
@@ -127,13 +208,18 @@ class HBNCFormViewModel @Inject constructor(private val repository: FormReposito
             val formId = currentSchema.formId
             val version = currentSchema.version
             val beneficiaryId = benId ?: 0
-            val visitDate =
-                calculateDueDate(_infant.value?.visitDay ?: "", visitDay) ?: "2025-07-10"
+//            val visitDate = calculateDueDate(_infant.value?.visitDay ?: "", visitDay) ?: "N/A"
+//            val dob = dob
+//            if (dob.isNullOrEmpty() || visitDay.isNullOrEmpty()) {
+//                Log.e("saveFormResponses", "DOB or VisitDay is null or empty.")
+//                return@launch
+//            }
 
             val fieldMap = currentSchema.sections.orEmpty()
                 .flatMap { it.fields.orEmpty() }
                 .filter { it.visible && it.value != null }
                 .associate { it.fieldId to it.value }
+            val visitDate = fieldMap["visit_date"]?.toString() ?: "N/A"
 
             val wrappedJson = JSONObject().apply {
                 put("formId", formId)
@@ -147,6 +233,7 @@ class HBNCFormViewModel @Inject constructor(private val repository: FormReposito
                 benId = benId,
                 hhId = hhId,
                 visitDay = visitDay,
+                visitDate = visitDate,
                 formId = formId,
                 version = version,
                 formDataJson = wrappedJson.toString(),
@@ -168,25 +255,33 @@ class HBNCFormViewModel @Inject constructor(private val repository: FormReposito
     }
 
 
-    fun calculateDueDate(dob: String, visitDay: String): String? {
+    fun calculateDueDate(dobMillis: Long, visitDay: String): Long? {
         return try {
-            val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-            val date = sdf.parse(dob) ?: return null
-            val calendar = Calendar.getInstance().apply { time = date }
-            when (visitDay) {
-                "1st Day" -> calendar.add(Calendar.DAY_OF_MONTH, 0)
-                "3rd Day" -> calendar.add(Calendar.DAY_OF_MONTH, 2)
-                "7th Day" -> calendar.add(Calendar.DAY_OF_MONTH, 6)
-                "14th Day" -> calendar.add(Calendar.DAY_OF_MONTH, 13)
-                "21st Day" -> calendar.add(Calendar.DAY_OF_MONTH, 20)
-                "28th Day" -> calendar.add(Calendar.DAY_OF_MONTH, 27)
-                "42nd Day" -> calendar.add(Calendar.DAY_OF_MONTH, 41)
+            val calendar = Calendar.getInstance().apply {
+                time = Date(dobMillis)
             }
-            sdf.format(calendar.time)
+            Log.v("DEBUG", "Raw DOB millis: $dobMillis → ${formatDate(dobMillis)}")
+            Log.v("DEBUG", "Received DOB millis from source: $dobMillis → ${formatDate(dobMillis)}")
+
+            val daysToAdd = when (visitDay.trim()) {
+                "1st Day" -> 0
+                "3rd Day" -> 2
+                "7th Day" -> 6
+                "14th Day" -> 13
+                "21st Day" -> 20
+                "28th Day" -> 27
+                "42nd Day" -> 41
+                else -> return null
+            }
+
+            calendar.add(Calendar.DAY_OF_MONTH, daysToAdd)
+            calendar.timeInMillis
         } catch (e: Exception) {
+            e.printStackTrace()
             null
         }
     }
+
 
 
     fun getVisibleFields(): List<FormField> {
@@ -227,12 +322,11 @@ class HBNCFormViewModel @Inject constructor(private val repository: FormReposito
         } ?: emptyList()
     }
 
-    fun getVisitCardList(): List<VisitCard> {
-        val visitOrder =
-            listOf("1st Day", "3rd Day", "7th Day", "14th Day", "21st Day", "28th Day", "42nd Day")
+    fun getVisitCardList(dob:Long): List<VisitCard> {
+//        val visitOrder = listOf("1st Day", "3rd Day", "7th Day", "14th Day", "21st Day", "28th Day", "42nd Day")
 
         val currentBenId = infant.value?.benId
-        val dob = infant.value?.visitDay ?: "-"
+//        val dob = infant.value?.visitDay ?: "-"
 
         val relevantVisits = _syncedVisitList.value.filter { it.benId == currentBenId }
 
@@ -251,22 +345,106 @@ class HBNCFormViewModel @Inject constructor(private val repository: FormReposito
             }
 
             val visit = relevantVisits.find { it.visitDay == day }
+            val visitDate: String = visit?.formDataJson
+                ?.let { JSONObject(it).optString("visit_date", null) }
+                ?: "-"
+//                val visitDate = visit?.let {
+//                    try {
+//                        val json = JSONObject(it.formDataJson)
+//                        json.optString("visit_date", "-")
+//                    } catch (e: Exception) {
+//                        "-"
+//                    }
+//                } ?: calculateDueDate(dob, day) ?: "-"
 
-            val visitDate = visit?.let {
-                try {
-                    val json = JSONObject(it.formDataJson)
-                    json.optString("visitDate", "-")
-                } catch (e: Exception) {
-                    "-"
+                VisitCard(
+                    visitDay = day,
+                    visitDate = visitDate,
+                    isCompleted = isCompleted,
+                    isEditable = isEditable
+                )
+            }
+    }
+    fun formatDate(epochMillis: Long): String {
+        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        return sdf.format(Date(epochMillis))
+    }
+    suspend fun getLastVisitDay(benId: Long): String? {
+        val visits = repository.getSyncedVisitsByRchId(benId)
+
+        // Filter only valid visitDays and find max index
+        val lastVisit = visits
+            .filter { it.visitDay in visitOrder }
+            .maxByOrNull { visitOrder.indexOf(it.visitDay) }
+
+        return lastVisit?.visitDay
+    }
+    suspend fun getLastVisitDate(benId: Long): Date? {
+
+        val visits = repository.getSyncedVisitsByRchId(benId)
+        val lastVisit = visits
+            .filter { it.visitDay in visitOrder }
+            .maxByOrNull { visitOrder.indexOf(it.visitDay) }
+
+        return lastVisit?.formDataJson?.let {
+            try {
+                val json = JSONObject(it)
+                val fields = json.optJSONObject("fields")
+                val dateStr = fields?.optString("visit_date")
+                if (!dateStr.isNullOrBlank()) {
+                    SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).parse(dateStr)
+                } else {
+                    null
                 }
-            } ?: calculateDueDate(dob, day) ?: "-"
+            } catch (e: Exception) {
+                null
+            }
+        }
+    }
 
-            VisitCard(
-                visitDay = day,
-                visitDate = visitDate,
-                isCompleted = isCompleted,
-                isEditable = isEditable
-            )
+
+    fun loadVisitDates(benId: Long) {
+        viewModelScope.launch {
+            previousVisitDate = getLastVisitDate(benId)
+            lastVisitDay = getLastVisitDay(benId)  // if needed
+            Log.d("HBNCDatess", "benid: $benId visitDateVievmodel: $lastVisitDay, previousVisitDate: $previousVisitDate")
+
+        }
+    }
+    fun getMaxVisitDate(): Date {
+        val today = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.time
+
+        val alreadyFilledDates = _syncedVisitList.value.mapNotNull {
+            try {
+                val json = JSONObject(it.formDataJson)
+                val fields = json.optJSONObject("fields")
+                val dateStr = fields?.optString("visit_date")
+                if (!dateStr.isNullOrBlank()) {
+                    SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).parse(dateStr)
+                } else null
+            } catch (e: Exception) {
+                null
+            }
+        }
+
+        return if (alreadyFilledDates.contains(today)) {
+            Calendar.getInstance().apply { add(Calendar.DATE, -1) }.time
+        } else {
+            today
+        }
+    }
+
+    fun getMinVisitDate(): Date? {
+        return previousVisitDate?.let {
+            Calendar.getInstance().apply {
+                time = it
+                add(Calendar.DATE, 1) // 1 din baad se allow
+            }.time
         }
     }
 

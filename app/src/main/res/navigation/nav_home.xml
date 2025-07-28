@@ -1004,7 +1004,7 @@
         <argument
             android:name="benId"
             app:argType="long" />
-        <!-- Action to navigate from InfantForm to HBNCForm -->
+
         <action
             android:id="@+id/action_infantFormFragment_to_hbncFormFragment"
             app:destination="@id/hbncFormFragment" />
