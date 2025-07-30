@@ -1,11 +1,9 @@
 package org.piramalswasthya.sakhi.ui.home_activity.infant
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -27,11 +25,11 @@ import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.HBNC_F
 import org.piramalswasthya.sakhi.work.dynamicWoker.FormSyncWorker
 
 @AndroidEntryPoint
-class InfantFormFragment : Fragment() {
+class InfantDayListFragment : Fragment() {
 
     private var _binding: FragmentInfantFormBinding? = null
     private val binding get() = _binding!!
-    private val args: InfantFormFragmentArgs by navArgs()
+    private val args: InfantDayListFragmentArgs by navArgs()
     private val viewModel: HBNCFormViewModel by viewModels()
     var dob=0L
     private val infantListViewModel: InfantListViewModel by viewModels()
@@ -79,9 +77,9 @@ class InfantFormFragment : Fragment() {
                     val cards = viewModel.getVisitCardList(dob)
 
                     binding.recyclerVisitCards.layoutManager =
-                        GridLayoutManager(requireContext(), 3)
+                        GridLayoutManager(requireContext(), 2)
                     binding.recyclerVisitCards.adapter = VisitCardAdapter(cards) { card ->
-                        val action = InfantFormFragmentDirections
+                        val action = InfantDayListFragmentDirections
                             .actionInfantFormFragmentToHbncFormFragment(
                                 benId,hhId,
                                 visitDay = card.visitDay,
@@ -104,7 +102,7 @@ class InfantFormFragment : Fragment() {
         super.onStart()
         activity?.let {
             (it as HomeActivity).updateActionBar(
-                R.drawable.ic__child,
+                R.drawable.ic__infant,
                 getString(R.string.hbnc_day_list)
             )
         }

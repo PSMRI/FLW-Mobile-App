@@ -996,7 +996,7 @@
 
     <fragment
         android:id="@+id/infantFormFragment"
-        android:name="org.piramalswasthya.sakhi.ui.home_activity.infant.InfantFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.infant.InfantDayListFragment"
         android:label="Infant Details">
         <argument
             android:name="hhId"
