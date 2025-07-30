@@ -202,6 +202,9 @@ class NewBenRegFragment : Fragment() {
             submitBenForm()
         }
 
+        viewModel.isDeath.observe(viewLifecycleOwner) { isDeath ->
+            binding.fabEdit.visibility = if (isDeath) View.GONE else View.VISIBLE
+        }
         viewModel.recordExists.observe(viewLifecycleOwner) { notIt ->
             notIt?.let { recordExists ->
                 binding.fabEdit.visibility = if (recordExists) View.VISIBLE else View.GONE
