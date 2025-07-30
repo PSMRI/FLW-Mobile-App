@@ -51,7 +51,7 @@ enum class Gender {
 // In your BenBasicCache.kt file, REPLACE the old @DatabaseView with this one.
 @DatabaseView(
     viewName = "BEN_BASIC_CACHE",
-    value = "SELECT b.beneficiaryId as benId, b.householdId as hhId, b.regDate, b.firstName as benName, b.lastName as benSurname, b.gender, b.dob as dob, b.familyHeadRelationPosition as relToHeadId" +
+    value = "SELECT b.beneficiaryId as benId, b.motherName as motherName, b.householdId as hhId, b.regDate, b.firstName as benName, b.lastName as benSurname, b.gender, b.dob as dob, b.familyHeadRelationPosition as relToHeadId" +
             ", b.contactNumber as mobileNo, b.fatherName, h.fam_familyHeadName as familyHeadName, b.gen_spouseName as spouseName, b.rchId, b.gen_lastMenstrualPeriod as lastMenstrualPeriod" +
             ", b.isHrpStatus as hrpStatus, b.syncState, b.gen_reproductiveStatusId as reproductiveStatusId, b.isKid, b.immunizationStatus" +
             ", b.loc_village_id as villageId, b.abha_healthIdNumber as abhaId" +
@@ -113,6 +113,7 @@ data class BenBasicCache(
     val relToHeadId: Int,
     val mobileNo: Long,
     val fatherName: String? = null,
+    val motherName: String?= null,
     val familyHeadName: String? = null,
 //    val typeOfList: TypeOfList,
     val spouseName: String? = null,
@@ -255,6 +256,7 @@ data class BenBasicCache(
             isNewAbha = isNewAbha,
             relToHeadId = relToHeadId,
             mobileNo = mobileNo.toString(),
+            motherName =  motherName?.takeIf { it.isNotEmpty() } ?: "Not Available",
             fatherName = fatherName?.takeIf { it.isNotEmpty() } ?: "Not Available",
          /*   motherName = motherName,*/
             familyHeadName = familyHeadName ?: "Not Available",
