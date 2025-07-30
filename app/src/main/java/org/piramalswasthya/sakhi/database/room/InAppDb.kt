@@ -112,7 +112,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.InfantEntity
         FormResponseJsonEntity::class
     ],
     views = [BenBasicCache::class],
-    version = 19, exportSchema = false
+    version = 20, exportSchema = false
 )
 
 @TypeConverters(LocationEntityListConverter::class, SyncStateConverter::class)
@@ -160,10 +160,7 @@ abstract class InAppDb : RoomDatabase() {
             })
             val MIGRATION_19_20 = object : Migration(19, 20) {
                 override fun migrate(db: SupportSQLiteDatabase) {
-                    // Step 2: Drop the old view to ensure a clean slate.
                     db.execSQL("DROP VIEW IF EXISTS BEN_BASIC_CACHE")
-
-                    // Step 3: Create the new view with a clean, correct, and complete SQL query.
                     db.execSQL("CREATE VIEW `BEN_BASIC_CACHE` AS " +
                             "SELECT b.beneficiaryId as benId, b.motherName as motherName, b.householdId as hhId, b.regDate, b.firstName as benName, b.lastName as benSurname, b.gender, b.dob as dob, b.familyHeadRelationPosition as relToHeadId" +
                             ", b.contactNumber as mobileNo, b.fatherName, h.fam_familyHeadName as familyHeadName, b.gen_spouseName as spouseName, b.rchId, b.gen_lastMenstrualPeriod as lastMenstrualPeriod" +
@@ -217,7 +214,6 @@ abstract class InAppDb : RoomDatabase() {
                             "WHERE b.isDraft = 0 GROUP BY b.beneficiaryId ORDER BY b.updatedDate DESC")
                 }
             }
-
             val MIGRATION_18_19 = object : Migration(18, 19) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     val columns = listOf(
@@ -456,7 +452,7 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_13_14,
                         MIGRATION_14_15,
                         MIGRATION_15_16,
-                        MIGRATION_16_18,
+                        MIGRATION_17_18,
                         MIGRATION_18_19,
                         MIGRATION_19_20
                     ).build()
