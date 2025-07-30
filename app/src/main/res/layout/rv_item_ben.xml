@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
+        <import type="android.view.View" />
         <variable
             name="ben"
             type="org.piramalswasthya.sakhi.model.BenBasicDomain" />
@@ -130,6 +130,16 @@
                         android:contentDescription="@string/iv_sync_state_tv"
                         app:syncState="@{ben.syncState}"
                         tools:src="@drawable/ic_synced" />
+                    <ImageView
+                        android:id="@+id/iv_isDeath"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center_vertical|end"
+                        android:layout_marginHorizontal="@dimen/padding_small"
+                        android:visibility="@{ben.isDeath == true ? View.VISIBLE : View.GONE}"
+                        android:contentDescription="@string/iv_sync_state_tv"
+                        android:src="@drawable/ic_death"
+                        />
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -410,6 +420,7 @@
                             android:backgroundTint="@android:color/holo_green_dark"
                             android:onClick="@{()-> clickListener.onClickABHA(ben)}"
                             android:text="@string/abha"
+                            android:visibility="@{ben.isDeath == true ? View.INVISIBLE : View.VISIBLE}"
                             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                             android:textColor="?attr/colorOnPrimary"
                             app:cornerRadius="@dimen/padding_normal"

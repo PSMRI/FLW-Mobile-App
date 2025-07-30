@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.database.room
 
 import android.content.Context
+import android.util.Log
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -157,8 +158,7 @@ abstract class InAppDb : RoomDatabase() {
             val MIGRATION_1_2 = Migration(1, 2, migrate = {
 //                it.execSQL("select count(*) from beneficiary")
             })
-
-            val MIGRATION_18_19 = object : Migration(18, 19) {
+            val MIGRATION_19_20 = object : Migration(19, 20) {
                 override fun migrate(db: SupportSQLiteDatabase) {
                     // Step 2: Drop the old view to ensure a clean slate.
                     db.execSQL("DROP VIEW IF EXISTS BEN_BASIC_CACHE")
@@ -218,6 +218,49 @@ abstract class InAppDb : RoomDatabase() {
                 }
             }
 
+            val MIGRATION_18_19 = object : Migration(18, 19) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    val columns = listOf(
+                        "isDeath INTEGER",
+                        "isDeathValue TEXT",
+                        "dateOfDeath TEXT",
+                        "timeOfDeath TEXT",
+                        "reasonOfDeath TEXT",
+                        "reasonOfDeathId INTEGER",
+                        "placeOfDeath TEXT",
+                        "placeOfDeathId INTEGER",
+                        "otherPlaceOfDeath TEXT"
+                    )
+
+                    for (column in columns) {
+                        database.execSQL("ALTER TABLE BENEFICIARY ADD COLUMN $column")
+                    }
+
+
+
+                    // 🔹 Columns for PREGNANCY_ANC table
+                    val pregnancyAncColumns = listOf(
+                        "serialNo TEXT",
+                        "methodOfTermination TEXT",
+                        "methodOfTerminationId INTEGER DEFAULT 0 NOT NULL",
+                        "terminationDoneBy TEXT",
+                        "terminationDoneById INTEGER DEFAULT 0 NOT NULL",
+                        "isPaiucdId INTEGER DEFAULT 0 NOT NULL",
+                        "isPaiucd TEXT",
+                        "remarks TEXT",
+                        "abortionImg1 TEXT",
+                        "abortionImg2 TEXT",
+                        "placeOfDeath TEXT",
+                        "placeOfDeathId INTEGER DEFAULT 0 NOT NULL",
+                        "otherPlaceOfDeath TEXT"
+                    )
+
+                    for (column in pregnancyAncColumns) {
+                        database.execSQL("ALTER TABLE PREGNANCY_ANC ADD COLUMN $column")
+                    }
+
+                }
+            }
 
             val MIGRATION_17_18 = object : Migration(17, 18) {
                 override fun migrate(database: SupportSQLiteDatabase) {
@@ -241,45 +284,51 @@ abstract class InAppDb : RoomDatabase() {
                 FOREIGN KEY(`beneficiaryID`) REFERENCES `BENEFICIARY`(`beneficiaryId`) ON UPDATE CASCADE ON DELETE CASCADE
             )
         """.trimIndent())
-
                     // 2. Copy existing data into new table (with default/placeholder values for new fields)
-                    database.execSQL("""
-            INSERT INTO ABHA_GENERATED_NEW (
-                id,
-                beneficiaryID,
-                beneficiaryRegID,
-                benName,
-                createdBy,
-                message,
-                txnId,
-                benSurname,
-                healthId,
-                healthIdNumber,
-                abhaProfileJson,
-                isNewAbha,
-                providerServiceMapId,
-                syncState
-            )
-            SELECT
-                id,
-                benId AS beneficiaryID,
-                hhId AS beneficiaryRegID,
-                benName,
-                '' AS createdBy,
-                '' AS message,
-                '' AS txnId,
-                benSurname,
-                healthId,
-                healthIdNumber,
-                '' AS abhaProfileJson,
-                isNewAbha,
-                0 ,
-             0 
-            FROM ABHA_GENERATED
-        """.trimIndent())
+                    try {
+                        database.execSQL("""
+                INSERT INTO ABHA_GENERATED_NEW (
+                    id,
+                    beneficiaryID,
+                    beneficiaryRegID,
+                    benName,
+                    createdBy,
+                    message,
+                    txnId,
+                    benSurname,
+                    healthId,
+                    healthIdNumber,
+                    abhaProfileJson,
+                    isNewAbha,
+                    providerServiceMapId,
+                    syncState
+                )
+                SELECT
+                    id,
+                    benId AS beneficiaryID,
+                    hhId AS beneficiaryRegID,
+                    benName,
+                    '' AS createdBy,
+                    '' AS message,
+                    '' AS txnId,
+                    benSurname,
+                    healthId,
+                    healthIdNumber,
+                    '' AS abhaProfileJson,
+                    isNewAbha,
+                    0,
+                    0
+                FROM ABHA_GENERATED
+            """.trimIndent())
+                    } catch (e: Exception) {
+                        // Table might not exist on some devices — log and continue
+                        Log.w("RoomMigration", "Skipping data copy: ABHA_GENERATED table not found", e)
+                    }
 
                     // 3. Drop old table
-                    database.execSQL("DROP TABLE ABHA_GENERATED")
+                    try {
+                        database.execSQL("DROP TABLE IF EXISTS ABHA_GENERATED")
+                    } catch (_: Exception) {}
 
                     // 4. Rename new table
                     database.execSQL("ALTER TABLE ABHA_GENERATED_NEW RENAME TO ABHA_GENERATED")
@@ -407,9 +456,10 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_13_14,
                         MIGRATION_14_15,
                         MIGRATION_15_16,
-                        MIGRATION_17_18,
+                        MIGRATION_16_18,
                         MIGRATION_18_19,
-                        ).build()
+                        MIGRATION_19_20
+                    ).build()
 
                     INSTANCE = instance
                 }
