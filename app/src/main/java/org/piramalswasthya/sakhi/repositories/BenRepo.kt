@@ -13,6 +13,7 @@ import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.BeneficiaryIdsAvailDao
 import org.piramalswasthya.sakhi.database.room.dao.HouseholdDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseJsonDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.ImageUtils
 import org.piramalswasthya.sakhi.helpers.Konstants
@@ -34,7 +35,8 @@ class BenRepo @Inject constructor(
     private val infantRegRepo: InfantRegRepo,
     private val preferenceDao: PreferenceDao,
     private val userRepo: UserRepo,
-    private val tmcNetworkApiService: AmritApiService
+    private val tmcNetworkApiService: AmritApiService,
+    private val formResponseJsonDao: FormResponseJsonDao
 ) {
 
     companion object {
@@ -68,6 +70,7 @@ class BenRepo @Inject constructor(
             benDao.getBen(benId)
         }
     }
+
 
     suspend fun getBenWithHRPT(benId: Long): BenWithHRPTrackingCache {
         return withContext(Dispatchers.IO) {
@@ -186,6 +189,10 @@ class BenRepo @Inject constructor(
                             imageUri = photoUri
                         )
                     }
+                    formResponseJsonDao.updateVisitBenId(
+                        oldBenId = ben.beneficiaryId,
+                        newBenId = newBenId
+                    )
                     //FIX TO MAP UPDATED BEN-ID FOR HOF
                     householdDao.getHousehold(ben.householdId)
                         ?.takeIf { it.benId == ben.beneficiaryId }?.let {

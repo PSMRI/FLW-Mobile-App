@@ -179,21 +179,22 @@ class PwAncFormViewModel @Inject constructor(
                             maternalHealthRepo.persistRegisterRecord(it)
                         }
 
-                        maternalHealthRepo.getBenFromId(benId)?.let {
-                            it.isDeath = true
-                            it.isDeathValue = "Death"
-                            val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.US)
-                            val dateOfDeath = ancCache.deathDate?.let { d ->
-                                dateFormat.format(Date(d))
-                            } ?: ""
-                            it.dateOfDeath = dateOfDeath
-                            it.reasonOfDeath = ancCache.maternalDeathProbableCause
-                            it.reasonOfDeathId = ancCache.maternalDeathProbableCauseId
-                            it.placeOfDeath = ancCache.placeOfDeath
-                            it.placeOfDeathId = ancCache.placeOfDeathId ?: -1
-                            it.otherPlaceOfDeath = ancCache.otherPlaceOfDeath
-                            it.syncState = SyncState.UNSYNCED
-                            benRepo.updateRecord(it)
+                            maternalHealthRepo.getBenFromId(benId)?.let {
+                                it.isDeath = true
+                                it.isDeathValue = "Death"
+                                val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.US)
+                                val dateOfDeath = ancCache.deathDate?.let { d ->
+                                    dateFormat.format(Date(d))
+                                } ?: ""
+                                it.dateOfDeath = dateOfDeath
+                                it.reasonOfDeath = ancCache.maternalDeathProbableCause
+                                it.reasonOfDeathId = ancCache.maternalDeathProbableCauseId
+                                it.placeOfDeath = ancCache.placeOfDeath
+                                it.placeOfDeathId = ancCache.placeOfDeathId ?: -1
+                                it.otherPlaceOfDeath = ancCache.otherPlaceOfDeath
+                                if (it.processed != "N") it.processed = "U"
+                                it.syncState = SyncState.UNSYNCED
+                                benRepo.updateRecord(it)
                         }
 
                         maternalHealthRepo.getAllActiveAncRecords(benId).apply {

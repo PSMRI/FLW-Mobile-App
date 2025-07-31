@@ -39,6 +39,7 @@ class FormSyncWorker @AssistedInject constructor(
 
             val unsyncedForms = repository.getUnsyncedForms()
             for (form in unsyncedForms) {
+                if ((form.benId ?: -1) < 0) continue
                 val success = repository.syncFormToServer(form)
                 if (success) {
                     repository.markFormAsSynced(form.id)

@@ -29,6 +29,7 @@ import org.piramalswasthya.sakhi.ui.home_activity.child_care.infant_list.InfantL
 import org.piramalswasthya.sakhi.ui.setSyncState
 import org.piramalswasthya.sakhi.utils.dynamicFiledValidator.FieldValidator
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.HBNC_FORM_ID
+import org.piramalswasthya.sakhi.work.WorkerUtils
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -236,6 +237,12 @@ class HBNCFormFragment : Fragment() {
                             today != null && visitDate.after(today) -> "Visit Date cannot be after today's date"
                             deliveryDate == null -> "Delivery date is missing"
                             visitDate.before(Date(deliveryDate)) -> "Visit Date cannot be before delivery date"
+                            previousVisitDate != null && !visitDate.after(previousVisitDate) ->
+                                "Visit Date must be after previous visit (${
+                                    sdf.format(
+                                        previousVisitDate
+                                    )
+                                })"
                             minVisitDate != null && visitDate.before(minVisitDate) ->
                                 "Visit Date should be on or after due date (${
                                     sdf.format(
@@ -243,12 +250,7 @@ class HBNCFormFragment : Fragment() {
                                     )
                                 })"
 
-                            previousVisitDate != null && !visitDate.after(previousVisitDate) ->
-                                "Visit Date must be after previous visit (${
-                                    sdf.format(
-                                        previousVisitDate
-                                    )
-                                })"
+
 
                             else -> null
                         }
@@ -289,9 +291,11 @@ class HBNCFormFragment : Fragment() {
             section.fields.orEmpty().any { it.visible && !it.errorMessage.isNullOrBlank() }
         }
         if (hasErrors) return
-        viewModel.saveFormResponses(benId, hhId)
-        findNavController().previousBackStackEntry?.savedStateHandle?.set("form_submitted", true)
-        findNavController().popBackStack()
+        lifecycleScope.launch {
+            viewModel.saveFormResponses(benId, hhId)
+            findNavController().previousBackStackEntry?.savedStateHandle?.set("form_submitted", true)
+            findNavController().popBackStack()
+        }
     }
     override fun onStart() {
         super.onStart()
