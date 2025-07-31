@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.adapters.dynamicAdapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,64 +20,48 @@ class VisitCardAdapter(
         val btnView: View = view.findViewById(R.id.btnView)
         val btnAddVisit: View = view.findViewById(R.id.btnAddVisit)
     }
+    private val lastDeathIndex: Int = visits.indexOfLast { it.isCompleted && it.isBabyDeath }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VisitViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_visit_card, parent, false)
         return VisitViewHolder(view)
     }
 
-//    override fun onBindViewHolder(holder: VisitViewHolder, position: Int) {
-//        val visit = visits[position]
-//        holder.tvVisitDay.text = visit.visitDay
-//        holder.tvVisitDate.text = visit.visitDate
-//
-//        holder.tvStatus.text = when {
-//            visit.isCompleted -> "Completed (View)"
-//            visit.isEditable -> "Eligible (Fill Form)"
-//            else -> "Locked"
-//        }
-//
-//        holder.itemView.isEnabled = visit.isCompleted || visit.isEditable
-//        holder.itemView.alpha = if (holder.itemView.isEnabled) 1.0f else 0.5f
-//
-//        holder.itemView.setOnClickListener {
-//            if (holder.itemView.isEnabled) {
-//                onVisitClick(visit)
-//            }
-//        }
-//    }
 override fun onBindViewHolder(holder: VisitViewHolder, position: Int) {
     val visit = visits[position]
     holder.tvVisitDay.text = visit.visitDay
     holder.tvVisitDate.text = visit.visitDate
-
-    // Hide both buttons
     holder.btnView.visibility = View.GONE
     holder.btnAddVisit.visibility = View.GONE
 
-
+    if (lastDeathIndex != -1 && position > lastDeathIndex) {
+        holder.itemView.setBackgroundResource(R.color.read_only)
+        holder.itemView.isEnabled = false
+        return
+    }
 
     when {
         visit.isCompleted -> {
             holder.btnView.visibility = View.VISIBLE
-            holder.itemView.setBackgroundResource(R.color.holo_green_dark)
+            holder.btnView.setBackgroundResource(R.color.Quartenary)
+            holder.itemView.setBackgroundResource(R.color.md_theme_dark_inversePrimary)
             holder.itemView.isEnabled = true
-            holder.itemView.setOnClickListener {
+            holder.btnView.setOnClickListener {
                 onVisitClick(visit)
             }
         }
         visit.isEditable -> {
             holder.btnAddVisit.visibility = View.VISIBLE
-            holder.itemView.setBackgroundResource(R.color.Quartenary)
+            holder.btnAddVisit.setBackgroundResource(R.color.Quartenary)
+            holder.itemView.setBackgroundResource(R.color.md_theme_dark_inversePrimary)
             holder.itemView.isEnabled = true
-            holder.itemView.setOnClickListener {
+            holder.btnAddVisit.setOnClickListener {
                 onVisitClick(visit)
             }
         }
         else -> {
             holder.itemView.setBackgroundResource(R.color.read_only)
             holder.itemView.isEnabled = false
-//            holder.itemView.alpha = if (holder.itemView.isEnabled) 1.0f else 0.5f
             holder.itemView.setOnClickListener(null)
         }
     }

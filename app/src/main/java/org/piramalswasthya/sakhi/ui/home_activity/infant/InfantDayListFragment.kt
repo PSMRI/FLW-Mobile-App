@@ -74,7 +74,7 @@ class InfantDayListFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.syncedVisitList.collectLatest {
-                    val cards = viewModel.getVisitCardList(dob)
+                    val cards = viewModel.getVisitCardList(benId)
 
                     binding.recyclerVisitCards.layoutManager =
                         GridLayoutManager(requireContext(), 2)

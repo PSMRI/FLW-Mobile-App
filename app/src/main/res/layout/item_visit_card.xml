@@ -7,7 +7,7 @@
     android:layout_margin="8dp"
     android:focusable="true"
     android:importantForAccessibility="yes"
-    card_view:cardBackgroundColor="@color/Quartenary"
+    card_view:cardBackgroundColor="@color/md_theme_dark_inversePrimary"
     card_view:cardElevation="4dp"
     card_view:cardCornerRadius="12dp">
 
@@ -43,27 +43,29 @@
             android:gravity="end"
             android:weightSum="2">
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="38dp"
                 android:layout_weight="1"
                 android:text="View"
-                android:textSize="18sp"
+                android:includeFontPadding="false"
+                android:textSize="14sp"
                 android:textColor="@color/md_theme_light_onTertiary"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:textAllCaps="false"
                 android:paddingHorizontal="12dp" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnAddVisit"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="38dp"
                 android:layout_weight="1"
                 android:textColor="@color/md_theme_light_onTertiary"
                 android:text="Add Visit"
-                android:textSize="18sp"
-                android:visibility="gone"
+                android:includeFontPadding="false"
+                android:textSize="14sp"
+                android:visibility="visible"
                 android:textAllCaps="false"
                 android:paddingHorizontal="12dp"
                 android:layout_marginStart="8dp" />

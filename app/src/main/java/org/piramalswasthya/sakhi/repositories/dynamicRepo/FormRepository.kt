@@ -159,6 +159,8 @@ class FormRepository @Inject constructor(
     suspend fun getUnsyncedForms(): List<FormResponseJsonEntity> =
         jsonResponseDao.getUnsyncedForms()
 
+
+
     suspend fun syncFormToServer(form: FormResponseJsonEntity): Boolean {
         return try {
             val request = FormSubmitRequestMapper.fromEntity(form) ?: return false

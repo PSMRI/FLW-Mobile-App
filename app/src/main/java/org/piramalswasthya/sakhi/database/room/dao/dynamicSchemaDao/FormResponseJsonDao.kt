@@ -25,5 +25,7 @@ interface FormResponseJsonDao {
     @Query("SELECT * FROM all_visit_history WHERE benId = :benId")
     suspend fun getSyncedVisitsByRchId(benId: Long): List<FormResponseJsonEntity>
 
+    @Query("UPDATE all_visit_history SET benId = :newBenId WHERE benId = :oldBenId")
+    suspend fun updateVisitBenId(oldBenId: Long, newBenId: Long)
 
 }
