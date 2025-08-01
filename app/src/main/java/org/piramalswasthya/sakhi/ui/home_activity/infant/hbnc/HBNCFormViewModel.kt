@@ -151,7 +151,6 @@ suspend fun saveFormResponses(benId: Long, hhId: Long) {
         .associate { it.fieldId to it.value }
 
     val visitDate = fieldMap["visit_date"]?.toString() ?: "N/A"
-
     val isBabyAlive = fieldMap["is_baby_alive"]?.toString().orEmpty()
     if (isBabyAlive.equals("No", ignoreCase = true)) {
         val reasonOfDeath = fieldMap["reason_for_death"]?.toString().orEmpty()
@@ -168,7 +167,7 @@ suspend fun saveFormResponses(benId: Long, hhId: Long) {
                     this.reasonOfDeath = reasonOfDeath
                     reasonOfDeathId = -1
                     this.placeOfDeath = placeOfDeath
-                    placeOfDeathId = -1
+                    placeOfDeathId = if (!otherPlaceOfDeath.isNullOrBlank()) 8 else -1
                     this.otherPlaceOfDeath = otherPlaceOfDeath
                     if (this.processed != "N") this.processed = "U"
                     syncState = SyncState.UNSYNCED
