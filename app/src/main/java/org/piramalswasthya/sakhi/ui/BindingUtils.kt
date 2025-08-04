@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.ui
 
+import android.content.Context
 import android.net.Uri
 import android.os.Build
 import android.text.Html
@@ -388,6 +389,22 @@ fun TextInputLayout.setAsteriskFormText(required: Boolean?, title: String?) {
         }
     }
 }
+fun checkFileSize(uri: Uri,context: Context) : Boolean {
+    val size = getFileSize(uri, context)
+    return size > 5 * 1024 * 1024
+
+}
+fun getFileSize(uri: Uri,context: Context): Long {
+    val cursor = context.contentResolver.query(uri, null, null, null, null)
+    return cursor?.use {
+        val sizeIndex = it.getColumnIndex(android.provider.OpenableColumns.SIZE)
+        if (sizeIndex != -1 && it.moveToFirst()) {
+            it.getLong(sizeIndex)
+        } else {
+            0L
+        }
+    } ?: 0L
+}
 
 @RequiresApi(Build.VERSION_CODES.N)
 @BindingAdapter("asteriskRequired", "hintText")
@@ -405,6 +422,7 @@ fun TextView.setAsteriskTextView(required: Boolean?, title: String?) {
             }
         }
     }
+
 }
 
 

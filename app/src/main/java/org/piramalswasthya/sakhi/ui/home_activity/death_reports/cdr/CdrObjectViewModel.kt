@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.ui.home_activity.death_reports.cdr
 
 import android.app.Application
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -60,10 +61,28 @@ class CdrObjectViewModel @Inject constructor(
     val exists: LiveData<Boolean>
         get() = _exists
 
-    private val dataset =
-        CDRFormDataset(context, preferenceDao.getCurrentLanguage())
+    private val dataset = CDRFormDataset(context, preferenceDao.getCurrentLanguage(),preferenceDao)
     val formList = dataset.listFlow
 
+    fun getIndexOfCDR1() = dataset.getIndexOfCDR1()
+
+    fun getIndexOfCDR2() = dataset.getIndexOfCDR2()
+    fun getIndexOfIsDeathCertificate() = dataset.getIndexOfIsDeathCertificate()
+
+    private var lastDocumentFormId: Int = 0
+    fun setCurrentDocumentFormId(id: Int) {
+        lastDocumentFormId = id
+    }
+    fun getDocumentFormId():Int {
+        return lastDocumentFormId
+    }
+
+
+
+    fun setImageUriToFormElement(dpUri: Uri) {
+        dataset.setImageUriToFormElement(lastDocumentFormId, dpUri)
+
+    }
 
     init {
         viewModelScope.launch {
