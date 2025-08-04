@@ -31,6 +31,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.databinding.LayoutUploafFormBinding
 import org.piramalswasthya.sakhi.databinding.RvItemFormAgePickerViewV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormCheckV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormDatepickerV2Binding
@@ -45,6 +46,7 @@ import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.getDateString
 import org.piramalswasthya.sakhi.model.AgeUnitDTO
 import org.piramalswasthya.sakhi.model.FormElement
+import org.piramalswasthya.sakhi.model.InputType
 import org.piramalswasthya.sakhi.model.InputType.AGE_PICKER
 import org.piramalswasthya.sakhi.model.InputType.CHECKBOXES
 import org.piramalswasthya.sakhi.model.InputType.DATE_PICKER
@@ -69,9 +71,11 @@ class FormInputAdapter(
     private val imageClickListener: ImageClickListener? = null,
     private val ageClickListener: AgeClickListener? = null,
     private val formValueListener: FormValueListener? = null,
-    private val isEnabled: Boolean = true
+    private val isEnabled: Boolean = true,
+    private val selectImageClickListener: SelectUploadImageClickListener? = null,
+    private val viewDocumentListner: ViewDocumentOnClick? = null,
 ) : ListAdapter<FormElement, ViewHolder>(FormInputDiffCallBack) {
-
+    var disableUpload = false
 
     object FormInputDiffCallBack : DiffUtil.ItemCallback<FormElement>() {
         override fun areItemsTheSame(oldItem: FormElement, newItem: FormElement) =
@@ -871,7 +875,18 @@ class FormInputAdapter(
         fun onAgeClick(form: FormElement) = ageClick(form.id)
 
     }
+    class ViewDocumentOnClick(private val viewDocument: (formId: Int) -> Unit) {
 
+        fun onViewDocumentClick(form: FormElement) = viewDocument(form.id)
+
+    }
+
+
+    class SelectUploadImageClickListener(private val selectImageClick: (formId: Int) -> Unit) {
+
+        fun onSelectImageClick(form: FormElement) = selectImageClick(form.id)
+
+    }
     class FormValueListener(private val valueChanged: (id: Int, value: Int) -> Unit) {
 
         fun onValueChanged(form: FormElement, index: Int) {
@@ -897,9 +912,42 @@ class FormInputAdapter(
             TIME_PICKER -> TimePickerInputViewHolder.from(parent)
             HEADLINE -> HeadlineViewHolder.from(parent)
             AGE_PICKER -> AgePickerViewInputViewHolder.from(parent)
+            InputType.FILE_UPLOAD -> FileUploadInputViewHolder.from(parent)
         }
     }
+    class FileUploadInputViewHolder private constructor(private val binding: LayoutUploafFormBinding) :
+        ViewHolder(binding.root) {
+        companion object {
+            fun from(parent: ViewGroup): ViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = LayoutUploafFormBinding.inflate(layoutInflater, parent, false)
+                return FileUploadInputViewHolder(binding)
+            }
+        }
 
+
+        fun bind(
+            item: FormElement,
+            clickListener: SelectUploadImageClickListener?,
+            documentOnClick: ViewDocumentOnClick?,
+            isEnabled: Boolean
+        ) {
+            binding.form = item
+            binding.tvTitle.text = item.title
+            binding.clickListener = clickListener
+            binding.documentclickListener = documentOnClick
+            binding.btnView.visibility = if (item.value != null) View.VISIBLE else View.GONE
+
+            if (isEnabled) {
+                binding.addFile.isEnabled = true
+                binding.addFile.alpha = 1f
+            } else {
+                binding.addFile.isEnabled = false
+                binding.addFile.alpha = 0.5f
+            }
+        }
+
+    }
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
         val isEnabled = if (isEnabled) item.isEnabled else false
@@ -927,6 +975,8 @@ class FormInputAdapter(
 
             TIME_PICKER -> (holder as TimePickerInputViewHolder).bind(item, isEnabled)
             HEADLINE -> (holder as HeadlineViewHolder).bind(item, formValueListener)
+            InputType.FILE_UPLOAD -> (holder as FileUploadInputViewHolder).bind(item,selectImageClickListener,viewDocumentListner,isEnabled = !disableUpload)
+
             AGE_PICKER -> (holder as AgePickerViewInputViewHolder).bind(
                 item,
                 isEnabled,

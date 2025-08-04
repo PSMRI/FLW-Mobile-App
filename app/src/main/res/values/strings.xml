@@ -332,6 +332,8 @@
     <string name="time_of_death">Time of Death</string>
     <string name="reason_for_death">Reason for Death</string>
     <string name="place_of_death">Place of Death</string>
+    <string name="file_size">File size should be less than or equals to 5 MB.</string>
+
     <string-array name="sync_records">
         <item>Beneficiary</item>
         <item>CBAC</item>
