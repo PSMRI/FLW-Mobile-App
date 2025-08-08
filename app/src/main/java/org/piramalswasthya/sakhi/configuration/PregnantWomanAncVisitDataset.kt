@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Konstants
@@ -74,66 +75,7 @@ class PregnantWomanAncVisitDataset(
         hasDependants = true,
     )
 
-    private val serialNoAsPerAdmission = FormElement(
-        id = 36,
-        inputType = InputType.EDIT_TEXT,
-        title = "Serial no as per Admission/ Evacuation register",
-        arrayId = -1,
-        etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_SIGNED,
-        etMaxLength = 10,
-        required = false,
-    )
-    private val methodOfTermination = FormElement(
-        id = 37,
-        inputType = InputType.DROPDOWN,
-        title = "Method of Termination",
-        arrayId = R.array.anc_method_of_termination,
-        entries = resources.getStringArray(R.array.anc_method_of_termination),
-        required = true,
-        hasDependants = true,
-    )
-    private val terminationDoneBy = FormElement(
-        id = 37,
-        inputType = InputType.DROPDOWN,
-        title = "Termination done by",
-        arrayId = R.array.anc_termination_done_by,
-        entries = resources.getStringArray(R.array.anc_termination_done_by),
-        required = true,
-    )
 
-    private val isPaiucd = FormElement(
-        id = 38,
-        inputType = InputType.RADIO,
-        title = "Post Abortion Contraception\nIs PAIUCD inserted after an abortion",
-        arrayId = R.array.anc_confirmation_array,
-        entries = resources.getStringArray(R.array.anc_confirmation_array),
-        required = true,
-    )
-
-    private val remarks = FormElement(
-        id = 39,
-        inputType = InputType.EDIT_TEXT,
-        title = "Remarks",
-        arrayId = -1,
-        etMaxLength = 100,
-        required = false,
-    )
-    private val abortionDischargeSummaryImg1 = FormElement(
-        id = 40,
-        inputType = IMAGE_VIEW,
-        title = resources.getString(R.string.nbr_abortion_image),
-        subtitle = resources.getString(R.string.nbr_image_cam_gal),
-        arrayId = -1,
-        required = false
-    )
-    private val abortionDischargeSummaryImg2 = FormElement(
-        id = 41,
-        inputType = IMAGE_VIEW,
-        title = resources.getString(R.string.nbr_abortion_image),
-        subtitle = resources.getString(R.string.nbr_image_cam_gal),
-        arrayId = -1,
-        required = false
-    )
 
     private val placeOfDeath = FormElement(
         id = 42,
@@ -156,8 +98,8 @@ class PregnantWomanAncVisitDataset(
         id = 6,
         inputType = InputType.DROPDOWN,
         title = "Facility (Place of Abortion)",
-        arrayId = R.array.death_place_array,
-        entries = resources.getStringArray(R.array.death_place_array),
+        arrayId = R.array.abortion_place_array,
+        entries = resources.getStringArray(R.array.abortion_place_array),
         required = true,
         hasDependants = true,
     )
@@ -231,16 +173,17 @@ class PregnantWomanAncVisitDataset(
     private val pulseRate = FormElement(
         id = 11,
         inputType = InputType.EDIT_TEXT,
-        etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
+        title = "Pulse Rate (BPM)",
+        etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL,
         etMaxLength = 3,
-        title = "Pulse Rate",
-        min = 1,
-        max = 999,
+        minDecimal = 40.0,
+        maxDecimal = 200.0,
         required = false,
         showDrawable = true,
         backgroundDrawable = R.drawable.ic_bg_circular,
         iconDrawableRes = R.drawable.ic_pulse_rate,
     )
+
 
     private val hb = FormElement(
         id = 12,
@@ -758,24 +701,49 @@ class PregnantWomanAncVisitDataset(
                 }
             }
 
-            isAborted.id -> triggerDependants(
-                source = isAborted,
-                passedIndex = index,
-                triggerIndex = 1,
-                target = listOf(
-                    abortionType,
-                    abortionFacility,
-                    abortionDate,
-                    serialNoAsPerAdmission,
-                    methodOfTermination,
-                    terminationDoneBy,
-                    isPaiucd,
-                    remarks,
-                    abortionDischargeSummaryImg1,
-                    abortionDischargeSummaryImg2
-                ),
-                targetSideEffect = listOf(abortionFacility)
-            )
+            isAborted.id -> {
+                if (isAborted.value.equals("Yes", ignoreCase = true)) {
+                    triggerDependants(
+                        source = isAborted,
+                        addItems = listOf(abortionType, abortionFacility, abortionDate),
+                        removeItems = listOf(  weight, bp, pulseRate, hb, fundalHeight,
+                            urineAlbumin, randomBloodSugarTest,
+                            dateOfTTOrTd1, dateOfTTOrTd2, dateOfTTOrTdBooster,
+                            numFolicAcidTabGiven, anyHighRisk, highRiskCondition,
+                            highRiskReferralFacility, hrpConfirm, hrpConfirmedBy,numIfaAcidTabGiven
+                            ),
+                        position = getIndexById(isAborted.id) + 1
+                    )
+                } else {
+                    triggerDependants(
+                        source = isAborted,
+                        addItems = listOf(  weight, bp, pulseRate, hb, fundalHeight,
+                            urineAlbumin, randomBloodSugarTest,
+                            dateOfTTOrTd1, dateOfTTOrTd2, dateOfTTOrTdBooster,
+                            numFolicAcidTabGiven, anyHighRisk, highRiskCondition,
+                            highRiskReferralFacility, hrpConfirm, hrpConfirmedBy,numIfaAcidTabGiven,
+                            maternalDeath),
+                        removeItems = listOf(
+                            abortionType, abortionFacility, abortionDate
+                        ),
+                        position = -1
+                    )
+                }
+            }
+
+
+//
+//            isAborted.id -> triggerDependants(
+//                source = isAborted,
+//                passedIndex = index,
+//                triggerIndex = 1,
+//                target = listOf(
+//                    abortionType,
+//                    abortionFacility,
+//                    abortionDate,
+//                ),
+//                targetSideEffect = listOf(abortionFacility)
+//            )
 
 //            abortionType.id -> triggerDependants(
 //                source = abortionType,
@@ -903,20 +871,6 @@ class PregnantWomanAncVisitDataset(
 
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as PregnantWomanAncCache).let { cache ->
-            cache.serialNo = serialNoAsPerAdmission.value
-            cache.methodOfTermination = methodOfTermination.value
-            cache.methodOfTerminationId =
-                methodOfTermination.entries?.indexOf(methodOfTermination.value ?: "")
-                    ?.takeIf { it != -1 }
-            cache.terminationDoneBy = terminationDoneBy.value
-            cache.terminationDoneById =
-                terminationDoneBy.entries?.indexOf(terminationDoneBy.value ?: "")
-                    ?.takeIf { it != -1 }
-            cache.isPaiucd = isPaiucd.value
-            cache.isPaiucdId = isPaiucd.entries?.indexOf(isPaiucd.value ?: "") == 1
-            cache.remarks = remarks.value
-            cache.abortionImg1 = abortionDischargeSummaryImg1.value
-            cache.abortionImg2 = abortionDischargeSummaryImg2.value
             cache.placeOfDeath = placeOfDeath.value
             cache.placeOfDeathId = placeOfDeath.entries?.indexOf(placeOfDeath.value ?: "")
                 ?.takeIf { it != -1 }
@@ -1015,17 +969,4 @@ class PregnantWomanAncVisitDataset(
         it.syncState = SyncState.UNSYNCED
     }
 
-    fun setImageUriToFormElement(lastImageFormId: Int, dpUri: Uri) {
-        when (lastImageFormId) {
-            abortionDischargeSummaryImg1.id -> {
-                abortionDischargeSummaryImg1.value = dpUri.toString()
-                abortionDischargeSummaryImg1.errorText = null
-            }
-            abortionDischargeSummaryImg2.id -> {
-                abortionDischargeSummaryImg2.value = dpUri.toString()
-                abortionDischargeSummaryImg2.errorText = null
-            }
-        }
-
-    }
 }

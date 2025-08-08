@@ -1,7 +1,9 @@
 package org.piramalswasthya.sakhi.repositories
 
+import android.util.Log
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.transformLatest
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
@@ -10,6 +12,7 @@ import org.piramalswasthya.sakhi.database.room.dao.HouseholdDao
 import org.piramalswasthya.sakhi.database.room.dao.ImmunizationDao
 import org.piramalswasthya.sakhi.database.room.dao.MaternalHealthDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.model.BenWithAncListDomain
 import org.piramalswasthya.sakhi.model.filterMdsr
 import java.util.Calendar
 import javax.inject.Inject
@@ -188,12 +191,29 @@ class RecordsRepo @Inject constructor(
 
     //        .map { list -> list.map { it.ben } }
     fun getPregnantWomenListCount() = benDao.getAllPregnancyWomenListCount(selectedVillage)
+    fun getAbortionPregnantWomanCount() = benDao.getAllAbortionWomenListCount(selectedVillage)
+
+
     fun getRegisteredPregnantWomanList() =
         benDao.getAllRegisteredPregnancyWomenList(selectedVillage)
             .map { list ->
                 list.filter { !it.savedAncRecords.any { it.maternalDeath == true } }
                     .map { it.asDomainModel() }
             }
+    fun getAbortionPregnantWomanList(): Flow<List<BenWithAncListDomain>> =
+        benDao.getAllAbortionWomenList(selectedVillage)
+            .map { benList ->
+                benList
+                    .filter { woman ->
+                        woman.savedAncRecords.any { anc ->
+                            anc.isAborted == true && anc.abortionDate != null
+                        }
+                    }
+                    .map { it.asDomainModel() }
+            }
+
+
+
 
     fun getRegisteredPregnantWomanListCount() =
         benDao.getAllRegisteredPregnancyWomenListCount(selectedVillage)
