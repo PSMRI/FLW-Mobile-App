@@ -31,7 +31,7 @@
 
     <string name="nav_item_1_text">Name : %s</string>
     <string name="nav_item_2_text">Role : %s</string>
-    <string name="nav_item_3_text">ID : %d</string>
+    <string name="nav_item_3_text">ID : %s</string>
     <string name="nav_item_4_text">Version : %s</string>
 
 
