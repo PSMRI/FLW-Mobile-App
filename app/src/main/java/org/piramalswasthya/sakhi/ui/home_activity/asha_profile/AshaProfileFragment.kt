@@ -17,11 +17,15 @@ import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
+import org.piramalswasthya.sakhi.adapters.HouseHoldListAdapter
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentAshaProfileBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.home_activity.all_household.AllHouseholdFragmentDirections
 import timber.log.Timber
 import java.io.File
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -33,6 +37,10 @@ class AshaProfileFragment : Fragment() {
     private val viewModel: AshaProfileViewModel by viewModels()
 
     private var latestTmpUri: Uri? = null
+
+    @Inject
+    lateinit var prefDao: PreferenceDao
+
 
     private val takePicture =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { success: Boolean ->
@@ -64,6 +72,7 @@ class AshaProfileFragment : Fragment() {
                 binding.fabEdit.visibility = if (recordExists) View.VISIBLE else View.GONE
                 binding.btnSubmit.visibility = if (recordExists) View.GONE else View.VISIBLE
                 binding.addHousehold.visibility = if (recordExists) View.VISIBLE else View.GONE
+                binding.rvAny.visibility = if (recordExists) View.VISIBLE else View.GONE
                 val adapter = FormInputAdapter(
                     formValueListener = FormInputAdapter.FormValueListener { formId, index ->
                         viewModel.updateListOnValueChanged(formId, index)
@@ -94,6 +103,49 @@ class AshaProfileFragment : Fragment() {
                 )
             )
         }
+
+        val householdAdapter = HouseHoldListAdapter(false, prefDao, HouseHoldListAdapter.HouseholdClickListener({
+            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+                findNavController().navigate(
+                    AllHouseholdFragmentDirections.actionAllHouseholdFragmentToNewHouseholdFragment(
+                        it
+                    )
+                )
+            }
+        }, {
+//            val bundle = Bundle()
+//            bundle.putLong("hhId", it)
+//            bundle.putString("diseaseType", "No")
+//            bundle.putInt("fromDisease", 0)
+//            findNavController().navigate(R.id.householdMembersFragments, bundle)
+            findNavController().navigate(
+                AllHouseholdFragmentDirections.actionAllHouseholdFragmentToHouseholdMembersFragment(
+                    it,0,"No"
+                )
+            )
+        }, {
+            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+                if (it.numMembers == 0) {
+                    findNavController().navigate(
+                        AllHouseholdFragmentDirections.actionAllHouseholdFragmentToNewBenRegFragment(
+                            it.hhId,
+                            18
+                        )
+                    )
+                }
+            }
+
+        }))
+        binding.rvAny.adapter = householdAdapter
+
+
+
+        lifecycleScope.launch {
+            viewModel.householdList.collect {
+                householdAdapter.submitList(it)
+            }
+        }
+
 
         binding.fabEdit.setOnClickListener {
             viewModel.setRecordExist(false)

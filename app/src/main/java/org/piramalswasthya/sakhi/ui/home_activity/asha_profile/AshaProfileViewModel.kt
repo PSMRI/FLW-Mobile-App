@@ -10,13 +10,17 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.configuration.AshaProfileDataset
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.model.HouseHoldBasicDomain
 import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.model.ProfileActivityCache
 import org.piramalswasthya.sakhi.repositories.AshaProfileRepo
+import org.piramalswasthya.sakhi.repositories.RecordsRepo
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -27,7 +31,14 @@ class AshaProfileViewModel @Inject constructor(
     preferenceDao: PreferenceDao,
     @ApplicationContext var context: Context,
     private val ashaProfileRepo: AshaProfileRepo,
+    recordsRepo: RecordsRepo
 ) : ViewModel() {
+
+    private val filter = MutableStateFlow("")
+
+    val householdList = recordsRepo.hhList.combine(filter) { list, _ ->
+        list.take(1)
+    }
 
     val currentUser = preferenceDao.getLoggedInUser()
     enum class State {
@@ -128,4 +139,19 @@ class AshaProfileViewModel @Inject constructor(
         dataset.setImageUriToFormElement(lastImageFormId, dpUri)
 
     }
+
+    private fun filterHH(
+        list: List<HouseHoldBasicDomain>, filter: String
+    ): List<HouseHoldBasicDomain> {
+        return if (filter == "") list
+        else {
+            val filterText = filter.lowercase()
+            list.filter {
+                it.hhId.toString().contains(filterText) || it.headFullName.lowercase()
+                    .contains(filterText) || it.contactNumber.lowercase().contains(filterText)
+            }
+        }
+    }
+
+
 }
