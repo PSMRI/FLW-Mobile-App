@@ -66,7 +66,7 @@
     <string name="cd_icon_grid_icon">icon</string>
     <string name="nav_item_1_text">Name : <b>%s</b></string>
     <string name="nav_item_2_text">Username : <b>%s</b></string>
-    <string name="nav_item_3_text">User ID :  <b>%d</b></string>
+    <string name="nav_item_3_text">User ID :  <b>%s</b></string>
     <string name="nav_item_4_text">Version : %s</string>
     <string name="tv_required_text_asterisk">*</string>
     <string name="rv_item_hh_entry_1">%1$d</string>

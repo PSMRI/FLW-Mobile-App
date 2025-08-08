@@ -559,7 +559,21 @@ class HRPPregnantTrackDataset(
                 1
             }
             hemoglobinTest.id->{
-                validateInput(diastolic)
+                validateInput(hemoglobinTest)
+                1
+            }
+
+            rbg.id->{
+                validateInput(rbg)
+                1
+            }
+            fbg.id->{
+                validateInput(fbg)
+                1
+
+            }
+            ppbg.id->{
+                validateInput(ppbg)
                 1
             }
 

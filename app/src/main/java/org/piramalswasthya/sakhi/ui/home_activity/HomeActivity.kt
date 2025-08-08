@@ -28,6 +28,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.text.HtmlCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.MenuProvider
 import androidx.navigation.fragment.NavHostFragment
@@ -63,6 +64,7 @@ import org.piramalswasthya.sakhi.ui.service_location_activity.ServiceLocationAct
 import org.piramalswasthya.sakhi.utils.KeyUtils
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import java.net.URI
+import java.util.Locale
 import javax.inject.Inject
 
 
@@ -496,8 +498,17 @@ class HomeActivity : AppCompatActivity() {
                 resources.getString(R.string.nav_item_1_text, it.name)
             headerView.findViewById<TextView>(R.id.tv_nav_role).text =
                 resources.getString(R.string.nav_item_2_text, it.userName)
-            headerView.findViewById<TextView>(R.id.tv_nav_id).text =
-                resources.getString(R.string.nav_item_3_text, it.userId)
+
+
+            val englishId = String.format(Locale.ENGLISH, "%s", it.userId)
+            val formatted = HtmlCompat.fromHtml(
+                getString(R.string.nav_item_3_text, englishId),
+                HtmlCompat.FROM_HTML_MODE_LEGACY
+            )
+            headerView.findViewById<TextView>(R.id.tv_nav_id).text = formatted
+
+//            headerView.findViewById<TextView>(R.id.tv_nav_id).text =
+//                resources.getString(R.string.nav_item_3_text, it.userId)
         }
         viewModel.profilePicUri?.let {
             Glide.with(this).load(it).placeholder(R.drawable.ic_person).circleCrop()
