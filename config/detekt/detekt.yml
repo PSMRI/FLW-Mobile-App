@@ -4,21 +4,22 @@ build:
 config:
   validation: true
 
-rules:
-  style:
-    MagicNumber:
-      active: true
-      ignoreNumbers: [-1, 0, 1, 2]
-      excludes: ['**/test/**', '**/androidTest/**']
-    WildcardImport:
-      active: true
-  complexity:
-    ComplexMethod:
-      active: true
-      threshold: 15
-    LongParameterList:
-      active: true
-      functionThreshold: 6
-  comments:
-    UndocumentedPublicClass:
-      active: false
+style:
+  MagicNumber:
+    active: true
+    ignoreNumbers: ['-1', '0', '1', '2']
+    excludes: ['**/test/**', '**/androidTest/**']
+  WildcardImport:
+    active: true
+
+complexity:
+  CyclomaticComplexMethod:
+    active: true
+    threshold: 15
+  LongParameterList:
+    active: true
+    threshold: 6
+
+comments:
+  UndocumentedPublicClass:
+    active: false
