@@ -62,15 +62,8 @@ class PwAncFormViewModel @Inject constructor(
     val recordExists: LiveData<Boolean>
         get() = _recordExists
 
-    private var lastImageFormId: Int = 0
 
-    fun setCurrentImageFormId(id: Int) {
-        lastImageFormId = id
-    }
-    fun setImageUriToFormElement(dpUri: Uri) {
-        dataset.setImageUriToFormElement(lastImageFormId, dpUri)
 
-    }
 
     //    private lateinit var user: UserDomain
     private val dataset =

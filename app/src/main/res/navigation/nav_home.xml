@@ -151,6 +151,10 @@
         <action
             android:id="@+id/action_motherCareFragment_to_pncMotherListFragment"
             app:destination="@id/pncMotherListFragment" />
+
+        <action
+            android:id="@+id/action_motherCareFragment_to_abortionListFragment"
+            app:destination="@id/abortionListFragment" />
     </fragment>
     <fragment
         android:id="@+id/deathReportsFragment"
@@ -1043,7 +1047,10 @@
             app:argType="string"
             android:defaultValue="hbnc_form_001" />
     </fragment>
-
+    <fragment
+        android:id="@+id/abortionListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.maternal_health.abortion.AbortionListFragment"
+        android:label="AbortionListFragment" />
 
 
 </navigation>
