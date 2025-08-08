@@ -195,7 +195,7 @@ class FindAbhaFragment : Fragment() {
         viewModel.errorMessage.observe(viewLifecycleOwner) {
             it?.let {
                 binding.tvErrorTextAbha.visibility = View.VISIBLE
-                binding.tvErrorTextAbha.text = "No ABHA Found"
+                binding.tvErrorTextAbha.text = it
                 viewModel.resetErrorMessage()
             }
         }
