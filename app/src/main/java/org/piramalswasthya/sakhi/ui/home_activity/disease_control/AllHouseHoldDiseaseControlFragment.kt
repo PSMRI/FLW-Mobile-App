@@ -95,7 +95,9 @@ class AllHouseHoldDiseaseControlFragment : Fragment() {
 
         }, {
 
-        }))
+
+        },
+            ))
         binding.rvAny.adapter = householdAdapter
 
         lifecycleScope.launch {
