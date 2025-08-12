@@ -8,3 +8,7 @@
 /local.properties
 /secrets.properties
 **/google-services.json
+.gradle/
+**/.gradle/**
+build/
+**/build/**
