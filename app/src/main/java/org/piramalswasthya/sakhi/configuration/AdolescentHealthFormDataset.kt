@@ -158,6 +158,14 @@ class AdolescentHealthFormDataset(context: Context, language: Languages) : Datas
         required = false
     )
 
+    private val sDate = FormElement(
+        id = 15,
+        inputType = DATE_PICKER,
+        title = "Date",
+        arrayId = -1,
+        required = false,
+        max = getCurrentDateMillis()
+    )
 
     private val firstPage: List<FormElement> by lazy {
         listOf(
@@ -187,6 +195,7 @@ class AdolescentHealthFormDataset(context: Context, language: Languages) : Datas
             sanitaryNapkinDistributed.value = if (saved.sanitaryNapkinDistributed == true) sanitaryNapkinDistributed.entries!![0] else sanitaryNapkinDistributed.entries!![1]
             noOfPacketsDistributed.value = saved.noOfPacketsDistributed?.toString()
             place.value = saved.place
+            sDate.value = saved.distributionDate?.let { getDateFromLong(it) }
             referredToHealthFacility.value = saved.referredToHealthFacility
             counselingProvided.value = if (saved.counselingProvided == true) counselingProvided.entries!![0] else counselingProvided.entries!![1]
             counselingType.value = saved.counselingType
@@ -202,6 +211,7 @@ class AdolescentHealthFormDataset(context: Context, language: Languages) : Datas
         if (sanitaryNapkinDistributed.value == sanitaryNapkinDistributed.entries!![0]) {
             list.add(list.indexOf(sanitaryNapkinDistributed) + 1, noOfPacketsDistributed)
             list.add(list.indexOf(noOfPacketsDistributed) + 1, place)
+            list.add(list.indexOf(place) + 1, sDate)
         }
 
         if (healthStatus.value == healthStatus.entries!![1] || healthStatus.value == healthStatus.entries!![2]) {
@@ -245,7 +255,7 @@ class AdolescentHealthFormDataset(context: Context, language: Languages) : Datas
                     source = sanitaryNapkinDistributed,
                     triggerIndex = 0,
                     passedIndex = index,
-                    target = listOf(noOfPacketsDistributed,place)
+                    target = listOf(noOfPacketsDistributed,place,sDate)
 
                 )
             }
@@ -290,6 +300,7 @@ class AdolescentHealthFormDataset(context: Context, language: Languages) : Datas
             ben.sanitaryNapkinDistributed = sanitaryNapkinDistributed.value == sanitaryNapkinDistributed.entries!![0]
             ben.noOfPacketsDistributed = noOfPacketsDistributed.value?.toInt()
             ben.place = place.value
+            ben.distributionDate = getLongFromDate(sDate.value)
             ben.referredToHealthFacility = referredToHealthFacility.value
             ben.counselingProvided = counselingProvided.value == counselingProvided.entries!![0]
             ben.counselingType = counselingType.value
