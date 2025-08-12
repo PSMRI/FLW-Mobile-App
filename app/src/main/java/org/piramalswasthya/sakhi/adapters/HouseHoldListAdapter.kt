@@ -50,20 +50,23 @@ class HouseHoldListAdapter(private var isDisease: Boolean, val pref: PreferenceD
             binding.household = item
             binding.clickListener = clickListener
             binding.executePendingBindings()
-            if (!isDisease) {
+           /* if (!isDisease) {
                 binding.button4.visibility = View.VISIBLE
                 binding.button5.visibility = View.GONE
             } else {
                 binding.button4.visibility = View.GONE
                 binding.button5.visibility = View.GONE
             }
+            */
 
-            if (pref.getLoggedInUser()?.role.equals("asha", true)) {
+
+            if (pref.getLoggedInUser()?.role.equals("asha", true) && isDisease) {
+                binding.button4.visibility = View.GONE
+            } else if (pref.getLoggedInUser()?.role.equals("asha", true) && !isDisease) {
                 binding.button4.visibility = View.VISIBLE
             } else {
                 binding.button4.visibility = View.GONE
             }
-
         }
 
     }
