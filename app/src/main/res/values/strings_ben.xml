@@ -244,6 +244,17 @@
         <item>In Transit</item>
         <item>Other Place of Death</item>
     </string-array>
+    <string-array name="abortion_place_array">
+        <item>Home</item>
+        <item>Subcenter</item>
+        <item>PHC</item>
+        <item>CHC</item>
+        <item>District Hospital</item>
+        <item>Medical College Hospital</item>
+        <item>Private Hospital</item>
+        <item>In Transit</item>
+        <item>Other Place of Abortion</item>
+    </string-array>
     <string-array name="reason_of_death_array">
         <item>Natural Death</item>
         <item>Accident</item>

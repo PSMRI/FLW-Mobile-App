@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.repositories.dynamicRepo
 
 import android.content.Context
+import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -20,6 +21,7 @@ import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 import retrofit2.Response
+import timber.log.Timber
 import javax.inject.Named
 
 @Singleton
@@ -90,7 +92,9 @@ class FormRepository @Inject constructor(
                     continue
                 }
 
-                val visitDay = item.fields.get("visit_day")?.asString?.trim() ?: ""
+                val visitDay = item.fields.get("visit_day")?.let {
+                    if (it.isJsonPrimitive) it.asString.trim() else ""
+                } ?: ""
                 val visitDate = item.visitDate ?: "-"
                 val benId = item.beneficiaryId
                 val hhId = item.houseHoldId
@@ -112,6 +116,7 @@ class FormRepository @Inject constructor(
                                 else -> prim.asString
                             }
                         }
+
                         else -> jsonElement.toString()
                     }
                     fieldsJson.put(key, value)
@@ -139,6 +144,7 @@ class FormRepository @Inject constructor(
                 insertOrUpdateFormResponse(entity)
 
             } catch (e: Exception) {
+                Timber.tag("FormRepository").e(e, "Failed to save visit at index " + index)
             }
         }
     }
@@ -153,12 +159,11 @@ class FormRepository @Inject constructor(
     suspend fun insertFormResponse(entity: FormResponseJsonEntity) =
         jsonResponseDao.insertFormResponse(entity)
 
-    suspend fun loadFormResponseJson(benId:Long, visitDay: String): String? =
+    suspend fun loadFormResponseJson(benId: Long, visitDay: String): String? =
         jsonResponseDao.getFormResponse(benId, visitDay)?.formDataJson
 
     suspend fun getUnsyncedForms(): List<FormResponseJsonEntity> =
         jsonResponseDao.getUnsyncedForms()
-
 
 
     suspend fun syncFormToServer(form: FormResponseJsonEntity): Boolean {

@@ -22,6 +22,7 @@ import org.piramalswasthya.sakhi.model.BenWithTbScreeningDomain
 import org.piramalswasthya.sakhi.model.BenWithTbSuspectedDomain
 import org.piramalswasthya.sakhi.model.ImmunizationDetailsDomain
 import org.piramalswasthya.sakhi.model.InfantRegDomain
+import org.piramalswasthya.sakhi.model.PregnantWomanAncCache
 import org.piramalswasthya.sakhi.model.PregnantWomenVisitDomain
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -142,6 +143,22 @@ fun filterPwAncList(
                 it.ben.rchId.takeIf { it1 -> it1?.isDigitsOnly() == true }?.contains(filterText) ?: false
 
     }
+
+fun filterAbortionList(
+    list: List<BenWithAncListDomain>,
+    filterText: String
+) =
+    list.filter {
+        it.ben.benId.toString().lowercase().contains(filterText) ||
+                it.ben.age.lowercase().contains(filterText) ||
+                it.ben.familyHeadName.lowercase().contains(filterText) ||
+                it.ben.benFullName.lowercase().contains(filterText) ||
+                it.ben.spouseName?.lowercase()?.contains(filterText) ?: false ||
+                it.ben.mobileNo.lowercase().contains(filterText) ||
+//                it.abortionDate?.toString()?.contains(filterText) ?: false ||
+                it.ben.rchId.takeIf { id -> id?.isDigitsOnly() == true }?.contains(filterText) ?: false
+    }
+
 
 fun filterPncDomainList(
     list: List<BenPncDomain>,
