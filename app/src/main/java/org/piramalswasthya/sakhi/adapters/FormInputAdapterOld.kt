@@ -572,7 +572,7 @@ class FormInputAdapterOld(
             TIME_PICKER -> TimePickerInputViewHolder.from(parent)
             HEADLINE -> HeadlineViewHolder.from(parent)
             AGE_PICKER -> FormInputAdapter.AgePickerViewInputViewHolder.from(parent)
-            FILE_UPLOAD -> FormInputAdapter.FileUploadInputViewHolder.from(parent)
+            FILE_UPLOAD -> FileUploadInputViewHolder.from(parent)
         }
     }
 
