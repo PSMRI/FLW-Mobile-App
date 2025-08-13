@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.adapters
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.os.CountDownTimer
 import android.text.Editable
 import android.text.InputFilter
 import android.text.InputFilter.AllCaps
@@ -14,10 +15,12 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import android.widget.TextView
 import androidx.core.view.children
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.google.android.material.button.MaterialButton
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.configuration.FormEditTextDefaultInputFilter
 import org.piramalswasthya.sakhi.databinding.RvItemFormCheckBinding
@@ -29,13 +32,16 @@ import org.piramalswasthya.sakhi.databinding.RvItemFormImageViewBinding
 import org.piramalswasthya.sakhi.databinding.RvItemFormRadioBinding
 import org.piramalswasthya.sakhi.databinding.RvItemFormTextViewBinding
 import org.piramalswasthya.sakhi.databinding.RvItemFormTimepickerBinding
+import org.piramalswasthya.sakhi.databinding.RvItemFormUploadImageBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
+import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.FormInputOld
 import org.piramalswasthya.sakhi.model.InputType.AGE_PICKER
 import org.piramalswasthya.sakhi.model.InputType.CHECKBOXES
 import org.piramalswasthya.sakhi.model.InputType.DATE_PICKER
 import org.piramalswasthya.sakhi.model.InputType.DROPDOWN
 import org.piramalswasthya.sakhi.model.InputType.EDIT_TEXT
+import org.piramalswasthya.sakhi.model.InputType.FILE_UPLOAD
 import org.piramalswasthya.sakhi.model.InputType.HEADLINE
 import org.piramalswasthya.sakhi.model.InputType.IMAGE_VIEW
 import org.piramalswasthya.sakhi.model.InputType.RADIO
@@ -245,6 +251,47 @@ class FormInputAdapterOld(
         }
     }
 
+
+
+    class FileUploadInputViewHolder private constructor(private val binding: RvItemFormUploadImageBinding) :
+        ViewHolder(binding.root) {
+        companion object {
+            fun from(parent: ViewGroup): ViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = RvItemFormUploadImageBinding.inflate(layoutInflater, parent, false)
+                return FileUploadInputViewHolder(binding)
+            }
+        }
+
+        fun bind(item: FormInputOld, isEnabled: Boolean) {
+
+        }
+
+        private lateinit var countDownTimer : CountDownTimer
+        private var countdownTimers : HashMap<Int, CountDownTimer> = HashMap()
+
+        private fun formatTimeInSeconds(millis: Long) : String {
+            val seconds = millis / 1000
+            return "${seconds} sec"
+        }
+        private fun startTimer(timerInSec: TextView, generateOtp: MaterialButton) {
+            countDownTimer =  object : CountDownTimer(60000, 1000) {
+                override fun onTick(millisUntilFinished: Long) {
+                    timerInSec.visibility = View.VISIBLE
+                    timerInSec.text = formatTimeInSeconds(millisUntilFinished)
+                }
+                override fun onFinish() {
+                    timerInSec.visibility = View.INVISIBLE
+                    timerInSec.text = ""
+                    generateOtp.isEnabled = true
+                    generateOtp.text = timerInSec.resources.getString(R.string.resend_otp)
+                }
+            }.start()
+
+            countdownTimers[adapterPosition] = countDownTimer
+
+        }
+    }
     class RadioInputViewHolder private constructor(private val binding: RvItemFormRadioBinding) :
         ViewHolder(binding.root) {
         companion object {
@@ -525,6 +572,7 @@ class FormInputAdapterOld(
             TIME_PICKER -> TimePickerInputViewHolder.from(parent)
             HEADLINE -> HeadlineViewHolder.from(parent)
             AGE_PICKER -> FormInputAdapter.AgePickerViewInputViewHolder.from(parent)
+            FILE_UPLOAD -> FileUploadInputViewHolder.from(parent)
         }
     }
 
@@ -546,6 +594,8 @@ class FormInputAdapterOld(
             TIME_PICKER -> (holder as TimePickerInputViewHolder).bind(item, isEnabled)
             HEADLINE -> (holder as HeadlineViewHolder).bind(item)
             AGE_PICKER -> null
+            FILE_UPLOAD -> (holder as FileUploadInputViewHolder).bind(item, isEnabled)
+
         }
     }
 
