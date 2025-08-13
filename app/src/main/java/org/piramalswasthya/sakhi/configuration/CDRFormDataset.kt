@@ -269,7 +269,7 @@ class CDRFormDataset(
         saved?.let { savedCdr ->
             visitDate.value = savedCdr.visitDate?.let { it1 -> getDateFromLong(it1) }
             landmarks.value = savedCdr.landmarks
-            cdrFileUpload2.value = savedCdr.cdr1File
+            cdrFileUpload2.value = savedCdr.cdr2File
             cdrFileUpload1.value = savedCdr.cdr1File
             cdrDeathFileUpload.value = savedCdr.cdrDeathCertFile
             pincode.value = savedCdr.pincode?.toString()
