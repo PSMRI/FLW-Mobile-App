@@ -20,6 +20,9 @@ import org.piramalswasthya.sakhi.repositories.DeliveryOutcomeRepo
 import org.piramalswasthya.sakhi.repositories.EcrRepo
 import org.piramalswasthya.sakhi.repositories.MaternalHealthRepo
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -74,7 +77,10 @@ class DeliveryOutcomeViewModel @Inject constructor(
                     syncState = SyncState.UNSYNCED,
                     createdBy = asha.userName,
                     updatedBy = asha.userName,
-                    isActive = true
+                    isActive = true,
+
+
+
                 )
             }
 
@@ -109,7 +115,28 @@ class DeliveryOutcomeViewModel @Inject constructor(
                     deliveryOutcomeRepo.saveDeliveryOutcome(deliveryOutcome)
 
                     val ecr = ecrRepo.getSavedRecord(deliveryOutcome.benId)
+
+                    if(deliveryOutcome.isDeath==true)
+                    {
+                        benRepo.getBenFromId(benId)?.let {
+                            it.isDeath = true
+                            it.isDeathValue = "Death"
+                            val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.US)
+                            val dateOfDeath = deliveryOutcome.dateOfDeath?.let { d ->
+                                dateFormat.format(Date(d))
+                            } ?: ""
+                            it.dateOfDeath = dateOfDeath
+                            it.placeOfDeath = deliveryOutcome.placeOfDeath
+                            it.placeOfDeathId = deliveryOutcome.placeOfDeathId ?: -1
+                            it.otherPlaceOfDeath = deliveryOutcome.otherPlaceOfDeath
+                            if (it.processed != "N") it.processed = "U"
+                            it.syncState = SyncState.UNSYNCED
+                            benRepo.updateRecord(it)
+                        }
+                    }
+
                     if (ecr != null) {
+
                         deliveryOutcome.liveBirth?.let {
                             ecr.noOfLiveChildren = ecr.noOfLiveChildren + it
                         }
