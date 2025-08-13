@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.work
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.work.Constraints
@@ -13,6 +14,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.Operation
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
+import org.piramalswasthya.sakhi.work.dynamicWoker.FormSyncWorker
 import java.util.concurrent.TimeUnit
 
 object WorkerUtils {
@@ -47,10 +49,6 @@ object WorkerUtils {
             OneTimeWorkRequestBuilder<PullChildImmunizatonFromAmritWorker>()
                 .setConstraints(networkOnlyConstraint)
                 .build()
-        val pullHBYCFromAmritWorker =
-            OneTimeWorkRequestBuilder<PullHBYCFromAmritWorker>()
-                .setConstraints(networkOnlyConstraint)
-                .build()
         val pullHBNCFromAmritWorker =
             OneTimeWorkRequestBuilder<PullChildHBNCFromAmritWorker>()
                 .setConstraints(networkOnlyConstraint)
@@ -74,15 +72,17 @@ object WorkerUtils {
         val pushECWorkRequest = OneTimeWorkRequestBuilder<PushECToAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
-        val pushChildHBYCToAmritWorker = OneTimeWorkRequestBuilder<PushChildHBYCToAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
-            .build()
         val pushChildHBNCToAmritWorker = OneTimeWorkRequestBuilder<PushChildHBNCFromAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
         val pushAbhaWorkRequest = OneTimeWorkRequestBuilder<PushMapAbhatoBenficiaryWorker>()
-            .setConstraints(networkOnlyConstraint) // if you have constraints
+            .setConstraints(networkOnlyConstraint)
             .build()
+
+        val formSyncWorkerRequest = OneTimeWorkRequestBuilder<FormSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+
         val workManager = WorkManager.getInstance(context)
         workManager
             .beginUniqueWork(
@@ -96,7 +96,6 @@ object WorkerUtils {
             .then(pullTBWorkRequest)
             .then(pullECWorkRequest)
             .then(pullImmunizationWorkRequest)
-//            .then(pullHBYCFromAmritWorker)
             .then(pullHBNCFromAmritWorker)
             .then(pushWorkRequest)
             .then(pushCbacWorkRequest)
@@ -104,11 +103,14 @@ object WorkerUtils {
             .then(pushHRPToAmritWorker)
             .then(pushTBWorkRequest)
             .then(pushECWorkRequest)
-//            .then(pushChildHBYCToAmritWorker)
             .then(pushChildHBNCToAmritWorker)
             .then(pushAbhaWorkRequest)
+            .then(formSyncWorkerRequest)
             .enqueue()
+
     }
+
+
 
     fun triggerAmritPushWorker(context: Context) {
         val pushWorkRequest = OneTimeWorkRequestBuilder<PushToAmritWorker>()
@@ -161,6 +163,10 @@ object WorkerUtils {
         val pushChildHBNCToAmritWorker = OneTimeWorkRequestBuilder<PushChildHBNCFromAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
+
+        val formSyncWorkerRequest  = OneTimeWorkRequestBuilder<FormSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
         //Always at last - INCENTIVES
         val pullIncentiveActivityWorkRequest =
             OneTimeWorkRequestBuilder<PullIncentiveWorker>()
@@ -177,8 +183,10 @@ object WorkerUtils {
                 .build()
 
         val pushAbhaWorkRequest = OneTimeWorkRequestBuilder<PushMapAbhatoBenficiaryWorker>()
-            .setConstraints(networkOnlyConstraint) // if you have constraints
+            .setConstraints(networkOnlyConstraint)
             .build()
+
+
         val workManager = WorkManager.getInstance(context)
         workManager
             .beginUniqueWork(
@@ -202,6 +210,7 @@ object WorkerUtils {
             .then(pushChildHBNCToAmritWorker)
             .then(pullIncentiveActivityWorkRequest)
             .then(pushAbhaWorkRequest)
+            .then(formSyncWorkerRequest)
             .enqueue()
     }
 
@@ -424,4 +433,5 @@ object WorkerUtils {
         val workManager = WorkManager.getInstance(context)
         workManager.cancelAllWork()
     }
+
 }

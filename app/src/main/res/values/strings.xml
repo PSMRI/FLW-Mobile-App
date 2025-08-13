@@ -260,7 +260,7 @@
     <string name="pmjay_form">PMJAY Form</string>
     <string name="household_members">Household Members</string>
     <string name="fp_ot_register">FP-OT Register</string>
-    <string name="hbnc_day_list">Hbnc Day List</string>
+    <string name="hbnc_day_list">HBNC Day List</string>
     <string name="hbnc">Hbnc</string>
     <string name="visit_card">Visit Card</string>
     <string name="hbnc_part_i">Hbnc Part I</string>
@@ -324,6 +324,14 @@
     <string name="add_family_member">Add Family Member</string>
     <string name="app_native_name">উৎপ্ৰেৰণা</string>
     <string name="non_pregnant_women_eligible_couple_section">Non-Pregnant Women (Eligible Couple) section</string>
+    <string name="status">Status</string>
+    <string name="visit_date">Visit Date</string>
+    <string name="visit_day">Visit Day</string>
+    <string name="beneficiary_status">Beneficiary Status</string>
+    <string name="date_of_death">Date of Death</string>
+    <string name="time_of_death">Time of Death</string>
+    <string name="reason_for_death">Reason for Death</string>
+    <string name="place_of_death">Place of Death</string>
     <string-array name="sync_records">
         <item>Beneficiary</item>
         <item>CBAC</item>

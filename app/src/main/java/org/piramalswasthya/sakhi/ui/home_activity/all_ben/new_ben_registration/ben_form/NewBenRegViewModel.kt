@@ -113,6 +113,7 @@ class NewBenRegViewModel @Inject constructor(
 
                 if (benIdFromArgs != 0L && recordExists.value == true) {
                     ben = benRepo.getBeneficiaryRecord(benIdFromArgs, hhId)!!
+                    _isDeath.postValue(ben.isDeath ?: false)
                     dataset.setFirstPageToRead(
                         ben,
                         familyHeadPhoneNo = household.family?.familyHeadPhoneNo
@@ -166,6 +167,15 @@ class NewBenRegViewModel @Inject constructor(
                         ben = BenRegCache(
                             ashaId = user.userId,
                             beneficiaryId = benIdToSet,
+                            isDeath = false,
+                            isDeathValue = "",
+                            dateOfDeath = "",
+                            timeOfDeath = "",
+                            reasonOfDeath = "",
+                            reasonOfDeathId = -1,
+                            placeOfDeath = "",
+                            placeOfDeathId = -1,
+                            otherPlaceOfDeath = "",
                             householdId = hhId,
                             isAdult = false,
                             isKid = dataset.isKid(),
@@ -225,6 +235,9 @@ class NewBenRegViewModel @Inject constructor(
     fun resetListUpdateState() {
         _listUpdateState.value = ListUpdateState.Idle
     }
+
+    private val _isDeath = MutableLiveData<Boolean>()
+    val isDeath: LiveData<Boolean> get() = _isDeath
 
     fun getBenGender() = ben.gender
     fun getBenName() = "${ben.firstName} ${ben.lastName ?: ""}"

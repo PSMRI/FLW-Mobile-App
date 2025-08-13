@@ -2,6 +2,10 @@ package org.piramalswasthya.sakhi.network
 
 import okhttp3.ResponseBody
 import org.piramalswasthya.sakhi.model.*
+import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
+import org.piramalswasthya.sakhi.model.dynamicEntity.FormSubmitRequest
+import org.piramalswasthya.sakhi.model.dynamicModel.HBNCVisitListResponse
+import org.piramalswasthya.sakhi.model.dynamicModel.HBNCVisitRequest
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -205,5 +209,21 @@ interface AmritApiService {
 
     @POST("flw-api/child-care/hbyc/saveAll")
     suspend fun pushHBYCToServer(@Body hbncPostList: List<HbycPost>): Response<ResponseBody>
+
+    @GET("common-api/dynamicForm/form/{formId}/fields")
+    suspend fun fetchFormSchema(
+        @Path("formId") formId: String
+    ): Response<FormSchemaDto>
+
+    @POST("flw-api/child-care/hbncVisit/saveAll")
+    suspend fun submitForm(
+        @Body request: List<FormSubmitRequest>
+    ): Response<Unit>
+
+
+    @POST("flw-api/child-care/hbncVisit/getAll")
+    suspend fun getAllHbncVisits(
+        @Body request: HBNCVisitRequest
+    ): Response<HBNCVisitListResponse>
 
 }
