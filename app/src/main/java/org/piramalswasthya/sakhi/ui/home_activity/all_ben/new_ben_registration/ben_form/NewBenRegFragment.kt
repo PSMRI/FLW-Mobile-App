@@ -199,7 +199,11 @@ class NewBenRegFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.cvPatientInformation.visibility = View.GONE
         binding.btnSubmit.setOnClickListener {
-            submitBenForm()
+           // submitBenForm()
+            if (validateCurrentPage()) {
+                showPreview()
+            }
+
         }
 
         viewModel.recordExists.observe(viewLifecycleOwner) { notIt ->
@@ -350,6 +354,37 @@ class NewBenRegFragment : Fragment() {
             viewModel.saveForm()
         }
     }
+
+    private fun showPreview() {
+        // run in lifecycleScope since viewModel.getFormPreviewData() is suspend
+        lifecycleScope.launch {
+            val previewItems = try {
+                viewModel.getFormPreviewData()
+            } catch (e: Exception) {
+                // fallback: show toast and perform direct submit
+                Toast.makeText(requireContext(), getString(R.string.something_wend_wong_contact_testing), Toast.LENGTH_SHORT).show()
+                return@launch
+            }
+
+            val sheet = PreviewBottomSheet()
+            sheet.setData(previewItems)
+            sheet.setCallbacks(
+                onEdit = { /* user wants to edit — do nothing, sheet already dismissed */ },
+                onSubmit = {
+                    // validate before saving (reuse your existing validateCurrentPage)
+                    if (validateCurrentPage()) {
+                        viewModel.saveForm()
+                    } else {
+                        // scroll to first invalid field is handled inside validateCurrentPage
+                    }
+                }
+            )
+            sheet.show(parentFragmentManager, "ben_preview_sheet")
+        }
+    }
+
+
+
 
     private fun validateCurrentPage(): Boolean {
         val result = binding.form.rvInputForm.adapter?.let {
