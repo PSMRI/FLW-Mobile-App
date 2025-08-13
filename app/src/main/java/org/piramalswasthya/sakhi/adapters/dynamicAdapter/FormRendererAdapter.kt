@@ -6,6 +6,7 @@
     import android.net.Uri
     import android.text.*
     import android.text.style.ForegroundColorSpan
+    import android.util.Log
     import android.view.*
     import android.widget.*
     import androidx.appcompat.content.res.AppCompatResources
@@ -15,6 +16,7 @@
     import com.google.android.material.textfield.TextInputLayout
     import org.piramalswasthya.sakhi.R
     import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
+    import timber.log.Timber
     import java.text.SimpleDateFormat
     import java.util.*
 
@@ -65,6 +67,7 @@
             try {
                 holder.bind(field)
             } catch (e: Exception) {
+                Timber.tag("FormRendererAdapter").e(e, "Error binding field: " + field.fieldId)
             }
         }
 
@@ -304,112 +307,6 @@
                         addWithError(textInputLayout, field)
                     }
 
-
-//                    "date" -> {
-//                        val context = itemView.context
-//                        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-//                        val today = Calendar.getInstance().time
-//                        val todayStr = sdf.format(today)
-//
-//                        if (field.fieldId == "visit_date" && (field.value == null || (field.value as? String)?.isBlank() == true)) {
-//                            field.value = todayStr
-//                        }
-//                        val isFieldAlwaysDisabled = field.fieldId == "due_date"
-//
-//                        val textInputLayout = TextInputLayout(
-//                            context,
-//                            null,
-//                            com.google.android.material.R.style.Widget_Material3_TextInputLayout_OutlinedBox
-//                        ).apply {
-//                            layoutParams = LinearLayout.LayoutParams(
-//                                ViewGroup.LayoutParams.MATCH_PARENT,
-//                                ViewGroup.LayoutParams.WRAP_CONTENT
-//                            ).apply {
-//                                setMargins(0, 16, 0, 8)
-//                            }
-//                            hint = field.placeholder ?: "Select ${field.label}"
-//                            boxBackgroundMode = TextInputLayout.BOX_BACKGROUND_OUTLINE
-//                            boxStrokeColor = ContextCompat.getColor(context, R.color.md_theme_light_primary)
-//                            boxStrokeWidthFocused = 2
-//                            setBoxCornerRadii(12f, 12f, 12f, 12f)
-//                        }
-//
-//                        val editText = TextInputEditText(context).apply {
-//                            layoutParams = LinearLayout.LayoutParams(
-//                                ViewGroup.LayoutParams.MATCH_PARENT,
-//                                ViewGroup.LayoutParams.WRAP_CONTENT
-//                            )
-//                            setPadding(32, 24, 32, 24)
-//                            background = null
-//                            setText(field.value as? String ?: "")
-//                            isFocusable = false
-//                            isClickable = true
-//                            isEnabled = !isFieldAlwaysDisabled && !isViewOnly
-//                            setCompoundDrawablesWithIntrinsicBounds(
-//                                null, null,
-//                                ContextCompat.getDrawable(context, R.drawable.ic_calendar),
-//                                null
-//                            )
-//                            compoundDrawablePadding = 24
-//                            setTextColor(ContextCompat.getColor(context, android.R.color.black))
-//                            setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodyLarge)
-//                        }
-//
-//                        textInputLayout.addView(editText)
-//
-//                        // 📅 Date picker logic for editable fields (visit_date now included)
-//                        if (!isViewOnly && !isFieldAlwaysDisabled) {
-//                            editText.setOnClickListener {
-//                                val calendar = Calendar.getInstance()
-//
-//                                val (minDate, maxDate) = run {
-//                                    val minDateStr = field.validation?.minDate
-//                                    val maxDateStr = field.validation?.maxDate
-//
-//                                    val min = when (minDateStr) {
-//                                        "today" -> today
-//                                        "dob", "due_date" -> {
-//                                            val ref = fields.find { it.fieldId == minDateStr }
-//                                            (ref?.value as? String)?.let { sdf.parse(it) }
-//                                        }
-//                                        else -> minDateStr?.let { sdf.parse(it) }
-//                                    }
-//
-//                                    val max = when (maxDateStr) {
-//                                        "today" -> today
-//                                        "dob", "due_date" -> {
-//                                            val ref = fields.find { it.fieldId == maxDateStr }
-//                                            (ref?.value as? String)?.let { sdf.parse(it) } ?: today
-//                                        }
-//                                        else -> maxDateStr?.let { sdf.parse(it) } ?: today
-//                                    }
-//
-//                                    min to max
-//                                }
-//
-//                                DatePickerDialog(
-//                                    context,
-//                                    { _, year, month, dayOfMonth ->
-//                                        val dateStr = String.format("%02d-%02d-%04d", dayOfMonth, month + 1, year)
-//                                        editText.setText(dateStr)
-//                                        field.value = dateStr
-//                                        onValueChanged(field, dateStr)
-//                                    },
-//                                    calendar.get(Calendar.YEAR),
-//                                    calendar.get(Calendar.MONTH),
-//                                    calendar.get(Calendar.DAY_OF_MONTH)
-//                                ).apply {
-//                                    minDate?.let { datePicker.minDate = it.time }
-//                                    maxDate?.let { datePicker.maxDate = it.time }
-//                                }.show()
-//                            }
-//                        }
-//
-//                        addWithError(textInputLayout, field)
-//                    }
-
-
-
                     "date" -> {
                         val context = itemView.context
                         val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
@@ -576,6 +473,8 @@
                                     val uri = Uri.parse(filePath)
                                     setImageURI(uri)
                                 } catch (e: Exception) {
+                                    Timber.tag("FormRendererAdapter").e(e, "Failed to load image: " + filePath)
+                                    setImageResource(R.drawable.ic_person)
                                 }
                             } else {
                                 setImageResource(R.drawable.ic_person)
