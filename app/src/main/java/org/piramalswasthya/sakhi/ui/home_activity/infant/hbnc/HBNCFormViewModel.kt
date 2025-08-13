@@ -138,7 +138,10 @@ class HBNCFormViewModel @Inject constructor(
 
         _schema.value = currentSchema.copy()
     }
-
+    companion object {
+        private const val OTHER_PLACE_OF_DEATH_ID = 8
+        private const val DEFAULT_DEATH_ID = -1
+    }
 suspend fun saveFormResponses(benId: Long, hhId: Long) {
     val currentSchema = _schema.value ?: return
     val formId = currentSchema.formId
@@ -167,7 +170,7 @@ suspend fun saveFormResponses(benId: Long, hhId: Long) {
                     this.reasonOfDeath = reasonOfDeath
                     reasonOfDeathId = -1
                     this.placeOfDeath = placeOfDeath
-                    placeOfDeathId = if (!otherPlaceOfDeath.isNullOrBlank()) 8 else -1
+                    placeOfDeathId = if (!otherPlaceOfDeath.isNullOrBlank()) OTHER_PLACE_OF_DEATH_ID else DEFAULT_DEATH_ID
                     this.otherPlaceOfDeath = otherPlaceOfDeath
                     if (this.processed != "N") this.processed = "U"
                     syncState = SyncState.UNSYNCED
@@ -178,6 +181,7 @@ suspend fun saveFormResponses(benId: Long, hhId: Long) {
             e.printStackTrace()
         }
     }
+
 
     val wrappedJson = JSONObject().apply {
         put("formId", formId)
@@ -261,8 +265,8 @@ suspend fun saveFormResponses(benId: Long, hhId: Long) {
                     conditional = field.conditional?.let {
                         if (!it.dependsOn.isNullOrBlank() && !it.expectedValue.isNullOrBlank()) {
                             ConditionalLogic(
-                                dependsOn = it.dependsOn!!,
-                                expectedValue = it.expectedValue!!
+                                dependsOn = it.dependsOn,
+                                expectedValue = it.expectedValue
                             )
                         } else null
                     },
@@ -311,13 +315,15 @@ suspend fun saveFormResponses(benId: Long, hhId: Long) {
         val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
         return sdf.format(Date(epochMillis))
     }
-    suspend fun getLastVisitDay(benId: Long): String? {
-        val visits = repository.getSyncedVisitsByRchId(benId)
-        val lastVisit = visits
-            .filter { it.visitDay in visitOrder }
-            .maxByOrNull { visitOrder.indexOf(it.visitDay) }
+    private suspend fun getLastVisit(benId: Long): FormResponseJsonEntity? {
+                val visits = repository.getSyncedVisitsByRchId(benId)
+                return visits
+                    .filter { it.visitDay in visitOrder }
+                    .maxByOrNull { visitOrder.indexOf(it.visitDay) }
+            }
 
-        return lastVisit?.visitDay
+    suspend fun getLastVisitDay(benId: Long): String? {
+        return getLastVisit(benId)?.visitDay
     }
     suspend fun getLastVisitDate(benId: Long): Date? {
 
@@ -326,7 +332,7 @@ suspend fun saveFormResponses(benId: Long, hhId: Long) {
             .filter { it.visitDay in visitOrder }
             .maxByOrNull { visitOrder.indexOf(it.visitDay) }
 
-        return lastVisit?.formDataJson?.let {
+        return getLastVisit(benId)?.formDataJson?.let {
             try {
                 val json = JSONObject(it)
                 val fields = json.optJSONObject("fields")

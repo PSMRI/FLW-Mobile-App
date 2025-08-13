@@ -95,6 +95,7 @@
     <string name="tv_ncd_status_ph">NCD Status</string>
     <string name="tv_tb_status_ph">TB Status</string>
     <string name="iv_sync_state_tv">SYNC STATE</string>
+    <string name="iv_death_indicator">Death</string>
     <string name="chat_error">There is some error in loading your chat bot</string>
     <string name="help_and_support">Help &amp; Support</string>
 
@@ -333,6 +334,7 @@
     <string name="reason_for_death">Reason for Death</string>
     <string name="place_of_death">Place of Death</string>
     <string name="file_size">File size should be less than or equals to 5 MB.</string>
+    <string name="add_file">add file</string>
 
     <string-array name="sync_records">
         <item>Beneficiary</item>
