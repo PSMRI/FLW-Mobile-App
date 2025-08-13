@@ -36,6 +36,7 @@
     <string name="icon_title_pmdo">Delivery Outcome</string>
     <string name="icon_title_pmir">Infant Registration</string>
     <string name="icon_title_pmcr">Child Registration</string>
+    <string name="icon_title_abortion">Abortion List</string>
     <string name="icon_title_ecr">Eligible Couple Registration</string>
     <string name="icon_title_ect">Eligible Couple Tracking</string>
     <string name="icon_title_dmc">Delivery Stage List</string>

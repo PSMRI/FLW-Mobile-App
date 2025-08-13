@@ -597,6 +597,7 @@ data class BenWithAncVisitCache(
                     syncState = it.syncState
                 )
             }.sortedBy { it.visitNumber },
+            savedAncRecords = savedAncRecords,
             pmsmaFillable = if (activePmsma == null) savedAncRecords.any { it.visitNumber == 1 } else true,
             hasPmsma = activePmsma != null,
             showAddAnc = if (savedAncRecords.isEmpty())
@@ -629,6 +630,7 @@ data class BenWithAncListDomain(
     val ben: BenBasicDomain,
     val pwr: PregnantWomanRegistrationCache,
     val anc: List<AncStatus>,
+    val savedAncRecords: List<PregnantWomanAncCache>,
     val lmpString: String? = getDateString(pwr.lmpDate),
     val eddString: String? = getDateString(pwr.lmpDate + TimeUnit.DAYS.toMillis(280)),
     val weeksOfPregnancy: String? = (TimeUnit.MILLISECONDS.toDays(getTodayMillis() - pwr.lmpDate) / 7).takeIf { it <= 40 }
