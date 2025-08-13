@@ -77,6 +77,11 @@
     <string name="form_input_error_invalid_mcp">অবৈধ MCP নম্বর !</string>
     <string name="form_input_error_invalid_aadhar">অবৈধ আধার নম্বর</string>
     <string name="no_records_found_hh">কোনও পরিবারের রেকর্ড পাওয়া যায়নি। দয়া করে নীচের বোতামে ক্লিক করে পরিবার নিবন্ধন শুরু করুন।</string>
+    <string name="icon_title_abortion">গৰ্ভপাত তালিকা</string>
+    <string-array name="anc_paiucd_done_by">
+        <item>ডাক্টৰ</item>
+        <item>নাৰ্চ</item>
+    </string-array>
 
 
     <string name="tracking_date">দৰমাহাৰ তাৰিখ</string>
