@@ -61,6 +61,8 @@
     <string name="tv_ncd_status_ph">এনচিডি স্থিতি</string>
     <string name="tv_tb_status_ph">টিবি স্থিতি</string>
     <string name="iv_sync_state_tv">সময়সৰণি স্থিতি</string>
+    <string name="iv_death_indicator">মৃত্যু</string>
+    <string name="add_file">ফাইল যোগ কৰক</string>
     <string name="version">2.0.0</string>
     <string name="tv_text_select_village">দয়া করে নীচের গ্রাম নির্বাচন করুন।</string>
     <string name="form_input_empty_error">"প্ৰয়োজনীয় ক্ষেত্ৰখন খালী হ’ব নোৱাৰে !</string>
