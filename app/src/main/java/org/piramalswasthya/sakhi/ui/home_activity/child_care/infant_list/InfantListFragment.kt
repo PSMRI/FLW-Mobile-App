@@ -42,11 +42,12 @@ class InfantListFragment : Fragment() {
         val benAdapter = InfantListAdapter(
             InfantListAdapter.InfantListClickListener { benId, hhId ->
                 findNavController().navigate(
-                    InfantListFragmentDirections.actionInfantListFragmentToHbncDayListFragment(
+                    InfantListFragmentDirections.actionInfantListFragmentToInfantFormFragment(
                         benId = benId,
-                        hhId = hhId
+                        hhId = hhId,
                     )
                 )
+
             }
         )
         binding.rvAny.adapter = benAdapter
@@ -66,9 +67,7 @@ class InfantListFragment : Fragment() {
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
             }
-
             override fun afterTextChanged(p0: Editable?) {
                 viewModel.filterText(p0?.toString() ?: "")
             }

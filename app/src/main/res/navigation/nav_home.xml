@@ -314,9 +314,12 @@
         android:name="org.piramalswasthya.sakhi.ui.home_activity.child_care.infant_list.InfantListFragment"
         android:label="@string/child_care_icon_title_infant_list"
         tools:layout="@layout/fragment_infant_list">
+<!--        <action-->
+<!--            android:id="@+id/action_infantListFragment_to_hbncDayListFragment"-->
+<!--            app:destination="@id/hbncDayListFragment" />-->
         <action
-            android:id="@+id/action_infantListFragment_to_hbncDayListFragment"
-            app:destination="@id/hbncDayListFragment" />
+            android:id="@+id/action_infantListFragment_to_infantFormFragment"
+            app:destination="@id/infantFormFragment" />
     </fragment>
     <fragment
         android:id="@+id/adolescentListFragment"
@@ -989,6 +992,58 @@
         android:name="org.piramalswasthya.sakhi.ui.home_activity.incentives.IncentivesFragment"
         android:label="fragment_incentives"
         tools:layout="@layout/fragment_incentives" />
+
+
+    <fragment
+        android:id="@+id/infantFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.infant.InfantDayListFragment"
+        android:label="Infant Details">
+        <argument
+            android:name="hhId"
+            app:argType="long" />
+        <argument
+            android:name="benId"
+            app:argType="long" />
+
+        <action
+            android:id="@+id/action_infantFormFragment_to_hbncFormFragment"
+            app:destination="@id/hbncFormFragment" />
+    </fragment>
+
+    <!-- HBNC Visit Form Fragment -->
+    <fragment
+        android:id="@+id/hbncFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.infant.hbnc.HBNCFormFragment"
+        android:label="HBNC Visit Form">
+
+        <!-- Required arguments passed via Safe Args -->
+
+        <argument
+            android:name="benId"
+            app:argType="long" />
+
+        <argument
+            android:name="hhId"
+            app:argType="long" />
+
+
+        <argument
+            android:name="visitDay"
+            app:argType="string"
+            app:nullable="false" />
+
+        <argument
+            android:name="isViewMode"
+            app:argType="boolean"
+            android:defaultValue="false" />
+
+        <!-- ✅ New argument for API form schema -->
+        <argument
+            android:name="formId"
+            app:argType="string"
+            android:defaultValue="hbnc_form_001" />
+    </fragment>
+
 
 
 </navigation>

@@ -271,6 +271,17 @@ class ChildRegistrationDataset(
         return BenRegCache(
             ashaId = user.userId,
             beneficiaryId = 0,
+            isDeath = motherBen.isDeath,
+            isDeathValue=motherBen.isDeathValue,
+            dateOfDeath=motherBen.dateOfDeath,
+            timeOfDeath=motherBen.timeOfDeath,
+            reasonOfDeath=motherBen.reasonOfDeath,
+            reasonOfDeathId=motherBen.reasonOfDeathId,
+            placeOfDeath=motherBen.placeOfDeath,
+            placeOfDeathId=motherBen.placeOfDeathId,
+            otherPlaceOfDeath=motherBen.otherPlaceOfDeath,
+
+
             createdDate = System.currentTimeMillis(),
             updatedBy = user.userName,
             createdBy = user.userName,

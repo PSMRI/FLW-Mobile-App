@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardVisit"
+    android:layout_width="match_parent"
+    android:layout_height="150dp"
+    android:layout_margin="8dp"
+    android:focusable="true"
+    android:importantForAccessibility="yes"
+    card_view:cardBackgroundColor="@color/md_theme_dark_inversePrimary"
+    card_view:cardElevation="4dp"
+    card_view:cardCornerRadius="12dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/tvVisitDay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Visit Day"
+            android:textColor="@color/md_theme_light_onPrimary"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvVisitDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Visit Date"
+            android:textSize="14sp"
+            android:textColor="@color/md_theme_light_onPrimary"
+            android:layout_marginTop="4dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
+            android:gravity="end"
+            android:weightSum="2">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnView"
+                android:layout_width="match_parent"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                android:text="View"
+                android:includeFontPadding="false"
+                android:textSize="14sp"
+                android:textColor="@color/md_theme_light_onTertiary"
+                android:visibility="visible"
+                android:textAllCaps="false"
+                android:paddingHorizontal="12dp" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnAddVisit"
+                android:layout_width="match_parent"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                android:textColor="@color/md_theme_light_onTertiary"
+                android:text="Add Visit"
+                android:includeFontPadding="false"
+                android:textSize="14sp"
+                android:visibility="visible"
+                android:textAllCaps="false"
+                android:paddingHorizontal="12dp"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

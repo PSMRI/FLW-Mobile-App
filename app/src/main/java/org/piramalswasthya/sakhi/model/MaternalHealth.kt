@@ -319,6 +319,22 @@ data class PregnantWomanAncCache(
     val benId: Long,
     var visitNumber: Int,
     var isActive: Boolean = true,
+
+    var serialNo: String? = null,
+    var methodOfTermination: String? = null,
+    var methodOfTerminationId: Int? = 0,
+    var terminationDoneBy: String? = null,
+    var terminationDoneById: Int? = 0,
+    var isPaiucdId: Boolean? = false,
+    var isPaiucd: String? = null,
+    var remarks: String? = null,
+    var abortionImg1: String? = null,
+    var abortionImg2: String? = null,
+    var placeOfDeath: String? = null,
+    var placeOfDeathId: Int? = 0,
+    var otherPlaceOfDeath: String? = null,
+
+
     var ancDate: Long = System.currentTimeMillis(),
     var isAborted: Boolean = false,
     var abortionType: String? = null,
@@ -365,6 +381,21 @@ data class PregnantWomanAncCache(
             benId = benId,
             ancDate = getDateStringFromLong(ancDate),
             isActive = true,
+
+            serialNo = serialNo,
+            methodOfTermination = methodOfTermination,
+            methodOfTerminationId = methodOfTerminationId,
+            terminationDoneBy = terminationDoneBy,
+            terminationDoneById = terminationDoneById,
+            isPaiucdId = isPaiucdId,
+            isPaiucd = isPaiucd,
+            remarks = remarks,
+            abortionImg1 = abortionImg1,
+            abortionImg2 = abortionImg2,
+            placeOfDeath = placeOfDeath,
+            placeOfDeathId = placeOfDeathId,
+            otherPlaceOfDeath = otherPlaceOfDeath,
+
             ancVisit = visitNumber,
             isAborted = isAborted,
             abortionType = abortionType,
@@ -404,6 +435,22 @@ data class ANCPost(
     val benId: Long = 0,
     val ancDate: String? = null,
     val isActive: Boolean,
+
+    var serialNo: String? = null,
+    var methodOfTermination: String? = null,
+    var methodOfTerminationId: Int? = 0,
+    var terminationDoneBy: String? = null,
+    var terminationDoneById: Int? = 0,
+    var isPaiucdId: Boolean? = false,
+    var isPaiucd: String? = null,
+    var remarks: String? = null,
+    var abortionImg1: String? = null,
+    var abortionImg2: String? = null,
+    var placeOfDeath: String? = null,
+    var placeOfDeathId: Int? = 0,
+    var otherPlaceOfDeath: String? = null,
+
+
     val ancVisit: Int,
     val isAborted: Boolean = false,
     val abortionType: String? = null,
@@ -435,12 +482,29 @@ data class ANCPost(
     val createdBy: String,
     val updatedDate: String? = null,
     val updatedBy: String,
-    var providerServiceMapID :String?=null
+    var providerServiceMapID: String? = null
 ) {
     fun toAncCache(): PregnantWomanAncCache {
         return PregnantWomanAncCache(
             id = id,
             benId = benId,
+
+            serialNo = serialNo,
+            methodOfTermination = methodOfTermination,
+            methodOfTerminationId = methodOfTerminationId,
+            terminationDoneBy = terminationDoneBy,
+            terminationDoneById = terminationDoneById,
+            isPaiucdId = isPaiucdId,
+            isPaiucd = isPaiucd,
+            remarks = remarks,
+            abortionImg1 = abortionImg1,
+            abortionImg2 = abortionImg2,
+            placeOfDeath = placeOfDeath,
+            placeOfDeathId = placeOfDeathId,
+            otherPlaceOfDeath = otherPlaceOfDeath,
+
+
+
             visitNumber = ancVisit,
             ancDate = getLongFromDate(ancDate),
             isAborted = isAborted,

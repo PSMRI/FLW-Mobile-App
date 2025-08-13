@@ -48,10 +48,15 @@ enum class Gender {
     TRANSGENDER
 }
 
+enum class BenStatus {
+    Alive,
+    Death,
+}
+
 // In your BenBasicCache.kt file, REPLACE the old @DatabaseView with this one.
 @DatabaseView(
     viewName = "BEN_BASIC_CACHE",
-    value = "SELECT b.beneficiaryId as benId, b.householdId as hhId, b.regDate, b.firstName as benName, b.lastName as benSurname, b.gender, b.dob as dob, b.familyHeadRelationPosition as relToHeadId" +
+    value = "SELECT b.beneficiaryId as benId, b.motherName as motherName, b.householdId as hhId, b.regDate, b.firstName as benName, b.lastName as benSurname, b.gender, b.dob as dob, b.isDeath,b.isDeathValue,b.dateOfDeath,b.timeOfDeath,b.reasonOfDeath,b.reasonOfDeathId,b.placeOfDeath,b.placeOfDeathId,b.otherPlaceOfDeath, b.familyHeadRelationPosition as relToHeadId" +
             ", b.contactNumber as mobileNo, b.fatherName, h.fam_familyHeadName as familyHeadName, b.gen_spouseName as spouseName, b.rchId, b.gen_lastMenstrualPeriod as lastMenstrualPeriod" +
             ", b.isHrpStatus as hrpStatus, b.syncState, b.gen_reproductiveStatusId as reproductiveStatusId, b.isKid, b.immunizationStatus" +
             ", b.loc_village_id as villageId, b.abha_healthIdNumber as abhaId" +
@@ -106,6 +111,17 @@ data class BenBasicCache(
     val benId: Long,
     val hhId: Long,
     val regDate: Long,
+    var isDeath: Boolean = false,
+    var isDeathValue: String? = null,
+    var dateOfDeath: String? = null,
+    var timeOfDeath: String? = null,
+    var reasonOfDeath: String? = null,
+    var reasonOfDeathId: Int? = null,
+    var placeOfDeath: String? = null,
+    var placeOfDeathId: Int? = null,
+    var otherPlaceOfDeath: String? = null,
+
+
     val benName: String,
     val benSurname: String? = null,
     val gender: Gender,
@@ -113,6 +129,7 @@ data class BenBasicCache(
     val relToHeadId: Int,
     val mobileNo: Long,
     val fatherName: String? = null,
+    val motherName: String?= null,
     val familyHeadName: String? = null,
 //    val typeOfList: TypeOfList,
     val spouseName: String? = null,
@@ -222,7 +239,6 @@ data class BenBasicCache(
         }
 
 
-
         private fun getDiffYears(a: Calendar, b: Calendar): Int {
             var diff = b.get(Calendar.YEAR) - a.get(Calendar.YEAR)
             if (a.get(Calendar.MONTH) > b.get(Calendar.MONTH) || a.get(Calendar.MONTH) == b.get(
@@ -246,6 +262,17 @@ data class BenBasicCache(
         return BenBasicDomain(
             benId = benId,
             hhId = hhId,
+            isDeath = isDeath,
+            isDeathValue = isDeathValue,
+            dateOfDeath = dateOfDeath,
+            timeOfDeath = timeOfDeath,
+            reasonOfDeath = reasonOfDeath,
+            reasonOfDeathId = reasonOfDeathId,
+            placeOfDeath = placeOfDeath,
+            placeOfDeathId = placeOfDeathId,
+            otherPlaceOfDeath = otherPlaceOfDeath,
+
+
             regDate = dateFormat.format(Date(regDate)),
             benName = benName,
             benSurname = benSurname ?: "",
@@ -255,6 +282,7 @@ data class BenBasicCache(
             isNewAbha = isNewAbha,
             relToHeadId = relToHeadId,
             mobileNo = mobileNo.toString(),
+            motherName =  motherName?.takeIf { it.isNotEmpty() } ?: "Not Available",
             fatherName = fatherName?.takeIf { it.isNotEmpty() } ?: "Not Available",
          /*   motherName = motherName,*/
             familyHeadName = familyHeadName ?: "Not Available",
@@ -491,7 +519,7 @@ data class BenBasicCache(
             fatherName = fatherName,
             familyHeadName = familyHeadName ?: "Not Available",
 //            typeOfList = typeOfList.name,
-            rchId = rchId ,
+            rchId = rchId,
             hrpStatus = hrpStatus,
             form1Filled = pwrFilled,
             syncState = pwrSyncState
@@ -515,7 +543,7 @@ data class BenBasicCache(
             lastMenstrualPeriod = getDateStringFromLong(lastMenstrualPeriod),
             edd = getEddFromLmp(lastMenstrualPeriod),
 //            typeOfList = typeOfList.name,
-            rchId = rchId ,
+            rchId = rchId,
             hrpStatus = hrpStatus,
             form1Filled = hrppaFilled,
             syncState = hrppaSyncState,
@@ -538,7 +566,7 @@ data class BenBasicCache(
             fatherName = fatherName,
             familyHeadName = familyHeadName ?: "Not Available",
 //            typeOfList = typeOfList.name,
-            rchId = rchId ,
+            rchId = rchId,
             hrpStatus = hrpStatus,
             form1Filled = hrpnpaFilled,
             syncState = hrpnpaSyncState
@@ -585,7 +613,7 @@ data class BenBasicCache(
             fatherName = fatherName,
             familyHeadName = familyHeadName ?: "Not Available",
 //            typeOfList = typeOfList.name,
-            rchId = rchId ,
+            rchId = rchId,
             hrpStatus = hrpStatus,
             form1Filled = hrptrackingDone,
             form1Enabled = !hrptrackingDone,
@@ -608,7 +636,7 @@ data class BenBasicCache(
             fatherName = fatherName,
             familyHeadName = familyHeadName ?: "Not Available",
 //            typeOfList = typeOfList.name,
-            rchId = rchId ,
+            rchId = rchId,
             hrpStatus = hrpStatus,
             form1Filled = irFilled,
             syncState = irSyncState
@@ -668,7 +696,7 @@ data class BenBasicCache(
             fatherName = fatherName,
             familyHeadName = familyHeadName ?: "Not Available",
 //            typeOfList = typeOfList.name,
-            rchId = rchId ,
+            rchId = rchId,
             hrpStatus = hrpStatus,
             form1Filled = ecrFilled,
             syncState = syncState
@@ -701,6 +729,17 @@ data class BenBasicCache(
 data class BenBasicDomain(
     val benId: Long,
     val hhId: Long,
+
+    var isDeath: Boolean = false,
+    var isDeathValue: String? = null,
+    var dateOfDeath: String? = null,
+    var timeOfDeath: String? = null,
+    var reasonOfDeath: String? = null,
+    var reasonOfDeathId: Int? = null,
+    var placeOfDeath: String? = null,
+    var placeOfDeathId: Int? = null,
+    var otherPlaceOfDeath: String? = null,
+
     val regDate: String,
     val benName: String,
     val benSurname: String? = null,
@@ -719,7 +758,7 @@ data class BenBasicDomain(
     val familyHeadName: String,
     val spouseName: String? = null,
 //    val typeOfList: String,
-    val rchId: String?=null,
+    val rchId: String? = null,
     val hrpStatus: Boolean = false,
     var syncState: SyncState?
 )
@@ -743,7 +782,7 @@ data class BenBasicDomainForForm(
     val lastMenstrualPeriod: String? = null,
     val edd: String? = null,
 //    val typeOfList: String,
-    val rchId: String?=null,
+    val rchId: String? = null,
     val hrpStatus: Boolean = false,
     val form1Filled: Boolean = false,
     val form2Filled: Boolean = false,
@@ -900,7 +939,7 @@ data class BenRegKidNetwork(
 data class BenHealthIdDetails(
     var healthId: String = "",
     var healthIdNumber: String = "",
-    var isNewAbha: Boolean= false
+    var isNewAbha: Boolean = false
 )
 
 data class BenRegGen(
@@ -965,6 +1004,17 @@ data class BenRegCache(
     var householdId: Long,
 
     var beneficiaryId: Long,
+
+    var isDeath: Boolean,
+    var isDeathValue: String? = null,
+    var dateOfDeath: String? = null,
+    var timeOfDeath: String? = null,
+    var reasonOfDeath: String? = null,
+    var reasonOfDeathId: Int,
+    var placeOfDeath: String? = null,
+    var placeOfDeathId: Int,
+    var otherPlaceOfDeath: String? = null,
+
 
     var benRegId: Long = 0,
 
@@ -1131,7 +1181,7 @@ data class BenRegCache(
 
     var isDraft: Boolean,
 
-    var isNewAbha: Boolean=false,
+    var isNewAbha: Boolean = false,
 
     ) : FormDataModel {
 
