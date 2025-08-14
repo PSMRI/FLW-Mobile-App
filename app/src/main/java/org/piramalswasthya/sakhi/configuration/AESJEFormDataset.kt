@@ -202,9 +202,6 @@ class AESJEFormDataset(
         }
 
 
-        ben?.let {
-            dateOfCase.min = it.regDate
-        }
         setUpPage(list)
 
     }
@@ -265,6 +262,10 @@ class AESJEFormDataset(
                     )
                 }
                 0
+            }
+
+            other.id -> {
+                validateEmptyOnEditText(other)
             }
 
 

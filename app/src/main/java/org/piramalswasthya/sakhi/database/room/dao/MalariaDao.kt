@@ -59,4 +59,15 @@ interface MalariaDao {
 
     @Update
     suspend fun updateIRS(vararg it: IRSRoundScreening)
+
+    @Query("""
+        SELECT COUNT(*) FROM IRS_ROUND
+        WHERE householdId = :householdId
+          AND date BETWEEN :yearStart AND :yearEnd
+    """)
+    suspend fun countRoundsInYear(
+        householdId: Long,
+        yearStart: Long,
+        yearEnd: Long
+    ): Int
 }

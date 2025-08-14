@@ -371,8 +371,10 @@
                         <ImageView
                             android:layout_width="30dp"
                             android:layout_height="30dp"
-                            android:src="@{ben.isConsent ? @drawable/ic_check_circle : @drawable/crossnew}"
-                            android:layout_toRightOf="@+id/mob"
+
+                            android:src="@{ben.isConsent ? @drawable/verified : @drawable/not_verified}"
+
+                           android:layout_toRightOf="@+id/mob"
                             android:layout_marginStart="5dp"
                             />
                     </RelativeLayout>

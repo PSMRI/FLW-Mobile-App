@@ -147,6 +147,17 @@
 
             android:textColor="@android:color/white" />
 
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_normal"
+            android:padding="@dimen/padding_small"
+            tools:text="TextView"
+            android:text="@string/heading"
+            android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall" />
+
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/irs_any"
             android:layout_width="match_parent"
