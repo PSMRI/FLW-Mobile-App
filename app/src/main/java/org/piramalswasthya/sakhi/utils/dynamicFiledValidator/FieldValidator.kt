@@ -4,9 +4,24 @@ import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
 import java.text.SimpleDateFormat
 import java.util.*
 
+data class FieldValidationConfig(
+    val fieldId: String,
+    val customMessages: Map<String, String> = emptyMap()
+)
+
 object FieldValidator {
 
     data class ValidationResult(val isValid: Boolean, val errorMessage: String? = null)
+
+    private val fieldConfigs = mapOf(
+        "due_date" to FieldValidationConfig(
+            fieldId = "due_date",
+            customMessages = mapOf(
+                "minDate" to "cannot be before Date of Delivery",
+                "maxDate" to "cannot be after today"
+            )
+        )
+    )
 
     fun validate(field: FormField, dob: String?, todayStr: String = getToday()): ValidationResult {
         if (field.isRequired && (field.value == null || field.value.toString().isBlank())) {
@@ -25,6 +40,7 @@ object FieldValidator {
                     ValidationResult(true)
                 }
             }
+
             "number" -> {
                 val num = valueStr.toFloatOrNull()
                     ?: return ValidationResult(false, "${field.label} must be a number")
@@ -58,25 +74,22 @@ object FieldValidator {
                     else -> rules.maxDate?.let { runCatching { sdf.parse(it) }.getOrNull() }
                 }
 
-//                if (minDate != null && valueDate.before(minDate))
-//                    return ValidationResult(false, "${field.label} cannot be before ${rules.minDate}")
-//
-//                if (maxDate != null && valueDate.after(maxDate))
-//                    return ValidationResult(false, "${field.label} cannot be after ${rules.maxDate}")
-
                 if (minDate != null && valueDate.before(minDate)) {
+                    val customMessage = fieldConfigs[field.fieldId]?.customMessages?.get("minDate")
                     return ValidationResult(
                         false,
-                        if (field.fieldId == "due_date") "${field.label} cannot be before Date of Delivery"
-                        else "${field.label} cannot be before ${rules.minDate}"
+                        customMessage?.let { "${field.label} $it" }
+                            ?: "${field.label} cannot be before ${rules.minDate}"
+
                     )
                 }
 
                 if (maxDate != null && valueDate.after(maxDate)) {
+                    val customMessage = fieldConfigs[field.fieldId]?.customMessages?.get("minDate")
                     return ValidationResult(
                         false,
-                        if (field.fieldId == "due_date") "${field.label} cannot be after today"
-                        else "${field.label} cannot be after ${rules.maxDate}"
+                        customMessage?.let { "${field.label} $it" }
+                            ?: "${field.label} cannot be after ${rules.maxDate}"
                     )
                 }
 

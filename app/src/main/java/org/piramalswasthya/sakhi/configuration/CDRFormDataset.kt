@@ -11,13 +11,14 @@ import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.CDRCache
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.InputType
+import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
 class CDRFormDataset(
     context: Context, currentLanguage: Languages,
-   val preferences: PreferenceDao
+    val preferences: PreferenceDao
 ) : Dataset(context, currentLanguage) {
 
     private val childName = FormElement(
@@ -156,13 +157,13 @@ class CDRFormDataset(
     private val cdrFileUpload1 = FormElement(
         id = 21,
         inputType = InputType.FILE_UPLOAD,
-        title = "CDR form from ANM",
+        title = "CDR form from ANM 1",
         required = false,
     )
     private val cdrFileUpload2 = FormElement(
         id = 22,
         inputType = InputType.FILE_UPLOAD,
-        title = "CDR form from ANM",
+        title = "CDR form from ANM 2",
         required = false,
     )
     private val cdrDeathFileUpload = FormElement(
@@ -230,11 +231,16 @@ class CDRFormDataset(
             timeOfDeath,
 
             dateOfNotification,
-            cdrFileUpload1,cdrFileUpload2,cdrDeathFileUpload
+            cdrFileUpload1, cdrFileUpload2, cdrDeathFileUpload
         )
         val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
         val deathDateMillis = ben.dateOfDeath?.let {
-            dateFormat.parse(it)?.time
+            try {
+                dateFormat.parse(it)?.time
+            } catch (e: Exception) {
+                Timber.tag("CDRFormDataset").e(e, "Failed to parse death date: " + it)
+                null
+            }
         } ?: System.currentTimeMillis()
         dateOfNotification.min = deathDateMillis
         dateOfNotification.max = System.currentTimeMillis()
@@ -250,22 +256,22 @@ class CDRFormDataset(
         address.value = currentAddress
         houseNumber.value = currentHouseNumber
         mohalla.value = currentMohalla
-        dateOfDeath.value =ben.dateOfDeath
+        dateOfDeath.value = ben.dateOfDeath
 //        timeOfDeath.value =ben.timeOfDeath
-        placeOfDeath.value =ben.placeOfDeath
+        placeOfDeath.value = ben.placeOfDeath
         mobileNumber.value = ben.contactNumber.toString()
-        val user = preferences.getLoggedInUser()!!
-        firstInformant.value=user.userName
-        state.value = user.state.name
-        district.value = user.district.name
-        block.value = user.block.name
-        village.value = user.villages[0].name
+        val user = preferences.getLoggedInUser()
+        firstInformant.value = user?.userName ?: ""
+        state.value = user?.state?.name ?: ""
+        district.value = user?.district?.name ?: ""
+        block.value = user?.block?.name ?: ""
+        village.value = user!!.villages[0].name
         saved?.let { savedCdr ->
             visitDate.value = savedCdr.visitDate?.let { it1 -> getDateFromLong(it1) }
             landmarks.value = savedCdr.landmarks
-            cdrFileUpload2.value=savedCdr.cdr1File
-            cdrFileUpload1.value=savedCdr.cdr1File
-            cdrDeathFileUpload.value=savedCdr.cdrDeathCertFile
+            cdrFileUpload2.value = savedCdr.cdr2File
+            cdrFileUpload1.value = savedCdr.cdr1File
+            cdrDeathFileUpload.value = savedCdr.cdrDeathCertFile
             pincode.value = savedCdr.pincode?.toString()
             landline.value = savedCdr.landline?.toString()
             mobileNumber.value = savedCdr.mobileNumber.toString()
@@ -292,9 +298,9 @@ class CDRFormDataset(
             cdr.motherName = motherName.value
             cdr.fatherName = fatherName.value
             cdr.address = address.value
-            cdr.cdr1File= cdrFileUpload1.value
-            cdr.cdr2File= cdrFileUpload2.value
-            cdr.cdrDeathCertFile= cdrDeathFileUpload.value
+            cdr.cdr1File = cdrFileUpload1.value
+            cdr.cdr2File = cdrFileUpload2.value
+            cdr.cdrDeathCertFile = cdrDeathFileUpload.value
             cdr.houseNumber = houseNumber.value
             cdr.mohalla = mohalla.value
             cdr.landmarks = landmarks.value
@@ -335,6 +341,7 @@ class CDRFormDataset(
 
         }
     }
+
     private fun convertTimeToLong(value: Any?): Long {
         return when (value) {
             is Long -> value
@@ -348,10 +355,10 @@ class CDRFormDataset(
                     0L
                 }
             }
+
             else -> 0L
         }
     }
-
 
 
 }

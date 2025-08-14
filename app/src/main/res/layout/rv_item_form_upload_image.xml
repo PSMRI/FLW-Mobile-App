@@ -41,6 +41,7 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:src="@drawable/ic_add_circle"
+            android:contentDescription="@string/add_file"
             android:onClick="@{()->clickListener.onSelectImageClick(form)}"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -63,7 +64,7 @@
 
         <ImageView
             android:id="@+id/iv"
-            benImage="@{form.value}"
+            app:benImage="@{form.value}"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:visibility="gone"
