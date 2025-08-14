@@ -120,7 +120,7 @@
         <item>Doctor</item>
         <item>Nurse</item>
     </string-array>
-    <string-array name="anc_is_paiucd">
+    <string-array name="anc_paiucd_done_by">
         <item>Doctor</item>
         <item>Nurse</item>
     </string-array>

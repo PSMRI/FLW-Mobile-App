@@ -61,6 +61,8 @@
     <string name="tv_ncd_status_ph">এনচিডি স্থিতি</string>
     <string name="tv_tb_status_ph">টিবি স্থিতি</string>
     <string name="iv_sync_state_tv">সময়সৰণি স্থিতি</string>
+    <string name="iv_death_indicator">মৃত্যু</string>
+    <string name="add_file">ফাইল যোগ কৰক</string>
     <string name="version">2.0.0</string>
     <string name="tv_text_select_village">দয়া করে নীচের গ্রাম নির্বাচন করুন।</string>
     <string name="form_input_empty_error">"প্ৰয়োজনীয় ক্ষেত্ৰখন খালী হ’ব নোৱাৰে !</string>
@@ -77,6 +79,11 @@
     <string name="form_input_error_invalid_mcp">অবৈধ MCP নম্বর !</string>
     <string name="form_input_error_invalid_aadhar">অবৈধ আধার নম্বর</string>
     <string name="no_records_found_hh">কোনও পরিবারের রেকর্ড পাওয়া যায়নি। দয়া করে নীচের বোতামে ক্লিক করে পরিবার নিবন্ধন শুরু করুন।</string>
+    <string name="icon_title_abortion">গৰ্ভপাত তালিকা</string>
+    <string-array name="anc_paiucd_done_by">
+        <item>ডাক্টৰ</item>
+        <item>নাৰ্চ</item>
+    </string-array>
 
 
     <string name="tracking_date">দৰমাহাৰ তাৰিখ</string>

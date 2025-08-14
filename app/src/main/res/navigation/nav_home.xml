@@ -1014,13 +1014,11 @@
             app:destination="@id/hbncFormFragment" />
     </fragment>
 
-    <!-- HBNC Visit Form Fragment -->
     <fragment
         android:id="@+id/hbncFormFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.infant.hbnc.HBNCFormFragment"
         android:label="HBNC Visit Form">
 
-        <!-- Required arguments passed via Safe Args -->
 
         <argument
             android:name="benId"
@@ -1034,14 +1032,14 @@
         <argument
             android:name="visitDay"
             app:argType="string"
-            app:nullable="false" />
+            app:nullable="true"
+            android:defaultValue="@null"/>
 
         <argument
             android:name="isViewMode"
             app:argType="boolean"
             android:defaultValue="false" />
 
-        <!-- ✅ New argument for API form schema -->
         <argument
             android:name="formId"
             app:argType="string"

@@ -137,7 +137,7 @@
                         android:layout_gravity="center_vertical|end"
                         android:layout_marginHorizontal="@dimen/padding_small"
                         android:visibility="@{ben.isDeath == true ? View.VISIBLE : View.GONE}"
-                        android:contentDescription="@string/iv_sync_state_tv"
+                        android:contentDescription="@string/iv_death_indicator"
                         android:src="@drawable/ic_death"
                         />
 

@@ -69,7 +69,6 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         }
 
 
-
         private fun getHoFMinDobMillis(): Long {
             val cal = Calendar.getInstance()
             cal.add(Calendar.YEAR, -1 * Konstants.maxAgeForGenBen)
@@ -452,36 +451,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
         ben?.takeIf { !it.isDraft }?.let { saved ->
 
-            if(ben.isDeath)
-            {
-
-                list.add(list.indexOf(lastName) + 1 ,beneficiaryStatus)
-                if(saved.isDeath)
-                {
-                    list.add(list.indexOf(beneficiaryStatus) + 1 ,dateOfDeath)
-                    list.add(list.indexOf(dateOfDeath) + 1 ,timeOfDeath)
-                    list.add(list.indexOf(timeOfDeath) + 1 ,reasonOfDeath)
-                    list.add(list.indexOf(reasonOfDeath) + 1 ,placeOfDeath)
-                    placeOfDeath.entries?.indexOf(saved.placeOfDeath)?.takeIf { it >= 0 }?.let { index ->
-                        if (index == 8) {
-                            list.add(list.indexOf(placeOfDeath) + 1, otherPlaceOfDeath)
-                        }
-                    }
-
-
-                }
-
-                beneficiaryStatus.value = when (saved.isDeath) {
-                    true -> BenStatus.Death.name
-                    false -> BenStatus.Alive.name
-                    null -> null
-                }
-                dateOfDeath.value=saved.dateOfDeath
-                timeOfDeath.value=saved.timeOfDeath
-                reasonOfDeath.value=saved.reasonOfDeath
-                placeOfDeath.value=saved.placeOfDeath
-                otherPlaceOfDeath.value=saved.otherPlaceOfDeath
-
+            if (ben.isDeath) {
+                initializeDeathFields(list, saved, list.indexOf(lastName))
             }
 
             pic.value = saved.userImage
@@ -505,10 +476,12 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                         wifeName.value = it
                         if (it.isNotEmpty()) wifeName.inputType = TEXT_VIEW
                     }
+
                     2 -> {
                         husbandName.value = it
                         if (it.isNotEmpty()) husbandName.inputType = TEXT_VIEW
                     }
+
                     3 -> {
                         spouseName.value = it
                         if (it.isNotEmpty()) spouseName.inputType = TEXT_VIEW
@@ -526,16 +499,21 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 FEMALE -> R.array.nbr_marital_status_female_array
                 else -> R.array.nbr_marital_status_male_array
             }
-            maritalStatus.value = saved.genDetails?.maritalStatusId?.let { maritalStatus.getStringFromPosition(it) }
+            maritalStatus.value =
+                saved.genDetails?.maritalStatusId?.let { maritalStatus.getStringFromPosition(it) }
 
             ageAtMarriage.value = saved.genDetails?.ageAtMarriage.toString()
             dateOfMarriage.value = getDateFromLong(saved.genDetails?.marriageDate ?: 0)
 
-            mobileNoOfRelation.value = mobileNoOfRelation.getStringFromPosition(saved.mobileNoOfRelationId)
+            mobileNoOfRelation.value =
+                mobileNoOfRelation.getStringFromPosition(saved.mobileNoOfRelationId)
             otherMobileNoOfRelation.value = saved.mobileOthers
             contactNumber.value = saved.contactNumber.toString()
 
-            val relationIndex = (saved.familyHeadRelationPosition - 1).coerceIn(0, relationToHeadListDefault.lastIndex)
+            val relationIndex = (saved.familyHeadRelationPosition - 1).coerceIn(
+                0,
+                relationToHeadListDefault.lastIndex
+            )
             relationToHead.value = relationToHeadListDefault.getOrNull(relationIndex)
 
             otherRelationToHead.value = saved.familyHeadRelationOther
@@ -543,9 +521,14 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             religion.value = religion.getStringFromPosition(saved.religionId)
             otherReligion.value = saved.religionOthers
 
-            childRegisteredAtAwc.value = childRegisteredAtAwc.getStringFromPosition(saved.kidDetails?.childRegisteredSchoolId ?: 0)
-            childRegisteredAtSchool.value = childRegisteredAtSchool.getStringFromPosition(saved.kidDetails?.childRegisteredSchoolId ?: 0)
-            typeOfSchool.value = typeOfSchool.getStringFromPosition(saved.kidDetails?.typeOfSchoolId ?: 0)
+            childRegisteredAtAwc.value = childRegisteredAtAwc.getStringFromPosition(
+                saved.kidDetails?.childRegisteredSchoolId ?: 0
+            )
+            childRegisteredAtSchool.value = childRegisteredAtSchool.getStringFromPosition(
+                saved.kidDetails?.childRegisteredSchoolId ?: 0
+            )
+            typeOfSchool.value =
+                typeOfSchool.getStringFromPosition(saved.kidDetails?.typeOfSchoolId ?: 0)
             rchId.value = saved.rchId
 
             reproductiveStatus.value = saved.genDetails?.reproductiveStatusId?.let {
@@ -615,7 +598,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
 
         birthCertificateNumber.value = ben?.kidDetails?.birthCertificateNumber
-        placeOfBirth.value = ben?.kidDetails?.birthPlaceId?.let { placeOfBirth.getStringFromPosition(it) }
+        placeOfBirth.value =
+            ben?.kidDetails?.birthPlaceId?.let { placeOfBirth.getStringFromPosition(it) }
 
         if (hasThirdPage()) list.add(reproductiveStatus)
 
@@ -680,18 +664,18 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         agePopup.min = getHoFMinDobMillis()
         agePopup.max = getHofMaxDobMillis()
         ben?.takeIf { !it.isDraft }?.let { saved ->
-            list.add(list.indexOf(lastName) + 1 ,beneficiaryStatus)
-            if(saved.isDeath)
-            {
-                list.add(list.indexOf(beneficiaryStatus) + 1 ,dateOfDeath)
-                list.add(list.indexOf(dateOfDeath) + 1 ,timeOfDeath)
-                list.add(list.indexOf(timeOfDeath) + 1 ,reasonOfDeath)
-                list.add(list.indexOf(reasonOfDeath) + 1 ,placeOfDeath)
-                placeOfDeath.entries?.indexOf(saved.placeOfDeath)?.takeIf { it >= 0 }?.let { index ->
-                    if (index == 8) {
-                        list.add(list.indexOf(placeOfDeath) + 1, otherPlaceOfDeath)
+            list.add(list.indexOf(lastName) + 1, beneficiaryStatus)
+            if (saved.isDeath) {
+                list.add(list.indexOf(beneficiaryStatus) + 1, dateOfDeath)
+                list.add(list.indexOf(dateOfDeath) + 1, timeOfDeath)
+                list.add(list.indexOf(timeOfDeath) + 1, reasonOfDeath)
+                list.add(list.indexOf(reasonOfDeath) + 1, placeOfDeath)
+                placeOfDeath.entries?.indexOf(saved.placeOfDeath)?.takeIf { it >= 0 }
+                    ?.let { index ->
+                        if (index == 8) {
+                            list.add(list.indexOf(placeOfDeath) + 1, otherPlaceOfDeath)
+                        }
                     }
-                }
 
 
             }
@@ -701,11 +685,11 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 false -> BenStatus.Alive.name
                 null -> null
             }
-            dateOfDeath.value=saved.dateOfDeath
-            timeOfDeath.value=saved.timeOfDeath
-            reasonOfDeath.value=saved.reasonOfDeath
-            placeOfDeath.value=saved.placeOfDeath
-            otherPlaceOfDeath.value=saved.otherPlaceOfDeath
+            dateOfDeath.value = saved.dateOfDeath
+            timeOfDeath.value = saved.timeOfDeath
+            reasonOfDeath.value = saved.reasonOfDeath
+            placeOfDeath.value = saved.placeOfDeath
+            otherPlaceOfDeath.value = saved.otherPlaceOfDeath
 
 
 
@@ -860,19 +844,19 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
 
         ben?.takeIf { !it.isDraft }?.let { saved ->
-            list.add(list.indexOf(lastName) + 1 ,beneficiaryStatus)
+            list.add(list.indexOf(lastName) + 1, beneficiaryStatus)
 
-            if(saved.isDeath)
-            {
-                list.add(list.indexOf(beneficiaryStatus) + 1 ,dateOfDeath)
-                list.add(list.indexOf(dateOfDeath) + 1 ,timeOfDeath)
-                list.add(list.indexOf(timeOfDeath) + 1 ,reasonOfDeath)
-                list.add(list.indexOf(reasonOfDeath) + 1 ,placeOfDeath)
-                placeOfDeath.entries?.indexOf(saved.placeOfDeath)?.takeIf { it >= 0 }?.let { index ->
-                    if (index == 8) {
-                        list.add(list.indexOf(placeOfDeath) + 1, otherPlaceOfDeath)
+            if (saved.isDeath) {
+                list.add(list.indexOf(beneficiaryStatus) + 1, dateOfDeath)
+                list.add(list.indexOf(dateOfDeath) + 1, timeOfDeath)
+                list.add(list.indexOf(timeOfDeath) + 1, reasonOfDeath)
+                list.add(list.indexOf(reasonOfDeath) + 1, placeOfDeath)
+                placeOfDeath.entries?.indexOf(saved.placeOfDeath)?.takeIf { it >= 0 }
+                    ?.let { index ->
+                        if (index == 8) {
+                            list.add(list.indexOf(placeOfDeath) + 1, otherPlaceOfDeath)
+                        }
                     }
-                }
 
 
             }
@@ -882,11 +866,11 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 false -> BenStatus.Alive.name
                 null -> null
             }
-            dateOfDeath.value=saved.dateOfDeath
-            timeOfDeath.value=saved.timeOfDeath
-            reasonOfDeath.value=saved.reasonOfDeath
-            placeOfDeath.value=saved.placeOfDeath
-            otherPlaceOfDeath.value=saved.otherPlaceOfDeath
+            dateOfDeath.value = saved.dateOfDeath
+            timeOfDeath.value = saved.timeOfDeath
+            reasonOfDeath.value = saved.reasonOfDeath
+            placeOfDeath.value = saved.placeOfDeath
+            otherPlaceOfDeath.value = saved.otherPlaceOfDeath
 
             handleForAgeDob(formId = agePopup.id)
             pic.value = saved.userImage
@@ -1007,11 +991,9 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
         if (relationToHeadId == 4 || relationToHeadId == 5) hoF?.let {
             if (it.genDetails?.maritalStatusId == 2) {
-                if(benIfDataExist!=null)
-                {
+                if (benIfDataExist != null) {
                     handleForAgeDob(formId = agePopup.id)
-                }
-                else{
+                } else {
                     agePopup.min = getHoFMinDobMillis()
                     agePopup.max = getHofMaxDobMillis()
                 }
@@ -1026,8 +1008,9 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             val minParentAge = hoFSpouseAge?.let { minOf(hoFAge, it) } ?: hoFAge
 
             val hofAgeAtMarriage = hoF.genDetails?.ageAtMarriage ?: 0
-            var hoFSpouseAgeAtMarriage=  hoFSpouse.firstOrNull()?.genDetails?.ageAtMarriage
-            val minAgeAtMarriage = hoFSpouseAgeAtMarriage?.let { minOf(hofAgeAtMarriage, it) } ?: hofAgeAtMarriage
+            var hoFSpouseAgeAtMarriage = hoFSpouse.firstOrNull()?.genDetails?.ageAtMarriage
+            val minAgeAtMarriage =
+                hoFSpouseAgeAtMarriage?.let { minOf(hofAgeAtMarriage, it) } ?: hofAgeAtMarriage
 
             val (maxSonYears, maxSonMonths) = calculateMaxSonAge(
                 parentYears = minParentAge,
@@ -1113,8 +1096,9 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         val minParentAge = hoFSpouseAge?.let { minOf(hoFAge, it) } ?: hoFAge
 
         val hofAgeAtMarriage = hoF.genDetails?.ageAtMarriage ?: 0
-        var hoFSpouseAgeAtMarriage=  hoFSpouse?.genDetails?.ageAtMarriage
-        val minAgeAtMarriage = hoFSpouseAgeAtMarriage?.let { minOf(hofAgeAtMarriage, it) } ?: hofAgeAtMarriage
+        var hoFSpouseAgeAtMarriage = hoFSpouse?.genDetails?.ageAtMarriage
+        val minAgeAtMarriage =
+            hoFSpouseAgeAtMarriage?.let { minOf(hofAgeAtMarriage, it) } ?: hofAgeAtMarriage
 
 
         val (maxSonYears, maxSonMonths) = calculateMaxSonAge(
@@ -1417,8 +1401,6 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
     )
 
 
-
-
     private val deathRemoveList by lazy {
         listOf(
             breastFeedWithin1Hr,
@@ -1523,11 +1505,12 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 validateEmptyOnEditText(firstName)
                 validateAllCapsOrSpaceOnEditTextWithHindiEnabled(firstName)
             }
+
             beneficiaryStatus.id -> {
                 val isDeath = beneficiaryStatus.value == BenStatus.Death.name
 
                 if (isDeath) {
-                  dateOfDeath.min= getMinDateFromRegistration(dateOfReg.value!!)
+                    dateOfDeath.min = getMinDateFromRegistration(dateOfReg.value!!)
                     val gender = gender.value
                     val age = agePopup.value
                     val showMaternal = shouldShowMaternalDeath(gender, age)
@@ -1543,16 +1526,23 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     passedIndex = if (isDeath) 1 else 0,
                     triggerIndex = 1,
                     target = if (isDeath) {
-                        listOf(dateOfDeath,timeOfDeath, reasonOfDeath, placeOfDeath)
+                        listOf(dateOfDeath, timeOfDeath, reasonOfDeath, placeOfDeath)
                     } else {
-                        listOf(dateOfDeath, timeOfDeath,reasonOfDeath, placeOfDeath, otherPlaceOfDeath)
+                        listOf(
+                            dateOfDeath,
+                            timeOfDeath,
+                            reasonOfDeath,
+                            placeOfDeath,
+                            otherPlaceOfDeath
+                        )
                     }
                 )
             }
 
 
             placeOfDeath.id -> {
-                val index = placeOfDeath.entries?.indexOf(placeOfDeath.value).takeIf { it!! >= 0 } ?: return -1
+                val index = placeOfDeath.entries?.indexOf(placeOfDeath.value).takeIf { it!! >= 0 }
+                    ?: return -1
                 val triggerIndex = 8
                 return triggerDependants(
                     source = placeOfDeath,
@@ -1636,7 +1626,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                         addItems = listOf(reproductiveStatus),
                         removeItems = emptyList(),
                         position = -2
-                    )} else {
+                    )
+                } else {
                     fatherName.required = true
                     motherName.required = true
 
@@ -1844,12 +1835,17 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             else -> -1
         }
     }
+
     private fun handleForAgeDob(formId: Int): Int {
         if (formId == agePopup.id) {
             if (agePopup.errorText == null) {
                 ageAtMarriage.value = null
                 val ageAtMarriageMax = if (isBenParentOfHoF())
-                    getAgeFromDob(getLongFromDate(agePopup.value)) - (hof?.dob?.let { getAgeFromDob(it) } ?: 0)
+                    getAgeFromDob(getLongFromDate(agePopup.value)) - (hof?.dob?.let {
+                        getAgeFromDob(
+                            it
+                        )
+                    } ?: 0)
                 else
                     getAgeFromDob(getLongFromDate(agePopup.value))
                 ageAtMarriage.max = ageAtMarriageMax.toLong()
@@ -1865,10 +1861,12 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                         "Adolescent Girl", "Eligible Couple", "Pregnant Woman",
                         "Postnatal Mother", "Permanently Sterilised"
                     )
+
                     age in 20..49 -> listOf(
                         "Eligible Couple", "Pregnant Woman",
                         "Postnatal Mother", "Permanently Sterilised"
                     )
+
                     age >= 50 -> listOf("Elderly Woman")
                     else -> emptyList()
                 }
@@ -1889,10 +1887,12 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                         agePopup.max = yearsAgo(15)
                         agePopup.min = yearsAgo(19)
                     }
+
                     "Eligible Couple", "Pregnant Woman", "Postnatal Mother", "Permanently Sterilised" -> {
                         agePopup.max = yearsAgo(20)
                         agePopup.min = yearsAgo(49)
                     }
+
                     "Elderly Woman" -> {
                         agePopup.max = yearsAgo(50)
                         agePopup.min = yearsAgo(100)
@@ -1929,9 +1929,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         val listChanged3 =
             if (maritalStatus.inputType == TEXT_VIEW) -1 else {
 
-                if (getYearsFromDate(agePopup.value.toString()) <= Konstants.maxAgeForAdolescent)
-
-                {
+                if (getYearsFromDate(agePopup.value.toString()) <= Konstants.maxAgeForAdolescent) {
                     fatherName.required = true
                     motherName.required = true
 
@@ -2006,15 +2004,17 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as BenRegCache).let { ben ->
             // Page 001
-            ben.isDeathValue=beneficiaryStatus.value
+            ben.isDeathValue = beneficiaryStatus.value
             ben.isDeath = beneficiaryStatus.entries?.indexOf(beneficiaryStatus.value ?: "") == 1
-            ben.dateOfDeath=dateOfDeath.value
-            ben.timeOfDeath=timeOfDeath.value
-            ben.reasonOfDeath=reasonOfDeath.value
-            ben.reasonOfDeathId = reasonOfDeath.entries?.indexOf(reasonOfDeath.value ?: "")?.takeIf { it != -1 } ?: -1
-            ben.placeOfDeath=placeOfDeath.value
-            ben.placeOfDeathId = placeOfDeath.entries?.indexOf(placeOfDeath.value ?: "")?.takeIf { it != -1 } ?: -1
-            ben.otherPlaceOfDeath=otherPlaceOfDeath.value
+            ben.dateOfDeath = dateOfDeath.value
+            ben.timeOfDeath = timeOfDeath.value
+            ben.reasonOfDeath = reasonOfDeath.value
+            ben.reasonOfDeathId =
+                reasonOfDeath.entries?.indexOf(reasonOfDeath.value ?: "")?.takeIf { it != -1 } ?: -1
+            ben.placeOfDeath = placeOfDeath.value
+            ben.placeOfDeathId =
+                placeOfDeath.entries?.indexOf(placeOfDeath.value ?: "")?.takeIf { it != -1 } ?: -1
+            ben.otherPlaceOfDeath = otherPlaceOfDeath.value
 
 
             ben.userImage = pic.value
@@ -2212,6 +2212,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             add(Calendar.YEAR, -years)
         }.timeInMillis
     }
+
     private fun updateReproductiveOptionsBasedOnAgeGender() {
         val age = getAgeFromDob(getLongFromDate(agePopup.value))
         val genderIsFemale = gender.value == gender.entries?.get(1)
@@ -2225,10 +2226,12 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     "Adolescent Girl", "Eligible Couple", "Pregnant Woman",
                     "Postnatal Mother", "Permanently Sterilised"
                 )
+
                 age in 20..49 -> listOf(
                     "Eligible Couple", "Pregnant Woman",
                     "Postnatal Mother", "Permanently Sterilised"
                 )
+
                 age >= 50 -> listOf("Elderly Woman")
                 else -> emptyList()
             }
@@ -2248,10 +2251,12 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     agePopup.max = yearsAgo(15)
                     agePopup.min = yearsAgo(19)
                 }
+
                 "Eligible Couple", "Pregnant Woman", "Postnatal Mother", "Permanently Sterilised" -> {
                     agePopup.max = yearsAgo(20)
                     agePopup.min = yearsAgo(49)
                 }
+
                 "Elderly Woman" -> {
                     agePopup.max = yearsAgo(50)
                     agePopup.min = yearsAgo(100)
@@ -2259,8 +2264,9 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             }
         }
     }
+
     private fun shouldShowMaternalDeath(gender: String?, dob: String?): Boolean {
-        Log.v("valuesOfData","dob:$dob")
+        Log.v("valuesOfData", "dob:$dob")
 
         if (gender != "Female") return false
         val age = dob?.let { dobString ->
@@ -2285,6 +2291,37 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         } catch (e: Exception) {
             0L
         }
+    }
+
+
+    private fun initializeDeathFields(
+        list: MutableList<FormElement>,
+        saved: BenRegCache?,
+        lastNameIndex: Int
+    ) {
+        list.add(lastNameIndex + 1, beneficiaryStatus)
+        if (saved?.isDeath == true) {
+            list.add(list.indexOf(beneficiaryStatus) + 1, dateOfDeath)
+            list.add(list.indexOf(dateOfDeath) + 1, timeOfDeath)
+            list.add(list.indexOf(timeOfDeath) + 1, reasonOfDeath)
+            list.add(list.indexOf(reasonOfDeath) + 1, placeOfDeath)
+            placeOfDeath.entries?.indexOf(saved.placeOfDeath)?.takeIf { it >= 0 }?.let { index ->
+                if (index == 8) {
+                    list.add(list.indexOf(placeOfDeath) + 1, otherPlaceOfDeath)
+                }
+            }
+        }
+
+        beneficiaryStatus.value = when (saved?.isDeath) {
+            true -> BenStatus.Death.name
+            false -> BenStatus.Alive.name
+            null -> null
+        }
+        dateOfDeath.value = saved?.dateOfDeath
+        timeOfDeath.value = saved?.timeOfDeath
+        reasonOfDeath.value = saved?.reasonOfDeath
+        placeOfDeath.value = saved?.placeOfDeath
+        otherPlaceOfDeath.value = saved?.otherPlaceOfDeath
     }
 
 }
