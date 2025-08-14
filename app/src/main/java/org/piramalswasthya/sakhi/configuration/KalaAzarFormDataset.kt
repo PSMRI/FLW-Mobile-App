@@ -225,9 +225,6 @@ class KalaAzarFormDataset(
         }
 
 
-        ben?.let {
-            dateOfCase.min = it.regDate
-        }
         setUpPage(list)
 
     }
@@ -254,6 +251,10 @@ class KalaAzarFormDataset(
                     )
                 }
                 0
+            }
+
+            other.id -> {
+                validateEmptyOnEditText(other)
             }
 
             referredTo.id -> {

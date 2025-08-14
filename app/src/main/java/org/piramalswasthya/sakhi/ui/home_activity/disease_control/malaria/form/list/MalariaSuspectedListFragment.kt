@@ -82,6 +82,13 @@ class MalariaSuspectedListFragment : Fragment() {
             }
         }
 
+        irsViewModel.checkSubmitButtonVisibility()
+
+        lifecycleScope.launchWhenStarted {
+            irsViewModel.isSubmitVisible.collect { isVisible ->
+                binding.btnSubmit.isEnabled = if (isVisible) true else false
+            }
+        }
 
 
         val irsListAdapter = IrsRoundListAdapter()

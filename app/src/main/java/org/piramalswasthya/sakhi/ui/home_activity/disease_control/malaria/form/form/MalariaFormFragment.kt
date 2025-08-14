@@ -40,7 +40,7 @@ class MalariaFormFragment : Fragment() {
         viewModel.recordExists.observe(viewLifecycleOwner) { notIt ->
             if (viewModel.isSuspected) {
 
-                binding.fabEdit.visibility = if(notIt) View.VISIBLE else View.GONE
+                binding.fabEdit.visibility = if(notIt && viewModel.isSuspected) View.VISIBLE else View.GONE
 
             } else {
                 binding.fabEdit.visibility = View.GONE

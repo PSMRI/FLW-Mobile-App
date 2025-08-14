@@ -75,11 +75,13 @@ class BenChildImmunizationListAdapter(
 
     class VaccinesClickListener(
         private val clickedVaccine: (benId: Long) -> Unit,
+        private val callBen: (ben: BenBasicDomain) -> Unit
 
         ) {
         fun onClickedBen(item: BenBasicDomain) = clickedVaccine(
             item.benId
         )
+        fun onClickedForCall(item: BenBasicDomain) = callBen(item)
 
     }
 

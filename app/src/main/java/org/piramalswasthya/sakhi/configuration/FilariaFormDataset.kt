@@ -130,7 +130,7 @@ class FilariaFormDataset(
                 }
                 medicineSideEffect.value =
                     getLocalValueInArray(medicineSideEffect.arrayId, saved.medicineSideEffect)
-                if (medicineSideEffect.value == medicineSideEffect.entries!!.last()) {
+                if (medicineSideEffect.value == medicineSideEffect.entries!![medicineSideEffect.entries!!.size - 2]) {
                     list.add(list.indexOf(medicineSideEffect) + 1, sideEffectOther)
                     sideEffectOther.value = saved.otherSideEffectDetails
                 }
@@ -139,9 +139,6 @@ class FilariaFormDataset(
         }
 
 
-        ben?.let {
-            dateOfCase.min = it.regDate
-        }
         setUpPage(list)
 
     }
@@ -207,7 +204,7 @@ class FilariaFormDataset(
             }
 
             medicineSideEffect.id -> {
-                if (medicineSideEffect.value == medicineSideEffect.entries!!.last()) {
+                if (medicineSideEffect.value == medicineSideEffect.entries!![medicineSideEffect.entries!!.size - 2]) {
                     triggerDependants(
                         source = medicineSideEffect,
                         addItems = listOf(sideEffectOther),
@@ -240,6 +237,15 @@ class FilariaFormDataset(
                 }
                 0
             }
+
+            other.id -> {
+                validateEmptyOnEditText(other)
+            }
+
+            sideEffectOther.id -> {
+                validateEmptyOnEditText(sideEffectOther)
+            }
+
             else -> -1
         }
 

@@ -33,7 +33,7 @@ class MalariaConfirmCasesDataset(
         title = resources.getString(R.string.treatment_given),
         entries = resources.getStringArray(R.array.pf_pv),
         required = false,
-        hasDependants = false
+        hasDependants = true
     )
 
 
@@ -48,7 +48,7 @@ class MalariaConfirmCasesDataset(
     )
 
     private var dayWiseTrackingPV = FormElement(
-        id = 22,
+        id = 23,
         inputType = InputType.DROPDOWN,
         title = resources.getString(R.string.day_wise_tracking_pv),
         arrayId = R.array.daysPv,
@@ -58,7 +58,7 @@ class MalariaConfirmCasesDataset(
     )
 
     private val dateOfCompletion = FormElement(
-        id = 1,
+        id = 2,
         inputType = InputType.DATE_PICKER,
         title = resources.getString(R.string.date_of_completion),
         arrayId = -1,
@@ -70,7 +70,7 @@ class MalariaConfirmCasesDataset(
     )
 
     private val referalDate = FormElement(
-        id = 1,
+        id = 3,
         inputType = InputType.DATE_PICKER,
         title = resources.getString(R.string.date_of_referal),
         arrayId = -1,
@@ -98,9 +98,12 @@ class MalariaConfirmCasesDataset(
             dateOfCompletion.value = getDateFromLong(saved.treatmentCompletionDate)
             referalDate.value = getDateFromLong(saved.referralDate)
             treatmentGiven.value = saved.treatmentGiven
+
             if(treatmentGiven.value == resources.getStringArray(R.array.pf_pv)[0]){
+                list.add(list.indexOf(treatmentGiven) + 1 ,dayWiseTrackingPf)
                 dayWiseTrackingPf.value = getLocalValueInArray(R.array.daysPf,saved.day)
             } else {
+                list.add(list.indexOf(treatmentGiven) + 1 ,dayWiseTrackingPV)
                 dayWiseTrackingPV.value = getLocalValueInArray(R.array.daysPv,saved.day)
 
             }
@@ -108,9 +111,6 @@ class MalariaConfirmCasesDataset(
 
         }
 
-        ben?.let {
-            dateOfCase.min = it.regDate
-        }
         setUpPage(list)
 
     }
@@ -124,14 +124,16 @@ class MalariaConfirmCasesDataset(
                     triggerDependants(
                         source = treatmentGiven,
                         addItems = listOf(dayWiseTrackingPf),
-                        removeItems = listOf()
+                        removeItems = listOf(dayWiseTrackingPV)
                     )
-                } else {
+
+                } else if(treatmentGiven.value == resources.getStringArray(R.array.pf_pv)[1]){
                     triggerDependants(
                         source = treatmentGiven,
                         addItems = listOf(dayWiseTrackingPV),
-                        removeItems = listOf()
+                        removeItems = listOf(dayWiseTrackingPf)
                     )
+
                 }
                 0
             }

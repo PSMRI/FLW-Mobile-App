@@ -329,7 +329,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_small"
                 android:layout_weight="1"
-                android:backgroundTint="@android:color/holo_red_light"
+                android:backgroundTint="?attr/colorPrimary"
                 android:elevation="@dimen/padding_normal"
                 app:cardCornerRadius="@dimen/padding_normal"
                 app:cardElevation="@dimen/padding_normal">
@@ -369,7 +369,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_small"
                 android:layout_weight="1"
-                android:backgroundTint="@android:color/holo_red_light"
+                android:backgroundTint="?attr/colorPrimary"
                 android:elevation="@dimen/padding_normal"
                 app:cardCornerRadius="@dimen/padding_normal"
                 app:cardElevation="@dimen/padding_normal">
@@ -407,7 +407,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_small"
                 android:layout_weight="1"
-                android:backgroundTint="@android:color/holo_red_light"
+                android:backgroundTint="?attr/colorPrimary"
                 android:elevation="@dimen/padding_normal"
                 app:cardCornerRadius="@dimen/padding_normal"
                 app:cardElevation="@dimen/padding_normal">
@@ -454,7 +454,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/margin_small"
                     android:layout_weight="1"
-                    android:backgroundTint="@android:color/holo_red_light"
+                    android:backgroundTint="?attr/colorPrimary"
                     android:elevation="@dimen/padding_normal"
                     app:cardCornerRadius="@dimen/padding_normal"
                     app:cardElevation="@dimen/padding_normal">
@@ -495,7 +495,7 @@
                     android:layout_margin="@dimen/margin_small"
                     android:layout_weight="1"
                     android:visibility="invisible"
-                    android:backgroundTint="@android:color/holo_red_light"
+                    android:backgroundTint="?attr/colorPrimary"
                     android:elevation="@dimen/padding_normal"
                     app:cardCornerRadius="@dimen/padding_normal"
                     app:cardElevation="@dimen/padding_normal">
@@ -534,7 +534,7 @@
                     android:layout_margin="@dimen/margin_small"
                     android:layout_weight="1"
                     android:visibility="invisible"
-                    android:backgroundTint="@android:color/holo_red_light"
+                    android:backgroundTint="?attr/colorPrimary"
                     android:elevation="@dimen/padding_normal"
                     app:cardCornerRadius="@dimen/padding_normal"
                     app:cardElevation="@dimen/padding_normal">

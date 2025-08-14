@@ -1395,6 +1395,13 @@
         <action
             android:id="@+id/action_ashaProfileFragment_to_newHouseholdFragment"
             app:destination="@id/newHouseholdFragment" />
+        <action
+            android:id="@+id/action_ashaProfileFragment_to_householdMembersFragment"
+            app:destination="@id/householdMembersFragment" />
+        <action
+            android:id="@+id/action_ashaProfileFragment_to_newBenRegFragment"
+            app:destination="@id/newBenRegFragment" />
+
     </fragment>
     <fragment
         android:id="@+id/adolescentHealthFormFragment"
