@@ -31,6 +31,7 @@
         android:background="@drawable/blue_border"
         android:orientation="horizontal"
         android:padding="@dimen/padding_normal"
+        android:layout_marginTop="5dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 

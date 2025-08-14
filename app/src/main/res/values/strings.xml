@@ -19,7 +19,7 @@
     <string name="radio_title" translatable="false">%s<span> *</span></string>
     <string name="radio_title_ds">%s<span> **</span></string>
     <string name="tracking_date">Date of Visit</string>
-    <string name="case_date">Malaria Screening Date</string>
+    <string name="case_date">Maleria Screening Date</string>
     <string name="start_t_date">Date of Starting Treatment</string>
     <string name="date_of_completion">Date of Completion of Treatment</string>
     <string name="date_of_referal">Date of Referral</string>
@@ -409,6 +409,7 @@
     <string name="filter_list">Filter</string>
     <string name="ben_with_rch_id">Ben With RCH ID</string>
     <string name="call">Call</string>
+    <string name="heading">History</string>
     <string-array name="sync_records">
         <item>Beneficiary</item>
         <item>CBAC</item>
@@ -505,6 +506,17 @@
         <item>Other</item>
     </string-array>
 
+    <string-array name="dc_refer_malaria">
+        <item>Primary Health Centre</item>
+        <item>Community Health Centre</item>
+        <item>District Hospital</item>
+        <item>Medical College and Hospital</item>
+        <item>Referral Hospital</item>
+        <item>Other Private Hospital</item>
+        <item>Other</item>
+        <item>None</item>
+    </string-array>
+
     <string-array name="daysPv">
         <item>Day 1</item>
         <item>Day 2</item>
@@ -570,6 +582,7 @@
         <item>V (Vomiting)</item>
         <item>N (Najala)</item>
         <item>O (Other)</item>
+        <item>None</item>
     </string-array>
 </resources>
 
