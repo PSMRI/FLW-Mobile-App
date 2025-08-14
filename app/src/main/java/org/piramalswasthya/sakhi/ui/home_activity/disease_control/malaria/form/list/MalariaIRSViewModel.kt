@@ -9,6 +9,8 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.configuration.IRSRoundDataSet
@@ -16,6 +18,7 @@ import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.IRSRoundScreening
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.MalariaRepo
+import org.piramalswasthya.sakhi.utils.HelperUtil
 import timber.log.Timber
 import javax.inject.Inject
 @HiltViewModel
@@ -55,6 +58,8 @@ class MalariaIRSViewModel @Inject constructor(
 
     private lateinit var irsRoundScreening: IRSRoundScreening
 
+    private val _isSubmitVisible = MutableStateFlow(true)
+    val isSubmitVisible: StateFlow<Boolean> = _isSubmitVisible
 
     init {
         viewModelScope.launch {
@@ -79,25 +84,35 @@ class MalariaIRSViewModel @Inject constructor(
 
     }
 
+    fun checkSubmitButtonVisibility() {
+        viewModelScope.launch {
+            val count = malariaRepo.getCount(hhId)
+            _isSubmitVisible.value = count < 4
+        }
+    }
 
 
     fun saveForm() {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                try {
-                    _state.postValue(State.SAVING)
-                    dataset.mapValues(irsRoundScreening, 1)
-                    malariaRepo.saveIRSScreening(irsRoundScreening)
-                    malariaRepo.getAllActiveIRSRecords(hhId).apply {
-                        malariaRepo.updateIRSRecord(toTypedArray())
-                    }
+            val allowed = malariaRepo.canSubmit(hhId)
+            if (allowed) {
+                withContext(Dispatchers.IO) {
+                    try {
+                        _state.postValue(State.SAVING)
+                        dataset.mapValues(irsRoundScreening, 1)
+                        malariaRepo.saveIRSScreening(irsRoundScreening)
+                        malariaRepo.getAllActiveIRSRecords(hhId).apply {
+                            malariaRepo.updateIRSRecord(toTypedArray())
+                        }
 
-                    _state.postValue(State.SAVE_SUCCESS)
-                } catch (e: Exception) {
-                    Timber.d("saving irs data failed!! $e")
-                    _state.postValue(State.SAVE_FAILED)
+                        _state.postValue(State.SAVE_SUCCESS)
+                    } catch (e: Exception) {
+                        Timber.d("saving irs data failed!! $e")
+                        _state.postValue(State.SAVE_FAILED)
+                    }
                 }
             }
+
         }
     }
 
