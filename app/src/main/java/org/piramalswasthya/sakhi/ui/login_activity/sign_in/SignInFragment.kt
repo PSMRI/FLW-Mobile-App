@@ -196,88 +196,88 @@ class SignInFragment : Fragment() {
                     binding.pbSignIn.visibility = View.VISIBLE
                     binding.tvError.visibility = View.GONE
 
-                    WorkerUtils.triggerGenBenIdWorker(requireContext())
-                    if (BuildConfig.FLAVOR.equals("niramay", true))  {
-                        if (viewModel.getLoggedInUser()?.serviceMapId == 1718){
-                            findNavController().navigate(
-                                if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
-                                else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
-                            activity?.finish()
-                        }else{
-                            binding.clContent.visibility = View.VISIBLE
-                            binding.pbSignIn.visibility = View.GONE
-                            binding.tvError.visibility = View.GONE
-                            Toast.makeText(requireContext(),"This user is not from Niramay Project",Toast.LENGTH_SHORT).show()
-                        }
-
-                    } else if(BuildConfig.FLAVOR.equals("xushrukha", true)){
-                        if (viewModel.getLoggedInUser()?.serviceMapId == 1716){
-                            findNavController().navigate(
-                                if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
-                                else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
-                            activity?.finish()
-                        } else {
-                            binding.clContent.visibility = View.VISIBLE
-                            binding.pbSignIn.visibility = View.GONE
-                            binding.tvError.visibility = View.GONE
-                            Toast.makeText(requireContext(),"This user is not from Xushrukha Project",Toast.LENGTH_SHORT).show()
-                        }
-
-                    } else {
-                        findNavController().navigate(
-                            if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
-                            else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
-                        activity?.finish()
-                    }
-
-//                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
-//                        WorkerUtils.triggerGenBenIdWorker(requireContext())
-//                        if (BuildConfig.FLAVOR.equals("niramay", true))  {
-//                            if (viewModel.getLoggedInUser()?.serviceMapId == 1718){
-//                                findNavController().navigate(
-//                                    if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
-//                                    else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
-//                                activity?.finish()
-//                            }else{
-//                                binding.clContent.visibility = View.VISIBLE
-//                                binding.pbSignIn.visibility = View.GONE
-//                                binding.tvError.visibility = View.GONE
-//                                Toast.makeText(requireContext(),"This user is not from Niramay Project",Toast.LENGTH_SHORT).show()
-//                            }
-//
-//                        }else if(BuildConfig.FLAVOR.equals("xushrukha", true)){
-//                            if (viewModel.getLoggedInUser()?.serviceMapId == 1716){
-//                                findNavController().navigate(
-//                                    if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
-//                                    else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
-//                                activity?.finish()
-//                            }else{
-//                                binding.clContent.visibility = View.VISIBLE
-//                                binding.pbSignIn.visibility = View.GONE
-//                                binding.tvError.visibility = View.GONE
-//                                Toast.makeText(requireContext(),"This user is not from Xushrukha Project",Toast.LENGTH_SHORT).show()
-//                            }
-//
-//                        }else{
+//                    WorkerUtils.triggerGenBenIdWorker(requireContext())
+//                    if (BuildConfig.FLAVOR.equals("niramay", true))  {
+//                        if (viewModel.getLoggedInUser()?.serviceMapId == 1718){
 //                            findNavController().navigate(
 //                                if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
 //                                else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
 //                            activity?.finish()
+//                        }else{
+//                            binding.clContent.visibility = View.VISIBLE
+//                            binding.pbSignIn.visibility = View.GONE
+//                            binding.tvError.visibility = View.GONE
+//                            Toast.makeText(requireContext(),"This user is not from Niramay Project",Toast.LENGTH_SHORT).show()
 //                        }
-//                    } else {
-//                        val locationRecord = LocationRecord(
-//                            LocationEntity(1, "India"),
-//                            LocationEntity(prefDao.getLoggedInUser()!!.state.id, prefDao.getLoggedInUser()!!.state.name),
-//                            LocationEntity(0, ""),
-//                            LocationEntity(prefDao.getLoggedInUser()!!.block.id, prefDao.getLoggedInUser()!!.block.name),
-//                            LocationEntity(prefDao.getLoggedInUser()!!.villages[0].id, prefDao.getLoggedInUser()!!.villages[0].name),
-//                        )
-//                        prefDao.saveLocationRecord(locationRecord)
 //
+//                    } else if(BuildConfig.FLAVOR.equals("xushrukha", true)){
+//                        if (viewModel.getLoggedInUser()?.serviceMapId == 1716){
+//                            findNavController().navigate(
+//                                if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
+//                                else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
+//                            activity?.finish()
+//                        } else {
+//                            binding.clContent.visibility = View.VISIBLE
+//                            binding.pbSignIn.visibility = View.GONE
+//                            binding.tvError.visibility = View.GONE
+//                            Toast.makeText(requireContext(),"This user is not from Xushrukha Project",Toast.LENGTH_SHORT).show()
+//                        }
+
+//                    } else {
+//                        findNavController().navigate(
+//                            if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
+//                            else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
 //                        activity?.finish()
-//                        val goToHome = Intent(requireContext(), SupervisorActivity::class.java)
-//                        startActivity(goToHome)
 //                    }
+
+                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+                        WorkerUtils.triggerGenBenIdWorker(requireContext())
+                        if (BuildConfig.FLAVOR.equals("niramay", true))  {
+                            if (viewModel.getLoggedInUser()?.serviceMapId == 1718){
+                                findNavController().navigate(
+                                    if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
+                                    else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
+                                activity?.finish()
+                            }else{
+                                binding.clContent.visibility = View.VISIBLE
+                                binding.pbSignIn.visibility = View.GONE
+                                binding.tvError.visibility = View.GONE
+                                Toast.makeText(requireContext(),"This user is not from Niramay Project",Toast.LENGTH_SHORT).show()
+                            }
+
+                        }else if(BuildConfig.FLAVOR.equals("xushrukha", true)){
+                            if (viewModel.getLoggedInUser()?.serviceMapId == 1716){
+                                findNavController().navigate(
+                                    if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
+                                    else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
+                                activity?.finish()
+                            }else{
+                                binding.clContent.visibility = View.VISIBLE
+                                binding.pbSignIn.visibility = View.GONE
+                                binding.tvError.visibility = View.GONE
+                                Toast.makeText(requireContext(),"This user is not from Xushrukha Project",Toast.LENGTH_SHORT).show()
+                            }
+
+                        }else{
+                            findNavController().navigate(
+                                if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
+                                else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
+                            activity?.finish()
+                        }
+                    } else {
+                        val locationRecord = LocationRecord(
+                            LocationEntity(1, "India"),
+                            LocationEntity(prefDao.getLoggedInUser()!!.state.id, prefDao.getLoggedInUser()!!.state.name),
+                            LocationEntity(0, ""),
+                            LocationEntity(prefDao.getLoggedInUser()!!.block.id, prefDao.getLoggedInUser()!!.block.name),
+                            LocationEntity(prefDao.getLoggedInUser()!!.villages[0].id, prefDao.getLoggedInUser()!!.villages[0].name),
+                        )
+                        prefDao.saveLocationRecord(locationRecord)
+
+                        activity?.finish()
+                        val goToHome = Intent(requireContext(), SupervisorActivity::class.java)
+                        startActivity(goToHome)
+                    }
                 }
             }
         }
