@@ -311,7 +311,7 @@ class AshaProfileDataset(
 
         ashaName.value = ashaProfile?.name
         pic.value = ashaProfile?.profileImage
-        village.value = currentUser?.villages!![0].name
+        village.value = currentUser.villages[0].name
         loginuserName.value = currentUser.userName
         userId.value = ashaProfile?.employeeId.toString()
         mobileNumber.value = ashaProfile?.mobileNumber.toString()
