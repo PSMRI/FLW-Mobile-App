@@ -130,9 +130,9 @@ class HBNCFormFragment : Fragment() {
         infantListViewModel.getDobByBenIdAsync(benId) { dobMillis ->
             if (dobMillis != null) {
                 dob = dobMillis
-                viewModel.loadFormSchema(benId, HBNC_FORM_ID, visitDay, true, dob)
+                viewModel.loadFormSchema(benId, HBNC_FORM_ID, visitDay!!, true, dob)
             } else {
-                viewModel.loadFormSchema(benId, HBNC_FORM_ID, visitDay, true, dob)
+                viewModel.loadFormSchema(benId, HBNC_FORM_ID, visitDay!!, true, dob)
             }
         }
 

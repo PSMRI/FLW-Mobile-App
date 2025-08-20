@@ -244,7 +244,27 @@
     <string name="female">মহিলা</string>
     <string name="transgender">ৰূপান্তৰিত লিংগ</string>
     <string name="tv_husband_name_ph">স্বামীৰ নাম</string>
-
+    <string name="jsy_payment_voucher">JSY payment voucher</string>
+    <string name="mcp_card_1">MCP Card 1</string>
+    <string name="mcp_card_2">MCP Card 2</string>
+    <string name="during_pregnancy">During pregnancy</string>
+    <string name="a_during_pregnancy">a. During pregnancy</string>
+    <string name="b_during_delivery">b. During delivery</string>
+    <string name="c_within_42_days_after_delivery">c. Within 42 days after delivery</string>
+    <string name="d_during_abortion_or_within_6_weeks_after_abortion">d. During abortion or within 6 weeks after abortion</string>
+    <string name="name_of_reporting_person">"Name of reporting Person "</string>
+    <string name="designation">Designation</string>
+    <string name="verification_by_anm_of_the_respective_sub_center_that_death_of_women_occurred_during_pregnancy_or_within_42_days_of_delivery_abortion">Verification by ANM of the respective Sub-center that death of women occurred during pregnancy or within 42 days of delivery/abortion:</string>
+    <string name="name_of_anm">Name of ANM</string>
+    <string name="name_of_the_sub_center">Name of the sub center</string>
+    <string name="mdsr_form_from_anm_1">MDSR form from ANM 1</string>
+    <string name="mdsr_form_from_anm_2">MDSR form from ANM 2</string>
+    <string name="death_certificate">Death Certificate</string>
+    <string name="village_town_city">Village/Town/City</string>
+    <string name="father_name">Father Name</string>
+    <string name="age_of_woman">Age Of Woman</string>
+    <string name="when_did_death_occur">When did death occur</string>
+    <string name="name_of_the_deceased_woman">Name of the deceased woman</string>
 
 
 </resources>
