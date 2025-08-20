@@ -8,7 +8,7 @@ import org.piramalswasthya.sakhi.model.FilariaScreeningCache
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.InputType
-import org.piramalswasthya.sakhi.model.TBScreeningCache
+import java.util.Calendar
 
 class FilariaFormDataset(
     context: Context, currentLanguage: Languages
@@ -89,6 +89,7 @@ class FilariaFormDataset(
     )
 
     var isMale = false;
+    var benAge = 0L;
     fun isMaleFemale(ben: BenRegCache?): Boolean {
          if (ben?.gender == Gender.MALE) {
              isMale = true
@@ -107,6 +108,9 @@ class FilariaFormDataset(
 
         )
         isMaleFemale(ben)
+        benAge = ben!!.dob
+        decAndAllDoseFieldValidation(benAge)
+
 
         if (saved == null) {
             dateOfCase.value = getDateFromLong(System.currentTimeMillis())
@@ -143,6 +147,17 @@ class FilariaFormDataset(
 
     }
 
+    private fun decAndAllDoseFieldValidation(age: Long) {
+            if (isYoung(age)) {
+                decAndAlbDoseStatus.isEnabled = false
+                decAndAlbDoseStatus.value = getLocalValueInArray(decAndAlbDoseStatus.arrayId,"Y")
+            } else {
+                decAndAlbDoseStatus.isEnabled = true
+
+            }
+
+    }
+
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
         return when (formId) {
             isSuffering.id -> {
@@ -164,6 +179,9 @@ class FilariaFormDataset(
                             target = listOf(whichPartOfBodyFemale,decAndAlbDoseStatus,medicineSideEffect),
 
                             )
+                        whichPartOfBodyFemale.isEnabled = true
+                        decAndAlbDoseStatus.isEnabled = true
+                        decAndAllDoseFieldValidation(benAge)
                     }
 
                 } else {
@@ -283,4 +301,25 @@ class FilariaFormDataset(
     fun getIndexOfDate(): Int {
         return getIndexById(dateOfCase.id)
     }
+
+    fun isYoung(age: Long): Boolean {
+        val calDob = Calendar.getInstance().apply { timeInMillis = age }
+        val calNow = Calendar.getInstance()
+
+        val years = calNow.get(Calendar.YEAR) - calDob.get(Calendar.YEAR)
+        val months = calNow.get(Calendar.MONTH) - calDob.get(Calendar.MONTH)
+        val days = calNow.get(Calendar.DAY_OF_MONTH) - calDob.get(Calendar.DAY_OF_MONTH)
+
+        var totalYears = years
+        var totalMonths = months
+        var totalDays = days
+
+        if (totalMonths < 0 || (totalMonths == 0 && totalDays < 0)) {
+            totalYears--
+            totalMonths += 12
+        }
+        return (totalYears < 2)
+    }
+
+
 }

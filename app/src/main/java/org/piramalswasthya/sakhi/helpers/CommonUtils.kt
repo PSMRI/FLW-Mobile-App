@@ -88,16 +88,16 @@ fun filterForBen(
     ben: BenBasicDomain,
     filterText: String
 ) = ben.hhId.toString().lowercase().contains(filterText) ||
-        ben.benId.toString().lowercase().contains(filterText) ||
+        ben.benId.toString().lowercase().contains(filterText.replace(" ","")) ||
         ben.abhaId.toString().lowercase().contains(filterText) ||
         ben.regDate.lowercase().contains((filterText)) ||
-        ben.age.lowercase().contains(filterText) ||
+        ben.age.lowercase() == filterText.lowercase() ||
         ben.benFullName.lowercase().contains(filterText) ||
         ben.familyHeadName.lowercase().contains(filterText) ||
         ben.benSurname?.lowercase()?.contains(filterText) ?: false ||
         ben.rchId.takeIf { it?.isDigitsOnly() == true }?.contains(filterText) ?: false ||
         ben.mobileNo.lowercase().contains(filterText) ||
-        ben.gender.lowercase().contains(filterText) ||
+        ben.gender.lowercase() == filterText.lowercase() ||
         ben.spouseName?.lowercase()?.contains(filterText) == true ||
         ben.fatherName?.lowercase()?.contains(filterText) ?: false
 
