@@ -161,11 +161,14 @@ class RecordsRepo @Inject constructor(
 
     var hrpPregnantWomenList = benDao.getAllPregnancyWomenForHRList(selectedVillage)
         .map { list -> list.map { it.asDomainModel() } }
+
     val hrpPregnantWomenListCount = benDao.getAllPregnancyWomenForHRListCount(selectedVillage)
 
     var hrpTrackingPregList = benDao.getAllHRPTrackingPregList(selectedVillage)
         .map { list -> list.map { it.asDomainModel() } }
+
     val hrpTrackingPregListCount = benDao.getAllHRPTrackingPregListCount(selectedVillage)
+
 
 //    val hrpTrackingPregHistCount = hrpDao.getHRPTrackHist(ben)
 

@@ -55,6 +55,27 @@ class BenRepo @Inject constructor(
         }
     }
 
+    // 1. Pregnancy death check
+    suspend fun hasPregnancyDeath(benId: Long): Boolean {
+        return benDao.checkPregnancyDeath(benId)
+    }
+
+    // 2. Abortion death check
+    suspend fun hasAbortionDeath(benId: Long): Boolean {
+        return benDao.checkAbortionDeath(benId)
+    }
+
+    // 3. Delivery death check
+    suspend fun hasDeliveryDeath(benId: Long): Boolean {
+        return benDao.checkDeliveryDeath(benId)
+    }
+
+    // 4. PNC death check
+    suspend fun hasPncDeath(benId: Long): Boolean {
+        return benDao.checkPncDeath(benId)
+    }
+
+
     fun getBenBasicListFromHousehold(hhId: Long): Flow<List<BenBasicDomain>> {
         return benDao.getAllBasicBenForHousehold(hhId).map { it.map { it.asBasicDomainModel() } }
 

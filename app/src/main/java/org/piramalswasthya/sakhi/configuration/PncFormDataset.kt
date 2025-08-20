@@ -8,6 +8,7 @@ import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.DeliveryOutcomeCache
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.InputType
+import org.piramalswasthya.sakhi.model.InputType.EDIT_TEXT
 import org.piramalswasthya.sakhi.model.PNCVisitCache
 import org.piramalswasthya.sakhi.model.getDateStrFromLong
 import timber.log.Timber
@@ -164,7 +165,7 @@ class PncFormDataset(
         id = 15,
         inputType = InputType.DROPDOWN,
         title = resources.getString(R.string.pnc_death_place),
-        entries = resources.getStringArray(R.array.pnc_death_place_array),
+        entries = resources.getStringArray(R.array.death_place_array),
         required = true,
         hasDependants = false,
     )
@@ -175,6 +176,13 @@ class PncFormDataset(
         title = resources.getString(R.string.pnc_remarks),
         required = false,
         hasDependants = false
+    )
+    private val otherPlaceOfDeath = FormElement(
+        id = 55,
+        inputType = EDIT_TEXT,
+        title = context.getString(R.string.other_place_of_death),
+        required = true,
+        hasDependants = true,
     )
 
     suspend fun setUpPage(
@@ -259,6 +267,12 @@ class PncFormDataset(
                 causeOfDeath.value = it.causeOfDeath
                 otherDeathCause.value = it.otherDeathCause
                 placeOfDeath.value = it.placeOfDeath
+                otherPlaceOfDeath.value = it.otherPlaceOfDeath
+                placeOfDeath.entries?.indexOf(saved.placeOfDeath)?.takeIf { it >= 0 }?.let { index ->
+                    if (index == 8) {
+                        list.add(list.indexOf(placeOfDeath) + 1, otherPlaceOfDeath)
+                    }
+                }
                 list.addAll(
                     list.indexOf(motherDeath) + 1,
                     listOf(deathDate, causeOfDeath, placeOfDeath)
@@ -321,6 +335,8 @@ class PncFormDataset(
 
                 visitDate.value = null
                 visitDate.inputType = InputType.DATE_PICKER
+
+
 
                 val today = Calendar.getInstance().setToStartOfTheDay().timeInMillis
                 when (val visitNumber = pncPeriod.value!!.substring(4).toInt()) {
@@ -430,6 +446,17 @@ class PncFormDataset(
                 return -1
             }
 
+            placeOfDeath.id -> {
+                val index = placeOfDeath.entries?.indexOf(placeOfDeath.value).takeIf { it!! >= 0 } ?: return -1
+                val triggerIndex = 8
+                return triggerDependants(
+                    source = placeOfDeath,
+                    passedIndex = index,
+                    triggerIndex = triggerIndex,
+                    target = otherPlaceOfDeath
+                )
+            }
+
             ifaTabsGiven.id -> validateIntMinMax(ifaTabsGiven)
             anyContraceptionMethod.id -> triggerDependants(
                 source = anyContraceptionMethod,
@@ -492,6 +519,7 @@ class PncFormDataset(
         (cacheModel as PNCVisitCache).let { form ->
             form.pncPeriod = pncPeriod.value!!.substring(4).toInt()
             form.pncDate = getLongFromDate(visitDate.value!!)
+            form.otherPlaceOfDeath=otherPlaceOfDeath.value
             form.dateOfDelivery = getLongFromDate(deliveryDate.value)
             form.ifaTabsGiven = ifaTabsGiven.value?.takeIf { it.isNotEmpty() }?.toInt()
             form.anyContraceptionMethod =
