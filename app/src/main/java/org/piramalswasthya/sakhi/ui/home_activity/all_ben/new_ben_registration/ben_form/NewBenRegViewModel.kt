@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.configuration.BenRegFormDataset
@@ -21,6 +22,7 @@ import org.piramalswasthya.sakhi.model.BenRegKid
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.HouseholdCache
 import org.piramalswasthya.sakhi.model.LocationRecord
+import org.piramalswasthya.sakhi.model.PreviewItem
 import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.HouseholdRepo
@@ -168,9 +170,9 @@ class NewBenRegViewModel @Inject constructor(
                             beneficiaryId = benIdToSet,
                             householdId = hhId,
                             isAdult = false,
-                            isKid = false,
+                            isKid = dataset.isKid(),
                             isDraft = true,
-                            kidDetails = BenRegKid(),
+                            kidDetails = if(dataset.isKid()) BenRegKid() else null,
                             genDetails = BenRegGen(),
                             syncState = SyncState.UNSYNCED,
                             locationRecord = locationRecord
@@ -252,5 +254,45 @@ class NewBenRegViewModel @Inject constructor(
     fun setRecordExist(b: Boolean) {
         _recordExists.value = b
     }
+
+
+
+    suspend fun getFormPreviewData(): List<PreviewItem> = withContext(Dispatchers.Default) {
+        val elements = dataset.listFlow.first()
+        val out = mutableListOf<PreviewItem>()
+        for (el in elements) {
+            if (el.inputType.name == "IMAGE_VIEW" || el.inputType.toString() == "IMAGE_VIEW") {
+                val uri = try {
+                    el.value?.let { Uri.parse(it.toString()) }
+                } catch (e: Exception) {
+                    null
+                }
+                out.add(
+                    PreviewItem(
+                        label = el.title ?: "",
+                        value = "",
+                        isImage = true,
+                        imageUri = uri
+                    )
+                )
+                continue
+            }
+
+            val display = when {
+                el.value == null -> "-"
+                el.value is String && el.value.toString().isBlank() -> "-"
+                el.value is String && el.value.toString().contains(",") -> el.value.toString()
+                    .split(",")
+                    .map { it.trim() }
+                    .filter { it.isNotEmpty() }
+                    .joinToString(", ")
+                else -> el.value.toString()
+            }
+            val trimmed = if (display.length > 400) display.substring(0, 400) + "…" else display
+            out.add(PreviewItem(label = el.title ?: "", value = trimmed, isImage = false))
+        }
+        out
+    }
+
 
 }

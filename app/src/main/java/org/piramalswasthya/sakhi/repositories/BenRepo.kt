@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import org.json.JSONException
 import org.json.JSONObject
-import org.piramalswasthya.sakhi.configuration.BenGenRegFormDataset
 import org.piramalswasthya.sakhi.database.room.BeneficiaryIdsAvail
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
@@ -19,6 +18,7 @@ import org.piramalswasthya.sakhi.helpers.ImageUtils
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.model.*
 import org.piramalswasthya.sakhi.network.*
+import org.piramalswasthya.sakhi.utils.HelperUtil
 import timber.log.Timber
 import java.lang.Long.min
 import java.net.SocketTimeoutException
@@ -164,9 +164,9 @@ class BenRepo @Inject constructor(
                 val responseStatusCode: Int = jsonObj.getInt("statusCode")
                 if (responseStatusCode == 200) {
                     val jsonObjectData: JSONObject = jsonObj.getJSONObject("data")
-                    val resBenId = jsonObjectData.getString("response")
-                    val benNumber = resBenId.substring(resBenId.length - 12)
-                    val newBenId = java.lang.Long.valueOf(benNumber)
+                    val response = jsonObjectData.getString("response")
+                    val newBenId = jsonObjectData.getString("benGenId").toLong()
+                    val newBenRegId = jsonObjectData.getString("benRegId").toLong()
                     //FIX TO UPDATE IMAGE-NAME WITH NEW BEN-ID
                     val infantReg = infantRegRepo.getInfantRegFromChildBenId(ben.beneficiaryId)
                     infantReg?.let {
@@ -177,12 +177,15 @@ class BenRepo @Inject constructor(
                     }
                     infantReg?.let { infantRegRepo.update(it) }
                     val photoUri = ImageUtils.renameImage(context, ben.beneficiaryId, newBenId)
-                    benDao.updateToFinalBenId(
-                        hhId = ben.householdId,
-                        oldId = ben.beneficiaryId,
-                        newId = newBenId,
-                        imageUri = photoUri
-                    )
+                    if (newBenRegId != null) {
+                        benDao.updateToFinalBenId(
+                            hhId = ben.householdId,
+                            oldId = ben.beneficiaryId,
+                            newBenRegId=newBenRegId,
+                            newId = newBenId,
+                            imageUri = photoUri
+                        )
+                    }
                     //FIX TO MAP UPDATED BEN-ID FOR HOF
                     householdDao.getHousehold(ben.householdId)
                         ?.takeIf { it.benId == ben.beneficiaryId }?.let {
@@ -212,7 +215,6 @@ class BenRepo @Inject constructor(
             Timber.d("Caugnt error $e")
             return false
         }
-
     }
 
     suspend fun processNewBen(): Boolean {
@@ -230,7 +232,6 @@ class BenRepo @Inject constructor(
 //            val cbacPostList = mutableSetOf<CbacPost>()
 
             benList.forEach {
-//                val isSuccess =
                 createBenIdAtServerByBeneficiarySending(it, user, it.locationRecord)
                 Timber.d("YTR 429 $it")
             }
@@ -240,15 +241,13 @@ class BenRepo @Inject constructor(
                 benDao.setSyncState(it.householdId, it.beneficiaryId, SyncState.SYNCING)
                 benNetworkPostList.add(it.asNetworkPostModel(context, user))
                 householdNetworkPostList.add(
-                    householdDao.getHousehold(it.householdId)!!.asNetworkModel()
+                    householdDao.getHousehold(it.householdId)!!.asNetworkModel(user)
                 )
                 try {
-                    if (it.ageUnitId != 3 || it.age < 15) kidNetworkPostList.add(it.asKidNetworkModel())
+                    if (it.ageUnitId != 3 || it.age < 15) kidNetworkPostList.add(it.asKidNetworkModel(user))
                 } catch (e: java.lang.Exception) {
                     Timber.d("caught error in adding kidDetails : $e")
                 }
-
-
             }
 
             val uploadDone = postDataToAmritServer(
@@ -327,6 +326,7 @@ class BenRepo @Inject constructor(
     }
 
     suspend fun getBeneficiariesFromServerForWorker(pageNumber: Int): Int {
+        Timber.d("=====1234:getBeneficiariesFromServerForWorker : $pageNumber")
         return withContext(Dispatchers.IO) {
             val user =
                 preferenceDao.getLoggedInUser()
@@ -356,6 +356,10 @@ class BenRepo @Inject constructor(
                                 val dataObj = jsonObj.getJSONObject("data")
                                 val pageSize = dataObj.getInt("totalPage")
 
+//                                HelperUtil.allPagesContent.append("Page $pageNumber:\n")
+//                                HelperUtil.allPagesContent.append(responseString)
+//                                HelperUtil.allPagesContent.append("\n")
+
                                 try {
                                     householdDao.upsert(
                                         *getHouseholdCacheFromServerResponse(
@@ -367,6 +371,7 @@ class BenRepo @Inject constructor(
                                     return@withContext 0
                                 }
                                 val benCacheList = getBenCacheFromServerResponse(responseString)
+
                                 benDao.upsert(*benCacheList.toTypedArray())
 //                                val cbacCacheList = getCbacCacheFromServerResponse(responseString)
 //                                cbacDao.upsert(*cbacCacheList.toTypedArray())
@@ -384,6 +389,8 @@ class BenRepo @Inject constructor(
                             }
 
                             5000 -> {
+                              //  HelperUtil.saveApiResponseToDownloads(context, "9864880049_getBeneficiaryData_response.txt", HelperUtil.allPagesContent.toString())
+
                                 if (errorMessage == "No record found") return@withContext 0
                             }
 
@@ -510,7 +517,7 @@ class BenRepo @Inject constructor(
         return localDateTime?.time ?: 0
     }
 
-
+    var count = 0
     private suspend fun getBenCacheFromServerResponse(response: String): MutableList<BenRegCache> {
         val jsonObj = JSONObject(response)
         val result = mutableListOf<BenRegCache>()
@@ -524,6 +531,8 @@ class BenRepo @Inject constructor(
                 for (i in 0 until jsonArray.length()) {
                     val jsonObject = jsonArray.getJSONObject(i)
                     val benDataObj = jsonObject.getJSONObject("beneficiaryDetails")
+                    val abhaHealthDetailsObj = jsonObject.getJSONObject("abhaHealthDetails")
+
 //                    val houseDataObj = jsonObject.getJSONObject("householdDetails")
 //                    val cbacDataObj = jsonObject.getJSONObject("cbacDetails")
                     val childDataObj = jsonObject.getJSONObject("bornbirthDeatils")
@@ -550,6 +559,7 @@ class BenRepo @Inject constructor(
                                 beneficiaryId = jsonObject.getLong("benficieryid"),
                                 ashaId = jsonObject.getInt("ashaId"),
                                 benRegId = jsonObject.getLong("BenRegId"),
+                                isNewAbha = if (abhaHealthDetailsObj.has("isNewAbha")) abhaHealthDetailsObj.getBoolean("isNewAbha") else false,
                                 age = benDataObj.getInt("age"),
                                 ageUnit = if (benDataObj.has("gender")) {
                                     when (benDataObj.getString("age_unit")) {
@@ -959,10 +969,14 @@ class BenRepo @Inject constructor(
 //                                ) else null,
 //                                noOfDaysForDelivery = noOfDaysForDelivery,
                                 ),
-                                healthIdDetails = if (jsonObject.has("healthId")) BenHealthIdDetails(
-                                    jsonObject.getString("healthId"),
-                                    jsonObject.getString("healthIdNumber")
-                                ) else null,
+                                healthIdDetails =if(abhaHealthDetailsObj != null && abhaHealthDetailsObj.length() > 0){
+                                    BenHealthIdDetails(
+                                        healthIdNumber = abhaHealthDetailsObj.getString("HealthIdNumber"),
+                                        isNewAbha =  if (abhaHealthDetailsObj.has("isNewAbha")) abhaHealthDetailsObj.getBoolean("isNewAbha") else false,
+                                        healthId = abhaHealthDetailsObj.getString("HealthID")
+                                    )
+
+                                }else null,
                                 syncState = SyncState.SYNCED,
                                 isDraft = false
                             )
@@ -1003,6 +1017,11 @@ class BenRepo @Inject constructor(
                                 )
                             }, ${benDataObj.getString("reproductiveStatus")}"
                         )*/
+
+//                        if (benDataObj.has("benficieryid")){
+//                            count++
+//                            Timber.d("====050224,::$count")
+//                        }
                     } catch (e: JSONException) {
                         Timber.e("Beneficiary skipped: ${jsonObject.getLong("benficieryid")} with error $e")
                     } catch (e: NumberFormatException) {

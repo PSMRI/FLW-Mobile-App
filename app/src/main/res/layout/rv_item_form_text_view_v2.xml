@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="android.view.View" />
         <variable
             name="form"
             type="org.piramalswasthya.sakhi.model.FormElement" />
@@ -35,6 +36,7 @@
                 android:focusable="false"
                 android:inputType="none"
                 android:singleLine="true"
+                android:paddingLeft="@dimen/_20sdp"
                 android:text="@{form.value}"
                 android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
                 tools:text="Woo hoo" />

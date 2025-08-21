@@ -102,6 +102,13 @@
         <item>Any Other Method</item>
     </string-array>
 
+    <string-array name="antra_doses">
+        <item>Dose-1</item>
+        <item>Dose-2</item>
+        <item>Dose-3</item>
+        <item>Dose-4</item>
+    </string-array>
+
     <!--  PregnantWoman ANC  -->
     <string-array name="anc_abortion_type_array">
         <item>Induced</item>
@@ -193,6 +200,7 @@
     <string name="pmsma_tetanus_toxoid">Tetanus toxoid</string>
     <string name="pmsma_lmp">LMP</string>
     <string name="pmsma_edd">Expected Delivery</string>
+    <string name="string_edd">EDD</string>
     <string name="pmsma_last_mestrual_period">Last Menstrual Period</string>
     <string name="pmsma_expected_delivery_date">Expected Date of Delivery</string>
     <string name="pmsma_high_risk_factors">Identification of high-risk factors</string>

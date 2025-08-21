@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.network
 
+import android.os.Parcelable
 import com.squareup.moshi.JsonClass
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.model.HRPNonPregnantAssessCache
@@ -8,8 +9,12 @@ import org.piramalswasthya.sakhi.model.HRPPregnantAssessCache
 import org.piramalswasthya.sakhi.model.HRPPregnantTrackCache
 import org.piramalswasthya.sakhi.model.TBScreeningCache
 import org.piramalswasthya.sakhi.model.TBSuspectedCache
+import org.piramalswasthya.sakhi.utils.KeyUtils
 import java.text.SimpleDateFormat
 import java.util.Locale
+import kotlinx.parcelize.Parcelize
+import org.piramalswasthya.sakhi.model.ABHAModel
+import org.piramalswasthya.sakhi.model.Gender
 
 @JsonClass(generateAdapter = true)
 data class D2DAuthUserRequest(
@@ -90,7 +95,8 @@ data class BenHealthDetails(
     val benHealthID: Int,
     val healthIdNumber: String,
     val beneficiaryRegID: Long,
-    val healthId: String
+    val healthId: String,
+    val isNewAbha: Boolean
 )
 
 @JsonClass(generateAdapter = true)
@@ -105,8 +111,8 @@ data class BenAbhaResponse(
 
 @JsonClass(generateAdapter = true)
 data class AbhaTokenRequest(
-    val clientId: String = "##",
-    val clientSecret: String = "##",
+    val clientId: String = KeyUtils.abhaClientID(),
+    val clientSecret: String = KeyUtils.abhaClientSecret(),
     val grantType: String = "client_credentials"
 )
 
@@ -119,9 +125,21 @@ data class AbhaTokenResponse(
     val tokenType: String
 )
 
+// ABHA v1/v2 request
+//@JsonClass(generateAdapter = true)
+//data class AbhaGenerateAadhaarOtpRequest(
+//    var aadhaar: String
+//)
+
+// ABHA v3 request
 @JsonClass(generateAdapter = true)
 data class AbhaGenerateAadhaarOtpRequest(
-    var aadhaar: String
+//    var aadhaar: String
+    val txnId: String,
+    val scope: List<String>,
+    val loginHint: String,
+    var loginId: String,
+    var otpSystem: String
 )
 
 @JsonClass(generateAdapter = true)
@@ -139,7 +157,8 @@ data class AbhaGenerateAadhaarOtpResponse(
 @JsonClass(generateAdapter = true)
 data class AbhaGenerateAadhaarOtpResponseV2(
     val txnId: String,
-    val mobileNumber: String
+    val mobileNumber: String,
+    val message:String
 )
 
 @JsonClass(generateAdapter = true)
@@ -147,19 +166,163 @@ data class AbhaResendAadhaarOtpRequest(
     val txnId: String
 )
 
+// ABHA v1/v2 request
+//@JsonClass(generateAdapter = true)
+//data class AbhaVerifyAadhaarOtpRequest(
+//    val otp: String,
+//    val txnId: String
+//)
 
+// ABHA v3 request
 @JsonClass(generateAdapter = true)
 data class AbhaVerifyAadhaarOtpRequest(
-    val otp: String,
-    val txnId: String
+    val authData: AuthData,
+    val consent: Consent
 )
-
 
 @JsonClass(generateAdapter = true)
-data class AbhaVerifyAadhaarOtpResponse(
+data class SearchAbhaRequest(
+    val scope: List<String>,
+    var mobile: String
+)
+
+@JsonClass(generateAdapter = true)
+data class SearchAbhaResponse(
+    val txnId: String,
+    val ABHA: List<Abha>
+)
+
+@JsonClass(generateAdapter = true)
+data class Abha(
+    val index: Int,
+    val ABHANumber: String,
+    val name: String,
+    val gender: String
+)
+
+@JsonClass(generateAdapter = true)
+data class LoginGenerateOtpRequest(
+    val scope: List<String>,
+    val loginHint: String,
+    var loginId: String,
+    val otpSystem: String,
     val txnId: String
 )
 
+@JsonClass(generateAdapter = true)
+data class LoginGenerateOtpResponse(
+    val txnId: String,
+    val message: String
+)
+
+@JsonClass(generateAdapter = true)
+data class LoginVerifyOtpRequest(
+    val scope: List<String>,
+    val authData: AuthData3
+)
+
+@JsonClass(generateAdapter = true)
+data class AuthData3(
+    val authMethods: List<String>,
+    val otp: Otp3
+)
+
+@JsonClass(generateAdapter = true)
+data class Otp3(
+    val txnId: String,
+    var otpValue: String
+)
+
+@JsonClass(generateAdapter = true)
+data class LoginVerifyOtpResponse(
+    val txnId: String,
+    val authResult: String,
+    val message: String,
+    val token: String,
+    val expiresIn: Long,
+    val refreshToken: String,
+    val refreshExpiresIn: Long,
+    val accounts: List<Accounts>
+)
+
+@JsonClass(generateAdapter = true)
+data class Accounts(
+    val ABHANumber: String,
+    val preferredAbhaAddress: String,
+    val name: String,
+    val status: String,
+    val profilePhoto: String,
+    val mobileVerified: Boolean
+)
+
+@JsonClass(generateAdapter = true)
+data class AuthData(
+    val authMethods: List<String>,
+    val otp: Otp
+)
+
+@JsonClass(generateAdapter = true)
+data class Consent(
+    val code: String,
+    val version: String
+)
+
+@JsonClass(generateAdapter = true)
+data class Otp(
+    var timeStamp: String,
+    val txnId: String,
+    var otpValue: String,
+    var mobile: String
+)
+
+// ABHA v1/v2 request
+//@JsonClass(generateAdapter = true)
+//data class AbhaVerifyAadhaarOtpResponse(
+//    val txnId: String
+//)
+
+// ABHA v3 request
+@Parcelize
+@JsonClass(generateAdapter = true)
+data class AbhaVerifyAadhaarOtpResponse(
+    val message: String="",
+    val txnId: String="",
+    val tokens: Tokens = Tokens(),
+    val ABHAProfile: ABHAProfile=ABHAProfile(),
+    val isNew: Boolean=false
+) : Parcelable
+
+@Parcelize
+@JsonClass(generateAdapter = true)
+data class Tokens(
+    val token: String="",
+    val expiresIn: Int=0,
+    val refreshToken: String="",
+    val refreshExpiresIn: Int=0
+) : Parcelable
+
+@Parcelize
+@JsonClass(generateAdapter = true)
+data class ABHAProfile(
+    val firstName: String="",
+    val middleName: String="",
+    val lastName: String="",
+    val dob: String="",
+    val gender: String="",
+    val photo: String="",
+    val mobile: String="",
+    val email: String="",
+    val phrAddress:List<String>?= listOf<String>(),
+    val address: String="",
+    val districtCode: String="",
+    val stateCode: String="",
+    val pinCode: String="",
+    val abhaType: String="",
+    val stateName: String="",
+    val districtName: String="",
+    val ABHANumber: String="",
+    val abhaStatus: String=""
+) : Parcelable
 
 @JsonClass(generateAdapter = true)
 data class AbhaGenerateMobileOtpRequest(
@@ -178,16 +341,43 @@ data class AbhaCheckAndGenerateMobileOtpResponse(
 )
 
 
+// ABHA v1/v2 request
+//@JsonClass(generateAdapter = true)
+//data class AbhaVerifyMobileOtpRequest(
+//    val otp: String,
+//    val txnId: String
+//)
+
+// ABHA v3 request
 @JsonClass(generateAdapter = true)
 data class AbhaVerifyMobileOtpRequest(
-    val otp: String,
-    val txnId: String
+    val scope: List<String>,
+    val authData: AuthData2
+)
+
+@JsonClass(generateAdapter = true)
+data class AuthData2(
+    val authMethods: List<String>,
+    val otp: Otp2
+)
+
+@JsonClass(generateAdapter = true)
+data class Otp2(
+    var timeStamp: String,
+    val txnId: String,
+    var otpValue: String
 )
 
 
 @JsonClass(generateAdapter = true)
 data class AbhaVerifyMobileOtpResponse(
     val txnId: String
+)
+
+@JsonClass(generateAdapter = true)
+data class AbhaPublicCertificateResponse(
+    val publicKey: String,
+    val encryptionAlgorithm: String
 )
 
 @JsonClass(generateAdapter = true)
@@ -330,14 +520,30 @@ data class CreateHealthIdRequest(
     val providerServiceMapID: Int?,
     val createdBy: String?
 )
-
+@JsonClass(generateAdapter = true)
 data class MapHIDtoBeneficiary(
     val beneficiaryRegID: Long?,
     val beneficiaryID: Long?,
     val healthId: String?,
     val healthIdNumber: String?,
     var providerServiceMapId: Int?,
-    var createdBy: String?
+    var createdBy: String?,
+    var message: String?,
+    var txnId: String?,
+    var ABHAProfile: ABHAProfile?,
+    var isNew: Boolean?
+)
+
+@JsonClass(generateAdapter = true)
+data class AddHealthIdRecord(
+    val healthId: String?,
+    val healthIdNumber: String?,
+    var providerServiceMapId: Int?,
+    var createdBy: String?,
+    var message: String?,
+    var txnId: String?,
+    var ABHAProfile: ABHAProfile?,
+    var isNew: Boolean?
 )
 
 data class TBScreeningRequestDTO(
@@ -554,6 +760,39 @@ data class TBScreeningDTO(
             takingAntiTBDrugs = takingAntiTBDrugs,
             familySufferingFromTB = familySufferingFromTB,
             syncState = SyncState.SYNCED
+        )
+    }
+}
+
+
+data class ABHAGeneratedDTO(
+    val id: Int = 0,
+    val beneficiaryID: Long,
+    val beneficiaryRegID: Long,
+    val benName: String,
+    val createdBy: String,
+    val message: String,
+    val txnId: String,
+    val benSurname: String? = null,
+    var healthId: String = "",
+    var healthIdNumber: String = "",
+    var isNewAbha: Boolean= false,
+    val providerServiceMapId: Int,
+
+) {
+    fun toCache(): ABHAModel {
+        return ABHAModel(
+            beneficiaryID = beneficiaryID,
+            beneficiaryRegID = beneficiaryRegID,
+            benName = benName,
+            benSurname = benSurname,
+            healthId = healthId,
+            txnId = txnId,
+            message = message,
+            createdBy = createdBy,
+            healthIdNumber = healthIdNumber,
+            isNewAbha = isNewAbha,
+            providerServiceMapId = providerServiceMapId
         )
     }
 }

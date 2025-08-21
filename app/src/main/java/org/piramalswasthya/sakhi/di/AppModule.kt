@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.di
 
 import android.content.Context
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -11,13 +12,34 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.piramalswasthya.sakhi.database.room.InAppDb
-import org.piramalswasthya.sakhi.database.room.dao.*
+import org.piramalswasthya.sakhi.database.room.dao.ABHAGenratedDao
+import org.piramalswasthya.sakhi.database.room.dao.BenDao
+import org.piramalswasthya.sakhi.database.room.dao.BeneficiaryIdsAvailDao
+import org.piramalswasthya.sakhi.database.room.dao.CbacDao
+import org.piramalswasthya.sakhi.database.room.dao.CdrDao
+import org.piramalswasthya.sakhi.database.room.dao.ChildRegistrationDao
+import org.piramalswasthya.sakhi.database.room.dao.DeliveryOutcomeDao
+import org.piramalswasthya.sakhi.database.room.dao.HbncDao
+import org.piramalswasthya.sakhi.database.room.dao.HbycDao
+import org.piramalswasthya.sakhi.database.room.dao.HouseholdDao
+import org.piramalswasthya.sakhi.database.room.dao.ImmunizationDao
+import org.piramalswasthya.sakhi.database.room.dao.IncentiveDao
+import org.piramalswasthya.sakhi.database.room.dao.InfantRegDao
+import org.piramalswasthya.sakhi.database.room.dao.MaternalHealthDao
+import org.piramalswasthya.sakhi.database.room.dao.MdsrDao
+import org.piramalswasthya.sakhi.database.room.dao.PmsmaDao
+import org.piramalswasthya.sakhi.database.room.dao.PncDao
+import org.piramalswasthya.sakhi.database.room.dao.SyncDao
+import org.piramalswasthya.sakhi.database.room.dao.TBDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.AnalyticsHelper
+import org.piramalswasthya.sakhi.helpers.ApiAnalyticsInterceptor
 import org.piramalswasthya.sakhi.network.AbhaApiService
 import org.piramalswasthya.sakhi.network.AmritApiService
 import org.piramalswasthya.sakhi.network.interceptors.ContentTypeInterceptor
 import org.piramalswasthya.sakhi.network.interceptors.TokenInsertAbhaInterceptor
 import org.piramalswasthya.sakhi.network.interceptors.TokenInsertTmcInterceptor
+import org.piramalswasthya.sakhi.utils.KeyUtils
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
@@ -27,11 +49,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-
-    private const val baseTmcUrl =
-        "https://amritdemo.piramalswasthya.org/"
-
-    private const val baseAbhaUrl = "https://healthidsbx.abdm.gov.in/api/"
 
     private val baseClient =
         OkHttpClient.Builder()
@@ -50,13 +67,14 @@ object AppModule {
     @Singleton
     @Provides
     @Named("uatClient")
-    fun provideTmcHttpClient(): OkHttpClient {
+    fun provideTmcHttpClient(apiAnalyticsInterceptor: ApiAnalyticsInterceptor): OkHttpClient {
         return baseClient
             .newBuilder()
             .connectTimeout(60, TimeUnit.SECONDS)
             .readTimeout(60, TimeUnit.SECONDS)
             .writeTimeout(60, TimeUnit.SECONDS)
             .addInterceptor(TokenInsertTmcInterceptor())
+            .addInterceptor(apiAnalyticsInterceptor)
             .build()
     }
 
@@ -83,7 +101,7 @@ object AppModule {
         return Retrofit.Builder()
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             //.addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(baseTmcUrl)
+            .baseUrl(KeyUtils.baseTMCUrl())
             .client(httpClient)
             .build()
             .create(AmritApiService::class.java)
@@ -98,7 +116,7 @@ object AppModule {
         return Retrofit.Builder()
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             //.addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(baseAbhaUrl)
+            .baseUrl(KeyUtils.baseAbhaUrl())
             .client(httpClient)
             .build()
             .create(AbhaApiService::class.java)
@@ -107,6 +125,22 @@ object AppModule {
     @Singleton
     @Provides
     fun provideRoomDatabase(@ApplicationContext context: Context) = InAppDb.getInstance(context)
+
+    @Provides
+    @Singleton
+    fun provideAnalyticsHelper(
+        @ApplicationContext context: Context
+    ): AnalyticsHelper {
+        return AnalyticsHelper(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideApiAnalyticsInterceptor(
+        @ApplicationContext context: Context
+    ): ApiAnalyticsInterceptor {
+        return ApiAnalyticsInterceptor(context)
+    }
 
     @Singleton
     @Provides
@@ -185,6 +219,10 @@ object AppModule {
     @Singleton
     @Provides
     fun provideHBYCDao(database: InAppDb): HbycDao = database.hbycDao
+
+    @Singleton
+    @Provides
+    fun provideABHAGenDao(database: InAppDb): ABHAGenratedDao = database.abhaGenratedDao
 
 
 }

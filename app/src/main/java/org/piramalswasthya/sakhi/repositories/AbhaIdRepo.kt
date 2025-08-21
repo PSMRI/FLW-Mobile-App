@@ -4,11 +4,16 @@ import android.util.Base64
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
+import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.model.ABHAModel
+import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.network.AadhaarVerifyBioRequest
 import org.piramalswasthya.sakhi.network.AbhaApiService
 import org.piramalswasthya.sakhi.network.AbhaCheckAndGenerateMobileOtpResponse
@@ -16,12 +21,14 @@ import org.piramalswasthya.sakhi.network.AbhaGenerateAadhaarOtpRequest
 import org.piramalswasthya.sakhi.network.AbhaGenerateAadhaarOtpResponse
 import org.piramalswasthya.sakhi.network.AbhaGenerateAadhaarOtpResponseV2
 import org.piramalswasthya.sakhi.network.AbhaGenerateMobileOtpRequest
+import org.piramalswasthya.sakhi.network.AbhaPublicCertificateResponse
 import org.piramalswasthya.sakhi.network.AbhaResendAadhaarOtpRequest
 import org.piramalswasthya.sakhi.network.AbhaTokenResponse
 import org.piramalswasthya.sakhi.network.AbhaVerifyAadhaarOtpRequest
 import org.piramalswasthya.sakhi.network.AbhaVerifyAadhaarOtpResponse
 import org.piramalswasthya.sakhi.network.AbhaVerifyMobileOtpRequest
 import org.piramalswasthya.sakhi.network.AbhaVerifyMobileOtpResponse
+import org.piramalswasthya.sakhi.network.AddHealthIdRecord
 import org.piramalswasthya.sakhi.network.AmritApiService
 import org.piramalswasthya.sakhi.network.CreateAbhaIdGovRequest
 import org.piramalswasthya.sakhi.network.CreateAbhaIdRequest
@@ -29,8 +36,14 @@ import org.piramalswasthya.sakhi.network.CreateAbhaIdResponse
 import org.piramalswasthya.sakhi.network.CreateHIDResponse
 import org.piramalswasthya.sakhi.network.CreateHealthIdRequest
 import org.piramalswasthya.sakhi.network.GenerateOtpHid
+import org.piramalswasthya.sakhi.network.LoginGenerateOtpRequest
+import org.piramalswasthya.sakhi.network.LoginGenerateOtpResponse
+import org.piramalswasthya.sakhi.network.LoginVerifyOtpRequest
+import org.piramalswasthya.sakhi.network.LoginVerifyOtpResponse
 import org.piramalswasthya.sakhi.network.MapHIDtoBeneficiary
 import org.piramalswasthya.sakhi.network.NetworkResult
+import org.piramalswasthya.sakhi.network.SearchAbhaRequest
+import org.piramalswasthya.sakhi.network.SearchAbhaResponse
 import org.piramalswasthya.sakhi.network.StateCodeResponse
 import org.piramalswasthya.sakhi.network.ValidateOtpHid
 import retrofit2.Response
@@ -39,6 +52,11 @@ import java.io.IOException
 import java.net.SocketTimeoutException
 import java.security.KeyFactory
 import java.security.spec.X509EncodedKeySpec
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
+import java.util.UUID
 import javax.crypto.Cipher
 import javax.inject.Inject
 
@@ -46,12 +64,24 @@ class AbhaIdRepo @Inject constructor(
     private val abhaApiService: AbhaApiService,
     private val amritApiService: AmritApiService,
     private val userRepo: UserRepo,
+    private val abhaGenerated: ABHAGenratedRepo,
     private val prefDao: PreferenceDao
 ) {
     suspend fun getAccessToken(): NetworkResult<AbhaTokenResponse> {
         return withContext(Dispatchers.IO) {
             try {
-                val response = abhaApiService.getToken()
+
+                val response = abhaApiService.getToken(
+                    id = if (BuildConfig.FLAVOR.contains("stag", true) ||
+                        BuildConfig.FLAVOR.contains("uat", true)
+                    ) {
+                        "sbx"
+                    } else {
+                        "abdm"
+                    },
+                    requestId = generateUUID(),
+                    timestamp = getCurrentTimestamp()
+                )
                 if (response.isSuccessful) {
                     val responseBody = response.body()?.string()
                     val result = Gson().fromJson(responseBody, AbhaTokenResponse::class.java)
@@ -75,12 +105,17 @@ class AbhaIdRepo @Inject constructor(
     suspend fun getAuthCert(): NetworkResult<String> {
         return withContext(Dispatchers.IO) {
             try {
-                val response = abhaApiService.getAuthCert()
+                val response = abhaApiService.getAuthCert(
+                    requestId = generateUUID(),
+                    timestamp = getCurrentTimestamp()
+                )
                 if (response.isSuccessful) {
                     val responseBody = response.body()?.string()
-                    var key = responseBody!!
-                    key = key.replace("-----BEGIN PUBLIC KEY-----\n", "")
-                    key = key.replace("-----END PUBLIC KEY-----", "")
+                    val result =
+                        Gson().fromJson(responseBody, AbhaPublicCertificateResponse::class.java)
+                    var key = result.publicKey
+//                    key = key.replace("-----BEGIN PUBLIC KEY-----\n", "")
+//                    key = key.replace("-----END PUBLIC KEY-----", "")
                     key = key.trim()
                     NetworkResult.Success(key)
                 } else {
@@ -126,15 +161,91 @@ class AbhaIdRepo @Inject constructor(
         }
     }
 
-    suspend fun generateOtpForAadhaarV2(req: AbhaGenerateAadhaarOtpRequest): NetworkResult<AbhaGenerateAadhaarOtpResponseV2> {
+    suspend fun generateAadhaarOtpV3(req: AbhaGenerateAadhaarOtpRequest): NetworkResult<AbhaGenerateAadhaarOtpResponseV2> {
         return withContext(Dispatchers.IO) {
             try {
-                req.aadhaar = encryptData(req.aadhaar)
-                val response = abhaApiService.generateAadhaarOtpV2(req)
+                req.loginId = encryptData(req.loginId)
+                val response =
+                    abhaApiService.generateAadhaarOtpV3(req, generateUUID(), getCurrentTimestamp())
                 if (response.isSuccessful) {
                     val responseBody = response.body()?.string()
                     val result =
                         Gson().fromJson(responseBody, AbhaGenerateAadhaarOtpResponseV2::class.java)
+                    NetworkResult.Success(result)
+                } else {
+
+                    val errorString = response?.errorBody()?.string()
+                    val (code, message) = parseAbhaErrorString(errorString) ?: Pair("", "")
+
+                    if (message.contains("UIDAI Error code : 953")){
+                        return@withContext NetworkResult.Error(-5, "You have requested multiple OTPs in this transaction. Please try again in 30 minutes.")
+                    }
+                    sendErrorResponse(response)
+                }
+            } catch (e: IOException) {
+                NetworkResult.Error(-1, "Unable to connect to Internet!")
+            } catch (e: JSONException) {
+                if (e.message.toString().contains("UIDAI Error code : 953")){
+                    return@withContext NetworkResult.Error(-5, "You have requested multiple OTPs in this transaction. Please try again in 30 minutes.")
+                }
+                NetworkResult.Error(-2, "Invalid response! Please try again!")
+            } catch (e: SocketTimeoutException) {
+                NetworkResult.Error(-3, "Request Timed out! Please try again!")
+            } catch (e: java.lang.Exception) {
+                e.printStackTrace()
+                NetworkResult.Error(-4, e.message ?: "Unknown Error")
+            }
+        }
+    }
+
+    suspend fun searchAbha(req: SearchAbhaRequest): NetworkResult<SearchAbhaResponse> {
+        return withContext(Dispatchers.IO) {
+            try {
+                req.mobile = encryptData(req.mobile)
+                val response = abhaApiService.searchAbha(req, generateUUID(), getCurrentTimestamp())
+                if (response.isSuccessful) {
+                    val intermediateResult = JSONArray(response.body()?.string())
+                    val responseBody = intermediateResult.getJSONObject(0).toString()
+                    val result =
+                        Gson().fromJson(responseBody, SearchAbhaResponse::class.java)
+                    NetworkResult.Success(result)
+                } else {
+
+                    val errorString = response?.errorBody()?.string()
+                    val (code, message) = parseAbhaErrorString(errorString) ?: Pair("", "")
+
+                    if (message.contains("User not found.") || code.contains("ABDM-1114")){
+                        return@withContext NetworkResult.Error(-5, "User not found.")
+                    }
+
+                    sendErrorResponse(response)
+                }
+            } catch (e: IOException) {
+                NetworkResult.Error(-1, "Unable to connect to Internet!")
+            } catch (e: JSONException) {
+                if (e.message.toString().contains("No value for details")){
+                    return@withContext NetworkResult.Error(-5, "User not found.")
+                }
+                NetworkResult.Error(-2, "Invalid response! Please try again!")
+            } catch (e: SocketTimeoutException) {
+                NetworkResult.Error(-3, "Request Timed out! Please try again!")
+            } catch (e: java.lang.Exception) {
+                e.printStackTrace()
+                NetworkResult.Error(-4, e.message ?: "Unknown Error")
+            }
+        }
+    }
+
+    suspend fun generateAbhaOtp(req: LoginGenerateOtpRequest): NetworkResult<LoginGenerateOtpResponse> {
+        return withContext(Dispatchers.IO) {
+            try {
+                req.loginId = encryptData(req.loginId)
+                val response =
+                    abhaApiService.loginGenerateOtp(req, generateUUID(), getCurrentTimestamp())
+                if (response.isSuccessful) {
+                    val responseBody = response.body()?.string()
+                    val result =
+                        Gson().fromJson(responseBody, LoginGenerateOtpResponse::class.java)
                     NetworkResult.Success(result)
                 } else {
                     sendErrorResponse(response)
@@ -152,6 +263,44 @@ class AbhaIdRepo @Inject constructor(
         }
     }
 
+    suspend fun verifyAbhaOtp(req: LoginVerifyOtpRequest): NetworkResult<LoginVerifyOtpResponse> {
+        return withContext(Dispatchers.IO) {
+            try {
+                req.authData.otp.otpValue = encryptData(req.authData.otp.otpValue)
+                val response =
+                    abhaApiService.loginVerifyOtp(req, generateUUID(), getCurrentTimestamp())
+                if (response.isSuccessful) {
+                    val responseBody = response.body()?.string()
+                    val result =
+                        Gson().fromJson(responseBody, LoginVerifyOtpResponse::class.java)
+                    NetworkResult.Success(result)
+                } else {
+                    sendErrorResponse(response)
+                }
+            } catch (e: IOException) {
+                NetworkResult.Error(-1, "Unable to connect to Internet!")
+            } catch (e: JSONException) {
+                NetworkResult.Error(-2, "Invalid response! Please try again!")
+            } catch (e: SocketTimeoutException) {
+                NetworkResult.Error(-3, "Request Timed out! Please try again!")
+            } catch (e: java.lang.Exception) {
+                e.printStackTrace()
+                NetworkResult.Error(-4, e.message ?: "Unknown Error")
+            }
+        }
+    }
+
+    private fun generateUUID(): String {
+        return UUID.randomUUID().toString()
+    }
+
+    private fun getCurrentTimestamp(): String {
+        val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ENGLISH).apply {
+            timeZone = TimeZone.getTimeZone("UTC")
+        }
+        return sdf.format(Date())
+    }
+
     private fun encryptData(txt: String): String {
         var encryptedTextBase64 = ""
         val publicKeyString = prefDao.getPublicKeyForAbha()!!
@@ -162,7 +311,8 @@ class AbhaIdRepo @Inject constructor(
             val publicKeySpec = X509EncodedKeySpec(publicKeyBytes)
             val publicKey = keyFactory.generatePublic(publicKeySpec)
 
-            val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
+            // Cipher used in ABHA v3 APIs
+            val cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-1AndMGF1Padding")
             cipher.init(Cipher.ENCRYPT_MODE, publicKey)
             val encryptedText = cipher.doFinal(txt.toByteArray())
             encryptedTextBase64 =
@@ -198,15 +348,73 @@ class AbhaIdRepo @Inject constructor(
         }
     }
 
+
+    fun parseAbhaErrorString(errorString: String?): Pair<String, String>? {
+        return try {
+            if (errorString.isNullOrEmpty()) return null
+            val json = JSONObject(errorString)
+            val errorObj = json.optJSONObject("error")
+            val code = errorObj?.optString("code") ?: ""
+            val message = errorObj?.optString("message") ?: ""
+            Pair(code, message)
+        } catch (e: Exception) {
+            Timber.e("Error parsing error JSON: ${e.message}")
+            null
+        }
+    }
+
     suspend fun verifyOtpForAadhaar(req: AbhaVerifyAadhaarOtpRequest): NetworkResult<AbhaVerifyAadhaarOtpResponse> {
+        var response: Response<ResponseBody>? = null
         return withContext(Dispatchers.IO) {
             try {
-                val response = abhaApiService.verifyAadhaarOtp(req)
-                if (response.isSuccessful) {
-                    val responseBody = response.body()?.string()
+                // ABHA v3
+                req.authData.otp.otpValue = encryptData(req.authData.otp.otpValue)
+                req.authData.otp.timeStamp = getCurrentTimestamp()
+
+                // ABHA v3 API
+                response = abhaApiService.verifyAadhaarOtp3(req, generateUUID(), getCurrentTimestamp())
+                if (response?.isSuccessful == true) {
+                    val responseBody = response?.body()?.string()
                     val result =
                         Gson().fromJson(responseBody, AbhaVerifyAadhaarOtpResponse::class.java)
                     NetworkResult.Success(result)
+                } else {
+                    val errorString = response?.errorBody()?.string()
+                    val (code, message) = parseAbhaErrorString(errorString) ?: Pair("", "")
+
+                    if (message.contains("The mobile number provided by you is already linked to 6 ABHA numbers. Please provide a different mobile number.")){
+                        return@withContext NetworkResult.Error(-5, "The mobile number provided by you is already linked to 6 ABHA numbers.\nPlease provide a different mobile number.")
+                    }
+
+                    if (message.contains("UIDAI Error code : 400 : OTP validation failed")){
+                        return@withContext NetworkResult.Error(-6, "Incorrect OTP, Please Enter Valid OTP")
+                    }
+
+                    sendErrorResponse(response)
+                }
+            } catch (e: IOException) {
+                NetworkResult.Error(-1, "Unable to connect to Internet!")
+            } catch (e: JSONException) {
+                NetworkResult.Error(-2, "SMS Gateway is unavailable! Please try again!")
+            } catch (e: SocketTimeoutException) {
+                NetworkResult.Error(-3, "Request Timed out! Please try again!")
+            } catch (e: java.lang.Exception) {
+                e.printStackTrace()
+                NetworkResult.Error(-4, e.message ?: "Unknown Error")
+            }
+        }
+
+    }
+
+    suspend fun printAbhaCard(): NetworkResult<ResponseBody> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = abhaApiService.printAbhaCard(generateUUID(), getCurrentTimestamp())
+                val responseBody = response.body()
+                if (response.isSuccessful) {
+                    NetworkResult.Success(
+                        responseBody!!
+                    )
                 } else {
                     sendErrorResponse(response)
                 }
@@ -217,7 +425,6 @@ class AbhaIdRepo @Inject constructor(
             } catch (e: SocketTimeoutException) {
                 NetworkResult.Error(-3, "Request Timed out! Please try again!")
             } catch (e: java.lang.Exception) {
-                e.printStackTrace()
                 NetworkResult.Error(-4, e.message ?: "Unknown Error")
             }
         }
@@ -255,7 +462,14 @@ class AbhaIdRepo @Inject constructor(
     suspend fun verifyOtpForMobileNumber(req: AbhaVerifyMobileOtpRequest): NetworkResult<AbhaVerifyMobileOtpResponse> {
         return withContext(Dispatchers.IO) {
             try {
-                val response = abhaApiService.verifyMobileOtp(req)
+                // ABHA v3
+                req.authData.otp.otpValue = encryptData(req.authData.otp.otpValue)
+                req.authData.otp.timeStamp = getCurrentTimestamp()
+                // ABHA v1/v2 API
+//                val response = abhaApiService.verifyMobileOtp(req)
+                // ABHA v3 API
+                val response =
+                    abhaApiService.verifyMobileOtp3(req, generateUUID(), getCurrentTimestamp())
                 if (response.isSuccessful) {
                     val responseBody = response.body()?.string()
                     val result =
@@ -304,16 +518,16 @@ class AbhaIdRepo @Inject constructor(
         return abhaApiService.getPdfCard()
     }
 
-    private fun sendErrorResponse(response: Response<ResponseBody>): NetworkResult.Error {
-        return when (response.code()) {
+    private fun sendErrorResponse(response: Response<ResponseBody>?): NetworkResult.Error {
+        return when (response?.code()) {
             503 -> NetworkResult.Error(503, "Service Unavailable! Please try later!")
             else -> {
-                val errorBody = response.errorBody()?.string()
+                val errorBody = response?.errorBody()?.string()
                 val errorJson = JSONObject(errorBody.toString())
                 val detailsArray = errorJson.getJSONArray("details")
                 val detailsObject = detailsArray.getJSONObject(0)
                 val errorMessage = detailsObject.getString("message")
-                NetworkResult.Error(response.code(), errorMessage)
+                NetworkResult.Error(response?.code()!!, errorMessage)
             }
         }
     }
@@ -407,7 +621,7 @@ class AbhaIdRepo @Inject constructor(
         }
     }
 
-    suspend fun mapHealthIDToBeneficiary(mapHIDtoBeneficiary: MapHIDtoBeneficiary): NetworkResult<String> {
+    suspend fun mapHealthIDToBeneficiary(mapHIDtoBeneficiary: MapHIDtoBeneficiary, ben: BenRegCache?): NetworkResult<String> {
         return withContext((Dispatchers.IO)) {
             try {
                 val user =
@@ -417,13 +631,79 @@ class AbhaIdRepo @Inject constructor(
                 val response = amritApiService.mapHealthIDToBeneficiary(mapHIDtoBeneficiary)
                 val responseBody = response.body()?.string()
                 when (responseBody?.let { JSONObject(it).getInt("statusCode") }) {
+                    200 -> {
+
+                        val json = JSONObject(responseBody)
+                        val data = json.optJSONObject("data")
+                        Timber.d("Checkbox values : ${data}")
+                        abhaGenerated.deleteAbhaByBenId(mapHIDtoBeneficiary.beneficiaryID!!)
+
+                        if (data != null && data.has("benHealthID") && data.has("healthId")) {
+                            NetworkResult.Success(responseBody)
+
+                        }
+
+                        else if (data != null && data.has("response")) {
+                            val message = data.getString("response")
+
+                            NetworkResult.Error(0, message)
+                        }
+
+                        else {
+                            NetworkResult.Error(0, "Unknown response format")
+                        }
+                    }
+
+                    5000, 5002 -> {
+                        saveAbhaModelFromRequest(mapHIDtoBeneficiary,ben)
+                        if (JSONObject(responseBody).getString("errorMessage")
+                                .contentEquals("Invalid login key or session is expired")
+                        ) {
+                            userRepo.refreshTokenTmc(user.userName, user.password)
+                            mapHealthIDToBeneficiary(mapHIDtoBeneficiary,ben)
+                        } else {
+                            NetworkResult.Error(
+                                0,
+                                JSONObject(responseBody).getString("errorMessage")
+                            )
+                        }
+                    }
+
+                    else -> NetworkResult.Error(0, responseBody.toString())
+                }
+            } catch (e: IOException) {
+                saveAbhaModelFromRequest(mapHIDtoBeneficiary,ben)
+                NetworkResult.Error(-1, "Unable to connect to Internet!")
+            } catch (e: JSONException) {
+                saveAbhaModelFromRequest(mapHIDtoBeneficiary,ben)
+                NetworkResult.Error(-2, "Invalid response! Please try again!")
+            } catch (e: SocketTimeoutException) {
+                saveAbhaModelFromRequest(mapHIDtoBeneficiary,ben)
+                NetworkResult.Error(-3, "Request Timed out! Please try again!")
+            } catch (e: java.lang.Exception) {
+                saveAbhaModelFromRequest(mapHIDtoBeneficiary,ben)
+                NetworkResult.Error(-4, e.message ?: "Unknown Error")
+            }
+        }
+    }
+
+    suspend fun addHealthIdRecord(addHealthIdRecord: AddHealthIdRecord): NetworkResult<String> {
+        return withContext((Dispatchers.IO)) {
+            try {
+                val user =
+                    prefDao.getLoggedInUser() ?: throw IllegalStateException("No user logged in!!")
+                addHealthIdRecord.providerServiceMapId = user.serviceMapId
+                addHealthIdRecord.createdBy = user.userName
+                val response = amritApiService.addHealthIdRecord(addHealthIdRecord)
+                val responseBody = response.body()?.string()
+                when (responseBody?.let { JSONObject(it).getInt("statusCode") }) {
                     200 -> NetworkResult.Success(responseBody)
                     5000, 5002 -> {
                         if (JSONObject(responseBody).getString("errorMessage")
                                 .contentEquals("Invalid login key or session is expired")
                         ) {
                             userRepo.refreshTokenTmc(user.userName, user.password)
-                            mapHealthIDToBeneficiary(mapHIDtoBeneficiary)
+                            addHealthIdRecord(addHealthIdRecord)
                         } else {
                             NetworkResult.Error(
                                 0,
@@ -519,5 +799,27 @@ class AbhaIdRepo @Inject constructor(
                 NetworkResult.Error(-4, e.message ?: "Unknown Error")
             }
         }
+    }
+
+    suspend fun saveAbhaModelFromRequest(
+        mapHIDtoBeneficiary: MapHIDtoBeneficiary,
+        ben: BenRegCache?
+    ) {
+        val abhaProfileJson = Gson().toJson(mapHIDtoBeneficiary.ABHAProfile)
+        val abha = ABHAModel(
+            beneficiaryID = mapHIDtoBeneficiary.beneficiaryID!!,
+            beneficiaryRegID = mapHIDtoBeneficiary.beneficiaryRegID!!,
+            benName = ben?.firstName.toString(),
+            benSurname = ben?.lastName,
+            healthId = mapHIDtoBeneficiary.healthId!!,
+            txnId = mapHIDtoBeneficiary.txnId!!,
+            message = mapHIDtoBeneficiary.message!!,
+            createdBy = "",
+            providerServiceMapId = prefDao.getLoggedInUser()?.serviceMapId!!,
+            abhaProfileJson = abhaProfileJson,
+            healthIdNumber = mapHIDtoBeneficiary.healthIdNumber.toString(),
+            isNewAbha = mapHIDtoBeneficiary.isNew!!
+        )
+        abhaGenerated.saveAbhaGenrated(abha)
     }
 }

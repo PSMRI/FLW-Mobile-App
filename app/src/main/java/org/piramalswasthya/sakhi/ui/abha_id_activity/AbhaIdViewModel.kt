@@ -19,8 +19,7 @@ class AbhaIdViewModel @Inject constructor(
     private val abhaIdRepo: AbhaIdRepo,
     private val prefDao: PreferenceDao,
     private val userRepo: UserRepo
-) :
-    ViewModel() {
+) : ViewModel() {
 
     enum class State {
         LOADING_TOKEN,
@@ -72,9 +71,9 @@ class AbhaIdViewModel @Inject constructor(
             when (val result = abhaIdRepo.getAccessToken()) {
                 is NetworkResult.Success -> {
                     _accessToken = result.data
+                    TokenInsertAbhaInterceptor.setToken(accessToken.accessToken)
                     generatePublicKey()
                     _state.value = State.SUCCESS
-                    TokenInsertAbhaInterceptor.setToken(accessToken.accessToken)
                 }
 
                 is NetworkResult.Error -> {

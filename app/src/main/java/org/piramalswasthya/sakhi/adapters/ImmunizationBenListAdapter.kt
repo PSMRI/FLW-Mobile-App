@@ -38,6 +38,7 @@ class ImmunizationBenListAdapter(
         fun bind(
             item: ImmunizationDetailsDomain, clickListener: VaccinesClickListener?
         ) {
+
             binding.temp = item.ben
             binding.clickListener = clickListener
             binding.executePendingBindings()
@@ -45,12 +46,15 @@ class ImmunizationBenListAdapter(
         }
     }
 
+
+
     override fun onCreateViewHolder(
         parent: ViewGroup, viewType: Int
     ): BenVaccineViewHolder = BenVaccineViewHolder.from(parent)
 
     override fun onBindViewHolder(holder: BenVaccineViewHolder, position: Int) {
         holder.bind(getItem(position), clickListener)
+
     }
 
 

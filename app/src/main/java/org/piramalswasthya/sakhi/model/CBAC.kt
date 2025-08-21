@@ -459,7 +459,7 @@ data class CbacCache(
     }
 
     companion object {
-        private val dateFormat = SimpleDateFormat("EEE, MMM dd yyyy", Locale.getDefault())
+        private val dateFormat = SimpleDateFormat("EEE, MMM dd yyyy", Locale.ENGLISH)
 
         private fun getCbacCreatedDateFromLong(long: Long): String {
             return dateFormat.format(long)

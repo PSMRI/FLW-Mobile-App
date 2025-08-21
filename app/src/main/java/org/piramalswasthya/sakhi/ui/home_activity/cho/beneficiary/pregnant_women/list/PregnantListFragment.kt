@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.pregnant_women.list
 
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -32,6 +33,7 @@ class PregnantListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentDisplaySearchRvButtonBinding.inflate(layoutInflater, container, false)
+        requireActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         return binding.root
     }
@@ -56,10 +58,20 @@ class PregnantListFragment : Fragment() {
                             benId
                         )
                     )
+                },
+                { _, benId ->
+                    findNavController().navigate(
+                        PregnantListFragmentDirections.actionPregnantListFragmentToHRPMicroBirthPlanTable(
+                            benId
+                        )
+                    )
                 }),
+
             formButtonText = arrayOf(
                 resources.getString(R.string.assess),
-                resources.getString(R.string.micro)
+                resources.getString(R.string.micro),
+                resources.getString(R.string.share),
+
             ),
             role = 1
         )

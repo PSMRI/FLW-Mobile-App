@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.configuration
 import android.content.Context
 import android.text.InputType
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.helpers.Konstants.english
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.setToStartOfTheDay
 import org.piramalswasthya.sakhi.model.BenRegCache
@@ -21,7 +22,7 @@ import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 class PMSMAFormDataset(
-    context: Context, currentLanguage: Languages
+    context: Context,  currentLanguage: Languages
 ) : Dataset(context, currentLanguage) {
 
     companion object {
@@ -478,7 +479,12 @@ class PMSMAFormDataset(
             }
 
             mobileNumber.id -> validateMobileNumberOnEditText(mobileNumber)
-            husbandName.id -> validateAllCapsOrSpaceOnEditText(husbandName)
+            husbandName.id -> {
+                if (currentLanguage.toString() == english) {
+                   // validateAllCapsOrSpaceOnEditText(husbandName)
+                    validateAllCapsOrSpaceOnEditTextWithHindiEnabled(husbandName)
+                } else -1
+            }
             bp.id -> validateForBp(bp)
             weight.id -> validateIntMinMax(weight)
 

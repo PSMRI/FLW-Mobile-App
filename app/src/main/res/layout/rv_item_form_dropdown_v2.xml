@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+        <import type="android.view.View" />
         <variable
             name="form"
             type="org.piramalswasthya.sakhi.model.FormElement" />
@@ -33,6 +34,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="none"
+                android:paddingLeft="@dimen/_20sdp"
                 android:text="@{form.value}"
                 app:listItems="@{form.entries}"
                 tools:ignore="SpeakableTextPresentCheck" />
@@ -40,13 +42,13 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_edit_text"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:visibility="gone"
+            android:layout_marginStart="@dimen/_15sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -58,11 +60,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@{form.value}"
+                android:paddingLeft="@dimen/_20sdp"
                 android:singleLine="true"
                 android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
 
         </com.google.android.material.textfield.TextInputLayout>
-<!--        <TextView-->
+
+        <!--        <TextView-->
 <!--            android:id="@+id/tv_nullable"-->
 <!--            android:layout_width="wrap_content"-->
 <!--            android:layout_height="wrap_content"-->

@@ -2,11 +2,13 @@ package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
 import android.content.res.Resources
+import android.util.Log
 import android.util.Range
 import androidx.annotation.StringRes
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.helpers.Konstants.english
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.setToStartOfTheDay
 import org.piramalswasthya.sakhi.model.FormElement
@@ -18,13 +20,14 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import java.util.concurrent.TimeUnit
+import kotlin.math.abs
 
 
 /**
  * Base class to be extended to use as a sandwich between viewModel and repository objects.
  * @see org.piramalswasthya.sakhi.adapters.FormInputAdapter
  */
-abstract class Dataset(context: Context, currentLanguage: Languages) {
+abstract class Dataset(context: Context, val currentLanguage: Languages) {
 
     /**
      * Resource object of currently selected language. To be used to get language specific strings from strings.xml.
@@ -112,7 +115,10 @@ abstract class Dataset(context: Context, currentLanguage: Languages) {
     }
 
     protected fun FormElement.getEnglishStringFromPosition(position: Int): String? {
-        return if (position <= 0) null else englishResources.getStringArray(arrayId)[position - 1]
+        return if (position <= 0) null else {
+            val array = englishResources.getStringArray(arrayId)
+            return if (position in 1..array.size) array[position - 1] else null
+        }
     }
 
 
@@ -227,16 +233,40 @@ abstract class Dataset(context: Context, currentLanguage: Languages) {
         return if (passedIndex == triggerIndex) {
             if (!list.contains(target)) {
                 val listIndex = list.indexOf(source)
-                list.add(
-                    listIndex + 1, target
-                )
+                val safeIndex = (listIndex + 1).coerceAtMost(list.size)
+                list.add(safeIndex, target)
                 listIndex
-            } else -1
+            } else {
+                -1
+            }
         } else {
-            val anyRemoved = list.remove(
-                target
-            )
+            val anyRemoved = list.remove(target)
             if (anyRemoved) {
+                target.value = null
+                targetSideEffect?.forEach { element ->
+                    if (list.contains(element)) {
+                        list.remove(element)
+                        element.value = null
+                    }
+                }
+                list.indexOf(source)
+            } else {
+                -1
+            }
+        }
+    }
+
+
+
+    protected fun triggerforHide(
+        source: FormElement,
+        passedIndex: Int,
+        triggerIndex: Int,
+        target: FormElement,
+        targetSideEffect: List<FormElement>? = null
+    ): Int {
+        val anyRemoved = list.remove(target)
+          return if (anyRemoved) {
                 target.value = null
                 targetSideEffect?.let { sideEffectList ->
                     list.removeAll(sideEffectList)
@@ -244,8 +274,10 @@ abstract class Dataset(context: Context, currentLanguage: Languages) {
                 }
                 list.indexOf(source)
             } else -1
-        }
+
+
     }
+
 
     protected fun triggerDependants(
         age: Int,
@@ -364,11 +396,19 @@ abstract class Dataset(context: Context, currentLanguage: Languages) {
             add(Calendar.WEEK_OF_YEAR, 40)
         }.timeInMillis
 
+    protected fun getANCMaxFromLmp(lmp: Long) =
+
+        Calendar.getInstance().apply {
+            timeInMillis = lmp
+            add(Calendar.DAY_OF_YEAR, 294)
+           // add(Calendar.WEEK_OF_YEAR, 42)
+        }.timeInMillis
+
     protected fun getMinFromMaxForLmp(lmp: Long) =
 
         Calendar.getInstance().apply {
             timeInMillis = lmp
-            add(Calendar.WEEK_OF_YEAR, -40)
+            add(Calendar.WEEK_OF_YEAR, -57)
         }.timeInMillis
 
 
@@ -487,15 +527,57 @@ abstract class Dataset(context: Context, currentLanguage: Languages) {
             ?: false
 
     protected fun validateAllCapsOrSpaceOnEditText(formElement: FormElement): Int {
-        if (formElement.allCaps) {
-            formElement.value?.takeIf { it.isNotEmpty() }?.isAllUppercaseOrSpace()?.let {
-                Timber.d("Is ok : $it")
-                formElement.errorText = if (it) null
-                else resources.getString(R.string.form_input_upper_case_error)
-            } ?: run {
-                if (!formElement.required) formElement.errorText = null
+        if (currentLanguage.toString() == english) {
+            if (formElement.allCaps) {
+                formElement.value?.takeIf { it.isNotEmpty() }?.isAllUppercaseOrSpace()?.let {
+                    Timber.d("Is ok : $it")
+                    formElement.errorText = if (it) null
+                    else resources.getString(R.string.form_input_upper_case_error)
+                } ?: run {
+                    if (!formElement.required) formElement.errorText = null
+                }
             }
         }
+        return -1
+    }
+
+    protected fun validateAllCapsOrSpaceOnEditTextWithHindiEnabled(formElement: FormElement): Int {
+        val value = formElement.value.orEmpty().trim()
+
+        // Function to check if a character is Hindi or Assamese
+        fun Char.isHindiOrAssamese(): Boolean {
+            return this in '\u0900'..'\u097F' || this in '\u0980'..'\u09FF'
+        }
+
+        // Function to check if a string contains only uppercase English letters or spaces
+        fun String.isAllUppercaseOrSpace(): Boolean {
+            return this.all { it.isUpperCase() || it.isWhitespace() || it.isHindiOrAssamese() }
+        }
+
+        if (formElement.allCaps) {
+            when {
+                value.isEmpty() -> {
+                    if (formElement.required) {
+                        formElement.errorText = resources.getString(R.string.form_input_empty_error)
+                    } else {
+                        formElement.errorText = null
+                    }
+                    return -1
+                }
+                !value.isAllUppercaseOrSpace() -> {
+                    formElement.errorText = resources.getString(R.string.form_input_upper_case_error)
+                    return -1
+                }
+            }
+
+            // Convert only English letters to uppercase, keep Hindi/Assamese as is
+            val transformedValue = value.map {
+                if (it.isLowerCase() && !it.isHindiOrAssamese()) it.uppercaseChar() else it
+            }.joinToString("")
+
+            formElement.value = transformedValue
+        }
+
         return -1
     }
 
@@ -590,7 +672,7 @@ abstract class Dataset(context: Context, currentLanguage: Languages) {
         return -1
     }
 
-    protected fun validateIntMinMax(formElement: FormElement): Int {
+   /* protected fun validateIntMinMax(formElement: FormElement): Int {
         formElement.errorText = formElement.value?.takeIf { it.isNotEmpty() }?.toLong()?.let {
             formElement.min?.let { min ->
                 formElement.max?.let { max ->
@@ -607,14 +689,43 @@ abstract class Dataset(context: Context, currentLanguage: Languages) {
             }
         }
         return -1
+    }*/
+
+    protected fun validateIntMinMax(formElement: FormElement): Int {
+        val inputValue = formElement.value
+
+        val longValue = inputValue?.takeIf { it.isNotEmpty() }?.toLongOrNull()
+
+        formElement.errorText = if (longValue == null) {
+            null
+        } else {
+            formElement.min?.let { min ->
+                formElement.max?.let { max ->
+                    when {
+                        longValue < min -> resources.getString(
+                            R.string.form_input_min_limit_error, formElement.title, min
+                        )
+
+                        longValue > max -> resources.getString(
+                            R.string.form_input_max_limit_error, formElement.title, max
+                        )
+
+                        else -> null
+                    }
+                }
+            }
+        }
+
+        return -1
     }
+
 
     protected fun validateDoubleMinMax(formElement: FormElement): Int {
         formElement.errorText = formElement.value?.takeIf { it.isNotEmpty() }?.let {
             if (it.first() == '.')
                 "0$it"
             else it
-        }?.toDouble()?.let {
+        }?. toDoubleOrNull()?.let {
             formElement.minDecimal?.let { min ->
                 formElement.maxDecimal?.let { max ->
                     if (it < min) {
@@ -659,7 +770,7 @@ abstract class Dataset(context: Context, currentLanguage: Languages) {
 
 
     protected fun validateMobileNumberOnEditText(formElement: FormElement): Int {
-        formElement.errorText = formElement.value?.takeIf { it.isNotEmpty() }?.toLong()?.let {
+        formElement.errorText = formElement.value?.takeIf { it.isNotEmpty() }?.toLongOrNull()?.let {
             if (it < 6_000_000_000L || it == 6666666666L || it == 7777777777L || it == 8888888888L
                 || it == 9999999999L
             ) resources.getString(R.string.form_input_error_invalid_mobile) else null
@@ -689,6 +800,23 @@ abstract class Dataset(context: Context, currentLanguage: Languages) {
             else
                 formElement.errorText = null
         } ?: kotlin.run { formElement.errorText = null }
+        return -1
+    }
+
+    protected fun validateWeightOnEditText(formElement: FormElement): Int {
+        formElement.value?.takeIf { it.isNotEmpty() }?.let {
+            if (it.all { it == '0' }) {
+                formElement.errorText = "Weight Cannot be 0"
+            } else {
+                val weight = it.toIntOrNull()
+                if (weight != null && weight > 7000)
+                    formElement.errorText = "Weight Should not be greater than 7000 gram"
+                else
+                    formElement.errorText = null
+            }
+        } ?: run {
+            formElement.errorText = null
+        }
         return -1
     }
 
@@ -772,21 +900,80 @@ abstract class Dataset(context: Context, currentLanguage: Languages) {
         return dob.timeInMillis
     }
 
+
     fun getLocalValueInArray(arrayId: Int, entry: String?): String? {
-        return if (entry.isNullOrEmpty()) {
-            null
+        if (entry.isNullOrEmpty()) return null
+
+        val englishArray = englishResources.getStringArray(arrayId)
+        val localizedArray = resources.getStringArray(arrayId)
+        val index = englishArray.indexOf(entry)
+
+        return if (index in englishArray.indices) {
+            localizedArray[index]
         } else {
-            resources.getStringArray(arrayId)[englishResources.getStringArray(arrayId)
-                .indexOf(entry)]
+            // Optional: log and gracefully fail
+            Log.w("Dataset", "Entry '$entry' not found in English array for ID $arrayId")
+            null
         }
     }
 
+
+
+    /*  fun getLocalValueInArray(arrayId: Int, entry: String?): String? {
+          return if (entry.isNullOrEmpty()) {
+              null
+          } else {
+              resources.getStringArray(arrayId)[englishResources.getStringArray(arrayId)
+                  .indexOf(entry)]
+          }
+      }*/
+
     fun getEnglishValueInArray(arrayId: Int, entry: String?): String? {
-        entry?.let {
-            return englishResources.getStringArray(arrayId)[resources.getStringArray(arrayId)
-                .indexOf(it)]
+        if (entry.isNullOrEmpty()) return null
+
+        val localizedArray = resources.getStringArray(arrayId)
+        val englishArray = englishResources.getStringArray(arrayId)
+        val index = localizedArray.indexOf(entry)
+
+        return if (index in localizedArray.indices) {
+            englishArray[index]
+        } else {
+            Log.w("Dataset", "Entry '$entry' not found in localized array for ID $arrayId")
+            null
         }
-        return null
+    }
+
+    fun isValidChildGap(formElement: FormElement, firstDobStr: String?/*, secondDobStr: String?*/): Int {
+        val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
+        try {
+            val firstDob = dateFormat.parse(firstDobStr)
+            val secondDob = dateFormat.parse(formElement.value)
+
+            if (firstDob == null || secondDob == null) {
+                formElement.errorText = null //return false
+            }
+
+            // If twins (same DOB), it's valid
+            if (firstDob == secondDob){
+                formElement.errorText = null
+                return -1
+            } //true
+
+            val diffInMillis = abs(secondDob.time - firstDob.time)
+            val diffInDays = diffInMillis / (1000 * 60 * 60 * 24)
+
+            // Valid if gap is 365 days (approx. 12 months) or more
+            if (diffInDays >= 365){
+                formElement.errorText = null
+            }else{
+                formElement.errorText = "Invalid date of birth! The minimum age difference should be at least 12 months."
+            }
+
+        } catch (e: Exception) {
+            formElement.errorText = "Invalid date format or parsing error"//null // Invalid date format or parsing error
+        }
+
+        return -1
     }
 
 }

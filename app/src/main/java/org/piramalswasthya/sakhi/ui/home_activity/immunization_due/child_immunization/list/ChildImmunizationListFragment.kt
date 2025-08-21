@@ -1,22 +1,28 @@
 package org.piramalswasthya.sakhi.ui.home_activity.immunization_due.child_immunization.list
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
-import org.piramalswasthya.sakhi.adapters.ImmunizationBenListAdapter
+import org.piramalswasthya.sakhi.adapters.BenChildImmunizationListAdapter
+//import org.piramalswasthya.sakhi.adapters.ImmunizationBenListAdapter
+import org.piramalswasthya.sakhi.adapters.ImmunizationBirthDoseCategoryAdapter
+import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.databinding.FragmentChildImmunizationListBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import timber.log.Timber
 
 @AndroidEntryPoint
-class ChildImmunizationListFragment : Fragment() {
+class ChildImmunizationListFragment : Fragment(),ImmunizationBirthDoseCategoryAdapter.CategoryClickListener{
 
     private var _binding: FragmentChildImmunizationListBinding? = null
     private val binding: FragmentChildImmunizationListBinding
@@ -24,8 +30,16 @@ class ChildImmunizationListFragment : Fragment() {
 
 
     private val viewModel: ChildImmunizationListViewModel by viewModels()
+    private var catTxt = ""
+
+    private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
+        binding.searchView.setText(value)
+        binding.searchView.setSelection(value.length)
+        viewModel.filterText(value)
+    }
 
     private val bottomSheet: ChildImmunizationVaccineBottomSheetFragment by lazy { ChildImmunizationVaccineBottomSheetFragment() }
+    private val filterBottomSheet: ChildImmunizationFilterBottomSheetFragment by lazy { ChildImmunizationFilterBottomSheetFragment() }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -36,22 +50,63 @@ class ChildImmunizationListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.rvCat.adapter = ImmunizationBirthDoseCategoryAdapter(viewModel.categoryData(),this,viewModel)
+
         binding.rvList.adapter =
-            ImmunizationBenListAdapter(ImmunizationBenListAdapter.VaccinesClickListener {
+            BenChildImmunizationListAdapter(BenChildImmunizationListAdapter.VaccinesClickListener {
                 viewModel.updateBottomSheetData(it)
                 if (!bottomSheet.isVisible)
                     bottomSheet.show(childFragmentManager, "ImM")
             })
 
+
         lifecycleScope.launch {
-            viewModel.benWithVaccineDetails.collect {
-                Timber.d("Collecting list : $it")
+            viewModel.immunizationBenList.collect {
+                if (it.isEmpty())
+                    binding.flEmpty.visibility = View.VISIBLE
+                else
+                    binding.flEmpty.visibility = View.GONE
+
                 binding.rvList.apply {
-                    (adapter as ImmunizationBenListAdapter).submitList(it)
+                    (adapter as BenChildImmunizationListAdapter).submitList(it.sortedByDescending { it.ben.regDate })
                 }
             }
         }
 
+        val searchTextWatcher = object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun afterTextChanged(p0: Editable?) {
+                viewModel.filterText(p0?.toString() ?: "")
+            }
+
+        }
+        binding.searchView.setOnFocusChangeListener { searchView, b ->
+            if (b)
+                (searchView as EditText).addTextChangedListener(searchTextWatcher)
+            else
+                (searchView as EditText).removeTextChangedListener(searchTextWatcher)
+
+        }
+
+        binding.ibSearch.setOnClickListener { sttContract.launch(Unit) }
+
+        binding.ivFilter.setOnClickListener {
+            if (!filterBottomSheet.isVisible)
+                filterBottomSheet.show(childFragmentManager, "ImM")
+        }
+
+        viewModel.selectedFilter.observe(viewLifecycleOwner){
+            if (it!=null){
+                binding.tvSelectedFilter.text = it
+            }
+        }
     }
 
     override fun onStart() {
@@ -61,6 +116,18 @@ class ChildImmunizationListFragment : Fragment() {
                 R.drawable.ic__immunization,
                 getString(R.string.child_immunization_list)
             )
+        }
+    }
+
+    override fun onClicked(catDataList: String) {
+
+        if (catDataList.contains("ALL")) {
+            viewModel.filterText("")
+        }
+        else {
+            catTxt = catDataList
+            viewModel.filterText(catTxt)
+
         }
     }
 

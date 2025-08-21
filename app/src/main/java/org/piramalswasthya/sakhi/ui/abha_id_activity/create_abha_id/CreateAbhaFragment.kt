@@ -1,11 +1,14 @@
 package org.piramalswasthya.sakhi.ui.abha_id_activity.create_abha_id
 
 import android.app.AlertDialog
+import android.app.Dialog
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
@@ -14,30 +17,40 @@ import android.os.CountDownTimer
 import android.os.Environment
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Base64
+import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.app.NotificationCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.work.Operation
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.hilt.android.AndroidEntryPoint
+import okhttp3.ResponseBody
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.FragmentCreateAbhaBinding
+import org.piramalswasthya.sakhi.helpers.AnalyticsHelper
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
-import org.piramalswasthya.sakhi.ui.abha_id_activity.create_abha_id.CreateAbhaViewModel.State
+import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.AadhaarIdViewModel
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
+import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class CreateAbhaFragment : Fragment() {
@@ -50,7 +63,17 @@ class CreateAbhaFragment : Fragment() {
         get() = _binding!!
     private val viewModel: CreateAbhaViewModel by viewModels()
 
+    private val parentViewModel: AadhaarIdViewModel by viewModels({ requireActivity() })
+
     private val channelId = "download abha card"
+
+    private var benId: Long = 0
+
+    @Inject lateinit var analyticsHelper: AnalyticsHelper
+
+    val args: CreateAbhaFragmentArgs by lazy {
+        CreateAbhaFragmentArgs.fromBundle(requireArguments())
+    }
 
 
     private var timer = object : CountDownTimer(30000, 1000) {
@@ -78,7 +101,7 @@ class CreateAbhaFragment : Fragment() {
 
     private val exitAlert by lazy {
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle(resources.getString(R.string.exit))
+            .setTitle(resources.getString(R.string.exit)).setCancelable(false)
             .setMessage(resources.getString(R.string.do_you_want_to_go_back))
             .setPositiveButton(resources.getString(R.string.yes)) { _, _ ->
                 activity?.finish()
@@ -117,17 +140,50 @@ class CreateAbhaFragment : Fragment() {
 
         val intent = requireActivity().intent
 
-        val benId = intent.getLongExtra("benId", 0)
+        benId = intent.getLongExtra("benId", 0)
         val benRegId = intent.getLongExtra("benRegId", 0)
 
-        viewModel.createHID(benId, benRegId)
+        if (parentViewModel.abhaMode.value == AadhaarIdViewModel.Abha.SEARCH) {
+            binding.imageView.setImageResource(R.drawable.ic_exclamation_circle_green)
+            binding.textView7.text = getString(R.string.str_here_abha_no)
+            binding.clDownloadAbha.visibility = View.INVISIBLE
+
+        }else{
+            val timestamp = System.currentTimeMillis()
+            analyticsHelper.logCustomTimestampEvent("map_ben_to_health_id_request",timestamp)
+            viewModel.mapBeneficiaryToHealthId(benId, benRegId)
+            WorkerUtils.triggerAmritPushWorker(requireContext())
+        }
+
+
+
+
+        binding.textView2.text = args.name
+        binding.textView4.text = args.abhaNumber
+
+        viewModel.abhaResponseLiveData.observe(viewLifecycleOwner) {
+            if (it != null) {
+                if (!it.isNew) {
+                    binding.imageView.setImageResource(R.drawable.ic_exclamation_circle)
+                    binding.textView7.text = getString(R.string.str_abha_already_exist)
+                    binding.clDownloadAbha.visibility = View.VISIBLE
+                    binding.abhBenMappedTxt.text = resources.getString(R.string.not_linked_to_beneficiary)
+                } else {
+                    binding.imageView.setImageResource(R.drawable.ic_check_circle)
+                    binding.textView7.text = getString(R.string.str_abha_successfully_created)
+                    binding.clDownloadAbha.visibility = View.VISIBLE
+                    binding.llAbhaBenMapped.visibility = View.VISIBLE
+
+                }
+            }
+        }
 
         viewModel.benMapped.observe(viewLifecycleOwner) {
             it?.let {
                 binding.abhBenMappedTxt.text = String.format(
                     "%s%s%s",
                     resources.getString(R.string.linked_to_beneficiary),
-                    " ",
+                    "\n",
                     it
                 )
                 binding.llAbhaBenMapped.visibility = View.VISIBLE
@@ -152,73 +208,12 @@ class CreateAbhaFragment : Fragment() {
         binding.btnDownloadAbhaNo.setOnClickListener {
             binding.txtDownloadAbha.visibility = View.INVISIBLE
             binding.clDownloadAbha.visibility = View.GONE
+            requireActivity().finish()
         }
         requireActivity().onBackPressedDispatcher.addCallback(
             viewLifecycleOwner,
             onBackPressedCallback
         )
-
-        viewModel.state.observe(viewLifecycleOwner) { state ->
-            when (state) {
-                State.IDLE -> {}
-                State.LOADING -> {
-                    binding.pbCai.visibility = View.VISIBLE
-                    binding.clCreateAbhaId.visibility = View.INVISIBLE
-                    binding.clError.visibility = View.INVISIBLE
-                }
-
-                State.ERROR_NETWORK -> {
-                    binding.pbCai.visibility = View.INVISIBLE
-                    binding.clCreateAbhaId.visibility = View.INVISIBLE
-                    binding.clError.visibility = View.VISIBLE
-                }
-
-                State.ERROR_SERVER -> {
-                    binding.pbCai.visibility = View.INVISIBLE
-                    binding.clError.visibility = View.INVISIBLE
-                    binding.tvErrorText.visibility = View.VISIBLE
-                }
-
-                State.ABHA_GENERATE_SUCCESS -> {
-                    binding.pbCai.visibility = View.INVISIBLE
-                    binding.clCreateAbhaId.visibility = View.VISIBLE
-                    binding.clVerifyMobileOtp.visibility = View.INVISIBLE
-                    binding.clError.visibility = View.INVISIBLE
-                }
-
-                State.OTP_GENERATE_SUCCESS -> {
-                    binding.clVerifyMobileOtp.visibility = View.VISIBLE
-                    binding.clDownloadAbha.visibility = View.GONE
-                    binding.clError.visibility = View.INVISIBLE
-                    startResendTimer()
-                }
-
-                State.OTP_VERIFY_SUCCESS -> {
-                    binding.pbCai.visibility = View.INVISIBLE
-                    binding.clCreateAbhaId.visibility = View.VISIBLE
-                    binding.clDownloadAbha.visibility = View.GONE
-                    binding.clVerifyMobileOtp.visibility = View.INVISIBLE
-                    binding.clError.visibility = View.INVISIBLE
-                }
-
-                State.DOWNLOAD_SUCCESS -> {
-                    binding.pbCai.visibility = View.INVISIBLE
-                    binding.clCreateAbhaId.visibility = View.VISIBLE
-                    binding.clError.visibility = View.INVISIBLE
-                }
-
-                State.DOWNLOAD_ERROR -> {
-                    binding.pbCai.visibility = View.INVISIBLE
-                    binding.clCreateAbhaId.visibility = View.VISIBLE
-                    binding.clDownloadAbha.visibility = View.GONE
-                    binding.clVerifyMobileOtp.visibility = View.VISIBLE
-                    binding.tvErrorTextVerify.visibility = View.VISIBLE
-                    startResendTimer()
-                }
-
-                State.ERROR_INTERNAL -> {}
-            }
-        }
 
         viewModel.errorMessage.observe(viewLifecycleOwner) {
             it?.let {
@@ -228,19 +223,46 @@ class CreateAbhaFragment : Fragment() {
             }
         }
 
-        viewModel.cardBase64.observe(viewLifecycleOwner) {
+        viewModel.byteImage.observe(viewLifecycleOwner) {
             it?.let {
                 showFileNotification(it)
             }
         }
         binding.btnDownloadAbhaYes.setOnClickListener {
-            viewModel.generateOtp()
-            binding.clDownloadAbha.visibility = View.GONE
+            viewModel.printAbhaCard()
         }
 
         binding.resendOtp.setOnClickListener {
             viewModel.generateOtp()
             startResendTimer()
+        }
+
+        lifecycleScope.launchWhenStarted {
+            viewModel.uiEvent.collect { event ->
+                when (event) {
+                    is UIEvent.ShowDialog -> {
+                       showDialog(event.message,event.s)
+                    }
+
+                }
+            }
+        }
+
+        viewModel.state.observe(viewLifecycleOwner) {
+            if (it.name == "ABHA_GENERATE_SUCCESS"){
+                val timestamp = System.currentTimeMillis()
+                analyticsHelper.logCustomTimestampEvent("map_ben_to_health_id_reponse",timestamp)
+            }
+            if (it.name == "DOWNLOAD_SUCCESS") {
+                binding.clDownloadAbha.visibility = View.INVISIBLE
+                Snackbar.make(
+                    requireView(),
+                    getString(R.string.str_abha_card_downloaded), Snackbar.LENGTH_INDEFINITE
+                ).setAction(getString(R.string.ok)) {
+                    requireActivity().finish()
+                }.show()
+            }
+
         }
     }
 
@@ -251,9 +273,9 @@ class CreateAbhaFragment : Fragment() {
         _binding = null
     }
 
-    private fun showFileNotification(fileStr: String) {
+    private fun showFileNotification(fileStr: ResponseBody) {
         val fileName =
-            "${viewModel.hidResponse.value?.name}_${System.currentTimeMillis()}.png"
+            "${benId}_${System.currentTimeMillis()}.png"
         val notificationManager =
             requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -266,8 +288,7 @@ class CreateAbhaFragment : Fragment() {
         val directory =
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
         val file = File(directory, fileName)
-        val data: ByteArray = Base64.decode(fileStr, 0)
-        FileOutputStream(file).use { stream -> stream.write(data) }
+        FileOutputStream(file).use { stream -> stream.write(fileStr.bytes()) }
         MediaScannerConnection.scanFile(
             requireContext(),
             arrayOf(file.toString()),
@@ -354,6 +375,13 @@ class CreateAbhaFragment : Fragment() {
                         "Downloading $fileName ", Snackbar.LENGTH_SHORT
                     ).show()
                 }
+                is Operation.State.SUCCESS -> {
+                    binding.clDownloadAbha.visibility = View.INVISIBLE
+                    Snackbar.make(
+                        binding.root,
+                        "Downloading $fileName ", Snackbar.LENGTH_SHORT
+                    ).show()
+                }
 
                 is Operation.State.FAILURE -> {
                     Toast.makeText(context, "Failed to download , Please retry", Toast.LENGTH_SHORT)
@@ -361,5 +389,28 @@ class CreateAbhaFragment : Fragment() {
                 }
             }
         }
+
+
+    }
+
+    private fun showDialog(message: String,surname:String) {
+        val dialog = Dialog(requireContext(), android.R.style.Theme_DeviceDefault_Light_NoActionBar_Fullscreen)
+        dialog.setContentView(R.layout.dialog_abha_error)
+        dialog.setCancelable(false)
+        val window = dialog.window
+        window?.setLayout(
+            (resources.displayMetrics.widthPixels * 0.85).toInt(),
+            (resources.displayMetrics.heightPixels * 0.55).toInt()
+        )
+        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        window?.setGravity(Gravity.CENTER)
+        val tvMessage = dialog.findViewById<TextView>(R.id.tvMessage)
+        val btnOk = dialog.findViewById<Button>(R.id.btnOk)
+        tvMessage.text = requireContext().getString(R.string.abha_already_linked_message, message,surname)
+        btnOk.setOnClickListener {
+            dialog.dismiss()
+            activity?.finish()
+        }
+        dialog.show()
     }
 }

@@ -10,6 +10,7 @@ import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.InputType
 import org.piramalswasthya.sakhi.model.PNCVisitCache
 import org.piramalswasthya.sakhi.model.getDateStrFromLong
+import timber.log.Timber
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
@@ -20,8 +21,28 @@ class PncFormDataset(
     private var visit: Int = 0
     private var dateOfDelivery: Long = 0L
 
-    private val pncPeriod = FormElement(
+    companion object{
+        fun getMinDeliveryDate(): Long {
+            val cal = Calendar.getInstance()
+            cal.add(Calendar.YEAR, -1)
+            return cal.timeInMillis
+        }
+    }
+
+
+    private val deliveryDate = FormElement(
         id = 1,
+        inputType = InputType.DATE_PICKER,
+        title = "Date of Delivery",
+        arrayId = -1,
+        required = true,
+        max = System.currentTimeMillis(),
+        min = getMinDeliveryDate(),
+        isEnabled = true
+    )
+
+    private val pncPeriod = FormElement(
+        id = 2,
         inputType = InputType.DROPDOWN,
         title = resources.getString(R.string.pnc_period),
 //        entries = resources.getStringArray(R.array.pnc_period_array),
@@ -31,8 +52,8 @@ class PncFormDataset(
     )
 
     private val visitDate = FormElement(
-        id = 2,
-        inputType = InputType.TEXT_VIEW,
+        id = 3,
+        inputType = InputType.DATE_PICKER,
         title = resources.getString(R.string.pnc_visit_date),
         arrayId = -1,
         required = true,
@@ -40,7 +61,7 @@ class PncFormDataset(
     )
 
     private val ifaTabsGiven = FormElement(
-        id = 3,
+        id = 4,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.pnc_ifa_tabs_given),
         required = false,
@@ -52,7 +73,7 @@ class PncFormDataset(
     )
 
     private val anyContraceptionMethod = FormElement(
-        id = 4,
+        id = 5,
         inputType = InputType.RADIO,
         title = resources.getString(R.string.pnc_any_contraception_method),
         entries = resources.getStringArray(R.array.pnc_confirmation_array),
@@ -61,7 +82,7 @@ class PncFormDataset(
     )
 
     private val contraceptionMethod = FormElement(
-        id = 5,
+        id = 6,
         inputType = InputType.DROPDOWN,
         title = resources.getString(R.string.pnc_contraception_method),
         entries = resources.getStringArray(R.array.pnc_contraception_method_array),
@@ -70,7 +91,7 @@ class PncFormDataset(
     )
 
     private val otherPpcMethod = FormElement(
-        id = 6,
+        id = 7,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.pnc_other_ppc_method),
         required = true,
@@ -78,7 +99,7 @@ class PncFormDataset(
     )
 
     private val motherDangerSign = FormElement(
-        id = 7,
+        id = 8,
         inputType = InputType.DROPDOWN,
         title = resources.getString(R.string.pnc_mother_danger_sign),
         entries = resources.getStringArray(R.array.pnc_mother_danger_sign_array),
@@ -87,7 +108,7 @@ class PncFormDataset(
     )
 
     private val otherDangerSign = FormElement(
-        id = 8,
+        id = 9,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.pnc_other_danger_sign),
         required = true,
@@ -95,7 +116,7 @@ class PncFormDataset(
     )
 
     private val referralFacility = FormElement(
-        id = 9,
+        id = 10,
         inputType = InputType.DROPDOWN,
         title = resources.getString(R.string.pnc_referral_facility),
         entries = resources.getStringArray(R.array.pnc_referral_facility_array),
@@ -104,7 +125,7 @@ class PncFormDataset(
     )
 
     private val motherDeath = FormElement(
-        id = 10,
+        id = 11,
         inputType = InputType.RADIO,
         title = resources.getString(R.string.pnc_mother_death),
         entries = resources.getStringArray(R.array.pnc_confirmation_array),
@@ -113,7 +134,7 @@ class PncFormDataset(
     )
 
     private val deathDate = FormElement(
-        id = 11,
+        id = 12,
         inputType = InputType.DATE_PICKER,
         title = resources.getString(R.string.pnc_death_date),
         arrayId = -1,
@@ -123,7 +144,7 @@ class PncFormDataset(
     )
 
     private val causeOfDeath = FormElement(
-        id = 12,
+        id = 13,
         inputType = InputType.DROPDOWN,
         title = resources.getString(R.string.pnc_death_cause),
         entries = resources.getStringArray(R.array.pnc_death_cause_array),
@@ -132,7 +153,7 @@ class PncFormDataset(
     )
 
     private val otherDeathCause = FormElement(
-        id = 13,
+        id = 14,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.pnc_other_death_cause),
         required = true,
@@ -140,7 +161,7 @@ class PncFormDataset(
     )
 
     private val placeOfDeath = FormElement(
-        id = 14,
+        id = 15,
         inputType = InputType.DROPDOWN,
         title = resources.getString(R.string.pnc_death_place),
         entries = resources.getStringArray(R.array.pnc_death_place_array),
@@ -149,7 +170,7 @@ class PncFormDataset(
     )
 
     private val remarks = FormElement(
-        id = 15,
+        id = 16,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.pnc_remarks),
         required = false,
@@ -159,11 +180,12 @@ class PncFormDataset(
     suspend fun setUpPage(
         visitNumber: Int,
         ben: BenRegCache,
-        deliveryOutcomeCache: DeliveryOutcomeCache,
+        deliveryOutcomeCache: DeliveryOutcomeCache?=null,
         previousPnc: PNCVisitCache?,
         saved: PNCVisitCache?
     ) {
         val list = mutableListOf(
+            deliveryDate,
             pncPeriod,
             visitDate,
             ifaTabsGiven,
@@ -173,18 +195,26 @@ class PncFormDataset(
             motherDeath,
             remarks
         )
-        dateOfDelivery = deliveryOutcomeCache.dateOfDelivery!!
-        deathDate.min = dateOfDelivery
+
+        dateOfDelivery = deliveryOutcomeCache?.dateOfDelivery?:0L
+        if (dateOfDelivery!=0L){
+            deathDate.min = dateOfDelivery
+            deliveryDate.isEnabled = false
+        }
+
         deathDate.max = System.currentTimeMillis()
         motherDeath.value = motherDeath.entries!!.last()
         val daysSinceDeliveryMillis = Calendar.getInstance()
-            .setToStartOfTheDay().timeInMillis - deliveryOutcomeCache.dateOfDelivery!!.let {
+            .setToStartOfTheDay().timeInMillis - deliveryOutcomeCache?.dateOfDelivery.let {
             val cal = Calendar.getInstance()
-            cal.timeInMillis = it
+            if (it != null) {
+                cal.timeInMillis = it
+            }
             cal.setToStartOfTheDay()
             cal.timeInMillis
         }
         val daysSinceDelivery = TimeUnit.MILLISECONDS.toDays(daysSinceDeliveryMillis)
+        deliveryDate.value = getDateFromLong(dateOfDelivery)
         pncPeriod.entries =
             listOf(
                 1,
@@ -287,8 +317,11 @@ class PncFormDataset(
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
         return when (formId) {
             pncPeriod.id -> {
-                visitDate.inputType = InputType.DATE_PICKER
+                dateOfDelivery = getLongFromDate(deliveryDate.value)
+
                 visitDate.value = null
+                visitDate.inputType = InputType.DATE_PICKER
+
                 val today = Calendar.getInstance().setToStartOfTheDay().timeInMillis
                 when (val visitNumber = pncPeriod.value!!.substring(4).toInt()) {
                     1 -> {
@@ -459,6 +492,7 @@ class PncFormDataset(
         (cacheModel as PNCVisitCache).let { form ->
             form.pncPeriod = pncPeriod.value!!.substring(4).toInt()
             form.pncDate = getLongFromDate(visitDate.value!!)
+            form.dateOfDelivery = getLongFromDate(deliveryDate.value)
             form.ifaTabsGiven = ifaTabsGiven.value?.takeIf { it.isNotEmpty() }?.toInt()
             form.anyContraceptionMethod =
                 anyContraceptionMethod.value?.let { it == anyContraceptionMethod.entries!!.first() }

@@ -26,7 +26,7 @@
             android:layout_marginTop="40dp"
             android:contentDescription="@string/cd_assam_nhm_logo"
             android:src="@drawable/logo_circle"
-           />
+            />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -113,6 +113,7 @@
                     <com.google.android.material.radiobutton.MaterialRadioButton
                         android:id="@+id/rb_hindi"
                         style="@style/radio_item_lang"
+                        android:visibility="gone"
                         android:text="@string/text_hindi" />
 
                     <com.google.android.material.radiobutton.MaterialRadioButton
@@ -179,6 +180,7 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:longClickable="false"
                     android:hint="@string/til_password_hint_text"
                     android:paddingTop="@dimen/padding_normal"
                     android:paddingBottom="@dimen/padding_normal"
@@ -191,6 +193,8 @@
                         android:layout_height="match_parent"
                         android:drawablePadding="@dimen/padding_normal"
                         android:inputType="textPassword"
+                        android:longClickable="false"
+                        android:textIsSelectable="false"
                         android:singleLine="true"
                         android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
 
@@ -207,9 +211,7 @@
                     android:visibility="gone"
                     app:layout_constraintTop_toBottomOf="@id/til_password"
                     tools:text="Hello"
-                    tools:visibility="visible"
-
-                    />
+                    tools:visibility="visible" />
 
                 <CheckBox
                     android:id="@+id/cb_remember"
@@ -218,6 +220,17 @@
                     android:text="@string/cb_login_remember_me_text"
                     android:checked="true"
                     app:layout_constraintTop_toBottomOf="@id/tv_error" />
+
+                <TextView
+                    android:id="@+id/tvDeleteAccount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/delete_my_account"
+                    android:textColor="@color/md_theme_light_shadow"
+                    android:fontFamily="@font/roboto_regular"
+                    android:paddingBottom="@dimen/_3sdp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/cb_remember"/>
 
                 <Button
                     android:id="@+id/tv_forgot_password"
@@ -230,7 +243,7 @@
                     android:text="@string/btn_login_forgot_password_text"
                     android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
                     android:visibility="gone"
-                    app:layout_constraintTop_toBottomOf="@id/cb_remember" />
+                    app:layout_constraintTop_toBottomOf="@id/tvDeleteAccount" />
 
 
                 <com.google.android.material.button.MaterialButton
@@ -270,8 +283,7 @@
         android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cv_login_item_container" />
-
+        app:layout_constraintStart_toStartOf="parent" />
+<!--    app:layout_constraintTop_toBottomOf="@+id/cv_login_item_container"-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

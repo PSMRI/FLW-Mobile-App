@@ -41,10 +41,10 @@ fun ImageView.setVaccineState(syncState: VaccineState?) {
     syncState?.let {
 //        visibility = View.VISIBLE
         val drawable = when (it) {
-            DONE -> R.drawable.ic_check_circle
-            MISSED -> R.drawable.ic_close
+            DONE -> R.drawable.ic_check_circle_green
+            MISSED -> R.drawable.ic_crossed_circle
             PENDING -> R.drawable.ic_add_circle
-            OVERDUE -> R.drawable.ic_overdue
+            OVERDUE -> R.drawable.ic_event_available
             UNAVAILABLE -> null
         }
         drawable?.let { it1 -> setImageResource(it1) }
@@ -57,7 +57,10 @@ fun Button.setVaccineState(syncState: VaccineState?) {
     syncState?.let {
         visibility = View.VISIBLE
         when (it) {
-            PENDING,
+            PENDING -> {
+                text = "FILL"
+            }
+
             OVERDUE -> {
                 text = "FILL"
             }
@@ -160,7 +163,7 @@ fun LinearLayout.showRchIdOrNot(ben: BenBasicDomain?) {
 @BindingAdapter("textBasedOnNumMembers")
 fun TextView.textBasedOnNumMembers(numMembers: Int?) {
     numMembers?.let {
-        text = if (it > 0) "Add Member" else "Add Head of Family"
+        text = if (it > 0) resources.getString(R.string.str_add_member)  else resources.getString(R.string.add_family_member)
     }
 }
 

@@ -41,11 +41,9 @@
                             android:id="@+id/tv_ben_name"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:gravity="center"
                             android:padding="@dimen/padding_normal"
                             android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
                             android:textColor="@android:color/white"
-                            app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toStartOf="@+id/tv_age_gender"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
@@ -63,6 +61,30 @@
                             app:layout_constraintEnd_toEndOf="parent"
                             tools:text="36 Years | Male" />
 
+                        <TextView
+                            android:id="@+id/ben_id_title"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:padding="@dimen/padding_normal"
+                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                            android:textColor="@android:color/white"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/tv_age_gender"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_ben_name"
+                            android:text="@string/beneficiary_id" />
+
+                        <TextView
+                            android:id="@+id/ben_id"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="@dimen/padding_normal"
+                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                            android:textColor="@android:color/white"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_ben_name"
+                            />
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                 </androidx.cardview.widget.CardView>
@@ -95,7 +117,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/margin_normal"
-                    android:backgroundTint="?attr/colorOnPrimary"
+                    android:backgroundTint="@color/wood_lightest"
                     android:elevation="@dimen/padding_normal"
                     app:cardCornerRadius="@dimen/padding_normal"
                     app:cardElevation="@dimen/padding_normal">
@@ -448,7 +470,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/margin_normal"
-                    android:backgroundTint="?attr/colorOnPrimary"
+                    android:backgroundTint="@color/md_theme_light_inverseOnSurface"
                     android:elevation="@dimen/padding_normal"
                     app:cardCornerRadius="@dimen/padding_normal"
                     app:cardElevation="@dimen/padding_normal">
@@ -504,6 +526,25 @@
                                 android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
                                 android:textColor="@android:color/holo_red_light" />
 
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/tvNoneOfThese"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    style="@style/cbac_ed_hint"
+                                    android:text="@string/none_of"  />
+
+                                <CheckBox
+                                    android:id="@+id/cbNoneOfThese"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content" />
+                            </LinearLayout>
 
                             <include
                                 android:id="@+id/cbac_histb"
@@ -773,6 +814,26 @@
                                     app:fieldName="@{@string/cbac_fouldis}"
 
                                     app:numAsterisk="@{0}" />
+
+                         <!--       <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="8dp"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:id="@+id/nonTxt"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="@string/none_of"  />
+
+                                    <CheckBox
+                                        android:id="@+id/none_check"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        />
+                                </LinearLayout>-->
                             </LinearLayout>
 
                             <LinearLayout
@@ -816,6 +877,8 @@
                                     app:numAsterisk="@{0}" />
 
 
+
+
                             </LinearLayout>
 
                         </LinearLayout>
@@ -831,7 +894,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/margin_normal"
-                    android:backgroundTint="?attr/colorOnPrimary"
+                    android:backgroundTint="@color/md_theme_light_errorContainer"
                     android:elevation="@dimen/padding_normal"
                     app:cardCornerRadius="@dimen/padding_normal"
                     app:cardElevation="@dimen/padding_normal">
@@ -929,7 +992,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/margin_normal"
-                    android:backgroundTint="?attr/colorOnPrimary"
+                    android:backgroundTint="@color/md_theme_dark_onSurfaceVariant"
                     android:elevation="@dimen/padding_normal"
                     app:cardCornerRadius="@dimen/padding_normal"
                     app:cardElevation="@dimen/padding_normal">

@@ -4,7 +4,10 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.res.Resources
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.widget.EditText
+import android.widget.NumberPicker
 import org.piramalswasthya.sakhi.databinding.AlertAgePickerBinding
 import org.piramalswasthya.sakhi.model.AgeUnitDTO
 
@@ -53,41 +56,69 @@ class AgePickerDialog(context: Context) : AlertDialog(context) {
     }
 
     fun show(ageUnitDTO: AgeUnitDTO, isOk: Boolean) {
-        super.show()
-        binding.dialogNumberPickerYears.minValue = yearsMin
-        binding.dialogNumberPickerYears.maxValue = yearsMax
-        binding.dialogNumberPickerYears.value = ageUnitDTO.years
+        Handler(Looper.getMainLooper()).post {
+            super.show()
+            val safeYearsMin = yearsMin.coerceAtLeast(0)
+            val safeYearsMax = yearsMax.coerceAtLeast(safeYearsMin)
 
-        binding.dialogNumberPickerMonths.minValue = montsMin
-        binding.dialogNumberPickerMonths.maxValue = monthsMax
-        binding.dialogNumberPickerMonths.value = ageUnitDTO.months
+            val safeMonthsMin = montsMin.coerceAtLeast(0)
+            val safeMonthsMax = monthsMax.coerceAtLeast(safeMonthsMin)
 
-        binding.dialogNumberPickerDays.minValue = daysMin
-        binding.dialogNumberPickerDays.maxValue = daysMax
-        binding.dialogNumberPickerDays.value = ageUnitDTO.days
+            val safeDaysMin = daysMin.coerceAtLeast(0)
+            val safeDaysMax = daysMax.coerceAtLeast(safeDaysMin)
 
-        binding.btnOk.setOnClickListener {
-            val mInputTextYears: EditText = binding.dialogNumberPickerYears.findViewById(
-                Resources.getSystem().getIdentifier("numberpicker_input", "id", "android")
-            )
-            ageUnitDTO.years = mInputTextYears.text.toString().toInt()
+            binding.dialogNumberPickerYears.apply {
+                minValue = safeYearsMin
+                maxValue = safeYearsMax
+                value = ageUnitDTO.years.coerceIn(safeYearsMin, safeYearsMax)
+                forceLatinDigits(this)
+            }
 
-            val mInputTextMonths: EditText = binding.dialogNumberPickerMonths.findViewById(
-                Resources.getSystem().getIdentifier("numberpicker_input", "id", "android")
-            )
-            ageUnitDTO.months = mInputTextMonths.text.toString().toInt()
+            binding.dialogNumberPickerMonths.apply {
+                minValue = safeMonthsMin
+                maxValue = safeMonthsMax
+                value = ageUnitDTO.months.coerceIn(safeMonthsMin, safeMonthsMax)
+                forceLatinDigits(this)
+            }
 
-            val mInputTextDays: EditText = binding.dialogNumberPickerDays.findViewById(
-                Resources.getSystem().getIdentifier("numberpicker_input", "id", "android")
-            )
-            ageUnitDTO.days = mInputTextDays.text.toString().toInt()
-            dismiss()
-        }
+            binding.dialogNumberPickerDays.apply {
+                minValue = safeDaysMin
+                maxValue = safeDaysMax
+                value = ageUnitDTO.days.coerceIn(safeDaysMin, safeDaysMax)
+                forceLatinDigits(this)
+            }
 
-        binding.btnCancel.setOnClickListener {
-            cancel()
+            binding.btnOk.setOnClickListener {
+                val mInputTextYears: EditText = binding.dialogNumberPickerYears.findViewById(
+                    Resources.getSystem().getIdentifier("numberpicker_input", "id", "android")
+                )
+                ageUnitDTO.years = mInputTextYears.text.toString().toInt()
+
+                val mInputTextMonths: EditText = binding.dialogNumberPickerMonths.findViewById(
+                    Resources.getSystem().getIdentifier("numberpicker_input", "id", "android")
+                )
+                ageUnitDTO.months = mInputTextMonths.text.toString().toInt()
+
+                val mInputTextDays: EditText = binding.dialogNumberPickerDays.findViewById(
+                    Resources.getSystem().getIdentifier("numberpicker_input", "id", "android")
+                )
+                ageUnitDTO.days = mInputTextDays.text.toString().toInt()
+                dismiss()
+            }
+
+            binding.btnCancel.setOnClickListener {
+                cancel()
+            }
         }
     }
+
+    private fun forceLatinDigits(picker: NumberPicker) {
+        val min = picker.minValue
+        val max = picker.maxValue
+        picker.displayedValues = null
+        picker.displayedValues = (min..max).map { it.toString() }.toTypedArray()
+    }
+
 
     companion object {
         const val TAG = "AgePickerDialog"

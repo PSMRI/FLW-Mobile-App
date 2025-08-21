@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="menu_home">ঘৰ</string>
     <string name="menu_home_home">ঘৰ</string>
     <string name="menu_home_scheduler">সূচীকাৰক</string>
-
     <string name="icon_title_household">সমস্ত পাৰিবাৰিক তালিকা</string>
     <string name="icon_title_ben">সমস্ত হিতাধিকাৰীৰ তালিকা</string>
     <string name="icon_title_ec">উপযুক্ত দম্পতিৰ তালিকা</string>
@@ -20,25 +20,37 @@
     <string name="icon_title_icc">নৱজাতকৰ তালিকা</string>
     <string name="icon_title_ccc">শিশুৰ তালিকা</string>
     <string name="icon_title_acc">কিশোৰ তালিকা</string>
+    <string name="icon_title_pmr">গৰ্ভৱতী মহিলাৰ পঞ্জীয়ন</string>
+    <string name="icon_title_pmt">এ এন চি ভ্ৰমণ</string>
+    <string name="icon_title_pmp">পিএমএছএমএ</string>
+    <string name="icon_title_pmdo">ডেলিভাৰীৰ ফলাফল</string>
+    <string name="icon_title_pmir">শিশুৰ পঞ্জীয়ন</string>
+    <string name="icon_title_pmcr">শিশু পঞ্জীয়ন</string>
+    <string name="icon_title_ecr">যোগ্য দম্পতী পঞ্জীয়ন</string>
+    <string name="icon_title_ect">যোগ্য দম্পতী অনুসৰণ</string>
     <string name="icon_title_dmc">প্ৰসবাৱস্থাৰ তালিকা</string>
     <string name="icon_title_pncmc">প্ৰসৱোত্তৰ মাত্ৰীৰ তালিকা</string>
     <string name="icon_title_rmc">প্ৰজননৰ আয়ুস তালিকা</string>
     <string name="icon_title_ncd_list">এন চি ডি  তালিকা </string>
     <string name="icon_title_ncd_eligible_list">এন চি ডি উপযুক্ত তালিকা</string>
-    <string name="icon_title_ncd_non_eligible_list">এনচিডি অপ্ৰাথমিকতা তালিকা</string>
+    <string name="icon_title_ncd_non_eligible_list">এনচিডি অগ্ৰাধিকাৰ তালিকা</string>
     <string name="icon_title_ncd_priority_list">এন চি ডি প্ৰাথমিকতাৰ তালিকা</string>
     <string name="icon_title_sr">জৰীপ পঞ্জী</string>
     <string name="icon_title_ncd_tb_screening">টি.বি. স্ক্ৰীনিং</string>
     <string name="icon_title_ncd_tb_suspected">সন্দেহিত টি.বি. মৰাত কেছব</string>
-<string name="icon_title_hrp_pregnant">উচ্চ ঝুঁকি\nগর্ভবতী মহিলা</string>
-<string name="icon_title_hrp_non_pregnant">উচ্চ ঝুঁকি\nগর্ভাবস্থা নহয়ে মহিলা</string>
-<string name="icon_title_hrp_pregnant_assess">উচ্চ ঝুঁকি মূল্যায়ন কৰক</string>
-<string name="icon_title_hrp_pregnant_track">উচ্চ ঝুঁকি অনুসৰণ কৰক</string>
-<string name="icon_title_hrp_non_pregnant_assess">উচ্চ ঝুঁকি মূল্যায়ন কৰক</string>
-<string name="icon_title_hrp_non_pregnant_track">উচ্চ ঝুঁকি নহয়ে গৰ্ভাবস্থা নহয়ে মহিলা অনুসৰণ কৰক</string>
-
+    <string name="icon_title_hrp_pregnant">উচ্চ ঝুঁকি\nগর্ভবতী মহিলা</string>
+    <string name="icon_title_hrp_non_pregnant">উচ্চ ঝুঁকি\nগর্ভাবস্থা নহয়ে মহিলা</string>
+    <string name="icon_title_hrp_pregnant_assess">উচ্চ ঝুঁকি মূল্যায়ন কৰক</string>
+    <string name="icon_title_hrp_pregnant_track">উচ্চ ঝুঁকি অনুসৰণ কৰক</string>
+    <string name="icon_title_hrp_non_pregnant_assess">উচ্চ ঝুঁকি মূল্যায়ন কৰক</string>
+    <string name="icon_title_hrp_non_pregnant_track">উচ্চ ঝুঁকি নহয়ে গৰ্ভাবস্থা নহয়ে মহিলা অনুসৰণ কৰক</string>
     <string name="home_fragment_percent_download_text">%1d%% ডাউনলোড হৈছে</string>
     <string name="error_sign_in_invalid_u_p">অবৈধ ব্যৱহাৰকাৰীনাম / পাছৱৰ্ড!</string>
     <string name="error_sign_in_timeout">সাৰ্ভাৰ সময় অতিবাহিত, পুনৰ চেষ্টা কৰক!</string>
     <string name="error_sign_in_disconnected_network">নেটওৱাৰ্কলৈ সংযোগ কৰিব পৰা হোৱা নাই!</string>
+    <string name="all_records_synced">সকলো ৰেকৰ্ড ছিংক কৰা হৈছে</string>
+    <string name="are_you_sure_to_logout">আপুনি নিশ্চিত নেকি যে আপুনি লগআউট কৰিব বিচাৰে?</string>
+    <string name="not_processed">" ৰেকৰ্ডসমূহ সমন্বয় কৰা হোৱা নাই!"</string>
+
+
 </resources>

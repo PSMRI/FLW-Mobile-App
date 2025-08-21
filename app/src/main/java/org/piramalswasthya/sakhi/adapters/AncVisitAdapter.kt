@@ -34,11 +34,15 @@ class AncVisitAdapter(private val clickListener: AncVisitClickListener) :
         }
 
         fun bind(
-            item: AncStatus, clickListener: AncVisitClickListener
+            item: AncStatus, clickListener: AncVisitClickListener, isLastItem: Boolean
         ) {
             binding.visit = item
             binding.clickListener = clickListener
             binding.executePendingBindings()
+
+            binding.btnView.setOnClickListener {
+                clickListener.onClickedVisit(item, isLastItem)
+            }
 
         }
     }
@@ -48,16 +52,16 @@ class AncVisitAdapter(private val clickListener: AncVisitClickListener) :
     ) = AncViewHolder.from(parent)
 
     override fun onBindViewHolder(holder: AncViewHolder, position: Int) {
-        holder.bind(getItem(position), clickListener)
+        val isLastItem = position == itemCount - 1
+        holder.bind(getItem(position), clickListener, isLastItem)
     }
 
 
     class AncVisitClickListener(
-        private val clickedForm: (benId: Long, visitNumber: Int) -> Unit,
-
-        ) {
-        fun onClickedVisit(item: AncStatus) = clickedForm(
-            item.benId, item.visitNumber
+        private val clickedForm: (benId: Long, visitNumber: Int, isLast: Boolean) -> Unit
+    ) {
+        fun onClickedVisit(item: AncStatus, isLast: Boolean) = clickedForm(
+            item.benId, item.visitNumber, isLast
         )
     }
 

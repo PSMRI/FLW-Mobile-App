@@ -7,13 +7,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import org.piramalswasthya.sakhi.network.AbhaGenerateMobileOtpRequest
+import org.piramalswasthya.sakhi.network.AbhaGenerateAadhaarOtpRequest
 import org.piramalswasthya.sakhi.network.AbhaVerifyMobileOtpRequest
+import org.piramalswasthya.sakhi.network.AuthData2
 import org.piramalswasthya.sakhi.network.CreateAbhaIdRequest
 import org.piramalswasthya.sakhi.network.CreateAbhaIdResponse
 import org.piramalswasthya.sakhi.network.NetworkResult
+import org.piramalswasthya.sakhi.network.Otp2
 import org.piramalswasthya.sakhi.network.interceptors.TokenInsertAbhaInterceptor
 import org.piramalswasthya.sakhi.repositories.AbhaIdRepo
+import org.piramalswasthya.sakhi.ui.abha_id_activity.create_abha_id.CreateAbhaFragmentArgs
 import javax.inject.Inject
 
 @HiltViewModel
@@ -40,6 +43,8 @@ class VerifyMobileOtpViewModel @Inject constructor(
         VerifyMobileOtpFragmentArgs.fromSavedStateHandle(savedStateHandle).txnId
     private val phoneNumberFromArgs =
         VerifyMobileOtpFragmentArgs.fromSavedStateHandle(savedStateHandle).phoneNum
+    var alternatePhoneNumberArgs =
+        VerifyMobileOtpFragmentArgs.fromSavedStateHandle(savedStateHandle).alternatePhoneNumber
 
     private var _txnId: String? = null
     val txnID: String
@@ -54,6 +59,8 @@ class VerifyMobileOtpViewModel @Inject constructor(
         get() = _showExit
 
     var abha = MutableLiveData<CreateAbhaIdResponse?>(null)
+
+    var abhaResponse: String =  CreateAbhaFragmentArgs.fromSavedStateHandle(savedStateHandle).abhaResponse?:""
 
     fun verifyOtpClicked(otp: String) {
         _state.value = State.LOADING
@@ -72,8 +79,11 @@ class VerifyMobileOtpViewModel @Inject constructor(
         viewModelScope.launch {
             val result = abhaIdRepo.verifyOtpForMobileNumber(
                 AbhaVerifyMobileOtpRequest(
-                    otp,
-                    txnIdFromArgs
+                    listOf<String>("abha-enrol", "mobile-verify"),
+                    AuthData2(
+                        listOf<String>("otp"),
+                        Otp2("timestamp", txnIdFromArgs, otp)
+                    )
                 )
             )
             when (result) {
@@ -100,13 +110,17 @@ class VerifyMobileOtpViewModel @Inject constructor(
     fun resendOtp() {
         _state.value = State.LOADING
         viewModelScope.launch {
-            val result = abhaIdRepo.checkAndGenerateOtpForMobileNumber(
-                AbhaGenerateMobileOtpRequest(
-                    phoneNumberFromArgs,
-                    txnIdFromArgs
-                )
-            )
-            when (result) {
+            when (val result =
+                abhaIdRepo.generateAadhaarOtpV3(
+                    AbhaGenerateAadhaarOtpRequest(
+                        txnIdFromArgs,
+                        listOf<String>("abha-enrol", "mobile-verify"),
+                        "mobile",
+                        alternatePhoneNumberArgs,
+                        "abdm"
+                    )
+                )) {
+
                 is NetworkResult.Success -> {
                     txnIdFromArgs = result.data.txnId
                     _txnId = result.data.txnId

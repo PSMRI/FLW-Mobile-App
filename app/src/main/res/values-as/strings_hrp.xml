@@ -38,6 +38,7 @@
     <string name="assess_for_high_risk_conditions_in_the_non_pregnant_women">অগৰ্ভৱতী মহিলাৰ উচ্চ বিপদজনক অৱস্থাৰ বাবে মূল্যায়ন কৰা</string>
     <string name="visible_signs_of_anemia_as_per_appearance">শাৰীৰিক ৰূপ অনুসৰি ৰক্তহীনতাৰ দৃশ্যমান লক্ষণ</string>
     <string name="for_clinical_assessment_to_be_filled_consulting_with_anm">ক্লিনিকেল মূল্যায়নৰ বাবে (ANM ৰ সৈতে পৰামৰ্শ কৰি পূৰণ কৰা হ’ব)</string>
+    <string name="to_be_filled_consulting_with_anm">(এ এন এমৰ সৈতে পৰামৰ্শ কৰি পূৰণ কৰা হ’ব)</string>
     <string name="hypertension">উচ্চ ৰক্তচাপ</string>
     <string name="risk_status">ৰিস্কৰ অৱস্থা</string>
     <string name="missed_period">মিছড পিৰিয়ড</string>
@@ -53,6 +54,8 @@
     <string name="edd">ডেলিভাৰীৰ আনুমানিক তাৰিখ</string>
     <string name="assess_for_high_risk_conditions_in_the_pregnant_women">গৰ্ভৱতী মহিলাৰ উচ্চ বিপদজনক অৱস্থাৰ বাবে মূল্যায়ন কৰা</string>
     <string name="rd_pmsa">PMSAৰ তারিখ</string>
+    <string name="rd_dengue">আৰ ডি ডেংগু</string>
+    <string name="rd_filaria">আৰ ডি ফিলাৰিয়া</string>
     <string name="pregnancy_induced_hypertension">গৰ্ভাৱস্থাৰ ফলত হোৱা উচ্চ ৰক্তচাপ</string>
     <string name="hiv_syphilis_hep_b">HIV/শিফিলিছ/হেপ B</string>
     <string name="mal_presentation">দোষ প্ৰদৰ্শন</string>
@@ -76,7 +79,7 @@
     <string name="visit_on">"দিন যোগ দি"</string>
     <string name="follow_up">অনুসৰণ</string>
     <string name="history">ইতিহাস</string>
-    <string name="micro">মাইক্ৰ’</string>
+    <string name="micro">মাইক্ৰ’ জন্ম পৰিকল্পনা</string>
     <string name="_1st_anc">1ম এএনসি</string>
     <string name="_1st_pmsma">1ম পিএমএসএমএ</string>
     <string name="_2nd_pmsma">2য় পিএমএসএমএ</string>
@@ -90,12 +93,12 @@
     <string name="high_risk_conditions">High risk conditions</string>
     <string name="beneficiaries">Beneficiaries</string>
     <string name="blood_pressure">ৰক্তচাপ (BP)</string>
-    <string name="systolic">Systolic (mm Hg)</string>
-    <string name="diastolic">Diastolic (mm Hg)</string>
-    <string name="blood_glucose_test">Blood Glucose (Sugar) Test</string>
-    <string name="random_blood_glucose">Random blood Sugar (RBG) (mg/dL)</string>
-    <string name="fasting_glucose_test">Fasting Blood Sugar Test (FBG) (mg/dL)</string>
-    <string name="post_prandial_glucose_test">Post-Prandial Blood Sugar Test (PPBG) (mg/dL)</string>
+    <string name="systolic">চিষ্টোলিক (মিমি Hg)</string>
+    <string name="diastolic">ডায়েষ্টোলিক (মিমি Hg)</string>
+    <string name="blood_glucose_test">তেজৰ গ্লুক’জ (চেনি) পৰীক্ষা</string>
+    <string name="random_blood_glucose">ৰেণ্ডম ব্লাড চুগাৰ (RBG) (mg/dL)</string>
+    <string name="fasting_glucose_test">উপবাসৰ সময়ত তেজৰ চেনি পৰীক্ষা (FBG) (mg/dL)</string>
+    <string name="post_prandial_glucose_test">খাদ্যৰ পিছৰ তেজৰ চেনি পৰীক্ষা (PPBG) (mg/dL)</string>
     <string name="hemoglobin_test">হিম’গ্লবিন (Hb) পৰীক্ষা (g/dl)</string>
     <string name="whether_ifa_supplement_provided">আই এফ এ পৰিপূৰক প্ৰদান কৰা হৈছেনে?</string>
     <string name="issued_quantity_ifa">আই এফ এৰ পৰিপূৰক জাৰি কৰা পৰিমাণ</string>
@@ -103,6 +106,13 @@
     <string name="issued_quantity_ifa_or_folic_acid">Issued quantity of IFA or Folic Acid supplement</string>
     <string name="using_75gm_ogtt">Using 75 gm OGTT</string>
     <string name="after_2hrs">After 2 Hours (mg/dL)</string>
+    <string name="micro_birth_plan_table">Micro Birth Plan Table</string>
+    <string name="share">Share</string>
+    <string name="pw_name"><b>PW name:</b></string>
+    <string name="b_age"><b>Age:</b></string>
+    <string name="c_no"><b>Contact no:\n1-</b></string>
+    <string name="b_blood_donor"><b>Blood donor identified\n1:</b></string>
+    <string name="pregnant_women_pw_section">গৰ্ভৱতী মহিলা (PW) অংশ</string>
 
     <string-array name="sugar_test_types">
         <item>RBS</item>

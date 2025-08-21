@@ -12,7 +12,7 @@ import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
-import org.piramalswasthya.sakhi.adapters.FormInputAdapter
+import org.piramalswasthya.sakhi.adapters.FormInputAdapterWithBgIcon
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.form.PwAncFormViewModel.State
@@ -40,10 +40,9 @@ class PwAncFormFragment : Fragment() {
 
         viewModel.recordExists.observe(viewLifecycleOwner) { notIt ->
             notIt?.let { recordExists ->
-                binding.fabEdit.visibility = /*if (recordExists) View.VISIBLE else */View.GONE
                 binding.btnSubmit.visibility = if (recordExists) View.GONE else View.VISIBLE
-                val adapter = FormInputAdapter(
-                    formValueListener = FormInputAdapter.FormValueListener { formId, index ->
+                val adapter = FormInputAdapterWithBgIcon(
+                    formValueListener = FormInputAdapterWithBgIcon.FormValueListener { formId, index ->
                         viewModel.updateListOnValueChanged(formId, index)
                         hardCodedListUpdate(formId)
                     }, isEnabled = !recordExists
@@ -69,6 +68,7 @@ class PwAncFormFragment : Fragment() {
             submitAncForm()
         }
         binding.fabEdit.setOnClickListener {
+            binding.fabEdit.visibility = View.GONE
             viewModel.setRecordExist(false)
         }
         viewModel.state.observe(viewLifecycleOwner) { state ->
@@ -99,6 +99,11 @@ class PwAncFormFragment : Fragment() {
                 }
             }
         }
+
+        if (viewModel.lastItemClick) binding.fabEdit.visibility = View.VISIBLE else View.GONE
+
+
+
     }
 
     private fun submitAncForm() {
@@ -109,7 +114,7 @@ class PwAncFormFragment : Fragment() {
 
     private fun validateCurrentPage(): Boolean {
         val result = binding.form.rvInputForm.adapter?.let {
-            (it as FormInputAdapter).validateInput(resources)
+            (it as FormInputAdapterWithBgIcon).validateInput(resources)
         }
         Timber.d("Validation : $result")
         return if (result == -1) true

@@ -145,7 +145,7 @@ data class BenWithHRPTrackingCache(
 ) {
 
     companion object {
-        private val dateFormat = SimpleDateFormat("EEE, MMM dd yyyy", Locale.getDefault())
+        private val dateFormat = SimpleDateFormat("EEE, MMM dd yyyy", Locale.ENGLISH)
 
         private fun getHRPTFilledDateFromLong(long: Long?): String {
             return "Visited on ${dateFormat.format(long)}"

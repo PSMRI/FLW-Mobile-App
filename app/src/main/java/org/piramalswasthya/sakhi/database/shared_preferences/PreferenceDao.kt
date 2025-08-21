@@ -36,6 +36,19 @@ class PreferenceDao @Inject constructor(@ApplicationContext private val context:
         editor.apply()
     }
 
+
+    fun getJWTAmritToken(): String? {
+        val prefKey = context.getString(R.string.PREF_primary_JWT_API_KEY)
+        return pref.getString(prefKey, null)
+    }
+
+    fun registerJWTAmritToken(token: String) {
+        val editor = pref.edit()
+        val prefKey = context.getString(R.string.PREF_primary_JWT_API_KEY)
+        editor.putString(prefKey, token)
+        editor.apply()
+    }
+
     fun registerLoginCred(userName: String, password: String) {
         val editor = pref.edit()
         val prefUserKey = context.getString(R.string.PREF_rem_me_uname)
@@ -125,7 +138,7 @@ class PreferenceDao @Inject constructor(@ApplicationContext private val context:
         val key = context.getString(R.string.PREF_current_saved_language)
         return when (pref.getString(key, null)) {
             Languages.ASSAMESE.symbol -> Languages.ASSAMESE
-            Languages.HINDI.symbol -> Languages.HINDI
+         /*   Languages.HINDI.symbol -> Languages.HINDI*/
             Languages.ENGLISH.symbol -> Languages.ENGLISH
             else -> Languages.ENGLISH
         }

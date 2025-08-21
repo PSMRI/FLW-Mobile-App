@@ -158,7 +158,7 @@ class AbhaIdActivity : AppCompatActivity() {
 
     private fun setUpActionBar() {
         setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
 //        NavigationUI.setupWithNavController(binding.toolbar, navController)
         NavigationUI.setupActionBarWithNavController(this, navController)
     }
@@ -166,6 +166,7 @@ class AbhaIdActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         TokenInsertAbhaInterceptor.setToken("")
+        TokenInsertAbhaInterceptor.setXToken("")
         intent.removeExtra("benId")
         intent.removeExtra("benRegId")
         countDownTimer?.cancel()

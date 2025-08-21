@@ -39,6 +39,11 @@
             android:id="@+id/incentivesFragment"
             android:icon="@drawable/ic__incentive"
             android:title="@string/incentive_fragment_title" />
+        <item
+            android:id="@+id/ChatFragment"
+            android:icon="@drawable/baseline_chat_24"
+            android:visible="false"
+            android:title="@string/help_and_support" />
     </group>
 
 
@@ -65,6 +70,17 @@
 
         android:id="@+id/menu_group_bottom"
         android:checkableBehavior="single">
+        <item
+            android:id="@+id/menu_delete_account"
+            android:checkable="false"
+            android:icon="@drawable/ic_delete_account"
+            android:title="@string/delete_my_account" />
+
+        <item
+            android:id="@+id/menu_support"
+            android:checkable="false"
+            android:icon="@drawable/ic_support"
+            android:title="@string/support" />
         <item
             android:id="@+id/menu_logout"
             android:checkable="false"

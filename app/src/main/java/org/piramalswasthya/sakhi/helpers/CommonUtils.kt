@@ -1,5 +1,10 @@
 package org.piramalswasthya.sakhi.helpers
 
+import android.app.Activity
+import android.content.Context.CONNECTIVITY_SERVICE
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import androidx.core.text.isDigitsOnly
 import org.piramalswasthya.sakhi.model.AncStatus
 import org.piramalswasthya.sakhi.model.BenBasicDomain
@@ -15,6 +20,7 @@ import org.piramalswasthya.sakhi.model.BenWithHRPTListDomain
 import org.piramalswasthya.sakhi.model.BenWithPwrDomain
 import org.piramalswasthya.sakhi.model.BenWithTbScreeningDomain
 import org.piramalswasthya.sakhi.model.BenWithTbSuspectedDomain
+import org.piramalswasthya.sakhi.model.ImmunizationDetailsDomain
 import org.piramalswasthya.sakhi.model.InfantRegDomain
 import org.piramalswasthya.sakhi.model.PregnantWomenVisitDomain
 import java.text.SimpleDateFormat
@@ -22,6 +28,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
+
 
 fun filterBenList(list: List<BenBasicDomain>, text: String): List<BenBasicDomain> {
     if (text == "")
@@ -34,6 +41,7 @@ fun filterBenList(list: List<BenBasicDomain>, text: String): List<BenBasicDomain
     }
 }
 
+
 fun filterForBen(
     ben: BenBasicDomain,
     filterText: String
@@ -45,7 +53,7 @@ fun filterForBen(
         ben.benFullName.lowercase().contains(filterText) ||
         ben.familyHeadName.lowercase().contains(filterText) ||
         ben.benSurname?.lowercase()?.contains(filterText) ?: false ||
-        ben.rchId.takeIf { it.isDigitsOnly() }?.contains(filterText) ?: false ||
+        ben.rchId.takeIf { it?.isDigitsOnly() == true }?.contains(filterText) ?: false ||
         ben.mobileNo.lowercase().contains(filterText) ||
         ben.gender.lowercase().contains(filterText) ||
         ben.spouseName?.lowercase()?.contains(filterText) == true ||
@@ -78,7 +86,7 @@ fun filterEcTrackingList(
                 it.ben.spouseName?.lowercase()?.contains(filterText) ?: false ||
                 it.ben.benId.toString().lowercase().contains(filterText) ||
                 it.ben.mobileNo.lowercase().contains(filterText) ||
-                it.ben.rchId.takeIf { it1 -> it1.isDigitsOnly() }?.contains(filterText) ?: false
+                it.ben.rchId.takeIf { it1 -> it1?.isDigitsOnly() == true }?.contains(filterText) ?: false
     }
 
 fun filterEcRegistrationList(
@@ -93,7 +101,7 @@ fun filterEcRegistrationList(
                 it.ben.spouseName?.lowercase()?.contains(filterText) ?: false ||
                 it.ben.benId.toString().lowercase().contains(filterText) ||
                 it.ben.mobileNo.lowercase().contains(filterText) ||
-                it.ben.rchId.takeIf { it1 -> it1.isDigitsOnly() }?.contains(filterText) ?: false
+                it.ben.rchId.takeIf { it1 -> it1?.isDigitsOnly() == true }?.contains(filterText) ?: false
 
 
 //                ||
@@ -112,7 +120,7 @@ fun filterPwrRegistrationList(
                 it.ben.spouseName?.lowercase()?.contains(filterText) ?: false ||
                 it.ben.benId.toString().lowercase().contains(filterText) ||
                 it.ben.mobileNo.lowercase().contains(filterText) ||
-                it.ben.rchId.takeIf { it1 -> it1.isDigitsOnly() }?.contains(filterText) ?: false
+                it.ben.rchId.takeIf { it1 -> it1?.isDigitsOnly() == true }?.contains(filterText) ?: false
     }
 
 
@@ -131,7 +139,7 @@ fun filterPwAncList(
                 it.lmpString?.contains(filterText) ?: false ||
                 it.eddString?.contains(filterText) ?: false ||
                 it.weeksOfPregnancy?.contains(filterText) ?: false ||
-                it.ben.rchId.takeIf { it1 -> it1.isDigitsOnly() }?.contains(filterText) ?: false
+                it.ben.rchId.takeIf { it1 -> it1?.isDigitsOnly() == true }?.contains(filterText) ?: false
 
     }
 
@@ -148,7 +156,7 @@ fun filterPncDomainList(
                 it.ben.benId.toString().lowercase().contains(filterText) ||
                 it.ben.mobileNo.lowercase().contains(filterText) ||
                 it.deliveryDate.contains(filterText) ||
-                it.ben.rchId.takeIf { it1 -> it1.isDigitsOnly() }?.contains(filterText) ?: false
+                it.ben.rchId.takeIf { it1 -> it1?.isDigitsOnly() == true }?.contains(filterText) ?: false
     }
 
 fun filterInfantDomainList(
@@ -164,7 +172,7 @@ fun filterInfantDomainList(
                 it.motherBen.benId.toString().lowercase().contains(filterText) ||
                 it.motherBen.mobileNo.lowercase().contains(filterText) ||
                 it.babyName.contains(filterText) ||
-                it.motherBen.rchId.takeIf { it1 -> it1.isDigitsOnly() }
+                it.motherBen.rchId.takeIf { it1 -> it1?.isDigitsOnly() == true }
                     ?.contains(filterText) ?: false
     }
 
@@ -183,7 +191,7 @@ fun filterTbScreeningList(
                 it.ben.benId.toString().lowercase().contains(filterText) ||
                 it.ben.mobileNo.lowercase().contains(filterText) ||
                 it.ben.gender.lowercase().contains(filterText) ||
-                it.ben.rchId.takeIf { it1 -> it1.isDigitsOnly() }?.contains(filterText) ?: false
+                it.ben.rchId.takeIf { it1 -> it1?.isDigitsOnly() == true }?.contains(filterText) ?: false
     }
 
 fun filterTbSuspectedList(
@@ -200,7 +208,7 @@ fun filterTbSuspectedList(
                 it.ben.benId.toString().lowercase().contains(filterText) ||
                 it.ben.mobileNo.lowercase().contains(filterText) ||
                 it.ben.gender.lowercase().contains(filterText) ||
-                it.ben.rchId.takeIf { it1 -> it1.isDigitsOnly() }?.contains(filterText) ?: false
+                it.ben.rchId.takeIf { it1 -> it1?.isDigitsOnly() == true }?.contains(filterText) ?: false
     }
 
 @JvmName("filterBenList1")
@@ -217,7 +225,7 @@ fun filterBenFormList(
                     it.benId.toString().lowercase().contains(filterText) ||
                     it.regDate.lowercase().contains((filterText)) ||
                     it.age.lowercase().contains(filterText) ||
-                    it.rchId.takeIf { it1 -> it1.isDigitsOnly() }?.contains(filterText) ?: false ||
+                    it.rchId.takeIf { it1 -> it1?.isDigitsOnly() == true }?.contains(filterText) ?: false ||
                     it.benName.lowercase().contains(filterText) ||
                     it.familyHeadName.lowercase().contains(filterText) ||
                     it.spouseName?.lowercase()?.contains(filterText) == true ||
@@ -244,7 +252,7 @@ fun filterBenHRPFormList(
                     it.ben.benId.toString().lowercase().contains(filterText) ||
                     it.ben.regDate.lowercase().contains((filterText)) ||
                     it.ben.age.lowercase().contains(filterText) ||
-                    it.ben.rchId.takeIf { it1 -> it1.isDigitsOnly() }
+                    it.ben.rchId.takeIf { it1 -> it1?.isDigitsOnly() == true }
                         ?.contains(filterText) ?: false ||
                     it.ben.benName.lowercase().contains(filterText) ||
                     it.ben.familyHeadName.lowercase().contains(filterText) ||
@@ -271,7 +279,7 @@ fun filterBenHRNPFormList(
                     it.ben.benId.toString().lowercase().contains(filterText) ||
                     it.ben.regDate.lowercase().contains((filterText)) ||
                     it.ben.age.lowercase().contains(filterText) ||
-                    it.ben.rchId.takeIf { it1 -> it1.isDigitsOnly() }
+                    it.ben.rchId.takeIf { it1 -> it1?.isDigitsOnly() == true }
                         ?.contains(filterText) ?: false ||
                     it.ben.benName.lowercase().contains(filterText) ||
                     it.ben.familyHeadName.lowercase().contains(filterText) ||
@@ -298,7 +306,7 @@ fun filterBenHRPTFormList(
                     it.ben.benId.toString().lowercase().contains(filterText) ||
                     it.ben.regDate.lowercase().contains((filterText)) ||
                     it.ben.age.lowercase().contains(filterText) ||
-                    it.ben.rchId.takeIf { it1 -> it1.isDigitsOnly() }
+                    it.ben.rchId.takeIf { it1 -> it1?.isDigitsOnly() == true }
                         ?.contains(filterText) ?: false ||
                     it.ben.benName.lowercase().contains(filterText) ||
                     it.ben.familyHeadName.lowercase().contains(filterText) ||
@@ -311,6 +319,74 @@ fun filterBenHRPTFormList(
         }
     }
 }
+
+
+fun filterImmunList(list: List<ImmunizationDetailsDomain>, text: String): List<ImmunizationDetailsDomain> {
+    if (text == "")
+        return list
+    else {
+        var filterText = text.lowercase()
+        var secondFilterText = ""
+        var thirdFilterText = ""
+        var fourthFilterText = ""
+
+        if (filterText.contains("5-6 years")) {
+            secondFilterText = "${filterText.split("-")[0]} years"
+            filterText = filterText.split("-")[1]
+        } else if (filterText.contains("16-24 months")) {
+            secondFilterText = "1 years"
+            filterText = "2 years"
+        } else if (filterText.contains("9-12 months")) {
+            secondFilterText = "${filterText.split("-")[0]} months"
+            thirdFilterText = "10 months"
+            fourthFilterText = "11 months"
+            filterText = filterText.split("-")[1]
+        } else if (filterText.contains("6 weeks")) {
+            secondFilterText = "1 months"
+            filterText = "2 months"
+        } else if (filterText.contains("10 weeks")) {
+            filterText = "3 months"
+        } else if (filterText.contains("14 weeks")) {
+            filterText = "4 months"
+        }else{
+
+                val filterText = text.lowercase()
+                return list.filter {
+                    filterForImm(
+                        it,
+                        filterText,
+                        secondFilterText,
+                        thirdFilterText,
+                        fourthFilterText
+                    )
+                }
+
+        }
+        return list.filter {
+            filterForImm(
+                it,
+                filterText,
+                secondFilterText,
+                thirdFilterText,
+                fourthFilterText
+            )
+        }
+    }
+}
+
+fun filterForImm(
+    imm: ImmunizationDetailsDomain,
+    filterText: String,
+    firstVal: String,
+    secondVal: String,
+    thirdVal: String
+) = imm.ben.age.lowercase() == filterText ||
+        imm.ben.age.lowercase() == firstVal ||
+        imm.ben.age.lowercase() == secondVal ||
+        imm.ben.age.lowercase() == thirdVal ||
+        imm.ben.benFullName.lowercase() ==filterText ||
+        imm.ben.mobileNo.lowercase() ==filterText ||
+        imm.ben.motherName?.lowercase() ==filterText
 
 fun filterBenHRNPTFormList(
     list: List<BenWithHRNPTListDomain>,
@@ -325,7 +401,7 @@ fun filterBenHRNPTFormList(
                     it.ben.benId.toString().lowercase().contains(filterText) ||
                     it.ben.regDate.lowercase().contains((filterText)) ||
                     it.ben.age.lowercase().contains(filterText) ||
-                    it.ben.rchId.takeIf { it1 -> it1.isDigitsOnly() }
+                    it.ben.rchId.takeIf { it1 -> it1?.isDigitsOnly() == true }
                         ?.contains(filterText) ?: false ||
                     it.ben.benName.lowercase().contains(filterText) ||
                     it.ben.familyHeadName.lowercase().contains(filterText) ||
@@ -425,6 +501,23 @@ fun getDateString(dateLong: Long?): String? {
         return dateFormat.format(Date(dateLong))
     } ?: run {
         return null
+    }
+}
+
+
+@Suppress("deprecation")
+fun isInternetAvailable(activity: Activity): Boolean {
+    val conMgr = activity.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        val network = conMgr.activeNetwork
+        val networkCapabilities = conMgr.getNetworkCapabilities(network)
+        return networkCapabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+            ?: false
+    } else {
+        // below API Level 23
+        return (conMgr.activeNetworkInfo != null && conMgr.activeNetworkInfo!!.isAvailable
+                && conMgr.activeNetworkInfo!!.isConnected)
     }
 }
 
