@@ -15,7 +15,7 @@
     <string name="bank_acc_no">Bank Acc No</string>
     <string name="nearest_24x7_phc">Nearest 24x7 PHC</string>
     <string name="nearest_fru">Nearest FRU</string>
-    <string name="nearest_usg_centre">Nearest USG centre:</string>
+    <string name="nearest_usg_centre">Nearest USG centre</string>
     <string name="nearest_sc_hwc">Nearest SC/HWC</string>
     <string name="blood_donors_identified_1">Blood donors identified 1</string>
     <string name="blood_donors_identified_2">Blood donors identified 2</string>
@@ -79,7 +79,7 @@
     <string name="visit_on">"Visit On "</string>
     <string name="follow_up">Follow Up</string>
     <string name="history">History</string>
-    <string name="micro">Micro</string>
+    <string name="micro">Micro Birth Plan</string>
     <string name="_1st_anc">1st ANC</string>
     <string name="_1st_pmsma">1st PMSMA</string>
     <string name="_2nd_pmsma">2nd PMSMA</string>
@@ -107,6 +107,13 @@
     <string name="using_75gm_ogtt">Using 75 gm OGTT</string>
     <string name="after_2hrs">After 2 Hours (mg/dL)</string>
     <string name="pregnant_women_pw_section">Pregnant Women (PW) section</string>
+    <string name="micro_birth_plan_table">Micro Birth Plan Table</string>
+    <string name="share">Share</string>
+    <string name="pw_name"><b>PW name :</b></string>
+    <string name="b_age"><b>Age :</b></string>
+    <string name="c_no"><b>Contact no :\n1 -</b></string>
+    <string name="b_blood_donor"><b>Blood donor identified\n1 -</b></string>
+
 
     <string-array name="sugar_test_types">
         <item>RBS</item>

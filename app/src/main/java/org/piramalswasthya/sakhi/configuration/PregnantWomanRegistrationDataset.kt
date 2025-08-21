@@ -22,10 +22,15 @@ class PregnantWomanRegistrationDataset(
 ) : Dataset(context, currentLanguage) {
 
     companion object {
+        var registrationDate:Long = 0
         private fun getMinLmpMillis(): Long {
             val cal = Calendar.getInstance()
-            cal.add(Calendar.DAY_OF_YEAR, -1 * 280)
+            cal.add(Calendar.DAY_OF_YEAR, -1 * 400) //before it is 280
             return cal.timeInMillis
+        }
+        private fun pwRegisterBeforeoneYear(): Long {
+            return   registrationDate-TimeUnit.DAYS.toMillis(365)
+
         }
     }
 
@@ -49,7 +54,7 @@ class PregnantWomanRegistrationDataset(
         isMobileNumber = true,
         etMaxLength = 12
     )
-    private val mcpCardNumber = FormElement(
+/*    private val mcpCardNumber = FormElement(
         id = 3,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.pwrdst_mcp_card_no),
@@ -57,7 +62,7 @@ class PregnantWomanRegistrationDataset(
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
         isMobileNumber = true,
         etMaxLength = 12
-    )
+    )*/
     private val name = FormElement(
         id = 4,
         inputType = InputType.TEXT_VIEW,
@@ -160,6 +165,7 @@ class PregnantWomanRegistrationDataset(
         title = resources.getString(R.string.pwrdst_vdrl_tst_done),
         arrayId = -1,
         required = false,
+        min= pwRegisterBeforeoneYear(),
         max = System.currentTimeMillis(),
     )
     private val hivTestResult = FormElement(
@@ -403,7 +409,7 @@ class PregnantWomanRegistrationDataset(
         val list = mutableListOf(
             dateOfReg,
             rchId,
-            mcpCardNumber,
+           // mcpCardNumber,
             name,
             husbandName,
             age,
@@ -435,18 +441,20 @@ class PregnantWomanRegistrationDataset(
             multiplePregnancy,
             isHrpCase
         )
-        dateOfReg.value = getDateFromLong(System.currentTimeMillis())
+
+      //  dateOfReg.value = getDateFromLong(System.currentTimeMillis())
         dateOfReg.value?.let {
             val long = getLongFromDate(it)
-            dateOfhivTestDone.min = long
-            dateOfVdrlTestDone.min = long
-            dateOfhbsAgTestDone.min = long
+            dateOfhivTestDone.min = long - TimeUnit.DAYS.toMillis(365)
+            dateOfVdrlTestDone.min = long - TimeUnit.DAYS.toMillis(365)
+            dateOfhbsAgTestDone.min = long - TimeUnit.DAYS.toMillis(365)
         }
+
 
         ben?.let {
             dateOfReg.min = it.regDate.also {
-                dateOfVdrlTestDone.min = it
-                dateOfhivTestDone.min = it
+                dateOfVdrlTestDone.min = it - TimeUnit.DAYS.toMillis(365)
+                dateOfhivTestDone.min = it - TimeUnit.DAYS.toMillis(365)
                 hbsAgTestResult.min = it
             }
             rchId.value = ben.rchId
@@ -545,13 +553,16 @@ class PregnantWomanRegistrationDataset(
             dateOfReg.apply {
                 value = getDateFromLong(it.dateOfRegistration)
                 inputType = InputType.TEXT_VIEW
+
             }
+
             it.dateOfRegistration.let {
                 lmp.max = it
-                lmp.min = it - TimeUnit.DAYS.toMillis(280)
-                dateOfVdrlTestDone.min = it
-                dateOfhivTestDone.min = it
-                dateOfhbsAgTestDone.min = it
+                lmp.min = it - TimeUnit.DAYS.toMillis(400)
+                dateOfVdrlTestDone.min = it - TimeUnit.DAYS.toMillis(365)
+                dateOfhivTestDone.min = it - TimeUnit.DAYS.toMillis(365)
+                dateOfhbsAgTestDone.min = it - TimeUnit.DAYS.toMillis(365)
+
 
             }
             val eddFromLmp = getEddFromLmp(it.lmpDate)
@@ -560,7 +571,7 @@ class PregnantWomanRegistrationDataset(
                 dateOfhivTestDone.max = maxDate
                 dateOfhbsAgTestDone.max = maxDate
             }
-            mcpCardNumber.value = it.mcpCardNumber.toString()
+          //  mcpCardNumber.value = it.mcpCardNumber.toString()
             lmp.value = getDateFromLong(it.lmpDate)
             if (it.lmpDate > 0) {
                 lmp.isEnabled = false
@@ -672,6 +683,10 @@ class PregnantWomanRegistrationDataset(
 //                list.add(assignedAsHrpBy)
 //            }
 //        }
+
+
+        noOfDeliveries.isEnabled=false
+        timeLessThan18m.isEnabled=false
         setUpPage(list)
 
     }
@@ -686,15 +701,15 @@ class PregnantWomanRegistrationDataset(
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
         return when (formId) {
             rchId.id -> validateRchIdOnEditText(rchId)
-            mcpCardNumber.id -> validateMcpOnEditText(mcpCardNumber)
+          //  mcpCardNumber.id -> validateMcpOnEditText(mcpCardNumber)
             dateOfReg.id -> {
                 dateOfReg.value?.let {
                     val dateOfRegLong = getLongFromDate(it)
                     lmp.max = dateOfRegLong
                     lmp.min = getMinFromMaxForLmp(lmp.max!!)
-                    dateOfVdrlTestDone.min = dateOfRegLong
-                    dateOfhivTestDone.min = dateOfRegLong
-                    dateOfhbsAgTestDone.min = dateOfRegLong
+                    dateOfVdrlTestDone.min = dateOfRegLong - TimeUnit.DAYS.toMillis(365)
+                    dateOfhivTestDone.min = dateOfRegLong - TimeUnit.DAYS.toMillis(365)
+                    dateOfhbsAgTestDone.min = dateOfRegLong - TimeUnit.DAYS.toMillis(365)
                     updateAgeCheck(dateOfBirth, dateOfRegLong)
                     return handleListOnValueChanged(isHrpCase.id, 0)
                 }
@@ -723,9 +738,9 @@ class PregnantWomanRegistrationDataset(
                 }
                 edd.value = eddLong?.let { getDateFromLong(it) }
                 regLong?.let {
-                    dateOfhivTestDone.min = it
-                    dateOfVdrlTestDone.min = it
-                    dateOfhbsAgTestDone.min = it
+                    dateOfhivTestDone.min = it - TimeUnit.DAYS.toMillis(365)
+                    dateOfVdrlTestDone.min = it - TimeUnit.DAYS.toMillis(365)
+                    dateOfhbsAgTestDone.min = it - TimeUnit.DAYS.toMillis(365)
                 }
                 eddLong?.let {
                     val max = minOf(it, System.currentTimeMillis())
@@ -929,7 +944,7 @@ class PregnantWomanRegistrationDataset(
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as PregnantWomanRegistrationCache).let { form ->
             form.dateOfRegistration = getLongFromDate(dateOfReg.value)
-            form.mcpCardNumber = mcpCardNumber.value?.takeIf { it.isNotEmpty() }?.toLong() ?: 0
+           // form.mcpCardNumber = mcpCardNumber.value?.takeIf { it.isNotEmpty() }?.toLong() ?: 0
             form.rchId = rchId.value?.takeIf { it.isNotEmpty() }?.toLong() ?: 0
             form.lmpDate = getLongFromDate(lmp.value)
             form.bloodGroup =

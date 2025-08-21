@@ -19,6 +19,10 @@
         <action
             android:id="@+id/action_aadhaarIdFragment_to_generateMobileOtpFragment"
             app:destination="@id/generateMobileOtpFragment" />
+
+        <action
+            android:id="@+id/action_aadhaarIdFragment_to_aadhaarConsentFragment"
+            app:destination="@id/aadhaarConsentFragment" />
     </fragment>
     <fragment
         android:id="@+id/aadhaarOtpFragment"
@@ -33,6 +37,12 @@
             app:destination="@id/generateMobileOtpFragment"
             app:popUpTo="@id/aadhaarOtpFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_aadhaarOtpFragment_to_createAbhaFragment"
+            app:destination="@id/createAbhaFragment" />
+        <action
+            android:id="@+id/action_aadhaarOtpFragment_to_verifyMobileOtpFragment"
+            app:destination="@id/verifyMobileOtpFragment" />
         <argument
             android:name="mobileNumber"
             app:argType="string" />
@@ -47,6 +57,9 @@
             app:destination="@id/verifyMobileOtpFragment" />
         <argument
             android:name="txnId"
+            app:argType="string" />
+        <argument
+            android:name="mobileNumber"
             app:argType="string" />
         <action
             android:id="@+id/action_generateMobileOtpFragment_to_createAbhaFragment"
@@ -68,6 +81,22 @@
         <argument
             android:name="phoneNum"
             app:argType="string" />
+
+        <argument
+            android:name="alternatePhoneNumber"
+            app:argType="string" />
+        <argument
+            android:name="name"
+            app:argType="string" />
+        <argument
+            android:name="phrAddress"
+            app:argType="string" />
+        <argument
+            android:name="abhaNumber"
+            app:argType="string" />
+        <argument
+            android:name="abhaResponse"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/createAbhaFragment"
@@ -77,5 +106,21 @@
         <argument
             android:name="txnId"
             app:argType="string" />
+        <argument
+            android:name="name"
+            app:argType="string" />
+        <argument
+            android:name="phrAddress"
+            app:argType="string" />
+        <argument
+            android:name="abhaNumber"
+            app:argType="string" />
+        <argument
+            android:name="abhaResponse"
+            app:argType="string" />
     </fragment>
+    <fragment
+        android:id="@+id/aadhaarConsentFragment"
+        android:name="org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.aadhaar_consent.AbhaConsentFragment"
+        android:label="AbhaConsentFragment" />
 </navigation>

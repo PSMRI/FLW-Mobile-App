@@ -13,15 +13,15 @@
     <string name="cbac_ask_pat_note">লক্ষ্য :</string>
     <string name="cbac_ast1">* যদি নিম্নতম প্রশ্নসমূহৰ যেতিয়া "হোৱা" বাছনি হোৱা থাকে তেন্তে পপ আপ বার্তা "পৰৱানি মডলক যোৱা আৰু স্পুটাম নমূনা লওক"</string>
     <string name="cbac_ast2">** যদি নিম্নতম প্রশ্নসমূহৰ যেতিয়া "হোৱা" বাছনি হোৱা থাকে তেন্তে পপ আপ বার্তা "পৰৱানি মডক বা তলত সকলো পৰিবাৰৰ সদস্যবোৰ নিকলেনি চিত্ৰানুপ্রাণনৰ বাবে পৰিচিত কৰক"</string>
-    <string name="cbac_select">বাছনি কৰক …</string>
-    <string name="cbac_fh_tb">কোনো পৰিবাৰত কোনো ব্যক্তি হালপৰাই হচ্ছে নে?</string>
-    <string name="cbac_taking_tb_drug">আপুনি মমহা অবস্থাৰ ঔষধ খোৱা হৈ আছে নে?</string>
-    <string name="cbac_histb">টিবিৰ ইতিহাস</string>
-    <string name="cbac_coughing">২ সপ্তাহৰ অধিক সময় খঁচি</string>
-    <string name="cbac_blsputum">স্বৰ্ণালিৰ পৰা থীত</string>
-    <string name="cbac_feverwks">২ সপ্তাহৰ অধিক সময় জৰতি</string>
-    <string name="cbac_lsweight">ওজনৰ ক্ষয়</string>
-    <string name="cbac_ntswets">আতিত্যৰ স্বলাপ</string>
+    <string name="cbac_select">বাছনি কৰক …</string>cbac_lsweight
+    <string name="cbac_fh_tb">বৰ্তমান যক্ষ্মা ৰোগত আক্ৰান্ত পৰিয়ালৰ যিকোনো ব্যক্তি আছে নেকি</string>
+    <string name="cbac_taking_tb_drug">আপুনি বৰ্তমান যক্ষ্মা-ৰোধী ঔষধ গ্ৰহণ কৰি আছে নেকি</string>
+    <string name="cbac_histb">যক্ষ্মা ৰোগৰ ইতিহাস</string>
+    <string name="cbac_coughing">2 সপ্তাহতকৈ অধিক কাহ</string>
+    <string name="cbac_blsputum">স্পুটামত তেজ</string>
+    <string name="cbac_feverwks">জ্বৰ 2 সপ্তাহৰ বাবে</string>
+    <string name="cbac_lsweight">ওজন হ্ৰাস</string>
+    <string name="cbac_ntswets">নিশাৰ ঘাম</string>
     <string name="cbac_recurrent_ulceration">বৰহিত বা পাৰমলৰ উপৰত পুনৰাবৃত্তি</string>
     <string name="cbac_recurrent_tingling">হাতৰ বা পাৰমলৰ উপৰত পুনৰাবৃত্তি</string>
     <string name="cbac_recurrent_cloudy">মেঘপৰা অথবা মিহিলৰ দৃষ্টি পৰা সমস্যা</string>
@@ -37,7 +37,7 @@
     <string name="cbac_Any_Growth">মোখত অথবা থীত অত্যাধিক সংখ্যক উদ্ভিদ</string>
     <string name="cbac_Any_white">মোখত অথবা থীত অত্যাধিক সংখ্যক ধুৱা অথবা লাল ছোৱা</string>
     <string name="cbac_Pain_while_chewing">মাখুৰি খোৱাৰ সময় ব্যথা</string>
-    <string name="cbac_Any_hyper_pigmented">স্বলয় বা শব্দে গুম হৈ অসমত চেমিকৈ সৰু চিতা অথবা রঙাঞ্চৰণ</string>
+    <string name="cbac_Any_hyper_pigmented">সংবেদন হেৰুওৱা ছালত যিকোনো হাইপাৰ পিগমেণ্টেড পেচ বা বিবৰণ</string>
     <string name="cbac_any_thickend_skin">স্কিনৰ বাজানো সমস্যা থাকিলে</string>
     <string name="cbac_any_nodules_skin">স্কিনত কোনো গুৰু থাকিলে</string>
     <string name="cbac_Recurrent_numbness">পলং (হাতৰ নকলত) অথবা পাৰমল (পাৰমলত) নিতৰালি শব্দ</string>
@@ -193,6 +193,11 @@
     <string name="sputum_test_result">স্পুটাম পৰীক্ষা ফলাফল</string>
     <string name="referred_to_facility">সুবিধাৰ পৰা উপযুক্ত স্থানলৈ উপস্থাপিত হৈছে</string>
     <string name="facility_referral_follow_ups">সুবিধাৰ পৰা উপযুক্ত স্থানলৈ উপস্থাপন অনুসৰণ</string>
+
+    <string name="none_of">এইবোৰৰ কোনোটোৱেই নহয়</string>
+
+
+
     <string-array name="tb_submitted_yet">
         <item>ডিএমচি</item>
         <item>এসচি</item>

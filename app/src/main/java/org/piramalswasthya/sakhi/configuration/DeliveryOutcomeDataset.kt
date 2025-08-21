@@ -8,11 +8,28 @@ import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.InputType
 import org.piramalswasthya.sakhi.model.PregnantWomanAncCache
 import org.piramalswasthya.sakhi.model.PregnantWomanRegistrationCache
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
 import java.util.concurrent.TimeUnit
 
 open class DeliveryOutcomeDataset(
     context: Context, currentLanguage: Languages
 ) : Dataset(context, currentLanguage) {
+
+    companion object{
+        @Throws(Exception::class)
+        fun getOneMonthLater(deliveryDate: String?): String {
+            val sdf: SimpleDateFormat = SimpleDateFormat("dd-MM-yyyy")
+            val date: Date = sdf.parse(deliveryDate)
+
+            val calendar: Calendar = Calendar.getInstance()
+            calendar.setTime(date)
+            calendar.add(Calendar.MONTH, 1) // Add 1 month
+
+            return sdf.format(calendar.getTime())
+        }
+    }
 
     private val dateOfDelivery = FormElement(
         id = 1,
@@ -47,7 +64,7 @@ open class DeliveryOutcomeDataset(
         inputType = InputType.RADIO,
         title = resources.getString(R.string.do_delivery_type),
         entries = resources.getStringArray(R.array.do_type_of_delivery_array),
-        required = false,
+        required = true,
         hasDependants = false
     )
 
@@ -102,7 +119,7 @@ open class DeliveryOutcomeDataset(
         id = 10,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.do_delivery_outcome),
-        required = false,
+        required = true,
         hasDependants = false,
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
         etMaxLength = 1,
@@ -114,7 +131,7 @@ open class DeliveryOutcomeDataset(
         id = 11,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.do_live_birth),
-        required = false,
+        required = true,
         hasDependants = false,
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
         etMaxLength = 1,
@@ -126,7 +143,7 @@ open class DeliveryOutcomeDataset(
         id = 12,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.do_still_birth),
-        required = false,
+        required = true,
         hasDependants = false,
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
         etMaxLength = 1,
@@ -188,7 +205,11 @@ open class DeliveryOutcomeDataset(
         )
         if (saved == null) {
             dateOfDelivery.value = getDateFromLong(System.currentTimeMillis())
-            dateOfDischarge.min = System.currentTimeMillis()
+            //dateOfDischarge.min = System.currentTimeMillis()
+            stillBirth.value = "0"
+
+            dateOfDischarge.min = getLongFromDate(dateOfDelivery.value)
+            dateOfDischarge.max =getLongFromDate(getOneMonthLater(dateOfDelivery.value))
         } else {
             list = mutableListOf(
                 dateOfDelivery,
@@ -241,6 +262,7 @@ open class DeliveryOutcomeDataset(
         return when (formId) {
             dateOfDelivery.id -> {
                 dateOfDischarge.min = getLongFromDate(dateOfDelivery.value)
+                dateOfDischarge.max =getLongFromDate(getOneMonthLater(dateOfDelivery.value))
                 -1
             }
 
@@ -256,6 +278,11 @@ open class DeliveryOutcomeDataset(
 
             complication.id -> {
                 if (index == 6) {
+                    liveBirth.value = "0"
+                    liveBirth.isEnabled =false
+
+                    handleListOnValueChanged(liveBirth.id, 0)
+
                     triggerDependants(
                         source = complication,
                         addItems = listOf(causeOfDeath),
@@ -331,6 +358,10 @@ open class DeliveryOutcomeDataset(
             if (deliveryOutcome.value!!.toInt() != liveBirth.value!!.toInt() + stillBirth.value!!.toInt()) {
                 formElement.errorText =
                     "Outcome of Delivery should be equal to sum of Live and Still births"
+            }else{
+                deliveryOutcome.errorText = null
+                liveBirth.errorText = null
+                stillBirth.errorText = null
             }
         }
         if (!deliveryOutcome.value.isNullOrEmpty()) {

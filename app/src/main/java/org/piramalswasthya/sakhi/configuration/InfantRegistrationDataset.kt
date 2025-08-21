@@ -114,9 +114,10 @@ class InfantRegistrationDataset(
         title = "Weight at Birth(kg)",
         required = false,
         hasDependants = false,
-        minDecimal = 0.5,
-        maxDecimal = 7.0,
-        etInputType = android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL,
+        etMaxLength = 5,
+        min = 1,
+        max = 7000,
+        etInputType = android.text.InputType.TYPE_CLASS_NUMBER,
     )
 
     private var breastFeedingStarted = FormElement(
@@ -128,45 +129,45 @@ class InfantRegistrationDataset(
         hasDependants = false,
     )
 
-    private val opv0Dose = FormElement(
-        id = 13,
-        inputType = InputType.DATE_PICKER,
-        title = "OPV0 Dose",
-        arrayId = -1,
-        required = false,
-        max = System.currentTimeMillis(),
-        hasDependants = true
-    )
+//    private val opv0Dose = FormElement(
+//        id = 13,
+//        inputType = InputType.DATE_PICKER,
+//        title = "OPV0 Dose",
+//        arrayId = -1,
+//        required = false,
+//        max = System.currentTimeMillis(),
+//        hasDependants = true
+//    )
 
-    private val bcgDose = FormElement(
-        id = 14,
-        inputType = InputType.DATE_PICKER,
-        title = "BCG Dose",
-        arrayId = -1,
-        required = false,
-        max = System.currentTimeMillis(),
-        hasDependants = true
-    )
+//    private val bcgDose = FormElement(
+//        id = 14,
+//        inputType = InputType.DATE_PICKER,
+//        title = "BCG Dose",
+//        arrayId = -1,
+//        required = false,
+//        max = System.currentTimeMillis(),
+//        hasDependants = true
+//    )
 
-    private val hepBDose = FormElement(
-        id = 15,
-        inputType = InputType.DATE_PICKER,
-        title = "HEP B-0 Dose",
-        arrayId = -1,
-        required = false,
-        max = System.currentTimeMillis(),
-        hasDependants = true
-    )
+//    private val hepBDose = FormElement(
+//        id = 15,
+//        inputType = InputType.DATE_PICKER,
+//        title = "HEP B-0 Dose",
+//        arrayId = -1,
+//        required = false,
+//        max = System.currentTimeMillis(),
+//        hasDependants = true
+//    )
 
-    private val vitkDose = FormElement(
-        id = 16,
-        inputType = InputType.DATE_PICKER,
-        title = "VITK Dose",
-        arrayId = -1,
-        required = false,
-        max = System.currentTimeMillis(),
-        hasDependants = true
-    )
+//    private val vitkDose = FormElement(
+//        id = 16,
+//        inputType = InputType.DATE_PICKER,
+//        title = "VITK Dose",
+//        arrayId = -1,
+//        required = false,
+//        max = System.currentTimeMillis(),
+//        hasDependants = true
+//    )
 
 
     suspend fun setUpPage(
@@ -183,10 +184,10 @@ class InfantRegistrationDataset(
             hadBirthDefect,
 //            birthDefect,
 //            otherDefect,
-            weight, breastFeedingStarted, opv0Dose, bcgDose, hepBDose, vitkDose
+            weight, breastFeedingStarted, //opv0Dose, bcgDose, hepBDose, vitkDose
         )
         if (deliveryOutcomeCache != null) {
-            opv0Dose.min = deliveryOutcomeCache.dateOfDelivery
+     /*       opv0Dose.min = deliveryOutcomeCache.dateOfDelivery
             bcgDose.min = deliveryOutcomeCache.dateOfDelivery
             hepBDose.min = deliveryOutcomeCache.dateOfDelivery
             vitkDose.min = deliveryOutcomeCache.dateOfDelivery
@@ -205,7 +206,7 @@ class InfantRegistrationDataset(
                         vitkDose.max = it + TimeUnit.DAYS.toMillis(1)
                     }
                 }
-            }
+            }*/
         }
         if (pwrCache != null && deliveryOutcomeCache != null) {
             val weeksOfPregnancy = deliveryOutcomeCache.dateOfDelivery?.let {
@@ -240,10 +241,10 @@ class InfantRegistrationDataset(
                 otherDefect,
                 weight,
                 breastFeedingStarted,
-                opv0Dose,
+         /*       opv0Dose,
                 bcgDose,
                 hepBDose,
-                vitkDose
+                vitkDose*/
             )
             babyName.value = saved.babyName
             infantTerm.value = saved.infantTerm
@@ -257,10 +258,10 @@ class InfantRegistrationDataset(
             otherDefect.value = saved.otherDefect
             weight.value = saved.weight.toString()
             breastFeedingStarted.value = if (saved.breastFeedingStarted == true) "Yes" else "No"
-            opv0Dose.value = saved.opv0Dose?.let { getDateFromLong(it) }
-            bcgDose.value = saved.bcgDose?.let { getDateFromLong(it) }
-            hepBDose.value = saved.hepBDose?.let { getDateFromLong(it) }
-            vitkDose.value = saved.vitkDose?.let { getDateFromLong(it) }
+//            opv0Dose.value = saved.opv0Dose?.let { getDateFromLong(it) }
+//            bcgDose.value = saved.bcgDose?.let { getDateFromLong(it) }
+//            hepBDose.value = saved.hepBDose?.let { getDateFromLong(it) }
+//            vitkDose.value = saved.vitkDose?.let { getDateFromLong(it) }
         }
         setUpPage(list)
 
@@ -301,9 +302,7 @@ class InfantRegistrationDataset(
             }
 
             weight.id -> {
-                validateDoubleUpto1DecimalPlaces(weight)
-                if (weight.errorText == null) validateDoubleMinMax(weight)
-                -1
+                validateWeightOnEditText(weight)
 
             }
 
@@ -327,10 +326,10 @@ class InfantRegistrationDataset(
             form.otherDefect = otherDefect.value
             form.weight = weight.value?.toDouble()
             form.breastFeedingStarted = breastFeedingStarted.value == "Yes"
-            form.opv0Dose = getLongFromDate(opv0Dose.value)
+           /* form.opv0Dose = getLongFromDate(opv0Dose.value)
             form.bcgDose = getLongFromDate(bcgDose.value)
             form.hepBDose = getLongFromDate(hepBDose.value)
-            form.vitkDose = getLongFromDate(vitkDose.value)
+            form.vitkDose = getLongFromDate(vitkDose.value)*/
         }
     }
 }

@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexboxLayoutManager
@@ -45,7 +46,8 @@ class ImmunizationCategoryAdapter(private val clickListener: ImmunizationIconCli
         fun bind(item: VaccineCategoryDomain, clickListener: ImmunizationIconClickListener?) {
             binding.category = item
             binding.clickListener = clickListener
-            val layoutManager = FlexboxLayoutManager(binding.root.context)
+                // val layoutManager = FlexboxLayoutManager(binding.root.context)
+            val layoutManager = LinearLayoutManager(binding.root.context)
             binding.rvVaccine.layoutManager = layoutManager
             val adapter = ImmunizationVaccineAdapter(
                 clickListener
@@ -68,8 +70,7 @@ class ImmunizationCategoryAdapter(private val clickListener: ImmunizationIconCli
         holder.bind(getItem(position), clickListener)
     }
 
-    class ImmunizationIconClickListener(val selectedListener: (vaccineId: Int) -> Unit) {
-        fun onClicked(vaccine: VaccineDomain) = selectedListener(vaccine.vaccineId)
-
+    class ImmunizationIconClickListener(val selectedListener: (vaccineId: VaccineDomain) -> Unit) {
+        fun onClicked(vaccine: VaccineDomain) = selectedListener(vaccine)
     }
 }

@@ -40,8 +40,8 @@
     <string name="do_you_want_to_continue_with_previous_form_or_create_a_new_form_and_discard_the_previous_form">Do you want to continue with previous form, or create a new form and discard the previous form?</string>
     <string name="open_draft">OPEN DRAFT</string>
     <string name="create_new">CREATE NEW</string>
-    <string name="warning_id_running_low_connect_to_internet_at_the_earliest">Warning : ID running low, connect to internet at the earliest</string>
-    <string name="error_no_more_ben_ids_available_connect_to_internet_to_get_some">Error : No more ben Ids available. Connect to internet to get some.</string>
+    <string name="warning_id_running_low_connect_to_internet_at_the_earliest">Warning : Poor Internet Connectivity</string>
+    <string name="error_no_more_ben_ids_available_connect_to_internet_to_get_some">Error : Check Internet Connectivity to get Ben id.</string>
     <string name="please_select_type_of_beneficiary">Please select type of beneficiary</string>
     <string name="frag_new_ben_type_kid_text">New Born / Infant / Child / Adolescent\n( 0 - less than 15 years of age )</string>
     <string name="frag_new_ben_type_adult_text">General Registration \n( 15 years and above )</string>
@@ -61,6 +61,7 @@
         <item>Postnatal Mother</item>
         <item>Elderly Woman</item>
         <item>Adolescent Girl</item>
+        <item>Permanently Sterilised</item>
     </string-array>
 
     <string-array name="nbr_marital_status_male_array">
@@ -197,7 +198,7 @@
     <string-array name="religion_array">
         <item>Hindu</item>
         <item>Muslim</item>
-        <item>Christen</item>
+        <item>Christian</item>
         <item>Sikhism</item>
         <item>Buddhism</item>
         <item>Jainism</item>

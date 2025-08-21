@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="frag_service_type_title">Select Village</string>
@@ -9,12 +10,10 @@
     <string name="service_type_dd_block_text">Block</string>
     <string name="service_type_dd_village_text">Village</string>
     <string name="btn_continue_text">Continue</string>
-
     <string name="menu_home">Home</string>
     <string name="menu_home_home">Home</string>
-    <string name="menu_home_scheduler">Scheduler</string>
+    <string name="menu_home_scheduler">Dashboard</string>
     <string name="til_hint_selected_village">Selected Village</string>
-
     <string name="icon_title_household">All\nHousehold</string>
     <string name="icon_title_ben">All\nBeneficiaries</string>
     <string name="icon_title_ec">Eligible\nCouple List</string>
@@ -22,13 +21,12 @@
     <string name="icon_title_cc">Child Care</string>
     <string name="icon_title_ncd">NCD</string>
     <string name="icon_title_cd">Communicable Diseases</string>
-    <string name="icon_title_imm">Immunization Due List</string>
+    <string name="icon_title_imm">Routine Immunization</string>
     <string name="icon_title_hrp">High Risk Assessment</string>
     <string name="icon_title_gop">General OP Care List</string>
     <string name="icon_title_msl">Menopause Stage List</string>
     <string name="icon_title_dr">Death Reports</string>
     <string name="icon_title_vlf">Village Level Forms</string>
-
     <string name="icon_title_icc">Infant List</string>
     <string name="icon_title_ccc">Child List</string>
     <string name="icon_title_acc">Adolescent List</string>
@@ -43,10 +41,9 @@
     <string name="icon_title_dmc">Delivery Stage List</string>
     <string name="icon_title_pncmc">PNC Mother List</string>
     <string name="icon_title_rmc">Reproductive Age List</string>
-
     <string name="icon_title_ncd_list">NCD List</string>
     <string name="icon_title_ncd_eligible_list">NCD Eligible List</string>
-    <string name="icon_title_ncd_non_eligible_list">NCD Non-Eligible List</string>
+    <string name="icon_title_ncd_non_eligible_list">NCD Non-Priority List</string>
     <string name="icon_title_ncd_priority_list">NCD Priority List</string>
     <string name="icon_title_ncd_tb_screening">TB Screening</string>
     <string name="icon_title_ncd_tb_suspected">Suspected TB cases</string>
@@ -56,15 +53,13 @@
     <string name="icon_title_hrp_pregnant_track">Follow-up of HRP Women</string>
     <string name="icon_title_hrp_non_pregnant_assess">Assess High Risk in Non-PW</string>
     <string name="icon_title_hrp_non_pregnant_track">Follow-up of High Risk Cases</string>
-
     <string name="icon_title_sr">Survey Register</string>
-
     <string name="home_fragment_percent_download_text">%1d%% downloaded</string>
     <string name="error_sign_in_invalid_u_p">Invalid Username / password !</string>
     <string name="error_sign_in_timeout">Server timed out, try again!</string>
     <string name="error_sign_in_disconnected_network">Unable to connect to network!</string>
-    <string name="not_processed">" not Processed"</string>
+    <string name="not_processed">" Records Not Synced!"</string>
     <string name="all_records_synced">All records synced</string>
-    <string name="are_you_sure_to_logout">" Are you sure to logout?"</string>
+    <string name="are_you_sure_to_logout">" Are you sure you want to logout?"</string>
 
 </resources>

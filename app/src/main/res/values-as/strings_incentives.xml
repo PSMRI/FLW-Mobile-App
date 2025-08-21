@@ -1,2 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="incentive_fragment_title">প্ৰৰোচনা</string>
+    <string name="incentive_activity_details">কাৰ্য্যকলাপ: %1s</string>
+    <string name="incentive_last_updated">শেষবাৰৰ বাবে %1s ত আপডেইট কৰা হৈছে</string>
+    <string name="asha_incentive_master_claim_form">আশা প্ৰৰোচনামূলক মাষ্টাৰ দাবী প্ৰ-পত্ৰ</string>
+    <string name="sdm_ho_or_i_c_block_phc">SDM&amp;HO বা i/c ব্লক PHC</string>
+    <string name="sub_submission_of_asha_incentive_claim_for_the_period_from">Sub: ৰ পৰা সময়ছোৱাৰ বাবে আশা প্ৰৰোচনামূলক দাবী দাখিল কৰা</string>
+    <string name="for_the_period_from">ৰ পৰা সময়ছোৱাৰ বাবে</string>
+    <string name="as_per_statement_mentioned_below">তলত উল্লেখ কৰা বিবৃতি অনুসৰি।</string>
+    <string name="with_reference_to_">ওপৰত উল্লেখ কৰা বিষয়টোৰ সন্দৰ্ভত মই আশাৰ প্ৰৰোচনামূলক দাবী দাখিল কৰাৰ গৌৰৱ লাভ কৰিছো</string>
+    <string name="as_per_statement">তলত উল্লেখ কৰা বিবৃতি অনুসৰি।</string>
+    <string name="sir_madam">ছাৰ/মেডাম,</string>
+</resources>

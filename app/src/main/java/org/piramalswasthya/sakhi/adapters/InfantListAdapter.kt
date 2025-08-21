@@ -1,12 +1,14 @@
 package org.piramalswasthya.sakhi.adapters
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.databinding.RvItemBenChildCareInfantBinding
 import org.piramalswasthya.sakhi.model.BenBasicDomain
+import java.util.concurrent.TimeUnit
 
 
 class InfantListAdapter(
@@ -44,8 +46,20 @@ class InfantListAdapter(
             binding.ben = item
             binding.clickListener = clickListener
             binding.executePendingBindings()
-
+            setOverDueStatus(item.dob)
         }
+
+        private fun setOverDueStatus(dob: Long)  {
+
+                val diffLong = System.currentTimeMillis() - dob
+                if (TimeUnit.MILLISECONDS.toDays(diffLong).toInt() > 42) {
+                    binding.dueIcon.visibility = View.VISIBLE
+                } else {
+                    binding.dueIcon.visibility = View.GONE
+                }
+
+            }
+
     }
 
     override fun onCreateViewHolder(
@@ -54,6 +68,7 @@ class InfantListAdapter(
 
     override fun onBindViewHolder(holder: BenViewHolder, position: Int) {
         holder.bind(getItem(position), clickListener, showSyncIcon)
+
     }
 
 

@@ -5,6 +5,7 @@
     <string name="PREF_NAME" translatable="false">Sakhi-pref-1</string>
     <string name="PREF_D2D_API_KEY" translatable="false">JWT-Token_A</string>
     <string name="PREF_primary_API_KEY" translatable="false">JWT-Token_B</string>
+    <string name="PREF_primary_JWT_API_KEY" translatable="false">JWT-Token_N</string>
     <string name="PREF_rem_me_uname" translatable="false">user-name-local-saved</string>
     <string name="PREF_rem_me_pwd" translatable="false">password-local-saved</string>
     <string name="PREF_rem_me_state" translatable="false">state_user-local-saved</string>
@@ -15,7 +16,7 @@
     <string name="PREF_current_saved_language" translatable="false">Locale.Helper.Selected.Language</string>
     <string name="PREF_current_dp_uri" translatable="false">DP_URI_cat</string>
 
-    <string name="radio_title">%s<span> *</span></string>
+    <string name="radio_title" translatable="false">%s<span> *</span></string>
     <string name="radio_title_ds">%s<span> **</span></string>
     <string name="tracking_date">Date of Visit</string>
     <string name="mdsr_form">MDSR</string>
@@ -41,7 +42,7 @@
 
     <!--    HBNC-->
     <string name="hbnc_baby_dead_alert">Cause of death to be reported to ANM/MPW/PHC for infant death review.</string>
-    <string name="hbnc_baby_gestational_age_alert">If child is born in less than 35 weeks, pay attention.</string>
+    <string name="hbnc_baby_gestational_age_alert" translatable="false">If child is born in less than 35 weeks, pay attention.</string>
     <string name="hbnc_mother_dead_alert">Report to ANM/PHC for maternal death review.</string>
     <string name="hbnc_mother_problem_alert">If yes, refer immediately to a hospital.</string>
     <string name="hbnc_mother_num_eat_alert">If the mother does not eat full stomach or eat less than 4 times, advise mother to do so.</string>
@@ -59,16 +60,13 @@
     <string name="hbnc_baby_weight_2_5_alert">Advise the mother to provide extra warmth to the baby and feed the baby more frequently. If the baby (low birth weight or normal) is not gaining weight then refer to SNCU at the nearest health facility.</string>
 
 
-
-
-
     <string name="title_activity_home" translatable="false">HomeActivity</string>
     <string name="nav_header_desc" translatable="false">Navigation header</string>
 
     <string name="cd_icon_grid_icon">icon</string>
     <string name="nav_item_1_text">Name : <b>%s</b></string>
     <string name="nav_item_2_text">Username : <b>%s</b></string>
-    <string name="nav_item_3_text">User ID :  <b>%d</b></string>
+    <string name="nav_item_3_text">User ID :  <b>%s</b></string>
     <string name="nav_item_4_text">Version : %s</string>
     <string name="tv_required_text_asterisk">*</string>
     <string name="rv_item_hh_entry_1">%1$d</string>
@@ -97,6 +95,8 @@
     <string name="tv_ncd_status_ph">NCD Status</string>
     <string name="tv_tb_status_ph">TB Status</string>
     <string name="iv_sync_state_tv">SYNC STATE</string>
+    <string name="chat_error">There is some error in loading your chat bot</string>
+    <string name="help_and_support">Help &amp; Support</string>
 
 
     <string name="version">2.0.0</string>
@@ -165,9 +165,9 @@
     <string name="no_records_found_hh">No Household records found. Please start registering households by clicking on the button below.</string>
     <string name="something_went_wrong_nunable_to_connect_to_server_ntry_again_later">Something went wrong !\nUnable to connect to server !\nTry again later!</string>
     <string name="try_again">Try Again!</string>
-    <string name="version_2_0_0">APK Version 7.1.35</string>
-<!--    <string name="disagree">DISAGREE</string>-->
-<!--    <string name="agree">AGREE</string>-->
+    <string name="version_2_0_0">APK Version 2.0.0</string>
+    <!--    <string name="disagree">DISAGREE</string>-->
+    <!--    <string name="agree">AGREE</string>-->
     <string name="enter_pin">Enter PIN</string>
     <string name="sync_in_progress">Sync in progress ...</string>
     <string name="full_name">Full Name</string>
@@ -232,6 +232,10 @@
 
     <string name="help">Help</string>
     <string name="logout">Logout</string>
+    <string name="delete_my_account">Request to delete my account</string>
+    <string name="str_add_member">Add Member</string>
+    <string name="str_not_available">Not Available</string>
+    <string name="support">Support</string>
     <string name="sync_status">Sync Status</string>
     <string name="go_to_home">Go to Home</string>
     <string name="change_language">Change Language</string>
@@ -243,7 +247,7 @@
     <string name="reproductive_age_list">Reproductive Age List</string>
     <string name="ncd_eligible_list">NCD Eligible List</string>
     <string name="ncd_list">NCD List</string>
-    <string name="ncd_non_eligible_list">NCD Non-Eligible List</string>
+    <string name="ncd_non_eligible_list">NCD Non-Priority List</string>
     <string name="ncd_priority_list">NCD Priority List</string>
     <string name="survey_register">Survey Register</string>
     <string name="all_household_list">All Household List</string>
@@ -264,7 +268,7 @@
     <string name="hbyc">HBYC</string>
     <string name="hbyc_month_list">Hbyc Month List</string>
     <string name="immunization">Immunization</string>
-<!--    <string name="child_immunization_list">Child Immunization List</string>-->
+    <!--    <string name="child_immunization_list">Child Immunization List</string>-->
     <string name="pregnancy_registration_form">Pregnancy Registration Form</string>
     <string name="anc_visit">ANC Visit</string>
     <string name="eligible_couple_list">Eligible Couple List</string>
@@ -280,22 +284,22 @@
     <string name="delivery_outcome_list">Delivery Outcome List</string>
     <string name="infant_reg_list">Infant Reg List</string>
     <string name="infant_reg">Infant Reg</string>
-<!--    <string name="child_reg_list">Child Reg List</string>-->
-<!--    <string name="child_reg">Child Reg.</string>-->
+    <!--    <string name="child_reg_list">Child Reg List</string>-->
+    <!--    <string name="child_reg">Child Reg.</string>-->
     <string name="communicable_diseases">Communicable Diseases</string>
     <string name="dashboard">Dashboard</string>
     <string name="sign_in">Sign In</string>
     <string name="service_location">Service Location</string>
 
-<!--    <string name="wife_s_name">Wife\'s Name</string>-->
-<!--    <string name="spouse_s_name">Spouse\'s Name</string>-->
-<!--    <string name="age_at_marriage">Age At Marriage</string>-->
-<!--    <string name="date_of_marriage">Date of Marriage</string>-->
-<!--    <string name="father_s_name">Father\'s Name</string>-->
-<!--    <string name="mother_s_name">Mother\'s Name</string>-->
-<!--    <string name="mobile_number_of">Mobile Number Of</string>-->
-<!--    <string name="other_mobile_number_of">Other - Mobile Number of</string>-->
-<!--    <string name="form_name">Form Name</string>-->
+    <!--    <string name="wife_s_name">Wife\'s Name</string>-->
+    <!--    <string name="spouse_s_name">Spouse\'s Name</string>-->
+    <!--    <string name="age_at_marriage">Age At Marriage</string>-->
+    <!--    <string name="date_of_marriage">Date of Marriage</string>-->
+    <!--    <string name="father_s_name">Father\'s Name</string>-->
+    <!--    <string name="mother_s_name">Mother\'s Name</string>-->
+    <!--    <string name="mobile_number_of">Mobile Number Of</string>-->
+    <!--    <string name="other_mobile_number_of">Other - Mobile Number of</string>-->
+    <!--    <string name="form_name">Form Name</string>-->
 
     <string name="save_successful">Save Successful</string>
     <string name="something_wend_wong_contact_testing">Something wend wong! Contact testing!</string>

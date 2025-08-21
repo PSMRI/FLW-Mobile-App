@@ -15,7 +15,6 @@ class HRPMicroBirthPlanDataset(
         id = 1,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.name_of_the_pw),
-        arrayId = -1,
         required = true,
         etInputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
     )
@@ -24,8 +23,7 @@ class HRPMicroBirthPlanDataset(
         id = 2,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.nearest_sc_hwc),
-        arrayId = -1,
-        required = true,
+        required = false,
         etInputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
     )
 
@@ -42,8 +40,8 @@ class HRPMicroBirthPlanDataset(
         id = 4,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.contact_number_1),
-        arrayId = -1,
         required = true,
+        isEnabled = false,
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
         isMobileNumber = true,
         etMaxLength = 10,
@@ -55,8 +53,7 @@ class HRPMicroBirthPlanDataset(
         id = 5,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.contact_number_2),
-        arrayId = -1,
-        required = true,
+        required = false,
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
         isMobileNumber = true,
         etMaxLength = 10,
@@ -67,16 +64,16 @@ class HRPMicroBirthPlanDataset(
         id = 6,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.sc_hwc_tg_hosp),
-        arrayId = -1,
-        required = true,
+        required = false,
+        etMaxLength = 100,
         etInputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
     )
     private val block = FormElement(
         id = 7,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.block),
-        arrayId = -1,
-        required = true,
+        required = false,
+        etMaxLength = 100,
         etInputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
     )
 
@@ -84,21 +81,20 @@ class HRPMicroBirthPlanDataset(
         id = 8,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.bank_acc_no),
-        arrayId = -1,
-        required = true,
+        required = false,
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
         isMobileNumber = true,
-        etMaxLength = 12,
-        max = 999999999999,
-        min = 100000000000
+        etMaxLength = 18,
+        max = 999999999999999999L,
+        min = 10000000L
     )
 
     private val nearestPhc = FormElement(
         id = 9,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.nearest_24x7_phc),
-        arrayId = -1,
-        required = true,
+        required = false,
+        etMaxLength = 100,
         etInputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
     )
 
@@ -106,8 +102,8 @@ class HRPMicroBirthPlanDataset(
         id = 10,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.nearest_fru),
-        arrayId = -1,
-        required = true,
+        required = false,
+        etMaxLength = 100,
         etInputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
     )
 
@@ -115,8 +111,8 @@ class HRPMicroBirthPlanDataset(
         id = 11,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.blood_donors_identified_1),
-        arrayId = -1,
-        required = true,
+        required = false,
+        etMaxLength = 50,
         etInputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
     )
 
@@ -124,8 +120,8 @@ class HRPMicroBirthPlanDataset(
         id = 12,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.blood_donors_identified_2),
-        arrayId = -1,
-        required = true,
+        required = false,
+        etMaxLength = 50,
         etInputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
     )
 
@@ -133,8 +129,8 @@ class HRPMicroBirthPlanDataset(
         id = 13,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.birth_companion),
-        arrayId = -1,
-        required = true,
+        required = false,
+        etMaxLength = 50,
         etInputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
     )
 
@@ -142,8 +138,9 @@ class HRPMicroBirthPlanDataset(
         id = 14,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.person_who_will_take_care_of_children_if_any_when_the_pw_is_admitted_for_delivery),
-        arrayId = -1,
-        required = true,
+        required = false,
+        etMaxLength = 50,
+
         etInputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
     )
 
@@ -151,8 +148,8 @@ class HRPMicroBirthPlanDataset(
         id = 15,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.name_of_vhsnd_community_member_for_support_during_emergency),
-        arrayId = -1,
-        required = true,
+        required = false,
+        etMaxLength = 100,
         etInputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
     )
 
@@ -160,8 +157,7 @@ class HRPMicroBirthPlanDataset(
         id = 16,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.contact_number_of_vhsnd_community_member_for_support_during_emergency),
-        arrayId = -1,
-        required = true,
+        required = false,
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
         isMobileNumber = true,
         etMaxLength = 10,
@@ -172,16 +168,16 @@ class HRPMicroBirthPlanDataset(
         id = 17,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.mode_of_transportation_in_case_of_labour_pain),
-        arrayId = -1,
-        required = true,
+        required = false,
+        etMaxLength = 20,
         etInputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
     )
     private val usg = FormElement(
         id = 18,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.nearest_usg_centre),
-        arrayId = -1,
-        required = true,
+        required = false,
+        etMaxLength = 100,
         etInputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
     )
 
@@ -189,8 +185,16 @@ class HRPMicroBirthPlanDataset(
         id = 19,
         inputType = InputType.HEADLINE,
         title = resources.getString(R.string.micro_birth_plan_for_all_pregnant_women),
-        arrayId = -1,
         required = false
+    )
+
+    private val husbandName = FormElement(
+        id = 20,
+        inputType = InputType.EDIT_TEXT,
+        title = resources.getString(R.string.husband_s_name),
+        required = true,
+        isEnabled = false,
+        etInputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
     )
 
     suspend fun setUpPage(ben: BenRegCache?, saved: HRPMicroBirthPlanCache?) {
@@ -203,23 +207,27 @@ class HRPMicroBirthPlanDataset(
             scHosp,
             usg,
             block,
+            husbandName,
             bankac,
             nearestPhc,
             nearestFru,
             bloodDonors1,
             bloodDonors2,
             birthCompanion,
-//            careTaker,
-//            communityMember,
-//            communityMemberContact,
+            careTaker,
+            communityMember,
+            communityMemberContact,
             modeOfTransportation
         )
 
+
+        contactNumber1.value=ben?.contactNumber.toString()
+        husbandName.value= ben?.genDetails?.spouseName.toString()
         saved?.let {
             nearestSc.value = it.nearestSc
             bloodGroup.value =
                 getLocalValueInArray(R.array.maternal_health_blood_group, it.bloodGroup)
-            contactNumber1.value = it.contactNumber1
+            contactNumber1.value = ben?.contactNumber?.toString()
             contactNumber2.value = it.contactNumber2
             scHosp.value = it.scHosp
             block.value = it.block
@@ -302,9 +310,6 @@ class HRPMicroBirthPlanDataset(
                 validateMobileNumberOnEditText(communityMemberContact)
             }
 
-            modeOfTransportation.id -> {
-                validateAllAlphabetsSpaceOnEditText(modeOfTransportation)
-            }
 
             else -> {
                 -1

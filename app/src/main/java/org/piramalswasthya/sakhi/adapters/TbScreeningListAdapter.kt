@@ -43,6 +43,10 @@ class TbScreeningListAdapter(
         ) {
             binding.benWithTb = item
 
+            if(item.tb?.historyOfTb == true){
+                binding.cvContent.visibility = View.GONE
+            }
+
             binding.ivSyncState.visibility = if (item.tb == null) View.INVISIBLE else View.VISIBLE
 
             if (item.ben.spouseName == "Not Available" && item.ben.fatherName == "Not Available") {

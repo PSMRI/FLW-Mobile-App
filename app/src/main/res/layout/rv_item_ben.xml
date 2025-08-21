@@ -391,7 +391,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical"
-                        android:padding="@dimen/padding_small"></LinearLayout>
+                        android:padding="@dimen/padding_small"/>
 
                     <LinearLayout
                         showLayout="@{showAbha? !hasAbha : showAbha}"
@@ -426,22 +426,35 @@
                         android:orientation="vertical"
                         android:padding="@dimen/padding_small">
 
-                        <TextView
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="2"
-                            android:text="@string/abha_number"
-                            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                            android:textColor="?attr/colorOnPrimary" />
+                            android:orientation="horizontal">
 
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/abha_number"
+                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                                android:textColor="?attr/colorOnPrimary" />
+
+                            <ImageView
+                                android:id="@+id/tvIsNewAbha"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/_5sdp"
+                                android:src='@{ben.isNewAbha ? @drawable/ic_new_abha : @drawable/ic_existing_abha}' />
+
+                        </LinearLayout>
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="2"
                             android:text="@{ben.abhaId}"
                             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                             android:textColor="?attr/colorOnPrimary"
-                            tools:text="0123456789" />
+                            tools:text="0123456789"/>
+
+
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>

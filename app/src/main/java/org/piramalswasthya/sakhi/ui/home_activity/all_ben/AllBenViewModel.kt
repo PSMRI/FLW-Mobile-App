@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.helpers.filterBenList
 import org.piramalswasthya.sakhi.model.BenHealthIdDetails
+import org.piramalswasthya.sakhi.repositories.ABHAGenratedRepo
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
 import javax.inject.Inject
@@ -17,6 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AllBenViewModel @Inject constructor(
     recordsRepo: RecordsRepo,
+    abhaGenratedRepo: ABHAGenratedRepo,
     private val benRepo: BenRepo
 ) : ViewModel() {
 
@@ -52,18 +54,28 @@ class AllBenViewModel @Inject constructor(
         _benId.value = benId
         viewModelScope.launch {
             benRepo.getBenFromId(benId)?.let {
-                val result = benRepo.getBeneficiaryWithId(it.benRegId)
-                if (result != null) {
+                _benRegId.value = it.benRegId
+               // val result = benRepo.getBeneficiaryWithId(it.benRegId)
+               /* if (result != null) {
                     _abha.value = result.healthIdNumber
                     it.healthIdDetails = BenHealthIdDetails(result.healthId, result.healthIdNumber)
+                    it.isNewAbha =result.isNewAbha
                     benRepo.updateRecord(it)
                 } else {
                     _benRegId.value = it.benRegId
-                }
+                }*/
             }
         }
     }
 
+    suspend fun getBenFromId(benId: Long):Long{
+        var benRegId = 0L
+             val result = benRepo.getBenFromId(benId)
+             if (result != null) {
+                 benRegId = result.benRegId
+             }
+         return benRegId
+    }
     fun resetBenRegId() {
         _benRegId.value = null
     }

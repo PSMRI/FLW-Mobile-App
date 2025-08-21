@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pwrdst_rich_id">RCH ID</string>
+    <string name="pwrdst_mcp_card_no">এমচিপি কাৰ্ড নং</string>
+    <string name="pwrdst_name_hus">স্বামীৰ নাম</string>
+    <string name="pwrdst_curr_age_wo">মহিলাৰ বৰ্তমান বয়স</string>
+    <string name="pwrdst_lmp_date">LMP Date</string>
+    <string name="pwrdst_wk_of_prag_reg">পঞ্জীয়নৰ সময়ত গৰ্ভাৱস্থাৰ সপ্তাহ</string>
+    <string name="pwrdst_edd">EDD</string>
+    <string name="pwrdst_name_prag_wo">গৰ্ভৱতী মহিলাৰ নাম</string>
+    <string name="pwrdst_bld_grp">ব্লাড গ্ৰুপ</string>
+    <string name="pwrdst_wht_of_tm_reg">সময়ত PW (Kg) ৰ ওজন পঞ্জীয়ন</string>
+    <string name="pwrdst_hht_of_pw">পিডব্লিউৰ উচ্চতা (চে.মি.)</string>
+    <string name="pwrdst_vdrl_rpr_tst_rlts">VDRL/RPR পৰীক্ষাৰ ফলাফল</string>
+    <string name="pwrdst_vdrl_tst_done">VDRL পৰীক্ষা কৰা তাৰিখ</string>
+    <string name="pwrdst_hiv_tst_rlt">এইচ আই ভি পৰীক্ষাৰ ফলাফল</string>
+    <string name="pwrdst_date_hiv_tst_done">এইচ আই ভি পৰীক্ষা কৰা তাৰিখ</string>
+    <string name="pwrdst_hbsag_tst_rlt">HBsAg পৰীক্ষাৰ ফলাফল</string>
+    <string name="pwrdst_hbsag_tst_done">HbsAg পৰীক্ষা কৰা তাৰিখ</string>
+    <string name="pwrdst_pst_illness">অতীতৰ অসুস্থতা</string>
+    <string name="pwrdst_other">অন্যান্য</string>
+    <string name="pwrdst_is_prag">এইটো আপোনাৰ ১ম গৰ্ভাৱস্থা নেকি?</string>
+    <string name="pwrdst_no_of_prev_prag">মুঠ নং। পূৰ্বৰ গৰ্ভাৱস্থাৰ</string>
+    <string name="pwrdst_any_lst_pregnancy">Last Pregnancy ত যিকোনো জটিলতা</string>
+    <string name="pwrdst_any_other_comp">আন যিকোনো জটিলতা</string>
+    <array name="pwrdst_yes_no">
+        <item>Yes</item>
+        <item>No</item>
+    </array>
+    <string name="pwrdst_is_id_as_hrp_cse">এইচ আৰ পি কেছ হিচাপে চিনাক্ত কৰা হৈছেনে?</string>
+    <string name="pwrdst_who_id_as_hrp">কোনে এইচ আৰ পি বুলি চিনাক্ত কৰিছিল?</string>
+
+</resources>

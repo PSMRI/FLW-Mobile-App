@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <data>
+
+    </data>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TableLayout
+                android:id="@+id/table_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_alignParentTop="true" >
+
+                <TableRow
+                    android:background="@drawable/horizontal_border"
+                    >
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/micro_birth_plan"
+                        android:gravity="center"
+                        android:background="@color/md_theme_dark_error"
+                        android:layout_weight="1"
+                        android:textStyle="bold"
+                        android:padding="8dp"/>
+
+                    <TextView
+                        android:id="@+id/tvLmpDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/lmp"
+                        android:background="@color/md_theme_dark_onTertiaryContainer"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:textStyle="bold"
+                        android:padding="8dp"/>
+
+                    <TextView
+                        android:id="@+id/tvEddDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/edd"
+                        android:background="@color/md_theme_dark_onTertiaryContainer"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:textStyle="bold"
+                        android:padding="8dp"/>
+                </TableRow>
+
+                <TableRow
+                    android:weightSum="4"
+                    android:background="@drawable/horizontal_border"
+                    android:layout_gravity="center_horizontal"
+                    >
+
+                    <TextView
+                        android:id="@+id/name_pw"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:minHeight="80dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/border_line"
+                        android:padding="8dp"/>
+
+                    <TextView
+                        android:id="@+id/age"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:layout_weight="1"
+                        android:minHeight="80dp"
+                        android:background="@drawable/border_line"
+                        android:padding="8dp"/>
+
+                    <TextView
+                        android:id="@+id/contact_no"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:layout_weight="1"
+                        android:minHeight="80dp"
+                        android:background="@drawable/border_line"
+                        android:padding="8dp"/>
+
+
+                    <TextView
+                        android:id="@+id/sc_hwc"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:layout_weight="1"
+                        android:minHeight="80dp"
+                        android:padding="8dp"/>
+
+
+
+                </TableRow>
+
+                <TableRow
+                    android:weightSum="4"
+                    android:background="@drawable/horizontal_border"
+
+                    >
+
+                    <TextView
+                        android:id="@+id/husband_name"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:layout_weight="1"
+                        android:background="@drawable/border_line"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:padding="8dp"/>
+
+                    <TextView
+                        android:id="@+id/lmp"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/border_line"
+                        android:layout_weight="1"
+                        android:padding="8dp"/>
+
+                    <TextView
+                        android:id="@+id/edd"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/border_line"
+                        android:padding="8dp"/>
+
+                    <TextView
+                        android:id="@+id/bank_acc_no"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="8dp"/>
+
+                </TableRow>
+
+                <TableRow
+                    android:background="@drawable/horizontal_border"
+                    android:weightSum="4"
+                    android:layout_gravity="center_horizontal"
+                    >
+
+                    <TextView
+                        android:id="@+id/nr_sc_hwc"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/border_line"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:padding="8dp"/>
+
+
+
+                    <TextView
+                        android:id="@+id/block"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/border_line"
+                        android:padding="8dp"/>
+
+                    <TextView
+                        android:id="@+id/nr_phc"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/border_line"
+                        android:layout_weight="1"
+                        android:padding="8dp"/>
+
+                    <TextView
+                        android:id="@+id/nr_fru"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="8dp"/>
+
+                </TableRow>
+
+                <TableRow
+                    android:background="@drawable/horizontal_border"
+                    android:weightSum="4"
+                    android:layout_gravity="center_horizontal"
+                    >
+
+                    <TextView
+                        android:id="@+id/nr_usg"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:minHeight="80dp"
+                        android:background="@drawable/border_line"
+                        android:layout_weight="1"
+                        android:padding="8dp"/>
+
+                    <TextView
+                        android:id="@+id/blood_grp"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:minHeight="80dp"
+                        android:background="@drawable/border_line"
+                        android:padding="8dp"/>
+
+                    <TextView
+                        android:id="@+id/blood_donr"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:minHeight="80dp"
+                        android:background="@drawable/border_line"
+                        android:padding="8dp"/>
+
+                    <TextView
+                        android:id="@+id/birth_comp"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:minHeight="80dp"
+                        android:padding="8dp"/>
+                </TableRow>
+
+                <TableRow
+                    android:background="@drawable/horizontal_border"
+                    >
+
+                    <TextView
+                        android:id="@+id/prson_tk_care"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="8dp"/>
+
+                </TableRow>
+
+                <TableRow
+                    android:background="@drawable/horizontal_border"
+                    >
+
+                    <TextView
+                        android:id="@+id/name_of_cont_no"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="8dp"/>
+
+                </TableRow>
+                <TableRow
+                    android:background="@drawable/horizontal_border"
+                    >
+
+                    <TextView
+                        android:id="@+id/mode_of_trasp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="8dp"/>
+
+
+                </TableRow>
+            </TableLayout>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_share"
+                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableRight="@drawable/icon_whatsapp"
+                android:layout_margin="@dimen/margin_normal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/table_layout"
+                android:textColor="?attr/colorOnPrimary"
+                android:text="Share" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+</layout>

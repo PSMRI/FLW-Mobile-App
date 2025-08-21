@@ -6,6 +6,8 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -15,18 +17,20 @@ import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.adapters.NCDCategoryAdapter
 import org.piramalswasthya.sakhi.adapters.NcdCbacBenListAdapter
-import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
+import org.piramalswasthya.sakhi.databinding.FragmentNcdEligibleListBinding
 import org.piramalswasthya.sakhi.model.getDateStrFromLong
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import timber.log.Timber
 
 @AndroidEntryPoint
-class NcdEligibleListFragment : Fragment() {
+class NcdEligibleListFragment : Fragment() , NCDCategoryAdapter.ClickListener {
 
 
-    private val binding: FragmentDisplaySearchRvButtonBinding by lazy {
-        FragmentDisplaySearchRvButtonBinding.inflate(layoutInflater)
+
+    private val binding: FragmentNcdEligibleListBinding by lazy {
+        FragmentNcdEligibleListBinding.inflate(layoutInflater)
     }
 
     private val viewModel: NcdEligibleListViewModel by viewModels()
@@ -44,6 +48,12 @@ class NcdEligibleListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnNextPage.visibility = View.GONE
+
+
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, viewModel.yearsList())
+        binding.tilRvDropdown.setAdapter(adapter)
+
+        binding.rvCat.adapter = NCDCategoryAdapter(viewModel.categoryData(),this,viewModel)
 
         val benAdapter =
             NcdCbacBenListAdapter(
@@ -105,6 +115,19 @@ class NcdEligibleListFragment : Fragment() {
             }
 
         }
+        binding.tilRvDropdown.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                val selectedItem = parent.getItemAtPosition(position).toString()
+                if (selectedItem != "Select Years") {
+                    viewModel.filterText(selectedItem)
+                }
+
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                Timber.d("Called here!")
+            }
+        }
         binding.searchView.setOnFocusChangeListener { searchView, b ->
             if (b)
                 (searchView as EditText).addTextChangedListener(searchTextWatcher)
@@ -114,6 +137,7 @@ class NcdEligibleListFragment : Fragment() {
         }
     }
 
+
     override fun onStart() {
         super.onStart()
         activity?.let {
@@ -122,6 +146,10 @@ class NcdEligibleListFragment : Fragment() {
                 getString(R.string.ncd_eligible_list)
             )
         }
+    }
+
+    override fun onClicked(catDataList: String) {
+        viewModel.selectedText = catDataList
     }
 
 }

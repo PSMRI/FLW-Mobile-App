@@ -113,7 +113,11 @@ class NewBenRegFragment : Fragment() {
         alertDialog.setNegativeButton(
             resources.getString(R.string.cancel)
         ) { dialog, _ ->
-            findNavController().navigateUp()
+            try {
+                findNavController().navigateUp()
+            } catch (e:Exception){
+                dialog.cancel()
+            }
             dialog.cancel()
         }
         alertDialog.show()
@@ -140,7 +144,12 @@ class NewBenRegFragment : Fragment() {
         alertDialog.setNegativeButton(
             resources.getString(R.string.cancel)
         ) { dialog, _ ->
-            findNavController().navigateUp()
+            try {
+                findNavController().navigateUp()
+            } catch (e:Exception) {
+                dialog.cancel()
+            }
+
             dialog.cancel()
         }
         alertDialog.show()
@@ -156,12 +165,17 @@ class NewBenRegFragment : Fragment() {
             .create()
         alertBinding.btnNegative.setOnClickListener {
             alertDialog.dismiss()
-            findNavController().navigateUp()
+            try {
+                findNavController().navigateUp()
+            }catch (e:Exception){
+                alertDialog.dismiss()
+            }
+
         }
         alertBinding.btnPositive.setOnClickListener {
             if (alertBinding.checkBox.isChecked) {
                 viewModel.setConsentAgreed()
-                requestLocationPermission()
+                //requestLocationPermission()
                 alertDialog.dismiss()
             } else
                 Toast.makeText(
@@ -185,7 +199,11 @@ class NewBenRegFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.cvPatientInformation.visibility = View.GONE
         binding.btnSubmit.setOnClickListener {
-            submitBenForm()
+           // submitBenForm()
+            if (validateCurrentPage()) {
+                showPreview()
+            }
+
         }
 
         viewModel.recordExists.observe(viewLifecycleOwner) { notIt ->
@@ -297,11 +315,10 @@ class NewBenRegFragment : Fragment() {
 
                 }
 
-                9 -> {
-                    viewModel.getIndexOfMaritalStatus().takeIf { it != -1 }?.let {
-                        notifyItemChanged(it)
-                    }
-                }
+                9 -> notifyDataSetChanged()
+
+                115 -> notifyDataSetChanged()
+
 
                 12 -> notifyDataSetChanged()
 //notifyItemChanged(viewModel.getIndexOfContactNumber())
@@ -338,6 +355,37 @@ class NewBenRegFragment : Fragment() {
         }
     }
 
+    private fun showPreview() {
+        // run in lifecycleScope since viewModel.getFormPreviewData() is suspend
+        lifecycleScope.launch {
+            val previewItems = try {
+                viewModel.getFormPreviewData()
+            } catch (e: Exception) {
+                // fallback: show toast and perform direct submit
+                Toast.makeText(requireContext(), getString(R.string.something_wend_wong_contact_testing), Toast.LENGTH_SHORT).show()
+                return@launch
+            }
+
+            val sheet = PreviewBottomSheet()
+            sheet.setData(previewItems)
+            sheet.setCallbacks(
+                onEdit = { /* user wants to edit — do nothing, sheet already dismissed */ },
+                onSubmit = {
+                    // validate before saving (reuse your existing validateCurrentPage)
+                    if (validateCurrentPage()) {
+                        viewModel.saveForm()
+                    } else {
+                        // scroll to first invalid field is handled inside validateCurrentPage
+                    }
+                }
+            )
+            sheet.show(parentFragmentManager, "ben_preview_sheet")
+        }
+    }
+
+
+
+
     private fun validateCurrentPage(): Boolean {
         val result = binding.form.rvInputForm.adapter?.let {
             (it as FormInputAdapter).validateInput(resources)
@@ -354,7 +402,7 @@ class NewBenRegFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        requestLocationPermission()
+    //    requestLocationPermission()
         activity?.let {
             (it as HomeActivity).updateActionBar(
                 R.drawable.ic__ben,

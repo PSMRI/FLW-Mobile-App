@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+        <import type="android.view.View" />
         <variable
             name="form"
             type="org.piramalswasthya.sakhi.model.FormElement" />
@@ -31,12 +32,13 @@
                 android:drawableEnd="@drawable/ic_calendar"
                 android:focusable="false"
                 android:singleLine="true"
+                android:paddingLeft="@dimen/_20sdp"
                 android:text="@{form.value}"
                 android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
-<!--        <TextView-->
+        <!--        <TextView-->
 <!--            android:id="@+id/tv_nullable"-->
 <!--            android:layout_width="wrap_content"-->
 <!--            android:layout_height="wrap_content"-->

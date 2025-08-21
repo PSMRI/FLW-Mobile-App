@@ -16,6 +16,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.FragmentVerifyMobileOtpBinding
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
+import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.AadhaarIdViewModel
 import org.piramalswasthya.sakhi.ui.abha_id_activity.verify_mobile_otp.VerifyMobileOtpViewModel.State
 
 @AndroidEntryPoint
@@ -29,16 +30,25 @@ class VerifyMobileOtpFragment : Fragment() {
 
     private val viewModel: VerifyMobileOtpViewModel by viewModels()
 
+    private val parentViewModel: AadhaarIdViewModel by viewModels({ requireActivity() })
 
-    private var timer = object : CountDownTimer(30000, 1000) {
+    val args: VerifyMobileOtpFragmentArgs by lazy {
+        VerifyMobileOtpFragmentArgs.fromBundle(requireArguments())
+    }
+
+
+    private var timer = object : CountDownTimer(60000, 1000) {
         override fun onTick(millisUntilFinished: Long) {
             val sec = millisUntilFinished / 1000 % 60
-            binding.timerResendOtp.text = sec.toString()
+          //  binding.timerResendOtp.text = "Didn't receive OTP? Wait 00:$sec seconds"
+            binding.timerCount.text = "$sec"
         }
 
         override fun onFinish() {
             binding.resendOtp.isEnabled = true
             binding.timerResendOtp.visibility = View.INVISIBLE
+            binding.timerCount.visibility = View.INVISIBLE
+            binding.timerSeconds.visibility = View.INVISIBLE
         }
     }
 
@@ -53,10 +63,9 @@ class VerifyMobileOtpFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = findNavController()
-
         startResendTimer()
         binding.btnVerifyOTP.setOnClickListener {
-            viewModel.verifyOtpClicked(binding.tietVerifyMobileOtp.text.toString())
+            viewModel.verifyOtpClicked(binding.otpView.text.toString())
         }
 
         binding.resendOtp.setOnClickListener {
@@ -64,7 +73,7 @@ class VerifyMobileOtpFragment : Fragment() {
             startResendTimer()
         }
 
-        binding.tietVerifyMobileOtp.addTextChangedListener(object : TextWatcher {
+        binding.otpView.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
 
@@ -73,6 +82,7 @@ class VerifyMobileOtpFragment : Fragment() {
 
             override fun afterTextChanged(p0: Editable?) {
                 binding.btnVerifyOTP.isEnabled = p0 != null && p0.length == 6
+                binding.tvErrorText.visibility = View.GONE
             }
         })
 
@@ -102,7 +112,7 @@ class VerifyMobileOtpFragment : Fragment() {
                 State.OTP_VERIFY_SUCCESS -> {
                     findNavController().navigate(
                         VerifyMobileOtpFragmentDirections.actionVerifyMobileOtpFragmentToCreateAbhaFragment(
-                            viewModel.txnID
+                            viewModel.txnID, args.name, args.phrAddress, args.abhaNumber,viewModel.abhaResponse
                         )
                     )
                     viewModel.resetState()
@@ -136,7 +146,7 @@ class VerifyMobileOtpFragment : Fragment() {
                 State.ABHA_GENERATED_SUCCESS -> {
                     findNavController().navigate(
                         VerifyMobileOtpFragmentDirections.actionVerifyMobileOtpFragmentToCreateAbhaFragment(
-                            viewModel.txnID
+                            viewModel.txnID, args.name, args.phrAddress, args.abhaNumber,viewModel.abhaResponse
                         )
                     )
                     viewModel.resetState()
@@ -150,6 +160,10 @@ class VerifyMobileOtpFragment : Fragment() {
                 viewModel.resetErrorMessage()
             }
         }
+
+        var string = getMobileNumber(parentViewModel.otpMobileNumberMessage) ?: ""
+        binding.tvOtpMsg.text = getString(R.string.str_otp_number_message).replace("@mobileNumber", string)
+
     }
 
     override fun onStart() {
@@ -165,6 +179,8 @@ class VerifyMobileOtpFragment : Fragment() {
     private fun startResendTimer() {
         binding.resendOtp.isEnabled = false
         binding.timerResendOtp.visibility = View.VISIBLE
+        binding.timerCount.visibility = View.VISIBLE
+        binding.timerSeconds.visibility = View.VISIBLE
         timer.start()
     }
 
@@ -174,4 +190,11 @@ class VerifyMobileOtpFragment : Fragment() {
         _binding = null
     }
 
+    private fun getMobileNumber(input: String): String? {
+        val regex = Regex("""\*+\d+""")
+        val matches = regex.findAll(input).toList()
+        val lastMatch = matches.lastOrNull()?.value
+        println("Extracted: $lastMatch") // Output: ******0180
+        return lastMatch
+    }
 }

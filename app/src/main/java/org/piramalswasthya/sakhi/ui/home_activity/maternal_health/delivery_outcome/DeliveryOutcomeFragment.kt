@@ -119,16 +119,23 @@ class DeliveryOutcomeFragment : Fragment() {
         binding.form.rvInputForm.adapter?.apply {
             when (formId) {
                 1 -> {
-                    notifyItemChanged(13)
+                    //notifyItemChanged(13)
+                    notifyDataSetChanged()
+                }
+                6->{
+                   // notifyItemChanged(10)
+                    notifyDataSetChanged()
                 }
 
                 11, 12 -> {
-                    notifyItemChanged(10)
+                   // notifyItemChanged(10)
+                    notifyDataSetChanged()
                 }
 
                 10 -> {
-                    notifyItemChanged(11)
-                    notifyItemChanged(12)
+//                    notifyItemChanged(11)
+//                    notifyItemChanged(12)
+                    notifyDataSetChanged()
                 }
             }
         }

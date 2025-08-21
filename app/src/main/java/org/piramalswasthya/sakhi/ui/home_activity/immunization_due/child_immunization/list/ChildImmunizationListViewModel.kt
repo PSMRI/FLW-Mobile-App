@@ -1,5 +1,7 @@
 package org.piramalswasthya.sakhi.ui.home_activity.immunization_due.child_immunization.list
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -10,6 +12,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.database.room.dao.ImmunizationDao
+import org.piramalswasthya.sakhi.helpers.filterImmunList
 import org.piramalswasthya.sakhi.model.ImmunizationCategory
 import org.piramalswasthya.sakhi.model.ImmunizationDetailsDomain
 import org.piramalswasthya.sakhi.model.Vaccine
@@ -36,6 +39,11 @@ class ChildImmunizationListViewModel @Inject constructor(
     )
     private lateinit var vaccinesList: List<Vaccine>
 
+    private val filter = MutableStateFlow("")
+
+    val selectedFilter=MutableLiveData<String?>("All")
+    var selectedPosition = 0
+
     val benWithVaccineDetails = pastRecords.map { vaccineIdList ->
         vaccineIdList.map { cache ->
             val ageMillis = System.currentTimeMillis() - cache.ben.dob
@@ -48,22 +56,25 @@ class ChildImmunizationListViewModel @Inject constructor(
                         vaccine.vaccineName,
                         vaccine.immunizationService,
                         if (cache.givenVaccines.any { it.vaccineId == vaccine.vaccineId }) VaccineState.DONE
-                        else if (ageMillis < (vaccine.maxAllowedAgeInMillis)) {
-                            vaccine.dependantVaccineId?.let { dep ->
-
-                                val isDepThere =
-                                    cache.givenVaccines.any { it.vaccineId == vaccine.dependantVaccineId }
-                                if (isDepThere)
-                                    VaccineState.PENDING
-                                else VaccineState.MISSED
-                            }
-                                ?: run { VaccineState.PENDING }
+                        else if (ageMillis <= (vaccine.minAllowedAgeInMillis)) {
+                            VaccineState.PENDING
+                        } else if (ageMillis <= (vaccine.maxAllowedAgeInMillis)) {
+                            VaccineState.OVERDUE
                         } else VaccineState.MISSED
-
                     )
-
                 })
         }
+    }
+
+    val immunizationBenList = benWithVaccineDetails.combine(filter) { list, filter ->
+        filterImmunList(list, filter)
+    }
+
+    fun filterText(text: String) {
+        viewModelScope.launch {
+            filter.emit(text)
+        }
+
     }
 
     private val clickedBenId = MutableStateFlow(0L)
@@ -88,6 +99,25 @@ class ChildImmunizationListViewModel @Inject constructor(
     }
 
 
+    private val catList = ArrayList<String>()
+
+    fun categoryData() : ArrayList<String> {
+
+        catList.clear()
+        catList.add("ALL")
+        catList.add("6 WEEKS")
+        catList.add("10 WEEKS")
+        catList.add("14 WEEKS")
+        catList.add("9-12 MONTHS")
+        catList.add("16-24 MONTHS")
+        catList.add("5-6 YEARS")
+        catList.add("10 YEARS")
+        catList.add("16 YEARS")
+
+        return catList
+
+    }
+
     private fun navigateForClicked(benId: Long, vaccineId: Int) {
         Timber.d("Hello Me! clicked for $benId, vaccineId : $vaccineId")
     }
@@ -95,5 +125,6 @@ class ChildImmunizationListViewModel @Inject constructor(
     fun getSelectedBenId(): Long {
         return clickedBenId.value
     }
+
 
 }

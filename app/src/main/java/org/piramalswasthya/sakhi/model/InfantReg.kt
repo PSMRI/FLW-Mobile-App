@@ -138,11 +138,20 @@ data class BenWithDoAndIrCache(
 data class InfantRegDomain(
     val motherBen: BenBasicDomain,
     val babyIndex: Int,
-    val babyName: String = "Baby $babyIndex of ${motherBen.benFullName}",
+    var babyName: String = "Baby $babyIndex of ${motherBen.benFullName}",
     val deliveryOutcome: DeliveryOutcomeCache,
     val savedIr: InfantRegCache?,
     val syncState: SyncState? = savedIr?.syncState
-)
+) {
+    val customName: String
+        get() = if (babyIndex == 0) {
+            "${babyIndex+1}st baby of ${motherBen.benName}"
+        } else if (babyIndex == 1) {
+            "${babyIndex+1}nd baby of ${motherBen.benName}"
+        } else {
+            "${babyIndex+1}rd baby of ${motherBen.benName}"
+        }
+}
 
 data class InfantRegPost(
     val id: Long = 0,

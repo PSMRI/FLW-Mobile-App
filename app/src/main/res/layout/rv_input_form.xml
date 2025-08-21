@@ -6,7 +6,6 @@
     android:id="@+id/rv_input_form"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/padding_normal"
     android:focusableInTouchMode="true"
     android:animateLayoutChanges="false"
     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"

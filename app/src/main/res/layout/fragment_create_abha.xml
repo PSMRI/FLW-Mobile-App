@@ -25,7 +25,7 @@
                 android:id="@+id/imageView"
                 android:layout_width="96dp"
                 android:layout_height="96dp"
-                android:layout_marginTop="96dp"
+                android:layout_marginTop="85dp"
                 android:src="@drawable/ic_check_circle"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -38,11 +38,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin_big"
-                android:text="@string/abha_number_generated_successfully"
                 android:textAppearance="?attr/textAppearanceHeadline6"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imageView" />
+<!--           android:text="@{viewModel.abhaResponseLiveData.message}"
+               android:text="@string/abha_number_generated_successfully"-->
+
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardView"
@@ -51,7 +53,6 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="@dimen/margin_big"
                 android:layout_marginEnd="16dp"
-                app:cardUseCompatPadding="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/textView7">
@@ -59,7 +60,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="@dimen/_5sdp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -69,11 +71,10 @@
 
                         <TextView
                             android:id="@+id/textView1"
-                            android:layout_width="250dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="@dimen/margin_normal"
-                            android:layout_weight="2"
-                            android:gravity="end"
+                            android:gravity="start"
                             android:text="@string/name_"
                             android:textSize="14sp"
                             android:textStyle="bold" />
@@ -83,7 +84,6 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="@{viewModel.hidResponse.name}"
                             android:textSize="14sp" />
                     </LinearLayout>
 
@@ -95,11 +95,10 @@
 
                         <TextView
                             android:id="@+id/textView3"
-                            android:layout_width="250dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="@dimen/margin_normal"
-                            android:layout_weight="1"
-                            android:gravity="end"
+                            android:gravity="start"
                             android:text="@string/abha_number_"
                             android:textSize="14sp"
                             android:textStyle="bold" />
@@ -109,7 +108,6 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="@{viewModel.hidResponse.healthIdNumber}"
                             android:textSize="14sp" />
                     </LinearLayout>
 
@@ -125,11 +123,11 @@
                 android:padding="@dimen/padding_normal"
                 android:gravity="center_horizontal"
                 android:visibility="gone">
-<!--                <TextView-->
-<!--                    android:layout_width="30dp"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:background="@drawable/ic_check_circle">-->
-<!--                </TextView>-->
+                <!--                <TextView-->
+                <!--                    android:layout_width="30dp"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:background="@drawable/ic_check_circle">-->
+                <!--                </TextView>-->
                 <TextView
                     android:id="@+id/abh_ben_mapped_txt"
                     android:layout_width="match_parent"
@@ -148,6 +146,7 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="50dp"
                 android:paddingRight="50dp"
+                android:visibility="visible"
                 app:layout_constraintTop_toBottomOf="@id/ll_abha_ben_mapped">
                 <TextView
                     android:id="@+id/txt_download_abha"
@@ -205,93 +204,94 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/padding_normal"
+                android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="@id/cl_download_abha">
+                <TextView
+                    android:id="@+id/tv_otp_msg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_big"
+                    android:layout_weight="1"
+                    android:textSize="14sp"
+                    android:visibility="invisible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/cl_verify_mobile_otp" />
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textInputLayout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/margin_normal"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.25"
+                    tools:layout_editor_absoluteX="16dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/tiet_aadhaar_otp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:hint="@string/enter_otp"
+                        android:inputType="number"
+                        android:maxLength="6"
+                        android:singleLine="true"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+
                     <TextView
-                        android:id="@+id/tv_otp_msg"
+                        android:id="@+id/tv_error_text_verify"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_big"
+                        android:layout_marginTop="@dimen/margin_small"
                         android:layout_weight="1"
-                        android:textSize="14sp"
-                        android:visibility="invisible"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/cl_verify_mobile_otp" />
+                        android:text="@string/textview"
+                        android:textColor="@android:color/holo_red_light"
+                        android:visibility="gone" />
+                </com.google.android.material.textfield.TextInputLayout>
 
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_verify_OTP"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="@dimen/margin_normal"
+                    android:layout_marginTop="16dp"
+                    android:clickable="false"
+                    android:enabled="false"
+                    android:padding="@dimen/padding_normal"
+                    android:text="@string/verify_otp"
+                    android:textAllCaps="false"
+                    android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+                    android:textColor="?attr/colorOnPrimary"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/textInputLayout"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="@dimen/margin_normal"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.25"
-                        tools:layout_editor_absoluteX="16dp">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/tiet_aadhaar_otp"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:hint="@string/enter_otp"
-                            android:inputType="number"
-                            android:maxLength="6"
-                            android:singleLine="true"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
-
-                        <TextView
-                            android:id="@+id/tv_error_text_verify"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/margin_small"
-                            android:layout_weight="1"
-                            android:text="@string/textview"
-                            android:textColor="@android:color/holo_red_light"
-                            android:visibility="gone" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_verify_OTP"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_margin="@dimen/margin_normal"
-                        android:layout_marginTop="16dp"
-                        android:clickable="false"
-                        android:enabled="false"
-                        android:padding="@dimen/padding_normal"
-                        android:text="@string/verify_otp"
-                        android:textAllCaps="false"
-                        android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-                        android:textColor="?attr/colorOnPrimary"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/resend_otp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_normal"
-                        android:layout_marginEnd="16dp"
-                        android:text="@string/resend_otp"
-                        android:textAllCaps="false"
-                        android:textColor="?attr/colorOnPrimary"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/btn_verify_OTP" />
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/timer_resend_otp"
-                        android:layout_width="40dp"
-                        android:layout_height="wrap_content"
-                        android:text="@string/_30"
-                        android:padding="0dp"
-                        app:cornerRadius="40dp"
-                        android:textColor="?attr/colorOnPrimary"
-                        android:layout_marginTop="@dimen/margin_normal"
-                        android:layout_marginEnd="16dp"
-                        app:layout_constraintEnd_toStartOf="@+id/resend_otp"
-                        app:layout_constraintTop_toBottomOf="@+id/btn_verify_OTP"/>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/resend_otp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_normal"
+                    android:layout_marginEnd="16dp"
+                    android:text="@string/resend_otp"
+                    android:textAllCaps="false"
+                    android:textColor="?attr/colorOnPrimary"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/btn_verify_OTP" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/timer_resend_otp"
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/_30"
+                    android:padding="0dp"
+                    app:cornerRadius="40dp"
+                    android:textColor="?attr/colorOnPrimary"
+                    android:layout_marginTop="@dimen/margin_normal"
+                    android:layout_marginEnd="16dp"
+                    app:layout_constraintEnd_toStartOf="@+id/resend_otp"
+                    app:layout_constraintTop_toBottomOf="@+id/btn_verify_OTP"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

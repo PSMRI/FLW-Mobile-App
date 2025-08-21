@@ -143,7 +143,7 @@ class HRPNonPregnantTrackDataset(
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.systolic),
         arrayId = -1,
-        required = false,
+        required = true,
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER,
         etMaxLength = 3
     )
@@ -153,7 +153,7 @@ class HRPNonPregnantTrackDataset(
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.diastolic),
         arrayId = -1,
-        required = false,
+        required = true,
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER,
         etMaxLength = 4
     )
@@ -163,7 +163,7 @@ class HRPNonPregnantTrackDataset(
         inputType = InputType.RADIO,
         title = resources.getString(R.string.blood_glucose_test),
         entries = resources.getStringArray(R.array.sugar_test_types),
-        required = false,
+        required = true,
         hasDependants = true
     )
 
@@ -172,7 +172,7 @@ class HRPNonPregnantTrackDataset(
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.random_blood_glucose),
         arrayId = -1,
-        required = false,
+        required = true,
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER,
         etMaxLength = 3
     )
@@ -182,7 +182,7 @@ class HRPNonPregnantTrackDataset(
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.fasting_glucose_test),
         arrayId = -1,
-        required = false,
+        required = true,
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER,
         etMaxLength = 3
     )
@@ -192,7 +192,7 @@ class HRPNonPregnantTrackDataset(
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.post_prandial_glucose_test),
         arrayId = -1,
-        required = false,
+        required = true,
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER,
         etMaxLength = 3
     )
@@ -202,7 +202,7 @@ class HRPNonPregnantTrackDataset(
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.hemoglobin_test),
         arrayId = -1,
-        required = false,
+        required = true,
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL,
         etMaxLength = 4
     )
@@ -221,7 +221,7 @@ class HRPNonPregnantTrackDataset(
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.issued_quantity_ifa),
         arrayId = -1,
-        required = false,
+        required = true,
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER,
         etMaxLength = 3
     )
@@ -418,8 +418,47 @@ class HRPNonPregnantTrackDataset(
                 1
             }
 
+            systolic.id->{
+                validateInput(systolic)
+                1
+            }
+            diastolic.id->{
+                validateInput(diastolic)
+                1
+            }
+            rbg.id->{
+                validateInput(rbg)
+                1
+            }
+            fbg.id->{
+                validateInput(fbg)
+                1
+            }
+            ppbg.id->{
+                validateInput(ppbg)
+                1
+            }
+            hemoglobinTest.id->{
+                validateInput(hemoglobinTest)
+                1
+            }
+
+
             else -> -1
         }
+    }
+
+    private fun validateInput(formElement: FormElement): Int {
+        formElement.errorText = if (formElement.value.isNullOrEmpty()){
+            resources.getString(
+                R.string.form_input_empty_error
+            )
+
+        }else{
+            null
+        }
+
+        return -1
     }
 
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {

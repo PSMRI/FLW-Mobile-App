@@ -164,6 +164,10 @@ class MaternalHealthRepo @Inject constructor(
 
         try {
 
+         ancPostList.forEach{
+                it.providerServiceMapID = user.serviceMapId.toString()
+            }
+
             val response = amritApiService.postAncForm(ancPostList.toList())
             val statusCode = response.code()
 
