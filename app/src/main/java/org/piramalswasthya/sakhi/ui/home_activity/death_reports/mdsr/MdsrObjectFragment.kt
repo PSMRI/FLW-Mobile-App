@@ -9,9 +9,6 @@ import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -28,7 +25,6 @@ import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
-import org.piramalswasthya.sakhi.adapters.FormInputAdapterOld
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.databinding.LayoutMediaOptionsBinding
 import org.piramalswasthya.sakhi.databinding.LayoutViewMediaBinding
@@ -42,78 +38,63 @@ import java.io.File
 @AndroidEntryPoint
 class MdsrObjectFragment : Fragment() {
 
-
     private var _binding: FragmentNewFormBinding? = null
-    private val binding: FragmentNewFormBinding
-        get() = _binding!!
+    private val binding get() = _binding!!
 
-    private val requestLocationPermission =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { b ->
-            if (b) {
-                requestLocationPermission()
-            } else findNavController().navigateUp()
-        }
-    private var latestTmpUri: Uri? = null
-    private var mdsr1Uri: Uri? = null
-    private var mdsr2Uri: Uri? = null
-    private var isDeathUri: Uri? = null
+    private val viewModel: MdsrObjectViewModel by viewModels()
+
+    private val formMap = mutableMapOf(
+        21 to FormConfig(null) { viewModel.getIndexOfMDSR1() },
+        22 to FormConfig(null) { viewModel.getIndexOfMDSR2() },
+        23 to FormConfig(null) { viewModel.getIndexOfIsDeathCertificate() }
+    )
+
+    data class FormConfig(
+        var uri: Uri?,
+        val indexProvider: () -> Int
+    )
 
     private val PICK_PDF_FILE = 1
+    private var latestTmpUri: Uri? = null
+
     private val takePicture =
-        registerForActivityResult(ActivityResultContracts.TakePicture()) { success: Boolean ->
+        registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
             if (success) {
                 val formId = viewModel.getDocumentFormId()
-
-                val uri = when (formId) {
-                    21 -> mdsr1Uri
-                    22 -> mdsr2Uri
-                    23 -> isDeathUri
-                    else -> latestTmpUri
-                }
+                val uri = formMap[formId]?.uri ?: latestTmpUri
 
                 uri?.let {
                     viewModel.setImageUriToFormElement(it)
-
-                    val index = when (formId) {
-                        21 -> viewModel.getIndexOfMDSR1()
-                        22 -> viewModel.getIndexOfMDSR2()
-                        23 -> viewModel.getIndexOfIsDeathCertificate()
-                        else -> null
-                    }
-
-                    index?.let { i ->
+                    formMap[formId]?.indexProvider?.invoke()?.let { i ->
                         binding.form.rvInputForm.adapter?.notifyItemChanged(i)
                     }
                 }
             }
         }
 
+    private val requestLocationPermission =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            if (granted) requestLocationPermission()
+            else findNavController().navigateUp()
+        }
 
-
-    private val viewModel: MdsrObjectViewModel by viewModels()
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: android.view.LayoutInflater, container: android.view.ViewGroup?, savedInstanceState: Bundle?): android.view.View {
         _binding = FragmentNewFormBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: android.view.View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.benName.observe(viewLifecycleOwner) {
-            binding.tvBenName.text = it
-        }
-        viewModel.benAgeGender.observe(viewLifecycleOwner) {
-            binding.tvAgeGender.text = it
-        }
+        viewModel.benName.observe(viewLifecycleOwner) { binding.tvBenName.text = it }
+        viewModel.benAgeGender.observe(viewLifecycleOwner) { binding.tvAgeGender.text = it }
+
         binding.btnSubmit.setOnClickListener {
             if (validate()) viewModel.submitForm()
         }
-        viewModel.exists.observe(viewLifecycleOwner) { notIt ->
-            notIt?.let { recordExists ->
+
+        viewModel.exists.observe(viewLifecycleOwner) { recordExists ->
+            recordExists?.let {
                 val adapter = FormInputAdapter(
                     formValueListener = FormInputAdapter.FormValueListener { formId, index ->
                         viewModel.updateListOnValueChanged(formId, index)
@@ -121,101 +102,66 @@ class MdsrObjectFragment : Fragment() {
                     selectImageClickListener = FormInputAdapter.SelectUploadImageClickListener { formId ->
                         viewModel.setCurrentDocumentFormId(formId)
                         chooseOptions()
-//                        Toast.makeText(requireContext(), formId.toString(), Toast.LENGTH_LONG).show()
                     },
-
                     viewDocumentListner = FormInputAdapter.ViewDocumentOnClick { formId ->
-                        if (recordExists) {
-                            viewDocuments(formId)
-                        } else {
-                            val uri = when (formId) {
-                                21 -> mdsr1Uri
-                                22 -> mdsr2Uri
-                                23 -> isDeathUri
-                                else -> null
-                            }
-
-                            uri?.let {
-                                if (it.toString().contains("document")) {
-                                    displayPdf(it)
-                                } else {
-                                    viewImage(it)
-                                }
-                            }
+                        if (it) viewDocuments(formId)
+                        else formMap[formId]?.uri?.let { uri ->
+                            if (uri.toString().contains("document")) displayPdf(uri)
+                            else viewImage(uri)
                         }
                     },
-
-                    isEnabled = !recordExists
+                    isEnabled = !it
                 )
-                adapter.disableUpload = recordExists
-                binding.btnSubmit.isEnabled = !recordExists
+                adapter.disableUpload = it
+                binding.btnSubmit.isEnabled = !it
                 binding.form.rvInputForm.adapter = adapter
                 lifecycleScope.launch {
-                    viewModel.formList.collect {
-                        if (it.isNotEmpty())
-                            adapter.submitList(it)
-
+                    viewModel.formList.collect { list ->
+                        if (list.isNotEmpty()) adapter.submitList(list)
                     }
                 }
             }
         }
-        viewModel.state.observe(viewLifecycleOwner) {
-            when (it) {
-                MdsrObjectViewModel.State.LOADING -> {
-                    binding.cvPatientInformation.visibility = View.GONE
-                    binding.form.rvInputForm.visibility = View.GONE
-                    binding.btnSubmit.visibility = View.GONE
-                    binding.pbForm.visibility = View.VISIBLE
-                }
 
+        viewModel.state.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                MdsrObjectViewModel.State.LOADING -> toggleViews(false)
                 MdsrObjectViewModel.State.SUCCESS -> {
                     findNavController().navigateUp()
                     WorkerUtils.triggerAmritPushWorker(requireContext())
                 }
-
                 MdsrObjectViewModel.State.FAIL -> {
-                    binding.cvPatientInformation.visibility = View.VISIBLE
-                    binding.form.rvInputForm.visibility = View.VISIBLE
-                    binding.btnSubmit.visibility = View.VISIBLE
-                    binding.pbForm.visibility = View.GONE
+                    toggleViews(true)
                     Toast.makeText(
                         context,
                         resources.getString(R.string.saving_mdsr_to_database_failed),
                         Toast.LENGTH_LONG
                     ).show()
                 }
-
-                else -> {
-                    binding.cvPatientInformation.visibility = View.VISIBLE
-                    binding.form.rvInputForm.visibility = View.VISIBLE
-                    binding.btnSubmit.visibility = View.VISIBLE
-                    binding.pbForm.visibility = View.GONE
-                }
+                else -> toggleViews(true)
             }
         }
     }
 
+    private fun toggleViews(show: Boolean) {
+        binding.cvPatientInformation.visibility = if (show) android.view.View.VISIBLE else android.view.View.GONE
+        binding.form.rvInputForm.visibility = if (show) android.view.View.VISIBLE else android.view.View.GONE
+        binding.btnSubmit.visibility = if (show) android.view.View.VISIBLE else android.view.View.GONE
+        binding.pbForm.visibility = if (show) android.view.View.GONE else android.view.View.VISIBLE
+    }
 
     fun validate(): Boolean {
-        val result = binding.form.rvInputForm.adapter?.let {
-            (it as FormInputAdapter).validateInput(resources)
-        }
+        val result = (binding.form.rvInputForm.adapter as? FormInputAdapter)?.validateInput(resources)
         Timber.d("Validation : $result")
-        return if (result == -1)
-            true
-        else {
-            if (result != null) {
-                binding.form.rvInputForm.scrollToPosition(result)
-            }
+        return if (result == -1) true else {
+            result?.let { binding.form.rvInputForm.scrollToPosition(it) }
             false
         }
     }
 
     override fun onStart() {
         super.onStart()
-        activity?.let {
-            (it as HomeActivity).updateActionBar(R.drawable.ic__death, getString(R.string.mdsr))
-        }
+        (activity as? HomeActivity)?.updateActionBar(R.drawable.ic__death, getString(R.string.mdsr))
     }
 
     override fun onDestroy() {
@@ -223,81 +169,20 @@ class MdsrObjectFragment : Fragment() {
         _binding = null
     }
 
-
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == PICK_PDF_FILE && resultCode == Activity.RESULT_OK) {
-            if (viewModel.getDocumentFormId() == 21) {
-                data?.data?.let { pdfUri ->
-                    if (checkFileSize(pdfUri, requireContext())) {
-                        Toast.makeText(
-                            context,
-                            resources.getString(R.string.file_size),
-                            Toast.LENGTH_LONG
-                        ).show()
-
-                    } else {
-                        mdsr1Uri = pdfUri
-                        mdsr1Uri?.let { uri ->
-                            viewModel.setImageUriToFormElement(uri)
-                            binding.form.rvInputForm.apply {
-                                val adapter = this.adapter as FormInputAdapter
-                                adapter.notifyDataSetChanged()
-                            }
-                        }
-
-//                    updateImageRecord()
-                    }
+            val formId = viewModel.getDocumentFormId()
+            data?.data?.let { pdfUri ->
+                if (checkFileSize(pdfUri, requireContext())) {
+                    Toast.makeText(context, resources.getString(R.string.file_size), Toast.LENGTH_LONG).show()
+                } else {
+                    formMap[formId]?.uri = pdfUri
+                    viewModel.setImageUriToFormElement(pdfUri)
+                    (binding.form.rvInputForm.adapter as? FormInputAdapter)?.notifyDataSetChanged()
                 }
             }
-            else if(viewModel.getDocumentFormId() == 22){
-                data?.data?.let { pdfUri ->
-                    if (checkFileSize(pdfUri, requireContext())) {
-                        Toast.makeText(
-                            context,
-                            resources.getString(R.string.file_size),
-                            Toast.LENGTH_LONG
-                        ).show()
-
-                    } else {
-                        mdsr2Uri = pdfUri
-                        mdsr2Uri?.let { uri ->
-                            viewModel.setImageUriToFormElement(uri)
-                            binding.form.rvInputForm.apply {
-                                val adapter = this.adapter as FormInputAdapter
-                                adapter.notifyDataSetChanged()
-                            }
-                        }
-
-//                    updateImageRecord()
-                    }
-                }
-            }
-            else if(viewModel.getDocumentFormId() == 23){
-                data?.data?.let { pdfUri ->
-                    if (checkFileSize(pdfUri, requireContext())) {
-                        Toast.makeText(
-                            context,
-                            resources.getString(R.string.file_size),
-                            Toast.LENGTH_LONG
-                        ).show()
-
-                    } else {
-                        isDeathUri = pdfUri
-                        isDeathUri?.let { uri ->
-                            viewModel.setImageUriToFormElement(uri)
-                            binding.form.rvInputForm.apply {
-                                val adapter = this.adapter as FormInputAdapter
-                                adapter.notifyDataSetChanged()
-                            }
-                        }
-
-//                    updateImageRecord()
-                    }
-                }
-            }
-
         }
     }
 
@@ -307,21 +192,10 @@ class MdsrObjectFragment : Fragment() {
             .setView(alertBinding.root)
             .setCancelable(true)
             .create()
-        alertBinding.btnPdf.setOnClickListener {
-            alertDialog.dismiss()
-            selectPdf()
-        }
-        alertBinding.btnCamera.setOnClickListener {
-            alertDialog.dismiss()
-            takeImage()
-        }
-        alertBinding.btnGallery.setOnClickListener {
-            alertDialog.dismiss()
-            selectImage()
-        }
-        alertBinding.btnCancel.setOnClickListener {
-            alertDialog.dismiss()
-        }
+        alertBinding.btnPdf.setOnClickListener { alertDialog.dismiss(); selectPdf() }
+        alertBinding.btnCamera.setOnClickListener { alertDialog.dismiss(); takeImage() }
+        alertBinding.btnGallery.setOnClickListener { alertDialog.dismiss(); selectImage() }
+        alertBinding.btnCancel.setOnClickListener { alertDialog.dismiss() }
         alertDialog.show()
     }
 
@@ -336,61 +210,37 @@ class MdsrObjectFragment : Fragment() {
     private fun takeImage() {
         lifecycleScope.launchWhenStarted {
             getTmpFileUri().let { uri ->
-                if (viewModel.getDocumentFormId() == 21) {
-                    mdsr1Uri = uri
-                    takePicture.launch(mdsr1Uri)
-                } else if (viewModel.getDocumentFormId() == 22) {
-                    mdsr2Uri = uri
-                    takePicture.launch(mdsr2Uri)
-                }
-                else if (viewModel.getDocumentFormId() == 23) {
-                    isDeathUri = uri
-                    takePicture.launch(isDeathUri)
-                }
-//                else {
-//                    latestTmpUri = uri
-//                    takePicture.launch(latestTmpUri)
-//                }
-
+                val formId = viewModel.getDocumentFormId()
+                formMap[formId]?.uri = uri
+                takePicture.launch(uri)
             }
         }
     }
 
     private fun requestLocationPermission() {
-        val locationManager =
-            requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         val isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(), Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED
         ) requestLocationPermission.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-//        else if (!isGPSEnabled) showSettingsAlert()
     }
 
     private fun getTmpFileUri(): Uri {
         val imagesDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         val tmpFile = File.createTempFile(Konstants.tempBenImagePrefix, ".jpg", imagesDir)
-        return FileProvider.getUriForFile(
-            requireContext(),
-            "${BuildConfig.APPLICATION_ID}.provider",
-            tmpFile
-        )
+        return FileProvider.getUriForFile(requireContext(), "${BuildConfig.APPLICATION_ID}.provider", tmpFile)
     }
 
     private fun displayPdf(pdfUri: Uri) {
-
         val intent = Intent(Intent.ACTION_VIEW).apply {
             setDataAndType(pdfUri, "application/pdf")
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION) // Grant permission to read the file
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
         startActivity(Intent.createChooser(intent, "Open PDF with"))
-
     }
 
     private fun selectImage() {
-        val intent = Intent(Intent.ACTION_PICK).apply {
-            type = "image/*"
-        }
+        val intent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
         startActivityForResult(intent, PICK_PDF_FILE)
     }
 
@@ -400,53 +250,21 @@ class MdsrObjectFragment : Fragment() {
             .setView(viewImageBinding.root)
             .setCancelable(true)
             .create()
-        Glide.with(this).load(Uri.parse(imageUri.toString())).placeholder(R.drawable.ic_person)
-            .into(viewImageBinding.viewImage)
-        viewImageBinding.btnClose.setOnClickListener {
-            alertDialog.dismiss()
-        }
+        Glide.with(this).load(imageUri).placeholder(R.drawable.ic_person).into(viewImageBinding.viewImage)
+        viewImageBinding.btnClose.setOnClickListener { alertDialog.dismiss() }
         alertDialog.show()
     }
 
-    private fun viewDocuments(it: Int) {
-        if (it == 21) {
-            lifecycleScope.launch {
-                viewModel.formList.collect {
-                    it.get(viewModel.getIndexOfMDSR1()).value.let {
-                        if (it.toString().contains("document")) {
-                            displayPdf(it!!.toUri())
-                        } else {
-                            viewImage(it!!.toUri())
-                        }
-                    }
-                }
-            }
-        } else if (it == 22) {
-            lifecycleScope.launch {
-                viewModel.formList.collect {
-                    it.get(viewModel.getIndexOfMDSR2()).value.let {
-                        if (it.toString().contains("document")) {
-                            displayPdf(it!!.toUri())
-                        } else {
-                            viewImage(it!!.toUri())
-                        }
-                    }
-                }
-            }
-        } else if (it == 23) {
-            lifecycleScope.launch {
-                viewModel.formList.collect {
-                    it.get(viewModel.getIndexOfIsDeathCertificate()).value.let {
-                        if (it.toString().contains("document")) {
-                            displayPdf(it!!.toUri())
-                        } else {
-                            viewImage(it!!.toUri())
-                        }
+    private fun viewDocuments(formId: Int) {
+        lifecycleScope.launch {
+            viewModel.formList.collect { list ->
+                formMap[formId]?.indexProvider?.invoke()?.let { index ->
+                    list.getOrNull(index)?.value?.toUri()?.let { uri ->
+                        if (uri.toString().contains("document")) displayPdf(uri)
+                        else viewImage(uri)
                     }
                 }
             }
         }
-
     }
-
 }
