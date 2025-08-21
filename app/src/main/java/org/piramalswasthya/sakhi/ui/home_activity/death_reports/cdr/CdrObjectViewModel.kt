@@ -65,7 +65,6 @@ class CdrObjectViewModel @Inject constructor(
     val formList = dataset.listFlow
 
     fun getIndexOfCDR1() = dataset.getIndexOfCDR1()
-
     fun getIndexOfCDR2() = dataset.getIndexOfCDR2()
     fun getIndexOfIsDeathCertificate() = dataset.getIndexOfIsDeathCertificate()
 
@@ -76,9 +75,6 @@ class CdrObjectViewModel @Inject constructor(
     fun getDocumentFormId():Int {
         return lastDocumentFormId
     }
-
-
-
     fun setImageUriToFormElement(dpUri: Uri) {
         dataset.setImageUriToFormElement(lastDocumentFormId, dpUri)
 

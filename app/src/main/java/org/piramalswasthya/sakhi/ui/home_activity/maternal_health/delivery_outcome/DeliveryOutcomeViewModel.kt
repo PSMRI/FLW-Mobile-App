@@ -1,6 +1,8 @@
 package org.piramalswasthya.sakhi.ui.home_activity.maternal_health.delivery_outcome
 
 import android.content.Context
+import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -20,6 +22,9 @@ import org.piramalswasthya.sakhi.repositories.DeliveryOutcomeRepo
 import org.piramalswasthya.sakhi.repositories.EcrRepo
 import org.piramalswasthya.sakhi.repositories.MaternalHealthRepo
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -60,6 +65,25 @@ class DeliveryOutcomeViewModel @Inject constructor(
 
     private lateinit var deliveryOutcome: DeliveryOutcomeCache
 
+    fun getIndexOfMCP1() = dataset.getIndexOfMCP1()
+
+    fun getIndexOfMCP2() = dataset.getIndexOfMCP2()
+    fun getIndexOfIsjsyFileUpload() = dataset.getIndexOfIsjsyFileUpload()
+
+    private var lastDocumentFormId: Int = 0
+    fun setCurrentDocumentFormId(id: Int) {
+        lastDocumentFormId = id
+    }
+    fun getDocumentFormId():Int {
+        return lastDocumentFormId
+    }
+
+    fun setImageUriToFormElement(dpUri: Uri) {
+        dataset.setImageUriToFormElement(lastDocumentFormId, dpUri)
+
+    }
+
+
     init {
         viewModelScope.launch {
             val asha = preferenceDao.getLoggedInUser()!!
@@ -74,7 +98,10 @@ class DeliveryOutcomeViewModel @Inject constructor(
                     syncState = SyncState.UNSYNCED,
                     createdBy = asha.userName,
                     updatedBy = asha.userName,
-                    isActive = true
+                    isActive = true,
+
+
+
                 )
             }
 
@@ -100,35 +127,58 @@ class DeliveryOutcomeViewModel @Inject constructor(
 
     }
 
-    fun saveForm() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                try {
-                    _state.postValue(State.SAVING)
-                    dataset.mapValues(deliveryOutcome, 1)
-                    deliveryOutcomeRepo.saveDeliveryOutcome(deliveryOutcome)
+fun saveForm() {
+    viewModelScope.launch {
+        withContext(Dispatchers.IO) {
+            try {
+                _state.postValue(State.SAVING)
 
-                    val ecr = ecrRepo.getSavedRecord(deliveryOutcome.benId)
-                    if (ecr != null) {
-                        deliveryOutcome.liveBirth?.let {
-                            ecr.noOfLiveChildren = ecr.noOfLiveChildren + it
-                        }
-                        deliveryOutcome.deliveryOutcome?.let {
-                            ecr.noOfChildren = ecr.noOfChildren + it
-                        }
-                        if (ecr.processed != "N") ecr.processed = "U"
-                        ecr.syncState = SyncState.UNSYNCED
-                        ecrRepo.persistRecord(ecr)
+                dataset.mapValues(deliveryOutcome, 1)
+
+                deliveryOutcomeRepo.saveDeliveryOutcome(deliveryOutcome)
+
+                val ecr = ecrRepo.getSavedRecord(deliveryOutcome.benId)
+
+                if (deliveryOutcome.complication.equals("Death", ignoreCase = true)) {
+                    benRepo.getBenFromId(benId)?.let {
+                        it.isDeath = true
+                        it.isDeathValue = "Death"
+
+                        it.dateOfDeath = deliveryOutcome.dateOfDeath
+                        it.reasonOfDeath = deliveryOutcome.causeOfDeath
+                        it.placeOfDeath = deliveryOutcome.placeOfDeath
+                        it.placeOfDeathId = deliveryOutcome.placeOfDeathId ?: -1
+                        it.otherPlaceOfDeath = deliveryOutcome.otherPlaceOfDeath
+
+                        if (it.processed != "N") it.processed = "U"
+                        it.syncState = SyncState.UNSYNCED
+
+                        benRepo.updateRecord(it)
                     }
-
-                    _state.postValue(State.SAVE_SUCCESS)
-                } catch (e: Exception) {
-                    Timber.d("saving delivery outcome data failed!!")
-                    _state.postValue(State.SAVE_FAILED)
                 }
+
+                if (ecr != null) {
+                    deliveryOutcome.liveBirth?.let {
+                        ecr.noOfLiveChildren = ecr.noOfLiveChildren + it
+                    }
+                    deliveryOutcome.deliveryOutcome?.let {
+                        ecr.noOfChildren = ecr.noOfChildren + it
+                    }
+                    if (ecr.processed != "N") ecr.processed = "U"
+                    ecr.syncState = SyncState.UNSYNCED
+
+                    ecrRepo.persistRecord(ecr)
+                }
+
+                _state.postValue(State.SAVE_SUCCESS)
+            } catch (e: Exception) {
+                _state.postValue(State.SAVE_FAILED)
             }
         }
     }
+}
+
+
 
     fun resetState() {
         _state.value = State.IDLE

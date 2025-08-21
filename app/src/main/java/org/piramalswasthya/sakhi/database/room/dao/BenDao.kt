@@ -213,7 +213,7 @@ interface BenDao {
     //@Query("SELECT ben.* FROM BEN_BASIC_CACHE ben left outer join delivery_outcome del on ben.benId = del.benId left outer join pnc_visit pnc on pnc.benId = ben.benId WHERE reproductiveStatusId = 3 and (pnc.isActive is null or pnc.isActive == 1) and CAST((strftime('%s','now') - del.dateOfDelivery/1000)/60/60/24 AS INTEGER) BETWEEN :minPncDate and :maxPncDate and  villageId=:selectedVillage group by ben.benId")
     //@Query("SELECT ben.* FROM BEN_BASIC_CACHE ben LEFT OUTER JOIN delivery_outcome del ON ben.benId = del.benId LEFT OUTER JOIN pnc_visit pnc ON pnc.benId = ben.benId WHERE reproductiveStatusId = 3 AND (pnc.isActive IS NULL OR pnc.isActive == 1) AND ( del.dateOfDelivery IS NULL OR CAST((strftime('%s','now') - COALESCE(del.dateOfDelivery, 0)/1000)/60/60/24 AS INTEGER) BETWEEN :minPncDate AND :maxPncDate) AND (:selectedVillage IS NULL OR villageId = :selectedVillage) GROUP BY ben.benId")
 
-    @Query("SELECT ben.* FROM BEN_BASIC_CACHE ben LEFT OUTER JOIN delivery_outcome del ON ben.benId = del.benId LEFT OUTER JOIN pnc_visit pnc ON pnc.benId = ben.benId WHERE reproductiveStatusId = 3 AND (pnc.isActive IS NULL OR pnc.isActive = 1) AND (pnc.pncPeriod IS NULL OR pnc.pncPeriod != 42) AND (:selectedVillage IS NULL OR villageId = :selectedVillage) GROUP BY ben.benId")
+    @Query("SELECT ben.* FROM BEN_BASIC_CACHE ben LEFT OUTER JOIN delivery_outcome del ON ben.benId = del.benId LEFT OUTER JOIN pnc_visit pnc ON pnc.benId = ben.benId WHERE reproductiveStatusId = 3 AND (pnc.isActive IS NULL OR pnc.isActive = 1) AND (pnc.pncPeriod IS NULL OR pnc.pncPeriod != 42)  AND (ben.isDeath IS NULL OR ben.isDeath = 0) AND (:selectedVillage IS NULL OR villageId = :selectedVillage) GROUP BY ben.benId")
     fun getAllPNCMotherList(
         selectedVillage: Int
 //        minPncDate: Long = 0,
@@ -313,5 +313,21 @@ interface BenDao {
         villageId: Int,
         lowWeightLimit: Double = Konstants.babyLowWeight
     ): Flow<Int>
+
+    // Pregnancy Death
+    @Query("SELECT COUNT(*) FROM PREGNANCY_ANC WHERE benId = :benId AND deathDate IS NOT NULL AND isAborted = 0")
+    suspend fun checkPregnancyDeath(benId: Long): Boolean
+
+    // Abortion Death
+    @Query("SELECT COUNT(*) FROM PREGNANCY_ANC WHERE benId = :benId AND deathDate IS NOT NULL AND isAborted = 1")
+    suspend fun checkAbortionDeath(benId: Long): Boolean
+
+    // Delivery Outcome
+    @Query("SELECT COUNT(*) FROM DELIVERY_OUTCOME WHERE benId = :benId AND dateOfDeath IS NOT NULL")
+    suspend fun checkDeliveryDeath(benId: Long): Boolean
+
+    // PNC
+    @Query("SELECT COUNT(*) FROM PNC_VISIT WHERE benId = :benId AND deathDate IS NOT NULL")
+    suspend fun checkPncDeath(benId: Long): Boolean
 
 }

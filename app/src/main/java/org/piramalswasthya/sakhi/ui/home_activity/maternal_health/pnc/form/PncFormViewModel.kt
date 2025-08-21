@@ -20,6 +20,9 @@ import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.DeliveryOutcomeRepo
 import org.piramalswasthya.sakhi.repositories.PncRepo
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -133,6 +136,20 @@ class PncFormViewModel @Inject constructor(
                         )
                         deliveryOutcomeRepo.saveDeliveryOutcome(saveDeliveryOutcome)
                     }
+                    if (pncCache.motherDeath) {
+                        benRepo.getBenFromId(benId)?.let {
+                            it.isDeath = true
+                            it.isDeathValue = "Death"
+                            it.dateOfDeath = longToDateString(pncCache.deathDate)
+                            it.reasonOfDeath = pncCache.causeOfDeath
+                            it.placeOfDeath = pncCache.placeOfDeath
+                            it.otherPlaceOfDeath = pncCache.otherPlaceOfDeath
+
+                            if (it.processed != "N") it.processed = "U"
+                            it.syncState = SyncState.UNSYNCED
+                            benRepo.updateRecord(it)
+                        }
+                    }
 
                     _state.postValue(State.SAVE_SUCCESS)
                 } catch (e: Exception) {
@@ -147,5 +164,10 @@ class PncFormViewModel @Inject constructor(
         _recordExists.value = b
 
     }
-
+    fun longToDateString(dateMillis: Long?): String {
+        val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.US)
+        return dateMillis?.let { millis ->
+            dateFormat.format(Date(millis))
+        } ?: ""
+    }
 }
