@@ -139,7 +139,7 @@ import org.piramalswasthya.sakhi.model.VHNDCache
         ABHAModel::class,
     ],
     views = [BenBasicCache::class],
-    version = 18, exportSchema = false
+    version = 19, exportSchema = false
 )
 
 @TypeConverters(LocationEntityListConverter::class, SyncStateConverter::class)
@@ -373,6 +373,102 @@ abstract class InAppDb : RoomDatabase() {
                 it.execSQL("alter table HRP_PREGNANT_TRACK add column fastingOgtt INTEGER")
                 it.execSQL("alter table HRP_PREGNANT_TRACK add column after2hrsOgtt INTEGER")
             })
+
+            val MIGRATION_18_19 = object : Migration(18, 19) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    try {
+
+                        // 1. Create new table with correct schema
+
+                        database.execSQL("""
+            CREATE TABLE PROFILE_ACTIVITY_new (
+                id INTEGER PRIMARY KEY NOT NULL,
+                name TEXT,  -- nullable (because String?)
+                profileImage TEXT NOT NULL,
+                village TEXT NOT NULL,
+                employeeId INTEGER NOT NULL,
+                dob TEXT NOT NULL,
+                age INTEGER NOT NULL,
+                mobileNumber TEXT NOT NULL,
+                alternateMobileNumber TEXT NOT NULL,
+                fatherOrSpouseName TEXT NOT NULL,
+                dateOfJoining TEXT NOT NULL,
+                bankAccount TEXT NOT NULL,
+                ifsc TEXT NOT NULL,
+                populationCovered INTEGER NOT NULL,
+                choName TEXT NOT NULL,
+                choMobile TEXT NOT NULL,
+                awwName TEXT NOT NULL,
+                awwMobile TEXT NOT NULL,
+                anm1Name TEXT NOT NULL,
+                anm1Mobile TEXT NOT NULL,
+                anm2Name TEXT NOT NULL,
+                anm2Mobile TEXT NOT NULL,
+                abhaNumber TEXT NOT NULL,
+                ashaHouseholdRegistration TEXT NOT NULL,
+                ashaFamilyMember TEXT NOT NULL,
+                providerServiceMapID TEXT NOT NULL,
+                isFatherOrSpouse INTEGER NOT NULL DEFAULT 0,
+                supervisorName TEXT NOT NULL,
+                supervisorMobile TEXT NOT NULL
+            )
+        """)
+
+                        database.execSQL("""
+            INSERT INTO PROFILE_ACTIVITY_new (
+                id, name, profileImage, village, employeeId, dob, age, mobileNumber,
+                alternateMobileNumber, fatherOrSpouseName, dateOfJoining, bankAccount,
+                ifsc, populationCovered, choName, choMobile, awwName, awwMobile,
+                anm1Name, anm1Mobile, anm2Name, anm2Mobile, abhaNumber,
+                ashaHouseholdRegistration, ashaFamilyMember, providerServiceMapID,
+                isFatherOrSpouse, supervisorName, supervisorMobile
+            )
+            SELECT 
+                id,
+                name,
+                profileImage,
+                village,
+                employeeId,
+                dob,
+                age,
+                mobileNumber,
+                alternateMobileNumber,
+                fatherOrSpouseName,
+                dateOfJoining,
+                bankAccount,
+                ifsc,
+                populationCovered,
+                choName,
+                choMobile,
+                awwName,
+                awwMobile,
+                anm1Name,
+                anm1Mobile,
+                anm2Name,
+                anm2Mobile,
+                abhaNumber,
+                ashaHouseholdRegistration,
+                ashaFamilyMember,
+                providerServiceMapID,
+                isFatherOrSpouse,
+                supervisorName,
+                supervisorMobile
+            FROM PROFILE_ACTIVITY
+        """)
+
+                        database.execSQL("DROP TABLE PROFILE_ACTIVITY")
+                        database.execSQL("ALTER TABLE PROFILE_ACTIVITY_new RENAME TO PROFILE_ACTIVITY")
+                    } catch (e: Exception) {
+
+                        Log.e("DB_MIGRATION", "Migration 1->2 failed: ${e.message}", e)
+
+                        throw e
+
+                    }
+
+                }
+            }
+
 //        _db.execSQL("CREATE TABLE IF NOT EXISTS `HRP_PREGNANT_TRACK` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `benId` INTEGER NOT NULL, `visitDate` INTEGER, `rdPmsa` TEXT, `rdDengue` TEXT, `rdFilaria` TEXT, `severeAnemia` TEXT, `hemoglobinTest` TEXT, `ifaGiven` TEXT, `ifaQuantity` INTEGER, `pregInducedHypertension` TEXT, `systolic` INTEGER, `diastolic` INTEGER, `gestDiabetesMellitus` TEXT, `bloodGlucoseTest` TEXT, `fbg` INTEGER, `rbg` INTEGER, `ppbg` INTEGER, `fastingOgtt` INTEGER, `after2hrsOgtt` INTEGER, `hypothyrodism` TEXT, `polyhydromnios` TEXT, `oligohydromnios` TEXT, `antepartumHem` TEXT, `malPresentation` TEXT, `hivsyph` TEXT, `visit` TEXT, `syncState` INTEGER NOT NULL, FOREIGN KEY(`benId`) REFERENCES `BENEFICIARY`(`beneficiaryId`) ON UPDATE CASCADE ON DELETE CASCADE )");
             synchronized(this) {
                 var instance = INSTANCE
@@ -385,7 +481,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_13_14,
                         MIGRATION_14_15,
                         MIGRATION_15_16,
-                        MIGRATION_16_18
+                        MIGRATION_16_18,
+                        MIGRATION_18_19
                     ).build()
 
                     INSTANCE = instance
