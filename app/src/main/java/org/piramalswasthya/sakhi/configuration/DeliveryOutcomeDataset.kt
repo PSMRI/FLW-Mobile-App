@@ -1,11 +1,17 @@
 package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
+import android.net.Uri
+import android.util.Log
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Languages
+import org.piramalswasthya.sakhi.model.BenStatus
 import org.piramalswasthya.sakhi.model.DeliveryOutcomeCache
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.InputType
+import org.piramalswasthya.sakhi.model.InputType.DATE_PICKER
+import org.piramalswasthya.sakhi.model.InputType.DROPDOWN
+import org.piramalswasthya.sakhi.model.InputType.EDIT_TEXT
 import org.piramalswasthya.sakhi.model.PregnantWomanAncCache
 import org.piramalswasthya.sakhi.model.PregnantWomanRegistrationCache
 import java.text.SimpleDateFormat
@@ -95,6 +101,7 @@ open class DeliveryOutcomeDataset(
         hasDependants = true
     )
 
+
     private var otherCauseOfDeath = FormElement(
         id = 8,
         inputType = InputType.EDIT_TEXT,
@@ -103,6 +110,30 @@ open class DeliveryOutcomeDataset(
         etInputType = android.text.InputType.TYPE_CLASS_TEXT,
         required = true,
         hasDependants = false
+    )
+
+    private val dateOfDeath = FormElement(
+        id = 51,
+        inputType = DATE_PICKER,
+        title = context.getString(R.string.date_of_death),
+        max = System.currentTimeMillis(),
+        required = true,
+    )
+
+    private val placeOfDeath = FormElement(
+        id = 54,
+        inputType = DROPDOWN,
+        title = context.getString(R.string.place_of_death),
+        arrayId = R.array.death_place_array,
+        entries = resources.getStringArray(R.array.death_place_array),
+        required = true,
+    )
+    private val otherPlaceOfDeath = FormElement(
+        id = 55,
+        inputType = EDIT_TEXT,
+        title = context.getString(R.string.other_place_of_death),
+        required = true,
+        hasDependants = true,
     )
 
     private var otherComplication = FormElement(
@@ -178,7 +209,27 @@ open class DeliveryOutcomeDataset(
         title = resources.getString(R.string.do_is_jsy_beneficiary),
         entries = resources.getStringArray(R.array.do_is_jsy_beneficiary_array),
         required = false,
-        hasDependants = false
+        hasDependants = true
+    )
+
+    private val mcpFileUpload1 = FormElement(
+        id = 21,
+        inputType = InputType.FILE_UPLOAD,
+        title = context.getString(R.string.mcp_card_1),
+        required = false,
+    )
+    private val mcpFileUpload2 = FormElement(
+        id = 22,
+        inputType = InputType.FILE_UPLOAD,
+        title = context.getString(R.string.mcp_card_2),
+        required = false,
+    )
+    private val jsyFileUpload = FormElement(
+        id = 23,
+        inputType = InputType.FILE_UPLOAD,
+        title = context.getString(R.string.jsy_payment_voucher),
+        required = false,
+        hasDependants = true
     )
 
     suspend fun setUpPage(
@@ -201,7 +252,9 @@ open class DeliveryOutcomeDataset(
             stillBirth,
             dateOfDischarge,
             timeOfDischarge,
-            isJSYBenificiary
+            isJSYBenificiary,
+            mcpFileUpload1,
+            mcpFileUpload2
         )
         if (saved == null) {
             dateOfDelivery.value = getDateFromLong(System.currentTimeMillis())
@@ -226,15 +279,50 @@ open class DeliveryOutcomeDataset(
                 stillBirth,
                 dateOfDischarge,
                 timeOfDischarge,
-                isJSYBenificiary
+                isJSYBenificiary,
+                mcpFileUpload1,
+                mcpFileUpload2
             )
+//            hadComplications.value = if (saved.hadComplications == true) "Yes" else "No"
+            if (saved.hadComplications == true) {
+                list.add(list.indexOf(hadComplications) + 1 ,complication)
+                hadComplications.value = "Yes"
+            } else {
+                hadComplications.value = "No"
+            }
+
+
+            if(saved.complication.equals("Other Delivery Complication", ignoreCase = true))
+            {
+                list.add(list.indexOf(complication) + 1 ,otherComplication)
+            }
+            if(saved.complication.equals("DEATH", ignoreCase = true))
+            {
+                list.add(list.indexOf(complication) + 1 ,causeOfDeath)
+                list.add(list.indexOf(causeOfDeath) + 1 ,dateOfDeath)
+                list.add(list.indexOf(dateOfDeath) + 1 ,placeOfDeath)
+                placeOfDeath.entries?.indexOf(saved.placeOfDeath)?.takeIf { it >= 0 }?.let { index ->
+                    if (index == 8) {
+                        list.add(list.indexOf(placeOfDeath) + 1, otherPlaceOfDeath)
+                    }
+                }
+
+            }
+            mcpFileUpload1.value=saved.mcp1File
+            mcpFileUpload2.value=saved.mcp2File
+            jsyFileUpload.value=saved.jsyFile
+            dateOfDeath.value=saved.dateOfDeath
+            placeOfDeath.value=saved.placeOfDeath
+            otherPlaceOfDeath.value=saved.otherPlaceOfDeath
+
+
             dateOfDelivery.value = saved.dateOfDelivery?.let { getDateFromLong(it) }
             timeOfDelivery.value = saved.timeOfDelivery
             placeOfDelivery.value =
                 getLocalValueInArray(R.array.do_place_of_delivery_array, saved.placeOfDelivery)
             typeOfDelivery.value =
                 getLocalValueInArray(R.array.do_type_of_delivery_array, saved.typeOfDelivery)
-            hadComplications.value = if (saved.hadComplications == true) "Yes" else "No"
+//            hadComplications.value = if (saved.hadComplications == true) "Yes" else "No"
             complication.value =
                 getLocalValueInArray(R.array.do_complications_array, saved.complication)
             causeOfDeath.value =
@@ -246,14 +334,21 @@ open class DeliveryOutcomeDataset(
             stillBirth.value = saved.stillBirth.toString()
             dateOfDischarge.value = saved.dateOfDischarge?.let { getDateFromLong(it) }
             timeOfDischarge.value = saved.timeOfDischarge
-            isJSYBenificiary.value = if (saved.isJSYBenificiary == true) "Yes" else "No"
+            if (saved.isJSYBenificiary == true) {
+                list.add(list.indexOf(isJSYBenificiary) + 1 ,jsyFileUpload)
+                isJSYBenificiary.value = "Yes"
+            } else {
+                isJSYBenificiary.value = "No"
+            }
         }
+        dateOfDeath.min=pwr.lmpDate
         dateOfDelivery.min = maxOf(pwr.lmpDate + TimeUnit.DAYS.toMillis(21 * 7), anc.ancDate)
         dateOfDelivery.max =
             minOf(
                 System.currentTimeMillis(),
                 getEddFromLmp(pwr.lmpDate) + TimeUnit.DAYS.toMillis(25)
             )
+
         setUpPage(list)
 
     }
@@ -272,7 +367,17 @@ open class DeliveryOutcomeDataset(
                     passedIndex = index,
                     triggerIndex = 0,
                     target = complication,
-                    targetSideEffect = listOf(causeOfDeath, otherComplication, otherCauseOfDeath)
+                    targetSideEffect = listOf(causeOfDeath, otherComplication, otherCauseOfDeath,dateOfDeath,placeOfDeath,otherPlaceOfDeath)
+                )
+            }
+            placeOfDeath.id -> {
+                val index = placeOfDeath.entries?.indexOf(placeOfDeath.value).takeIf { it!! >= 0 } ?: return -1
+                val triggerIndex = 8
+                return triggerDependants(
+                    source = placeOfDeath,
+                    passedIndex = index,
+                    triggerIndex = triggerIndex,
+                    target = otherPlaceOfDeath
                 )
             }
 
@@ -285,7 +390,7 @@ open class DeliveryOutcomeDataset(
 
                     triggerDependants(
                         source = complication,
-                        addItems = listOf(causeOfDeath),
+                        addItems = listOf(causeOfDeath,dateOfDeath,placeOfDeath),
                         removeItems = listOf(otherComplication, otherCauseOfDeath)
                     )
                 } else if (index == 7) {
@@ -298,7 +403,7 @@ open class DeliveryOutcomeDataset(
                     triggerDependants(
                         source = complication,
                         addItems = listOf(),
-                        removeItems = listOf(otherComplication, otherCauseOfDeath, causeOfDeath)
+                        removeItems = listOf(otherComplication, otherCauseOfDeath, causeOfDeath,dateOfDeath,placeOfDeath,otherPlaceOfDeath)
                     )
                 }
             }
@@ -311,6 +416,18 @@ open class DeliveryOutcomeDataset(
                     target = otherCauseOfDeath
                 )
             }
+
+            isJSYBenificiary.id -> {
+                val isYes = isJSYBenificiary.value.equals("Yes", ignoreCase = true)
+                triggerDependants(
+                    source = isJSYBenificiary,
+                    passedIndex = index,
+                    triggerIndex = if (isYes) index else -1,
+                    target = jsyFileUpload
+                )
+            }
+
+
 
             otherCauseOfDeath.id -> {
                 validateAllAlphabetsSpecialOnEditText(otherCauseOfDeath)
@@ -374,6 +491,19 @@ open class DeliveryOutcomeDataset(
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as DeliveryOutcomeCache).let { form ->
             form.dateOfDelivery = getLongFromDate(dateOfDelivery.value)
+            form.mcp1File = mcpFileUpload1.value
+            form.mcp2File = mcpFileUpload2.value
+            form.jsyFile = jsyFileUpload.value
+            form.dateOfDeath=dateOfDeath.value
+            form.placeOfDeath=placeOfDeath.value
+            form.otherPlaceOfDeath=otherPlaceOfDeath.value
+            if (complication.value.equals("Death", ignoreCase = true)){
+                form.isDeath=true
+                form.isDeathValue="Death"
+            }
+            form.placeOfDeathId = placeOfDeath.entries?.indexOf(placeOfDeath.value ?: "")
+                ?.takeIf { it != -1 }
+
             form.timeOfDelivery = timeOfDelivery.value
             form.placeOfDelivery = placeOfDelivery.value
             form.typeOfDelivery = typeOfDelivery.value
@@ -390,6 +520,31 @@ open class DeliveryOutcomeDataset(
             })
             form.timeOfDischarge = timeOfDischarge.value
             form.isJSYBenificiary = isJSYBenificiary.value == "Yes"
+        }
+    }
+    fun getIndexOfMCP1() = getIndexById(mcpFileUpload1.id)
+    fun getIndexOfMCP2() = getIndexById(mcpFileUpload2.id)
+    fun getIndexOfIsjsyFileUpload() = getIndexById(jsyFileUpload.id)
+
+
+    fun setImageUriToFormElement(lastImageFormId: Int, dpUri: Uri) {
+
+        when (lastImageFormId) {
+            21 -> {
+                mcpFileUpload1.value = dpUri.toString()
+                mcpFileUpload1.errorText = null
+            }
+
+            22 -> {
+                mcpFileUpload2.value = dpUri.toString()
+                mcpFileUpload2.errorText = null
+            }
+
+            23 -> {
+                jsyFileUpload.value = dpUri.toString()
+                jsyFileUpload.errorText = null
+            }
+
         }
     }
 }

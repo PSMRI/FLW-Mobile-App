@@ -112,7 +112,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.InfantEntity
         FormResponseJsonEntity::class
     ],
     views = [BenBasicCache::class],
-    version = 21, exportSchema = false
+    version = 24, exportSchema = false
 )
 
 @TypeConverters(LocationEntityListConverter::class, SyncStateConverter::class)
@@ -158,6 +158,37 @@ abstract class InAppDb : RoomDatabase() {
             val MIGRATION_1_2 = Migration(1, 2, migrate = {
 //                it.execSQL("select count(*) from beneficiary")
             })
+            val MIGRATION_23_24 = object : Migration(23, 24) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("ALTER TABLE MDSR ADD COLUMN mdsr1File TEXT")
+                    database.execSQL("ALTER TABLE MDSR ADD COLUMN mdsr2File TEXT")
+                    database.execSQL("ALTER TABLE MDSR ADD COLUMN mdsrDeathCertFile TEXT")
+                }
+            }
+            val MIGRATION_22_23 = object : Migration(22, 23) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL(
+                        "ALTER TABLE PNC_VISIT ADD COLUMN otherPlaceOfDeath TEXT"
+                    )
+                }
+            }
+
+
+            val MIGRATION_21_22 = object : Migration(21, 22) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN isDeath INTEGER")
+                    database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN isDeathValue TEXT")
+                    database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN dateOfDeath TEXT")
+                    database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN placeOfDeath TEXT")
+                    database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN placeOfDeathId INTEGER DEFAULT 0")
+                    database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN otherPlaceOfDeath TEXT")
+                    database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN mcp1File TEXT")
+                    database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN mcp2File TEXT")
+                    database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN jsyFile TEXT")
+                }
+            }
+
+
 
             val MIGRATION_20_21 = object : Migration(20, 21) {
                 override fun migrate(database: SupportSQLiteDatabase) {
@@ -463,7 +494,10 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_17_18,
                         MIGRATION_18_19,
                         MIGRATION_19_20,
-                        MIGRATION_20_21
+                        MIGRATION_20_21,
+                        MIGRATION_21_22,
+                        MIGRATION_22_23,
+                        MIGRATION_23_24
                     ).build()
 
                     INSTANCE = instance

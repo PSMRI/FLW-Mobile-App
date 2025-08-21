@@ -387,9 +387,6 @@ private fun getTmpFileUri(): Uri {
     )
 }
 
-
-
-
     private fun displayPdf(pdfUri: Uri) {
 
         val intent = Intent(Intent.ACTION_VIEW).apply {
