@@ -62,6 +62,17 @@ object HelperUtil {
 
     }
 
+    fun getDateStringFromLongStraight(dateLong: Long?): String? {
+        val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
+        dateLong?.let {
+            val dateString = dateFormat.format(dateLong)
+            return dateString
+        } ?: run {
+            return null
+        }
+
+    }
+
     /**
      * gets millis from given years months days
      */

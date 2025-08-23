@@ -299,6 +299,7 @@
     <string name="str_add_member">Add Member</string>
     <string name="str_not_available">Not Available</string>
     <string name="support">Support</string>
+    <string name="status">Status</string>
     <string name="sync_status">Sync Status</string>
     <string name="go_to_home">Go to Home</string>
     <string name="change_language">Change Language</string>
