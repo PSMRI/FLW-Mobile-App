@@ -54,6 +54,7 @@
     <string name="bad_obstetric_history">Bad obstetric history</string>
     <string name="multiple_pregnancy">Multiple Pregnancy</string>
     <string name="lmp_date">LMP Date</string>
+    <string name="last_visit_date">Last Visit Date</string>
     <string name="edd">EDD</string>
     <string name="assess_for_high_risk_conditions_in_the_pregnant_women">Assess for High Risk Conditions in the Pregnant Women</string>
     <string name="rd_pmsa">RD Malaria</string>
