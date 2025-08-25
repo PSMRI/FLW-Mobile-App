@@ -26,6 +26,7 @@ import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.children
 import androidx.recyclerview.widget.DiffUtil
@@ -1023,38 +1024,58 @@ class FormInputAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
         val isEnabled = if (isEnabled) item.isEnabled else false
-        when (item.inputType) {
-            EDIT_TEXT -> (holder as EditTextInputViewHolder).bind(
-                item, isEnabled, formValueListener
-            )
+        try {
+            when (item.inputType) {
+                EDIT_TEXT -> (holder as EditTextInputViewHolder).bind(
+                    item, isEnabled, formValueListener
+                )
 
-            DROPDOWN -> (holder as DropDownInputViewHolder).bind(item, isEnabled, formValueListener)
-            RADIO -> (holder as RadioInputViewHolder).bind(item, isEnabled, formValueListener)
-            DATE_PICKER -> (holder as DatePickerInputViewHolder).bind(
-                item, isEnabled, formValueListener
-            )
+                DROPDOWN -> (holder as DropDownInputViewHolder).bind(
+                    item,
+                    isEnabled,
+                    formValueListener
+                )
 
-            TEXT_VIEW -> (holder as TextViewInputViewHolder).bind(item)
-            IMAGE_VIEW -> (holder as ImageViewInputViewHolder).bind(
-                item, imageClickListener, isEnabled
-            )
+                RADIO -> (holder as RadioInputViewHolder).bind(item, isEnabled, formValueListener)
+                DATE_PICKER -> (holder as DatePickerInputViewHolder).bind(
+                    item, isEnabled, formValueListener
+                )
 
-            CHECKBOXES -> (holder as CheckBoxesInputViewHolder).bind(
-                item,
-                isEnabled,
-                formValueListener
-            )
+                TEXT_VIEW -> (holder as TextViewInputViewHolder).bind(item)
+                IMAGE_VIEW -> (holder as ImageViewInputViewHolder).bind(
+                    item, imageClickListener, isEnabled
+                )
 
-            TIME_PICKER -> (holder as TimePickerInputViewHolder).bind(item, isEnabled)
-            HEADLINE -> (holder as HeadlineViewHolder).bind(item, formValueListener)
-            AGE_PICKER -> (holder as AgePickerViewInputViewHolder).bind(
-                item,
-                isEnabled,
-                formValueListener
-            )
-            InputType.BUTTON -> (holder as ButtonInputViewHolder).bind(item, isEnabled, sendOtpClickListener)
-            InputType.FILE_UPLOAD -> (holder as FileUploadInputViewHolder).bind(item,selectImageClickListener,viewDocumentListner, position)
+                CHECKBOXES -> (holder as CheckBoxesInputViewHolder).bind(
+                    item,
+                    isEnabled,
+                    formValueListener
+                )
 
+                TIME_PICKER -> (holder as TimePickerInputViewHolder).bind(item, isEnabled)
+                HEADLINE -> (holder as HeadlineViewHolder).bind(item, formValueListener)
+                AGE_PICKER -> (holder as AgePickerViewInputViewHolder).bind(
+                    item,
+                    isEnabled,
+                    formValueListener
+                )
+
+                InputType.BUTTON -> (holder as ButtonInputViewHolder).bind(
+                    item,
+                    isEnabled,
+                    sendOtpClickListener
+                )
+
+                InputType.FILE_UPLOAD -> (holder as FileUploadInputViewHolder).bind(
+                    item,
+                    selectImageClickListener,
+                    viewDocumentListner,
+                    position
+                )
+
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
