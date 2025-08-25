@@ -1,5 +1,9 @@
 package org.piramalswasthya.sakhi.ui.home_activity.all_ben
 
+import android.content.Context
+import android.media.MediaScannerConnection
+import android.os.Environment
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -10,11 +14,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.helpers.filterBenList
-import org.piramalswasthya.sakhi.model.BenHealthIdDetails
+import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.repositories.ABHAGenratedRepo
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
-import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_otp.AadhaarOtpFragmentArgs
+import java.io.File
+import java.io.FileWriter
 import javax.inject.Inject
 
 @HiltViewModel
@@ -106,4 +111,31 @@ class AllBenViewModel @Inject constructor(
     fun resetBenRegId() {
         _benRegId.value = null
     }
+
+    fun createCsvFile(context: Context, users: List<BenBasicDomain>): File? {
+        return try {
+            val fileName = "ABHAUsers_${System.currentTimeMillis()}.csv"
+            val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+            if (!downloadsDir.exists()) downloadsDir.mkdirs()
+
+            val file = File(downloadsDir, fileName)
+
+            FileWriter(file).use { writer ->
+
+                writer.append("Ben ID,Beneficiary Name,Mobile,ABHA ID,Age,IsNewAbha,RCH ID\n")
+                for (user in users) {
+                    writer.append("${user.benId}\t,${user.benFullName},${user.mobileNo},${user.abhaId},${user.age},${user.isNewAbha},${user.rchId}\t\n")
+                }
+            }
+            MediaScannerConnection.scanFile(context, arrayOf(file.absolutePath), null, null)
+
+            Toast.makeText(context, "CSV Downloaded: ${file.name}", Toast.LENGTH_LONG).show()
+
+            file
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
 }

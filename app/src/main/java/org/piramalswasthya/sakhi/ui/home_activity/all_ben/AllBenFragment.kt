@@ -24,7 +24,6 @@ import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.AlertFilterBinding
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchAndToggleRvButtonBinding
-import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
@@ -129,8 +128,19 @@ class AllBenFragment : Fragment() {
             filterAlert.show()
         }
 
+        binding.ibDownload.setOnClickListener {
+            lifecycleScope.launch {
+                viewModel.benList.collect { users ->
+                    if (users.isNotEmpty()) {
+                        viewModel.createCsvFile(requireContext(), users)
+                    }
+                }
+            }
+        }
+
         if (args.source == 1 || args.source == 2) {
             binding.ibFilter.visibility = View.GONE
+            binding.ibDownload.visibility = View.VISIBLE
         }
 
         benAdapter = BenListAdapter(
@@ -285,4 +295,6 @@ class AllBenFragment : Fragment() {
         super.onDestroy()
         _binding = null
     }
+
+
 }
