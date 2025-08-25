@@ -177,9 +177,13 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
 
     protected suspend fun setUpPage(mList: List<FormElement>) {
 
-        list.clear()
-        list.addAll(mList)
-        _listFlow.emit(list.toMutableList())
+        try {
+            list.clear()
+            list.addAll(mList)
+            _listFlow.emit(list.toMutableList())
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
 
