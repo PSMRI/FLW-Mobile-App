@@ -101,11 +101,11 @@ object WorkerUtils {
             .then(pushCbacWorkRequest)
             .then(pushImmunizationWorkRequest)
             .then(pushHRPToAmritWorker)
+            .then(formSyncWorkerRequest)
             .then(pushTBWorkRequest)
             .then(pushECWorkRequest)
             .then(pushChildHBNCToAmritWorker)
             .then(pushAbhaWorkRequest)
-            .then(formSyncWorkerRequest)
             .enqueue()
 
     }
@@ -204,13 +204,13 @@ object WorkerUtils {
             .then(pushPNCWorkRequest)
             .then(pushInfantRegisterWorkRequest)
             .then(pushMdsrWorkRequest)
+            .then(formSyncWorkerRequest)
             .then(pushCdrWorkRequest)
             .then(pushImmunizationWorkRequest)
 //            .then(pushChildHBYCToAmritWorker)
             .then(pushChildHBNCToAmritWorker)
             .then(pullIncentiveActivityWorkRequest)
             .then(pushAbhaWorkRequest)
-            .then(formSyncWorkerRequest)
             .enqueue()
     }
 
