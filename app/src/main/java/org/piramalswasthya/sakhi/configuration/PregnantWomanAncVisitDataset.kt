@@ -413,6 +413,7 @@ class PregnantWomanAncVisitDataset(
             weekOfPregnancy,
             ancVisit,
             isAborted,
+            maternalDeath,
             weight,
             bp,
             pulseRate,
@@ -428,7 +429,6 @@ class PregnantWomanAncVisitDataset(
             anyHighRisk,
             highRiskReferralFacility,
             hrpConfirm,
-            maternalDeath
 
         )
         abortionDate.min = regis.lmpDate + TimeUnit.DAYS.toMillis(5 * 7 + 1)
@@ -702,30 +702,51 @@ class PregnantWomanAncVisitDataset(
             }
 
             isAborted.id -> {
-                if (isAborted.value.equals("Yes", ignoreCase = true)) {
+                if (isAborted.value.equals("Yes", ignoreCase = true)  || maternalDeath.value.equals("Yes", ignoreCase = true)) {
                     triggerDependants(
                         source = isAborted,
                         addItems = listOf(abortionType, abortionFacility, abortionDate),
-                        removeItems = listOf(  weight, bp, pulseRate, hb, fundalHeight,
-                            urineAlbumin, randomBloodSugarTest,
-                            dateOfTTOrTd1, dateOfTTOrTd2, dateOfTTOrTdBooster,
-                            numFolicAcidTabGiven, anyHighRisk, highRiskCondition,
-                            highRiskReferralFacility, hrpConfirm, hrpConfirmedBy,numIfaAcidTabGiven
+                        removeItems = listOf( weight,
+                            bp,
+                            pulseRate,
+                            hb,
+                            fundalHeight,
+                            urineAlbumin,
+                            randomBloodSugarTest,
+                            dateOfTTOrTd1,
+                            dateOfTTOrTd2,
+                            dateOfTTOrTdBooster,
+                            numFolicAcidTabGiven,
+                            numIfaAcidTabGiven,
+                            anyHighRisk,
+                            highRiskReferralFacility,
+                            hrpConfirm,
                             ),
                         position = getIndexById(isAborted.id) + 1
                     )
                 } else {
                     triggerDependants(
-                        source = isAborted,
-                        addItems = listOf(  weight, bp, pulseRate, hb, fundalHeight,
-                            urineAlbumin, randomBloodSugarTest,
-                            dateOfTTOrTd1, dateOfTTOrTd2, dateOfTTOrTdBooster,
-                            numFolicAcidTabGiven, anyHighRisk, highRiskCondition,
-                            highRiskReferralFacility, hrpConfirm, hrpConfirmedBy,numIfaAcidTabGiven,
-                            maternalDeath),
+                        source = maternalDeath,
+                        addItems = listOf( weight,
+                            bp,
+                            pulseRate,
+                            hb,
+                            fundalHeight,
+                            urineAlbumin,
+                            randomBloodSugarTest,
+                            dateOfTTOrTd1,
+                            dateOfTTOrTd2,
+                            dateOfTTOrTdBooster,
+                            numFolicAcidTabGiven,
+                            numIfaAcidTabGiven,
+                            anyHighRisk,
+                            highRiskReferralFacility,
+                            hrpConfirm
+                            ),
                         removeItems = listOf(
                             abortionType, abortionFacility, abortionDate
                         ),
+//                        position = getIndexById(maternalDeath.id) + 1
                         position = -1
                     )
                 }
@@ -839,14 +860,66 @@ class PregnantWomanAncVisitDataset(
                 )
             }
 
-            maternalDeath.id -> triggerDependants(
-                source = maternalDeath,
-                passedIndex = index,
-                triggerIndex = 1,
-                target = listOf(maternalDeathProbableCause, maternalDateOfDeath, placeOfDeath),
-                targetSideEffect = listOf(otherMaternalDeathProbableCause)
-            )
+//            maternalDeath.id -> triggerDependants(
+//                source = maternalDeath,
+//                passedIndex = index,
+//                triggerIndex = 1,
+//                target = listOf(maternalDeathProbableCause, maternalDateOfDeath, placeOfDeath),
+//                targetSideEffect = listOf(otherMaternalDeathProbableCause,)
+//            )
 
+
+            maternalDeath.id -> {
+                if (maternalDeath.value.equals("Yes", ignoreCase = true) || isAborted.value.equals("Yes", ignoreCase = true)) {
+                    triggerDependants(
+                        source = maternalDeath,
+                        addItems = listOf(maternalDeathProbableCause, maternalDateOfDeath, placeOfDeath),
+                        removeItems = listOf(  weight,
+                            bp,
+                            pulseRate,
+                            hb,
+                            fundalHeight,
+                            urineAlbumin,
+                            randomBloodSugarTest,
+                            dateOfTTOrTd1,
+                            dateOfTTOrTd2,
+                            dateOfTTOrTdBooster,
+                            numFolicAcidTabGiven,
+                            numIfaAcidTabGiven,
+                            anyHighRisk,
+                            highRiskReferralFacility,
+                            hrpConfirm,
+                        ),
+                        position = getIndexById(maternalDeath.id) + 1
+                    )
+                } else {
+                    triggerDependants(
+                        source = maternalDeath,
+                        addItems = listOf( weight,
+                            bp,
+                            pulseRate,
+                            hb,
+                            fundalHeight,
+                            urineAlbumin,
+                            randomBloodSugarTest,
+                            dateOfTTOrTd1,
+                            dateOfTTOrTd2,
+                            dateOfTTOrTdBooster,
+                            numFolicAcidTabGiven,
+                            numIfaAcidTabGiven,
+                            anyHighRisk,
+                            highRiskReferralFacility,
+                            hrpConfirm
+                        ),
+                        removeItems = listOf(
+                            maternalDeathProbableCause, maternalDateOfDeath, placeOfDeath
+                        ),
+//                        position = getIndexById(maternalDeath.id) + 1
+                        position = -1
+                    )
+                }
+            }
+//
             maternalDeathProbableCause.id -> triggerDependants(
                 source = maternalDeathProbableCause,
                 passedIndex = index,

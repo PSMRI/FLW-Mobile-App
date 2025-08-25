@@ -31,8 +31,13 @@ class InfantDayListFragment : Fragment() {
     private val binding get() = _binding!!
     private val args: InfantDayListFragmentArgs by navArgs()
     private val viewModel: HBNCFormViewModel by viewModels()
-    var dob=0L
     private val infantListViewModel: InfantListViewModel by viewModels()
+
+    private var dob = 0L
+    private var isBenDead = false
+
+    private lateinit var visitAdapter: VisitCardAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -48,6 +53,52 @@ class InfantDayListFragment : Fragment() {
 
         viewModel.loadInfant(benId, hhId)
         viewModel.loadSyncedVisitList(benId)
+        viewModel.checkIfBenDead(benId)
+
+        binding.recyclerVisitCards.layoutManager = GridLayoutManager(requireContext(), 2)
+        visitAdapter = VisitCardAdapter(emptyList(), isBenDead) { card ->
+            val action = InfantDayListFragmentDirections
+                .actionInfantFormFragmentToHbncFormFragment(
+                    benId, hhId,
+                    visitDay = card.visitDay,
+                    isViewMode = !card.isEditable,
+                    formId = HBNC_FORM_ID
+                )
+            findNavController().navigate(action)
+        }
+        binding.recyclerVisitCards.adapter = visitAdapter
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.isBenDead.collectLatest { dead ->
+                    isBenDead = dead
+                    visitAdapter.updateDeathStatus(dead)
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.syncedVisitList.collectLatest {
+                    val cards = viewModel.getVisitCardList(benId)
+                    visitAdapter.updateVisits(cards)
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.infant.collectLatest { infant ->
+                infant?.let {
+                    binding.tvRchId?.text = it.benId.toString()
+                }
+            }
+        }
+
+        infantListViewModel.getDobByBenIdAsync(benId) { dobMillis ->
+            if (dobMillis != null) {
+                dob = dobMillis
+            }
+        }
 
         val savedStateHandle = findNavController().currentBackStackEntry?.savedStateHandle
         savedStateHandle?.getLiveData<Boolean>("form_submitted")
@@ -58,39 +109,6 @@ class InfantDayListFragment : Fragment() {
                     savedStateHandle.remove<Boolean>("form_submitted")
                 }
             }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.infant.collectLatest { infant ->
-                infant?.let {
-                    binding.tvRchId?.text = it.benId.toString()
-                }
-            }
-        }
-        infantListViewModel.getDobByBenIdAsync(benId) { dobMillis ->
-            if (dobMillis != null) {
-                dob=dobMillis
-            }
-        }
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.syncedVisitList.collectLatest {
-                    val cards = viewModel.getVisitCardList(benId)
-
-                    binding.recyclerVisitCards.layoutManager =
-                        GridLayoutManager(requireContext(), 2)
-                    binding.recyclerVisitCards.adapter = VisitCardAdapter(cards) { card ->
-                        val action = InfantDayListFragmentDirections
-                            .actionInfantFormFragmentToHbncFormFragment(
-                                benId,hhId,
-                                visitDay = card.visitDay,
-                                isViewMode = !card.isEditable,
-                                formId = HBNC_FORM_ID
-                            )
-                        findNavController().navigate(action)
-                    }
-                }
-            }
-        }
     }
 
     override fun onDestroyView() {
