@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +20,7 @@ import org.piramalswasthya.sakhi.adapters.IconGridAdapter
 import org.piramalswasthya.sakhi.configuration.IconDataset
 import org.piramalswasthya.sakhi.databinding.RvIconGridBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
 import javax.inject.Inject
@@ -58,7 +60,8 @@ class LmsFragment: Fragment() {
         binding.rvIconGrid.layoutManager = rvLayoutManager
         val rvAdapter = IconGridAdapter(
             IconGridAdapter.GridIconClickListener {
-                if(it.actionId.toString().contains("2131361919"))
+                Timber.tag("LMSActionId").d(it.actionId.toString())
+                if(it.actionId.toString().contains("2131361960"))
                 {
                     val pdfFile = copyPdfToCache(requireContext(), "dummy.pdf", R.raw.dummy)
                     openPdfFile(requireContext(), pdfFile)
