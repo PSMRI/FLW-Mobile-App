@@ -85,6 +85,9 @@ class BenRepo @Inject constructor(
         return benDao.getAllBenForHousehold(hhId)
 
     }
+    suspend fun isBenDead(benId: Long): Boolean {
+        return benDao.isBenDead(benId)
+    }
 
     suspend fun getBenFromId(benId: Long): BenRegCache? {
         return withContext(Dispatchers.IO) {

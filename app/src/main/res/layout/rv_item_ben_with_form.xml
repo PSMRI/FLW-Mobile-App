@@ -63,7 +63,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
                     android:paddingHorizontal="@dimen/padding_small"
-                    android:text="@{ben.familyHeadName}"
+                    android:text='@{ben.benName + " " + ben.benSurname}'
                     android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                     android:textColor="?attr/colorPrimaryVariant"
 

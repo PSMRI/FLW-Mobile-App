@@ -47,6 +47,9 @@ interface BenDao {
     @Query("SELECT * FROM BENEFICIARY WHERE beneficiaryId =:benId LIMIT 1")
     suspend fun getBen(benId: Long): BenRegCache?
 
+    @Query("SELECT EXISTS(SELECT 1 FROM BENEFICIARY WHERE beneficiaryId = :benId AND isDeath = 1)")
+    suspend fun isBenDead(benId: Long): Boolean
+
 
     @Query("UPDATE BENEFICIARY SET syncState = :syncState WHERE beneficiaryId =:benId AND householdId = :hhId")
     suspend fun setSyncState(hhId: Long, benId: Long, syncState: SyncState)
@@ -98,14 +101,14 @@ interface BenDao {
 
     //    @Query("SELECT b.benId as ecBenId,b.*, r.noOfLiveChildren as numChildren , t.* FROM ben_basic_cache b join eligible_couple_reg r on b.benId=r.benId left outer join eligible_couple_tracking t on t.benId=b.benId WHERE CAST((strftime('%s','now') - b.dob/1000)/60/60/24/365 AS INTEGER) BETWEEN :min and :max and b.reproductiveStatusId = 1 and  b.villageId=:selectedVillage group by b.benId")
     @Transaction
-    @Query("SELECT b.* FROM ben_basic_cache b join eligible_couple_reg r on b.benId=r.benId  WHERE CAST((strftime('%s','now') - b.dob/1000)/60/60/24/365 AS INTEGER) BETWEEN :min and :max and b.reproductiveStatusId = 1 and  b.villageId=:selectedVillage group by b.benId")
+    @Query("SELECT b.* FROM ben_basic_cache b join eligible_couple_reg r on b.benId=r.benId  WHERE CAST((strftime('%s','now') - b.dob/1000)/60/60/24/365 AS INTEGER) BETWEEN :min and :max and b.reproductiveStatusId = 1 and  b.villageId=:selectedVillage and isDeath = 0 or isDeath is NULL group by b.benId")
     fun getAllEligibleTrackingList(
         selectedVillage: Int,
         min: Int = Konstants.minAgeForEligibleCouple, max: Int = Konstants.maxAgeForEligibleCouple
     ): Flow<List<BenWithEcTrackingCache>>
 
     @Transaction
-    @Query("SELECT * FROM ben_basic_cache WHERE CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) BETWEEN :min and :max and reproductiveStatusId = 1 and  villageId=:selectedVillage group by benId")
+    @Query("SELECT * FROM ben_basic_cache WHERE CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) BETWEEN :min and :max and reproductiveStatusId = 1 and  villageId=:selectedVillage and isDeath = 0 or isDeath is NULL group by benId")
     fun getAllEligibleRegistrationList(
         selectedVillage: Int,
         min: Int = Konstants.minAgeForEligibleCouple, max: Int = Konstants.maxAgeForEligibleCouple
