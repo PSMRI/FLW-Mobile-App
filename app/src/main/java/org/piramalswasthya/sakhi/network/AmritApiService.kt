@@ -4,6 +4,7 @@ import okhttp3.ResponseBody
 import org.piramalswasthya.sakhi.model.*
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSubmitRequest
+import org.piramalswasthya.sakhi.model.dynamicModel.ApiResponse
 import org.piramalswasthya.sakhi.model.dynamicModel.HBNCVisitListResponse
 import org.piramalswasthya.sakhi.model.dynamicModel.HBNCVisitRequest
 import retrofit2.Response
@@ -213,7 +214,7 @@ interface AmritApiService {
     @GET("common-api/dynamicForm/form/{formId}/fields")
     suspend fun fetchFormSchema(
         @Path("formId") formId: String
-    ): Response<FormSchemaDto>
+    ): Response<ApiResponse<FormSchemaDto>>
 
     @POST("flw-api/child-care/hbncVisit/saveAll")
     suspend fun submitForm(

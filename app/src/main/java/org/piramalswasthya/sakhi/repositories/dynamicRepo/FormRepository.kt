@@ -36,23 +36,33 @@ class FormRepository @Inject constructor(
     suspend fun getFormSchema(formId: String): FormSchemaDto? = withContext(Dispatchers.IO) {
         try {
             val response = amritApiService.fetchFormSchema(formId)
+
             if (response.isSuccessful) {
-                val apiSchema = response.body()
-                apiSchema?.let {
-                    val localSchema = getSavedSchema(it.formId)
-                    if (localSchema == null || localSchema.version < it.version) {
-                        saveFormSchemaToDb(it)
+                val apiResponse = response.body()
+                if (apiResponse?.success == true) {
+                    val apiSchema = apiResponse.data
+                    apiSchema?.let {
+                        val localSchema = getSavedSchema(it.formId)
+                        if (localSchema == null || localSchema.version < it.version) {
+                            saveFormSchemaToDb(it)
+                        }
+                        return@withContext it
                     }
-                    return@withContext it
                 }
             }
         } catch (e: Exception) {
+            // ignore exception, fallback below will handle
         }
 
+        // fallback -> DB or assets
         formSchemaDao.getSchema(formId)?.let {
             return@withContext FormSchemaDto.fromJson(it.schemaJson)
-        } ?: loadSchemaFromAssets()
+        } ?: run {
+            return@withContext loadSchemaFromAssets()
+        }
     }
+
+
 
     private fun loadSchemaFromAssets(): FormSchemaDto? {
         return try {

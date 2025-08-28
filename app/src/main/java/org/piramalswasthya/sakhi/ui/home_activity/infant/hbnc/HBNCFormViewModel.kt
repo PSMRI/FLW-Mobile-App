@@ -42,6 +42,10 @@ class HBNCFormViewModel @Inject constructor(
     var visitDay: String = ""
     private var isViewMode: Boolean = false
 
+
+    private val _isBenDead = MutableStateFlow(false)
+    val isBenDead: StateFlow<Boolean> = _isBenDead
+
     fun loadSyncedVisitList(benId: Long) {
         viewModelScope.launch {
             val list = repository.getSyncedVisitsByRchId(benId)
@@ -390,4 +394,14 @@ suspend fun saveFormResponses(benId: Long, hhId: Long) {
         }
     }
 
+    fun checkIfBenDead(benId: Long) {
+        viewModelScope.launch {
+            try {
+                val dead = benRepo.isBenDead(benId)
+                _isBenDead.value = dead
+            } catch (e: Exception) {
+                _isBenDead.value = false
+            }
+        }
+    }
 }
