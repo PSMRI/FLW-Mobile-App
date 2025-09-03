@@ -262,34 +262,95 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
+       <androidx.core.widget.NestedScrollView
+           android:layout_width="match_parent"
+           android:layout_weight="1"
+           android:fillViewport="true"
+           android:layout_height="match_parent">
+           <LinearLayout
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:orientation="vertical">
+               <FrameLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="0dp"
+                   android:layout_weight="1">
 
-        <include
-            android:id="@+id/form"
-            layout="@layout/rv_input_form"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
+                   <include
+                       android:id="@+id/form"
+                       layout="@layout/rv_input_form"
+                       android:layout_width="match_parent"
+                       android:layout_height="match_parent"
+                       android:layout_weight="1" />
 
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fab_edit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|end"
-                android:layout_marginEnd="@dimen/padding_wide"
-                android:layout_marginBottom="@dimen/padding_wide"
-                android:contentDescription="@string/edit"
-                android:visibility="gone"
-                app:backgroundTint="@color/md_theme_light_primary"
-                app:srcCompat="@drawable/ic_edit"
-                app:tint="@color/md_theme_light_onTertiary"
-                tools:visibility="visible" />
+                   <com.google.android.material.floatingactionbutton.FloatingActionButton
+                       android:id="@+id/fab_edit"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_gravity="bottom|end"
+                       android:layout_marginEnd="@dimen/padding_wide"
+                       android:layout_marginBottom="@dimen/padding_wide"
+                       android:contentDescription="@string/edit"
+                       android:visibility="gone"
+                       app:backgroundTint="@color/md_theme_light_primary"
+                       app:srcCompat="@drawable/ic_edit"
+                       app:tint="@color/md_theme_light_onTertiary"
+                       tools:visibility="visible" />
 
-        </FrameLayout>
+               </FrameLayout>
+               <TextView
+                   android:id="@+id/tvHeading"
+                   android:visibility="gone"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:text="@string/antra_injection_details"
+                   android:textSize="18sp"
+                   android:textStyle="bold"
+                   android:gravity="center"
+                   android:padding="8dp"
+                   android:background="#E0E0E0" />
+               <TableLayout
+                   android:id="@+id/tableAntra"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:visibility="gone"
+                   android:stretchColumns="0,1,2"
+                   android:padding="8dp">
+
+                   <TableRow
+                       android:background="#FFF5F5F5"
+                       android:padding="8dp">
+                       <TextView
+                           android:layout_width="0dp"
+                           android:layout_height="wrap_content"
+                           android:layout_weight="1"
+                           android:text="@string/dose"
+                           android:textStyle="bold"
+                           android:gravity="center"/>
+                       <TextView
+                           android:layout_width="0dp"
+                           android:layout_height="wrap_content"
+                           android:layout_weight="1"
+                           android:text="@string/date"
+                           android:textStyle="bold"
+                           android:gravity="center"/>
+                       <TextView
+                           android:layout_width="0dp"
+                           android:layout_height="wrap_content"
+                           android:layout_weight="1"
+                           android:text="@string/next_due_date"
+                           android:textStyle="bold"
+                           android:gravity="center"/>
+                   </TableRow>
+               </TableLayout>
+
+
+           </LinearLayout>
+
+
+       </androidx.core.widget.NestedScrollView>
+
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_submit"

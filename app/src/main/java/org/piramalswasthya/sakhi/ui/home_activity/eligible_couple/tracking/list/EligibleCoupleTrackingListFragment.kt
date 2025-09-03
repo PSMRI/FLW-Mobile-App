@@ -44,9 +44,14 @@ class EligibleCoupleTrackingListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+
+
+
         binding.btnNextPage.visibility = View.GONE
         val benAdapter = ECTrackingListAdapter(
             ECTrackingListAdapter.ECTrackListClickListener(addNewTrack = { benId, canAdd ->
+
                 if (canAdd)
                     findNavController().navigate(
                         EligibleCoupleTrackingListFragmentDirections.actionEligibleCoupleTrackingListFragmentToEligibleCoupleTrackingFormFragment(
