@@ -118,6 +118,11 @@ object WorkerUtils {
                 ExistingWorkPolicy.APPEND_OR_REPLACE,
                 pullWorkRequest
             )
+            .then(pullMalariaWorkRequest)
+            .then(pullAESToAmritWorker)
+            .then(pullkalaAzarToAmritWorker)
+            .then(pullFilariaToAmritWorker)
+            .then(pullLeprosyToAmritWorker)
             .then(pullVLFWorkRequest)
             .then(pullAdolescentWorkRequest)
             .then(pullIncentiveActivityWorkRequest)
@@ -138,11 +143,6 @@ object WorkerUtils {
 //            .then(pushChildHBYCToAmritWorker)
             .then(pushChildHBNCToAmritWorker)
             .then(pushAbhaWorkRequest)
-            .then(pullMalariaWorkRequest)
-            .then(pullAESToAmritWorker)
-            .then(pullkalaAzarToAmritWorker)
-            .then(pullFilariaToAmritWorker)
-            .then(pullLeprosyToAmritWorker)
             .enqueue()
     }
 
@@ -363,6 +363,11 @@ object WorkerUtils {
                 ExistingWorkPolicy.APPEND_OR_REPLACE,
                 pullWorkRequest
             )
+            .then(pullMalariaWorkRequest)
+            .then(pullAESToAmritWorker)
+            .then(pullkalaAzarToAmritWorker)
+            .then(pullFilariaToAmritWorker)
+            .then(pullLeprosyToAmritWorker)
             .then(pullVLFWorkRequest)
             .then(pulladolescentWorkRequest)
             .then(pullIncentiveActivityWorkRequest)
@@ -382,11 +387,6 @@ object WorkerUtils {
 //            .then(pullHBYCFromAmritWorker)
             .then(pullHBNCFromAmritWorker)
             .then(setSyncCompleteWorker)
-            .then(pullMalariaWorkRequest)
-            .then(pullAESToAmritWorker)
-            .then(pullkalaAzarToAmritWorker)
-            .then(pullFilariaToAmritWorker)
-            .then(pullLeprosyToAmritWorker)
             .enqueue()
     }
 
