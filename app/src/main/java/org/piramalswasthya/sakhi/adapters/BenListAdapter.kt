@@ -6,8 +6,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.RvItemBenBinding
+import org.piramalswasthya.sakhi.helpers.getDateFromLong
+import org.piramalswasthya.sakhi.helpers.getPatientTypeByAge
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.model.HouseHoldBasicDomain
 
@@ -55,6 +58,8 @@ class BenListAdapter(
             pref: PreferenceDao?
         ) {
 
+            var gender = ""
+
             if (pref?.getLoggedInUser()?.role.equals("asha", true)) {
                 binding.btnAbha.visibility = View.VISIBLE
             } else {
@@ -76,6 +81,44 @@ class BenListAdapter(
                 binding.ivCall.visibility = View.VISIBLE
             } else {
                 binding.ivCall.visibility = View.GONE
+            }
+
+            gender = item.gender.toString()
+
+            if (item.dob != null) {
+                val type = getPatientTypeByAge(getDateFromLong(item.dob!!))
+                if (type == "new_born_baby") {
+                    binding.ivHhLogo.setImageResource(R.drawable.ic_new_born_baby)
+                } else if (type == "infant") {
+                    binding.ivHhLogo.setImageResource(R.drawable.ic_infant)
+                } else if (type == "child") {
+                    //male female check
+                    if (gender == "Male") {
+                        binding.ivHhLogo.setImageResource(R.drawable.ic_boy)
+                    } else if (gender == "Female") {
+                        binding.ivHhLogo.setImageResource(R.drawable.ic_girl)
+                    } else {
+
+                    }
+
+                } else if (type == "adolescence") {
+                    if (gender == "Male") {
+                        binding.ivHhLogo.setImageResource(R.drawable.ic_boy)
+                    } else if (gender == "Female") {
+                        binding.ivHhLogo.setImageResource(R.drawable.ic_girl)
+                    } else {
+
+                    }
+
+                } else if (type == "adult") {
+                    if (gender == "Male") {
+                        binding.ivHhLogo.setImageResource(R.drawable.ic_male)
+                    } else if (gender == "Female") {
+                        binding.ivHhLogo.setImageResource(R.drawable.ic_female)
+                    } else {
+                        binding.ivHhLogo.setImageResource(R.drawable.ic_unisex)
+                    }
+                }
             }
 
             if (showBeneficiaries) {

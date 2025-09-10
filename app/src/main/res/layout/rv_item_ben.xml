@@ -86,11 +86,12 @@
                         android:layout_gravity="center_vertical"
                         android:layout_marginStart="10dp"
                         android:paddingVertical="@dimen/padding_normal"
-                        android:src="@{ben.gender.equals(`MALE`) ? @drawable/ic_male : @drawable/ic_female}"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:tint="?attr/colorPrimary" />
+
+<!--                    android:src="@{ben.gender.equals(`MALE`) ? @drawable/ic_males : @drawable/ic_females}"-->
 
                     <TextView
                         android:id="@+id/tv_hh_id"
