@@ -10,6 +10,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
@@ -30,8 +31,10 @@ class AllBenViewModel @Inject constructor(
     private val benRepo: BenRepo
 ) : ViewModel() {
 
-
     private var sourceFromArgs = AllBenFragmentArgs.fromSavedStateHandle(savedStateHandle).source
+
+    private val newBenList = recordsRepo.allBenWithNewAbhaList
+    private val oldBenList = recordsRepo.allBenWithOldAbhaList
 
     private val allBenList = when (sourceFromArgs) {
         1 -> {
@@ -45,12 +48,30 @@ class AllBenViewModel @Inject constructor(
         }
     }
 
-    private val filter = MutableStateFlow("")
-    private val kind = MutableStateFlow(0)
+    private val filterOrg = MutableStateFlow("")
+    private val kindOrg = MutableStateFlow(0)
 
-    val benList = allBenList.combine(kind) { list, kind ->
+    private val filterNew = MutableStateFlow("")
+    private val kindNew = MutableStateFlow(0)
+
+    private val filterOld = MutableStateFlow("")
+    private val kindOld = MutableStateFlow(0)
+
+    val benList = allBenList.combine(kindOrg) { list, kind ->
         filterBenList(list, kind)
-    }.combine(filter) { list, filter ->
+    }.combine(filterOrg) { list, filter ->
+        filterBenList(list, filter)
+    }
+
+    val benNewList = newBenList.combine(kindNew) { list, kind ->
+        filterBenList(list, kind)
+    }.combine(filterNew) { list, filter ->
+        filterBenList(list, filter)
+    }
+
+    val benOldList = oldBenList.combine(kindOld) { list, kind ->
+        filterBenList(list, kind)
+    }.combine(filterOld) { list, filter ->
         filterBenList(list, filter)
     }
 
@@ -68,14 +89,18 @@ class AllBenViewModel @Inject constructor(
 
     fun filterText(text: String) {
         viewModelScope.launch {
-            filter.emit(text)
+            filterOrg.emit(text)
+            filterNew.emit(text)
+            filterOld.emit(text)
         }
 
     }
 
     fun filterType(type: Int) {
         viewModelScope.launch {
-            kind.emit(type)
+            kindOrg.emit(type)
+            kindNew.emit(type)
+            kindOld.emit(type)
         }
 
     }

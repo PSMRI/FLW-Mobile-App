@@ -411,6 +411,8 @@
     <string name="ben_with_rch_id">Ben With RCH ID</string>
     <string name="call">Call</string>
     <string name="heading">History</string>
+    <string name="new_abha">NEW ABHA</string>
+    <string name="existing_abha">EXISTING ABHA</string>
     <string-array name="sync_records">
         <item>Beneficiary</item>
         <item>CBAC</item>
