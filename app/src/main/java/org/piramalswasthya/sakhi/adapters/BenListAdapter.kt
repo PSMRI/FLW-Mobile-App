@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import org.piramalswasthya.sakhi.databinding.RvItemBenBinding
 import org.piramalswasthya.sakhi.helpers.getDateFromLong
 import org.piramalswasthya.sakhi.helpers.getPatientTypeByAge
 import org.piramalswasthya.sakhi.model.BenBasicDomain
+import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.HouseHoldBasicDomain
 
 
@@ -93,28 +95,28 @@ class BenListAdapter(
                     binding.ivHhLogo.setImageResource(R.drawable.ic_infant)
                 } else if (type == "child") {
                     //male female check
-                    if (gender == "Male") {
+                    if (gender == Gender.MALE.name) {
                         binding.ivHhLogo.setImageResource(R.drawable.ic_boy)
-                    } else if (gender == "Female") {
+                    } else if (gender == Gender.FEMALE.name) {
                         binding.ivHhLogo.setImageResource(R.drawable.ic_girl)
                     } else {
 
                     }
 
                 } else if (type == "adolescence") {
-                    if (gender == "Male") {
+                    if (gender == Gender.MALE.name) {
                         binding.ivHhLogo.setImageResource(R.drawable.ic_boy)
-                    } else if (gender == "Female") {
+                    } else if (gender == Gender.FEMALE.name) {
                         binding.ivHhLogo.setImageResource(R.drawable.ic_girl)
                     } else {
 
                     }
 
                 } else if (type == "adult") {
-                    if (gender == "Male") {
-                        binding.ivHhLogo.setImageResource(R.drawable.ic_male)
-                    } else if (gender == "Female") {
-                        binding.ivHhLogo.setImageResource(R.drawable.ic_female)
+                    if (gender == Gender.MALE.name) {
+                        binding.ivHhLogo.setImageResource(R.drawable.ic_males)
+                    } else if (gender == Gender.FEMALE.name) {
+                        binding.ivHhLogo.setImageResource(R.drawable.ic_females)
                     } else {
                         binding.ivHhLogo.setImageResource(R.drawable.ic_unisex)
                     }

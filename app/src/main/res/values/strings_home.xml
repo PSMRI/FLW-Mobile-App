@@ -48,7 +48,7 @@
     <string name="icon_title_leprosy">Leprosy</string>
     <string name="icon_title_malaria_confirmed">Malaria Confirmed Cases</string>
     <string name="icon_title_dearming">Deworming</string>
-    <string name="icon_title_abha">ABHA Generated\nCount</string>
+    <string name="icon_title_abha">ABHA\nCount</string>
     <string name="icon_title_abhas">ABHA\nBeneficiaries</string>
     <string name="icon_title_rch">RCH ID\nCount</string>
     <string name="icon_title_rchs">RCH ID\nBeneficiaries</string>
