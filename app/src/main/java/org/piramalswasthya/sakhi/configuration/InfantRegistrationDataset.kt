@@ -11,7 +11,6 @@ import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.InfantRegCache
 import org.piramalswasthya.sakhi.model.InputType
 import org.piramalswasthya.sakhi.model.PregnantWomanRegistrationCache
-import java.util.concurrent.TimeUnit
 
 class InfantRegistrationDataset(
     context: Context, currentLanguage: Languages
@@ -186,28 +185,7 @@ class InfantRegistrationDataset(
 //            otherDefect,
             weight, breastFeedingStarted, //opv0Dose, bcgDose, hepBDose, vitkDose
         )
-        if (deliveryOutcomeCache != null) {
-     /*       opv0Dose.min = deliveryOutcomeCache.dateOfDelivery
-            bcgDose.min = deliveryOutcomeCache.dateOfDelivery
-            hepBDose.min = deliveryOutcomeCache.dateOfDelivery
-            vitkDose.min = deliveryOutcomeCache.dateOfDelivery
-            deliveryOutcomeCache.dateOfDelivery.let {
-                if (it != null) {
-                    if (it + TimeUnit.DAYS.toMillis(15) < System.currentTimeMillis()) opv0Dose.max =
-                        it + TimeUnit.DAYS.toMillis(15)
-                    if (it + TimeUnit.DAYS.toMillis(365) < System.currentTimeMillis()) bcgDose.max =
-                        it + TimeUnit.DAYS.toMillis(365)
-                    if (it + 24 * 60 * 60 * 1000 < System.currentTimeMillis()) {
-                        hepBDose.max = it + TimeUnit.DAYS.toMillis(
 
-
-                            1
-                        )
-                        vitkDose.max = it + TimeUnit.DAYS.toMillis(1)
-                    }
-                }
-            }*/
-        }
         if (pwrCache != null && deliveryOutcomeCache != null) {
             val weeksOfPregnancy = deliveryOutcomeCache.dateOfDelivery?.let {
                 getWeeksOfPregnancy(
@@ -226,7 +204,6 @@ class InfantRegistrationDataset(
                     if (deliveryOutcomeCache.liveBirth == null || deliveryOutcomeCache.liveBirth == 1) "baby of ${ben.firstName}"
                     else "baby $babyIndex of ${ben.firstName}"
             }
-//            opv0Dose.value = getDateFromLong(System.currentTimeMillis())
         } else {
             list = mutableListOf(
                 babyName,

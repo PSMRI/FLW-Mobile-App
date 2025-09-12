@@ -1,6 +1,5 @@
 package org.piramalswasthya.sakhi.ui.home_activity.immunization_due.child_immunization.list
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,9 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.database.room.dao.ImmunizationDao
 import org.piramalswasthya.sakhi.helpers.filterImmunList
 import org.piramalswasthya.sakhi.model.ImmunizationCategory
@@ -37,7 +34,6 @@ class ChildImmunizationListViewModel @Inject constructor(
         }.timeInMillis,
         maxDob = System.currentTimeMillis(),
     )
-    private lateinit var vaccinesList: List<Vaccine>
 
     private val filter = MutableStateFlow("")
 
@@ -143,10 +139,6 @@ class ChildImmunizationListViewModel @Inject constructor(
 
         return catList
 
-    }
-
-    private fun navigateForClicked(benId: Long, vaccineId: Int) {
-        Timber.d("Hello Me! clicked for $benId, vaccineId : $vaccineId")
     }
 
     fun getSelectedBenId(): Long {
