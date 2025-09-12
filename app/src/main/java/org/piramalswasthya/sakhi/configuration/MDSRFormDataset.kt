@@ -17,7 +17,7 @@ class MDSRFormDataset(
     private val dateOfDeath = FormElement(
         id = 1,
         inputType = InputType.DATE_PICKER,
-        title = "Date of death ",
+        title =resources.getString(R.string.str_date_of_death),
         min = 0L,
         max = System.currentTimeMillis(),
         required = true
@@ -25,20 +25,20 @@ class MDSRFormDataset(
     private val address = FormElement(
         id = 2,
         inputType = InputType.TEXT_VIEW,
-        title = "Address",
+        title =resources.getString(R.string.mdsr_address),
         required = false
     )
     private val husbandName = FormElement(
         id = 3,
         inputType = InputType.TEXT_VIEW,
         etMaxLength = 50,
-        title = "Husband’s Name",
+        title =resources.getString(R.string.mdsr_husband_name),
         required = false
     )
     private val causeOfDeath = FormElement(
         id = 4,
         inputType = InputType.RADIO,
-        title = "Cause of death",
+        title =resources.getString(R.string.mdsr_cause),
         required = true,
         orientation = LinearLayout.VERTICAL,
         hasDependants = true,
@@ -47,13 +47,13 @@ class MDSRFormDataset(
     private val reasonOfDeath = FormElement(
         id = 5,
         inputType = InputType.EDIT_TEXT,
-        title = "Specify Reason",
+        title =resources.getString(R.string.mdsr_reason_death),
         required = true
     )
     private val investigationDate = FormElement(
         id = 6,
         inputType = InputType.DATE_PICKER,
-        title = "Date of field investigation",
+        title =resources.getString(R.string.mdsr_field_investigation),
         min = 0L,
         max = System.currentTimeMillis(),
         required = false
@@ -61,7 +61,7 @@ class MDSRFormDataset(
     private val actionTaken = FormElement(
         id = 7,
         inputType = InputType.RADIO,
-        title = "Action Take",
+        title =resources.getString(R.string.mdsr_action),
         required = false,
         orientation = LinearLayout.VERTICAL,
         entries = arrayOf("Yes", "No")
@@ -69,7 +69,7 @@ class MDSRFormDataset(
     private val blockMOSign = FormElement(
         id = 8,
         inputType = InputType.EDIT_TEXT,
-        title = "Signature of MO I/C of the block",
+        title =resources.getString(R.string.mdsr_signature),
         required = false
     )
     private val dateIc = FormElement(
@@ -77,7 +77,7 @@ class MDSRFormDataset(
         inputType = InputType.DATE_PICKER,
         min = 0L,
         max = System.currentTimeMillis(),
-        title = "Date",
+        title =resources.getString(R.string.mdsr_ic_date),
         required = false
     )
 

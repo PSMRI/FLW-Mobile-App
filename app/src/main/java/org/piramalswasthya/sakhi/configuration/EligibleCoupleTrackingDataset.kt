@@ -92,7 +92,7 @@ class EligibleCoupleTrackingDataset(
     private val antraDoses = FormElement(
         id = 9,
         inputType = InputType.DROPDOWN,
-        title = "Antra injection",
+        title = resources.getString(R.string.antra_injection),
         arrayId = R.array.antra_doses,
         entries = resources.getStringArray(R.array.antra_doses),
         required = false,

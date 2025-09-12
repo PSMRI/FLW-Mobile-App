@@ -158,4 +158,34 @@
         <item>CHO</item>
         <item>MO</item>
     </string-array>
+
+    <string name="saving_mdsr_to_database_failed">एमडीएसआर (मातृ मृत्यु) डेटा सेव करने में विफल</string>
+    <string name="hbyc_form">एचबीवाईसी फॉर्म</string>
+    <string name="saving_hbnc_part_ii_to_database_failed">एचबीएनसी भाग-II डेटा सेव करने में विफल</string>
+    <string name="part_i">भाग-I</string>
+    <string name="part_ii">भाग-II</string>
+    <string name="hbnc_form">एचबीएनसी (गृह भ्रमण) फॉर्म</string>
+
+
+    <string name="str_name_of_child">बच्चे का नाम</string>
+    <string name="str_rch_id_of_child">बच्चे का आरसीएच आईडी नंबर</string>
+    <string name="str_date_of_birth">जन्म तिथि</string>
+    <string name="str_sex_of_child">बच्चे का लिंग</string>
+    <string name="str_mothers_name">माता का नाम</string>
+    <string name="str_fathers_name">पिता का नाम</string>
+    <string name="str_whose_mobile_number">किसका मोबाइल नंबर</string>
+    <string name="str_mobile_no">मोबाइल नंबर</string>
+    <string name="str_rch_id_of_mother">माता का आरसीएच आईडी नंबर</string>
+    <string name="str_birth_cert_number">जन्म प्रमाण पत्र संख्या</string>
+    <string name="str_weight_at_birth">जन्म के समय वजन (किलोग्राम)</string>
+    <string name="str_place_of_birth">जन्म स्थान</string>
+    <string name="str_district_hospital">जिला अस्पताल</string>
+    <string name="str_community_health_centre">सामुदायिक स्वास्थ्य केंद्र</string>
+    <string name="str_primary_health_center">प्राथमिक स्वास्थ्य केंद्र</string>
+    <string name="str_sub_center">स्वास्थ्य उपकेंद्र</string>
+    <string name="str_other_public_facility">अन्य स्वास्थ्य केंद्र</string>
+    <string name="str_home">घर</string>
+    <string name="str_sub_district_hospital">सह-जिला अस्पताल</string>
+    <string name="str_medical_college_hospital">मेडिकल कॉलेज अस्पताल</string>
+
 </resources>

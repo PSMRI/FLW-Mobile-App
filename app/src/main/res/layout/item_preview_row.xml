@@ -12,6 +12,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1.0"
+        android:textSize="@dimen/_12sdp"
+        android:fontFamily="@font/roboto_medium"
+        android:textColor="@color/md_theme_light_shadow"
         android:textStyle="bold" />
 
     <TextView
@@ -19,9 +22,11 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1.2"
+        android:textSize="@dimen/_12sdp"
+        android:fontFamily="@font/roboto_regular"
+        android:textColor="@color/md_theme_light_shadow"
         android:gravity="end" />
 
-    <!-- ImageView placeholder for image rows; default gone -->
     <ImageView
         android:id="@+id/ivPreviewImage"
         android:layout_width="56dp"

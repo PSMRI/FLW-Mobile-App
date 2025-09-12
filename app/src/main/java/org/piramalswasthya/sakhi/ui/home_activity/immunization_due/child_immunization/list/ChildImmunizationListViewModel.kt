@@ -44,7 +44,34 @@ class ChildImmunizationListViewModel @Inject constructor(
     val selectedFilter=MutableLiveData<String?>("All")
     var selectedPosition = 0
 
-    val benWithVaccineDetails = pastRecords.map { vaccineIdList ->
+    private val vaccinesFlow = MutableStateFlow<List<Vaccine>>(emptyList())
+    val benWithVaccineDetails = pastRecords.combine(vaccinesFlow) { vaccineIdList, vaccines ->
+        vaccineIdList.map { cache ->
+            val ageMillis = System.currentTimeMillis() - cache.ben.dob
+            ImmunizationDetailsDomain(
+                ben = cache.ben.asBasicDomainModel(),
+                vaccineStateList = vaccines.filter { it.minAllowedAgeInMillis < ageMillis }.map { vaccine ->
+                    val state = when {
+                        cache.givenVaccines.any { it.vaccineId == vaccine.vaccineId } -> VaccineState.DONE
+                        ageMillis <= vaccine.minAllowedAgeInMillis -> VaccineState.PENDING
+                        ageMillis <= vaccine.maxAllowedAgeInMillis -> VaccineState.OVERDUE
+                        else -> VaccineState.MISSED
+                    }
+                    VaccineDomain(vaccine.vaccineId, vaccine.vaccineName, vaccine.immunizationService, state)
+                }
+            )
+        }
+    }
+
+    // init: populate vaccinesFlow
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            val vaccines = vaccineDao.getVaccinesForCategory(ImmunizationCategory.CHILD)
+            vaccinesFlow.emit(vaccines)
+        }
+    }
+
+/*    val benWithVaccineDetails = pastRecords.map { vaccineIdList ->
         vaccineIdList.map { cache ->
             val ageMillis = System.currentTimeMillis() - cache.ben.dob
             ImmunizationDetailsDomain(ben = cache.ben.asBasicDomainModel(),
@@ -64,7 +91,7 @@ class ChildImmunizationListViewModel @Inject constructor(
                     )
                 })
         }
-    }
+    }*/
 
     val immunizationBenList = benWithVaccineDetails.combine(filter) { list, filter ->
         filterImmunList(list, filter)
@@ -84,13 +111,13 @@ class ChildImmunizationListViewModel @Inject constructor(
 
     }
 
-    init {
+   /* init {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 vaccinesList = vaccineDao.getVaccinesForCategory(ImmunizationCategory.CHILD)
             }
         }
-    }
+    }*/
 
     fun updateBottomSheetData(benId: Long) {
         viewModelScope.launch {
