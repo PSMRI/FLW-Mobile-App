@@ -23,6 +23,7 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentSignInBinding
 import org.piramalswasthya.sakhi.helpers.ImageUtils
+import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.Languages.ASSAMESE
 import org.piramalswasthya.sakhi.helpers.Languages.ENGLISH
 import org.piramalswasthya.sakhi.helpers.NetworkResponse
@@ -111,16 +112,16 @@ class SignInFragment : Fragment() {
 
         when (prefDao.getCurrentLanguage()) {
             ENGLISH -> binding.rgLangSelect.check(binding.rbEng.id)
-    /*        HINDI -> binding.rgLangSelect.check(binding.rbHindi.id)*/
+            Languages.HINDI -> binding.rgLangSelect.check(binding.rbHindi.id)
             ASSAMESE -> binding.rgLangSelect.check(binding.rbAssamese.id)
         }
 
         binding.rgLangSelect.setOnCheckedChangeListener { _, i ->
             val currentLanguage = when (i) {
                 binding.rbEng.id -> ENGLISH
-           /*     binding.rbHindi.id -> HINDI*/
+                binding.rbHindi.id -> Languages.HINDI
                 binding.rbAssamese.id -> ASSAMESE
-                else -> ENGLISH
+                else -> ASSAMESE
             }
             prefDao.saveSetLanguage(currentLanguage)
             val refresh = Intent(requireContext(), LoginActivity::class.java)

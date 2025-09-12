@@ -44,5 +44,30 @@
 
     <string name="icon_title_sr">सर्वेक्षण प्रपत्र</string>
 
+    <string name="icon_title_cd">संक्रामक (संचारी) रोग</string>
+    <string name="icon_title_pmr">गर्भवती महिला का पंजीकरण</string>
+    <string name="icon_title_pmt">गर्भ जांच (ANC) विज़िट</string>
+    <string name="icon_title_pmp">पीएमएसएमए (PMSMA) विज़िट</string>
+    <string name="icon_title_pmdo">डिलीवरी का परिणाम</string>
+    <string name="icon_title_pmir">शिशु का पंजीकरण</string>
+    <string name="icon_title_pmcr">बच्चे का पंजीकरण</string>
+    <string name="icon_title_ecr">योग्य दंपति का पंजीकरण</string>
+    <string name="icon_title_ect">योग्य दंपति का ट्रैकिंग</string>
+    <string name="icon_title_ncd_tb_screening">टीबी जांच</string>
+    <string name="icon_title_ncd_tb_suspected">संदिग्ध टीबी मामले</string>
+    <string name="icon_title_hrp_pregnant">उच्च जोखिम गर्भवती महिलाएं</string>
+    <string name="icon_title_hrp_non_pregnant">उच्च जोखिम गैर गर्भवती महिलाएं</string>
+    <string name="icon_title_hrp_pregnant_assess">गर्भवती महिला में उच्च जोखिम का आकलन</string>
+    <string name="icon_title_hrp_pregnant_track">उच्च जोखिम गर्भवती महिला का फॉलो-अप</string>
+    <string name="icon_title_hrp_non_pregnant_assess">गैर गर्भवती महिला में उच्च जोखिम का आकलन</string>
+    <string name="icon_title_hrp_non_pregnant_track">उच्च जोखिम मामलों का फॉलो-अप</string>
+    <string name="home_fragment_percent_download_text">%1$d%% डाउनलोड हुआ</string>
+    <string name="error_sign_in_invalid_u_p">गलत यूजरनेम / पासवर्ड</string>
+    <string name="error_sign_in_timeout">सर्वर का समय खत्म, फिर से कोशिश करें</string>
+    <string name="error_sign_in_disconnected_network">नेटवर्क से कनेक्ट नहीं हो पा रहा</string>
+    <string name="not_processed">रिकॉर्ड सिंक नहीं हुआ</string>
+    <string name="all_records_synced">सभी रिकॉर्ड सिंक हो गए</string>
+    <string name="are_you_sure_to_logout">क्या आप वाकई लॉगआउट करना चाहते हैं?</string>
+
 
 </resources>

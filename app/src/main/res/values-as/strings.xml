@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_native_name">উৎপ্ৰেৰণা</string>
     <string name="navigation_drawer_open">নেভিগেচন ড্ৰয়াৰ খোলক</string>
     <string name="navigation_drawer_close">নেভিগেচন ড্ৰয়াৰ বন্ধ কৰক</string>
     <!--   To Be Deleeted-->
@@ -230,13 +231,86 @@
     <string name="str_add_member">সদস্য যোগ কৰক</string>
     <string name="relation_with_hof">গৃহমুৰব্বীৰ সৈতে সম্পৰ্ক</string>
     <string name="str_not_available">উপলব্ধ নহয়</string>
-    <string name="death_type_cdr">শিশুমৃত্যু পৰ্যালোচনা</string>
+<!--    <string name="death_type_cdr">শিশুমৃত্যু পৰ্যালোচনা</string>-->
     <string name="add_family_member">পৰিয়ালৰ সদস্য যোগ কৰক</string>
 
     <string name="male">পুৰুষ</string>
     <string name="female">মহিলা</string>
     <string name="transgender">ৰূপান্তৰিত লিংগ</string>
     <string name="tv_husband_name_ph">স্বামীৰ নাম</string>
+
+
+    <string name="hbnc_baby_dead_alert">শিশুৰ মৃত্যু পৰ্যালোচনাৰ বাবে মৃত্যুৰ কাৰণ ANM/MPW/PHC ক জনাব লাগিব।</string>
+    <string name="hbnc_baby_gestational_age_alert">যদি শিশু ৩৫ সপ্তাহতকৈ কম বয়সত জন্ম হয়, তেন্তে মনোযোগ দিব।</string>
+    <string name="hbnc_mother_dead_alert">মাতৃ হত্যাৰ সমীক্ষাৰ বাবে ANM/PHC ৰ লক্ষ্যত ৱিকৃত কৰক।</string>
+    <string name="hbnc_mother_problem_alert">যদি হʼয়, তৎক্ষণাৎ হস্পিতাললৈ প্ৰেৰণ কৰক</string>
+    <string name="hbnc_mother_num_eat_alert">যদি মাতৃয়ে পৰিপূৰ্ণ ভোজন নকৰে বা ৪ বাৰৰ পৰা কম খায়, তেন্তে মাতৃক এইদৰে কৰিবলৈ উপদেশ দিয়ক।</string>
+    <string name="hbnc_mother_num_pad_alert">যদি ৫টাতকৈ বেছি পেড লাগে, তেন্তে মাতৃক হস্পিতাললৈ প্ৰেৰণ কৰক</string>
+    <string name="hbnc_baby_warm_winter_alert">যদি কৰা হোৱা নাই, তেন্তে মাতৃক সেয়া কৰিবলৈ পৰামৰ্শ দিয়ক</string>
+    <string name="hbnc_baby_fed_properly_alert">যদি কৰা হোৱা নাই, তেন্তে মাতৃক সেয়া কৰিবলৈ পৰামৰ্শ দিয়ক</string>
+    <string name="hbnc_baby_cry_incessant_alert">প্ৰতি ২ ঘণ্টাৰ পাছত শিশুটোক স্তন্যপান খুৱাবলৈ মাতৃক পৰামৰ্শ দিয়ক</string>
+    <string name="hbnc_baby_temp_alert">তাপমাত্ৰা ১০২°ফা (৩৮.৯°চে) লৈকে হ\'লে পেৰাচিটামল খুৱাব, আৰু যদি তাপমাত্ৰা তাৰো ওপৰত হয় তেন্তে হস্পিতাললৈ প্ৰেৰণ কৰিব</string>
+    <string name="hbnc_mother_foul_discharge_alert">যদি হʼয়, তেন্তে মাতৃক হস্পিতাললৈ প্ৰেৰণ কৰক</string>
+    <string name="hbnc_mother_speak_abnormal_fits_alert">যদি হʼয়, তেন্তে মাতৃক হস্পিতাললৈ প্ৰেৰণ কৰক</string>
+    <string name="hbnc_mother_less_no_milk_alert">মাকক শিশুটোক বেছি বাৰে স্তন্যপান খুৱাবলৈ কওক আৰু স্তন্যপান কৰোঁতে সঠিক জুৰণি আৰু অৱস্থানৰ বাবে পৰামৰ্শ দিয়ক</string>
+    <string name="hbnc_mother_breast_problem_alert">স্তনৰ বোঁটাত ফাট ধৰা ক্ষেত্ৰত, মাকক স্তন পৰিষ্কাৰ আৰু লুব্ৰিকেটেড ৰাখিবলৈ পৰামৰ্শ দিয়ক</string>
+    <string name="hbnc_baby_eye_pus_alert">চকুত যদি পঁহি হয় তেন্তে এন্টিবায়’টিক অইণ্টমেণ্ট লগাব পাৰি</string>
+    <string name="hbnc_baby_weight_1_8_alert">শিশুক ওচৰৰ স্বাস্থ্য কেন্দ্ৰত থকা অসুস্থ নৱজাতক হেঁচা চোৱা ইউনিট (SNCU)লৈ প্ৰেৰণ কৰক আৰু উচ্চ-ঝুঁকিপূর্ণ শিশুৰ ফৰ্ম অনুসৰি ঘৰত অতিৰিক্ত ভিজিট কৰক। যদি শিশুটোৱে (কম জন্ম ওজন বা সাধাৰণ) ওজন নুৱায়, তেন্তে শিশুটোক ওচৰৰ স্বাস্থ্য কেন্দ্ৰৰ SNCUলৈ প্ৰেৰণ কৰিব</string>
+    <string name="hbnc_baby_weight_2_5_alert">মাকক উপদেশ দিয়ক যি সিঁচাৰক অধিক তাপমান প্ৰদান কৰিব আৰু সিঁচাৰক অধিক ঘন ঘন খুৱাব। যদি সিঁচাৰ (কম য়ুতল বৰ্ত্তমান বা স্বাভাৱিক) ওজন বৃদ্ধিত নাযায় তেনেহলে নিকটবৰ্তী স্বাস্থ্য কেন্দ্ৰত SNCU লৈ পঠিয়াব।</string>
+    <string name="ben_pending_sync">বাকি থকা ছিঙ্ক</string>
+    <string name="tv_spouse_name_ph">পত্নী/স্বামীৰ নাম</string>
+    <string name="tv_spouse">পত্নী/স্বামী</string>
+    <string name="chat_error">আপোনাৰ চেটবট লোড হোৱাত কিছুমান ত্ৰুটি হৈছে</string>
+    <string name="help_and_support">সহায় আৰু সমৰ্থন</string>
+    <string name="evac_patient_info">ৰোগীৰ তথ্য</string>
+    <string name="immunization_dosage_count"/>
+    <string name="select_death_type">উপভোক্তাৰ মৃত্যুৰ ধৰণ নিৰ্বাচন কৰক</string>
+    <string name="death_type_cdr">শিশু মৃত্যুৰ পৰ্যালোচনা</string>
+    <string name="death_type_mdsr">মাতৃ মৃত্যুৰ নীড়ীক্ষণ আৰু প্ৰতিক্ৰিয়া</string>
+    <string name="continue_button">আগবাঢ়ক</string>
+<!--    <string name="about_us_powered">দ্বাৰা চালিত</string>-->
+    <string name="hbnc_day_text">দিন %1d</string>
+    <string name="hello_blank_fragment">নমস্কাৰ খালী টুকুৰা</string>
+    <string name="hbnc_mother_temp_case_1">মাক পৰাচেটাম\'ল দিব।</string>
+    <string name="hbnc_mother_temp_case_2">মাক হাস্পতাললৈ পৰিচালনা কৰক।</string>
+    <string name="hbnc_baby_temp_97_alert">মাকক উপদেশ দিয়ক যে শিশুক গৰম কৰি ৰাখিবলৈ ঘৰৰ তাপমান বৃদ্ধি কৰিব, চামৰীৰ সৈতে চামৰীৰ সংস্পৰ্শ দিব, শিশুক গৰম কাপোৰ বা থলুত ৰাখিব আৰু বাৰে বাৰে খুৱাব।</string>
+    <string name="hbnc_baby_temp_96_alert">মাকক উপদেশ দিয়ক যে শিশুক গৰম কৰি ৰাখিবলৈ ঘৰৰ তাপমান বৃদ্ধি কৰিব, চামৰীৰ সৈতে চামৰীৰ সংস্পৰ্শ দিব, শিশুক গৰম থলুত ৰাখিব আৰু বাৰে বাৰে খুৱাব। শিশুটি গৰম হোৱা পাছত, তাক কাপোৰ পৰাই আগতেই গৰম কৰা খাটত মাকৰ ওচৰত ৰাখিব।</string>
+    <string name="hbnc_baby_temp_99_alert">তেতিয়া sepsis ৰ লক্ষণ আছে নে নাই সেয়া পৰীক্ষা কৰক। যদি sepsis ৰ লক্ষণ দেখা নাযায়, তেন্তে কেৱল ১/৪ চামুচ paracetamol দি ব্যৱস্থাপনা কৰক আৰু তৎক্ষণাৎ নিকটতম স্বাস্থ্য কেন্দ্ৰৰ SNCU লৈ প্ৰেৰণ কৰক।</string>
+    <string name="form_input_alphabet_special_only_error">কেৱল বৰ্ণমালা আৰু বিশেষ চিহ্নসমূহ অনুমোদিত!</string>
+    <string name="form_input__no_alpha_space_error">বৰ্ণমালা বা খালী ঠাই অনুমোদিত নহয়!</string>
+    <string name="form_input_digit_only_error">কেৱল সংখ্যা অনুমোদিত!</string>
+    <string name="enter_pin">PIN দিয়ক</string>
+    <string name="sync_in_progress">Sync চলি আছে</string>
+    <string name="full_name">সম্পূৰ্ণ নাম</string>
+    <string name="other">অন্যান্য</string>
+    <string name="state">ৰাজ্য</string>
+    <string name="district">জিলা</string>
+    <string name="view_household_information">ঘৰ-সংক্ৰান্ত তথ্য চাওক</string>
+    <string name="hello">নমস্কাৰ</string>
+    <string name="select_immunization_category">টিকাকৰণৰ শ্ৰেণী বাছনি কৰক</string>
+    <string name="children">শিশু</string>
+    <string name="mother">মাক</string>
+    <string name="patient_information">ৰোগীৰ তথ্য</string>
+    <string name="mother_name">মাকৰ নাম</string>
+    <string name="date_of_birth">জন্ম তাৰিখ</string>
+    <string name="previous_vaccine_details">পূৰ্বৰ টিকা সম্পৰ্কিত তথ্য</string>
+    <string name="due_serial">বাকী থকা ক্ৰমিক সংখ্যা</string>
+    <string name="saving_form">ফৰ্ম সংৰক্ষণ কৰি আছে</string>
+    <string name="previous">পূৰ্বৱৰ্তী</string>
+    <string name="next">পৰৱৰ্তী</string>
+    <string name="edit">সম্পাদনা কৰক</string>
+    <string name="_0">0</string>
+    <string name="high_risk_babies">উচ্চ-ঝুঁকিপূর্ণ শিশুসমূহ</string>
+    <string name="pnc_visits">PNC পৰিদৰ্শন</string>
+    <string name="add_anc_visits">ANC পৰিদৰ্শন</string>
+    <string name="add_pnc_visits">PNC পৰিদৰ্শন যোগ কৰক</string>
+    <string name="pregnancy_weeks">গৰ্ভাৱস্থাৰ সপ্তাহ</string>
+    <string name="view_visit">পৰিদৰ্শন চাওক</string>
+    <string name="add_visit">পৰিদৰ্শন যোগ কৰক</string>
+<!--    <string name="sync_status">সিঙ্ক অৱস্থা</string>-->
+    <string name="survey_register">ছৰ্ভে ৰেজিষ্টাৰ</string>
+    <string name="family_member_registration">পৰিয়ালৰ সদস্যৰ পঞ্জীয়ন</string>
+    <string name="non_pregnant_women_eligible_couple_section">গৰ্ভৱতী নহয় থকাৰ মহিলাসকল (যোগ্য দম্পতি) বিভাগ</string>
 
 
 

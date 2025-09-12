@@ -284,4 +284,43 @@
         <item>अन्य</item>
     </string-array>
 
+    <string name="anc_visit_number">एएनसी (ANC) विज़िट %1d</string>
+    <string name="pnc_visit_number">पीएनसी (PNC) विज़िट – दिन %1d</string>
+    <string name="register">पंजीकरण करें</string>
+    <string name="tracking_form_filled_successfully">ट्रैकिंग फॉर्म सफलतापूर्वक भरा गया</string>
+    <string name="pmsma_form">पीएमएसएमए (PMSMA) फॉर्म</string>
+    <string name="general_op">सामान्य बाह्य रोगी</string>
+    <string name="saving_pmsma_to_database_failed">पीएमएसएमए (PMSMA) डेटा सेव करने में विफल</string>
+    <string name="hrp_case_please_visit_the_nearest_hwc_or_call_104">उच्च जोखिम गर्भावस्था – नजदीकी एचडब्ल्यूसी जाएं या 104 पर कॉल करें</string>
+
+
+    <string name="str_anc_period">प्रसवपूर्व देखभाल (एएनसी) अवधि</string>
+    <string name="str_abortion_if_any">गर्भपात, यदि कोई हो</string>
+    <string name="str_abortion_type">गर्भपात का प्रकार</string>
+    <string name="str_facility">स्वास्थ्य केंद्र</string>
+    <string name="str_abortion_date">गर्भपात की तिथि</string>
+    <string name="str_weight_pw">पंजीकरण के समय गर्भवती महिला का वजन (किग्रा)</string>
+    <string name="str_bp_of_pw">गर्भवती महिला का रक्तचाप (BP) - सिस्टोलिक/डायस्टोलिक (मिमी एचजी)</string>
+    <string name="str_pulse_rate">नाड़ी दर</string>
+    <string name="str_hb">हीमोग्लोबिन स्तर ((ग्राम/डेसीलीटर))</string>
+    <string name="str_fundal_height">गर्भाशय की मूल ऊँचाई/आकार (सप्ताह)</string>
+    <string name="str_urine_albumin">मूत्र एल्बुमिन</string>
+    <string name="str_random_blood_sugar">रैंडम ब्लड शुगर टेस्ट</string>
+    <string name="str_date_of_tt_first_dose">टीडी टीटी (पहली खुराक) की तिथि</string>
+    <string name="str_date_of_tt_second_dose">टीडी टीटी (दूसरी खुराक) की तिथि</string>
+    <string name="str_date_of_tt_booster_dose">टीडी टीटी (बूस्टर खुराक) की तिथि</string>
+    <string name="str_no_of_acid_tab">दी गई फोलिक एसिड की गोलियों की संख्या</string>
+    <string name="str_no_of_ifa_tab">दी गई आईएफए गोलियों की संख्या</string>
+    <string name="str_any_high_risk_cond">कोई उच्च जोखिम वाली स्थितियाँ</string>
+    <string name="str_high_risk_cond">उच्च जोखिम वाली स्थितियाँ</string>
+    <string name="str_any_other_high_risk_cond">कोई अन्य उच्च जोखिम वाली स्थितियाँ</string>
+    <string name="str_referral_facility">रेफ़रल स्वास्थ्य केंद्र</string>
+    <string name="str_hrp_confirmed">क्या एचआरपी (उच्च जोखिम) की पुष्टि हुई है?</string>
+    <string name="str_identified_as_hrp">HRP (उच्च जोखिम वाली गर्भावस्था) के रूप में पहचानने वाला व्यक्ति</string>
+    <string name="str_maternal_death">मातृ मृत्यु</string>
+    <string name="str_cause_of_death">मृत्यु का संभावित कारण</string>
+    <string name="str_other_cause_of_death">मृत्यु का अन्य कारण</string>
+    <string name="str_death_date">मृत्यु तिथि</string>
+    <string name="str_has_pregnant_women_delivered">क्या गर्भवती महिला ने प्रसव किया है?</string>
+    <string name="anc_date">ANC Date</string>
 </resources>

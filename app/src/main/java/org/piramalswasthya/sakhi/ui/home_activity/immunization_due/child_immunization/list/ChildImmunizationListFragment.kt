@@ -62,14 +62,17 @@ class ChildImmunizationListFragment : Fragment(),ImmunizationBirthDoseCategoryAd
 
         lifecycleScope.launch {
             viewModel.immunizationBenList.collect {
-                if (it.isEmpty())
+                if (it.isEmpty()){
                     binding.flEmpty.visibility = View.VISIBLE
-                else
+                    binding.rvList.visibility = View.GONE
+                } else{
                     binding.flEmpty.visibility = View.GONE
-
-                binding.rvList.apply {
-                    (adapter as BenChildImmunizationListAdapter).submitList(it.sortedByDescending { it.ben.regDate })
+                    binding.rvList.visibility = View.VISIBLE
+                    binding.rvList.apply {
+                        (adapter as BenChildImmunizationListAdapter).submitList(it.sortedByDescending { it.ben.regDate })
+                    }
                 }
+
             }
         }
 

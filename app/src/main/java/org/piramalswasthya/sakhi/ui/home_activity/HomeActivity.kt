@@ -111,22 +111,23 @@ class HomeActivity : AppCompatActivity() {
     private val langChooseAlert by lazy {
         val currentLanguageIndex = when (pref.getCurrentLanguage()) {
             Languages.ENGLISH -> 0
-            Languages.ASSAMESE -> 1
-         /*   Languages.HINDI -> 2*/
-
+            Languages.HINDI -> 1
+            Languages.ASSAMESE -> 2
         }
         MaterialAlertDialogBuilder(this).setTitle(resources.getString(R.string.choose_application_language))
             .setSingleChoiceItems(
                 arrayOf(
                     resources.getString(R.string.english),
-                  /*  resources.getString(R.string.hindi),*/
-                    resources.getString(R.string.assamese)
+                    resources.getString(R.string.hindi),
+                    resources.getString(
+                        R.string.assamese
+                    )
                 ), currentLanguageIndex
             ) { di, checkedItemIndex ->
                 val checkedLanguage = when (checkedItemIndex) {
                     0 -> Languages.ENGLISH
-               /*     2 -> Languages.HINDI*/
-                    1 -> Languages.ASSAMESE
+                    1 -> Languages.HINDI
+                    2 -> Languages.ASSAMESE
                     else -> throw IllegalStateException("yoohuulanguageindexunkonwn $checkedItemIndex")
                 }
                 if (checkedItemIndex == currentLanguageIndex) {
@@ -639,20 +640,16 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun isDeviceRootedOrEmulator(): Boolean {
-
 //      return isRooted() || isEmulator() || RootedUtil().isDeviceRooted(applicationContext)
         return isRooted() || isEmulator()
-
     }
 
     @Deprecated("will fix this implementation")
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (inAppUpdateHelper.onActivityResult(requestCode, resultCode)) {
-            // Handled update result
             return
         }
-        // Handle other activity results here if needed
     }
 
 }

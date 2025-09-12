@@ -93,7 +93,10 @@
     এই ABHA নম্বৰ ইতিমধ্যে কোনোবাৰ সৈতে সংযুক্ত। অনুগ্ৰহ কৰি\n<b>%1$s %2$s</b> ৰ সঠিক Aadhaar নম্বৰ ব্যৱহাৰ কৰি পুনৰ চেষ্টা কৰক।
 </string>
 
-
+    <string name="not_linked_to_beneficiary">এই ABHA নম্বৰটো ইতিমধ্যে ৱিকলিংক কৰা হৈছে, দয়া কৰি সঠিক আধাৰ নম্বৰ ব্যৱহাৰ কৰি পুনৰ চেষ্টা কৰক</string>
+    <string name="str_abha_otp_number">OTP ABHA-ত পঞ্জীয়ন কৰা ম\'বাইল নম্বৰলৈ পঠিওৱা হৈছে যিটো @mobileNumber লৈ শেষ হয়</string>
+    <string name="enter_ben_name">উপভোক্তাৰ নাম দিয়ক</string>
+    <string name="str_invalid_ben_name">অনুগ্ৰহ কৰি বৈধ লাভকাৰীৰ নাম প্ৰৱিষ্ট কৰক</string>
 
 
 </resources>

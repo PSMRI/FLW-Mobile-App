@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
 import android.widget.LinearLayout
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.BenBasicCache
 import org.piramalswasthya.sakhi.model.BenRegCache
@@ -22,13 +23,13 @@ class CDRFormDataset(
     private val dateOfBirth = FormElement(
         id = 2,
         inputType = InputType.TEXT_VIEW,
-        title = "Date of Birth",
+        title = resources.getString(R.string.date_of_birth),
         required = false
     )
     private val age = FormElement(
         id = 3,
         inputType = InputType.TEXT_VIEW,
-        title = "Age",
+        title = resources.getString(R.string.mdsr_age),
         required = false
     )
     private val visitDate = FormElement(
@@ -36,55 +37,55 @@ class CDRFormDataset(
         inputType = InputType.DATE_PICKER,
         min = 0L,
         max = System.currentTimeMillis(),
-        title = "Visit Date",
+        title = resources.getString(R.string.str_visit),
         required = true
     )
     private val gender = FormElement(
         id = 5,
         inputType = InputType.TEXT_VIEW,
-        title = "Gender",
+        title = resources.getString(R.string.str_gender),
         required = false
     )
     private val motherName = FormElement(
         id = 6,
         inputType = InputType.TEXT_VIEW,
-        title = "Mother’s Name",
+        title =  resources.getString(R.string.mother_name),
         required = false
     )
     private val fatherName = FormElement(
         id = 7,
         inputType = InputType.TEXT_VIEW,
-        title = "Father’s Name",
+        title = resources.getString(R.string.father_s_name),
         required = false
     )
     private val address = FormElement(
         id = 8,
         inputType = InputType.TEXT_VIEW,
-        title = "Address",
+        title =resources.getString(R.string.str_address),
         required = false
     )
     private val houseNumber = FormElement(
         id = 9,
         inputType = InputType.EDIT_TEXT,
-        title = "House number",
+        title =resources.getString(R.string.str_house_number),
         required = false
     )
     private val mohalla = FormElement(
         id = 10,
         inputType = InputType.EDIT_TEXT,
-        title = "Mohalla/Colony ",
+        title =resources.getString(R.string.str_mohalla_colony),
         required = false
     )
     private val landmarks = FormElement(
         id = 11,
         inputType = InputType.EDIT_TEXT,
-        title = "Landmarks, if any ",
+        title =resources.getString(R.string.str_landmark_if_any),
         required = false
     )
     private val pincode = FormElement(
         id = 12,
         inputType = InputType.EDIT_TEXT,
-        title = "Pincode",
+        title =resources.getString(R.string.str_pincode),
         etMaxLength = 6,
         min = 100000,
         max = 999999,
@@ -94,7 +95,7 @@ class CDRFormDataset(
     private val landline = FormElement(
         id = 13,
         inputType = InputType.EDIT_TEXT,
-        title = "Landline",
+        title =resources.getString(R.string.str_landline),
         etMaxLength = 12,
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
         required = false
@@ -102,13 +103,13 @@ class CDRFormDataset(
     private val mobileNumber = FormElement(
         id = 14,
         inputType = InputType.TEXT_VIEW,
-        title = "Mobile number",
+        title =resources.getString(R.string.str_mobile_number),
         required = false
     )
     private val dateOfDeath = FormElement(
         id = 15,
         inputType = InputType.DATE_PICKER,
-        title = "Date of death",
+        title =resources.getString(R.string.mdsr_date_of_deceased),
         min = 0L,
         max = System.currentTimeMillis(),
         required = true
@@ -116,13 +117,13 @@ class CDRFormDataset(
     private val timeOfDeath = FormElement(
         id = 16,
         inputType = InputType.TIME_PICKER,
-        title = "Time",
+        title =resources.getString(R.string.str_time),
         required = false
     )
     private val placeOfDeath = FormElement(
         id = 17,
         inputType = InputType.RADIO,
-        title = "Place of Death",
+        title =resources.getString(R.string.str_place_of_death),
         required = true,
         orientation = LinearLayout.VERTICAL,
         entries = arrayOf("Home", "Hospital", "In transit")
@@ -130,19 +131,19 @@ class CDRFormDataset(
     private val firstInformant = FormElement(
         id = 18,
         inputType = InputType.TEXT_VIEW,
-        title = "Name of First Informant ",
+        title =resources.getString(R.string.str_name_of_first_informant),
         required = false
     )
     private val ashaSign = FormElement(
         id = 19,
         inputType = InputType.EDIT_TEXT,
-        title = "Signature/Name of ASHA",
+        title = resources.getString(R.string.str_name_of_asha),
         required = false
     )
     private val dateOfNotification = FormElement(
         id = 20,
         inputType = InputType.DATE_PICKER,
-        title = "Date of Notification ",
+        title = resources.getString(R.string.str_date_of_notification),
         min = 0L,
         max = System.currentTimeMillis(),
         required = false

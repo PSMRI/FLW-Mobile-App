@@ -6,6 +6,7 @@ import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.res.ColorStateList
 import android.content.res.Resources
 import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Build
 import android.text.Editable
 import android.text.InputFilter
@@ -15,6 +16,7 @@ import android.text.SpannableString
 import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
+import android.util.Log
 import android.view.Gravity
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -25,6 +27,8 @@ import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.children
 import androidx.recyclerview.widget.DiffUtil
@@ -63,6 +67,7 @@ import org.piramalswasthya.sakhi.utils.HelperUtil.getLongFromDate
 import org.piramalswasthya.sakhi.utils.HelperUtil.updateAgeDTO
 import timber.log.Timber
 import java.util.Calendar
+import java.util.Locale
 
 
 class FormInputAdapter(
@@ -574,7 +579,7 @@ class FormInputAdapter(
         }
     }
 
-    class DatePickerInputViewHolder private constructor(private val binding: RvItemFormDatepickerV2Binding) :
+ /*   class DatePickerInputViewHolder private constructor(private val binding: RvItemFormDatepickerV2Binding) :
         ViewHolder(binding.root) {
         companion object {
             fun from(parent: ViewGroup): ViewHolder {
@@ -603,6 +608,11 @@ class FormInputAdapter(
             item.errorText?.also { binding.tilEditText.error = it }
                 ?: run { binding.tilEditText.error = null }
             binding.et.setOnClickListener {
+
+                getDateString(item.max)?.let { Log.d("=======1712:max:", it) }
+                getDateString(item.min)?.let { Log.d("=======1712:min:", it) }
+                Log.d("=======1712:value:", "${item.value}")
+             //   getDateString(millis)?.let { Log.d("=======1712:current:", it) }
                 item.value?.let { value ->
                     thisYear = value.substring(6).toInt()
                     thisMonth = value.substring(3, 5).trim().toInt() - 1
@@ -630,12 +640,124 @@ class FormInputAdapter(
                 binding.tilEditText.error = null
                 datePickerDialog.datePicker.maxDate = item.max ?: 0
                 datePickerDialog.datePicker.minDate = item.min ?: 0
+
                 if (item.showYearFirstInDatePicker)
                     datePickerDialog.datePicker.touchables[0].performClick()
-                datePickerDialog.show()
+                if (item.max!!> item.min!!){
+                    datePickerDialog.show()
+                }else{
+                    Toast.makeText(binding.root.context,"Invalid date range", Toast.LENGTH_SHORT).show()
+                }
             }
             binding.executePendingBindings()
 
+        }
+    }*/
+
+
+    class DatePickerInputViewHolder private constructor(private val binding: RvItemFormDatepickerV2Binding) :
+        ViewHolder(binding.root) {
+        companion object {
+            fun from(parent: ViewGroup): ViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = RvItemFormDatepickerV2Binding.inflate(layoutInflater, parent, false)
+                return DatePickerInputViewHolder(binding)
+            }
+        }
+
+        fun bind(item: FormElement, isEnabled: Boolean, formValueListener: FormValueListener?) {
+            binding.form = item
+            binding.invalidateAll()
+
+            if (!isEnabled) {
+                binding.et.isFocusable = false
+                binding.et.isClickable = false
+                binding.executePendingBindings()
+                return
+            }
+
+            val today = Calendar.getInstance()
+            var thisYear = today.get(Calendar.YEAR)
+            var thisMonth = today.get(Calendar.MONTH)
+            var thisDay = today.get(Calendar.DAY_OF_MONTH)
+
+            item.errorText?.also { binding.tilEditText.error = it }
+                ?: run { binding.tilEditText.error = null }
+
+            binding.et.setOnClickListener { view ->
+                item.value?.let { value ->
+                    try {
+                        val parts = value.split("-")
+                        if (parts.size == 3) {
+                            thisDay = parts[0].trim().toIntOrNull() ?: thisDay
+                            thisMonth = (parts[1].trim().toIntOrNull() ?: (thisMonth + 1)) - 1
+                            thisYear = parts[2].trim().toIntOrNull() ?: thisYear
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+
+                val datePickerDialog = DatePickerDialog(
+                    view.context,
+                    { _, year, month, day ->
+                        val millis = Calendar.getInstance().apply {
+                            set(Calendar.YEAR, year)
+                            set(Calendar.MONTH, month)
+                            set(Calendar.DAY_OF_MONTH, day)
+                            set(Calendar.HOUR_OF_DAY, 0)
+                            set(Calendar.MINUTE, 0)
+                            set(Calendar.SECOND, 0)
+                            set(Calendar.MILLISECOND, 0)
+                        }.timeInMillis
+
+                        item.value = when {
+                            item.min != null && millis < item.min!! -> getDateString(item.min)
+                            item.max != null && millis > item.max!! -> getDateString(item.max)
+                            else -> getDateString(millis)
+                        }
+
+                        binding.invalidateAll()
+                        if (item.hasDependants) formValueListener?.onValueChanged(item, -1)
+                    },
+                    thisYear, thisMonth, thisDay
+                )
+
+                item.errorText = null
+                binding.tilEditText.error = null
+
+                if (item.min != null && item.max != null && item.min!! > item.max!!) {
+                    Toast.makeText(
+                        binding.root.context,
+                        "Invalid date range",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return@setOnClickListener
+                }
+
+                item.max?.let { datePickerDialog.datePicker.maxDate = it }
+                item.min?.let { datePickerDialog.datePicker.minDate = it }
+
+                if (item.showYearFirstInDatePicker)
+                    datePickerDialog.datePicker.touchables.firstOrNull()?.performClick()
+
+                datePickerDialog.show()
+                forceLatinDigits(datePickerDialog.datePicker)
+            }
+
+            binding.executePendingBindings()
+        }
+        private fun forceLatinDigits(view: View) {
+            when (view) {
+                is ViewGroup -> repeat(view.childCount) { forceLatinDigits(view.getChildAt(it)) }
+                is TextView -> {
+                    val latin = Locale.forLanguageTag("en-US-u-nu-latn")
+                    view.textLocale = latin
+                    view.setTextLocale(latin)
+                    view.typeface = Typeface.SANS_SERIF
+                    view.isAllCaps = false
+                }
+            }
         }
     }
 
