@@ -220,7 +220,10 @@ class EligibleCoupleTrackingDataset(
                             mpaFileUpload1.value=saved.mpaFile
 
 //                            antraDoses.value = saved.methodOfContraception!!.split("/")[1]
-                            antraDoses.value = saved.antraDose
+                            if(saved.antraDose!=null){
+                                antraDoses.value = saved.antraDose
+
+                            }
                         }
                         else {
                             methodOfContraception.value =
@@ -483,7 +486,6 @@ class EligibleCoupleTrackingDataset(
 
         }
     }
-
     private fun calculateNextInjectionDate(
         injectionDate: String?,
         minDays: Int,
@@ -495,6 +497,7 @@ class EligibleCoupleTrackingDataset(
 
             val cal = Calendar.getInstance()
             cal.time = date
+
             cal.add(Calendar.DAY_OF_YEAR, minDays)
             val minDate = sdf.format(cal.time)
 
@@ -518,6 +521,7 @@ class EligibleCoupleTrackingDataset(
         val last = sdf.parse(lastDate) ?: return "Dose-1"
 
         val diffDays = ((today.time - last.time) / (1000 * 60 * 60 * 24))
+
         if (diffDays > 120) {
             return "Dose-1"
         }
@@ -527,7 +531,6 @@ class EligibleCoupleTrackingDataset(
 
         return if (next in 1..10) "Dose-$next" else "No More Doses"
     }
-
 
 
 

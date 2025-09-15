@@ -1,4 +1,4 @@
-package org.piramalswasthya.sakhi.ui.home_activity.eligible_couple.tracking.form
+package org.piramalswasthya.sakhi.ui.home_activity.maternal_health.abortion.form
 
 import android.Manifest
 import android.app.Activity
@@ -27,24 +27,36 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
-import org.piramalswasthya.sakhi.adapters.FormInputAdapter
+import org.piramalswasthya.sakhi.adapters.FormInputAdapterWithBgIcon
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.databinding.LayoutMediaOptionsBinding
 import org.piramalswasthya.sakhi.databinding.LayoutViewMediaBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.ui.checkFileSize
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
-import org.piramalswasthya.sakhi.utils.HelperUtil
 import org.piramalswasthya.sakhi.work.WorkerUtils
+import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.abortion.form.PwAncAbortionFormViewModel.State
+
 import timber.log.Timber
 import java.io.File
 
 @AndroidEntryPoint
-class EligibleCoupleTrackingFormFragment : Fragment() {
+class PwAncAbortionFormFragment : Fragment() {
 
     private var _binding: FragmentNewFormBinding? = null
     private val binding: FragmentNewFormBinding
         get() = _binding!!
+
+    private val requestLocationPermission =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { b ->
+            if (b) {
+                requestLocationPermission()
+            } else findNavController().navigateUp()
+        }
+    private var latestTmpUri: Uri? = null
+    private var abortion1Uri: Uri? = null
+    private var abortion2Uri: Uri? = null
+
     private val PICK_PDF_FILE = 1
     private val takePicture =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { success: Boolean ->
@@ -52,7 +64,8 @@ class EligibleCoupleTrackingFormFragment : Fragment() {
                 val formId = viewModel.getDocumentFormId()
 
                 val uri = when (formId) {
-                    21 -> mpaUri
+                    21 -> abortion1Uri
+                    22 -> abortion2Uri
                     else -> latestTmpUri
                 }
 
@@ -60,7 +73,8 @@ class EligibleCoupleTrackingFormFragment : Fragment() {
                     viewModel.setImageUriToFormElement(it)
 
                     val index = when (formId) {
-                        21 -> viewModel.getIndexOfMPA()
+                        21 -> viewModel.getIndexOfAbortionDischarge1()
+                        22 -> viewModel.getIndexOfAbortionDischarge2()
                         else -> null
                     }
 
@@ -71,17 +85,7 @@ class EligibleCoupleTrackingFormFragment : Fragment() {
             }
         }
 
-
-    private val requestLocationPermission =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { b ->
-            if (b) {
-                requestLocationPermission()
-            } else findNavController().navigateUp()
-        }
-    private var latestTmpUri: Uri? = null
-    private var mpaUri: Uri? = null
-
-    private val viewModel: EligibleCoupleTrackingFormViewModel by viewModels()
+    private val viewModel: PwAncAbortionFormViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -93,52 +97,39 @@ class EligibleCoupleTrackingFormFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.allDoseList.observe(viewLifecycleOwner) { doseList ->
-            HelperUtil.populateAntraTable(requireContext(), binding.tableAntra, doseList ?: return@observe)
-        }
-
         viewModel.recordExists.observe(viewLifecycleOwner) { notIt ->
             notIt?.let { recordExists ->
-                val adapter = FormInputAdapter(
-                    formValueListener = FormInputAdapter.FormValueListener { formId, index ->
+                binding.btnSubmit.visibility = if (recordExists) View.GONE else View.VISIBLE
+                val adapter = FormInputAdapterWithBgIcon(
+                    formValueListener = FormInputAdapterWithBgIcon.FormValueListener { formId, index ->
                         viewModel.updateListOnValueChanged(formId, index)
                         hardCodedListUpdate(formId)
                     },
-
-                    selectImageClickListener = FormInputAdapter.SelectUploadImageClickListener { formId ->
+                    selectImageClickListener = FormInputAdapterWithBgIcon.SelectUploadImageClickListener { formId ->
                         viewModel.setCurrentDocumentFormId(formId)
                         chooseOptions()
                     },
 
-                    viewDocumentListner = FormInputAdapter.ViewDocumentOnClick { formId ->
+                    viewDocumentListner = FormInputAdapterWithBgIcon.ViewDocumentOnClick { formId ->
                         if (recordExists) {
                             viewDocuments(formId)
                         } else {
                             val uri = when (formId) {
-                                21 -> mpaUri
+                                21 -> abortion1Uri
+                                22 -> abortion2Uri
                                 else -> null
                             }
 
                             uri?.let {
-                                if (it.toString().contains("document")) {
-                                    displayPdf(it)
-                                } else {
-                                    viewImage(it)
-                                }
+                                viewImage(it)
+
                             }
                         }
                     },
                     isEnabled = !recordExists
                 )
-                adapter.disableUpload = recordExists
-
-                viewModel.showAntraSection.observe(viewLifecycleOwner) { show ->
-                    listOf(binding.tableAntra, binding.tvHeading).forEach {
-                        it.visibility = if (show) View.VISIBLE else View.GONE
-                    }
-                }
-                binding.btnSubmit.isEnabled = !recordExists
                 binding.form.rvInputForm.adapter = adapter
+                binding.form.rvInputForm.itemAnimator = null
                 lifecycleScope.launch {
                     viewModel.formList.collect {
                         if (it.isNotEmpty())
@@ -156,42 +147,49 @@ class EligibleCoupleTrackingFormFragment : Fragment() {
             binding.tvAgeGender.text = it
         }
         binding.btnSubmit.setOnClickListener {
-            submitEligibleTrackingForm()
+            submitAncForm()
         }
-
-        viewModel.state.observe(viewLifecycleOwner) {
-            when (it) {
-                EligibleCoupleTrackingFormViewModel.State.SAVE_SUCCESS -> {
-                    navigateToNextScreen()
-                    WorkerUtils.triggerAmritPushWorker(requireContext())
-
+        binding.fabEdit.setOnClickListener {
+            binding.fabEdit.visibility = View.GONE
+            viewModel.setRecordExist(false)
+        }
+        viewModel.state.observe(viewLifecycleOwner) { state ->
+            when (state!!) {
+                State.IDLE -> {
                 }
 
-                else -> {}
+                State.SAVING -> {
+                    binding.llContent.visibility = View.GONE
+                    binding.pbForm.visibility = View.VISIBLE
+                }
+
+                State.SAVE_SUCCESS -> {
+                    binding.llContent.visibility = View.VISIBLE
+                    binding.pbForm.visibility = View.GONE
+                    Toast.makeText(context, "Save Successful", Toast.LENGTH_LONG).show()
+                    WorkerUtils.triggerAmritPushWorker(requireContext())
+                    findNavController().navigateUp()
+                }
+
+                State.SAVE_FAILED -> {
+                    Toast.makeText(
+
+                        context, "Something wend wong! Contact testing!", Toast.LENGTH_LONG
+                    ).show()
+                    binding.llContent.visibility = View.VISIBLE
+                    binding.pbForm.visibility = View.GONE
+                }
             }
         }
-    }
 
-    private fun navigateToNextScreen() {
-        if (viewModel.isPregnant) {
-            findNavController().navigate(
-                EligibleCoupleTrackingFormFragmentDirections.actionEligibleCoupleTrackingFormFragmentToPregnancyRegistrationFormFragment(
-                    benId = viewModel.benId
-                )
-            )
-            viewModel.resetState()
-        } else {
-            findNavController().navigateUp()
-            Toast.makeText(
-                requireContext(),
-                resources.getString(R.string.tracking_form_filled_successfully),
-                Toast.LENGTH_SHORT
-            ).show()
-            viewModel.resetState()
+        viewModel.recordExists.observe(viewLifecycleOwner) { exists ->
+            binding.fabEdit.visibility = if (exists) View.VISIBLE else View.GONE
         }
+
+
     }
 
-    private fun submitEligibleTrackingForm() {
+    private fun submitAncForm() {
         if (validateCurrentPage()) {
             viewModel.saveForm()
         }
@@ -199,7 +197,7 @@ class EligibleCoupleTrackingFormFragment : Fragment() {
 
     private fun validateCurrentPage(): Boolean {
         val result = binding.form.rvInputForm.adapter?.let {
-            (it as FormInputAdapter).validateInput(resources)
+            (it as FormInputAdapterWithBgIcon).validateInput(resources)
         }
         Timber.d("Validation : $result")
         return if (result == -1) true
@@ -211,24 +209,9 @@ class EligibleCoupleTrackingFormFragment : Fragment() {
         }
     }
 
-
     private fun hardCodedListUpdate(formId: Int) {
         binding.form.rvInputForm.adapter?.apply {
             when (formId) {
-                1 -> {
-                    notifyItemChanged(1)
-                    notifyItemChanged(2)
-
-                }
-                11 ->{
-                    notifyDataSetChanged()
-                }
-
-                4, 5 -> {
-                    notifyDataSetChanged()
-                    //notifyItemChanged(viewModel.getIndexOfIsPregnant())
-                }
-
             }
         }
     }
@@ -237,10 +220,15 @@ class EligibleCoupleTrackingFormFragment : Fragment() {
         super.onStart()
         activity?.let {
             (it as HomeActivity).updateActionBar(
-                R.drawable.ic__eligible_couple,
-                getString(R.string.eligible_couple_tracking_form)
+                R.drawable.ic__anc_visit,
+                getString(R.string.cac_form)
             )
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 
 
@@ -258,33 +246,53 @@ class EligibleCoupleTrackingFormFragment : Fragment() {
                         ).show()
 
                     } else {
-                        mpaUri = pdfUri
-                        mpaUri?.let { uri ->
+                        abortion1Uri = pdfUri
+                        abortion1Uri?.let { uri ->
                             viewModel.setImageUriToFormElement(uri)
                             binding.form.rvInputForm.apply {
-                                val adapter = this.adapter as FormInputAdapter
+                                val adapter = this.adapter as FormInputAdapterWithBgIcon
                                 adapter.notifyDataSetChanged()
                             }
                         }
 
-//                    updateImageRecord()
                     }
                 }
             }
-           
+            else if(viewModel.getDocumentFormId() == 22){
+                data?.data?.let { pdfUri ->
+                    if (checkFileSize(pdfUri, requireContext())) {
+                        Toast.makeText(
+                            context,
+                            resources.getString(R.string.file_size),
+                            Toast.LENGTH_LONG
+                        ).show()
+
+                    } else {
+                        abortion2Uri = pdfUri
+                        abortion2Uri?.let { uri ->
+                            viewModel.setImageUriToFormElement(uri)
+                            binding.form.rvInputForm.apply {
+                                val adapter = this.adapter as FormInputAdapterWithBgIcon
+                                adapter.notifyDataSetChanged()
+                            }
+                        }
+
+                    }
+                }
+            }
+
+
         }
     }
 
     private fun chooseOptions() {
         val alertBinding = LayoutMediaOptionsBinding.inflate(layoutInflater, binding.root, false)
+        alertBinding.btnPdf.visibility=View.GONE
         val alertDialog = MaterialAlertDialogBuilder(requireContext())
             .setView(alertBinding.root)
             .setCancelable(true)
             .create()
-        alertBinding.btnPdf.setOnClickListener {
-            alertDialog.dismiss()
-            selectPdf()
-        }
+
         alertBinding.btnCamera.setOnClickListener {
             alertDialog.dismiss()
             takeImage()
@@ -299,22 +307,17 @@ class EligibleCoupleTrackingFormFragment : Fragment() {
         alertDialog.show()
     }
 
-    private fun selectPdf() {
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-            addCategory(Intent.CATEGORY_OPENABLE)
-            type = "application/pdf"
-        }
-        startActivityForResult(intent, PICK_PDF_FILE)
-    }
 
     private fun takeImage() {
         lifecycleScope.launchWhenStarted {
             getTmpFileUri().let { uri ->
                 if (viewModel.getDocumentFormId() == 21) {
-                    mpaUri = uri
-                    takePicture.launch(mpaUri)
-                } 
-
+                    abortion1Uri = uri
+                    takePicture.launch(abortion1Uri)
+                } else if (viewModel.getDocumentFormId() == 22) {
+                    abortion2Uri = uri
+                    takePicture.launch(abortion2Uri)
+                }
 
             }
         }
@@ -341,15 +344,7 @@ class EligibleCoupleTrackingFormFragment : Fragment() {
         )
     }
 
-    private fun displayPdf(pdfUri: Uri) {
 
-        val intent = Intent(Intent.ACTION_VIEW).apply {
-            setDataAndType(pdfUri, "application/pdf")
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION) // Grant permission to read the file
-        }
-        startActivity(Intent.createChooser(intent, "Open PDF with"))
-
-    }
 
     private fun selectImage() {
         val intent = Intent(Intent.ACTION_PICK).apply {
@@ -376,22 +371,22 @@ class EligibleCoupleTrackingFormFragment : Fragment() {
         if (it == 21) {
             lifecycleScope.launch {
                 viewModel.formList.collect {
-                    it.get(viewModel.getIndexOfMPA()).value.let {
-                        if (it.toString().contains("document")) {
-                            displayPdf(it!!.toUri())
-                        } else {
-                            viewImage(it!!.toUri())
-                        }
+                    it.get(viewModel.getIndexOfAbortionDischarge1()).value.let {
+                        viewImage(it!!.toUri())
                     }
                 }
             }
-        } 
-      
+        } else if (it == 22) {
+            lifecycleScope.launch {
+                viewModel.formList.collect {
+                    it.get(viewModel.getIndexOfAbortionDischarge2()).value.let {
+                        viewImage(it!!.toUri())
+                    }
+                }
+            }
+        }
 
     }
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
-    }
+
 
 }
