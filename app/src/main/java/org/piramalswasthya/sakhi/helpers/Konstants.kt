@@ -84,6 +84,8 @@ object Konstants {
 
     const val ncd = "NCD"
 
+    const val other_Incentive = "OTHER INCENTIVES"
+
     const val additionalIncentivetoAshaSGovt = "ADDITIONAL INCENTIVE TO ASHA UNDER STATE GOVT. BUDGET"
 
     const val antaraProg = "ASHA incentive for accompanying the client for Injectable MPA(Antara Prog)administration"

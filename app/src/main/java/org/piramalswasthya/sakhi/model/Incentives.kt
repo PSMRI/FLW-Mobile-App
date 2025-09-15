@@ -1,16 +1,21 @@
 package org.piramalswasthya.sakhi.model
 
+import android.os.Parcelable
+import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.Relation
+import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import kotlinx.parcelize.Parcelize
 import org.piramalswasthya.sakhi.network.getLongFromDate
 
 @Entity(tableName = "INCENTIVE_ACTIVITY")
+@Parcelize
 data class IncentiveActivityCache(
     @PrimaryKey
     val id: Long,
@@ -22,15 +27,17 @@ data class IncentiveActivityCache(
     val state: Int,
     val district: Int,
     val group: String,
+    val groupName: String,
     val fmrCode: String?,
     val fmrCodeOld: String?,
 //    val createdDate: Long,
 //    val createdBy: String,
 //    val updatedDate: Long,
 //    val updatedBy: String,
-)
+) : Parcelable
 
 @JsonClass(generateAdapter = true)
+@Parcelize
 data class IncentiveActivityNetwork(
     val id: Long,
     val name: String,
@@ -40,13 +47,14 @@ data class IncentiveActivityNetwork(
     val state: Int,
     val district: Int,
     val group: String,
+    val groupName: String,
     val fmrCode: String?,
     val fmrCodeOld: String?,
     val createdDate: String,
     val createdBy: String,
     val updatedDate: String,
     val updatedBy: String,
-) {
+) : Parcelable {
     fun asCacheModel(): IncentiveActivityCache {
         return IncentiveActivityCache(
             id = id,
@@ -57,6 +65,7 @@ data class IncentiveActivityNetwork(
             state = state,
             district = district,
             group = group,
+            groupName = groupName,
             fmrCode = fmrCode,
             fmrCodeOld = fmrCodeOld
         )
@@ -64,21 +73,25 @@ data class IncentiveActivityNetwork(
 }
 
 @JsonClass(generateAdapter = true)
+@Parcelize
 data class IncentiveActivityListRequest(
     @Json(name = "state")
     val stateId: Int,
 
     @Json(name = "district")
-    val districtId: Int
-)
+    val districtId: Int,
+    @Json(name = "langCode")
+    val language: String
+) : Parcelable
 
 @JsonClass(generateAdapter = true)
+@Parcelize
 data class IncentiveActivityListResponse(
     val data: List<IncentiveActivityNetwork>,
     val statusCode: Int,
     val errorMessage: String,
     val status: String
-)
+) : Parcelable
 
 @Entity(
     tableName = "INCENTIVE_RECORD",
@@ -91,9 +104,11 @@ data class IncentiveActivityListResponse(
     )],
     indices = [Index(name = "incentiveInd", value = ["activityId"])]
 )
+@Parcelize
 data class IncentiveRecordCache(
     @PrimaryKey
     val id: Long,
+    @ColumnInfo
     val activityId: Long,
     val ashaId: Int,
     val benId: Long,
@@ -105,9 +120,9 @@ data class IncentiveRecordCache(
     val createdBy: String,
     val updatedDate: Long,
     val updatedBy: String,
-)
+) : Parcelable
 
-
+@Parcelize
 data class IncentiveRecordNetwork(
     val id: Long,
     val activityId: Long,
@@ -121,7 +136,7 @@ data class IncentiveRecordNetwork(
     val createdBy: String,
     val updatedDate: String,
     val updatedBy: String,
-) {
+) : Parcelable {
     fun asCacheModel(): IncentiveRecordCache {
         return IncentiveRecordCache(
             id = id,
@@ -141,21 +156,25 @@ data class IncentiveRecordNetwork(
 }
 
 @JsonClass(generateAdapter = true)
+@Parcelize
 data class IncentiveRecordListRequest(
     @Json(name = "ashaId")
     val userId: Int,
     val fromDate: String,
     val toDate: String,
-)
+
+) : Parcelable
 
 @JsonClass(generateAdapter = true)
+@Parcelize
 data class IncentiveRecordListResponse(
     val data: List<IncentiveRecordNetwork>,
     val statusCode: Int,
     val errorMessage: String,
     val status: String
-)
+) : Parcelable
 
+@Parcelize
 data class IncentiveCache(
     @Embedded
     val record: IncentiveRecordCache,
@@ -163,7 +182,7 @@ data class IncentiveCache(
     val activity: IncentiveActivityCache,
     @Relation(parentColumn = "benId", entityColumn = "benId")
     val ben: BenBasicCache?,
-) {
+) : Parcelable {
     fun asDomainModel(): IncentiveDomain {
         return IncentiveDomain(
             record,
@@ -172,24 +191,57 @@ data class IncentiveCache(
         )
     }
 }
+@Parcelize
+data class IncentiveActivityWithRecords(
+    @Embedded
+    val activity: IncentiveActivityCache,
 
+    @Relation(
+        parentColumn = "id",
+        entityColumn = "activityId"
+    )
+    val records: List<IncentiveRecordCache>
+) : Parcelable {
+    fun asDomainModel() = IncentiveActivityDomain(activity, records)
+}
+
+
+@Parcelize
 data class IncentiveDomain(
     val record: IncentiveRecordCache,
     val activity: IncentiveActivityCache,
     val ben: BenBasicDomain?
-)
+) : Parcelable
 
+@Parcelize
+data class IncentiveActivityDomain(
+    val activity: IncentiveActivityCache,
+    val records: List<IncentiveRecordCache>
+) : Parcelable
+@Parcelize
 data class IncentiveDomainDTO(
     val id: Long = 0,
-    val group: String,
+    var group: String,
+    var groupName : String,
     val name: String,
-    val description: String,
+    var description: String,
     val paymentParam: String,
     val rate: Long,
     var noOfClaims: Int,
     var amountClaimed: Long,
-    var fmrCode: String?
-)
+    var fmrCode: String?,
+    val documentsSubmitted: String? = null
+) : Parcelable
+
+@Parcelize
+data class IncentiveGrouped(
+    val activityName: String,
+    val totalAmount: Long,
+    val count: Int,
+    val groupName: String,
+    val description: String,
+    val activity: IncentiveActivityCache
+) : Parcelable
 
 
 

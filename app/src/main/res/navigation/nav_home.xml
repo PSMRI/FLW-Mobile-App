@@ -995,8 +995,32 @@
         android:id="@+id/incentivesFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.incentives.IncentivesFragment"
         android:label="fragment_incentives"
-        tools:layout="@layout/fragment_incentives" />
+        tools:layout="@layout/fragment_incentives" >
 
+        <argument
+            android:name="activityId"
+            app:argType="long" />
+        <argument
+            android:name="activityName"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_incentivesFragment_to_incentiveDetailFragment"
+            app:destination="@id/incentiveDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/incentiveDetailFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.incentives.IncentivesSubFragment"
+        android:label="fragment_incentives_sub">
+
+        <argument
+            android:name="activityId"
+            app:argType="long" />
+        <argument
+            android:name="activityName"
+            app:argType="string" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/infantFormFragment"

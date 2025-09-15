@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="serialNo"
+            type="Integer" />
+
+        <variable
+            name="item"
+            type="org.piramalswasthya.sakhi.model.IncentiveGrouped" />
+        <variable
+            name="clickListener"
+            type="kotlin.jvm.functions.Function2&lt;java.lang.Long, java.lang.String, kotlin.Unit&gt;" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:onClick="@{() -> clickListener.invoke(item.activity.id, item.activityName)}">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.1" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline50"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline75"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.75" />
+
+        <TextView
+            android:id="@+id/tvSerialNo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@{String.valueOf(serialNo)}"
+            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/guideline10"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:text="1" />
+
+
+        <LinearLayout
+            android:id="@+id/llActivityColumn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintStart_toEndOf="@id/guideline10"
+            app:layout_constraintEnd_toStartOf="@id/guideline50"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <TextView
+                android:id="@+id/tvGroupName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{item.groupName}"
+                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                android:textStyle="bold"
+                android:ellipsize="end"
+                android:singleLine="true"
+                tools:text="Maternal Health" />
+
+            <TextView
+                android:id="@+id/tvActivityName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{item.description}"
+                android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                android:ellipsize="end"
+                tools:text="ANC Checkup" />
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/tvCount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@{String.valueOf(item.count)}"
+            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+            android:gravity="center"
+            app:layout_constraintStart_toStartOf="@id/guideline50"
+            app:layout_constraintEnd_toStartOf="@id/guideline75"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:text="12" />
+
+        <TextView
+            android:id="@+id/tvTotalAmount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@{String.valueOf(item.totalAmount)}"
+            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+            android:textStyle="bold"
+            android:gravity="end"
+            android:paddingEnd="@dimen/_5sdp"
+            app:layout_constraintStart_toStartOf="@id/guideline75"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:text="₹240" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
