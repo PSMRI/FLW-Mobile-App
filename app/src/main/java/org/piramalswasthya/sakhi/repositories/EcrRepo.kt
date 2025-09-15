@@ -574,9 +574,19 @@ class EcrRepo @Inject constructor(
         val list = mutableListOf<EligibleCoupleTrackingCache>()
         for (i in 0 until dataObj.length()) {
             val ecrJson = dataObj.getJSONObject(i)
+            val methodOfContraceptionRaw = ecrJson.optString("methodOfContraception", null)
+
             val ecr = EligibleCoupleTrackingCache(
                 benId = ecrJson.getLong("benId"),
                 visitDate = getLongFromDate(ecrJson.getString("visitDate")),
+                dateOfAntraInjection = getStringToDate(ecrJson.optString("dateOfAntraInjection",null)),
+//                antraDose = ecrJson.optString("antraDose",null),
+                antraDose = methodOfContraceptionRaw?.substringAfter("/", "")
+                    ?.takeIf { it.isNotEmpty() }
+                    ?: ecrJson.optString("antraDose", null),
+                dueDateOfAntraInjection = ecrJson.optString("dueDateOfAntraInjection",null),
+                mpaFile = ecrJson.optString("mpaFile",null),
+
                 isPregnancyTestDone = if (ecrJson.has("isPregnancyTestDone")) ecrJson.getString("isPregnancyTestDone") else null,
                 isActive = if (ecrJson.has("isActive")) ecrJson.getBoolean("isActive") else false,
                 pregnancyTestResult = if (ecrJson.has("pregnancyTestResult")) ecrJson.getString("pregnancyTestResult") else null,
@@ -664,5 +674,20 @@ class EcrRepo @Inject constructor(
             val date = f.parse(dateString)
             return date?.time ?: throw IllegalStateException("Invalid date for dateReg")
         }
+        private fun getStringToDate(dateString: String?): String? {
+            if (dateString.isNullOrBlank()) return null
+
+            return try {
+                val inputFormat = SimpleDateFormat("MMM d, yyyy h:mm:ss a", Locale.ENGLISH)
+                val outputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
+
+                val date = inputFormat.parse(dateString)
+                date?.let { outputFormat.format(it) }
+            } catch (e: Exception) {
+                null
+            }
+        }
+
+
     }
 }

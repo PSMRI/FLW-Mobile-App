@@ -320,6 +320,10 @@ data class PregnantWomanAncCache(
     var visitNumber: Int,
     var isActive: Boolean = true,
 
+    var lmpDate: Long? = null,
+    var visitDate: Long? = null,
+    var weekOfPregnancy: Int? = null,
+
     var serialNo: String? = null,
     var methodOfTermination: String? = null,
     var methodOfTerminationId: Int? = 0,
@@ -381,7 +385,9 @@ data class PregnantWomanAncCache(
             benId = benId,
             ancDate = getDateStringFromLong(ancDate),
             isActive = true,
-
+            lmpDate = lmpDate?.let { getDateStringFromLong(it) },
+            visitDate = visitDate?.let { getDateStringFromLong(it) },
+            weekOfPregnancy = weekOfPregnancy,
             serialNo = serialNo,
             methodOfTermination = methodOfTermination,
             methodOfTerminationId = methodOfTerminationId,
@@ -436,6 +442,9 @@ data class ANCPost(
     val ancDate: String? = null,
     val isActive: Boolean,
 
+    var lmpDate: String? = null,
+    var visitDate: String? = null,
+    var weekOfPregnancy: Int? = null,
     var serialNo: String? = null,
     var methodOfTermination: String? = null,
     var methodOfTerminationId: Int? = 0,
@@ -489,6 +498,9 @@ data class ANCPost(
             id = id,
             benId = benId,
 
+            lmpDate = getLongFromDate(lmpDate),
+            visitDate = getLongFromDate(visitDate),
+            weekOfPregnancy = weekOfPregnancy,
             serialNo = serialNo,
             methodOfTermination = methodOfTermination,
             methodOfTerminationId = methodOfTerminationId,
@@ -572,7 +584,6 @@ data class BenWithAncVisitCache(
     )
     val savedAncRecords: List<PregnantWomanAncCache>
 ) {
-
     companion object {
         private val dateFormat = SimpleDateFormat("EEE, MMM dd yyyy", Locale.ENGLISH)
 
@@ -584,60 +595,105 @@ data class BenWithAncVisitCache(
     fun asDomainModel(): BenWithAncListDomain {
         val lastAncRecord = savedAncRecords.maxByOrNull { it.ancDate }
         val activePmsma = pmsma.firstOrNull { it.isActive }
-        val activePwrRecrod = pwr.first { it.active }
+        val activePwrRecord = pwr.firstOrNull { it.active }
+        val abortionRecord = savedAncRecords.firstOrNull { it.isAborted }
+        val lmpDateToUse = activePwrRecord?.lmpDate
+            ?: abortionRecord?.lmpDate
+            ?: 0L
+
+        val eddDateToUse = if (lmpDateToUse != 0L) {
+            lmpDateToUse + TimeUnit.DAYS.toMillis(280)
+        } else 0L
+
+        val weekOfPregnancyToUse = if (lmpDateToUse != 0L) {
+            (TimeUnit.MILLISECONDS.toDays(getTodayMillis() - lmpDateToUse) / 7).toInt()
+        } else 0
+
         return BenWithAncListDomain(
-//            ecBenId,
-            ben.asBasicDomainModel(),
-            activePwrRecrod,
-            savedAncRecords.filter { it.isActive }.map {
+            ben = ben.asBasicDomainModel(),
+            pwr = activePwrRecord,
+            anc = savedAncRecords.filter { it.isActive }.map {
                 AncStatus(
                     benId = it.benId,
                     visitNumber = it.visitNumber,
-                    filledWeek = (TimeUnit.MILLISECONDS.toDays(it.ancDate - activePwrRecrod.lmpDate) / 7).toInt(),
+                    filledWeek = if (lmpDateToUse != 0L)
+                        (TimeUnit.MILLISECONDS.toDays(it.ancDate - lmpDateToUse) / 7).toInt()
+                    else 0,
                     syncState = it.syncState
                 )
             }.sortedBy { it.visitNumber },
             savedAncRecords = savedAncRecords,
-            pmsmaFillable = if (activePmsma == null) savedAncRecords.any { it.visitNumber == 1 } else true,
+            pmsmaFillable = if (activePmsma == null) {
+                savedAncRecords.any { it.visitNumber == 1 }
+            } else true,
             hasPmsma = activePmsma != null,
-            showAddAnc = if (savedAncRecords.isEmpty())
-                TimeUnit.MILLISECONDS.toDays(
-                    getTodayMillis() - activePwrRecrod.lmpDate
-                ) >= Konstants.minAnc1Week * 7
-//            else
-//                lastAncRecord != null &&
-//                        (activePwrRecrod.lmpDate + TimeUnit.DAYS.toMillis(280)) > (lastAncRecord.ancDate + TimeUnit.DAYS.toMillis(
-//                    28
-//                )) &&
-//                        lastAncRecord.visitNumber < 4 && TimeUnit.MILLISECONDS.toDays(
-//                    getTodayMillis() - lastAncRecord.ancDate
-//                ) > 28,
-            else
+            showAddAnc = if (activePwrRecord == null) {
+                false
+            } else if (savedAncRecords.isEmpty()) {
+                TimeUnit.MILLISECONDS.toDays(getTodayMillis() - lmpDateToUse) >= Konstants.minAnc1Week * 7
+            } else {
                 lastAncRecord != null &&
-                        (activePwrRecrod.lmpDate + TimeUnit.DAYS.toMillis(840)) > (lastAncRecord.ancDate + TimeUnit.DAYS.toMillis(
-                    28
-                )) &&
+                        (lmpDateToUse + TimeUnit.DAYS.toMillis(840)) >
+                        (lastAncRecord.ancDate + TimeUnit.DAYS.toMillis(28)) &&
                         lastAncRecord.visitNumber < 8 &&
-                        lastAncRecord.ancDate + TimeUnit.DAYS.toMillis(28) < getTodayMillis(),
-            syncState = if (activePmsma == null && savedAncRecords.isEmpty()) null else if (activePmsma?.syncState == SyncState.UNSYNCED || savedAncRecords.any { it.syncState != SyncState.SYNCED }) SyncState.UNSYNCED else SyncState.SYNCED
-        )
-
-
+                        lastAncRecord.ancDate + TimeUnit.DAYS.toMillis(28) < getTodayMillis()
+            },
+            syncState = if (activePmsma == null && savedAncRecords.isEmpty()) {
+                null
+            } else if (activePmsma?.syncState == SyncState.UNSYNCED ||
+                savedAncRecords.any { it.syncState != SyncState.SYNCED }
+            ) {
+                SyncState.UNSYNCED
+            } else {
+                SyncState.SYNCED
+            }
+        ).apply {
+            if (activePwrRecord == null && abortionRecord != null) {
+                lmpDate = lmpDateToUse
+                eddDate = eddDateToUse
+                weekOfPregnancy = weekOfPregnancyToUse
+                abortionDate = abortionRecord.ancDate
+            }
+        }
     }
 }
 
 data class BenWithAncListDomain(
     val ben: BenBasicDomain,
-    val pwr: PregnantWomanRegistrationCache,
+    val pwr: PregnantWomanRegistrationCache?,
     val anc: List<AncStatus>,
     val savedAncRecords: List<PregnantWomanAncCache>,
-    val lmpString: String? = getDateString(pwr.lmpDate),
-    val eddString: String? = getDateString(pwr.lmpDate + TimeUnit.DAYS.toMillis(280)),
-    val weeksOfPregnancy: String? = (TimeUnit.MILLISECONDS.toDays(getTodayMillis() - pwr.lmpDate) / 7).takeIf { it <= 40 }
-        ?.toString() ?: "NA",
+
+    // Abortion ke liye override hone wali raw values
+    var lmpDate: Long? = null,
+    var eddDate: Long? = null,
+    var weekOfPregnancy: Int? = null,
+    var abortionDate: Long? = null,
+
     val showAddAnc: Boolean,
     val pmsmaFillable: Boolean,
     val hasPmsma: Boolean,
     val showViewAnc: Boolean = anc.isEmpty(),
     val syncState: SyncState?
-)
+) {
+    val finalLmpDate: Long? get() = pwr?.lmpDate ?: lmpDate
+    val finalEddDate: Long? get() =
+        pwr?.let { it.lmpDate + TimeUnit.DAYS.toMillis(280) } ?: eddDate
+
+    val finalWeeksOfPregnancy: Int?
+        get() = finalLmpDate?.let {
+            val weeks = (TimeUnit.MILLISECONDS.toDays(getTodayMillis() - it) / 7).toInt()
+            if (weeks > 40) null else weeks
+        } ?: weekOfPregnancy?.takeIf { it <= 40 }
+    val lmpString: String? get() = finalLmpDate?.let { getDateString(it) }
+    val eddString: String? get() = finalEddDate?.let { getDateString(it) }
+    val weeksOfPregnancy: String
+        get() = finalWeeksOfPregnancy?.toString() ?: "N/A"
+    val abortionDateString: String? get() = abortionDate?.let { getDateString(it) }
+
+    val isAbortionFormFilled: Boolean
+        get() = savedAncRecords.firstOrNull { it.isAborted }?.terminationDoneBy != null
+}
+
+
+
