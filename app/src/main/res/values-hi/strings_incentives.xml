@@ -1,2 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="providing_hbnc_up_to_days_after_birth_discharge_from_sncu">জন্মৰ পিছত ৪২ দিনলৈ/SNCU ৰ পৰা ছুটী দিয়াৰ পিছত HBNC প্ৰদান কৰাৰ বাবদ</string>
+    <string name="incentive_to_asha_for_quarterly_visits_of_hbyc">HBYC ৰ ত্রিমাসিক পৰিদৰ্শনৰ বাবদ আশাক দিয়া মাননী</string>
+    <string name="incentive_to_asha_for_follow_up_of_sncu_discharge_babies_and_for_follow_up_of_lbw_babies">Incentive to ASHA for follow up of SNCU discharge babies and for follow up of LBW babies</string>
+    <string name="asha_incentive_for_referral_of_sam_cases_to_nrc_and_for_follow_up_of_discharged_sam_children_from_nrc">ASHA incentive for referral of SAM cases to NRC and for follow up of discharged SAM children from NRC</string>
+    <string name="child_death_reporting">Child Death Reporting</string>
+    <string name="incentive_for_e_hbnc_only_for_cachar">Incentive for E-HBNC (only for Cachar)</string>
+    <string name="activity_wise_claim_forms_along_with_supporting_documents_are_also_enclosed_as_per_guideline">Activity wise claim forms along with supporting documents are also enclosed as per guideline.</string>
+    <string name="cetify_that_all_claims_are_genuine_and_services_are_rendered_by_me_regarding_the_activities_against_which_the_claim_submitted_kindly_make_the_payment"> </string>
+    <string name="yours_faithfully">Yours faithfully,</string>
+    <string name="account_no">Account No:</string>
+    <string name="bank_name_branch_name"><![CDATA[Bank Name & Branch Name:]]></string>
+    <string name="contact_no">Contact No:</string>
+    <string name="village">Village: %1$s</string>
+    <string name="name_of_the_asha">Name of the ASHA : %1$s</string>
+    <string name="sc_name">SC Name:</string>
+    <string name="certify_that_the_claims_mentioned_above_are_correct">Certify that the claims mentioned above are correct.</string>
+    <string name="signature_of_asha_supervisor">Signature of ASHA SUPERVISOR</string>
+    <string name="signature_of_anm">Signature of ANM</string>
+    <string name="signature_of_cho">Signature of CHO</string>
+    <string name="for_office_use_only">For office use only</string>
+    <string name="signature_of_abpm">Signature of ABPM</string>
+    <string name="signature_of_bam">Signature of BAM</string>
+    <string name="signature_of_bcm">Signature of BCM</string>
+    <string name="signature_of_bpm">Signature of BPM</string>
+    <string name="signature_of_sdm_ho">Signature of SDM &amp; HO</string>
+    <string name="an_amount_of_rs_rupees_only_approved_for_payment_of_asha_incentive_for_the_period_from_to_and_the_amount_is_debited_to_the_account_through_dbt">An amount of Rs________________(Rupees_________only) approved for payment of ASHA incentive for the period from____________to_____________and the amount is debited to the account through DBT.</string>
+
+</resources>

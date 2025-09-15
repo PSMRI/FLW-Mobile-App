@@ -112,7 +112,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.InfantEntity
         FormResponseJsonEntity::class
     ],
     views = [BenBasicCache::class],
-    version = 24, exportSchema = false
+    version = 25, exportSchema = false
 )
 
 @TypeConverters(LocationEntityListConverter::class, SyncStateConverter::class)
@@ -158,6 +158,13 @@ abstract class InAppDb : RoomDatabase() {
             val MIGRATION_1_2 = Migration(1, 2, migrate = {
 //                it.execSQL("select count(*) from beneficiary")
             })
+            val Migration_24_25 = object  : Migration(24,25)
+            {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("ALTER TABLE INCENTIVE_ACTIVITY ADD COLUMN groupName TEXT")
+
+                }
+            }
             val MIGRATION_23_24 = object : Migration(23, 24) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     database.execSQL("ALTER TABLE MDSR ADD COLUMN mdsr1File TEXT")
@@ -497,7 +504,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_20_21,
                         MIGRATION_21_22,
                         MIGRATION_22_23,
-                        MIGRATION_23_24
+                        MIGRATION_23_24,
+                        Migration_24_25
                     ).build()
 
                     INSTANCE = instance

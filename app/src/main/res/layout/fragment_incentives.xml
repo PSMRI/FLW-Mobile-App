@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:background="@android:color/holo_orange_light"
         android:padding="@dimen/padding_normal"
+        android:visibility="gone"
         android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
         android:gravity="center"
         app:layout_constraintTop_toTopOf="parent"
@@ -215,11 +216,102 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:layout_height="wrap_content"
-                android:text="FETCH"
+                android:text="Submit"
                 >
             </com.google.android.material.button.MaterialButton>
         </LinearLayout>
     </LinearLayout>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/ll_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/holo_orange_light"
+        android:padding="@dimen/padding_small"
+        app:layout_constraintTop_toBottomOf="@+id/from_to_date_range">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.1" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline50"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline75"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="307dp" />
+
+        <TextView
+            android:id="@+id/tvHeaderSerialNo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="S.No"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/guideline10"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+
+        <TextView
+            android:id="@+id/tvHeaderActivity"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Activity"
+            android:textStyle="bold"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+            app:layout_constraintStart_toEndOf="@id/guideline10"
+            app:layout_constraintEnd_toStartOf="@id/guideline50"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <TextView
+            android:id="@+id/tvHeaderCount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="No of Claims"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginEnd="@dimen/_5sdp"
+            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+            app:layout_constraintStart_toStartOf="@id/guideline50"
+            app:layout_constraintEnd_toStartOf="@id/guideline75"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <TextView
+            android:id="@+id/tvHeaderAmount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Amount claimed (Rs.)"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:paddingEnd="@dimen/_5sdp"
+            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+            app:layout_constraintStart_toStartOf="@id/guideline75"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_incentive"
@@ -228,7 +320,9 @@
         android:orientation="vertical"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toTopOf="@id/ll_sum"
-        app:layout_constraintTop_toBottomOf="@+id/from_to_date_range"
+        app:layout_constraintTop_toBottomOf="@id/ll_header"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         tools:itemCount="23"
         tools:listitem="@layout/rv_item_incentive" >
 
