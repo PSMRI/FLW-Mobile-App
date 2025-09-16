@@ -1047,8 +1047,20 @@
     </fragment>
     <fragment
         android:id="@+id/abortionListFragment"
-        android:name="org.piramalswasthya.sakhi.ui.home_activity.maternal_health.abortion.AbortionListFragment"
-        android:label="AbortionListFragment" />
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.maternal_health.abortion.list.AbortionListFragment"
+        android:label="AbortionListFragment" >
+        <action
+            android:id="@+id/action_abortionListFragment_to_pwAncAbortionFormFragment"
+            app:destination="@id/pwAncAbortionFormFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/pwAncAbortionFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.maternal_health.abortion.form.PwAncAbortionFormFragment"
+        android:label="PwAncAbortionFormFragment" >
+        <argument
+            android:name="benId"
+            app:argType="long" />
+    </fragment>
 
 
 </navigation>

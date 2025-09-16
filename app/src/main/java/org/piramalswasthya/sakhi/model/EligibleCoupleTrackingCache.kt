@@ -54,7 +54,7 @@ data class EligibleCoupleTrackingCache(
         return ECTNetwork(
             benId = benId,
             visitDate = getDateTimeStringFromLong(visitDate)!!,
-            dateOfAntraInjection = dateOfAntraInjection,
+            dateOfAntraInjection = dateOfAntraInjection?.let { SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).parse(it)?.time }?.let { getDateTimeStringFromLong(it) },
             dueDateOfAntraInjection = dueDateOfAntraInjection,
             mpaFile = mpaFile,
             antraDose = antraDose,

@@ -105,6 +105,16 @@
     <string name="antra_injection_details">ANTRA Injection Details</string>
     <string name="dose">Dose</string>
     <string name="next_due_date">Next Due Date</string>
+    <string name="abortion_discharge_summary_1">Abortion Discharge\n Summary 1</string>
+    <string name="abortion_discharge_summary_2">Abortion Discharge\n Summary 2</string>
+    <string name="remarks">Remarks</string>
+    <string name="post_abortion_contraception_is_paiucd_inserted_after_an_abortion">Post Abortion Contraception\nIs PAIUCD inserted after an abortion</string>
+    <string name="termination_done_by">Termination done by</string>
+    <string name="method_of_termination">Method of Termination</string>
+    <string name="serial_no_as_per_admission_evacuation_register">Serial no as per Admission/ Evacuation register</string>
+    <string name="facility_place_of_abortion">Facility (Place of Abortion)</string>
+    <string name="abortion_type">Abortion Type</string>
+    <string name="abortion_date">Abortion Date</string>
 
 
     <string-array name="temp_array">
