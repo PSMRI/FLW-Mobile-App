@@ -36,7 +36,6 @@ import org.piramalswasthya.sakhi.ui.checkFileSize
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.abortion.form.PwAncAbortionFormViewModel.State
-
 import timber.log.Timber
 import java.io.File
 
@@ -53,6 +52,7 @@ class PwAncAbortionFormFragment : Fragment() {
                 requestLocationPermission()
             } else findNavController().navigateUp()
         }
+
     private var latestTmpUri: Uri? = null
     private var abortion1Uri: Uri? = null
     private var abortion2Uri: Uri? = null
@@ -62,23 +62,11 @@ class PwAncAbortionFormFragment : Fragment() {
         registerForActivityResult(ActivityResultContracts.TakePicture()) { success: Boolean ->
             if (success) {
                 val formId = viewModel.getDocumentFormId()
-
-                val uri = when (formId) {
-                    21 -> abortion1Uri
-                    22 -> abortion2Uri
-                    else -> latestTmpUri
-                }
+                val uri = getUriByFormId(formId)
 
                 uri?.let {
                     viewModel.setImageUriToFormElement(it)
-
-                    val index = when (formId) {
-                        21 -> viewModel.getIndexOfAbortionDischarge1()
-                        22 -> viewModel.getIndexOfAbortionDischarge2()
-                        else -> null
-                    }
-
-                    index?.let { i ->
+                    getIndexByFormId(formId)?.let { i ->
                         binding.form.rvInputForm.adapter?.notifyItemChanged(i)
                     }
                 }
@@ -109,21 +97,11 @@ class PwAncAbortionFormFragment : Fragment() {
                         viewModel.setCurrentDocumentFormId(formId)
                         chooseOptions()
                     },
-
                     viewDocumentListner = FormInputAdapterWithBgIcon.ViewDocumentOnClick { formId ->
                         if (recordExists) {
                             viewDocuments(formId)
                         } else {
-                            val uri = when (formId) {
-                                21 -> abortion1Uri
-                                22 -> abortion2Uri
-                                else -> null
-                            }
-
-                            uri?.let {
-                                viewImage(it)
-
-                            }
+                            getUriByFormId(formId)?.let { viewImage(it) }
                         }
                     },
                     isEnabled = !recordExists
@@ -132,37 +110,32 @@ class PwAncAbortionFormFragment : Fragment() {
                 binding.form.rvInputForm.itemAnimator = null
                 lifecycleScope.launch {
                     viewModel.formList.collect {
-                        if (it.isNotEmpty())
-
-                            adapter.submitList(it)
-
+                        if (it.isNotEmpty()) adapter.submitList(it)
                     }
                 }
             }
         }
+
         viewModel.benName.observe(viewLifecycleOwner) {
             binding.tvBenName.text = it
         }
         viewModel.benAgeGender.observe(viewLifecycleOwner) {
             binding.tvAgeGender.text = it
         }
-        binding.btnSubmit.setOnClickListener {
-            submitAncForm()
-        }
+
+        binding.btnSubmit.setOnClickListener { submitAncForm() }
         binding.fabEdit.setOnClickListener {
             binding.fabEdit.visibility = View.GONE
             viewModel.setRecordExist(false)
         }
+
         viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state!!) {
-                State.IDLE -> {
-                }
-
+                State.IDLE -> {}
                 State.SAVING -> {
                     binding.llContent.visibility = View.GONE
                     binding.pbForm.visibility = View.VISIBLE
                 }
-
                 State.SAVE_SUCCESS -> {
                     binding.llContent.visibility = View.VISIBLE
                     binding.pbForm.visibility = View.GONE
@@ -170,12 +143,8 @@ class PwAncAbortionFormFragment : Fragment() {
                     WorkerUtils.triggerAmritPushWorker(requireContext())
                     findNavController().navigateUp()
                 }
-
                 State.SAVE_FAILED -> {
-                    Toast.makeText(
-
-                        context, "Something wend wong! Contact testing!", Toast.LENGTH_LONG
-                    ).show()
+                    Toast.makeText(context, "Something went wrong! Contact testing!", Toast.LENGTH_LONG).show()
                     binding.llContent.visibility = View.VISIBLE
                     binding.pbForm.visibility = View.GONE
                 }
@@ -185,8 +154,6 @@ class PwAncAbortionFormFragment : Fragment() {
         viewModel.recordExists.observe(viewLifecycleOwner) { exists ->
             binding.fabEdit.visibility = if (exists) View.VISIBLE else View.GONE
         }
-
-
     }
 
     private fun submitAncForm() {
@@ -202,9 +169,7 @@ class PwAncAbortionFormFragment : Fragment() {
         Timber.d("Validation : $result")
         return if (result == -1) true
         else {
-            if (result != null) {
-                binding.form.rvInputForm.scrollToPosition(result)
-            }
+            result?.let { binding.form.rvInputForm.scrollToPosition(it) }
             false
         }
     }
@@ -212,6 +177,7 @@ class PwAncAbortionFormFragment : Fragment() {
     private fun hardCodedListUpdate(formId: Int) {
         binding.form.rvInputForm.adapter?.apply {
             when (formId) {
+                // future hardcoded updates
             }
         }
     }
@@ -231,63 +197,32 @@ class PwAncAbortionFormFragment : Fragment() {
         _binding = null
     }
 
-
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == PICK_PDF_FILE && resultCode == Activity.RESULT_OK) {
-            if (viewModel.getDocumentFormId() == 21) {
-                data?.data?.let { pdfUri ->
-                    if (checkFileSize(pdfUri, requireContext())) {
-                        Toast.makeText(
-                            context,
-                            resources.getString(R.string.file_size),
-                            Toast.LENGTH_LONG
-                        ).show()
+            handlePdfResult(viewModel.getDocumentFormId(), data?.data)
+        }
+    }
 
-                    } else {
-                        abortion1Uri = pdfUri
-                        abortion1Uri?.let { uri ->
-                            viewModel.setImageUriToFormElement(uri)
-                            binding.form.rvInputForm.apply {
-                                val adapter = this.adapter as FormInputAdapterWithBgIcon
-                                adapter.notifyDataSetChanged()
-                            }
-                        }
-
-                    }
+    private fun handlePdfResult(formId: Int, pdfUri: Uri?) {
+        pdfUri?.let { uri ->
+            if (checkFileSize(uri, requireContext())) {
+                Toast.makeText(context, resources.getString(R.string.file_size), Toast.LENGTH_LONG).show()
+            } else {
+                when (formId) {
+                    21 -> abortion1Uri = uri
+                    22 -> abortion2Uri = uri
                 }
+                viewModel.setImageUriToFormElement(uri)
+                (binding.form.rvInputForm.adapter as? FormInputAdapterWithBgIcon)?.notifyDataSetChanged()
             }
-            else if(viewModel.getDocumentFormId() == 22){
-                data?.data?.let { pdfUri ->
-                    if (checkFileSize(pdfUri, requireContext())) {
-                        Toast.makeText(
-                            context,
-                            resources.getString(R.string.file_size),
-                            Toast.LENGTH_LONG
-                        ).show()
-
-                    } else {
-                        abortion2Uri = pdfUri
-                        abortion2Uri?.let { uri ->
-                            viewModel.setImageUriToFormElement(uri)
-                            binding.form.rvInputForm.apply {
-                                val adapter = this.adapter as FormInputAdapterWithBgIcon
-                                adapter.notifyDataSetChanged()
-                            }
-                        }
-
-                    }
-                }
-            }
-
-
         }
     }
 
     private fun chooseOptions() {
         val alertBinding = LayoutMediaOptionsBinding.inflate(layoutInflater, binding.root, false)
-        alertBinding.btnPdf.visibility=View.GONE
+        alertBinding.btnPdf.visibility = View.GONE
         val alertDialog = MaterialAlertDialogBuilder(requireContext())
             .setView(alertBinding.root)
             .setCancelable(true)
@@ -301,24 +236,27 @@ class PwAncAbortionFormFragment : Fragment() {
             alertDialog.dismiss()
             selectImage()
         }
-        alertBinding.btnCancel.setOnClickListener {
-            alertDialog.dismiss()
-        }
+        alertBinding.btnCancel.setOnClickListener { alertDialog.dismiss() }
         alertDialog.show()
     }
-
 
     private fun takeImage() {
         lifecycleScope.launchWhenStarted {
             getTmpFileUri().let { uri ->
-                if (viewModel.getDocumentFormId() == 21) {
-                    abortion1Uri = uri
-                    takePicture.launch(abortion1Uri)
-                } else if (viewModel.getDocumentFormId() == 22) {
-                    abortion2Uri = uri
-                    takePicture.launch(abortion2Uri)
-                }
+                assignUriAndLaunch(viewModel.getDocumentFormId(), uri)
+            }
+        }
+    }
 
+    private fun assignUriAndLaunch(formId: Int, tmpUri: Uri) {
+        when (formId) {
+            21 -> {
+                abortion1Uri = tmpUri
+                takePicture.launch(abortion1Uri)
+            }
+            22 -> {
+                abortion2Uri = tmpUri
+                takePicture.launch(abortion2Uri)
             }
         }
     }
@@ -331,7 +269,6 @@ class PwAncAbortionFormFragment : Fragment() {
                 requireContext(), Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) requestLocationPermission.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-//        else if (!isGPSEnabled) showSettingsAlert()
     }
 
     private fun getTmpFileUri(): Uri {
@@ -344,12 +281,8 @@ class PwAncAbortionFormFragment : Fragment() {
         )
     }
 
-
-
     private fun selectImage() {
-        val intent = Intent(Intent.ACTION_PICK).apply {
-            type = "image/*"
-        }
+        val intent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
         startActivityForResult(intent, PICK_PDF_FILE)
     }
 
@@ -361,32 +294,34 @@ class PwAncAbortionFormFragment : Fragment() {
             .create()
         Glide.with(this).load(Uri.parse(imageUri.toString())).placeholder(R.drawable.ic_person)
             .into(viewImageBinding.viewImage)
-        viewImageBinding.btnClose.setOnClickListener {
-            alertDialog.dismiss()
-        }
+        viewImageBinding.btnClose.setOnClickListener { alertDialog.dismiss() }
         alertDialog.show()
     }
 
-    private fun viewDocuments(it: Int) {
-        if (it == 21) {
-            lifecycleScope.launch {
-                viewModel.formList.collect {
-                    it.get(viewModel.getIndexOfAbortionDischarge1()).value.let {
-                        viewImage(it!!.toUri())
-                    }
-                }
-            }
-        } else if (it == 22) {
-            lifecycleScope.launch {
-                viewModel.formList.collect {
-                    it.get(viewModel.getIndexOfAbortionDischarge2()).value.let {
-                        viewImage(it!!.toUri())
-                    }
-                }
-            }
+    private fun viewDocuments(formId: Int) {
+        when (formId) {
+            21 -> observeAndViewDocument(viewModel.getIndexOfAbortionDischarge1())
+            22 -> observeAndViewDocument(viewModel.getIndexOfAbortionDischarge2())
         }
-
     }
 
+    private fun observeAndViewDocument(index: Int) {
+        lifecycleScope.launch {
+            viewModel.formList.collect {
+                it[index].value?.let { uriStr -> viewImage(uriStr.toUri()) }
+            }
+        }
+    }
 
+    private fun getUriByFormId(formId: Int): Uri? = when (formId) {
+        21 -> abortion1Uri
+        22 -> abortion2Uri
+        else -> latestTmpUri
+    }
+
+    private fun getIndexByFormId(formId: Int): Int? = when (formId) {
+        21 -> viewModel.getIndexOfAbortionDischarge1()
+        22 -> viewModel.getIndexOfAbortionDischarge2()
+        else -> null
+    }
 }
