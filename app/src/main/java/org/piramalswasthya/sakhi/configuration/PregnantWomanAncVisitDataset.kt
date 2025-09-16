@@ -345,7 +345,8 @@ class PregnantWomanAncVisitDataset(
         iconDrawableRes = R.drawable.ic_bmi,
     )
     private val maternalDeath = FormElement(
-        id = 27, inputType = InputType.RADIO, title = "Maternal Death",
+        id = 27, inputType = InputType.RADIO,
+        title = "Maternal Death",
         arrayId = R.array.anc_confirmation_array1,
         entries = resources.getStringArray(R.array.anc_confirmation_array1),
         required = false, hasDependants = true
@@ -634,6 +635,21 @@ class PregnantWomanAncVisitDataset(
                             removeItems = listOf(deliveryDone),
                         )
                     }
+
+                    if (weeks > 24) {
+                        triggerDependants(
+                            source = ancVisit,
+                            removeItems = listOf(isAborted,abortionDate,abortionType,abortionFacility),
+                            addItems = emptyList()
+                        )
+                    } else {
+                        triggerDependants(
+                            source = ancVisit,
+                            addItems = listOf(isAborted),
+                            removeItems = emptyList()
+                        )
+                    }
+
                     weekOfPregnancy.value = weeks.toString()
                     val calcVisitNumber = when (weeks) {
                         in Konstants.minAnc1Week..Konstants.maxAnc1Week -> 1
@@ -642,16 +658,19 @@ class PregnantWomanAncVisitDataset(
                         in Konstants.minAnc4Week..Konstants.maxAnc4Week -> 4
                         else -> 0
                     }
-                    if (ancVisit.entries?.contains(calcVisitNumber.toString()) == true) {
+                    if (isAborted.value.equals("No", ignoreCase = true) &&
+                        maternalDeath.value.equals("No", ignoreCase = true)
+                    ) {
                         ancVisit.value = calcVisitNumber.toString()
-                        val listChanged2 = if (weeks <= 12)
+
+                        val listChanged2 = if (weeks <= 12) {
                             triggerDependants(
                                 source = ancVisit,
                                 addItems = listOf(numFolicAcidTabGiven),
                                 removeItems = listOf(fundalHeight, numIfaAcidTabGiven),
                                 position = getIndexById(dateOfTTOrTdBooster.id) + 1
                             )
-                        else {
+                        } else {
                             triggerDependants(
                                 source = ancVisit,
                                 removeItems = listOf(numFolicAcidTabGiven),
@@ -664,14 +683,15 @@ class PregnantWomanAncVisitDataset(
                                 addItems = listOf(numIfaAcidTabGiven),
                                 position = getIndexById(dateOfTTOrTdBooster.id) + 1
                             )
-
                         }
+
                         return if (listChanged >= 0 || listChanged2 >= 0)
                             1
                         else
                             -1
                     }
                     return listChanged
+
                 }
                 -1
             }
@@ -702,76 +722,54 @@ class PregnantWomanAncVisitDataset(
             }
 
             isAborted.id -> {
-                if (isAborted.value.equals("Yes", ignoreCase = true)  || maternalDeath.value.equals("Yes", ignoreCase = true)) {
-                    triggerDependants(
-                        source = isAborted,
-                        addItems = listOf(abortionType, abortionFacility, abortionDate),
-                        removeItems = listOf( weight,
-                            bp,
-                            pulseRate,
-                            hb,
-                            fundalHeight,
-                            urineAlbumin,
-                            randomBloodSugarTest,
-                            dateOfTTOrTd1,
-                            dateOfTTOrTd2,
-                            dateOfTTOrTdBooster,
-                            numFolicAcidTabGiven,
-                            numIfaAcidTabGiven,
-                            anyHighRisk,
-                            highRiskReferralFacility,
-                            hrpConfirm,
-                            ),
-                        position = getIndexById(isAborted.id) + 1
-                    )
-                } else {
+                val commonAddItems = listOf(
+                    weight,
+                    bp,
+                    pulseRate,
+                    hb,
+                    fundalHeight,
+                    urineAlbumin,
+                    randomBloodSugarTest,
+                    dateOfTTOrTd1,
+                    dateOfTTOrTd2,
+                    dateOfTTOrTdBooster,
+                    numFolicAcidTabGiven,
+                    numIfaAcidTabGiven,
+                    anyHighRisk,
+                    highRiskReferralFacility,
+                    hrpConfirm
+                )
+
+                if (isAborted.value.equals("Yes", ignoreCase = true) ||
+                    maternalDeath.value.equals("Yes", ignoreCase = true)
+                ) {
                     triggerDependants(
                         source = maternalDeath,
-                        addItems = listOf( weight,
-                            bp,
-                            pulseRate,
-                            hb,
-                            fundalHeight,
-                            urineAlbumin,
-                            randomBloodSugarTest,
-                            dateOfTTOrTd1,
-                            dateOfTTOrTd2,
-                            dateOfTTOrTdBooster,
-                            numFolicAcidTabGiven,
-                            numIfaAcidTabGiven,
-                            anyHighRisk,
-                            highRiskReferralFacility,
-                            hrpConfirm
-                            ),
-                        removeItems = listOf(
-                            abortionType, abortionFacility, abortionDate
-                        ),
-//                        position = getIndexById(maternalDeath.id) + 1
+                        addItems = listOf(abortionType, abortionFacility, abortionDate),
+                        removeItems = commonAddItems + deliveryDone,
+                        position = getIndexById(isAborted.id).coerceAtLeast(0) + 1 // safe
+                    )
+                } else {
+                    val week = weekOfPregnancy.value?.toIntOrNull()
+
+                    val addItems = if (week != null && week >= Konstants.minWeekToShowDelivered) {
+                        listOf(deliveryDone) + commonAddItems
+                    } else {
+                        commonAddItems
+                    }
+
+                    val removeItems = listOf(abortionType, abortionFacility, abortionDate) +
+                            if (week == null || week < Konstants.minWeekToShowDelivered) listOf(deliveryDone) else emptyList()
+
+                    triggerDependants(
+                        source = maternalDeath,
+                        addItems = addItems,
+                        removeItems = removeItems,
                         position = -1
                     )
                 }
             }
 
-
-//
-//            isAborted.id -> triggerDependants(
-//                source = isAborted,
-//                passedIndex = index,
-//                triggerIndex = 1,
-//                target = listOf(
-//                    abortionType,
-//                    abortionFacility,
-//                    abortionDate,
-//                ),
-//                targetSideEffect = listOf(abortionFacility)
-//            )
-
-//            abortionType.id -> triggerDependants(
-//                source = abortionType,
-//                passedIndex = index,
-//                triggerIndex = 0,
-//                target = abortionFacility,
-//            )
 
             dateOfTTOrTd1.id -> {
                 if (dateOfTTOrTd1.value == null)
@@ -860,66 +858,62 @@ class PregnantWomanAncVisitDataset(
                 )
             }
 
-//            maternalDeath.id -> triggerDependants(
-//                source = maternalDeath,
-//                passedIndex = index,
-//                triggerIndex = 1,
-//                target = listOf(maternalDeathProbableCause, maternalDateOfDeath, placeOfDeath),
-//                targetSideEffect = listOf(otherMaternalDeathProbableCause,)
-//            )
-
-
             maternalDeath.id -> {
-                if (maternalDeath.value.equals("Yes", ignoreCase = true) || isAborted.value.equals("Yes", ignoreCase = true)) {
+                val commonAddItems = listOf(
+                    weight,
+                    bp,
+                    pulseRate,
+                    hb,
+                    fundalHeight,
+                    urineAlbumin,
+                    randomBloodSugarTest,
+                    dateOfTTOrTd1,
+                    dateOfTTOrTd2,
+                    dateOfTTOrTdBooster,
+                    numFolicAcidTabGiven,
+                    numIfaAcidTabGiven,
+                    anyHighRisk,
+                    highRiskReferralFacility,
+                    hrpConfirm
+                )
+
+                val maternalDeathFields = listOf(
+                    maternalDeathProbableCause,
+                    maternalDateOfDeath,
+                    placeOfDeath
+                )
+
+                val week = weekOfPregnancy.value?.toIntOrNull()
+
+                if (maternalDeath.value.equals("Yes", ignoreCase = true) ||
+                    isAborted.value.equals("Yes", ignoreCase = true)
+                ) {
                     triggerDependants(
                         source = maternalDeath,
-                        addItems = listOf(maternalDeathProbableCause, maternalDateOfDeath, placeOfDeath),
-                        removeItems = listOf(  weight,
-                            bp,
-                            pulseRate,
-                            hb,
-                            fundalHeight,
-                            urineAlbumin,
-                            randomBloodSugarTest,
-                            dateOfTTOrTd1,
-                            dateOfTTOrTd2,
-                            dateOfTTOrTdBooster,
-                            numFolicAcidTabGiven,
-                            numIfaAcidTabGiven,
-                            anyHighRisk,
-                            highRiskReferralFacility,
-                            hrpConfirm,
-                        ),
-                        position = getIndexById(maternalDeath.id) + 1
+                        addItems = maternalDeathFields,
+                        removeItems = commonAddItems + deliveryDone,
+                        position = getIndexById(maternalDeath.id).coerceAtLeast(0) + 1
                     )
                 } else {
+                    val addItems = if (week != null && week >= Konstants.minWeekToShowDelivered) {
+                        listOf(deliveryDone) + commonAddItems   // deliveryDone first
+                    } else {
+                        commonAddItems
+                    }
+
+                    val removeItems = maternalDeathFields +
+                            if (week == null || week < Konstants.minWeekToShowDelivered) listOf(deliveryDone) else emptyList()
+
                     triggerDependants(
                         source = maternalDeath,
-                        addItems = listOf( weight,
-                            bp,
-                            pulseRate,
-                            hb,
-                            fundalHeight,
-                            urineAlbumin,
-                            randomBloodSugarTest,
-                            dateOfTTOrTd1,
-                            dateOfTTOrTd2,
-                            dateOfTTOrTdBooster,
-                            numFolicAcidTabGiven,
-                            numIfaAcidTabGiven,
-                            anyHighRisk,
-                            highRiskReferralFacility,
-                            hrpConfirm
-                        ),
-                        removeItems = listOf(
-                            maternalDeathProbableCause, maternalDateOfDeath, placeOfDeath
-                        ),
-//                        position = getIndexById(maternalDeath.id) + 1
+                        addItems = addItems,
+                        removeItems = removeItems,
                         position = -1
                     )
                 }
             }
-//
+
+
             maternalDeathProbableCause.id -> triggerDependants(
                 source = maternalDeathProbableCause,
                 passedIndex = index,
@@ -949,7 +943,7 @@ class PregnantWomanAncVisitDataset(
                 ?.takeIf { it != -1 }
             cache.otherPlaceOfDeath = otherPlaceOfDeath.value
 
-
+            cache.lmpDate = regis.lmpDate
 
 
             cache.visitNumber = ancVisit.value!!.toInt()

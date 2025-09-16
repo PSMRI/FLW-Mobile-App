@@ -11,7 +11,7 @@
 
         <variable
             name="clickListener"
-            type="org.piramalswasthya.sakhi.adapters.AncVisitListAdapter.PregnancyVisitClickListener" />
+            type="org.piramalswasthya.sakhi.adapters.AncAbortionListAdapter.AbortionListClickListener" />
 
     </data>
 
@@ -310,9 +310,10 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:text="@{visit.abortionDateString}"
                             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                             android:textColor="?attr/colorOnPrimary"
-                            tools:text="15 Aug 2025" />
+                            tools:text="" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -333,10 +334,10 @@
                     android:id="@+id/btn_add_anc"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="0dp"
+                    android:visibility="invisible"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/margin_normal"
                     android:layout_weight="1"
-
                     android:backgroundTint="@android:color/holo_green_dark"
                     android:onClick="@{() -> clickListener.addVisit(visit)}"
                     android:text="@string/add_anc_visits"
@@ -346,6 +347,7 @@
                     android:id="@+id/btn_view_visits"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="0dp"
+                    android:visibility="invisible"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/margin_normal"
                     android:layout_weight="1"
@@ -363,7 +365,7 @@
                     android:layout_marginHorizontal="@dimen/margin_normal"
                     android:layout_weight="1"
                     android:backgroundTint="@android:color/holo_green_dark"
-                    android:onClick="@{() -> clickListener.pmsma(visit)}"
+                    android:onClick="@{() -> clickListener.addVisit(visit)}"
                     android:text="@string/pmsma"
                     android:textColor="?attr/colorOnPrimary" />
 

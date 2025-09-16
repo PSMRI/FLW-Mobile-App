@@ -43,6 +43,9 @@ class EligibleCoupleTrackingFormViewModel @Inject constructor(
         IDLE, SAVING, SAVE_SUCCESS, SAVE_FAILED
     }
 
+    private val _showAntraSection = MutableLiveData<Boolean>()
+    val showAntraSection: LiveData<Boolean> = _showAntraSection
+
     private val _state = MutableLiveData(State.IDLE)
     val state: LiveData<State>
         get() = _state
@@ -99,11 +102,12 @@ class EligibleCoupleTrackingFormViewModel @Inject constructor(
              loadAllDoses(benId)
 
 
-            // Check if record already exists
             val existingRecord = ecrRepo.getEct(benId, createdDate)
             if (existingRecord != null) {
                 eligibleCoupleTracking = existingRecord
                 _recordExists.value = true
+                _showAntraSection.value = existingRecord.methodOfContraception
+                    ?.contains("ANTRA", ignoreCase = true) == true
             } else {
                 eligibleCoupleTracking = EligibleCoupleTrackingCache(
                     benId = benId,
@@ -112,6 +116,7 @@ class EligibleCoupleTrackingFormViewModel @Inject constructor(
                     updatedBy = asha.userName,
                 )
                 _recordExists.value = false
+                _showAntraSection.value = false
             }
 
             ecrRepo.getSavedRecord(benId)?.let {
@@ -125,42 +130,6 @@ class EligibleCoupleTrackingFormViewModel @Inject constructor(
         }
     }
 
-
-//    init {
-//        viewModelScope.launch {
-//            val asha = preferenceDao.getLoggedInUser()!!
-//            val ben = ecrRepo.getBenFromId(benId)?.also { ben ->
-//                _benName.value =
-//                    "${ben.firstName} ${if (ben.lastName == null) "" else ben.lastName}"
-//                _benAgeGender.value = "${ben.age} ${ben.ageUnit?.name} | ${ben.gender?.name}"
-//                eligibleCoupleTracking = EligibleCoupleTrackingCache(
-//                    benId = ben.beneficiaryId,
-//                    syncState = SyncState.UNSYNCED,
-//                    createdBy = asha.userName,
-//                    updatedBy = asha.userName,
-//                )
-//            }
-//
-//            val pastTrack = ecrRepo.getLatestEctByBenId(benId)
-//
-//            ecrRepo.getEct(benId, createdDate)?.let {
-//                eligibleCoupleTracking = it
-//                _recordExists.value = true
-//            } ?: run {
-//                _recordExists.value = false
-//            }
-//
-//            ecrRepo.getSavedRecord(benId)?.let {
-//                dataset.setUpPage(
-//                    ben,
-//                    it.dateOfReg,
-//                    pastTrack,
-//                    if (recordExists.value == true) eligibleCoupleTracking else null
-//                )
-//            }
-//
-//        }
-//    }
 
     fun updateListOnValueChanged(formId: Int, index: Int) {
         viewModelScope.launch {

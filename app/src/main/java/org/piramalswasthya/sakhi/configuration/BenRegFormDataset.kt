@@ -1360,6 +1360,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
     private val dateOfDeath = FormElement(
         id = 51,
+        arrayId = -1,
         inputType = DATE_PICKER,
         title = context.getString(R.string.date_of_death),
         max = System.currentTimeMillis(),

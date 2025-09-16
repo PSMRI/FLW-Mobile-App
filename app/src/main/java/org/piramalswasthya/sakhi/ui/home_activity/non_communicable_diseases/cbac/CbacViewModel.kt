@@ -7,7 +7,7 @@ import android.content.res.Resources
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.map
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -63,19 +63,20 @@ class CbacViewModel @Inject constructor(
     }
 
     private val _raAgeScore = MutableLiveData(0)
-    val raAgeScore = Transformations.map(_raAgeScore) { it.toString() }
+    val raAgeScore = _raAgeScore.map { it.toString() }
     private val _raSmokeScore = MutableLiveData(0)
-    val raSmokeScore = Transformations.map(_raSmokeScore) { it.toString() }
+    val raSmokeScore =  _raSmokeScore.map { it.toString() }
     private val _raAlcoholScore = MutableLiveData(0)
-    val raAlcoholScore = Transformations.map(_raAlcoholScore) { it.toString() }
+    val raAlcoholScore =_raAlcoholScore.map { it.toString() }
     private val _raWaistScore = MutableLiveData(0)
-    val raWaistScore = Transformations.map(_raWaistScore) { it.toString() }
+    val raWaistScore = _raWaistScore.map { it.toString() }
     private val _raPaScore = MutableLiveData(0)
-    val raPaScore = Transformations.map(_raPaScore) { it.toString() }
+    val raPaScore =_raPaScore.map { it.toString() }
     private val _raFhScore = MutableLiveData(0)
-    val raFhScore = Transformations.map(_raFhScore) { it.toString() }
+    val raFhScore = _raFhScore.map { it.toString() }
     private val _raTotalScore = MutableLiveData(0)
-    val raTotalScore = Transformations.map(_raTotalScore) {
+
+    val raTotalScore = _raTotalScore.map {
         String.format(
             "%s%s%s",
             resources.getString(R.string.total_score_wihout_semi_colon),
@@ -86,11 +87,13 @@ class CbacViewModel @Inject constructor(
 
     //PHQ2
     private val _phq2LittleInterestScore = MutableLiveData(0)
-    val phq2LittleInterestScore = Transformations.map(_phq2LittleInterestScore) { it.toString() }
+    val phq2LittleInterestScore = _phq2LittleInterestScore.map { it.toString() }
     private val _phq2FeelDownDepScore = MutableLiveData(0)
-    val phq2FeelDownDepScore = Transformations.map(_phq2FeelDownDepScore) { it.toString() }
+    val phq2FeelDownDepScore =_phq2FeelDownDepScore.map { it.toString() }
+
     private val _phq2TotalScore = MutableLiveData(0)
-    val phq2TotalScore = Transformations.map(_phq2TotalScore) {
+
+    val phq2TotalScore = _phq2TotalScore.map {
         String.format(
             "%s%s%s",
             resources.getString(R.string.total_score_wihout_semi_colon),
@@ -99,8 +102,7 @@ class CbacViewModel @Inject constructor(
         )
     }
 
-
-    val raAgeText = Transformations.map(_raAgeScore) {
+    val raAgeText = _raAgeScore.map {
         val text = resources.getStringArray(R.array.cbac_age)[it]
         if (this::cbac.isInitialized)
             cbac.cbac_age_posi = it + 1
