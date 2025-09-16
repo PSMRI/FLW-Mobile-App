@@ -184,6 +184,7 @@
     <string name="immunization">পৰিস্কৃতি</string>
     <string name="pregnancy_registration_form">গৰ্ভাবস্থাৰ পঞ্জীকৰণ ফৰ্ম</string>
     <string name="anc_visit">ANC দৰকাৰি</string>
+    <string name="cac_form">CAC Form</string>
     <string name="eligible_couple_list">যোগ্য জনপৰা পৰাৰ তালিকা</string>
     <string name="eligible_couple_registration">যোগ্য জনপৰা পৰাৰ পঞ্জীকৰণ</string>
     <string name="eligible_couple_tracking_list">যোগ্য জনপৰা পৰাৰ ট্ৰেকিং তালিকা</string>
@@ -265,6 +266,23 @@
     <string name="age_of_woman">Age Of Woman</string>
     <string name="when_did_death_occur">When did death occur</string>
     <string name="name_of_the_deceased_woman">Name of the deceased woman</string>
+    <string name="date_of_antra_injection">Date of ANTRA Injection</string>
+    <string name="due_date_of_next_injection">Due date of next Injection</string>
+    <string name="mpa_card">MPA Card</string>
+    <string name="invalid_injection_date">Invalid injection date</string>
+    <string name="antra_injection_details">ANTRA Injection Details</string>
+    <string name="dose">Dose</string>
+    <string name="next_due_date">Next Due Date</string>
+    <string name="abortion_discharge_summary_1">Abortion Discharge\n Summary 1</string>
+    <string name="abortion_discharge_summary_2">Abortion Discharge\n Summary 2</string>
+    <string name="remarks">Remarks</string>
+    <string name="post_abortion_contraception_is_paiucd_inserted_after_an_abortion">Post Abortion Contraception\nIs PAIUCD inserted after an abortion</string>
+    <string name="termination_done_by">Termination done by</string>
+    <string name="method_of_termination">Method of Termination</string>
+    <string name="serial_no_as_per_admission_evacuation_register">Serial no as per Admission/ Evacuation register</string>
+    <string name="facility_place_of_abortion">Facility (Place of Abortion)</string>
+    <string name="abortion_type">Abortion Type</string>
+    <string name="abortion_date">Abortion Date</string>
 
 
 </resources>
