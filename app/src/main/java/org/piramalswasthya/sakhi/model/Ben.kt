@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.model
 
 import android.content.Context
+import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.DatabaseView
 import androidx.room.Embedded
@@ -9,6 +10,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import kotlinx.parcelize.Parcelize
 import org.piramalswasthya.sakhi.configuration.FormDataModel
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.ImageUtils
@@ -107,7 +109,9 @@ enum class BenStatus {
             "LEFT OUTER JOIN CHILD_REG cr ON b.beneficiaryId = cr.motherBenId " +
             "WHERE b.isDraft = 0 GROUP BY b.beneficiaryId ORDER BY b.updatedDate DESC"
 )
+@Parcelize
 data class BenBasicCache(
+    @ColumnInfo
     val benId: Long,
     val hhId: Long,
     val regDate: Long,
@@ -182,7 +186,7 @@ data class BenBasicCache(
     val isMdsr: Boolean,
     val crFilled: Boolean,
     val doFilled: Boolean,
-) {
+) : Parcelable {
     companion object {
         val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
         fun getAgeFromDob(dob: Long): Int {
@@ -725,7 +729,7 @@ data class BenBasicCache(
 
 }
 
-
+@Parcelize
 data class BenBasicDomain(
     val benId: Long,
     val hhId: Long,
@@ -761,7 +765,7 @@ data class BenBasicDomain(
     val rchId: String? = null,
     val hrpStatus: Boolean = false,
     var syncState: SyncState?
-)
+) : Parcelable
 
 
 data class BenBasicDomainForForm(
