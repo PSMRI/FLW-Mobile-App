@@ -41,5 +41,9 @@ interface EcrDao {
     @Query("select count(*)>0 from eligible_couple_tracking where createdDate=:createdDate")
     suspend fun ectWithsameCreateDateExists(createdDate: Long): Boolean
 
+    @Query("SELECT * FROM eligible_couple_tracking WHERE benId = :benId ORDER BY visitDate DESC")
+    suspend fun getAllAntraDoses(benId: Long): List<EligibleCoupleTrackingCache>
+
+
 
 }
