@@ -12,10 +12,15 @@ import android.text.TextPaint
 import android.text.TextUtils
 import android.util.Log
 import android.util.TypedValue
+import android.view.Gravity
+import android.widget.TableLayout
+import android.widget.TableRow
+import android.widget.TextView
 import androidx.collection.lruCache
 import androidx.core.graphics.withTranslation
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.AgeUnitDTO
+import org.piramalswasthya.sakhi.model.EligibleCoupleTrackingCache
 import java.io.File
 import java.io.FileOutputStream
 import java.text.NumberFormat
@@ -345,6 +350,43 @@ object HelperUtil {
             Log.d("SAVE_FILE", "File saved to Downloads: ${file.absolutePath}")
         } catch (e: Exception) {
             Log.e("SAVE_FILE", "Error saving to Downloads: ${e.message}")
+        }
+    }
+
+
+
+    fun populateAntraTable(
+        context: Context,
+        tableLayout: TableLayout,
+        visits: List<EligibleCoupleTrackingCache>
+    ) {
+        val headerCount = 1
+        if (tableLayout.childCount > headerCount) {
+            tableLayout.removeViews(headerCount, tableLayout.childCount - headerCount)
+        }
+
+        val lp = TableRow.LayoutParams(0, TableRow.LayoutParams.MATCH_PARENT, 1f).apply {
+            setMargins(4, 4, 4, 4)
+        }
+
+        fun createBox(text: String?) = TextView(context).apply {
+            this.text = text ?: "-"
+            layoutParams = lp
+            gravity = Gravity.CENTER
+            setPadding(16, 16, 16, 16)
+            setBackgroundResource(android.R.drawable.editbox_background)
+        }
+
+        visits.forEach { visit ->
+            tableLayout.addView(
+                TableRow(context).apply {
+                    listOf(
+                        visit.antraDose,
+                        visit.dateOfAntraInjection,
+                        visit.dueDateOfAntraInjection
+                    ).forEach { addView(createBox(it)) }
+                }
+            )
         }
     }
 

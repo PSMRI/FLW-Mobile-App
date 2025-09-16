@@ -611,6 +611,13 @@ class EcrRepo @Inject constructor(
             database.ecrDao.getLatestEct(benId)
         }
     }
+   suspend fun getAllAntraDoses(benId: Long): List<EligibleCoupleTrackingCache>? {
+        return withContext(Dispatchers.IO) {
+            database.ecrDao.getAllAntraDoses(benId)
+        }
+    }
+
+
 
     private fun getHighRiskAssess(dataObj: JSONArray): List<HRPNonPregnantAssessCache> {
 //        TODO()
