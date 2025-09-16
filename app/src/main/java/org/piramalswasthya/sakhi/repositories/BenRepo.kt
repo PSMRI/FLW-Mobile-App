@@ -85,6 +85,7 @@ class BenRepo @Inject constructor(
         return benDao.getAllBenForHousehold(hhId)
 
     }
+
     suspend fun isBenDead(benId: Long): Boolean {
         return benDao.isBenDead(benId)
     }
@@ -208,7 +209,7 @@ class BenRepo @Inject constructor(
                         benDao.updateToFinalBenId(
                             hhId = ben.householdId,
                             oldId = ben.beneficiaryId,
-                            newBenRegId=newBenRegId,
+                            newBenRegId = newBenRegId,
                             newId = newBenId,
                             imageUri = photoUri
                         )
@@ -275,7 +276,11 @@ class BenRepo @Inject constructor(
                     householdDao.getHousehold(it.householdId)!!.asNetworkModel(user)
                 )
                 try {
-                    if (it.ageUnitId != 3 || it.age < 15) kidNetworkPostList.add(it.asKidNetworkModel(user))
+                    if (it.ageUnitId != 3 || it.age < 15) kidNetworkPostList.add(
+                        it.asKidNetworkModel(
+                            user
+                        )
+                    )
                 } catch (e: java.lang.Exception) {
                     Timber.d("caught error in adding kidDetails : $e")
                 }
@@ -420,7 +425,7 @@ class BenRepo @Inject constructor(
                             }
 
                             5000 -> {
-                              //  HelperUtil.saveApiResponseToDownloads(context, "9864880049_getBeneficiaryData_response.txt", HelperUtil.allPagesContent.toString())
+                                //  HelperUtil.saveApiResponseToDownloads(context, "9864880049_getBeneficiaryData_response.txt", HelperUtil.allPagesContent.toString())
 
                                 if (errorMessage == "No record found") return@withContext 0
                             }
@@ -493,6 +498,56 @@ class BenRepo @Inject constructor(
                                         BenBasicDomain(
                                             benId = jsonObject.getLong("benficieryid"),
                                             hhId = jsonObject.getLong("houseoldId"),
+
+//                                            isDeath = if (jsonObject.has("isDeath")) jsonObject.optBoolean("isDeath") else false,
+//                                            isDeathValue = jsonObject.optString("isDeath", null),
+//                                            dateOfDeath = jsonObject.optString("dateOfDeath", null),
+//                                            timeOfDeath = jsonObject.optString("timeOfDeath", null),
+//                                            reasonOfDeath = jsonObject.optString("reasonOfDeath", null),
+//                                            reasonOfDeathId = if (jsonObject.has("reasonOfDeathId")) jsonObject.optInt("reasonOfDeathId") else -1,
+//                                            placeOfDeath = jsonObject.optString("placeOfDeath", null),
+//                                            placeOfDeathId = if (jsonObject.has("placeOfDeathId")) jsonObject.optInt("placeOfDeathId") else -1,
+//                                            otherPlaceOfDeath = jsonObject.optString("otherPlaceOfDeath", null),
+
+                                            isDeath = if (jsonObject.has("isDeath")) jsonObject.optBoolean(
+                                                "isDeath"
+                                            ) else false,
+
+                                            isDeathValue = jsonObject.optString("isDeath", null)
+                                                .takeIf { !it.isNullOrEmpty() },
+
+                                            dateOfDeath = jsonObject.optString("dateOfDeath", null)
+                                                .takeIf { !it.isNullOrEmpty() },
+
+                                            timeOfDeath = jsonObject.optString("timeOfDeath", null)
+                                                .takeIf { !it.isNullOrEmpty() },
+
+                                            reasonOfDeath = jsonObject.optString(
+                                                "reasonOfDeath",
+                                                null
+                                            ).takeIf { !it.isNullOrEmpty() },
+
+                                            reasonOfDeathId = if (jsonObject.has("reasonOfDeathId")) {
+                                                jsonObject.optInt("reasonOfDeathId")
+                                                    .takeIf { it != 0 } ?: -1
+                                            } else -1,
+
+                                            placeOfDeath = jsonObject.optString(
+                                                "placeOfDeath",
+                                                null
+                                            ).takeIf { !it.isNullOrEmpty() },
+
+                                            placeOfDeathId = if (jsonObject.has("placeOfDeathId")) {
+                                                jsonObject.optInt("placeOfDeathId")
+                                                    .takeIf { it != 0 } ?: -1
+                                            } else -1,
+
+                                            otherPlaceOfDeath = jsonObject.optString(
+                                                "otherPlaceOfDeath",
+                                                null
+                                            ).takeIf { !it.isNullOrEmpty() },
+
+
                                             regDate = benDataObj.getString("registrationDate"),
                                             benName = benDataObj.getString("firstName"),
                                             benSurname = benDataObj.getString("lastName"),
@@ -588,19 +643,35 @@ class BenRepo @Inject constructor(
                             BenRegCache(
                                 householdId = jsonObject.getLong("houseoldId"),
                                 beneficiaryId = jsonObject.getLong("benficieryid"),
-                                isDeath  = jsonObject.getBoolean("isDeath"),
-                                isDeathValue  = jsonObject.getString("isDeathValue"),
-                                dateOfDeath  = jsonObject.getString("dateOfDeath"),
-                                timeOfDeath  = jsonObject.getString("timeOfDeath"),
-                                reasonOfDeath  = jsonObject.getString("reasonOfDeath"),
-                                reasonOfDeathId  = jsonObject.getInt("reasonOfDeathId"),
-                                placeOfDeath  = jsonObject.getString("placeOfDeath"),
-                                placeOfDeathId  = jsonObject.getInt("placeOfDeathId"),
-                                otherPlaceOfDeath  = jsonObject.getString("otherPlaceOfDeath"),
+                                isDeath = if (jsonObject.has("isDeath")) jsonObject.optBoolean("isDeath") else false,
+                                isDeathValue = jsonObject.optString("isDeath", null)
+                                    .takeIf { !it.isNullOrEmpty() },
+                                dateOfDeath = jsonObject.optString("dateOfDeath", null)
+                                    .takeIf { !it.isNullOrEmpty() },
+                                timeOfDeath = jsonObject.optString("timeOfDeath", null)
+                                    .takeIf { !it.isNullOrEmpty() },
+                                reasonOfDeath = jsonObject.optString("reasonOfDeath", null)
+                                    .takeIf { !it.isNullOrEmpty() },
+                                reasonOfDeathId = if (jsonObject.has("reasonOfDeathId")) {
+                                    jsonObject.optInt("reasonOfDeathId").takeIf { it != 0 } ?: -1
+                                } else -1,
+
+                                placeOfDeath = jsonObject.optString("placeOfDeath", null)
+                                    .takeIf { !it.isNullOrEmpty() },
+
+                                placeOfDeathId = if (jsonObject.has("placeOfDeathId")) {
+                                    jsonObject.optInt("placeOfDeathId").takeIf { it != 0 } ?: -1
+                                } else -1,
+
+                                otherPlaceOfDeath = jsonObject.optString("otherPlaceOfDeath", null)
+                                    .takeIf { !it.isNullOrEmpty() },
+
 
                                 ashaId = jsonObject.getInt("ashaId"),
                                 benRegId = jsonObject.getLong("BenRegId"),
-                                isNewAbha = if (abhaHealthDetailsObj.has("isNewAbha")) abhaHealthDetailsObj.getBoolean("isNewAbha") else false,
+                                isNewAbha = if (abhaHealthDetailsObj.has("isNewAbha")) abhaHealthDetailsObj.getBoolean(
+                                    "isNewAbha"
+                                ) else false,
                                 age = benDataObj.getInt("age"),
                                 ageUnit = if (benDataObj.has("gender")) {
                                     when (benDataObj.getString("age_unit")) {
@@ -1010,18 +1081,20 @@ class BenRepo @Inject constructor(
 //                                ) else null,
 //                                noOfDaysForDelivery = noOfDaysForDelivery,
                                 ),
-                                healthIdDetails =if(abhaHealthDetailsObj != null && abhaHealthDetailsObj.length() > 0){
+                                healthIdDetails = if (abhaHealthDetailsObj != null && abhaHealthDetailsObj.length() > 0) {
                                     BenHealthIdDetails(
                                         healthIdNumber = abhaHealthDetailsObj.getString("HealthIdNumber"),
-                                        isNewAbha =  if (abhaHealthDetailsObj.has("isNewAbha")) abhaHealthDetailsObj.getBoolean("isNewAbha") else false,
+                                        isNewAbha = if (abhaHealthDetailsObj.has("isNewAbha")) abhaHealthDetailsObj.getBoolean(
+                                            "isNewAbha"
+                                        ) else false,
                                         healthId = abhaHealthDetailsObj.getString("HealthID")
                                     )
 
-                                }else null,
+                                } else null,
                                 syncState = SyncState.SYNCED,
                                 isDraft = false,
 
-                            )
+                                )
                         )
 
 

@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools">
 
+
     <LinearLayout
         android:id="@+id/ll_content"
         android:layout_width="match_parent"
@@ -14,272 +15,360 @@
         android:orientation="vertical"
         android:padding="@dimen/padding_normal">
 
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cv_patient_information"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_small"
-            android:backgroundTint="?attr/colorPrimary"
-            android:elevation="@dimen/padding_normal"
-            app:cardCornerRadius="@dimen/padding_normal"
-            app:cardElevation="@dimen/padding_normal"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/cl_patient_information"
+            android:layout_height="match_parent">
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_patient_information"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_small"
+                android:backgroundTint="?attr/colorPrimary"
+                android:elevation="@dimen/padding_normal"
+                app:cardCornerRadius="@dimen/padding_normal"
+                app:cardElevation="@dimen/padding_normal"
+                app:layout_constraintTop_toTopOf="parent">
 
-                <LinearLayout
-                    android:id="@+id/ll_patient_information_1"
-                    app:layout_constraintTop_toTopOf="@+id/cl_patient_information"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_patient_information"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <TextView
-                        android:id="@+id/tv_ben_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:padding="@dimen/padding_normal"
-                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                        android:textColor="@android:color/white"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/tv_age_gender"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
 
-                    <TextView
-                        android:id="@+id/tv_age_gender"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:padding="@dimen/padding_normal"
-                        android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                        android:textColor="@android:color/white"
-                        app:layout_constraintEnd_toEndOf="parent" />
-                </LinearLayout>
+                    <LinearLayout
+                        android:id="@+id/ll_patient_information_1"
+                        app:layout_constraintTop_toTopOf="@+id/cl_patient_information"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:id="@+id/tv_ben_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:padding="@dimen/padding_normal"
+                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                            android:textColor="@android:color/white"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/tv_age_gender"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tv_age_gender"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:padding="@dimen/padding_normal"
+                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+                            android:textColor="@android:color/white"
+                            app:layout_constraintEnd_toEndOf="parent" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/ll_patient_information_2"
+                        app:layout_constraintTop_toBottomOf="@+id/ll_patient_information_1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        android:padding="@dimen/padding_normal">
+                        <LinearLayout
+                            android:id="@+id/ll_ben_pwr_tracking_details_1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:baselineAligned="false"
+                            android:orientation="horizontal">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical"
+                                android:padding="@dimen/padding_small">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/husband_s_name"
+                                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                                    android:textColor="?attr/colorOnPrimary" />
+
+                                <TextView
+                                    android:id="@+id/husband_name"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                                    android:textColor="?attr/colorOnPrimary"
+                                    tools:text="TextView" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical"
+                                android:padding="@dimen/padding_small">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/tv_mob_no_ph"
+                                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                                    android:textColor="?attr/colorOnPrimary" />
+
+                                <TextView
+                                    android:id="@+id/mobile_number"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                                    android:textColor="?attr/colorOnPrimary"
+                                    tools:text="TextView" />
+                            </LinearLayout>
+
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/ll_ben_pwr_tracking_details_2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:baselineAligned="false"
+                            android:orientation="horizontal">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical"
+                                android:padding="@dimen/padding_small">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/beneficiary_id"
+                                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                                    android:textColor="?attr/colorOnPrimary" />
+
+                                <TextView
+                                    android:id="@+id/ben_id"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                                    android:textColor="?attr/colorOnPrimary"
+                                    tools:text="TextView" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical"
+                                android:padding="@dimen/padding_small">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/tv_rch_id"
+                                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                                    android:textColor="?attr/colorOnPrimary" />
+
+                                <TextView
+                                    android:id="@+id/rch_id"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                                    android:textColor="?attr/colorOnPrimary"
+                                    tools:text="TextView" />
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/ll_ben_pwr_tracking_details_3"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:baselineAligned="false"
+                            android:orientation="horizontal">
+
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical"
+                                android:padding="@dimen/padding_small">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/pregnancy_weeks"
+                                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                                    android:textColor="?attr/colorOnPrimary" />
+
+                                <TextView
+                                    android:id="@+id/weeks_of_preg"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                                    android:textColor="?attr/colorOnPrimary"
+                                    tools:text="TextView" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical"
+                                android:padding="@dimen/padding_small">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/pmsma_lmp"
+                                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                                    android:textColor="?attr/colorOnPrimary" />
+
+                                <TextView
+                                    android:id="@+id/lmp"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                                    android:textColor="?attr/colorOnPrimary"
+                                    tools:text="TextView" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical"
+                                android:padding="@dimen/padding_small">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/pmsma_edd"
+                                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                                    android:textColor="?attr/colorOnPrimary" />
+
+                                <TextView
+                                    android:id="@+id/edd"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                                    android:textColor="?attr/colorOnPrimary"
+                                    tools:text="TextView" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.core.widget.NestedScrollView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:fillViewport="true"
+                app:layout_constraintBottom_toTopOf="@+id/btn_submit"
+                app:layout_constraintEnd_toEndOf="@+id/cv_patient_information"
+                app:layout_constraintStart_toStartOf="@+id/cv_patient_information"
+                app:layout_constraintTop_toBottomOf="@+id/cv_patient_information">
 
                 <LinearLayout
-                    android:id="@+id/ll_patient_information_2"
-                    app:layout_constraintTop_toBottomOf="@+id/ll_patient_information_1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:visibility="gone"
-                    android:padding="@dimen/padding_normal">
-                    <LinearLayout
-                        android:id="@+id/ll_ben_pwr_tracking_details_1"
+                    android:orientation="vertical">
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1">
+
+                        <include
+                            android:id="@+id/form"
+                            layout="@layout/rv_input_form"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1" />
+
+
+                    </FrameLayout>
+
+                    <TextView
+                        android:id="@+id/tvHeading"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:baselineAligned="false"
-                        android:orientation="horizontal">
+                        android:background="#E0E0E0"
+                        android:gravity="center"
+                        android:padding="8dp"
+                        android:text="@string/antra_injection_details"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:visibility="gone" />
 
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:padding="@dimen/padding_small">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/husband_s_name"
-                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                android:textColor="?attr/colorOnPrimary" />
-
-                            <TextView
-                                android:id="@+id/husband_name"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                android:textColor="?attr/colorOnPrimary"
-                                tools:text="TextView" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:padding="@dimen/padding_small">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/tv_mob_no_ph"
-                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                android:textColor="?attr/colorOnPrimary" />
-
-                            <TextView
-                                android:id="@+id/mobile_number"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                android:textColor="?attr/colorOnPrimary"
-                                tools:text="TextView" />
-                        </LinearLayout>
-
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/ll_ben_pwr_tracking_details_2"
+                    <TableLayout
+                        android:id="@+id/tableAntra"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:baselineAligned="false"
-                        android:orientation="horizontal">
+                        android:padding="8dp"
+                        android:stretchColumns="0,1,2"
+                        android:visibility="gone">
 
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:padding="@dimen/padding_small">
+                        <TableRow
+                            android:background="#FFF5F5F5"
+                            android:padding="8dp">
 
                             <TextView
-                                android:layout_width="wrap_content"
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:text="@string/beneficiary_id"
-                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                android:textColor="?attr/colorOnPrimary" />
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:text="@string/dose"
+                                android:textStyle="bold" />
 
                             <TextView
-                                android:id="@+id/ben_id"
-                                android:layout_width="wrap_content"
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                android:textColor="?attr/colorOnPrimary"
-                                tools:text="TextView" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:padding="@dimen/padding_small">
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:text="@string/date"
+                                android:textStyle="bold" />
 
                             <TextView
-                                android:layout_width="wrap_content"
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:text="@string/tv_rch_id"
-                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                android:textColor="?attr/colorOnPrimary" />
-
-                            <TextView
-                                android:id="@+id/rch_id"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                android:textColor="?attr/colorOnPrimary"
-                                tools:text="TextView" />
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/ll_ben_pwr_tracking_details_3"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:baselineAligned="false"
-                        android:orientation="horizontal">
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:text="@string/next_due_date"
+                                android:textStyle="bold" />
+                        </TableRow>
+                    </TableLayout>
 
 
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:padding="@dimen/padding_small">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/pregnancy_weeks"
-                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                android:textColor="?attr/colorOnPrimary" />
-
-                            <TextView
-                                android:id="@+id/weeks_of_preg"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                android:textColor="?attr/colorOnPrimary"
-                                tools:text="TextView" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:padding="@dimen/padding_small">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/pmsma_lmp"
-                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                android:textColor="?attr/colorOnPrimary" />
-
-                            <TextView
-                                android:id="@+id/lmp"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                android:textColor="?attr/colorOnPrimary"
-                                tools:text="TextView" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:padding="@dimen/padding_small">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/pmsma_edd"
-                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                android:textColor="?attr/colorOnPrimary" />
-
-                            <TextView
-                                android:id="@+id/edd"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                android:textColor="?attr/colorOnPrimary"
-                                tools:text="TextView" />
-                        </LinearLayout>
-                    </LinearLayout>
                 </LinearLayout>
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.cardview.widget.CardView>
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
-
-        <include
-            android:id="@+id/form"
-            layout="@layout/rv_input_form"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
-
+            </androidx.core.widget.NestedScrollView>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_submit"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|bottom"
+                android:layout_margin="@dimen/margin_small"
+                android:text="@string/btn_submit"
+                android:textColor="@android:color/white" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab_edit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/btn_submit"
                 android:layout_marginEnd="@dimen/padding_wide"
                 android:layout_marginBottom="@dimen/padding_wide"
                 android:contentDescription="@string/edit"
@@ -289,17 +378,11 @@
                 app:tint="@color/md_theme_light_onTertiary"
                 tools:visibility="visible" />
 
-        </FrameLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_submit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal|bottom"
-            android:layout_margin="@dimen/margin_small"
-            android:text="@string/btn_submit"
 
-            android:textColor="@android:color/white" />
+
+
 
 
     </LinearLayout>

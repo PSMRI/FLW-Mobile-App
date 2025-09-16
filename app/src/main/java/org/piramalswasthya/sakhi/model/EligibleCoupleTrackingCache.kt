@@ -30,6 +30,12 @@ data class EligibleCoupleTrackingCache(
     val id: Int = 0,
     val benId: Long,
     var visitDate: Long = System.currentTimeMillis(),
+
+    var dateOfAntraInjection: String? = null,
+    var dueDateOfAntraInjection: String? = null,
+    var mpaFile: String? = null,
+    var antraDose: String? = null,
+
     var isPregnancyTestDone: String? = null,
     var pregnancyTestResult: String? = null,
     var isPregnant: String? = null,
@@ -48,6 +54,11 @@ data class EligibleCoupleTrackingCache(
         return ECTNetwork(
             benId = benId,
             visitDate = getDateTimeStringFromLong(visitDate)!!,
+            dateOfAntraInjection = dateOfAntraInjection?.let { SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).parse(it)?.time }?.let { getDateTimeStringFromLong(it) },
+            dueDateOfAntraInjection = dueDateOfAntraInjection,
+            mpaFile = mpaFile,
+            antraDose = antraDose,
+
             isPregnancyTestDone = isPregnancyTestDone,
             pregnancyTestResult = pregnancyTestResult,
             isPregnant = isPregnant,
@@ -66,6 +77,10 @@ data class EligibleCoupleTrackingCache(
 data class ECTNetwork(
     val benId: Long,
     val visitDate: String,
+    var dateOfAntraInjection: String? = null,
+    var dueDateOfAntraInjection: String? = null,
+    var mpaFile: String? = null,
+    var antraDose: String? = null,
     val isPregnancyTestDone: String?,
     val pregnancyTestResult: String?,
     val isPregnant: String?,

@@ -6,7 +6,6 @@
     <array name="ectdset_yes_no_dont">
         <item>Yes</item>
         <item>No</item>
-        <item>Don\'t Know</item>
     </array>
     <array name="ectdset_yes_no">
         <item>Yes</item>

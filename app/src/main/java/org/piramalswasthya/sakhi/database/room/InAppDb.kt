@@ -112,6 +112,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.InfantEntity
         FormResponseJsonEntity::class
     ],
     views = [BenBasicCache::class],
+
     version = 27, exportSchema = false
 )
 
@@ -158,6 +159,7 @@ abstract class InAppDb : RoomDatabase() {
             val MIGRATION_1_2 = Migration(1, 2, migrate = {
 //                it.execSQL("select count(*) from beneficiary")
             })
+
             val MIGRATION_26_27 = object  : Migration(26,27)
             {
                 override fun migrate(database: SupportSQLiteDatabase) {
