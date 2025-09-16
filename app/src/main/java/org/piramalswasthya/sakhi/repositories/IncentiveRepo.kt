@@ -28,12 +28,14 @@ class IncentiveRepo @Inject constructor(
 ) {
 
     val list = incentiveDao.getAllRecords()
+    val activity_list = incentiveDao.getAllActivity()
 
 
     suspend fun pullAndSaveAllIncentiveActivities(user: User): Boolean {
         return withContext(Dispatchers.IO) {
             try {
-                val requestBody = IncentiveActivityListRequest(0, 0)
+                val currentLang = preferenceDao.getCurrentLanguage().symbol
+                val requestBody = IncentiveActivityListRequest(0, 0, currentLang)
                 val response = amritApiService.getAllIncentiveActivities(requestBody = requestBody)
                 val statusCode = response.code()
                 if (statusCode == 200) {
@@ -94,24 +96,22 @@ class IncentiveRepo @Inject constructor(
             Gson().fromJson(dataObj, Array<IncentiveActivityNetwork>::class.java).toList()
 
         val activityList = activities.map { it.asCacheModel() }
-        activityList.forEach { activity ->
-            val activityCache = incentiveDao.getActivityById(activity.id)
-            if (activityCache == null) {
-                incentiveDao.insert(activity)
-            }
-        }
+        incentiveDao.insert(*activityList.toTypedArray())
+
     }
 
     suspend fun pullAndSaveAllIncentiveRecords(user: User): Boolean {
         return withContext(Dispatchers.IO) {
             try {
+
                 val requestBody = IncentiveRecordListRequest(
-                    user.userId, getDateTimeStringFromLong(
+                    user.userId,
+                    getDateTimeStringFromLong(
                         preferenceDao.lastIncentivePullTimestamp
                     )!!,
                     getDateTimeStringFromLong(
                         Calendar.getInstance().setToEndOfTheDay().timeInMillis
-                    )!!
+                    )!!,
                 )
                 val response = amritApiService.getAllIncentiveRecords(requestBody = requestBody)
                 val statusCode = response.code()
@@ -169,12 +169,7 @@ class IncentiveRepo @Inject constructor(
     private suspend fun saveIncentiveRecordsData(dataObj: String) {
         val records = Gson().fromJson(dataObj, Array<IncentiveRecordNetwork>::class.java).toList()
         val recordList = records.map { it.asCacheModel() }
-        recordList.forEach {
-            val record =
-                incentiveDao.getRecordById(it.id)
-            if (record == null) {
-                incentiveDao.insert(it)
-            }
-        }
+        incentiveDao.insert(*recordList.toTypedArray())
+
     }
 }
