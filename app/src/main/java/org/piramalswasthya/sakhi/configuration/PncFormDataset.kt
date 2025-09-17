@@ -1,6 +1,8 @@
 package org.piramalswasthya.sakhi.configuration
 
+import android.app.AlertDialog
 import android.content.Context
+import android.util.Log
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.setToStartOfTheDay
@@ -61,6 +63,7 @@ class PncFormDataset(
         hasDependants = false
     )
 
+
     private val ifaTabsGiven = FormElement(
         id = 4,
         inputType = InputType.EDIT_TEXT,
@@ -104,7 +107,7 @@ class PncFormDataset(
         inputType = InputType.DROPDOWN,
         title = resources.getString(R.string.pnc_mother_danger_sign),
         entries = resources.getStringArray(R.array.pnc_mother_danger_sign_array),
-        required = false,
+        required = true,
         hasDependants = true
     )
 
@@ -185,6 +188,28 @@ class PncFormDataset(
         hasDependants = true,
     )
 
+    private val dateOfSterilisation = FormElement(
+        id = 56,
+        inputType = InputType.DATE_PICKER,
+        title = "Date of Sterilisation",
+        arrayId = -1,
+        required = true,
+        hasDependants = false
+
+    )
+    private val anySignOfDanger = FormElement(
+        id = 57,
+        inputType = InputType.RADIO,
+        title = "Any Danger Signs?",
+        entries = resources.getStringArray(R.array.pnc_confirmation_array),
+        required = false,
+        hasDependants = true
+    )
+
+    private val sterilisation : Array<String> by lazy {
+        resources.getStringArray(R.array.sterilization_methods_array)
+    }
+
     suspend fun setUpPage(
         visitNumber: Int,
         ben: BenRegCache,
@@ -198,7 +223,7 @@ class PncFormDataset(
             visitDate,
             ifaTabsGiven,
             anyContraceptionMethod,
-            motherDangerSign,
+            anySignOfDanger,
             referralFacility,
             motherDeath,
             remarks
@@ -252,7 +277,14 @@ class PncFormDataset(
             contraceptionMethod.value = it.contraceptionMethod
             if (it.contraceptionMethod == contraceptionMethod.entries!!.last()) {
                 list.add(list.indexOf(contraceptionMethod) + 1, otherPpcMethod)
+
             }
+            if(it.contraceptionMethod in sterilisation )
+            {
+                list.add(list.indexOf(contraceptionMethod) + 1, dateOfSterilisation)
+
+            }
+
             otherPpcMethod.value = it.otherPpcMethod
             motherDangerSign.value = it.motherDangerSign
             if (it.motherDangerSign == motherDangerSign.entries!!.last()) {
@@ -458,20 +490,94 @@ class PncFormDataset(
             }
 
             ifaTabsGiven.id -> validateIntMinMax(ifaTabsGiven)
+
             anyContraceptionMethod.id -> triggerDependants(
                 source = anyContraceptionMethod,
                 passedIndex = index,
                 triggerIndex = 0,
                 target = contraceptionMethod,
-                targetSideEffect = listOf(otherPpcMethod)
+                targetSideEffect =  listOf(
+                    otherPpcMethod,
+                    dateOfSterilisation
+                )
             )
 
-            contraceptionMethod.id -> triggerDependants(
-                source = contraceptionMethod,
-                passedIndex = index,
-                triggerIndex = contraceptionMethod.entries!!.lastIndex,
-                target = otherPpcMethod,
-            )
+
+            contraceptionMethod.id -> {
+                val selected = contraceptionMethod.entries?.getOrNull(index)?.trim() ?: ""
+                Timber.d("Selected contraception: '$selected' (index=$index)")
+
+                // 🔹 Other PPC Method
+                val anyOtherValue = contraceptionMethod.entries!!.last().trim()
+                val result1 = if (selected.equals(anyOtherValue, ignoreCase = true)) {
+                    Timber.d("Will add OtherPPCMethod")
+                    triggerDependants(
+                        source = contraceptionMethod,
+                        passedIndex = index,
+                        triggerIndex = contraceptionMethod.entries!!.lastIndex,
+                        target = otherPpcMethod
+                    )
+                } else {
+                    // Remove otherPpcMethod if not selected
+                    triggerDependants(
+                        source = contraceptionMethod,
+                        passedIndex = -1, // Force removal
+                        triggerIndex = contraceptionMethod.entries!!.lastIndex,
+                        target = otherPpcMethod
+                    )
+                }
+
+                // 🔹 Date of Sterilisation
+                val isSterilisation = sterilisation.any { it.equals(selected, ignoreCase = true) }
+                Timber.d("isSterilisation = $isSterilisation")
+                val result2 = if (isSterilisation) {
+                    dateOfSterilisation.min = dateOfDelivery
+                    dateOfSterilisation.max = System.currentTimeMillis()
+                    Timber.d("Will add DateOfSterilisation")
+                    triggerDependants(
+                        source = contraceptionMethod,
+                        passedIndex = index,
+                        triggerIndex = index,
+                        target = dateOfSterilisation
+                    )
+                } else {
+                    dateOfSterilisation.value = null
+                    // Remove dateOfSterilisation if not a sterilization method
+                    triggerDependants(
+                        source = contraceptionMethod,
+                        passedIndex = -1, // Force removal
+                        triggerIndex = index,
+                        target = dateOfSterilisation
+                    )
+                }
+
+                // Return the appropriate index if either operation modified the list
+                if (result1 != -1) result1 else result2
+            }
+
+            anySignOfDanger.id -> {
+                val result = triggerDependants(
+                    source = anySignOfDanger,
+                    passedIndex = index,
+                    triggerIndex = 0,
+                    target = motherDangerSign,
+                    targetSideEffect = listOf(otherDangerSign)
+                )
+
+                // Update referralFacility required status based on danger signs selection
+                if (index == 0) { // "Yes" selected
+                    referralFacility.required = true
+                    Timber.d("Danger signs present - referral facility is now required")
+                } else { // "No" selected
+                    referralFacility.required = false
+                    referralFacility.errorText = null // Clear any previous error
+                    Timber.d("No danger signs - referral facility is not required")
+                }
+
+                result
+            }
+
+
 
             motherDangerSign.id ->
                 triggerDependants(
@@ -538,4 +644,9 @@ class PncFormDataset(
             form.remarks = remarks.value?.takeIf { it.isNotEmpty() }
         }
     }
+
+
+
+
+
 }
