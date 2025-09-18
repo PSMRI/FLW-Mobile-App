@@ -54,6 +54,9 @@ interface BenDao {
     fun getAllIRSRoundBen(hhId: Long): Flow<List<IRSRoundScreening>>
 
     @Transaction
+    @Query("SELECT * FROM IRS_ROUND WHERE householdId = :hhId ORDER BY rounds DESC LIMIT 1")
+    fun getLastIRSRoundBen(hhId: Long): Flow<IRSRoundScreening?>
+    @Transaction
     @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage and hhId = :hhId")
     fun getAllKALAZARScreeningBen(selectedVillage: Int,hhId: Long): Flow<List<BenWithKALAZARScreeningCache>>
 

@@ -71,8 +71,10 @@ fun filterBenList(
     } else {
         list
     }
+fun filterAdolescentList(list: List<BenWithAdolescentDomain>) = list
 
-fun filterAdolesenctList(list: List<BenWithAdolescentDomain>, text: String): List<BenWithAdolescentDomain> {
+
+fun filterAdolescentList(list: List<BenWithAdolescentDomain>, text: String): List<BenWithAdolescentDomain> {
     if (text == "")
         return list
     else {
@@ -89,14 +91,14 @@ fun filterForBen(
     filterText: String
 ) = ben.hhId.toString().lowercase().contains(filterText) ||
         ben.benId.toString().lowercase().contains(filterText.replace(" ","")) ||
-        ben.abhaId.toString().lowercase().contains(filterText) ||
+        ben.abhaId.toString().replace("-","").lowercase().contains(filterText.replace(" ","")) ||
         ben.regDate.lowercase().contains((filterText)) ||
         ben.age.lowercase() == filterText.lowercase() ||
         ben.benFullName.lowercase().contains(filterText) ||
         ben.familyHeadName.lowercase().contains(filterText) ||
         ben.benSurname?.lowercase()?.contains(filterText) ?: false ||
-        ben.rchId.takeIf { it?.isDigitsOnly() == true }?.contains(filterText) ?: false ||
-        ben.mobileNo.lowercase().contains(filterText) ||
+        ben.rchId.takeIf { it?.isDigitsOnly() == true }?.contains(filterText.replace(" ","")) ?: false ||
+        ben.mobileNo.lowercase().contains(filterText.replace(" ","")) ||
         ben.gender.lowercase() == filterText.lowercase() ||
         ben.spouseName?.lowercase()?.contains(filterText) == true ||
         ben.fatherName?.lowercase()?.contains(filterText) ?: false
@@ -105,7 +107,20 @@ fun filterForBen(
 fun filterAdolesent(
     ben: BenWithAdolescentDomain,
     filterText: String
-) = ben.ben.benFullName.toString().lowercase().contains(filterText)
+) = ben.ben.hhId.toString().lowercase().contains(filterText) ||
+        ben.ben.benId.toString().lowercase().contains(filterText.replace(" ","")) ||
+        ben.ben.abhaId.toString().lowercase().contains(filterText) ||
+        ben.ben.regDate.lowercase().contains((filterText)) ||
+        ben.ben.age.lowercase() == filterText.lowercase() ||
+        ben.ben.benFullName.lowercase().contains(filterText) ||
+        ben.ben.familyHeadName.lowercase().contains(filterText) ||
+        ben.ben.benSurname?.lowercase()?.contains(filterText) ?: false ||
+        ben.ben.rchId.takeIf { it?.isDigitsOnly() == true }?.contains(filterText) ?: false ||
+        ben.ben.mobileNo.lowercase().contains(filterText) ||
+        ben.ben.gender.lowercase() == filterText.lowercase() ||
+        ben.ben.spouseName?.lowercase()?.contains(filterText) == true ||
+        ben.ben.fatherName?.lowercase()?.contains(filterText) ?: false
+
 
 
 fun filterBenFormList(
