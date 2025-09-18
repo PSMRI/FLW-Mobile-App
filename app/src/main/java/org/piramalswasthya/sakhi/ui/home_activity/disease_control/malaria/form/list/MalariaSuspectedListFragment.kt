@@ -52,9 +52,9 @@ class MalariaSuspectedListFragment : Fragment() {
         } else {
             binding.switchButton.visibility = View.GONE
         }
-        binding.switchButton.text = if (binding.switchButton.isChecked) "ON" else "OFF"
+        binding.switchButton.text = if (binding.switchButton.isChecked) "IRS ON" else "IRS OFF"
         binding.switchButton.setOnCheckedChangeListener { _, isChecked ->
-            binding.switchButton.text = if (isChecked) "ON" else "OFF"
+            binding.switchButton.text = if (isChecked) "IRS ON" else "IRS OFF"
             binding.llContent.visibility = if (isChecked) View.VISIBLE else View.GONE
         }
 

@@ -11,6 +11,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.configuration.IRSRoundDataSet
@@ -18,6 +19,7 @@ import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.IRSRoundScreening
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.MalariaRepo
+import org.piramalswasthya.sakhi.repositories.RecordsRepo
 import org.piramalswasthya.sakhi.utils.HelperUtil
 import timber.log.Timber
 import javax.inject.Inject
@@ -27,8 +29,10 @@ class MalariaIRSViewModel @Inject constructor(
     preferenceDao: PreferenceDao,
     @ApplicationContext context: Context,
     private val malariaRepo: MalariaRepo,
-    private val benRepo: BenRepo
-) : ViewModel() {
+    private val benRepo: BenRepo,
+    recordsRepo: RecordsRepo,
+
+    ) : ViewModel() {
 
     var hhId = MalariaSuspectedListFragmentArgs.fromSavedStateHandle(savedStateHandle).hhId
 
@@ -69,9 +73,10 @@ class MalariaIRSViewModel @Inject constructor(
                     householdId = hhId,
                 )
             }
+            val lastRecord = recordsRepo.getLastIRSRoundBen(hhId).firstOrNull()
 
             dataset.setUpPage(
-                if (recordExists.value == true) irsRoundScreening else null
+                lastRecord ?: null
             )
 
         }

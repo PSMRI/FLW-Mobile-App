@@ -80,7 +80,7 @@ class MalariaFormDataset(
 
     )
     private var otherReasonOfDeath = FormElement(
-        id = 5,
+        id = 28,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.other_reason),
         required = true,
@@ -528,6 +528,10 @@ class MalariaFormDataset(
                 }
                 0
             }
+            otherPlaceOfDeath.id -> {
+                validateEmptyOnEditText(otherPlaceOfDeath)
+
+            }
 
             rapidDiagnostic.id -> {
                 if (rapidDiagnostic.value == resources.getStringArray(R.array.positive_negative)[2]) {
@@ -599,6 +603,9 @@ class MalariaFormDataset(
                     )
                 }
                 0
+            }
+            otherReasonOfDeath.id -> {
+                validateEmptyOnEditText(otherReasonOfDeath)
             }
 
             else -> {

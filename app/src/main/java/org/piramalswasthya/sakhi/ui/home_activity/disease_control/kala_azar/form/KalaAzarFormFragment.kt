@@ -15,6 +15,7 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentMaleriaFormBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -78,7 +79,7 @@ class KalaAzarFormFragment : Fragment() {
                         requireContext(),
                         "Kala Azar Form submitted", Toast.LENGTH_SHORT
                     ).show()
-//                    WorkerUtils.triggerAmritPushWorker(requireContext())
+                    WorkerUtils.triggerAmritPushWorker(requireContext())
                     findNavController().navigateUp()
                 }
 

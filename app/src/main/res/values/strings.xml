@@ -475,6 +475,13 @@
         <item name="dc_symp">Recurrence of Symptoms</item>
     </string-array>
 
+    <string-array name="irs_rounds">
+        <item name="one">1st Round</item>
+        <item name="two">2nd Round</item>
+        <item name="three">3rd Round</item>
+        <item name="four">4th Round</item>
+    </string-array>
+
     <string-array name="benificary_case_status_leprosy">
         <item name="dc_not_app">Not Applicable</item>
         <item name="dc_recovering">Recovering</item>
@@ -563,7 +570,6 @@
         <item>Left Leg</item>
         <item>Right Side Breast</item>
         <item>Left Side Breast</item>
-        <item>Hydrocele</item>
         <item>Other</item>
     </string-array>
 
