@@ -25,11 +25,11 @@ interface BenDao {
     @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage AND abhaId IS NOT NULL")
     fun getAllBenWithAbha(selectedVillage: Int): Flow<List<BenBasicCache>>
 
-    @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage AND abhaId IS NOT NULL AND isNewAbha = 1")
-    fun getAllBenWithNewAbha(selectedVillage: Int): Flow<List<BenBasicCache>>
-
-    @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage AND abhaId IS NOT NULL AND isNewAbha = 0")
-    fun getAllBenWithOldAbha(selectedVillage: Int): Flow<List<BenBasicCache>>
+//    @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage AND abhaId IS NOT NULL AND isNewAbha = 1")
+//    fun getAllBenWithNewAbha(selectedVillage: Int): Flow<List<BenBasicCache>>
+//
+//    @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage AND abhaId IS NOT NULL AND isNewAbha = 0")
+//    fun getAllBenWithOldAbha(selectedVillage: Int): Flow<List<BenBasicCache>>
 
     @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage AND abhaId IS NULL")
     fun getAllBenWithoutAbha(selectedVillage: Int): Flow<List<BenBasicCache>>

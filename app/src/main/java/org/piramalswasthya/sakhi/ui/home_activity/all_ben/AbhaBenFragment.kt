@@ -239,21 +239,21 @@ class AbhaBenFragment : Fragment() {
         )
         binding.rvExistingAbha.adapter = benOldAdapter
 
-        lifecycleScope.launch {
-            viewModel.benNewList.collect {
-                isNewListEmpty = it.isEmpty()
-                toggleNoRecord()
-                benNewAdapter.submitList(it)
-            }
-        }
-
-        lifecycleScope.launch {
-            viewModel.benOldList.collect {
-                isOldListEmpty = it.isEmpty()
-                toggleNoRecord()
-                benOldAdapter.submitList(it)
-            }
-        }
+//        lifecycleScope.launch {
+//            viewModel.benNewList.collect {
+//                isNewListEmpty = it.isEmpty()
+//                toggleNoRecord()
+//                benNewAdapter.submitList(it)
+//            }
+//        }
+//
+//        lifecycleScope.launch {
+//            viewModel.benOldList.collect {
+//                isOldListEmpty = it.isEmpty()
+//                toggleNoRecord()
+//                benOldAdapter.submitList(it)
+//            }
+//        }
 
         binding.ibSearch.visibility = View.VISIBLE
         binding.ibSearch.setOnClickListener { sttContract.launch(Unit) }
