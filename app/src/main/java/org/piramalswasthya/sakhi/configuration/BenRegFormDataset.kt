@@ -451,7 +451,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         title = resources.getString(R.string.nbr_mobile_number_of),
         arrayId = R.array.temp_mobile_no_relation_array,
         entries = resources.getStringArray(R.array.temp_mobile_no_relation_array),
-        required = true,
+        required = false,
         hasDependants = true,
     )
 

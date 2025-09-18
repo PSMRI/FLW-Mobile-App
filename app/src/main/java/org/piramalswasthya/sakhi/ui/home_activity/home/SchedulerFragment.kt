@@ -92,7 +92,7 @@ class SchedulerFragment : Fragment() {
             findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToInfantRegListFragment())
         }
         binding.cvAbha.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionNavHomeToAbhaBenFragment(1))
+            findNavController().navigate(HomeFragmentDirections.actionNavHomeToAllBenFragment(1))
 //            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToHRPPregnantListFragment())
         }
         binding.cvRch.setOnClickListener {
