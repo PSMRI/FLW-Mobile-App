@@ -14,6 +14,9 @@
             android:id="@+id/action_nav_home_to_allBenFragment"
             app:destination="@id/allBenFragment" />
         <action
+            android:id="@+id/action_nav_home_to_abhaBenFragment"
+            app:destination="@id/abhaBenFragment" />
+        <action
             android:id="@+id/action_nav_home_to_allHouseholdFragment"
             app:destination="@id/allHouseholdFragment" />
         <action
@@ -112,6 +115,19 @@
         tools:layout="@layout/fragment_all_ben">
         <action
             android:id="@+id/action_allBenFragment_to_newBenRegFragment"
+            app:destination="@id/newBenRegFragment" />
+        <argument
+            android:name="source"
+            android:defaultValue="0"
+            app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/abhaBenFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.all_ben.AbhaBenFragment"
+        android:label="@string/icon_title_ben"
+        tools:layout="@layout/fragment_all_ben">
+        <action
+            android:id="@+id/action_abhaBenFragment_to_newBenRegFragment"
             app:destination="@id/newBenRegFragment" />
         <argument
             android:name="source"

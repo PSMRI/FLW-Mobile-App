@@ -6,6 +6,7 @@ import android.content.Context.CONNECTIVITY_SERVICE
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.core.text.isDigitsOnly
 import org.piramalswasthya.sakhi.model.AncStatus
 import org.piramalswasthya.sakhi.model.BenBasicDomain
@@ -27,6 +28,9 @@ import org.piramalswasthya.sakhi.model.ImmunizationDetailsDomain
 import org.piramalswasthya.sakhi.model.InfantRegDomain
 import org.piramalswasthya.sakhi.model.PregnantWomenVisitDomain
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.Period
+import java.time.ZoneId
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -562,6 +566,45 @@ fun Calendar.setToEndOfTheDay() = apply {
     set(Calendar.MINUTE, 59)
     set(Calendar.SECOND, 59)
     set(Calendar.MILLISECOND, 0)
+}
+
+fun getDateFromLong(time: Long) : Date {
+    val pattern: String = "dd/MM/yyyy HH:mm:ss"
+    val date = Date(time)
+//    val format = SimpleDateFormat(pattern, Locale.getDefault())
+    return date
+}
+
+fun getPatientTypeByAge(dateOfBirth: Date): String {
+    val birthDate = dateOfBirth.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+    val currentDate = LocalDate.now()
+
+    val period = Period.between(birthDate, currentDate)
+    val years = period.years
+    val months = period.months % 12
+    val days = period.days % 30
+
+    var type= ""
+    if((days <= 30 || months<=1) && years<1 ){
+        type = "new_born_baby"
+    }
+    if((years<1 && months<=12) || (months==0 && days==0 && years==1)){
+        type = "infant"
+    }
+
+    if(years>=1&& years<=12){
+        type ="child"
+    }
+
+    if(years>=12 && years<=18){
+        type = "adolescence"
+    }
+
+    if(years>=18){
+        type = "adult"
+    }
+
+    return type
 }
 
 

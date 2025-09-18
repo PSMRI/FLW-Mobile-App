@@ -72,6 +72,8 @@ class NewBenRegViewModel @Inject constructor(
 
     val isHoF = relToHeadId == 18
 
+    var isBenMarried = false
+
     companion object {
         var isOtpVerified = false
     }
@@ -140,6 +142,11 @@ class NewBenRegViewModel @Inject constructor(
 
                 if (benIdFromArgs != 0L && recordExists.value == true) {
                     ben = benRepo.getBeneficiaryRecord(benIdFromArgs, hhId)!!
+                    if (ben.genDetails?.maritalStatus == "Unmarried") {
+                        isBenMarried = false
+                    } else {
+                        isBenMarried = true
+                    }
                     isOtpVerified = ben.isConsent
                     dataset.setFirstPageToRead(
                         ben,

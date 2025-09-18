@@ -37,6 +37,10 @@ class RecordsRepo @Inject constructor(
         benDao.getAllBenWithoutAbha(selectedVillage).map { list -> list.map { it.asBasicDomainModel() } }
     val allBenWithAbhaList =
         benDao.getAllBenWithAbha(selectedVillage).map { list -> list.map { it.asBasicDomainModel() } }
+//    val allBenWithNewAbhaList =
+//        benDao.getAllBenWithNewAbha(selectedVillage).map { list -> list.map { it.asBasicDomainModel() } }
+//    val allBenWithOldAbhaList =
+//        benDao.getAllBenWithOldAbha(selectedVillage).map { list -> list.map { it.asBasicDomainModel() } }
     val benWithAbhaListCount = benDao.getAllBenWithAbhaCount(selectedVillage)
     val allBenWithRchList =
         benDao.getAllBenWithRch(selectedVillage).map { list -> list.map { it.asBasicDomainModel() } }
