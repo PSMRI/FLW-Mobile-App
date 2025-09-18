@@ -258,18 +258,18 @@ class AshaProfileDataset(
 
 
     )
-    private val  ashaHouseholdRegistrationNo = FormElement(
-        id = 24,
-        inputType = InputType.TEXT_VIEW,
-        title = "Asha Household registration",
-        required = false,
-    )
-    private val  ashaFamilymember = FormElement(
-        id = 25,
-        inputType = InputType.EDIT_TEXT,
-        title = "Asha Family member",
-        required = false,
-    )
+//    private val  ashaHouseholdRegistrationNo = FormElement(
+//        id = 24,
+//        inputType = InputType.TEXT_VIEW,
+//        title = "Asha Household registration",
+//        required = false,
+//    )
+//    private val  ashaFamilymember = FormElement(
+//        id = 25,
+//        inputType = InputType.EDIT_TEXT,
+//        title = "Asha Family member",
+//        required = false,
+//    )
 
 
     suspend fun setUpPage(
@@ -302,9 +302,9 @@ class AshaProfileDataset(
             mobileNoOfANM1,
             nameOfANM2,
             mobileNoOfANM2,
-            abhaNumber,
-            ashaHouseholdRegistrationNo,
-            ashaFamilymember
+            abhaNumber
+//            ashaHouseholdRegistrationNo,
+//            ashaFamilymember
 
 
         )
@@ -335,8 +335,8 @@ class AshaProfileDataset(
         nameOfANM2.value = ashaProfile?.anm2Name.toString()
         mobileNoOfANM2.value = ashaProfile?.anm2Mobile.toString()
         abhaNumber.value = ashaProfile?.abhaNumber.toString()
-        ashaHouseholdRegistrationNo.value = ashaProfile?.ashaHouseholdRegistration.toString()
-        ashaFamilymember.value = ashaProfile?.ashaFamilyMember.toString()
+//        ashaHouseholdRegistrationNo.value = ashaProfile?.ashaHouseholdRegistration.toString()
+//        ashaFamilymember.value = ashaProfile?.ashaFamilyMember.toString()
         setUpPage(list)
 
     }
@@ -453,8 +453,8 @@ class AshaProfileDataset(
             dataModel.anm2Name = nameOfANM2.value.toString()
             dataModel.anm2Mobile = mobileNoOfANM2.value.toString()
             dataModel.abhaNumber = abhaNumber.value.toString()
-            dataModel.ashaHouseholdRegistration = ashaHouseholdRegistrationNo.value.toString()
-            dataModel.ashaFamilyMember = ashaFamilymember.value.toString()
+//            dataModel.ashaHouseholdRegistration = ashaHouseholdRegistrationNo.value.toString()
+//            dataModel.ashaFamilyMember = ashaFamilymember.value.toString()
             dataModel.isFatherOrSpouse = when (fatherOrspouse.value) {
                 fatherOrspouse.entries!![0] -> true
                 fatherOrspouse.entries!![1] -> false

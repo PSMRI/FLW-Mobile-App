@@ -70,6 +70,7 @@ class AshaProfileFragment : Fragment() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.pbForm.visibility = View.VISIBLE
         viewModel.recordExists.observe(viewLifecycleOwner) { notIt ->
 
             notIt?.let { recordExists ->
@@ -99,6 +100,9 @@ class AshaProfileFragment : Fragment() {
                     viewModel.formList.collect {
                         if (it.isNotEmpty())
                             adapter.submitList(it)
+                        binding.llContent.visibility = View.VISIBLE
+                        binding.pbForm.visibility = View.GONE
+                        binding.textError.visibility = View.GONE
 
                     }
                 }
@@ -192,6 +196,7 @@ class AshaProfileFragment : Fragment() {
                     ).show()
                     binding.llContent.visibility = View.VISIBLE
                     binding.pbForm.visibility = View.GONE
+//                    binding.textError.visibility = View.VISIBLE
                 }
             }
         }

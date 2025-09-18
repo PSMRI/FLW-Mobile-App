@@ -125,6 +125,9 @@ class DewormingDataset(
                     target = listOf(dewormingDate,dewormingLocation),
                 )
             }
+            ageGroup.id -> {
+                validateEmptyOnEditText(ageGroup)
+            }
             else -> -1
         }
     }
