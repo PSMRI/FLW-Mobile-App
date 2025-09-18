@@ -65,13 +65,17 @@ class AdolescentListFragment : Fragment() {
             viewModel.benList.collect {
                 if (it.isEmpty()){
                     binding.flEmpty.visibility = View.VISIBLE
+                    binding.rvAny.visibility = View.GONE
                 } else{
                     binding.flEmpty.visibility = View.GONE
-                    benAdapter.submitList(it.filter { it.ben.ageInt in 10..19 })
+                    binding.rvAny.visibility = View.VISIBLE
+                    benAdapter.submitList(it)
                 }
 
             }
         }
+        binding.ibSearch.visibility = View.VISIBLE
+        binding.ibSearch.setOnClickListener { sttContract.launch(Unit) }
         val searchTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 
@@ -94,7 +98,6 @@ class AdolescentListFragment : Fragment() {
 
         }
 
-        binding.ibSearch.setOnClickListener { sttContract.launch(Unit) }
     }
 
     override fun onStart() {

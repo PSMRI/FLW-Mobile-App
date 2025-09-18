@@ -291,6 +291,10 @@ class KalaAzarFormDataset(
                 0
             }
 
+            otherPlaceOfDeath.id -> {
+                validateEmptyOnEditText(otherPlaceOfDeath)
+            }
+
             rapidDiagnostic.id -> {
                 if (rapidDiagnostic.value == resources.getStringArray(R.array.positive_negative)[2]) {
                     triggerDependants(
@@ -345,6 +349,9 @@ class KalaAzarFormDataset(
                     )
                 }
                 0
+            }
+            otherReasonOfDeath.id -> {
+                validateEmptyOnEditText(otherReasonOfDeath)
             }
 
             else -> {
