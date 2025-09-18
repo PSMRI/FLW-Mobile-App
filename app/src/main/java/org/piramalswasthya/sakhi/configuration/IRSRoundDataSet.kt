@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
+import android.util.Log
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.FormElement
@@ -36,8 +37,10 @@ class IRSRoundDataSet(
 
     private val rounds = FormElement(
         id = 3,
-        inputType = InputType.EDIT_TEXT,
+        inputType = InputType.DROPDOWN,
         title = resources.getString(R.string.round),
+        arrayId = R.array.irs_rounds,
+        entries = resources.getStringArray(R.array.irs_rounds),
         required = false,
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
         hasDependants = false
@@ -53,9 +56,12 @@ class IRSRoundDataSet(
             rounds,
         )
         if(saved != null) {
-           /* dateOfCase.value = getDateFromLong(saved?.date!!)
-            rounds.value = saved?.rounds.toString()*/
-
+            dateOfCase.value = getDateFromLong(System.currentTimeMillis())
+            val index = saved.rounds
+            val localizedArray = resources.getStringArray(R.array.irs_rounds)
+            if (index in localizedArray.indices) {
+                rounds.value = localizedArray[index]
+            }
 
         } else {
 
@@ -79,7 +85,7 @@ class IRSRoundDataSet(
 
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as IRSRoundScreening).let { form ->
-            form.rounds = rounds.value!!.toInt()
+            form.rounds = rounds.getPosition()
             form.date = getLongFromDate(dateOfCase.value)
         }
     }

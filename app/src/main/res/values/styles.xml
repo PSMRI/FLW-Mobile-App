@@ -93,6 +93,11 @@
         <item name="bottomSheetStyle">@style/AppModalStyle</item>
     </style>
 
+    <style name="CustomSwitchStyle" parent="ThemeOverlay.AppCompat">
+        <item name="colorControlActivated">#4CAF50</item> <!-- ON color -->
+        <item name="colorSwitchThumbNormal">#B0BEC5</item> <!-- OFF thumb -->
+        <item name="android:colorForeground">#CFD8DC</item> <!-- Track OFF -->
+    </style>
     <style name="AppModalStyle"
         parent="Widget.Design.BottomSheet.Modal">
         <item name="android:background">@drawable/rounded_dialog</item>
