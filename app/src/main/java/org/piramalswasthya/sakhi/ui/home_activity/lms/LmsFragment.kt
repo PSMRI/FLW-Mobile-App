@@ -61,13 +61,13 @@ class LmsFragment: Fragment() {
         val rvAdapter = IconGridAdapter(
             IconGridAdapter.GridIconClickListener {
                 Timber.tag("LMSActionId").d(it.actionId.toString())
-                if(it.actionId.toString().contains("2131361960"))
+                if(it.actionId == LmsFragmentDirections.actionLmsFragmentToVideoTutorialFragmet().actionId)
                 {
+                    findNavController().navigate(R.id.videoTutorialFragmet)
+                }
+                else {
                     val pdfFile = copyPdfToCache(requireContext(), "dummy.pdf", R.raw.dummy)
                     openPdfFile(requireContext(), pdfFile)
-                }
-                else{
-                    findNavController().navigate(R.id.videoTutorialFragmet)
                 }
             },
             viewModel.scope
