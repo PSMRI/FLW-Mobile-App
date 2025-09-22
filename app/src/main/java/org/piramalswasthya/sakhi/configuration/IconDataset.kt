@@ -19,6 +19,7 @@ import org.piramalswasthya.sakhi.ui.home_activity.eligible_couple.EligibleCouple
 import org.piramalswasthya.sakhi.ui.home_activity.home.HomeFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.hrp_cases.HrpCasesFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.immunization_due.ImmunizationDueTypeFragmentDirections
+import org.piramalswasthya.sakhi.ui.home_activity.lms.LmsFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.MotherCareFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.NcdFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.VillageLevelFormsFragmentDirections
@@ -382,7 +383,8 @@ class IconDataset @Inject constructor(
             R.drawable.ic_video_icon,
             resources.getString(R.string.icon_title_video_tutorial),
             null,
-            ChildCareFragmentDirections.actionChildCareFragmentToAdolescentListFragment()        )
+            LmsFragmentDirections.actionLmsFragmentToVideoTutorialFragmet()
+        )
     ).apply {
         forEachIndexed { index, icon ->
             icon.colorPrimary = index % 2 == 0
