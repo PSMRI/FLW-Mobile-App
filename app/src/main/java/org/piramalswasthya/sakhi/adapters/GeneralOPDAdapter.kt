@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.databinding.RvGeneralOpdBenBinding
 import org.piramalswasthya.sakhi.model.BenBasicDomain
+import org.piramalswasthya.sakhi.model.GeneralOPEDBeneficiary
 
 class GeneralOPDAdapter(
     private val clickListener: CallClickListener? = null,
@@ -16,14 +17,14 @@ class GeneralOPDAdapter(
     private val showAbha: Boolean = false,
     private val role: Int? = 0
 ) :
-    ListAdapter<BenBasicDomain, GeneralOPDAdapter.BenViewHolder>(BenDiffUtilCallBack) {
-    private object BenDiffUtilCallBack : DiffUtil.ItemCallback<BenBasicDomain>() {
+    ListAdapter<GeneralOPEDBeneficiary, GeneralOPDAdapter.BenViewHolder>(BenDiffUtilCallBack) {
+    private object BenDiffUtilCallBack : DiffUtil.ItemCallback<GeneralOPEDBeneficiary>() {
         override fun areItemsTheSame(
-            oldItem: BenBasicDomain, newItem: BenBasicDomain
-        ) = oldItem.benId == newItem.benId
+            oldItem: GeneralOPEDBeneficiary, newItem: GeneralOPEDBeneficiary
+        ) = oldItem.beneficiaryId == newItem.beneficiaryId
 
         override fun areContentsTheSame(
-            oldItem: BenBasicDomain, newItem: BenBasicDomain
+            oldItem: GeneralOPEDBeneficiary, newItem: GeneralOPEDBeneficiary
         ) = oldItem == newItem
 
     }
@@ -39,21 +40,21 @@ class GeneralOPDAdapter(
         }
 
         fun bind(
-            item: BenBasicDomain,
+            item: GeneralOPEDBeneficiary,
             clickListener: CallClickListener?,
             showAbha: Boolean,
             showSyncIcon: Boolean,
             showRegistrationDate: Boolean,
             showBeneficiaries: Boolean, role: Int?
         ) {
-            if (!showSyncIcon) item.syncState = null
+//            if (!showSyncIcon) item.syncState = null
             binding.ben = item
             binding.callclickListener = clickListener
             binding.showAbha = showAbha
             binding.showRegistrationDate = showRegistrationDate
             binding.registrationDate.visibility =
                 if (showRegistrationDate) View.VISIBLE else View.INVISIBLE
-            binding.hasAbha = !item.abhaId.isNullOrEmpty()
+//            binding.hasAbha = !item.abhaId.isNullOrEmpty()
             binding.role = role
 
             if (showBeneficiaries) {
@@ -62,12 +63,12 @@ class GeneralOPDAdapter(
                     binding.husband = false
                     binding.spouse = false
                 } else {
-                    if (item.gender == "MALE") {
+                    if (item.genderName == "MALE") {
                         binding.father = true
                         binding.husband = false
                         binding.spouse = false
-                    } else if (item.gender == "FEMALE") {
-                        if (item.ageInt > 15) {
+                    } else if (item.genderName == "FEMALE") {
+                        if (item.ben_age_val!! > 15) {
                             binding.father =
                                 item.fatherName != "Not Available" && item.spouseName == "Not Available"
                             binding.husband = item.spouseName != "Not Available"
@@ -112,10 +113,12 @@ class GeneralOPDAdapter(
 
 
     class CallClickListener(
-        private val clickedCall: (benId: Long, hhId: Long, mobileno: String) -> Unit,
+        private val clickedCall: (benId: Long, mobileno: String) -> Unit,
     ) {
 
-        fun onClickCall(item: BenBasicDomain) = clickedCall(item.benId, item.hhId, item.mobileNo)
+        fun onClickCall(item: GeneralOPEDBeneficiary) = clickedCall(item.beneficiaryId,
+            item.preferredPhoneNum.toString()
+        )
     }
 
 }

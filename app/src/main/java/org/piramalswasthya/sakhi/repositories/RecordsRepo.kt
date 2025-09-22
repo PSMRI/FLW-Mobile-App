@@ -32,6 +32,7 @@ class RecordsRepo @Inject constructor(
 
     val allBenList =
         benDao.getAllBen(selectedVillage).map { list -> list.map { it.asBasicDomainModel() } }
+
     val allBenListCount = benDao.getAllBenCount(selectedVillage)
     val allBenWithoutAbhaList =
         benDao.getAllBenWithoutAbha(selectedVillage).map { list -> list.map { it.asBasicDomainModel() } }

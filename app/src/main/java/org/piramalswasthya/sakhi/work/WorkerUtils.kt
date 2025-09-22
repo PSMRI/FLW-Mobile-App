@@ -27,6 +27,9 @@ object WorkerUtils {
         val pullWorkRequest = OneTimeWorkRequestBuilder<PullFromAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
+        val generalOpdPullFromAmritWorker = OneTimeWorkRequestBuilder<GeneralOpdPullFromAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
         val pullAdolescentWorkRequest = OneTimeWorkRequestBuilder<PullAdolescentFromWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
@@ -119,6 +122,7 @@ object WorkerUtils {
                 pullWorkRequest
             )
             .then(pullVLFWorkRequest)
+            .then(generalOpdPullFromAmritWorker)
             .then(pullAdolescentWorkRequest)
             .then(pullIncentiveActivityWorkRequest)
             .then(pullCbacWorkRequest)
@@ -143,6 +147,7 @@ object WorkerUtils {
             .then(pullkalaAzarToAmritWorker)
             .then(pullFilariaToAmritWorker)
             .then(pullLeprosyToAmritWorker)
+
             .enqueue()
     }
 
@@ -276,6 +281,9 @@ object WorkerUtils {
             .setConstraints(networkOnlyConstraint)
             .build()
 
+        val generalOpdPullFromAmritWorker = OneTimeWorkRequestBuilder<GeneralOpdPullFromAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
         val pullIncentiveActivityWorkRequest =
             OneTimeWorkRequestBuilder<PullIncentiveWorker>()
                 .setConstraints(networkOnlyConstraint)
@@ -364,6 +372,7 @@ object WorkerUtils {
                 pullWorkRequest
             )
             .then(pullVLFWorkRequest)
+            .then(generalOpdPullFromAmritWorker)
             .then(pulladolescentWorkRequest)
             .then(pullIncentiveActivityWorkRequest)
             .then(pullCbacWorkRequest)
@@ -387,6 +396,7 @@ object WorkerUtils {
             .then(pullkalaAzarToAmritWorker)
             .then(pullFilariaToAmritWorker)
             .then(pullLeprosyToAmritWorker)
+
             .enqueue()
     }
 
