@@ -7,7 +7,7 @@
 
         <variable
             name="ben"
-            type="org.piramalswasthya.sakhi.model.BenBasicDomain" />
+            type="org.piramalswasthya.sakhi.model.GeneralOPEDBeneficiary" />
 
         <variable
             name="callclickListener"
@@ -98,7 +98,7 @@
                         android:drawablePadding="@dimen/padding_small"
                         android:gravity="center_vertical"
                         android:padding="@dimen/padding_small"
-                        android:text="@{ben.benFullName}"
+                        android:text="@{ben.benName}"
                         android:textStyle="bold"
                         android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                         android:textColor="?attr/colorPrimaryVariant"
@@ -254,7 +254,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@{ben.gender}"
+                            android:text="@{ben.genderName}"
                             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                             android:textColor="?attr/colorOnPrimary"
                             tools:text="Female" />
@@ -288,7 +288,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@{ben.regDate}"
+                            android:text="@{ben.registrationDate.split(`T`)[0]}"
                             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                             android:textColor="?attr/colorOnPrimary"
                             tools:text="12-12-4523" />
@@ -309,7 +309,7 @@
                             android:textColor="?attr/colorOnPrimary" />
 
                         <TextView
-                            benIdText="@{ben.benId}"
+                            benIdText="@{ben.beneficiaryId}"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
@@ -335,7 +335,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@{ben.mobileNo}"
+                            android:text="@{ben.preferredPhoneNum}"
                             android:layout_below="@+id/mob"
                             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                             android:textColor="?attr/colorOnPrimary"
@@ -370,7 +370,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@{ben.regDate}"
+                            android:text="@{ben.benVisitDate.split(`T`)[0]}"
                             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                             android:textColor="?attr/colorOnPrimary"
                             tools:text="12-12-4523" />
@@ -391,12 +391,12 @@
                             android:textColor="?attr/colorOnPrimary" />
 
                         <TextView
-                            benIdText="@{ben.benId}"
+                            tools:text="@{ben.visitCategory.toString()}"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                             android:textColor="?attr/colorOnPrimary"
-                            tools:text="Lala Land" />
+                            />
                     </LinearLayout>
 
                     <RelativeLayout
@@ -417,7 +417,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@{ben.regDate}"
+                            android:text="@{ben.consultationDate.split(`T`)[0]}"
                             android:layout_below="@+id/followupdate"
                             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                             android:textColor="?attr/colorOnPrimary"

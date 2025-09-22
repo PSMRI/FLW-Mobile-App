@@ -22,6 +22,7 @@ import org.piramalswasthya.sakhi.database.room.dao.DeliveryOutcomeDao
 import org.piramalswasthya.sakhi.database.room.dao.EcrDao
 import org.piramalswasthya.sakhi.database.room.dao.FilariaDao
 import org.piramalswasthya.sakhi.database.room.dao.FpotDao
+import org.piramalswasthya.sakhi.database.room.dao.GeneralOpdDao
 import org.piramalswasthya.sakhi.database.room.dao.HbncDao
 import org.piramalswasthya.sakhi.database.room.dao.HbycDao
 import org.piramalswasthya.sakhi.database.room.dao.HouseholdDao
@@ -58,6 +59,7 @@ import org.piramalswasthya.sakhi.model.EligibleCoupleRegCache
 import org.piramalswasthya.sakhi.model.EligibleCoupleTrackingCache
 import org.piramalswasthya.sakhi.model.FPOTCache
 import org.piramalswasthya.sakhi.model.FilariaScreeningCache
+import org.piramalswasthya.sakhi.model.GeneralOPEDBeneficiary
 import org.piramalswasthya.sakhi.model.HBNCCache
 import org.piramalswasthya.sakhi.model.HBYCCache
 import org.piramalswasthya.sakhi.model.HRPMicroBirthPlanCache
@@ -137,9 +139,10 @@ import org.piramalswasthya.sakhi.model.VHNDCache
         ProfileActivityCache::class,
         AdolescentHealthCache::class,
         ABHAModel::class,
+        GeneralOPEDBeneficiary::class,
     ],
     views = [BenBasicCache::class],
-    version = 18, exportSchema = false
+    version = 19, exportSchema = false
 )
 
 @TypeConverters(LocationEntityListConverter::class, SyncStateConverter::class)
@@ -176,6 +179,7 @@ abstract class InAppDb : RoomDatabase() {
     abstract val filariaDao: FilariaDao
     abstract val profileDao: ProfileDao
     abstract val abhaGenratedDao: ABHAGenratedDao
+    abstract val generalOpdDao: GeneralOpdDao
 
     abstract val syncDao: SyncDao
 
@@ -190,6 +194,61 @@ abstract class InAppDb : RoomDatabase() {
                 it.execSQL("alter table BENEFICIARY add column isConsent BOOL")
 
             })
+
+            val MIGRATION_18_19 = object : Migration(18, 19) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("""
+            CREATE TABLE IF NOT EXISTS `GENERAL_OPD_ACTIVITY` (
+                `benFlowID` INTEGER,
+                `beneficiaryRegID` INTEGER,
+                `benVisitID` INTEGER,
+                `visitCode` INTEGER,
+                `benVisitNo` INTEGER,
+                `nurseFlag` INTEGER,
+                `doctorFlag` INTEGER,
+                `pharmacist_flag` INTEGER,
+                `lab_technician_flag` INTEGER,
+                `radiologist_flag` INTEGER,
+                `oncologist_flag` INTEGER,
+                `specialist_flag` INTEGER,
+                `agentId` TEXT,
+                `visitDate` TEXT,
+                `modified_by` TEXT,
+                `modified_date` TEXT,
+                `benName` TEXT,
+                `deleted` INTEGER,
+                `firstName` TEXT,
+                `lastName` TEXT,
+                `age` TEXT,
+                `ben_age_val` INTEGER,
+                `genderID` INTEGER,
+                `genderName` TEXT,
+                `preferredPhoneNum` TEXT,
+                `fatherName` TEXT,
+                `spouseName` TEXT,
+                `districtName` TEXT,
+                `servicePointName` TEXT,
+                `registrationDate` TEXT,
+                `benVisitDate` TEXT,
+                `consultationDate` TEXT,
+                `consultantID` INTEGER,
+                `consultantName` TEXT,
+                `visitSession` TEXT,
+                `servicePointID` INTEGER,
+                `districtID` INTEGER,
+                `villageID` INTEGER,
+                `vanID` INTEGER,
+                `beneficiaryId` INTEGER NOT NULL,
+                `dob` TEXT,
+                `tc_SpecialistLabFlag` INTEGER,
+                `visitReason` TEXT,
+                `visitCategory` TEXT,
+                PRIMARY KEY(`beneficiaryId`)
+            )
+        """)
+                }
+            }
+
 
             val MIGRATION_16_18 = object : Migration(16, 18) {
                 override fun migrate(database: SupportSQLiteDatabase) {
@@ -385,7 +444,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_13_14,
                         MIGRATION_14_15,
                         MIGRATION_15_16,
-                        MIGRATION_16_18
+                        MIGRATION_16_18,
+                        MIGRATION_18_19
                     ).build()
 
                     INSTANCE = instance

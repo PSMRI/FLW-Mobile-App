@@ -52,7 +52,7 @@ class GeneralOpCareFragment : Fragment() {
 
         benAdapter = GeneralOPDAdapter(
             clickListener = GeneralOPDAdapter.CallClickListener(
-                { benId, hhId , mobileno ->
+                { benId , mobileno ->
 
                     try {
                         val callIntent = Intent(Intent.ACTION_CALL)

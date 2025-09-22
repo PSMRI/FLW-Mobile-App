@@ -8,30 +8,26 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
-import org.piramalswasthya.sakhi.helpers.filterBenList
+import org.piramalswasthya.sakhi.database.room.dao.GeneralOpdDao
+import org.piramalswasthya.sakhi.helpers.filterOPDBenList
 import org.piramalswasthya.sakhi.repositories.BenRepo
-import org.piramalswasthya.sakhi.repositories.RecordsRepo
 import javax.inject.Inject
 @HiltViewModel
 class GeneralOpCareViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
-    recordsRepo: RecordsRepo,
-    private val benRepo: BenRepo
+    private val benRepo: BenRepo,
+    private val generalOpdDao: GeneralOpdDao,
 ) : ViewModel() {
 
 
 
-   var allBenList = recordsRepo.allBenList
+   var allBenList = generalOpdDao.getAll()
 
     private val filter = MutableStateFlow("")
-    private val kind = MutableStateFlow(0)
+    private val kind = MutableStateFlow("")
 
     val benList = allBenList.combine(kind) { list, kind ->
-        filterBenList(list, kind)
-    }.combine(filter) { list, filter ->
-        filterBenList(list, filter)
+        filterOPDBenList(list, kind)
     }
-
     private val _abha = MutableLiveData<String?>()
     val abha: LiveData<String?>
         get() = _abha
@@ -51,7 +47,7 @@ class GeneralOpCareViewModel @Inject constructor(
 
     }
 
-    fun filterType(type: Int) {
+    fun filterType(type: String) {
         viewModelScope.launch {
             kind.emit(type)
         }
