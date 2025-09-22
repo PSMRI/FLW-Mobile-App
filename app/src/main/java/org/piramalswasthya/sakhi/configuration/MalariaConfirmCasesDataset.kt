@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
+import android.util.Log
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.BenRegCache
@@ -63,8 +64,8 @@ class MalariaConfirmCasesDataset(
         title = resources.getString(R.string.date_of_completion),
         arrayId = -1,
         required = true,
-        min = System.currentTimeMillis() -  (3L * 24 * 60 * 60 * 1000),
-        max = System.currentTimeMillis(),
+        min = System.currentTimeMillis(),
+        max = Long.MAX_VALUE,
         hasDependants = true
 
     )
@@ -74,25 +75,35 @@ class MalariaConfirmCasesDataset(
         inputType = InputType.DATE_PICKER,
         title = resources.getString(R.string.date_of_referal),
         arrayId = -1,
-        required = true,
-        min = System.currentTimeMillis() -  (3L * 24 * 60 * 60 * 1000),
-        max = System.currentTimeMillis(),
+        required = false,
+        min = System.currentTimeMillis() ,
+        max = System.currentTimeMillis() +  (3L * 30 * 24 * 60 * 60 * 1000),
         hasDependants = true
 
     )
 
 
-    suspend fun setUpPage(ben: BenRegCache?, saved: MalariaConfirmedCasesCache?) {
+    suspend fun setUpPage(ben: BenRegCache?, slideTestName:String, saved: MalariaConfirmedCasesCache?) {
         val list = mutableListOf(
             dateOfCase,
             treatmentGiven,
             dateOfCompletion,
             referalDate
         )
+
         if (saved == null) {
             dateOfCase.value = getDateFromLong(System.currentTimeMillis())
             dayWiseTrackingPf.value = resources.getStringArray(R.array.daysPf)[0]
             dayWiseTrackingPV.value = resources.getStringArray(R.array.daysPv)[0]
+
+            treatmentGiven.value = slideTestName
+            if(treatmentGiven.value == resources.getStringArray(R.array.pf_pv)[0]){
+                list.add(list.indexOf(treatmentGiven) + 1 ,dayWiseTrackingPf)
+            } else {
+                list.add(list.indexOf(treatmentGiven) + 1 ,dayWiseTrackingPV)
+
+            }
+            updateCompletionDateLimits(setDefault = true)
         } else {
             dateOfCase.value = getDateFromLong(saved.dateOfDiagnosis)
             dateOfCompletion.value = getDateFromLong(saved.treatmentCompletionDate)
@@ -107,7 +118,7 @@ class MalariaConfirmCasesDataset(
                 dayWiseTrackingPV.value = getLocalValueInArray(R.array.daysPv,saved.day)
 
             }
-
+            updateCompletionDateLimits()
 
         }
 
@@ -119,7 +130,14 @@ class MalariaConfirmCasesDataset(
 
         return when (formId) {
 
+            dateOfCase.id -> {
+                updateCompletionDateLimits(setDefault = true)
+                0
+            }
+
+
             treatmentGiven.id -> {
+                updateCompletionDateLimits(setDefault = true)
                 if(treatmentGiven.value == resources.getStringArray(R.array.pf_pv)[0]){
                     triggerDependants(
                         source = treatmentGiven,
@@ -178,5 +196,29 @@ class MalariaConfirmCasesDataset(
 
     fun getIndexOfDate(): Int {
         return getIndexById(dateOfCase.id)
+    }
+
+
+    private fun updateCompletionDateLimits(setDefault: Boolean = false) {
+        val startDate = getLongFromDate(dateOfCase.value) ?: return
+        val treatment = treatmentGiven.value ?: return
+
+
+
+        val days = when (treatment) {
+            resources.getStringArray(R.array.pf_pv)[0] -> 3
+            resources.getStringArray(R.array.pf_pv)[1] -> 4
+            else -> 0
+        }
+
+        if (days > 0) {
+            val maxDate = startDate + (days * 24 * 60 * 60 * 1000L)
+            dateOfCompletion.min = startDate
+            dateOfCompletion.max = maxDate
+
+            if (setDefault) {
+                dateOfCompletion.value = getDateFromLong(maxDate)
+            }
+        }
     }
 }

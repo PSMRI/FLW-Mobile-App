@@ -139,7 +139,7 @@ import org.piramalswasthya.sakhi.model.VHNDCache
         ABHAModel::class,
     ],
     views = [BenBasicCache::class],
-    version = 19, exportSchema = false
+    version = 20, exportSchema = false
 )
 
 @TypeConverters(LocationEntityListConverter::class, SyncStateConverter::class)
@@ -190,6 +190,12 @@ abstract class InAppDb : RoomDatabase() {
                 it.execSQL("alter table BENEFICIARY add column isConsent BOOL")
 
             })
+
+            val MIGRATION_19_20 = object : Migration(19, 20) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("ALTER TABLE MALARIA_SCREENING ADD COLUMN slideTestName TEXT")
+                }
+            }
 
             val MIGRATION_16_18 = object : Migration(16, 18) {
                 override fun migrate(database: SupportSQLiteDatabase) {
@@ -266,6 +272,7 @@ abstract class InAppDb : RoomDatabase() {
                     database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_ABHA_GENERATED_beneficiaryID` ON `ABHA_GENERATED` (`beneficiaryID`)")
                 }
             }
+
 
             val MIGRATION_15_16 = object : Migration(15, 16) {
                 override fun migrate(db: SupportSQLiteDatabase) {
@@ -482,7 +489,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_14_15,
                         MIGRATION_15_16,
                         MIGRATION_16_18,
-                        MIGRATION_18_19
+                        MIGRATION_18_19,
+                        MIGRATION_19_20
                     ).build()
 
                     INSTANCE = instance
