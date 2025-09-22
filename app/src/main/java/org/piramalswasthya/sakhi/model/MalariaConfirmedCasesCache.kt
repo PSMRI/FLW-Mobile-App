@@ -57,17 +57,20 @@ data class BenWithMalariaConfirmedCache(
         parentColumn = "benId", entityColumn = "benId"
     )
     val malariaConfirmed: MalariaConfirmedCasesCache?,
+    val slideTestName: String?
 
     ) {
     fun asMalariaConfirmedDomainModel(): BenWithMalariaConfirmedDomain {
         return BenWithMalariaConfirmedDomain(
             ben = ben.asBasicDomainModel(),
-            malariaConfirmed = malariaConfirmed
+            malariaConfirmed = malariaConfirmed,
+            slideTestName = slideTestName
         )
     }
 }
 
 data class BenWithMalariaConfirmedDomain(
     val ben: BenBasicDomain,
-    val malariaConfirmed: MalariaConfirmedCasesCache?
+    val malariaConfirmed: MalariaConfirmedCasesCache?,
+    val slideTestName: String?
 )

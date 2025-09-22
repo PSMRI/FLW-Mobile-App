@@ -217,6 +217,7 @@
     <string name="rapid_diagnostic">Rapid Diagnostic Test (RDT)</string>
     <string name="rapid_diagnostic_kala">Kala Azar Rapid Diagnostic Test (RDT)</string>
     <string name="slide_test_pf">Malaria Slide Test Pf</string>
+    <string name="slide_test">Malaria Slide Test</string>
     <string name="slide_test_pv">Malaria Slide Test Pv</string>
     <string name="malariacasecount">Malaria Case Count</string>
     <string name="filariacasecount">Filaria Case Count</string>

@@ -409,9 +409,6 @@ class PregnantWomanAncVisitDataset(
             ancDate,
             weekOfPregnancy,
             ancVisit,
-            headLine,
-            fileUploadFront,
-            fileUploadBack,
             isAborted,
             weight,
             bp,
@@ -428,7 +425,10 @@ class PregnantWomanAncVisitDataset(
             anyHighRisk,
             highRiskReferralFacility,
             hrpConfirm,
-            maternalDeath
+            maternalDeath,
+            headLine,
+            fileUploadFront,
+            fileUploadBack,
 
 
         )
@@ -479,7 +479,8 @@ class PregnantWomanAncVisitDataset(
                 val long = getLongFromDate(it)
                 val weeks = getWeeksOfPregnancy(long, regis.lmpDate)
                 if (weeks >= Konstants.minWeekToShowDelivered) {
-                    list.add(deliveryDone)
+                    list.add(list.indexOf(maternalDeath) + 1,deliveryDone)
+
                 }
                 if (weeks <= 12) {
                     list.remove(fundalHeight)
@@ -503,7 +504,7 @@ class PregnantWomanAncVisitDataset(
                 list.remove(numFolicAcidTabGiven)
             }
             if (woP >= Konstants.minWeekToShowDelivered) {
-                if (!list.contains(deliveryDone)) list.add(deliveryDone)
+                if (!list.contains(deliveryDone)) list.add(list.indexOf(maternalDeath) + 1,deliveryDone)
             }
             ancDate.value = getDateFromLong(savedAnc.ancDate)
             weekOfPregnancy.value = woP.toString()
