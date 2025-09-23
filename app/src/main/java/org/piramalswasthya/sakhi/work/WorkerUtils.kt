@@ -27,6 +27,9 @@ object WorkerUtils {
         val pullWorkRequest = OneTimeWorkRequestBuilder<PullFromAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
+        val generalOpdPullFromAmritWorker = OneTimeWorkRequestBuilder<GeneralOpdPullFromAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
         val pullAdolescentWorkRequest = OneTimeWorkRequestBuilder<PullAdolescentFromWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
@@ -124,6 +127,7 @@ object WorkerUtils {
             .then(pullFilariaToAmritWorker)
             .then(pullLeprosyToAmritWorker)
             .then(pullVLFWorkRequest)
+            .then(generalOpdPullFromAmritWorker)
             .then(pullAdolescentWorkRequest)
             .then(pullIncentiveActivityWorkRequest)
             .then(pullCbacWorkRequest)
@@ -276,6 +280,9 @@ object WorkerUtils {
             .setConstraints(networkOnlyConstraint)
             .build()
 
+        val generalOpdPullFromAmritWorker = OneTimeWorkRequestBuilder<GeneralOpdPullFromAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
         val pullIncentiveActivityWorkRequest =
             OneTimeWorkRequestBuilder<PullIncentiveWorker>()
                 .setConstraints(networkOnlyConstraint)
@@ -369,6 +376,7 @@ object WorkerUtils {
             .then(pullFilariaToAmritWorker)
             .then(pullLeprosyToAmritWorker)
             .then(pullVLFWorkRequest)
+            .then(generalOpdPullFromAmritWorker)
             .then(pulladolescentWorkRequest)
             .then(pullIncentiveActivityWorkRequest)
             .then(pullCbacWorkRequest)
@@ -387,6 +395,7 @@ object WorkerUtils {
 //            .then(pullHBYCFromAmritWorker)
             .then(pullHBNCFromAmritWorker)
             .then(setSyncCompleteWorker)
+
             .enqueue()
     }
 
