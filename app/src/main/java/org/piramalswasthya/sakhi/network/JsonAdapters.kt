@@ -99,6 +99,17 @@ data class GetDataPaginatedRequest(
     val toDate: String
 )
 
+@JsonClass(generateAdapter = true)
+data class GetDataPaginatedRequestForGeneralOPD(
+    val userId: Int,
+    val villageID: Int,
+    val userName: String,
+    val ashaId: Int,
+    val pageNo: Int,
+    val fromDate: String,
+    val toDate: String
+)
+
 
 @JsonClass(generateAdapter = true)
 data class GetVHNDRequest(

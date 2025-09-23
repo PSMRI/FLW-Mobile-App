@@ -3,25 +3,26 @@ package org.piramalswasthya.sakhi.repositories
 import android.app.Application
 import android.widget.Toast
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import org.piramalswasthya.sakhi.database.room.BeneficiaryIdsAvail
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.BeneficiaryIdsAvailDao
+import org.piramalswasthya.sakhi.database.room.dao.GeneralOpdDao
 import org.piramalswasthya.sakhi.database.room.dao.HouseholdDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.ImageUtils
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.model.*
 import org.piramalswasthya.sakhi.network.*
-import org.piramalswasthya.sakhi.work.WorkerUtils
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.NewBenRegViewModel
-import org.piramalswasthya.sakhi.utils.HelperUtil
 import timber.log.Timber
 import java.lang.Long.min
 import java.net.SocketTimeoutException
@@ -37,6 +38,7 @@ class BenRepo @Inject constructor(
     private val infantRegRepo: InfantRegRepo,
     private val preferenceDao: PreferenceDao,
     private val userRepo: UserRepo,
+    private val generalOpdDao: GeneralOpdDao,
     private val tmcNetworkApiService: AmritApiService
 ) {
 
@@ -513,6 +515,95 @@ class BenRepo @Inject constructor(
             Timber.d("get_ben data : $benDataList")
             Pair(0, benDataList)
         }
+    }
+
+    suspend fun getGeneralOPDBeneficiariesFromServertoWorker(pageNumber: Int): Int {
+        Timber.d("=====1234:getBeneficiariesFromServerForWorker : $pageNumber")
+        return withContext(Dispatchers.IO) {
+            val user =
+                preferenceDao.getLoggedInUser()
+                    ?: throw IllegalStateException("No user logged in!!")
+            val lastTimeStamp = preferenceDao.getLastSyncedTimeStamp()
+            try {
+                val response = tmcNetworkApiService.getgeneralOPDBeneficiaries(
+                    GetDataPaginatedRequestForGeneralOPD(
+                        user.userId,
+                        user.villages[0].id,
+                        user.userName,
+                        user.userId,
+                        pageNumber,
+                        getCurrentDate(lastTimeStamp),
+                        getCurrentDate(),
+
+                    )
+                )
+                val statusCode = response.code()
+                if (statusCode == 200) {
+                    val responseString = response.body()?.string()
+                    if (responseString != null) {
+                        val jsonObj = JSONObject(responseString)
+
+                        val errorMessage = jsonObj.getString("errorMessage")
+                        val responseStatusCode = jsonObj.getInt("statusCode")
+                        Timber.d("Pull from amrit page $pageNumber response status : $responseStatusCode")
+                        when (responseStatusCode) {
+                            200 -> {
+
+
+                                try {
+                                    val dataObj = jsonObj.getJSONObject("data")
+                                    val entriesArray = dataObj.getJSONArray("entries")
+                                    saveGeneralOPDData(entriesArray)
+                                } catch (e: Exception) {
+                                    Timber.d("Incentive master data not synced $e")
+                                    return@withContext 0
+                                }
+
+//
+
+                                return@withContext 1
+                            }
+
+                            5002 -> {
+                                if (pageNumber == 0 && userRepo.refreshTokenTmc(
+                                        user.userName, user.password
+                                    )
+                                ) throw SocketTimeoutException("Refreshed Token!")
+                                else throw IllegalStateException("User Logged out!!")
+                            }
+
+                            5000 -> {
+                                //  HelperUtil.saveApiResponseToDownloads(context, "9864880049_getBeneficiaryData_response.txt", HelperUtil.allPagesContent.toString())
+
+                                if (errorMessage == "No record found") return@withContext 0
+                            }
+
+                            else -> {
+                                throw IllegalStateException("$responseStatusCode received, dont know what todo!?")
+                            }
+                        }
+                    }
+                }
+
+            } catch (e: SocketTimeoutException) {
+                Timber.d("get_ben error : $e")
+                return@withContext -2
+
+            } catch (e: java.lang.IllegalStateException) {
+                Timber.d("get_ben error : $e")
+                return@withContext -1
+            }
+            -1
+        }
+    }
+
+    private suspend fun saveGeneralOPDData(dataObj: JSONArray) {
+        val gson = Gson()
+        val type = object : TypeToken<List<GeneralOPDNetwork>>() {}.type
+        val networkList: List<GeneralOPDNetwork> = gson.fromJson(dataObj.toString(), type)
+        val entityList = networkList.map { it.asGeneralCacheModel() }
+        generalOpdDao.insertAll(entityList)
+
     }
 
     private fun getLongFromDate(date: String): Long {

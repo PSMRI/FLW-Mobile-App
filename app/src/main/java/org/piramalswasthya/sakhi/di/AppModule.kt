@@ -22,6 +22,7 @@ import org.piramalswasthya.sakhi.database.room.dao.CdrDao
 import org.piramalswasthya.sakhi.database.room.dao.ChildRegistrationDao
 import org.piramalswasthya.sakhi.database.room.dao.DeliveryOutcomeDao
 import org.piramalswasthya.sakhi.database.room.dao.FilariaDao
+import org.piramalswasthya.sakhi.database.room.dao.GeneralOpdDao
 import org.piramalswasthya.sakhi.database.room.dao.HbncDao
 import org.piramalswasthya.sakhi.database.room.dao.HbycDao
 import org.piramalswasthya.sakhi.database.room.dao.HouseholdDao
@@ -263,6 +264,10 @@ object AppModule {
     @Singleton
     @Provides
     fun provideABHAGenDao(database: InAppDb): ABHAGenratedDao = database.abhaGenratedDao
+
+    @Singleton
+    @Provides
+    fun provideGenOPDDao(database: InAppDb): GeneralOpdDao = database.generalOpdDao
 
 
 }
