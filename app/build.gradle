@@ -8,6 +8,8 @@ plugins {
     id 'kotlin-kapt'
     id 'kotlin-parcelize'
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
+    id 'org.jlleitschuh.gradle.ktlint' version '13.0.0'
+    id 'io.gitlab.arturbosch.detekt' version '1.23.6'
 }
 
 apply from: rootProject.file('versioning.gradle')
@@ -229,3 +231,37 @@ dependencies {
     implementation 'com.google.android.play:app-update:2.1.0'
 }
 
+// Detekt configuration
+detekt {
+    toolVersion = "1.23.6"
+    buildUponDefaultConfig = true
+    allRules = false
+    parallel = true
+    config = files("$rootDir/config/detekt/detekt.yml")
+    baseline = file("$rootDir/config/detekt/baseline.xml")
+    autoCorrect = false
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+        sarif.required.set(true)  // This enables SARIF for GitHub code scanning
+    }
+}
+
+// Ktlint configuration
+ktlint {
+    android.set(true)
+    ignoreFailures.set(false)
+    reporters {
+        reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.PLAIN)
+        reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.CHECKSTYLE)
+        reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.SARIF)
+    }
+    filter {
+        exclude("**/build/**", "**/generated/**")
+    }
+}
+
+// Wire both tools into the check task
+tasks.named("check") {
+    dependsOn("detekt", "ktlintCheck")
+}
