@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.repositories
 
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
@@ -433,7 +434,12 @@ class EcrRepo @Inject constructor(
                         ) else getLongFromDate(
                         ecrJson.getString("createdDate")
                     ),
-                    lmpDate = getLongFromDate(ecrJson.getString("lmpDate")),
+                    lmpDate =
+                    if (ecrJson.has("lmpDate")) {
+                        getLongFromLmpDate(ecrJson.getString("lmpDate"))
+                    } else {
+                        0L
+                    },
                     bankAccount = if (ecrJson.has("bankAccountNumber")) ecrJson.getLong("bankAccountNumber") else null,
                     bankName = if (ecrJson.has("bankName")) ecrJson.getString("bankName") else null,
                     branchName = if (ecrJson.has("branchName")) ecrJson.getString("branchName") else null,
@@ -582,7 +588,12 @@ class EcrRepo @Inject constructor(
             val ecrJson = dataObj.getJSONObject(i)
             val ecr = EligibleCoupleTrackingCache(
                 benId = ecrJson.getLong("benId"),
-                lmpDate = getLongFromDate(ecrJson.getString("lmpDate")),
+                lmpDate =
+                if (ecrJson.has("lmpDate")) {
+                    getLongFromLmpDate(ecrJson.getString("lmpDate"))
+                } else {
+                    0L
+                },
                 visitDate = getLongFromDate(ecrJson.getString("visitDate")),
                 isPregnancyTestDone = if (ecrJson.has("isPregnancyTestDone")) ecrJson.getString("isPregnancyTestDone") else null,
                 isActive = if (ecrJson.has("isActive")) ecrJson.getBoolean("isActive") else false,
@@ -665,5 +676,13 @@ class EcrRepo @Inject constructor(
             val date = f.parse(dateString)
             return date?.time ?: throw IllegalStateException("Invalid date for dateReg")
         }
+
+        private fun getLongFromLmpDate(dateString: String): Long {
+            //Jul 22, 2023 8:17:23 AM"
+            val f = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+            val date = f.parse(dateString)
+            return date?.time ?: throw IllegalStateException("Invalid date for dateReg")
+        }
+
     }
 }

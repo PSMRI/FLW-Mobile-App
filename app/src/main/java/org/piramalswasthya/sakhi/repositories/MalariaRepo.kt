@@ -179,7 +179,6 @@ class MalariaRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-                        val errorMessage = jsonObj.getString("errorMessage")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit tb screening data : $responseStatusCode")
                         when (responseStatusCode) {
@@ -204,11 +203,13 @@ class MalariaRepo @Inject constructor(
                             }
 
                             5000 -> {
-                                if (errorMessage == "No record found") return@withContext 0
+//                                val errorMessage = jsonObj.getString("errorMessage")
+//                                if (errorMessage == "No record found") return@withContext 0
+                                return@withContext 0
                             }
 
                             else -> {
-                                throw IllegalStateException("$responseStatusCode received, dont know what todo!?")
+                                throw IllegalStateException("$responseStatusCode received, don't know what todo!?")
                             }
                         }
                     }

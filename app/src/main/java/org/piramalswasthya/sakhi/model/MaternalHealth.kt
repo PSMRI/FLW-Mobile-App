@@ -361,8 +361,8 @@ data class PregnantWomanAncCache(
     var updatedBy: String,
     var updatedDate: Long = System.currentTimeMillis(),
     var syncState: SyncState,
-    var frontFilePath : String,
-    var backFilePath : String
+    var frontFilePath : String?,
+    var backFilePath : String?
 ) : FormDataModel {
     fun asPostModel(): ANCPost {
         return ANCPost(
@@ -443,8 +443,8 @@ data class ANCPost(
     val updatedDate: String? = null,
     val updatedBy: String,
     var providerServiceMapID :String?=null,
-    var frontFilePath : String,
-    var backFilePath : String
+    var frontFilePath : String?,
+    var backFilePath : String?
 
 ) {
     fun toAncCache(context : Context): PregnantWomanAncCache {
