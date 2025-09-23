@@ -142,7 +142,7 @@ import org.piramalswasthya.sakhi.model.VHNDCache
         GeneralOPEDBeneficiary::class,
     ],
     views = [BenBasicCache::class],
-    version = 20, exportSchema = false
+    version = 21, exportSchema = false
 )
 
 @TypeConverters(LocationEntityListConverter::class, SyncStateConverter::class)
@@ -195,7 +195,7 @@ abstract class InAppDb : RoomDatabase() {
 
             })
 
-            val MIGRATION_18_19 = object : Migration(18, 19) {
+            val MIGRATION_20_21 = object : Migration(20, 21) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     database.execSQL("""
             CREATE TABLE IF NOT EXISTS `GENERAL_OPD_ACTIVITY` (
@@ -547,7 +547,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_15_16,
                         MIGRATION_16_18,
                         MIGRATION_18_19,
-                        MIGRATION_19_20
+                        MIGRATION_19_20,
+                        MIGRATION_20_21
 
                     ).build()
 
