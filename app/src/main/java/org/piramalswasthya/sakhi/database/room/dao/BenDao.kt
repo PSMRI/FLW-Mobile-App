@@ -25,6 +25,12 @@ interface BenDao {
     @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage AND abhaId IS NOT NULL")
     fun getAllBenWithAbha(selectedVillage: Int): Flow<List<BenBasicCache>>
 
+//    @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage AND abhaId IS NOT NULL AND isNewAbha = 1")
+//    fun getAllBenWithNewAbha(selectedVillage: Int): Flow<List<BenBasicCache>>
+//
+//    @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage AND abhaId IS NOT NULL AND isNewAbha = 0")
+//    fun getAllBenWithOldAbha(selectedVillage: Int): Flow<List<BenBasicCache>>
+
     @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage AND abhaId IS NULL")
     fun getAllBenWithoutAbha(selectedVillage: Int): Flow<List<BenBasicCache>>
 
@@ -53,6 +59,9 @@ interface BenDao {
     @Query("SELECT * FROM IRS_ROUND where householdId = :hhId")
     fun getAllIRSRoundBen(hhId: Long): Flow<List<IRSRoundScreening>>
 
+    @Transaction
+    @Query("SELECT * FROM IRS_ROUND WHERE householdId = :hhId ORDER BY rounds DESC LIMIT 1")
+    fun getLastIRSRoundBen(hhId: Long): Flow<IRSRoundScreening?>
     @Transaction
     @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage and hhId = :hhId")
     fun getAllKALAZARScreeningBen(selectedVillage: Int,hhId: Long): Flow<List<BenWithKALAZARScreeningCache>>
@@ -112,7 +121,8 @@ interface BenDao {
     @Query("SELECT COUNT(*) FROM BENEFICIARY WHERE isDraft = 0 AND (processed = 'N' OR processed = 'U') AND syncState =0")
     fun getAllUnProcessedRecordCount(): Flow<Int>
 
-    @Query("SELECT * FROM BENEFICIARY WHERE isDraft = 0 AND processed = 'U' AND syncState =:unsynced AND isConsent = 1")
+//    @Query("SELECT * FROM BENEFICIARY WHERE isDraft = 0 AND processed = 'U' AND syncState =:unsynced AND isConsent = 1")
+    @Query("SELECT * FROM BENEFICIARY WHERE isDraft = 0 AND processed = 'U' AND syncState =:unsynced")
     suspend fun getAllBenForSyncWithServer(unsynced: SyncState = SyncState.UNSYNCED): List<BenRegCache>
 
     @Query("UPDATE BENEFICIARY SET processed = 'P' , syncState = 2 WHERE beneficiaryId in (:benId)")
@@ -329,7 +339,7 @@ interface BenDao {
     fun getTbScreeningList(villageId: Int): Flow<List<BenWithTbSuspectedCache>>
 
     @Transaction
-    @Query("select b.* from BEN_BASIC_CACHE b inner join malaria_screening t on  b.benId = t.benId where villageId = :villageId  and t.caseStatus = 'Confirmed' ")
+    @Query("select b.*, t.slideTestName As slideTestName from BEN_BASIC_CACHE b inner join malaria_screening t on  b.benId = t.benId where villageId = :villageId  and t.caseStatus = 'Confirmed' ")
     fun getMalariaConfirmedCasesList(villageId: Int): Flow<List<BenWithMalariaConfirmedCache>>
 
     @Transaction

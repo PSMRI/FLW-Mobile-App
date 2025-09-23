@@ -29,6 +29,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.text.HtmlCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.MenuProvider
 import androidx.navigation.fragment.NavHostFragment
@@ -219,6 +220,15 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 //        FirebaseMessaging.getInstance().subscribeToTopic("Immunization${pref.getLoggedInUser()?.userId}")
         super.onCreate(savedInstanceState)
         _binding = ActivityHomeBinding.inflate(layoutInflater)
+
+        if (pref?.getLoggedInUser()?.role.equals("asha", true)) {
+            binding.navView.menu.findItem(R.id.supervisorFragment).setVisible(false)
+            binding.navView.menu.findItem(R.id.homeFragment).setVisible(true)
+        } else {
+            binding.navView.menu.findItem(R.id.homeFragment).setVisible(false)
+            binding.navView.menu.findItem(R.id.supervisorFragment).setVisible(true)
+        }
+
         setContentView(binding.root)
         setUpActionBar()
         setUpNavHeader()
@@ -514,8 +524,17 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
                 resources.getString(R.string.nav_item_1_text, it.name)
             headerView.findViewById<TextView>(R.id.tv_nav_role).text =
                 resources.getString(R.string.nav_item_2_text, it.userName)
-            headerView.findViewById<TextView>(R.id.tv_nav_id).text =
-                resources.getString(R.string.nav_item_3_text, it.userId)
+
+
+            val englishId = String.format(Locale.ENGLISH, "%s", it.userId)
+            val formatted = HtmlCompat.fromHtml(
+                getString(R.string.nav_item_3_text, englishId),
+                HtmlCompat.FROM_HTML_MODE_LEGACY
+            )
+            headerView.findViewById<TextView>(R.id.tv_nav_id).text = formatted
+
+//            headerView.findViewById<TextView>(R.id.tv_nav_id).text =
+//                resources.getString(R.string.nav_item_3_text, it.userId)
         }
         viewModel.profilePicUri?.let {
             Glide.with(this).load(it).placeholder(R.drawable.ic_person).circleCrop()
@@ -671,7 +690,8 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    @Deprecated("will fix this implementation")
+    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (inAppUpdateHelper.onActivityResult(requestCode, resultCode)) {
             // Handled update result

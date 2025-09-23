@@ -202,9 +202,6 @@ class AESJEFormDataset(
         }
 
 
-        ben?.let {
-            dateOfCase.min = it.regDate
-        }
         setUpPage(list)
 
     }
@@ -266,6 +263,12 @@ class AESJEFormDataset(
                 }
                 0
             }
+            otherPlaceOfDeath.id -> {
+                validateEmptyOnEditText(otherPlaceOfDeath)
+            }
+            other.id -> {
+                validateEmptyOnEditText(other)
+            }
 
 
 
@@ -286,6 +289,9 @@ class AESJEFormDataset(
                 0
             }
 
+            otherReasonOfDeath.id -> {
+                validateEmptyOnEditText(otherReasonOfDeath)
+            }
             else -> {
                 -1
             }

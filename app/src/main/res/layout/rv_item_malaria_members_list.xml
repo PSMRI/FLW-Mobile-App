@@ -58,7 +58,7 @@
                         android:drawablePadding="@dimen/padding_small"
                         android:gravity="center_vertical"
                         android:padding="@dimen/padding_small"
-                        android:text="@{benWithMalaria.ben.familyHeadName}"
+                        android:text="@{benWithMalaria.ben.benFullName}"
                         android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                         android:textColor="?attr/colorPrimaryVariant"
                         app:drawableLeftCompat="@drawable/ic__hh"

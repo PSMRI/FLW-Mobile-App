@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.databinding.RvItemEcTrackingListBinding
 import org.piramalswasthya.sakhi.model.BenWithEctListDomain
+import org.piramalswasthya.sakhi.utils.HelperUtil
 import java.util.concurrent.TimeUnit
 
 class ECTrackingListAdapter(private val clickListener: ECTrackListClickListener) :
@@ -39,23 +40,38 @@ class ECTrackingListAdapter(private val clickListener: ECTrackListClickListener)
             item: BenWithEctListDomain, clickListener: ECTrackListClickListener
         ) {
 
+            if (item.savedECTRecords.isEmpty()) {
+                binding.llEcTrackingDetails3.visibility = View.GONE
+            } else {
+                binding.llEcTrackingDetails3.visibility = View.VISIBLE
+            }
+
             if (item.ectDate == 0L) {
                 binding.ivFollowState.visibility = View.GONE
+                binding.llVisitDate.visibility = View.INVISIBLE
             } else if (item.ectDate < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(90) &&
                 item.ectDate > System.currentTimeMillis() - TimeUnit.DAYS.toMillis(365)) {
                 binding.ivFollowState.visibility = View.VISIBLE
+                binding.llVisitDate.visibility = View.VISIBLE
+                binding.benVisitDate.text = HelperUtil.getDateStringFromLongStraight(item.ectDate)
             } else {
                 binding.ivFollowState.visibility = View.GONE
+                binding.llVisitDate.visibility = View.VISIBLE
+                binding.benVisitDate.text = HelperUtil.getDateStringFromLongStraight(item.ectDate)
             }
 
             if (item.lmpDate != 0L) {
+                binding.benLmpDate.text = HelperUtil.getDateStringFromLongStraight(item.lmpDate)
                 if (System.currentTimeMillis() - item.lmpDate > TimeUnit.DAYS.toMillis(35)) {
                     binding.ivMissState.visibility = View.VISIBLE
+                    binding.benStatus.text = "Missed Period"
                 } else {
                     binding.ivMissState.visibility = View.GONE
+                    binding.benStatus.text = "Under Review"
                 }
             } else {
                 binding.ivMissState.visibility = View.GONE
+                binding.llEcTrackingDetails3.visibility = View.GONE
             }
 
             binding.item = item

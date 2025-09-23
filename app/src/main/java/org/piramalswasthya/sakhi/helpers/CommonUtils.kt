@@ -6,6 +6,7 @@ import android.content.Context.CONNECTIVITY_SERVICE
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.core.text.isDigitsOnly
 import org.piramalswasthya.sakhi.model.AncStatus
 import org.piramalswasthya.sakhi.model.BenBasicDomain
@@ -28,6 +29,9 @@ import org.piramalswasthya.sakhi.model.ImmunizationDetailsDomain
 import org.piramalswasthya.sakhi.model.InfantRegDomain
 import org.piramalswasthya.sakhi.model.PregnantWomenVisitDomain
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.Period
+import java.time.ZoneId
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -84,8 +88,10 @@ fun filterBenList(
     } else {
         list
     }
+fun filterAdolescentList(list: List<BenWithAdolescentDomain>) = list
 
-fun filterAdolesenctList(list: List<BenWithAdolescentDomain>, text: String): List<BenWithAdolescentDomain> {
+
+fun filterAdolescentList(list: List<BenWithAdolescentDomain>, text: String): List<BenWithAdolescentDomain> {
     if (text == "")
         return list
     else {
@@ -101,16 +107,16 @@ fun filterForBen(
     ben: BenBasicDomain,
     filterText: String
 ) = ben.hhId.toString().lowercase().contains(filterText) ||
-        ben.benId.toString().lowercase().contains(filterText) ||
-        ben.abhaId.toString().lowercase().contains(filterText) ||
+        ben.benId.toString().lowercase().contains(filterText.replace(" ","")) ||
+        ben.abhaId.toString().replace("-","").lowercase().contains(filterText.replace(" ","")) ||
         ben.regDate.lowercase().contains((filterText)) ||
-        ben.age.lowercase().contains(filterText) ||
+        ben.age.lowercase() == filterText.lowercase() ||
         ben.benFullName.lowercase().contains(filterText) ||
         ben.familyHeadName.lowercase().contains(filterText) ||
         ben.benSurname?.lowercase()?.contains(filterText) ?: false ||
-        ben.rchId.takeIf { it?.isDigitsOnly() == true }?.contains(filterText) ?: false ||
-        ben.mobileNo.lowercase().contains(filterText) ||
-        ben.gender.lowercase().contains(filterText) ||
+        ben.rchId.takeIf { it?.isDigitsOnly() == true }?.contains(filterText.replace(" ","")) ?: false ||
+        ben.mobileNo.lowercase().contains(filterText.replace(" ","")) ||
+        ben.gender.lowercase() == filterText.lowercase() ||
         ben.spouseName?.lowercase()?.contains(filterText) == true ||
         ben.fatherName?.lowercase()?.contains(filterText) ?: false
 
@@ -118,7 +124,20 @@ fun filterForBen(
 fun filterAdolesent(
     ben: BenWithAdolescentDomain,
     filterText: String
-) = ben.ben.benFullName.toString().lowercase().contains(filterText)
+) = ben.ben.hhId.toString().lowercase().contains(filterText) ||
+        ben.ben.benId.toString().lowercase().contains(filterText.replace(" ","")) ||
+        ben.ben.abhaId.toString().lowercase().contains(filterText) ||
+        ben.ben.regDate.lowercase().contains((filterText)) ||
+        ben.ben.age.lowercase() == filterText.lowercase() ||
+        ben.ben.benFullName.lowercase().contains(filterText) ||
+        ben.ben.familyHeadName.lowercase().contains(filterText) ||
+        ben.ben.benSurname?.lowercase()?.contains(filterText) ?: false ||
+        ben.ben.rchId.takeIf { it?.isDigitsOnly() == true }?.contains(filterText) ?: false ||
+        ben.ben.mobileNo.lowercase().contains(filterText) ||
+        ben.ben.gender.lowercase() == filterText.lowercase() ||
+        ben.ben.spouseName?.lowercase()?.contains(filterText) == true ||
+        ben.ben.fatherName?.lowercase()?.contains(filterText) ?: false
+
 
 
 fun filterBenFormList(
@@ -581,6 +600,45 @@ fun Calendar.setToEndOfTheDay() = apply {
     set(Calendar.MINUTE, 59)
     set(Calendar.SECOND, 59)
     set(Calendar.MILLISECOND, 0)
+}
+
+fun getDateFromLong(time: Long) : Date {
+    val pattern: String = "dd/MM/yyyy HH:mm:ss"
+    val date = Date(time)
+//    val format = SimpleDateFormat(pattern, Locale.getDefault())
+    return date
+}
+
+fun getPatientTypeByAge(dateOfBirth: Date): String {
+    val birthDate = dateOfBirth.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+    val currentDate = LocalDate.now()
+
+    val period = Period.between(birthDate, currentDate)
+    val years = period.years
+    val months = period.months % 12
+    val days = period.days % 30
+
+    var type= ""
+    if((days <= 30 || months<=1) && years<1 ){
+        type = "new_born_baby"
+    }
+    if((years<1 && months<=12) || (months==0 && days==0 && years==1)){
+        type = "infant"
+    }
+
+    if(years>=1&& years<=12){
+        type ="child"
+    }
+
+    if(years>=12 && years<=18){
+        type = "adolescence"
+    }
+
+    if(years>=18){
+        type = "adult"
+    }
+
+    return type
 }
 
 

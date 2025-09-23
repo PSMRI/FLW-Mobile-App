@@ -19,6 +19,7 @@ import org.piramalswasthya.sakhi.ui.home_activity.eligible_couple.EligibleCouple
 import org.piramalswasthya.sakhi.ui.home_activity.home.HomeFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.hrp_cases.HrpCasesFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.immunization_due.ImmunizationDueTypeFragmentDirections
+import org.piramalswasthya.sakhi.ui.home_activity.lms.LmsFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.MotherCareFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.NcdFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.VillageLevelFormsFragmentDirections
@@ -306,13 +307,13 @@ class IconDataset @Inject constructor(
             VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToVHNDListFragement()
         ),
         Icon(
-            R.drawable.ic__follow_up_hrp,
+            R.drawable.vhnc,
             resources.getString(R.string.vnhc),
             null,
             VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToVHNCListFragement()
         ) ,
         Icon(
-                R.drawable.ic__follow_up_hrp,
+                R.drawable.phc_review,
         resources.getString(R.string.phc_review),
             null,
             VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToPHCReviewListFragement()
@@ -320,14 +321,14 @@ class IconDataset @Inject constructor(
     )
         ,
         Icon(
-            R.drawable.ic__follow_up_hrp,
+            R.drawable.ahd,
             resources.getString(R.string.ahd),
             null,
             VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToAHDListFragment()
         )
         ,
         Icon(
-            R.drawable.ic__follow_up_hrp,
+            R.drawable.dewarming,
             resources.getString(R.string.national_deworming_day),
             null,
             VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToDewormingListFragment()
@@ -382,7 +383,8 @@ class IconDataset @Inject constructor(
             R.drawable.ic_video_icon,
             resources.getString(R.string.icon_title_video_tutorial),
             null,
-            ChildCareFragmentDirections.actionChildCareFragmentToAdolescentListFragment()        )
+            LmsFragmentDirections.actionLmsFragmentToVideoTutorialFragmet()
+        )
     ).apply {
         forEachIndexed { index, icon ->
             icon.colorPrimary = index % 2 == 0
@@ -416,14 +418,14 @@ class IconDataset @Inject constructor(
 
         ),
         Icon(
-            R.drawable.ic__eligible_couple,
+            R.drawable.maleria,
             resources.getString(R.string.icon_title_maleria),
             recordsRepo.tbScreeningListCount,
             DiseaseControlFragmentDirections.actionDiseaseControlFragmentToMalariaIconsFragment(
 
             )
         ), Icon(
-            R.drawable.ic__eligible_couple,
+            R.drawable.kala,
             resources.getString(R.string.icon_title_ka),
             recordsRepo.tbScreeningListCount,
             DiseaseControlFragmentDirections.actionDiseaseControlFragmentToAllHouseHoldDiseaseControlFragment(
@@ -432,7 +434,7 @@ class IconDataset @Inject constructor(
         ),
 
         Icon(
-            R.drawable.ic__eligible_couple,
+            R.drawable.aes,
             resources.getString(R.string.icon_title_aes),
             recordsRepo.tbScreeningListCount,
             DiseaseControlFragmentDirections.actionDiseaseControlFragmentToAllHouseHoldDiseaseControlFragment(
@@ -440,7 +442,7 @@ class IconDataset @Inject constructor(
             )
         ),
         Icon(
-            R.drawable.ic__eligible_couple,
+            R.drawable.filaria,
             resources.getString(R.string.icon_title_filaria),
             recordsRepo.tbScreeningListCount,
             DiseaseControlFragmentDirections.actionDiseaseControlFragmentToAllHouseHoldDiseaseControlFragment(
@@ -448,7 +450,7 @@ class IconDataset @Inject constructor(
             )
         ),
         Icon(
-            R.drawable.ic__eligible_couple,
+            R.drawable.leprocy,
             resources.getString(R.string.icon_title_leprosy),
             recordsRepo.tbScreeningListCount,
             DiseaseControlFragmentDirections.actionDiseaseControlFragmentToAllHouseHoldDiseaseControlFragment(
@@ -545,7 +547,7 @@ class IconDataset @Inject constructor(
 
     fun getImmunizationDataset() = listOf(
         Icon(
-            R.drawable.ic__immunization,
+            R.drawable.ic_vaccines,
             "Child Immunization",
             recordsRepo.childrenImmunizationListCount,
             ImmunizationDueTypeFragmentDirections.actionImmunizationDueTypeFragmentToChildImmunizationListFragment()
@@ -591,12 +593,12 @@ class IconDataset @Inject constructor(
 
     fun getMalariaDataset(resources: Resources) = listOf(
         Icon(
-            R.drawable.ic__ncd_eligibility,
+            R.drawable.malaria_list,
             resources.getString(R.string.icon_title_maleria),
             recordsRepo.tbScreeningListCount,
             MalariaIconsFragmentDirections.actionMalariaIconsFragmentToAllHouseHoldDiseaseControlFragment(Disease.MALARIA.toString())
         ), Icon(
-            R.drawable.ic__death,
+            R.drawable.confirmed,
             resources.getString(R.string.icon_title_malaria_confirmed),
             recordsRepo.malariaConfirmedCasesListCount,
             MalariaIconsFragmentDirections.actionMalariaIconsFragmentToConfirmedMalariaLIstFragment()

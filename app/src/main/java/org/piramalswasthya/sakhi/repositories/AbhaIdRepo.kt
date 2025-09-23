@@ -251,11 +251,13 @@ class AbhaIdRepo @Inject constructor(
                     sendErrorResponse(response)
                 }
             } catch (e: IOException) {
-                NetworkResult.Error(-1, "Unable to connect to Internet!")
+//                NetworkResult.Error(-1, "Unable to connect to Internet!")
+                NetworkResult.NetworkError
             } catch (e: JSONException) {
                 NetworkResult.Error(-2, "Invalid response! Please try again!")
             } catch (e: SocketTimeoutException) {
-                NetworkResult.Error(-3, "Request Timed out! Please try again!")
+//                NetworkResult.Error(-3, "Request Timed out! Please try again!")
+                NetworkResult.NetworkError
             } catch (e: java.lang.Exception) {
                 e.printStackTrace()
                 NetworkResult.Error(-4, e.message ?: "Unknown Error")

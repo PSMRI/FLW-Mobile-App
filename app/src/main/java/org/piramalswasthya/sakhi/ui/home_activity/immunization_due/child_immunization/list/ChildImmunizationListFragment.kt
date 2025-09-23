@@ -17,15 +17,12 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.BenChildImmunizationListAdapter
-import org.piramalswasthya.sakhi.adapters.ImmunizationBenListAdapter
-//import org.piramalswasthya.sakhi.adapters.ImmunizationBenListAdapter
 import org.piramalswasthya.sakhi.adapters.ImmunizationBirthDoseCategoryAdapter
 import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentChildImmunizationListBinding
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
-import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -62,12 +59,28 @@ class ChildImmunizationListFragment : Fragment(),ImmunizationBirthDoseCategoryAd
 
         binding.rvCat.adapter = ImmunizationBirthDoseCategoryAdapter(viewModel.categoryData(),this,viewModel)
 
+
+
         binding.rvList.adapter =
-            BenChildImmunizationListAdapter(BenChildImmunizationListAdapter.VaccinesClickListener {
+            BenChildImmunizationListAdapter(
+                clickListener = BenChildImmunizationListAdapter.VaccinesClickListener ({
                 viewModel.updateBottomSheetData(it)
                 if (!bottomSheet.isVisible)
                     bottomSheet.show(childFragmentManager, "ImM")
-            })
+            } , {
+                    try {
+                        val callIntent = Intent(Intent.ACTION_CALL)
+                        callIntent.setData(Uri.parse("tel:${it.mobileNo}"))
+                        startActivity(callIntent)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        activity?.let {
+                            (it as HomeActivity).askForPermissions()
+                        }
+                        Toast.makeText(requireContext(), "Please allow permissions first", Toast.LENGTH_SHORT).show()
+                    }
+            }),
+            )
 
 //        ImmunizationBenListAdapter(
 //            ImmunizationBenListAdapter.VaccinesClickListener(clickedVaccine = {
@@ -144,12 +157,12 @@ class ChildImmunizationListFragment : Fragment(),ImmunizationBirthDoseCategoryAd
         activity?.let {
             if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
                 (it as HomeActivity).updateActionBar(
-                    R.drawable.ic__immunization,
+                    R.drawable.ic_vaccines,
                     getString(R.string.child_immunization_list)
                 )
             } else {
                 (it as SupervisorActivity).updateActionBar(
-                    R.drawable.ic__immunization,
+                    R.drawable.ic_vaccines,
                     getString(R.string.child_immunization_list)
                 )
             }

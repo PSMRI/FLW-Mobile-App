@@ -29,10 +29,28 @@
             android:singleLine="true" />
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/ib_download"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            tools:visibility="gone"
+            android:background="?attr/colorPrimary">
+            <ImageView
+                android:id="@+id/ib_download_im"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                tools:visibility="visible"
+                android:paddingHorizontal="12dp"
+                android:src="@drawable/ic_download"
+                app:tint="#ffffff"
+                android:background="?attr/colorPrimary"
+                />
+        </androidx.cardview.widget.CardView>
+        <androidx.cardview.widget.CardView
             android:id="@+id/ib_search"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             tools:visibility="visible"
+            android:layout_marginStart="4dp"
             android:background="?attr/colorPrimary">
             <ImageView
                 android:id="@+id/ib_search_im"

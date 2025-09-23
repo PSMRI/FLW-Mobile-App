@@ -52,9 +52,9 @@ class MalariaSuspectedListFragment : Fragment() {
         } else {
             binding.switchButton.visibility = View.GONE
         }
-        binding.switchButton.text = if (binding.switchButton.isChecked) "ON" else "OFF"
+        binding.switchButton.text = if (binding.switchButton.isChecked) "IRS ON" else "IRS OFF"
         binding.switchButton.setOnCheckedChangeListener { _, isChecked ->
-            binding.switchButton.text = if (isChecked) "ON" else "OFF"
+            binding.switchButton.text = if (isChecked) "IRS ON" else "IRS OFF"
             binding.llContent.visibility = if (isChecked) View.VISIBLE else View.GONE
         }
 
@@ -82,6 +82,13 @@ class MalariaSuspectedListFragment : Fragment() {
             }
         }
 
+        irsViewModel.checkSubmitButtonVisibility()
+
+        lifecycleScope.launchWhenStarted {
+            irsViewModel.isSubmitVisible.collect { isVisible ->
+                binding.btnSubmit.isEnabled = if (isVisible) true else false
+            }
+        }
 
 
         val irsListAdapter = IrsRoundListAdapter()

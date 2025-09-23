@@ -418,8 +418,47 @@ class HRPNonPregnantTrackDataset(
                 1
             }
 
+            systolic.id->{
+                validateInput(systolic)
+                1
+            }
+            diastolic.id->{
+                validateInput(diastolic)
+                1
+            }
+            rbg.id->{
+                validateInput(rbg)
+                1
+            }
+            fbg.id->{
+                validateInput(fbg)
+                1
+            }
+            ppbg.id->{
+                validateInput(ppbg)
+                1
+            }
+            hemoglobinTest.id->{
+                validateInput(hemoglobinTest)
+                1
+            }
+
+
             else -> -1
         }
+    }
+
+    private fun validateInput(formElement: FormElement): Int {
+        formElement.errorText = if (formElement.value.isNullOrEmpty()){
+            resources.getString(
+                R.string.form_input_empty_error
+            )
+
+        }else{
+            null
+        }
+
+        return -1
     }
 
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {

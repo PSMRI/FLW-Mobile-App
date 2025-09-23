@@ -117,7 +117,7 @@ class FormInputAdapterWithBgIcon (
                 binding.et.isFocusable = true
             }
             val param = binding.tilEditText.layoutParams as ViewGroup.MarginLayoutParams
-            param.setMargins(60,0,0,0)
+//            param.setMargins(40,0,0,0)
             binding.tilEditText.layoutParams = param
             binding.form = item
             if (item.errorText == null) binding.tilEditText.isErrorEnabled = false

@@ -10,6 +10,7 @@ import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.RvItemPregnancyVisitBinding
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.model.BenWithAncListDomain
+import org.piramalswasthya.sakhi.utils.HelperUtil
 import java.util.concurrent.TimeUnit
 
 class AncVisitListAdapter(private val clickListener: PregnancyVisitClickListener? = null,
@@ -53,11 +54,16 @@ class AncVisitListAdapter(private val clickListener: PregnancyVisitClickListener
 
             if (item.ancDate == 0L) {
                 binding.ivFollowState.visibility = View.GONE
+                binding.llBenPwrTrackingDetails4.visibility = View.GONE
             } else if (item.ancDate < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(90) &&
                 item.ancDate > System.currentTimeMillis() - TimeUnit.DAYS.toMillis(365)) {
                 binding.ivFollowState.visibility = View.VISIBLE
+                binding.llBenPwrTrackingDetails4.visibility = View.VISIBLE
+                binding.benVisitDate.text = HelperUtil.getDateStringFromLongStraight(item.ancDate)
             } else {
                 binding.ivFollowState.visibility = View.GONE
+                binding.llBenPwrTrackingDetails4.visibility = View.VISIBLE
+                binding.benVisitDate.text = HelperUtil.getDateStringFromLongStraight(item.ancDate)
             }
 
             if (showCall) {

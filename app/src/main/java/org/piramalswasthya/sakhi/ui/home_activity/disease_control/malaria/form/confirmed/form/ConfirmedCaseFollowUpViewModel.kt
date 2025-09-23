@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.ui.home_activity.disease_control.malaria.form.confirmed.form
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -17,6 +18,7 @@ import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.MalariaConfirmedCasesCache
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.MalariaRepo
+import org.piramalswasthya.sakhi.repositories.RecordsRepo
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -26,8 +28,10 @@ class ConfirmedCaseFollowUpViewModel @Inject constructor(
     preferenceDao: PreferenceDao,
     @ApplicationContext context: Context,
     private val malariaRepo: MalariaRepo,
-    private val benRepo: BenRepo
+    private val benRepo: BenRepo,
+    private val recordsRepo: RecordsRepo,
 ) : ViewModel() {
+    private var slideTest: String? = "Pv"
     val benId =
         ConfirmedCaseFollowUpFormFragmentArgs.fromSavedStateHandle(savedStateHandle).benId
 
@@ -77,10 +81,18 @@ class ConfirmedCaseFollowUpViewModel @Inject constructor(
                 _recordExists.value = false
             }
 
-            dataset.setUpPage(
-                ben,
-                if (recordExists.value == true) malariaConfirmedCasesCache else null
-            )
+            viewModelScope.launch {
+                recordsRepo.malariaConfirmedCasesList.collect { list ->
+                    val item = list.find { it.ben.benId == benId }
+                    val slide = item?.slideTestName ?: "Pv"
+
+                    dataset.setUpPage(
+                        ben,
+                        slide,
+                        if (_recordExists.value == true) malariaConfirmedCasesCache else null
+                    )
+                }
+            }
 
         }
     }

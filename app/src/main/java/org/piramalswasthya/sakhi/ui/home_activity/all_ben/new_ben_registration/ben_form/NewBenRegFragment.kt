@@ -431,7 +431,7 @@ class NewBenRegFragment : Fragment() {
                         Toast.LENGTH_LONG
                     ).show()
                     WorkerUtils.triggerAmritPushWorker(requireContext())
-                    if (viewModel.isHoFMarried()) {
+                    if (viewModel.isHoFMarried() && !viewModel.isBenMarried) {
                         showAddSpouseAlert()
                     } else {
                         findNavController().navigateUp()

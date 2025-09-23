@@ -36,7 +36,7 @@
     <string name="cd_icon_grid_icon">চিহ্ন</string>
     <string name="nav_item_1_text">নাম : <b>%s</b></string>
     <string name="nav_item_2_text">ব্যৱহাৰকাৰী : <b>%s</b></string>
-    <string name="nav_item_3_text">ব্যৱহাৰকাৰী আইডি :  <b>%d</b></string>
+    <string name="nav_item_3_text">ব্যৱহাৰকাৰী আইডি :  <b>%s</b></string>
     <string name="nav_item_4_text">ভাৰ্সন : %s</string>
     <string name="tv_required_text_asterisk">*</string>
     <string name="rv_item_hh_entry_1">%1$d</string>
