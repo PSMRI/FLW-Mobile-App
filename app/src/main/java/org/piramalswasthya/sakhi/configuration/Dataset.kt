@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
 import android.content.res.Resources
+import android.util.Log
 import android.util.Range
 import androidx.annotation.StringRes
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -143,7 +144,10 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
     }
 
     protected fun FormElement.getEnglishStringFromPosition(position: Int): String? {
-        return if (position <= 0) null else englishResources.getStringArray(arrayId)[position - 1]
+        return if (position <= 0) null else {
+            val array = englishResources.getStringArray(arrayId)
+            return if (position in 1..array.size) array[position - 1] else null
+        }
     }
 
 
@@ -173,9 +177,13 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
 
     protected suspend fun setUpPage(mList: List<FormElement>) {
 
-        list.clear()
-        list.addAll(mList)
-        _listFlow.emit(list.toMutableList())
+        try {
+            list.clear()
+            list.addAll(mList)
+            _listFlow.emit(list.toMutableList())
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
 
@@ -747,7 +755,7 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
         return -1
     }
 
-    protected fun validateIntMinMax(formElement: FormElement): Int {
+   /* protected fun validateIntMinMax(formElement: FormElement): Int {
         formElement.errorText = formElement.value?.takeIf { it.isNotEmpty() }?.toLong()?.let {
             formElement.min?.let { min ->
                 formElement.max?.let { max ->
@@ -764,14 +772,43 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
             }
         }
         return -1
+    }*/
+
+    protected fun validateIntMinMax(formElement: FormElement): Int {
+        val inputValue = formElement.value
+
+        val longValue = inputValue?.takeIf { it.isNotEmpty() }?.toLongOrNull()
+
+        formElement.errorText = if (longValue == null) {
+            null
+        } else {
+            formElement.min?.let { min ->
+                formElement.max?.let { max ->
+                    when {
+                        longValue < min -> resources.getString(
+                            R.string.form_input_min_limit_error, formElement.title, min
+                        )
+
+                        longValue > max -> resources.getString(
+                            R.string.form_input_max_limit_error, formElement.title, max
+                        )
+
+                        else -> null
+                    }
+                }
+            }
+        }
+
+        return -1
     }
+
 
     protected fun validateDoubleMinMax(formElement: FormElement): Int {
         formElement.errorText = formElement.value?.takeIf { it.isNotEmpty() }?.let {
             if (it.first() == '.')
                 "0$it"
             else it
-        }?.toDouble()?.let {
+        }?. toDoubleOrNull()?.let {
             formElement.minDecimal?.let { min ->
                 formElement.maxDecimal?.let { max ->
                     if (it < min) {
@@ -816,7 +853,7 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
 
 
     protected fun validateMobileNumberOnEditText(formElement: FormElement): Int {
-        formElement.errorText = formElement.value?.takeIf { it.isNotEmpty() }?.toLong()?.let {
+        formElement.errorText = formElement.value?.takeIf { it.isNotEmpty() }?.toLongOrNull()?.let {
             if (it < 6_000_000_000L || it == 6666666666L || it == 7777777777L || it == 8888888888L
                 || it == 9999999999L
             ) resources.getString(R.string.form_input_error_invalid_mobile) else null
@@ -862,15 +899,19 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
     }
 
     protected fun validateWeightOnEditText(formElement: FormElement): Int {
-
         formElement.value?.takeIf { it.isNotEmpty() }?.let {
-            if (it.all { it == '0' })
+            if (it.all { it == '0' }) {
                 formElement.errorText = "Weight Cannot be 0"
-            else if(it.toInt() > 7000)
-                formElement.errorText = "Weight Should not be greater than 7000 gram"
-            else
-                formElement.errorText = null
-        } ?: kotlin.run { formElement.errorText = null }
+            } else {
+                val weight = it.toIntOrNull()
+                if (weight != null && weight > 7000)
+                    formElement.errorText = "Weight Should not be greater than 7000 gram"
+                else
+                    formElement.errorText = null
+            }
+        } ?: run {
+            formElement.errorText = null
+        }
         return -1
     }
 
@@ -954,21 +995,47 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
         return dob.timeInMillis
     }
 
+
     fun getLocalValueInArray(arrayId: Int, entry: String?): String? {
-        return if (entry.isNullOrEmpty()) {
-            null
+        if (entry.isNullOrEmpty()) return null
+
+        val englishArray = englishResources.getStringArray(arrayId)
+        val localizedArray = resources.getStringArray(arrayId)
+        val index = englishArray.indexOf(entry)
+
+        return if (index in englishArray.indices) {
+            localizedArray[index]
         } else {
-            resources.getStringArray(arrayId)[englishResources.getStringArray(arrayId)
-                .indexOf(entry)]
+            // Optional: log and gracefully fail
+            Log.w("Dataset", "Entry '$entry' not found in English array for ID $arrayId")
+            null
         }
     }
 
+
+
+    /*  fun getLocalValueInArray(arrayId: Int, entry: String?): String? {
+          return if (entry.isNullOrEmpty()) {
+              null
+          } else {
+              resources.getStringArray(arrayId)[englishResources.getStringArray(arrayId)
+                  .indexOf(entry)]
+          }
+      }*/
+
     fun getEnglishValueInArray(arrayId: Int, entry: String?): String? {
-        entry?.let {
-            return englishResources.getStringArray(arrayId)[resources.getStringArray(arrayId)
-                .indexOf(it)]
+        if (entry.isNullOrEmpty()) return null
+
+        val localizedArray = resources.getStringArray(arrayId)
+        val englishArray = englishResources.getStringArray(arrayId)
+        val index = localizedArray.indexOf(entry)
+
+        return if (index in localizedArray.indices) {
+            englishArray[index]
+        } else {
+            Log.w("Dataset", "Entry '$entry' not found in localized array for ID $arrayId")
+            null
         }
-        return null
     }
 
     fun isValidChildGap(formElement: FormElement, firstDobStr: String?/*, secondDobStr: String?*/): Int {

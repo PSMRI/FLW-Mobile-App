@@ -10,13 +10,20 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.configuration.AshaProfileDataset
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.model.BenRegCache
+import org.piramalswasthya.sakhi.model.HouseHoldBasicDomain
+import org.piramalswasthya.sakhi.model.HouseholdCache
 import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.model.ProfileActivityCache
 import org.piramalswasthya.sakhi.repositories.AshaProfileRepo
+import org.piramalswasthya.sakhi.repositories.HouseholdRepo
+import org.piramalswasthya.sakhi.repositories.RecordsRepo
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -27,7 +34,15 @@ class AshaProfileViewModel @Inject constructor(
     preferenceDao: PreferenceDao,
     @ApplicationContext var context: Context,
     private val ashaProfileRepo: AshaProfileRepo,
+    private val householdRepo: HouseholdRepo,
+    recordsRepo: RecordsRepo
 ) : ViewModel() {
+
+    private val filter = MutableStateFlow("")
+
+    val householdList = recordsRepo.hhList.combine(filter) { list, _ ->
+        list.take(1)
+    }
 
     val currentUser = preferenceDao.getLoggedInUser()
     enum class State {
@@ -62,6 +77,18 @@ class AshaProfileViewModel @Inject constructor(
     private var lastImageFormId: Int = 0
 
 
+    private var _selectedHouseholdId: Long = 0
+
+    private val _householdBenList = mutableListOf<BenRegCache>()
+    val householdBenList: List<BenRegCache>
+        get() = _householdBenList
+
+    val selectedHouseholdId: Long
+        get() = _selectedHouseholdId
+
+    private var _selectedHousehold: HouseholdCache? = null
+    val selectedHousehold: HouseholdCache?
+        get() = _selectedHousehold
     init {
         viewModelScope.launch {
             val asha = preferenceDao.getLoggedInUser()!!
@@ -128,4 +155,23 @@ class AshaProfileViewModel @Inject constructor(
         dataset.setImageUriToFormElement(lastImageFormId, dpUri)
 
     }
+
+
+
+    fun setSelectedHouseholdId(id: Long) {
+        _selectedHouseholdId = id
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                _selectedHousehold = householdRepo.getRecord(id)
+            }
+            _householdBenList.clear()
+            _householdBenList.addAll(householdRepo.getAllBenOfHousehold(id))
+        }
+    }
+
+    fun resetSelectedHouseholdId() {
+        _selectedHouseholdId = 0
+        _householdBenList.clear()
+    }
+
 }

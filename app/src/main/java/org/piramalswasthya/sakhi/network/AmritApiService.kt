@@ -67,23 +67,23 @@ interface AmritApiService {
 //    @POST("tb/screening/saveAll")
     suspend fun saveTBScreeningData(@Body tbScreeningRequestDTO: TBScreeningRequestDTO): Response<ResponseBody>
 
-    @POST("flw-api/disease/KalaAzar/saveAll")
+    @POST("flw-api/disease/kalaAzar/saveAll")
     suspend fun saveKalaAzarScreeningData(@Body kalaAzarScreenRequestDTO: KalaAzarScreeningRequestDTO): Response<ResponseBody>
 
-    @POST("flw-api/disease/Malaria/saveAll")
+    @POST("flw-api/disease/malaria/saveAll")
     suspend fun saveMalariaScreeningData(@Body malariaScreeningRequestDTO: MalariaScreeningRequestDTO): Response<ResponseBody>
 
-    @POST("flw-api/disease/Leprosy/saveAll")
+    @POST("flw-api/disease/leprosy/saveAll")
     suspend fun saveLeprosyScreeningData(@Body leprosyScreeningRequestDTO: LeprosyScreeningRequestDTO): Response<ResponseBody>
 
 
-    @POST("flw-api/disease/AesJe/saveAll")
+    @POST("flw-api/disease/aesJe/saveAll")
     suspend fun saveAESScreeningData(@Body aesScreeningRequestDTO: AESScreeningRequestDTO): Response<ResponseBody>
 
-    @POST("flw-api/disease/Filaria/saveAll")
+    @POST("flw-api/disease/filaria/saveAll")
     suspend fun saveFilariaScreeningData(@Body filariaScreeningRequestDTO: FilariaScreeningRequestDTO): Response<ResponseBody>
 
-    @POST("flw-api/disease/getAll")
+    @POST("flw-api/disease/getAllDisease")
     suspend fun getMalariaScreeningData(@Body userDetail: GetDataPaginatedRequestForDisease): Response<ResponseBody>
 
     @GET("flw-api/irsRound/list")

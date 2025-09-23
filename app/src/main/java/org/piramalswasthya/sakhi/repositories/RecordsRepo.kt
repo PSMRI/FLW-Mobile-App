@@ -38,6 +38,10 @@ class RecordsRepo @Inject constructor(
         benDao.getAllBenWithoutAbha(selectedVillage).map { list -> list.map { it.asBasicDomainModel() } }
     val allBenWithAbhaList =
         benDao.getAllBenWithAbha(selectedVillage).map { list -> list.map { it.asBasicDomainModel() } }
+//    val allBenWithNewAbhaList =
+//        benDao.getAllBenWithNewAbha(selectedVillage).map { list -> list.map { it.asBasicDomainModel() } }
+//    val allBenWithOldAbhaList =
+//        benDao.getAllBenWithOldAbha(selectedVillage).map { list -> list.map { it.asBasicDomainModel() } }
     val benWithAbhaListCount = benDao.getAllBenWithAbhaCount(selectedVillage)
     val allBenWithRchList =
         benDao.getAllBenWithRch(selectedVillage).map { list -> list.map { it.asBasicDomainModel() } }
@@ -85,6 +89,7 @@ class RecordsRepo @Inject constructor(
         .map { list -> list.map { it.asAESScreeningDomainModel() } }
 
     fun iRSRoundList(hhId:Long) = benDao.getAllIRSRoundBen(hhId = hhId)
+    fun getLastIRSRoundBen(hhId:Long) = benDao.getLastIRSRoundBen(hhId = hhId)
 
 
     fun KalazarScreeningList(hhId:Long) = benDao.getAllKALAZARScreeningBen(selectedVillage, hhId = hhId)

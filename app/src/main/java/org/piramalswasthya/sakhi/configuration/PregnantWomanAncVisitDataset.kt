@@ -152,8 +152,8 @@ class PregnantWomanAncVisitDataset(
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
         etMaxLength = 3,
         title = "Pulse Rate",
-        min = 1,
-        max = 999,
+        min = 40,
+        max = 200,
         required = false,
         showDrawable = true,
         backgroundDrawable=R.drawable.ic_bg_circular,
@@ -409,9 +409,6 @@ class PregnantWomanAncVisitDataset(
             ancDate,
             weekOfPregnancy,
             ancVisit,
-            headLine,
-            fileUploadFront,
-            fileUploadBack,
             isAborted,
             weight,
             bp,
@@ -428,7 +425,10 @@ class PregnantWomanAncVisitDataset(
             anyHighRisk,
             highRiskReferralFacility,
             hrpConfirm,
-            maternalDeath
+            maternalDeath,
+            headLine,
+            fileUploadFront,
+            fileUploadBack,
 
 
         )
@@ -479,7 +479,8 @@ class PregnantWomanAncVisitDataset(
                 val long = getLongFromDate(it)
                 val weeks = getWeeksOfPregnancy(long, regis.lmpDate)
                 if (weeks >= Konstants.minWeekToShowDelivered) {
-                    list.add(deliveryDone)
+                    list.add(list.indexOf(maternalDeath) + 1,deliveryDone)
+
                 }
                 if (weeks <= 12) {
                     list.remove(fundalHeight)
@@ -503,7 +504,7 @@ class PregnantWomanAncVisitDataset(
                 list.remove(numFolicAcidTabGiven)
             }
             if (woP >= Konstants.minWeekToShowDelivered) {
-                if (!list.contains(deliveryDone)) list.add(deliveryDone)
+                if (!list.contains(deliveryDone)) list.add(list.indexOf(maternalDeath) + 1,deliveryDone)
             }
             ancDate.value = getDateFromLong(savedAnc.ancDate)
             weekOfPregnancy.value = woP.toString()

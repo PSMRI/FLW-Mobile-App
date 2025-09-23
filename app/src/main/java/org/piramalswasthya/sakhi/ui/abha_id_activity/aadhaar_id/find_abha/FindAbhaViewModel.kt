@@ -86,11 +86,23 @@ class FindAbhaViewModel @Inject constructor(
                 }
 
                 is NetworkResult.Error -> {
-                    _errorMessage.value = result.message
-                    _state.value = AadhaarIdViewModel.State.ERROR_SERVER
+                    if (result.code == -1) {
+                        _errorMessage.value = "Internet connectivity issue, try again later"
+                        Timber.i(result.toString())
+                        _state.value = AadhaarIdViewModel.State.ERROR_NETWORK
+                    } else if (result.code == -4) {
+                        _errorMessage.value = "Some error occurred"
+//                    _errorMessage.value = result.message
+                        _state.value = AadhaarIdViewModel.State.ERROR_SERVER
+                    } else {
+                        _errorMessage.value = "No ABHA Found"
+//                    _errorMessage.value = result.message
+                        _state.value = AadhaarIdViewModel.State.ERROR_SERVER
+                    }
                 }
 
                 is NetworkResult.NetworkError -> {
+                    _errorMessage.value = "Network Issue"
                     Timber.i(result.toString())
                     _state.value = AadhaarIdViewModel.State.ERROR_NETWORK
                 }

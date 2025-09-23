@@ -163,6 +163,17 @@ class KalaAzarFormDataset(
                 else if (saved.rapidDiagnosticTest == "Negative") resources.getStringArray(R.array.positive_negative)[1]
                 else resources.getStringArray(R.array.positive_negative)[2]
 
+            if (saved.kalaAzarCaseStatus == "Suspected") {
+                caseStatus.entries = resources.getStringArray(R.array.dc_case_status)
+                    .filter { it == "Confirmed" || it == "Not Confirmed" }
+                    .toTypedArray()
+            } else if (saved.kalaAzarCaseStatus == "Confirmed") {
+                caseStatus.entries = resources.getStringArray(R.array.dc_case_status)
+                    .filter { it == "Treatment Started"}
+                    .toTypedArray()
+            } else {
+                caseStatus.entries = resources.getStringArray(R.array.dc_case_status)
+            }
             if (saved.kalaAzarCaseStatus != null) {
                 caseStatus.value =
                     getLocalValueInArray(R.array.dc_case_status, saved.kalaAzarCaseStatus)
@@ -225,9 +236,6 @@ class KalaAzarFormDataset(
         }
 
 
-        ben?.let {
-            dateOfCase.min = it.regDate
-        }
         setUpPage(list)
 
     }
@@ -254,6 +262,10 @@ class KalaAzarFormDataset(
                     )
                 }
                 0
+            }
+
+            other.id -> {
+                validateEmptyOnEditText(other)
             }
 
             referredTo.id -> {
@@ -288,6 +300,10 @@ class KalaAzarFormDataset(
                     )
                 }
                 0
+            }
+
+            otherPlaceOfDeath.id -> {
+                validateEmptyOnEditText(otherPlaceOfDeath)
             }
 
             rapidDiagnostic.id -> {
@@ -344,6 +360,9 @@ class KalaAzarFormDataset(
                     )
                 }
                 0
+            }
+            otherReasonOfDeath.id -> {
+                validateEmptyOnEditText(otherReasonOfDeath)
             }
 
             else -> {

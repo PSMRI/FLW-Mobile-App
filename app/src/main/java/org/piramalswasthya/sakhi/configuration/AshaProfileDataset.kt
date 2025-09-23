@@ -258,18 +258,18 @@ class AshaProfileDataset(
 
 
     )
-    private val  ashaHouseholdRegistrationNo = FormElement(
-        id = 24,
-        inputType = InputType.TEXT_VIEW,
-        title = "Asha Household registration",
-        required = false,
-    )
-    private val  ashaFamilymember = FormElement(
-        id = 25,
-        inputType = InputType.EDIT_TEXT,
-        title = "Asha Family member",
-        required = false,
-    )
+//    private val  ashaHouseholdRegistrationNo = FormElement(
+//        id = 24,
+//        inputType = InputType.TEXT_VIEW,
+//        title = "Asha Household registration",
+//        required = false,
+//    )
+//    private val  ashaFamilymember = FormElement(
+//        id = 25,
+//        inputType = InputType.EDIT_TEXT,
+//        title = "Asha Family member",
+//        required = false,
+//    )
 
 
     suspend fun setUpPage(
@@ -302,16 +302,16 @@ class AshaProfileDataset(
             mobileNoOfANM1,
             nameOfANM2,
             mobileNoOfANM2,
-            abhaNumber,
-            ashaHouseholdRegistrationNo,
-            ashaFamilymember
+            abhaNumber
+//            ashaHouseholdRegistrationNo,
+//            ashaFamilymember
 
 
         )
 
         ashaName.value = ashaProfile?.name
         pic.value = ashaProfile?.profileImage
-        village.value = ashaProfile?.village
+        village.value = currentUser.villages[0].name
         loginuserName.value = currentUser.userName
         userId.value = ashaProfile?.employeeId.toString()
         mobileNumber.value = ashaProfile?.mobileNumber.toString()
@@ -335,8 +335,8 @@ class AshaProfileDataset(
         nameOfANM2.value = ashaProfile?.anm2Name.toString()
         mobileNoOfANM2.value = ashaProfile?.anm2Mobile.toString()
         abhaNumber.value = ashaProfile?.abhaNumber.toString()
-        ashaHouseholdRegistrationNo.value = ashaProfile?.ashaHouseholdRegistration.toString()
-        ashaFamilymember.value = ashaProfile?.ashaFamilyMember.toString()
+//        ashaHouseholdRegistrationNo.value = ashaProfile?.ashaHouseholdRegistration.toString()
+//        ashaFamilymember.value = ashaProfile?.ashaFamilyMember.toString()
         setUpPage(list)
 
     }
@@ -431,30 +431,30 @@ class AshaProfileDataset(
     suspend fun mapProfileValues(cacheModel: ProfileActivityCache,context: Context){
         (cacheModel).let { dataModel ->
             dataModel.name = ashaName.value
-            dataModel.profileImage = pic.value
-            dataModel.village = village.value
-            dataModel.dob = dateReverseFormat(dob.value.toString())
+            dataModel.profileImage = pic.value.toString()
+            dataModel.village = village.value.toString()
+            dataModel.dob = dateReverseFormat(dob.value.toString()).toString()
             dataModel.age = ages.value!!.toInt()
-            dataModel.mobileNumber = mobileNumber.value
-            dataModel.alternateMobileNumber = alternameMobileNumber.value
-            dataModel.fatherOrSpouseName = spouseOrFatherNameEdt.value
-            dataModel.supervisorName = ashaSupervisorName.value
-            dataModel.supervisorMobile = ashaSupervisorContactNumber.value
-            dataModel.dateOfJoining = dateOfJoining.value
-            dataModel.bankAccount = bankAccount.value
-            dataModel.ifsc = Ifsc.value
-            dataModel.populationCovered = populationCovered.value?.takeIf { it.isNotEmpty() }?.toIntOrNull()
-            dataModel.choName = ChoName.value
-            dataModel.choMobile = ChoMobileNo.value
-            dataModel.awwName = nameOfAWW.value
-            dataModel.awwMobile = mobieNoOfAWW.value
-            dataModel.anm1Name = nameOfANM1.value
-            dataModel.anm1Mobile = mobileNoOfANM1.value
-            dataModel.anm2Name = nameOfANM2.value
-            dataModel.anm2Mobile = mobileNoOfANM2.value
-            dataModel.abhaNumber = abhaNumber.value
-            dataModel.ashaHouseholdRegistration = ashaHouseholdRegistrationNo.value
-            dataModel.ashaFamilyMember = ashaFamilymember.value
+            dataModel.mobileNumber = mobileNumber.value.toString()
+            dataModel.alternateMobileNumber = alternameMobileNumber.value.toString()
+            dataModel.fatherOrSpouseName = spouseOrFatherNameEdt.value.toString()
+            dataModel.supervisorName = ashaSupervisorName.value.toString()
+            dataModel.supervisorMobile = ashaSupervisorContactNumber.value.toString()
+            dataModel.dateOfJoining = dateOfJoining.value.toString()
+            dataModel.bankAccount = bankAccount.value.toString()
+            dataModel.ifsc = Ifsc.value.toString()
+            dataModel.populationCovered = populationCovered.value?.takeIf { it.isNotEmpty() }?.toIntOrNull()!!
+            dataModel.choName = ChoName.value.toString()
+            dataModel.choMobile = ChoMobileNo.value.toString()
+            dataModel.awwName = nameOfAWW.value.toString()
+            dataModel.awwMobile = mobieNoOfAWW.value.toString()
+            dataModel.anm1Name = nameOfANM1.value.toString()
+            dataModel.anm1Mobile = mobileNoOfANM1.value.toString()
+            dataModel.anm2Name = nameOfANM2.value.toString()
+            dataModel.anm2Mobile = mobileNoOfANM2.value.toString()
+            dataModel.abhaNumber = abhaNumber.value.toString()
+//            dataModel.ashaHouseholdRegistration = ashaHouseholdRegistrationNo.value.toString()
+//            dataModel.ashaFamilyMember = ashaFamilymember.value.toString()
             dataModel.isFatherOrSpouse = when (fatherOrspouse.value) {
                 fatherOrspouse.entries!![0] -> true
                 fatherOrspouse.entries!![1] -> false

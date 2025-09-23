@@ -124,7 +124,7 @@ class LeprosyFormDataset(
         inputType = InputType.DATE_PICKER,
         title = resources.getString(R.string.follow_up_date),
         arrayId = -1,
-        required = true,
+        required = false,
         max = System.currentTimeMillis(),
         min = System.currentTimeMillis() - (90L * 24 * 60 * 60 * 1000),
         hasDependants = true
@@ -175,10 +175,13 @@ class LeprosyFormDataset(
                 list.add(list.indexOf(beneficiaryStatus) + 1, leprosyStatus)
                 list.add(list.indexOf(beneficiaryStatus) + 2, typeOfLeprosy)
                 list.add(list.indexOf(beneficiaryStatus) + 3, followUpdate)
-                list.add(list.indexOf(beneficiaryStatus) + 4, referredTo)
-                list.add(list.indexOf(beneficiaryStatus) + 5, remarks)
+                list.add(list.indexOf(beneficiaryStatus) + 4, remarks)
                 remarks.value = saved.remarks
                 leprosyStatus.value = getLocalValueInArray(leprosyStatus.arrayId, saved.leprosyStatus)
+                if (leprosyStatus.value == leprosyStatus.entries!![leprosyStatus.entries!!.size-3]) {
+                    list.add(list.indexOf(leprosyStatus) + 1, referredTo)
+
+                }
                 typeOfLeprosy.value = getLocalValueInArray(typeOfLeprosy.arrayId, saved.typeOfLeprosy)
 
             }
@@ -198,9 +201,7 @@ class LeprosyFormDataset(
         }
 
 
-        ben?.let {
-            dateOfCase.min = it.regDate
-        }
+
         setUpPage(list)
 
     }
@@ -218,13 +219,32 @@ class LeprosyFormDataset(
                 } else {
                     triggerDependants(
                         source = beneficiaryStatus,
-                        addItems = listOf(leprosyStatus,referredTo,typeOfLeprosy,followUpdate,
+                        addItems = listOf(leprosyStatus,typeOfLeprosy,followUpdate,
                             remarks),
                         removeItems = listOf(dateOfDeath,placeOfDeath,reasonOfDeath,otherPlaceOfDeath,otherReasonOfDeath)
                     )
                 }
                 0
             }
+
+
+            leprosyStatus.id -> {
+                if (leprosyStatus.value == leprosyStatus.entries!![leprosyStatus.entries!!.size-3]) {
+                    triggerDependants(
+                        source = leprosyStatus,
+                        addItems = listOf(referredTo),
+                        removeItems = listOf()
+                    )
+                } else {
+                    triggerDependants(
+                        source = leprosyStatus,
+                        addItems = listOf(),
+                        removeItems = listOf(referredTo)
+                    )
+                }
+                0
+            }
+
             referredTo.id -> {
                 if (referredTo.value == referredTo.entries!!.last()) {
                     triggerDependants(
@@ -241,6 +261,8 @@ class LeprosyFormDataset(
                 }
                 0
             }
+
+
 
             placeOfDeath.id -> {
                 if (placeOfDeath.value == placeOfDeath.entries!!.last()) {
@@ -273,6 +295,18 @@ class LeprosyFormDataset(
                     )
                 }
                 0
+            }
+
+            other.id -> {
+                validateEmptyOnEditText(other)
+            }
+
+            otherReasonOfDeath.id -> {
+                validateEmptyOnEditText(otherReasonOfDeath)
+            }
+            otherPlaceOfDeath.id -> {
+                validateEmptyOnEditText(otherPlaceOfDeath)
+
             }
 
             else -> {

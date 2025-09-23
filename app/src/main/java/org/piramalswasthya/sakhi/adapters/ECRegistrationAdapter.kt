@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.databinding.RvItemBenEcWithFormBinding
 import org.piramalswasthya.sakhi.model.BenWithEcrDomain
+import org.piramalswasthya.sakhi.utils.HelperUtil
 import java.util.concurrent.TimeUnit
 
 class ECRegistrationAdapter(
@@ -43,15 +44,28 @@ class ECRegistrationAdapter(
             clickListener: ClickListener?,
         ) {
             binding.benWithEcr = item
+            
+            if (item.ecr == null) {
+                binding.llLmpDate.visibility = View.INVISIBLE
+                binding.llBenStatus.visibility = View.INVISIBLE
+            } else {
+                binding.llLmpDate.visibility = View.VISIBLE
+                binding.llBenStatus.visibility = View.VISIBLE
+            }
 
             if (item.ecr?.lmpDate != null && item.ecr.lmpDate != 0L) {
+                binding.benLmpDate.text = HelperUtil.getDateStringFromLongStraight(item.ecr.lmpDate)
                 if (System.currentTimeMillis() - item.ecr.lmpDate > TimeUnit.DAYS.toMillis(35)) {
                     binding.ivMissState.visibility = View.VISIBLE
+                    binding.benStatus.text = "Missed Period"
                 } else {
                     binding.ivMissState.visibility = View.GONE
+                    binding.benStatus.text = "Under Review"
                 }
             } else {
                 binding.ivMissState.visibility = View.GONE
+                binding.llLmpDate.visibility = View.INVISIBLE
+                binding.llBenStatus.visibility = View.INVISIBLE
             }
 
             binding.ivSyncState.visibility = if (item.ecr == null) View.INVISIBLE else View.VISIBLE

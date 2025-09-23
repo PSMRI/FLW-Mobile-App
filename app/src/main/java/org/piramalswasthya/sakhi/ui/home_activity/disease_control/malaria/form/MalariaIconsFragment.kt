@@ -60,7 +60,7 @@ class MalariaIconsFragment : Fragment() {
         super.onStart()
         activity?.let {
             (it as HomeActivity).updateActionBar(
-                R.drawable.ic__ncd,
+                R.drawable.malaria_list,
                 getString(R.string.icon_title_maleria)
             )
         }

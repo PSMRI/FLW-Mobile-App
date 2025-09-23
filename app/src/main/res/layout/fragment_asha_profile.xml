@@ -5,275 +5,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools">
+<androidx.core.widget.NestedScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
 
     <LinearLayout
         android:id="@+id/ll_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
         android:backgroundTint="?attr/colorOnSecondary"
         android:orientation="vertical"
         android:padding="@dimen/padding_normal">
 
-
-<!--        <androidx.cardview.widget.CardView-->
-<!--            android:id="@+id/cv_patient_information"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_margin="@dimen/margin_small"-->
-<!--            android:backgroundTint="?attr/colorPrimary"-->
-<!--            android:elevation="@dimen/padding_normal"-->
-<!--            app:cardCornerRadius="@dimen/padding_normal"-->
-<!--            app:cardElevation="@dimen/padding_normal"-->
-<!--            app:layout_constraintTop_toTopOf="parent">-->
-
-<!--            <androidx.constraintlayout.widget.ConstraintLayout-->
-<!--                android:id="@+id/cl_patient_information"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content">-->
-
-<!--                <LinearLayout-->
-<!--                    android:id="@+id/ll_patient_information_1"-->
-<!--                    app:layout_constraintTop_toTopOf="@+id/cl_patient_information"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content">-->
-<!--                    <TextView-->
-<!--                        android:id="@+id/tv_ben_name"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:gravity="center"-->
-<!--                        android:padding="@dimen/padding_normal"-->
-<!--                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"-->
-<!--                        android:textColor="@android:color/white"-->
-<!--                        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                        app:layout_constraintEnd_toStartOf="@+id/tv_age_gender"-->
-<!--                        app:layout_constraintStart_toStartOf="parent"-->
-<!--                        app:layout_constraintTop_toTopOf="parent" />-->
-
-<!--                    <TextView-->
-<!--                        android:id="@+id/tv_age_gender"-->
-<!--                        android:layout_width="0dp"-->
-<!--                        android:layout_height="match_parent"-->
-<!--                        android:layout_weight="1"-->
-<!--                        android:gravity="center"-->
-<!--                        android:padding="@dimen/padding_normal"-->
-<!--                        android:textAppearance="@style/TextAppearance.Material3.TitleSmall"-->
-<!--                        android:textColor="@android:color/white"-->
-<!--                        app:layout_constraintEnd_toEndOf="parent" />-->
-<!--                </LinearLayout>-->
-
-<!--                <LinearLayout-->
-<!--                    android:id="@+id/ll_patient_information_2"-->
-<!--                    app:layout_constraintTop_toBottomOf="@+id/ll_patient_information_1"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:orientation="vertical"-->
-<!--                    android:visibility="gone"-->
-<!--                    android:padding="@dimen/padding_normal"-->
-<!--                    >-->
-<!--                    <LinearLayout-->
-<!--                        android:id="@+id/ll_ben_pwr_tracking_details_1"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:baselineAligned="false"-->
-<!--                        android:orientation="horizontal">-->
-
-<!--                        <LinearLayout-->
-<!--                            android:layout_width="0dp"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:layout_weight="1"-->
-<!--                            android:orientation="vertical"-->
-<!--                            android:padding="@dimen/padding_small">-->
-
-<!--                            <TextView-->
-<!--                                android:layout_width="wrap_content"-->
-<!--                                android:layout_height="wrap_content"-->
-<!--                                android:text="@string/husband_s_name"-->
-<!--                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"-->
-<!--                                android:textColor="?attr/colorOnPrimary" />-->
-
-<!--                            <TextView-->
-<!--                                android:id="@+id/husband_name"-->
-<!--                                android:layout_width="wrap_content"-->
-<!--                                android:layout_height="wrap_content"-->
-<!--                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"-->
-<!--                                android:textColor="?attr/colorOnPrimary"-->
-<!--                                tools:text="TextView" />-->
-<!--                        </LinearLayout>-->
-
-<!--                        <LinearLayout-->
-<!--                            android:layout_width="0dp"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:layout_weight="1"-->
-<!--                            android:orientation="vertical"-->
-<!--                            android:padding="@dimen/padding_small">-->
-
-<!--                            <TextView-->
-<!--                                android:layout_width="wrap_content"-->
-<!--                                android:layout_height="wrap_content"-->
-<!--                                android:text="@string/tv_mob_no_ph"-->
-<!--                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"-->
-<!--                                android:textColor="?attr/colorOnPrimary" />-->
-
-<!--                            <TextView-->
-<!--                                android:id="@+id/mobile_number"-->
-<!--                                android:layout_width="wrap_content"-->
-<!--                                android:layout_height="wrap_content"-->
-<!--                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"-->
-<!--                                android:textColor="?attr/colorOnPrimary"-->
-<!--                                tools:text="TextView" />-->
-<!--                        </LinearLayout>-->
-
-
-<!--                    </LinearLayout>-->
-
-<!--                    <LinearLayout-->
-<!--                        android:id="@+id/ll_ben_pwr_tracking_details_2"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:baselineAligned="false"-->
-<!--                        android:orientation="horizontal">-->
-
-<!--                        <LinearLayout-->
-<!--                            android:layout_width="0dp"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:layout_weight="1"-->
-<!--                            android:orientation="vertical"-->
-<!--                            android:padding="@dimen/padding_small">-->
-
-<!--                            <TextView-->
-<!--                                android:layout_width="wrap_content"-->
-<!--                                android:layout_height="wrap_content"-->
-<!--                                android:text="@string/beneficiary_id"-->
-<!--                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"-->
-<!--                                android:textColor="?attr/colorOnPrimary" />-->
-
-<!--                            <TextView-->
-<!--                                android:id="@+id/ben_id"-->
-<!--                                android:layout_width="wrap_content"-->
-<!--                                android:layout_height="wrap_content"-->
-<!--                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"-->
-<!--                                android:textColor="?attr/colorOnPrimary"-->
-<!--                                tools:text="TextView" />-->
-<!--                        </LinearLayout>-->
-
-<!--                        <LinearLayout-->
-<!--                            android:layout_width="0dp"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:layout_weight="1"-->
-<!--                            android:orientation="vertical"-->
-<!--                            android:padding="@dimen/padding_small">-->
-
-<!--                            <TextView-->
-<!--                                android:layout_width="wrap_content"-->
-<!--                                android:layout_height="wrap_content"-->
-<!--                                android:text="@string/tv_rch_id"-->
-<!--                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"-->
-<!--                                android:textColor="?attr/colorOnPrimary" />-->
-
-<!--                            <TextView-->
-<!--                                android:id="@+id/rch_id"-->
-<!--                                android:layout_width="wrap_content"-->
-<!--                                android:layout_height="wrap_content"-->
-<!--                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"-->
-<!--                                android:textColor="?attr/colorOnPrimary"-->
-<!--                                tools:text="TextView" />-->
-<!--                        </LinearLayout>-->
-
-<!--                    </LinearLayout>-->
-
-<!--                    <LinearLayout-->
-<!--                        android:id="@+id/ll_ben_pwr_tracking_details_3"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:baselineAligned="false"-->
-<!--                        android:orientation="horizontal">-->
-
-
-<!--                        <LinearLayout-->
-<!--                            android:layout_width="0dp"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:layout_weight="1"-->
-<!--                            android:orientation="vertical"-->
-<!--                            android:padding="@dimen/padding_small">-->
-
-<!--                            <TextView-->
-<!--                                android:layout_width="wrap_content"-->
-<!--                                android:layout_height="wrap_content"-->
-<!--                                android:text="@string/pregnancy_weeks"-->
-<!--                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"-->
-<!--                                android:textColor="?attr/colorOnPrimary" />-->
-
-<!--                            <TextView-->
-<!--                                android:id="@+id/weeks_of_preg"-->
-<!--                                android:layout_width="wrap_content"-->
-<!--                                android:layout_height="wrap_content"-->
-<!--                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"-->
-<!--                                android:textColor="?attr/colorOnPrimary"-->
-<!--                                tools:text="TextView" />-->
-<!--                        </LinearLayout>-->
-
-<!--                        <LinearLayout-->
-<!--                            android:layout_width="0dp"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:layout_weight="1"-->
-<!--                            android:orientation="vertical"-->
-<!--                            android:padding="@dimen/padding_small">-->
-
-<!--                            <TextView-->
-<!--                                android:layout_width="wrap_content"-->
-<!--                                android:layout_height="wrap_content"-->
-<!--                                android:text="@string/pmsma_lmp"-->
-<!--                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"-->
-<!--                                android:textColor="?attr/colorOnPrimary" />-->
-
-<!--                            <TextView-->
-<!--                                android:id="@+id/lmp"-->
-<!--                                android:layout_width="wrap_content"-->
-<!--                                android:layout_height="wrap_content"-->
-<!--                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"-->
-<!--                                android:textColor="?attr/colorOnPrimary"-->
-<!--                                tools:text="TextView" />-->
-<!--                        </LinearLayout>-->
-
-<!--                        <LinearLayout-->
-<!--                            android:layout_width="0dp"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:layout_weight="1"-->
-<!--                            android:orientation="vertical"-->
-<!--                            android:padding="@dimen/padding_small">-->
-
-<!--                            <TextView-->
-<!--                                android:layout_width="wrap_content"-->
-<!--                                android:layout_height="wrap_content"-->
-<!--                                android:text="@string/pmsma_edd"-->
-<!--                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"-->
-<!--                                android:textColor="?attr/colorOnPrimary" />-->
-
-<!--                            <TextView-->
-<!--                                android:id="@+id/edd"-->
-<!--                                android:layout_width="wrap_content"-->
-<!--                                android:layout_height="wrap_content"-->
-<!--                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"-->
-<!--                                android:textColor="?attr/colorOnPrimary"-->
-<!--                                tools:text="TextView" />-->
-<!--                        </LinearLayout>-->
-<!--                    </LinearLayout>-->
-<!--                </LinearLayout>-->
-
-<!--            </androidx.constraintlayout.widget.ConstraintLayout>-->
-<!--        </androidx.cardview.widget.CardView>-->
-
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
+            android:layout_height="wrap_content"
+            >
 
             <include
                 android:id="@+id/form"
                 layout="@layout/rv_input_form"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1" />
+                android:layout_height="wrap_content"
+                />
 
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -310,8 +66,19 @@
 
             android:textColor="@android:color/white" />
 
-
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_any"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_small"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toTopOf="@id/btn_next_page"
+            app:layout_constraintTop_toBottomOf="@+id/ll_content"
+            tools:itemCount="2"
+            tools:listitem="@layout/rv_item_household" />
     </LinearLayout>
+</androidx.core.widget.NestedScrollView>
+
 
 
 
@@ -322,6 +89,18 @@
         android:layout_gravity="center"
         android:indeterminateTint="?attr/colorPrimary"
         android:visibility="gone" />
+
+
+    <TextView
+        android:id="@+id/textError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:textSize="14sp"
+        android:text="Data could not be fetched from server,\nplease try again later."
+        android:textColor="?attr/colorPrimary"
+        android:visibility="gone"/>
 
 
 

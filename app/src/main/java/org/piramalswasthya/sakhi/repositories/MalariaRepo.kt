@@ -21,9 +21,11 @@ import org.piramalswasthya.sakhi.network.MalariaConfirmedDTO
 import org.piramalswasthya.sakhi.network.MalariaConfirmedRequestDTO
 import org.piramalswasthya.sakhi.network.MalariaScreeningDTO
 import org.piramalswasthya.sakhi.network.MalariaScreeningRequestDTO
+import org.piramalswasthya.sakhi.utils.HelperUtil
 import timber.log.Timber
 import java.net.SocketTimeoutException
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Locale
 import javax.inject.Inject
 
@@ -534,6 +536,29 @@ class MalariaRepo @Inject constructor(
             return date?.time ?: throw IllegalStateException("Invalid date for dateReg")
         }
     }
+
+
+    suspend fun canSubmit(householdId: Long): Boolean {
+        val (start, end) = HelperUtil.getYearRange()
+        val count = malariaDao.countRoundsInYear(householdId, start, end)
+        return count < 4
+    }
+
+    suspend fun getCount(householdId: Long) : Int {
+        val (start, end) = HelperUtil.getYearRange()
+        val count = malariaDao.countRoundsInYear(householdId, start, end)
+        return count
+    }
+
+    suspend fun submitRound(round: IRSRoundScreening): Boolean {
+        return if (canSubmit(round.householdId)) {
+            malariaDao.saveIRSScreening(round)
+            true
+        } else {
+            false // already reached limit
+        }
+    }
+
 
 
 }

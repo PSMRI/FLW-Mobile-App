@@ -19,7 +19,7 @@
     <string name="radio_title" translatable="false">%s<span> *</span></string>
     <string name="radio_title_ds">%s<span> **</span></string>
     <string name="tracking_date">Date of Visit</string>
-    <string name="case_date">Malaria Screening Date</string>
+    <string name="case_date">Maleria Screening Date</string>
     <string name="start_t_date">Date of Starting Treatment</string>
     <string name="date_of_completion">Date of Completion of Treatment</string>
     <string name="date_of_referal">Date of Referral</string>
@@ -89,7 +89,7 @@
     <string name="cd_icon_grid_icon">icon</string>
     <string name="nav_item_1_text">Name : <b>%s</b></string>
     <string name="nav_item_2_text">Username : <b>%s</b></string>
-    <string name="nav_item_3_text">User ID :  <b>%d</b></string>
+    <string name="nav_item_3_text">User ID :  <b>%s</b></string>
     <string name="nav_item_4_text">Version : %s</string>
     <string name="tv_required_text_asterisk">*</string>
     <string name="rv_item_hh_entry_1">%1$d</string>
@@ -299,6 +299,7 @@
     <string name="str_add_member">Add Member</string>
     <string name="str_not_available">Not Available</string>
     <string name="support">Support</string>
+    <string name="status">Status</string>
     <string name="sync_status">Sync Status</string>
     <string name="go_to_home">Go to Home</string>
     <string name="change_language">Change Language</string>
@@ -343,7 +344,7 @@
     <string name="tb_screening_list">TB Screening List</string>
     <string name="tb_suspected_list">Suspected TB cases</string>
     <string name="tb_screening_form">TB Screening Form</string>
-    <string name="maleria_screening_form">Maleria Form</string>
+    <string name="maleria_screening_form">Malaria Form</string>
     <string name="kala_screening_form">KALA Azar Form</string>
     <string name="aes_screening_form">AES Form</string>
     <string name="filaria_screening_form">Filaria Form</string>
@@ -409,6 +410,9 @@
     <string name="filter_list">Filter</string>
     <string name="ben_with_rch_id">Ben With RCH ID</string>
     <string name="call">Call</string>
+    <string name="heading">History</string>
+    <string name="new_abha">NEW ABHA</string>
+    <string name="existing_abha">EXISTING ABHA</string>
     <string-array name="sync_records">
         <item>Beneficiary</item>
         <item>CBAC</item>
@@ -471,6 +475,13 @@
         <item name="dc_symp">Recurrence of Symptoms</item>
     </string-array>
 
+    <string-array name="irs_rounds">
+        <item name="one">1st Round</item>
+        <item name="two">2nd Round</item>
+        <item name="three">3rd Round</item>
+        <item name="four">4th Round</item>
+    </string-array>
+
     <string-array name="benificary_case_status_leprosy">
         <item name="dc_not_app">Not Applicable</item>
         <item name="dc_recovering">Recovering</item>
@@ -503,6 +514,17 @@
         <item>Referral Hospital</item>
         <item>Other Private Hospital</item>
         <item>Other</item>
+    </string-array>
+
+    <string-array name="dc_refer_malaria">
+        <item>Primary Health Centre</item>
+        <item>Community Health Centre</item>
+        <item>District Hospital</item>
+        <item>Medical College and Hospital</item>
+        <item>Referral Hospital</item>
+        <item>Other Private Hospital</item>
+        <item>Other</item>
+        <item>None</item>
     </string-array>
 
     <string-array name="daysPv">
@@ -548,7 +570,6 @@
         <item>Left Leg</item>
         <item>Right Side Breast</item>
         <item>Left Side Breast</item>
-        <item>Hydrocele</item>
         <item>Other</item>
     </string-array>
 
@@ -570,6 +591,7 @@
         <item>V (Vomiting)</item>
         <item>N (Najala)</item>
         <item>O (Other)</item>
+        <item>None</item>
     </string-array>
 </resources>
 

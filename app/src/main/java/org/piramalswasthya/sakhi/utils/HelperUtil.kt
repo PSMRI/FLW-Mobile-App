@@ -62,6 +62,17 @@ object HelperUtil {
 
     }
 
+    fun getDateStringFromLongStraight(dateLong: Long?): String? {
+        val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
+        dateLong?.let {
+            val dateString = dateFormat.format(dateLong)
+            return dateString
+        } ?: run {
+            return null
+        }
+
+    }
+
     /**
      * gets millis from given years months days
      */
@@ -350,6 +361,26 @@ object HelperUtil {
 
 
 
+    fun getYearRange(timeMillis: Long = System.currentTimeMillis()): Pair<Long, Long> {
+        val cal = Calendar.getInstance().apply { timeInMillis = timeMillis }
+        cal.set(Calendar.MONTH, Calendar.JANUARY)
+        cal.set(Calendar.DAY_OF_MONTH, 1)
+        cal.set(Calendar.HOUR_OF_DAY, 0)
+        cal.set(Calendar.MINUTE, 0)
+        cal.set(Calendar.SECOND, 0)
+        cal.set(Calendar.MILLISECOND, 0)
+        val start = cal.timeInMillis
+
+        cal.set(Calendar.MONTH, Calendar.DECEMBER)
+        cal.set(Calendar.DAY_OF_MONTH, 31)
+        cal.set(Calendar.HOUR_OF_DAY, 23)
+        cal.set(Calendar.MINUTE, 59)
+        cal.set(Calendar.SECOND, 59)
+        cal.set(Calendar.MILLISECOND, 999)
+        val end = cal.timeInMillis
+
+        return start to end
+    }
 
 
 
