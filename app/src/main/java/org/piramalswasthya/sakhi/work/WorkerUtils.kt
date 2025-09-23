@@ -27,6 +27,9 @@ object WorkerUtils {
         val pullWorkRequest = OneTimeWorkRequestBuilder<PullFromAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
+        val generalOpdPullFromAmritWorker = OneTimeWorkRequestBuilder<GeneralOpdPullFromAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
         val pullAdolescentWorkRequest = OneTimeWorkRequestBuilder<PullAdolescentFromWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
@@ -133,6 +136,7 @@ object WorkerUtils {
             .then(pullFilariaToAmritWorker)
             .then(pullLeprosyToAmritWorker)
             .then(pullHRPWorkRequest)
+            .then(generalOpdPullFromAmritWorker)
             .then(pushWorkRequest)
             .then(pushCbacWorkRequest)
             .then(pushImmunizationWorkRequest)
@@ -276,6 +280,9 @@ object WorkerUtils {
             .setConstraints(networkOnlyConstraint)
             .build()
 
+        val generalOpdPullFromAmritWorker = OneTimeWorkRequestBuilder<GeneralOpdPullFromAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
         val pullIncentiveActivityWorkRequest =
             OneTimeWorkRequestBuilder<PullIncentiveWorker>()
                 .setConstraints(networkOnlyConstraint)
@@ -386,6 +393,7 @@ object WorkerUtils {
             .then(pullLeprosyToAmritWorker)
             .then(pullVLFWorkRequest)
             .then(pulladolescentWorkRequest)
+            .then(generalOpdPullFromAmritWorker)
             .then(setSyncCompleteWorker)
             .enqueue()
     }
