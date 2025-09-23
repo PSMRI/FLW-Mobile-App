@@ -24,6 +24,7 @@ import org.piramalswasthya.sakhi.model.BenWithMalariaConfirmedDomain
 import org.piramalswasthya.sakhi.model.BenWithPwrDomain
 import org.piramalswasthya.sakhi.model.BenWithTbScreeningDomain
 import org.piramalswasthya.sakhi.model.BenWithTbSuspectedDomain
+import org.piramalswasthya.sakhi.model.GeneralOPEDBeneficiary
 import org.piramalswasthya.sakhi.model.ImmunizationDetailsDomain
 import org.piramalswasthya.sakhi.model.InfantRegDomain
 import org.piramalswasthya.sakhi.model.PregnantWomenVisitDomain
@@ -44,6 +45,18 @@ fun filterBenList(list: List<BenBasicDomain>, text: String): List<BenBasicDomain
         val filterText = text.lowercase()
         return list.filter {
             filterForBen(it, filterText)
+        }
+    }
+}
+
+
+fun filterOPDBenList(list: List<GeneralOPEDBeneficiary>, text: String): List<GeneralOPEDBeneficiary> {
+    if (text == "")
+        return list
+    else {
+        val filterText = text.lowercase()
+        return list.filter {
+            filterOPD(it, filterText)
         }
     }
 }
@@ -139,6 +152,12 @@ fun filterBenFormList(
                 ben.spouseName.lowercase().contains(filterText) ||
                 ben.weeksOfPregnancy.toString().lowercase().contains(filterText)
     }
+
+
+fun filterOPD(
+    ben: GeneralOPEDBeneficiary,
+    filterText: String
+) = ben.benName.toString().lowercase().contains(filterText)
 
 fun filterEcTrackingList(
     list: List<BenWithEctListDomain>,

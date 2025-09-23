@@ -34,6 +34,9 @@ interface AmritApiService {
     @POST("flw-api/beneficiary/getBeneficiaryData")
     suspend fun getBeneficiaries(@Body userDetail: GetDataPaginatedRequest): Response<ResponseBody>
 
+    @POST("flw-api/generalOpd/getBeneficiaries")
+    suspend fun getgeneralOPDBeneficiaries(@Body userDetail: GetDataPaginatedRequestForGeneralOPD): Response<ResponseBody>
+
     @POST("common-api/beneficiaryConsent/sendConsent")
     suspend fun sendOtp(@Body sendOtpRequest: sendOtpRequest): Response<ResponseBody>
 
