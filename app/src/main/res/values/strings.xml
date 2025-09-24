@@ -413,6 +413,9 @@
     <string name="heading">History</string>
     <string name="new_abha">NEW ABHA</string>
     <string name="existing_abha">EXISTING ABHA</string>
+    <string name="referred_date">Referred Date</string>
+    <string name="referred_from">Referred From</string>
+    <string name="referral_reason">Referral reason</string>
     <string-array name="sync_records">
         <item>Beneficiary</item>
         <item>CBAC</item>
