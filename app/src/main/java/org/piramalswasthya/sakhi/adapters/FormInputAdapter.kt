@@ -83,7 +83,7 @@ class FormInputAdapter(
 
         override fun areContentsTheSame(oldItem: FormElement, newItem: FormElement): Boolean {
             Timber.d("${oldItem.id}   ${oldItem.errorText} ${newItem.errorText}")
-            return oldItem.errorText == newItem.errorText
+            return oldItem.errorText == newItem.errorText &&   oldItem.required == newItem.required
         }
     }
 
@@ -318,8 +318,10 @@ class FormInputAdapter(
             }
         }
 
-        fun bind(item: FormElement, isEnabled: Boolean, formValueListener: FormValueListener?) {
+        fun bind(item: FormElement, isEnabled: Boolean,  formValueListener: FormValueListener?) {
             binding.form = item
+
+            binding.executePendingBindings()
             if (item.errorText == null) {
                 binding.tilRvDropdown.error = null
                 binding.tilRvDropdown.isErrorEnabled = false
@@ -948,9 +950,12 @@ class FormInputAdapter(
         }
 
     }
+
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
         val isEnabled = if (isEnabled) item.isEnabled else false
+
         when (item.inputType) {
             EDIT_TEXT -> (holder as EditTextInputViewHolder).bind(
                 item, isEnabled, formValueListener

@@ -220,8 +220,10 @@
         <item>पुरुष निषेकरण</item>
         <item>महिला निषेकरण</item>
         <item>पोस्ट पार्टम स्टेरिलाइजेशन (PPS प्रसव के 7 दिनों के भीतर)</item>
+        <item>MiniLap</item>
         <item>कोई अन्य (स्पष्ट करें)</item>
     </string-array>
+
     <string-array name="pnc_mother_danger_sign_array">
         <item>PPH (पोस्ट पार्टम हेमोरेज)</item>
         <item>बुखार</item>
