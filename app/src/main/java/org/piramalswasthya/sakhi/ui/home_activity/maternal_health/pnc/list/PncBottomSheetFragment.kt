@@ -40,7 +40,7 @@ class PncBottomSheetFragment : BottomSheetDialogFragment() {
             PncVisitAdapter(PncVisitAdapter.PncVisitClickListener { benId, visitNumber ->
                 findNavController().navigate(
                     PncMotherListFragmentDirections.actionPncMotherListFragmentToPncFormFragment(
-                        benId, visitNumber
+                        benId, null, visitNumber
                     )
                 )
                 this.dismiss()

@@ -294,8 +294,12 @@
         <item>FEMALE STERILIZATION</item>
         <item>POST PARTUM STERILIZATION (PPS)</item>
         <item>MiniLap</item>
+    </string-array>
 
-
+    <string-array name="female_sterilization_methods_array">
+        <item>FEMALE STERILIZATION</item>
+        <item>POST PARTUM STERILIZATION (PPS)</item>
+        <item>MiniLap</item>
     </string-array>
     <string-array name="pnc_mother_danger_sign_array">
         <item>PPH - Excessive bleeding</item>
