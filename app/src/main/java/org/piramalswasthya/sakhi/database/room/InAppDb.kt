@@ -142,7 +142,7 @@ import org.piramalswasthya.sakhi.model.VHNDCache
         GeneralOPEDBeneficiary::class,
     ],
     views = [BenBasicCache::class],
-    version = 21, exportSchema = false
+    version = 22, exportSchema = false
 )
 
 @TypeConverters(LocationEntityListConverter::class, SyncStateConverter::class)
@@ -327,6 +327,98 @@ abstract class InAppDb : RoomDatabase() {
 
                     // 5. Recreate index
                     database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_ABHA_GENERATED_beneficiaryID` ON `ABHA_GENERATED` (`beneficiaryID`)")
+                }
+            }
+
+            val MIGRATION_21_22 = object : Migration(21, 22) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("""
+            CREATE TABLE PREGNANCY_ANC_NEW (
+                id INTEGER NOT NULL PRIMARY KEY,
+                benId INTEGER NOT NULL,
+                visitNumber INTEGER NOT NULL,
+                isActive INTEGER NOT NULL,
+                ancDate INTEGER NOT NULL,
+                isAborted INTEGER NOT NULL,
+                abortionType TEXT,
+                abortionTypeId INTEGER NOT NULL,
+                abortionFacility TEXT,
+                abortionFacilityId INTEGER NOT NULL,
+                abortionDate INTEGER,
+                weight INTEGER,
+                bpSystolic INTEGER,
+                bpDiastolic INTEGER,
+                pulseRate TEXT,
+                hb REAL,
+                fundalHeight INTEGER,
+                urineAlbumin TEXT,
+                urineAlbuminId INTEGER NOT NULL,
+                randomBloodSugarTest TEXT,
+                randomBloodSugarTestId INTEGER NOT NULL,
+                numFolicAcidTabGiven INTEGER NOT NULL,
+                numIfaAcidTabGiven INTEGER NOT NULL,
+                anyHighRisk INTEGER,
+                highRisk TEXT,
+                highRiskId INTEGER NOT NULL,
+                otherHighRisk TEXT,
+                referralFacility TEXT,
+                referralFacilityId INTEGER NOT NULL,
+                hrpConfirmed INTEGER,
+                hrpConfirmedBy TEXT,
+                hrpConfirmedById INTEGER NOT NULL,
+                maternalDeath INTEGER,
+                maternalDeathProbableCause TEXT,
+                maternalDeathProbableCauseId INTEGER NOT NULL,
+                otherMaternalDeathProbableCause TEXT,
+                deathDate INTEGER,
+                pregnantWomanDelivered INTEGER,
+                processed TEXT,
+                createdBy TEXT NOT NULL,
+                createdDate INTEGER NOT NULL,
+                updatedBy TEXT NOT NULL,
+                updatedDate INTEGER NOT NULL,
+                syncState INTEGER NOT NULL,
+                frontFilePath TEXT,   -- nullable now
+                backFilePath TEXT,    -- nullable now
+                FOREIGN KEY(benId) REFERENCES BENEFICIARY(beneficiaryId) 
+                  ON UPDATE CASCADE ON DELETE CASCADE
+            )
+        """.trimIndent())
+
+                    database.execSQL("""
+            INSERT INTO PREGNANCY_ANC_NEW (
+                id, benId, visitNumber, isActive, ancDate, isAborted,
+                abortionType, abortionTypeId, abortionFacility, abortionFacilityId, abortionDate,
+                weight, bpSystolic, bpDiastolic, pulseRate, hb, fundalHeight,
+                urineAlbumin, urineAlbuminId, randomBloodSugarTest, randomBloodSugarTestId,
+                numFolicAcidTabGiven, numIfaAcidTabGiven, anyHighRisk, highRisk, highRiskId,
+                otherHighRisk, referralFacility, referralFacilityId,
+                hrpConfirmed, hrpConfirmedBy, hrpConfirmedById,
+                maternalDeath, maternalDeathProbableCause, maternalDeathProbableCauseId,
+                otherMaternalDeathProbableCause, deathDate, pregnantWomanDelivered,
+                processed, createdBy, createdDate, updatedBy, updatedDate, syncState,
+                frontFilePath, backFilePath
+            )
+            SELECT 
+                id, benId, visitNumber, isActive, ancDate, isAborted,
+                abortionType, abortionTypeId, abortionFacility, abortionFacilityId, abortionDate,
+                weight, bpSystolic, bpDiastolic, pulseRate, hb, fundalHeight,
+                urineAlbumin, urineAlbuminId, randomBloodSugarTest, randomBloodSugarTestId,
+                numFolicAcidTabGiven, numIfaAcidTabGiven, anyHighRisk, highRisk, highRiskId,
+                otherHighRisk, referralFacility, referralFacilityId,
+                hrpConfirmed, hrpConfirmedBy, hrpConfirmedById,
+                maternalDeath, maternalDeathProbableCause, maternalDeathProbableCauseId,
+                otherMaternalDeathProbableCause, deathDate, pregnantWomanDelivered,
+                processed, createdBy, createdDate, updatedBy, updatedDate, syncState,
+                frontFilePath, backFilePath
+            FROM PREGNANCY_ANC
+        """.trimIndent())
+
+                    database.execSQL("DROP TABLE PREGNANCY_ANC")
+
+                    database.execSQL("ALTER TABLE PREGNANCY_ANC_NEW RENAME TO PREGNANCY_ANC")
+
+                    database.execSQL("CREATE INDEX ind_mha ON PREGNANCY_ANC(benId)")
                 }
             }
 
@@ -548,7 +640,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_16_18,
                         MIGRATION_18_19,
                         MIGRATION_19_20,
-                        MIGRATION_20_21
+                        MIGRATION_20_21,
+                        MIGRATION_21_22
 
                     ).build()
 
