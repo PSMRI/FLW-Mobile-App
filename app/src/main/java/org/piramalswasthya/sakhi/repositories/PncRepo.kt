@@ -236,4 +236,9 @@ class PncRepo @Inject constructor(
         }
     }
 
+    suspend fun getAllPncVisitsForBeneficiary(benId: Long): List<PNCVisitCache> {
+
+        return pncDao.getPncVisitsByBenId(benId)
+    }
+
 }

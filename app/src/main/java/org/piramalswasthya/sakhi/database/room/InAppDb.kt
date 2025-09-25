@@ -113,7 +113,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.InfantEntity
     ],
     views = [BenBasicCache::class],
 
-    version = 27, exportSchema = false
+    version = 28, exportSchema = false
 )
 
 @TypeConverters(LocationEntityListConverter::class, SyncStateConverter::class)
@@ -156,16 +156,43 @@ abstract class InAppDb : RoomDatabase() {
 
         fun getInstance(appContext: Context): InAppDb {
 
+
             val MIGRATION_1_2 = Migration(1, 2, migrate = {
 //                it.execSQL("select count(*) from beneficiary")
             })
 
+            val MIGRATION_27_28 = object  : Migration(27,28)
+            {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    val cursor = database.query("PRAGMA table_info(PNC_VISIT)")
+                    val existingColumns = mutableSetOf<String>()
+                    while (cursor.moveToNext()) {
+                        existingColumns.add(cursor.getString(1))
+                    }
+                    cursor.close()
+
+                    if (!existingColumns.contains("deliveryDischargeSummary1")) {
+                        database.execSQL("ALTER TABLE PNC_VISIT ADD COLUMN deliveryDischargeSummary1 TEXT")
+                    }
+                    if (!existingColumns.contains("deliveryDischargeSummary2")) {
+                        database.execSQL("ALTER TABLE PNC_VISIT ADD COLUMN deliveryDischargeSummary2 TEXT")
+                    }
+                    if (!existingColumns.contains("deliveryDischargeSummary3")) {
+                        database.execSQL("ALTER TABLE PNC_VISIT ADD COLUMN deliveryDischargeSummary3 TEXT")
+                    }
+                    if (!existingColumns.contains("deliveryDischargeSummary4")) {
+                        database.execSQL("ALTER TABLE PNC_VISIT ADD COLUMN deliveryDischargeSummary4 TEXT")
+                    }
+                    if (!existingColumns.contains("sterilisationDate")) {
+                        database.execSQL("ALTER TABLE PNC_VISIT ADD COLUMN sterilisationDate INTEGER ")                    }
+                }
+
+            }
+
             val MIGRATION_26_27 = object  : Migration(26,27)
             {
                 override fun migrate(database: SupportSQLiteDatabase) {
-                    database.execSQL("ALTER TABLE INCENTIVE_ACTIVITY ADD COLUMN groupName TEXT")
-
-                }
+                    database.execSQL("ALTER TABLE INCENTIVE_ACTIVITY ADD COLUMN groupName TEXT")                }
             }
             val MIGRATION_25_26 = object : Migration(25, 26) {
                 override fun migrate(database: SupportSQLiteDatabase) {
@@ -527,7 +554,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_23_24,
                         MIGRATION_24_25,
                         MIGRATION_25_26,
-                        MIGRATION_26_27
+                        MIGRATION_26_27,
+                        MIGRATION_27_28
                     ).build()
 
                     INSTANCE = instance

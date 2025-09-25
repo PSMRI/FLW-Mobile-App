@@ -48,6 +48,7 @@ import org.piramalswasthya.sakhi.helpers.getDateString
 import org.piramalswasthya.sakhi.model.AgeUnitDTO
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.FormInputOld
+import org.piramalswasthya.sakhi.model.InputType
 import org.piramalswasthya.sakhi.model.InputType.AGE_PICKER
 import org.piramalswasthya.sakhi.model.InputType.CHECKBOXES
 import org.piramalswasthya.sakhi.model.InputType.DATE_PICKER
@@ -833,6 +834,7 @@ class FormInputAdapterWithBgIcon (
             HEADLINE -> HeadlineViewHolder.from(parent)
             AGE_PICKER -> AgePickerViewInputViewHolder.from(parent)
             FILE_UPLOAD -> FileUploadInputViewHolder.from(parent)
+
         }
     }
 
