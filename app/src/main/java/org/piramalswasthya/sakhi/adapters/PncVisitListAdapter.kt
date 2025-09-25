@@ -62,14 +62,15 @@ class PncVisitListAdapter(private val clickListener: PncVisitClickListener? = nu
 
     class PncVisitClickListener(
         private val showVisits: (benId: Long) -> Unit,
-        private val addVisit: (benId: Long, visitNumber: Int) -> Unit,
+        private val addVisit: (benId: Long, hhId: Long ,visitNumber: Int) -> Unit,
 
         ) {
         fun showVisits(item: BenPncDomain) = showVisits(
             item.ben.benId,
+
         )
 
-        fun addVisit(item: BenPncDomain) = addVisit(item.ben.benId,
+        fun addVisit(item: BenPncDomain) = addVisit(item.ben.benId,item.ben.hhId,
             if (item.savedPncRecords.isEmpty()) 1 else item.savedPncRecords.maxOf { it.pncPeriod } + 1)
     }
 

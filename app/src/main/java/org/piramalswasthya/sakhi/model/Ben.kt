@@ -1256,8 +1256,9 @@ data class BenRegCache(
                     0 -> 0
                     1 -> 1
                     2 -> 2
-                    3 -> 4
-                    4 -> 5
+                    3 -> 3
+                    4 -> 4
+                    5->  5
                     else -> 6
                 }
             } ?: 0,
@@ -1269,6 +1270,7 @@ data class BenRegCache(
                     2 -> "Antenatal Mother"
                     3 -> "Postnatal Mother-Lactating Mother"
                     4 -> "Menopause Stage"
+                    5 -> "Permanently Sterilised"
                     else -> "Teenager"
                 }
             } ?: "",
