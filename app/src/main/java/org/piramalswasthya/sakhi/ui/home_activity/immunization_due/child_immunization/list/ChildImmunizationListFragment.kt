@@ -26,10 +26,7 @@ import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ChildImmunizationListFragment : Fragment(),ImmunizationBirthDoseCategoryAdapter.CategoryClickListener {
-
-    @Inject
-    lateinit var prefDao: PreferenceDao
+class ChildImmunizationListFragment : Fragment(),ImmunizationBirthDoseCategoryAdapter.CategoryClickListener{
 
     private var _binding: FragmentChildImmunizationListBinding? = null
     private val binding: FragmentChildImmunizationListBinding
@@ -59,60 +56,27 @@ class ChildImmunizationListFragment : Fragment(),ImmunizationBirthDoseCategoryAd
 
         binding.rvCat.adapter = ImmunizationBirthDoseCategoryAdapter(viewModel.categoryData(),this,viewModel)
 
-
-
         binding.rvList.adapter =
-            BenChildImmunizationListAdapter(
-                clickListener = BenChildImmunizationListAdapter.VaccinesClickListener ({
+            BenChildImmunizationListAdapter(BenChildImmunizationListAdapter.VaccinesClickListener {
                 viewModel.updateBottomSheetData(it)
                 if (!bottomSheet.isVisible)
                     bottomSheet.show(childFragmentManager, "ImM")
-            } , {
-                    try {
-                        val callIntent = Intent(Intent.ACTION_CALL)
-                        callIntent.setData(Uri.parse("tel:${it.mobileNo}"))
-                        startActivity(callIntent)
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                        activity?.let {
-                            (it as HomeActivity).askForPermissions()
-                        }
-                        Toast.makeText(requireContext(), "Please allow permissions first", Toast.LENGTH_SHORT).show()
-                    }
-            }),
-            )
-
-//        ImmunizationBenListAdapter(
-//            ImmunizationBenListAdapter.VaccinesClickListener(clickedVaccine = {
-//                viewModel.updateBottomSheetData(it)
-//                if (!bottomSheet.isVisible)
-//                    bottomSheet.show(childFragmentManager, "ImM")
-//            }, callBen = {
-//                try {
-//                    val callIntent = Intent(Intent.ACTION_CALL)
-//                    callIntent.setData(Uri.parse("tel:${it.mobileNo}"))
-//                    startActivity(callIntent)
-//                } catch (e: Exception) {
-//                    e.printStackTrace()
-//                    activity?.let {
-//                        (it as HomeActivity).askForPermissions()
-//                    }
-//                    Toast.makeText(requireContext(), "Please allow permissions first", Toast.LENGTH_SHORT).show()
-//                }
-//            })
-//        )
+            })
 
 
         lifecycleScope.launch {
             viewModel.immunizationBenList.collect {
-                if (it.isEmpty())
+                if (it.isEmpty()){
                     binding.flEmpty.visibility = View.VISIBLE
-                else
+                    binding.rvList.visibility = View.GONE
+                } else{
                     binding.flEmpty.visibility = View.GONE
-
-                binding.rvList.apply {
-                    (adapter as BenChildImmunizationListAdapter).submitList(it.sortedByDescending { it.ben.regDate })
+                    binding.rvList.visibility = View.VISIBLE
+                    binding.rvList.apply {
+                        (adapter as BenChildImmunizationListAdapter).submitList(it.sortedByDescending { it.ben.regDate })
+                    }
                 }
+
             }
         }
 
@@ -155,17 +119,10 @@ class ChildImmunizationListFragment : Fragment(),ImmunizationBirthDoseCategoryAd
     override fun onStart() {
         super.onStart()
         activity?.let {
-            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
-                (it as HomeActivity).updateActionBar(
-                    R.drawable.ic_vaccines,
-                    getString(R.string.child_immunization_list)
-                )
-            } else {
-                (it as SupervisorActivity).updateActionBar(
-                    R.drawable.ic_vaccines,
-                    getString(R.string.child_immunization_list)
-                )
-            }
+            (it as HomeActivity).updateActionBar(
+                R.drawable.ic__immunization,
+                getString(R.string.child_immunization_list)
+            )
         }
     }
 

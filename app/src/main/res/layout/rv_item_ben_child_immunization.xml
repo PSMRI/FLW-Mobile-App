@@ -63,19 +63,7 @@
                         app:drawableTint="?attr/colorPrimary"
                         tools:text="Hello Meister" />
 
-                    <ImageView
-                        android:id="@+id/iv_call"
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
-                        android:padding="4dp"
-                        android:src="@drawable/ic_call_icon"
-                        android:layout_gravity="center"
-                        android:onClick="@{()->clickListener.onClickedForCall(temp)}"
-                        android:background="?selectableItemBackgroundBorderless"
-                        android:layout_marginEnd="4dp"
-                        app:layout_constraintEnd_toEndOf="@+id/tv_hh_id"
-                        app:layout_constraintTop_toTopOf="@+id/tv_hh_id"
-                        app:layout_constraintBottom_toBottomOf="@+id/tv_hh_id"/>
+
                     <ImageView
                         android:id="@+id/iv_sync_state"
                         android:layout_width="24dp"
@@ -293,28 +281,28 @@
                     </LinearLayout>
 
 
-                  <!--  <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:padding="@dimen/padding_small">
+                    <!--  <LinearLayout
+                          android:layout_width="0dp"
+                          android:layout_height="wrap_content"
+                          android:layout_weight="1"
+                          android:orientation="vertical"
+                          android:padding="@dimen/padding_small">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/mobile_number"
-                            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                            android:textColor="?attr/colorOnPrimary" />
+                          <TextView
+                              android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:text="@string/mobile_number"
+                              android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                              android:textColor="?attr/colorOnPrimary" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@{temp.mobileNo}"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                            android:textColor="?attr/colorOnPrimary"
-                            tools:text="0123456789" />
-                    </LinearLayout>-->
+                          <TextView
+                              android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:text="@{temp.mobileNo}"
+                              android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                              android:textColor="?attr/colorOnPrimary"
+                              tools:text="0123456789" />
+                      </LinearLayout>-->
 
                     <LinearLayout
                         android:layout_width="0dp"
