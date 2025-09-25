@@ -8,6 +8,8 @@ import com.squareup.moshi.JsonClass
 import org.piramalswasthya.sakhi.configuration.FormDataModel
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.network.getLongFromDate
+import org.piramalswasthya.sakhi.utils.HelperUtil
+import org.piramalswasthya.sakhi.utils.HelperUtil.getDateStringFromLong
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -29,6 +31,11 @@ data class PMSMACache(
     val id: Long = 0,
     val benId: Long,
 //    val hhId: Long,
+
+    var visitDate: Long? = null,
+    var visitNumber: Int,
+    var anyOtherHighRiskCondition: String? = null,
+
     var isActive: Boolean,
     var mctsNumberOrRchNumber: String? = null,
     var haveMCPCard: Boolean = false,
@@ -89,6 +96,9 @@ data class PMSMACache(
             id = id,
             benId = benId,
             isActive = isActive,
+            visitDate =  visitDate?.let { HelperUtil.getDateStringFromLong(it) },
+            visitNumber = visitNumber,
+            anyOtherHighRiskCondition = anyOtherHighRiskCondition,
             rchNumber = mctsNumberOrRchNumber,
             haveMCPCard = haveMCPCard,
             givenMCPCard = givenMCPCard,
@@ -136,6 +146,9 @@ data class PmsmaPost(
 
     val id: Long = 0,
     val benId: Long = 0,
+    var visitDate: String? = null,
+    var visitNumber: Int,
+    var anyOtherHighRiskCondition: String? = null,
     val isActive: Boolean,
     val rchNumber: String? = null,
     val haveMCPCard: Boolean = false,
@@ -181,6 +194,9 @@ data class PmsmaPost(
             id = id,
             benId = benId,
             isActive = isActive,
+            visitDate =  getLongFromDate(visitDate),
+            visitNumber = visitNumber,
+            anyOtherHighRiskCondition = anyOtherHighRiskCondition,
 //            hhId
             mctsNumberOrRchNumber = rchNumber,
             haveMCPCard = haveMCPCard,

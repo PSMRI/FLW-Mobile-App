@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pmsma
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -76,6 +77,8 @@ class PmsmaFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Timber.d("onViewCreated called!!")
+
+        val args = PmsmaFragmentArgs.fromBundle(requireArguments())
         viewModel.benName.observe(viewLifecycleOwner) {
             binding.tvBenName.text = it
         }
@@ -102,7 +105,13 @@ class PmsmaFragment : Fragment() {
                 }
             }
         }
+        if (viewModel.lastItemClick) binding.fabEdit.visibility = View.VISIBLE else View.GONE
 
+
+        binding.fabEdit.setOnClickListener {
+            binding.fabEdit.visibility = View.GONE
+            viewModel.setRecordExist(false)
+        }
         viewModel.state.observe(viewLifecycleOwner) {
             when (it) {
                 State.LOADING -> {

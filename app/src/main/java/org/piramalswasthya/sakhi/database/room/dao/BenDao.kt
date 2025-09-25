@@ -170,6 +170,32 @@ interface BenDao {
     fun getAllRegisteredPregnancyWomenList(selectedVillage: Int): Flow<List<BenWithAncVisitCache>>
 
     @Transaction
+    @Query("""
+    SELECT ben.*  
+    FROM BEN_BASIC_CACHE ben
+    INNER JOIN pregnancy_register pwr ON pwr.benId = ben.benId
+    WHERE pwr.active = 1 
+      AND ben.reproductiveStatusId = 2  
+      AND ben.villageId = :selectedVillage
+      AND (ben.benId IN (SELECT benId FROM PMSMA WHERE highriskSymbols = 1)
+           OR ben.benId IN (SELECT benId FROM PREGNANCY_ANC WHERE anyHighRisk = 1))
+    GROUP BY ben.benId
+""")
+    fun getAllHighRiskPregnancyWomenList(selectedVillage: Int): Flow<List<BenWithAncVisitCache>>
+
+
+
+    @Transaction
+    @Query("""
+    SELECT * 
+    FROM BEN_BASIC_CACHE 
+    WHERE reproductiveStatusId = 2 
+      AND villageId = :selectedVillage
+""")
+    fun getAllRegisteredPmsmaWomenList(selectedVillage: Int): Flow<List<BenWithAncVisitCache>>
+
+
+    @Transaction
     @Query("SELECT ben.*  from BEN_BASIC_CACHE  ben inner join pregnancy_anc pwr on pwr.benId = ben.benId where pwr.isAborted = 1  and ben.villageId=:selectedVillage group by ben.benId")
     fun getAllAbortionWomenList(selectedVillage: Int): Flow<List<BenWithAncVisitCache>>
 
@@ -182,6 +208,18 @@ interface BenDao {
     @Query("SELECT count(distinct(ben.benId)) FROM BEN_BASIC_CACHE  ben inner join pregnancy_anc pwr on pwr.benId = ben.benId where pwr.isAborted = 1 and ben.villageId=:selectedVillage")
     fun getAllAbortionWomenListCount(selectedVillage: Int): Flow<Int>
 
+    @Query("""
+    SELECT COUNT(DISTINCT b.benId)
+    FROM BEN_BASIC_CACHE b
+    INNER JOIN pregnancy_register pwr ON pwr.benId = b.benId
+    LEFT JOIN PMSMA p ON b.benId = p.benId AND p.highriskSymbols = 1
+    LEFT JOIN PREGNANCY_ANC a ON b.benId = a.benId AND a.anyHighRisk = 1
+    WHERE b.villageId = :selectedVillage
+      AND pwr.active = 1
+      AND b.reproductiveStatusId = 2
+      AND (p.benId IS NOT NULL OR a.benId IS NOT NULL)
+""")
+    fun getHighRiskWomenCount(selectedVillage: Int): Flow<Int>
 
     @Query("SELECT * FROM BEN_BASIC_CACHE where  CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER)  >= :min and villageId=:selectedVillage")
     fun getAllNCDList(
