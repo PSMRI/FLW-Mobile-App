@@ -88,7 +88,7 @@ class VHNDListFragement : Fragment() {
         activity?.let {
             (it as HomeActivity).updateActionBar(
                 R.drawable.ic__village_level_form,
-                getString(R.string.icon_title_vhnd_list)
+                getString(R.string.vhnd)
             )
         }
     }

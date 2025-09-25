@@ -96,7 +96,7 @@
 
     <string name="place">Place</string>
     <string name="no_b_attended">No. of Beneficiaries Attended</string>
-    <string name="vhnd">VHND</string>
+    <string name="vhnd">VHND/VHSND</string>
     <string name="vnhc">VHNC</string>
     <string name="phc_review">PHC Review Meeting</string>
     <string name="ahd">AHD </string>
