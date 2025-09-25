@@ -159,7 +159,7 @@ abstract class InAppDb : RoomDatabase() {
             val MIGRATION_1_2 = Migration(1, 2, migrate = {
 //                it.execSQL("select count(*) from beneficiary")
             })
-            val MIGRATION_27_28 = object : Migration(27, 28) {
+            val MIGRATION_28_29 = object : Migration(28, 29) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     database.execSQL("ALTER TABLE PMSMA ADD COLUMN visitDate INTEGER")
                     database.execSQL("ALTER TABLE PMSMA ADD COLUMN visitNumber INTEGER NOT NULL DEFAULT 0")
@@ -536,7 +536,7 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_24_25,
                         MIGRATION_25_26,
                         MIGRATION_26_27,
-                        MIGRATION_27_28
+                        MIGRATION_28_29
                     )
 //                        .fallbackToDestructiveMigration()
                         .build()
