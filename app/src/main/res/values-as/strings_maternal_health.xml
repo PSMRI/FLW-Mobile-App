@@ -71,6 +71,17 @@
         <item>হয়</item>
     </string-array>
 
+    <string-array name="select_high_risk_condition">
+        <item>HIGH BP (SYSTOLIC >=140 AND OR DIASTOLIC >=90 mmHg)</item>
+        <item>CONVULSIONS</item>
+        <item>VAGINAL BLEEDING</item>
+        <item>FOUL SMELLING DISCHARGE</item>
+        <item>SEVERE ANAEMIA (HB &lt;7 gm/dl)</item>
+        <item>DIABETES</item>
+        <item>TWINS</item>
+        <item>OTHER</item>
+    </string-array>
+
 
     <!--  PMSMA  -->
     <string name="anc_visit_number">ANC %1d ভ্ৰমণ কৰক</string>
@@ -131,6 +142,12 @@
     <string-array name="pmsma_confirmation_array">
         <item>হোৱ</item>
         <item>নহয়</item>
+    </string-array>
+
+    <string-array name="pmsma_malaria_array">
+        <item>Negative</item>
+        <item>Positive</item>
+        <item>Test Not Done</item>
     </string-array>
 
     <!--  Delivery Outcome  -->

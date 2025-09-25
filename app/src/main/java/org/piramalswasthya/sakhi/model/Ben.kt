@@ -1363,6 +1363,16 @@ data class BenRegCache(
             genderId = genderId,
             maritalStatusID = if (isKid) null else genDetails?.maritalStatusId?.toString() ?: null,
             maritalStatusName = if (isKid) null else genDetails?.maritalStatus ?: null,
+            isDeath = isDeath,
+            isDeathValue = isDeathValue ?: "",
+            dateOfDeath = dateOfDeath ?:"",
+            placeOfDeath = placeOfDeath ?: "",
+            timeOfDeath = timeOfDeath ?: "",
+            reasonOfDeath = reasonOfDeath ?: "",
+            reasonOfDeathId = reasonOfDeathId ?: -1,
+            placeOfDeathId = placeOfDeathId ?: -1,
+            otherPlaceOfDeath = otherPlaceOfDeath?: "",
+
         )
     }
 

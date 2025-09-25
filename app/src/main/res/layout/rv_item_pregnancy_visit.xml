@@ -292,10 +292,10 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/llAnc"
                 android:layout_marginVertical="@dimen/margin_normal"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/linear_pwr_tracking_Layout">
 
                 <com.google.android.material.button.MaterialButton
@@ -324,6 +324,17 @@
                     android:text="@string/anc_visits"
                     android:textColor="?attr/colorOnPrimary" />
 
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/margin_normal"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/llAnc">
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_pmsma"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
@@ -335,8 +346,20 @@
                     android:onClick="@{() -> clickListener.pmsma(visit)}"
                     android:text="@string/pmsma"
                     android:textColor="?attr/colorOnPrimary" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_view_visits_pmsma"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/margin_normal"
+                    android:layout_weight="1"
 
+                    android:backgroundTint="@android:color/holo_green_dark"
+                    android:onClick="@{() -> clickListener.showPmsmaVisits(visit)}"
+                    android:text="@string/pmsma_visits"
+                    android:textColor="?attr/colorOnPrimary" />
             </LinearLayout>
+
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
