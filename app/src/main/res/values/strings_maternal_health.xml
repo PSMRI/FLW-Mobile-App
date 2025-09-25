@@ -273,7 +273,7 @@
     <string name="pnc_visit_date">PNC Visit Date</string>
     <string name="pnc_ifa_tabs_given">No. of IFA Tablets given</string>
     <string name="pnc_contraception_method">Method of Contraception</string>
-    <string name="pnc_any_contraception_method">Any Method of Contraception</string>
+    <string name="pnc_any_contraception_method">Any Method of Postpartum Contraception (PPC)</string>
     <string name="pnc_other_ppc_method">Other PPC Method</string>
     <string name="pnc_mother_danger_sign">Mother Danger Sign</string>
     <string name="pnc_other_danger_sign">Other Danger Sign</string>
@@ -302,11 +302,25 @@
         <item>CONDOM</item>
         <item>MALE STERILIZATION</item>
         <item>FEMALE STERILIZATION</item>
-        <item>POST PARTUM STERILIZATION (PPS WITHIN 7 DAYS OF DELIVERY)</item>
+        <item>POST PARTUM STERILIZATION (PPS)</item>
+        <item>MiniLap</item>
         <item>ANY OTHER (SPECIFY)</item>
     </string-array>
+
+    <string-array name="sterilization_methods_array">
+        <item>MALE STERILIZATION</item>
+        <item>FEMALE STERILIZATION</item>
+        <item>POST PARTUM STERILIZATION (PPS)</item>
+        <item>MiniLap</item>
+    </string-array>
+
+    <string-array name="female_sterilization_methods_array">
+        <item>FEMALE STERILIZATION</item>
+        <item>POST PARTUM STERILIZATION (PPS)</item>
+        <item>MiniLap</item>
+    </string-array>
     <string-array name="pnc_mother_danger_sign_array">
-        <item>PPH</item>
+        <item>PPH - Excessive bleeding</item>
         <item>FEVER</item>
         <item>SEPSIS</item>
         <item>SEVERE ABDOMINAL PAIN</item>
@@ -319,7 +333,6 @@
         <item>Community Health Centre</item>
         <item>District Hospital</item>
         <item>Other Private Hospital</item>
-        <item>Any Other (Specify)</item>
     </string-array>
     <string-array name="pnc_death_cause_array">
         <item>ECLAMPSIA</item>
