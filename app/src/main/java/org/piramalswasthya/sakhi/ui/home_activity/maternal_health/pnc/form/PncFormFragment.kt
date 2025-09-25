@@ -55,11 +55,13 @@ class PncFormFragment : Fragment() {
             } else findNavController().navigateUp()
         }
 
-    private var latestTmpUri: Uri? = null
-    private var deliveryDischargeUri1: Uri? = null
-    private var deliveryDischargeUri2: Uri? = null
-    private var deliveryDischargeUri3: Uri? = null
-    private var deliveryDischargeUri4: Uri? = null
+
+    private val deliveryDischargeUris = mutableMapOf<Int, Uri?>(
+        58 to null,
+        59 to null,
+        60 to null,
+        61 to null
+    )
 
 
     private val PICK_PDF_FILE = 1
@@ -261,35 +263,16 @@ class PncFormFragment : Fragment() {
     private fun takeImage() {
         lifecycleScope.launchWhenStarted {
             getTmpFileUri().let { uri ->
-                assignUriAndLaunch(viewModel.getDocumentFormId(), uri)
+                setUriForFormId(viewModel.getDocumentFormId(), uri)
+                takePicture.launch(uri)
             }
         }
     }
 
-    private fun assignUriAndLaunch(formId: Int, tmpUri: Uri) {
-        when (formId) {
-            58 -> {
-                deliveryDischargeUri1 = tmpUri
-                takePicture.launch(deliveryDischargeUri1)
-            }
-
-            59 -> {
-                deliveryDischargeUri2 = tmpUri
-                takePicture.launch(deliveryDischargeUri2)
-            }
-
-            60 -> {
-                deliveryDischargeUri3 = tmpUri
-                takePicture.launch(deliveryDischargeUri3)
-            }
-
-            61 -> {
-                deliveryDischargeUri4 = tmpUri
-                takePicture.launch(deliveryDischargeUri4)
-            }
-
-        }
+    private fun setUriForFormId(formId: Int, uri: Uri) {
+        deliveryDischargeUris[formId] = uri
     }
+
 
     private fun requestLocationPermission() {
         val locationManager =
@@ -348,13 +331,10 @@ class PncFormFragment : Fragment() {
         }
     }
 
-    private fun getUriByFormId(formId: Int): Uri? = when (formId) {
-        58 -> deliveryDischargeUri1
-        59 -> deliveryDischargeUri2
-        60 -> deliveryDischargeUri3
-        61 -> deliveryDischargeUri4
-        else -> latestTmpUri
+    private fun getUriByFormId(formId: Int): Uri? {
+        return deliveryDischargeUris[formId]
     }
+
 
     private fun getIndexByFormId(formId: Int): Int? = when (formId) {
         58 -> viewModel.getIndexDeliveryDischargeSummary1()
@@ -378,12 +358,7 @@ class PncFormFragment : Fragment() {
                 Toast.makeText(context, resources.getString(R.string.file_size), Toast.LENGTH_LONG)
                     .show()
             } else {
-                when (formId) {
-                    58 -> deliveryDischargeUri1 = uri
-                    59 -> deliveryDischargeUri2 = uri
-                    60 -> deliveryDischargeUri3 = uri
-                    61 -> deliveryDischargeUri4 = uri
-                }
+                setUriForFormId(formId, uri)
                 viewModel.setImageUriToFormElement(uri)
                 (binding.form.rvInputForm.adapter as? FormInputAdapter)?.notifyDataSetChanged()
             }
@@ -421,10 +396,7 @@ class PncFormFragment : Fragment() {
 
 
     private fun isDeliveryDischargeUploaded(): Boolean {
-        return deliveryDischargeUri1 != null ||
-                deliveryDischargeUri2 != null ||
-                deliveryDischargeUri3 != null ||
-                deliveryDischargeUri4 != null
+        return deliveryDischargeUris.values.any { it != null }
     }
 
 
