@@ -29,4 +29,6 @@ interface PncDao {
     suspend fun getAllPNCs(eligBenIds: Set<Long>): List<PNCVisitCache>
 
 
+    @Query("SELECT * FROM PNC_VISIT WHERE benId = :benId")
+    suspend fun getPncVisitsByBenId(benId: Long): List<PNCVisitCache>
 }
