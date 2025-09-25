@@ -29,7 +29,6 @@ import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
-import org.piramalswasthya.sakhi.adapters.FormInputAdapterWithBgIcon
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.databinding.LayoutMediaOptionsBinding
 import org.piramalswasthya.sakhi.databinding.LayoutViewMediaBinding
@@ -49,35 +48,27 @@ class PncFormFragment : Fragment() {
         get() = _binding!!
 
     private val requestLocationPermission =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { b ->
-            if (b) {
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            if (granted) {
                 requestLocationPermission()
             } else findNavController().navigateUp()
         }
 
-
-    private val deliveryDischargeUris = mutableMapOf<Int, Uri?>(
+    private val deliveryDischargeUris: MutableMap<Int, Uri?> = mutableMapOf(
         58 to null,
         59 to null,
         60 to null,
         61 to null
     )
 
-
     private val PICK_PDF_FILE = 1
-
 
     private val takePicture =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { success: Boolean ->
             if (success) {
                 val formId = viewModel.getDocumentFormId()
-                val uri = getUriByFormId(formId)
-
-                uri?.let {
-                    viewModel.setImageUriToFormElement(it)
-                    getIndexByFormId(formId)?.let { i ->
-                        binding.form.rvInputForm.adapter?.notifyItemChanged(i)
-                    }
+                getUriByFormId(formId)?.let { uri ->
+                    updateAdapterForFormId(formId, uri)
                 }
             }
         }
@@ -96,7 +87,7 @@ class PncFormFragment : Fragment() {
 
         viewModel.recordExists.observe(viewLifecycleOwner) { notIt ->
             notIt?.let { recordExists ->
-                binding.fabEdit.visibility = /*if (recordExists) View.VISIBLE else */View.GONE
+                binding.fabEdit.visibility = View.GONE
                 binding.btnSubmit.visibility = if (recordExists) View.GONE else View.VISIBLE
                 val adapter = FormInputAdapter(
                     selectImageClickListener = FormInputAdapter.SelectUploadImageClickListener { formId ->
@@ -115,35 +106,35 @@ class PncFormFragment : Fragment() {
                         if (recordExists) {
                             viewDocuments(formId)
                         } else {
-                            getUriByFormId(formId)?.let { viewImage(it) }
+                            getUriByFormId(formId)?.let { showImageDialog(it) }
                         }
                     },
                     isEnabled = !recordExists
-
                 )
                 binding.form.rvInputForm.adapter = adapter
                 lifecycleScope.launch {
                     viewModel.formList.collect {
-                        if (it.isNotEmpty())
-
-                            adapter.submitList(it)
-
+                        if (it.isNotEmpty()) adapter.submitList(it)
                     }
                 }
             }
         }
-        viewModel.showIncentiveAlert.observe(viewLifecycleOwner) { shouldShowAlert ->
-            if (shouldShowAlert) {
+
+        viewModel.showIncentiveAlert.observe(viewLifecycleOwner) { shouldShow ->
+            if (shouldShow) {
                 showIncentiveAlert()
                 viewModel.incentiveAlertShown()
             }
         }
+
         viewModel.benName.observe(viewLifecycleOwner) {
             binding.tvBenName.text = it
         }
+
         viewModel.benAgeGender.observe(viewLifecycleOwner) {
             binding.tvAgeGender.text = it
         }
+
         binding.btnSubmit.setOnClickListener {
             if (!isDeliveryDischargeUploaded()) {
                 showUploadReminderDialog()
@@ -151,19 +142,21 @@ class PncFormFragment : Fragment() {
                 submitAncForm()
             }
         }
+
         binding.fabEdit.setOnClickListener {
             viewModel.setRecordExist(false)
         }
+
         viewModel.navigateToMdsr.observe(viewLifecycleOwner) { shouldNavigate ->
             if (shouldNavigate) {
                 navigateToMdsr()
                 viewModel.onNavigationComplete()
             }
         }
+
         viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state) {
-                is State.IDLE -> {
-                }
+                is State.IDLE -> Unit
 
                 is State.SAVING -> {
                     binding.llContent.visibility = View.GONE
@@ -171,15 +164,12 @@ class PncFormFragment : Fragment() {
                 }
 
                 is State.SAVE_SUCCESS -> {
-                    val saveSuccessState = state
                     binding.llContent.visibility = View.VISIBLE
                     binding.pbForm.visibility = View.GONE
                     Toast.makeText(context, "Save Successful", Toast.LENGTH_LONG).show()
                     WorkerUtils.triggerAmritPushWorker(requireContext())
-                    //   WorkerUtils.triggerAdHocPncEcUpdateWorker(requireContext())
-                    //findNavController().navigateUp()
 
-                    if (saveSuccessState.shouldNavigateToMdsr) {
+                    if (state.shouldNavigateToMdsr) {
                         navigateToMdsr()
                     } else {
                         findNavController().navigateUp()
@@ -187,10 +177,7 @@ class PncFormFragment : Fragment() {
                 }
 
                 is State.SAVE_FAILED -> {
-                    Toast.makeText(
-
-                        context, "Something wend wong! Contact testing!", Toast.LENGTH_LONG
-                    ).show()
+                    Toast.makeText(context, "Something went wrong! Contact testing!", Toast.LENGTH_LONG).show()
                     binding.llContent.visibility = View.VISIBLE
                     binding.pbForm.visibility = View.GONE
                 }
@@ -205,29 +192,21 @@ class PncFormFragment : Fragment() {
     }
 
     private fun validateCurrentPage(): Boolean {
-        val result = binding.form.rvInputForm.adapter?.let {
-            (it as FormInputAdapter).validateInput(resources)
-        }
+        val result = (binding.form.rvInputForm.adapter as? FormInputAdapter)
+            ?.validateInput(resources)
         Timber.d("Validation : $result")
         return if (result == -1) true
         else {
-            if (result != null) {
-                binding.form.rvInputForm.scrollToPosition(result)
-            }
+            result?.let { binding.form.rvInputForm.scrollToPosition(it) }
             false
         }
     }
 
-
     private fun hardCodedListUpdate(formId: Int) {
         binding.form.rvInputForm.adapter?.apply {
-            when (formId) {
-
-                1 -> notifyItemChanged(1)
-            }
+            if (formId == 1) notifyItemChanged(1)
         }
     }
-
 
     private fun chooseOptions() {
         val alertBinding = LayoutMediaOptionsBinding.inflate(layoutInflater, binding.root, false)
@@ -250,14 +229,11 @@ class PncFormFragment : Fragment() {
     }
 
     private fun showIncentiveAlert() {
-        AlertDialog.Builder(requireContext())
-            .setTitle("Reminder!!")
-            .setMessage("Do you want to upload \"Delivery Discharge Summary\" photo copy to claim your Incentive.")
-            .setPositiveButton("OK") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .setCancelable(false)
-            .show()
+        showReminderDialog(
+            title = "Reminder!!",
+            message = "Do you want to upload \"Delivery Discharge Summary\" photo copy to claim your Incentive.",
+            positiveText = "OK"
+        )
     }
 
     private fun takeImage() {
@@ -272,7 +248,6 @@ class PncFormFragment : Fragment() {
     private fun setUriForFormId(formId: Int, uri: Uri) {
         deliveryDischargeUris[formId] = uri
     }
-
 
     private fun requestLocationPermission() {
         val locationManager =
@@ -295,22 +270,8 @@ class PncFormFragment : Fragment() {
     }
 
     private fun selectImage() {
-        val intent = Intent(Intent.ACTION_PICK).apply {
-            type = "image/*"
-        }
+        val intent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
         startActivityForResult(intent, PICK_PDF_FILE)
-    }
-
-    private fun viewImage(imageUri: Uri) {
-        val viewImageBinding = LayoutViewMediaBinding.inflate(layoutInflater, binding.root, false)
-        val alertDialog = MaterialAlertDialogBuilder(requireContext())
-            .setView(viewImageBinding.root)
-            .setCancelable(true)
-            .create()
-        Glide.with(this).load(Uri.parse(imageUri.toString())).placeholder(R.drawable.ic_person)
-            .into(viewImageBinding.viewImage)
-        viewImageBinding.btnClose.setOnClickListener { alertDialog.dismiss() }
-        alertDialog.show()
     }
 
     private fun viewDocuments(formId: Int) {
@@ -319,22 +280,18 @@ class PncFormFragment : Fragment() {
             59 -> observeAndViewDocument(viewModel.getIndexDeliveryDischargeSummary2())
             60 -> observeAndViewDocument(viewModel.getIndexDeliveryDischargeSummary3())
             61 -> observeAndViewDocument(viewModel.getIndexDeliveryDischargeSummary4())
-
         }
     }
 
     private fun observeAndViewDocument(index: Int) {
         lifecycleScope.launch {
             viewModel.formList.collect {
-                it[index].value?.let { uriStr -> viewImage(uriStr.toUri()) }
+                it[index].value?.let { uriStr -> showImageDialog(uriStr.toUri()) }
             }
         }
     }
 
-    private fun getUriByFormId(formId: Int): Uri? {
-        return deliveryDischargeUris[formId]
-    }
-
+    private fun getUriByFormId(formId: Int): Uri? = deliveryDischargeUris[formId]
 
     private fun getIndexByFormId(formId: Int): Int? = when (formId) {
         58 -> viewModel.getIndexDeliveryDischargeSummary1()
@@ -355,50 +312,36 @@ class PncFormFragment : Fragment() {
     private fun handlePdfResult(formId: Int, pdfUri: Uri?) {
         pdfUri?.let { uri ->
             if (checkFileSize(uri, requireContext())) {
-                Toast.makeText(context, resources.getString(R.string.file_size), Toast.LENGTH_LONG)
-                    .show()
+                Toast.makeText(context, resources.getString(R.string.file_size), Toast.LENGTH_LONG).show()
             } else {
-                setUriForFormId(formId, uri)
-                viewModel.setImageUriToFormElement(uri)
-                (binding.form.rvInputForm.adapter as? FormInputAdapter)?.notifyDataSetChanged()
+                updateAdapterForFormId(formId, uri)
             }
         }
     }
 
     private fun navigateToMdsr() {
-
         if (viewModel.hhId != null) {
             val action = PncFormFragmentDirections.actionPncFormFragmentToMdsrObjectFragment(
                 hhId = viewModel.hhId!!,
                 benId = viewModel.benId
             )
-
             findNavController().navigate(action)
         }
     }
 
-
     private fun showUploadReminderDialog() {
-        AlertDialog.Builder(requireContext())
-            .setTitle("Reminder!!")
-            .setMessage("Do you want to upload \"Delivery Discharge Summary\" photo copy to claim your Incentive.")
-            .setPositiveButton("Yes") { dialog, _ ->
-                dialog.dismiss()
-
-            }
-            .setNegativeButton("No") { dialog, _ ->
-                dialog.dismiss()
-                submitAncForm()
-            }
-            .setCancelable(false)
-            .show()
+        showReminderDialog(
+            title = "Reminder!!",
+            message = "Do you want to upload \"Delivery Discharge Summary\" photo copy to claim your Incentive.",
+            positiveText = "Yes",
+            negativeText = "No",
+            onNegative = { submitAncForm() }
+        )
     }
-
 
     private fun isDeliveryDischargeUploaded(): Boolean {
         return deliveryDischargeUris.values.any { it != null }
     }
-
 
     override fun onStart() {
         super.onStart()
@@ -412,4 +355,53 @@ class PncFormFragment : Fragment() {
         _binding = null
     }
 
+
+
+    private fun showReminderDialog(
+        title: String,
+        message: String,
+        positiveText: String,
+        negativeText: String? = null,
+        onPositive: (() -> Unit)? = null,
+        onNegative: (() -> Unit)? = null,
+        cancelable: Boolean = false
+    ) {
+        AlertDialog.Builder(requireContext())
+            .setTitle(title)
+            .setMessage(message)
+            .apply {
+                setPositiveButton(positiveText) { dialog, _ ->
+                    dialog.dismiss()
+                    onPositive?.invoke()
+                }
+                negativeText?.let {
+                    setNegativeButton(it) { dialog, _ ->
+                        dialog.dismiss()
+                        onNegative?.invoke()
+                    }
+                }
+            }
+            .setCancelable(cancelable)
+            .show()
+    }
+
+    private fun updateAdapterForFormId(formId: Int, uri: Uri) {
+        setUriForFormId(formId, uri)
+        viewModel.setImageUriToFormElement(uri)
+        (binding.form.rvInputForm.adapter as? FormInputAdapter)?.notifyDataSetChanged()
+    }
+
+    private fun showImageDialog(uri: Uri) {
+        val viewImageBinding = LayoutViewMediaBinding.inflate(layoutInflater, binding.root, false)
+        val alertDialog = MaterialAlertDialogBuilder(requireContext())
+            .setView(viewImageBinding.root)
+            .setCancelable(true)
+            .create()
+        Glide.with(this)
+            .load(uri)
+            .placeholder(R.drawable.ic_person)
+            .into(viewImageBinding.viewImage)
+        viewImageBinding.btnClose.setOnClickListener { alertDialog.dismiss() }
+        alertDialog.show()
+    }
 }
