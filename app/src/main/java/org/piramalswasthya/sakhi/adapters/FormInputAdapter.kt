@@ -321,7 +321,7 @@ class FormInputAdapter(
         fun bind(item: FormElement, isEnabled: Boolean,  formValueListener: FormValueListener?) {
             binding.form = item
 
-            binding.executePendingBindings()
+
             if (item.errorText == null) {
                 binding.tilRvDropdown.error = null
                 binding.tilRvDropdown.isErrorEnabled = false
