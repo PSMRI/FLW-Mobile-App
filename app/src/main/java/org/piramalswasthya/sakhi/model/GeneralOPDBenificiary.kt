@@ -50,6 +50,7 @@ data class GeneralOPEDBeneficiary(
     val dob: String?,
     val tc_SpecialistLabFlag: Int?,
     val visitReason: String?,
+    val village: String?,
     val visitCategory: String?
 )
 @JsonClass(generateAdapter = true)
@@ -97,6 +98,7 @@ data class GeneralOPDNetwork(
     val dob: String?,
     val tc_SpecialistLabFlag: Int?,
     val visitReason: String?,
+    val village: String?,
     val visitCategory: String?
 ) {
     fun asGeneralCacheModel(): GeneralOPEDBeneficiary {
@@ -144,6 +146,7 @@ data class GeneralOPDNetwork(
             dob = dob,
             tc_SpecialistLabFlag = tc_SpecialistLabFlag,
             visitReason = visitReason,
+            village = village,
             visitCategory = visitCategory
         )
     }

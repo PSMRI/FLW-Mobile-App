@@ -142,7 +142,7 @@ import org.piramalswasthya.sakhi.model.VHNDCache
         GeneralOPEDBeneficiary::class,
     ],
     views = [BenBasicCache::class],
-    version = 22, exportSchema = false
+    version = 23, exportSchema = false
 )
 
 @TypeConverters(LocationEntityListConverter::class, SyncStateConverter::class)
@@ -194,6 +194,11 @@ abstract class InAppDb : RoomDatabase() {
                 it.execSQL("alter table BENEFICIARY add column isConsent BOOL")
 
             })
+            val MIGRATION_22_23 = object : Migration(22, 23) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("ALTER TABLE GENERAL_OPD_ACTIVITY ADD COLUMN village TEXT")
+                }
+            }
 
             val MIGRATION_20_21 = object : Migration(20, 21) {
                 override fun migrate(database: SupportSQLiteDatabase) {
@@ -641,7 +646,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_18_19,
                         MIGRATION_19_20,
                         MIGRATION_20_21,
-                        MIGRATION_21_22
+                        MIGRATION_21_22,
+                        MIGRATION_22_23
 
                     ).build()
 
