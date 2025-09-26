@@ -1,5 +1,6 @@
     package org.piramalswasthya.sakhi.configuration
 
+    import android.app.AlertDialog
     import android.content.Context
     import android.text.InputType
     import android.util.Log
@@ -17,6 +18,7 @@
     import org.piramalswasthya.sakhi.model.PMSMACache
     import org.piramalswasthya.sakhi.model.PregnantWomanAncCache
     import org.piramalswasthya.sakhi.model.PregnantWomanRegistrationCache
+    import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pmsma.PmsmaViewModel
     import java.text.SimpleDateFormat
     import java.util.Calendar
     import java.util.Date
@@ -24,7 +26,8 @@
     import java.util.concurrent.TimeUnit
 
     class PMSMAFormDataset(
-        context: Context, currentLanguage: Languages
+        context: Context, currentLanguage: Languages,
+        private val viewModel: PmsmaViewModel
     ) : Dataset(context, currentLanguage) {
 
         companion object {
@@ -571,6 +574,11 @@
                 }
 
                 highriskSymbols.id -> {
+                    if(highriskSymbols.value=="Yes")
+                    {
+                        viewModel.onHighRiskSelected(true)
+
+                    }
                     triggerDependants(
                         source = highriskSymbols,
                         passedIndex = index,
@@ -578,6 +586,7 @@
                         target = highRiskReason,
                         targetSideEffect = listOf(anyOtherHighRiskCondition)
                     )
+
                 }
 
                 highRiskReason.id -> {

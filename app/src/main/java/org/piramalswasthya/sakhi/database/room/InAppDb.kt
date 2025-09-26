@@ -165,14 +165,8 @@ abstract class InAppDb : RoomDatabase() {
                     database.execSQL("ALTER TABLE PMSMA ADD COLUMN visitDate INTEGER")
                     database.execSQL("ALTER TABLE PMSMA ADD COLUMN visitNumber INTEGER NOT NULL DEFAULT 0")
                     database.execSQL("ALTER TABLE PMSMA ADD COLUMN anyOtherHighRiskCondition TEXT")
-//                    database.execSQL("UPDATE PMSMA SET visitNumber = 1 WHERE visitNumber = 0")
-//                    database.execSQL("UPDATE PMSMA SET visitDate = createdDate WHERE visitDate IS NULL OR visitDate = 0")
                 }
             }
-            val MIGRATION_26_27 = object  : Migration(26,27)
-            {
-                override fun migrate(database: SupportSQLiteDatabase) {
-                    database.execSQL("ALTER TABLE INCENTIVE_ACTIVITY ADD COLUMN groupName TEXT NOT NULL DEFAULT ''")
 
             val MIGRATION_27_28 = object  : Migration(27,28)
             {
@@ -205,7 +199,7 @@ abstract class InAppDb : RoomDatabase() {
             val MIGRATION_26_27 = object  : Migration(26,27)
             {
                 override fun migrate(database: SupportSQLiteDatabase) {
-                    database.execSQL("ALTER TABLE INCENTIVE_ACTIVITY ADD COLUMN groupName TEXT")                }
+                    database.execSQL("ALTER TABLE INCENTIVE_ACTIVITY ADD COLUMN groupName TEXT  NOT NULL DEFAULT ''")                }
             }
             val MIGRATION_25_26 = object : Migration(25, 26) {
                 override fun migrate(database: SupportSQLiteDatabase) {

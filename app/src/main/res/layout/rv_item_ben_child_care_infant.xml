@@ -92,16 +92,6 @@
                     android:layout_marginHorizontal="@dimen/padding_small"
                     android:elevation="2dp"
                     android:src="@drawable/ic_overdue" />
-
-                <ImageView
-                    android:id="@+id/iv_sync_state"
-                    android:layout_width="24dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical|end"
-                    android:layout_marginHorizontal="@dimen/padding_small"
-                    android:contentDescription="@string/iv_sync_state_tv"
-                    app:syncState="@{ben.syncState}"
-                    tools:src="@drawable/ic_synced" />
                 <ImageView
                     android:id="@+id/iv_isDeath"
                     android:layout_width="24dp"
@@ -112,6 +102,16 @@
                     android:contentDescription="@string/iv_death_indicator"
                     android:src="@drawable/ic_death"
                     />
+                <ImageView
+                    android:id="@+id/iv_sync_state"
+                    android:layout_width="24dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|end"
+                    android:layout_marginHorizontal="@dimen/padding_small"
+                    android:contentDescription="@string/iv_sync_state_tv"
+                    app:syncState="@{ben.syncState}"
+                    tools:src="@drawable/ic_synced" />
+
 
             </LinearLayout>
 
