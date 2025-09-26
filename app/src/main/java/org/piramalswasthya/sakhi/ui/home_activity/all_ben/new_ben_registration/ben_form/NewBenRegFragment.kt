@@ -266,7 +266,7 @@ class NewBenRegFragment : Fragment() {
                         Toast.LENGTH_LONG
                     ).show()
                     WorkerUtils.triggerAmritPushWorker(requireContext())
-                    if (viewModel.isHoFMarried()) {
+                    if (viewModel.isHoFMarried()&& viewModel.isEditClicked) {
                         showAddSpouseAlert()
                     } else {
                         findNavController().navigateUp()
@@ -286,6 +286,7 @@ class NewBenRegFragment : Fragment() {
         }
 
         binding.fabEdit.setOnClickListener {
+            viewModel.isEditClicked = true
             viewModel.setRecordExist(false)
         }
     }
@@ -400,6 +401,7 @@ class NewBenRegFragment : Fragment() {
             false
         }
     }
+
 
     override fun onStart() {
         super.onStart()

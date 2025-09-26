@@ -761,7 +761,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             religion,
             rchId,
             reproductiveStatus,
-            ageAtMarriage
+//            ageAtMarriage
         )
 
         this.familyHeadPhoneNo = household.family?.familyHeadPhoneNo?.toString()
@@ -915,10 +915,10 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             list.remove(reproductiveStatus)
         }
 
-        val shouldAgeAtMarraige = maritalStatus.value == "Married"
+     /*   val shouldAgeAtMarraige = maritalStatus.value == "Married"
         if (!shouldAgeAtMarraige) {
             list.remove(ageAtMarriage)
-        }
+        }*/
 
         if (!isKid() && !hasThirdPage()) {
             list.remove(rchId)
