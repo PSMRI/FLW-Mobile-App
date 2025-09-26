@@ -80,6 +80,7 @@
     <string name="form_input_error_invalid_aadhar">অবৈধ আধার নম্বর</string>
     <string name="no_records_found_hh">কোনও পরিবারের রেকর্ড পাওয়া যায়নি। দয়া করে নীচের বোতামে ক্লিক করে পরিবার নিবন্ধন শুরু করুন।</string>
     <string name="icon_title_abortion">গৰ্ভপাত তালিকা</string>
+    <string name="icon_title_pmsma">PMSMA List</string>
     <string-array name="anc_paiucd_done_by">
         <item>ডাক্টৰ</item>
         <item>নাৰ্চ</item>
@@ -283,6 +284,14 @@
     <string name="facility_place_of_abortion">Facility (Place of Abortion)</string>
     <string name="abortion_type">Abortion Type</string>
     <string name="abortion_date">Abortion Date</string>
+    <string name="any_other_high_risk_conditions">Any other High Risk conditions</string>
+    <string name="details_of_pregnant_women">Details of Pregnant women</string>
+    <string name="anc_period">ANC Period</string>
+    <string name="anc_date">ANC Date</string>
+    <string name="if_yes_select_high_risk_condition">if yes, select high-risk condition</string>
+    <string name="pmsma_visit_date">PMSMA Visit Date</string>
+    <string name="pmsma_visits">PMSMA Visits</string>
+    <string name="pmsma_visit">PMSMA Visit</string>
 
 
 </resources>

@@ -62,10 +62,6 @@ class PwAncFormViewModel @Inject constructor(
     val recordExists: LiveData<Boolean>
         get() = _recordExists
 
-
-
-
-    //    private lateinit var user: UserDomain
     private val dataset =
         PregnantWomanAncVisitDataset(context, preferenceDao.getCurrentLanguage())
     val formList = dataset.listFlow

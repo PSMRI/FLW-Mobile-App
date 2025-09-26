@@ -223,6 +223,26 @@ class PmsmaRepo @Inject constructor(
         }
 
     }
+    suspend fun getSavedRecord(benId: Long, visitNumber: Int): PMSMACache? {
+        return withContext(Dispatchers.IO) {
+            pmsmaDao.getSavedRecord(benId,visitNumber)
+        }
+
+    }
+    suspend fun getActiveAncCountForBenIds(benId: Long): Int {
+        return withContext(Dispatchers.IO) {
+            pmsmaDao.getActiveAncCountForBenIds(benId)
+        }
+
+    }
+
+
+    suspend fun getLastPmsmaVisit(benId: Long): PMSMACache? {
+        return withContext(Dispatchers.IO) {
+            pmsmaDao.getLastPmsmaVisit(benId)
+        }
+
+    }
 
     suspend fun setToInactive(eligBenIds: Set<Long>) {
         withContext(Dispatchers.IO) {

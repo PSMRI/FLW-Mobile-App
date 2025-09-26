@@ -32,6 +32,8 @@ interface MaternalHealthDao {
     @Query("select * from pregnancy_anc where benId in (:benId) and isActive = 1")
     fun getAllActiveAncRecords(benId: Set<Long>): List<PregnantWomanAncCache>
 
+
+
     @Query("select * from pregnancy_register where benId in (:benId)")
     fun getAllActivePwrRecords(benId: Set<Long>): List<PregnantWomanRegistrationCache>
 

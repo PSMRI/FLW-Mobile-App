@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.model
 
+import android.util.Log
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
@@ -15,6 +16,7 @@ import org.piramalswasthya.sakhi.helpers.getWeeksOfPregnancy
 import org.piramalswasthya.sakhi.network.getLongFromDate
 import org.piramalswasthya.sakhi.utils.HelperUtil.getDateStringFromLong
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
@@ -62,6 +64,14 @@ data class PregnantWomenVisitDomain(
 )
 
 data class AncStatus(
+    val benId: Long,
+    val visitNumber: Int,
+    val filledWeek: Int,
+    val syncState: SyncState? = null
+)
+
+
+data class PMSMAStatus(
     val benId: Long,
     val visitNumber: Int,
     val filledWeek: Int,
@@ -580,6 +590,12 @@ data class BenWithAncVisitCache(
     val pmsma: List<PMSMACache>,
 
     @Relation(
+        parentColumn = "benId",
+        entityColumn = "benId",
+    )
+    val savedPmsmaRecords: List<PMSMACache>,
+
+    @Relation(
         parentColumn = "benId", entityColumn = "benId", entity = PregnantWomanAncCache::class
     )
     val savedAncRecords: List<PregnantWomanAncCache>
@@ -608,7 +624,6 @@ data class BenWithAncVisitCache(
         val weekOfPregnancyToUse = if (lmpDateToUse != 0L) {
             (TimeUnit.MILLISECONDS.toDays(getTodayMillis() - lmpDateToUse) / 7).toInt()
         } else 0
-
         return BenWithAncListDomain(
             ben = ben.asBasicDomainModel(),
             pwr = activePwrRecord,
@@ -622,10 +637,46 @@ data class BenWithAncVisitCache(
                     syncState = it.syncState
                 )
             }.sortedBy { it.visitNumber },
+            pmsma = if (savedPmsmaRecords.filter { it.isActive }.isEmpty()) {
+                listOf(
+                    PMSMAStatus(
+                        benId = ben.benId,
+                        visitNumber = 0,
+                        filledWeek = if (activePmsma == null && savedAncRecords.any { it.visitNumber == 1 }) {
+                            1
+                        } else {
+                            0
+                        },
+                        syncState = SyncState.UNSYNCED
+                    )
+                )
+            } else {
+                savedPmsmaRecords.filter { it.isActive }.map {
+                    val lastVisitRecord = savedPmsmaRecords.filter { it.isActive }
+                        .maxByOrNull { it.visitNumber }
+
+                    var eligibilityFilledWeek = 1
+
+                    if (lastVisitRecord != null) {
+                        val today = Calendar.getInstance().timeInMillis
+                        val gapDays = TimeUnit.MILLISECONDS.toDays(today - lastVisitRecord.visitDate!!)
+                        eligibilityFilledWeek = if (gapDays >= 7) 1 else 0
+                    }
+
+                    PMSMAStatus(
+                        benId = it.benId,
+                        visitNumber = it.visitNumber,
+                        filledWeek = eligibilityFilledWeek,
+                        syncState = it.syncState
+                    )
+                }.sortedBy { it.visitNumber }
+            }
+            ,
             savedAncRecords = savedAncRecords,
             pmsmaFillable = if (activePmsma == null) {
-                savedAncRecords.any { it.visitNumber == 1 }
+                savedAncRecords.any { it.visitNumber >0 }
             } else true,
+
             hasPmsma = activePmsma != null,
             showAddAnc = if (activePwrRecord == null) {
                 false
@@ -656,15 +707,17 @@ data class BenWithAncVisitCache(
             }
         }
     }
+
 }
 
 data class BenWithAncListDomain(
     val ben: BenBasicDomain,
     val pwr: PregnantWomanRegistrationCache?,
     val anc: List<AncStatus>,
+    val pmsma: List<PMSMAStatus>,
     val savedAncRecords: List<PregnantWomanAncCache>,
 
-    // Abortion ke liye override hone wali raw values
+
     var lmpDate: Long? = null,
     var eddDate: Long? = null,
     var weekOfPregnancy: Int? = null,
