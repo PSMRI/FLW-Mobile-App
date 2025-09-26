@@ -113,7 +113,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.InfantEntity
     ],
     views = [BenBasicCache::class],
 
-    version = 28, exportSchema = false
+    version = 29, exportSchema = false
 )
 
 @TypeConverters(LocationEntityListConverter::class, SyncStateConverter::class)
@@ -160,6 +160,13 @@ abstract class InAppDb : RoomDatabase() {
             val MIGRATION_1_2 = Migration(1, 2, migrate = {
 //                it.execSQL("select count(*) from beneficiary")
             })
+            val MIGRATION_28_29 = object : Migration(28, 29) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("ALTER TABLE PMSMA ADD COLUMN visitDate INTEGER")
+                    database.execSQL("ALTER TABLE PMSMA ADD COLUMN visitNumber INTEGER NOT NULL DEFAULT 0")
+                    database.execSQL("ALTER TABLE PMSMA ADD COLUMN anyOtherHighRiskCondition TEXT")
+                }
+            }
 
             val MIGRATION_27_28 = object  : Migration(27,28)
             {
@@ -192,7 +199,7 @@ abstract class InAppDb : RoomDatabase() {
             val MIGRATION_26_27 = object  : Migration(26,27)
             {
                 override fun migrate(database: SupportSQLiteDatabase) {
-                    database.execSQL("ALTER TABLE INCENTIVE_ACTIVITY ADD COLUMN groupName TEXT")                }
+                    database.execSQL("ALTER TABLE INCENTIVE_ACTIVITY ADD COLUMN groupName TEXT  NOT NULL DEFAULT ''")                }
             }
             val MIGRATION_25_26 = object : Migration(25, 26) {
                 override fun migrate(database: SupportSQLiteDatabase) {
@@ -555,7 +562,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_24_25,
                         MIGRATION_25_26,
                         MIGRATION_26_27,
-                        MIGRATION_27_28
+                        MIGRATION_27_28,
+                        MIGRATION_28_29
                     ).build()
 
                     INSTANCE = instance

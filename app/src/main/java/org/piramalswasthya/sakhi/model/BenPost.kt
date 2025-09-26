@@ -11,6 +11,33 @@ data class BenPost(
     val countyid: Int = 0,
     @Json(name = "Processed")
     val processed: String? = null,
+    @Json(name = "isDeath")
+    val isDeath: Boolean,
+
+    @Json(name = "isDeathValue")
+    val isDeathValue: String,
+
+    @Json(name = "dateOfDeath")
+    val dateOfDeath: String,
+
+    @Json(name = "timeOfDeath")
+    val timeOfDeath: String,
+
+    @Json(name = "reasonOfDeath")
+    val reasonOfDeath: String,
+
+    @Json(name = "reasonOfDeathId")
+    val reasonOfDeathId: Int,
+
+    @Json(name = "placeOfDeath")
+    val placeOfDeath: String,
+
+    @Json(name = "placeOfDeathId")
+    val placeOfDeathId: Int,
+
+    @Json(name = "otherPlaceOfDeath")
+    val otherPlaceOfDeath: String,
+
     @Json(name = "ProviderServiceMapID")
     val providerServiceMapID: Int = 0,
     @Json(name = "VanID")

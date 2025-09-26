@@ -311,6 +311,12 @@ class IconDataset @Inject constructor(
             recordsRepo.getAbortionPregnantWomanCount(),
             MotherCareFragmentDirections.actionMotherCareFragmentToAbortionListFragment()
         ),
+        Icon(
+            R.drawable.ic__child_registration,
+            resources.getString(R.string.icon_title_pmsma),
+            recordsRepo.getHighRiskWomenCount(),
+            MotherCareFragmentDirections.actionMotherCareFragmentToPmsmaHighRiskListFragment()
+        )
     ).apply {
         forEachIndexed { index, icon ->
             icon.colorPrimary = index % 2 == 0

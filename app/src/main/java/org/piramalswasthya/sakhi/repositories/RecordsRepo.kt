@@ -195,14 +195,26 @@ class RecordsRepo @Inject constructor(
     //        .map { list -> list.map { it.ben } }
     fun getPregnantWomenListCount() = benDao.getAllPregnancyWomenListCount(selectedVillage)
     fun getAbortionPregnantWomanCount() = benDao.getAllAbortionWomenListCount(selectedVillage)
+    fun getHighRiskWomenCount() = benDao.getHighRiskWomenCount(selectedVillage)
 
-
+    fun getRegisteredPmsmaWomenList() =
+        benDao.getAllRegisteredPmsmaWomenList(selectedVillage)
+            .map { list ->
+                list.map { it.asDomainModel() }
+            }
     fun getRegisteredPregnantWomanList() =
         benDao.getAllRegisteredPregnancyWomenList(selectedVillage)
             .map { list ->
                 list.filter { !it.savedAncRecords.any { it.maternalDeath == true } }
                     .map { it.asDomainModel() }
             }
+    fun getHighRiskPregnantWomanList() =
+        benDao.getAllHighRiskPregnancyWomenList(selectedVillage)
+            .map { list ->
+                list.filter { !it.savedAncRecords.any { it.maternalDeath == true } }
+                    .map { it.asDomainModel() }
+            }
+
     fun getAbortionPregnantWomanList(): Flow<List<BenWithAncListDomain>> =
         benDao.getAllAbortionWomenList(selectedVillage)
             .map { benList ->

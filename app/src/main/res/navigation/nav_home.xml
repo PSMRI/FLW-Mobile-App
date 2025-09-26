@@ -155,6 +155,10 @@
         <action
             android:id="@+id/action_motherCareFragment_to_abortionListFragment"
             app:destination="@id/abortionListFragment" />
+
+        <action
+            android:id="@+id/action_motherCareFragment_to_pmsmaHighRiskListFragment"
+            app:destination="@id/pmsmaHighRiskListFragment" />
     </fragment>
     <fragment
         android:id="@+id/deathReportsFragment"
@@ -456,6 +460,16 @@
         <argument
             android:name="hhId"
             app:argType="long" />
+
+        <argument
+            android:name="visitNumber"
+            app:argType="integer" />
+
+        <argument
+            android:name="lastItemClick"
+            app:argType="boolean"
+            android:defaultValue="false" />
+
     </fragment>
     <fragment
         android:id="@+id/householdMembersFragment"
@@ -621,6 +635,7 @@
         <action
             android:id="@+id/action_pwAncVisitsFragment_to_pmsmaFragment"
             app:destination="@id/pmsmaFragment" />
+
     </fragment>
     <fragment
         android:id="@+id/pregnancyRegistrationFormFragment"
@@ -1097,5 +1112,16 @@
             app:argType="long" />
     </fragment>
 
+    <fragment
+        android:id="@+id/pmsmaHighRiskListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pmsma.pmsmaHighRiskList.PmsmaHighRiskListFragment"
+        android:label="PmsmaHighRiskListFragment" >
+        <action
+            android:id="@+id/action_pmsmaHighRiskListFragment_to_pwAncFormFragment"
+            app:destination="@id/pwAncFormFragment" />
+        <action
+            android:id="@+id/action_pmsmaHighRiskListFragment_to_pmsmaFragment"
+            app:destination="@id/pmsmaFragment" />
+    </fragment>
 
 </navigation>
