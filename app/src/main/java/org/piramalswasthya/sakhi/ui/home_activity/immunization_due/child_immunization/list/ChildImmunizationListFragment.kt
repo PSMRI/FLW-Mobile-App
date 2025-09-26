@@ -109,6 +109,11 @@ class ChildImmunizationListFragment : Fragment(),ImmunizationBirthDoseCategoryAd
                 filterBottomSheet.show(childFragmentManager, "ImM")
         }
 
+        binding.tvSelectedFilter.setOnClickListener {
+            if (!filterBottomSheet.isVisible)
+                filterBottomSheet.show(childFragmentManager, "ImM")
+        }
+
         viewModel.selectedFilter.observe(viewLifecycleOwner){
             if (it!=null){
                 binding.tvSelectedFilter.text = it
