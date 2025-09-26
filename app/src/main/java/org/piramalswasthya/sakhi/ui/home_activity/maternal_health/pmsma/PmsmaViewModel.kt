@@ -37,6 +37,12 @@ class PmsmaViewModel @Inject constructor(
     private val visitNumber = PmsmaFragmentArgs.fromSavedStateHandle(state).visitNumber
     val lastItemClick = PmsmaFragmentArgs.fromSavedStateHandle(state).lastItemClick
 
+    private val _showHighRiskAlert = MutableLiveData<Boolean>()
+    val showHighRiskAlert: LiveData<Boolean> get() = _showHighRiskAlert
+
+    fun onHighRiskSelected(isHighRisk: Boolean) {
+        if (isHighRisk) _showHighRiskAlert.value = true
+    }
     private val _benName = MutableLiveData<String>()
     val benName: LiveData<String> get() = _benName
 
@@ -53,7 +59,7 @@ class PmsmaViewModel @Inject constructor(
         _recordExists.value = b
     }
 
-    private val dataset = PMSMAFormDataset(context, preferenceDao.getCurrentLanguage())
+    private val dataset = PMSMAFormDataset(context, preferenceDao.getCurrentLanguage(),this)
     val formList = dataset.listFlow
 
     private lateinit var ben: BenRegCache
