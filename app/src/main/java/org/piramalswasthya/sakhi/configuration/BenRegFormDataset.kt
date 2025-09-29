@@ -843,6 +843,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             community,
             religion,
             rchId,
+            reproductiveStatus
         )
         this.familyHeadPhoneNo = household.family?.familyHeadPhoneNo?.toString()
         tempraryContactNoBelongsto.value =
@@ -1844,7 +1845,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 reproductiveStatus.value = null
             } else {
                 val saved = benIfDataExist
-                reproductiveStatus.isEnabled = false
+                reproductiveStatus.isEnabled = true
                 if (saved != null) {
                     reproductiveStatus.value = saved.genDetails?.reproductiveStatusId?.let {
                         reproductiveStatus.getStringFromPosition(it)

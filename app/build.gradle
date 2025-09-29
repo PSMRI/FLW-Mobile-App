@@ -18,7 +18,7 @@ android {
 
     defaultConfig {
         applicationId "org.piramalswasthya.sakhi"
-        minSdk 23
+        minSdk 25
         targetSdk 35
         versionCode buildVersionCode()
         versionName buildVersionName()
