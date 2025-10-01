@@ -7,8 +7,14 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.RvItemBenBinding
+import org.piramalswasthya.sakhi.helpers.getDateFromLong
+import org.piramalswasthya.sakhi.helpers.getPatientTypeByAge
 import org.piramalswasthya.sakhi.model.BenBasicDomain
+import org.piramalswasthya.sakhi.model.Gender
+import org.piramalswasthya.sakhi.model.HouseHoldBasicDomain
 
 
 class BenListAdapter(
@@ -17,7 +23,9 @@ class BenListAdapter(
     private val showRegistrationDate: Boolean = false,
     private val showSyncIcon: Boolean = false,
     private val showAbha: Boolean = false,
-    private val role: Int? = 0
+    private val showCall: Boolean = false,
+    private val role: Int? = 0,
+    private val pref: PreferenceDao? = null
 ) :
     ListAdapter<BenBasicDomain, BenListAdapter.BenViewHolder>(BenDiffUtilCallBack) {
     private object BenDiffUtilCallBack : DiffUtil.ItemCallback<BenBasicDomain>() {
@@ -47,8 +55,18 @@ class BenListAdapter(
             showAbha: Boolean,
             showSyncIcon: Boolean,
             showRegistrationDate: Boolean,
-            showBeneficiaries: Boolean, role: Int?
+            showBeneficiaries: Boolean, role: Int?,
+            showCall: Boolean,
+            pref: PreferenceDao?
         ) {
+
+            var gender = ""
+
+            if (pref?.getLoggedInUser()?.role.equals("asha", true)) {
+                binding.btnAbha.visibility = View.VISIBLE
+            } else {
+                binding.btnAbha.visibility = View.GONE
+            }
             if (!showSyncIcon) item.syncState = null
             binding.ben = item
             binding.clickListener = clickListener
@@ -60,6 +78,50 @@ class BenListAdapter(
                 if (showRegistrationDate) View.VISIBLE else View.INVISIBLE
             binding.hasAbha = !item.abhaId.isNullOrEmpty()
             binding.role = role
+
+            if (showCall) {
+                binding.ivCall.visibility = View.VISIBLE
+            } else {
+                binding.ivCall.visibility = View.GONE
+            }
+
+            gender = item.gender.toString()
+
+            if (item.dob != null) {
+                val type = getPatientTypeByAge(getDateFromLong(item.dob!!))
+                if (type == "new_born_baby") {
+                    binding.ivHhLogo.setImageResource(R.drawable.ic_new_born_baby)
+                } else if (type == "infant") {
+                    binding.ivHhLogo.setImageResource(R.drawable.ic_infant)
+                } else if (type == "child") {
+                    //male female check
+                    if (gender == Gender.MALE.name) {
+                        binding.ivHhLogo.setImageResource(R.drawable.ic_boy)
+                    } else if (gender == Gender.FEMALE.name) {
+                        binding.ivHhLogo.setImageResource(R.drawable.ic_girl)
+                    } else {
+
+                    }
+
+                } else if (type == "adolescence") {
+                    if (gender == Gender.MALE.name) {
+                        binding.ivHhLogo.setImageResource(R.drawable.ic_boy)
+                    } else if (gender == Gender.FEMALE.name) {
+                        binding.ivHhLogo.setImageResource(R.drawable.ic_girl)
+                    } else {
+
+                    }
+
+                } else if (type == "adult") {
+                    if (gender == Gender.MALE.name) {
+                        binding.ivHhLogo.setImageResource(R.drawable.ic_males)
+                    } else if (gender == Gender.FEMALE.name) {
+                        binding.ivHhLogo.setImageResource(R.drawable.ic_females)
+                    } else {
+                        binding.ivHhLogo.setImageResource(R.drawable.ic_unisex)
+                    }
+                }
+            }
 
             if (showBeneficiaries) {
                 if (item.spouseName == "Not Available" && item.fatherName == "Not Available") {
@@ -111,7 +173,9 @@ class BenListAdapter(
             showSyncIcon,
             showRegistrationDate,
             showBeneficiaries,
-            role
+            role,
+            showCall,
+            pref
         )
     }
 
@@ -120,6 +184,7 @@ class BenListAdapter(
         private val clickedBen: (hhId: Long, benId: Long, relToHeadId: Int) -> Unit,
         private val clickedHousehold: (hhId: Long) -> Unit,
         private val clickedABHA: (benId: Long, hhId: Long) -> Unit,
+        private val callBen: (ben: BenBasicDomain) -> Unit
     ) {
         fun onClickedBen(item: BenBasicDomain) = clickedBen(
             item.hhId,
@@ -130,6 +195,8 @@ class BenListAdapter(
         fun onClickedHouseHold(item: BenBasicDomain) = clickedHousehold(item.hhId)
 
         fun onClickABHA(item: BenBasicDomain) = clickedABHA(item.benId, item.hhId)
+
+        fun onClickedForCall(item: BenBasicDomain) = callBen(item)
     }
 
 }

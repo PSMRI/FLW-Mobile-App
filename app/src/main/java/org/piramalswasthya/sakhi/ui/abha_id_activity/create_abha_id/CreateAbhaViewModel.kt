@@ -298,7 +298,7 @@ class CreateAbhaViewModel @Inject constructor(
         val req = AddHealthIdRecord(
             healthId = hID,
             healthIdNumber = healthIdNumber,
-            providerServiceMapId = 34,
+            providerServiceMapId = pref.getLoggedInUser()?.serviceMapId,
             createdBy = "",
             message =response.message,
             txnId=response.txnId,

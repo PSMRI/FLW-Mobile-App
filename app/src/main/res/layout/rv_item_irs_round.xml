@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <data>
+
+        <variable
+            name="irs"
+            type="org.piramalswasthya.sakhi.model.IRSRoundScreening" />
+
+        <variable
+            name="irsviewModel"
+            type="org.piramalswasthya.sakhi.ui.home_activity.disease_control.malaria.form.list.IRSRoundListViewModel" />
+
+        <variable
+            name="position"
+            type="int" />
+        <variable
+            name="dataset"
+            type="org.piramalswasthya.sakhi.configuration.Dataset.Companion" />
+
+    </data>
+
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:background="@drawable/blue_border"
+        android:orientation="horizontal"
+        android:padding="@dimen/padding_normal"
+        android:layout_marginTop="5dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="*"
+           >
+
+            <TableRow>
+                <TextView
+                    android:text="@{@string/sr_no(position + 1)}"
+                    android:padding="8dp" />
+                <TextView
+                    app:formattedDate="@{irs.date}"
+                    android:padding="8dp" />
+                <TextView
+                    android:text="@{@string/round_no(irs.rounds)}"
+                    android:padding="8dp" />
+            </TableRow>
+
+        </TableLayout>
+
+    </LinearLayout>
+
+</layout>

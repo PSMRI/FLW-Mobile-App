@@ -15,11 +15,18 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.TbSuspectedListAdapter
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
+import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class TBSuspectedListFragment : Fragment() {
+
+    @Inject
+    lateinit var prefDao: PreferenceDao
+
     private var _binding: FragmentDisplaySearchRvButtonBinding? = null
     private val binding: FragmentDisplaySearchRvButtonBinding
         get() = _binding!!
@@ -46,7 +53,7 @@ class TBSuspectedListFragment : Fragment() {
                         benId
                     )
                 )
-            }
+            }, pref = prefDao
         )
         binding.rvAny.adapter = benAdapter
 
@@ -85,10 +92,17 @@ class TBSuspectedListFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            (it as HomeActivity).updateActionBar(
-                R.drawable.ic__ncd,
-                getString(R.string.tb_suspected_list)
-            )
+            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+                (it as HomeActivity).updateActionBar(
+                    R.drawable.ic__ncd,
+                    getString(R.string.tb_suspected_list)
+                )
+            } else {
+                (it as SupervisorActivity).updateActionBar(
+                    R.drawable.ic__ncd,
+                    getString(R.string.tb_suspected_list)
+                )
+            }
         }
     }
 

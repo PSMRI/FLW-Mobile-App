@@ -46,6 +46,7 @@ class FindAbhaFragment : Fragment() {
 
     var isValidMobile = false
     var isValidAbha = false
+    var isConsent = false
     var isValidBenName = false
     private val aadhaarDisclaimer by lazy {
         AlertDialog.Builder(requireContext())
@@ -121,11 +122,12 @@ class FindAbhaFragment : Fragment() {
         }
 
         viewModel.abha.observe(viewLifecycleOwner) {
+            binding.tvErrorTextAbha.visibility = View.GONE
             it?.let {
                 binding.tilSelectAbha.isEnabled = true
                 abhaData.addAll(it)
                 it.forEach { abha ->
-                    abhaList.add(abha.name)
+                    abhaList.add(abha.name + " : " + abha.ABHANumber)
                 }
                 adapterType = ArrayAdapter<String>(
                     requireContext(),
@@ -136,6 +138,11 @@ class FindAbhaFragment : Fragment() {
             }
         }
 
+        binding.aadharConsentCheckBox.setOnCheckedChangeListener { _, ischecked ->
+            isConsent = ischecked
+            enableButton()
+//            binding.btnGenerateOtp.isEnabled = isValidAbha && isValidMobile && ischecked
+        }
 
         binding.aadharDisclaimer.setOnClickListener {
             if(parentViewModel.beneficiaryName.value!=null && !parentViewModel.beneficiaryName.value.isNullOrBlank()) {
@@ -160,6 +167,7 @@ class FindAbhaFragment : Fragment() {
                     parentViewModel.setMobileNumber(s.toString())
                     binding.tilMobileNumber.error = null
                     binding.btnSearchAbha.isEnabled = isValidMobile
+                    enableButton()
                     binding.ivValidMobile.setImageResource(R.drawable.ic_check_circle_green)
 
                 }else{
@@ -180,8 +188,7 @@ class FindAbhaFragment : Fragment() {
                 selectedAbhaIndex = abhaData[position].index
                 parentViewModel.setSelectedAbhaIndex(selectedAbhaIndex.toString())
                 isValidAbha = true
-                binding.btnGenerateOtp.isEnabled = isValidAbha && isValidMobile
-
+                enableButton()
             }
 
         // observing error message from parent and updating error text field
@@ -230,9 +237,16 @@ class FindAbhaFragment : Fragment() {
             }
 
         })
+
         viewModel.otpMobileNumberMessage.observe(viewLifecycleOwner) {
             it?.let {
                 parentViewModel.setOTPMsg(it)
+            }
+        }
+
+        parentViewModel.consentChecked.observe(viewLifecycleOwner){
+            if (it ==true){
+                binding.btnGenerateOtp.isEnabled = isValidAbha && isValidMobile && (parentViewModel.consentChecked.value==true)
             }
         }
     }
@@ -249,5 +263,13 @@ class FindAbhaFragment : Fragment() {
         }
         val m: Matcher = p.matcher(str)
         return m.matches()
+    }
+
+    private fun enableButton() {
+        if (isValidAbha && isValidMobile && isConsent) {
+            binding.btnGenerateOtp.isEnabled = true
+        } else {
+            binding.btnGenerateOtp.isEnabled = false
+        }
     }
 }

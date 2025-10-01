@@ -334,19 +334,18 @@
                     tools:text="CBAC Form" />
 
 
-
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_form1"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_small"
                     android:layout_weight="1"
+                    android:onClick="@{()-> clickListener.onClickForm1(benWithhrpa)}"
                     android:paddingLeft="5dp"
                     android:paddingRight="5dp"
-                    android:onClick="@{()-> clickListener.onClickForm1(benWithhrpa)}"
-                    android:layout_margin="@dimen/margin_small"
-                    android:visibility="invisible"
                     android:textColor="?attr/colorOnPrimary"
+                    android:visibility="invisible"
                     tools:text="CBAC Form" />
 
 

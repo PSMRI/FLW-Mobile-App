@@ -1,33 +1,79 @@
 package org.piramalswasthya.sakhi.ui.home_activity.all_ben
 
+import android.content.Context
+import android.media.MediaScannerConnection
+import android.os.Environment
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.helpers.filterBenList
-import org.piramalswasthya.sakhi.model.BenHealthIdDetails
+import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.repositories.ABHAGenratedRepo
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
+import java.io.File
+import java.io.FileWriter
 import javax.inject.Inject
 
 @HiltViewModel
 class AllBenViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     recordsRepo: RecordsRepo,
     abhaGenratedRepo: ABHAGenratedRepo,
     private val benRepo: BenRepo
 ) : ViewModel() {
 
+    private var sourceFromArgs = AllBenFragmentArgs.fromSavedStateHandle(savedStateHandle).source
 
-    private val allBenList = recordsRepo.allBenList
-    private val filter = MutableStateFlow("")
-    val benList = allBenList.combine(filter) { list, filter ->
+//    private val newBenList = recordsRepo.allBenWithNewAbhaList
+//    private val oldBenList = recordsRepo.allBenWithOldAbhaList
+
+    private val allBenList = when (sourceFromArgs) {
+        1 -> {
+            recordsRepo.allBenWithAbhaList
+        }
+        2 -> {
+            recordsRepo.allBenWithRchList
+        }
+        else -> {
+            recordsRepo.allBenList
+        }
+    }
+
+    private val filterOrg = MutableStateFlow("")
+    private val kindOrg = MutableStateFlow(0)
+
+//    private val filterNew = MutableStateFlow("")
+//    private val kindNew = MutableStateFlow(0)
+
+//    private val filterOld = MutableStateFlow("")
+//    private val kindOld = MutableStateFlow(0)
+
+    val benList = allBenList.combine(kindOrg) { list, kind ->
+        filterBenList(list, kind)
+    }.combine(filterOrg) { list, filter ->
         filterBenList(list, filter)
     }
+
+//    val benNewList = newBenList.combine(kindNew) { list, kind ->
+//        filterBenList(list, kind)
+//    }.combine(filterNew) { list, filter ->
+//        filterBenList(list, filter)
+//    }
+
+//    val benOldList = oldBenList.combine(kindOld) { list, kind ->
+//        filterBenList(list, kind)
+//    }.combine(filterOld) { list, filter ->
+//        filterBenList(list, filter)
+//    }
 
     private val _abha = MutableLiveData<String?>()
     val abha: LiveData<String?>
@@ -43,7 +89,18 @@ class AllBenViewModel @Inject constructor(
 
     fun filterText(text: String) {
         viewModelScope.launch {
-            filter.emit(text)
+            filterOrg.emit(text)
+//            filterNew.emit(text)
+//            filterOld.emit(text)
+        }
+
+    }
+
+    fun filterType(type: Int) {
+        viewModelScope.launch {
+            kindOrg.emit(type)
+//            kindNew.emit(type)
+//            kindOld.emit(type)
         }
 
     }
@@ -79,4 +136,31 @@ class AllBenViewModel @Inject constructor(
     fun resetBenRegId() {
         _benRegId.value = null
     }
+
+    fun createCsvFile(context: Context, users: List<BenBasicDomain>): File? {
+        return try {
+            val fileName = "ABHAUsers_${System.currentTimeMillis()}.csv"
+            val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+            if (!downloadsDir.exists()) downloadsDir.mkdirs()
+
+            val file = File(downloadsDir, fileName)
+
+            FileWriter(file).use { writer ->
+
+                writer.append("Ben ID,Beneficiary Name,Mobile,ABHA ID,Age,IsNewAbha,RCH ID\n")
+                for (user in users) {
+                    writer.append("${user.benId}\t,${user.benFullName},${user.mobileNo},${user.abhaId},${user.age},${user.isNewAbha},${user.rchId}\t\n")
+                }
+            }
+            MediaScannerConnection.scanFile(context, arrayOf(file.absolutePath), null, null)
+
+            Toast.makeText(context, "CSV Downloaded: ${file.name}", Toast.LENGTH_LONG).show()
+
+            file
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
 }

@@ -9,7 +9,7 @@ data class FormElement(
     var required: Boolean,
     var title: String,
     val subtitle: String? = null,
-      @ArrayRes var arrayId: Int = -1,
+    @ArrayRes var arrayId: Int = -1,
     var entries: Array<String>? = null,
     var doubleStar: Boolean = false,
     val hasDependants: Boolean = false,
@@ -35,5 +35,5 @@ data class FormElement(
     val showYearFirstInDatePicker: Boolean = false,
     @DrawableRes val backgroundDrawable: Int? = null,
     @DrawableRes val iconDrawableRes: Int? = null,
-    val showDrawable: Boolean? = false
+    val showDrawable: Boolean? = false,
 )

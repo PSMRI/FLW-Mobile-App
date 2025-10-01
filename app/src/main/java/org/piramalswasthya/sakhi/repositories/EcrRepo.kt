@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.repositories
 
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
@@ -433,6 +434,12 @@ class EcrRepo @Inject constructor(
                         ) else getLongFromDate(
                         ecrJson.getString("createdDate")
                     ),
+                    lmpDate =
+                    if (ecrJson.has("lmpDate")) {
+                        getLongFromLmpDate(ecrJson.getString("lmpDate"))
+                    } else {
+                        0L
+                    },
                     bankAccount = if (ecrJson.has("bankAccountNumber")) ecrJson.getLong("bankAccountNumber") else null,
                     bankName = if (ecrJson.has("bankName")) ecrJson.getString("bankName") else null,
                     branchName = if (ecrJson.has("branchName")) ecrJson.getString("branchName") else null,
@@ -557,7 +564,12 @@ class EcrRepo @Inject constructor(
                             "updatedDate"
                         ) else ecrJson.getString("createdDate")
                     ),
-                    syncState = SyncState.SYNCED
+                    syncState = SyncState.SYNCED,
+                    lmp_date = getLongFromDate(
+                        if (ecrJson.has("updatedDate")) ecrJson.getString(
+                            "updatedDate"
+                        ) else ecrJson.getString("createdDate")
+                    )
                 )
                 if (ecr.isRegistered) list.add(ecr)
             } catch (e: Exception) {
@@ -578,6 +590,12 @@ class EcrRepo @Inject constructor(
 
             val ecr = EligibleCoupleTrackingCache(
                 benId = ecrJson.getLong("benId"),
+                lmpDate =
+                if (ecrJson.has("lmpDate")) {
+                    getLongFromLmpDate(ecrJson.getString("lmpDate"))
+                } else {
+                    0L
+                },
                 visitDate = getLongFromDate(ecrJson.getString("visitDate")),
                 dateOfAntraInjection = getStringToDate(ecrJson.optString("dateOfAntraInjection",null)),
 //                antraDose = ecrJson.optString("antraDose",null),
@@ -608,7 +626,8 @@ class EcrRepo @Inject constructor(
                     ) else ecrJson.getString("createdDate")
                 ),
                 processed = "P",
-                syncState = SyncState.SYNCED
+                syncState = SyncState.SYNCED,
+                lmp_date = ecrJson.getLong("benId")
             )
             list.add(ecr)
 
@@ -674,6 +693,14 @@ class EcrRepo @Inject constructor(
             val date = f.parse(dateString)
             return date?.time ?: throw IllegalStateException("Invalid date for dateReg")
         }
+
+        private fun getLongFromLmpDate(dateString: String): Long {
+            //Jul 22, 2023 8:17:23 AM"
+            val f = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+            val date = f.parse(dateString)
+            return date?.time ?: throw IllegalStateException("Invalid date for dateReg")
+        }
+
         private fun getStringToDate(dateString: String?): String? {
             if (dateString.isNullOrBlank()) return null
 

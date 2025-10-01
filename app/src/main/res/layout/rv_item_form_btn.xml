@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="form"
+            type="org.piramalswasthya.sakhi.model.FormElement" />
+    </data>
+
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/generate_otp"
+            android:layout_width="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="@dimen/margin_small"
+            android:layout_marginEnd="16dp"
+            android:text="@string/send_otp"
+            android:backgroundTint="@color/background_selector"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:textAllCaps="false"
+            android:textColor="?attr/colorOnPrimary"
+            android:layout_gravity="end"
+            />
+        <TextView
+            android:id="@+id/timerInSec"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            app:layout_constraintTop_toBottomOf="@+id/generate_otp"
+            app:layout_constraintEnd_toEndOf="@+id/generate_otp"
+            app:layout_constraintStart_toStartOf="@+id/generate_otp"/>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_edit_text"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:endIconMode="custom"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:visibility="gone"
+            app:errorEnabled="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/timerInSec">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionDone"
+                android:hint="@string/enter_otp"
+                android:inputType="numberPassword"
+                android:maxLength="6"
+                android:singleLine="true"
+                android:text="@{form.value}"
+                android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                tools:text="lsdkfnsld" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</layout>
