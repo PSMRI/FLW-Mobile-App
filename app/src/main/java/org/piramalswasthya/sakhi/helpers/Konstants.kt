@@ -10,6 +10,8 @@ object Konstants {
     //Dev
     const val devCode = 112
 
+    val nonFollowUpDuration: Long = TimeUnit.DAYS.toMillis(90)
+
 
     const val tempBenImagePrefix: String = "tmp_image_file"
     const val tempBenImageSuffix: String = ".jpeg"

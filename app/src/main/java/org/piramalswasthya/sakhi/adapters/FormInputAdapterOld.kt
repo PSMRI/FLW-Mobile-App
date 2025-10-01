@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.google.android.material.button.MaterialButton
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.configuration.FormEditTextDefaultInputFilter
+import org.piramalswasthya.sakhi.databinding.RvItemFormBtnBinding
 import org.piramalswasthya.sakhi.databinding.RvItemFormCheckBinding
 import org.piramalswasthya.sakhi.databinding.RvItemFormDatepickerBinding
 import org.piramalswasthya.sakhi.databinding.RvItemFormDropdownBinding
@@ -37,6 +38,7 @@ import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.FormInputOld
 import org.piramalswasthya.sakhi.model.InputType.AGE_PICKER
+import org.piramalswasthya.sakhi.model.InputType.BUTTON
 import org.piramalswasthya.sakhi.model.InputType.CHECKBOXES
 import org.piramalswasthya.sakhi.model.InputType.DATE_PICKER
 import org.piramalswasthya.sakhi.model.InputType.DROPDOWN
@@ -247,6 +249,22 @@ class FormInputAdapterOld(
 
             item.errorText?.let { binding.tilRvDropdown.error = it }
             binding.executePendingBindings()
+
+        }
+    }
+
+    class ButtonInputViewHolder private constructor(private val binding: RvItemFormBtnBinding) :
+        ViewHolder(binding.root) {
+        companion object {
+            fun from(parent: ViewGroup): ViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = RvItemFormBtnBinding.inflate(layoutInflater, parent, false)
+                return ButtonInputViewHolder(binding)
+            }
+        }
+
+        fun bind(item: FormInputOld, isEnabled: Boolean) {
+
 
         }
     }
@@ -572,6 +590,7 @@ class FormInputAdapterOld(
             TIME_PICKER -> TimePickerInputViewHolder.from(parent)
             HEADLINE -> HeadlineViewHolder.from(parent)
             AGE_PICKER -> FormInputAdapter.AgePickerViewInputViewHolder.from(parent)
+            BUTTON -> FormInputAdapter.ButtonInputViewHolder.from(parent)
             FILE_UPLOAD -> FileUploadInputViewHolder.from(parent)
         }
     }
@@ -594,6 +613,7 @@ class FormInputAdapterOld(
             TIME_PICKER -> (holder as TimePickerInputViewHolder).bind(item, isEnabled)
             HEADLINE -> (holder as HeadlineViewHolder).bind(item)
             AGE_PICKER -> null
+            BUTTON -> (holder as ButtonInputViewHolder).bind(item, isEnabled)
             FILE_UPLOAD -> (holder as FileUploadInputViewHolder).bind(item, isEnabled)
 
         }

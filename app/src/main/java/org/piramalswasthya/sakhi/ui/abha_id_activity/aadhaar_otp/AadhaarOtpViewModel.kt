@@ -245,7 +245,7 @@ class AadhaarOtpViewModel @Inject constructor(
     }
 
 
-    fun resendAadhaarOtp(aadhaarNo:String) {
+    fun resendCreateAadhaarOtp(aadhaarNo:String) {
         viewModelScope.launch {
             when (val result = abhaIdRepo.generateAadhaarOtpV3(
                 AbhaGenerateAadhaarOtpRequest(

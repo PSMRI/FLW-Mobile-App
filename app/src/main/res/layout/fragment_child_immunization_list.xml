@@ -101,6 +101,7 @@
                 android:minWidth="@dimen/_25sdp"
                 android:minHeight="@dimen/_25sdp"
                 android:src="@drawable/ic_filter"
+                android:tint="?attr/colorPrimary"
                 android:layout_marginEnd="@dimen/_10sdp"/>
 
         </LinearLayout>

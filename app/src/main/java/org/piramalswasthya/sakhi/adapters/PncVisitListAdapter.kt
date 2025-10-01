@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.databinding.RvItemPncVisitBinding
 import org.piramalswasthya.sakhi.model.BenPncDomain
+import org.piramalswasthya.sakhi.utils.HelperUtil
+import java.util.concurrent.TimeUnit
 
 class PncVisitListAdapter(private val clickListener: PncVisitClickListener? = null) :
     ListAdapter<BenPncDomain, PncVisitListAdapter.PregnancyVisitViewHolder>(
@@ -39,6 +41,20 @@ class PncVisitListAdapter(private val clickListener: PncVisitClickListener? = nu
         fun bind(
             item: BenPncDomain, clickListener: PncVisitClickListener?
         ) {
+
+            if (item.pncDate == 0L) {
+                binding.ivFollowState.visibility = View.GONE
+                binding.llBenPwrTrackingDetails3.visibility = View.GONE
+            } else if (item.pncDate < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(90) &&
+                item.pncDate > System.currentTimeMillis() - TimeUnit.DAYS.toMillis(365)) {
+                binding.ivFollowState.visibility = View.VISIBLE
+                binding.llBenPwrTrackingDetails3.visibility = View.VISIBLE
+                binding.benVisitDate.text = HelperUtil.getDateStringFromLongStraight(item.pncDate)
+            } else {
+                binding.ivFollowState.visibility = View.GONE
+                binding.llBenPwrTrackingDetails3.visibility = View.VISIBLE
+                binding.benVisitDate.text = HelperUtil.getDateStringFromLongStraight(item.pncDate)
+            }
 
             binding.visit = item
             binding.btnViewVisits.visibility =

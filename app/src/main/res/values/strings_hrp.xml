@@ -13,6 +13,7 @@
     <string name="sc_hwc_tg_hosp">SC/HWC/TG Hosp</string>
     <string name="block">Block</string>
     <string name="bank_acc_no">Bank Acc No</string>
+    <string name="bank_acc">Bank Account</string>
     <string name="nearest_24x7_phc">Nearest 24x7 PHC</string>
     <string name="nearest_fru">Nearest FRU</string>
     <string name="nearest_usg_centre">Nearest USG centre</string>
@@ -46,11 +47,14 @@
     <string name="adoption_of_family_planning">Adoption of Family Planning</string>
     <string name="current_fp_pregnancy_status">CURRENT FP/ PREGNANCY STATUS</string>
     <string name="severe_anemia">Severe Anemia</string>
+    <string name="round">Rounds</string>
+    <string name="irs_round">IRS Rounds</string>
     <string name="diabetes">Diabetes</string>
     <string name="rh_negative">Rh Negative</string>
     <string name="bad_obstetric_history">Bad obstetric history</string>
     <string name="multiple_pregnancy">Multiple Pregnancy</string>
     <string name="lmp_date">LMP Date</string>
+    <string name="last_visit_date">Last Visit Date</string>
     <string name="edd">EDD</string>
     <string name="assess_for_high_risk_conditions_in_the_pregnant_women">Assess for High Risk Conditions in the Pregnant Women</string>
     <string name="rd_pmsa">RD Malaria</string>
@@ -78,6 +82,9 @@
     <string name="assessment_form_filled_successfully">Assessment form filled successfully</string>
     <string name="visit_on">"Visit On "</string>
     <string name="follow_up">Follow Up</string>
+    <string name="follow_up_date">Follow Up Date</string>
+    <string name="supervisor_visit_date">Date of Visit by Supervisor</string>
+    <string name="test_up_date">Date of Test</string>
     <string name="history">History</string>
     <string name="micro">Micro Birth Plan</string>
     <string name="_1st_anc">1st ANC</string>
@@ -114,6 +121,10 @@
     <string name="c_no"><b>Contact no :\n1 -</b></string>
     <string name="b_blood_donor"><b>Blood donor identified\n1 -</b></string>
 
+
+    <string name="help_support">Help &amp; Support</string>
+    <string name="user_guide">User Guide</string>
+    <string name="video_tutorial">Video Tutorial</string>
 
     <string-array name="sugar_test_types">
         <item>RBS</item>

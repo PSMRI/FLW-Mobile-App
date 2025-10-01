@@ -137,11 +137,19 @@ class AadhaarIdFragment : Fragment() {
                     if (viewModel.userType.value == "ASHA") {
                         viewModel.resetState()
                         if (viewModel.verificationType.value == "OTP") {
-                            findNavController().navigate(
-                                AadhaarIdFragmentDirections.actionAadhaarIdFragmentToAadhaarOtpFragment(
-                                    viewModel.txnId, viewModel.mobileNumber
+                            if (abhaMode == AadhaarIdViewModel.Abha.CREATE) {
+                                findNavController().navigate(
+                                    AadhaarIdFragmentDirections.actionAadhaarIdFragmentToAadhaarOtpFragment(
+                                        viewModel.txnId, viewModel.mobileNumber
+                                    )
                                 )
-                            )
+                            } else {
+                                findNavController().navigate(
+                                    AadhaarIdFragmentDirections.actionAadhaarIdFragmentToAadhaarOtpFragment(
+                                        viewModel.txnId, viewModel.mobileNumber
+                                    )
+                                )
+                            }
                         } else if (viewModel.verificationType.value == "FP") {
                             findNavController().navigate(
                                 AadhaarIdFragmentDirections.actionAadhaarIdFragmentToGenerateMobileOtpFragment(

@@ -10,6 +10,8 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import org.piramalswasthya.sakhi.database.converters.LocationEntityListConverter
 import org.piramalswasthya.sakhi.database.converters.SyncStateConverter
+import org.piramalswasthya.sakhi.database.room.dao.AdolescentHealthDao
+import org.piramalswasthya.sakhi.database.room.dao.AesDao
 import org.piramalswasthya.sakhi.database.room.dao.ABHAGenratedDao
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.BeneficiaryIdsAvailDao
@@ -18,7 +20,9 @@ import org.piramalswasthya.sakhi.database.room.dao.CdrDao
 import org.piramalswasthya.sakhi.database.room.dao.ChildRegistrationDao
 import org.piramalswasthya.sakhi.database.room.dao.DeliveryOutcomeDao
 import org.piramalswasthya.sakhi.database.room.dao.EcrDao
+import org.piramalswasthya.sakhi.database.room.dao.FilariaDao
 import org.piramalswasthya.sakhi.database.room.dao.FpotDao
+import org.piramalswasthya.sakhi.database.room.dao.GeneralOpdDao
 import org.piramalswasthya.sakhi.database.room.dao.HbncDao
 import org.piramalswasthya.sakhi.database.room.dao.HbycDao
 import org.piramalswasthya.sakhi.database.room.dao.HouseholdDao
@@ -26,17 +30,25 @@ import org.piramalswasthya.sakhi.database.room.dao.HrpDao
 import org.piramalswasthya.sakhi.database.room.dao.ImmunizationDao
 import org.piramalswasthya.sakhi.database.room.dao.IncentiveDao
 import org.piramalswasthya.sakhi.database.room.dao.InfantRegDao
+import org.piramalswasthya.sakhi.database.room.dao.KalaAzarDao
+import org.piramalswasthya.sakhi.database.room.dao.LeprosyDao
+import org.piramalswasthya.sakhi.database.room.dao.MalariaDao
 import org.piramalswasthya.sakhi.database.room.dao.MaternalHealthDao
 import org.piramalswasthya.sakhi.database.room.dao.MdsrDao
 import org.piramalswasthya.sakhi.database.room.dao.PmjayDao
 import org.piramalswasthya.sakhi.database.room.dao.PmsmaDao
 import org.piramalswasthya.sakhi.database.room.dao.PncDao
+import org.piramalswasthya.sakhi.database.room.dao.ProfileDao
 import org.piramalswasthya.sakhi.database.room.dao.SyncDao
 import org.piramalswasthya.sakhi.database.room.dao.TBDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormSchemaDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.InfantDao
+import org.piramalswasthya.sakhi.database.room.dao.VLFDao
+import org.piramalswasthya.sakhi.model.AHDCache
+import org.piramalswasthya.sakhi.model.AESScreeningCache
+import org.piramalswasthya.sakhi.model.AdolescentHealthCache
 import org.piramalswasthya.sakhi.model.ABHAModel
 import org.piramalswasthya.sakhi.model.BenBasicCache
 import org.piramalswasthya.sakhi.model.BenRegCache
@@ -44,9 +56,12 @@ import org.piramalswasthya.sakhi.model.CDRCache
 import org.piramalswasthya.sakhi.model.CbacCache
 import org.piramalswasthya.sakhi.model.ChildRegCache
 import org.piramalswasthya.sakhi.model.DeliveryOutcomeCache
+import org.piramalswasthya.sakhi.model.DewormingCache
 import org.piramalswasthya.sakhi.model.EligibleCoupleRegCache
 import org.piramalswasthya.sakhi.model.EligibleCoupleTrackingCache
 import org.piramalswasthya.sakhi.model.FPOTCache
+import org.piramalswasthya.sakhi.model.FilariaScreeningCache
+import org.piramalswasthya.sakhi.model.GeneralOPEDBeneficiary
 import org.piramalswasthya.sakhi.model.HBNCCache
 import org.piramalswasthya.sakhi.model.HBYCCache
 import org.piramalswasthya.sakhi.model.HRPMicroBirthPlanCache
@@ -55,22 +70,31 @@ import org.piramalswasthya.sakhi.model.HRPNonPregnantTrackCache
 import org.piramalswasthya.sakhi.model.HRPPregnantAssessCache
 import org.piramalswasthya.sakhi.model.HRPPregnantTrackCache
 import org.piramalswasthya.sakhi.model.HouseholdCache
+import org.piramalswasthya.sakhi.model.IRSRoundScreening
 import org.piramalswasthya.sakhi.model.ImmunizationCache
 import org.piramalswasthya.sakhi.model.IncentiveActivityCache
 import org.piramalswasthya.sakhi.model.IncentiveRecordCache
 import org.piramalswasthya.sakhi.model.InfantRegCache
+import org.piramalswasthya.sakhi.model.KalaAzarScreeningCache
+import org.piramalswasthya.sakhi.model.LeprosyScreeningCache
 import org.piramalswasthya.sakhi.model.MDSRCache
+import org.piramalswasthya.sakhi.model.PHCReviewMeetingCache
+import org.piramalswasthya.sakhi.model.MalariaConfirmedCasesCache
+import org.piramalswasthya.sakhi.model.MalariaScreeningCache
 import org.piramalswasthya.sakhi.model.PMJAYCache
 import org.piramalswasthya.sakhi.model.PMSMACache
 import org.piramalswasthya.sakhi.model.PNCVisitCache
 import org.piramalswasthya.sakhi.model.PregnantWomanAncCache
 import org.piramalswasthya.sakhi.model.PregnantWomanRegistrationCache
+import org.piramalswasthya.sakhi.model.ProfileActivityCache
 import org.piramalswasthya.sakhi.model.TBScreeningCache
 import org.piramalswasthya.sakhi.model.TBSuspectedCache
+import org.piramalswasthya.sakhi.model.VHNCCache
 import org.piramalswasthya.sakhi.model.Vaccine
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.InfantEntity
+import org.piramalswasthya.sakhi.model.VHNDCache
 
 @Database(
     entities = [
@@ -105,14 +129,28 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.InfantEntity
         //INCENTIVES
         IncentiveActivityCache::class,
         IncentiveRecordCache::class,
+        VHNDCache::class,
+        VHNCCache::class,
+        PHCReviewMeetingCache::class,
+        AHDCache::class,
+        DewormingCache::class,
+        MalariaScreeningCache::class,
+        AESScreeningCache::class,
+        KalaAzarScreeningCache::class,
+        FilariaScreeningCache::class,
+        LeprosyScreeningCache::class,
+        MalariaConfirmedCasesCache::class,
+        IRSRoundScreening::class,
+        ProfileActivityCache::class,
+        AdolescentHealthCache::class,
         ABHAModel::class,
         //Dynamic Data
         InfantEntity::class,
         FormSchemaEntity::class,
         FormResponseJsonEntity::class
+        GeneralOPEDBeneficiary::class,
     ],
     views = [BenBasicCache::class],
-
     version = 29, exportSchema = false
 )
 
@@ -123,6 +161,7 @@ abstract class InAppDb : RoomDatabase() {
     abstract val benIdGenDao: BeneficiaryIdsAvailDao
     abstract val householdDao: HouseholdDao
     abstract val benDao: BenDao
+    abstract val adolescentHealthDao: AdolescentHealthDao
     abstract val cbacDao: CbacDao
     abstract val cdrDao: CdrDao
     abstract val mdsrDao: MdsrDao
@@ -141,7 +180,15 @@ abstract class InAppDb : RoomDatabase() {
     abstract val infantRegDao: InfantRegDao
     abstract val childRegistrationDao: ChildRegistrationDao
     abstract val incentiveDao: IncentiveDao
+    abstract val vlfDao: VLFDao
+    abstract val malariaDao: MalariaDao
+    abstract val aesDao: AesDao
+    abstract val kalaAzarDao: KalaAzarDao
+    abstract val leprosyDao: LeprosyDao
+    abstract val filariaDao: FilariaDao
+    abstract val profileDao: ProfileDao
     abstract val abhaGenratedDao: ABHAGenratedDao
+    abstract val generalOpdDao: GeneralOpdDao
 
     abstract fun infantDao(): InfantDao
     abstract fun formSchemaDao(): FormSchemaDao
@@ -156,10 +203,18 @@ abstract class InAppDb : RoomDatabase() {
 
         fun getInstance(appContext: Context): InAppDb {
 
+            val MIGRATION_1_2 = Migration(18, 19, migrate = {
+                it.execSQL("alter table BEN_BASIC_CACHE add column isConsent BOOL")
+                it.execSQL("alter table BENEFICIARY add column isConsent BOOL")
 
-            val MIGRATION_1_2 = Migration(1, 2, migrate = {
-//                it.execSQL("select count(*) from beneficiary")
             })
+
+            val MIGRATION_22_23 = object : Migration(22, 23) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("ALTER TABLE GENERAL_OPD_ACTIVITY ADD COLUMN village TEXT")
+                }
+            }
+
             val MIGRATION_28_29 = object : Migration(28, 29) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     database.execSQL("ALTER TABLE PMSMA ADD COLUMN visitDate INTEGER")
@@ -209,6 +264,65 @@ abstract class InAppDb : RoomDatabase() {
                 }
             }
 
+            val MIGRATION_20_21 = object : Migration(20, 21) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("""
+            CREATE TABLE IF NOT EXISTS `GENERAL_OPD_ACTIVITY` (
+                `benFlowID` INTEGER,
+                `beneficiaryRegID` INTEGER,
+                `benVisitID` INTEGER,
+                `visitCode` INTEGER,
+                `benVisitNo` INTEGER,
+                `nurseFlag` INTEGER,
+                `doctorFlag` INTEGER,
+                `pharmacist_flag` INTEGER,
+                `lab_technician_flag` INTEGER,
+                `radiologist_flag` INTEGER,
+                `oncologist_flag` INTEGER,
+                `specialist_flag` INTEGER,
+                `agentId` TEXT,
+                `visitDate` TEXT,
+                `modified_by` TEXT,
+                `modified_date` TEXT,
+                `benName` TEXT,
+                `deleted` INTEGER,
+                `firstName` TEXT,
+                `lastName` TEXT,
+                `age` TEXT,
+                `ben_age_val` INTEGER,
+                `genderID` INTEGER,
+                `genderName` TEXT,
+                `preferredPhoneNum` TEXT,
+                `fatherName` TEXT,
+                `spouseName` TEXT,
+                `districtName` TEXT,
+                `servicePointName` TEXT,
+                `registrationDate` TEXT,
+                `benVisitDate` TEXT,
+                `consultationDate` TEXT,
+                `consultantID` INTEGER,
+                `consultantName` TEXT,
+                `visitSession` TEXT,
+                `servicePointID` INTEGER,
+                `districtID` INTEGER,
+                `villageID` INTEGER,
+                `vanID` INTEGER,
+                `beneficiaryId` INTEGER NOT NULL,
+                `dob` TEXT,
+                `tc_SpecialistLabFlag` INTEGER,
+                `visitReason` TEXT,
+                `visitCategory` TEXT,
+                PRIMARY KEY(`beneficiaryId`)
+            )
+        """)
+                }
+            }
+
+            val MIGRATION_19_20 = object : Migration(19, 20) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("ALTER TABLE MALARIA_SCREENING ADD COLUMN slideTestName TEXT")
+                }
+            }
 
             val MIGRATION_24_25 = object : Migration(24, 25) {
                 override fun migrate(database: SupportSQLiteDatabase) {
@@ -434,6 +548,175 @@ abstract class InAppDb : RoomDatabase() {
                 }
             }
 
+            val MIGRATION_16_18 = object : Migration(16, 18) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    // 1. Create new table with updated schema
+                    database.execSQL("""
+            CREATE TABLE IF NOT EXISTS `ABHA_GENERATED_NEW` (
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                `beneficiaryID` INTEGER NOT NULL,
+                `beneficiaryRegID` INTEGER NOT NULL,
+                `benName` TEXT NOT NULL,
+                `createdBy` TEXT NOT NULL,
+                `message` TEXT NOT NULL,
+                `txnId` TEXT NOT NULL,
+                `benSurname` TEXT,
+                `healthId` TEXT NOT NULL,
+                `healthIdNumber` TEXT NOT NULL,
+                `abhaProfileJson` TEXT NOT NULL,
+                `isNewAbha` INTEGER NOT NULL,
+                `providerServiceMapId` INTEGER NOT NULL,
+                `syncState` INTEGER NOT NULL,
+                FOREIGN KEY(`beneficiaryID`) REFERENCES `BENEFICIARY`(`beneficiaryId`) ON UPDATE CASCADE ON DELETE CASCADE
+            )
+        """.trimIndent())
+                    // 2. Copy existing data into new table (with default/placeholder values for new fields)
+                    try {
+                        database.execSQL("""
+                INSERT INTO ABHA_GENERATED_NEW (
+                    id,
+                    beneficiaryID,
+                    beneficiaryRegID,
+                    benName,
+                    createdBy,
+                    message,
+                    txnId,
+                    benSurname,
+                    healthId,
+                    healthIdNumber,
+                    abhaProfileJson,
+                    isNewAbha,
+                    providerServiceMapId,
+                    syncState
+                )
+                SELECT
+                    id,
+                    benId AS beneficiaryID,
+                    hhId AS beneficiaryRegID,
+                    benName,
+                    '' AS createdBy,
+                    '' AS message,
+                    '' AS txnId,
+                    benSurname,
+                    healthId,
+                    healthIdNumber,
+                    '' AS abhaProfileJson,
+                    isNewAbha,
+                    0,
+                    0
+                FROM ABHA_GENERATED
+            """.trimIndent())
+                    } catch (e: Exception) {
+                        // Table might not exist on some devices — log and continue
+                        Log.w("RoomMigration", "Skipping data copy: ABHA_GENERATED table not found", e)
+                    }
+
+                    // 3. Drop old table
+                    try {
+                        database.execSQL("DROP TABLE IF EXISTS ABHA_GENERATED")
+                    } catch (_: Exception) {}
+
+                    // 4. Rename new table
+                    database.execSQL("ALTER TABLE ABHA_GENERATED_NEW RENAME TO ABHA_GENERATED")
+
+                    // 5. Recreate index
+                    database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_ABHA_GENERATED_beneficiaryID` ON `ABHA_GENERATED` (`beneficiaryID`)")
+                }
+            }
+
+            val MIGRATION_21_22 = object : Migration(21, 22) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("""
+            CREATE TABLE PREGNANCY_ANC_NEW (
+                id INTEGER NOT NULL PRIMARY KEY,
+                benId INTEGER NOT NULL,
+                visitNumber INTEGER NOT NULL,
+                isActive INTEGER NOT NULL,
+                ancDate INTEGER NOT NULL,
+                isAborted INTEGER NOT NULL,
+                abortionType TEXT,
+                abortionTypeId INTEGER NOT NULL,
+                abortionFacility TEXT,
+                abortionFacilityId INTEGER NOT NULL,
+                abortionDate INTEGER,
+                weight INTEGER,
+                bpSystolic INTEGER,
+                bpDiastolic INTEGER,
+                pulseRate TEXT,
+                hb REAL,
+                fundalHeight INTEGER,
+                urineAlbumin TEXT,
+                urineAlbuminId INTEGER NOT NULL,
+                randomBloodSugarTest TEXT,
+                randomBloodSugarTestId INTEGER NOT NULL,
+                numFolicAcidTabGiven INTEGER NOT NULL,
+                numIfaAcidTabGiven INTEGER NOT NULL,
+                anyHighRisk INTEGER,
+                highRisk TEXT,
+                highRiskId INTEGER NOT NULL,
+                otherHighRisk TEXT,
+                referralFacility TEXT,
+                referralFacilityId INTEGER NOT NULL,
+                hrpConfirmed INTEGER,
+                hrpConfirmedBy TEXT,
+                hrpConfirmedById INTEGER NOT NULL,
+                maternalDeath INTEGER,
+                maternalDeathProbableCause TEXT,
+                maternalDeathProbableCauseId INTEGER NOT NULL,
+                otherMaternalDeathProbableCause TEXT,
+                deathDate INTEGER,
+                pregnantWomanDelivered INTEGER,
+                processed TEXT,
+                createdBy TEXT NOT NULL,
+                createdDate INTEGER NOT NULL,
+                updatedBy TEXT NOT NULL,
+                updatedDate INTEGER NOT NULL,
+                syncState INTEGER NOT NULL,
+                frontFilePath TEXT,   -- nullable now
+                backFilePath TEXT,    -- nullable now
+                FOREIGN KEY(benId) REFERENCES BENEFICIARY(beneficiaryId) 
+                  ON UPDATE CASCADE ON DELETE CASCADE
+            )
+        """.trimIndent())
+
+                    database.execSQL("""
+            INSERT INTO PREGNANCY_ANC_NEW (
+                id, benId, visitNumber, isActive, ancDate, isAborted,
+                abortionType, abortionTypeId, abortionFacility, abortionFacilityId, abortionDate,
+                weight, bpSystolic, bpDiastolic, pulseRate, hb, fundalHeight,
+                urineAlbumin, urineAlbuminId, randomBloodSugarTest, randomBloodSugarTestId,
+                numFolicAcidTabGiven, numIfaAcidTabGiven, anyHighRisk, highRisk, highRiskId,
+                otherHighRisk, referralFacility, referralFacilityId,
+                hrpConfirmed, hrpConfirmedBy, hrpConfirmedById,
+                maternalDeath, maternalDeathProbableCause, maternalDeathProbableCauseId,
+                otherMaternalDeathProbableCause, deathDate, pregnantWomanDelivered,
+                processed, createdBy, createdDate, updatedBy, updatedDate, syncState,
+                frontFilePath, backFilePath
+            )
+            SELECT 
+                id, benId, visitNumber, isActive, ancDate, isAborted,
+                abortionType, abortionTypeId, abortionFacility, abortionFacilityId, abortionDate,
+                weight, bpSystolic, bpDiastolic, pulseRate, hb, fundalHeight,
+                urineAlbumin, urineAlbuminId, randomBloodSugarTest, randomBloodSugarTestId,
+                numFolicAcidTabGiven, numIfaAcidTabGiven, anyHighRisk, highRisk, highRiskId,
+                otherHighRisk, referralFacility, referralFacilityId,
+                hrpConfirmed, hrpConfirmedBy, hrpConfirmedById,
+                maternalDeath, maternalDeathProbableCause, maternalDeathProbableCauseId,
+                otherMaternalDeathProbableCause, deathDate, pregnantWomanDelivered,
+                processed, createdBy, createdDate, updatedBy, updatedDate, syncState,
+                frontFilePath, backFilePath
+            FROM PREGNANCY_ANC
+        """.trimIndent())
+
+                    database.execSQL("DROP TABLE PREGNANCY_ANC")
+
+                    database.execSQL("ALTER TABLE PREGNANCY_ANC_NEW RENAME TO PREGNANCY_ANC")
+
+                    database.execSQL("CREATE INDEX ind_mha ON PREGNANCY_ANC(benId)")
+                }
+            }
+
+
             val MIGRATION_15_16 = object : Migration(15, 16) {
                 override fun migrate(db: SupportSQLiteDatabase) {
                     // Step 2: Drop the old view to ensure a clean slate.
@@ -540,6 +823,102 @@ abstract class InAppDb : RoomDatabase() {
                 it.execSQL("alter table HRP_PREGNANT_TRACK add column fastingOgtt INTEGER")
                 it.execSQL("alter table HRP_PREGNANT_TRACK add column after2hrsOgtt INTEGER")
             })
+
+            val MIGRATION_18_19 = object : Migration(18, 19) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    try {
+
+                        // 1. Create new table with correct schema
+
+                        database.execSQL("""
+            CREATE TABLE PROFILE_ACTIVITY_new (
+                id INTEGER PRIMARY KEY NOT NULL,
+                name TEXT,  -- nullable (because String?)
+                profileImage TEXT NOT NULL,
+                village TEXT NOT NULL,
+                employeeId INTEGER NOT NULL,
+                dob TEXT NOT NULL,
+                age INTEGER NOT NULL,
+                mobileNumber TEXT NOT NULL,
+                alternateMobileNumber TEXT NOT NULL,
+                fatherOrSpouseName TEXT NOT NULL,
+                dateOfJoining TEXT NOT NULL,
+                bankAccount TEXT NOT NULL,
+                ifsc TEXT NOT NULL,
+                populationCovered INTEGER NOT NULL,
+                choName TEXT NOT NULL,
+                choMobile TEXT NOT NULL,
+                awwName TEXT NOT NULL,
+                awwMobile TEXT NOT NULL,
+                anm1Name TEXT NOT NULL,
+                anm1Mobile TEXT NOT NULL,
+                anm2Name TEXT NOT NULL,
+                anm2Mobile TEXT NOT NULL,
+                abhaNumber TEXT NOT NULL,
+                ashaHouseholdRegistration TEXT NOT NULL,
+                ashaFamilyMember TEXT NOT NULL,
+                providerServiceMapID TEXT NOT NULL,
+                isFatherOrSpouse INTEGER NOT NULL DEFAULT 0,
+                supervisorName TEXT NOT NULL,
+                supervisorMobile TEXT NOT NULL
+            )
+        """)
+
+                        database.execSQL("""
+            INSERT INTO PROFILE_ACTIVITY_new (
+                id, name, profileImage, village, employeeId, dob, age, mobileNumber,
+                alternateMobileNumber, fatherOrSpouseName, dateOfJoining, bankAccount,
+                ifsc, populationCovered, choName, choMobile, awwName, awwMobile,
+                anm1Name, anm1Mobile, anm2Name, anm2Mobile, abhaNumber,
+                ashaHouseholdRegistration, ashaFamilyMember, providerServiceMapID,
+                isFatherOrSpouse, supervisorName, supervisorMobile
+            )
+            SELECT 
+                id,
+                name,
+                profileImage,
+                village,
+                employeeId,
+                dob,
+                age,
+                mobileNumber,
+                alternateMobileNumber,
+                fatherOrSpouseName,
+                dateOfJoining,
+                bankAccount,
+                ifsc,
+                populationCovered,
+                choName,
+                choMobile,
+                awwName,
+                awwMobile,
+                anm1Name,
+                anm1Mobile,
+                anm2Name,
+                anm2Mobile,
+                abhaNumber,
+                ashaHouseholdRegistration,
+                ashaFamilyMember,
+                providerServiceMapID,
+                isFatherOrSpouse,
+                supervisorName,
+                supervisorMobile
+            FROM PROFILE_ACTIVITY
+        """)
+
+                        database.execSQL("DROP TABLE PROFILE_ACTIVITY")
+                        database.execSQL("ALTER TABLE PROFILE_ACTIVITY_new RENAME TO PROFILE_ACTIVITY")
+                    } catch (e: Exception) {
+
+                        Log.e("DB_MIGRATION", "Migration 1->2 failed: ${e.message}", e)
+
+                        throw e
+
+                    }
+
+                }
+            }
+
 //        _db.execSQL("CREATE TABLE IF NOT EXISTS `HRP_PREGNANT_TRACK` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `benId` INTEGER NOT NULL, `visitDate` INTEGER, `rdPmsa` TEXT, `rdDengue` TEXT, `rdFilaria` TEXT, `severeAnemia` TEXT, `hemoglobinTest` TEXT, `ifaGiven` TEXT, `ifaQuantity` INTEGER, `pregInducedHypertension` TEXT, `systolic` INTEGER, `diastolic` INTEGER, `gestDiabetesMellitus` TEXT, `bloodGlucoseTest` TEXT, `fbg` INTEGER, `rbg` INTEGER, `ppbg` INTEGER, `fastingOgtt` INTEGER, `after2hrsOgtt` INTEGER, `hypothyrodism` TEXT, `polyhydromnios` TEXT, `oligohydromnios` TEXT, `antepartumHem` TEXT, `malPresentation` TEXT, `hivsyph` TEXT, `visit` TEXT, `syncState` INTEGER NOT NULL, FOREIGN KEY(`benId`) REFERENCES `BENEFICIARY`(`beneficiaryId`) ON UPDATE CASCADE ON DELETE CASCADE )");
             synchronized(this) {
                 var instance = INSTANCE
@@ -552,6 +931,12 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_13_14,
                         MIGRATION_14_15,
                         MIGRATION_15_16,
+//                        MIGRATION_16_18, \\2.5
+//                        MIGRATION_18_19,
+//                        MIGRATION_19_20,
+//                        MIGRATION_20_21,
+//                        MIGRATION_21_22,
+//                        MIGRATION_22_23  \\2.5
                         MIGRATION_17_18,
                         MIGRATION_18_19,
                         MIGRATION_19_20,
@@ -564,6 +949,7 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_26_27,
                         MIGRATION_27_28,
                         MIGRATION_28_29
+
                     ).build()
 
                     INSTANCE = instance

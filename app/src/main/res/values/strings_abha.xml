@@ -2,6 +2,7 @@
 <resources>
 
     <string name="verify_aadhaar_number">Verify Aadhaar Number</string>
+    <string name="verify_aadhaar_otp">Verify Aadhaar OTP</string>
     <string name="verify_mobile_number">Verify Mobile Number</string>
     <string name="enter_otp">Enter OTP</string>
     <string name="verify_otp">Verify OTP</string>
@@ -13,10 +14,13 @@
     <!--    <string name="try_again">Try Again!</string>-->
     <string name="aadhaar">Aadhaar</string>
     <string name="asha">ASHA</string>
+    <string name="ashaname">ASHA Name</string>
     <string name="gov">GOV</string>
     <string name="enter_aadhaar_number">Enter Aadhaar Number</string>
     <string name="aadhaar_number">Aadhaar Number</string>
-    <string name="generate_otp">Send OTP</string><!--Generate OTP-->
+    <string name="verified">Verified</string>
+    <string name="generate_otp">Send OTP</string>
+    <string name="send_otp">Send OTP</string>
     <string name="select_abha">Select Name</string>
     <string name="pid">PID</string>
     <string name="generate_abha">ABHA</string><!--Generate ABHA-->
@@ -25,6 +29,8 @@
     <string name="abha_number_generated_successfully">ABHA number generated successfully</string>
     <string name="name">Name :</string>
     <string name="abha_number">ABHA Number :</string>
+    <string name="abha_id">ABHA ID</string>
+    <string name="linked_toO_beneficiary">Linked to Beneficiary</string>
     <string name="linked_to_beneficiary">This ABHA is successfully linked to the record of</string>
     <string name="not_linked_to_beneficiary">This ABHA No is already linked to some one, please try again using correct Aadhaar No</string>
     <string name="do_you_want_to_download_the_abha_card">Do you want to download the ABHA card?</string>

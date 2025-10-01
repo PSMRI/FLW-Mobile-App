@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
+import android.net.Uri
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Languages
@@ -176,7 +177,29 @@ class ChildRegistrationDataset(
         required = false,
         hasDependants = false
     )
+    private val headLine = FormElement(
+        id = 13,
+        inputType = InputType.HEADLINE,
+        title = "Birth Certificate Uploads",
+        headingLine = false,
+        required = false,
+    )
+    private val fileUploadFront = FormElement(
+        id = 14,
+        inputType = InputType.FILE_UPLOAD,
+        title = "Front Side",
+        required = false,
+    )
+    private val fileUploadBack = FormElement(
+        id = 15,
+        inputType = InputType.FILE_UPLOAD,
+        title = "Back Side",
+        required = false,
+    )
 
+
+    fun getIndexOfBirthCertificateFrontPath() = getIndexById(fileUploadFront.id)
+    fun getIndexOfBirthCertificateBackPath() = getIndexById(fileUploadBack.id)
 
     suspend fun setUpPage(
         motherBen: BenRegCache?,
@@ -196,7 +219,11 @@ class ChildRegistrationDataset(
             rchIdMother,
             birthCertificateNo,
             weightAtBirth,
-            placeOfBirth
+            placeOfBirth,
+            headLine,
+            fileUploadFront,
+            fileUploadBack
+
         )
         dateOfReg.value = getDateFromLong(System.currentTimeMillis())
         dateOfReg.min = deliveryOutcomeCache?.dateOfDelivery
@@ -319,8 +346,11 @@ class ChildRegistrationDataset(
                 childName = childName.value,
                 birthPlace = placeOfBirth.value,
                 birthPlaceId = placeOfBirth.getPosition(),
-                birthCertificateNumber = birthCertificateNo.value
-            )
+                birthCertificateNumber = birthCertificateNo.value,
+                birthCertificateFileFrontView = fileUploadFront.value.toString(),
+                birthCertificateFileBackView = fileUploadBack.value.toString()
+            ),
+            isConsent = false
         )
     }
 
@@ -336,5 +366,19 @@ class ChildRegistrationDataset(
             9
         else
             10
+    }
+
+    fun setImageUriToFormElement(lastImageFormId: Int, dpUri: Uri) {
+        if (lastImageFormId == 14) {
+                fileUploadFront.value = dpUri.toString()
+                fileUploadFront.errorText = null
+
+        } else {
+                fileUploadBack.value = dpUri.toString()
+                fileUploadBack.errorText = null
+
+        }
+
+
     }
 }

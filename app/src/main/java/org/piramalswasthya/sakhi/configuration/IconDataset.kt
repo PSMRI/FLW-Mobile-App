@@ -1,19 +1,25 @@
 package org.piramalswasthya.sakhi.configuration
 
 import android.content.res.Resources
-import android.view.WindowManager
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.Icon
+import org.piramalswasthya.sakhi.repositories.AdolescentHealthRepo
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
+import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.SupervisorFragmentDirections
+import org.piramalswasthya.sakhi.ui.home_activity.all_household.AllHouseholdViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.child_care.ChildCareFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.communicable_diseases.CdFragmentDirections
+import org.piramalswasthya.sakhi.ui.home_activity.disease_control.DiseaseControlFragment
+import org.piramalswasthya.sakhi.ui.home_activity.disease_control.DiseaseControlFragmentDirections
+import org.piramalswasthya.sakhi.ui.home_activity.disease_control.malaria.form.MalariaIconsFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.eligible_couple.EligibleCoupleFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.home.HomeFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.hrp_cases.HrpCasesFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.immunization_due.ImmunizationDueTypeFragmentDirections
+import org.piramalswasthya.sakhi.ui.home_activity.lms.LmsFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.MotherCareFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.NcdFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.VillageLevelFormsFragmentDirections
@@ -23,12 +29,18 @@ import javax.inject.Inject
 @ActivityRetainedScoped
 class IconDataset @Inject constructor(
     private val recordsRepo: RecordsRepo,
-    private val preferenceDao: PreferenceDao
+    private val preferenceDao: PreferenceDao,
+    private val adolescentHealthRepo: AdolescentHealthRepo
 ) {
 
     enum class Modules {
         ALL,
         HRP
+
+    }
+
+    enum class Disease {
+        MALARIA, KALA_AZAR, AES_JE, FILARIA, LEPROSY, DEWARMING
     }
 
     fun getHomeIconDataset(resources: Resources): List<Icon> {
@@ -52,7 +64,7 @@ class IconDataset @Inject constructor(
                     R.drawable.ic__ben,
                     resources.getString(R.string.icon_title_ben),
                     recordsRepo.allBenListCount,
-                    HomeFragmentDirections.actionNavHomeToAllBenFragment(),
+                    HomeFragmentDirections.actionNavHomeToAllBenFragment(0),
                 ),
                 Icon(
                     R.drawable.ic__eligible_couple,
@@ -74,9 +86,9 @@ class IconDataset @Inject constructor(
                 ),
                 Icon(
                     R.drawable.ic__ncd,
-                    resources.getString(R.string.icon_title_ncd),
+                    resources.getString(R.string.icon_title_disease),
                     null,
-                    HomeFragmentDirections.actionNavHomeToNcdFragment(),
+                    HomeFragmentDirections.actionHomeFragmentToDiseaseControlFragment()
                 ),
                 Icon(
                     R.drawable.ic__ncd,
@@ -117,6 +129,7 @@ class IconDataset @Inject constructor(
                     null,
                     HomeFragmentDirections.actionNavHomeToVillageLevelFormsFragment()
                 ),
+
             )
 
             Modules.HRP -> listOf(
@@ -130,7 +143,7 @@ class IconDataset @Inject constructor(
                     R.drawable.ic__ben,
                     resources.getString(R.string.icon_title_ben),
                     recordsRepo.allBenListCount,
-                    HomeFragmentDirections.actionNavHomeToAllBenFragment(),
+                    HomeFragmentDirections.actionNavHomeToAllBenFragment(0),
                 ),
                 Icon(
                     R.drawable.ic__eligible_couple,
@@ -154,6 +167,7 @@ class IconDataset @Inject constructor(
 
                 )
             )
+
         }.apply {
             forEachIndexed { index, icon ->
                 icon.colorPrimary = index % 2 == 0
@@ -197,6 +211,79 @@ class IconDataset @Inject constructor(
         ),
     )
 
+    fun getSupervisorIconsDataset(resources: Resources) = listOf(
+        Icon(
+            R.drawable.ic__hh,
+            resources.getString(R.string.sup_households),
+            recordsRepo.hhListCount,
+            SupervisorFragmentDirections.actionNavSupervisorToAllHouseholdFragments()
+        ),
+        Icon(
+            R.drawable.ic__ben,
+            resources.getString(R.string.sup_beneficiaries),
+            recordsRepo.allBenListCount,
+            SupervisorFragmentDirections.actionNavSupervisorToAllBenFragments(0)
+        ),
+        Icon(
+            R.drawable.ic__eligible_couple,
+            resources.getString(R.string.sup_eligible_couples),
+            recordsRepo.eligibleCoupleTrackingListCount,
+            SupervisorFragmentDirections.actionNavSupervisorToEligibleCoupleTrackingListFragments()
+        ),
+        Icon(
+            R.drawable.ic__maternal_health,
+            resources.getString(R.string.sup_pregnant_women),
+            recordsRepo.getPregnantWomenListCount(),
+            SupervisorFragmentDirections.actionNavSupervisorToPwRegistrationFragments()
+        ),
+        Icon(
+            R.drawable.ic__anc_visit,
+            resources.getString(R.string.sup_anc_visits),
+            recordsRepo.getRegisteredPregnantWomanListCount(),
+            SupervisorFragmentDirections.actionNavSupervisorToPwAncVisitsFragments()
+        ),
+        Icon(
+            R.drawable.ic__hrp,
+            resources.getString(R.string.sup_hrp_woman),
+            recordsRepo.hrpPregnantWomenListCount,
+            SupervisorFragmentDirections.actionNavSupervisorToPregnantListFragments()
+        ),
+        Icon(
+            R.drawable.ic__delivery_outcome,
+            resources.getString(R.string.sup_deliveries),
+            recordsRepo.getDeliveredWomenListCount(),
+            SupervisorFragmentDirections.actionNavSupervisorToDeliveryOutcomeListFragments()
+        ),
+        Icon(
+            R.drawable.ic__immunization,
+            resources.getString(R.string.sup_routine_immunization),
+            recordsRepo.childrenImmunizationListCount,
+            SupervisorFragmentDirections.actionNavSupervisorToChildImmunizationListFragments()
+        ),
+        Icon(
+            R.drawable.ic__ncd_list,
+            resources.getString(R.string.sup_ncd_screened),
+            recordsRepo.ncdListCount,
+            SupervisorFragmentDirections.actionNavSupervisorToNcdListFragments()
+        ),
+        Icon(
+            R.drawable.ic__ncd_priority,
+            resources.getString(R.string.sup_ncd_priority),
+            recordsRepo.getNcdPriorityListCount,
+            SupervisorFragmentDirections.actionNavSupervisorToNcdPriorityListFragments()
+        ),
+        Icon(
+            R.drawable.ic__death,
+            resources.getString(R.string.sup_tb_cases),
+            recordsRepo.tbSuspectedListCount,
+            SupervisorFragmentDirections.actionNavSupervisorToTBSuspectedListFragments()
+        )
+    ).apply {
+        forEachIndexed { index, icon ->
+            icon.colorPrimary = index % 3 == 0
+        }
+    }
+
     fun getHRPPregnantWomenDataset(resources: Resources) = listOf(
         Icon(
             R.drawable.ic__assess_high_risk,
@@ -209,6 +296,42 @@ class IconDataset @Inject constructor(
             resources.getString(R.string.icon_title_hrp_pregnant_track),
             recordsRepo.hrpTrackingPregListCount,
             HrpCasesFragmentDirections.actionHrpCasesFragmentToHRPPregnantListFragment()
+        )
+    )
+
+    fun getVLFDataset(resources: Resources) = listOf(
+        Icon(
+            R.drawable.ic__assess_high_risk,
+            resources.getString(R.string.vhnd),
+            null,
+            VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToVHNDListFragement()
+        ),
+        Icon(
+            R.drawable.vhnc,
+            resources.getString(R.string.vnhc),
+            null,
+            VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToVHNCListFragement()
+        ) ,
+        Icon(
+                R.drawable.phc_review,
+        resources.getString(R.string.phc_review),
+            null,
+            VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToPHCReviewListFragement()
+
+    )
+        ,
+        Icon(
+            R.drawable.ahd,
+            resources.getString(R.string.ahd),
+            null,
+            VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToAHDListFragment()
+        )
+        ,
+        Icon(
+            R.drawable.dewarming,
+            resources.getString(R.string.national_deworming_day),
+            null,
+            VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToDewormingListFragment()
         )
     )
 
@@ -250,6 +373,24 @@ class IconDataset @Inject constructor(
         }
     }
 
+    fun getLmsDataset(resources: Resources) = listOf(
+        Icon(
+            R.drawable.ic_guide_icon,
+            resources.getString(R.string.icon_title_user_guid),
+            null,
+            EligibleCoupleFragmentDirections.actionEligibleCoupleFragmentToEligibleCoupleListFragment()
+        ), Icon(
+            R.drawable.ic_video_icon,
+            resources.getString(R.string.icon_title_video_tutorial),
+            null,
+            LmsFragmentDirections.actionLmsFragmentToVideoTutorialFragmet()
+        )
+    ).apply {
+        forEachIndexed { index, icon ->
+            icon.colorPrimary = index % 2 == 0
+        }
+    }
+
     fun getEligibleCoupleDataset(resources: Resources) = listOf(
         Icon(
             R.drawable.ic__eligible_couple,
@@ -262,6 +403,68 @@ class IconDataset @Inject constructor(
             recordsRepo.eligibleCoupleTrackingListCount,
             EligibleCoupleFragmentDirections.actionEligibleCoupleFragmentToEligibleCoupleTrackingListFragment()
         )
+    ).apply {
+        forEachIndexed { index, icon ->
+            icon.colorPrimary = index % 2 == 0
+        }
+    }
+
+    fun getDiseaseControlDataset(resources: Resources) = listOf(
+        Icon(
+            R.drawable.ic__ncd,
+            resources.getString(R.string.icon_title_ncd),
+            null,
+            DiseaseControlFragmentDirections.actionDiseaseControlFragmentToNcdFragment(),
+
+        ),
+        Icon(
+            R.drawable.maleria,
+            resources.getString(R.string.icon_title_maleria),
+            recordsRepo.tbScreeningListCount,
+            DiseaseControlFragmentDirections.actionDiseaseControlFragmentToMalariaIconsFragment(
+
+            )
+        ), Icon(
+            R.drawable.kala,
+            resources.getString(R.string.icon_title_ka),
+            recordsRepo.tbScreeningListCount,
+            DiseaseControlFragmentDirections.actionDiseaseControlFragmentToAllHouseHoldDiseaseControlFragment(
+                Disease.KALA_AZAR.toString()
+            )
+        ),
+
+        Icon(
+            R.drawable.aes,
+            resources.getString(R.string.icon_title_aes),
+            recordsRepo.tbScreeningListCount,
+            DiseaseControlFragmentDirections.actionDiseaseControlFragmentToAllHouseHoldDiseaseControlFragment(
+                Disease.AES_JE.toString()
+            )
+        ),
+        Icon(
+            R.drawable.filaria,
+            resources.getString(R.string.icon_title_filaria),
+            recordsRepo.tbScreeningListCount,
+            DiseaseControlFragmentDirections.actionDiseaseControlFragmentToAllHouseHoldDiseaseControlFragment(
+                Disease.FILARIA.toString()
+            )
+        ),
+        Icon(
+            R.drawable.leprocy,
+            resources.getString(R.string.icon_title_leprosy),
+            recordsRepo.tbScreeningListCount,
+            DiseaseControlFragmentDirections.actionDiseaseControlFragmentToAllHouseHoldDiseaseControlFragment(
+                Disease.LEPROSY.toString()
+            )
+        ),
+        /*Icon(
+            R.drawable.ic__eligible_couple,
+            resources.getString(R.string.icon_title_dearming),
+            recordsRepo.eligibleCoupleTrackingListCount,
+            DiseaseControlFragmentDirections.actionDiseaseControlFragmentToAllHouseHoldDiseaseControlFragment(
+                Disease.DEWARMING.toString()
+            )
+        )*/
     ).apply {
         forEachIndexed { index, icon ->
             icon.colorPrimary = index % 2 == 0
@@ -356,13 +559,13 @@ class IconDataset @Inject constructor(
 
     fun getImmunizationDataset() = listOf(
         Icon(
-            R.drawable.ic__immunization,
+            R.drawable.ic_vaccines,
             "Child Immunization",
             recordsRepo.childrenImmunizationListCount,
             ImmunizationDueTypeFragmentDirections.actionImmunizationDueTypeFragmentToChildImmunizationListFragment()
         ),
 
-    ).apply {
+        ).apply {
         forEachIndexed { index, icon ->
             icon.colorPrimary = index % 2 == 0
         }
@@ -392,6 +595,25 @@ class IconDataset @Inject constructor(
             resources.getString(R.string.icon_title_ncd_tb_suspected),
             recordsRepo.tbSuspectedListCount,
             CdFragmentDirections.actionCdFragmentToTBSuspectedListFragment()
+
+        )
+    ).apply {
+        forEachIndexed { index, icon ->
+            icon.colorPrimary = index % 2 == 0
+        }
+    }
+
+    fun getMalariaDataset(resources: Resources) = listOf(
+        Icon(
+            R.drawable.malaria_list,
+            resources.getString(R.string.icon_title_maleria),
+            recordsRepo.tbScreeningListCount,
+            MalariaIconsFragmentDirections.actionMalariaIconsFragmentToAllHouseHoldDiseaseControlFragment(Disease.MALARIA.toString())
+        ), Icon(
+            R.drawable.confirmed,
+            resources.getString(R.string.icon_title_malaria_confirmed),
+            recordsRepo.malariaConfirmedCasesListCount,
+            MalariaIconsFragmentDirections.actionMalariaIconsFragmentToConfirmedMalariaLIstFragment()
 
         )
     ).apply {
