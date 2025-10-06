@@ -34,6 +34,8 @@ data class EligibleCoupleTrackingCache(
     var dateOfAntraInjection: String? = null,
     var dueDateOfAntraInjection: String? = null,
     var mpaFile: String? = null,
+    var dischargeSummary1: String? = null,
+    var dischargeSummary2: String? = null,
     var antraDose: String? = null,
 
     var isPregnancyTestDone: String? = null,
@@ -41,6 +43,7 @@ data class EligibleCoupleTrackingCache(
     var isPregnant: String? = null,
     var usingFamilyPlanning: Boolean? = null,
     var methodOfContraception: String? = null,
+
     val createdBy: String,
     val createdDate: Long = System.currentTimeMillis(),
     val updatedBy: String,
