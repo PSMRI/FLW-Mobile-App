@@ -49,6 +49,11 @@ class EcrRepo @Inject constructor(
             database.ecrDao.getSavedECR(benId)
         }
     }
+    suspend fun getNoOfChildren(benId: Long): Int? {
+        return withContext(Dispatchers.IO) {
+            database.ecrDao.getNoOfChildren(benId)
+        }
+    }
 
     suspend fun getEct(benId: Long, createdDate: Long): EligibleCoupleTrackingCache? {
         return withContext(Dispatchers.IO) {

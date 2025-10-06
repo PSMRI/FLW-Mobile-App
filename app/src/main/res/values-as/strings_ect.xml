@@ -5,7 +5,7 @@
     <string name="ectdset_is_preg_tst_done">গৰ্ভাৱস্থা পৰীক্ষা কৰা হয়নে?</string>
     <string name="ectdset_preg_tst_rlt">গৰ্ভাৱস্থা পৰীক্ষাৰ ফলাফল</string>
     <string name="ectdset_name_wo_preg">মহিলাগৰাকী গৰ্ভৱতী নেকি?</string>
-    <string name="ectdset_fly_plan_mthd">আপুনি পৰিয়াল পৰিকল্পনা পদ্ধতি ব্যৱহাৰ কৰিছেনে?</string>
+    <string name="ectdset_fly_plan_mthd">আপুনি পৰিয়াল পৰিকল্পনা ব্যৱহাৰ কৰি আছে নে কৰিব বিচাৰে?</string>
     <string name="ectdset_mthd_conpt">গৰ্ভনিৰোধৰ পদ্ধতি</string>
     <string name="ectdset_other_mthd">অন্য যিকোনো পদ্ধতি</string>
 </resources>
