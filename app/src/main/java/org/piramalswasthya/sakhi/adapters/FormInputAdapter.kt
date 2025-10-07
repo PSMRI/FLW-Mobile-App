@@ -648,35 +648,6 @@ class FormInputAdapter(
         fun onViewDocumentClick(form: FormElement) = viewDocument(form.id)
 
     }
-    class FileUploadInputViewHolder private constructor(private val binding: LayoutUploafFormBinding) :
-        ViewHolder(binding.root) {
-        companion object {
-            fun from(parent: ViewGroup): ViewHolder {
-                val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = LayoutUploafFormBinding.inflate(layoutInflater, parent, false)
-                return FileUploadInputViewHolder(binding)
-            }
-        }
-
-
-        fun bind(item: FormElement, clickListener: SelectUploadImageClickListener?, documentOnClick: ViewDocumentOnClick?, isEnabled: Int) {
-
-            binding.form = item
-            binding.tvTitle.text = item.title
-            binding.clickListener = clickListener
-            binding.documentclickListener = documentOnClick
-            if (item.value != null) binding.btnView.visibility = View.VISIBLE
-            else binding.btnView.visibility = View.GONE
-
-
-
-
-        }
-
-
-    }
-
-
 
     class DatePickerInputViewHolder private constructor(private val binding: RvItemFormDatepickerV2Binding) :
         ViewHolder(binding.root) {
@@ -990,18 +961,7 @@ class FormInputAdapter(
         fun onAgeClick(form: FormElement) = ageClick(form.id)
 
     }
-    class ViewDocumentOnClick(private val viewDocument: (formId: Int) -> Unit) {
 
-        fun onViewDocumentClick(form: FormElement) = viewDocument(form.id)
-
-    }
-
-
-    class SelectUploadImageClickListener(private val selectImageClick: (formId: Int) -> Unit) {
-
-        fun onSelectImageClick(form: FormElement) = selectImageClick(form.id)
-
-    }
     class FormValueListener(private val valueChanged: (id: Int, value: Int) -> Unit) {
 
         fun onValueChanged(form: FormElement, index: Int) {

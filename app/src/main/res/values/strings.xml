@@ -404,15 +404,11 @@
     <string name="add_family_member">Add Family Member</string>
     <string name="app_native_name">উৎপ্ৰেৰণা</string>
     <string name="non_pregnant_women_eligible_couple_section">Non-Pregnant Women (Eligible Couple) section</string>
-    <string name="status">Status</string>
-    <string name="visit_date">Visit Date</string>
     <string name="visit_day">Visit Day</string>
-    <string name="beneficiary_status">Beneficiary Status</string>
     <string name="date_of_death">Date of Death</string>
     <string name="time_of_death">Time of Death</string>
     <string name="reason_for_death">Reason for Death</string>
     <string name="place_of_death">Place of Death</string>
-    <string name="file_size">File size should be less than or equals to 5 MB.</string>
     <string name="add_file">add file</string>
     <string name="jsy_payment_voucher">JSY payment voucher</string>
     <string name="mcp_card_1">MCP Card 1</string>

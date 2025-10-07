@@ -176,7 +176,6 @@ class PregnantWomanAncVisitDataset(
         title = "Pulse Rate (BPM)",
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL,
         etMaxLength = 3,
-        title = "Pulse Rate",
         minDecimal = 40.0,
         maxDecimal = 200.0,
         required = false,

@@ -147,7 +147,7 @@ import org.piramalswasthya.sakhi.model.VHNDCache
         //Dynamic Data
         InfantEntity::class,
         FormSchemaEntity::class,
-        FormResponseJsonEntity::class
+        FormResponseJsonEntity::class,
         GeneralOPEDBeneficiary::class,
     ],
     views = [BenBasicCache::class],
@@ -209,11 +209,11 @@ abstract class InAppDb : RoomDatabase() {
 
             })
 
-            val MIGRATION_22_23 = object : Migration(22, 23) {
-                override fun migrate(database: SupportSQLiteDatabase) {
-                    database.execSQL("ALTER TABLE GENERAL_OPD_ACTIVITY ADD COLUMN village TEXT")
-                }
-            }
+//            val MIGRATION_22_23 = object : Migration(22, 23) {
+//                override fun migrate(database: SupportSQLiteDatabase) {
+//                    database.execSQL("ALTER TABLE GENERAL_OPD_ACTIVITY ADD COLUMN village TEXT")
+//                }
+//            }
 
             val MIGRATION_28_29 = object : Migration(28, 29) {
                 override fun migrate(database: SupportSQLiteDatabase) {
@@ -264,8 +264,113 @@ abstract class InAppDb : RoomDatabase() {
                 }
             }
 
+//            val MIGRATION_20_21 = object : Migration(20, 21) {
+//                override fun migrate(database: SupportSQLiteDatabase) {
+//                    database.execSQL("""
+//            CREATE TABLE IF NOT EXISTS `GENERAL_OPD_ACTIVITY` (
+//                `benFlowID` INTEGER,
+//                `beneficiaryRegID` INTEGER,
+//                `benVisitID` INTEGER,
+//                `visitCode` INTEGER,
+//                `benVisitNo` INTEGER,
+//                `nurseFlag` INTEGER,
+//                `doctorFlag` INTEGER,
+//                `pharmacist_flag` INTEGER,
+//                `lab_technician_flag` INTEGER,
+//                `radiologist_flag` INTEGER,
+//                `oncologist_flag` INTEGER,
+//                `specialist_flag` INTEGER,
+//                `agentId` TEXT,
+//                `visitDate` TEXT,
+//                `modified_by` TEXT,
+//                `modified_date` TEXT,
+//                `benName` TEXT,
+//                `deleted` INTEGER,
+//                `firstName` TEXT,
+//                `lastName` TEXT,
+//                `age` TEXT,
+//                `ben_age_val` INTEGER,
+//                `genderID` INTEGER,
+//                `genderName` TEXT,
+//                `preferredPhoneNum` TEXT,
+//                `fatherName` TEXT,
+//                `spouseName` TEXT,
+//                `districtName` TEXT,
+//                `servicePointName` TEXT,
+//                `registrationDate` TEXT,
+//                `benVisitDate` TEXT,
+//                `consultationDate` TEXT,
+//                `consultantID` INTEGER,
+//                `consultantName` TEXT,
+//                `visitSession` TEXT,
+//                `servicePointID` INTEGER,
+//                `districtID` INTEGER,
+//                `villageID` INTEGER,
+//                `vanID` INTEGER,
+//                `beneficiaryId` INTEGER NOT NULL,
+//                `dob` TEXT,
+//                `tc_SpecialistLabFlag` INTEGER,
+//                `visitReason` TEXT,
+//                `visitCategory` TEXT,
+//                PRIMARY KEY(`beneficiaryId`)
+//            )
+//        """)
+//                }
+//            }
+
+//            val MIGRATION_19_20 = object : Migration(19, 20) {
+//                override fun migrate(database: SupportSQLiteDatabase) {
+//                    database.execSQL("ALTER TABLE MALARIA_SCREENING ADD COLUMN slideTestName TEXT")
+//                }
+//            }
+
+            val MIGRATION_24_25 = object : Migration(24, 25) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("ALTER TABLE ELIGIBLE_COUPLE_TRACKING ADD COLUMN dateOfAntraInjection TEXT")
+                    database.execSQL("ALTER TABLE ELIGIBLE_COUPLE_TRACKING ADD COLUMN dueDateOfAntraInjection TEXT")
+                    database.execSQL("ALTER TABLE ELIGIBLE_COUPLE_TRACKING ADD COLUMN mpaFile TEXT")
+                    database.execSQL("ALTER TABLE ELIGIBLE_COUPLE_TRACKING ADD COLUMN antraDose TEXT")
+                }
+            }
+
+            val MIGRATION_23_24 = object : Migration(23, 24) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("ALTER TABLE MDSR ADD COLUMN mdsr1File TEXT")
+                    database.execSQL("ALTER TABLE MDSR ADD COLUMN mdsr2File TEXT")
+                    database.execSQL("ALTER TABLE MDSR ADD COLUMN mdsrDeathCertFile TEXT")
+                }
+            }
+            val MIGRATION_22_23 = object : Migration(22, 23) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL(
+                        "ALTER TABLE PNC_VISIT ADD COLUMN otherPlaceOfDeath TEXT"
+                    )
+                    database.execSQL("ALTER TABLE GENERAL_OPD_ACTIVITY ADD COLUMN village TEXT")
+                }
+            }
+
+
+//            val MIGRATION_21_22 = object : Migration(21, 22) {
+//                override fun migrate(database: SupportSQLiteDatabase) {
+//                    database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN isDeath INTEGER")
+//                    database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN isDeathValue TEXT")
+//                    database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN dateOfDeath TEXT")
+//                    database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN placeOfDeath TEXT")
+//                    database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN placeOfDeathId INTEGER DEFAULT 0")
+//                    database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN otherPlaceOfDeath TEXT")
+//                    database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN mcp1File TEXT")
+//                    database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN mcp2File TEXT")
+//                    database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN jsyFile TEXT")
+//                }
+//            }
+
+
+
             val MIGRATION_20_21 = object : Migration(20, 21) {
                 override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("ALTER TABLE CDR ADD COLUMN cdr1File TEXT")
+                    database.execSQL("ALTER TABLE CDR ADD COLUMN cdr2File TEXT")
+                    database.execSQL("ALTER TABLE CDR ADD COLUMN cdrDeathCertFile TEXT")
                     database.execSQL("""
             CREATE TABLE IF NOT EXISTS `GENERAL_OPD_ACTIVITY` (
                 `benFlowID` INTEGER,
@@ -315,61 +420,6 @@ abstract class InAppDb : RoomDatabase() {
                 PRIMARY KEY(`beneficiaryId`)
             )
         """)
-                }
-            }
-
-            val MIGRATION_19_20 = object : Migration(19, 20) {
-                override fun migrate(database: SupportSQLiteDatabase) {
-                    database.execSQL("ALTER TABLE MALARIA_SCREENING ADD COLUMN slideTestName TEXT")
-                }
-            }
-
-            val MIGRATION_24_25 = object : Migration(24, 25) {
-                override fun migrate(database: SupportSQLiteDatabase) {
-                    database.execSQL("ALTER TABLE ELIGIBLE_COUPLE_TRACKING ADD COLUMN dateOfAntraInjection TEXT")
-                    database.execSQL("ALTER TABLE ELIGIBLE_COUPLE_TRACKING ADD COLUMN dueDateOfAntraInjection TEXT")
-                    database.execSQL("ALTER TABLE ELIGIBLE_COUPLE_TRACKING ADD COLUMN mpaFile TEXT")
-                    database.execSQL("ALTER TABLE ELIGIBLE_COUPLE_TRACKING ADD COLUMN antraDose TEXT")
-                }
-            }
-
-            val MIGRATION_23_24 = object : Migration(23, 24) {
-                override fun migrate(database: SupportSQLiteDatabase) {
-                    database.execSQL("ALTER TABLE MDSR ADD COLUMN mdsr1File TEXT")
-                    database.execSQL("ALTER TABLE MDSR ADD COLUMN mdsr2File TEXT")
-                    database.execSQL("ALTER TABLE MDSR ADD COLUMN mdsrDeathCertFile TEXT")
-                }
-            }
-            val MIGRATION_22_23 = object : Migration(22, 23) {
-                override fun migrate(database: SupportSQLiteDatabase) {
-                    database.execSQL(
-                        "ALTER TABLE PNC_VISIT ADD COLUMN otherPlaceOfDeath TEXT"
-                    )
-                }
-            }
-
-
-            val MIGRATION_21_22 = object : Migration(21, 22) {
-                override fun migrate(database: SupportSQLiteDatabase) {
-                    database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN isDeath INTEGER")
-                    database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN isDeathValue TEXT")
-                    database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN dateOfDeath TEXT")
-                    database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN placeOfDeath TEXT")
-                    database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN placeOfDeathId INTEGER DEFAULT 0")
-                    database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN otherPlaceOfDeath TEXT")
-                    database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN mcp1File TEXT")
-                    database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN mcp2File TEXT")
-                    database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN jsyFile TEXT")
-                }
-            }
-
-
-
-            val MIGRATION_20_21 = object : Migration(20, 21) {
-                override fun migrate(database: SupportSQLiteDatabase) {
-                    database.execSQL("ALTER TABLE CDR ADD COLUMN cdr1File TEXT")
-                    database.execSQL("ALTER TABLE CDR ADD COLUMN cdr2File TEXT")
-                    database.execSQL("ALTER TABLE CDR ADD COLUMN cdrDeathCertFile TEXT")
                 }
             }
             val MIGRATION_19_20 = object : Migration(19, 20) {
@@ -426,51 +476,52 @@ abstract class InAppDb : RoomDatabase() {
                             "LEFT OUTER JOIN INFANT_REG ir ON b.beneficiaryId = ir.motherBenId " +
                             "LEFT OUTER JOIN CHILD_REG cr ON b.beneficiaryId = cr.motherBenId " +
                             "WHERE b.isDraft = 0 GROUP BY b.beneficiaryId ORDER BY b.updatedDate DESC")
+                    db.execSQL("ALTER TABLE MALARIA_SCREENING ADD COLUMN slideTestName TEXT")
                 }
             }
-            val MIGRATION_18_19 = object : Migration(18, 19) {
-                override fun migrate(database: SupportSQLiteDatabase) {
-                    val columns = listOf(
-                        "isDeath INTEGER",
-                        "isDeathValue TEXT",
-                        "dateOfDeath TEXT",
-                        "timeOfDeath TEXT",
-                        "reasonOfDeath TEXT",
-                        "reasonOfDeathId INTEGER",
-                        "placeOfDeath TEXT",
-                        "placeOfDeathId INTEGER",
-                        "otherPlaceOfDeath TEXT"
-                    )
-
-                    for (column in columns) {
-                        database.execSQL("ALTER TABLE BENEFICIARY ADD COLUMN $column")
-                    }
-
-
-
-                    // 🔹 Columns for PREGNANCY_ANC table
-                    val pregnancyAncColumns = listOf(
-                        "serialNo TEXT",
-                        "methodOfTermination TEXT",
-                        "methodOfTerminationId INTEGER DEFAULT 0 NOT NULL",
-                        "terminationDoneBy TEXT",
-                        "terminationDoneById INTEGER DEFAULT 0 NOT NULL",
-                        "isPaiucdId INTEGER DEFAULT 0 NOT NULL",
-                        "isPaiucd TEXT",
-                        "remarks TEXT",
-                        "abortionImg1 TEXT",
-                        "abortionImg2 TEXT",
-                        "placeOfDeath TEXT",
-                        "placeOfDeathId INTEGER DEFAULT 0 NOT NULL",
-                        "otherPlaceOfDeath TEXT"
-                    )
-
-                    for (column in pregnancyAncColumns) {
-                        database.execSQL("ALTER TABLE PREGNANCY_ANC ADD COLUMN $column")
-                    }
-
-                }
-            }
+//            val MIGRATION_18_19 = object : Migration(18, 19) {
+//                override fun migrate(database: SupportSQLiteDatabase) {
+//                    val columns = listOf(
+//                        "isDeath INTEGER",
+//                        "isDeathValue TEXT",
+//                        "dateOfDeath TEXT",
+//                        "timeOfDeath TEXT",
+//                        "reasonOfDeath TEXT",
+//                        "reasonOfDeathId INTEGER",
+//                        "placeOfDeath TEXT",
+//                        "placeOfDeathId INTEGER",
+//                        "otherPlaceOfDeath TEXT"
+//                    )
+//
+//                    for (column in columns) {
+//                        database.execSQL("ALTER TABLE BENEFICIARY ADD COLUMN $column")
+//                    }
+//
+//
+//
+//                    // 🔹 Columns for PREGNANCY_ANC table
+//                    val pregnancyAncColumns = listOf(
+//                        "serialNo TEXT",
+//                        "methodOfTermination TEXT",
+//                        "methodOfTerminationId INTEGER DEFAULT 0 NOT NULL",
+//                        "terminationDoneBy TEXT",
+//                        "terminationDoneById INTEGER DEFAULT 0 NOT NULL",
+//                        "isPaiucdId INTEGER DEFAULT 0 NOT NULL",
+//                        "isPaiucd TEXT",
+//                        "remarks TEXT",
+//                        "abortionImg1 TEXT",
+//                        "abortionImg2 TEXT",
+//                        "placeOfDeath TEXT",
+//                        "placeOfDeathId INTEGER DEFAULT 0 NOT NULL",
+//                        "otherPlaceOfDeath TEXT"
+//                    )
+//
+//                    for (column in pregnancyAncColumns) {
+//                        database.execSQL("ALTER TABLE PREGNANCY_ANC ADD COLUMN $column")
+//                    }
+//
+//                }
+//            }
 
             val MIGRATION_17_18 = object : Migration(17, 18) {
                 override fun migrate(database: SupportSQLiteDatabase) {
@@ -713,6 +764,16 @@ abstract class InAppDb : RoomDatabase() {
                     database.execSQL("ALTER TABLE PREGNANCY_ANC_NEW RENAME TO PREGNANCY_ANC")
 
                     database.execSQL("CREATE INDEX ind_mha ON PREGNANCY_ANC(benId)")
+
+                    database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN isDeath INTEGER")
+                    database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN isDeathValue TEXT")
+                    database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN dateOfDeath TEXT")
+                    database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN placeOfDeath TEXT")
+                    database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN placeOfDeathId INTEGER DEFAULT 0")
+                    database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN otherPlaceOfDeath TEXT")
+                    database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN mcp1File TEXT")
+                    database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN mcp2File TEXT")
+                    database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN jsyFile TEXT")
                 }
             }
 
@@ -908,6 +969,46 @@ abstract class InAppDb : RoomDatabase() {
 
                         database.execSQL("DROP TABLE PROFILE_ACTIVITY")
                         database.execSQL("ALTER TABLE PROFILE_ACTIVITY_new RENAME TO PROFILE_ACTIVITY")
+
+                        val columns = listOf(
+                            "isDeath INTEGER",
+                            "isDeathValue TEXT",
+                            "dateOfDeath TEXT",
+                            "timeOfDeath TEXT",
+                            "reasonOfDeath TEXT",
+                            "reasonOfDeathId INTEGER",
+                            "placeOfDeath TEXT",
+                            "placeOfDeathId INTEGER",
+                            "otherPlaceOfDeath TEXT"
+                        )
+
+                        for (column in columns) {
+                            database.execSQL("ALTER TABLE BENEFICIARY ADD COLUMN $column")
+                        }
+
+
+
+                        // 🔹 Columns for PREGNANCY_ANC table
+                        val pregnancyAncColumns = listOf(
+                            "serialNo TEXT",
+                            "methodOfTermination TEXT",
+                            "methodOfTerminationId INTEGER DEFAULT 0 NOT NULL",
+                            "terminationDoneBy TEXT",
+                            "terminationDoneById INTEGER DEFAULT 0 NOT NULL",
+                            "isPaiucdId INTEGER DEFAULT 0 NOT NULL",
+                            "isPaiucd TEXT",
+                            "remarks TEXT",
+                            "abortionImg1 TEXT",
+                            "abortionImg2 TEXT",
+                            "placeOfDeath TEXT",
+                            "placeOfDeathId INTEGER DEFAULT 0 NOT NULL",
+                            "otherPlaceOfDeath TEXT"
+                        )
+
+                        for (column in pregnancyAncColumns) {
+                            database.execSQL("ALTER TABLE PREGNANCY_ANC ADD COLUMN $column")
+                        }
+
                     } catch (e: Exception) {
 
                         Log.e("DB_MIGRATION", "Migration 1->2 failed: ${e.message}", e)
