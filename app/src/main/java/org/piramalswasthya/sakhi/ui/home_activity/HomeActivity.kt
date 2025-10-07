@@ -55,6 +55,7 @@ import org.piramalswasthya.sakhi.helpers.InAppUpdateHelper
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.MyContextWrapper
 import org.piramalswasthya.sakhi.helpers.isInternetAvailable
+import org.piramalswasthya.sakhi.ui.Fragments.MaaMeetingFormFragment
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.home_activity.home.HomeViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.sync.SyncBottomSheetFragment
@@ -577,6 +578,16 @@ class HomeActivity : AppCompatActivity() {
             binding.drawerLayout.close()
             true
 
+        }
+
+        binding.navView.menu.findItem(R.id.maa_meeting_submission).setOnMenuItemClickListener {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.nav_host_fragment_home, MaaMeetingFormFragment())
+                .addToBackStack(null)
+                .commit()
+
+            binding.drawerLayout.close()
+            true
         }
 
         binding.navView.menu.findItem(R.id.menu_support).setOnMenuItemClickListener {

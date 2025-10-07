@@ -1,6 +1,8 @@
 package org.piramalswasthya.sakhi.network
 
 import okhttp3.ResponseBody
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import org.piramalswasthya.sakhi.model.*
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSubmitRequest
@@ -11,6 +13,18 @@ import retrofit2.Response
 import retrofit2.http.*
 
 interface AmritApiService {
+    @Multipart
+    @POST("flw-api/maa-meetings/saveAll")
+    suspend fun postMaaMeetingMultipart(
+        @Part("meetingDate") meetingDate: RequestBody,
+        @Part("place") place: RequestBody,
+        @Part("participants") participants: RequestBody,
+        @Part("ashaId") ashaId: RequestBody,
+        @Part meetingImages: List<MultipartBody.Part>
+    ): Response<ResponseBody>
+
+    @POST("flw-api/maa-meetings/getAll")
+    suspend fun getMaaMeetings(@Body userDetail: GetDataRequest): Response<ResponseBody>
 
     @Headers("No-Auth: true")
     @POST("common-api/user/userAuthenticate")
