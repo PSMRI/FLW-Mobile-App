@@ -4,16 +4,12 @@ import android.content.Context
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.InputType
-import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Locale
 
 class MaaMeetingDataset(
     context: Context,
     currentLanguage: Languages
 ) : Dataset(context, currentLanguage) {
-
-    private val dateFormatter = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
 
     val meetingDate = FormElement(
         id = 1,
@@ -84,20 +80,6 @@ class MaaMeetingDataset(
 
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
 
-    }
-
-    fun getSelectedDateCalendar(): Calendar? {
-        val v = meetingDate.value ?: return null
-        return try {
-            Calendar.getInstance().apply { time = dateFormatter.parse(v)!! }
-        } catch (_: Exception) {
-            null
-        }
-    }
-
-    fun countSelectedUploads(): Int {
-        val uploads = listOf(upload1, upload2, upload3, upload4, upload5)
-        return uploads.count { !it.value.isNullOrEmpty() }
     }
 }
 

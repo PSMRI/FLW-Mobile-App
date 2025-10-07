@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.network
 
 import android.os.Parcelable
+import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.model.HRPNonPregnantAssessCache
