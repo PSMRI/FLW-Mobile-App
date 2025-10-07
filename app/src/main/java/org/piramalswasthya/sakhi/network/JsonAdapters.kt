@@ -83,6 +83,17 @@ data class GetDataPaginatedRequest(
 )
 
 @JsonClass(generateAdapter = true)
+data class GetDataRequest(
+    val villageID: Int,
+    val fromDate: String,
+    val toDate: String,
+    val pageNo: Int,
+    val userId: Long,
+    val userName: String,
+    val ashaId: Long
+)
+
+@JsonClass(generateAdapter = true)
 data class BenResponse(
     val benId: String,
     val benRegId: Long,

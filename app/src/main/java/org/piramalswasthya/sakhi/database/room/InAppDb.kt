@@ -10,6 +10,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import org.piramalswasthya.sakhi.database.converters.LocationEntityListConverter
 import org.piramalswasthya.sakhi.database.converters.SyncStateConverter
+import org.piramalswasthya.sakhi.database.converters.StringListConverter
 import org.piramalswasthya.sakhi.database.room.dao.ABHAGenratedDao
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.BeneficiaryIdsAvailDao
@@ -29,6 +30,7 @@ import org.piramalswasthya.sakhi.database.room.dao.InfantRegDao
 import org.piramalswasthya.sakhi.database.room.dao.MaternalHealthDao
 import org.piramalswasthya.sakhi.database.room.dao.MdsrDao
 import org.piramalswasthya.sakhi.database.room.dao.PmjayDao
+import org.piramalswasthya.sakhi.database.room.dao.MaaMeetingDao
 import org.piramalswasthya.sakhi.database.room.dao.PmsmaDao
 import org.piramalswasthya.sakhi.database.room.dao.PncDao
 import org.piramalswasthya.sakhi.database.room.dao.SyncDao
@@ -67,6 +69,7 @@ import org.piramalswasthya.sakhi.model.PregnantWomanAncCache
 import org.piramalswasthya.sakhi.model.PregnantWomanRegistrationCache
 import org.piramalswasthya.sakhi.model.TBScreeningCache
 import org.piramalswasthya.sakhi.model.TBSuspectedCache
+import org.piramalswasthya.sakhi.model.MaaMeetingEntity
 import org.piramalswasthya.sakhi.model.Vaccine
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaEntity
@@ -109,14 +112,15 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.InfantEntity
         //Dynamic Data
         InfantEntity::class,
         FormSchemaEntity::class,
-        FormResponseJsonEntity::class
+        FormResponseJsonEntity::class,
+        MaaMeetingEntity::class
     ],
     views = [BenBasicCache::class],
 
-    version = 27, exportSchema = false
+    version = 29, exportSchema = false
 )
 
-@TypeConverters(LocationEntityListConverter::class, SyncStateConverter::class)
+@TypeConverters(LocationEntityListConverter::class, SyncStateConverter::class, StringListConverter::class)
 
 abstract class InAppDb : RoomDatabase() {
 
@@ -142,6 +146,7 @@ abstract class InAppDb : RoomDatabase() {
     abstract val childRegistrationDao: ChildRegistrationDao
     abstract val incentiveDao: IncentiveDao
     abstract val abhaGenratedDao: ABHAGenratedDao
+    abstract val maaMeetingDao: MaaMeetingDao
 
     abstract fun infantDao(): InfantDao
     abstract fun formSchemaDao(): FormSchemaDao
@@ -165,6 +170,28 @@ abstract class InAppDb : RoomDatabase() {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     database.execSQL("ALTER TABLE INCENTIVE_ACTIVITY ADD COLUMN groupName TEXT")
 
+                }
+            }
+
+            val MIGRATION_27_28 = object : Migration(27,28) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL(
+                        "CREATE TABLE IF NOT EXISTS `MAA_MEETING` (" +
+                                "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                                "`meetingDate` TEXT, `place` TEXT, `participants` INTEGER, `ashaId` INTEGER, " +
+                                "`meetingImages` TEXT, " +
+                                "`createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `syncState` INTEGER NOT NULL)"
+                    )
+                }
+            }
+            val MIGRATION_28_29 = object : Migration(28,29) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    try { database.execSQL("ALTER TABLE MAA_MEETING ADD COLUMN meetingImages TEXT") } catch (_: Exception) {}
+                    try { database.execSQL("ALTER TABLE MAA_MEETING DROP COLUMN upload1Bytes") } catch (_: Exception) {}
+                    try { database.execSQL("ALTER TABLE MAA_MEETING DROP COLUMN upload2Bytes") } catch (_: Exception) {}
+                    try { database.execSQL("ALTER TABLE MAA_MEETING DROP COLUMN upload3Bytes") } catch (_: Exception) {}
+                    try { database.execSQL("ALTER TABLE MAA_MEETING DROP COLUMN upload4Bytes") } catch (_: Exception) {}
+                    try { database.execSQL("ALTER TABLE MAA_MEETING DROP COLUMN upload5Bytes") } catch (_: Exception) {}
                 }
             }
             val MIGRATION_25_26 = object : Migration(25, 26) {
@@ -527,7 +554,9 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_23_24,
                         MIGRATION_24_25,
                         MIGRATION_25_26,
-                        MIGRATION_26_27
+                        MIGRATION_26_27,
+                        MIGRATION_27_28,
+                        MIGRATION_28_29
                     ).build()
 
                     INSTANCE = instance
