@@ -51,9 +51,6 @@ interface AmritApiService {
     @POST("common-api/beneficiaryConsent/resendConsent")
     suspend fun resendOtp(@Body sendOtpRequest: sendOtpRequest): Response<ResponseBody>
 
-    @POST("tm-api/registrar/registrarBeneficaryRegistrationNew")
-    suspend fun getBenIdFromBeneficiarySending(@Body beneficiaryDataSending: BeneficiaryDataSending): Response<ResponseBody>
-
     @POST("common-api/beneficiaryConsent/validateConsent")
     suspend fun validateOtp(@Body validateOtp: ValidateOtpRequest ): Response<ResponseBody>
 

@@ -35,6 +35,9 @@ import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.VaccineState
 import org.piramalswasthya.sakhi.model.VaccineState.*
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 
 @BindingAdapter("vaccineState")
@@ -75,6 +78,14 @@ fun Button.setVaccineState(syncState: VaccineState?) {
                 visibility = View.GONE
             }
         }
+    }
+}
+
+@BindingAdapter("formattedDate")
+fun setFormattedDate(view: TextView, timestamp: Long?) {
+    timestamp?.let {
+        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        view.text = sdf.format(Date(it))
     }
 }
 
