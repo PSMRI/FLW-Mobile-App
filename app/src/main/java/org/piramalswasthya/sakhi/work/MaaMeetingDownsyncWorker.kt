@@ -1,7 +1,6 @@
 package org.piramalswasthya.sakhi.work
 
 import android.content.Context
-import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
@@ -27,13 +26,11 @@ class MaaMeetingDownsyncWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         return try {
-            Log.i("MaaMeetngDownsyncWorkerOne", "doWork: try")
             withContext(Dispatchers.IO) {
                 maaMeetingRepo.downSyncAndPersist()
             }
             Result.success()
         } catch (_: Exception) {
-            Log.i("MaaMeetngDownsyncWorkerOne", "doWork: Catch")
             Result.retry()
         }
     }
