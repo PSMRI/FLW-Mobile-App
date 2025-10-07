@@ -9,7 +9,6 @@ import org.piramalswasthya.sakhi.database.room.dao.MaaMeetingDao
 import org.piramalswasthya.sakhi.model.MaaMeetingEntity
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.network.AmritApiService
-import java.io.InputStream
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -19,18 +18,14 @@ import android.content.ContentResolver
 import android.provider.OpenableColumns
 import android.graphics.BitmapFactory
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.core.content.FileProvider
 import java.io.FileOutputStream
-import timber.log.Timber
 import javax.inject.Inject
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
-import org.piramalswasthya.sakhi.network.GetDataPaginatedRequest
 import org.piramalswasthya.sakhi.repositories.BenRepo.Companion.getCurrentDate
 import android.util.Base64
-import com.google.gson.JsonObject
 import org.piramalswasthya.sakhi.network.GetDataRequest
 
 class MaaMeetingRepo @Inject constructor(
@@ -86,6 +81,7 @@ class MaaMeetingRepo @Inject constructor(
                 place = (row.place ?: "").toRequestBody("text/plain".toMediaTypeOrNull()),
                 participants = ((row.participants ?: 0).toString()).toRequestBody("text/plain".toMediaTypeOrNull()),
                 ashaId = ((row.ashaId ?: 0).toString()).toRequestBody("text/plain".toMediaTypeOrNull()),
+                createdBy = ((pref.getLoggedInUser()?.userName ?: 0).toString()).toRequestBody("text/plain".toMediaTypeOrNull()),
                 meetingImages = imagesParts
             )
             if (response.isSuccessful) {
@@ -116,10 +112,11 @@ class MaaMeetingRepo @Inject constructor(
             val imageBase64List = item.meetingImages ?: emptyList()
             val imageUriList = imageBase64List.mapNotNull { base64 ->
                 try {
-                    val base64Data = base64.substringAfter(",")
-                    val imageBytes = Base64.decode(base64Data, Base64.DEFAULT)
-                    val file = File(appContext.cacheDir, "meeting_${System.currentTimeMillis()}.jpg")
-                    file.outputStream().use { it.write(imageBytes) }
+                    val base64Data = base64.substringAfter(",", base64)
+                    val bytes = Base64.decode(base64Data, Base64.DEFAULT)
+                    val (ext, _) = detectExtAndMime(bytes)
+                    val file = File(appContext.cacheDir, "meeting_${System.currentTimeMillis()}.$ext")
+                    file.outputStream().use { it.write(bytes) }
                     val uri = FileProvider.getUriForFile(
                         appContext,
                         "${appContext.packageName}.provider",
@@ -127,13 +124,11 @@ class MaaMeetingRepo @Inject constructor(
                     )
                     uri.toString()
                 } catch (e: Exception) {
-                    Log.e("MaaMeetingInsert", "Error converting Base64 to URI", e)
                     null
                 }
             }
 
             val entity = MaaMeetingEntity(
-                id = item.id?.toLong()!!,
                 meetingDate = convertToLocalDate(item.meetingDate),
                 place = item.place,
                 participants = item.participants,
@@ -144,6 +139,21 @@ class MaaMeetingRepo @Inject constructor(
 
             dao.insert(entity)
         }
+    }
+
+    private fun detectExtAndMime(bytes: ByteArray): Pair<String, String> {
+        if (bytes.size >= 4) {
+            if (bytes[0] == 0x25.toByte() && bytes[1] == 0x50.toByte() && bytes[2] == 0x44.toByte() && bytes[3] == 0x46.toByte()) {
+                return "pdf" to "application/pdf"
+            }
+            if (bytes[0] == 0xFF.toByte() && bytes[1] == 0xD8.toByte() && bytes[2] == 0xFF.toByte()) {
+                return "jpg" to "image/jpeg"
+            }
+            if (bytes[0] == 0x89.toByte() && bytes[1] == 0x50.toByte() && bytes[2] == 0x4E.toByte() && bytes[3] == 0x47.toByte()) {
+                return "png" to "image/png"
+            }
+        }
+        return "bin" to "application/octet-stream"
     }
 
     suspend fun hasMeetingInSameQuarter(meetingDate: String?): Boolean = withContext(Dispatchers.IO) {

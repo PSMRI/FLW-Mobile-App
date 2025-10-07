@@ -60,16 +60,16 @@ class MaaMeetingFormFragment : Fragment() {
                     ?.currentList?.firstOrNull { it.id == formId }
 
                 element?.value?.let { uriStr ->
+                    val uri = Uri.parse(uriStr)
+                    val mime = requireContext().contentResolver.getType(uri) ?: guessMimeFromUri(uri)
                     try {
-                        val uri = Uri.parse(uriStr)
-                        Log.e("MaaMeetingFormFragmentOne", "Opening - $uri")
                         val intent = Intent(Intent.ACTION_VIEW).apply {
-                            data = uri
+                            setDataAndType(uri, mime)
                             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                         }
                         startActivity(intent)
                     } catch (e: Exception) {
-                        Log.e("MaaMeetingFormFragmentOne", "Error opening image", e)
+                        Toast.makeText(requireContext(), "Issue No Image Found", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -142,6 +142,21 @@ class MaaMeetingFormFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 1010 && resultCode == Activity.RESULT_OK) {
             data?.data?.let { uri ->
+                // Persist permission so we can view later
+                try {
+                    requireContext().contentResolver.takePersistableUriPermission(
+                        uri, Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    )
+                } catch (_: Exception) {}
+
+                // Allow only JPEG, PNG, PDF
+                val mime = requireContext().contentResolver.getType(uri) ?: guessMimeFromUri(uri)
+                val allowed = setOf("image/jpeg", "image/png", "application/pdf")
+                if (!allowed.contains(mime)) {
+                    Toast.makeText(requireContext(), "Only JPEG, PNG, PDF allowed", Toast.LENGTH_LONG).show()
+                    return
+                }
+
                 if (checkFileSize(uri, requireContext())) {
                     Toast.makeText(requireContext(), getString(R.string.file_size), Toast.LENGTH_LONG).show()
                     return
@@ -149,6 +164,16 @@ class MaaMeetingFormFragment : Fragment() {
                 viewModel.setUploadUriFor(lastFileFormId, uri)
                 (binding.form.rvInputForm.adapter as? FormInputAdapter)?.notifyDataSetChanged()
             }
+        }
+    }
+
+    private fun guessMimeFromUri(uri: Uri): String {
+        val path = uri.toString().lowercase()
+        return when {
+            path.endsWith(".jpg") || path.endsWith(".jpeg") -> "image/jpeg"
+            path.endsWith(".png") -> "image/png"
+            path.endsWith(".pdf") -> "application/pdf"
+            else -> "application/octet-stream"
         }
     }
 
