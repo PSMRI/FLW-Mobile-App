@@ -26,6 +26,7 @@ import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import org.piramalswasthya.sakhi.repositories.BenRepo.Companion.getCurrentDate
 import android.util.Base64
+import android.util.Log
 import org.piramalswasthya.sakhi.network.GetDataRequest
 
 class MaaMeetingRepo @Inject constructor(
@@ -91,7 +92,7 @@ class MaaMeetingRepo @Inject constructor(
     }
 
     suspend fun downSyncAndPersist() = withContext(Dispatchers.IO) {
-
+        Log.i("MaaMeetingRepoOne", "downSyncAndPersist: ")
         val response = api.getMaaMeetings(
             GetDataRequest(
                 0,
