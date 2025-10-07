@@ -20,6 +20,7 @@ interface AmritApiService {
         @Part("place") place: RequestBody,
         @Part("participants") participants: RequestBody,
         @Part("ashaId") ashaId: RequestBody,
+        @Part("createdBy") createdBy: RequestBody,
         @Part meetingImages: List<MultipartBody.Part>
     ): Response<ResponseBody>
 
