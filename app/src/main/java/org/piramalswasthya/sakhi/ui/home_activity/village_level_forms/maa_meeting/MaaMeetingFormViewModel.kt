@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.configuration.MaaMeetingDataset
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.MaaMeetingEntity
@@ -39,26 +40,30 @@ class MaaMeetingFormViewModel @Inject constructor(
         get() = _recordExists
 
     init {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val meeting = repo.getMaaMeetingById(id)
-            meeting?.let {
-                dataset.meetingDate.value = it.meetingDate
-                dataset.meetingPlace.value = it.place
-                dataset.participants.value = it.participants?.toString()
-                val imgs = it.meetingImages ?: emptyList()
+            val recordExists = meeting != null
+
+            if (recordExists) {
+                dataset.meetingDate.value = meeting!!.meetingDate
+                dataset.meetingPlace.value = meeting.place
+                dataset.participants.value = meeting.participants?.toString()
+                val imgs = meeting.meetingImages ?: emptyList()
                 dataset.upload1.value = imgs.getOrNull(0)
                 dataset.upload2.value = imgs.getOrNull(1)
                 dataset.upload3.value = imgs.getOrNull(2)
                 dataset.upload4.value = imgs.getOrNull(3)
                 dataset.upload5.value = imgs.getOrNull(4)
-                _recordExists.value  = true
-
-            }?: run {
-                _recordExists.value  = false
             }
-            dataset.setUpPage()
+
+            _recordExists.postValue(recordExists)
+
+            withContext(Dispatchers.Main) {
+                dataset.setUpPage(recordExists)
+            }
         }
     }
+
 
     fun updateListOnValueChanged(formId: Int, index: Int) {
         viewModelScope.launch {
