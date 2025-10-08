@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.network
 
 import android.os.Parcelable
+import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.model.HRPMicroBirthPlanCache
@@ -136,6 +137,17 @@ data class ValidateOtpRequest(
 
 data class sendOtpRequest(
     val mobNo: String,
+)
+
+@JsonClass(generateAdapter = true)
+data class GetDataRequest(
+    val villageID: Int,
+    val fromDate: String,
+    val toDate: String,
+    val pageNo: Int,
+    val userId: Long,
+    val userName: String,
+    val ashaId: Long
 )
 
 @JsonClass(generateAdapter = true)
