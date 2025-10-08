@@ -120,8 +120,7 @@ class CbacRepo @Inject constructor(
     }
     suspend fun pushAndUpdateCbacRecord() {
         val unProcessedList = database.cbacDao.getAllUnprocessedCbac()
-        val list = unProcessedList
-            .map { it.cbac.asPostModel(it.hhId, it.benGender, resources = resources) }
+        val list = unProcessedList.map { it.cbac.asPostModel(it.hhId, it.benGender, resources = resources) }
 
         val response = list.takeIf { it.isNotEmpty() }?.let {
             amritApiService.postCbacs(list = list)
@@ -184,39 +183,6 @@ class CbacRepo @Inject constructor(
             Log.e("CBAC", "Error parsing response: ${e.message}", e)
         }
     }
-
-    /*    suspend fun pushAndUpdateCbacRecord() {
-            val unProcessedList = database.cbacDao.getAllUnprocessedCbac()
-            val list = unProcessedList
-                .map { it.cbac.asPostModel(it.hhId, it.benGender, resources = resources) }
-            val response = list.takeIf { it.isNotEmpty() }?.let {
-                amritApiService.postCbacs(list = list)
-            }
-
-            response?.body()?.string()?.let { body ->
-                val jsonBody = JSONObject(body)
-                val array = jsonBody.getJSONArray("data")
-                for (i in 0 until array.length()) {
-                    val item = array.getJSONObject(i)
-                    val isSuccess = item.getString("status") == "Success"
-                    if (isSuccess) {
-                        val benId = item.getLong("benId")
-                        val createdDate = getLongFromDate(item.getString("createdDate"))
-                        unProcessedList.firstOrNull {
-                            compareLocalWithServer(
-                                it.cbac.createdDate,
-                                createdDate
-                            ) && it.cbac.benId == benId
-                        }?.let {
-                            it.cbac.Processed = "P"
-                            it.cbac.syncState = SyncState.SYNCED
-                            database.cbacDao.update(it.cbac)
-                        }
-                    }
-                }
-            }
-        }*/
-
 
     private fun compareLocalWithServer(local: Long, server: Long): Boolean {
         val localRounded = local - local % 1000
