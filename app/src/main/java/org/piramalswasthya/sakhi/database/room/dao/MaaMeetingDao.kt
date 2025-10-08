@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.model.MaaMeetingEntity
 
@@ -22,11 +23,17 @@ interface MaaMeetingDao {
     @Query("select * from MAA_MEETING where syncState = :state")
     fun getBySyncState(state: SyncState): List<MaaMeetingEntity>
 
+    @Query("select * from MAA_MEETING where id = :id")
+    fun getBySyncState(id: Long): List<MaaMeetingEntity>
+
     @Query("update MAA_MEETING set syncState = :state where id = :id")
     fun updateSyncState(id: Long, state: SyncState)
 
     @Query("select * from MAA_MEETING")
     fun getAll(): List<MaaMeetingEntity>
+
+    @Query("SELECT * FROM MAA_MEETING")
+    fun getAllMaaData(): Flow<List<MaaMeetingEntity>>
 
     @Query("delete from MAA_MEETING")
     fun clearAll()

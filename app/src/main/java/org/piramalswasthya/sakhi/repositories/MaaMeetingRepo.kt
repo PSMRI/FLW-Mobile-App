@@ -26,6 +26,7 @@ import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import org.piramalswasthya.sakhi.repositories.BenRepo.Companion.getCurrentDate
 import android.util.Base64
+import kotlinx.coroutines.flow.Flow
 import org.piramalswasthya.sakhi.network.GetDataRequest
 import org.piramalswasthya.sakhi.utils.HelperUtil.compressImageToTemp
 import org.piramalswasthya.sakhi.utils.HelperUtil.convertToLocalDate
@@ -163,6 +164,9 @@ class MaaMeetingRepo @Inject constructor(
             y == year && rq == q
         }
     }
+
+    fun getAllMaaMeetings(): Flow<List<MaaMeetingEntity>> = dao.getAllMaaData()
+
 }
 
 @JsonClass(generateAdapter = true)

@@ -1,14 +1,15 @@
-package org.piramalswasthya.sakhi.ui.Fragments
+package org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.maa_meeting
 
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -20,7 +21,9 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentMaaMeetingFormBinding
 import org.piramalswasthya.sakhi.model.FormElement
+import org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.maa_meeting.MaaMeetingFormViewModel
 import org.piramalswasthya.sakhi.ui.checkFileSize
+import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 
 @AndroidEntryPoint
 class MaaMeetingFormFragment : Fragment() {
@@ -33,6 +36,7 @@ class MaaMeetingFormFragment : Fragment() {
     private val viewModel: MaaMeetingFormViewModel by viewModels()
 
     private var lastFileFormId: Int = -1
+    private var formId: Int = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,13 +58,18 @@ class MaaMeetingFormFragment : Fragment() {
                 showFileChooser()
             },
 
+            imageClickListener = FormInputAdapter.ImageClickListener {
+                formId = it
+                getId(formId)
+            },
             viewDocumentListner = FormInputAdapter.ViewDocumentOnClick { formId ->
                 val element = (binding.form.rvInputForm.adapter as? FormInputAdapter)
                     ?.currentList?.firstOrNull { it.id == formId }
 
                 element?.value?.let { uriStr ->
                     val uri = Uri.parse(uriStr)
-                    val mime = requireContext().contentResolver.getType(uri) ?: guessMimeFromUri(uri)
+                    val mime =
+                        requireContext().contentResolver.getType(uri) ?: guessMimeFromUri(uri)
                     try {
                         val intent = Intent(Intent.ACTION_VIEW).apply {
                             setDataAndType(uri, mime)
@@ -68,11 +77,14 @@ class MaaMeetingFormFragment : Fragment() {
                         }
                         startActivity(intent)
                     } catch (e: Exception) {
-                        Toast.makeText(requireContext(), "Issue No Image Found", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), "Issue No Image Found", Toast.LENGTH_SHORT)
+                            .show()
                     }
                 }
             }
         )
+
+        Log.i("MaaMeetingOneTwoThreeee", "onViewCreated: $formId")
         binding.form.rvInputForm.adapter = adapter
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -94,6 +106,10 @@ class MaaMeetingFormFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun getId(id:Int){
+        Log.i("MaaMeetingOneTwoThreeee", "onViewCreated12: $id")
     }
 
     private fun validateBeforeSubmit(list: List<FormElement>): Boolean {
@@ -137,6 +153,7 @@ class MaaMeetingFormFragment : Fragment() {
         startActivityForResult(intent, 1010)
     }
 
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 1010 && resultCode == Activity.RESULT_OK) {
@@ -173,6 +190,16 @@ class MaaMeetingFormFragment : Fragment() {
             path.endsWith(".png") -> "image/png"
             path.endsWith(".pdf") -> "application/pdf"
             else -> "application/octet-stream"
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        activity?.let {
+            (it as HomeActivity).updateActionBar(
+                R.drawable.ic__village_level_form,
+                getString(R.string.maa_meeting_list)
+            )
         }
     }
 

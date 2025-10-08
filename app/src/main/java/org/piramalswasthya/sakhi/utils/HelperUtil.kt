@@ -426,9 +426,6 @@ object HelperUtil {
         }
     }
 
-
-
-
     fun detectExtAndMime(bytes: ByteArray): Pair<String, String> {
         if (bytes.size >= 4) {
             if (bytes[0] == 0x25.toByte() && bytes[1] == 0x50.toByte() && bytes[2] == 0x44.toByte() && bytes[3] == 0x46.toByte()) {
@@ -443,8 +440,6 @@ object HelperUtil {
         }
         return "bin" to "application/octet-stream"
     }
-
-
 
     fun getFileName(uri: android.net.Uri, appContext: Context): String? {
         return if (uri.scheme == ContentResolver.SCHEME_CONTENT) {
