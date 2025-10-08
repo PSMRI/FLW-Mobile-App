@@ -152,23 +152,23 @@ class EligibleCoupleTrackingDataset(
             month.value =
                 resources.getStringArray(R.array.visit_months)[Companion.getMonth(dateOfVisit.value)!!]
             isPregnancyTestDone.value =
-                getLocalValueInArray(R.array.yes_no, saved.isPregnancyTestDone)
-            if (isPregnancyTestDone.value == resources.getStringArray(R.array.yes_no)[0]) {
+                getLocalValueInArray(R.array.ectdset_yes_no, saved.isPregnancyTestDone)
+            if (isPregnancyTestDone.value == resources.getStringArray(R.array.ectdset_yes_no)[0]) {
                 list.add(list.indexOf(isPregnancyTestDone) + 1, pregnancyTestResult)
                 pregnancyTestResult.value = saved.pregnancyTestResult
             }
-            isPregnant.value = getLocalValueInArray(R.array.yes_no, saved.isPregnant)
-            if (isPregnant.value == resources.getStringArray(R.array.yes_no)[1]) {
+            isPregnant.value = getLocalValueInArray(R.array.ectdset_yes_no, saved.isPregnant)
+            if (isPregnant.value == resources.getStringArray(R.array.ectdset_yes_no)[1]) {
                 list.add(usingFamilyPlanning)
                 saved.usingFamilyPlanning?.let {
                     usingFamilyPlanning.value =
-                        if (it) resources.getStringArray(R.array.yes_no)[0] else resources.getStringArray(
-                            R.array.yes_no
+                        if (it) resources.getStringArray(R.array.ectdset_yes_no)[0] else resources.getStringArray(
+                            R.array.ectdset_yes_no
                         )[1]
                 }
                 usingFamilyPlanning.value =
-                    if (saved.usingFamilyPlanning == true) resources.getStringArray(R.array.yes_no)[1] else resources.getStringArray(
-                        R.array.yes_no
+                    if (saved.usingFamilyPlanning == true) resources.getStringArray(R.array.ectdset_yes_no)[1] else resources.getStringArray(
+                        R.array.ectdset_yes_no
                     )[1]
                 if (saved.usingFamilyPlanning == true) {
                     list.add(methodOfContraception)
@@ -207,7 +207,7 @@ class EligibleCoupleTrackingDataset(
             }
             isPregnancyTestDone.id -> {
                 isPregnant.isEnabled = true
-                if (isPregnant.value == resources.getStringArray(R.array.yes_no_donno)[0]) {
+                if (isPregnant.value == resources.getStringArray(R.array.ectdset_yes_no_dont)[0]) {
                     triggerDependants(
                         source = isPregnancyTestDone,
                         passedIndex = index,
@@ -215,7 +215,7 @@ class EligibleCoupleTrackingDataset(
                         target = pregnancyTestResult
                     )
                 }
-                else if (isPregnant.value == resources.getStringArray(R.array.yes_no_donno)[1]) {
+                else if (isPregnant.value == resources.getStringArray(R.array.ectdset_yes_no_dont)[1]) {
                     triggerDependants(
                         source = isPregnancyTestDone,
                         passedIndex = index,
@@ -253,7 +253,7 @@ class EligibleCoupleTrackingDataset(
 
             pregnancyTestResult.id -> {
                 if (pregnancyTestResult.value == resources.getStringArray(R.array.ectdset_po_neg)[0]) {
-                    isPregnant.value = resources.getStringArray(R.array.yes_no)[0]
+                    isPregnant.value = resources.getStringArray(R.array.ectdset_yes_no)[0]
                     isPregnant.isEnabled = false
                     triggerDependants(
                         source = pregnancyTestResult,
@@ -272,7 +272,7 @@ class EligibleCoupleTrackingDataset(
                 }
                else if (pregnancyTestResult.value == resources.getStringArray(R.array.ectdset_po_neg)[1]) {
                     isPregnant.isEnabled = true
-                    isPregnant.value = resources.getStringArray(R.array.yes_no)[1]
+                    isPregnant.value = resources.getStringArray(R.array.ectdset_yes_no)[1]
                     triggerDependants(
                         source = pregnancyTestResult,
                         passedIndex = index,
@@ -298,7 +298,7 @@ class EligibleCoupleTrackingDataset(
             }
 
             isPregnant.id -> {
-                if (isPregnant.value == resources.getStringArray(R.array.yes_no_donno)[0]) {
+                if (isPregnant.value == resources.getStringArray(R.array.ectdset_yes_no_dont)[0]) {
                     triggerDependants(
                         source = isPregnant,
                         passedIndex = index,
@@ -307,7 +307,7 @@ class EligibleCoupleTrackingDataset(
                         targetSideEffect = listOf(methodOfContraception, anyOtherMethod,antraDoses)
                     )
                 }
-                else if (isPregnant.value == resources.getStringArray(R.array.yes_no_donno)[1]) {
+                else if (isPregnant.value == resources.getStringArray(R.array.ectdset_yes_no_dont)[1]) {
                     triggerDependants(
                         source = isPregnant,
                         passedIndex = index,
@@ -391,7 +391,7 @@ class EligibleCoupleTrackingDataset(
             form.isPregnancyTestDone = isPregnancyTestDone.value
             form.pregnancyTestResult = pregnancyTestResult.value
             form.isPregnant = isPregnant.value
-            form.usingFamilyPlanning = usingFamilyPlanning.value?.let { it == resources.getStringArray(R.array.yes_no)[0] }
+            form.usingFamilyPlanning = usingFamilyPlanning.value?.let { it == resources.getStringArray(R.array.ectdset_yes_no)[0] }
             if (methodOfContraception.value == resources.getStringArray(R.array.method_of_contraception)
                     .last()
             ) {
