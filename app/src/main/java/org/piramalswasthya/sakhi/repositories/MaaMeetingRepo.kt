@@ -26,8 +26,13 @@ import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import org.piramalswasthya.sakhi.repositories.BenRepo.Companion.getCurrentDate
 import android.util.Base64
-import android.util.Log
 import org.piramalswasthya.sakhi.network.GetDataRequest
+import org.piramalswasthya.sakhi.utils.HelperUtil.compressImageToTemp
+import org.piramalswasthya.sakhi.utils.HelperUtil.convertToLocalDate
+import org.piramalswasthya.sakhi.utils.HelperUtil.convertToServerDate
+import org.piramalswasthya.sakhi.utils.HelperUtil.copyToTemp
+import org.piramalswasthya.sakhi.utils.HelperUtil.detectExtAndMime
+import org.piramalswasthya.sakhi.utils.HelperUtil.getFileName
 
 class MaaMeetingRepo @Inject constructor(
     @ApplicationContext val appContext: Context,
@@ -68,9 +73,9 @@ class MaaMeetingRepo @Inject constructor(
         pending.forEach { row ->
             val imagesParts = (row.meetingImages ?: emptyList()).mapNotNull { uriStr ->
                 val uri = android.net.Uri.parse(uriStr)
-                val name = getFileName(uri) ?: "upload"
+                val name = getFileName(uri,appContext) ?: "upload"
                 val mime = appContext.contentResolver.getType(uri) ?: "application/octet-stream"
-                val fileForUpload = if (mime.startsWith("image/")) compressImageToTemp(uri, name) else copyToTemp(uri, name)
+                val fileForUpload = if (mime.startsWith("image/")) compressImageToTemp(uri, name,appContext) else copyToTemp(uri, name, appContext)
                 fileForUpload?.let { file ->
                     val body = file.asRequestBody(mime.toMediaTypeOrNull())
                     MultipartBody.Part.createFormData("meetingImages", file.name, body)
@@ -92,7 +97,6 @@ class MaaMeetingRepo @Inject constructor(
     }
 
     suspend fun downSyncAndPersist() = withContext(Dispatchers.IO) {
-        Log.i("MaaMeetingRepoOne", "downSyncAndPersist: ")
         val response = api.getMaaMeetings(
             GetDataRequest(
                 0,
@@ -142,21 +146,6 @@ class MaaMeetingRepo @Inject constructor(
         }
     }
 
-    private fun detectExtAndMime(bytes: ByteArray): Pair<String, String> {
-        if (bytes.size >= 4) {
-            if (bytes[0] == 0x25.toByte() && bytes[1] == 0x50.toByte() && bytes[2] == 0x44.toByte() && bytes[3] == 0x46.toByte()) {
-                return "pdf" to "application/pdf"
-            }
-            if (bytes[0] == 0xFF.toByte() && bytes[1] == 0xD8.toByte() && bytes[2] == 0xFF.toByte()) {
-                return "jpg" to "image/jpeg"
-            }
-            if (bytes[0] == 0x89.toByte() && bytes[1] == 0x50.toByte() && bytes[2] == 0x4E.toByte() && bytes[3] == 0x47.toByte()) {
-                return "png" to "image/png"
-            }
-        }
-        return "bin" to "application/octet-stream"
-    }
-
     suspend fun hasMeetingInSameQuarter(meetingDate: String?): Boolean = withContext(Dispatchers.IO) {
         if (meetingDate.isNullOrBlank()) return@withContext false
         val parts = meetingDate.split("-")
@@ -174,60 +163,6 @@ class MaaMeetingRepo @Inject constructor(
             y == year && rq == q
         }
     }
-
-    private fun getFileName(uri: android.net.Uri): String? {
-        return if (uri.scheme == ContentResolver.SCHEME_CONTENT) {
-            appContext.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
-                val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                if (cursor.moveToFirst() && nameIndex >= 0) cursor.getString(nameIndex) else null
-            }
-        } else {
-            uri.path?.let { path -> File(path).name }
-        }
-    }
-
-    private fun copyToTemp(uri: android.net.Uri, nameHint: String): File? {
-        return try {
-            val suffix = nameHint.substringAfterLast('.', missingDelimiterValue = "")
-            val temp = if (suffix.isNotEmpty()) File.createTempFile("maa_upload_", ".${suffix}", appContext.cacheDir) else File.createTempFile("maa_upload_", null, appContext.cacheDir)
-            appContext.contentResolver.openInputStream(uri)?.use { ins ->
-                FileOutputStream(temp).use { outs -> ins.copyTo(outs) }
-            }
-            temp
-        } catch (_: Exception) { null }
-    }
-
-    private fun compressImageToTemp(uri: android.net.Uri, nameHint: String): File? {
-        return try {
-            val opts = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-            appContext.contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, opts) }
-            val (srcW, srcH) = opts.outWidth to opts.outHeight
-            if (srcW <= 0 || srcH <= 0) return copyToTemp(uri, nameHint)
-            val maxDim = 1280
-            var sample = 1
-            while (srcW / sample > maxDim || srcH / sample > maxDim) sample *= 2
-            val opts2 = BitmapFactory.Options().apply { inSampleSize = sample }
-            val bmp = appContext.contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, opts2) } ?: return copyToTemp(uri, nameHint)
-            val temp = File.createTempFile("maa_img_", ".jpg", appContext.cacheDir)
-            FileOutputStream(temp).use { fos -> bmp.compress(Bitmap.CompressFormat.JPEG, 80, fos) }
-            temp
-        } catch (_: Exception) { null }
-    }
-
-    private fun convertToServerDate(local: String?): String? {
-        if (local.isNullOrBlank()) return null
-        val parts = local.split("-")
-        if (parts.size != 3) return local
-        return "${parts[2]}-${parts[1]}-${parts[0]}"
-    }
-
-    private fun convertToLocalDate(server: String?): String? {
-        if (server.isNullOrBlank()) return null
-        val parts = server.split("-")
-        if (parts.size != 3) return server
-        return "${parts[2]}-${parts[1]}-${parts[0]}"
-    }
-
 }
 
 @JsonClass(generateAdapter = true)
