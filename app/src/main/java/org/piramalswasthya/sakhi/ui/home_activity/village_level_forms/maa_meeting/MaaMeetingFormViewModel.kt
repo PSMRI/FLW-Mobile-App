@@ -1,6 +1,9 @@
 package org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.maa_meeting
 
 import android.net.Uri
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -9,7 +12,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.configuration.MaaMeetingDataset
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.MaaMeetingEntity
@@ -19,11 +21,12 @@ import javax.inject.Inject
 @HiltViewModel
 class MaaMeetingFormViewModel @Inject constructor(
     pref: PreferenceDao,
+    savedStateHandle: SavedStateHandle,
     private val repo: MaaMeetingRepo
 ) : ViewModel() {
 
     val dataset = MaaMeetingDataset(repo.appContext, pref.getCurrentLanguage())
-
+    var id = MaaMeetingFormFragmentArgs.fromSavedStateHandle(savedStateHandle).id
     val formList = dataset.listFlow
 
     private val _maaMeetings = repo.getAllMaaMeetings()
@@ -31,27 +34,29 @@ class MaaMeetingFormViewModel @Inject constructor(
 
     val maaMeetings: StateFlow<List<MaaMeetingEntity>> = _maaMeetings
 
+    private val _recordExists = MutableLiveData<Boolean>()
+    val recordExists: LiveData<Boolean>
+        get() = _recordExists
+
     init {
         viewModelScope.launch {
-            dataset.setUpPage()
-            prefillIfAvailable()
-        }
-    }
-
-    private suspend fun prefillIfAvailable() {
-        withContext(Dispatchers.IO) {
-            val latest = repo.getLatest()
-            if (latest != null) {
-                dataset.meetingDate.value = latest.meetingDate
-                dataset.meetingPlace.value = latest.place
-                dataset.participants.value = latest.participants?.toString()
-                val imgs = latest.meetingImages ?: emptyList()
+            val meeting = repo.getMaaMeetingById(id)
+            meeting?.let {
+                dataset.meetingDate.value = it.meetingDate
+                dataset.meetingPlace.value = it.place
+                dataset.participants.value = it.participants?.toString()
+                val imgs = it.meetingImages ?: emptyList()
                 dataset.upload1.value = imgs.getOrNull(0)
                 dataset.upload2.value = imgs.getOrNull(1)
                 dataset.upload3.value = imgs.getOrNull(2)
                 dataset.upload4.value = imgs.getOrNull(3)
                 dataset.upload5.value = imgs.getOrNull(4)
+                _recordExists.value  = true
+
+            }?: run {
+                _recordExists.value  = false
             }
+            dataset.setUpPage()
         }
     }
 
@@ -86,7 +91,6 @@ class MaaMeetingFormViewModel @Inject constructor(
             repo.save(entity)
             repo.tryUpsync()
             repo.downSyncAndPersist()
-            withContext(Dispatchers.Main) { prefillIfAvailable() }
         }
     }
 

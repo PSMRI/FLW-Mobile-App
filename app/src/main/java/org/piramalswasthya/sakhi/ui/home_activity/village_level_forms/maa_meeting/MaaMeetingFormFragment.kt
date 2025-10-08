@@ -14,6 +14,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.navArgs
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -36,7 +37,8 @@ class MaaMeetingFormFragment : Fragment() {
     private val viewModel: MaaMeetingFormViewModel by viewModels()
 
     private var lastFileFormId: Int = -1
-    private var formId: Int = 0
+    private val args: MaaMeetingFormFragmentArgs by navArgs()
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,67 +51,69 @@ class MaaMeetingFormFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapter = FormInputAdapter(
-            formValueListener = FormInputAdapter.FormValueListener { id, index ->
-                viewModel.updateListOnValueChanged(id, index)
-            },
-            selectImageClickListener = FormInputAdapter.SelectUploadImageClickListener { formId ->
-                lastFileFormId = formId
-                showFileChooser()
-            },
 
-            imageClickListener = FormInputAdapter.ImageClickListener {
-                formId = it
-                getId(formId)
-            },
-            viewDocumentListner = FormInputAdapter.ViewDocumentOnClick { formId ->
-                val element = (binding.form.rvInputForm.adapter as? FormInputAdapter)
-                    ?.currentList?.firstOrNull { it.id == formId }
+        viewModel.id = args.id
 
-                element?.value?.let { uriStr ->
-                    val uri = Uri.parse(uriStr)
-                    val mime =
-                        requireContext().contentResolver.getType(uri) ?: guessMimeFromUri(uri)
-                    try {
-                        val intent = Intent(Intent.ACTION_VIEW).apply {
-                            setDataAndType(uri, mime)
-                            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        if (viewModel.id > 0) {
+            binding.btnSubmit.visibility = View.GONE
+        }else{
+            binding.btnSubmit.visibility = View.VISIBLE
+        }
+
+        viewModel.recordExists.observe(viewLifecycleOwner) { exists ->
+            val adapter = FormInputAdapter(
+                formValueListener = FormInputAdapter.FormValueListener { id, index ->
+                    viewModel.updateListOnValueChanged(id, index)
+                },
+                selectImageClickListener = FormInputAdapter.SelectUploadImageClickListener { formId ->
+                    lastFileFormId = formId
+                    showFileChooser()
+                },
+                isEnabled = !exists,
+                viewDocumentListner = FormInputAdapter.ViewDocumentOnClick { formId ->
+                    val element = (binding.form.rvInputForm.adapter as? FormInputAdapter)
+                        ?.currentList?.firstOrNull { it.id == formId }
+
+                    element?.value?.let { uriStr ->
+                        val uri = Uri.parse(uriStr)
+                        val mime =
+                            requireContext().contentResolver.getType(uri) ?: guessMimeFromUri(uri)
+                        try {
+                            val intent = Intent(Intent.ACTION_VIEW).apply {
+                                setDataAndType(uri, mime)
+                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            }
+                            startActivity(intent)
+                        } catch (e: Exception) {
+                            Toast.makeText(requireContext(), "Issue No Image Found", Toast.LENGTH_SHORT)
+                                .show()
                         }
-                        startActivity(intent)
-                    } catch (e: Exception) {
-                        Toast.makeText(requireContext(), "Issue No Image Found", Toast.LENGTH_SHORT)
-                            .show()
                     }
                 }
-            }
-        )
+            )
 
-        Log.i("MaaMeetingOneTwoThreeee", "onViewCreated: $formId")
-        binding.form.rvInputForm.adapter = adapter
+            binding.form.rvInputForm.adapter = adapter
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.formList.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .collect { list ->
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewModel.formList.collect {
+                        list ->
                     adapter.submitList(list)
                 }
-        }
+            }
 
-        binding.btnSubmit.setOnClickListener {
-            viewLifecycleOwner.lifecycleScope.launch {
-                if (validateBeforeSubmit(adapter.currentList)) {
-                    if (viewModel.hasMeetingInSameQuarter()) {
-                        Toast.makeText(requireContext(), "Only one meeting per quarter is allowed", Toast.LENGTH_LONG).show()
-                        return@launch
+            binding.btnSubmit.setOnClickListener {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    if (validateBeforeSubmit(adapter.currentList)) {
+                        if (viewModel.hasMeetingInSameQuarter()) {
+                            Toast.makeText(requireContext(), "Only one meeting per quarter is allowed", Toast.LENGTH_LONG).show()
+                            return@launch
+                        }
+                        viewModel.saveForm()
+                        Toast.makeText(requireContext(), "Data Saved Successfully.", Toast.LENGTH_SHORT).show()
                     }
-                    viewModel.saveForm()
-                    Toast.makeText(requireContext(), "Data Saved Successfully.", Toast.LENGTH_SHORT).show()
                 }
             }
         }
-    }
-
-    private fun getId(id:Int){
-        Log.i("MaaMeetingOneTwoThreeee", "onViewCreated12: $id")
     }
 
     private fun validateBeforeSubmit(list: List<FormElement>): Boolean {

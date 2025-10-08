@@ -135,6 +135,7 @@ class MaaMeetingRepo @Inject constructor(
             }
 
             val entity = MaaMeetingEntity(
+                id = item.id?.toLong()!!,
                 meetingDate = convertToLocalDate(item.meetingDate),
                 place = item.place,
                 participants = item.participants,
@@ -167,6 +168,9 @@ class MaaMeetingRepo @Inject constructor(
 
     fun getAllMaaMeetings(): Flow<List<MaaMeetingEntity>> = dao.getAllMaaData()
 
+    suspend fun getMaaMeetingById(id: Long): MaaMeetingEntity? {
+        return dao.getMaaMeetingById(id)
+    }
 }
 
 @JsonClass(generateAdapter = true)

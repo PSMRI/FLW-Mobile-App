@@ -15,6 +15,7 @@ import android.text.SpannableString
 import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
+import android.util.Log
 import android.view.Gravity
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -1015,11 +1016,13 @@ class FormInputAdapter(
             binding.btnView.visibility = if (item.value != null) View.VISIBLE else View.GONE
 
             if (isEnabled) {
-                binding.addFile.isEnabled = true
-                binding.addFile.alpha = 1f
+                binding.addFile.visibility = View.VISIBLE
+//                binding.addFile.isEnabled = true
+//                binding.addFile.alpha = 1f
             } else {
-                binding.addFile.isEnabled = false
-                binding.addFile.alpha = 0.5f
+                binding.addFile.visibility = View.GONE
+//                binding.addFile.isEnabled = false
+//                binding.addFile.alpha = 0.5f
             }
         }
 
@@ -1069,7 +1072,7 @@ class FormInputAdapter(
                     sendOtpClickListener
                 )
 
-                InputType.FILE_UPLOAD -> (holder as FileUploadInputViewHolder).bind(item,selectImageClickListener,viewDocumentListner,isEnabled = !disableUpload)
+                InputType.FILE_UPLOAD -> (holder as FileUploadInputViewHolder).bind(item,selectImageClickListener,viewDocumentListner,isEnabled = isEnabled)
 
             }
         } catch (e: Exception) {

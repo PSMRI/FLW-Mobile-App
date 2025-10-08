@@ -1,7 +1,6 @@
 package org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.maa_meeting
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,13 +36,17 @@ class MaaMeetingListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.btnNextPage.text = resources.getString(R.string.btn_new_maa_meeting)
         binding.btnNextPage.visibility = View.VISIBLE
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            binding.btnNextPage.isEnabled = !viewModel.hasMeetingInSameQuarter()
+        }
+
         binding.btnNextPage.setOnClickListener {
             findNavController().navigate(R.id.action_allMaaMeetingFragment_to_maaMeetingFormFragment)
         }
 
         val ahdAdapter = MaaMeetingAdapter(
             clickListener = MaaMeetingAdapter.MaaMeetingAdapterClickListener { id ->
-                Log.i("MaaMeetingOneTwoThreeee", "onViewCreatedClicked: $id")
                 findNavController().navigate(
                     MaaMeetingListFragmentDirections.actionAllMaaMeetingFragmentToMaaMeetingFormFragment(id)
                 )
@@ -58,7 +61,6 @@ class MaaMeetingListFragment : Fragment() {
             }
         }
     }
-
 
     override fun onStart() {
         super.onStart()
