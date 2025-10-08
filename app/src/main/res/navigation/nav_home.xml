@@ -293,6 +293,9 @@
         <action
             android:id="@+id/action_villageLevelFormsFragment_to_DewormingListFragment"
             app:destination="@id/DewormingListFragment" />
+        <action
+            android:id="@+id/action_villageLevelFormsFragment_to_allMaaMeetingFragment"
+            app:destination="@id/allMaaMeetingFragment" />
     </fragment>
     <fragment
         android:id="@+id/newHouseholdFragment"
@@ -448,6 +451,17 @@
         android:name="org.piramalswasthya.sakhi.ui.home_activity.get_ben_data.GetBenFragment"
         android:label="@string/beneficiaries_data"
         tools:layout="@layout/fragment_get_ben" />
+    <fragment
+        android:id="@+id/allMaaMeetingFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.maa_meeting.MaaMeetingListFragment"
+        android:label="fragment_all_maa_meeting"
+        tools:layout="@layout/fragment_all_maa_meeting" >
+        <action
+            android:id="@+id/action_allMaaMeetingFragment_to_maaMeetingFormFragment"
+            app:destination="@id/maaMeetingFormFragment" />
+    </fragment>
+
+
     <fragment
         android:id="@+id/cbacFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.cbac.CbacFragment"
@@ -1569,6 +1583,16 @@
         <action
             android:id="@+id/action_lmsFragment_to_videoTutorialFragmet"
             app:destination="@id/videoTutorialFragmet" />
+    </fragment>
+    <fragment
+        android:id="@+id/maaMeetingFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.maa_meeting.MaaMeetingFormFragment"
+        android:label="fragment_maa_meeting_form"
+        tools:layout="@layout/fragment_maa_meeting_form">
+        <argument
+            android:name="id"
+            android:defaultValue="0L"
+            app:argType="long" />
     </fragment>
 
 </navigation>

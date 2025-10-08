@@ -332,7 +332,14 @@ class IconDataset @Inject constructor(
             resources.getString(R.string.national_deworming_day),
             null,
             VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToDewormingListFragment()
-        )
+        ),
+
+        Icon(
+            R.drawable.dewarming,
+        resources.getString(R.string.maa_meeting),
+        null,
+        VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToAllMaaMeetingFragment()
+    )
     )
 
     fun getHRPNonPregnantWomenDataset(resources: Resources) = listOf(

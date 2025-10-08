@@ -1,14 +1,18 @@
-package org.piramalswasthya.sakhi.ui.Fragments
+package org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.maa_meeting
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.configuration.MaaMeetingDataset
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.model.MaaMeetingEntity
 import org.piramalswasthya.sakhi.repositories.MaaMeetingRepo
 import javax.inject.Inject
 
@@ -21,6 +25,11 @@ class MaaMeetingFormViewModel @Inject constructor(
     val dataset = MaaMeetingDataset(repo.appContext, pref.getCurrentLanguage())
 
     val formList = dataset.listFlow
+
+    private val _maaMeetings = repo.getAllMaaMeetings()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val maaMeetings: StateFlow<List<MaaMeetingEntity>> = _maaMeetings
 
     init {
         viewModelScope.launch {
@@ -85,5 +94,3 @@ class MaaMeetingFormViewModel @Inject constructor(
         return repo.hasMeetingInSameQuarter(dataset.meetingDate.value)
     }
 }
-
-

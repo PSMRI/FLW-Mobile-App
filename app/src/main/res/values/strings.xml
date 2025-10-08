@@ -139,6 +139,7 @@
 
     <string name="mobilized_for_ahd">Mobilized for AHD</string>
     <string name="ahd_place">AHD Place</string>
+    <string name="asha_Id">Asha ID</string>
     <string name="ahd_date">AHD Date</string>
     <string name="upload_image">Upload Image</string>
     <string name="upload_image_sub">Upload JPEG or PNG file (Max: 5MB)</string>

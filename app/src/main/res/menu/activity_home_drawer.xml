@@ -43,13 +43,6 @@
             android:title="@string/create_abha_number" />
     </group>
 
-    <group>
-        <item
-            android:id="@+id/maa_meeting_submission"
-            android:checkable="false"
-            android:icon="@drawable/ic_completed_tasks"
-            android:title="Maa Meeting" />
-    </group>
     <group
         android:checkableBehavior="single">
         <item

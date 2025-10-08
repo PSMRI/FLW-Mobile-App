@@ -150,14 +150,13 @@ import org.piramalswasthya.sakhi.model.VHNDCache
         //Dynamic Data
         InfantEntity::class,
         FormSchemaEntity::class,
-        FormResponseJsonEntity::class,
-        MaaMeetingEntity::class
+        MaaMeetingEntity::class,
         FormResponseJsonEntity::class,
         GeneralOPEDBeneficiary::class,
     ],
     views = [BenBasicCache::class],
 
-    version = 29, exportSchema = false
+    version = 30, exportSchema = false
 )
 
 @TypeConverters(LocationEntityListConverter::class, SyncStateConverter::class, StringListConverter::class)
@@ -216,11 +215,25 @@ abstract class InAppDb : RoomDatabase() {
 
             })
 
+
+
 //            val MIGRATION_22_23 = object : Migration(22, 23) {
 //                override fun migrate(database: SupportSQLiteDatabase) {
 //                    database.execSQL("ALTER TABLE GENERAL_OPD_ACTIVITY ADD COLUMN village TEXT")
 //                }
 //            }
+
+            val MIGRATION_29_30 = object : Migration(29,30) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL(
+                        "CREATE TABLE IF NOT EXISTS `MAA_MEETING` (" +
+                                "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                                "`meetingDate` TEXT, `place` TEXT, `participants` INTEGER, `ashaId` INTEGER, " +
+                                "`meetingImages` TEXT, " +
+                                "`createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `syncState` INTEGER NOT NULL)"
+                    )
+                }
+            }
 
             val MIGRATION_28_29 = object : Migration(28, 29) {
                 override fun migrate(database: SupportSQLiteDatabase) {
@@ -266,28 +279,8 @@ abstract class InAppDb : RoomDatabase() {
                 }
             }
 
-            val MIGRATION_27_28 = object : Migration(27,28) {
-                override fun migrate(database: SupportSQLiteDatabase) {
-                    database.execSQL(
-                        "CREATE TABLE IF NOT EXISTS `MAA_MEETING` (" +
-                                "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                                "`meetingDate` TEXT, `place` TEXT, `participants` INTEGER, `ashaId` INTEGER, " +
-                                "`meetingImages` TEXT, " +
-                                "`createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `syncState` INTEGER NOT NULL)"
-                    )
-                }
-            }
-            val MIGRATION_28_29 = object : Migration(28,29) {
-                override fun migrate(database: SupportSQLiteDatabase) {
-                    try { database.execSQL("ALTER TABLE MAA_MEETING ADD COLUMN meetingImages TEXT") } catch (_: Exception) {}
-                    try { database.execSQL("ALTER TABLE MAA_MEETING DROP COLUMN upload1Bytes") } catch (_: Exception) {}
-                    try { database.execSQL("ALTER TABLE MAA_MEETING DROP COLUMN upload2Bytes") } catch (_: Exception) {}
-                    try { database.execSQL("ALTER TABLE MAA_MEETING DROP COLUMN upload3Bytes") } catch (_: Exception) {}
-                    try { database.execSQL("ALTER TABLE MAA_MEETING DROP COLUMN upload4Bytes") } catch (_: Exception) {}
-                    try { database.execSQL("ALTER TABLE MAA_MEETING DROP COLUMN upload5Bytes") } catch (_: Exception) {}
-                }
-                    database.execSQL("ALTER TABLE INCENTIVE_ACTIVITY ADD COLUMN groupName TEXT  NOT NULL DEFAULT ''")                }
-            }
+
+
             val MIGRATION_25_26 = object : Migration(25, 26) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     database.execSQL("ALTER TABLE PREGNANCY_ANC ADD COLUMN lmpDate INTEGER")
@@ -1081,7 +1074,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_25_26,
                         MIGRATION_26_27,
                         MIGRATION_27_28,
-                        MIGRATION_28_29
+                        MIGRATION_28_29,
+                        MIGRATION_29_30
                     ).build()
 
                     INSTANCE = instance
