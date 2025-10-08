@@ -14,15 +14,8 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
-import android.content.ContentResolver
-import android.provider.OpenableColumns
-import android.graphics.BitmapFactory
-import android.graphics.Bitmap
 import androidx.core.content.FileProvider
-import java.io.FileOutputStream
 import javax.inject.Inject
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import org.piramalswasthya.sakhi.repositories.BenRepo.Companion.getCurrentDate
 import android.util.Base64
@@ -34,6 +27,7 @@ import org.piramalswasthya.sakhi.utils.HelperUtil.convertToServerDate
 import org.piramalswasthya.sakhi.utils.HelperUtil.copyToTemp
 import org.piramalswasthya.sakhi.utils.HelperUtil.detectExtAndMime
 import org.piramalswasthya.sakhi.utils.HelperUtil.getFileName
+import org.piramalswasthya.sakhi.model.MaaMeetingGetAllResponse
 
 class MaaMeetingRepo @Inject constructor(
     @ApplicationContext val appContext: Context,
@@ -170,22 +164,5 @@ class MaaMeetingRepo @Inject constructor(
         return dao.getMaaMeetingById(id)
     }
 }
-
-@JsonClass(generateAdapter = true)
-data class MaaMeetingGetAllResponse(
-    @Json(name = "data") val data: List<MaaMeetingServerItem>?,
-    @Json(name = "statusCode") val statusCode: Int?,
-    @Json(name = "status") val status: String?
-)
-
-@JsonClass(generateAdapter = true)
-data class MaaMeetingServerItem(
-    @Json(name = "id") val id: Int?,
-    @Json(name = "meetingDate") val meetingDate: String?,
-    @Json(name = "place") val place: String?,
-    @Json(name = "participants") val participants: Int?,
-    @Json(name = "ashaId") val ashaId: Int?,
-    @Json(name = "meetingImages") val meetingImages: List<String>?
-)
 
 
