@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.repositories
 
 import android.content.Context
 import android.content.res.Resources
+import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -117,38 +118,105 @@ class CbacRepo @Inject constructor(
     private fun getNumPages(body: JSONObject): Int {
         return body.getJSONObject("data").getInt("totalPage")
     }
-
     suspend fun pushAndUpdateCbacRecord() {
         val unProcessedList = database.cbacDao.getAllUnprocessedCbac()
         val list = unProcessedList
             .map { it.cbac.asPostModel(it.hhId, it.benGender, resources = resources) }
+
         val response = list.takeIf { it.isNotEmpty() }?.let {
             amritApiService.postCbacs(list = list)
         }
-        response?.body()?.string()?.let { body ->
-            val jsonBody = JSONObject(body)
-            val array = jsonBody.getJSONArray("data")
+
+        val bodyString = try {
+            response?.body()?.string() ?: response?.errorBody()?.string()
+        } catch (e: Exception) {
+            Log.e("CBAC", "Error reading response body: ${e.message}", e)
+            null
+        }
+
+        if (bodyString.isNullOrEmpty()) {
+            Log.w("CBAC", "Empty response body from server, nothing to parse")
+            return
+        }
+
+        try {
+            val jsonBody = JSONObject(bodyString)
+
+            val statusCode = jsonBody.optInt("statusCode", 200)
+            if (statusCode == 5002 || statusCode == 401) {
+                val user = prefDao.getLoggedInUser()!!
+                userRepo.refreshTokenTmc(user.userName, user.password)
+                pushAndUpdateCbacRecord()
+                return
+            }
+
+            val array = jsonBody.optJSONArray("data")
+            if (array == null) {
+                Log.w("CBAC", "No 'data' found in server response: $bodyString")
+                return
+            }
+
             for (i in 0 until array.length()) {
-                val item = array.getJSONObject(i)
-                val isSuccess = item.getString("status") == "Success"
+                val item = array.optJSONObject(i) ?: continue
+                val isSuccess = item.optString("status") == "Success"
                 if (isSuccess) {
-                    val benId = item.getLong("benId")
-                    val createdDate = getLongFromDate(item.getString("createdDate"))
+                    val benId = item.optLong("benId", -1L)
+                    val createdDate = getLongFromDate(item.optString("createdDate"))
                     unProcessedList.firstOrNull {
-                        compareLocalWithServer(
-                            it.cbac.createdDate,
-                            createdDate
-                        ) && it.cbac.benId == benId
+                        compareLocalWithServer(it.cbac.createdDate, createdDate)
+                                && it.cbac.benId == benId
+                    }?.let {
+                        it.cbac.Processed = "P"
+                        it.cbac.syncState = SyncState.SYNCED
+                        database.cbacDao.update(it.cbac)
                     }
-                        ?.let {
+                } else {
+                    val itemStatus = item.optInt("statusCode", -1)
+                    if (itemStatus == 5002 || itemStatus == 401) {
+                        val user = prefDao.getLoggedInUser()!!
+                        userRepo.refreshTokenTmc(user.userName, user.password)
+                        pushAndUpdateCbacRecord()
+                        return
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("CBAC", "Error parsing response: ${e.message}", e)
+        }
+    }
+
+    /*    suspend fun pushAndUpdateCbacRecord() {
+            val unProcessedList = database.cbacDao.getAllUnprocessedCbac()
+            val list = unProcessedList
+                .map { it.cbac.asPostModel(it.hhId, it.benGender, resources = resources) }
+            val response = list.takeIf { it.isNotEmpty() }?.let {
+                amritApiService.postCbacs(list = list)
+            }
+
+            response?.body()?.string()?.let { body ->
+                val jsonBody = JSONObject(body)
+                val array = jsonBody.getJSONArray("data")
+                for (i in 0 until array.length()) {
+                    val item = array.getJSONObject(i)
+                    val isSuccess = item.getString("status") == "Success"
+                    if (isSuccess) {
+                        val benId = item.getLong("benId")
+                        val createdDate = getLongFromDate(item.getString("createdDate"))
+                        unProcessedList.firstOrNull {
+                            compareLocalWithServer(
+                                it.cbac.createdDate,
+                                createdDate
+                            ) && it.cbac.benId == benId
+                        }?.let {
                             it.cbac.Processed = "P"
                             it.cbac.syncState = SyncState.SYNCED
                             database.cbacDao.update(it.cbac)
                         }
+                    }
                 }
             }
-        }
-    }
+        }*/
+
 
     private fun compareLocalWithServer(local: Long, server: Long): Boolean {
         val localRounded = local - local % 1000
