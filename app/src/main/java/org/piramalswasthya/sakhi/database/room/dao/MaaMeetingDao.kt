@@ -20,6 +20,9 @@ interface MaaMeetingDao {
     @Query("select * from MAA_MEETING order by updatedAt desc limit 1")
     fun getLatest(): MaaMeetingEntity?
 
+    @Query("SELECT * FROM MAA_MEETING WHERE id = :id LIMIT 1")
+    suspend fun getMaaMeetingById(id: Long): MaaMeetingEntity?
+
     @Query("select * from MAA_MEETING where syncState = :state")
     fun getBySyncState(state: SyncState): List<MaaMeetingEntity>
 
