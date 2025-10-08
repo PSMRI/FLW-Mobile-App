@@ -99,7 +99,7 @@ class MaaMeetingFormViewModel @Inject constructor(
         }
     }
 
-    suspend fun hasMeetingInSameQuarter(): Boolean {
-        return repo.hasMeetingInSameQuarter(dataset.meetingDate.value)
+    suspend fun hasMeetingInSameQuarter(date: String?): Boolean {
+        return repo.hasMeetingInSameQuarter(date)
     }
 }

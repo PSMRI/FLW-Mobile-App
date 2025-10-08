@@ -4,15 +4,12 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -22,9 +19,9 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentMaaMeetingFormBinding
 import org.piramalswasthya.sakhi.model.FormElement
-import org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.maa_meeting.MaaMeetingFormViewModel
 import org.piramalswasthya.sakhi.ui.checkFileSize
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.utils.HelperUtil.getMimeFromUri
 
 @AndroidEntryPoint
 class MaaMeetingFormFragment : Fragment() {
@@ -77,7 +74,7 @@ class MaaMeetingFormFragment : Fragment() {
                     element?.value?.let { uriStr ->
                         val uri = Uri.parse(uriStr)
                         val mime =
-                            requireContext().contentResolver.getType(uri) ?: guessMimeFromUri(uri)
+                            requireContext().contentResolver.getType(uri) ?: getMimeFromUri(uri)
                         try {
                             val intent = Intent(Intent.ACTION_VIEW).apply {
                                 setDataAndType(uri, mime)
@@ -104,10 +101,6 @@ class MaaMeetingFormFragment : Fragment() {
             binding.btnSubmit.setOnClickListener {
                 viewLifecycleOwner.lifecycleScope.launch {
                     if (validateBeforeSubmit(adapter.currentList)) {
-                        if (viewModel.hasMeetingInSameQuarter()) {
-                            Toast.makeText(requireContext(), "Only one meeting per quarter is allowed", Toast.LENGTH_LONG).show()
-                            return@launch
-                        }
                         viewModel.saveForm()
                         Toast.makeText(requireContext(), "Data Saved Successfully.", Toast.LENGTH_SHORT).show()
                     }
@@ -170,7 +163,7 @@ class MaaMeetingFormFragment : Fragment() {
                 } catch (_: Exception) {}
 
                 // Allow only JPEG, PNG, PDF
-                val mime = requireContext().contentResolver.getType(uri) ?: guessMimeFromUri(uri)
+                val mime = requireContext().contentResolver.getType(uri) ?: getMimeFromUri(uri)
                 val allowed = setOf("image/jpeg", "image/png", "application/pdf")
                 if (!allowed.contains(mime)) {
                     Toast.makeText(requireContext(), "Only JPEG, PNG, PDF allowed", Toast.LENGTH_LONG).show()
@@ -184,16 +177,6 @@ class MaaMeetingFormFragment : Fragment() {
                 viewModel.setUploadUriFor(lastFileFormId, uri)
                 (binding.form.rvInputForm.adapter as? FormInputAdapter)?.notifyDataSetChanged()
             }
-        }
-    }
-
-    private fun guessMimeFromUri(uri: Uri): String {
-        val path = uri.toString().lowercase()
-        return when {
-            path.endsWith(".jpg") || path.endsWith(".jpeg") -> "image/jpeg"
-            path.endsWith(".png") -> "image/png"
-            path.endsWith(".pdf") -> "application/pdf"
-            else -> "application/octet-stream"
         }
     }
 
