@@ -7,6 +7,7 @@ import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
+import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.OpenableColumns
@@ -492,5 +493,15 @@ object HelperUtil {
         val parts = server.split("-")
         if (parts.size != 3) return server
         return "${parts[2]}-${parts[1]}-${parts[0]}"
+    }
+
+    fun getMimeFromUri(uri: Uri): String {
+        val path = uri.toString().lowercase()
+        return when {
+            path.endsWith(".jpg") || path.endsWith(".jpeg") -> "image/jpeg"
+            path.endsWith(".png") -> "image/png"
+            path.endsWith(".pdf") -> "application/pdf"
+            else -> "application/octet-stream"
+        }
     }
 }

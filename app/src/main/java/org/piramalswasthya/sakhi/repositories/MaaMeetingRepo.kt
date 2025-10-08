@@ -43,8 +43,6 @@ class MaaMeetingRepo @Inject constructor(
     private val moshi: Moshi
 ) {
 
-    suspend fun getLatest(): MaaMeetingEntity? = withContext(Dispatchers.IO) { dao.getLatest() }
-
     fun buildEntity(
         date: String?,
         place: String?,

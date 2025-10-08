@@ -38,7 +38,11 @@ class MaaMeetingListFragment : Fragment() {
         binding.btnNextPage.visibility = View.VISIBLE
 
         viewLifecycleOwner.lifecycleScope.launch {
-            binding.btnNextPage.isEnabled = !viewModel.hasMeetingInSameQuarter()
+            viewModel.maaMeetings.collect { meetings ->
+                val lastMeetingDate = meetings.lastOrNull()?.meetingDate
+                val hasMeeting = viewModel.hasMeetingInSameQuarter(lastMeetingDate)
+                binding.btnNextPage.isEnabled = !hasMeeting
+            }
         }
 
         binding.btnNextPage.setOnClickListener {

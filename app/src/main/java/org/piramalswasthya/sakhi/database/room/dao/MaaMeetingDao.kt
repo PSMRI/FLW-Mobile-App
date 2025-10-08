@@ -14,20 +14,11 @@ interface MaaMeetingDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(entity: MaaMeetingEntity): Long
 
-    @Update
-    fun update(entity: MaaMeetingEntity)
-
-    @Query("select * from MAA_MEETING order by updatedAt desc limit 1")
-    fun getLatest(): MaaMeetingEntity?
-
     @Query("SELECT * FROM MAA_MEETING WHERE id = :id LIMIT 1")
     suspend fun getMaaMeetingById(id: Long): MaaMeetingEntity?
 
     @Query("select * from MAA_MEETING where syncState = :state")
     fun getBySyncState(state: SyncState): List<MaaMeetingEntity>
-
-    @Query("select * from MAA_MEETING where id = :id")
-    fun getBySyncState(id: Long): List<MaaMeetingEntity>
 
     @Query("update MAA_MEETING set syncState = :state where id = :id")
     fun updateSyncState(id: Long, state: SyncState)
