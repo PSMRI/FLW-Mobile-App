@@ -4,7 +4,6 @@ import android.content.Context
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.InputType
-import org.piramalswasthya.sakhi.model.MaaMeetingEntity
 import java.util.Calendar
 
 class MaaMeetingDataset(
@@ -54,21 +53,29 @@ class MaaMeetingDataset(
     val upload4 = upload1.copy(id = 13, title = "Meeting Photos / MoM (4)")
     val upload5 = upload1.copy(id = 14, title = "Meeting Photos / MoM (5)")
 
-    suspend fun setUpPage() {
-        setUpPage(
-            listOf(
-                meetingDate,
-                meetingPlace,
-                participants,
-                upload1,
-                upload2,
-                upload3,
-                upload4,
-                upload5
-            )
+    suspend fun setUpPage(recordExists: Boolean) {
+        val list = mutableListOf(
+            meetingDate,
+            meetingPlace,
+            participants
         )
 
+        val uploadList = listOf(upload1, upload2, upload3, upload4, upload5)
+
+        if (recordExists) {
+            val filledUploads = uploadList.filter { !it.value.isNullOrEmpty() }
+            if (filledUploads.isEmpty()) {
+                list.addAll(uploadList)
+            } else {
+                list.addAll(filledUploads)
+            }
+        } else {
+            list.addAll(uploadList)
+        }
+
+        setUpPage(list)
     }
+
 
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
         return when (formId) {
