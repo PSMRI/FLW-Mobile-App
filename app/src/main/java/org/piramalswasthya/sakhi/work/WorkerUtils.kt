@@ -496,6 +496,14 @@ object WorkerUtils {
             .enqueueUniqueWork(GenerateBenIdsWorker.name, ExistingWorkPolicy.KEEP, workRequest)
     }
 
+    fun triggerMaaMeetingWorker(context: Context) {
+        val workRequest = OneTimeWorkRequestBuilder<MaaMeetingDownsyncWorker>()
+            .setConstraints(MaaMeetingDownsyncWorker.constraint)
+            .build()
+        WorkManager.getInstance(context)
+            .enqueueUniqueWork(MaaMeetingDownsyncWorker.name, ExistingWorkPolicy.KEEP, workRequest)
+    }
+
     fun triggerPeriodicPncEcUpdateWorker(context: Context) {
         val workRequest =
             PeriodicWorkRequest.Builder(UpdatePNCToECWorker::class.java, 1, TimeUnit.DAYS)

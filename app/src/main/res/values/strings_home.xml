@@ -28,6 +28,7 @@
     <string name="icon_title_hrp">High Risk Assessment</string>
     <string name="icon_title_gop">General OPD Care List</string>
     <string name="icon_title_msl">Menopause Stage List</string>
+    <string name="btn_new_maa_meeting">New Maa Meeting Registration</string>
     <string name="icon_title_dr">Death Reports</string>
     <string name="icon_title_vlf">Village Level Forms</string>
     <string name="icon_title_vhnd">VHND Forms</string>
@@ -96,11 +97,14 @@
     <string name="icon_title_ahd_list">AHD Forms List</string>
 
     <string name="place">Place</string>
+    <string name="participants">Participants</string>
     <string name="no_b_attended">No. of Beneficiaries Attended</string>
     <string name="vhnd">VHND/VHSND</string>
     <string name="vnhc">VHNC</string>
     <string name="phc_review">PHC Review Meeting</string>
     <string name="ahd">AHD </string>
     <string name="national_deworming_day">National Deworming Day </string>
+    <string name="maa_meeting">Maa Meeting</string>
+    <string name="maa_meeting_list">Maa Meeting Forms List</string>
 
 </resources>

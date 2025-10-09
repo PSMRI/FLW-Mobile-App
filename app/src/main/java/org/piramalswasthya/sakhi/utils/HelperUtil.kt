@@ -1,11 +1,16 @@
 package org.piramalswasthya.sakhi.utils
 
+import android.content.ContentResolver
 import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Resources
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
+import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import android.provider.OpenableColumns
 import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
@@ -18,6 +23,8 @@ import android.widget.TableRow
 import android.widget.TextView
 import androidx.collection.lruCache
 import androidx.core.graphics.withTranslation
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.AgeUnitDTO
 import org.piramalswasthya.sakhi.model.EligibleCoupleTrackingCache
@@ -420,5 +427,81 @@ object HelperUtil {
         }
     }
 
+    fun detectExtAndMime(bytes: ByteArray): Pair<String, String> {
+        if (bytes.size >= 4) {
+            if (bytes[0] == 0x25.toByte() && bytes[1] == 0x50.toByte() && bytes[2] == 0x44.toByte() && bytes[3] == 0x46.toByte()) {
+                return "pdf" to "application/pdf"
+            }
+            if (bytes[0] == 0xFF.toByte() && bytes[1] == 0xD8.toByte() && bytes[2] == 0xFF.toByte()) {
+                return "jpg" to "image/jpeg"
+            }
+            if (bytes[0] == 0x89.toByte() && bytes[1] == 0x50.toByte() && bytes[2] == 0x4E.toByte() && bytes[3] == 0x47.toByte()) {
+                return "png" to "image/png"
+            }
+        }
+        return "bin" to "application/octet-stream"
+    }
 
+    fun getFileName(uri: android.net.Uri, appContext: Context): String? {
+        return if (uri.scheme == ContentResolver.SCHEME_CONTENT) {
+            appContext.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+                val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                if (cursor.moveToFirst() && nameIndex >= 0) cursor.getString(nameIndex) else null
+            }
+        } else {
+            uri.path?.let { path -> File(path).name }
+        }
+    }
+
+    fun copyToTemp(uri: android.net.Uri, nameHint: String, appContext: Context): File? {
+        return try {
+            val suffix = nameHint.substringAfterLast('.', missingDelimiterValue = "")
+            val temp = if (suffix.isNotEmpty()) File.createTempFile("maa_upload_", ".${suffix}", appContext.cacheDir) else File.createTempFile("maa_upload_", null, appContext.cacheDir)
+            appContext.contentResolver.openInputStream(uri)?.use { ins ->
+                FileOutputStream(temp).use { outs -> ins.copyTo(outs) }
+            }
+            temp
+        } catch (_: Exception) { null }
+    }
+
+    fun compressImageToTemp(uri: android.net.Uri, nameHint: String, appContext: Context): File? {
+        return try {
+            val opts = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+            appContext.contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, opts) }
+            val (srcW, srcH) = opts.outWidth to opts.outHeight
+            if (srcW <= 0 || srcH <= 0) return copyToTemp(uri, nameHint,appContext)
+            val maxDim = 1280
+            var sample = 1
+            while (srcW / sample > maxDim || srcH / sample > maxDim) sample *= 2
+            val opts2 = BitmapFactory.Options().apply { inSampleSize = sample }
+            val bmp = appContext.contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, opts2) } ?: return copyToTemp(uri, nameHint, appContext)
+            val temp = File.createTempFile("maa_img_", ".jpg", appContext.cacheDir)
+            FileOutputStream(temp).use { fos -> bmp.compress(Bitmap.CompressFormat.JPEG, 80, fos) }
+            temp
+        } catch (_: Exception) { null }
+    }
+
+    fun convertToServerDate(local: String?): String? {
+        if (local.isNullOrBlank()) return null
+        val parts = local.split("-")
+        if (parts.size != 3) return local
+        return "${parts[2]}-${parts[1]}-${parts[0]}"
+    }
+
+    fun convertToLocalDate(server: String?): String? {
+        if (server.isNullOrBlank()) return null
+        val parts = server.split("-")
+        if (parts.size != 3) return server
+        return "${parts[2]}-${parts[1]}-${parts[0]}"
+    }
+
+    fun getMimeFromUri(uri: Uri): String {
+        val path = uri.toString().lowercase()
+        return when {
+            path.endsWith(".jpg") || path.endsWith(".jpeg") -> "image/jpeg"
+            path.endsWith(".png") -> "image/png"
+            path.endsWith(".pdf") -> "application/pdf"
+            else -> "application/octet-stream"
+        }
+    }
 }
