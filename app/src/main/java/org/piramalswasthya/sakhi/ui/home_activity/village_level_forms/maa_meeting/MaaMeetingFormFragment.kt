@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -101,8 +102,10 @@ class MaaMeetingFormFragment : Fragment() {
             binding.btnSubmit.setOnClickListener {
                 viewLifecycleOwner.lifecycleScope.launch {
                     if (validateBeforeSubmit(adapter.currentList)) {
+                        binding.btnSubmit.isEnabled = false
                         viewModel.saveForm()
                         Toast.makeText(requireContext(), "Data Saved Successfully.", Toast.LENGTH_SHORT).show()
+                        findNavController().popBackStack()
                     }
                 }
             }
@@ -185,7 +188,7 @@ class MaaMeetingFormFragment : Fragment() {
         activity?.let {
             (it as HomeActivity).updateActionBar(
                 R.drawable.ic__village_level_form,
-                getString(R.string.maa_meeting_list)
+                getString(R.string.maa_meeting)
             )
         }
     }
