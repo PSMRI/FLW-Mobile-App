@@ -471,6 +471,16 @@
     <string name="referred_date">Referred Date</string>
     <string name="referred_from">Referred From</string>
     <string name="referral_reason">Referral reason</string>
+    <string name="child_rch_id">Child RCH ID</string>
+    <string name="vaccination_due_date">Vaccination Due Date</string>
+    <string name="reminder">Reminder!!</string>
+    <string name="do_you_want_to_upload_mcp_card_immunization_page_section_photo_copy_to_claim_your_incentive">Do you want to upload MCP Card - Immunization page/ section photo copy to claim your Incentive</string>
+    <string name="yes_1">Yes</string>
+    <string name="no_1">No</string>
+    <string name="dose_name_2">Dose Name : %1$s</string>
+    <string name="u_win_session">U-WIN Session</string>
+    <string name="uwin">UWin</string>
+    <string name="u_win_sessions_list">U-win Session List</string>
 
     <string-array name="sync_records">
         <item>Beneficiary</item>

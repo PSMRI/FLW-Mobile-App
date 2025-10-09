@@ -43,6 +43,7 @@ import org.piramalswasthya.sakhi.database.room.dao.PncDao
 import org.piramalswasthya.sakhi.database.room.dao.ProfileDao
 import org.piramalswasthya.sakhi.database.room.dao.SyncDao
 import org.piramalswasthya.sakhi.database.room.dao.TBDao
+import org.piramalswasthya.sakhi.database.room.dao.UwinDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormSchemaDao
@@ -91,6 +92,7 @@ import org.piramalswasthya.sakhi.model.PregnantWomanRegistrationCache
 import org.piramalswasthya.sakhi.model.ProfileActivityCache
 import org.piramalswasthya.sakhi.model.TBScreeningCache
 import org.piramalswasthya.sakhi.model.TBSuspectedCache
+import org.piramalswasthya.sakhi.model.UwinCache
 import org.piramalswasthya.sakhi.model.MaaMeetingEntity
 import org.piramalswasthya.sakhi.model.VHNCCache
 import org.piramalswasthya.sakhi.model.Vaccine
@@ -150,13 +152,16 @@ import org.piramalswasthya.sakhi.model.VHNDCache
         //Dynamic Data
         InfantEntity::class,
         FormSchemaEntity::class,
+        FormResponseJsonEntity::class,
+        UwinCache::class,
+
         MaaMeetingEntity::class,
         FormResponseJsonEntity::class,
         GeneralOPEDBeneficiary::class,
     ],
     views = [BenBasicCache::class],
 
-    version = 30, exportSchema = false
+    version = 31, exportSchema = false
 )
 
 @TypeConverters(LocationEntityListConverter::class, SyncStateConverter::class, StringListConverter::class)
@@ -196,6 +201,8 @@ abstract class InAppDb : RoomDatabase() {
     abstract val generalOpdDao: GeneralOpdDao
     abstract val maaMeetingDao: MaaMeetingDao
 
+    abstract val uwinDao : UwinDao
+
     abstract fun infantDao(): InfantDao
     abstract fun formSchemaDao(): FormSchemaDao
     abstract fun formResponseDao(): FormResponseDao
@@ -223,6 +230,13 @@ abstract class InAppDb : RoomDatabase() {
 //                }
 //            }
 
+            val MIGRATION_30_31 = object : Migration(30,31)
+            {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("ALTER TABLE IMMUNIZATION ADD COLUMN mcpCardSummary1 TEXT")
+                    database.execSQL("ALTER TABLE IMMUNIZATION ADD COLUMN mcpCardSummary2 TEXT")
+                }
+            }
             val MIGRATION_29_30 = object : Migration(29,30) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     database.execSQL(
@@ -1075,7 +1089,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_26_27,
                         MIGRATION_27_28,
                         MIGRATION_28_29,
-                        MIGRATION_29_30
+                        MIGRATION_29_30,
+                        MIGRATION_30_31
                     ).build()
 
                     INSTANCE = instance
