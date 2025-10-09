@@ -39,7 +39,7 @@ class MaaMeetingListFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.maaMeetings.collect { meetings ->
-                val lastMeetingDate = meetings.lastOrNull()?.meetingDate
+                val lastMeetingDate = meetings.firstOrNull()?.meetingDate
                 val hasMeeting = viewModel.hasMeetingInSameQuarter(lastMeetingDate)
                 binding.btnNextPage.isEnabled = !hasMeeting
             }
@@ -71,7 +71,7 @@ class MaaMeetingListFragment : Fragment() {
         activity?.let {
             (it as HomeActivity).updateActionBar(
                 R.drawable.ic__village_level_form,
-                getString(R.string.maa_meeting_list)
+                getString(R.string.maa_meeting)
             )
         }
     }

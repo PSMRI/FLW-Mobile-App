@@ -36,6 +36,7 @@ class MaaMeetingAdapter(
 
         fun bind(item: MaaMeetingEntity, clickListener: MaaMeetingAdapterClickListener?) {
             binding.maaMeeting = item
+
             binding.clickListener = clickListener
             binding.executePendingBindings()
         }

@@ -10,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -17,6 +18,8 @@ import org.piramalswasthya.sakhi.configuration.MaaMeetingDataset
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.MaaMeetingEntity
 import org.piramalswasthya.sakhi.repositories.MaaMeetingRepo
+import java.text.SimpleDateFormat
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -31,7 +34,12 @@ class MaaMeetingFormViewModel @Inject constructor(
     val formList = dataset.listFlow
 
     private val _maaMeetings = repo.getAllMaaMeetings()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+        .map { list ->
+            list.sortedByDescending { item ->
+                SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).parse(item.meetingDate)
+            }
+        }
+    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val maaMeetings: StateFlow<List<MaaMeetingEntity>> = _maaMeetings
 
@@ -81,8 +89,8 @@ class MaaMeetingFormViewModel @Inject constructor(
         }
     }
 
-    fun saveForm() {
-        viewModelScope.launch(Dispatchers.IO) {
+    suspend fun saveForm() {
+        withContext(Dispatchers.IO) {
             val entity = repo.buildEntity(
                 date = dataset.meetingDate.value,
                 place = dataset.meetingPlace.value,
