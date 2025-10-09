@@ -27,21 +27,56 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/tvDate"
+            <LinearLayout
+                android:id="@+id/ll_title_ec_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/colorOnPrimary"
-                android:drawablePadding="@dimen/padding_small"
                 android:gravity="center_vertical"
-                android:padding="@dimen/padding_normal"
-                android:text='@{maaMeeting.meetingDate != null ? maaMeeting.meetingDate : ""}'
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                android:textColor="?attr/colorPrimaryVariant"
-                app:drawableLeftCompat="@drawable/ic_calendar"
-                app:drawableTint="?attr/colorPrimary"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="Date" />
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/padding_tiny"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/tvDate"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/colorOnPrimary"
+                    android:drawablePadding="@dimen/padding_small"
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/padding_normal"
+                    android:layout_weight="7"
+                    app:formattedMeetingDate="@{maaMeeting.meetingDate}"
+                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                    android:textColor="?attr/colorPrimaryVariant"
+                    app:drawableLeftCompat="@drawable/ic_calendar"
+                    app:drawableTint="?attr/colorPrimary"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Date" />
+
+                <ImageView
+                    android:id="@+id/iv_miss_state"
+                    android:layout_width="24dp"
+                    android:layout_height="wrap_content"
+                    app:tint="@android:color/holo_red_dark"
+                    android:visibility="invisible"
+                    android:layout_gravity="center_vertical|end"
+                    android:layout_marginHorizontal="@dimen/padding_small"
+                    android:contentDescription="@string/iv_sync_state_tv"
+                    android:src="@drawable/ic_women" />
+
+                <ImageView
+                    android:id="@+id/iv_sync_state"
+                    android:layout_width="24dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|end"
+                    android:layout_marginHorizontal="@dimen/padding_small"
+                    android:contentDescription="@string/iv_sync_state_tv"
+                    app:syncState="@{maaMeeting.syncState}"
+                    tools:src="@drawable/ic_synced" />
+
+            </LinearLayout>
+
 
             <LinearLayout
                 android:id="@+id/ll_ahd_details"
@@ -51,54 +86,28 @@
                 android:orientation="horizontal"
                 android:padding="@dimen/padding_normal"
                 android:weightSum="9"
-                app:layout_constraintTop_toBottomOf="@id/tvDate">
+                app:layout_constraintTop_toBottomOf="@id/ll_title_ec_bar">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:layout_weight="3"
-                    android:gravity="center"
                     android:padding="@dimen/padding_small">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/place"
-                        android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                        android:text="@string/meeting_date"
+                        android:textStyle="bold"
+                        android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
                         android:textColor="?attr/colorOnPrimary" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text='@{maaMeeting.place != null ? maaMeeting.place : ""}'
-                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                        android:textColor="?attr/colorOnPrimary"
-                        tools:text="HWC" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_weight="3"
-                    android:gravity="center"
-                    android:padding="@dimen/padding_small">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/participants"
-                        android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                        android:textColor="?attr/colorOnPrimary" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text='@{maaMeeting.participants != null ? String.valueOf(maaMeeting.participants) : ""}'
-                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                        android:text='@{maaMeeting.meetingDate != null ? maaMeeting.meetingDate : ""}'
+                        android:textAppearance="@style/TextAppearance.Material3.BodySmall"
                         android:textColor="?attr/colorOnPrimary"
                         tools:text="0" />
                 </LinearLayout>
@@ -108,22 +117,45 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:layout_weight="3"
-                    android:gravity="center"
                     android:padding="@dimen/padding_small">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/asha_Id"
-                        android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                        android:text="@string/place"
+                        android:textStyle="bold"
+                        android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
                         android:textColor="?attr/colorOnPrimary" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text='@{maaMeeting.ashaId != null ? String.valueOf(maaMeeting.ashaId) : ""}'
-                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                        android:text='@{maaMeeting.place != null ? maaMeeting.place : ""}'
+                        android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                        android:textColor="?attr/colorOnPrimary"
+                        tools:text="HWC" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="3"
+                    android:padding="@dimen/padding_small">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/participants"
+                        android:textStyle="bold"
+                        android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+                        android:textColor="?attr/colorOnPrimary" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text='@{maaMeeting.participants != null ? String.valueOf(maaMeeting.participants) : ""}'
+                        android:textAppearance="@style/TextAppearance.Material3.BodySmall"
                         android:textColor="?attr/colorOnPrimary"
                         tools:text="0" />
                 </LinearLayout>
