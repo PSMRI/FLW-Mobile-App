@@ -12,6 +12,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.IconGridAdapter
 import org.piramalswasthya.sakhi.databinding.RvIconGridBinding
+import org.piramalswasthya.sakhi.model.Icon
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 
 @AndroidEntryPoint
@@ -34,6 +35,7 @@ class VillageLevelFormsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // TODO: Use the ViewModel
+
         setUpVillageLevelFormsIconRvAdapter()
     }
 
@@ -43,13 +45,30 @@ class VillageLevelFormsFragment : Fragment() {
             requireContext().resources.getInteger(R.integer.icon_grid_span)
         )
         binding.rvIconGrid.layoutManager = rvLayoutManager
-        binding.rvIconGrid.adapter = IconGridAdapter(
-            //IconDataset.getVillageLevelFormsDataset(),
+        val adapter = IconGridAdapter(
             IconGridAdapter.GridIconClickListener {
                 findNavController().navigate(it)
             },
             viewModel.scope
         )
+        binding.rvIconGrid.adapter = adapter
+        val iconList = listOf(
+            Icon(
+                icon = R.drawable.ic__village_level_form,
+                title = "Session Form",
+                count = null,
+                navAction = VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToSurveyRegisterFragment()
+            ),
+            Icon(
+                icon = R.drawable.ic__village_level_form,
+                title = "U-WIN Session Form",
+                count = null,
+                navAction = VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToUwinListFragment()
+
+            )
+        )
+
+        adapter.submitList(iconList)
     }
 
     override fun onStart() {

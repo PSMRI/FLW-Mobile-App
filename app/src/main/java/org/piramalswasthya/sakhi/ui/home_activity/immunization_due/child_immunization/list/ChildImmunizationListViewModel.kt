@@ -1,6 +1,5 @@
 package org.piramalswasthya.sakhi.ui.home_activity.immunization_due.child_immunization.list
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -105,6 +104,7 @@ class ChildImmunizationListViewModel @Inject constructor(
 
         catList.clear()
         catList.add("ALL")
+        catList.add("Birth Dose")
         catList.add("6 WEEKS")
         catList.add("10 WEEKS")
         catList.add("14 WEEKS")
