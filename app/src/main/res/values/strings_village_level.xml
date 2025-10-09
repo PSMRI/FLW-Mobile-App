@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="place_hwk">HWC</string>
+    <string name="place_school">School</string>
+    <string name="place_anganwadi">Anganwadi Centre</string>
+    <string name="place_community">Community Center</string>
+    <string name="u_win_session_date">U-WIN Session Date</string>
+    <string name="place">Place</string>
+    <string name="no_of_participants_attended">No. of Participants Attended</string>
+
+    <string-array name="place_of_delivery_options">
+        <item>@string/place_hwk</item>
+        <item>@string/place_school</item>
+        <item>@string/place_anganwadi</item>
+        <item>@string/place_community</item>
+    </string-array>
+
+</resources>
+

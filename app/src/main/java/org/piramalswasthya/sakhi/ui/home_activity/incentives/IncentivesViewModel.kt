@@ -2,6 +2,8 @@ package org.piramalswasthya.sakhi.ui.home_activity.incentives
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.Data
+import androidx.work.ListenableWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,8 +33,10 @@ IncentivesViewModel @Inject constructor(
     private val _lastUpdated: Long = pref.lastIncentivePullTimestamp
 
     private val _incentiveRepo = incentiveRepo
+    private val _pref = pref
     val lastUpdated: String
         get() = getDateStrFromLong(_lastUpdated)!!
+
 
 
     val items = incentiveRepo.activity_list.map { it ->
@@ -49,6 +53,10 @@ IncentivesViewModel @Inject constructor(
     private val initEnd = Calendar.getInstance().apply {
         setToStartOfTheDay()
     }.timeInMillis
+
+    init {
+        pullIncentives()
+    }
 
 
     private val _from = MutableStateFlow(initStart)
@@ -79,6 +87,16 @@ IncentivesViewModel @Inject constructor(
         incentiveList.map { domainList ->
             groupIncentivesByActivity(domainList)
         }
+
+    private fun pullIncentives() {
+        viewModelScope.launch {
+            val user = _pref.getLoggedInUser()
+            if (user != null) {
+                _incentiveRepo.pullAndSaveAllIncentiveActivities(user)
+                _incentiveRepo.pullAndSaveAllIncentiveRecords(user)
+            }
+        }
+    }
 
     fun setRange(from: Long, to: Long) {
         viewModelScope.launch {

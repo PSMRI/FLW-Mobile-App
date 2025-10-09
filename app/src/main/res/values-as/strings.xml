@@ -283,6 +283,15 @@
     <string name="facility_place_of_abortion">Facility (Place of Abortion)</string>
     <string name="abortion_type">Abortion Type</string>
     <string name="abortion_date">Abortion Date</string>
+    <string name="child_rch_id">Child RCH ID</string>
+    <string name="vaccination_due_date">Vaccination Due Date</string>
+    <string name="reminder">Reminder!!</string>
+    <string name="do_you_want_to_upload_mcp_card_immunization_page_section_photo_copy_to_claim_your_incentive">Do you want to upload MCP Card - Immunization page/ section photo copy to claim your Incentive</string>
+    <string name="yes_1">Yes</string>
+    <string name="no_1">No</string>
+    <string name="dose_name_2">Dose Name : %1$s</string>
+    <string name="u_win_session">U-WIN Session</string>
+    <string name="u_win_sessions_list">U-win Session List</string>
 
 
 </resources>

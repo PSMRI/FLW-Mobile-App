@@ -361,7 +361,22 @@ fun filterImmunList(list: List<ImmunizationDetailsDomain>, text: String): List<I
         } else if (filterText.contains("6 weeks")) {
             secondFilterText = "1 months"
             filterText = "2 months"
-        } else if (filterText.contains("10 weeks")) {
+        } else if  (filterText.contains("birth dose"))  {
+            secondFilterText = "1 days"
+            filterText = "1 months"
+
+            return list.filter { imm ->
+                val age = imm.ben.age.lowercase()
+                age.contains("day") || filterForImm(
+                    imm,
+                    filterText,
+                    secondFilterText,
+                    thirdFilterText,
+                    fourthFilterText
+                )
+            }
+        }
+        else if (filterText.contains("10 weeks")) {
             filterText = "3 months"
         } else if (filterText.contains("14 weeks")) {
             filterText = "4 months"

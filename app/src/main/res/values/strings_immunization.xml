@@ -12,5 +12,6 @@
     <string name="vaccinated_place">Vaccinated Place</string>
     <string name="vaccinated_by">Vaccinated By</string>
     <string name="date_of_vaccination">Date of Vaccination</string>
+    <string name="dose_name">Dose Name</string>
 
 </resources>
