@@ -202,6 +202,7 @@
     <string name="months">Months</string>
     <string name="day">Day</string>
     <string name="days">Days</string>
+    <string name="mother_rch_id">Mother RCH ID</string>
 
     <string-array name="nbr_relationship_to_head_female">
         <item>Mother</item>

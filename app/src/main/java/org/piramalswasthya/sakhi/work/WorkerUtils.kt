@@ -252,6 +252,12 @@ object WorkerUtils {
             .setConstraints(networkOnlyConstraint)
             .build()
 
+        val pushUwinWorkerRequest = OneTimeWorkRequestBuilder<PushUwinToAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+
+
+
 
         val workManager = WorkManager.getInstance(context)
         workManager
@@ -279,6 +285,7 @@ object WorkerUtils {
             .then(pushChildHBNCToAmritWorker)
             .then(pullIncentiveActivityWorkRequest)
             .then(pushAbhaWorkRequest)
+            .then(pushUwinWorkerRequest)
             .then(pushMalariaWorkRequest)
             .then(pushAESToAmritWorker)
             .then(pushkalaAzarToAmritWorker)
@@ -357,6 +364,9 @@ object WorkerUtils {
             OneTimeWorkRequestBuilder<PullChildHBNCFromAmritWorker>()
                 .setConstraints(networkOnlyConstraint)
                 .build()
+        val pullUwinWorkerRequest = OneTimeWorkRequestBuilder<PullUwinFromAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
         val pullAshaWorkRequest =
             OneTimeWorkRequestBuilder<PullIncentiveWorker>()
                 .setConstraints(networkOnlyConstraint)
@@ -378,6 +388,7 @@ object WorkerUtils {
         val pullFilariaToAmritWorker = OneTimeWorkRequestBuilder<PullFilariaFromAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
+
         val workManager = WorkManager.getInstance(context)
         workManager
             .beginUniqueWork(
@@ -392,6 +403,7 @@ object WorkerUtils {
             .then(pullECWorkRequest)
             .then(pullPWWorkRequest)
             .then(pullPMSMAWorkRequest)
+            .then(pullUwinWorkerRequest)
             .then(pullPNCWorkRequest)
             .then(pullDeliveryOutcomeWorkRequest)
             .then(pullInfantRegWorkRequest)
@@ -400,6 +412,7 @@ object WorkerUtils {
             .then(pullMdsrWorkRequest)
             .then(pullCdrWorkRequest)
 //            .then(pullHBYCFromAmritWorker)
+
             .then(pullHBNCFromAmritWorker)
             .then(pullHRPWorkRequest)
             .then(pullVLFWorkRequest)
@@ -410,6 +423,7 @@ object WorkerUtils {
             .then(pullFilariaToAmritWorker)
             .then(pullLeprosyToAmritWorker)
             .then(setSyncCompleteWorker)
+
             .enqueue()
     }
 

@@ -1,5 +1,7 @@
 package org.piramalswasthya.sakhi.network
 
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -322,4 +324,19 @@ interface AmritApiService {
         @Body request: HBNCVisitRequest
     ): Response<HBNCVisitListResponse>
 
+    @Multipart
+    @POST("flw-api/uwin/session/saveAll")
+    suspend fun saveUwinSession(
+        @Part("meetingDate") meetingDate: RequestBody,
+        @Part("place") place: RequestBody,
+        @Part("participants") participants: RequestBody,
+        @Part("ashaId") ashaId: RequestBody,
+        @Part("createdBy") createdBy: RequestBody,
+        @Part images: List<MultipartBody.Part>? = null
+    ): Response<ResponseBody>
+
+    @POST("flw-api/uwin/session/getAll")
+    suspend fun getAllUwinSessions(
+        @Body request: UwinGetAllRequest
+    ): Response<ResponseBody>
 }

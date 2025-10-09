@@ -39,6 +39,7 @@ import org.piramalswasthya.sakhi.database.room.dao.PncDao
 import org.piramalswasthya.sakhi.database.room.dao.ProfileDao
 import org.piramalswasthya.sakhi.database.room.dao.SyncDao
 import org.piramalswasthya.sakhi.database.room.dao.TBDao
+import org.piramalswasthya.sakhi.database.room.dao.UwinDao
 import org.piramalswasthya.sakhi.database.room.dao.MaaMeetingDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.VLFDao
@@ -288,6 +289,10 @@ object AppModule {
     @Provides
     fun provideFormResponseJsonDao(database: InAppDb): FormResponseJsonDao = database.formResponseJsonDao()
 
+
+    @Singleton
+    @Provides
+    fun provideUwinDao(database: InAppDb) : UwinDao = database.uwinDao
     @Singleton
     @Provides
     fun provideGenOPDDao(database: InAppDb): GeneralOpdDao = database.generalOpdDao

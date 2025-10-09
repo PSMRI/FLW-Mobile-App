@@ -455,7 +455,10 @@ fun filterBenHRPTFormList(
 }
 
 
-fun filterImmunList(list: List<ImmunizationDetailsDomain>, text: String): List<ImmunizationDetailsDomain> {
+fun filterImmunList(
+    list: List<ImmunizationDetailsDomain>,
+    text: String
+): List<ImmunizationDetailsDomain> {
     val raw = text.trim()
     if (raw.isEmpty()) return list
 
@@ -464,34 +467,45 @@ fun filterImmunList(list: List<ImmunizationDetailsDomain>, text: String): List<I
     var alt2 = ""
     var alt3 = ""
 
-    // normalize some common range inputs (keep but make clearer)
     when {
         filterText.contains("5-6") || filterText.contains("5-6 years") -> {
-            // match both "5 years" and "6 years"
             alt1 = "5 years"
             filterText = "6 years"
         }
+
         filterText.contains("16-24") || filterText.contains("16-24 months") -> {
             alt1 = "1 year"
             filterText = "2 years"
         }
+
         filterText.contains("9-12") || filterText.contains("9-12 months") -> {
             alt1 = "9 months"
             alt2 = "10 months"
             alt3 = "11 months"
             filterText = "12 months"
         }
+
         filterText.contains("6 weeks") -> {
             alt1 = "1 month"
             filterText = "2 months"
         }
+
+        filterText.contains("birth dose") -> {
+            alt1 = "1 day"
+            filterText = "1 month"
+
+            // special case: also match beneficiaries whose age contains "day"
+            return list.filter { imm ->
+                val age = imm.ben.age.lowercase()
+                age.contains("day") || filterForImm(imm, filterText, alt1, alt2, alt3)
+            }
+        }
+
         filterText.contains("10 weeks") -> filterText = "3 months"
         filterText.contains("14 weeks") -> filterText = "4 months"
     }
 
-    return list.filter {
-        filterForImm(it, filterText, alt1, alt2, alt3)
-    }
+    return list.filter { filterForImm(it, filterText, alt1, alt2, alt3) }
 }
 
 fun filterForImm(
@@ -625,6 +639,7 @@ fun getDateFromLong(time: Long) : Date {
     return date
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 fun getPatientTypeByAge(dateOfBirth: Date): String {
     val birthDate = dateOfBirth.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
     val currentDate = LocalDate.now()
