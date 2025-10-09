@@ -39,6 +39,7 @@ import org.piramalswasthya.sakhi.database.room.dao.PncDao
 import org.piramalswasthya.sakhi.database.room.dao.ProfileDao
 import org.piramalswasthya.sakhi.database.room.dao.SyncDao
 import org.piramalswasthya.sakhi.database.room.dao.TBDao
+import org.piramalswasthya.sakhi.database.room.dao.MaaMeetingDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.VLFDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
@@ -291,5 +292,9 @@ object AppModule {
     @Provides
     fun provideGenOPDDao(database: InAppDb): GeneralOpdDao = database.generalOpdDao
 
+
+    @Singleton
+    @Provides
+    fun provideMaaMeetingDao(database: InAppDb): MaaMeetingDao = database.maaMeetingDao
 
 }
