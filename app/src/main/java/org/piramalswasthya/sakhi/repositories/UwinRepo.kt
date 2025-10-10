@@ -1,10 +1,7 @@
 package org.piramalswasthya.sakhi.repositories
 
-import android.content.ContentResolver
+
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.provider.OpenableColumns
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
@@ -33,6 +30,10 @@ import android.util.Base64
 import androidx.core.content.FileProvider
 import org.piramalswasthya.sakhi.model.UwinNetwork
 import org.piramalswasthya.sakhi.repositories.BenRepo.Companion.getCurrentDate
+import org.piramalswasthya.sakhi.utils.HelperUtil.compressImageToTemp
+import org.piramalswasthya.sakhi.utils.HelperUtil.copyToTemp
+import org.piramalswasthya.sakhi.utils.HelperUtil.detectExtAndMime
+import org.piramalswasthya.sakhi.utils.HelperUtil.getFileName
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -65,9 +66,10 @@ class UwinRepo @Inject constructor(
             try {
                 val uri = android.net.Uri.parse(uriStr)
                 val mime = appContext.contentResolver.getType(uri) ?: "application/octet-stream"
-                val fileName = getFileName(uri) ?: "upload"
-                val file = if (mime.startsWith("image/")) compressImageToTemp(uri, fileName)
-                else copyToTemp(uri, fileName)
+                val fileName = getFileName(uri, appContext) ?: "upload"
+                val file =
+                    if (mime.startsWith("image/")) compressImageToTemp(uri, fileName, appContext)
+                    else copyToTemp(uri, fileName, appContext)
                 file?.let {
                     val body = it.asRequestBody(mime.toMediaTypeOrNull())
                     parts.add(MultipartBody.Part.createFormData("meetingImages", it.name, body))
@@ -113,29 +115,17 @@ class UwinRepo @Inject constructor(
 
         val meetingDate = meetingDateFormatted.toRequestBody("text/plain".toMediaTypeOrNull())
         val place = (network.place ?: "").toRequestBody("text/plain".toMediaTypeOrNull())
-        val participants = network.participantsCount.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+        val participants =
+            network.participantsCount.toString().toRequestBody("text/plain".toMediaTypeOrNull())
         val ashaId = user.userId.toString().toRequestBody("text/plain".toMediaTypeOrNull())
         val createdBy = user.userName.toRequestBody("text/plain".toMediaTypeOrNull())
 
-        Timber.d(
-            """
-        🛰️ Posting UWIN session
-        meetingDate = $meetingDateFormatted
-        place = ${network.place}
-        participants = ${network.participantsCount}
-        ashaId = ${user.userId}
-        createdBy = ${user.userName}
-        imagesCount = ${images?.size ?: 0}
-        """.trimIndent()
-        )
 
         try {
             val response = amritApiService.saveUwinSession(
                 meetingDate, place, participants, ashaId, createdBy, images
             )
 
-            Timber.d("🌐 Raw HTTP response code: ${response.code()}")
-            Timber.d("🌐 Raw HTTP message: ${response.message()}")
 
             if (response.isSuccessful) {
                 val bodyString = response.body()?.string()
@@ -164,6 +154,7 @@ class UwinRepo @Inject constructor(
                         uwinDao.updateSyncState(network.id, SyncState.SYNCED)
                         true
                     }
+
                     5002 -> {
                         Timber.w("🔁 Token expired. Refreshing token and retrying...")
                         if (userRepo.refreshTokenTmc(user.userName, user.password)) {
@@ -171,6 +162,7 @@ class UwinRepo @Inject constructor(
                         }
                         false
                     }
+
                     else -> {
                         Timber.e("❌ Server returned error: $errorMessage (statusCode=$statusCode)")
                         false
@@ -191,9 +183,7 @@ class UwinRepo @Inject constructor(
     }
 
 
-
     suspend fun downSyncAndPersist() = withContext(Dispatchers.IO) {
-        Timber.d("Uwin dowsync called")
         val user = preferenceDao.getLoggedInUser() ?: return@withContext
         val response = amritApiService.getAllUwinSessions(
             UwinGetAllRequest(
@@ -217,9 +207,9 @@ class UwinRepo @Inject constructor(
         val parsed = adapter.fromJson(body) ?: return@withContext
 
         val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        // Access entries through the data object
+
         val entries = parsed.data?.entries ?: emptyList()
-        Timber.d("✅ Got ${entries.size} UWIN sessions from server")
+
 
         val localList = entries.mapNotNull { item ->
             val imageUriList = item.meetingImages?.mapNotNull { base64 ->
@@ -229,7 +219,11 @@ class UwinRepo @Inject constructor(
                     val (ext, _) = detectExtAndMime(bytes)
                     val file = File(appContext.cacheDir, "uwin_${System.currentTimeMillis()}.$ext")
                     file.outputStream().use { it.write(bytes) }
-                    val uri = FileProvider.getUriForFile(appContext, "${appContext.packageName}.provider", file)
+                    val uri = FileProvider.getUriForFile(
+                        appContext,
+                        "${appContext.packageName}.provider",
+                        file
+                    )
                     uri.toString()
                 } catch (e: Exception) {
                     null
@@ -254,65 +248,7 @@ class UwinRepo @Inject constructor(
         }
 
         uwinDao.replaceAll(localList)
-        Timber.d("✅ Saved ${localList.size} UWIN sessions locally.")
-    }
 
-
-
-    private fun getFileName(uri: android.net.Uri): String? {
-        return if (uri.scheme == ContentResolver.SCHEME_CONTENT) {
-            appContext.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
-                val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                if (cursor.moveToFirst() && nameIndex >= 0) cursor.getString(nameIndex) else null
-            }
-        } else uri.path?.let { File(it).name }
-    }
-
-    private fun copyToTemp(uri: android.net.Uri, nameHint: String): File? = try {
-        val suffix = nameHint.substringAfterLast('.', "")
-        val temp = if (suffix.isNotEmpty()) File.createTempFile("uwin_", ".$suffix", appContext.cacheDir)
-        else File.createTempFile("uwin_", null, appContext.cacheDir)
-        appContext.contentResolver.openInputStream(uri)?.use { ins ->
-            FileOutputStream(temp).use { outs -> ins.copyTo(outs) }
-        }
-        temp
-    } catch (_: Exception) {
-        null
-    }
-
-    private fun compressImageToTemp(uri: android.net.Uri, nameHint: String): File? {
-        return try {
-            val opts = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-            appContext.contentResolver.openInputStream(uri)?.use {
-                BitmapFactory.decodeStream(it, null, opts)
-            }
-
-            val (srcW, srcH) = opts.outWidth to opts.outHeight
-            val maxDim = 1280
-            var sample = 1
-            while (srcW / sample > maxDim || srcH / sample > maxDim) sample *= 2
-
-            val opts2 = BitmapFactory.Options().apply { inSampleSize = sample }
-            val bmp = appContext.contentResolver.openInputStream(uri)?.use {
-                BitmapFactory.decodeStream(it, null, opts2)
-            } ?: return copyToTemp(uri, nameHint)
-
-            val temp = File.createTempFile("uwin_img_", ".jpg", appContext.cacheDir)
-            FileOutputStream(temp).use { fos -> bmp.compress(Bitmap.CompressFormat.JPEG, 80, fos) }
-            temp
-        } catch (_: Exception) {
-            null
-        }
-    }
-
-
-    private fun detectExtAndMime(bytes: ByteArray): Pair<String, String> {
-        if (bytes.size >= 4) {
-            if (bytes[0] == 0xFF.toByte() && bytes[1] == 0xD8.toByte()) return "jpg" to "image/jpeg"
-            if (bytes[0] == 0x89.toByte() && bytes[1] == 0x50.toByte()) return "png" to "image/png"
-            if (bytes[0] == 0x25.toByte() && bytes[1] == 0x50.toByte()) return "pdf" to "application/pdf"
-        }
-        return "bin" to "application/octet-stream"
     }
 
 

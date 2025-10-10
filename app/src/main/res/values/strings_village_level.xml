@@ -6,7 +6,7 @@
     <string name="place_anganwadi">Anganwadi Centre</string>
     <string name="place_community">Community Center</string>
     <string name="u_win_session_date">U-WIN Session Date</string>
-    <string name="place">Place</string>
+    <string name="place_village">Place</string>
     <string name="no_of_participants_attended">No. of Participants Attended</string>
 
     <string-array name="place_of_delivery_options">

@@ -3,8 +3,6 @@ package org.piramalswasthya.sakhi.network
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import org.piramalswasthya.sakhi.model.*
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSubmitRequest

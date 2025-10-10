@@ -4,6 +4,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteConstraintException
 import androidx.core.app.NotificationCompat
 import androidx.hilt.work.HiltWorker
+import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
@@ -27,12 +28,13 @@ class PullUwinFromAmritWorker @AssistedInject constructor(
 
     companion object {
         const val name = "PullUwinFromAmritWorker"
+        val constraint = Constraints.Builder()
+            .build()
     }
 
     override suspend fun doWork(): Result {
-        Timber.d("🚀 Starting PullUwinFromAmritWorker...")
 
-        // Safely set foreground notification
+
         try {
             setForeground(createForegroundInfo("Downloading UWIN Session Data"))
         } catch (t: Throwable) {
@@ -42,7 +44,7 @@ class PullUwinFromAmritWorker @AssistedInject constructor(
         return withContext(Dispatchers.IO) {
             val startTime = System.currentTimeMillis()
             try {
-                // Prepare async tasks (scalable for future expansion)
+
                 val results = awaitAll(
                     async { fetchUwinSessions() }
                 )
@@ -79,7 +81,7 @@ class PullUwinFromAmritWorker @AssistedInject constructor(
 
     private suspend fun fetchUwinSessions(): Boolean = withContext(Dispatchers.IO) {
         try {
-            Timber.d("⬇️ Fetching UWIN sessions from server...")
+
             uwinRepo.downSyncAndPersist()
             Timber.d("✅ Successfully downloaded and persisted UWIN data.")
             true

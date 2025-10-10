@@ -152,12 +152,10 @@ import org.piramalswasthya.sakhi.model.VHNDCache
         //Dynamic Data
         InfantEntity::class,
         FormSchemaEntity::class,
-        FormResponseJsonEntity::class,
-        UwinCache::class,
-
         MaaMeetingEntity::class,
         FormResponseJsonEntity::class,
         GeneralOPEDBeneficiary::class,
+        UwinCache::class
     ],
     views = [BenBasicCache::class],
 
@@ -200,7 +198,6 @@ abstract class InAppDb : RoomDatabase() {
     abstract val abhaGenratedDao: ABHAGenratedDao
     abstract val generalOpdDao: GeneralOpdDao
     abstract val maaMeetingDao: MaaMeetingDao
-
     abstract val uwinDao : UwinDao
 
     abstract fun infantDao(): InfantDao
