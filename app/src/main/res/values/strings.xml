@@ -472,6 +472,9 @@
     <string name="referred_date">Referred Date</string>
     <string name="referred_from">Referred From</string>
     <string name="referral_reason">Referral reason</string>
+    <string name="check_sam">Check SAM</string>
+    <string name="ors">ORS</string>
+    <string name="ifa">IFA</string>
 
     <string-array name="sync_records">
         <item>Beneficiary</item>

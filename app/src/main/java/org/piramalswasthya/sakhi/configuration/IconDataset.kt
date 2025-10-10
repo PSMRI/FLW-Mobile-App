@@ -9,10 +9,8 @@ import org.piramalswasthya.sakhi.model.Icon
 import org.piramalswasthya.sakhi.repositories.AdolescentHealthRepo
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.SupervisorFragmentDirections
-import org.piramalswasthya.sakhi.ui.home_activity.all_household.AllHouseholdViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.child_care.ChildCareFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.communicable_diseases.CdFragmentDirections
-import org.piramalswasthya.sakhi.ui.home_activity.disease_control.DiseaseControlFragment
 import org.piramalswasthya.sakhi.ui.home_activity.disease_control.DiseaseControlFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.disease_control.malaria.form.MalariaIconsFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.eligible_couple.EligibleCoupleFragmentDirections
@@ -373,6 +371,12 @@ class IconDataset @Inject constructor(
             resources.getString(R.string.icon_title_acc),
             recordsRepo.adolescentListCount,
             ChildCareFragmentDirections.actionChildCareFragmentToAdolescentListFragment()
+        ),
+        Icon(
+            R.drawable.ic__adolescent,
+            resources.getString(R.string.children_under_five_years),
+            recordsRepo.childFilteredListCount,
+            ChildCareFragmentDirections.actionChildrenUnderFiveYearFragmentToChildListFragment()
         )
     ).apply {
         forEachIndexed { index, icon ->
