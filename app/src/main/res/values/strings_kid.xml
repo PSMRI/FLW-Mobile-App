@@ -156,7 +156,7 @@
         <item>Medical College Hospital</item>
         <item>Private Hospital</item>
         <item>Accredited Private Hospital</item>
-        <item>VHND</item>
+        <item>VHND VHSND U-WIN Session</item>
         <item>Other</item>
     </string-array>
     <string-array name="imm_vaccinated_by_array">

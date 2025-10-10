@@ -455,7 +455,10 @@ fun filterBenHRPTFormList(
 }
 
 
-fun filterImmunList(list: List<ImmunizationDetailsDomain>, text: String): List<ImmunizationDetailsDomain> {
+fun filterImmunList(
+    list: List<ImmunizationDetailsDomain>,
+    text: String
+): List<ImmunizationDetailsDomain> {
     val raw = text.trim()
     if (raw.isEmpty()) return list
 
@@ -464,34 +467,45 @@ fun filterImmunList(list: List<ImmunizationDetailsDomain>, text: String): List<I
     var alt2 = ""
     var alt3 = ""
 
-    // normalize some common range inputs (keep but make clearer)
     when {
         filterText.contains("5-6") || filterText.contains("5-6 years") -> {
-            // match both "5 years" and "6 years"
             alt1 = "5 years"
             filterText = "6 years"
         }
+
         filterText.contains("16-24") || filterText.contains("16-24 months") -> {
             alt1 = "1 year"
             filterText = "2 years"
         }
+
         filterText.contains("9-12") || filterText.contains("9-12 months") -> {
             alt1 = "9 months"
             alt2 = "10 months"
             alt3 = "11 months"
             filterText = "12 months"
         }
+
         filterText.contains("6 weeks") -> {
             alt1 = "1 month"
             filterText = "2 months"
         }
+
+        filterText.contains("birth dose") -> {
+            alt1 = "1 day"
+            filterText = "1 month"
+
+            // special case: also match beneficiaries whose age contains "day"
+            return list.filter { imm ->
+                val age = imm.ben.age.lowercase()
+                age.contains("day") || filterForImm(imm, filterText, alt1, alt2, alt3)
+            }
+        }
+
         filterText.contains("10 weeks") -> filterText = "3 months"
         filterText.contains("14 weeks") -> filterText = "4 months"
     }
 
-    return list.filter {
-        filterForImm(it, filterText, alt1, alt2, alt3)
-    }
+    return list.filter { filterForImm(it, filterText, alt1, alt2, alt3) }
 }
 
 fun filterForImm(
@@ -624,38 +638,53 @@ fun getDateFromLong(time: Long) : Date {
 //    val format = SimpleDateFormat(pattern, Locale.getDefault())
     return date
 }
-
 fun getPatientTypeByAge(dateOfBirth: Date): String {
-    val birthDate = dateOfBirth.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
-    val currentDate = LocalDate.now()
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
-    val period = Period.between(birthDate, currentDate)
-    val years = period.years
-    val months = period.months % 12
-    val days = period.days % 30
+        val birthDate = dateOfBirth.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+        val currentDate = LocalDate.now()
+        val period = Period.between(birthDate, currentDate)
 
-    var type= ""
-    if((days <= 30 || months<=1) && years<1 ){
-        type = "new_born_baby"
+        val years = period.years
+        val months = period.months
+        val days = period.days
+
+        when {
+            years == 0 && months == 0 && days <= 30 -> "new_born_baby"
+            years == 0 && (months > 0 || days > 30) -> "infant"
+            years in 1..12 -> "child"
+            years in 13..18 -> "adolescence"
+            else -> "adult"
+        }
+    } else {
+
+        val current = Calendar.getInstance()
+        val birth = Calendar.getInstance().apply { time = dateOfBirth }
+
+        var years = current.get(Calendar.YEAR) - birth.get(Calendar.YEAR)
+        var months = current.get(Calendar.MONTH) - birth.get(Calendar.MONTH)
+        var days = current.get(Calendar.DAY_OF_MONTH) - birth.get(Calendar.DAY_OF_MONTH)
+
+
+        if (days < 0) {
+            months -= 1
+            days += current.getActualMaximum(Calendar.DAY_OF_MONTH)
+        }
+        if (months < 0) {
+            years -= 1
+            months += 12
+        }
+
+        when {
+            years == 0 && months <= 1 -> "new_born_baby"
+            years == 0 && months <= 12 -> "infant"
+            years in 1..12 -> "child"
+            years in 13..18 -> "adolescence"
+            else -> "adult"
+        }
     }
-    if((years<1 && months<=12) || (months==0 && days==0 && years==1)){
-        type = "infant"
-    }
-
-    if(years>=1&& years<=12){
-        type ="child"
-    }
-
-    if(years>=12 && years<=18){
-        type = "adolescence"
-    }
-
-    if(years>=18){
-        type = "adult"
-    }
-
-    return type
 }
+
 
 
 sealed class NetworkResponse<T>(val data: T? = null, val message: String? = null) {

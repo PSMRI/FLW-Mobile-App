@@ -273,6 +273,9 @@
         android:label="@string/icon_title_vlf"
         tools:layout="@layout/rv_icon_grid">
         <action
+            android:id="@+id/action_villageLevelFormsFragment_to_uwinListFragment"
+            app:destination="@id/uwinListFragment" />
+        <action
             android:id="@+id/action_villageLevelFormsFragment_to_surveyRegisterFragment"
             app:destination="@id/surveyRegisterFragment" />
         <action
@@ -297,6 +300,28 @@
             android:id="@+id/action_villageLevelFormsFragment_to_allMaaMeetingFragment"
             app:destination="@id/allMaaMeetingFragment" />
     </fragment>
+
+    <fragment
+      android:id="@+id/uwinListFragment"
+      android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.u_win_forms.UwinListFragment"
+      android:label="@string/u_win_sessions_list"  >
+      <action
+          android:id="@+id/action_uwinListFragment_to_uwinFragment"
+          app:destination="@id/uwinFragment"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/uwinFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.u_win_forms.UwinFragment"
+        android:label="@string/uwin"
+        tools:layout="@layout/fragment_uwin">
+        <argument
+            android:name="uwinId"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
+
     <fragment
         android:id="@+id/newHouseholdFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.all_household.new_household_registration.NewHouseholdFragment"
