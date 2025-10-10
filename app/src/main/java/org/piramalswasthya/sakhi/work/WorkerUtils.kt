@@ -121,6 +121,10 @@ object WorkerUtils {
             .setConstraints(networkOnlyConstraint)
             .build()
 
+        val maaMeetingFormSyncWorkerRequest = OneTimeWorkRequestBuilder<MaaMeetingDownsyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+
         val workManager = WorkManager.getInstance(context)
         workManager
             .beginUniqueWork(
@@ -128,6 +132,7 @@ object WorkerUtils {
                 ExistingWorkPolicy.APPEND_OR_REPLACE,
                 pullWorkRequest
             )
+            .then(maaMeetingFormSyncWorkerRequest)
             .then(pullIncentiveActivityWorkRequest)
             .then(pullCbacWorkRequest)
             .then(pullTBWorkRequest)
@@ -163,6 +168,9 @@ object WorkerUtils {
             .setConstraints(networkOnlyConstraint)
             .build()
         val pushAdolescentWorkRequest = OneTimeWorkRequestBuilder<PushAdolescentAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pushMaaMeetingsWorkRequest = OneTimeWorkRequestBuilder<MaaMeetingsPushWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
         val pushCbacWorkRequest = OneTimeWorkRequestBuilder<CbacPushToAmritWorker>()
@@ -264,6 +272,7 @@ object WorkerUtils {
                 ExistingWorkPolicy.APPEND_OR_REPLACE,
                 pushWorkRequest
             )
+            .then(pushMaaMeetingsWorkRequest)
             .then(pushCbacWorkRequest)
             .then(pushAdolescentWorkRequest)
             .then(pushHRPToAmritWorker)
@@ -319,7 +328,9 @@ object WorkerUtils {
          val pullVLFWorkRequest = OneTimeWorkRequestBuilder<PullVLFFromAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
-
+        val maaMeetingFormSyncWorkerRequest = OneTimeWorkRequestBuilder<MaaMeetingDownsyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
         val pullTBWorkRequest = OneTimeWorkRequestBuilder<PullTBFromAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
@@ -394,6 +405,7 @@ object WorkerUtils {
                 ExistingWorkPolicy.APPEND_OR_REPLACE,
                 pullWorkRequest
             )
+            .then(maaMeetingFormSyncWorkerRequest)
             .then(pullIncentiveActivityWorkRequest)
             .then(pullCbacWorkRequest)
             .then(pullVaccineWorkRequest)
