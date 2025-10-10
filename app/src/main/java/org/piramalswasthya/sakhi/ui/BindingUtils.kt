@@ -437,3 +437,27 @@ fun TextView.setAsteriskTextView(required: Boolean?, title: String?) {
 }
 
 
+@BindingAdapter(value = ["formattedSessionDate"], requireAll = false)
+fun setFormattedSessionDate(textView: TextView, timestamp: Long?) {
+    if (timestamp == null) {
+        textView.text = "Session Date: N/A"
+        return
+    }
+
+    val date = Date(timestamp)
+    val formatType = textView.tag as? String ?: "default"
+
+    val format = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+    val formattedDate = format.format(date)
+
+    textView.text = when (formatType) {
+        "default" -> "Session Date: $formattedDate"
+        "monthYear" -> {
+            val monthFormat = SimpleDateFormat("MMMM - yyyy", Locale.getDefault())
+            val monthYear = monthFormat.format(date)
+            "UWIN Session  $monthYear"
+        }
+        else -> "Session Date: $formattedDate"
+    }
+}
+

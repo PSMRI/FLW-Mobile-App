@@ -53,28 +53,32 @@
                 app:layout_constraintTop_toTopOf="parent">
 
 
-            <TextView
-                android:id="@+id/tvSessionDate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                <TextView
+                    android:id="@+id/tvHeaderDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="@dimen/padding_small"
+                    android:padding="@dimen/_10sdp"
+                    android:gravity="center_vertical|start"
+                    app:formattedSessionDate='@{uwin.sessionDate}'
+                    android:textColor="?attr/colorPrimaryVariant"
+                    app:drawableLeftCompat="@drawable/ic_calendar"
+                    app:drawableTint="?attr/colorPrimary"
+                    android:tag="monthYear"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Date" />
 
-                android:drawablePadding="@dimen/padding_small"
-                android:padding="@dimen/_10sdp"
-                android:gravity="center_vertical"
-                app:formattedSessionDate='@{uwin.sessionDate}'
-                android:textColor="?attr/colorPrimaryVariant"
-                app:drawableLeftCompat="@drawable/ic_calendar"
-                app:drawableTint="?attr/colorPrimary"
-
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="Date" />
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
 
 
                 <ImageView
                     android:id="@+id/iv_sync_state"
                     android:layout_width="24dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical|end"
+                    android:layout_gravity="end|center_vertical"
                     android:layout_marginHorizontal="@dimen/padding_small"
                     android:contentDescription="@string/iv_sync_state_tv"
                     app:syncState="@{uwin.syncState}"
@@ -85,6 +89,17 @@
 
             <TextView
                 android:layout_marginTop="@dimen/_10sdp"
+                android:id="@+id/tvSessionDate"
+                android:padding="@dimen/padding_normal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:formattedSessionDate='@{uwin.sessionDate}'
+                android:tag="default"
+                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                android:textColor="?attr/colorOnPrimary"
+                />
+
+            <TextView
                 android:id="@+id/tvPlace"
                 android:padding="@dimen/padding_normal"
                 android:layout_width="wrap_content"

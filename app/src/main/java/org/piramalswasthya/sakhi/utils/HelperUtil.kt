@@ -1,5 +1,4 @@
 package org.piramalswasthya.sakhi.utils
-
 import android.content.ContentResolver
 import android.content.Context
 import android.content.res.Configuration
@@ -28,9 +27,6 @@ import android.widget.Toast
 import androidx.collection.lruCache
 import androidx.core.content.FileProvider
 import androidx.core.graphics.withTranslation
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.piramalswasthya.sakhi.R
@@ -44,19 +40,7 @@ import java.io.FileOutputStream
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Date
 import java.util.Locale
-
-
-@BindingAdapter("formattedSessionDate")
-fun setFormattedSessionDate(textView: TextView, timestamp: Long?) {
-    textView.text = if (timestamp != null) {
-        val format = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
-        "Session Date: ${format.format(Date(timestamp))}"
-    } else {
-        "Session Date: N/A"
-    }
-}
 
 object HelperUtil {
 
@@ -548,18 +532,22 @@ object HelperUtil {
             .setView(binding.root)
             .setCancelable(true)
             .create()
-    fun convertToServerDate(local: String?): String? {
-        if (local.isNullOrBlank()) return null
-        val parts = local.split("-")
-        if (parts.size != 3) return local
-        return "${parts[2]}-${parts[1]}-${parts[0]}"
-    }
+
+
+
 
         Glide.with(this).load(uri).placeholder(R.drawable.ic_person)
             .into(binding.viewImage)
 
         binding.btnClose.setOnClickListener { dialog.dismiss() }
         dialog.show()
+    }
+
+    fun convertToServerDate(local: String?): String? {
+        if (local.isNullOrBlank()) return null
+        val parts = local.split("-")
+        if (parts.size != 3) return local
+        return "${parts[2]}-${parts[1]}-${parts[0]}"
     }
 
     fun Context.showMediaOptionsDialog(
@@ -595,42 +583,10 @@ object HelperUtil {
         )
     }
 
-    fun getFileName(context: Context, uri: Uri): String? {
-        if (uri.scheme == ContentResolver.SCHEME_CONTENT) {
-            context.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
-                val index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                if (cursor.moveToFirst() && index >= 0) return cursor.getString(index)
-            }
-        }
-        return uri.path?.let { File(it).name }
-    }
 
-    fun copyToTemp(context: Context, uri: Uri, nameHint: String): File? = runCatching {
-        val suffix = nameHint.substringAfterLast('.', "")
-        val temp = File.createTempFile("uwin_", if (suffix.isNotEmpty()) ".$suffix" else null, context.cacheDir)
-        context.contentResolver.openInputStream(uri)?.use { ins ->
-            FileOutputStream(temp).use { outs -> ins.copyTo(outs) }
-        }
-        temp
-    }.getOrNull()
 
-    fun compressImageToTemp(context: Context, uri: Uri, nameHint: String): File? = runCatching {
-        val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-        context.contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, options) }
 
-        val (srcW, srcH) = options.outWidth to options.outHeight
-        val maxDim = 1280
-        var sample = 1
-        while (srcW / sample > maxDim || srcH / sample > maxDim) sample *= 2
 
-        val opts2 = BitmapFactory.Options().apply { inSampleSize = sample }
-        val bmp = context.contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, opts2) }
-            ?: return copyToTemp(context, uri, nameHint)
-
-        val temp = File.createTempFile("uwin_img_", ".jpg", context.cacheDir)
-        FileOutputStream(temp).use { fos -> bmp.compress(Bitmap.CompressFormat.JPEG, 80, fos) }
-        temp
-    }.getOrNull()
 
 
 
@@ -646,15 +602,7 @@ object HelperUtil {
     }
 
 
-    @BindingAdapter("formattedSessionDate")
-    fun TextView.setFormattedSessionDate(timestamp: Long?) {
-        text = if (timestamp != null) {
-            val format = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
-            "Session Date: ${format.format(Date(timestamp))}"
-        } else {
-            "Session Date: N/A"
-        }
-    }
+
     fun convertToLocalDate(server: String?): String? {
         if (server.isNullOrBlank()) return null
         val parts = server.split("-")
