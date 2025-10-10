@@ -339,6 +339,12 @@ class IconDataset @Inject constructor(
         resources.getString(R.string.maa_meeting),
         null,
         VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToAllMaaMeetingFragment()
+    )   ,
+        Icon(
+            R.drawable.dewarming,
+            resources.getString(R.string.u_win_session),
+            null,
+            VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToUwinListFragment()
     )
     )
 

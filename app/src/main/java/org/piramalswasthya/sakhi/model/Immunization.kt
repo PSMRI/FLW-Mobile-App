@@ -67,7 +67,9 @@ data class ImmunizationCache(
     var createdDate: Long = System.currentTimeMillis(),
     var updatedBy: String,
     val updatedDate: Long = System.currentTimeMillis(),
-    var syncState: SyncState
+    var syncState: SyncState,
+    var mcpCardSummary1 : String ? = null,
+    var mcpCardSummary2 : String ? = null
 ) : FormDataModel {
     fun asPostModel(): ImmunizationPost {
         return ImmunizationPost(
@@ -81,7 +83,9 @@ data class ImmunizationCache(
             createdDate = getDateStrFromLong(createdDate),
             createdBy = createdBy,
             modifiedBy = updatedBy,
-            lastModDate = getDateStrFromLong(updatedDate)
+            lastModDate = getDateStrFromLong(updatedDate),
+            mcpCardSummary1 = mcpCardSummary1,
+            mcpCardSummary2 = mcpCardSummary2
         )
     }
 }
@@ -154,7 +158,9 @@ data class ImmunizationPost(
     val createdDate: String? = null,
     val createdBy: String,
     var lastModDate: String? = null,
-    var modifiedBy: String
+    var modifiedBy: String,
+    var mcpCardSummary1 : String ? = null,
+    var mcpCardSummary2 : String ? = null
 ) {
     fun toCacheModel(): ImmunizationCache {
         return ImmunizationCache(
@@ -171,7 +177,9 @@ data class ImmunizationPost(
             createdDate = getLongFromDate(createdDate),
             updatedBy = modifiedBy,
             updatedDate = getLongFromDate(lastModDate),
-            syncState = SyncState.SYNCED
+            syncState = SyncState.SYNCED,
+            mcpCardSummary1 = mcpCardSummary1,
+            mcpCardSummary2 = mcpCardSummary2,
         )
     }
 }

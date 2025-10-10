@@ -43,6 +43,7 @@ import org.piramalswasthya.sakhi.database.room.dao.PncDao
 import org.piramalswasthya.sakhi.database.room.dao.ProfileDao
 import org.piramalswasthya.sakhi.database.room.dao.SyncDao
 import org.piramalswasthya.sakhi.database.room.dao.TBDao
+import org.piramalswasthya.sakhi.database.room.dao.UwinDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormSchemaDao
@@ -91,6 +92,7 @@ import org.piramalswasthya.sakhi.model.PregnantWomanRegistrationCache
 import org.piramalswasthya.sakhi.model.ProfileActivityCache
 import org.piramalswasthya.sakhi.model.TBScreeningCache
 import org.piramalswasthya.sakhi.model.TBSuspectedCache
+import org.piramalswasthya.sakhi.model.UwinCache
 import org.piramalswasthya.sakhi.model.MaaMeetingEntity
 import org.piramalswasthya.sakhi.model.VHNCCache
 import org.piramalswasthya.sakhi.model.Vaccine
@@ -153,13 +155,18 @@ import org.piramalswasthya.sakhi.model.VHNDCache
         MaaMeetingEntity::class,
         FormResponseJsonEntity::class,
         GeneralOPEDBeneficiary::class,
+        UwinCache::class
     ],
     views = [BenBasicCache::class],
 
-    version = 30, exportSchema = false
+    version = 31, exportSchema = false
 )
 
-@TypeConverters(LocationEntityListConverter::class, SyncStateConverter::class, StringListConverter::class)
+@TypeConverters(
+    LocationEntityListConverter::class,
+    SyncStateConverter::class,
+    StringListConverter::class
+)
 
 abstract class InAppDb : RoomDatabase() {
 
@@ -195,6 +202,7 @@ abstract class InAppDb : RoomDatabase() {
     abstract val abhaGenratedDao: ABHAGenratedDao
     abstract val generalOpdDao: GeneralOpdDao
     abstract val maaMeetingDao: MaaMeetingDao
+    abstract val uwinDao: UwinDao
 
     abstract fun infantDao(): InfantDao
     abstract fun formSchemaDao(): FormSchemaDao
@@ -216,14 +224,37 @@ abstract class InAppDb : RoomDatabase() {
             })
 
 
-
 //            val MIGRATION_22_23 = object : Migration(22, 23) {
 //                override fun migrate(database: SupportSQLiteDatabase) {
 //                    database.execSQL("ALTER TABLE GENERAL_OPD_ACTIVITY ADD COLUMN village TEXT")
 //                }
 //            }
 
-            val MIGRATION_29_30 = object : Migration(29,30) {
+            val MIGRATION_30_31 = object : Migration(30, 31) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("ALTER TABLE IMMUNIZATION ADD COLUMN mcpCardSummary1 TEXT")
+                    database.execSQL("ALTER TABLE IMMUNIZATION ADD COLUMN mcpCardSummary2 TEXT")
+                    database.execSQL(
+                        """
+                           CREATE TABLE IF NOT EXISTS `UWIN_SESSION` (
+                          `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                          `sessionDate` INTEGER NOT NULL,
+                          `place` TEXT,
+                          `participantsCount` INTEGER NOT NULL,
+                          `uploadedFiles1` TEXT,
+                          `uploadedFiles2` TEXT,
+                          `processed` TEXT,
+                          `createdBy` TEXT NOT NULL,
+                          `createdDate` INTEGER NOT NULL,
+                          `updatedBy` TEXT NOT NULL,
+                          `updatedDate` INTEGER NOT NULL,
+                          `syncState` TEXT NOT NULL
+                           )
+                           """.trimIndent()
+                    )
+                }
+            }
+            val MIGRATION_29_30 = object : Migration(29, 30) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     database.execSQL(
                         "CREATE TABLE IF NOT EXISTS `MAA_MEETING` (" +
@@ -243,8 +274,7 @@ abstract class InAppDb : RoomDatabase() {
                 }
             }
 
-            val MIGRATION_27_28 = object  : Migration(27,28)
-            {
+            val MIGRATION_27_28 = object : Migration(27, 28) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     val cursor = database.query("PRAGMA table_info(PNC_VISIT)")
                     val existingColumns = mutableSetOf<String>()
@@ -266,19 +296,18 @@ abstract class InAppDb : RoomDatabase() {
                         database.execSQL("ALTER TABLE PNC_VISIT ADD COLUMN deliveryDischargeSummary4 TEXT")
                     }
                     if (!existingColumns.contains("sterilisationDate")) {
-                        database.execSQL("ALTER TABLE PNC_VISIT ADD COLUMN sterilisationDate INTEGER ")                    }
+                        database.execSQL("ALTER TABLE PNC_VISIT ADD COLUMN sterilisationDate INTEGER ")
+                    }
                 }
 
             }
 
-            val MIGRATION_26_27 = object  : Migration(26,27)
-            {
+            val MIGRATION_26_27 = object : Migration(26, 27) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     database.execSQL("ALTER TABLE INCENTIVE_ACTIVITY ADD COLUMN groupName TEXT")
 
                 }
             }
-
 
 
             val MIGRATION_25_26 = object : Migration(25, 26) {
@@ -390,13 +419,13 @@ abstract class InAppDb : RoomDatabase() {
 //            }
 
 
-
             val MIGRATION_20_21 = object : Migration(20, 21) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     database.execSQL("ALTER TABLE CDR ADD COLUMN cdr1File TEXT")
                     database.execSQL("ALTER TABLE CDR ADD COLUMN cdr2File TEXT")
                     database.execSQL("ALTER TABLE CDR ADD COLUMN cdrDeathCertFile TEXT")
-                    database.execSQL("""
+                    database.execSQL(
+                        """
             CREATE TABLE IF NOT EXISTS `GENERAL_OPD_ACTIVITY` (
                 `benFlowID` INTEGER,
                 `beneficiaryRegID` INTEGER,
@@ -444,63 +473,66 @@ abstract class InAppDb : RoomDatabase() {
                 `visitCategory` TEXT,
                 PRIMARY KEY(`beneficiaryId`)
             )
-        """)
+        """
+                    )
                 }
             }
             val MIGRATION_19_20 = object : Migration(19, 20) {
                 override fun migrate(db: SupportSQLiteDatabase) {
                     db.execSQL("DROP VIEW IF EXISTS BEN_BASIC_CACHE")
-                    db.execSQL("CREATE VIEW `BEN_BASIC_CACHE` AS " +
-                            "SELECT b.beneficiaryId as benId, b.motherName as motherName, b.householdId as hhId, b.regDate, b.firstName as benName, b.lastName as benSurname, b.gender, b.dob as dob, b.familyHeadRelationPosition as relToHeadId" +
-                            ", b.contactNumber as mobileNo, b.fatherName, h.fam_familyHeadName as familyHeadName, b.gen_spouseName as spouseName, b.rchId, b.gen_lastMenstrualPeriod as lastMenstrualPeriod" +
-                            ", b.isHrpStatus as hrpStatus, b.syncState, b.gen_reproductiveStatusId as reproductiveStatusId, b.isKid, b.immunizationStatus" +
-                            ", b.loc_village_id as villageId, b.abha_healthIdNumber as abhaId" +
-                            ", b.isNewAbha" +
-                            ", IFNULL(cbac.benId IS NOT NULL, 0) as cbacFilled, cbac.syncState as cbacSyncState" +
-                            ", IFNULL(cdr.benId IS NOT NULL, 0) as cdrFilled, cdr.syncState as cdrSyncState" +
-                            ", IFNULL(mdsr.benId IS NOT NULL, 0) as mdsrFilled, mdsr.syncState as mdsrSyncState" +
-                            ", IFNULL(pmsma.benId IS NOT NULL, 0) as pmsmaFilled, pmsma.syncState as pmsmaSyncState" +
-                            ", IFNULL(hbnc.benId IS NOT NULL, 0) as hbncFilled" +
-                            ", IFNULL(hbyc.benId IS NOT NULL, 0) as hbycFilled" +
-                            ", IFNULL(pwr.benId IS NOT NULL, 0) as pwrFilled, pwr.syncState as pwrSyncState" +
-                            ", IFNULL(pwa.pregnantWomanDelivered, 0) as isDelivered, IFNULL(pwa.hrpConfirmed, 0) as pwHrp" +
-                            ", IFNULL(ecr.benId IS NOT NULL, 0) as ecrFilled" +
-                            ", IFNULL(ect.benId IS NOT NULL, 0) as ectFilled" +
-                            ", IFNULL((pwa.maternalDeath OR do.complication = 'DEATH' OR pnc.motherDeath), 0) as isMdsr" +
-                            ", IFNULL(tbsn.benId IS NOT NULL, 0) as tbsnFilled, tbsn.syncState as tbsnSyncState" +
-                            ", IFNULL(tbsp.benId IS NOT NULL, 0) as tbspFilled, tbsp.syncState as tbspSyncState" +
-                            ", IFNULL(ir.motherBenId IS NOT NULL, 0) as irFilled, ir.syncState as irSyncState" +
-                            ", IFNULL(cr.motherBenId IS NOT NULL, 0) as crFilled, cr.syncState as crSyncState" +
-                            ", IFNULL(do.benId IS NOT NULL, 0) as doFilled, do.syncState as doSyncState" +
-                            ", IFNULL((hrppa.benId IS NOT NULL AND hrppa.noOfDeliveries IS NOT NULL AND hrppa.timeLessThan18m IS NOT NULL AND hrppa.heightShort IS NOT NULL AND hrppa.age IS NOT NULL AND hrppa.rhNegative IS NOT NULL AND hrppa.homeDelivery IS NOT NULL AND hrppa.badObstetric IS NOT NULL AND hrppa.multiplePregnancy IS NOT NULL), 0) as hrppaFilled, hrppa.syncState as hrppaSyncState" +
-                            ", IFNULL((hrpnpa.benId IS NOT NULL AND hrpnpa.noOfDeliveries IS NOT NULL AND hrpnpa.timeLessThan18m IS NOT NULL AND hrpnpa.heightShort IS NOT NULL AND hrpnpa.age IS NOT NULL AND hrpnpa.misCarriage IS NOT NULL AND hrpnpa.homeDelivery IS NOT NULL AND hrpnpa.medicalIssues IS NOT NULL AND hrpnpa.pastCSection IS NOT NULL), 0) as hrpnpaFilled, hrpnpa.syncState as hrpnpaSyncState" +
-                            ", IFNULL(hrpmbp.benId IS NOT NULL, 0) as hrpmbpFilled, hrpmbp.syncState as hrpmbpSyncState" +
-                            ", IFNULL(hrpt.benId IS NOT NULL, 0) as hrptFilled, IFNULL(((count(distinct hrpt.id) > 3) OR (((JulianDay('now')) - JulianDay(date(max(hrpt.visitDate)/1000,'unixepoch','localtime'))) < 1)), 0) as hrptrackingDone, hrpt.syncState as hrptSyncState" +
-                            ", IFNULL(hrnpt.benId IS NOT NULL, 0) as hrnptFilled, IFNULL(((JulianDay('now') - JulianDay(date(max(hrnpt.visitDate)/1000,'unixepoch','localtime'))) < 1), 0) as hrnptrackingDone, hrnpt.syncState as hrnptSyncState " +
-                            "FROM BENEFICIARY b " +
-                            "JOIN HOUSEHOLD h ON b.householdId = h.householdId " +
-                            "LEFT OUTER JOIN CBAC cbac ON b.beneficiaryId = cbac.benId " +
-                            "LEFT OUTER JOIN CDR cdr ON b.beneficiaryId = cdr.benId " +
-                            "LEFT OUTER JOIN MDSR mdsr ON b.beneficiaryId = mdsr.benId " +
-                            "LEFT OUTER JOIN PMSMA pmsma ON b.beneficiaryId = pmsma.benId " +
-                            "LEFT OUTER JOIN HBNC hbnc ON b.beneficiaryId = hbnc.benId " +
-                            "LEFT OUTER JOIN HBYC hbyc ON b.beneficiaryId = hbyc.benId " +
-                            "LEFT OUTER JOIN PREGNANCY_REGISTER pwr ON b.beneficiaryId = pwr.benId " +
-                            "LEFT OUTER JOIN PREGNANCY_ANC pwa ON b.beneficiaryId = pwa.benId " +
-                            "LEFT OUTER JOIN pnc_visit pnc ON b.beneficiaryId = pnc.benId " +
-                            "LEFT OUTER JOIN ELIGIBLE_COUPLE_REG ecr ON b.beneficiaryId = ecr.benId " +
-                            "LEFT OUTER JOIN ELIGIBLE_COUPLE_TRACKING ect ON (b.beneficiaryId = ect.benId AND CAST((strftime('%s','now') - ect.visitDate/1000)/60/60/24 AS INTEGER) < 30) " +
-                            "LEFT OUTER JOIN TB_SCREENING tbsn ON b.beneficiaryId = tbsn.benId " +
-                            "LEFT OUTER JOIN TB_SUSPECTED tbsp ON b.beneficiaryId = tbsp.benId " +
-                            "LEFT OUTER JOIN HRP_PREGNANT_ASSESS hrppa ON b.beneficiaryId = hrppa.benId " +
-                            "LEFT OUTER JOIN HRP_NON_PREGNANT_ASSESS hrpnpa ON b.beneficiaryId = hrpnpa.benId " +
-                            "LEFT OUTER JOIN HRP_MICRO_BIRTH_PLAN hrpmbp ON b.beneficiaryId = hrpmbp.benId " +
-                            "LEFT OUTER JOIN HRP_NON_PREGNANT_TRACK hrnpt ON b.beneficiaryId = hrnpt.benId " +
-                            "LEFT OUTER JOIN HRP_PREGNANT_TRACK hrpt ON b.beneficiaryId = hrpt.benId " +
-                            "LEFT OUTER JOIN DELIVERY_OUTCOME do ON b.beneficiaryId = do.benId " +
-                            "LEFT OUTER JOIN INFANT_REG ir ON b.beneficiaryId = ir.motherBenId " +
-                            "LEFT OUTER JOIN CHILD_REG cr ON b.beneficiaryId = cr.motherBenId " +
-                            "WHERE b.isDraft = 0 GROUP BY b.beneficiaryId ORDER BY b.updatedDate DESC")
+                    db.execSQL(
+                        "CREATE VIEW `BEN_BASIC_CACHE` AS " +
+                                "SELECT b.beneficiaryId as benId, b.motherName as motherName, b.householdId as hhId, b.regDate, b.firstName as benName, b.lastName as benSurname, b.gender, b.dob as dob, b.familyHeadRelationPosition as relToHeadId" +
+                                ", b.contactNumber as mobileNo, b.fatherName, h.fam_familyHeadName as familyHeadName, b.gen_spouseName as spouseName, b.rchId, b.gen_lastMenstrualPeriod as lastMenstrualPeriod" +
+                                ", b.isHrpStatus as hrpStatus, b.syncState, b.gen_reproductiveStatusId as reproductiveStatusId, b.isKid, b.immunizationStatus" +
+                                ", b.loc_village_id as villageId, b.abha_healthIdNumber as abhaId" +
+                                ", b.isNewAbha" +
+                                ", IFNULL(cbac.benId IS NOT NULL, 0) as cbacFilled, cbac.syncState as cbacSyncState" +
+                                ", IFNULL(cdr.benId IS NOT NULL, 0) as cdrFilled, cdr.syncState as cdrSyncState" +
+                                ", IFNULL(mdsr.benId IS NOT NULL, 0) as mdsrFilled, mdsr.syncState as mdsrSyncState" +
+                                ", IFNULL(pmsma.benId IS NOT NULL, 0) as pmsmaFilled, pmsma.syncState as pmsmaSyncState" +
+                                ", IFNULL(hbnc.benId IS NOT NULL, 0) as hbncFilled" +
+                                ", IFNULL(hbyc.benId IS NOT NULL, 0) as hbycFilled" +
+                                ", IFNULL(pwr.benId IS NOT NULL, 0) as pwrFilled, pwr.syncState as pwrSyncState" +
+                                ", IFNULL(pwa.pregnantWomanDelivered, 0) as isDelivered, IFNULL(pwa.hrpConfirmed, 0) as pwHrp" +
+                                ", IFNULL(ecr.benId IS NOT NULL, 0) as ecrFilled" +
+                                ", IFNULL(ect.benId IS NOT NULL, 0) as ectFilled" +
+                                ", IFNULL((pwa.maternalDeath OR do.complication = 'DEATH' OR pnc.motherDeath), 0) as isMdsr" +
+                                ", IFNULL(tbsn.benId IS NOT NULL, 0) as tbsnFilled, tbsn.syncState as tbsnSyncState" +
+                                ", IFNULL(tbsp.benId IS NOT NULL, 0) as tbspFilled, tbsp.syncState as tbspSyncState" +
+                                ", IFNULL(ir.motherBenId IS NOT NULL, 0) as irFilled, ir.syncState as irSyncState" +
+                                ", IFNULL(cr.motherBenId IS NOT NULL, 0) as crFilled, cr.syncState as crSyncState" +
+                                ", IFNULL(do.benId IS NOT NULL, 0) as doFilled, do.syncState as doSyncState" +
+                                ", IFNULL((hrppa.benId IS NOT NULL AND hrppa.noOfDeliveries IS NOT NULL AND hrppa.timeLessThan18m IS NOT NULL AND hrppa.heightShort IS NOT NULL AND hrppa.age IS NOT NULL AND hrppa.rhNegative IS NOT NULL AND hrppa.homeDelivery IS NOT NULL AND hrppa.badObstetric IS NOT NULL AND hrppa.multiplePregnancy IS NOT NULL), 0) as hrppaFilled, hrppa.syncState as hrppaSyncState" +
+                                ", IFNULL((hrpnpa.benId IS NOT NULL AND hrpnpa.noOfDeliveries IS NOT NULL AND hrpnpa.timeLessThan18m IS NOT NULL AND hrpnpa.heightShort IS NOT NULL AND hrpnpa.age IS NOT NULL AND hrpnpa.misCarriage IS NOT NULL AND hrpnpa.homeDelivery IS NOT NULL AND hrpnpa.medicalIssues IS NOT NULL AND hrpnpa.pastCSection IS NOT NULL), 0) as hrpnpaFilled, hrpnpa.syncState as hrpnpaSyncState" +
+                                ", IFNULL(hrpmbp.benId IS NOT NULL, 0) as hrpmbpFilled, hrpmbp.syncState as hrpmbpSyncState" +
+                                ", IFNULL(hrpt.benId IS NOT NULL, 0) as hrptFilled, IFNULL(((count(distinct hrpt.id) > 3) OR (((JulianDay('now')) - JulianDay(date(max(hrpt.visitDate)/1000,'unixepoch','localtime'))) < 1)), 0) as hrptrackingDone, hrpt.syncState as hrptSyncState" +
+                                ", IFNULL(hrnpt.benId IS NOT NULL, 0) as hrnptFilled, IFNULL(((JulianDay('now') - JulianDay(date(max(hrnpt.visitDate)/1000,'unixepoch','localtime'))) < 1), 0) as hrnptrackingDone, hrnpt.syncState as hrnptSyncState " +
+                                "FROM BENEFICIARY b " +
+                                "JOIN HOUSEHOLD h ON b.householdId = h.householdId " +
+                                "LEFT OUTER JOIN CBAC cbac ON b.beneficiaryId = cbac.benId " +
+                                "LEFT OUTER JOIN CDR cdr ON b.beneficiaryId = cdr.benId " +
+                                "LEFT OUTER JOIN MDSR mdsr ON b.beneficiaryId = mdsr.benId " +
+                                "LEFT OUTER JOIN PMSMA pmsma ON b.beneficiaryId = pmsma.benId " +
+                                "LEFT OUTER JOIN HBNC hbnc ON b.beneficiaryId = hbnc.benId " +
+                                "LEFT OUTER JOIN HBYC hbyc ON b.beneficiaryId = hbyc.benId " +
+                                "LEFT OUTER JOIN PREGNANCY_REGISTER pwr ON b.beneficiaryId = pwr.benId " +
+                                "LEFT OUTER JOIN PREGNANCY_ANC pwa ON b.beneficiaryId = pwa.benId " +
+                                "LEFT OUTER JOIN pnc_visit pnc ON b.beneficiaryId = pnc.benId " +
+                                "LEFT OUTER JOIN ELIGIBLE_COUPLE_REG ecr ON b.beneficiaryId = ecr.benId " +
+                                "LEFT OUTER JOIN ELIGIBLE_COUPLE_TRACKING ect ON (b.beneficiaryId = ect.benId AND CAST((strftime('%s','now') - ect.visitDate/1000)/60/60/24 AS INTEGER) < 30) " +
+                                "LEFT OUTER JOIN TB_SCREENING tbsn ON b.beneficiaryId = tbsn.benId " +
+                                "LEFT OUTER JOIN TB_SUSPECTED tbsp ON b.beneficiaryId = tbsp.benId " +
+                                "LEFT OUTER JOIN HRP_PREGNANT_ASSESS hrppa ON b.beneficiaryId = hrppa.benId " +
+                                "LEFT OUTER JOIN HRP_NON_PREGNANT_ASSESS hrpnpa ON b.beneficiaryId = hrpnpa.benId " +
+                                "LEFT OUTER JOIN HRP_MICRO_BIRTH_PLAN hrpmbp ON b.beneficiaryId = hrpmbp.benId " +
+                                "LEFT OUTER JOIN HRP_NON_PREGNANT_TRACK hrnpt ON b.beneficiaryId = hrnpt.benId " +
+                                "LEFT OUTER JOIN HRP_PREGNANT_TRACK hrpt ON b.beneficiaryId = hrpt.benId " +
+                                "LEFT OUTER JOIN DELIVERY_OUTCOME do ON b.beneficiaryId = do.benId " +
+                                "LEFT OUTER JOIN INFANT_REG ir ON b.beneficiaryId = ir.motherBenId " +
+                                "LEFT OUTER JOIN CHILD_REG cr ON b.beneficiaryId = cr.motherBenId " +
+                                "WHERE b.isDraft = 0 GROUP BY b.beneficiaryId ORDER BY b.updatedDate DESC"
+                    )
                     db.execSQL("ALTER TABLE MALARIA_SCREENING ADD COLUMN slideTestName TEXT")
                 }
             }
@@ -551,7 +583,8 @@ abstract class InAppDb : RoomDatabase() {
             val MIGRATION_17_18 = object : Migration(17, 18) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     // 1. Create new table with updated schema
-                    database.execSQL("""
+                    database.execSQL(
+                        """
             CREATE TABLE IF NOT EXISTS `ABHA_GENERATED_NEW` (
                 `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 `beneficiaryID` INTEGER NOT NULL,
@@ -569,10 +602,12 @@ abstract class InAppDb : RoomDatabase() {
                 `syncState` INTEGER NOT NULL,
                 FOREIGN KEY(`beneficiaryID`) REFERENCES `BENEFICIARY`(`beneficiaryId`) ON UPDATE CASCADE ON DELETE CASCADE
             )
-        """.trimIndent())
+        """.trimIndent()
+                    )
                     // 2. Copy existing data into new table (with default/placeholder values for new fields)
                     try {
-                        database.execSQL("""
+                        database.execSQL(
+                            """
                 INSERT INTO ABHA_GENERATED_NEW (
                     id,
                     beneficiaryID,
@@ -605,16 +640,22 @@ abstract class InAppDb : RoomDatabase() {
                     0,
                     0
                 FROM ABHA_GENERATED
-            """.trimIndent())
+            """.trimIndent()
+                        )
                     } catch (e: Exception) {
                         // Table might not exist on some devices — log and continue
-                        Log.w("RoomMigration", "Skipping data copy: ABHA_GENERATED table not found", e)
+                        Log.w(
+                            "RoomMigration",
+                            "Skipping data copy: ABHA_GENERATED table not found",
+                            e
+                        )
                     }
 
                     // 3. Drop old table
                     try {
                         database.execSQL("DROP TABLE IF EXISTS ABHA_GENERATED")
-                    } catch (_: Exception) {}
+                    } catch (_: Exception) {
+                    }
 
                     // 4. Rename new table
                     database.execSQL("ALTER TABLE ABHA_GENERATED_NEW RENAME TO ABHA_GENERATED")
@@ -627,7 +668,8 @@ abstract class InAppDb : RoomDatabase() {
             val MIGRATION_16_18 = object : Migration(16, 18) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     // 1. Create new table with updated schema
-                    database.execSQL("""
+                    database.execSQL(
+                        """
             CREATE TABLE IF NOT EXISTS `ABHA_GENERATED_NEW` (
                 `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 `beneficiaryID` INTEGER NOT NULL,
@@ -645,10 +687,12 @@ abstract class InAppDb : RoomDatabase() {
                 `syncState` INTEGER NOT NULL,
                 FOREIGN KEY(`beneficiaryID`) REFERENCES `BENEFICIARY`(`beneficiaryId`) ON UPDATE CASCADE ON DELETE CASCADE
             )
-        """.trimIndent())
+        """.trimIndent()
+                    )
                     // 2. Copy existing data into new table (with default/placeholder values for new fields)
                     try {
-                        database.execSQL("""
+                        database.execSQL(
+                            """
                 INSERT INTO ABHA_GENERATED_NEW (
                     id,
                     beneficiaryID,
@@ -681,16 +725,22 @@ abstract class InAppDb : RoomDatabase() {
                     0,
                     0
                 FROM ABHA_GENERATED
-            """.trimIndent())
+            """.trimIndent()
+                        )
                     } catch (e: Exception) {
                         // Table might not exist on some devices — log and continue
-                        Log.w("RoomMigration", "Skipping data copy: ABHA_GENERATED table not found", e)
+                        Log.w(
+                            "RoomMigration",
+                            "Skipping data copy: ABHA_GENERATED table not found",
+                            e
+                        )
                     }
 
                     // 3. Drop old table
                     try {
                         database.execSQL("DROP TABLE IF EXISTS ABHA_GENERATED")
-                    } catch (_: Exception) {}
+                    } catch (_: Exception) {
+                    }
 
                     // 4. Rename new table
                     database.execSQL("ALTER TABLE ABHA_GENERATED_NEW RENAME TO ABHA_GENERATED")
@@ -702,7 +752,8 @@ abstract class InAppDb : RoomDatabase() {
 
             val MIGRATION_21_22 = object : Migration(21, 22) {
                 override fun migrate(database: SupportSQLiteDatabase) {
-                    database.execSQL("""
+                    database.execSQL(
+                        """
             CREATE TABLE PREGNANCY_ANC_NEW (
                 id INTEGER NOT NULL PRIMARY KEY,
                 benId INTEGER NOT NULL,
@@ -753,9 +804,11 @@ abstract class InAppDb : RoomDatabase() {
                 FOREIGN KEY(benId) REFERENCES BENEFICIARY(beneficiaryId) 
                   ON UPDATE CASCADE ON DELETE CASCADE
             )
-        """.trimIndent())
+        """.trimIndent()
+                    )
 
-                    database.execSQL("""
+                    database.execSQL(
+                        """
             INSERT INTO PREGNANCY_ANC_NEW (
                 id, benId, visitNumber, isActive, ancDate, isAborted,
                 abortionType, abortionTypeId, abortionFacility, abortionFacilityId, abortionDate,
@@ -782,7 +835,8 @@ abstract class InAppDb : RoomDatabase() {
                 processed, createdBy, createdDate, updatedBy, updatedDate, syncState,
                 frontFilePath, backFilePath
             FROM PREGNANCY_ANC
-        """.trimIndent())
+        """.trimIndent()
+                    )
 
                     database.execSQL("DROP TABLE PREGNANCY_ANC")
 
@@ -809,57 +863,59 @@ abstract class InAppDb : RoomDatabase() {
                     db.execSQL("DROP VIEW IF EXISTS BEN_BASIC_CACHE")
 
                     // Step 3: Create the new view with a clean, correct, and complete SQL query.
-                    db.execSQL("CREATE VIEW `BEN_BASIC_CACHE` AS " +
-                            "SELECT b.beneficiaryId as benId, b.householdId as hhId, b.regDate, b.firstName as benName, b.lastName as benSurname, b.gender, b.dob as dob, b.familyHeadRelationPosition as relToHeadId" +
-                            ", b.contactNumber as mobileNo, b.fatherName, h.fam_familyHeadName as familyHeadName, b.gen_spouseName as spouseName, b.rchId, b.gen_lastMenstrualPeriod as lastMenstrualPeriod" +
-                            ", b.isHrpStatus as hrpStatus, b.syncState, b.gen_reproductiveStatusId as reproductiveStatusId, b.isKid, b.immunizationStatus" +
-                            ", b.loc_village_id as villageId, b.abha_healthIdNumber as abhaId" +
-                            ", b.isNewAbha" +
-                            ", IFNULL(cbac.benId IS NOT NULL, 0) as cbacFilled, cbac.syncState as cbacSyncState" +
-                            ", IFNULL(cdr.benId IS NOT NULL, 0) as cdrFilled, cdr.syncState as cdrSyncState" +
-                            ", IFNULL(mdsr.benId IS NOT NULL, 0) as mdsrFilled, mdsr.syncState as mdsrSyncState" +
-                            ", IFNULL(pmsma.benId IS NOT NULL, 0) as pmsmaFilled, pmsma.syncState as pmsmaSyncState" +
-                            ", IFNULL(hbnc.benId IS NOT NULL, 0) as hbncFilled" +
-                            ", IFNULL(hbyc.benId IS NOT NULL, 0) as hbycFilled" +
-                            ", IFNULL(pwr.benId IS NOT NULL, 0) as pwrFilled, pwr.syncState as pwrSyncState" +
-                            ", IFNULL(pwa.pregnantWomanDelivered, 0) as isDelivered, IFNULL(pwa.hrpConfirmed, 0) as pwHrp" +
-                            ", IFNULL(ecr.benId IS NOT NULL, 0) as ecrFilled" +
-                            ", IFNULL(ect.benId IS NOT NULL, 0) as ectFilled" +
-                            ", IFNULL((pwa.maternalDeath OR do.complication = 'DEATH' OR pnc.motherDeath), 0) as isMdsr" +
-                            ", IFNULL(tbsn.benId IS NOT NULL, 0) as tbsnFilled, tbsn.syncState as tbsnSyncState" +
-                            ", IFNULL(tbsp.benId IS NOT NULL, 0) as tbspFilled, tbsp.syncState as tbspSyncState" +
-                            ", IFNULL(ir.motherBenId IS NOT NULL, 0) as irFilled, ir.syncState as irSyncState" +
-                            ", IFNULL(cr.motherBenId IS NOT NULL, 0) as crFilled, cr.syncState as crSyncState" +
-                            ", IFNULL(do.benId IS NOT NULL, 0) as doFilled, do.syncState as doSyncState" +
-                            ", IFNULL((hrppa.benId IS NOT NULL AND hrppa.noOfDeliveries IS NOT NULL AND hrppa.timeLessThan18m IS NOT NULL AND hrppa.heightShort IS NOT NULL AND hrppa.age IS NOT NULL AND hrppa.rhNegative IS NOT NULL AND hrppa.homeDelivery IS NOT NULL AND hrppa.badObstetric IS NOT NULL AND hrppa.multiplePregnancy IS NOT NULL), 0) as hrppaFilled, hrppa.syncState as hrppaSyncState" +
-                            ", IFNULL((hrpnpa.benId IS NOT NULL AND hrpnpa.noOfDeliveries IS NOT NULL AND hrpnpa.timeLessThan18m IS NOT NULL AND hrpnpa.heightShort IS NOT NULL AND hrpnpa.age IS NOT NULL AND hrpnpa.misCarriage IS NOT NULL AND hrpnpa.homeDelivery IS NOT NULL AND hrpnpa.medicalIssues IS NOT NULL AND hrpnpa.pastCSection IS NOT NULL), 0) as hrpnpaFilled, hrpnpa.syncState as hrpnpaSyncState" +
-                            ", IFNULL(hrpmbp.benId IS NOT NULL, 0) as hrpmbpFilled, hrpmbp.syncState as hrpmbpSyncState" +
-                            ", IFNULL(hrpt.benId IS NOT NULL, 0) as hrptFilled, IFNULL(((count(distinct hrpt.id) > 3) OR (((JulianDay('now')) - JulianDay(date(max(hrpt.visitDate)/1000,'unixepoch','localtime'))) < 1)), 0) as hrptrackingDone, hrpt.syncState as hrptSyncState" +
-                            ", IFNULL(hrnpt.benId IS NOT NULL, 0) as hrnptFilled, IFNULL(((JulianDay('now') - JulianDay(date(max(hrnpt.visitDate)/1000,'unixepoch','localtime'))) < 1), 0) as hrnptrackingDone, hrnpt.syncState as hrnptSyncState " +
-                            "FROM BENEFICIARY b " +
-                            "JOIN HOUSEHOLD h ON b.householdId = h.householdId " +
-                            "LEFT OUTER JOIN CBAC cbac ON b.beneficiaryId = cbac.benId " +
-                            "LEFT OUTER JOIN CDR cdr ON b.beneficiaryId = cdr.benId " +
-                            "LEFT OUTER JOIN MDSR mdsr ON b.beneficiaryId = mdsr.benId " +
-                            "LEFT OUTER JOIN PMSMA pmsma ON b.beneficiaryId = pmsma.benId " +
-                            "LEFT OUTER JOIN HBNC hbnc ON b.beneficiaryId = hbnc.benId " +
-                            "LEFT OUTER JOIN HBYC hbyc ON b.beneficiaryId = hbyc.benId " +
-                            "LEFT OUTER JOIN PREGNANCY_REGISTER pwr ON b.beneficiaryId = pwr.benId " +
-                            "LEFT OUTER JOIN PREGNANCY_ANC pwa ON b.beneficiaryId = pwa.benId " +
-                            "LEFT OUTER JOIN pnc_visit pnc ON b.beneficiaryId = pnc.benId " +
-                            "LEFT OUTER JOIN ELIGIBLE_COUPLE_REG ecr ON b.beneficiaryId = ecr.benId " +
-                            "LEFT OUTER JOIN ELIGIBLE_COUPLE_TRACKING ect ON (b.beneficiaryId = ect.benId AND CAST((strftime('%s','now') - ect.visitDate/1000)/60/60/24 AS INTEGER) < 30) " +
-                            "LEFT OUTER JOIN TB_SCREENING tbsn ON b.beneficiaryId = tbsn.benId " +
-                            "LEFT OUTER JOIN TB_SUSPECTED tbsp ON b.beneficiaryId = tbsp.benId " +
-                            "LEFT OUTER JOIN HRP_PREGNANT_ASSESS hrppa ON b.beneficiaryId = hrppa.benId " +
-                            "LEFT OUTER JOIN HRP_NON_PREGNANT_ASSESS hrpnpa ON b.beneficiaryId = hrpnpa.benId " +
-                            "LEFT OUTER JOIN HRP_MICRO_BIRTH_PLAN hrpmbp ON b.beneficiaryId = hrpmbp.benId " +
-                            "LEFT OUTER JOIN HRP_NON_PREGNANT_TRACK hrnpt ON b.beneficiaryId = hrnpt.benId " +
-                            "LEFT OUTER JOIN HRP_PREGNANT_TRACK hrpt ON b.beneficiaryId = hrpt.benId " +
-                            "LEFT OUTER JOIN DELIVERY_OUTCOME do ON b.beneficiaryId = do.benId " +
-                            "LEFT OUTER JOIN INFANT_REG ir ON b.beneficiaryId = ir.motherBenId " +
-                            "LEFT OUTER JOIN CHILD_REG cr ON b.beneficiaryId = cr.motherBenId " +
-                            "WHERE b.isDraft = 0 GROUP BY b.beneficiaryId ORDER BY b.updatedDate DESC")
+                    db.execSQL(
+                        "CREATE VIEW `BEN_BASIC_CACHE` AS " +
+                                "SELECT b.beneficiaryId as benId, b.householdId as hhId, b.regDate, b.firstName as benName, b.lastName as benSurname, b.gender, b.dob as dob, b.familyHeadRelationPosition as relToHeadId" +
+                                ", b.contactNumber as mobileNo, b.fatherName, h.fam_familyHeadName as familyHeadName, b.gen_spouseName as spouseName, b.rchId, b.gen_lastMenstrualPeriod as lastMenstrualPeriod" +
+                                ", b.isHrpStatus as hrpStatus, b.syncState, b.gen_reproductiveStatusId as reproductiveStatusId, b.isKid, b.immunizationStatus" +
+                                ", b.loc_village_id as villageId, b.abha_healthIdNumber as abhaId" +
+                                ", b.isNewAbha" +
+                                ", IFNULL(cbac.benId IS NOT NULL, 0) as cbacFilled, cbac.syncState as cbacSyncState" +
+                                ", IFNULL(cdr.benId IS NOT NULL, 0) as cdrFilled, cdr.syncState as cdrSyncState" +
+                                ", IFNULL(mdsr.benId IS NOT NULL, 0) as mdsrFilled, mdsr.syncState as mdsrSyncState" +
+                                ", IFNULL(pmsma.benId IS NOT NULL, 0) as pmsmaFilled, pmsma.syncState as pmsmaSyncState" +
+                                ", IFNULL(hbnc.benId IS NOT NULL, 0) as hbncFilled" +
+                                ", IFNULL(hbyc.benId IS NOT NULL, 0) as hbycFilled" +
+                                ", IFNULL(pwr.benId IS NOT NULL, 0) as pwrFilled, pwr.syncState as pwrSyncState" +
+                                ", IFNULL(pwa.pregnantWomanDelivered, 0) as isDelivered, IFNULL(pwa.hrpConfirmed, 0) as pwHrp" +
+                                ", IFNULL(ecr.benId IS NOT NULL, 0) as ecrFilled" +
+                                ", IFNULL(ect.benId IS NOT NULL, 0) as ectFilled" +
+                                ", IFNULL((pwa.maternalDeath OR do.complication = 'DEATH' OR pnc.motherDeath), 0) as isMdsr" +
+                                ", IFNULL(tbsn.benId IS NOT NULL, 0) as tbsnFilled, tbsn.syncState as tbsnSyncState" +
+                                ", IFNULL(tbsp.benId IS NOT NULL, 0) as tbspFilled, tbsp.syncState as tbspSyncState" +
+                                ", IFNULL(ir.motherBenId IS NOT NULL, 0) as irFilled, ir.syncState as irSyncState" +
+                                ", IFNULL(cr.motherBenId IS NOT NULL, 0) as crFilled, cr.syncState as crSyncState" +
+                                ", IFNULL(do.benId IS NOT NULL, 0) as doFilled, do.syncState as doSyncState" +
+                                ", IFNULL((hrppa.benId IS NOT NULL AND hrppa.noOfDeliveries IS NOT NULL AND hrppa.timeLessThan18m IS NOT NULL AND hrppa.heightShort IS NOT NULL AND hrppa.age IS NOT NULL AND hrppa.rhNegative IS NOT NULL AND hrppa.homeDelivery IS NOT NULL AND hrppa.badObstetric IS NOT NULL AND hrppa.multiplePregnancy IS NOT NULL), 0) as hrppaFilled, hrppa.syncState as hrppaSyncState" +
+                                ", IFNULL((hrpnpa.benId IS NOT NULL AND hrpnpa.noOfDeliveries IS NOT NULL AND hrpnpa.timeLessThan18m IS NOT NULL AND hrpnpa.heightShort IS NOT NULL AND hrpnpa.age IS NOT NULL AND hrpnpa.misCarriage IS NOT NULL AND hrpnpa.homeDelivery IS NOT NULL AND hrpnpa.medicalIssues IS NOT NULL AND hrpnpa.pastCSection IS NOT NULL), 0) as hrpnpaFilled, hrpnpa.syncState as hrpnpaSyncState" +
+                                ", IFNULL(hrpmbp.benId IS NOT NULL, 0) as hrpmbpFilled, hrpmbp.syncState as hrpmbpSyncState" +
+                                ", IFNULL(hrpt.benId IS NOT NULL, 0) as hrptFilled, IFNULL(((count(distinct hrpt.id) > 3) OR (((JulianDay('now')) - JulianDay(date(max(hrpt.visitDate)/1000,'unixepoch','localtime'))) < 1)), 0) as hrptrackingDone, hrpt.syncState as hrptSyncState" +
+                                ", IFNULL(hrnpt.benId IS NOT NULL, 0) as hrnptFilled, IFNULL(((JulianDay('now') - JulianDay(date(max(hrnpt.visitDate)/1000,'unixepoch','localtime'))) < 1), 0) as hrnptrackingDone, hrnpt.syncState as hrnptSyncState " +
+                                "FROM BENEFICIARY b " +
+                                "JOIN HOUSEHOLD h ON b.householdId = h.householdId " +
+                                "LEFT OUTER JOIN CBAC cbac ON b.beneficiaryId = cbac.benId " +
+                                "LEFT OUTER JOIN CDR cdr ON b.beneficiaryId = cdr.benId " +
+                                "LEFT OUTER JOIN MDSR mdsr ON b.beneficiaryId = mdsr.benId " +
+                                "LEFT OUTER JOIN PMSMA pmsma ON b.beneficiaryId = pmsma.benId " +
+                                "LEFT OUTER JOIN HBNC hbnc ON b.beneficiaryId = hbnc.benId " +
+                                "LEFT OUTER JOIN HBYC hbyc ON b.beneficiaryId = hbyc.benId " +
+                                "LEFT OUTER JOIN PREGNANCY_REGISTER pwr ON b.beneficiaryId = pwr.benId " +
+                                "LEFT OUTER JOIN PREGNANCY_ANC pwa ON b.beneficiaryId = pwa.benId " +
+                                "LEFT OUTER JOIN pnc_visit pnc ON b.beneficiaryId = pnc.benId " +
+                                "LEFT OUTER JOIN ELIGIBLE_COUPLE_REG ecr ON b.beneficiaryId = ecr.benId " +
+                                "LEFT OUTER JOIN ELIGIBLE_COUPLE_TRACKING ect ON (b.beneficiaryId = ect.benId AND CAST((strftime('%s','now') - ect.visitDate/1000)/60/60/24 AS INTEGER) < 30) " +
+                                "LEFT OUTER JOIN TB_SCREENING tbsn ON b.beneficiaryId = tbsn.benId " +
+                                "LEFT OUTER JOIN TB_SUSPECTED tbsp ON b.beneficiaryId = tbsp.benId " +
+                                "LEFT OUTER JOIN HRP_PREGNANT_ASSESS hrppa ON b.beneficiaryId = hrppa.benId " +
+                                "LEFT OUTER JOIN HRP_NON_PREGNANT_ASSESS hrpnpa ON b.beneficiaryId = hrpnpa.benId " +
+                                "LEFT OUTER JOIN HRP_MICRO_BIRTH_PLAN hrpmbp ON b.beneficiaryId = hrpmbp.benId " +
+                                "LEFT OUTER JOIN HRP_NON_PREGNANT_TRACK hrnpt ON b.beneficiaryId = hrnpt.benId " +
+                                "LEFT OUTER JOIN HRP_PREGNANT_TRACK hrpt ON b.beneficiaryId = hrpt.benId " +
+                                "LEFT OUTER JOIN DELIVERY_OUTCOME do ON b.beneficiaryId = do.benId " +
+                                "LEFT OUTER JOIN INFANT_REG ir ON b.beneficiaryId = ir.motherBenId " +
+                                "LEFT OUTER JOIN CHILD_REG cr ON b.beneficiaryId = cr.motherBenId " +
+                                "WHERE b.isDraft = 0 GROUP BY b.beneficiaryId ORDER BY b.updatedDate DESC"
+                    )
                 }
             }
 
@@ -868,20 +924,22 @@ abstract class InAppDb : RoomDatabase() {
                 it.execSQL("DROP VIEW IF EXISTS BEN_BASIC_CACHE");
                 //  it.execSQL("CREATE VIEW BEN_BASIC_CACHE AS " +
                 //         "SELECT  benId,hhId,regDate,benName,benSurname,gender,dob,relToHeadId,mobileNo,fatherName,familyHeadName,spouseName,rchId,hrpStatus,syncState,reproductiveStatusId, lastMenstrualPeriod,isKid,immunizationStatus,villageId,abhaId,isNewAbha,cbacFilled,cbacSyncState,cdrFilled,cdrSyncState,mdsrFilled,mdsrSyncState,pmsmaSyncState,pmsmaFilled,hbncFilled,hbycFilled,pwrFilled,pwrSyncState,doSyncState,irSyncState,crSyncState,ecrFilled,ectFilled,tbsnFilled,tbsnSyncState,tbspFilled,tbspSyncState,hrppaFilled,hrpnpaFilled,hrpmbpFilled,hrptFilled,hrptrackingDone,hrnptrackingDone,hrnptFilled,hrppaSyncState,hrpnpaSyncState,hrpmbpSyncState,hrptSyncState,hrnptSyncState,isDelivered,pwHrp,irFilled,isMdsr,crFilled,doFilled FROM BENEFICIARY");
-                it.execSQL("CREATE VIEW BEN_BASIC_CACHE AS " +
-                        "SELECT b.beneficiaryId as benId, b.householdId as hhId, b.regDate, " +
-                        "b.firstName as benName, b.lastName as benSurname, b.gender, b.dob as dob, " +
-                        "b.familyHeadRelationPosition as relToHeadId, b.contactNumber as mobileNo, " +
-                        "b.fatherName, h.fam_familyHeadName as familyHeadName, b.gen_spouseName as spouseName, " +
-                        "b.rchId, b.gen_lastMenstrualPeriod as lastMenstrualPeriod, b.isHrpStatus as hrpStatus, " +
-                        "b.syncState, b.gen_reproductiveStatusId as reproductiveStatusId, b.isKid, b.immunizationStatus, " +
-                        "b.loc_village_id as villageId, b.abha_healthIdNumber as abhaId, " +
-                        "b.isNewAbha, " + // Added the new column here
-                        "cbac.benId is not null as cbacFilled, cbac.syncState as cbacSyncState " +
-                        "FROM BENEFICIARY b " +
-                        "JOIN HOUSEHOLD h ON b.householdId = h.householdId " +
-                        "LEFT OUTER JOIN CBAC cbac on b.beneficiaryId = cbac.benId " +
-                        "WHERE b.isDraft = 0 GROUP BY b.beneficiaryId ORDER BY b.updatedDate DESC")
+                it.execSQL(
+                    "CREATE VIEW BEN_BASIC_CACHE AS " +
+                            "SELECT b.beneficiaryId as benId, b.householdId as hhId, b.regDate, " +
+                            "b.firstName as benName, b.lastName as benSurname, b.gender, b.dob as dob, " +
+                            "b.familyHeadRelationPosition as relToHeadId, b.contactNumber as mobileNo, " +
+                            "b.fatherName, h.fam_familyHeadName as familyHeadName, b.gen_spouseName as spouseName, " +
+                            "b.rchId, b.gen_lastMenstrualPeriod as lastMenstrualPeriod, b.isHrpStatus as hrpStatus, " +
+                            "b.syncState, b.gen_reproductiveStatusId as reproductiveStatusId, b.isKid, b.immunizationStatus, " +
+                            "b.loc_village_id as villageId, b.abha_healthIdNumber as abhaId, " +
+                            "b.isNewAbha, " + // Added the new column here
+                            "cbac.benId is not null as cbacFilled, cbac.syncState as cbacSyncState " +
+                            "FROM BENEFICIARY b " +
+                            "JOIN HOUSEHOLD h ON b.householdId = h.householdId " +
+                            "LEFT OUTER JOIN CBAC cbac on b.beneficiaryId = cbac.benId " +
+                            "WHERE b.isDraft = 0 GROUP BY b.beneficiaryId ORDER BY b.updatedDate DESC"
+                )
 
             })
 
@@ -916,7 +974,8 @@ abstract class InAppDb : RoomDatabase() {
 
                         // 1. Create new table with correct schema
 
-                        database.execSQL("""
+                        database.execSQL(
+                            """
             CREATE TABLE PROFILE_ACTIVITY_new (
                 id INTEGER PRIMARY KEY NOT NULL,
                 name TEXT,  -- nullable (because String?)
@@ -948,9 +1007,11 @@ abstract class InAppDb : RoomDatabase() {
                 supervisorName TEXT NOT NULL,
                 supervisorMobile TEXT NOT NULL
             )
-        """)
+        """
+                        )
 
-                        database.execSQL("""
+                        database.execSQL(
+                            """
             INSERT INTO PROFILE_ACTIVITY_new (
                 id, name, profileImage, village, employeeId, dob, age, mobileNumber,
                 alternateMobileNumber, fatherOrSpouseName, dateOfJoining, bankAccount,
@@ -990,7 +1051,8 @@ abstract class InAppDb : RoomDatabase() {
                 supervisorName,
                 supervisorMobile
             FROM PROFILE_ACTIVITY
-        """)
+        """
+                        )
 
                         database.execSQL("DROP TABLE PROFILE_ACTIVITY")
                         database.execSQL("ALTER TABLE PROFILE_ACTIVITY_new RENAME TO PROFILE_ACTIVITY")
@@ -1010,7 +1072,6 @@ abstract class InAppDb : RoomDatabase() {
                         for (column in columns) {
                             database.execSQL("ALTER TABLE BENEFICIARY ADD COLUMN $column")
                         }
-
 
 
                         // 🔹 Columns for PREGNANCY_ANC table
@@ -1075,7 +1136,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_26_27,
                         MIGRATION_27_28,
                         MIGRATION_28_29,
-                        MIGRATION_29_30
+                        MIGRATION_29_30,
+                        MIGRATION_30_31
                     ).build()
 
                     INSTANCE = instance
