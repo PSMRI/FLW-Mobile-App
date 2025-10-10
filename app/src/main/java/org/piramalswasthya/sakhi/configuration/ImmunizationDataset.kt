@@ -138,7 +138,7 @@ class ImmunizationDataset(context: Context, language: Languages) : Dataset(conte
 //        name.value = ben.firstName ?: "Baby of ${ben.motherName}"
 //        motherName.value = ben.motherName
 //        dateOfBirth.value = getDateFromLong(ben.dob)
-        doseName.value = vaccine.immunizationService.name
+//        doseName.value = vaccine.immunizationService.name
         vaccineName.value = vaccine.vaccineName.dropLastWhile { it.isDigit() }
         doseNumber.value = vaccine.vaccineName.takeLastWhile { it.isDigit() }
         vaccinationDueDate.value = getDateFromLong(ben.dob + vaccine.maxAllowedAgeInMillis)
@@ -185,12 +185,12 @@ class ImmunizationDataset(context: Context, language: Languages) : Dataset(conte
 
     fun setImageUriToFormElement(lastImageFormId: Int, dpUri: Uri) {
         when (lastImageFormId) {
-            111 -> {
+            mcpCard1.id -> {
                 mcpCard1.value = dpUri.toString()
                 mcpCard1.errorText = null
             }
 
-            112 -> {
+            mcpCard2.id -> {
                 mcpCard2.value = dpUri.toString()
                 mcpCard2.errorText = null
             }

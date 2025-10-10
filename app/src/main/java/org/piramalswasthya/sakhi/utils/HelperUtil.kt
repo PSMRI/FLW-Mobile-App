@@ -507,7 +507,17 @@ object HelperUtil {
     }
 
     fun Context.isFileTooLarge(uri: Uri): Boolean {
-        return contentResolver.openInputStream(uri)?.available()?.let { it > 5 * 1024 * 1024 } ?: false
+            return contentResolver.openAssetFileDescriptor(uri, "r")?.use {
+                   it.length > 5 * 1024 * 1024
+                } ?: contentResolver.openInputStream(uri)?.use { stream ->
+                    var total = 0L
+                    val buffer = ByteArray(8192)
+                    var read: Int
+                    while (stream.read(buffer).also { read = it } != -1 && total <= 5 * 1024 * 1024) {
+                            total += read
+                        }
+                    total > 5 * 1024 * 1024
+                } ?: false
     }
     fun compressImageToTemp(uri: android.net.Uri, nameHint: String, appContext: Context): File? {
         return try {
@@ -571,14 +581,15 @@ object HelperUtil {
 
     fun Context.showUploadReminderDialog(
         message: String,
-        onPositive: () -> Unit
+        onNo: () -> Unit
     ) {
         showReminderDialog(
             title = getString(R.string.reminder),
             message = message,
-            positiveText = getString(R.string.yes_1),
-            negativeText = getString(R.string.no_1),
-            onNegative = onPositive,
+            positiveText = getString(R.string.yes_dialog),
+            negativeText = getString(R.string.no_dialog),
+            onPositive = {},
+            onNegative = onNo,
             context = this
         )
     }

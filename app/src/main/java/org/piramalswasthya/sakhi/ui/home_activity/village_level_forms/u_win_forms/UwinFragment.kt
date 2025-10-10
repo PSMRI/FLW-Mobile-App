@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
@@ -56,7 +57,9 @@ class UwinFragment : Fragment() {
         120 to null, 121 to null
     )
 
-    private val PICK_IMAGE = 1
+    private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        handleImageResult(viewModel.getDocumentFormId(), uri)
+    }
 
     private val takePictureLauncher =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
@@ -161,12 +164,27 @@ class UwinFragment : Fragment() {
     }
 
     private fun selectImage() {
-        startActivityForResult(Intent(Intent.ACTION_PICK).apply { type = "image/*" }, PICK_IMAGE)
+        pickImageLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+    }
+
+    private fun handleImageResult(formId: Int, uri: Uri?) {
+        uri?.let {
+            if (checkFileSize(it, requireContext())) {
+                Toast.makeText(context, resources.getString(R.string.file_size), Toast.LENGTH_LONG).show()
+            } else updateAdapterForFormId(formId, it)
+        }
     }
 
     private fun handleCameraResult() {
         val formId = viewModel.getDocumentFormId()
-        uwinSummary[formId]?.let { updateAdapterForFormId(formId, it) }
+        uwinSummary[formId]?.let {uri ->
+        if (checkFileSize(uri, requireContext())) {
+            Toast.makeText(context, resources.getString(R.string.file_size), Toast.LENGTH_LONG).show()
+            uwinSummary[formId] = null
+        } else {
+            updateAdapterForFormId(formId, uri)
+        }
+    }
     }
 
     @Deprecated("Deprecated in Java")

@@ -33,7 +33,7 @@
     <string name="title_new_ben_reg_non_hof">Family Member Registration</string>
     <string name="icon_title_abortion">गर्भपात सूची</string>
     <string name="icon_title_pmsma">PMSMA List</string>
-    <string name="mother_rch_id">Mother RCH ID</string>
+    <string name="mother_rch_id">मां की RCH आईडी</string>
     <string-array name="anc_paiucd_done_by">
         <item>डॉक्टर</item>
         <item>नर्स</item>

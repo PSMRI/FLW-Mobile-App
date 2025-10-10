@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Update
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.model.UwinCache
 
@@ -15,14 +16,18 @@ interface UwinDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(session: UwinCache)
 
+    @Update
+    suspend fun update(session: UwinCache)
+
     @Query("SELECT * FROM UWIN_SESSION")
     suspend fun getAllSessions(): List<UwinCache>
 
     @Query("SELECT * FROM UWIN_SESSION WHERE id = :id LIMIT 1")
     suspend fun getUwinById(id: Int): UwinCache?
 
-    @Query("SELECT * FROM UWIN_SESSION WHERE syncState != 'SYNCED'")
-    suspend fun getUnsyncedSessions(): List<UwinCache>
+    @Query("SELECT * FROM UWIN_SESSION WHERE syncState != :synced")
+    suspend fun getUnsyncedSessions(synced: SyncState = SyncState.SYNCED): List<UwinCache>
+
 
     @Query("UPDATE UWIN_SESSION SET syncState = :syncState WHERE id = :id")
     suspend fun updateSyncState(id: Int, syncState: SyncState)
