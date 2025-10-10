@@ -187,17 +187,7 @@ class UwinFragment : Fragment() {
     }
     }
 
-    @Deprecated("Deprecated in Java")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == PICK_IMAGE && resultCode == Activity.RESULT_OK) {
-            data?.data?.let { uri ->
-                if (requireContext().isFileTooLarge(uri)) {
-                    context?.showToast(getString(R.string.file_size))
-                } else updateAdapterForFormId(viewModel.getDocumentFormId(), uri)
-            }
-        }
-    }
+
 
     private fun updateAdapterForFormId(formId: Int, uri: Uri) {
         uwinSummary[formId] = uri

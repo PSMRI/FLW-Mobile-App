@@ -638,20 +638,20 @@ fun getDateFromLong(time: Long) : Date {
 //    val format = SimpleDateFormat(pattern, Locale.getDefault())
     return date
 }
-
 fun getPatientTypeByAge(dateOfBirth: Date): String {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
         val birthDate = dateOfBirth.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
         val currentDate = LocalDate.now()
         val period = Period.between(birthDate, currentDate)
+
         val years = period.years
-        val months = period.months % 12
-        val days = period.days % 30
+        val months = period.months
+        val days = period.days
 
         when {
-            (days <= 30 || months <= 1) && years < 1 -> "new_born_baby"
-            (years < 1 && months <= 12) || (months == 0 && days == 0 && years == 1) -> "infant"
+            years == 0 && months == 0 && days <= 30 -> "new_born_baby"
+            years == 0 && (months > 0 || days > 30) -> "infant"
             years in 1..12 -> "child"
             years in 13..18 -> "adolescence"
             else -> "adult"
@@ -660,20 +660,31 @@ fun getPatientTypeByAge(dateOfBirth: Date): String {
 
         val current = Calendar.getInstance()
         val birth = Calendar.getInstance().apply { time = dateOfBirth }
-        val years = current.get(Calendar.YEAR) - birth.get(Calendar.YEAR)
-        val months = current.get(Calendar.MONTH) - birth.get(Calendar.MONTH)
-        val days = current.get(Calendar.DAY_OF_MONTH) - birth.get(Calendar.DAY_OF_MONTH)
-        val correctedYears = if (months < 0 || (months == 0 && days < 0)) years - 1 else years
+
+        var years = current.get(Calendar.YEAR) - birth.get(Calendar.YEAR)
+        var months = current.get(Calendar.MONTH) - birth.get(Calendar.MONTH)
+        var days = current.get(Calendar.DAY_OF_MONTH) - birth.get(Calendar.DAY_OF_MONTH)
+
+
+        if (days < 0) {
+            months -= 1
+            days += current.getActualMaximum(Calendar.DAY_OF_MONTH)
+        }
+        if (months < 0) {
+            years -= 1
+            months += 12
+        }
 
         when {
-            correctedYears == 0 && months <= 1 -> "new_born_baby"
-            correctedYears == 0 && months <= 12 -> "infant"
-            correctedYears in 1..12 -> "child"
-            correctedYears in 13..18 -> "adolescence"
+            years == 0 && months <= 1 -> "new_born_baby"
+            years == 0 && months <= 12 -> "infant"
+            years in 1..12 -> "child"
+            years in 13..18 -> "adolescence"
             else -> "adult"
         }
     }
 }
+
 
 
 sealed class NetworkResponse<T>(val data: T? = null, val message: String? = null) {

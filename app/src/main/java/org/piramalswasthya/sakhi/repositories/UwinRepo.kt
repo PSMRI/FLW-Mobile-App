@@ -50,6 +50,7 @@ class UwinRepo @Inject constructor(
     private val moshi: Moshi
 ) {
 
+    private val maxRetries = 3
     fun getAllLocalRecords() = uwinDao.getAllUwinRecords()
 
     suspend fun insertLocalRecord(record: UwinCache) = withContext(Dispatchers.IO) {
@@ -110,7 +111,14 @@ class UwinRepo @Inject constructor(
         }
     }
 
-    suspend fun postUwinSession(network: UwinNetwork): Boolean = withContext(Dispatchers.IO) {
+    suspend fun postUwinSession(network: UwinNetwork,retryCount: Int = 0): Boolean = withContext(Dispatchers.IO) {
+
+        if (retryCount >= maxRetries) {
+            Timber.e("❌ Max retries ($maxRetries) exceeded for session id=${network.id}")
+            return@withContext false
+        }
+
+
         val user = preferenceDao.getLoggedInUser() ?: return@withContext false
 
         val images = buildMultipartFromUris(network)
@@ -162,7 +170,7 @@ class UwinRepo @Inject constructor(
                     5002 -> {
                         Timber.w("🔁 Token expired. Refreshing token and retrying...")
                         if (userRepo.refreshTokenTmc(user.userName, user.password)) {
-                            throw SocketTimeoutException("Retry after token refresh")
+                            return@withContext postUwinSession(network, retryCount + 1)
                         }
                         false
                     }
@@ -179,7 +187,7 @@ class UwinRepo @Inject constructor(
             }
         } catch (e: SocketTimeoutException) {
             Timber.w("⏳ Timeout — Retrying postUwinSession...")
-            postUwinSession(network)
+            postUwinSession(network, retryCount + 1)
         } catch (e: Exception) {
             Timber.e(e, "❌ Exception posting UWIN session")
             false
