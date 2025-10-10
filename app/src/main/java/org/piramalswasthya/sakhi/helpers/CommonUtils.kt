@@ -639,37 +639,40 @@ fun getDateFromLong(time: Long) : Date {
     return date
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 fun getPatientTypeByAge(dateOfBirth: Date): String {
-    val birthDate = dateOfBirth.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
-    val currentDate = LocalDate.now()
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
-    val period = Period.between(birthDate, currentDate)
-    val years = period.years
-    val months = period.months % 12
-    val days = period.days % 30
+        val birthDate = dateOfBirth.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+        val currentDate = LocalDate.now()
+        val period = Period.between(birthDate, currentDate)
+        val years = period.years
+        val months = period.months % 12
+        val days = period.days % 30
 
-    var type= ""
-    if((days <= 30 || months<=1) && years<1 ){
-        type = "new_born_baby"
+        when {
+            (days <= 30 || months <= 1) && years < 1 -> "new_born_baby"
+            (years < 1 && months <= 12) || (months == 0 && days == 0 && years == 1) -> "infant"
+            years in 1..12 -> "child"
+            years in 13..18 -> "adolescence"
+            else -> "adult"
+        }
+    } else {
+
+        val current = Calendar.getInstance()
+        val birth = Calendar.getInstance().apply { time = dateOfBirth }
+        val years = current.get(Calendar.YEAR) - birth.get(Calendar.YEAR)
+        val months = current.get(Calendar.MONTH) - birth.get(Calendar.MONTH)
+        val days = current.get(Calendar.DAY_OF_MONTH) - birth.get(Calendar.DAY_OF_MONTH)
+        val correctedYears = if (months < 0 || (months == 0 && days < 0)) years - 1 else years
+
+        when {
+            correctedYears == 0 && months <= 1 -> "new_born_baby"
+            correctedYears == 0 && months <= 12 -> "infant"
+            correctedYears in 1..12 -> "child"
+            correctedYears in 13..18 -> "adolescence"
+            else -> "adult"
+        }
     }
-    if((years<1 && months<=12) || (months==0 && days==0 && years==1)){
-        type = "infant"
-    }
-
-    if(years>=1&& years<=12){
-        type ="child"
-    }
-
-    if(years>=12 && years<=18){
-        type = "adolescence"
-    }
-
-    if(years>=18){
-        type = "adult"
-    }
-
-    return type
 }
 
 

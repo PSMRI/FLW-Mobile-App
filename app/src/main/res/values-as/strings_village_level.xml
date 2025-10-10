@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="u_win_session_date">U-WIN Session Date</string>
-    <string name="place">Place</string>
-    <string name="no_of_participants_attended">No. of Participants Attended</string>
+
 </resources>

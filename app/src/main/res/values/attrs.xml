@@ -61,7 +61,5 @@
     <declare-styleable name="TextView">
         <attr name="formatType" format="string" />
         <attr name="formattedSessionDate" format="integer" />
-        <attr name="drawableLeftCompat" format="reference" />
-        <attr name="drawableTint" format="color|reference" />
     </declare-styleable>
 </resources>

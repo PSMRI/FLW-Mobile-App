@@ -106,7 +106,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                 android:textColor="?attr/colorOnPrimary"
-                android:text='@{"Place: " + uwin.place}' />
+                android:text='@{@string/place_label(uwin.place)}' />
 
             <TextView
                 android:id="@+id/tvParticipants"
@@ -115,7 +115,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                 android:textColor="?attr/colorOnPrimary"
-                android:text='@{"Participants: " + String.valueOf(uwin.participantsCount)}' />
+                android:text='@{@string/participant_label(uwin.participantsCount)}' />
         </LinearLayout>
 
             <com.google.android.material.button.MaterialButton

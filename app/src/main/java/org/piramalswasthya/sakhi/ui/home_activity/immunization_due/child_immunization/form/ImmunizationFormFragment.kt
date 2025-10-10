@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.CompoundButton
 import android.widget.CompoundButton.OnCheckedChangeListener
 import android.widget.Toast
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.core.content.FileProvider
@@ -60,7 +61,12 @@ class ImmunizationFormFragment : Fragment(), OnCheckedChangeListener {
 
 
 
-    private val PICK_IMAGE = 1
+
+
+    private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+                    handleImageResult(viewModel.getDocumentFormId(), uri)
+                }
+
 
     private val takePictureLauncher =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
@@ -275,7 +281,14 @@ class ImmunizationFormFragment : Fragment(), OnCheckedChangeListener {
     }
     private fun handleCameraResult() {
         val formId = viewModel.getDocumentFormId()
-        mcpCardUris[formId]?.let { updateAdapterForFormId(formId, it) }
+        mcpCardUris[formId]?.let { uri ->
+                   if (checkFileSize(uri, requireContext())) {
+                            Toast.makeText(context, resources.getString(R.string.file_size), Toast.LENGTH_LONG).show()
+                            mcpCardUris[formId] = null
+                        } else {
+                            updateAdapterForFormId(formId, uri)
+                        }
+                }
     }
 
     private fun updateAdapterForFormId(formId: Int, uri: Uri) {
@@ -293,8 +306,7 @@ class ImmunizationFormFragment : Fragment(), OnCheckedChangeListener {
     }
 
     private fun selectImage() {
-        val intent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
-        startActivityForResult(intent, PICK_IMAGE)
+        pickImageLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
 
     private fun viewDocuments(formId: Int) {
@@ -313,14 +325,14 @@ class ImmunizationFormFragment : Fragment(), OnCheckedChangeListener {
 
 
 
-    @Deprecated("Deprecated in Java")
+  /*  @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == PICK_IMAGE && resultCode == Activity.RESULT_OK) {
             handleImageResult(viewModel.getDocumentFormId(), data?.data)
         }
     }
-
+*/
     private fun handleImageResult(formId: Int, uri: Uri?) {
         uri?.let {
             if (checkFileSize(it, requireContext())) {

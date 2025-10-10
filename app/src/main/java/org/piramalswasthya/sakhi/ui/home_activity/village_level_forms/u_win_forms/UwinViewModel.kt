@@ -92,7 +92,11 @@ class UwinViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 _state.postValue(State.SAVING)
-                val uwinCache = UwinCache(
+                val base = currentUwinCache?.copy(
+                    updatedBy = asha.userName,
+                    updatedDate = System.currentTimeMillis(),
+                    syncState = SyncState.UNSYNCED
+                ) ?: UwinCache(
                     id = 0,
                     sessionDate = 0L,
                     place = "",
@@ -103,9 +107,13 @@ class UwinViewModel @Inject constructor(
                     updatedBy = asha.userName,
                     syncState = SyncState.UNSYNCED
                 )
-                dataset.mapValues(uwinCache, 1)
-                uwinRepo.insertLocalRecord(uwinCache)
-                currentUwinCache = uwinCache
+                dataset.mapValues(base, 1)
+                if (base.id == 0) {
+                    uwinRepo.insertLocalRecord(base)
+                } else {
+                    uwinRepo.updateLocalRecord(base) // add this helper in the repo/dao
+                }
+                currentUwinCache = base
                 _state.postValue(State.SAVE_SUCCESS)
             } catch (e: Exception) {
                 Timber.e(e, "Saving U-Win data failed")

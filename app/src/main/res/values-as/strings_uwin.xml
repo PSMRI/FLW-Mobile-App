@@ -1,8 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="no_u_win_sessions_found">No U-WIN sessions found.</string>
-    <string name="add_new_u_win_entry">Add New U-WIN Entry</string>
-    <string name="u_win_session_list">U-win Session List</string>
-    <string name="u_win_session_detail">U-win Session Detail</string>
-    <string name="do_you_want_to_upload_uwin_form_immunization_page_section_photo_copy_to_claim_your_incentive">Do you want to upload Uwin Form - Immunization page/ section photo copy to claim your Incentive</string>
+
 </resources>

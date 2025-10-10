@@ -56,6 +56,10 @@ class UwinRepo @Inject constructor(
         uwinDao.insert(record)
     }
 
+    suspend fun updateLocalRecord(record: UwinCache) = withContext(Dispatchers.IO) {
+        uwinDao.update(record)
+    }
+
     suspend fun getUwinById(id: Int): UwinCache? = uwinDao.getUwinById(id)
 
     private fun buildMultipartFromUris(network: UwinNetwork): List<MultipartBody.Part> {

@@ -64,13 +64,10 @@ class UwinListFragment : Fragment() {
 
 
     private fun setupObservers() {
-        lifecycleScope.launch {
-            viewModel.uwinList.observe(viewLifecycleOwner) { list ->
+        viewModel.uwinList.observe(viewLifecycleOwner) { list ->
 
-                android.util.Log.d("UwinListFragment", "List updated with ${list?.size ?: 0} items")
-                adapter.submitList(list?.toList())
-                binding.tvNoData.visibility = if (list.isNullOrEmpty()) View.VISIBLE else View.GONE
-            }
+                    adapter.submitList(list?.toList())
+                    binding.tvNoData.visibility = if (list.isNullOrEmpty()) View.VISIBLE else View.GONE
         }
     }
 
