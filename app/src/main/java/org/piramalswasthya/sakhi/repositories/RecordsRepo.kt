@@ -141,6 +141,14 @@ class RecordsRepo @Inject constructor(
         .map { list -> list.map { it.asBasicDomainModel() } }
     val childListCount = childList.map { it.size }
 
+    val childFilteredList = benDao.getAllChildList(selectedVillage, 0, 5 * 365)
+        .map { list ->
+            list
+                .filter { !it.isDeath }
+                .map { it.asBasicDomainModel() }
+        }
+    val childFilteredListCount = childFilteredList.map { it.size }
+
     val adolescentList =
         benDao.getAllAdolescentList(selectedVillage)
             .map { list -> list.map { it.asAdolescentDomainModel() } }

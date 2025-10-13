@@ -160,8 +160,9 @@
         <action
             android:id="@+id/action_childCareFragment_to_childListFragment"
             app:destination="@id/childListFragment" />
-
-
+        <action
+            android:id="@+id/action_childCareFragment_to_childrenUnderFiveYearListFragment"
+            app:destination="@id/childrenUnderFiveYearListFragment" />
     </fragment>
     <fragment
         android:id="@+id/motherCareFragment"
@@ -428,6 +429,13 @@
         <action
             android:id="@+id/action_childListFragment_to_hbycMonthListFragment"
             app:destination="@id/hbycMonthListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/childrenUnderFiveYearListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.child_care.children_under_five_years.ChildrenUnderFiveYearsListFragment"
+        android:label="@string/child_under_five_years_list"
+        tools:layout="@layout/fragment_children_under_five_years_list">
+
     </fragment>
     <fragment
         android:id="@+id/pncMotherListFragment"
