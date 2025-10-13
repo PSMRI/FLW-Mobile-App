@@ -313,6 +313,7 @@
     <string name="pnc_mother_list">PNC Mother List</string>
     <string name="reproductive_age_list">Reproductive Age List</string>
     <string name="ncd_eligible_list">NCD Eligible List</string>
+    <string name="child_under_five_years_list">Child Under Five Years List</string>
     <string name="ncd_list">NCD List</string>
     <string name="ncd_non_eligible_list">NCD Non-Priority List</string>
     <string name="ncd_priority_list">NCD Priority List</string>
@@ -472,6 +473,9 @@
     <string name="referred_date">Referred Date</string>
     <string name="referred_from">Referred From</string>
     <string name="referral_reason">Referral reason</string>
+    <string name="check_sam">Check SAM</string>
+    <string name="ors">ORS</string>
+    <string name="ifa">IFA</string>
     <string name="child_rch_id">Child RCH ID</string>
     <string name="vaccination_due_date">Vaccination Due Date</string>
     <string name="reminder">Reminder!!</string>
