@@ -310,6 +310,16 @@
                             app:layout_constraintTop_toTopOf="parent" />
                     </LinearLayout>
 
+                    <TextView
+                        android:id="@+id/tvDoseName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/dose_name"
+                        android:fontFamily="@font/roboto_medium"
+                        android:textSize="@dimen/_18sdp"
+                        android:textColor="@color/md_theme_light_shadow"
+                        android:padding="8dp"/>
+
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_imm_cat"
                         android:layout_width="match_parent"
