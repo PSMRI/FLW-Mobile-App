@@ -159,17 +159,19 @@ class IncentivesFragment : Fragment() {
         groupedAdapter = IncentiveGroupedAdapter { activityId, activityName ->
             viewLifecycleOwner.lifecycleScope.launch {
                 viewModel.getRecordsForActivity(activityId).collect { records ->
+                    if (records.any {
+                            it.record.benId != 0L
+                        }) {
+                        val bundle = bundleOf(
+                            "records" to ArrayList(records),
+                            "activityName" to activityName
+                        )
+                        setFragmentResult("records_key", bundle)
 
-                    val bundle = bundleOf(
-                        "records" to ArrayList(records),
-                        "activityName" to activityName
-                    )
-                    setFragmentResult("records_key", bundle)
-
-                    findNavController().navigate(
-                        R.id.action_incentivesFragment_to_incentiveDetailFragment,
-                    )
-
+                        findNavController().navigate(
+                            R.id.action_incentivesFragment_to_incentiveDetailFragment,
+                        )
+                    }
                     cancel()
                 }
             }
