@@ -510,7 +510,7 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
     private fun setUpFirstTimePullWorker() {
         WorkerUtils.triggerPeriodicPncEcUpdateWorker(this)
-        WorkerUtils.triggerUwinWorker(this)
+
         if (!pref.isFullPullComplete)
             WorkerUtils.triggerAmritPullWorker(this)
 //        WorkerUtils.triggerD2dSyncWorker(this)
