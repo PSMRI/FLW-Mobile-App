@@ -29,11 +29,17 @@ object TextViewBindingAdapters {
         }
     }
 
-    @JvmStatic
-    @BindingAdapter("visibleForORS", "visibleForSAM", "visibleForIFA", requireAll = false)
-    fun setButtonVisibility(view: View, ors: String?, sam: String?, ifa: String?) {
-        // This adapter can be reused for all buttons.
-    }
+//    @JvmStatic
+//    @BindingAdapter("visibleForORS", "visibleForSAM", "visibleForIFA", requireAll = false)
+//    fun setButtonVisibility(view: View, ors: String?, sam: String?, ifa: String?) {
+//        val isVisible = when {
+//            ors != null -> ors.equals("true", ignoreCase = true)
+//            sam != null -> sam.equals("true", ignoreCase = true)
+//            ifa != null -> ifa.equals("true", ignoreCase = true)
+//            else -> false
+//        }
+//        view.visibility = if (isVisible) View.VISIBLE else View.GONE
+//    }
 
     @JvmStatic
     @BindingAdapter("ageForORSVisibility")

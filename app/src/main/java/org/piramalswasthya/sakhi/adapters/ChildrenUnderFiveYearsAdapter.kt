@@ -9,8 +9,7 @@ import org.piramalswasthya.sakhi.databinding.ChildrenUnderFiveYearsItemBinding
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 
 class ChildrenUnderFiveYearsAdapter(
-    private val clickListener: ChildListClickListener,
-    private val showSyncIcon: Boolean = false
+    private val clickListener: ChildListClickListener
 ) :
     ListAdapter<BenBasicDomain, ChildrenUnderFiveYearsAdapter.BenViewHolder>(BenDiffUtilCallBack) {
     private object BenDiffUtilCallBack : DiffUtil.ItemCallback<BenBasicDomain>() {
@@ -36,10 +35,8 @@ class ChildrenUnderFiveYearsAdapter(
 
         fun bind(
             item: BenBasicDomain,
-            clickListener: ChildListClickListener,
-            showSyncIcon: Boolean,
+            clickListener: ChildListClickListener
         ) {
-            if (!showSyncIcon) item.syncState = null
             binding.ben = item
             binding.clickListener = clickListener
             binding.executePendingBindings()
@@ -52,7 +49,7 @@ class ChildrenUnderFiveYearsAdapter(
     ) = BenViewHolder.from(parent)
 
     override fun onBindViewHolder(holder: BenViewHolder, position: Int) {
-        holder.bind(getItem(position), clickListener, showSyncIcon)
+        holder.bind(getItem(position), clickListener)
     }
 
 

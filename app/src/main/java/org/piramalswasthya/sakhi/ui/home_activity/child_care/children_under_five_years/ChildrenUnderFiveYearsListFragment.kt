@@ -47,8 +47,6 @@ class ChildrenUnderFiveYearsListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.btnNextPage.visibility = View.GONE
-        binding.fabEdit.visibility = View.GONE
 
         benAdapter = ChildrenUnderFiveYearsAdapter(
             ChildrenUnderFiveYearsAdapter.ChildListClickListener { benId, hhId , type->
@@ -63,13 +61,10 @@ class ChildrenUnderFiveYearsListFragment : Fragment() {
         )
         binding.rvAny.adapter = benAdapter
 
-        lifecycleScope.launch {
-            viewModel.benList.collect {
-                if (it.isEmpty())
-                    binding.flEmpty.visibility = View.VISIBLE
-                else
-                    binding.flEmpty.visibility = View.GONE
-                benAdapter.submitList(it)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.benList.collect { list ->
+                binding.flEmpty.visibility = if (list.isEmpty()) View.VISIBLE else View.GONE
+                benAdapter.submitList(list)
             }
         }
 
@@ -109,8 +104,8 @@ class ChildrenUnderFiveYearsListFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
     }
 
