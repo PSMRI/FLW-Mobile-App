@@ -29,18 +29,6 @@ object TextViewBindingAdapters {
         }
     }
 
-//    @JvmStatic
-//    @BindingAdapter("visibleForORS", "visibleForSAM", "visibleForIFA", requireAll = false)
-//    fun setButtonVisibility(view: View, ors: String?, sam: String?, ifa: String?) {
-//        val isVisible = when {
-//            ors != null -> ors.equals("true", ignoreCase = true)
-//            sam != null -> sam.equals("true", ignoreCase = true)
-//            ifa != null -> ifa.equals("true", ignoreCase = true)
-//            else -> false
-//        }
-//        view.visibility = if (isVisible) View.VISIBLE else View.GONE
-//    }
-
     @JvmStatic
     @BindingAdapter("ageForORSVisibility")
     fun setORSVisibility(view: View, ageString: String?) {
@@ -78,7 +66,7 @@ object TextViewBindingAdapters {
 
     // ---- Helper functions ----
     private fun shouldShowORS(ageString: String?): Boolean {
-        val (years, months) = parseAge(ageString)
+        val (years) = parseAge(ageString)
         return years in 0..5
     }
 
