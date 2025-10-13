@@ -260,6 +260,10 @@ object WorkerUtils {
             .setConstraints(networkOnlyConstraint)
             .build()
 
+        val pushUwinWorkerRequest = OneTimeWorkRequestBuilder<PushUwinToAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+
 
         val workManager = WorkManager.getInstance(context)
         workManager
@@ -277,6 +281,7 @@ object WorkerUtils {
             .then(pushECToAmritWorker)
             .then(pushPWWorkRequest)
             .then(pushPmsmaWorkRequest)
+            .then(pushUwinWorkerRequest)
             .then(pushDeliverOutcomeWorkRequest)
             .then(pushPNCWorkRequest)
             .then(pushInfantRegisterWorkRequest)
@@ -368,6 +373,9 @@ object WorkerUtils {
             OneTimeWorkRequestBuilder<PullChildHBNCFromAmritWorker>()
                 .setConstraints(networkOnlyConstraint)
                 .build()
+        val pullUwinWorkerRequest = OneTimeWorkRequestBuilder<PullUwinFromAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
         val pullAshaWorkRequest =
             OneTimeWorkRequestBuilder<PullIncentiveWorker>()
                 .setConstraints(networkOnlyConstraint)
@@ -389,6 +397,7 @@ object WorkerUtils {
         val pullFilariaToAmritWorker = OneTimeWorkRequestBuilder<PullFilariaFromAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
+
         val workManager = WorkManager.getInstance(context)
         workManager
             .beginUniqueWork(
@@ -403,6 +412,7 @@ object WorkerUtils {
             .then(pullTBWorkRequest)
             .then(pullECWorkRequest)
             .then(pullPWWorkRequest)
+            .then(pullUwinWorkerRequest)
             .then(pullPMSMAWorkRequest)
             .then(pullPNCWorkRequest)
             .then(pullDeliveryOutcomeWorkRequest)
@@ -507,6 +517,22 @@ object WorkerUtils {
         WorkManager.getInstance(context)
             .enqueueUniqueWork(GenerateBenIdsWorker.name, ExistingWorkPolicy.KEEP, workRequest)
     }
+
+    fun triggerMaaMeetingWorker(context: Context) {
+        val workRequest = OneTimeWorkRequestBuilder<MaaMeetingDownsyncWorker>()
+            .setConstraints(MaaMeetingDownsyncWorker.constraint)
+            .build()
+        WorkManager.getInstance(context)
+            .enqueueUniqueWork(MaaMeetingDownsyncWorker.name, ExistingWorkPolicy.KEEP, workRequest)
+    }
+    fun triggerUwinWorker(context: Context) {
+        val workRequest = OneTimeWorkRequestBuilder<PullUwinFromAmritWorker>()
+            .setConstraints(PullUwinFromAmritWorker.constraint)
+            .build()
+        WorkManager.getInstance(context)
+            .enqueueUniqueWork(PullUwinFromAmritWorker.name, ExistingWorkPolicy.KEEP, workRequest)
+    }
+
     fun triggerPeriodicPncEcUpdateWorker(context: Context) {
         val workRequest =
             PeriodicWorkRequest.Builder(UpdatePNCToECWorker::class.java, 1, TimeUnit.DAYS)

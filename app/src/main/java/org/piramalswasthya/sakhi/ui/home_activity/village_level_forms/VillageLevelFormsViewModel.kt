@@ -35,7 +35,8 @@ class VillageLevelFormsViewModel @Inject constructor(
         "VHNC" to "vhnc",
         "PHC Review Meeting" to "phc_review",
         "AHD" to "ahd",
-        "National Deworming Day" to "deworming"
+        "National Deworming Day" to "deworming",
+        "U-win Sessions" to "uwin"
     )
 
     @RequiresApi(Build.VERSION_CODES.O)

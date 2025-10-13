@@ -1,5 +1,4 @@
 package org.piramalswasthya.sakhi.utils
-
 import android.content.ContentResolver
 import android.content.Context
 import android.content.res.Configuration
@@ -15,16 +14,24 @@ import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
 import android.text.TextUtils
+import android.util.Base64
 import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
 import android.widget.TableLayout
 import android.widget.TableRow
 import android.widget.TextView
+import android.widget.Toast
 import androidx.collection.lruCache
+import androidx.core.content.FileProvider
 import androidx.core.graphics.withTranslation
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import com.bumptech.glide.Glide
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.databinding.LayoutMediaOptionsBinding
+import org.piramalswasthya.sakhi.databinding.LayoutViewMediaBinding
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.AgeUnitDTO
 import org.piramalswasthya.sakhi.model.EligibleCoupleTrackingCache
@@ -441,6 +448,35 @@ object HelperUtil {
         }
         return "bin" to "application/octet-stream"
     }
+    fun showReminderDialog(
+        title: String,
+        message: String,
+        positiveText: String,
+        negativeText: String? = null,
+        onPositive: (() -> Unit)? = null,
+        onNegative: (() -> Unit)? = null,
+        cancelable: Boolean = false,
+        context: Context
+    ) {
+        MaterialAlertDialogBuilder(context)
+            .setTitle(title)
+            .setMessage(message)
+            .apply {
+                setPositiveButton(positiveText) { dialog, _ ->
+                    dialog.dismiss(); onPositive?.invoke()
+                }
+                negativeText?.let {
+                    setNegativeButton(it) { dialog, _ ->
+                        dialog.dismiss(); onNegative?.invoke()
+                    }
+                }
+            }
+            .setCancelable(cancelable)
+            .show()
+    }
+
+    fun Context.showToast(message: String) =
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
 
     fun getFileName(uri: android.net.Uri, appContext: Context): String? {
         return if (uri.scheme == ContentResolver.SCHEME_CONTENT) {
@@ -452,7 +488,13 @@ object HelperUtil {
             uri.path?.let { path -> File(path).name }
         }
     }
+    fun MutableMap<Int, Uri?>.hasUploadedFile(): Boolean =
+        values.any { it != null }
 
+    fun Context.createTempImageUri(): Uri {
+        val tmpFile = File.createTempFile("uwin_img_", ".jpg", getExternalFilesDir(Environment.DIRECTORY_PICTURES))
+        return FileProvider.getUriForFile(this, "$packageName.provider", tmpFile)
+    }
     fun copyToTemp(uri: android.net.Uri, nameHint: String, appContext: Context): File? {
         return try {
             val suffix = nameHint.substringAfterLast('.', missingDelimiterValue = "")
@@ -464,6 +506,19 @@ object HelperUtil {
         } catch (_: Exception) { null }
     }
 
+    fun Context.isFileTooLarge(uri: Uri): Boolean {
+            return contentResolver.openAssetFileDescriptor(uri, "r")?.use {
+                   it.length > 5 * 1024 * 1024
+                } ?: contentResolver.openInputStream(uri)?.use { stream ->
+                    var total = 0L
+                    val buffer = ByteArray(8192)
+                    var read: Int
+                    while (stream.read(buffer).also { read = it } != -1 && total <= 5 * 1024 * 1024) {
+                            total += read
+                        }
+                    total > 5 * 1024 * 1024
+                } ?: false
+    }
     fun compressImageToTemp(uri: android.net.Uri, nameHint: String, appContext: Context): File? {
         return try {
             val opts = BitmapFactory.Options().apply { inJustDecodeBounds = true }
@@ -481,12 +536,83 @@ object HelperUtil {
         } catch (_: Exception) { null }
     }
 
+    fun Context.showImageDialog(uri: Uri) {
+        val binding = LayoutViewMediaBinding.inflate(LayoutInflater.from(this))
+        val dialog = MaterialAlertDialogBuilder(this)
+            .setView(binding.root)
+            .setCancelable(true)
+            .create()
+
+
+
+
+        Glide.with(this).load(uri).placeholder(R.drawable.ic_person)
+            .into(binding.viewImage)
+
+        binding.btnClose.setOnClickListener { dialog.dismiss() }
+        dialog.show()
+    }
+
     fun convertToServerDate(local: String?): String? {
         if (local.isNullOrBlank()) return null
         val parts = local.split("-")
         if (parts.size != 3) return local
         return "${parts[2]}-${parts[1]}-${parts[0]}"
     }
+
+    fun Context.showMediaOptionsDialog(
+        onCameraClick: () -> Unit,
+        onGalleryClick: () -> Unit
+    ) {
+        val binding = LayoutMediaOptionsBinding.inflate(LayoutInflater.from(this))
+        binding.btnPdf.visibility = View.GONE
+
+        val dialog = MaterialAlertDialogBuilder(this)
+            .setView(binding.root)
+            .setCancelable(true)
+            .create()
+
+        binding.btnCamera.setOnClickListener { dialog.dismiss(); onCameraClick() }
+        binding.btnGallery.setOnClickListener { dialog.dismiss(); onGalleryClick() }
+        binding.btnCancel.setOnClickListener { dialog.dismiss() }
+
+        dialog.show()
+    }
+
+    fun Context.showUploadReminderDialog(
+        message: String,
+        onNo: () -> Unit
+    ) {
+        showReminderDialog(
+            title = getString(R.string.reminder),
+            message = message,
+            positiveText = getString(R.string.yes_dialog),
+            negativeText = getString(R.string.no_dialog),
+            onPositive = {},
+            onNegative = onNo,
+            context = this
+        )
+    }
+
+
+
+
+
+
+
+
+    fun base64ToTempFile(base64: String, cacheDir: File, context: Context): Uri? {
+        return runCatching {
+            val base64Data = base64.substringAfter(",", base64)
+            val bytes = Base64.decode(base64Data, Base64.DEFAULT)
+            val (ext, _) = detectExtAndMime(bytes)
+            val file = File(cacheDir, "uwin_${System.currentTimeMillis()}.$ext")
+            file.writeBytes(bytes)
+            FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
+        }.getOrNull()
+    }
+
+
 
     fun convertToLocalDate(server: String?): String? {
         if (server.isNullOrBlank()) return null
