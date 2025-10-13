@@ -67,6 +67,7 @@
     <string name="downloading_abha_card">Downloading abha card</string>
     <string name="str_create_abha">Create ABHA</string>
     <string name="str_search_abha">Search ABHA</string>
+    <string name="search_ben">Search Ben</string>
     <string name="str_invalid_aadhaar_no">Please Enter Valid Aadhaar Number</string>
     <string name="str_invalid_mobile_no">Please Enter Valid Mobile Number</string>
     <string name="str_invalid_ben_name">Please Enter Valid Beneficiary name</string>

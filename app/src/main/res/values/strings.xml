@@ -313,6 +313,7 @@
     <string name="pnc_mother_list">PNC Mother List</string>
     <string name="reproductive_age_list">Reproductive Age List</string>
     <string name="ncd_eligible_list">NCD Eligible List</string>
+    <string name="child_under_five_years_list">Child Under Five Years List</string>
     <string name="ncd_list">NCD List</string>
     <string name="ncd_non_eligible_list">NCD Non-Priority List</string>
     <string name="ncd_priority_list">NCD Priority List</string>

@@ -376,7 +376,7 @@ class IconDataset @Inject constructor(
             R.drawable.ic__adolescent,
             resources.getString(R.string.children_under_five_years),
             recordsRepo.childFilteredListCount,
-            ChildCareFragmentDirections.actionChildrenUnderFiveYearFragmentToChildListFragment()
+            ChildCareFragmentDirections.actionChildCareFragmentToChildrenUnderFiveYearListFragment()
         )
     ).apply {
         forEachIndexed { index, icon ->
