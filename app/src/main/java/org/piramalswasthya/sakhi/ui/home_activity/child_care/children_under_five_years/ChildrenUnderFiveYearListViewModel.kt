@@ -34,13 +34,5 @@ class ChildrenUnderFiveYearListViewModel @Inject constructor(
         viewModelScope.launch {
             filter.emit(text)
         }
-
-    }
-
-    fun filterType(type: String) {
-        viewModelScope.launch {
-            kind.emit(type)
-        }
-
     }
 }

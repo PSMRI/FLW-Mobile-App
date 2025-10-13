@@ -18,7 +18,6 @@ import org.piramalswasthya.sakhi.adapters.ChildrenUnderFiveYearsAdapter
 import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.databinding.FragmentChildrenUnderFiveYearsListBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
-import kotlin.getValue
 
 @AndroidEntryPoint
 class ChildrenUnderFiveYearsListFragment : Fragment() {
@@ -49,14 +48,8 @@ class ChildrenUnderFiveYearsListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         benAdapter = ChildrenUnderFiveYearsAdapter(
-            ChildrenUnderFiveYearsAdapter.ChildListClickListener { benId, hhId , type->
+            ChildrenUnderFiveYearsAdapter.ChildListClickListener { benId, hhId, type ->
                 Log.i("ChildrenUnderFiveYearsOne", "onViewCreated: $benId === $hhId === $type")
-//                findNavController().navigate(
-//                    ChildListFragmentDirections.actionChildListFragmentToHbycMonthListFragment(
-//                        hhId,
-//                        benId
-//                    )
-//                )
             }
         )
         binding.rvAny.adapter = benAdapter
@@ -72,17 +65,16 @@ class ChildrenUnderFiveYearsListFragment : Fragment() {
         binding.ibSearch.setOnClickListener { sttContract.launch(Unit) }
         val searchTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
+                // Need to implementation when it's need
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
+                // Need to implementation when it's need
             }
 
             override fun afterTextChanged(p0: Editable?) {
                 viewModel.filterText(p0?.toString() ?: "")
             }
-
         }
         binding.searchView.setOnFocusChangeListener { searchView, b ->
             if (b)
