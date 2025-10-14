@@ -19,19 +19,21 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.dynamicAdapter.VisitCardAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentInfantFormBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.home_activity.child_care.child_list.hbyc.form.HbycViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.child_care.infant_list.InfantListViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.infant.hbnc.HBNCFormViewModel
+import org.piramalswasthya.sakhi.ui.home_activity.infant.hbyc.HBYCFormViewModel
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.HBNC_FORM_ID
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.HBYC_FORM_ID
 import org.piramalswasthya.sakhi.work.dynamicWoker.FormSyncWorker
 
 @AndroidEntryPoint
-class InfantDayListFragment : Fragment() {
+class ChildMonthListFragment : Fragment() {
 
     private var _binding: FragmentInfantFormBinding? = null
     private val binding get() = _binding!!
-    private val args: InfantDayListFragmentArgs by navArgs()
-    private val viewModel: HBNCFormViewModel by viewModels()
+    private val args: ChildMonthListFragmentArgs by navArgs()
+    private val viewModel: HBYCFormViewModel by viewModels()
     private val infantListViewModel: InfantListViewModel by viewModels()
 
     private var dob = 0L
@@ -58,8 +60,7 @@ class InfantDayListFragment : Fragment() {
 
         binding.recyclerVisitCards.layoutManager = GridLayoutManager(requireContext(), 2)
         visitAdapter = VisitCardAdapter(emptyList(), isBenDead) { card ->
-            val action = InfantDayListFragmentDirections
-                .actionInfantFormFragmentToHbncFormFragment(
+            val action= ChildMonthListFragmentDirections.actionInfantFormFragmentToHBYCFormFragment(
                     benId, hhId,
                     visitDay = card.visitDay,
                     isViewMode = !card.isEditable,
@@ -121,8 +122,8 @@ class InfantDayListFragment : Fragment() {
         super.onStart()
         activity?.let {
             (it as HomeActivity).updateActionBar(
-                R.drawable.ic__infant,
-                getString(R.string.hbnc_day_list)
+                R.drawable.ic__child,
+                getString(R.string.hbyc_month_list)
             )
         }
     }
