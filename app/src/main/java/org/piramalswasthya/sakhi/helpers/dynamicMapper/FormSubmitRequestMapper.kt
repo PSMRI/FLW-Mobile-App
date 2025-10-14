@@ -1,21 +1,21 @@
 package org.piramalswasthya.sakhi.helpers.dynamicMapper
 
-
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import org.json.JSONObject
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSubmitRequest
+import org.piramalswasthya.sakhi.model.dynamicEntity.hbyc.FormResponseJsonEntityHBYC
 import java.text.SimpleDateFormat
 import java.util.*
 
 object FormSubmitRequestMapper {
 
-    fun fromEntityList(entities: List<FormResponseJsonEntity>): List<FormSubmitRequest> {
-        return entities.mapNotNull { fromEntity(it) }
-    }
+//    fun fromEntityList(entities: List<FormResponseJsonEntity>): List<FormSubmitRequest> {
+//        return entities.mapNotNull { fromEntity(it) }
+//    }
 
-    fun fromEntity(entity: FormResponseJsonEntity): FormSubmitRequest? {
+    fun fromEntity(entity: FormResponseJsonEntity,userName: String): FormSubmitRequest? {
         return try {
             val jsonObj = JSONObject(entity.formDataJson)
             val fieldsObj = jsonObj.optJSONObject("fields")
@@ -24,6 +24,7 @@ object FormSubmitRequestMapper {
             val fieldsMap: Map<String, Any?> = Gson().fromJson(fieldsObj.toString(), type)
 
             FormSubmitRequest(
+                userName = userName,
                 formId = jsonObj.optString("formId"),
                 beneficiaryId = jsonObj.optLong("beneficiaryId"),
                 houseHoldId = jsonObj.optLong("houseHoldId"),
@@ -36,6 +37,28 @@ object FormSubmitRequestMapper {
         }
     }
 
+    // NEW: Overload for HBYC entity
+    fun fromEntity(entity: FormResponseJsonEntityHBYC,userName: String): FormSubmitRequest? {
+        return try {
+            val jsonObj = JSONObject(entity.formDataJson)
+            val fieldsObj = jsonObj.optJSONObject("fields")
+
+            val type = object : TypeToken<Map<String, Any?>>() {}.type
+            val fieldsMap: Map<String, Any?> = Gson().fromJson(fieldsObj.toString(), type)
+
+            FormSubmitRequest(
+                userName = userName,
+                formId = jsonObj.optString("formId"),
+                beneficiaryId = jsonObj.optLong("beneficiaryId"),
+                houseHoldId = jsonObj.optLong("houseHoldId"),
+                visitDate = jsonObj.optString("visitDate"),
+                fields = fieldsMap
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
 
     private fun convertDateToIso(input: String): String {
         return try {

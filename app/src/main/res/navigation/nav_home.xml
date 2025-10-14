@@ -339,9 +339,13 @@
         android:name="org.piramalswasthya.sakhi.ui.home_activity.child_care.child_list.ChildListFragment"
         android:label="@string/child_care_icon_title_child_list"
         tools:layout="@layout/fragment_child_list">
+<!--        <action-->
+<!--            android:id="@+id/action_childListFragment_to_hbycMonthListFragment"-->
+<!--            app:destination="@id/hbycMonthListFragment" />-->
+
         <action
-            android:id="@+id/action_childListFragment_to_hbycMonthListFragment"
-            app:destination="@id/hbycMonthListFragment" />
+            android:id="@+id/action_childListFragment_to_childMonthListFragment"
+            app:destination="@id/childMonthListFragment" />
     </fragment>
     <fragment
         android:id="@+id/pncMotherListFragment"
@@ -1122,6 +1126,51 @@
         <action
             android:id="@+id/action_pmsmaHighRiskListFragment_to_pmsmaFragment"
             app:destination="@id/pmsmaFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/childMonthListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.infant.ChildMonthListFragment"
+        android:label="ChildMonthListFragment" >
+        <argument
+            android:name="hhId"
+            app:argType="long" />
+        <argument
+            android:name="benId"
+            app:argType="long" />
+
+        <action
+            android:id="@+id/action_infantFormFragment_to_HBYCFormFragment"
+            app:destination="@id/HBYCFormFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/HBYCFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.infant.hbyc.HBYCFormFragment"
+        android:label="HBYCFormFragment" >
+
+        <argument
+            android:name="benId"
+            app:argType="long" />
+
+        <argument
+            android:name="hhId"
+            app:argType="long" />
+
+
+        <argument
+            android:name="visitDay"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null"/>
+
+        <argument
+            android:name="isViewMode"
+            app:argType="boolean"
+            android:defaultValue="false" />
+
+        <argument
+            android:name="formId"
+            app:argType="string"
+            android:defaultValue="hbyc_form_001" />
     </fragment>
 
 </navigation>

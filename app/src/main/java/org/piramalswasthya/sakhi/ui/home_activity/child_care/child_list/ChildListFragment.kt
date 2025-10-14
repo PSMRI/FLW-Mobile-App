@@ -47,7 +47,7 @@ class ChildListFragment : Fragment() {
         val benAdapter = ChildListAdapter(
             ChildListAdapter.ChildListClickListener { benId, hhId ->
                 findNavController().navigate(
-                    ChildListFragmentDirections.actionChildListFragmentToHbycMonthListFragment(
+                    ChildListFragmentDirections.actionChildListFragmentToChildMonthListFragment(
                         hhId,
                         benId
                     )
