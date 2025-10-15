@@ -35,6 +35,9 @@ import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.VaccineState
 import org.piramalswasthya.sakhi.model.VaccineState.*
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 
 @BindingAdapter("vaccineState")
@@ -75,6 +78,14 @@ fun Button.setVaccineState(syncState: VaccineState?) {
                 visibility = View.GONE
             }
         }
+    }
+}
+
+@BindingAdapter("formattedDate")
+fun setFormattedDate(view: TextView, timestamp: Long?) {
+    timestamp?.let {
+        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        view.text = sdf.format(Date(it))
     }
 }
 
@@ -425,4 +436,28 @@ fun TextView.setAsteriskTextView(required: Boolean?, title: String?) {
 
 }
 
+
+@BindingAdapter(value = ["formattedSessionDate"], requireAll = false)
+fun setFormattedSessionDate(textView: TextView, timestamp: Long?) {
+    if (timestamp == null) {
+        textView.text =textView.context.getString(R.string.session_date_n_a)
+        return
+    }
+
+    val date = Date(timestamp)
+    val formatType = textView.tag as? String ?: "default"
+
+    val format = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+    val formattedDate = format.format(date)
+
+    textView.text = when (formatType) {
+        "default" -> textView.context.getString(R.string.session_date_format, formattedDate)
+        "monthYear" -> {
+            val monthFormat = SimpleDateFormat("MMMM - yyyy", Locale.getDefault())
+            val monthYear = monthFormat.format(date)
+            textView.context.getString(R.string.uwin_session_format, monthYear)
+        }
+        else -> textView.context.getString(R.string.session_date_format, formattedDate)
+    }
+}
 

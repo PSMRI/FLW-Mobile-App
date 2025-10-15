@@ -1,8 +1,10 @@
 package org.piramalswasthya.sakhi.network
 
 import android.os.Parcelable
+import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import org.piramalswasthya.sakhi.database.room.SyncState
+import org.piramalswasthya.sakhi.model.HRPMicroBirthPlanCache
 import org.piramalswasthya.sakhi.model.HRPNonPregnantAssessCache
 import org.piramalswasthya.sakhi.model.HRPNonPregnantTrackCache
 import org.piramalswasthya.sakhi.model.HRPPregnantAssessCache
@@ -13,6 +15,22 @@ import org.piramalswasthya.sakhi.utils.KeyUtils
 import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlinx.parcelize.Parcelize
+import org.piramalswasthya.sakhi.model.DewormingCache
+import org.piramalswasthya.sakhi.model.AHDCache
+import org.piramalswasthya.sakhi.model.PHCReviewMeetingCache
+import org.piramalswasthya.sakhi.model.VHNCCache
+import org.piramalswasthya.sakhi.model.VHNDCache
+
+//import org.piramalswasthya.sakhi.model.VHNDCache
+import org.piramalswasthya.sakhi.model.AESScreeningCache
+import org.piramalswasthya.sakhi.model.AdolescentHealthCache
+import org.piramalswasthya.sakhi.model.FilariaScreeningCache
+import org.piramalswasthya.sakhi.model.IRSRoundScreening
+import org.piramalswasthya.sakhi.model.KalaAzarScreeningCache
+import org.piramalswasthya.sakhi.model.LeprosyScreeningCache
+import org.piramalswasthya.sakhi.model.MalariaConfirmedCasesCache
+import org.piramalswasthya.sakhi.model.MalariaScreeningCache
+import org.piramalswasthya.sakhi.model.getDateTimeStringFromLong
 import org.piramalswasthya.sakhi.model.ABHAModel
 import org.piramalswasthya.sakhi.model.Gender
 
@@ -80,6 +98,56 @@ data class GetDataPaginatedRequest(
     val pageNo: Int,
     val fromDate: String,
     val toDate: String
+)
+
+@JsonClass(generateAdapter = true)
+data class GetDataPaginatedRequestForGeneralOPD(
+    val userId: Int,
+    val villageID: Int,
+    val userName: String,
+    val ashaId: Int,
+    val pageNo: Int,
+    val fromDate: String,
+    val toDate: String
+)
+
+
+@JsonClass(generateAdapter = true)
+data class GetVHNDRequest(
+    val formType: String,
+    val userId: Int,
+
+)
+
+@JsonClass(generateAdapter = true)
+
+data class GetDataPaginatedRequestForDisease(
+    val ashaId: Int,
+    val pageNo: Int,
+    val fromDate: String,
+    val toDate: String,
+    val diseaseTypeID: Int
+)
+
+data class ValidateOtpRequest(
+    val otp: Int,
+    val mobNo: String,
+)
+
+
+data class sendOtpRequest(
+    val mobNo: String,
+)
+
+@JsonClass(generateAdapter = true)
+data class GetDataRequest(
+    val villageID: Int,
+    val fromDate: String,
+    val toDate: String,
+    val pageNo: Int,
+    val userId: Long,
+    val userName: String,
+    val ashaId: Long
 )
 
 @JsonClass(generateAdapter = true)
@@ -159,6 +227,32 @@ data class AbhaGenerateAadhaarOtpResponseV2(
     val txnId: String,
     val mobileNumber: String,
     val message:String
+)
+
+@JsonClass(generateAdapter = true)
+data class SendOtpResponse(
+    val data: Data,
+    val statusCode: Long,
+    val errorMessage: String,
+    val status: String,
+)
+
+data class Data(
+    val response: String,
+)
+
+@JsonClass(generateAdapter = true)
+
+data class ValidateOtpResponse(
+    val data: ResponseOtp,
+    val statusCode: Long,
+    val errorMessage: String,
+    val status: String,
+)
+
+data class ResponseOtp(
+    val userName: String,
+    val userId: String,
 )
 
 @JsonClass(generateAdapter = true)
@@ -551,6 +645,40 @@ data class TBScreeningRequestDTO(
     val tbScreeningList: List<TBScreeningDTO>
 )
 
+data class KalaAzarScreeningRequestDTO(
+    val userId: Int,
+    val kalaAzarLists: List<KALAZARScreeningDTO>
+)
+
+data class MalariaScreeningRequestDTO(
+    val userId: Int,
+    val malariaLists: List<MalariaScreeningDTO>
+)
+
+data class IRSScreeningRequestDTO(
+    val rounds: List<ScreeningRoundDTO>
+)
+
+data class LeprosyScreeningRequestDTO(
+    val userId: Int,
+    val leprosyLists: List<LeprosyScreeningDTO>
+)
+
+data class AESScreeningRequestDTO(
+    val userId: Int,
+    val aesJeLists: List<AESScreeningDTO>
+)
+
+data class FilariaScreeningRequestDTO(
+    val userId: Int,
+    val filariaLists: List<FilariaScreeningDTO>
+)
+
+data class AdolescentHealthRequestDTO(
+    val userId: Int,
+    val adolescentHealths: List<AdolscentHealthDTO>
+)
+
 data class UserDataDTO<T>(
     val userId: Int,
     val entries: List<T>
@@ -654,6 +782,56 @@ data class HRPPregnantAssessDTO(
     }
 }
 
+@JsonClass(generateAdapter = true)
+data class HRPMicroBirthPlanDTO(
+    val id: Int = 0,
+    val benId: Long,
+    var nearestSc: String? = null,
+    var bloodGroup: String? = null,
+    var contactNumber1: String? = null,
+    var contactNumber2: String? = null,
+    var scHosp: String? = null,
+    var usg: String? = null,
+    var block: String? = null,
+    var nearestPhc: String? = null,
+    var nearestFru: String? = null,
+    var bloodDonors1: String? = null,
+    var bloodDonors2: String? = null,
+    var birthCompanion: String? = null,
+    var careTaker: String? = null,
+    var communityMember: String? = null,
+    var communityMemberContact: String? = null,
+    var modeOfTransportation: String? = null,
+) {
+    fun toCache(): HRPMicroBirthPlanCache {
+        return HRPMicroBirthPlanCache(
+            id = 0,
+            benId = benId,
+            nearestSc = nearestSc,
+            bloodGroup = bloodGroup,
+            contactNumber1 = contactNumber1,
+            contactNumber2 = contactNumber2,
+            scHosp = scHosp,
+            usg = usg,
+            block = block,
+            nearestPhc = nearestPhc,
+            nearestFru = nearestFru,
+            bloodDonors1 = bloodDonors1,
+            bloodDonors2 = bloodDonors2,
+            birthCompanion = birthCompanion,
+            careTaker = careTaker,
+            communityMember = communityMember,
+            communityMemberContact = communityMemberContact,
+            modeOfTransportation = modeOfTransportation,
+            processed = "P",
+            syncState = SyncState.SYNCED
+        )
+    }
+}
+
+
+
+
 data class HRPNonPregnantTrackDTO(
     var id: Int = 0,
     val benId: Long,
@@ -734,6 +912,117 @@ data class HRPNonPregnantAssessDTO(
     }
 }
 
+data class VHNDDTO(
+    val id: Int = 0,
+    var vhndDate: String?,
+    var place: String? = null,
+    var noOfBeneficiariesAttended: Int? = null,
+    var Image1: String? = null,
+    var Image2: String? = null,
+) {
+    fun toCache(): VHNDCache {
+        return VHNDCache(
+            id = 0,
+            vhndDate = vhndDate!!,
+            place = place,
+            noOfBeneficiariesAttended = noOfBeneficiariesAttended,
+            image1 = Image1,
+            image2 = Image2,
+            syncState = SyncState.SYNCED
+        )
+    }
+}
+
+data class VHNCDTO(
+    val id: Int = 0,
+    var vhncDate: String?,
+    var place: String? = null,
+    var noOfBeneficiariesAttended: Int? = null,
+    var Image1: String? = null,
+    var Image2: String? = null,
+) {
+    fun toCache(): VHNCCache {
+        return VHNCCache(
+            id = 0,
+            vhncDate = vhncDate!!,
+            place = place,
+            noOfBeneficiariesAttended = noOfBeneficiariesAttended,
+            image1 = Image1,
+            image2 = Image2,
+            syncState = SyncState.SYNCED
+        )
+    }
+}
+
+data class PHCReviewDTO(
+    val id: Int = 0,
+    var phcReviewDate: String?,
+    var place: String? = null,
+    var noOfBeneficiariesAttended: Int? = null,
+    var Image1: String? = null,
+    var Image2: String? = null
+) {
+    fun toCache(): PHCReviewMeetingCache {
+        return PHCReviewMeetingCache(
+            id = 0,
+            phcReviewDate = phcReviewDate!!,
+            place = place,
+            noOfBeneficiariesAttended = noOfBeneficiariesAttended,
+            image1 = Image1,
+            image2 = Image2,
+            syncState = SyncState.SYNCED
+        )
+    }
+}
+
+data class AHDDTO(
+    val id: Int = 0,
+    var mobilizedForAHD: String?,
+    var ahdPlace: String? = null,
+    var ahdDate: String? = null,
+    var image1: String? = null,
+    var image2: String? = null,
+) {
+    fun toCache(): AHDCache {
+        return AHDCache(
+            id = 0,
+            mobilizedForAHD = mobilizedForAHD!!,
+            ahdPlace = ahdPlace,
+            ahdDate = ahdDate,
+            image1 = image1,
+            image2 = image2,
+            syncState = SyncState.SYNCED
+        )
+    }
+}
+
+data class DewormingDTO(
+    var id: Int = 0,
+    var dewormingDone: String? = null,
+    var dewormingDate: String? = null,
+    var dewormingLocation: String? = null,
+    var ageGroup: Int? = null,
+    var image1: String? = null,
+    var image2: String? = null,
+    var regDate: String? = null,
+) {
+    fun toCache(): DewormingCache {
+        return DewormingCache(
+            id = id,
+            dewormingDone = dewormingDone,
+            dewormingDate = dewormingDate,
+            dewormingLocation = dewormingLocation,
+            ageGroup = ageGroup,
+            image1 = image1,
+            image2 = image2,
+            regDate = regDate,
+            syncState = SyncState.SYNCED
+        )
+    }
+}
+
+
+
 data class TBScreeningDTO(
     val id: Long,
     val benId: Long,
@@ -759,6 +1048,47 @@ data class TBScreeningDTO(
             historyOfTb = historyOfTb,
             takingAntiTBDrugs = takingAntiTBDrugs,
             familySufferingFromTB = familySufferingFromTB,
+            syncState = SyncState.SYNCED
+        )
+    }
+}
+
+data class AdolscentHealthDTO(
+    var id :Int? = null,
+    var userID :Int? =null,
+    var benId:Long,
+    var visitDate: String,
+    var healthStatus: String? = null,
+    var ifaTabletDistributed: Boolean? = null,
+    var quantityOfIfaTablets: Int? = null,
+    var menstrualHygieneAwarenessGiven: Boolean? = null,
+    var sanitaryNapkinDistributed: Boolean? = null,
+    var noOfPacketsDistributed: Int? = null,
+    var place: String? = null,
+    var distributionDate: String? = null,
+    var referredToHealthFacility: String? = null,
+    var counselingProvided: Boolean? = null,
+    var counselingType: String? = null,
+    var followUpDate: String? = null,
+    var referralStatus: String? = null,
+) {
+    fun toCache(): AdolescentHealthCache {
+        return AdolescentHealthCache(
+            benId = benId,
+            visitDate = getLongFromDate(visitDate),
+            healthStatus = healthStatus,
+            ifaTabletDistributed = ifaTabletDistributed,
+            quantityOfIfaTablets = quantityOfIfaTablets,
+            menstrualHygieneAwarenessGiven = menstrualHygieneAwarenessGiven,
+            sanitaryNapkinDistributed = sanitaryNapkinDistributed,
+            noOfPacketsDistributed = noOfPacketsDistributed,
+            place = place,
+            distributionDate = getLongFromDate(distributionDate),
+            referredToHealthFacility = referredToHealthFacility,
+            counselingProvided = counselingProvided,
+            counselingType = counselingType,
+            followUpDate = getLongFromDate(followUpDate),
+            referralStatus = referralStatus,
             syncState = SyncState.SYNCED
         )
     }
@@ -827,6 +1157,329 @@ data class TBSuspectedRequestDTO(
     val userId: Int,
     val tbSuspectedList: List<TBSuspectedDTO>
 )
+
+data class MalariaConfirmedRequestDTO(
+    val userId: Int,
+    val malariaFollowListUp: List<MalariaConfirmedDTO>
+)
+
+
+data class MalariaScreeningDTO(
+    val id: Int = 0,
+    val benId: Long,
+    val caseDate: String,
+    val houseHoldDetailsId: Long,
+    val screeningDate: String,
+    val beneficiaryStatus: String,
+    val beneficiaryStatusId: Int = 0,
+    val dateOfDeath: String,
+    val placeOfDeath: String,
+    val otherPlaceOfDeath: String,
+    val reasonForDeath: String,
+    val otherReasonForDeath: String,
+    val rapidDiagnosticTest: String,
+    val dateOfRdt: String,
+    val slideTestName: String,
+    val slideTestPf: String,
+    val slideTestPv: String,
+    val dateOfSlideTest: String,
+    val dateOfVisitBySupervisor: String,
+    var caseStatus: String ? = "",
+    var referredTo: Int ? = 0,
+    var referToName: String ? = null,
+    var otherReferredFacility: String ? = null,
+    var remarks: String ? = null,
+    var diseaseTypeID: Int ? = 0,
+    var followUpDate: String,
+    var feverMoreThanTwoWeeks: Boolean ? = false,
+    var fluLikeIllness: Boolean ? = false,
+    var shakingChills: Boolean ? = false,
+    var headache: Boolean ? = false,
+    var muscleAches: Boolean ? = false,
+    var tiredness: Boolean ? = false,
+    var nausea: Boolean ? = false,
+    var vomiting: Boolean ? = false,
+    var diarrhea: Boolean ? = false,
+    var createdBy: String ? = "",
+
+) {
+    fun toCache(): MalariaScreeningCache {
+        return MalariaScreeningCache(
+            benId = benId,
+            caseDate = getLongFromDate(caseDate),
+            caseStatus = caseStatus,
+            houseHoldDetailsId = houseHoldDetailsId,
+            referredTo = referredTo,
+            referToName = referToName.toString(),
+            otherReferredFacility = otherReferredFacility,
+            remarks = remarks,
+            followUpDate = getLongFromDate(followUpDate),
+            syncState = SyncState.SYNCED,
+            diseaseTypeID = diseaseTypeID,
+            feverMoreThanTwoWeeks = feverMoreThanTwoWeeks,
+            fluLikeIllness = fluLikeIllness,
+            shakingChills = shakingChills,
+            headache = headache,
+            muscleAches = muscleAches,
+            tiredness = tiredness,
+            nausea = nausea,
+            vomiting = vomiting,
+            diarrhea = diarrhea,
+            beneficiaryStatusId = beneficiaryStatusId,
+            beneficiaryStatus = beneficiaryStatus,
+            createdBy = createdBy,
+            screeningDate = getLongFromDate(screeningDate),
+            rapidDiagnosticTest = rapidDiagnosticTest,
+            slideTestName = slideTestName,
+            slideTestPf = slideTestPf,
+            slideTestPv = slideTestPv,
+            dateOfSlideTest = getLongFromDate(dateOfSlideTest),
+            dateOfRdt = getLongFromDate(dateOfRdt),
+            dateOfDeath = getLongFromDate(dateOfDeath),
+            dateOfVisitBySupervisor = getLongFromDate(dateOfVisitBySupervisor),
+            reasonForDeath = reasonForDeath,
+            otherReasonForDeath = otherReasonForDeath,
+            otherPlaceOfDeath = otherPlaceOfDeath,
+            placeOfDeath = placeOfDeath
+
+
+        )
+    }
+}
+
+data class MalariaConfirmedDTO(
+    val id: Int = 0,
+    val diseaseId: Int = 0,
+    val benId: Long,
+    val houseHoldDetailsId: Long,
+    var dateOfDiagnosis: String,
+    var treatmentStartDate: String,
+    var treatmentCompletionDate: String,
+    var treatmentGiven: String,
+    var referralDate: String,
+    var day: String,
+) {
+    fun toCache(): MalariaConfirmedCasesCache {
+        return MalariaConfirmedCasesCache(
+            benId = benId,
+            dateOfDiagnosis = getLongFromDate(dateOfDiagnosis),
+            treatmentStartDate = getLongFromDate(treatmentStartDate),
+            treatmentCompletionDate = getLongFromDate(treatmentCompletionDate),
+            referralDate = getLongFromDate(referralDate),
+            treatmentGiven = treatmentGiven,
+            houseHoldDetailsId = houseHoldDetailsId,
+            diseaseId = diseaseId,
+            day = day,
+            )
+    }
+}
+
+data class AESScreeningDTO(
+    val id: Int = 0,
+    val benId: Long,
+    var visitDate: String,
+    val houseHoldDetailsId: Long,
+    var beneficiaryStatus: String ? = null,
+    var beneficiaryStatusId: Int = 0,
+    var dateOfDeath: String,
+    var placeOfDeath: String ? = null,
+    var otherPlaceOfDeath: String ? = null,
+    var reasonForDeath: String ?  = null,
+    var otherReasonForDeath: String ?  = null,
+    var aesJeCaseStatus: String ? = "",
+    var referredTo: Int ? = 0,
+    var referToName: String ? = null,
+    var otherReferredFacility: String ? = null,
+    var diseaseTypeID: Int ? = 0,
+    var createdDate: String,
+    var createdBy: String ? = null,
+    var followUpPoint: Int ? = 0,
+    var syncState: SyncState = SyncState.UNSYNCED,
+
+    ) {
+    fun toCache(): AESScreeningCache {
+        return AESScreeningCache(
+            benId = benId,
+            visitDate = getLongFromDate(visitDate),
+            aesJeCaseStatus = aesJeCaseStatus,
+            houseHoldDetailsId = houseHoldDetailsId,
+            referredTo = referredTo,
+            referToName = referToName.toString(),
+            otherReferredFacility = otherReferredFacility,
+            createdDate = getLongFromDate(createdDate),
+            syncState = SyncState.SYNCED,
+            diseaseTypeID = diseaseTypeID,
+            beneficiaryStatusId = beneficiaryStatusId,
+            beneficiaryStatus = beneficiaryStatus,
+            createdBy = createdBy,
+            dateOfDeath = getLongFromDate(dateOfDeath),
+            reasonForDeath = reasonForDeath,
+            otherReasonForDeath = otherReasonForDeath,
+            otherPlaceOfDeath = otherPlaceOfDeath,
+            placeOfDeath = placeOfDeath,
+            followUpPoint = followUpPoint
+
+
+        )
+    }
+}
+
+
+data class LeprosyScreeningDTO(
+    val id: Int = 0,
+    val benId: Long,
+    val homeVisitDate: String,
+    val leprosyStatusDate: String,
+    val dateOfDeath: String,
+    val houseHoldDetailsId: Long,
+    var leprosyStatus: String ? = "",
+    var referredTo: Int ? = 0,
+    var referToName: String ? = null,
+    var otherReferredTo: String ? = null,
+    var typeOfLeprosy: String ? = null,
+    var remarks: String ? = null,
+    var beneficiaryStatus: String ? = null,
+    var placeOfDeath: String ? = null,
+    var otherPlaceOfDeath: String ? = null,
+    var reasonForDeath: String ? = null,
+    var otherReasonForDeath: String ? = null,
+    var diseaseTypeID: Int ? = 0,
+    var beneficiaryStatusId: Int ? = 0,
+    var followUpDate: String,
+
+    ) {
+    fun toCache(): LeprosyScreeningCache {
+        return LeprosyScreeningCache(
+            benId = benId,
+            homeVisitDate = getLongFromDate(homeVisitDate),
+            leprosyStatusDate = getLongFromDate(leprosyStatusDate),
+            dateOfDeath = getLongFromDate(dateOfDeath),
+            leprosyStatus = leprosyStatus,
+            houseHoldDetailsId = houseHoldDetailsId,
+            referredTo = referredTo,
+            referToName = referToName.toString(),
+            otherReferredTo = otherReferredTo,
+            remarks = remarks,
+            followUpDate = getLongFromDate(followUpDate),
+            syncState = SyncState.SYNCED,
+            diseaseTypeID = diseaseTypeID,
+            reasonForDeath = reasonForDeath,
+            otherReasonForDeath = otherReasonForDeath,
+            otherPlaceOfDeath = otherPlaceOfDeath,
+            placeOfDeath = placeOfDeath,
+            beneficiaryStatusId = beneficiaryStatusId,
+            beneficiaryStatus = beneficiaryStatus
+
+
+        )
+    }
+}
+
+data class FilariaScreeningDTO(
+    val id: Int = 0,
+    val benId: Long,
+    val mdaHomeVisitDate: String,
+    val houseHoldDetailsId: Long,
+    var sufferingFromFilariasis: Boolean ? = false,
+    var doseStatus: String ? = null,
+    var affectedBodyPart: String ? = null,
+    var otherDoseStatusDetails: String ? = null,
+    var filariasisCaseCount: String ? = null,
+    var medicineSideEffect: String ? = "",
+    var otherSideEffectDetails: String ? = "",
+    var createdBy: String ?  = "",
+    var diseaseTypeID: Int ? = 0,
+    var createdDate: String,
+    var syncState: SyncState = SyncState.UNSYNCED,
+
+    ) {
+    fun toCache(): FilariaScreeningCache {
+        return FilariaScreeningCache(
+            benId = benId,
+            syncState = SyncState.SYNCED,
+            diseaseTypeID = diseaseTypeID,
+            mdaHomeVisitDate = getLongFromDate(mdaHomeVisitDate),
+            houseHoldDetailsId = houseHoldDetailsId,
+            doseStatus = doseStatus.toString(),
+            sufferingFromFilariasis = sufferingFromFilariasis!!,
+            affectedBodyPart = affectedBodyPart.toString(),
+            otherDoseStatusDetails = otherDoseStatusDetails.toString(),
+            medicineSideEffect = medicineSideEffect.toString(),
+            otherSideEffectDetails = otherSideEffectDetails.toString(),
+            createdBy = createdBy.toString(),
+            createdDate = getLongFromDate(createdDate),
+
+        )
+    }
+}
+
+data class ScreeningRoundDTO(
+    val date: String,
+    val rounds: Int,
+    val householdId: Long
+) {
+    fun toCache(): IRSRoundScreening {
+        return IRSRoundScreening(
+            date = getLongFromDate(date),
+            rounds = rounds,
+            householdId = householdId,
+        )
+    }
+}
+
+data class KALAZARScreeningDTO(
+    val id: Int = 0,
+    val benId: Long,
+    var visitDate: String,
+    val houseHoldDetailsId: Long,
+    var beneficiaryStatus: String,
+    var beneficiaryStatusId: Int = 0,
+    var dateOfDeath: String,
+    var placeOfDeath: String,
+    var otherPlaceOfDeath: String,
+    var reasonForDeath: String,
+    var otherReasonForDeath: String,
+    var rapidDiagnosticTest: String,
+    var dateOfRdt: String,
+    var kalaAzarCaseStatus: String ? = "",
+    var referredTo: Int ? = 0,
+    var referToName: String,
+    var otherReferredFacility: String,
+    var diseaseTypeID: Int ? = 0,
+    var createdDate: String,
+    var createdBy: String ,
+    var followUpPoint: Int ? = 0,
+    var syncState: SyncState = SyncState.UNSYNCED,
+
+    ) {
+    fun toCache(): KalaAzarScreeningCache {
+        return KalaAzarScreeningCache(
+            benId = benId,
+            visitDate = getLongFromDate(visitDate),
+            kalaAzarCaseStatus = kalaAzarCaseStatus,
+            houseHoldDetailsId = houseHoldDetailsId,
+            referredTo = referredTo,
+            referToName = referToName.toString(),
+            otherReferredFacility = otherReferredFacility,
+            createdDate = getLongFromDate(createdDate),
+            syncState = SyncState.SYNCED,
+            diseaseTypeID = diseaseTypeID,
+            beneficiaryStatusId = beneficiaryStatusId,
+            beneficiaryStatus = beneficiaryStatus,
+            createdBy = createdBy,
+            rapidDiagnosticTest = rapidDiagnosticTest,
+            dateOfRdt = getLongFromDate(dateOfRdt),
+            dateOfDeath = getLongFromDate(dateOfDeath),
+            reasonForDeath = reasonForDeath,
+            otherReasonForDeath = otherReasonForDeath,
+            otherPlaceOfDeath = otherPlaceOfDeath,
+            placeOfDeath = placeOfDeath,
+            followUpPoint = followUpPoint
+
+
+        )
+    }
+}
 
 fun getLongFromDate(dateString: String?): Long {
     val f = SimpleDateFormat("MMM d, yyyy h:mm:ss a", Locale.ENGLISH)

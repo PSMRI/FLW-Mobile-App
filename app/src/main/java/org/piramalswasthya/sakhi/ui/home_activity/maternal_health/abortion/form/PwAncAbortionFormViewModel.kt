@@ -93,7 +93,9 @@ class PwAncAbortionFormViewModel @Inject constructor(
                     visitNumber = 0,
                     syncState = SyncState.UNSYNCED,
                     createdBy = asha.userName,
-                    updatedBy = asha.userName
+                    updatedBy = asha.userName,
+                    frontFilePath = "",
+                    backFilePath = ""
                 )
             }
             maternalHealthRepo.getSavedRecordANC(benId)?.let {

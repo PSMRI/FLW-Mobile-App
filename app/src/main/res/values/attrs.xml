@@ -57,4 +57,9 @@
             <enum name="Integer" value="2"/>
         </attr>
     </declare-styleable>
+
+    <declare-styleable name="TextView">
+        <attr name="formatType" format="string" />
+        <attr name="formattedSessionDate" format="integer" />
+    </declare-styleable>
 </resources>

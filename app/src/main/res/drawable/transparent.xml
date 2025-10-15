@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@android:color/white"/> <!-- Background color inside CardView -->
+    <stroke
+        android:width="2dp"
+        android:color="@android:color/white"/> <!-- Stroke (border) color and width -->
+    <corners android:radius="4dp"/> <!-- Corner radius for rounded edges -->
+</shape>

@@ -7,6 +7,12 @@
     tools:context=".ui.home_activity.all_household.AllHouseholdFragment">
 
 
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/topLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:layout_constraintTop_toTopOf="parent"
+    >
     <LinearLayout
         android:id="@+id/ll_search"
         android:layout_width="match_parent"
@@ -46,7 +52,126 @@
                 />
         </androidx.cardview.widget.CardView>
 
+
     </LinearLayout>
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switchButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:visibility="gone"
+        style="@style/CustomSwitchStyle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="IRS OFF"
+        app:layout_constraintTop_toBottomOf="@+id/ll_search"
+        />
+    <LinearLayout
+        android:id="@+id/ll_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/switchButton"
+        android:backgroundTint="?attr/colorOnSecondary"
+        android:orientation="vertical"
+        android:padding="@dimen/padding_normal">
+
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+            <include
+                android:id="@+id/form"
+                layout="@layout/rv_input_form"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+
+
+
+        </FrameLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_submit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_margin="@dimen/margin_small"
+            android:text="@string/btn_submit"
+
+            android:textColor="@android:color/white" />
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_normal"
+            android:padding="@dimen/padding_small"
+            tools:text="TextView"
+            android:text="@string/heading"
+            android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall" />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/irs_any"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_small"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toTopOf="@id/btn_next_page"
+            app:layout_constraintTop_toBottomOf="@+id/ll_content"
+            tools:itemCount="2"
+            tools:listitem="@layout/rv_item_household" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/question_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="5dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/ll_search"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/question_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Is there a herd of pigs near the house?"
+            android:textSize="16sp"
+            />
+
+        <RadioGroup
+            android:id="@+id/radioGroupPig"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/radioYes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Yes" />
+
+            <RadioButton
+                android:id="@+id/radioNo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No" />
+        </RadioGroup>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_any"
@@ -55,7 +180,7 @@
         android:layout_marginTop="@dimen/margin_small"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toTopOf="@id/btn_next_page"
-        app:layout_constraintTop_toBottomOf="@+id/ll_search"
+        app:layout_constraintTop_toBottomOf="@+id/topLayout"
         tools:itemCount="2"
         tools:listitem="@layout/rv_item_household" />
 
@@ -64,7 +189,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@id/btn_next_page"
-        app:layout_constraintTop_toBottomOf="@+id/ll_search">
+        app:layout_constraintTop_toBottomOf="@+id/topLayout">
 
         <TextView
             android:id="@+id/tv_empty_content"
@@ -86,5 +211,23 @@
         android:text="@string/btn_text_frag_home_nhhr"
         android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
         app:layout_constraintBottom_toBottomOf="parent" />
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+
+        android:layout_marginRight="20dp"
+        android:layout_gravity="bottom|end"
+        android:contentDescription="@string/edit"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_add_circle"
+        tools:visibility="gone" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

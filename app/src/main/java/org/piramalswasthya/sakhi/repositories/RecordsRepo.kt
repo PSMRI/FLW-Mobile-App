@@ -15,6 +15,7 @@ import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.BenWithAncListDomain
 import org.piramalswasthya.sakhi.model.filterMdsr
 import java.util.Calendar
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @ActivityRetainedScoped
@@ -34,7 +35,20 @@ class RecordsRepo @Inject constructor(
 
     val allBenList =
         benDao.getAllBen(selectedVillage).map { list -> list.map { it.asBasicDomainModel() } }
+
     val allBenListCount = benDao.getAllBenCount(selectedVillage)
+    val allBenWithoutAbhaList =
+        benDao.getAllBenWithoutAbha(selectedVillage).map { list -> list.map { it.asBasicDomainModel() } }
+    val allBenWithAbhaList =
+        benDao.getAllBenWithAbha(selectedVillage).map { list -> list.map { it.asBasicDomainModel() } }
+//    val allBenWithNewAbhaList =
+//        benDao.getAllBenWithNewAbha(selectedVillage).map { list -> list.map { it.asBasicDomainModel() } }
+//    val allBenWithOldAbhaList =
+//        benDao.getAllBenWithOldAbha(selectedVillage).map { list -> list.map { it.asBasicDomainModel() } }
+    val benWithAbhaListCount = benDao.getAllBenWithAbhaCount(selectedVillage)
+    val allBenWithRchList =
+        benDao.getAllBenWithRch(selectedVillage).map { list -> list.map { it.asBasicDomainModel() } }
+    val benWithRchListCount = benDao.getAllBenWithRchCount(selectedVillage)
     fun getBenList() =
         benDao.getAllBen(selectedVillage).map { list -> list.map { it.asBasicDomainModel() } }
 
@@ -71,13 +85,39 @@ class RecordsRepo @Inject constructor(
 //        .map { list -> list.map { it.asBenBasicDomainModelForCbacForm() } }
 //    val ncdNonEligibleListCount = ncdNonEligibleList.map { it.size }
 
+     fun malariaScreeningList(hhId:Long) = benDao.getAllMalariaScreeningBen(selectedVillage, hhId = hhId)
+        .map { list -> list.map { it.asMalariaScreeningDomainModel() } }
+
+    fun aesScreeningList(hhId:Long) = benDao.getAllAESScreeningBen(selectedVillage, hhId = hhId)
+        .map { list -> list.map { it.asAESScreeningDomainModel() } }
+
+    fun iRSRoundList(hhId:Long) = benDao.getAllIRSRoundBen(hhId = hhId)
+    fun getLastIRSRoundBen(hhId:Long) = benDao.getLastIRSRoundBen(hhId = hhId)
+
+
+    fun KalazarScreeningList(hhId:Long) = benDao.getAllKALAZARScreeningBen(selectedVillage, hhId = hhId)
+        .map { list -> list.map { it.asKALAZARScreeningDomainModel() } }
+
+    fun LeprosyScreeningList(hhId:Long) = benDao.getAllLeprosyScreeningBen(selectedVillage, hhId = hhId)
+        .map { list -> list.map { it.asLeprosyScreeningDomainModel() } }
+
+    fun filariaScreeningList(hhId:Long) = benDao.getAllFilariaScreeningBen(selectedVillage, hhId = hhId)
+        .map { list -> list.map { it.asFilariaScreeningDomainModel() } }
+
+
     val tbScreeningList = benDao.getAllTbScreeningBen(selectedVillage)
         .map { list -> list.map { it.asTbScreeningDomainModel() } }
     val tbScreeningListCount = tbScreeningList.map { it.size }
 
+
     val tbSuspectedList = benDao.getTbScreeningList(selectedVillage)
         .map { list -> list.map { it.asTbSuspectedDomainModel() } }
     val tbSuspectedListCount = tbSuspectedList.map { it.size }
+
+    val malariaConfirmedCasesList = benDao.getMalariaConfirmedCasesList(selectedVillage)
+        .map { list -> list.map { it.asMalariaConfirmedDomainModel() } }
+
+    val malariaConfirmedCasesListCount = malariaConfirmedCasesList.map { it.size }
 
     val menopauseList = benDao.getAllMenopauseStageList(selectedVillage)
         .map { list -> list.map { it.asBasicDomainModel() } }
@@ -101,9 +141,17 @@ class RecordsRepo @Inject constructor(
         .map { list -> list.map { it.asBasicDomainModel() } }
     val childListCount = childList.map { it.size }
 
+    val childFilteredList = benDao.getAllChildList(selectedVillage, 0, 5 * 365)
+        .map { list ->
+            list
+                .filter { !it.isDeath }
+                .map { it.asBasicDomainModel() }
+        }
+    val childFilteredListCount = childFilteredList.map { it.size }
+
     val adolescentList =
         benDao.getAllAdolescentList(selectedVillage)
-            .map { list -> list.map { it.asBasicDomainModel() } }
+            .map { list -> list.map { it.asAdolescentDomainModel() } }
     val adolescentListCount = adolescentList.map { it.size }
 
     val immunizationList = benDao.getAllImmunizationDueList(selectedVillage)
@@ -118,6 +166,30 @@ class RecordsRepo @Inject constructor(
     val pncMotherList = benDao.getAllPNCMotherList(selectedVillage)
         .map { list -> list.map { it.asBasicDomainModelForPNC() } }
     val pncMotherListCount = pncMotherList.map { it.size }
+
+    val pncMotherNonFollowUpList = benDao.getAllPNCMotherList(selectedVillage)
+        .map { list ->
+            list.filter {
+                if (!it.savedPncRecords.isNullOrEmpty()) {
+                    it.savedPncRecords.last().pncDate != 0L &&
+                            it.savedPncRecords.last().pncDate < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(
+                        90
+                    ) &&
+                            it.savedPncRecords.last().pncDate > System.currentTimeMillis() - TimeUnit.DAYS.toMillis(
+                        365
+                    )
+//                it.savedPncRecords.any { it1 ->
+//                    it1.pncDate != 0L &&
+//                    it1.pncDate < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(90) &&
+//                            it1.pncDate > System.currentTimeMillis() - TimeUnit.DAYS.toMillis(365)
+//                }
+                } else {
+                    false
+                }
+            }
+                .map { it.asBasicDomainModelForPNC() } }
+
+    val pncMotherNonFollowUpListCount = pncMotherNonFollowUpList.map { it.size }
 
     val cdrList = benDao.getAllCDRList(selectedVillage)
         .map { list -> list.map { it.asBenBasicDomainModelForCdrForm() } }
@@ -149,11 +221,68 @@ class RecordsRepo @Inject constructor(
         .map { list -> list.map { it.asDomainModel() } }
     val eligibleCoupleListCount = eligibleCoupleList.map { it.size }
 
+    val eligibleCoupleMissedPeriodList = benDao.getAllEligibleRegistrationList(selectedVillage)
+        .map { list ->
+            list.filter {
+                it.ecr != null && it.ecr.lmpDate != 0L &&
+                        System.currentTimeMillis() - it.ecr.lmpDate > TimeUnit.DAYS.toMillis(35)
+//                if (it.ecr != null && it.ecr.lmpDate != 0L) {
+//                    System.currentTimeMillis() - it.ecr.lmpDate > TimeUnit.DAYS.toMillis(35)
+//                } else {
+//                    true
+//                }
+                }
+                .map { it.asDomainModel() } }
+    val eligibleCoupleMissedPeriodListCount = eligibleCoupleMissedPeriodList.map { it.size }
+
     val eligibleCoupleTrackingList = benDao.getAllEligibleTrackingList(selectedVillage)
         .map { list -> list.map { it.asDomainModel() } }
 
     //        .map { list -> list.map { it.asBenBasicDomainModelECTForm() } }
     val eligibleCoupleTrackingListCount = eligibleCoupleTrackingList.map { it.size }
+
+    val eligibleCoupleTrackingNonFollowUpList = benDao.getAllEligibleTrackingList(selectedVillage)
+        .map { list ->
+            list.filter {
+                if (!it.savedECTRecords.isNullOrEmpty()) {
+                    it.savedECTRecords.last().visitDate != 0L &&
+                            it.savedECTRecords.last().visitDate < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(
+                        90
+                    ) &&
+                            it.savedECTRecords.last().visitDate > System.currentTimeMillis() - TimeUnit.DAYS.toMillis(
+                        365
+                    )
+//                it.savedECTRecords.any { it1 ->
+//                    it1.visitDate != 0L &&
+//                    it1.visitDate < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(90) &&
+//                            it1.visitDate > System.currentTimeMillis() - TimeUnit.DAYS.toMillis(365)
+//                }
+                } else {
+                    false
+                }
+            }
+                .map { it.asDomainModel() } }
+
+    val eligibleCoupleTrackingNonFollowUpListCount = eligibleCoupleTrackingNonFollowUpList.map { it.size }
+
+    val eligibleCoupleTrackingMissedPeriodList = benDao.getAllEligibleTrackingList(selectedVillage)
+        .map { list ->
+            list.filter {
+                if (!it.savedECTRecords.isNullOrEmpty() && it.savedECTRecords.last().lmpDate != 0L) {
+                    System.currentTimeMillis() - it.savedECTRecords.last().lmpDate > TimeUnit.DAYS.toMillis(35)
+                } else {
+                    false
+                }
+//                 it.savedECTRecords.any { record ->
+//                     if (record.lmpDate != 0L) {
+//                         System.currentTimeMillis() - record.lmpDate > TimeUnit.DAYS.toMillis(35)
+//                     } else {
+//                         false
+//                     }
+//                }
+            }
+                .map { it.asDomainModel() } }
+    val eligibleCoupleTrackingMissedPeriodListCount = eligibleCoupleTrackingMissedPeriodList.map { it.size }
 
 //    val deliveredWomenList = benDao.getAllEligibleTrackingList(selectedVillage)
 //        .map { list -> list.map { it.asBenBasicDomainModelECTForm() } }
@@ -184,6 +313,9 @@ class RecordsRepo @Inject constructor(
     val lowWeightBabiesCount = benDao.getLowWeightBabiesCount(selectedVillage)
 
     fun getPregnantWomenList() = benDao.getAllPregnancyWomenList(selectedVillage)
+        .map { list -> list.map { it.asPwrDomainModel() } }
+
+    fun getPregnantWomenWithRchList() = benDao.getAllPregnancyWomenWithRchList(selectedVillage)
         .map { list -> list.map { it.asPwrDomainModel() } }
 
     fun getRegisteredInfants() = childRegistrationDao.getAllRegisteredInfants(selectedVillage)
@@ -232,6 +364,33 @@ class RecordsRepo @Inject constructor(
 
     fun getRegisteredPregnantWomanListCount() =
         benDao.getAllRegisteredPregnancyWomenListCount(selectedVillage)
+
+    fun getRegisteredPregnantWomanNonFollowUpList() =
+        benDao.getAllRegisteredPregnancyWomenList(selectedVillage)
+            .map { list ->
+                list.filter {
+                    if (!it.savedAncRecords.isNullOrEmpty()) {
+                        it.savedAncRecords.last().ancDate != 0L &&
+                                it.savedAncRecords.last().ancDate < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(
+                            90
+                        ) &&
+                                it.savedAncRecords.last().ancDate > System.currentTimeMillis() - TimeUnit.DAYS.toMillis(
+                            365
+                        )
+//                    it.savedAncRecords.any { it1 ->
+//                        it1.ancDate != 0L &&
+//                        it1.ancDate < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(90) &&
+//                                it1.ancDate > System.currentTimeMillis() - TimeUnit.DAYS.toMillis(365)
+//                    }
+                    } else {
+                        false
+                    }
+                }
+                    .map { it.asDomainModel() }
+            }
+
+    fun getRegisteredPregnantWomanNonFollowUpListCount() =
+        getRegisteredPregnantWomanNonFollowUpList().map { it.size }
 
     val hrpCases = benDao.getHrpCases(selectedVillage)
         .map { list -> list.distinctBy { it.benId }.map { it.asBasicDomainModel() } }

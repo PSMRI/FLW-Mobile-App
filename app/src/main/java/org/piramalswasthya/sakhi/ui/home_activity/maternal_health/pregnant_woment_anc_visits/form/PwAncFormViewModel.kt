@@ -39,6 +39,8 @@ class PwAncFormViewModel @Inject constructor(
         IDLE, SAVING, SAVE_SUCCESS, SAVE_FAILED
     }
 
+    private var lastDocumentFormId: Int = 0
+
     private val benId =
         PwAncFormFragmentArgs.fromSavedStateHandle(savedStateHandle).benId
     private val visitNumber =
@@ -69,6 +71,9 @@ class PwAncFormViewModel @Inject constructor(
     private lateinit var ancCache: PregnantWomanAncCache
     private lateinit var registerRecord: PregnantWomanRegistrationCache
 
+    fun getIndexOfMCPCardFront() = dataset.getIndexOfMCPCardFrontPath()
+    fun getIndexOfMCPCardBack() = dataset.getIndexOfMCPCardBackPath()
+
     init {
         viewModelScope.launch {
             val asha = preferenceDao.getLoggedInUser()!!
@@ -81,7 +86,9 @@ class PwAncFormViewModel @Inject constructor(
                     visitNumber = visitNumber,
                     syncState = SyncState.UNSYNCED,
                     createdBy = asha.userName,
-                    updatedBy = asha.userName
+                    updatedBy = asha.userName,
+                    frontFilePath = "",
+                    backFilePath = ""
                 )
             }
             registerRecord = maternalHealthRepo.getSavedRegistrationRecord(benId)!!
@@ -105,6 +112,18 @@ class PwAncFormViewModel @Inject constructor(
         }
     }
 
+    fun setCurrentDocumentFormId(id: Int) {
+        lastDocumentFormId = id
+    }
+    fun getDocumentFormId():Int {
+        return lastDocumentFormId
+    }
+
+    fun setImageUriToFormElement(dpUri: Uri) {
+        dataset.setImageUriToFormElement(lastDocumentFormId, dpUri)
+
+
+    }
     fun updateListOnValueChanged(formId: Int, index: Int) {
         viewModelScope.launch {
             dataset.updateList(formId, index)

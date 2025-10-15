@@ -52,7 +52,9 @@ class PullHRPFromAmritWorker @AssistedInject constructor(
 //                            async { getHRPAssess() },
                             async { getHRPTrack() },
 //                            async { getHRNonPAssess() },
-                            async { getHRNonPTrack() }
+                            async { getHRNonPTrack() },
+
+                           async { getHighRiskAssessMicroBirthPlan() }
                         )
 
                     val endTime = System.currentTimeMillis()
@@ -109,6 +111,18 @@ class PullHRPFromAmritWorker @AssistedInject constructor(
         return withContext(Dispatchers.IO) {
             try {
                 val res = hrpRepo.getHighRiskAssessDetailsFromServer()
+                return@withContext res == 1
+            } catch (e: Exception) {
+                Timber.d("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
+            }
+            true
+        }
+    }
+
+    private suspend fun getHighRiskAssessMicroBirthPlan(): Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                val res = hrpRepo.getHighRiskAssessMicroBirthPlanDetailsFromServer()
                 return@withContext res == 1
             } catch (e: Exception) {
                 Timber.d("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")

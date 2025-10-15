@@ -41,6 +41,12 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
             return date?.time ?: throw IllegalStateException("Invalid date for dateReg")
         }
 
+        private fun getMinLmpMillis(): Long {
+            val cal = Calendar.getInstance()
+            cal.add(Calendar.DAY_OF_YEAR, -1 * 400) //before it is 280
+            return cal.timeInMillis
+        }
+
         private fun getMinDobMillis(): Long {
             val cal = Calendar.getInstance()
             cal.add(Calendar.YEAR, -15)
@@ -165,6 +171,20 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
         isEnabled = false,
         backgroundDrawable=R.drawable.ic_bg_circular,
         iconDrawableRes=R.drawable.ic_age_of_women_at_marriage,
+        showDrawable = true
+    )
+
+    private var lmpDate = FormElement(
+        id = 73,
+        inputType = DATE_PICKER,
+        title = resources.getString(R.string.lmp_date),
+        arrayId = -1,
+        required = true,
+        max = System.currentTimeMillis(),
+        min = getMinLmpMillis(),
+        hasDependants = true,
+        backgroundDrawable=R.drawable.ic_bg_circular,
+        iconDrawableRes=R.drawable.ic_anc_date,
         showDrawable = true
     )
 
@@ -921,6 +941,7 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
             husbandName,
 //            age,
             ageAtMarriage,
+            lmpDate,
             womanDetails,
 //            aadharNo,
             bankAccount,
@@ -945,6 +966,7 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
             pastCSection,
         )
         dateOfReg.value = getDateFromLong(System.currentTimeMillis())
+//        lmpDate.value = getDateFromLong(1735237800000L)
 //        dateOfReg.value?.let {
 //            val long = Dataset.getLongFromDate(it)
 //            dateOfhivTestDone.min = long
@@ -1004,6 +1026,7 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
             bankName.value = ecCache.bankName
             branchName.value = ecCache.branchName
             ifsc.value = ecCache.ifsc
+            lmpDate.value = getDateFromLong(ecCache.lmpDate)
             noOfChildren.value = ecCache.noOfChildren.toString()
             noOfLiveChildren.value = ecCache.noOfLiveChildren.toString()
             numMale.value = ecCache.noOfMaleChildren.toString()
@@ -1231,6 +1254,7 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
             ifsc.id -> {
                 validateAllAlphaNumericOnEditText(ifsc)
             }
+
 
             ageAtMarriage.id -> {
                 if (ageAtMarriage.value.isNullOrEmpty()) {
@@ -1811,6 +1835,9 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as EligibleCoupleRegCache).let { ecr ->
             ecr.dateOfReg = getLongFromDate(dateOfReg.value!!)
+            lmpDate.value?.let {
+                ecr.lmpDate = getLongFromDate(it)
+            }
             ecr.bankAccount = bankAccount.value?.takeIf { it.isNotBlank() }?.toLong()
             ecr.bankName = bankName.value
             ecr.branchName = branchName.value

@@ -15,14 +15,30 @@ class PwRegistrationListViewModel @Inject constructor(
     recordsRepo: RecordsRepo
 ) : ViewModel() {
     private val allBenList = recordsRepo.getPregnantWomenList()
+    private val allBenWithRchList = recordsRepo.getPregnantWomenWithRchList()
     private val filter = MutableStateFlow("")
-    val benList = allBenList.combine(filter) { list, filter ->
+    private val kind = MutableStateFlow("false")
+
+    val benList = allBenList.combine(kind) { list, kind ->
+        if (kind.equals("false", true)) {
+            filterPwrRegistrationList(list, false)
+        } else {
+            filterPwrRegistrationList(list, true)
+        }
+    }.combine(filter) { list, filter ->
         filterPwrRegistrationList(list, filter)
     }
 
     fun filterText(text: String) {
         viewModelScope.launch {
             filter.emit(text)
+        }
+
+    }
+
+    fun filterType(type: String) {
+        viewModelScope.launch {
+            kind.emit(type)
         }
 
     }

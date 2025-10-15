@@ -13,6 +13,10 @@ data class Icon(
     val allowRedBorder: Boolean = false
 )
 
+
+
+
+
 data class ImmunizationIcon(
     val benId: Long,
     val hhId: Long,

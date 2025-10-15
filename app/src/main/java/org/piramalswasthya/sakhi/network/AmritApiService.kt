@@ -1,5 +1,7 @@
 package org.piramalswasthya.sakhi.network
 
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import org.piramalswasthya.sakhi.model.*
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
@@ -7,12 +9,26 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.FormSubmitRequest
 import org.piramalswasthya.sakhi.model.dynamicModel.ApiResponse
 import org.piramalswasthya.sakhi.model.dynamicModel.HBNCVisitListResponse
 import org.piramalswasthya.sakhi.model.dynamicModel.HBNCVisitRequest
+import org.piramalswasthya.sakhi.ui.home_activity.asha_profile.AshaProfileViewModel
 import retrofit2.Response
 import retrofit2.http.*
 
 interface AmritApiService {
+    @Multipart
+    @POST("flw-api/maa-meetings/saveAll")
+    suspend fun postMaaMeetingMultipart(
+        @Part("meetingDate") meetingDate: RequestBody,
+        @Part("place") place: RequestBody,
+        @Part("participants") participants: RequestBody,
+        @Part("ashaId") ashaId: RequestBody,
+        @Part("createdBy") createdBy: RequestBody,
+        @Part meetingImages: List<MultipartBody.Part>
+    ): Response<ResponseBody>
 
-    @Headers("No-Auth: true")
+    @POST("flw-api/maa-meetings/getAll")
+    suspend fun getMaaMeetings(@Body userDetail: GetDataRequest): Response<ResponseBody>
+
+    @Headers("No-Auth: true", "User-Agent: okhttp")
     @POST("common-api/user/userAuthenticate")
     suspend fun getJwtToken(@Body json: TmcAuthUserRequest): Response<ResponseBody>
 
@@ -22,18 +38,36 @@ interface AmritApiService {
         @Query("userId") userId: Int
     ): UserNetworkResponse
 
+    @POST("common-api/firebaseNotification/userToken")
+    suspend fun saveFirebaseToken(@Body json: Map<String, Any>): Response<ResponseBody>
+
     @POST("tm-api/registrar/registrarBeneficaryRegistrationNew")
     suspend fun getBenIdFromBeneficiarySending(@Body beneficiaryDataSending: BeneficiaryDataSending): Response<ResponseBody>
 
-    @POST("hwc-api/registrar/registrarBeneficaryRegistrationNew")
+    @POST("hwc-facility-service/registrar/registrarBeneficaryRegistrationNew")
     suspend fun getBenIdFromBeneficiarySending(@Body benCHOPost: BenCHOPost): Response<ResponseBody>
 
     @POST("identity-api/rmnch/syncDataToAmrit")
     suspend fun submitRmnchDataAmrit(@Body sendingRMNCHData: SendingRMNCHData): Response<ResponseBody>
 
+    @POST("flw-api/asha/editProfile")
+    suspend fun submitAshaProfileData(@Body sendAshaPost: ProfileActivityCache): Response<ResponseBody>
+
     //    @POST("beneficiary/getBeneficiaryData")
     @POST("flw-api/beneficiary/getBeneficiaryData")
     suspend fun getBeneficiaries(@Body userDetail: GetDataPaginatedRequest): Response<ResponseBody>
+
+    @POST("flw-api/generalOpd/getBeneficiaries")
+    suspend fun getgeneralOPDBeneficiaries(@Body userDetail: GetDataPaginatedRequestForGeneralOPD): Response<ResponseBody>
+
+    @POST("common-api/beneficiaryConsent/sendConsent")
+    suspend fun sendOtp(@Body sendOtpRequest: sendOtpRequest): Response<ResponseBody>
+
+    @POST("common-api/beneficiaryConsent/resendConsent")
+    suspend fun resendOtp(@Body sendOtpRequest: sendOtpRequest): Response<ResponseBody>
+
+    @POST("common-api/beneficiaryConsent/validateConsent")
+    suspend fun validateOtp(@Body validateOtp: ValidateOtpRequest ): Response<ResponseBody>
 
     @POST("flw-api/cbac/getAll")
     suspend fun getCbacs(@Body userDetail: GetDataPaginatedRequest): Response<ResponseBody>
@@ -53,13 +87,64 @@ interface AmritApiService {
 //    @POST("tb/screening/saveAll")
     suspend fun saveTBScreeningData(@Body tbScreeningRequestDTO: TBScreeningRequestDTO): Response<ResponseBody>
 
+    @POST("flw-api/disease/kalaAzar/saveAll")
+    suspend fun saveKalaAzarScreeningData(@Body kalaAzarScreenRequestDTO: KalaAzarScreeningRequestDTO): Response<ResponseBody>
+
+    @POST("flw-api/disease/malaria/saveAll")
+    suspend fun saveMalariaScreeningData(@Body malariaScreeningRequestDTO: MalariaScreeningRequestDTO): Response<ResponseBody>
+
+    @POST("flw-api/disease/leprosy/saveAll")
+    suspend fun saveLeprosyScreeningData(@Body leprosyScreeningRequestDTO: LeprosyScreeningRequestDTO): Response<ResponseBody>
+
+
+    @POST("flw-api/disease/aesJe/saveAll")
+    suspend fun saveAESScreeningData(@Body aesScreeningRequestDTO: AESScreeningRequestDTO): Response<ResponseBody>
+
+    @POST("flw-api/disease/filaria/saveAll")
+    suspend fun saveFilariaScreeningData(@Body filariaScreeningRequestDTO: FilariaScreeningRequestDTO): Response<ResponseBody>
+
+    @POST("flw-api/disease/getAllDisease")
+    suspend fun getMalariaScreeningData(@Body userDetail: GetDataPaginatedRequestForDisease): Response<ResponseBody>
+
+    @GET("flw-api/irsRound/list")
+    suspend fun getScreeningData(@Query("householdId") householdId:Int): Response<ResponseBody>
+
+    @POST("flw-api/adolescentHealth/getAll")
+    suspend fun getAdolescentHealthData(@Body userDetail: GetDataPaginatedRequest): Response<ResponseBody>
+
+    @POST("flw-api/adolescentHealth/saveAll")
+    suspend fun saveAdolescentHealthData(@Body adolescentHealthRequestDTO: AdolescentHealthRequestDTO): Response<ResponseBody>
+
     @POST("flw-api/tb/suspected/saveAll")
-//    @POST("tb/suspected/saveAll")
     suspend fun saveTBSuspectedData(@Body tbSuspectedRequestDTO: TBSuspectedRequestDTO): Response<ResponseBody>
+
+    @POST("flw-0.0.1/api/follow-up/save")
+    suspend fun saveMalariaConfirmedData(@Body malariaConfirmedRequestDTO: MalariaConfirmedRequestDTO): Response<ResponseBody>
+
+    @POST("flw-0.0.1/api/follow-up/get")
+    suspend fun getMalariaConfirmedData(@Body malariaConfirmedRequestDTO: GetDataPaginatedRequestForDisease): Response<ResponseBody>
 
     @POST("flw-api/highRisk/pregnant/assess/getAll")
 //    @POST("highRisk/pregnant/assess/getAll")
     suspend fun getHRPAssessData(@Body userDetail: GetDataPaginatedRequest): Response<ResponseBody>
+
+    @POST("flw-api/forms/villageLevel/getAll")
+    suspend fun getVLFData(@Body userDetail: GetVHNDRequest): Response<ResponseBody>
+
+    @POST("flw-api/forms/villageLevel/vhnd/saveAll")
+    suspend fun saveVHNDData(@Body userDataDTO: UserDataDTO<Any?>): Response<ResponseBody>
+
+    @POST("flw-api/forms/villageLevel/vhnc/saveAll")
+    suspend fun saveVHNCData(@Body userDataDTO: UserDataDTO<Any?>): Response<ResponseBody>
+
+    @POST("flw-api/forms/villageLevel/phc/saveAll")
+    suspend fun savePHCData(@Body userDataDTO: UserDataDTO<Any?>): Response<ResponseBody>
+
+    @POST("flw-api/forms/villageLevel/ahd/saveAll")
+    suspend fun saveAHDData(@Body userDataDTO: UserDataDTO<Any?>): Response<ResponseBody>
+
+    @POST("flw-api/forms/villageLevel/deworming/saveAll")
+    suspend fun saveDewormingData(@Body userDataDTO: UserDataDTO<Any?>): Response<ResponseBody>
 
     @POST("flw-api/highRisk/pregnant/assess/saveAll")
 //    @POST("highRisk/pregnant/assess/saveAll")
@@ -68,6 +153,13 @@ interface AmritApiService {
     @POST("flw-api/highRisk/assess/getAll")
 //    @POST("highRisk/pregnant/assess/getAll")
     suspend fun getHighRiskAssessData(@Body userDetail: GetDataPaginatedRequest): Response<ResponseBody>
+
+    @GET("flw-api/micro-birthPlan/getAll")
+    suspend fun getMicroBirthPlanAssessData(@Query("userId") userId: Int): Response<ResponseBody>
+
+    @POST("flw-api/micro-birthPlan/saveAll")
+    suspend fun saveMicroBirthPlanAssessData(@Body userDataDTO: UserDataDTO<Any?>): Response<ResponseBody>
+
 
     @POST("flw-api/highRisk/assess/saveAll")
 //    @POST("highRisk/pregnant/assess/saveAll")
@@ -196,6 +288,9 @@ interface AmritApiService {
     @POST("flw-api/incentive/masterData/getAll")
     suspend fun getAllIncentiveActivities(@Body requestBody: IncentiveActivityListRequest): Response<ResponseBody>
 
+    @GET("/flw-api/asha/getProfile")
+    suspend fun getAshaProfileData(@Query("employeeId") userId: Int): Response<ResponseBody>
+
     @POST("flw-api/incentive/fetchUserData")
     suspend fun getAllIncentiveRecords(@Body requestBody: IncentiveRecordListRequest): Response<ResponseBody>
 
@@ -240,4 +335,19 @@ interface AmritApiService {
         @Body request: HBNCVisitRequest
     ): Response<HBNCVisitListResponse>
 
+    @Multipart
+    @POST("flw-api/uwin/session/saveAll")
+    suspend fun saveUwinSession(
+        @Part("meetingDate") meetingDate: RequestBody,
+        @Part("place") place: RequestBody,
+        @Part("participants") participants: RequestBody,
+        @Part("ashaId") ashaId: RequestBody,
+        @Part("createdBy") createdBy: RequestBody,
+        @Part images: List<MultipartBody.Part>? = null
+    ): Response<ResponseBody>
+
+    @POST("flw-api/uwin/session/getAll")
+    suspend fun getAllUwinSessions(
+        @Body request: UwinGetAllRequest
+    ): Response<ResponseBody>
 }

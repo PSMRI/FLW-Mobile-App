@@ -2,16 +2,25 @@ package org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.
 
 import android.content.Context
 import android.net.Uri
+import android.os.CountDownTimer
+import android.view.View
+import android.widget.TextView
+import android.widget.Toast
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.textfield.TextInputEditText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.configuration.BenRegFormDataset
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
@@ -21,6 +30,7 @@ import org.piramalswasthya.sakhi.model.BenRegKid
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.HouseholdCache
 import org.piramalswasthya.sakhi.model.LocationRecord
+import org.piramalswasthya.sakhi.model.PreviewItem
 import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.HouseholdRepo
@@ -40,6 +50,8 @@ class NewBenRegViewModel @Inject constructor(
     enum class State {
         IDLE, SAVING, SAVE_SUCCESS, SAVE_FAILED
     }
+     lateinit var countDownTimer : CountDownTimer
+
 
     sealed class ListUpdateState {
         object Idle : ListUpdateState()
@@ -61,6 +73,12 @@ class NewBenRegViewModel @Inject constructor(
         }
 
     val isHoF = relToHeadId == 18
+
+    var isBenMarried = false
+
+    companion object {
+        var isOtpVerified = false
+    }
 
     private val benIdFromArgs =
         NewBenRegFragmentArgs.fromSavedStateHandle(savedStateHandle).benId
@@ -95,7 +113,20 @@ class NewBenRegViewModel @Inject constructor(
     private lateinit var locationRecord: LocationRecord
 
     private var lastImageFormId: Int = 0
+    var otp = 1234
 
+    fun getIndexOfBirthCertificateFront() = dataset.getIndexOfBirthCertificateFrontPath()
+
+    fun getIndexOfBirthCertificateBack() = dataset.getIndexOfBirthCertificateBackPath()
+
+    private var lastDocumentFormId: Int = 0
+
+    fun setCurrentDocumentFormId(id: Int) {
+        lastDocumentFormId = id
+    }
+    fun getDocumentFormId():Int {
+        return lastDocumentFormId
+    }
     init {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
@@ -114,13 +145,19 @@ class NewBenRegViewModel @Inject constructor(
                 if (benIdFromArgs != 0L && recordExists.value == true) {
                     ben = benRepo.getBeneficiaryRecord(benIdFromArgs, hhId)!!
                     _isDeath.postValue(ben.isDeath ?: false)
+                    if (ben.genDetails?.maritalStatus == "Unmarried") {
+                        isBenMarried = false
+                    } else {
+                        isBenMarried = true
+                    }
+                    isOtpVerified = ben.isConsent
                     dataset.setFirstPageToRead(
                         ben,
                         familyHeadPhoneNo = household.family?.familyHeadPhoneNo
                     )
                 } else if (benIdFromArgs != 0L && recordExists.value != true) {
                     ben = benRepo.getBeneficiaryRecord(benIdFromArgs, hhId)!!
-
+                    isOtpVerified = ben.isConsent
                     if (isHoF) dataset.setPageForHof(
                         if (this@NewBenRegViewModel::ben.isInitialized) ben else null,
                         household
@@ -136,6 +173,7 @@ class NewBenRegViewModel @Inject constructor(
                         )
                     }
                 } else {
+
                     if (isHoF) dataset.setPageForHof(
                         if (this@NewBenRegViewModel::ben.isInitialized) ben else null,
                         household
@@ -183,7 +221,8 @@ class NewBenRegViewModel @Inject constructor(
                             kidDetails = if(dataset.isKid()) BenRegKid() else null,
                             genDetails = BenRegGen(),
                             syncState = SyncState.UNSYNCED,
-                            locationRecord = locationRecord
+                            locationRecord = locationRecord,
+                            isConsent = isOtpVerified
                         )
                     }
                     dataset.mapValues(ben, 2)
@@ -261,9 +300,107 @@ class NewBenRegViewModel @Inject constructor(
     fun getIndexOfAgeAtMarriage() = dataset.getIndexOfAgeAtMarriage()
     fun getIndexOfMaritalStatus() = dataset.getIndexOfMaritalStatus()
     fun getIndexOfContactNumber() = dataset.getIndexOfContactNumber()
+    fun getIndexofTempraryNumber() = dataset.getTempMobileNoStatus()
 
     fun setRecordExist(b: Boolean) {
         _recordExists.value = b
     }
 
+     fun sentOtp(mobileNo: String) {
+        viewModelScope.launch {
+            benRepo.sendOtp(mobileNo)?.let {
+                if (it.status == "Success") {
+
+                } else {
+
+
+                }
+            }
+            }
+    }
+
+    fun resendOtp(mobileNo: String) {
+        viewModelScope.launch {
+            benRepo.resendOtp(mobileNo)?.let {
+                if (it.status == "Success") {
+
+                } else {
+
+
+                }
+            }
+        }
+    }
+
+
+    fun validateOtp(
+        mobileNo: String,
+        otp: Int,
+        context: FragmentActivity,
+        otpField: TextInputEditText,
+        button: MaterialButton,
+        timerInsec: TextView
+    ) : Boolean {
+        var memberOtpVerified = false
+        viewModelScope.launch {
+            benRepo.verifyOtp(mobileNo,otp)?.let {
+                if (it.status.equals("Success")) {
+                    Toast.makeText(context,"Otp Verified", Toast.LENGTH_SHORT).show()
+                    otpField.isEnabled = false
+                    button.text = context.resources.getString(R.string.verified)
+                    button.isEnabled = true
+                    isOtpVerified = true
+
+                } else {
+                    Toast.makeText(context,"Invalid Otp", Toast.LENGTH_SHORT).show()
+                    memberOtpVerified = false
+                    isOtpVerified = false
+                }
+            }
+        }
+        return memberOtpVerified
+    }
+
+    suspend fun getFormPreviewData(): List<PreviewItem> = withContext(Dispatchers.Default) {
+        val elements = dataset.listFlow.first()
+        val out = mutableListOf<PreviewItem>()
+        for (el in elements) {
+            if (el.inputType.name == "IMAGE_VIEW" || el.inputType.toString() == "IMAGE_VIEW") {
+                val uri = try {
+                    el.value?.let { Uri.parse(it.toString()) }
+                } catch (e: Exception) {
+                    null
+                }
+                out.add(
+                    PreviewItem(
+                        label = el.title ?: "",
+                        value = "",
+                        isImage = true,
+                        imageUri = uri
+                    )
+                )
+                continue
+            }
+
+            val display = when {
+                el.value == null -> "-"
+                el.value is String && el.value.toString().isBlank() -> "-"
+                el.value is String && el.value.toString().contains(",") -> el.value.toString()
+                    .split(",")
+                    .map { it.trim() }
+                    .filter { it.isNotEmpty() }
+                    .joinToString(", ")
+                else -> el.value.toString()
+            }
+            val trimmed = if (display.length > 400) display.substring(0, 400) + "…" else display
+            out.add(PreviewItem(label = el.title ?: "", value = trimmed, isImage = false))
+        }
+        out
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        isOtpVerified = false
+
+    }
 }

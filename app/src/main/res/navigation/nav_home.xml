@@ -14,6 +14,9 @@
             android:id="@+id/action_nav_home_to_allBenFragment"
             app:destination="@id/allBenFragment" />
         <action
+            android:id="@+id/action_nav_home_to_abhaBenFragment"
+            app:destination="@id/abhaBenFragment" />
+        <action
             android:id="@+id/action_nav_home_to_allHouseholdFragment"
             app:destination="@id/allHouseholdFragment" />
         <action
@@ -76,6 +79,16 @@
         <action
             android:id="@+id/action_homeFragment_to_childImmunizationListFragment"
             app:destination="@id/childImmunizationListFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_diseaseControlFragment"
+            app:destination="@id/diseaseControlFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_nonFollowUpFragment"
+            app:destination="@id/nonFollowUpFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_missedPeriodFragment"
+            app:destination="@id/missedPeriodFragment" />
+
     </fragment>
     <fragment
         android:id="@+id/allHouseholdFragment"
@@ -91,6 +104,9 @@
         <action
             android:id="@+id/action_allHouseholdFragment_to_newBenRegFragment"
             app:destination="@id/newBenRegFragment" />
+        <action
+            android:id="@+id/action_allHouseholdFragment_to_malariaSuspectedListFragment"
+            app:destination="@id/malariaSuspectedListFragment" />
     </fragment>
     <fragment
         android:id="@+id/allBenFragment"
@@ -100,6 +116,23 @@
         <action
             android:id="@+id/action_allBenFragment_to_newBenRegFragment"
             app:destination="@id/newBenRegFragment" />
+        <argument
+            android:name="source"
+            android:defaultValue="0"
+            app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/abhaBenFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.all_ben.AbhaBenFragment"
+        android:label="@string/icon_title_ben"
+        tools:layout="@layout/fragment_all_ben">
+        <action
+            android:id="@+id/action_abhaBenFragment_to_newBenRegFragment"
+            app:destination="@id/newBenRegFragment" />
+        <argument
+            android:name="source"
+            android:defaultValue="0"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/eligibleCoupleFragment"
@@ -127,6 +160,9 @@
         <action
             android:id="@+id/action_childCareFragment_to_childListFragment"
             app:destination="@id/childListFragment" />
+        <action
+            android:id="@+id/action_childCareFragment_to_childrenUnderFiveYearListFragment"
+            app:destination="@id/childrenUnderFiveYearListFragment" />
     </fragment>
     <fragment
         android:id="@+id/motherCareFragment"
@@ -238,9 +274,55 @@
         android:label="@string/icon_title_vlf"
         tools:layout="@layout/rv_icon_grid">
         <action
+            android:id="@+id/action_villageLevelFormsFragment_to_uwinListFragment"
+            app:destination="@id/uwinListFragment" />
+        <action
             android:id="@+id/action_villageLevelFormsFragment_to_surveyRegisterFragment"
             app:destination="@id/surveyRegisterFragment" />
+        <action
+            android:id="@+id/action_villageLevelFormsFragment_to_VHNDListFragement"
+            app:destination="@id/VHNDListFragement" />
+
+        <action
+            android:id="@+id/action_villageLevelFormsFragment_to_VHNCListFragement"
+            app:destination="@id/VHNCListFragement" />
+
+        <action
+            android:id="@+id/action_villageLevelFormsFragment_to_PHCReviewListFragement"
+            app:destination="@id/PHCReviewListFragement" />
+        <action
+            android:id="@+id/action_villageLevelFormsFragment_to_AHDListFragment"
+            app:destination="@id/AHDListFragment" />
+
+        <action
+            android:id="@+id/action_villageLevelFormsFragment_to_DewormingListFragment"
+            app:destination="@id/DewormingListFragment" />
+        <action
+            android:id="@+id/action_villageLevelFormsFragment_to_allMaaMeetingFragment"
+            app:destination="@id/allMaaMeetingFragment" />
     </fragment>
+
+    <fragment
+      android:id="@+id/uwinListFragment"
+      android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.u_win_forms.UwinListFragment"
+      android:label="@string/u_win_sessions_list"  >
+      <action
+          android:id="@+id/action_uwinListFragment_to_uwinFragment"
+          app:destination="@id/uwinFragment"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/uwinFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.u_win_forms.UwinFragment"
+        android:label="@string/uwin"
+        tools:layout="@layout/fragment_uwin">
+        <argument
+            android:name="uwinId"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
+
     <fragment
         android:id="@+id/newHouseholdFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.all_household.new_household_registration.NewHouseholdFragment"
@@ -267,39 +349,39 @@
         <argument
             android:name="hhId"
             app:argType="long" />
-<!--        <action-->
-<!--            android:id="@+id/action_newBenRegTypeFragment_to_newBenRegL15Fragment"-->
-<!--            app:destination="@id/newBenRegL15Fragment"-->
-<!--            app:popUpTo="@id/homeFragment" />-->
+        <!--        <action-->
+        <!--            android:id="@+id/action_newBenRegTypeFragment_to_newBenRegL15Fragment"-->
+        <!--            app:destination="@id/newBenRegL15Fragment"-->
+        <!--            app:popUpTo="@id/homeFragment" />-->
         <action
             android:id="@+id/action_newBenRegTypeFragment_to_newBenRegG15Fragment"
             app:destination="@id/newBenRegG15Fragment"
             app:popUpTo="@id/homeFragment" />
     </fragment>
-<!--    <fragment-->
-<!--        android:id="@+id/newBenRegL15Fragment"-->
-<!--        android:name="org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_age_less_15.NewBenRegL15Fragment"-->
-<!--        android:label="@string/kid_registration">-->
-<!--        <argument-->
-<!--            android:name="hhId"-->
-<!--            app:argType="long" />-->
-<!--        <action-->
-<!--            android:id="@+id/action_newBenRegL15Fragment_to_infantListFragment"-->
-<!--            app:destination="@id/infantListFragment"-->
-<!--            app:popUpTo="@id/homeFragment" />-->
-<!--        <action-->
-<!--            android:id="@+id/action_newBenRegL15Fragment_to_childListFragment"-->
-<!--            app:destination="@id/childListFragment"-->
-<!--            app:popUpTo="@id/homeFragment" />-->
-<!--        <action-->
-<!--            android:id="@+id/action_newBenRegL15Fragment_to_adolescentListFragment"-->
-<!--            app:destination="@id/adolescentListFragment"-->
-<!--            app:popUpTo="@id/homeFragment" />-->
-<!--        <argument-->
-<!--            android:name="benId"-->
-<!--            android:defaultValue="0L"-->
-<!--            app:argType="long" />-->
-<!--    </fragment>-->
+    <!--    <fragment-->
+    <!--        android:id="@+id/newBenRegL15Fragment"-->
+    <!--        android:name="org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_age_less_15.NewBenRegL15Fragment"-->
+    <!--        android:label="@string/kid_registration">-->
+    <!--        <argument-->
+    <!--            android:name="hhId"-->
+    <!--            app:argType="long" />-->
+    <!--        <action-->
+    <!--            android:id="@+id/action_newBenRegL15Fragment_to_infantListFragment"-->
+    <!--            app:destination="@id/infantListFragment"-->
+    <!--            app:popUpTo="@id/homeFragment" />-->
+    <!--        <action-->
+    <!--            android:id="@+id/action_newBenRegL15Fragment_to_childListFragment"-->
+    <!--            app:destination="@id/childListFragment"-->
+    <!--            app:popUpTo="@id/homeFragment" />-->
+    <!--        <action-->
+    <!--            android:id="@+id/action_newBenRegL15Fragment_to_adolescentListFragment"-->
+    <!--            app:destination="@id/adolescentListFragment"-->
+    <!--            app:popUpTo="@id/homeFragment" />-->
+    <!--        <argument-->
+    <!--            android:name="benId"-->
+    <!--            android:defaultValue="0L"-->
+    <!--            app:argType="long" />-->
+    <!--    </fragment>-->
     <fragment
         android:id="@+id/newBenRegG15Fragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_age_more_15.NewBenRegG15Fragment"
@@ -331,9 +413,14 @@
     </fragment>
     <fragment
         android:id="@+id/adolescentListFragment"
-        android:name="org.piramalswasthya.sakhi.ui.home_activity.child_care.adolescent_list.AdolescentListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.child_care.adolescent_list.list.AdolescentListFragment"
         android:label="@string/child_care_icon_title_adolescent_list"
-        tools:layout="@layout/fragment_adolescent_list" />
+        tools:layout="@layout/fragment_adolescent_list" >
+
+        <action
+            android:id="@+id/action_adolescentListFragment_to_adolescentHealthFormFragment"
+            app:destination="@id/adolescentHealthFormFragment" />
+    </fragment>
     <fragment
         android:id="@+id/childListFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.child_care.child_list.ChildListFragment"
@@ -348,6 +435,13 @@
             app:destination="@id/childMonthListFragment" />
     </fragment>
     <fragment
+        android:id="@+id/childrenUnderFiveYearListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.child_care.children_under_five_years.ChildrenUnderFiveYearsListFragment"
+        android:label="@string/child_under_five_years_list"
+        tools:layout="@layout/fragment_children_under_five_years_list">
+
+    </fragment>
+    <fragment
         android:id="@+id/pncMotherListFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pnc.list.PncMotherListFragment"
         android:label="@string/pnc_mother_list"
@@ -355,6 +449,10 @@
         <action
             android:id="@+id/action_pncMotherListFragment_to_pncFormFragment"
             app:destination="@id/pncFormFragment" />
+        <argument
+            android:name="source"
+            android:defaultValue="0"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/ncdEligibleListFragment"
@@ -390,6 +488,17 @@
         android:name="org.piramalswasthya.sakhi.ui.home_activity.get_ben_data.GetBenFragment"
         android:label="@string/beneficiaries_data"
         tools:layout="@layout/fragment_get_ben" />
+    <fragment
+        android:id="@+id/allMaaMeetingFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.maa_meeting.MaaMeetingListFragment"
+        android:label="fragment_all_maa_meeting"
+        tools:layout="@layout/fragment_all_maa_meeting" >
+        <action
+            android:id="@+id/action_allMaaMeetingFragment_to_maaMeetingFormFragment"
+            app:destination="@id/maaMeetingFormFragment" />
+    </fragment>
+
+
     <fragment
         android:id="@+id/cbacFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.cbac.CbacFragment"
@@ -483,18 +592,30 @@
         <argument
             android:name="hhId"
             app:argType="long" />
+        <argument
+            android:name="fromDisease"
+            app:argType="integer" />
+        <argument
+            android:name="diseaseType"
+            app:argType="string" />
         <action
             android:id="@+id/action_householdMembersFragment_to_newBenRegTypeFragment"
             app:destination="@id/newBenRegTypeFragment" />
-<!--        <action-->
-<!--            android:id="@+id/action_householdMembersFragment_to_newBenRegL15Fragment"-->
-<!--            app:destination="@id/newBenRegL15Fragment" />-->
+        <!--        <action-->
+        <!--            android:id="@+id/action_householdMembersFragment_to_newBenRegL15Fragment"-->
+        <!--            app:destination="@id/newBenRegL15Fragment" />-->
         <action
             android:id="@+id/action_householdMembersFragment_to_newBenRegG15Fragment"
             app:destination="@id/newBenRegG15Fragment" />
         <action
             android:id="@+id/action_householdMembersFragment_to_newBenRegFragment"
             app:destination="@id/newBenRegFragment" />
+        <action
+            android:id="@+id/action_householdMembersFragment_to_malariaFormFragment"
+            app:destination="@id/malariaFormFragment" />
+        <action
+            android:id="@+id/action_householdMembersFragment_to_kalaAzarFormFragment"
+            app:destination="@id/kalaAzarFormFragment" />
     </fragment>
     <fragment
         android:id="@+id/hbncDayListFragment"
@@ -620,6 +741,33 @@
             app:destination="@id/immunizationFormFragment" />
     </fragment>
     <fragment
+        android:id="@+id/nonFollowUpFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.home.NonFollowUpFragment"
+        android:label="@string/non_follow_up_cases"
+        tools:layout="@layout/fragment_non_follow_up">
+        <action
+            android:id="@+id/action_nonFollowUpFragment_to_pwAncVisitsFragment"
+            app:destination="@id/pwAncVisitsFragment" />
+        <action
+            android:id="@+id/action_nonFollowUpFragment_to_pncMotherListFragment"
+            app:destination="@id/pncMotherListFragment" />
+        <action
+            android:id="@+id/action_nonFollowUpFragment_to_eligibleCoupleTrackingListFragment"
+            app:destination="@id/eligibleCoupleTrackingListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/missedPeriodFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.home.MissedPeriodFragment"
+        android:label="@string/missed_period"
+        tools:layout="@layout/fragment_missed_period">
+        <action
+            android:id="@+id/action_missedPeriodFragment_to_eligibleCoupleListFragment"
+            app:destination="@id/eligibleCoupleListFragment" />
+        <action
+            android:id="@+id/action_missedPeriodFragment_to_eligibleCoupleTrackingListFragment"
+            app:destination="@id/eligibleCoupleTrackingListFragment" />
+    </fragment>
+    <fragment
         android:id="@+id/pwRegistrationFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_women_registration.list.PwRegistrationListFragment"
         android:label="@string/icon_title_pmr"
@@ -639,7 +787,10 @@
         <action
             android:id="@+id/action_pwAncVisitsFragment_to_pmsmaFragment"
             app:destination="@id/pmsmaFragment" />
-
+        <argument
+            android:name="source"
+            android:defaultValue="0"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/pregnancyRegistrationFormFragment"
@@ -675,6 +826,10 @@
         <action
             android:id="@+id/action_eligibleCoupleListFragment_to_eligibleCoupleRegFragment"
             app:destination="@id/eligibleCoupleRegFragment" />
+        <argument
+            android:name="source"
+            android:defaultValue="0"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/eligibleCoupleRegFragment"
@@ -691,6 +846,10 @@
         <action
             android:id="@+id/action_eligibleCoupleTrackingListFragment_to_eligibleCoupleTrackingFormFragment"
             app:destination="@id/eligibleCoupleTrackingFormFragment" />
+        <argument
+            android:name="source"
+            android:defaultValue="0"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/eligibleCoupleTrackingFormFragment"
@@ -978,7 +1137,7 @@
     <fragment
         android:id="@+id/HRPMicroBirthPlanTable"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.pregnant_women.micro_birth_plan_table.HRPMicroBirthPlanTable"
-        android:label="@string/micro_birth_plan_table" >
+        android:label="@string/micro_birth_plan_table">
         <argument
             android:name="benId"
             app:argType="long" />
@@ -1171,6 +1330,351 @@
             android:name="formId"
             app:argType="string"
             android:defaultValue="hbyc_form_001" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/VHNDFormFragement"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.vhnd.VHNDFormFragement"
+        android:label="VHNDFormFragement">
+        <argument
+            android:name="id"
+            android:defaultValue="0"
+            app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/VHNDListFragement"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.vhnd.VHNDListFragement"
+        android:label="VHNDListFragement">
+
+        <action
+            android:id="@+id/action_VHNDListFragement_to_VHNDFormFragement"
+            app:destination="@id/VHNDFormFragement" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/VHNCListFragement"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.vhnc.VHNCListFragement"
+        android:label="VHNCListFragement">
+        <action
+            android:id="@+id/action_VHNCListFragement_to_VHNCFormFragement"
+            app:destination="@id/VHNCFormFragement" />
+    </fragment>
+    <fragment
+        android:id="@+id/VHNCFormFragement"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.vhnc.VHNCFormFragement"
+        android:label="VHNCFormFragement">
+        <argument
+            android:name="id"
+            android:defaultValue="0"
+            app:argType="integer" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/PHCReviewListFragement"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.phc_review_meeting.PHCReviewListFragement"
+        android:label="PHCReviewListFragement">
+        <action
+            android:id="@+id/action_PHCReviewListFragement_to_PHCReviewFormFragement"
+            app:destination="@id/PHCReviewFormFragement" />
+    </fragment>
+    <fragment
+        android:id="@+id/PHCReviewFormFragement"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.phc_review_meeting.PHCReviewFormFragement"
+        android:label="PHCReviewFormFragement">
+        <argument
+            android:name="id"
+            android:defaultValue="0"
+            app:argType="integer" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/AHDListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.ahd.AHDListFragment"
+        android:label="AHD List">
+        <action
+            android:id="@+id/action_AHDListFragment_to_AHDFormFragment"
+            app:destination="@id/AHDFormFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/AHDFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.ahd.AHDFormFragment"
+        android:label="AHD Form">
+        <argument
+            android:name="id"
+            android:defaultValue="0"
+            app:argType="integer" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/DewormingListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.national_deworming_day.DewormingListFragment"
+        android:label="Deworming List">
+        <action
+            android:id="@+id/action_DewormingListFragment_to_DewormingFormFragment"
+            app:destination="@id/DewormingFormFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/DewormingFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.national_deworming_day.DewormingFormFragment"
+        android:label="Deworming Form">
+        <argument
+            android:name="id"
+            android:defaultValue="0"
+            app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/diseaseControlFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.DiseaseControlFragment"
+        android:label="DiseaseControlFragment" >
+        <action
+            android:id="@+id/action_diseaseControlFragment_to_allHouseHoldDiseaseControlFragment"
+            app:destination="@id/allHouseHoldDiseaseControlFragment" />
+        <action
+            android:id="@+id/action_diseaseControlFragment_to_ncdFragment"
+            app:destination="@id/ncdFragment" />
+        <action
+            android:id="@+id/action_diseaseControlFragment_to_malariaIconsFragment"
+            app:destination="@id/malariaIconsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/allHouseHoldDiseaseControlFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.AllHouseHoldDiseaseControlFragment"
+        android:label="fragment_all_house_hold_disease_control"
+        tools:layout="@layout/fragment_all_house_hold_disease_control"
+
+        >
+        <argument
+            android:name="diseaseType"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_allHouseHoldDiseaseControlFragment_to_householdMembersFragment"
+            app:destination="@id/householdMembersFragment" />
+        <action
+            android:id="@+id/action_allHouseHoldDiseaseControlFragment_to_malariaSuspectedListFragment"
+            app:destination="@id/malariaSuspectedListFragment" />
+        <action
+            android:id="@+id/action_allHouseHoldDiseaseControlFragment_to_AESSuspectedListFragment"
+            app:destination="@id/AESSuspectedListFragment" />
+        <action
+            android:id="@+id/action_allHouseHoldDiseaseControlFragment_to_kalaAzarSuspectedListFragment"
+            app:destination="@id/kalaAzarSuspectedListFragment" />
+        <action
+            android:id="@+id/action_allHouseHoldDiseaseControlFragment_to_leprosySuspectedListFragment"
+            app:destination="@id/leprosySuspectedListFragment" />
+        <action
+            android:id="@+id/action_allHouseHoldDiseaseControlFragment_to_filariaSuspectedListFragment"
+            app:destination="@id/filariaSuspectedListFragment" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/malariaFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.malaria.form.form.MalariaFormFragment"
+        android:label="MalariaFormFragment" >
+        <argument
+            android:name="benId"
+            app:argType="long" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/kalaAzarFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.kala_azar.form.KalaAzarFormFragment"
+        android:label="KalaAzarFormFragment" >
+        <argument
+            android:name="benId"
+            app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/malariaSuspectedListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.malaria.form.list.MalariaSuspectedListFragment"
+        android:label="MalariaSuspectedListFragment" >
+        <argument
+            android:name="hhId"
+            app:argType="long" />
+        <argument
+            android:name="fromDisease"
+            app:argType="integer" />
+        <argument
+            android:name="diseaseType"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_malariaSuspectedListFragment_to_malariaFormFragment"
+            app:destination="@id/malariaFormFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/AESSuspectedListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.aes_je.list.AESSuspectedListFragment"
+        android:label="AESSuspectedListFragment" >
+        <argument
+            android:name="hhId"
+            app:argType="long" />
+        <argument
+            android:name="fromDisease"
+            app:argType="integer" />
+        <argument
+            android:name="diseaseType"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_AESSuspectedListFragment_to_AEFFormFragment"
+            app:destination="@id/AEFFormFragment" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/AEFFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.aes_je.form.AEFFormFragment"
+        android:label="AEFFormFragment" >
+        <argument
+            android:name="benId"
+            app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/kalaAzarSuspectedListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.kala_azar.list.KalaAzarSuspectedListFragment"
+        android:label="KalaAzarSuspectedListFragment" >
+        <argument
+            android:name="hhId"
+            app:argType="long" />
+        <argument
+            android:name="fromDisease"
+            app:argType="integer" />
+        <argument
+            android:name="diseaseType"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_kalaAzarSuspectedListFragment_to_kalaAzarFormFragment"
+            app:destination="@id/kalaAzarFormFragment" >
+
+        </action>
+    </fragment>
+    <fragment
+        android:id="@+id/leprosySuspectedListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.leprosy.list.LeprosySuspectedListFragment"
+        android:label="LeprosySuspectedListFragment" >
+        <argument
+            android:name="hhId"
+            app:argType="long" />
+        <argument
+            android:name="fromDisease"
+            app:argType="integer" />
+        <argument
+            android:name="diseaseType"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_leprosySuspectedListFragment_to_leprosyFormFragment"
+            app:destination="@id/leprosyFormFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/leprosyFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.leprosy.form.LeprosyFormFragment"
+        android:label="LeprosyFormFragment">
+        <argument
+            android:name="benId"
+            app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/filariaSuspectedListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.filaria.list.FilariaSuspectedListFragment"
+        android:label="FilariaSuspectedListFragment" >
+        <argument
+            android:name="hhId"
+            app:argType="long" />
+        <argument
+            android:name="fromDisease"
+            app:argType="integer" />
+        <argument
+            android:name="diseaseType"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_filariaSuspectedListFragment_to_filariaFormFragment"
+            app:destination="@id/filariaFormFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/filariaFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.filaria.form.FilariaFormFragment"
+        android:label="FilariaFormFragment">
+        <argument
+            android:name="benId"
+            app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/malariaIconsFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.malaria.form.MalariaIconsFragment"
+        android:label="MalariaIconsFragment" >
+        <action
+            android:id="@+id/action_malariaIconsFragment_to_allHouseHoldDiseaseControlFragment"
+            app:destination="@id/allHouseHoldDiseaseControlFragment" />
+        <action
+            android:id="@+id/action_malariaIconsFragment_to_confirmedMalariaLIstFragment"
+            app:destination="@id/confirmedMalariaLIstFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/confirmedMalariaLIstFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.malaria.form.confirmed.list.ConfirmedMalariaLIstFragment"
+        android:label="ConfirmedMalariaLIstFragment" >
+
+        <action
+            android:id="@+id/action_confirmedMalariaLIstFragment_to_confirmedCaseFollowUpFormFragment"
+            app:destination="@id/confirmedCaseFollowUpFormFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/confirmedCaseFollowUpFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.malaria.form.confirmed.form.ConfirmedCaseFollowUpFormFragment"
+        android:label="ConfirmedCaseFollowUpFormFragment" >
+        <argument
+            android:name="benId"
+            app:argType="long" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/videoTutorialFragmet"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.lms.videoTutorial.VideoTutorialFragment"
+        android:label="VideoTutorialFragmet" />
+    <fragment
+        android:id="@+id/ashaProfileFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.asha_profile.AshaProfileFragment"
+        android:label="fragment_asha_profile"
+        tools:layout="@layout/fragment_asha_profile" >
+
+        <action
+            android:id="@+id/action_ashaProfileFragment_to_newHouseholdFragment"
+            app:destination="@id/newHouseholdFragment" />
+        <action
+            android:id="@+id/action_ashaProfileFragment_to_householdMembersFragment"
+            app:destination="@id/householdMembersFragment" />
+        <action
+            android:id="@+id/action_ashaProfileFragment_to_newBenRegFragment"
+            app:destination="@id/newBenRegFragment" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/adolescentHealthFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.child_care.adolescent_list.form.AdolescentHealthFormFragment"
+        android:label="AdolescentHealthFormFragment" >
+        <argument
+            android:name="benId"
+            android:defaultValue="0L"
+            app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/lmsFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.lms.LmsFragment"
+        android:label="LmsFragment">
+        <action
+            android:id="@+id/action_lmsFragment_to_videoTutorialFragmet"
+            app:destination="@id/videoTutorialFragmet" />
+    </fragment>
+    <fragment
+        android:id="@+id/maaMeetingFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.maa_meeting.MaaMeetingFormFragment"
+        android:label="fragment_maa_meeting_form"
+        tools:layout="@layout/fragment_maa_meeting_form">
+        <argument
+            android:name="id"
+            android:defaultValue="0L"
+            app:argType="long" />
     </fragment>
 
 </navigation>

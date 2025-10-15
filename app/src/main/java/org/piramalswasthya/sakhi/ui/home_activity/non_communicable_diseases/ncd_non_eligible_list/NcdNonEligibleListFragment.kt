@@ -14,11 +14,16 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.BenListAdapter
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class NcdNonEligibleListFragment : Fragment() {
+
+    @Inject
+    lateinit var prefDao: PreferenceDao
 
     private val binding: FragmentDisplaySearchRvButtonBinding by lazy {
         FragmentDisplaySearchRvButtonBinding.inflate(layoutInflater)
@@ -38,7 +43,8 @@ class NcdNonEligibleListFragment : Fragment() {
 
         binding.btnNextPage.visibility = View.GONE
         val benAdapter = BenListAdapter(
-            showBeneficiaries = true
+            showBeneficiaries = true,
+            pref = prefDao
         )
         binding.rvAny.adapter = benAdapter
 

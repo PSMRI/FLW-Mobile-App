@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.home_activity.village_level_forms.u_win_forms.UwinFragment">
+
+
+   <androidx.constraintlayout.widget.ConstraintLayout
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:padding="@dimen/_8sdp">
+
+
+
+       <androidx.core.widget.NestedScrollView
+           android:layout_width="0dp"
+           android:layout_height="0dp"
+           app:layout_constraintStart_toStartOf="parent"
+           app:layout_constraintEnd_toEndOf="parent"
+           app:layout_constraintTop_toTopOf="parent"
+           app:layout_constraintBottom_toTopOf="@+id/btn_submit">
+
+
+           <include
+               android:id="@+id/form"
+               layout="@layout/rv_input_form"
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"
+               />
+
+       </androidx.core.widget.NestedScrollView>
+
+       <com.google.android.material.button.MaterialButton
+           android:id="@+id/btn_submit"
+           app:layout_constraintBottom_toBottomOf="parent"
+           app:layout_constraintStart_toStartOf="parent"
+           app:layout_constraintEnd_toEndOf="parent"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_gravity="center_horizontal|bottom"
+           android:layout_margin="@dimen/margin_small"
+           android:text="@string/btn_submit"
+           android:textColor="@android:color/white" />
+
+
+   </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ProgressBar
+        android:id="@+id/pb_form"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminateTint="?attr/colorPrimary"
+        android:visibility="gone" />
+
+</FrameLayout>
