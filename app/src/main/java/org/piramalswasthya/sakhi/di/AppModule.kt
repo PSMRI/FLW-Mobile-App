@@ -42,6 +42,7 @@ import org.piramalswasthya.sakhi.database.room.dao.TBDao
 import org.piramalswasthya.sakhi.database.room.dao.UwinDao
 import org.piramalswasthya.sakhi.database.room.dao.MaaMeetingDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseJsonDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseJsonDaoHBYC
 import org.piramalswasthya.sakhi.database.room.dao.VLFDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.AnalyticsHelper
@@ -289,6 +290,9 @@ object AppModule {
     @Provides
     fun provideFormResponseJsonDao(database: InAppDb): FormResponseJsonDao = database.formResponseJsonDao()
 
+    @Singleton
+    @Provides
+    fun formResponseJsonDaoHBYC(database: InAppDb): FormResponseJsonDaoHBYC = database.formResponseJsonDaoHBYC()
 
     @Singleton
     @Provides

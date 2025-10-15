@@ -311,6 +311,7 @@ interface AmritApiService {
         @Path("formId") formId: String
     ): Response<ApiResponse<FormSchemaDto>>
 
+
     @POST("flw-api/child-care/hbncVisit/saveAll")
     suspend fun submitForm(
         @Body request: List<FormSubmitRequest>
@@ -319,6 +320,18 @@ interface AmritApiService {
 
     @POST("flw-api/child-care/hbncVisit/getAll")
     suspend fun getAllHbncVisits(
+        @Body request: HBNCVisitRequest
+    ): Response<HBNCVisitListResponse>
+
+
+    @POST("flw-api/child-care/hbycVisit/saveAll")
+    suspend fun submitFormhbyc(
+        @Body request: List<FormSubmitRequest>
+    ): Response<Unit>
+
+
+    @POST("flw-api/child-care/hbycVisit/getAll")
+    suspend fun getAllHbycVisits(
         @Body request: HBNCVisitRequest
     ): Response<HBNCVisitListResponse>
 

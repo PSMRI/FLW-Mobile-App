@@ -46,6 +46,7 @@ import org.piramalswasthya.sakhi.database.room.dao.TBDao
 import org.piramalswasthya.sakhi.database.room.dao.UwinDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseJsonDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseJsonDaoHBYC
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormSchemaDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.InfantDao
 import org.piramalswasthya.sakhi.database.room.dao.VLFDao
@@ -99,6 +100,7 @@ import org.piramalswasthya.sakhi.model.Vaccine
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.InfantEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.hbyc.FormResponseJsonEntityHBYC
 import org.piramalswasthya.sakhi.model.VHNDCache
 
 @Database(
@@ -152,6 +154,8 @@ import org.piramalswasthya.sakhi.model.VHNDCache
         //Dynamic Data
         InfantEntity::class,
         FormSchemaEntity::class,
+        FormResponseJsonEntity::class,
+        FormResponseJsonEntityHBYC::class,
         MaaMeetingEntity::class,
         FormResponseJsonEntity::class,
         GeneralOPEDBeneficiary::class,
@@ -159,7 +163,7 @@ import org.piramalswasthya.sakhi.model.VHNDCache
     ],
     views = [BenBasicCache::class],
 
-    version = 31, exportSchema = false
+    version = 33, exportSchema = false
 )
 
 @TypeConverters(
@@ -208,6 +212,7 @@ abstract class InAppDb : RoomDatabase() {
     abstract fun formSchemaDao(): FormSchemaDao
     abstract fun formResponseDao(): FormResponseDao
     abstract fun formResponseJsonDao(): FormResponseJsonDao
+    abstract fun formResponseJsonDaoHBYC(): FormResponseJsonDaoHBYC
 
     abstract val syncDao: SyncDao
 
@@ -222,6 +227,89 @@ abstract class InAppDb : RoomDatabase() {
                 it.execSQL("alter table BENEFICIARY add column isConsent BOOL")
 
             })
+            val MIGRATION_32_33 = object : Migration(32, 33) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("""
+            CREATE TABLE IF NOT EXISTS ALL_VISIT_HISTORY_HBYC (
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                benId INTEGER NOT NULL,
+                hhId INTEGER NOT NULL,
+                visitDay TEXT NOT NULL,
+                visitDate TEXT NOT NULL,
+                formId TEXT NOT NULL,
+                version INTEGER NOT NULL,
+                formDataJson TEXT NOT NULL,
+                isSynced INTEGER NOT NULL DEFAULT 0,
+                createdAt INTEGER NOT NULL,
+                syncedAt INTEGER
+            )
+        """.trimIndent())
+                    database.execSQL("""
+            CREATE UNIQUE INDEX IF NOT EXISTS index_all_visit_history_hbyc_unique 
+            ON ALL_VISIT_HISTORY_HBYC (benId, hhId, visitDay, visitDate, formId)
+        """.trimIndent())
+                }
+            }
+
+
+            val MIGRATION_31_32 = object : Migration(31, 32) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("""
+            CREATE TABLE IF NOT EXISTS form_schema (
+                formId TEXT NOT NULL PRIMARY KEY,
+                formName TEXT NOT NULL,
+                version INTEGER NOT NULL DEFAULT 1,
+                schemaJson TEXT NOT NULL
+            )
+        """.trimIndent())
+
+                    database.execSQL("""
+            CREATE TABLE IF NOT EXISTS all_visit_history (
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                benId INTEGER NOT NULL,
+                hhId INTEGER NOT NULL,
+                visitDay TEXT NOT NULL,
+                visitDate TEXT NOT NULL,
+                formId TEXT NOT NULL,
+                version INTEGER NOT NULL,
+                formDataJson TEXT NOT NULL,
+                isSynced INTEGER NOT NULL DEFAULT 0,
+                createdAt INTEGER NOT NULL,
+                syncedAt INTEGER
+            )
+        """.trimIndent())
+
+                    database.execSQL("""
+            CREATE UNIQUE INDEX IF NOT EXISTS index_all_visit_history_unique 
+            ON all_visit_history (benId, hhId, visitDay, visitDate, formId)
+        """.trimIndent())
+                }
+            }
+
+
+            val MIGRATION_30_31 = object : Migration(30, 31) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    // Create the new table
+                    database.execSQL("""
+            CREATE TABLE IF NOT EXISTS form_schema (
+                formId TEXT NOT NULL PRIMARY KEY,
+                formName TEXT NOT NULL,
+                version INTEGER NOT NULL DEFAULT 1,
+                schemaJson TEXT NOT NULL
+            )
+        """.trimIndent())
+                }
+            }
+
+
+            val MIGRATION_29_30 = object : Migration(29, 30) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("ALTER TABLE eligible_couple_tracking ADD COLUMN dischargeSummary1 TEXT")
+                    database.execSQL("ALTER TABLE eligible_couple_tracking ADD COLUMN dischargeSummary2 TEXT")
+                }
+            }
+
+
 
 
 //            val MIGRATION_22_23 = object : Migration(22, 23) {
@@ -1137,6 +1225,9 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_27_28,
                         MIGRATION_28_29,
                         MIGRATION_29_30,
+                        MIGRATION_30_31,
+                        MIGRATION_31_32,
+                        MIGRATION_32_33,
                         MIGRATION_30_31
                     ).build()
 
