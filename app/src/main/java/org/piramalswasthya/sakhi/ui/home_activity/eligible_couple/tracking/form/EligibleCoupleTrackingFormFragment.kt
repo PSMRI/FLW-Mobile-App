@@ -301,21 +301,35 @@ class EligibleCoupleTrackingFormFragment : Fragment() {
     }
 
     private fun viewDocuments(formId: Int) {
-        val uri = when (formId) {
-            21 -> mpaUri
-            58 -> deliveryDischargeSummary1Uri
-            59 -> deliveryDischargeSummary2Uri
-            else -> null
-        }
+        lifecycleScope.launch {
+            viewModel.formList.collect { list ->
+                val value = when (formId) {
+                    21 -> list.getOrNull(viewModel.getIndexOfMPA())?.value
+                    58 -> list.getOrNull(viewModel.getIndexDeliveryDischargeSummary1())?.value
+                    59 -> list.getOrNull(viewModel.getIndexDeliveryDischargeSummary2())?.value
+                    else -> null
+                }
 
-        uri?.let { fileUri ->
-            if (fileUri.toString().contains("document")) {
-                displayPdf(fileUri)
-            } else {
-                viewImage(fileUri)
+                if (value.isNullOrEmpty()) {
+                    Toast.makeText(requireContext(), "No document found for this form", Toast.LENGTH_SHORT).show()
+                    return@collect
+                }
+
+                val uri = value.toUri()
+                try {
+                    if (uri.toString().contains("document", ignoreCase = true)) {
+                        displayPdf(uri)
+                    } else {
+                        viewImage(uri)
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Toast.makeText(requireContext(), "Unable to open document", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
+
 
     private fun isMPAForm(formId: Int) = formId == 21
 

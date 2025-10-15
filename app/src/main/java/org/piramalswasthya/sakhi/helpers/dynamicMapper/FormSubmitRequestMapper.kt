@@ -11,36 +11,17 @@ import java.util.*
 
 object FormSubmitRequestMapper {
 
-//    fun fromEntityList(entities: List<FormResponseJsonEntity>): List<FormSubmitRequest> {
-//        return entities.mapNotNull { fromEntity(it) }
-//    }
-
-    fun fromEntity(entity: FormResponseJsonEntity,userName: String): FormSubmitRequest? {
-        return try {
-            val jsonObj = JSONObject(entity.formDataJson)
-            val fieldsObj = jsonObj.optJSONObject("fields")
-
-            val type = object : TypeToken<Map<String, Any?>>() {}.type
-            val fieldsMap: Map<String, Any?> = Gson().fromJson(fieldsObj.toString(), type)
-
-            FormSubmitRequest(
-                userName = userName,
-                formId = jsonObj.optString("formId"),
-                beneficiaryId = jsonObj.optLong("beneficiaryId"),
-                houseHoldId = jsonObj.optLong("houseHoldId"),
-                visitDate = jsonObj.optString("visitDate"),
-                fields = fieldsMap
-            )
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
+    fun fromEntity(entity: FormResponseJsonEntity, userName: String): FormSubmitRequest? {
+        return mapCommon(entity.formDataJson, userName)
     }
 
-    // NEW: Overload for HBYC entity
-    fun fromEntity(entity: FormResponseJsonEntityHBYC,userName: String): FormSubmitRequest? {
+    fun fromEntity(entity: FormResponseJsonEntityHBYC, userName: String): FormSubmitRequest? {
+        return mapCommon(entity.formDataJson, userName)
+    }
+
+    private fun mapCommon(formDataJson: String, userName: String): FormSubmitRequest? {
         return try {
-            val jsonObj = JSONObject(entity.formDataJson)
+            val jsonObj = JSONObject(formDataJson)
             val fieldsObj = jsonObj.optJSONObject("fields")
 
             val type = object : TypeToken<Map<String, Any?>>() {}.type
@@ -67,7 +48,7 @@ object FormSubmitRequestMapper {
             val date = inputFormat.parse(input)
             outputFormat.format(date!!)
         } catch (e: Exception) {
-            input // fallback if not a date
+            input
         }
     }
 }

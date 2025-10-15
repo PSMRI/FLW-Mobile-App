@@ -219,58 +219,57 @@ class EligibleCoupleTrackingDataset(
                 list.add(list.indexOf(isPregnancyTestDone) + 1, pregnancyTestResult)
                 pregnancyTestResult.value = saved.pregnancyTestResult
             }
+            else {
+                list.add(usingFamilyPlanning)
+                saved.usingFamilyPlanning?.let {
+                    usingFamilyPlanning.value =
+                        if (it) resources.getStringArray(R.array.yes_no)[0]
+                        else resources.getStringArray(R.array.yes_no)[1]
+                }
+                list.add(methodOfContraception)
+                val methods = resources.getStringArray(R.array.method_of_contraception)
+                val sterilizationIndices = listOf(7, 8, 9)
+                saved.methodOfContraception?.let { method ->
+
+                    if (method in methods) {
+                        methodOfContraception.value = method
+
+                        val selectedIndex = methods.indexOf(method)
+                        if (selectedIndex in sterilizationIndices) {
+                            list.add(deliveryDischargeSummary1)
+                            list.add(deliveryDischargeSummary2)
+                            deliveryDischargeSummary1.value = saved.dischargeSummary1
+                            deliveryDischargeSummary2.value = saved.dischargeSummary2
+                        }
+
+                    } else if (method.split("/")[0] == methods[1]) {
+                        methodOfContraception.value = methods[1]
+                        list.add(antraDoses)
+                        list.add(dateOfAntraInjection)
+                        list.add(dueDateOfAntraInjection)
+                        list.add(mpaFileUpload1)
+
+                        dateOfAntraInjection.value = saved.dateOfAntraInjection
+                        dueDateOfAntraInjection.value = saved.dueDateOfAntraInjection
+                        mpaFileUpload1.value = saved.mpaFile
+
+                        if (saved.antraDose != null) {
+                            antraDoseValue = saved.antraDose!!
+                            antraDoses.value = saved.antraDose
+                        }
+
+                    } else {
+                        methodOfContraception.value = methods.last()
+                        list.add(anyOtherMethod)
+                        anyOtherMethod.value = method
+                    }
+                }
+            }
+
             isPregnant.value = getLocalValueInArray(R.array.yes_no, saved.isPregnant)
-//            if (isPregnant.value == resources.getStringArray(R.array.yes_no)[1]) {
-//                list.add(usingFamilyPlanning)
-//                saved.usingFamilyPlanning?.let {
-//                    usingFamilyPlanning.value =
-//                        if (it) resources.getStringArray(R.array.yes_no)[0] else resources.getStringArray(
-//                            R.array.yes_no
-//                        )[1]
-//                }
-//                usingFamilyPlanning.value =
-//                    if (saved.usingFamilyPlanning == true) resources.getStringArray(R.array.yes_no)[1] else resources.getStringArray(
-//                        R.array.yes_no
-//                    )[1]
-//                if (saved.usingFamilyPlanning == true) {
-//                    list.add(methodOfContraception)
-//                    if (saved.methodOfContraception in resources.getStringArray(R.array.method_of_contraception)) {
-//                        methodOfContraception.value = saved.methodOfContraception
-//                    } else if (saved.methodOfContraception != null) {
-//                        if (saved.methodOfContraception!!.split("/")[0] == resources.getStringArray(R.array.method_of_contraception)[1]) {
-//                            methodOfContraception.value =
-//                                resources.getStringArray(R.array.method_of_contraception)[1]
-//                            list.add(antraDoses)
-//                            list.add(dateOfAntraInjection)
-//                            list.add(dueDateOfAntraInjection)
-//                            list.add(mpaFileUpload1)
-//                            dateOfAntraInjection.value=saved.dateOfAntraInjection
-//                            dueDateOfAntraInjection.value=saved.dueDateOfAntraInjection
-//                            mpaFileUpload1.value=saved.mpaFile
-//
-////                            antraDoses.value = saved.methodOfContraception!!.split("/")[1]
-//                            if(saved.antraDose!=null){
-//                                antraDoseValue=saved.antraDose!!
-//                                antraDoses.value = saved.antraDose
-//
-//                            }
-//                        }
-//                        else {
-//
-//                            methodOfContraception.value =
-//                                resources.getStringArray(R.array.method_of_contraception).last()
-//                            list.add(anyOtherMethod)
-//                            anyOtherMethod.value = saved.methodOfContraception
-//                        }
-//
-//                    }
-//
-//                }
-//            }
 
             if (isPregnant.value == resources.getStringArray(R.array.yes_no)[1]) {
                 list.add(usingFamilyPlanning)
-
                 saved.usingFamilyPlanning?.let {
                     usingFamilyPlanning.value =
                         if (it) resources.getStringArray(R.array.yes_no)[0]
@@ -318,7 +317,6 @@ class EligibleCoupleTrackingDataset(
                     }
                 }
             }
-
 
         }
         setUpPage(list)

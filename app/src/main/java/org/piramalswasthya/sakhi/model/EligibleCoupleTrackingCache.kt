@@ -61,6 +61,8 @@ data class EligibleCoupleTrackingCache(
             dueDateOfAntraInjection = dueDateOfAntraInjection,
             mpaFile = mpaFile,
             antraDose = antraDose,
+            dischargeSummary1=dischargeSummary1,
+            dischargeSummary2=dischargeSummary2,
 
             isPregnancyTestDone = isPregnancyTestDone,
             pregnancyTestResult = pregnancyTestResult,
@@ -83,6 +85,8 @@ data class ECTNetwork(
     var dateOfAntraInjection: String? = null,
     var dueDateOfAntraInjection: String? = null,
     var mpaFile: String? = null,
+    var dischargeSummary1: String? = null,
+    var dischargeSummary2: String? = null,
     var antraDose: String? = null,
     val isPregnancyTestDone: String?,
     val pregnancyTestResult: String?,
