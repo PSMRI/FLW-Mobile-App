@@ -18,32 +18,39 @@ class ChildListViewModel @Inject constructor(
 
     private val allBenList = recordsRepo.childList
     private val filter = MutableStateFlow("")
-    val benList = allBenList.combine(filter) { list, filter ->
-        filterBenList(list, filter)
+    val benList = allBenList.combine(filter) { list, query ->
+        filterBenList(list, query)
     }
 
     fun filterText(text: String) {
         viewModelScope.launch {
             filter.emit(text)
         }
-
     }
-    fun getDobByBenIdAsync(benId: Long, onResult: (Long?) -> Unit) {
+
+    private fun collectBenList(action: (List<BenBasicDomain>) -> Boolean) {
         viewModelScope.launch {
             allBenList.collect { list ->
-                val dob = list.find { it.benId == benId }?.dob
-                onResult(dob)
-                return@collect
+                if (action(list)) return@collect
             }
         }
     }
+
+    fun getDobByBenIdAsync(benId: Long, onResult: (Long?) -> Unit) {
+        collectBenList { list ->
+            list.find { it.benId == benId }?.dob?.let {
+                onResult(it)
+                true
+            } ?: false
+        }
+    }
+
     fun getBenById(benId: Long, onResult: (BenBasicDomain?) -> Unit) {
-        viewModelScope.launch {
-            allBenList.collect { list ->
-                val ben = list.find { it.benId == benId }
-                onResult(ben)
-                return@collect
-            }
+        collectBenList { list ->
+            list.find { it.benId == benId }?.let {
+                onResult(it)
+                true
+            } ?: false
         }
     }
 }
