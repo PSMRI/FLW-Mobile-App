@@ -35,4 +35,11 @@
         <item name="android:statusBarColor">@color/seed</item>
 
     </style>
+
+    <style name="ButtonStyled" parent="Widget.MaterialComponents.Button">
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">12dp</item>
+        <item name="iconTint">@color/background_selector</item>
+        <item name="android:textColor">@color/background_selector</item>
+    </style>
 </resources>

@@ -1,0 +1,78 @@
+package org.piramalswasthya.sakhi.ui.home_activity.disease_control.malaria.form.confirmed.list
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.adapters.MalariaConfirmedCasesListAdapter
+import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
+import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.home_activity.disease_control.leprosy.list.LeprosySuspectedListFragmentDirections
+
+@AndroidEntryPoint
+class ConfirmedMalariaLIstFragment : Fragment() {
+    private var _binding: FragmentDisplaySearchRvButtonBinding? = null
+    private val binding: FragmentDisplaySearchRvButtonBinding
+        get() = _binding!!
+
+    private val viewModel: ConfirmedMalariaListViewModel by viewModels()
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentDisplaySearchRvButtonBinding.inflate(layoutInflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.btnNextPage.visibility = View.GONE
+        binding.llSearch.visibility = View.GONE
+
+        val benAdapter = MalariaConfirmedCasesListAdapter(
+            clickListener = MalariaConfirmedCasesListAdapter.ClickListener { hhId, benId ->
+                findNavController().navigate(
+                    ConfirmedMalariaLIstFragmentDirections.actionConfirmedMalariaLIstFragmentToConfirmedCaseFollowUpFormFragment(
+                        benId = benId
+                    )
+                )
+            },
+        )
+        binding.rvAny.adapter = benAdapter
+
+        lifecycleScope.launch {
+            viewModel.allBenList.collect {
+                if (it.isEmpty())
+                    binding.flEmpty.visibility = View.VISIBLE
+                else
+                    binding.flEmpty.visibility = View.GONE
+                benAdapter.submitList(it)
+            }
+        }
+
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+        activity?.let {
+            (it as HomeActivity).updateActionBar(
+                R.drawable.ic__hh,
+                getString(R.string.icon_title_malaria_confirmed)
+            )
+        }
+    }
+
+
+
+
+
+}

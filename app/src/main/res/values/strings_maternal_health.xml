@@ -3,6 +3,9 @@
 
 
     <string name="anc_visit_number">ANC Visit %1d</string>
+    <string name="sr_no">Sr. no : %1d</string>
+    <string name="date_no">Date : %1$s</string>
+    <string name="round_no">Round : %1d</string>
     <string name="pnc_visit_number">PNC Visit on Day %1d</string>
     <string name="register">Register</string>
     <string name="tracking_form_filled_successfully">Tracking form filled successfully</string>

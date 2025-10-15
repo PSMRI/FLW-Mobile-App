@@ -36,7 +36,7 @@
     <string name="cd_icon_grid_icon">চিহ্ন</string>
     <string name="nav_item_1_text">নাম : <b>%s</b></string>
     <string name="nav_item_2_text">ব্যৱহাৰকাৰী : <b>%s</b></string>
-    <string name="nav_item_3_text">ব্যৱহাৰকাৰী আইডি :  <b>%d</b></string>
+    <string name="nav_item_3_text">ব্যৱহাৰকাৰী আইডি :  <b>%s</b></string>
     <string name="nav_item_4_text">ভাৰ্সন : %s</string>
     <string name="tv_required_text_asterisk">*</string>
     <string name="rv_item_hh_entry_1">%1$d</string>
@@ -292,6 +292,15 @@
     <string name="pmsma_visit_date">PMSMA Visit Date</string>
     <string name="pmsma_visits">PMSMA Visits</string>
     <string name="pmsma_visit">PMSMA Visit</string>
+   <!-- <string name="child_rch_id">Child RCH ID</string>
+    <string name="vaccination_due_date">Vaccination Due Date</string>
+    <string name="reminder">Reminder!!</string>
+    <string name="do_you_want_to_upload_mcp_card_immunization_page_section_photo_copy_to_claim_your_incentive">Do you want to upload MCP Card - Immunization page/ section photo copy to claim your Incentive</string>
+    <string name="yes_dialog">Yes</string>
+    <string name="no_dialog">No</string>
+    <string name="dose_name_2">Dose Name : %1$s</string>
+    <string name="u_win_session">U-WIN Session</string>
+    <string name="u_win_sessions_list">U-win Session List</string>-->
 
 
 </resources>

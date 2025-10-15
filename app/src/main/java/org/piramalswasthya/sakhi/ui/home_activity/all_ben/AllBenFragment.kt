@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.ui.home_activity.all_ben
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -14,25 +15,41 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.BenListAdapter
 import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
-import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.databinding.AlertFilterBinding
+import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchAndToggleRvButtonBinding
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
+import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.all_household.AllHouseholdFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.home.HomeViewModel
+import timber.log.Timber
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class AllBenFragment : Fragment() {
 
-    private var _binding: FragmentDisplaySearchRvButtonBinding? = null
+    @Inject
+    lateinit var prefDao: PreferenceDao
 
-    private val binding: FragmentDisplaySearchRvButtonBinding
+    private var _binding: FragmentDisplaySearchAndToggleRvButtonBinding? = null
+
+    private val binding: FragmentDisplaySearchAndToggleRvButtonBinding
         get() = _binding!!
 
+    val args: AllBenFragmentArgs by lazy {
+        AllBenFragmentArgs.fromBundle(requireArguments())
+    }
+
+    private lateinit var benAdapter: BenListAdapter
+
+    private var selectedAbha = Abha.ALL
 
     private val viewModel: AllBenViewModel by viewModels()
     private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
@@ -51,42 +68,124 @@ class AllBenFragment : Fragment() {
             .create()
     }
 
+    enum class Abha {
+        ALL,
+        WITH,
+        WITHOUT
+    }
+
+    private val filterAlert by lazy {
+        val filterAlertBinding = AlertFilterBinding.inflate(layoutInflater, binding.root, false)
+        filterAlertBinding.rgAbha.setOnCheckedChangeListener { radioGroup, i ->
+            Timber.d("RG Gender selected id : $i")
+            selectedAbha = when (i) {
+                filterAlertBinding.rbAll.id -> Abha.ALL
+                filterAlertBinding.rbWith.id -> Abha.WITH
+                filterAlertBinding.rbWithout.id -> Abha.WITHOUT
+                else -> Abha.ALL
+            }
+
+        }
+
+        filterAlertBinding.tvRch.visibility = View.GONE
+        filterAlertBinding.cbRch.visibility = View.GONE
+
+        val alert = MaterialAlertDialogBuilder(requireContext()).setView(filterAlertBinding.root)
+            .setOnCancelListener {
+            }.create()
+
+        filterAlertBinding.btnOk.setOnClickListener {
+            if (selectedAbha == Abha.WITH) {
+                viewModel.filterType(1)
+            } else if (selectedAbha == Abha.WITHOUT) {
+                viewModel.filterType(2)
+            }  else {
+                viewModel.filterType(0)
+            }
+
+            alert.cancel()
+        }
+        filterAlertBinding.btnCancel.setOnClickListener {
+            alert.cancel()
+        }
+
+        alert
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentDisplaySearchRvButtonBinding.inflate(layoutInflater)
+        _binding = FragmentDisplaySearchAndToggleRvButtonBinding.inflate(layoutInflater)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.btnNextPage.visibility = View.GONE
-        val benAdapter = BenListAdapter(
+
+        binding.ibFilter.setOnClickListener {
+            filterAlert.show()
+        }
+
+        binding.ibDownload.setOnClickListener {
+            lifecycleScope.launch {
+                viewModel.benList.collect { users ->
+                    if (users.isNotEmpty()) {
+                        viewModel.createCsvFile(requireContext(), users)
+                    }
+                }
+            }
+        }
+
+        if (args.source == 1 || args.source == 2) {
+            binding.ibFilter.visibility = View.GONE
+            binding.ibDownload.visibility = View.VISIBLE
+        }
+
+        benAdapter = BenListAdapter(
             clickListener = BenListAdapter.BenClickListener(
                 { hhId, benId, relToHeadId ->
 
-                    findNavController().navigate(
-                        AllBenFragmentDirections.actionAllBenFragmentToNewBenRegFragment(
-                            hhId = hhId,
-                            benId = benId,
-                            relToHeadId = relToHeadId,
-                            gender = 0
+                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+                        findNavController().navigate(
+                            AllBenFragmentDirections.actionAllBenFragmentToNewBenRegFragment(
+                                hhId = hhId,
+                                benId = benId,
+                                relToHeadId = relToHeadId,
+                                gender = 0
 
+                            )
                         )
-                    )
+                    }
+
                 },
                 {
                 },
                 { benId, hhId ->
                     checkAndGenerateABHA(benId)
                 },
+                {
+                    try {
+                        val callIntent = Intent(Intent.ACTION_CALL)
+                        callIntent.setData(Uri.parse("tel:${it.mobileNo}"))
+                        startActivity(callIntent)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        activity?.let {
+                            (it as HomeActivity).askForPermissions()
+                        }
+                        Toast.makeText(requireContext(), "Please allow permissions first", Toast.LENGTH_SHORT).show()
+                    }
+                }
 
                 ),
             showAbha = true,
             showSyncIcon = true,
             showBeneficiaries = true,
-            showRegistrationDate = true
+            showRegistrationDate = true,
+            showCall = true,
+            pref = prefDao
         )
         binding.rvAny.adapter = benAdapter
         lifecycleScope.launch {
@@ -166,10 +265,29 @@ class AllBenFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            (it as HomeActivity).updateActionBar(
-                R.drawable.ic__ben,
-                getString(R.string.icon_title_ben)
-            )
+            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+                (it as HomeActivity).updateActionBar(
+                    R.drawable.ic__ben,
+                    title = if (args.source == 1) {
+                        getString(R.string.icon_title_abhas)
+                    } else if (args.source == 2) {
+                        getString(R.string.icon_title_rchs)
+                    } else {
+                        getString(R.string.icon_title_ben)
+                    }
+                )
+            } else {
+                (it as SupervisorActivity).updateActionBar(
+                    R.drawable.ic__ben,
+                    title = if (args.source == 1) {
+                        getString(R.string.icon_title_abhas)
+                    } else if (args.source == 2) {
+                        getString(R.string.icon_title_rchs)
+                    } else {
+                        getString(R.string.icon_title_ben)
+                    }
+                )
+            }
         }
     }
 
@@ -177,4 +295,6 @@ class AllBenFragment : Fragment() {
         super.onDestroy()
         _binding = null
     }
+
+
 }

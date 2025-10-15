@@ -77,17 +77,21 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <!--                <ImageView-->
-                    <!--                    android:id="@+id/iv_hh_logo"-->
-                    <!--                    android:layout_width="wrap_content"-->
-                    <!--                    android:layout_height="0dp"-->
-                    <!--                    android:paddingVertical="@dimen/padding_normal"-->
-                    <!--                    android:src="@drawable/ic__hh"-->
-                    <!--                    app:layout_constraintBottom_toBottomOf="parent"-->
-                    <!--                    app:layout_constraintStart_toStartOf="parent"-->
-                    <!--                    app:layout_constraintTop_toTopOf="parent"-->
-                    <!--                    app:tint="?attr/colorPrimary" />-->
 
+
+                    <ImageView
+                        android:id="@+id/iv_hh_logo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="10dp"
+                        android:paddingVertical="@dimen/padding_normal"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="?attr/colorPrimary" />
+
+<!--                    android:src="@{ben.gender.equals(`MALE`) ? @drawable/ic_males : @drawable/ic_females}"-->
 
                     <TextView
                         android:id="@+id/tv_hh_id"
@@ -100,9 +104,10 @@
                         android:padding="@dimen/padding_small"
                         android:text="@{ben.benFullName}"
                         android:textStyle="bold"
+                        android:ellipsize="end"
+                        android:layout_marginEnd="@dimen/padding_small"
                         android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                         android:textColor="?attr/colorPrimaryVariant"
-                        app:drawableLeftCompat="@drawable/ic_person"
                         app:drawableTint="?attr/colorPrimary"
                         tools:text="Hello Meister" />
 
@@ -130,6 +135,21 @@
                         android:contentDescription="@string/iv_death_indicator"
                         android:src="@drawable/ic_death"
                         />
+
+                    <ImageView
+                        android:id="@+id/iv_call"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:padding="4dp"
+                        android:visibility="gone"
+                        android:src="@drawable/ic_call_icon"
+                        android:layout_gravity="center"
+                        android:onClick="@{()->clickListener.onClickedForCall(ben)}"
+                        android:background="?selectableItemBackgroundBorderless"
+                        android:layout_marginEnd="4dp"
+                        app:layout_constraintEnd_toEndOf="@+id/tv_hh_id"
+                        app:layout_constraintTop_toTopOf="@+id/tv_hh_id"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_hh_id"/>
 
                     <ImageView
                         android:id="@+id/iv_sync_state"
@@ -338,7 +358,7 @@
                             tools:text="Lala Land" />
                     </LinearLayout>
 
-                    <LinearLayout
+                    <RelativeLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -346,6 +366,7 @@
                         android:padding="@dimen/padding_small">
 
                         <TextView
+                            android:id="@+id/mob"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/mobile_number"
@@ -356,10 +377,20 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@{ben.mobileNo}"
+                            android:layout_below="@+id/mob"
                             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                             android:textColor="?attr/colorOnPrimary"
                             tools:text="0123456789" />
-                    </LinearLayout>
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+
+                            android:src="@{ben.isConsent ? @drawable/verified : @drawable/not_verified}"
+
+                           android:layout_toRightOf="@+id/mob"
+                            android:layout_marginStart="5dp"
+                            />
+                    </RelativeLayout>
 
                 </LinearLayout>
 

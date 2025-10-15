@@ -28,6 +28,9 @@
     <string name="nbr_image_cam_gal">Tap to use camera/Gallery</string>
     <string name="nbr_image_sub">Tap to use camera</string>
     <string name="nbr_dor">Date of Registration</string>
+    <string name="vhnd_date">VHND Date</string>
+    <string name="vhnc_date">VHNC Date</string>
+    <string name="phc_review_meeting_date">PHC Review Meeting Date</string>
     <string name="nbr_nb_first_name">First Name</string>
     <string name="nbr_nb_last_name">Last Name / Surname</string>
     <string name="beneficiary_details_ben">Beneficiary Details</string>
@@ -53,11 +56,26 @@
     <string name="disagree">DISAGREE</string>
     <string name="other_place_of_death">Other Place of Death</string>
     <string name="agree">AGREE</string>
+
+    <string name="deworming_done">Deworming Round Done?</string>
+    <string name="deworming_date">Date of Deworming</string>
+    <string name="deworming_location">Location of Deworming</string>
+    <string name="age_group">Age Group</string>
+    <string name="deworming_title">National Deworming Day Form</string>
+    <string name="deworming_list_title">National Deworming Day Forms List</string>
+    <string name="ndd_list_title">NDD Form</string>
+
+    <string-array name="deworming_location_options">
+        <item>School</item>
+        <item>Home Visit</item>
+    </string-array>
+
     <string-array name="nbr_gender_array">
         <item name="nbr_gender_1">Male</item>
         <item name="nbr_gender_2">Female</item>
         <item name="nbr_gender_3">Transgender</item>
     </string-array>
+
     <string-array name="nbr_reproductive_status_array">
         <item>Eligible Couple</item>
         <item>Pregnant Woman</item>
@@ -92,6 +110,16 @@
         <item>Father</item>
         <item>Family Head</item>
         <item>Other</item>
+    </string-array>
+
+    <string-array name="temp_mobile_no_relation_array">
+        <item>Family Head</item>
+        <item>Self</item>
+        <item>Spouse</item>
+        <item>Mother</item>
+        <item>Father</item>
+        <item>Neighbor</item>
+        <item>Friend/Relative</item>
     </string-array>
 
     <string-array name="nbr_relationship_to_head_src">
@@ -174,6 +202,7 @@
     <string name="months">Months</string>
     <string name="day">Day</string>
     <string name="days">Days</string>
+    <string name="mother_rch_id">Mother RCH ID</string>
 
     <string-array name="nbr_relationship_to_head_female">
         <item>Mother</item>
@@ -218,6 +247,21 @@
     <string-array name="yes_no">
         <item>Yes</item>
         <item>No</item>
+    </string-array>
+    <string-array name="fathers_spouse">
+        <item>Father</item>
+        <item>Spouse</item>
+    </string-array>
+
+    <string-array name="pf_pv">
+        <item>Pf</item>
+        <item>Pv</item>
+    </string-array>
+
+    <string-array name="positive_negative">
+        <item>Positive</item>
+        <item>Negative</item>
+        <item>Not Performed</item>
     </string-array>
 
     <string-array name="yes">

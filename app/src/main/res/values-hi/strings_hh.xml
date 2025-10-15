@@ -2,6 +2,7 @@
 <resources>
 
     <string name="btn_text_frag_home_nhhr">नया घरेलू पंजीकरण</string>
+    <string name="btn_new_maa_meeting">नई माँ बैठक पंजीकरण</string>
     <string name="no_records_found">कोई लाभार्थी प्रदर्शित करने के लिए नहीं। कृपया लाभार्थियों का पंजीकरण शुरू करें</string>
     <string name="household_search">घरेलू सर्च</string>
 

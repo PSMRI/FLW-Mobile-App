@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.os.SystemClock
 import android.view.Menu
 import android.view.MenuInflater
@@ -28,6 +29,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.text.HtmlCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.MenuProvider
 import androidx.navigation.fragment.NavHostFragment
@@ -37,9 +39,11 @@ import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.internal.common.CommonUtils.isEmulator
 import com.google.firebase.crashlytics.internal.common.CommonUtils.isRooted
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
@@ -63,11 +67,12 @@ import org.piramalswasthya.sakhi.ui.service_location_activity.ServiceLocationAct
 import org.piramalswasthya.sakhi.utils.KeyUtils
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import java.net.URI
+import java.util.Locale
 import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class HomeActivity : AppCompatActivity() {
+class HomeActivity : AppCompatActivity(), MessageUpdate {
 
     var isChatSupportEnabled : Boolean = false
     private lateinit var updateHelper: InAppUpdateHelper
@@ -207,26 +212,29 @@ class HomeActivity : AppCompatActivity() {
                 WindowManager.LayoutParams.FLAG_SECURE
             )
         }
+        FirebaseApp.initializeApp(this)
+        FBMessaging.messageUpdate = this
+        FirebaseMessaging.getInstance().subscribeToTopic("All")
+//        FirebaseMessaging.getInstance().subscribeToTopic("ANC${pref.getLoggedInUser()?.userId}")
+//        FirebaseMessaging.getInstance().subscribeToTopic("Immunization${pref.getLoggedInUser()?.userId}")
         super.onCreate(savedInstanceState)
         _binding = ActivityHomeBinding.inflate(layoutInflater)
+
+        if (pref?.getLoggedInUser()?.role.equals("asha", true)) {
+            binding.navView.menu.findItem(R.id.supervisorFragment).setVisible(false)
+            binding.navView.menu.findItem(R.id.homeFragment).setVisible(true)
+        } else {
+            binding.navView.menu.findItem(R.id.homeFragment).setVisible(false)
+            binding.navView.menu.findItem(R.id.supervisorFragment).setVisible(true)
+        }
+
         setContentView(binding.root)
         setUpActionBar()
         setUpNavHeader()
         setUpFirstTimePullWorker()
         setUpMenu()
-        val permissions = arrayOf<String>(
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.INTERNET,
-            Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.CAMERA
-        )
 
-        ActivityCompat.requestPermissions(
-            this,
-            permissions,
-            1010
-        )
+        askForPermissions()
 
         if (isChatSupportEnabled)
         {
@@ -285,6 +293,25 @@ class HomeActivity : AppCompatActivity() {
             analyticsHelper.logEvent(FirebaseAnalytics.Event.APP_OPEN, params)
 
         }
+
+    }
+
+    fun askForPermissions() {
+
+        val permissions = arrayOf<String>(
+            Manifest.permission.CALL_PHONE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.INTERNET,
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.CAMERA
+        )
+
+        ActivityCompat.requestPermissions(
+            this,
+            permissions,
+            1010
+        )
 
     }
 
@@ -483,6 +510,7 @@ class HomeActivity : AppCompatActivity() {
 
     private fun setUpFirstTimePullWorker() {
         WorkerUtils.triggerPeriodicPncEcUpdateWorker(this)
+
         if (!pref.isFullPullComplete)
             WorkerUtils.triggerAmritPullWorker(this)
 //        WorkerUtils.triggerD2dSyncWorker(this)
@@ -496,8 +524,17 @@ class HomeActivity : AppCompatActivity() {
                 resources.getString(R.string.nav_item_1_text, it.name)
             headerView.findViewById<TextView>(R.id.tv_nav_role).text =
                 resources.getString(R.string.nav_item_2_text, it.userName)
-            headerView.findViewById<TextView>(R.id.tv_nav_id).text =
-                resources.getString(R.string.nav_item_3_text, it.userId)
+
+
+            val englishId = String.format(Locale.ENGLISH, "%s", it.userId)
+            val formatted = HtmlCompat.fromHtml(
+                getString(R.string.nav_item_3_text, englishId),
+                HtmlCompat.FROM_HTML_MODE_LEGACY
+            )
+            headerView.findViewById<TextView>(R.id.tv_nav_id).text = formatted
+
+//            headerView.findViewById<TextView>(R.id.tv_nav_id).text =
+//                resources.getString(R.string.nav_item_3_text, it.userId)
         }
         viewModel.profilePicUri?.let {
             Glide.with(this).load(it).placeholder(R.drawable.ic_person).circleCrop()
@@ -543,6 +580,15 @@ class HomeActivity : AppCompatActivity() {
             WorkerUtils.triggerAmritPushWorker(this)
             if (!pref.isFullPullComplete)
                 WorkerUtils.triggerAmritPullWorker(this)
+            binding.drawerLayout.close()
+            true
+
+        }
+
+        binding.navView.menu.findItem(R.id.ChatFragment).setOnMenuItemClickListener {
+//            navController.popBackStack(R.id.lmsFragment, false)
+            navController.navigate(R.id.lmsFragment)
+
             binding.drawerLayout.close()
             true
 
@@ -634,7 +680,18 @@ class HomeActivity : AppCompatActivity() {
 
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun ApiUpdate() {
+        try {
+            Log.e("AAAAAMessage","ApiUpdate")
+//            mChatMessageUpdate.apiUpdate()
+        } catch (e: Exception) {
+            Log.e("AAAAAMessage","ApiUpdate $e")
+        }
+
+    }
+
+    @Deprecated("will fix this implementation")
+    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (inAppUpdateHelper.onActivityResult(requestCode, resultCode)) {
             // Handled update result

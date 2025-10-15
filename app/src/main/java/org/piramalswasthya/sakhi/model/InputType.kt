@@ -12,5 +12,6 @@ enum class InputType {
     TIME_PICKER,
     HEADLINE,
     AGE_PICKER,
+    BUTTON,
     FILE_UPLOAD
 }

@@ -5,12 +5,15 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="frag_service_type_title">Select Village</string>
     <string name="tv_text_select_village">Please select the village below.</string>
+    <string name="loginusername">Login Username</string>
+    <string name="asha_empid">ASHA Emp ID</string>
     <string name="service_type_dd_state_text">State</string>
     <string name="service_type_dd_district_text">District</string>
     <string name="service_type_dd_block_text">Block</string>
     <string name="service_type_dd_village_text">Village</string>
     <string name="btn_continue_text">Continue</string>
     <string name="menu_home">Home</string>
+    <string name="menu_supervisor">ASHA Supervisor</string>
     <string name="menu_home_home">Home</string>
     <string name="menu_home_scheduler">Dashboard</string>
     <string name="til_hint_selected_village">Selected Village</string>
@@ -23,13 +26,38 @@
     <string name="icon_title_cd">Communicable Diseases</string>
     <string name="icon_title_imm">Routine Immunization</string>
     <string name="icon_title_hrp">High Risk Assessment</string>
-    <string name="icon_title_gop">General OP Care List</string>
+    <string name="icon_title_gop">General OPD Care List</string>
     <string name="icon_title_msl">Menopause Stage List</string>
+    <string name="btn_new_maa_meeting">New Maa Meeting Registration</string>
     <string name="icon_title_dr">Death Reports</string>
     <string name="icon_title_vlf">Village Level Forms</string>
+    <string name="icon_title_vhnd">VHND Forms</string>
+    <string name="icon_title_ahd">AHD Forms</string>
+    <string name="icon_title_vhnc">VHNC Forms</string>
+    <string name="icon_title_phc">PHC Review Meeting Forms</string>
+    <string name="icon_title_vhnd_list">VHND Forms List</string>
+    <string name="icon_title_vhnc_list">VHNC Forms List</string>
+    <string name="icon_title_phc_list">PHC Review Meeting Forms List</string>
+    <string name="icon_title_disease">Disease Control</string>
+    <string name="icon_title_maleria">Malaria</string>
+    <string name="icon_title_kalaazar">KALA AZAR</string>
+    <string name="icon_title_Filaria">Filaria</string>
+    <string name="icon_title_ka">Kala Azar</string>
+    <string name="icon_title_aes">AES/JE</string>
+    <string name="icon_title_filaria">Filaria</string>
+    <string name="icon_title_leprosy">Leprosy</string>
+    <string name="icon_title_malaria_confirmed">Malaria Confirmed Cases</string>
+    <string name="icon_title_dearming">Deworming</string>
+    <string name="icon_title_abha">ABHA\nCount</string>
+    <string name="icon_title_abhas">ABHA\nBeneficiaries</string>
+    <string name="icon_title_rch">RCH ID\nCount</string>
+    <string name="icon_title_rchs">RCH ID\nBeneficiaries</string>
+    <string name="icon_title_no_follow_up">No Visit in Last 3 Months</string>
+    <string name="icon_title_missed_period">Missed Period</string>
     <string name="icon_title_icc">Infant List</string>
     <string name="icon_title_ccc">Child List</string>
     <string name="icon_title_acc">Adolescent List</string>
+    <string name="children_under_five_years">Children under 5 Years</string>
     <string name="icon_title_pmr">Pregnant Women Registration</string>
     <string name="icon_title_pmt">ANC Visits</string>
     <string name="icon_title_pmp">PMSMA</string>
@@ -39,7 +67,9 @@
     <string name="icon_title_abortion">Abortion List</string>
     <string name="icon_title_pmsma">PMSMA List</string>
     <string name="icon_title_ecr">Eligible Couple Registration</string>
+    <string name="icon_title_user_guid">User Guide</string>
     <string name="icon_title_ect">Eligible Couple Tracking</string>
+    <string name="icon_title_video_tutorial">Video Tutorial</string>
     <string name="icon_title_dmc">Delivery Stage List</string>
     <string name="icon_title_pncmc">PNC Mother List</string>
     <string name="icon_title_rmc">Reproductive Age List</string>
@@ -63,5 +93,19 @@
     <string name="not_processed">" Records Not Synced!"</string>
     <string name="all_records_synced">All records synced</string>
     <string name="are_you_sure_to_logout">" Are you sure you want to logout?"</string>
+
+
+    <string name="icon_title_ahd_list">AHD Forms List</string>
+
+    <string name="place">Place</string>
+    <string name="participants">Participants</string>
+    <string name="no_b_attended">No. of Beneficiaries Attended</string>
+    <string name="vhnd">VHND/VHSND</string>
+    <string name="vnhc">VHNC</string>
+    <string name="phc_review">PHC Review Meeting</string>
+    <string name="ahd">AHD </string>
+    <string name="national_deworming_day">National Deworming Day </string>
+    <string name="maa_meeting">Maa Meeting</string>
+    <string name="maa_meeting_list">Maa Meeting Forms List</string>
 
 </resources>
