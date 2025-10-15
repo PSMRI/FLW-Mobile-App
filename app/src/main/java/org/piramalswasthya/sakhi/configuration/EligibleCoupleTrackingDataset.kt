@@ -16,10 +16,14 @@ import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Locale
+import kotlin.contracts.contract
 
 class EligibleCoupleTrackingDataset(
     context: Context, currentLanguage: Languages
 ) : Dataset(context, currentLanguage) {
+
+    var antraDoseValue="N/A"
+    var noOfChildrens=-1
 
     private var dateOfVisit = FormElement(
         id = 1,
@@ -142,7 +146,7 @@ class EligibleCoupleTrackingDataset(
         title = context.getString(R.string.due_date_of_next_injection),
         required = false,
 
-    )
+        )
 
     private val mpaFileUpload1 = FormElement(
         id = 21,
@@ -150,13 +154,36 @@ class EligibleCoupleTrackingDataset(
         title = context.getString(R.string.mpa_card),
         required = false,
     )
+
+
+    private val deliveryDischargeSummary1  = FormElement(
+        id = 58,
+        inputType = InputType.FILE_UPLOAD,
+        title = "Discharge Summary Applicable for Sterilisation Method 1",
+        required = false
+
+    )
+
+    private val deliveryDischargeSummary2 = FormElement(
+        id =59,
+        inputType = InputType.FILE_UPLOAD,
+        title = "Discharge Summary Applicable for Sterilisation Method 2",
+        required = false
+    )
     fun getIndexOfIsPregnant() = getIndexById(isPregnant.id)
     suspend fun setUpPage(
         ben: BenRegCache?,
         dateOfReg: Long,
         lastTrack: EligibleCoupleTrackingCache?,
-        saved: EligibleCoupleTrackingCache?
+        saved: EligibleCoupleTrackingCache?,
+        noOfChildren: Int?
     ) {
+        noOfChildrens=noOfChildren!!
+        methodOfContraception.entries = if (noOfChildren == 0)
+            resources.getStringArray(R.array.method_of_contraception_for_zero_child)
+        else
+            resources.getStringArray(R.array.method_of_contraception)
+
         val list = mutableListOf(
             dateOfVisit,
             lmpDate,
@@ -174,8 +201,10 @@ class EligibleCoupleTrackingDataset(
             if (ben != null) {
                 dateOfAntraInjection.min=ben.regDate
             }
+
             val nextDose = getNextDose(lastTrack?.antraDose, lastTrack?.dateOfAntraInjection)
             antraDoses.value = nextDose
+            antraDoseValue=nextDose
             antraDoses.isEnabled = false
 
             dateOfVisit.min = lastTrack?.let {
@@ -208,50 +237,102 @@ class EligibleCoupleTrackingDataset(
                 list.add(list.indexOf(isPregnancyTestDone) + 1, pregnancyTestResult)
                 pregnancyTestResult.value = saved.pregnancyTestResult
             }
+            else {
+                list.add(usingFamilyPlanning)
+                saved.usingFamilyPlanning?.let {
+                    usingFamilyPlanning.value =
+                        if (it) resources.getStringArray(R.array.yes_no)[0]
+                        else resources.getStringArray(R.array.yes_no)[1]
+                }
+                list.add(methodOfContraception)
+                val methods = resources.getStringArray(R.array.method_of_contraception)
+                val sterilizationIndices = listOf(7, 8, 9)
+                saved.methodOfContraception?.let { method ->
+
+                    if (method in methods) {
+                        methodOfContraception.value = method
+
+                        val selectedIndex = methods.indexOf(method)
+                        if (selectedIndex in sterilizationIndices) {
+                            list.add(deliveryDischargeSummary1)
+                            list.add(deliveryDischargeSummary2)
+                            deliveryDischargeSummary1.value = saved.dischargeSummary1
+                            deliveryDischargeSummary2.value = saved.dischargeSummary2
+                        }
+
+                    } else if (method.split("/")[0] == methods[1]) {
+                        methodOfContraception.value = methods[1]
+                        list.add(antraDoses)
+                        list.add(dateOfAntraInjection)
+                        list.add(dueDateOfAntraInjection)
+                        list.add(mpaFileUpload1)
+
+                        dateOfAntraInjection.value = saved.dateOfAntraInjection
+                        dueDateOfAntraInjection.value = saved.dueDateOfAntraInjection
+                        mpaFileUpload1.value = saved.mpaFile
+
+                        if (saved.antraDose != null) {
+                            antraDoseValue = saved.antraDose!!
+                            antraDoses.value = saved.antraDose
+                        }
+
+                    } else {
+                        methodOfContraception.value = methods.last()
+                        list.add(anyOtherMethod)
+                        anyOtherMethod.value = method
+                    }
+                }
+            }
+
             isPregnant.value = getLocalValueInArray(R.array.yes_no, saved.isPregnant)
+
             if (isPregnant.value == resources.getStringArray(R.array.yes_no)[1]) {
                 list.add(usingFamilyPlanning)
                 saved.usingFamilyPlanning?.let {
                     usingFamilyPlanning.value =
-                        if (it) resources.getStringArray(R.array.yes_no)[0] else resources.getStringArray(
-                            R.array.yes_no
-                        )[1]
+                        if (it) resources.getStringArray(R.array.yes_no)[0]
+                        else resources.getStringArray(R.array.yes_no)[1]
                 }
-                usingFamilyPlanning.value =
-                    if (saved.usingFamilyPlanning == true) resources.getStringArray(R.array.yes_no)[1] else resources.getStringArray(
-                        R.array.yes_no
-                    )[1]
+
                 if (saved.usingFamilyPlanning == true) {
                     list.add(methodOfContraception)
-                    if (saved.methodOfContraception in resources.getStringArray(R.array.method_of_contraception)) {
-                        methodOfContraception.value = saved.methodOfContraception
-                    } else if (saved.methodOfContraception != null) {
-                        if (saved.methodOfContraception!!.split("/")[0] == resources.getStringArray(R.array.method_of_contraception)[1]) {
-                            methodOfContraception.value =
-                                resources.getStringArray(R.array.method_of_contraception)[1]
+                    val methods = resources.getStringArray(R.array.method_of_contraception)
+                    val sterilizationIndices = listOf(7, 8, 9)
+                    saved.methodOfContraception?.let { method ->
+
+                        if (method in methods) {
+                            methodOfContraception.value = method
+
+                            val selectedIndex = methods.indexOf(method)
+                            if (selectedIndex in sterilizationIndices) {
+                                list.add(deliveryDischargeSummary1)
+                                list.add(deliveryDischargeSummary2)
+                                deliveryDischargeSummary1.value = saved.dischargeSummary1
+                                deliveryDischargeSummary2.value = saved.dischargeSummary2
+                            }
+
+                        } else if (method.split("/")[0] == methods[1]) {
+                            methodOfContraception.value = methods[1]
                             list.add(antraDoses)
                             list.add(dateOfAntraInjection)
                             list.add(dueDateOfAntraInjection)
                             list.add(mpaFileUpload1)
-                            dateOfAntraInjection.value=saved.dateOfAntraInjection
-                            dueDateOfAntraInjection.value=saved.dueDateOfAntraInjection
-                            mpaFileUpload1.value=saved.mpaFile
 
-//                            antraDoses.value = saved.methodOfContraception!!.split("/")[1]
-                            if(saved.antraDose!=null){
+                            dateOfAntraInjection.value = saved.dateOfAntraInjection
+                            dueDateOfAntraInjection.value = saved.dueDateOfAntraInjection
+                            mpaFileUpload1.value = saved.mpaFile
+
+                            if (saved.antraDose != null) {
+                                antraDoseValue = saved.antraDose!!
                                 antraDoses.value = saved.antraDose
-
                             }
-                        }
-                        else {
-                            methodOfContraception.value =
-                                resources.getStringArray(R.array.method_of_contraception).last()
+
+                        } else {
+                            methodOfContraception.value = methods.last()
                             list.add(anyOtherMethod)
-                            anyOtherMethod.value = saved.methodOfContraception
+                            anyOtherMethod.value = method
                         }
-
                     }
-
                 }
             }
 
@@ -281,51 +362,24 @@ class EligibleCoupleTrackingDataset(
                 -1
             }
 
-
             isPregnancyTestDone.id -> {
                 isPregnant.isEnabled = true
-                if (isPregnant.value == resources.getStringArray(R.array.yes_no_donno)[0]) {
+                if (isPregnancyTestDone.value == resources.getStringArray(R.array.yes_no_donno)[0]) {
                     triggerDependants(
                         source = isPregnancyTestDone,
-                        passedIndex = index,
-                        triggerIndex = 0,
-                        target = pregnancyTestResult
+                        removeItems = listOf(isPregnant,usingFamilyPlanning,methodOfContraception,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,anyOtherMethod,mpaFileUpload1),
+                        addItems = listOf(pregnancyTestResult)
                     )
                 }
-                else if (isPregnant.value == resources.getStringArray(R.array.yes_no_donno)[1]) {
+                else{
                     triggerDependants(
                         source = isPregnancyTestDone,
-                        passedIndex = index,
-                        triggerIndex = 0,
-                        target = pregnancyTestResult
+                        removeItems = listOf(isPregnant,pregnancyTestResult),
+                        addItems = listOf(usingFamilyPlanning)
                     )
-                    triggerforHide(
-                        source = isPregnancyTestDone,
-                        passedIndex = index,
-                        triggerIndex = 1,
-                        target = isPregnant,
-                        targetSideEffect = listOf(isPregnant,usingFamilyPlanning,methodOfContraception,antraDoses,anyOtherMethod)
-                    )
+                }
 
-                }
-                else {
-                    triggerDependants(
-                        source = isPregnancyTestDone,
-                        passedIndex = index,
-                        triggerIndex = 0,
-                        target = pregnancyTestResult
-                    )
-                    triggerforHide(
-                        source = isPregnancyTestDone,
-                        passedIndex = index,
-                        triggerIndex = 1,
-                        target = isPregnant,
-                        targetSideEffect = listOf(isPregnant,usingFamilyPlanning,methodOfContraception,antraDoses,anyOtherMethod)
-                    )
-                }
                 return 0
-
-
             }
 
             pregnancyTestResult.id -> {
@@ -344,10 +398,10 @@ class EligibleCoupleTrackingDataset(
                         passedIndex = index,
                         triggerIndex = 1,
                         target = usingFamilyPlanning,
-                        targetSideEffect = listOf(usingFamilyPlanning,methodOfContraception,antraDoses,anyOtherMethod)
+                        targetSideEffect = listOf(usingFamilyPlanning,methodOfContraception,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,anyOtherMethod)
                     )
                 }
-               else if (pregnancyTestResult.value == resources.getStringArray(R.array.ectdset_po_neg)[1]) {
+                else if (pregnancyTestResult.value == resources.getStringArray(R.array.ectdset_po_neg)[1]) {
                     isPregnant.isEnabled = true
                     isPregnant.value = resources.getStringArray(R.array.yes_no)[1]
                     triggerDependants(
@@ -355,14 +409,14 @@ class EligibleCoupleTrackingDataset(
                         passedIndex = index,
                         triggerIndex = 1,
                         target = isPregnant,
-                        targetSideEffect = listOf(isPregnant,usingFamilyPlanning,methodOfContraception, anyOtherMethod,antraDoses)
+                        targetSideEffect = listOf(isPregnant,usingFamilyPlanning,methodOfContraception, anyOtherMethod,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection)
                     )
                     triggerDependants(
                         source = isPregnant,
                         passedIndex = index,
                         triggerIndex = 1,
                         target = usingFamilyPlanning,
-                        targetSideEffect = listOf(methodOfContraception, anyOtherMethod,antraDoses)
+                        targetSideEffect = listOf(methodOfContraception, anyOtherMethod,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection)
                     )
 
                 }
@@ -371,7 +425,7 @@ class EligibleCoupleTrackingDataset(
                     isPregnant.isEnabled = true
                 }
 
-               return 0
+                return 0
             }
 
             isPregnant.id -> {
@@ -381,7 +435,7 @@ class EligibleCoupleTrackingDataset(
                         passedIndex = index,
                         triggerIndex = 1,
                         target = usingFamilyPlanning,
-                        targetSideEffect = listOf(methodOfContraception, anyOtherMethod,antraDoses)
+                        targetSideEffect = listOf(methodOfContraception, anyOtherMethod,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,mpaFileUpload1)
                     )
                 }
                 else if (isPregnant.value == resources.getStringArray(R.array.yes_no_donno)[1]) {
@@ -390,7 +444,7 @@ class EligibleCoupleTrackingDataset(
                         passedIndex = index,
                         triggerIndex = 1,
                         target = usingFamilyPlanning,
-                        targetSideEffect = listOf(methodOfContraception, anyOtherMethod,antraDoses)
+                        targetSideEffect = listOf(methodOfContraception, anyOtherMethod,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,mpaFileUpload1)
                     )
                 }
                 else {
@@ -399,7 +453,7 @@ class EligibleCoupleTrackingDataset(
                         passedIndex = index,
                         triggerIndex = 2,
                         target = usingFamilyPlanning,
-                        targetSideEffect = listOf(methodOfContraception, anyOtherMethod,antraDoses)
+                        targetSideEffect = listOf(methodOfContraception, anyOtherMethod,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,mpaFileUpload1)
                     )
                 }
                 return 0
@@ -408,22 +462,36 @@ class EligibleCoupleTrackingDataset(
             }
 
             usingFamilyPlanning.id -> {
-                triggerDependants(
-                    source = usingFamilyPlanning,
-                    passedIndex = index,
-                    triggerIndex = 0,
-                    target = methodOfContraception,
-                    targetSideEffect = listOf(anyOtherMethod,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,mpaFileUpload1)
-                )
+                antraDoses.value = antraDoseValue
+
+                if (usingFamilyPlanning.value == resources.getStringArray(R.array.yes_no_donno)[0]) {
+                    triggerDependants(
+                        source = usingFamilyPlanning,
+                        removeItems = emptyList(),
+                        addItems = listOf(methodOfContraception)
+                    )
+                }
+                else{
+                    triggerDependants(
+                        source = usingFamilyPlanning,
+                        removeItems = listOf(methodOfContraception,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,anyOtherMethod,mpaFileUpload1),
+                        addItems = emptyList()
+                    )
+                }
+//
+
             }
 
             methodOfContraception.id -> {
+
                 when (methodOfContraception.value) {
+
                     resources.getStringArray(R.array.method_of_contraception)[1] -> {
                         triggerDependants(
                             source = methodOfContraception,
                             addItems = listOf(antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,mpaFileUpload1),
-                            removeItems = listOf(anyOtherMethod),
+                            removeItems = listOf(anyOtherMethod,deliveryDischargeSummary1,
+                                deliveryDischargeSummary2),
                             position = getIndexById(methodOfContraception.id) + 1
                         )
                     }
@@ -432,18 +500,56 @@ class EligibleCoupleTrackingDataset(
                         triggerDependants(
                             source = methodOfContraception,
                             addItems = listOf(anyOtherMethod),
-                            removeItems = listOf(antraDoses),
+                            removeItems = listOf(antraDoses,deliveryDischargeSummary1,
+                                deliveryDischargeSummary2,mpaFileUpload1),
                             position = getIndexById(methodOfContraception.id) + 1
                         )
                     }
 
                     else -> {
-                        triggerDependants(
-                            source = methodOfContraception,
-                            addItems = emptyList(),
-                            removeItems = listOf(antraDoses, anyOtherMethod,dateOfAntraInjection,dueDateOfAntraInjection,mpaFileUpload1),
-                            position = -1
-                        )
+
+                        if(noOfChildrens!=0)
+                        {
+                            val methods = resources.getStringArray(R.array.method_of_contraception).toMutableList()
+                            val sterilizationIndices = listOf(7, 8, 9)
+                            val selectedIndex = methods.indexOf(methodOfContraception.value)
+                            if (selectedIndex in sterilizationIndices) {
+                                triggerDependants(
+                                    source = methodOfContraception,
+                                    addItems = listOf(
+                                        deliveryDischargeSummary1,
+                                        deliveryDischargeSummary2
+                                    ),
+                                    removeItems = listOf(
+                                        antraDoses,
+                                        anyOtherMethod,
+                                        dateOfAntraInjection,
+                                        dueDateOfAntraInjection,
+                                        mpaFileUpload1,
+
+                                    ),
+                                    position = -1
+                                )
+                            }
+                            else{
+                                triggerDependants(
+                                    source = methodOfContraception,
+                                    addItems = emptyList(),
+                                    removeItems = listOf(antraDoses, anyOtherMethod,dateOfAntraInjection,dueDateOfAntraInjection,mpaFileUpload1, deliveryDischargeSummary1,
+                                        deliveryDischargeSummary2),
+                                    position = -1
+                                )
+                            }
+                        }else{
+                            triggerDependants(
+                                source = methodOfContraception,
+                                addItems = emptyList(),
+                                removeItems = listOf(antraDoses, anyOtherMethod,dateOfAntraInjection,dueDateOfAntraInjection,mpaFileUpload1, deliveryDischargeSummary1,
+                                    deliveryDischargeSummary2),
+                                position = -1
+                            )
+                        }
+
                     }
                 }
                 return 0
@@ -469,6 +575,9 @@ class EligibleCoupleTrackingDataset(
             form.isPregnancyTestDone = isPregnancyTestDone.value
             form.pregnancyTestResult = pregnancyTestResult.value
             form.isPregnant = isPregnant.value
+            form.dischargeSummary1 = deliveryDischargeSummary1.value
+            form.dischargeSummary2 = deliveryDischargeSummary2.value
+
             form.usingFamilyPlanning = usingFamilyPlanning.value?.let { it == resources.getStringArray(R.array.yes_no)[0] }
             if (methodOfContraception.value == resources.getStringArray(R.array.method_of_contraception)
                     .last()
@@ -495,12 +604,22 @@ class EligibleCoupleTrackingDataset(
 
 
     fun getIndexOfMPA() = getIndexById(mpaFileUpload1.id)
+    fun getIndexDeliveryDischargeSummary1 () = getIndexById(deliveryDischargeSummary1.id)
+    fun getIndexDeliveryDischargeSummary2 () = getIndexById(deliveryDischargeSummary2.id)
     fun setImageUriToFormElement(lastImageFormId: Int, dpUri: Uri) {
 
         when (lastImageFormId) {
             21 -> {
                 mpaFileUpload1.value = dpUri.toString()
                 mpaFileUpload1.errorText = null
+            }
+            58 -> {
+                deliveryDischargeSummary1.value = dpUri.toString()
+                deliveryDischargeSummary1.errorText = null
+            }
+            59 -> {
+                deliveryDischargeSummary2.value = dpUri.toString()
+                deliveryDischargeSummary2.errorText = null
             }
 
         }

@@ -75,6 +75,8 @@ class EligibleCoupleTrackingFormViewModel @Inject constructor(
     private lateinit var eligibleCoupleTracking: EligibleCoupleTrackingCache
 
     fun getIndexOfMPA() = dataset.getIndexOfMPA()
+    fun getIndexDeliveryDischargeSummary1() = dataset.getIndexDeliveryDischargeSummary2()
+    fun getIndexDeliveryDischargeSummary2() = dataset.getIndexDeliveryDischargeSummary2()
 
     private var lastDocumentFormId: Int = 0
     fun setCurrentDocumentFormId(id: Int) {
@@ -120,12 +122,14 @@ class EligibleCoupleTrackingFormViewModel @Inject constructor(
                 _showAntraSection.value = false
             }
 
+
             ecrRepo.getSavedRecord(benId)?.let {
                 dataset.setUpPage(
                     ben,
                     it.dateOfReg,
                     pastTrack,
-                    if (_recordExists.value == true) eligibleCoupleTracking else null
+                    if (_recordExists.value == true) eligibleCoupleTracking else null,
+                    ecrRepo.getNoOfChildren(benId)
                 )
             }
         }
