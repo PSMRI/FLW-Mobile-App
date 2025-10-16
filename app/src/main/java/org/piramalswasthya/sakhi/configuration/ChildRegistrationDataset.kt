@@ -147,7 +147,7 @@ class ChildRegistrationDataset(
     private val weightAtBirth = FormElement(
         id = 12,
         inputType = InputType.EDIT_TEXT,
-        title = "Weight at Birth (kg)",
+        title = resources.getString(R.string.str_weight_at_birth),
         arrayId = -1,
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL,
         minDecimal = 0.5,
