@@ -100,6 +100,8 @@
     <string name="mdsr_ic_date">তাৰিখ</string>
     <string name="mdsr_reason_death">কাৰণ নিৰ্দিষ্ট কৰক</string>
     <string name="mdsr_action">পৰাৱৰ্তন কৰা হৈছে</string>
+    <string name="str_weight_at_birth_gram">জন্মৰ সময়ত ওজন ( গ্ৰাম )</string>
+
 
     <string name="save_successful">সংরক্ষণ সফল</string>
     <string name="something_wend_wong_contact_testing">কিবা অশুদ্ধ! পৰীক্ষণ কৰক!</string>
