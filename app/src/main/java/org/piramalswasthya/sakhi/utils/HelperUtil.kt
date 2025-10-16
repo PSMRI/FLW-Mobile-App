@@ -595,7 +595,24 @@ object HelperUtil {
     }
 
 
+    fun Context.getFileSizeInMB(uri: Uri): Double? {
+        return try {
+            contentResolver.openFileDescriptor(uri, "r")?.use { pfd ->
+                val sizeInBytes = pfd.statSize
 
+                if (sizeInBytes > 0) {
+                    val sizeInMB = sizeInBytes / (1024.0 * 1024.0)
+                    sizeInMB
+                } else {
+                    null
+                }
+            } ?: run {
+                null
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
 
 
 

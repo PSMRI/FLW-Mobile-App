@@ -128,6 +128,7 @@
     <string name="pmsma_visit_date">PMSMA Visit Date</string>
     <string name="pmsma_visits">PMSMA Visits</string>
     <string name="pmsma_visit">PMSMA Visit</string>
+    <string name="sam">Severe Acute Malnutrition</string>
 
 
     <string-array name="temp_array">

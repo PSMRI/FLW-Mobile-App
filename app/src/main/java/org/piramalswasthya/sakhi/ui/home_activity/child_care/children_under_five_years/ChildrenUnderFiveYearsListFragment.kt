@@ -8,9 +8,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
@@ -48,8 +50,8 @@ class ChildrenUnderFiveYearsListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         benAdapter = ChildrenUnderFiveYearsAdapter(
-            ChildrenUnderFiveYearsAdapter.ChildListClickListener { benId, hhId, type ->
-                Log.i("ChildrenUnderFiveYearsOne", "onViewCreated: $benId === $hhId === $type")
+            ChildrenUnderFiveYearsAdapter.ChildListClickListener { benId, hhId,dob, type ->
+                showOptionsBottomSheet(benId, hhId, dob,type)
             }
         )
         binding.rvAny.adapter = benAdapter
@@ -85,6 +87,17 @@ class ChildrenUnderFiveYearsListFragment : Fragment() {
         }
 
     }
+
+
+
+    private fun showOptionsBottomSheet(benId: Long, hhId: Long, dob: Long, type : String) {
+        val bottomSheet = ChildrenUnderFiveBottomSheetFragment.newInstance(benId, hhId, dob,type)
+        bottomSheet.show(childFragmentManager, bottomSheet.tag)
+
+    }
+
+
+
 
     override fun onStart() {
         super.onStart()

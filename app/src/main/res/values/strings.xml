@@ -371,7 +371,6 @@
     //................VHND........................
 
 
-
     <!--    <string name="wife_s_name">Wife\'s Name</string>-->
     <!--    <string name="spouse_s_name">Spouse\'s Name</string>-->
     <!--    <string name="age_at_marriage">Age At Marriage</string>-->
@@ -489,6 +488,8 @@
     <string name="session_date_n_a">Session Date: N/A</string>
     <string name="session_date_format">Session Date: %s</string>
     <string name="uwin_session_format">UWIN Session %s</string>
+    <string name="sam">Severe Acute Malnutrition</string>
+    <string name="add">ADD</string>
 
     <string-array name="sync_records">
         <item>Beneficiary</item>
@@ -518,12 +519,12 @@
     </string-array>
 
     <string-array name="leprosy_status">
-        <item >Screened</item>
-        <item >Denied</item>
-        <item >Not Screened</item>
-        <item >Suspected</item>
-        <item >Confirmed</item>
-        <item >Not Confirmed</item>
+        <item>Screened</item>
+        <item>Denied</item>
+        <item>Not Screened</item>
+        <item>Suspected</item>
+        <item>Confirmed</item>
+        <item>Not Confirmed</item>
     </string-array>
 
     <string-array name="death_place">
