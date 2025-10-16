@@ -432,10 +432,43 @@
     </fragment>
     <fragment
         android:id="@+id/childrenUnderFiveYearListFragment"
-        android:name="org.piramalswasthya.sakhi.ui.home_activity.child_care.children_under_five_years.ChildrenUnderFiveYearsListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.child_care.children_under_five_years.CUFYListFragment"
         android:label="@string/child_under_five_years_list"
         tools:layout="@layout/fragment_children_under_five_years_list">
 
+        <action
+            android:id="@+id/action_childrenUnderFiveYearListFragment_to_childrenUnderFiveYearFormFragment"
+            app:destination="@id/childrenUnderFiveYearFormFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/childrenUnderFiveYearFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.child_care.children_under_five_years.children_forms.CUFYFormFragment"
+        android:label="@string/child_under_five_years_list">
+        <argument
+            android:name="benId"
+            app:argType="long" />
+
+        <argument
+            android:name="hhId"
+            app:argType="long" />
+
+        <argument
+            android:name="visitType"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null"/>
+
+        <argument
+            android:name="isViewMode"
+            app:argType="boolean"
+            android:defaultValue="false" />
+
+        <argument
+            android:name="formId"
+            app:argType="string"
+            android:defaultValue="hbnc_form_001" />
     </fragment>
     <fragment
         android:id="@+id/pncMotherListFragment"

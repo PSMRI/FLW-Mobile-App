@@ -9,7 +9,6 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.FormSubmitRequest
 import org.piramalswasthya.sakhi.model.dynamicModel.ApiResponse
 import org.piramalswasthya.sakhi.model.dynamicModel.HBNCVisitListResponse
 import org.piramalswasthya.sakhi.model.dynamicModel.HBNCVisitRequest
-import org.piramalswasthya.sakhi.ui.home_activity.asha_profile.AshaProfileViewModel
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -319,6 +318,11 @@ interface AmritApiService {
 
     @POST("flw-api/child-care/hbncVisit/getAll")
     suspend fun getAllHbncVisits(
+        @Body request: HBNCVisitRequest
+    ): Response<HBNCVisitListResponse>
+
+    @POST("flw-api/child-care/ors/getAll")
+    suspend fun getAllOrsVisits(
         @Body request: HBNCVisitRequest
     ): Response<HBNCVisitListResponse>
 

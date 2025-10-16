@@ -49,6 +49,8 @@ import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponse
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormSchemaDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.InfantDao
 import org.piramalswasthya.sakhi.database.room.dao.VLFDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.CUFYFormResponseDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.CUFYFormResponseJsonDao
 import org.piramalswasthya.sakhi.model.AHDCache
 import org.piramalswasthya.sakhi.model.AESScreeningCache
 import org.piramalswasthya.sakhi.model.AdolescentHealthCache
@@ -100,6 +102,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.FormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.InfantEntity
 import org.piramalswasthya.sakhi.model.VHNDCache
+import org.piramalswasthya.sakhi.model.dynamicEntity.CUFYFormResponseJsonEntity
 
 @Database(
     entities = [
@@ -154,12 +157,13 @@ import org.piramalswasthya.sakhi.model.VHNDCache
         FormSchemaEntity::class,
         MaaMeetingEntity::class,
         FormResponseJsonEntity::class,
+        CUFYFormResponseJsonEntity::class,
         GeneralOPEDBeneficiary::class,
         UwinCache::class
     ],
     views = [BenBasicCache::class],
 
-    version = 31, exportSchema = false
+    version = 32, exportSchema = false
 )
 
 @TypeConverters(
@@ -207,6 +211,8 @@ abstract class InAppDb : RoomDatabase() {
     abstract fun infantDao(): InfantDao
     abstract fun formSchemaDao(): FormSchemaDao
     abstract fun formResponseDao(): FormResponseDao
+    abstract fun CUFYFormResponseDao(): CUFYFormResponseDao
+    abstract fun CUFYFormResponseJsonDao(): CUFYFormResponseJsonDao
     abstract fun formResponseJsonDao(): FormResponseJsonDao
 
     abstract val syncDao: SyncDao
@@ -229,6 +235,36 @@ abstract class InAppDb : RoomDatabase() {
 //                    database.execSQL("ALTER TABLE GENERAL_OPD_ACTIVITY ADD COLUMN village TEXT")
 //                }
 //            }
+
+            val MIGRATION_31_32 = object : Migration(31, 32) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL(
+                        """
+            CREATE TABLE IF NOT EXISTS `children_under_five_all_visit` (
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                `benId` INTEGER NOT NULL,
+                `hhId` INTEGER NOT NULL,
+                `visitDate` TEXT NOT NULL,
+                `formId` TEXT NOT NULL,
+                `version` INTEGER NOT NULL,
+                `formDataJson` TEXT NOT NULL,
+                `isSynced` INTEGER NOT NULL DEFAULT 0,
+                `createdAt` INTEGER NOT NULL,
+                `updatedAt` INTEGER NOT NULL,
+                `syncedAt` INTEGER
+            )
+            """.trimIndent()
+                    )
+
+                    database.execSQL(
+                        """
+            CREATE UNIQUE INDEX IF NOT EXISTS `index_children_under_five_all_visit_benId_hhId_visitDate_formId`
+            ON `children_under_five_all_visit` (`benId`, `hhId`, `visitDate`, `formId`)
+            """.trimIndent()
+                    )
+                }
+            }
+
 
             val MIGRATION_30_31 = object : Migration(30, 31) {
                 override fun migrate(database: SupportSQLiteDatabase) {
@@ -1137,7 +1173,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_27_28,
                         MIGRATION_28_29,
                         MIGRATION_29_30,
-                        MIGRATION_30_31
+                        MIGRATION_30_31,
+                        MIGRATION_31_32
                     ).build()
 
                     INSTANCE = instance

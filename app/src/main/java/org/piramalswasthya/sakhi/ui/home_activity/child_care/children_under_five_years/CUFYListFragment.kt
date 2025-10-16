@@ -3,7 +3,6 @@ package org.piramalswasthya.sakhi.ui.home_activity.child_care.children_under_fiv
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +10,7 @@ import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
@@ -18,16 +18,17 @@ import org.piramalswasthya.sakhi.adapters.ChildrenUnderFiveYearsAdapter
 import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.databinding.FragmentChildrenUnderFiveYearsListBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYFormSyncWorker
 
 @AndroidEntryPoint
-class ChildrenUnderFiveYearsListFragment : Fragment() {
+class CUFYListFragment : Fragment() {
 
     private var _binding: FragmentChildrenUnderFiveYearsListBinding? = null
 
     private val binding: FragmentChildrenUnderFiveYearsListBinding
         get() = _binding!!
 
-    private val viewModel: ChildrenUnderFiveYearListViewModel by viewModels()
+    private val viewModel: CUFYListViewModel by viewModels()
     private lateinit var benAdapter: ChildrenUnderFiveYearsAdapter
 
     private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
@@ -46,10 +47,16 @@ class ChildrenUnderFiveYearsListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        CUFYFormSyncWorker.enqueue(requireContext())
         benAdapter = ChildrenUnderFiveYearsAdapter(
             ChildrenUnderFiveYearsAdapter.ChildListClickListener { benId, hhId, type ->
-                Log.i("ChildrenUnderFiveYearsOne", "onViewCreated: $benId === $hhId === $type")
+                findNavController().navigate(
+                    CUFYListFragmentDirections.actionChildrenUnderFiveYearListFragmentToChildrenUnderFiveYearFormFragment(
+                        benId,
+                        hhId,
+                        type
+                    )
+                )
             }
         )
         binding.rvAny.adapter = benAdapter

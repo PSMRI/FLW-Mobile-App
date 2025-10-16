@@ -4,6 +4,7 @@ package org.piramalswasthya.sakhi.helpers.dynamicMapper
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import org.json.JSONObject
+import org.piramalswasthya.sakhi.model.dynamicEntity.CUFYFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSubmitRequest
 import java.text.SimpleDateFormat
@@ -16,6 +17,28 @@ object FormSubmitRequestMapper {
     }
 
     fun fromEntity(entity: FormResponseJsonEntity): FormSubmitRequest? {
+        return try {
+            val jsonObj = JSONObject(entity.formDataJson)
+            val fieldsObj = jsonObj.optJSONObject("fields")
+
+            val type = object : TypeToken<Map<String, Any?>>() {}.type
+            val fieldsMap: Map<String, Any?> = Gson().fromJson(fieldsObj.toString(), type)
+
+            FormSubmitRequest(
+                formId = jsonObj.optString("formId"),
+                beneficiaryId = jsonObj.optLong("beneficiaryId"),
+                houseHoldId = jsonObj.optLong("houseHoldId"),
+                visitDate = jsonObj.optString("visitDate"),
+                fields = fieldsMap
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+
+    fun fromEntity(entity: CUFYFormResponseJsonEntity): FormSubmitRequest? {
         return try {
             val jsonObj = JSONObject(entity.formDataJson)
             val fieldsObj = jsonObj.optJSONObject("fields")
