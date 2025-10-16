@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class ChildrenUnderFiveYearListViewModel @Inject constructor(
+class CUFYListViewModel @Inject constructor(
     recordsRepo: RecordsRepo
 ) : ViewModel() {
 

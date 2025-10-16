@@ -1,7 +1,6 @@
 package org.piramalswasthya.sakhi.work
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.work.Constraints
@@ -14,6 +13,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.Operation
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
+import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYFormSyncWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.FormSyncWorker
 import java.util.concurrent.TimeUnit
 
@@ -26,6 +26,9 @@ object WorkerUtils {
         .build()
 
     fun triggerAmritSyncWorker(context: Context) {
+        val CUFYFormSyncWorker = OneTimeWorkRequestBuilder<CUFYFormSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
         val pullWorkRequest = OneTimeWorkRequestBuilder<PullFromAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
@@ -132,6 +135,7 @@ object WorkerUtils {
                 ExistingWorkPolicy.APPEND_OR_REPLACE,
                 pullWorkRequest
             )
+            .then(CUFYFormSyncWorker)
             .then(maaMeetingFormSyncWorkerRequest)
             .then(pullIncentiveActivityWorkRequest)
             .then(pullCbacWorkRequest)
@@ -164,6 +168,9 @@ object WorkerUtils {
     }
 
     fun triggerAmritPushWorker(context: Context) {
+        val formSyncWorkerRequest  = OneTimeWorkRequestBuilder<FormSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
         val pushWorkRequest = OneTimeWorkRequestBuilder<PushToAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
@@ -227,7 +234,7 @@ object WorkerUtils {
             .setConstraints(networkOnlyConstraint)
             .build()
 
-        val formSyncWorkerRequest  = OneTimeWorkRequestBuilder<FormSyncWorker>()
+        val CUFYFormSyncWorkerRequest  = OneTimeWorkRequestBuilder<CUFYFormSyncWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
         //Always at last - INCENTIVES
@@ -291,6 +298,7 @@ object WorkerUtils {
             .then(pushImmunizationWorkRequest)
 //            .then(pushChildHBYCToAmritWorker)
             .then(pushChildHBNCToAmritWorker)
+            .then(CUFYFormSyncWorkerRequest)
             .then(pullIncentiveActivityWorkRequest)
             .then(pushAbhaWorkRequest)
             .then(pushMalariaWorkRequest)

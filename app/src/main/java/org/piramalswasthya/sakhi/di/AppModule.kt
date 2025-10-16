@@ -1,7 +1,6 @@
 package org.piramalswasthya.sakhi.di
 
 import android.content.Context
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -43,6 +42,7 @@ import org.piramalswasthya.sakhi.database.room.dao.UwinDao
 import org.piramalswasthya.sakhi.database.room.dao.MaaMeetingDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.VLFDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.CUFYFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.AnalyticsHelper
 import org.piramalswasthya.sakhi.helpers.ApiAnalyticsInterceptor
@@ -302,4 +302,7 @@ object AppModule {
     @Provides
     fun provideMaaMeetingDao(database: InAppDb): MaaMeetingDao = database.maaMeetingDao
 
+    @Singleton
+    @Provides
+    fun provideCUFYFormResponseJsonDao(database: InAppDb): CUFYFormResponseJsonDao = database.CUFYFormResponseJsonDao()
 }
