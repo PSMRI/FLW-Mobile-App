@@ -157,7 +157,6 @@ import org.piramalswasthya.sakhi.model.VHNDCache
         FormResponseJsonEntity::class,
         FormResponseJsonEntityHBYC::class,
         MaaMeetingEntity::class,
-        FormResponseJsonEntity::class,
         GeneralOPEDBeneficiary::class,
         UwinCache::class
     ],
@@ -298,6 +297,24 @@ abstract class InAppDb : RoomDatabase() {
                 schemaJson TEXT NOT NULL
             )
         """.trimIndent())
+                    database.execSQL("ALTER TABLE IMMUNIZATION ADD COLUMN mcpCardSummary1 TEXT")
+                    database.execSQL("ALTER TABLE IMMUNIZATION ADD COLUMN mcpCardSummary2 TEXT")
+                    database.execSQL("DROP TABLE IF EXISTS `UWIN_SESSION`")
+                    database.execSQL("""CREATE TABLE IF NOT EXISTS `UWIN_SESSION` (
+                            `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    `sessionDate` INTEGER NOT NULL,
+                    `place` TEXT,
+                    `participantsCount` INTEGER NOT NULL,
+                    `uploadedFiles1` TEXT,
+                    `uploadedFiles2` TEXT,
+                    `processed` TEXT,
+                    `createdBy` TEXT NOT NULL,
+                    `createdDate` INTEGER NOT NULL,
+                    `updatedBy` TEXT NOT NULL,
+                    `updatedDate` INTEGER NOT NULL,
+                    `syncState` INTEGER NOT NULL
+                    )
+                    """.trimIndent())
                 }
             }
 
@@ -306,6 +323,13 @@ abstract class InAppDb : RoomDatabase() {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     database.execSQL("ALTER TABLE eligible_couple_tracking ADD COLUMN dischargeSummary1 TEXT")
                     database.execSQL("ALTER TABLE eligible_couple_tracking ADD COLUMN dischargeSummary2 TEXT")
+                    database.execSQL(
+                        "CREATE TABLE IF NOT EXISTS `MAA_MEETING` (" +
+                                "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                                "`meetingDate` TEXT, `place` TEXT, `participants` INTEGER, `ashaId` INTEGER, " +
+                                "`meetingImages` TEXT, " +
+                                "`createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `syncState` INTEGER NOT NULL)"
+                    )
                 }
             }
 
@@ -318,41 +342,6 @@ abstract class InAppDb : RoomDatabase() {
 //                }
 //            }
 
-            val MIGRATION_30_31 = object : Migration(30, 31) {
-                override fun migrate(database: SupportSQLiteDatabase) {
-                    database.execSQL("ALTER TABLE IMMUNIZATION ADD COLUMN mcpCardSummary1 TEXT")
-                    database.execSQL("ALTER TABLE IMMUNIZATION ADD COLUMN mcpCardSummary2 TEXT")
-                    database.execSQL(
-                        """
-                           CREATE TABLE IF NOT EXISTS `UWIN_SESSION` (
-                          `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                          `sessionDate` INTEGER NOT NULL,
-                          `place` TEXT,
-                          `participantsCount` INTEGER NOT NULL,
-                          `uploadedFiles1` TEXT,
-                          `uploadedFiles2` TEXT,
-                          `processed` TEXT,
-                          `createdBy` TEXT NOT NULL,
-                          `createdDate` INTEGER NOT NULL,
-                          `updatedBy` TEXT NOT NULL,
-                          `updatedDate` INTEGER NOT NULL,
-                          `syncState` TEXT NOT NULL
-                           )
-                           """.trimIndent()
-                    )
-                }
-            }
-            val MIGRATION_29_30 = object : Migration(29, 30) {
-                override fun migrate(database: SupportSQLiteDatabase) {
-                    database.execSQL(
-                        "CREATE TABLE IF NOT EXISTS `MAA_MEETING` (" +
-                                "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                                "`meetingDate` TEXT, `place` TEXT, `participants` INTEGER, `ashaId` INTEGER, " +
-                                "`meetingImages` TEXT, " +
-                                "`createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `syncState` INTEGER NOT NULL)"
-                    )
-                }
-            }
 
             val MIGRATION_28_29 = object : Migration(28, 29) {
                 override fun migrate(database: SupportSQLiteDatabase) {
@@ -1227,8 +1216,7 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_29_30,
                         MIGRATION_30_31,
                         MIGRATION_31_32,
-                        MIGRATION_32_33,
-                        MIGRATION_30_31
+                        MIGRATION_32_33
                     ).build()
 
                     INSTANCE = instance
