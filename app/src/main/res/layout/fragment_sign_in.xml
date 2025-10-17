@@ -25,7 +25,7 @@
             android:layout_height="100dp"
             android:layout_marginTop="40dp"
             android:contentDescription="@string/cd_assam_nhm_logo"
-            android:src="@drawable/logo_circle"
+            tools:src="@drawable/logo_circle"
             />
         <TextView
             android:layout_width="wrap_content"
@@ -97,7 +97,6 @@
                     android:id="@+id/rg_lang_select"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:checkedButton="@id/rb_eng"
                     android:gravity="center"
                     android:orientation="horizontal"
                     android:paddingStart="@dimen/padding_wide"
@@ -119,6 +118,7 @@
                     <com.google.android.material.radiobutton.MaterialRadioButton
                         android:id="@+id/rb_assamese"
                         style="@style/radio_item_lang"
+                        android:visibility="gone"
                         android:text="@string/text_assamese" />
 
                 </RadioGroup>
