@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import com.google.gson.Gson
 import dagger.hilt.android.qualifiers.ApplicationContext
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.Languages
@@ -140,7 +141,11 @@ class PreferenceDao @Inject constructor(@ApplicationContext private val context:
             Languages.ASSAMESE.symbol -> Languages.ASSAMESE
             Languages.HINDI.symbol -> Languages.HINDI
             Languages.ENGLISH.symbol -> Languages.ENGLISH
-            else -> Languages.ASSAMESE
+            else -> if (BuildConfig.FLAVOR.contains("mitanin", true)) {
+                Languages.HINDI
+            } else {
+                Languages.ASSAMESE
+            }
         }
     }
 
