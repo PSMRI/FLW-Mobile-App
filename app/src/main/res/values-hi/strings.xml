@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--Home-->
-    <string name="app_native_name">उत्प्रेरोना</string>
+<!--    <string name="app_native_name">मितानिन</string>-->
     <string name="title_activity_home" translatable="false">HomeActivity</string>
     <string name="nav_header_desc" translatable="false">Navigation header</string>
     <string name="cd_icon_grid_icon">icon</string>
