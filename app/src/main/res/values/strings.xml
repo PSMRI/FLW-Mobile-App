@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">Sakhi</string>
+    <string name="app_name" translatable="false">Mitanin</string>
 
     <!--    Pref-->
     <string name="PREF_NAME" translatable="false">Sakhi-pref-1</string>
@@ -322,7 +322,7 @@
     <string name="family_member_registration">Family Member Registration</string>
     <string name="relation_with_hof">Relation with HOF</string>
     <string name="add_family_member">Add Family Member</string>
-    <string name="app_native_name">Utprerona</string>
+    <string name="app_native_name">Mitanin</string>
     <string name="non_pregnant_women_eligible_couple_section">Non-Pregnant Women (Eligible Couple) section</string>
     <string-array name="sync_records">
         <item>Beneficiary</item>
