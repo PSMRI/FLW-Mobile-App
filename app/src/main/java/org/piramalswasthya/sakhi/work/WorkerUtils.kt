@@ -13,7 +13,9 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.Operation
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
-import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYFormSyncWorker
+import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYIFAFormSyncWorker
+import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYORSFormSyncWorker
+import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYSAMFormSyncWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.FormSyncWorker
 import java.util.concurrent.TimeUnit
 
@@ -26,7 +28,13 @@ object WorkerUtils {
         .build()
 
     fun triggerAmritSyncWorker(context: Context) {
-        val CUFYFormSyncWorker = OneTimeWorkRequestBuilder<CUFYFormSyncWorker>()
+        val CUFYORSFormSyncWorker = OneTimeWorkRequestBuilder<CUFYORSFormSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val CUFYIFAFormSyncWorker = OneTimeWorkRequestBuilder<CUFYIFAFormSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val CUFYSAMFormSyncWorker = OneTimeWorkRequestBuilder<CUFYSAMFormSyncWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
         val pullWorkRequest = OneTimeWorkRequestBuilder<PullFromAmritWorker>()
@@ -135,7 +143,9 @@ object WorkerUtils {
                 ExistingWorkPolicy.APPEND_OR_REPLACE,
                 pullWorkRequest
             )
-            .then(CUFYFormSyncWorker)
+            .then(CUFYORSFormSyncWorker)
+            .then(CUFYIFAFormSyncWorker)
+            .then(CUFYSAMFormSyncWorker)
             .then(maaMeetingFormSyncWorkerRequest)
             .then(pullIncentiveActivityWorkRequest)
             .then(pullCbacWorkRequest)
@@ -234,7 +244,13 @@ object WorkerUtils {
             .setConstraints(networkOnlyConstraint)
             .build()
 
-        val CUFYFormSyncWorkerRequest  = OneTimeWorkRequestBuilder<CUFYFormSyncWorker>()
+        val CUFYORSFormSyncWorkerRequest  = OneTimeWorkRequestBuilder<CUFYORSFormSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val CUFYIFAFormSyncWorker = OneTimeWorkRequestBuilder<CUFYIFAFormSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val CUFYSAMFormSyncWorker = OneTimeWorkRequestBuilder<CUFYSAMFormSyncWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
         //Always at last - INCENTIVES
@@ -298,7 +314,9 @@ object WorkerUtils {
             .then(pushImmunizationWorkRequest)
 //            .then(pushChildHBYCToAmritWorker)
             .then(pushChildHBNCToAmritWorker)
-            .then(CUFYFormSyncWorkerRequest)
+            .then(CUFYORSFormSyncWorkerRequest)
+            .then(CUFYIFAFormSyncWorker)
+            .then(CUFYSAMFormSyncWorker)
             .then(pullIncentiveActivityWorkRequest)
             .then(pushAbhaWorkRequest)
             .then(pushMalariaWorkRequest)
