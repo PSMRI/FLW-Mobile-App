@@ -17,7 +17,6 @@ import org.piramalswasthya.sakhi.adapters.CUFYAdapter
 import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.databinding.FragmentChildrenUnderFiveYearsListBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
-import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYFormSyncWorker
 
 @AndroidEntryPoint
 class CUFYListFragment : Fragment() {
@@ -46,7 +45,6 @@ class CUFYListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        CUFYFormSyncWorker.enqueue(requireContext())
 
         benAdapter = CUFYAdapter(
             CUFYAdapter.ChildListClickListener { benId, hhId,dob, type ->

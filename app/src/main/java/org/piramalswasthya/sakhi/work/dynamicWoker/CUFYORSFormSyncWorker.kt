@@ -15,7 +15,7 @@ import timber.log.Timber
 import java.io.IOException
 
 @HiltWorker
-class CUFYFormSyncWorker @AssistedInject constructor(
+class CUFYORSFormSyncWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workerParams: WorkerParameters,
     private val preferenceDao: PreferenceDao,
@@ -34,17 +34,12 @@ class CUFYFormSyncWorker @AssistedInject constructor(
                 ashaId = user.userId
             )
 
-            val response = repository.getAllOrsVisits(request)
+            val response = repository.getAllFormVisits(FormConstants.ORS_FORM_NAME,request)
             if (response.isSuccessful) {
                 val visitList = response.body()?.data.orEmpty()
                 repository.saveDownloadedVisitList(visitList, FormConstants.CHILDREN_UNDER_FIVE_ORS_FORM_ID)
-//                repository.saveDownloadedVisitList(visitList, FormConstants.CHILDREN_UNDER_FIVE_SAM_FORM_ID)
-//                repository.saveDownloadedVisitList(visitList, FormConstants.CHILDREN_UNDER_FIVE_SAM_FORM_ID)
             } else {
-                timber.log.Timber.e("Failed to fetch HBNC visits: ${response.code()} - ${response.message()}")
-                // Decide whether to continue with sync or fail based on the error
                 if (response.code() >= 500) {
-                    // Server error - retry later
                     throw IOException("Server error: ${response.code()}")
                 }
             }
@@ -54,7 +49,7 @@ class CUFYFormSyncWorker @AssistedInject constructor(
                 if ((form.benId ?: -1) < 0) continue
 
                 try{
-                    val success = repository.syncFormToServer(form)
+                    val success = repository.syncFormToServer(FormConstants.ORS_FORM_NAME,form)
                     if (success) {
                         repository.markFormAsSynced(form.id)
                     }
@@ -87,7 +82,7 @@ class CUFYFormSyncWorker @AssistedInject constructor(
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
 
-            val request = OneTimeWorkRequestBuilder<CUFYFormSyncWorker>()
+            val request = OneTimeWorkRequestBuilder<CUFYORSFormSyncWorker>()
                 .setConstraints(constraints)
                 .build()
 

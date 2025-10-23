@@ -89,8 +89,8 @@ class CUFYFormRepository @Inject constructor(
     suspend fun getSyncedVisitsByRchId(benId: Long): List<CUFYFormResponseJsonEntity> =
         jsonResponseDao.getSyncedVisitsByRchId(benId)
 
-    suspend fun getAllOrsVisits(request: HBNCVisitRequest): Response<HBNCVisitListResponse> {
-        return amritApiService.getAllOrsVisits(request)
+    suspend fun getAllFormVisits(formName: String, request: HBNCVisitRequest): Response<HBNCVisitListResponse> {
+        return amritApiService.getAllFormVisits(formName, request)
     }
 
     suspend fun saveDownloadedVisitList(list: List<HBNCVisitResponse>, formId: String) {
@@ -173,10 +173,10 @@ class CUFYFormRepository @Inject constructor(
         jsonResponseDao.getUnsyncedForms()
 
 
-    suspend fun syncFormToServer(form: CUFYFormResponseJsonEntity): Boolean {
+    suspend fun syncFormToServer(formName: String, form: CUFYFormResponseJsonEntity): Boolean {
         return try {
             val request = FormSubmitRequestMapper.fromEntity(form) ?: return false
-            val response = amritApiService.submitForm(listOf(request))
+            val response = amritApiService.submitChildCareForm(formName,listOf(request))
             response.isSuccessful
         } catch (e: Exception) {
             false
