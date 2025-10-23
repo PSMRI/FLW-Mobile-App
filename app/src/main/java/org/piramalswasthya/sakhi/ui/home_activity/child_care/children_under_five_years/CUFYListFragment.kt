@@ -14,7 +14,7 @@ import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
-import org.piramalswasthya.sakhi.adapters.ChildrenUnderFiveYearsAdapter
+import org.piramalswasthya.sakhi.adapters.CUFYAdapter
 import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.databinding.FragmentChildrenUnderFiveYearsListBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
@@ -29,7 +29,7 @@ class CUFYListFragment : Fragment() {
         get() = _binding!!
 
     private val viewModel: CUFYListViewModel by viewModels()
-    private lateinit var benAdapter: ChildrenUnderFiveYearsAdapter
+    private lateinit var benAdapter: CUFYAdapter
 
     private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
         binding.searchView.setText(value)
@@ -48,8 +48,8 @@ class CUFYListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         CUFYFormSyncWorker.enqueue(requireContext())
-        benAdapter = ChildrenUnderFiveYearsAdapter(
-            ChildrenUnderFiveYearsAdapter.ChildListClickListener { benId, hhId, type ->
+        benAdapter = CUFYAdapter(
+            CUFYAdapter.ChildListClickListener { benId, hhId, type ->
                 findNavController().navigate(
                     CUFYListFragmentDirections.actionChildrenUnderFiveYearListFragmentToChildrenUnderFiveYearFormFragment(
                         benId,
