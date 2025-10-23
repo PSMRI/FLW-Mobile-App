@@ -54,17 +54,17 @@ class CUFYAdapter(
 
 
     class ChildListClickListener(
-        val goToForm: (benId: Long, hhId: Long, type: String) -> Unit
+        val goToForm: (benId: Long, hhId: Long, dob: Long, type: String) -> Unit
 
     ) {
         fun onClickedSAM(item: BenBasicDomain) = goToForm(
-            item.benId, item.hhId, "Check SAM"
+            item.benId, item.hhId, item.dob, "Check SAM"
         )
         fun onClickedORS(item: BenBasicDomain) = goToForm(
-            item.benId, item.hhId, "ORS"
+            item.benId, item.hhId, item.dob, "ORS"
         )
         fun onClickedIFA(item: BenBasicDomain) = goToForm(
-            item.benId, item.hhId, "IFA"
+            item.benId, item.hhId, item.dob, "IFA"
         )
     }
 

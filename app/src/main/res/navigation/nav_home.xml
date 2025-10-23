@@ -468,7 +468,7 @@
         <argument
             android:name="formId"
             app:argType="string"
-            android:defaultValue="hbnc_form_001" />
+            android:defaultValue="sam_visit_001" />
     </fragment>
     <fragment
         android:id="@+id/pncMotherListFragment"
