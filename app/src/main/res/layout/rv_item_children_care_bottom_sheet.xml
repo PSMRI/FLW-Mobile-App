@@ -54,7 +54,7 @@
             android:layout_height="wrap_content"
             android:backgroundTint="?attr/colorPrimary"
             android:text="@string/view"
-            android:onClick="@{() -> clickListener.onAddClicked(option)}"
+            android:onClick="@{() -> clickListener.onViewClicked(option)}"
             android:textColor="?attr/colorOnPrimary" />
 
         <androidx.legacy.widget.Space

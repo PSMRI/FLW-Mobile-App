@@ -48,17 +48,13 @@ class CUFYListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         CUFYFormSyncWorker.enqueue(requireContext())
+
         benAdapter = CUFYAdapter(
-            CUFYAdapter.ChildListClickListener { benId, hhId, type ->
-                findNavController().navigate(
-                    CUFYListFragmentDirections.actionChildrenUnderFiveYearListFragmentToChildrenUnderFiveYearFormFragment(
-                        benId,
-                        hhId,
-                        type
-                    )
-                )
+            CUFYAdapter.ChildListClickListener { benId, hhId,dob, type ->
+                showOptionsBottomSheet(benId, hhId, dob,type)
             }
         )
+
         binding.rvAny.adapter = benAdapter
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -90,6 +86,12 @@ class CUFYListFragment : Fragment() {
                 (searchView as EditText).removeTextChangedListener(searchTextWatcher)
 
         }
+
+    }
+
+    private fun showOptionsBottomSheet(benId: Long, hhId: Long, dob: Long, type : String) {
+        val bottomSheet = CUFYBottomSheetFragment.newInstance(benId, hhId, dob,type)
+        bottomSheet.show(childFragmentManager, bottomSheet.tag)
 
     }
 

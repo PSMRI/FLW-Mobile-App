@@ -71,26 +71,38 @@ class CUFYBottomSheetFragment : BottomSheetDialogFragment() {
 
     private fun navigateToForm(formType: String, benId: Long, hhId: Long, dob: Long, isViewMode: Boolean) {
         try {
-            when (formType) {
-                /* "Check SAM" -> {
-                     val action = ChildrenUnderFiveYearsListFragmentDirections
-                         .actionChildrenUnderFiveYearsListFragmentToSamFormFragment(
-                             benId = benId,
-                             hhId = hhId,
-                             dob = dob,
-                             isViewMode = isViewMode
-                         )
-                     findNavController().navigate(action)
-                 }*/
-                "ORS" -> {
-                    // Navigate to ORS form
-                    Toast.makeText(requireContext(), "ORS Form - Coming Soon", Toast.LENGTH_SHORT).show()
-                }
-                "IFA" -> {
-                    // Navigate to IFA form
-                    Toast.makeText(requireContext(), "IFA Form - Coming Soon", Toast.LENGTH_SHORT).show()
-                }
-            }
+
+            findNavController().navigate(
+                CUFYListFragmentDirections.actionChildrenUnderFiveYearListFragmentToChildrenUnderFiveYearFormFragment(
+                    benId,
+                    hhId,
+                    formType,
+                    isViewMode
+                )
+            )
+
+//            when (formType) {
+//
+//                 "Check SAM" -> {
+////                     val action = ChildrenUnderFiveYearsListFragmentDirections
+////                         .actionChildrenUnderFiveYearsListFragmentToSamFormFragment(
+////                             benId = benId,
+////                             hhId = hhId,
+////                             dob = dob,
+////                             isViewMode = isViewMode
+////                         )
+////                     findNavController().navigate(action)
+//
+//                 }
+//                "ORS" -> {
+//                    // Navigate to ORS form
+//                    Toast.makeText(requireContext(), "ORS Form - Coming Soon", Toast.LENGTH_SHORT).show()
+//                }
+//                "IFA" -> {
+//                    // Navigate to IFA form
+//                    Toast.makeText(requireContext(), "IFA Form - Coming Soon", Toast.LENGTH_SHORT).show()
+//                }
+//            }
         } catch (e: Exception) {
             Toast.makeText(requireContext(), "Error navigating to form", Toast.LENGTH_SHORT).show()
             Log.e("FormNavigation", "Error navigating to $formType form", e)
