@@ -11,4 +11,11 @@
     <string name="with_reference_to_">ওপৰত উল্লেখ কৰা বিষয়টোৰ সন্দৰ্ভত মই আশাৰ প্ৰৰোচনামূলক দাবী দাখিল কৰাৰ গৌৰৱ লাভ কৰিছো</string>
     <string name="as_per_statement">তলত উল্লেখ কৰা বিবৃতি অনুসৰি।</string>
     <string name="sir_madam">ছাৰ/মেডাম,</string>
+
+    <string name="incentive_processed">প্ৰক্ৰিয়া কৰামুঠ : ₹ %1d</string>
+    <string name="incentive_pending">অপেক্ষমাণ মুঠ : ₹ %1d</string>
+    <string name="incentive_amount">₹ %1d</string>
+    <string name="incentive_ben_details">বেন আইডি: %1d | নাম: %2s</string>
+    <string name="to">লৈ</string>
+    <string name="to_small">" ৰ পৰা "</string>
 </resources>

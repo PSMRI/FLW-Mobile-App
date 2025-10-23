@@ -1,6 +1,5 @@
 package org.piramalswasthya.sakhi.ui.home_activity.immunization_due.child_immunization.list
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,9 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.database.room.dao.ImmunizationDao
 import org.piramalswasthya.sakhi.helpers.filterImmunList
 import org.piramalswasthya.sakhi.model.ImmunizationCategory
@@ -37,14 +34,41 @@ class ChildImmunizationListViewModel @Inject constructor(
         }.timeInMillis,
         maxDob = System.currentTimeMillis(),
     )
-    private lateinit var vaccinesList: List<Vaccine>
 
     private val filter = MutableStateFlow("")
 
     val selectedFilter=MutableLiveData<String?>("All")
     var selectedPosition = 0
 
-    val benWithVaccineDetails = pastRecords.map { vaccineIdList ->
+    private val vaccinesFlow = MutableStateFlow<List<Vaccine>>(emptyList())
+    val benWithVaccineDetails = pastRecords.combine(vaccinesFlow) { vaccineIdList, vaccines ->
+        vaccineIdList.map { cache ->
+            val ageMillis = System.currentTimeMillis() - cache.ben.dob
+            ImmunizationDetailsDomain(
+                ben = cache.ben.asBasicDomainModel(),
+//                vaccineStateList = vaccines.filter { it.minAllowedAgeInMillis < ageMillis }.map { vaccine ->
+                vaccineStateList = vaccines.map { vaccine ->
+                    val state = when {
+                        cache.givenVaccines.any { it.vaccineId == vaccine.vaccineId } -> VaccineState.DONE
+                        ageMillis < vaccine.minAllowedAgeInMillis -> VaccineState.PENDING
+                        ageMillis <= vaccine.maxAllowedAgeInMillis -> VaccineState.OVERDUE
+                        else -> VaccineState.MISSED
+                    }
+                    VaccineDomain(vaccine.vaccineId, vaccine.vaccineName, vaccine.immunizationService, state)
+                }
+            )
+        }
+    }
+
+    // init: populate vaccinesFlow
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            val vaccines = vaccineDao.getVaccinesForCategory(ImmunizationCategory.CHILD)
+            vaccinesFlow.emit(vaccines)
+        }
+    }
+
+/*    val benWithVaccineDetails = pastRecords.map { vaccineIdList ->
         vaccineIdList.map { cache ->
             val ageMillis = System.currentTimeMillis() - cache.ben.dob
             ImmunizationDetailsDomain(ben = cache.ben.asBasicDomainModel(),
@@ -64,7 +88,7 @@ class ChildImmunizationListViewModel @Inject constructor(
                     )
                 })
         }
-    }
+    }*/
 
     val immunizationBenList = benWithVaccineDetails.combine(filter) { list, filter ->
         filterImmunList(list, filter)
@@ -84,13 +108,13 @@ class ChildImmunizationListViewModel @Inject constructor(
 
     }
 
-    init {
+   /* init {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 vaccinesList = vaccineDao.getVaccinesForCategory(ImmunizationCategory.CHILD)
             }
         }
-    }
+    }*/
 
     fun updateBottomSheetData(benId: Long) {
         viewModelScope.launch {
@@ -116,10 +140,6 @@ class ChildImmunizationListViewModel @Inject constructor(
 
         return catList
 
-    }
-
-    private fun navigateForClicked(benId: Long, vaccineId: Int) {
-        Timber.d("Hello Me! clicked for $benId, vaccineId : $vaccineId")
     }
 
     fun getSelectedBenId(): Long {

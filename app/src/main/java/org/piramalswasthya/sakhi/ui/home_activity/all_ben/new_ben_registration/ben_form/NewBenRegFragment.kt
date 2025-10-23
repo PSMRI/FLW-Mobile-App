@@ -210,6 +210,7 @@ class NewBenRegFragment : Fragment() {
             notIt?.let { recordExists ->
                 binding.fabEdit.visibility = if (recordExists) View.VISIBLE else View.GONE
                 binding.btnSubmit.visibility = if (recordExists) View.GONE else View.VISIBLE
+                if (!viewModel.isHoF)binding.btnSubmit.text = "Preview"
                 val adapter =
                     FormInputAdapter(imageClickListener = FormInputAdapter.ImageClickListener {
                         viewModel.setCurrentImageFormId(it)
@@ -265,7 +266,7 @@ class NewBenRegFragment : Fragment() {
                         Toast.LENGTH_LONG
                     ).show()
                     WorkerUtils.triggerAmritPushWorker(requireContext())
-                    if (viewModel.isHoFMarried()) {
+                    if (viewModel.isHoFMarried()&& viewModel.isEditClicked) {
                         showAddSpouseAlert()
                     } else {
                         findNavController().navigateUp()
@@ -285,6 +286,7 @@ class NewBenRegFragment : Fragment() {
         }
 
         binding.fabEdit.setOnClickListener {
+            viewModel.isEditClicked = true
             viewModel.setRecordExist(false)
         }
     }
@@ -399,6 +401,7 @@ class NewBenRegFragment : Fragment() {
             false
         }
     }
+
 
     override fun onStart() {
         super.onStart()

@@ -19,6 +19,7 @@ import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.NCDCategoryAdapter
 import org.piramalswasthya.sakhi.adapters.NcdCbacBenListAdapter
+import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.databinding.FragmentNcdEligibleListBinding
 import org.piramalswasthya.sakhi.model.getDateStrFromLong
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
@@ -37,6 +38,12 @@ class NcdEligibleListFragment : Fragment() , NCDCategoryAdapter.ClickListener {
 
     private val bottomSheet: NcdBottomSheetFragment by lazy { NcdBottomSheetFragment() }
 
+    private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
+        binding.searchView.setText(value)
+        binding.searchView.setSelection(value.length)
+        viewModel.filterText(value)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -48,7 +55,7 @@ class NcdEligibleListFragment : Fragment() , NCDCategoryAdapter.ClickListener {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnNextPage.visibility = View.GONE
-
+        binding.ibSearch.setOnClickListener { sttContract.launch(Unit) }
 
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, viewModel.yearsList())
         binding.tilRvDropdown.setAdapter(adapter)
@@ -149,7 +156,7 @@ class NcdEligibleListFragment : Fragment() , NCDCategoryAdapter.ClickListener {
     }
 
     override fun onClicked(catDataList: String) {
-        viewModel.selectedText = catDataList
+        viewModel.setSelectedCategory(catDataList)
     }
 
 }

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">Sakhi</string>
+    <string name="app_name" translatable="false">Mitanin</string>
 
     <!--    Pref-->
     <string name="PREF_NAME" translatable="false">Sakhi-pref-1</string>
@@ -322,7 +322,7 @@
     <string name="family_member_registration">Family Member Registration</string>
     <string name="relation_with_hof">Relation with HOF</string>
     <string name="add_family_member">Add Family Member</string>
-    <string name="app_native_name">উৎপ্ৰেৰণা</string>
+    <string name="app_native_name">Mitanin</string>
     <string name="non_pregnant_women_eligible_couple_section">Non-Pregnant Women (Eligible Couple) section</string>
     <string-array name="sync_records">
         <item>Beneficiary</item>
@@ -342,6 +342,273 @@
     <string-array name="ecr_gender_array">
         <item name="nbr_gender_1">Male</item>
         <item name="nbr_gender_2">Female</item>
+    </string-array>
+
+
+    <string name="str_subcenter_name">Subcenter name</string>
+    <string name="str_primary_health_center_name">Primary Health Center Name </string>
+    <string name="str_village_population">Village Population</string>
+    <string name="str_total_no_of_childrens">Total number of children aged 3 to 15 months in villages</string>
+    <string name="str_hyyc_by_age_tour">H.B.Y.C by age Tour</string>
+    <string name="str_ors_packet_delivered">O.R.S. Packet delivered </string>
+    <string name="str_Iron_folic_acid">Iron folic acid syrup given (after six months of childbirth)</string>
+    <string name="str_child_vaccinated_by_age">Child vaccinated by age</string>
+    <string name="str_child_was_ill">The child was ill</string>
+    <string name="str_if_yes_refer_hospital">If yes refer hospital</string>
+    <string name="str_suppliments_given_to_child">Supplements given to the child according to age</string>
+    <string name="str_by_height_length">By height / length (color inscribed in mcp card)</string>
+    <string name="str_no_of_children_weighing_less">Number of children weighing less than –3SD orange color indicated in MCCP card referred to VHSND/PHC/NRC</string>
+    <string name="str_weight_acc_to_child">Weight according to child’s age (color inscribed in MCP card)</string>
+    <string name="str_delay_constraint_found">Delay / constraint found in the physical and mental development of the child according to age</string>
+    <string name="str_if_yes_then_health_institute">If yes then Health Institute R.B.S.K. Team / A.N.M. referred to</string>
+    <string name="str_vit_a_suppliment">Vitamin – A supplements given to the child according to age</string>
+    <string name="str_mark_age">Mark age (in month) at the time of death</string>
+    <string name="str_qm_informed">Q.M/A.N.M was informed</string>
+    <string name="str_supervisor_from_block">Supervisor from block/district/state level in last on</string>
+    <string name="str_ors_in_last_one_month">ORS in last one month Packet shortage</string>
+    <string name="str_ifa_last_month">IFA in last one month Decreased syrup</string>
+
+
+    <!-- HBNCDataSet -->
+
+    <string name="str_yay_it_is_working">Yay, it is working!!!</string>
+    <string name="str_yay_it_is_not_working">Yay, it is not working!!!</string>
+    <string name="str_health_subcenter_name">Health Subcenter Name </string>
+    <string name="str_mother_name">Mother Name</string>
+    <string name="str_date_of_delivery">Date of Delivery</string>
+    <string name="str_place_of_delivery">Place of Delivery</string>
+    <string name="str_baby_gender">Baby Gender</string>
+    <string name="str_type_of_delivery">Type of Delivery</string>
+    <string name="str_started_breastfeeding">Started Breastfeeding</string>
+    <string name="str_weight_at_birth_gram">Weight at Birth ( grams )</string>
+    <string name="str_discharge_date_of_mother">Discharge Date of Mother</string>
+    <string name="str_discharge_date_of_baby">Discharge Date of Baby</string>
+    <string name="str_registration_of_birth">Registration Of Birth</string>
+    <string name="str_child_immunizaation_status">Child Immunization Status</string>
+    <string name="str_child_feed_after_birth">What was the baby fed after birth </string>
+    <string name="str_how_did_the_baby_breastfeed">How did the baby breastfeed? </string>
+    <string name="str_baby_eye_condition">Baby eye condition</string>
+    <string name="str_is_there_bleeding">Is there bleeding from the baby umbilical cord </string>
+    <string name="str_weighing_machine_scale_coloer">Weighing machine scale color</string>
+    <string name="str_child_physical_condition">Enter the child physical condition</string>
+    <string name="str_all_limbs_limp">All limbs limp</string>
+    <string name="str_feeding_less_stop">Feeding less/stop</string>
+    <string name="str_the_child_is_wrapped_in_cloth">The child is wrapped in cloth and kept to the mother</string>
+    <string name="str_started_breastfeeding_only">"Started breastfeeding only/ only given breast milk</string>
+    <string name="str_newborn_first_training">Newborn first training (A) Ask mother</string>
+    <string name="str_baby_stomach_feeding">How many times the mother feeds her stomach in 24 hours. Action – If the mother does not eat full stomach or eat less than 4 times, advise mother to do so</string>
+    <string name="str_baby_pad_changed">How many pads have been changed in a day for bleeding? Action – If more than 2 pad, refer the mother to the hospital.</string>
+    <string name="str_baby_in_winter">During the winter season, is the baby kept warm? (Closer to the mother, dressed well and wrapped). - If it is not being done, ask the mother to do it."</string>
+    <string name="str_baby_breastfed_properly">Is the child breastfed properly? (Whenever feeling hungry or breastfeeding at least 7 – 8 times in 24 hours). Action – if it is not being done then ask the mother to do it. "</string>
+    <string name="str_baby_urination_per_day">Does the child cry continuously or urinate less than 6 times a day? Action – Advice the mother for breast-feeding"</string>
+    <string name="str_mother_body_temperature">measure and check the temperature. Action – Give the patient paracetamol tablet if the temperature is 102°F (38.9°C) and refer to the hospital if the temperature is higher than this."</string>
+    <string name="str_water_discharge">Water discharge with foul smell and fever 102 degree Fahrenheit (38.9 degree C). </string>
+    <string name="str_is_mother_speaking_abnormally">Is mother speaking abnormally or having fits?</string>
+    <string name="str_mother_milk_is_not_produced">Mothers milk is not being produced after delivery or she thinks less milk is being produced.</string>
+    <string name="str_mother_cracked_nipple">Does the mother have cracked nipple / pain and / or hard breasts</string>
+    <string name="str_are_the_eyes_swollen">Are the eyes swollen / Are there pus from the eyes?</string>
+    <string name="str_weight_on_day">Weight on Day</string>
+    <string name="str_yellowing_of_eye">Yellowing of the eye/palm/sole/skin (jaundice)</string>
+    <string name="str_respiratory_rate">Respiratory rate more than 60 per minute</string>
+    <string name="str_d_sepsis">(D) Sepsis</string>
+    <string name="str_symptoms_of_sepsis">Examine the following symptoms of sepsis. If symptoms are present, then write, Yes, if symptoms are not present, then do not write. Enter the symptoms seen from the health check-up on the first day of the newborns birth."</string>
+    <string name="str_distended_abdomen">Distended abdomen or mother says baby vomits often</string>
+    <string name="str_child_feels_cold">The mother tells that the child feels cold when touching or the temperature of the child is more than 89 degrees Fahrenheit (37.5 degrees C)"</string>
+    <string name="str_chest_is_pulled">and the chest is pulled inward while breathing.</string>
+    <string name="str_pus_in_the_navel">Pus in the navel</string>
+    <string name="str_asha_name">ASHA NAME</string>
+    <string name="str_village_name">Village Name</string>
+    <string name="str_block_name">Block Name</string>
+    <string name="str_still_birth">Still Birth</string>
+    <string name="str_supervisors_remark">Supervisors Remark </string>
+    <string name="str_supervisor">Supervisor</string>
+    <string name="str_supervisor_name">Supervisor name</string>
+    <string name="str_signature_with_date">Signature with Date of Supervisor</string>
+    <string name="str_mother_newborn_home_visit_card">Mother-Newborn Home Visit Card</string>
+    <string name="str_discharge_of_institutinal_delivery">Discharge of Institutional Delivery</string>
+    <string name="str_date_of_home_visit">Date of Home Visit</string>
+    <string name="str_baby_alive">Is the baby alive?</string>
+    <string name="str_time_of_death">Time of death of baby</string>
+    <string name="str_date_of_death_of_baby">Date of death of baby</string>
+    <string name="str_place_of_baby_death">Place of Baby Death</string>
+    <string name="str_other_place_of_baby_death">Other place of Baby Death</string>
+    <string name="str_is_baby_preterm">Is the baby preterm?</string>
+    <string name="str_how_many_weeks">How many weeks has it been since baby born (Gestational Age)</string>
+    <string name="str_date_of_first_examination">Date of First examination of baby</string>
+    <string name="str_time_of_first_examination">Time of First examination of baby</string>
+    <string name="str_is_the_mother_alive">Is the mother alive?</string>
+    <string name="str_date_of_death_of_mother">Date of death of mother</string>
+    <string name="str_time_of_death_of_mother">Time of death of mother</string>
+    <string name="str_place_of_mother_death">Place of mother Death</string>
+    <string name="str_other_place_of_mother_death">Other place of mother Death</string>
+    <string name="str_does_mother_have_any_problem">Does Mother have any problems</string>
+    <string name="str_first_feed_to_baby">Other - What was given as the first feed to baby after birth?</string>
+    <string name="str_when_first_feed_to_baby">When was the baby first fed</string>
+    <string name="str_does_the_mother_have_breatfeeding">Does the mother have breastfeeding problem?</string>
+    <string name="str_write_the_problem">Write the problem, if there is any problem in breast feeding, help the mother to overcome it</string>
+    <string name="str_baby_first_health_checkup">Part 2: Baby first health check-up</string>
+    <string name="str_temperature_ot_the_baby">Temperature of the baby</string>
+    <string name="str_tie_again_with_clean_thread">If yes, either ASHA, ANM/MPW or TBA can tie again with a clean thread. Action taken? </string>
+    <string name="str_weighing_matches">Weighing matches with the colour?</string>
+    <string name="str_routine_newborn_care">Routine Newborn Care: whether the task was performed</string>
+    <string name="str_dry_the_baby">Dry the baby</string>
+    <string name="str_cry_weak_stopped">Cry weak/ stopped</string>
+    <string name="str_keep_the_cord_clean_and_dry">Keep the cord clean and dry</string>
+    <string name="str_was_there_anything_unusual">Was there anything unusual with the baby?</string>
+    <string name="str_other_unusual_with_the_baby">Other - unusual with the baby</string>
+    <string name="str_asha_hygeine">ASHA should wash hands with soap and water before touching the baby during each visit</string>
+    <string name="str_baby_referred_for_any_reason">Baby referred for any reason?</string>
+    <string name="str_date_of_baby_referral">Date of baby referral</string>
+    <string name="str_place_of_baby_referral">Place of baby referral</string>
+    <string name="str_other_place_of_baby_referral">Other -Place of baby referral</string>
+    <string name="str_mother_referred_for_any_reason">Mother referred for any reason?</string>
+    <string name="str_date_of_mother_referral">Date of mother referral</string>
+    <string name="str_place_of_mother_referral">Place of mother referral</string>
+    <string name="str_other_place_of_mother_referral">Other -Place of mother referral</string>
+    <string name="preview_title">Preview</string>
+
+    <string-array name="hbyc_month_array">
+        <item name="hbyc_month_3">3 Month</item>
+        <item name="hbyc_month_4">4 Month</item>
+        <item name="hbyc_month_5">5 Month</item>
+        <item name="hbyc_month_6">6 Month</item>
+        <item name="hbyc_month_7">7 Month</item>
+        <item name="hbyc_month_8">8 Month</item>
+        <item name="hbyc_month_9">9 Month</item>
+        <item name="hbyc_month_10">10 Month</item>
+        <item name="hbyc_month_11">11 Month</item>
+        <item name="hbyc_month_12">12 Month</item>
+        <item name="hbyc_month_13">13 Month</item>
+        <item name="hbyc_month_14">14 Month</item>
+        <item name="hbyc_month_15">15 Month</item>
+    </string-array>
+
+    <!--HBNC Strings-->
+    <string-array name="hbnc_place_of_delivery_array">
+        <item name="hbnc_place_of_delivery_1">House</item>
+        <item name="hbnc_place_of_delivery_2">Health center</item>
+        <item name="hbnc_place_of_delivery_3">CHC</item>
+        <item name="hbnc_place_of_delivery_4">PHC</item>
+    </string-array>
+
+    <string-array name="hbnc_baby_gender">
+        <item name="hbnc_male">Male</item>
+        <item name="hbnc_female">Female</item>
+        <item name="hbnc_transgender">Transgender</item>
+    </string-array>
+
+    <string-array name="hbnc_type_of_delivery">
+        <item name="hbnc_normal_delivery">Normal Delivery</item>
+        <item name="hbnc_c_section">C - Section</item>
+        <item name="hbnc_assisted">Assisted</item>
+    </string-array>
+
+    <string-array name="hbnc_started_breastfeeding">
+        <item name="hbnc_breastfeeding_time_1">Within an hour</item>
+        <item name="hbnc_breastfeeding_time_2">1 - 4 hours</item>
+        <item name="hbnc_breastfeeding_time_3">4.1 - 24 hours</item>
+        <item name="hbnc_breastfeeding_time_4">After 24 hours</item>
+    </string-array>
+
+    <string-array name="hbnc_child_immunization_status">
+        <item name="hbnc_bcg">BCG</item>
+        <item name="hbnc_polio">Polio</item>
+        <item name="hbnc_dpt_1">DPT 1</item>
+        <item name="hbnc_hapatitis_b">Hepatitis-B</item>
+    </string-array>
+    <string-array name="hbnc_feeding_of_baby">
+        <item name="hbnc_feeding_of_baby_1">Mother Milk</item>
+        <item name="hbnc_feeding_of_baby_2">Water</item>
+        <item name="hbnc_feeding_of_baby_3">Honey</item>
+        <item name="hbnc_feeding_of_baby_4">Mishri water</item>
+        <item name="hbnc_feeding_of_baby_5">Goat Milk</item>
+        <item name="hbnc_feeding_of_baby_6">Other</item>
+    </string-array>
+
+    <string-array name="hbnc_how_breastfeed_baby">
+        <item name="hbnc_forcefully">Forcefully</item>
+        <item name="hbnc_weakly">Weakly</item>
+        <item name="hbnc_feed_with_spoon">Could not breastfeed but had to be fed with spoon</item>
+        <item name="hbnc_not_feeding">Could neither breast-feed nor could take milk given by spoon</item>
+
+    </string-array>
+
+    <string-array name="hbnc_baby_eye_condition">
+        <item name="hbnc_forcefully">Normal</item>
+        <item name="hbnc_weakly">Swelling</item>
+        <item name="hbnc_feed_with_spoon">oozing pus</item>
+
+    </string-array>
+
+    <string-array name="hbnc_scale_color">
+        <item name="hbnc_red">Red</item>
+        <item name="hbnc_yellow">Yellow</item>
+        <item name="hbnc_green">Green</item>
+    </string-array>
+
+    <string-array name="hbnc_supervisor">
+        <item name="hbnc_asha_facilitator">ASHA Facilitator</item>
+        <item name="hbnc_anm">ANM</item>
+        <item name="hbnc_mpw">MPW</item>
+    </string-array>
+
+    <string-array name="hbnc_place_of_baby_death">
+        <item name="hbnc_home">Home</item>
+        <item name="hbnc_sub_center">Sub-center</item>
+        <item name="hbnc_phc">PHC</item>
+        <item name="hbnc_chc">CHC</item>
+        <item name="hbnc_other">Other</item>
+    </string-array>
+
+    <string-array name="hbnc_gestational_age">
+        <item name="hbnc_weak_1">24 – 34 Weeks</item>
+        <item name="hbnc_weak_2">34 – 36 Weeks</item>
+        <item name="hbnc_weak_3">36 – 38 Weeks</item>
+    </string-array>
+
+    <string-array name="hbnc_place_of_mother_death">
+        <item name="hbnc_home">Home</item>
+        <item name="hbnc_subcenter">Sub-center</item>
+        <item name="hbnc_phc">PHC</item>
+        <item name="hbnc_chc">CHC</item>
+        <item name="hbnc_other">Other</item>
+    </string-array>
+
+    <string-array name="hbnc_mother_problems">
+        <item name="hbnc_mother_problem_1">Excessive Bleeding</item>
+        <item name="hbnc_mother_problem_2">Unconscious / Fits</item>
+    </string-array>
+
+    <string-array name="hbnc_unusual_with_the_baby">
+        <item name="hbnc_unusual_with_baby_1">Curved limbs</item>
+        <item name="hbnc_unusual_with_baby_2">cleft lip</item>
+        <item name="hbnc_unusual_with_baby_3">Other</item>
+    </string-array>
+
+    <string-array name="hbnc_place_of_baby_referral">
+        <item name="hbnc_place_of_baby_referral_1">Sub-Centre</item>
+        <item name="hbnc_place_of_baby_referral_2">PHC</item>
+        <item name="hbnc_place_of_baby_referral_3">CHC</item>
+        <item name="hbnc_place_of_baby_referral_4">Sub-District Hospital</item>
+        <item name="hbnc_place_of_baby_referral_5">District Hospital</item>
+        <item name="hbnc_place_of_baby_referral_6">Medical College Hospital</item>
+        <item name="hbnc_place_of_baby_referral_7">In Transit</item>
+        <item name="hbnc_place_of_baby_referral_8">Private Hospital</item>
+        <item name="hbnc_place_of_baby_referral_9">Accredited Private Hospital</item>
+        <item name="hbnc_place_of_baby_referral_10">Other</item>
+    </string-array>
+
+    <string-array name="hbnc_place_of_mother_referral">
+        <item name="hbnc_place_of_mother_referral_1">Sub-Centre</item>
+        <item name="hbnc_place_of_mother_referral_2">PHC</item>
+        <item name="hbnc_place_of_mother_referral_3">CHC</item>
+        <item name="hbnc_place_of_mother_referral_4">Sub-District Hospital</item>
+        <item name="hbnc_place_of_mother_referral_5">District Hospital</item>
+        <item name="hbnc_place_of_mother_referral_6">Medical College Hospital</item>
+        <item name="hbnc_place_of_mother_referral_7">In Transit</item>
+        <item name="hbnc_place_of_mother_referral_8">Private Hospital</item>
+        <item name="hbnc_place_of_mother_referral_9">Accredited Private Hospital</item>
+        <item name="hbnc_place_of_mother_referral_10">Other</item>
     </string-array>
 
 </resources>

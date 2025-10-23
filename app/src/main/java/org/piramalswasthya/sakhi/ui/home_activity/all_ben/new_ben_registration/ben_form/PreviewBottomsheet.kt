@@ -1,15 +1,16 @@
 package org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form
 
 import org.piramalswasthya.sakhi.model.PreviewItem
-
-
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageButton
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.PreviewAdapter
@@ -44,6 +45,22 @@ class PreviewBottomSheet : BottomSheetDialogFragment() {
             dismiss()
             onSubmit?.invoke()
         }
+        v.findViewById<ImageButton>(R.id.btnClosePreview).setOnClickListener {
+            dismiss()
+        }
         return v
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val dialog = dialog as? BottomSheetDialog
+        val bottomSheet = dialog?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+        bottomSheet?.let {
+            val behavior = BottomSheetBehavior.from(it)
+            behavior.state = BottomSheetBehavior.STATE_EXPANDED
+            behavior.skipCollapsed = true
+            behavior.isDraggable = false
+            behavior.peekHeight = it.height
+        }
     }
 }
