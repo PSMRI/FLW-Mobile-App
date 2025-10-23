@@ -141,6 +141,10 @@ class RecordsRepo @Inject constructor(
         .map { list -> list.map { it.asBasicDomainModel() } }
     val childListCount = childList.map { it.size }
 
+
+    val childCard = benDao.getAllInfantList(selectedVillage)
+        .map { list -> list.map { it.asBasicDomainModel() } }
+
     val childFilteredList = benDao.getAllChildList(selectedVillage, 0, 5 * 365)
         .map { list ->
             list

@@ -45,7 +45,7 @@ class CUFYFormFragment : Fragment() {
 
     private val args: CUFYFormFragmentArgs by navArgs()
 
-    private val infantListViewModel: InfantListViewModel by viewModels()
+    private val infantListViewModel: CUFYFormCardViewModel by viewModels()
     private val viewModel: CUFYFormViewModel by viewModels()
     var benId = -1L
     var hhId = -1L
@@ -128,14 +128,14 @@ class CUFYFormFragment : Fragment() {
             formId = FormConstants.CHILDREN_UNDER_FIVE_SAM_FORM_ID;
         }
 
+        viewModel.loadVisitDates(benId)
+
         infantListViewModel.getBenById(benId) { ben ->
-            infantBinding.btnHBNC.visibility= View.GONE
-            infantBinding.dueIcon.visibility= View.GONE
+            infantBinding.btnHBNC.visibility = View.GONE
+            infantBinding.dueIcon.visibility = View.GONE
             ben?.syncState = null
             infantBinding.ben = ben
         }
-
-        viewModel.loadVisitDates(benId)
 
         infantListViewModel.getDobByBenIdAsync(benId) { dobMillis ->
             if (dobMillis != null) {

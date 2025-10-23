@@ -8,10 +8,10 @@ import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.databinding.ChildrenUnderFiveYearsItemBinding
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 
-class ChildrenUnderFiveYearsAdapter(
+class CUFYAdapter(
     private val clickListener: ChildListClickListener
 ) :
-    ListAdapter<BenBasicDomain, ChildrenUnderFiveYearsAdapter.BenViewHolder>(BenDiffUtilCallBack) {
+    ListAdapter<BenBasicDomain, CUFYAdapter.BenViewHolder>(BenDiffUtilCallBack) {
     private object BenDiffUtilCallBack : DiffUtil.ItemCallback<BenBasicDomain>() {
         override fun areItemsTheSame(
             oldItem: BenBasicDomain, newItem: BenBasicDomain

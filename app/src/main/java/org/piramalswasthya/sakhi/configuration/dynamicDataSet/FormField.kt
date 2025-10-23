@@ -4,6 +4,7 @@ data class FormField(
     val fieldId: String,
     val label: String,
     val type: String,
+    var defaultValue: String? = null,
     val isRequired: Boolean,
     val options: List<String>? = null,
     var value: Any? = null,

@@ -99,7 +99,7 @@ class CUFYFormViewModel @Inject constructor(
                     field.value = when (field.fieldId) {
                         "visit_day" -> visitDay
                         "due_date" -> calculateDueDate(dob, visitDay)?.let { formatDate(it) } ?: ""
-                        else -> savedFieldValues[field.fieldId] ?: field.defaultValue
+                        else -> savedFieldValues[field.fieldId] ?: field.default
                     }
 
                     field.isEditable = when (field.fieldId) {
@@ -248,6 +248,7 @@ class CUFYFormViewModel @Inject constructor(
                     fieldId = field.fieldId,
                     label = field.label,
                     type = field.type,
+                    defaultValue = field.defaultValue,
                     options = field.options,
                     isRequired = field.required,
                     placeholder = field.placeholder,
