@@ -20,6 +20,7 @@ import org.piramalswasthya.sakhi.model.PregnantWomanAncCache
 import org.piramalswasthya.sakhi.model.PregnantWomanRegistrationCache
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.MaternalHealthRepo
+import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pnc.form.PncFormViewModel
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -35,9 +36,13 @@ class PwAncFormViewModel @Inject constructor(
     private val benRepo: BenRepo
 ) : ViewModel() {
 
-    enum class State {
-        IDLE, SAVING, SAVE_SUCCESS, SAVE_FAILED
+    sealed class State {
+        object IDLE : State()
+        object SAVING : State()
+        data class SAVE_SUCCESS(val shouldNavigateToMdsr: Boolean) : State()
+        object SAVE_FAILED : State()
     }
+
 
     private var lastDocumentFormId: Int = 0
 
@@ -49,7 +54,7 @@ class PwAncFormViewModel @Inject constructor(
         PwAncFormFragmentArgs.fromSavedStateHandle(savedStateHandle).lastItemClick
 
 
-    private val _state = MutableLiveData(State.IDLE)
+    private val _state = MutableLiveData<State>(State.IDLE)
     val state: LiveData<State>
         get() = _state
 
@@ -179,6 +184,8 @@ class PwAncFormViewModel @Inject constructor(
                         }
                     }
 
+                    val shouldNavigateToMdsr = ancCache.maternalDeath ?: false
+
                     if (ancCache.maternalDeath == true) {
                         maternalHealthRepo.getSavedRegistrationRecord(benId)?.let {
                             it.active = false
@@ -215,7 +222,7 @@ class PwAncFormViewModel @Inject constructor(
                         }
                     }
 
-                    _state.postValue(State.SAVE_SUCCESS)
+                    _state.postValue(State.SAVE_SUCCESS(shouldNavigateToMdsr))
                 } catch (e: Exception) {
                     _state.postValue(State.SAVE_FAILED)
                 }

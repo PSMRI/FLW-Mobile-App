@@ -269,7 +269,7 @@ class PwAncFormFragment : Fragment() {
                     binding.pbForm.visibility = View.VISIBLE
                 }
 
-                State.SAVE_SUCCESS -> {
+                is  State.SAVE_SUCCESS -> {
                     binding.llContent.visibility = View.VISIBLE
                     binding.pbForm.visibility = View.GONE
                     Toast.makeText(context, "Save Successful", Toast.LENGTH_LONG).show()

@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.configuration
 import android.content.Context
 import android.net.Uri
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.setToStartOfTheDay
 import org.piramalswasthya.sakhi.model.BenRegCache
@@ -254,11 +255,11 @@ class PncFormDataset(
             deliveryDate,
             pncPeriod,
             visitDate,
+            motherDeath,
             ifaTabsGiven,
             anyContraceptionMethod,
             anySignOfDanger,
             referralFacility,
-            motherDeath,
             remarks,
             deliveryDischargeSummary1,
             deliveryDischargeSummary2,
@@ -685,7 +686,8 @@ class PncFormDataset(
                     target = otherDangerSign
                 )
 
-            motherDeath.id -> {
+         /*   motherDeath.id -> {
+
                 triggerDependants(
                     source = motherDeath,
                     passedIndex = index,
@@ -693,7 +695,56 @@ class PncFormDataset(
                     target = listOf(deathDate, causeOfDeath, placeOfDeath),
                     targetSideEffect = listOf(otherDeathCause)
                 )
+
+            }*/
+
+            motherDeath.id -> {
+                if (index == 0) {
+                    triggerDependants(
+                        source = motherDeath,
+                        removeItems = listOf(
+                            ifaTabsGiven,
+                            anyContraceptionMethod,
+                            anySignOfDanger,
+                            referralFacility,
+                            remarks,
+                            deliveryDischargeSummary1,
+                            deliveryDischargeSummary2,
+                            deliveryDischargeSummary3,
+                            deliveryDischargeSummary4
+                        ),
+                        addItems = listOf(
+                            deathDate,
+                            causeOfDeath,
+                            placeOfDeath,
+                            otherDeathCause
+                        )
+                    )
+                } else {
+                    triggerDependants(
+                        source = motherDeath,
+                        removeItems = listOf(
+                            deathDate,
+                            causeOfDeath,
+                            placeOfDeath,
+                            otherDeathCause
+                        ),
+                        addItems = listOf(
+                            ifaTabsGiven,
+                            anyContraceptionMethod,
+                            anySignOfDanger,
+                            referralFacility,
+                            remarks,
+                            deliveryDischargeSummary1,
+                            deliveryDischargeSummary2,
+                            deliveryDischargeSummary3,
+                            deliveryDischargeSummary4
+                        )
+                    )
+                }
             }
+
+
 
             causeOfDeath.id -> {
                 triggerDependants(
@@ -718,6 +769,8 @@ class PncFormDataset(
 //        }
 //        return -1
 //    }
+
+
 
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as PNCVisitCache).let { form ->
