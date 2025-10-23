@@ -136,14 +136,10 @@ class CUFYFormFragment : Fragment() {
             infantBinding.ben = ben
         }
 
-        infantListViewModel.getDobByBenIdAsync(benId) { dobMillis ->
-            if (dobMillis != null) {
-                dob = dobMillis
-                viewModel.loadFormSchema(benId, formId, visitType!!, true, dob)
-            } else {
-                viewModel.loadFormSchema(benId, formId, visitType!!, true, dob)
-            }
+        infantListViewModel.getDobByBenIdAsync(benId) { dob ->
+            viewModel.loadFormSchema(benId, formId, visitType!!, true)
         }
+
 
         lifecycleScope.launch {
             viewModel.schema.collectLatest { schema ->

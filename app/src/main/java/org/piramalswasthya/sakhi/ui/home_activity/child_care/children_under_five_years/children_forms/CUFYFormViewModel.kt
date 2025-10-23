@@ -57,8 +57,7 @@ class CUFYFormViewModel @Inject constructor(
         benId: Long,
         formId: String,
         visitDay: String,
-        viewMode: Boolean,
-        dob: Long
+        viewMode: Boolean
     ) {
         this.visitDay = visitDay
         this.isViewMode = viewMode
@@ -98,7 +97,7 @@ class CUFYFormViewModel @Inject constructor(
                 section.fields.orEmpty().forEach { field ->
                     field.value = when (field.fieldId) {
                         "visit_day" -> visitDay
-                        "due_date" -> calculateDueDate(dob, visitDay)?.let { formatDate(it) } ?: ""
+                        "due_date" -> calculateDueDate(31212421423, visitDay)?.let { formatDate(it) } ?: ""
                         else -> savedFieldValues[field.fieldId] ?: field.default
                     }
 

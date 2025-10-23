@@ -328,6 +328,9 @@ interface BenDao {
         selectedVillage: Int, max: Int = Konstants.maxAgeForInfant
     ): Flow<List<BenBasicCache>>
 
+    @Query("SELECT * FROM BEN_BASIC_CACHE WHERE benId = :benId LIMIT 1")
+    suspend fun getBenById(benId: Long): BenBasicCache?
+
     @Query("SELECT * FROM BEN_BASIC_CACHE WHERE CAST(((strftime('%s','now') - dob/1000)/60/60/24) AS INTEGER) <= :max and villageId=:selectedVillage and rchId is not null and rchId != ''")
     fun getAllInfantWithRchList(
         selectedVillage: Int, max: Int = Konstants.maxAgeForInfant

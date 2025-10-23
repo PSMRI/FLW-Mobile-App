@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.helpers.filterBenList
 import org.piramalswasthya.sakhi.model.BenBasicDomain
@@ -15,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CUFYFormCardViewModel @Inject constructor(
-    recordsRepo: RecordsRepo
+    private val recordsRepo: RecordsRepo
 ) : ViewModel() {
 
     private val allBenList = recordsRepo.childCard
@@ -32,33 +31,21 @@ class CUFYFormCardViewModel @Inject constructor(
         filterBenList(list, filter)
     }
 
-    fun getDobByBenIdAsync(benId: Long, onResult: (Long?) -> Unit) {
-        viewModelScope.launch {
-            allBenList.collect { list ->
-                val dob = list.find { it.benId == benId }?.dob
-                onResult(dob)
-                return@collect
-            }
-        }
-    }
-//    fun getBenById(benId: Long, onResult: (BenBasicDomain?) -> Unit) {
-//        viewModelScope.launch {
-//            allBenList.collect { list ->
-//                val ben = list.find { it.benId == benId }
-//                onResult(ben)
-//                return@collect
-//            }
-//        }
-//    }
-
     fun getBenById(benId: Long, onResult: (BenBasicDomain?) -> Unit) {
         viewModelScope.launch {
-            val list = allBenList.firstOrNull() ?: emptyList()
-            val ben = list.find { it.benId == benId }
+            val ben = recordsRepo.getBenById(benId)
             onResult(ben)
         }
     }
 
+    fun getDobByBenIdAsync(benId: Long, onResult: (List<BenBasicDomain>) -> Unit) {
+        viewModelScope.launch {
+            allBenList.collect { list ->
+                val filtered = list.filter { it.benId == benId }
+                onResult(filtered)
+            }
+        }
+    }
 
     fun filterText(text: String) {
         viewModelScope.launch {
@@ -73,5 +60,4 @@ class CUFYFormCardViewModel @Inject constructor(
         }
 
     }
-
 }
