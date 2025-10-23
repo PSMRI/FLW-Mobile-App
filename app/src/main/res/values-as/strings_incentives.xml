@@ -15,7 +15,7 @@
     <string name="incentive_processed">প্ৰক্ৰিয়া কৰামুঠ : ₹ %1d</string>
     <string name="incentive_pending">অপেক্ষমাণ মুঠ : ₹ %1d</string>
     <string name="incentive_amount">₹ %1d</string>
-    <string name="incentive_ben_details">বেন আইডি: %1dনাম: %2s</string>
+    <string name="incentive_ben_details">বেন আইডি: %1d | নাম: %2s</string>
     <string name="to">লৈ</string>
     <string name="to_small">" ৰ পৰা "</string>
 </resources>

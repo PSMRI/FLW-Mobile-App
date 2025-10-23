@@ -142,7 +142,7 @@ class CbacRepo @Inject constructor(
             val jsonBody = JSONObject(bodyString)
 
             val statusCode = jsonBody.optInt("statusCode", 200)
-            if (statusCode == 5002 || statusCode == 401) {
+            if (statusCode == 401) {
                 val user = prefDao.getLoggedInUser()!!
                 userRepo.refreshTokenTmc(user.userName, user.password)
                 pushAndUpdateCbacRecord()
@@ -171,7 +171,7 @@ class CbacRepo @Inject constructor(
                     }
                 } else {
                     val itemStatus = item.optInt("statusCode", -1)
-                    if (itemStatus == 5002 || itemStatus == 401) {
+                    if (itemStatus == 401) {
                         val user = prefDao.getLoggedInUser()!!
                         userRepo.refreshTokenTmc(user.userName, user.password)
                         pushAndUpdateCbacRecord()
