@@ -12,6 +12,7 @@ import org.piramalswasthya.sakhi.database.room.dao.HouseholdDao
 import org.piramalswasthya.sakhi.database.room.dao.ImmunizationDao
 import org.piramalswasthya.sakhi.database.room.dao.MaternalHealthDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.model.BenWithAncListDomain
 import org.piramalswasthya.sakhi.model.filterMdsr
 import java.util.Calendar
@@ -364,6 +365,9 @@ class RecordsRepo @Inject constructor(
             }
 
 
+    suspend fun getBenById(benId: Long): BenBasicDomain? {
+        return benDao.getBenById(benId)?.asBasicDomainModel()
+    }
 
 
     fun getRegisteredPregnantWomanListCount() =
