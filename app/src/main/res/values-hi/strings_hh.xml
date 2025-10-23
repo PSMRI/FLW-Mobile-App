@@ -142,6 +142,6 @@
     <string name="consent_alert_title">कृपया सहमति फॉर्म की जांच करें</string>
     <string name="add_head_of_family">ADD Head Of Family</string>
     <string name="add_head_of_family_message">Would you like to add <b>%1s</b> as a HoF Beneficiary ?</string>
-
+    <string name="hh_no_members">परिवार की जानकारी खाली है</string>
 
 </resources>

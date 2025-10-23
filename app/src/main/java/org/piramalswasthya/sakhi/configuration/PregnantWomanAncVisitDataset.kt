@@ -25,7 +25,7 @@ class PregnantWomanAncVisitDataset(
     private val ancDate = FormElement(
         id = 1,
         inputType = InputType.DATE_PICKER,
-        title = "ANC Date",
+        title = resources.getString(R.string.anc_date),
         required = true,
         hasDependants = true,
         backgroundDrawable=R.drawable.ic_bg_circular,
@@ -35,7 +35,7 @@ class PregnantWomanAncVisitDataset(
     private val weekOfPregnancy = FormElement(
         id = 2,
         inputType = InputType.TEXT_VIEW,
-        title = "Weeks of Pregnancy",
+        title = resources.getString(R.string.weeks_of_pregnancy),
         required = false,
         showDrawable = true,
         backgroundDrawable=R.drawable.ic_bg_circular,
@@ -45,7 +45,7 @@ class PregnantWomanAncVisitDataset(
     private val ancVisit = FormElement(
         id = 3,
         inputType = InputType.DROPDOWN,
-        title = "ANC Period",
+        title = resources.getString(R.string.str_anc_period),
         required = true,
         showDrawable = true,
         backgroundDrawable=R.drawable.ic_bg_circular,
@@ -54,7 +54,7 @@ class PregnantWomanAncVisitDataset(
     private val isAborted = FormElement(
         id = 4,
         inputType = InputType.RADIO,
-        title = "Abortion If Any",
+        title = resources.getString(R.string.str_abortion_if_any),
         arrayId = R.array.anc_confirmation_array1,
         entries = resources.getStringArray(R.array.anc_confirmation_array1),
         required = false,
@@ -63,7 +63,7 @@ class PregnantWomanAncVisitDataset(
     private val abortionType = FormElement(
         id = 5,
         inputType = InputType.RADIO,
-        title = "Abortion Type",
+        title = resources.getString(R.string.str_abortion_type),
         arrayId = R.array.anc_abortion_type_array,
         entries = resources.getStringArray(R.array.anc_abortion_type_array),
         required = true,
@@ -72,7 +72,7 @@ class PregnantWomanAncVisitDataset(
     private val abortionFacility = FormElement(
         id = 6,
         inputType = InputType.RADIO,
-        title = "Facility",
+        title = resources.getString(R.string.str_facility),
         arrayId = R.array.anc_abortion_facility_array,
         entries = resources.getStringArray(R.array.anc_abortion_facility_array),
         required = true,
@@ -81,7 +81,7 @@ class PregnantWomanAncVisitDataset(
     private val abortionDate = FormElement(
         id = 7,
         inputType = InputType.DATE_PICKER,
-        title = "Abortion Date",
+        title = resources.getString(R.string.str_abortion_date),
         required = true,
         max = System.currentTimeMillis(),
         showDrawable = true,
@@ -92,7 +92,7 @@ class PregnantWomanAncVisitDataset(
     private val weight = FormElement(
         id = 8,
         inputType = InputType.EDIT_TEXT,
-        title = "Weight of PW (Kg) at time Registration",
+        title = resources.getString(R.string.str_weight_pw),
         arrayId = -1,
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
         etMaxLength = 3,
@@ -106,7 +106,7 @@ class PregnantWomanAncVisitDataset(
     private val bp = FormElement(
         id = 9,
         inputType = InputType.EDIT_TEXT,
-        title = "BP of PW – Systolic/ Diastolic (mm Hg) ",
+        title = resources.getString(R.string.str_bp_of_pw),
 //        etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
         etMaxLength = 7,
         required = true,
@@ -150,7 +150,7 @@ class PregnantWomanAncVisitDataset(
         inputType = InputType.EDIT_TEXT,
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
         etMaxLength = 3,
-        title = "Pulse Rate",
+        title = resources.getString(R.string.str_pulse_rate),
         min = 40,
         max = 200,
         required = false,
@@ -162,7 +162,7 @@ class PregnantWomanAncVisitDataset(
     private val hb = FormElement(
         id = 12,
         inputType = InputType.EDIT_TEXT,
-        title = "HB (gm/dl)",
+        title = resources.getString(R.string.str_hb),
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL,
         etMaxLength = 4,
         minDecimal = 2.0,
@@ -176,7 +176,7 @@ class PregnantWomanAncVisitDataset(
     private val fundalHeight = FormElement(
         id = 13,
         inputType = InputType.EDIT_TEXT,
-        title = "Fundal Height / Size of the Uterus weeks",
+        title = resources.getString(R.string.str_fundal_height),
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
         etMaxLength = 2,
         min = 1,
@@ -189,7 +189,7 @@ class PregnantWomanAncVisitDataset(
     private val urineAlbumin = FormElement(
         id = 14,
         inputType = InputType.RADIO,
-        title = "Urine Albumin",
+        title = resources.getString(R.string.str_urine_albumin),
         arrayId = R.array.anc_urine_albumin_array,
         entries = resources.getStringArray(R.array.anc_urine_albumin_array),
         required = false,
@@ -198,7 +198,7 @@ class PregnantWomanAncVisitDataset(
     private val randomBloodSugarTest = FormElement(
         id = 15,
         inputType = InputType.RADIO,
-        title = "Random Blood Sugar Test",
+        title = resources.getString(R.string.str_random_blood_sugar),
         arrayId = R.array.anc_random_blood_sugar_test_array,
         entries = resources.getStringArray(R.array.anc_random_blood_sugar_test_array),
         required = false,
@@ -207,7 +207,7 @@ class PregnantWomanAncVisitDataset(
     private val dateOfTTOrTd1 = FormElement(
         id = 16,
         inputType = InputType.DATE_PICKER,
-        title = "Date of Td TT (1st Dose)",
+        title = resources.getString(R.string.str_date_of_tt_first_dose),
         required = false,
         hasDependants = true,
         max = System.currentTimeMillis(),
@@ -218,7 +218,7 @@ class PregnantWomanAncVisitDataset(
     private val dateOfTTOrTd2 = FormElement(
         id = 17,
         inputType = InputType.DATE_PICKER,
-        title = "Date of Td TT (2nd Dose)",
+        title = resources.getString(R.string.str_date_of_tt_second_dose),
         required = false,
         max = System.currentTimeMillis(),
         showDrawable = true,
@@ -228,7 +228,7 @@ class PregnantWomanAncVisitDataset(
     private val dateOfTTOrTdBooster = FormElement(
         id = 18,
         inputType = InputType.DATE_PICKER,
-        title = "Date of Td TT (Boooster Dose)",
+        title = resources.getString(R.string.str_date_of_tt_booster_dose),
         required = false,
         hasDependants = true,
 
@@ -240,7 +240,7 @@ class PregnantWomanAncVisitDataset(
     private val numFolicAcidTabGiven = FormElement(
         id = 19,
         inputType = InputType.EDIT_TEXT,
-        title = "No. of Folic Acid Tabs given",
+        title = resources.getString(R.string.str_no_of_acid_tab),
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
         etMaxLength = 2,
         required = false,
@@ -253,7 +253,7 @@ class PregnantWomanAncVisitDataset(
     private val numIfaAcidTabGiven = FormElement(
         id = 20,
         inputType = InputType.EDIT_TEXT,
-        title = "No. of IFA Tabs given",
+        title = resources.getString(R.string.str_no_of_ifa_tab),
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
         etMaxLength = 3,
         required = false,
@@ -266,14 +266,14 @@ class PregnantWomanAncVisitDataset(
     private val anyHighRisk = FormElement(
         id = 21,
         inputType = InputType.RADIO,
-        title = "Any High Risk conditions",
+        title = resources.getString(R.string.str_any_high_risk_cond),
         arrayId = R.array.anc_confirmation_array1,
         entries = resources.getStringArray(R.array.anc_confirmation_array1),
         required = false,
         hasDependants = true
     )
     private val highRiskCondition = FormElement(
-        id = 22, inputType = InputType.DROPDOWN, title = "High Risk Conditions",
+        id = 22, inputType = InputType.DROPDOWN,  title = resources.getString(R.string.str_high_risk_cond),
         arrayId = R.array.anc_high_risk_array,
         entries = resources.getStringArray(R.array.anc_high_risk_array),
         required = false, hasDependants = true,
@@ -284,7 +284,7 @@ class PregnantWomanAncVisitDataset(
     private val otherHighRiskCondition = FormElement(
         id = 23,
         inputType = InputType.EDIT_TEXT,
-        title = "Any other High Risk conditions",
+        title = resources.getString(R.string.str_any_other_high_risk_cond),
         required = true,
         showDrawable = true,
         backgroundDrawable=R.drawable.ic_bg_circular,
@@ -293,7 +293,7 @@ class PregnantWomanAncVisitDataset(
     private val highRiskReferralFacility = FormElement(
         id = 24,
         inputType = InputType.DROPDOWN,
-        title = "Referral Facility",
+        title = resources.getString(R.string.str_referral_facility),
         arrayId = R.array.anc_referral_facility_array,
         entries = resources.getStringArray(R.array.anc_referral_facility_array),
         required = false,
@@ -302,7 +302,7 @@ class PregnantWomanAncVisitDataset(
         iconDrawableRes=R.drawable.ic_referral,
     )
     private val hrpConfirm = FormElement(
-        id = 25, inputType = InputType.RADIO, title = "Is HRP Confirmed?",
+        id = 25, inputType = InputType.RADIO,   title = resources.getString(R.string.str_hrp_confirmed),
         arrayId = R.array.anc_confirmation_array1,
         entries = resources.getStringArray(R.array.anc_confirmation_array1),
         required = false, hasDependants = true
@@ -310,7 +310,7 @@ class PregnantWomanAncVisitDataset(
     private val hrpConfirmedBy = FormElement(
         id = 26,
         inputType = InputType.DROPDOWN,
-        title = "Who had identified as HRP?",
+        title = resources.getString(R.string.str_identified_as_hrp),
         arrayId = R.array.anc_confirmed_by_array,
         entries = resources.getStringArray(R.array.anc_confirmed_by_array),
         required = true,
@@ -319,7 +319,7 @@ class PregnantWomanAncVisitDataset(
         iconDrawableRes=R.drawable.ic_bmi,
     )
     private val maternalDeath = FormElement(
-        id = 27, inputType = InputType.RADIO, title = "Maternal Death",
+        id = 27, inputType = InputType.RADIO,  title = resources.getString(R.string.str_maternal_death),
         arrayId = R.array.anc_confirmation_array1,
         entries = resources.getStringArray(R.array.anc_confirmation_array1),
         required = false, hasDependants = true
@@ -327,7 +327,7 @@ class PregnantWomanAncVisitDataset(
     private val maternalDeathProbableCause = FormElement(
         id = 28,
         inputType = InputType.DROPDOWN,
-        title = "Probable Cause of Death",
+        title = resources.getString(R.string.str_cause_of_death),
         arrayId = R.array.anc_death_cause_array,
         entries = resources.getStringArray(R.array.anc_death_cause_array),
         required = true,
@@ -339,7 +339,7 @@ class PregnantWomanAncVisitDataset(
     private val otherMaternalDeathProbableCause = FormElement(
         id = 29,
         inputType = InputType.EDIT_TEXT,
-        title = "Other Death Cause",
+        title = resources.getString(R.string.str_other_cause_of_death),
         required = true,
         showDrawable = true,
         backgroundDrawable=R.drawable.ic_bg_circular,
@@ -348,7 +348,7 @@ class PregnantWomanAncVisitDataset(
     private val maternalDateOfDeath = FormElement(
         id = 30,
         inputType = InputType.DATE_PICKER,
-        title = "Death Date",
+        title = resources.getString(R.string.str_death_date),
         required = true,
         max = System.currentTimeMillis(),
         showDrawable = true,
@@ -359,7 +359,7 @@ class PregnantWomanAncVisitDataset(
     private val deliveryDone = FormElement(
         id = 31,
         inputType = InputType.RADIO,
-        title = "Has the pregnant woman delivered?",
+        title = resources.getString(R.string.str_has_pregnant_women_delivered),
         arrayId = R.array.anc_confirmation_array,
         entries = resources.getStringArray(R.array.anc_confirmation_array),
         required = false,
@@ -432,7 +432,6 @@ class PregnantWomanAncVisitDataset(
 //            ancDate.max =
 //                minOf(getEddFromLmp(regis.lmpDate), System.currentTimeMillis())
 
-            /*This change is done to test working as per Madhava*/
             ancDate.max = getANCMaxFromLmp(regis.lmpDate) //minOf(getEddFromLmp(regis.lmpDate),System.currentTimeMillis())
 
 //          ancDate.value = getDateFromLong(ancDate.max!!)

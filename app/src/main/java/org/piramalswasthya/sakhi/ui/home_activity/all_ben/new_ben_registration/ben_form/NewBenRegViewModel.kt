@@ -81,6 +81,7 @@ class NewBenRegViewModel @Inject constructor(
 
 
     private var isConsentAgreed = false
+    var isEditClicked = false
 
     fun setConsentAgreed() {
         isConsentAgreed = true

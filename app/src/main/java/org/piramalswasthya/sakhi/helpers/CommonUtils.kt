@@ -6,7 +6,6 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import androidx.core.text.isDigitsOnly
-import org.piramalswasthya.sakhi.model.AncStatus
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.model.BenBasicDomainForForm
 import org.piramalswasthya.sakhi.model.BenPncDomain
@@ -103,9 +102,6 @@ fun filterEcRegistrationList(
                 it.ben.mobileNo.lowercase().contains(filterText) ||
                 it.ben.rchId.takeIf { it1 -> it1?.isDigitsOnly() == true }?.contains(filterText) ?: false
 
-
-//                ||
-//                it.numChildren.contains(filterText)
     }
 
 fun filterPwrRegistrationList(
@@ -230,7 +226,6 @@ fun filterBenFormList(
                     it.familyHeadName.lowercase().contains(filterText) ||
                     it.spouseName?.lowercase()?.contains(filterText) == true ||
                     it.benSurname?.lowercase()?.contains(filterText) ?: false ||
-//                    it.typeOfList.lowercase().contains(filterText) ||
                     it.mobileNo.lowercase().contains(filterText) ||
                     it.gender.lowercase().contains(filterText) ||
                     it.fatherName?.lowercase()?.contains(filterText) ?: false
@@ -258,7 +253,6 @@ fun filterBenHRPFormList(
                     it.ben.familyHeadName.lowercase().contains(filterText) ||
                     it.ben.spouseName?.lowercase()?.contains(filterText) == true ||
                     it.ben.benSurname?.lowercase()?.contains(filterText) ?: false ||
-//                    it.typeOfList.lowercase().contains(filterText) ||
                     it.ben.mobileNo.lowercase().contains(filterText) ||
                     it.ben.gender.lowercase().contains(filterText) ||
                     it.ben.fatherName?.lowercase()?.contains(filterText) ?: false
@@ -285,7 +279,6 @@ fun filterBenHRNPFormList(
                     it.ben.familyHeadName.lowercase().contains(filterText) ||
                     it.ben.spouseName?.lowercase()?.contains(filterText) == true ||
                     it.ben.benSurname?.lowercase()?.contains(filterText) ?: false ||
-//                    it.typeOfList.lowercase().contains(filterText) ||
                     it.ben.mobileNo.lowercase().contains(filterText) ||
                     it.ben.gender.lowercase().contains(filterText) ||
                     it.ben.fatherName?.lowercase()?.contains(filterText) ?: false
@@ -312,7 +305,6 @@ fun filterBenHRPTFormList(
                     it.ben.familyHeadName.lowercase().contains(filterText) ||
                     it.ben.spouseName?.lowercase()?.contains(filterText) == true ||
                     it.ben.benSurname?.lowercase()?.contains(filterText) ?: false ||
-//                    it.typeOfList.lowercase().contains(filterText) ||
                     it.ben.mobileNo.lowercase().contains(filterText) ||
                     it.ben.gender.lowercase().contains(filterText) ||
                     it.ben.fatherName?.lowercase()?.contains(filterText) ?: false
@@ -320,73 +312,72 @@ fun filterBenHRPTFormList(
     }
 }
 
-
 fun filterImmunList(list: List<ImmunizationDetailsDomain>, text: String): List<ImmunizationDetailsDomain> {
-    if (text == "")
-        return list
-    else {
-        var filterText = text.lowercase()
-        var secondFilterText = ""
-        var thirdFilterText = ""
-        var fourthFilterText = ""
+    val raw = text.trim()
+    if (raw.isEmpty()) return list
 
-        if (filterText.contains("5-6 years")) {
-            secondFilterText = "${filterText.split("-")[0]} years"
-            filterText = filterText.split("-")[1]
-        } else if (filterText.contains("16-24 months")) {
-            secondFilterText = "1 years"
+    var filterText = raw.lowercase()
+    var alt1 = ""
+    var alt2 = ""
+    var alt3 = ""
+
+    // normalize some common range inputs (keep but make clearer)
+    when {
+        filterText.contains("5-6") || filterText.contains("5-6 years") -> {
+            // match both "5 years" and "6 years"
+            alt1 = "5 years"
+            filterText = "6 years"
+        }
+        filterText.contains("16-24") || filterText.contains("16-24 months") -> {
+            alt1 = "1 year"
             filterText = "2 years"
-        } else if (filterText.contains("9-12 months")) {
-            secondFilterText = "${filterText.split("-")[0]} months"
-            thirdFilterText = "10 months"
-            fourthFilterText = "11 months"
-            filterText = filterText.split("-")[1]
-        } else if (filterText.contains("6 weeks")) {
-            secondFilterText = "1 months"
+        }
+        filterText.contains("9-12") || filterText.contains("9-12 months") -> {
+            alt1 = "9 months"
+            alt2 = "10 months"
+            alt3 = "11 months"
+            filterText = "12 months"
+        }
+        filterText.contains("6 weeks") -> {
+            alt1 = "1 month"
             filterText = "2 months"
-        } else if (filterText.contains("10 weeks")) {
-            filterText = "3 months"
-        } else if (filterText.contains("14 weeks")) {
-            filterText = "4 months"
-        }else{
-
-                val filterText = text.lowercase()
-                return list.filter {
-                    filterForImm(
-                        it,
-                        filterText,
-                        secondFilterText,
-                        thirdFilterText,
-                        fourthFilterText
-                    )
-                }
-
         }
-        return list.filter {
-            filterForImm(
-                it,
-                filterText,
-                secondFilterText,
-                thirdFilterText,
-                fourthFilterText
-            )
-        }
+        filterText.contains("10 weeks") -> filterText = "3 months"
+        filterText.contains("14 weeks") -> filterText = "4 months"
+    }
+
+    return list.filter {
+        filterForImm(it, filterText, alt1, alt2, alt3)
     }
 }
 
 fun filterForImm(
     imm: ImmunizationDetailsDomain,
     filterText: String,
-    firstVal: String,
-    secondVal: String,
-    thirdVal: String
-) = imm.ben.age.lowercase() == filterText ||
-        imm.ben.age.lowercase() == firstVal ||
-        imm.ben.age.lowercase() == secondVal ||
-        imm.ben.age.lowercase() == thirdVal ||
-        imm.ben.benFullName.lowercase() ==filterText ||
-        imm.ben.mobileNo.lowercase() ==filterText ||
-        imm.ben.motherName?.lowercase() ==filterText
+    firstVal: String = "",
+    secondVal: String = "",
+    thirdVal: String = ""
+): Boolean {
+    val token = filterText.trim().lowercase()
+
+    val age = imm.ben.age?.lowercase() ?: ""
+    val name = imm.ben.benFullName?.lowercase() ?: ""
+    val mother = imm.ben.motherName?.lowercase() ?: ""
+    val mobile = imm.ben.mobileNo ?: ""
+
+    if (age.contains(token)) return true
+    if (firstVal.isNotEmpty() && age.contains(firstVal)) return true
+    if (secondVal.isNotEmpty() && age.contains(secondVal)) return true
+    if (thirdVal.isNotEmpty() && age.contains(thirdVal)) return true
+
+    if (name.contains(token)) return true
+    if (mother.contains(token)) return true
+
+    if (mobile.contains(token)) return true
+
+    return false
+}
+
 
 fun filterBenHRNPTFormList(
     list: List<BenWithHRNPTListDomain>,
@@ -407,7 +398,6 @@ fun filterBenHRNPTFormList(
                     it.ben.familyHeadName.lowercase().contains(filterText) ||
                     it.ben.spouseName?.lowercase()?.contains(filterText) == true ||
                     it.ben.benSurname?.lowercase()?.contains(filterText) ?: false ||
-//                    it.typeOfList.lowercase().contains(filterText) ||
                     it.ben.mobileNo.lowercase().contains(filterText) ||
                     it.ben.gender.lowercase().contains(filterText) ||
                     it.ben.fatherName?.lowercase()?.contains(filterText) ?: false
@@ -418,56 +408,9 @@ fun filterBenHRNPTFormList(
 fun getWeeksOfPregnancy(regLong: Long, lmpLong: Long) =
     (TimeUnit.MILLISECONDS.toDays(regLong - lmpLong) / 7).toInt()
 
-//private fun getAncStatus(
-//    list: List<AncStatus>, lmpDate: Long, visitNumber: Int, benId: Long, at: Long
-//): AncStatus {
-//
-//    val currentAnc = list.firstOrNull { it.visitNumber == visitNumber }?.let { return it }
-//    val lastAnc =
-//        if (visitNumber > 1) list.firstOrNull { it.visitNumber == visitNumber - 1 } else null
-//    val lastAncFilledWeek = lastAnc?.filledWeek ?: 0
-//    val weeks = getWeeksOfPregnancy(at, lmpDate)
-//    val weekRange = when (visitNumber) {
-//        1 -> Konstants.minAnc1Week//..Konstants.maxAnc1Week
-//        2 -> getMinAncFillDate(Konstants.minAnc2Week, lastAncFilledWeek) //..Konstants.maxAnc2Week
-//        3 -> getMinAncFillDate(Konstants.minAnc3Week, lastAncFilledWeek)  //..Konstants.maxAnc2Week//..Konstants.maxAnc3Week
-//        4 -> getMinAncFillDate(Konstants.minAnc4Week, lastAncFilledWeek)  //..Konstants.maxAnc2Week//..Konstants.maxAnc4Week
-//        else -> throw IllegalStateException("visit number not in [1,4]")
-//    }
-//    return if (weeks >= weekRange) AncStatus(
-//        benId,
-//        visitNumber,
-////        if (visitNumber == 1) AncFormState.ALLOW_FILL else {
-////            if (lastAnc == null) AncFormState.NO_FILL else AncFormState.ALLOW_FILL
-////        },
-//        0
-//    )
-//    else AncStatus(
-//        benId,
-//        visitNumber,
-////        AncFormState.NO_FILL,
-//        0
-//    )
-//}
-
 fun getMinAncFillDate(minWeek: Int, lastAncFilledWeek: Int) =
     if (minWeek - lastAncFilledWeek <= 4) lastAncFilledWeek + 4 else minWeek
 
-//fun getAncStatusList(
-//    list: List<AncStatus>, lmpDate: Long, benId: Long, at: Long
-//) =
-//    listOf(1, 2, 3, 4).map {
-//        getAncStatus(list, lmpDate, it, benId, at)
-//    }
-
-fun hasPendingAncVisit(
-    list: List<AncStatus>, lmpDate: Long, benId: Long, at: Long
-): Boolean {
-//    val l = getAncStatusList(list, lmpDate, benId, at).map { it.formState }
-//    Timber.tag("MaternalHealthRepo").d("Emitted : at CommonUtls : $l")
-//    return l.contains(AncFormState.ALLOW_FILL)
-    return true
-}
 
 fun getTodayMillis() = Calendar.getInstance().setToStartOfTheDay().timeInMillis
 

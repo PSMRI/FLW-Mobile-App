@@ -17,6 +17,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.HomePagerAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentHomeBinding
+import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.Languages.ASSAMESE
 import org.piramalswasthya.sakhi.helpers.Languages.ENGLISH
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
@@ -170,7 +171,7 @@ class HomeFragment : Fragment() {
                 homeActivity.updateActionBar(
                     R.drawable.ic_home, when (viewModel.currentLanguage) {
                         ENGLISH -> it.name
-                    /*    HINDI -> it.nameHindi ?: it.name*/
+                        Languages.HINDI -> it.nameHindi ?: it.name
                         ASSAMESE -> it.nameAssamese ?: it.name
                     }
                 )

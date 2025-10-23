@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+<!--    <string name="app_native_name">मितानिन</string>-->
     <string name="navigation_drawer_open">নেভিগেচন ড্ৰয়াৰ খোলক</string>
     <string name="navigation_drawer_close">নেভিগেচন ড্ৰয়াৰ বন্ধ কৰক</string>
     <!--   To Be Deleeted-->
@@ -99,6 +100,8 @@
     <string name="mdsr_ic_date">তাৰিখ</string>
     <string name="mdsr_reason_death">কাৰণ নিৰ্দিষ্ট কৰক</string>
     <string name="mdsr_action">পৰাৱৰ্তন কৰা হৈছে</string>
+    <string name="str_weight_at_birth_gram">জন্মৰ সময়ত ওজন ( গ্ৰাম )</string>
+
 
     <string name="save_successful">সংরক্ষণ সফল</string>
     <string name="something_wend_wong_contact_testing">কিবা অশুদ্ধ! পৰীক্ষণ কৰক!</string>
@@ -230,13 +233,313 @@
     <string name="str_add_member">সদস্য যোগ কৰক</string>
     <string name="relation_with_hof">গৃহমুৰব্বীৰ সৈতে সম্পৰ্ক</string>
     <string name="str_not_available">উপলব্ধ নহয়</string>
-    <string name="death_type_cdr">শিশুমৃত্যু পৰ্যালোচনা</string>
+<!--    <string name="death_type_cdr">শিশুমৃত্যু পৰ্যালোচনা</string>-->
     <string name="add_family_member">পৰিয়ালৰ সদস্য যোগ কৰক</string>
 
     <string name="male">পুৰুষ</string>
     <string name="female">মহিলা</string>
     <string name="transgender">ৰূপান্তৰিত লিংগ</string>
     <string name="tv_husband_name_ph">স্বামীৰ নাম</string>
+
+
+    <string name="hbnc_baby_dead_alert">শিশুৰ মৃত্যু পৰ্যালোচনাৰ বাবে মৃত্যুৰ কাৰণ ANM/MPW/PHC ক জনাব লাগিব।</string>
+    <string name="hbnc_baby_gestational_age_alert">যদি শিশু ৩৫ সপ্তাহতকৈ কম বয়সত জন্ম হয়, তেন্তে মনোযোগ দিব।</string>
+    <string name="hbnc_mother_dead_alert">মাতৃ হত্যাৰ সমীক্ষাৰ বাবে ANM/PHC ৰ লক্ষ্যত ৱিকৃত কৰক।</string>
+    <string name="hbnc_mother_problem_alert">যদি হʼয়, তৎক্ষণাৎ হস্পিতাললৈ প্ৰেৰণ কৰক</string>
+    <string name="hbnc_mother_num_eat_alert">যদি মাতৃয়ে পৰিপূৰ্ণ ভোজন নকৰে বা ৪ বাৰৰ পৰা কম খায়, তেন্তে মাতৃক এইদৰে কৰিবলৈ উপদেশ দিয়ক।</string>
+    <string name="hbnc_mother_num_pad_alert">যদি ৫টাতকৈ বেছি পেড লাগে, তেন্তে মাতৃক হস্পিতাললৈ প্ৰেৰণ কৰক</string>
+    <string name="hbnc_baby_warm_winter_alert">যদি কৰা হোৱা নাই, তেন্তে মাতৃক সেয়া কৰিবলৈ পৰামৰ্শ দিয়ক</string>
+    <string name="hbnc_baby_fed_properly_alert">যদি কৰা হোৱা নাই, তেন্তে মাতৃক সেয়া কৰিবলৈ পৰামৰ্শ দিয়ক</string>
+    <string name="hbnc_baby_cry_incessant_alert">প্ৰতি ২ ঘণ্টাৰ পাছত শিশুটোক স্তন্যপান খুৱাবলৈ মাতৃক পৰামৰ্শ দিয়ক</string>
+    <string name="hbnc_baby_temp_alert">তাপমাত্ৰা ১০২°ফা (৩৮.৯°চে) লৈকে হ\'লে পেৰাচিটামল খুৱাব, আৰু যদি তাপমাত্ৰা তাৰো ওপৰত হয় তেন্তে হস্পিতাললৈ প্ৰেৰণ কৰিব</string>
+    <string name="hbnc_mother_foul_discharge_alert">যদি হʼয়, তেন্তে মাতৃক হস্পিতাললৈ প্ৰেৰণ কৰক</string>
+    <string name="hbnc_mother_speak_abnormal_fits_alert">যদি হʼয়, তেন্তে মাতৃক হস্পিতাললৈ প্ৰেৰণ কৰক</string>
+    <string name="hbnc_mother_less_no_milk_alert">মাকক শিশুটোক বেছি বাৰে স্তন্যপান খুৱাবলৈ কওক আৰু স্তন্যপান কৰোঁতে সঠিক জুৰণি আৰু অৱস্থানৰ বাবে পৰামৰ্শ দিয়ক</string>
+    <string name="hbnc_mother_breast_problem_alert">স্তনৰ বোঁটাত ফাট ধৰা ক্ষেত্ৰত, মাকক স্তন পৰিষ্কাৰ আৰু লুব্ৰিকেটেড ৰাখিবলৈ পৰামৰ্শ দিয়ক</string>
+    <string name="hbnc_baby_eye_pus_alert">চকুত যদি পঁহি হয় তেন্তে এন্টিবায়’টিক অইণ্টমেণ্ট লগাব পাৰি</string>
+    <string name="hbnc_baby_weight_1_8_alert">শিশুক ওচৰৰ স্বাস্থ্য কেন্দ্ৰত থকা অসুস্থ নৱজাতক হেঁচা চোৱা ইউনিট (SNCU)লৈ প্ৰেৰণ কৰক আৰু উচ্চ-ঝুঁকিপূর্ণ শিশুৰ ফৰ্ম অনুসৰি ঘৰত অতিৰিক্ত ভিজিট কৰক। যদি শিশুটোৱে (কম জন্ম ওজন বা সাধাৰণ) ওজন নুৱায়, তেন্তে শিশুটোক ওচৰৰ স্বাস্থ্য কেন্দ্ৰৰ SNCUলৈ প্ৰেৰণ কৰিব</string>
+    <string name="hbnc_baby_weight_2_5_alert">মাকক উপদেশ দিয়ক যি সিঁচাৰক অধিক তাপমান প্ৰদান কৰিব আৰু সিঁচাৰক অধিক ঘন ঘন খুৱাব। যদি সিঁচাৰ (কম য়ুতল বৰ্ত্তমান বা স্বাভাৱিক) ওজন বৃদ্ধিত নাযায় তেনেহলে নিকটবৰ্তী স্বাস্থ্য কেন্দ্ৰত SNCU লৈ পঠিয়াব।</string>
+    <string name="ben_pending_sync">বাকি থকা ছিঙ্ক</string>
+    <string name="tv_spouse_name_ph">পত্নী/স্বামীৰ নাম</string>
+    <string name="tv_spouse">পত্নী/স্বামী</string>
+    <string name="chat_error">আপোনাৰ চেটবট লোড হোৱাত কিছুমান ত্ৰুটি হৈছে</string>
+    <string name="help_and_support">সহায় আৰু সমৰ্থন</string>
+    <string name="evac_patient_info">ৰোগীৰ তথ্য</string>
+    <string name="immunization_dosage_count"/>
+    <string name="select_death_type">উপভোক্তাৰ মৃত্যুৰ ধৰণ নিৰ্বাচন কৰক</string>
+    <string name="death_type_cdr">শিশু মৃত্যুৰ পৰ্যালোচনা</string>
+    <string name="death_type_mdsr">মাতৃ মৃত্যুৰ নীড়ীক্ষণ আৰু প্ৰতিক্ৰিয়া</string>
+    <string name="continue_button">আগবাঢ়ক</string>
+<!--    <string name="about_us_powered">দ্বাৰা চালিত</string>-->
+    <string name="hbnc_day_text">দিন %1d</string>
+    <string name="hello_blank_fragment">নমস্কাৰ খালী টুকুৰা</string>
+    <string name="hbnc_mother_temp_case_1">মাক পৰাচেটাম\'ল দিব।</string>
+    <string name="hbnc_mother_temp_case_2">মাক হাস্পতাললৈ পৰিচালনা কৰক।</string>
+    <string name="hbnc_baby_temp_97_alert">মাকক উপদেশ দিয়ক যে শিশুক গৰম কৰি ৰাখিবলৈ ঘৰৰ তাপমান বৃদ্ধি কৰিব, চামৰীৰ সৈতে চামৰীৰ সংস্পৰ্শ দিব, শিশুক গৰম কাপোৰ বা থলুত ৰাখিব আৰু বাৰে বাৰে খুৱাব।</string>
+    <string name="hbnc_baby_temp_96_alert">মাকক উপদেশ দিয়ক যে শিশুক গৰম কৰি ৰাখিবলৈ ঘৰৰ তাপমান বৃদ্ধি কৰিব, চামৰীৰ সৈতে চামৰীৰ সংস্পৰ্শ দিব, শিশুক গৰম থলুত ৰাখিব আৰু বাৰে বাৰে খুৱাব। শিশুটি গৰম হোৱা পাছত, তাক কাপোৰ পৰাই আগতেই গৰম কৰা খাটত মাকৰ ওচৰত ৰাখিব।</string>
+    <string name="hbnc_baby_temp_99_alert">তেতিয়া sepsis ৰ লক্ষণ আছে নে নাই সেয়া পৰীক্ষা কৰক। যদি sepsis ৰ লক্ষণ দেখা নাযায়, তেন্তে কেৱল ১/৪ চামুচ paracetamol দি ব্যৱস্থাপনা কৰক আৰু তৎক্ষণাৎ নিকটতম স্বাস্থ্য কেন্দ্ৰৰ SNCU লৈ প্ৰেৰণ কৰক।</string>
+    <string name="form_input_alphabet_special_only_error">কেৱল বৰ্ণমালা আৰু বিশেষ চিহ্নসমূহ অনুমোদিত!</string>
+    <string name="form_input__no_alpha_space_error">বৰ্ণমালা বা খালী ঠাই অনুমোদিত নহয়!</string>
+    <string name="form_input_digit_only_error">কেৱল সংখ্যা অনুমোদিত!</string>
+    <string name="enter_pin">PIN দিয়ক</string>
+    <string name="sync_in_progress">Sync চলি আছে</string>
+    <string name="full_name">সম্পূৰ্ণ নাম</string>
+    <string name="other">অন্যান্য</string>
+    <string name="state">ৰাজ্য</string>
+    <string name="district">জিলা</string>
+    <string name="view_household_information">ঘৰ-সংক্ৰান্ত তথ্য চাওক</string>
+    <string name="hello">নমস্কাৰ</string>
+    <string name="select_immunization_category">টিকাকৰণৰ শ্ৰেণী বাছনি কৰক</string>
+    <string name="children">শিশু</string>
+    <string name="mother">মাক</string>
+    <string name="patient_information">ৰোগীৰ তথ্য</string>
+    <string name="mother_name">মাকৰ নাম</string>
+    <string name="date_of_birth">জন্ম তাৰিখ</string>
+    <string name="previous_vaccine_details">পূৰ্বৰ টিকা সম্পৰ্কিত তথ্য</string>
+    <string name="due_serial">বাকী থকা ক্ৰমিক সংখ্যা</string>
+    <string name="saving_form">ফৰ্ম সংৰক্ষণ কৰি আছে</string>
+    <string name="previous">পূৰ্বৱৰ্তী</string>
+    <string name="next">পৰৱৰ্তী</string>
+    <string name="edit">সম্পাদনা কৰক</string>
+    <string name="_0">0</string>
+    <string name="high_risk_babies">উচ্চ-ঝুঁকিপূর্ণ শিশুসমূহ</string>
+    <string name="pnc_visits">PNC পৰিদৰ্শন</string>
+    <string name="add_anc_visits">ANC পৰিদৰ্শন</string>
+    <string name="add_pnc_visits">PNC পৰিদৰ্শন যোগ কৰক</string>
+    <string name="pregnancy_weeks">গৰ্ভাৱস্থাৰ সপ্তাহ</string>
+    <string name="view_visit">পৰিদৰ্শন চাওক</string>
+    <string name="add_visit">পৰিদৰ্শন যোগ কৰক</string>
+<!--    <string name="sync_status">সিঙ্ক অৱস্থা</string>-->
+    <string name="survey_register">ছৰ্ভে ৰেজিষ্টাৰ</string>
+    <string name="family_member_registration">পৰিয়ালৰ সদস্যৰ পঞ্জীয়ন</string>
+    <string name="non_pregnant_women_eligible_couple_section">গৰ্ভৱতী নহয় থকাৰ মহিলাসকল (যোগ্য দম্পতি) বিভাগ</string>
+<!--HBNC-->
+    <string-array name="hbnc_place_of_delivery_array">
+        <item name="hbnc_place_of_delivery_1">ঘৰ</item>
+        <item name="hbnc_place_of_delivery_2">স্বাস্থ্য কেন্দ্ৰ</item>
+        <item name="hbnc_place_of_delivery_3">সামূহিক স্বাস্থ্য কেন্দ্ৰ</item>
+        <item name="hbnc_place_of_delivery_4">প্ৰাথমিক স্বাস্থ্য কেন্দ্ৰ</item>
+    </string-array>
+
+    <string-array name="hbnc_baby_gender">
+        <item name="hbnc_male">পুৰুষ</item>
+        <item name="hbnc_female">মহিলা</item>
+        <item name="hbnc_transgender">তৃতীয় লিংগ</item>
+    </string-array>
+
+    <string-array name="hbnc_type_of_delivery">
+        <item name="hbnc_normal_delivery">স্বাভাৱিক প্ৰসৱ</item>
+        <item name="hbnc_c_section">চিজেৰিয়ান প্ৰসৱ</item>
+        <item name="hbnc_assisted">সহায়তাপ্ৰদান</item>
+    </string-array>
+
+    <string-array name="hbnc_feeding_of_baby">
+        <item name="hbnc_feeding_of_baby_1">মাতৃৰ দুধ</item>
+        <item name="hbnc_feeding_of_baby_2">পানী</item>
+        <item name="hbnc_feeding_of_baby_3">মধু</item>
+        <item name="hbnc_feeding_of_baby_4">মিচ্ৰিৰ পানী</item>
+        <item name="hbnc_feeding_of_baby_5">ছাগলীৰ দুধ</item>
+        <item name="hbnc_feeding_of_baby_6">অন্য</item>
+    </string-array>
+
+    <string-array name="hbnc_child_immunization_status">
+        <item name="hbnc_bcg">বিৰুধী-ক্ষয় ৰোগৰ টিকা (BCG)</item>
+        <item name="hbnc_polio">পোলিঅ\' টিকা</item>
+        <item name="hbnc_dpt_1">ডি-পি-টি ১ (DPT 1)</item>
+        <item name="hbnc_hapatitis_b">হেপাটাইটিছ-বি টিকা</item>
+    </string-array>
+
+    <string-array name="hbnc_baby_eye_condition">
+        <item name="hbnc_forcefully">স্বাভাৱিক</item>
+        <item name="hbnc_weakly">ফুলা</item>
+        <item name="hbnc_feed_with_spoon">পুঁজ ওলাইছে</item>
+    </string-array>
+
+    <string-array name="hbnc_supervisor">
+        <item name="hbnc_asha_facilitator">আশা সমন্বয়ক</item>
+        <item name="hbnc_anm">এ.এন.এম (সহায়ক নার্স মিজৱাইফ)</item>
+        <item name="hbnc_mpw">এম.পি.ডব্লিউ (বহুমুখী কৰ্মী)</item>
+    </string-array>
+
+    <string-array name="hbnc_place_of_baby_death">
+        <item name="hbnc_home">গৃহ</item>
+        <item name="hbnc_sub_center">উপ-কেন্দ্ৰ</item>
+        <item name="hbnc_phc">প্ৰাথমিক স্বাস্থ্য কেন্দ্ৰ</item>
+        <item name="hbnc_chc">সামূহিক স্বাস্থ্য কেন্দ্ৰ</item>
+        <item name="hbnc_other">অন্য</item>
+    </string-array>
+
+    <string-array name="hbnc_gestational_age">
+        <item name="hbnc_weak_1">২৪ – ৩৪ সপ্তাহ</item>
+        <item name="hbnc_weak_2">৩৪ – ৩৬ সপ্তাহ</item>
+        <item name="hbnc_weak_3">৩৬ – ৩৮ সপ্তাহ</item>
+    </string-array>
+
+    <string-array name="hbnc_place_of_mother_death">
+        <item name="hbnc_home">গৃহ</item>
+        <item name="hbnc_subcenter">উপ-কেন্দ্ৰ</item>
+        <item name="hbnc_phc">প্ৰাথমিক স্বাস্থ্য কেন্দ্ৰ</item>
+        <item name="hbnc_chc">সামূহিক স্বাস্থ্য কেন্দ্ৰ</item>
+        <item name="hbnc_other">অন্য</item>
+    </string-array>
+
+    <string-array name="hbnc_mother_problems">
+        <item name="hbnc_mother_problem_1">অত্যধিক ৰক্তক্ষৰণ</item>
+        <item name="hbnc_mother_problem_2">অচেতন / খিঁচুনি</item>
+    </string-array>
+
+    <string-array name="hbnc_unusual_with_the_baby">
+        <item name="hbnc_unusual_with_baby_1">হাত-পা বাঁকা</item>
+        <item name="hbnc_unusual_with_baby_2">ওঁঠত ফাঁক (চিড়)</item>
+        <item name="hbnc_unusual_with_baby_3">অন্য</item>
+    </string-array>
+
+    <string-array name="hbnc_place_of_baby_referral">
+        <item name="hbnc_place_of_baby_referral_1">উপ-কেন্দ্ৰ</item>
+        <item name="hbnc_place_of_baby_referral_2">প্ৰাথমিক স্বাস্থ্য কেন্দ্ৰ</item>
+        <item name="hbnc_place_of_baby_referral_3">সামূহিক স্বাস্থ্য কেন্দ্ৰ</item>
+        <item name="hbnc_place_of_baby_referral_4">মহকুমা চিকিৎসালয়</item>
+        <item name="hbnc_place_of_baby_referral_5">জিলা চিকিৎসালয়</item>
+        <item name="hbnc_place_of_baby_referral_6">মেডিকেল কলেজ হাস্পতাল</item>
+        <item name="hbnc_place_of_baby_referral_7">পৰিবহন চলি থকা অৱস্থাত</item>
+        <item name="hbnc_place_of_baby_referral_8">ব্যক্তিগত চিকিৎসালয়</item>
+        <item name="hbnc_place_of_baby_referral_9">স্বীকৃতিপ্ৰাপ্ত ব্যক্তিগত চিকিৎসালয়</item>
+        <item name="hbnc_place_of_baby_referral_10">অন্য</item>
+    </string-array>
+
+    <string name="str_yay_it_is_working">বাহ্‌, এইটো কাম কৰি আছে!!!</string>
+    <string name="str_yay_it_is_not_working">বাহ্‌, এইটো কাম নকৰে!</string>
+    <string name="str_health_subcenter_name">স্বাস্থ্য উপকেন্দ্ৰৰ নাম</string>
+    <string name="str_mother_name">মাতৃৰ নাম</string>
+   <!-- <string name="str_father_name">পিতৃৰ নাম</string>-->
+    <string name="str_date_of_delivery">প্ৰসবৰ তাৰিখ</string>
+    <string name="str_place_of_delivery">প্ৰসবৰ স্থান</string>
+    <string name="str_baby_gender">শিশুৰ লিঙ্গ</string>
+    <string name="str_type_of_delivery">প্ৰসৱৰ ধৰণ</string>
+    <string name="str_started_breastfeeding">স্তন্যপান আৰম্ভ কৰিছে</string>
+   <!-- <string name="str_weight_at_birth">জন্মসময়ৰ ওজন (গ্ৰামত)</string>-->
+    <string name="str_discharge_date_of_mother">মাতৃৰ প্ৰস্থান তাৰিখ</string>
+    <string name="str_discharge_date_of_baby">শিশুৰ প্ৰস্থান তাৰিখ</string>
+    <string name="str_registration_of_birth">জন্মৰ পঞ্জীয়ন</string>
+    <string name="str_child_immunizaation_status">শিশুৰ টিকাকৰণৰ অৱস্থা</string>
+    <string name="str_child_feed_after_birth">জন্মৰ পিছত শিশুক কি খুৱাই দিয়া হৈছিল</string>
+    <string name="str_how_did_the_baby_breastfeed">শিশুৱে কেনেকৈ স্তন্যপান কৰিলে?</string>
+    <string name="str_baby_eye_condition">শিশুৰ চকুৰ অৱস্থা</string>
+    <string name="str_is_there_bleeding">শিশুৰ নাভিৰ ডৰীত ৰক্ত বাহি আছে নে</string>
+    <string name="str_weighing_machine_scale_coloer">ওজন মাপিবলৈ যন্ত্ৰৰ স্কেলৰ ৰঙ</string>
+    <string name="str_child_physical_condition">শিশুৰ শাৰীৰিক অৱস্থা লিখক</string>
+    <string name="str_all_limbs_limp">সকলো অঙ্গ আলসুৱা</string>
+    <string name="str_feeding_less_stop">কমকৈ খুৱাই দিয়া/বন্ধ কৰা</string>
+    <string name="str_the_child_is_wrapped_in_cloth">শিশুটিক কাপোৰেৰে মেৰিয়াই মাকৰ ওচৰত ৰখা হয়</string>
+    <string name="str_started_breastfeeding_only">কেৱল স্তনপান কৰিবলৈ আৰম্ভ কৰিলে/ কেৱল মাতৃদুগ্ধহে দিয়া হ\'ল।</string>
+    <string name="str_newborn_first_training">নবজাতক প্ৰথম প্ৰশিক্ষণ (ক) মাতৃক সোধক</string>
+    <string name="str_baby_stomach_feeding">২৪ ঘন্টাত মাতৃয়ে কিমানবাৰ ভোজন কৰে। পদক্ষেপ – যদি মাতৃয়ে পেট ভৰি নাখায় বা ৪ বাৰতকৈ কম খায়, তেন্তে মাতৃক ভৰি পেট খোৱাৰ উপদেশ দিয়ক।</string>
+    <string name="str_baby_pad_changed">ৰক্তক্ষৰণৰ বাবে এটা দিনত কিমানটা পেড সলনি কৰা হৈছে? পদক্ষেপ – যদি ২টা পেডতকৈ বেছি লাগে, তেন্তে মাতৃক হাস্পতাললৈ প্ৰেৰণ কৰক।</string>
+    <string name="str_baby_in_winter">শীতকালত কেঁচুৱাটোক গৰম কৰি ৰখা হয়নে? (মাকৰ ওচৰত, ভালকৈ সাজ-পোছাক পিন্ধি মেৰিয়াই)। - যদি কৰা হোৱা নাই তেন্তে মাকক কৰিবলৈ কওক।</string>
+    <string name="str_baby_breastfed_properly">শিশুটিক সঠিকভাৱে স্তনপান কৰাইছেনে? (যেতিয়াই ভোক অনুভৱ হয় বা ২৪ ঘণ্টাত কমেও ৭ – ৮ বাৰ স্তনপান কৰাব লাগে)। কাৰ্য্য – যদি কৰা হোৱা নাই তেন্তে মাতৃক কৰিবলৈ কওক।</string>
+    <string name="str_baby_urination_per_day">শিশুটিয়ে অবিৰতভাৱে কান্দে নে দিনটোত ৬ বাৰতকৈ কম প্ৰস্ৰাৱ কৰে? কাৰ্য্য – মাতৃক স্তনপানৰ বাবে পৰামৰ্শ দিয়া"</string>
+    <string name="str_mother_body_temperature">উষ্ণতা জুখি পৰীক্ষা কৰক। কাৰ্য্য – ৰোগীক পেৰাচিটামল টেবলেট দিব যদি উষ্ণতা ১০২°F (৩৮.৯°C) হয় আৰু যদি উষ্ণতা ইয়াতকৈ বেছি হয় তেন্তে চিকিৎসালয়লৈ প্ৰেৰণ কৰা।"</string>
+    <string name="str_water_discharge">দুৰ্গন্ধ আৰু জ্বৰৰ সৈতে পানীৰ নিৰ্গমন ১০২ ডিগ্ৰী ফাৰেনহাইট (৩৮.৯ ডিগ্ৰী চেলছিয়াছ)।</string>
+    <string name="str_is_mother_speaking_abnormally">মাকে অস্বাভাৱিকভাৱে কথা কয় নে ফিট হৈছে?</string>
+    <string name="str_mother_milk_is_not_produced">প্ৰসৱৰ পিছত মাতৃৰ গাখীৰ উৎপাদন হোৱা নাই বা তাই ভাবে যে গাখীৰ কম উৎপাদন হৈছে।</string>
+    <string name="str_mother_cracked_nipple">মাতৃৰ নিপল ফাটিছে নেকি / বিষ আৰু/বা কঠিন স্তন আছে নেকি</string>
+    <string name="str_respiratory_rate">শ্বাস-প্ৰশ্বাসৰ হাৰ প্ৰতি মিনিটত ৬০তকৈ অধিক</string>
+    <string name="str_d_sepsis">(ঘ) চেপ্চিছ</string>
+    <string name="str_symptoms_of_sepsis">চেপ্‌চিছৰ তলত দিয়া লক্ষণসমূহ পৰীক্ষা কৰক। লক্ষণ উপস্থিত থাকিলে “হʼয়” লিখিব, লক্ষণ উপস্থিত নাথাকিলে লিখিব নালাগে। নবজাতক জন্মৰ প্ৰথম দিনৰ স্বাস্থ্য পৰীক্ষাত দেখা লক্ষণসমূহ লিখক।</string>
+    <string name="str_distended_abdomen">পেট ফুলা বা মাকে কয় যে শিশুৱে সঘনাই বমি কৰে</string>
+    <string name="str_child_feels_cold">মাকে কয় যে শিশুটিয়ে স্পৰ্শ কৰিলে ঠাণ্ডা অনুভৱ কৰে বা শিশুটিৰ উষ্ণতা ৮৯ ডিগ্ৰী ফাৰেনহাইট (৩৭.৫ ডিগ্ৰী চেলছিয়াছ)তকৈ অধিক হয়"</string>
+    <string name="str_chest_is_pulled">আৰু উশাহ লওঁতে বুকুখন ভিতৰলৈ টানি লোৱা হয়।</string>
+    <string name="str_pus_in_the_navel">নাভিত পুঁজ</string>
+    <string name="str_asha_name">আশাৰ নাম</string>
+    <string name="str_village_name">গাঁওৰ নাম</string>
+    <string name="str_block_name">ব্লক নাম</string>
+    <string name="str_still_birth">মৃতজন্ম</string>
+    <string name="str_supervisors_remark">পৰ্যবেক্ষকৰ মন্তব্য</string>
+    <string name="str_supervisor">পৰ্যবেক্ষক</string>
+    <string name="str_supervisor_name">পৰ্যবেক্ষকৰ নাম</string>
+    <string name="str_signature_with_date">পৰ্যবেক্ষকৰ স্বাক্ষৰ আৰু তাৰিখ</string>
+    <string name="str_mother_newborn_home_visit_card">মাতৃ-নবজাতক গৃহ পৰিদৰ্শন কাৰ্ড</string>
+    <string name="str_discharge_of_institutinal_delivery">প্ৰতিষ্ঠানিক প্ৰসৱৰ প্ৰস্থান</string>
+    <string name="str_date_of_home_visit">গৃহ পৰিদৰ্শনৰ তাৰিখ</string>
+    <string name="str_baby_alive">শিশু জীয়াই আছে নে?</string>
+<!--    <string name="str_date_of_death">শিশুৰ মৃত্যুৰ তাৰিখ</string>-->
+    <string name="str_time_of_death">শিশুৰ মৃত্যুৰ সময়</string>
+    <string name="str_place_of_baby_death">শিশুৰ মৃত্যুৰ স্থান</string>
+    <string name="str_other_place_of_baby_death">শিশুৰ মৃত্যুৰ অন্য স্থান</string>
+    <string name="str_is_baby_preterm">কেঁচুৱাটো অকালতে জন্ম হয় নেকি?</string>
+    <string name="str_how_many_weeks">কেঁচুৱা জন্ম হোৱাৰ পৰা কিমান সপ্তাহ হ’ল (Gestational Age)</string>
+    <string name="str_date_of_first_examination">শিশুৰ প্ৰথম পৰীক্ষণৰ তাৰিখ</string>
+    <string name="str_time_of_first_examination">শিশুৰ প্ৰথম পৰীক্ষণৰ সময়</string>
+    <string name="str_is_the_mother_alive">মাতৃ জীয়াই আছে নে?</string>
+    <string name="str_date_of_death_of_mother">মাতৃৰ মৃত্যুৰ তাৰিখ</string>
+    <string name="str_time_of_death_of_mother">মাতৃৰ মৃত্যুৰ সময়</string>
+    <string name="str_place_of_mother_death">মাতৃৰ মৃত্যুৰ স্থান</string>
+    <string name="str_other_place_of_mother_death">মাতৃ মৃত্যুৰ অন্য ঠাই</string>
+    <string name="str_does_mother_have_any_problem">মাতৃৰ কোনো সমস্যা আছে নে</string>
+    <string name="str_first_feed_to_baby">অন্য - জন্মৰ পিছত শিশুক প্ৰথমতে কি খুৱাই দিয়া হৈছিল?</string>
+    <string name="str_does_the_mother_have_breatfeeding">মাতৃৰ স্তন্যপান কৰোৱাত কোনো সমস্যা আছে নে?</string>
+    <string name="str_write_the_problem">সমস্যাটো লিখক, যদি স্তন্যপান কৰোৱাত সমস্যা থাকে, তেন্তে মাতৃক সমাধান কৰাত সহায় কৰক</string>
+    <string name="str_baby_first_health_checkup">অংশ ২: শিশুৰ প্ৰথম স্বাস্থ্য পৰীক্ষা</string>
+    <string name="str_temperature_ot_the_baby">শিশুৰ তাপমাত্রা</string>
+    <string name="str_tie_again_with_clean_thread">যদি হʼয়, আশা, এ.এন.এম/এম.পি.ডব্লিউ বা টি.বি.এ-এ শুচি সূতাৰে পুনৰ বান্ধিব পাৰে। গৃহীত পদক্ষেপ?</string>
+    <string name="str_weighing_matches">ওজন ৰঙৰ সৈতে মিল খাইছে নে?</string>
+    <string name="str_routine_newborn_care">নিয়মীয়া নবজাতক সেয়া: কাৰ্যটো কৰা হৈছিল নে</string>
+    <string name="str_dry_the_baby">শিশুক শুকুৱাওক</string>
+    <string name="str_cry_weak_stopped">শিশুৰ ৰোদন দুর্বল/বন্ধ হৈছে</string>
+    <string name="str_keep_the_cord_clean_and_dry">শিশুৰ ডৰি পৰিষ্কাৰ আৰু শুকান ৰাখক</string>
+    <string name="str_was_there_anything_unusual">শিশুৰ সৈতে অস্বাভাৱিক কিছু আছিল নে?</string>
+    <string name="str_other_unusual_with_the_baby">অন্য - শিশুৰ সৈতে অস্বাভাৱিক</string>
+    <string name="str_asha_hygeine">আশা-এ প্রতিটো পৰিদৰ্শনত শিশুক ধৰা আগতে চাবুনী আৰু পানীৰে হাত ধুব লাগিব</string>
+    <string name="str_baby_referred_for_any_reason">শিশুক কোনো কাৰণত প্ৰেৰণ কৰা হৈছিল নে?</string>
+    <string name="str_date_of_baby_referral">শিশুক প্ৰেৰণ কৰাৰ তাৰিখ</string>
+    <string name="str_place_of_baby_referral">শিশুক প্ৰেৰণ কৰাৰ স্থান</string>
+    <string name="str_other_place_of_baby_referral">অন্য - শিশুক প্ৰেৰণ কৰাৰ স্থান</string>
+    <string name="str_mother_referred_for_any_reason">মাতৃক কোনো কাৰণত প্ৰেৰণ কৰা হৈছিল নে?</string>
+    <string name="str_date_of_mother_referral">মাতৃক প্ৰেৰণ কৰাৰ তাৰিখ</string>
+    <string name="str_place_of_mother_referral">মাতৃক প্ৰেৰণ কৰাৰ স্থান</string>
+    <string name="str_other_place_of_mother_referral">অন্য - মাতৃক প্ৰেৰণ কৰাৰ স্থান</string>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

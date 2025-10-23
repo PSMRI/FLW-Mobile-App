@@ -1,2 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="verify_aadhaar_number">आधार संख्या सत्यापित करें</string>
+    <string name="verify_mobile_number">मोबाइल संख्या सत्यापित करें</string>
+    <string name="enter_otp">ओटीपी दर्ज करें</string>
+    <string name="verify_otp">ओटीपी सत्यापित करें</string>
+    <string name="resend_otp">ओटीपी पुनः भेजें</string>
+    <string name="exit">बाहर निकलें</string>
+    <string name="timer">टाइमर</string>
+    <string name="aadhaar">आधार</string>
+    <string name="asha">मितानिन</string>
+    <string name="gov">सरकार</string>
+    <string name="enter_aadhaar_number">आधार संख्या दर्ज करें</string>
+    <string name="aadhaar_number">आधार संख्या</string>
+    <string name="generate_otp">ओटीपी भेजें</string>
+    <string name="select_abha">नाम चुनें</string>
+    <string name="pid">पीआईडी</string>
+    <string name="generate_abha">आभा</string>
+    <string name="_30">३०</string>
+    <string name="date">दिनांक</string>
+    <string name="abha_number_generated_successfully">आभा संख्या सफलतापूर्वक जनरेट हुई</string>
+    <string name="name">नाम:</string>
+    <string name="abha_number">आभा संख्या:</string>
+    <string name="linked_to_beneficiary">यह आभा संख्या सफलतापूर्वक रिकॉर्ड से जुड़ा है</string>
+    <string name="not_linked_to_beneficiary">यह आभा संख्या पहले से किसी और से जुड़ा है, कृपया सही आधार संख्या डालें</string>
+    <string name="do_you_want_to_download_the_abha_card">क्या आप आभा कार्ड डाउनलोड करना चाहते हैं?</string>
+    <string name="yes">हाँ</string>
+    <string name="no">नहीं</string>
+    <string name="submit">जमा करें</string>
+
+    <string name="enter_mobile_number">मोबाइल संख्या दर्ज करें</string>
+    <string name="enter_number_for_abha">आभा पंजीकरण के लिए आधार संख्या</string>
+    <string name="aadhaar_linked_mobile">आधार से जुड़ा मोबाइल संख्या या अन्य मोबाइल संख्या</string>
+    <string name="mobile_number">मोबाइल संख्या</string>
+    <string name="check_and_generate_otp">जांचें और ओटीपी बनाएं</string>
+    <string name="textview">टेक्स्ट व्यू</string>
+    <string name="download_abha_channel_id">आभा कार्ड डाउनलोड हो रहा है</string>
+    <string name="generate_abha_id">आभा संख्या बनाएं</string>
+    <string name="create_abha_number">आभा संख्या बनाएं</string>
+    <string name="aadhar_consent_text">मैं पुष्टि करता/करती हूँ कि मैंने व्यक्ति को उसके आधार संख्या का उपयोग कर आभा संख्या बनाने के लिए नीचे दी गई सहमति प्रक्रिया समझा दी है</string>
+    <string name="aadhar_disclaimer_consent_disclaimer">आपके आभा संख्या बनाने के लिए सहमति</string>
+    <string name="abha">आभा</string>
+    <string name="aadhar_disclaimer_consent_text">मैं, एतद्द्वारा घोषणा करता/करती हूँ कि मैं स्वेच्छा से अपना आधार संख्या और यूआईडीएआई द्वारा जारी जनसांख्यिकीय जानकारी राष्ट्रीय स्वास्थ्य प्राधिकरण (एनएचए) के साथ एबीएचए संख्या बनाने के एकमात्र उद्देश्य से साझा कर रहा/रही हूँ। मैं समझता/समझती हूँ कि मेरे एबीएचए संख्या का उपयोग और साझाकरण एबीडीएम द्वारा समय-समय पर स्वास्थ्य सेवाओं के प्रावधान सहित अधिसूचित उद्देश्यों के लिए किया जा सकता है। इसके अलावा, मुझे पता है कि मेरी व्यक्तिगत पहचान योग्य जानकारी (नाम, पता, आयु, जन्म तिथि, लिंग और फोटो) राष्ट्रीय डिजिटल स्वास्थ्य पारिस्थितिकी तंत्र (एनडीएचई) में काम करने वाली संस्थाओं को उपलब्ध कराई जा सकती है, जिसमें अन्य बातों के साथ-साथ हितधारक और संस्थाएँ जैसे स्वास्थ्य सेवा पेशेवर (जैसे डॉक्टर), सुविधाएँ (जैसे अस्पताल, प्रयोगशालाएँ) और डेटा फ़िड्युसरी (जैसे स्वास्थ्य प्रोग्रामर) शामिल हैं, जो आयुष्मान भारत डिजिटल मिशन (एबीडीएम) और उसके तहत विभिन्न प्रक्रियाओं से पंजीकृत हैं या उससे जुड़े हैं। मैं एनएचए को उपरोक्त उद्देश्य के लिए आधार (वित्तीय और अन्य सब्सिडी, लाभ और सेवाओं का लक्षित वितरण) अधिनियम, 2016 के प्रावधानों के अनुसार यूआईडीएआई के साथ आधार आधारित प्रमाणीकरण करने के लिए मेरे आधार संख्या का उपयोग करने के लिए अधिकृत करता हूं। मैं समझता/समझती हूं कि यूआईडीएआई सफल प्रमाणीकरण के बाद एनएचए के साथ मेरे ई-केवाईसी विवरण या “हां” का जवाब साझा करेगा। मुझे आधार के अलावा अन्य आईडी का उपयोग करने के विकल्प के बारे में विधिवत सूचित किया गया है; हालांकि, मैं जानबूझकर एनडीएचई में लाभ प्राप्त करने के उद्देश्य से आधार संख्या का उपयोग करना चुनता/चुनती हूं। मुझे पता है कि आधार संख्या को छोड़कर मेरी व्यक्तिगत पहचान योग्य जानकारी का उपयोग और ऊपर वर्णित उद्देश्यों के लिए साझा किया जा सकता है। मैं आधार अधिनियम और विनियमों के प्रावधानों के अनुसार किसी भी समय दी गई सहमति को रद्द करने का अधिकार सुरक्षित रखता/रखती हूं।</string>
+    <string name="d_o_b">जन्म तिथि</string>
+    <string name="beneficiary_abha_number">लाभार्थी का आभा संख्या</string>
+    <string name="offline">ऑफलाइन</string>
+    <string name="check_circle">✔ चिह्न</string>
+    <string name="name_">नाम:</string>
+    <string name="abha_number_">आभा संख्या:</string>
+    <string name="aadhaar_linked_mobile_number_or_other_mobile_number">आधार से जुड़ा मोबाइल संख्या या अन्य मोबाइल संख्या</string>
+    <string name="individual_s_consent_for_creation_of_abha_number">आभा संख्या बनाने के लिए व्यक्ति की सहमति</string>
+    <string name="validate_fp">परिवार नियोजन सत्यापित करें</string>
+    <string name="generating_abha_for">दर्ज करें</string>
+    <string name="otp_sent_to">OTP आधार से जुड़े मोबाइल संख्या पर भेजा गया</string>
+    <string name="otp_was_resent">OTP फिर से भेजा गया</string>
+    <string name="do_you_want_to_go_back">क्या आप वापस जाना चाहते हैं?</string>
+    <string name="downloading_abha_card">आभा कार्ड डाउनलोड हो रहा है</string>
+    <string name="str_create_abha">आभा बनाएं</string>
+    <string name="str_search_abha">आभा खोजें</string>
+    <string name="str_invalid_aadhaar_no">कृपया सही आधार संख्या दर्ज करें</string>
+    <string name="str_invalid_mobile_no">कृपया सही मोबाइल संख्या दर्ज करें</string>
+    <string name="str_invalid_ben_name">कृपया सही लाभार्थी का नाम दर्ज करें</string>
+    <string name="str_here_abha_no">यह रहा आपका आभा संख्या!</string>
+    <string name="str_abha_already_exist">यह आभा पहले से मौजूद है!</string>
+    <string name="abha_already_linked_message">यह आभा संख्या पहले से किसी और से जुड़ा है, कृपया सही आधार संख्या डालकर पुनः प्रयास करें</string>
+    <string name="str_abha_successfully_created">आभा खाता सफलतापूर्वक बनाया गया!</string>
+    <string name="str_abha_card_downloaded">आप आभा कार्ड को डाउनलोड फोल्डर में देख सकते हैं!!</string>
+    <string name="str_abha_otp_note">यह OTP केवल 10 मिनट तक मान्य है</string>
+    <string name="str_enter_otp">OTP दर्ज करें:</string>
+    <string name="str_find_abha">पहले से आभा है? अभी पता करें!</string>
+    <string name="str_get_your_abha">मोबाइल संख्या से आभा संख्या प्राप्त करें</string>
+    <string name="enter_ben_name">लाभार्थी का नाम दर्ज करें</string>
+    <string name="str_didnt_receive_otp">OTP नहीं मिला? कृपया प्रतीक्षा करें</string>
+    <string name="str_declaration">मैं यह घोषणा करता/करती हूँ कि:</string>
+    <string name="str_aadhaar_consent_1">मैं स्वेच्छा से भारतीय विशिष्ट पहचान प्राधिकरण ("यूआईडीएआई") द्वारा जारी अपना आधार संख्या/वर्चुअल आईडी, और अपनी जनसांख्यिकीय जानकारी,
+आयुष्मान भारत स्वास्थ्य खाता संख्या ("आभा संख्या") और आयुष्मान भारत स्वास्थ्य खाता पता ("आभा पता") बनाने के उद्देश्य से साझा कर रहा/रही हूँ। मैं एनएचए को उपरोक्त उद्देश्य के लिए आधार (वित्तीय और अन्य सब्सिडी,
+लाभ और सेवाओं का लक्षित वितरण) अधिनियम, 2016 के प्रावधानों के अनुसार यूआईडीएआई के साथ आधार आधारित प्रमाणीकरण करने हेतु मेरे आधार संख्या/वर्चुअल आईडी का उपयोग करने के लिए अधिकृत करता/करती हूँ। मैं समझता/समझती हूँ कि यूआईडीएआई सफल प्रमाणीकरण के बाद मेरे ई-केवाईसी विवरण, या "हाँ" का उत्तर एनएचए के साथ साझा करेगा।</string>
+    <string name="str_aadhaar_consent_2">मैं आधार के अलावा किसी अन्य दस्तावेज़ का उपयोग करके आयुष्मान भारत स्वास्थ्य खाता संख्या ("ABHA संख्या") और आयुष्मान भारत स्वास्थ्य खाता पता ("ABHA पता") बनाना चाहता/चाहती हूँ।
+(आगे बढ़ने के लिए यहाँ क्लिक करें)</string>
+    <string name="str_aadhaar_consent_3">मैं अपने ABHA पते और संख्या का उपयोग और स्वास्थ्य रिकॉर्ड को लिंक करने की अनुमति देता/देती हूँ…</string>
+    <string name="str_aadhaar_consent_4">मैं इस मुलाकात के दौरान मुझे स्वास्थ्य सेवाएं प्रदान करने के उद्देश्य से अपने सभी स्वास्थ्य रिकॉर्ड स्वास्थ्य सेवा प्रदाता(ओं) के साथ साझा करने के लिए अधिकृत करता/करती हूं।</string>
+    <string name="str_aadhaar_consent_5">मैं अपने रिकॉर्ड को गुमनाम बनाकर सार्वजनिक स्वास्थ्य उद्देश्यों में उपयोग की अनुमति देता/देती हूँ</string>
+    <string name="str_aadhaar_consent_6">मैं, @ashaName, पुष्टि करती हूँ कि मैंने उपर्युक्त उद्देश्यों के लिए लाभार्थी को सहमति की सामग्री के बारे में विधिवत सूचित और समझाया है।</string>
+    <string name="str_aadhaar_consent_7">मुझे, @beneficiaryName, ऊपर बताई गई सहमति के बारे में समझाया गया है और मैं उपरोक्त उद्देश्यों के लिए अपनी सहमति प्रदान करता हूँ।</string>
+    <string name="str_seconds">सेकंड</string>
+    <string name="str_aadhaar_otp_number">OTP आधार से जुड़े मोबाइल संख्या (@mobileNumber पर समाप्त) पर भेजा गया</string>
+    <string name="str_abha_otp_number">OTP ABHA से जुड़े मोबाइल संख्या (@mobileNumber पर समाप्त) पर भेजा गया</string>
+    <string name="str_otp_number_message">OTP मोबाइल संख्या (@mobileNumber पर समाप्त) पर भेजा गया</string>
+</resources>
