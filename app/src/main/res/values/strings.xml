@@ -369,7 +369,7 @@
     <string name="str_ifa_last_month">IFA in last one month Decreased syrup</string>
 
 
-    HBNCDataSet============================================================================
+    <!-- HBNCDataSet -->
 
     <string name="str_yay_it_is_working">Yay, it is working!!!</string>
     <string name="str_yay_it_is_not_working">Yay, it is not working!!!</string>
@@ -465,6 +465,7 @@
     <string name="str_date_of_mother_referral">Date of mother referral</string>
     <string name="str_place_of_mother_referral">Place of mother referral</string>
     <string name="str_other_place_of_mother_referral">Other -Place of mother referral</string>
+    <string name="preview_title">Preview</string>
 
     <string-array name="hbyc_month_array">
         <item name="hbyc_month_3">3 Month</item>
