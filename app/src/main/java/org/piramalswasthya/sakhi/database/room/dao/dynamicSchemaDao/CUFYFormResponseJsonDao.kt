@@ -19,8 +19,10 @@ interface CUFYFormResponseJsonDao {
     @Query("DELETE FROM children_under_five_all_visit WHERE benId = :benId AND visitDate = :visitDate")
     suspend fun deleteFormResponse(benId: Long, visitDate: String)
 
-    @Query("SELECT * FROM children_under_five_all_visit WHERE isSynced = 0")
-    suspend fun getUnsyncedForms(): List<CUFYFormResponseJsonEntity>
+
+    @Query("SELECT * FROM children_under_five_all_visit WHERE isSynced = 0 AND formId = :formId")
+    suspend fun getUnsyncedForms(formId: String): List<CUFYFormResponseJsonEntity>
+
 
     @Query("UPDATE children_under_five_all_visit SET isSynced = 1, syncedAt = :syncedAt WHERE id = :id")
     suspend fun markAsSynced(id: Int, syncedAt: String)

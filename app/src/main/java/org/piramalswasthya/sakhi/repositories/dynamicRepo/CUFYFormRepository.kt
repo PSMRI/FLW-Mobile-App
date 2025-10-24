@@ -169,8 +169,9 @@ class CUFYFormRepository @Inject constructor(
     suspend fun loadFormResponseJson(benId: Long, visitDay: String): String? =
         jsonResponseDao.getFormResponse(benId, visitDay)?.formDataJson
 
-    suspend fun getUnsyncedForms(): List<CUFYFormResponseJsonEntity> =
-        jsonResponseDao.getUnsyncedForms()
+    suspend fun getUnsyncedForms(formId: String): List<CUFYFormResponseJsonEntity> =
+        jsonResponseDao.getUnsyncedForms(formId)
+
 
 
     suspend fun syncFormToServer(formName: String, form: CUFYFormResponseJsonEntity): Boolean {
