@@ -10,7 +10,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.FrameLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
@@ -19,13 +18,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.dynamicAdapter.FormRendererAdapter
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
+import org.piramalswasthya.sakhi.databinding.FragmentChildrenUnderFiveFormBinding
 import org.piramalswasthya.sakhi.databinding.RvItemBenChildCareInfantBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.utils.dynamicFiledValidator.FieldValidator
@@ -33,12 +32,11 @@ import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import androidx.core.view.isVisible
+import androidx.core.view.isGone
 
 @AndroidEntryPoint
 class CUFYFormFragment : Fragment() {
-
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var saveButton: Button
 
     val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
 
@@ -49,10 +47,13 @@ class CUFYFormFragment : Fragment() {
     var benId = -1L
     var hhId = -1L
     var dob = -1L
+    var isViewMode = false
     lateinit var formId: String
     private lateinit var adapter: FormRendererAdapter
     private var currentImageField: FormField? = null
     private var tempCameraUri: Uri? = null
+    private var _binding: FragmentChildrenUnderFiveFormBinding? = null
+    private val binding get() = _binding!!
 
     private val galleryLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
@@ -100,12 +101,15 @@ class CUFYFormFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View = inflater.inflate(R.layout.fragment_children_under_five_form, container, false)
+    ): View {
+        _binding = FragmentChildrenUnderFiveFormBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        recyclerView = view.findViewById(R.id.recyclerView)
-        saveButton = view.findViewById(R.id.btnSave)
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         val container = view.findViewById<FrameLayout>(R.id.infant_card_container)
         val infantBinding =
@@ -113,11 +117,20 @@ class CUFYFormFragment : Fragment() {
         container.addView(infantBinding.root)
 
         val visitType = args.visitType
-        val isViewMode = args.isViewMode
+        isViewMode = args.isViewMode
         benId = args.benId
         hhId = args.hhId
 
         Log.i("ChildrenUnderFiveFormFragmentOne", "onViewCreated: $visitType == $isViewMode == $benId == $hhId")
+
+        binding.fabEdit.isVisible = isViewMode
+
+        binding.fabEdit.setOnClickListener {
+            isViewMode = false
+            binding.fabEdit.isGone = true
+            binding.btnSave.isVisible = true
+            refreshAdapter()
+        }
 
         if (visitType.equals("ORS")){
             formId = FormConstants.CHILDREN_UNDER_FIVE_ORS_FORM_ID;
@@ -140,43 +153,45 @@ class CUFYFormFragment : Fragment() {
             viewModel.loadFormSchema(benId, formId, visitType!!, true)
         }
 
-
         lifecycleScope.launch {
             viewModel.schema.collectLatest { schema ->
-                if (schema == null) {
-                    return@collectLatest
-                }
-
-                val visibleFields = viewModel.getVisibleFields().toMutableList()
-                val minVisitDate = viewModel.getMinVisitDate()
-                val maxVisitDate = viewModel.getMaxVisitDate()
-
-                adapter = FormRendererAdapter(
-                    visibleFields,
-                    isViewOnly = isViewMode,
-                    minVisitDate = minVisitDate,
-                    maxVisitDate = maxVisitDate
-                ) { field, value ->
-                    if (value == "pick_image") {
-                        currentImageField = field
-                        showImagePickerDialog()
-                    } else {
-                        field.value = value
-                        viewModel.updateFieldValue(field.fieldId, value)
-                        val updatedVisibleFields = viewModel.getVisibleFields()
-                        adapter.updateFields(updatedVisibleFields)
-                    }
-                }
-
-                recyclerView.adapter = adapter
-                saveButton.visibility = if (isViewMode) View.GONE else View.VISIBLE
+                if (schema == null) return@collectLatest
+                refreshAdapter()
             }
         }
 
-        saveButton.setOnClickListener {
+        binding.btnSave.setOnClickListener {
             handleFormSubmission()
         }
     }
+
+    private fun refreshAdapter() {
+        val visibleFields = viewModel.getVisibleFields().toMutableList()
+        val minVisitDate = viewModel.getMinVisitDate()
+        val maxVisitDate = viewModel.getMaxVisitDate()
+
+        adapter = FormRendererAdapter(
+            visibleFields,
+            isViewOnly = isViewMode,
+            minVisitDate = minVisitDate,
+            maxVisitDate = maxVisitDate
+        ) { field, value ->
+            if (value == "pick_image") {
+                currentImageField = field
+                showImagePickerDialog()
+            } else {
+                field.value = value
+                viewModel.updateFieldValue(field.fieldId, value)
+                val updatedVisibleFields = viewModel.getVisibleFields()
+                adapter.updateFields(updatedVisibleFields)
+            }
+        }
+
+        binding.recyclerView.adapter = adapter
+        binding.btnSave.isVisible = !isViewMode
+        binding.fabEdit.isVisible = isViewMode
+    }
+
     private fun showImagePickerDialog() {
         val options = arrayOf("Take Photo", "Choose from Gallery")
 
@@ -290,7 +305,7 @@ class CUFYFormFragment : Fragment() {
             ?.fieldId
 
         val errorIndex = copiedFields.indexOfFirst { it.fieldId == firstErrorFieldId }
-        if (errorIndex >= 0) recyclerView.scrollToPosition(errorIndex)
+        if (errorIndex >= 0) binding.recyclerView.scrollToPosition(errorIndex)
 
         val hasErrors = currentSchema.sections.orEmpty().any { section ->
             section.fields.orEmpty().any { it.visible && !it.errorMessage.isNullOrBlank() }
@@ -302,6 +317,7 @@ class CUFYFormFragment : Fragment() {
             findNavController().popBackStack()
         }
     }
+
     override fun onStart() {
         super.onStart()
         activity?.let {
