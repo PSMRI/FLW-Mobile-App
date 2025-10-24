@@ -48,6 +48,18 @@ class CUFYBottomSheetFragment : BottomSheetDialogFragment() {
 
         val type = arguments?.getString("type")
 
+        when (type) {
+            FormConstants.SAM_FORM_NAME -> {
+                CUFYSAMFormSyncWorker.enqueue(requireContext())
+            }
+            FormConstants.ORS_FORM_NAME -> {
+                CUFYORSFormSyncWorker.enqueue(requireContext())
+            }
+            FormConstants.IFA_FORM_NAME -> {
+                CUFYIFAFormSyncWorker.enqueue(requireContext())
+            }
+        }
+
         binding.rvAnc.adapter = ChildCareVisitListAdapter(
             ChildCareVisitListAdapter.ChildOptionsClickListener { formType, isViewMode ->
                 val benId = arguments?.getLong("benId") ?: 0L
@@ -75,15 +87,6 @@ class CUFYBottomSheetFragment : BottomSheetDialogFragment() {
 
     private fun navigateToForm(formType: String, benId: Long, hhId: Long, dob: Long, isViewMode: Boolean) {
         try {
-
-            lifecycleScope.launch(Dispatchers.IO) {
-                when (formType) {
-                    FormConstants.IFA_FORM_NAME -> CUFYIFAFormSyncWorker.enqueue(requireContext())
-                    FormConstants.SAM_FORM_NAME -> CUFYSAMFormSyncWorker.enqueue(requireContext())
-                    FormConstants.ORS_FORM_NAME -> CUFYORSFormSyncWorker.enqueue(requireContext())
-                }
-            }
-
             Log.i("ChildrenUnderFiveFormFragmentOne", "navigateToForm: $formType")
 
             findNavController().navigate(

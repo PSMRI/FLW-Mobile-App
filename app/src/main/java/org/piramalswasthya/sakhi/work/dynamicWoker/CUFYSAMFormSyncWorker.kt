@@ -44,7 +44,7 @@ class CUFYSAMFormSyncWorker @AssistedInject constructor(
                 }
             }
 
-            val unsyncedForms = repository.getUnsyncedForms()
+            val unsyncedForms = repository.getUnsyncedForms(FormConstants.CHILDREN_UNDER_FIVE_SAM_FORM_ID)
             for (form in unsyncedForms) {
                 if ((form.benId ?: -1) < 0) continue
 

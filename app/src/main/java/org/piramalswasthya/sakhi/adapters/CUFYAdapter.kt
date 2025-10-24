@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.databinding.ChildrenUnderFiveYearsItemBinding
 import org.piramalswasthya.sakhi.model.BenBasicDomain
+import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
 
 class CUFYAdapter(
     private val clickListener: ChildListClickListener
@@ -58,13 +59,13 @@ class CUFYAdapter(
 
     ) {
         fun onClickedSAM(item: BenBasicDomain) = goToForm(
-            item.benId, item.hhId, item.dob, "Check SAM"
+            item.benId, item.hhId, item.dob, FormConstants.SAM_FORM_NAME
         )
         fun onClickedORS(item: BenBasicDomain) = goToForm(
-            item.benId, item.hhId, item.dob, "ORS"
+            item.benId, item.hhId, item.dob, FormConstants.ORS_FORM_NAME
         )
         fun onClickedIFA(item: BenBasicDomain) = goToForm(
-            item.benId, item.hhId, item.dob, "IFA"
+            item.benId, item.hhId, item.dob, FormConstants.IFA_FORM_NAME
         )
     }
 
