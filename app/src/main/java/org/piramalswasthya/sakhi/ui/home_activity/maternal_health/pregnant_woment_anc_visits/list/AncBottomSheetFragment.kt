@@ -45,7 +45,7 @@ class AncBottomSheetFragment : BottomSheetDialogFragment() {
             AncVisitAdapter(AncVisitAdapter.AncVisitClickListener { benId, visitNumber,isLast ->
                 findNavController().navigate(
                     PwAncVisitsListFragmentDirections.actionPwAncVisitsFragmentToPwAncFormFragment(
-                        benId, visitNumber,isLast
+                        benId, null,visitNumber,isLast
                     )
                 )
                 this.dismiss()

@@ -34,6 +34,7 @@ import org.piramalswasthya.sakhi.databinding.LayoutViewMediaBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.ui.checkFileSize
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.form.PwAncFormFragmentDirections
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import java.io.File
 
@@ -113,27 +114,36 @@ class DeliveryOutcomeFragment : Fragment() {
         binding.btnSubmit.setOnClickListener { submitDeliveryOutcomeForm() }
 
         viewModel.state.observe(viewLifecycleOwner) { state ->
-            when (state!!) {
-                DeliveryOutcomeViewModel.State.SAVING -> {
-                    binding.llContent.visibility = View.GONE
-                    binding.pbForm.visibility = View.VISIBLE
-                }
-                DeliveryOutcomeViewModel.State.SAVE_SUCCESS -> {
-                    binding.llContent.visibility = View.VISIBLE
-                    binding.pbForm.visibility = View.GONE
-//                    Toast.makeText(context, "Save Successful!!!", Toast.LENGTH_LONG).show()
-                    WorkerUtils.triggerAdHocPncEcUpdateWorker(requireContext())
-                    findNavController().navigateUp()
-                }
-                DeliveryOutcomeViewModel.State.SAVE_FAILED -> {
-//                    Toast.makeText(context, "Something wend wong! Contact testing!", Toast.LENGTH_LONG).show()
-                    binding.llContent.visibility = View.VISIBLE
-                    binding.pbForm.visibility = View.GONE
-                }
+            when (state) {
+               is DeliveryOutcomeViewModel.State.SAVING -> toggleLoading(true)
+               is DeliveryOutcomeViewModel.State.SAVE_SUCCESS -> handleSaveSuccess(state.shouldNavigateToMdsr)
+               is DeliveryOutcomeViewModel.State.SAVE_FAILED -> toggleLoading(false)
                 else -> {}
             }
         }
     }
+
+    private fun toggleLoading(isLoading: Boolean) {
+        binding.llContent.visibility = if (isLoading) View.GONE else View.VISIBLE
+        binding.pbForm.visibility = if (isLoading) View.VISIBLE else View.GONE
+    }
+
+    private fun handleSaveSuccess(shouldNavigateToMdsr: Boolean) {
+        toggleLoading(false)
+        WorkerUtils.triggerAdHocPncEcUpdateWorker(requireContext())
+        if (shouldNavigateToMdsr) navigateToMdsr()
+        else findNavController().navigateUp()
+    }
+
+    private fun navigateToMdsr() {
+        viewModel.hhId.let {
+            val action = DeliveryOutcomeFragmentDirections.actionDeliveryOutcomeFragmentToMdsrObjectFragment(
+                hhId = it, benId = viewModel.benId
+            )
+            findNavController().navigate(action)
+        }
+    }
+
 
     private fun submitDeliveryOutcomeForm() {
         if (validateCurrentPage()) viewModel.saveForm()
