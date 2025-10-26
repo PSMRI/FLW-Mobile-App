@@ -313,7 +313,7 @@
         <item>No</item>
     </string-array>
     <string-array name="pnc_contraception_method_array">
-        <item>POST PARTUM IUCD (PPIUCD) WITHIN 48 HRS OF DELIVERY</item>
+        <item>POST PARTUM IUCD (PPIUCD) </item>
         <item>CONDOM</item>
         <item>MALE STERILIZATION</item>
         <item>FEMALE STERILIZATION</item>
