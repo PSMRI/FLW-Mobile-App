@@ -1,29 +1,34 @@
 package org.piramalswasthya.sakhi.helpers.dynamicMapper
 
-
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import org.json.JSONObject
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSubmitRequest
+import org.piramalswasthya.sakhi.model.dynamicEntity.hbyc.FormResponseJsonEntityHBYC
 import java.text.SimpleDateFormat
 import java.util.*
 
 object FormSubmitRequestMapper {
 
-    fun fromEntityList(entities: List<FormResponseJsonEntity>): List<FormSubmitRequest> {
-        return entities.mapNotNull { fromEntity(it) }
+    fun fromEntity(entity: FormResponseJsonEntity, userName: String): FormSubmitRequest? {
+        return mapCommon(entity.formDataJson, userName)
     }
 
-    fun fromEntity(entity: FormResponseJsonEntity): FormSubmitRequest? {
+    fun fromEntity(entity: FormResponseJsonEntityHBYC, userName: String): FormSubmitRequest? {
+        return mapCommon(entity.formDataJson, userName)
+    }
+
+    private fun mapCommon(formDataJson: String, userName: String): FormSubmitRequest? {
         return try {
-            val jsonObj = JSONObject(entity.formDataJson)
+            val jsonObj = JSONObject(formDataJson)
             val fieldsObj = jsonObj.optJSONObject("fields")
 
             val type = object : TypeToken<Map<String, Any?>>() {}.type
             val fieldsMap: Map<String, Any?> = Gson().fromJson(fieldsObj.toString(), type)
 
             FormSubmitRequest(
+                userName = userName,
                 formId = jsonObj.optString("formId"),
                 beneficiaryId = jsonObj.optLong("beneficiaryId"),
                 houseHoldId = jsonObj.optLong("houseHoldId"),
@@ -36,7 +41,6 @@ object FormSubmitRequestMapper {
         }
     }
 
-
     private fun convertDateToIso(input: String): String {
         return try {
             val inputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
@@ -44,7 +48,7 @@ object FormSubmitRequestMapper {
             val date = inputFormat.parse(input)
             outputFormat.format(date!!)
         } catch (e: Exception) {
-            input // fallback if not a date
+            input
         }
     }
 }

@@ -20,8 +20,6 @@ class MaaMeetingDownsyncWorker @AssistedInject constructor(
 
     companion object {
         const val name = "MaaMeetingDownsyncWorker"
-        val constraint = Constraints.Builder()
-            .build()
     }
 
     override suspend fun doWork(): Result {

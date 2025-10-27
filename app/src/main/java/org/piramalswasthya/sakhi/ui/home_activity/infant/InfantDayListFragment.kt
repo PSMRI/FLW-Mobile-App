@@ -22,6 +22,7 @@ import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.child_care.infant_list.InfantListViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.infant.hbnc.HBNCFormViewModel
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.HBNC_FORM_ID
+import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.HBYC_FORM_ID
 import org.piramalswasthya.sakhi.work.dynamicWoker.FormSyncWorker
 
 @AndroidEntryPoint
@@ -62,7 +63,7 @@ class InfantDayListFragment : Fragment() {
                     benId, hhId,
                     visitDay = card.visitDay,
                     isViewMode = !card.isEditable,
-                    formId = HBNC_FORM_ID
+                    formId = HBYC_FORM_ID
                 )
             findNavController().navigate(action)
         }

@@ -1,8 +1,8 @@
 package org.piramalswasthya.sakhi.network
 
-import okhttp3.ResponseBody
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.ResponseBody
 import org.piramalswasthya.sakhi.model.*
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSubmitRequest
@@ -332,6 +332,7 @@ interface AmritApiService {
         @Path("formId") formId: String
     ): Response<ApiResponse<FormSchemaDto>>
 
+
     @POST("flw-api/child-care/hbncVisit/saveAll")
     suspend fun submitForm(
         @Body request: List<FormSubmitRequest>
@@ -343,4 +344,31 @@ interface AmritApiService {
         @Body request: HBNCVisitRequest
     ): Response<HBNCVisitListResponse>
 
+
+    @POST("flw-api/child-care/hbycVisit/saveAll")
+    suspend fun submitFormhbyc(
+        @Body request: List<FormSubmitRequest>
+    ): Response<Unit>
+
+
+    @POST("flw-api/child-care/hbycVisit/getAll")
+    suspend fun getAllHbycVisits(
+        @Body request: HBNCVisitRequest
+    ): Response<HBNCVisitListResponse>
+
+    @Multipart
+    @POST("flw-api/uwin/session/saveAll")
+    suspend fun saveUwinSession(
+        @Part("meetingDate") meetingDate: RequestBody,
+        @Part("place") place: RequestBody,
+        @Part("participants") participants: RequestBody,
+        @Part("ashaId") ashaId: RequestBody,
+        @Part("createdBy") createdBy: RequestBody,
+        @Part images: List<MultipartBody.Part>? = null
+    ): Response<ResponseBody>
+
+    @POST("flw-api/uwin/session/getAll")
+    suspend fun getAllUwinSessions(
+        @Body request: UwinGetAllRequest
+    ): Response<ResponseBody>
 }
