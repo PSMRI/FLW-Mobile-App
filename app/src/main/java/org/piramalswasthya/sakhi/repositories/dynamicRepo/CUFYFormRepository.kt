@@ -84,8 +84,6 @@ class CUFYFormRepository @Inject constructor(
 
     suspend fun getSavedSchema(formId: String) = formSchemaDao.getSchema(formId)
 
-    suspend fun getInfantByRchId(benId: Long) = jsonResponseDao.getSyncedVisitsByRchId(benId)
-
     suspend fun getSyncedVisitsByRchId(benId: Long): List<CUFYFormResponseJsonEntity> =
         jsonResponseDao.getSyncedVisitsByRchId(benId)
 

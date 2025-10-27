@@ -140,7 +140,7 @@ class CUFYFormFragment : Fragment() {
             formId = FormConstants.CHILDREN_UNDER_FIVE_SAM_FORM_ID;
         }
 
-        viewModel.loadVisitDates(benId)
+//        viewModel.loadVisitDates(benId)
 
         infantListViewModel.getBenById(benId) { ben ->
             infantBinding.btnHBNC.visibility = View.GONE
@@ -249,9 +249,6 @@ class CUFYFormFragment : Fragment() {
                             null
                         }
 
-                        val minVisitDate = viewModel.calculateDueDate(deliveryDate, currentVisitDay)
-                            ?.let { Date(it) }
-
                         val errorMessage = when {
                             visitDate == null -> "Invalid visit date"
                             today != null && visitDate.after(today) -> "Visit Date cannot be after today's date"
@@ -263,14 +260,6 @@ class CUFYFormFragment : Fragment() {
                                         previousVisitDate
                                     )
                                 })"
-                            minVisitDate != null && visitDate.before(minVisitDate) ->
-                                "Visit Date should be on or after due date (${
-                                    sdf.format(
-                                        minVisitDate
-                                    )
-                                })"
-
-
 
                             else -> null
                         }

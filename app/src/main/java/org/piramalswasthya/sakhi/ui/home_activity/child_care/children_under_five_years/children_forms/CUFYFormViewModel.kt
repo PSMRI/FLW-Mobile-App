@@ -32,13 +32,12 @@ class CUFYFormViewModel @Inject constructor(
 
     private val _infant = MutableStateFlow<CUFYFormResponseJsonEntity?>(null)
     val infant: StateFlow<CUFYFormResponseJsonEntity?> = _infant
-    var lastVisitDay: String? = null
+//    var lastVisitDay: String? = null
     var previousVisitDate: Date? = null
     private val _syncedVisitList = MutableStateFlow<List<CUFYFormResponseJsonEntity>>(emptyList())
-    val syncedVisitList: StateFlow<List<CUFYFormResponseJsonEntity>> = _syncedVisitList
-    private val visitOrder = listOf("1st Day", "3rd Day", "7th Day", "14th Day", "21st Day", "28th Day", "42nd Day")
-    private var benId: Long = 0L
-    private var hhId: Long = 0L
+//    private val visitOrder = listOf("1st Day", "3rd Day", "7th Day", "14th Day", "21st Day", "28th Day", "42nd Day")
+//    private var benId: Long = 0L
+//    private var hhId: Long = 0L
     var visitDay: String = ""
     private var isViewMode: Boolean = false
 
@@ -97,7 +96,6 @@ class CUFYFormViewModel @Inject constructor(
                 section.fields.orEmpty().forEach { field ->
                     field.value = when (field.fieldId) {
                         "visit_day" -> visitDay
-                        "due_date" -> calculateDueDate(31212421423, visitDay)?.let { formatDate(it) } ?: ""
                         else -> savedFieldValues[field.fieldId] ?: field.default
                     }
 
@@ -141,10 +139,10 @@ class CUFYFormViewModel @Inject constructor(
 
         _schema.value = currentSchema.copy()
     }
-    companion object {
-        private const val OTHER_PLACE_OF_DEATH_ID = 8
-        private const val DEFAULT_DEATH_ID = -1
-    }
+//    companion object {
+//        private const val OTHER_PLACE_OF_DEATH_ID = 8
+//        private const val DEFAULT_DEATH_ID = -1
+//    }
     suspend fun saveFormResponses(benId: Long, hhId: Long) {
         val currentSchema = _schema.value ?: return
         val formId = currentSchema.formId
@@ -157,34 +155,6 @@ class CUFYFormViewModel @Inject constructor(
             .associate { it.fieldId to it.value }
 
         val visitDate = fieldMap["visit_date"]?.toString() ?: "N/A"
-        val isBabyAlive = fieldMap["is_baby_alive"]?.toString().orEmpty()
-        if (isBabyAlive.equals("No", ignoreCase = true)) {
-            val reasonOfDeath = fieldMap["reason_for_death"]?.toString().orEmpty()
-            val placeOfDeath = fieldMap["place_of_death"]?.toString().orEmpty()
-            val otherPlaceOfDeath = fieldMap["other_place_of_death"]?.toString().orEmpty()
-            val dateOfDeath = fieldMap["date_of_death"]?.toString().orEmpty()
-
-            try {
-                benRepo.getBenFromId(benId)?.let { ben ->
-                    ben.apply {
-                        isDeath = true
-                        isDeathValue = "Death"
-                        this.dateOfDeath = dateOfDeath
-                        this.reasonOfDeath = reasonOfDeath
-                        reasonOfDeathId = -1
-                        this.placeOfDeath = placeOfDeath
-                        placeOfDeathId = if (!otherPlaceOfDeath.isNullOrBlank()) OTHER_PLACE_OF_DEATH_ID else DEFAULT_DEATH_ID
-                        this.otherPlaceOfDeath = otherPlaceOfDeath
-                        if (this.processed != "N") this.processed = "U"
-                        syncState = SyncState.UNSYNCED
-                    }
-                    benRepo.updateRecord(ben)
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-
 
         val wrappedJson = JSONObject().apply {
             put("formId", formId)
@@ -210,36 +180,6 @@ class CUFYFormViewModel @Inject constructor(
         loadSyncedVisitList(benId)
     }
 
-    fun loadInfant(benId: Long, hhId: Long) {
-        this.benId = benId
-        this.hhId = hhId
-        viewModelScope.launch {
-            _infant.value = repository.getInfantByRchId(benId).firstOrNull()
-        }
-    }
-    fun calculateDueDate(dobMillis: Long, visitDay: String): Long? {
-        return try {
-            val calendar = Calendar.getInstance().apply {
-                time = Date(dobMillis)
-            }
-            val daysToAdd = when (visitDay.trim()) {
-                "1st Day" -> 0
-                "3rd Day" -> 2
-                "7th Day" -> 6
-                "14th Day" -> 13
-                "21st Day" -> 20
-                "28th Day" -> 27
-                "42nd Day" -> 41
-                else -> return null
-            }
-
-            calendar.add(Calendar.DAY_OF_MONTH, daysToAdd)
-            calendar.timeInMillis
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
-    }
     fun getVisibleFields(): List<FormField> {
         return _schema.value?.sections?.flatMap { section ->
             section.fields.filter { it.visible }.map { field ->
@@ -279,85 +219,45 @@ class CUFYFormViewModel @Inject constructor(
         } ?: emptyList()
     }
 
-    fun getVisitCardList(benId: Long): List<VisitCard> {
-        val currentBenId = benId
-        val relevantVisits = _syncedVisitList.value.filter { it.benId == currentBenId }
-        val completed = relevantVisits.map { it.visitDate }.toSet()
-        return visitOrder.map { day ->
-            val isCompleted = completed.contains(day)
-
-            val isEditable = when (day) {
-                "1st Day" -> !isCompleted
-                "3rd Day" -> !isCompleted && completed.contains("1st Day")
-                "7th Day" -> !isCompleted && completed.contains("3rd Day")
-                "14th Day", "21st Day", "28th Day" -> !isCompleted && completed.contains("7th Day")
-                "42nd Day" -> !isCompleted && completed.contains("28th Day")
-                else -> false
-            }
-
-            val visit = relevantVisits.find { it.visitDate == day }
-            val visitDate: String = visit?.formDataJson?.let { JSONObject(it).optString("visitDate", null) } ?: "-"
-            val isBabyDeath = visit?.formDataJson?.let {
-                val root = JSONObject(it)
-                val fieldsJson = root.optJSONObject("fields") ?: JSONObject()
-                val isAliveValue = fieldsJson.optString("is_baby_alive", "Yes")
-                isAliveValue.equals("No", ignoreCase = true)
-
-
-            } ?: false
-            VisitCard(
-                visitDay = day,
-                visitDate = visitDate,
-                isCompleted = isCompleted,
-                isEditable = isEditable,
-                isBabyDeath =isBabyDeath
-            )
-        }
-    }
-
-    fun formatDate(epochMillis: Long): String {
-        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-        return sdf.format(Date(epochMillis))
-    }
-    private suspend fun getLastVisit(benId: Long): CUFYFormResponseJsonEntity? {
-        val visits = repository.getSyncedVisitsByRchId(benId)
-        return visits
-            .filter { it.visitDate in visitOrder }
-            .maxByOrNull { visitOrder.indexOf(it.visitDate) }
-    }
-
-    suspend fun getLastVisitDay(benId: Long): String? {
-        return getLastVisit(benId)?.visitDate
-    }
-    suspend fun getLastVisitDate(benId: Long): Date? {
-
-        val visits = repository.getSyncedVisitsByRchId(benId)
-        val lastVisit = visits
-            .filter { it.visitDate in visitOrder }
-            .maxByOrNull { visitOrder.indexOf(it.visitDate) }
-
-        return getLastVisit(benId)?.formDataJson?.let {
-            try {
-                val json = JSONObject(it)
-                val fields = json.optJSONObject("fields")
-                val dateStr = fields?.optString("visit_date")
-                if (!dateStr.isNullOrBlank()) {
-                    SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).parse(dateStr)
-                } else {
-                    null
-                }
-            } catch (e: Exception) {
-                null
-            }
-        }
-    }
-    fun loadVisitDates(benId: Long) {
-        viewModelScope.launch {
-            previousVisitDate = getLastVisitDate(benId)
-            lastVisitDay = getLastVisitDay(benId)
-
-        }
-    }
+//    private suspend fun getLastVisit(benId: Long): CUFYFormResponseJsonEntity? {
+//        val visits = repository.getSyncedVisitsByRchId(benId)
+//        return visits
+//            .filter { it.visitDate in visitOrder }
+//            .maxByOrNull { visitOrder.indexOf(it.visitDate) }
+//    }
+//
+//    suspend fun getLastVisitDay(benId: Long): String? {
+//        return getLastVisit(benId)?.visitDate
+//    }
+//    suspend fun getLastVisitDate(benId: Long): Date? {
+//
+//        val visits = repository.getSyncedVisitsByRchId(benId)
+//        val lastVisit = visits
+//            .filter { it.visitDate in visitOrder }
+//            .maxByOrNull { visitOrder.indexOf(it.visitDate) }
+//
+//        return getLastVisit(benId)?.formDataJson?.let {
+//            try {
+//                val json = JSONObject(it)
+//                val fields = json.optJSONObject("fields")
+//                val dateStr = fields?.optString("visit_date")
+//                if (!dateStr.isNullOrBlank()) {
+//                    SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).parse(dateStr)
+//                } else {
+//                    null
+//                }
+//            } catch (e: Exception) {
+//                null
+//            }
+//        }
+//    }
+//    fun loadVisitDates(benId: Long) {
+//        viewModelScope.launch {
+//            previousVisitDate = getLastVisitDate(benId)
+//            lastVisitDay = getLastVisitDay(benId)
+//
+//        }
+//    }
     fun getMaxVisitDate(): Date {
         val today = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, 0)
@@ -391,17 +291,6 @@ class CUFYFormViewModel @Inject constructor(
                 time = it
                 add(Calendar.DATE, 1)
             }.time
-        }
-    }
-
-    fun checkIfBenDead(benId: Long) {
-        viewModelScope.launch {
-            try {
-                val dead = benRepo.isBenDead(benId)
-                _isBenDead.value = dead
-            } catch (e: Exception) {
-                _isBenDead.value = false
-            }
         }
     }
 }
