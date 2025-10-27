@@ -171,6 +171,7 @@
     <string name="alert">Alert !</string>
     <string name="missing_field">MISSING FIELD</string>
     <string name="suspected_hrp_and_ncd_case">SUSPECTED HRP AND NCD CASE!</string>
+    <string name="isrefer">REFER</string>
     <string name="ok">Ok</string>
     <string name="suspected_hrp_case">SUSPECTED HRP CASE!</string>
     <string name="suspected_ncd_case_please_visit_nearest_hwc_or_call">Suspected NCD case, please visit nearest HWC or call\n 104.</string>
@@ -197,6 +198,7 @@
     <string name="filled_on">"Filled on "</string>
     <string name="save">Save</string>
     <string name="tb_suspected_alert">Refer to MO and collect the Sputum sample</string>
+    <string name="ncd_refer_alert">Do you want to refer to HWC facility?</string>
     <string name="tb_suspected_alert_positive">Refer to MO</string>
     <string name="tb_suspected_family_alert">Refer to MO or inform ANM/MPW to tracing of all family members</string>
     <string name="is_sputum_sample_collected">Is Sputum sample collected?</string>

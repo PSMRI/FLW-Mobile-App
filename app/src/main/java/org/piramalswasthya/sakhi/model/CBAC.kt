@@ -14,6 +14,7 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.room.SyncState
 import java.text.SimpleDateFormat
 import java.util.Locale
+import java.util.TimeZone
 
 @Entity(
     tableName = "CBAC",
@@ -123,332 +124,445 @@ data class CbacCache(
     var suspected_ncd_diseases: String? = null,
     var confirmed_ncd_diseases: String? = null,
     var diagnosis_status: String? = null,
-
+    var isReffered: Boolean? = false,
     var syncState: SyncState
 
 
 ) {
-    fun asPostModel(hhId: Long, benGender: Gender, resources: Resources): CbacPost {
-        return CbacPost(
-            houseoldId = hhId,
-            beneficiaryId = benId,
-            ashaid = ashaId,
-            filledDate = getDateTimeStringFromLong(fillDate) ?: "",
-            cbac_age = resources.getStringArray(R.array.cbac_age)[cbac_age_posi - 1],
-            cbac_age_posi = cbac_age_posi,
-            cbac_smoke = resources.getStringArray(R.array.cbac_smoke)[cbac_smoke_posi - 1],
-            cbac_smoke_posi = cbac_smoke_posi,
-            cbac_alcohol = resources.getStringArray(R.array.cbac_alcohol)[cbac_alcohol_posi - 1],
-            cbac_alcohol_posi = cbac_alcohol_posi,
-            cbac_waist = if (benGender == Gender.MALE)
+//    fun asPostModel(hhId: Long, benGender: Gender, resources: Resources): CbacPost {
+//        return CbacPost(
+//            houseoldId = hhId,
+//            beneficiaryId = benId,
+//            ashaid = ashaId,
+//            filledDate = getDateTimeStringFromLong(fillDate) ?: "",
+//            cbac_age = resources.getStringArray(R.array.cbac_age)[cbac_age_posi - 1],
+//            cbac_age_posi = cbac_age_posi,
+//            cbac_smoke = resources.getStringArray(R.array.cbac_smoke)[cbac_smoke_posi - 1],
+//            cbac_smoke_posi = cbac_smoke_posi,
+//            cbac_alcohol = resources.getStringArray(R.array.cbac_alcohol)[cbac_alcohol_posi - 1],
+//            cbac_alcohol_posi = cbac_alcohol_posi,
+//            cbac_waist = if (benGender == Gender.MALE)
+//                resources.getStringArray(R.array.cbac_waist_mes_male)[cbac_waist_posi - 1]
+//            else
+//                resources.getStringArray(R.array.cbac_waist_mes_female)[cbac_waist_posi - 1],
+//            cbac_waist_posi = cbac_waist_posi,
+//            cbac_pa = resources.getStringArray(R.array.cbac_pa)[cbac_pa_posi - 1],
+//            cbac_pa_posi = cbac_pa_posi,
+//            cbac_familyhistory = resources.getStringArray(R.array.cbac_fh)[cbac_familyhistory_posi - 1],
+//            cbac_familyhistory_posi = cbac_familyhistory_posi,
+//            total_score = total_score,
+//            cbac_sufferingtb = when (cbac_sufferingtb_pos) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_fh_tb)
+//            },
+//            cbac_sufferingtb_pos = cbac_sufferingtb_pos,
+//            cbac_antitbdrugs = when (cbac_antitbdrugs_pos) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_taking_tb_drug)
+//            },
+//            cbac_antitbdrugs_pos = cbac_antitbdrugs_pos,
+//            cbac_tbhistory = when (cbac_tbhistory_pos) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_histb)
+//            },
+//            cbac_tbhistory_pos = cbac_tbhistory_pos,
+//            cbac_sortnesofbirth = when (cbac_sortnesofbirth_pos) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_breath)
+//            },
+//            cbac_sortnesofbirth_pos = cbac_sortnesofbirth_pos,
+//            cbac_coughing = when (cbac_coughing_pos) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_coughing)
+//            },
+//            cbac_coughing_pos = cbac_coughing_pos,
+//            cbac_bloodsputum = when (cbac_bloodsputum_pos) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_blsputum)
+//            },
+//            cbac_bloodsputum_pos = cbac_bloodsputum_pos,
+//            cbac_fivermore = when (cbac_fivermore_pos) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_feverwks)
+//            },
+//            cbac_fivermore_pos = cbac_fivermore_pos,
+//            cbac_loseofweight = when (cbac_loseofweight_pos) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_lsweight)
+//            },
+//            cbac_loseofweight_pos = cbac_loseofweight_pos,
+//            cbac_nightsweats = when (cbac_nightsweats_pos) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_ntswets)
+//            },
+//            cbac_nightsweats_pos = cbac_nightsweats_pos,
+//            cbac_historyoffits = when (cbac_historyoffits_pos) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_hifits)
+//            },
+//            cbac_historyoffits_pos = cbac_historyoffits_pos,
+//            cbac_difficultyinmouth = when (cbac_difficultyinmouth_pos) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_difmouth)
+//            },
+//            cbac_difficultyinmouth_pos = cbac_difficultyinmouth_pos,
+//            cbac_uicers = when (cbac_uicers_pos) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_recurrent_ulceration)
+//            },
+//            cbac_uicers_pos = cbac_uicers_pos,
+//            cbac_toneofvoice = when (cbac_toneofvoice_pos) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_voice)
+//            },
+//            cbac_toneofvoice_pos = cbac_toneofvoice_pos,
+//            cbac_lumpinbreast = when (cbac_lumpinbreast_pos) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_lumpbrest)
+//            },
+//            cbac_lumpinbreast_pos = cbac_lumpinbreast_pos,
+//            cbac_blooddischage = when (cbac_blooddischage_pos) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_nipple)
+//            },
+//            cbac_blooddischage_pos = cbac_blooddischage_pos,
+//            cbac_changeinbreast = when (cbac_changeinbreast_pos) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_breast)
+//            },
+//            cbac_changeinbreast_pos = cbac_changeinbreast_pos,
+//            cbac_bleedingbtwnperiods = when (cbac_bleedingbtwnperiods_pos) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_blperiods)
+//            },
+//            cbac_bleedingbtwnperiods_pos = cbac_bleedingbtwnperiods_pos,
+//            cbac_bleedingaftermenopause = when (cbac_bleedingaftermenopause_pos) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_blmenopause)
+//            },
+//            cbac_bleedingaftermenopause_pos = cbac_bleedingaftermenopause_pos,
+//            cbac_bleedingafterintercourse = when (cbac_bleedingafterintercourse_pos) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_blintercorse)
+//            },
+//            cbac_bleedingafterintercourse_pos = cbac_bleedingafterintercourse_pos,
+//            cbac_foulveginaldischarge = when (cbac_foulveginaldischarge_pos) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_fouldis)
+//            },
+//            cbac_foulveginaldischarge_pos = cbac_foulveginaldischarge_pos,
+//            cbac_referpatient_mo = cbac_referpatient_mo ?: "0",
+//            cbac_tracing_all_fm = cbac_tracing_all_fm ?: "0",
+//            cbac_sputemcollection = cbac_sputemcollection ?: "0",
+//            serverUpdatedStatus = serverUpdatedStatus,
+//            createdBy = createdBy!!,
+//            createdDate = getDateTimeStringFromLong(createdDate)!!,
+//            ProviderServiceMapID = ProviderServiceMapID,
+//            VanID = VanID,
+//            Processed = Processed!!,
+//            Countyid = Countyid,
+//            stateid = stateid,
+//            districtid = districtid,
+//            districtname = districtname,
+//            villageid = villageid,
+//            hrp_suspected = hrp_suspected ?: false,
+//            suspected_hrp = suspected_hrp ?: "N",
+//            ncd_suspected = ncd_suspected ?: "N",
+//            suspected_ncd = suspected_ncd ?: "N",
+//            suspected_tb = suspected_tb ?: "N",
+//            suspected_ncd_diseases = suspected_ncd_diseases ?: "N",
+//            cbac_reg_id = cbac_reg_id,
+//            ncd_suspected_cancer = false,
+//            ncd_suspected_hypertension = false,
+//            ncd_suspected_breastCancer = false,
+//            ncd_suspected_diabettis = false,
+//            ncd_confirmed = ncd_confirmed ?: false,
+//            confirmed_ncd = confirmed_ncd ?: "No",
+//            confirmed_hrp = null,
+//            confirmed_tb = null,
+//            suspected_confirmed_tb = false,
+//            confirmed_ncd_diseases = null,
+//            diagnosis_status = null,
+//            cbac_growth_in_mouth = when (cbac_growth_in_mouth_posi) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_Any_Growth)
+//            },
+//            cbac_growth_in_mouth_posi = cbac_growth_in_mouth_posi,
+//            cbac_white_or_red_patch = when (cbac_white_or_red_patch_posi) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_Any_white)
+//            },
+//            cbac_white_or_red_patch_posi = cbac_white_or_red_patch_posi,
+//            cbac_Pain_while_chewing = when (cbac_Pain_while_chewing_posi) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_Pain_while_chewing)
+//            },
+//            cbac_Pain_while_chewing_posi = cbac_Pain_while_chewing_posi,
+//            cbac_hyper_pigmented_patch = when (cbac_hyper_pigmented_patch_posi) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_Any_hyper_pigmented)
+//            },
+//            cbac_hyper_pigmented_patch_posi = cbac_hyper_pigmented_patch_posi,
+//            cbac_any_thickend_skin = when (cbac_any_thickend_skin_posi) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_any_thickend_skin)
+//            },
+//            cbac_any_thickend_skin_posi = cbac_any_thickend_skin_posi,
+//            cbac_nodules_on_skin = when (cbac_nodules_on_skin_posi) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_any_nodules_skin)
+//            },
+//            cbac_nodules_on_skin_posi = cbac_nodules_on_skin_posi,
+//            cbac_numbness_on_palm = when (cbac_numbness_on_palm_posi) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_Recurrent_numbness)
+//            },
+//            cbac_numbness_on_palm_posi = cbac_numbness_on_palm_posi,
+//            cbac_clawing_of_fingers = when (cbac_clawing_of_fingers_posi) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_Clawing_of_fingers)
+//            },
+//            cbac_clawing_of_fingers_posi = cbac_clawing_of_fingers_posi,
+//            cbac_tingling_or_numbness = when (cbac_tingling_or_numbness_posi) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_Tingling_or_Numbness)
+//            },
+//            cbac_tingling_or_numbness_posi = cbac_tingling_or_numbness_posi,
+//            cbac_cloudy = when (cbac_cloudy_posi) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_recurrent_cloudy)
+//            },
+//            cbac_cloudy_posi = cbac_cloudy_posi,
+//            cbac_diffreading = when (cbac_diffreading_posi) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_recurrent_diffculty_reading)
+//            },
+//            cbac_diffreading_posi = cbac_diffreading_posi,
+//            cbac_pain_ineyes = when (cbac_pain_ineyes_posi) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_recurrent_pain_eyes)
+//            },
+//            cbac_pain_ineyes_posi = cbac_pain_ineyes_posi,
+//            cbac_redness_ineyes = when (cbac_redness_ineyes_posi) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_recurrent_redness_eyes)
+//            },
+//            cbac_redness_ineyes_posi = cbac_redness_ineyes_posi,
+//            cbac_diff_inhearing = when (cbac_diff_inhearing_posi) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_recurrent_diff_hearing)
+//            },
+//            cbac_diff_inhearing_posi = cbac_diff_inhearing_posi,
+//            cbac_inability_close_eyelid = when (cbac_inability_close_eyelid_posi) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_Inability_close_eyelid)
+//            },
+//            cbac_rec_tingling = when (cbac_tingling_palm_posi) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_recurrent_tingling)
+//            },
+//            cbac_rec_tingling_posi = cbac_tingling_palm_posi,
+//            cbac_inability_close_eyelid_posi = cbac_inability_close_eyelid_posi,
+//            cbac_diff_holding_obj = when (cbac_diff_holding_obj_posi) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_diff_holding_objects)
+//            },
+//            cbac_diff_holding_obj_posi = cbac_diff_holding_obj_posi,
+//            cbac_weekness_in_feet = when (cbac_weekness_in_feet_posi) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_Weekness_in_feet)
+//            },
+//            cbac_weekness_in_feet_posi = cbac_weekness_in_feet_posi,
+//            cbac_feeling_unsteady = when (cbac_feeling_unsteady_posi) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_unsteady)
+//            },
+//            cbac_feeling_unsteady_posi = cbac_feeling_unsteady_posi,
+//            cbac_suffer_physical_disability = when (cbac_suffer_physical_disability_posi) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_pd_rm)
+//            },
+//            cbac_suffer_physical_disability_posi = cbac_suffer_physical_disability_posi,
+//            cbac_needing_help = when (cbac_needing_help_posi) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_nhop)
+//            },
+//            cbac_fuel_used = if (cbac_fuel_used_posi > 0) resources.getStringArray(R.array.cbac_type_Cooking_fuel)[cbac_fuel_used_posi - 1] else "",
+//            cbac_fuel_used_posi = cbac_fuel_used_posi,
+//            cbac_occupational_exposure = if (cbac_occupational_exposure_posi > 0) resources.getStringArray(
+//                R.array.cbac_type_occupational_exposure
+//            )[cbac_occupational_exposure_posi - 1] else "",
+//            cbac_occupational_exposure_posi = cbac_occupational_exposure_posi,
+//            cbac_little_interest = if (cbac_little_interest_posi > 0) resources.getStringArray(R.array.cbac_li)[cbac_little_interest_posi - 1] else "",
+//            cbac_little_interest_posi = cbac_little_interest_posi,
+//            cbac_feeling_down = if (cbac_feeling_down_posi > 0) resources.getStringArray(R.array.cbac_fd)[cbac_feeling_down_posi - 1] else "",
+//            cbac_feeling_down_posi = cbac_feeling_down_posi,
+//            cbac_little_interest_score = cbac_little_interest_score,
+//            cbac_feeling_down_score = cbac_feeling_down_score,
+//            cbac_needing_help_posi = cbac_needing_help_posi,
+//            cbac_forgetting_names = when (cbac_forgetting_names_posi) {
+//                1 -> "Yes"
+//                2 -> "No"
+//                else -> resources.getString(R.string.cbac_forget_names)
+//            },
+//            cbac_forgetting_names_posi = cbac_forgetting_names_posi,
+//
+//            )
+//    }
+
+
+    fun asPostModel(
+        hhId: Long,
+        benGender: Gender,
+        resources: Resources,
+    ): CbacPostNew {
+        return CbacPostNew(
+            cbacAge = resources.getStringArray(R.array.cbac_age)[cbac_age_posi - 1],
+            cbacAgeScore = cbac_age_posi,
+            cbacConsumeGutka = resources.getStringArray(R.array.cbac_smoke)[cbac_smoke_posi - 1],
+            cbacConsumeGutkaScore = cbac_smoke_posi,
+            cbacAlcohol = resources.getStringArray(R.array.cbac_alcohol)[cbac_alcohol_posi - 1],
+            cbacAlcoholScore = cbac_alcohol_posi,
+
+            cbacWaistMale = if (benGender == Gender.MALE)
                 resources.getStringArray(R.array.cbac_waist_mes_male)[cbac_waist_posi - 1]
-            else
-                resources.getStringArray(R.array.cbac_waist_mes_female)[cbac_waist_posi - 1],
-            cbac_waist_posi = cbac_waist_posi,
-            cbac_pa = resources.getStringArray(R.array.cbac_pa)[cbac_pa_posi - 1],
-            cbac_pa_posi = cbac_pa_posi,
-            cbac_familyhistory = resources.getStringArray(R.array.cbac_fh)[cbac_familyhistory_posi - 1],
-            cbac_familyhistory_posi = cbac_familyhistory_posi,
-            total_score = total_score,
-            cbac_sufferingtb = when (cbac_sufferingtb_pos) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_fh_tb)
-            },
-            cbac_sufferingtb_pos = cbac_sufferingtb_pos,
-            cbac_antitbdrugs = when (cbac_antitbdrugs_pos) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_taking_tb_drug)
-            },
-            cbac_antitbdrugs_pos = cbac_antitbdrugs_pos,
-            cbac_tbhistory = when (cbac_tbhistory_pos) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_histb)
-            },
-            cbac_tbhistory_pos = cbac_tbhistory_pos,
-            cbac_sortnesofbirth = when (cbac_sortnesofbirth_pos) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_breath)
-            },
-            cbac_sortnesofbirth_pos = cbac_sortnesofbirth_pos,
-            cbac_coughing = when (cbac_coughing_pos) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_coughing)
-            },
-            cbac_coughing_pos = cbac_coughing_pos,
-            cbac_bloodsputum = when (cbac_bloodsputum_pos) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_blsputum)
-            },
-            cbac_bloodsputum_pos = cbac_bloodsputum_pos,
-            cbac_fivermore = when (cbac_fivermore_pos) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_feverwks)
-            },
-            cbac_fivermore_pos = cbac_fivermore_pos,
-            cbac_loseofweight = when (cbac_loseofweight_pos) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_lsweight)
-            },
-            cbac_loseofweight_pos = cbac_loseofweight_pos,
-            cbac_nightsweats = when (cbac_nightsweats_pos) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_ntswets)
-            },
-            cbac_nightsweats_pos = cbac_nightsweats_pos,
-            cbac_historyoffits = when (cbac_historyoffits_pos) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_hifits)
-            },
-            cbac_historyoffits_pos = cbac_historyoffits_pos,
-            cbac_difficultyinmouth = when (cbac_difficultyinmouth_pos) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_difmouth)
-            },
-            cbac_difficultyinmouth_pos = cbac_difficultyinmouth_pos,
-            cbac_uicers = when (cbac_uicers_pos) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_recurrent_ulceration)
-            },
-            cbac_uicers_pos = cbac_uicers_pos,
-            cbac_toneofvoice = when (cbac_toneofvoice_pos) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_voice)
-            },
-            cbac_toneofvoice_pos = cbac_toneofvoice_pos,
-            cbac_lumpinbreast = when (cbac_lumpinbreast_pos) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_lumpbrest)
-            },
-            cbac_lumpinbreast_pos = cbac_lumpinbreast_pos,
-            cbac_blooddischage = when (cbac_blooddischage_pos) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_nipple)
-            },
-            cbac_blooddischage_pos = cbac_blooddischage_pos,
-            cbac_changeinbreast = when (cbac_changeinbreast_pos) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_breast)
-            },
-            cbac_changeinbreast_pos = cbac_changeinbreast_pos,
-            cbac_bleedingbtwnperiods = when (cbac_bleedingbtwnperiods_pos) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_blperiods)
-            },
-            cbac_bleedingbtwnperiods_pos = cbac_bleedingbtwnperiods_pos,
-            cbac_bleedingaftermenopause = when (cbac_bleedingaftermenopause_pos) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_blmenopause)
-            },
-            cbac_bleedingaftermenopause_pos = cbac_bleedingaftermenopause_pos,
-            cbac_bleedingafterintercourse = when (cbac_bleedingafterintercourse_pos) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_blintercorse)
-            },
-            cbac_bleedingafterintercourse_pos = cbac_bleedingafterintercourse_pos,
-            cbac_foulveginaldischarge = when (cbac_foulveginaldischarge_pos) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_fouldis)
-            },
-            cbac_foulveginaldischarge_pos = cbac_foulveginaldischarge_pos,
-            cbac_referpatient_mo = cbac_referpatient_mo ?: "0",
-            cbac_tracing_all_fm = cbac_tracing_all_fm ?: "0",
-            cbac_sputemcollection = cbac_sputemcollection ?: "0",
-            serverUpdatedStatus = serverUpdatedStatus,
-            createdBy = createdBy!!,
-            createdDate = getDateTimeStringFromLong(createdDate)!!,
-            ProviderServiceMapID = ProviderServiceMapID,
-            VanID = VanID,
-            Processed = Processed!!,
-            Countyid = Countyid,
-            stateid = stateid,
-            districtid = districtid,
-            districtname = districtname,
-            villageid = villageid,
-            hrp_suspected = hrp_suspected ?: false,
-            suspected_hrp = suspected_hrp ?: "N",
-            ncd_suspected = ncd_suspected ?: "N",
-            suspected_ncd = suspected_ncd ?: "N",
-            suspected_tb = suspected_tb ?: "N",
-            suspected_ncd_diseases = suspected_ncd_diseases ?: "N",
-            cbac_reg_id = cbac_reg_id,
-            ncd_suspected_cancer = false,
-            ncd_suspected_hypertension = false,
-            ncd_suspected_breastCancer = false,
-            ncd_suspected_diabettis = false,
-            ncd_confirmed = ncd_confirmed ?: false,
-            confirmed_ncd = confirmed_ncd ?: "No",
-            confirmed_hrp = null,
-            confirmed_tb = null,
-            suspected_confirmed_tb = false,
-            confirmed_ncd_diseases = null,
-            diagnosis_status = null,
-            cbac_growth_in_mouth = when (cbac_growth_in_mouth_posi) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_Any_Growth)
-            },
-            cbac_growth_in_mouth_posi = cbac_growth_in_mouth_posi,
-            cbac_white_or_red_patch = when (cbac_white_or_red_patch_posi) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_Any_white)
-            },
-            cbac_white_or_red_patch_posi = cbac_white_or_red_patch_posi,
-            cbac_Pain_while_chewing = when (cbac_Pain_while_chewing_posi) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_Pain_while_chewing)
-            },
-            cbac_Pain_while_chewing_posi = cbac_Pain_while_chewing_posi,
-            cbac_hyper_pigmented_patch = when (cbac_hyper_pigmented_patch_posi) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_Any_hyper_pigmented)
-            },
-            cbac_hyper_pigmented_patch_posi = cbac_hyper_pigmented_patch_posi,
-            cbac_any_thickend_skin = when (cbac_any_thickend_skin_posi) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_any_thickend_skin)
-            },
-            cbac_any_thickend_skin_posi = cbac_any_thickend_skin_posi,
-            cbac_nodules_on_skin = when (cbac_nodules_on_skin_posi) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_any_nodules_skin)
-            },
-            cbac_nodules_on_skin_posi = cbac_nodules_on_skin_posi,
-            cbac_numbness_on_palm = when (cbac_numbness_on_palm_posi) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_Recurrent_numbness)
-            },
-            cbac_numbness_on_palm_posi = cbac_numbness_on_palm_posi,
-            cbac_clawing_of_fingers = when (cbac_clawing_of_fingers_posi) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_Clawing_of_fingers)
-            },
-            cbac_clawing_of_fingers_posi = cbac_clawing_of_fingers_posi,
-            cbac_tingling_or_numbness = when (cbac_tingling_or_numbness_posi) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_Tingling_or_Numbness)
-            },
-            cbac_tingling_or_numbness_posi = cbac_tingling_or_numbness_posi,
-            cbac_cloudy = when (cbac_cloudy_posi) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_recurrent_cloudy)
-            },
-            cbac_cloudy_posi = cbac_cloudy_posi,
-            cbac_diffreading = when (cbac_diffreading_posi) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_recurrent_diffculty_reading)
-            },
-            cbac_diffreading_posi = cbac_diffreading_posi,
-            cbac_pain_ineyes = when (cbac_pain_ineyes_posi) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_recurrent_pain_eyes)
-            },
-            cbac_pain_ineyes_posi = cbac_pain_ineyes_posi,
-            cbac_redness_ineyes = when (cbac_redness_ineyes_posi) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_recurrent_redness_eyes)
-            },
-            cbac_redness_ineyes_posi = cbac_redness_ineyes_posi,
-            cbac_diff_inhearing = when (cbac_diff_inhearing_posi) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_recurrent_diff_hearing)
-            },
-            cbac_diff_inhearing_posi = cbac_diff_inhearing_posi,
-            cbac_inability_close_eyelid = when (cbac_inability_close_eyelid_posi) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_Inability_close_eyelid)
-            },
-            cbac_rec_tingling = when (cbac_tingling_palm_posi) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_recurrent_tingling)
-            },
-            cbac_rec_tingling_posi = cbac_tingling_palm_posi,
-            cbac_inability_close_eyelid_posi = cbac_inability_close_eyelid_posi,
-            cbac_diff_holding_obj = when (cbac_diff_holding_obj_posi) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_diff_holding_objects)
-            },
-            cbac_diff_holding_obj_posi = cbac_diff_holding_obj_posi,
-            cbac_weekness_in_feet = when (cbac_weekness_in_feet_posi) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_Weekness_in_feet)
-            },
-            cbac_weekness_in_feet_posi = cbac_weekness_in_feet_posi,
-            cbac_feeling_unsteady = when (cbac_feeling_unsteady_posi) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_unsteady)
-            },
-            cbac_feeling_unsteady_posi = cbac_feeling_unsteady_posi,
-            cbac_suffer_physical_disability = when (cbac_suffer_physical_disability_posi) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_pd_rm)
-            },
-            cbac_suffer_physical_disability_posi = cbac_suffer_physical_disability_posi,
-            cbac_needing_help = when (cbac_needing_help_posi) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_nhop)
-            },
-            cbac_fuel_used = if (cbac_fuel_used_posi > 0) resources.getStringArray(R.array.cbac_type_Cooking_fuel)[cbac_fuel_used_posi - 1] else "",
-            cbac_fuel_used_posi = cbac_fuel_used_posi,
-            cbac_occupational_exposure = if (cbac_occupational_exposure_posi > 0) resources.getStringArray(
+            else null,
+            cbacWaistMaleScore = if (benGender == Gender.MALE) cbac_waist_posi else null,
+
+            cbacWaistFemale = if (benGender == Gender.FEMALE)
+                resources.getStringArray(R.array.cbac_waist_mes_female)[cbac_waist_posi - 1]
+            else null,
+            cbacWaistFemaleScore = if (benGender == Gender.FEMALE) cbac_waist_posi else null,
+
+            cbacPhysicalActivity = resources.getStringArray(R.array.cbac_pa)[cbac_pa_posi - 1],
+            cbacPhysicalActivityScore = cbac_pa_posi,
+            cbacFamilyHistoryBpdiabetes = resources.getStringArray(R.array.cbac_fh)[cbac_familyhistory_posi - 1],
+            cbacFamilyHistoryBpdiabetesScore = cbac_familyhistory_posi,
+
+            cbacShortnessBreath = yesNoFromPos(cbac_sortnesofbirth_pos, resources.getString(R.string.cbac_breath)),
+            cbacCough2weeks = yesNoFromPos(cbac_coughing_pos, resources.getString(R.string.cbac_coughing)),
+            cbacBloodsputum = yesNoFromPos(cbac_bloodsputum_pos, resources.getString(R.string.cbac_blsputum)),
+            cbacFever2weeks = yesNoFromPos(cbac_fivermore_pos, resources.getString(R.string.cbac_feverwks)),
+            cbacWeightLoss = yesNoFromPos(cbac_loseofweight_pos, resources.getString(R.string.cbac_lsweight)),
+            cbacNightSweats = yesNoFromPos(cbac_nightsweats_pos, resources.getString(R.string.cbac_ntswets)),
+            cbacAntiTBDrugs = yesNoFromPos(cbac_antitbdrugs_pos, resources.getString(R.string.cbac_taking_tb_drug)),
+            cbacTb = yesNoFromPos(cbac_sufferingtb_pos, resources.getString(R.string.cbac_fh_tb)),
+            cbacTBHistory = yesNoFromPos(cbac_tbhistory_pos, resources.getString(R.string.cbac_histb)),
+
+            cbacUlceration = yesNoFromPos(cbac_uicers_pos, resources.getString(R.string.cbac_recurrent_ulceration)),
+            cbacRecurrentTingling = yesNoFromPos(cbac_tingling_palm_posi, resources.getString(R.string.cbac_recurrent_tingling)),
+            cbacFitsHistory = yesNoFromPos(cbac_historyoffits_pos, resources.getString(R.string.cbac_hifits)),
+            cbacMouthopeningDifficulty = yesNoFromPos(cbac_difficultyinmouth_pos, resources.getString(R.string.cbac_difmouth)),
+            cbacMouthUlcers = yesNoFromPos(cbac_uicers_pos, resources.getString(R.string.cbac_recurrent_ulceration)),
+            cbacMouthUlcersGrowth = yesNoFromPos(cbac_growth_in_mouth_posi, resources.getString(R.string.cbac_Any_Growth)),
+            cbacMouthredpatch = yesNoFromPos(cbac_white_or_red_patch_posi, resources.getString(R.string.cbac_Any_white)),
+            cbacPainchewing = yesNoFromPos(cbac_Pain_while_chewing_posi, resources.getString(R.string.cbac_Pain_while_chewing)),
+            cbacTonechange = yesNoFromPos(cbac_toneofvoice_pos, resources.getString(R.string.cbac_voice)),
+
+            cbacHypopigmentedpatches = yesNoFromPos(cbac_hyper_pigmented_patch_posi, resources.getString(R.string.cbac_Any_hyper_pigmented)),
+            cbacThickenedskin = yesNoFromPos(cbac_any_thickend_skin_posi, resources.getString(R.string.cbac_any_thickend_skin)),
+            cbacNodulesonskin = yesNoFromPos(cbac_nodules_on_skin_posi, resources.getString(R.string.cbac_any_nodules_skin)),
+            cbacRecurrentNumbness = yesNoFromPos(cbac_numbness_on_palm_posi, resources.getString(R.string.cbac_Recurrent_numbness)),
+
+            cbacBlurredVision = yesNoFromPos(cbac_cloudy_posi, resources.getString(R.string.cbac_recurrent_cloudy)),
+            cbacDifficultyreading = yesNoFromPos(cbac_diffreading_posi, resources.getString(R.string.cbac_recurrent_diffculty_reading)),
+            cbacPainineyes = yesNoFromPosNullable(cbac_pain_ineyes_posi, resources.getString(R.string.cbac_recurrent_pain_eyes)),
+            cbacRednessPain = yesNoFromPos(cbac_redness_ineyes_posi, resources.getString(R.string.cbac_recurrent_redness_eyes)),
+            cbacDifficultyHearing = yesNoFromPos(cbac_diff_inhearing_posi, resources.getString(R.string.cbac_recurrent_diff_hearing)),
+
+            cbacClawingfingers = yesNoFromPos(cbac_clawing_of_fingers_posi, resources.getString(R.string.cbac_Clawing_of_fingers)),
+            cbacHandTingling = yesNoFromPos(cbac_tingling_or_numbness_posi, resources.getString(R.string.cbac_Tingling_or_Numbness)),
+            cbacInabilityCloseeyelid = yesNoFromPos(cbac_inability_close_eyelid_posi, resources.getString(R.string.cbac_Inability_close_eyelid)),
+            cbacDifficultHoldingObjects = yesNoFromPos(cbac_diff_holding_obj_posi, resources.getString(R.string.cbac_diff_holding_objects)),
+            cbacFeetweakness = yesNoFromPos(cbac_weekness_in_feet_posi, resources.getString(R.string.cbac_Weekness_in_feet)),
+
+            cbacLumpBreast = yesNoFromPosNullable(cbac_lumpinbreast_pos, resources.getString(R.string.cbac_lumpbrest)),
+            cbacBloodnippleDischarge = yesNoFromPosNullable(cbac_blooddischage_pos, resources.getString(R.string.cbac_nipple)),
+            cbacBreastsizechange = yesNoFromPosNullable(cbac_changeinbreast_pos, resources.getString(R.string.cbac_breast)),
+            cbacBleedingPeriods = yesNoFromPosNullable(cbac_bleedingbtwnperiods_pos, resources.getString(R.string.cbac_blperiods)),
+            cbacBleedingMenopause = yesNoFromPosNullable(cbac_bleedingaftermenopause_pos, resources.getString(R.string.cbac_blmenopause)),
+            cbacBleedingIntercourse = yesNoFromPosNullable(cbac_bleedingafterintercourse_pos, resources.getString(R.string.cbac_blintercorse)),
+            cbacVaginalDischarge = yesNoFromPosNullable(cbac_foulveginaldischarge_pos, resources.getString(R.string.cbac_fouldis)),
+
+            cbacFeelingUnsteady = yesNoFromPosNullable(cbac_feeling_unsteady_posi, resources.getString(R.string.cbac_unsteady)),
+            cbacPhysicalDisabilitySuffering = yesNoFromPosNullable(cbac_suffer_physical_disability_posi, resources.getString(R.string.cbac_pd_rm)),
+            cbacNeedhelpEverydayActivities = yesNoFromPosNullable(cbac_needing_help_posi, resources.getString(R.string.cbac_nhop)),
+            cbacForgetnearones = yesNoFromPosNullable(cbac_forgetting_names_posi, resources.getString(R.string.cbac_forget_names)),
+
+            CbacCookingOil = if (cbac_fuel_used_posi > 0) resources.getStringArray(R.array.cbac_type_Cooking_fuel)[cbac_fuel_used_posi - 1] else "",
+            CbacCookingOilScore = cbac_fuel_used_posi,
+            CbacOccupationalExposure = if (cbac_occupational_exposure_posi > 0) resources.getStringArray(
                 R.array.cbac_type_occupational_exposure
             )[cbac_occupational_exposure_posi - 1] else "",
-            cbac_occupational_exposure_posi = cbac_occupational_exposure_posi,
-            cbac_little_interest = if (cbac_little_interest_posi > 0) resources.getStringArray(R.array.cbac_li)[cbac_little_interest_posi - 1] else "",
-            cbac_little_interest_posi = cbac_little_interest_posi,
-            cbac_feeling_down = if (cbac_feeling_down_posi > 0) resources.getStringArray(R.array.cbac_fd)[cbac_feeling_down_posi - 1] else "",
-            cbac_feeling_down_posi = cbac_feeling_down_posi,
-            cbac_little_interest_score = cbac_little_interest_score,
-            cbac_feeling_down_score = cbac_feeling_down_score,
-            cbac_needing_help_posi = cbac_needing_help_posi,
-            cbac_forgetting_names = when (cbac_forgetting_names_posi) {
-                1 -> "Yes"
-                2 -> "No"
-                else -> resources.getString(R.string.cbac_forget_names)
-            },
-            cbac_forgetting_names_posi = cbac_forgetting_names_posi,
-
-            )
+            CbacOccupationalExposureScore = cbac_occupational_exposure_posi,
+            CbacLittleInterestPleasure = if (cbac_little_interest_posi > 0) resources.getStringArray(R.array.cbac_li)[cbac_little_interest_posi - 1] else "",
+            CbacLittleInterestPleasureScore = cbac_little_interest_posi,
+            CbacDepressedhopeless = if (cbac_feeling_down_posi > 0) resources.getStringArray(R.array.cbac_fd)[cbac_feeling_down_posi - 1] else "",
+            CbacDepressedhopelessScore = cbac_feeling_down_posi,
+            totalScore = total_score,
+            CbacFeelingDownScore = cbac_feeling_down_score,
+        )
     }
+
+    // Helper methods
+    private fun yesNoFromPos(pos: Int, default: String): String {
+        return when (pos) {
+            1 -> "Yes"
+            2 -> "No"
+            else -> default
+        }
+    }
+
+    private fun yesNoFromPosNullable(pos: Int, default: String): String? {
+        return when (pos) {
+            1 -> "Yes"
+            2 -> "No"
+            else -> null
+        }
+    }
+
+
 
     fun asDomainModel(): CbacDomain {
         return CbacDomain(
@@ -764,6 +878,83 @@ data class CbacPost(
 
     )
 
+
+
+@JsonClass(generateAdapter = true)
+data class CbacPostNew(
+    val cbacAge: String,
+    val cbacAgeScore: Int,
+    val cbacConsumeGutka: String,
+    val cbacConsumeGutkaScore: Int,
+    val cbacAlcohol: String,
+    val cbacAlcoholScore: Int,
+    val cbacWaistMale: String?,
+    val cbacWaistMaleScore: Int?,
+    val cbacWaistFemale: String?,
+    val cbacWaistFemaleScore: Int?,
+    val cbacPhysicalActivity: String,
+    val cbacPhysicalActivityScore: Int,
+    val cbacFamilyHistoryBpdiabetes: String,
+    val cbacFamilyHistoryBpdiabetesScore: Int,
+    val cbacShortnessBreath: String,
+    val cbacCough2weeks: String,
+    val cbacBloodsputum: String,
+    val cbacFever2weeks: String,
+    val cbacWeightLoss: String,
+    val cbacNightSweats: String,
+    val cbacAntiTBDrugs: String,
+    val cbacTb: String,
+    val cbacTBHistory: String,
+    val cbacUlceration: String,
+    val cbacRecurrentTingling: String,
+    val cbacFitsHistory: String,
+    val cbacMouthopeningDifficulty: String,
+    val cbacMouthUlcers: String,
+    val cbacMouthUlcersGrowth: String,
+    val cbacMouthredpatch: String,
+    val cbacPainchewing: String,
+    val cbacTonechange: String,
+    val cbacHypopigmentedpatches: String,
+    val cbacThickenedskin: String,
+    val cbacNodulesonskin: String,
+    val cbacRecurrentNumbness: String,
+    val cbacBlurredVision: String,
+    val cbacDifficultyreading: String,
+    val cbacPainineyes: String?,
+    val cbacRednessPain: String,
+    val cbacDifficultyHearing: String,
+    val cbacClawingfingers: String,
+    val cbacHandTingling: String,
+    val cbacInabilityCloseeyelid: String,
+    val cbacDifficultHoldingObjects: String,
+    val cbacFeetweakness: String,
+    val cbacLumpBreast: String?,
+    val cbacBloodnippleDischarge: String?,
+    val cbacBreastsizechange: String?,
+    val cbacBleedingPeriods: String?,
+    val cbacBleedingMenopause: String?,
+    val cbacBleedingIntercourse: String?,
+    val cbacVaginalDischarge: String?,
+    val cbacFeelingUnsteady: String?,
+    val cbacPhysicalDisabilitySuffering: String?,
+    val cbacNeedhelpEverydayActivities: String?,
+    val cbacForgetnearones: String?,
+    val CbacOccupationalExposure: String?,
+    val CbacBotheredProblemLast2weeks: String? ="",
+    val CbacLittleInterestPleasure: String?,
+    val CbacDepressedhopeless: String?,
+    val CbacDiscolorationSkin: String? = "",
+    val CbacCookingOil: String?,
+    val totalScore: Int,
+    val CbacOccupationalExposureScore: Int,
+    val CbacBotheredProblemLast2weeksScore: Int ? = 0,
+    val CbacLittleInterestPleasureScore: Int,
+    val CbacDepressedhopelessScore: Int,
+    val CbacCookingOilScore: Int,
+    val CbacFeelingDownScore: Int,
+)
+
+
 data class BenWithCbacCache(
 //    @ColumnInfo(name = "benId")
     @Embedded
@@ -781,6 +972,36 @@ data class BenWithCbacCache(
     }
 }
 
+
+data class BenWithCbacAndReferalCache(
+    @Embedded val ben: BenBasicCache,
+    @Relation(
+        parentColumn = "benId",
+        entityColumn = "benId"
+    )
+    val cbacList: List<CbacCache>,
+    @Relation(
+        parentColumn = "benId",
+        entityColumn = "benId"
+    )
+    val referralList: ReferalCache
+) {
+    fun asDomainModel(): BenWithCbacReferDomain {
+        return BenWithCbacReferDomain(
+            ben.asBasicDomainModel(), cbacList,referralList
+        )
+    }
+}
+
+data class BenWithCbacReferDomain(
+    val ben: BenBasicDomain,
+    val savedCbacRecords: List<CbacCache>,
+    val referalCac : ReferalCache,
+    val allSynced: SyncState? = if (savedCbacRecords.isEmpty()) null else
+        if (savedCbacRecords.map { it.syncState }
+                .all { it == SyncState.SYNCED }) SyncState.SYNCED else SyncState.UNSYNCED
+)
+
 data class BenWithCbacDomain(
 //    @ColumnInfo(name = "benId")
     val ben: BenBasicDomain,
@@ -789,3 +1010,208 @@ data class BenWithCbacDomain(
         if (savedCbacRecords.map { it.syncState }
                 .all { it == SyncState.SYNCED }) SyncState.SYNCED else SyncState.UNSYNCED
 )
+
+
+data class CbacResponseDto(
+    val id: Int,
+    val beneficiaryRegId: Long,
+    val visitCode: Long,
+
+    val cbacAge: String?,
+    val cbacAgeScore: Int?,
+
+    val cbacConsumeGutka: String?,
+    val cbacConsumeGutkaScore: Int?,
+
+    val cbacAlcohol: String?,
+    val cbacAlcoholScore: Int?,
+
+    val cbacWaistMale: String?,
+    val cbacWaistMaleScore: Int?,
+    val cbacWaistFemale: String? = null,
+    val cbacWaistFemaleScore: Int? = null,
+
+    val cbacPhysicalActivity: String?,
+    val cbacPhysicalActivityScore: Int?,
+
+    val cbacFamilyHistoryBpdiabetes: String?,
+    val cbacFamilyHistoryBpdiabetesScore: Int?,
+
+    val cbacShortnessBreath: String?,
+    val cbacCough2weeks: String?,
+    val cbacBloodsputum: String?,
+    val cbacFever2weeks: String?,
+    val cbacWeightLoss: String?,
+    val cbacNightSweats: String?,
+    val cbacAntiTBDrugs: String?,
+    val cbacTb: String?,
+    val cbacTBHistory: String?,
+    val cbacUlceration: String?,
+    val cbacRecurrentTingling: String?,
+    val cbacFitsHistory: String?,
+    val cbacMouthopeningDifficulty: String?,
+    val cbacMouthUlcers: String?,
+    val cbacMouthUlcersGrowth: String?,
+    val cbacMouthredpatch: String?,
+    val cbacPainchewing: String?,
+    val cbacTonechange: String?,
+    val cbacHypopigmentedpatches: String?,
+    val cbacThickenedskin: String?,
+    val cbacNodulesonskin: String?,
+    val cbacRecurrentNumbness: String?,
+    val cbacBlurredVision: String?,
+    val cbacDifficultHoldingObjects: String?,
+    val cbacFeetweakness: String?,
+    val cbacLumpBreast: String?,
+    val cbacBloodnippleDischarge: String?,
+    val cbacBreastsizechange: String?,
+    val cbacBleedingPeriods: String?,
+    val cbacBleedingMenopause: String?,
+    val cbacBleedingIntercourse: String?,
+    val cbacVaginalDischarge: String?,
+    val cbacHandTingling: String?,
+    val cbacClawingfingers: String?,
+    val cbacDifficultyHearing: String?,
+    val cbacRednessPain: String?,
+    val cbacDifficultyreading: String?,
+    val CbacOccupationalExposure: String?,
+    val CbacBotheredProblemLast2weeks: String?,
+    val CbacLittleInterestPleasure: String?,
+    val CbacDepressedhopeless: String?,
+    val CbacDiscolorationSkin: String?,
+    val cbacPainineyes: String?,
+    val CbacCookingOil: String?,
+    val cbacInabilityCloseeyelid: String,
+    val totalScore: Int,
+    val deleted: Boolean?,
+    val processed: String?,
+    val createdBy: String?,
+    val createdDate: String?,
+    val lastModDate: String?,
+    val vanId: Int?,
+    val parkingPlaceId: Int?,
+    val CbacOccupationalExposureScore: Int,
+    val CbacBotheredProblemLast2weeksScore: Int ? = 0,
+    val CbacLittleInterestPleasureScore: Int,
+    val CbacDepressedhopelessScore: Int,
+    val CbacCookingOilScore: Int,
+    val CbacFeelingDownScore: Int,
+)
+
+fun CbacResponseDto.toEntity():CbacCache {
+    return CbacCache(
+        id = id,
+        fillDate = createdDate.toMillisOrNull() ?: 0L,
+        benId = beneficiaryRegId,
+        ashaId = 0,
+        cbac_age_posi = cbacAgeScore ?: 0,
+        cbac_smoke_posi = cbacConsumeGutkaScore ?: 0,
+        cbac_alcohol_posi = cbacAlcoholScore ?: 0,
+        cbac_waist_posi = cbacWaistMaleScore ?: cbacWaistFemaleScore ?: 0,
+        cbac_pa_posi = cbacPhysicalActivityScore ?: 0,
+        cbac_familyhistory_posi = cbacFamilyHistoryBpdiabetesScore ?: 0,
+        cbac_sufferingtb_pos = if (cbacTb.equals("yes", true)) 1 else 2,
+        cbac_sortnesofbirth_pos = if (cbacShortnessBreath.equals("yes", true)) 1 else 2,
+        cbac_coughing_pos = if (cbacCough2weeks.equals("yes", true)) 1 else 2,
+        cbac_bloodsputum_pos = if (cbacBloodsputum.equals("yes", true)) 1 else 2,
+        cbac_fivermore_pos = if (cbacFever2weeks.equals("yes", true)) 1 else 2,
+        cbac_loseofweight_pos = if (cbacWeightLoss.equals("yes", true)) 1 else 2,
+        cbac_nightsweats_pos = if (cbacNightSweats.equals("yes", true)) 1 else 2,
+        cbac_antitbdrugs_pos = if (cbacAntiTBDrugs.equals("yes", true)) 1 else 2,
+        cbac_tbhistory_pos = if (cbacTBHistory.equals("yes", true)) 1 else 2,
+        cbac_uicers_pos = if (cbacUlceration.equals("yes", true)) 1 else 2,
+        cbac_tingling_or_numbness_posi = if (cbacRecurrentTingling.equals("yes", true)) 1 else 2,
+        cbac_historyoffits_pos = if (cbacFitsHistory.equals("yes", true)) 1 else 2,
+        cbac_difficultyinmouth_pos = if (cbacMouthopeningDifficulty.equals("yes", true)) 1 else 2,
+        cbac_growth_in_mouth_posi = if (cbacMouthUlcersGrowth.equals("yes", true)) 1 else 2,
+        cbac_white_or_red_patch_posi = if (cbacMouthredpatch.equals("yes", true)) 1 else 2,
+        cbac_Pain_while_chewing_posi = if (cbacPainchewing.equals("yes", true)) 1 else 2,
+        cbac_toneofvoice_pos = if (cbacTonechange.equals("yes", true)) 1 else 0,
+        cbac_hyper_pigmented_patch_posi = if (cbacHypopigmentedpatches.equals("yes", true)) 1 else 2,
+        cbac_any_thickend_skin_posi = if (cbacThickenedskin.equals("yes", true)) 1 else 2,
+        cbac_nodules_on_skin_posi = if (cbacNodulesonskin.equals("yes", true)) 1 else 2,
+        cbac_numbness_on_palm_posi = if (cbacRecurrentNumbness.equals("yes", true)) 1 else 2,
+        cbac_cloudy_posi = if (cbacBlurredVision.equals("yes", true)) 1 else 2,
+        cbac_diff_holding_obj_posi = if (cbacDifficultHoldingObjects.equals("yes", true)) 1 else 2,
+        cbac_weekness_in_feet_posi = if (cbacFeetweakness.equals("yes", true)) 1 else 2,
+        cbac_tingling_palm_posi = if (cbacHandTingling.equals("yes", true)) 1 else 2,
+        cbac_clawing_of_fingers_posi = if (cbacClawingfingers.equals("yes", true)) 1 else 2,
+        cbac_diff_inhearing_posi = if (cbacDifficultyHearing.equals("yes", true)) 1 else 2,
+        cbac_redness_ineyes_posi = if (cbacRednessPain.equals("yes", true)) 1 else 2,
+        cbac_pain_ineyes_posi = if (cbacPainineyes.equals("yes", true)) 1 else 2,
+        cbac_inability_close_eyelid_posi = if (cbacInabilityCloseeyelid.equals("yes", true)) 1 else 2,
+
+        cbac_lumpinbreast_pos =  if (cbacLumpBreast.equals("yes", true)) 1 else 2,
+        cbac_blooddischage_pos =if (cbacBloodnippleDischarge.equals("yes", true)) 1 else 2,
+        cbac_changeinbreast_pos = if (cbacBreastsizechange.equals("yes", true)) 1 else 2,
+        cbac_bleedingbtwnperiods_pos = if (cbacBleedingPeriods.equals("yes", true)) 1 else 2,
+        cbac_bleedingaftermenopause_pos = if (cbacBleedingMenopause.equals("yes", true)) 1 else 2,
+        cbac_bleedingafterintercourse_pos = if (cbacBleedingIntercourse.equals("yes", true)) 1 else 2,
+        cbac_foulveginaldischarge_pos = if (cbacVaginalDischarge.equals("yes", true)) 1 else 2,
+
+        total_score = totalScore,
+        cbac_feeling_down_score = CbacFeelingDownScore,
+        cbac_feeling_down_posi = CbacFeelingDownScore,
+        cbac_little_interest_posi = CbacLittleInterestPleasureScore,
+        cbac_little_interest_score = CbacLittleInterestPleasureScore,
+        cbac_fuel_used_posi = CbacCookingOilScore,
+        cbac_occupational_exposure_posi = CbacOccupationalExposureScore,
+        createdBy = createdBy,
+        cbac_diffreading_posi = if (cbacDifficultyreading.equals("yes", true)) 1 else 2,
+        VanID = vanId!!,
+        Processed = "P",
+        syncState = SyncState.SYNCED
+    )
+}
+
+data class CbacRequest(
+    val visitDetails: VisitDetailsWrapper,
+    val cbac: CbacPostNew,
+    val benFlowID: Long?,
+    val beneficiaryID: Long,
+    val sessionID: Int?,
+    val parkingPlaceID: Int?,
+    val createdBy: String,
+    val vanID: Int?,
+    val beneficiaryRegID: Long,
+    val benVisitID: Long?,
+    val providerServiceMapID: Int?
+)
+
+data class VisitDetailsWrapper(
+    val visitDetails: CbacVisitDetails
+)
+
+data class CbacVisitDetails(
+    val beneficiaryRegID: Long,
+    val providerServiceMapID: Int,
+    val visitNo: Int? = null,
+    val visitReason: String,
+    val visitCategory: String,
+    val subVisitCategory: String?=null,
+    val pregnancyStatus: String?=null,
+    val followUpForFpMethod: String?=null,
+    val otherFollowUpForFpMethod: String?=null,
+    val sideEffects: String?=null,
+    val otherSideEffects: String?=null,
+    val IdrsOrCbac: String,
+    val rCHID: String?=null,
+    val healthFacilityType: String?=null,
+    val healthFacilityLocation: String?=null,
+    val reportFilePath: String?=null,
+    val createdBy: String,
+    val vanID: Int,
+    val parkingPlaceID: Int,
+    val fileIDs:String?=null
+)
+
+fun String?.toMillisOrNull(pattern: String = "MMM dd, yyyy, h:mm:ss a"): Long? {
+    if (this.isNullOrBlank()) return null
+    return try {
+        val format = SimpleDateFormat(pattern, Locale.getDefault())
+        format.timeZone = TimeZone.getTimeZone("UTC")
+        format.parse(this)?.time
+    } catch (e: Exception) {
+        null
+    }
+}

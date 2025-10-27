@@ -13,12 +13,16 @@ import android.widget.Toast
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.FragmentCbacBinding
 import org.piramalswasthya.sakhi.model.CbacCache
 import org.piramalswasthya.sakhi.model.Gender
+import org.piramalswasthya.sakhi.model.ReferalCache
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_screening.form.TBScreeningFormViewModel
 import org.piramalswasthya.sakhi.work.WorkerUtils
@@ -69,6 +73,18 @@ class CbacFragment : Fragment() {
             .setPositiveButton(resources.getString(R.string.ok)) { dialog, _ -> dialog.dismiss() }
             .create()
     }
+
+    private val asreferAlertDialog by lazy {
+        AlertDialog.Builder(requireContext())
+            .setTitle(getString(R.string.isrefer))
+            .setMessage(resources.getString(R.string.ncd_refer_alert))
+            .setPositiveButton(resources.getString(R.string.yes)) { dialog, _ -> dialog.dismiss()
+            findNavController().navigate(CbacFragmentDirections.actionCbacFragmentToNcdReferForm(viewModel.benId, cbacId = viewModel.cbacId))
+            }
+            .setNegativeButton(resources.getString(R.string.no)) { dialog, _ -> dialog.dismiss() }
+            .create()
+    }
+
     private val ast2AlertDialog by lazy {
         AlertDialog.Builder(requireContext()).setTitle(getString(R.string.suspected_hrp_case))
             .setMessage(resources.getString(R.string.tb_suspected_family_alert))
@@ -93,6 +109,13 @@ class CbacFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        findNavController().currentBackStackEntry
+            ?.savedStateHandle
+            ?.getLiveData<String>("REFERRAL_RESULT")
+            ?.observe(viewLifecycleOwner) { json ->
+                val referral = Gson().fromJson(json, ReferalCache::class.java)
+                viewModel.setReferral(referral)
+            }
         viewModelTbScreening.state.observe(viewLifecycleOwner) {
             when (it) {
                 TBScreeningFormViewModel.State.SAVE_SUCCESS -> {
@@ -139,6 +162,11 @@ class CbacFragment : Fragment() {
                 CbacViewModel.State.SAVE_SUCCESS -> {
                     Timber.d("CBAC form saved successfully!")
                     viewModel.resetState()
+                    if (viewModel.referralCache != null) {
+                        lifecycleScope.launch {
+                            viewModel.cbacRepo.updateReferStatus(viewModel.benId, true)
+                        }
+                    }
                     WorkerUtils.triggerAmritPushWorker(requireContext())
                     findNavController().navigateUp()
                 }
@@ -502,9 +530,14 @@ class CbacFragment : Fragment() {
     }
 
     private fun handleNcdSusBottomInfoDisplay(score: Int) {
+
         if (score >= 4) {
             binding.ncdSusValidDisplay.visibility = View.VISIBLE
             viewModel.setFlagForNcd(true)
+            if (score > 4) {
+                if (isInFillMode)
+                asreferAlertDialog.show()
+            }
         } else {
             if (binding.ncdSusValidDisplay.visibility != View.GONE) {
                 binding.ncdSusValidDisplay.visibility = View.GONE
@@ -891,25 +924,42 @@ class CbacFragment : Fragment() {
         }
         binding.cbacLumpbrest.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
-                R.id.rb_yes -> viewModel.setLumpB(1)
+                R.id.rb_yes -> {
+                    viewModel.setLumpB(1)
+                    if (isInFillMode)
+                        asreferAlertDialog.show()
+                }
                 R.id.rb_no -> viewModel.setLumpB(2)
             }
         }
         binding.cbacNipple.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
-                R.id.rb_yes -> viewModel.setNipple(1)
+                R.id.rb_yes -> {
+                    viewModel.setNipple(1)
+                    if (isInFillMode)
+                        asreferAlertDialog.show()
+                }
                 R.id.rb_no -> viewModel.setNipple(2)
             }
         }
         binding.cbacBreast.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
-                R.id.rb_yes -> viewModel.setBreast(1)
+                R.id.rb_yes -> {
+                    viewModel.setBreast(1)
+                    if (isInFillMode)
+                        asreferAlertDialog.show()
+
+                }
                 R.id.rb_no -> viewModel.setBreast(2)
             }
         }
         binding.cbacBlperiods.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
-                R.id.rb_yes -> viewModel.setBlP(1)
+                R.id.rb_yes -> {
+                    viewModel.setBlP(1)
+                    if (isInFillMode)
+                        asreferAlertDialog.show()
+                }
                 R.id.rb_no -> viewModel.setBlP(2)
             }
         }
@@ -920,6 +970,8 @@ class CbacFragment : Fragment() {
                     alertDialog.setTitle(resources.getString(R.string.alert))
                     alertDialog.setMessage(resources.getString(R.string.inform_asha_facilitator))
                     alertDialog.show()
+                    if (isInFillMode)
+                        asreferAlertDialog.show()
                     binding.tvBlMenopause.visibility = View.VISIBLE
                 }
 
@@ -931,13 +983,21 @@ class CbacFragment : Fragment() {
         }
         binding.cbacBlintercorse.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
-                R.id.rb_yes -> viewModel.setBlI(1)
+                R.id.rb_yes -> {
+                    viewModel.setBlI(1)
+                    if (isInFillMode)
+                        asreferAlertDialog.show()
+                }
                 R.id.rb_no -> viewModel.setBlI(2)
             }
         }
         binding.cbacFouldis.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
-                R.id.rb_yes -> viewModel.setFoulD(1)
+                R.id.rb_yes ->  {
+                    viewModel.setFoulD(1)
+                    if (isInFillMode)
+                        asreferAlertDialog.show()
+                }
                 R.id.rb_no -> viewModel.setFoulD(2)
             }
         }
@@ -1098,6 +1158,7 @@ class CbacFragment : Fragment() {
         viewModel.phq2TotalScore.observe(viewLifecycleOwner) {
             if (it.substring(it.lastIndexOf(' ') + 1).toInt() > 3) {
                 binding.tvTbMoicVisit.visibility = View.VISIBLE
+                asreferAlertDialog.show()
                 viewModel.setFlagForPhQ2(true)
             } else {
                 if (binding.tvTbMoicVisit.visibility != View.GONE) {

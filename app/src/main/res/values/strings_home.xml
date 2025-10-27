@@ -106,5 +106,7 @@
     <string name="national_deworming_day">National Deworming Day </string>
     <string name="maa_meeting">Maa Meeting</string>
     <string name="maa_meeting_list">Maa Meeting Forms List</string>
+    <string name="saas_bahu_list">Saas Bahu Sammelan</string>
+    <string name="saas_bahu_reg">Saas Bahu Sammelan Registration</string>
 
 </resources>

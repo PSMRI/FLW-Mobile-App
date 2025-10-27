@@ -14,6 +14,8 @@ interface CbacDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(vararg cbacCache: CbacCache)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(cbacCache: List<CbacCache>)
     @Update
     suspend fun update(vararg cbacCache: CbacCache)
 
@@ -40,4 +42,6 @@ interface CbacDao {
     @Query("select count(*)>0 from cbac where createdDate between :createdDate-:range and :createdDate+:range")
     suspend fun sameCreateDateExists(createdDate: Long, range: Long): Boolean
 
+    @Query("UPDATE cbac SET isReffered = :status WHERE benId = :benId")
+    suspend fun updateReferralStatus(benId: Long, status: Boolean)
 }

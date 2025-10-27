@@ -9,7 +9,6 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.FormSubmitRequest
 import org.piramalswasthya.sakhi.model.dynamicModel.ApiResponse
 import org.piramalswasthya.sakhi.model.dynamicModel.HBNCVisitListResponse
 import org.piramalswasthya.sakhi.model.dynamicModel.HBNCVisitRequest
-import org.piramalswasthya.sakhi.ui.home_activity.asha_profile.AshaProfileViewModel
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -25,8 +24,22 @@ interface AmritApiService {
         @Part meetingImages: List<MultipartBody.Part>
     ): Response<ResponseBody>
 
+
+    @Multipart
+    @POST("flw-api/sammelans/saveAll")
+    suspend fun postSaasBahuSammelanMultipart(
+        @Part("date") meetingDate: RequestBody,
+        @Part("place") place: RequestBody,
+        @Part("participants") participants: RequestBody,
+        @Part("ashaId") ashaId: RequestBody,
+        @Part meetingImages: List<MultipartBody.Part>
+    ): Response<ResponseBody>
+
     @POST("flw-api/maa-meetings/getAll")
     suspend fun getMaaMeetings(@Body userDetail: GetDataRequest): Response<ResponseBody>
+
+    @POST("flw-api/sammelans/getAll")
+    suspend fun getSaasBahuSammelans(@Body userDetail: GetDataRequest): Response<ResponseBody>
 
     @Headers("No-Auth: true", "User-Agent: okhttp")
     @POST("common-api/user/userAuthenticate")
@@ -72,8 +85,16 @@ interface AmritApiService {
     @POST("flw-api/cbac/getAll")
     suspend fun getCbacs(@Body userDetail: GetDataPaginatedRequest): Response<ResponseBody>
 
-    @POST("flw-api/cbac/saveAll")
-    suspend fun postCbacs(/*@Url url : String  ="http://192.168.1.94:8081/cbac/saveAll",*/@Body list: List<CbacPost>): Response<ResponseBody>
+    @POST("/hwc-api/NCD/getByUserCbacDetails")
+    suspend fun getCbacData(@Body getcbacRequest: GetCBACRequest) : Response<ResponseBody>
+
+//    @POST("flw-api/cbac/saveAll")
+    @POST("hwc-api/NCD/save/nurseData")
+    suspend fun postCbacs(/*@Url url : String  ="http://192.168.1.94:8081/cbac/saveAll",*/@Body list: CbacRequest): Response<ResponseBody>
+
+    @POST("hwc-api/generalOPD/save/doctorData")
+    suspend fun postRefer(@Body list: ReferralRequest): Response<ResponseBody>
+
 
     //    @POST("tb/screening/getAll")
     @POST("flw-api/tb/screening/getAll")

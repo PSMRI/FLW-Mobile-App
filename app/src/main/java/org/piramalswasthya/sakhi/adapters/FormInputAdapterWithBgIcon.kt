@@ -6,6 +6,7 @@ import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.res.ColorStateList
 import android.content.res.Resources
 import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import android.os.CountDownTimer
 import android.text.Editable
@@ -32,6 +33,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.google.android.material.button.MaterialButton
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.databinding.LayoutMultiFileUploadBinding
 import org.piramalswasthya.sakhi.databinding.RvItemFormAgePickerViewV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormBtnBinding
 import org.piramalswasthya.sakhi.databinding.RvItemFormCheckV2Binding
@@ -48,7 +50,6 @@ import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.getDateString
 import org.piramalswasthya.sakhi.model.AgeUnitDTO
 import org.piramalswasthya.sakhi.model.FormElement
-import org.piramalswasthya.sakhi.model.FormInputOld
 import org.piramalswasthya.sakhi.model.InputType
 import org.piramalswasthya.sakhi.model.InputType.AGE_PICKER
 import org.piramalswasthya.sakhi.model.InputType.BUTTON
@@ -636,6 +637,51 @@ class FormInputAdapterWithBgIcon (
         private lateinit var countDownTimer : CountDownTimer
         private var countdownTimers : HashMap<Int, CountDownTimer> = HashMap()
 
+    class MultiFileUploadInputViewHolder private constructor(private val binding: LayoutMultiFileUploadBinding) :
+        ViewHolder(binding.root) {
+        companion object {
+            fun from(parent: ViewGroup): ViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = LayoutMultiFileUploadBinding.inflate(layoutInflater, parent, false)
+                return MultiFileUploadInputViewHolder(binding)
+            }
+        }
+        var selectedFiles = mutableListOf<Uri>()
+
+        private lateinit var fileAdapter: FileListAdapter
+
+        fun bind(
+            item: FormElement,
+            clickListener: SelectUploadImageClickListener?,
+            documentOnClick: ViewDocumentOnClick?,
+            isEnabled: Boolean
+        ) {
+            /* binding.form = item
+             binding.tvTitle.text = item.title
+             binding.clickListener = clickListener
+             binding.documentclickListener = documentOnClick
+             binding.btnView.visibility = if (item.value != null) View.VISIBLE else View.GONE
+
+             if (isEnabled) {
+                 binding.addFile.isEnabled = true
+                 binding.addFile.alpha = 1f
+             } else {
+                 binding.addFile.isEnabled = false
+                 binding.addFile.alpha = 0.5f
+             }*/
+
+            fileAdapter = FileListAdapter(selectedFiles)
+            binding.rvFiles.adapter = fileAdapter
+
+            binding.btnSelectFiles.isEnabled = isEnabled
+            binding.btnSelectFiles.alpha = if (isEnabled) 1f else 0.5f
+
+            binding.btnSelectFiles.setOnClickListener {
+                clickListener?.onSelectImageClick(item)
+            }
+        }
+
+    }
         private fun formatTimeInSeconds(millis: Long) : String {
             val seconds = millis / 1000
             return "${seconds} sec"
@@ -657,6 +703,52 @@ class FormInputAdapterWithBgIcon (
             countdownTimers[adapterPosition] = countDownTimer
 
         }
+    }
+
+    class MultiFileUploadInputViewHolder private constructor(private val binding: LayoutMultiFileUploadBinding) :
+        ViewHolder(binding.root) {
+        companion object {
+            fun from(parent: ViewGroup): ViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = LayoutMultiFileUploadBinding.inflate(layoutInflater, parent, false)
+                return MultiFileUploadInputViewHolder(binding)
+            }
+        }
+        var selectedFiles = mutableListOf<Uri>()
+
+        private lateinit var fileAdapter: FileListAdapter
+
+        fun bind(
+            item: FormElement,
+            clickListener: SelectUploadImageClickListener?,
+            documentOnClick: ViewDocumentOnClick?,
+            isEnabled: Boolean,
+        ) {
+            /* binding.form = item
+             binding.tvTitle.text = item.title
+             binding.clickListener = clickListener
+             binding.documentclickListener = documentOnClick
+             binding.btnView.visibility = if (item.value != null) View.VISIBLE else View.GONE
+
+             if (isEnabled) {
+                 binding.addFile.isEnabled = true
+                 binding.addFile.alpha = 1f
+             } else {
+                 binding.addFile.isEnabled = false
+                 binding.addFile.alpha = 0.5f
+             }*/
+
+            fileAdapter = FileListAdapter(selectedFiles)
+            binding.rvFiles.adapter = fileAdapter
+
+            binding.btnSelectFiles.isEnabled = isEnabled
+            binding.btnSelectFiles.alpha = if (isEnabled) 1f else 0.5f
+
+            binding.btnSelectFiles.setOnClickListener {
+                clickListener?.onSelectImageClick(item)
+            }
+        }
+
     }
 
     class FileUploadInputViewHolder private constructor(private val binding: RvItemFormUploadImageBinding) :
@@ -884,6 +976,9 @@ class FormInputAdapterWithBgIcon (
             AGE_PICKER -> AgePickerViewInputViewHolder.from(parent)
             BUTTON -> ButtonInputViewHolder.from(parent)
             FILE_UPLOAD -> FileUploadInputViewHolder.from(parent)
+            InputType.MULTIFILE_UPLOAD -> MultiFileUploadInputViewHolder.from(parent)
+
+
         }
     }
 
@@ -919,8 +1014,13 @@ class FormInputAdapterWithBgIcon (
                 isEnabled,
                 formValueListener
             )
-            BUTTON -> (holder as ButtonInputViewHolder).bind(item, isEnabled,formValueListener)
+            InputType.BUTTON -> (holder as ButtonInputViewHolder).bind(
+                item,
+                isEnabled,
+                formValueListener
+            )
             FILE_UPLOAD -> (holder as FileUploadInputViewHolder).bind(item,selectImageClickListener,viewDocumentListner, isEnabled)
+            InputType.MULTIFILE_UPLOAD -> (holder as MultiFileUploadInputViewHolder).bind(item,selectImageClickListener,viewDocumentListner, isEnabled )
 
         }
     }

@@ -1,6 +1,6 @@
 package org.piramalswasthya.sakhi.repositories
 
-import android.util.Log
+import android.app.Application
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
@@ -30,8 +30,10 @@ class EcrRepo @Inject constructor(
     private val userRepo: UserRepo,
     private val database: InAppDb,
     private val preferenceDao: PreferenceDao,
-    private val tmcNetworkApiService: AmritApiService
-) {
+    private val tmcNetworkApiService: AmritApiService,
+    private val context: Application,
+
+    ) {
 
     suspend fun persistRecord(ecrForm: EligibleCoupleRegCache) {
         withContext(Dispatchers.IO) {
@@ -73,7 +75,7 @@ class EcrRepo @Inject constructor(
                 val ben = database.benDao.getBen(it.benId)
                     ?: throw IllegalStateException("No beneficiary exists for benId: ${it.benId}!!")
 
-                val ecrPost = it.asPostModel()
+                val ecrPost = it.asPostModel(context)
                 val cache = database.hrpDao.getNonPregnantAssess(ben.beneficiaryId)
                 cache?.let {
                     ecrPost.misCarriage = cache.misCarriage
@@ -565,10 +567,20 @@ class EcrRepo @Inject constructor(
                         ) else ecrJson.getString("createdDate")
                     ),
                     syncState = SyncState.SYNCED,
+                    isKitHandedOver = ecrJson.optBoolean("isKitHandedOver",false),
+                    kitHandedOverDate = getLongFromDate(
+                        if (ecrJson.has("updatedDate")) ecrJson.optString(
+                            "updatedDate"
+                        ) else ecrJson.optString("updatedDate")
+                    ),
+                    kitPhoto1 = ecrJson.optString("kitPhoto1",""),
+                    kitPhoto2 = ecrJson.optString("kitPhoto2",""),
                     lmp_date = getLongFromDate(
                         if (ecrJson.has("updatedDate")) ecrJson.getString(
                             "updatedDate"
-                        ) else ecrJson.getString("createdDate")
+                        ) else ecrJson.getString("createdDate"),
+
+
                     )
                 )
                 if (ecr.isRegistered) list.add(ecr)
