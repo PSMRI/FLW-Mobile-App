@@ -100,16 +100,9 @@ class CUFYFormRepository @Inject constructor(
                     continue
                 }
 
-                val visitDay = item.fields.get("visit_day")?.let {
-                    if (it.isJsonPrimitive) it.asString.trim() else ""
-                } ?: ""
                 val visitDate = item.visitDate ?: "-"
                 val benId = item.beneficiaryId
                 val hhId = item.houseHoldId
-
-                if (visitDay.isBlank()) {
-                    continue
-                }
 
                 val fieldsJson = JSONObject()
                 item.fields.entrySet().forEach { (key, jsonElement) ->
