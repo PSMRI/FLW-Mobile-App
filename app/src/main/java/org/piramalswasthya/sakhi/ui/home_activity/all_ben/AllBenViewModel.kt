@@ -10,7 +10,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
@@ -33,15 +32,15 @@ class AllBenViewModel @Inject constructor(
 
     private var sourceFromArgs = AllBenFragmentArgs.fromSavedStateHandle(savedStateHandle).source
 
-//    private val newBenList = recordsRepo.allBenWithNewAbhaList
-//    private val oldBenList = recordsRepo.allBenWithOldAbhaList
-
     private val allBenList = when (sourceFromArgs) {
         1 -> {
             recordsRepo.allBenWithAbhaList
         }
         2 -> {
             recordsRepo.allBenWithRchList
+        }
+        3 -> {
+            recordsRepo.allBenAboveThirtyList
         }
         else -> {
             recordsRepo.allBenList
@@ -51,29 +50,11 @@ class AllBenViewModel @Inject constructor(
     private val filterOrg = MutableStateFlow("")
     private val kindOrg = MutableStateFlow(0)
 
-//    private val filterNew = MutableStateFlow("")
-//    private val kindNew = MutableStateFlow(0)
-
-//    private val filterOld = MutableStateFlow("")
-//    private val kindOld = MutableStateFlow(0)
-
     val benList = allBenList.combine(kindOrg) { list, kind ->
         filterBenList(list, kind)
     }.combine(filterOrg) { list, filter ->
         filterBenList(list, filter)
     }
-
-//    val benNewList = newBenList.combine(kindNew) { list, kind ->
-//        filterBenList(list, kind)
-//    }.combine(filterNew) { list, filter ->
-//        filterBenList(list, filter)
-//    }
-
-//    val benOldList = oldBenList.combine(kindOld) { list, kind ->
-//        filterBenList(list, kind)
-//    }.combine(filterOld) { list, filter ->
-//        filterBenList(list, filter)
-//    }
 
     private val _abha = MutableLiveData<String?>()
     val abha: LiveData<String?>
@@ -90,8 +71,6 @@ class AllBenViewModel @Inject constructor(
     fun filterText(text: String) {
         viewModelScope.launch {
             filterOrg.emit(text)
-//            filterNew.emit(text)
-//            filterOld.emit(text)
         }
 
     }
@@ -99,8 +78,6 @@ class AllBenViewModel @Inject constructor(
     fun filterType(type: Int) {
         viewModelScope.launch {
             kindOrg.emit(type)
-//            kindNew.emit(type)
-//            kindOld.emit(type)
         }
 
     }
@@ -112,15 +89,6 @@ class AllBenViewModel @Inject constructor(
         viewModelScope.launch {
             benRepo.getBenFromId(benId)?.let {
                 _benRegId.value = it.benRegId
-               // val result = benRepo.getBeneficiaryWithId(it.benRegId)
-               /* if (result != null) {
-                    _abha.value = result.healthIdNumber
-                    it.healthIdDetails = BenHealthIdDetails(result.healthId, result.healthIdNumber)
-                    it.isNewAbha =result.isNewAbha
-                    benRepo.updateRecord(it)
-                } else {
-                    _benRegId.value = it.benRegId
-                }*/
             }
         }
     }

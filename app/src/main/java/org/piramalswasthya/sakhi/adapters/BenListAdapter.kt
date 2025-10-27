@@ -1,6 +1,5 @@
 package org.piramalswasthya.sakhi.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +13,6 @@ import org.piramalswasthya.sakhi.helpers.getDateFromLong
 import org.piramalswasthya.sakhi.helpers.getPatientTypeByAge
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.model.Gender
-import org.piramalswasthya.sakhi.model.HouseHoldBasicDomain
 
 
 class BenListAdapter(
@@ -195,6 +193,7 @@ class BenListAdapter(
         fun onClickedHouseHold(item: BenBasicDomain) = clickedHousehold(item.hhId)
 
         fun onClickABHA(item: BenBasicDomain) = clickedABHA(item.benId, item.hhId)
+        fun onClickAbove30(item: BenBasicDomain) = clickedABHA(item.benId, item.hhId)
 
         fun onClickedForCall(item: BenBasicDomain) = callBen(item)
     }

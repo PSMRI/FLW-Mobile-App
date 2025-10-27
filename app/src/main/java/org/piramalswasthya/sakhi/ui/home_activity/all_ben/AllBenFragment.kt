@@ -71,7 +71,8 @@ class AllBenFragment : Fragment() {
     enum class Abha {
         ALL,
         WITH,
-        WITHOUT
+        WITHOUT,
+        AGE_ABOVE_30
     }
 
     private val filterAlert by lazy {
@@ -82,6 +83,7 @@ class AllBenFragment : Fragment() {
                 filterAlertBinding.rbAll.id -> Abha.ALL
                 filterAlertBinding.rbWith.id -> Abha.WITH
                 filterAlertBinding.rbWithout.id -> Abha.WITHOUT
+                filterAlertBinding.rbAgeAboveThirty.id -> Abha.AGE_ABOVE_30
                 else -> Abha.ALL
             }
 
@@ -99,7 +101,9 @@ class AllBenFragment : Fragment() {
                 viewModel.filterType(1)
             } else if (selectedAbha == Abha.WITHOUT) {
                 viewModel.filterType(2)
-            }  else {
+            } else if (selectedAbha == Abha.AGE_ABOVE_30) {
+                viewModel.filterType(3)
+            }   else {
                 viewModel.filterType(0)
             }
 
@@ -138,7 +142,7 @@ class AllBenFragment : Fragment() {
             }
         }
 
-        if (args.source == 1 || args.source == 2) {
+        if (args.source == 1 || args.source == 2 || args.source == 3) {
             binding.ibFilter.visibility = View.GONE
             binding.ibDownload.visibility = View.VISIBLE
         }

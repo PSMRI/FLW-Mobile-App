@@ -17,6 +17,7 @@ import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.divider.MaterialDivider
 import com.google.android.material.textfield.TextInputEditText
@@ -461,3 +462,7 @@ fun setFormattedSessionDate(textView: TextView, timestamp: Long?) {
     }
 }
 
+@BindingAdapter("visibleIfAgeAbove30")
+fun MaterialButton.visibleIfAgeAbove30(age: Int?) {
+    visibility = if ((age ?: 0) >= 30) View.VISIBLE else View.GONE
+}

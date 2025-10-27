@@ -1,12 +1,10 @@
 package org.piramalswasthya.sakhi.helpers
 
-import android.app.Activity
 import android.content.Context
 import android.content.Context.CONNECTIVITY_SERVICE
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.core.text.isDigitsOnly
 import org.piramalswasthya.sakhi.model.AncStatus
 import org.piramalswasthya.sakhi.model.BenBasicDomain
@@ -27,7 +25,6 @@ import org.piramalswasthya.sakhi.model.BenWithTbSuspectedDomain
 import org.piramalswasthya.sakhi.model.GeneralOPEDBeneficiary
 import org.piramalswasthya.sakhi.model.ImmunizationDetailsDomain
 import org.piramalswasthya.sakhi.model.InfantRegDomain
-import org.piramalswasthya.sakhi.model.PregnantWomanAncCache
 import org.piramalswasthya.sakhi.model.PregnantWomenVisitDomain
 import java.text.SimpleDateFormat
 import java.time.LocalDate
@@ -77,20 +74,29 @@ fun filterBenList(
 fun filterBenList(
     list: List<BenBasicDomain>,
     filterType: Int
-) =
-    if (filterType == 1) {
-        list.filter {
-            !it.abhaId.isNullOrEmpty()
-        }
-    } else if (filterType == 2) {
-        list.filter {
-            it.abhaId.isNullOrEmpty()
-        }
-    } else {
-        list
-    }
-fun filterAdolescentList(list: List<BenWithAdolescentDomain>) = list
+): List<BenBasicDomain> {
+    return when (filterType) {
+        1 -> list.filter { !it.abhaId.isNullOrEmpty() }
 
+        2 -> list.filter { it.abhaId.isNullOrEmpty() }
+
+        3 -> list.filter { ben ->
+            val age = getAgeFromDob(ben.dob)
+            age >= 30
+        }
+
+        else -> list
+    }
+}
+
+fun getAgeFromDob(dob: Long?): Int {
+    if (dob == null) return 0
+    val currentTimeMillis = System.currentTimeMillis()
+    val diffMillis = currentTimeMillis - dob
+    return (diffMillis / (1000L * 60 * 60 * 24 * 365)).toInt()
+}
+
+fun filterAdolescentList(list: List<BenWithAdolescentDomain>) = list
 
 fun filterAdolescentList(list: List<BenWithAdolescentDomain>, text: String): List<BenWithAdolescentDomain> {
     if (text == "")
@@ -564,57 +570,6 @@ fun filterBenHRNPTFormList(
 
 fun getWeeksOfPregnancy(regLong: Long, lmpLong: Long) =
     (TimeUnit.MILLISECONDS.toDays(regLong - lmpLong) / 7).toInt()
-
-//private fun getAncStatus(
-//    list: List<AncStatus>, lmpDate: Long, visitNumber: Int, benId: Long, at: Long
-//): AncStatus {
-//
-//    val currentAnc = list.firstOrNull { it.visitNumber == visitNumber }?.let { return it }
-//    val lastAnc =
-//        if (visitNumber > 1) list.firstOrNull { it.visitNumber == visitNumber - 1 } else null
-//    val lastAncFilledWeek = lastAnc?.filledWeek ?: 0
-//    val weeks = getWeeksOfPregnancy(at, lmpDate)
-//    val weekRange = when (visitNumber) {
-//        1 -> Konstants.minAnc1Week//..Konstants.maxAnc1Week
-//        2 -> getMinAncFillDate(Konstants.minAnc2Week, lastAncFilledWeek) //..Konstants.maxAnc2Week
-//        3 -> getMinAncFillDate(Konstants.minAnc3Week, lastAncFilledWeek)  //..Konstants.maxAnc2Week//..Konstants.maxAnc3Week
-//        4 -> getMinAncFillDate(Konstants.minAnc4Week, lastAncFilledWeek)  //..Konstants.maxAnc2Week//..Konstants.maxAnc4Week
-//        else -> throw IllegalStateException("visit number not in [1,4]")
-//    }
-//    return if (weeks >= weekRange) AncStatus(
-//        benId,
-//        visitNumber,
-////        if (visitNumber == 1) AncFormState.ALLOW_FILL else {
-////            if (lastAnc == null) AncFormState.NO_FILL else AncFormState.ALLOW_FILL
-////        },
-//        0
-//    )
-//    else AncStatus(
-//        benId,
-//        visitNumber,
-////        AncFormState.NO_FILL,
-//        0
-//    )
-//}
-
-fun getMinAncFillDate(minWeek: Int, lastAncFilledWeek: Int) =
-    if (minWeek - lastAncFilledWeek <= 4) lastAncFilledWeek + 4 else minWeek
-
-//fun getAncStatusList(
-//    list: List<AncStatus>, lmpDate: Long, benId: Long, at: Long
-//) =
-//    listOf(1, 2, 3, 4).map {
-//        getAncStatus(list, lmpDate, it, benId, at)
-//    }
-
-fun hasPendingAncVisit(
-    list: List<AncStatus>, lmpDate: Long, benId: Long, at: Long
-): Boolean {
-//    val l = getAncStatusList(list, lmpDate, benId, at).map { it.formState }
-//    Timber.tag("MaternalHealthRepo").d("Emitted : at CommonUtls : $l")
-//    return l.contains(AncFormState.ALLOW_FILL)
-    return true
-}
 
 fun getTodayMillis() = Calendar.getInstance().setToStartOfTheDay().timeInMillis
 
