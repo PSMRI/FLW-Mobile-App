@@ -25,6 +25,7 @@
         private val isViewOnly: Boolean = false,
         private val minVisitDate: Date? = null,
         private val maxVisitDate: Date? = null,
+        private val isSNCU: Boolean = false,
         private val onValueChanged: (FormField, Any?) -> Unit
 
     ) : RecyclerView.Adapter<FormRendererAdapter.FormViewHolder>() {
@@ -413,6 +414,50 @@
 
 
 
+//                    "radio" -> {
+//                        val context = itemView.context
+//
+//                        val radioGroup = RadioGroup(context).apply {
+//                            orientation = RadioGroup.HORIZONTAL
+//                            layoutParams = LinearLayout.LayoutParams(
+//                                ViewGroup.LayoutParams.MATCH_PARENT,
+//                                ViewGroup.LayoutParams.WRAP_CONTENT
+//                            ).apply {
+//                                setMargins(0, 8, 0, 8)
+//                            }
+//                        }
+//
+//                        field.options?.forEachIndexed { index, option ->
+//                            val radioButton = RadioButton(context).apply {
+//                                text = option
+//                                isChecked = field.value == option
+//                                isEnabled = !isViewOnly
+//
+//                                layoutParams = LinearLayout.LayoutParams(
+//                                    LinearLayout.LayoutParams.WRAP_CONTENT,
+//                                    LinearLayout.LayoutParams.WRAP_CONTENT
+//                                ).apply {
+//                                    setMargins(0, 0, if (index != field.options!!.lastIndex) 24 else 0, 0) // spacing between radios
+//                                }
+//                            }
+//
+//                            if (!isViewOnly) {
+//                                radioButton.setOnCheckedChangeListener { _, isChecked ->
+//                                    if (isChecked && field.value != option) {
+//                                        field.value = option
+//                                        onValueChanged(field, option)
+//                                    }
+//                                }
+//                            }
+//
+//                            radioGroup.addView(radioButton)
+//                        }
+//
+//                        addWithError(radioGroup, field)
+//                    }
+
+
+
                     "radio" -> {
                         val context = itemView.context
 
@@ -421,30 +466,45 @@
                             layoutParams = LinearLayout.LayoutParams(
                                 ViewGroup.LayoutParams.MATCH_PARENT,
                                 ViewGroup.LayoutParams.WRAP_CONTENT
-                            ).apply {
-                                setMargins(0, 8, 0, 8)
-                            }
+                            ).apply { setMargins(0, 8, 0, 8) }
+                        }
+
+                        // Special logic for SNCU auto-selection
+                        val isFieldDisabled = field.fieldId == "discharged_from_sncu" &&
+                                fields.find { it.fieldId == "is_baby_alive" }?.value == "Yes" &&
+                                isSNCU
+
+                        if (isFieldDisabled && field.value != "Yes") {
+                            field.value = "Yes"
+                            onValueChanged(field, "Yes")
+                            notifyItemChanged(adapterPosition)
                         }
 
                         field.options?.forEachIndexed { index, option ->
                             val radioButton = RadioButton(context).apply {
                                 text = option
+                                // Always set isChecked based on field.value to handle recycling
                                 isChecked = field.value == option
-                                isEnabled = !isViewOnly
-
+                                isEnabled = !isViewOnly && !isFieldDisabled
                                 layoutParams = LinearLayout.LayoutParams(
                                     LinearLayout.LayoutParams.WRAP_CONTENT,
                                     LinearLayout.LayoutParams.WRAP_CONTENT
-                                ).apply {
-                                    setMargins(0, 0, if (index != field.options!!.lastIndex) 24 else 0, 0) // spacing between radios
-                                }
+                                ).apply { setMargins(0, 0, if (index != field.options!!.lastIndex) 24 else 0, 0) }
                             }
 
-                            if (!isViewOnly) {
+                            // Remove previous listener to prevent double-calls due to recycling
+                            radioButton.setOnCheckedChangeListener(null)
+
+                            if (!isViewOnly && !isFieldDisabled) {
                                 radioButton.setOnCheckedChangeListener { _, isChecked ->
                                     if (isChecked && field.value != option) {
                                         field.value = option
                                         onValueChanged(field, option)
+                                        // Update UI for other radios in group
+                                        for (i in 0 until radioGroup.childCount) {
+                                            val child = radioGroup.getChildAt(i) as RadioButton
+                                            if (child.text != option) child.isChecked = false
+                                        }
                                     }
                                 }
                             }
@@ -452,8 +512,33 @@
                             radioGroup.addView(radioButton)
                         }
 
-                        addWithError(radioGroup, field)
+                        // Add wrapper for error text without removing all views
+                        val wrapper = LinearLayout(itemView.context).apply {
+                            orientation = LinearLayout.VERTICAL
+                            layoutParams = LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT
+                            )
+                        }
+                        wrapper.addView(radioGroup)
+
+                        val errorTextView = TextView(itemView.context).apply {
+                            setTextColor(Color.RED)
+                            textSize = 12f
+                            text = field.errorMessage ?: ""
+                            visibility = if (field.errorMessage.isNullOrBlank()) View.GONE else View.VISIBLE
+                        }
+                        wrapper.addView(errorTextView)
+
+                        inputContainer.removeAllViews()
+                        inputContainer.addView(wrapper)
                     }
+
+
+
+
+
+
 
 
                     "image" -> {
@@ -506,6 +591,14 @@
                     }
                 }
             }
+        }
+
+        init {
+            setHasStableIds(true)
+        }
+
+        override fun getItemId(position: Int): Long {
+            return fields[position].fieldId.hashCode().toLong()
         }
 
     }

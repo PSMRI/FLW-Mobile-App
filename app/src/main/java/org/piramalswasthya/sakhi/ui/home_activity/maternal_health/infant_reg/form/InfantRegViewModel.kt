@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.ui.home_activity.maternal_health.infant_reg.form
 
 import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -66,6 +67,27 @@ class InfantRegViewModel @Inject constructor(
     private var deliveryOutcome: DeliveryOutcomeCache? = null
     private var pwrCache: PregnantWomanRegistrationCache? = null
 
+
+
+    fun getIndexDeliveryDischargeSummary1() = dataset.getIndexDeliveryDischargeSummary1()
+    fun getIndexDeliveryDischargeSummary2() = dataset.getIndexDeliveryDischargeSummary2()
+    fun getIndexDeliveryDischargeSummary3() = dataset.getIndexDeliveryDischargeSummary3()
+    fun getIndexDeliveryDischargeSummary4() = dataset.getIndexDeliveryDischargeSummary4()
+
+    private var lastDocumentFormId: Int = 0
+    fun setCurrentDocumentFormId(id: Int) {
+        lastDocumentFormId = id
+    }
+
+    fun getDocumentFormId(): Int {
+        return lastDocumentFormId
+    }
+
+    fun setImageUriToFormElement(dpUri: Uri) {
+        dataset.setImageUriToFormElement(lastDocumentFormId, dpUri)
+
+    }
+
     init {
         viewModelScope.launch {
             val asha = preferenceDao.getLoggedInUser()!!
@@ -104,6 +126,7 @@ class InfantRegViewModel @Inject constructor(
             )
         }
     }
+
 
     fun updateListOnValueChanged(formId: Int, index: Int) {
         viewModelScope.launch {

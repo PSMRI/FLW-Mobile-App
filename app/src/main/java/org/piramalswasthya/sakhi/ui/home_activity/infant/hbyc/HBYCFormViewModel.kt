@@ -16,6 +16,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.hbyc.FormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
 import org.piramalswasthya.sakhi.model.dynamicModel.VisitCard
 import org.piramalswasthya.sakhi.repositories.BenRepo
+import org.piramalswasthya.sakhi.repositories.InfantRegRepo
 import org.piramalswasthya.sakhi.repositories.dynamicRepo.FormRepository
 import java.text.SimpleDateFormat
 import java.util.*
@@ -24,7 +25,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HBYCFormViewModel @Inject constructor(
     private val repository: FormRepository,
-    private val benRepo: BenRepo
+    private val benRepo: BenRepo,
+    private val infantRegRepo: InfantRegRepo,
 ) : ViewModel() {
 
     private val _schema = MutableStateFlow<FormSchemaDto?>(null)
@@ -44,6 +46,17 @@ class HBYCFormViewModel @Inject constructor(
 
     private val _isBenDead = MutableStateFlow(false)
     val isBenDead: StateFlow<Boolean> = _isBenDead
+
+
+    private val _isSNCU = MutableStateFlow(false)
+    val isSNCU: StateFlow<Boolean> = _isSNCU
+
+    fun fetchSNCUStatus(benId: Long) {
+        viewModelScope.launch {
+            val infantRecord = infantRegRepo.getInfantReg(benId, 1)
+            _isSNCU.value = infantRecord?.isSNCU.equals("Yes", ignoreCase = true)
+        }
+    }
 
     var previousVisitDate: Date? = null
     var lastVisitDay: String? = null
@@ -138,13 +151,25 @@ class HBYCFormViewModel @Inject constructor(
         } else true
     }
 
-    fun updateFieldValue(fieldId: String, value: Any?) {
-        val currentSchema = _schema.value ?: return
-        val allFields = currentSchema.sections.flatMap { it.fields }
-        allFields.find { it.fieldId == fieldId }?.value = value
-        allFields.forEach { field -> field.visible = evaluateFieldVisibility(field, allFields) }
-        _schema.value = currentSchema.copy()
+fun updateFieldValue(fieldId: String, value: Any?) {
+    val currentSchema = _schema.value ?: return
+    val allFields = currentSchema.sections.flatMap { it.fields }
+
+    allFields.find { it.fieldId == fieldId }?.apply {
+        this.value = value
     }
+    allFields.forEach { field ->
+        field.visible = evaluateFieldVisibility(field, allFields)
+    }
+
+    val babyAliveValue = allFields.find { it.fieldId == "is_baby_alive" }?.value
+    val sncuField = allFields.find { it.fieldId == "discharged_from_sncu" }
+    if (sncuField != null && babyAliveValue == "Yes" && _isSNCU.value) {
+        sncuField.value = "Yes"
+    }
+    _schema.value = currentSchema.copy()
+}
+
 
     suspend fun saveFormResponses(benId: Long, hhId: Long) {
         val currentSchema = _schema.value ?: return
