@@ -12,6 +12,7 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.piramalswasthya.sakhi.database.room.InAppDb
+import org.piramalswasthya.sakhi.database.room.NcdReferalDao
 import org.piramalswasthya.sakhi.database.room.dao.AdolescentHealthDao
 import org.piramalswasthya.sakhi.database.room.dao.AesDao
 import org.piramalswasthya.sakhi.database.room.dao.ABHAGenratedDao
@@ -37,6 +38,7 @@ import org.piramalswasthya.sakhi.database.room.dao.MdsrDao
 import org.piramalswasthya.sakhi.database.room.dao.PmsmaDao
 import org.piramalswasthya.sakhi.database.room.dao.PncDao
 import org.piramalswasthya.sakhi.database.room.dao.ProfileDao
+import org.piramalswasthya.sakhi.database.room.dao.SaasBahuSammelanDao
 import org.piramalswasthya.sakhi.database.room.dao.SyncDao
 import org.piramalswasthya.sakhi.database.room.dao.TBDao
 import org.piramalswasthya.sakhi.database.room.dao.MaaMeetingDao
@@ -290,11 +292,19 @@ object AppModule {
 
     @Singleton
     @Provides
+    fun provideFormSaasBahuSamelanDao(database: InAppDb): SaasBahuSammelanDao = database.saasBahuSammelanDao
+
+    @Singleton
+    @Provides
     fun provideGenOPDDao(database: InAppDb): GeneralOpdDao = database.generalOpdDao
 
 
     @Singleton
     @Provides
     fun provideMaaMeetingDao(database: InAppDb): MaaMeetingDao = database.maaMeetingDao
+
+    @Singleton
+    @Provides
+    fun provideNcdReferDao(database: InAppDb): NcdReferalDao = database.referalDao
 
 }

@@ -292,6 +292,8 @@
     <string name="pmsma_visit_date">PMSMA Visit Date</string>
     <string name="pmsma_visits">PMSMA Visits</string>
     <string name="pmsma_visit">PMSMA Visit</string>
+    <string name="higher_healthcare_center">Higher Healthcare Center</string>
+    <string name="additional_services">Additional Services</string>
 
 
 </resources>
