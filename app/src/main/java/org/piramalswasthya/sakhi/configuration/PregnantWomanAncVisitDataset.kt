@@ -395,7 +395,7 @@ class PregnantWomanAncVisitDataset(
     private val headLine = FormElement(
         id = 34,
         inputType = InputType.HEADLINE,
-        title = "MCP Card Uploads",
+        title = "MCP Cards",
         headingLine = false,
         required = false,
     )
@@ -452,7 +452,6 @@ class PregnantWomanAncVisitDataset(
             anyHighRisk,
             highRiskReferralFacility,
             hrpConfirm,
-            maternalDeath,
             headLine,
             fileUploadFront,
             fileUploadBack,

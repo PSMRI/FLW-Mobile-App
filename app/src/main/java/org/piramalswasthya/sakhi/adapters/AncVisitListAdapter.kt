@@ -106,7 +106,7 @@ class AncVisitListAdapter(
     class PregnancyVisitClickListener(
         private val showVisits: (benId: Long) -> Unit,
         private val showPmsmaVisits: (benId: Long, hhId: Long) -> Unit,
-        private val addVisit: (benId: Long, visitNumber: Int) -> Unit,
+        private val addVisit: (benId: Long,hhId : Long, visitNumber: Int) -> Unit,
         private val pmsma: (benId: Long, hhId: Long, visitNumber: Int) -> Unit,
         private val callBen: (ben: BenWithAncListDomain) -> Unit
     ) {
@@ -114,6 +114,7 @@ class AncVisitListAdapter(
         fun showPmsmaVisits(item: BenWithAncListDomain) = showPmsmaVisits(item.ben.benId, item.ben.hhId)
         fun addVisit(item: BenWithAncListDomain) = addVisit(
             item.ben.benId,
+            item.ben.hhId,
             if (item.anc.isEmpty()) 1 else item.anc.maxOf { it.visitNumber } + 1
         )
 

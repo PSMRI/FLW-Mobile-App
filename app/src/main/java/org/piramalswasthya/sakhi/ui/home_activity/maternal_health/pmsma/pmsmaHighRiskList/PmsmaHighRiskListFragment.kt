@@ -60,10 +60,10 @@ class PmsmaHighRiskListFragment : Fragment() {
                     if (!bottomSheet.isVisible)
                         bottomSheet.show(childFragmentManager, "ANC")
                 },
-                addVisit = { benId, visitNumber ->
+                addVisit = { benId,hhId, visitNumber ->
                     findNavController().navigate(
                         PmsmaHighRiskListFragmentDirections.actionPmsmaHighRiskListFragmentToPwAncFormFragment(
-                            benId, visitNumber
+                            benId,hhId.toString(), visitNumber
                         )
                     )
                 },
