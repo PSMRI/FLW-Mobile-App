@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+        <string name="no_u_win_sessions_found">कोई यू-विन सत्र नहीं मिला।</string>
+        <string name="add_new_u_win_entry">नया यू-विन प्रविष्टि जोड़ें</string>
+        <string name="u_win_session_list">यू-विन सत्र सूची</string>
+        <string name="u_win_session_detail">यू-विन सत्र विवरण</string>
+        <string name="do_you_want_to_upload_uwin_form_immunization_page_section_photo_copy_to_claim_your_incentive">क्या आप अपने प्रोत्साहन का दावा करने के लिए यूविन फॉर्म - टीकाकरण पृष्ठ / अनुभाग फोटो कॉपी अपलोड करना चाहते हैं</string>
+</resources>

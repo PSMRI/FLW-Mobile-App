@@ -160,8 +160,9 @@
         <action
             android:id="@+id/action_childCareFragment_to_childListFragment"
             app:destination="@id/childListFragment" />
-
-
+        <action
+            android:id="@+id/action_childCareFragment_to_childrenUnderFiveYearListFragment"
+            app:destination="@id/childrenUnderFiveYearListFragment" />
     </fragment>
     <fragment
         android:id="@+id/motherCareFragment"
@@ -276,6 +277,9 @@
         android:label="@string/icon_title_vlf"
         tools:layout="@layout/rv_icon_grid">
         <action
+            android:id="@+id/action_villageLevelFormsFragment_to_uwinListFragment"
+            app:destination="@id/uwinListFragment" />
+        <action
             android:id="@+id/action_villageLevelFormsFragment_to_surveyRegisterFragment"
             app:destination="@id/surveyRegisterFragment" />
         <action
@@ -306,6 +310,28 @@
             android:id="@+id/action_villageLevelFormsFragment_to_saasBahuSammelanListFragment"
             app:destination="@id/saasBahuSammelanListFragment" />
     </fragment>
+
+    <fragment
+      android:id="@+id/uwinListFragment"
+      android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.u_win_forms.UwinListFragment"
+      android:label="@string/u_win_sessions_list"  >
+      <action
+          android:id="@+id/action_uwinListFragment_to_uwinFragment"
+          app:destination="@id/uwinFragment"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/uwinFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.u_win_forms.UwinFragment"
+        android:label="@string/uwin"
+        tools:layout="@layout/fragment_uwin">
+        <argument
+            android:name="uwinId"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
+
     <fragment
         android:id="@+id/newHouseholdFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.all_household.new_household_registration.NewHouseholdFragment"
@@ -409,9 +435,20 @@
         android:name="org.piramalswasthya.sakhi.ui.home_activity.child_care.child_list.ChildListFragment"
         android:label="@string/child_care_icon_title_child_list"
         tools:layout="@layout/fragment_child_list">
+<!--        <action-->
+<!--            android:id="@+id/action_childListFragment_to_hbycMonthListFragment"-->
+<!--            app:destination="@id/hbycMonthListFragment" />-->
+
         <action
-            android:id="@+id/action_childListFragment_to_hbycMonthListFragment"
-            app:destination="@id/hbycMonthListFragment" />
+            android:id="@+id/action_childListFragment_to_childMonthListFragment"
+            app:destination="@id/childMonthListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/childrenUnderFiveYearListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.child_care.children_under_five_years.ChildrenUnderFiveYearsListFragment"
+        android:label="@string/child_under_five_years_list"
+        tools:layout="@layout/fragment_children_under_five_years_list">
+
     </fragment>
     <fragment
         android:id="@+id/pncMotherListFragment"
@@ -1269,6 +1306,49 @@
             android:name="id"
             android:defaultValue="0L"
             app:argType="long" />
+        android:id="@+id/childMonthListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.infant.ChildMonthListFragment"
+        android:label="ChildMonthListFragment" >
+        <argument
+            android:name="hhId"
+            app:argType="long" />
+        <argument
+            android:name="benId"
+            app:argType="long" />
+
+        <action
+            android:id="@+id/action_infantFormFragment_to_HBYCFormFragment"
+            app:destination="@id/HBYCFormFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/HBYCFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.infant.hbyc.HBYCFormFragment"
+        android:label="HBYCFormFragment" >
+
+        <argument
+            android:name="benId"
+            app:argType="long" />
+
+        <argument
+            android:name="hhId"
+            app:argType="long" />
+
+
+        <argument
+            android:name="visitDay"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null"/>
+
+        <argument
+            android:name="isViewMode"
+            app:argType="boolean"
+            android:defaultValue="false" />
+
+        <argument
+            android:name="formId"
+            app:argType="string"
+            android:defaultValue="hbyc_form_001" />
     </fragment>
 
     <fragment

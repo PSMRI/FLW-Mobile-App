@@ -18,7 +18,7 @@
         <item>Negative</item>
     </array>
     <string name="ectdset_name_wo_preg">Is the woman pregnant?</string>
-    <string name="ectdset_fly_plan_mthd">Are you using Family Planning Method?</string>
+    <string name="ectdset_fly_plan_mthd">Are you using Family Planning Method? or Do you want to use any Planning Method</string>
     <string name="ectdset_mthd_conpt">Method of Contraception</string>
     <string name="ectdset_other_mthd">Any Other Method</string>
 </resources>

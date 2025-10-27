@@ -15,7 +15,6 @@
         android:textSize="16sp"
         android:text="Field Label" />
 
-    <!-- 🔄 Change this to FrameLayout for dynamic view rendering -->
     <FrameLayout
         android:id="@+id/inputContainer"
         android:layout_width="match_parent"

@@ -57,6 +57,7 @@
     <string name="icon_title_icc">Infant List</string>
     <string name="icon_title_ccc">Child List</string>
     <string name="icon_title_acc">Adolescent List</string>
+    <string name="children_under_five_years">Children under 5 Years</string>
     <string name="icon_title_pmr">Pregnant Women Registration</string>
     <string name="icon_title_pmt">ANC Visits</string>
     <string name="icon_title_pmp">PMSMA</string>
