@@ -162,7 +162,7 @@ import org.piramalswasthya.sakhi.model.VHNDCache
     ],
     views = [BenBasicCache::class],
 
-    version = 33, exportSchema = false
+    version = 34, exportSchema = false
 )
 
 @TypeConverters(
@@ -226,6 +226,17 @@ abstract class InAppDb : RoomDatabase() {
                 it.execSQL("alter table BENEFICIARY add column isConsent BOOL")
 
             })
+            val MIGRATION_33_34 = object : Migration(33, 34) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("ALTER TABLE INFANT_REG ADD COLUMN isSNCU TEXT")
+                    database.execSQL("ALTER TABLE INFANT_REG ADD COLUMN deliveryDischargeSummary1 TEXT")
+                    database.execSQL("ALTER TABLE INFANT_REG ADD COLUMN deliveryDischargeSummary2 TEXT")
+                    database.execSQL("ALTER TABLE INFANT_REG ADD COLUMN deliveryDischargeSummary3 TEXT")
+                    database.execSQL("ALTER TABLE INFANT_REG ADD COLUMN deliveryDischargeSummary4 TEXT")
+                }
+            }
+
+
             val MIGRATION_32_33 = object : Migration(32, 33) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     database.execSQL("""
@@ -1216,7 +1227,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_29_30,
                         MIGRATION_30_31,
                         MIGRATION_31_32,
-                        MIGRATION_32_33
+                        MIGRATION_32_33,
+                        MIGRATION_33_34,
                     ).build()
 
                     INSTANCE = instance
