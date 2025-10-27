@@ -463,6 +463,7 @@
     <string name="all">All</string>
     <string name="with_abha">With ABHA</string>
     <string name="without_abha">Without ABHA</string>
+    <string name="age_above_30_years">Age above 30 years</string>
     <string name="no_visit_made">No Visit Made</string>
     <string name="filter_list">Filter</string>
     <string name="ben_with_rch_id">Ben With RCH ID</string>

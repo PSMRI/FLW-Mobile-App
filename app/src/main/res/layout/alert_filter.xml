@@ -115,6 +115,14 @@
             android:includeFontPadding="false"
             android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
 
+        <RadioButton
+            android:id="@+id/rbAgeAboveThirty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/age_above_30_years"
+            android:includeFontPadding="false"
+            android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+
     </RadioGroup>
 
     <com.google.android.material.button.MaterialButton
