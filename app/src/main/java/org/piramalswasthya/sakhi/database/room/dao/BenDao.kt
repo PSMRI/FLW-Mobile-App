@@ -231,6 +231,7 @@ interface BenDao {
     WHERE pwr.active = 1 
       AND ben.reproductiveStatusId = 2  
       AND ben.villageId = :selectedVillage
+        AND (ben.isDeath = 0 OR ben.isDeath IS NULL)
       AND (ben.benId IN (SELECT benId FROM PMSMA WHERE highriskSymbols = 1)
            OR ben.benId IN (SELECT benId FROM PREGNANCY_ANC WHERE anyHighRisk = 1))
     GROUP BY ben.benId

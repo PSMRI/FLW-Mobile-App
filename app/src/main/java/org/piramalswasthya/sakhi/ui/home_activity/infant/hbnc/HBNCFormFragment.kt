@@ -118,6 +118,10 @@ class HBNCFormFragment : Fragment() {
         benId = args.benId
         hhId = args.hhId
 
+        viewModel.fetchSNCUStatus(benId)
+
+
+
         infantListViewModel.getBenById(benId) { ben ->
             infantBinding.btnHBNC.visibility=View.GONE
             infantBinding.dueIcon.visibility=View.GONE
@@ -127,6 +131,7 @@ class HBNCFormFragment : Fragment() {
         }
         viewModel.loadVisitDates(benId)
 
+
         infantListViewModel.getDobByBenIdAsync(benId) { dobMillis ->
             if (dobMillis != null) {
                 dob = dobMillis
@@ -135,6 +140,7 @@ class HBNCFormFragment : Fragment() {
                 viewModel.loadFormSchema(benId, HBNC_FORM_ID, visitDay!!, true, dob)
             }
         }
+
 
         lifecycleScope.launch {
             viewModel.schema.collectLatest { schema ->
@@ -150,7 +156,9 @@ class HBNCFormFragment : Fragment() {
                     visibleFields,
                     isViewOnly = isViewMode,
                     minVisitDate = minVisitDate,
-                    maxVisitDate = maxVisitDate
+                    maxVisitDate = maxVisitDate,
+                    isSNCU = viewModel.isSNCU.value ?: false
+//                    isSNCU = true
                 ) { field, value ->
                     if (value == "pick_image") {
                         currentImageField = field
@@ -164,6 +172,18 @@ class HBNCFormFragment : Fragment() {
                 }
 
                 recyclerView.adapter = adapter
+
+                val isSNCUCase = viewModel.isSNCU.value ?: false
+                if (isSNCUCase) {
+                    val updatedFields = adapter.getUpdatedFields().map { field ->
+                        if (field.fieldId == "discharged_from_sncu") {
+                            field.value = "Yes"
+                            field.errorMessage = null
+                        }
+                        field
+                    }
+                    adapter.updateFields(updatedFields)
+                }
                 saveButton.visibility = if (isViewMode) View.GONE else View.VISIBLE
             }
         }
@@ -172,6 +192,8 @@ class HBNCFormFragment : Fragment() {
             handleFormSubmission()
         }
     }
+
+
     private fun showImagePickerDialog() {
         val options = arrayOf("Take Photo", "Choose from Gallery")
 
@@ -215,6 +237,7 @@ class HBNCFormFragment : Fragment() {
 
         currentSchema.sections.orEmpty().forEach { section ->
             section.fields.orEmpty().forEach { schemaField ->
+
                 updatedFields.find { it.fieldId == schemaField.fieldId }?.let { updated ->
                     schemaField.value = updated.value
 
