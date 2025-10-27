@@ -54,7 +54,7 @@ class DeliveryOutcomeListFragment : Fragment() {
                 { hhId, benId ->
                     findNavController().navigate(
                         DeliveryOutcomeListFragmentDirections.actionDeliveryOutcomeListFragmentToDeliveryOutcomeFragment(
-                            benId
+                            benId, hhId
                         )
                     )
                 }), resources.getString(R.string.register), pref = prefDao

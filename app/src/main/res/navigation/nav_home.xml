@@ -810,6 +810,11 @@
             android:name="benId"
             app:argType="long" />
         <argument
+            android:name="hhId"
+            app:argType="string"
+            app:nullable="true"
+            />
+        <argument
             android:name="visitNumber"
             app:argType="integer" />
 
@@ -817,6 +822,12 @@
             android:name="lastItemClick"
             app:argType="boolean"
             android:defaultValue="false" />
+        <action
+            android:id="@+id/action_pwAncFormFragment_to_mdsrObjectFragment"
+            app:destination="@id/mdsrObjectFragment"
+            app:popUpToInclusive="true"
+            app:popUpTo="@id/pwAncFormFragment"/>
+
     </fragment>
 
     <fragment
@@ -914,6 +925,17 @@
         <argument
             android:name="benId"
             app:argType="long" />
+        <argument
+            android:name="hhId"
+            app:argType="long"/>
+        <action
+            android:id="@+id/action_deliveryOutcomeFragment_to_mdsrObjectFragment"
+            app:destination="@id/mdsrObjectFragment"
+            app:popUpToInclusive="true"
+            app:popUpTo="@id/deliveryOutcomeFragment"/>
+
+
+
     </fragment>
     <fragment
         android:id="@+id/deliveryOutcomeListFragment"
