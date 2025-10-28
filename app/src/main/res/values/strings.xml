@@ -490,6 +490,9 @@
     <string name="session_date_format">Session Date: %s</string>
     <string name="uwin_session_format">UWIN Session %s</string>
     <string name="is_baby_discharge_from_sncu">Is Baby discharge from SNCU?</string>
+    <string name="optional">(Optional)</string>
+    <string name="optional_">Optional</string>
+    <string name="mandatory">Mandatory <font color='#FF0000'>*</font></string>
 
     <string-array name="sync_records">
         <item>Beneficiary</item>
