@@ -5,6 +5,7 @@ import android.content.Context.CONNECTIVITY_SERVICE
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import android.util.Log
 import androidx.core.text.isDigitsOnly
 import org.piramalswasthya.sakhi.model.AncStatus
 import org.piramalswasthya.sakhi.model.BenBasicDomain
@@ -71,23 +72,23 @@ fun filterBenList(
         list
     }
 
-fun filterBenList(
-    list: List<BenBasicDomain>,
-    filterType: Int
-): List<BenBasicDomain> {
-    return when (filterType) {
-        1 -> list.filter { !it.abhaId.isNullOrEmpty() }
+    fun filterBenList(
+        list: List<BenBasicDomain>,
+        filterType: Int
+    ): List<BenBasicDomain> {
+        return when (filterType) {
+            1 -> list.filter { !it.abhaId.isNullOrEmpty() }
 
-        2 -> list.filter { it.abhaId.isNullOrEmpty() }
+            2 -> list.filter { it.abhaId.isNullOrEmpty() }
 
-        3 -> list.filter { ben ->
-            val age = getAgeFromDob(ben.dob)
-            age >= 30
+            3 -> list.filter { ben ->
+                val age = getAgeFromDob(ben.dob)
+                age >= 30 && ben.isDeathValue == "false"
+            }
+
+            else -> list
         }
-
-        else -> list
     }
-}
 
 fun getAgeFromDob(dob: Long?): Int {
     if (dob == null) return 0
