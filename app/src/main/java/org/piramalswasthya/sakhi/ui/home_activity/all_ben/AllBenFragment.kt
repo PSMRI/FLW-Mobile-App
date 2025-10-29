@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -168,6 +169,16 @@ class AllBenFragment : Fragment() {
                 },
                 { benId, hhId ->
                     checkAndGenerateABHA(benId)
+                },
+                { benId, hhId ->
+                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+                        findNavController().navigate(
+                            AllBenFragmentDirections.actionAllBenFragmentToEyeSurgeryFormFragment(
+                                hhId = hhId,
+                                benId = benId
+                            )
+                        )
+                    }
                 },
                 {
                     try {

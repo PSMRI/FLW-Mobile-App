@@ -182,6 +182,7 @@ class BenListAdapter(
         private val clickedBen: (hhId: Long, benId: Long, relToHeadId: Int) -> Unit,
         private val clickedHousehold: (hhId: Long) -> Unit,
         private val clickedABHA: (benId: Long, hhId: Long) -> Unit,
+        private val clickedAddEyeSurgery: (benId: Long, hhId: Long) -> Unit,
         private val callBen: (ben: BenBasicDomain) -> Unit
     ) {
         fun onClickedBen(item: BenBasicDomain) = clickedBen(
@@ -193,7 +194,7 @@ class BenListAdapter(
         fun onClickedHouseHold(item: BenBasicDomain) = clickedHousehold(item.hhId)
 
         fun onClickABHA(item: BenBasicDomain) = clickedABHA(item.benId, item.hhId)
-        fun onClickAbove30(item: BenBasicDomain) = clickedABHA(item.benId, item.hhId)
+        fun onClickAddEyeSurgery(item: BenBasicDomain) = clickedAddEyeSurgery(item.benId, item.hhId)
 
         fun onClickedForCall(item: BenBasicDomain) = callBen(item)
     }
