@@ -1029,8 +1029,10 @@ class FormInputAdapter(
     }
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
-        val isEnabled = if (isEnabled) item.isEnabled else false
+//        I was getting crash that's why i have moved this line inside try block
+//        val isEnabled = if (isEnabled) item.isEnabled else false
         try {
+            val isEnabled = if (isEnabled) item.isEnabled else false
             when (item.inputType) {
                 EDIT_TEXT -> (holder as EditTextInputViewHolder).bind(
                     item, isEnabled, formValueListener

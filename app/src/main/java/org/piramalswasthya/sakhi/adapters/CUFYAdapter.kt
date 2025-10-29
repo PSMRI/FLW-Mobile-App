@@ -7,11 +7,12 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.databinding.ChildrenUnderFiveYearsItemBinding
 import org.piramalswasthya.sakhi.model.BenBasicDomain
+import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
 
-class ChildrenUnderFiveYearsAdapter(
+class CUFYAdapter(
     private val clickListener: ChildListClickListener
 ) :
-    ListAdapter<BenBasicDomain, ChildrenUnderFiveYearsAdapter.BenViewHolder>(BenDiffUtilCallBack) {
+    ListAdapter<BenBasicDomain, CUFYAdapter.BenViewHolder>(BenDiffUtilCallBack) {
     private object BenDiffUtilCallBack : DiffUtil.ItemCallback<BenBasicDomain>() {
         override fun areItemsTheSame(
             oldItem: BenBasicDomain, newItem: BenBasicDomain
@@ -54,17 +55,17 @@ class ChildrenUnderFiveYearsAdapter(
 
 
     class ChildListClickListener(
-        val goToForm: (benId: Long, hhId: Long, type: String) -> Unit
+        val goToForm: (benId: Long, hhId: Long, dob: Long, type: String) -> Unit
 
     ) {
         fun onClickedSAM(item: BenBasicDomain) = goToForm(
-            item.benId, item.hhId, "Check SAM"
+            item.benId, item.hhId, item.dob, FormConstants.SAM_FORM_NAME
         )
         fun onClickedORS(item: BenBasicDomain) = goToForm(
-            item.benId, item.hhId, "ORS"
+            item.benId, item.hhId, item.dob, FormConstants.ORS_FORM_NAME
         )
         fun onClickedIFA(item: BenBasicDomain) = goToForm(
-            item.benId, item.hhId, "IFA"
+            item.benId, item.hhId, item.dob, FormConstants.IFA_FORM_NAME
         )
     }
 

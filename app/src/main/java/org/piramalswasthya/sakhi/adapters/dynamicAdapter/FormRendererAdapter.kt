@@ -3,6 +3,7 @@
     import android.app.AlertDialog
     import android.app.DatePickerDialog
     import android.graphics.Color
+    import android.graphics.Typeface
     import android.net.Uri
     import android.text.*
     import android.text.style.ForegroundColorSpan
@@ -129,6 +130,29 @@
                 }
 
                 when (field.type) {
+                    "label" -> {
+                        val context = itemView.context
+                        val value = field.defaultValue?.trim()
+
+                        if (!value.isNullOrEmpty()) {
+                            val textView = TextView(context).apply {
+                                layoutParams = LinearLayout.LayoutParams(
+                                    ViewGroup.LayoutParams.MATCH_PARENT,
+                                    ViewGroup.LayoutParams.WRAP_CONTENT
+                                ).apply {
+                                    setMargins(0, 16, 0, 8)
+                                }
+
+                                text = value
+                                setTypeface(typeface, Typeface.BOLD)
+                                setTextColor(ContextCompat.getColor(context, android.R.color.black))
+                                setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_TitleMedium)
+                            }
+
+                            addWithError(textView, field)
+                        }
+                    }
+
                     "text" -> {
                         val context = itemView.context
 
@@ -237,7 +261,6 @@
                         textInputLayout.addView(editText)
                         addWithError(textInputLayout, field)
                     }
-
 
                     "dropdown" -> {
                         val context = itemView.context
@@ -411,8 +434,6 @@
                         addWithError(textInputLayout, field)
                     }
 
-
-
                     "radio" -> {
                         val context = itemView.context
 
@@ -455,7 +476,6 @@
                         addWithError(radioGroup, field)
                     }
 
-
                     "image" -> {
                         val context = itemView.context
 
@@ -496,7 +516,6 @@
 
                         addWithError(container, field)
                     }
-
 
                     else -> {
                         inputContainer.addView(TextView(itemView.context).apply {
