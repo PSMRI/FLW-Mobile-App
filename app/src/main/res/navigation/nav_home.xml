@@ -116,6 +116,9 @@
         <action
             android:id="@+id/action_allBenFragment_to_newBenRegFragment"
             app:destination="@id/newBenRegFragment" />
+        <action
+            android:id="@+id/action_allBenFragment_to_eyeSurgeryFormFragment"
+            app:destination="@id/eyeSurgeryFormFragment" />
         <argument
             android:name="source"
             android:defaultValue="0"
@@ -1024,6 +1027,18 @@
             android:id="@+id/action_newBenRegFragment_self"
             app:destination="@id/newBenRegFragment"
             app:launchSingleTop="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/eyeSurgeryFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registration.EyeSurgeryFormFragment"
+        android:label="EyeSurgeryFormFragment">
+        <argument
+            android:name="hhId"
+            app:argType="long" />
+        <argument
+            android:name="benId"
+            android:defaultValue="0L"
+            app:argType="long" />
     </fragment>
     <fragment
         android:id="@+id/benListCHOFragment"
