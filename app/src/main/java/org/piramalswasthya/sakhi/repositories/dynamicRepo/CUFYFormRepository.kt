@@ -165,9 +165,9 @@ class CUFYFormRepository @Inject constructor(
 
 
 
-    suspend fun syncFormToServer(formName: String, form: CUFYFormResponseJsonEntity): Boolean {
+    suspend fun syncFormToServer(userName: String,formName: String, form: CUFYFormResponseJsonEntity): Boolean {
         return try {
-            val request = FormSubmitRequestMapper.fromEntity(form) ?: return false
+            val request = FormSubmitRequestMapper.fromEntity(form,userName) ?: return false
             val response = amritApiService.submitChildCareForm(formName,listOf(request))
             response.isSuccessful
         } catch (e: Exception) {
