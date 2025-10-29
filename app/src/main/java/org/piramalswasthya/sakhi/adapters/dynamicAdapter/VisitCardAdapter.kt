@@ -1,10 +1,12 @@
 package org.piramalswasthya.sakhi.adapters.dynamicAdapter
 
+import android.text.Html
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.model.dynamicModel.VisitCard
@@ -18,6 +20,7 @@ class VisitCardAdapter(
     inner class VisitViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvVisitDay: TextView = view.findViewById(R.id.tvVisitDay)
         val tvVisitDate: TextView = view.findViewById(R.id.tvVisitDate)
+        val tvVisitOption: TextView = view.findViewById(R.id.tvOptionalLabel)
         val btnView: View = view.findViewById(R.id.btnView)
         val btnAddVisit: View = view.findViewById(R.id.btnAddVisit)
         init {
@@ -58,6 +61,31 @@ class VisitCardAdapter(
         holder.btnView.visibility = View.GONE
         holder.btnAddVisit.visibility = View.GONE
 
+
+
+//        holder.tvVisitOption.visibility = if (visit.visitDay in listOf("14th Day", "21st Day", "28th Day")) {
+//            View.VISIBLE
+//        } else {
+//            View.GONE
+//        }
+
+
+        holder.tvVisitOption.apply {
+
+            when (visit.visitDay) {
+                "14th Day", "21st Day", "28th Day" -> {
+                    visibility = View.VISIBLE
+                    text = context.getString(R.string.optional_)
+                    setTextColor(context.getColor(R.color.read_only))
+                }
+                "1st Day", "3rd Day", "7th Day", "42nd Day" -> {
+                    visibility = View.VISIBLE
+                    text= context.getString(R.string.mandatory)
+                }
+
+            }
+        }
+
         when {
             visit.isCompleted -> {
                 holder.btnView.visibility = View.VISIBLE
@@ -85,6 +113,7 @@ class VisitCardAdapter(
                 holder.itemView.setBackgroundResource(R.color.read_only)
                 holder.itemView.isEnabled = false
                 holder.btnView.isEnabled = false
+                holder.tvVisitOption.visibility= View.GONE
                 holder.btnAddVisit.isEnabled = false
             }
         }

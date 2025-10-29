@@ -293,6 +293,9 @@
     <string name="pmsma_visits">PMSMA Visits</string>
     <string name="pmsma_visit">PMSMA Visit</string>
     <string name="is_baby_discharge_from_sncu">Is Baby discharge from SNCU?</string>
+    <string name="optional">(Optional)</string>
+    <string name="optional_">Optional</string>
+    <string name="mandatory">Mandatory <font color='#FF0000'>*</font></string>
     <!-- <string name="child_rch_id">Child RCH ID</string>
      <string name="vaccination_due_date">Vaccination Due Date</string>
      <string name="reminder">Reminder!!</string>

@@ -312,13 +312,18 @@ suspend fun saveFormResponses(benId: Long, hhId: Long) {
                 "1st Day" -> !isCompleted
                 "3rd Day" -> !isCompleted && completed.contains("1st Day")
                 "7th Day" -> !isCompleted && completed.contains("3rd Day")
-                "14th Day", "21st Day", "28th Day" -> !isCompleted && completed.contains("7th Day")
-                "42nd Day" -> !isCompleted && completed.contains("28th Day")
+                "14th Day", "21st Day", "28th Day","42nd Day" -> !isCompleted && completed.contains("7th Day")
+//                "42nd Day" -> !isCompleted && completed.contains("28th Day")
                 else -> false
             }
 
             val visit = relevantVisits.find { it.visitDay == day }
             val visitDate: String = visit?.formDataJson?.let { JSONObject(it).optString("visitDate", null) } ?: "-"
+
+            val dueDate: String = _schema.value?.sections
+                ?.flatMap { it.fields.orEmpty() }
+                ?.find { it.fieldId == "due_date" && it.value != null }?.value?.toString() ?: "-"
+
             val isBabyDeath = visit?.formDataJson?.let {
                 val root = JSONObject(it)
                 val fieldsJson = root.optJSONObject("fields") ?: JSONObject()

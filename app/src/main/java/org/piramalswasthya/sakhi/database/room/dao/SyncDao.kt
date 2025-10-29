@@ -127,12 +127,14 @@ interface SyncDao {
                 "    INNER JOIN beneficiary b ON b.beneficiaryId = imm.beneficiaryId " +
 //                "    WHERE b.loc_village_id = :villageId " +
                 "    UNION ALL " +
-                "    SELECT 18 as id, 'HBYC' as name, hbyc.syncState as syncState " +
-                "    FROM HBYC hbyc " +
+                "    SELECT 18 as id, 'HBYC' as name,  CASE \n" +
+                "   WHEN hbyc.isSynced = 1 THEN 2 ELSE hbyc.isSynced  END AS syncState " +
+                "    FROM all_visit_history_hbyc hbyc " +
                 "    INNER JOIN beneficiary b ON b.beneficiaryId = hbyc.benId " +
                 "    UNION ALL " +
-                "    SELECT 19 as id, 'HBNC' as name, hbnc.syncState as syncState " +
-                "    FROM HBNC hbnc " +
+                "    SELECT 19 as id, 'HBNC' as name, CASE \n" +
+                "   WHEN hbnc.isSynced = 1 THEN 2 ELSE hbnc.isSynced  END AS syncState " +
+                "    FROM all_visit_history hbnc " +
                 "    INNER JOIN beneficiary b ON b.beneficiaryId = hbnc.benId " +
                 ") AS combined_data " +
                 "GROUP BY id, name, syncState " +
