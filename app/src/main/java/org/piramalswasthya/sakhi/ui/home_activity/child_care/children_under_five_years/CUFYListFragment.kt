@@ -3,7 +3,6 @@ package org.piramalswasthya.sakhi.ui.home_activity.child_care.children_under_fiv
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,21 +13,21 @@ import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
-import org.piramalswasthya.sakhi.adapters.ChildrenUnderFiveYearsAdapter
+import org.piramalswasthya.sakhi.adapters.CUFYAdapter
 import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.databinding.FragmentChildrenUnderFiveYearsListBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 
 @AndroidEntryPoint
-class ChildrenUnderFiveYearsListFragment : Fragment() {
+class CUFYListFragment : Fragment() {
 
     private var _binding: FragmentChildrenUnderFiveYearsListBinding? = null
 
     private val binding: FragmentChildrenUnderFiveYearsListBinding
         get() = _binding!!
 
-    private val viewModel: ChildrenUnderFiveYearListViewModel by viewModels()
-    private lateinit var benAdapter: ChildrenUnderFiveYearsAdapter
+    private val viewModel: CUFYListViewModel by viewModels()
+    private lateinit var benAdapter: CUFYAdapter
 
     private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
         binding.searchView.setText(value)
@@ -47,11 +46,12 @@ class ChildrenUnderFiveYearsListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        benAdapter = ChildrenUnderFiveYearsAdapter(
-            ChildrenUnderFiveYearsAdapter.ChildListClickListener { benId, hhId, type ->
-                Log.i("ChildrenUnderFiveYearsOne", "onViewCreated: $benId === $hhId === $type")
+        benAdapter = CUFYAdapter(
+            CUFYAdapter.ChildListClickListener { benId, hhId,dob, type ->
+                showOptionsBottomSheet(benId, hhId, dob,type)
             }
         )
+
         binding.rvAny.adapter = benAdapter
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -83,6 +83,12 @@ class ChildrenUnderFiveYearsListFragment : Fragment() {
                 (searchView as EditText).removeTextChangedListener(searchTextWatcher)
 
         }
+
+    }
+
+    private fun showOptionsBottomSheet(benId: Long, hhId: Long, dob: Long, type : String) {
+        val bottomSheet = CUFYBottomSheetFragment.newInstance(benId, hhId, dob,type)
+        bottomSheet.show(childFragmentManager, bottomSheet.tag)
 
     }
 

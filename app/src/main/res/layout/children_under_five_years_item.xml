@@ -9,7 +9,7 @@
             type="org.piramalswasthya.sakhi.model.BenBasicDomain" />
         <variable
             name="clickListener"
-            type="org.piramalswasthya.sakhi.adapters.ChildrenUnderFiveYearsAdapter.ChildListClickListener" />
+            type="org.piramalswasthya.sakhi.adapters.CUFYAdapter.ChildListClickListener" />
 
     </data>
 
