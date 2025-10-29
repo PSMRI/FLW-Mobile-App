@@ -257,7 +257,7 @@ abstract class InAppDb : RoomDatabase() {
             }
 
 
-            val MIGRATION_31_32 = object : Migration(31, 32) {
+            val MIGRATION_33_34 = object : Migration(31, 32) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     database.execSQL("""
             CREATE TABLE IF NOT EXISTS form_schema (
@@ -1252,7 +1252,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_29_30,
                         MIGRATION_30_31,
                         MIGRATION_31_32,
-                        MIGRATION_32_33
+                        MIGRATION_32_33,
+                        MIGRATION_33_34
                     ).build()
 
                     INSTANCE = instance

@@ -29,6 +29,7 @@ object FormSubmitRequestMapper {
             val fieldsMap: Map<String, Any?> = Gson().fromJson(fieldsObj.toString(), type)
 
             FormSubmitRequest(
+                userName = userName,
                 formId = jsonObj.optString("formId"),
                 beneficiaryId = jsonObj.optLong("beneficiaryId"),
                 houseHoldId = jsonObj.optLong("houseHoldId"),
@@ -42,7 +43,7 @@ object FormSubmitRequestMapper {
     }
 
 
-    fun fromEntity(entity: CUFYFormResponseJsonEntity): FormSubmitRequest? {
+    fun fromEntity(entity: CUFYFormResponseJsonEntity, userName: String): FormSubmitRequest? {
         return try {
             val jsonObj = JSONObject(entity.formDataJson)
             val fieldsObj = jsonObj.optJSONObject("fields")
