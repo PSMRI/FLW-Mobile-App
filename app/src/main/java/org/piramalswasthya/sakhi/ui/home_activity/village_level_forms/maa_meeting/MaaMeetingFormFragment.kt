@@ -165,7 +165,6 @@ class MaaMeetingFormFragment : Fragment() {
                     )
                 } catch (_: Exception) {}
 
-                // Allow only JPEG, PNG, PDF
                 val mime = requireContext().contentResolver.getType(uri) ?: getMimeFromUri(uri)
                 val allowed = setOf("image/jpeg", "image/png", "application/pdf")
                 if (!allowed.contains(mime)) {

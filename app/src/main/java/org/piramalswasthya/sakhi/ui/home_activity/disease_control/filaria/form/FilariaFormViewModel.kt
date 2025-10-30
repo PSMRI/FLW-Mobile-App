@@ -101,6 +101,7 @@ class FilariaFormViewModel @Inject constructor(
                 try {
                     _state.postValue(State.SAVING)
                     dataset.mapValues(filariaScreeningCache, 1)
+
                     filariaRepo.saveFilariaScreening(filariaScreeningCache)
                     _state.postValue(State.SAVE_SUCCESS)
                 } catch (e: Exception) {
