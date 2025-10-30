@@ -50,9 +50,9 @@ class ChildCareVisitListAdapter(
     }
 
     class ChildOptionsClickListener(
-        private val clickedOption: (formType: String, isViewMode: Boolean) -> Unit
+        private val clickedOption: (formType: String, visitDay: String?, isViewMode: Boolean,formDataJson: String?, recordId: Int?) -> Unit
     ) {
-        fun onAddClicked(item: ChildOption) = clickedOption(item.formType, false)
-        fun onViewClicked(item: ChildOption) = clickedOption(item.formType, true)
+        fun onAddClicked(item: ChildOption) = clickedOption(item.formType, null, false, null,null)
+        fun onViewClicked(item: ChildOption) = clickedOption(item.formType, item.visitDay, true,item.formDataJson,item.recordId)
     }
 }
