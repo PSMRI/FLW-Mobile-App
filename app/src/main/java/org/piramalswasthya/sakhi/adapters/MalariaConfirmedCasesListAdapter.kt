@@ -44,7 +44,7 @@ class MalariaConfirmedCasesListAdapter(
             binding.benWithMalariaConfirmed = item
 
 
-            binding.ivSyncState.visibility = if (item.malariaConfirmed == null) View.INVISIBLE else View.VISIBLE
+            binding.ivSyncState.visibility = if (item.malariaConfirmed == null) View.GONE else View.VISIBLE
 
 /*            try {
                 if(item.malariaConfirmed!!.caseStatus != null) {
@@ -98,6 +98,15 @@ class MalariaConfirmedCasesListAdapter(
                     binding.spouse = item.ben.spouseName != "Not Available"
                     binding.husband = false
                 }
+            }
+            if ( item.malariaConfirmed != null && item.ben.isDeath) {
+                binding.btnFormTb.visibility = View.VISIBLE
+            } else if (item.malariaConfirmed == null && !item.ben.isDeath){
+                binding.btnFormTb.visibility = View.VISIBLE
+            } else if (item.malariaConfirmed != null && !item.ben.isDeath){
+                binding.btnFormTb.visibility = View.VISIBLE
+            } else {
+                binding.btnFormTb.visibility = View.INVISIBLE
             }
 
             binding.btnFormTb.text = if (item.malariaConfirmed == null) "Follow Up" else "View"

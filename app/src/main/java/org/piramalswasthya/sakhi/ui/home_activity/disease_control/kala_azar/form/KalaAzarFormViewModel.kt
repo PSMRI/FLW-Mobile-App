@@ -12,22 +12,34 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.configuration.KalaAzarFormDataset
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.KalaAzarScreeningCache
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.KalaAzarRepo
+import org.piramalswasthya.sakhi.repositories.MaternalHealthRepo
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
 class KalaAzarFormViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     preferenceDao: PreferenceDao,
-    @ApplicationContext context: Context,
+    @ApplicationContext var context: Context,
     private val kalaAzarRepo: KalaAzarRepo,
-    private val benRepo: BenRepo
-) : ViewModel() {
+    private val benRepo: BenRepo,
+    private val maternalHealthRepo: MaternalHealthRepo,
+
+    ) : ViewModel() {
+
+
+
+
     val benId =
         KalaAzarFormFragmentArgs.fromSavedStateHandle(savedStateHandle).benId
 
@@ -61,7 +73,11 @@ class KalaAzarFormViewModel @Inject constructor(
     private lateinit var kalaazarScreeningCache: KalaAzarScreeningCache
 
     private val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO
+    var isDeath = false
+    var _isBeneficaryStatusDeath = MutableLiveData<Boolean>()
 
+    val isBeneficaryStatusDeath: LiveData<Boolean>
+        get() = _isBeneficaryStatusDeath
     init {
         viewModelScope.launch {
             val ben = benRepo.getBenFromId(benId)?.also { ben ->
@@ -77,6 +93,7 @@ class KalaAzarFormViewModel @Inject constructor(
             kalaAzarRepo.getKalaAzarScreening(benId)?.let {
                 kalaazarScreeningCache = it
                 _recordExists.value = true
+                _isBeneficaryStatusDeath.value = kalaazarScreeningCache.beneficiaryStatus.equals("Death", ignoreCase = true)
             } ?: run {
                 _recordExists.value = false
             }
@@ -108,6 +125,29 @@ class KalaAzarFormViewModel @Inject constructor(
                 try {
                     _state.postValue(State.SAVING)
                     dataset.mapValues(kalaazarScreeningCache, 1)
+                    if (kalaazarScreeningCache.beneficiaryStatus == "Death") {
+                        isDeath = true
+                        val reasons = context.resources.getStringArray(R.array.benificary_case_status_kalaazar)
+                        val selectedValue = kalaazarScreeningCache.reasonForDeath
+                        val position = reasons.indexOf(selectedValue)
+                        maternalHealthRepo.getBenFromId(benId)?.let {
+                            it.isDeath = true
+                            it.isDeathValue = "Death"
+                            val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.US)
+                            val dateOfDeath = kalaazarScreeningCache.dateOfDeath?.let { d ->
+                                dateFormat.format(Date(d))
+                            } ?: ""
+                            it.dateOfDeath = dateOfDeath
+                            it.reasonOfDeath = kalaazarScreeningCache.reasonForDeath
+                            it.reasonOfDeathId = position
+                            it.placeOfDeath = kalaazarScreeningCache.placeOfDeath
+                            it.placeOfDeathId = context.resources.getStringArray(R.array.death_place).indexOf(kalaazarScreeningCache.placeOfDeath)
+                            it.otherPlaceOfDeath = kalaazarScreeningCache.otherPlaceOfDeath
+                            if (it.processed != "N") it.processed = "U"
+                            it.syncState = SyncState.UNSYNCED
+                            benRepo.updateRecord(it)
+                        }
+                    }
                     kalaAzarRepo.saveKalaAzarScreening(kalaazarScreeningCache)
                     _state.postValue(State.SAVE_SUCCESS)
                 } catch (e: Exception) {
