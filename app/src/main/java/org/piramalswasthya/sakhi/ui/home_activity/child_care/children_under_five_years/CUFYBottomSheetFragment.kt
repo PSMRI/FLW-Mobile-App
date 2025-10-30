@@ -17,6 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.adapters.ChildCareVisitListAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentCUFYBottomSheetBinding
+import org.piramalswasthya.sakhi.model.ChildOption
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
 import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYIFAFormSyncWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYORSFormSyncWorker
@@ -32,6 +33,8 @@ class CUFYBottomSheetFragment : BottomSheetDialogFragment() {
         get() = _binding!!
 
 
+
+    private lateinit var formID : String
     private val viewModel: CUFYListViewModel by viewModels({ requireParentFragment() })
 
 
@@ -50,25 +53,27 @@ class CUFYBottomSheetFragment : BottomSheetDialogFragment() {
 
         when (type) {
             FormConstants.SAM_FORM_NAME -> {
-                CUFYSAMFormSyncWorker.enqueue(requireContext())
+              //  CUFYSAMFormSyncWorker.enqueue(requireContext())
+                formID = FormConstants.CHILDREN_UNDER_FIVE_SAM_FORM_ID
             }
             FormConstants.ORS_FORM_NAME -> {
-                CUFYORSFormSyncWorker.enqueue(requireContext())
+                //CUFYORSFormSyncWorker.enqueue(requireContext())
+                formID = FormConstants.CHILDREN_UNDER_FIVE_ORS_FORM_ID
             }
             FormConstants.IFA_FORM_NAME -> {
-                CUFYIFAFormSyncWorker.enqueue(requireContext())
+                //CUFYIFAFormSyncWorker.enqueue(requireContext())
+                formID = FormConstants.CHILDREN_UNDER_FIVE_IFA_FORM_ID
             }
         }
 
         binding.rvAnc.adapter = ChildCareVisitListAdapter(
-            ChildCareVisitListAdapter.ChildOptionsClickListener { formType, isViewMode ->
+            ChildCareVisitListAdapter.ChildOptionsClickListener { formType, visitDay, isViewMode , formDataJson,recordId->
                 val benId = arguments?.getLong("benId") ?: 0L
                 val hhId = arguments?.getLong("hhId") ?: 0L
                 val dob = arguments?.getLong("dob") ?: 0L
 
-
-                navigateToForm(formType, benId, hhId, dob, isViewMode)
-                this.dismiss()
+                navigateToForm(formType, benId, hhId, dob, visitDay, isViewMode,formDataJson,recordId)
+                dismiss()
             }
         )
 
@@ -79,26 +84,62 @@ class CUFYBottomSheetFragment : BottomSheetDialogFragment() {
 
     private fun observeList(type: String?) {
         lifecycleScope.launch {
-            val filteredOptions = viewModel.getFilteredOptions(type)
-            (_binding?.rvAnc?.adapter as ChildCareVisitListAdapter?)?.submitList(filteredOptions)
+
+            val benId = arguments?.getLong("benId") ?: 0L
+            val hhId = arguments?.getLong("hhId") ?: 0L
+
+
+            val savedList = viewModel.getSavedVisits(formID ,benId)
+
+            val viewOptions = savedList.mapIndexed { index, entity ->
+                ChildOption(
+                    formType = mapFormIdToType(entity.formId),
+                    title = "Visit ${index + 1}",
+                    description = entity.visitDate,
+                    isViewMode = true,
+                    visitDay = entity.visitDate,
+                    formDataJson = entity.formDataJson,
+                    recordId = entity.id
+                )
+            }
+
+            val addOption = ChildOption(
+                formType = type ?: "",
+                title = "Add Visit",
+                description = "",
+                isViewMode = false,
+                formDataJson = null
+            )
+
+            val finalList = viewOptions + addOption
+            (_binding?.rvAnc?.adapter as ChildCareVisitListAdapter?)?.submitList(finalList)
         }
     }
 
+    private fun mapFormIdToType(formId: String): String {
+        return when (formId) {
+            FormConstants.CHILDREN_UNDER_FIVE_SAM_FORM_ID -> FormConstants.SAM_FORM_NAME
+            FormConstants.CHILDREN_UNDER_FIVE_ORS_FORM_ID -> FormConstants.ORS_FORM_NAME
+            FormConstants.CHILDREN_UNDER_FIVE_IFA_FORM_ID -> FormConstants.IFA_FORM_NAME
+            else -> formId
+        }
+    }
 
-    private fun navigateToForm(formType: String, benId: Long, hhId: Long, dob: Long, isViewMode: Boolean) {
+    private fun navigateToForm(formType: String, benId: Long, hhId: Long, dob: Long, visitDay: String?, isViewMode: Boolean,formDataJson: String?,recordId: Int?) {
         try {
-            Log.i("ChildrenUnderFiveFormFragmentOne", "navigateToForm: $formType")
-
             findNavController().navigate(
                 CUFYListFragmentDirections.actionChildrenUnderFiveYearListFragmentToChildrenUnderFiveYearFormFragment(
                     benId,
                     hhId,
                     formType,
-                    isViewMode
+                    isViewMode,
+                    formDataJson,
+                    recordId ?: 0
+
                 )
             )
         } catch (e: Exception) {
-                e.printStackTrace()
+            e.printStackTrace()
         }
     }
 
