@@ -2,6 +2,8 @@
 
     import android.app.AlertDialog
     import android.app.DatePickerDialog
+    import android.content.ActivityNotFoundException
+    import android.content.Intent
     import android.graphics.Color
     import android.graphics.Typeface
     import android.net.Uri
@@ -491,9 +493,28 @@
                             if (!filePath.isNullOrBlank()) {
                                 try {
                                     val uri = Uri.parse(filePath)
-                                    setImageURI(uri)
+
+                                    if (filePath.endsWith(".pdf") || context.contentResolver.getType(uri)?.contains("pdf") == true) {
+                                        setImageResource(R.drawable.ic_person)
+
+                                        setOnClickListener {
+                                            val intent = Intent(Intent.ACTION_VIEW).apply {
+                                                setDataAndType(uri, "application/pdf")
+                                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                            }
+                                            try {
+                                                context.startActivity(intent)
+                                            } catch (e: ActivityNotFoundException) {
+                                                Toast.makeText(context, "No app found to open PDF", Toast.LENGTH_SHORT).show()
+                                            }
+                                        }
+                                    } else {
+                                        setImageURI(uri)
+                                    }
+
+
                                 } catch (e: Exception) {
-                                    Timber.tag("FormRendererAdapter").e(e, "Failed to load image: " + filePath)
+                                    Timber.tag("FormRendererAdapter").e(e, "Failed to load file: $filePath")
                                     setImageResource(R.drawable.ic_person)
                                 }
                             } else {

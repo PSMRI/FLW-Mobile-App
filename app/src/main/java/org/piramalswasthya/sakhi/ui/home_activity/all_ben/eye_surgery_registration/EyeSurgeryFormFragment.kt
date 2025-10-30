@@ -1,8 +1,10 @@
 package org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registration
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -52,25 +54,28 @@ class EyeSurgeryFormFragment : Fragment() {
     private var tempCameraUri: Uri? = null
 
 
-    private val galleryLauncher =
-        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            uri?.let {
-                val sizeInMB = requireContext().getFileSizeInMB(it)
-                val maxSize = (currentImageField?.validation?.maxSizeMB ?: 5).toDouble()
+    private val filePickerLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val uri = result.data?.data
+                uri?.let {
+                    val sizeInMB = requireContext().getFileSizeInMB(it)
+                    val maxSize = (currentImageField?.validation?.maxSizeMB ?: 5).toDouble()
 
-                if (sizeInMB != null && sizeInMB > maxSize) {
-                    currentImageField?.errorMessage =
-                        currentImageField?.validation?.errorMessage
-                            ?: "Image must be less than ${maxSize.toInt()}MB"
+                    if (sizeInMB != null && sizeInMB > maxSize) {
+                        currentImageField?.errorMessage =
+                            currentImageField?.validation?.errorMessage
+                                ?: "File must be less than ${maxSize.toInt()}MB"
+                        adapter.notifyDataSetChanged()
+                        return@let
+                    }
+
+                    currentImageField?.apply {
+                        value = it.toString()
+                        errorMessage = null
+                    }
                     adapter.notifyDataSetChanged()
-                    return@let
                 }
-
-                currentImageField?.apply {
-                    value = it.toString()
-                    errorMessage = null
-                }
-                adapter.notifyDataSetChanged()
             }
         }
 
@@ -147,20 +152,19 @@ class EyeSurgeryFormFragment : Fragment() {
 
     }
 
+private fun showImagePickerDialog() {
+    val options = arrayOf("Take Photo", "Choose File (PDF / Image)")
 
-    private fun showImagePickerDialog() {
-        val options = arrayOf("Take Photo", "Choose from Gallery")
-
-        AlertDialog.Builder(requireContext())
-            .setTitle("Select Image")
-            .setItems(options) { _, which ->
-                when (which) {
-                    0 -> launchCamera()
-                    1 -> galleryLauncher.launch("image/*")
-                }
+    AlertDialog.Builder(requireContext())
+        .setTitle("Select File")
+        .setItems(options) { _, which ->
+            when (which) {
+                0 -> launchCamera()
+                1 -> launchFilePicker()
             }
-            .show()
-    }
+        }
+        .show()
+}
 
     private fun launchCamera() {
         val contentValues = ContentValues().apply {
@@ -175,19 +179,24 @@ class EyeSurgeryFormFragment : Fragment() {
         cameraLauncher.launch(tempCameraUri)
     }
 
+    private fun launchFilePicker() {
+        val mimeTypes = arrayOf("image/jpeg", "image/png", "application/pdf")
+
+        val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
+            type = "*/*"
+            putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
+            addCategory(Intent.CATEGORY_OPENABLE)
+        }
+
+        val chooser = Intent.createChooser(intent, "Select File (PDF, JPG, PNG)")
+        filePickerLauncher.launch(chooser)
+    }
+
     fun Context.getFileSizeInMB(uri: Uri): Double? {
         return try {
             contentResolver.openFileDescriptor(uri, "r")?.use { pfd ->
                 val sizeInBytes = pfd.statSize
-
-                if (sizeInBytes > 0) {
-                    val sizeInMB = sizeInBytes / (1024.0 * 1024.0)
-                    sizeInMB
-                } else {
-                    null
-                }
-            } ?: run {
-                null
+                if (sizeInBytes > 0) sizeInBytes / (1024.0 * 1024.0) else null
             }
         } catch (e: Exception) {
             null

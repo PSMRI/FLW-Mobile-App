@@ -1,8 +1,10 @@
 package org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registration
 
+    import android.content.Context
     import androidx.lifecycle.ViewModel
     import androidx.lifecycle.viewModelScope
     import dagger.hilt.android.lifecycle.HiltViewModel
+    import dagger.hilt.android.qualifiers.ApplicationContext
     import kotlinx.coroutines.flow.MutableStateFlow
     import kotlinx.coroutines.flow.StateFlow
     import kotlinx.coroutines.launch
@@ -14,6 +16,7 @@ package org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registrat
     import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
     import org.piramalswasthya.sakhi.model.dynamicEntity.eye_surgery.EyeSurgeryFormResponseJsonEntity
     import org.piramalswasthya.sakhi.repositories.dynamicRepo.EyeSurgeryFormRepository
+    import org.piramalswasthya.sakhi.work.dynamicWoker.EyeSurgeryFormSyncWorker
     import java.text.SimpleDateFormat
     import java.util.*
     import javax.inject.Inject
@@ -21,6 +24,7 @@ package org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registrat
     @HiltViewModel
     class EyeSurgeryFormViewModel @Inject constructor(
         private val repository: EyeSurgeryFormRepository,
+        @ApplicationContext private val context: Context
     ) : ViewModel() {
 
         private val _schema = MutableStateFlow<FormSchemaDto?>(null)
@@ -62,12 +66,12 @@ package org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registrat
                 if (localSchemaToRender == null) {
                     return@launch
                 }
-
-                launch {
-                    val updatedSchema = repository.getFormSchema(formId)
-                    if (updatedSchema != null && (cachedSchemaEntity?.version ?: 0) < updatedSchema.version) {
-                    }
-                }
+//
+//                launch {
+//                    val updatedSchema = repository.getFormSchema(formId)
+//                    if (updatedSchema != null && (cachedSchemaEntity?.version ?: 0) < updatedSchema.version) {
+//                    }
+//                }
                 val savedJson = repository.loadFormResponseJson(benId, visitDay)
                 val savedFieldValues = if (!savedJson.isNullOrBlank()) {
                     try {
@@ -165,6 +169,8 @@ package org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registrat
             repository.insertFormResponse(entity)
 
             loadSyncedVisitList(benId)
+
+            EyeSurgeryFormSyncWorker.enqueue(context)
         }
 
         fun getVisibleFields(): List<FormField> {
