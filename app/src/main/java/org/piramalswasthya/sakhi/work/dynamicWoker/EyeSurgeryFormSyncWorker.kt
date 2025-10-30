@@ -27,6 +27,21 @@ class EyeSurgeryFormSyncWorker @AssistedInject constructor(
             val user = preferenceDao.getLoggedInUser()
                 ?: throw IllegalStateException("No user logged in")
 
+            val unsyncedForms = repository.getUnsyncedForms(FormConstants.EYE_SURGERY_FORM_ID)
+            for (form in unsyncedForms) {
+                if ((form.benId ?: -1) < 0) continue
+
+                try{
+                    val success = repository.syncFormToServer(user.userName,FormConstants.EYE_SURGERY_FORM_NAME,form)
+                    if (success) {
+                        repository.markFormAsSynced(form.id)
+                    }
+                }catch (e: Exception){
+                    Timber.e(e, "Failed to sync form ${form.id}")
+                }
+
+            }
+
             val request = HBNCVisitRequest(
                 fromDate = HelperUtil.getCurrentDate(Konstants.defaultTimeStamp),
                 toDate = HelperUtil.getCurrentDate(),
@@ -44,21 +59,6 @@ class EyeSurgeryFormSyncWorker @AssistedInject constructor(
                 }
             }
 
-            val unsyncedForms = repository.getUnsyncedForms(FormConstants.EYE_SURGERY_FORM_ID)
-            for (form in unsyncedForms) {
-                if ((form.benId ?: -1) < 0) continue
-
-                try{
-                    val success = repository.syncFormToServer(user.userName,FormConstants.EYE_SURGERY_FORM_NAME,form)
-                    if (success) {
-                        repository.markFormAsSynced(form.id)
-                    }
-                }catch (e: Exception){
-                    Timber.e(e, "Failed to sync form ${form.id}")
-                }
-
-            }
-
             Result.success()
         } catch (e: IllegalStateException) {
             Timber.e(e, "FormSyncWorker failed: No user logged in")
@@ -73,6 +73,20 @@ class EyeSurgeryFormSyncWorker @AssistedInject constructor(
             } else {
                 Result.failure()
             }
+        }
+    }
+
+    companion object {
+        fun enqueue(context: Context) {
+            val constraints = Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build()
+
+            val request = OneTimeWorkRequestBuilder<EyeSurgeryFormSyncWorker>()
+                .setConstraints(constraints)
+                .build()
+
+            WorkManager.getInstance(context).enqueue(request)
         }
     }
 }
