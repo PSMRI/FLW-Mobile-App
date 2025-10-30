@@ -52,6 +52,7 @@ import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.InfantDao
 import org.piramalswasthya.sakhi.database.room.dao.VLFDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.CUFYFormResponseDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.CUFYFormResponseJsonDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.EyeSurgeryFormResponseJsonDao
 import org.piramalswasthya.sakhi.model.AHDCache
 import org.piramalswasthya.sakhi.model.AESScreeningCache
 import org.piramalswasthya.sakhi.model.AdolescentHealthCache
@@ -105,6 +106,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.InfantEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.hbyc.FormResponseJsonEntityHBYC
 import org.piramalswasthya.sakhi.model.VHNDCache
 import org.piramalswasthya.sakhi.model.dynamicEntity.CUFYFormResponseJsonEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.eye_surgery.EyeSurgeryFormResponseJsonEntity
 
 @Database(
     entities = [
@@ -162,11 +164,12 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.CUFYFormResponseJsonEntity
         FormResponseJsonEntityHBYC::class,
         CUFYFormResponseJsonEntity::class,
         GeneralOPEDBeneficiary::class,
-        UwinCache::class
+        UwinCache::class,
+        EyeSurgeryFormResponseJsonEntity::class
     ],
     views = [BenBasicCache::class],
 
-    version = 33, exportSchema = false
+    version = 34, exportSchema = false
 )
 
 @TypeConverters(
@@ -218,6 +221,7 @@ abstract class InAppDb : RoomDatabase() {
     abstract fun CUFYFormResponseJsonDao(): CUFYFormResponseJsonDao
     abstract fun formResponseJsonDao(): FormResponseJsonDao
     abstract fun formResponseJsonDaoHBYC(): FormResponseJsonDaoHBYC
+    abstract fun formResponseJsonDaoEyeSurgery(): EyeSurgeryFormResponseJsonDao
 
     abstract val syncDao: SyncDao
 
@@ -232,6 +236,35 @@ abstract class InAppDb : RoomDatabase() {
                 it.execSQL("alter table BENEFICIARY add column isConsent BOOL")
 
             })
+
+            val MIGRATION_34_35 = object : Migration(34, 35) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL(
+                        """
+            CREATE TABLE IF NOT EXISTS `ALL_EYE_SURGERY_VISIT_HISTORY` (
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                `benId` INTEGER NOT NULL,
+                `hhId` INTEGER NOT NULL,
+                `visitDate` TEXT NOT NULL,
+                `formId` TEXT NOT NULL,
+                `version` INTEGER NOT NULL,
+                `formDataJson` TEXT NOT NULL,
+                `isSynced` INTEGER NOT NULL DEFAULT 0,
+                `createdAt` INTEGER NOT NULL,
+                `syncedAt` INTEGER
+            )
+            """.trimIndent()
+                    )
+                    database.execSQL(
+                        """
+            CREATE UNIQUE INDEX IF NOT EXISTS `index_ALL_EYE_SURGERY_VISIT_HISTORY_benId_hhId_visitDate_formId`
+            ON `ALL_EYE_SURGERY_VISIT_HISTORY` (`benId`, `hhId`, `visitDate`, `formId`)
+            """.trimIndent()
+                    )
+                }
+            }
+
+
             val MIGRATION_32_33 = object : Migration(32, 33) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     database.execSQL("""
@@ -257,7 +290,7 @@ abstract class InAppDb : RoomDatabase() {
             }
 
 
-            val MIGRATION_33_34 = object : Migration(31, 32) {
+            val MIGRATION_33_34 = object : Migration(33, 34) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     database.execSQL("""
             CREATE TABLE IF NOT EXISTS form_schema (
@@ -1253,7 +1286,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_30_31,
                         MIGRATION_31_32,
                         MIGRATION_32_33,
-                        MIGRATION_33_34
+                        MIGRATION_33_34,
+                        MIGRATION_34_35
                     ).build()
 
                     INSTANCE = instance

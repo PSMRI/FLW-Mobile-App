@@ -24,20 +24,15 @@ import javax.inject.Inject
 @HiltViewModel
 class CUFYFormViewModel @Inject constructor(
     private val repository: CUFYFormRepository,
-    private val benRepo: BenRepo
 ) : ViewModel() {
 
     private val _schema = MutableStateFlow<FormSchemaDto?>(null)
     val schema: StateFlow<FormSchemaDto?> = _schema
-
     private val _infant = MutableStateFlow<CUFYFormResponseJsonEntity?>(null)
     val infant: StateFlow<CUFYFormResponseJsonEntity?> = _infant
-//    var lastVisitDay: String? = null
     var previousVisitDate: Date? = null
     private val _syncedVisitList = MutableStateFlow<List<CUFYFormResponseJsonEntity>>(emptyList())
-//    private val visitOrder = listOf("1st Day", "3rd Day", "7th Day", "14th Day", "21st Day", "28th Day", "42nd Day")
-//    private var benId: Long = 0L
-//    private var hhId: Long = 0L
+
     var visitDay: String = ""
     private var isViewMode: Boolean = false
 
@@ -139,10 +134,7 @@ class CUFYFormViewModel @Inject constructor(
 
         _schema.value = currentSchema.copy()
     }
-//    companion object {
-//        private const val OTHER_PLACE_OF_DEATH_ID = 8
-//        private const val DEFAULT_DEATH_ID = -1
-//    }
+
     suspend fun saveFormResponses(benId: Long, hhId: Long) {
         val currentSchema = _schema.value ?: return
         val formId = currentSchema.formId
@@ -219,45 +211,6 @@ class CUFYFormViewModel @Inject constructor(
         } ?: emptyList()
     }
 
-//    private suspend fun getLastVisit(benId: Long): CUFYFormResponseJsonEntity? {
-//        val visits = repository.getSyncedVisitsByRchId(benId)
-//        return visits
-//            .filter { it.visitDate in visitOrder }
-//            .maxByOrNull { visitOrder.indexOf(it.visitDate) }
-//    }
-//
-//    suspend fun getLastVisitDay(benId: Long): String? {
-//        return getLastVisit(benId)?.visitDate
-//    }
-//    suspend fun getLastVisitDate(benId: Long): Date? {
-//
-//        val visits = repository.getSyncedVisitsByRchId(benId)
-//        val lastVisit = visits
-//            .filter { it.visitDate in visitOrder }
-//            .maxByOrNull { visitOrder.indexOf(it.visitDate) }
-//
-//        return getLastVisit(benId)?.formDataJson?.let {
-//            try {
-//                val json = JSONObject(it)
-//                val fields = json.optJSONObject("fields")
-//                val dateStr = fields?.optString("visit_date")
-//                if (!dateStr.isNullOrBlank()) {
-//                    SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).parse(dateStr)
-//                } else {
-//                    null
-//                }
-//            } catch (e: Exception) {
-//                null
-//            }
-//        }
-//    }
-//    fun loadVisitDates(benId: Long) {
-//        viewModelScope.launch {
-//            previousVisitDate = getLastVisitDate(benId)
-//            lastVisitDay = getLastVisitDay(benId)
-//
-//        }
-//    }
     fun getMaxVisitDate(): Date {
         val today = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, 0)
