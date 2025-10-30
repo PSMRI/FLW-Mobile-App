@@ -46,7 +46,7 @@ class EyeSurgeryFormFragment : Fragment() {
     val args: EyeSurgeryFormFragmentArgs by lazy {
         EyeSurgeryFormFragmentArgs.fromBundle(requireArguments())
     }
-    private val viewModel: EyeSurgeryViewModel by viewModels()
+    private val viewModel: EyeSurgeryFormViewModel by viewModels()
     private lateinit var adapter: FormRendererAdapter
     private var currentImageField: FormField? = null
     private var tempCameraUri: Uri? = null
@@ -106,8 +106,7 @@ class EyeSurgeryFormFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.loadFormSchema(args.benId, FormConstants.EYE_SURGERY_FORM_ID, false)
-        Log.i("FragmentEyeSurgeryFormBinding", "onViewCreated: ${args.hhId} ==== ${args.benId}")
+        viewModel.loadFormSchema(args.benId, FormConstants.EYE_SURGERY_FORM_ID, "",false)
 
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         lifecycleScope.launch {
@@ -198,9 +197,6 @@ class EyeSurgeryFormFragment : Fragment() {
     private fun handleFormSubmission() {
         val currentSchema = viewModel.schema.value ?: return
         val previousVisitDate = viewModel.previousVisitDate
-        val deliveryDate = "dob" ?: return
-        val dobString =
-            SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(Date(deliveryDate))
 
         val updatedFields = adapter.getUpdatedFields()
         val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
@@ -211,7 +207,7 @@ class EyeSurgeryFormFragment : Fragment() {
                 updatedFields.find { it.fieldId == schemaField.fieldId }?.let { updated ->
                     schemaField.value = updated.value
 
-                    val result = FieldValidator.validate(updated, dobString)
+                    val result = FieldValidator.validate(updated, null)
                     updated.errorMessage = if (!result.isValid) result.errorMessage else null
                     schemaField.errorMessage = updated.errorMessage
                     if (schemaField.fieldId == "visit_date" && schemaField.value is String) {
@@ -226,8 +222,6 @@ class EyeSurgeryFormFragment : Fragment() {
                         val errorMessage = when {
                             visitDate == null -> "Invalid visit date"
                             today != null && visitDate.after(today) -> "Visit Date cannot be after today's date"
-                            deliveryDate == null -> "Delivery date is missing"
-//                            visitDate.before(Date(deliveryDate)) -> "Visit Date cannot be before delivery date"
                             previousVisitDate != null && !visitDate.after(previousVisitDate) ->
                                 "Visit Date must be after previous visit (${
                                     sdf.format(
