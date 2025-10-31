@@ -42,6 +42,10 @@
             name="role"
             type="Integer" />
 
+        <variable
+            name="isMatched"
+            type="Boolean" />
+
     </data>
 
     <androidx.cardview.widget.CardView
@@ -520,9 +524,10 @@
                             android:layout_marginStart="@dimen/margin_small"
                             android:layout_weight="1"
                             android:backgroundTint="@android:color/holo_green_dark"
-                            android:onClick="@{()-> clickListener.onClickAddEyeSurgery(ben)}"
+                            android:onClick="@{()-> clickListener.onClickAddEyeSurgery(ben,isMatched)}"
                             android:text="@string/add_eye_surgery"
-                            app:visibleIfAgeAbove30="@{ben.ageInt}"
+                            app:visibleIfAgeAbove30AndAliveAge="@{ben.ageInt}"
+                            app:isDeath="@{ben.isDeathValue}"
                             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                             android:textColor="?attr/colorOnPrimary"
                             app:cornerRadius="@dimen/padding_normal"

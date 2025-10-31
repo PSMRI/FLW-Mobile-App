@@ -1,6 +1,8 @@
 package org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registration
 
     import android.content.Context
+    import androidx.lifecycle.LiveData
+    import androidx.lifecycle.MutableLiveData
     import androidx.lifecycle.ViewModel
     import androidx.lifecycle.viewModelScope
     import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,6 +41,16 @@ package org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registrat
         private val _isBenDead = MutableStateFlow(false)
         val isBenDead: StateFlow<Boolean> = _isBenDead
 
+        private val _benIdList = MutableLiveData<List<Long>>()
+        val benIdList: LiveData<List<Long>> = _benIdList
+
+        fun loadAllBenIds() {
+            viewModelScope.launch {
+                val ids = repository.getAllBenIds()
+                _benIdList.postValue(ids)
+            }
+        }
+
         fun loadSyncedVisitList(benId: Long) {
             viewModelScope.launch {
                 val list = repository.getSyncedVisitsByRchId(benId)
@@ -49,30 +61,21 @@ package org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registrat
         fun loadFormSchema(
             benId: Long,
             formId: String,
-            visitDay: String,
             viewMode: Boolean
         ) {
-            this.visitDay = visitDay
             this.isViewMode = viewMode
+
+            loadSyncedVisitList(benId)
 
             viewModelScope.launch {
                 val cachedSchemaEntity = repository.getSavedSchema(formId)
                 val cachedSchema: FormSchemaDto? = cachedSchemaEntity?.let {
                     FormSchemaDto.fromJson(it.schemaJson)
                 }
-                val localSchemaToRender = cachedSchema ?: repository.getFormSchema(formId)?.also {
-                }
 
-                if (localSchemaToRender == null) {
-                    return@launch
-                }
-//
-//                launch {
-//                    val updatedSchema = repository.getFormSchema(formId)
-//                    if (updatedSchema != null && (cachedSchemaEntity?.version ?: 0) < updatedSchema.version) {
-//                    }
-//                }
-                val savedJson = repository.loadFormResponseJson(benId, visitDay)
+                val localSchemaToRender = cachedSchema ?: repository.getFormSchema(formId) ?: return@launch
+
+                val savedJson = repository.loadFormResponseJson(benId)
                 val savedFieldValues = if (!savedJson.isNullOrBlank()) {
                     try {
                         val root = JSONObject(savedJson)

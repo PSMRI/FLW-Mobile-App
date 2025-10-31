@@ -23,7 +23,7 @@ class BenListAdapter(
     private val showAbha: Boolean = false,
     private val showCall: Boolean = false,
     private val role: Int? = 0,
-    private val pref: PreferenceDao? = null
+    private val pref: PreferenceDao? = null,
 ) :
     ListAdapter<BenBasicDomain, BenListAdapter.BenViewHolder>(BenDiffUtilCallBack) {
     private object BenDiffUtilCallBack : DiffUtil.ItemCallback<BenBasicDomain>() {
@@ -55,7 +55,8 @@ class BenListAdapter(
             showRegistrationDate: Boolean,
             showBeneficiaries: Boolean, role: Int?,
             showCall: Boolean,
-            pref: PreferenceDao?
+            pref: PreferenceDao?,
+            benIdList: List<Long>
         ) {
 
             var gender = ""
@@ -82,6 +83,17 @@ class BenListAdapter(
             } else {
                 binding.ivCall.visibility = View.GONE
             }
+
+            val isMatched = benIdList.contains(item.benId)
+            binding.isMatched = isMatched
+
+            binding.btnAbove30.text = if (isMatched) {
+                binding.root.context.getString(R.string.view_edit_eye_surgery)
+            } else {
+                binding.root.context.getString(R.string.add_eye_surgery)
+            }
+
+            binding.executePendingBindings()
 
             gender = item.gender.toString()
 
@@ -163,6 +175,8 @@ class BenListAdapter(
         parent: ViewGroup, viewType: Int
     ) = BenViewHolder.from(parent)
 
+    private val benIds = mutableListOf<Long>()
+
     override fun onBindViewHolder(holder: BenViewHolder, position: Int) {
         holder.bind(
             getItem(position),
@@ -173,16 +187,23 @@ class BenListAdapter(
             showBeneficiaries,
             role,
             showCall,
-            pref
+            pref,
+            benIds
         )
     }
+    fun submitBenIds(list: List<Long>) {
+        benIds.clear()
+        benIds.addAll(list)
+        notifyDataSetChanged()
+    }
+
 
 
     class BenClickListener(
         private val clickedBen: (hhId: Long, benId: Long, relToHeadId: Int) -> Unit,
         private val clickedHousehold: (hhId: Long) -> Unit,
         private val clickedABHA: (benId: Long, hhId: Long) -> Unit,
-        private val clickedAddEyeSurgery: (benId: Long, hhId: Long) -> Unit,
+        private val clickedAddEyeSurgery: (benId: Long, hhId: Long, isViewMode: Boolean) -> Unit,
         private val callBen: (ben: BenBasicDomain) -> Unit
     ) {
         fun onClickedBen(item: BenBasicDomain) = clickedBen(
@@ -194,7 +215,7 @@ class BenListAdapter(
         fun onClickedHouseHold(item: BenBasicDomain) = clickedHousehold(item.hhId)
 
         fun onClickABHA(item: BenBasicDomain) = clickedABHA(item.benId, item.hhId)
-        fun onClickAddEyeSurgery(item: BenBasicDomain) = clickedAddEyeSurgery(item.benId, item.hhId)
+        fun onClickAddEyeSurgery(item: BenBasicDomain, isMatched: Boolean) = clickedAddEyeSurgery(item.benId, item.hhId, isMatched)
 
         fun onClickedForCall(item: BenBasicDomain) = callBen(item)
     }

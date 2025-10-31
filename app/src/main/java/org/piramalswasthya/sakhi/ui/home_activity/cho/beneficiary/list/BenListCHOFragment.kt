@@ -85,7 +85,7 @@ class BenListCHOFragment : Fragment() {
                 { benId, hhId ->
                     checkAndGenerateABHA(benId)
                 },
-                { benId, hhId ->
+                { benId, hhId, isViewMode ->
                 }, {}
 
                 ),

@@ -13,8 +13,8 @@ interface EyeSurgeryFormResponseJsonDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertFormResponse(response: EyeSurgeryFormResponseJsonEntity)
 
-    @Query("SELECT * FROM all_eye_surgery_visit_history WHERE benId = :benId AND visitDate = :visitDate LIMIT 1")
-    suspend fun getFormResponse(benId: Long, visitDate: String): EyeSurgeryFormResponseJsonEntity?
+    @Query("SELECT * FROM all_eye_surgery_visit_history WHERE benId = :benId LIMIT 1")
+    suspend fun getFormResponse(benId: Long): EyeSurgeryFormResponseJsonEntity?
 
     @Query("DELETE FROM all_eye_surgery_visit_history WHERE benId = :benId AND visitDate = :visitDate")
     suspend fun deleteFormResponse(benId: Long, visitDate: String)
@@ -32,5 +32,8 @@ interface EyeSurgeryFormResponseJsonDao {
 
     @Query("UPDATE all_eye_surgery_visit_history SET benId = :newBenId WHERE benId = :oldBenId")
     suspend fun updateVisitBenId(oldBenId: Long, newBenId: Long)
+
+    @Query("SELECT DISTINCT benId FROM all_eye_surgery_visit_history")
+    suspend fun getAllUniqueBenIds(): List<Long>
 
 }

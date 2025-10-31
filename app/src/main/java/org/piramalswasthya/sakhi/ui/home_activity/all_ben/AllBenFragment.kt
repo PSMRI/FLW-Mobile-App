@@ -28,8 +28,8 @@ import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchAndToggleRvBut
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registration.EyeSurgeryFormViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.all_household.AllHouseholdFragmentDirections
-import org.piramalswasthya.sakhi.ui.home_activity.home.HomeViewModel
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -53,13 +53,13 @@ class AllBenFragment : Fragment() {
     private var selectedAbha = Abha.ALL
 
     private val viewModel: AllBenViewModel by viewModels()
+    private val viewModelEyeSurgery: EyeSurgeryFormViewModel by viewModels()
+
     private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
         binding.searchView.setText(value)
         binding.searchView.setSelection(value.length)
         viewModel.filterText(value)
     }
-
-    private val homeViewModel: HomeViewModel by viewModels({ requireActivity() })
 
     private val abhaDisclaimer by lazy {
         AlertDialog.Builder(requireContext())
@@ -129,6 +129,8 @@ class AllBenFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.btnNextPage.visibility = View.GONE
 
+        viewModelEyeSurgery.loadAllBenIds()
+
         binding.ibFilter.setOnClickListener {
             filterAlert.show()
         }
@@ -170,12 +172,13 @@ class AllBenFragment : Fragment() {
                 { benId, hhId ->
                     checkAndGenerateABHA(benId)
                 },
-                { benId, hhId ->
+                { benId, hhId , isViewMode->
                     if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
                         findNavController().navigate(
                             AllBenFragmentDirections.actionAllBenFragmentToEyeSurgeryFormFragment(
                                 hhId = hhId,
-                                benId = benId
+                                benId = benId,
+                                isViewMode = isViewMode
                             )
                         )
                     }
@@ -260,6 +263,14 @@ class AllBenFragment : Fragment() {
             }
 
         }
+
+        viewModelEyeSurgery.benIdList.observe(viewLifecycleOwner) { benIds ->
+            if (benIds.isNotEmpty()) {
+                benAdapter.submitBenIds(benIds)
+            }
+        }
+
+
     }
 
     private fun checkAndGenerateABHA(benId: Long) {
