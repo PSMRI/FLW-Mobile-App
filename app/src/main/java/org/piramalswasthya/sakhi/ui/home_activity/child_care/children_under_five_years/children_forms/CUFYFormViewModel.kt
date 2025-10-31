@@ -284,7 +284,17 @@ suspend fun saveFormResponses(benId: Long, hhId: Long, recordId: Int = 0) {
             .filter { it.visible && it.value != null }
             .associate { it.fieldId to it.value }
 
-        val visitDate = fieldMap["visit_date"]?.toString() ?: "N/A"
+        val rawVisitDate = fieldMap["visit_date"]?.toString() ?: "N/A"
+        val visitDate = try {
+
+            val inputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+            val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val parsedDate = inputFormat.parse(rawVisitDate)
+            if (parsedDate != null) outputFormat.format(parsedDate) else rawVisitDate
+        } catch (e: Exception) {
+            Timber.tag("CUFYFormVM").e(e, "⚠️ Date format conversion failed for: $rawVisitDate")
+            rawVisitDate
+        }
 
         val wrappedJson = JSONObject().apply {
             put("formId", formId)

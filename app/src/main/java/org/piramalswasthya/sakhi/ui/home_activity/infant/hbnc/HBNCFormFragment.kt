@@ -150,8 +150,9 @@ class HBNCFormFragment : Fragment() {
                     visibleFields,
                     isViewOnly = isViewMode,
                     minVisitDate = minVisitDate,
-                    maxVisitDate = maxVisitDate
-                ) { field, value ->
+                    maxVisitDate = maxVisitDate,
+                    onValueChanged =
+                { field, value ->
                     if (value == "pick_image") {
                         currentImageField = field
                         showImagePickerDialog()
@@ -162,6 +163,7 @@ class HBNCFormFragment : Fragment() {
                         adapter.updateFields(updatedVisibleFields)
                     }
                 }
+                )
 
                 recyclerView.adapter = adapter
                 saveButton.visibility = if (isViewMode) View.GONE else View.VISIBLE

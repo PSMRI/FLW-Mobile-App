@@ -71,7 +71,7 @@ class CUFYListFragment : Fragment() {
             }
         }
 
-        // Start SAM status updates when view is created
+
         lifecycleScope.launch {
             viewModel.startSamStatusUpdates()
         }

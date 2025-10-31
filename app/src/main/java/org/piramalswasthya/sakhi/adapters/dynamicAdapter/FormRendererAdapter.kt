@@ -26,7 +26,9 @@
         private val isViewOnly: Boolean = false,
         private val minVisitDate: Date? = null,
         private val maxVisitDate: Date? = null,
-        private val onValueChanged: (FormField, Any?) -> Unit
+        private val onValueChanged: (FormField, Any?) -> Unit,
+        private val onShowAlert: ((String, String) -> Unit)? = null
+
 
     ) : RecyclerView.Adapter<FormRendererAdapter.FormViewHolder>() {
 
@@ -193,8 +195,12 @@
                         if (!isViewOnly) {
                             editText.addTextChangedListener(object : TextWatcher {
                                 override fun afterTextChanged(s: Editable?) {
-                                    field.value = s.toString()
+                                    val value = s.toString().toFloatOrNull()
+                                    field.value = value
                                     onValueChanged(field, s.toString())
+                                    if (field.fieldId == "muac" && value != null) {
+                                        onShowAlert?.invoke("CHECK_MUAC", value.toString())
+                                    }
                                 }
 
                                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -321,6 +327,9 @@
                                     editText.setText(selected)
                                     field.value = selected
                                     onValueChanged(field, selected)
+                                    if (field.fieldId == "weight_for_height_status") {
+                                        onShowAlert?.invoke("CHECK_WEIGHT_HEIGHT", selected)
+                                    }
                                 }
                                 builder.show()
                             }

@@ -36,6 +36,9 @@ import java.util.Date
 import java.util.Locale
 import androidx.core.view.isVisible
 import androidx.core.view.isGone
+import org.piramalswasthya.sakhi.utils.HelperUtil.checkAndShowMUACAlert
+import org.piramalswasthya.sakhi.utils.HelperUtil.checkAndShowSAMAlert
+import org.piramalswasthya.sakhi.utils.HelperUtil.checkAndShowWeightForHeightAlert
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.IFA_FORM_NAME
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.ORS_FORM_NAME
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.SAM_FORM_NAME
@@ -257,18 +260,34 @@ class CUFYFormFragment : Fragment() {
             visibleFields,
             isViewOnly = isViewMode,
             minVisitDate = minVisitDate,
-            maxVisitDate = maxVisitDate
-        ) { field, value ->
-            if (value == "pick_image") {
-                currentImageField = field
-                showImagePickerDialog()
-            } else {
-                field.value = value
-                viewModel.updateFieldValue(field.fieldId, value)
-                val updatedVisibleFields = viewModel.getVisibleFields()
-                adapter.updateFields(updatedVisibleFields)
+            maxVisitDate = maxVisitDate,
+            onValueChanged = { field, value ->
+                if (value == "pick_image") {
+                    currentImageField = field
+                    showImagePickerDialog()
+                } else {
+                    field.value = value
+                    viewModel.updateFieldValue(field.fieldId, value)
+                    val updatedVisibleFields = viewModel.getVisibleFields()
+                    adapter.updateFields(updatedVisibleFields)
+
+
+                    if (formId == FormConstants.CHILDREN_UNDER_FIVE_SAM_FORM_ID) {
+                        checkAndShowSAMAlert(requireContext(), field.fieldId, value)
+                    }
+                }
+            },
+
+            onShowAlert = { alertType, value ->
+
+                if (formId == FormConstants.CHILDREN_UNDER_FIVE_SAM_FORM_ID) {
+                    when (alertType) {
+                        "CHECK_MUAC" -> checkAndShowMUACAlert(requireContext(), value)
+                        "CHECK_WEIGHT_HEIGHT" -> checkAndShowWeightForHeightAlert(requireContext(), value)
+                    }
+                }
             }
-        }
+        )
 
         binding.recyclerView.adapter = adapter
         binding.btnSave.isVisible = !isViewMode
