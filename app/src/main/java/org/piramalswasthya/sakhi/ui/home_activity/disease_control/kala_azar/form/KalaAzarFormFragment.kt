@@ -38,7 +38,9 @@ class KalaAzarFormFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.recordExists.observe(viewLifecycleOwner) { notIt ->
-            binding.fabEdit.visibility = if(notIt) View.VISIBLE else View.GONE
+            viewModel.isBeneficaryStatusDeath.observe(viewLifecycleOwner){ it
+                binding.fabEdit.visibility = if(notIt && !it) View.VISIBLE else View.GONE
+            }
             binding.btnSubmit.visibility = if (notIt) View.GONE else View.VISIBLE
             notIt?.let { recordExists ->
                 val adapter = FormInputAdapter(
@@ -75,10 +77,14 @@ class KalaAzarFormFragment : Fragment() {
         viewModel.state.observe(viewLifecycleOwner) {
             when (it) {
                 KalaAzarFormViewModel.State.SAVE_SUCCESS -> {
-                    Toast.makeText(
-                        requireContext(),
-                        "Kala Azar Form submitted", Toast.LENGTH_SHORT
-                    ).show()
+                    if (viewModel.isDeath) {
+                        setMessage(R.string.ben_marked_death)
+
+                    } else {
+                        setMessage(R.string.kala_submitted)
+
+                    }
+
                     WorkerUtils.triggerAmritPushWorker(requireContext())
                     findNavController().navigateUp()
                 }
@@ -86,6 +92,12 @@ class KalaAzarFormFragment : Fragment() {
                 else -> {}
             }
         }
+    }
+    private fun setMessage(message: Int) {
+        Toast.makeText(
+            requireContext(),
+            resources.getString(message),Toast.LENGTH_SHORT
+        ).show()
     }
 
     override fun onStart() {

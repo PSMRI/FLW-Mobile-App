@@ -15,20 +15,28 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.repositories.BenRepo
+import org.piramalswasthya.sakhi.repositories.MaternalHealthRepo
 import org.piramalswasthya.sakhi.ui.home_activity.disease_control.malaria.form.form.MalariaFormFragmentArgs
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 @HiltViewModel
 
 class AESFormViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     preferenceDao: PreferenceDao,
-    @ApplicationContext context: Context,
+    @ApplicationContext var context: Context,
     private val aesRepo: AESRepo,
-    private val benRepo: BenRepo
-) : ViewModel() {
+    private val benRepo: BenRepo,
+    private val maternalHealthRepo: MaternalHealthRepo,
+
+    ) : ViewModel() {
     val benId =
         MalariaFormFragmentArgs.fromSavedStateHandle(savedStateHandle).benId
 
@@ -56,8 +64,12 @@ class AESFormViewModel @Inject constructor(
     val formList = dataset.listFlow
 
 
+    var isDeath = false
     private lateinit var aesScreeningCache: AESScreeningCache
+    var _isBeneficaryStatusDeath = MutableLiveData<Boolean>()
 
+    val isBeneficaryStatusDeath: LiveData<Boolean>
+        get() = _isBeneficaryStatusDeath
 
     init {
         viewModelScope.launch {
@@ -74,6 +86,7 @@ class AESFormViewModel @Inject constructor(
             aesRepo.getAESScreening(benId)?.let {
                 aesScreeningCache = it
                 _recordExists.value = true
+                _isBeneficaryStatusDeath.value = aesScreeningCache.beneficiaryStatus.equals("Death", ignoreCase = true)
             } ?: run {
                 _recordExists.value = false
             }
@@ -101,6 +114,29 @@ class AESFormViewModel @Inject constructor(
                 try {
                     _state.postValue(State.SAVING)
                     dataset.mapValues(aesScreeningCache, 1)
+                    if (aesScreeningCache.beneficiaryStatus == "Death") {
+                        isDeath = true
+                        val reasons = context.resources.getStringArray(R.array.benificary_case_status)
+                        val selectedValue = aesScreeningCache.reasonForDeath
+                        val position = reasons.indexOf(selectedValue)
+                        maternalHealthRepo.getBenFromId(benId)?.let {
+                            it.isDeath = true
+                            it.isDeathValue = "Death"
+                            val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.US)
+                            val dateOfDeath = aesScreeningCache.dateOfDeath?.let { d ->
+                                dateFormat.format(Date(d))
+                            } ?: ""
+                            it.dateOfDeath = dateOfDeath
+                            it.reasonOfDeath = aesScreeningCache.reasonForDeath
+                            it.reasonOfDeathId = position
+                            it.placeOfDeath = aesScreeningCache.placeOfDeath
+                            it.placeOfDeathId = context.resources.getStringArray(R.array.death_place).indexOf(aesScreeningCache.placeOfDeath)
+                            it.otherPlaceOfDeath = aesScreeningCache.otherPlaceOfDeath
+                            if (it.processed != "N") it.processed = "U"
+                            it.syncState = SyncState.UNSYNCED
+                            benRepo.updateRecord(it)
+                        }
+                    }
                     aesRepo.saveAESScreening(aesScreeningCache)
                     _state.postValue(State.SAVE_SUCCESS)
                 } catch (e: Exception) {

@@ -11,22 +11,30 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.configuration.MalariaFormDataset
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.MalariaScreeningCache
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.MalariaRepo
+import org.piramalswasthya.sakhi.repositories.MaternalHealthRepo
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
 class MalariaFormViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     preferenceDao: PreferenceDao,
-    @ApplicationContext context: Context,
+    @ApplicationContext var context: Context,
     private val malariaRepo: MalariaRepo,
-    private val benRepo: BenRepo
-) : ViewModel() {
+    private val benRepo: BenRepo,
+    private val maternalHealthRepo: MaternalHealthRepo,
+
+    ) : ViewModel() {
     val benId =
         MalariaFormFragmentArgs.fromSavedStateHandle(savedStateHandle).benId
 
@@ -54,9 +62,13 @@ class MalariaFormViewModel @Inject constructor(
     val formList = dataset.listFlow
 
     var isSuspected = false
+    var isDeath = false
 
     private lateinit var malariaScreeningCache: MalariaScreeningCache
+    var _isBeneficaryStatusDeath = MutableLiveData<Boolean>()
 
+    val isBeneficaryStatusDeath: LiveData<Boolean>
+        get() = _isBeneficaryStatusDeath
 
     init {
         viewModelScope.launch {
@@ -74,6 +86,7 @@ class MalariaFormViewModel @Inject constructor(
                 malariaScreeningCache = it
                 isSuspected = isSuspectedCase(malariaScreeningCache)
                 _recordExists.value = true
+                _isBeneficaryStatusDeath.value = malariaScreeningCache.beneficiaryStatus.equals("Death", ignoreCase = true)
             } ?: run {
                 _recordExists.value = false
             }
@@ -101,6 +114,29 @@ class MalariaFormViewModel @Inject constructor(
                 try {
                     _state.postValue(State.SAVING)
                     dataset.mapValues(malariaScreeningCache, 1)
+                    if (malariaScreeningCache.beneficiaryStatus == "Death") {
+                        isDeath = true
+                        val reasons = context.resources.getStringArray(R.array.benificary_case_status)
+                        val selectedValue = malariaScreeningCache.reasonForDeath
+                        val position = reasons.indexOf(selectedValue)
+                        maternalHealthRepo.getBenFromId(benId)?.let {
+                            it.isDeath = true
+                            it.isDeathValue = "Death"
+                            val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.US)
+                            val dateOfDeath = malariaScreeningCache.dateOfDeath?.let { d ->
+                                dateFormat.format(Date(d))
+                            } ?: ""
+                            it.dateOfDeath = dateOfDeath
+                            it.reasonOfDeath = malariaScreeningCache.reasonForDeath
+                            it.reasonOfDeathId = position
+                            it.placeOfDeath = malariaScreeningCache.placeOfDeath
+                            it.placeOfDeathId = context.resources.getStringArray(R.array.death_place).indexOf(malariaScreeningCache.placeOfDeath)
+                            it.otherPlaceOfDeath = malariaScreeningCache.otherPlaceOfDeath
+                            if (it.processed != "N") it.processed = "U"
+                            it.syncState = SyncState.UNSYNCED
+                            benRepo.updateRecord(it)
+                        }
+                    }
                     malariaRepo.saveMalariaScreening(malariaScreeningCache)
                     _state.postValue(State.SAVE_SUCCESS)
                 } catch (e: Exception) {

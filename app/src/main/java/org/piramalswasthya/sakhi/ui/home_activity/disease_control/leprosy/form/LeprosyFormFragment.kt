@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.ui.home_activity.disease_control.leprosy.form
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,10 +36,13 @@ class LeprosyFormFragment : Fragment() {
         return binding.root
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.recordExists.observe(viewLifecycleOwner) { notIt ->
-            binding.fabEdit.visibility = if(notIt) View.VISIBLE else View.GONE
+            viewModel.isBeneficaryStatusDeath.observe(viewLifecycleOwner){ it
+                binding.fabEdit.visibility = if(notIt && !it) View.VISIBLE else View.GONE
+            }
             binding.btnSubmit.visibility = if (notIt) View.GONE else View.VISIBLE
             notIt?.let { recordExists ->
                 val adapter = FormInputAdapter(
@@ -75,10 +79,14 @@ class LeprosyFormFragment : Fragment() {
         viewModel.state.observe(viewLifecycleOwner) {
             when (it) {
                 LeprosyFormViewModel.State.SAVE_SUCCESS -> {
-                    Toast.makeText(
-                        requireContext(),
-                        resources.getString(R.string.leprosy_submitted), Toast.LENGTH_SHORT
-                    ).show()
+                    if (viewModel.isDeath) {
+                        setMessage(R.string.ben_marked_death)
+
+                    } else {
+                        setMessage(R.string.leprosy_submitted)
+
+                    }
+
                     WorkerUtils.triggerAmritPushWorker(requireContext())
                     findNavController().navigateUp()
                 }
@@ -88,6 +96,12 @@ class LeprosyFormFragment : Fragment() {
         }
     }
 
+    private fun setMessage(message: Int) {
+        Toast.makeText(
+            requireContext(),
+            resources.getString(message),Toast.LENGTH_SHORT
+        ).show()
+    }
     private fun submitMalariaScreeningForm() {
         if (validateCurrentPage()) {
             viewModel.saveForm()

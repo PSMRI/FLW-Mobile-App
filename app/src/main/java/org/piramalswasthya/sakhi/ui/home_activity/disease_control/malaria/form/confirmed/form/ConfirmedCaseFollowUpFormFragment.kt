@@ -71,7 +71,7 @@ class ConfirmedCaseFollowUpFormFragment : Fragment() {
                 ConfirmedCaseFollowUpViewModel.State.SAVE_SUCCESS -> {
                     Toast.makeText(
                         requireContext(),
-                        resources.getString(R.string.leprosy_submitted), Toast.LENGTH_SHORT
+                        resources.getString(R.string.malaria_submitted), Toast.LENGTH_SHORT
                     ).show()
                     WorkerUtils.triggerAmritPushWorker(requireContext())
                     findNavController().navigateUp()
