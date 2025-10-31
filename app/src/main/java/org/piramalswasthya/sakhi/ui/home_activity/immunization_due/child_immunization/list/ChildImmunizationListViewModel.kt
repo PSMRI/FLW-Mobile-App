@@ -46,10 +46,11 @@ class ChildImmunizationListViewModel @Inject constructor(
             val ageMillis = System.currentTimeMillis() - cache.ben.dob
             ImmunizationDetailsDomain(
                 ben = cache.ben.asBasicDomainModel(),
-                vaccineStateList = vaccines.filter { it.minAllowedAgeInMillis < ageMillis }.map { vaccine ->
+//                vaccineStateList = vaccines.filter { it.minAllowedAgeInMillis < ageMillis }.map { vaccine ->
+                vaccineStateList = vaccines.map { vaccine ->
                     val state = when {
                         cache.givenVaccines.any { it.vaccineId == vaccine.vaccineId } -> VaccineState.DONE
-                        ageMillis <= vaccine.minAllowedAgeInMillis -> VaccineState.PENDING
+                        ageMillis < vaccine.minAllowedAgeInMillis -> VaccineState.PENDING
                         ageMillis <= vaccine.maxAllowedAgeInMillis -> VaccineState.OVERDUE
                         else -> VaccineState.MISSED
                     }

@@ -21,7 +21,7 @@
             android:layout_weight="1"
             android:textColor="@color/md_theme_light_shadow"
             android:textSize="@dimen/_20sdp"
-            android:text="Preview" />
+            android:text="@string/preview_title" />
 
         <ImageButton
             android:id="@+id/btnClosePreview"

@@ -166,10 +166,6 @@ class EligibleCoupleTrackingDataset(
                             R.array.ectdset_yes_no
                         )[1]
                 }
-                usingFamilyPlanning.value =
-                    if (saved.usingFamilyPlanning == true) resources.getStringArray(R.array.ectdset_yes_no)[1] else resources.getStringArray(
-                        R.array.ectdset_yes_no
-                    )[1]
                 if (saved.usingFamilyPlanning == true) {
                     list.add(methodOfContraception)
                     if (saved.methodOfContraception in resources.getStringArray(R.array.method_of_contraception)) {

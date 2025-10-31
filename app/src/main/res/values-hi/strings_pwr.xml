@@ -5,7 +5,7 @@
         <item>नहीं</item>
     </array>
     <string name="pwrdst_rich_id">आरसीएच आईडी</string>
-    <string name="pwrdst_mcp_card_no">l̥एमसीपी कार्ड संख्या</string>
+    <string name="pwrdst_mcp_card_no">एमसीपी कार्ड संख्या</string>
     <string name="pwrdst_name_prag_wo">गर्भवती महिला का नाम</string>
     <string name="pwrdst_name_hus">पति का नाम</string>
     <string name="pwrdst_curr_age_wo">महिला की वर्तमान आयु</string>
