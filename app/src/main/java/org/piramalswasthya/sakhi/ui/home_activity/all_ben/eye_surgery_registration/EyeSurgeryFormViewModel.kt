@@ -137,43 +137,49 @@ package org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registrat
             _schema.value = currentSchema.copy()
         }
 
-        suspend fun saveFormResponses(benId: Long, hhId: Long) {
-            val currentSchema = _schema.value ?: return
-            val formId = currentSchema.formId
-            val version = currentSchema.version
-            val beneficiaryId = benId
+        suspend fun saveFormResponses(benId: Long, hhId: Long) : Boolean {
+            return try{
+                val currentSchema = _schema.value ?: return false
+                val formId = currentSchema.formId
+                val version = currentSchema.version
+                val beneficiaryId = benId
 
-            val fieldMap = currentSchema.sections.orEmpty()
-                .flatMap { it.fields.orEmpty() }
-                .filter { it.visible && it.value != null }
-                .associate { it.fieldId to it.value }
+                val fieldMap = currentSchema.sections.orEmpty()
+                    .flatMap { it.fields.orEmpty() }
+                    .filter { it.visible && it.value != null }
+                    .associate { it.fieldId to it.value }
 
-            val visitDate = fieldMap["visit_date"]?.toString() ?: "N/A"
+                val visitDate = fieldMap["visit_date"]?.toString() ?: "N/A"
 
-            val wrappedJson = JSONObject().apply {
-                put("formId", formId)
-                put("beneficiaryId", beneficiaryId)
-                put("houseHoldId", hhId)
-                put("visitDate", visitDate)
-                put("fields", JSONObject(fieldMap))
+                val wrappedJson = JSONObject().apply {
+                    put("formId", formId)
+                    put("beneficiaryId", beneficiaryId)
+                    put("houseHoldId", hhId)
+                    put("visitDate", visitDate)
+                    put("fields", JSONObject(fieldMap))
+                }
+
+                val entity = EyeSurgeryFormResponseJsonEntity(
+                    benId = benId,
+                    hhId = hhId,
+                    visitDate = visitDate,
+                    formId = formId,
+                    version = version,
+                    formDataJson = wrappedJson.toString(),
+                    isSynced = false,
+                    syncedAt = null
+                )
+
+                repository.insertFormResponse(entity)
+
+                loadSyncedVisitList(benId)
+
+                EyeSurgeryFormSyncWorker.enqueue(context)
+                true
+            }catch (e: Exception){
+                e.printStackTrace()
+                false
             }
-
-            val entity = EyeSurgeryFormResponseJsonEntity(
-                benId = benId,
-                hhId = hhId,
-                visitDate = visitDate,
-                formId = formId,
-                version = version,
-                formDataJson = wrappedJson.toString(),
-                isSynced = false,
-                syncedAt = null
-            )
-
-            repository.insertFormResponse(entity)
-
-            loadSyncedVisitList(benId)
-
-            EyeSurgeryFormSyncWorker.enqueue(context)
         }
 
         fun getVisibleFields(): List<FormField> {
