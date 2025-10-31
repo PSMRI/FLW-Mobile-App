@@ -1,6 +1,9 @@
 package org.piramalswasthya.sakhi.utils
+import android.app.AlertDialog
 import android.content.ContentResolver
+import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Bitmap
@@ -9,6 +12,7 @@ import android.graphics.Canvas
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.text.Layout
 import android.text.StaticLayout
@@ -24,6 +28,7 @@ import android.widget.TableLayout
 import android.widget.TableRow
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
 import androidx.collection.lruCache
 import androidx.core.content.FileProvider
 import androidx.core.graphics.withTranslation
@@ -519,7 +524,8 @@ object HelperUtil {
                     total > 5 * 1024 * 1024
                 } ?: false
     }
-    fun compressImageToTemp(uri: android.net.Uri, nameHint: String, appContext: Context): File? {
+
+    fun compressImageToTemp(uri: Uri, nameHint: String, appContext: Context): File? {
         return try {
             val opts = BitmapFactory.Options().apply { inJustDecodeBounds = true }
             appContext.contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, opts) }
@@ -594,13 +600,6 @@ object HelperUtil {
         )
     }
 
-
-
-
-
-
-
-
     fun base64ToTempFile(base64: String, cacheDir: File, context: Context): Uri? {
         return runCatching {
             val base64Data = base64.substringAfter(",", base64)
@@ -611,8 +610,6 @@ object HelperUtil {
             FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
         }.getOrNull()
     }
-
-
 
     fun convertToLocalDate(server: String?): String? {
         if (server.isNullOrBlank()) return null
@@ -629,5 +626,60 @@ object HelperUtil {
             path.endsWith(".pdf") -> "application/pdf"
             else -> "application/octet-stream"
         }
+    }
+
+    fun launchCamera(context: Context): Uri? {
+        val contentValues = ContentValues().apply {
+            put(MediaStore.Images.Media.DISPLAY_NAME, "IMG_${System.currentTimeMillis()}.jpg")
+            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+        }
+        return context.contentResolver.insert(
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            contentValues
+        )
+    }
+
+    fun launchFilePicker(launcher: ActivityResultLauncher<Intent>) {
+        val mimeTypes = arrayOf("image/jpeg", "image/png", "application/pdf")
+        val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
+            type = "*/*"
+            putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
+            addCategory(Intent.CATEGORY_OPENABLE)
+        }
+        val chooser = Intent.createChooser(intent, "Select File (PDF, JPG, PNG)")
+        launcher.launch(chooser)
+    }
+
+    fun Context.getFileSizeInMB(uri: Uri): Double? {
+        return try {
+            contentResolver.openFileDescriptor(uri, "r")?.use { pfd ->
+                val sizeInBytes = pfd.statSize
+                if (sizeInBytes > 0) sizeInBytes / (1024.0 * 1024.0) else null
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    fun fileToBase64(file: File): String {
+        val bytes = file.readBytes()
+        return Base64.encodeToString(bytes, Base64.NO_WRAP)
+    }
+
+    fun showPickerDialog(
+        context: Context,
+        onCameraSelected: () -> Unit,
+        onFileSelected: () -> Unit
+    ) {
+        val options = arrayOf("Take Photo", "Choose File (PDF / Image)")
+        AlertDialog.Builder(context)
+            .setTitle("Select File")
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> onCameraSelected()
+                    1 -> onFileSelected()
+                }
+            }
+            .show()
     }
 }
