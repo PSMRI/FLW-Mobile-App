@@ -4,22 +4,26 @@
     import android.app.DatePickerDialog
     import android.content.ActivityNotFoundException
     import android.content.Intent
+    import android.graphics.BitmapFactory
     import android.graphics.Color
     import android.graphics.Typeface
     import android.net.Uri
     import android.text.*
     import android.text.style.ForegroundColorSpan
-    import android.util.Log
     import android.view.*
+    import android.util.Base64
     import android.widget.*
     import androidx.appcompat.content.res.AppCompatResources
     import androidx.core.content.ContextCompat
+    import androidx.core.content.FileProvider
     import androidx.recyclerview.widget.RecyclerView
     import com.google.android.material.textfield.TextInputEditText
     import com.google.android.material.textfield.TextInputLayout
     import org.piramalswasthya.sakhi.R
     import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
     import timber.log.Timber
+    import java.io.File
+    import java.io.FileOutputStream
     import java.text.SimpleDateFormat
     import java.util.*
 
@@ -492,27 +496,75 @@
                             val filePath = field.value?.toString()
                             if (!filePath.isNullOrBlank()) {
                                 try {
-                                    val uri = Uri.parse(filePath)
+                                    when {
+                                        filePath.endsWith(".pdf", ignoreCase = true) ||
+                                                (filePath.startsWith("content://") &&
+                                                        context.contentResolver.getType(Uri.parse(filePath))?.contains("pdf") == true) -> {
 
-                                    if (filePath.endsWith(".pdf") || context.contentResolver.getType(uri)?.contains("pdf") == true) {
-                                        setImageResource(R.drawable.ic_person)
-
-                                        setOnClickListener {
-                                            val intent = Intent(Intent.ACTION_VIEW).apply {
-                                                setDataAndType(uri, "application/pdf")
-                                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                                            }
-                                            try {
-                                                context.startActivity(intent)
-                                            } catch (e: ActivityNotFoundException) {
-                                                Toast.makeText(context, "No app found to open PDF", Toast.LENGTH_SHORT).show()
+                                            setImageResource(R.drawable.ic_person)
+                                            setOnClickListener {
+                                                val uri = Uri.parse(filePath)
+                                                val intent = Intent(Intent.ACTION_VIEW).apply {
+                                                    setDataAndType(uri, "application/pdf")
+                                                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                                }
+                                                try {
+                                                    context.startActivity(intent)
+                                                } catch (e: ActivityNotFoundException) {
+                                                    Toast.makeText(context, "No app found to open PDF", Toast.LENGTH_SHORT).show()
+                                                }
                                             }
                                         }
-                                    } else {
-                                        setImageURI(uri)
+
+                                        filePath.startsWith("JVBERi0") || filePath.startsWith("%PDF") -> {
+                                            setImageResource(R.drawable.ic_person)
+                                            setOnClickListener {
+                                                try {
+                                                    val decodedBytes = Base64.decode(filePath, Base64.DEFAULT)
+                                                    val tempPdf = File.createTempFile("decoded_pdf_", ".pdf", context.cacheDir)
+                                                    FileOutputStream(tempPdf).use { it.write(decodedBytes) }
+
+                                                    val uri = FileProvider.getUriForFile(
+                                                        context,
+                                                        "${context.packageName}.provider",
+                                                        tempPdf
+                                                    )
+
+                                                    val intent = Intent(Intent.ACTION_VIEW).apply {
+                                                        setDataAndType(uri, "application/pdf")
+                                                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                                    }
+                                                    context.startActivity(intent)
+                                                } catch (e: Exception) {
+                                                    Toast.makeText(context, "Failed to open PDF", Toast.LENGTH_SHORT).show()
+                                                    Timber.e(e, "Failed to open Base64 PDF")
+                                                }
+                                            }
+                                        }
+
+                                        filePath.startsWith("data:image", ignoreCase = true) ||
+                                                filePath.startsWith("/9j/") ||
+                                                filePath.startsWith("iVBOR") ||
+                                                (filePath.length > 100 &&
+                                                        !filePath.startsWith("content://") &&
+                                                        !filePath.startsWith("file://")) -> {
+
+                                            try {
+                                                val base64String = filePath.substringAfter(",")
+                                                val decodedBytes = Base64.decode(base64String, Base64.DEFAULT)
+                                                val bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+                                                setImageBitmap(bitmap)
+                                            } catch (e: Exception) {
+                                                Timber.e(e, "Failed to decode base64 image")
+                                                setImageResource(R.drawable.ic_person)
+                                            }
+                                        }
+
+                                        else -> {
+                                            val uri = Uri.parse(filePath)
+                                            setImageURI(uri)
+                                        }
                                     }
-
-
                                 } catch (e: Exception) {
                                     Timber.tag("FormRendererAdapter").e(e, "Failed to load file: $filePath")
                                     setImageResource(R.drawable.ic_person)
@@ -537,7 +589,6 @@
 
                         addWithError(container, field)
                     }
-
                     else -> {
                         inputContainer.addView(TextView(itemView.context).apply {
                             text = field.value?.toString() ?: ""

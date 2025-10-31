@@ -1,13 +1,8 @@
 package org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registration
 
 import android.app.Activity
-import android.app.AlertDialog
-import android.content.ContentValues
-import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -28,6 +23,12 @@ import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentEyeSurgeryFormBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.utils.HelperUtil.compressImageToTemp
+import org.piramalswasthya.sakhi.utils.HelperUtil.fileToBase64
+import org.piramalswasthya.sakhi.utils.HelperUtil.getFileSizeInMB
+import org.piramalswasthya.sakhi.utils.HelperUtil.launchCamera
+import org.piramalswasthya.sakhi.utils.HelperUtil.launchFilePicker
+import org.piramalswasthya.sakhi.utils.HelperUtil.showPickerDialog
 import org.piramalswasthya.sakhi.utils.dynamicFiledValidator.FieldValidator
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
 import org.piramalswasthya.sakhi.work.dynamicWoker.EyeSurgeryFormSyncWorker
@@ -58,35 +59,14 @@ class EyeSurgeryFormFragment : Fragment() {
     private var benId : Long = 0L
     private var isViewMode : Boolean = false
 
-    private val filePickerLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val uri = result.data?.data
-                uri?.let {
-                    val sizeInMB = requireContext().getFileSizeInMB(it)
-                    val maxSize = (currentImageField?.validation?.maxSizeMB ?: 5).toDouble()
-
-                    if (sizeInMB != null && sizeInMB > maxSize) {
-                        currentImageField?.errorMessage =
-                            currentImageField?.validation?.errorMessage
-                                ?: "File must be less than ${maxSize.toInt()}MB"
-                        adapter.notifyDataSetChanged()
-                        return@let
-                    }
-
-                    currentImageField?.apply {
-                        value = it.toString()
-                        errorMessage = null
-                    }
-                    adapter.notifyDataSetChanged()
-                }
-            }
-        }
 
     private val cameraLauncher =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
             if (success && tempCameraUri != null) {
-                val sizeInMB = requireContext().getFileSizeInMB(tempCameraUri!!)
+                val context = requireContext()
+                val uri = tempCameraUri!!
+
+                val sizeInMB = context.getFileSizeInMB(uri)
                 val maxSize = (currentImageField?.validation?.maxSizeMB ?: 5).toDouble()
 
                 if (sizeInMB != null && sizeInMB > maxSize) {
@@ -97,13 +77,59 @@ class EyeSurgeryFormFragment : Fragment() {
                     return@registerForActivityResult
                 }
 
+                val compressedFile = compressImageToTemp(uri, "camera_image", context)
+                val base64String = compressedFile?.let { fileToBase64(it) }
+
                 currentImageField?.apply {
-                    value = tempCameraUri.toString()
+                    value = base64String
                     errorMessage = null
                 }
                 adapter.notifyDataSetChanged()
             }
         }
+
+    private val filePickerLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val uri = result.data?.data ?: return@registerForActivityResult
+                val context = requireContext()
+
+                val sizeInMB = context.getFileSizeInMB(uri)
+                val maxSize = (currentImageField?.validation?.maxSizeMB ?: 5).toDouble()
+
+                if (sizeInMB != null && sizeInMB > maxSize) {
+                    currentImageField?.errorMessage =
+                        currentImageField?.validation?.errorMessage
+                            ?: "File must be less than ${maxSize.toInt()}MB"
+                    adapter.notifyDataSetChanged()
+                    return@registerForActivityResult
+                }
+
+                val compressedFile = compressImageToTemp(uri, "selected_image", context)
+                val base64String = compressedFile?.let { fileToBase64(it) }
+
+                currentImageField?.apply {
+                    value = base64String
+                    errorMessage = null
+                }
+                adapter.notifyDataSetChanged()
+            }
+        }
+
+    private fun showImagePickerDialog() {
+        showPickerDialog(
+            requireContext(),
+            onCameraSelected = {
+                tempCameraUri = launchCamera(requireContext())
+                cameraLauncher.launch(tempCameraUri)
+            },
+            onFileSelected = {
+                launchFilePicker(filePickerLauncher)
+            }
+        )
+    }
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -169,56 +195,19 @@ class EyeSurgeryFormFragment : Fragment() {
         binding.fabEdit.isVisible = isViewMode
     }
 
-private fun showImagePickerDialog() {
-    val options = arrayOf("Take Photo", "Choose File (PDF / Image)")
-
-    AlertDialog.Builder(requireContext())
-        .setTitle("Select File")
-        .setItems(options) { _, which ->
-            when (which) {
-                0 -> launchCamera()
-                1 -> launchFilePicker()
-            }
-        }
-        .show()
-}
-
-    private fun launchCamera() {
-        val contentValues = ContentValues().apply {
-            put(MediaStore.Images.Media.DISPLAY_NAME, "IMG_${System.currentTimeMillis()}.jpg")
-            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-        }
-
-        tempCameraUri = requireContext().contentResolver.insert(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-            contentValues
-        )
-        cameraLauncher.launch(tempCameraUri)
-    }
-
-    private fun launchFilePicker() {
-        val mimeTypes = arrayOf("image/jpeg", "image/png", "application/pdf")
-
-        val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
-            type = "*/*"
-            putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
-            addCategory(Intent.CATEGORY_OPENABLE)
-        }
-
-        val chooser = Intent.createChooser(intent, "Select File (PDF, JPG, PNG)")
-        filePickerLauncher.launch(chooser)
-    }
-
-    fun Context.getFileSizeInMB(uri: Uri): Double? {
-        return try {
-            contentResolver.openFileDescriptor(uri, "r")?.use { pfd ->
-                val sizeInBytes = pfd.statSize
-                if (sizeInBytes > 0) sizeInBytes / (1024.0 * 1024.0) else null
-            }
-        } catch (e: Exception) {
-            null
-        }
-    }
+//private fun showImagePickerDialog() {
+//    val options = arrayOf("Take Photo", "Choose File (PDF / Image)")
+//
+//    AlertDialog.Builder(requireContext())
+//        .setTitle("Select File")
+//        .setItems(options) { _, which ->
+//            when (which) {
+//                0 -> launchCamera()
+//                1 -> launchFilePicker()
+//            }
+//        }
+//        .show()
+//}
 
     private fun handleFormSubmission() {
         val currentSchema = viewModel.schema.value ?: return
