@@ -511,20 +511,6 @@ object HelperUtil {
         } catch (_: Exception) { null }
     }
 
-    fun Context.isFileTooLarge(uri: Uri): Boolean {
-            return contentResolver.openAssetFileDescriptor(uri, "r")?.use {
-                   it.length > 5 * 1024 * 1024
-                } ?: contentResolver.openInputStream(uri)?.use { stream ->
-                    var total = 0L
-                    val buffer = ByteArray(8192)
-                    var read: Int
-                    while (stream.read(buffer).also { read = it } != -1 && total <= 5 * 1024 * 1024) {
-                            total += read
-                        }
-                    total > 5 * 1024 * 1024
-                } ?: false
-    }
-
     fun compressImageToTemp(uri: Uri, nameHint: String, appContext: Context): File? {
         return try {
             val opts = BitmapFactory.Options().apply { inJustDecodeBounds = true }
@@ -598,17 +584,6 @@ object HelperUtil {
             onNegative = onNo,
             context = this
         )
-    }
-
-    fun base64ToTempFile(base64: String, cacheDir: File, context: Context): Uri? {
-        return runCatching {
-            val base64Data = base64.substringAfter(",", base64)
-            val bytes = Base64.decode(base64Data, Base64.DEFAULT)
-            val (ext, _) = detectExtAndMime(bytes)
-            val file = File(cacheDir, "uwin_${System.currentTimeMillis()}.$ext")
-            file.writeBytes(bytes)
-            FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
-        }.getOrNull()
     }
 
     fun convertToLocalDate(server: String?): String? {
