@@ -106,6 +106,15 @@ class MalariaMemberListAdapter(
                 }
             }
 
+            if ( item.tb != null && item.ben.isDeath) {
+                binding.btnFormTb.visibility = View.VISIBLE
+            } else if (item.tb == null && !item.ben.isDeath){
+                binding.btnFormTb.visibility = View.VISIBLE
+            } else if (item.tb != null && !item.ben.isDeath){
+                binding.btnFormTb.visibility = View.VISIBLE
+            } else {
+                binding.btnFormTb.visibility = View.INVISIBLE
+            }
             binding.btnFormTb.text = if (item.tb == null) "Register" else "View"
             binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.tb == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
             binding.clickListener = clickListener

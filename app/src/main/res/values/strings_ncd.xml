@@ -186,6 +186,8 @@
     <string name="tb_screening">TB Screening</string>
     <string name="tb_screening_submitted">TB Screening submitted</string>
     <string name="malaria_submitted">Malaria Form submitted</string>
+    <string name="kala_submitted">Kala Azar Form submitted</string>
+    <string name="ben_marked_death">Beneficiary marked as Deceased.</string>
     <string name="irs_submitted">IRS Form submitted</string>
     <string name="aes_submitted">AES/JS Form submitted</string>
     <string name="filaria_submitted">Filaria Form submitted</string>

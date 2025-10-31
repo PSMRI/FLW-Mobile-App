@@ -11,14 +11,20 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.configuration.FilariaFormDataset
 import org.piramalswasthya.sakhi.configuration.LeprosyFormDataset
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.LeprosyScreeningCache
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.LeprosyRepo
+import org.piramalswasthya.sakhi.repositories.MaternalHealthRepo
 import org.piramalswasthya.sakhi.ui.home_activity.disease_control.malaria.form.form.MalariaFormFragmentArgs
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,10 +32,12 @@ import javax.inject.Inject
 class LeprosyFormViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     preferenceDao: PreferenceDao,
-    @ApplicationContext context: Context,
+    @ApplicationContext var context: Context,
     private val leprosyRepo: LeprosyRepo,
-    private val benRepo: BenRepo
+    private val benRepo: BenRepo,
+    var maternalHealthRepo: MaternalHealthRepo
 ) : ViewModel() {
+    var isDeath = true
     val benId =
         LeprosyFormFragmentArgs.fromSavedStateHandle(savedStateHandle).benId
 
@@ -57,6 +65,10 @@ class LeprosyFormViewModel @Inject constructor(
     val formList = dataset.listFlow
 
 
+    var _isBeneficaryStatusDeath = MutableLiveData<Boolean>()
+
+    val isBeneficaryStatusDeath: LiveData<Boolean>
+        get() = _isBeneficaryStatusDeath
     private lateinit var leprosyScreenCache: LeprosyScreeningCache
 
 
@@ -75,6 +87,7 @@ class LeprosyFormViewModel @Inject constructor(
             leprosyRepo.getLeprosyScreening(benId)?.let {
                 leprosyScreenCache = it
                 _recordExists.value = true
+                _isBeneficaryStatusDeath.value = leprosyScreenCache.beneficiaryStatus.equals("Death", ignoreCase = true)
             } ?: run {
                 _recordExists.value = false
             }
@@ -102,6 +115,30 @@ class LeprosyFormViewModel @Inject constructor(
                 try {
                     _state.postValue(State.SAVING)
                     dataset.mapValues(leprosyScreenCache, 1)
+                    if (leprosyScreenCache.beneficiaryStatus == "Death") {
+                        isDeath = true
+                        val reasons = context.resources.getStringArray(R.array.benificary_case_status)
+                        val selectedValue = leprosyScreenCache.reasonForDeath
+                        val position = reasons.indexOf(selectedValue)
+                        maternalHealthRepo.getBenFromId(benId)?.let {
+                            it.isDeath = true
+                            it.isDeathValue = "Death"
+                            val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.US)
+                            val dateOfDeath = leprosyScreenCache.dateOfDeath?.let { d ->
+                                dateFormat.format(Date(d))
+                            } ?: ""
+                            it.dateOfDeath = dateOfDeath
+                            it.reasonOfDeath = leprosyScreenCache.reasonForDeath
+                            it.reasonOfDeathId = position
+                            it.placeOfDeath = leprosyScreenCache.placeOfDeath
+                            it.placeOfDeathId = context.resources.getStringArray(R.array.death_place).indexOf(leprosyScreenCache.placeOfDeath)
+                            it.otherPlaceOfDeath = leprosyScreenCache.otherPlaceOfDeath
+                            if (it.processed != "N") it.processed = "U"
+                            it.syncState = SyncState.UNSYNCED
+                            benRepo.updateRecord(it)
+                        }
+                    }
+
                     leprosyRepo.saveLeprosyScreening(leprosyScreenCache)
                     _state.postValue(State.SAVE_SUCCESS)
                 } catch (e: Exception) {

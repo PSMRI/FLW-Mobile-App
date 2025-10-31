@@ -49,7 +49,7 @@ class FilariaMemberListAdapter(
                 binding.cvContent.visibility = View.GONE
             }*/
 
-            binding.ivSyncState.visibility = if (item.filaria == null) View.INVISIBLE else View.VISIBLE
+            binding.ivSyncState.visibility = if (item.filaria == null) View.GONE else View.VISIBLE
 
             if (item.ben.spouseName == "Not Available" && item.ben.fatherName == "Not Available") {
                 binding.father = true
@@ -79,6 +79,15 @@ class FilariaMemberListAdapter(
                 }
             }
 
+            if ( item.filaria != null && item.ben.isDeath) {
+                binding.btnFormTb.visibility = View.VISIBLE
+            } else if (item.filaria == null && !item.ben.isDeath){
+                binding.btnFormTb.visibility = View.VISIBLE
+            } else if (item.filaria != null && !item.ben.isDeath){
+                binding.btnFormTb.visibility = View.VISIBLE
+            } else {
+                binding.btnFormTb.visibility = View.INVISIBLE
+            }
             binding.btnFormTb.text = if (item.filaria == null) "Register" else "View"
             binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.filaria == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
             binding.clickListener = clickListener

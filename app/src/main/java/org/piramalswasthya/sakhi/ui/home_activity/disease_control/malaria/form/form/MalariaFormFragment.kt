@@ -39,10 +39,12 @@ class MalariaFormFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel.recordExists.observe(viewLifecycleOwner) { notIt ->
             if (viewModel.isSuspected) {
-
-                binding.fabEdit.visibility = if(notIt && viewModel.isSuspected) View.VISIBLE else View.GONE
+                viewModel.isBeneficaryStatusDeath.observe(viewLifecycleOwner){ it
+                    binding.fabEdit.visibility = if(notIt && !it && viewModel.isSuspected) View.VISIBLE else View.GONE
+                }
 
             } else {
+
                 binding.fabEdit.visibility = View.GONE
             }
             binding.btnSubmit.visibility = if (notIt) View.GONE else View.VISIBLE
@@ -81,10 +83,14 @@ class MalariaFormFragment : Fragment() {
         viewModel.state.observe(viewLifecycleOwner) {
             when (it) {
                 MalariaFormViewModel.State.SAVE_SUCCESS -> {
-                    Toast.makeText(
-                        requireContext(),
-                        resources.getString(R.string.malaria_submitted),Toast.LENGTH_SHORT
-                    ).show()
+                    if (viewModel.isDeath) {
+                        setMessage(R.string.ben_marked_death)
+
+                    } else {
+                        setMessage(R.string.malaria_submitted)
+
+                    }
+
                     WorkerUtils.triggerAmritPushWorker(requireContext())
                     findNavController().navigateUp()
                 }
@@ -92,6 +98,13 @@ class MalariaFormFragment : Fragment() {
                 else -> {}
             }
         }
+    }
+
+    private fun setMessage(message: Int) {
+        Toast.makeText(
+            requireContext(),
+            resources.getString(message),Toast.LENGTH_SHORT
+        ).show()
     }
 
 
