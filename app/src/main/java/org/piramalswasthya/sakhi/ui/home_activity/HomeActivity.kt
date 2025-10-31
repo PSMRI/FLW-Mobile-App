@@ -51,6 +51,7 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.ActivityHomeBinding
 import org.piramalswasthya.sakhi.helpers.AnalyticsHelper
+import org.piramalswasthya.sakhi.helpers.CrashEmailSender
 import org.piramalswasthya.sakhi.helpers.ImageUtils
 import org.piramalswasthya.sakhi.helpers.InAppUpdateHelper
 import org.piramalswasthya.sakhi.helpers.Languages
@@ -63,6 +64,7 @@ import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
 import org.piramalswasthya.sakhi.ui.service_location_activity.ServiceLocationActivity
 import org.piramalswasthya.sakhi.utils.KeyUtils
 import org.piramalswasthya.sakhi.work.WorkerUtils
+import java.io.File
 import java.net.URI
 import java.util.Locale
 import javax.inject.Inject
@@ -586,6 +588,21 @@ class HomeActivity : AppCompatActivity() {
                 i.setData(Uri.parse(url))
                 startActivity(i)
             }
+            binding.drawerLayout.close()
+            true
+
+        }
+
+        binding.navView.menu.findItem(R.id.menu_report_crash).setOnMenuItemClickListener {
+            val crashDir = File(filesDir, "crashes")
+            val latestFile = crashDir.listFiles()?.maxByOrNull { it.lastModified() }
+
+            if (latestFile != null) {
+                CrashEmailSender.sendCrashReport(this, latestFile)
+            } else {
+                 Toast.makeText(this, "No crash report found", Toast.LENGTH_SHORT).show()
+            }
+
             binding.drawerLayout.close()
             true
 
