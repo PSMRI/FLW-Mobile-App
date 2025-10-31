@@ -189,25 +189,10 @@ class EyeSurgeryFormFragment : Fragment() {
                 adapter.updateFields(updatedVisibleFields)
             }
         }
-
         binding.recyclerView.adapter = adapter
         binding.btnSave.isVisible = !isViewMode
         binding.fabEdit.isVisible = isViewMode
     }
-
-//private fun showImagePickerDialog() {
-//    val options = arrayOf("Take Photo", "Choose File (PDF / Image)")
-//
-//    AlertDialog.Builder(requireContext())
-//        .setTitle("Select File")
-//        .setItems(options) { _, which ->
-//            when (which) {
-//                0 -> launchCamera()
-//                1 -> launchFilePicker()
-//            }
-//        }
-//        .show()
-//}
 
     private fun handleFormSubmission() {
         val currentSchema = viewModel.schema.value ?: return
@@ -217,8 +202,8 @@ class EyeSurgeryFormFragment : Fragment() {
         val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
         val today = Date()
 
-        currentSchema.sections.orEmpty().forEach { section ->
-            section.fields.orEmpty().forEach { schemaField ->
+        currentSchema.sections.forEach { section ->
+            section.fields.forEach { schemaField ->
                 updatedFields.find { it.fieldId == schemaField.fieldId }?.let { updated ->
                     schemaField.value = updated.value
 
@@ -232,7 +217,6 @@ class EyeSurgeryFormFragment : Fragment() {
                         } catch (e: Exception) {
                             null
                         }
-
 
                         val errorMessage = when {
                             visitDate == null -> "Invalid visit date"
@@ -253,7 +237,7 @@ class EyeSurgeryFormFragment : Fragment() {
         }
 
         updatedFields.forEach { adapterField ->
-            currentSchema.sections.orEmpty().flatMap { it.fields.orEmpty() }
+            currentSchema.sections.flatMap { it.fields }
                 .find { it.fieldId == adapterField.fieldId }
                 ?.let { schemaField ->
                     adapterField.errorMessage = schemaField.errorMessage
@@ -261,8 +245,8 @@ class EyeSurgeryFormFragment : Fragment() {
         }
 
         val copiedFields = updatedFields.map { updated ->
-            val error = currentSchema.sections.orEmpty()
-                .flatMap { it.fields.orEmpty() }
+            val error = currentSchema.sections
+                .flatMap { it.fields }
                 .find { it.fieldId == updated.fieldId }
                 ?.errorMessage
             updated.copy(errorMessage = error)
@@ -270,16 +254,16 @@ class EyeSurgeryFormFragment : Fragment() {
         adapter.updateFields(copiedFields)
         adapter.notifyDataSetChanged()
 
-        val firstErrorFieldId = currentSchema.sections.orEmpty()
-            .flatMap { it.fields.orEmpty() }
+        val firstErrorFieldId = currentSchema.sections
+            .flatMap { it.fields }
             .firstOrNull { it.visible && !it.errorMessage.isNullOrBlank() }
             ?.fieldId
 
         val errorIndex = copiedFields.indexOfFirst { it.fieldId == firstErrorFieldId }
         if (errorIndex >= 0) binding.recyclerView.scrollToPosition(errorIndex)
 
-        val hasErrors = currentSchema.sections.orEmpty().any { section ->
-            section.fields.orEmpty().any { it.visible && !it.errorMessage.isNullOrBlank() }
+        val hasErrors = currentSchema.sections.any { section ->
+            section.fields.any { it.visible && !it.errorMessage.isNullOrBlank() }
         }
         if (hasErrors) return
 
