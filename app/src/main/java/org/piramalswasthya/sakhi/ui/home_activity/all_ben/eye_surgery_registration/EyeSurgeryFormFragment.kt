@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
@@ -292,8 +293,14 @@ private fun showImagePickerDialog() {
             section.fields.orEmpty().any { it.visible && !it.errorMessage.isNullOrBlank() }
         }
         if (hasErrors) return
+
         lifecycleScope.launch {
-            viewModel.saveFormResponses(benId, hhId)
+            val isSaved = viewModel.saveFormResponses(benId, hhId)
+            if (isSaved) {
+                Toast.makeText(requireContext(),  getString(R.string.eye_surgery_details_saved_successfully), Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(requireContext(), getString(R.string.failed_to_submit_form), Toast.LENGTH_SHORT).show()
+            }
             findNavController().previousBackStackEntry?.savedStateHandle?.set("form_submitted", true)
             findNavController().popBackStack()
         }
