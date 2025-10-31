@@ -116,15 +116,22 @@ class HomeActivity : AppCompatActivity() {
             Languages.HINDI -> 1
             Languages.ASSAMESE -> 2
         }
-        MaterialAlertDialogBuilder(this).setTitle(resources.getString(R.string.choose_application_language))
-            .setSingleChoiceItems(
+        val options =
+            if (BuildConfig.FLAVOR.contains("mitanin", true)) {
+                arrayOf(
+                    resources.getString(R.string.english),
+                    resources.getString(R.string.hindi)
+                )
+            } else {
                 arrayOf(
                     resources.getString(R.string.english),
                     resources.getString(R.string.hindi),
-                    resources.getString(
-                        R.string.assamese
-                    )
-                ), currentLanguageIndex
+                    resources.getString(R.string.assamese)
+                )
+            }
+        MaterialAlertDialogBuilder(this).setTitle(resources.getString(R.string.choose_application_language))
+            .setSingleChoiceItems(
+                options, currentLanguageIndex
             ) { di, checkedItemIndex ->
                 val checkedLanguage = when (checkedItemIndex) {
                     0 -> Languages.ENGLISH

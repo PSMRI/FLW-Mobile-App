@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--Home-->
-    <string name="app_native_name">उत्प्रेरोना</string>
+<!--    <string name="app_native_name">मितानिन</string>-->
     <string name="title_activity_home" translatable="false">HomeActivity</string>
     <string name="nav_header_desc" translatable="false">Navigation header</string>
     <string name="cd_icon_grid_icon">icon</string>
@@ -17,6 +17,7 @@
     <string name="consent_text">Consent:\nI have been explained by the ASHA, the purpose for which the information and measurement findings is being collected from me, in a language I understand and I give my consent to collect the information and measurement findings on my personal health profile.</string>
 
     <string name="long_to_string">%d</string>
+    <string name="preview_title">पूर्व दर्शन</string>
 
 
     <string name="tv_reg_date_ph">Registration Date</string>

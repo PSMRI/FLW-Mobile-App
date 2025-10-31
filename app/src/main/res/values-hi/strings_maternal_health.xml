@@ -322,5 +322,5 @@
     <string name="str_other_cause_of_death">मृत्यु का अन्य कारण</string>
     <string name="str_death_date">मृत्यु तिथि</string>
     <string name="str_has_pregnant_women_delivered">क्या गर्भवती महिला ने प्रसव किया है?</string>
-    <string name="anc_date">ANC Date</string>
+    <string name="anc_date">एएनसी तारीख</string>
 </resources>
