@@ -90,6 +90,9 @@ class EyeSurgeryFormRepository @Inject constructor(
         return amritApiService.getAllEyeSurgeryFormVisits(formName, request)
     }
 
+    suspend fun getAllBenIds(): List<Long> {
+        return jsonResponseDao.getAllUniqueBenIds()
+    }
     suspend fun saveDownloadedVisitList(list: List<HBNCVisitResponse>, formId: String) {
         for ((index, item) in list.withIndex()) {
             try {
@@ -148,7 +151,7 @@ class EyeSurgeryFormRepository @Inject constructor(
 
 
     suspend fun insertOrUpdateFormResponse(entity: EyeSurgeryFormResponseJsonEntity) {
-        val existing = jsonResponseDao.getFormResponse(entity.benId, entity.visitDate)
+        val existing = jsonResponseDao.getFormResponse(entity.benId)
         val updated = existing?.let { entity.copy(id = it.id) } ?: entity
         jsonResponseDao.insertFormResponse(updated)
     }
@@ -156,8 +159,8 @@ class EyeSurgeryFormRepository @Inject constructor(
     suspend fun insertFormResponse(entity: EyeSurgeryFormResponseJsonEntity) =
         jsonResponseDao.insertFormResponse(entity)
 
-    suspend fun loadFormResponseJson(benId: Long, visitDay: String): String? =
-        jsonResponseDao.getFormResponse(benId, visitDay)?.formDataJson
+    suspend fun loadFormResponseJson(benId: Long): String? =
+        jsonResponseDao.getFormResponse(benId)?.formDataJson
 
     suspend fun getUnsyncedForms(formId: String): List<EyeSurgeryFormResponseJsonEntity> =
         jsonResponseDao.getUnsyncedForms(formId)

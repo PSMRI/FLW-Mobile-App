@@ -8,12 +8,12 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -29,6 +29,7 @@ import org.piramalswasthya.sakhi.databinding.FragmentEyeSurgeryFormBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.utils.dynamicFiledValidator.FieldValidator
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
+import org.piramalswasthya.sakhi.work.dynamicWoker.EyeSurgeryFormSyncWorker
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -52,7 +53,9 @@ class EyeSurgeryFormFragment : Fragment() {
     private lateinit var adapter: FormRendererAdapter
     private var currentImageField: FormField? = null
     private var tempCameraUri: Uri? = null
-
+    private var hhId : Long = 0L
+    private var benId : Long = 0L
+    private var isViewMode : Boolean = false
 
     private val filePickerLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -111,7 +114,12 @@ class EyeSurgeryFormFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.loadFormSchema(args.benId, FormConstants.EYE_SURGERY_FORM_ID, "",false)
+        EyeSurgeryFormSyncWorker.enqueue(requireContext())
+        benId = args.benId
+        hhId = args.hhId
+        isViewMode = args.isViewMode
+
+        viewModel.loadFormSchema(benId, FormConstants.EYE_SURGERY_FORM_ID, false)
 
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         lifecycleScope.launch {
@@ -119,37 +127,45 @@ class EyeSurgeryFormFragment : Fragment() {
                 if (schema == null) {
                     return@collectLatest
                 }
-
-                val visibleFields = viewModel.getVisibleFields().toMutableList()
-                val minVisitDate = viewModel.getMinVisitDate()
-                val maxVisitDate = viewModel.getMaxVisitDate()
-
-                adapter = FormRendererAdapter(
-                    visibleFields,
-                    isViewOnly = false,
-                    minVisitDate = minVisitDate,
-                    maxVisitDate = maxVisitDate
-                ) { field, value ->
-                    if (value == "pick_image") {
-                        currentImageField = field
-                        showImagePickerDialog()
-                    } else {
-                        field.value = value
-                        viewModel.updateFieldValue(field.fieldId, value)
-                        val updatedVisibleFields = viewModel.getVisibleFields()
-                        adapter.updateFields(updatedVisibleFields)
-                    }
-                }
-
-                binding.recyclerView.adapter = adapter
-                binding.btnSave.visibility = if (false) View.GONE else View.VISIBLE
+                refreshAdapter()
             }
+        }
+
+        binding.fabEdit.setOnClickListener {
+            isViewMode = false
+            refreshAdapter()
         }
 
         binding.btnSave.setOnClickListener {
             handleFormSubmission()
         }
+    }
 
+    private fun refreshAdapter(){
+        val visibleFields = viewModel.getVisibleFields().toMutableList()
+        val minVisitDate = viewModel.getMinVisitDate()
+        val maxVisitDate = viewModel.getMaxVisitDate()
+
+        adapter = FormRendererAdapter(
+            visibleFields,
+            isViewOnly = isViewMode,
+            minVisitDate = minVisitDate,
+            maxVisitDate = maxVisitDate
+        ) { field, value ->
+            if (value == "pick_image") {
+                currentImageField = field
+                showImagePickerDialog()
+            } else {
+                field.value = value
+                viewModel.updateFieldValue(field.fieldId, value)
+                val updatedVisibleFields = viewModel.getVisibleFields()
+                adapter.updateFields(updatedVisibleFields)
+            }
+        }
+
+        binding.recyclerView.adapter = adapter
+        binding.btnSave.isVisible = !isViewMode
+        binding.fabEdit.isVisible = isViewMode
     }
 
 private fun showImagePickerDialog() {
@@ -277,7 +293,7 @@ private fun showImagePickerDialog() {
         }
         if (hasErrors) return
         lifecycleScope.launch {
-            viewModel.saveFormResponses(args.benId, args.hhId)
+            viewModel.saveFormResponses(benId, hhId)
             findNavController().previousBackStackEntry?.savedStateHandle?.set("form_submitted", true)
             findNavController().popBackStack()
         }
