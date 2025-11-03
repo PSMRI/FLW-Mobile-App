@@ -251,13 +251,18 @@ class CUFYFormFragment : Fragment() {
         tableRendar()
     }
 
-
-    private fun tableRendar(){
+    private fun tableRendar() {
         binding.tableRv.layoutManager = LinearLayoutManager(requireContext())
         viewModel.bottleList.observe(viewLifecycleOwner) { list ->
-            binding.tableRv.adapter = BottleAdapter(list)
+
+            if (formId.equals(FormConstants.CHILDREN_UNDER_FIVE_IFA_FORM_ID, ignoreCase = true) && !list.isNullOrEmpty()) {
+                binding.llTable.visibility = View.VISIBLE
+                binding.tableRv.adapter = BottleAdapter(list)
+            } else {
+                binding.llTable.visibility = View.GONE
+            }
         }
-        viewModel.loadBottleData(benId,formId)
+        viewModel.loadBottleData(benId, formId)
     }
 
     private fun refreshAdapter() {
