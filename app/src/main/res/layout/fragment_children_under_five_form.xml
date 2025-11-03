@@ -36,6 +36,11 @@
 
         </androidx.core.widget.NestedScrollView>
 
+    <LinearLayout
+        android:id="@+id/ll_table"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <TextView
             android:layout_width="match_parent"
@@ -86,6 +91,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:nestedScrollingEnabled="false" />
+    </LinearLayout>
 
         <Button
             android:id="@+id/btnSave"
