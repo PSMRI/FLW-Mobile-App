@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import androidx.room.Upsert
+import org.piramalswasthya.sakhi.model.BottleItem
 import org.piramalswasthya.sakhi.model.dynamicEntity.CUFYFormResponseJsonEntity
 
 
@@ -41,5 +42,8 @@ interface CUFYFormResponseJsonDao {
 
     @Query("UPDATE children_under_five_all_visit SET benId = :newBenId WHERE benId = :oldBenId")
     suspend fun updateVisitBenId(oldBenId: Long, newBenId: Long)
+
+    @Query("SELECT formDataJson FROM children_under_five_all_visit WHERE benId = :benId AND formId = :formId")
+    suspend fun getFormJsonList(benId: Long, formId: String): List<String>
 
 }
