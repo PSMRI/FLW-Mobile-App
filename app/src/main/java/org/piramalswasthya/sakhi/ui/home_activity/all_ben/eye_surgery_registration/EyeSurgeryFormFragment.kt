@@ -172,23 +172,24 @@ class EyeSurgeryFormFragment : Fragment() {
         val visibleFields = viewModel.getVisibleFields().toMutableList()
         val minVisitDate = viewModel.getMinVisitDate()
         val maxVisitDate = viewModel.getMaxVisitDate()
-
+//Changed By Kunal
         adapter = FormRendererAdapter(
             visibleFields,
             isViewOnly = isViewMode,
             minVisitDate = minVisitDate,
-            maxVisitDate = maxVisitDate
-        ) { field, value ->
-            if (value == "pick_image") {
-                currentImageField = field
-                showImagePickerDialog()
-            } else {
-                field.value = value
-                viewModel.updateFieldValue(field.fieldId, value)
-                val updatedVisibleFields = viewModel.getVisibleFields()
-                adapter.updateFields(updatedVisibleFields)
-            }
-        }
+            maxVisitDate = maxVisitDate,
+            onValueChanged =
+                { field, value ->
+                    if (value == "pick_image") {
+                        currentImageField = field
+                        showImagePickerDialog()
+                    } else {
+                        field.value = value
+                        viewModel.updateFieldValue(field.fieldId, value)
+                        adapter.updateFields(viewModel.getVisibleFields())
+                    }
+                },)
+
         binding.recyclerView.adapter = adapter
         binding.btnSave.isVisible = !isViewMode
         binding.fabEdit.isVisible = isViewMode
