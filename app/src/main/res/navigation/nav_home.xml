@@ -207,6 +207,13 @@
         <action
             android:id="@+id/action_deathReportsFragment_to_cdrListFragment"
             app:destination="@id/cdrListFragment" />
+        <action
+            android:id="@+id/action_deathReportsFragment_to_nmdsrListFragment"
+            app:destination="@id/nmdsrListFragment"/>
+        <action
+            android:id="@+id/action_deathReportsFragment_to_gdrListFragment"
+            app:destination="@id/gdrListFragment"/>
+
     </fragment>
     <fragment
         android:id="@+id/generalOpCareFragment"
@@ -539,6 +546,15 @@
             android:id="@+id/action_mdsrListFragment_to_mdsrObjectFragment"
             app:destination="@id/mdsrObjectFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/nmdsrListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.death_reports.nmdsr.NmdsrListFragment"
+        />
+    <fragment
+        android:id="@+id/gdrListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.death_reports.gdr.GdrListFragment"
+    />
     <fragment
         android:id="@+id/mdsrObjectFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.death_reports.mdsr.MdsrObjectFragment"

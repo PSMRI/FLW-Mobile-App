@@ -15,7 +15,8 @@ class BenListAdapterForForm(
     private val clickListener: ClickListener? = null,
     private vararg val formButtonText: String,
     private val role: Int? = 0,
-    private val pref: PreferenceDao? = null
+    private val pref: PreferenceDao? = null,
+    private val isGeneralForm: Boolean? = null
 ) :
     ListAdapter<BenBasicDomainForForm, BenListAdapterForForm.BenViewHolder>
         (BenDiffUtilCallBack) {
@@ -47,18 +48,32 @@ class BenListAdapterForForm(
             clickListener: ClickListener?,
             vararg btnText: String,
             role: Int?,
-            pref: PreferenceDao?
+            pref: PreferenceDao?,
+            isGeneralForm: Boolean? = null
         ) {
 
-            if (pref?.getLoggedInUser()?.role.equals("asha", true)) {
-                binding.btnForm1.visibility = View.VISIBLE
-                binding.btnForm2.visibility = View.VISIBLE
-                binding.btnForm3.visibility = View.VISIBLE
+            binding.isGeneralForm = isGeneralForm == true
+            if (isGeneralForm == true) {
+                binding.ivSyncState.visibility = View.GONE
+                binding.btnForm1.visibility = View.GONE
+                binding.btnForm2.visibility = View.GONE
+                binding.btnForm3.visibility = View.GONE
             } else {
-                binding.btnForm1.visibility = View.INVISIBLE
-                binding.btnForm2.visibility = View.INVISIBLE
-                binding.btnForm3.visibility = View.INVISIBLE
+                binding.ivSyncState.visibility = View.VISIBLE
+
+                if (pref?.getLoggedInUser()?.role.equals("asha", true)) {
+                    binding.btnForm1.visibility = View.VISIBLE
+                    binding.btnForm2.visibility = View.VISIBLE
+                    binding.btnForm3.visibility = View.VISIBLE
+                } else {
+                    binding.btnForm1.visibility = View.INVISIBLE
+                    binding.btnForm2.visibility = View.INVISIBLE
+                    binding.btnForm3.visibility = View.INVISIBLE
+                }
             }
+
+
+
 
             binding.ben = item
             binding.clickListener = clickListener
@@ -92,6 +107,13 @@ class BenListAdapterForForm(
             }
             binding.role = role
             binding.hasLmp = !item.lastMenstrualPeriod.isNullOrEmpty()
+
+            if (isGeneralForm == true) {
+                binding.ivSyncState.visibility = View.GONE
+                binding.btnForm1.visibility = View.GONE
+                binding.btnForm2.visibility = View.GONE
+                binding.btnForm3.visibility = View.GONE
+            }
             binding.executePendingBindings()
 
         }
@@ -167,7 +189,7 @@ class BenListAdapterForForm(
         BenViewHolder.from(parent)
 
     override fun onBindViewHolder(holder: BenViewHolder, position: Int) {
-        holder.bind(getItem(position), clickListener, btnText = formButtonText, role = role, pref = pref)
+        holder.bind(getItem(position), clickListener, btnText = formButtonText, role = role, pref = pref,isGeneralForm = isGeneralForm ?:false)
     }
 
 

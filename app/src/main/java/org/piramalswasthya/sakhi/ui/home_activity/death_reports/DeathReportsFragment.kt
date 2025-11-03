@@ -49,6 +49,22 @@ class DeathReportsFragment : Fragment() {
             }
         }
 
+
+        binding.cardChildDeaths.setOnClickListener {
+            findNavController().navigate(DeathReportsFragmentDirections.actionDeathReportsFragmentToCdrListFragment())
+        }
+        binding.cardGeneralDeaths.setOnClickListener {
+            findNavController().navigate(DeathReportsFragmentDirections.actionDeathReportsFragmentToGdrListFragment())
+        }
+
+
+        binding.cardMaternalDeaths.setOnClickListener {
+            findNavController().navigate(DeathReportsFragmentDirections.actionDeathReportsFragmentToMdsrListFragment())
+        }
+        binding.cardNonMaternalDeaths.setOnClickListener {
+            findNavController().navigate(DeathReportsFragmentDirections.actionDeathReportsFragmentToNmdsrListFragment())
+        }
+
         binding.btnContinue.setOnClickListener {
             when (binding.rgDeathType.checkedRadioButtonId) {
                 binding.rbCdr.id -> {

@@ -5,6 +5,8 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="ben"
             type="org.piramalswasthya.sakhi.model.BenBasicDomainForForm" />
@@ -20,6 +22,10 @@
         <variable
             name="hasLmp"
             type="Boolean" />
+        <variable
+            name="isGeneralForm"
+            type="Boolean" />
+
     </data>
 
     <androidx.cardview.widget.CardView
@@ -83,7 +89,7 @@
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@id/tv_hh_id"
                     android:contentDescription="@string/iv_sync_state_tv"
-
+                    android:visibility="@{isGeneralForm ? View.GONE : View.VISIBLE}"
                     app:layout_constraintBottom_toBottomOf="@+id/tv_hh_id"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
