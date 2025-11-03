@@ -15,7 +15,7 @@ import timber.log.Timber
 import java.io.IOException
 
 @HiltWorker
-class CUFYIFAFormSyncWorker @AssistedInject constructor(
+class CUFYIFAPushWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workerParams: WorkerParameters,
     private val preferenceDao: PreferenceDao,
@@ -27,29 +27,14 @@ class CUFYIFAFormSyncWorker @AssistedInject constructor(
             val user = preferenceDao.getLoggedInUser()
                 ?: throw IllegalStateException("No user logged in")
 
-            val request = HBNCVisitRequest(
-                fromDate = HelperUtil.getCurrentDate(Konstants.defaultTimeStamp),
-                toDate = HelperUtil.getCurrentDate(),
-                pageNo = 0,
-                ashaId = user.userId
-            )
 
-            val response = repository.getAllFormVisits(FormConstants.IFA_FORM_NAME,request)
-            if (response.isSuccessful) {
-                val visitList = response.body()?.data.orEmpty()
-                repository.saveDownloadedVisitList(visitList, FormConstants.CHILDREN_UNDER_FIVE_IFA_FORM_ID)
-            } else {
-                if (response.code() >= 500) {
-                    throw IOException("Server error: ${response.code()}")
-                }
-            }
 
-          /*  val unsyncedForms = repository.getUnsyncedForms(FormConstants.CHILDREN_UNDER_FIVE_IFA_FORM_ID)
+            val unsyncedForms = repository.getUnsyncedForms(FormConstants.CHILDREN_UNDER_FIVE_IFA_FORM_ID)
             for (form in unsyncedForms) {
                 if ((form.benId ?: -1) < 0) continue
 
                 try{
-                    val success = repository.syncFormToServer(user.userName,FormConstants.IFA_FORM_NAME,form)
+                    val success = repository.syncFormToServer(FormConstants.IFA_FORM_NAME,form)
                     if (success) {
                         repository.markFormAsSynced(form.id)
                     }
@@ -57,7 +42,7 @@ class CUFYIFAFormSyncWorker @AssistedInject constructor(
                     Timber.e(e, "Failed to sync form ${form.id}")
                 }
 
-            }*/
+            }
 
             Result.success()
         } catch (e: IllegalStateException) {
@@ -82,7 +67,7 @@ class CUFYIFAFormSyncWorker @AssistedInject constructor(
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
 
-            val request = OneTimeWorkRequestBuilder<CUFYIFAFormSyncWorker>()
+            val request = OneTimeWorkRequestBuilder< CUFYIFAPushWorker>()
                 .setConstraints(constraints)
                 .build()
 

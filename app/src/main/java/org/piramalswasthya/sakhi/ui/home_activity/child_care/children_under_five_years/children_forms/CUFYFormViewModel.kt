@@ -1,5 +1,9 @@
 package org.piramalswasthya.sakhi.ui.home_activity.child_care.children_under_five_years.children_forms
 
+import android.net.Uri
+import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,6 +21,8 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
 import org.piramalswasthya.sakhi.model.dynamicModel.VisitCard
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.dynamicRepo.CUFYFormRepository
+import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
+import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -25,6 +31,13 @@ import javax.inject.Inject
 class CUFYFormViewModel @Inject constructor(
     private val repository: CUFYFormRepository,
 ) : ViewModel() {
+
+    sealed class SaveFormState {
+        object Idle : SaveFormState()
+        object Loading : SaveFormState()
+        object Success : SaveFormState()
+        data class Error(val message: String) : SaveFormState()
+    }
 
     private val _schema = MutableStateFlow<FormSchemaDto?>(null)
     val schema: StateFlow<FormSchemaDto?> = _schema
@@ -36,9 +49,18 @@ class CUFYFormViewModel @Inject constructor(
     var visitDay: String = ""
     private var isViewMode: Boolean = false
 
+    private val _saveFormState = MutableLiveData<SaveFormState>(SaveFormState.Idle)
+    val saveFormState: LiveData<SaveFormState> = _saveFormState
+
 
     private val _isBenDead = MutableStateFlow(false)
     val isBenDead: StateFlow<Boolean> = _isBenDead
+
+    private var existingRecordId: Int = 0
+
+    fun setRecordId(recordId: Int) {
+        existingRecordId = recordId
+    }
 
     fun loadSyncedVisitList(benId: Long) {
         viewModelScope.launch {
@@ -47,6 +69,104 @@ class CUFYFormViewModel @Inject constructor(
 
         }
     }
+
+    fun loadFormSchemaFromJson(
+        benId: Long,
+        formId: String,
+        visitDay: String,
+        isViewMode: Boolean,
+        formDataJson: String
+    ) {
+        this.visitDay = visitDay
+        this.isViewMode = isViewMode
+
+        viewModelScope.launch {
+            val cachedSchemaEntity = repository.getSavedSchema(formId)
+            val cachedSchema: FormSchemaDto? = cachedSchemaEntity?.let {
+                FormSchemaDto.fromJson(it.schemaJson)
+            }
+            val localSchema = cachedSchema ?: repository.getFormSchema(formId)
+            if (localSchema == null) return@launch
+
+            val savedValues = try {
+                val root = JSONObject(formDataJson)
+                val fieldsJson = root.optJSONObject("fields") ?: JSONObject()
+                fieldsJson.keys().asSequence().associateWith { fieldsJson.opt(it) }
+            } catch (e: Exception) {
+                emptyMap<String, Any?>()
+            }
+
+            val allFields = localSchema.sections.flatMap { it.fields.orEmpty() }
+
+            localSchema.sections.forEach { section ->
+                section.fields.orEmpty().forEach { field ->
+                    field.value = when (formId) {
+
+                        FormConstants.CHILDREN_UNDER_FIVE_ORS_FORM_ID -> {
+                            when (field.type) {
+                                "number" -> {
+                                    val rawValue = savedValues[field.fieldId]
+                                    when (rawValue) {
+                                        is Number -> rawValue
+                                        is String -> rawValue.toDoubleOrNull()
+                                        else -> null
+                                    } ?: field.defaultValue
+                                }
+                                "date" -> savedValues[field.fieldId]?.toString() ?: ""
+                                else -> savedValues[field.fieldId] ?: field.defaultValue
+                            }
+                        }
+
+                        FormConstants.CHILDREN_UNDER_FIVE_IFA_FORM_ID -> {
+                            when (field.type) {
+                                "image" -> {
+                                    val uriValue = savedValues[field.fieldId]?.toString()
+                                    if (!uriValue.isNullOrEmpty() && uriValue.startsWith("content://")) {
+                                        uriValue
+                                    } else ""
+                                }
+                                "date" -> savedValues[field.fieldId]?.toString() ?: ""
+                                "number" -> (savedValues[field.fieldId] as? Number)
+                                    ?: (savedValues[field.fieldId]?.toString()?.toDoubleOrNull())
+                                    ?: field.defaultValue
+                                else -> savedValues[field.fieldId] ?: field.defaultValue
+                            }
+                        }
+
+                        FormConstants.CHILDREN_UNDER_FIVE_SAM_FORM_ID -> {
+                            val value = savedValues[field.fieldId] ?: field.defaultValue
+                            when (field.type) {
+                                "image", "view_image" -> {
+                                    val uriValue = value?.toString() ?: ""
+                                    if (uriValue.startsWith("content://")) uriValue else ""
+                                }
+                                else -> value
+                            }
+                        }
+
+                        else -> savedValues[field.fieldId] ?: field.defaultValue
+                    }
+
+
+                    field.isEditable = when (field.fieldId) {
+                        "visit_day", "due_date" -> false
+                        else -> !isViewMode
+                    }
+                }
+            }
+
+
+            localSchema.sections.forEach { section ->
+                section.fields.orEmpty().forEach { field ->
+                    field.visible = evaluateFieldVisibility(field, allFields)
+                }
+            }
+
+            _schema.value = localSchema
+        }
+    }
+
+
     fun loadFormSchema(
         benId: Long,
         formId: String,
@@ -68,11 +188,11 @@ class CUFYFormViewModel @Inject constructor(
                 return@launch
             }
 
-            launch {
+           /* launch {
                 val updatedSchema = repository.getFormSchema(formId)
                 if (updatedSchema != null && (cachedSchemaEntity?.version ?: 0) < updatedSchema.version) {
                 }
-            }
+            }*/
             val savedJson = repository.loadFormResponseJson(benId, visitDay)
             val savedFieldValues = if (!savedJson.isNullOrBlank()) {
                 try {
@@ -134,6 +254,22 @@ class CUFYFormViewModel @Inject constructor(
 
         _schema.value = currentSchema.copy()
     }
+//    companion object {
+//        private const val OTHER_PLACE_OF_DEATH_ID = 8
+//        private const val DEFAULT_DEATH_ID = -1
+//    }
+suspend fun saveFormResponses(benId: Long, hhId: Long, recordId: Int = 0) {
+
+    Timber.tag("CUFYFormVM").d("💾 Saving form... benId=$benId, hhId=$hhId, recordId=$recordId")
+    val currentSchema = _schema.value ?: run {
+        Timber.tag("CUFYFormVM").e("❌ Schema is null, aborting save.")
+        return
+    }
+
+    val formId = currentSchema.formId
+    val version = currentSchema.version
+    Timber.tag("CUFYFormVM")
+        .d("🧾 Saving form... formId=$formId, version=$version, benId=$benId, hhId=$hhId, recordId=$recordId")
 
     suspend fun saveFormResponses(benId: Long, hhId: Long) {
         val currentSchema = _schema.value ?: return
@@ -141,22 +277,38 @@ class CUFYFormViewModel @Inject constructor(
         val version = currentSchema.version
         val beneficiaryId = benId
 
+    _saveFormState.postValue(SaveFormState.Loading)
+
+    try {
         val fieldMap = currentSchema.sections.orEmpty()
             .flatMap { it.fields.orEmpty() }
             .filter { it.visible && it.value != null }
             .associate { it.fieldId to it.value }
 
-        val visitDate = fieldMap["visit_date"]?.toString() ?: "N/A"
+        val rawVisitDate = fieldMap["visit_date"]?.toString() ?: "N/A"
+        val visitDate = try {
+
+            val inputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+            val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val parsedDate = inputFormat.parse(rawVisitDate)
+            if (parsedDate != null) outputFormat.format(parsedDate) else rawVisitDate
+        } catch (e: Exception) {
+            Timber.tag("CUFYFormVM").e(e, "⚠️ Date format conversion failed for: $rawVisitDate")
+            rawVisitDate
+        }
 
         val wrappedJson = JSONObject().apply {
             put("formId", formId)
-            put("beneficiaryId", beneficiaryId)
+            put("beneficiaryId", benId)
             put("houseHoldId", hhId)
             put("visitDate", visitDate)
             put("fields", JSONObject(fieldMap))
         }
 
+        val currentTime = System.currentTimeMillis()
+
         val entity = CUFYFormResponseJsonEntity(
+            id = if (recordId > 0) recordId else 0,
             benId = benId,
             hhId = hhId,
             visitDate = visitDate,
@@ -164,13 +316,27 @@ class CUFYFormViewModel @Inject constructor(
             version = version,
             formDataJson = wrappedJson.toString(),
             isSynced = false,
-            syncedAt = null
+            syncedAt = null,
+            createdAt = currentTime,
+            updatedAt = currentTime
         )
 
-        repository.insertFormResponse(entity)
+        // 👇 Capture returned row ID
+        val insertedId = repository.insertFormResponse(entity)
+        Timber.tag("CUFYFormVM").i("✅ Form inserted successfully with recordId=$insertedId")
 
         loadSyncedVisitList(benId)
+
+        _saveFormState.postValue(SaveFormState.Success)
+        Timber.tag("CUFYFormVM").i("🎉 SaveFormState = SUCCESS (recordId=$insertedId)")
+
+    } catch (e: Exception) {
+        Timber.tag("CUFYFormVM").e(e, "❌ Error saving form: ${e.localizedMessage}")
+        _saveFormState.postValue(SaveFormState.Error(e.localizedMessage ?: "Failed to save form"))
     }
+}
+
+
 
     fun getVisibleFields(): List<FormField> {
         return _schema.value?.sections?.flatMap { section ->
