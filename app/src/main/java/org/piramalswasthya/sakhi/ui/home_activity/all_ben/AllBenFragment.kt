@@ -73,7 +73,8 @@ class AllBenFragment : Fragment() {
         ALL,
         WITH,
         WITHOUT,
-        AGE_ABOVE_30
+        AGE_ABOVE_30,
+        WARA
     }
 
     private val filterAlert by lazy {
@@ -85,6 +86,7 @@ class AllBenFragment : Fragment() {
                 filterAlertBinding.rbWith.id -> Abha.WITH
                 filterAlertBinding.rbWithout.id -> Abha.WITHOUT
                 filterAlertBinding.rbAgeAboveThirty.id -> Abha.AGE_ABOVE_30
+                filterAlertBinding.rbWara.id -> Abha.WARA
                 else -> Abha.ALL
             }
 
@@ -104,7 +106,9 @@ class AllBenFragment : Fragment() {
                 viewModel.filterType(2)
             } else if (selectedAbha == Abha.AGE_ABOVE_30) {
                 viewModel.filterType(3)
-            }   else {
+            } else if (selectedAbha == Abha.WARA) {
+                viewModel.filterType(4)
+            }  else {
                 viewModel.filterType(0)
             }
 
@@ -145,7 +149,7 @@ class AllBenFragment : Fragment() {
             }
         }
 
-        if (args.source == 1 || args.source == 2 || args.source == 3) {
+        if (args.source == 1 || args.source == 2 || args.source == 3 || args.source == 4) {
             binding.ibFilter.visibility = View.GONE
             binding.ibDownload.visibility = View.VISIBLE
         }
@@ -269,8 +273,6 @@ class AllBenFragment : Fragment() {
                 benAdapter.submitBenIds(benIds)
             }
         }
-
-
     }
 
     private fun checkAndGenerateABHA(benId: Long) {
@@ -321,6 +323,4 @@ class AllBenFragment : Fragment() {
         super.onDestroy()
         _binding = null
     }
-
-
 }
