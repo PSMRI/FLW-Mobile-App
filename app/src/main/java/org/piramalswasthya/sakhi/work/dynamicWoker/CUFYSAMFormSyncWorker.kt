@@ -44,7 +44,7 @@ class CUFYSAMFormSyncWorker @AssistedInject constructor(
                 }
             }
 
-            val unsyncedForms = repository.getUnsyncedForms(FormConstants.CHILDREN_UNDER_FIVE_SAM_FORM_ID)
+           /* val unsyncedForms = repository.getUnsyncedForms(FormConstants.CHILDREN_UNDER_FIVE_SAM_FORM_ID)
             for (form in unsyncedForms) {
                 if ((form.benId ?: -1) < 0) continue
 
@@ -58,7 +58,7 @@ class CUFYSAMFormSyncWorker @AssistedInject constructor(
                 }
 
             }
-
+*/
             Result.success()
         } catch (e: IllegalStateException) {
             Timber.e(e, "FormSyncWorker failed: No user logged in")
