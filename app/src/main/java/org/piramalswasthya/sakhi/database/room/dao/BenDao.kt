@@ -253,9 +253,26 @@ interface BenDao {
     @Query("SELECT ben.*  from BEN_BASIC_CACHE  ben inner join pregnancy_anc pwr on pwr.benId = ben.benId where pwr.isAborted = 1  and ben.villageId=:selectedVillage group by ben.benId")
     fun getAllAbortionWomenList(selectedVillage: Int): Flow<List<BenWithAncVisitCache>>
 
+    @Query("""
+    SELECT * FROM BEN_BASIC_CACHE 
+    WHERE 
+        CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) >= 15
+        AND isDeath = 1
+        AND (reasonOfDeath IS NULL OR reasonOfDeath != 'Maternal Death')
+        AND villageId = :selectedVillage
+""")
+    fun getAllGeneralDeathsList(selectedVillage: Int): Flow<List<BenBasicCache>>
 
-
-
+    @Query("""
+    SELECT * FROM BEN_BASIC_CACHE 
+    WHERE 
+        gender = 'FEMALE'
+        AND CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) BETWEEN 15 AND 49
+        AND isDeath = 1
+        AND reasonOfDeath = 'Non-Maternal Death'
+        AND villageId = :selectedVillage
+     """)
+    fun getAllNonMaternalDeathsList(selectedVillage: Int): Flow<List<BenBasicCache>>
     @Query("SELECT count(distinct(ben.benId)) FROM BEN_BASIC_CACHE  ben inner join pregnancy_register pwr on pwr.benId = ben.benId where pwr.active = 1 and ben.reproductiveStatusId=2 and ben.villageId=:selectedVillage")
     fun getAllRegisteredPregnancyWomenListCount(selectedVillage: Int): Flow<Int>
 
@@ -367,6 +384,7 @@ interface BenDao {
     fun getAllCDRList(
         selectedVillage: Int, max: Int = Konstants.maxAgeForCdr
     ): Flow<List<BenBasicCache>>
+
 
     @Transaction
     @Query("SELECT * FROM BEN_BASIC_CACHE WHERE reproductiveStatusId in (2, 3, 4) and isMdsr = 1 and villageId=:selectedVillage")

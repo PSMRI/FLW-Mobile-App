@@ -9,7 +9,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class DeathReportsViewModel @Inject constructor() : ViewModel() {
+class
+DeathReportsViewModel @Inject constructor() : ViewModel() {
 
     private val _navigateToCdrList = MutableLiveData(false)
     val navigateToCdrList: LiveData<Boolean>

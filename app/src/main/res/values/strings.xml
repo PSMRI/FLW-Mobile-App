@@ -131,7 +131,11 @@
 
     <string name="immunization_dosage_count">%d/%d</string>
     <string name="select_death_type">Select Beneficiary Death Type</string>
+    <string name="general_deaths">General Deaths</string>
     <string name="death_type_cdr">CDR (Child Death Review)</string>
+    <string name="maternal_deaths">Maternal Deaths (MDSR)</string>
+    <string name="non_maternal_deaths">Non-Maternal Deaths</string>
+    <string name="child_deaths">Child Deaths</string>
     <string name="death_type_mdsr">MDSR (Maternal Death Surveillance and Response)</string>
     <string name="continue_button">CONTINUE</string>
 
@@ -371,7 +375,6 @@
     //................VHND........................
 
 
-
     <!--    <string name="wife_s_name">Wife\'s Name</string>-->
     <!--    <string name="spouse_s_name">Spouse\'s Name</string>-->
     <!--    <string name="age_at_marriage">Age At Marriage</string>-->
@@ -518,12 +521,12 @@
     </string-array>
 
     <string-array name="leprosy_status">
-        <item >Screened</item>
-        <item >Denied</item>
-        <item >Not Screened</item>
-        <item >Suspected</item>
-        <item >Confirmed</item>
-        <item >Not Confirmed</item>
+        <item>Screened</item>
+        <item>Denied</item>
+        <item>Not Screened</item>
+        <item>Suspected</item>
+        <item>Confirmed</item>
+        <item>Not Confirmed</item>
     </string-array>
 
     <string-array name="death_place">
