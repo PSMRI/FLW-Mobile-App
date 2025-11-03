@@ -9,7 +9,9 @@ import android.view.ViewGroup
 import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
@@ -57,9 +59,23 @@ class CUFYListFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.benList.collect { list ->
                 binding.flEmpty.visibility = if (list.isEmpty()) View.VISIBLE else View.GONE
-                benAdapter.submitList(list)
+
             }
         }
+
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.benListWithSamStatus.collect { benList ->
+                    benAdapter.submitList(benList)
+                }
+            }
+        }
+
+
+        lifecycleScope.launch {
+            viewModel.startSamStatusUpdates()
+        }
+
 
         binding.ibSearch.visibility = View.VISIBLE
         binding.ibSearch.setOnClickListener { sttContract.launch(Unit) }

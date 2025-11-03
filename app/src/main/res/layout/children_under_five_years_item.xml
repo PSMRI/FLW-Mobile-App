@@ -10,6 +10,9 @@
         <variable
             name="clickListener"
             type="org.piramalswasthya.sakhi.adapters.CUFYAdapter.ChildListClickListener" />
+        <variable
+            name="samStatus"
+            type="String" />
 
     </data>
 
@@ -336,7 +339,7 @@
                         style="@style/Widget.Material3.Button.TonalButton"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:text="@string/check_sam"
+                        android:text="@{samStatus}"
                         android:layout_marginEnd="@dimen/_5sdp"
                         android:layout_weight="1"
                         android:onClick="@{() -> clickListener.onClickedSAM(ben)}"

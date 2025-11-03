@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.ui.home_activity.child_care.children_under_fiv
 import android.app.AlertDialog
 import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -11,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -34,6 +36,17 @@ import java.util.Date
 import java.util.Locale
 import androidx.core.view.isVisible
 import androidx.core.view.isGone
+import org.piramalswasthya.sakhi.adapters.dynamicAdapter.BottleAdapter
+import org.piramalswasthya.sakhi.utils.HelperUtil.checkAndShowMUACAlert
+import org.piramalswasthya.sakhi.utils.HelperUtil.checkAndShowSAMAlert
+import org.piramalswasthya.sakhi.utils.HelperUtil.checkAndShowWeightForHeightAlert
+import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.IFA_FORM_NAME
+import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.ORS_FORM_NAME
+import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.SAM_FORM_NAME
+import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYIFAPushWorker
+import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYORSPushWorker
+import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYSAMPushWorker
+import timber.log.Timber
 
 @AndroidEntryPoint
 class CUFYFormFragment : Fragment() {
@@ -49,6 +62,7 @@ class CUFYFormFragment : Fragment() {
     var dob = -1L
     var isViewMode = false
     lateinit var formId: String
+    private var recordId: Int = 0
     private lateinit var adapter: FormRendererAdapter
     private var currentImageField: FormField? = null
     private var tempCameraUri: Uri? = null
@@ -58,6 +72,17 @@ class CUFYFormFragment : Fragment() {
     private val galleryLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
+                try {
+
+                    requireContext().contentResolver.takePersistableUriPermission(
+                        it,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    )
+                    Timber.tag("CUFYFormFragment").d("✅ Persisted read permission for URI: $it")
+                } catch (e: SecurityException) {
+                    Timber.tag("CUFYFormFragment").e(e, "❌ Failed to persist URI permission: $it")
+                }
+
                 val sizeInMB = requireContext().getFileSizeInMB(it)
                 val maxSize = (currentImageField?.validation?.maxSizeMB ?: 5).toDouble()
 
@@ -73,9 +98,11 @@ class CUFYFormFragment : Fragment() {
                     value = it.toString()
                     errorMessage = null
                 }
+
                 adapter.notifyDataSetChanged()
             }
         }
+
 
     private val cameraLauncher =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
@@ -120,8 +147,11 @@ class CUFYFormFragment : Fragment() {
         isViewMode = args.isViewMode
         benId = args.benId
         hhId = args.hhId
+        recordId = args.recordId
+        viewModel.setRecordId(recordId)
+        val formDataJson = args.formDataJson
 
-        Log.i("ChildrenUnderFiveFormFragmentOne", "onViewCreated: $visitType == $isViewMode == $benId == $hhId")
+        Log.i("ChildrenUnderFiveFormFragment", "onViewCreated: formDataJson = ${formDataJson?.take(1000)}...")
 
         binding.fabEdit.isVisible = isViewMode
 
@@ -132,15 +162,14 @@ class CUFYFormFragment : Fragment() {
             refreshAdapter()
         }
 
-        if (visitType.equals("ORS")){
+        if (visitType.equals(ORS_FORM_NAME)){
             formId = FormConstants.CHILDREN_UNDER_FIVE_ORS_FORM_ID;
-        }else if (visitType.equals("IFA")){
+        }else if (visitType.equals(IFA_FORM_NAME)){
             formId = FormConstants.CHILDREN_UNDER_FIVE_IFA_FORM_ID;
-        }else if (visitType.equals("Check SAM")){
+        }else if (visitType.equals(SAM_FORM_NAME)){
             formId = FormConstants.CHILDREN_UNDER_FIVE_SAM_FORM_ID;
         }
 
-//        viewModel.loadVisitDates(benId)
 
         infantListViewModel.getBenById(benId) { ben ->
             infantBinding.btnHBNC.visibility = View.GONE
@@ -150,9 +179,25 @@ class CUFYFormFragment : Fragment() {
         }
 
         infantListViewModel.getDobByBenIdAsync(benId) { dob ->
-            viewModel.loadFormSchema(benId, formId, visitType!!, true)
-        }
+            if (!formDataJson.isNullOrEmpty()) {
 
+                viewModel.loadFormSchemaFromJson(
+                    benId = benId,
+                    formId = formId,
+                    visitDay = visitType!!,
+                    isViewMode = isViewMode,
+                    formDataJson = formDataJson
+                )
+            } else {
+
+                viewModel.loadFormSchema(
+                    benId = benId,
+                    formId = formId,
+                    visitDay = visitType!!,
+                    viewMode = isViewMode
+                )
+            }
+        }
         lifecycleScope.launch {
             viewModel.schema.collectLatest { schema ->
                 if (schema == null) return@collectLatest
@@ -160,9 +205,59 @@ class CUFYFormFragment : Fragment() {
             }
         }
 
+        viewModel.saveFormState.observe(viewLifecycleOwner) { state ->
+            Timber.tag("CUFYFormFragment").d("📊 saveFormState observer: state changed to ${state::class.simpleName}")
+
+            when (state) {
+                is CUFYFormViewModel.SaveFormState.Idle -> {
+                    Timber.tag("CUFYFormFragment").d("📊 saveFormState: Idle")
+                }
+                is CUFYFormViewModel.SaveFormState.Loading -> {
+                    Timber.tag("CUFYFormFragment").d("📊 saveFormState: Loading")
+                }
+                is CUFYFormViewModel.SaveFormState.Success -> {
+                    Timber.tag("CUFYFormFragment").d("📊 saveFormState: Success")
+                    Timber.tag("CUFYFormFragment").d("🚀 saveFormState: About to enqueue worker for visitType=$visitType")
+
+                    if (visitType.equals(ORS_FORM_NAME)){
+                        Timber.tag("CUFYFormFragment").d("👷 saveFormState: Enqueuing CUFYORSPushWorker")
+                        CUFYORSPushWorker.enqueue(requireContext())
+                    }else if (visitType.equals(IFA_FORM_NAME)){
+                        Timber.tag("CUFYFormFragment").d("👷 saveFormState: Enqueuing CUFYIFAPushWorker")
+                        CUFYIFAPushWorker.enqueue(requireContext())
+                    }else if (visitType.equals(SAM_FORM_NAME)){
+                        Timber.tag("CUFYFormFragment").d("👷 saveFormState: Enqueuing CUFYSAMPushWorker")
+                        CUFYSAMPushWorker.enqueue(requireContext())
+                    }
+
+                    Timber.tag("CUFYFormFragment").d("✅ saveFormState: Worker enqueued, about to navigate back")
+                    lifecycleScope.launch {
+                        findNavController().previousBackStackEntry?.savedStateHandle?.set("form_submitted", true)
+                        Timber.tag("CUFYFormFragment").d("🧭 saveFormState: Navigation state set, popping back stack")
+                        findNavController().popBackStack()
+                    }
+                }
+                is CUFYFormViewModel.SaveFormState.Error -> {
+                    Timber.tag("CUFYFormFragment").e("❌ saveFormState: Error - ${state.message}")
+                    Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
         binding.btnSave.setOnClickListener {
             handleFormSubmission()
         }
+
+        tableRendar()
+    }
+
+
+    private fun tableRendar(){
+        binding.tableRv.layoutManager = LinearLayoutManager(requireContext())
+        viewModel.bottleList.observe(viewLifecycleOwner) { list ->
+            binding.tableRv.adapter = BottleAdapter(list)
+        }
+        viewModel.loadBottleData(benId,formId)
     }
 
     private fun refreshAdapter() {
@@ -174,18 +269,34 @@ class CUFYFormFragment : Fragment() {
             visibleFields,
             isViewOnly = isViewMode,
             minVisitDate = minVisitDate,
-            maxVisitDate = maxVisitDate
-        ) { field, value ->
-            if (value == "pick_image") {
-                currentImageField = field
-                showImagePickerDialog()
-            } else {
-                field.value = value
-                viewModel.updateFieldValue(field.fieldId, value)
-                val updatedVisibleFields = viewModel.getVisibleFields()
-                adapter.updateFields(updatedVisibleFields)
+            maxVisitDate = maxVisitDate,
+            onValueChanged = { field, value ->
+                if (value == "pick_image") {
+                    currentImageField = field
+                    showImagePickerDialog()
+                } else {
+                    field.value = value
+                    viewModel.updateFieldValue(field.fieldId, value)
+                    val updatedVisibleFields = viewModel.getVisibleFields()
+                    adapter.updateFields(updatedVisibleFields)
+
+
+                    if (formId == FormConstants.CHILDREN_UNDER_FIVE_SAM_FORM_ID) {
+                        checkAndShowSAMAlert(requireContext(), field.fieldId, value)
+                    }
+                }
+            },
+
+            onShowAlert = { alertType, value ->
+
+                if (formId == FormConstants.CHILDREN_UNDER_FIVE_SAM_FORM_ID) {
+                    when (alertType) {
+                        "CHECK_MUAC" -> checkAndShowMUACAlert(requireContext(), value)
+                        "CHECK_WEIGHT_HEIGHT" -> checkAndShowWeightForHeightAlert(requireContext(), value)
+                    }
+                }
             }
-        }
+        )
 
         binding.recyclerView.adapter = adapter
         binding.btnSave.isVisible = !isViewMode
@@ -233,8 +344,8 @@ class CUFYFormFragment : Fragment() {
         val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
         val today = Date()
 
-        currentSchema.sections.orEmpty().forEach { section ->
-            section.fields.orEmpty().forEach { schemaField ->
+        currentSchema.sections.forEach { section ->
+            section.fields.forEach { schemaField ->
                 updatedFields.find { it.fieldId == schemaField.fieldId }?.let { updated ->
                     schemaField.value = updated.value
 
@@ -248,6 +359,20 @@ class CUFYFormFragment : Fragment() {
                         } catch (e: Exception) {
                             null
                         }
+
+                        Log.d(
+                            "FormSubmission",
+                            """
+                        ──────────────
+                        🧩 Field Validation Debug:
+                        ➤ visitDateStr: $visitDateStr
+                        ➤ Parsed visitDate: ${visitDate?.let { sdf.format(it) } ?: "null"}
+                        ➤ today: ${sdf.format(today)}
+                        ➤ deliveryDate: ${sdf.format(Date(deliveryDate))}
+                        ➤ previousVisitDate: ${previousVisitDate?.let { sdf.format(it) } ?: "null"}
+                        ──────────────
+                        """.trimIndent()
+                        )
 
                         val errorMessage = when {
                             visitDate == null -> "Invalid visit date"
@@ -271,7 +396,7 @@ class CUFYFormFragment : Fragment() {
         }
 
         updatedFields.forEach { adapterField ->
-            currentSchema.sections.orEmpty().flatMap { it.fields.orEmpty() }
+            currentSchema.sections.flatMap { it.fields }
                 .find { it.fieldId == adapterField.fieldId }
                 ?.let { schemaField ->
                     adapterField.errorMessage = schemaField.errorMessage
@@ -279,8 +404,8 @@ class CUFYFormFragment : Fragment() {
         }
 
         val copiedFields = updatedFields.map { updated ->
-            val error = currentSchema.sections.orEmpty()
-                .flatMap { it.fields.orEmpty() }
+            val error = currentSchema.sections
+                .flatMap { it.fields }
                 .find { it.fieldId == updated.fieldId }
                 ?.errorMessage
             updated.copy(errorMessage = error)
@@ -288,22 +413,20 @@ class CUFYFormFragment : Fragment() {
         adapter.updateFields(copiedFields)
         adapter.notifyDataSetChanged()
 
-        val firstErrorFieldId = currentSchema.sections.orEmpty()
-            .flatMap { it.fields.orEmpty() }
+        val firstErrorFieldId = currentSchema.sections
+            .flatMap { it.fields }
             .firstOrNull { it.visible && !it.errorMessage.isNullOrBlank() }
             ?.fieldId
 
         val errorIndex = copiedFields.indexOfFirst { it.fieldId == firstErrorFieldId }
         if (errorIndex >= 0) binding.recyclerView.scrollToPosition(errorIndex)
 
-        val hasErrors = currentSchema.sections.orEmpty().any { section ->
-            section.fields.orEmpty().any { it.visible && !it.errorMessage.isNullOrBlank() }
+        val hasErrors = currentSchema.sections.any { section ->
+            section.fields.any { it.visible && !it.errorMessage.isNullOrBlank() }
         }
         if (hasErrors) return
         lifecycleScope.launch {
-            viewModel.saveFormResponses(benId, hhId)
-            findNavController().previousBackStackEntry?.savedStateHandle?.set("form_submitted", true)
-            findNavController().popBackStack()
+            viewModel.saveFormResponses(benId, hhId,recordId)
         }
     }
 
