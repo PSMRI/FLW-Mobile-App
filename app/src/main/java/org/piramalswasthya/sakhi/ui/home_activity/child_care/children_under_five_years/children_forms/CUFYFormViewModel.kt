@@ -270,7 +270,7 @@ suspend fun saveFormResponses(benId: Long, hhId: Long, recordId: Int = 0) {
     val version = currentSchema.version
     Timber.tag("CUFYFormVM")
         .d("🧾 Saving form... formId=$formId, version=$version, benId=$benId, hhId=$hhId, recordId=$recordId")
-
+}
     suspend fun saveFormResponses(benId: Long, hhId: Long) {
         val currentSchema = _schema.value ?: return
         val formId = currentSchema.formId
@@ -308,7 +308,7 @@ suspend fun saveFormResponses(benId: Long, hhId: Long, recordId: Int = 0) {
         val currentTime = System.currentTimeMillis()
 
         val entity = CUFYFormResponseJsonEntity(
-            id = if (recordId > 0) recordId else 0,
+//            id = if (recordId > 0) recordId else 0,
             benId = benId,
             hhId = hhId,
             visitDate = visitDate,
