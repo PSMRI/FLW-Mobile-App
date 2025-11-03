@@ -42,6 +42,9 @@ class AllBenViewModel @Inject constructor(
         3 -> {
             recordsRepo.allBenAboveThirtyList
         }
+        4 -> {
+            recordsRepo.allBenAboveThirtyList
+        }
         else -> {
             recordsRepo.allBenList
         }
