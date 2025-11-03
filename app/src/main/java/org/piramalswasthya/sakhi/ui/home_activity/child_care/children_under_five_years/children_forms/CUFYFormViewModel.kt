@@ -1,7 +1,5 @@
 package org.piramalswasthya.sakhi.ui.home_activity.child_care.children_under_five_years.children_forms
 
-import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,12 +12,10 @@ import org.json.JSONObject
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.ConditionalLogic
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FieldValidation
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
-import org.piramalswasthya.sakhi.database.room.SyncState
+import org.piramalswasthya.sakhi.model.BottleItem
 import org.piramalswasthya.sakhi.model.dynamicEntity.CUFYFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormFieldDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
-import org.piramalswasthya.sakhi.model.dynamicModel.VisitCard
-import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.dynamicRepo.CUFYFormRepository
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
 import timber.log.Timber
@@ -57,6 +53,16 @@ class CUFYFormViewModel @Inject constructor(
     val isBenDead: StateFlow<Boolean> = _isBenDead
 
     private var existingRecordId: Int = 0
+
+    private val _bottleList = MutableLiveData<List<BottleItem>>()
+    val bottleList: LiveData<List<BottleItem>> = _bottleList
+
+    fun loadBottleData(benId: Long, formId: String) {
+        viewModelScope.launch {
+            val list = repository.getBottleList(benId, formId)
+            _bottleList.postValue(list)
+        }
+    }
 
     fun setRecordId(recordId: Int) {
         existingRecordId = recordId
@@ -254,10 +260,7 @@ class CUFYFormViewModel @Inject constructor(
 
         _schema.value = currentSchema.copy()
     }
-//    companion object {
-//        private const val OTHER_PLACE_OF_DEATH_ID = 8
-//        private const val DEFAULT_DEATH_ID = -1
-//    }
+
 suspend fun saveFormResponses(benId: Long, hhId: Long, recordId: Int = 0) {
 
     Timber.tag("CUFYFormVM").d("💾 Saving form... benId=$benId, hhId=$hhId, recordId=$recordId")
@@ -270,12 +273,12 @@ suspend fun saveFormResponses(benId: Long, hhId: Long, recordId: Int = 0) {
     val version = currentSchema.version
     Timber.tag("CUFYFormVM")
         .d("🧾 Saving form... formId=$formId, version=$version, benId=$benId, hhId=$hhId, recordId=$recordId")
-}
-    suspend fun saveFormResponses(benId: Long, hhId: Long) {
-        val currentSchema = _schema.value ?: return
-        val formId = currentSchema.formId
-        val version = currentSchema.version
-        val beneficiaryId = benId
+//}
+//    suspend fun saveFormResponses(benId: Long, hhId: Long) {
+//        val currentSchema = _schema.value ?: return
+//        val formId = currentSchema.formId
+//        val version = currentSchema.version
+//        val beneficiaryId = benId
 
     _saveFormState.postValue(SaveFormState.Loading)
 

@@ -36,6 +36,7 @@ import java.util.Date
 import java.util.Locale
 import androidx.core.view.isVisible
 import androidx.core.view.isGone
+import org.piramalswasthya.sakhi.adapters.dynamicAdapter.BottleAdapter
 import org.piramalswasthya.sakhi.utils.HelperUtil.checkAndShowMUACAlert
 import org.piramalswasthya.sakhi.utils.HelperUtil.checkAndShowSAMAlert
 import org.piramalswasthya.sakhi.utils.HelperUtil.checkAndShowWeightForHeightAlert
@@ -152,8 +153,6 @@ class CUFYFormFragment : Fragment() {
 
         Log.i("ChildrenUnderFiveFormFragment", "onViewCreated: formDataJson = ${formDataJson?.take(1000)}...")
 
-        Log.i("ChildrenUnderFiveFormFragmentOne", "onViewCreated: $visitType == $isViewMode == $benId == $hhId")
-
         binding.fabEdit.isVisible = isViewMode
 
         binding.fabEdit.setOnClickListener {
@@ -171,7 +170,6 @@ class CUFYFormFragment : Fragment() {
             formId = FormConstants.CHILDREN_UNDER_FIVE_SAM_FORM_ID;
         }
 
-//        viewModel.loadVisitDates(benId)
 
         infantListViewModel.getBenById(benId) { ben ->
             infantBinding.btnHBNC.visibility = View.GONE
@@ -249,6 +247,17 @@ class CUFYFormFragment : Fragment() {
         binding.btnSave.setOnClickListener {
             handleFormSubmission()
         }
+
+        tableRendar()
+    }
+
+
+    private fun tableRendar(){
+        binding.tableRv.layoutManager = LinearLayoutManager(requireContext())
+        viewModel.bottleList.observe(viewLifecycleOwner) { list ->
+            binding.tableRv.adapter = BottleAdapter(list)
+        }
+        viewModel.loadBottleData(benId,formId)
     }
 
     private fun refreshAdapter() {
@@ -335,8 +344,8 @@ class CUFYFormFragment : Fragment() {
         val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
         val today = Date()
 
-        currentSchema.sections.orEmpty().forEach { section ->
-            section.fields.orEmpty().forEach { schemaField ->
+        currentSchema.sections.forEach { section ->
+            section.fields.forEach { schemaField ->
                 updatedFields.find { it.fieldId == schemaField.fieldId }?.let { updated ->
                     schemaField.value = updated.value
 
@@ -387,7 +396,7 @@ class CUFYFormFragment : Fragment() {
         }
 
         updatedFields.forEach { adapterField ->
-            currentSchema.sections.orEmpty().flatMap { it.fields.orEmpty() }
+            currentSchema.sections.flatMap { it.fields }
                 .find { it.fieldId == adapterField.fieldId }
                 ?.let { schemaField ->
                     adapterField.errorMessage = schemaField.errorMessage
@@ -395,8 +404,8 @@ class CUFYFormFragment : Fragment() {
         }
 
         val copiedFields = updatedFields.map { updated ->
-            val error = currentSchema.sections.orEmpty()
-                .flatMap { it.fields.orEmpty() }
+            val error = currentSchema.sections
+                .flatMap { it.fields }
                 .find { it.fieldId == updated.fieldId }
                 ?.errorMessage
             updated.copy(errorMessage = error)
@@ -404,22 +413,20 @@ class CUFYFormFragment : Fragment() {
         adapter.updateFields(copiedFields)
         adapter.notifyDataSetChanged()
 
-        val firstErrorFieldId = currentSchema.sections.orEmpty()
-            .flatMap { it.fields.orEmpty() }
+        val firstErrorFieldId = currentSchema.sections
+            .flatMap { it.fields }
             .firstOrNull { it.visible && !it.errorMessage.isNullOrBlank() }
             ?.fieldId
 
         val errorIndex = copiedFields.indexOfFirst { it.fieldId == firstErrorFieldId }
         if (errorIndex >= 0) binding.recyclerView.scrollToPosition(errorIndex)
 
-        val hasErrors = currentSchema.sections.orEmpty().any { section ->
-            section.fields.orEmpty().any { it.visible && !it.errorMessage.isNullOrBlank() }
+        val hasErrors = currentSchema.sections.any { section ->
+            section.fields.any { it.visible && !it.errorMessage.isNullOrBlank() }
         }
         if (hasErrors) return
         lifecycleScope.launch {
             viewModel.saveFormResponses(benId, hhId,recordId)
-//            findNavController().previousBackStackEntry?.savedStateHandle?.set("form_submitted", true)
-//            findNavController().popBackStack()
         }
     }
 
