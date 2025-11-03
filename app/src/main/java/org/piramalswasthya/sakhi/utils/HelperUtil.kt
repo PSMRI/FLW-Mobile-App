@@ -28,6 +28,7 @@ import android.widget.TableLayout
 import android.widget.TableRow
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.activity.result.ActivityResultLauncher
 import androidx.collection.lruCache
 import androidx.core.content.FileProvider
@@ -657,4 +658,57 @@ object HelperUtil {
             }
             .show()
     }
+
+    fun checkAndShowMUACAlert(context: Context, muacValue: String): Boolean {
+        val muac = muacValue.toFloatOrNull() ?: return false
+
+        if (muac <= 11.5f) {
+            showAlertDialog(
+                context,
+                "SAM Case Detected",
+                "MUAC is $muac cm. Please refer the Child to NRC as SAM case."
+            )
+            return true
+        }
+        return false
+    }
+
+    fun checkAndShowWeightForHeightAlert(context: Context, status: String): Boolean {
+        if (status == "SAM") {
+            showAlertDialog(
+                context,
+                "SAM Case Detected",
+                "Weight-for-Height Status is SAM. Please refer the Child to NRC as SAM case."
+            )
+            return true
+        }
+        return false
+    }
+
+    fun checkAndShowSAMAlert(context: Context, fieldId: String, value: Any?): Boolean {
+        return when (fieldId) {
+            "muac" -> {
+                val muacValue = when (value) {
+                    is String -> value
+                    is Number -> value.toString()
+                    else -> null
+                }
+                muacValue?.let { checkAndShowMUACAlert(context, it) } ?: false
+            }
+            "weight_for_height_status" -> {
+                val status = value?.toString()
+                status?.let { checkAndShowWeightForHeightAlert(context, it) } ?: false
+            }
+            else -> false
+        }
+    }
+
+    private fun showAlertDialog(context: Context, title: String, message: String) {
+        AlertDialog.Builder(context)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+            .show()
+    }
+
 }

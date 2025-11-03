@@ -473,6 +473,18 @@
             android:defaultValue="false" />
 
         <argument
+        android:name="formDataJson"
+        app:argType="string"
+        android:defaultValue="@null"
+            app:nullable="true"    />
+
+
+        <argument
+            android:name="recordId"
+            android:defaultValue="0"
+            app:argType="integer" />
+
+        <argument
             android:name="formId"
             app:argType="string"
             android:defaultValue="sam_visit_001" />

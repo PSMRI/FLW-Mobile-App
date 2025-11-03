@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="android.view.View" />
         <variable
             name="option"
             type="org.piramalswasthya.sakhi.model.ChildOption" />
@@ -42,6 +43,7 @@
             android:layout_height="wrap_content"
             android:backgroundTint="?attr/colorPrimary"
             android:text="@string/add"
+            android:visibility="@{option.viewMode ? View.GONE : View.VISIBLE}"
             android:onClick="@{() -> clickListener.onAddClicked(option)}"
             android:textColor="?attr/colorOnPrimary" />
 
@@ -55,7 +57,8 @@
             android:backgroundTint="?attr/colorPrimary"
             android:text="@string/view"
             android:onClick="@{() -> clickListener.onViewClicked(option)}"
-            android:textColor="?attr/colorOnPrimary" />
+            android:textColor="?attr/colorOnPrimary"
+            android:visibility="@{option.viewMode ? View.VISIBLE : View.GONE}"/>
 
         <androidx.legacy.widget.Space
             android:layout_width="10dp"
