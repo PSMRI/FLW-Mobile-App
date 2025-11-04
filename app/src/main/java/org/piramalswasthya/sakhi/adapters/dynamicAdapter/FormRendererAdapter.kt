@@ -15,6 +15,7 @@
     import androidx.recyclerview.widget.RecyclerView
     import com.google.android.material.textfield.TextInputEditText
     import com.google.android.material.textfield.TextInputLayout
+    import org.json.JSONArray
     import org.piramalswasthya.sakhi.R
     import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
     import timber.log.Timber
@@ -134,7 +135,7 @@
                 when (field.type) {
                     "label" -> {
                         val context = itemView.context
-                        val value = field.defaultValue?.trim()
+                        val value = field.value.toString()
 
                         if (!value.isNullOrEmpty()) {
                             val textView = TextView(context).apply {
@@ -349,6 +350,7 @@
                             field.value = todayStr
                         }
                         val isFieldAlwaysDisabled = field.fieldId == "due_date"
+                        val isFieldEditable = field.isEditable && !isViewOnly && !isFieldAlwaysDisabled
 
                         val textInputLayout = TextInputLayout(
                             context,
@@ -375,10 +377,53 @@
                             )
                             setPadding(32, 24, 32, 24)
                             background = null
-                            setText(field.value as? String ?: "")
+                            val dateValue = when (val v = field.value) {
+                                is String -> {
+                                    val cleanValue = v.trim().removePrefix("\"").removeSuffix("\"")
+                                    if (cleanValue.startsWith("[")) {
+                                        try {
+                                            val jsonArray = JSONArray(cleanValue)
+                                            val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                                            val dates = (0 until jsonArray.length()).mapNotNull {
+                                                runCatching { sdf.parse(jsonArray.getString(it)) }.getOrNull()
+                                            }
+                                            dates.maxOrNull()?.let { sdf.format(it) }
+                                        } catch (e: Exception) {
+                                            Log.e("FormRenderer", "Error parsing JSON array: ${e.message}")
+                                            null
+                                        }
+                                    } else {
+                                        cleanValue
+                                    }
+                                }
+                                is List<*> -> {
+                                    val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                                    v.mapNotNull { it as? String }
+                                        .mapNotNull { runCatching { sdf.parse(it) }.getOrNull() }
+                                        .maxOrNull()?.let { sdf.format(it) }
+                                }
+                                is JSONArray -> {
+                                    try {
+                                        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                                        val dates = (0 until v.length()).mapNotNull {
+                                            runCatching { sdf.parse(v.getString(it)) }.getOrNull()
+                                        }
+                                        dates.maxOrNull()?.let { sdf.format(it) }
+                                    } catch (e: Exception) {
+                                        Log.e("FormRenderer", "Error parsing JSONArray directly: ${e.message}")
+                                        null
+                                    }
+                                }
+
+                                else -> null
+                            }
+                            setText(dateValue ?: "")
+                            //setText(field.value as? String ?: "")
                             isFocusable = false
-                            isClickable = true
-                            isEnabled = !isFieldAlwaysDisabled && !isViewOnly
+                            isClickable = isFieldEditable
+                            isEnabled = isFieldEditable
+                           // isClickable = true
+                            //isEnabled = !isFieldAlwaysDisabled && !isViewOnly
                             setCompoundDrawablesWithIntrinsicBounds(
                                 null, null,
                                 ContextCompat.getDrawable(context, R.drawable.ic_calendar),
@@ -391,7 +436,8 @@
 
                         textInputLayout.addView(editText)
 
-                        if (!isViewOnly && !isFieldAlwaysDisabled) {
+                     //   if (!isViewOnly && !isFieldAlwaysDisabled) {
+                        if (isFieldEditable) {
                             editText.setOnClickListener {
                                 val calendar = Calendar.getInstance()
 

@@ -14,7 +14,7 @@ data class FormField(
     val placeholder: String? = null,
 
     val validation: FieldValidation? = null,
-    val isEditable: Boolean = true
+    var isEditable: Boolean = true
 )
 
 data class ConditionalLogic(

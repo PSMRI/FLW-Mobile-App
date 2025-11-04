@@ -10,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import org.json.JSONArray
 import org.json.JSONObject
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.ConditionalLogic
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FieldValidation
@@ -45,12 +46,9 @@ class CUFYFormViewModel @Inject constructor(
 
     private val _infant = MutableStateFlow<CUFYFormResponseJsonEntity?>(null)
     val infant: StateFlow<CUFYFormResponseJsonEntity?> = _infant
-//    var lastVisitDay: String? = null
     var previousVisitDate: Date? = null
     private val _syncedVisitList = MutableStateFlow<List<CUFYFormResponseJsonEntity>>(emptyList())
-//    private val visitOrder = listOf("1st Day", "3rd Day", "7th Day", "14th Day", "21st Day", "28th Day", "42nd Day")
-//    private var benId: Long = 0L
-//    private var hhId: Long = 0L
+
     var visitDay: String = ""
     private var isViewMode: Boolean = false
 
@@ -193,11 +191,7 @@ class CUFYFormViewModel @Inject constructor(
                 return@launch
             }
 
-           /* launch {
-                val updatedSchema = repository.getFormSchema(formId)
-                if (updatedSchema != null && (cachedSchemaEntity?.version ?: 0) < updatedSchema.version) {
-                }
-            }*/
+
             val savedJson = repository.loadFormResponseJson(benId, visitDay)
             val savedFieldValues = if (!savedJson.isNullOrBlank()) {
                 try {
@@ -259,22 +253,15 @@ class CUFYFormViewModel @Inject constructor(
 
         _schema.value = currentSchema.copy()
     }
-//    companion object {
-//        private const val OTHER_PLACE_OF_DEATH_ID = 8
-//        private const val DEFAULT_DEATH_ID = -1
-//    }
+
 suspend fun saveFormResponses(benId: Long, hhId: Long, recordId: Int = 0) {
 
-    Timber.tag("CUFYFormVM").d("💾 Saving form... benId=$benId, hhId=$hhId, recordId=$recordId")
     val currentSchema = _schema.value ?: run {
-        Timber.tag("CUFYFormVM").e("❌ Schema is null, aborting save.")
         return
     }
 
     val formId = currentSchema.formId
     val version = currentSchema.version
-    Timber.tag("CUFYFormVM")
-        .d("🧾 Saving form... formId=$formId, version=$version, benId=$benId, hhId=$hhId, recordId=$recordId")
 
     _saveFormState.postValue(SaveFormState.Loading)
 
@@ -292,8 +279,37 @@ suspend fun saveFormResponses(benId: Long, hhId: Long, recordId: Int = 0) {
             val parsedDate = inputFormat.parse(rawVisitDate)
             if (parsedDate != null) outputFormat.format(parsedDate) else rawVisitDate
         } catch (e: Exception) {
-            Timber.tag("CUFYFormVM").e(e, "⚠️ Date format conversion failed for: $rawVisitDate")
+            Timber.tag("CUFYFormVM").e(e, " Date format conversion failed for: $rawVisitDate")
             rawVisitDate
+        }
+        val fieldsJson = JSONObject()
+        fieldMap.forEach { (fieldId, value) ->
+            if (fieldId == "follow_up_visit_date") {
+
+                val followUpArray = JSONArray()
+                if (value != null && value.toString().isNotBlank()) {
+                    val dates = if (value.toString().contains(",")) {
+                        value.toString().split(",").map { it.trim() }
+                    } else {
+                        listOf(value.toString())
+                    }
+                    dates.forEach { date ->
+                        if (date.isNotBlank()) {
+                            followUpArray.put(date)
+                        }
+                    }
+                }
+                fieldsJson.put(fieldId, followUpArray)
+            } else {
+
+                when (value) {
+                    is Number -> fieldsJson.put(fieldId, value)
+                    is String -> fieldsJson.put(fieldId, value)
+                    is Boolean -> fieldsJson.put(fieldId, value)
+                    is JSONArray->fieldsJson.put(fieldId,value)
+                    else -> fieldsJson.put(fieldId, value?.toString() ?: "")
+                }
+            }
         }
 
         val wrappedJson = JSONObject().apply {
@@ -301,7 +317,7 @@ suspend fun saveFormResponses(benId: Long, hhId: Long, recordId: Int = 0) {
             put("beneficiaryId", benId)
             put("houseHoldId", hhId)
             put("visitDate", visitDate)
-            put("fields", JSONObject(fieldMap))
+            put("fields", fieldsJson)
         }
 
         val currentTime = System.currentTimeMillis()
@@ -320,17 +336,13 @@ suspend fun saveFormResponses(benId: Long, hhId: Long, recordId: Int = 0) {
             updatedAt = currentTime
         )
 
-        // 👇 Capture returned row ID
         val insertedId = repository.insertFormResponse(entity)
-        Timber.tag("CUFYFormVM").i("✅ Form inserted successfully with recordId=$insertedId")
 
         loadSyncedVisitList(benId)
 
         _saveFormState.postValue(SaveFormState.Success)
-        Timber.tag("CUFYFormVM").i("🎉 SaveFormState = SUCCESS (recordId=$insertedId)")
 
     } catch (e: Exception) {
-        Timber.tag("CUFYFormVM").e(e, "❌ Error saving form: ${e.localizedMessage}")
         _saveFormState.postValue(SaveFormState.Error(e.localizedMessage ?: "Failed to save form"))
     }
 }
@@ -376,45 +388,6 @@ suspend fun saveFormResponses(benId: Long, hhId: Long, recordId: Int = 0) {
         } ?: emptyList()
     }
 
-//    private suspend fun getLastVisit(benId: Long): CUFYFormResponseJsonEntity? {
-//        val visits = repository.getSyncedVisitsByRchId(benId)
-//        return visits
-//            .filter { it.visitDate in visitOrder }
-//            .maxByOrNull { visitOrder.indexOf(it.visitDate) }
-//    }
-//
-//    suspend fun getLastVisitDay(benId: Long): String? {
-//        return getLastVisit(benId)?.visitDate
-//    }
-//    suspend fun getLastVisitDate(benId: Long): Date? {
-//
-//        val visits = repository.getSyncedVisitsByRchId(benId)
-//        val lastVisit = visits
-//            .filter { it.visitDate in visitOrder }
-//            .maxByOrNull { visitOrder.indexOf(it.visitDate) }
-//
-//        return getLastVisit(benId)?.formDataJson?.let {
-//            try {
-//                val json = JSONObject(it)
-//                val fields = json.optJSONObject("fields")
-//                val dateStr = fields?.optString("visit_date")
-//                if (!dateStr.isNullOrBlank()) {
-//                    SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).parse(dateStr)
-//                } else {
-//                    null
-//                }
-//            } catch (e: Exception) {
-//                null
-//            }
-//        }
-//    }
-//    fun loadVisitDates(benId: Long) {
-//        viewModelScope.launch {
-//            previousVisitDate = getLastVisitDate(benId)
-//            lastVisitDay = getLastVisitDay(benId)
-//
-//        }
-//    }
     fun getMaxVisitDate(): Date {
         val today = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, 0)
@@ -449,5 +422,9 @@ suspend fun saveFormResponses(benId: Long, hhId: Long, recordId: Int = 0) {
                 add(Calendar.DATE, 1)
             }.time
         }
+    }
+
+    suspend fun getFormsDataByFormID(formId: String, benId: Long): List<CUFYFormResponseJsonEntity> {
+        return repository.getSavedDataByFormId(formId, benId)
     }
 }

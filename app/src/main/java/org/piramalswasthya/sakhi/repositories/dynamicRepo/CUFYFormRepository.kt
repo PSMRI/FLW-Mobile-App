@@ -1,10 +1,13 @@
 package org.piramalswasthya.sakhi.repositories.dynamicRepo
 
 import android.content.Context
+import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.json.JSONArray
 import org.json.JSONObject
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.room.InAppDb
 import org.piramalswasthya.sakhi.helpers.dynamicMapper.FormSubmitRequestMapper
 import org.piramalswasthya.sakhi.model.dynamicEntity.CUFYFormResponseJsonEntity
@@ -113,6 +116,7 @@ class CUFYFormRepository @Inject constructor(
                                 prim.isBoolean -> prim.asBoolean
                                 prim.isNumber -> prim.asNumber
                                 prim.isString -> prim.asString
+                                prim.isJsonArray -> prim.isJsonArray
                                 else -> prim.asString
                             }
                         }
@@ -156,62 +160,41 @@ class CUFYFormRepository @Inject constructor(
     }*/
 
     suspend fun insertOrUpdateFormResponse(entity: CUFYFormResponseJsonEntity) {
-        Timber.tag("CUFYFormRepository").d("🔄 insertOrUpdateFormResponse: START - entity.id=${entity.id}, benId=${entity.benId}, visitDate=${entity.visitDate}")
 
         val existing = jsonResponseDao.getFormResponse(entity.benId, entity.visitDate)
-        Timber.tag("CUFYFormRepository").d("🔍 insertOrUpdateFormResponse: Found existing record - ${if (existing != null) "ID=${existing.id}" else "null"}")
 
         val updated = existing?.let {
             val result = entity.copy(id = it.id)
-            Timber.tag("CUFYFormRepository").d("📝 insertOrUpdateFormResponse: Updating existing record ID=${it.id}")
             result
         } ?: run {
-            Timber.tag("CUFYFormRepository").d("🆕 insertOrUpdateFormResponse: Creating new record")
             entity
         }
 
         jsonResponseDao.insertFormResponse(updated)
-        Timber.tag("CUFYFormRepository").d("✅ insertOrUpdateFormResponse: COMPLETED - Final entity ID=${updated.id}")
     }
 
-   /* suspend fun insertFormResponse(entity: CUFYFormResponseJsonEntity) {
-        if (entity.id > 0) {
 
-            val existingRecord = jsonResponseDao.getFormResponseById(entity.id)
-            if (existingRecord != null) {
-                val updatedEntity = entity.copy(createdAt = existingRecord.createdAt)
-                jsonResponseDao.updateFormResponse(updatedEntity)
-                return
-            }
-        }
-
-        jsonResponseDao.insertFormResponse(entity)
-    }*/
 
 
     suspend fun insertFormResponse(entity: CUFYFormResponseJsonEntity) {
-        Timber.tag("CUFYFormRepository").d("🔄 insertFormResponse: START - entity.id=${entity.id}, benId=${entity.benId}, visitDate=${entity.visitDate}")
 
         if (entity.id > 0) {
-            Timber.tag("CUFYFormRepository").d("🔍 insertFormResponse: Checking for existing record with ID=${entity.id}")
             val existingRecord = jsonResponseDao.getFormResponseById(entity.id)
 
             if (existingRecord != null) {
-                Timber.tag("CUFYFormRepository").d("📝 insertFormResponse: Found existing record, UPDATING ID=${entity.id}")
-                val updatedEntity = entity.copy(createdAt = existingRecord.createdAt)
-                val updateResult = jsonResponseDao.updateFormResponse(updatedEntity)
-                Timber.tag("CUFYFormRepository").d("✅ insertFormResponse: Update completed, rows affected=$updateResult")
+               // val updatedEntity = entity.copy(createdAt = existingRecord.createdAt)
+                //val updateResult = jsonResponseDao.updateFormResponse(updatedEntity)
+                val mergedEntity = mergeFollowUpDates(existingRecord, entity)
+                val updateResult = jsonResponseDao.updateFormResponse(mergedEntity)
                 return
             } else {
-                Timber.tag("CUFYFormRepository").w("⚠️ insertFormResponse: No existing record found for ID=${entity.id}, will INSERT as new")
+                Timber.tag("CUFYFormRepository").w(" insertFormResponse: No existing record found for ID=${entity.id}, will INSERT as new")
             }
         } else {
-            Timber.tag("CUFYFormRepository").d("🆕 insertFormResponse: ID=0, INSERTING as new record")
+            Timber.tag("CUFYFormRepository").d(" insertFormResponse: ID=0, INSERTING as new record")
         }
 
-        Timber.tag("CUFYFormRepository").d("💽 insertFormResponse: Calling DAO insertFormResponse")
         jsonResponseDao.insertFormResponse(entity)
-        Timber.tag("CUFYFormRepository").d("✅ insertFormResponse: COMPLETED")
     }
 
     suspend fun loadFormResponseJson(benId: Long, visitDay: String): String? =
@@ -222,6 +205,76 @@ class CUFYFormRepository @Inject constructor(
 
     suspend fun getSavedDataByFormId(formId: String, benId: Long  ): List<CUFYFormResponseJsonEntity> =
         jsonResponseDao.getFormsDataByFormID(formId, benId)
+
+
+    private fun mergeFollowUpDates(existingEntity: CUFYFormResponseJsonEntity, newEntity: CUFYFormResponseJsonEntity): CUFYFormResponseJsonEntity {
+
+        try {
+            val existingJson = JSONObject(existingEntity.formDataJson)
+            val existingFields = existingJson.optJSONObject("fields") ?: JSONObject()
+            val existingFollowUpArray = existingFields.optJSONArray("follow_up_visit_date")
+
+            val newJson = JSONObject(newEntity.formDataJson)
+            val newFields = newJson.optJSONObject("fields") ?: JSONObject()
+            val newFollowUpArray = newFields.optJSONArray("follow_up_visit_date")
+
+
+            val mergedFollowUpArray = JSONArray()
+
+            if (existingFollowUpArray != null) {
+                for (i in 0 until existingFollowUpArray.length()) {
+                    val date = existingFollowUpArray.optString(i)
+                    if (date.isNotBlank()) {
+                        mergedFollowUpArray.put(date)
+                    }
+                }
+            }
+
+            if (newFollowUpArray != null) {
+                for (i in 0 until newFollowUpArray.length()) {
+                    val newDate = newFollowUpArray.optString(i)
+                    if (newDate.isNotBlank()) {
+                        var exists = false
+                        for (j in 0 until mergedFollowUpArray.length()) {
+                            if (mergedFollowUpArray.optString(j) == newDate) {
+                                exists = true
+                                break
+                            }
+                        }
+                        if (!exists) {
+                            mergedFollowUpArray.put(newDate)
+                        }
+                    }
+                }
+            }
+
+
+            val mergedFields = JSONObject()
+
+            newFields.keys().forEach { key ->
+                mergedFields.put(key, newFields.get(key))
+            }
+
+            mergedFields.put("follow_up_visit_date", mergedFollowUpArray)
+
+            val mergedJson = JSONObject().apply {
+                put("formId", newJson.optString("formId"))
+                put("beneficiaryId", newJson.optLong("beneficiaryId"))
+                put("houseHoldId", newJson.optLong("houseHoldId"))
+                put("visitDate", newJson.optString("visitDate"))
+                put("fields", mergedFields)
+            }
+
+
+            return newEntity.copy(
+                formDataJson = mergedJson.toString(),
+                updatedAt = System.currentTimeMillis()
+            )
+
+        } catch (e: Exception) {
+            return newEntity.copy(updatedAt = System.currentTimeMillis())
+        }
+    }
 
 
 
@@ -250,38 +303,34 @@ class CUFYFormRepository @Inject constructor(
             benId
         ).sortedByDescending { it.visitDate }
 
-        Timber.tag("CUFYFormRepository").d("📋 getCurrentSamStatus: Found ${samForms.size} SAM forms")
 
         if (samForms.isEmpty()) {
             return "Check SAM"
         }
 
         val latestForm = samForms.first()
-        Timber.tag("CUFYFormRepository").d("📄 getCurrentSamStatus: Latest form data: ${latestForm.formDataJson}")
 
         return try {
             val json = JSONObject(latestForm.formDataJson)
             val fields = json.optJSONObject("fields") ?: JSONObject()
 
-            val isReferredToNRC = fields.optString("is_child_referred_nrc") == "Yes"
-            val isAdmittedToNRC = fields.optString("is_child_admitted_nrc") == "Yes"
-            val isDischargedFromNRC = fields.optString("is_child_discharged_nrc") == "Yes"
-            val samStatus = fields.optString("sam_status")
+            val isReferredToNRC = fields.optString(context.getString(R.string.is_child_referred_nrc)) == "Yes"
+            val isAdmittedToNRC = fields.optString(context.getString(R.string.is_child_admitted_nrc)) == "Yes"
+            val isDischargedFromNRC = fields.optString(context.getString(R.string.is_child_discharged_nrc)) == "Yes"
+            val samStatus = fields.optString(context.getString(R.string.sam_status))
 
-            Timber.tag("CUFYFormRepository").d("🔍 getCurrentSamStatus: isReferred=$isReferredToNRC, isAdmitted=$isAdmittedToNRC, isDischarged=$isDischargedFromNRC, samStatus=$samStatus")
 
 
             when {
                 isDischargedFromNRC -> {
-                    if (samStatus == "Improved") "Check SAM" else "Follow up SAM"
+                    if (samStatus == "Improved") "Check SAM" else context.getString(R.string.follow_up_sam)
                 }
-                isAdmittedToNRC -> "NRC Admitted"
-                isReferredToNRC -> "Referred to NRC"
-                else -> "Check SAM"
+                isAdmittedToNRC -> context.getString(R.string.nrc_admitted)
+                isReferredToNRC -> context.getString(R.string.referred_to_nrc)
+                else -> context.getString(R.string.check_sam)
             }
         } catch (e: Exception) {
-            Timber.tag("CUFYFormRepository").e(e, "❌ getCurrentSamStatus: Error parsing form data")
-            "Check SAM"
+            context.getString(R.string.check_sam)
         }
     }
 }
