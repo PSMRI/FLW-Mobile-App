@@ -1,6 +1,8 @@
 package org.piramalswasthya.sakhi.ui.home_activity.infant.hbnc
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import org.piramalswasthya.sakhi.repositories.dynamicRepo.FormRepository
@@ -19,6 +21,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
 import org.piramalswasthya.sakhi.model.dynamicModel.VisitCard
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.InfantRegRepo
+import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pnc.form.PncFormViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -45,6 +48,8 @@ class HBNCFormViewModel @Inject constructor(
     var visitDay: String = ""
     private var isViewMode: Boolean = false
 
+    private val _navigateToCdsr = MutableLiveData<Boolean>()
+    val navigateToCdsr: LiveData<Boolean> get() = _navigateToCdsr
 
     private val _isBenDead = MutableStateFlow(false)
     val isBenDead: StateFlow<Boolean> = _isBenDead
@@ -59,6 +64,9 @@ class HBNCFormViewModel @Inject constructor(
         }
     }
 
+    fun onNavigationComplete() {
+        _navigateToCdsr.value = false
+    }
 
     fun loadSyncedVisitList(benId: Long) {
         viewModelScope.launch {
@@ -201,6 +209,7 @@ suspend fun saveFormResponses(benId: Long, hhId: Long) {
                     syncState = SyncState.UNSYNCED
                 }
                 benRepo.updateRecord(ben)
+                _navigateToCdsr.postValue(true)
             }
         } catch (e: Exception) {
             e.printStackTrace()

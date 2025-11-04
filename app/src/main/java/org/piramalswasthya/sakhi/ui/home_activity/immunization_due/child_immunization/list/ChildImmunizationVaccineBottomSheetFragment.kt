@@ -1,15 +1,18 @@
 package org.piramalswasthya.sakhi.ui.home_activity.immunization_due.child_immunization.list
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.adapters.ImmunizationCategoryAdapter
 import org.piramalswasthya.sakhi.databinding.BottomSheetImmVaccineBinding
@@ -25,6 +28,8 @@ class ChildImmunizationVaccineBottomSheetFragment : BottomSheetDialogFragment() 
     private val binding: BottomSheetImmVaccineBinding
         get() = _binding!!
 
+    var benIsDeath = false
+
     private val viewModel: ChildImmunizationListViewModel by viewModels({ requireParentFragment() })
 
     override fun onCreateView(
@@ -36,9 +41,18 @@ class ChildImmunizationVaccineBottomSheetFragment : BottomSheetDialogFragment() 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+//        lifecycleScope.launchWhenStarted {
+//            viewModel.isSelectedBenDeathFlow.collect { isDeath ->
+//                benIsDeath = isDeath
+//                Toast.makeText(requireContext(),"$benIsDeath", Toast.LENGTH_LONG).show()
+//            }
+//        }
+
         binding.rvImmCat.adapter =
             ImmunizationCategoryAdapter(ImmunizationCategoryAdapter.ImmunizationIconClickListener {
                 val benId = viewModel.getSelectedBenId()
+
                 findNavController().navigate(
                     ChildImmunizationListFragmentDirections.actionChildImmunizationListFragmentToImmunizationFormFragment(
                         benId = benId, vaccineId = it.vaccineId, category = it.vaccineCategory.name
@@ -47,12 +61,25 @@ class ChildImmunizationVaccineBottomSheetFragment : BottomSheetDialogFragment() 
                 dismiss()
             })
 
+//        lifecycleScope.launch {
+//            viewModel.bottomSheetContent.collect {
+//                it?.let {
+//                    submitListToVaccinationRv(it)
+//                }
+//            }
+//        }
+
         lifecycleScope.launch {
-            viewModel.bottomSheetContent.collect {
-                it?.let {
-                    submitListToVaccinationRv(it)
+            viewModel.bottomSheetContent
+                .combine(viewModel.isSelectedBenDeathFlow) { detail, isDeath ->
+                    Pair(detail, isDeath)
                 }
-            }
+                .collect { (detail, isDeath) ->
+                    detail?.let {
+                        benIsDeath = isDeath
+                        submitListToVaccinationRv(it)
+                    }
+                }
         }
     }
 
@@ -60,7 +87,7 @@ class ChildImmunizationVaccineBottomSheetFragment : BottomSheetDialogFragment() 
     private fun submitListToVaccinationRv(detail: ImmunizationDetailsDomain) {
         val list = ChildImmunizationCategory.values().map { category ->
             VaccineCategoryDomain(category,
-                vaccineStateList = detail.vaccineStateList.filter { it.vaccineCategory == category })
+                vaccineStateList = detail.vaccineStateList.filter { it.vaccineCategory == category }, isBenDeath = benIsDeath)
         }.filter { it.vaccineStateList.isNotEmpty() }
         Timber.d("Called list at bottom sheet ${_binding?.rvImmCat?.adapter} ${detail.ben.benId} $list")
 
