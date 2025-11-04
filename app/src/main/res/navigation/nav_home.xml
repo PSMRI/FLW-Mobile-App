@@ -1279,6 +1279,12 @@
             android:name="formId"
             app:argType="string"
             android:defaultValue="hbnc_form_001" />
+
+        <action
+            android:id="@+id/action_hbncFormFragment_to_cdrObjectFragment"
+            app:destination="@id/cdrObjectFragment"
+            app:popUpTo="@id/hbncFormFragment"
+            app:popUpToInclusive="true"/>
     </fragment>
     <fragment
         android:id="@+id/abortionListFragment"
@@ -1318,6 +1324,11 @@
         <argument
             android:name="benId"
             app:argType="long" />
+
+        <argument
+            android:name="dob"
+            app:argType="long" />
+
 
         <action
             android:id="@+id/action_infantFormFragment_to_HBYCFormFragment"
