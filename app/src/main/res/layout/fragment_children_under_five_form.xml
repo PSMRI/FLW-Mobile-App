@@ -3,6 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
     <LinearLayout
         android:orientation="vertical"
@@ -42,7 +46,17 @@
             android:layout_height="wrap_content"
             android:text="Submit"
             android:layout_margin="12dp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_follow_up_visits"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_huge"
+            android:visibility="gone"
+           />
     </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
 
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

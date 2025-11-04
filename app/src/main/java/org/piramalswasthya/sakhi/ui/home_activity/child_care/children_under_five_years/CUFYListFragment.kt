@@ -81,11 +81,9 @@ class CUFYListFragment : Fragment() {
         binding.ibSearch.setOnClickListener { sttContract.launch(Unit) }
         val searchTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                // Need to implementation when it's need
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                // Need to implementation when it's need
             }
 
             override fun afterTextChanged(p0: Editable?) {

@@ -1,9 +1,12 @@
 package org.piramalswasthya.sakhi.ui.home_activity.child_care.children_under_five_years
 
 
+import android.annotation.SuppressLint
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,16 +19,15 @@ import org.piramalswasthya.sakhi.model.ChildOption
 import org.piramalswasthya.sakhi.model.dynamicEntity.CUFYFormResponseJsonEntity
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
 import org.piramalswasthya.sakhi.repositories.dynamicRepo.CUFYFormRepository
-import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.IFA_FORM_NAME
-import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.ORS_FORM_NAME
-import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.SAM_FORM_NAME
+
 import javax.inject.Inject
 
 
 @HiltViewModel
 class CUFYListViewModel @Inject constructor(
     recordsRepo: RecordsRepo,
-    repository: CUFYFormRepository
+    repository: CUFYFormRepository,
+    @ApplicationContext context: Context,
 ) : ViewModel() {
 
     private val allBenList = recordsRepo.childFilteredList
@@ -33,6 +35,9 @@ class CUFYListViewModel @Inject constructor(
     private val _recordsRepo = repository
     private val filter = MutableStateFlow("")
     private val kind = MutableStateFlow("false")
+
+    @SuppressLint("StaticFieldLeak")
+    private val _context = context
 
     val benList = allBenList.combine(kind) { list, kind ->
         if (kind.equals("false", true)) {
@@ -51,65 +56,20 @@ class CUFYListViewModel @Inject constructor(
     }
 
     private val _benListWithSamStatus = MutableStateFlow<List<BenWithSamStatus>>(emptyList())
-    val benListWithSamStatus: StateFlow<List<BenWithSamStatus>> = _benListWithSamStatus.asStateFlow()
+    val benListWithSamStatus: StateFlow<List<BenWithSamStatus>> =
+        _benListWithSamStatus.asStateFlow()
 
     private val _childOptionsList = MutableStateFlow<List<ChildOption>>(emptyList())
     val childOptionsList: StateFlow<List<ChildOption>> = _childOptionsList.asStateFlow()
 
-    suspend fun getSavedVisits(formId: String, benId: Long ): List<CUFYFormResponseJsonEntity> {
+    suspend fun getSavedVisits(formId: String, benId: Long): List<CUFYFormResponseJsonEntity> {
         return _recordsRepo.getSavedDataByFormId(formId, benId)
     }
 
 
-
-
     init {
         updateSamStatusesOnce()
-        loadChildOptions()
-    }
 
-    private fun loadChildOptions() {
-        val options = listOf(
-            ChildOption(
-                formType = SAM_FORM_NAME,
-                title = "SAM Form",
-                description = "Severe Acute Malnutrition",
-
-                ),
-            ChildOption(
-                formType =  ORS_FORM_NAME,
-                title = "ORS Form",
-                description = "Oral Rehydration Solution",
-
-                ),
-            ChildOption(
-                formType = IFA_FORM_NAME,
-                title = "IFA Form",
-                description = "Iron Folic Acid",
-
-                ),
-
-            ChildOption(
-                formType = SAM_FORM_NAME,
-                title = "SAM Form",
-                description = "Severe Acute Malnutrition",
-
-                ),
-        )
-        _childOptionsList.value = options
-    }
-
-
-    fun updateAllSamStatuses() {
-        viewModelScope.launch {
-            benList.collect { list ->
-                val updatedList = list.map { ben ->
-                    val status = _recordsRepo.getCurrentSamStatus(ben.benId)
-                    BenWithSamStatus(ben, status)
-                }
-
-            }
-        }
     }
 
 
@@ -154,16 +114,6 @@ class CUFYListViewModel @Inject constructor(
         }
     }
 
-
-    fun getFilteredOptions(type: String?): List<ChildOption> {
-        return when (type) {
-            SAM_FORM_NAME -> childOptionsList.value.filter { it.formType == SAM_FORM_NAME }
-            ORS_FORM_NAME -> childOptionsList.value.filter { it.formType == ORS_FORM_NAME }
-            IFA_FORM_NAME -> childOptionsList.value.filter { it.formType == IFA_FORM_NAME }
-
-            else -> childOptionsList.value // Show all options
-        }
-    }
 
     data class BenWithSamStatus(
         val ben: BenBasicDomain,
