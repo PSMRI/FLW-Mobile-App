@@ -117,6 +117,8 @@ class HBNCFormFragment : Fragment() {
         val isViewMode = args.isViewMode
         benId = args.benId
         hhId = args.hhId
+        Log.d("HBNCFormFragment", "Page Loadded benId: $benId hhId: $hhId")
+
 
         viewModel.fetchSNCUStatus(benId)
 
@@ -138,6 +140,13 @@ class HBNCFormFragment : Fragment() {
                 viewModel.loadFormSchema(benId, HBNC_FORM_ID, visitDay!!, true, dob)
             } else {
                 viewModel.loadFormSchema(benId, HBNC_FORM_ID, visitDay!!, true, dob)
+            }
+        }
+
+        viewModel.navigateToCdsr.observe(viewLifecycleOwner) { shouldNavigate ->
+            if (shouldNavigate == true) {
+                showDeathAlertDialog()
+                viewModel.onNavigationComplete()
             }
         }
 
@@ -316,8 +325,8 @@ class HBNCFormFragment : Fragment() {
         if (hasErrors) return
         lifecycleScope.launch {
             viewModel.saveFormResponses(benId, hhId)
-            findNavController().previousBackStackEntry?.savedStateHandle?.set("form_submitted", true)
-            findNavController().popBackStack()
+//            findNavController().previousBackStackEntry?.savedStateHandle?.set("form_submitted", true)
+//            findNavController().popBackStack()
         }
     }
     override fun onStart() {
@@ -347,4 +356,32 @@ class HBNCFormFragment : Fragment() {
             null
         }
     }
+
+    private fun showDeathAlertDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Infant Death Reported")
+            .setMessage("Child marked as deceased. Please complete the CDR form.")
+            .setCancelable(false)
+            .setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+                navigateToCDRForm()
+            }
+            .show()
+    }
+    private fun navigateToCDRForm() {
+        try {
+            val action = HBNCFormFragmentDirections
+                .actionHbncFormFragmentToCdrObjectFragment(
+                    hhId, benId
+                )
+
+            if (isAdded && view != null) {
+                findNavController().navigate(action)
+            }
+        } catch (e: Exception) {
+        }
+    }
+
+
+
 }

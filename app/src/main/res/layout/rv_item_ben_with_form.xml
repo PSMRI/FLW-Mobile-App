@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
+        <import type="android.view.View" />
         <variable
             name="ben"
             type="org.piramalswasthya.sakhi.model.BenBasicDomainForForm" />
@@ -191,6 +191,14 @@
                         layout="@layout/rv_item_ben_element"
                         app:field="@{ben.age}"
                         app:fieldTitle="@{@string/tv_age_ph}" />
+
+                    <include
+                        android:id="@+id/rl_death"
+                        style="@style/rv_item_ben_fields"
+                        layout="@layout/rv_item_ben_element"
+                        app:field="@{ben.dateOfDeath}"
+                        app:fieldTitle="@{@string/date_of_death}"
+                        />
                 </LinearLayout>
 
                 <LinearLayout
