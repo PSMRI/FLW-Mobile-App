@@ -11,7 +11,7 @@
     <string name="str_address">पता</string>
     <string name="str_house_number">मकान संख्या</string>
     <string name="str_mohalla_colony">मोहल्ला/कॉलोनी</string>
-    <string name="str_landmark_if_any">पहचान के स्थल, यदि कोई हों</string>
+    <string name="str_landmark_if_any">चिह्नित स्थान (यदि कोई हो तो )</string>
     <string name="str_pincode">पिन कोड</string>
     <string name="str_landline">लैंडलाइन</string>
     <string name="str_mobile_number">मोबाइल नंबर</string>
