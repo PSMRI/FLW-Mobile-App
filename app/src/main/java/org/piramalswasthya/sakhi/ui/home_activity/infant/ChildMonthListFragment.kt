@@ -1,9 +1,11 @@
 package org.piramalswasthya.sakhi.ui.home_activity.infant
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -24,6 +26,7 @@ import org.piramalswasthya.sakhi.ui.home_activity.child_care.infant_list.InfantL
 import org.piramalswasthya.sakhi.ui.home_activity.infant.hbyc.HBYCFormViewModel
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.HBYC_FORM_ID
 import org.piramalswasthya.sakhi.work.dynamicWoker.FormSyncWorker
+import java.util.Calendar
 
 @AndroidEntryPoint
 class ChildMonthListFragment : Fragment() {
@@ -34,6 +37,7 @@ class ChildMonthListFragment : Fragment() {
     private val viewModel: HBYCFormViewModel by viewModels()
     private val infantListViewModel: InfantListViewModel by viewModels()
 
+    var ageOfBaby=0L
     private var dob = 0L
     private var isBenDead = false
     private lateinit var visitAdapter: VisitCardAdapter
@@ -50,6 +54,7 @@ class ChildMonthListFragment : Fragment() {
 
         val benId = args.benId
         val hhId = args.hhId
+         ageOfBaby = args.dob
 
         setupRecyclerView()
         initializeData(benId, hhId)
@@ -91,9 +96,10 @@ class ChildMonthListFragment : Fragment() {
         }
 
         observeLatest(viewModel.syncedVisitList) {
-            val cards = viewModel.getVisitCardList(benId)
+            val cards = viewModel.getVisitCardList(benId,ageOfBaby)
             visitAdapter.updateVisits(cards)
         }
+
 
         observeLatest(viewModel.infant) { infant ->
             infant?.let { binding.tvRchId?.text = it.benId.toString() }
@@ -132,4 +138,6 @@ class ChildMonthListFragment : Fragment() {
             getString(R.string.hbyc_month_list)
         )
     }
+
+
 }
