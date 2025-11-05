@@ -24,7 +24,8 @@ class DeathReportsFragment : Fragment() {
     lateinit var iconDataset: IconDataset
 
     companion object {
-        fun newInstance() = MotherCareFragment()
+        fun newInstance() = DeathReportsFragment()
+
     }
 
     private val viewModel: DeathReportsViewModel by viewModels()

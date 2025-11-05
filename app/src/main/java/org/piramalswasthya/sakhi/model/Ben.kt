@@ -382,7 +382,7 @@ data class BenBasicCache(
             mobileNo = mobileNo.toString(),
             fatherName = fatherName,
             familyHeadName = familyHeadName ?: "Not Available",
-            dateOfDeath = dateOfDeath?:"Not Dead",
+            dateOfDeath = dateOfDeath,
 //            typeOfList = typeOfList.name,
             rchId = rchId,
             hrpStatus = hrpStatus,

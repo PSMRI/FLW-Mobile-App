@@ -338,7 +338,7 @@ class RecordsRepo @Inject constructor(
     fun getPregnantWomenListCount() = benDao.getAllPregnancyWomenListCount(selectedVillage)
     fun getAbortionPregnantWomanCount() = benDao.getAllAbortionWomenListCount(selectedVillage)
     fun getHighRiskWomenCount() = benDao.getHighRiskWomenCount(selectedVillage)
-    fun getMaternalDeathCount() = benDao.getAllNonMaternalDeathsCount(selectedVillage)
+    fun getMaternalDeathCount() = benDao.getAllMDSRCount(selectedVillage)
     fun getNonMaternalDeathCount() = benDao.getAllNonMaternalDeathsCount(selectedVillage)
     fun getChildDeathCount() = benDao.getAllCDRListCount(selectedVillage)
 

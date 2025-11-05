@@ -65,7 +65,7 @@ abstract class BaseListFragment<T : ViewBinding> : Fragment() {
 
         recyclerView.adapter = benAdapter
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.benList.collect { list ->
                 emptyStateView.visibility = if (list.isEmpty()) View.VISIBLE else View.GONE
                 benAdapter.submitList(list)

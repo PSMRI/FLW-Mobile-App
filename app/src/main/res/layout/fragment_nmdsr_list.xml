@@ -128,45 +128,7 @@
                 tools:listitem="@layout/rv_item_household" />
 
         </LinearLayout>
-        <LinearLayout
-            android:id="@+id/question_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="5dp"
-            android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@+id/ll_search"
-            android:orientation="vertical">
-            <TextView
-                android:id="@+id/question_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Is there a herd of pigs near the house?"
-                android:textSize="16sp"
-                />
 
-            <RadioGroup
-                android:id="@+id/radioGroupPig"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <RadioButton
-                    android:id="@+id/radioYes"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Yes" />
-
-                <RadioButton
-                    android:id="@+id/radioNo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="No" />
-            </RadioGroup>
-        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -179,7 +141,7 @@
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/margin_small"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toTopOf="@id/btn_next_page"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/topLayout"
         tools:itemCount="2"
         tools:listitem="@layout/rv_item_household" />
@@ -188,7 +150,7 @@
         android:id="@+id/fl_empty"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/btn_next_page"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/topLayout">
 
         <TextView
@@ -203,31 +165,7 @@
     </FrameLayout>
 
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_next_page"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_normal"
-        android:padding="@dimen/padding_normal"
-        android:text="@string/btn_text_frag_home_nhhr"
-        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-        app:layout_constraintBottom_toBottomOf="parent" />
 
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_edit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-
-        android:layout_marginRight="20dp"
-        android:layout_gravity="bottom|end"
-        android:contentDescription="@string/edit"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_add_circle"
-        tools:visibility="gone" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
