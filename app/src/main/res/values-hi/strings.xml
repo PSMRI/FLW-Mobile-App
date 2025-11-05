@@ -14,7 +14,7 @@
     <string name="notification_sync_channel_name">Sync Data</string>
     <string name="notification_sync_channel_description">Upload beneficiaries to Server</string>
     <string name="notification_sync_channel_id">sakhi-sync0</string>
-    <string name="consent_text">Consent:\nI have been explained by the ASHA, the purpose for which the information and measurement findings is being collected from me, in a language I understand and I give my consent to collect the information and measurement findings on my personal health profile.</string>
+    <string name="consent_text">सहमति:\nमुझे मितानिन द्वारा उस उद्देश्य के बारे में बताया गया है जिसके लिए मेरी जानकारी और माप से संबंधित निष्कर्ष एकत्र किए जा रहे हैं। यह जानकारी मुझे ऐसी भाषा में समझाई गई है जिसे मैं समझता/समझती हूँ, और मैं अपनी व्यक्तिगत स्वास्थ्य प्रोफ़ाइल से संबंधित जानकारी और माप के निष्कर्ष एकत्र करने के लिए अपनी सहमति देता/देती हूँ।</string>
 
     <string name="long_to_string">%d</string>
     <string name="preview_title">पूर्व दर्शन</string>
@@ -202,10 +202,10 @@
     <string name="delivery_stage_list">प्रसव अवस्था सूची</string>
     <string name="pnc_mother_list">PNC माँ सूची</string>
     <string name="reproductive_age_list">प्रजनन आयु सूची</string>
-    <string name="ncd_eligible_list">NCD पात्र सूची</string>
-    <string name="ncd_list">NCD सूची</string>
-    <string name="ncd_non_eligible_list">NCD गैर-प्राथमिकता सूची</string>
-    <string name="ncd_priority_list">NCD प्राथमिकता सूची</string>
+    <string name="ncd_eligible_list">गैर संक्रामक रोग पात्र सूची</string>
+    <string name="ncd_list">गैर संक्रामक रोग सूची</string>
+    <string name="ncd_non_eligible_list">गैर संक्रामक रोग गैर-प्राथमिकता सूची</string>
+    <string name="ncd_priority_list">गैर संक्रामक रोग प्राथमिकता सूची</string>
     <string name="survey_register">सर्वेक्षण रजिस्टर</string>
     <string name="all_household_list">सभी परिवारों की सूची</string>
     <string name="beneficiaries_data">लाभार्थियों का डेटा</string>
@@ -262,7 +262,7 @@
     <string name="pregnancy_registration">गर्भावस्था पंजीकरण</string>
     <string name="mother_immunizationlist">माता टीकाकरण सूची</string>
     <string name="family_member_registration">परिवार के सदस्य का पंजीकरण</string>
-    <string name="relation_with_hof">एचओएफ से संबंध</string>
+    <string name="relation_with_hof">"मुखिया" से सम्बन्ध</string>
     <string name="add_family_member">परिवार के सदस्य जोड़ें</string>
     <string name="non_pregnant_women_eligible_couple_section">गैर-गर्भवती महिलाएं (पात्र दंपत्ति) अनुभाग</string>
     <string name="about_us">पिरामल स्वास्थ्य सभी के लिए सार्वभौमिक स्वास्थ्य देखभाल को पूरा करने के लिए भारत सरकार के दृष्टिकोण को पूरक और संपूरित करके सार्वजनिक स्वास्थ्य सेवा के अंतराल को पाटने पर ध्यान केंद्रित कर रहा है। पिरामल स्वास्थ्य भारत में प्राथमिक सार्वजनिक स्वास्थ्य देखभाल क्षेत्र में मातृ स्वास्थ्य, बाल और किशोर स्वास्थ्य, गैर-संचारी रोगों पर ध्यान केंद्रित करने वाले सबसे बड़े गैर-लाभकारी संगठनों में से एक है। पिरामल स्वास्थ्य के पास कई स्वास्थ्य सेवा नवाचारों को बड़े पैमाने पर संचालित करने का एक दशक से अधिक का अनुभव है, जो पूरे भारत में सबसे कम सेवा प्राप्त और हाशिए पर रहने वाली आबादी की प्राथमिक स्वास्थ्य देखभाल जरूरतों को पूरा कर रहा है। पिरामल स्वास्थ्य भारत के 20 राज्यों में 35 नवीन सार्वजनिक स्वास्थ्य देखभाल वितरण कार्यक्रमों के माध्यम से कार्यरत है और अब तक 10.7 करोड़ से अधिक लाभार्थियों को सेवा प्रदान कर चुका है| पिरामल स्वास्थ्य में 250 चिकित्सकों सहित 2260 कर्मचारी कार्यरत हैं जो परिणामोन्मुखी दृष्टिकोण के माध्यम से सेवा भाव (लाभार्थी-केंद्रित) के मूल मूल्य पर काम करते हैं। पिछले बारह वर्षों में, फोकस निम्नलिखित पर रहा है, बड़े पैमाने पर स्थायी प्रभाव के लिए प्लेटफॉर्म का निर्माण, एक यात्रा के रूप में पैमाने पर नवाचार, नीति आयोग के ज्ञान और कार्यान्वयन भागीदार के रूप में नीतियों, शासन और सार्वजनिक स्वास्थ्य देखभाल प्रणाली की जवाबदेही को प्रभावित करना। हस्तक्षेप डिजाइन, मॉडलिंग, पायलटिंग और उन पायलटों को बढ़ाने के रूप में नवाचार पिरामल स्वास्थ्य में एक दृष्टिकोण रहा है। पिरामल स्वास्थ्य प्राथमिक स्वास्थ्य सेवा को न केवल सस्ती, सुलभ और सभी के लिए उपलब्ध बनाने के लिए प्रतिबद्ध है, बल्कि यह भी सुनिश्चित करता है कि यह पूर्ण, निरंतर और व्यापक हो।</string>

@@ -32,14 +32,14 @@ class ChildRegistrationDataset(
     private val childName = FormElement(
         id = 2,
         inputType = InputType.EDIT_TEXT,
-        title = "Name of Child",
+        title = resources.getString(R.string.str_name_of_child),
         required = false,
         hasDependants = false
     )
     private val rchId = FormElement(
         id = 3,
         inputType = InputType.EDIT_TEXT,
-        title = "RCH ID No. of Child",
+        title = resources.getString(R.string.str_rch_id_of_child),
         arrayId = -1,
         required = false,
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
@@ -50,7 +50,7 @@ class ChildRegistrationDataset(
     private val dob = FormElement(
         id = 4,
         inputType = InputType.DATE_PICKER,
-        title = "Date of Birth",
+        title = resources.getString(R.string.nbr_dob),
         arrayId = -1,
         required = true,
         min = getMinDateOfReg(),
@@ -61,7 +61,7 @@ class ChildRegistrationDataset(
     private val childGender = FormElement(
         id = 5,
         inputType = InputType.RADIO,
-        title = "Sex of Child",
+        title = resources.getString(R.string.str_sex_of_child),
         entries = arrayOf(resources.getString(R.string.male), resources.getString(R.string.female)),
         isEnabled = false,
         required = false,
@@ -72,7 +72,7 @@ class ChildRegistrationDataset(
     private val motherName = FormElement(
         id = 6,
         inputType = InputType.EDIT_TEXT,
-        title = "Mother's Name",
+        title = resources.getString(R.string.mother_s_name),
         arrayId = -1,
         required = true,
         allCaps = true,
@@ -84,7 +84,7 @@ class ChildRegistrationDataset(
     private val fatherName = FormElement(
         id = 7,
         inputType = InputType.EDIT_TEXT,
-        title = "Father's Name",
+        title = resources.getString(R.string.father_s_name),
         arrayId = -1,
         required = true,
         allCaps = true,
@@ -97,7 +97,7 @@ class ChildRegistrationDataset(
     private val mobileNumberOf = FormElement(
         id = 8,
         inputType = InputType.RADIO,
-        title = "Whose Mobile Number",
+        title = resources.getString(R.string.str_whose_mobile_number),
         entries = arrayOf(
             "Mother",
             "Father",
