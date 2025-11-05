@@ -85,10 +85,18 @@ fun filterBenList(
                 val age = getAgeFromDob(ben.dob)
                 age >= 30 && ben.isDeathValue == "false"
             }
-
+            4 -> list.filter(::isWARA)
             else -> list
         }
     }
+
+private fun isWARA(ben: BenBasicDomain): Boolean {
+    val age = getAgeFromDob(ben.dob)
+    val alive = ben.isDeathValue.equals("false", ignoreCase = true)
+    val genderOk = ben.gender?.equals("female", ignoreCase = true) == true
+    val reproOk = (ben.reproductiveStatusId == 1 || ben.reproductiveStatusId == 2)
+    return genderOk && alive && age in 20..49 && reproOk
+}
 
 fun getAgeFromDob(dob: Long?): Int {
     if (dob == null) return 0

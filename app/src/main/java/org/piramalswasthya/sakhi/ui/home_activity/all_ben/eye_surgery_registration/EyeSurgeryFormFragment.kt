@@ -3,7 +3,6 @@ package org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registrat
 import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -155,7 +154,7 @@ class EyeSurgeryFormFragment : Fragment() {
             FormConstants.EYE_SURGERY_FORM_ID
         }
         val formName = if (isIFA) {
-            FormConstants.IFA_FORM_NAME
+            FormConstants.IFA_DISTRIBUTION_FORM_ID
         } else {
             FormConstants.EYE_SURGERY_FORM_NAME
         }

@@ -34,6 +34,9 @@ interface BenDao {
     @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage AND CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) >= 30 AND isDeath = 0")
     fun getAllBenAboveThirty(selectedVillage: Int): Flow<List<BenBasicCache>>
 
+    @Query("SELECT * FROM BEN_BASIC_CACHE WHERE villageId = :selectedVillage AND gender = 'Female' AND isDeath = 0 AND CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) BETWEEN 20 AND 49 AND (reproductiveStatusId = 1 OR reproductiveStatusId = 2)")
+    fun getAllBenWARA(selectedVillage: Int): Flow<List<BenBasicCache>>
+
     @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage and gender = :gender")
     fun getAllBenGender(selectedVillage: Int, gender: String): Flow<List<BenBasicCache>>
 
