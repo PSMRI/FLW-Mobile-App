@@ -6,7 +6,6 @@
     android:background="@color/read_only"
     tools:context=".ui.home_activity.all_household.AllHouseholdFragment">
 
-
 <androidx.constraintlayout.widget.ConstraintLayout
     android:id="@+id/topLayout"
     android:layout_width="match_parent"
@@ -52,7 +51,6 @@
                 />
         </androidx.cardview.widget.CardView>
 
-
     </LinearLayout>
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/switchButton"
@@ -60,13 +58,28 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:visibility="gone"
+        android:visibility="visible"
         style="@style/CustomSwitchStyle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:text="IRS OFF"
         app:layout_constraintTop_toBottomOf="@+id/ll_search"
         />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switchBtnMosquito"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:visibility="visible"
+        style="@style/CustomSwitchStyle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="Mosquito Net OFF"
+        app:layout_constraintTop_toBottomOf="@+id/ll_content"
+        />
+
     <LinearLayout
         android:id="@+id/ll_content"
         android:layout_width="match_parent"
@@ -77,22 +90,14 @@
         android:orientation="vertical"
         android:padding="@dimen/padding_normal">
 
-
-
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            >
-
+            android:layout_height="wrap_content">
             <include
                 android:id="@+id/form"
                 layout="@layout/rv_input_form"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                />
-
-
-
+                android:layout_height="wrap_content" />
         </FrameLayout>
 
         <com.google.android.material.button.MaterialButton
@@ -170,9 +175,6 @@
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_any"
         android:layout_width="match_parent"
@@ -201,7 +203,6 @@
             android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
     </FrameLayout>
 
-
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_next_page"
         android:layout_width="match_parent"
@@ -212,13 +213,11 @@
         android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
         app:layout_constraintBottom_toBottomOf="parent" />
 
-
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
-
         android:layout_marginRight="20dp"
         android:layout_gravity="bottom|end"
         android:contentDescription="@string/edit"
@@ -227,7 +226,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_add_circle"
         tools:visibility="gone" />
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
