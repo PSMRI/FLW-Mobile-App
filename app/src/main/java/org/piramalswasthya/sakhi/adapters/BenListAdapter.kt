@@ -167,7 +167,6 @@ class BenListAdapter(
                 binding.spouse = false
             }
             binding.executePendingBindings()
-
         }
     }
 
@@ -203,21 +202,13 @@ class BenListAdapter(
         private val clickedBen: (hhId: Long, benId: Long, relToHeadId: Int) -> Unit,
         private val clickedHousehold: (hhId: Long) -> Unit,
         private val clickedABHA: (benId: Long, hhId: Long) -> Unit,
-        private val clickedAddEyeSurgery: (benId: Long, hhId: Long, isViewMode: Boolean) -> Unit,
+        private val clickedAddAllBenBtn: (benId: Long, hhId: Long, isViewMode: Boolean, isIFA: Boolean) -> Unit,
         private val callBen: (ben: BenBasicDomain) -> Unit
     ) {
-        fun onClickedBen(item: BenBasicDomain) = clickedBen(
-            item.hhId,
-            item.benId,
-            item.relToHeadId - 1
-        )
-
+        fun onClickedBen(item: BenBasicDomain) = clickedBen(item.hhId, item.benId, item.relToHeadId - 1)
         fun onClickedHouseHold(item: BenBasicDomain) = clickedHousehold(item.hhId)
-
         fun onClickABHA(item: BenBasicDomain) = clickedABHA(item.benId, item.hhId)
-        fun onClickAddEyeSurgery(item: BenBasicDomain, isMatched: Boolean) = clickedAddEyeSurgery(item.benId, item.hhId, isMatched)
-
+        fun clickedAddAllBenBtn(item: BenBasicDomain, isMatched: Boolean, isIFA: Boolean) = clickedAddAllBenBtn(item.benId, item.hhId, isMatched,isIFA)
         fun onClickedForCall(item: BenBasicDomain) = callBen(item)
     }
-
 }

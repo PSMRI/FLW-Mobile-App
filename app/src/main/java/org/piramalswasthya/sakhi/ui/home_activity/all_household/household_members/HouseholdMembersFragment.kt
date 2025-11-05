@@ -119,7 +119,7 @@ class HouseholdMembersFragment : Fragment() {
                         checkAndGenerateABHA(benId)
                     }
                 },
-                { benId, hhId, isViewMode ->
+                { benId, hhId, isViewMode, isIFA ->
                 },
                 {
                     try {

@@ -174,7 +174,7 @@ class AbhaBenFragment : Fragment() {
                 { benId, hhId ->
                     checkAndGenerateABHA(benId)
                 },
-                { benId, hhId, isViewMode ->
+                { benId, hhId, isViewMode, isIFA ->
                 },
                 {
                     try {
@@ -222,7 +222,7 @@ class AbhaBenFragment : Fragment() {
                 { benId, hhId ->
                     checkAndGenerateABHA(benId)
                 },
-                { benId, hhId, isViewMode ->
+                { benId, hhId, isViewMode, isIFA ->
                 },
                 {
                     try {

@@ -67,7 +67,7 @@ class NcdListFragment : Fragment() {
                 },
                 { benId, hhId ->
                 },
-                { benId, hhId, isViewMode ->
+                { benId, hhId, isViewMode, isIFA ->
                 },
                 {
 

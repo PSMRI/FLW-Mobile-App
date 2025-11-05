@@ -176,13 +176,14 @@ class AllBenFragment : Fragment() {
                 { benId, hhId ->
                     checkAndGenerateABHA(benId)
                 },
-                { benId, hhId , isViewMode->
+                { benId, hhId , isViewMode, isIFA->
                     if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
                         findNavController().navigate(
                             AllBenFragmentDirections.actionAllBenFragmentToEyeSurgeryFormFragment(
                                 hhId = hhId,
                                 benId = benId,
-                                isViewMode = isViewMode
+                                isViewMode = isViewMode,
+                                isIFA = isIFA
                             )
                         )
                     }

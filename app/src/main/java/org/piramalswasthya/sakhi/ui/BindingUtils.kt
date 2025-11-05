@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Build
 import android.text.Html
 import android.text.InputType
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
@@ -465,5 +466,17 @@ fun setFormattedSessionDate(textView: TextView, timestamp: Long?) {
 @BindingAdapter(value = ["visibleIfAgeAbove30AndAliveAge", "isDeath"], requireAll = true)
 fun MaterialButton.visibleIfAgeAbove30AndAlive(age: Int?, isDeath: String?) {
     val shouldShow = (age ?: 0) >= 30 && isDeath.equals("false", ignoreCase = true)
+    visibility = if (shouldShow) View.VISIBLE else View.GONE
+}
+
+@BindingAdapter(value = ["visibleIfEligibleFemale", "isDeath", "reproductiveStatusId", "gender"], requireAll = true)
+fun MaterialButton.visibleIfEligibleFemale(age: Int?, isDeath: String?, reproductiveStatusId: Int?, gender: String?) {
+
+    val shouldShow =
+        (gender.equals("female", ignoreCase = true)) &&
+                ((age ?: 0) in 20..49) &&
+                (reproductiveStatusId == 1 || reproductiveStatusId == 2) &&
+                isDeath.equals("false", ignoreCase = true)
+
     visibility = if (shouldShow) View.VISIBLE else View.GONE
 }

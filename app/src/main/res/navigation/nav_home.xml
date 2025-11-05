@@ -1088,6 +1088,10 @@
             android:name="isViewMode"
             app:argType="boolean"
             android:defaultValue="false" />
+        <argument
+            android:name="isIFA"
+            app:argType="boolean"
+            android:defaultValue="false" />
     </fragment>
     <fragment
         android:id="@+id/benListCHOFragment"
