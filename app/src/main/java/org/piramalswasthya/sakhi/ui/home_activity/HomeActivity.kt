@@ -583,8 +583,10 @@ class HomeActivity : AppCompatActivity() {
         }
         binding.navView.menu.findItem(R.id.menu_delete_account).setOnMenuItemClickListener {
             var url = ""
-            if (BuildConfig.FLAVOR.equals("saksham", true) ||BuildConfig.FLAVOR.equals("niramay", true) || BuildConfig.FLAVOR.equals("xushrukha", true))  {
+            if (BuildConfig.FLAVOR.contains("saksham", true) ||BuildConfig.FLAVOR.contains("niramay", true) || BuildConfig.FLAVOR.contains("xushrukha", true))  {
                 url = "https://forms.office.com/r/HkE3c0tGr6"
+            } else if (BuildConfig.FLAVOR.contains("mitanin", true)) {
+                url = "https://forms.office.com/r/KY9ZKFT3LK"
             } else {
                 url =
                     "https://forms.office.com/Pages/ResponsePage.aspx?id=jQ49md0HKEGgbxRJvtPnRISY9UjAA01KtsFKYKhp1nNURUpKQzNJUkE1OUc0SllXQ0IzRFVJNlM2SC4u"
@@ -616,7 +618,11 @@ class HomeActivity : AppCompatActivity() {
         }
 
         binding.navView.menu.findItem(R.id.menu_support).setOnMenuItemClickListener {
-            var url = "https://forms.office.com/r/AqY1KqAz3v"
+            val url: String = if (BuildConfig.FLAVOR.contains("mitanin", true)) {
+                "https://forms.office.com/r/DW5EVdRMVs"
+            } else {
+                "https://forms.office.com/r/AqY1KqAz3v"
+            }
             if (url.isNotEmpty()){
                 val i = Intent(Intent.ACTION_VIEW)
                 i.setData(Uri.parse(url))
