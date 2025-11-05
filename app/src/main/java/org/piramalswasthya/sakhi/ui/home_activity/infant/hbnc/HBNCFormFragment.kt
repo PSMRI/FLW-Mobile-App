@@ -117,6 +117,12 @@ class HBNCFormFragment : Fragment() {
         val isViewMode = args.isViewMode
         benId = args.benId
         hhId = args.hhId
+        Log.d("HBNCFormFragment", "Page Loadded benId: $benId hhId: $hhId")
+
+
+        viewModel.fetchSNCUStatus(benId)
+
+
 
         infantListViewModel.getBenById(benId) { ben ->
             infantBinding.btnHBNC.visibility=View.GONE
@@ -127,6 +133,7 @@ class HBNCFormFragment : Fragment() {
         }
         viewModel.loadVisitDates(benId)
 
+
         infantListViewModel.getDobByBenIdAsync(benId) { dobMillis ->
             if (dobMillis != null) {
                 dob = dobMillis
@@ -135,6 +142,14 @@ class HBNCFormFragment : Fragment() {
                 viewModel.loadFormSchema(benId, HBNC_FORM_ID, visitDay!!, true, dob)
             }
         }
+
+        viewModel.navigateToCdsr.observe(viewLifecycleOwner) { shouldNavigate ->
+            if (shouldNavigate == true) {
+                showDeathAlertDialog()
+                viewModel.onNavigationComplete()
+            }
+        }
+
 
         lifecycleScope.launch {
             viewModel.schema.collectLatest { schema ->
@@ -150,7 +165,9 @@ class HBNCFormFragment : Fragment() {
                     visibleFields,
                     isViewOnly = isViewMode,
                     minVisitDate = minVisitDate,
-                    maxVisitDate = maxVisitDate
+                    maxVisitDate = maxVisitDate,
+                    isSNCU = viewModel.isSNCU.value ?: false
+//                    isSNCU = true
                 ) { field, value ->
                     if (value == "pick_image") {
                         currentImageField = field
@@ -164,6 +181,18 @@ class HBNCFormFragment : Fragment() {
                 }
 
                 recyclerView.adapter = adapter
+
+                val isSNCUCase = viewModel.isSNCU.value ?: false
+                if (isSNCUCase) {
+                    val updatedFields = adapter.getUpdatedFields().map { field ->
+                        if (field.fieldId == "discharged_from_sncu") {
+                            field.value = "Yes"
+                            field.errorMessage = null
+                        }
+                        field
+                    }
+                    adapter.updateFields(updatedFields)
+                }
                 saveButton.visibility = if (isViewMode) View.GONE else View.VISIBLE
             }
         }
@@ -172,6 +201,8 @@ class HBNCFormFragment : Fragment() {
             handleFormSubmission()
         }
     }
+
+
     private fun showImagePickerDialog() {
         val options = arrayOf("Take Photo", "Choose from Gallery")
 
@@ -215,6 +246,7 @@ class HBNCFormFragment : Fragment() {
 
         currentSchema.sections.orEmpty().forEach { section ->
             section.fields.orEmpty().forEach { schemaField ->
+
                 updatedFields.find { it.fieldId == schemaField.fieldId }?.let { updated ->
                     schemaField.value = updated.value
 
@@ -293,8 +325,8 @@ class HBNCFormFragment : Fragment() {
         if (hasErrors) return
         lifecycleScope.launch {
             viewModel.saveFormResponses(benId, hhId)
-            findNavController().previousBackStackEntry?.savedStateHandle?.set("form_submitted", true)
-            findNavController().popBackStack()
+//            findNavController().previousBackStackEntry?.savedStateHandle?.set("form_submitted", true)
+//            findNavController().popBackStack()
         }
     }
     override fun onStart() {
@@ -324,4 +356,32 @@ class HBNCFormFragment : Fragment() {
             null
         }
     }
+
+    private fun showDeathAlertDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Infant Death Reported")
+            .setMessage("Child marked as deceased. Please complete the CDR form.")
+            .setCancelable(false)
+            .setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+                navigateToCDRForm()
+            }
+            .show()
+    }
+    private fun navigateToCDRForm() {
+        try {
+            val action = HBNCFormFragmentDirections
+                .actionHbncFormFragmentToCdrObjectFragment(
+                    hhId, benId
+                )
+
+            if (isAdded && view != null) {
+                findNavController().navigate(action)
+            }
+        } catch (e: Exception) {
+        }
+    }
+
+
+
 }

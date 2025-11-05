@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="android.view.View" />
+
         <variable
             name="benWithFilaria"
             type="org.piramalswasthya.sakhi.model.BenWithFilariaScreeningDomain" />
@@ -65,6 +67,16 @@
                         app:drawableTint="?attr/colorPrimary"
                         tools:text="Hello Meister" />
 
+                    <ImageView
+                        android:id="@+id/iv_isDeath"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center_vertical|end"
+                        android:layout_marginHorizontal="@dimen/padding_small"
+                        android:visibility="@{benWithFilaria.ben.isDeath == true ? View.VISIBLE : View.GONE}"
+                        android:contentDescription="@string/iv_death_indicator"
+                        android:src="@drawable/ic_death"
+                        />
                     <ImageView
                         android:id="@+id/iv_sync_state"
                         android:layout_width="24dp"

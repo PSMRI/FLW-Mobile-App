@@ -58,11 +58,11 @@ class ChildListAdapter(
 
 
     class ChildListClickListener(
-        val goToHbnc: (benId: Long, hhId: Long) -> Unit
+        val goToHbyc: (benId: Long, hhId: Long,dob:Long) -> Unit
 
     ) {
-        fun onClickedHbnc(item: BenBasicDomain) = goToHbnc(
-            item.benId, item.hhId
+        fun onClickedHbyc(item: BenBasicDomain) = goToHbyc(
+            item.benId, item.hhId,item.dob
         )
     }
 

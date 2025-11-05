@@ -148,5 +148,7 @@ class ChildImmunizationListViewModel @Inject constructor(
         return clickedBenId.value
     }
 
-
+    val isSelectedBenDeathFlow = clickedBenId.combine(benWithVaccineDetails) { benId, list ->
+        list.firstOrNull { it.ben.benId == benId }?.ben?.isDeath ?: false
+    }
 }

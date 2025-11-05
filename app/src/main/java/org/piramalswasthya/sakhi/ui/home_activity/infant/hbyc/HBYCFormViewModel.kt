@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.ui.home_activity.infant.hbyc
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,6 +17,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.hbyc.FormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
 import org.piramalswasthya.sakhi.model.dynamicModel.VisitCard
 import org.piramalswasthya.sakhi.repositories.BenRepo
+import org.piramalswasthya.sakhi.repositories.InfantRegRepo
 import org.piramalswasthya.sakhi.repositories.dynamicRepo.FormRepository
 import java.text.SimpleDateFormat
 import java.util.*
@@ -24,7 +26,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HBYCFormViewModel @Inject constructor(
     private val repository: FormRepository,
-    private val benRepo: BenRepo
+    private val benRepo: BenRepo,
+    private val infantRegRepo: InfantRegRepo,
 ) : ViewModel() {
 
     private val _schema = MutableStateFlow<FormSchemaDto?>(null)
@@ -36,7 +39,7 @@ class HBYCFormViewModel @Inject constructor(
     private val _syncedVisitList = MutableStateFlow<List<FormResponseJsonEntityHBYC>>(emptyList())
     val syncedVisitList: StateFlow<List<FormResponseJsonEntityHBYC>> = _syncedVisitList
 
-    private val visitOrder = listOf("3 Months", "6 Months", "9 Months", "12 Months", "15 Months")
+    val visitOrder = listOf("3 Months", "6 Months", "9 Months", "12 Months", "15 Months")
     private var benId: Long = 0L
     private var hhId: Long = 0L
     var visitMonth: String = ""
@@ -44,6 +47,17 @@ class HBYCFormViewModel @Inject constructor(
 
     private val _isBenDead = MutableStateFlow(false)
     val isBenDead: StateFlow<Boolean> = _isBenDead
+
+
+    private val _isSNCU = MutableStateFlow(false)
+    val isSNCU: StateFlow<Boolean> = _isSNCU
+
+    fun fetchSNCUStatus(benId: Long) {
+        viewModelScope.launch {
+            val infantRecord = infantRegRepo.getInfantReg(benId, 1)
+            _isSNCU.value = infantRecord?.isSNCU.equals("Yes", ignoreCase = true)
+        }
+    }
 
     var previousVisitDate: Date? = null
     var lastVisitDay: String? = null
@@ -138,13 +152,25 @@ class HBYCFormViewModel @Inject constructor(
         } else true
     }
 
-    fun updateFieldValue(fieldId: String, value: Any?) {
-        val currentSchema = _schema.value ?: return
-        val allFields = currentSchema.sections.flatMap { it.fields }
-        allFields.find { it.fieldId == fieldId }?.value = value
-        allFields.forEach { field -> field.visible = evaluateFieldVisibility(field, allFields) }
-        _schema.value = currentSchema.copy()
+fun updateFieldValue(fieldId: String, value: Any?) {
+    val currentSchema = _schema.value ?: return
+    val allFields = currentSchema.sections.flatMap { it.fields }
+
+    allFields.find { it.fieldId == fieldId }?.apply {
+        this.value = value
     }
+    allFields.forEach { field ->
+        field.visible = evaluateFieldVisibility(field, allFields)
+    }
+
+    val babyAliveValue = allFields.find { it.fieldId == "is_baby_alive" }?.value
+    val sncuField = allFields.find { it.fieldId == "discharged_from_sncu" }
+    if (sncuField != null && babyAliveValue == "Yes" && _isSNCU.value) {
+        sncuField.value = "Yes"
+    }
+    _schema.value = currentSchema.copy()
+}
+
 
     suspend fun saveFormResponses(benId: Long, hhId: Long) {
         val currentSchema = _schema.value ?: return
@@ -261,19 +287,72 @@ class HBYCFormViewModel @Inject constructor(
         } ?: emptyList()
     }
 
-    fun getVisitCardList(benId: Long): List<VisitCard> {
+//    fun getVisitCardList(benId: Long): List<VisitCard> {
+//        val relevantVisits = _syncedVisitList.value.filter { it.benId == benId }
+//        val completed = relevantVisits.map { it.visitDay }.toSet()
+//        return visitOrder.map { month ->
+//            val isCompleted = completed.contains(month)
+//            val isEditable = when (month) {
+//                "3 Months" -> !isCompleted
+//                "6 Months" -> !isCompleted && completed.contains("3 Months")
+//                "9 Months" -> !isCompleted && completed.contains("6 Months")
+//                "12 Months" -> !isCompleted && completed.contains("9 Months")
+//                "15 Months" -> !isCompleted && completed.contains("12 Months")
+//                else -> false
+//            }
+//            val visit = relevantVisits.find { it.visitDay == month }
+//            val visitDate = visit?.formDataJson?.let { JSONObject(it).optString("visitDate", "-") } ?: "-"
+//            val isBabyDeath = visit?.formDataJson?.let {
+//                val root = JSONObject(it)
+//                val fieldsJson = root.optJSONObject("fields") ?: JSONObject()
+//                fieldsJson.optString("is_baby_alive", "Yes").equals("No", ignoreCase = true)
+//            } ?: false
+//            VisitCard(
+//                visitDay = month,
+//                visitDate = visitDate,
+//                isCompleted = isCompleted,
+//                isEditable = isEditable,
+//                isBabyDeath = isBabyDeath
+//            )
+//        }
+//    }
+
+    fun getVisitCardList(benId: Long, dobMillis: Long): List<VisitCard> {
         val relevantVisits = _syncedVisitList.value.filter { it.benId == benId }
         val completed = relevantVisits.map { it.visitDay }.toSet()
-        return visitOrder.map { month ->
+
+        // Baby ki age months use new method
+        val babyAgeMonths = getBabyAgeMonths(dobMillis)
+        Log.d("HBYC", "Baby age in months: $babyAgeMonths")
+
+        val visitMonthMapping = mapOf(
+            "3 Months" to 3,
+            "6 Months" to 6,
+            "9 Months" to 9,
+            "12 Months" to 12,
+            "15 Months" to 15
+        )
+
+        // Eligible months filter based on baby age
+        val eligibleMonths = visitOrder.filter { month ->
+            val monthValue = visitMonthMapping[month] ?: 0
+            val isEligible = monthValue <= babyAgeMonths
+            Log.d("HBYC", "Month: $month, Value: $monthValue, Eligible: $isEligible")
+            isEligible
+        }
+
+        Log.d("HBYC", "Eligible months after filtering: $eligibleMonths")
+
+        // Sequential visit logic: only next pending visit is editable
+        var nextEditableFound = false
+
+        return eligibleMonths.map { month ->
             val isCompleted = completed.contains(month)
-            val isEditable = when (month) {
-                "3 Months" -> !isCompleted
-                "6 Months" -> !isCompleted && completed.contains("3 Months")
-                "9 Months" -> !isCompleted && completed.contains("6 Months")
-                "12 Months" -> !isCompleted && completed.contains("9 Months")
-                "15 Months" -> !isCompleted && completed.contains("12 Months")
-                else -> false
-            }
+            val isEditable = if (!nextEditableFound && !isCompleted) {
+                nextEditableFound = true
+                true
+            } else false
+
             val visit = relevantVisits.find { it.visitDay == month }
             val visitDate = visit?.formDataJson?.let { JSONObject(it).optString("visitDate", "-") } ?: "-"
             val isBabyDeath = visit?.formDataJson?.let {
@@ -281,6 +360,12 @@ class HBYCFormViewModel @Inject constructor(
                 val fieldsJson = root.optJSONObject("fields") ?: JSONObject()
                 fieldsJson.optString("is_baby_alive", "Yes").equals("No", ignoreCase = true)
             } ?: false
+
+            Log.d(
+                "HBYC",
+                "VisitCard -> Month: $month, Completed: $isCompleted, Editable: $isEditable, VisitDate: $visitDate, BabyDeath: $isBabyDeath"
+            )
+
             VisitCard(
                 visitDay = month,
                 visitDate = visitDate,
@@ -290,6 +375,9 @@ class HBYCFormViewModel @Inject constructor(
             )
         }
     }
+
+
+
 
     fun getMaxVisitDate(): Date {
         val today = Calendar.getInstance().apply {
@@ -353,5 +441,13 @@ class HBYCFormViewModel @Inject constructor(
             previousVisitDate = getLastVisitDate(benId)
             lastVisitDay = getLastVisitDay(benId)
         }
+    }
+
+    fun getBabyAgeMonths(dobMillis: Long): Int {
+        val dob = Calendar.getInstance().apply { timeInMillis = dobMillis }
+        val today = Calendar.getInstance()
+        var age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR)
+        age = age * 12 + today.get(Calendar.MONTH) - dob.get(Calendar.MONTH)
+        return age
     }
 }

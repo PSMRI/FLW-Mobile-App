@@ -1,5 +1,8 @@
 package org.piramalswasthya.sakhi.ui.home_activity.infant.hbnc
 
+import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import org.piramalswasthya.sakhi.repositories.dynamicRepo.FormRepository
@@ -17,6 +20,8 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.FormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
 import org.piramalswasthya.sakhi.model.dynamicModel.VisitCard
 import org.piramalswasthya.sakhi.repositories.BenRepo
+import org.piramalswasthya.sakhi.repositories.InfantRegRepo
+import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pnc.form.PncFormViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -24,7 +29,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HBNCFormViewModel @Inject constructor(
     private val repository: FormRepository,
-    private val benRepo: BenRepo
+    private val benRepo: BenRepo,
+    private val infantRegRepo: InfantRegRepo,
 ) : ViewModel() {
 
     private val _schema = MutableStateFlow<FormSchemaDto?>(null)
@@ -42,9 +48,25 @@ class HBNCFormViewModel @Inject constructor(
     var visitDay: String = ""
     private var isViewMode: Boolean = false
 
+    private val _navigateToCdsr = MutableLiveData<Boolean>()
+    val navigateToCdsr: LiveData<Boolean> get() = _navigateToCdsr
 
     private val _isBenDead = MutableStateFlow(false)
     val isBenDead: StateFlow<Boolean> = _isBenDead
+
+    private val _isSNCU = MutableStateFlow(false)
+    val isSNCU: StateFlow<Boolean> = _isSNCU
+
+    fun fetchSNCUStatus(benId: Long) {
+        viewModelScope.launch {
+            val infantRecord = infantRegRepo.getInfantReg(benId, 1)
+            _isSNCU.value = infantRecord?.isSNCU.equals("Yes", ignoreCase = true)
+        }
+    }
+
+    fun onNavigationComplete() {
+        _navigateToCdsr.value = false
+    }
 
     fun loadSyncedVisitList(benId: Long) {
         viewModelScope.launch {
@@ -133,15 +155,22 @@ class HBNCFormViewModel @Inject constructor(
     fun updateFieldValue(fieldId: String, value: Any?) {
         val currentSchema = _schema.value ?: return
         val allFields = currentSchema.sections.flatMap { it.fields }
-
-        allFields.find { it.fieldId == fieldId }?.value = value
-
+        allFields.find { it.fieldId == fieldId }?.apply {
+            this.value = value
+        }
         allFields.forEach { field ->
             field.visible = evaluateFieldVisibility(field, allFields)
         }
-
+        val babyAliveValue = allFields.find { it.fieldId == "is_baby_alive" }?.value
+        val sncuField = allFields.find { it.fieldId == "discharged_from_sncu" }
+        if (sncuField != null && babyAliveValue == "Yes" && _isSNCU.value) {
+            sncuField.value = "Yes"
+        }
         _schema.value = currentSchema.copy()
     }
+
+
+
     companion object {
         private const val OTHER_PLACE_OF_DEATH_ID = 8
         private const val DEFAULT_DEATH_ID = -1
@@ -180,6 +209,7 @@ suspend fun saveFormResponses(benId: Long, hhId: Long) {
                     syncState = SyncState.UNSYNCED
                 }
                 benRepo.updateRecord(ben)
+                _navigateToCdsr.postValue(true)
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -291,13 +321,18 @@ suspend fun saveFormResponses(benId: Long, hhId: Long) {
                 "1st Day" -> !isCompleted
                 "3rd Day" -> !isCompleted && completed.contains("1st Day")
                 "7th Day" -> !isCompleted && completed.contains("3rd Day")
-                "14th Day", "21st Day", "28th Day" -> !isCompleted && completed.contains("7th Day")
-                "42nd Day" -> !isCompleted && completed.contains("28th Day")
+                "14th Day", "21st Day", "28th Day","42nd Day" -> !isCompleted && completed.contains("7th Day")
+//                "42nd Day" -> !isCompleted && completed.contains("28th Day")
                 else -> false
             }
 
             val visit = relevantVisits.find { it.visitDay == day }
             val visitDate: String = visit?.formDataJson?.let { JSONObject(it).optString("visitDate", null) } ?: "-"
+
+            val dueDate: String = _schema.value?.sections
+                ?.flatMap { it.fields.orEmpty() }
+                ?.find { it.fieldId == "due_date" && it.value != null }?.value?.toString() ?: "-"
+
             val isBabyDeath = visit?.formDataJson?.let {
                 val root = JSONObject(it)
                 val fieldsJson = root.optJSONObject("fields") ?: JSONObject()
