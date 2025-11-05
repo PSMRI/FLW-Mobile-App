@@ -58,11 +58,11 @@
     <string name="cbac_single_ast" translatable="false">* </string>
     <string name="cbac_yes">हाँ</string>
     <string name="cbac_no">नहीं</string>
-    <string name="cbac_risk_Factors_COPD">भाग C: सीओपीडी (COPD) के खतरे के कारण</string>
+    <string name="cbac_risk_Factors_COPD">भाग C: दीर्घकालिक अवरोधक फेफड़ों की बीमारी (COPD) का जोखिम कारक</string>
     <string name="cbac_occupational_exposure">व्यावसायिक जोखिम</string>
-    <string name="cbac_PHQ2">भाग D: पीएचक्यू2 (डिप्रेशन से जुड़े सवाल)</string>
-    <string name="cbac_last_two_weeks">पिछले दो हफ्तों में, आपको नीचे लिखी समस्याएं कितनी बार हुई हैं?</string>
-    <string name="cbac_little_interest">काम करने में मन न लगना या खुशी न मिलना</string>
+    <string name="cbac_PHQ2">भाग D: PHQ2 (मानसिक स्वास्थ्य)</string>
+    <string name="cbac_last_two_weeks">पिछले दो हफ़्तों से क्या आप निम्नलिखित समस्या से परेशान हैं?</string>
+    <string name="cbac_little_interest">काम करने में कम रुचि या आनंद?</string>
     <string name="cbac_feeling_down">उदास, मायूस या निराश महसूस करना</string>
     <string name="hrp_valid">उच्च जोखिम गर्भावस्था (HRP) मामला — नजदीकी हेल्थ एंड वेलनेस सेंटर (HWC) जाएं या 104 पर कॉल करें</string>
     <string name="hrp_sug_valid">संदिग्ध उच्च जोखिम गर्भावस्था — नजदीकी हेल्थ एंड वेलनेस सेंटर जाएं या 104 पर कॉल करें</string>
