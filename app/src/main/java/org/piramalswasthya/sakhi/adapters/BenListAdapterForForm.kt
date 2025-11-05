@@ -53,24 +53,17 @@ class BenListAdapterForForm(
         ) {
 
             binding.isGeneralForm = isGeneralForm == true
-            if (isGeneralForm == true) {
-                binding.ivSyncState.visibility = View.GONE
-                binding.btnForm1.visibility = View.GONE
-                binding.btnForm2.visibility = View.GONE
-                binding.btnForm3.visibility = View.GONE
-            } else {
-                binding.ivSyncState.visibility = View.VISIBLE
 
-                if (pref?.getLoggedInUser()?.role.equals("asha", true)) {
-                    binding.btnForm1.visibility = View.VISIBLE
-                    binding.btnForm2.visibility = View.VISIBLE
-                    binding.btnForm3.visibility = View.VISIBLE
-                } else {
-                    binding.btnForm1.visibility = View.INVISIBLE
-                    binding.btnForm2.visibility = View.INVISIBLE
-                    binding.btnForm3.visibility = View.INVISIBLE
-                }
+            if (pref?.getLoggedInUser()?.role.equals("asha", true)) {
+                binding.btnForm1.visibility = View.VISIBLE
+                binding.btnForm2.visibility = View.VISIBLE
+                binding.btnForm3.visibility = View.VISIBLE
+            } else {
+                binding.btnForm1.visibility = View.INVISIBLE
+                binding.btnForm2.visibility = View.INVISIBLE
+                binding.btnForm3.visibility = View.INVISIBLE
             }
+
 
 
 
@@ -189,7 +182,14 @@ class BenListAdapterForForm(
         BenViewHolder.from(parent)
 
     override fun onBindViewHolder(holder: BenViewHolder, position: Int) {
-        holder.bind(getItem(position), clickListener, btnText = formButtonText, role = role, pref = pref,isGeneralForm = isGeneralForm ?:false)
+        holder.bind(
+            getItem(position),
+            clickListener,
+            btnText = formButtonText,
+            role = role,
+            pref = pref,
+            isGeneralForm = isGeneralForm ?: false
+        )
     }
 
 

@@ -54,7 +54,7 @@
                 <ImageView
                     android:id="@+id/iv_hh_logo"
                     android:layout_width="wrap_content"
-                    android:layout_height="0dp"
+                    android:layout_height="wrap_content"
                     android:paddingVertical="@dimen/padding_normal"
                     android:src="@drawable/ic__hh"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -94,7 +94,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintTop_toTopOf="@+id/tv_hh_id"
-                    app:syncState="@{ben.syncState}"
+                    app:syncStateForBen="@{ben.syncState}"
                     tools:src="@drawable/ic_synced" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -197,6 +197,14 @@
                         layout="@layout/rv_item_ben_element"
                         app:field="@{ben.age}"
                         app:fieldTitle="@{@string/tv_age_ph}" />
+                    <include
+                        android:id="@+id/rl_date_of_death"
+                        style="@style/rv_item_ben_fields"
+                        layout="@layout/rv_item_ben_element"
+                        android:visibility="@{ben.dateOfDeath == null || ben.dateOfDeath.isEmpty() ? View.INVISIBLE : View.VISIBLE}"
+                        app:field="@{ben.dateOfDeath}"
+                        app:fieldTitle="@{@string/tv_date_of_death}" />
+
                 </LinearLayout>
 
                 <LinearLayout

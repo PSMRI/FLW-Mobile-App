@@ -18,8 +18,8 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.BenListAdapterForForm
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentGdrListBinding
+import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.death_reports.mdsr.MdsrListFragmentDirections
-import org.piramalswasthya.sakhi.ui.home_activity.death_reports.nmdsr.NmdsrListViewModel
 import javax.inject.Inject
 import kotlin.getValue
 
@@ -96,5 +96,20 @@ class GdrListFragment : Fragment() {
     }
 
 
+
+    override fun onStart() {
+        super.onStart()
+        activity?.let {
+            (it as HomeActivity).updateActionBar(
+                R.drawable.ic__death,
+                getString(R.string.general_deaths)
+            )
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
 
 }
