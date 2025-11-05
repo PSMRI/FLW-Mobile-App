@@ -81,11 +81,12 @@ class ChildListFragment : Fragment() {
         }
 
         benAdapter = ChildListAdapter(
-            ChildListAdapter.ChildListClickListener { benId, hhId ->
+            ChildListAdapter.ChildListClickListener { benId, hhId,dob ->
                 findNavController().navigate(
                     ChildListFragmentDirections.actionChildListFragmentToChildMonthListFragment(
                         hhId,
-                        benId
+                        benId,
+                        dob
                     )
                 )
             }

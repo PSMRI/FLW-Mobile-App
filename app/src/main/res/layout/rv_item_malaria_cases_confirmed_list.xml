@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="android.view.View" />
+
         <variable
             name="benWithMalariaConfirmed"
             type="org.piramalswasthya.sakhi.model.BenWithMalariaConfirmedDomain" />
@@ -64,7 +66,16 @@
                         app:drawableLeftCompat="@drawable/ic__hh"
                         app:drawableTint="?attr/colorPrimary"
                         tools:text="Hello Meister" />
-
+                    <ImageView
+                        android:id="@+id/iv_isDeath"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center_vertical|end"
+                        android:layout_marginHorizontal="@dimen/padding_small"
+                        android:visibility="@{benWithMalariaConfirmed.ben.isDeath == true ? View.VISIBLE : View.GONE}"
+                        android:contentDescription="@string/iv_death_indicator"
+                        android:src="@drawable/ic_death"
+                        />
                     <ImageView
                         android:id="@+id/iv_malaria_status"
                         android:layout_width="24dp"

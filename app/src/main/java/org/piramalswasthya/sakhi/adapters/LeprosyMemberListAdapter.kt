@@ -48,7 +48,7 @@ class LeprosyMemberListAdapter(
                 binding.cvContent.visibility = View.GONE
             }*/
 
-            binding.ivSyncState.visibility = if (item.leprosy == null) View.INVISIBLE else View.VISIBLE
+            binding.ivSyncState.visibility = if (item.leprosy == null) View.GONE else View.VISIBLE
 
             if (item.ben.spouseName == "Not Available" && item.ben.fatherName == "Not Available") {
                 binding.father = true
@@ -77,7 +77,15 @@ class LeprosyMemberListAdapter(
                     binding.husband = false
                 }
             }
-
+            if ( item.leprosy != null && item.ben.isDeath) {
+                binding.btnFormTb.visibility = View.VISIBLE
+            } else if (item.leprosy == null && !item.ben.isDeath){
+                binding.btnFormTb.visibility = View.VISIBLE
+            } else if (item.leprosy != null && !item.ben.isDeath){
+                binding.btnFormTb.visibility = View.VISIBLE
+            } else {
+                binding.btnFormTb.visibility = View.INVISIBLE
+            }
             binding.btnFormTb.text = if (item.leprosy == null) "Register" else "View"
             binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.leprosy == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
             binding.clickListener = clickListener

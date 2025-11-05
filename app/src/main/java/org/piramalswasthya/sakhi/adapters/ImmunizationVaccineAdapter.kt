@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -7,8 +8,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.databinding.RvItemImmVaccineBinding
 import org.piramalswasthya.sakhi.model.VaccineDomain
+import org.piramalswasthya.sakhi.model.VaccineState
 
-class ImmunizationVaccineAdapter(private val clickListener: ImmunizationCategoryAdapter.ImmunizationIconClickListener? = null) :
+class ImmunizationVaccineAdapter(var isDeath: Boolean,private val clickListener: ImmunizationCategoryAdapter.ImmunizationIconClickListener? = null) :
     ListAdapter<VaccineDomain, ImmunizationVaccineAdapter.IconViewHolder>(
         ImmunizationIconDiffCallback
     ) {
@@ -35,11 +37,13 @@ class ImmunizationVaccineAdapter(private val clickListener: ImmunizationCategory
 
         fun bind(
             item: VaccineDomain,
-            clickListener: ImmunizationCategoryAdapter.ImmunizationIconClickListener?
+            clickListener: ImmunizationCategoryAdapter.ImmunizationIconClickListener?,isDeath: Boolean
         ) {
             binding.vaccine = item
+            binding.isDeath = isDeath
             binding.clickListener = clickListener
             binding.executePendingBindings()
+           
         }
 
     }
@@ -48,6 +52,6 @@ class ImmunizationVaccineAdapter(private val clickListener: ImmunizationCategory
         IconViewHolder.from(parent)
 
     override fun onBindViewHolder(holder: IconViewHolder, position: Int) {
-        holder.bind(getItem(position), clickListener)
+        holder.bind(getItem(position), clickListener,isDeath)
     }
 }
