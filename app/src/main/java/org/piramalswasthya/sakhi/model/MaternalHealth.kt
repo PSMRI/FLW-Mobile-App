@@ -192,7 +192,7 @@ data class BenWithPwrCache(
             benId = ben.benId,
             hhId = ben.hhId,
             regDate = BenBasicCache.dateFormat.format(Date(ben.regDate)),
-            benName = ben.benName,
+            benName = ben.benName.orEmpty(),
             benSurname = ben.benSurname ?: "",
             gender = ben.gender.name,
             dob = ben.dob,

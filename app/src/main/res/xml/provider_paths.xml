@@ -9,4 +9,5 @@
     <external-path
         name="external_files"
         path="." />
+    <files-path name="crash_files" path="crashes/" />
 </paths>

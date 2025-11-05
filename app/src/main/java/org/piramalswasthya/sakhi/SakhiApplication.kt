@@ -8,6 +8,7 @@ import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.google.firebase.FirebaseApp
 import dagger.hilt.android.HiltAndroidApp
+import org.piramalswasthya.sakhi.helpers.CrashHandler
 import org.piramalswasthya.sakhi.utils.KeyUtils
 import timber.log.Timber
 import javax.inject.Inject
@@ -37,6 +38,8 @@ class SakhiApplication : Application(), Configuration.Provider {
         KeyUtils.abhaClientSecret()
         KeyUtils.abhaTokenUrl()
         FirebaseApp.initializeApp(this)
+
+        Thread.setDefaultUncaughtExceptionHandler(CrashHandler(applicationContext))
     }
 
 }

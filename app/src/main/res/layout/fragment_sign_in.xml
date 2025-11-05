@@ -1,289 +1,266 @@
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_login"
+    android:fillViewport="true"
+    android:fitsSystemWindows="true"
     tools:context=".ui.login_activity.sign_in.SignInFragment">
 
 
-    <LinearLayout
-        android:id="@+id/ll_logo"
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/cv_login_item_container"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="spread_inside">
-        <ImageView
-            android:id="@+id/iv_nhm_logo"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_marginTop="40dp"
-            android:contentDescription="@string/cd_assam_nhm_logo"
-            tools:src="@drawable/logo_circle"
-            />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-            android:text="@string/app_native_name"/>
-
-    </LinearLayout>
+        tools:context=".ui.login_activity.sign_in.SignInFragment">
 
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cv_login_item_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_huge"
-        android:elevation="@dimen/padding_normal"
-        app:cardBackgroundColor="?attr/colorOnPrimary"
-        app:cardCornerRadius="@dimen/padding_wide"
-        app:cardElevation="@dimen/padding_wide"
-        app:layout_constraintBottom_toTopOf="@+id/textView12"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ll_logo">
-
-        <FrameLayout
+        <LinearLayout
+            android:id="@+id/ll_logo"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="@+id/cv_login_item_container"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="spread_inside">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/cl_content"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/padding_wide">
+            <ImageView
+                android:id="@+id/iv_nhm_logo"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginTop="40dp"
+                android:contentDescription="@string/cd_assam_nhm_logo"
+                tools:src="@drawable/logo_circle" />
 
-                <!--                    <com.google.android.material.textview.MaterialTextView-->
-                <!--                        android:id="@+id/tv_title"-->
-                <!--                        android:layout_width="match_parent"-->
-                <!--                        android:layout_height="wrap_content"-->
-                <!--                        android:paddingTop="@dimen/padding_normal"-->
-                <!--                        android:paddingBottom="@dimen/padding_normal"-->
-                <!--                        android:text="@string/tv_text_welcome"-->
-                <!--                        android:textAppearance="@style/TextAppearance.Material3.TitleLarge"-->
-                <!--                        app:layout_constraintTop_toTopOf="parent" />-->
-
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/tv_sign_in"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/padding_normal"
-                    android:paddingBottom="@dimen/padding_normal"
-                    android:text="@string/tv_text_sign_in"
-                    android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
-                    android:textStyle="normal"
-                    android:gravity="center"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/tv_lang"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:padding="@dimen/padding_normal"
-                    android:text="@string/tv_text_select_language"
-                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                    app:layout_constraintTop_toBottomOf="@id/tv_sign_in" />
-
-                <RadioGroup
-                    android:id="@+id/rg_lang_select"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:paddingStart="@dimen/padding_wide"
-                    android:paddingEnd="@dimen/padding_wide"
-                    android:weightSum="3"
-                    app:layout_constraintTop_toBottomOf="@id/tv_lang">
-
-                    <com.google.android.material.radiobutton.MaterialRadioButton
-                        android:id="@+id/rb_eng"
-                        style="@style/radio_item_lang"
-                        android:text="@string/text_english" />
-
-                    <com.google.android.material.radiobutton.MaterialRadioButton
-                        android:id="@+id/rb_hindi"
-                        style="@style/radio_item_lang"
-                        android:visibility="visible"
-                        android:text="@string/text_hindi" />
-
-                    <com.google.android.material.radiobutton.MaterialRadioButton
-                        android:id="@+id/rb_assamese"
-                        style="@style/radio_item_lang"
-                        android:visibility="gone"
-                        android:text="@string/text_assamese" />
-
-                </RadioGroup>
-
-                <!--                    <com.google.android.material.button.MaterialButtonToggleGroup-->
-                <!--                        android:id="@+id/toggleStates"-->
-                <!--                        style="?attr/materialButtonToggleGroupStyle"-->
-                <!--                        android:layout_width="wrap_content"-->
-                <!--                        android:layout_height="wrap_content"-->
-                <!--                        app:layout_constraintEnd_toEndOf="parent"-->
-                <!--                        app:layout_constraintStart_toStartOf="parent"-->
-                <!--                        app:layout_constraintTop_toBottomOf="@+id/rg_lang_select"-->
-                <!--                        app:selectionRequired="true"-->
-                <!--                        app:singleSelection="true">-->
-
-                <!--                        <com.google.android.material.button.MaterialButton-->
-                <!--                            android:id="@+id/tbtn_bihar"-->
-                <!--                            style="?attr/materialButtonOutlinedStyle"-->
-                <!--                            android:layout_width="wrap_content"-->
-                <!--                            android:layout_height="wrap_content"-->
-                <!--                            android:text="Bihar" />-->
-
-                <!--                        <com.google.android.material.button.MaterialButton-->
-                <!--                            android:id="@+id/tbtn_assam"-->
-                <!--                            style="?attr/materialButtonOutlinedStyle"-->
-                <!--                            android:layout_width="wrap_content"-->
-                <!--                            android:layout_height="wrap_content"-->
-                <!--                            android:text="Assam" />-->
-                <!--                    </com.google.android.material.button.MaterialButtonToggleGroup>-->
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/til_username"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/til_username_hint_text"
-                    android:paddingTop="@dimen/padding_normal"
-
-                    android:paddingBottom="@dimen/padding_normal"
-                    app:endIconTint="?attr/colorOnPrimary"
-
-                    app:layout_constraintTop_toBottomOf="@id/rg_lang_select"
-                    tools:layout_editor_absoluteX="16dp">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/et_username"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:drawableEnd="@drawable/ic_person"
-                        android:drawablePadding="@dimen/padding_normal"
-                        android:singleLine="true"
-                        android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/til_password"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:longClickable="false"
-                    android:hint="@string/til_password_hint_text"
-                    android:paddingTop="@dimen/padding_normal"
-                    android:paddingBottom="@dimen/padding_normal"
-                    app:layout_constraintTop_toBottomOf="@id/til_username"
-                    app:passwordToggleEnabled="true">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/et_password"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:drawablePadding="@dimen/padding_normal"
-                        android:inputType="textPassword"
-                        android:longClickable="false"
-                        android:textIsSelectable="false"
-                        android:singleLine="true"
-                        android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/tv_error"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-                    android:textColor="@android:color/holo_red_light"
-                    android:visibility="gone"
-                    app:layout_constraintTop_toBottomOf="@id/til_password"
-                    tools:text="Hello"
-                    tools:visibility="visible" />
-
-                <CheckBox
-                    android:id="@+id/cb_remember"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/cb_login_remember_me_text"
-                    android:checked="true"
-                    app:layout_constraintTop_toBottomOf="@id/tv_error" />
-
-                <TextView
-                    android:id="@+id/tvDeleteAccount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/delete_my_account"
-                    android:textColor="@color/md_theme_light_shadow"
-                    android:fontFamily="@font/roboto_regular"
-                    android:paddingBottom="@dimen/_3sdp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/cb_remember"/>
-
-                <Button
-                    android:id="@+id/tv_forgot_password"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/padding_normal"
-                    android:backgroundTint="?attr/colorOnPrimary"
-                    android:gravity="center"
-                    android:padding="@dimen/padding_normal"
-                    android:text="@string/btn_login_forgot_password_text"
-                    android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-                    android:visibility="gone"
-                    app:layout_constraintTop_toBottomOf="@id/tvDeleteAccount" />
-
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_login"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_margin="@dimen/padding_normal"
-                    android:padding="@dimen/padding_normal"
-                    android:text="@string/btn_login_text"
-                    android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-                    app:layout_constraintTop_toBottomOf="@id/tv_forgot_password" />
-
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <ProgressBar
-                android:id="@+id/pb_sign_in"
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:indeterminateTint="?attr/colorPrimary"
-                android:visibility="gone" />
-        </FrameLayout>
+                android:text="@string/app_native_name"
+                android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
 
-    </androidx.cardview.widget.CardView>
+        </LinearLayout>
 
-    <TextView
-        android:id="@+id/textView12"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/padding_wide"
-        android:text="@string/pwr_by_text"
-        android:lineSpacingMultiplier="1.5"
-        android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
-        android:textColor="?attr/colorOnPrimary"
-        android:gravity="center"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-<!--    app:layout_constraintTop_toBottomOf="@+id/cv_login_item_container"-->
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cv_login_item_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_huge"
+            android:elevation="@dimen/padding_normal"
+            app:cardBackgroundColor="?attr/colorOnPrimary"
+            app:cardCornerRadius="@dimen/padding_wide"
+            app:cardElevation="@dimen/padding_wide"
+            app:layout_constraintBottom_toTopOf="@+id/textView12"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ll_logo">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/padding_wide">
+
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/tv_sign_in"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:paddingTop="@dimen/padding_normal"
+                        android:paddingBottom="@dimen/padding_normal"
+                        android:text="@string/tv_text_sign_in"
+                        android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
+                        android:textStyle="normal"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tv_lang"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:padding="@dimen/padding_normal"
+                        android:text="@string/tv_text_select_language"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                        app:layout_constraintTop_toBottomOf="@id/tv_sign_in" />
+
+                    <RadioGroup
+                        android:id="@+id/rg_lang_select"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:paddingStart="@dimen/padding_wide"
+                        android:paddingEnd="@dimen/padding_wide"
+                        android:weightSum="3"
+                        app:layout_constraintTop_toBottomOf="@id/tv_lang">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/rb_eng"
+                            style="@style/radio_item_lang"
+                            android:text="@string/text_english" />
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/rb_hindi"
+                            style="@style/radio_item_lang"
+                            android:text="@string/text_hindi"
+                            android:visibility="visible" />
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/rb_assamese"
+                            style="@style/radio_item_lang"
+                            android:text="@string/text_assamese"
+                            android:visibility="gone" />
+
+                    </RadioGroup>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_username"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/til_username_hint_text"
+                        android:paddingTop="@dimen/padding_normal"
+
+                        android:paddingBottom="@dimen/padding_normal"
+                        app:endIconTint="?attr/colorOnPrimary"
+
+                        app:layout_constraintTop_toBottomOf="@id/rg_lang_select"
+                        tools:layout_editor_absoluteX="16dp">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/et_username"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:drawableEnd="@drawable/ic_person"
+                            android:drawablePadding="@dimen/padding_normal"
+                            android:singleLine="true"
+                            android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_password"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/til_password_hint_text"
+                        android:longClickable="false"
+                        android:paddingTop="@dimen/padding_normal"
+                        android:paddingBottom="@dimen/padding_normal"
+                        app:layout_constraintTop_toBottomOf="@id/til_username"
+                        app:passwordToggleEnabled="true">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/et_password"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:drawablePadding="@dimen/padding_normal"
+                            android:inputType="textPassword"
+                            android:longClickable="false"
+                            android:singleLine="true"
+                            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                            android:textIsSelectable="false" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/tv_error"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                        android:textColor="@android:color/holo_red_light"
+                        android:visibility="gone"
+                        app:layout_constraintTop_toBottomOf="@id/til_password"
+                        tools:text="Hello"
+                        tools:visibility="visible" />
+
+                    <CheckBox
+                        android:id="@+id/cb_remember"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="@string/cb_login_remember_me_text"
+                        app:layout_constraintTop_toBottomOf="@id/tv_error" />
+
+                    <TextView
+                        android:id="@+id/tvDeleteAccount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/roboto_regular"
+                        android:paddingBottom="@dimen/_3sdp"
+                        android:text="@string/delete_my_account"
+                        android:textColor="@color/md_theme_light_shadow"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/cb_remember" />
+
+                    <Button
+                        android:id="@+id/tv_forgot_password"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/padding_normal"
+                        android:backgroundTint="?attr/colorOnPrimary"
+                        android:gravity="center"
+                        android:padding="@dimen/padding_normal"
+                        android:text="@string/btn_login_forgot_password_text"
+                        android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+                        android:visibility="gone"
+                        app:layout_constraintTop_toBottomOf="@id/tvDeleteAccount" />
+
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_login"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_margin="@dimen/padding_normal"
+                        android:padding="@dimen/padding_normal"
+                        android:text="@string/btn_login_text"
+                        android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+                        app:layout_constraintTop_toBottomOf="@id/tv_forgot_password" />
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <ProgressBar
+                    android:id="@+id/pb_sign_in"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:indeterminateTint="?attr/colorPrimary"
+                    android:visibility="gone" />
+            </FrameLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/textView12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:lineSpacingMultiplier="1.5"
+            android:padding="@dimen/padding_wide"
+            android:text="@string/pwr_by_text"
+            android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+            android:textColor="?attr/colorOnPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+        <!--    app:layout_constraintTop_toBottomOf="@+id/cv_login_item_container"-->
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>
+
