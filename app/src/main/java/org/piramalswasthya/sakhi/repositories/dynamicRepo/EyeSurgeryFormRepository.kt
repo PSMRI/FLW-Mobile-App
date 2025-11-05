@@ -162,8 +162,8 @@ class EyeSurgeryFormRepository @Inject constructor(
     suspend fun loadFormResponseJson(benId: Long): String? =
         jsonResponseDao.getFormResponse(benId)?.formDataJson
 
-    suspend fun getUnsyncedForms(formId: String): List<EyeSurgeryFormResponseJsonEntity> =
-        jsonResponseDao.getUnsyncedForms(formId)
+    suspend fun getUnsyncedForms(formName: String): List<EyeSurgeryFormResponseJsonEntity> =
+        jsonResponseDao.getUnsyncedForms(formName)
 
     suspend fun syncFormToServer(userName: String,formName: String, form: EyeSurgeryFormResponseJsonEntity): Boolean {
         return try {

@@ -11,4 +11,5 @@ object FormConstants {
     const val EYE_SURGERY_FORM_NAME = "eye_surgery"
     const val HBYC_FORM_ID  = "hbyc_form_001"
     const val EYE_SURGERY_FORM_ID  = "eye_checkup_form_001"
+    const val IFA_DISTRIBUTION_FORM_ID  = "ifa_distribution_form"
 }

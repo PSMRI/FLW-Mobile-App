@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registrat
 import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -58,6 +59,7 @@ class EyeSurgeryFormFragment : Fragment() {
     private var hhId : Long = 0L
     private var benId : Long = 0L
     private var isViewMode : Boolean = false
+    private var isIFA : Boolean = false
 
 
     private val cameraLauncher =
@@ -141,12 +143,26 @@ class EyeSurgeryFormFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        EyeSurgeryFormSyncWorker.enqueue(requireContext())
+
         benId = args.benId
         hhId = args.hhId
         isViewMode = args.isViewMode
+        isIFA = args.isIFA
 
-        viewModel.loadFormSchema(benId, FormConstants.EYE_SURGERY_FORM_ID, false)
+        val formId = if (isIFA) {
+            FormConstants.IFA_DISTRIBUTION_FORM_ID
+        } else {
+            FormConstants.EYE_SURGERY_FORM_ID
+        }
+        val formName = if (isIFA) {
+            FormConstants.IFA_FORM_NAME
+        } else {
+            FormConstants.EYE_SURGERY_FORM_NAME
+        }
+
+
+        EyeSurgeryFormSyncWorker.enqueue(requireContext(), formName)
+        viewModel.loadFormSchema(benId, formId, false)
 
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         lifecycleScope.launch {

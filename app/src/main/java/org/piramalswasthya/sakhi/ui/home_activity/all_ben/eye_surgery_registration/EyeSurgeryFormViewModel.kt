@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registration
 
     import android.content.Context
+    import android.util.Log
     import androidx.lifecycle.LiveData
     import androidx.lifecycle.MutableLiveData
     import androidx.lifecycle.ViewModel
@@ -64,7 +65,7 @@ package org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registrat
             viewMode: Boolean
         ) {
             this.isViewMode = viewMode
-
+            Log.i("FormIdFromFragmentOne", "loadFormSchema: $formId")
             loadSyncedVisitList(benId)
 
             viewModelScope.launch {
@@ -174,7 +175,7 @@ package org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registrat
 
                 loadSyncedVisitList(benId)
 
-                EyeSurgeryFormSyncWorker.enqueue(context)
+                EyeSurgeryFormSyncWorker.enqueue(context,formId)
                 true
             }catch (e: Exception){
                 e.printStackTrace()

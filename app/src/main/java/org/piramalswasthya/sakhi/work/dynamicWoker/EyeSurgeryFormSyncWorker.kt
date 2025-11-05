@@ -24,42 +24,51 @@ class EyeSurgeryFormSyncWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         return try {
+            val formName = inputData.getString("formName")
+
             val user = preferenceDao.getLoggedInUser()
                 ?: throw IllegalStateException("No user logged in")
 
-            val unsyncedForms = repository.getUnsyncedForms(FormConstants.EYE_SURGERY_FORM_ID)
-            for (form in unsyncedForms) {
-                if ((form.benId ?: -1) < 0) continue
-
-                try{
-                    val success = repository.syncFormToServer(user.userName,FormConstants.EYE_SURGERY_FORM_NAME,form)
-                    if (success) {
-                        repository.markFormAsSynced(form.id)
-                    }
-                }catch (e: Exception){
-                    Timber.e(e, "Failed to sync form ${form.id}")
-                }
-
+            val formIdsToSync = if (formName.isNullOrBlank()) {
+                listOf(
+                    FormConstants.EYE_SURGERY_FORM_NAME,
+//                    FormConstants.IFA_DISTRIBUTION_FORM_ID,
+                )
+            } else {
+                listOf(formName)
             }
 
-            val request = HBNCVisitRequest(
-                fromDate = HelperUtil.getCurrentDate(Konstants.defaultTimeStamp),
-                toDate = HelperUtil.getCurrentDate(),
-                pageNo = 0,
-                ashaId = user.userId
-            )
+            for (formName in formIdsToSync) {
+                val unsyncedForms = repository.getUnsyncedForms(formName)
 
-            val response = repository.getAllFormVisits(FormConstants.EYE_SURGERY_FORM_NAME,request)
-            if (response.isSuccessful) {
-                val visitList = response.body()?.data.orEmpty()
-                repository.saveDownloadedVisitList(visitList, FormConstants.EYE_SURGERY_FORM_ID)
-            } else {
-                if (response.code() >= 500) {
+                for (form in unsyncedForms) {
+                    if ((form.benId ?: -1) < 0) continue
+                    try {
+                        val success = repository.syncFormToServer(user.userName, formName, form)
+                        if (success) repository.markFormAsSynced(form.id)
+                    } catch (e: Exception) {
+                        Timber.e(e, "Failed to sync form ${form.id}")
+                    }
+                }
+
+                val request = HBNCVisitRequest(
+                    fromDate = HelperUtil.getCurrentDate(Konstants.defaultTimeStamp),
+                    toDate = HelperUtil.getCurrentDate(),
+                    pageNo = 0,
+                    ashaId = user.userId
+                )
+
+                val response = repository.getAllFormVisits(formName, request)
+                if (response.isSuccessful) {
+                    val visitList = response.body()?.data.orEmpty()
+                    repository.saveDownloadedVisitList(visitList, formName)
+                } else if (response.code() >= 500) {
                     throw IOException("Server error: ${response.code()}")
                 }
             }
 
             Result.success()
+
         } catch (e: IllegalStateException) {
             Timber.e(e, "FormSyncWorker failed: No user logged in")
             Result.failure()
@@ -68,21 +77,24 @@ class EyeSurgeryFormSyncWorker @AssistedInject constructor(
             Result.retry()
         } catch (e: Exception) {
             Timber.e(e, "FormSyncWorker failed with unexpected error")
-            if (runAttemptCount < 3) {
-                Result.retry()
-            } else {
-                Result.failure()
-            }
+            if (runAttemptCount < 3) Result.retry() else Result.failure()
         }
     }
 
     companion object {
-        fun enqueue(context: Context) {
+        fun enqueue(context: Context, formName: String? = null) {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
 
+            val inputData = if (!formName.isNullOrBlank()) {
+                workDataOf("formName" to formName)
+            } else {
+                Data.EMPTY
+            }
+
             val request = OneTimeWorkRequestBuilder<EyeSurgeryFormSyncWorker>()
+                .setInputData(inputData)
                 .setConstraints(constraints)
                 .build()
 
