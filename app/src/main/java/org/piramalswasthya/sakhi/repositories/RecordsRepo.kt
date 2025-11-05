@@ -199,6 +199,9 @@ class RecordsRepo @Inject constructor(
     val gdrList = benDao.getAllGeneralDeathsList(selectedVillage)
         .map { list ->list.map{ it.asBenBasicDomainModelForCdrForm()} }
 
+    fun getGeneralDeathCount() = benDao.getAllGeneralDeathsCount(selectedVillage)
+
+
     val nmdrList = benDao.getAllNonMaternalDeathsList(selectedVillage)
         .map {list -> list.map{it.asBenBasicDomainModelForCdrForm()}}
 
@@ -335,6 +338,9 @@ class RecordsRepo @Inject constructor(
     fun getPregnantWomenListCount() = benDao.getAllPregnancyWomenListCount(selectedVillage)
     fun getAbortionPregnantWomanCount() = benDao.getAllAbortionWomenListCount(selectedVillage)
     fun getHighRiskWomenCount() = benDao.getHighRiskWomenCount(selectedVillage)
+    fun getMaternalDeathCount() = benDao.getAllNonMaternalDeathsCount(selectedVillage)
+    fun getNonMaternalDeathCount() = benDao.getAllNonMaternalDeathsCount(selectedVillage)
+    fun getChildDeathCount() = benDao.getAllCDRListCount(selectedVillage)
 
     fun getRegisteredPmsmaWomenList() =
         benDao.getAllRegisteredPmsmaWomenList(selectedVillage)

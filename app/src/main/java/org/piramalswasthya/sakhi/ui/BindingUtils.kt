@@ -318,6 +318,24 @@ fun ImageView.setSyncState(syncState: SyncState?) {
     }
 }
 
+@BindingAdapter("syncStateForBen")
+fun ImageView.setSyncStateForBen(syncState: SyncState?) {
+    syncState?.let {
+
+        val drawable = when (it) {
+            SyncState.UNSYNCED -> R.drawable.ic_unsynced
+            SyncState.SYNCING -> R.drawable.ic_syncing
+            SyncState.SYNCED -> R.drawable.ic_synced
+        }
+        setImageResource(drawable)
+        isClickable = it == SyncState.UNSYNCED
+        if (it == SyncState.SYNCING) startAnimation(rotate)
+    } ?: run {
+        visibility = View.INVISIBLE
+    }
+}
+
+
 
 @BindingAdapter("benImage")
 fun ImageView.setBenImage(uriString: String?) {
