@@ -12,6 +12,7 @@ import org.piramalswasthya.sakhi.database.room.dao.HouseholdDao
 import org.piramalswasthya.sakhi.database.room.dao.ImmunizationDao
 import org.piramalswasthya.sakhi.database.room.dao.MaternalHealthDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.model.BenBasicDomainForForm
 import org.piramalswasthya.sakhi.model.BenWithAncListDomain
 import org.piramalswasthya.sakhi.model.filterMdsr
 import java.util.Calendar
@@ -195,6 +196,15 @@ class RecordsRepo @Inject constructor(
         .map { list -> list.map { it.asBenBasicDomainModelForCdrForm() } }
 //    val cdrListCount = cdrList.map { it.size }
 
+    val gdrList = benDao.getAllGeneralDeathsList(selectedVillage)
+        .map { list ->list.map{ it.asBenBasicDomainModelForCdrForm()} }
+
+    fun getGeneralDeathCount() = benDao.getAllGeneralDeathsCount(selectedVillage)
+
+
+    val nmdrList = benDao.getAllNonMaternalDeathsList(selectedVillage)
+        .map {list -> list.map{it.asBenBasicDomainModelForCdrForm()}}
+
     val mdsrList = benDao.getAllMDSRList(selectedVillage)
         .map { list -> list.filterMdsr() }
 
@@ -328,6 +338,9 @@ class RecordsRepo @Inject constructor(
     fun getPregnantWomenListCount() = benDao.getAllPregnancyWomenListCount(selectedVillage)
     fun getAbortionPregnantWomanCount() = benDao.getAllAbortionWomenListCount(selectedVillage)
     fun getHighRiskWomenCount() = benDao.getHighRiskWomenCount(selectedVillage)
+    fun getMaternalDeathCount() = benDao.getAllMDSRCount(selectedVillage)
+    fun getNonMaternalDeathCount() = benDao.getAllNonMaternalDeathsCount(selectedVillage)
+    fun getChildDeathCount() = benDao.getAllCDRListCount(selectedVillage)
 
     fun getRegisteredPmsmaWomenList() =
         benDao.getAllRegisteredPmsmaWomenList(selectedVillage)
