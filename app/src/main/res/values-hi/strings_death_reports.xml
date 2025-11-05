@@ -22,5 +22,5 @@
     <string name="str_name_of_asha">आशा का हस्ताक्षर/नाम</string>
     <string name="str_date_of_notification">सूचना की तिथि</string>
     <string name="str_hospital">अस्पताल</string>
-    <string name="str_transit">स्थानांतरण के दौरान</string>
+    <string name="str_transit">यात्रा के दौरान</string>
 </resources>
