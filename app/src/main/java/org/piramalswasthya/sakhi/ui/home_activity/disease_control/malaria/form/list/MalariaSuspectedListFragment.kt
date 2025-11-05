@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.ui.home_activity.disease_control.malaria.form.list
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -47,14 +48,23 @@ class MalariaSuspectedListFragment : Fragment() {
         binding.llSearch.visibility = View.GONE
         if (viewModel.isFromDisease == 1 && viewModel.diseaseType == IconDataset.Disease.MALARIA.toString()) {
             binding.switchButton.visibility = View.VISIBLE
+            binding.switchBtnMosquito.visibility = View.VISIBLE
         } else if(viewModel.isFromDisease == 1) {
             binding.switchButton.visibility = View.GONE
+            binding.switchBtnMosquito.visibility = View.GONE
         } else {
             binding.switchButton.visibility = View.GONE
+            binding.switchBtnMosquito.visibility = View.GONE
         }
         binding.switchButton.text = if (binding.switchButton.isChecked) "IRS ON" else "IRS OFF"
         binding.switchButton.setOnCheckedChangeListener { _, isChecked ->
             binding.switchButton.text = if (isChecked) "IRS ON" else "IRS OFF"
+            binding.llContent.visibility = if (isChecked) View.VISIBLE else View.GONE
+        }
+
+        binding.switchBtnMosquito.text = if (binding.switchBtnMosquito.isChecked) "Mosquito Net ON" else "Mosquito Net OFF"
+        binding.switchBtnMosquito.setOnCheckedChangeListener { _, isChecked ->
+            binding.switchBtnMosquito.text = if (isChecked) "Mosquito Net ON" else "Mosquito Net OFF"
             binding.llContent.visibility = if (isChecked) View.VISIBLE else View.GONE
         }
 
@@ -68,9 +78,6 @@ class MalariaSuspectedListFragment : Fragment() {
             },
         )
         binding.rvAny.adapter = benAdapter
-
-
-
 
         lifecycleScope.launch {
             viewModel.allBenList.collect {
@@ -153,6 +160,7 @@ class MalariaSuspectedListFragment : Fragment() {
             false
         }
     }
+
     override fun onStart() {
         super.onStart()
         activity?.let {
@@ -162,9 +170,4 @@ class MalariaSuspectedListFragment : Fragment() {
             )
         }
     }
-
-
-
-
-
 }
