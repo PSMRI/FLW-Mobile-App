@@ -20,7 +20,7 @@
     <string name="icon_title_ec">पात्र युगल सूची</string>
     <string name="icon_title_mc">माता की देखभाल</string>
     <string name="icon_title_cc">बच्चे की देखभाल</string>
-    <string name="icon_title_ncd">एनसीडी</string>
+    <string name="icon_title_ncd">गैर संक्रामक रोग</string>
     <string name="icon_title_imm">टीकाकरण नियत सूची</string>
     <string name="icon_title_hrp">एचआरपी मामले</string>
     <string name="icon_title_gop">सामान्य वाह्य रोगी सूची</string>
@@ -36,10 +36,10 @@
     <string name="icon_title_pncmc">प्रसवोत्तर माँ की सूची</string>
     <string name="icon_title_rmc">प्रजनन आयु सूची</string>
 
-    <string name="icon_title_ncd_list">एनसीडी सूची</string>
-    <string name="icon_title_ncd_eligible_list">एनसीडी पात्र सूची</string>
-    <string name="icon_title_ncd_non_eligible_list">एनसीडी गैर प्राथमिकता सूची</string>
-    <string name="icon_title_ncd_priority_list">एनसीडी प्राथमिकता सूची</string>
+    <string name="icon_title_ncd_list">गैर संक्रामक रोग सूची</string>
+    <string name="icon_title_ncd_eligible_list">गैर संक्रामक रोग पात्र सूची</string>
+    <string name="icon_title_ncd_non_eligible_list">गैर संक्रामक रोग गैर प्राथमिकता सूची</string>
+    <string name="icon_title_ncd_priority_list">गैर संक्रामक रोग प्राथमिकता सूची</string>
 
 
     <string name="icon_title_sr">सर्वेक्षण प्रपत्र</string>
