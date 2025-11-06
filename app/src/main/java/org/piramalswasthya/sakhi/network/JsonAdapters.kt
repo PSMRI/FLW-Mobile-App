@@ -1,7 +1,6 @@
 package org.piramalswasthya.sakhi.network
 
 import android.os.Parcelable
-import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.model.HRPMicroBirthPlanCache
@@ -21,7 +20,6 @@ import org.piramalswasthya.sakhi.model.PHCReviewMeetingCache
 import org.piramalswasthya.sakhi.model.VHNCCache
 import org.piramalswasthya.sakhi.model.VHNDCache
 
-//import org.piramalswasthya.sakhi.model.VHNDCache
 import org.piramalswasthya.sakhi.model.AESScreeningCache
 import org.piramalswasthya.sakhi.model.AdolescentHealthCache
 import org.piramalswasthya.sakhi.model.FilariaScreeningCache
@@ -30,9 +28,8 @@ import org.piramalswasthya.sakhi.model.KalaAzarScreeningCache
 import org.piramalswasthya.sakhi.model.LeprosyScreeningCache
 import org.piramalswasthya.sakhi.model.MalariaConfirmedCasesCache
 import org.piramalswasthya.sakhi.model.MalariaScreeningCache
-import org.piramalswasthya.sakhi.model.getDateTimeStringFromLong
 import org.piramalswasthya.sakhi.model.ABHAModel
-import org.piramalswasthya.sakhi.model.Gender
+import org.piramalswasthya.sakhi.model.ReferalCache
 
 @JsonClass(generateAdapter = true)
 data class D2DAuthUserRequest(
@@ -99,6 +96,12 @@ data class GetDataPaginatedRequest(
     val fromDate: String,
     val toDate: String
 )
+
+@JsonClass(generateAdapter = true)
+data class GetCBACRequest(
+    val createdBy: String,
+)
+
 
 @JsonClass(generateAdapter = true)
 data class GetDataPaginatedRequestForGeneralOPD(
@@ -1318,6 +1321,52 @@ data class AESScreeningDTO(
             otherPlaceOfDeath = otherPlaceOfDeath,
             placeOfDeath = placeOfDeath,
             followUpPoint = followUpPoint
+
+
+        )
+    }
+}
+
+
+data class NCDReferalDTO(
+    val id: Int = 0,
+    val benId: Long,
+    val referredToInstituteID: Int?,
+    val refrredToAdditionalServiceList: List<String>?,
+    val referredToInstituteName: String?,
+    val referralReason: String?,
+    val revisitDate: String,
+    val vanID: Int?,
+    val parkingPlaceID: Int?,
+    val beneficiaryRegID: Long?,
+    val benVisitID: Long?,
+    val visitCode: Long?,
+    val providerServiceMapID: Int?,
+    val createdBy: String?,
+    val isSpecialist: Boolean? = false,
+    var syncState: SyncState = SyncState.UNSYNCED,
+
+    ) {
+    fun toCache(): ReferalCache {
+        return ReferalCache(
+            id = 0,
+            benId = benId,
+            revisitDate = getLongFromDate(revisitDate),
+            referredToInstituteID = referredToInstituteID,
+            refrredToAdditionalServiceList = refrredToAdditionalServiceList,
+            referredToInstituteName = referredToInstituteName,
+            visitCode = visitCode,
+            benVisitID = benVisitID,
+            createdBy = createdBy,
+            isSpecialist = false,
+            vanID = vanID,
+            providerServiceMapID = providerServiceMapID,
+            beneficiaryRegID =  beneficiaryRegID,
+            referralReason = referralReason,
+            parkingPlaceID = parkingPlaceID,
+            syncState = SyncState.SYNCED
+
+
 
 
         )

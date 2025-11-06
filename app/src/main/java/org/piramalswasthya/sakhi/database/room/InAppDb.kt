@@ -40,6 +40,7 @@ import org.piramalswasthya.sakhi.database.room.dao.PmjayDao
 import org.piramalswasthya.sakhi.database.room.dao.MaaMeetingDao
 import org.piramalswasthya.sakhi.database.room.dao.PmsmaDao
 import org.piramalswasthya.sakhi.database.room.dao.PncDao
+import org.piramalswasthya.sakhi.database.room.dao.SaasBahuSammelanDao
 import org.piramalswasthya.sakhi.database.room.dao.ProfileDao
 import org.piramalswasthya.sakhi.database.room.dao.SyncDao
 import org.piramalswasthya.sakhi.database.room.dao.TBDao
@@ -90,11 +91,13 @@ import org.piramalswasthya.sakhi.model.PMSMACache
 import org.piramalswasthya.sakhi.model.PNCVisitCache
 import org.piramalswasthya.sakhi.model.PregnantWomanAncCache
 import org.piramalswasthya.sakhi.model.PregnantWomanRegistrationCache
+import org.piramalswasthya.sakhi.model.SaasBahuSammelanCache
 import org.piramalswasthya.sakhi.model.ProfileActivityCache
 import org.piramalswasthya.sakhi.model.TBScreeningCache
 import org.piramalswasthya.sakhi.model.TBSuspectedCache
 import org.piramalswasthya.sakhi.model.UwinCache
 import org.piramalswasthya.sakhi.model.MaaMeetingEntity
+import org.piramalswasthya.sakhi.model.ReferalCache
 import org.piramalswasthya.sakhi.model.VHNCCache
 import org.piramalswasthya.sakhi.model.Vaccine
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormResponseJsonEntity
@@ -154,12 +157,15 @@ import org.piramalswasthya.sakhi.model.VHNDCache
         //Dynamic Data
         InfantEntity::class,
         FormSchemaEntity::class,
+        SaasBahuSammelanCache::class,
+        MaaMeetingEntity::class,
         FormResponseJsonEntity::class,
         FormResponseJsonEntityHBYC::class,
-        MaaMeetingEntity::class,
         GeneralOPEDBeneficiary::class,
-        UwinCache::class
+        ReferalCache::class,
+       UwinCache::class
     ],
+  
     views = [BenBasicCache::class],
 
     version = 33, exportSchema = false
@@ -203,9 +209,12 @@ abstract class InAppDb : RoomDatabase() {
     abstract val filariaDao: FilariaDao
     abstract val profileDao: ProfileDao
     abstract val abhaGenratedDao: ABHAGenratedDao
+    abstract val saasBahuSammelanDao: SaasBahuSammelanDao
     abstract val generalOpdDao: GeneralOpdDao
     abstract val maaMeetingDao: MaaMeetingDao
     abstract val uwinDao: UwinDao
+
+    abstract val referalDao: NcdReferalDao
 
     abstract fun infantDao(): InfantDao
     abstract fun formSchemaDao(): FormSchemaDao
@@ -288,6 +297,8 @@ abstract class InAppDb : RoomDatabase() {
 
             val MIGRATION_30_31 = object : Migration(30, 31) {
                 override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("ALTER TABLE CBAC ADD COLUMN isReffered INTEGER DEFAULT 0")
+
                     // Create the new table
                     database.execSQL("""
             CREATE TABLE IF NOT EXISTS form_schema (
@@ -319,6 +330,14 @@ abstract class InAppDb : RoomDatabase() {
             }
 
 
+         /*   val MIGRATION_30_31 = object : Migration(30, 31) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+//                    database.execSQL("ALTER TABLE GENERAL_OPD_ACTIVITY ADD COLUMN village TEXT")
+
+                }
+            }
+*/
+
             val MIGRATION_29_30 = object : Migration(29, 30) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     database.execSQL("ALTER TABLE eligible_couple_tracking ADD COLUMN dischargeSummary1 TEXT")
@@ -330,6 +349,10 @@ abstract class InAppDb : RoomDatabase() {
                                 "`meetingImages` TEXT, " +
                                 "`createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `syncState` INTEGER NOT NULL)"
                     )
+                    database.execSQL("ALTER TABLE ELIGIBLE_COUPLE_REG ADD COLUMN isKitHandedOver INTEGER NOT NULL DEFAULT 0")
+                    database.execSQL("ALTER TABLE ELIGIBLE_COUPLE_REG ADD COLUMN kitHandedOverDate INTEGER")
+                    database.execSQL("ALTER TABLE ELIGIBLE_COUPLE_REG ADD COLUMN kitPhoto1 TEXT")
+                    database.execSQL("ALTER TABLE ELIGIBLE_COUPLE_REG ADD COLUMN kitPhoto2 TEXT")
                 }
             }
 
@@ -1212,9 +1235,10 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_25_26,
                         MIGRATION_26_27,
                         MIGRATION_27_28,
+
                         MIGRATION_28_29,
                         MIGRATION_29_30,
-                        MIGRATION_30_31,
+                        MIGRATION_30_31 ,
                         MIGRATION_31_32,
                         MIGRATION_32_33
                     ).build()

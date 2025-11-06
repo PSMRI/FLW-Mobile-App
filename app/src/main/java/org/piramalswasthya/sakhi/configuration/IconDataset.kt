@@ -315,8 +315,7 @@ class IconDataset @Inject constructor(
         resources.getString(R.string.phc_review),
             null,
             VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToPHCReviewListFragement()
-
-    )
+        )
         ,
         Icon(
             R.drawable.ahd,
@@ -337,14 +336,21 @@ class IconDataset @Inject constructor(
         resources.getString(R.string.maa_meeting),
         null,
         VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToAllMaaMeetingFragment()
-    )   ,
+        ),
+        Icon(
+            R.drawable.dewarming,
+            resources.getString(R.string.saas_samelan),
+            null,
+            VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToSaasBahuSammelanListFragment()
+        )
+      ,
         Icon(
             R.drawable.dewarming,
             resources.getString(R.string.u_win_session),
             null,
             VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToUwinListFragment()
-    )
-    )
+    ),)
+
 
     fun getHRPNonPregnantWomenDataset(resources: Resources) = listOf(
         Icon(
@@ -567,6 +573,12 @@ class IconDataset @Inject constructor(
             resources.getString(R.string.icon_title_ncd_non_eligible_list),
             recordsRepo.getNcdNonEligibleListCount,
             NcdFragmentDirections.actionNcdFragmentToNcdNonEligibleListFragment()
+        ),
+        Icon(
+            R.drawable.ic_ncd_noneligible,
+            resources.getString(R.string.ncd_refer_list),
+            recordsRepo.getNcdrefferedListCount,
+            NcdFragmentDirections.actionNcdFragmentToNcdReferredListFragment()
         ),
     ).apply {
         forEachIndexed { index, icon ->
