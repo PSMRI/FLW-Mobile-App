@@ -313,6 +313,9 @@
     <string name="pnc_mother_list">PNC Mother List</string>
     <string name="reproductive_age_list">Reproductive Age List</string>
     <string name="ncd_eligible_list">NCD Eligible List</string>
+    <string name="ncd_refer_form">NCD Refer Form</string>
+    <string name="ncd_refer_list">NCD Referred List</string>
+
     <string name="child_under_five_years_list">Child Under Five Years List</string>
     <string name="ncd_list">NCD List</string>
     <string name="ncd_non_eligible_list">NCD Non-Priority List</string>
@@ -473,6 +476,12 @@
     <string name="referred_date">Referred Date</string>
     <string name="referred_from">Referred From</string>
     <string name="referral_reason">Referral reason</string>
+    <string name="saas_date">Saas Bahu Sammelan Date</string>
+    <string name="saas_samelan">Saas Bahu Sammelan</string>
+    <string name="no_participent">No. of Participants Attended</string>
+    <string name="place_new">Place</string>
+    <string name="higher_healthcare_center">Higher Healthcare Center</string>
+    <string name="additional_services">Additional Services</string>
     <string name="check_sam">Check SAM</string>
     <string name="ors">ORS</string>
     <string name="ifa">IFA</string>
@@ -503,6 +512,14 @@
         <item>HRP Track</item>
         <item>HR NonPreg. Assess</item>
         <item>HR NonPreg Track</item>
+    </string-array>
+
+
+    <string-array name="place_array">
+        <item>HWC</item>
+        <item>Anganwadi Centre</item>
+        <item>Community center</item>
+
     </string-array>
     <!-- Eligible couple registration -->
     <string-array name="ecr_gender_array">
