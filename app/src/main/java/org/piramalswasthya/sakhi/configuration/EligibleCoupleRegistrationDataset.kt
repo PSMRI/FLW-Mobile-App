@@ -197,7 +197,7 @@ class EligibleCoupleRegistrationDataset(
     )
 
     private val nayiPahelKitHandOver = FormElement(
-        id = 73,
+        id = 78,
         inputType = RADIO,
         title = resources.getString(R.string.ecrdset_is_nai_pahel_kit_handover),
         arrayId = -1,
@@ -1088,21 +1088,19 @@ class EligibleCoupleRegistrationDataset(
             noOfLiveChildren.value = ecCache.noOfLiveChildren.toString()
             numMale.value = ecCache.noOfMaleChildren.toString()
             numFemale.value = ecCache.noOfFemaleChildren.toString()
-            nayiPahelKitHandOver.value = if (ecCache.isKitHandedOver!!) "Yes" else "No"
-            if(nayiPahelKitHandOver.value.equals("yes", ignoreCase = true)) {
+            val isKitHandedOver = ecCache.isKitHandedOver == true
+            nayiPahelKitHandOver.value = if (isKitHandedOver) "Yes" else "No"
+            if (isKitHandedOver) {
                 list.addAll(
                     list.indexOf(nayiPahelKitHandOver) + 1,
                     listOf(kithandOverDate, ashaPhotoTitle,kitPhotoUploadOne, kitPhotoUploadTwo)
                 )
-                try {
-                    kithandOverDate.value = getDateFromLong(ecCache.kitHandedOverDate!!)
-                    kitPhotoUploadOne.value = ecCache.kitPhoto1
-                    kitPhotoUploadTwo.value = ecCache.kitPhoto2
-
-                } catch (e: Exception) {
-
-                }
-
+                ecCache.kitHandedOverDate?.let { kithandOverDate.value = getDateFromLong(it) }
+                kitPhotoUploadOne.value = ecCache.kitPhoto1
+                kitPhotoUploadTwo.value = ecCache.kitPhoto2
+            } else {
+                kitPhotoUploadOne.value = null
+                kitPhotoUploadTwo.value = null
             }
 
 

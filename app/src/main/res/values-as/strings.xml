@@ -292,8 +292,8 @@
     <string name="pmsma_visit_date">PMSMA Visit Date</string>
     <string name="pmsma_visits">PMSMA Visits</string>
     <string name="pmsma_visit">PMSMA Visit</string>
-    <string name="higher_healthcare_center">Higher Healthcare Center</string>
-    <string name="additional_services">Additional Services</string>
+    <string name="higher_healthcare_center">উচ্চতৰ স্বাস্থ্যসেৱা কেন্দ্ৰ</string>
+    <string name="additional_services">অতিৰিক্ত সেৱা</string>
    <!-- <string name="child_rch_id">Child RCH ID</string>
     <string name="vaccination_due_date">Vaccination Due Date</string>
     <string name="reminder">Reminder!!</string>

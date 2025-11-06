@@ -7,12 +7,12 @@ import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.LayoutFileViewBinding
 
-class FileListAdapter(private var images: MutableList<Uri>?) : RecyclerView.Adapter<FileListAdapter.FileVH>() {
+class FileListAdapter(private var images: MutableList<Uri>) : RecyclerView.Adapter<FileListAdapter.FileVH>() {
 
 
     fun updateFileList(newList: MutableList<Uri>) {
-        this.images?.clear()
-        this.images?.addAll(newList)
+        this.images.clear()
+        this.images.addAll(newList)
         notifyDataSetChanged()
     }
 
@@ -25,10 +25,10 @@ class FileListAdapter(private var images: MutableList<Uri>?) : RecyclerView.Adap
         return FileVH(binding)
     }
 
-    override fun getItemCount() = images!!.size
+    override fun getItemCount() = images.size
 
     override fun onBindViewHolder(holder: FileVH, position: Int) {
-        val file = images?.get(position)
+        val file = images.get(position)
         holder.binding.ivPreview.setImageURI(file)
     }
 
