@@ -1364,7 +1364,7 @@ data class NCDReferalDTO(
             beneficiaryRegID =  beneficiaryRegID,
             referralReason = referralReason,
             parkingPlaceID = parkingPlaceID,
-            syncState = SyncState.UNSYNCED
+            syncState = SyncState.SYNCED
 
 
 

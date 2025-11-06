@@ -1306,7 +1306,7 @@
             android:name="id"
             android:defaultValue="0L"
             app:argType="long" />
-        android:id="@+id/childMonthListFragment"
+       <!-- android:id="@+id/childMonthListFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.infant.ChildMonthListFragment"
         android:label="ChildMonthListFragment" >
         <argument
@@ -1318,7 +1318,7 @@
 
         <action
             android:id="@+id/action_infantFormFragment_to_HBYCFormFragment"
-            app:destination="@id/HBYCFormFragment" />
+            app:destination="@id/HBYCFormFragment" />-->
     </fragment>
     <fragment
         android:id="@+id/HBYCFormFragment"
@@ -1719,5 +1719,20 @@
         android:id="@+id/ncdRefferedList"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.ncd_referred.list.NcdRefferedList"
         android:label="NcdRefferedList" />
+    <fragment
+        android:id="@+id/childMonthListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.infant.ChildMonthListFragment"
+        android:label="ChildMonthListFragment" >
+        <argument
+            android:name="benId"
+            app:argType="long" />
+        <argument
+            android:name="hhId"
+            app:argType="long" />
+        <action
+            android:id="@+id/action_infantFormFragment_to_HBYCFormFragment"
+            app:destination="@id/HBYCFormFragment" />
+
+    </fragment>
 
 </navigation>

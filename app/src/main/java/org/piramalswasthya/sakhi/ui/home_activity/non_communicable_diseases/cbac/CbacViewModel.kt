@@ -17,6 +17,7 @@ import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
+import org.piramalswasthya.sakhi.database.room.dao.CbacDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.AgeUnit
@@ -40,6 +41,7 @@ class CbacViewModel @Inject constructor(
     benDao: BenDao,
     preferenceDao: PreferenceDao,
     var cbacRepo: CbacRepo,
+    var cbacDao: CbacDao,
     var referalRepo: NcdReferalRepo
 ) : ViewModel() {
 
@@ -608,8 +610,12 @@ class CbacViewModel @Inject constructor(
         cbac.ProviderServiceMapID = user!!.serviceMapId
 
         viewModelScope.launch {
+            if (referralCache != null) {
+                cbac.isReffered = true
+            }
             val result = cbacRepo.saveCbacData(cbac, ben)
             if (referralCache != null){
+
                 referalRepo.saveReferedNCD(referralCache!!)
 
             }

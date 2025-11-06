@@ -61,7 +61,7 @@ class NcdRefferalFormViewModel @Inject constructor(
         get() = _recordExists
 
     private val dataset =
-        ReferalFormDataset(context, preferenceDao.getCurrentLanguage())
+        ReferalFormDataset(context, preferenceDao.getCurrentLanguage(),preferenceDao)
     val formList = dataset.listFlow
 
      lateinit var referalCache: ReferalCache
@@ -86,6 +86,7 @@ class NcdRefferalFormViewModel @Inject constructor(
                 benId = benId,
                 id = 0,
                 syncState = SyncState.UNSYNCED,
+                createdBy = preferenceDao.getLoggedInUser()?.userName
             )
 
             dataset.setUpPage()

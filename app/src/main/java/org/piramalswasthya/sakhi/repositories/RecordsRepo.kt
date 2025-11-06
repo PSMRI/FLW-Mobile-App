@@ -1,6 +1,5 @@
 package org.piramalswasthya.sakhi.repositories
 
-import android.util.Log
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow

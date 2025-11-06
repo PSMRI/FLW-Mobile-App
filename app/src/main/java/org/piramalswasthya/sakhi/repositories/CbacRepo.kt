@@ -8,6 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import org.piramalswasthya.sakhi.database.room.InAppDb
+import org.piramalswasthya.sakhi.database.room.NcdReferalDao
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.BenRegCache
@@ -28,7 +29,9 @@ class CbacRepo @Inject constructor(
     private val database: InAppDb,
     private val userRepo: UserRepo,
     private val amritApiService: AmritApiService,
-    private val prefDao: PreferenceDao
+    private val prefDao: PreferenceDao,
+    private val referalDao: NcdReferalDao,
+
 ) {
 
     private val resources: Resources
@@ -91,6 +94,8 @@ class CbacRepo @Inject constructor(
         }
 
     }
+
+
 
 
     suspend fun pullAndPersistCbacRecord(page: Int = 0): Int {
@@ -175,7 +180,8 @@ class CbacRepo @Inject constructor(
                 vanID = prefDao.getLoggedInUser()?.vanId,
                 beneficiaryRegID = benId,
                 benVisitID = null,
-                providerServiceMapID = prefDao.getLoggedInUser()?.serviceMapId
+                providerServiceMapID = prefDao.getLoggedInUser()?.serviceMapId,
+                isFlw = true
             )
 
             val response = amritApiService.postCbacs(request)
@@ -191,6 +197,15 @@ class CbacRepo @Inject constructor(
                         val matchingRecord = unProcessedList.firstOrNull { it.cbac.benId == benId }
                         matchingRecord?.let { record ->
                             updateSyncStatusCbac(record.cbac)
+                        }
+                        val dataObject = jsonBody.getJSONObject("data")
+                        val visitCode = dataObject.getString("visitCode")
+                        val benVisitID = dataObject.getString("benVisitID")
+                        val referRecord = referalDao.getReferalFromBenId(benId)
+                        referRecord?.let { refer ->
+                            refer.visitCode = visitCode.toLongOrNull()
+                            refer.benVisitID = benVisitID.toLongOrNull()
+                            referalDao.update(refer)
                         }
                         WorkerUtils.triggerAmritPushWorker(context)
 

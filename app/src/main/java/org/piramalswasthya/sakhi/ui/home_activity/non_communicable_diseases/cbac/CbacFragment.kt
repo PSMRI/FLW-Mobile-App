@@ -3,7 +3,6 @@ package org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.cba
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -121,7 +120,7 @@ class CbacFragment : Fragment() {
                 TBScreeningFormViewModel.State.SAVE_SUCCESS -> {
                     Toast.makeText(
                         requireContext(),
-                        resources.getString(R.string.tb_screening_submitted), Toast.LENGTH_SHORT
+                        resources.getString(R.string.cbac_screening_submitted), Toast.LENGTH_SHORT
                     ).show()
                     WorkerUtils.triggerAmritPushWorker(requireContext())
                 }

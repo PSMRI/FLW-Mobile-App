@@ -88,11 +88,14 @@ interface AmritApiService {
     @POST("/hwc-api/NCD/getByUserCbacDetails")
     suspend fun getCbacData(@Body getcbacRequest: GetCBACRequest) : Response<ResponseBody>
 
+    @POST("/hwc-api/common/getBenReferDetailsByCreatedBy")
+    suspend fun getCbacReferData(@Body getcbacRequest: GetCBACRequest) : Response<ResponseBody>
+
 //    @POST("flw-api/cbac/saveAll")
     @POST("hwc-api/NCD/save/nurseData")
     suspend fun postCbacs(/*@Url url : String  ="http://192.168.1.94:8081/cbac/saveAll",*/@Body list: CbacRequest): Response<ResponseBody>
 
-    @POST("hwc-api/generalOPD/save/doctorData")
+    @POST("hwc-api/NCD/save/referDetails")
     suspend fun postRefer(@Body list: ReferralRequest): Response<ResponseBody>
 
 

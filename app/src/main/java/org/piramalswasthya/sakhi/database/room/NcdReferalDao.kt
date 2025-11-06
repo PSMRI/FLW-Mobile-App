@@ -11,6 +11,8 @@ interface NcdReferalDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(vararg referalCache: ReferalCache)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(referalCache: List<ReferalCache>)
     @Update
     suspend fun update(vararg referalCache: ReferalCache)
 

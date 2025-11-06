@@ -315,8 +315,7 @@ class IconDataset @Inject constructor(
         resources.getString(R.string.phc_review),
             null,
             VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToPHCReviewListFragement()
-
-    )
+        )
         ,
         Icon(
             R.drawable.ahd,
@@ -344,14 +343,14 @@ class IconDataset @Inject constructor(
             null,
             VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToSaasBahuSammelanListFragment()
         )
-    )   ,
+      ,
         Icon(
             R.drawable.dewarming,
             resources.getString(R.string.u_win_session),
             null,
             VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToUwinListFragment()
-    )
-    )
+    ),)
+
 
     fun getHRPNonPregnantWomenDataset(resources: Resources) = listOf(
         Icon(

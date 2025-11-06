@@ -297,6 +297,8 @@ abstract class InAppDb : RoomDatabase() {
 
             val MIGRATION_30_31 = object : Migration(30, 31) {
                 override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("ALTER TABLE CBAC ADD COLUMN isReffered INTEGER DEFAULT 0")
+
                     // Create the new table
                     database.execSQL("""
             CREATE TABLE IF NOT EXISTS form_schema (
@@ -328,14 +330,13 @@ abstract class InAppDb : RoomDatabase() {
             }
 
 
-            val MIGRATION_30_31 = object : Migration(30, 31) {
+         /*   val MIGRATION_30_31 = object : Migration(30, 31) {
                 override fun migrate(database: SupportSQLiteDatabase) {
 //                    database.execSQL("ALTER TABLE GENERAL_OPD_ACTIVITY ADD COLUMN village TEXT")
-                    database.execSQL("ALTER TABLE CBAC ADD COLUMN isReffered INTEGER DEFAULT 0")
 
                 }
             }
-
+*/
 
             val MIGRATION_29_30 = object : Migration(29, 30) {
                 override fun migrate(database: SupportSQLiteDatabase) {
@@ -1237,8 +1238,7 @@ abstract class InAppDb : RoomDatabase() {
 
                         MIGRATION_28_29,
                         MIGRATION_29_30,
-                        MIGRATION_30_31
-               
+                        MIGRATION_30_31 ,
                         MIGRATION_31_32,
                         MIGRATION_32_33
                     ).build()

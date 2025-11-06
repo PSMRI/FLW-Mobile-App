@@ -4,6 +4,7 @@ import android.text.InputType
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.configuration.Dataset
 import org.piramalswasthya.sakhi.configuration.FormDataModel
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.InputType.DATE_PICKER
@@ -11,7 +12,7 @@ import org.piramalswasthya.sakhi.model.InputType.DROPDOWN
 import org.piramalswasthya.sakhi.model.InputType.EDIT_TEXT
 import org.piramalswasthya.sakhi.model.ReferalCache
 
-class ReferalFormDataset(context: Context, language: Languages) : Dataset(context, language) {
+class ReferalFormDataset(context: Context, language: Languages,var preferenceDao: PreferenceDao) : Dataset(context, language) {
 
     private val healthCenter = FormElement(
         id = 1,
@@ -92,6 +93,10 @@ class ReferalFormDataset(context: Context, language: Languages) : Dataset(contex
             form.refrredToAdditionalServiceList = listOf(additionalService.value!!)
             form.referredToInstituteID = healthCenter.getPosition()
             form.referredToInstituteName = healthCenter.value
+            form.createdBy =  preferenceDao.getLoggedInUser()?.userName
+            form.vanID =  preferenceDao.getLoggedInUser()?.vanId
+            form.providerServiceMapID =  preferenceDao.getLoggedInUser()?.serviceMapId
+            form.parkingPlaceID =  preferenceDao.getLoggedInUser()?.serviceMapId
 
 
 

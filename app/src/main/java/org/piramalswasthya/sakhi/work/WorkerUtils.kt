@@ -42,6 +42,10 @@ object WorkerUtils {
         val pullCbacWorkRequest = OneTimeWorkRequestBuilder<CbacPullFromAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
+
+        val pullReferWorkRequest = OneTimeWorkRequestBuilder<ReferPullFromAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
         val pullHRPWorkRequest = OneTimeWorkRequestBuilder<PullHRPFromAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
@@ -77,10 +81,6 @@ object WorkerUtils {
         val pushCbacWorkRequest = OneTimeWorkRequestBuilder<CbacPushToAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
-        val pushNcdreferWorkRequest = OneTimeWorkRequestBuilder<NCDReferPushtoAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
-            .build()
-
         val pushImmunizationWorkRequest =
             OneTimeWorkRequestBuilder<PushChildImmunizationToAmritWorker>()
                 .setConstraints(networkOnlyConstraint)
@@ -88,7 +88,7 @@ object WorkerUtils {
         val pushHRPToAmritWorker = OneTimeWorkRequestBuilder<PushHRPToAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
-           val pushVLFToAmritWorker = OneTimeWorkRequestBuilder<PushVLFToAmritWorker>()
+        val pushVLFToAmritWorker = OneTimeWorkRequestBuilder<PushVLFToAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
 
@@ -125,13 +125,12 @@ object WorkerUtils {
             .setConstraints(networkOnlyConstraint)
             .build()
 
-
-        val pushSaasBahuSamelanAmritWorker = OneTimeWorkRequestBuilder<PushSaasBahuSamelanAmritWorker>()
-
         val maaMeetingFormSyncWorkerRequest = OneTimeWorkRequestBuilder<MaaMeetingDownsyncWorker>()
-
             .setConstraints(networkOnlyConstraint)
             .build()
+
+        val pullSaasBahuSamelanAmritWorker = OneTimeWorkRequestBuilder<SaasBahuSammelanPullWorker>()
+            .setConstraints(networkOnlyConstraint).build()
 
         val workManager = WorkManager.getInstance(context)
         workManager
@@ -140,14 +139,13 @@ object WorkerUtils {
                 ExistingWorkPolicy.APPEND_OR_REPLACE,
                 pullWorkRequest
             )
-            .then(pullECWorkRequest)
-            .then(pushNcdreferWorkRequest)
-            .then(pushSaasBahuSamelanAmritWorker)
             .then(maaMeetingFormSyncWorkerRequest)
+            .then(pullSaasBahuSamelanAmritWorker)
             .then(pullIncentiveActivityWorkRequest)
             .then(pullCbacWorkRequest)
-            .then(pullIncentiveActivityWorkRequest)
+            .then(pullReferWorkRequest)
             .then(pullTBWorkRequest)
+            .then(pullECWorkRequest)
             .then(pullImmunizationWorkRequest)
             .then(generalOpdPullFromAmritWorker)
 //            .then(pullHBYCFromAmritWorker)
@@ -238,10 +236,6 @@ object WorkerUtils {
             .setConstraints(networkOnlyConstraint)
             .build()
 
-        val pushSaasBahuSamelanAmritWorker = OneTimeWorkRequestBuilder<PushSaasBahuSamelanAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
-            .build()
-
         val formSyncWorkerRequest  = OneTimeWorkRequestBuilder<FormSyncWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
@@ -268,9 +262,6 @@ object WorkerUtils {
         val pushLeprosyToAmritWorker = OneTimeWorkRequestBuilder<pushLeprosyAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
-        val pushNcdreferWorkRequest = OneTimeWorkRequestBuilder<NCDReferPushtoAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
-            .build()
         val pushFilariaToAmritWorker = OneTimeWorkRequestBuilder<PushFilariaAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
@@ -278,7 +269,14 @@ object WorkerUtils {
             .setConstraints(networkOnlyConstraint)
             .build()
 
+        val pushSaasBahuSamelanAmritWorker = OneTimeWorkRequestBuilder<PushSaasBahuSamelanAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+
         val pushUwinWorkerRequest = OneTimeWorkRequestBuilder<PushUwinToAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pushNcdreferWorkRequest = OneTimeWorkRequestBuilder<NCDReferPushtoAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
 
@@ -290,10 +288,9 @@ object WorkerUtils {
                 ExistingWorkPolicy.APPEND_OR_REPLACE,
                 pushWorkRequest
             )
-            .then(pushSaasBahuSamelanAmritWorker)
             .then(pushMaaMeetingsWorkRequest)
+            .then(pushSaasBahuSamelanAmritWorker)
             .then(pushCbacWorkRequest)
-            .then(pushNcdreferWorkRequest)
             .then(pushAdolescentWorkRequest)
             .then(pushHRPToAmritWorker)
             .then(pushVLFToAmritWorker)
@@ -318,6 +315,8 @@ object WorkerUtils {
             .then(pushkalaAzarToAmritWorker)
             .then(pushFilariaToAmritWorker)
             .then(pushLeprosyToAmritWorker)
+            .then(pushNcdreferWorkRequest)
+
             .enqueue()
     }
 
@@ -339,13 +338,18 @@ object WorkerUtils {
         val pullCbacWorkRequest = OneTimeWorkRequestBuilder<CbacPullFromAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
+
+        val pullReferWorkRequest = OneTimeWorkRequestBuilder<ReferPullFromAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+
         val pullVaccineWorkRequest = OneTimeWorkRequestBuilder<PullVaccinesWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
         val pullHRPWorkRequest = OneTimeWorkRequestBuilder<PullHRPFromAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
-         val pullVLFWorkRequest = OneTimeWorkRequestBuilder<PullVLFFromAmritWorker>()
+        val pullVLFWorkRequest = OneTimeWorkRequestBuilder<PullVLFFromAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
         val maaMeetingFormSyncWorkerRequest = OneTimeWorkRequestBuilder<MaaMeetingDownsyncWorker>()
@@ -418,6 +422,8 @@ object WorkerUtils {
             .setConstraints(networkOnlyConstraint)
             .build()
 
+        val pullSaasBahuSamelanAmritWorker = OneTimeWorkRequestBuilder<SaasBahuSammelanPullWorker>()
+            .setConstraints(networkOnlyConstraint).build()
         val workManager = WorkManager.getInstance(context)
         workManager
             .beginUniqueWork(
@@ -425,14 +431,15 @@ object WorkerUtils {
                 ExistingWorkPolicy.APPEND_OR_REPLACE,
                 pullWorkRequest
             )
-            .then(pullECWorkRequest)
             .then(maaMeetingFormSyncWorkerRequest)
+            .then(pullSaasBahuSamelanAmritWorker)
+            .then(pullCbacWorkRequest)
+            .then(pullReferWorkRequest)
             .then(pullIncentiveActivityWorkRequest)
             .then(pullUwinWorkerRequest)
-            .then(pullCbacWorkRequest)
-            .then(pullIncentiveActivityWorkRequest)
             .then(pullVaccineWorkRequest)
             .then(pullTBWorkRequest)
+            .then(pullECWorkRequest)
             .then(pullPWWorkRequest)
             .then(pullPMSMAWorkRequest)
             .then(pullPNCWorkRequest)
@@ -547,15 +554,6 @@ object WorkerUtils {
         WorkManager.getInstance(context)
             .enqueueUniqueWork(PullUwinFromAmritWorker.name, ExistingWorkPolicy.KEEP, workRequest)
     }
-
-    fun triggerSaasBahuSammelanWorker(context: Context) {
-        val workRequest = OneTimeWorkRequestBuilder<SaasBahuSammelanPullWorker>()
-            .setConstraints(MaaMeetingDownsyncWorker.constraint)
-            .build()
-        WorkManager.getInstance(context)
-            .enqueueUniqueWork(SaasBahuSammelanPullWorker.name, ExistingWorkPolicy.KEEP, workRequest)
-    }
-
 
     fun triggerPeriodicPncEcUpdateWorker(context: Context) {
         val workRequest =
