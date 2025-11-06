@@ -3,7 +3,6 @@ package org.piramalswasthya.sakhi
 import android.app.Application
 import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
-import android.util.Log
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.google.firebase.FirebaseApp
