@@ -20,7 +20,7 @@ import org.piramalswasthya.sakhi.network.NCDReferalDTO
         onUpdate = ForeignKey.CASCADE,
         onDelete = ForeignKey.CASCADE
     )],
-    indices = [Index(name = "ind_refcache", value = ["benId"/* "hhId"*/])]
+    indices = [Index(name = "ind_refcache", value = ["benId"/* "hhId"*/], unique = true)]
 )
 data class ReferalCache(
     @PrimaryKey(autoGenerate = true)
@@ -58,7 +58,7 @@ data class ReferalCache(
             createdBy = createdBy,
             benVisitID = benVisitID,
             visitCode = visitCode,
-            beneficiaryRegID = beneficiaryRegID,
+            beneficiaryRegID = benId,
 
 
         )
@@ -88,22 +88,7 @@ data class BenWithNCDReferalDomain(
 )
 
 data class ReferralRequest(
-    val refer: ReferalCache,
-    val benFlowID: Long,
-    val beneficiaryID: Long,
-    val doctorFlag: Int,
-    val nurseFlag: Int,
-    val pharmacist_flag: Int,
-    val sessionID: Int,
-    val parkingPlaceID: Int,
-    val vanID: Int,
-    val beneficiaryRegID: String,
-    val providerServiceMapID: Int,
-    val visitCode: Long,
-    val benVisitID: Long,
-    val serviceID: Int,
-    val createdBy: String,
-    val isSpecialist: Boolean
+    val refer: NCDReferalDTO,
 )
 
 class Converters {

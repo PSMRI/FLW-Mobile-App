@@ -22,6 +22,8 @@ interface CbacDao {
     @Query("SELECT * FROM CBAC WHERE id = :cbacId LIMIT 1")
     suspend fun getCbacFromBenId(cbacId: Int): CbacCache?
 
+
+
     @Query("SELECT * FROM CBAC WHERE benId = :benId  order by fillDate desc LIMIT 1")
     suspend fun getLastFilledCbacFromBenId(benId: Long): CbacCache?
 
