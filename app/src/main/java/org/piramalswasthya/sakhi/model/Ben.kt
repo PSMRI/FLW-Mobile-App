@@ -391,7 +391,7 @@ data class BenBasicCache(
             mobileNo = mobileNo.toString(),
             fatherName = fatherName,
             familyHeadName = familyHeadName ?: "Not Available",
-            dateOfDeath = dateOfDeath,
+
 //            typeOfList = typeOfList.name,
             rchId = rchId,
             hrpStatus = hrpStatus,
@@ -423,7 +423,7 @@ data class BenBasicCache(
             mobileNo = mobileNo.toString(),
             fatherName = fatherName,
             familyHeadName = familyHeadName ?: "Not Available",
-            dateOfDeath = dateOfDeath,
+
 //            typeOfList = typeOfList.name,
             rchId = rchId,
             hrpStatus = hrpStatus,
@@ -840,7 +840,7 @@ data class BenBasicDomainForForm(
     val familyHeadName: String,
     val lastMenstrualPeriod: String? = null,
     val edd: String? = null,
-    val dateOfDeath : String? = null,
+
 //    val typeOfList: String,
     val rchId: String? = null,
     val hrpStatus: Boolean = false,
