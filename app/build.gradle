@@ -60,64 +60,48 @@ android {
             applicationIdSuffix ".saksham.stag"
             applicationId "org.piramalswasthya.sakhi"
             resValue "string", "app_native_name", "উৎপ্ৰেৰণা-Stag"
-            resValue "string", "app_icon", "@mipmap/ic_launcher"
-            resValue "string", "app_icon_round", "@mipmap/ic_launcher_round"
            }
         
         sakshamUat {
             applicationIdSuffix ".saksham.uat"
             applicationId "org.piramalswasthya.sakhi"
             resValue "string", "app_native_name", "উৎপ্ৰেৰণা-Uat"
-            resValue "string", "app_icon", "@mipmap/ic_launcher"
-            resValue "string", "app_icon_round", "@mipmap/ic_launcher_round"
         }
 
         saksham {
             applicationIdSuffix ".saksham"
             applicationId "org.piramalswasthya.sakhi"
             resValue "string", "app_native_name", "উৎপ্ৰেৰণা"
-            resValue "string", "app_icon", "@mipmap/ic_launcher"
-            resValue "string", "app_icon_round", "@mipmap/ic_launcher_round"
         }
         
         xushrukha {
             applicationIdSuffix ".xushrukha"
             applicationId "org.piramalswasthya.sakhi"
             resValue "string", "app_native_name", "Xushrukha - শুশ্ৰূষা"
-            resValue "string", "app_icon", "@mipmap/ic_launcher"
-            resValue "string", "app_icon_round", "@mipmap/ic_launcher_round"
         }
         
         niramay {
             applicationIdSuffix ".niramay"
             applicationId "org.piramalswasthya.sakhi"
             resValue "string", "app_native_name", "উৎপ্ৰেৰণা"
-            resValue "string", "app_icon", "@mipmap/ic_launcher"
-            resValue "string", "app_icon_round", "@mipmap/ic_launcher_round"
         }
 
         mitaninStag {
             applicationIdSuffix ".mitanin.stag"
             applicationId "org.piramalswasthya.sakhi"
             resValue "string", "app_native_name", "मितानिन-Stag"
-            resValue "string", "app_icon", "@mipmap/ic_mitanin_launcher"
-            resValue "string", "app_icon_round", "@mipmap/ic_mitanin_launcher_round"
         }
 
         mitaninUat {
             applicationIdSuffix ".mitanin.uat"
             applicationId "org.piramalswasthya.sakhi"
             resValue "string", "app_native_name", "मितानिन-Uat"
-            resValue "string", "app_icon", "@mipmap/ic_mitanin_launcher"
-            resValue "string", "app_icon_round", "@mipmap/ic_mitanin_launcher_round"
         }
 
         mitanin {
             applicationIdSuffix ".mitanin"
             applicationId "org.piramalswasthya.sakhi"
             resValue "string", "app_native_name", "मितानिन"
-            resValue "string", "app_icon", "@mipmap/ic_mitanin_launcher"
-            resValue "string", "app_icon_round", "@mipmap/ic_mitanin_launcher_round"
         }
 
     }
