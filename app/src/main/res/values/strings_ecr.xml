@@ -61,9 +61,9 @@
     <string name="ecrdset_9_age_yrs">9th Child Age ( in Years)</string>
     <string name="ecrdset_9_child_sex">9th Child Sex</string>
     <string name="ecrdset_gap_8_9_child">Gap between 8th child and 9th Child</string>
-    <string name="ecrdset_is_nai_pahel_kit_handover">Is Nayi Pahal kit hand overed to couple?</string>
+    <string name="ecrdset_is_nai_pahel_kit_handover">Is Nayi Pahal kit handed over to couple?</string>
     <string name="ecrdset_is_nai_pahel_kit_handover_date">Nayi Pahal kit handover Date</string>
-    <string name="asha_photo">ASHA Photo with couple while hand overing Nayi Pahal kit</string>
+    <string name="asha_photo">ASHA Photo with couple while handing over Nayi Pahal kit</string>
     <string name="asha_photo_one">ASHA Photo One</string>
     <string name="asha_photo_two">ASHA Photo Two</string>
 </resources>

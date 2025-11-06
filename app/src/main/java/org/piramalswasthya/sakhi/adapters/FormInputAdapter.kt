@@ -1032,10 +1032,10 @@ class FormInputAdapter(
                 binding.addFile.alpha = 0.5f
             }*/
 
-            fileAdapter = FileListAdapter(fileList)
+            val items = fileList ?: mutableListOf()
+            fileAdapter = FileListAdapter(items)
             binding.rvFiles.adapter = fileAdapter
-            fileAdapter.updateFileList(fileList!!)
-
+            fileAdapter.updateFileList(items)
             fileAdapter.notifyDataSetChanged()
 
             binding.btnSelectFiles.isEnabled = isEnabled
