@@ -6,7 +6,7 @@
     <string name="cbac_early_detection">Part B1: Early Detection</string>
     <string name="cbac_early_detection_2">Part B2: Women Only</string>
     <string name="cbac_early_detection_3">Part B3: Elderly Specific</string>
-    <string name="cbac_hint_age">What is your age?</string>
+    <string name="cbac_hint_age">What is your Age? (in Years)</string>
     <string name="cbac_hint_smoke">Do you smoke or consume smokeless products such as gutka or khaini?</string>
     <string name="cbac_hint_alcohol">Do you consume alcohol daily?</string>
     <string name="cbac_hint_waist">Measurement of waist (in cm)</string>

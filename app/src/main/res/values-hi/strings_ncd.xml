@@ -4,8 +4,8 @@
     <string name="cbac_early_detection">भाग B1: प्रारंभिक पहचान</string>
     <string name="cbac_early_detection_2">भाग B2: केवल महिलाओं के लिए</string>
     <string name="cbac_early_detection_3">भाग B3: बुजुर्गों के लिए विशेष</string>
-    <string name="cbac_hint_age">आपकी आयु क्या है?</string>
-    <string name="cbac_hint_smoke">क्या आप धूम्रपान करते हैं या गुटखा/खैनी जैसे बिना धुएं वाले उत्पाद का सेवन करते हैं?</string>
+    <string name="cbac_hint_age">आपकी उम्र क्या है? (वर्षों में)</string>
+    <string name="cbac_hint_smoke">क्या आप धूम्रपान करते हैं या गुटखा या खैनी जैसे धुआँ रहित उत्पादों का सेवन करते हैं?</string>
     <string name="cbac_hint_alcohol">क्या आप प्रतिदिन शराब का सेवन करते हैं?</string>
     <string name="cbac_hint_waist">कमर का माप (सेंटीमीटर में)</string>
     <string name="cbac_hint_pa">क्या आप सप्ताह में कम से कम 150 मिनट की शारीरिक गतिविधि करते हैं?</string>
@@ -24,7 +24,7 @@
     <string name="cbac_ntswets">रात में पसीना आना</string>
     <string name="cbac_recurrent_ulceration">हथेली या तलवे पर बार-बार होने वाले छाले</string>
     <string name="cbac_recurrent_tingling">हथेली या तलवे में बार-बार झुनझुनी होना</string>
-    <string name="cbac_recurrent_cloudy">धुंधला या धुंधली दृष्टि</string>
+    <string name="cbac_recurrent_cloudy">धुंधला या अस्पष्ट दिखना</string>
     <string name="cbac_recurrent_diffculty_reading">पढ़ने में कठिनाई</string>
     <string name="cbac_recurrent_pain_eyes">आंखों में एक सप्ताह से अधिक समय तक दर्द</string>
     <string name="cbac_recurrent_redness_eyes">आंखों में एक सप्ताह से अधिक समय तक लालिमा</string>
@@ -58,11 +58,11 @@
     <string name="cbac_single_ast" translatable="false">* </string>
     <string name="cbac_yes">हाँ</string>
     <string name="cbac_no">नहीं</string>
-    <string name="cbac_risk_Factors_COPD">भाग C: सीओपीडी (COPD) के खतरे के कारण</string>
+    <string name="cbac_risk_Factors_COPD">भाग C: दीर्घकालिक अवरोधक फेफड़ों की बीमारी (COPD) का जोखिम कारक</string>
     <string name="cbac_occupational_exposure">व्यावसायिक जोखिम</string>
-    <string name="cbac_PHQ2">भाग D: पीएचक्यू2 (डिप्रेशन से जुड़े सवाल)</string>
-    <string name="cbac_last_two_weeks">पिछले दो हफ्तों में, आपको नीचे लिखी समस्याएं कितनी बार हुई हैं?</string>
-    <string name="cbac_little_interest">काम करने में मन न लगना या खुशी न मिलना</string>
+    <string name="cbac_PHQ2">भाग D: PHQ2 (मानसिक स्वास्थ्य)</string>
+    <string name="cbac_last_two_weeks">पिछले दो हफ़्तों से क्या आप निम्नलिखित समस्या से परेशान हैं?</string>
+    <string name="cbac_little_interest">काम करने में कम रुचि या आनंद?</string>
     <string name="cbac_feeling_down">उदास, मायूस या निराश महसूस करना</string>
     <string name="hrp_valid">उच्च जोखिम गर्भावस्था (HRP) मामला — नजदीकी हेल्थ एंड वेलनेस सेंटर (HWC) जाएं या 104 पर कॉल करें</string>
     <string name="hrp_sug_valid">संदिग्ध उच्च जोखिम गर्भावस्था — नजदीकी हेल्थ एंड वेलनेस सेंटर जाएं या 104 पर कॉल करें</string>
@@ -153,7 +153,7 @@
     <string name="cbac_score">अंक</string>
     <string name="cbac_type_of_fuel">खाना पकाने में इस्तेमाल होने वाला ईंधन का प्रकार</string>
     <string name="cbac_remarks">टिप्पणी</string>
-    <string name="cbac_risk_assessment_tv">भाग A: जोखिम का आकलन</string>
+    <string name="cbac_risk_assessment_tv">भाग अ: जोखिम मूल्यांकन</string>
     <string name="cbac_tv_bl_menopause">मितानिन प्रशिक्षक को सूचित करें</string>
     <string name="cbac_form">सीबीएसी फॉर्म</string>
 
@@ -162,9 +162,9 @@
     <string name="suspected_hrp_and_ncd_case">संदिग्ध उच्च जोखिम गर्भावस्था (एचआरपी) और गैर-संचारी रोग का मामला</string>
     <string name="ok">ठीक है</string>
     <string name="suspected_hrp_case">संदिग्ध उच्च जोखिम गर्भावस्था (एचआरपी) का मामला</string>
-    <string name="suspected_ncd_case_please_visit_nearest_hwc_or_call">संदिग्ध गैर-संचारी रोग – नजदीकी हेल्थ एंड वेलनेस सेंटर जाएं या 104 पर कॉल करें</string>
-    <string name="refer_to_ncd_screening_day_vhsnd_hwc_for_ncd_screening_priority">प्राथमिकता के साथ एनसीडी स्क्रीनिंग के लिए एनसीडी स्क्रीनिंग दिवस/वीएचएसएनडी/एचडब्ल्यूसी पर भेजें</string>
-    <string name="refer_to_ncd_screening_day_vhsnd_hwc_for_ncd_screening_less_priority">कम प्राथमिकता के साथ एनसीडी स्क्रीनिंग दिवस/वीएचएसएनडी/एचडब्ल्यूसी पर भेजें</string>
+    <string name="suspected_ncd_case_please_visit_nearest_hwc_or_call">संदेहास्पद गैर-संचारी रोग का मामला — कृपया नज़दीकी स्वास्थ्य एवं कल्याण केंद्र जाएँ या 104 पर कॉल करें।</string>
+    <string name="refer_to_ncd_screening_day_vhsnd_hwc_for_ncd_screening_priority">गैर-संचारी रोग (एनसीडी) की जांच के लिए एनसीडी जांच दिवस / ग्राम स्वास्थ्य, स्वच्छता एवं पोषण दिवस (वीएचएसएनडी) / स्वास्थ्य एवं कल्याण केंद्र (एचडब्ल्यूसी) पर भेजें — (उच्च प्राथमिकता वाला मामला)।</string>
+    <string name="refer_to_ncd_screening_day_vhsnd_hwc_for_ncd_screening_less_priority">गैर-संचारी रोग (एनसीडी) की जांच के लिए एनसीडी जांच दिवस / ग्राम स्वास्थ्य, स्वच्छता एवं पोषण दिवस (वीएचएसएनडी) / स्वास्थ्य एवं कल्याण केंद्र (एचडब्ल्यूसी) पर भेजें — (कम प्राथमिकता वाला मामला)।</string>
     <string name="send_the_patient_to_moic_of_nearest_health_center_for_treatment">मरीज को नजदीकी स्वास्थ्य केंद्र के चिकित्सा अधिकारी के पास इलाज के लिए भेजें</string>
     <string name="refer_to_mo_and_collect_the_sputum_sample">चिकित्सा अधिकारी (MO) को भेजें और बलगम का नमूना लें</string>
     <string name="inform_asha_facilitator">मितानिन प्रशिक्षक को सूचित करें</string>
