@@ -38,11 +38,12 @@
         <item name="nbr_gender_3">ट्रांसजेंडर</item>
     </string-array>
     <string-array name="nbr_reproductive_status_array">
-        <item>योग्य जोड़</item>
+        <item>लक्ष्य दम्पति</item>
         <item>गर्भवती महिला</item>
-        <item>पोस्टनेटल मां</item>
-        <item>वृद्ध महिला</item>
-        <item>किशोरी</item>
+        <item>प्रसवोत्तर माता</item>
+        <item>वृद्धा महिला</item>
+        <item>किशोरी लड़की</item>
+        <item>स्थायी नसबंदीकृत महिला</item>
     </string-array>
 
     <string-array name="nbr_marital_status_male_array">
@@ -50,7 +51,7 @@
         <item>विवाहित</item>
         <item>तलाकशुदा</item>
         <item>अलग</item>
-        <item>विधवा</item>
+        <item>विधुर</item>
     </string-array>
 
     <string-array name="nbr_marital_status_female_array">
@@ -147,6 +148,7 @@
         <item>पिछड़ा वर्ग</item>
         <item>अन्य पिछड़ा वर्ग</item>
         <item>अन्य वर्ग</item>
+        <item>विशेष रूप से कमजोर जनजातीय समूह</item>
         <item>नहीं दिया गया</item>
     </string-array>
 
