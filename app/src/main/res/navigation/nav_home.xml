@@ -1488,7 +1488,21 @@
         <action
             android:id="@+id/action_diseaseControlFragment_to_malariaIconsFragment"
             app:destination="@id/malariaIconsFragment" />
+        <action
+            android:id="@+id/action_diseaseControlFragment_to_leprosyFragment"
+            app:destination="@id/leprosyFragment" />
+
     </fragment>
+    <fragment
+        android:id="@+id/leprosyFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.leprosy.LeprosyFragment"
+        android:label="LeprosyFragment">
+
+        <action
+            android:id="@+id/action_leprosyFragment_to_allHouseHoldDiseaseControlFragment"
+            app:destination="@id/allHouseHoldDiseaseControlFragment"/>
+    </fragment>
+
     <fragment
         android:id="@+id/allHouseHoldDiseaseControlFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.AllHouseHoldDiseaseControlFragment"
