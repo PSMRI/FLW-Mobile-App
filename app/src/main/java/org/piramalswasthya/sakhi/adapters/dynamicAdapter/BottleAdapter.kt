@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.adapters.dynamicAdapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,9 +24,10 @@ class BottleAdapter(private val items: List<BottleItem>) :
         return BottleViewHolder(view)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: BottleViewHolder, position: Int) {
         val item = items[position]
-        holder.tvSrNo.text = item.srNo.toString()
+        holder.tvSrNo.text = (position+1).toString()
         holder.tvBottleNumber.text = item.bottleNumber
         holder.tvDate.text = item.dateOfProvision
     }

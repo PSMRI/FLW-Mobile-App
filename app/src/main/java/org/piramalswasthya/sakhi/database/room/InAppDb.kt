@@ -50,6 +50,7 @@ import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponse
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormSchemaDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.InfantDao
 import org.piramalswasthya.sakhi.database.room.dao.VLFDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.BenIfaFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.CUFYFormResponseDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.CUFYFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.EyeSurgeryFormResponseJsonDao
@@ -106,6 +107,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.InfantEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.hbyc.FormResponseJsonEntityHBYC
 import org.piramalswasthya.sakhi.model.VHNDCache
 import org.piramalswasthya.sakhi.model.dynamicEntity.CUFYFormResponseJsonEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.ben_ifa.BenIfaFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.eye_surgery.EyeSurgeryFormResponseJsonEntity
 
 @Database(
@@ -165,11 +167,12 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.eye_surgery.EyeSurgeryFormR
         CUFYFormResponseJsonEntity::class,
         GeneralOPEDBeneficiary::class,
         UwinCache::class,
-        EyeSurgeryFormResponseJsonEntity::class
+        EyeSurgeryFormResponseJsonEntity::class,
+        BenIfaFormResponseJsonEntity::class
     ],
     views = [BenBasicCache::class],
 
-    version = 34, exportSchema = false
+    version = 35, exportSchema = false
 )
 
 @TypeConverters(
@@ -222,6 +225,7 @@ abstract class InAppDb : RoomDatabase() {
     abstract fun formResponseJsonDao(): FormResponseJsonDao
     abstract fun formResponseJsonDaoHBYC(): FormResponseJsonDaoHBYC
     abstract fun formResponseJsonDaoEyeSurgery(): EyeSurgeryFormResponseJsonDao
+    abstract fun formResponseJsonDaoBenIfa(): BenIfaFormResponseJsonDao
 
     abstract val syncDao: SyncDao
 
@@ -236,6 +240,59 @@ abstract class InAppDb : RoomDatabase() {
                 it.execSQL("alter table BENEFICIARY add column isConsent BOOL")
 
             })
+
+//            val MIGRATION_35_36 = object : Migration(35, 36) {
+//                override fun migrate(database: SupportSQLiteDatabase) {
+//                    database.execSQL(
+//                        """
+//            CREATE TABLE IF NOT EXISTS `ALL_BEN_IFA_VISIT_HISTORY` (
+//                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+//                `benId` INTEGER NOT NULL,
+//                `hhId` INTEGER NOT NULL,
+//                `visitDate` TEXT NOT NULL,
+//                `formId` TEXT NOT NULL,
+//                `version` INTEGER NOT NULL,
+//                `formDataJson` TEXT NOT NULL,
+//                `isSynced` INTEGER NOT NULL DEFAULT 0,
+//                `createdAt` INTEGER NOT NULL,
+//                `syncedAt` INTEGER
+//            )
+//            """.trimIndent()
+//                    )
+//                    database.execSQL(
+//                        """
+//            CREATE UNIQUE INDEX IF NOT EXISTS `index_ALL_BEN_IFA_VISIT_HISTORY_benId_hhId_visitDate_formId`
+//            ON `ALL_BEN_IFA_VISIT_HISTORY` (`benId`, `hhId`, `visitDate`, `formId`)
+//            """.trimIndent()
+//                    )
+//                }
+//            }
+
+
+            val MIGRATION_35_36 = object : Migration(35, 36) {
+                override fun migrate(db: SupportSQLiteDatabase) {
+                    db.execSQL("""
+            ALTER TABLE ALL_EYE_SURGERY_VISIT_HISTORY
+            ADD COLUMN visitMonth TEXT NOT NULL DEFAULT ''
+        """.trimIndent())
+
+                    db.execSQL("""
+            UPDATE ALL_EYE_SURGERY_VISIT_HISTORY
+            SET visitMonth = 
+                CASE
+                    WHEN visitDate GLOB '__-__-____'
+                    THEN substr(visitDate, 7, 4) || '-' || substr(visitDate, 4, 2)
+                    ELSE ''
+                END
+        """.trimIndent())
+
+                    db.execSQL("""
+            CREATE UNIQUE INDEX IF NOT EXISTS idx_eye_unique_month
+            ON ALL_EYE_SURGERY_VISIT_HISTORY(benId, formId, visitMonth)
+        """.trimIndent())
+                }
+            }
+
 
             val MIGRATION_34_35 = object : Migration(34, 35) {
                 override fun migrate(database: SupportSQLiteDatabase) {
@@ -1287,7 +1344,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_31_32,
                         MIGRATION_32_33,
                         MIGRATION_33_34,
-                        MIGRATION_34_35
+                        MIGRATION_34_35,
+                        MIGRATION_35_36
                     ).build()
 
                     INSTANCE = instance

@@ -503,57 +503,51 @@
 
                     </LinearLayout>
                 </LinearLayout>
+
                 <LinearLayout
-                    android:id="@+id/ll_ben_buttons"
+                    android:id="@+id/ll_ben_details_4"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
+                    android:weightSum="3"
                     app:layout_constraintTop_toBottomOf="@id/ll_ben_details_3">
 
-                    <LinearLayout
-                        android:layout_width="0dp"
+
+                    <Button
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:id="@+id/btn_ifa"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="@dimen/margin_small"
+                        android:backgroundTint="@android:color/holo_green_dark"
+                        android:onClick="@{()-> clickListener.clickedAddAllBenBtn(ben,isMatched,true)}"
+                        android:text="@string/ifa"
+                        app:visibleIfEligibleFemale="@{ben.ageInt}"
+                        app:isDeath="@{ben.isDeathValue}"
+                        app:reproductiveStatusId="@{ben.reproductiveStatusId}"
+                        app:gender="@{ben.gender}"
+                        android:textColor="?attr/colorOnPrimary"
+                        tools:ignore="NestedWeights" />
+
+                    <Space
+                        android:layout_width="@dimen/_5sdp"
+                        android:layout_height="match_parent"/>
+
+                    <Button
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:id="@+id/btn_above_30"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="8"
-                        android:orientation="horizontal">
+                        android:layout_marginStart="@dimen/margin_small"
+                        android:backgroundTint="@android:color/holo_green_dark"
+                        android:onClick="@{()-> clickListener.clickedAddAllBenBtn(ben,isMatched,false)}"
+                        android:text="@string/add_eye_surgery"
+                        app:visibleIfAgeAbove30AndAliveAge="@{ben.ageInt}"
+                        app:isDeath="@{ben.isDeathValue}"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                        android:textColor="?attr/colorOnPrimary"
+                        tools:ignore="NestedWeights"/>
 
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btn_ifa"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/margin_small"
-                            android:layout_weight="1"
-                            android:backgroundTint="@android:color/holo_green_dark"
-                            android:onClick="@{()-> clickListener.clickedAddAllBenBtn(ben,isMatched,true)}"
-                            android:text="@string/ifa"
-                            app:visibleIfEligibleFemale="@{ben.ageInt}"
-                            app:isDeath="@{ben.isDeathValue}"
-                            app:reproductiveStatusId="@{ben.reproductiveStatusId}"
-                            app:gender="@{ben.gender}"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                            android:textColor="?attr/colorOnPrimary"
-                            app:cornerRadius="@dimen/padding_normal"
-                            app:strokeColor="?attr/colorPrimary"
-                            tools:ignore="NestedWeights" />
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btn_above_30"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/margin_small"
-                            android:layout_weight="3"
-                            android:backgroundTint="@android:color/holo_green_dark"
-                            android:onClick="@{()-> clickListener.clickedAddAllBenBtn(ben,isMatched,false)}"
-                            android:text="@string/add_eye_surgery"
-                            app:visibleIfAgeAbove30AndAliveAge="@{ben.ageInt}"
-                            app:isDeath="@{ben.isDeathValue}"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                            android:textColor="?attr/colorOnPrimary"
-                            app:cornerRadius="@dimen/padding_normal"
-                            app:strokeColor="?attr/colorPrimary"
-                            tools:ignore="NestedWeights" />
-
-                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
 

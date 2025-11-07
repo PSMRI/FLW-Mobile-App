@@ -6,6 +6,7 @@ import org.json.JSONObject
 import org.piramalswasthya.sakhi.model.dynamicEntity.CUFYFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSubmitRequest
+import org.piramalswasthya.sakhi.model.dynamicEntity.ben_ifa.BenIfaFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.eye_surgery.EyeSurgeryFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.hbyc.FormResponseJsonEntityHBYC
 import java.text.SimpleDateFormat
@@ -16,6 +17,9 @@ object FormSubmitRequestMapper {
     fun fromEntity(entity: FormResponseJsonEntity, userName: String): FormSubmitRequest? {
         return mapCommon(entity.formDataJson, userName)
     }
+    fun fromEntity(entity: BenIfaFormResponseJsonEntity, userName: String): FormSubmitRequest? {
+            return mapCommon(entity.formDataJson, userName)
+        }
 
     fun fromEntity(entity: FormResponseJsonEntityHBYC, userName: String): FormSubmitRequest? {
         return mapCommon(entity.formDataJson, userName)
