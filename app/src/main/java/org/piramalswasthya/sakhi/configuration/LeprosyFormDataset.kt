@@ -138,16 +138,47 @@ class LeprosyFormDataset(
 
         )
 
+    private val leprosySymptoms = FormElement(
+        id = 14,
+        inputType = InputType.RADIO,
+        arrayId = R.array.yes_no,
+        title = "Any Leprosy Symptoms Present?",
+        entries = resources.getStringArray(R.array.yes_no),
+        hasDependants = true,
+        required = true,
+        isEnabled = true
+    )
+
+    private val visitLabel = FormElement(
+        id = 15,
+        inputType = InputType.TEXT_VIEW,
+        title = "Visit",
+        required = true,
+        isEnabled = false
+    )
+
     suspend fun setUpPage(ben: BenRegCache?, saved: LeprosyScreeningCache?) {
         val list = mutableListOf(
             dateOfCase,
-            beneficiaryStatus,
+           // beneficiaryStatus,
+            leprosySymptoms,
+            visitLabel,
+            leprosyStatus,
+
 
         )
         if (saved == null) {
             dateOfCase.value = getDateFromLong(System.currentTimeMillis())
+            leprosyStatus.value = resources.getStringArray(R.array.leprosy_status)[0]
+            visitLabel.value = "Visit -1"
+            leprosySymptoms.value = resources.getStringArray(R.array.yes_no)[1]
         } else {
             dateOfCase.value = getDateFromLong(saved.homeVisitDate)
+            leprosySymptoms.value = getLocalValueInArray(leprosySymptoms.arrayId, saved.leprosySymptoms)
+            val symptomsPosition = saved.leprosySymptomsPosition ?: 1
+            leprosySymptoms.value = resources.getStringArray(R.array.yes_no).getOrNull(symptomsPosition)
+                ?: resources.getStringArray(R.array.yes_no)[1]
+            visitLabel.value = saved.visitLabel ?: "Visit -1"
             beneficiaryStatus.value =
                 getLocalValueInArray(beneficiaryStatus.arrayId, saved.beneficiaryStatus)
 
@@ -207,7 +238,30 @@ class LeprosyFormDataset(
     }
 
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
+
         return when (formId) {
+            leprosySymptoms.id -> {
+                if (leprosySymptoms.value == resources.getStringArray(R.array.yes_no)[0]) {
+
+                    leprosyStatus.value = resources.getStringArray(R.array.leprosy_status)[3]
+                    visitLabel.value = "Visit -1"
+
+                    triggerDependants(
+                        source = leprosySymptoms,
+                        addItems = listOf(visitLabel,leprosyStatus,referredTo),
+                        removeItems = listOf()
+                    )
+
+                } else {
+                    leprosyStatus.value = resources.getStringArray(R.array.leprosy_status)[0]
+                    triggerDependants(
+                        source = leprosySymptoms,
+                        addItems = listOf(),
+                        removeItems = listOf(referredTo)
+                    )
+                }
+                0
+            }
             beneficiaryStatus.id -> {
                 if (beneficiaryStatus.value == beneficiaryStatus.entries!![3]!!) {
                     triggerDependants(
@@ -333,6 +387,13 @@ class LeprosyFormDataset(
             form.typeOfLeprosy = typeOfLeprosy.value
             form.diseaseTypeID = 5
             form.followUpDate = getLongFromDate(followUpdate.value)
+            form.leprosySymptoms = leprosySymptoms.value
+            form.visitLabel = visitLabel.value
+            form.leprosySymptomsPosition = when (leprosySymptoms.value) {
+                resources.getStringArray(R.array.yes_no)[0] -> 0
+                resources.getStringArray(R.array.yes_no)[1] -> 1
+                else -> 1
+            }
 
         }
     }

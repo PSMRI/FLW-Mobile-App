@@ -1346,6 +1346,10 @@ data class LeprosyScreeningDTO(
     var diseaseTypeID: Int ? = 0,
     var beneficiaryStatusId: Int ? = 0,
     var followUpDate: String,
+    var leprosySymptoms: String? = null,
+    var leprosySymptomsPosition: Int? = 1,
+    var visitLabel: String? = "Visit -1",
+    var visitNumber: Int? = 1,
 
     ) {
     fun toCache(): LeprosyScreeningCache {
@@ -1368,7 +1372,11 @@ data class LeprosyScreeningDTO(
             otherPlaceOfDeath = otherPlaceOfDeath,
             placeOfDeath = placeOfDeath,
             beneficiaryStatusId = beneficiaryStatusId,
-            beneficiaryStatus = beneficiaryStatus
+            beneficiaryStatus = beneficiaryStatus,
+            leprosySymptoms = leprosySymptoms,
+            leprosySymptomsPosition = leprosySymptomsPosition,
+            visitLabel = visitLabel,
+            visitNumber = visitNumber
 
 
         )

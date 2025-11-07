@@ -70,6 +70,25 @@ interface BenDao {
     @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage and hhId = :hhId")
     fun getAllLeprosyScreeningBen(selectedVillage: Int,hhId: Long): Flow<List<BenWithLeprosyScreeningCache>>
 
+
+    @Transaction
+    @Query("""
+    SELECT b.*, l.leprosySymptomsPosition 
+    FROM BEN_BASIC_CACHE b 
+    INNER JOIN LEPROSY_SCREENING l ON b.benId = l.benId 
+    WHERE b.villageId = :selectedVillage
+    AND l.leprosySymptomsPosition = :symptomsPosition
+""")
+    fun getLeprosyScreeningBenBySymptoms(selectedVillage: Int,  symptomsPosition: Int): Flow<List<BenWithLeprosyScreeningCache>>
+
+    @Query("""
+    SELECT COUNT(*) 
+    FROM BEN_BASIC_CACHE b 
+    INNER JOIN LEPROSY_SCREENING l ON b.benId = l.benId 
+    WHERE b.villageId = :selectedVillage 
+    AND l.leprosySymptomsPosition = :symptomsPosition
+""")
+    fun getLeprosyScreeningBenCountBySymptoms(selectedVillage: Int, symptomsPosition: Int): Flow<Int>
     @Transaction
     @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage and hhId = :hhId")
     fun getAllFilariaScreeningBen(selectedVillage: Int,hhId: Long): Flow<List<BenWithFilariaScreeningCache>>

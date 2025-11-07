@@ -102,6 +102,11 @@ class RecordsRepo @Inject constructor(
     fun LeprosyScreeningList(hhId:Long) = benDao.getAllLeprosyScreeningBen(selectedVillage, hhId = hhId)
         .map { list -> list.map { it.asLeprosyScreeningDomainModel() } }
 
+    fun LeprosySuspectedList() = benDao.getLeprosyScreeningBenBySymptoms(selectedVillage,0)
+        .map { list -> list.map { it.asLeprosyScreeningDomainModel() } }
+
+
+
     fun filariaScreeningList(hhId:Long) = benDao.getAllFilariaScreeningBen(selectedVillage, hhId = hhId)
         .map { list -> list.map { it.asFilariaScreeningDomainModel() } }
 
@@ -117,6 +122,8 @@ class RecordsRepo @Inject constructor(
 
     val malariaConfirmedCasesList = benDao.getMalariaConfirmedCasesList(selectedVillage)
         .map { list -> list.map { it.asMalariaConfirmedDomainModel() } }
+    val leprosySuspectedListCount = benDao.getLeprosyScreeningBenCountBySymptoms(selectedVillage,0)
+
 
     val malariaConfirmedCasesListCount = malariaConfirmedCasesList.map { it.size }
 
