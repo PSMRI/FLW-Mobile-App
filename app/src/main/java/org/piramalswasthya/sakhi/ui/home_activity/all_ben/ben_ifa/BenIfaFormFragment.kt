@@ -1,15 +1,14 @@
-package org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registration
+package org.piramalswasthya.sakhi.ui.home_activity.all_ben.ben_ifa
 
 import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -17,11 +16,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.adapters.dynamicAdapter.BottleAdapter
 import org.piramalswasthya.sakhi.adapters.dynamicAdapter.FormRendererAdapter
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
-import org.piramalswasthya.sakhi.databinding.FragmentEyeSurgeryFormBinding
+import org.piramalswasthya.sakhi.databinding.FragmentBenIfaFormBinding
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.utils.HelperUtil.compressImageToTemp
 import org.piramalswasthya.sakhi.utils.HelperUtil.fileToBase64
@@ -31,32 +31,35 @@ import org.piramalswasthya.sakhi.utils.HelperUtil.launchFilePicker
 import org.piramalswasthya.sakhi.utils.HelperUtil.showPickerDialog
 import org.piramalswasthya.sakhi.utils.dynamicFiledValidator.FieldValidator
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
-import org.piramalswasthya.sakhi.work.dynamicWoker.EyeSurgeryFormSyncWorker
+import org.piramalswasthya.sakhi.work.dynamicWoker.BenIfaFormSyncWorker
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 import kotlin.getValue
+
 @AndroidEntryPoint
-class EyeSurgeryFormFragment : Fragment() {
+class BenIfaFormFragment : Fragment() {
 
     @Inject
     lateinit var prefDao: PreferenceDao
-    private var _binding: FragmentEyeSurgeryFormBinding? = null
+    private var _binding: FragmentBenIfaFormBinding? = null
 
-    private val binding: FragmentEyeSurgeryFormBinding
+    private val binding: FragmentBenIfaFormBinding
         get() = _binding!!
 
-    val args: EyeSurgeryFormFragmentArgs by lazy {
-        EyeSurgeryFormFragmentArgs.fromBundle(requireArguments())
+    val args: BenIfaFormFragmentArgs by lazy {
+        BenIfaFormFragmentArgs.fromBundle(requireArguments())
     }
-    private val viewModel: EyeSurgeryFormViewModel by viewModels()
+    private val viewModel: BenIfaFormViewModel by viewModels()
     private lateinit var adapter: FormRendererAdapter
     private var currentImageField: FormField? = null
     private var tempCameraUri: Uri? = null
     private var hhId : Long = 0L
     private var benId : Long = 0L
     private var isViewMode : Boolean = false
+    private var canAdd : Boolean = false
+    private lateinit var formId : String
 
     private val cameraLauncher =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
@@ -131,7 +134,7 @@ class EyeSurgeryFormFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentEyeSurgeryFormBinding.inflate(layoutInflater)
+        _binding = FragmentBenIfaFormBinding.inflate(layoutInflater)
         return binding.root
     }
 
@@ -142,9 +145,15 @@ class EyeSurgeryFormFragment : Fragment() {
         hhId = args.hhId
         isViewMode = args.isViewMode
 
-        EyeSurgeryFormSyncWorker.enqueue(requireContext())
+        formId = FormConstants.IFA_DISTRIBUTION_FORM_ID
+        viewModel.checkIfCanAdd(benId)
 
-        viewModel.loadFormSchema(benId,  FormConstants.EYE_SURGERY_FORM_ID, false)
+        isViewMode = false
+
+
+        BenIfaFormSyncWorker.enqueue(requireContext())
+
+        viewModel.loadFormSchema(benId, formId, false,"")
 
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         lifecycleScope.launch {
@@ -156,22 +165,45 @@ class EyeSurgeryFormFragment : Fragment() {
             }
         }
 
-        binding.fabEdit.setOnClickListener {
-            isViewMode = false
-            refreshAdapter()
-        }
-
         binding.btnSave.setOnClickListener {
             handleFormSubmission()
         }
+
+        viewModel.canAddNewVisit.observe(viewLifecycleOwner) { canAdd ->
+            this.canAdd = canAdd
+        }
+
+        binding.btnAddNew.setOnClickListener {
+            if (canAdd){
+                binding.llRecyclerView.visibility = View.VISIBLE
+                binding.btnAddNew.visibility = View.GONE
+            }else{
+                Toast.makeText(requireContext(),"Already added for this month",Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        tableRendar()
     }
 
+    private fun tableRendar() {
+        binding.tableRv.layoutManager = LinearLayoutManager(requireContext())
+        viewModel.bottleList.observe(viewLifecycleOwner) { list ->
+
+            if (formId.equals(FormConstants.IFA_DISTRIBUTION_FORM_ID, ignoreCase = true) && !list.isNullOrEmpty()) {
+                binding.llTable.visibility = View.VISIBLE
+                binding.tableRv.adapter = BottleAdapter(list)
+            } else {
+                binding.llTable.visibility = View.GONE
+            }
+        }
+        viewModel.loadBottleData(benId, formId)
+    }
 
     private fun refreshAdapter(){
         val visibleFields = viewModel.getVisibleFields().toMutableList()
         val minVisitDate = viewModel.getMinVisitDate()
         val maxVisitDate = viewModel.getMaxVisitDate()
-        //Changed By Kunal
+//Changed By Kunal
         adapter = FormRendererAdapter(
             visibleFields,
             isViewOnly = isViewMode,
@@ -190,8 +222,6 @@ class EyeSurgeryFormFragment : Fragment() {
                 },)
 
         binding.recyclerView.adapter = adapter
-        binding.btnSave.isVisible = !isViewMode
-        binding.fabEdit.isVisible = isViewMode
     }
 
     private fun handleFormSubmission() {
@@ -222,7 +252,11 @@ class EyeSurgeryFormFragment : Fragment() {
                             visitDate == null -> "Invalid visit date"
                             today != null && visitDate.after(today) -> "Visit Date cannot be after today's date"
                             previousVisitDate != null && !visitDate.after(previousVisitDate) ->
-                                "Visit Date must be after previous visit (${sdf.format(previousVisitDate)})"
+                                "Visit Date must be after previous visit (${
+                                    sdf.format(
+                                        previousVisitDate
+                                    )
+                                })"
                             else -> null
                         }
                         schemaField.errorMessage = errorMessage
@@ -264,12 +298,7 @@ class EyeSurgeryFormFragment : Fragment() {
         if (hasErrors) return
 
         lifecycleScope.launch {
-            val isSaved = viewModel.saveFormResponses(benId, hhId)
-            if (isSaved) {
-                Toast.makeText(requireContext(),  getString(R.string.eye_surgery_details_saved_successfully), Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(requireContext(), getString(R.string.failed_to_submit_form), Toast.LENGTH_SHORT).show()
-            }
+            viewModel.saveFormResponses(benId, hhId)
             findNavController().previousBackStackEntry?.savedStateHandle?.set("form_submitted", true)
             findNavController().popBackStack()
         }
@@ -289,4 +318,5 @@ class EyeSurgeryFormFragment : Fragment() {
         super.onDestroy()
         _binding = null
     }
+
 }

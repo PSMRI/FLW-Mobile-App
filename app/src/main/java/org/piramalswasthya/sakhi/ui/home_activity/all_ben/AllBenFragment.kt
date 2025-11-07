@@ -178,14 +178,24 @@ class AllBenFragment : Fragment() {
                 },
                 { benId, hhId , isViewMode, isIFA->
                     if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
-                        findNavController().navigate(
-                            AllBenFragmentDirections.actionAllBenFragmentToEyeSurgeryFormFragment(
-                                hhId = hhId,
-                                benId = benId,
-                                isViewMode = isViewMode,
-                                isIFA = isIFA
+                        if (isIFA){
+                            findNavController().navigate(
+                                AllBenFragmentDirections.actionAllBenFragmentToBenIfaFormFragment(
+                                    hhId = hhId,
+                                    benId = benId,
+                                    isViewMode = isViewMode,
+                                )
                             )
-                        )
+                        }else{
+                            findNavController().navigate(
+                                AllBenFragmentDirections.actionAllBenFragmentToEyeSurgeryFormFragment(
+                                    hhId = hhId,
+                                    benId = benId,
+                                    isViewMode = isViewMode,
+                                )
+                            )
+                        }
+
                     }
                 },
                 {

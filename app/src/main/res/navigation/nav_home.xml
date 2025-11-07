@@ -119,6 +119,9 @@
         <action
             android:id="@+id/action_allBenFragment_to_eyeSurgeryFormFragment"
             app:destination="@id/eyeSurgeryFormFragment" />
+        <action
+            android:id="@+id/action_allBenFragment_to_benIfaFormFragment"
+            app:destination="@id/benIfaFormFragment" />
         <argument
             android:name="source"
             android:defaultValue="0"
@@ -1088,8 +1091,21 @@
             android:name="isViewMode"
             app:argType="boolean"
             android:defaultValue="false" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/benIfaFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.all_ben.ben_ifa.BenIfaFormFragment"
+        android:label="BenIfaFormFragment">
         <argument
-            android:name="isIFA"
+            android:name="hhId"
+            app:argType="long" />
+        <argument
+            android:name="benId"
+            android:defaultValue="0L"
+            app:argType="long" />
+        <argument
+            android:name="isViewMode"
             app:argType="boolean"
             android:defaultValue="false" />
     </fragment>
