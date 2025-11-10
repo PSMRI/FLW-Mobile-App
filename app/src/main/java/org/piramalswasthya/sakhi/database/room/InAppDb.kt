@@ -228,11 +228,17 @@ abstract class InAppDb : RoomDatabase() {
             })
 
             val MIGRATION_34_35 = object : Migration(34, 35) {
-               override fun migrate(database: SupportSQLiteDatabase) {
+                override fun migrate(database: SupportSQLiteDatabase) {
                     database.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN leprosySymptoms TEXT");
                     database.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN visitLabel TEXT");
                     database.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN visitNumber INTEGER");
                     database.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN leprosySymptomsPosition INTEGER DEFAULT 1");
+                    database.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN leprosySymptomsPosition INTEGER DEFAULT 1")
+                    database.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN isConfirmed INTEGER NOT NULL DEFAULT 0")
+                    database.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN treatmentStartDate INTEGER NOT NULL DEFAULT ${System.currentTimeMillis()}")
+                    database.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN treatmentEndDate INTEGER NOT NULL DEFAULT ${System.currentTimeMillis()}")
+                    database.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN mdtBlisterPackRecived TEXT")
+                    database.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN treatmentStatus TEXT")
                 }
             }
 
@@ -249,7 +255,8 @@ abstract class InAppDb : RoomDatabase() {
 
             val MIGRATION_32_33 = object : Migration(32, 33) {
                 override fun migrate(database: SupportSQLiteDatabase) {
-                    database.execSQL("""
+                    database.execSQL(
+                        """
             CREATE TABLE IF NOT EXISTS ALL_VISIT_HISTORY_HBYC (
                 id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 benId INTEGER NOT NULL,
@@ -263,27 +270,33 @@ abstract class InAppDb : RoomDatabase() {
                 createdAt INTEGER NOT NULL,
                 syncedAt INTEGER
             )
-        """.trimIndent())
-                    database.execSQL("""
+        """.trimIndent()
+                    )
+                    database.execSQL(
+                        """
             CREATE UNIQUE INDEX IF NOT EXISTS index_all_visit_history_hbyc_unique 
             ON ALL_VISIT_HISTORY_HBYC (benId, hhId, visitDay, visitDate, formId)
-        """.trimIndent())
+        """.trimIndent()
+                    )
                 }
             }
 
 
             val MIGRATION_31_32 = object : Migration(31, 32) {
                 override fun migrate(database: SupportSQLiteDatabase) {
-                    database.execSQL("""
+                    database.execSQL(
+                        """
             CREATE TABLE IF NOT EXISTS form_schema (
                 formId TEXT NOT NULL PRIMARY KEY,
                 formName TEXT NOT NULL,
                 version INTEGER NOT NULL DEFAULT 1,
                 schemaJson TEXT NOT NULL
             )
-        """.trimIndent())
+        """.trimIndent()
+                    )
 
-                    database.execSQL("""
+                    database.execSQL(
+                        """
             CREATE TABLE IF NOT EXISTS all_visit_history (
                 id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 benId INTEGER NOT NULL,
@@ -297,12 +310,15 @@ abstract class InAppDb : RoomDatabase() {
                 createdAt INTEGER NOT NULL,
                 syncedAt INTEGER
             )
-        """.trimIndent())
+        """.trimIndent()
+                    )
 
-                    database.execSQL("""
+                    database.execSQL(
+                        """
             CREATE UNIQUE INDEX IF NOT EXISTS index_all_visit_history_unique 
             ON all_visit_history (benId, hhId, visitDay, visitDate, formId)
-        """.trimIndent())
+        """.trimIndent()
+                    )
                 }
             }
 
@@ -310,18 +326,21 @@ abstract class InAppDb : RoomDatabase() {
             val MIGRATION_30_31 = object : Migration(30, 31) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     // Create the new table
-                    database.execSQL("""
+                    database.execSQL(
+                        """
             CREATE TABLE IF NOT EXISTS form_schema (
                 formId TEXT NOT NULL PRIMARY KEY,
                 formName TEXT NOT NULL,
                 version INTEGER NOT NULL DEFAULT 1,
                 schemaJson TEXT NOT NULL
             )
-        """.trimIndent())
+        """.trimIndent()
+                    )
                     database.execSQL("ALTER TABLE IMMUNIZATION ADD COLUMN mcpCardSummary1 TEXT")
                     database.execSQL("ALTER TABLE IMMUNIZATION ADD COLUMN mcpCardSummary2 TEXT")
                     database.execSQL("DROP TABLE IF EXISTS `UWIN_SESSION`")
-                    database.execSQL("""CREATE TABLE IF NOT EXISTS `UWIN_SESSION` (
+                    database.execSQL(
+                        """CREATE TABLE IF NOT EXISTS `UWIN_SESSION` (
                             `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                     `sessionDate` INTEGER NOT NULL,
                     `place` TEXT,
@@ -335,7 +354,8 @@ abstract class InAppDb : RoomDatabase() {
                     `updatedDate` INTEGER NOT NULL,
                     `syncState` INTEGER NOT NULL
                     )
-                    """.trimIndent())
+                    """.trimIndent()
+                    )
                 }
             }
 
@@ -353,8 +373,6 @@ abstract class InAppDb : RoomDatabase() {
                     )
                 }
             }
-
-
 
 
 //            val MIGRATION_22_23 = object : Migration(22, 23) {

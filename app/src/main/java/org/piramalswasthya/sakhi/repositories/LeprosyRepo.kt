@@ -40,6 +40,12 @@ class LeprosyRepo @Inject constructor(
         }
     }
 
+    suspend fun updateLerosyScreening(leprosyScreeningCache: LeprosyScreeningCache) {
+         withContext(Dispatchers.IO){
+             leprosyDao.updateLeprosyScreening(leprosyScreeningCache)
+         }
+    }
+
     /* suspend fun getTBSuspected(benId: Long): TBSuspectedCache? {
          return withContext(Dispatchers.IO) {
              malariaDao.getTbSuspected(benId)

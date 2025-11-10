@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.model.LeprosyScreeningCache
 
@@ -19,4 +20,9 @@ interface LeprosyDao {
     suspend fun getLeprosyScreening(syncState: SyncState): List<LeprosyScreeningCache>
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveLeprosyScreening(malariaScreeningCache: LeprosyScreeningCache)
+
+    @Update
+    suspend fun updateLeprosyScreening(malariaScreeningCache: LeprosyScreeningCache)
+
+
 }

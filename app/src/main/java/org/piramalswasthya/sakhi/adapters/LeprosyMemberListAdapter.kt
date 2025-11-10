@@ -86,8 +86,28 @@ class LeprosyMemberListAdapter(
             } else {
                 binding.btnFormTb.visibility = View.INVISIBLE
             }
-            binding.btnFormTb.text = if (item.leprosy == null) "Register" else "View"
-            binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.leprosy == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
+            val (text, colorRes) = when {
+                item.leprosy == null -> {
+                    "Screening" to android.R.color.holo_red_dark
+                }
+                item.leprosy.leprosySymptomsPosition == 1 -> {
+                    "View" to android.R.color.holo_green_dark
+                }
+                item.leprosy.leprosySymptomsPosition == 0 -> {
+                    "Suspected" to android.R.color.holo_red_dark
+                }
+                else -> {
+                    "View" to android.R.color.holo_green_dark
+                }
+            }
+
+            binding.btnFormTb.text = text
+            binding.btnFormTb.setBackgroundColor(
+                binding.root.resources.getColor(colorRes, binding.root.context.theme)
+            )
+           /* binding.btnFormTb.text = if (item.leprosy == null) "Register" else "View"
+            item.leprosy.leprosySymptomsPosition
+            binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.leprosy == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))*/
             binding.clickListener = clickListener
 
             binding.executePendingBindings()

@@ -45,8 +45,14 @@ data class LeprosyScreeningCache(
     var followUpDate: Long = System.currentTimeMillis(),
     var leprosySymptoms: String? = null,
     var leprosySymptomsPosition: Int? = 1,
+    var lerosyStatusPosition: Int? = 0,
     var visitLabel: String? = "Visit -1",
     var visitNumber: Int? = 1,
+    var isConfirmed: Boolean = false,
+    val treatmentStartDate : Long = System.currentTimeMillis(),
+    val treatmentEndDate : Long = System.currentTimeMillis(),
+    val mdtBlisterPackRecived: String? = null,
+    var treatmentStatus: String? = null,
     var syncState: SyncState = SyncState.UNSYNCED,
 ): FormDataModel {
     fun toDTO(): LeprosyScreeningDTO {
