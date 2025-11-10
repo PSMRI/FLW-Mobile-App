@@ -41,6 +41,7 @@ import org.piramalswasthya.sakhi.database.room.dao.SyncDao
 import org.piramalswasthya.sakhi.database.room.dao.TBDao
 import org.piramalswasthya.sakhi.database.room.dao.UwinDao
 import org.piramalswasthya.sakhi.database.room.dao.MaaMeetingDao
+import org.piramalswasthya.sakhi.database.room.dao.MosquitoNetFormResponseDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseJsonDaoHBYC
 import org.piramalswasthya.sakhi.database.room.dao.VLFDao
@@ -305,5 +306,9 @@ object AppModule {
     @Singleton
     @Provides
     fun provideMaaMeetingDao(database: InAppDb): MaaMeetingDao = database.maaMeetingDao
+
+    @Singleton
+    @Provides
+    fun provideMosquitoNetFormResponseDao(database: InAppDb): MosquitoNetFormResponseDao = database.formResponseMosquitoNetJsonDao()
 
 }

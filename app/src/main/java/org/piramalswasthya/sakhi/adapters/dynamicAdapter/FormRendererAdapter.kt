@@ -128,9 +128,10 @@
                     inputContainer.addView(wrapper)
 
                 }
-
+                Log.i("FormRendarAdapter", "FieldType: ${field.type}")
                 when (field.type) {
                     "text" -> {
+                        Log.i("FormRendarAdapter", "bind: Text")
                         val context = itemView.context
 
                         val textInputLayout = TextInputLayout(
@@ -186,6 +187,7 @@
 
 
                     "number" -> {
+                        Log.i("FormRendarAdapter", "bind: Number")
                         val context = itemView.context
 
                         val textInputLayout = TextInputLayout(
@@ -241,6 +243,7 @@
 
 
                     "dropdown" -> {
+                        Log.i("FormRendarAdapter", "bind: DropDown")
                         val context = itemView.context
                         val isEditableField  = field.fieldId != "visit_day" && field.isEditable && !isViewOnly
 
@@ -310,6 +313,7 @@
 
                     "date" -> {
                         val context = itemView.context
+                        Log.i("FormRendarAdapter", "bind: Date")
                         val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
                         val today = Calendar.getInstance().time
                         val todayStr = sdf.format(today)
@@ -460,7 +464,7 @@
 
                     "radio" -> {
                         val context = itemView.context
-
+                        Log.i("FormRendarAdapter", "bind: Radio")
                         val radioGroup = RadioGroup(context).apply {
                             orientation = RadioGroup.HORIZONTAL
                             layoutParams = LinearLayout.LayoutParams(
@@ -581,7 +585,9 @@
 
                         addWithError(container, field)
                     }
-
+                    "toggle" -> {
+                        Log.i("FormRendarAdapter", "bind: Toggle")
+                    }
 
                     else -> {
                         inputContainer.addView(TextView(itemView.context).apply {

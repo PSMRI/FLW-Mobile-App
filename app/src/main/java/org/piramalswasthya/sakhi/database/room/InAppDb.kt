@@ -38,6 +38,7 @@ import org.piramalswasthya.sakhi.database.room.dao.MaternalHealthDao
 import org.piramalswasthya.sakhi.database.room.dao.MdsrDao
 import org.piramalswasthya.sakhi.database.room.dao.PmjayDao
 import org.piramalswasthya.sakhi.database.room.dao.MaaMeetingDao
+import org.piramalswasthya.sakhi.database.room.dao.MosquitoNetFormResponseDao
 import org.piramalswasthya.sakhi.database.room.dao.PmsmaDao
 import org.piramalswasthya.sakhi.database.room.dao.PncDao
 import org.piramalswasthya.sakhi.database.room.dao.ProfileDao
@@ -102,6 +103,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.InfantEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.hbyc.FormResponseJsonEntityHBYC
 import org.piramalswasthya.sakhi.model.VHNDCache
+import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoNetFormResponseJsonEntity
 
 @Database(
     entities = [
@@ -158,11 +160,12 @@ import org.piramalswasthya.sakhi.model.VHNDCache
         FormResponseJsonEntityHBYC::class,
         MaaMeetingEntity::class,
         GeneralOPEDBeneficiary::class,
-        UwinCache::class
+        UwinCache::class,
+        MosquitoNetFormResponseJsonEntity::class
     ],
     views = [BenBasicCache::class],
 
-    version = 34, exportSchema = false
+    version = 35, exportSchema = false
 )
 
 @TypeConverters(
@@ -212,6 +215,7 @@ abstract class InAppDb : RoomDatabase() {
     abstract fun formResponseDao(): FormResponseDao
     abstract fun formResponseJsonDao(): FormResponseJsonDao
     abstract fun formResponseJsonDaoHBYC(): FormResponseJsonDaoHBYC
+    abstract fun formResponseMosquitoNetJsonDao(): MosquitoNetFormResponseDao
 
     abstract val syncDao: SyncDao
 
@@ -233,6 +237,35 @@ abstract class InAppDb : RoomDatabase() {
                     database.execSQL("ALTER TABLE INFANT_REG ADD COLUMN deliveryDischargeSummary2 TEXT")
                     database.execSQL("ALTER TABLE INFANT_REG ADD COLUMN deliveryDischargeSummary3 TEXT")
                     database.execSQL("ALTER TABLE INFANT_REG ADD COLUMN deliveryDischargeSummary4 TEXT")
+                }
+            }
+
+            val MIGRATION_34_35 = object : Migration(34, 35) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL(
+                        """
+            CREATE TABLE IF NOT EXISTS mosquito_net_visit (
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                benId INTEGER NOT NULL,
+                hhId INTEGER NOT NULL,
+                visitDay TEXT NOT NULL,
+                visitDate TEXT NOT NULL,
+                formId TEXT NOT NULL,
+                version INTEGER NOT NULL,
+                formDataJson TEXT NOT NULL,
+                isSynced INTEGER NOT NULL DEFAULT 0,
+                createdAt INTEGER NOT NULL,
+                syncedAt INTEGER
+            )
+            """.trimIndent()
+                    )
+
+                    database.execSQL(
+                        """
+            CREATE UNIQUE INDEX IF NOT EXISTS index_mosquito_net_visit_unique
+            ON mosquito_net_visit (benId, hhId, visitDay, visitDate, formId)
+            """.trimIndent()
+                    )
                 }
             }
 
@@ -1229,6 +1262,7 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_31_32,
                         MIGRATION_32_33,
                         MIGRATION_33_34,
+                        MIGRATION_34_35
                     ).build()
 
                     INSTANCE = instance
