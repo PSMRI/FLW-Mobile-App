@@ -12,6 +12,7 @@
     import android.text.style.ForegroundColorSpan
     import android.view.*
     import android.util.Base64
+    import android.util.Log
     import android.widget.*
     import androidx.appcompat.content.res.AppCompatResources
     import androidx.core.content.ContextCompat
