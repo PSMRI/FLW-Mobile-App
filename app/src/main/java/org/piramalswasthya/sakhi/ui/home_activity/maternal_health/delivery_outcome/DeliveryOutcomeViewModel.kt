@@ -39,12 +39,16 @@ class DeliveryOutcomeViewModel @Inject constructor(
 ) : ViewModel() {
     val benId =
         DeliveryOutcomeFragmentArgs.fromSavedStateHandle(savedStateHandle).benId
+   val hhId = DeliveryOutcomeFragmentArgs.fromSavedStateHandle(savedStateHandle).hhId
 
-    enum class State {
-        IDLE, SAVING, SAVE_SUCCESS, SAVE_FAILED
+    sealed class State {
+        object IDLE : State()
+        object SAVING : State()
+        data class SAVE_SUCCESS(val shouldNavigateToMdsr: Boolean) : State()
+        object SAVE_FAILED : State()
     }
 
-    private val _state = MutableLiveData(State.IDLE)
+    private val _state = MutableLiveData<State>(State.IDLE)
     val state: LiveData<State>
         get() = _state
 
@@ -138,7 +142,7 @@ fun saveForm() {
                 deliveryOutcomeRepo.saveDeliveryOutcome(deliveryOutcome)
 
                 val ecr = ecrRepo.getSavedRecord(deliveryOutcome.benId)
-
+                val shouldNavigateToMdsr = deliveryOutcome.complication?.equals("Death", ignoreCase = true) == true
                 if (deliveryOutcome.complication.equals("Death", ignoreCase = true)) {
                     benRepo.getBenFromId(benId)?.let {
                         it.isDeath = true
@@ -170,7 +174,7 @@ fun saveForm() {
                     ecrRepo.persistRecord(ecr)
                 }
 
-                _state.postValue(State.SAVE_SUCCESS)
+                _state.postValue(State.SAVE_SUCCESS(shouldNavigateToMdsr))
             } catch (e: Exception) {
                 _state.postValue(State.SAVE_FAILED)
             }

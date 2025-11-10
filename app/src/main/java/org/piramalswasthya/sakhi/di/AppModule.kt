@@ -41,8 +41,11 @@ import org.piramalswasthya.sakhi.database.room.dao.TBDao
 import org.piramalswasthya.sakhi.database.room.dao.UwinDao
 import org.piramalswasthya.sakhi.database.room.dao.MaaMeetingDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseJsonDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseJsonDaoHBYC
 import org.piramalswasthya.sakhi.database.room.dao.VLFDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.BenIfaFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.CUFYFormResponseJsonDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.EyeSurgeryFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.AnalyticsHelper
 import org.piramalswasthya.sakhi.helpers.ApiAnalyticsInterceptor
@@ -289,6 +292,9 @@ object AppModule {
     @Provides
     fun provideFormResponseJsonDao(database: InAppDb): FormResponseJsonDao = database.formResponseJsonDao()
 
+    @Singleton
+    @Provides
+    fun formResponseJsonDaoHBYC(database: InAppDb): FormResponseJsonDaoHBYC = database.formResponseJsonDaoHBYC()
 
     @Singleton
     @Provides
@@ -305,4 +311,12 @@ object AppModule {
     @Singleton
     @Provides
     fun provideCUFYFormResponseJsonDao(database: InAppDb): CUFYFormResponseJsonDao = database.CUFYFormResponseJsonDao()
+
+    @Singleton
+    @Provides
+    fun provideEyeSurgeryFormResponseJsonDao(database: InAppDb): EyeSurgeryFormResponseJsonDao = database.formResponseJsonDaoEyeSurgery()
+
+    @Singleton
+    @Provides
+    fun provideBenIfaFormResponseJsonDao(database: InAppDb): BenIfaFormResponseJsonDao = database.formResponseJsonDaoBenIfa()
 }

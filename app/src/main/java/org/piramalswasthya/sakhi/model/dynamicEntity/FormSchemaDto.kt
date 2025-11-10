@@ -45,7 +45,7 @@ data class FormFieldDto(
     val type: String = "",
 
     @SerializedName("options")
-    val options: List<String>? = null,
+    var options: List<String>? = null,
 
     @SerializedName("isRequired")
     val required: Boolean = false,

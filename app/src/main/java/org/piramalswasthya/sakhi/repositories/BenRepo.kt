@@ -569,7 +569,8 @@ class BenRepo @Inject constructor(
                                             syncState = if (benExists) SyncState.SYNCED else SyncState.SYNCING,
                                             dob = 0L,
                                             relToHeadId = 0,
-                                            isConsent = false
+                                            isConsent = false,
+                                            reproductiveStatusId =  benDataObj.getInt("reproductiveStatusId"),
                                         )
                                     )
                                 }

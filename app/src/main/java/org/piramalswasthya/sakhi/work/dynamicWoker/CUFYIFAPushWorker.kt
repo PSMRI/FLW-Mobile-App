@@ -34,7 +34,7 @@ class CUFYIFAPushWorker @AssistedInject constructor(
                 if ((form.benId ?: -1) < 0) continue
 
                 try{
-                    val success = repository.syncFormToServer(FormConstants.IFA_FORM_NAME,form)
+                    val success = repository.syncFormToServer(user.userName,FormConstants.IFA_FORM_NAME,form)
                     if (success) {
                         repository.markFormAsSynced(form.id)
                     }

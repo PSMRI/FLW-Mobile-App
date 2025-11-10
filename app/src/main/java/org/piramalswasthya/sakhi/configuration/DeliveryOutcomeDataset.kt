@@ -391,7 +391,9 @@ open class DeliveryOutcomeDataset(
                     triggerDependants(
                         source = complication,
                         addItems = listOf(causeOfDeath,dateOfDeath,placeOfDeath),
-                        removeItems = listOf(otherComplication, otherCauseOfDeath)
+                        removeItems = listOf(otherComplication, otherCauseOfDeath, dateOfDischarge,
+                            timeOfDischarge,
+                            isJSYBenificiary)
                     )
                 } else if (index == 7) {
                     triggerDependants(

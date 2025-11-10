@@ -37,6 +37,7 @@ import org.piramalswasthya.sakhi.databinding.LayoutViewMediaBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.ui.checkFileSize
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pnc.form.PncFormFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.form.PwAncFormViewModel.State
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
@@ -260,31 +261,11 @@ class PwAncFormFragment : Fragment() {
             viewModel.setRecordExist(false)
         }
         viewModel.state.observe(viewLifecycleOwner) { state ->
-            when (state!!) {
-                State.IDLE -> {
-                }
-
-                State.SAVING -> {
-                    binding.llContent.visibility = View.GONE
-                    binding.pbForm.visibility = View.VISIBLE
-                }
-
-                State.SAVE_SUCCESS -> {
-                    binding.llContent.visibility = View.VISIBLE
-                    binding.pbForm.visibility = View.GONE
-                    Toast.makeText(context, "Save Successful", Toast.LENGTH_LONG).show()
-                    WorkerUtils.triggerAmritPushWorker(requireContext())
-                    findNavController().navigateUp()
-                }
-
-                State.SAVE_FAILED -> {
-                    Toast.makeText(
-
-                        context, "Something wend wong! Contact testing!", Toast.LENGTH_LONG
-                    ).show()
-                    binding.llContent.visibility = View.VISIBLE
-                    binding.pbForm.visibility = View.GONE
-                }
+            when (state) {
+                is  State.IDLE -> Unit
+                is  State.SAVING -> toggleLoading(true)
+                is  State.SAVE_SUCCESS -> handleSaveSuccess(state.shouldNavigateToMdsr)
+                is  State.SAVE_FAILED -> handleSaveFailed()
             }
         }
 
@@ -292,6 +273,31 @@ class PwAncFormFragment : Fragment() {
 
 
 
+    }
+
+    private fun toggleLoading(isLoading: Boolean) {
+        binding.llContent.visibility = if (isLoading) View.GONE else View.VISIBLE
+        binding.pbForm.visibility = if (isLoading) View.VISIBLE else View.GONE
+    }
+
+    private fun handleSaveSuccess(shouldNavigateToMdsr: Boolean) {
+        toggleLoading(false)
+        WorkerUtils.triggerAmritPushWorker(requireContext())
+        if (shouldNavigateToMdsr) navigateToMdsr()
+        else findNavController().navigateUp()
+    }
+
+    private fun handleSaveFailed() {
+        toggleLoading(false)
+    }
+
+    private fun navigateToMdsr() {
+        viewModel.hhID.let {
+            val action = PwAncFormFragmentDirections.actionPwAncFormFragmentToMdsrObjectFragment(
+                hhId = it.toLong(), benId = viewModel.benId
+            )
+            findNavController().navigate(action)
+        }
     }
 
     private fun viewImage(imageUri: Uri) {

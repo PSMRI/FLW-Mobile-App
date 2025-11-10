@@ -94,6 +94,16 @@
         <item>Dec</item>
     </string-array>
 
+    <string-array name="method_of_contraception_for_zero_child">
+        <item>Self</item>
+        <item>ANTRA Injection</item>
+        <item>Copper T (IUCD)</item>
+        <item>Condom</item>
+        <item>Mala N</item>
+        <item>Chaya</item>
+        <item>ECP</item>
+        <item>Any Other Method</item>
+    </string-array>
     <string-array name="method_of_contraception">
         <item>Self</item>
         <item>ANTRA Injection</item>
@@ -107,6 +117,8 @@
         <item>MiniLap</item>
         <item>Any Other Method</item>
     </string-array>
+
+
 
     <string-array name="antra_doses">
         <item>Dose-1</item>
@@ -301,7 +313,7 @@
         <item>No</item>
     </string-array>
     <string-array name="pnc_contraception_method_array">
-        <item>POST PARTUM IUCD (PPIUCD) WITHIN 48 HRS OF DELIVERY</item>
+        <item>POST PARTUM IUCD (PPIUCD) </item>
         <item>CONDOM</item>
         <item>MALE STERILIZATION</item>
         <item>FEMALE STERILIZATION</item>

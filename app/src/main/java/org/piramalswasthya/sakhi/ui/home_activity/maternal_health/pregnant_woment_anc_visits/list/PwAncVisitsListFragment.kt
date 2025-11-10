@@ -68,10 +68,10 @@ class PwAncVisitsListFragment : Fragment() {
                 if (!bottomSheet.isVisible)
                     bottomSheet.show(childFragmentManager, "ANC")
             },
-                addVisit = { benId, visitNumber ->
+                addVisit = { benId,hhId, visitNumber ->
                     findNavController().navigate(
                         PwAncVisitsListFragmentDirections.actionPwAncVisitsFragmentToPwAncFormFragment(
-                            benId, visitNumber
+                            benId, hhId.toString(),visitNumber
                         )
                     )
                 },
