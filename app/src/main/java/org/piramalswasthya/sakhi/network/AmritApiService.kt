@@ -9,6 +9,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.FormSubmitRequest
 import org.piramalswasthya.sakhi.model.dynamicModel.ApiResponse
 import org.piramalswasthya.sakhi.model.dynamicModel.HBNCVisitListResponse
 import org.piramalswasthya.sakhi.model.dynamicModel.HBNCVisitRequest
+import org.piramalswasthya.sakhi.ui.home_activity.asha_profile.AshaProfileViewModel
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -310,6 +311,7 @@ interface AmritApiService {
         @Path("formId") formId: String
     ): Response<ApiResponse<FormSchemaDto>>
 
+
     @POST("flw-api/child-care/hbncVisit/saveAll")
     suspend fun submitForm(
         @Body request: List<FormSubmitRequest>
@@ -317,6 +319,12 @@ interface AmritApiService {
 
     @POST("flw-api/child-care/{formName}/saveAll")
     suspend fun submitChildCareForm(
+        @Path("formName") formName: String,
+        @Body request: List<FormSubmitRequest>
+    ): Response<Unit>
+
+    @POST("flw-api/beneficiary/{formName}/saveAll")
+    suspend fun submitEyeSurgeryForm(
         @Path("formName") formName: String,
         @Body request: List<FormSubmitRequest>
     ): Response<Unit>
@@ -330,6 +338,24 @@ interface AmritApiService {
     @POST("flw-api/child-care/{formName}/getAll")
     suspend fun getAllFormVisits(
         @Path("formName") formName: String,
+        @Body request: HBNCVisitRequest
+    ): Response<HBNCVisitListResponse>
+
+    @POST("flw-api/beneficiary/{formName}/getAll")
+    suspend fun getAllEyeSurgeryFormVisits(
+        @Path("formName") formName: String,
+        @Body request: HBNCVisitRequest
+    ): Response<HBNCVisitListResponse>
+
+
+    @POST("flw-api/child-care/hbycVisit/saveAll")
+    suspend fun submitFormhbyc(
+        @Body request: List<FormSubmitRequest>
+    ): Response<Unit>
+
+
+    @POST("flw-api/child-care/hbycVisit/getAll")
+    suspend fun getAllHbycVisits(
         @Body request: HBNCVisitRequest
     ): Response<HBNCVisitListResponse>
 

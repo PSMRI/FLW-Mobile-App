@@ -50,6 +50,11 @@ class EcrRepo @Inject constructor(
             database.ecrDao.getSavedECR(benId)
         }
     }
+    suspend fun getNoOfChildren(benId: Long): Int? {
+        return withContext(Dispatchers.IO) {
+            database.ecrDao.getNoOfChildren(benId)
+        }
+    }
 
     suspend fun getEct(benId: Long, createdDate: Long): EligibleCoupleTrackingCache? {
         return withContext(Dispatchers.IO) {
@@ -604,6 +609,8 @@ class EcrRepo @Inject constructor(
                     ?: ecrJson.optString("antraDose", null),
                 dueDateOfAntraInjection = ecrJson.optString("dueDateOfAntraInjection",null),
                 mpaFile = ecrJson.optString("mpaFile",null),
+                dischargeSummary1 = ecrJson.optString("dischargeSummary1",null),
+                dischargeSummary2 = ecrJson.optString("dischargeSummary2",null),
 
                 isPregnancyTestDone = if (ecrJson.has("isPregnancyTestDone")) ecrJson.getString("isPregnancyTestDone") else null,
                 isActive = if (ecrJson.has("isActive")) ecrJson.getBoolean("isActive") else false,

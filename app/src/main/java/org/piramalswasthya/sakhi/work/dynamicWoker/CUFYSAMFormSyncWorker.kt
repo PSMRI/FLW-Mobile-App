@@ -49,7 +49,7 @@ class CUFYSAMFormSyncWorker @AssistedInject constructor(
                 if ((form.benId ?: -1) < 0) continue
 
                 try{
-                    val success = repository.syncFormToServer(FormConstants.SAM_FORM_NAME,form)
+                    val success = repository.syncFormToServer(user.userName,FormConstants.SAM_FORM_NAME,form)
                     if (success) {
                         repository.markFormAsSynced(form.id)
                     }

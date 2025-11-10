@@ -10,6 +10,7 @@ import org.json.JSONObject
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.room.InAppDb
 import org.piramalswasthya.sakhi.helpers.dynamicMapper.FormSubmitRequestMapper
+import org.piramalswasthya.sakhi.model.BottleItem
 import org.piramalswasthya.sakhi.model.dynamicEntity.CUFYFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaEntity
@@ -93,6 +94,32 @@ class CUFYFormRepository @Inject constructor(
 
     suspend fun getAllFormVisits(formName: String, request: HBNCVisitRequest): Response<HBNCVisitListResponse> {
         return amritApiService.getAllFormVisits(formName, request)
+    }
+
+    suspend fun getBottleList(benId: Long, formId: String): List<BottleItem> {
+        val jsonList = jsonResponseDao.getFormJsonList(benId, formId)
+
+        val result = mutableListOf<BottleItem>()
+
+        jsonList.forEachIndexed { index, formJson ->
+            try {
+                val root = JSONObject(formJson)
+                val fields = root.optJSONObject("fields")
+                val date = fields?.optString("ifa_provision_date", "-") ?: "-"
+                val count = fields?.optString("ifa_bottle_count", "-") ?: "-"
+
+                result.add(
+                    BottleItem(
+                        srNo = index + 1,
+                        bottleNumber = count.toString(),
+                        dateOfProvision = date
+                    )
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+        return result
     }
 
     suspend fun saveDownloadedVisitList(list: List<HBNCVisitResponse>, formId: String) {
@@ -278,9 +305,9 @@ class CUFYFormRepository @Inject constructor(
 
 
 
-    suspend fun syncFormToServer(formName: String, form: CUFYFormResponseJsonEntity): Boolean {
+    suspend fun syncFormToServer(userName: String,formName: String, form: CUFYFormResponseJsonEntity): Boolean {
         return try {
-            val request = FormSubmitRequestMapper.fromEntity(form) ?: return false
+            val request = FormSubmitRequestMapper.fromEntity(form,userName) ?: return false
             val response = amritApiService.submitChildCareForm(formName,listOf(request))
             response.isSuccessful
         } catch (e: Exception) {

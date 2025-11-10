@@ -35,21 +35,24 @@ class PwAncFormViewModel @Inject constructor(
     private val benRepo: BenRepo
 ) : ViewModel() {
 
-    enum class State {
-        IDLE, SAVING, SAVE_SUCCESS, SAVE_FAILED
+    sealed class State {
+        object IDLE : State()
+        object SAVING : State()
+        data class SAVE_SUCCESS(val shouldNavigateToMdsr: Boolean) : State()
+        object SAVE_FAILED : State()
     }
 
     private var lastDocumentFormId: Int = 0
 
-    private val benId =
-        PwAncFormFragmentArgs.fromSavedStateHandle(savedStateHandle).benId
+    val benId = PwAncFormFragmentArgs.fromSavedStateHandle(savedStateHandle).benId
+    val hhID = PwAncFormFragmentArgs.fromSavedStateHandle(savedStateHandle).hhId.toString()
     private val visitNumber =
         PwAncFormFragmentArgs.fromSavedStateHandle(savedStateHandle).visitNumber
     val lastItemClick =
         PwAncFormFragmentArgs.fromSavedStateHandle(savedStateHandle).lastItemClick
 
 
-    private val _state = MutableLiveData(State.IDLE)
+    private val _state = MutableLiveData<State>(State.IDLE)
     val state: LiveData<State>
         get() = _state
 
@@ -179,6 +182,8 @@ class PwAncFormViewModel @Inject constructor(
                         }
                     }
 
+                    val shouldNavigateToMdsr = ancCache.maternalDeath ?: false
+
                     if (ancCache.maternalDeath == true) {
                         maternalHealthRepo.getSavedRegistrationRecord(benId)?.let {
                             it.active = false
@@ -187,22 +192,22 @@ class PwAncFormViewModel @Inject constructor(
                             maternalHealthRepo.persistRegisterRecord(it)
                         }
 
-                            maternalHealthRepo.getBenFromId(benId)?.let {
-                                it.isDeath = true
-                                it.isDeathValue = "Death"
-                                val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.US)
-                                val dateOfDeath = ancCache.deathDate?.let { d ->
-                                    dateFormat.format(Date(d))
-                                } ?: ""
-                                it.dateOfDeath = dateOfDeath
-                                it.reasonOfDeath = ancCache.maternalDeathProbableCause
-                                it.reasonOfDeathId = ancCache.maternalDeathProbableCauseId
-                                it.placeOfDeath = ancCache.placeOfDeath
-                                it.placeOfDeathId = ancCache.placeOfDeathId ?: -1
-                                it.otherPlaceOfDeath = ancCache.otherPlaceOfDeath
-                                if (it.processed != "N") it.processed = "U"
-                                it.syncState = SyncState.UNSYNCED
-                                benRepo.updateRecord(it)
+                        maternalHealthRepo.getBenFromId(benId)?.let {
+                            it.isDeath = true
+                            it.isDeathValue = "Death"
+                            val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.US)
+                            val dateOfDeath = ancCache.deathDate?.let { d ->
+                                dateFormat.format(Date(d))
+                            } ?: ""
+                            it.dateOfDeath = dateOfDeath
+                            it.reasonOfDeath = ancCache.maternalDeathProbableCause
+                            it.reasonOfDeathId = ancCache.maternalDeathProbableCauseId
+                            it.placeOfDeath = ancCache.placeOfDeath
+                            it.placeOfDeathId = ancCache.placeOfDeathId ?: -1
+                            it.otherPlaceOfDeath = ancCache.otherPlaceOfDeath
+                            if (it.processed != "N") it.processed = "U"
+                            it.syncState = SyncState.UNSYNCED
+                            benRepo.updateRecord(it)
                         }
 
                         maternalHealthRepo.getAllActiveAncRecords(benId).apply {
@@ -215,15 +220,13 @@ class PwAncFormViewModel @Inject constructor(
                         }
                     }
 
-                    _state.postValue(State.SAVE_SUCCESS)
+                    _state.postValue(State.SAVE_SUCCESS(shouldNavigateToMdsr))
                 } catch (e: Exception) {
                     _state.postValue(State.SAVE_FAILED)
                 }
             }
         }
     }
-
-
 
 
     fun setRecordExist(b: Boolean) {

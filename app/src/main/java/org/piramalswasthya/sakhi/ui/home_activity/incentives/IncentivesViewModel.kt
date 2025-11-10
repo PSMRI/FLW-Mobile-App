@@ -109,8 +109,7 @@ IncentivesViewModel @Inject constructor(
     fun mapToDomainDTO(list: List<IncentiveActivityDomain>): List<IncentiveDomainDTO> {
         val (from, to) = range.value
 
-        return list.map { domain ->
-
+        val dtoList = list.map { domain ->
             val filteredRecords = domain.records.filter { record ->
                 record.createdDate in from..to
             }
@@ -128,8 +127,13 @@ IncentivesViewModel @Inject constructor(
                 fmrCode = domain.activity.fmrCode,
                 documentsSubmitted = null
             )
-        }.sortedBy { it.group }
+        }
+
+        val groupOrder = dtoList.distinctBy { it.group }.map { it.group }
+
+        return dtoList.sortedBy { groupOrder.indexOf(it.group) }
     }
+
 
 
     fun groupIncentivesByActivity(incentiveDomainList: List<IncentiveDomain>): List<IncentiveGrouped> {

@@ -15,6 +15,7 @@ import org.json.JSONObject
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.ConditionalLogic
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FieldValidation
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
+import org.piramalswasthya.sakhi.model.BottleItem
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.model.dynamicEntity.CUFYFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormFieldDto
@@ -43,7 +44,6 @@ class CUFYFormViewModel @Inject constructor(
 
     private val _schema = MutableStateFlow<FormSchemaDto?>(null)
     val schema: StateFlow<FormSchemaDto?> = _schema
-
     private val _infant = MutableStateFlow<CUFYFormResponseJsonEntity?>(null)
     val infant: StateFlow<CUFYFormResponseJsonEntity?> = _infant
     var previousVisitDate: Date? = null
@@ -60,6 +60,16 @@ class CUFYFormViewModel @Inject constructor(
     val isBenDead: StateFlow<Boolean> = _isBenDead
 
     private var existingRecordId: Int = 0
+
+    private val _bottleList = MutableLiveData<List<BottleItem>>()
+    val bottleList: LiveData<List<BottleItem>> = _bottleList
+
+    fun loadBottleData(benId: Long, formId: String) {
+        viewModelScope.launch {
+            val list = repository.getBottleList(benId, formId)
+            _bottleList.postValue(list)
+        }
+    }
 
     fun setRecordId(recordId: Int) {
         existingRecordId = recordId

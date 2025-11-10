@@ -48,6 +48,8 @@ class EligibleCoupleTrackingFormFragment : Fragment() {
     private val PICK_FILE = 1
     private var latestTmpUri: Uri? = null
     private var mpaUri: Uri? = null
+    private var deliveryDischargeSummary1Uri: Uri? = null
+    private var deliveryDischargeSummary2Uri: Uri? = null
 
     private val viewModel: EligibleCoupleTrackingFormViewModel by viewModels()
 
@@ -55,12 +57,20 @@ class EligibleCoupleTrackingFormFragment : Fragment() {
         registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
             if (success) {
                 val formId = viewModel.getDocumentFormId()
-                val uri = if (isMPAForm(formId)) mpaUri else latestTmpUri
+                val uri = when (formId) {
+                    21 -> mpaUri
+                    58 -> deliveryDischargeSummary1Uri
+                    59 -> deliveryDischargeSummary2Uri
+                    else -> latestTmpUri
+                }
 
                 uri?.let {
                     viewModel.setImageUriToFormElement(it)
-                    if (isMPAForm(formId)) {
-                        binding.form.rvInputForm.adapter?.notifyItemChanged(viewModel.getIndexOfMPA())
+                    when (formId) {
+                        21 -> binding.form.rvInputForm.adapter?.notifyItemChanged(viewModel.getIndexOfMPA())
+                        58 -> binding.form.rvInputForm.adapter?.notifyItemChanged(viewModel.getIndexDeliveryDischargeSummary1())
+                        59 -> binding.form.rvInputForm.adapter?.notifyItemChanged(viewModel.getIndexDeliveryDischargeSummary2())
+                        else -> latestTmpUri
                     }
                 }
             }
@@ -117,14 +127,7 @@ class EligibleCoupleTrackingFormFragment : Fragment() {
                 chooseOptions()
             },
             viewDocumentListner = FormInputAdapter.ViewDocumentOnClick { formId ->
-                if (recordExists) {
-                    viewDocuments(formId)
-                } else {
-                    val uri = if (isMPAForm(formId)) mpaUri else null
-                    uri?.let {
-                        if (it.toString().contains("document")) displayPdf(it) else viewImage(it)
-                    }
-                }
+                viewDocuments(formId)
             },
             isEnabled = !recordExists
         ).apply { disableUpload = recordExists }
@@ -198,13 +201,20 @@ class EligibleCoupleTrackingFormFragment : Fragment() {
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == PICK_FILE && resultCode == Activity.RESULT_OK && isMPAForm(viewModel.getDocumentFormId())) {
-            data?.data?.let { pdfUri ->
-                if (checkFileSize(pdfUri, requireContext())) {
+        if (requestCode == PICK_FILE && resultCode == Activity.RESULT_OK) {
+            val formId = viewModel.getDocumentFormId()
+            val selectedUri = data?.data
+            selectedUri?.let { uri ->
+                if (checkFileSize(uri, requireContext())) {
                     Toast.makeText(context, resources.getString(R.string.file_size), Toast.LENGTH_LONG).show()
                 } else {
-                    mpaUri = pdfUri
-                    viewModel.setImageUriToFormElement(pdfUri)
+                    when (formId) {
+                        21 -> mpaUri = uri
+                        58 -> deliveryDischargeSummary1Uri = uri
+                        59 -> deliveryDischargeSummary2Uri = uri
+                        else -> latestTmpUri = uri
+                    }
+                    viewModel.setImageUriToFormElement(uri)
                     (binding.form.rvInputForm.adapter as? FormInputAdapter)?.notifyDataSetChanged()
                 }
             }
@@ -242,24 +252,25 @@ class EligibleCoupleTrackingFormFragment : Fragment() {
     private fun takeImage() {
         lifecycleScope.launchWhenStarted {
             getTmpFileUri().let { uri ->
-                if (isMPAForm(viewModel.getDocumentFormId())) {
-                    mpaUri = uri
-                    takePicture.launch(mpaUri)
+                val formId = viewModel.getDocumentFormId()
+                when (formId) {
+                    21 -> mpaUri = uri
+                    58 -> deliveryDischargeSummary1Uri = uri
+                    59 -> deliveryDischargeSummary2Uri = uri
+                    else -> latestTmpUri = uri
                 }
+                takePicture.launch(uri)
             }
         }
     }
 
     private fun requestLocationPermission() {
         val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        val isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(), Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED
         ) {
             requestLocationPermission.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
-//        else if (!isGPSEnabled) showSettingsAlert()
     }
 
     private fun getTmpFileUri(): Uri {
@@ -290,20 +301,35 @@ class EligibleCoupleTrackingFormFragment : Fragment() {
     }
 
     private fun viewDocuments(formId: Int) {
-        if (isMPAForm(formId)) {
-            lifecycleScope.launch {
-                viewModel.formList.collect {
-                    it[viewModel.getIndexOfMPA()].value?.let { value ->
-                        if (value.toString().contains("document")) {
-                            displayPdf(value.toUri())
-                        } else {
-                            viewImage(value.toUri())
-                        }
+        lifecycleScope.launch {
+            viewModel.formList.collect { list ->
+                val value = when (formId) {
+                    21 -> list.getOrNull(viewModel.getIndexOfMPA())?.value
+                    58 -> list.getOrNull(viewModel.getIndexDeliveryDischargeSummary1())?.value
+                    59 -> list.getOrNull(viewModel.getIndexDeliveryDischargeSummary2())?.value
+                    else -> null
+                }
+
+                if (value.isNullOrEmpty()) {
+                    Toast.makeText(requireContext(), "No document found for this form", Toast.LENGTH_SHORT).show()
+                    return@collect
+                }
+
+                val uri = value.toUri()
+                try {
+                    if (uri.toString().contains("document", ignoreCase = true)) {
+                        displayPdf(uri)
+                    } else {
+                        viewImage(uri)
                     }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Toast.makeText(requireContext(), "Unable to open document", Toast.LENGTH_SHORT).show()
                 }
             }
         }
     }
+
 
     private fun isMPAForm(formId: Int) = formId == 21
 

@@ -36,6 +36,7 @@ import java.util.Date
 import java.util.Locale
 import androidx.core.view.isVisible
 import androidx.core.view.isGone
+import org.piramalswasthya.sakhi.adapters.dynamicAdapter.BottleAdapter
 import org.json.JSONObject
 import org.piramalswasthya.sakhi.adapters.dynamicAdapter.FollowUpVisitAdapter
 import org.piramalswasthya.sakhi.utils.HelperUtil.checkAndShowMUACAlert
@@ -238,6 +239,22 @@ class CUFYFormFragment : Fragment() {
         binding.btnSave.setOnClickListener {
             handleFormSubmission()
         }
+
+        tableRendar()
+    }
+
+    private fun tableRendar() {
+        binding.tableRv.layoutManager = LinearLayoutManager(requireContext())
+        viewModel.bottleList.observe(viewLifecycleOwner) { list ->
+
+            if (formId.equals(FormConstants.CHILDREN_UNDER_FIVE_IFA_FORM_ID, ignoreCase = true) && !list.isNullOrEmpty()) {
+                binding.llTable.visibility = View.VISIBLE
+                binding.tableRv.adapter = BottleAdapter(list)
+            } else {
+                binding.llTable.visibility = View.GONE
+            }
+        }
+        viewModel.loadBottleData(benId, formId)
     }
 
     private fun refreshAdapter() {
