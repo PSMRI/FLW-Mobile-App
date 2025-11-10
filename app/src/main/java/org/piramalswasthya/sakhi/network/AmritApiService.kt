@@ -319,9 +319,33 @@ interface AmritApiService {
         @Body request: List<FormSubmitRequest>
     ): Response<Unit>
 
+    @POST("flw-api/child-care/{formName}/saveAll")
+    suspend fun submitChildCareForm(
+        @Path("formName") formName: String,
+        @Body request: List<FormSubmitRequest>
+    ): Response<Unit>
+
+    @POST("flw-api/beneficiary/{formName}/saveAll")
+    suspend fun submitEyeSurgeryForm(
+        @Path("formName") formName: String,
+        @Body request: List<FormSubmitRequest>
+    ): Response<Unit>
+
 
     @POST("flw-api/child-care/hbncVisit/getAll")
     suspend fun getAllHbncVisits(
+        @Body request: HBNCVisitRequest
+    ): Response<HBNCVisitListResponse>
+
+    @POST("flw-api/child-care/{formName}/getAll")
+    suspend fun getAllFormVisits(
+        @Path("formName") formName: String,
+        @Body request: HBNCVisitRequest
+    ): Response<HBNCVisitListResponse>
+
+    @POST("flw-api/beneficiary/{formName}/getAll")
+    suspend fun getAllEyeSurgeryFormVisits(
+        @Path("formName") formName: String,
         @Body request: HBNCVisitRequest
     ): Response<HBNCVisitListResponse>
 

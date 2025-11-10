@@ -123,7 +123,7 @@ class HBYCFormFragment : Fragment() {
                 val visibleFields = viewModel.getVisibleFields().toMutableList()
                 val minVisitDate = viewModel.getMinVisitDate()
                 val maxVisitDate = viewModel.getMaxVisitDate()
-
+            // Changed by Kunal
                 adapter = FormRendererAdapter(
                     visibleFields,
                     isViewOnly = isViewMode,
@@ -132,6 +132,9 @@ class HBYCFormFragment : Fragment() {
                             isSNCU = viewModel.isSNCU.value ?: false
 //                    isSNCU = true
                 ) { field, value ->
+                    maxVisitDate = maxVisitDate,
+                    onValueChanged =
+                 { field, value ->
                     if (value == "pick_image") {
                         currentImageField = field
                         showImagePickerDialog()
@@ -140,7 +143,7 @@ class HBYCFormFragment : Fragment() {
                         viewModel.updateFieldValue(field.fieldId, value)
                         adapter.updateFields(viewModel.getVisibleFields())
                     }
-                }
+                },)
 
                 recyclerView.adapter = adapter
                 saveButton.visibility = if (isViewMode) View.GONE else View.VISIBLE

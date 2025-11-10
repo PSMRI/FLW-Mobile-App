@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_new_visit">Add New Visit</string>
+    <string name="visit">Visit %1$d</string>
+    <string name="check_sam_">Check SAM</string>
+    <string name="severe_acute_malnutrition">Severe Acute Malnutrition</string>
+    <string name="sam_form">SAM Form</string>
+    <string name="ors_form">ORS Form</string>
+    <string name="oral_rehydration_solution">Oral Rehydration Solution</string>
+    <string name="ifa_form">IFA Form</string>
+    <string name="iron_folic_acid">Iron Folic Acid</string>
+    <string name="sam_form_">SAM Form</string>
+    <string name="take_photo">Take Photo</string>
+    <string name="select_image">Select Image</string>
+    <string name="choose_from_gallery">Choose from Gallery</string>
+    <string name="invalid_visit_date">Invalid visit date</string>
+    <string name="delivery_date_is_missing">Delivery date is missing</string>
+    <string name="visit_date_cannot_be_after_today_s_date">Visit Date cannot be after today\'s date</string>
+    <string name="visit_date_cannot_be_before_delivery_date">Visit Date cannot be before delivery date</string>
+    <string name="visit_date_must_be_after_previous_visit">Visit Date must be after previous visit (%1$s)</string>
+    <string name="visit_already_exists_for_this_date">Visit already exists for this date: %1$s</string>
+    <string name="visit_date_must_be_greater_then_the_last_visit_dates">Visit date must be greater then the last visit dates</string>
+    <string name="visit_date_must_be_after_all_existing_visit_dates">Visit date must be after all existing visit dates</string>
+    <string name="is_child_referred_nrc">is_child_referred_nrc</string>
+    <string name="is_child_admitted_nrc">is_child_admitted_nrc</string>
+    <string name="is_child_discharged_nrc">is_child_discharged_nrc</string>
+    <string name="sam_status">sam_status</string>
+    <string name="follow_up_sam">Follow up SAM</string>
+    <string name="nrc_admitted">NRC Admitted</string>
+    <string name="referred_to_nrc">Referred to NRC</string>
+</resources>
