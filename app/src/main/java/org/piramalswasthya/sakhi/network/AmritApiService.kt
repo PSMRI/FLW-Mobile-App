@@ -308,7 +308,9 @@ interface AmritApiService {
 
     @GET("common-api/dynamicForm/form/{formId}/fields")
     suspend fun fetchFormSchema(
-        @Path("formId") formId: String
+        @Path("formId") formId: String,
+        @Query("lang") lang: String
+
     ): Response<ApiResponse<FormSchemaDto>>
 
 

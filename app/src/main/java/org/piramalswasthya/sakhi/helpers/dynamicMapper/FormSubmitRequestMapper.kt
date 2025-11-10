@@ -6,12 +6,16 @@ import org.json.JSONObject
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSubmitRequest
 import org.piramalswasthya.sakhi.model.dynamicEntity.hbyc.FormResponseJsonEntityHBYC
+import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoNetFormResponseJsonEntity
 import java.text.SimpleDateFormat
 import java.util.*
 
 object FormSubmitRequestMapper {
 
     fun fromEntity(entity: FormResponseJsonEntity, userName: String): FormSubmitRequest? {
+        return mapCommon(entity.formDataJson, userName)
+    }
+    fun fromEntity(entity: MosquitoNetFormResponseJsonEntity, userName: String): FormSubmitRequest? {
         return mapCommon(entity.formDataJson, userName)
     }
 
