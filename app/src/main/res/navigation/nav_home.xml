@@ -1501,7 +1501,36 @@
         <action
             android:id="@+id/action_leprosyFragment_to_allHouseHoldDiseaseControlFragment"
             app:destination="@id/allHouseHoldDiseaseControlFragment"/>
+        <action
+            android:id="@+id/action_leprosyFragmen_to_leprosySuspectedListFragment"
+            app:destination="@+id/suspectedLeprosyListFragment" />
+
     </fragment>
+
+    <fragment
+        android:id="@+id/suspectedLeprosyListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.leprosy.suspected.list.SuspectedLeprosyListFragment"
+        android:label="SuspectedLeprosyListFragment">
+
+
+       <action
+           android:id="@+id/action_leprosySuspectedListFragment_to_suspectedLeprosyFormFragment"
+           app:destination="@id/suspectedLeprosyFormFragment"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/suspectedLeprosyFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.leprosy.suspected.from.SuspectedLeprosyFormFragment"
+        android:label="SuspectedLeprosyFromFragment">
+
+        <argument
+            android:name="benId"
+            app:argType="long" />
+
+
+    </fragment>
+
 
     <fragment
         android:id="@+id/allHouseHoldDiseaseControlFragment"

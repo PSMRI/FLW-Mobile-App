@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.LeprosyMemberListAdapter
@@ -15,6 +16,7 @@ import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBindin
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.disease_control.leprosy.list.LeprosySuspectedListFragmentDirections
 
+@AndroidEntryPoint
 class SuspectedLeprosyListFragment: Fragment() {
     private var _binding: FragmentDisplaySearchRvButtonBinding? = null
     private val binding: FragmentDisplaySearchRvButtonBinding
@@ -38,7 +40,7 @@ class SuspectedLeprosyListFragment: Fragment() {
         val benAdapter = LeprosyMemberListAdapter(
             clickListener = LeprosyMemberListAdapter.ClickListener { hhId, benId ->
                 findNavController().navigate(
-                    LeprosySuspectedListFragmentDirections.actionLeprosySuspectedListFragmentToLeprosyFormFragment(
+                    SuspectedLeprosyListFragmentDirections.actionLeprosySuspectedListFragmentToSuspectedLeprosyFormFragment(
                         benId = benId
                     )
                 )
@@ -64,7 +66,7 @@ class SuspectedLeprosyListFragment: Fragment() {
         activity?.let {
             (it as HomeActivity).updateActionBar(
                 R.drawable.ic__hh,
-                getString(R.string.icon_title_leprosy)
+                "Leprosy Suspected"
             )
         }
     }

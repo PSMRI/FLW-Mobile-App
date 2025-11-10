@@ -442,10 +442,7 @@ class IconDataset @Inject constructor(
             R.drawable.leprocy,
             "Leprosy Suspected,",
             recordsRepo.leprosySuspectedListCount,
-            LeprosyFragmentDirections.actionLeprosyFragmentToAllHouseHoldDiseaseControlFragment(
-                Disease.LEPROSY.toString()
-            )
-        ),
+            LeprosyFragmentDirections.actionLeprosyFragmenToLeprosySuspectedListFragment()),
         Icon(
             R.drawable.leprocy,
             "Leprosy Confirmed",
