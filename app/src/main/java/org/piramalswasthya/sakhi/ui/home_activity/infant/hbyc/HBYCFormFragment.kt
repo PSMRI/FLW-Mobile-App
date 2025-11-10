@@ -129,10 +129,7 @@ class HBYCFormFragment : Fragment() {
                     isViewOnly = isViewMode,
                     minVisitDate = minVisitDate,
                     maxVisitDate = maxVisitDate,
-                            isSNCU = viewModel.isSNCU.value ?: false
-//                    isSNCU = true
-                ) { field, value ->
-                    maxVisitDate = maxVisitDate,
+                    isSNCU = viewModel.isSNCU.value ?: false,
                     onValueChanged =
                  { field, value ->
                     if (value == "pick_image") {

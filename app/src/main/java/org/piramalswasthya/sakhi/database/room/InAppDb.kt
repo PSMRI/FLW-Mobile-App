@@ -170,12 +170,12 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         GeneralOPEDBeneficiary::class,
         UwinCache::class,
         EyeSurgeryFormResponseJsonEntity::class,
-        BenIfaFormResponseJsonEntity::class
+        BenIfaFormResponseJsonEntity::class,
         MosquitoNetFormResponseJsonEntity::class
     ],
     views = [BenBasicCache::class],
 
-    version = 35, exportSchema = false
+    version = 38, exportSchema = false
 )
 
 @TypeConverters(
@@ -244,7 +244,7 @@ abstract class InAppDb : RoomDatabase() {
                 it.execSQL("alter table BENEFICIARY add column isConsent BOOL")
 
             })
-            val MIGRATION_33_34 = object : Migration(33, 34) {
+            val MIGRATION_37_38 = object : Migration(37, 38) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     database.execSQL("ALTER TABLE INFANT_REG ADD COLUMN isSNCU TEXT")
                     database.execSQL("ALTER TABLE INFANT_REG ADD COLUMN deliveryDischargeSummary1 TEXT")
@@ -254,7 +254,7 @@ abstract class InAppDb : RoomDatabase() {
                 }
             }
 
-            val MIGRATION_34_35 = object : Migration(34, 35) {
+            val MIGRATION_36_37 = object : Migration(36, 37) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     database.execSQL(
                         """
@@ -366,31 +366,6 @@ abstract class InAppDb : RoomDatabase() {
             }
 
 
-            val MIGRATION_32_33 = object : Migration(32, 33) {
-                override fun migrate(database: SupportSQLiteDatabase) {
-                    database.execSQL("""
-            CREATE TABLE IF NOT EXISTS ALL_VISIT_HISTORY_HBYC (
-                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                benId INTEGER NOT NULL,
-                hhId INTEGER NOT NULL,
-                visitDay TEXT NOT NULL,
-                visitDate TEXT NOT NULL,
-                formId TEXT NOT NULL,
-                version INTEGER NOT NULL,
-                formDataJson TEXT NOT NULL,
-                isSynced INTEGER NOT NULL DEFAULT 0,
-                createdAt INTEGER NOT NULL,
-                syncedAt INTEGER
-            )
-        """.trimIndent())
-                    database.execSQL("""
-            CREATE UNIQUE INDEX IF NOT EXISTS index_all_visit_history_hbyc_unique 
-            ON ALL_VISIT_HISTORY_HBYC (benId, hhId, visitDay, visitDate, formId)
-        """.trimIndent())
-                }
-            }
-
-
             val MIGRATION_33_34 = object : Migration(33, 34) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     database.execSQL("""
@@ -425,6 +400,30 @@ abstract class InAppDb : RoomDatabase() {
                 }
             }
 
+
+            val MIGRATION_32_33 = object : Migration(32, 33) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("""
+            CREATE TABLE IF NOT EXISTS ALL_VISIT_HISTORY_HBYC (
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                benId INTEGER NOT NULL,
+                hhId INTEGER NOT NULL,
+                visitDay TEXT NOT NULL,
+                visitDate TEXT NOT NULL,
+                formId TEXT NOT NULL,
+                version INTEGER NOT NULL,
+                formDataJson TEXT NOT NULL,
+                isSynced INTEGER NOT NULL DEFAULT 0,
+                createdAt INTEGER NOT NULL,
+                syncedAt INTEGER
+            )
+        """.trimIndent())
+                    database.execSQL("""
+            CREATE UNIQUE INDEX IF NOT EXISTS index_all_visit_history_hbyc_unique 
+            ON ALL_VISIT_HISTORY_HBYC (benId, hhId, visitDay, visitDate, formId)
+        """.trimIndent())
+                }
+            }
 
             val MIGRATION_31_32 = object : Migration(31, 32) {
                 override fun migrate(database: SupportSQLiteDatabase) {
@@ -1389,7 +1388,9 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_32_33,
                         MIGRATION_33_34,
                         MIGRATION_34_35,
-                        MIGRATION_35_36
+                        MIGRATION_35_36,
+                        MIGRATION_36_37,
+                        MIGRATION_37_38
                     ).build()
 
                     INSTANCE = instance
