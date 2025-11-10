@@ -51,6 +51,10 @@ import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponse
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormSchemaDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.InfantDao
 import org.piramalswasthya.sakhi.database.room.dao.VLFDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.BenIfaFormResponseJsonDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.CUFYFormResponseDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.CUFYFormResponseJsonDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.EyeSurgeryFormResponseJsonDao
 import org.piramalswasthya.sakhi.model.AHDCache
 import org.piramalswasthya.sakhi.model.AESScreeningCache
 import org.piramalswasthya.sakhi.model.AdolescentHealthCache
@@ -103,6 +107,9 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.InfantEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.hbyc.FormResponseJsonEntityHBYC
 import org.piramalswasthya.sakhi.model.VHNDCache
+import org.piramalswasthya.sakhi.model.dynamicEntity.CUFYFormResponseJsonEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.ben_ifa.BenIfaFormResponseJsonEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.eye_surgery.EyeSurgeryFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoNetFormResponseJsonEntity
 
 @Database(
@@ -156,11 +163,14 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         //Dynamic Data
         InfantEntity::class,
         FormSchemaEntity::class,
+        MaaMeetingEntity::class,
         FormResponseJsonEntity::class,
         FormResponseJsonEntityHBYC::class,
-        MaaMeetingEntity::class,
+        CUFYFormResponseJsonEntity::class,
         GeneralOPEDBeneficiary::class,
         UwinCache::class,
+        EyeSurgeryFormResponseJsonEntity::class,
+        BenIfaFormResponseJsonEntity::class
         MosquitoNetFormResponseJsonEntity::class
     ],
     views = [BenBasicCache::class],
@@ -213,8 +223,12 @@ abstract class InAppDb : RoomDatabase() {
     abstract fun infantDao(): InfantDao
     abstract fun formSchemaDao(): FormSchemaDao
     abstract fun formResponseDao(): FormResponseDao
+    abstract fun CUFYFormResponseDao(): CUFYFormResponseDao
+    abstract fun CUFYFormResponseJsonDao(): CUFYFormResponseJsonDao
     abstract fun formResponseJsonDao(): FormResponseJsonDao
     abstract fun formResponseJsonDaoHBYC(): FormResponseJsonDaoHBYC
+    abstract fun formResponseJsonDaoEyeSurgery(): EyeSurgeryFormResponseJsonDao
+    abstract fun formResponseJsonDaoBenIfa(): BenIfaFormResponseJsonDao
     abstract fun formResponseMosquitoNetJsonDao(): MosquitoNetFormResponseDao
 
     abstract val syncDao: SyncDao
@@ -270,6 +284,88 @@ abstract class InAppDb : RoomDatabase() {
             }
 
 
+
+//            val MIGRATION_35_36 = object : Migration(35, 36) {
+//                override fun migrate(database: SupportSQLiteDatabase) {
+//                    database.execSQL(
+//                        """
+//            CREATE TABLE IF NOT EXISTS `ALL_BEN_IFA_VISIT_HISTORY` (
+//                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+//                `benId` INTEGER NOT NULL,
+//                `hhId` INTEGER NOT NULL,
+//                `visitDate` TEXT NOT NULL,
+//                `formId` TEXT NOT NULL,
+//                `version` INTEGER NOT NULL,
+//                `formDataJson` TEXT NOT NULL,
+//                `isSynced` INTEGER NOT NULL DEFAULT 0,
+//                `createdAt` INTEGER NOT NULL,
+//                `syncedAt` INTEGER
+//            )
+//            """.trimIndent()
+//                    )
+//                    database.execSQL(
+//                        """
+//            CREATE UNIQUE INDEX IF NOT EXISTS `index_ALL_BEN_IFA_VISIT_HISTORY_benId_hhId_visitDate_formId`
+//            ON `ALL_BEN_IFA_VISIT_HISTORY` (`benId`, `hhId`, `visitDate`, `formId`)
+//            """.trimIndent()
+//                    )
+//                }
+//            }
+
+
+            val MIGRATION_35_36 = object : Migration(35, 36) {
+                override fun migrate(db: SupportSQLiteDatabase) {
+                    db.execSQL("""
+            ALTER TABLE ALL_EYE_SURGERY_VISIT_HISTORY
+            ADD COLUMN visitMonth TEXT NOT NULL DEFAULT ''
+        """.trimIndent())
+
+                    db.execSQL("""
+            UPDATE ALL_EYE_SURGERY_VISIT_HISTORY
+            SET visitMonth = 
+                CASE
+                    WHEN visitDate GLOB '__-__-____'
+                    THEN substr(visitDate, 7, 4) || '-' || substr(visitDate, 4, 2)
+                    ELSE ''
+                END
+        """.trimIndent())
+
+                    db.execSQL("""
+            CREATE UNIQUE INDEX IF NOT EXISTS idx_eye_unique_month
+            ON ALL_EYE_SURGERY_VISIT_HISTORY(benId, formId, visitMonth)
+        """.trimIndent())
+                }
+            }
+
+
+            val MIGRATION_34_35 = object : Migration(34, 35) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL(
+                        """
+            CREATE TABLE IF NOT EXISTS `ALL_EYE_SURGERY_VISIT_HISTORY` (
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                `benId` INTEGER NOT NULL,
+                `hhId` INTEGER NOT NULL,
+                `visitDate` TEXT NOT NULL,
+                `formId` TEXT NOT NULL,
+                `version` INTEGER NOT NULL,
+                `formDataJson` TEXT NOT NULL,
+                `isSynced` INTEGER NOT NULL DEFAULT 0,
+                `createdAt` INTEGER NOT NULL,
+                `syncedAt` INTEGER
+            )
+            """.trimIndent()
+                    )
+                    database.execSQL(
+                        """
+            CREATE UNIQUE INDEX IF NOT EXISTS `index_ALL_EYE_SURGERY_VISIT_HISTORY_benId_hhId_visitDate_formId`
+            ON `ALL_EYE_SURGERY_VISIT_HISTORY` (`benId`, `hhId`, `visitDate`, `formId`)
+            """.trimIndent()
+                    )
+                }
+            }
+
+
             val MIGRATION_32_33 = object : Migration(32, 33) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     database.execSQL("""
@@ -295,7 +391,7 @@ abstract class InAppDb : RoomDatabase() {
             }
 
 
-            val MIGRATION_31_32 = object : Migration(31, 32) {
+            val MIGRATION_33_34 = object : Migration(33, 34) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     database.execSQL("""
             CREATE TABLE IF NOT EXISTS form_schema (
@@ -326,6 +422,36 @@ abstract class InAppDb : RoomDatabase() {
             CREATE UNIQUE INDEX IF NOT EXISTS index_all_visit_history_unique 
             ON all_visit_history (benId, hhId, visitDay, visitDate, formId)
         """.trimIndent())
+                }
+            }
+
+
+            val MIGRATION_31_32 = object : Migration(31, 32) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL(
+                        """
+            CREATE TABLE IF NOT EXISTS `children_under_five_all_visit` (
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                `benId` INTEGER NOT NULL,
+                `hhId` INTEGER NOT NULL,
+                `visitDate` TEXT NOT NULL,
+                `formId` TEXT NOT NULL,
+                `version` INTEGER NOT NULL,
+                `formDataJson` TEXT NOT NULL,
+                `isSynced` INTEGER NOT NULL DEFAULT 0,
+                `createdAt` INTEGER NOT NULL,
+                `updatedAt` INTEGER NOT NULL,
+                `syncedAt` INTEGER
+            )
+            """.trimIndent()
+                    )
+
+                    database.execSQL(
+                        """
+            CREATE UNIQUE INDEX IF NOT EXISTS `index_children_under_five_all_visit_benId_hhId_visitDate_formId`
+            ON `children_under_five_all_visit` (`benId`, `hhId`, `visitDate`, `formId`)
+            """.trimIndent()
+                    )
                 }
             }
 
@@ -1262,7 +1388,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_31_32,
                         MIGRATION_32_33,
                         MIGRATION_33_34,
-                        MIGRATION_34_35
+                        MIGRATION_34_35,
+                        MIGRATION_35_36
                     ).build()
 
                     INSTANCE = instance

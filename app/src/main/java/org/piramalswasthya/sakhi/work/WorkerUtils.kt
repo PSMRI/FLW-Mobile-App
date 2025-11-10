@@ -1,7 +1,6 @@
 package org.piramalswasthya.sakhi.work
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.work.Constraints
@@ -14,6 +13,11 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.Operation
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
+import org.piramalswasthya.sakhi.work.dynamicWoker.BenIfaFormSyncWorker
+import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYIFAFormSyncWorker
+import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYORSFormSyncWorker
+import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYSAMFormSyncWorker
+import org.piramalswasthya.sakhi.work.dynamicWoker.EyeSurgeryFormSyncWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.FormSyncWorker
 import java.util.concurrent.TimeUnit
 
@@ -26,6 +30,21 @@ object WorkerUtils {
         .build()
 
     fun triggerAmritSyncWorker(context: Context) {
+        val CUFYORSFormSyncWorker = OneTimeWorkRequestBuilder<CUFYORSFormSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val CUFYIFAFormSyncWorker = OneTimeWorkRequestBuilder<CUFYIFAFormSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pullEyeSurgeryFormSyncWorker = OneTimeWorkRequestBuilder<EyeSurgeryFormSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pullBenIfaFormSyncWorker = OneTimeWorkRequestBuilder<BenIfaFormSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val CUFYSAMFormSyncWorker = OneTimeWorkRequestBuilder<CUFYSAMFormSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
         val pullWorkRequest = OneTimeWorkRequestBuilder<PullFromAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
@@ -132,6 +151,11 @@ object WorkerUtils {
                 ExistingWorkPolicy.APPEND_OR_REPLACE,
                 pullWorkRequest
             )
+            .then(CUFYORSFormSyncWorker)
+            .then(CUFYIFAFormSyncWorker)
+            .then(CUFYSAMFormSyncWorker)
+            .then(pullEyeSurgeryFormSyncWorker)
+            .then(pullBenIfaFormSyncWorker)
             .then(maaMeetingFormSyncWorkerRequest)
             .then(pullIncentiveActivityWorkRequest)
             .then(pullCbacWorkRequest)
@@ -164,6 +188,9 @@ object WorkerUtils {
     }
 
     fun triggerAmritPushWorker(context: Context) {
+        val formSyncWorkerRequest  = OneTimeWorkRequestBuilder<FormSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
         val pushWorkRequest = OneTimeWorkRequestBuilder<PushToAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
@@ -227,7 +254,19 @@ object WorkerUtils {
             .setConstraints(networkOnlyConstraint)
             .build()
 
-        val formSyncWorkerRequest  = OneTimeWorkRequestBuilder<FormSyncWorker>()
+        val CUFYORSFormSyncWorkerRequest  = OneTimeWorkRequestBuilder<CUFYORSFormSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val CUFYIFAFormSyncWorker = OneTimeWorkRequestBuilder<CUFYIFAFormSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pushEyeSurgeryFormSyncWorker = OneTimeWorkRequestBuilder<EyeSurgeryFormSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pushBenIfaFormSyncWorker = OneTimeWorkRequestBuilder<BenIfaFormSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val CUFYSAMFormSyncWorker = OneTimeWorkRequestBuilder<CUFYSAMFormSyncWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
         //Always at last - INCENTIVES
@@ -291,6 +330,11 @@ object WorkerUtils {
             .then(pushImmunizationWorkRequest)
 //            .then(pushChildHBYCToAmritWorker)
             .then(pushChildHBNCToAmritWorker)
+            .then(CUFYORSFormSyncWorkerRequest)
+            .then(CUFYIFAFormSyncWorker)
+            .then(pushEyeSurgeryFormSyncWorker)
+            .then(pushBenIfaFormSyncWorker)
+            .then(CUFYSAMFormSyncWorker)
             .then(pullIncentiveActivityWorkRequest)
             .then(pushAbhaWorkRequest)
             .then(pushMalariaWorkRequest)
@@ -302,7 +346,22 @@ object WorkerUtils {
     }
 
     fun triggerAmritPullWorker(context: Context) {
+        val CUFYORSFormSyncWorker = OneTimeWorkRequestBuilder<CUFYORSFormSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val CUFYIFAFormSyncWorker = OneTimeWorkRequestBuilder<CUFYIFAFormSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val CUFYSAMFormSyncWorker = OneTimeWorkRequestBuilder<CUFYSAMFormSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
         val pullWorkRequest = OneTimeWorkRequestBuilder<PullFromAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pullEyeSurgeryFormSyncWorker = OneTimeWorkRequestBuilder<EyeSurgeryFormSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pullBenIfaFormSyncWorker = OneTimeWorkRequestBuilder<BenIfaFormSyncWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
         val pulladolescentWorkRequest = OneTimeWorkRequestBuilder<PushAdolescentAmritWorker>()
@@ -406,7 +465,12 @@ object WorkerUtils {
                 pullWorkRequest
             )
             .then(maaMeetingFormSyncWorkerRequest)
+            .then(pullEyeSurgeryFormSyncWorker)
+            .then(pullBenIfaFormSyncWorker)
             .then(pullIncentiveActivityWorkRequest)
+            .then(CUFYORSFormSyncWorker)
+            .then(CUFYIFAFormSyncWorker)
+            .then(CUFYSAMFormSyncWorker)
             .then(pullUwinWorkerRequest)
             .then(pullCbacWorkRequest)
             .then(pullVaccineWorkRequest)
@@ -421,6 +485,7 @@ object WorkerUtils {
             .then(generalOpdPullFromAmritWorker)
             .then(pullMdsrWorkRequest)
             .then(pullCdrWorkRequest)
+
 //            .then(pullHBYCFromAmritWorker)
             .then(pullHBNCFromAmritWorker)
             .then(pullHRPWorkRequest)

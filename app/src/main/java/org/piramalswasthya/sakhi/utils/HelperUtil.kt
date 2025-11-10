@@ -1,6 +1,9 @@
 package org.piramalswasthya.sakhi.utils
+import android.app.AlertDialog
 import android.content.ContentResolver
+import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Bitmap
@@ -9,6 +12,7 @@ import android.graphics.Canvas
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.text.Layout
 import android.text.StaticLayout
@@ -24,6 +28,7 @@ import android.widget.TableLayout
 import android.widget.TableRow
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
 import androidx.collection.lruCache
 import androidx.core.content.FileProvider
 import androidx.core.graphics.withTranslation
@@ -387,7 +392,6 @@ object HelperUtil {
         cal.set(Calendar.SECOND, 0)
         cal.set(Calendar.MILLISECOND, 0)
         val start = cal.timeInMillis
-
         cal.set(Calendar.MONTH, Calendar.DECEMBER)
         cal.set(Calendar.DAY_OF_MONTH, 31)
         cal.set(Calendar.HOUR_OF_DAY, 23)
@@ -506,20 +510,7 @@ object HelperUtil {
         } catch (_: Exception) { null }
     }
 
-    fun Context.isFileTooLarge(uri: Uri): Boolean {
-            return contentResolver.openAssetFileDescriptor(uri, "r")?.use {
-                   it.length > 5 * 1024 * 1024
-                } ?: contentResolver.openInputStream(uri)?.use { stream ->
-                    var total = 0L
-                    val buffer = ByteArray(8192)
-                    var read: Int
-                    while (stream.read(buffer).also { read = it } != -1 && total <= 5 * 1024 * 1024) {
-                            total += read
-                        }
-                    total > 5 * 1024 * 1024
-                } ?: false
-    }
-    fun compressImageToTemp(uri: android.net.Uri, nameHint: String, appContext: Context): File? {
+    fun compressImageToTemp(uri: Uri, nameHint: String, appContext: Context): File? {
         return try {
             val opts = BitmapFactory.Options().apply { inJustDecodeBounds = true }
             appContext.contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, opts) }
@@ -542,10 +533,6 @@ object HelperUtil {
             .setView(binding.root)
             .setCancelable(true)
             .create()
-
-
-
-
         Glide.with(this).load(uri).placeholder(R.drawable.ic_person)
             .into(binding.viewImage)
 
@@ -594,26 +581,6 @@ object HelperUtil {
         )
     }
 
-
-
-
-
-
-
-
-    fun base64ToTempFile(base64: String, cacheDir: File, context: Context): Uri? {
-        return runCatching {
-            val base64Data = base64.substringAfter(",", base64)
-            val bytes = Base64.decode(base64Data, Base64.DEFAULT)
-            val (ext, _) = detectExtAndMime(bytes)
-            val file = File(cacheDir, "uwin_${System.currentTimeMillis()}.$ext")
-            file.writeBytes(bytes)
-            FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
-        }.getOrNull()
-    }
-
-
-
     fun convertToLocalDate(server: String?): String? {
         if (server.isNullOrBlank()) return null
         val parts = server.split("-")
@@ -630,4 +597,112 @@ object HelperUtil {
             else -> "application/octet-stream"
         }
     }
+
+    fun launchCamera(context: Context): Uri? {
+        val contentValues = ContentValues().apply {
+            put(MediaStore.Images.Media.DISPLAY_NAME, "IMG_${System.currentTimeMillis()}.jpg")
+            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+        }
+        return context.contentResolver.insert(
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            contentValues
+        )
+    }
+
+    fun launchFilePicker(launcher: ActivityResultLauncher<Intent>) {
+        val mimeTypes = arrayOf("image/jpeg", "image/png", "application/pdf")
+        val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
+            type = "*/*"
+            putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
+            addCategory(Intent.CATEGORY_OPENABLE)
+        }
+        val chooser = Intent.createChooser(intent, "Select File (PDF, JPG, PNG)")
+        launcher.launch(chooser)
+    }
+
+    fun Context.getFileSizeInMB(uri: Uri): Double? {
+        return try {
+            contentResolver.openFileDescriptor(uri, "r")?.use { pfd ->
+                val sizeInBytes = pfd.statSize
+                if (sizeInBytes > 0) sizeInBytes / (1024.0 * 1024.0) else null
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    fun fileToBase64(file: File): String {
+        val bytes = file.readBytes()
+        return Base64.encodeToString(bytes, Base64.NO_WRAP)
+    }
+
+    fun showPickerDialog(
+        context: Context,
+        onCameraSelected: () -> Unit,
+        onFileSelected: () -> Unit
+    ) {
+        val options = arrayOf("Take Photo", "Choose File (PDF / Image)")
+        AlertDialog.Builder(context)
+            .setTitle("Select File")
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> onCameraSelected()
+                    1 -> onFileSelected()
+                }
+            }
+            .show()
+    }
+
+    fun checkAndShowMUACAlert(context: Context, muacValue: String): Boolean {
+        val muac = muacValue.toFloatOrNull() ?: return false
+
+        if (muac <= 11.5f) {
+            showAlertDialog(
+                context,
+                "SAM Case Detected",
+                "MUAC is $muac cm. Please refer the Child to NRC as SAM case."
+            )
+            return true
+        }
+        return false
+    }
+
+    fun checkAndShowWeightForHeightAlert(context: Context, status: String): Boolean {
+        if (status == "SAM") {
+            showAlertDialog(
+                context,
+                "SAM Case Detected",
+                "Weight-for-Height Status is SAM. Please refer the Child to NRC as SAM case."
+            )
+            return true
+        }
+        return false
+    }
+
+    fun checkAndShowSAMAlert(context: Context, fieldId: String, value: Any?): Boolean {
+        return when (fieldId) {
+            "muac" -> {
+                val muacValue = when (value) {
+                    is String -> value
+                    is Number -> value.toString()
+                    else -> null
+                }
+                muacValue?.let { checkAndShowMUACAlert(context, it) } ?: false
+            }
+            "weight_for_height_status" -> {
+                val status = value?.toString()
+                status?.let { checkAndShowWeightForHeightAlert(context, it) } ?: false
+            }
+            else -> false
+        }
+    }
+
+    private fun showAlertDialog(context: Context, title: String, message: String) {
+        AlertDialog.Builder(context)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+            .show()
+    }
+
 }

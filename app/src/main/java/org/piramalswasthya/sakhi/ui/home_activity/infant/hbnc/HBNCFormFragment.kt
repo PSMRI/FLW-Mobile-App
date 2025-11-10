@@ -166,6 +166,9 @@ class HBNCFormFragment : Fragment() {
                     isViewOnly = isViewMode,
                     minVisitDate = minVisitDate,
                     maxVisitDate = maxVisitDate,
+                    onValueChanged =
+                { field, value ->
+                    maxVisitDate = maxVisitDate,
                     isSNCU = viewModel.isSNCU.value ?: false
 //                    isSNCU = true
                 ) { field, value ->
@@ -179,6 +182,7 @@ class HBNCFormFragment : Fragment() {
                         adapter.updateFields(updatedVisibleFields)
                     }
                 }
+                )
 
                 recyclerView.adapter = adapter
 
