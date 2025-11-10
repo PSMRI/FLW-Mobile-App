@@ -40,7 +40,7 @@ class CUFYFormRepository @Inject constructor(
         var result: FormSchemaDto? = null
 
         try {
-            val response = amritApiService.fetchFormSchema(formId)
+            val response = amritApiService.fetchFormSchema(formId,"en")
 
             if (response.isSuccessful) {
                 val apiResponse = response.body()

@@ -166,12 +166,9 @@ class HBNCFormFragment : Fragment() {
                     isViewOnly = isViewMode,
                     minVisitDate = minVisitDate,
                     maxVisitDate = maxVisitDate,
+                    isSNCU = viewModel.isSNCU.value ?: false,
                     onValueChanged =
                 { field, value ->
-                    maxVisitDate = maxVisitDate,
-                    isSNCU = viewModel.isSNCU.value ?: false
-//                    isSNCU = true
-                ) { field, value ->
                     if (value == "pick_image") {
                         currentImageField = field
                         showImagePickerDialog()
