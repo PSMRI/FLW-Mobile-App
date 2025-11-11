@@ -130,7 +130,7 @@ class LeprosySuspectedDataset (
             leprosyStatus,
             referredTo,
             typeOfLeprosy,
-            treatmentStartDate
+
 
 
             )
@@ -141,12 +141,10 @@ class LeprosySuspectedDataset (
             leprosySymptoms.value = resources.getStringArray(R.array.yes_no)[1]
         } else {
             dateOfCase.value = getDateFromLong(saved.homeVisitDate)
-            leprosySymptoms.value = getLocalValueInArray(leprosySymptoms.arrayId, saved.leprosySymptoms)
             val symptomsPosition = saved.leprosySymptomsPosition ?: 1
             leprosySymptoms.value = resources.getStringArray(R.array.yes_no).getOrNull(symptomsPosition)
                 ?: resources.getStringArray(R.array.yes_no)[1]
-            val visit_value = saved.visitLabel
-            visitLabel.value = visit_value ?: "Visit -1"
+            visitLabel.value = "Visit -${saved?.currentVisitNumber ?: 1}"
             leprosyStatus.value =
                 getLocalValueInArray(leprosyStatus.arrayId, saved.leprosyStatus)
 
@@ -169,7 +167,6 @@ class LeprosySuspectedDataset (
             }
 
             other.value = saved.otherReferredTo
-            followUpdate.value = getDateFromLong(saved.followUpDate)
 
         }
 
@@ -178,18 +175,24 @@ class LeprosySuspectedDataset (
         setUpPage(list)
 
     }
-
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
-
         return when (formId) {
-            typeOfLeprosy.id ->{
+
+            typeOfLeprosy.id -> {
                 leprosyStatus.value = resources.getStringArray(R.array.leprosy_status)[4]
-                return 0
+
+                treatmentStartDate.value = getDateFromLong(System.currentTimeMillis())
+
+                triggerDependants(
+                    source = typeOfLeprosy,
+                    addItems = listOf(treatmentStartDate),
+                    removeItems = listOf(treatmentStartDate)
+                )
+
+                0
             }
 
-
-            else -> {
-            return 0}
+            else -> 0
         }
     }
 
@@ -203,7 +206,6 @@ class LeprosySuspectedDataset (
             form.leprosyStatus = leprosyStatus.value
             form.typeOfLeprosy = typeOfLeprosy.value
             form.diseaseTypeID = 5
-            form.followUpDate = getLongFromDate(followUpdate.value)
             form.leprosySymptoms = leprosySymptoms.value
             form.visitLabel = visitLabel.value
             form.leprosySymptomsPosition = when (leprosySymptoms.value) {
@@ -211,6 +213,8 @@ class LeprosySuspectedDataset (
                 resources.getStringArray(R.array.yes_no)[1] -> 1
                 else -> 1
             }
+            form.isConfirmed = !typeOfLeprosy.value.isNullOrEmpty()
+            form.treatmentStartDate = getLongFromDate(treatmentStartDate.value)
 
         }
     }

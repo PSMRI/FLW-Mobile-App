@@ -1,4 +1,4 @@
-package org.piramalswasthya.sakhi.ui.home_activity.disease_control.leprosy.confirmed.form
+package org.piramalswasthya.sakhi.ui.home_activity.disease_control.leprosy.visits
 
 import android.content.Context
 import androidx.lifecycle.LiveData
@@ -8,13 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.configuration.LeprosyConfirmedDataset
-import org.piramalswasthya.sakhi.configuration.LeprosySuspectedDataset
-import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.LeprosyFollowUpCache
 import org.piramalswasthya.sakhi.model.LeprosyScreeningCache
@@ -22,14 +17,10 @@ import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.LeprosyRepo
 import org.piramalswasthya.sakhi.repositories.MaternalHealthRepo
 import org.piramalswasthya.sakhi.ui.home_activity.disease_control.leprosy.form.LeprosyFormFragmentArgs
-import timber.log.Timber
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
-class LeprosyConfirmedFromViewModel@Inject constructor(
+class LeprosyVisitViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     preferenceDao: PreferenceDao,
     @ApplicationContext var context: Context,
@@ -38,8 +29,9 @@ class LeprosyConfirmedFromViewModel@Inject constructor(
     var maternalHealthRepo: MaternalHealthRepo
 ) : ViewModel() {
     var isDeath = true
-    val benId =
-        LeprosyFormFragmentArgs.fromSavedStateHandle(savedStateHandle).benId
+    val benId = LeprosyFormFragmentArgs.fromSavedStateHandle(savedStateHandle).benId
+    val visitNumber = LeprosyVisitFragmentArgs.fromSavedStateHandle(savedStateHandle).visitNumber
+
 
     enum class State {
         IDLE, SAVING, SAVE_SUCCESS, SAVE_FAILED, VISIT_COMPLETED
@@ -47,31 +39,31 @@ class LeprosyConfirmedFromViewModel@Inject constructor(
 
     private val _state = MutableLiveData(State.IDLE)
     val state: LiveData<State>
-        get() = _state
+    get() = _state
 
     private val _benName = MutableLiveData<String>()
     val benName: LiveData<String>
-        get() = _benName
+    get() = _benName
     private val _benAgeGender = MutableLiveData<String>()
     val benAgeGender: LiveData<String>
-        get() = _benAgeGender
+    get() = _benAgeGender
 
     private val _recordExists = MutableLiveData<Boolean>()
     val recordExists: LiveData<Boolean>
-        get() = _recordExists
+    get() = _recordExists
 
 
     private val _visitInfo = MutableLiveData<String>()
     val visitInfo: LiveData<String>
-        get() = _visitInfo
+    get() = _visitInfo
 
     private val _followUpDates = MutableLiveData<List<LeprosyFollowUpCache>>()
     val followUpDates: LiveData<List<LeprosyFollowUpCache>>
-        get() = _followUpDates
+    get() = _followUpDates
 
     private val _lastFollowUp = MutableLiveData<LeprosyFollowUpCache?>()
     val lastFollowUp: LiveData<LeprosyFollowUpCache?>
-        get() = _lastFollowUp
+    get() = _lastFollowUp
 
 
     private val dataset = LeprosyConfirmedDataset(context, preferenceDao.getCurrentLanguage())
@@ -81,7 +73,7 @@ class LeprosyConfirmedFromViewModel@Inject constructor(
     var _isBeneficaryStatusDeath = MutableLiveData<Boolean>()
 
     val isBeneficaryStatusDeath: LiveData<Boolean>
-        get() = _isBeneficaryStatusDeath
+    get() = _isBeneficaryStatusDeath
     private lateinit var leprosyScreenCache: LeprosyScreeningCache
     private lateinit var screeningData: LeprosyScreeningCache
     private lateinit var screening : LeprosyScreeningCache
@@ -98,7 +90,7 @@ class LeprosyConfirmedFromViewModel@Inject constructor(
                     houseHoldDetailsId = ben.householdId,
                 )
             }
-             screening = leprosyRepo.getLeprosyScreening(benId) ?: throw IllegalStateException("No screening data found for confirmed case with benId: $benId")
+            screening = leprosyRepo.getLeprosyScreening(benId) ?: throw IllegalStateException("No screening data found for confirmed case with benId: $benId")
 
             leprosyScreenCache = screening
             screeningData = screening
@@ -108,16 +100,16 @@ class LeprosyConfirmedFromViewModel@Inject constructor(
             val currentVisitNumber = screening.currentVisitNumber
             _visitInfo.value = "Visit - $currentVisitNumber"
 
-            val allFollowUps = leprosyRepo.getAllFollowUpsForBeneficiary(benId)
-            _followUpDates.value = allFollowUps
+            val followUpsForVisit = leprosyRepo.getFollowUpsForVisit(benId, visitNumber)
+            _followUpDates.value = followUpsForVisit
 
-            val lastFollowUpForCurrentVisit = getLastFollowUpForCurrentVisit(allFollowUps, currentVisitNumber)
-            _lastFollowUp.value = lastFollowUpForCurrentVisit
+            // Get the latest follow-up for this visit
+            val latestFollowUp = followUpsForVisit.maxByOrNull { it.followUpDate }
+            _lastFollowUp.value = latestFollowUp
 
             dataset.setUpPage(
                 ben,
-                screening,
-                followUp = lastFollowUpForCurrentVisit
+                followUp = latestFollowUp
             )
         }
     }
@@ -142,65 +134,7 @@ class LeprosyConfirmedFromViewModel@Inject constructor(
 
 
 
-    fun saveForm() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                try {
-                    _state.postValue(State.SAVING)
 
-                    val newFollowUp = LeprosyFollowUpCache(
-                        benId = benId,
-                        visitNumber = screeningData.currentVisitNumber,
-                        followUpDate = System.currentTimeMillis()
-                    )
-
-                    dataset.mapValues(newFollowUp,  1)
-                    newFollowUp.homeVisitDate = screening.homeVisitDate
-                    newFollowUp.leprosySymptoms = screening.leprosySymptoms
-                    newFollowUp.typeOfLeprosy = screening.typeOfLeprosy
-                    newFollowUp.leprosySymptomsPosition = screening.leprosySymptomsPosition
-                    newFollowUp.visitLabel = screening.visitLabel
-                    newFollowUp.leprosyStatus = screening.leprosyStatus
-                    newFollowUp.referredTo = screening.referredTo
-                    newFollowUp.referToName = screening.referToName
-                    newFollowUp.treatmentStartDate = screening.treatmentStartDate
-
-                    leprosyRepo.saveFollowUp(newFollowUp)
-
-                    if (newFollowUp.treatmentStatus == "Treatment Completed" &&
-                        newFollowUp.treatmentCompleteDate > 0) {
-
-                        val success = leprosyRepo.completeVisitAndStartNext(benId)
-                        if (success) {
-                            _state.postValue(State.VISIT_COMPLETED)
-
-                            val updatedScreening = leprosyRepo.getLeprosyScreening(benId)
-                            if (updatedScreening != null) {
-                                screeningData = updatedScreening
-                            }
-                        } else {
-                            _state.postValue(State.SAVE_SUCCESS)
-                        }
-                    } else {
-                        _state.postValue(State.SAVE_SUCCESS)
-                    }
-
-                    val updatedFollowUps = leprosyRepo.getAllFollowUpsForBeneficiary(benId)
-                    _followUpDates.postValue(updatedFollowUps)
-
-                    val newLastFollowUp = getLastFollowUpForCurrentVisit(
-                        updatedFollowUps,
-                        screeningData.currentVisitNumber
-                    )
-                    _lastFollowUp.postValue(newLastFollowUp)
-
-                } catch (e: Exception) {
-                    Timber.e(e, "Saving leprosy follow-up data failed!!")
-                    _state.postValue(State.SAVE_FAILED)
-                }
-            }
-        }
-    }
 
 
 

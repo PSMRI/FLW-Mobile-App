@@ -78,6 +78,7 @@ interface BenDao {
     INNER JOIN LEPROSY_SCREENING l ON b.benId = l.benId 
     WHERE b.villageId = :selectedVillage
     AND l.leprosySymptomsPosition = :symptomsPosition
+    AND l.isConfirmed = 0
 """)
     fun getLeprosyScreeningBenBySymptoms(selectedVillage: Int,  symptomsPosition: Int): Flow<List<BenWithLeprosyScreeningCache>>
 
@@ -87,8 +88,36 @@ interface BenDao {
     INNER JOIN LEPROSY_SCREENING l ON b.benId = l.benId 
     WHERE b.villageId = :selectedVillage 
     AND l.leprosySymptomsPosition = :symptomsPosition
+    AND l.isConfirmed = 0
 """)
     fun getLeprosyScreeningBenCountBySymptoms(selectedVillage: Int, symptomsPosition: Int): Flow<Int>
+
+    @Transaction
+    @Query("""
+    SELECT b.*, l.isConfirmed
+    FROM BEN_BASIC_CACHE b
+    INNER JOIN LEPROSY_SCREENING l ON b.benId = l.benId
+    WHERE b.villageId = :selectedVillage
+      AND l.isConfirmed = 1
+""")
+    fun getConfirmedLeprosyCases(
+        selectedVillage: Int
+    ): Flow<List<BenWithLeprosyScreeningCache>>
+
+    @Query("""
+    SELECT COUNT(*)
+    FROM BEN_BASIC_CACHE b
+    INNER JOIN LEPROSY_SCREENING l ON b.benId = l.benId
+    WHERE b.villageId = :selectedVillage
+      AND l.isConfirmed = 1
+""")
+    fun getConfirmedLeprosyCaseCount(
+        selectedVillage: Int
+    ): Flow<Int>
+
+    @Transaction
+    @Query("SELECT * FROM BEN_BASIC_CACHE WHERE benId = :benId")
+    suspend fun getBenWithLeprosyScreeningAndFollowUps(benId: Long): BenWithLeprosyScreeningCache?
     @Transaction
     @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage and hhId = :hhId")
     fun getAllFilariaScreeningBen(selectedVillage: Int,hhId: Long): Flow<List<BenWithFilariaScreeningCache>>

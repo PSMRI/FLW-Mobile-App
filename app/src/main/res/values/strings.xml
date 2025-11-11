@@ -604,9 +604,19 @@
     </string-array>
 
     <string-array name="type_of_leprocy">
-        <item name="mb">MB</item>
-        <item name="pb">PB</item>
+        <item name="mb">MB (Multibacillary)</item>
+        <item name="pb">PB (Paucibacillary)</item>
     </string-array>
+
+    <string-array name="leprosy_treatment_status">
+        <item>Recovering</item>
+        <item>Cured</item>
+        <item>Recurrence of Symptoms</item>
+        <item>Regularly taking medicine</item>
+        <item>Not regularly taking medicine</item>
+        <item>Treatment Completed</item>
+    </string-array>
+
 
     <string-array name="dc_refer">
         <item>Primary Health Centre</item>

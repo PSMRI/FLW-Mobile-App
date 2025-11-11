@@ -6,6 +6,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.transformLatest
+import org.piramalswasthya.sakhi.configuration.LeprosyConfirmedDataset
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.ChildRegistrationDao
 import org.piramalswasthya.sakhi.database.room.dao.HouseholdDao
@@ -105,7 +106,8 @@ class RecordsRepo @Inject constructor(
     fun LeprosySuspectedList() = benDao.getLeprosyScreeningBenBySymptoms(selectedVillage,0)
         .map { list -> list.map { it.asLeprosyScreeningDomainModel() } }
 
-
+    fun LeprosyConfirmedList() = benDao.getConfirmedLeprosyCases(selectedVillage =selectedVillage)
+        .map {list -> list.map { it.asLeprosyScreeningDomainModel()}}
 
     fun filariaScreeningList(hhId:Long) = benDao.getAllFilariaScreeningBen(selectedVillage, hhId = hhId)
         .map { list -> list.map { it.asFilariaScreeningDomainModel() } }
@@ -123,6 +125,7 @@ class RecordsRepo @Inject constructor(
     val malariaConfirmedCasesList = benDao.getMalariaConfirmedCasesList(selectedVillage)
         .map { list -> list.map { it.asMalariaConfirmedDomainModel() } }
     val leprosySuspectedListCount = benDao.getLeprosyScreeningBenCountBySymptoms(selectedVillage,0)
+    val leprosyConfirmedCasesListCount = benDao.getConfirmedLeprosyCaseCount(selectedVillage =selectedVillage)
 
 
     val malariaConfirmedCasesListCount = malariaConfirmedCasesList.map { it.size }
