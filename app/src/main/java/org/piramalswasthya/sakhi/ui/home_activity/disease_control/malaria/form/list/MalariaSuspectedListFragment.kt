@@ -1,12 +1,13 @@
 package org.piramalswasthya.sakhi.ui.home_activity.disease_control.malaria.form.list
 
+import android.app.Activity
+import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.view.isVisible
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -20,18 +21,26 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.adapters.IrsRoundListAdapter
 import org.piramalswasthya.sakhi.adapters.MalariaMemberListAdapter
+import org.piramalswasthya.sakhi.adapters.dynamicAdapter.BottleAdapter
 import org.piramalswasthya.sakhi.adapters.dynamicAdapter.FormRendererAdapter
 import org.piramalswasthya.sakhi.configuration.IconDataset
+import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
-import org.piramalswasthya.sakhi.ui.home_activity.disease_control.malaria.form.form.MalariaFormViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.disease_control.malaria.form.mosquito_net.MosquitoNetFormViewModel
-import org.piramalswasthya.sakhi.ui.home_activity.infant.hbnc.HBNCFormFragmentArgs
-import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
-import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.HBNC_FORM_ID
+import org.piramalswasthya.sakhi.utils.HelperUtil.compressImageToTemp
+import org.piramalswasthya.sakhi.utils.HelperUtil.fileToBase64
+import org.piramalswasthya.sakhi.utils.HelperUtil.getFileSizeInMB
+import org.piramalswasthya.sakhi.utils.HelperUtil.launchCamera
+import org.piramalswasthya.sakhi.utils.HelperUtil.launchFilePicker
+import org.piramalswasthya.sakhi.utils.HelperUtil.showPickerDialog
+import org.piramalswasthya.sakhi.utils.dynamicFiledValidator.FieldValidator
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.MOSQUITO_NET_FORM_ID
 import org.piramalswasthya.sakhi.work.WorkerUtils
-import timber.log.Timber
+import org.piramalswasthya.sakhi.work.dynamicWoker.MosquitoNetFormSyncWorker
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import kotlin.getValue
 
 
@@ -47,6 +56,65 @@ class MalariaSuspectedListFragment : Fragment() {
     private val irsViewModel: MalariaIRSViewModel by viewModels()
     private val irsListViewmodel: IRSRoundListViewModel by viewModels()
     var hhId = -1L
+    private var currentImageField: FormField? = null
+    private var tempCameraUri: Uri? = null
+
+    private val cameraLauncher =
+        registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+            if (success && tempCameraUri != null) {
+                val context = requireContext()
+                val uri = tempCameraUri!!
+
+                val sizeInMB = context.getFileSizeInMB(uri)
+                val maxSize = (currentImageField?.validation?.maxSizeMB ?: 5).toDouble()
+
+                if (sizeInMB != null && sizeInMB > maxSize) {
+                    currentImageField?.errorMessage =
+                        currentImageField?.validation?.errorMessage
+                            ?: "Image must be less than ${maxSize.toInt()}MB"
+                    adapter.notifyDataSetChanged()
+                    return@registerForActivityResult
+                }
+
+                val compressedFile = compressImageToTemp(uri, "camera_image", context)
+                val base64String = compressedFile?.let { fileToBase64(it) }
+
+                currentImageField?.apply {
+                    value = base64String
+                    errorMessage = null
+                }
+                adapter.notifyDataSetChanged()
+            }
+        }
+
+    private val filePickerLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val uri = result.data?.data ?: return@registerForActivityResult
+                val context = requireContext()
+
+                val sizeInMB = context.getFileSizeInMB(uri)
+                val maxSize = (currentImageField?.validation?.maxSizeMB ?: 5).toDouble()
+
+                if (sizeInMB != null && sizeInMB > maxSize) {
+                    currentImageField?.errorMessage =
+                        currentImageField?.validation?.errorMessage
+                            ?: "File must be less than ${maxSize.toInt()}MB"
+                    adapter.notifyDataSetChanged()
+                    return@registerForActivityResult
+                }
+
+                val compressedFile = compressImageToTemp(uri, "selected_image", context)
+                val base64String = compressedFile?.let { fileToBase64(it) }
+
+                currentImageField?.apply {
+                    value = base64String
+                    errorMessage = null
+                }
+                adapter.notifyDataSetChanged()
+            }
+        }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,6 +127,8 @@ class MalariaSuspectedListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         hhId = args.hhId
+        MosquitoNetFormSyncWorker.enqueue(requireContext())
+        binding.switchBtnMosquito.visibility = View.VISIBLE
         binding.btnNextPage.visibility = View.GONE
         binding.llSearch.visibility = View.GONE
         if (viewModel.isFromDisease == 1 && viewModel.diseaseType == IconDataset.Disease.MALARIA.toString()) {
@@ -71,17 +141,41 @@ class MalariaSuspectedListFragment : Fragment() {
             binding.switchButton.visibility = View.GONE
             binding.switchBtnMosquito.visibility = View.GONE
         }
-        binding.switchButton.text = if (binding.switchButton.isChecked) "IRS ON" else "IRS OFF"
-        binding.switchButton.setOnCheckedChangeListener { _, isChecked ->
-            binding.switchButton.text = if (isChecked) "IRS ON" else "IRS OFF"
-            binding.llContent.visibility = if (isChecked) View.VISIBLE else View.GONE
+
+        binding.apply {
+            switchButton.text = if (switchButton.isChecked) "IRS ON" else "IRS OFF"
+            switchButton.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
+                    if (switchBtnMosquito.isChecked) {
+                        switchBtnMosquito.isChecked = false
+                    }
+                }
+
+                switchButton.text = if (isChecked) "IRS ON" else "IRS OFF"
+                llContent.visibility = if (isChecked) View.VISIBLE else View.GONE
+            }
+
+            switchBtnMosquito.text = if (switchBtnMosquito.isChecked)
+                getString(R.string.mosquito_net_on)
+            else
+                getString(R.string.mosquito_net_off)
+
+            switchBtnMosquito.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
+                    if (switchButton.isChecked) {
+                        switchButton.isChecked = false
+                    }
+                }
+
+                switchBtnMosquito.text = if (isChecked)
+                    getString(R.string.mosquito_net_on)
+                else
+                    getString(R.string.mosquito_net_off)
+
+                mosquitoLl.visibility = if (isChecked) View.VISIBLE else View.GONE
+            }
         }
 
-        binding.switchBtnMosquito.text = if (binding.switchBtnMosquito.isChecked) "Mosquito Net ON" else "Mosquito Net OFF"
-        binding.switchBtnMosquito.setOnCheckedChangeListener { _, isChecked ->
-            binding.switchBtnMosquito.text = if (isChecked) "Mosquito Net ON" else "Mosquito Net OFF"
-            binding.mosquitoLl.visibility = if (isChecked) View.VISIBLE else View.GONE
-        }
 
         val benAdapter = MalariaMemberListAdapter(
             clickListener = MalariaMemberListAdapter.ClickListener { hhId, benId ->
@@ -121,21 +215,20 @@ class MalariaSuspectedListFragment : Fragment() {
             }
         }
 
-                val adapter = FormInputAdapter(
-                    formValueListener = FormInputAdapter.FormValueListener { formId, index ->
-                        irsViewModel.updateListOnValueChanged(formId, index)
-                    }, isEnabled = true
-                )
-                binding.form.rvInputForm.adapter = adapter
-                lifecycleScope.launch {
-                    irsViewModel.formList.collect {
-                        if (it.isNotEmpty()) {
-                            adapter.notifyItemChanged(irsViewModel.getIndexOfDate())
-                            adapter.submitList(it)
-                        }
+        val adapter = FormInputAdapter(
+            formValueListener = FormInputAdapter.FormValueListener { formId, index ->
+                irsViewModel.updateListOnValueChanged(formId, index)
+            }, isEnabled = true
+        )
+        binding.form.rvInputForm.adapter = adapter
+        lifecycleScope.launch {
+            irsViewModel.formList.collect {
+                if (it.isNotEmpty()) {
+                    adapter.notifyItemChanged(irsViewModel.getIndexOfDate())
+                    adapter.submitList(it)
+                }
 
-                    }
-
+            }
         }
 
         binding.btnSubmit.setOnClickListener {
@@ -168,6 +261,29 @@ class MalariaSuspectedListFragment : Fragment() {
                 refreshAdapter()
             }
         }
+
+        binding.saveBtn.setOnClickListener {
+            handleFormSubmission()
+        }
+        tableRender()
+    }
+
+    private fun tableRender() {
+        binding.includeBottleTable.tableHeading.visibility = View.GONE
+        binding.includeBottleTable.bottleNum.text = "Net Distributed? (Yes/No)"
+        binding.includeBottleTable.date.text = "Date"
+
+        binding.includeBottleTable.tableRv.layoutManager = LinearLayoutManager(requireContext())
+        viewModelMosquitoNet.bottleList.observe(viewLifecycleOwner) { list ->
+
+            if (!list.isNullOrEmpty()) {
+                binding.includeBottleTable.llTable.visibility = View.VISIBLE
+                binding.includeBottleTable.tableRv.adapter = BottleAdapter(list)
+            } else {
+                binding.includeBottleTable.llTable.visibility = View.GONE
+            }
+        }
+        viewModelMosquitoNet.loadBottleData(hhId)
     }
 
     private fun refreshAdapter(){
@@ -183,8 +299,8 @@ class MalariaSuspectedListFragment : Fragment() {
             onValueChanged =
                 { field, value ->
                     if (value == "pick_image") {
-//                        currentImageField = field
-//                        showImagePickerDialog()
+                        currentImageField = field
+                        showImagePickerDialog()
                     } else {
                         field.value = value
                         viewModelMosquitoNet.updateFieldValue(field.fieldId, value)
@@ -193,26 +309,105 @@ class MalariaSuspectedListFragment : Fragment() {
                 },)
 
         binding.mosquitoRecyclerView.adapter = adapter
-//        binding.saveBtn.isVisible = !isViewMode
     }
 
+    private fun showImagePickerDialog() {
+        showPickerDialog(
+            requireContext(),
+            onCameraSelected = {
+                tempCameraUri = launchCamera(requireContext())
+                cameraLauncher.launch(tempCameraUri)
+            },
+            onFileSelected = {
+                launchFilePicker(filePickerLauncher)
+            }
+        )
+    }
+
+    private fun handleFormSubmission() {
+        val currentSchema = viewModelMosquitoNet.schema.value ?: return
+        val previousVisitDate = viewModelMosquitoNet.previousVisitDate
+
+        val updatedFields = adapter.getUpdatedFields()
+        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val today = Date()
+
+        currentSchema.sections.forEach { section ->
+            section.fields.forEach { schemaField ->
+                updatedFields.find { it.fieldId == schemaField.fieldId }?.let { updated ->
+                    schemaField.value = updated.value
+
+                    val result = FieldValidator.validate(updated, null)
+                    updated.errorMessage = if (!result.isValid) result.errorMessage else null
+                    schemaField.errorMessage = updated.errorMessage
+                    if (schemaField.fieldId == "visit_date" && schemaField.value is String) {
+                        val visitDateStr = schemaField.value as String
+                        val visitDate = try {
+                            sdf.parse(visitDateStr)
+                        } catch (e: Exception) {
+                            null
+                        }
+
+                        val errorMessage = when {
+                            visitDate == null -> "Invalid visit date"
+                            today != null && visitDate.after(today) -> "Visit Date cannot be after today's date"
+                            previousVisitDate != null && !visitDate.after(previousVisitDate) ->
+                                "Visit Date must be after previous visit (${sdf.format(previousVisitDate)})"
+                            else -> null
+                        }
+                        schemaField.errorMessage = errorMessage
+                        updated.errorMessage = errorMessage
+                    }
+                }
+            }
+        }
+
+        updatedFields.forEach { adapterField ->
+            currentSchema.sections.flatMap { it.fields }
+                .find { it.fieldId == adapterField.fieldId }
+                ?.let { schemaField ->
+                    adapterField.errorMessage = schemaField.errorMessage
+                }
+        }
+
+        val copiedFields = updatedFields.map { updated ->
+            val error = currentSchema.sections
+                .flatMap { it.fields }
+                .find { it.fieldId == updated.fieldId }
+                ?.errorMessage
+            updated.copy(errorMessage = error)
+        }
+        adapter.updateFields(copiedFields)
+        adapter.notifyDataSetChanged()
+
+        val firstErrorFieldId = currentSchema.sections
+            .flatMap { it.fields }
+            .firstOrNull { it.visible && !it.errorMessage.isNullOrBlank() }
+            ?.fieldId
+
+        val errorIndex = copiedFields.indexOfFirst { it.fieldId == firstErrorFieldId }
+        if (errorIndex >= 0) binding.mosquitoRecyclerView.scrollToPosition(errorIndex)
+
+        val hasErrors = currentSchema.sections.any { section ->
+            section.fields.any { it.visible && !it.errorMessage.isNullOrBlank() }
+        }
+        if (hasErrors) return
+
+        lifecycleScope.launch {
+            val isSaved = viewModelMosquitoNet.saveFormResponses(hhId)
+            if (isSaved) {
+                Toast.makeText(requireContext(),  getString(R.string.data_saved_successfullt), Toast.LENGTH_SHORT).show()
+                findNavController().previousBackStackEntry?.savedStateHandle?.set("form_submitted", true)
+                findNavController().popBackStack()
+            } else {
+                Toast.makeText(requireContext(), getString(R.string.data_already_exist), Toast.LENGTH_SHORT).show()
+            }
+
+        }
+    }
 
     private fun submitIRSScreeningForm() {
         irsViewModel.saveForm()
-    }
-
-    private fun validateCurrentPage(): Boolean {
-        val result = binding.form.rvInputForm.adapter?.let {
-            (it as FormInputAdapter).validateInput(resources)
-        }
-        Timber.d("Validation : $result")
-        return if (result == -1) true
-        else {
-            if (result != null) {
-                binding.form.rvInputForm.scrollToPosition(result)
-            }
-            false
-        }
     }
 
     override fun onStart() {

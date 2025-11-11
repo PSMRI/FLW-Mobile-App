@@ -331,6 +331,12 @@ interface AmritApiService {
         @Body request: List<FormSubmitRequest>
     ): Response<Unit>
 
+    @POST("flw-api/disease/{formName}/saveAll")
+    suspend fun submitDiseaseMosquitoForm(
+        @Path("formName") formName: String,
+        @Body request: List<FormSubmitRequest>
+    ): Response<Unit>
+
 
     @POST("flw-api/child-care/hbncVisit/getAll")
     suspend fun getAllHbncVisits(
@@ -349,6 +355,11 @@ interface AmritApiService {
         @Body request: HBNCVisitRequest
     ): Response<HBNCVisitListResponse>
 
+    @POST("flw-api/disease/{formName}/getAll")
+    suspend fun getAllDiseaseMosquitoFormVisits(
+        @Path("formName") formName: String,
+        @Body request: HBNCVisitRequest
+    ): Response<HBNCVisitListResponse>
 
     @POST("flw-api/child-care/hbycVisit/saveAll")
     suspend fun submitFormhbyc(

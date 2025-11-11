@@ -63,6 +63,8 @@
     <string name="aadhaar_linked_mobile_number_or_other_mobile_number">Aadhaar linked mobile number or other mobile number</string>
     <string name="individual_s_consent_for_creation_of_abha_number">Individual’s consent for creation of ABHA Number.</string>
     <string name="validate_fp">Validate FP</string>
+    <string name="data_saved_successfullt">Data Saved Successfully.</string>
+    <string name="data_already_exist">Data already exist.</string>
     <string name="generating_abha_for">Enter</string>  <!--Creating ABHA for:-->
     <!--    <string name="otp_sent_to">"OTP sent to "</string>-->
     <string name="otp_sent_to">"OTP sent to Aadhaar linked mobile number"</string>

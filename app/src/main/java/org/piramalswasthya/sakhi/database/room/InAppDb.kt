@@ -260,16 +260,14 @@ abstract class InAppDb : RoomDatabase() {
                         """
             CREATE TABLE IF NOT EXISTS mosquito_net_visit (
                 id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                benId INTEGER NOT NULL,
                 hhId INTEGER NOT NULL,
-                visitDay TEXT NOT NULL,
                 visitDate TEXT NOT NULL,
                 formId TEXT NOT NULL,
                 version INTEGER NOT NULL,
                 formDataJson TEXT NOT NULL,
                 isSynced INTEGER NOT NULL DEFAULT 0,
-                createdAt INTEGER NOT NULL,
-                syncedAt INTEGER
+                syncedAt TEXT,
+                createdAt INTEGER NOT NULL DEFAULT (strftime('%s','now'))
             )
             """.trimIndent()
                     )
@@ -277,7 +275,7 @@ abstract class InAppDb : RoomDatabase() {
                     database.execSQL(
                         """
             CREATE UNIQUE INDEX IF NOT EXISTS index_mosquito_net_visit_unique
-            ON mosquito_net_visit (benId, hhId, visitDay, visitDate, formId)
+            ON mosquito_net_visit (hhId, visitDate, formId)
             """.trimIndent()
                     )
                 }
