@@ -87,11 +87,15 @@ class LeprosyMemberListAdapter(
                 binding.btnFormTb.visibility = View.INVISIBLE
             }
             val (text, colorRes) = when {
+
                 item.leprosy == null -> {
-                    "Screening" to android.R.color.holo_red_dark
+                    "Screening" to android.R.color.holo_green_dark
                 }
                 item.leprosy.leprosySymptomsPosition == 1 -> {
-                    "View" to android.R.color.holo_green_dark
+                    "Screening" to android.R.color.holo_green_dark
+                }
+                item.leprosy.leprosySymptomsPosition == 0 && item.leprosy.isConfirmed -> {
+                    "Follow Up" to android.R.color.holo_red_dark
                 }
                 item.leprosy.leprosySymptomsPosition == 0 -> {
                     "Suspected" to android.R.color.holo_red_dark
@@ -128,11 +132,16 @@ class LeprosyMemberListAdapter(
 
 
     class ClickListener(
-        private val clickedForm: ((hhId: Long, benId: Long) -> Unit)? = null
+        private val clickedForm: ((hhId: Long, benId: Long) -> Unit)? = null,
+        private val clickedVisits: ((benWithLeprosy: BenWithLeprosyScreeningDomain) -> Unit)? = null
+
 
     ) {
         fun onClickForm(item: BenWithLeprosyScreeningDomain) =
             clickedForm?.let { it(item.ben.hhId, item.ben.benId) }
+
+        fun onClickVisits(item: BenWithLeprosyScreeningDomain) =
+            clickedVisits?.let { it(item) }
     }
 
 }

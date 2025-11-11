@@ -174,16 +174,32 @@ class LeprosyFormDataset(
             leprosySymptoms.value = resources.getStringArray(R.array.yes_no)[1]
         } else {
             dateOfCase.value = getDateFromLong(saved.homeVisitDate)
-            leprosySymptoms.value = getLocalValueInArray(leprosySymptoms.arrayId, saved.leprosySymptoms)
             val symptomsPosition = saved.leprosySymptomsPosition ?: 1
             leprosySymptoms.value = resources.getStringArray(R.array.yes_no).getOrNull(symptomsPosition)
                 ?: resources.getStringArray(R.array.yes_no)[1]
-            visitLabel.value = saved.visitLabel ?: "Visit -1"
-            beneficiaryStatus.value =
-                getLocalValueInArray(beneficiaryStatus.arrayId, saved.beneficiaryStatus)
+            visitLabel.value = "Visit -${saved?.currentVisitNumber ?: 1}"
+            leprosyStatus.value =
+                getLocalValueInArray(leprosyStatus.arrayId, saved.leprosyStatus)
 
-
-            if (beneficiaryStatus.value == beneficiaryStatus.entries!![3]) {
+            if (leprosyStatus.value == leprosyStatus.entries!!.last()) {
+                leprosyStatus.value = saved.leprosyStatus
+                list.add(list.indexOf(leprosyStatus) + 1, other)
+            } else {
+                leprosyStatus.value =
+                    getLocalValueInArray(leprosyStatus.arrayId, saved.leprosyStatus)
+            }
+            list.add(list.indexOf(leprosyStatus) + 1, referredTo)
+            referredTo.value =
+                getLocalValueInArray(referredTo.arrayId, saved.referToName)
+            if (referredTo.value == referredTo.entries!!.last()) {
+                referredTo.value = saved.referToName
+                list.add(list.indexOf(referredTo) + 1, other)
+            } else {
+                referredTo.value =
+                    getLocalValueInArray(referredTo.arrayId, saved.referToName)
+            }
+            /*if
+            (beneficiaryStatus.value == beneficiaryStatus.entries!![3]) {
                 list.add(list.indexOf(beneficiaryStatus) + 1, dateOfDeath)
                 list.add(list.indexOf(beneficiaryStatus) + 2, placeOfDeath)
                 list.add(list.indexOf(beneficiaryStatus) + 3, reasonOfDeath)
@@ -216,18 +232,9 @@ class LeprosyFormDataset(
                 typeOfLeprosy.value = getLocalValueInArray(typeOfLeprosy.arrayId, saved.typeOfLeprosy)
 
             }
-            referredTo.value =
-                getLocalValueInArray(referredTo.arrayId, saved.referToName)
-            if (referredTo.value == referredTo.entries!!.last()) {
-                referredTo.value = saved.referToName
-                list.add(list.indexOf(referredTo) + 1, other)
-            } else {
-                referredTo.value =
-                    getLocalValueInArray(referredTo.arrayId, saved.referToName)
-            }
 
-            other.value = saved.otherReferredTo
-            followUpdate.value = getDateFromLong(saved.followUpDate)
+
+            other.value = saved.otherReferredTo*/
 
         }
 
@@ -386,7 +393,6 @@ class LeprosyFormDataset(
             form.leprosyStatus = leprosyStatus.value
             form.typeOfLeprosy = typeOfLeprosy.value
             form.diseaseTypeID = 5
-            form.followUpDate = getLongFromDate(followUpdate.value)
             form.leprosySymptoms = leprosySymptoms.value
             form.visitLabel = visitLabel.value
             form.leprosySymptomsPosition = when (leprosySymptoms.value) {

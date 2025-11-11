@@ -38,13 +38,14 @@ class SuspectedLeprosyListFragment: Fragment() {
         binding.llSearch.visibility = View.GONE
 
         val benAdapter = LeprosyMemberListAdapter(
-            clickListener = LeprosyMemberListAdapter.ClickListener { hhId, benId ->
+            clickListener = LeprosyMemberListAdapter.ClickListener ({ hhId, benId ->
                 findNavController().navigate(
                     SuspectedLeprosyListFragmentDirections.actionLeprosySuspectedListFragmentToSuspectedLeprosyFormFragment(
                         benId = benId
                     )
                 )
-            },
+            },)
+
         )
         binding.rvAny.adapter = benAdapter
 

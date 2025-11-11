@@ -1504,6 +1504,9 @@
         <action
             android:id="@+id/action_leprosyFragmen_to_leprosySuspectedListFragment"
             app:destination="@+id/suspectedLeprosyListFragment" />
+        <action
+            android:id="@+id/action_leprosyDragment_to_leprosyConfirmedListFragment"
+            app:destination="@+id/leprosyConfirmedListFragment"/>
 
     </fragment>
 
@@ -1530,6 +1533,43 @@
 
 
     </fragment>
+
+    <fragment
+        android:id="@+id/leprosyConfirmedFromFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.leprosy.confirmed.form.LeprosyConfirmedFromFragment"
+        android:label="LeprosyConfirmedFromFragment">
+        <argument
+            android:name="benId"
+            app:argType="long" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/leprosyConfirmedListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.leprosy.confirmed.list.LeprosyConfirmedListFragment"
+        android:label="LeprosyConfirmedListFragment">
+
+        <action
+            android:id="@+id/action_leprosyConfirmedListFragment_to_leprosyConfirmedFromFragment"
+            app:destination="@id/leprosyConfirmedFromFragment" />
+
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/leprosyVisitFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.leprosy.visits.LeprosyVisitFragment"
+        android:label="LeprosyVisitFragment">
+
+        <argument
+            android:name="benId"
+            app:argType="long" />
+        <argument
+            android:name="visitNumber"
+            app:argType="integer" />
+
+    </fragment>
+
+
 
 
     <fragment
@@ -1654,6 +1694,10 @@
         <argument
             android:name="diseaseType"
             app:argType="string" />
+
+        <action
+            android:id="@+id/action_leprosySuspectedListFragment_to_leprosyVisitFragment"
+            app:destination="@id/leprosyVisitFragment" />
         <action
             android:id="@+id/action_leprosySuspectedListFragment_to_leprosyFormFragment"
             app:destination="@id/leprosyFormFragment" />

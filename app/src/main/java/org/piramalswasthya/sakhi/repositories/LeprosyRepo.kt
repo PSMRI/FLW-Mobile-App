@@ -1,14 +1,19 @@
 package org.piramalswasthya.sakhi.repositories
 
+import android.content.Context
 import com.google.gson.Gson
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.LeprosyDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.Konstants
+import org.piramalswasthya.sakhi.model.BenWithLeprosyScreeningCache
+import org.piramalswasthya.sakhi.model.LeprosyFollowUpCache
 import org.piramalswasthya.sakhi.model.LeprosyScreeningCache
 import org.piramalswasthya.sakhi.network.AmritApiService
 import org.piramalswasthya.sakhi.network.GetDataPaginatedRequestForDisease
@@ -25,7 +30,9 @@ class LeprosyRepo @Inject constructor(
     private val benDao: BenDao,
     private val preferenceDao: PreferenceDao,
     private val userRepo: UserRepo,
-    private val tmcNetworkApiService: AmritApiService
+    private val tmcNetworkApiService: AmritApiService,
+    @ApplicationContext private val context: Context
+
 ) {
 
     suspend fun getLeprosyScreening(benId: Long): LeprosyScreeningCache? {
@@ -237,6 +244,62 @@ class LeprosyRepo @Inject constructor(
     }
 
 
+//    /*suspend fun getCurrentFollowUp(benId: Long, visitNumber: Int): LeprosyFollowUpCache? {
+//        return withContext(Dispatchers.IO) {
+//            leprosyDao.getFollowUpByVisit(benId, visitNumber)
+//        }
+//    }*/
+
+    suspend fun getAllFollowUpsForBeneficiary(benId: Long): List<LeprosyFollowUpCache> {
+        return withContext(Dispatchers.IO) {
+            leprosyDao.getAllFollowUpsForBeneficiary(benId)
+        }
+    }
+
+    suspend fun getFollowUpsForCurrentVisit(benId: Long, visitNumber: Int): List<LeprosyFollowUpCache> {
+        return withContext(Dispatchers.IO) {
+            leprosyDao.getFollowUpsByVisit(benId, visitNumber)
+        }
+    }
+
+    suspend fun saveFollowUp(followUp: LeprosyFollowUpCache) {
+        withContext(Dispatchers.IO) {
+            leprosyDao.insertFollowUp(followUp)
+        }
+    }
+
+    suspend fun updateFollowUp(followUp: LeprosyFollowUpCache) {
+        withContext(Dispatchers.IO) {
+            leprosyDao.updateFollowUp(followUp)
+        }
+    }
+
+    suspend fun getFollowUpsForVisit(benId: Long, visitNumber: Int): List<LeprosyFollowUpCache> {
+        return leprosyDao.getFollowUpsForVisit(benId, visitNumber)
+    }
+
+    suspend fun completeVisitAndStartNext(benId: Long): Boolean {
+        return withContext(Dispatchers.IO) {
+            val screening = leprosyDao.getLeprosyScreening(benId) ?: return@withContext false
+
+            screening.currentVisitNumber++
+            screening.leprosyStatus = context.resources.getStringArray(R.array.leprosy_status)[0]
+            screening.isConfirmed = false
+            screening.leprosySymptomsPosition = 1
+
+            leprosyDao.updateLeprosyScreening(screening)
+            true
+        }
+    }
+
+
+
+    suspend fun getBenWithLeprosyData(benId: Long): BenWithLeprosyScreeningCache? {
+        return withContext(Dispatchers.IO) {
+            benDao.getBenWithLeprosyScreeningAndFollowUps(benId)
+        }
+    }
+
     companion object {
         private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
         private val timeFormat = SimpleDateFormat("HH:mm:ss", Locale.ENGLISH)
@@ -247,7 +310,6 @@ class LeprosyRepo @Inject constructor(
         }
 
         private fun getLongFromDate(dateString: String): Long {
-            //Jul 22, 2023 8:17:23 AM"
             val f = SimpleDateFormat("MMM d, yyyy h:mm:ss a", Locale.ENGLISH)
             val date = f.parse(dateString)
             return date?.time ?: throw IllegalStateException("Invalid date for dateReg")
