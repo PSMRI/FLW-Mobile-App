@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.configuration
 import android.content.Context
 import android.net.Uri
 import android.text.InputType
+import android.util.Log
 import android.util.Range
 import android.widget.LinearLayout
 import org.piramalswasthya.sakhi.R
@@ -89,6 +90,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
     private var minAgeYear: Int = 0
     private var maxAgeYear: Int = Konstants.maxAgeForGenBen
+
+    private var datasetContext = context
 
     //////////////////////////////////First Page////////////////////////////////////
 
@@ -1650,14 +1653,14 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 val updatedReproductiveOptions = when {
                     !genderIsFemale -> emptyList()
                     age in 15..19 -> listOf(
-                        "Adolescent Girl", "Eligible Couple", "Pregnant Woman",
-                        "Postnatal Mother", "Permanently Sterilised"
+                        resources.getString(R.string.dd_ag), resources.getString(R.string.dd_ec), resources.getString(R.string.dd_pw),
+                        resources.getString(R.string.dd_pm), resources.getString(R.string.dd_ps)
                     )
                     age in 20..49 -> listOf(
-                        "Eligible Couple", "Pregnant Woman",
-                        "Postnatal Mother", "Permanently Sterilised"
+                        resources.getString(R.string.dd_ec), resources.getString(R.string.dd_pw),
+                        resources.getString(R.string.dd_pm), resources.getString(R.string.dd_ps)
                     )
-                    age >= 50 -> listOf("Elderly Woman")
+                    age >= 50 -> listOf(resources.getString(R.string.dd_ew))
                     else -> emptyList()
                 }
 
@@ -1673,15 +1676,16 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 }
 
                 when (reproductiveStatus.value) {
-                    "Adolescent Girl" -> {
+                    resources.getString(R.string.dd_ag) -> {
                         agePopup.max = yearsAgo(15)
                         agePopup.min = yearsAgo(19)
                     }
-                    "Eligible Couple", "Pregnant Woman", "Postnatal Mother", "Permanently Sterilised" -> {
+                    resources.getString(R.string.dd_ec), resources.getString(R.string.dd_pw),
+                    resources.getString(R.string.dd_pm), resources.getString(R.string.dd_ps) -> {
                         agePopup.max = yearsAgo(20)
                         agePopup.min = yearsAgo(49)
                     }
-                    "Elderly Woman" -> {
+                    resources.getString(R.string.dd_ew) -> {
                         agePopup.max = yearsAgo(50)
                         agePopup.min = yearsAgo(100)
                     }
@@ -1869,12 +1873,12 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             ben.genDetails?.let { gen ->
                 val selectedValue = reproductiveStatus.value?.trim() ?: ""
                 val reproductiveMap = mapOf(
-                    "Eligible Couple" to 1,
-                    "Pregnant Woman" to 2,
-                    "Postnatal Mother" to 3,
-                    "Elderly Woman" to 4,
-                    "Adolescent Girl" to 5,
-                    "Permanently Sterilised" to 6
+                    resources.getString(R.string.dd_ec) to 1,
+                    resources.getString(R.string.dd_pw) to 2,
+                    resources.getString(R.string.dd_pm) to 3,
+                    resources.getString(R.string.dd_ew) to 4,
+                    resources.getString(R.string.dd_ag) to 5,
+                    resources.getString(R.string.dd_ps) to 6
                 )
 
                 val selectedId = reproductiveMap[selectedValue] ?: 0
@@ -1996,14 +2000,14 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             val updatedReproductiveOptions = when {
                 !genderIsFemale -> emptyList()
                 age in 15..19 -> listOf(
-                    "Adolescent Girl", "Eligible Couple", "Pregnant Woman",
-                    "Postnatal Mother", "Permanently Sterilised"
+                    resources.getString(R.string.dd_ag), resources.getString(R.string.dd_ec), resources.getString(R.string.dd_pw),
+                    resources.getString(R.string.dd_pm), resources.getString(R.string.dd_ps)
                 )
                 age in 20..49 -> listOf(
-                    "Eligible Couple", "Pregnant Woman",
-                    "Postnatal Mother", "Permanently Sterilised"
+                    resources.getString(R.string.dd_ec), resources.getString(R.string.dd_pw),
+                    resources.getString(R.string.dd_pm), resources.getString(R.string.dd_ps)
                 )
-                age >= 50 -> listOf("Elderly Woman")
+                age >= 50 -> listOf(resources.getString(R.string.dd_ew))
                 else -> emptyList()
             }
 
@@ -2018,15 +2022,16 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
             // Set DOB constraints based on existing reproductive status
             when (reproductiveStatus.value) {
-                "Adolescent Girl" -> {
+                resources.getString(R.string.dd_ag) -> {
                     agePopup.max = yearsAgo(15)
                     agePopup.min = yearsAgo(19)
                 }
-                "Eligible Couple", "Pregnant Woman", "Postnatal Mother", "Permanently Sterilised" -> {
+                resources.getString(R.string.dd_ec), resources.getString(R.string.dd_pw),
+                resources.getString(R.string.dd_pm), resources.getString(R.string.dd_ps) -> {
                     agePopup.max = yearsAgo(20)
                     agePopup.min = yearsAgo(49)
                 }
-                "Elderly Woman" -> {
+                resources.getString(R.string.dd_ew) -> {
                     agePopup.max = yearsAgo(50)
                     agePopup.min = yearsAgo(100)
                 }
