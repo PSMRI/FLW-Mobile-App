@@ -37,9 +37,15 @@ class MalariaRepo @Inject constructor(
     private val tmcNetworkApiService: AmritApiService
 ) {
 
-    suspend fun getMalariaScreening(benId: Long): MalariaScreeningCache? {
+    suspend fun getLatestVisitForBen(benId: Long): MalariaScreeningCache? {
         return withContext(Dispatchers.IO) {
-            malariaDao.getMalariaScreening(benId)
+            malariaDao.getLatestVisitForBen(benId)
+        }
+    }
+
+    suspend fun getlastvisitIdforBen(benId: Long): Long? {
+        return withContext(Dispatchers.IO) {
+            malariaDao.getLastVisitIdForBen(benId)
         }
     }
 
@@ -67,6 +73,7 @@ class MalariaRepo @Inject constructor(
             malariaDao.getIRSScreening(benId)
         }
     }
+
 
     suspend fun saveIRSScreening(irsRoundScreening: IRSRoundScreening) {
         withContext(Dispatchers.IO) {

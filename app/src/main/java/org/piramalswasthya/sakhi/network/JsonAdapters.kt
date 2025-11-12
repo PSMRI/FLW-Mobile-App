@@ -1167,6 +1167,7 @@ data class MalariaConfirmedRequestDTO(
 data class MalariaScreeningDTO(
     val id: Int = 0,
     val benId: Long,
+    val visitId: Long,
     val caseDate: String,
     val houseHoldDetailsId: Long,
     val screeningDate: String,
@@ -1201,6 +1202,10 @@ data class MalariaScreeningDTO(
     var vomiting: Boolean ? = false,
     var diarrhea: Boolean ? = false,
     var createdBy: String ? = "",
+
+    var malariaTestType: Int? = 0,
+
+    var malariaSlideTestType: Int? = 0,
 
 ) {
     fun toCache(): MalariaScreeningCache {
@@ -1240,7 +1245,10 @@ data class MalariaScreeningDTO(
             reasonForDeath = reasonForDeath,
             otherReasonForDeath = otherReasonForDeath,
             otherPlaceOfDeath = otherPlaceOfDeath,
-            placeOfDeath = placeOfDeath
+            placeOfDeath = placeOfDeath,
+            visitId = visitId,
+            malariaTestType = malariaTestType,
+            malariaSlideTestType = malariaSlideTestType
 
 
         )
