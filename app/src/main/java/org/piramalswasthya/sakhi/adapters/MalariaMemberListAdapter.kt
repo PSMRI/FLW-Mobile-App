@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -51,31 +52,48 @@ class MalariaMemberListAdapter(
             }*/
 
             binding.ivSyncState.visibility = if (item.tb == null) View.INVISIBLE else View.VISIBLE
-
             try {
-                if(item.tb!!.caseStatus != null) {
-                    binding.ivMalariaStatus.visibility = View.VISIBLE
-                    if (item.tb.caseStatus == "Confirmed") {
-                        Glide.with(binding.ivSyncState).load(R.drawable.mosquito).into(binding.ivMalariaStatus)
-                    } else if (item.tb.caseStatus == "Suspected") {
-                        Glide.with(binding.ivSyncState).load(R.drawable.warning).into(binding.ivMalariaStatus)
-                    }else if (item.tb.caseStatus == "Not Confirmed") {
-                        Glide.with(binding.ivSyncState).load(R.drawable.ic_check_circle).into(binding.ivMalariaStatus)
-                    } else if (item.tb.caseStatus == "Treatment Started"){
-                        Glide.with(binding.ivSyncState).load(R.drawable.pill).into(binding.ivMalariaStatus)
-                    } else {
-                        Glide.with(binding.ivSyncState).load(R.drawable.warning).into(binding.ivMalariaStatus)
-
-                    }
+                if (item.tb == null) {
+                    binding.btnFormTb.text =  "Screening"
+                    binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(android.R.color.holo_red_dark))
 
                 } else {
-                    binding.ivMalariaStatus.visibility =  View.INVISIBLE
+                    if(item.tb.caseStatus != null) {
+
+                        binding.ivMalariaStatus.visibility = View.VISIBLE
+                        if (item.tb.caseStatus == "Confirmed") {
+                            binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(android.R.color.holo_green_dark))
+                            Glide.with(binding.ivSyncState).load(R.drawable.mosquito).into(binding.ivMalariaStatus)
+                            binding.btnFormTb.text =  "Confirmed"
+                        } else if (item.tb.caseStatus == "Suspected") {
+                            binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(android.R.color.holo_orange_light))
+                            Glide.with(binding.ivSyncState).load(R.drawable.warning).into(binding.ivMalariaStatus)
+                            binding.btnFormTb.text =  "Suspected"
+                        }else if (item.tb.caseStatus == "Not Confirmed") {
+                            binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(android.R.color.tertiary_text_light))
+                            Glide.with(binding.ivSyncState).load(R.drawable.ic_check_circle).into(binding.ivMalariaStatus)
+                            binding.btnFormTb.text =  "Not Confirmed"
+                        } else if (item.tb.caseStatus == "Treatment Started"){
+                            binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(android.R.color.holo_purple))
+                            Glide.with(binding.ivSyncState).load(R.drawable.pill).into(binding.ivMalariaStatus)
+                            binding.btnFormTb.text =  "Treatment Started"
+
+                        } else {
+                            Glide.with(binding.ivSyncState).load(R.drawable.warning).into(binding.ivMalariaStatus)
+                        }
+
+                    } else {
+                        binding.ivMalariaStatus.visibility =  View.INVISIBLE
+                        binding.btnFormTb.text =  "Screening"
+                        binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(android.R.color.holo_red_dark))
+
+                    }
                 }
+
             } catch (e:Exception) {
                 Timber.d("Exception at case status : $e collected")
 
             }
-
 
 
             if (item.ben.spouseName == "Not Available" && item.ben.fatherName == "Not Available") {
@@ -115,8 +133,8 @@ class MalariaMemberListAdapter(
             } else {
                 binding.btnFormTb.visibility = View.INVISIBLE
             }
-            binding.btnFormTb.text = if (item.tb == null) "Register" else "View"
-            binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.tb == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
+//            binding.btnFormTb.text = if (item.tb == null) "Screening" else "View"
+//            binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.tb == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
             binding.clickListener = clickListener
 
             binding.executePendingBindings()

@@ -13,8 +13,11 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
+import org.piramalswasthya.sakhi.adapters.MalariaMemberListAdapter
+import org.piramalswasthya.sakhi.adapters.VisitsListAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentMaleriaFormBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.home_activity.disease_control.malaria.form.list.MalariaSuspectedListFragmentDirections
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 
@@ -52,6 +55,8 @@ class MalariaFormFragment : Fragment() {
                 val adapter = FormInputAdapter(
                     formValueListener = FormInputAdapter.FormValueListener { formId, index ->
                         viewModel.updateListOnValueChanged(formId, index)
+                        hardCodedListUpdate(formId)
+
                     }, isEnabled = !recordExists
                 )
                 binding.btnSubmit.isEnabled = !recordExists
@@ -67,8 +72,24 @@ class MalariaFormFragment : Fragment() {
                 }
             }
         }
+
+        val visitAdapter = VisitsListAdapter()
+        binding.visitsRV.adapter = visitAdapter
+
+
+
+        binding.llPatientInformation3.visibility = View.VISIBLE
+
+        lifecycleScope.launch {
+            viewModel.allVisitsList.collect {
+                visitAdapter.submitList(it)
+            }
+        }
         viewModel.benName.observe(viewLifecycleOwner) {
             binding.tvBenName.text = it
+        }
+        viewModel.visitNo.observe(viewLifecycleOwner) {
+            binding.number.text = it
         }
         viewModel.benAgeGender.observe(viewLifecycleOwner) {
             binding.tvAgeGender.text = it
@@ -140,6 +161,18 @@ class MalariaFormFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    private fun hardCodedListUpdate(formId: Int) {
+        binding.form.rvInputForm.adapter?.apply {
+            when (formId) {
+                7,8,9,10,11,12,13,14,15,17,19,20 -> {
+                    notifyDataSetChanged()
+
+                }
+
+            }
+        }
     }
 
 }

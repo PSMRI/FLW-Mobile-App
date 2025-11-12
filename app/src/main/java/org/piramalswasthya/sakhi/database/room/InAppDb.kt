@@ -162,7 +162,7 @@ import org.piramalswasthya.sakhi.model.VHNDCache
     ],
     views = [BenBasicCache::class],
 
-    version = 34, exportSchema = false
+    version = 36, exportSchema = false
 )
 
 @TypeConverters(
@@ -226,6 +226,24 @@ abstract class InAppDb : RoomDatabase() {
                 it.execSQL("alter table BENEFICIARY add column isConsent BOOL")
 
             })
+            val MIGRATION_35_36 = object : Migration(35, 36) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+//                    database.execSQL("ALTER TABLE MALARIA_SCREENING ADD COLUMN visitId INTEGER NOT NULL DEFAULT 1")
+                    database.execSQL("DROP INDEX IF EXISTS ind_malariasn")
+                    database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS ind_malariasn ON MALARIA_SCREENING(benId, visitId)")
+                }
+            }
+
+            val MIGRATION_34_35 = object : Migration(34, 35) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("ALTER TABLE MALARIA_SCREENING ADD COLUMN visitId INTEGER NOT NULL DEFAULT 1")
+                    database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS ind_malariasn ON MALARIA_SCREENING(benId, visitId)")
+
+                    database.execSQL("ALTER TABLE MALARIA_SCREENING ADD COLUMN malariaTestType INTEGER DEFAULT 0")
+                    database.execSQL("ALTER TABLE MALARIA_SCREENING ADD COLUMN malariaSlideTestType INTEGER DEFAULT 0")
+                }
+            }
+
             val MIGRATION_33_34 = object : Migration(33, 34) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     database.execSQL("ALTER TABLE INFANT_REG ADD COLUMN isSNCU TEXT")
@@ -1229,6 +1247,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_31_32,
                         MIGRATION_32_33,
                         MIGRATION_33_34,
+                        MIGRATION_34_35,
+                        MIGRATION_35_36
                     ).build()
 
                     INSTANCE = instance
