@@ -113,6 +113,7 @@
     <string name="tv_husband_name_ph">Husband Name</string>
     <string name="tv_spouse_name_ph">Spouse Name</string>
     <string name="tv_family_head_name_ph">Family Head Name</string>
+    <string name="tv_date_of_death">Date Of Death</string>
     <string name="tv_spouse">Spouse</string>
     <string name="tv_ben_id_ph">Ben ID</string>
     <string name="tv_mob_no_ph">Mobile Number</string>
@@ -134,7 +135,11 @@
 
     <string name="immunization_dosage_count">%d/%d</string>
     <string name="select_death_type">Select Beneficiary Death Type</string>
+    <string name="general_deaths">General Deaths</string>
     <string name="death_type_cdr">CDR (Child Death Review)</string>
+    <string name="maternal_deaths">Maternal Deaths (MDSR)</string>
+    <string name="non_maternal_deaths">Non-Maternal Deaths</string>
+    <string name="child_deaths">Child Deaths</string>
     <string name="death_type_mdsr">MDSR (Maternal Death Surveillance and Response)</string>
     <string name="continue_button">CONTINUE</string>
 
@@ -326,6 +331,8 @@
     <string name="beneficiaries_data">Beneficiaries Data</string>
     <string name="cdr_list">CDR List</string>
     <string name="mdsr_list">MDSR List</string>
+    <string name="nmdsr_list">NMDSR List</string>
+    <string name="gdr_list">GDR List</string>
     <string name="mdsr">MDSR</string>
     <string name="cdr">CDR</string>
     <string name="pmsma">PMSMA</string>
