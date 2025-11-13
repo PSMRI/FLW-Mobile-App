@@ -162,7 +162,7 @@ import org.piramalswasthya.sakhi.model.VHNDCache
     ],
     views = [BenBasicCache::class],
 
-    version = 34, exportSchema = false
+    version = 36, exportSchema = false
 )
 
 @TypeConverters(
@@ -226,6 +226,28 @@ abstract class InAppDb : RoomDatabase() {
                 it.execSQL("alter table BENEFICIARY add column isConsent BOOL")
 
             })
+
+            val MIGRATION_35_36 = object : Migration(35, 36) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("ALTER TABLE form_schema ADD COLUMN language TEXT NOT NULL DEFAULT 'en'")
+                }
+            }
+
+            val MIGRATION_34_35 = object : Migration(34, 35) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    try {
+                        database.execSQL("ALTER TABLE PREGNANCY_ANC ADD COLUMN isYesOrNo INTEGER DEFAULT 0")
+                    } catch (e: Exception) {  }
+
+                    try {
+                        database.execSQL("ALTER TABLE PREGNANCY_ANC ADD COLUMN dateSterilisation INTEGER")
+                    } catch (e: Exception) { }
+                    database.execSQL("UPDATE PREGNANCY_ANC SET isPaiucdId = CASE WHEN isPaiucdId = 1 THEN 1 ELSE 0 END")
+                }
+            }
+
+
+
             val MIGRATION_33_34 = object : Migration(33, 34) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     database.execSQL("ALTER TABLE INFANT_REG ADD COLUMN isSNCU TEXT")
@@ -235,6 +257,7 @@ abstract class InAppDb : RoomDatabase() {
                     database.execSQL("ALTER TABLE INFANT_REG ADD COLUMN deliveryDischargeSummary4 TEXT")
                 }
             }
+
 
 
             val MIGRATION_32_33 = object : Migration(32, 33) {
@@ -1229,6 +1252,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_31_32,
                         MIGRATION_32_33,
                         MIGRATION_33_34,
+                        MIGRATION_34_35,
+                        MIGRATION_35_36
                     ).build()
 
                     INSTANCE = instance

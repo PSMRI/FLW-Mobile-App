@@ -75,12 +75,14 @@ class HBNCFormViewModel @Inject constructor(
 
         }
     }
+
     fun loadFormSchema(
         benId: Long,
         formId: String,
         visitDay: String,
         viewMode: Boolean,
-        dob: Long
+        dob: Long,
+        lang: String
     ) {
         this.visitDay = visitDay
         this.isViewMode = viewMode
@@ -90,18 +92,17 @@ class HBNCFormViewModel @Inject constructor(
             val cachedSchema: FormSchemaDto? = cachedSchemaEntity?.let {
                 FormSchemaDto.fromJson(it.schemaJson)
             }
-            val localSchemaToRender = cachedSchema ?: repository.getFormSchema(formId)?.also {
-            }
 
-            if (localSchemaToRender == null) {
-                return@launch
-            }
+            val localSchemaToRender = cachedSchema ?: repository.getFormSchema(formId, lang)?.also { }
+
+            if (localSchemaToRender == null) return@launch
 
             launch {
-                val updatedSchema = repository.getFormSchema(formId)
+                val updatedSchema = repository.getFormSchema(formId, lang)
                 if (updatedSchema != null && (cachedSchemaEntity?.version ?: 0) < updatedSchema.version) {
                 }
             }
+
             val savedJson = repository.loadFormResponseJson(benId, visitDay)
             val savedFieldValues = if (!savedJson.isNullOrBlank()) {
                 try {
@@ -111,9 +112,7 @@ class HBNCFormViewModel @Inject constructor(
                 } catch (e: Exception) {
                     emptyMap()
                 }
-            } else {
-                emptyMap()
-            }
+            } else emptyMap()
 
             val allFields = localSchemaToRender.sections.flatMap { it.fields.orEmpty() }
             localSchemaToRender.sections.orEmpty().forEach { section ->
@@ -136,9 +135,11 @@ class HBNCFormViewModel @Inject constructor(
                     field.visible = evaluateFieldVisibility(field, allFields)
                 }
             }
+
             _schema.value = localSchemaToRender
         }
     }
+
 
     private fun evaluateFieldVisibility(
         field: FormFieldDto,
