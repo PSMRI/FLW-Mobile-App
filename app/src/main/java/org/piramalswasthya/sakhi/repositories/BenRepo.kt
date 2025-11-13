@@ -80,6 +80,14 @@ class BenRepo @Inject constructor(
         return benDao.checkPncDeath(benId)
     }
 
+    suspend fun isPncCauseOfDeathAccident(benId: Long,cause: String): Boolean{
+        return  benDao.isDeathByCause(benId,cause)
+    }
+
+    suspend fun isAncCauseOfDeathAccident(benId: Long, cause:String): Boolean{
+        return benDao.isDeathByCauseAnc(benId,cause)
+    }
+
 
     fun getBenBasicListFromHousehold(hhId: Long): Flow<List<BenBasicDomain>> {
         return benDao.getAllBasicBenForHousehold(hhId).map { it.map { it.asBasicDomainModel() } }

@@ -300,13 +300,6 @@
             android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
             android:layout_marginBottom="@dimen/margin_small" />
 
-        <TextView
-            android:id="@+id/tv_follow_up_count"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Total Follow-ups: 0"
-            android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-            android:layout_marginBottom="@dimen/margin_small" />
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_follow_up_dates"
             android:layout_width="match_parent"

@@ -554,6 +554,7 @@ interface BenDao {
     @Query("SELECT COUNT(*) FROM PREGNANCY_ANC WHERE benId = :benId AND deathDate IS NOT NULL AND isAborted = 0")
     suspend fun checkPregnancyDeath(benId: Long): Boolean
 
+
     // Abortion Death
     @Query("SELECT COUNT(*) FROM PREGNANCY_ANC WHERE benId = :benId AND deathDate IS NOT NULL AND isAborted = 1")
     suspend fun checkAbortionDeath(benId: Long): Boolean
@@ -565,5 +566,26 @@ interface BenDao {
     // PNC
     @Query("SELECT COUNT(*) FROM PNC_VISIT WHERE benId = :benId AND deathDate IS NOT NULL")
     suspend fun checkPncDeath(benId: Long): Boolean
+
+    @Query("""
+    SELECT EXISTS(
+        SELECT 1 FROM PNC_VISIT
+        WHERE benId = :benId
+        AND deathDate IS NOT NULL
+        AND causeOfDeath = :cause
+    )
+""")
+    suspend fun isDeathByCause(benId: Long, cause: String): Boolean
+
+    @Query("""
+    SELECT EXISTS(
+        SELECT 1 FROM PREGNANCY_ANC
+        WHERE benId = :benId
+        AND deathDate IS NOT NULL
+        AND maternalDeathProbableCause = :cause
+    )
+""")
+    suspend fun isDeathByCauseAnc(benId: Long,cause: String): Boolean
+
 
 }

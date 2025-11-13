@@ -231,6 +231,7 @@ abstract class InAppDb : RoomDatabase() {
 
             val MIGRATION_35_36 = object : Migration(35, 36) {
                 override fun migrate(database: SupportSQLiteDatabase) {
+
                     database.execSQL("""
             CREATE TABLE IF NOT EXISTS `LEPROSY_FOLLOW_UP` (
                 `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -252,7 +253,11 @@ abstract class InAppDb : RoomDatabase() {
                 `treatmentEndDate` INTEGER NOT NULL DEFAULT ${System.currentTimeMillis()},
                 `mdtBlisterPackRecived` TEXT,
                 `treatmentStartDate` INTEGER NOT NULL DEFAULT ${System.currentTimeMillis()},
-                `syncState` INTEGER NOT NULL DEFAULT 0
+                `syncState` INTEGER NOT NULL DEFAULT 0,
+                `createdBy` TEXT DEFAULT '',
+                `createdDate` INTEGER NOT NULL DEFAULT ${System.currentTimeMillis()},
+                `modifiedBy` TEXT DEFAULT '',
+                `lastModDate` INTEGER NOT NULL DEFAULT ${System.currentTimeMillis()}
             )
         """)
 
@@ -263,6 +268,10 @@ abstract class InAppDb : RoomDatabase() {
 
                     database.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN currentVisitNumber INTEGER NOT NULL DEFAULT 1")
                     database.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN totalFollowUpMonthsRequired INTEGER NOT NULL DEFAULT 0")
+                    database.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN createdBy TEXT DEFAULT ''")
+                    database.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN createdDate INTEGER NOT NULL DEFAULT ${System.currentTimeMillis()}")
+                    database.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN modifiedBy TEXT DEFAULT ''")
+                    database.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN lastModDate INTEGER NOT NULL DEFAULT ${System.currentTimeMillis()}")
 
                     database.execSQL("""
             INSERT INTO LEPROSY_FOLLOW_UP (
@@ -270,7 +279,7 @@ abstract class InAppDb : RoomDatabase() {
                 treatmentCompleteDate, remarks, syncState,
                 homeVisitDate, leprosySymptoms, typeOfLeprosy, leprosySymptomsPosition,
                 visitLabel, leprosyStatus, referredTo, referToName, treatmentEndDate,
-                mdtBlisterPackRecived, treatmentStartDate
+                mdtBlisterPackRecived, treatmentStartDate, createdBy, createdDate, modifiedBy, lastModDate
             )
             SELECT 
                 benId, 
@@ -291,7 +300,11 @@ abstract class InAppDb : RoomDatabase() {
                 referToName,
                 treatmentEndDate,
                 mdtBlisterPackRecived,
-                treatmentStartDate
+                treatmentStartDate,
+                '' as createdBy,
+                ${System.currentTimeMillis()} as createdDate,
+                '' as modifiedBy,
+                ${System.currentTimeMillis()} as lastModDate
             FROM LEPROSY_SCREENING 
             WHERE followUpDate IS NOT NULL 
                OR treatmentStatus IS NOT NULL 
@@ -299,6 +312,7 @@ abstract class InAppDb : RoomDatabase() {
         """)
                 }
             }
+
 
             val MIGRATION_34_35 = object : Migration(34, 35) {
                 override fun migrate(database: SupportSQLiteDatabase) {

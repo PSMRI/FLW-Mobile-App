@@ -65,6 +65,8 @@ class LeprosyVisitViewModel @Inject constructor(
     val lastFollowUp: LiveData<LeprosyFollowUpCache?>
     get() = _lastFollowUp
 
+    private val username = preferenceDao.getLoggedInUser()?.userName ?: ""
+
 
     private val dataset = LeprosyConfirmedDataset(context, preferenceDao.getCurrentLanguage())
     val formList = dataset.listFlow
@@ -88,6 +90,8 @@ class LeprosyVisitViewModel @Inject constructor(
                 leprosyScreenCache = LeprosyScreeningCache(
                     benId = ben.beneficiaryId,
                     houseHoldDetailsId = ben.householdId,
+                    createdBy = username,
+                    modifiedBy = username
                 )
             }
             screening = leprosyRepo.getLeprosyScreening(benId) ?: throw IllegalStateException("No screening data found for confirmed case with benId: $benId")

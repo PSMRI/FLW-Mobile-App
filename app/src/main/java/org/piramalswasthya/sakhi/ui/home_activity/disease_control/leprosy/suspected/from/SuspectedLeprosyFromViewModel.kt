@@ -59,6 +59,9 @@ class SuspectedLeprosyFromViewModel@Inject constructor(
     val recordExists: LiveData<Boolean>
         get() = _recordExists
 
+    private val username = preferenceDao.getLoggedInUser()?.userName ?: ""
+
+
     private val dataset = LeprosySuspectedDataset(context, preferenceDao.getCurrentLanguage())
     val formList = dataset.listFlow
 
@@ -79,6 +82,8 @@ class SuspectedLeprosyFromViewModel@Inject constructor(
                 leprosyScreenCache = LeprosyScreeningCache(
                     benId = ben.beneficiaryId,
                     houseHoldDetailsId = ben.householdId,
+                    createdBy = username,
+                    modifiedBy = username,
                 )
             }
 

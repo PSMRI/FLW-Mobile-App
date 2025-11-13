@@ -57,6 +57,7 @@ class LeprosyConfirmedFromViewModel@Inject constructor(
         get() = _benAgeGender
 
     private val _recordExists = MutableLiveData<Boolean>()
+    private val username = preferenceDao.getLoggedInUser()?.userName ?: ""
     val recordExists: LiveData<Boolean>
         get() = _recordExists
 
@@ -82,6 +83,7 @@ class LeprosyConfirmedFromViewModel@Inject constructor(
 
     val isBeneficaryStatusDeath: LiveData<Boolean>
         get() = _isBeneficaryStatusDeath
+
     private lateinit var leprosyScreenCache: LeprosyScreeningCache
     private lateinit var screeningData: LeprosyScreeningCache
     private lateinit var screening : LeprosyScreeningCache
@@ -96,6 +98,9 @@ class LeprosyConfirmedFromViewModel@Inject constructor(
                 leprosyScreenCache = LeprosyScreeningCache(
                     benId = ben.beneficiaryId,
                     houseHoldDetailsId = ben.householdId,
+                    createdBy = preferenceDao.getLoggedInUser()?.userName ?: "",
+                    modifiedBy = preferenceDao.getLoggedInUser()?.userName?:"",
+
                 )
             }
              screening = leprosyRepo.getLeprosyScreening(benId) ?: throw IllegalStateException("No screening data found for confirmed case with benId: $benId")
@@ -151,7 +156,9 @@ class LeprosyConfirmedFromViewModel@Inject constructor(
                     val newFollowUp = LeprosyFollowUpCache(
                         benId = benId,
                         visitNumber = screeningData.currentVisitNumber,
-                        followUpDate = System.currentTimeMillis()
+                        followUpDate = System.currentTimeMillis(),
+                        createdBy =username ,
+                        modifiedBy = username,
                     )
 
                     dataset.mapValues(newFollowUp,  1)

@@ -64,7 +64,7 @@ class LeprosyFormViewModel @Inject constructor(
         LeprosyFormDataset(context, preferenceDao.getCurrentLanguage())
     val formList = dataset.listFlow
 
-
+    private val username = preferenceDao.getLoggedInUser()?.userName ?: ""
     var _isBeneficaryStatusDeath = MutableLiveData<Boolean>()
 
     val isBeneficaryStatusDeath: LiveData<Boolean>
@@ -81,6 +81,8 @@ class LeprosyFormViewModel @Inject constructor(
                 leprosyScreenCache = LeprosyScreeningCache(
                     benId = ben.beneficiaryId,
                     houseHoldDetailsId = ben.householdId,
+                    createdBy = username,
+                    modifiedBy = username,
                 )
             }
 
