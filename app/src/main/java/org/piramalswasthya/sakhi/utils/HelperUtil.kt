@@ -34,6 +34,7 @@ import androidx.core.content.FileProvider
 import androidx.core.graphics.withTranslation
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import org.json.JSONArray
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.LayoutMediaOptionsBinding
 import org.piramalswasthya.sakhi.databinding.LayoutViewMediaBinding
@@ -704,5 +705,47 @@ object HelperUtil {
             .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
             .show()
     }
+
+
+    fun parseSelections(rawValue: String?, entries: Array<String>): List<String> {
+        val raw = rawValue?.trim() ?: return emptyList()
+        if (raw.isEmpty()) return emptyList()
+
+        if (raw.startsWith("[") && raw.endsWith("]")) {
+            try {
+                val arr = JSONArray(raw)
+                val result = mutableListOf<String>()
+                for (i in 0 until arr.length()) {
+                    val item = arr.optString(i, "").trim()
+                    if (item.isNotEmpty()) result.add(item)
+                }
+                if (result.isNotEmpty()) return result
+            } catch (_: Exception) {
+            }
+        }
+
+        if (raw.contains(",")) {
+            return raw.split(",").map { it.trim() }.filter { it.isNotEmpty() }
+        }
+
+        if (raw.contains("|")) {
+            return raw.split("|").map { it.trim() }.filter { it.isNotEmpty() }
+        }
+
+        val found = mutableListOf<Pair<Int, String>>()
+        val lowerRaw = raw.lowercase()
+
+        for (entry in entries) {
+            val idx = lowerRaw.indexOf(entry.lowercase())
+            if (idx >= 0) found.add(idx to entry)
+        }
+
+        if (found.isNotEmpty()) {
+            return found.sortedBy { it.first }.map { it.second }
+        }
+
+        return listOf(raw)
+    }
+
 
 }
