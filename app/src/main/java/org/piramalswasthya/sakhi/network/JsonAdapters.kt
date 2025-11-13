@@ -128,7 +128,9 @@ data class GetDataPaginatedRequestForDisease(
     val pageNo: Int,
     val fromDate: String,
     val toDate: String,
-    val diseaseTypeID: Int
+    val diseaseTypeID: Int,
+    val userName : String? = null
+
 )
 
 data class ValidateOtpRequest(
@@ -1408,7 +1410,6 @@ data class LeprosyScreeningDTO(
 }
 
 data class LeprosyFollowUpDTO(
-    val id: Int = 0,
     val benId: Long,
     val visitNumber: Int,
     var followUpDate: String = getDateTimeStringFromLong(System.currentTimeMillis()).toString(),

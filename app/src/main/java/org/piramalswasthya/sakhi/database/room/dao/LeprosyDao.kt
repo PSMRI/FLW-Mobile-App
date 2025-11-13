@@ -21,6 +21,11 @@ interface LeprosyDao {
 
     @Query("SELECT * FROM LEPROSY_SCREENING WHERE  syncState = :syncState")
     suspend fun getLeprosyScreening(syncState: SyncState): List<LeprosyScreeningCache>
+
+    @Query("SELECT * FROM LEPROSY_FOLLOW_UP WHERE syncState = :syncState")
+    suspend fun getLeprosyFollowUP(syncState: SyncState): List<LeprosyFollowUpCache>
+
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveLeprosyScreening(malariaScreeningCache: LeprosyScreeningCache)
 
@@ -57,6 +62,9 @@ interface LeprosyDao {
     @Query("SELECT * FROM LEPROSY_FOLLOW_UP WHERE benId = :benId AND visitNumber = :visitNumber ORDER BY followUpDate DESC")
     suspend fun getFollowUpsForVisit(benId: Long, visitNumber: Int): List<LeprosyFollowUpCache>
 
+
+    @Query("SELECT * FROM LEPROSY_FOLLOW_UP")
+    suspend fun getAllFollowUpsByBenId(): List<LeprosyFollowUpCache>
 
 
 }

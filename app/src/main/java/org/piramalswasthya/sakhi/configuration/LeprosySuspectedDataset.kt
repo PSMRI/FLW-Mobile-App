@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.FormElement
@@ -215,6 +216,7 @@ class LeprosySuspectedDataset (
             }
             form.isConfirmed = !typeOfLeprosy.value.isNullOrEmpty()
             form.treatmentStartDate = getLongFromDate(treatmentStartDate.value)
+            form.syncState = SyncState.UNSYNCED
 
         }
     }
