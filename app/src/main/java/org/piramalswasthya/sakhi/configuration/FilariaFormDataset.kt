@@ -8,10 +8,12 @@ import org.piramalswasthya.sakhi.model.FilariaScreeningCache
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.InputType
+import org.piramalswasthya.sakhi.utils.HelperUtil.parseSelections
 import java.util.Calendar
 
 class FilariaFormDataset(
-    context: Context, currentLanguage: Languages
+    context: Context,
+    currentLanguage: Languages
 ) : Dataset(context, currentLanguage) {
 
     private val dateOfCase = FormElement(
@@ -22,8 +24,8 @@ class FilariaFormDataset(
         required = true,
         max = System.currentTimeMillis(),
         hasDependants = true
-
     )
+
     private val isSuffering = FormElement(
         id = 2,
         inputType = InputType.DROPDOWN,
@@ -32,10 +34,9 @@ class FilariaFormDataset(
         entries = resources.getStringArray(R.array.yes_no),
         required = false,
         hasDependants = true
-
     )
 
-    private var whichPartOfBodyMale = FormElement(
+    private val whichPartOfBodyMale = FormElement(
         id = 3,
         inputType = InputType.CHECKBOXES,
         title = resources.getString(R.string.body_part),
@@ -45,7 +46,7 @@ class FilariaFormDataset(
         hasDependants = true
     )
 
-    private var whichPartOfBodyFemale = FormElement(
+    private val whichPartOfBodyFemale = FormElement(
         id = 4,
         inputType = InputType.CHECKBOXES,
         title = resources.getString(R.string.body_part),
@@ -54,7 +55,8 @@ class FilariaFormDataset(
         required = false,
         hasDependants = true
     )
-    private var decAndAlbDoseStatus = FormElement(
+
+    private val decAndAlbDoseStatus = FormElement(
         id = 5,
         inputType = InputType.RADIO,
         title = resources.getString(R.string.is_medicine_distributed),
@@ -63,15 +65,8 @@ class FilariaFormDataset(
         required = false,
         hasDependants = true
     )
-//    private var other = FormElement(
-//        id = 6,
-//        inputType = InputType.EDIT_TEXT,
-//        title = resources.getString(R.string.other),
-//        required = true,
-//        hasDependants = false
-//    )
 
-    private var medicineSideEffect = FormElement(
+    private val medicineSideEffect = FormElement(
         id = 7,
         inputType = InputType.DROPDOWN,
         title = resources.getString(R.string.medicine_side_effect),
@@ -80,7 +75,8 @@ class FilariaFormDataset(
         required = false,
         hasDependants = true
     )
-    private var sideEffectOther = FormElement(
+
+    private val sideEffectOther = FormElement(
         id = 8,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.other),
@@ -88,139 +84,145 @@ class FilariaFormDataset(
         hasDependants = false
     )
 
-    var isMale = false;
-    var benAge = 0L;
-    fun isMaleFemale(ben: BenRegCache?): Boolean {
-         if (ben?.gender == Gender.MALE) {
-             isMale = true
-             return true
-         } else if (ben?.gender == Gender.FEMALE) {
-             isMale = false
-             return false
-         } else {
-             return false
-         }
-    }
-    suspend fun setUpPage(ben: BenRegCache?, saved: FilariaScreeningCache?) {
-        val list = mutableListOf(
-            dateOfCase,
-            isSuffering,
+    var isMale = false
+    var benAge = 0L
 
-        )
+    fun isMaleFemale(ben: BenRegCache?): Boolean {
+        return when (ben?.gender) {
+            Gender.MALE -> {
+                isMale = true
+                true
+            }
+            Gender.FEMALE -> {
+                isMale = false
+                false
+            }
+            else -> false
+        }
+    }
+
+    private fun toCsv(rawValue: String?, entries: Array<String>): String {
+        return parseSelections(rawValue, entries).joinToString(", ")
+    }
+
+    suspend fun setUpPage(ben: BenRegCache?, saved: FilariaScreeningCache?) {
+
+        val list = mutableListOf(dateOfCase, isSuffering)
+
         isMaleFemale(ben)
         benAge = ben!!.dob
         decAndAllDoseFieldValidation(benAge)
-
 
         if (saved == null) {
             dateOfCase.value = getDateFromLong(System.currentTimeMillis())
         } else {
             dateOfCase.value = getDateFromLong(saved.mdaHomeVisitDate)
-            isSuffering.value =  getLocalValueInArray(R.array.yes_no, if (saved.sufferingFromFilariasis == true) "Yes" else "No")
-            if (isSuffering.value == "Yes"){
-                list.add(list.indexOf(isSuffering) + 1, if (isMale) whichPartOfBodyMale else whichPartOfBodyFemale)
+            isSuffering.value =
+                getLocalValueInArray(
+                    R.array.yes_no,
+                    if (saved.sufferingFromFilariasis == true) "Yes" else "No"
+                )
+
+            if (isSuffering.value == "Yes") {
+
+                val bodyField = if (isMale) whichPartOfBodyMale else whichPartOfBodyFemale
+
+                list.add(list.indexOf(isSuffering) + 1, bodyField)
                 list.add(list.indexOf(isSuffering) + 2, decAndAlbDoseStatus)
                 list.add(list.indexOf(isSuffering) + 3, medicineSideEffect)
 
-                if (isMale) whichPartOfBodyMale.value = getLocalValueInArray(whichPartOfBodyMale.arrayId,saved.affectedBodyPart)
-                else whichPartOfBodyFemale.value = getLocalValueInArray(whichPartOfBodyFemale.arrayId,saved.affectedBodyPart)
+                val parsedList = parseSelections(saved.affectedBodyPart, bodyField.entries!!)
 
+                bodyField.value = if (parsedList.isNotEmpty()) {
+                    parsedList.joinToString(", ")
+                } else {
+                    saved.affectedBodyPart ?: ""
+                }
+
+                bodyField.isEnabled = true
 
                 decAndAlbDoseStatus.value =
                     getLocalValueInArray(decAndAlbDoseStatus.arrayId, saved.doseStatus)
-//                if (decAndAlbDoseStatus.value == decAndAlbDoseStatus.entries!!.last()) {
-//                    list.add(list.indexOf(decAndAlbDoseStatus) + 1, other)
-//                    other.value = saved.otherDoseStatusDetails
-//                }
+
                 medicineSideEffect.value =
                     getLocalValueInArray(medicineSideEffect.arrayId, saved.medicineSideEffect)
-                if (medicineSideEffect.value == medicineSideEffect.entries!![medicineSideEffect.entries!!.size - 2]) {
+
+                if (medicineSideEffect.value ==
+                    medicineSideEffect.entries!![medicineSideEffect.entries!!.size - 2]
+                ) {
                     list.add(list.indexOf(medicineSideEffect) + 1, sideEffectOther)
                     sideEffectOther.value = saved.otherSideEffectDetails
+                    sideEffectOther.isEnabled = false
                 }
             }
-
         }
 
-
         setUpPage(list)
-
     }
 
     private fun decAndAllDoseFieldValidation(age: Long) {
-            if (isYoung(age)) {
-                decAndAlbDoseStatus.isEnabled = false
-                decAndAlbDoseStatus.value = getLocalValueInArray(decAndAlbDoseStatus.arrayId,"Yes")
-            } else {
-                decAndAlbDoseStatus.isEnabled = true
-
-            }
-
+        if (isYoung(age)) {
+            decAndAlbDoseStatus.isEnabled = false
+            decAndAlbDoseStatus.value =
+                getLocalValueInArray(decAndAlbDoseStatus.arrayId, "Yes")
+        } else {
+            decAndAlbDoseStatus.isEnabled = true
+        }
     }
 
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
-        return when (formId) {
+        when (formId) {
+
             isSuffering.id -> {
                 isSuffering.isEnabled = true
+
                 if (isSuffering.value == resources.getStringArray(R.array.yes_no)[0]) {
-                    if (isMale ) {
+
+                    if (isMale) {
                         triggerDependants(
                             source = isSuffering,
                             passedIndex = index,
                             triggerIndex = 0,
-                            target = listOf(whichPartOfBodyMale,decAndAlbDoseStatus,medicineSideEffect),
-
-                            )
+                            target = listOf(whichPartOfBodyMale, decAndAlbDoseStatus, medicineSideEffect)
+                        )
                     } else {
                         triggerDependants(
                             source = isSuffering,
                             passedIndex = index,
                             triggerIndex = 0,
-                            target = listOf(whichPartOfBodyFemale,decAndAlbDoseStatus,medicineSideEffect),
-
-                            )
+                            target = listOf(whichPartOfBodyFemale, decAndAlbDoseStatus, medicineSideEffect)
+                        )
                         whichPartOfBodyFemale.isEnabled = true
                         decAndAlbDoseStatus.isEnabled = true
                         decAndAllDoseFieldValidation(benAge)
                     }
 
                 } else {
-                    if (isMale ) {
-                        triggerforHide(
-                            source = isSuffering,
-                            passedIndex = index,
-                            triggerIndex = 1,
-                            target = whichPartOfBodyMale,
-                            targetSideEffect = listOf(
-                                whichPartOfBodyMale,
-                                decAndAlbDoseStatus,
-                                medicineSideEffect,
-                                sideEffectOther
-                            )
+
+                    val targetField =
+                        if (isMale) whichPartOfBodyMale else whichPartOfBodyFemale
+
+                    triggerforHide(
+                        source = isSuffering,
+                        passedIndex = index,
+                        triggerIndex = 1,
+                        target = targetField,
+                        targetSideEffect = listOf(
+                            targetField,
+                            decAndAlbDoseStatus,
+                            medicineSideEffect,
+                            sideEffectOther
                         )
-                    } else {
-                        triggerforHide(
-                            source = isSuffering,
-                            passedIndex = index,
-                            triggerIndex = 1,
-                            target = whichPartOfBodyFemale,
-                            targetSideEffect = listOf(
-                                whichPartOfBodyFemale,
-                                decAndAlbDoseStatus,
-                                medicineSideEffect,
-                                sideEffectOther
-                            )
-                        )
-                    }
+                    )
                 }
 
                 return 0
-
-
             }
 
             medicineSideEffect.id -> {
-                if (medicineSideEffect.value == medicineSideEffect.entries!![medicineSideEffect.entries!!.size - 2]) {
+                if (medicineSideEffect.value ==
+                    medicineSideEffect.entries!![medicineSideEffect.entries!!.size - 2]
+                ) {
                     triggerDependants(
                         source = medicineSideEffect,
                         addItems = listOf(sideEffectOther),
@@ -233,52 +235,33 @@ class FilariaFormDataset(
                         removeItems = listOf(sideEffectOther)
                     )
                 }
-                0
+                return 0
             }
-
-
-            decAndAlbDoseStatus.id -> {
-                if (decAndAlbDoseStatus.value == decAndAlbDoseStatus.entries!!.last()) {
-                    triggerDependants(
-                        source = decAndAlbDoseStatus,
-                        addItems = listOf(),
-                        removeItems = listOf()
-                    )
-                } else {
-                    triggerDependants(
-                        source = decAndAlbDoseStatus,
-                        addItems = listOf(),
-                        removeItems = listOf()
-                    )
-                }
-                0
-            }
-
-//            other.id -> {
-//                validateEmptyOnEditText(other)
-//            }
 
             sideEffectOther.id -> {
                 validateEmptyOnEditText(sideEffectOther)
+                return 0
             }
-
-            else -> -1
         }
-
+        return -1
     }
 
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as FilariaScreeningCache).let { form ->
+
             form.mdaHomeVisitDate = getLongFromDate(dateOfCase.value)
             form.createdDate = getLongFromDate(dateOfCase.value)
             form.sufferingFromFilariasis = isSuffering()
             form.diseaseTypeID = 4
-            form.affectedBodyPart = if (isMale) whichPartOfBodyMale.value else whichPartOfBodyFemale.value
-            form.otherSideEffectDetails = sideEffectOther.value
-//            form.otherDoseStatusDetails = other.value
-            form.doseStatus = getEnglishValueInArray(R.array.yes_no, decAndAlbDoseStatus.value)
-            form.medicineSideEffect = getEnglishValueInArray(R.array.side_effect_of_medicine, medicineSideEffect.value)
 
+            val bodyField = if (isMale) whichPartOfBodyMale else whichPartOfBodyFemale
+
+            form.affectedBodyPart = toCsv(bodyField.value, bodyField.entries!!)
+
+            form.otherSideEffectDetails = sideEffectOther.value
+            form.doseStatus = getEnglishValueInArray(R.array.yes_no, decAndAlbDoseStatus.value)
+            form.medicineSideEffect =
+                getEnglishValueInArray(R.array.side_effect_of_medicine, medicineSideEffect.value)
         }
     }
 
@@ -295,7 +278,6 @@ class FilariaFormDataset(
         if (benRegCache.processed != "N") benRegCache.processed = "U"
     }
 
-
     fun getIndexOfDate(): Int {
         return getIndexById(dateOfCase.id)
     }
@@ -310,14 +292,12 @@ class FilariaFormDataset(
 
         var totalYears = years
         var totalMonths = months
-        var totalDays = days
 
-        if (totalMonths < 0 || (totalMonths == 0 && totalDays < 0)) {
+        if (totalMonths < 0 || (totalMonths == 0 && days < 0)) {
             totalYears--
             totalMonths += 12
         }
-        return (totalYears < 2)
+
+        return totalYears < 2
     }
-
-
 }
