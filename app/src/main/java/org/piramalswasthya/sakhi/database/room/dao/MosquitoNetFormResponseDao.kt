@@ -60,7 +60,7 @@ interface MosquitoNetFormResponseDao {
     @Query("SELECT * FROM mosquito_net_visit WHERE hhId = :hhId AND formId = :formId AND strftime('%Y', visitDate) = :year ORDER BY visitDate ASC LIMIT 1")
     suspend fun getOldestForYear(hhId: Long, formId: String, year: String): MosquitoNetFormResponseJsonEntity?
 
-    @Query("SELECT formDataJson FROM mosquito_net_visit WHERE hhId = :hhId ORDER BY date(visitDate) DESC")
+    @Query("SELECT formDataJson FROM mosquito_net_visit WHERE hhId = :hhId  ORDER BY substr(visitDate, 7, 4) || '-' || substr(visitDate, 4, 2) || '-' || substr(visitDate, 1, 2) DESC LIMIT 3")
     suspend fun getFormJsonList(hhId: Long): List<String>
     private fun extractYear(dateStr: String): String {
         return try {

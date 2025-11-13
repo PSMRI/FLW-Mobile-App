@@ -10,6 +10,7 @@
     <string name="rv_item_hh_ph_3">Surname : </string>
     <string name="hh_members_text">Members : %1d</string>
     <string name="btn_rv_item_hh_add_ben">Add Beneficiary</string>
+    <string name="add_mda">Add MDA</string>
 
     <string name="frag_nhhr_title">New Household Registration</string>
 

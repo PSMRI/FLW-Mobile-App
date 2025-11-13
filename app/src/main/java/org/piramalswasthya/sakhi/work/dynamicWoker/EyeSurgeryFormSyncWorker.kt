@@ -32,7 +32,8 @@ class EyeSurgeryFormSyncWorker @AssistedInject constructor(
                 fromDate = HelperUtil.getCurrentDate(Konstants.defaultTimeStamp),
                 toDate = HelperUtil.getCurrentDate(),
                 pageNo = 0,
-                ashaId = user.userId
+                ashaId = user.userId,
+                userName = user.userName
             )
 
            val unsyncedForms = repository.getUnsyncedForms(FormConstants.EYE_SURGERY_FORM_ID)

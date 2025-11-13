@@ -18,6 +18,7 @@ import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYIFAFormSyncWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYORSFormSyncWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYSAMFormSyncWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.EyeSurgeryFormSyncWorker
+import org.piramalswasthya.sakhi.work.dynamicWoker.FilariaMDAFormSyncWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.FormSyncWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.MosquitoNetFormSyncWorker
 import java.util.concurrent.TimeUnit
@@ -38,6 +39,9 @@ object WorkerUtils {
             .setConstraints(networkOnlyConstraint)
             .build()
         val pullEyeSurgeryFormSyncWorker = OneTimeWorkRequestBuilder<EyeSurgeryFormSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pullFilariaMDAFormSyncWorker = OneTimeWorkRequestBuilder<FilariaMDAFormSyncWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
         val pullMosquitoNetFormSyncWorker = OneTimeWorkRequestBuilder<MosquitoNetFormSyncWorker>()
@@ -159,6 +163,7 @@ object WorkerUtils {
             .then(CUFYIFAFormSyncWorker)
             .then(CUFYSAMFormSyncWorker)
             .then(pullEyeSurgeryFormSyncWorker)
+            .then(pullFilariaMDAFormSyncWorker)
             .then(pullMosquitoNetFormSyncWorker)
             .then(pullBenIfaFormSyncWorker)
             .then(maaMeetingFormSyncWorkerRequest)
@@ -268,6 +273,9 @@ object WorkerUtils {
         val pushEyeSurgeryFormSyncWorker = OneTimeWorkRequestBuilder<EyeSurgeryFormSyncWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
+        val pushFilariaMDAFormSyncWorker = OneTimeWorkRequestBuilder<FilariaMDAFormSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
         val pushMosquitoNetFormSyncWorker = OneTimeWorkRequestBuilder<MosquitoNetFormSyncWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
@@ -341,6 +349,7 @@ object WorkerUtils {
             .then(CUFYORSFormSyncWorkerRequest)
             .then(CUFYIFAFormSyncWorker)
             .then(pushEyeSurgeryFormSyncWorker)
+            .then(pushFilariaMDAFormSyncWorker)
             .then(pushMosquitoNetFormSyncWorker)
             .then(pushBenIfaFormSyncWorker)
             .then(CUFYSAMFormSyncWorker)
@@ -368,6 +377,9 @@ object WorkerUtils {
             .setConstraints(networkOnlyConstraint)
             .build()
         val pullEyeSurgeryFormSyncWorker = OneTimeWorkRequestBuilder<EyeSurgeryFormSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pullFilariaMDAFormSyncWorker = OneTimeWorkRequestBuilder<FilariaMDAFormSyncWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
         val pullMosquitoNetFormSyncWorker = OneTimeWorkRequestBuilder<MosquitoNetFormSyncWorker>()
@@ -478,6 +490,7 @@ object WorkerUtils {
             )
             .then(maaMeetingFormSyncWorkerRequest)
             .then(pullEyeSurgeryFormSyncWorker)
+            .then(pullFilariaMDAFormSyncWorker)
             .then(pullMosquitoNetFormSyncWorker)
             .then(pullBenIfaFormSyncWorker)
             .then(pullIncentiveActivityWorkRequest)

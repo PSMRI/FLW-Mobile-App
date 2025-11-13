@@ -13,7 +13,7 @@ import org.piramalswasthya.sakhi.model.HouseHoldBasicDomain
 import javax.inject.Inject
 
 
-class HouseHoldListAdapter(private var isDisease: Boolean, val pref: PreferenceDao, private val clickListener: HouseholdClickListener) :
+class HouseHoldListAdapter(private val diseaseType: String, private var isDisease: Boolean, val pref: PreferenceDao, private val clickListener: HouseholdClickListener) :
     ListAdapter<HouseHoldBasicDomain, HouseHoldListAdapter.HouseHoldViewHolder>(
         HouseHoldDiffUtilCallBack
     ) {
@@ -45,7 +45,8 @@ class HouseHoldListAdapter(private var isDisease: Boolean, val pref: PreferenceD
             item: HouseHoldBasicDomain,
             clickListener: HouseholdClickListener,
             isDisease: Boolean,
-            pref: PreferenceDao
+            pref: PreferenceDao,
+            diseaseType: String
         ) {
             binding.household = item
             binding.clickListener = clickListener
@@ -62,10 +63,17 @@ class HouseHoldListAdapter(private var isDisease: Boolean, val pref: PreferenceD
 
             if (pref.getLoggedInUser()?.role.equals("asha", true) && isDisease) {
                 binding.button4.visibility = View.GONE
+                if (diseaseType == "FILARIA") {
+                    binding.btnMda.visibility = View.VISIBLE
+                } else {
+                    binding.btnMda.visibility = View.GONE
+                }
             } else if (pref.getLoggedInUser()?.role.equals("asha", true) && !isDisease) {
                 binding.button4.visibility = View.VISIBLE
+                binding.btnMda.visibility = View.GONE
             } else {
                 binding.button4.visibility = View.GONE
+                binding.btnMda.visibility = View.GONE
             }
         }
 
@@ -76,18 +84,19 @@ class HouseHoldListAdapter(private var isDisease: Boolean, val pref: PreferenceD
     }
 
     override fun onBindViewHolder(holder: HouseHoldViewHolder, position: Int) {
-        holder.bind(getItem(position), clickListener,isDisease, pref)
+        holder.bind(getItem(position), clickListener,isDisease, pref, diseaseType)
     }
 
 
     class HouseholdClickListener(
         val hhDetails: (hhId: Long) -> Unit,
         val showMember: (hhId: Long) -> Unit,
-        val newBen: (hh: HouseHoldBasicDomain) -> Unit
+        val newBen: (hh: HouseHoldBasicDomain) -> Unit,
+        val addMDA: (hh: HouseHoldBasicDomain) -> Unit
     ) {
         fun onClickedForHHDetails(item: HouseHoldBasicDomain) = hhDetails(item.hhId)
         fun onClickedForMembers(item: HouseHoldBasicDomain) = showMember(item.hhId)
         fun onClickedForNewBen(item: HouseHoldBasicDomain) = newBen(item)
-
+        fun onClickedAddMDA(item: HouseHoldBasicDomain) = addMDA(item)
     }
 }

@@ -88,49 +88,29 @@ class MosquitoNetFormRepository @Inject constructor(
     suspend fun getAllByHhId(hhId: Long): List<MosquitoNetFormResponseJsonEntity> =
         jsonResponseDao.getAllByHhId(hhId)
 
+
     suspend fun getBottleList(hhId: Long): List<BottleItem> {
         val jsonList = jsonResponseDao.getFormJsonList(hhId)
+
         val result = mutableListOf<BottleItem>()
 
         jsonList.forEach { formJson ->
-            try {
-                val root = JSONObject(formJson)
-                val fields = root.optJSONObject("fields")
-                val date = fields?.optString("visit_date", "-") ?: "-"
-                val count = fields?.optString("is_net_distributed", "-") ?: "-"
+            val root = JSONObject(formJson)
+            val fields = root.optJSONObject("fields")
+            val date = fields?.optString("visit_date", "-") ?: "-"
+            val count = fields?.optString("is_net_distributed", "-") ?: "-"
 
-                result.add(
-                    BottleItem(
-                        srNo = 0,
-                        bottleNumber = count,
-                        dateOfProvision = date
-                    )
+            result.add(
+                BottleItem(
+                    srNo = 0,
+                    bottleNumber = count,
+                    dateOfProvision = date
                 )
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+            )
         }
 
-        val sortedList = result.sortedByDescending { it.dateOfProvision.parseDate() }
-
-        return sortedList.mapIndexed { index, item ->
+        return result.mapIndexed { index, item ->
             item.copy(srNo = index + 1)
-        }
-    }
-
-    private fun String.parseDate(): Long {
-        return try {
-            val formats = listOf("dd-MM-yyyy", "yyyy-MM-dd")
-            for (format in formats) {
-                try {
-                    val sdf = SimpleDateFormat(format, Locale.getDefault())
-                    val date = sdf.parse(this)
-                    if (date != null) return date.time
-                } catch (_: Exception) { }
-            }
-            0L
-        } catch (_: Exception) {
-            0L
         }
     }
 

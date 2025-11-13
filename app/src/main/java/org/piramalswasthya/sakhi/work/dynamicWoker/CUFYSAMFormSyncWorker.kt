@@ -31,7 +31,8 @@ class CUFYSAMFormSyncWorker @AssistedInject constructor(
                 fromDate = HelperUtil.getCurrentDate(Konstants.defaultTimeStamp),
                 toDate = HelperUtil.getCurrentDate(),
                 pageNo = 0,
-                ashaId = user.userId
+                ashaId = user.userId,
+                userName = user.userName
             )
 
             val response = repository.getAllFormVisits(FormConstants.SAM_FORM_NAME,request)

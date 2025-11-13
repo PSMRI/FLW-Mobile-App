@@ -26,7 +26,7 @@ class FilariaFormDataset(
     )
     private val isSuffering = FormElement(
         id = 2,
-        inputType = InputType.RADIO,
+        inputType = InputType.DROPDOWN,
         title = resources.getString(R.string.suffering_from_filaries),
         arrayId = R.array.yes_no,
         entries = resources.getStringArray(R.array.yes_no),
@@ -37,7 +37,7 @@ class FilariaFormDataset(
 
     private var whichPartOfBodyMale = FormElement(
         id = 3,
-        inputType = InputType.DROPDOWN,
+        inputType = InputType.CHECKBOXES,
         title = resources.getString(R.string.body_part),
         arrayId = R.array.body_part_male,
         entries = resources.getStringArray(R.array.body_part_male),
@@ -47,7 +47,7 @@ class FilariaFormDataset(
 
     private var whichPartOfBodyFemale = FormElement(
         id = 4,
-        inputType = InputType.DROPDOWN,
+        inputType = InputType.CHECKBOXES,
         title = resources.getString(R.string.body_part),
         arrayId = R.array.body_part_female,
         entries = resources.getStringArray(R.array.body_part_female),
@@ -56,20 +56,20 @@ class FilariaFormDataset(
     )
     private var decAndAlbDoseStatus = FormElement(
         id = 5,
-        inputType = InputType.DROPDOWN,
-        title = resources.getString(R.string.dose_status),
-        arrayId = R.array.dec_albendazole_array,
-        entries = resources.getStringArray(R.array.dec_albendazole_array),
+        inputType = InputType.RADIO,
+        title = resources.getString(R.string.is_medicine_distributed),
+        arrayId = R.array.yes_no,
+        entries = resources.getStringArray(R.array.yes_no),
         required = false,
         hasDependants = true
     )
-    private var other = FormElement(
-        id = 6,
-        inputType = InputType.EDIT_TEXT,
-        title = resources.getString(R.string.other),
-        required = true,
-        hasDependants = false
-    )
+//    private var other = FormElement(
+//        id = 6,
+//        inputType = InputType.EDIT_TEXT,
+//        title = resources.getString(R.string.other),
+//        required = true,
+//        hasDependants = false
+//    )
 
     private var medicineSideEffect = FormElement(
         id = 7,
@@ -128,10 +128,10 @@ class FilariaFormDataset(
 
                 decAndAlbDoseStatus.value =
                     getLocalValueInArray(decAndAlbDoseStatus.arrayId, saved.doseStatus)
-                if (decAndAlbDoseStatus.value == decAndAlbDoseStatus.entries!!.last()) {
-                    list.add(list.indexOf(decAndAlbDoseStatus) + 1, other)
-                    other.value = saved.otherDoseStatusDetails
-                }
+//                if (decAndAlbDoseStatus.value == decAndAlbDoseStatus.entries!!.last()) {
+//                    list.add(list.indexOf(decAndAlbDoseStatus) + 1, other)
+//                    other.value = saved.otherDoseStatusDetails
+//                }
                 medicineSideEffect.value =
                     getLocalValueInArray(medicineSideEffect.arrayId, saved.medicineSideEffect)
                 if (medicineSideEffect.value == medicineSideEffect.entries!![medicineSideEffect.entries!!.size - 2]) {
@@ -150,7 +150,7 @@ class FilariaFormDataset(
     private fun decAndAllDoseFieldValidation(age: Long) {
             if (isYoung(age)) {
                 decAndAlbDoseStatus.isEnabled = false
-                decAndAlbDoseStatus.value = getLocalValueInArray(decAndAlbDoseStatus.arrayId,"Y")
+                decAndAlbDoseStatus.value = getLocalValueInArray(decAndAlbDoseStatus.arrayId,"Yes")
             } else {
                 decAndAlbDoseStatus.isEnabled = true
 
@@ -195,7 +195,6 @@ class FilariaFormDataset(
                                 whichPartOfBodyMale,
                                 decAndAlbDoseStatus,
                                 medicineSideEffect,
-                                other,
                                 sideEffectOther
                             )
                         )
@@ -209,7 +208,6 @@ class FilariaFormDataset(
                                 whichPartOfBodyFemale,
                                 decAndAlbDoseStatus,
                                 medicineSideEffect,
-                                other,
                                 sideEffectOther
                             )
                         )
@@ -243,22 +241,22 @@ class FilariaFormDataset(
                 if (decAndAlbDoseStatus.value == decAndAlbDoseStatus.entries!!.last()) {
                     triggerDependants(
                         source = decAndAlbDoseStatus,
-                        addItems = listOf(other),
+                        addItems = listOf(),
                         removeItems = listOf()
                     )
                 } else {
                     triggerDependants(
                         source = decAndAlbDoseStatus,
                         addItems = listOf(),
-                        removeItems = listOf(other)
+                        removeItems = listOf()
                     )
                 }
                 0
             }
 
-            other.id -> {
-                validateEmptyOnEditText(other)
-            }
+//            other.id -> {
+//                validateEmptyOnEditText(other)
+//            }
 
             sideEffectOther.id -> {
                 validateEmptyOnEditText(sideEffectOther)
@@ -277,8 +275,8 @@ class FilariaFormDataset(
             form.diseaseTypeID = 4
             form.affectedBodyPart = if (isMale) whichPartOfBodyMale.value else whichPartOfBodyFemale.value
             form.otherSideEffectDetails = sideEffectOther.value
-            form.otherDoseStatusDetails = other.value
-            form.doseStatus = getEnglishValueInArray(R.array.dec_albendazole_array, decAndAlbDoseStatus.value)
+//            form.otherDoseStatusDetails = other.value
+            form.doseStatus = getEnglishValueInArray(R.array.yes_no, decAndAlbDoseStatus.value)
             form.medicineSideEffect = getEnglishValueInArray(R.array.side_effect_of_medicine, medicineSideEffect.value)
 
         }
