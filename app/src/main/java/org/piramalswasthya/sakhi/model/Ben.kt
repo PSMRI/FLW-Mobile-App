@@ -809,7 +809,11 @@ data class BenBasicDomain(
     val hrpStatus: Boolean = false,
     var syncState: SyncState?,
     val isConsent: Boolean
-) : Parcelable
+) : Parcelable{
+    val dobString: String
+        get() = java.text.SimpleDateFormat("dd-MM-yyyy", java.util.Locale.getDefault())
+            .format(java.util.Date(dob))
+}
 
 
 data class BenBasicDomainForForm(
@@ -849,7 +853,7 @@ data class BenBasicDomainForForm(
     val form3Enabled: Boolean = true,
     val formsFilled: Int = 0,
     var syncState: SyncState?,
-    val isConsent: Boolean
+    val isConsent: Boolean,
 
 ) {
     companion object

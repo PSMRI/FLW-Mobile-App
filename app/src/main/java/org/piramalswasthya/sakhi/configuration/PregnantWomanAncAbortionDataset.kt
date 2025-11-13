@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.getWeeksOfPregnancy
@@ -93,13 +94,41 @@ class PregnantWomanAncAbortionDataset(
         required = true,
     )
 
+    private val isPlanig = FormElement(
+        id = 25,
+        inputType = InputType.HEADLINE,
+        title = "What family planning method has been chosen after the abortion?",
+        required = false,
+        hasDependants = false
+    )
     private val isPaiucd = FormElement(
         id = 9,
         inputType = InputType.RADIO,
-        title = context.getString(R.string.post_abortion_contraception_is_paiucd_inserted_after_an_abortion),
+        title = " ",
+        arrayId = R.array.abortion_isplaning_array,
+        entries = resources.getStringArray(R.array.abortion_isplaning_array),
+        required = false,
+        orientation = 1,
+        hasDependants = true
+    )
+
+    private val isYesOrNo = FormElement(
+        id = 23,
+        inputType = InputType.RADIO,
+        title = " ",
         arrayId = R.array.anc_confirmation_array,
         entries = resources.getStringArray(R.array.anc_confirmation_array),
         required = true,
+        orientation = 1,
+        hasDependants = true
+    )
+    private val dateOfSterilization = FormElement(
+        id = 24,
+        inputType = InputType.DATE_PICKER,
+        title = context.getString(R.string.date_of_sterilisation),
+        required = true,
+        max = System.currentTimeMillis(),
+        hasDependants = true,
     )
 
     private val remarks = FormElement(
@@ -149,25 +178,48 @@ class PregnantWomanAncAbortionDataset(
             serialNoAsPerAdmission,
             methodOfTermination,
             terminationDoneBy,
+            isPlanig,
             isPaiucd,
             remarks,
             abortionDischargeSummaryImg1,
             abortionDischargeSummaryImg2,
         )
 
+
         abortionDate.min = regis.lmpDate!! + TimeUnit.DAYS.toMillis(5 * 7 + 1)
-        abortionDate.max = minOf(System.currentTimeMillis(), regis.lmpDate!! + TimeUnit.DAYS.toMillis(21 * 7))
+        abortionDate.max =
+            minOf(System.currentTimeMillis(), regis.lmpDate!! + TimeUnit.DAYS.toMillis(21 * 7))
 
         if (saved == null) {
             visitDate.min = regis.abortionDate
+            dateOfSterilization.min = regis.abortionDate
             val woP = getWeeksOfPregnancy(regis.ancDate, regis.lmpDate!!)
             weekOfPregnancy.value = woP.toString()
             abortionType.value = regis.abortionType
             abortionFacility.value = regis.abortionFacility
             abortionDate.value = regis.abortionDate?.let { getDateFromLong(it) }
         } else {
+            isPaiucd.value = when (saved.isPaiucdId) {
+                1 -> isPaiucd.entries?.getOrNull(0)
+                2 -> isPaiucd.entries?.getOrNull(1)
+                else -> null
+            }
+            if (saved.isPaiucdId != 0) {
+                list.add(list.indexOf(isPaiucd) + 1, isYesOrNo)
+                isYesOrNo.value = if (saved.isYesOrNo == true) "Yes" else "No"
+
+                if (saved.isPaiucdId == 2 && saved.isYesOrNo == true) {
+                    list.add(list.indexOf(isYesOrNo) + 1, dateOfSterilization)
+                    dateOfSterilization.value = saved.dateSterilisation?.let { getDateFromLong(it) }
+                }
+            }
+
+
+
+            dateOfSterilization.min=saved.abortionDate
             visitDate.min = saved.abortionDate
             visitDate.value = saved.visitDate?.let { getDateFromLong(it) }
+
             val woP = getWeeksOfPregnancy(saved.ancDate, regis.lmpDate!!)
             weekOfPregnancy.value = woP.toString()
             abortionType.value = saved.abortionType
@@ -186,7 +238,37 @@ class PregnantWomanAncAbortionDataset(
     }
 
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
-        return -1
+
+        return when (formId) {
+            isPaiucd.id -> {
+                isYesOrNo.value=null
+                triggerDependants(
+                    source = isPaiucd,
+                    addItems = listOf(isYesOrNo),
+                    removeItems = listOf(dateOfSterilization),
+                )
+            }
+
+
+            isYesOrNo.id -> {
+                val isPaiucdSecondOption = (isPaiucd.entries?.indexOf(isPaiucd.value ?: "") ?: -1) == 1
+                if (isYesOrNo.value == "Yes" && isPaiucdSecondOption) {
+                    triggerDependants(
+                        source = isYesOrNo,
+                        addItems = listOf(dateOfSterilization),
+                        removeItems = emptyList()
+                    )
+                } else {
+                    triggerDependants(
+                        source = isYesOrNo,
+                        addItems = emptyList(),
+                        removeItems = listOf(dateOfSterilization)
+                    )
+                }
+            }
+
+            else -> -1
+        }
     }
 
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
@@ -201,13 +283,17 @@ class PregnantWomanAncAbortionDataset(
             cache.serialNo = serialNoAsPerAdmission.value
             cache.methodOfTermination = methodOfTermination.value
             cache.methodOfTerminationId =
-                methodOfTermination.entries?.indexOf(methodOfTermination.value ?: "")?.takeIf { it != -1 }
+                methodOfTermination.entries?.indexOf(methodOfTermination.value ?: "")
+                    ?.takeIf { it != -1 }
             cache.terminationDoneBy = terminationDoneBy.value
             cache.terminationDoneById =
-                terminationDoneBy.entries?.indexOf(terminationDoneBy.value ?: "")?.takeIf { it != -1 }
+                terminationDoneBy.entries?.indexOf(terminationDoneBy.value ?: "")
+                    ?.takeIf { it != -1 }
             cache.isPaiucd = isPaiucd.value
-            cache.isPaiucdId = isPaiucd.entries?.indexOf(isPaiucd.value ?: "") == 1
+            cache.isPaiucdId = (isPaiucd.entries?.indexOf(isPaiucd.value ?: "") ?: -1) + 1
+            cache.isYesOrNo =isYesOrNo.entries?.indexOf(isYesOrNo.value ?: "") == 0
             cache.remarks = remarks.value
+            cache.dateSterilisation = dateOfSterilization.value?.let { getLongFromDate(it) }
             cache.abortionImg1 = abortionDischargeSummaryImg1.value
             cache.abortionImg2 = abortionDischargeSummaryImg2.value
         }
@@ -223,6 +309,7 @@ class PregnantWomanAncAbortionDataset(
                 abortionDischargeSummaryImg1.value = dpUri.toString()
                 abortionDischargeSummaryImg1.errorText = null
             }
+
             22 -> {
                 abortionDischargeSummaryImg2.value = dpUri.toString()
                 abortionDischargeSummaryImg2.errorText = null
