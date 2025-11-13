@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.FilariaScreeningCache
@@ -395,6 +396,7 @@ class LeprosyFormDataset(
             form.diseaseTypeID = 5
             form.leprosySymptoms = leprosySymptoms.value
             form.visitLabel = visitLabel.value
+            form.syncState = SyncState.UNSYNCED
             form.leprosySymptomsPosition = when (leprosySymptoms.value) {
                 resources.getStringArray(R.array.yes_no)[0] -> 0
                 resources.getStringArray(R.array.yes_no)[1] -> 1

@@ -132,6 +132,7 @@ object WorkerUtils {
                 ExistingWorkPolicy.APPEND_OR_REPLACE,
                 pullWorkRequest
             )
+
             .then(maaMeetingFormSyncWorkerRequest)
             .then(pullIncentiveActivityWorkRequest)
             .then(pullCbacWorkRequest)
@@ -139,6 +140,7 @@ object WorkerUtils {
             .then(pullECWorkRequest)
             .then(pullImmunizationWorkRequest)
             .then(generalOpdPullFromAmritWorker)
+            .then(pullLeprosyToAmritWorker)
 //            .then(pullHBYCFromAmritWorker)
             .then(pullHBNCFromAmritWorker)
             .then(pullHRPWorkRequest)
@@ -148,7 +150,7 @@ object WorkerUtils {
             .then(pullAESToAmritWorker)
             .then(pullkalaAzarToAmritWorker)
             .then(pullFilariaToAmritWorker)
-            .then(pullLeprosyToAmritWorker)
+
             .then(pushWorkRequest)
             .then(pushCbacWorkRequest)
             .then(pushImmunizationWorkRequest)
@@ -253,6 +255,9 @@ object WorkerUtils {
         val pushLeprosyToAmritWorker = OneTimeWorkRequestBuilder<pushLeprosyAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
+        val pushLaprosyFollowUpAmritWorker = OneTimeWorkRequestBuilder<PushLeprosyFollowUpAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
         val pushFilariaToAmritWorker = OneTimeWorkRequestBuilder<PushFilariaAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
@@ -279,7 +284,8 @@ object WorkerUtils {
             .then(pushVLFToAmritWorker)
             .then(pushTBWorkRequest)
             .then(pushECToAmritWorker)
-            .then(pushPWWorkRequest)
+            .then(pushLeprosyToAmritWorker)
+            .then(pushLaprosyFollowUpAmritWorker)
             .then(pushPmsmaWorkRequest)
             .then(pushUwinWorkerRequest)
             .then(pushDeliverOutcomeWorkRequest)
@@ -297,7 +303,7 @@ object WorkerUtils {
             .then(pushAESToAmritWorker)
             .then(pushkalaAzarToAmritWorker)
             .then(pushFilariaToAmritWorker)
-            .then(pushLeprosyToAmritWorker)
+            .then(pushPWWorkRequest)
             .enqueue()
     }
 
@@ -412,7 +418,8 @@ object WorkerUtils {
             .then(pullVaccineWorkRequest)
             .then(pullTBWorkRequest)
             .then(pullECWorkRequest)
-            .then(pullPWWorkRequest)
+            .then(pullLeprosyToAmritWorker)
+
             .then(pullPMSMAWorkRequest)
             .then(pullPNCWorkRequest)
             .then(pullDeliveryOutcomeWorkRequest)
@@ -430,8 +437,9 @@ object WorkerUtils {
             .then(pullAESToAmritWorker)
             .then(pullkalaAzarToAmritWorker)
             .then(pullFilariaToAmritWorker)
-            .then(pullLeprosyToAmritWorker)
+
             .then(setSyncCompleteWorker)
+            .then(pullPWWorkRequest)
             .enqueue()
     }
 

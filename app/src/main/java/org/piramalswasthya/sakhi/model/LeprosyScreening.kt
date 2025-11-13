@@ -66,7 +66,6 @@ data class LeprosyScreeningCache(
 
     fun toDTO(): LeprosyScreeningDTO {
         return LeprosyScreeningDTO(
-            id = id,
             benId = benId,
             homeVisitDate = getDateTimeStringFromLong(homeVisitDate).toString(),
             leprosyStatusDate = getDateTimeStringFromLong(leprosyStatusDate).toString(),
@@ -191,7 +190,6 @@ data class LeprosyFollowUpCache(
 
     fun toDTO(): LeprosyFollowUpDTO {
         return LeprosyFollowUpDTO(
-            id = id,
             benId = benId,
             visitNumber = visitNumber,
             followUpDate = getDateTimeStringFromLong(followUpDate).toString(),
@@ -217,3 +215,8 @@ data class LeprosyFollowUpCache(
         )
     }
 }
+
+data class LeprosyFollowUpRequestDTO(
+    val userName: String,
+    val leprosyFollowUpLists: List<LeprosyFollowUpDTO>
+)

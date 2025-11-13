@@ -5,6 +5,7 @@ import com.google.gson.Gson
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.json.JSONException
 import org.json.JSONObject
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.room.SyncState
@@ -14,9 +15,11 @@ import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.model.BenWithLeprosyScreeningCache
 import org.piramalswasthya.sakhi.model.LeprosyFollowUpCache
+import org.piramalswasthya.sakhi.model.LeprosyFollowUpRequestDTO
 import org.piramalswasthya.sakhi.model.LeprosyScreeningCache
 import org.piramalswasthya.sakhi.network.AmritApiService
 import org.piramalswasthya.sakhi.network.GetDataPaginatedRequestForDisease
+import org.piramalswasthya.sakhi.network.LeprosyFollowUpDTO
 import org.piramalswasthya.sakhi.network.LeprosyScreeningDTO
 import org.piramalswasthya.sakhi.network.LeprosyScreeningRequestDTO
 import timber.log.Timber
@@ -78,7 +81,8 @@ class LeprosyRepo @Inject constructor(
                         pageNo = 0,
                         fromDate = BenRepo.getCurrentDate(Konstants.defaultTimeStamp),
                         toDate = getCurrentDate(),
-                        diseaseTypeID = 5
+                        diseaseTypeID = 5,
+                        userName = user.userName
                     )
                 )
                 val statusCode = response.code()
@@ -175,7 +179,9 @@ class LeprosyRepo @Inject constructor(
             leprosyasnList.forEach { cache ->
                 leprosysnDtos.add(cache.toDTO())
             }
-            if (leprosysnDtos.isEmpty()) return@withContext 1
+            if (leprosysnDtos.isEmpty())
+                return@withContext 1
+
             try {
                 val response = tmcNetworkApiService.saveLeprosyScreeningData(
                     LeprosyScreeningRequestDTO(
@@ -298,6 +304,288 @@ class LeprosyRepo @Inject constructor(
         return withContext(Dispatchers.IO) {
             benDao.getBenWithLeprosyScreeningAndFollowUps(benId)
         }
+    }
+
+
+    suspend fun getAllLeprosyDataFromServer(): Int {
+        return withContext(Dispatchers.IO) {
+            val user = preferenceDao.getLoggedInUser()
+                ?: throw IllegalStateException("No user logged in!!")
+            try {
+                val response = tmcNetworkApiService.getAllLeprosyData(
+                    GetDataPaginatedRequestForDisease(
+                        ashaId = user.userId,
+                        pageNo = 0,
+                        fromDate = BenRepo.getCurrentDate(Konstants.defaultTimeStamp),
+                        toDate = getCurrentDate(),
+                        diseaseTypeID = 5,
+                        userName = user.userName
+                    )
+                )
+                val statusCode = response.code()
+                if (statusCode == 200) {
+                    val responseString = response.body()?.string()
+                    if (responseString != null) {
+                        Timber.d("Raw leprosy response: $responseString")
+
+                        val jsonObj = JSONObject(responseString)
+
+                        // Use the correct field names from the response
+                        val statusCodeFromResponse = jsonObj.getInt("statusCode")
+                        val status = jsonObj.getString("status")
+
+                        Timber.d("Pull all leprosy data - Status: $statusCodeFromResponse, Status: $status")
+
+                        when (statusCodeFromResponse) {
+                            200 -> {
+                                try {
+                                    val dataArray = jsonObj.getJSONArray("data")
+                                    saveAllLeprosyDataFromResponse(dataArray.toString())
+                                    return@withContext 1
+                                } catch (e: Exception) {
+                                    Timber.d("Leprosy entries not synced $e")
+                                    return@withContext 0
+                                }
+                            }
+
+                            5002 -> {
+                                if (userRepo.refreshTokenTmc(user.userName, user.password))
+                                    throw SocketTimeoutException("Refreshed Token!")
+                                else throw IllegalStateException("User Logged out!!")
+                            }
+
+                            else -> {
+                                throw IllegalStateException("$statusCodeFromResponse received, dont know what todo!?")
+                            }
+                        }
+                    }
+                } else {
+                    Timber.d("HTTP error for leprosy data: $statusCode")
+                }
+            } catch (e: SocketTimeoutException) {
+                Timber.d("get_all_leprosy error : $e")
+                return@withContext -2
+            } catch (e: JSONException) {
+                Timber.d("JSON parsing error for leprosy data: $e")
+                return@withContext -1
+            } catch (e: java.lang.IllegalStateException) {
+                Timber.d("get_all_leprosy error : $e")
+                return@withContext -1
+            } catch (e: Exception) {
+                Timber.d("get_all_leprosy unexpected error : $e")
+                return@withContext -1
+            }
+            -1
+        }
+    }
+
+    suspend fun getAllLeprosyFollowUpDataFromServer(): Int {
+        return withContext(Dispatchers.IO) {
+            val user = preferenceDao.getLoggedInUser()
+                ?: throw IllegalStateException("No user logged in!!")
+            try {
+                val response = tmcNetworkApiService.getAllLeprosyFollowUpData(
+                    GetDataPaginatedRequestForDisease(
+                        ashaId = user.userId,
+                        pageNo = 0,
+                        fromDate = BenRepo.getCurrentDate(Konstants.defaultTimeStamp),
+                        toDate = getCurrentDate(),
+                        diseaseTypeID = 5,
+                        userName = user.userName
+                    )
+                )
+                val statusCode = response.code()
+                if (statusCode == 200) {
+                    val responseString = response.body()?.string()
+                    if (responseString != null) {
+                        Timber.d("Raw leprosy followup response: $responseString")
+
+                        val jsonObj = JSONObject(responseString)
+
+                        // Use the correct field names from the response
+                        val statusCodeFromResponse = jsonObj.getInt("statusCode")
+                        val status = jsonObj.getString("status")
+
+                        Timber.d("Pull all leprosy followup data - Status: $statusCodeFromResponse, Status: $status")
+
+                        when (statusCodeFromResponse) {
+                            200 -> {
+                                try {
+                                    val dataArray = jsonObj.getJSONArray("data")
+                                    saveAllLeprosyFollowUpDataFromResponse(dataArray.toString())
+                                    return@withContext 1
+                                } catch (e: Exception) {
+                                    Timber.d("Leprosy followup entries not synced $e")
+                                    return@withContext 0
+                                }
+                            }
+
+                            5002 -> {
+                                if (userRepo.refreshTokenTmc(user.userName, user.password))
+                                    throw SocketTimeoutException("Refreshed Token!")
+                                else throw IllegalStateException("User Logged out!!")
+                            }
+
+                            else -> {
+                                throw IllegalStateException("$statusCodeFromResponse received, dont know what todo!?")
+                            }
+                        }
+                    }
+                } else {
+                    Timber.d("HTTP error for leprosy followup data: $statusCode")
+                }
+            } catch (e: SocketTimeoutException) {
+                Timber.d("get_all_leprosy_followup error : $e")
+                return@withContext -2
+            } catch (e: JSONException) {
+                Timber.d("JSON parsing error for leprosy followup data: $e")
+                return@withContext -1
+            } catch (e: java.lang.IllegalStateException) {
+                Timber.d("get_all_leprosy_followup error : $e")
+                return@withContext -1
+            } catch (e: Exception) {
+                Timber.d("get_all_leprosy_followup unexpected error : $e")
+                return@withContext -1
+            }
+            -1
+        }
+    }
+
+    // Upsync - Push Unsynced Leprosy FollowUp Data to Server
+    suspend fun pushUnSyncedLeprosyFollowUpData(): Int {
+        return withContext(Dispatchers.IO) {
+            val user = preferenceDao.getLoggedInUser()
+                ?: throw IllegalStateException("No user logged in!!")
+
+            val unsyncedFollowUps: List<LeprosyFollowUpCache> = leprosyDao.getAllFollowUpsByBenId().filter {
+                it.syncState == SyncState.UNSYNCED
+            }
+
+            val followUpDtos = unsyncedFollowUps.map { it.toDTO() }
+
+            if (followUpDtos.isEmpty()) return@withContext 1
+
+            try {
+                val response = tmcNetworkApiService.saveLeprosyFollowUpData(
+                    followUpDtos
+                    )
+
+                val statusCode = response.code()
+                if (statusCode == 200) {
+                    val responseString = response.body()?.string()
+                    if (responseString != null) {
+                        val jsonObj = JSONObject(responseString)
+                        val responseStatusCode = jsonObj.getInt("statusCode")
+                        Timber.d("Push leprosy followup data : $responseStatusCode")
+                        when (responseStatusCode) {
+                            200 -> {
+                                updateSyncStatusFollowUps(unsyncedFollowUps)
+                                return@withContext 1
+                            }
+
+                            5002 -> {
+                                if (userRepo.refreshTokenTmc(user.userName, user.password))
+                                    throw SocketTimeoutException("Refreshed Token!")
+                                else throw IllegalStateException("User Logged out!!")
+                            }
+
+                            5000 -> {
+                                val errorMessage = jsonObj.getString("errorMessage")
+                                if (errorMessage == "No record found") return@withContext 0
+                            }
+
+                            else -> {
+                                throw IllegalStateException("$responseStatusCode received, dont know what todo!?")
+                            }
+                        }
+                    }
+                }
+            } catch (e: SocketTimeoutException) {
+                Timber.d("push_leprosy_followup error : $e")
+                return@withContext -2
+            } catch (e: java.lang.IllegalStateException) {
+                Timber.d("push_leprosy_followup error : $e")
+                return@withContext -1
+            }
+            -1
+        }
+    }
+
+    // Helper method to save all leprosy data from response (prevents duplicates)
+    private suspend fun saveAllLeprosyDataFromResponse(dataObj: String) {
+        try {
+            // Parse as array of LeprosyScreeningDTO
+            val leprosyList = Gson().fromJson(dataObj, Array<LeprosyScreeningDTO>::class.java)
+            leprosyList?.forEach { leprosyScreeningDTO ->
+                leprosyScreeningDTO.homeVisitDate?.let { visitDate ->
+                    val existingScreening = leprosyDao.getLeprosyScreening(
+                        leprosyScreeningDTO.benId,
+                        getLongFromDate(visitDate),
+                        getLongFromDate(visitDate) - 19_800_000
+                    )
+                    if (existingScreening == null) {
+                        benDao.getBen(leprosyScreeningDTO.benId)?.let {
+                            leprosyDao.saveLeprosyScreening(leprosyScreeningDTO.toCache().copy(
+                                syncState = SyncState.SYNCED
+                            ))
+                        }
+                    } else {
+                        leprosyDao.updateLeprosyScreening(leprosyScreeningDTO.toCache().copy(
+                            id = existingScreening.id,
+                            syncState = SyncState.SYNCED
+                        ))
+                    }
+                }
+            }
+            Timber.d("Successfully saved ${leprosyList?.size ?: 0} leprosy screening records")
+        } catch (e: Exception) {
+            Timber.d("Error saving leprosy data: $e")
+            throw e
+        }
+    }
+
+    private suspend fun saveAllLeprosyFollowUpDataFromResponse(dataObj: String) {
+        try {
+            // Parse as array of LeprosyFollowUpDTO
+            val followUpList = Gson().fromJson(dataObj, Array<LeprosyFollowUpDTO>::class.java)
+            followUpList?.forEach { followUpDTO ->
+                followUpDTO.followUpDate?.let { followUpDate ->
+                    val existingFollowUp = leprosyDao.getFollowUp(
+                        followUpDTO.benId,
+                        followUpDTO.visitNumber,
+                        getLongFromDate(followUpDate)
+                    )
+                    if (existingFollowUp == null) {
+                        benDao.getBen(followUpDTO.benId)?.let {
+                            leprosyDao.insertFollowUp(followUpDTO.toCache().copy(
+                                syncState = SyncState.SYNCED
+                            ))
+                        }
+                    } else {
+                        leprosyDao.updateFollowUp(followUpDTO.toCache().copy(
+                            id = existingFollowUp.id,
+                            syncState = SyncState.SYNCED
+                        ))
+                    }
+                }
+            }
+            Timber.d("Successfully saved ${followUpList?.size ?: 0} leprosy followup records")
+        } catch (e: Exception) {
+            Timber.d("Error saving leprosy followup data: $e")
+            throw e
+        }
+    }
+
+    private suspend fun updateSyncStatusFollowUps(followUpList: List<LeprosyFollowUpCache>) {
+        followUpList.forEach {
+            it.syncState = SyncState.SYNCED
+            leprosyDao.updateFollowUp(it)
+        }
+    }
+
+    suspend fun pushAllUnSyncedRecords(): Boolean {
+        val followUpResult = pushUnSyncedLeprosyFollowUpData()
+        return ( followUpResult == 1)
     }
 
     companion object {
