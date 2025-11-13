@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.ui.home_activity.disease_control
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -55,7 +56,7 @@ class AllHouseHoldDiseaseControlFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val householdAdapter = HouseHoldListAdapter(isDisease, prefDao, HouseHoldListAdapter.HouseholdClickListener({
+        val householdAdapter = HouseHoldListAdapter(viewModel.diseaseType,isDisease, prefDao, HouseHoldListAdapter.HouseholdClickListener({
 
         }, {
             if(viewModel.diseaseType == IconDataset.Disease.MALARIA.toString()){
@@ -96,6 +97,12 @@ class AllHouseHoldDiseaseControlFragment : Fragment() {
         }, {
 
 
+        },{
+            findNavController().navigate(
+                AllHouseHoldDiseaseControlFragmentDirections.actionAllHouseHoldDiseaseControlFragmentToFilariaMDAFormFragment(
+                    it.hhId
+                )
+            )
         },
             ))
         binding.rvAny.adapter = householdAdapter

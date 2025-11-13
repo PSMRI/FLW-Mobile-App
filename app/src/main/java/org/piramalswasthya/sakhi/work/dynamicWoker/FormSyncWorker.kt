@@ -31,7 +31,8 @@ class FormSyncWorker @AssistedInject constructor(
                 fromDate = HelperUtil.getCurrentDate(Konstants.defaultTimeStamp),
                 toDate = HelperUtil.getCurrentDate(),
                 pageNo = 0,
-                ashaId = user.userId
+                ashaId = user.userId,
+                userName = user.userName
             )
 
             val hbncResponse = repository.getAllHbncVisits(hbncRequest)
@@ -47,7 +48,8 @@ class FormSyncWorker @AssistedInject constructor(
                 fromDate = HelperUtil.getCurrentDate(Konstants.defaultTimeStamp),
                 toDate = HelperUtil.getCurrentDate(),
                 pageNo = 0,
-                ashaId = user.userId
+                ashaId = user.userId,
+                userName = user.userName
             )
 
             val hbycResponse = repository.getAllHbycVisits(hbycRequest)

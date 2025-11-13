@@ -55,6 +55,7 @@ import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.BenIfaFormRe
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.CUFYFormResponseDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.CUFYFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.EyeSurgeryFormResponseJsonDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FilariaMDAFormResponseJsonDao
 import org.piramalswasthya.sakhi.model.AHDCache
 import org.piramalswasthya.sakhi.model.AESScreeningCache
 import org.piramalswasthya.sakhi.model.AdolescentHealthCache
@@ -108,6 +109,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.InfantEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.hbyc.FormResponseJsonEntityHBYC
 import org.piramalswasthya.sakhi.model.VHNDCache
 import org.piramalswasthya.sakhi.model.dynamicEntity.CUFYFormResponseJsonEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.FilariaMDA.FilariaMDAFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.ben_ifa.BenIfaFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.eye_surgery.EyeSurgeryFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoNetFormResponseJsonEntity
@@ -171,11 +173,12 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         UwinCache::class,
         EyeSurgeryFormResponseJsonEntity::class,
         BenIfaFormResponseJsonEntity::class,
-        MosquitoNetFormResponseJsonEntity::class
+        MosquitoNetFormResponseJsonEntity::class,
+        FilariaMDAFormResponseJsonEntity::class
     ],
     views = [BenBasicCache::class],
 
-    version = 38, exportSchema = false
+    version = 39, exportSchema = false
 )
 
 @TypeConverters(
@@ -230,6 +233,7 @@ abstract class InAppDb : RoomDatabase() {
     abstract fun formResponseJsonDaoEyeSurgery(): EyeSurgeryFormResponseJsonDao
     abstract fun formResponseJsonDaoBenIfa(): BenIfaFormResponseJsonDao
     abstract fun formResponseMosquitoNetJsonDao(): MosquitoNetFormResponseDao
+    abstract fun formResponseFilariaMDAJsonDao(): FilariaMDAFormResponseJsonDao
 
     abstract val syncDao: SyncDao
 
@@ -244,6 +248,43 @@ abstract class InAppDb : RoomDatabase() {
                 it.execSQL("alter table BENEFICIARY add column isConsent BOOL")
 
             })
+
+            val MIGRATION_38_39 = object : Migration(38, 39) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+
+                    database.execSQL(
+                        """
+            CREATE TABLE IF NOT EXISTS FILARIA_MDA_VISIT_HISTORY (
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                hhId INTEGER NOT NULL,
+                visitDate TEXT NOT NULL,
+                visitMonth TEXT NOT NULL,
+                formId TEXT NOT NULL,
+                version INTEGER NOT NULL,
+                formDataJson TEXT NOT NULL,
+                isSynced INTEGER NOT NULL DEFAULT 0,
+                createdAt INTEGER NOT NULL DEFAULT (strftime('%s','now')),
+                syncedAt TEXT
+            )
+            """.trimIndent()
+                    )
+                    database.execSQL(
+                        """
+            CREATE UNIQUE INDEX IF NOT EXISTS index_FILARIA_MDA_VISIT_HISTORY_hhId_formId_visitMonth
+            ON FILARIA_MDA_VISIT_HISTORY (hhId, formId, visitMonth)
+            """.trimIndent()
+                    )
+
+                    database.execSQL(
+                        """
+            CREATE INDEX IF NOT EXISTS index_FILARIA_MDA_VISIT_HISTORY_hhId_visitDate
+            ON FILARIA_MDA_VISIT_HISTORY (hhId, visitDate)
+            """.trimIndent()
+                    )
+                }
+            }
+
+
             val MIGRATION_37_38 = object : Migration(37, 38) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     database.execSQL("ALTER TABLE INFANT_REG ADD COLUMN isSNCU TEXT")
@@ -1388,7 +1429,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_34_35,
                         MIGRATION_35_36,
                         MIGRATION_36_37,
-                        MIGRATION_37_38
+                        MIGRATION_37_38,
+                        MIGRATION_38_39
                     ).build()
 
                     INSTANCE = instance

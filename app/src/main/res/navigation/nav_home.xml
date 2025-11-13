@@ -1585,6 +1585,9 @@
         <action
             android:id="@+id/action_allHouseHoldDiseaseControlFragment_to_filariaSuspectedListFragment"
             app:destination="@id/filariaSuspectedListFragment" />
+        <action
+            android:id="@+id/action_allHouseHoldDiseaseControlFragment_to_filariaMDAFormFragment"
+            app:destination="@id/filariaMDAFormFragment" />
 
     </fragment>
     <fragment
@@ -1714,6 +1717,14 @@
         android:label="FilariaFormFragment">
         <argument
             android:name="benId"
+            app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/filariaMDAFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.filaria.form.FilariaMDAFormFragment"
+        android:label="FilariaMDAFormFragment">
+        <argument
+            android:name="hhId"
             app:argType="long" />
     </fragment>
     <fragment

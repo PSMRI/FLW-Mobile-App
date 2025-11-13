@@ -8,18 +8,18 @@ import dagger.assisted.AssistedInject
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.model.dynamicModel.HBNCVisitRequest
-import org.piramalswasthya.sakhi.repositories.dynamicRepo.MosquitoNetFormRepository
+import org.piramalswasthya.sakhi.repositories.dynamicRepo.FilariaMDAFormRepository
 import org.piramalswasthya.sakhi.utils.HelperUtil
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
 import timber.log.Timber
 import java.io.IOException
 
 @HiltWorker
-class MosquitoNetFormSyncWorker @AssistedInject constructor(
+class FilariaMDAFormSyncWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workerParams: WorkerParameters,
     private val preferenceDao: PreferenceDao,
-    private val repository: MosquitoNetFormRepository
+    private val repository: FilariaMDAFormRepository
 ) : CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
@@ -35,12 +35,12 @@ class MosquitoNetFormSyncWorker @AssistedInject constructor(
                 userName = user.userName
             )
 
-            val unsyncedForms = repository.getUnsyncedForms(FormConstants.MOSQUITO_NET_FORM_ID)
+            val unsyncedForms = repository.getUnsyncedForms(FormConstants.MDA_DISTRIBUTION_FORM_ID)
             for (form in unsyncedForms) {
-                if (form.hhId < 0) continue
+                if ((form.hhId ?: -1) < 0) continue
 
                 try{
-                    val success = repository.syncFormToServer(user.userName,FormConstants.MOSQUITO_NET_FORM_Name,form)
+                    val success = repository.syncFormToServer(user.userName,FormConstants.MDA_DISTRIBUTION_FORM_NAME,form)
                     if (success) {
                         repository.markFormAsSynced(form.id)
                     }
@@ -49,10 +49,10 @@ class MosquitoNetFormSyncWorker @AssistedInject constructor(
                 }
 
             }
-            val response = repository.getAllFormVisits(FormConstants.MOSQUITO_NET_FORM_Name,request)
+            val response = repository.getAllFormVisits(FormConstants.MDA_DISTRIBUTION_FORM_NAME,request)
             if (response.isSuccessful) {
                 val visitList = response.body()?.data.orEmpty()
-                repository.saveDownloadedVisitList(visitList, FormConstants.MOSQUITO_NET_FORM_ID)
+                repository.saveDownloadedVisitList(visitList, FormConstants.MDA_DISTRIBUTION_FORM_ID)
             } else {
                 if (response.code() >= 500) {
                     throw IOException("Server error: ${response.code()}")
@@ -82,7 +82,7 @@ class MosquitoNetFormSyncWorker @AssistedInject constructor(
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
 
-            val request = OneTimeWorkRequestBuilder<MosquitoNetFormSyncWorker>()
+            val request = OneTimeWorkRequestBuilder<FilariaMDAFormSyncWorker>()
                 .setConstraints(constraints)
                 .build()
 

@@ -14,4 +14,6 @@ object FormConstants {
     const val HBYC_FORM_ID  = "hbyc_form_001"
     const val MOSQUITO_NET_FORM_ID  = "mosquito_net_distribution_form"
     const val MOSQUITO_NET_FORM_Name  = "mobilizationMosquitoNet"
+    const val MDA_DISTRIBUTION_FORM_ID  = "mda_distribution_form"
+    const val MDA_DISTRIBUTION_FORM_NAME  = "mda"
 }
