@@ -97,7 +97,7 @@ class PregnantWomanAncAbortionDataset(
     private val isPlanig = FormElement(
         id = 25,
         inputType = InputType.HEADLINE,
-        title = "What family planning method has been chosen after the abortion?",
+        title = context.getString(R.string.what_family_planning_method_has_been_chosen_after_the_abortion),
         required = false,
         hasDependants = false
     )
