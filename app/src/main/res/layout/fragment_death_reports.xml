@@ -6,11 +6,12 @@
     android:orientation="vertical"
     android:padding="@dimen/padding_normal">
 
-    <TextView
+   <!-- <TextView
         android:id="@+id/tv_type_title_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/padding_normal"
+        android:visibility="gone"
         android:text="@string/select_death_type"
         android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
         app:layout_constraintTop_toTopOf="parent" />
@@ -20,6 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/padding_normal"
+        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/tv_type_title_text">
 
         <RadioButton
@@ -41,6 +43,117 @@
             android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
     </RadioGroup>
 
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_general_deaths"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_normal"
+        android:layout_marginTop="@dimen/margin_huge"
+        android:layout_marginEnd="@dimen/margin_normal"
+        android:clickable="true"
+        android:focusable="true"
+        app:cardCornerRadius="@dimen/_8sdp"
+        app:cardElevation="@dimen/_4sdp"
+        android:backgroundTint="?attr/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_type_title_text">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/_30sdp"
+            android:text="@string/general_deaths"
+            android:textColor="?attr/colorOnPrimary"
+            android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+            android:gravity="center" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    &lt;!&ndash; Maternal Deaths Card &ndash;&gt;
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_maternal_deaths"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_normal"
+        android:layout_marginTop="@dimen/margin_huge"
+        android:layout_marginEnd="@dimen/margin_normal"
+        android:clickable="true"
+        android:focusable="true"
+        app:cardCornerRadius="@dimen/_8sdp"
+        app:cardElevation="@dimen/_4sdp"
+        android:backgroundTint="?attr/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/card_general_deaths">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/_30sdp"
+            android:text="@string/maternal_deaths"
+            android:textColor="?attr/colorOnPrimary"
+            android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+            android:gravity="center" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    &lt;!&ndash; Non-Maternal Deaths Card &ndash;&gt;
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_non_maternal_deaths"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_normal"
+        android:layout_marginTop="@dimen/margin_huge"
+        android:layout_marginEnd="@dimen/margin_normal"
+        android:clickable="true"
+        android:focusable="true"
+        app:cardCornerRadius="@dimen/_8sdp"
+        app:cardElevation="@dimen/_4sdp"
+        android:backgroundTint="?attr/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/card_maternal_deaths">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/_30sdp"
+            android:text="@string/non_maternal_deaths"
+            android:textColor="?attr/colorOnPrimary"
+            android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+            android:gravity="center" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    &lt;!&ndash; Child Deaths Card &ndash;&gt;
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_child_deaths"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_normal"
+        android:layout_marginTop="@dimen/margin_huge"
+        android:layout_marginEnd="@dimen/margin_normal"
+        android:clickable="true"
+        android:focusable="true"
+        app:cardCornerRadius="@dimen/_8sdp"
+        app:cardElevation="@dimen/_4sdp"
+        android:backgroundTint="?attr/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/card_non_maternal_deaths">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/_30sdp"
+            android:text="@string/child_deaths"
+            android:textColor="@color/design_default_color_on_primary"
+            android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+            android:gravity="center" />
+
+    </com.google.android.material.card.MaterialCardView>
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_continue"
         android:layout_width="match_parent"
@@ -49,7 +162,8 @@
         android:layout_margin="@dimen/margin_normal"
         android:text="@string/btn_continue_text"
         android:textColor="?attr/colorOnPrimary"
-        app:layout_constraintTop_toBottomOf="@id/rg_death_type" />
-
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/card_child_deaths" />
+-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

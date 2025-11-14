@@ -172,9 +172,9 @@ class HBNCFormFragment : Fragment() {
                     isViewOnly = isViewMode,
                     minVisitDate = minVisitDate,
                     maxVisitDate = maxVisitDate,
-                    isSNCU = viewModel.isSNCU.value ?: false
-//                    isSNCU = true
-                ) { field, value ->
+                    isSNCU = viewModel.isSNCU.value ?: false,
+                    onValueChanged =
+                { field, value ->
                     if (value == "pick_image") {
                         currentImageField = field
                         showImagePickerDialog()
@@ -185,6 +185,7 @@ class HBNCFormFragment : Fragment() {
                         adapter.updateFields(updatedVisibleFields)
                     }
                 }
+                )
 
                 recyclerView.adapter = adapter
 

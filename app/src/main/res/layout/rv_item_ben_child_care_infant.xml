@@ -41,18 +41,6 @@
                 android:paddingHorizontal="@dimen/padding_tiny"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <!--                <ImageView-->
-                <!--                    android:id="@+id/iv_hh_logo"-->
-                <!--                    android:layout_width="wrap_content"-->
-                <!--                    android:layout_height="0dp"-->
-                <!--                    android:paddingVertical="@dimen/padding_normal"-->
-                <!--                    android:src="@drawable/ic__hh"-->
-                <!--                    app:layout_constraintBottom_toBottomOf="parent"-->
-                <!--                    app:layout_constraintStart_toStartOf="parent"-->
-                <!--                    app:layout_constraintTop_toTopOf="parent"-->
-                <!--                    app:tint="?attr/colorPrimary" />-->
-
-
                 <TextView
                     android:id="@+id/tv_hh_id"
                     android:layout_width="0dp"
