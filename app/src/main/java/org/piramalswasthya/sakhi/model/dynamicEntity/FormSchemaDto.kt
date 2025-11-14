@@ -13,6 +13,8 @@ data class FormSchemaDto(
     @SerializedName("version")
     val version: Int = 1,
 
+
+
     @SerializedName("sections")
     val sections: List<FormSectionDto> = emptyList()
 ) {

@@ -64,6 +64,11 @@
         <item>हाँ</item>
         <item>नहीं</item>
     </string-array>
+
+    <string-array name="abortion_isplaning_array">
+        <item>Has a PAIUCD been inserted?(Copper-T)\n or</item>
+        <item>Has the woman opted for permanent sterilization (Tubectomy)?</item>
+    </string-array>
     <string-array name="anc_confirmation_array1">
         <item>नहीं</item>
         <item>हाँ</item>
