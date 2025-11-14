@@ -41,7 +41,7 @@ class FormRepository @Inject constructor(
 
     suspend fun getFormSchema(formId: String): FormSchemaDto? = withContext(Dispatchers.IO) {
         try {
-            val response = amritApiService.fetchFormSchema(formId)
+            val response = amritApiService.fetchFormSchema(formId,"en")
             if (response.isSuccessful) {
                 val apiResponse = response.body()
                 val apiSchema = apiResponse?.data

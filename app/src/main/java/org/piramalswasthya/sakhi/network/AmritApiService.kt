@@ -308,12 +308,32 @@ interface AmritApiService {
 
     @GET("common-api/dynamicForm/form/{formId}/fields")
     suspend fun fetchFormSchema(
-        @Path("formId") formId: String
+        @Path("formId") formId: String,
+        @Query("lang") lang: String
+
     ): Response<ApiResponse<FormSchemaDto>>
 
 
     @POST("flw-api/child-care/hbncVisit/saveAll")
     suspend fun submitForm(
+        @Body request: List<FormSubmitRequest>
+    ): Response<Unit>
+
+    @POST("flw-api/child-care/{formName}/saveAll")
+    suspend fun submitChildCareForm(
+        @Path("formName") formName: String,
+        @Body request: List<FormSubmitRequest>
+    ): Response<Unit>
+
+    @POST("flw-api/beneficiary/{formName}/saveAll")
+    suspend fun submitEyeSurgeryForm(
+        @Path("formName") formName: String,
+        @Body request: List<FormSubmitRequest>
+    ): Response<Unit>
+
+    @POST("flw-api/disease/{formName}/saveAll")
+    suspend fun submitDiseaseMosquitoForm(
+        @Path("formName") formName: String,
         @Body request: List<FormSubmitRequest>
     ): Response<Unit>
 
@@ -323,6 +343,23 @@ interface AmritApiService {
         @Body request: HBNCVisitRequest
     ): Response<HBNCVisitListResponse>
 
+    @POST("flw-api/child-care/{formName}/getAll")
+    suspend fun getAllFormVisits(
+        @Path("formName") formName: String,
+        @Body request: HBNCVisitRequest
+    ): Response<HBNCVisitListResponse>
+
+    @POST("flw-api/beneficiary/{formName}/getAll")
+    suspend fun getAllEyeSurgeryFormVisits(
+        @Path("formName") formName: String,
+        @Body request: HBNCVisitRequest
+    ): Response<HBNCVisitListResponse>
+
+    @POST("flw-api/disease/{formName}/getAll")
+    suspend fun getAllDiseaseMosquitoFormVisits(
+        @Path("formName") formName: String,
+        @Body request: HBNCVisitRequest
+    ): Response<HBNCVisitListResponse>
 
     @POST("flw-api/child-care/hbycVisit/saveAll")
     suspend fun submitFormhbyc(

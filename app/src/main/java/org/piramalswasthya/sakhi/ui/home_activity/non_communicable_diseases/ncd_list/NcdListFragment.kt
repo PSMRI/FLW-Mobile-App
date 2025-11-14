@@ -65,8 +65,12 @@ class NcdListFragment : Fragment() {
                 {
                 },
                 { benId, hhId ->
-                }, {}
+                },
+                { benId, hhId, isViewMode, isIFA ->
+                },
+                {
 
+                }
                 ), true,
             pref = prefDao
         )

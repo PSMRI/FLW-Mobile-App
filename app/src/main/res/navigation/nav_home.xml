@@ -116,6 +116,12 @@
         <action
             android:id="@+id/action_allBenFragment_to_newBenRegFragment"
             app:destination="@id/newBenRegFragment" />
+        <action
+            android:id="@+id/action_allBenFragment_to_eyeSurgeryFormFragment"
+            app:destination="@id/eyeSurgeryFormFragment" />
+        <action
+            android:id="@+id/action_allBenFragment_to_benIfaFormFragment"
+            app:destination="@id/benIfaFormFragment" />
         <argument
             android:name="source"
             android:defaultValue="0"
@@ -443,10 +449,55 @@
     </fragment>
     <fragment
         android:id="@+id/childrenUnderFiveYearListFragment"
-        android:name="org.piramalswasthya.sakhi.ui.home_activity.child_care.children_under_five_years.ChildrenUnderFiveYearsListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.child_care.children_under_five_years.CUFYListFragment"
         android:label="@string/child_under_five_years_list"
         tools:layout="@layout/fragment_children_under_five_years_list">
 
+        <action
+            android:id="@+id/action_childrenUnderFiveYearListFragment_to_childrenUnderFiveYearFormFragment"
+            app:destination="@id/childrenUnderFiveYearFormFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/childrenUnderFiveYearFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.child_care.children_under_five_years.children_forms.CUFYFormFragment"
+        android:label="@string/child_under_five_years_list">
+        <argument
+            android:name="benId"
+            app:argType="long" />
+
+        <argument
+            android:name="hhId"
+            app:argType="long" />
+
+        <argument
+            android:name="visitType"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null"/>
+
+        <argument
+            android:name="isViewMode"
+            app:argType="boolean"
+            android:defaultValue="false" />
+
+        <argument
+        android:name="formDataJson"
+        app:argType="string"
+        android:defaultValue="@null"
+            app:nullable="true"    />
+
+
+        <argument
+            android:name="recordId"
+            android:defaultValue="0"
+            app:argType="integer" />
+
+        <argument
+            android:name="formId"
+            app:argType="string"
+            android:defaultValue="sam_visit_001" />
     </fragment>
     <fragment
         android:id="@+id/pncMotherListFragment"
@@ -1042,6 +1093,39 @@
             app:launchSingleTop="true" />
     </fragment>
     <fragment
+        android:id="@+id/eyeSurgeryFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registration.EyeSurgeryFormFragment"
+        android:label="EyeSurgeryFormFragment">
+        <argument
+            android:name="hhId"
+            app:argType="long" />
+        <argument
+            android:name="benId"
+            android:defaultValue="0L"
+            app:argType="long" />
+        <argument
+            android:name="isViewMode"
+            app:argType="boolean"
+            android:defaultValue="false" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/benIfaFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.all_ben.ben_ifa.BenIfaFormFragment"
+        android:label="BenIfaFormFragment">
+        <argument
+            android:name="hhId"
+            app:argType="long" />
+        <argument
+            android:name="benId"
+            android:defaultValue="0L"
+            app:argType="long" />
+        <argument
+            android:name="isViewMode"
+            app:argType="boolean"
+            android:defaultValue="false" />
+    </fragment>
+    <fragment
         android:id="@+id/benListCHOFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.list.BenListCHOFragment"
         android:label="@string/beneficiaries">
@@ -1517,6 +1601,9 @@
         <action
             android:id="@+id/action_allHouseHoldDiseaseControlFragment_to_filariaSuspectedListFragment"
             app:destination="@id/filariaSuspectedListFragment" />
+        <action
+            android:id="@+id/action_allHouseHoldDiseaseControlFragment_to_filariaMDAFormFragment"
+            app:destination="@id/filariaMDAFormFragment" />
 
     </fragment>
     <fragment
@@ -1646,6 +1733,14 @@
         android:label="FilariaFormFragment">
         <argument
             android:name="benId"
+            app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/filariaMDAFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.filaria.form.FilariaMDAFormFragment"
+        android:label="FilariaMDAFormFragment">
+        <argument
+            android:name="hhId"
             app:argType="long" />
     </fragment>
     <fragment
