@@ -290,7 +290,7 @@ class MalariaSuspectedListFragment : Fragment() {
         val visibleFields = viewModelMosquitoNet.getVisibleFields().toMutableList()
         val minVisitDate = viewModelMosquitoNet.getMinVisitDate()
         val maxVisitDate = viewModelMosquitoNet.getMaxVisitDate()
-        //Changed By Kunal
+
         adapter = FormRendererAdapter(
             visibleFields,
             isViewOnly = false,
@@ -396,7 +396,7 @@ class MalariaSuspectedListFragment : Fragment() {
         lifecycleScope.launch {
             val isSaved = viewModelMosquitoNet.saveFormResponses(hhId)
             if (isSaved) {
-                Toast.makeText(requireContext(),  getString(R.string.data_saved_successfullt), Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(),  getString(R.string.data_saved_successfully), Toast.LENGTH_SHORT).show()
                 findNavController().previousBackStackEntry?.savedStateHandle?.set("form_submitted", true)
                 findNavController().popBackStack()
             } else {

@@ -488,6 +488,11 @@
     <string name="check_sam">Check SAM</string>
     <string name="ors">ORS</string>
     <string name="ifa">IFA</string>
+    <string name="date_of_provision">Date of Provision</string>
+    <string name="bottle_number">Bottle Number</string>
+    <string name="s_no">S. No</string>
+    <string name="follow_up_date">Follow Up Dates</string>
+    <string name="bottle_distribution">Bottle Distribution</string>
     <string name="child_rch_id">Child RCH ID</string>
     <string name="vaccination_due_date">Vaccination Due Date</string>
     <string name="reminder">Reminder!!</string>

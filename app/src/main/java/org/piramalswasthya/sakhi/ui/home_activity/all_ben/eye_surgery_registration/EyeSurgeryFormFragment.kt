@@ -171,7 +171,7 @@ class EyeSurgeryFormFragment : Fragment() {
         val visibleFields = viewModel.getVisibleFields().toMutableList()
         val minVisitDate = viewModel.getMinVisitDate()
         val maxVisitDate = viewModel.getMaxVisitDate()
-        //Changed By Kunal
+
         adapter = FormRendererAdapter(
             visibleFields,
             isViewOnly = isViewMode,

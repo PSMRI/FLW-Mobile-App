@@ -178,7 +178,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
     ],
     views = [BenBasicCache::class],
 
-    version = 39, exportSchema = false
+    version = 40, exportSchema = false
 )
 
 @TypeConverters(
@@ -248,6 +248,33 @@ abstract class InAppDb : RoomDatabase() {
                 it.execSQL("alter table BENEFICIARY add column isConsent BOOL")
 
             })
+
+            val MIGRATION_39_40 = object : Migration(39, 40) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL(
+                        """
+            CREATE TABLE IF NOT EXISTS `ALL_BEN_IFA_VISIT_HISTORY` (
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                `benId` INTEGER NOT NULL,
+                `hhId` INTEGER NOT NULL,
+                `visitDate` TEXT NOT NULL,
+                `formId` TEXT NOT NULL,
+                `version` INTEGER NOT NULL,
+                `formDataJson` TEXT NOT NULL,
+                `isSynced` INTEGER NOT NULL DEFAULT 0,
+                `createdAt` INTEGER NOT NULL,
+                `syncedAt` INTEGER
+            )
+            """.trimIndent()
+                    )
+                    database.execSQL(
+                        """
+            CREATE UNIQUE INDEX IF NOT EXISTS `index_ALL_BEN_IFA_VISIT_HISTORY_benId_hhId_visitDate_formId`
+            ON `ALL_BEN_IFA_VISIT_HISTORY` (`benId`, `hhId`, `visitDate`, `formId`)
+            """.trimIndent()
+                    )
+                }
+            }
 
             val MIGRATION_38_39 = object : Migration(38, 39) {
                 override fun migrate(database: SupportSQLiteDatabase) {
@@ -321,35 +348,6 @@ abstract class InAppDb : RoomDatabase() {
                     )
                 }
             }
-
-
-
-//            val MIGRATION_35_36 = object : Migration(35, 36) {
-//                override fun migrate(database: SupportSQLiteDatabase) {
-//                    database.execSQL(
-//                        """
-//            CREATE TABLE IF NOT EXISTS `ALL_BEN_IFA_VISIT_HISTORY` (
-//                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-//                `benId` INTEGER NOT NULL,
-//                `hhId` INTEGER NOT NULL,
-//                `visitDate` TEXT NOT NULL,
-//                `formId` TEXT NOT NULL,
-//                `version` INTEGER NOT NULL,
-//                `formDataJson` TEXT NOT NULL,
-//                `isSynced` INTEGER NOT NULL DEFAULT 0,
-//                `createdAt` INTEGER NOT NULL,
-//                `syncedAt` INTEGER
-//            )
-//            """.trimIndent()
-//                    )
-//                    database.execSQL(
-//                        """
-//            CREATE UNIQUE INDEX IF NOT EXISTS `index_ALL_BEN_IFA_VISIT_HISTORY_benId_hhId_visitDate_formId`
-//            ON `ALL_BEN_IFA_VISIT_HISTORY` (`benId`, `hhId`, `visitDate`, `formId`)
-//            """.trimIndent()
-//                    )
-//                }
-//            }
 
 
             val MIGRATION_35_36 = object : Migration(35, 36) {
@@ -1430,7 +1428,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_35_36,
                         MIGRATION_36_37,
                         MIGRATION_37_38,
-                        MIGRATION_38_39
+                        MIGRATION_38_39,
+                        MIGRATION_39_40
                     ).build()
 
                     INSTANCE = instance
