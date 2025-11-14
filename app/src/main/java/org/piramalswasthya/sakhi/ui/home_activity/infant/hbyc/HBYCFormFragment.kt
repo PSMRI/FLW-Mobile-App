@@ -129,9 +129,9 @@ class HBYCFormFragment : Fragment() {
                     isViewOnly = isViewMode,
                     minVisitDate = minVisitDate,
                     maxVisitDate = maxVisitDate,
-                            isSNCU = viewModel.isSNCU.value ?: false
-//                    isSNCU = true
-                ) { field, value ->
+                    isSNCU = viewModel.isSNCU.value ?: false,
+                    onValueChanged =
+                 { field, value ->
                     if (value == "pick_image") {
                         currentImageField = field
                         showImagePickerDialog()
@@ -140,7 +140,7 @@ class HBYCFormFragment : Fragment() {
                         viewModel.updateFieldValue(field.fieldId, value)
                         adapter.updateFields(viewModel.getVisibleFields())
                     }
-                }
+                },)
 
                 recyclerView.adapter = adapter
                 saveButton.visibility = if (isViewMode) View.GONE else View.VISIBLE

@@ -272,6 +272,7 @@ data class BenBasicCache(
             isDeath = isDeath,
             isDeathValue = isDeathValue,
             dateOfDeath = dateOfDeath,
+            reproductiveStatusId = reproductiveStatusId,
             timeOfDeath = timeOfDeath,
             reasonOfDeath = reasonOfDeath,
             reasonOfDeathId = reasonOfDeathId,
@@ -321,7 +322,8 @@ data class BenBasicCache(
             hrpStatus = hrpStatus,
             relToHeadId = 0,
             syncState = syncState,
-            isConsent = isConsent
+            isConsent = isConsent,
+            reproductiveStatusId = reproductiveStatusId
         )
     }
 
@@ -788,6 +790,7 @@ data class BenBasicDomain(
     var placeOfDeath: String? = null,
     var placeOfDeathId: Int? = null,
     var otherPlaceOfDeath: String? = null,
+    var reproductiveStatusId: Int,
 
     val regDate: String,
     val benName: String,

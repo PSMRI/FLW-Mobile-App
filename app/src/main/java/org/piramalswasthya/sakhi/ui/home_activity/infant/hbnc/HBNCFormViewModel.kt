@@ -121,7 +121,7 @@ class HBNCFormViewModel @Inject constructor(
                     field.value = when (field.fieldId) {
                         "visit_day" -> visitDay
                         "due_date" -> calculateDueDate(dob, visitDay)?.let { formatDate(it) } ?: ""
-                        else -> savedFieldValues[field.fieldId] ?: field.defaultValue
+                        else -> savedFieldValues[field.fieldId] ?: field.default
                     }
 
                     field.isEditable = when (field.fieldId) {
