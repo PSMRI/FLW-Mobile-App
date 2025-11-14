@@ -11,6 +11,7 @@ import org.piramalswasthya.sakhi.repositories.RecordsRepo
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.SupervisorFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.child_care.ChildCareFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.communicable_diseases.CdFragmentDirections
+import org.piramalswasthya.sakhi.ui.home_activity.death_reports.DeathReportsFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.disease_control.DiseaseControlFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.disease_control.malaria.form.MalariaIconsFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.eligible_couple.EligibleCoupleFragmentDirections
@@ -487,6 +488,33 @@ class IconDataset @Inject constructor(
             icon.colorPrimary = index % 2 == 0
         }
     }
+
+    fun getDeathReportDataset(resources: Resources) = listOf(
+        Icon(
+            R.drawable.ic__death,
+            resources.getString(R.string.general_deaths),
+            recordsRepo.getGeneralDeathCount(),
+            DeathReportsFragmentDirections.actionDeathReportsFragmentToGdrListFragment()
+        ),
+        Icon(
+            R.drawable.ic__death,
+            resources.getString(R.string.maternal_deaths),
+            recordsRepo.getMaternalDeathCount(),
+            DeathReportsFragmentDirections.actionDeathReportsFragmentToMdsrListFragment()
+        ),
+        Icon(
+            R.drawable.ic__death,
+            resources.getString(R.string.non_maternal_deaths),
+            recordsRepo.getNonMaternalDeathCount(),
+            DeathReportsFragmentDirections.actionDeathReportsFragmentToNmdsrListFragment()
+        ),
+        Icon(
+            R.drawable.ic__death,
+            resources.getString(R.string.child_deaths),
+            recordsRepo.getChildDeathCount(),
+            DeathReportsFragmentDirections.actionDeathReportsFragmentToCdrListFragment()
+        )
+    )
 
     fun getMotherCareDataset(resources: Resources) = listOf(
         Icon(

@@ -20,6 +20,10 @@
         <variable
             name="hasLmp"
             type="Boolean" />
+        <variable
+            name="isGeneralForm"
+            type="Boolean" />
+
     </data>
 
     <androidx.cardview.widget.CardView
@@ -48,7 +52,7 @@
                 <ImageView
                     android:id="@+id/iv_hh_logo"
                     android:layout_width="wrap_content"
-                    android:layout_height="0dp"
+                    android:layout_height="wrap_content"
                     android:paddingVertical="@dimen/padding_normal"
                     android:src="@drawable/ic__hh"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -83,12 +87,12 @@
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@id/tv_hh_id"
                     android:contentDescription="@string/iv_sync_state_tv"
-
+                    android:visibility="@{isGeneralForm ? View.GONE : View.VISIBLE}"
                     app:layout_constraintBottom_toBottomOf="@+id/tv_hh_id"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintTop_toTopOf="@+id/tv_hh_id"
-                    app:syncState="@{ben.syncState}"
+                    app:syncStateForBen="@{ben.syncState}"
                     tools:src="@drawable/ic_synced" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>

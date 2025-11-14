@@ -7,18 +7,21 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.databinding.ChildrenUnderFiveYearsItemBinding
 import org.piramalswasthya.sakhi.model.BenBasicDomain
+import org.piramalswasthya.sakhi.ui.home_activity.child_care.children_under_five_years.CUFYListViewModel
+import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
 
-class ChildrenUnderFiveYearsAdapter(
-    private val clickListener: ChildListClickListener
+class CUFYAdapter(
+    private val clickListener: ChildListClickListener,
+
 ) :
-    ListAdapter<BenBasicDomain, ChildrenUnderFiveYearsAdapter.BenViewHolder>(BenDiffUtilCallBack) {
-    private object BenDiffUtilCallBack : DiffUtil.ItemCallback<BenBasicDomain>() {
+    ListAdapter<CUFYListViewModel.BenWithSamStatus, CUFYAdapter.BenViewHolder>(BenDiffUtilCallBack) {
+    private object BenDiffUtilCallBack : DiffUtil.ItemCallback<CUFYListViewModel.BenWithSamStatus>() {
         override fun areItemsTheSame(
-            oldItem: BenBasicDomain, newItem: BenBasicDomain
-        ) = oldItem.benId == newItem.benId
+            oldItem: CUFYListViewModel.BenWithSamStatus, newItem: CUFYListViewModel.BenWithSamStatus
+        ) = oldItem.ben.benId == newItem.ben.benId
 
         override fun areContentsTheSame(
-            oldItem: BenBasicDomain, newItem: BenBasicDomain
+            oldItem: CUFYListViewModel.BenWithSamStatus, newItem: CUFYListViewModel.BenWithSamStatus
         ) = oldItem == newItem
 
     }
@@ -34,11 +37,12 @@ class ChildrenUnderFiveYearsAdapter(
         }
 
         fun bind(
-            item: BenBasicDomain,
+            item: CUFYListViewModel.BenWithSamStatus,
             clickListener: ChildListClickListener
         ) {
-            binding.ben = item
+            binding.ben =  item.ben
             binding.clickListener = clickListener
+            binding.samStatus = item.samStatus
             binding.executePendingBindings()
 
         }
@@ -50,21 +54,32 @@ class ChildrenUnderFiveYearsAdapter(
 
     override fun onBindViewHolder(holder: BenViewHolder, position: Int) {
         holder.bind(getItem(position), clickListener)
+
+    }
+
+    suspend fun updateSamStatus(benId: Long, status: String) {
+        val currentList = currentList.toMutableList()
+        val index = currentList.indexOfFirst { it.ben.benId == benId }
+        if (index != -1) {
+            val updatedItem = currentList[index].copy(samStatus = status)
+            currentList[index] = updatedItem
+            submitList(currentList.toList())
+        }
     }
 
 
     class ChildListClickListener(
-        val goToForm: (benId: Long, hhId: Long, type: String) -> Unit
+        val goToForm: (benId: Long, hhId: Long, dob: Long, type: String) -> Unit
 
     ) {
         fun onClickedSAM(item: BenBasicDomain) = goToForm(
-            item.benId, item.hhId, "Check SAM"
+            item.benId, item.hhId, item.dob, FormConstants.SAM_FORM_NAME
         )
         fun onClickedORS(item: BenBasicDomain) = goToForm(
-            item.benId, item.hhId, "ORS"
+            item.benId, item.hhId, item.dob, FormConstants.ORS_FORM_NAME
         )
         fun onClickedIFA(item: BenBasicDomain) = goToForm(
-            item.benId, item.hhId, "IFA"
+            item.benId, item.hhId, item.dob, FormConstants.IFA_FORM_NAME
         )
     }
 
