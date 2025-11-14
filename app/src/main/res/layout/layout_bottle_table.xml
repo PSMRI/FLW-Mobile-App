@@ -9,7 +9,7 @@
         android:id="@+id/table_heading"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Bottle Distribution"
+        android:text="@string/bottle_distribution"
         android:textStyle="bold"
         android:textSize="16sp"
         android:gravity="center"
@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:weightSum="3"
-        android:background="#E0E0E0"
+        android:background="@color/table_header_background"
         android:paddingVertical="8dp">
 
         <TextView
@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="S. No"
+            android:text="@string/s_no"
             android:textStyle="bold" />
 
         <TextView
@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Bottle Number"
+            android:text="@string/bottle_number"
             android:textStyle="bold" />
 
         <TextView
@@ -48,7 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Date of Provision"
+            android:text="@string/date_of_provision"
             android:textStyle="bold" />
     </LinearLayout>
 
