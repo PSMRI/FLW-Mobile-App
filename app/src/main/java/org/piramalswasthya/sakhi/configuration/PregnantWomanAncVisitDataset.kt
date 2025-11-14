@@ -435,7 +435,7 @@ class PregnantWomanAncVisitDataset(
             ancDate,
             weekOfPregnancy,
             ancVisit,
-            isAborted,
+//            isAborted,
             maternalDeath,
             weight,
             bp,

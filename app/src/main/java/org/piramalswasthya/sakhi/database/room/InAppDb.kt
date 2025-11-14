@@ -178,7 +178,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
     ],
     views = [BenBasicCache::class],
 
-    version = 40, exportSchema = false
+    version = 36, exportSchema = false
 )
 
 @TypeConverters(
@@ -249,6 +249,28 @@ abstract class InAppDb : RoomDatabase() {
 
             })
 
+            val MIGRATION_35_36 = object : Migration(35, 36) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("ALTER TABLE form_schema ADD COLUMN language TEXT NOT NULL DEFAULT 'en'")
+                }
+            }
+
+            val MIGRATION_34_35 = object : Migration(34, 35) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    try {
+                        database.execSQL("ALTER TABLE PREGNANCY_ANC ADD COLUMN isYesOrNo INTEGER DEFAULT 0")
+                    } catch (e: Exception) {  }
+
+                    try {
+                        database.execSQL("ALTER TABLE PREGNANCY_ANC ADD COLUMN dateSterilisation INTEGER")
+                    } catch (e: Exception) { }
+                    database.execSQL("UPDATE PREGNANCY_ANC SET isPaiucdId = CASE WHEN isPaiucdId = 1 THEN 1 ELSE 0 END")
+                }
+            }
+
+
+
+            val MIGRATION_33_34 = object : Migration(33, 34) {
             val MIGRATION_39_40 = object : Migration(39, 40) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     database.execSQL(
@@ -322,6 +344,9 @@ abstract class InAppDb : RoomDatabase() {
                 }
             }
 
+
+
+            val MIGRATION_32_33 = object : Migration(32, 33) {
             val MIGRATION_36_37 = object : Migration(36, 37) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     database.execSQL(
@@ -1425,6 +1450,7 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_32_33,
                         MIGRATION_33_34,
                         MIGRATION_34_35,
+                        MIGRATION_35_36
                         MIGRATION_35_36,
                         MIGRATION_36_37,
                         MIGRATION_37_38,

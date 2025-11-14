@@ -310,7 +310,6 @@ interface AmritApiService {
     suspend fun fetchFormSchema(
         @Path("formId") formId: String,
         @Query("lang") lang: String
-
     ): Response<ApiResponse<FormSchemaDto>>
 
 
