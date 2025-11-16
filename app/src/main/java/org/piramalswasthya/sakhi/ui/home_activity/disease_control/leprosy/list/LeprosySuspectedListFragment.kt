@@ -87,6 +87,10 @@ class LeprosySuspectedListFragment : Fragment() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
 
     private fun showVisitsBottomSheet(benWithLeprosy: BenWithLeprosyScreeningDomain) {
         val bottomSheetDialog = BottomSheetDialog(requireContext())

@@ -94,8 +94,13 @@ class LeprosyVisitViewModel @Inject constructor(
                     modifiedBy = username
                 )
             }
-            screening = leprosyRepo.getLeprosyScreening(benId) ?: throw IllegalStateException("No screening data found for confirmed case with benId: $benId")
-
+            val screeningRecord = leprosyRepo.getLeprosyScreening(benId)
+            if (screeningRecord == null) {
+                _state.value = State.SAVE_FAILED
+                return@launch
+            }
+            screening = screeningRecord
+            screeningData = screeningRecord
             leprosyScreenCache = screening
             screeningData = screening
             _recordExists.value = true
@@ -107,14 +112,16 @@ class LeprosyVisitViewModel @Inject constructor(
             val followUpsForVisit = leprosyRepo.getFollowUpsForVisit(benId, visitNumber)
             _followUpDates.value = followUpsForVisit
 
-            // Get the latest follow-up for this visit
             val latestFollowUp = followUpsForVisit.maxByOrNull { it.followUpDate }
             _lastFollowUp.value = latestFollowUp
 
-            dataset.setUpPage(
-                ben,
-                followUp = latestFollowUp
-            )
+            if (ben != null) {
+                dataset.setUpPage(
+                    ben = ben,
+                    saved = screeningRecord,
+                    followUp = latestFollowUp
+                )
+            }
         }
     }
 
@@ -132,15 +139,6 @@ class LeprosyVisitViewModel @Inject constructor(
             .filter { it.visitNumber == currentVisitNumber }
             .maxByOrNull { it.followUpDate }
     }
-
-
-
-
-
-
-
-
-
 
     fun resetState() {
         _state.value = State.IDLE

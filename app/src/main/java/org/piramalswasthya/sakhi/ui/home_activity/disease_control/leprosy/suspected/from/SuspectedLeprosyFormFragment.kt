@@ -77,7 +77,7 @@ class SuspectedLeprosyFormFragment  : Fragment() {
             binding.tvAgeGender.text = it
         }
         binding.btnSubmit.setOnClickListener {
-            submitMalariaScreeningForm()
+            submitLeprosyScreeningForm()
         }
 
         viewModel.state.observe(viewLifecycleOwner) {
@@ -106,7 +106,7 @@ class SuspectedLeprosyFormFragment  : Fragment() {
             resources.getString(message),Toast.LENGTH_SHORT
         ).show()
     }
-    private fun submitMalariaScreeningForm() {
+    private fun submitLeprosyScreeningForm() {
         if (validateCurrentPage()) {
             viewModel.saveForm()
         }

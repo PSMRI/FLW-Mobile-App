@@ -160,7 +160,6 @@ class LeprosyConfirmedDataset(
             treatmentStatus,
         )
 
-        // Initialize date constraints
         homeVisitDateLong = saved?.homeVisitDate ?: System.currentTimeMillis()
         treatmentStartDateLong = saved?.treatmentStartDate ?: 0L
         lastFollowUpDateLong = followUp?.followUpDate ?: 0L
@@ -169,10 +168,9 @@ class LeprosyConfirmedDataset(
         if (saved == null) {
             dateOfCase.value = getDateFromLong(System.currentTimeMillis())
             leprosyStatus.value = resources.getStringArray(R.array.leprosy_status)[0]
-            visitLabel.value = "Visit -1"
+            visitLabel.value = "Visit -${saved?.currentVisitNumber ?: 1}"
             leprosySymptoms.value = resources.getStringArray(R.array.yes_no)[1]
 
-            // Set initial min dates
             updateDateConstraints()
         } else {
             dateOfCase.value = getDateFromLong(saved.homeVisitDate)
@@ -205,7 +203,6 @@ class LeprosyConfirmedDataset(
 
             other.value = saved.otherReferredTo
 
-            // Update date constraints
             updateDateConstraints()
         }
 
@@ -231,7 +228,6 @@ class LeprosyConfirmedDataset(
 
             remarks.value = followUp.remarks
 
-            // Update date constraints for existing follow-up
             updateDateConstraints()
         }
 
@@ -263,7 +259,6 @@ class LeprosyConfirmedDataset(
         mdt_blister_pack_recived.isEnabled = false
         treatmentStatus.isEnabled = false
 
-        // Initialize date constraints
         homeVisitDateLong = followUp?.homeVisitDate ?: System.currentTimeMillis()
         treatmentStartDateLong = followUp?.treatmentStartDate ?: 0L
         lastFollowUpDateLong = followUp?.followUpDate ?: 0L
@@ -275,7 +270,6 @@ class LeprosyConfirmedDataset(
             visitLabel.value = "Visit -1"
             leprosySymptoms.value = resources.getStringArray(R.array.yes_no)[1]
 
-            // Set initial min dates
             updateDateConstraints()
         } else {
             dateOfCase.value = getDateFromLong(followUp.homeVisitDate)
@@ -320,7 +314,6 @@ class LeprosyConfirmedDataset(
                 list.add(list.indexOf(treatmentStatus) + 1, treatmentEndDate)
             }
 
-            // Update date constraints for existing follow-up
             updateDateConstraints()
         }
 
@@ -328,7 +321,7 @@ class LeprosyConfirmedDataset(
     }
 
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
-        return when (formId) {
+         when (formId) {
             treatmentStatus.id -> {
                 if (treatmentStatus.value == treatmentStatus.entries!!.last()) {
                     triggerDependants(
@@ -346,23 +339,19 @@ class LeprosyConfirmedDataset(
             }
 
             treatmentStartDate.id -> {
-                // Update treatment start date and refresh constraints
                 treatmentStartDateLong = getLongFromDate(treatmentStartDate.value)
                 updateDateConstraints()
-                return 0
+
             }
 
             followUpdate.id -> {
-                // Update follow-up date and refresh constraints
                 lastFollowUpDateLong = getLongFromDate(followUpdate.value)
                 updateDateConstraints()
-                return 0
+
             }
 
-            else -> {
-                return 0
-            }
         }
+        return 0
     }
 
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {

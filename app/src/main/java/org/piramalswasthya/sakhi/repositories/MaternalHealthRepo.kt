@@ -217,7 +217,7 @@ class MaternalHealthRepo @Inject constructor(
                 } catch (e: IOException) {
                     e.printStackTrace()
                 } catch (e: SocketTimeoutException) {
-                   // postDataToAmritServer(ancPostList)
+                    postDataToAmritServer(ancPostList)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -228,8 +228,7 @@ class MaternalHealthRepo @Inject constructor(
             return false
         } catch (e: SocketTimeoutException) {
             Timber.d("Caught exception $e here")
-            return false
-           // return postDataToAmritServer(ancPostList)
+            return postDataToAmritServer(ancPostList)
         } catch (e: JSONException) {
             Timber.d("Caught exception $e here")
             return false
