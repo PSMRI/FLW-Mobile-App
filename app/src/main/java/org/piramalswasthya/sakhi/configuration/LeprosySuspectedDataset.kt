@@ -186,7 +186,7 @@ class LeprosySuspectedDataset (
 
     }
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
-        return when (formId) {
+         when (formId) {
 
             typeOfLeprosy.id -> {
                 leprosyStatus.value = resources.getStringArray(R.array.leprosy_status)[4]
@@ -199,11 +199,12 @@ class LeprosySuspectedDataset (
                     removeItems = listOf(treatmentStartDate)
                 )
 
-                0
+
             }
 
-            else -> 0
+
         }
+        return 0
     }
 
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {

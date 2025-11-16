@@ -517,7 +517,9 @@
     <string name="leprosy_confirmed">Leprosy Confirmed</string>
     <string name="leprosy_suspected">Leprosy Suspected</string>
     <string name="leprosy_confirmed_form">Leprosy Confirmed Form</string>
-    <string name="leprosy_suspected_form">Leprosy Suspected Fomm</string>
+    <string name="leprosy_suspected_form">Leprosy Suspected Form</string>
+    <string name="follow_up_history">Follow-up History</string>
+    <string name="download_not_available_for_this_variant">Download not available for this variant</string>
 
     <string-array name="sync_records">
         <item>Beneficiary</item>

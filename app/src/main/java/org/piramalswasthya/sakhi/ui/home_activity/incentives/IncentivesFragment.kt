@@ -259,7 +259,8 @@ class IncentivesFragment : Fragment() {
         binding.tvTotalPending.setOnClickListener {
             if (isMitaninVariant) {
 
-                Toast.makeText(requireContext(), "Download not available for this variant", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(),
+                    getString(R.string.download_not_available_for_this_variant), Toast.LENGTH_SHORT).show()
             } else {
                 askPermissions()
             }

@@ -145,7 +145,7 @@ class SuspectedLeprosyFromViewModel@Inject constructor(
                     leprosyRepo.updateLerosyScreening(leprosyScreenCache)
                     _state.postValue(State.SAVE_SUCCESS)
                 } catch (e: Exception) {
-                    Timber.d("saving Filaria data failed!!")
+                    Timber.d("saving  leprosy screening data  data failed!!")
                     _state.postValue(State.SAVE_FAILED)
                 }
             }

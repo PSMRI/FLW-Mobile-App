@@ -238,16 +238,7 @@ class PncFormDataset(
         title = "Delivery Discharge Summary 4",
         required = false
     )
-    val numberPickerElement = FormElement(
-        id = 1001,
-        inputType = InputType.NUMBER_PICKER,
-        required = true,
-        title = "Quantity",
-        value = "0", // Initial value
-        min = 0L, // Minimum value (0 by default)
-        max = 100L, // Maximum value (optional)
-        isEnabled = true
-    )
+
 
     private val sterilisation : Array<String> by lazy {
         resources.getStringArray(R.array.sterilization_methods_array)

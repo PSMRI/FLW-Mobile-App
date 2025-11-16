@@ -292,6 +292,7 @@ class LeprosyRepo @Inject constructor(
             screening.leprosyStatus = context.resources.getStringArray(R.array.leprosy_status)[0]
             screening.isConfirmed = false
             screening.leprosySymptomsPosition = 1
+            screening.syncState = SyncState.UNSYNCED
 
             leprosyDao.updateLeprosyScreening(screening)
             true

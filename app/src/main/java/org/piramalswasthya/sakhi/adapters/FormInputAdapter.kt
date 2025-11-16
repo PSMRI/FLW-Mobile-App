@@ -995,6 +995,14 @@ class FormInputAdapter(
         ) {
             binding.form = item
 
+            binding.etNumberInput.isEnabled = isEnabled
+            binding.btnDecrement.isEnabled = isEnabled
+            binding.btnIncrement.isEnabled = isEnabled
+            if (!isEnabled) {
+                hideError()
+                return
+            }
+
             val minValue = item.min?.toInt() ?: 0
             val maxValue = item.max?.toInt()
             val allowNegative = item.minDecimal != null && item.minDecimal!! < 0
@@ -1019,26 +1027,34 @@ class FormInputAdapter(
 
                     if (internalUpdate) return
                     if (editable.isNullOrBlank()) {
-                        showError("Value cannot be empty")
+                        item.errorText = "Value cannot be empty"
+                        showError(item.errorText!!)
                         return
                     }
 
                     val inputValue = editable.toString().toIntOrNull()
                     if (inputValue == null) {
-                        showError("Enter a valid number")
+                        item.errorText = "Enter a valid number"
+                        showError(item.errorText!!)
                         return
                     }
 
                     val validated = validateValue(inputValue, minValue, maxValue, allowNegative)
 
                     if (validated != inputValue) {
-                        showError("Allowed range: $minValue to $maxValue")
+                        val msg = if (maxValue != null)
+                            "Allowed range: $minValue to $maxValue"
+                        else
+                            "Minimum allowed value: $minValue"
+                        item.errorText = msg
+                        showError(msg)
 
                         updateDisplay(validated)
                         updateValue(validated, item, formValueListener)
                         return
                     }
 
+                    item.errorText = null
                     hideError()
 
                     currentValue = validated
