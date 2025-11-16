@@ -14,5 +14,6 @@ enum class InputType {
     AGE_PICKER,
     BUTTON,
 
-    FILE_UPLOAD
+    FILE_UPLOAD,
+    NUMBER_PICKER
 }

@@ -67,7 +67,7 @@ class PncFormDataset(
 
     private val ifaTabsGiven = FormElement(
         id = 4,
-        inputType = InputType.EDIT_TEXT,
+        inputType = InputType.NUMBER_PICKER,
         title = resources.getString(R.string.pnc_ifa_tabs_given),
         required = false,
         hasDependants = false,
@@ -238,6 +238,16 @@ class PncFormDataset(
         title = "Delivery Discharge Summary 4",
         required = false
     )
+    val numberPickerElement = FormElement(
+        id = 1001,
+        inputType = InputType.NUMBER_PICKER,
+        required = true,
+        title = "Quantity",
+        value = "0", // Initial value
+        min = 0L, // Minimum value (0 by default)
+        max = 100L, // Maximum value (optional)
+        isEnabled = true
+    )
 
     private val sterilisation : Array<String> by lazy {
         resources.getStringArray(R.array.sterilization_methods_array)
@@ -265,7 +275,8 @@ class PncFormDataset(
             deliveryDischargeSummary1,
             deliveryDischargeSummary2,
             deliveryDischargeSummary3,
-            deliveryDischargeSummary4
+            deliveryDischargeSummary4,
+
 
         )
 

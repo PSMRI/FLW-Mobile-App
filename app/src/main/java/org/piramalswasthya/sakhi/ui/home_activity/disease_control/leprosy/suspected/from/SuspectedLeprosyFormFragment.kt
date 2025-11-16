@@ -130,7 +130,7 @@ class SuspectedLeprosyFormFragment  : Fragment() {
         activity?.let {
             (it as HomeActivity).updateActionBar(
                 R.drawable.ic__ncd,
-                getString(R.string.leprosy_screening_form)
+                getString(R.string.leprosy_suspected_form)
             )
         }
     }

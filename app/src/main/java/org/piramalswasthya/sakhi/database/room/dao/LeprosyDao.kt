@@ -49,7 +49,7 @@ interface LeprosyDao {
     @Query("SELECT * FROM LEPROSY_FOLLOW_UP WHERE benId = :benId AND visitNumber = :visitNumber ORDER BY followUpDate DESC")
     suspend fun getFollowUpsByVisit(benId: Long, visitNumber: Int): List<LeprosyFollowUpCache>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertFollowUp(followUp: LeprosyFollowUpCache)
 
     @Update

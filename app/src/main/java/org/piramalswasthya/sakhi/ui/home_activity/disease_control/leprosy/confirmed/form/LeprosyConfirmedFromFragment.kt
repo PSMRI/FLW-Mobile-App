@@ -53,9 +53,7 @@ class LeprosyConfirmedFromFragment : Fragment() {
 
         viewModel.followUpDates.observe(viewLifecycleOwner) { followUps ->
             followUpAdapter.submitList(followUps)
-            //binding.f = "Total Follow-ups: ${followUps.size}"
 
-            // Show/hide follow-up section based on whether there are follow-ups
             if (followUps.isNotEmpty()) {
                 binding.rvFollowUpDates.visibility = View.VISIBLE
             } else {
@@ -97,6 +95,12 @@ class LeprosyConfirmedFromFragment : Fragment() {
             submitMalariaScreeningForm()
         }
 
+        viewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
+            errorMessage?.let {
+                Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+                viewModel.clearErrorMessage()
+            }
+        }
         viewModel.state.observe(viewLifecycleOwner) {
             when (it) {
                 LeprosyConfirmedFromViewModel.State.SAVE_SUCCESS -> {
@@ -167,7 +171,7 @@ class LeprosyConfirmedFromFragment : Fragment() {
         activity?.let {
             (it as HomeActivity).updateActionBar(
                 R.drawable.ic__ncd,
-                "Leprosy Confirmed"
+                getString(R.string.leprosy_confirmed_form)
             )
         }
     }

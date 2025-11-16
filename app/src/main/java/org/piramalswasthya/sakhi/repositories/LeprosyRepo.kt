@@ -511,65 +511,85 @@ class LeprosyRepo @Inject constructor(
         }
     }
 
-    // Helper method to save all leprosy data from response (prevents duplicates)
     private suspend fun saveAllLeprosyDataFromResponse(dataObj: String) {
+
+
         try {
-            // Parse as array of LeprosyScreeningDTO
+
             val leprosyList = Gson().fromJson(dataObj, Array<LeprosyScreeningDTO>::class.java)
-            leprosyList?.forEach { leprosyScreeningDTO ->
+
+
+            leprosyList?.forEachIndexed { index, leprosyScreeningDTO ->
+
+
                 leprosyScreeningDTO.homeVisitDate?.let { visitDate ->
+
+                    val visitLong = getLongFromDate(visitDate)
+                    val previousVisitWindow = visitLong - 19_800_000
+
+
+
                     val existingScreening = leprosyDao.getLeprosyScreening(
                         leprosyScreeningDTO.benId,
-                        getLongFromDate(visitDate),
-                        getLongFromDate(visitDate) - 19_800_000
+                        visitLong,
+                        previousVisitWindow
                     )
+
                     if (existingScreening == null) {
-                        benDao.getBen(leprosyScreeningDTO.benId)?.let {
-                            leprosyDao.saveLeprosyScreening(leprosyScreeningDTO.toCache().copy(
+
+
+                        val benExists = benDao.getBen(leprosyScreeningDTO.benId)
+
+                        if (benExists != null) {
+                            val cacheObj = leprosyScreeningDTO.toCache().copy(
                                 syncState = SyncState.SYNCED
-                            ))
+                            )
+                            leprosyDao.saveLeprosyScreening(cacheObj)
+
+
+                        } else {
+                            Timber.w(" Ben does NOT exist locally → Skipping save for benId=${leprosyScreeningDTO.benId}")
                         }
+
                     } else {
-                        leprosyDao.updateLeprosyScreening(leprosyScreeningDTO.toCache().copy(
+
+                        Timber.d(
+                            " Existing screening FOUND (id=${existingScreening.id}) → Updating record for benId=${leprosyScreeningDTO.benId}"
+                        )
+
+                        val updatedCache = leprosyScreeningDTO.toCache().copy(
                             id = existingScreening.id,
                             syncState = SyncState.SYNCED
-                        ))
+                        )
+
+                        leprosyDao.updateLeprosyScreening(updatedCache)
+
                     }
+                } ?: run {
+                    Timber.w(" homeVisitDate is NULL for benId=${leprosyScreeningDTO.benId} → Skipping this record")
                 }
             }
-            Timber.d("Successfully saved ${leprosyList?.size ?: 0} leprosy screening records")
+
+            Timber.d(" Successfully saved ${leprosyList?.size ?: 0} leprosy screening records")
+
         } catch (e: Exception) {
-            Timber.d("Error saving leprosy data: $e")
+            Timber.e(e, "Error saving leprosy data")
             throw e
         }
     }
 
+
     private suspend fun saveAllLeprosyFollowUpDataFromResponse(dataObj: String) {
         try {
-            // Parse as array of LeprosyFollowUpDTO
             val followUpList = Gson().fromJson(dataObj, Array<LeprosyFollowUpDTO>::class.java)
             followUpList?.forEach { followUpDTO ->
                 followUpDTO.followUpDate?.let { followUpDate ->
-                    val existingFollowUp = leprosyDao.getFollowUp(
-                        followUpDTO.benId,
-                        followUpDTO.visitNumber,
-                        getLongFromDate(followUpDate)
-                    )
-                    if (existingFollowUp == null) {
-                        benDao.getBen(followUpDTO.benId)?.let {
-                            leprosyDao.insertFollowUp(followUpDTO.toCache().copy(
-                                syncState = SyncState.SYNCED
-                            ))
-                        }
-                    } else {
-                        leprosyDao.updateFollowUp(followUpDTO.toCache().copy(
-                            id = existingFollowUp.id,
-                            syncState = SyncState.SYNCED
-                        ))
-                    }
+                    leprosyDao.insertFollowUp(followUpDTO.toCache().copy(
+                        syncState = SyncState.SYNCED
+                    ))
                 }
             }
-            Timber.d("Successfully saved ${followUpList?.size ?: 0} leprosy followup records")
+            Timber.d("Successfully upserted ${followUpList?.size ?: 0} leprosy followup records")
         } catch (e: Exception) {
             Timber.d("Error saving leprosy followup data: $e")
             throw e

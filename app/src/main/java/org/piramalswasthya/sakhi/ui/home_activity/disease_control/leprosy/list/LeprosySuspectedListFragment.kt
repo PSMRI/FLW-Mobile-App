@@ -104,7 +104,6 @@ class LeprosySuspectedListFragment : Fragment() {
             binding.rvVisits.visibility = View.VISIBLE
             binding.tvEmptyMessage.visibility = View.GONE
 
-            // Setup RecyclerView with LayoutManager
             binding.rvVisits.layoutManager = LinearLayoutManager(requireContext())
 
             val visitsAdapter = VisitsAdapter(visitNumbers) { visitNumber ->
@@ -119,7 +118,6 @@ class LeprosySuspectedListFragment : Fragment() {
         bottomSheetDialog.setContentView(binding.root)
         bottomSheetDialog.show()
 
-        // Debug: Check if the bottom sheet is actually showing items
         binding.rvVisits.post {
             println("DEBUG: RecyclerView child count = ${binding.rvVisits.childCount}")
             println("DEBUG: RecyclerView adapter item count = ${binding.rvVisits.adapter?.itemCount}")
