@@ -49,7 +49,7 @@ class PullPWRFromAmritWorker @AssistedInject constructor(
                     val result1 =
                         awaitAll(
                             async { getPwrDetails() },
-                            async { getAncVisitDetails() }
+                          //  async { getAncVisitDetails() }
                         )
 
                     val endTime = System.currentTimeMillis()

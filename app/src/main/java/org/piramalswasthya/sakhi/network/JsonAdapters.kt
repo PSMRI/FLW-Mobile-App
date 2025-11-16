@@ -1363,9 +1363,9 @@ data class LeprosyScreeningDTO(
     var mdtBlisterPackRecived: String? = null,
     var treatmentStatus: String? = null,
     val createdBy: String,
-    val createdDate: Long = System.currentTimeMillis(),
+    val createdDate:String,
     val modifiedBy: String,
-    val lastModDate: Long = System.currentTimeMillis(),
+    val lastModDate: String,
 ) {
     fun toCache(): LeprosyScreeningCache {
         return LeprosyScreeningCache(
@@ -1401,9 +1401,9 @@ data class LeprosyScreeningDTO(
             mdtBlisterPackRecived = mdtBlisterPackRecived,
             treatmentStatus = treatmentStatus,
             createdBy = createdBy,
-            createdDate = createdDate,
+            createdDate = getLongFromDate(createdDate),
             modifiedBy = modifiedBy,
-            lastModDate =lastModDate,
+            lastModDate =getLongFromDate(lastModDate),
             syncState = SyncState.SYNCED
         )
     }
@@ -1428,9 +1428,9 @@ data class LeprosyFollowUpDTO(
     var treatmentEndDate: String = getDateTimeStringFromLong(System.currentTimeMillis()).toString(),
     var mdtBlisterPackRecived: String? = null,
     val createdBy: String,
-    val createdDate: Long = System.currentTimeMillis(),
+    val createdDate: String,
     val modifiedBy: String,
-    val lastModDate: Long = System.currentTimeMillis(),
+    val lastModDate: String,
     var treatmentStartDate: String = getDateTimeStringFromLong(System.currentTimeMillis()).toString()
 ) {
     fun toCache(): LeprosyFollowUpCache {
@@ -1454,9 +1454,9 @@ data class LeprosyFollowUpDTO(
             mdtBlisterPackRecived = mdtBlisterPackRecived,
             treatmentStartDate = getLongFromDate(treatmentStartDate),
             createdBy = createdBy,
-            createdDate =createdDate,
+            createdDate =getLongFromDate(createdDate),
             modifiedBy = modifiedBy,
-            lastModDate =lastModDate,
+            lastModDate =getLongFromDate(lastModDate),
             syncState = SyncState.SYNCED
         )
     }

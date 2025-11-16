@@ -67,7 +67,7 @@ class SuspectedLeprosyListFragment: Fragment() {
         activity?.let {
             (it as HomeActivity).updateActionBar(
                 R.drawable.ic__hh,
-                "Leprosy Suspected"
+                getString(R.string.leprosy_suspected)
             )
         }
     }

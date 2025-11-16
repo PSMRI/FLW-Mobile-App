@@ -13,6 +13,8 @@ class LeprosySuspectedDataset (
     context: Context, currentLanguage: Languages
 ) : Dataset(context, currentLanguage) {
 
+    private var homeVisitDateLong: Long = System.currentTimeMillis()
+    private var treatmentStartDateLong: Long = 0L
     private val dateOfCase = FormElement(
         id = 1,
         inputType = InputType.TEXT_VIEW,
@@ -135,11 +137,15 @@ class LeprosySuspectedDataset (
 
 
             )
+        homeVisitDateLong = saved?.homeVisitDate ?: System.currentTimeMillis()
         if (saved == null) {
             dateOfCase.value = getDateFromLong(System.currentTimeMillis())
             leprosyStatus.value = resources.getStringArray(R.array.leprosy_status)[0]
             visitLabel.value = "Visit -1"
             leprosySymptoms.value = resources.getStringArray(R.array.yes_no)[1]
+
+            updateDateConstraints()
+
         } else {
             dateOfCase.value = getDateFromLong(saved.homeVisitDate)
             val symptomsPosition = saved.leprosySymptomsPosition ?: 1
@@ -168,6 +174,9 @@ class LeprosySuspectedDataset (
             }
 
             other.value = saved.otherReferredTo
+
+
+            updateDateConstraints()
 
         }
 
@@ -235,5 +244,11 @@ class LeprosySuspectedDataset (
 
     fun getIndexOfDate(): Int {
         return getIndexById(dateOfCase.id)
+    }
+
+    private fun updateDateConstraints() {
+        treatmentStartDate.min = homeVisitDateLong
+
+
     }
 }

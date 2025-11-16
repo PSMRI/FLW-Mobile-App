@@ -70,8 +70,7 @@ class LeprosyConfirmedListFragment: Fragment() {
         activity?.let {
             (it as HomeActivity).updateActionBar(
                 R.drawable.ic__hh,
-                "Leprosy Confirmed"
-            )
+                getString(R.string.leprosy_confirmed)            )
         }
     }
 

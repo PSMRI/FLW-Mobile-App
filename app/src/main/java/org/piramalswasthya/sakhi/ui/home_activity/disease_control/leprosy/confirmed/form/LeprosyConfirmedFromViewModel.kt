@@ -87,6 +87,10 @@ class LeprosyConfirmedFromViewModel@Inject constructor(
     private lateinit var leprosyScreenCache: LeprosyScreeningCache
     private lateinit var screeningData: LeprosyScreeningCache
     private lateinit var screening : LeprosyScreeningCache
+    private val _errorMessage = MutableLiveData<String?>()
+    val errorMessage: LiveData<String?>
+        get() = _errorMessage
+
 
 
     init {
@@ -143,6 +147,9 @@ class LeprosyConfirmedFromViewModel@Inject constructor(
     }
 
 
+    fun clearErrorMessage() {
+        _errorMessage.value = null
+    }
 
 
 
@@ -152,6 +159,14 @@ class LeprosyConfirmedFromViewModel@Inject constructor(
             withContext(Dispatchers.IO) {
                 try {
                     _state.postValue(State.SAVING)
+
+                    val validationError = dataset.validateForm()
+                    if (validationError != null) {
+                        _state.postValue(State.SAVE_FAILED)
+                        // Post error message to show in fragment
+                        _errorMessage.postValue(validationError)
+                        return@withContext
+                    }
 
                     val newFollowUp = LeprosyFollowUpCache(
                         benId = benId,

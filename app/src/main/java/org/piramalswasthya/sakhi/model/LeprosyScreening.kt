@@ -97,9 +97,9 @@ data class LeprosyScreeningCache(
             treatmentEndDate = getDateTimeStringFromLong(treatmentEndDate).toString(),
             mdtBlisterPackRecived = mdtBlisterPackRecived,
             createdBy = createdBy,
-            createdDate =createdDate,
+            createdDate =getDateTimeStringFromLong(createdDate).toString(),
             modifiedBy = modifiedBy,
-            lastModDate = lastModDate,
+            lastModDate = getDateTimeStringFromLong(lastModDate).toString(),
             treatmentStatus = treatmentStatus
         )
     }
@@ -208,9 +208,9 @@ data class LeprosyFollowUpCache(
             treatmentEndDate = getDateTimeStringFromLong(treatmentEndDate).toString(),
             mdtBlisterPackRecived = mdtBlisterPackRecived,
             createdBy = createdBy,
-            createdDate = createdDate,
+            createdDate =getDateTimeStringFromLong(createdDate).toString(),
             modifiedBy = modifiedBy,
-            lastModDate = lastModDate,
+            lastModDate = getDateTimeStringFromLong(lastModDate).toString(),
             treatmentStartDate = getDateTimeStringFromLong(treatmentStartDate).toString()
         )
     }
