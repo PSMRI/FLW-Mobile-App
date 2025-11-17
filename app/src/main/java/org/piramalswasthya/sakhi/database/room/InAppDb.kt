@@ -178,7 +178,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
     ],
     views = [BenBasicCache::class],
 
-    version = 43, exportSchema = false
+    version = 42, exportSchema = false
 )
 
 @TypeConverters(
@@ -261,17 +261,6 @@ abstract class InAppDb : RoomDatabase() {
                     database.execSQL("ALTER TABLE form_schema ADD COLUMN language TEXT NOT NULL DEFAULT 'en'")
                 }
             }
-
-            val MIGRATION_42_43 = object : Migration(42, 43) {
-                override fun migrate(database: SupportSQLiteDatabase) {
-                    database.execSQL("ALTER TABLE INFANT_REG ADD COLUMN isSNCU TEXT")
-                    database.execSQL("ALTER TABLE INFANT_REG ADD COLUMN deliveryDischargeSummary1 TEXT")
-                    database.execSQL("ALTER TABLE INFANT_REG ADD COLUMN deliveryDischargeSummary2 TEXT")
-                    database.execSQL("ALTER TABLE INFANT_REG ADD COLUMN deliveryDischargeSummary3 TEXT")
-                    database.execSQL("ALTER TABLE INFANT_REG ADD COLUMN deliveryDischargeSummary4 TEXT")
-                }
-            }
-
 
             val MIGRATION_39_40 = object : Migration(39, 40) {
                 override fun migrate(database: SupportSQLiteDatabase) {
@@ -1455,8 +1444,7 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_38_39,
                         MIGRATION_39_40,
                         MIGRATION_40_41,
-                        MIGRATION_41_42,
-                        MIGRATION_42_43
+                        MIGRATION_41_42
                     ).build()
 
                     INSTANCE = instance
