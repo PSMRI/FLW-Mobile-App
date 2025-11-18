@@ -432,7 +432,7 @@ class IconDataset @Inject constructor(
     fun getLeprosyDataset(resources: Resources) = listOf(
         Icon(
             R.drawable.leprocy,
-            "Leprosy Screening",
+            resources.getString(R.string.leprosy_screening),
             recordsRepo.tbScreeningListCount,
             LeprosyFragmentDirections.actionLeprosyFragmentToAllHouseHoldDiseaseControlFragment(
                 Disease.LEPROSY.toString()
@@ -440,13 +440,13 @@ class IconDataset @Inject constructor(
         ),
         Icon(
             R.drawable.leprocy,
-            "Leprosy Suspected,",
-            recordsRepo.leprosySuspectedListCount,
+            resources.getString(R.string.leprosy_suspected),
+             recordsRepo.leprosySuspectedListCount,
             LeprosyFragmentDirections.actionLeprosyFragmenToLeprosySuspectedListFragment()
         ),
         Icon(
             R.drawable.leprocy,
-            "Leprosy Confirmed",
+            resources.getString(R.string.leprosy_confirmed),
             recordsRepo.leprosyConfirmedCasesListCount,
             LeprosyFragmentDirections.actionLeprosyDragmentToLeprosyConfirmedListFragment()
         ),

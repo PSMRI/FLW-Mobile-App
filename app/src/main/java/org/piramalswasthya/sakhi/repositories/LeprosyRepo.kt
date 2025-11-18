@@ -50,7 +50,7 @@ class LeprosyRepo @Inject constructor(
         }
     }
 
-    suspend fun updateLerosyScreening(leprosyScreeningCache: LeprosyScreeningCache) {
+    suspend fun updateLeprosyScreening(leprosyScreeningCache: LeprosyScreeningCache) {
          withContext(Dispatchers.IO){
              leprosyDao.updateLeprosyScreening(leprosyScreeningCache)
          }
@@ -281,7 +281,9 @@ class LeprosyRepo @Inject constructor(
     }
 
     suspend fun getFollowUpsForVisit(benId: Long, visitNumber: Int): List<LeprosyFollowUpCache> {
-        return leprosyDao.getFollowUpsForVisit(benId, visitNumber)
+        return withContext(Dispatchers.IO) {
+            leprosyDao.getFollowUpsForVisit(benId, visitNumber)
+        }
     }
 
     suspend fun completeVisitAndStartNext(benId: Long): Boolean {

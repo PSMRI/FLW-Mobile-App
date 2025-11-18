@@ -28,7 +28,7 @@ import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
-class SuspectedLeprosyFromViewModel@Inject constructor(
+class SuspectedLeprosyFromViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     preferenceDao: PreferenceDao,
     @ApplicationContext var context: Context,
@@ -142,7 +142,7 @@ class SuspectedLeprosyFromViewModel@Inject constructor(
                         }
                     }
 
-                    leprosyRepo.updateLerosyScreening(leprosyScreenCache)
+                    leprosyRepo.updateLeprosyScreening(leprosyScreenCache)
                     _state.postValue(State.SAVE_SUCCESS)
                 } catch (e: Exception) {
                     Timber.d("saving  leprosy screening data  data failed!!")
