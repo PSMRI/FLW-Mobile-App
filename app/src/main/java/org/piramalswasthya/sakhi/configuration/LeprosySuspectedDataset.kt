@@ -99,7 +99,7 @@ class LeprosySuspectedDataset (
     private val visitLabel = FormElement(
         id = 15,
         inputType = InputType.TEXT_VIEW,
-        title = context.getString(R.string.visit),
+        title = context.getString(R.string.visits),
         required = true,
         isEnabled = false
     )
