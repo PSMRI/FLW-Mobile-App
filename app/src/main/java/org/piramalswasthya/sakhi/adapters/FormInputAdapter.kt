@@ -21,6 +21,7 @@ import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.CheckBox
 import android.widget.LinearLayout
@@ -46,6 +47,7 @@ import org.piramalswasthya.sakhi.databinding.RvItemFormDropdownV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormEditTextV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormHeadlineV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormImageViewV2Binding
+import org.piramalswasthya.sakhi.databinding.RvItemFormNumberPickerBinding
 import org.piramalswasthya.sakhi.databinding.RvItemFormRadioV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormTextViewV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormTimepickerV2Binding
@@ -971,6 +973,156 @@ class FormInputAdapter(
         }
 
     }
+    class NumberPickerInputViewHolder private constructor(
+        private val binding: RvItemFormNumberPickerBinding
+    ) : ViewHolder(binding.root) {
+
+        private var textWatcher: TextWatcher? = null
+        private var internalUpdate = false
+
+        companion object {
+            fun from(parent: ViewGroup): ViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = RvItemFormNumberPickerBinding.inflate(layoutInflater, parent, false)
+                return NumberPickerInputViewHolder(binding)
+            }
+        }
+
+        fun bind(
+            item: FormElement,
+            isEnabled: Boolean,
+            formValueListener: FormValueListener?
+        ) {
+            binding.form = item
+
+            binding.etNumberInput.isEnabled = isEnabled
+            binding.btnDecrement.isEnabled = isEnabled
+            binding.btnIncrement.isEnabled = isEnabled
+            if (!isEnabled) {
+                hideError()
+                return
+            }
+
+            val minValue = item.min?.toInt() ?: 0
+            val maxValue = item.max?.toInt()
+            val allowNegative = item.minDecimal != null && item.minDecimal!! < 0
+
+            binding.etNumberInput.setText(minValue.toString())
+            binding.etNumberInput.setSelection(binding.etNumberInput.text!!.length)
+            var currentValue = item.value?.toIntOrNull() ?: minValue
+
+            textWatcher?.let { binding.etNumberInput.removeTextChangedListener(it) }
+
+            textWatcher = object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+                }
+
+
+
+
+                override fun afterTextChanged(editable: Editable?) {
+
+                    if (internalUpdate) return
+                    if (editable.isNullOrBlank()) {
+                        item.errorText = "Value cannot be empty"
+                        showError(item.errorText!!)
+                        return
+                    }
+
+                    val inputValue = editable.toString().toIntOrNull()
+                    if (inputValue == null) {
+                        item.errorText = "Enter a valid number"
+                        showError(item.errorText!!)
+                        return
+                    }
+
+                    val validated = validateValue(inputValue, minValue, maxValue, allowNegative)
+
+                    if (validated != inputValue) {
+                        val msg = if (maxValue != null)
+                            "Allowed range: $minValue to $maxValue"
+                        else
+                            "Minimum allowed value: $minValue"
+                        item.errorText = msg
+                        showError(msg)
+
+                        updateDisplay(validated)
+                        updateValue(validated, item, formValueListener)
+                        return
+                    }
+
+                    item.errorText = null
+                    hideError()
+
+                    currentValue = validated
+                    updateValue(currentValue, item, formValueListener)
+                }
+            }
+
+            updateDisplay(currentValue)
+
+            binding.etNumberInput.addTextChangedListener(textWatcher)
+
+
+
+            binding.btnDecrement.setOnClickListener {
+                currentValue = (item.value?.toIntOrNull() ?: minValue) - 1
+                currentValue = validateValue(currentValue, minValue, maxValue, allowNegative)
+                hideError()
+                updateValue(currentValue, item, formValueListener)
+                updateDisplay(currentValue)
+            }
+
+            binding.btnIncrement.setOnClickListener {
+                currentValue = (item.value?.toIntOrNull() ?: minValue) + 1
+                currentValue = validateValue(currentValue, minValue, maxValue, allowNegative)
+                hideError()
+                updateValue(currentValue, item, formValueListener)
+                updateDisplay(currentValue)
+            }
+        }
+
+
+        private fun validateValue(value: Int, min: Int, max: Int?, allowNegative: Boolean): Int {
+            var newValue = value
+
+            if (!allowNegative && newValue < min) newValue = min
+            if (max != null && newValue > max) newValue = max
+
+            return newValue
+        }
+
+        private fun updateDisplay(value: Int) {
+            internalUpdate = true
+            binding.etNumberInput.setText(value.toString())
+            binding.etNumberInput.setSelection(binding.etNumberInput.text!!.length)
+            internalUpdate = false
+        }
+
+        private fun updateValue(
+            newValue: Int,
+            item: FormElement,
+            formValueListener: FormValueListener?
+        ) {
+            item.value = newValue.toString()
+            formValueListener?.onValueChanged(item,newValue)
+        }
+
+        private fun showError(message: String) {
+            binding.tvError.apply {
+                text = message
+                visibility = View.VISIBLE
+            }
+        }
+
+        private fun hideError() {
+            binding.tvError.visibility = View.GONE
+        }
+    }
+
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -990,6 +1142,7 @@ class FormInputAdapter(
             AGE_PICKER -> AgePickerViewInputViewHolder.from(parent)
             InputType.BUTTON -> ButtonInputViewHolder.from(parent)
             InputType.FILE_UPLOAD -> FileUploadInputViewHolder.from(parent)
+            InputType.NUMBER_PICKER -> NumberPickerInputViewHolder.from(parent)
         }
     }
     class FileUploadInputViewHolder private constructor(private val binding: LayoutUploafFormBinding) :
@@ -1076,6 +1229,9 @@ class FormInputAdapter(
 
                 InputType.FILE_UPLOAD -> (holder as FileUploadInputViewHolder).bind(item,selectImageClickListener,viewDocumentListner,isEnabled = isEnabled)
 
+                InputType.NUMBER_PICKER -> (holder as NumberPickerInputViewHolder).bind(
+                    item, isEnabled, formValueListener
+                )
             }
         } catch (e: Exception) {
             e.printStackTrace()

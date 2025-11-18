@@ -197,6 +197,7 @@
         <item>HAEMORRHAGE</item>
         <item>HIGH FEVER</item>
         <item>ABORTION</item>
+        <item>Accident</item>
         <item>OTHER</item>
     </string-array>
     <string-array name="anc_confirmation_array">
@@ -294,7 +295,8 @@
     <string name="pnc_visit_date">PNC Visit Date</string>
     <string name="pnc_ifa_tabs_given">No. of IFA Tablets given</string>
     <string name="pnc_contraception_method">Method of Contraception</string>
-    <string name="pnc_any_contraception_method">Any Method of Postpartum Contraception (PPC)</string>
+    <string name="pnc_any_contraception_method">Has the couple started any family planning method after delivery?\nAny Postpartum Contraception (PPC)</string>
+
     <string name="pnc_other_ppc_method">Other PPC Method</string>
     <string name="pnc_mother_danger_sign">Mother Danger Sign</string>
     <string name="pnc_other_danger_sign">Other Danger Sign</string>
@@ -347,7 +349,12 @@
         <item>SEVERE ABDOMINAL PAIN</item>
         <item>SEVERE HEADACHE OR BLURRED VISION</item>
         <item>DIFFICULT BREATHING</item>
+        <item>Yellowness of Urine, Skin or Eyes</item>
+        <item>Pale Skin or Eyes</item>
+        <item>Swelling on face, hands and legs</item>
+        <item>Abnormal behaviour</item>
         <item>Any Other</item>
+
     </string-array>
     <string-array name="pnc_referral_facility_array">
         <item>Primary Health Centre</item>
@@ -355,13 +362,17 @@
         <item>District Hospital</item>
         <item>Other Private Hospital</item>
     </string-array>
+
     <string-array name="pnc_death_cause_array">
         <item>ECLAMPSIA</item>
         <item>HAEMORRHAGE (PPH)</item>
         <item>ANAEMIA</item>
         <item>HIGH FEVER</item>
+        <item>Sepsis</item>
+        <item>Accident</item>
         <item>Any Other</item>
     </string-array>
+
     <string-array name="pnc_death_place_array">
         <item>Home</item>
         <item>Hospital</item>

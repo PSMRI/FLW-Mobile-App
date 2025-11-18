@@ -70,6 +70,54 @@ interface BenDao {
     @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage and hhId = :hhId")
     fun getAllLeprosyScreeningBen(selectedVillage: Int,hhId: Long): Flow<List<BenWithLeprosyScreeningCache>>
 
+
+    @Transaction
+    @Query("""
+    SELECT b.*, l.leprosySymptomsPosition 
+    FROM BEN_BASIC_CACHE b 
+    INNER JOIN LEPROSY_SCREENING l ON b.benId = l.benId 
+    WHERE b.villageId = :selectedVillage
+    AND l.leprosySymptomsPosition = :symptomsPosition
+    AND l.isConfirmed = 0
+""")
+    fun getLeprosyScreeningBenBySymptoms(selectedVillage: Int,  symptomsPosition: Int): Flow<List<BenWithLeprosyScreeningCache>>
+
+    @Query("""
+    SELECT COUNT(*) 
+    FROM BEN_BASIC_CACHE b 
+    INNER JOIN LEPROSY_SCREENING l ON b.benId = l.benId 
+    WHERE b.villageId = :selectedVillage 
+    AND l.leprosySymptomsPosition = :symptomsPosition
+    AND l.isConfirmed = 0
+""")
+    fun getLeprosyScreeningBenCountBySymptoms(selectedVillage: Int, symptomsPosition: Int): Flow<Int>
+
+    @Transaction
+    @Query("""
+    SELECT b.*, l.isConfirmed
+    FROM BEN_BASIC_CACHE b
+    INNER JOIN LEPROSY_SCREENING l ON b.benId = l.benId
+    WHERE b.villageId = :selectedVillage
+      AND l.isConfirmed = 1
+""")
+    fun getConfirmedLeprosyCases(
+        selectedVillage: Int
+    ): Flow<List<BenWithLeprosyScreeningCache>>
+
+    @Query("""
+    SELECT COUNT(*)
+    FROM BEN_BASIC_CACHE b
+    INNER JOIN LEPROSY_SCREENING l ON b.benId = l.benId
+    WHERE b.villageId = :selectedVillage
+      AND l.isConfirmed = 1
+""")
+    fun getConfirmedLeprosyCaseCount(
+        selectedVillage: Int
+    ): Flow<Int>
+
+    @Transaction
+    @Query("SELECT * FROM BEN_BASIC_CACHE WHERE benId = :benId")
+    suspend fun getBenWithLeprosyScreeningAndFollowUps(benId: Long): BenWithLeprosyScreeningCache?
     @Transaction
     @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage and hhId = :hhId")
     fun getAllFilariaScreeningBen(selectedVillage: Int,hhId: Long): Flow<List<BenWithFilariaScreeningCache>>
@@ -505,6 +553,7 @@ interface BenDao {
     @Query("SELECT COUNT(*) FROM PREGNANCY_ANC WHERE benId = :benId AND deathDate IS NOT NULL AND isAborted = 0")
     suspend fun checkPregnancyDeath(benId: Long): Boolean
 
+
     // Abortion Death
     @Query("SELECT COUNT(*) FROM PREGNANCY_ANC WHERE benId = :benId AND deathDate IS NOT NULL AND isAborted = 1")
     suspend fun checkAbortionDeath(benId: Long): Boolean
@@ -516,5 +565,26 @@ interface BenDao {
     // PNC
     @Query("SELECT COUNT(*) FROM PNC_VISIT WHERE benId = :benId AND deathDate IS NOT NULL")
     suspend fun checkPncDeath(benId: Long): Boolean
+
+    @Query("""
+    SELECT EXISTS(
+        SELECT 1 FROM PNC_VISIT
+        WHERE benId = :benId
+        AND deathDate IS NOT NULL
+        AND causeOfDeath = :cause
+    )
+""")
+    suspend fun isDeathByCause(benId: Long, cause: String): Boolean
+
+    @Query("""
+    SELECT EXISTS(
+        SELECT 1 FROM PREGNANCY_ANC
+        WHERE benId = :benId
+        AND deathDate IS NOT NULL
+        AND maternalDeathProbableCause = :cause
+    )
+""")
+    suspend fun isDeathByCauseAnc(benId: Long,cause: String): Boolean
+
 
 }

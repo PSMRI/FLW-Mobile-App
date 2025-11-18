@@ -58,6 +58,7 @@
         <item>हेमोरेज (रक्तस्राव)</item>
         <item>उच्च बुखार</item>
         <item>गर्भपात</item>
+        <item>दुर्घटना</item>
         <item>अन्य</item>
     </string-array>
     <string-array name="anc_confirmation_array">
@@ -252,6 +253,10 @@
         <item>गंभीर पेट दर्द</item>
         <item>गंभीर सिरदर्द या ब्लर्ड विजन</item>
         <item>सांस लेने में कठिनाई</item>
+        <item>पेशाब, त्वचा या आँखों का पीलापन</item>
+        <item>त्वचा या आँखों का पीला पड़ना </item>
+        <item>चेहरे, हाथों और पैरों में सूजन </item>
+        <item>असामान्य व्यवहार </item>
         <item>कोई अन्य</item>
     </string-array>
     <string-array name="pnc_referral_facility_array">
@@ -265,6 +270,8 @@
         <item>हेमोरेज (PPH)</item>
         <item>एनीमिया</item>
         <item>उच्च बुखार</item>
+        <item>पूति</item>
+        <item>दुर्घटना</item>
         <item>कोई अन्य</item>
     </string-array>
     <string-array name="pnc_death_place_array">

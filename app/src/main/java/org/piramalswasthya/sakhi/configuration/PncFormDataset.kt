@@ -67,7 +67,7 @@ class PncFormDataset(
 
     private val ifaTabsGiven = FormElement(
         id = 4,
-        inputType = InputType.EDIT_TEXT,
+        inputType = InputType.NUMBER_PICKER,
         title = resources.getString(R.string.pnc_ifa_tabs_given),
         required = false,
         hasDependants = false,
@@ -239,6 +239,7 @@ class PncFormDataset(
         required = false
     )
 
+
     private val sterilisation : Array<String> by lazy {
         resources.getStringArray(R.array.sterilization_methods_array)
     }
@@ -265,7 +266,8 @@ class PncFormDataset(
             deliveryDischargeSummary1,
             deliveryDischargeSummary2,
             deliveryDischargeSummary3,
-            deliveryDischargeSummary4
+            deliveryDischargeSummary4,
+
 
         )
 

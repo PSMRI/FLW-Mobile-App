@@ -4,15 +4,24 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.LeprosyMemberListAdapter
+import org.piramalswasthya.sakhi.adapters.VisitsAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
+import org.piramalswasthya.sakhi.databinding.LayoutVisitsBottomSheetBinding
+import org.piramalswasthya.sakhi.model.BenBasicDomain
+import org.piramalswasthya.sakhi.model.BenWithLeprosyScreeningDomain
+import org.piramalswasthya.sakhi.model.LeprosyFollowUpCache
+import org.piramalswasthya.sakhi.model.LeprosyScreeningCache
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.disease_control.kala_azar.list.KalaAzarSuspectedListFragmentDirections
 
@@ -38,13 +47,18 @@ class LeprosySuspectedListFragment : Fragment() {
         binding.llSearch.visibility = View.GONE
 
         val benAdapter = LeprosyMemberListAdapter(
-            clickListener = LeprosyMemberListAdapter.ClickListener { hhId, benId ->
-                findNavController().navigate(
-                    LeprosySuspectedListFragmentDirections.actionLeprosySuspectedListFragmentToLeprosyFormFragment(
-                        benId = benId
+            clickListener = LeprosyMemberListAdapter.ClickListener(
+                clickedForm = { hhId, benId ->
+                    findNavController().navigate(
+                        LeprosySuspectedListFragmentDirections.actionLeprosySuspectedListFragmentToLeprosyFormFragment(
+                            benId = benId
+                        )
                     )
-                )
-            },
+                },
+                clickedVisits = { benWithLeprosy ->
+                    showVisitsBottomSheet(benWithLeprosy)
+                }
+            )
         )
         binding.rvAny.adapter = benAdapter
 
@@ -59,6 +73,8 @@ class LeprosySuspectedListFragment : Fragment() {
         }
 
 
+
+
     }
 
     override fun onStart() {
@@ -71,8 +87,53 @@ class LeprosySuspectedListFragment : Fragment() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
+
+    private fun showVisitsBottomSheet(benWithLeprosy: BenWithLeprosyScreeningDomain) {
+        val bottomSheetDialog = BottomSheetDialog(requireContext())
+        val binding = LayoutVisitsBottomSheetBinding.inflate(layoutInflater)
+
+        val currentVisitNumber = benWithLeprosy.leprosy?.currentVisitNumber ?: 1
+        val visitNumbers = (1 until currentVisitNumber).toList()
 
 
+        if (visitNumbers.isEmpty()) {
+            binding.rvVisits.visibility = View.GONE
+            binding.tvEmptyMessage.visibility = View.VISIBLE
+        } else {
+            binding.rvVisits.visibility = View.VISIBLE
+            binding.tvEmptyMessage.visibility = View.GONE
 
+            binding.rvVisits.layoutManager = LinearLayoutManager(requireContext())
+
+            val visitsAdapter = VisitsAdapter(visitNumbers) { visitNumber ->
+                navigateToLeprosyVisitFragment(benWithLeprosy.ben.benId, visitNumber)
+                bottomSheetDialog.dismiss()
+            }
+
+            binding.rvVisits.adapter = visitsAdapter
+        }
+
+        bottomSheetDialog.setContentView(binding.root)
+        bottomSheetDialog.show()
+
+
+    }
+
+    private fun navigateToLeprosyVisitFragment(benId: Long, visitNumber: Int) {
+        findNavController().navigate(
+            LeprosySuspectedListFragmentDirections.actionLeprosySuspectedListFragmentToLeprosyVisitFragment(
+                benId = benId,
+                visitNumber = visitNumber
+            )
+        )
+    }
 
 }
+
+
+
+

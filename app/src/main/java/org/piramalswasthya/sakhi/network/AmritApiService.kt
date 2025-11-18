@@ -103,6 +103,15 @@ interface AmritApiService {
     @POST("flw-api/disease/filaria/saveAll")
     suspend fun saveFilariaScreeningData(@Body filariaScreeningRequestDTO: FilariaScreeningRequestDTO): Response<ResponseBody>
 
+    @POST("flw-api/disease/leprosy/getAll")
+    suspend fun getAllLeprosyData(@Body request: GetDataPaginatedRequestForDisease): Response<ResponseBody>
+
+    @POST("flw-api/disease/leprosy/followUp/getAll")
+    suspend fun getAllLeprosyFollowUpData(@Body request: GetDataPaginatedRequestForDisease): Response<ResponseBody>
+
+    @POST("flw-api/disease/leprosy/followUp/saveAll")
+    suspend fun saveLeprosyFollowUpData(@Body request: List<LeprosyFollowUpDTO>): Response<ResponseBody>
+
     @POST("flw-api/disease/getAllDisease")
     suspend fun getMalariaScreeningData(@Body userDetail: GetDataPaginatedRequestForDisease): Response<ResponseBody>
 
