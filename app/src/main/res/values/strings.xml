@@ -520,6 +520,8 @@
     <string name="leprosy_suspected_form">Leprosy Suspected Form</string>
     <string name="follow_up_history">Follow-up History</string>
     <string name="download_not_available_for_this_variant">Download not available for this variant</string>
+    <string name="leprosy_visit">Leprosy Visit</string>
+    <string name="leprosy_screening">Leprosy Screening</string>
 
     <string-array name="sync_records">
         <item>Beneficiary</item>

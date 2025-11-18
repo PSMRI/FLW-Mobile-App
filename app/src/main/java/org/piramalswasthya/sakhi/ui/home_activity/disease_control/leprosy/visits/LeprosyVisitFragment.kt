@@ -138,7 +138,7 @@ class LeprosyVisitFragment : Fragment() {
         activity?.let {
             (it as HomeActivity).updateActionBar(
                 R.drawable.ic__ncd,
-                "Leprosy Visit"
+                getString(R.string.leprosy_visit)
             )
         }
     }

@@ -29,7 +29,7 @@ import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
-class LeprosyConfirmedFromViewModel@Inject constructor(
+class LeprosyConfirmedFromViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     preferenceDao: PreferenceDao,
     @ApplicationContext var context: Context,

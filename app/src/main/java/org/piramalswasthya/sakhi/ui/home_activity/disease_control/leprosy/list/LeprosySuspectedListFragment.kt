@@ -99,7 +99,6 @@ class LeprosySuspectedListFragment : Fragment() {
         val currentVisitNumber = benWithLeprosy.leprosy?.currentVisitNumber ?: 1
         val visitNumbers = (1 until currentVisitNumber).toList()
 
-        println("DEBUG: Visit Numbers list = $visitNumbers")
 
         if (visitNumbers.isEmpty()) {
             binding.rvVisits.visibility = View.GONE
@@ -111,7 +110,6 @@ class LeprosySuspectedListFragment : Fragment() {
             binding.rvVisits.layoutManager = LinearLayoutManager(requireContext())
 
             val visitsAdapter = VisitsAdapter(visitNumbers) { visitNumber ->
-                println("DEBUG: Visit $visitNumber clicked")
                 navigateToLeprosyVisitFragment(benWithLeprosy.ben.benId, visitNumber)
                 bottomSheetDialog.dismiss()
             }
@@ -122,10 +120,7 @@ class LeprosySuspectedListFragment : Fragment() {
         bottomSheetDialog.setContentView(binding.root)
         bottomSheetDialog.show()
 
-        binding.rvVisits.post {
-            println("DEBUG: RecyclerView child count = ${binding.rvVisits.childCount}")
-            println("DEBUG: RecyclerView adapter item count = ${binding.rvVisits.adapter?.itemCount}")
-        }
+
     }
 
     private fun navigateToLeprosyVisitFragment(benId: Long, visitNumber: Int) {

@@ -29,7 +29,7 @@ class LeprosyConfirmedListFragment: Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentDisplaySearchRvButtonBinding.inflate(layoutInflater, container, false)
+        _binding = FragmentDisplaySearchRvButtonBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -52,7 +52,7 @@ class LeprosyConfirmedListFragment: Fragment() {
         )
         binding.rvAny.adapter = benAdapter
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.allBenList.collect {
                 if (it.isEmpty())
                     binding.flEmpty.visibility = View.VISIBLE
@@ -75,10 +75,10 @@ class LeprosyConfirmedListFragment: Fragment() {
     }
 
 
-
-
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
     }
+
+
 }
