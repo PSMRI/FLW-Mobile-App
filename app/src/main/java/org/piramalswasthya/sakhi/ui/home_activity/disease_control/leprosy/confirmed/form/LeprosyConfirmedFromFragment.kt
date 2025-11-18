@@ -92,7 +92,7 @@ class LeprosyConfirmedFromFragment : Fragment() {
             binding.tvAgeGender.text = it
         }
         binding.btnSubmit.setOnClickListener {
-            submitMalariaScreeningForm()
+            submitLeprosyFollowUpForm()
         }
 
         viewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
@@ -147,11 +147,7 @@ class LeprosyConfirmedFromFragment : Fragment() {
             resources.getString(message),Toast.LENGTH_SHORT
         ).show()
     }
-    private fun submitMalariaScreeningForm() {
-        if (validateCurrentPage()) {
-            viewModel.saveForm()
-        }
-    }
+
 
     private fun validateCurrentPage(): Boolean {
         val result = binding.form.rvInputForm.adapter?.let {

@@ -522,6 +522,10 @@
     <string name="download_not_available_for_this_variant">Download not available for this variant</string>
     <string name="leprosy_visit">Leprosy Visit</string>
     <string name="leprosy_screening">Leprosy Screening</string>
+    <string name="any_leprosy_symptoms_present">Any Leprosy Symptoms Present?</string>
+    <string name="visit">Visit</string>
+    <string name="select_visit">Select Visit</string>
+    <string name="no_previous_visits_available">No previous visits available</string>
 
     <string-array name="sync_records">
         <item>Beneficiary</item>

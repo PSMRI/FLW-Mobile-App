@@ -289,7 +289,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Follow-up History"
+                android:text="@string/follow_up_history"
                 android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
                 android:layout_marginBottom="@dimen/margin_small" />
 
