@@ -13,6 +13,8 @@ data class FormSchemaDto(
     @SerializedName("version")
     val version: Int = 1,
 
+
+
     @SerializedName("sections")
     val sections: List<FormSectionDto> = emptyList()
 ) {
@@ -59,8 +61,11 @@ data class FormFieldDto(
     @SerializedName("placeholder")
     val placeholder: String? = null,
 
+    @SerializedName("defaultValue")
+    val defaultValue: String? = null,
+
     @SerializedName("default")
-    val defaultValue: Any? = null,
+    val default: Any? = null,
 
     @SerializedName("value")
     var value: Any? = null,

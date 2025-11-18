@@ -275,14 +275,28 @@ class FormInputAdapterWithBgIcon (
                 item.entries?.let { items ->
                     orientation = item.orientation ?: LinearLayout.HORIZONTAL
                     weightSum = items.size.toFloat()
+                    val layoutParamsRg = binding.rg.layoutParams as ViewGroup.MarginLayoutParams
+
                     items.forEach {
                         val rdBtn = RadioButton(this.context)
                         rdBtn.layoutParams = RadioGroup.LayoutParams(
                             RadioGroup.LayoutParams.WRAP_CONTENT,
                             RadioGroup.LayoutParams.WRAP_CONTENT,
                             1.0F
+
                         ).apply {
-                            gravity = Gravity.CENTER_HORIZONTAL
+
+                            if (item.id == 23 && item.title == " " || item.id == 9 && item.title == " ") {
+                                val density = binding.root.resources.displayMetrics.density
+                                layoutParamsRg.topMargin = (-25 * density).toInt()
+                                gravity = Gravity.START
+                                rdBtn.textSize = 16f
+                            } else {
+                                layoutParamsRg.topMargin = (0 * binding.root.resources.displayMetrics.density).toInt()
+                                gravity = Gravity.CENTER_HORIZONTAL
+                                rdBtn.textSize = 14f
+                            }
+
                         }
                         rdBtn.id = View.generateViewId()
                         val colorStateList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

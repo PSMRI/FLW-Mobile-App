@@ -17,6 +17,7 @@ import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.BeneficiaryIdsAvailDao
 import org.piramalswasthya.sakhi.database.room.dao.GeneralOpdDao
 import org.piramalswasthya.sakhi.database.room.dao.HouseholdDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.CUFYFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseJsonDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.ImageUtils
@@ -41,7 +42,8 @@ class BenRepo @Inject constructor(
     private val userRepo: UserRepo,
     private val generalOpdDao: GeneralOpdDao,
     private val tmcNetworkApiService: AmritApiService,
-    private val formResponseJsonDao: FormResponseJsonDao
+    private val formResponseJsonDao: FormResponseJsonDao,
+    private val provideCUFYFormResponseJsonDao: CUFYFormResponseJsonDao
 ) {
 
     companion object {
@@ -575,7 +577,8 @@ class BenRepo @Inject constructor(
                                             syncState = if (benExists) SyncState.SYNCED else SyncState.SYNCING,
                                             dob = 0L,
                                             relToHeadId = 0,
-                                            isConsent = false
+                                            isConsent = false,
+                                            reproductiveStatusId =  benDataObj.getInt("reproductiveStatusId"),
                                         )
                                     )
                                 }

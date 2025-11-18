@@ -165,6 +165,14 @@ class PwAncFormViewModel @Inject constructor(
                             if (it.processed != "N") it.processed = "U"
                             it.syncState = SyncState.UNSYNCED
                             maternalHealthRepo.persistRegisterRecord(it)
+
+                            maternalHealthRepo.getBenFromId(benId)?.let {
+                                it.genDetails?.reproductiveStatus = "Eligible Couple"
+                                it.genDetails?.reproductiveStatusId =1
+                                if (it.processed != "N") it.processed = "U"
+                                it.syncState = SyncState.UNSYNCED
+                                benRepo.updateRecord(it)
+                            }
                         }
 
                         maternalHealthRepo.getAllActiveAncRecords(benId).apply {
