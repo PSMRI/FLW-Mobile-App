@@ -9,7 +9,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Select Visit"
+            android:text="@string/select_visit"
             android:textSize="18sp"
             android:textStyle="bold"
             android:layout_marginBottom="16dp" />
@@ -18,7 +18,7 @@
             android:id="@+id/tvEmptyMessage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="No previous visits available"
+            android:text="@string/no_previous_visits_available"
             android:textSize="16sp"
             android:gravity="center"
             android:padding="16dp"

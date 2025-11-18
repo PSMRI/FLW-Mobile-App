@@ -89,7 +89,7 @@ class LeprosySuspectedDataset (
         id = 14,
         inputType = InputType.RADIO,
         arrayId = R.array.yes_no,
-        title = "Any Leprosy Symptoms Present?",
+        title = context.getString(R.string.any_leprosy_symptoms_present),
         entries = resources.getStringArray(R.array.yes_no),
         hasDependants = true,
         required = true,
@@ -99,7 +99,7 @@ class LeprosySuspectedDataset (
     private val visitLabel = FormElement(
         id = 15,
         inputType = InputType.TEXT_VIEW,
-        title = "Visit",
+        title = context.getString(R.string.visit),
         required = true,
         isEnabled = false
     )

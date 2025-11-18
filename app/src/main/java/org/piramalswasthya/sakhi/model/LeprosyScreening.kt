@@ -10,7 +10,7 @@ import org.piramalswasthya.sakhi.configuration.FormDataModel
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.network.LeprosyFollowUpDTO
 import org.piramalswasthya.sakhi.network.LeprosyScreeningDTO
-import org.piramalswasthya.sakhi.utils.HelperUtil.getDateStringFromLong
+
 
 @Entity(
     tableName = "LEPROSY_SCREENING",
