@@ -59,6 +59,7 @@
     <string name="type_of_leprocy">Type of Leprocy</string>
     <string name="treatment_start_date">Treatment Start Date</string>
     <string name="dose_status">DEC and Albendazole Dose Status</string>
+    <string name="is_medicine_distributed">Is medicine Distributed</string>
     <string name="body_part">Which part of Body	</string>
     <string name="medicine_side_effect">Medicine  Side Effect</string>
 
@@ -98,6 +99,8 @@
     <string name="notification_sync_channel_description">Upload beneficiaries to Server</string>
     <string name="notification_sync_channel_id">sakhi-sync0</string>
     <string name="btn_submit">Submit</string>
+    <string name="mosquito_net_on">Mosquito Net ON</string>
+    <string name="mosquito_net_off">Mosquito Net OFF</string>
     <string name="btn_apply">Apply</string>
     <string name="long_to_string">%d</string>
     <string name="ben_pending_sync">Pending Sync</string>
@@ -297,6 +300,7 @@
     <string name="add_cbac">Add CBAC</string>
     <string name="view_cbac">View CBAC</string>
     <string name="view">VIEW</string>
+    <string name="add">ADD</string>
     <string name="home">Home</string>
     <string name="asha_profile">Profile</string>
     <string name="sync_records">Sync Records</string>
@@ -470,6 +474,8 @@
     <string name="all">All</string>
     <string name="with_abha">With ABHA</string>
     <string name="without_abha">Without ABHA</string>
+    <string name="age_above_30_years">Age above 30 years</string>
+    <string name="wara">WARA</string>
     <string name="no_visit_made">No Visit Made</string>
     <string name="filter_list">Filter</string>
     <string name="ben_with_rch_id">Ben With RCH ID</string>
@@ -483,6 +489,11 @@
     <string name="check_sam">Check SAM</string>
     <string name="ors">ORS</string>
     <string name="ifa">IFA</string>
+    <string name="date_of_provision">Date of Provision</string>
+    <string name="bottle_number">Bottle Number</string>
+    <string name="s_no">S. No</string>
+    <string name="follow_up_date">Follow Up Dates</string>
+    <string name="bottle_distribution">Bottle Distribution</string>
     <string name="child_rch_id">Child RCH ID</string>
     <string name="vaccination_due_date">Vaccination Due Date</string>
     <string name="reminder">Reminder!!</string>
@@ -526,6 +537,9 @@
     <string name="visit">Visit</string>
     <string name="select_visit">Select Visit</string>
     <string name="no_previous_visits_available">No previous visits available</string>
+    <string name="after_the_abortion_the_woman_opted_for_permanent_sterilization_tubectomy">After the Abortion, the Woman opted for permanent sterilization (Tubectomy)</string>
+    <string name="date_of_sterilisation">Date of Sterilisation</string>
+    <string name="what_family_planning_method_has_been_chosen_after_the_abortion">What family planning method has been chosen after the abortion?</string>
 
     <string-array name="sync_records">
         <item>Beneficiary</item>
@@ -628,7 +642,6 @@
         <item>Not regularly taking medicine</item>
         <item>Treatment Completed</item>
     </string-array>
-
 
     <string-array name="dc_refer">
         <item>Primary Health Centre</item>

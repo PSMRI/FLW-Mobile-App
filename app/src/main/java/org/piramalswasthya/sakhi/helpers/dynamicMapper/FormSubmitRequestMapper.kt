@@ -3,9 +3,14 @@ package org.piramalswasthya.sakhi.helpers.dynamicMapper
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import org.json.JSONObject
+import org.piramalswasthya.sakhi.model.dynamicEntity.CUFYFormResponseJsonEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.FilariaMDA.FilariaMDAFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSubmitRequest
+import org.piramalswasthya.sakhi.model.dynamicEntity.ben_ifa.BenIfaFormResponseJsonEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.eye_surgery.EyeSurgeryFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.hbyc.FormResponseJsonEntityHBYC
+import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoNetFormResponseJsonEntity
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -14,9 +19,24 @@ object FormSubmitRequestMapper {
     fun fromEntity(entity: FormResponseJsonEntity, userName: String): FormSubmitRequest? {
         return mapCommon(entity.formDataJson, userName)
     }
+    fun fromEntity(entity: MosquitoNetFormResponseJsonEntity, userName: String): FormSubmitRequest? {
+        return mapCommon(entity.formDataJson, userName)
+    }
+    fun fromEntity(entity: BenIfaFormResponseJsonEntity, userName: String): FormSubmitRequest? {
+            return mapCommon(entity.formDataJson, userName)
+        }
 
     fun fromEntity(entity: FormResponseJsonEntityHBYC, userName: String): FormSubmitRequest? {
         return mapCommon(entity.formDataJson, userName)
+    }
+    fun fromEntity(entity: EyeSurgeryFormResponseJsonEntity, userName: String): FormSubmitRequest? {
+        return mapCommon(entity.formDataJson, userName)
+    }
+    fun fromEntity(entity: CUFYFormResponseJsonEntity, userName: String): FormSubmitRequest? {
+            return mapCommon(entity.formDataJson, userName)
+    }
+    fun fromEntity(entity: FilariaMDAFormResponseJsonEntity, userName: String): FormSubmitRequest? {
+            return mapCommon(entity.formDataJson, userName)
     }
 
     private fun mapCommon(formDataJson: String, userName: String): FormSubmitRequest? {

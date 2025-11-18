@@ -39,17 +39,18 @@ class FormRepository @Inject constructor(
     private val jsonResponseDaoHBYC = db.formResponseJsonDaoHBYC()
 
 
-    suspend fun getFormSchema(formId: String): FormSchemaDto? = withContext(Dispatchers.IO) {
+    suspend fun getFormSchema(formId: String, lang: String): FormSchemaDto? = withContext(Dispatchers.IO) {
         try {
-            val response = amritApiService.fetchFormSchema(formId)
+            val response = amritApiService.fetchFormSchema(formId, lang)
+
             if (response.isSuccessful) {
                 val apiResponse = response.body()
                 val apiSchema = apiResponse?.data
 
                 apiSchema?.let {
                     val localSchema = getSavedSchema(it.formId)
-                    if (localSchema == null || localSchema.version < it.version) {
-                        saveFormSchemaToDb(it)
+                    if (localSchema == null || localSchema.version < it.version || localSchema.language != lang) {
+                        saveFormSchemaToDb(it,lang)
                     }
                     return@withContext it
                 }
@@ -57,15 +58,17 @@ class FormRepository @Inject constructor(
             }
         } catch (e: Exception) {
         }
+
         val local = formSchemaDao.getSchema(formId)?.let { FormSchemaDto.fromJson(it.schemaJson) }
         return@withContext local
     }
 
 
-    suspend fun saveFormSchemaToDb(schema: FormSchemaDto) {
+    suspend fun saveFormSchemaToDb(schema: FormSchemaDto, lang: String) {
         val entity = FormSchemaEntity(
             formId = schema.formId,
             formName = schema.formName,
+            language = lang,
             version = schema.version,
             schemaJson = schema.toJson()
         )
