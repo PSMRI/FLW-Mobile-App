@@ -3,4 +3,5 @@
     <string name="cdr_form">CDR Form</string>
     <string name="maternal">Maternal</string>
     <string name="non_maternal">Non-maternal</string>
+    <string name="accident">Accident</string>
 </resources>

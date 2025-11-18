@@ -57,6 +57,7 @@
     <string name="day_wise_tracking_pf">Pf - Day-wise Tracking</string>
     <string name="day_wise_tracking_pv">PV - Day-wise Tracking</string>
     <string name="type_of_leprocy">Type of Leprocy</string>
+    <string name="treatment_start_date">Treatment Start Date</string>
     <string name="dose_status">DEC and Albendazole Dose Status</string>
     <string name="is_medicine_distributed">Is medicine Distributed</string>
     <string name="body_part">Which part of Body	</string>
@@ -524,6 +525,18 @@
     <string name="cdr_form_from_anm_1">CDR form from ANM 1</string>
     <string name="cdr_form_from_anm_2">CDR form from ANM 2</string>
     <string name="district_tehsil">District/Tehsil</string>
+    <string name="leprosy_confirmed">Leprosy Confirmed</string>
+    <string name="leprosy_suspected">Leprosy Suspected</string>
+    <string name="leprosy_confirmed_form">Leprosy Confirmed Form</string>
+    <string name="leprosy_suspected_form">Leprosy Suspected Form</string>
+    <string name="follow_up_history">Follow-up History</string>
+    <string name="download_not_available_for_this_variant">Download not available for this variant</string>
+    <string name="leprosy_visit">Leprosy Visit</string>
+    <string name="leprosy_screening">Leprosy Screening</string>
+    <string name="any_leprosy_symptoms_present">Any Leprosy Symptoms Present?</string>
+    <string name="visits">Visit</string>
+    <string name="select_visit">Select Visit</string>
+    <string name="no_previous_visits_available">No previous visits available</string>
     <string name="after_the_abortion_the_woman_opted_for_permanent_sterilization_tubectomy">After the Abortion, the Woman opted for permanent sterilization (Tubectomy)</string>
     <string name="date_of_sterilisation">Date of Sterilisation</string>
     <string name="what_family_planning_method_has_been_chosen_after_the_abortion">What family planning method has been chosen after the abortion?</string>
@@ -617,8 +630,17 @@
     </string-array>
 
     <string-array name="type_of_leprocy">
-        <item name="mb">MB</item>
-        <item name="pb">PB</item>
+        <item name="mb">MB (Multibacillary)</item>
+        <item name="pb">PB (Paucibacillary)</item>
+    </string-array>
+
+    <string-array name="leprosy_treatment_status">
+        <item>Recovering</item>
+        <item>Cured</item>
+        <item>Recurrence of Symptoms</item>
+        <item>Regularly taking medicine</item>
+        <item>Not regularly taking medicine</item>
+        <item>Treatment Completed</item>
     </string-array>
 
     <string-array name="dc_refer">

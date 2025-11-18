@@ -86,6 +86,7 @@ import org.piramalswasthya.sakhi.model.IncentiveActivityCache
 import org.piramalswasthya.sakhi.model.IncentiveRecordCache
 import org.piramalswasthya.sakhi.model.InfantRegCache
 import org.piramalswasthya.sakhi.model.KalaAzarScreeningCache
+import org.piramalswasthya.sakhi.model.LeprosyFollowUpCache
 import org.piramalswasthya.sakhi.model.LeprosyScreeningCache
 import org.piramalswasthya.sakhi.model.MDSRCache
 import org.piramalswasthya.sakhi.model.PHCReviewMeetingCache
@@ -157,6 +158,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         KalaAzarScreeningCache::class,
         FilariaScreeningCache::class,
         LeprosyScreeningCache::class,
+        LeprosyFollowUpCache::class,
         MalariaConfirmedCasesCache::class,
         IRSRoundScreening::class,
         ProfileActivityCache::class,
@@ -178,7 +180,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
     ],
     views = [BenBasicCache::class],
 
-    version = 42, exportSchema = false
+    version = 44, exportSchema = false
 )
 
 @TypeConverters(
@@ -248,6 +250,157 @@ abstract class InAppDb : RoomDatabase() {
                 it.execSQL("alter table BENEFICIARY add column isConsent BOOL")
 
             })
+
+            val MIGRATION_43_44 = object : Migration(43, 44) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+
+                    fun addColumnIfNotExists(
+                        db: SupportSQLiteDatabase,
+                        table: String,
+                        column: String,
+                        type: String
+                    ) {
+                        val cursor = db.query("PRAGMA table_info($table)")
+                        var exists = false
+
+                        while (cursor.moveToNext()) {
+                            val name = cursor.getString(cursor.getColumnIndexOrThrow("name"))
+                            if (name.equals(column, ignoreCase = true)) {
+                                exists = true
+                                break
+                            }
+                        }
+                        cursor.close()
+
+                        if (!exists) {
+                            db.execSQL("ALTER TABLE $table ADD COLUMN $column $type")
+                        }
+                    }
+
+
+                    database.execSQL("""
+            CREATE TABLE IF NOT EXISTS LEPROSY_FOLLOW_UP (
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                benId INTEGER NOT NULL,
+                visitNumber INTEGER NOT NULL,
+                followUpDate INTEGER NOT NULL,
+                treatmentStatus TEXT,
+                mdtBlisterPackReceived TEXT,
+                treatmentCompleteDate INTEGER NOT NULL DEFAULT 0,
+                remarks TEXT,
+                homeVisitDate INTEGER NOT NULL DEFAULT ${System.currentTimeMillis()},
+                leprosySymptoms TEXT,
+                typeOfLeprosy TEXT,
+                leprosySymptomsPosition INTEGER DEFAULT 1,
+                visitLabel TEXT DEFAULT 'Visit -1',
+                leprosyStatus TEXT DEFAULT '',
+                referredTo INTEGER DEFAULT 0,
+                referToName TEXT,
+                treatmentEndDate INTEGER NOT NULL DEFAULT ${System.currentTimeMillis()},
+                mdtBlisterPackRecived TEXT,
+                treatmentStartDate INTEGER NOT NULL DEFAULT ${System.currentTimeMillis()},
+                syncState INTEGER NOT NULL DEFAULT 0,
+                createdBy TEXT DEFAULT '',
+                createdDate INTEGER NOT NULL DEFAULT ${System.currentTimeMillis()},
+                modifiedBy TEXT DEFAULT '',
+                lastModDate INTEGER NOT NULL DEFAULT ${System.currentTimeMillis()}
+            )
+        """)
+
+                    database.execSQL("CREATE INDEX IF NOT EXISTS ind_leprosy_followup_ben ON LEPROSY_FOLLOW_UP (benId)")
+                    database.execSQL("CREATE INDEX IF NOT EXISTS ind_leprosy_followup_visit ON LEPROSY_FOLLOW_UP (benId, visitNumber)")
+
+
+                    addColumnIfNotExists(database, "LEPROSY_SCREENING", "currentVisitNumber", "INTEGER NOT NULL DEFAULT 1")
+                    addColumnIfNotExists(database, "LEPROSY_SCREENING", "totalFollowUpMonthsRequired", "INTEGER NOT NULL DEFAULT 0")
+                    addColumnIfNotExists(database, "LEPROSY_SCREENING", "createdBy", "TEXT DEFAULT ''")
+                    addColumnIfNotExists(database, "LEPROSY_SCREENING", "createdDate", "INTEGER NOT NULL DEFAULT ${System.currentTimeMillis()}")
+                    addColumnIfNotExists(database, "LEPROSY_SCREENING", "modifiedBy", "TEXT DEFAULT ''")
+                    addColumnIfNotExists(database, "LEPROSY_SCREENING", "lastModDate", "INTEGER NOT NULL DEFAULT ${System.currentTimeMillis()}")
+
+
+
+                    database.execSQL("""
+            INSERT INTO LEPROSY_FOLLOW_UP (
+                benId, visitNumber, followUpDate, treatmentStatus, mdtBlisterPackReceived,
+                treatmentCompleteDate, remarks, syncState,
+                homeVisitDate, leprosySymptoms, typeOfLeprosy, leprosySymptomsPosition,
+                visitLabel, leprosyStatus, referredTo, referToName, treatmentEndDate,
+                mdtBlisterPackRecived, treatmentStartDate, createdBy, createdDate, modifiedBy, lastModDate
+            )
+            SELECT 
+                benId,
+                1,
+                homeVisitDate AS followUpDate,
+                treatmentStatus,
+                mdtBlisterPackRecived,
+                treatmentEndDate,
+                '',
+                0,
+                homeVisitDate,
+                leprosySymptoms,
+                typeOfLeprosy,
+                leprosySymptomsPosition,
+                visitLabel,
+                leprosyStatus,
+                referredTo,
+                referToName,
+                treatmentEndDate,
+                mdtBlisterPackRecived,
+                treatmentStartDate,
+                '',
+                ${System.currentTimeMillis()},
+                '',
+                ${System.currentTimeMillis()}
+            FROM LEPROSY_SCREENING
+            WHERE treatmentStatus IS NOT NULL
+               OR mdtBlisterPackRecived IS NOT NULL
+               OR leprosySymptoms IS NOT NULL
+        """)
+                }
+            }
+
+
+
+
+            val MIGRATION_42_43 = object : Migration(42, 43) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+
+                    fun addColumnIfNotExists(
+                        db: SupportSQLiteDatabase,
+                        table: String,
+                        column: String,
+                        type: String
+                    ) {
+                        val cursor = db.query("PRAGMA table_info($table)")
+                        var exists = false
+
+                        while (cursor.moveToNext()) {
+                            val name = cursor.getString(cursor.getColumnIndexOrThrow("name"))
+                            if (name.equals(column, ignoreCase = true)) {
+                                exists = true
+                                break
+                            }
+                        }
+                        cursor.close()
+
+                        if (!exists) {
+                            db.execSQL("ALTER TABLE $table ADD COLUMN $column $type")
+                        }
+                    }
+
+                    addColumnIfNotExists(database, "LEPROSY_SCREENING", "leprosySymptoms", "TEXT")
+                    addColumnIfNotExists(database, "LEPROSY_SCREENING", "visitLabel", "TEXT")
+                    addColumnIfNotExists(database, "LEPROSY_SCREENING", "visitNumber", "INTEGER")
+                    addColumnIfNotExists(database, "LEPROSY_SCREENING", "leprosySymptomsPosition", "INTEGER DEFAULT 1")
+                    addColumnIfNotExists(database, "LEPROSY_SCREENING", "isConfirmed", "INTEGER NOT NULL DEFAULT 0")
+                    addColumnIfNotExists(database, "LEPROSY_SCREENING", "treatmentStartDate", "INTEGER NOT NULL DEFAULT ${System.currentTimeMillis()}")
+                    addColumnIfNotExists(database, "LEPROSY_SCREENING", "treatmentEndDate", "INTEGER NOT NULL DEFAULT ${System.currentTimeMillis()}")
+                    addColumnIfNotExists(database, "LEPROSY_SCREENING", "mdtBlisterPackRecived", "TEXT")
+                    addColumnIfNotExists(database, "LEPROSY_SCREENING", "treatmentStatus", "TEXT")
+                    addColumnIfNotExists(database, "LEPROSY_SCREENING", "leprosyState", "TEXT")
+                }
+            }
 
             val MIGRATION_40_41 = object : Migration(40, 41) {
                 override fun migrate(database: SupportSQLiteDatabase) {
@@ -1444,7 +1597,9 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_38_39,
                         MIGRATION_39_40,
                         MIGRATION_40_41,
-                        MIGRATION_41_42
+                        MIGRATION_41_42,
+                        MIGRATION_42_43,
+                        MIGRATION_43_44
                     ).build()
 
                     INSTANCE = instance
