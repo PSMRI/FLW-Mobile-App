@@ -127,10 +127,10 @@ interface AmritApiService {
     @POST("flw-api/tb/suspected/saveAll")
     suspend fun saveTBSuspectedData(@Body tbSuspectedRequestDTO: TBSuspectedRequestDTO): Response<ResponseBody>
 
-    @POST("flw-0.0.1/api/follow-up/save")
+    @POST("flw-api/follow-up/save")
     suspend fun saveMalariaConfirmedData(@Body malariaConfirmedRequestDTO: MalariaConfirmedRequestDTO): Response<ResponseBody>
 
-    @POST("flw-0.0.1/api/follow-up/get")
+    @POST("flw-api/follow-up/get")
     suspend fun getMalariaConfirmedData(@Body malariaConfirmedRequestDTO: GetDataPaginatedRequestForDisease): Response<ResponseBody>
 
     @POST("flw-api/highRisk/pregnant/assess/getAll")

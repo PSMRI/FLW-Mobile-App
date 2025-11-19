@@ -179,7 +179,6 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         FilariaMDAFormResponseJsonEntity::class
     ],
     views = [BenBasicCache::class],
-
     version = 44, exportSchema = false
 )
 
@@ -515,7 +514,6 @@ abstract class InAppDb : RoomDatabase() {
                 }
             }
 
-
             val MIGRATION_35_36 = object : Migration(35, 36) {
                 override fun migrate(db: SupportSQLiteDatabase) {
                     db.execSQL("""
@@ -537,6 +535,9 @@ abstract class InAppDb : RoomDatabase() {
             CREATE UNIQUE INDEX IF NOT EXISTS idx_eye_unique_month
             ON ALL_EYE_SURGERY_VISIT_HISTORY(benId, formId, visitMonth)
         """.trimIndent())
+//                    database.execSQL("ALTER TABLE MALARIA_SCREENING ADD COLUMN visitId INTEGER NOT NULL DEFAULT 1")
+                    database.execSQL("DROP INDEX IF EXISTS ind_malariasn")
+                    database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS ind_malariasn ON MALARIA_SCREENING(benId, visitId)")
                 }
             }
 
@@ -565,6 +566,11 @@ abstract class InAppDb : RoomDatabase() {
             ON `ALL_EYE_SURGERY_VISIT_HISTORY` (`benId`, `hhId`, `visitDate`, `formId`)
             """.trimIndent()
                     )
+                    database.execSQL("ALTER TABLE MALARIA_SCREENING ADD COLUMN visitId INTEGER NOT NULL DEFAULT 1")
+                    database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS ind_malariasn ON MALARIA_SCREENING(benId, visitId)")
+
+                    database.execSQL("ALTER TABLE MALARIA_SCREENING ADD COLUMN malariaTestType INTEGER DEFAULT 0")
+                    database.execSQL("ALTER TABLE MALARIA_SCREENING ADD COLUMN malariaSlideTestType INTEGER DEFAULT 0")
                 }
             }
 
