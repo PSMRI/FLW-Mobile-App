@@ -102,7 +102,7 @@ class MalariaFormDataset(
         title = resources.getString(R.string.cbac_feverwks),
         entries = resources.getStringArray(R.array.yes_no),
         required = false,
-        hasDependants = false
+        hasDependants = true
     ).apply {
         value = resources.getStringArray(R.array.yes_no)[1]
     }
@@ -113,7 +113,7 @@ class MalariaFormDataset(
         title = resources.getString(R.string.flu_like_illness),
         entries = resources.getStringArray(R.array.yes_no),
         required = false,
-        hasDependants = false
+        hasDependants = true
     ).apply {
         value = resources.getStringArray(R.array.yes_no)[1]
     }
@@ -124,7 +124,7 @@ class MalariaFormDataset(
         title = resources.getString(R.string.shakingchills),
         entries = resources.getStringArray(R.array.yes_no),
         required = false,
-        hasDependants = false
+        hasDependants = true
     ).apply {
         value = resources.getStringArray(R.array.yes_no)[1]
     }
@@ -135,7 +135,7 @@ class MalariaFormDataset(
         title = resources.getString(R.string.headache),
         entries = resources.getStringArray(R.array.yes_no),
         required = false,
-        hasDependants = false
+        hasDependants = true
     ).apply {
         value = resources.getStringArray(R.array.yes_no)[1]
     }
@@ -146,7 +146,7 @@ class MalariaFormDataset(
         title = resources.getString(R.string.muscleaches),
         entries = resources.getStringArray(R.array.yes_no),
         required = false,
-        hasDependants = false
+        hasDependants = true
     ).apply {
         value = resources.getStringArray(R.array.yes_no)[1]
     }
@@ -157,7 +157,7 @@ class MalariaFormDataset(
         title = resources.getString(R.string.tiredness),
         entries = resources.getStringArray(R.array.yes_no),
         required = false,
-        hasDependants = false
+        hasDependants = true
     ).apply {
         value = resources.getStringArray(R.array.yes_no)[1]
     }
@@ -167,7 +167,7 @@ class MalariaFormDataset(
         title = resources.getString(R.string.nausea),
         entries = resources.getStringArray(R.array.yes_no),
         required = false,
-        hasDependants = false
+        hasDependants = true
     ).apply {
         value = resources.getStringArray(R.array.yes_no)[1]
     }
@@ -177,7 +177,7 @@ class MalariaFormDataset(
         title = resources.getString(R.string.vomiting),
         entries = resources.getStringArray(R.array.yes_no),
         required = false,
-        hasDependants = false
+        hasDependants = true
     ).apply {
         value = resources.getStringArray(R.array.yes_no)[1]
     }
@@ -188,7 +188,7 @@ class MalariaFormDataset(
         title = resources.getString(R.string.diarrhea),
         entries = resources.getStringArray(R.array.yes_no),
         required = false,
-        hasDependants = false
+        hasDependants = true
     ).apply {
         value = resources.getStringArray(R.array.yes_no)[1]
     }
@@ -197,9 +197,22 @@ class MalariaFormDataset(
         id = 16,
         inputType = InputType.DROPDOWN,
         title = resources.getString(R.string.case_status),
-        arrayId = R.array.dc_case_status,
+        arrayId = -1,
         entries = resources.getStringArray(R.array.dc_case_status),
         required = false,
+        isEnabled = false,
+        hasDependants = true
+
+    )
+
+    private val testType = FormElement(
+        id = 28,
+        inputType = InputType.RADIO,
+        title = resources.getString(R.string.m_test_type),
+        arrayId = -1,
+        entries = resources.getStringArray(R.array.test_type),
+        required = false,
+        isEnabled = true,
         hasDependants = true
 
     )
@@ -311,19 +324,38 @@ class MalariaFormDataset(
 
     )
 
+    var visitId = 0L
 
     suspend fun setUpPage(ben: BenRegCache?, saved: MalariaScreeningCache?) {
         val list = mutableListOf(
             dateOfCase,
             beneficiaryStatus,
+            headline,
+            isFever,
+            isFluLikeIllness,
+            isShakingchills,
+            isHeadache,
+            isMuscleaches,
+            isTiredness,
+            isNausea,
+            isVomiting,
+            isDiarrhea,
+            caseStatus
         )
         if (saved == null) {
             dateOfCase.value = getDateFromLong(System.currentTimeMillis())
             beneficiaryStatus.value = resources.getStringArray(R.array.benificary_case_status)[0]
-            caseStatus.value = resources.getStringArray(R.array.dc_case_status)[0]
+            visitId = 0
+//            caseStatus.value = resources.getStringArray(R.array.dc_case_status)[0]
         } else {
             dateOfCase.value = getDateFromLong(saved.caseDate)
             followUpdate.value = getDateFromLong(saved.followUpDate)
+            visitId = saved.visitId
+            val entries = resources.getStringArray(R.array.test_type)
+            val index = saved.malariaTestType ?: 0
+            if (index != 0) {
+                testType.value = entries[index-1]
+            }
             remarks.value = saved.remarks
             if (saved.caseStatus == "Suspected") {
                 caseStatus.entries = resources.getStringArray(R.array.dc_case_status)
@@ -390,6 +422,10 @@ class MalariaFormDataset(
                 else resources.getStringArray(R.array.positive_negative)[2]
 
 
+            if (saved.malariaSlideTestType != 0) {
+                slideTestOptions.value = resources.getStringArray(R.array.pf_pv)[saved.malariaSlideTestType!!-1]
+
+            }
             beneficiaryStatus.value =
                 getLocalValueInArray(beneficiaryStatus.arrayId, saved.beneficiaryStatus)
 
@@ -414,7 +450,7 @@ class MalariaFormDataset(
                     otherReasonOfDeath.value = saved.otherReasonForDeath
                 }
             } else {
-                list.add(list.indexOf(beneficiaryStatus) + 1, headline)
+              /*  list.add(list.indexOf(beneficiaryStatus) + 1, headline)
                 list.add(list.indexOf(beneficiaryStatus) + 2, isFever)
                 list.add(list.indexOf(beneficiaryStatus) + 3, isFluLikeIllness)
                 list.add(list.indexOf(beneficiaryStatus) + 4, isShakingchills)
@@ -424,40 +460,75 @@ class MalariaFormDataset(
                 list.add(list.indexOf(beneficiaryStatus) + 8, isNausea)
                 list.add(list.indexOf(beneficiaryStatus) + 9, isVomiting)
                 list.add(list.indexOf(beneficiaryStatus) + 10, isDiarrhea)
-                list.add(list.indexOf(beneficiaryStatus) + 11, caseStatus)
-                list.add(list.indexOf(beneficiaryStatus) + 12, rapidDiagnostic)
+                list.add(list.indexOf(beneficiaryStatus) + 11, caseStatus)*/
+               /* list.add(list.indexOf(beneficiaryStatus) + 12, rapidDiagnostic)
                 list.add(list.indexOf(beneficiaryStatus) + 13, referredTo)
                 list.add(list.indexOf(beneficiaryStatus) + 14, remarks)
-                list.add(list.indexOf(beneficiaryStatus) + 15, dateOfVisitBySupervisor)
+                list.add(list.indexOf(beneficiaryStatus) + 15, dateOfVisitBySupervisor)*/
 
 
+                if (caseStatus.value == resources.getStringArray(R.array.dc_case_status)[0] || caseStatus.value == resources.getStringArray(R.array.dc_case_status)[1] || caseStatus.value == resources.getStringArray(R.array.dc_case_status)[2]) {
+                    list.add(list.indexOf(caseStatus) + 1, testType)
+                    if (testType.value ==  resources.getStringArray(R.array.test_type)[0]) {
+                        list.add(list.indexOf(testType) + 1, rapidDiagnostic)
+                        if (rapidDiagnostic.value != "Not Performed") {
+                            list.add(list.indexOf(rapidDiagnostic) + 1, dateOfTest)
+                            dateOfTest.value = getDateFromLong(saved.dateOfRdt)
+
+                        }
 
 
+                    } else if (testType.value == resources.getStringArray(R.array.test_type)[1]) {
+                        list.add(list.indexOf(testType) + 1, slideTestOptions)
+                        if (slideTestOptions.value ==  resources.getStringArray(R.array.pf_pv)[0]) {
+                            list.add(list.indexOf(slideTestOptions) + 1, slideTestPf)
+                        } else {
+                            list.add(list.indexOf(slideTestOptions) + 1, slideTestPv)
+                        }
+                        if (slideTestPv.value != "Not Performed") {
+                            list.add(list.indexOf(slideTestPv) + 1, dateOfSlidetest)
+                            dateOfSlidetest.value = getDateFromLong(saved.dateOfSlideTest)
+                        }
 
+                        if (slideTestPf.value != "Not Performed") {
+                            list.add(list.indexOf(slideTestPf) + 1, dateOfSlidetest)
+                            dateOfSlidetest.value = getDateFromLong(saved.dateOfSlideTest)
+                        }
 
-                if (rapidDiagnostic.value != "Not Performed") {
-                    list.add(list.indexOf(rapidDiagnostic) + 1, dateOfTest)
-                    dateOfTest.value = getDateFromLong(saved.dateOfRdt)
-                    if (rapidDiagnostic.value == "Positive") {
-                        list.add(list.indexOf(rapidDiagnostic) + 2, slideTestOptions)
-                        slideTestOptions.value = saved.slideTestName
+                    } else {
+                        list.add(list.indexOf(testType) + 1, rapidDiagnostic)
+                        if (rapidDiagnostic.value != "Not Performed") {
+                            list.add(list.indexOf(rapidDiagnostic) + 1, dateOfTest)
+                            dateOfTest.value = getDateFromLong(saved.dateOfRdt)
+                            list.add(list.indexOf(rapidDiagnostic) + 2, slideTestOptions)
+
+                        }
+
+                        if (slideTestOptions.value ==  resources.getStringArray(R.array.pf_pv)[0]) {
+                            list.add(list.indexOf(slideTestOptions) + 1, slideTestPf)
+                        } else {
+                            list.add(list.indexOf(slideTestOptions) + 1, slideTestPv)
+                        }
+                        if (slideTestPv.value != "Not Performed") {
+                            list.add(list.indexOf(slideTestPv) + 1, dateOfSlidetest)
+                            dateOfSlidetest.value = getDateFromLong(saved.dateOfSlideTest)
+                        }
+
+                        if (slideTestPf.value != "Not Performed") {
+                            list.add(list.indexOf(slideTestPf) + 1, dateOfSlidetest)
+                            dateOfSlidetest.value = getDateFromLong(saved.dateOfSlideTest)
+                        }
                     }
+
+                } else if (caseStatus.value == resources.getStringArray(R.array.dc_case_status)[1]) {
+                    list.add(list.indexOf(caseStatus) + 1, testType)
                 }
 
-                if (slideTestOptions.value ==  resources.getStringArray(R.array.pf_pv)[0]) {
-                    list.add(list.indexOf(slideTestOptions) + 1, slideTestPf)
-                } else {
-                    list.add(list.indexOf(slideTestOptions) + 1, slideTestPv)
-                }
-                if (slideTestPv.value != "Not Performed") {
-                    list.add(list.indexOf(slideTestPv) + 1, dateOfSlidetest)
-                    dateOfSlidetest.value = getDateFromLong(saved.dateOfSlideTest)
-                }
 
-                if (slideTestPf.value != "Not Performed") {
-                    list.add(list.indexOf(slideTestPf) + 1, dateOfSlidetest)
-                    dateOfSlidetest.value = getDateFromLong(saved.dateOfSlideTest)
-                }
+
+
+
+
 
             }
             referredTo.value =
@@ -483,25 +554,94 @@ class MalariaFormDataset(
 
         return when (formId) {
 
-           isFever.id -> {
-               if(isFever.value == resources.getStringArray(R.array.yes_no)[0]){
-                   caseStatus.value = resources.getStringArray(R.array.dc_case_status)[0]
-               }
-               0
-           }
-            isNausea.id -> {
-                if(isNausea.value == resources.getStringArray(R.array.yes_no)[0]){
-                    caseStatus.value = resources.getStringArray(R.array.dc_case_status)[0]
-                }
-                0
-            }
+            isFever.id,
+            isFluLikeIllness.id,
+            isShakingchills.id,
+            isHeadache.id,
+            isMuscleaches.id,
+            isTiredness.id,
+            isNausea.id,
+            isVomiting.id,
             isDiarrhea.id -> {
-                if(isDiarrhea.value == resources.getStringArray(R.array.yes_no)[0]){
-                    caseStatus.value = resources.getStringArray(R.array.dc_case_status)[0]
+
+                val yesValue = resources.getStringArray(R.array.yes_no)[0]
+                val suspectedValue = resources.getStringArray(R.array.dc_case_status)[0]
+                val notConfirmedValue = resources.getStringArray(R.array.dc_case_status)[2]
+
+                val symptoms = listOf(
+                    isFluLikeIllness.value,
+                    isShakingchills.value,
+                    isHeadache.value,
+                    isMuscleaches.value,
+                    isTiredness.value,
+                    isNausea.value,
+                    isVomiting.value,
+                    isDiarrhea.value
+                )
+
+                val nonFeverYesCount = symptoms.count { it == yesValue }
+
+                caseStatus.value = when {
+                    isFever.value == yesValue -> suspectedValue
+                    nonFeverYesCount >= 2 -> suspectedValue
+                    else -> notConfirmedValue
+                }
+
+                if(caseStatus.value == suspectedValue){
+                    triggerDependants(
+                        source = caseStatus,
+                        addItems = listOf(testType),
+                        removeItems = listOf()
+                    )
+                } else {
+                    triggerDependants(
+                        source = caseStatus,
+                        addItems = listOf(),
+                        removeItems = listOf(testType)
+                    )
+                }
+            }
+
+            caseStatus.id -> {
+                if(caseStatus.value == resources.getStringArray(R.array.dc_case_status)[0]){
+                    triggerDependants(
+                        source = caseStatus,
+                        addItems = listOf(testType),
+                        removeItems = listOf()
+                    )
+                } else {
+                    triggerDependants(
+                        source = caseStatus,
+                        addItems = listOf(),
+                        removeItems = listOf(testType)
+                    )
                 }
                 0
             }
 
+
+            testType.id -> {
+                if(testType.value == resources.getStringArray(R.array.test_type)[0]){
+                    triggerDependants(
+                        source = testType,
+                        addItems = listOf(rapidDiagnostic),
+                        removeItems = listOf(slideTestOptions,slideTestPf,slideTestPv,dateOfTest,dateOfSlidetest)
+                    )
+                } else if(testType.value == resources.getStringArray(R.array.test_type)[1]){
+                    triggerDependants(
+                        source = testType,
+                        addItems = listOf(slideTestOptions),
+                        removeItems = listOf(rapidDiagnostic,slideTestPf,slideTestPv,dateOfTest,dateOfSlidetest)
+                    )
+                } else {
+                    triggerDependants(
+                        source = testType,
+                        addItems = listOf(rapidDiagnostic,slideTestOptions),
+                        removeItems = listOf(slideTestPf,slideTestPv,dateOfTest,dateOfSlidetest)
+                    )
+                }
+                0
+            }
 
             beneficiaryStatus.id -> {
                 if (beneficiaryStatus.value == beneficiaryStatus.entries!!.last()) {
@@ -518,8 +658,7 @@ class MalariaFormDataset(
                         source = beneficiaryStatus,
                         addItems = listOf(headline,isFever,isFluLikeIllness,isShakingchills,isHeadache,
                             isMuscleaches,isTiredness,isNausea,isVomiting,isDiarrhea,
-                            caseStatus,rapidDiagnostic,referredTo,
-                            remarks,dateOfVisitBySupervisor),
+                            caseStatus),
                         removeItems = listOf(dateOfDeath,placeOfDeath,reasonOfDeath)
                     )
                 }
@@ -570,29 +709,55 @@ class MalariaFormDataset(
 
             rapidDiagnostic.id -> {
                 if (rapidDiagnostic.value == resources.getStringArray(R.array.positive_negative)[2]) {
+
                     triggerDependants(
                         source = rapidDiagnostic,
                         addItems = listOf(),
-                        removeItems = listOf(dateOfTest,slideTestOptions,slideTestPf,slideTestPv)
+                        removeItems = listOf(dateOfTest,slideTestOptions,slideTestPf,slideTestPv,dateOfSlidetest)
                     )
-                    caseStatus.value =
-                        getLocalValueInArray(caseStatus.arrayId, resources.getStringArray(R.array.dc_case_status)[0])
                 } else if (rapidDiagnostic.value == resources.getStringArray(R.array.positive_negative)[1]) {
-                    triggerDependants(
+                    if (testType.value == "Both") {
+                        triggerDependants(
+                            source = rapidDiagnostic,
+                            addItems = listOf(dateOfTest,slideTestOptions),
+                            removeItems = listOf()
+                        )
+                    } else {
+                        triggerDependants(
+                            source = rapidDiagnostic,
+                            addItems = listOf(dateOfTest),
+                            removeItems = listOf(slideTestOptions,slideTestPf,slideTestPv)
+                        )
+                    }
+
+                    if (visitId != 0L){
+                        caseStatus.value = resources.getStringArray(R.array.dc_case_status)[2]
+                    }
+
+//                    caseStatus.value = getLocalValueInArray(caseStatus.arrayId, resources.getStringArray(R.array.dc_case_status)[1])
+                } else {
+                    if (testType.value == "Both") {
+                        triggerDependants(
+                            source = rapidDiagnostic,
+                            addItems = listOf(dateOfTest,slideTestOptions),
+                            removeItems = listOf()
+                        )
+                    } else {
+                        triggerDependants(
+                            source = rapidDiagnostic,
+                            addItems = listOf(dateOfTest),
+                            removeItems = listOf(slideTestOptions,slideTestPf,slideTestPv)
+                        )
+                    }
+                  /*  triggerDependants(
                         source = rapidDiagnostic,
                         addItems = listOf(dateOfTest),
-                        removeItems = listOf(slideTestOptions,slideTestPf,slideTestPv)
-                    )
-                    caseStatus.value =
-                        getLocalValueInArray(caseStatus.arrayId, resources.getStringArray(R.array.dc_case_status)[1])
-                } else {
-                    triggerDependants(
-                        source = rapidDiagnostic,
-                        addItems = listOf(dateOfTest,slideTestOptions),
                         removeItems = listOf()
-                    )
-                    caseStatus.value =
-                        getLocalValueInArray(caseStatus.arrayId, resources.getStringArray(R.array.dc_case_status)[0])
+                    )*/
+                    if (visitId != 0L){
+                        caseStatus.value = resources.getStringArray(R.array.dc_case_status)[1]
+
+                    }
                 }
                 0
             }
@@ -624,6 +789,11 @@ class MalariaFormDataset(
                         addItems = listOf(dateOfSlidetest),
                         removeItems = listOf()
                     )
+                    if (visitId != 1L) {
+                        caseStatus.value = resources.getStringArray(R.array.dc_case_status)[1]
+
+                    }
+
                 } else if (slideTestPv.value == resources.getStringArray(R.array.positive_negative)[1]) {
 
                     triggerDependants(
@@ -631,12 +801,21 @@ class MalariaFormDataset(
                         addItems = listOf(dateOfSlidetest),
                         removeItems = listOf()
                     )
+                    if (visitId != 0L) {
+                        caseStatus.value = resources.getStringArray(R.array.dc_case_status)[2]
+
+                    }
+
                 } else {
                     triggerDependants(
                         source = slideTestPv,
                         addItems = listOf(),
                         removeItems = listOf(dateOfSlidetest)
                     )
+                    if (visitId != 0L) {
+                        caseStatus.value = resources.getStringArray(R.array.dc_case_status)[2]
+
+                    }
 
                 }
                 0
@@ -650,6 +829,11 @@ class MalariaFormDataset(
                         addItems = listOf(dateOfSlidetest),
                         removeItems = listOf()
                     )
+                    if (visitId != 0L) {
+                        caseStatus.value = resources.getStringArray(R.array.dc_case_status)[1]
+
+                    }
+
                 } else if (slideTestPf.value == resources.getStringArray(R.array.positive_negative)[1]) {
 
                     triggerDependants(
@@ -657,12 +841,21 @@ class MalariaFormDataset(
                         addItems = listOf(dateOfSlidetest),
                         removeItems = listOf()
                     )
+                    if (visitId != 0L) {
+                        caseStatus.value = resources.getStringArray(R.array.dc_case_status)[2]
+
+                    }
+
                 } else {
                     triggerDependants(
                         source = slideTestPf,
                         addItems = listOf(),
                         removeItems = listOf(dateOfSlidetest)
                     )
+                    if (visitId != 0L) {
+                        caseStatus.value = resources.getStringArray(R.array.dc_case_status)[2]
+
+                    }
 
                 }
                 0
@@ -733,6 +926,10 @@ class MalariaFormDataset(
             form.dateOfVisitBySupervisor = getLongFromDate(dateOfVisitBySupervisor.value)
             form.diseaseTypeID = 1
             form.followUpDate = getLongFromDate(followUpdate.value)
+            form.visitId = 1
+            form.malariaTestType = testType.getPosition()
+            form.malariaSlideTestType = slideTestOptions.getPosition()
+
         }
     }
 

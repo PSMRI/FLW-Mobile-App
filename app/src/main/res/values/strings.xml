@@ -30,6 +30,7 @@
     <string name="case_date_malaria">Malaria Case Status Date</string>
     <string name="aes_case_status_date">AES / JE Case Status Date</string>
     <string name="case_status">Case Status</string>
+    <string name="m_test_type">Malaria Test Type</string>
     <string name="place_of_Death">Place of Death</string>
     <string name="reason_of_Death">Reason for Death</string>
     <string name="beneficiary_status">Beneficiary Status</string>
@@ -281,6 +282,7 @@
     <string name="id">ID</string>
     <string name="no_of_children">No.of Children</string>
     <string name="view_visit">View Visit</string>
+    <string name="visit_no">Visit No.</string>
     <string name="add_visit">Add Visit</string>
     <string name="household_id">Household ID</string>
     <string name="sup_households">Households</string>
@@ -420,6 +422,7 @@
     <string name="non_pregnant_women_eligible_couple_section">Non-Pregnant Women (Eligible Couple) section</string>
     <string name="visit_day">Visit Day</string>
     <string name="date_of_death">Date of Death</string>
+    <string name="date_of_diagnosis">Date of Diagnosis</string>
     <string name="time_of_death">Time of Death</string>
     <string name="reason_for_death">Reason for Death</string>
     <string name="place_of_death">Place of Death</string>
@@ -568,6 +571,12 @@
         <item name="dc_treatment">Treatment Started</item>
     </string-array>
 
+    <string-array name="test_type">
+        <item name="rdt">RDT</item>
+        <item name="slide">Slide Test</item>
+        <item name="both">Both</item>
+    </string-array>
+
     <string-array name="leprosy_status">
         <item>Screened</item>
         <item>Denied</item>
@@ -590,8 +599,7 @@
     </string-array>
 
     <string-array name="benificary_case_status">
-        <item name="dc_not">Not Applicable</item>
-        <item name="dc_cured">Cured</item>
+        <item name="dc_not">Screening</item>
         <item name="dc_death">Death</item>
     </string-array>
 

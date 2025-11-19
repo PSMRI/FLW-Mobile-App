@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.model.HouseholdCache
 import org.piramalswasthya.sakhi.model.IRSRoundScreening
@@ -19,6 +20,15 @@ interface MalariaDao {
     @Query("SELECT * FROM MALARIA_SCREENING WHERE benId =:benId limit 1")
     suspend fun getMalariaScreening(benId: Long): MalariaScreeningCache?
 
+    @Query("SELECT * FROM MALARIA_SCREENING WHERE benId = :benId ORDER BY visitId DESC")
+     fun getAllVisitsForBen(benId: Long): Flow<List<MalariaScreeningCache>>
+
+    @Query("SELECT * FROM MALARIA_SCREENING WHERE benId = :benId ORDER BY visitId DESC LIMIT 1")
+    fun getLatestVisitForBen(benId: Long): MalariaScreeningCache?
+
+    @Query("SELECT MAX(visitId) FROM MALARIA_SCREENING WHERE benId = :benId")
+    suspend fun getLastVisitIdForBen(benId: Long): Long?
+
     @Query("SELECT * FROM MALARIA_SCREENING WHERE benId =:benId and (caseDate = :visitDate or caseDate = :visitDateGMT) limit 1")
     suspend fun getMalariaScreening(benId: Long, visitDate: Long, visitDateGMT: Long): MalariaScreeningCache?
 
@@ -27,7 +37,6 @@ interface MalariaDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveMalariaScreening(malariaScreeningCache: MalariaScreeningCache)
-
 
     @Query("SELECT * FROM MALARIA_CONFIRMED WHERE benId =:benId limit 1")
     suspend fun getMalariaConfirmed(benId: Long): MalariaConfirmedCasesCache?

@@ -37,9 +37,15 @@ class MalariaRepo @Inject constructor(
     private val tmcNetworkApiService: AmritApiService
 ) {
 
-    suspend fun getMalariaScreening(benId: Long): MalariaScreeningCache? {
+    suspend fun getLatestVisitForBen(benId: Long): MalariaScreeningCache? {
         return withContext(Dispatchers.IO) {
-            malariaDao.getMalariaScreening(benId)
+            malariaDao.getLatestVisitForBen(benId)
+        }
+    }
+
+    suspend fun getlastvisitIdforBen(benId: Long): Long? {
+        return withContext(Dispatchers.IO) {
+            malariaDao.getLastVisitIdForBen(benId)
         }
     }
 
@@ -67,6 +73,7 @@ class MalariaRepo @Inject constructor(
             malariaDao.getIRSScreening(benId)
         }
     }
+
 
     suspend fun saveIRSScreening(irsRoundScreening: IRSRoundScreening) {
         withContext(Dispatchers.IO) {
@@ -460,8 +467,11 @@ class MalariaRepo @Inject constructor(
                     val responseString = response.body()?.string()
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
+                        var errorMessage = ""
 
-                        val errorMessage = jsonObj.getString("errorMessage")
+                        if (jsonObj.has("errorMessage")) {
+                            errorMessage = jsonObj.getString("errorMessage")
+                        }
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Push to amrit tb screening data : $responseStatusCode")
                         when (responseStatusCode) {
