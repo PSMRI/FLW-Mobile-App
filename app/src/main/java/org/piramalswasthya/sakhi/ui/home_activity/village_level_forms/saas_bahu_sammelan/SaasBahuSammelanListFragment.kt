@@ -70,7 +70,7 @@ class SaasBahuSammelanListFragment : Fragment() {
                     val entryYear = entryCal.get(Calendar.YEAR)
                     entryMonth == currentMonth && entryYear == currentYear
                 }
-                binding.btnNextPage.isEnabled = hasCurrentMonthEntry
+                binding.btnNextPage.isEnabled = !hasCurrentMonthEntry
 
                 binding.flEmpty.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
                 ahdAdapter.submitList(it)
