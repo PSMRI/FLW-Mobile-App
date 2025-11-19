@@ -534,7 +534,7 @@ class CbacFragment : Fragment() {
             binding.ncdSusValidDisplay.visibility = View.VISIBLE
             viewModel.setFlagForNcd(true)
             if (score > 4) {
-                if (isInFillMode)
+                if (isInFillMode && viewModel.referralCache == null)
                 asreferAlertDialog.show()
             }
         } else {
@@ -925,7 +925,7 @@ class CbacFragment : Fragment() {
             when (id) {
                 R.id.rb_yes -> {
                     viewModel.setLumpB(1)
-                    if (isInFillMode)
+                    if (isInFillMode && viewModel.referralCache == null)
                         asreferAlertDialog.show()
                 }
                 R.id.rb_no -> viewModel.setLumpB(2)
@@ -935,7 +935,7 @@ class CbacFragment : Fragment() {
             when (id) {
                 R.id.rb_yes -> {
                     viewModel.setNipple(1)
-                    if (isInFillMode)
+                    if (isInFillMode && viewModel.referralCache == null)
                         asreferAlertDialog.show()
                 }
                 R.id.rb_no -> viewModel.setNipple(2)
@@ -945,7 +945,7 @@ class CbacFragment : Fragment() {
             when (id) {
                 R.id.rb_yes -> {
                     viewModel.setBreast(1)
-                    if (isInFillMode)
+                    if (isInFillMode && viewModel.referralCache == null)
                         asreferAlertDialog.show()
 
                 }
@@ -956,7 +956,7 @@ class CbacFragment : Fragment() {
             when (id) {
                 R.id.rb_yes -> {
                     viewModel.setBlP(1)
-                    if (isInFillMode)
+                    if (isInFillMode && viewModel.referralCache == null)
                         asreferAlertDialog.show()
                 }
                 R.id.rb_no -> viewModel.setBlP(2)
@@ -969,7 +969,7 @@ class CbacFragment : Fragment() {
                     alertDialog.setTitle(resources.getString(R.string.alert))
                     alertDialog.setMessage(resources.getString(R.string.inform_asha_facilitator))
                     alertDialog.show()
-                    if (isInFillMode)
+                    if (isInFillMode && viewModel.referralCache == null)
                         asreferAlertDialog.show()
                     binding.tvBlMenopause.visibility = View.VISIBLE
                 }
@@ -984,7 +984,7 @@ class CbacFragment : Fragment() {
             when (id) {
                 R.id.rb_yes -> {
                     viewModel.setBlI(1)
-                    if (isInFillMode)
+                    if (isInFillMode && viewModel.referralCache == null)
                         asreferAlertDialog.show()
                 }
                 R.id.rb_no -> viewModel.setBlI(2)
@@ -994,7 +994,7 @@ class CbacFragment : Fragment() {
             when (id) {
                 R.id.rb_yes ->  {
                     viewModel.setFoulD(1)
-                    if (isInFillMode)
+                    if (isInFillMode && viewModel.referralCache == null)
                         asreferAlertDialog.show()
                 }
                 R.id.rb_no -> viewModel.setFoulD(2)
@@ -1157,7 +1157,9 @@ class CbacFragment : Fragment() {
         viewModel.phq2TotalScore.observe(viewLifecycleOwner) {
             if (it.substring(it.lastIndexOf(' ') + 1).toInt() > 3) {
                 binding.tvTbMoicVisit.visibility = View.VISIBLE
-                asreferAlertDialog.show()
+                if (viewModel.referralCache == null) {
+                    asreferAlertDialog.show()
+                }
                 viewModel.setFlagForPhQ2(true)
             } else {
                 if (binding.tvTbMoicVisit.visibility != View.GONE) {
