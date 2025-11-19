@@ -55,6 +55,8 @@ class PullLeprosyFormAmritWorker @AssistedInject constructor(
                     val result1 =
                         awaitAll(
                             async { getLeprosyScreeningDetails() },
+                            async { getLeprosyList() },
+                            async { getLeprosyFollowUp() }
 
                             )
 
@@ -104,6 +106,37 @@ class PullLeprosyFormAmritWorker @AssistedInject constructor(
                 return@withContext res == 1
             } catch (e: Exception) {
                 Timber.d("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
+            }
+            true
+        }
+    }
+
+    private suspend fun getLeprosyList() : Boolean{
+        return  withContext(Dispatchers.IO)
+        {
+            try{
+                val res = leprosyRepo.getAllLeprosyDataFromServer()
+                return@withContext res == 1
+            }
+            catch (e: Exception)
+            {
+                Timber.d("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
+
+            }
+            true
+        }
+    }
+
+    private suspend fun getLeprosyFollowUp() : Boolean{
+        return  withContext(Dispatchers.IO){
+            try {
+                val res = leprosyRepo.getAllLeprosyFollowUpDataFromServer()
+                return@withContext res ==1
+            }
+            catch (e: Exception)
+            {
+                Timber.d("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
+
             }
             true
         }

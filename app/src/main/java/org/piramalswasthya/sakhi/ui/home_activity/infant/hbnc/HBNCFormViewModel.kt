@@ -1,6 +1,8 @@
 package org.piramalswasthya.sakhi.ui.home_activity.infant.hbnc
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import org.piramalswasthya.sakhi.repositories.dynamicRepo.FormRepository
@@ -19,6 +21,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
 import org.piramalswasthya.sakhi.model.dynamicModel.VisitCard
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.InfantRegRepo
+import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pnc.form.PncFormViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -45,6 +48,8 @@ class HBNCFormViewModel @Inject constructor(
     var visitDay: String = ""
     private var isViewMode: Boolean = false
 
+    private val _navigateToCdsr = MutableLiveData<Boolean>()
+    val navigateToCdsr: LiveData<Boolean> get() = _navigateToCdsr
 
     private val _isBenDead = MutableStateFlow(false)
     val isBenDead: StateFlow<Boolean> = _isBenDead
@@ -59,6 +64,9 @@ class HBNCFormViewModel @Inject constructor(
         }
     }
 
+    fun onNavigationComplete() {
+        _navigateToCdsr.value = false
+    }
 
     fun loadSyncedVisitList(benId: Long) {
         viewModelScope.launch {
@@ -67,12 +75,14 @@ class HBNCFormViewModel @Inject constructor(
 
         }
     }
+
     fun loadFormSchema(
         benId: Long,
         formId: String,
         visitDay: String,
         viewMode: Boolean,
-        dob: Long
+        dob: Long,
+        lang: String
     ) {
         this.visitDay = visitDay
         this.isViewMode = viewMode
@@ -82,18 +92,17 @@ class HBNCFormViewModel @Inject constructor(
             val cachedSchema: FormSchemaDto? = cachedSchemaEntity?.let {
                 FormSchemaDto.fromJson(it.schemaJson)
             }
-            val localSchemaToRender = cachedSchema ?: repository.getFormSchema(formId)?.also {
-            }
 
-            if (localSchemaToRender == null) {
-                return@launch
-            }
+            val localSchemaToRender = cachedSchema ?: repository.getFormSchema(formId, lang)?.also { }
+
+            if (localSchemaToRender == null) return@launch
 
             launch {
-                val updatedSchema = repository.getFormSchema(formId)
+                val updatedSchema = repository.getFormSchema(formId, lang)
                 if (updatedSchema != null && (cachedSchemaEntity?.version ?: 0) < updatedSchema.version) {
                 }
             }
+
             val savedJson = repository.loadFormResponseJson(benId, visitDay)
             val savedFieldValues = if (!savedJson.isNullOrBlank()) {
                 try {
@@ -103,9 +112,7 @@ class HBNCFormViewModel @Inject constructor(
                 } catch (e: Exception) {
                     emptyMap()
                 }
-            } else {
-                emptyMap()
-            }
+            } else emptyMap()
 
             val allFields = localSchemaToRender.sections.flatMap { it.fields.orEmpty() }
             localSchemaToRender.sections.orEmpty().forEach { section ->
@@ -113,7 +120,7 @@ class HBNCFormViewModel @Inject constructor(
                     field.value = when (field.fieldId) {
                         "visit_day" -> visitDay
                         "due_date" -> calculateDueDate(dob, visitDay)?.let { formatDate(it) } ?: ""
-                        else -> savedFieldValues[field.fieldId] ?: field.defaultValue
+                        else -> savedFieldValues[field.fieldId] ?: field.default
                     }
 
                     field.isEditable = when (field.fieldId) {
@@ -128,9 +135,11 @@ class HBNCFormViewModel @Inject constructor(
                     field.visible = evaluateFieldVisibility(field, allFields)
                 }
             }
+
             _schema.value = localSchemaToRender
         }
     }
+
 
     private fun evaluateFieldVisibility(
         field: FormFieldDto,
@@ -201,6 +210,7 @@ suspend fun saveFormResponses(benId: Long, hhId: Long) {
                     syncState = SyncState.UNSYNCED
                 }
                 benRepo.updateRecord(ben)
+                _navigateToCdsr.postValue(true)
             }
         } catch (e: Exception) {
             e.printStackTrace()

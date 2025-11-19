@@ -42,6 +42,10 @@
             name="role"
             type="Integer" />
 
+        <variable
+            name="isMatched"
+            type="Boolean" />
+
     </data>
 
     <androidx.cardview.widget.CardView
@@ -49,10 +53,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_normal"
-        android:backgroundTint="?attr/colorPrimary"
+        android:backgroundTint="@{ben.isDeath ? @color/md_theme_dark_outline: @color/md_theme_light_primary}"
         android:elevation="@dimen/padding_normal"
         app:cardCornerRadius="@dimen/padding_normal"
-        app:cardElevation="@dimen/padding_normal">
+        app:cardElevation="@dimen/padding_normal"
+        >
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -424,6 +429,29 @@
                             android:textColor="?attr/colorOnPrimary"
                             tools:text="0123456789" />
                     </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:visibility="@{ben.isDeath ? View.VISIBLE : View.GONE}"
+                        android:padding="@dimen/padding_small">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/date_of_death"
+                            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                            android:textColor="?attr/colorOnPrimary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@{ben.dateOfDeath}"
+                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                            android:textColor="?attr/colorOnPrimary"
+                            tools:text="" />
+                    </LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/blank_space"
@@ -498,6 +526,52 @@
 
 
                     </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_ben_details_4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="3"
+                    app:layout_constraintTop_toBottomOf="@id/ll_ben_details_3">
+
+
+                    <Button
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:id="@+id/btn_ifa"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="@dimen/margin_small"
+                        android:backgroundTint="@android:color/holo_green_dark"
+                        android:onClick="@{()-> clickListener.clickedAddAllBenBtn(ben,isMatched,true)}"
+                        android:text="@string/ifa"
+                        app:visibleIfEligibleFemale="@{ben.ageInt}"
+                        app:isDeath="@{ben.isDeathValue}"
+                        app:reproductiveStatusId="@{ben.reproductiveStatusId}"
+                        app:gender="@{ben.gender}"
+                        android:textColor="?attr/colorOnPrimary"
+                        tools:ignore="NestedWeights" />
+
+                    <Space
+                        android:layout_width="@dimen/_5sdp"
+                        android:layout_height="match_parent"/>
+
+                    <Button
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:id="@+id/btn_above_30"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/margin_small"
+                        android:backgroundTint="@android:color/holo_green_dark"
+                        android:onClick="@{()-> clickListener.clickedAddAllBenBtn(ben,isMatched,false)}"
+                        android:text="@string/add_eye_surgery"
+                        app:visibleIfAgeAbove30AndAliveAge="@{ben.ageInt}"
+                        app:isDeath="@{ben.isDeathValue}"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                        android:textColor="?attr/colorOnPrimary"
+                        tools:ignore="NestedWeights"/>
+
                 </LinearLayout>
             </LinearLayout>
 

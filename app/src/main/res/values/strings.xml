@@ -58,7 +58,9 @@
     <string name="day_wise_tracking_pf">Pf - Day-wise Tracking</string>
     <string name="day_wise_tracking_pv">PV - Day-wise Tracking</string>
     <string name="type_of_leprocy">Type of Leprocy</string>
+    <string name="treatment_start_date">Treatment Start Date</string>
     <string name="dose_status">DEC and Albendazole Dose Status</string>
+    <string name="is_medicine_distributed">Is medicine Distributed</string>
     <string name="body_part">Which part of Body	</string>
     <string name="medicine_side_effect">Medicine  Side Effect</string>
 
@@ -98,6 +100,8 @@
     <string name="notification_sync_channel_description">Upload beneficiaries to Server</string>
     <string name="notification_sync_channel_id">sakhi-sync0</string>
     <string name="btn_submit">Submit</string>
+    <string name="mosquito_net_on">Mosquito Net ON</string>
+    <string name="mosquito_net_off">Mosquito Net OFF</string>
     <string name="btn_apply">Apply</string>
     <string name="long_to_string">%d</string>
     <string name="ben_pending_sync">Pending Sync</string>
@@ -111,6 +115,7 @@
     <string name="tv_husband_name_ph">Husband Name</string>
     <string name="tv_spouse_name_ph">Spouse Name</string>
     <string name="tv_family_head_name_ph">Family Head Name</string>
+    <string name="tv_date_of_death">Date Of Death</string>
     <string name="tv_spouse">Spouse</string>
     <string name="tv_ben_id_ph">Ben ID</string>
     <string name="tv_mob_no_ph">Mobile Number</string>
@@ -132,7 +137,11 @@
 
     <string name="immunization_dosage_count">%d/%d</string>
     <string name="select_death_type">Select Beneficiary Death Type</string>
+    <string name="general_deaths">General Deaths</string>
     <string name="death_type_cdr">CDR (Child Death Review)</string>
+    <string name="maternal_deaths">Maternal Deaths (MDSR)</string>
+    <string name="non_maternal_deaths">Non-Maternal Deaths</string>
+    <string name="child_deaths">Child Deaths</string>
     <string name="death_type_mdsr">MDSR (Maternal Death Surveillance and Response)</string>
     <string name="continue_button">CONTINUE</string>
 
@@ -293,6 +302,7 @@
     <string name="add_cbac">Add CBAC</string>
     <string name="view_cbac">View CBAC</string>
     <string name="view">VIEW</string>
+    <string name="add">ADD</string>
     <string name="home">Home</string>
     <string name="asha_profile">Profile</string>
     <string name="sync_records">Sync Records</string>
@@ -324,6 +334,8 @@
     <string name="beneficiaries_data">Beneficiaries Data</string>
     <string name="cdr_list">CDR List</string>
     <string name="mdsr_list">MDSR List</string>
+    <string name="nmdsr_list">NMDSR List</string>
+    <string name="gdr_list">GDR List</string>
     <string name="mdsr">MDSR</string>
     <string name="cdr">CDR</string>
     <string name="pmsma">PMSMA</string>
@@ -371,7 +383,6 @@
     <string name="service_location">Service Location</string>
 
     //................VHND........................
-
 
 
     <!--    <string name="wife_s_name">Wife\'s Name</string>-->
@@ -466,6 +477,8 @@
     <string name="all">All</string>
     <string name="with_abha">With ABHA</string>
     <string name="without_abha">Without ABHA</string>
+    <string name="age_above_30_years">Age above 30 years</string>
+    <string name="wara">WARA</string>
     <string name="no_visit_made">No Visit Made</string>
     <string name="filter_list">Filter</string>
     <string name="ben_with_rch_id">Ben With RCH ID</string>
@@ -479,6 +492,11 @@
     <string name="check_sam">Check SAM</string>
     <string name="ors">ORS</string>
     <string name="ifa">IFA</string>
+    <string name="date_of_provision">Date of Provision</string>
+    <string name="bottle_number">Bottle Number</string>
+    <string name="s_no">S. No</string>
+    <string name="follow_up_date">Follow Up Dates</string>
+    <string name="bottle_distribution">Bottle Distribution</string>
     <string name="child_rch_id">Child RCH ID</string>
     <string name="vaccination_due_date">Vaccination Due Date</string>
     <string name="reminder">Reminder!!</string>
@@ -496,6 +514,35 @@
     <string name="optional">(Optional)</string>
     <string name="optional_">Optional</string>
     <string name="mandatory">Mandatory <font color='#FF0000'>*</font></string>
+    <string name="name_of_the_child">Name of the Child</string>
+    <string name="address">Address</string>
+    <string name="house_number">House number</string>
+    <string name="mohalla_colony">"Mohalla/Colony "</string>
+    <string name="landmarks_if_any">"Landmarks, if any "</string>
+    <string name="pincode">Pincode</string>
+    <string name="landline">Landline</string>
+    <string name="time">Time</string>
+    <string name="name_of_first_informant">"Name of First Informant "</string>
+    <string name="signature_name_of_asha">Signature/Name of ASHA</string>
+    <string name="date_of_notification">"Date of Notification "</string>
+    <string name="cdr_form_from_anm_1">CDR form from ANM 1</string>
+    <string name="cdr_form_from_anm_2">CDR form from ANM 2</string>
+    <string name="district_tehsil">District/Tehsil</string>
+    <string name="leprosy_confirmed">Leprosy Confirmed</string>
+    <string name="leprosy_suspected">Leprosy Suspected</string>
+    <string name="leprosy_confirmed_form">Leprosy Confirmed Form</string>
+    <string name="leprosy_suspected_form">Leprosy Suspected Form</string>
+    <string name="follow_up_history">Follow-up History</string>
+    <string name="download_not_available_for_this_variant">Download not available for this variant</string>
+    <string name="leprosy_visit">Leprosy Visit</string>
+    <string name="leprosy_screening">Leprosy Screening</string>
+    <string name="any_leprosy_symptoms_present">Any Leprosy Symptoms Present?</string>
+    <string name="visits">Visit</string>
+    <string name="select_visit">Select Visit</string>
+    <string name="no_previous_visits_available">No previous visits available</string>
+    <string name="after_the_abortion_the_woman_opted_for_permanent_sterilization_tubectomy">After the Abortion, the Woman opted for permanent sterilization (Tubectomy)</string>
+    <string name="date_of_sterilisation">Date of Sterilisation</string>
+    <string name="what_family_planning_method_has_been_chosen_after_the_abortion">What family planning method has been chosen after the abortion?</string>
 
     <string-array name="sync_records">
         <item>Beneficiary</item>
@@ -531,12 +578,12 @@
     </string-array>
 
     <string-array name="leprosy_status">
-        <item >Screened</item>
-        <item >Denied</item>
-        <item >Not Screened</item>
-        <item >Suspected</item>
-        <item >Confirmed</item>
-        <item >Not Confirmed</item>
+        <item>Screened</item>
+        <item>Denied</item>
+        <item>Not Screened</item>
+        <item>Suspected</item>
+        <item>Confirmed</item>
+        <item>Not Confirmed</item>
     </string-array>
 
     <string-array name="death_place">
@@ -591,8 +638,17 @@
     </string-array>
 
     <string-array name="type_of_leprocy">
-        <item name="mb">MB</item>
-        <item name="pb">PB</item>
+        <item name="mb">MB (Multibacillary)</item>
+        <item name="pb">PB (Paucibacillary)</item>
+    </string-array>
+
+    <string-array name="leprosy_treatment_status">
+        <item>Recovering</item>
+        <item>Cured</item>
+        <item>Recurrence of Symptoms</item>
+        <item>Regularly taking medicine</item>
+        <item>Not regularly taking medicine</item>
+        <item>Treatment Completed</item>
     </string-array>
 
     <string-array name="dc_refer">

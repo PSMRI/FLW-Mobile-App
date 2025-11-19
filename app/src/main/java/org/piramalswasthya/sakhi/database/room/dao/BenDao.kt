@@ -25,17 +25,17 @@ interface BenDao {
     @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage AND abhaId IS NOT NULL")
     fun getAllBenWithAbha(selectedVillage: Int): Flow<List<BenBasicCache>>
 
-//    @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage AND abhaId IS NOT NULL AND isNewAbha = 1")
-//    fun getAllBenWithNewAbha(selectedVillage: Int): Flow<List<BenBasicCache>>
-//
-//    @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage AND abhaId IS NOT NULL AND isNewAbha = 0")
-//    fun getAllBenWithOldAbha(selectedVillage: Int): Flow<List<BenBasicCache>>
-
     @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage AND abhaId IS NULL")
     fun getAllBenWithoutAbha(selectedVillage: Int): Flow<List<BenBasicCache>>
 
     @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage AND rchId IS NOT NULL AND rchId != ''")
     fun getAllBenWithRch(selectedVillage: Int): Flow<List<BenBasicCache>>
+
+    @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage AND CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) >= 30 AND isDeath = 0")
+    fun getAllBenAboveThirty(selectedVillage: Int): Flow<List<BenBasicCache>>
+
+    @Query("SELECT * FROM BEN_BASIC_CACHE WHERE villageId = :selectedVillage AND gender = 'Female' AND isDeath = 0 AND CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) BETWEEN 20 AND 49 AND (reproductiveStatusId = 1 OR reproductiveStatusId = 2)")
+    fun getAllBenWARA(selectedVillage: Int): Flow<List<BenBasicCache>>
 
     @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage and gender = :gender")
     fun getAllBenGender(selectedVillage: Int, gender: String): Flow<List<BenBasicCache>>
@@ -70,6 +70,54 @@ interface BenDao {
     @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage and hhId = :hhId")
     fun getAllLeprosyScreeningBen(selectedVillage: Int,hhId: Long): Flow<List<BenWithLeprosyScreeningCache>>
 
+
+    @Transaction
+    @Query("""
+    SELECT b.*, l.leprosySymptomsPosition 
+    FROM BEN_BASIC_CACHE b 
+    INNER JOIN LEPROSY_SCREENING l ON b.benId = l.benId 
+    WHERE b.villageId = :selectedVillage
+    AND l.leprosySymptomsPosition = :symptomsPosition
+    AND l.isConfirmed = 0
+""")
+    fun getLeprosyScreeningBenBySymptoms(selectedVillage: Int,  symptomsPosition: Int): Flow<List<BenWithLeprosyScreeningCache>>
+
+    @Query("""
+    SELECT COUNT(*) 
+    FROM BEN_BASIC_CACHE b 
+    INNER JOIN LEPROSY_SCREENING l ON b.benId = l.benId 
+    WHERE b.villageId = :selectedVillage 
+    AND l.leprosySymptomsPosition = :symptomsPosition
+    AND l.isConfirmed = 0
+""")
+    fun getLeprosyScreeningBenCountBySymptoms(selectedVillage: Int, symptomsPosition: Int): Flow<Int>
+
+    @Transaction
+    @Query("""
+    SELECT b.*, l.isConfirmed
+    FROM BEN_BASIC_CACHE b
+    INNER JOIN LEPROSY_SCREENING l ON b.benId = l.benId
+    WHERE b.villageId = :selectedVillage
+      AND l.isConfirmed = 1
+""")
+    fun getConfirmedLeprosyCases(
+        selectedVillage: Int
+    ): Flow<List<BenWithLeprosyScreeningCache>>
+
+    @Query("""
+    SELECT COUNT(*)
+    FROM BEN_BASIC_CACHE b
+    INNER JOIN LEPROSY_SCREENING l ON b.benId = l.benId
+    WHERE b.villageId = :selectedVillage
+      AND l.isConfirmed = 1
+""")
+    fun getConfirmedLeprosyCaseCount(
+        selectedVillage: Int
+    ): Flow<Int>
+
+    @Transaction
+    @Query("SELECT * FROM BEN_BASIC_CACHE WHERE benId = :benId")
+    suspend fun getBenWithLeprosyScreeningAndFollowUps(benId: Long): BenWithLeprosyScreeningCache?
     @Transaction
     @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage and hhId = :hhId")
     fun getAllFilariaScreeningBen(selectedVillage: Int,hhId: Long): Flow<List<BenWithFilariaScreeningCache>>
@@ -143,19 +191,37 @@ interface BenDao {
         min: Int = Konstants.minAgeForEligibleCouple, max: Int = Konstants.maxAgeForEligibleCouple
     ): Flow<List<BenBasicCache>>
 
-//    @Query("SELECT * FROM BEN_BASIC_CACHE WHERE CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) BETWEEN :min and :max and reproductiveStatusId = 1 and ecrFilled = 1 and villageId=:selectedVillage")
-//    fun getAllEligibleTrackingList(
-//        selectedVillage: Int,
-//        min: Int = Konstants.minAgeForEligibleCouple, max: Int = Konstants.maxAgeForEligibleCouple
-//    ): Flow<List<BenBasicCache>>
 
-    //    @Query("SELECT b.benId as ecBenId,b.*, r.noOfLiveChildren as numChildren , t.* FROM ben_basic_cache b join eligible_couple_reg r on b.benId=r.benId left outer join eligible_couple_tracking t on t.benId=b.benId WHERE CAST((strftime('%s','now') - b.dob/1000)/60/60/24/365 AS INTEGER) BETWEEN :min and :max and b.reproductiveStatusId = 1 and  b.villageId=:selectedVillage group by b.benId")
+//    @Query("SELECT b.benId as ecBenId,b.*, r.noOfLiveChildren as numChildren , t.* FROM ben_basic_cache b join eligible_couple_reg r on b.benId=r.benId left outer join eligible_couple_tracking t on t.benId=b.benId WHERE CAST((strftime('%s','now') - b.dob/1000)/60/60/24/365 AS INTEGER) BETWEEN :min and :max and b.reproductiveStatusId = 1 and  b.villageId=:selectedVillage group by b.benId")
     @Transaction
-    @Query("SELECT b.* FROM ben_basic_cache b join eligible_couple_reg r on b.benId=r.benId  WHERE CAST((strftime('%s','now') - b.dob/1000)/60/60/24/365 AS INTEGER) BETWEEN :min and :max and b.reproductiveStatusId = 1 and  b.villageId=:selectedVillage and isDeath = 0 or isDeath is NULL group by b.benId")
+//    @Query("SELECT b.* FROM ben_basic_cache b join eligible_couple_reg r on b.benId=r.benId  LEFT JOIN pregnancy_anc a ON b.benId = a.benId WHERE CAST((strftime('%s','now') - b.dob/1000)/60/60/24/365 AS INTEGER) BETWEEN :min and :max and b.reproductiveStatusId = 1 and  b.villageId=:selectedVillage and isDeath = 0 or isDeath is NULL group by b.benId")
+    @Query("SELECT b.* FROM ben_basic_cache b JOIN eligible_couple_reg r ON b.benId = r.benId LEFT JOIN pregnancy_anc a ON b.benId = a.benId WHERE CAST((strftime('%s','now') - b.dob/1000)/60/60/24/365 AS INTEGER) BETWEEN :min AND :max AND b.reproductiveStatusId = 1 AND b.villageId = :selectedVillage AND (b.isDeath = 0 OR b.isDeath IS NULL) GROUP BY b.benId")
     fun getAllEligibleTrackingList(
         selectedVillage: Int,
         min: Int = Konstants.minAgeForEligibleCouple, max: Int = Konstants.maxAgeForEligibleCouple
     ): Flow<List<BenWithEcTrackingCache>>
+
+//    @Transaction
+//    @Query("""
+//    SELECT b.*
+//    FROM ben_basic_cache b
+//    JOIN eligible_couple_reg r ON b.benId = r.benId
+//    LEFT JOIN pregnancy_anc a ON b.benId = a.benId
+//    WHERE CAST((strftime('%s','now') - b.dob/1000)/60/60/24/365 AS INTEGER) BETWEEN :min AND :max
+//      AND b.reproductiveStatusId = 1
+//      AND b.villageId = :selectedVillage
+//      AND (
+//            (b.isDeath = 0 OR b.isDeath IS NULL)
+//            OR (a.isAborted = 1)
+//          )
+//    GROUP BY b.benId
+//""")
+//    fun getAllEligibleTrackingList(
+//        selectedVillage: Int,
+//        min: Int = Konstants.minAgeForEligibleCouple,
+//        max: Int = Konstants.maxAgeForEligibleCouple
+//    ): Flow<List<BenWithEcTrackingCache>>
+
 
     @Transaction
     @Query("SELECT * FROM ben_basic_cache WHERE CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) BETWEEN :min and :max and reproductiveStatusId = 1 and  villageId=:selectedVillage and isDeath = 0 or isDeath is NULL group by benId")
@@ -254,9 +320,47 @@ interface BenDao {
     @Query("SELECT ben.*  from BEN_BASIC_CACHE  ben inner join pregnancy_anc pwr on pwr.benId = ben.benId where pwr.isAborted = 1  and ben.villageId=:selectedVillage group by ben.benId")
     fun getAllAbortionWomenList(selectedVillage: Int): Flow<List<BenWithAncVisitCache>>
 
+    @Query("""
+    SELECT * FROM BEN_BASIC_CACHE 
+    WHERE 
+        CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) >= 15
+        AND isDeath = 1
+        AND (reasonOfDeath IS NULL OR reasonOfDeath != 'Maternal Death')
+        AND villageId = :selectedVillage
+""")
+    fun getAllGeneralDeathsList(selectedVillage: Int): Flow<List<BenBasicCache>>
 
+    @Query("""
+    SELECT * FROM BEN_BASIC_CACHE 
+    WHERE 
+        gender = 'FEMALE'
+        AND CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) BETWEEN 15 AND 49
+        AND isDeath = 1
+        AND (reasonOfDeath IS NULL OR reasonOfDeath != 'Maternal Death')
+        AND villageId = :selectedVillage
+     """)
+    fun getAllNonMaternalDeathsList(selectedVillage: Int): Flow<List<BenBasicCache>>
 
+    @Query("""
+    SELECT COUNT(*) FROM BEN_BASIC_CACHE 
+    WHERE 
+        CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) >= 15
+        AND isDeath = 1
+        AND (reasonOfDeath IS NULL OR reasonOfDeath != 'Maternal Death')
+        AND villageId = :selectedVillage
+""")
+    fun getAllGeneralDeathsCount(selectedVillage: Int): Flow<Int>
 
+    @Query("""
+    SELECT COUNT(*) FROM BEN_BASIC_CACHE 
+    WHERE 
+        gender = 'FEMALE'
+        AND CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) BETWEEN 15 AND 49
+        AND isDeath = 1
+        AND (reasonOfDeath IS NULL OR reasonOfDeath != 'Maternal Death')
+        AND villageId = :selectedVillage
+""")
+    fun getAllNonMaternalDeathsCount(selectedVillage: Int): Flow<Int>
     @Query("SELECT count(distinct(ben.benId)) FROM BEN_BASIC_CACHE  ben inner join pregnancy_register pwr on pwr.benId = ben.benId where pwr.active = 1 and ben.reproductiveStatusId=2 and ben.villageId=:selectedVillage")
     fun getAllRegisteredPregnancyWomenListCount(selectedVillage: Int): Flow<Int>
 
@@ -329,6 +433,9 @@ interface BenDao {
         selectedVillage: Int, max: Int = Konstants.maxAgeForInfant
     ): Flow<List<BenBasicCache>>
 
+    @Query("SELECT * FROM BEN_BASIC_CACHE WHERE benId = :benId LIMIT 1")
+    suspend fun getBenById(benId: Long): BenBasicCache?
+
     @Query("SELECT * FROM BEN_BASIC_CACHE WHERE CAST(((strftime('%s','now') - dob/1000)/60/60/24) AS INTEGER) <= :max and villageId=:selectedVillage and rchId is not null and rchId != ''")
     fun getAllInfantWithRchList(
         selectedVillage: Int, max: Int = Konstants.maxAgeForInfant
@@ -369,10 +476,18 @@ interface BenDao {
         selectedVillage: Int, max: Int = Konstants.maxAgeForCdr
     ): Flow<List<BenBasicCache>>
 
+    @Query("SELECT COUNT(*) FROM BEN_BASIC_CACHE WHERE CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) <= :max and villageId=:selectedVillage AND isDeath = 1" )
+    fun getAllCDRListCount(
+        selectedVillage: Int, max: Int = Konstants.maxAgeForCdr
+    ): Flow<Int>
+
+
     @Transaction
     @Query("SELECT * FROM BEN_BASIC_CACHE WHERE reproductiveStatusId in (2, 3, 4) and isMdsr = 1 and villageId=:selectedVillage")
     fun getAllMDSRList(selectedVillage: Int): Flow<List<BenWithAncDoPncCache>>
-
+    @Transaction
+    @Query("SELECT COUNT(*) FROM BEN_BASIC_CACHE WHERE reproductiveStatusId in (2, 3, 4) and isMdsr = 1 and villageId=:selectedVillage")
+    fun getAllMDSRCount(selectedVillage: Int): Flow<Int>
     @Query("SELECT * FROM BEN_BASIC_CACHE WHERE  CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER)<=:max and villageId=:selectedVillage")
     fun getAllChildrenImmunizationList(
         selectedVillage: Int, max: Int = Konstants.maxAgeForAdolescentlist
@@ -438,6 +553,7 @@ interface BenDao {
     @Query("SELECT COUNT(*) FROM PREGNANCY_ANC WHERE benId = :benId AND deathDate IS NOT NULL AND isAborted = 0")
     suspend fun checkPregnancyDeath(benId: Long): Boolean
 
+
     // Abortion Death
     @Query("SELECT COUNT(*) FROM PREGNANCY_ANC WHERE benId = :benId AND deathDate IS NOT NULL AND isAborted = 1")
     suspend fun checkAbortionDeath(benId: Long): Boolean
@@ -449,5 +565,26 @@ interface BenDao {
     // PNC
     @Query("SELECT COUNT(*) FROM PNC_VISIT WHERE benId = :benId AND deathDate IS NOT NULL")
     suspend fun checkPncDeath(benId: Long): Boolean
+
+    @Query("""
+    SELECT EXISTS(
+        SELECT 1 FROM PNC_VISIT
+        WHERE benId = :benId
+        AND deathDate IS NOT NULL
+        AND causeOfDeath = :cause
+    )
+""")
+    suspend fun isDeathByCause(benId: Long, cause: String): Boolean
+
+    @Query("""
+    SELECT EXISTS(
+        SELECT 1 FROM PREGNANCY_ANC
+        WHERE benId = :benId
+        AND deathDate IS NOT NULL
+        AND maternalDeathProbableCause = :cause
+    )
+""")
+    suspend fun isDeathByCauseAnc(benId: Long,cause: String): Boolean
+
 
 }

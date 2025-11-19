@@ -33,6 +33,8 @@ import org.piramalswasthya.sakhi.model.MalariaScreeningCache
 import org.piramalswasthya.sakhi.model.getDateTimeStringFromLong
 import org.piramalswasthya.sakhi.model.ABHAModel
 import org.piramalswasthya.sakhi.model.Gender
+import org.piramalswasthya.sakhi.model.LeprosyFollowUpCache
+import org.piramalswasthya.sakhi.utils.HelperUtil.getDateStringFromLong
 
 @JsonClass(generateAdapter = true)
 data class D2DAuthUserRequest(
@@ -126,7 +128,9 @@ data class GetDataPaginatedRequestForDisease(
     val pageNo: Int,
     val fromDate: String,
     val toDate: String,
-    val diseaseTypeID: Int
+    val diseaseTypeID: Int,
+    val userName : String? = null
+
 )
 
 data class ValidateOtpRequest(
@@ -1340,45 +1344,128 @@ data class LeprosyScreeningDTO(
     val leprosyStatusDate: String,
     val dateOfDeath: String,
     val houseHoldDetailsId: Long,
-    var leprosyStatus: String ? = "",
-    var referredTo: Int ? = 0,
-    var referToName: String ? = null,
-    var otherReferredTo: String ? = null,
-    var typeOfLeprosy: String ? = null,
-    var remarks: String ? = null,
-    var beneficiaryStatus: String ? = null,
-    var placeOfDeath: String ? = null,
-    var otherPlaceOfDeath: String ? = null,
-    var reasonForDeath: String ? = null,
-    var otherReasonForDeath: String ? = null,
-    var diseaseTypeID: Int ? = 0,
-    var beneficiaryStatusId: Int ? = 0,
-    var followUpDate: String,
-
-    ) {
+    var leprosyStatus: String? = "",
+    var referredTo: Int? = 0,
+    var referToName: String? = null,
+    var otherReferredTo: String? = null,
+    var typeOfLeprosy: String? = null,
+    var remarks: String? = null,
+    var beneficiaryStatus: String? = null,
+    var placeOfDeath: String? = null,
+    var otherPlaceOfDeath: String? = null,
+    var reasonForDeath: String? = null,
+    var otherReasonForDeath: String? = null,
+    var diseaseTypeID: Int? = 0,
+    var beneficiaryStatusId: Int? = 0,
+    var leprosySymptoms: String? = null,
+    var leprosySymptomsPosition: Int? = 1,
+    var lerosyStatusPosition: Int? = 0,
+    var currentVisitNumber: Int = 1,
+    var visitLabel: String? = "Visit -1",
+    var visitNumber: Int? = 1,
+    var isConfirmed: Boolean = false,
+    var leprosyState: String? = "Screening",
+    var treatmentStartDate: String = getDateTimeStringFromLong(System.currentTimeMillis()).toString(),
+    var totalFollowUpMonthsRequired: Int = 0,
+    var treatmentEndDate: String = getDateTimeStringFromLong(System.currentTimeMillis()).toString(),
+    var mdtBlisterPackRecived: String? = null,
+    var treatmentStatus: String? = null,
+    val createdBy: String,
+    val createdDate:String,
+    val modifiedBy: String,
+    val lastModDate: String,
+) {
     fun toCache(): LeprosyScreeningCache {
         return LeprosyScreeningCache(
             benId = benId,
             homeVisitDate = getLongFromDate(homeVisitDate),
             leprosyStatusDate = getLongFromDate(leprosyStatusDate),
             dateOfDeath = getLongFromDate(dateOfDeath),
-            leprosyStatus = leprosyStatus,
             houseHoldDetailsId = houseHoldDetailsId,
+            leprosyStatus = leprosyStatus,
             referredTo = referredTo,
-            referToName = referToName.toString(),
+            referToName = referToName,
             otherReferredTo = otherReferredTo,
+            typeOfLeprosy = typeOfLeprosy,
             remarks = remarks,
-            followUpDate = getLongFromDate(followUpDate),
-            syncState = SyncState.SYNCED,
-            diseaseTypeID = diseaseTypeID,
+            beneficiaryStatus = beneficiaryStatus,
+            placeOfDeath = placeOfDeath,
+            otherPlaceOfDeath = otherPlaceOfDeath,
             reasonForDeath = reasonForDeath,
             otherReasonForDeath = otherReasonForDeath,
-            otherPlaceOfDeath = otherPlaceOfDeath,
-            placeOfDeath = placeOfDeath,
+            diseaseTypeID = diseaseTypeID,
             beneficiaryStatusId = beneficiaryStatusId,
-            beneficiaryStatus = beneficiaryStatus
+            leprosySymptoms = leprosySymptoms,
+            leprosySymptomsPosition = leprosySymptomsPosition,
+            lerosyStatusPosition = lerosyStatusPosition,
+            currentVisitNumber = currentVisitNumber,
+            visitLabel = visitLabel,
+            visitNumber = visitNumber,
+            isConfirmed = isConfirmed,
+            leprosyState = leprosyState,
+            treatmentStartDate = getLongFromDate(treatmentStartDate),
+            totalFollowUpMonthsRequired = totalFollowUpMonthsRequired,
+            treatmentEndDate = getLongFromDate(treatmentEndDate),
+            mdtBlisterPackRecived = mdtBlisterPackRecived,
+            treatmentStatus = treatmentStatus,
+            createdBy = createdBy,
+            createdDate = getLongFromDate(createdDate),
+            modifiedBy = modifiedBy,
+            lastModDate =getLongFromDate(lastModDate),
+            syncState = SyncState.SYNCED
+        )
+    }
+}
 
-
+data class LeprosyFollowUpDTO(
+    val benId: Long,
+    val visitNumber: Int,
+    var followUpDate: String = getDateTimeStringFromLong(System.currentTimeMillis()).toString(),
+    var treatmentStatus: String? = null,
+    var mdtBlisterPackReceived: String? = null,
+    var treatmentCompleteDate: String = getDateTimeStringFromLong(0).toString(),
+    var remarks: String? = null,
+    var homeVisitDate: String = getDateTimeStringFromLong(System.currentTimeMillis()).toString(),
+    var leprosySymptoms: String? = null,
+    var typeOfLeprosy: String? = null,
+    var leprosySymptomsPosition: Int? = 1,
+    var visitLabel: String? = "Visit -1",
+    var leprosyStatus: String? = "",
+    var referredTo: Int? = 0,
+    var referToName: String? = null,
+    var treatmentEndDate: String = getDateTimeStringFromLong(System.currentTimeMillis()).toString(),
+    var mdtBlisterPackRecived: String? = null,
+    val createdBy: String,
+    val createdDate: String,
+    val modifiedBy: String,
+    val lastModDate: String,
+    var treatmentStartDate: String = getDateTimeStringFromLong(System.currentTimeMillis()).toString()
+) {
+    fun toCache(): LeprosyFollowUpCache {
+        return LeprosyFollowUpCache(
+            benId = benId,
+            visitNumber = visitNumber,
+            followUpDate = getLongFromDate(followUpDate),
+            treatmentStatus = treatmentStatus,
+            mdtBlisterPackReceived = mdtBlisterPackReceived,
+            treatmentCompleteDate = getLongFromDate(treatmentCompleteDate),
+            remarks = remarks,
+            homeVisitDate = getLongFromDate(homeVisitDate),
+            leprosySymptoms = leprosySymptoms,
+            typeOfLeprosy = typeOfLeprosy,
+            leprosySymptomsPosition = leprosySymptomsPosition,
+            visitLabel = visitLabel,
+            leprosyStatus = leprosyStatus,
+            referredTo = referredTo,
+            referToName = referToName,
+            treatmentEndDate = getLongFromDate(treatmentEndDate),
+            mdtBlisterPackRecived = mdtBlisterPackRecived,
+            treatmentStartDate = getLongFromDate(treatmentStartDate),
+            createdBy = createdBy,
+            createdDate =getLongFromDate(createdDate),
+            modifiedBy = modifiedBy,
+            lastModDate =getLongFromDate(lastModDate),
+            syncState = SyncState.SYNCED
         )
     }
 }
