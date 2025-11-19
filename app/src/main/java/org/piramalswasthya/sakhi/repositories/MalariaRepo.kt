@@ -467,8 +467,11 @@ class MalariaRepo @Inject constructor(
                     val responseString = response.body()?.string()
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
+                        var errorMessage = ""
 
-                        val errorMessage = jsonObj.getString("errorMessage")
+                        if (jsonObj.has("errorMessage")) {
+                            errorMessage = jsonObj.getString("errorMessage")
+                        }
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Push to amrit tb screening data : $responseStatusCode")
                         when (responseStatusCode) {
