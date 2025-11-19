@@ -60,11 +60,17 @@
         <item>বিলিটৰ সড়ক</item>
         <item>উচ্চ জ্বৰ</item>
         <item>গৰ্ভপাত</item>
+        <item>দুৰ্ঘটনা</item>
         <item>অন্য</item>
     </string-array>
     <string-array name="anc_confirmation_array">
         <item>হয়</item>
         <item>নহয়</item>
+    </string-array>
+
+    <string-array name="abortion_isplaning_array">
+        <item>Has a PAIUCD been inserted?(Copper-T)\n or</item>
+        <item>Has the woman opted for permanent sterilization (Tubectomy)?</item>
     </string-array>
     <string-array name="anc_confirmation_array1">
         <item>নহয়</item>
@@ -270,6 +276,10 @@
         <item>বৃদ্ধ পেটৰ ব্যাথা</item>
         <item>বৃদ্ধ মাথৰ ব্যাথা অথবা মিশৰা চাবলৈ</item>
         <item>শ্বাৱাস নেহৰি পাব</item>
+        <item>প্ৰস্ৰাৱ, ছাল বা চকু হালধীয়া হোৱা</item>
+        <item>ছাল বা চকু শেঁতা পৰা </item>
+        <item>মুখ, হাত আৰু ভৰিত ফুলা</item>
+        <item>অস্বাভাৱিক আচৰণ </item>
         <item>অন্যান্য</item>
     </string-array>
     <string-array name="pnc_referral_facility_array">
@@ -283,6 +293,8 @@
         <item>জ্বৰৰ পৰা মৰণ (PPH)</item>
         <item>এনিমিয়া</item>
         <item>উচ্চ জ্বৰ</item>
+        <item>চেপ্চিছ</item>
+        <item>দুৰ্ঘটনা</item>
         <item>অন্যান্য</item>
     </string-array>
     <string-array name="pnc_death_place_array">

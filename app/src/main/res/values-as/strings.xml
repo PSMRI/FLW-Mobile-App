@@ -296,6 +296,25 @@
     <string name="optional">(Optional)</string>
     <string name="optional_">Optional</string>
     <string name="mandatory">Mandatory <font color='#FF0000'>*</font></string>
+    <string name="name_of_the_child">Name of the Child</string>
+    <string name="address">Address</string>
+    <string name="house_number">House number</string>
+    <string name="mohalla_colony">"Mohalla/Colony "</string>
+    <string name="landmarks_if_any">"Landmarks, if any "</string>
+    <string name="pincode">Pincode</string>
+    <string name="landline">Landline</string>
+    <string name="time">Time</string>
+    <string name="name_of_first_informant">"Name of First Informant "</string>
+    <string name="signature_name_of_asha">Signature/Name of ASHA</string>
+    <string name="date_of_notification">"Date of Notification "</string>
+    <string name="cdr_form_from_anm_1">CDR form from ANM 1</string>
+    <string name="cdr_form_from_anm_2">CDR form from ANM 2</string>
+    <string name="district_tehsil">District/Tehsil</string>
+    <string name="leprosy_confirmed">Leprosy Confirmed</string>
+    <string name="leprosy_suspected">Leprosy Suspected</string>
+    <string name="after_the_abortion_the_woman_opted_for_permanent_sterilization_tubectomy">After the Abortion, the Woman opted for permanent sterilization (Tubectomy)</string>
+    <string name="date_of_sterilisation">Date of Sterilisation</string>
+    <string name="what_family_planning_method_has_been_chosen_after_the_abortion">What family planning method has been chosen after the abortion?</string>
     <!-- <string name="child_rch_id">Child RCH ID</string>
      <string name="vaccination_due_date">Vaccination Due Date</string>
      <string name="reminder">Reminder!!</string>

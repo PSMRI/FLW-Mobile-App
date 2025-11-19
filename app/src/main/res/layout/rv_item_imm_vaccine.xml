@@ -15,6 +15,9 @@
             name="clickListener"
             type="org.piramalswasthya.sakhi.adapters.ImmunizationCategoryAdapter.ImmunizationIconClickListener" />
 
+        <variable
+            name="isDeath"
+            type="boolean" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -78,14 +81,16 @@
                       vaccineState="@{vaccine.state}" />-->
 
                 <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnVaccine"
                     vaccineState="@{vaccine.state}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="?attr/colorPrimary"
-                    android:onClick="@{()-> clickListener.onClicked(vaccine)}"
                     android:text="@string/kcuf"
+                    android:backgroundTint="@color/btn_vaccine_background"
+                    android:onClick="@{()-> clickListener.onClicked(vaccine)}"
                     android:textColor="?attr/colorOnPrimary"
                     android:textSize="12sp"
+                    android:enabled='@{!isDeath || vaccine.state == VaccineState.DONE}'
                     app:layout_constraintBottom_toBottomOf="@+id/tv_name"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/tv_name" />

@@ -116,6 +116,12 @@
         <action
             android:id="@+id/action_allBenFragment_to_newBenRegFragment"
             app:destination="@id/newBenRegFragment" />
+        <action
+            android:id="@+id/action_allBenFragment_to_eyeSurgeryFormFragment"
+            app:destination="@id/eyeSurgeryFormFragment" />
+        <action
+            android:id="@+id/action_allBenFragment_to_benIfaFormFragment"
+            app:destination="@id/benIfaFormFragment" />
         <argument
             android:name="source"
             android:defaultValue="0"
@@ -207,6 +213,13 @@
         <action
             android:id="@+id/action_deathReportsFragment_to_cdrListFragment"
             app:destination="@id/cdrListFragment" />
+        <action
+            android:id="@+id/action_deathReportsFragment_to_nmdsrListFragment"
+            app:destination="@id/nmdsrListFragment"/>
+        <action
+            android:id="@+id/action_deathReportsFragment_to_gdrListFragment"
+            app:destination="@id/gdrListFragment"/>
+
     </fragment>
     <fragment
         android:id="@+id/generalOpCareFragment"
@@ -436,10 +449,55 @@
     </fragment>
     <fragment
         android:id="@+id/childrenUnderFiveYearListFragment"
-        android:name="org.piramalswasthya.sakhi.ui.home_activity.child_care.children_under_five_years.ChildrenUnderFiveYearsListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.child_care.children_under_five_years.CUFYListFragment"
         android:label="@string/child_under_five_years_list"
         tools:layout="@layout/fragment_children_under_five_years_list">
 
+        <action
+            android:id="@+id/action_childrenUnderFiveYearListFragment_to_childrenUnderFiveYearFormFragment"
+            app:destination="@id/childrenUnderFiveYearFormFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/childrenUnderFiveYearFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.child_care.children_under_five_years.children_forms.CUFYFormFragment"
+        android:label="@string/child_under_five_years_list">
+        <argument
+            android:name="benId"
+            app:argType="long" />
+
+        <argument
+            android:name="hhId"
+            app:argType="long" />
+
+        <argument
+            android:name="visitType"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null"/>
+
+        <argument
+            android:name="isViewMode"
+            app:argType="boolean"
+            android:defaultValue="false" />
+
+        <argument
+        android:name="formDataJson"
+        app:argType="string"
+        android:defaultValue="@null"
+            app:nullable="true"    />
+
+
+        <argument
+            android:name="recordId"
+            android:defaultValue="0"
+            app:argType="integer" />
+
+        <argument
+            android:name="formId"
+            app:argType="string"
+            android:defaultValue="sam_visit_001" />
     </fragment>
     <fragment
         android:id="@+id/pncMotherListFragment"
@@ -539,6 +597,15 @@
             android:id="@+id/action_mdsrListFragment_to_mdsrObjectFragment"
             app:destination="@id/mdsrObjectFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/nmdsrListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.death_reports.nmdsr.NmdsrListFragment"
+        />
+    <fragment
+        android:id="@+id/gdrListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.death_reports.gdr.GdrListFragment"
+    />
     <fragment
         android:id="@+id/mdsrObjectFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.death_reports.mdsr.MdsrObjectFragment"
@@ -1026,6 +1093,39 @@
             app:launchSingleTop="true" />
     </fragment>
     <fragment
+        android:id="@+id/eyeSurgeryFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registration.EyeSurgeryFormFragment"
+        android:label="EyeSurgeryFormFragment">
+        <argument
+            android:name="hhId"
+            app:argType="long" />
+        <argument
+            android:name="benId"
+            android:defaultValue="0L"
+            app:argType="long" />
+        <argument
+            android:name="isViewMode"
+            app:argType="boolean"
+            android:defaultValue="false" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/benIfaFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.all_ben.ben_ifa.BenIfaFormFragment"
+        android:label="BenIfaFormFragment">
+        <argument
+            android:name="hhId"
+            app:argType="long" />
+        <argument
+            android:name="benId"
+            android:defaultValue="0L"
+            app:argType="long" />
+        <argument
+            android:name="isViewMode"
+            app:argType="boolean"
+            android:defaultValue="false" />
+    </fragment>
+    <fragment
         android:id="@+id/benListCHOFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.list.BenListCHOFragment"
         android:label="@string/beneficiaries">
@@ -1279,6 +1379,12 @@
             android:name="formId"
             app:argType="string"
             android:defaultValue="hbnc_form_001" />
+
+        <action
+            android:id="@+id/action_hbncFormFragment_to_cdrObjectFragment"
+            app:destination="@id/cdrObjectFragment"
+            app:popUpTo="@id/hbncFormFragment"
+            app:popUpToInclusive="true"/>
     </fragment>
     <fragment
         android:id="@+id/abortionListFragment"
@@ -1318,6 +1424,11 @@
         <argument
             android:name="benId"
             app:argType="long" />
+
+        <argument
+            android:name="dob"
+            app:argType="long" />
+
 
         <action
             android:id="@+id/action_infantFormFragment_to_HBYCFormFragment"
@@ -1461,7 +1572,90 @@
         <action
             android:id="@+id/action_diseaseControlFragment_to_malariaIconsFragment"
             app:destination="@id/malariaIconsFragment" />
+        <action
+            android:id="@+id/action_diseaseControlFragment_to_leprosyFragment"
+            app:destination="@id/leprosyFragment" />
+
     </fragment>
+    <fragment
+        android:id="@+id/leprosyFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.leprosy.LeprosyFragment"
+        android:label="LeprosyFragment">
+
+        <action
+            android:id="@+id/action_leprosyFragment_to_allHouseHoldDiseaseControlFragment"
+            app:destination="@id/allHouseHoldDiseaseControlFragment"/>
+        <action
+            android:id="@+id/action_leprosyFragmen_to_leprosySuspectedListFragment"
+            app:destination="@+id/suspectedLeprosyListFragment" />
+        <action
+            android:id="@+id/action_leprosyDragment_to_leprosyConfirmedListFragment"
+            app:destination="@+id/leprosyConfirmedListFragment"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/suspectedLeprosyListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.leprosy.suspected.list.SuspectedLeprosyListFragment"
+        android:label="SuspectedLeprosyListFragment">
+
+
+       <action
+           android:id="@+id/action_leprosySuspectedListFragment_to_suspectedLeprosyFormFragment"
+           app:destination="@id/suspectedLeprosyFormFragment"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/suspectedLeprosyFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.leprosy.suspected.from.SuspectedLeprosyFormFragment"
+        android:label="SuspectedLeprosyFromFragment">
+
+        <argument
+            android:name="benId"
+            app:argType="long" />
+
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/leprosyConfirmedFromFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.leprosy.confirmed.form.LeprosyConfirmedFromFragment"
+        android:label="LeprosyConfirmedFromFragment">
+        <argument
+            android:name="benId"
+            app:argType="long" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/leprosyConfirmedListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.leprosy.confirmed.list.LeprosyConfirmedListFragment"
+        android:label="LeprosyConfirmedListFragment">
+
+        <action
+            android:id="@+id/action_leprosyConfirmedListFragment_to_leprosyConfirmedFromFragment"
+            app:destination="@id/leprosyConfirmedFromFragment" />
+
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/leprosyVisitFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.leprosy.visits.LeprosyVisitFragment"
+        android:label="LeprosyVisitFragment">
+
+        <argument
+            android:name="benId"
+            app:argType="long" />
+        <argument
+            android:name="visitNumber"
+            app:argType="integer" />
+
+    </fragment>
+
+
+
+
     <fragment
         android:id="@+id/allHouseHoldDiseaseControlFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.AllHouseHoldDiseaseControlFragment"
@@ -1490,6 +1684,9 @@
         <action
             android:id="@+id/action_allHouseHoldDiseaseControlFragment_to_filariaSuspectedListFragment"
             app:destination="@id/filariaSuspectedListFragment" />
+        <action
+            android:id="@+id/action_allHouseHoldDiseaseControlFragment_to_filariaMDAFormFragment"
+            app:destination="@id/filariaMDAFormFragment" />
 
     </fragment>
     <fragment
@@ -1584,6 +1781,10 @@
         <argument
             android:name="diseaseType"
             app:argType="string" />
+
+        <action
+            android:id="@+id/action_leprosySuspectedListFragment_to_leprosyVisitFragment"
+            app:destination="@id/leprosyVisitFragment" />
         <action
             android:id="@+id/action_leprosySuspectedListFragment_to_leprosyFormFragment"
             app:destination="@id/leprosyFormFragment" />
@@ -1619,6 +1820,14 @@
         android:label="FilariaFormFragment">
         <argument
             android:name="benId"
+            app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/filariaMDAFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.filaria.form.FilariaMDAFormFragment"
+        android:label="FilariaMDAFormFragment">
+        <argument
+            android:name="hhId"
             app:argType="long" />
     </fragment>
     <fragment

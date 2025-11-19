@@ -1,11 +1,7 @@
 package org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.u_win_forms
 
-import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,35 +9,24 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.bumptech.glide.Glide
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentUwinBinding
-import org.piramalswasthya.sakhi.databinding.LayoutMediaOptionsBinding
-import org.piramalswasthya.sakhi.databinding.LayoutViewMediaBinding
-import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.ui.checkFileSize
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.utils.HelperUtil.createTempImageUri
 import org.piramalswasthya.sakhi.utils.HelperUtil.hasUploadedFile
-import org.piramalswasthya.sakhi.utils.HelperUtil.isFileTooLarge
 import org.piramalswasthya.sakhi.utils.HelperUtil.showImageDialog
 import org.piramalswasthya.sakhi.utils.HelperUtil.showMediaOptionsDialog
-import org.piramalswasthya.sakhi.utils.HelperUtil.showReminderDialog
 import org.piramalswasthya.sakhi.utils.HelperUtil.showToast
 import org.piramalswasthya.sakhi.utils.HelperUtil.showUploadReminderDialog
 import org.piramalswasthya.sakhi.work.WorkerUtils
-import timber.log.Timber
-import java.io.File
 import kotlin.collections.set
 import kotlin.getValue
 
@@ -100,7 +85,6 @@ class UwinFragment : Fragment() {
         }
     }
 
-    //region Setup
     private fun setupAdapter() {
         binding.form.rvInputForm.adapter = FormInputAdapter(
             selectImageClickListener = FormInputAdapter.SelectUploadImageClickListener { formId ->
@@ -152,9 +136,7 @@ class UwinFragment : Fragment() {
             } else saveForm()
         }
     }
-    //endregion
 
-    //region Image Handling
     private fun takeImage() {
         lifecycleScope.launchWhenStarted {
             val uri = requireContext().createTempImageUri()
@@ -187,14 +169,11 @@ class UwinFragment : Fragment() {
     }
     }
 
-
-
     private fun updateAdapterForFormId(formId: Int, uri: Uri) {
         uwinSummary[formId] = uri
         viewModel.setImageUriToFormElement(uri)
         binding.form.rvInputForm.adapter?.notifyDataSetChanged()
     }
-    //endregion
 
     private fun handleViewDocument(formId: Int) {
         if (uwinId != 0) {
@@ -219,8 +198,6 @@ class UwinFragment : Fragment() {
         }
     }
 
-
-
     override fun onStart() {
         super.onStart()
         (activity as? HomeActivity)?.updateActionBar(
@@ -232,9 +209,5 @@ class UwinFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    companion object {
-        private const val PICK_IMAGE = 1
     }
 }

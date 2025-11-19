@@ -83,6 +83,7 @@
         <item>Elderly Woman</item>
         <item>Adolescent Girl</item>
         <item>Permanently Sterilised</item>
+        <item>Not Applicable</item>
     </string-array>
 
     <string-array name="nbr_marital_status_male_array">

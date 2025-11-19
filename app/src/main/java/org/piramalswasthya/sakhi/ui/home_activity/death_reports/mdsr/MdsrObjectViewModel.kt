@@ -12,6 +12,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.configuration.MDSRFormDataset
 import org.piramalswasthya.sakhi.database.room.InAppDb
 import org.piramalswasthya.sakhi.database.room.SyncState
@@ -80,28 +81,23 @@ class MdsrObjectViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            // IO context me database + suspend calls
-            val (pregnancyDeath, abortionDeath, deliveryDeath, pncDeath) = withContext(Dispatchers.IO) {
-                val preg = benRepo.hasPregnancyDeath(benId)
-                val abort = benRepo.hasAbortionDeath(benId)
-                val deliv = benRepo.hasDeliveryDeath(benId)
-                val pnc = benRepo.hasPncDeath(benId)
-                val benRecord = benRepo.getBeneficiaryRecord(benId, hhId)!!
-                val hhRecord = benRepo.getHousehold(hhId)!!
-                val loggedUser = preferenceDao.getLoggedInUser()!!
-                val mdsrRecord = database.mdsrDao.getMDSR(benId)
+            val (pregnancyDeath, abortionDeath, deliveryDeath, pncDeath, pncDeathCause, ancDeathCause) =
+                withContext(Dispatchers.IO) {
+                    val preg = benRepo.hasPregnancyDeath(benId)
+                    val abort = benRepo.hasAbortionDeath(benId)
+                    val deliv = benRepo.hasDeliveryDeath(benId)
+                    val pnc = benRepo.hasPncDeath(benId)
+                    val pncCause = benRepo.isPncCauseOfDeathAccident(benId, context.getString(R.string.accident))
+                    val ancCause = benRepo.isAncCauseOfDeathAccident(benId, context.getString(R.string.accident))
 
-                ben = benRecord
-                household = hhRecord
-                user = loggedUser
-                mdsr = mdsrRecord
+                    ben = benRepo.getBeneficiaryRecord(benId, hhId)!!
+                    household = benRepo.getHousehold(hhId)!!
+                    user = preferenceDao.getLoggedInUser()!!
+                    mdsr = database.mdsrDao.getMDSR(benId)
 
-                listOf(preg, abort, deliv, pnc)
+                    DeathResults(preg, abort, deliv, pnc, pncCause, ancCause)
+                }
 
-            }
-
-
-            // Dataset ko coroutine ke andar initialize karo
             dataset = MDSRFormDataset(
                 context,
                 preferenceDao.getCurrentLanguage(),
@@ -109,10 +105,11 @@ class MdsrObjectViewModel @Inject constructor(
                 pregnancyDeath,
                 abortionDeath,
                 deliveryDeath,
-                pncDeath
+                pncDeath,
+                pncDeathCause,
+                ancDeathCause
             )
 
-            // UI updates
             _benName.value = "${ben.firstName} ${ben.lastName ?: ""}"
             _benAgeGender.value = "${ben.age} ${ben.ageUnit?.name} | ${ben.gender?.name}"
             val address = getAddress(household)
@@ -120,6 +117,7 @@ class MdsrObjectViewModel @Inject constructor(
             _exists.value = mdsr != null
         }
     }
+
 
     fun submitForm() {
         _state.value = State.LOADING
@@ -158,4 +156,15 @@ class MdsrObjectViewModel @Inject constructor(
             dataset.updateList(formId, index)
         }
     }
+
+
+    data class DeathResults(
+        val pregnancyDeath: Boolean,
+        val abortionDeath: Boolean,
+        val deliveryDeath: Boolean,
+        val pncDeath: Boolean,
+        val pncDeathCause: Boolean,
+        val ancDeathCause: Boolean
+    )
+
 }

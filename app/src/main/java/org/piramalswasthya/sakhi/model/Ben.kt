@@ -272,6 +272,7 @@ data class BenBasicCache(
             isDeath = isDeath,
             isDeathValue = isDeathValue,
             dateOfDeath = dateOfDeath,
+            reproductiveStatusId = reproductiveStatusId,
             timeOfDeath = timeOfDeath,
             reasonOfDeath = reasonOfDeath,
             reasonOfDeathId = reasonOfDeathId,
@@ -321,7 +322,8 @@ data class BenBasicCache(
             hrpStatus = hrpStatus,
             relToHeadId = 0,
             syncState = syncState,
-            isConsent = isConsent
+            isConsent = isConsent,
+            reproductiveStatusId = reproductiveStatusId
         )
     }
 
@@ -374,6 +376,15 @@ data class BenBasicCache(
         return BenBasicDomainForForm(
             benId = benId,
             hhId = hhId,
+            isDeath = isDeath,
+            isDeathValue = isDeathValue,
+            dateOfDeath = dateOfDeath,
+            timeOfDeath = timeOfDeath,
+            reasonOfDeath = reasonOfDeath,
+            reasonOfDeathId = reasonOfDeathId,
+            placeOfDeath = placeOfDeath,
+            placeOfDeathId = placeOfDeathId,
+            otherPlaceOfDeath = otherPlaceOfDeath,
             regDate = dateFormat.format(Date(regDate)),
             benName = benName,
             benSurname = benSurname ?: "Not Available",
@@ -382,6 +393,7 @@ data class BenBasicCache(
             mobileNo = mobileNo.toString(),
             fatherName = fatherName,
             familyHeadName = familyHeadName ?: "Not Available",
+
 //            typeOfList = typeOfList.name,
             rchId = rchId,
             hrpStatus = hrpStatus,
@@ -396,6 +408,15 @@ data class BenBasicCache(
         return BenBasicDomainForForm(
             benId = benId,
             hhId = hhId,
+            isDeath = isDeath,
+            isDeathValue = isDeathValue,
+            dateOfDeath = dateOfDeath,
+            timeOfDeath = timeOfDeath,
+            reasonOfDeath = reasonOfDeath,
+            reasonOfDeathId = reasonOfDeathId,
+            placeOfDeath = placeOfDeath,
+            placeOfDeathId = placeOfDeathId,
+            otherPlaceOfDeath = otherPlaceOfDeath,
             regDate = dateFormat.format(Date(regDate)),
             benName = benName,
             benSurname = benSurname ?: "Not Available",
@@ -404,6 +425,7 @@ data class BenBasicCache(
             mobileNo = mobileNo.toString(),
             fatherName = fatherName,
             familyHeadName = familyHeadName ?: "Not Available",
+
 //            typeOfList = typeOfList.name,
             rchId = rchId,
             hrpStatus = hrpStatus,
@@ -768,6 +790,7 @@ data class BenBasicDomain(
     var placeOfDeath: String? = null,
     var placeOfDeathId: Int? = null,
     var otherPlaceOfDeath: String? = null,
+    var reproductiveStatusId: Int,
 
     val regDate: String,
     val benName: String,
@@ -791,12 +814,25 @@ data class BenBasicDomain(
     val hrpStatus: Boolean = false,
     var syncState: SyncState?,
     val isConsent: Boolean
-) : Parcelable
+) : Parcelable{
+    val dobString: String
+        get() = java.text.SimpleDateFormat("dd-MM-yyyy", java.util.Locale.getDefault())
+            .format(java.util.Date(dob))
+}
 
 
 data class BenBasicDomainForForm(
     val benId: Long,
     val hhId: Long,
+    var isDeath: Boolean = false,
+    var isDeathValue: String? = null,
+    var dateOfDeath: String? = null,
+    var timeOfDeath: String? = null,
+    var reasonOfDeath: String? = null,
+    var reasonOfDeathId: Int? = null,
+    var placeOfDeath: String? = null,
+    var placeOfDeathId: Int? = null,
+    var otherPlaceOfDeath: String? = null,
     val regDate: String,
     val benName: String,
     val benSurname: String? = null,
@@ -811,6 +847,7 @@ data class BenBasicDomainForForm(
     val familyHeadName: String,
     val lastMenstrualPeriod: String? = null,
     val edd: String? = null,
+
 //    val typeOfList: String,
     val rchId: String? = null,
     val hrpStatus: Boolean = false,
@@ -822,7 +859,7 @@ data class BenBasicDomainForForm(
     val form3Enabled: Boolean = true,
     val formsFilled: Int = 0,
     var syncState: SyncState?,
-    val isConsent: Boolean
+    val isConsent: Boolean,
 
 ) {
     companion object

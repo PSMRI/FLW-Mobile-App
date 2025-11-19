@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Build
 import android.text.Html
 import android.text.InputType
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
@@ -17,6 +18,7 @@ import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.divider.MaterialDivider
 import com.google.android.material.textfield.TextInputEditText
@@ -318,6 +320,24 @@ fun ImageView.setSyncState(syncState: SyncState?) {
     }
 }
 
+@BindingAdapter("syncStateForBen")
+fun ImageView.setSyncStateForBen(syncState: SyncState?) {
+    syncState?.let {
+
+        val drawable = when (it) {
+            SyncState.UNSYNCED -> R.drawable.ic_unsynced
+            SyncState.SYNCING -> R.drawable.ic_syncing
+            SyncState.SYNCED -> R.drawable.ic_synced
+        }
+        setImageResource(drawable)
+        isClickable = it == SyncState.UNSYNCED
+        if (it == SyncState.SYNCING) startAnimation(rotate)
+    } ?: run {
+        visibility = View.INVISIBLE
+    }
+}
+
+
 
 @BindingAdapter("benImage")
 fun ImageView.setBenImage(uriString: String?) {
@@ -461,3 +481,20 @@ fun setFormattedSessionDate(textView: TextView, timestamp: Long?) {
     }
 }
 
+@BindingAdapter(value = ["visibleIfAgeAbove30AndAliveAge", "isDeath"], requireAll = true)
+fun Button.visibleIfAgeAbove30AndAlive(age: Int?, isDeath: String?) {
+    val shouldShow = (age ?: 0) >= 30 && isDeath.equals("false", ignoreCase = true)
+    visibility = if (shouldShow) View.VISIBLE else View.GONE
+}
+
+@BindingAdapter(value = ["visibleIfEligibleFemale", "isDeath", "reproductiveStatusId", "gender"], requireAll = true)
+fun Button.visibleIfEligibleFemale(age: Int?, isDeath: String?, reproductiveStatusId: Int?, gender: String?) {
+
+    val shouldShow =
+        (gender.equals("female", ignoreCase = true)) &&
+                ((age ?: 0) in 20..49) &&
+                (reproductiveStatusId == 1 || reproductiveStatusId == 2) &&
+                isDeath.equals("false", ignoreCase = true)
+
+    visibility = if (shouldShow) View.VISIBLE else View.GONE
+}

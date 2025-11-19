@@ -122,6 +122,7 @@ data class VaccineCategoryDomain(
     val category: ChildImmunizationCategory,
     val categoryString: String = category.name,
     val vaccineStateList: List<VaccineDomain>,
+    var isBenDeath: Boolean =false
 //    val onClick: (Long, Int) -> Unit
 )
 

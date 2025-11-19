@@ -207,7 +207,7 @@ class AllHouseholdFragment : Fragment() {
             binding.btnNextPage.visibility = View.GONE
         }
 //        binding.tvEmptyContent.text = resources.getString(R.string.no_records_found_hh)
-        val householdAdapter = HouseHoldListAdapter(isDisease, prefDao, HouseHoldListAdapter.HouseholdClickListener({
+        val householdAdapter = HouseHoldListAdapter("",isDisease, prefDao, HouseHoldListAdapter.HouseholdClickListener({
             if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
                 findNavController().navigate(
                     AllHouseholdFragmentDirections.actionAllHouseholdFragmentToNewHouseholdFragment(
@@ -241,7 +241,12 @@ class AllHouseholdFragment : Fragment() {
                 }
             }
 
-        }))
+        },
+        {
+
+
+        },
+            ))
         binding.rvAny.adapter = householdAdapter
 
         lifecycleScope.launch {
