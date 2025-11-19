@@ -536,8 +536,8 @@ abstract class InAppDb : RoomDatabase() {
             ON ALL_EYE_SURGERY_VISIT_HISTORY(benId, formId, visitMonth)
         """.trimIndent())
 //                    database.execSQL("ALTER TABLE MALARIA_SCREENING ADD COLUMN visitId INTEGER NOT NULL DEFAULT 1")
-                    database.execSQL("DROP INDEX IF EXISTS ind_malariasn")
-                    database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS ind_malariasn ON MALARIA_SCREENING(benId, visitId)")
+                    db.execSQL("DROP INDEX IF EXISTS ind_malariasn")
+                    db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS ind_malariasn ON MALARIA_SCREENING(benId, visitId)")
                 }
             }
 
