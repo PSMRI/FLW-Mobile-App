@@ -98,9 +98,7 @@ class IncentivesFragment : Fragment() {
     private val PERMISSION_REQUEST_CODE = 792
 
 
-    private val isMitaninVariant: Boolean by lazy {
-        BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
-    }
+    private var isMitaninVariant: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -205,6 +203,12 @@ class IncentivesFragment : Fragment() {
             viewModel.items.collect {
                 incentivesActivityList = it
 
+            }
+            viewModel.isStateChhattisgarh.observe(viewLifecycleOwner) { isChhattisgarh ->
+                if (isChhattisgarh)
+                    isMitaninVariant = true
+                else
+                    isMitaninVariant = false
             }
 
         }

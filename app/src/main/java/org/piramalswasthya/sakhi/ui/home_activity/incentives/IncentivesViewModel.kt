@@ -1,5 +1,7 @@
 package org.piramalswasthya.sakhi.ui.home_activity.incentives
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,6 +34,11 @@ IncentivesViewModel @Inject constructor(
 
     private val _incentiveRepo = incentiveRepo
     private val _pref = pref
+
+    private var _isStateChhattisgarh = MutableLiveData<Boolean>()
+    val isStateChhattisgarh: LiveData<Boolean>
+        get() = _isStateChhattisgarh
+
     val lastUpdated: String
         get() = getDateStrFromLong(_lastUpdated)!!
 
@@ -53,7 +60,10 @@ IncentivesViewModel @Inject constructor(
     }.timeInMillis
 
     init {
+        val user = pref.getLoggedInUser()
+        _isStateChhattisgarh.value = user?.state?.id == 8
         pullIncentives()
+
     }
 
 
