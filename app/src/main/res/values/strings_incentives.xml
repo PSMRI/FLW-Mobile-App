@@ -7,6 +7,7 @@
     <string name="incentive_amount">₹ %1d</string>
     <string name="incentive_ben_details">Ben ID: %1d\nName: %2s</string>
     <string name="incentive_activity_details">Activity: %1s</string>
+
     <string name="incentive_last_updated">Last Updated on %1s</string>
     <string name="asha_incentive_master_claim_form">ASHA Incentive Master Claim Form</string>
     <string name="to">To</string>
@@ -18,6 +19,7 @@
     <string name="as_per_statement">" as per statement mentioned below."</string>
     <string name="to_small">" to "</string>
     <string name="sir_madam">Sir/Madam,</string>
+
 
     <string-array name="months">
         <item>January</item>
@@ -33,4 +35,13 @@
         <item>November</item>
         <item>December</item>
     </string-array>
+
+    <string name="incentive_amount_claimed">Amount claimed (Rs.)</string>
+    <string name="incentive_no_of_claims">No of Claims</string>
+    <string name="incentive_parameter_for_payment">Parameter for payment</string>
+    <string name="incentive_rate_rs">Rate Rs.</string>
+    <string name="incentive_document_submitted">Documents submitted</string>
+    <string name="incentive_sub_submission_of_asha_incentive_claim_for_the_period_from_to">Sub:   Submission of ASHA incentive claim for the period from ….. To …..</string>
+    <string name="incentive_with_reference_to_the_subject_cited_above">With reference to the subject cited above, I have the honour to submit the ASHA incentives claims for the period from ...... to  ……….. as per statement mentioned below.</string>
+    <string name="incentive_an_amount_of_rs">An amount of Rs……. (Rupees ………. only) approved for payment of ASHA incentive for the period from…… to ………… and the amount is debited to the account through DBT.</string>
 </resources>
