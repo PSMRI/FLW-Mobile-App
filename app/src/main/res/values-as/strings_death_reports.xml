@@ -3,4 +3,37 @@
     <string name="cdr_form">চিডিআৰ ফৰ্ম</string>
     <string name="maternal">মাতৃৰ</string>
     <string name="non_maternal">অমাতৃৰ</string>
+    <string name="maternal_death">মাতৃ মৃত্যুসমূহ</string>
+    <string name="general_deaths">সাধাৰণ মৃত্যু</string>
+    <string name="non_maternal_deaths">অমাতৃ মৃত্যু</string>
+    <string name="child_deaths">শিশু মৃত্যু</string>
+    <string name="name_of_child">শিশুৰ নাম</string>
+    <string name="date_of_birth">জন্ম তাৰিখ</string>
+    <string name="age">বয়স</string>
+    <string name="gender">লিংগ</string>
+    <string name="mothers_name">মাতৃৰ নাম</string>
+    <string name="fathers_name">পিতৃৰ নাম</string>
+    <string name="complete_address">সম্পূৰ্ণ ঠিকনা</string>
+    <string name="address">ঠিকনা</string>
+    <string name="house_number">ঘৰ নম্বৰ</string>
+    <string name="mohalla_colony">মহল্লা/কলনী</string>
+    <string name="village_town_city">গাঁও/চহৰ/নগৰ</string>
+    <string name="block">ব্লক</string>
+    <string name="district_tehsil">জিলা/তহচিল</string>
+    <string name="state">ৰাজ্য</string>
+    <string name="pin_code">পিন ক\'ড</string>
+    <string name="landmarks_if_any">যদি কোনো চিনাক্ত স্থান থাকে</string>
+    <string name="phone_number_parents_family">মাতাপিতাৰ/পৰিয়ালৰ ফোন নম্বৰ (একেই ঘৰতে বসবাস কৰা)</string>
+    <string name="landline">লেণ্ডলাইন</string>
+    <string name="mobile_number">ম\'বাইল নম্বৰ</string>
+    <string name="date_of_death">মৃত্যুৰ তাৰিখ</string>
+    <string name="place_of_death">মৃত্যুৰ স্থান</string>
+    <string name="name_of_first_informant">প্ৰথম সংবাদ দিওতাৰ নাম</string>
+    <string name="time">সময়</string>
+    <string name="timing_of_informing">(সংবাদ দিয়া সময়)</string>
+    <string name="date_of_notification">জাননি দিয়াৰ তাৰিখ</string>
+    <string name="cdr_form_from_anm">ANM ৰ পৰা CDR ফৰ্ম</string>
+    <string name="death_certificate">মৃত্যু প্ৰমাণপত্ৰ</string>
+    <string name="death_certificate_duplicate">মৃত্যু প্ৰমাণপত্ৰ</string>
+
 </resources>

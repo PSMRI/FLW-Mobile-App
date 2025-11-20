@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="radio_title_cbac">%1s<![CDATA[<font color="#B00020"> *</font>]]></string>
+    <string name="radio_title_cbac_ds">%1s<![CDATA[<font color="#B00020"> **</font>]]></string>
     <string name="cbac_ask_pat">বৃদ্ধি আছে কি বারংবার যোগ কৰিছে?</string>
     <string name="cbac_early_detection">ভাগ B1: আদি শ্ৰেণী</string>
     <string name="cbac_early_detection_2">ভাগ B2: কেৱল মহিলা সদস্যসকলৰ বাবে</string>
