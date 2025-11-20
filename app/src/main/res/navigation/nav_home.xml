@@ -1960,6 +1960,11 @@
         <argument
             android:name="hhId"
             app:argType="long" />
+        <argument
+            android:name="dob"
+            app:argType="long" />
+
+
         <action
             android:id="@+id/action_infantFormFragment_to_HBYCFormFragment"
             app:destination="@id/HBYCFormFragment" />
