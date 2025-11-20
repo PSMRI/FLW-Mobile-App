@@ -280,6 +280,9 @@
         <action
             android:id="@+id/action_ncdFragment_to_ncdPriorityListFragment"
             app:destination="@id/ncdPriorityListFragment" />
+        <action
+            android:id="@+id/action_ncdFragment_to_ncdReferredListFragment"
+            app:destination="@id/ncdRefferedList" />
     </fragment>
     <fragment
         android:id="@+id/villageLevelFormsFragment"
@@ -311,8 +314,14 @@
             android:id="@+id/action_villageLevelFormsFragment_to_DewormingListFragment"
             app:destination="@id/DewormingListFragment" />
         <action
+            android:id="@+id/action_villageLevelFormsFragment_to_saasBahuSamelanFragment"
+            app:destination="@id/saasBahuSamelanFragment" />
+        <action
             android:id="@+id/action_villageLevelFormsFragment_to_allMaaMeetingFragment"
             app:destination="@id/allMaaMeetingFragment" />
+        <action
+            android:id="@+id/action_villageLevelFormsFragment_to_saasBahuSammelanListFragment"
+            app:destination="@id/saasBahuSammelanListFragment" />
     </fragment>
 
     <fragment
@@ -571,6 +580,9 @@
         <argument
             android:name="ashaId"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_cbacFragment_to_ncdReferForm"
+            app:destination="@id/NCDReferalForm" />
 
     </fragment>
     <fragment
@@ -1415,7 +1427,14 @@
             app:destination="@id/pmsmaFragment" />
     </fragment>
     <fragment
-        android:id="@+id/childMonthListFragment"
+        android:id="@+id/saasBahuSamelanFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.saas_bahu_sammelan.SaasBahuSamelanFragment"
+        android:label="SaasBahuSamelanFragment" >
+        <argument
+            android:name="id"
+            android:defaultValue="0L"
+            app:argType="long" />
+       <!-- android:id="@+id/childMonthListFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.infant.ChildMonthListFragment"
         android:label="ChildMonthListFragment" >
         <argument
@@ -1432,7 +1451,7 @@
 
         <action
             android:id="@+id/action_infantFormFragment_to_HBYCFormFragment"
-            app:destination="@id/HBYCFormFragment" />
+            app:destination="@id/HBYCFormFragment" />-->
     </fragment>
     <fragment
         android:id="@+id/HBYCFormFragment"
@@ -1906,6 +1925,45 @@
             android:name="id"
             android:defaultValue="0L"
             app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/saasBahuSammelanListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.saas_bahu_sammelan.SaasBahuSammelanListFragment"
+        android:label="SaasBahuSammelanListFragment" >
+        <action
+            android:id="@+id/action_saasBahuSammelanListFragment_to_saasBahuSammelanFormFrag"
+            app:destination="@id/saasBahuSamelanFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/NCDReferalForm"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.ncd_referred.form.NCDReferalFormFragment"
+        android:label="NCDReferalForm" >
+        <argument
+            android:name="benId"
+            app:argType="long" />
+        <argument
+            android:name="cbacId"
+            android:defaultValue="0"
+            app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/ncdRefferedList"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.ncd_referred.list.NcdRefferedList"
+        android:label="NcdRefferedList" />
+    <fragment
+        android:id="@+id/childMonthListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.infant.ChildMonthListFragment"
+        android:label="ChildMonthListFragment" >
+        <argument
+            android:name="benId"
+            app:argType="long" />
+        <argument
+            android:name="hhId"
+            app:argType="long" />
+        <action
+            android:id="@+id/action_infantFormFragment_to_HBYCFormFragment"
+            app:destination="@id/HBYCFormFragment" />
+
     </fragment>
 
 </navigation>

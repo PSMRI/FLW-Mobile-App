@@ -151,6 +151,8 @@
     <string name="after_the_abortion_the_woman_opted_for_permanent_sterilization_tubectomy">After the Abortion, the Woman opted for permanent sterilization (Tubectomy)</string>
     <string name="date_of_sterilisation">Date of Sterilisation</string>
     <string name="what_family_planning_method_has_been_chosen_after_the_abortion">What family planning method has been chosen after the abortion?</string>
+    <string name="higher_healthcare_center">उच्च स्वास्थ्य सेवा केंद्र</string>
+    <string name="additional_services">अतिरिक्त सेवाएं</string>
 
 
     <string-array name="temp_array">

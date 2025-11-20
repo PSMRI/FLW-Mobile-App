@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.ui
 import android.content.Context
 import android.net.Uri
 import android.os.Build
+import android.provider.OpenableColumns
 import android.text.Html
 import android.text.InputType
 import android.util.Log
@@ -87,6 +88,15 @@ fun Button.setVaccineState(syncState: VaccineState?) {
 fun setFormattedDate(view: TextView, timestamp: Long?) {
     timestamp?.let {
         val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        view.text = sdf.format(Date(it))
+    }
+}
+
+
+@BindingAdapter("formattedDatewitheMonth")
+fun setFormattedDateWithMonth(view: TextView, timestamp: Long?) {
+    timestamp?.let {
+        val sdf = SimpleDateFormat("dd-MM-yyyy , MMM", Locale.getDefault())
         view.text = sdf.format(Date(it))
     }
 }
@@ -437,6 +447,18 @@ fun getFileSize(uri: Uri,context: Context): Long {
     } ?: 0L
 }
 
+fun getByteArrayFromUri(uri: Uri,context: Context): ByteArray {
+    val inputStream = context.contentResolver.openInputStream(uri)
+    return inputStream?.readBytes() ?: byteArrayOf()
+}
+ fun getFileName(uri: Uri,context: Context): String {
+    val cursor = context.contentResolver.query(uri, null, null, null, null)
+    cursor?.use {
+        val index = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+        if (it.moveToFirst()) return it.getString(index)
+    }
+    return "file_${System.currentTimeMillis()}"
+}
 @RequiresApi(Build.VERSION_CODES.N)
 @BindingAdapter("asteriskRequired", "hintText")
 fun TextView.setAsteriskTextView(required: Boolean?, title: String?) {
