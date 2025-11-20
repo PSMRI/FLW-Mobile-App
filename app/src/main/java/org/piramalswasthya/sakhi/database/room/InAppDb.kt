@@ -41,6 +41,7 @@ import org.piramalswasthya.sakhi.database.room.dao.MaaMeetingDao
 import org.piramalswasthya.sakhi.database.room.dao.MosquitoNetFormResponseDao
 import org.piramalswasthya.sakhi.database.room.dao.PmsmaDao
 import org.piramalswasthya.sakhi.database.room.dao.PncDao
+import org.piramalswasthya.sakhi.database.room.dao.SaasBahuSammelanDao
 import org.piramalswasthya.sakhi.database.room.dao.ProfileDao
 import org.piramalswasthya.sakhi.database.room.dao.SyncDao
 import org.piramalswasthya.sakhi.database.room.dao.TBDao
@@ -97,11 +98,13 @@ import org.piramalswasthya.sakhi.model.PMSMACache
 import org.piramalswasthya.sakhi.model.PNCVisitCache
 import org.piramalswasthya.sakhi.model.PregnantWomanAncCache
 import org.piramalswasthya.sakhi.model.PregnantWomanRegistrationCache
+import org.piramalswasthya.sakhi.model.SaasBahuSammelanCache
 import org.piramalswasthya.sakhi.model.ProfileActivityCache
 import org.piramalswasthya.sakhi.model.TBScreeningCache
 import org.piramalswasthya.sakhi.model.TBSuspectedCache
 import org.piramalswasthya.sakhi.model.UwinCache
 import org.piramalswasthya.sakhi.model.MaaMeetingEntity
+import org.piramalswasthya.sakhi.model.ReferalCache
 import org.piramalswasthya.sakhi.model.VHNCCache
 import org.piramalswasthya.sakhi.model.Vaccine
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormResponseJsonEntity
@@ -167,11 +170,13 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         //Dynamic Data
         InfantEntity::class,
         FormSchemaEntity::class,
+        SaasBahuSammelanCache::class,
         MaaMeetingEntity::class,
         FormResponseJsonEntity::class,
         FormResponseJsonEntityHBYC::class,
         CUFYFormResponseJsonEntity::class,
         GeneralOPEDBeneficiary::class,
+        ReferalCache::class,
         UwinCache::class,
         EyeSurgeryFormResponseJsonEntity::class,
         BenIfaFormResponseJsonEntity::class,
@@ -220,9 +225,12 @@ abstract class InAppDb : RoomDatabase() {
     abstract val filariaDao: FilariaDao
     abstract val profileDao: ProfileDao
     abstract val abhaGenratedDao: ABHAGenratedDao
+    abstract val saasBahuSammelanDao: SaasBahuSammelanDao
     abstract val generalOpdDao: GeneralOpdDao
     abstract val maaMeetingDao: MaaMeetingDao
     abstract val uwinDao: UwinDao
+
+    abstract val referalDao: NcdReferalDao
 
     abstract fun infantDao(): InfantDao
     abstract fun formSchemaDao(): FormSchemaDao
@@ -542,6 +550,9 @@ abstract class InAppDb : RoomDatabase() {
             }
 
 
+
+
+
             val MIGRATION_34_35 = object : Migration(34, 35) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     database.execSQL(
@@ -575,7 +586,7 @@ abstract class InAppDb : RoomDatabase() {
             }
 
 
-            val MIGRATION_33_34 = object : Migration(33, 34) {
+            val MIGRATION_33_34 = object : Migration(31, 32) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     database.execSQL("""
             CREATE TABLE IF NOT EXISTS form_schema (
@@ -666,6 +677,8 @@ abstract class InAppDb : RoomDatabase() {
 
             val MIGRATION_30_31 = object : Migration(30, 31) {
                 override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("ALTER TABLE CBAC ADD COLUMN isReffered INTEGER DEFAULT 0")
+
                     // Create the new table
                     database.execSQL("""
             CREATE TABLE IF NOT EXISTS form_schema (
@@ -708,6 +721,10 @@ abstract class InAppDb : RoomDatabase() {
                                 "`meetingImages` TEXT, " +
                                 "`createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `syncState` INTEGER NOT NULL)"
                     )
+                    database.execSQL("ALTER TABLE ELIGIBLE_COUPLE_REG ADD COLUMN isKitHandedOver INTEGER NOT NULL DEFAULT 0")
+                    database.execSQL("ALTER TABLE ELIGIBLE_COUPLE_REG ADD COLUMN kitHandedOverDate INTEGER")
+                    database.execSQL("ALTER TABLE ELIGIBLE_COUPLE_REG ADD COLUMN kitPhoto1 TEXT")
+                    database.execSQL("ALTER TABLE ELIGIBLE_COUPLE_REG ADD COLUMN kitPhoto2 TEXT")
                 }
             }
 

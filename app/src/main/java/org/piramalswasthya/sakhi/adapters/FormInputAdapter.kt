@@ -6,6 +6,7 @@ import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.res.ColorStateList
 import android.content.res.Resources
 import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import android.text.Editable
 import android.text.InputFilter
@@ -38,6 +39,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.databinding.LayoutMultiFileUploadBinding
 import org.piramalswasthya.sakhi.databinding.LayoutUploafFormBinding
 import org.piramalswasthya.sakhi.databinding.RvItemFormAgePickerViewV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormBtnBinding
@@ -86,6 +88,7 @@ class FormInputAdapter(
     private val isEnabled: Boolean = true,
     private val selectImageClickListener: SelectUploadImageClickListener? = null,
     private val viewDocumentListner: ViewDocumentOnClick? = null,
+    var  fileList: MutableList<Uri>? = null,
 ) : ListAdapter<FormElement, ViewHolder>(FormInputDiffCallBack) {
     var disableUpload = false
 
@@ -1143,8 +1146,65 @@ class FormInputAdapter(
             InputType.BUTTON -> ButtonInputViewHolder.from(parent)
             InputType.FILE_UPLOAD -> FileUploadInputViewHolder.from(parent)
             InputType.NUMBER_PICKER -> NumberPickerInputViewHolder.from(parent)
+            InputType.MULTIFILE_UPLOAD -> MultiFileUploadInputViewHolder.from(parent)
         }
     }
+
+    fun updateFileList(newList: List<Uri>) {
+        this.fileList?.addAll(newList)
+        notifyDataSetChanged()
+    }
+    class MultiFileUploadInputViewHolder private constructor(private val binding: LayoutMultiFileUploadBinding) :
+        ViewHolder(binding.root) {
+        companion object {
+            fun from(parent: ViewGroup): ViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = LayoutMultiFileUploadBinding.inflate(layoutInflater, parent, false)
+                return MultiFileUploadInputViewHolder(binding)
+            }
+        }
+
+        private lateinit var fileAdapter: FileListAdapter
+
+        fun bind(
+            item: FormElement,
+            clickListener: SelectUploadImageClickListener?,
+            documentOnClick: ViewDocumentOnClick?,
+            isEnabled: Boolean,
+            fileList : MutableList<Uri>?
+        ) {
+           /* binding.form = item
+            binding.tvTitle.text = item.title
+            binding.clickListener = clickListener
+            binding.documentclickListener = documentOnClick
+            binding.btnView.visibility = if (item.value != null) View.VISIBLE else View.GONE
+
+            if (isEnabled) {
+                binding.addFile.isEnabled = true
+                binding.addFile.alpha = 1f
+            } else {
+                binding.addFile.isEnabled = false
+                binding.addFile.alpha = 0.5f
+            }*/
+
+            val items = fileList ?: mutableListOf()
+            fileAdapter = FileListAdapter(items)
+            binding.rvFiles.adapter = fileAdapter
+            fileAdapter.updateFileList(items)
+            fileAdapter.notifyDataSetChanged()
+
+            binding.btnSelectFiles.isEnabled = isEnabled
+            binding.btnSelectFiles.alpha = if (isEnabled) 1f else 0.5f
+
+            binding.btnSelectFiles.setOnClickListener {
+                clickListener?.onSelectImageClick(item)
+            }
+        }
+
+    }
+
+
+
     class FileUploadInputViewHolder private constructor(private val binding: LayoutUploafFormBinding) :
         ViewHolder(binding.root) {
         companion object {
@@ -1220,14 +1280,14 @@ class FormInputAdapter(
                     isEnabled,
                     formValueListener
                 )
-
                 InputType.BUTTON -> (holder as ButtonInputViewHolder).bind(
                     item,
                     isEnabled,
                     sendOtpClickListener
                 )
 
-                InputType.FILE_UPLOAD -> (holder as FileUploadInputViewHolder).bind(item,selectImageClickListener,viewDocumentListner,isEnabled = isEnabled)
+                InputType.FILE_UPLOAD -> (holder as FileUploadInputViewHolder).bind(item,selectImageClickListener,viewDocumentListner,isEnabled = !disableUpload)
+                org.piramalswasthya.sakhi.model.InputType.MULTIFILE_UPLOAD -> (holder as MultiFileUploadInputViewHolder).bind(item,selectImageClickListener,viewDocumentListner,isEnabled = !disableUpload,fileList)
 
                 InputType.NUMBER_PICKER -> (holder as NumberPickerInputViewHolder).bind(
                     item, isEnabled, formValueListener
@@ -1235,6 +1295,7 @@ class FormInputAdapter(
             }
         } catch (e: Exception) {
             e.printStackTrace()
+
         }
     }
 
