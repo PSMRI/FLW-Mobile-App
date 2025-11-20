@@ -4,4 +4,24 @@
     <string name="maternal">Maternal</string>
     <string name="non_maternal">Non-maternal</string>
     <string name="accident">Accident</string>
+
+    <string name="str_age">Age</string>
+    <string name="str_visit">Visit Date</string>
+    <string name="str_gender">Gender</string>
+    <string name="str_father_name">Father’s Name</string>
+    <string name="str_address">Address</string>
+    <string name="str_house_number">House number</string>
+    <string name="str_mohalla_colony">Mohalla/Colony </string>
+    <string name="str_landmark_if_any">Landmarks, if any </string>
+    <string name="str_pincode">Pincode</string>
+    <string name="str_landline">Landline</string>
+    <string name="str_mobile_number">Mobile number</string>
+    <string name="str_date_of_death">Date of death</string>
+    <string name="str_time">Time</string>
+    <string name="str_place_of_death">Place of Death</string>
+    <string name="str_name_of_first_informant">Name of First Informant </string>
+    <string name="str_name_of_asha">Signature/Name of ASHA</string>
+    <string name="str_date_of_notification">Date of Notification </string>
+    <string name="str_hospital">Hospital</string>
+    <string name="str_transit">In transit</string>
 </resources>

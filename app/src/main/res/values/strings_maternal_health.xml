@@ -488,4 +488,34 @@
         <item>Other</item>
     </string-array>
 
+    <string name="anc_date">ANC Date</string>
+    <string name="str_anc_period">ANC Period</string>
+    <string name="str_abortion_if_any">Abortion If Any</string>
+    <string name="str_abortion_type">Abortion Type</string>
+    <string name="str_facility">Facility</string>
+    <string name="str_abortion_date">Abortion Date</string>
+    <string name="str_weight_pw">Weight of PW (Kg) at time Registration</string>
+    <string name="str_bp_of_pw">BP of PW – Systolic/ Diastolic (mm Hg) </string>
+    <string name="str_pulse_rate">Pulse Rate</string>
+    <string name="str_hb">HB (gm/dl)</string>
+    <string name="str_fundal_height">Fundal Height / Size of the Uterus weeks</string>
+    <string name="str_urine_albumin">Urine Albumin</string>
+    <string name="str_random_blood_sugar">Random Blood Sugar Test</string>
+    <string name="str_date_of_tt_first_dose">Date of Td TT (1st Dose)</string>
+    <string name="str_date_of_tt_second_dose">Date of Td TT (2nd Dose)</string>
+    <string name="str_date_of_tt_booster_dose">Date of Td TT (Booster Dose)</string>
+    <string name="str_no_of_acid_tab">No. of Folic Acid Tabs given</string>
+    <string name="str_no_of_ifa_tab">No. of IFA Tabs given</string>
+    <string name="str_any_high_risk_cond">Any High Risk conditions</string>
+    <string name="str_high_risk_cond">High Risk Conditions</string>
+    <string name="str_any_other_high_risk_cond">Any other High Risk conditions</string>
+    <string name="str_referral_facility">Referral Facility</string>
+    <string name="str_hrp_confirmed">Is HRP Confirmed?</string>
+    <string name="str_identified_as_hrp">Who had identified as HRP?</string>
+    <string name="str_maternal_death">Maternal Death</string>
+    <string name="str_cause_of_death">Probable Cause of Death</string>
+    <string name="str_other_cause_of_death">Other Death Cause</string>
+    <string name="str_death_date">Death Date</string>
+    <string name="str_has_pregnant_women_delivered">Has the pregnant woman delivered?</string>
+
 </resources>

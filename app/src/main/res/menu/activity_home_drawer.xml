@@ -87,6 +87,12 @@
             android:title="@string/delete_my_account" />
 
         <item
+            android:id="@+id/menu_report_crash"
+            android:checkable="false"
+            android:icon="@drawable/ic_crash"
+            android:title="Report Crash" />
+
+        <item
             android:id="@+id/menu_support"
             android:checkable="false"
             android:icon="@drawable/ic_support"

@@ -3,5 +3,27 @@
     <string name="cdr_form">চিডিআৰ ফৰ্ম</string>
     <string name="maternal">মাতৃৰ</string>
     <string name="non_maternal">অমাতৃৰ</string>
+
+    <string name="str_age">বয়স</string>
+    <string name="str_visit">সাক্ষাত্‌ৰ তাৰিখ</string>
+    <string name="str_gender">লিংগ</string>
+<!--    <string name="str_mothers_name">মাতৃৰ নাম</string>-->
+    <string name="str_father_name">পিতৃৰ নাম</string>
+    <string name="str_address">ঠিকনা</string>
+    <string name="str_house_number">ঘৰ নম্বৰ</string>
+    <string name="str_mohalla_colony">মহল্লা/কলনি</string>
+    <string name="str_landmark_if_any">চিনাক্ত কৰিবলৈ সহায়ক স্থান, যদি থাকে</string>
+    <string name="str_pincode">পিনক\'ড</string>
+    <string name="str_landline">লেণ্ডলাইন</string>
+    <string name="str_mobile_number">ম’বাইল নম্বৰ</string>
+    <string name="str_date_of_death">মৃত্যুৰ তাৰিখ</string>
+    <string name="str_time">সময়</string>
+    <string name="str_place_of_death">মৃত্যুৰ স্থান</string>
+    <string name="str_name_of_first_informant">প্ৰথম তথ্যদানকাৰীৰ নাম</string>
+    <string name="str_name_of_asha">আশাৰ স্বাক্ষৰ/নাম</string>
+    <string name="str_date_of_notification">অৱগত কৰাৰ তাৰিখ</string>
+    <string name="str_hospital">হস্পিটেল</string>
+    <string name="str_transit">পথত (যাত্ৰাৰ সময়ত)</string>
+
     <string name="accident">দুৰ্ঘটনা</string>
 </resources>

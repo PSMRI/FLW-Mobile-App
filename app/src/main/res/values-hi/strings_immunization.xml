@@ -1,4 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="dose_name">खुराक का नाम</string>
+    <string name="imm_name">नाम</string>
+    <string name="last_vaccination_date">पिछली टीकाकरण तिथि</string>
+    <string name="no_of_doses_taken">लिए गए डोज की संख्या</string>
+    <string name="current_vaccine_details">वर्तमान टीके का विवरण</string>
+    <string name="vaccine_name">टीके का नाम</string>
+    <string name="dose_number">डोज संख्या</string>
+    <string name="expected_date">अपेक्षित तिथि</string>
+    <string name="vaccination_date">टीकाकरण तिथि</string>
+    <string name="vaccination_place">टीकाकरण स्थल</string>
+    <string name="vaccinated_place">टीका लगाया गया स्थान</string>
+    <string name="vaccinated_by">टीका लगाने वाला</string>
+    <string name="date_of_vaccination">टीकाकरण की तारीख</string>
 </resources>

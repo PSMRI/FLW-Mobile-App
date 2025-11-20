@@ -26,47 +26,47 @@ class HBYCFormDataset(
     private val month = FormElement(
         id = 1,
         inputType = InputType.EDIT_TEXT,
-        title = "Month",
+        title = resources.getString(R.string.month),
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
         required = false
     )
     private val subCenterName = FormElement(
         id = 2,
         inputType = InputType.EDIT_TEXT,
-        title = "Subcenter name ",
+        title = resources.getString(R.string.str_sub_center),
         required = false
     )
     private val year = FormElement(
         id = 3,
         inputType = InputType.EDIT_TEXT,
-        title = "Year",
+        title = resources.getString(R.string.mdsr_year),
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
         required = false
     )
     private val primaryHealthCenterName = FormElement(
         id = 4,
         inputType = InputType.EDIT_TEXT,
-        title = "Primary Health Center Name ",
+        title = resources.getString(R.string.str_primary_health_center_name),
         required = false
     )
     private val villagePopulation = FormElement(
         id = 5,
         inputType = InputType.EDIT_TEXT,
-        title = "Village Population",
+        title = resources.getString(R.string.str_village_population),
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
         required = false
     )
     private val infantPopulation = FormElement(
         id = 6,
         inputType = InputType.EDIT_TEXT,
-        title = "Total number of children aged 3 to 15 months in villages",
+        title = resources.getString(R.string.str_total_no_of_childrens),
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
         required = false
     )
     private val visitDate = FormElement(
         id = 7,
         inputType = InputType.DATE_PICKER,
-        title = "Visit Date",
+        title = resources.getString(R.string.str_visit),
         required = false,
         min = 0L,
         max = System.currentTimeMillis()
@@ -74,153 +74,139 @@ class HBYCFormDataset(
     private val hbycAgeCategory = FormElement(
         id = 8,
         inputType = InputType.DROPDOWN,
-        title = "H.B.Y.C by age Tour",
+        title = resources.getString(R.string.str_hyyc_by_age_tour),
         required = false,
         entries = arrayOf("3", "6", "9", "12", "15")
     )
     private val orsPacketDelivered = FormElement(
         id = 9,
         inputType = InputType.RADIO,
-        title = "O.R.S. Packet delivered ",
+        title =  resources.getString(R.string.str_ors_packet_delivered),
         required = false,
         entries = arrayOf("Yes", "No")
     )
     private val ironFolicAcidGiven = FormElement(
         id = 10,
         inputType = InputType.RADIO,
-        title = "Iron folic acid syrup given (after six months of childbirth)",
+        title =  resources.getString(R.string.str_Iron_folic_acid),
         required = false,
         entries = arrayOf("Yes", "No")
     )
     private val isVaccinatedByAge = FormElement(
         id = 11,
         inputType = InputType.RADIO,
-        title = "Child vaccinated by age",
+        title = resources.getString(R.string.str_child_vaccinated_by_age),
         required = false,
         entries = arrayOf("Yes", "No")
     )
     private val wasIll = FormElement(
         id = 12,
         inputType = InputType.RADIO,
-        title = "The child was ill",
+        title =resources.getString(R.string.str_child_was_ill),
         required = false,
         entries = arrayOf("Yes", "No")
     )
     private val referred = FormElement(
         id = 13,
         inputType = InputType.RADIO,
-        title = "If yes refer hospital",
+        title = resources.getString(R.string.str_if_yes_refer_hospital),
         required = false,
         entries = arrayOf("Yes", "No")
     )
     private val supplementsGiven = FormElement(
         id = 14,
         inputType = InputType.RADIO,
-        title = "Supplements given to the child according to age",
+        title = resources.getString(R.string.str_suppliments_given_to_child),
         required = false,
         entries = arrayOf("Yes", "No")
     )
     private val byHeightLength = FormElement(
         id = 15,
         inputType = InputType.RADIO,
-        title = "By height / length (color inscribed in mcp card)",
+        title = resources.getString(R.string.str_by_height_length),
         required = false,
         entries = arrayOf("Yes", "No")
     )
     private val childrenWeighingLessReferred = FormElement(
         id = 16,
         inputType = InputType.RADIO,
-        title = "Number of children weighing less than –3SD orange color indicated in MCCP card referred to VHSND/PHC/NRC",
+        title =  resources.getString(R.string.str_no_of_children_weighing_less),
         required = false,
         entries = arrayOf("Yes", "No")
     )
     private val weightAccordingToAge = FormElement(
         id = 17,
         inputType = InputType.RADIO,
-        title = "Weight according to child’s age (color inscribed in MCP card)",
+        title =  resources.getString(R.string.str_weight_acc_to_child),
         required = false,
         entries = arrayOf("Yes", "No")
     )
     private val delayInDevelopment = FormElement(
         id = 18,
         inputType = InputType.RADIO,
-        title = "Delay / constraint found in the physical and mental development of the child according to age",
+        title =  resources.getString(R.string.str_delay_constraint_found),
         required = false,
         entries = arrayOf("Yes", "No")
     )
     private val referredToHealthInstitite = FormElement(
         id = 19,
         inputType = InputType.RADIO,
-        title = "If yes then Health Institute R.B.S.K. Team / A.N.M. referred to",
+        title =  resources.getString(R.string.str_if_yes_then_health_institute),
         required = false,
         entries = arrayOf("Yes", "No")
     )
     private val vitaminASupplementsGiven = FormElement(
         id = 20,
         inputType = InputType.RADIO,
-        title = "Vitamin – A supplements given to the child according to age",
+        title =  resources.getString(R.string.str_vit_a_suppliment),
         required = false,
         entries = arrayOf("Yes", "No")
     )
     private val deathAge = FormElement(
         id = 21,
         inputType = InputType.DROPDOWN,
-        title = "Mark age (in month) at the time of death",
+        title =  resources.getString(R.string.str_mark_age),
         required = false,
-        entries = arrayOf(
-            "3 Month",
-            "4 Month",
-            "5 Month",
-            "6 Month",
-            "7 Month",
-            "8 Month",
-            "9 Month",
-            "10 Month",
-            "11 Month",
-            "12 Month",
-            "13 Month",
-            "14 Month",
-            "15 Month",
-        )
+        entries =  resources.getStringArray(R.array.hbyc_month_array)
     )
     private val deathCause = FormElement(
         id = 22,
         inputType = InputType.EDIT_TEXT,
-        title = "Cause of death",
+        title =  resources.getString(R.string.mdsr_cause),
         required = false
     )
     private val qmOrAnmInformed = FormElement(
         id = 23,
         inputType = InputType.RADIO,
-        title = "Q.M/A.N.M was informed",
+        title =  resources.getString(R.string.str_qm_informed),
         required = false,
         entries = arrayOf("Yes", "No")
     )
     private val deathPlace = FormElement(
         id = 24,
         inputType = InputType.DROPDOWN,
-        title = "Place of death",
+        title =  resources.getString(R.string.str_place_of_death),
         required = false,
         entries = arrayOf("Home", "Health Center", "On the Way")
     )
     private val superVisorOn = FormElement(
         id = 25,
         inputType = InputType.RADIO,
-        title = "Supervisor from block/district/state level in last on",
+        title =resources.getString(R.string.str_supervisor_from_block),
         required = false,
         entries = arrayOf("Yes", "No")
     )
     private val orsShortage = FormElement(
         id = 26,
         inputType = InputType.RADIO,
-        title = "ORS in last one month Packet shortage",
+        title = resources.getString(R.string.str_ors_in_last_one_month),
         required = false,
         entries = arrayOf("Yes", "No")
     )
     private val ifaDecreased = FormElement(
         id = 27,
         inputType = InputType.RADIO,
-        title = "IFA in last one month Decreased syrup",
+        title = resources.getString(R.string.str_ifa_last_month),
         required = false,
         entries = arrayOf("Yes", "No")
     )
