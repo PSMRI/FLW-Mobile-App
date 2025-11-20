@@ -54,6 +54,7 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.ActivityHomeBinding
 import org.piramalswasthya.sakhi.helpers.AnalyticsHelper
+import org.piramalswasthya.sakhi.helpers.CrashEmailSender
 import org.piramalswasthya.sakhi.helpers.ImageUtils
 import org.piramalswasthya.sakhi.helpers.InAppUpdateHelper
 import org.piramalswasthya.sakhi.helpers.Languages
@@ -66,6 +67,7 @@ import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
 import org.piramalswasthya.sakhi.ui.service_location_activity.ServiceLocationActivity
 import org.piramalswasthya.sakhi.utils.KeyUtils
 import org.piramalswasthya.sakhi.work.WorkerUtils
+import java.io.File
 import java.net.URI
 import java.util.Locale
 import javax.inject.Inject
@@ -114,22 +116,30 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
     private val langChooseAlert by lazy {
         val currentLanguageIndex = when (pref.getCurrentLanguage()) {
             Languages.ENGLISH -> 0
-            Languages.ASSAMESE -> 1
-         /*   Languages.HINDI -> 2*/
-
+            Languages.HINDI -> 1
+            Languages.ASSAMESE -> 2
         }
-        MaterialAlertDialogBuilder(this).setTitle(resources.getString(R.string.choose_application_language))
-            .setSingleChoiceItems(
+        val options =
+            if (BuildConfig.FLAVOR.contains("mitanin", true)) {
                 arrayOf(
                     resources.getString(R.string.english),
-                  /*  resources.getString(R.string.hindi),*/
+                    resources.getString(R.string.hindi)
+                )
+            } else {
+                arrayOf(
+                    resources.getString(R.string.english),
+                    resources.getString(R.string.hindi),
                     resources.getString(R.string.assamese)
-                ), currentLanguageIndex
+                )
+            }
+        MaterialAlertDialogBuilder(this).setTitle(resources.getString(R.string.choose_application_language))
+            .setSingleChoiceItems(
+                options, currentLanguageIndex
             ) { di, checkedItemIndex ->
                 val checkedLanguage = when (checkedItemIndex) {
                     0 -> Languages.ENGLISH
-               /*     2 -> Languages.HINDI*/
-                    1 -> Languages.ASSAMESE
+                    1 -> Languages.HINDI
+                    2 -> Languages.ASSAMESE
                     else -> throw IllegalStateException("yoohuulanguageindexunkonwn $checkedItemIndex")
                 }
                 if (checkedItemIndex == currentLanguageIndex) {
@@ -609,8 +619,10 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         }
         binding.navView.menu.findItem(R.id.menu_delete_account).setOnMenuItemClickListener {
             var url = ""
-            if (BuildConfig.FLAVOR.equals("saksham", true) ||BuildConfig.FLAVOR.equals("niramay", true) || BuildConfig.FLAVOR.equals("xushrukha", true))  {
+            if (BuildConfig.FLAVOR.contains("saksham", true) ||BuildConfig.FLAVOR.contains("niramay", true) || BuildConfig.FLAVOR.contains("xushrukha", true))  {
                 url = "https://forms.office.com/r/HkE3c0tGr6"
+            } else if (BuildConfig.FLAVOR.contains("mitanin", true)) {
+                url = "https://forms.office.com/r/KY9ZKFT3LK"
             } else {
                 url =
                     "https://forms.office.com/Pages/ResponsePage.aspx?id=jQ49md0HKEGgbxRJvtPnRISY9UjAA01KtsFKYKhp1nNURUpKQzNJUkE1OUc0SllXQ0IzRFVJNlM2SC4u"
@@ -626,8 +638,27 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
         }
 
+        binding.navView.menu.findItem(R.id.menu_report_crash).setOnMenuItemClickListener {
+            val crashDir = File(filesDir, "crashes")
+            val latestFile = crashDir.listFiles()?.maxByOrNull { it.lastModified() }
+
+            if (latestFile != null) {
+                CrashEmailSender.sendCrashReport(this, latestFile)
+            } else {
+                 Toast.makeText(this, "No crash report found", Toast.LENGTH_SHORT).show()
+            }
+
+            binding.drawerLayout.close()
+            true
+
+        }
+
         binding.navView.menu.findItem(R.id.menu_support).setOnMenuItemClickListener {
-            var url = "https://forms.office.com/r/AqY1KqAz3v"
+            val url: String = if (BuildConfig.FLAVOR.contains("mitanin", true)) {
+                "https://forms.office.com/r/DW5EVdRMVs"
+            } else {
+                "https://forms.office.com/r/AqY1KqAz3v"
+            }
             if (url.isNotEmpty()){
                 val i = Intent(Intent.ACTION_VIEW)
                 i.setData(Uri.parse(url))
@@ -675,10 +706,8 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
     }
 
     private fun isDeviceRootedOrEmulator(): Boolean {
-
 //      return isRooted() || isEmulator() || RootedUtil().isDeviceRooted(applicationContext)
         return isRooted() || isEmulator()
-
     }
 
     override fun ApiUpdate() {
@@ -695,10 +724,8 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (inAppUpdateHelper.onActivityResult(requestCode, resultCode)) {
-            // Handled update result
             return
         }
-        // Handle other activity results here if needed
     }
 
 }

@@ -146,4 +146,26 @@
     <string name="part_i">প্ৰথম খণ্ড</string>
     <string name="part_ii">দ্বিতীয় খণ্ড</string>
     <string name="hbnc_form">এইচ বি এন চি ফৰ্ম</string>
+
+
+    <string name="str_name_of_child">শিশুৰ নাম</string>
+    <string name="str_rch_id_of_child">শিশুৰ RCH ID নম্বৰ</string>
+    <string name="str_date_of_birth">জন্মৰ তাৰিখ</string>
+    <string name="str_sex_of_child">শিশুৰ লিংগ</string>
+    <string name="str_mothers_name">মাতৃৰ নাম</string>
+    <string name="str_fathers_name">পিতৃৰ নাম</string>
+    <string name="str_whose_mobile_number">কাৰ মোবাইল নম্বৰ</string>
+    <string name="str_mobile_no">ম’বাইল নম্বৰ</string>
+    <string name="str_rch_id_of_mother">মাতৃৰ RCH ID নম্বৰ</string>
+    <string name="str_birth_cert_number">জন্মৰ প্ৰমাণ পত্ৰ নম্বৰ</string>
+    <string name="str_weight_at_birth">জন্মসময়ত ওজন (কিলোগ্ৰামত)</string>
+    <string name="str_place_of_birth">জন্মস্থান</string>
+    <string name="str_district_hospital">জিলা হস্পিটেল</string>
+    <string name="str_community_health_centre">সামূহিক স্বাস্থ্য কেন্দ্ৰ</string>
+    <string name="str_primary_health_center">প্ৰাথমিক স্বাস্থ্য কেন্দ্ৰ</string>
+    <string name="str_sub_center">উপ কেন্দ্ৰ</string>
+    <string name="str_home">ঘৰ</string>
+    <string name="str_sub_district_hospital">উপ-জিলা হস্পিটেল</string>
+    <string name="str_medical_college_hospital">মেডিকেল কলেজ হাস্পতাল</string>
+
 </resources>

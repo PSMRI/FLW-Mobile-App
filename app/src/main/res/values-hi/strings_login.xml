@@ -13,6 +13,8 @@
     <string name="cb_login_remember_me_text">मुझे याद रखना</string>
     <string name="btn_login_forgot_password_text">पासवर्ड भूल गए?</string>
     <string name="btn_login_text">लॉग इन करें</string>
+    <string name="login_diff_user">आप पहले @username के रूप में @ मितानिन से लॉगिन हैं, क्या आप किसी और यूज़र से लॉगिन करना चाहते हैं?</string>
+    <string name="unsync_record_count">नमस्ते! @count रिकॉर्ड अभी सिंक नहीं हुए हैं, कृपया सभी रिकॉर्ड सिंक होने तक प्रतीक्षा करें</string>
 
 
 </resources>

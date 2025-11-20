@@ -164,4 +164,32 @@
         <item>CHO</item>
         <item>MO</item>
     </string-array>
+
+    <string name="str_name_of_child">Name of Child</string>
+    <string name="str_rch_id_of_child">RCH ID No. of Child</string>
+    <string name="str_date_of_birth">Date of Birth</string>
+    <string name="str_sex_of_child">Sex of Child</string>
+    <string name="str_mothers_name">Mother\'s Name</string>
+    <string name="str_fathers_name">Father\'s Name</string>
+    <string name="str_whose_mobile_number">Whose Mobile Number</string>
+    <string name="str_mobile_no">Mobile No.</string>
+    <string name="str_rch_id_of_mother">RCH ID No. of Mother</string>
+    <string name="str_birth_cert_number">Birth Certificate Number</string>
+    <string name="str_weight_at_birth">Weight at Birth (kg)</string>
+    <string name="str_place_of_birth">Place of Birth</string>
+    <string name="str_district_hospital">District Hospital</string>
+    <string name="str_community_health_centre">Community Health Centre</string>
+    <string name="str_primary_health_center">Primary Health Centre</string>
+    <string name="str_sub_center">Sub Centre</string>
+    <string name="str_other_public_facility">Other Public Facility</string>
+    <string name="str_accredited_private_hospital">Accredited Private Hospital</string>
+    <string name="str_other_private_hospital">Other Private Hospital</string>
+    <string name="str_home">Home</string>
+    <string name="str_sub_district_hospital">Sub District Hospital</string>
+    <string name="str_medical_college_hospital">Medical College Hospital</string>
+
+
+
+
+
 </resources>

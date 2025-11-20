@@ -26,5 +26,22 @@
     <string name="signature_of_bpm">Signature of BPM</string>
     <string name="signature_of_sdm_ho">Signature of SDM &amp; HO</string>
     <string name="an_amount_of_rs_rupees_only_approved_for_payment_of_asha_incentive_for_the_period_from_to_and_the_amount_is_debited_to_the_account_through_dbt">An amount of Rs________________(Rupees_________only) approved for payment of ASHA incentive for the period from____________to_____________and the amount is debited to the account through DBT.</string>
+    <string name="incentive_fragment_title">प्रोत्साहन राशि</string>
+    <string name="incentive_processed">संसाधित – कुल: ₹ %1d</string>
+    <string name="incentive_pending">लंबित – कुल: ₹ %1d</string>
+    <string name="incentive_amount">₹ %1d</string>
+    <string name="incentive_ben_details">लाभार्थी आईडी: %1d – नाम: %2s</string>
+    <string name="incentive_activity_details">गतिविधि: %1s</string>
+    <string name="incentive_last_updated">अंतिम अपडेट: %1s</string>
+    <string name="asha_incentive_master_claim_form">मितानिन प्रोत्साहन मास्टर दावा फॉर्म</string>
+    <string name="to">प्राप्तकर्ता</string>
+    <string name="sdm_ho_or_i_c_block_phc">प्रभारी ब्लॉक पीएचसी</string>
+    <string name="sub_submission_of_asha_incentive_claim_for_the_period_from">विषय: मितानिन प्रोत्साहन दावे का प्रस्तुतिकरण, अवधि –</string>
+    <string name="for_the_period_from">अवधि –</string>
+    <string name="as_per_statement_mentioned_below">नीचे दिए गए विवरण के अनुसार</string>
+    <string name="with_reference_to_">ऊपर दिए गए विषय के संदर्भ में, मैं अवधि … से मितानिन प्रोत्साहन दावा प्रस्तुत कर रही/रहा हूँ</string>
+    <string name="as_per_statement">जैसा कि नीचे दिए विवरण में है</string>
+    <string name="to_small">से – तक</string>
+    <string name="sir_madam">महोदय/महोदया,</string>
 
 </resources>
