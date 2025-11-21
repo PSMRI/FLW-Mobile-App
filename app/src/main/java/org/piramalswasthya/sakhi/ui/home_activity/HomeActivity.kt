@@ -116,25 +116,17 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
     private val langChooseAlert by lazy {
         val currentLanguageIndex = when (pref.getCurrentLanguage()) {
             Languages.ENGLISH -> 0
-            Languages.HINDI -> 1
             Languages.ASSAMESE -> 2
+            Languages.HINDI -> 1
+
         }
-        val options =
-            if (BuildConfig.FLAVOR.contains("mitanin", true)) {
-                arrayOf(
-                    resources.getString(R.string.english),
-                    resources.getString(R.string.hindi)
-                )
-            } else {
+        MaterialAlertDialogBuilder(this).setTitle(resources.getString(R.string.choose_application_language))
+            .setSingleChoiceItems(
                 arrayOf(
                     resources.getString(R.string.english),
                     resources.getString(R.string.hindi),
                     resources.getString(R.string.assamese)
-                )
-            }
-        MaterialAlertDialogBuilder(this).setTitle(resources.getString(R.string.choose_application_language))
-            .setSingleChoiceItems(
-                options, currentLanguageIndex
+                ), currentLanguageIndex
             ) { di, checkedItemIndex ->
                 val checkedLanguage = when (checkedItemIndex) {
                     0 -> Languages.ENGLISH
@@ -619,10 +611,8 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         }
         binding.navView.menu.findItem(R.id.menu_delete_account).setOnMenuItemClickListener {
             var url = ""
-            if (BuildConfig.FLAVOR.contains("saksham", true) ||BuildConfig.FLAVOR.contains("niramay", true) || BuildConfig.FLAVOR.contains("xushrukha", true))  {
+            if (BuildConfig.FLAVOR.equals("saksham", true) ||BuildConfig.FLAVOR.equals("niramay", true) || BuildConfig.FLAVOR.equals("xushrukha", true))  {
                 url = "https://forms.office.com/r/HkE3c0tGr6"
-            } else if (BuildConfig.FLAVOR.contains("mitanin", true)) {
-                url = "https://forms.office.com/r/KY9ZKFT3LK"
             } else {
                 url =
                     "https://forms.office.com/Pages/ResponsePage.aspx?id=jQ49md0HKEGgbxRJvtPnRISY9UjAA01KtsFKYKhp1nNURUpKQzNJUkE1OUc0SllXQ0IzRFVJNlM2SC4u"
@@ -638,27 +628,8 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
         }
 
-        binding.navView.menu.findItem(R.id.menu_report_crash).setOnMenuItemClickListener {
-            val crashDir = File(filesDir, "crashes")
-            val latestFile = crashDir.listFiles()?.maxByOrNull { it.lastModified() }
-
-            if (latestFile != null) {
-                CrashEmailSender.sendCrashReport(this, latestFile)
-            } else {
-                 Toast.makeText(this, "No crash report found", Toast.LENGTH_SHORT).show()
-            }
-
-            binding.drawerLayout.close()
-            true
-
-        }
-
         binding.navView.menu.findItem(R.id.menu_support).setOnMenuItemClickListener {
-            val url: String = if (BuildConfig.FLAVOR.contains("mitanin", true)) {
-                "https://forms.office.com/r/DW5EVdRMVs"
-            } else {
-                "https://forms.office.com/r/AqY1KqAz3v"
-            }
+            var url = "https://forms.office.com/r/AqY1KqAz3v"
             if (url.isNotEmpty()){
                 val i = Intent(Intent.ACTION_VIEW)
                 i.setData(Uri.parse(url))

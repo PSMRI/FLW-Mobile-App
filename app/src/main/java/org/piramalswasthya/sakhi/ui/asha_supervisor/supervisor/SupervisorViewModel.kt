@@ -15,6 +15,7 @@ import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.database.room.InAppDb
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.Languages.ASSAMESE
 import org.piramalswasthya.sakhi.helpers.Languages.ENGLISH
 import org.piramalswasthya.sakhi.helpers.setToStartOfTheDay
@@ -103,8 +104,9 @@ class SupervisorViewModel @Inject constructor(
     val selectedVillageName: String?
         get() = when (pref.getCurrentLanguage()) {
             ENGLISH -> selectedVillage?.name
-//            HINDI -> selectedVillage?.nameHindi ?: selectedVillage?.name
+            Languages.HINDI -> selectedVillage?.nameHindi ?: selectedVillage?.name
             ASSAMESE -> selectedVillage?.nameAssamese ?: selectedVillage?.name
+
         }
 
     private val _navigateToLoginPage = MutableLiveData(false)
@@ -140,10 +142,10 @@ class SupervisorViewModel @Inject constructor(
 
                     }
 
-//                    HINDI -> {
-//                        villageDropdownEntries =
-//                            user.villages.map { it.nameHindi ?: it.name }.toTypedArray()
-//                    }
+                    Languages.HINDI -> {
+                       villageDropdownEntries =
+                           user.villages.map { it.nameHindi ?: it.name }.toTypedArray()
+                   }
 
                     ASSAMESE -> {
                         villageDropdownEntries =

@@ -16,7 +16,6 @@
     <string name="notification_sync_channel_id">sakhi-sync0</string>
     <string name="consent_text">सहमति:\nमुझे मितानिन द्वारा उस उद्देश्य के बारे में बताया गया है जिसके लिए मेरी जानकारी और माप से संबंधित निष्कर्ष एकत्र किए जा रहे हैं। यह जानकारी मुझे ऐसी भाषा में समझाई गई है जिसे मैं समझता/समझती हूँ, और मैं अपनी व्यक्तिगत स्वास्थ्य प्रोफ़ाइल से संबंधित जानकारी और माप के निष्कर्ष एकत्र करने के लिए अपनी सहमति देता/देती हूँ।</string>
 
-    <string name="aadhar_consent_text">I hereby confirm that I have explained the below mentioned consent process to the individual for the creation of the ABHA Number using he individual\'s aadhar number</string>
 
     <string name="long_to_string">%d</string>
     <string name="preview_title">पूर्वावलोकन</string>
@@ -46,10 +45,6 @@
     <string name="form_input_empty_error">आवश्यक फ़ील्ड खाली नहीं हो सकता !</string>
     <string name="form_input_upper_case_error">Only Alphabets in upper case allowed!</string>
     <string name="form_input_min_limit_error">%1s should be greater than or equal to %2d</string>
-    <string name="form_input_max_limit_error">%1s should be lesser than or equal to %2d</string>
-    <string name="form_input_error_invalid_mobile">Invalid Mobile Number !</string>
-    <string name="form_input_error_invalid_rch">Invalid RCH ID !</string>
-    <string name="form_input_error_invalid_aadhar">Invalid Aadhar Number</string>
     <string name="jsy_payment_voucher">JSY payment voucher</string>
     <string name="mcp_card_1">MCP Card 1</string>
     <string name="mcp_card_2">MCP Card 2</string>

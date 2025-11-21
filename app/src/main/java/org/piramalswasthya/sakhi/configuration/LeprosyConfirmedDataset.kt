@@ -163,7 +163,7 @@ class LeprosyConfirmedDataset(
         homeVisitDateLong = saved?.homeVisitDate ?: System.currentTimeMillis()
         treatmentStartDateLong = saved?.treatmentStartDate ?: 0L
         lastFollowUpDateLong = followUp?.followUpDate ?: 0L
-        isNewFollowUp = followUp == null
+       // isNewFollowUp = followUp == null
 
         if (saved == null) {
             dateOfCase.value = getDateFromLong(System.currentTimeMillis())
@@ -173,6 +173,7 @@ class LeprosyConfirmedDataset(
 
             updateDateConstraints()
         } else {
+
             dateOfCase.value = getDateFromLong(saved.homeVisitDate)
             leprosySymptoms.value = getLocalValueInArray(leprosySymptoms.arrayId, saved.leprosySymptoms)
             typeOfLeprosy.value = getLocalValueInArray(typeOfLeprosy.arrayId, saved.typeOfLeprosy)
@@ -209,7 +210,9 @@ class LeprosyConfirmedDataset(
         if (followUp == null) {
             visitLabel.value = "Visit -${saved?.currentVisitNumber ?: 1}"
             followUpdate.value = getDateFromLong(System.currentTimeMillis())
+            isNewFollowUp = true
         } else {
+            isNewFollowUp = false
             visitLabel.value = "Visit -${saved?.currentVisitNumber ?: 1}"
             followUpdate.value = getDateFromLong(followUp.followUpDate)
             mdt_blister_pack_recived.value = getLocalValueInArray(
@@ -262,16 +265,16 @@ class LeprosyConfirmedDataset(
         homeVisitDateLong = followUp?.homeVisitDate ?: System.currentTimeMillis()
         treatmentStartDateLong = followUp?.treatmentStartDate ?: 0L
         lastFollowUpDateLong = followUp?.followUpDate ?: 0L
-        isNewFollowUp = followUp == null
 
         if (followUp == null) {
             dateOfCase.value = getDateFromLong(System.currentTimeMillis())
             leprosyStatus.value = resources.getStringArray(R.array.leprosy_status)[0]
             visitLabel.value = "Visit -1"
             leprosySymptoms.value = resources.getStringArray(R.array.yes_no)[1]
-
+            isNewFollowUp = true
             updateDateConstraints()
         } else {
+            isNewFollowUp = false
             dateOfCase.value = getDateFromLong(followUp.homeVisitDate)
             leprosySymptoms.value = getLocalValueInArray(leprosySymptoms.arrayId, followUp.leprosySymptoms)
             typeOfLeprosy.value = getLocalValueInArray(typeOfLeprosy.arrayId, followUp.typeOfLeprosy)
@@ -340,13 +343,13 @@ class LeprosyConfirmedDataset(
 
             treatmentStartDate.id -> {
                 treatmentStartDateLong = getLongFromDate(treatmentStartDate.value)
-                updateDateConstraints()
+
 
             }
 
             followUpdate.id -> {
-                lastFollowUpDateLong = getLongFromDate(followUpdate.value)
-                updateDateConstraints()
+             //   lastFollowUpDateLong = getLongFromDate(followUpdate.value)
+
 
             }
 
@@ -377,7 +380,7 @@ class LeprosyConfirmedDataset(
      */
     fun validateForm(): String? {
         // Check 15-day gap for new follow-ups
-        if (isNewFollowUp && lastFollowUpDateLong > 0) {
+        if (!isNewFollowUp && lastFollowUpDateLong > 0) {
             val selectedFollowUpDate = getLongFromDate(followUpdate.value)
             val daysGap = (selectedFollowUpDate - lastFollowUpDateLong) / (24 * 60 * 60 * 1000)
 
@@ -427,7 +430,7 @@ class LeprosyConfirmedDataset(
         val followUpMinDate = maxOf(treatmentStartDateLong, lastFollowUpDateLong, homeVisitDateLong)
         followUpdate.min = if (followUpMinDate > 0) followUpMinDate else homeVisitDateLong
 
-        if (isNewFollowUp && lastFollowUpDateLong > 0) {
+        if (!isNewFollowUp && lastFollowUpDateLong > 0) {
             val minDateWithGap = lastFollowUpDateLong + (15L * 24 * 60 * 60 * 1000)
             followUpdate.min = maxOf(followUpdate.min!!.toLong(), minDateWithGap)
         }

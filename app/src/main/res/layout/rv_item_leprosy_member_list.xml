@@ -324,11 +324,11 @@
                     android:layout_marginBottom="@dimen/margin_normal"
                     android:onClick="@{()-> clickListener.onClickVisits(benWithLeprosy)}"
                     android:text="Visits"
+
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/btn_form_tb"
                     app:layout_constraintTop_toBottomOf="@+id/linear_tb_screening_list_Layout"
                     android:textColor="?attr/colorOnPrimary"
-                    android:visibility="@{benWithLeprosy.leprosy != null &amp;&amp; benWithLeprosy.leprosy.currentVisitNumber &gt; 1 ? View.VISIBLE : View.GONE}"
                     tools:backgroundTint="@android:color/holo_green_dark" />
 
                 <com.google.android.material.button.MaterialButton

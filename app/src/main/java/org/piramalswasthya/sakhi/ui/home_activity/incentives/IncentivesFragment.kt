@@ -102,6 +102,8 @@ class IncentivesFragment : Fragment() {
         BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
     }
 
+    private var isChhattisgarhVariant: Boolean = false
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -206,6 +208,12 @@ class IncentivesFragment : Fragment() {
                 incentivesActivityList = it
 
             }
+            viewModel.isStateChhattisgarh.observe(viewLifecycleOwner) { isChhattisgarh ->
+                if (isChhattisgarh)
+                    isChhattisgarhVariant = true
+                else
+                    isChhattisgarhVariant = false
+            }
 
         }
 
@@ -252,12 +260,12 @@ class IncentivesFragment : Fragment() {
             viewModel.setRange(firstDay, lastDay)
         }
 
-        if (isMitaninVariant) {
+        if (isMitaninVariant || isChhattisgarhVariant) {
             binding.tvTotalPending.setCompoundDrawablesRelative(null, null, null, null)
         }
 
         binding.tvTotalPending.setOnClickListener {
-            if (isMitaninVariant) {
+            if (isMitaninVariant || isChhattisgarhVariant) {
 
                 Toast.makeText(requireContext(),
                     getString(R.string.download_not_available_for_this_variant), Toast.LENGTH_SHORT).show()
@@ -1090,7 +1098,7 @@ class IncentivesFragment : Fragment() {
 
     private fun askPermissions() {
 
-        if (isMitaninVariant) {
+        if (isMitaninVariant || isChhattisgarhVariant) {
             return
         }
 

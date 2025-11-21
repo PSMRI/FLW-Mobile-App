@@ -105,19 +105,6 @@ class SignInFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        if (BuildConfig.FLAVOR.contains("mitanin", true)) {
-            binding.ivNhmLogo.setImageResource(R.drawable.logo_circle_green)
-            binding.rbAssamese.visibility = View.GONE
-            binding.rgLangSelect.clearCheck()
-            binding.rgLangSelect.check(R.id.rb_hindi)
-        } else {
-            binding.ivNhmLogo.setImageResource(R.drawable.logo_circle)
-            binding.rbAssamese.visibility = View.VISIBLE
-            binding.rgLangSelect.clearCheck()
-            binding.rgLangSelect.check(R.id.rb_assamese)
-        }
-
         binding.btnLogin.setOnClickListener {
             view.findFocus()?.let { view ->
                 val imm =
@@ -138,7 +125,7 @@ class SignInFragment : Fragment() {
                 binding.rbEng.id -> ENGLISH
                 binding.rbHindi.id -> Languages.HINDI
                 binding.rbAssamese.id -> ASSAMESE
-                else -> ASSAMESE
+                else -> ENGLISH
             }
             prefDao.saveSetLanguage(currentLanguage)
             val refresh = Intent(requireContext(), LoginActivity::class.java)

@@ -48,7 +48,8 @@ class LeprosyConfirmedListFragment: Fragment() {
                     )
                 },
 
-            )
+            ),
+            showExtraButton = false
         )
         binding.rvAny.adapter = benAdapter
 

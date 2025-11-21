@@ -118,7 +118,6 @@ class LeprosyVisitViewModel @Inject constructor(
             if (ben != null) {
                 dataset.setUpPage(
                     ben = ben,
-                    saved = screeningRecord,
                     followUp = latestFollowUp
                 )
             }
