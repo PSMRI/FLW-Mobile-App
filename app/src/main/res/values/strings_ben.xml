@@ -56,13 +56,20 @@
         <item name="nbr_gender_3">Transgender</item>
     </string-array>
     <string-array name="nbr_reproductive_status_array">
-        <item>Eligible Couple</item>
+        <item name="ec">Eligible Couple</item>
         <item>Pregnant Woman</item>
         <item>Postnatal Mother</item>
         <item>Elderly Woman</item>
         <item>Adolescent Girl</item>
         <item>Permanently Sterilised</item>
     </string-array>
+
+    <string name="dd_ec">Eligible Couple</string>
+    <string name="dd_pw">Pregnant Woman</string>
+    <string name="dd_pm">Postnatal Mother</string>
+    <string name="dd_ew">Elderly Woman</string>
+    <string name="dd_ag">Adolescent Girl</string>
+    <string name="dd_ps">Permanently Sterilised</string>
 
     <string-array name="nbr_marital_status_male_array">
         <item>Unmarried</item>
