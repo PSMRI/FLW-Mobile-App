@@ -141,11 +141,7 @@ class PreferenceDao @Inject constructor(@ApplicationContext private val context:
             Languages.ASSAMESE.symbol -> Languages.ASSAMESE
             Languages.HINDI.symbol -> Languages.HINDI
             Languages.ENGLISH.symbol -> Languages.ENGLISH
-            else -> if (BuildConfig.FLAVOR.contains("mitanin", true)) {
-                Languages.HINDI
-            } else {
-                Languages.ASSAMESE
-            }
+            else -> Languages.ENGLISH
         }
     }
 

@@ -83,7 +83,7 @@ class ServiceTypeViewModel @Inject constructor(
 
                     }
 
-                    Languages.HINDI -> {
+                   Languages.HINDI -> {
                         stateDropdownEntry =
                             user.state.let { it.nameHindi ?: it.name }
                         districtDropdownEntry =

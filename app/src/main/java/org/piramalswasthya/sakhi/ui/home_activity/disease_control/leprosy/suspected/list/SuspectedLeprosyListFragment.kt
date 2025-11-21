@@ -44,7 +44,8 @@ class SuspectedLeprosyListFragment: Fragment() {
                         benId = benId
                     )
                 )
-            },)
+            },),
+                    showExtraButton = false
 
         )
         binding.rvAny.adapter = benAdapter

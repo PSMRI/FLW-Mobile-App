@@ -488,7 +488,7 @@
         <item>Other</item>
     </string-array>
 
-    <string name="anc_date">ANC Date</string>
+
     <string name="str_anc_period">ANC Period</string>
     <string name="str_abortion_if_any">Abortion If Any</string>
     <string name="str_abortion_type">Abortion Type</string>

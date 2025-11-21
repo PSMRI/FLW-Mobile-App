@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -11,7 +12,9 @@ import org.piramalswasthya.sakhi.model.BenWithKALAZARScreeningDomain
 import org.piramalswasthya.sakhi.model.BenWithLeprosyScreeningDomain
 
 class LeprosyMemberListAdapter(
-    private val clickListener: ClickListener? = null
+    private val clickListener: ClickListener? = null,
+    private val showExtraButton: Boolean? = null
+
 ) :
     ListAdapter<BenWithLeprosyScreeningDomain, LeprosyMemberListAdapter.BenViewHolder>
         (BenDiffUtilCallBack) {
@@ -41,12 +44,29 @@ class LeprosyMemberListAdapter(
         fun bind(
             item: BenWithLeprosyScreeningDomain,
             clickListener: ClickListener?,
+            showExtraButton: Boolean?
         ) {
             binding.benWithLeprosy = item
+
+            if(showExtraButton == true && item.leprosy != null && item.leprosy.currentVisitNumber >1)
+            {
+                binding.btnVisits.visibility = View.VISIBLE
+
+                val green = ContextCompat.getColor(
+                    binding.root.context,
+                    android.R.color.holo_green_dark
+                )
+                binding.btnVisits.setBackgroundColor(green)
+            }
+            else
+            {
+                binding.btnVisits.visibility = View.GONE
+            }
 
             /*if(item.tb?.historyOfTb == true){
                 binding.cvContent.visibility = View.GONE
             }*/
+
 
             binding.ivSyncState.visibility = if (item.leprosy == null) View.GONE else View.VISIBLE
 
@@ -127,7 +147,7 @@ class LeprosyMemberListAdapter(
         BenViewHolder.from(parent)
 
     override fun onBindViewHolder(holder: BenViewHolder, position: Int) {
-        holder.bind(getItem(position), clickListener)
+        holder.bind(getItem(position), clickListener,showExtraButton)
     }
 
 
