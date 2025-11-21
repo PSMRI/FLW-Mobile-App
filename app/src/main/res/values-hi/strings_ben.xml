@@ -46,6 +46,13 @@
         <item>स्थायी नसबंदीकृत महिला</item>
     </string-array>
 
+    <string name="dd_ec">लक्ष्य दम्पति</string>
+    <string name="dd_pw">गर्भवती महिला</string>
+    <string name="dd_pm">प्रसवोत्तर माता</string>
+    <string name="dd_ew">वृद्धा महिला</string>
+    <string name="dd_ag">किशोरी लड़की</string>
+    <string name="dd_ps">स्थायी नसबंदीकृत महिला</string>
+
     <string-array name="nbr_marital_status_male_array">
         <item>अविवाहित</item>
         <item>विवाहित</item>
@@ -137,7 +144,7 @@
         <item>दादी</item>
         <item>सास</item>
         <item>पोती</item>
-        <item>नातनी</item>
+        <item>बहू</item>
         <item>अन्य</item>
     </string-array>
 
