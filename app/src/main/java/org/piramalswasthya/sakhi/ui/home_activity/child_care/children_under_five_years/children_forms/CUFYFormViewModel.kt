@@ -1,7 +1,5 @@
 package org.piramalswasthya.sakhi.ui.home_activity.child_care.children_under_five_years.children_forms
 
-import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -16,11 +14,9 @@ import org.piramalswasthya.sakhi.configuration.dynamicDataSet.ConditionalLogic
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FieldValidation
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
 import org.piramalswasthya.sakhi.model.BottleItem
-import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.model.dynamicEntity.CUFYFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormFieldDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
-import org.piramalswasthya.sakhi.model.dynamicModel.VisitCard
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.dynamicRepo.CUFYFormRepository
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
@@ -32,7 +28,6 @@ import javax.inject.Inject
 @HiltViewModel
 class CUFYFormViewModel @Inject constructor(
     private val repository: CUFYFormRepository,
-    private val benRepo: BenRepo
 ) : ViewModel() {
 
     sealed class SaveFormState {
@@ -109,10 +104,10 @@ class CUFYFormViewModel @Inject constructor(
                 emptyMap<String, Any?>()
             }
 
-            val allFields = localSchema.sections.flatMap { it.fields.orEmpty() }
+            val allFields = localSchema.sections.flatMap { it.fields }
 
             localSchema.sections.forEach { section ->
-                section.fields.orEmpty().forEach { field ->
+                section.fields.forEach { field ->
                     field.value = when (formId) {
 
                         FormConstants.CHILDREN_UNDER_FIVE_ORS_FORM_ID -> {
@@ -170,7 +165,7 @@ class CUFYFormViewModel @Inject constructor(
 
 
             localSchema.sections.forEach { section ->
-                section.fields.orEmpty().forEach { field ->
+                section.fields.forEach { field ->
                     field.visible = evaluateFieldVisibility(field, allFields)
                 }
             }
@@ -215,9 +210,9 @@ class CUFYFormViewModel @Inject constructor(
                 emptyMap()
             }
 
-            val allFields = localSchemaToRender.sections.flatMap { it.fields.orEmpty() }
-            localSchemaToRender.sections.orEmpty().forEach { section ->
-                section.fields.orEmpty().forEach { field ->
+            val allFields = localSchemaToRender.sections.flatMap { it.fields }
+            localSchemaToRender.sections.forEach { section ->
+                section.fields.forEach { field ->
                     field.value = when (field.fieldId) {
                         "visit_day" -> visitDay
                         else -> savedFieldValues[field.fieldId] ?: field.default
@@ -230,8 +225,8 @@ class CUFYFormViewModel @Inject constructor(
                 }
             }
 
-            localSchemaToRender.sections.orEmpty().forEach { section ->
-                section.fields.orEmpty().forEach { field ->
+            localSchemaToRender.sections.forEach { section ->
+                section.fields.forEach { field ->
                     field.visible = evaluateFieldVisibility(field, allFields)
                 }
             }
@@ -276,8 +271,8 @@ suspend fun saveFormResponses(benId: Long, hhId: Long, recordId: Int = 0) {
     _saveFormState.postValue(SaveFormState.Loading)
 
     try {
-        val fieldMap = currentSchema.sections.orEmpty()
-            .flatMap { it.fields.orEmpty() }
+        val fieldMap = currentSchema.sections
+            .flatMap { it.fields }
             .filter { it.visible && it.value != null }
             .associate { it.fieldId to it.value }
 
@@ -356,8 +351,6 @@ suspend fun saveFormResponses(benId: Long, hhId: Long, recordId: Int = 0) {
         _saveFormState.postValue(SaveFormState.Error(e.localizedMessage ?: "Failed to save form"))
     }
 }
-
-
 
     fun getVisibleFields(): List<FormField> {
         return _schema.value?.sections?.flatMap { section ->
