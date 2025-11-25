@@ -309,7 +309,7 @@ class BenIfaFormFragment : Fragment() {
         activity?.let {
             (it as HomeActivity).updateActionBar(
                 R.drawable.ic__ben,
-                getString(R.string.add_eye_surgery)
+                getString(R.string.ifa)
             )
         }
     }

@@ -9,6 +9,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.room.InAppDb
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.dynamicMapper.FormSubmitRequestMapper
 import org.piramalswasthya.sakhi.model.BottleItem
 import org.piramalswasthya.sakhi.model.dynamicEntity.CUFYFormResponseJsonEntity
@@ -31,6 +32,7 @@ import javax.inject.Named
 class CUFYFormRepository @Inject constructor(
     @ApplicationContext private val context: Context,
     @Named("gsonAmritApi") private val amritApiService: AmritApiService,
+    private val pref : PreferenceDao,
     private val db: InAppDb
 ) {
     private val formSchemaDao = db.formSchemaDao()
@@ -81,6 +83,7 @@ class CUFYFormRepository @Inject constructor(
         val entity = FormSchemaEntity(
             formId = schema.formId,
             formName = schema.formName,
+            language = pref.getCurrentLanguage().symbol,
             version = schema.version,
             schemaJson = schema.toJson()
         )
