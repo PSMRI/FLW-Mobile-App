@@ -208,14 +208,19 @@ class IncentivesFragment : Fragment() {
                 incentivesActivityList = it
 
             }
+
+
+        }
+
+        lifecycleScope.launch {
             viewModel.isStateChhattisgarh.observe(viewLifecycleOwner) { isChhattisgarh ->
                 if (isChhattisgarh)
                     isChhattisgarhVariant = true
                 else
                     isChhattisgarhVariant = false
             }
-
         }
+
 
         lifecycleScope.launch {
             viewModel.incentiveList.collect {

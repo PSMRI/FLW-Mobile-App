@@ -25,7 +25,7 @@ data class ConditionalLogic(
 data class FieldValidation(
     val min: Float? = null,
     val max: Float? = null,
-    val minDate: String? = null,
+    var minDate: String? = null,
     val maxDate: String? = null,
 
     val maxLength: Int? = null,

@@ -125,7 +125,7 @@ class HBNCFormFragment : Fragment() {
         benId = args.benId
         hhId = args.hhId
         val currentLang = pref.getCurrentLanguage()  // ye return karega Languages enum value
-         langCode = currentLang.symbol
+        langCode = currentLang.symbol
 
         viewModel.fetchSNCUStatus(benId)
 
@@ -172,9 +172,9 @@ class HBNCFormFragment : Fragment() {
                     isViewOnly = isViewMode,
                     minVisitDate = minVisitDate,
                     maxVisitDate = maxVisitDate,
-                    isSNCU = viewModel.isSNCU.value ?: false,
-                    onValueChanged =
-                { field, value ->
+                    isSNCU = viewModel.isSNCU.value ?: false, onValueChanged =
+                        { field, value ->
+
                     if (value == "pick_image") {
                         currentImageField = field
                         showImagePickerDialog()
@@ -184,8 +184,7 @@ class HBNCFormFragment : Fragment() {
                         val updatedVisibleFields = viewModel.getVisibleFields()
                         adapter.updateFields(updatedVisibleFields)
                     }
-                }
-                )
+                },)
 
                 recyclerView.adapter = adapter
 

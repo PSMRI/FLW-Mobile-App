@@ -120,7 +120,7 @@ class HBNCFormViewModel @Inject constructor(
                     field.value = when (field.fieldId) {
                         "visit_day" -> visitDay
                         "due_date" -> calculateDueDate(dob, visitDay)?.let { formatDate(it) } ?: ""
-                        else -> savedFieldValues[field.fieldId] ?: field.default
+                        else -> savedFieldValues[field.fieldId] ?: field.defaultValue
                     }
 
                     field.isEditable = when (field.fieldId) {
@@ -176,72 +176,72 @@ class HBNCFormViewModel @Inject constructor(
         private const val OTHER_PLACE_OF_DEATH_ID = 8
         private const val DEFAULT_DEATH_ID = -1
     }
-suspend fun saveFormResponses(benId: Long, hhId: Long) {
-    val currentSchema = _schema.value ?: return
-    val formId = currentSchema.formId
-    val version = currentSchema.version
-    val beneficiaryId = benId
+    suspend fun saveFormResponses(benId: Long, hhId: Long) {
+        val currentSchema = _schema.value ?: return
+        val formId = currentSchema.formId
+        val version = currentSchema.version
+        val beneficiaryId = benId
 
-    val fieldMap = currentSchema.sections.orEmpty()
-        .flatMap { it.fields.orEmpty() }
-        .filter { it.visible && it.value != null }
-        .associate { it.fieldId to it.value }
+        val fieldMap = currentSchema.sections.orEmpty()
+            .flatMap { it.fields.orEmpty() }
+            .filter { it.visible && it.value != null }
+            .associate { it.fieldId to it.value }
 
-    val visitDate = fieldMap["visit_date"]?.toString() ?: "N/A"
-    val isBabyAlive = fieldMap["is_baby_alive"]?.toString().orEmpty()
-    if (isBabyAlive.equals("No", ignoreCase = true)) {
-        val reasonOfDeath = fieldMap["reason_for_death"]?.toString().orEmpty()
-        val placeOfDeath = fieldMap["place_of_death"]?.toString().orEmpty()
-        val otherPlaceOfDeath = fieldMap["other_place_of_death"]?.toString().orEmpty()
-        val dateOfDeath = fieldMap["date_of_death"]?.toString().orEmpty()
+        val visitDate = fieldMap["visit_date"]?.toString() ?: "N/A"
+        val isBabyAlive = fieldMap["is_baby_alive"]?.toString().orEmpty()
+        if (isBabyAlive.equals("No", ignoreCase = true)) {
+            val reasonOfDeath = fieldMap["reason_for_death"]?.toString().orEmpty()
+            val placeOfDeath = fieldMap["place_of_death"]?.toString().orEmpty()
+            val otherPlaceOfDeath = fieldMap["other_place_of_death"]?.toString().orEmpty()
+            val dateOfDeath = fieldMap["date_of_death"]?.toString().orEmpty()
 
-        try {
-            benRepo.getBenFromId(benId)?.let { ben ->
-                ben.apply {
-                    isDeath = true
-                    isDeathValue = "Death"
-                    this.dateOfDeath = dateOfDeath
-                    this.reasonOfDeath = reasonOfDeath
-                    reasonOfDeathId = -1
-                    this.placeOfDeath = placeOfDeath
-                    placeOfDeathId = if (!otherPlaceOfDeath.isNullOrBlank()) OTHER_PLACE_OF_DEATH_ID else DEFAULT_DEATH_ID
-                    this.otherPlaceOfDeath = otherPlaceOfDeath
-                    if (this.processed != "N") this.processed = "U"
-                    syncState = SyncState.UNSYNCED
+            try {
+                benRepo.getBenFromId(benId)?.let { ben ->
+                    ben.apply {
+                        isDeath = true
+                        isDeathValue = "Death"
+                        this.dateOfDeath = dateOfDeath
+                        this.reasonOfDeath = reasonOfDeath
+                        reasonOfDeathId = -1
+                        this.placeOfDeath = placeOfDeath
+                        placeOfDeathId = if (!otherPlaceOfDeath.isNullOrBlank()) OTHER_PLACE_OF_DEATH_ID else DEFAULT_DEATH_ID
+                        this.otherPlaceOfDeath = otherPlaceOfDeath
+                        if (this.processed != "N") this.processed = "U"
+                        syncState = SyncState.UNSYNCED
+                    }
+                    benRepo.updateRecord(ben)
+                    _navigateToCdsr.postValue(true)
                 }
-                benRepo.updateRecord(ben)
-                _navigateToCdsr.postValue(true)
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
+
+
+        val wrappedJson = JSONObject().apply {
+            put("formId", formId)
+            put("beneficiaryId", beneficiaryId)
+            put("houseHoldId", hhId)
+            put("visitDate", visitDate)
+            put("fields", JSONObject(fieldMap))
+        }
+
+        val entity = FormResponseJsonEntity(
+            benId = benId,
+            hhId = hhId,
+            visitDay = visitDay,
+            visitDate = visitDate,
+            formId = formId,
+            version = version,
+            formDataJson = wrappedJson.toString(),
+            isSynced = false,
+            syncedAt = null
+        )
+
+        repository.insertFormResponse(entity)
+
+        loadSyncedVisitList(benId)
     }
-
-
-    val wrappedJson = JSONObject().apply {
-        put("formId", formId)
-        put("beneficiaryId", beneficiaryId)
-        put("houseHoldId", hhId)
-        put("visitDate", visitDate)
-        put("fields", JSONObject(fieldMap))
-    }
-
-    val entity = FormResponseJsonEntity(
-        benId = benId,
-        hhId = hhId,
-        visitDay = visitDay,
-        visitDate = visitDate,
-        formId = formId,
-        version = version,
-        formDataJson = wrappedJson.toString(),
-        isSynced = false,
-        syncedAt = null
-    )
-
-    repository.insertFormResponse(entity)
-
-    loadSyncedVisitList(benId)
-}
 
     fun loadInfant(benId: Long, hhId: Long) {
         this.benId = benId
@@ -342,25 +342,25 @@ suspend fun saveFormResponses(benId: Long, hhId: Long) {
 
 
             } ?: false
-                VisitCard(
-                    visitDay = day,
-                    visitDate = visitDate,
-                    isCompleted = isCompleted,
-                    isEditable = isEditable,
-                    isBabyDeath =isBabyDeath
-                )
-            }
+            VisitCard(
+                visitDay = day,
+                visitDate = visitDate,
+                isCompleted = isCompleted,
+                isEditable = isEditable,
+                isBabyDeath =isBabyDeath
+            )
+        }
     }
     fun formatDate(epochMillis: Long): String {
         val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
         return sdf.format(Date(epochMillis))
     }
     private suspend fun getLastVisit(benId: Long): FormResponseJsonEntity? {
-                val visits = repository.getSyncedVisitsByRchId(benId)
-                return visits
-                    .filter { it.visitDay in visitOrder }
-                    .maxByOrNull { visitOrder.indexOf(it.visitDay) }
-            }
+        val visits = repository.getSyncedVisitsByRchId(benId)
+        return visits
+            .filter { it.visitDay in visitOrder }
+            .maxByOrNull { visitOrder.indexOf(it.visitDay) }
+    }
 
     suspend fun getLastVisitDay(benId: Long): String? {
         return getLastVisit(benId)?.visitDay
