@@ -34,6 +34,7 @@ class MalariaConfirmCasesDataset(
         title = resources.getString(R.string.treatment_given),
         entries = resources.getStringArray(R.array.pf_pv),
         required = false,
+        isEnabled = false,
         hasDependants = true
     )
 

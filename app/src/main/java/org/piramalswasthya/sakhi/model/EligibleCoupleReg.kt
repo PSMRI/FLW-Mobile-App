@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.model
 
+import android.content.Context
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
@@ -7,9 +8,9 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.Relation
 import com.squareup.moshi.Json
-import org.piramalswasthya.sakhi.configuration.Dataset.Companion.getDateFromLong
 import org.piramalswasthya.sakhi.configuration.FormDataModel
 import org.piramalswasthya.sakhi.database.room.SyncState
+import org.piramalswasthya.sakhi.helpers.ImageUtils
 import org.piramalswasthya.sakhi.utils.HelperUtil.getDateStringFromLong
 
 @Entity(
@@ -81,13 +82,28 @@ data class EligibleCoupleRegCache(
     var createdDate: Long = System.currentTimeMillis(),
     var updatedBy: String,
     val updatedDate: Long = System.currentTimeMillis(),
-    var syncState: SyncState,
-    var lmp_date:Long
+    var lmp_date:Long,
+    var isKitHandedOver: Boolean ? = false,
+    var kitHandedOverDate: Long? = null,
+    var kitPhoto1: String? = null,
+    var kitPhoto2: String? = null,
+    var syncState: SyncState
 ) : FormDataModel {
-    fun asPostModel(): EcrPost {
+
+    fun asPostModel(context : Context): EcrPost {
         return EcrPost(
             benId = benId,
             dateOfReg = getDateStringFromLong(dateOfReg)!!,
+            kitHandedOverDate = getDateStringFromLong(kitHandedOverDate).toString(),
+            isKitHandedOver = isKitHandedOver!!,
+            kitPhoto1 = ImageUtils.getEncodedStringForBenImage(
+                context,
+                benId
+            ) ?: "",
+            kitPhoto2 = ImageUtils.getEncodedStringForBenImage(
+                context,
+                benId
+            ) ?: "",
             bankAccount = bankAccount,
             bankName = bankName,
             branchName = branchName,
@@ -226,4 +242,8 @@ data class EcrPost(
     val createdDate: String,
     var updatedBy: String,
     val updatedDate: String,
+    val isKitHandedOver: Boolean,
+    val kitHandedOverDate: String = "",
+    val kitPhoto1: String = "",
+    val kitPhoto2: String = "",
 )

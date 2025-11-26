@@ -77,7 +77,7 @@ android {
         xushrukha {
             applicationIdSuffix ".xushrukha"
             applicationId "org.piramalswasthya.sakhi"
-             resValue "string", "app_native_name", "Xushrukha - শুশ্ৰূষা"
+            resValue "string", "app_native_name", "Xushrukha - শুশ্ৰূষা"
         }
 
         niramay {
@@ -86,6 +86,23 @@ android {
             resValue "string", "app_native_name", "উৎপ্ৰেৰণা"
         }
 
+        mitaninStag {
+            applicationIdSuffix ".mitanin.stag"
+            applicationId "org.piramalswasthya.sakhi"
+            resValue "string", "app_native_name", "मितानिन-Stag"
+        }
+
+        mitaninUat {
+            applicationIdSuffix ".mitanin.uat"
+            applicationId "org.piramalswasthya.sakhi"
+            resValue "string", "app_native_name", "मितानिन-Uat"
+        }
+
+        mitanin {
+            applicationIdSuffix ".mitanin"
+            applicationId "org.piramalswasthya.sakhi"
+            resValue "string", "app_native_name", "मितानिन"
+        }
 
     }
 
@@ -115,7 +132,7 @@ android {
             path file("src/main/cpp/CMakeLists.txt")
         }
     }
-    ndkVersion "27.2.12479018"
+    ndkVersion '29.0.14033849'
 
 }
 

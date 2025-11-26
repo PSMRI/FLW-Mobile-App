@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -41,7 +42,7 @@ class ChildImmunizationVaccineAdapter (private val clickListener: ImmunizationCl
             }
         }
 
-        fun bind(
+        /*fun bind(
             item: VaccineDomain,
             clickListener: ImmunizationClickListener?
         ) {
@@ -76,6 +77,50 @@ class ChildImmunizationVaccineAdapter (private val clickListener: ImmunizationCl
             binding.executePendingBindings()
 
 
+        }*/
+
+        fun bind(
+            item: VaccineDomain,
+            clickListener: ImmunizationClickListener?
+        ) {
+            binding.vaccine = item
+            binding.clickListener = clickListener
+
+            // Reset listeners before re-binding
+            binding.idSwitch.setOnCheckedChangeListener(null)
+            binding.idSwitch.setOnClickListener(null)
+
+            // Set switch state
+            binding.idSwitch.isChecked = item.isSwitchChecked
+
+            when (item.state.name) {
+                "PENDING", "OVERDUE" -> {
+                    binding.idSwitch.isEnabled = true
+                    binding.idSwitch.setOnCheckedChangeListener { _, isChecked ->
+                        clickListener?.onClicked(adapterPosition, item.apply { isSwitchChecked = isChecked })
+                    }
+                }
+
+                "MISSED", "UNAVAILABLE" -> {
+                    binding.idSwitch.isEnabled = true   // keep it tappable
+                    binding.idSwitch.isChecked = false
+                    binding.idSwitch.setOnClickListener {
+                        Toast.makeText(
+                            binding.root.context,
+                            "Immunization cannot be done as it is missed",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        binding.idSwitch.isChecked = false // always force back to off
+                    }
+                }
+
+                else -> { // DONE
+                    binding.idSwitch.isEnabled = false
+                    binding.idSwitch.isChecked = true
+                }
+            }
+
+            binding.executePendingBindings()
         }
 
     }

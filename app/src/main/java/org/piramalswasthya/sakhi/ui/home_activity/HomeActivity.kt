@@ -54,6 +54,7 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.ActivityHomeBinding
 import org.piramalswasthya.sakhi.helpers.AnalyticsHelper
+import org.piramalswasthya.sakhi.helpers.CrashEmailSender
 import org.piramalswasthya.sakhi.helpers.ImageUtils
 import org.piramalswasthya.sakhi.helpers.InAppUpdateHelper
 import org.piramalswasthya.sakhi.helpers.Languages
@@ -66,6 +67,7 @@ import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
 import org.piramalswasthya.sakhi.ui.service_location_activity.ServiceLocationActivity
 import org.piramalswasthya.sakhi.utils.KeyUtils
 import org.piramalswasthya.sakhi.work.WorkerUtils
+import java.io.File
 import java.net.URI
 import java.util.Locale
 import javax.inject.Inject
@@ -114,22 +116,22 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
     private val langChooseAlert by lazy {
         val currentLanguageIndex = when (pref.getCurrentLanguage()) {
             Languages.ENGLISH -> 0
-            Languages.ASSAMESE -> 1
-         /*   Languages.HINDI -> 2*/
+            Languages.ASSAMESE -> 2
+            Languages.HINDI -> 1
 
         }
         MaterialAlertDialogBuilder(this).setTitle(resources.getString(R.string.choose_application_language))
             .setSingleChoiceItems(
                 arrayOf(
                     resources.getString(R.string.english),
-                  /*  resources.getString(R.string.hindi),*/
+                    resources.getString(R.string.hindi),
                     resources.getString(R.string.assamese)
                 ), currentLanguageIndex
             ) { di, checkedItemIndex ->
                 val checkedLanguage = when (checkedItemIndex) {
                     0 -> Languages.ENGLISH
-               /*     2 -> Languages.HINDI*/
-                    1 -> Languages.ASSAMESE
+                    1 -> Languages.HINDI
+                    2 -> Languages.ASSAMESE
                     else -> throw IllegalStateException("yoohuulanguageindexunkonwn $checkedItemIndex")
                 }
                 if (checkedItemIndex == currentLanguageIndex) {
@@ -675,10 +677,8 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
     }
 
     private fun isDeviceRootedOrEmulator(): Boolean {
-
 //      return isRooted() || isEmulator() || RootedUtil().isDeviceRooted(applicationContext)
         return isRooted() || isEmulator()
-
     }
 
     override fun ApiUpdate() {
@@ -695,10 +695,8 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (inAppUpdateHelper.onActivityResult(requestCode, resultCode)) {
-            // Handled update result
             return
         }
-        // Handle other activity results here if needed
     }
 
 }

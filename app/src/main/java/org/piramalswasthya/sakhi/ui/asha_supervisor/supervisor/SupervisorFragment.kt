@@ -25,6 +25,7 @@ import org.piramalswasthya.sakhi.adapters.IconGridAdapter
 import org.piramalswasthya.sakhi.configuration.IconDataset
 import org.piramalswasthya.sakhi.databinding.FragmentSupervisorBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
+import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.Languages.ASSAMESE
 import org.piramalswasthya.sakhi.helpers.Languages.ENGLISH
 import org.piramalswasthya.sakhi.helpers.getDateString
@@ -278,8 +279,9 @@ class SupervisorFragment : Fragment() {
                 homeActivity.updateActionBar(
                     R.drawable.ic_home, when (viewModel.currentLanguage) {
                         ENGLISH -> it.name
-//                        HINDI -> it.nameHindi ?: it.name
+                        Languages.HINDI -> it.nameHindi ?: it.name
                         ASSAMESE -> it.nameAssamese ?: it.name
+
                     }
                 )
                 homeActivity.setHomeMenuItemVisibility(false)

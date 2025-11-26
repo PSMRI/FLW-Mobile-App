@@ -109,7 +109,7 @@ class MalariaConfirmedCasesListAdapter(
                 binding.btnFormTb.visibility = View.INVISIBLE
             }
 
-            binding.btnFormTb.text = if (item.malariaConfirmed == null) "Follow Up" else "View"
+            binding.btnFormTb.text = if (item.malariaConfirmed == null) "Follow Up" else item.malariaConfirmed.day
             binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.malariaConfirmed == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
             binding.clickListener = clickListener
 

@@ -1,6 +1,5 @@
 package org.piramalswasthya.sakhi.repositories
 
-import android.util.Log
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -65,7 +64,10 @@ class RecordsRepo @Inject constructor(
     val ncdListCount = allBenListCount
 
     val getNcdEligibleList = benDao.getBenWithCbac(selectedVillage)
+    val getNcdrefferedList = benDao.getBenWithReferredCbac(selectedVillage)
     val getNcdEligibleListCount = benDao.getBenWithCbacCount(selectedVillage)
+    val getNcdrefferedListCount = benDao.getReferredBenCount(selectedVillage)
+
     val getNcdPriorityList = getNcdEligibleList.map {
         it.filter { it.savedCbacRecords.isNotEmpty() && it.savedCbacRecords.maxBy { it.createdDate }.total_score > 4 }
     }
@@ -94,6 +96,12 @@ class RecordsRepo @Inject constructor(
     fun LeprosyScreeningList(hhId:Long) = benDao.getAllLeprosyScreeningBen(selectedVillage, hhId = hhId)
         .map { list -> list.map { it.asLeprosyScreeningDomainModel() } }
 
+    fun LeprosySuspectedList() = benDao.getLeprosyScreeningBenBySymptoms(selectedVillage,0)
+        .map { list -> list.map { it.asLeprosyScreeningDomainModel() } }
+
+    fun LeprosyConfirmedList() = benDao.getConfirmedLeprosyCases(selectedVillage =selectedVillage)
+        .map {list -> list.map { it.asLeprosyScreeningDomainModel()}}
+
     fun filariaScreeningList(hhId:Long) = benDao.getAllFilariaScreeningBen(selectedVillage, hhId = hhId)
         .map { list -> list.map { it.asFilariaScreeningDomainModel() } }
 
@@ -109,6 +117,9 @@ class RecordsRepo @Inject constructor(
 
     val malariaConfirmedCasesList = benDao.getMalariaConfirmedCasesList(selectedVillage)
         .map { list -> list.map { it.asMalariaConfirmedDomainModel() } }
+    val leprosySuspectedListCount = benDao.getLeprosyScreeningBenCountBySymptoms(selectedVillage,0)
+    val leprosyConfirmedCasesListCount = benDao.getConfirmedLeprosyCaseCount(selectedVillage =selectedVillage)
+
 
     val malariaConfirmedCasesListCount = malariaConfirmedCasesList.map { it.size }
 
