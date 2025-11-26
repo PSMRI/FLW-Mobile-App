@@ -44,6 +44,7 @@
         <item>@string/nhhr_type_residential_area_2</item>
         <item>@string/nhhr_type_residential_area_3</item>
         <item>@string/nhhr_type_residential_area_4</item>
+        <item>@string/nhhr_type_residential_area_5</item>
     </string-array>
     <string name="nhhr_type_of_house">Type of house</string>
     <string name="nhhr_type_of_house_1">None</string>
