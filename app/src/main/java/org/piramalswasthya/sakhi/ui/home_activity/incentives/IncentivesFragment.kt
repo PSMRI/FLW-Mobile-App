@@ -215,9 +215,10 @@ class IncentivesFragment : Fragment() {
         lifecycleScope.launch {
             viewModel.isStateChhattisgarh.observe(viewLifecycleOwner) { isChhattisgarh ->
                 if (isChhattisgarh)
-                    isChhattisgarhVariant = true
-                else
-                    isChhattisgarhVariant = false
+                {   isChhattisgarhVariant = true
+                binding.tvTotalPending.setCompoundDrawablesRelative(null, null, null, null)
+                }
+                else isChhattisgarhVariant = false
             }
         }
 
@@ -265,9 +266,7 @@ class IncentivesFragment : Fragment() {
             viewModel.setRange(firstDay, lastDay)
         }
 
-        if (isMitaninVariant || isChhattisgarhVariant) {
-            binding.tvTotalPending.setCompoundDrawablesRelative(null, null, null, null)
-        }
+
 
         binding.tvTotalPending.setOnClickListener {
             if (isMitaninVariant || isChhattisgarhVariant) {
