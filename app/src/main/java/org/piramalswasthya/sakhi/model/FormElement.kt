@@ -35,5 +35,10 @@ data class FormElement(
     val showYearFirstInDatePicker: Boolean = false,
     @DrawableRes val backgroundDrawable: Int? = null,
     @DrawableRes val iconDrawableRes: Int? = null,
+    var minFiles: Int? = null,
+    var maxFiles: Int? = null,
+    var allowedFormats: List<String>? = null,
+    var maxFileSizeMB: Int? = null,
+    var selectedFiles: MutableList<String>? = null,
     val showDrawable: Boolean? = false,
 )

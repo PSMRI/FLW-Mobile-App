@@ -10,6 +10,7 @@
     <string name="rv_item_hh_ph_3">Surname : </string>
     <string name="hh_members_text">Members : %1d</string>
     <string name="btn_rv_item_hh_add_ben">Add Beneficiary</string>
+    <string name="add_mda">Add MDA</string>
 
     <string name="frag_nhhr_title">New Household Registration</string>
 
@@ -73,7 +74,8 @@
     <string name="nhhr_fuel_cooking_4">Coal</string>
     <string name="nhhr_fuel_cooking_5">Kerosene</string>
     <string name="nhhr_fuel_cooking_6">LPG</string>
-    <string name="nhhr_fuel_cooking_7">Other</string>
+    <string name="nhhr_fuel_cooking_7">Induction</string>
+    <string name="nhhr_fuel_cooking_8">Other</string>
     <string-array name="nhhr_fuel_cooking_array">
         <item>@string/nhhr_fuel_cooking_1</item>
         <item>@string/nhhr_fuel_cooking_2</item>
@@ -82,6 +84,7 @@
         <item>@string/nhhr_fuel_cooking_5</item>
         <item>@string/nhhr_fuel_cooking_6</item>
         <item>@string/nhhr_fuel_cooking_7</item>
+        <item>@string/nhhr_fuel_cooking_8</item>
     </string-array>
     <string name="nhhr_primary_water">Primary Source of Water</string>
     <string name="nhhr_primary_water_1">Tap Water</string>

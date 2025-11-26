@@ -12,6 +12,7 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.piramalswasthya.sakhi.database.room.InAppDb
+import org.piramalswasthya.sakhi.database.room.NcdReferalDao
 import org.piramalswasthya.sakhi.database.room.dao.AdolescentHealthDao
 import org.piramalswasthya.sakhi.database.room.dao.AesDao
 import org.piramalswasthya.sakhi.database.room.dao.ABHAGenratedDao
@@ -37,13 +38,19 @@ import org.piramalswasthya.sakhi.database.room.dao.MdsrDao
 import org.piramalswasthya.sakhi.database.room.dao.PmsmaDao
 import org.piramalswasthya.sakhi.database.room.dao.PncDao
 import org.piramalswasthya.sakhi.database.room.dao.ProfileDao
+import org.piramalswasthya.sakhi.database.room.dao.SaasBahuSammelanDao
 import org.piramalswasthya.sakhi.database.room.dao.SyncDao
 import org.piramalswasthya.sakhi.database.room.dao.TBDao
 import org.piramalswasthya.sakhi.database.room.dao.UwinDao
 import org.piramalswasthya.sakhi.database.room.dao.MaaMeetingDao
+import org.piramalswasthya.sakhi.database.room.dao.MosquitoNetFormResponseDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseJsonDaoHBYC
 import org.piramalswasthya.sakhi.database.room.dao.VLFDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.BenIfaFormResponseJsonDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.CUFYFormResponseJsonDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.EyeSurgeryFormResponseJsonDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FilariaMDAFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.AnalyticsHelper
 import org.piramalswasthya.sakhi.helpers.ApiAnalyticsInterceptor
@@ -292,11 +299,16 @@ object AppModule {
 
     @Singleton
     @Provides
+    fun provideFormSaasBahuSamelanDao(database: InAppDb): SaasBahuSammelanDao = database.saasBahuSammelanDao
+
+    @Singleton
+    @Provides
     fun formResponseJsonDaoHBYC(database: InAppDb): FormResponseJsonDaoHBYC = database.formResponseJsonDaoHBYC()
 
     @Singleton
     @Provides
     fun provideUwinDao(database: InAppDb) : UwinDao = database.uwinDao
+
     @Singleton
     @Provides
     fun provideGenOPDDao(database: InAppDb): GeneralOpdDao = database.generalOpdDao
@@ -305,5 +317,27 @@ object AppModule {
     @Singleton
     @Provides
     fun provideMaaMeetingDao(database: InAppDb): MaaMeetingDao = database.maaMeetingDao
+
+    @Singleton
+    @Provides
+    fun provideCUFYFormResponseJsonDao(database: InAppDb): CUFYFormResponseJsonDao = database.CUFYFormResponseJsonDao()
+
+    @Singleton
+    @Provides
+    fun provideEyeSurgeryFormResponseJsonDao(database: InAppDb): EyeSurgeryFormResponseJsonDao = database.formResponseJsonDaoEyeSurgery()
+
+    @Singleton
+    @Provides
+    fun provideBenIfaFormResponseJsonDao(database: InAppDb): BenIfaFormResponseJsonDao = database.formResponseJsonDaoBenIfa()
+    @Singleton
+    @Provides
+    fun provideMosquitoNetFormResponseDao(database: InAppDb): MosquitoNetFormResponseDao = database.formResponseMosquitoNetJsonDao()
+    @Singleton
+    @Provides
+    fun provideFilariaMDAFormResponseDao(database: InAppDb): FilariaMDAFormResponseJsonDao = database.formResponseFilariaMDAJsonDao()
+
+    @Singleton
+    @Provides
+    fun provideNcdReferDao(database: InAppDb): NcdReferalDao = database.referalDao
 
 }

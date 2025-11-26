@@ -23,26 +23,33 @@ class NcdEligibleListViewModel @Inject constructor(
 
     private lateinit var asha: User
     var clickedPosition = 0
-    var selectedText = "ALL"
+
+    private val selectedCategory = MutableStateFlow("ALL")
 
     private val allBenList = recordsRepo.getNcdEligibleList
     private val filter = MutableStateFlow("")
     private val selectedBenId = MutableStateFlow(0L)
 
-    val benList = allBenList.combine(filter) { cacheList, filter ->
+    val benList = combine(allBenList, filter, selectedCategory) { cacheList, filterText, selectedCat ->
         val list = cacheList.map { it.asDomainModel() }
         val benBasicDomainList = list.map { it.ben }
-        val filteredBenBasicDomainList = filterBenList(benBasicDomainList, filter)
-        list.filter { it.ben.benId in filteredBenBasicDomainList.map { it.benId } }
-        if (selectedText == "Screened"){
-            list.filter { it.savedCbacRecords.isNotEmpty() }
-        } else if (selectedText == "Not Screened") {
-            list.filter { it.savedCbacRecords.isEmpty() }
-        } else {
-            list.filter { it.ben.benId in filteredBenBasicDomainList.map { it.benId } }
-        }
+        val filteredBenBasicDomainList = filterBenList(benBasicDomainList, filterText)
 
+        val filteredIds = filteredBenBasicDomainList.map { it.benId }.toSet()
+
+        when (selectedCat) {
+            "Screened" -> list.filter { it.savedCbacRecords.isNotEmpty() && (it.ben.benId in filteredIds) }
+            "Not Screened" -> list.filter { it.savedCbacRecords.isEmpty() && (it.ben.benId in filteredIds) }
+            else -> list.filter { it.ben.benId in filteredIds } // "ALL" or any other text -> show filtered results
+        }
     }
+
+    fun setSelectedCategory(cat: String) {
+        viewModelScope.launch {
+            selectedCategory.emit(cat)
+        }
+    }
+
 
     val ncdDetails = allBenList.combineTransform(selectedBenId) { list, benId ->
         if (benId != 0L) {

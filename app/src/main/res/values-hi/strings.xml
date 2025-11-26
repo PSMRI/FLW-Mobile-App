@@ -1,52 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <!--Home -->
-
-
-
-
-
+    <!--Home-->
+<!--    <string name="app_native_name">मितानिन</string>-->
     <string name="title_activity_home" translatable="false">HomeActivity</string>
     <string name="nav_header_desc" translatable="false">Navigation header</string>
-
-<!--    <string name="home_icon_title_all_ben">All Beneficiaries</string>-->
-<!--    <string name="home_icon_title_elig_coup">Eligible Couples</string>-->
-<!--    <string name="home_icon_title_child_care">Child Care</string>-->
-<!--    <string name="child_care_icon_title_child_list">Child List</string>-->
-<!--    <string name="child_care_icon_title_infant_list">Infant List</string>-->
-<!--    <string name="child_care_icon_title_adolescent_list">Adolescent List</string>-->
-<!--    <string name="home_icon_title_mother_care">Mother Care</string>-->
-<!--    <string name="home_icon_title_death_rep">Death Reports</string>-->
-<!--    <string name="home_icon_title_gen_op">General OP Care</string>-->
-<!--    <string name="home_icon_title_hrp_cases">HRP Cases</string>-->
-<!--    <string name="home_icon_title_imm_due">Immunization Due</string>-->
-<!--    <string name="home_icon_title_menopause_stage_list">Menopause Stage List</string>-->
-<!--    <string name="home_icon_title_ncd">NCD</string>-->
-<!--    <string name="home_icon_title_village_lvl_forms">Village Level Forms</string>-->
-
-
     <string name="cd_icon_grid_icon">icon</string>
-
-
     <string name="nav_item_1_text">Name : %s</string>
     <string name="nav_item_2_text">Role : %s</string>
     <string name="nav_item_3_text">ID : %s</string>
     <string name="nav_item_4_text">Version : %s</string>
-
-
     <string name="tv_required_text_asterisk">*</string>
-
     <string name="rv_item_hh_entry_1">%1$d</string>
-
-
     <string name="notification_sync_channel_name">Sync Data</string>
     <string name="notification_sync_channel_description">Upload beneficiaries to Server</string>
     <string name="notification_sync_channel_id">sakhi-sync0</string>
-    <string name="consent_text">Consent:\nI have been explained by the ASHA, the purpose for which the information and measurement findings is being collected from me, in a language I understand and I give my consent to collect the information and measurement findings on my personal health profile.</string>
-    <string name="aadhar_consent_text">I hereby confirm that I have explained the below mentioned consent process to the individual for the creation of the ABHA Number using he individual\'s aadhar number</string>
+    <string name="consent_text">सहमति:\nमुझे मितानिन द्वारा उस उद्देश्य के बारे में बताया गया है जिसके लिए मेरी जानकारी और माप से संबंधित निष्कर्ष एकत्र किए जा रहे हैं। यह जानकारी मुझे ऐसी भाषा में समझाई गई है जिसे मैं समझता/समझती हूँ, और मैं अपनी व्यक्तिगत स्वास्थ्य प्रोफ़ाइल से संबंधित जानकारी और माप के निष्कर्ष एकत्र करने के लिए अपनी सहमति देता/देती हूँ।</string>
+
 
     <string name="long_to_string">%d</string>
+    <string name="preview_title">पूर्वावलोकन</string>
 
 
     <string name="tv_reg_date_ph">Registration Date</string>
@@ -73,10 +45,6 @@
     <string name="form_input_empty_error">आवश्यक फ़ील्ड खाली नहीं हो सकता !</string>
     <string name="form_input_upper_case_error">Only Alphabets in upper case allowed!</string>
     <string name="form_input_min_limit_error">%1s should be greater than or equal to %2d</string>
-    <string name="form_input_max_limit_error">%1s should be lesser than or equal to %2d</string>
-    <string name="form_input_error_invalid_mobile">Invalid Mobile Number !</string>
-    <string name="form_input_error_invalid_rch">Invalid RCH ID !</string>
-    <string name="form_input_error_invalid_aadhar">Invalid Aadhar Number</string>
     <string name="jsy_payment_voucher">JSY payment voucher</string>
     <string name="mcp_card_1">MCP Card 1</string>
     <string name="mcp_card_2">MCP Card 2</string>
@@ -146,6 +114,13 @@
     <string name="cdr_form_from_anm_1">CDR form from ANM 1</string>
     <string name="cdr_form_from_anm_2">CDR form from ANM 2</string>
     <string name="district_tehsil">District/Tehsil</string>
+    <string name="leprosy_confirmed">Leprosy Confirmed</string>
+    <string name="leprosy_suspected">Leprosy Suspected</string>
+    <string name="after_the_abortion_the_woman_opted_for_permanent_sterilization_tubectomy">After the Abortion, the Woman opted for permanent sterilization (Tubectomy)</string>
+    <string name="date_of_sterilisation">Date of Sterilisation</string>
+    <string name="what_family_planning_method_has_been_chosen_after_the_abortion">What family planning method has been chosen after the abortion?</string>
+    <string name="higher_healthcare_center">उच्च स्वास्थ्य सेवा केंद्र</string>
+    <string name="additional_services">अतिरिक्त सेवाएं</string>
 
 
     <string-array name="temp_array">
@@ -156,6 +131,219 @@
         <item>Item 5</item>
         <item>Item 6</item>
     </string-array>
+
+
+    <string name="tracking_date">भेंट की तिथि</string>
+    <string name="mdsr_form">मातृ मृत्यु निगरानी एवं प्रतिक्रिया (MDSR)</string>
+    <string name="mdsr_district">जिला</string>
+    <string name="mdsr_state">राज्य</string>
+    <string name="mdsr_month">महीना</string>
+    <string name="mdsr_year">वर्ष</string>
+    <string name="mdsr_name_deceased">मृत व्यक्ति का नाम</string>
+    <string name="mdsr_age">उम्र</string>
+    <string name="mdsr_date_of_deceased">मृत्यु की तारीख</string>
+    <string name="mdsr_address">पता</string>
+    <string name="mdsr_husband_name">पति का नाम</string>
+    <string name="mdsr_cause">मृत्यु का कारण</string>
+    <string name="mdsr_maternal">मातृ मृत्यु</string>
+    <string name="mdsr_non_maternal">गैर मातृ मृत्यु</string>
+    <string name="mdsr_name_designation">नाम/पद</string>
+    <string name="mdsr_field_investigation">क्षेत्रीय जाँच की तिथि</string>
+    <string name="mdsr_signature">ब्लॉक के प्रभारी चिकित्सा अधिकारी का हस्ताक्षर:</string>
+    <string name="mdsr_ic_date">तारीख</string>
+    <string name="mdsr_reason_death">कारण बताएं</string>
+    <string name="mdsr_action">की गई कार्रवाई</string>
+    <string name="hbnc_baby_dead_alert">शिशु मृत्यु की समीक्षा हेतु मृत्यु का कारण RHO को बताएं</string>
+    <string name="hbnc_baby_gestational_age_alert">अगर बच्चा 35 हफ्ते से पहले पैदा हुआ है, तो ध्यान दें</string>
+    <string name="hbnc_mother_dead_alert">मातृ मृत्यु समीक्षा हेतु RHO को सूचित करें</string>
+    <string name="hbnc_mother_problem_alert">अगर हाँ, तो तुरंत अस्पताल भेजें</string>
+    <string name="hbnc_mother_num_eat_alert">यदि माँ पेट भर खाना नहीं खाती है या 4 बार से कम खाती है, तो माँ को ऐसा करने की सलाह दें।</string>
+    <string name="hbnc_mother_num_pad_alert">यदि 5 से ज़्यादा पैड इस्तेमाल किए गए हैं, तो माँ को अस्पताल रेफर करें।</string>
+    <string name="hbnc_baby_warm_winter_alert">यदि माँ ऐसा नहीं कर रही है, तो उसे ऐसा करने की सलाह दें।</string>
+    <string name="hbnc_baby_fed_properly_alert">यदि माँ ऐसा नहीं कर रही है, तो उसे ऐसा करने की सलाह दें।</string>
+    <string name="hbnc_baby_cry_incessant_alert">माँ को हर 2 घंटे बाद बच्चे को दूध पिलाने की सलाह दें</string>
+    <string name="hbnc_baby_temp_alert">102°F (38.9°C) तक का तापमान - पैरासिटामोल से उपचार करें, और यदि तापमान इससे अधिक है, तो अस्पताल रेफर करें।</string>
+    <string name="hbnc_mother_foul_discharge_alert">यदि हाँ, तो माँ को अस्पताल रेफर करें।</string>
+    <string name="hbnc_mother_speak_abnormal_fits_alert">यदि हाँ, तो माँ को अस्पताल रेफर करें।</string>
+    <string name="hbnc_mother_less_no_milk_alert">माँ को बच्चे को अधिक बार दूध पिलाने के लिए कहें और स्तनपान के दौरान उचित लगाव और स्थिति के बारे में सलाह दें।</string>
+    <string name="hbnc_mother_breast_problem_alert">निप्पल फटने की स्थिति में, माँ को स्तन को साफ़ और चिकना रखने की सलाह दें।</string>
+    <string name="hbnc_baby_eye_pus_alert">अगर आँख में मवाद है, तो एंटीबायोटिक मरहम लगाया जा सकता है।</string>
+    <string name="hbnc_baby_weight_1_8_alert">शिशु को नज़दीकी स्वास्थ्य केंद्र के बीमार नवजात शिशु देखभाल इकाई (एसएनसीयू) में रेफर करें और उच्च जोखिम वाले शिशु के अनुसार अतिरिक्त घरेलू दौरे भी करें। अगर शिशु (कम जन्म वज़न या सामान्य) का वज़न नहीं बढ़ रहा है, तो नज़दीकी स्वास्थ्य केंद्र के एसएनसीयू में रेफर करें।</string>
+    <string name="hbnc_baby_weight_2_5_alert">माँ को शिशु को अतिरिक्त गर्मी देने और उसे बार-बार दूध पिलाने की सलाह दें। अगर शिशु (कम जन्म वज़न या सामान्य) का वज़न नहीं बढ़ रहा है, तो नज़दीकी स्वास्थ्य केंद्र के एसएनसीयू में रेफर करें।</string>
+    <string name="str_weight_at_birth_gram">जन्म के समय वजन (ग्राम)</string>
+    <string name="btn_submit">सबमिट करें</string>
+    <string name="ben_pending_sync">सिंक लंबित</string>
+    <string name="tv_husband_name_ph">पति का नाम</string>
+    <string name="tv_spouse_name_ph">पति/पत्नी का नाम</string>
+    <string name="tv_spouse">जीवनसाथी</string>
+    <string name="chat_error">आपके चैट बॉट को लोड करने में कुछ त्रुटि हुई है</string>
+    <string name="help_and_support">सहायता और समर्थन</string>
+    <string name="evac_patient_info">रोगी जानकारी</string>
+    <string name="immunization_dosage_count">%d/%d</string>
+    <string name="select_death_type">लाभार्थी की मृत्यु का प्रकार चुनें</string>
+    <string name="death_type_cdr">सीडीआर (बाल मृत्यु समीक्षा)</string>
+    <string name="death_type_mdsr">एमडीएसआर (मातृ मृत्यु निगरानी और प्रतिक्रिया)</string>
+    <string name="continue_button">जारी रखें</string>
+    <string name="hbnc_day_text">दिन %1$d</string>
+    <string name="hello_blank_fragment">नमस्ते (खाली भाग)</string>
+    <string name="hbnc_mother_temp_case_1">माँ को पैरासिटामोल दें</string>
+    <string name="hbnc_mother_temp_case_2">माँ को अस्पताल भेजें</string>
+    <string name="hbnc_baby_temp_97_alert">माँ को सलाह दें कि बच्चे को गर्म रखें — कमरे का तापमान बढ़ाएँ, त्वचा से त्वचा का संपर्क दें, बच्चे को गर्म बैग में रखें और बार-बार दूध पिलाएँ</string>
+    <string name="hbnc_baby_temp_96_alert">माँ को सलाह दें कि बच्चे को गर्म रखें (कमरा गर्म, त्वचा से त्वचा संपर्क, गर्म बैग, बार-बार दूध)। जब बच्चा गर्म हो जाए तो उसे कपड़े पहनाकर पहले से गर्म किए बिस्तर में माँ के पास रखें</string>
+    <string name="hbnc_baby_temp_99_alert">फिर सेप्सिस के लक्षण देखें। अगर लक्षण नहीं हैं तो ¼ चम्मच पैरासिटामोल दें और तुरंत नजदीकी एसएनसीयू भेजें</string>
+    <string name="form_input_missing_entry_error">फ़ील्ड में %1$d अंक होने चाहिए</string>
+    <string name="form_input_alphabet_space_only_error">केवल अक्षर और खाली जगह मान्य</string>
+    <string name="form_input_alphabet_special_only_error">केवल अक्षर और विशेष चिन्ह मान्य</string>
+    <string name="form_input_alph_numeric_space_only_error">केवल अक्षर और अंक मान्य</string>
+    <string name="form_input__no_alpha_space_error">अक्षर या खाली जगह मान्य नहीं</string>
+    <string name="form_input_digit_only_error">केवल अंक मान्य</string>
+    <string name="form_input_min_limit_error_decimal">%1$s %2$.1f से अधिक या बराबर होना चाहिए</string>
+    <string name="form_input_max_limit_error">%1$s %2$d से कम या बराबर होना चाहिए</string>
+    <string name="form_input_max_limit_error_decimal">%1$s %2$.1f से कम या बराबर होना चाहिए</string>
+    <string name="form_input_error_invalid_mobile">अमान्य मोबाइल संख्या!</string>
+    <string name="form_input_error_invalid_rch">अमान्य RCH ID!</string>
+    <string name="form_input_error_invalid_mcp">अमान्य MCP संख्या!</string>
+    <string name="form_input_error_invalid_aadhar">अमान्य आधार संख्या!</string>
+    <string name="no_records_found_hh">कोई घरेलू रिकॉर्ड नहीं मिला। कृपया नीचे दिए गए बटन पर क्लिक करके घरों का पंजीकरण शुरू करें।</string>
+    <string name="something_went_wrong_nunable_to_connect_to_server_ntry_again_later">कुछ गड़बड़ हो गई! सर्वर से कनेक्ट नहीं हो पा रहा है! बाद में फिर से कोशिश करें!</string>
+    <string name="try_again">फिर से प्रयास करें</string>
+    <string name="version_2_0_0">APK वर्जन 2.0.0</string>
+    <string name="enter_pin">पिन दर्ज करें</string>
+    <string name="sync_in_progress">सिंक हो रहा है…</string>
+    <string name="full_name">पूरा नाम</string>
+    <string name="male">पुरुष</string>
+    <string name="female">महिला</string>
+    <string name="transgender">ट्रांसजेंडर</string>
+    <string name="other">अन्य</string>
+    <string name="state">राज्य</string>
+    <string name="district">जिला</string>
+    <string name="view_household_information">परिवार की जानकारी देखें</string>
+    <string name="hello">नमस्ते</string>
+    <string name="select_immunization_category">टीकाकरण श्रेणी चुनें</string>
+    <string name="children">बच्चे</string>
+    <string name="mother">माँ</string>
+    <string name="patient_information">रोगी की जानकारी</string>
+    <string name="mother_name">माँ का नाम</string>
+    <string name="date_of_birth">जन्म तिथि</string>
+    <string name="previous_vaccine_details">पिछला टीकाकरण विवरण</string>
+    <string name="due_serial">देय क्रम</string>
+    <string name="saving_form">फॉर्म सेव हो रहा है…</string>
+    <string name="previous">पिछला</string>
+    <string name="next">अगला</string>
+    <string name="edit">संपादित करें</string>
+    <string name="to_do_list">कार्य सूची</string>
+    <string name="beneficiaries_due_for_anc">एएनसी के लिए लाभार्थी बकाया</string>
+    <string name="beneficiaries_due_for_immunization">टीकाकरण के लिए देय लाभार्थी</string>
+    <string name="high_risk_cases">उच्च जोखिम वाले मामले</string>
+    <string name="high_risk_pregnant_women">उच्च जोखिम वाली गर्भवती महिलाएं</string>
+    <string name="high_risk_non_pregnant_women">उच्च जोखिम वाली गैर-गर्भवती महिलाएं</string>
+    <string name="high_risk_babies">उच्च जोखिम वाले शिशु</string>
+    <string name="low_birth_weight_babies">कम वजन वाले शिशु</string>
+    <string name="age">आयु</string>
+    <string name="gender">लिंग</string>
+    <string name="registration_date">पंजीकरण तिथि</string>
+    <string name="beneficiary_id">लाभार्थी आईडी</string>
+    <string name="rch_id">आरसीएच आईडी</string>
+    <string name="sync_to_local">स्थानीय से सिंक करें</string>
+    <string name="beneficiary_name">लाभार्थी का नाम</string>
+    <string name="husband_s_name">पति का नाम</string>
+    <string name="weeks_of_pregnancy">गर्भावस्था के सप्ताह</string>
+    <string name="pregnancy_weeks">गर्भावस्था के सप्ताह</string>
+    <string name="anc_visits">एएनसी विज़िट</string>
+    <string name="pnc_visits">पीएनसी विज़िट</string>
+    <string name="add_anc_visits">एएनसी विज़िट जोड़ें</string>
+    <string name="add_pnc_visits">पीएनसी विज़िट जोड़ें</string>
+    <string name="id">आईडी</string>
+    <string name="no_of_children">बच्चों की संख्या</string>
+    <string name="view_visit">विज़िट देखें</string>
+    <string name="add_visit">विज़िट जोड़ें</string>
+    <string name="household_id">परिवार आईडी</string>
+    <string name="contact_number">संपर्क संख्या</string>
+    <string name="show_vaccines">टीके दिखाएँ</string>
+    <string name="add_cbac">CBAC जोड़ें</string>
+    <string name="view_cbac">CBAC देखें</string>
+    <string name="view">देखें</string>
+    <string name="home">होम</string>
+    <string name="sync_records">रिकॉर्ड सिंक करें</string>
+    <string name="about">हमारे बारे में</string>
+    <string name="help">सहायता</string>
+    <string name="logout">लॉगआउट करें</string>
+    <string name="delete_my_account">मेरा खाता हटाने का अनुरोध</string>
+    <string name="str_add_member">सदस्य जोड़ें</string>
+    <string name="str_not_available">उपलब्ध नहीं</string>
+    <string name="support">सहायता</string>
+    <string name="go_to_home">होम पर जाएँ</string>
+    <string name="change_language">भाषा बदलें</string>
+    <string name="kid_registration">बच्चे का पंजीकरण</string>
+    <string name="adult_registration">वयस्क पंजीकरण</string>
+    <string name="pregnancy_list">गर्भावस्था सूची</string>
+    <string name="delivery_stage_list">प्रसव अवस्था सूची</string>
+    <string name="pnc_mother_list">PNC माँ सूची</string>
+    <string name="reproductive_age_list">प्रजनन आयु सूची</string>
+    <string name="ncd_eligible_list">गैर संक्रामक रोग पात्र सूची</string>
+    <string name="ncd_list">गैर संक्रामक रोग सूची</string>
+    <string name="ncd_non_eligible_list">गैर संक्रामक रोग गैर-प्राथमिकता सूची</string>
+    <string name="ncd_priority_list">गैर संक्रामक रोग प्राथमिकता सूची</string>
+    <string name="survey_register">सर्वेक्षण रजिस्टर</string>
+    <string name="all_household_list">सभी परिवारों की सूची</string>
+    <string name="beneficiaries_data">लाभार्थियों का डेटा</string>
+    <string name="cdr_list">सीडीआर सूची</string>
+    <string name="mdsr_list">एमडीएसआर सूची</string>
+    <string name="mdsr">एमडीएसआर</string>
+    <string name="cdr">सीडीआर</string>
+    <string name="pmsma">पीएमएसएमए</string>
+    <string name="pmjay_form">पीएमजेएवाई फॉर्म</string>
+    <string name="household_members">परिवार के सदस्य</string>
+    <string name="fp_ot_register">एफपी-ओटी रजिस्टर</string>
+    <string name="hbnc_day_list">एचबीएनसी दिवस सूची</string>
+    <string name="hbnc">एचबीएनसी</string>
+    <string name="visit_card">विजिटिंग कार्ड</string>
+    <string name="hbnc_part_i">एचबीएनसी भाग I</string>
+    <string name="hbnc_part_ii">एचबीएनसी भाग II</string>
+    <string name="hbyc">एचबीवाईसी</string>
+    <string name="hbyc_month_list">एचबीवाईसी माह सूची</string>
+    <string name="immunization">टीकाकरण</string>
+    <string name="pregnancy_registration_form">गर्भावस्था पंजीकरण फॉर्म</string>
+    <string name="anc_visit">एएनसी विजिट</string>
+    <string name="eligible_couple_list">पात्र दंपत्ति सूची</string>
+    <string name="eligible_couple_registration">पात्र दंपत्ति पंजीकरण</string>
+    <string name="eligible_couple_tracking_list">पात्र दंपत्ति ट्रैकिंग सूची</string>
+    <string name="eligible_couple_tracking_form">पात्र दंपत्ति ट्रैकिंग फॉर्म</string>
+    <string name="tb_screening_list">टीबी स्क्रीनिंग सूची</string>
+    <string name="tb_suspected_list">संदेहास्पद टीबी मामले</string>
+    <string name="tb_screening_form">टीबी स्क्रीनिंग फॉर्म</string>
+    <string name="tb_suspected_form">संदेहास्पद टीबी मामले</string>
+    <string name="mother_immunization">माँ का टीकाकरण</string>
+    <string name="delivery_outcome">प्रसव परिणाम</string>
+    <string name="delivery_outcome_list">प्रसव परिणाम सूची</string>
+    <string name="infant_reg_list">शिशु पंजीकरण सूची</string>
+    <string name="infant_reg">शिशु पंजीकरण</string>
+    <string name="communicable_diseases">संचारी रोग</string>
+    <string name="dashboard">डैशबोर्ड</string>
+    <string name="sign_in">साइन इन</string>
+    <string name="service_location">सेवा स्थान</string>
+    <string name="save_successful">सफलतापूर्वक सहेजें</string>
+    <string name="something_wend_wong_contact_testing">कुछ गड़बड़ है! संपर्क परीक्षण!</string>
+    <string name="error_input">त्रुटि इनपुट</string>
+    <string name="exit_application">एप्लिकेशन से बाहर निकलें</string>
+    <string name="do_you_want_to_exit_application">क्या आप एप्लिकेशन से बाहर निकलना चाहते हैं?</string>
+    <string name="downloading">डाउनलोड हो रहा है…</string>
+    <string name="choose_application_language">एप्लिकेशन की भाषा चुनें</string>
+    <string name="english">अंग्रेज़ी</string>
+    <string name="hindi">हिन्दी</string>
+    <string name="sync">सिंक</string>
+    <string name="tap_to_change">बदलने के लिए टैप करें</string>
+    <string name="validate">मान्य करें</string>
+    <string name="hbnc_daylist">एचबीएनसी डे लिस्ट</string>
+    <string name="hbyc_list">एचबीवाईसी सूची</string>
+    <string name="child_immunization">बाल टीकाकरण</string>
+    <string name="pregnancy_registration">गर्भावस्था पंजीकरण</string>
+    <string name="mother_immunizationlist">माता टीकाकरण सूची</string>
+    <string name="family_member_registration">परिवार के सदस्य का पंजीकरण</string>
+    <string name="relation_with_hof">"मुखिया" से सम्बन्ध</string>
+    <string name="add_family_member">परिवार के सदस्य जोड़ें</string>
+    <string name="non_pregnant_women_eligible_couple_section">गैर-गर्भवती महिलाएं (पात्र दंपत्ति) अनुभाग</string>
+    <string name="about_us">पिरामल स्वास्थ्य सभी के लिए सार्वभौमिक स्वास्थ्य देखभाल को पूरा करने के लिए भारत सरकार के दृष्टिकोण को पूरक और संपूरित करके सार्वजनिक स्वास्थ्य सेवा के अंतराल को पाटने पर ध्यान केंद्रित कर रहा है। पिरामल स्वास्थ्य भारत में प्राथमिक सार्वजनिक स्वास्थ्य देखभाल क्षेत्र में मातृ स्वास्थ्य, बाल और किशोर स्वास्थ्य, गैर-संचारी रोगों पर ध्यान केंद्रित करने वाले सबसे बड़े गैर-लाभकारी संगठनों में से एक है। पिरामल स्वास्थ्य के पास कई स्वास्थ्य सेवा नवाचारों को बड़े पैमाने पर संचालित करने का एक दशक से अधिक का अनुभव है, जो पूरे भारत में सबसे कम सेवा प्राप्त और हाशिए पर रहने वाली आबादी की प्राथमिक स्वास्थ्य देखभाल जरूरतों को पूरा कर रहा है। पिरामल स्वास्थ्य भारत के 20 राज्यों में 35 नवीन सार्वजनिक स्वास्थ्य देखभाल वितरण कार्यक्रमों के माध्यम से कार्यरत है और अब तक 10.7 करोड़ से अधिक लाभार्थियों को सेवा प्रदान कर चुका है| पिरामल स्वास्थ्य में 250 चिकित्सकों सहित 2260 कर्मचारी कार्यरत हैं जो परिणामोन्मुखी दृष्टिकोण के माध्यम से सेवा भाव (लाभार्थी-केंद्रित) के मूल मूल्य पर काम करते हैं। पिछले बारह वर्षों में, फोकस निम्नलिखित पर रहा है, बड़े पैमाने पर स्थायी प्रभाव के लिए प्लेटफॉर्म का निर्माण, एक यात्रा के रूप में पैमाने पर नवाचार, नीति आयोग के ज्ञान और कार्यान्वयन भागीदार के रूप में नीतियों, शासन और सार्वजनिक स्वास्थ्य देखभाल प्रणाली की जवाबदेही को प्रभावित करना। हस्तक्षेप डिजाइन, मॉडलिंग, पायलटिंग और उन पायलटों को बढ़ाने के रूप में नवाचार पिरामल स्वास्थ्य में एक दृष्टिकोण रहा है। पिरामल स्वास्थ्य प्राथमिक स्वास्थ्य सेवा को न केवल सस्ती, सुलभ और सभी के लिए उपलब्ध बनाने के लिए प्रतिबद्ध है, बल्कि यह भी सुनिश्चित करता है कि यह पूर्ण, निरंतर और व्यापक हो।</string>
 
 
 </resources>

@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -74,7 +75,8 @@ class AbhaBenFragment : Fragment() {
     enum class Abha {
         ALL,
         WITH,
-        WITHOUT
+        WITHOUT,
+        AGE_ABOVE_30
     }
 
     private val filterAlert by lazy {
@@ -85,6 +87,7 @@ class AbhaBenFragment : Fragment() {
                 filterAlertBinding.rbAll.id -> Abha.ALL
                 filterAlertBinding.rbWith.id -> Abha.WITH
                 filterAlertBinding.rbWithout.id -> Abha.WITHOUT
+                filterAlertBinding.rbAgeAboveThirty.id -> Abha.AGE_ABOVE_30
                 else -> Abha.ALL
             }
 
@@ -102,6 +105,8 @@ class AbhaBenFragment : Fragment() {
                 viewModel.filterType(1)
             } else if (selectedAbha == Abha.WITHOUT) {
                 viewModel.filterType(2)
+            } else if (selectedAbha == Abha.AGE_ABOVE_30) {
+                viewModel.filterType(3)
             }  else {
                 viewModel.filterType(0)
             }
@@ -140,7 +145,7 @@ class AbhaBenFragment : Fragment() {
             }
         }
 
-        if (args.source == 1 || args.source == 2) {
+        if (args.source == 1 || args.source == 2 || args.source == 3) {
             binding.ibFilter.visibility = View.GONE
             binding.ibDownload.visibility = View.VISIBLE
         }
@@ -184,6 +189,8 @@ class AbhaBenFragment : Fragment() {
                 },
                 { benId, hhId ->
                     checkAndGenerateABHA(benId)
+                },
+                { benId, hhId, isViewMode, isIFA ->
                 },
                 {
                     try {
@@ -243,6 +250,8 @@ class AbhaBenFragment : Fragment() {
                 { benId, hhId ->
                     checkAndGenerateABHA(benId)
                 },
+                { benId, hhId, isViewMode, isIFA ->
+                },
                 {
                     try {
                         val callIntent = Intent(Intent.ACTION_CALL)
@@ -267,22 +276,6 @@ class AbhaBenFragment : Fragment() {
             context = requireActivity()
         )
         binding.rvExistingAbha.adapter = benOldAdapter
-
-//        lifecycleScope.launch {
-//            viewModel.benNewList.collect {
-//                isNewListEmpty = it.isEmpty()
-//                toggleNoRecord()
-//                benNewAdapter.submitList(it)
-//            }
-//        }
-//
-//        lifecycleScope.launch {
-//            viewModel.benOldList.collect {
-//                isOldListEmpty = it.isEmpty()
-//                toggleNoRecord()
-//                benOldAdapter.submitList(it)
-//            }
-//        }
 
         binding.ibSearch.visibility = View.VISIBLE
         binding.ibSearch.setOnClickListener { sttContract.launch(Unit) }

@@ -13,6 +13,7 @@ import org.piramalswasthya.sakhi.ui.home_activity.child_care.ChildCareFragmentDi
 import org.piramalswasthya.sakhi.ui.home_activity.communicable_diseases.CdFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.death_reports.DeathReportsFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.disease_control.DiseaseControlFragmentDirections
+import org.piramalswasthya.sakhi.ui.home_activity.disease_control.leprosy.LeprosyFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.disease_control.malaria.form.MalariaIconsFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.eligible_couple.EligibleCoupleFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.home.HomeFragmentDirections
@@ -316,8 +317,7 @@ class IconDataset @Inject constructor(
         resources.getString(R.string.phc_review),
             null,
             VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToPHCReviewListFragement()
-
-    )
+        )
         ,
         Icon(
             R.drawable.ahd,
@@ -338,14 +338,21 @@ class IconDataset @Inject constructor(
         resources.getString(R.string.maa_meeting),
         null,
         VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToAllMaaMeetingFragment()
-    )   ,
+        ),
+        Icon(
+            R.drawable.dewarming,
+            resources.getString(R.string.saas_samelan),
+            null,
+            VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToSaasBahuSammelanListFragment()
+        )
+      ,
         Icon(
             R.drawable.dewarming,
             resources.getString(R.string.u_win_session),
             null,
             VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToUwinListFragment()
-    )
-    )
+    ),)
+
 
     fun getHRPNonPregnantWomenDataset(resources: Resources) = listOf(
         Icon(
@@ -427,6 +434,32 @@ class IconDataset @Inject constructor(
         }
     }
 
+
+    fun getLeprosyDataset(resources: Resources) = listOf(
+        Icon(
+            R.drawable.leprocy,
+            resources.getString(R.string.leprosy_screening),
+            recordsRepo.tbScreeningListCount,
+            LeprosyFragmentDirections.actionLeprosyFragmentToAllHouseHoldDiseaseControlFragment(
+                Disease.LEPROSY.toString()
+            )
+        ),
+        Icon(
+            R.drawable.leprocy,
+            resources.getString(R.string.leprosy_suspected),
+             recordsRepo.leprosySuspectedListCount,
+            LeprosyFragmentDirections.actionLeprosyFragmenToLeprosySuspectedListFragment()
+        ),
+        Icon(
+            R.drawable.leprocy,
+            resources.getString(R.string.leprosy_confirmed),
+            recordsRepo.leprosyConfirmedCasesListCount,
+            LeprosyFragmentDirections.actionLeprosyDragmentToLeprosyConfirmedListFragment()
+        ),
+
+    )
+
+
     fun getDiseaseControlDataset(resources: Resources) = listOf(
         Icon(
             R.drawable.ic__ncd,
@@ -471,9 +504,7 @@ class IconDataset @Inject constructor(
             R.drawable.leprocy,
             resources.getString(R.string.icon_title_leprosy),
             recordsRepo.tbScreeningListCount,
-            DiseaseControlFragmentDirections.actionDiseaseControlFragmentToAllHouseHoldDiseaseControlFragment(
-                Disease.LEPROSY.toString()
-            )
+            DiseaseControlFragmentDirections.actionDiseaseControlFragmentToLeprosyFragment()
         ),
         /*Icon(
             R.drawable.ic__eligible_couple,
@@ -595,6 +626,12 @@ class IconDataset @Inject constructor(
             resources.getString(R.string.icon_title_ncd_non_eligible_list),
             recordsRepo.getNcdNonEligibleListCount,
             NcdFragmentDirections.actionNcdFragmentToNcdNonEligibleListFragment()
+        ),
+        Icon(
+            R.drawable.ic_ncd_noneligible,
+            resources.getString(R.string.ncd_refer_list),
+            recordsRepo.getNcdrefferedListCount,
+            NcdFragmentDirections.actionNcdFragmentToNcdReferredListFragment()
         ),
     ).apply {
         forEachIndexed { index, icon ->

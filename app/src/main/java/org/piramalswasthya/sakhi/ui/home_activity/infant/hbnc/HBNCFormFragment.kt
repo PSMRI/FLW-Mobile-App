@@ -23,7 +23,9 @@ import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.dynamicAdapter.FormRendererAdapter
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.RvItemBenChildCareInfantBinding
+import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.child_care.infant_list.InfantListViewModel
 import org.piramalswasthya.sakhi.ui.setSyncState
@@ -33,6 +35,7 @@ import org.piramalswasthya.sakhi.work.WorkerUtils
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class HBNCFormFragment : Fragment() {
@@ -53,6 +56,10 @@ class HBNCFormFragment : Fragment() {
     private lateinit var adapter: FormRendererAdapter
     private var currentImageField: FormField? = null
     private var tempCameraUri: Uri? = null
+    var langCode=""
+
+    @Inject
+    lateinit var pref: PreferenceDao
 
     private val galleryLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
@@ -71,7 +78,9 @@ class HBNCFormFragment : Fragment() {
                 currentImageField?.apply {
                     value = it.toString()
                     errorMessage = null
+                    viewModel.updateFieldValue(fieldId, value)
                 }
+                adapter.updateFields(viewModel.getVisibleFields())
                 adapter.notifyDataSetChanged()
             }
         }
@@ -93,7 +102,9 @@ class HBNCFormFragment : Fragment() {
                 currentImageField?.apply {
                     value = tempCameraUri.toString()
                     errorMessage = null
+                    viewModel.updateFieldValue(fieldId, value)
                 }
+                adapter.updateFields(viewModel.getVisibleFields())
                 adapter.notifyDataSetChanged()
             }
         }
@@ -117,12 +128,10 @@ class HBNCFormFragment : Fragment() {
         val isViewMode = args.isViewMode
         benId = args.benId
         hhId = args.hhId
-        Log.d("HBNCFormFragment", "Page Loadded benId: $benId hhId: $hhId")
-
+        val currentLang = pref.getCurrentLanguage()  // ye return karega Languages enum value
+        langCode = currentLang.symbol
 
         viewModel.fetchSNCUStatus(benId)
-
-
 
         infantListViewModel.getBenById(benId) { ben ->
             infantBinding.btnHBNC.visibility=View.GONE
@@ -137,16 +146,19 @@ class HBNCFormFragment : Fragment() {
         infantListViewModel.getDobByBenIdAsync(benId) { dobMillis ->
             if (dobMillis != null) {
                 dob = dobMillis
-                viewModel.loadFormSchema(benId, HBNC_FORM_ID, visitDay!!, true, dob)
+
+                viewModel.loadFormSchema(benId, HBNC_FORM_ID, visitDay!!, true, dob,langCode)
             } else {
-                viewModel.loadFormSchema(benId, HBNC_FORM_ID, visitDay!!, true, dob)
+                viewModel.loadFormSchema(benId, HBNC_FORM_ID, visitDay!!, true, dob,langCode)
             }
         }
 
         viewModel.navigateToCdsr.observe(viewLifecycleOwner) { shouldNavigate ->
             if (shouldNavigate == true) {
                 showDeathAlertDialog()
-                viewModel.onNavigationComplete()
+            }
+            else{
+                findNavController().popBackStack()
             }
         }
 
@@ -166,9 +178,9 @@ class HBNCFormFragment : Fragment() {
                     isViewOnly = isViewMode,
                     minVisitDate = minVisitDate,
                     maxVisitDate = maxVisitDate,
-                    isSNCU = viewModel.isSNCU.value ?: false
-//                    isSNCU = true
-                ) { field, value ->
+                    isSNCU = viewModel.isSNCU.value ?: false,
+                    onValueChanged =
+                   { field, value ->
                     if (value == "pick_image") {
                         currentImageField = field
                         showImagePickerDialog()
@@ -178,7 +190,7 @@ class HBNCFormFragment : Fragment() {
                         val updatedVisibleFields = viewModel.getVisibleFields()
                         adapter.updateFields(updatedVisibleFields)
                     }
-                }
+                },)
 
                 recyclerView.adapter = adapter
 
@@ -325,8 +337,13 @@ class HBNCFormFragment : Fragment() {
         if (hasErrors) return
         lifecycleScope.launch {
             viewModel.saveFormResponses(benId, hhId)
-//            findNavController().previousBackStackEntry?.savedStateHandle?.set("form_submitted", true)
-//            findNavController().popBackStack()
+//            val isBabyAlive = updatedFields.find { it.fieldId == "is_baby_alive" }?.value?.toString() ?: "Yes"
+//            if (isBabyAlive.equals("No", ignoreCase = true)) {
+////                viewModel.triggerNavigate()
+//            } else {
+//                viewModel.triggerPopBack()
+//            }
+
         }
     }
     override fun onStart() {
@@ -378,6 +395,7 @@ class HBNCFormFragment : Fragment() {
             if (isAdded && view != null) {
                 findNavController().navigate(action)
             }
+
         } catch (e: Exception) {
         }
     }

@@ -41,4 +41,7 @@
     <string name="incentive_ben_details">Ben ID: %1d\nনাম: %2s</string>
     <string name="an_amount_of_rs_rupees_only_approved_for_payment_of_asha_incentive_for_the_period_from_to_and_the_amount_is_debited_to_the_account_through_dbt">একটা পৰিমাণ ৰুপি ________________(অক্ষৰত ___________ মাত্ৰ) ASHA প্ৰেৰিত ভাতাৰ মাচুল অনুমোদিত হৈছে ____________ৰ পৰা ____________ লৈকালৰ বাবে, আৰু সেই পৰিমাণ DBT যোগে একাউণ্টত জমা কৰা হ’ল।
 </string>
+    <string name="incentive_amount">₹ %1d</string>
+    <string name="to">লৈ</string>
+    <string name="to_small">" ৰ পৰা "</string>
 </resources>

@@ -17,9 +17,11 @@ import org.piramalswasthya.sakhi.configuration.PregnantWomanAncAbortionDataset
 import org.piramalswasthya.sakhi.configuration.PregnantWomanAncVisitDataset
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.model.EligibleCoupleTrackingCache
 import org.piramalswasthya.sakhi.model.PregnantWomanAncCache
 import org.piramalswasthya.sakhi.model.PregnantWomanRegistrationCache
 import org.piramalswasthya.sakhi.repositories.BenRepo
+import org.piramalswasthya.sakhi.repositories.EcrRepo
 import org.piramalswasthya.sakhi.repositories.MaternalHealthRepo
 import timber.log.Timber
 import java.text.SimpleDateFormat
@@ -31,6 +33,7 @@ import javax.inject.Inject
 class PwAncAbortionFormViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     preferenceDao: PreferenceDao,
+    private val ecrRepo: EcrRepo,
     @ApplicationContext context: Context,
     private val maternalHealthRepo: MaternalHealthRepo,
     private val benRepo: BenRepo
@@ -66,8 +69,9 @@ class PwAncAbortionFormViewModel @Inject constructor(
     val formList = dataset.listFlow
 
     private lateinit var ancCache: PregnantWomanAncCache
+    private lateinit var ectCache: EligibleCoupleTrackingCache
     fun getIndexOfAbortionDischarge1() = dataset.getIndexOfAbortionDischarge1()
-    fun getIndexOfAbortionDischarge2() = dataset.getIndexOfAbortionDischarge1()
+    fun getIndexOfAbortionDischarge2() = dataset.getIndexOfAbortionDischarge2()
 
     private var lastDocumentFormId: Int = 0
     fun setCurrentDocumentFormId(id: Int) {
@@ -97,6 +101,9 @@ class PwAncAbortionFormViewModel @Inject constructor(
                     frontFilePath = "",
                     backFilePath = ""
                 )
+
+
+
             }
             maternalHealthRepo.getSavedRecordANC(benId)?.let {
                 ancCache = it
@@ -105,6 +112,15 @@ class PwAncAbortionFormViewModel @Inject constructor(
                 _recordExists.value = false
             }
             val lastAnc = maternalHealthRepo.getSavedRecordANC(benId)
+
+            ectCache = EligibleCoupleTrackingCache(
+                benId = benId,
+                syncState = SyncState.UNSYNCED,
+                createdBy = asha.userName,
+                updatedBy = asha.userName,
+                lmp_date =lastAnc?.lmpDate ?: 0L
+            )
+
 
             dataset.setUpPage(
                 ben,
@@ -127,44 +143,60 @@ class PwAncAbortionFormViewModel @Inject constructor(
         private const val TAG = "ANCFormViewModel"
     }
 
-    fun saveForm() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                try {
-                    _state.postValue(State.SAVING)
+fun saveForm() {
+    viewModelScope.launch {
+        withContext(Dispatchers.IO) {
+            try {
+                _state.postValue(State.SAVING)
+                dataset.mapValues(ancCache, 1)
+                maternalHealthRepo.persistAncRecord(ancCache)
 
-                    dataset.mapValues(ancCache, 1)
-                    maternalHealthRepo.persistAncRecord(ancCache)
-
-                    if (ancCache.isAborted) {
-                        maternalHealthRepo.getSavedRegistrationRecord(benId)?.let {
-                            it.active = false
-                            if (it.processed != "N") {
-                                it.processed = "U"
-                            }
-                            it.syncState = SyncState.UNSYNCED
-                            maternalHealthRepo.persistRegisterRecord(it)
-                        }
-
-                        maternalHealthRepo.getAllInActiveAncRecords(benId).apply {
-                            forEach {
-                                it.isActive = false
-                                if (it.processed != "N") {
-                                    it.processed = "U"
-                                }
-                                it.syncState = SyncState.UNSYNCED
-                            }
-                            maternalHealthRepo.updateAncRecord(toTypedArray())
-                        }
+                if (ancCache.isPaiucdId == 2 && ancCache.isYesOrNo==true) {
+                    benRepo.getBenFromId(benId)?.let { ben ->
+                        ben.genDetails = ben.genDetails?.copy(
+                            reproductiveStatus = "Permanently Sterilised",
+                            reproductiveStatusId = 6
+                        )
+                        if (ben.processed != "N") ben.processed = "U"
+                        ben.syncState = SyncState.UNSYNCED
+                        benRepo.updateRecord(ben)
                     }
 
-                    _state.postValue(State.SAVE_SUCCESS)
-                } catch (e: Exception) {
-                    _state.postValue(State.SAVE_FAILED)
+                    val ben = maternalHealthRepo.getBenFromId(benId)
+                    ben?.let {
+                        ectCache.visitDate = ancCache.dateSterilisation!!
+                        ectCache.pregnancyTestResult = "No"
+                        ectCache.usingFamilyPlanning = true
+                        ectCache.methodOfContraception = "FEMALE STERILIZATION"
+                        ecrRepo.saveEct(ectCache)
+                    }
                 }
+
+                if (ancCache.isAborted) {
+                    maternalHealthRepo.getSavedRegistrationRecord(benId)?.let {
+                        it.active = false
+                        if (it.processed != "N") it.processed = "U"
+                        it.syncState = SyncState.UNSYNCED
+                        maternalHealthRepo.persistRegisterRecord(it)
+                    }
+
+                    val inactiveAnc = maternalHealthRepo.getAllInActiveAncRecords(benId)
+                    inactiveAnc.forEach {
+                        it.isActive = false
+                        if (it.processed != "N") it.processed = "U"
+                        it.syncState = SyncState.UNSYNCED
+                    }
+                    maternalHealthRepo.updateAncRecord(inactiveAnc.toTypedArray())
+                }
+
+                _state.postValue(State.SAVE_SUCCESS)
+            } catch (e: Exception) {
+                _state.postValue(State.SAVE_FAILED)
             }
         }
     }
+}
+
 
 
     fun setRecordExist(b: Boolean) {

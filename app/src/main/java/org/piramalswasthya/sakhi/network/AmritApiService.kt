@@ -9,7 +9,6 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.FormSubmitRequest
 import org.piramalswasthya.sakhi.model.dynamicModel.ApiResponse
 import org.piramalswasthya.sakhi.model.dynamicModel.HBNCVisitListResponse
 import org.piramalswasthya.sakhi.model.dynamicModel.HBNCVisitRequest
-import org.piramalswasthya.sakhi.ui.home_activity.asha_profile.AshaProfileViewModel
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -25,8 +24,22 @@ interface AmritApiService {
         @Part meetingImages: List<MultipartBody.Part>
     ): Response<ResponseBody>
 
+
+    @Multipart
+    @POST("flw-api/sammelans/saveAll")
+    suspend fun postSaasBahuSammelanMultipart(
+        @Part("date") meetingDate: RequestBody,
+        @Part("place") place: RequestBody,
+        @Part("participants") participants: RequestBody,
+        @Part("ashaId") ashaId: RequestBody,
+        @Part meetingImages: List<MultipartBody.Part>
+    ): Response<ResponseBody>
+
     @POST("flw-api/maa-meetings/getAll")
     suspend fun getMaaMeetings(@Body userDetail: GetDataRequest): Response<ResponseBody>
+
+    @POST("flw-api/sammelans/getAll")
+    suspend fun getSaasBahuSammelans(@Body userDetail: GetDataRequest): Response<ResponseBody>
 
     @Headers("No-Auth: true", "User-Agent: okhttp")
     @POST("common-api/user/userAuthenticate")
@@ -72,8 +85,19 @@ interface AmritApiService {
     @POST("flw-api/cbac/getAll")
     suspend fun getCbacs(@Body userDetail: GetDataPaginatedRequest): Response<ResponseBody>
 
-    @POST("flw-api/cbac/saveAll")
-    suspend fun postCbacs(/*@Url url : String  ="http://192.168.1.94:8081/cbac/saveAll",*/@Body list: List<CbacPost>): Response<ResponseBody>
+    @POST("/hwc-api/NCD/getByUserCbacDetails")
+    suspend fun getCbacData(@Body getcbacRequest: GetCBACRequest) : Response<ResponseBody>
+
+    @POST("/hwc-api/common/getBenReferDetailsByCreatedBy")
+    suspend fun getCbacReferData(@Body getcbacRequest: GetCBACRequest) : Response<ResponseBody>
+
+//    @POST("flw-api/cbac/saveAll")
+    @POST("hwc-api/NCD/save/nurseData")
+    suspend fun postCbacs(/*@Url url : String  ="http://192.168.1.94:8081/cbac/saveAll",*/@Body list: CbacRequest): Response<ResponseBody>
+
+    @POST("hwc-api/NCD/save/referDetails")
+    suspend fun postRefer(@Body list: ReferralRequest): Response<ResponseBody>
+
 
     //    @POST("tb/screening/getAll")
     @POST("flw-api/tb/screening/getAll")
@@ -103,6 +127,15 @@ interface AmritApiService {
     @POST("flw-api/disease/filaria/saveAll")
     suspend fun saveFilariaScreeningData(@Body filariaScreeningRequestDTO: FilariaScreeningRequestDTO): Response<ResponseBody>
 
+    @POST("flw-api/disease/leprosy/getAll")
+    suspend fun getAllLeprosyData(@Body request: GetDataPaginatedRequestForDisease): Response<ResponseBody>
+
+    @POST("flw-api/disease/leprosy/followUp/getAll")
+    suspend fun getAllLeprosyFollowUpData(@Body request: GetDataPaginatedRequestForDisease): Response<ResponseBody>
+
+    @POST("flw-api/disease/leprosy/followUp/saveAll")
+    suspend fun saveLeprosyFollowUpData(@Body request: List<LeprosyFollowUpDTO>): Response<ResponseBody>
+
     @POST("flw-api/disease/getAllDisease")
     suspend fun getMalariaScreeningData(@Body userDetail: GetDataPaginatedRequestForDisease): Response<ResponseBody>
 
@@ -118,10 +151,10 @@ interface AmritApiService {
     @POST("flw-api/tb/suspected/saveAll")
     suspend fun saveTBSuspectedData(@Body tbSuspectedRequestDTO: TBSuspectedRequestDTO): Response<ResponseBody>
 
-    @POST("flw-0.0.1/api/follow-up/save")
+    @POST("flw-api/follow-up/save")
     suspend fun saveMalariaConfirmedData(@Body malariaConfirmedRequestDTO: MalariaConfirmedRequestDTO): Response<ResponseBody>
 
-    @POST("flw-0.0.1/api/follow-up/get")
+    @POST("flw-api/follow-up/get")
     suspend fun getMalariaConfirmedData(@Body malariaConfirmedRequestDTO: GetDataPaginatedRequestForDisease): Response<ResponseBody>
 
     @POST("flw-api/highRisk/pregnant/assess/getAll")
@@ -308,12 +341,31 @@ interface AmritApiService {
 
     @GET("common-api/dynamicForm/form/{formId}/fields")
     suspend fun fetchFormSchema(
-        @Path("formId") formId: String
+        @Path("formId") formId: String,
+        @Query("lang") lang: String
     ): Response<ApiResponse<FormSchemaDto>>
 
 
     @POST("flw-api/child-care/hbncVisit/saveAll")
     suspend fun submitForm(
+        @Body request: List<FormSubmitRequest>
+    ): Response<Unit>
+
+    @POST("flw-api/child-care/{formName}/saveAll")
+    suspend fun submitChildCareForm(
+        @Path("formName") formName: String,
+        @Body request: List<FormSubmitRequest>
+    ): Response<Unit>
+
+    @POST("flw-api/beneficiary/{formName}/saveAll")
+    suspend fun submitEyeSurgeryForm(
+        @Path("formName") formName: String,
+        @Body request: List<FormSubmitRequest>
+    ): Response<Unit>
+
+    @POST("flw-api/disease/{formName}/saveAll")
+    suspend fun submitDiseaseMosquitoForm(
+        @Path("formName") formName: String,
         @Body request: List<FormSubmitRequest>
     ): Response<Unit>
 
@@ -323,6 +375,23 @@ interface AmritApiService {
         @Body request: HBNCVisitRequest
     ): Response<HBNCVisitListResponse>
 
+    @POST("flw-api/child-care/{formName}/getAll")
+    suspend fun getAllFormVisits(
+        @Path("formName") formName: String,
+        @Body request: HBNCVisitRequest
+    ): Response<HBNCVisitListResponse>
+
+    @POST("flw-api/beneficiary/{formName}/getAll")
+    suspend fun getAllEyeSurgeryFormVisits(
+        @Path("formName") formName: String,
+        @Body request: HBNCVisitRequest
+    ): Response<HBNCVisitListResponse>
+
+    @POST("flw-api/disease/{formName}/getAll")
+    suspend fun getAllDiseaseMosquitoFormVisits(
+        @Path("formName") formName: String,
+        @Body request: HBNCVisitRequest
+    ): Response<HBNCVisitListResponse>
 
     @POST("flw-api/child-care/hbycVisit/saveAll")
     suspend fun submitFormhbyc(

@@ -86,7 +86,8 @@ class HBYCFormViewModel @Inject constructor(
         formId: String,
         visitMonth: String,
         viewMode: Boolean,
-        dob: Long
+        dob: Long,
+        lang: String
     ) {
         this.visitMonth = visitMonth
         this.isViewMode = viewMode
@@ -96,7 +97,7 @@ class HBYCFormViewModel @Inject constructor(
                 val cachedSchemaEntity = repository.getSavedSchema(formId)
                 val cachedSchema: FormSchemaDto? = cachedSchemaEntity?.let { FormSchemaDto.fromJson(it.schemaJson) }
 
-                val localSchemaToRender = cachedSchema ?: repository.getFormSchema(formId) ?: return@launch
+                val localSchemaToRender = cachedSchema ?: repository.getFormSchema(formId, lang) ?: return@launch
 
                 val savedJson = repository.loadFormResponseJsonHBYC(benId, visitMonth)
                 val savedFieldValues = if (!savedJson.isNullOrBlank()) {
@@ -142,6 +143,7 @@ class HBYCFormViewModel @Inject constructor(
             }
         }
     }
+
 
     private fun evaluateFieldVisibility(field: FormFieldDto, allFields: List<FormFieldDto>): Boolean {
         val cond = field.conditional
@@ -287,41 +289,11 @@ fun updateFieldValue(fieldId: String, value: Any?) {
         } ?: emptyList()
     }
 
-//    fun getVisitCardList(benId: Long): List<VisitCard> {
-//        val relevantVisits = _syncedVisitList.value.filter { it.benId == benId }
-//        val completed = relevantVisits.map { it.visitDay }.toSet()
-//        return visitOrder.map { month ->
-//            val isCompleted = completed.contains(month)
-//            val isEditable = when (month) {
-//                "3 Months" -> !isCompleted
-//                "6 Months" -> !isCompleted && completed.contains("3 Months")
-//                "9 Months" -> !isCompleted && completed.contains("6 Months")
-//                "12 Months" -> !isCompleted && completed.contains("9 Months")
-//                "15 Months" -> !isCompleted && completed.contains("12 Months")
-//                else -> false
-//            }
-//            val visit = relevantVisits.find { it.visitDay == month }
-//            val visitDate = visit?.formDataJson?.let { JSONObject(it).optString("visitDate", "-") } ?: "-"
-//            val isBabyDeath = visit?.formDataJson?.let {
-//                val root = JSONObject(it)
-//                val fieldsJson = root.optJSONObject("fields") ?: JSONObject()
-//                fieldsJson.optString("is_baby_alive", "Yes").equals("No", ignoreCase = true)
-//            } ?: false
-//            VisitCard(
-//                visitDay = month,
-//                visitDate = visitDate,
-//                isCompleted = isCompleted,
-//                isEditable = isEditable,
-//                isBabyDeath = isBabyDeath
-//            )
-//        }
-//    }
 
     fun getVisitCardList(benId: Long, dobMillis: Long): List<VisitCard> {
         val relevantVisits = _syncedVisitList.value.filter { it.benId == benId }
         val completed = relevantVisits.map { it.visitDay }.toSet()
 
-        // Baby ki age months use new method
         val babyAgeMonths = getBabyAgeMonths(dobMillis)
         Log.d("HBYC", "Baby age in months: $babyAgeMonths")
 
@@ -333,7 +305,6 @@ fun updateFieldValue(fieldId: String, value: Any?) {
             "15 Months" to 15
         )
 
-        // Eligible months filter based on baby age
         val eligibleMonths = visitOrder.filter { month ->
             val monthValue = visitMonthMapping[month] ?: 0
             val isEligible = monthValue <= babyAgeMonths
@@ -343,7 +314,6 @@ fun updateFieldValue(fieldId: String, value: Any?) {
 
         Log.d("HBYC", "Eligible months after filtering: $eligibleMonths")
 
-        // Sequential visit logic: only next pending visit is editable
         var nextEditableFound = false
 
         return eligibleMonths.map { month ->

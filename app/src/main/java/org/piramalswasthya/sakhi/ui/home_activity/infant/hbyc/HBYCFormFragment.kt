@@ -22,6 +22,7 @@ import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.dynamicAdapter.FormRendererAdapter
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.RvItemBenChildCareChildBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.child_care.child_list.ChildListViewModel
@@ -30,6 +31,7 @@ import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.HBYC_F
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class HBYCFormFragment : Fragment() {
@@ -46,7 +48,9 @@ class HBYCFormFragment : Fragment() {
     private var currentImageField: FormField? = null
     private var tempCameraUri: Uri? = null
     val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-
+    @Inject
+    lateinit var pref: PreferenceDao
+    var langCode=""
     private val galleryLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
@@ -61,7 +65,9 @@ class HBYCFormFragment : Fragment() {
                 currentImageField?.apply {
                     value = it.toString()
                     errorMessage = null
+                    viewModel.updateFieldValue(fieldId, value)
                 }
+                adapter.updateFields(viewModel.getVisibleFields())
                 adapter.notifyDataSetChanged()
             }
         }
@@ -80,7 +86,9 @@ class HBYCFormFragment : Fragment() {
                 currentImageField?.apply {
                     value = tempCameraUri.toString()
                     errorMessage = null
+                    viewModel.updateFieldValue(fieldId, value)
                 }
+                adapter.updateFields(viewModel.getVisibleFields())
                 adapter.notifyDataSetChanged()
             }
         }
@@ -103,7 +111,8 @@ class HBYCFormFragment : Fragment() {
         val isViewMode = args.isViewMode
         benId = args.benId
         hhId = args.hhId
-
+        val currentLang = pref.getCurrentLanguage()  // ye return karega Languages enum value
+        langCode = currentLang.symbol
         childListViewModel.getBenById(benId) { ben ->
             infantBinding.btnHbyc.visibility = View.GONE
             ben?.syncState = null
@@ -114,7 +123,7 @@ class HBYCFormFragment : Fragment() {
 
         childListViewModel.getDobByBenIdAsync(benId) { dobMillis ->
             dob = dobMillis ?: dob
-            viewModel.loadFormSchema(benId, HBYC_FORM_ID, visitDay!!, true, dob)
+            viewModel.loadFormSchema(benId, HBYC_FORM_ID, visitDay!!, true, dob,langCode)
         }
 
         lifecycleScope.launch {
@@ -129,9 +138,9 @@ class HBYCFormFragment : Fragment() {
                     isViewOnly = isViewMode,
                     minVisitDate = minVisitDate,
                     maxVisitDate = maxVisitDate,
-                            isSNCU = viewModel.isSNCU.value ?: false
-//                    isSNCU = true
-                ) { field, value ->
+                    isSNCU = viewModel.isSNCU.value ?: false,
+                    onValueChanged =
+                 { field, value ->
                     if (value == "pick_image") {
                         currentImageField = field
                         showImagePickerDialog()
@@ -140,7 +149,7 @@ class HBYCFormFragment : Fragment() {
                         viewModel.updateFieldValue(field.fieldId, value)
                         adapter.updateFields(viewModel.getVisibleFields())
                     }
-                }
+                },)
 
                 recyclerView.adapter = adapter
                 saveButton.visibility = if (isViewMode) View.GONE else View.VISIBLE

@@ -289,11 +289,19 @@ class NewBenRegFragment : Fragment() {
     private val consentAlert by lazy {
         val alertBinding = AlertConsentBinding.inflate(layoutInflater, binding.root, false)
         alertBinding.textView4.text = resources.getString(R.string.consent_alert_title)
-        alertBinding.checkBox.text = resources.getString(R.string.consent_text)
+        alertBinding.scrollableText.text = resources.getString(R.string.consent_text)
         val alertDialog = MaterialAlertDialogBuilder(requireContext())
             .setView(alertBinding.root)
             .setCancelable(false)
             .create()
+        alertBinding.scrollableText.movementMethod = android.text.method.ScrollingMovementMethod()
+
+
+//        alertDialog.setOnShowListener {
+//            val width = (resources.displayMetrics.widthPixels * 0.9).toInt()  // 90% width
+//            val height = (resources.displayMetrics.heightPixels * 0.5).toInt() // 50% height
+//            alertDialog.window?.setLayout(width, height)
+//        }
         alertBinding.btnNegative.setOnClickListener {
             alertDialog.dismiss()
             try {

@@ -18,7 +18,9 @@ class MDSRFormDataset(
     val pregnancyDeath: Boolean = false,
     val abortionDeath: Boolean = false,
     val deliveryDeath: Boolean = false,
-    val pncDeath: Boolean = false
+    val pncDeath: Boolean = false,
+    val pncDeathCause: Boolean = false,
+    val ancDeathCause: Boolean = false
 
 ) : Dataset(context, currentLanguage) {
 
@@ -321,7 +323,10 @@ class MDSRFormDataset(
         duringAbortion6Weeks.value = if (abortionDeath) "Yes" else "No"
 
         val causeOfDeathValue = if (pregnancyDeath || abortionDeath || deliveryDeath || pncDeath) {
-            "Suspected Maternal death"
+            if(pncDeathCause || ancDeathCause)
+                "Non-maternal death"
+            else
+                "Suspected Maternal death"
         } else {
             "Non-maternal death"
         }

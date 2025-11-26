@@ -59,6 +59,7 @@ class BenListAdapter(
             showCall: Boolean,
             pref: PreferenceDao?,
             context : FragmentActivity
+            benIdList: List<Long>
         ) {
 
             var gender = ""
@@ -85,6 +86,17 @@ class BenListAdapter(
             } else {
                 binding.ivCall.visibility = View.GONE
             }
+
+            val isMatched = benIdList.contains(item.benId)
+            binding.isMatched = isMatched
+
+            binding.btnAbove30.text = if (isMatched) {
+                binding.root.context.getString(R.string.view_edit_eye_surgery)
+            } else {
+                binding.root.context.getString(R.string.add_eye_surgery)
+            }
+
+            binding.executePendingBindings()
 
             gender = item.gender.toString()
 
@@ -124,7 +136,7 @@ class BenListAdapter(
                     if (gender == Gender.MALE.name) {
                         binding.ivHhLogo.setImageResource(R.drawable.ic_males)
                     } else if (gender == Gender.FEMALE.name) {
-                        binding.ivHhLogo.setImageResource(R.drawable.ic_females)
+                        binding.ivHhLogo.setImageResource(R.drawable.ic_female)
                     } else {
                         binding.ivHhLogo.setImageResource(R.drawable.ic_unisex)
                     }
@@ -199,13 +211,14 @@ class BenListAdapter(
                 binding.spouse = false
             }
             binding.executePendingBindings()
-
         }
     }
 
     override fun onCreateViewHolder(
         parent: ViewGroup, viewType: Int
     ) = BenViewHolder.from(parent)
+
+    private val benIds = mutableListOf<Long>()
 
     override fun onBindViewHolder(holder: BenViewHolder, position: Int) {
         holder.bind(
@@ -219,8 +232,15 @@ class BenListAdapter(
             showCall,
             pref,
             context
+            benIds
         )
     }
+    fun submitBenIds(list: List<Long>) {
+        benIds.clear()
+        benIds.addAll(list)
+        notifyDataSetChanged()
+    }
+
 
 
     class BenClickListener(
@@ -230,6 +250,7 @@ class BenListAdapter(
         private val clickedChildben: (hhId: Long, benId: Long, relToHeadId: Int) -> Unit,
         private val clickedHousehold: (hhId: Long) -> Unit,
         private val clickedABHA: (benId: Long, hhId: Long) -> Unit,
+        private val clickedAddAllBenBtn: (benId: Long, hhId: Long, isViewMode: Boolean, isIFA: Boolean) -> Unit,
         private val callBen: (ben: BenBasicDomain) -> Unit
     ) {
         fun onClickedBen(item: BenBasicDomain) = clickedBen(
@@ -259,10 +280,8 @@ class BenListAdapter(
             item.relToHeadId
         )
         fun onClickedHouseHold(item: BenBasicDomain) = clickedHousehold(item.hhId)
-
         fun onClickABHA(item: BenBasicDomain) = clickedABHA(item.benId, item.hhId)
-
+        fun clickedAddAllBenBtn(item: BenBasicDomain, isMatched: Boolean, isIFA: Boolean) = clickedAddAllBenBtn(item.benId, item.hhId, isMatched,isIFA)
         fun onClickedForCall(item: BenBasicDomain) = callBen(item)
     }
-
 }

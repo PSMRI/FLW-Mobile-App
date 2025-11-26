@@ -197,12 +197,19 @@
         <item>HAEMORRHAGE</item>
         <item>HIGH FEVER</item>
         <item>ABORTION</item>
+        <item>Accident</item>
         <item>OTHER</item>
     </string-array>
     <string-array name="anc_confirmation_array">
         <item>Yes</item>
         <item>No</item>
     </string-array>
+      <string-array name="abortion_isplaning_array">
+        <item>Has a PAIUCD been inserted?(Copper-T)\n or</item>
+        <item>Has the woman opted for permanent sterilization (Tubectomy)?</item>
+    </string-array>
+
+
     <string-array name="anc_confirmation_array1">
         <item>No</item>
         <item>Yes</item>
@@ -288,7 +295,8 @@
     <string name="pnc_visit_date">PNC Visit Date</string>
     <string name="pnc_ifa_tabs_given">No. of IFA Tablets given</string>
     <string name="pnc_contraception_method">Method of Contraception</string>
-    <string name="pnc_any_contraception_method">Any Method of Postpartum Contraception (PPC)</string>
+    <string name="pnc_any_contraception_method">Has the couple started any family planning method after delivery?\nAny Postpartum Contraception (PPC)</string>
+
     <string name="pnc_other_ppc_method">Other PPC Method</string>
     <string name="pnc_mother_danger_sign">Mother Danger Sign</string>
     <string name="pnc_other_danger_sign">Other Danger Sign</string>
@@ -341,7 +349,12 @@
         <item>SEVERE ABDOMINAL PAIN</item>
         <item>SEVERE HEADACHE OR BLURRED VISION</item>
         <item>DIFFICULT BREATHING</item>
+        <item>Yellowness of Urine, Skin or Eyes</item>
+        <item>Pale Skin or Eyes</item>
+        <item>Swelling on face, hands and legs</item>
+        <item>Abnormal behaviour</item>
         <item>Any Other</item>
+
     </string-array>
     <string-array name="pnc_referral_facility_array">
         <item>Primary Health Centre</item>
@@ -349,13 +362,17 @@
         <item>District Hospital</item>
         <item>Other Private Hospital</item>
     </string-array>
+
     <string-array name="pnc_death_cause_array">
         <item>ECLAMPSIA</item>
         <item>HAEMORRHAGE (PPH)</item>
         <item>ANAEMIA</item>
         <item>HIGH FEVER</item>
+        <item>Sepsis</item>
+        <item>Accident</item>
         <item>Any Other</item>
     </string-array>
+
     <string-array name="pnc_death_place_array">
         <item>Home</item>
         <item>Hospital</item>
@@ -470,5 +487,35 @@
         <item>Neural Tube Defect (Spinal Bifida)</item>
         <item>Other</item>
     </string-array>
+
+
+    <string name="str_anc_period">ANC Period</string>
+    <string name="str_abortion_if_any">Abortion If Any</string>
+    <string name="str_abortion_type">Abortion Type</string>
+    <string name="str_facility">Facility</string>
+    <string name="str_abortion_date">Abortion Date</string>
+    <string name="str_weight_pw">Weight of PW (Kg) at time Registration</string>
+    <string name="str_bp_of_pw">BP of PW – Systolic/ Diastolic (mm Hg) </string>
+    <string name="str_pulse_rate">Pulse Rate</string>
+    <string name="str_hb">HB (gm/dl)</string>
+    <string name="str_fundal_height">Fundal Height / Size of the Uterus weeks</string>
+    <string name="str_urine_albumin">Urine Albumin</string>
+    <string name="str_random_blood_sugar">Random Blood Sugar Test</string>
+    <string name="str_date_of_tt_first_dose">Date of Td TT (1st Dose)</string>
+    <string name="str_date_of_tt_second_dose">Date of Td TT (2nd Dose)</string>
+    <string name="str_date_of_tt_booster_dose">Date of Td TT (Booster Dose)</string>
+    <string name="str_no_of_acid_tab">No. of Folic Acid Tabs given</string>
+    <string name="str_no_of_ifa_tab">No. of IFA Tabs given</string>
+    <string name="str_any_high_risk_cond">Any High Risk conditions</string>
+    <string name="str_high_risk_cond">High Risk Conditions</string>
+    <string name="str_any_other_high_risk_cond">Any other High Risk conditions</string>
+    <string name="str_referral_facility">Referral Facility</string>
+    <string name="str_hrp_confirmed">Is HRP Confirmed?</string>
+    <string name="str_identified_as_hrp">Who had identified as HRP?</string>
+    <string name="str_maternal_death">Maternal Death</string>
+    <string name="str_cause_of_death">Probable Cause of Death</string>
+    <string name="str_other_cause_of_death">Other Death Cause</string>
+    <string name="str_death_date">Death Date</string>
+    <string name="str_has_pregnant_women_delivered">Has the pregnant woman delivered?</string>
 
 </resources>

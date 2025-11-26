@@ -17,6 +17,7 @@ import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
+import org.piramalswasthya.sakhi.database.room.dao.CbacDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.AgeUnit
@@ -24,7 +25,9 @@ import org.piramalswasthya.sakhi.model.BenBasicCache
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.CbacCache
 import org.piramalswasthya.sakhi.model.Gender
+import org.piramalswasthya.sakhi.model.ReferalCache
 import org.piramalswasthya.sakhi.repositories.CbacRepo
+import org.piramalswasthya.sakhi.repositories.NcdReferalRepo
 import timber.log.Timber
 import java.util.Locale
 import java.util.concurrent.TimeUnit
@@ -37,7 +40,9 @@ class CbacViewModel @Inject constructor(
     state: SavedStateHandle,
     benDao: BenDao,
     preferenceDao: PreferenceDao,
-    private val cbacRepo: CbacRepo
+    var cbacRepo: CbacRepo,
+    var cbacDao: CbacDao,
+    var referalRepo: NcdReferalRepo
 ) : ViewModel() {
 
     enum class State {
@@ -60,6 +65,11 @@ class CbacViewModel @Inject constructor(
         val configuration = Configuration(context.resources.configuration)
         configuration.setLocale(Locale(preferenceDao.getCurrentLanguage().symbol))
         context.createConfigurationContext(configuration).resources
+    }
+     var referralCache: ReferalCache? = null
+
+    fun setReferral(referral: ReferalCache) {
+        this.referralCache = referral
     }
 
     private val _raAgeScore = MutableLiveData(0)
@@ -600,7 +610,16 @@ class CbacViewModel @Inject constructor(
         cbac.ProviderServiceMapID = user!!.serviceMapId
 
         viewModelScope.launch {
+            if (referralCache != null) {
+                cbac.isReffered = true
+            }
             val result = cbacRepo.saveCbacData(cbac, ben)
+            if (referralCache != null){
+
+                referalRepo.saveReferedNCD(referralCache!!)
+
+            }
+
             if (result)
                 _state.value = State.SAVE_SUCCESS
             else

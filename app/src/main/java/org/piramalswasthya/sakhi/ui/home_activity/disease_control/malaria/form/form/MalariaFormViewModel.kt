@@ -9,11 +9,13 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.configuration.MalariaFormDataset
 import org.piramalswasthya.sakhi.database.room.SyncState
+import org.piramalswasthya.sakhi.database.room.dao.MalariaDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.MalariaScreeningCache
 import org.piramalswasthya.sakhi.repositories.BenRepo
@@ -29,12 +31,14 @@ import javax.inject.Inject
 class MalariaFormViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     preferenceDao: PreferenceDao,
+    var malariaDao: MalariaDao,
     @ApplicationContext var context: Context,
     private val malariaRepo: MalariaRepo,
     private val benRepo: BenRepo,
     private val maternalHealthRepo: MaternalHealthRepo,
 
     ) : ViewModel() {
+
     val benId =
         MalariaFormFragmentArgs.fromSavedStateHandle(savedStateHandle).benId
 
@@ -49,6 +53,10 @@ class MalariaFormViewModel @Inject constructor(
     private val _benName = MutableLiveData<String>()
     val benName: LiveData<String>
         get() = _benName
+    private val _visitNo = MutableLiveData<String>()
+    val visitNo: LiveData<String>
+        get() = _visitNo
+
     private val _benAgeGender = MutableLiveData<String>()
     val benAgeGender: LiveData<String>
         get() = _benAgeGender
@@ -63,6 +71,7 @@ class MalariaFormViewModel @Inject constructor(
 
     var isSuspected = false
     var isDeath = false
+    var allVisitsList = malariaDao.getAllVisitsForBen(benId)
 
     private lateinit var malariaScreeningCache: MalariaScreeningCache
     var _isBeneficaryStatusDeath = MutableLiveData<Boolean>()
@@ -70,20 +79,24 @@ class MalariaFormViewModel @Inject constructor(
     val isBeneficaryStatusDeath: LiveData<Boolean>
         get() = _isBeneficaryStatusDeath
 
+
     init {
         viewModelScope.launch {
             val ben = benRepo.getBenFromId(benId)?.also { ben ->
                 _benName.value =
                     "${ben.firstName} ${if (ben.lastName == null) "" else ben.lastName}"
                 _benAgeGender.value = "${ben.age} ${ben.ageUnit?.name} | ${ben.gender?.name}"
+
                 malariaScreeningCache = MalariaScreeningCache(
                     benId = ben.beneficiaryId,
                     houseHoldDetailsId = ben.householdId,
+                    visitId = 1
                 )
             }
 
-            malariaRepo.getMalariaScreening(benId)?.let {
+            malariaRepo.getLatestVisitForBen(benId)?.let {
                 malariaScreeningCache = it
+                _visitNo.value = malariaScreeningCache.visitId.toString()
                 isSuspected = isSuspectedCase(malariaScreeningCache)
                 _recordExists.value = true
                 _isBeneficaryStatusDeath.value = malariaScreeningCache.beneficiaryStatus.equals("Death", ignoreCase = true)
@@ -137,7 +150,10 @@ class MalariaFormViewModel @Inject constructor(
                             benRepo.updateRecord(it)
                         }
                     }
-                    malariaRepo.saveMalariaScreening(malariaScreeningCache)
+                    val lastVisitId = malariaRepo.getlastvisitIdforBen(malariaScreeningCache.benId) ?: 0L
+                    val nextVisitId = lastVisitId + 1
+                    val newScreening = malariaScreeningCache.copy(id = 0, visitId = nextVisitId)
+                    malariaRepo.saveMalariaScreening(newScreening)
                     _state.postValue(State.SAVE_SUCCESS)
                 } catch (e: Exception) {
                     Timber.d("saving malaria data failed!!")

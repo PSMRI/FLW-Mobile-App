@@ -117,7 +117,7 @@ class AshaProfileFragment : Fragment() {
             )
         }
 
-        val householdAdapter = HouseHoldListAdapter(false, prefDao, HouseHoldListAdapter.HouseholdClickListener({
+        val householdAdapter = HouseHoldListAdapter("",false, prefDao, HouseHoldListAdapter.HouseholdClickListener({
             if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
                 findNavController().navigate(
                     AllHouseholdFragmentDirections.actionAllHouseholdFragmentToNewHouseholdFragment(
@@ -153,7 +153,11 @@ class AshaProfileFragment : Fragment() {
                 }
             }
 
-        }))
+        },
+        {
+
+
+        },))
         binding.rvAny.adapter = householdAdapter
 
 

@@ -755,6 +755,28 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
         return -1
     }
 
+    protected fun validateUploads(
+        uploads: List<FormElement>,
+        minRequired: Int = 2
+    ): Int {
+        val uploadCount = uploads.count { !it.value.isNullOrEmpty() }
+
+        return if (uploadCount < minRequired) {
+            uploads.forEach {
+                if (it.value.isNullOrEmpty()) {
+                    it.errorText = resources.getString(R.string.form_input_empty_error)
+                }
+            }
+            0
+        } else {
+            uploads.forEach { it.errorText = null }
+            -1
+        }
+    }
+
+
+
+
    /* protected fun validateIntMinMax(formElement: FormElement): Int {
         formElement.errorText = formElement.value?.takeIf { it.isNotEmpty() }?.toLong()?.let {
             formElement.min?.let { min ->

@@ -83,7 +83,15 @@
         <item>Elderly Woman</item>
         <item>Adolescent Girl</item>
         <item>Permanently Sterilised</item>
+        <item>Not Applicable</item>
     </string-array>
+
+    <string name="dd_ec">Eligible Couple</string>
+    <string name="dd_pw">Pregnant Woman</string>
+    <string name="dd_pm">Postnatal Mother</string>
+    <string name="dd_ew">Elderly Woman</string>
+    <string name="dd_ag">Adolescent Girl</string>
+    <string name="dd_ps">Permanently Sterilised</string>
 
     <string-array name="nbr_marital_status_male_array">
         <item>Unmarried</item>
@@ -224,6 +232,7 @@
         <item>BC</item>
         <item>OBC</item>
         <item>OC</item>
+        <item>PVTG – Primitive Vulnerable Tribal Groups</item>
         <item>Not given</item>
     </string-array>
 

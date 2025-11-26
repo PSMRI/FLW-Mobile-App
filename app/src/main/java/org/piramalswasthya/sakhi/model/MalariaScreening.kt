@@ -19,12 +19,13 @@ import org.piramalswasthya.sakhi.network.MalariaScreeningDTO
         onUpdate = ForeignKey.CASCADE,
         onDelete = ForeignKey.CASCADE
     )],
-    indices = [Index(name = "ind_malariasn", value = ["benId"/* "hhId"*/])]
+    indices = [Index(name = "ind_malariasn", value = ["benId" , "visitId"] , unique = true)]
 )
 data class MalariaScreeningCache(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val benId: Long,
+    var visitId: Long,
     var caseDate: Long = System.currentTimeMillis(),
     val houseHoldDetailsId: Long,
     val screeningDate: Long = System.currentTimeMillis(),
@@ -59,12 +60,17 @@ data class MalariaScreeningCache(
     var vomiting: Boolean ? = false,
     var diarrhea: Boolean ? = false,
     var createdBy: String ? = null,
+    var malariaTestType: Int? = 0,
+    var malariaSlideTestType: Int? = 0,
     var syncState: SyncState = SyncState.UNSYNCED,
 ): FormDataModel {
     fun toDTO(): MalariaScreeningDTO {
         return MalariaScreeningDTO(
             id = 0,
             benId = benId,
+            visitId = visitId,
+            malariaTestType = malariaTestType,
+            malariaSlideTestType = malariaSlideTestType,
             caseDate = getDateTimeStringFromLong(caseDate).toString(),
             houseHoldDetailsId = houseHoldDetailsId,
             caseStatus = caseStatus.toString(),

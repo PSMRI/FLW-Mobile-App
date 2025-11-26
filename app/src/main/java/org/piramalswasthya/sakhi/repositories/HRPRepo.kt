@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.repositories
 
 import android.util.Log
+import android.app.Application
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import kotlinx.coroutines.Dispatchers
@@ -41,9 +42,11 @@ class HRPRepo @Inject constructor(
     private val maternalHealthRepo: MaternalHealthRepo,
     private val ecrRepo: EcrRepo,
     private val preferenceDao: PreferenceDao,
-    private val tmcNetworkApiService: AmritApiService
+    private val tmcNetworkApiService: AmritApiService,
+    private val context: Application,
 
-) {
+
+    ) {
     suspend fun getPregnantAssess(benId: Long): HRPPregnantAssessCache? {
         return withContext(Dispatchers.IO) {
             database.hrpDao.getPregnantAssess(benId)
@@ -1279,10 +1282,12 @@ class HRPRepo @Inject constructor(
                 medicalIssues = cache.medicalIssues,
                 pastCSection = cache.pastCSection,
                 isHighRisk = cache.isHighRisk,
-                isRegistered = false
+                isRegistered = false,
+                isKitHandedOver = false
+
             )
         } else {
-            ecrPost = ecr.asPostModel()
+            ecrPost = ecr.asPostModel(context)
             ecrPost.misCarriage = cache.misCarriage
             ecrPost.homeDelivery = cache.homeDelivery
             ecrPost.medicalIssues = cache.medicalIssues

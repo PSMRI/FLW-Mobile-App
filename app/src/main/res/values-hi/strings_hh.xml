@@ -18,7 +18,7 @@
     <string name="nhhr_title_page_2">घरेलू विवरण</string>
     <string name="nhhr_title_page_3">घरेलू सुविधाएं</string>
 
-    <string name="nhhr_first_name_hof">परिवार के मुखिया का नाम</string>
+    <string name="nhhr_first_name_hof">परिवार के मुखिया का "प्रथम नाम"</string>
     <string name="nhhr_last_name_hof">अंतिम नाम / उपनाम</string>
     <string name="nhhr_mob_no_hof">परिवार के मुखिया का मोबाइल नंबर</string>
     <string name="nhhr_house_no">मकान नंबर</string>
@@ -35,9 +35,9 @@
     <string name="btn_frag_nhhr_next">next</string>
     <string name="nhhr_type_residential_area">आवासीय क्षेत्र का प्रकार</string>
     <string name="nhhr_type_residential_area_1">चयन कीजिए</string>
-    <string name="nhhr_type_residential_area_2">ग्रामीण</string>
-    <string name="nhhr_type_residential_area_3">शहरी</string>
-    <string name="nhhr_type_residential_area_4">आदिवासी</string>
+    <string name="nhhr_type_residential_area_2">ग्रामीण क्षेत्र</string>
+    <string name="nhhr_type_residential_area_3">शहरी क्षेत्र</string>
+    <string name="nhhr_type_residential_area_4">आदिवासी क्षेत्र</string>
     <string name="nhhr_type_residential_area_5">Tea Garden</string>
 
     <string-array name="nhhr_type_residential_area_array">
@@ -45,7 +45,6 @@
         <item>@string/nhhr_type_residential_area_2</item>
         <item>@string/nhhr_type_residential_area_3</item>
         <item>@string/nhhr_type_residential_area_4</item>
-        <item>@string/nhhr_type_residential_area_5</item>
 
     </string-array>
     <string name="nhhr_type_of_house">घर का प्रकार</string>
@@ -64,7 +63,7 @@
         <item>हाँ</item>
         <item>नहीं</item>
     </string-array>
-    <string name="nhhr_separate_kitchen">अलग रसोई</string>
+    <string name="nhhr_separate_kitchen">अलग रसोई घर</string>
     <string-array name="nhhr_separate_kitchen_array">
         <item>हाँ</item>
         <item>नहीं</item>
@@ -76,7 +75,8 @@
     <string name="nhhr_fuel_cooking_4">कोयला</string>
     <string name="nhhr_fuel_cooking_5">मिट्टी का तेल (केरोसिन)</string>
     <string name="nhhr_fuel_cooking_6">रसोई गैस</string>
-    <string name="nhhr_fuel_cooking_7">अन्य</string>
+    <string name="nhhr_fuel_cooking_7">इंडक्शन</string>
+    <string name="nhhr_fuel_cooking_8">अन्य</string>
     <string-array name="nhhr_fuel_cooking_array">
         <item>@string/nhhr_fuel_cooking_1</item>
         <item>@string/nhhr_fuel_cooking_2</item>
@@ -85,6 +85,7 @@
         <item>@string/nhhr_fuel_cooking_5</item>
         <item>@string/nhhr_fuel_cooking_6</item>
         <item>@string/nhhr_fuel_cooking_7</item>
+        <item>@string/nhhr_fuel_cooking_8</item>
     </string-array>
     <string name="nhhr_primary_water">पानी का प्राथमिक स्रोत</string>
     <string name="nhhr_primary_water_1">नल का पानी</string>
@@ -142,7 +143,7 @@
     <string name="btn_frag_nhhr_to_ben">लाभार्थी रजिस्टर करने के लिए जारी रखें</string>
     <string name="consent_alert_title">कृपया सहमति फॉर्म की जांच करें</string>
     <string name="add_head_of_family">ADD Head Of Family</string>
-    <string name="add_head_of_family_message">Would you like to add <b>%1s</b> as a HoF Beneficiary ?</string>
-
+    <string name="add_head_of_family_message">क्या आप <b>%1s</b> को मुखिया को लाभार्थी के रूप में जोड़ें?</string>
+    <string name="hh_no_members">परिवार की जानकारी खाली है</string>
 
 </resources>
