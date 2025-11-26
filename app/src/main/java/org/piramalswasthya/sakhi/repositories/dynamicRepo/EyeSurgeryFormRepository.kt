@@ -9,7 +9,6 @@ import org.json.JSONObject
 import org.piramalswasthya.sakhi.database.room.InAppDb
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.dynamicMapper.FormSubmitRequestMapper
-import org.piramalswasthya.sakhi.model.BottleItem
 import org.piramalswasthya.sakhi.model.dynamicEntity.eye_surgery.EyeSurgeryFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaEntity
@@ -54,7 +53,6 @@ class EyeSurgeryFormRepository @Inject constructor(
                 }
             }
         } catch (e: Exception) {
-            // ignored — fallback below will handle
         }
 
         if (result == null) {
@@ -131,7 +129,6 @@ class EyeSurgeryFormRepository @Inject constructor(
                     val benId = item.beneficiaryId
                     val hhId = item.houseHoldId
 
-                    // Convert all fields to JSON
                     val fieldsJson = JSONObject()
                     item.fields.entrySet().forEach { (key, jsonElement) ->
                         val value = when {
@@ -150,7 +147,6 @@ class EyeSurgeryFormRepository @Inject constructor(
                         fieldsJson.put(key, value)
                     }
 
-                    // Wrap the form payload
                     val fullJson = JSONObject().apply {
                         put("formId", formId)
                         put("beneficiaryId", benId)
@@ -159,7 +155,6 @@ class EyeSurgeryFormRepository @Inject constructor(
                         put("fields", fieldsJson)
                     }
 
-                    // Build entity
                     EyeSurgeryFormResponseJsonEntity(
                         benId = benId,
                         hhId = hhId,
@@ -177,7 +172,6 @@ class EyeSurgeryFormRepository @Inject constructor(
             }
 
             if (entityList.isNotEmpty()) {
-                // Use REPLACE; unique index will collapse duplicates within same month
                 insertAllByMonth(entityList)
             }
 

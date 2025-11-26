@@ -99,8 +99,10 @@ class CUFYFormFragment : Fragment() {
                 currentImageField?.apply {
                     value = it.toString()
                     errorMessage = null
-                }
+                    viewModel.updateFieldValue(fieldId, value)
 
+                }
+                adapter.updateFields(viewModel.getVisibleFields())
                 adapter.notifyDataSetChanged()
             }
         }
@@ -123,7 +125,9 @@ class CUFYFormFragment : Fragment() {
                 currentImageField?.apply {
                     value = tempCameraUri.toString()
                     errorMessage = null
+                    viewModel.updateFieldValue(fieldId, value)
                 }
+                adapter.updateFields(viewModel.getVisibleFields())
                 adapter.notifyDataSetChanged()
             }
         }

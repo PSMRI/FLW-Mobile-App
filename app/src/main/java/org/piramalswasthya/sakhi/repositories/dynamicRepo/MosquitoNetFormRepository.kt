@@ -28,7 +28,7 @@ import javax.inject.Singleton
 class MosquitoNetFormRepository @Inject constructor(
     @ApplicationContext private val context: Context,
     @Named("gsonAmritApi") private val amritApiService: AmritApiService,
-    private val pref: PreferenceDao,
+    private val pref : PreferenceDao,
     private val db: InAppDb
 ) {
     private val formSchemaDao = db.formSchemaDao()

@@ -84,7 +84,9 @@ class BenIfaFormFragment : Fragment() {
                 currentImageField?.apply {
                     value = base64String
                     errorMessage = null
+                    viewModel.updateFieldValue(fieldId, value)
                 }
+                adapter.updateFields(viewModel.getVisibleFields())
                 adapter.notifyDataSetChanged()
             }
         }
@@ -112,7 +114,9 @@ class BenIfaFormFragment : Fragment() {
                 currentImageField?.apply {
                     value = base64String
                     errorMessage = null
+                    viewModel.updateFieldValue(fieldId, value)
                 }
+                adapter.updateFields(viewModel.getVisibleFields())
                 adapter.notifyDataSetChanged()
             }
         }

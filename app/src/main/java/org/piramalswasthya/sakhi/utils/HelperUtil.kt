@@ -19,7 +19,6 @@ import android.text.StaticLayout
 import android.text.TextPaint
 import android.text.TextUtils
 import android.util.Base64
-import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -746,6 +745,4 @@ object HelperUtil {
 
         return listOf(raw)
     }
-
-
 }

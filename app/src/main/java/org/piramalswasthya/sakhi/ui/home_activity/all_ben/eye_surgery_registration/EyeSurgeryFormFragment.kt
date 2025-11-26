@@ -81,7 +81,9 @@ class EyeSurgeryFormFragment : Fragment() {
                 currentImageField?.apply {
                     value = base64String
                     errorMessage = null
+                    viewModel.updateFieldValue(fieldId, value)
                 }
+                adapter.updateFields(viewModel.getVisibleFields())
                 adapter.notifyDataSetChanged()
             }
         }
@@ -109,7 +111,9 @@ class EyeSurgeryFormFragment : Fragment() {
                 currentImageField?.apply {
                     value = base64String
                     errorMessage = null
+                    viewModel.updateFieldValue(fieldId, value)
                 }
+                adapter.updateFields(viewModel.getVisibleFields())
                 adapter.notifyDataSetChanged()
             }
         }

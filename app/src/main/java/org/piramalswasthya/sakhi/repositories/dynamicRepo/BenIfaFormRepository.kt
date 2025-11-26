@@ -28,7 +28,7 @@ import javax.inject.Named
 class BenIfaFormRepository @Inject constructor(
     @ApplicationContext private val context: Context,
     @Named("gsonAmritApi") private val amritApiService: AmritApiService,
-    private val pref : PreferenceDao,
+    private val pref: PreferenceDao,
     private val db: InAppDb
 ) {
     private val formSchemaDao = db.formSchemaDao()
@@ -79,9 +79,9 @@ class BenIfaFormRepository @Inject constructor(
         val entity = FormSchemaEntity(
             formId = schema.formId,
             formName = schema.formName,
-            language = pref.getCurrentLanguage().symbol,
+            language =  pref.getCurrentLanguage().symbol,
             version = schema.version,
-            schemaJson = schema.toJson()
+            schemaJson = schema.toJson(),
         )
         formSchemaDao.insertOrUpdate(entity)
     }
