@@ -27,12 +27,14 @@ object StringMappingUtil {
     @RequiresApi(Build.VERSION_CODES.O)
     fun convertDate(input: String?): String {
         if (input.isNullOrEmpty()) return ""
-
-        val english = convertDigits(input)
-        val inFmt = DateTimeFormatter.ofPattern("dd-MM-yyyy")
-        val outFmt = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-
-        return LocalDate.parse(english, inFmt).format(outFmt)
+        return try {
+                val english = convertDigits(input)
+                val inFmt = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+                val outFmt = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                LocalDate.parse(english, inFmt).format(outFmt)
+            } catch (e: Exception) {
+                ""
+            }
     }
 
     /** Recursively convert Strings, Numbers, Lists, Maps */

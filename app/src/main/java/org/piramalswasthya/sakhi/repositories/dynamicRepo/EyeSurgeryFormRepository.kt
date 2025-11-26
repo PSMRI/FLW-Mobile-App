@@ -27,7 +27,7 @@ import javax.inject.Named
 class EyeSurgeryFormRepository @Inject constructor(
     @ApplicationContext private val context: Context,
     @Named("gsonAmritApi") private val amritApiService: AmritApiService,
-    private var pref: PreferenceDao,
+    private val pref: PreferenceDao,
     private val db: InAppDb
 ) {
     private val formSchemaDao = db.formSchemaDao()
