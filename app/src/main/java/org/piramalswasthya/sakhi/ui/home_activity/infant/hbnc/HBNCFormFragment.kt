@@ -152,7 +152,9 @@ class HBNCFormFragment : Fragment() {
         viewModel.navigateToCdsr.observe(viewLifecycleOwner) { shouldNavigate ->
             if (shouldNavigate == true) {
                 showDeathAlertDialog()
-                viewModel.onNavigationComplete()
+            }
+            else{
+                findNavController().popBackStack()
             }
         }
 
@@ -172,9 +174,9 @@ class HBNCFormFragment : Fragment() {
                     isViewOnly = isViewMode,
                     minVisitDate = minVisitDate,
                     maxVisitDate = maxVisitDate,
-                    isSNCU = viewModel.isSNCU.value ?: false, onValueChanged =
-                        { field, value ->
-
+                    isSNCU = viewModel.isSNCU.value ?: false,
+                    onValueChanged =
+                   { field, value ->
                     if (value == "pick_image") {
                         currentImageField = field
                         showImagePickerDialog()
@@ -331,8 +333,13 @@ class HBNCFormFragment : Fragment() {
         if (hasErrors) return
         lifecycleScope.launch {
             viewModel.saveFormResponses(benId, hhId)
-//            findNavController().previousBackStackEntry?.savedStateHandle?.set("form_submitted", true)
-//            findNavController().popBackStack()
+//            val isBabyAlive = updatedFields.find { it.fieldId == "is_baby_alive" }?.value?.toString() ?: "Yes"
+//            if (isBabyAlive.equals("No", ignoreCase = true)) {
+////                viewModel.triggerNavigate()
+//            } else {
+//                viewModel.triggerPopBack()
+//            }
+
         }
     }
     override fun onStart() {
@@ -384,6 +391,7 @@ class HBNCFormFragment : Fragment() {
             if (isAdded && view != null) {
                 findNavController().navigate(action)
             }
+
         } catch (e: Exception) {
         }
     }

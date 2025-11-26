@@ -24,6 +24,8 @@
     import kotlinx.coroutines.CoroutineScope
     import kotlinx.coroutines.Dispatchers
     import kotlinx.coroutines.Job
+    import kotlinx.coroutines.MainScope
+    import kotlinx.coroutines.cancelChildren
     import kotlinx.coroutines.delay
     import kotlinx.coroutines.launch
     import org.json.JSONArray
@@ -89,13 +91,23 @@
             }
         }
 
+        override fun onViewRecycled(holder: FormViewHolder) {
+            holder.clear()
+            super.onViewRecycled(holder)
+        }
+
         override fun getItemCount(): Int = fields.size
 
         inner class FormViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             private val label: TextView = view.findViewById(R.id.tvLabel)
             private val inputContainer: ViewGroup = view.findViewById(R.id.inputContainer)
+            private val viewHolderScope = MainScope()
             private var muacDebounceJob: Job? = null
 
+
+            fun clear() {
+                viewHolderScope.coroutineContext.cancelChildren()
+            }
 
             fun bind(field: FormField) {
 
@@ -276,14 +288,15 @@
                                 override fun afterTextChanged(s: Editable?) {
                                     val value = s.toString().toFloatOrNull()
                                     field.value = value
-                                    muacDebounceJob?.cancel()
-
-                                    muacDebounceJob = CoroutineScope(Dispatchers.Main).launch {
-                                        delay(3000)
-
-                                        onValueChanged(field, value)
-                                    }
-
+                                    if (field.fieldId.contains("muac", ignoreCase = true)) {
+                                                    muacDebounceJob?.cancel()
+                                                    muacDebounceJob = CoroutineScope(Dispatchers.Main).launch {
+                                                            delay(1500)
+                                                            onValueChanged(field, value)
+                                                        }
+                                                } else {
+                                                    onValueChanged(field, value)
+                                                }
                                 }
 
                                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
