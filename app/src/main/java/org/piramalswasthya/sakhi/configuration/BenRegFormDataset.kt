@@ -1684,7 +1684,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     timeStampDateOfMarriageFromSpouse
                 )
 
-                updateReproductiveOptionsBasedOnAgeGender()
+                updateReproductiveOptionsBasedOnAgeGender(formId = agePopup.id)
 
             }
 
@@ -1711,6 +1711,9 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             }
 
             childRegisteredAtSchool.id -> {
+                if ((getAgeFromDob(getLongFromDate(agePopup.value))) in 3..6) {
+                    typeOfSchool.required = true
+                }
                 triggerDependants(
                     source = childRegisteredAtSchool,
                     passedIndex = index,
@@ -1739,7 +1742,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 }
                 val listChanged = if (hasThirdPage()) {
 
-                    updateReproductiveOptionsBasedOnAgeGender()
+                    updateReproductiveOptionsBasedOnAgeGender(formId = gender.id)
                     triggerDependants(
                         source = rchId,
                         addItems = listOf(reproductiveStatus),
@@ -1779,7 +1782,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     maritalStatus.entries!![0] -> {
                         fatherName.required = true
                         motherName.required = true
-                        updateReproductiveOptionsBasedOnAgeGender()
+                        updateReproductiveOptionsBasedOnAgeGender(formId = maritalStatus.id)
                         return triggerDependants(
                             source = maritalStatus,
                             addItems = emptyList(),
@@ -1803,7 +1806,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                         husbandName.required = true
                         wifeName.required = true
                         wifeName.allCaps = true
-                        updateReproductiveOptionsBasedOnAgeGender()
+                        updateReproductiveOptionsBasedOnAgeGender(formId = maritalStatus.id)
                         return triggerDependants(
                             source = maritalStatus, addItems = when (gender.value) {
                                 gender.entries!![0] -> listOf(wifeName, ageAtMarriage)
@@ -1831,7 +1834,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                         wifeName.allCaps = true
                         fatherName.required = true
                         motherName.required = true
-                        updateReproductiveOptionsBasedOnAgeGender()
+                        updateReproductiveOptionsBasedOnAgeGender(formId = maritalStatus.id)
                         return triggerDependants(
                             source = maritalStatus, addItems = when (gender.value) {
                                 gender.entries!![0] -> listOf(wifeName, ageAtMarriage)
@@ -2495,7 +2498,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         }.timeInMillis
     }
 
-    private fun updateReproductiveOptionsBasedOnAgeGender(): Int {
+    private fun updateReproductiveOptionsBasedOnAgeGender(formId: Int): Int {
         val age = getAgeFromDob(getLongFromDate(agePopup.value))
         val genderIsFemale = gender.value == gender.entries?.get(1)
 
@@ -2626,22 +2629,117 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             }
         }
 
-        val listChanged = if (hasThirdPage()) triggerDependants(
-            source = rchId,
-            addItems = listOf(reproductiveStatus),
-            removeItems = emptyList(),
-            position = -2
-        ) else {
-            fatherName.required = true
-            motherName.required = true
-            triggerDependants(
-                source = rchId,
-                removeItems = listOf(reproductiveStatus),
-                addItems = emptyList()
-            )
-        }
+        if (formId == agePopup.id) {
 
-        return listChanged
+            val listChanged = if (hasThirdPage()) triggerDependants(
+                source = rchId,
+                addItems = listOf(reproductiveStatus),
+                removeItems = emptyList(),
+                position = -2
+            ) else {
+                fatherName.required = true
+                motherName.required = true
+                triggerDependants(
+                    source = rchId,
+                    removeItems = listOf(reproductiveStatus),
+                    addItems = emptyList()
+                )
+            } != -1
+
+            val listChanged2 = triggerDependants(
+                age = getAgeFromDob(getLongFromDate(agePopup.value)),
+                ageTriggerRange = Range(4, 14),
+                target = childRegisteredAtSchool,
+                placeAfter = religion,
+                targetSideEffect = listOf(typeOfSchool)
+            ) != -1
+
+            val listChanged3 =
+                if (maritalStatus.inputType == TEXT_VIEW) -1 else {
+
+                    if (getYearsFromDate(agePopup.value.toString()) <= Konstants.maxAgeForAdolescent) {
+                        fatherName.required = true
+                        motherName.required = true
+
+                        triggerDependants(
+                            source = rchId,
+                            addItems = listOf(birthCertificateNumber, placeOfBirth),
+                            removeItems = listOf(
+                                husbandName,
+                                wifeName,
+                                spouseName,
+                                ageAtMarriage,
+                                dateOfMarriage,
+                                maritalStatus,
+                                reproductiveStatus
+                            ),
+                            position = -2
+                        )
+
+                    } else {
+                        maritalStatus.value = null
+                        triggerDependants(
+                            source = gender,
+                            removeItems = listOf(birthCertificateNumber, placeOfBirth),
+                            addItems = listOf(maritalStatus)
+                        )
+                        if (gender.value == "Female") {
+                            triggerDependants(
+                                source = rchId,
+                                removeItems = listOf(),
+                                addItems = listOf(reproductiveStatus),
+                                position = -2
+                            )
+
+                        } else {
+                            triggerDependants(
+                                source = rchId,
+                                removeItems = listOf(reproductiveStatus),
+                                addItems = listOf()
+                            )
+                        }
+                    }
+                } != -1
+
+            val listChanged4 =
+                if (maritalStatus.inputType == TEXT_VIEW) -1 else {
+                    if (getYearsFromDate(agePopup.value.toString()) <= Konstants.maxAgeForAdolescent || gender.value == gender.entries!![1]) {
+                        triggerDependants(
+                            source = religion,
+                            removeItems = emptyList(),
+                            addItems = listOf(rchId)
+                        )
+                    } else {
+                        triggerDependants(
+                            source = religion,
+                            removeItems = listOf(rchId),
+                            addItems = emptyList()
+                        )
+                    }
+                } != -1
+
+            return if (listChanged || listChanged2 || listChanged3 || listChanged4) 1 else -1
+
+        } else {
+
+            val listChanged = if (hasThirdPage()) triggerDependants(
+                source = rchId,
+                addItems = listOf(reproductiveStatus),
+                removeItems = emptyList(),
+                position = -2
+            ) else {
+                fatherName.required = true
+                motherName.required = true
+                triggerDependants(
+                    source = rchId,
+                    removeItems = listOf(reproductiveStatus),
+                    addItems = emptyList()
+                )
+            }
+
+            return listChanged
+
+        }
 
     }
 
