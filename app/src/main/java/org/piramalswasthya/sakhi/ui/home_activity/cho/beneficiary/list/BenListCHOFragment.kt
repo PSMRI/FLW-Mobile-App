@@ -78,6 +78,15 @@ class BenListCHOFragment : Fragment() {
                 { hhId, benId, isKid ->
 //                    Toast.makeText(requireContext(), "ben clicked", Toast.LENGTH_SHORT).show()
                 },
+                clickedWifeBen = { hhId, benId, relToHeadId ->
+
+                },
+                clickedHusbandBen = { hhId, benId, isKrelToHeadIdid ->
+
+                },
+                clickedChildben = {
+                    hhId,benId,relToHeadId ->
+                },
                 {
 
                 },
@@ -88,7 +97,8 @@ class BenListCHOFragment : Fragment() {
                 ),
 //            showAbha = true,
             role = 1,
-            pref = prefDao
+            pref = prefDao,
+            context = requireActivity()
         )
         binding.rvAny.adapter = benAdapter
         lifecycleScope.launch {

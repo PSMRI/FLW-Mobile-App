@@ -3,7 +3,6 @@ package org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.
 import android.content.Context
 import android.net.Uri
 import android.os.CountDownTimer
-import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
@@ -62,7 +61,7 @@ class NewBenRegViewModel @Inject constructor(
 
 
     val hhId = NewBenRegFragmentArgs.fromSavedStateHandle(savedStateHandle).hhId
-    private val relToHeadId =
+     val relToHeadId =
         NewBenRegFragmentArgs.fromSavedStateHandle(savedStateHandle).relToHeadId
     private val benGender =
         when (NewBenRegFragmentArgs.fromSavedStateHandle(savedStateHandle).gender) {
@@ -80,8 +79,12 @@ class NewBenRegViewModel @Inject constructor(
         var isOtpVerified = false
     }
 
-    private val benIdFromArgs =
+    val benIdFromArgs =
         NewBenRegFragmentArgs.fromSavedStateHandle(savedStateHandle).benId
+     val SelectedbenIdFromArgs =
+        NewBenRegFragmentArgs.fromSavedStateHandle(savedStateHandle).selectedBenId
+
+    private val isAddspouse = NewBenRegFragmentArgs.fromSavedStateHandle(savedStateHandle).isAddSpouse
 
     private val _state = MutableLiveData(State.IDLE)
     val state: LiveData<State>
@@ -105,7 +108,7 @@ class NewBenRegViewModel @Inject constructor(
     fun getIsConsentAgreed() = isConsentAgreed
 
     private lateinit var user: User
-    private val dataset: BenRegFormDataset =
+    val dataset: BenRegFormDataset =
         BenRegFormDataset(context, preferenceDao.getCurrentLanguage())
     val formList = dataset.listFlow
     private lateinit var household: HouseholdCache
@@ -164,12 +167,16 @@ class NewBenRegViewModel @Inject constructor(
                     ) else {
                         val familyList = benRepo.getBenListFromHousehold(hhId)
                         val hoFBen = familyList.firstOrNull { it.beneficiaryId == household.benId }
+                        val selectedben = familyList.firstOrNull { it.beneficiaryId == SelectedbenIdFromArgs }
+
                         dataset.setPageForFamilyMember(
                             ben = if (this@NewBenRegViewModel::ben.isInitialized) ben else null,
                             household = household,
                             hoF = hoFBen, benGender = ben.gender!!,
                             relationToHeadId = relToHeadId,
-                            hoFSpouse = familyList.filter { it.familyHeadRelationPosition == 5 || it.familyHeadRelationPosition == 6 }
+                            hoFSpouse = familyList.filter { it.familyHeadRelationPosition == 5 || it.familyHeadRelationPosition == 6 },
+                            selectedben,
+                            isAddspouse
                         )
                     }
                 } else {
@@ -180,12 +187,16 @@ class NewBenRegViewModel @Inject constructor(
                     ) else {
                         val familyList = benRepo.getBenListFromHousehold(hhId)
                         val hoFBen = familyList.firstOrNull { it.beneficiaryId == household.benId }
+                        val selectedben = familyList.firstOrNull { it.beneficiaryId == SelectedbenIdFromArgs }
+
                         dataset.setPageForFamilyMember(
                             ben = if (this@NewBenRegViewModel::ben.isInitialized) ben else null,
                             household = household,
                             hoF = hoFBen, benGender = benGender!!,
                             relationToHeadId = relToHeadId,
-                            hoFSpouse = familyList.filter { it.familyHeadRelationPosition == 5 || it.familyHeadRelationPosition == 6 }
+                            hoFSpouse = familyList.filter { it.familyHeadRelationPosition == 5 || it.familyHeadRelationPosition == 6 },
+                            selectedben,
+                            isAddspouse
 
                         )
                     }
@@ -222,10 +233,16 @@ class NewBenRegViewModel @Inject constructor(
                             genDetails = BenRegGen(),
                             syncState = SyncState.UNSYNCED,
                             locationRecord = locationRecord,
-                            isConsent = isOtpVerified
+                            isConsent = isOtpVerified,
+
                         )
                     }
                     dataset.mapValues(ben, 2)
+                    if (ben.familyHeadRelationPosition == 5 || ben.familyHeadRelationPosition == 6 ) {
+                        benRepo.updateHousehold(ben.householdId)
+                    } else if (isAddspouse == 1) {
+                        benRepo.updateBeneficiarySpouseAdded(ben.householdId,SelectedbenIdFromArgs)
+                    }
                     if (isHoF) {
                         dataset.updateHouseholdWithHoFDetails(household, ben)
                         householdRepo.updateHousehold(household)
@@ -252,6 +269,7 @@ class NewBenRegViewModel @Inject constructor(
                         household.benId = ben.beneficiaryId
                         householdRepo.updateHousehold(household)
                     }
+
                     _state.postValue(State.SAVE_SUCCESS)
                 } catch (e: IllegalAccessError) {
                     Timber.d("saving Ben data failed!! $e")
@@ -282,6 +300,8 @@ class NewBenRegViewModel @Inject constructor(
     fun getBenName() = "${ben.firstName} ${ben.lastName ?: ""}"
     fun isHoFMarried() = isHoF && ben.genDetails?.maritalStatusId == 2
 
+
+    var wantToAddChild = dataset.isAddingChildren
 
     fun setCurrentImageFormId(id: Int) {
         lastImageFormId = id

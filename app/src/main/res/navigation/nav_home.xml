@@ -116,6 +116,10 @@
         <action
             android:id="@+id/action_allBenFragment_to_newBenRegFragment"
             app:destination="@id/newBenRegFragment" />
+        <action
+            android:id="@+id/action_allBenFragment_to_newChildAsBenRegistrationFragment"
+            app:destination="@id/newChildAsBenRegistrationFragment" />
+
         <argument
             android:name="source"
             android:defaultValue="0"
@@ -617,7 +621,9 @@
         <action
             android:id="@+id/action_householdMembersFragment_to_newBenRegTypeFragment"
             app:destination="@id/newBenRegTypeFragment" />
-        <!--        <action-->
+        <action
+            android:id="@+id/action_householdMembersFragment_to_newChildAsBenRegistrationFragment"
+            app:destination="@id/newChildAsBenRegistrationFragment" />        <!--        <action-->
         <!--            android:id="@+id/action_householdMembersFragment_to_newBenRegL15Fragment"-->
         <!--            app:destination="@id/newBenRegL15Fragment" />-->
         <action
@@ -1033,12 +1039,24 @@
             android:defaultValue="0L"
             app:argType="long" />
         <argument
+            android:name="selectedBenId"
+            android:defaultValue="0L"
+            app:argType="long" />
+        <argument
             android:name="gender"
+            android:defaultValue="0"
+            app:argType="integer" />
+        <argument
+            android:name="isAddSpouse"
             android:defaultValue="0"
             app:argType="integer" />
         <action
             android:id="@+id/action_newBenRegFragment_self"
             app:destination="@id/newBenRegFragment"
+            app:launchSingleTop="true" />
+        <action
+            android:id="@+id/action_newChild_asBenRegFragment"
+            app:destination="@id/newChildAsBenRegistrationFragment"
             app:launchSingleTop="true" />
     </fragment>
     <fragment
@@ -1724,6 +1742,37 @@
             android:name="id"
             android:defaultValue="0L"
             app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/newChildAsBenRegistrationFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.new_child_ben.NewChildAsBenRegistrationFragment"
+        android:label="NewChildAsBenRegistrationFragment" >
+        <argument
+            android:name="hhId"
+            app:argType="long" />
+        <argument
+            android:name="relToHeadId"
+            app:argType="integer" />
+        <argument
+            android:name="benId"
+            android:defaultValue="0L"
+            app:argType="long" />
+        <argument
+            android:name="selectedBenId"
+            android:defaultValue="0L"
+            app:argType="long" />
+        <argument
+            android:name="gender"
+            android:defaultValue="0"
+            app:argType="integer" />
+        <argument
+            android:name="isAddSpouse"
+            android:defaultValue="0"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_newBenRegFragment_self"
+            app:destination="@id/newBenRegFragment"
+            app:launchSingleTop="true" />
     </fragment>
 
 </navigation>

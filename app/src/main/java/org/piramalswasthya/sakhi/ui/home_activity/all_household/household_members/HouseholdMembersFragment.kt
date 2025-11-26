@@ -22,6 +22,7 @@ import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBindin
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.utils.HelperUtil
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -80,6 +81,7 @@ class HouseholdMembersFragment : Fragment() {
         val benAdapter = BenListAdapter(
             clickListener = BenListAdapter.BenClickListener(
                 { hhId, benId, relToHeadId ->
+
                     if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
                         if (viewModel.isFromDisease == 0) {
                             findNavController().navigate(
@@ -87,7 +89,118 @@ class HouseholdMembersFragment : Fragment() {
                                     hhId = hhId,
                                     benId = benId,
                                     gender = 0,
+                                    isAddSpouse = 0,
                                     relToHeadId = relToHeadId
+                                )
+
+                            )
+                        } else {
+                            if (viewModel.diseaseType == IconDataset.Disease.MALARIA.toString()) {
+
+                                findNavController().navigate(
+                                    HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToMalariaFormFragment(
+                                        benId = benId,
+                                    )
+
+                                )
+                            } else if (viewModel.diseaseType == IconDataset.Disease.KALA_AZAR.toString()) {
+                                findNavController().navigate(
+                                    HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToKalaAzarFormFragment(
+                                        benId = benId,
+                                    )
+
+                                )
+                            }
+                        }
+                    }
+                },
+                clickedWifeBen = {
+                        hhId, benId, relToHeadId ->
+
+                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+
+                        if (viewModel.isFromDisease == 0) {
+                            findNavController().navigate(
+                                HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToNewBenRegFragment(
+                                    hhId = hhId,
+                                    benId = 0,
+                                    gender = 2,
+                                    selectedBenId = benId,
+                                    isAddSpouse = 1,
+                                    relToHeadId = HelperUtil.getFemaleRelationId(relToHeadId)
+                                )
+
+                            )
+                        } else {
+                            if (viewModel.diseaseType == IconDataset.Disease.MALARIA.toString()) {
+
+                                findNavController().navigate(
+                                    HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToMalariaFormFragment(
+                                        benId = benId,
+                                    )
+
+                                )
+                            } else if (viewModel.diseaseType == IconDataset.Disease.KALA_AZAR.toString()) {
+                                findNavController().navigate(
+                                    HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToKalaAzarFormFragment(
+                                        benId = benId,
+                                    )
+
+                                )
+                            }
+                        }
+                    }
+                },
+                clickedHusbandBen = {
+                        hhId, benId, relToHeadId ->
+
+                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+                        if (viewModel.isFromDisease == 0) {
+                            findNavController().navigate(
+                                HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToNewBenRegFragment(
+                                    hhId = hhId,
+                                    benId = 0,
+                                    gender = 1,
+                                    selectedBenId = benId,
+                                    isAddSpouse = 1,
+                                    relToHeadId = HelperUtil.getMaleRelationId(relToHeadId)
+                                )
+
+                            )
+                        } else {
+                            if (viewModel.diseaseType == IconDataset.Disease.MALARIA.toString()) {
+
+                                findNavController().navigate(
+                                    HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToMalariaFormFragment(
+                                        benId = benId,
+                                    )
+
+                                )
+                            } else if (viewModel.diseaseType == IconDataset.Disease.KALA_AZAR.toString()) {
+                                findNavController().navigate(
+                                    HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToKalaAzarFormFragment(
+                                        benId = benId,
+                                    )
+
+                                )
+                            }
+                        }
+                    }
+                },
+                clickedChildben = {
+                        hhId, benId, relToHeadId ->
+
+                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+
+                        if (viewModel.isFromDisease == 0) {
+                            findNavController().navigate(
+                                HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToNewChildAsBenRegistrationFragment(
+                                    hhId = hhId,
+                                    benId = 0,
+                                    gender = 2,
+                                    selectedBenId = benId,
+                                    isAddSpouse = 1,
+                                    relToHeadId = HelperUtil.getFemaleRelationId(relToHeadId)
                                 )
 
                             )
@@ -132,11 +245,12 @@ class HouseholdMembersFragment : Fragment() {
                     }
                 }
             ),
+            showRegistrationDate = true,
             showSyncIcon = true,
             showAbha = showAbha,
-            showRegistrationDate = true,
             showCall = true,
-            pref = prefDao
+            pref = prefDao,
+            context = requireActivity()
         )
         binding.rvAny.adapter = benAdapter
 
@@ -191,6 +305,8 @@ class HouseholdMembersFragment : Fragment() {
     private fun checkAndGenerateABHA(benId: Long) {
         viewModel.fetchAbha(benId)
     }
+
+
 
 
 }
