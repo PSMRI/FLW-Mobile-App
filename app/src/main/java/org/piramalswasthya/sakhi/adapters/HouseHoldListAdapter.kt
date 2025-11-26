@@ -6,11 +6,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.RvItemHouseholdBinding
 import org.piramalswasthya.sakhi.model.HouseHoldBasicDomain
-import javax.inject.Inject
 
 
 class HouseHoldListAdapter(private var isDisease: Boolean, val pref: PreferenceDao, private val clickListener: HouseholdClickListener) :
@@ -50,6 +48,7 @@ class HouseHoldListAdapter(private var isDisease: Boolean, val pref: PreferenceD
             binding.household = item
             binding.clickListener = clickListener
             binding.executePendingBindings()
+
            /* if (!isDisease) {
                 binding.button4.visibility = View.VISIBLE
                 binding.button5.visibility = View.GONE
@@ -58,6 +57,7 @@ class HouseHoldListAdapter(private var isDisease: Boolean, val pref: PreferenceD
                 binding.button5.visibility = View.GONE
             }
             */
+
 
 
             if (pref.getLoggedInUser()?.role.equals("asha", true) && isDisease) {

@@ -23,7 +23,9 @@ import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.google.android.material.button.MaterialButton
@@ -35,7 +37,6 @@ import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
-import org.piramalswasthya.sakhi.adapters.FormInputAdapterWithBgIcon
 import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.databinding.AlertConsentBinding
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
@@ -48,7 +49,6 @@ import org.piramalswasthya.sakhi.ui.checkFileSize
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.NewBenRegViewModel.Companion.isOtpVerified
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.NewBenRegViewModel.State
-import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.form.PwAncFormFragment
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 import java.io.File
@@ -195,6 +195,46 @@ class NewBenRegFragment : Fragment() {
                     hhId = viewModel.hhId,
                     gender = spouseGender,
                     relToHeadId = if (spouseGender == 1) 5 else 4
+                )
+            )
+            dialog.dismiss()
+        }
+
+        // on pressing cancel button
+        alertDialog.setNegativeButton(
+            resources.getString(R.string.cancel)
+        ) { dialog, _ ->
+            try {
+                findNavController().navigateUp()
+            } catch (e:Exception){
+                dialog.cancel()
+            }
+            dialog.cancel()
+        }
+        alertDialog.show()
+    }
+
+    private fun showAddSChildAlert() {
+        val alertDialog = MaterialAlertDialogBuilder(requireContext()).setCancelable(false)
+
+        // Setting Dialog Title
+        alertDialog.setTitle("Add Children")
+
+        // Setting Dialog Message
+        alertDialog.setMessage("Would you like to add children's")
+
+        // On pressing Settings button
+        alertDialog.setPositiveButton(
+            "Ok"
+        ) { dialog, _ ->
+            val spouseGender = if (viewModel.getBenGender() == Gender.FEMALE) 1 else 2
+            findNavController().navigate(
+                NewBenRegFragmentDirections.actionNewChildAsBenRegFragment(
+                    hhId = viewModel.hhId,
+                    benId = viewModel.benIdFromArgs,
+                    gender = spouseGender,
+                    selectedBenId = viewModel.SelectedbenIdFromArgs,
+                    relToHeadId = viewModel.relToHeadId
                 )
             )
             dialog.dismiss()
@@ -438,11 +478,31 @@ class NewBenRegFragment : Fragment() {
                         Toast.LENGTH_LONG
                     ).show()
                     WorkerUtils.triggerAmritPushWorker(requireContext())
-                    if (viewModel.isHoFMarried() && !viewModel.isBenMarried) {
+
+                    lifecycleScope.launch {
+                        viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+
+                            if (viewModel.isHoFMarried() && !viewModel.isBenMarried) {
+                                showAddSpouseAlert()
+                            }
+
+                            viewModel.dataset.isAddingChildren.collect { value ->
+                                if (value) {
+                                    showAddSChildAlert()
+                                } else {
+                                    findNavController().navigateUp()
+                                }
+                            }
+                        }
+                    }
+
+
+
+                    /*if (viewModel.isHoFMarried() && !viewModel.isBenMarried) {
                         showAddSpouseAlert()
                     } else {
                         findNavController().navigateUp()
-                    }
+                    }*/
                 }
 
                 State.SAVE_FAILED -> {
@@ -498,6 +558,12 @@ class NewBenRegFragment : Fragment() {
                 1008 -> {
                     notifyDataSetChanged()
 
+                }
+                1012 -> {
+                    val value = viewModel.dataset.ageAtMarriage.value ?: ""
+                    if (value.length >= 2) {
+                        notifyDataSetChanged()
+                    }
                 }
 
                 8 -> {

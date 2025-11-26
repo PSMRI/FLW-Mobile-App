@@ -612,7 +612,37 @@ object HelperUtil {
         }.getOrNull()
     }
 
+     fun getMaleRelationId(relToHeadId: Int): Int {
+        return when (relToHeadId) {
+        // add husbands
+            18 -> 8      // daughter in law and son
+            16 -> 19     // grand daughter and other
+            14 -> 12     // mother in law and father in law
+            12 -> 11     // grand mother and grand father
+            10 -> 16     // daughter and son in law
+            1 -> 1     // Mother
+            19 -> 4     // Mother
 
+            else -> 19
+        }
+    }
+
+     fun getFemaleRelationId(relToHeadId: Int): Int {
+        // add wife
+        return when (relToHeadId) {
+
+            9 -> 17     // son- daugther in law
+            2 -> 0     // father and mother
+            7 -> 17     // nephew and daughter in law
+            17 -> 10    // son in law and Daughter
+            15 -> 19     // grand son and other
+            13 -> 13     // father in law and mother in law
+            11 -> 12     // father in law and mother in law
+            19 -> 5    // father in law and mother in law
+
+            else -> 19
+        }
+    }
 
     fun convertToLocalDate(server: String?): String? {
         if (server.isNullOrBlank()) return null

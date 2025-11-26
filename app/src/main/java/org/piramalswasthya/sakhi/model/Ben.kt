@@ -58,7 +58,7 @@ enum class BenStatus {
 // In your BenBasicCache.kt file, REPLACE the old @DatabaseView with this one.
 @DatabaseView(
     viewName = "BEN_BASIC_CACHE",
-    value = "SELECT b.beneficiaryId as benId, b.isConsent as isConsent, b.motherName as motherName, b.householdId as hhId, b.regDate, b.firstName as benName, b.lastName as benSurname, b.gender, b.dob as dob, b.isDeath,b.isDeathValue,b.dateOfDeath,b.timeOfDeath,b.reasonOfDeath,b.reasonOfDeathId,b.placeOfDeath,b.placeOfDeathId,b.otherPlaceOfDeath, b.familyHeadRelationPosition as relToHeadId" +
+    value = "SELECT b.beneficiaryId as benId,b.isMarried,b.noOfAliveChildren, b.noOfChildren, b.doYouHavechildren ,b.isConsent as isConsent, b.motherName as motherName, b.householdId as hhId, b.regDate, b.firstName as benName, b.lastName as benSurname, b.gender, b.dob as dob, b.isDeath,b.isDeathValue,b.dateOfDeath,b.timeOfDeath,b.reasonOfDeath,b.reasonOfDeathId,b.placeOfDeath,b.placeOfDeathId,b.otherPlaceOfDeath,b.isSpouseAdded,b.isChildrenAdded, b.familyHeadRelationPosition as relToHeadId" +
             ", b.contactNumber as mobileNo, b.fatherName, h.fam_familyHeadName as familyHeadName, b.gen_spouseName as spouseName, b.rchId, b.gen_lastMenstrualPeriod as lastMenstrualPeriod" +
             ", b.isHrpStatus as hrpStatus, b.syncState, b.gen_reproductiveStatusId as reproductiveStatusId, b.isKid, b.immunizationStatus" +
             ", b.loc_village_id as villageId, b.abha_healthIdNumber as abhaId" +
@@ -188,7 +188,13 @@ data class BenBasicCache(
     val isMdsr: Boolean,
     val crFilled: Boolean,
     val doFilled: Boolean,
-    val isConsent: Boolean
+    val isConsent: Boolean,
+    var isSpouseAdded: Boolean,
+    var isChildrenAdded: Boolean,
+    var isMarried: Boolean,
+    var doYouHavechildren: Boolean = false,
+    var noOfChildren: Int = 0,
+    var noOfAliveChildren: Int = 0,
 ) : Parcelable {
     companion object {
         val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
@@ -278,8 +284,6 @@ data class BenBasicCache(
             placeOfDeath = placeOfDeath,
             placeOfDeathId = placeOfDeathId,
             otherPlaceOfDeath = otherPlaceOfDeath,
-
-
             regDate = dateFormat.format(Date(regDate)),
             benName = benName,
             benSurname = benSurname ?: "",
@@ -298,7 +302,15 @@ data class BenBasicCache(
             rchId = rchId?.takeIf { it.isNotEmpty() },
             hrpStatus = hrpStatus,
             syncState = syncState,
-            isConsent = isConsent
+            isConsent = isConsent,
+            isChildrenAdded = isChildrenAdded,
+            isSpouseAdded = isSpouseAdded,
+            isMarried = isMarried,
+            noOfAliveChildren = noOfAliveChildren,
+            noOfChildren = noOfAliveChildren,
+            doYouHavechildren = doYouHavechildren
+
+
 
         )
     }
@@ -321,7 +333,13 @@ data class BenBasicCache(
             hrpStatus = hrpStatus,
             relToHeadId = 0,
             syncState = syncState,
-            isConsent = isConsent
+            isConsent = isConsent,
+            isChildrenAdded =  isChildrenAdded,
+            isSpouseAdded = isSpouseAdded,
+            isMarried = isMarried,
+            noOfAliveChildren = noOfAliveChildren,
+            noOfChildren = noOfAliveChildren,
+            doYouHavechildren = doYouHavechildren
         )
     }
 
@@ -810,7 +828,14 @@ data class BenBasicDomain(
     val rchId: String? = null,
     val hrpStatus: Boolean = false,
     var syncState: SyncState?,
-    val isConsent: Boolean
+    val isConsent: Boolean,
+    var isSpouseAdded: Boolean,
+    var isChildrenAdded: Boolean,
+    var isMarried : Boolean,
+    var doYouHavechildren: Boolean = false,
+    var noOfChildren: Int = 0,
+    var noOfAliveChildren: Int = 0,
+
 ) : Parcelable
 
 
@@ -1253,6 +1278,12 @@ data class BenRegCache(
     var isConsent: Boolean = false,
 
     var isNewAbha: Boolean = false,
+    var isSpouseAdded:  Boolean = false,
+    var isChildrenAdded: Boolean = false,
+    var isMarried: Boolean = false,
+    var doYouHavechildren: Boolean = false,
+    var noOfChildren: Int = 0,
+    var noOfAliveChildren: Int = 0,
 
     )  : FormDataModel {
 
@@ -1442,6 +1473,13 @@ data class BenRegCache(
             reasonOfDeathId = reasonOfDeathId ?: -1,
             placeOfDeathId = placeOfDeathId ?: -1,
             otherPlaceOfDeath = otherPlaceOfDeath?: "",
+            noofAlivechildren = noOfAliveChildren,
+            noOfchildren = noOfChildren,
+            isMarried = isMarried,
+            isChildrenAdded = isChildrenAdded,
+            doYouHavechildren = doYouHavechildren,
+            isSpouseAdded = isSpouseAdded,
+
 
         )
     }

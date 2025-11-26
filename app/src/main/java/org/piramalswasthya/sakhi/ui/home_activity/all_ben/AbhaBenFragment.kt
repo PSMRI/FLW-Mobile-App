@@ -24,11 +24,9 @@ import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.AlertFilterBinding
 import org.piramalswasthya.sakhi.databinding.FragmentAbhaBenBinding
-import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchAndToggleRvButtonBinding
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
-import org.piramalswasthya.sakhi.ui.home_activity.all_household.AllHouseholdFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.home.HomeViewModel
 import timber.log.Timber
 import javax.inject.Inject
@@ -164,7 +162,25 @@ class AbhaBenFragment : Fragment() {
                     }
 
                 },
+                clickedWifeBen = {
+                        hhId, benId, relToHeadId ->
+
+                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+
+                    }
+                },
+                clickedHusbandBen = {
+                        hhId, benId, relToHeadId ->
+
+                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+
+                    }
+                },
+                clickedChildben = { hhId, benId, relToHeadId ->
+
+                },
                 {
+
                 },
                 { benId, hhId ->
                     checkAndGenerateABHA(benId)
@@ -184,12 +200,14 @@ class AbhaBenFragment : Fragment() {
                 }
 
                 ),
-            showAbha = true,
-            showSyncIcon = true,
             showBeneficiaries = true,
             showRegistrationDate = true,
+            showSyncIcon = true,
+            showAbha = true,
             showCall = true,
-            pref = prefDao
+            pref = prefDao,
+            context = requireActivity()
+
         )
         binding.rvNewAbha.adapter = benNewAdapter
 
@@ -203,12 +221,22 @@ class AbhaBenFragment : Fragment() {
                                 hhId = hhId,
                                 benId = benId,
                                 relToHeadId = relToHeadId,
+                                isAddSpouse = 0,
                                 gender = 0
 
                             )
                         )
                     }
 
+                },
+                clickedWifeBen = { hhId, benId, relToHeadId ->
+                },
+                clickedHusbandBen = {
+                        hhId, benId, relToHeadId ->
+
+                },
+                clickedChildben = {
+                        hhId, benId, relToHeadId ->
                 },
                 {
                 },
@@ -230,12 +258,13 @@ class AbhaBenFragment : Fragment() {
                 }
 
             ),
-            showAbha = true,
-            showSyncIcon = true,
             showBeneficiaries = true,
             showRegistrationDate = true,
+            showSyncIcon = true,
+            showAbha = true,
             showCall = true,
-            pref = prefDao
+            pref = prefDao,
+            context = requireActivity()
         )
         binding.rvExistingAbha.adapter = benOldAdapter
 

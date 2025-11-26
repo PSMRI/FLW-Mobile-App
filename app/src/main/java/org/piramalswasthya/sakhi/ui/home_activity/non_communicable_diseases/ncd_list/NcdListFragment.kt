@@ -62,13 +62,25 @@ class NcdListFragment : Fragment() {
             BenListAdapter.BenClickListener(
                 { hhId, benId, isKid ->
                 },
+                clickedWifeBen = { hhId, benId, relToHeadId ->
+
+                },
+                clickedHusbandBen = { hhId, benId, isKrelToHeadIdid ->
+
+                },
+                clickedChildben = {
+                        hhId, benId, isKrelToHeadIdid ->
+                },
                 {
                 },
                 { benId, hhId ->
-                }, {}
+                },
+                {}
 
-                ), true,
-            pref = prefDao
+                ),
+            true,
+            pref = prefDao,
+            context = requireActivity()
         )
         binding.rvAny.adapter = benAdapter
         lifecycleScope.launch {
