@@ -13,6 +13,7 @@
     import android.view.*
     import android.util.Base64
     import android.util.Log
+    import android.view.inputmethod.EditorInfo
     import android.widget.*
     import androidx.appcompat.content.res.AppCompatResources
     import androidx.core.content.ContextCompat
@@ -20,6 +21,13 @@
     import androidx.recyclerview.widget.RecyclerView
     import com.google.android.material.textfield.TextInputEditText
     import com.google.android.material.textfield.TextInputLayout
+    import kotlinx.coroutines.CoroutineScope
+    import kotlinx.coroutines.Dispatchers
+    import kotlinx.coroutines.Job
+    import kotlinx.coroutines.MainScope
+    import kotlinx.coroutines.cancelChildren
+    import kotlinx.coroutines.delay
+    import kotlinx.coroutines.launch
     import org.json.JSONArray
     import org.piramalswasthya.sakhi.R
     import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
@@ -83,11 +91,23 @@
             }
         }
 
+        override fun onViewRecycled(holder: FormViewHolder) {
+            holder.clear()
+            super.onViewRecycled(holder)
+        }
+
         override fun getItemCount(): Int = fields.size
 
         inner class FormViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             private val label: TextView = view.findViewById(R.id.tvLabel)
             private val inputContainer: ViewGroup = view.findViewById(R.id.inputContainer)
+            private val viewHolderScope = MainScope()
+            private var muacDebounceJob: Job? = null
+
+
+            fun clear() {
+                viewHolderScope.coroutineContext.cancelChildren()
+            }
 
             fun bind(field: FormField) {
 
@@ -140,10 +160,13 @@
 
                 }
 
+
+
+
                 when (field.type) {
                     "label" -> {
                         val context = itemView.context
-                        val value = field.value.toString()
+                        val value = field.defaultValue.toString()
 
                         if (!value.isNullOrEmpty()) {
                             val textView = TextView(context).apply {
@@ -162,6 +185,7 @@
 
                             addWithError(textView, field)
                         }
+
                     }
 
                     "text" -> {
@@ -207,9 +231,7 @@
                                     val value = s.toString().toFloatOrNull()
                                     field.value = value
                                     onValueChanged(field, s.toString())
-                                    if (field.fieldId == "muac" && value != null) {
-                                        onShowAlert?.invoke("CHECK_MUAC", value.toString())
-                                    }
+
                                 }
 
                                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -261,11 +283,20 @@
                         }
 
                         if (!isViewOnly) {
+
                             editText.addTextChangedListener(object : TextWatcher {
                                 override fun afterTextChanged(s: Editable?) {
                                     val value = s.toString().toFloatOrNull()
                                     field.value = value
-                                    onValueChanged(field, value)
+                                    if (field.fieldId.contains("muac", ignoreCase = true)) {
+                                                    muacDebounceJob?.cancel()
+                                                    muacDebounceJob = CoroutineScope(Dispatchers.Main).launch {
+                                                            delay(1500)
+                                                            onValueChanged(field, value)
+                                                        }
+                                                } else {
+                                                    onValueChanged(field, value)
+                                                }
                                 }
 
                                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -336,9 +367,7 @@
                                     editText.setText(selected)
                                     field.value = selected
                                     onValueChanged(field, selected)
-                                    if (field.fieldId == "weight_for_height_status") {
-                                        onShowAlert?.invoke("CHECK_WEIGHT_HEIGHT", selected)
-                                    }
+
                                 }
                                 builder.show()
                             }
@@ -348,7 +377,7 @@
                         addWithError(textInputLayout, field)
                     }
 
-                    "date" -> {
+                   /* "date" -> {
                         val context = itemView.context
                         val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
                         val today = Calendar.getInstance().time
@@ -483,6 +512,156 @@
                                         editText.setText(dateStr)
                                         field.value = dateStr
                                         onValueChanged(field, dateStr)
+                                    },
+                                    calendar.get(Calendar.YEAR),
+                                    calendar.get(Calendar.MONTH),
+                                    calendar.get(Calendar.DAY_OF_MONTH)
+                                ).apply {
+                                    minDate?.let { datePicker.minDate = it.time }
+                                    maxDate?.let { datePicker.maxDate = it.time }
+                                }.show()
+                            }
+                        }
+
+                        addWithError(textInputLayout, field)
+                    }*/
+                    "date" -> {
+                        val context = itemView.context
+                        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                        val today = Calendar.getInstance().time
+                        val todayStr = sdf.format(today)
+
+                        // Auto-set visit date if empty
+                        if (field.fieldId == "visit_date" &&
+                            (field.value == null || (field.value as? String)?.isBlank() == true)
+                        ) {
+                            field.value = todayStr
+                        }
+
+                        val isFieldDisabled = field.fieldId == "due_date"
+                        val isFieldEditable = field.isEditable && !isViewOnly && !isFieldDisabled
+
+                        val textInputLayout = TextInputLayout(
+                            context, null,
+                            com.google.android.material.R.style.Widget_Material3_TextInputLayout_OutlinedBox
+                        ).apply {
+                            layoutParams = LinearLayout.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.WRAP_CONTENT
+                            ).apply { setMargins(0, 16, 0, 8) }
+
+                            hint = field.placeholder ?: "Select ${field.label}"
+                            boxBackgroundMode = TextInputLayout.BOX_BACKGROUND_OUTLINE
+                            boxStrokeColor = ContextCompat.getColor(context, R.color.md_theme_light_primary)
+                            boxStrokeWidthFocused = 2
+                            setBoxCornerRadii(12f, 12f, 12f, 12f)
+                        }
+
+                        val editText = TextInputEditText(context).apply {
+                            layoutParams = LinearLayout.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.WRAP_CONTENT
+                            )
+                            setPadding(32, 24, 32, 24)
+                            background = null
+                            setText(field.value as? String ?: "")
+                            isFocusable = false
+                            isClickable = isFieldEditable
+                            isEnabled = isFieldEditable
+                            setCompoundDrawablesWithIntrinsicBounds(
+                                null, null,
+                                ContextCompat.getDrawable(context, R.drawable.ic_calendar),
+                                null
+                            )
+                            compoundDrawablePadding = 24
+                            setTextColor(ContextCompat.getColor(context, android.R.color.black))
+                            setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodyLarge)
+                        }
+
+                        textInputLayout.addView(editText)
+
+                        // ---- HELPER FUNCTIONS ----
+                        fun getDate(fieldId: String): Date? {
+                            val v = fields.find { it.fieldId == fieldId }?.value as? String
+                            return try { sdf.parse(v ?: "") } catch (e: Exception) { null }
+                        }
+
+                        fun setError(fieldId: String, msg: String) {
+                            val f = fields.find { it.fieldId == fieldId }
+                            f?.errorMessage = msg
+                            notifyItemChanged(fields.indexOf(f))
+                        }
+
+                        fun clearError(fieldId: String) {
+                            val f = fields.find { it.fieldId == fieldId }
+                            if (f?.errorMessage != null) {
+                                f.errorMessage = null
+                                notifyItemChanged(fields.indexOf(f))
+                            }
+                        }
+
+                        if (isFieldEditable) {
+                            editText.setOnClickListener {
+                                val calendar = Calendar.getInstance()
+
+                                val minDate = when (field.fieldId) {
+                                    "visit_date" -> null
+                                    "nrc_admission_date" -> getDate("visit_date")
+                                    "nrc_discharge_date" -> getDate("nrc_admission_date")
+                                    "follow_up_visit_date" -> getDate("nrc_discharge_date")
+                                    else -> null
+                                }
+
+                                val maxDate = today
+
+                                DatePickerDialog(
+                                    context,
+                                    { _, year, month, dayOfMonth ->
+                                        val dateStr = String.format("%02d-%02d-%04d", dayOfMonth, month + 1, year)
+                                        editText.setText(dateStr)
+                                        field.value = dateStr
+                                        onValueChanged(field, dateStr)
+
+
+                                        when (field.fieldId) {
+
+                                            "visit_date" -> {
+                                                val admission = fields.find { it.fieldId == "nrc_admission_date" }
+                                                admission?.validation?.minDate = dateStr
+                                                notifyItemChanged(fields.indexOf(admission))
+                                                clearError("nrc_admission_date")
+                                            }
+
+                                            "nrc_admission_date" -> {
+                                                val discharge = fields.find { it.fieldId == "nrc_discharge_date" }
+                                                discharge?.validation?.minDate = dateStr
+                                                notifyItemChanged(fields.indexOf(discharge))
+
+                                                val dischargeDate = getDate("nrc_discharge_date")
+                                                val admissionDate = sdf.parse(dateStr)
+
+                                                if (dischargeDate != null && dischargeDate.before(admissionDate)) {
+                                                    setError("nrc_discharge_date", "Discharge cannot be before admission")
+                                                } else {
+                                                    clearError("nrc_discharge_date")
+                                                }
+                                            }
+
+                                            "nrc_discharge_date" -> {
+                                                val followUp = fields.find { it.fieldId == "follow_up_visit_date" }
+                                                followUp?.validation?.minDate = dateStr
+                                                notifyItemChanged(fields.indexOf(followUp))
+
+                                                val followDate = getDate("follow_up_visit_date")
+                                                val dischargeDate = sdf.parse(dateStr)
+
+                                                if (followDate != null && followDate.before(dischargeDate)) {
+                                                    setError("follow_up_visit_date", "Follow-up cannot be before discharge")
+                                                } else {
+                                                    clearError("follow_up_visit_date")
+                                                }
+                                            }
+                                        }
                                     },
                                     calendar.get(Calendar.YEAR),
                                     calendar.get(Calendar.MONTH),
