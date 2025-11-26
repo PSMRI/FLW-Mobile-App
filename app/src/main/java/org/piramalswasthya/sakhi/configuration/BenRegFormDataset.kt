@@ -343,7 +343,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         title = resources.getString(R.string.nbr_child_reg_school),
         arrayId = R.array.yes_no,
         entries = resources.getStringArray(R.array.yes_no),
-        required = false,
+        required = true,
         hasDependants = true
     )
 
@@ -354,7 +354,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         title = resources.getString(R.string.nbr_child_type_school),
         arrayId = R.array.school_type_array,
         entries = resources.getStringArray(R.array.school_type_array),
-        required = false
+        required = true
     )
 
 
@@ -1711,6 +1711,9 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             }
 
             childRegisteredAtSchool.id -> {
+                if ((getAgeFromDob(getLongFromDate(agePopup.value))) in 3..6) {
+                    typeOfSchool.required = true
+                }
                 triggerDependants(
                     source = childRegisteredAtSchool,
                     passedIndex = index,
@@ -2071,14 +2074,6 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     reproductiveStatus.value = updatedReproductiveOptions[0]
                 }
             } else {
-
-                if (age in 3..6) {
-                    childRegisteredAtSchool.required = true
-                    typeOfSchool.required = true
-                } else {
-                    childRegisteredAtSchool.required = false
-                    typeOfSchool.required = false
-                }
 
                 val saved = benIfDataExist
                 if (saved != null) {
@@ -2562,14 +2557,6 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 reproductiveStatus.value = updatedReproductiveOptions[0]
             }
         } else {
-
-            if (age in 3..6) {
-                childRegisteredAtSchool.required = true
-                typeOfSchool.required = true
-            } else {
-                childRegisteredAtSchool.required = false
-                typeOfSchool.required = false
-            }
 
             val updatedReproductiveOptions = when {
                 !genderIsFemale -> emptyList()
