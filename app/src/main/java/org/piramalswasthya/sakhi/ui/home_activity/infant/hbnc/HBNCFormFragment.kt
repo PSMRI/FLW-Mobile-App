@@ -125,7 +125,7 @@ class HBNCFormFragment : Fragment() {
         benId = args.benId
         hhId = args.hhId
         val currentLang = pref.getCurrentLanguage()  // ye return karega Languages enum value
-         langCode = currentLang.symbol
+        langCode = currentLang.symbol
 
         viewModel.fetchSNCUStatus(benId)
 
@@ -152,7 +152,9 @@ class HBNCFormFragment : Fragment() {
         viewModel.navigateToCdsr.observe(viewLifecycleOwner) { shouldNavigate ->
             if (shouldNavigate == true) {
                 showDeathAlertDialog()
-                viewModel.onNavigationComplete()
+            }
+            else{
+                findNavController().popBackStack()
             }
         }
 
@@ -174,7 +176,7 @@ class HBNCFormFragment : Fragment() {
                     maxVisitDate = maxVisitDate,
                     isSNCU = viewModel.isSNCU.value ?: false,
                     onValueChanged =
-                { field, value ->
+                   { field, value ->
                     if (value == "pick_image") {
                         currentImageField = field
                         showImagePickerDialog()
@@ -184,8 +186,7 @@ class HBNCFormFragment : Fragment() {
                         val updatedVisibleFields = viewModel.getVisibleFields()
                         adapter.updateFields(updatedVisibleFields)
                     }
-                }
-                )
+                },)
 
                 recyclerView.adapter = adapter
 
@@ -332,8 +333,13 @@ class HBNCFormFragment : Fragment() {
         if (hasErrors) return
         lifecycleScope.launch {
             viewModel.saveFormResponses(benId, hhId)
-//            findNavController().previousBackStackEntry?.savedStateHandle?.set("form_submitted", true)
-//            findNavController().popBackStack()
+//            val isBabyAlive = updatedFields.find { it.fieldId == "is_baby_alive" }?.value?.toString() ?: "Yes"
+//            if (isBabyAlive.equals("No", ignoreCase = true)) {
+////                viewModel.triggerNavigate()
+//            } else {
+//                viewModel.triggerPopBack()
+//            }
+
         }
     }
     override fun onStart() {
@@ -385,6 +391,7 @@ class HBNCFormFragment : Fragment() {
             if (isAdded && view != null) {
                 findNavController().navigate(action)
             }
+
         } catch (e: Exception) {
         }
     }

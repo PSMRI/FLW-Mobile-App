@@ -208,14 +208,20 @@ class IncentivesFragment : Fragment() {
                 incentivesActivityList = it
 
             }
-            viewModel.isStateChhattisgarh.observe(viewLifecycleOwner) { isChhattisgarh ->
-                if (isChhattisgarh)
-                    isChhattisgarhVariant = true
-                else
-                    isChhattisgarhVariant = false
-            }
+
 
         }
+
+        lifecycleScope.launch {
+            viewModel.isStateChhattisgarh.observe(viewLifecycleOwner) { isChhattisgarh ->
+                if (isChhattisgarh)
+                {   isChhattisgarhVariant = true
+                binding.tvTotalPending.setCompoundDrawablesRelative(null, null, null, null)
+                }
+                else isChhattisgarhVariant = false
+            }
+        }
+
 
         lifecycleScope.launch {
             viewModel.incentiveList.collect {
@@ -260,9 +266,7 @@ class IncentivesFragment : Fragment() {
             viewModel.setRange(firstDay, lastDay)
         }
 
-        if (isMitaninVariant || isChhattisgarhVariant) {
-            binding.tvTotalPending.setCompoundDrawablesRelative(null, null, null, null)
-        }
+
 
         binding.tvTotalPending.setOnClickListener {
             if (isMitaninVariant || isChhattisgarhVariant) {
