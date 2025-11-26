@@ -1,7 +1,10 @@
 package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
+import android.net.Uri
 import android.text.InputType
+import androidx.lifecycle.MutableLiveData
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Konstants
@@ -25,7 +28,12 @@ import java.util.Calendar
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
-class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
+class EligibleCoupleRegistrationDataset(
+    var reqContext: Context,
+    var context: Context,
+    language: Languages,
+    var showDialogEvent: MutableLiveData<String>
+) :
     Dataset(context, language) {
 
     companion object {
@@ -188,6 +196,48 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
         showDrawable = true
     )
 
+    private val nayiPahelKitHandOver = FormElement(
+        id = 78,
+        inputType = RADIO,
+        title = resources.getString(R.string.ecrdset_is_nai_pahel_kit_handover),
+        arrayId = -1,
+        entries = resources.getStringArray(R.array.yes_no),
+        required = true,
+        hasDependants = true,
+    )
+
+    private val kithandOverDate = FormElement(
+        id = 74,
+        inputType = DATE_PICKER,
+        title = resources.getString(R.string.ecrdset_is_nai_pahel_kit_handover_date),
+        arrayId = -1,
+        required = true,
+        max = System.currentTimeMillis(),
+        min = 0L,
+        hasDependants = true,
+        showDrawable = true
+    )
+
+    private val ashaPhotoTitle = FormElement(
+        id = 77,
+        inputType = HEADLINE,
+        title = resources.getString(R.string.asha_photo),
+        arrayId = -1,
+        required = false
+    )
+
+    private val kitPhotoUploadOne = FormElement(
+        id = 75,
+        inputType = org.piramalswasthya.sakhi.model.InputType.FILE_UPLOAD,
+        title = context.getString(R.string.asha_photo_one),
+        required = false,
+    )
+    private val kitPhotoUploadTwo = FormElement(
+        id = 76,
+        inputType = org.piramalswasthya.sakhi.model.InputType.FILE_UPLOAD,
+        title = context.getString(R.string.asha_photo_two),
+        required = false,
+    )
     private val womanDetails = FormElement(
         id = 6,
         inputType = HEADLINE,
@@ -929,6 +979,12 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
 
     private var lastDeliveryDate = 0L
 
+
+    fun getIndexofAshaKitPhotoOne() = getIndexById(kitPhotoUploadOne.id)
+    fun getIndexofAshaKitPhoto() = getIndexById(kitPhotoUploadTwo.id)
+
+
+
     suspend fun setUpPage(
         ben: BenRegCache?,
         assess: HRPNonPregnantAssessCache?,
@@ -942,6 +998,7 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
 //            age,
             ageAtMarriage,
             lmpDate,
+            nayiPahelKitHandOver,
             womanDetails,
 //            aadharNo,
             bankAccount,
@@ -1031,6 +1088,22 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
             noOfLiveChildren.value = ecCache.noOfLiveChildren.toString()
             numMale.value = ecCache.noOfMaleChildren.toString()
             numFemale.value = ecCache.noOfFemaleChildren.toString()
+            val isKitHandedOver = ecCache.isKitHandedOver == true
+            nayiPahelKitHandOver.value = if (isKitHandedOver) "Yes" else "No"
+            if (isKitHandedOver) {
+                list.addAll(
+                    list.indexOf(nayiPahelKitHandOver) + 1,
+                    listOf(kithandOverDate, ashaPhotoTitle,kitPhotoUploadOne, kitPhotoUploadTwo)
+                )
+                ecCache.kitHandedOverDate?.let { kithandOverDate.value = getDateFromLong(it) }
+                kitPhotoUploadOne.value = ecCache.kitPhoto1
+                kitPhotoUploadTwo.value = ecCache.kitPhoto2
+            } else {
+                kitPhotoUploadOne.value = null
+                kitPhotoUploadTwo.value = null
+            }
+
+
             if (ecCache.noOfLiveChildren > 0) {
                 ecCache.dob1?.let {
                     dob1.value = getDateFromLong(it)
@@ -1222,6 +1295,7 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
 
     }
 
+
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
         return when (formId) {
 
@@ -1231,6 +1305,32 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
 //                updateAgeCheck(dateOfBirth, getLongFromDate(dateOfReg.value))
 //                handleListOnValueChanged(ageCheck.id, 0)
 //            }
+            nayiPahelKitHandOver.id -> {
+                nayiPahelKitHandOver.isEnabled = true
+                if (nayiPahelKitHandOver.value == resources.getStringArray(R.array.yes_no)[0] )
+                {
+
+                    showDialogEvent.value = "Please upload photo of \"couple with Nayi Pahal kit\", to claim your Incentive."
+
+
+                    triggerDependants(
+                        source = nayiPahelKitHandOver,
+                        passedIndex = index,
+                        triggerIndex = 0,
+                        target = listOf(kithandOverDate, ashaPhotoTitle,kitPhotoUploadOne, kitPhotoUploadTwo),
+                    )
+                } else if (nayiPahelKitHandOver.value == resources.getStringArray(R.array.yes_no)[1]) {
+                    triggerforHide(
+                        source = nayiPahelKitHandOver,
+                        passedIndex = index,
+                        triggerIndex = 1,
+                        target = kithandOverDate,
+                        targetSideEffect = listOf(kithandOverDate,ashaPhotoTitle, kitPhotoUploadOne, kitPhotoUploadTwo),
+                    )
+                }
+                0
+            }
+
             rchId.id -> {
                 validateRchIdOnEditText(rchId)
             }
@@ -1853,6 +1953,10 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
                 gender1.entries!![1] -> Gender.FEMALE
                 else -> null
             }
+            ecr.isKitHandedOver = nayiPahelKitHandOver.value.equals("yes", ignoreCase = true)
+            ecr.kitHandedOverDate = getLongFromDate(kithandOverDate.value)
+            ecr.kitPhoto1 = kitPhotoUploadOne.value
+            ecr.kitPhoto2 = kitPhotoUploadTwo.value
             ecr.marriageFirstChildGap =marriageFirstChildGap.value?.filter { it.isDigit() }?.toIntOrNull() ?: 0
               //  marriageFirstChildGap.value?.takeIf { it.isNotBlank() }?.toInt()
             if (noOfLiveChildren.value?.toInt()!! > 1) {
@@ -2064,4 +2168,18 @@ class EligibleCoupleRegistrationDataset(context: Context, language: Languages) :
     fun getIndexOfGap9() = getIndexById(eighthAndNinthChildGap.id)
 
     fun getIndexOfTimeLessThan18() = getIndexById(timeLessThan18m.id)
+
+    fun setImageUriToFormElement(lastImageFormId: Int, dpUri: Uri) {
+        if (lastImageFormId == 75) {
+            kitPhotoUploadOne.value = dpUri.toString()
+            kitPhotoUploadOne.errorText = null
+
+        } else {
+            kitPhotoUploadTwo.value = dpUri.toString()
+            kitPhotoUploadTwo.errorText = null
+
+        }
+
+    }
+
 }

@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.Languages.ASSAMESE
 import org.piramalswasthya.sakhi.helpers.Languages.ENGLISH
 import org.piramalswasthya.sakhi.model.LocationEntity
@@ -53,7 +54,7 @@ class ServiceTypeViewModel @Inject constructor(
     val selectedVillageName: String?
         get() = when (pref.getCurrentLanguage()) {
             ENGLISH -> selectedVillage?.name
-           /* HINDI -> selectedVillage?.nameHindi ?: selectedVillage?.name*/
+            Languages.HINDI -> selectedVillage?.nameHindi ?: selectedVillage?.name
             ASSAMESE -> selectedVillage?.nameAssamese ?: selectedVillage?.name
         }
 
@@ -82,7 +83,7 @@ class ServiceTypeViewModel @Inject constructor(
 
                     }
 
-                   /* HINDI -> {
+                   Languages.HINDI -> {
                         stateDropdownEntry =
                             user.state.let { it.nameHindi ?: it.name }
                         districtDropdownEntry =
@@ -91,7 +92,7 @@ class ServiceTypeViewModel @Inject constructor(
                             user.block.let { it.nameHindi ?: it.name }
                         villageDropdownEntries =
                             user.villages.map { it.nameHindi ?: it.name }.toTypedArray()
-                    }*/
+                    }
 
                     ASSAMESE -> {
                         stateDropdownEntry =

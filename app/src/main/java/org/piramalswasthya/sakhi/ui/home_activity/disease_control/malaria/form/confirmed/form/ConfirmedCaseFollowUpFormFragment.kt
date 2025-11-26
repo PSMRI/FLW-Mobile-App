@@ -37,6 +37,9 @@ class ConfirmedCaseFollowUpFormFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.recordExists.observe(viewLifecycleOwner) { notIt ->
+            binding.fabEdit.visibility = if(notIt) View.VISIBLE else View.GONE
+            binding.btnSubmit.visibility = if (notIt) View.GONE else View.VISIBLE
+
             notIt?.let { recordExists ->
                 val adapter = FormInputAdapter(
                     formValueListener = FormInputAdapter.FormValueListener { formId, index ->
@@ -65,7 +68,9 @@ class ConfirmedCaseFollowUpFormFragment : Fragment() {
         binding.btnSubmit.setOnClickListener {
             submitMalariaScreeningForm()
         }
-
+        binding.fabEdit.setOnClickListener {
+            viewModel.setRecordExist(false)
+        }
         viewModel.state.observe(viewLifecycleOwner) {
             when (it) {
                 ConfirmedCaseFollowUpViewModel.State.SAVE_SUCCESS -> {

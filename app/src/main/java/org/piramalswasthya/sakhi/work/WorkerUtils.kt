@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.work
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.work.Constraints
@@ -69,6 +70,10 @@ object WorkerUtils {
         val pullCbacWorkRequest = OneTimeWorkRequestBuilder<CbacPullFromAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
+
+        val pullReferWorkRequest = OneTimeWorkRequestBuilder<ReferPullFromAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
         val pullHRPWorkRequest = OneTimeWorkRequestBuilder<PullHRPFromAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
@@ -111,7 +116,7 @@ object WorkerUtils {
         val pushHRPToAmritWorker = OneTimeWorkRequestBuilder<PushHRPToAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
-           val pushVLFToAmritWorker = OneTimeWorkRequestBuilder<PushVLFToAmritWorker>()
+        val pushVLFToAmritWorker = OneTimeWorkRequestBuilder<PushVLFToAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
 
@@ -152,6 +157,9 @@ object WorkerUtils {
             .setConstraints(networkOnlyConstraint)
             .build()
 
+        val pullSaasBahuSamelanAmritWorker = OneTimeWorkRequestBuilder<SaasBahuSammelanPullWorker>()
+            .setConstraints(networkOnlyConstraint).build()
+
         val workManager = WorkManager.getInstance(context)
         workManager
             .beginUniqueWork(
@@ -167,12 +175,15 @@ object WorkerUtils {
             .then(pullMosquitoNetFormSyncWorker)
             .then(pullBenIfaFormSyncWorker)
             .then(maaMeetingFormSyncWorkerRequest)
+            .then(pullSaasBahuSamelanAmritWorker)
             .then(pullIncentiveActivityWorkRequest)
             .then(pullCbacWorkRequest)
+            .then(pullReferWorkRequest)
             .then(pullTBWorkRequest)
             .then(pullECWorkRequest)
             .then(pullImmunizationWorkRequest)
             .then(generalOpdPullFromAmritWorker)
+            .then(pullLeprosyToAmritWorker)
 //            .then(pullHBYCFromAmritWorker)
             .then(pullHBNCFromAmritWorker)
             .then(pullHRPWorkRequest)
@@ -182,7 +193,6 @@ object WorkerUtils {
             .then(pullAESToAmritWorker)
             .then(pullkalaAzarToAmritWorker)
             .then(pullFilariaToAmritWorker)
-            .then(pullLeprosyToAmritWorker)
             .then(pushWorkRequest)
             .then(pushCbacWorkRequest)
             .then(pushImmunizationWorkRequest)
@@ -308,6 +318,9 @@ object WorkerUtils {
         val pushLeprosyToAmritWorker = OneTimeWorkRequestBuilder<pushLeprosyAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
+        val pushLaprosyFollowUpAmritWorker = OneTimeWorkRequestBuilder<PushLeprosyFollowUpAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
         val pushFilariaToAmritWorker = OneTimeWorkRequestBuilder<PushFilariaAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
@@ -315,7 +328,14 @@ object WorkerUtils {
             .setConstraints(networkOnlyConstraint)
             .build()
 
+        val pushSaasBahuSamelanAmritWorker = OneTimeWorkRequestBuilder<PushSaasBahuSamelanAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+
         val pushUwinWorkerRequest = OneTimeWorkRequestBuilder<PushUwinToAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pushNcdreferWorkRequest = OneTimeWorkRequestBuilder<NCDReferPushtoAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
 
@@ -328,12 +348,15 @@ object WorkerUtils {
                 pushWorkRequest
             )
             .then(pushMaaMeetingsWorkRequest)
+            .then(pushSaasBahuSamelanAmritWorker)
             .then(pushCbacWorkRequest)
             .then(pushAdolescentWorkRequest)
             .then(pushHRPToAmritWorker)
             .then(pushVLFToAmritWorker)
             .then(pushTBWorkRequest)
             .then(pushECToAmritWorker)
+            .then(pushLeprosyToAmritWorker)
+            .then(pushLaprosyFollowUpAmritWorker)
             .then(pushPWWorkRequest)
             .then(pushPmsmaWorkRequest)
             .then(pushUwinWorkerRequest)
@@ -359,7 +382,8 @@ object WorkerUtils {
             .then(pushAESToAmritWorker)
             .then(pushkalaAzarToAmritWorker)
             .then(pushFilariaToAmritWorker)
-            .then(pushLeprosyToAmritWorker)
+            .then(pushNcdreferWorkRequest)
+
             .enqueue()
     }
 
@@ -402,13 +426,18 @@ object WorkerUtils {
         val pullCbacWorkRequest = OneTimeWorkRequestBuilder<CbacPullFromAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
+
+        val pullReferWorkRequest = OneTimeWorkRequestBuilder<ReferPullFromAmritWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+
         val pullVaccineWorkRequest = OneTimeWorkRequestBuilder<PullVaccinesWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
         val pullHRPWorkRequest = OneTimeWorkRequestBuilder<PullHRPFromAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
-         val pullVLFWorkRequest = OneTimeWorkRequestBuilder<PullVLFFromAmritWorker>()
+        val pullVLFWorkRequest = OneTimeWorkRequestBuilder<PullVLFFromAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
         val maaMeetingFormSyncWorkerRequest = OneTimeWorkRequestBuilder<MaaMeetingDownsyncWorker>()
@@ -481,6 +510,8 @@ object WorkerUtils {
             .setConstraints(networkOnlyConstraint)
             .build()
 
+        val pullSaasBahuSamelanAmritWorker = OneTimeWorkRequestBuilder<SaasBahuSammelanPullWorker>()
+            .setConstraints(networkOnlyConstraint).build()
         val workManager = WorkManager.getInstance(context)
         workManager
             .beginUniqueWork(
@@ -493,12 +524,14 @@ object WorkerUtils {
             .then(pullFilariaMDAFormSyncWorker)
             .then(pullMosquitoNetFormSyncWorker)
             .then(pullBenIfaFormSyncWorker)
+            .then(pullSaasBahuSamelanAmritWorker)
+            .then(pullCbacWorkRequest)
+            .then(pullReferWorkRequest)
             .then(pullIncentiveActivityWorkRequest)
             .then(CUFYORSFormSyncWorker)
             .then(CUFYIFAFormSyncWorker)
             .then(CUFYSAMFormSyncWorker)
             .then(pullUwinWorkerRequest)
-            .then(pullCbacWorkRequest)
             .then(pullVaccineWorkRequest)
             .then(pullTBWorkRequest)
             .then(pullECWorkRequest)
@@ -511,7 +544,6 @@ object WorkerUtils {
             .then(generalOpdPullFromAmritWorker)
             .then(pullMdsrWorkRequest)
             .then(pullCdrWorkRequest)
-
 //            .then(pullHBYCFromAmritWorker)
             .then(pullHBNCFromAmritWorker)
             .then(pullHRPWorkRequest)

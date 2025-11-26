@@ -126,7 +126,7 @@ class BenListAdapter(
                     if (gender == Gender.MALE.name) {
                         binding.ivHhLogo.setImageResource(R.drawable.ic_males)
                     } else if (gender == Gender.FEMALE.name) {
-                        binding.ivHhLogo.setImageResource(R.drawable.ic_females)
+                        binding.ivHhLogo.setImageResource(R.drawable.ic_female)
                     } else {
                         binding.ivHhLogo.setImageResource(R.drawable.ic_unisex)
                     }

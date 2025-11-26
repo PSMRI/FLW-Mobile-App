@@ -40,6 +40,7 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.IncentiveListAdapter
 import org.piramalswasthya.sakhi.adapters.IncentiveGroupedAdapter
@@ -95,6 +96,13 @@ class IncentivesFragment : Fragment() {
     private lateinit var groupedAdapter: IncentiveGroupedAdapter
 
     private val PERMISSION_REQUEST_CODE = 792
+
+
+    private val isMitaninVariant: Boolean by lazy {
+        BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
+    }
+
+    private var isChhattisgarhVariant: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -200,6 +208,12 @@ class IncentivesFragment : Fragment() {
                 incentivesActivityList = it
 
             }
+            viewModel.isStateChhattisgarh.observe(viewLifecycleOwner) { isChhattisgarh ->
+                if (isChhattisgarh)
+                    isChhattisgarhVariant = true
+                else
+                    isChhattisgarhVariant = false
+            }
 
         }
 
@@ -246,8 +260,18 @@ class IncentivesFragment : Fragment() {
             viewModel.setRange(firstDay, lastDay)
         }
 
+        if (isMitaninVariant || isChhattisgarhVariant) {
+            binding.tvTotalPending.setCompoundDrawablesRelative(null, null, null, null)
+        }
+
         binding.tvTotalPending.setOnClickListener {
-            askPermissions()
+            if (isMitaninVariant || isChhattisgarhVariant) {
+
+                Toast.makeText(requireContext(),
+                    getString(R.string.download_not_available_for_this_variant), Toast.LENGTH_SHORT).show()
+            } else {
+                askPermissions()
+            }
         }
 
         binding.et1.setOnClickListener {
@@ -1073,6 +1097,10 @@ class IncentivesFragment : Fragment() {
     }
 
     private fun askPermissions() {
+
+        if (isMitaninVariant || isChhattisgarhVariant) {
+            return
+        }
 
         val sdkversion = Build.VERSION.SDK_INT
 
