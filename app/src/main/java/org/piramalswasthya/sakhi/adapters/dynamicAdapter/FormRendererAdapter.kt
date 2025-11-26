@@ -612,13 +612,7 @@
                                     else -> null
                                 }
 
-                                val maxDate = when (field.fieldId) {
-                                    "visit_date" -> today
-                                    "nrc_admission_date" -> today
-                                    "nrc_discharge_date" -> today
-                                    "follow_up_visit_date" -> today
-                                    else -> today
-                                }
+                                val maxDate = today
 
                                 DatePickerDialog(
                                     context,
