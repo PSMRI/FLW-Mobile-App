@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="incentive_fragment_title">প্ৰৰোচনা</string>
-    <string name="incentive_activity_details">কাৰ্য্যকলাপ: %1s</string>
     <string name="incentive_last_updated">শেষবাৰৰ বাবে %1s ত আপডেইট কৰা হৈছে</string>
-    <string name="asha_incentive_master_claim_form">আশা প্ৰৰোচনামূলক মাষ্টাৰ দাবী প্ৰ-পত্ৰ</string>
     <string name="sdm_ho_or_i_c_block_phc">SDM&amp;HO বা i/c ব্লক PHC</string>
     <string name="sub_submission_of_asha_incentive_claim_for_the_period_from">Sub: ৰ পৰা সময়ছোৱাৰ বাবে আশা প্ৰৰোচনামূলক দাবী দাখিল কৰা</string>
     <string name="for_the_period_from">ৰ পৰা সময়ছোৱাৰ বাবে</string>
@@ -11,4 +9,24 @@
     <string name="with_reference_to_">ওপৰত উল্লেখ কৰা বিষয়টোৰ সন্দৰ্ভত মই আশাৰ প্ৰৰোচনামূলক দাবী দাখিল কৰাৰ গৌৰৱ লাভ কৰিছো</string>
     <string name="as_per_statement">তলত উল্লেখ কৰা বিবৃতি অনুসৰি।</string>
     <string name="sir_madam">ছাৰ/মেডাম,</string>
+    <string name="asha_incentive_master_claim_form">আশা প্ৰৰোচনামূলক মাষ্টাৰ ক্লেইম ফৰ্ম</string>
+    <string name="incentive_activity_details">কাৰ্যকলাপ: %1s</string>
+
+    <string name="incentive_amount_claimed">দাবী কৰা ধনৰাশি (Rs.)</string>
+    <string name="incentive_no_of_claims">দাবীৰ সংখ্যা</string>
+    <string name="incentive_parameter_for_payment">পেমেণ্টৰ বাবে পেৰামিটাৰ</string>
+    <string name="incentive_rate_rs">মূল্য Rs.</string>
+    <string name="incentive_document_submitted">প্ৰদান কৰা নথি</string>
+    <string name="incentive_sub_submission_of_asha_incentive_claim_for_the_period_from_to">বিষয়: ….. পৰা ….. পৰ্য্যন্তৰ সময়ছোৱাৰ বাবে আশা প্ৰেৰণা দাবী দাখিলৰ বিষয়ে</string>
+    <string name="incentive_with_reference_to_the_subject_cited_above">উল্লেখিত বিষয়ৰ প্ৰসংগত, মই মৰমৰ সৈতে তলত উল্লেখ কৰা বিবৰণ অনুসৰি ...... ৰ পৰা ……….. পৰ্যন্ত সময়কালৰ ASHA প্ৰেৰণা দাবীসমূহ জমা দিবলৈ ৰাজি আছো।</string>
+    <string name="incentive_an_amount_of_rs">এটা পৰিমাণ Rs……. (মাত্ৰ …… ৰুপী) ASHA প্ৰেৰণা প্ৰদানৰ বাবে অনুমোদিত হৈছে ……ৰ পৰা ……লৈ, আৰু এই পৰিমাণটো DBTৰ জৰিয়তে একাউণ্টত ডেবিট কৰা হৈছে।</string>
+
+
+    <string name="incentive_processed">প্ৰক্ৰিয়াকৃত মুঠ: ₹ %1d</string>
+    <string name="incentive_pending">বাকী থকা মুঠ : ₹ %1d</string>
+    <string name="incentive_amount">₹ %1d</string>
+    <string name="incentive_ben_details">বেন আইডি: %1d\nনাম: %2s</string>
+    <string name="to">লৈ</string>
+    <string name="to_small">" লৈ "</string>
+
 </resources>
