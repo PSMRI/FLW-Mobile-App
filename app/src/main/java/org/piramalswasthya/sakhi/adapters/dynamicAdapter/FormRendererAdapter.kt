@@ -676,52 +676,6 @@
                         addWithError(textInputLayout, field)
                     }
 
-
-
-//                    "radio" -> {
-//                        val context = itemView.context
-//
-//                        val radioGroup = RadioGroup(context).apply {
-//                            orientation = RadioGroup.HORIZONTAL
-//                            layoutParams = LinearLayout.LayoutParams(
-//                                ViewGroup.LayoutParams.MATCH_PARENT,
-//                                ViewGroup.LayoutParams.WRAP_CONTENT
-//                            ).apply {
-//                                setMargins(0, 8, 0, 8)
-//                            }
-//                        }
-//
-//                        field.options?.forEachIndexed { index, option ->
-//                            val radioButton = RadioButton(context).apply {
-//                                text = option
-//                                isChecked = field.value == option
-//                                isEnabled = !isViewOnly
-//
-//                                layoutParams = LinearLayout.LayoutParams(
-//                                    LinearLayout.LayoutParams.WRAP_CONTENT,
-//                                    LinearLayout.LayoutParams.WRAP_CONTENT
-//                                ).apply {
-//                                    setMargins(0, 0, if (index != field.options!!.lastIndex) 24 else 0, 0) // spacing between radios
-//                                }
-//                            }
-//
-//                            if (!isViewOnly) {
-//                                radioButton.setOnCheckedChangeListener { _, isChecked ->
-//                                    if (isChecked && field.value != option) {
-//                                        field.value = option
-//                                        onValueChanged(field, option)
-//                                    }
-//                                }
-//                            }
-//
-//                            radioGroup.addView(radioButton)
-//                        }
-//
-//                        addWithError(radioGroup, field)
-//                    }
-
-
-
                     "radio" -> {
                         val context = itemView.context
 

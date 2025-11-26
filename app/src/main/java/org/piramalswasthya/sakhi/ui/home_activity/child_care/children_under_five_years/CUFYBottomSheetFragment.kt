@@ -2,7 +2,6 @@ package org.piramalswasthya.sakhi.ui.home_activity.child_care.children_under_fiv
 
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,16 +12,12 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.ChildCareVisitListAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentCUFYBottomSheetBinding
 import org.piramalswasthya.sakhi.model.ChildOption
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
-import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYIFAFormSyncWorker
-import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYORSFormSyncWorker
-import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYSAMFormSyncWorker
 
 @AndroidEntryPoint
 class CUFYBottomSheetFragment : BottomSheetDialogFragment() {
