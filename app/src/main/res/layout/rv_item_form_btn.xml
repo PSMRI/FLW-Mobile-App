@@ -19,7 +19,7 @@
             android:id="@+id/generate_otp"
             android:layout_width="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_height="40dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_small"
             android:layout_marginEnd="16dp"
             android:text="@string/send_otp"

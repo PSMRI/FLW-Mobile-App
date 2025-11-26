@@ -60,11 +60,17 @@
         <item>বিলিটৰ সড়ক</item>
         <item>উচ্চ জ্বৰ</item>
         <item>গৰ্ভপাত</item>
+        <item>দুৰ্ঘটনা</item>
         <item>অন্য</item>
     </string-array>
     <string-array name="anc_confirmation_array">
         <item>হয়</item>
         <item>নহয়</item>
+    </string-array>
+
+    <string-array name="abortion_isplaning_array">
+        <item>Has a PAIUCD been inserted?(Copper-T)\n or</item>
+        <item>Has the woman opted for permanent sterilization (Tubectomy)?</item>
     </string-array>
     <string-array name="anc_confirmation_array1">
         <item>নহয়</item>
@@ -123,7 +129,6 @@
     <string name="pmsma_calcium_supplementation">কেলচিয়াম সুপ্লিমেণ্টেচন</string>
     <string name="pmsma_tetanus_toxoid">টেটেনাছ ট’কচইড</string>
     <string name="pmsma_lmp">LMP (আদি মাসিকৰ দিন)</string>
-    <string name="pmsma_edd">প্ৰত্যাশিত ডেলিভাৰী</string>
     <string name="pmsma_last_mestrual_period">শেষ মাসিকৰ সময়</string>
     <string name="pmsma_expected_delivery_date">পৰামিতা ডেলিভাৰীৰ তাৰিখ</string>
     <string name="pmsma_high_risk_factors">উচ্চ আপাতকাৰী সাঁচ</string>
@@ -270,6 +275,10 @@
         <item>বৃদ্ধ পেটৰ ব্যাথা</item>
         <item>বৃদ্ধ মাথৰ ব্যাথা অথবা মিশৰা চাবলৈ</item>
         <item>শ্বাৱাস নেহৰি পাব</item>
+        <item>প্ৰস্ৰাৱ, ছাল বা চকু হালধীয়া হোৱা</item>
+        <item>ছাল বা চকু শেঁতা পৰা </item>
+        <item>মুখ, হাত আৰু ভৰিত ফুলা</item>
+        <item>অস্বাভাৱিক আচৰণ </item>
         <item>অন্যান্য</item>
     </string-array>
     <string-array name="pnc_referral_facility_array">
@@ -283,6 +292,8 @@
         <item>জ্বৰৰ পৰা মৰণ (PPH)</item>
         <item>এনিমিয়া</item>
         <item>উচ্চ জ্বৰ</item>
+        <item>চেপ্চিছ</item>
+        <item>দুৰ্ঘটনা</item>
         <item>অন্যান্য</item>
     </string-array>
     <string-array name="pnc_death_place_array">
@@ -336,5 +347,38 @@
         <item>নিউৰেল টিউব ডিফেক্ট (স্পাইনেল বিফাইদা)</item>
         <item>অন্য দোষ</item>
     </string-array>
+
+    <string name="pmsma_edd">প্ৰত্যাশিত প্ৰসৱ</string>
+    <string name="string_edd">প্ৰত্যাশিত প্ৰসৱৰ তাৰিখ</string>
+<!--    <string name="string_anc_date">গৰ্ভাৱস্থাৰ যত্নৰ তাৰিখ</string>-->
+<!--    <string name="str_weeks_of_preg">গৰ্ভাৱস্থাৰ সপ্তাহ</string>-->
+    <string name="str_anc_period">গৰ্ভাৱস্থাৰ যত্নকাল</string>
+    <string name="str_abortion_if_any">আগতে গৰ্ভপাত হৈছিল নে?</string>
+    <string name="str_abortion_type">গৰ্ভপাতৰ প্ৰকাৰ</string>
+    <string name="str_facility">কেন্দ্ৰ</string>
+    <string name="str_abortion_date">গৰ্ভপাতৰ তাৰিখ</string>
+    <string name="str_weight_pw">নিবন্ধনৰ সময়ত গৰ্ভৱতী মহিলাৰ ওজন (কিলোগ্ৰামত)</string>
+    <string name="str_bp_of_pw">গৰ্ভৱতী মহিলাৰ ৰক্তচাপ – সিস্ট’লিক/ডায়াষ্ট’লিক (মি.মি. এইচ.জি.)</string>
+    <string name="str_pulse_rate">নাড়ীৰ গতি</string>
+    <string name="str_hb">এইচবি (গ্ৰাম/ডিএল)</string>
+    <string name="str_fundal_height">গৰ্ভাশয়ৰ উচ্চতা / আকাৰ (সপ্তাহত)</string>
+    <string name="str_urine_albumin">প্ৰস্ৰাৱত এলবুমিন</string>
+    <string name="str_random_blood_sugar">ৰেণ্ডম ব্লাড চুগাৰ পৰীক্ষা</string>
+    <string name="str_date_of_tt_first_dose">টিডি টিটি তাৰিখ (১ম ড’জ)</string>
+    <string name="str_date_of_tt_second_dose">টিডি টিটি তাৰিখ (২য় ড’জ)</string>
+    <string name="str_date_of_tt_booster_dose">টিডি টিটি তাৰিখ (বুস্টাৰ ড’জ)</string>
+    <string name="str_no_of_acid_tab">প্ৰদান কৰা ফলিক এচিড টেবলেটৰ সংখ্যা</string>
+    <string name="str_no_of_ifa_tab">প্ৰদান কৰা আইএফএ টেবলেটৰ সংখ্যা</string>
+    <string name="str_any_high_risk_cond">কোনো উচ্চ-ঝুঁকিপূৰ্ণ অৱস্থা</string>
+    <string name="str_high_risk_cond">উচ্চ-ঝুঁকিপূৰ্ণ অৱস্থা</string>
+    <string name="str_any_other_high_risk_cond">আন কোনো উচ্চ-ঝুঁকিপূৰ্ণ অৱস্থা</string>
+    <string name="str_referral_facility">ৰেফাৰেল সুবিধা</string>
+    <string name="str_hrp_confirmed">HRP নিশ্চিত কৰা হৈছে নে?</string>
+    <string name="str_identified_as_hrp">কাক দ্বাৰা HRP হিচাপে চিনাক্ত কৰা হৈছিল?</string>
+    <string name="str_maternal_death">মাতৃ মৃত্যুৰ ঘটনা</string>
+    <string name="str_cause_of_death">মৃত্যুৰ সম্ভাব্য কাৰণ</string>
+    <string name="str_other_cause_of_death">মৃত্যুৰ অন্য কাৰণ</string>
+    <string name="str_death_date">মৃত্যুৰ তাৰিখ</string>
+    <string name="str_has_pregnant_women_delivered">গৰ্ভৱতী মহিলাই প্ৰসৱ কৰিছে নে?</string>
 
 </resources>

@@ -81,6 +81,13 @@ class NcdListFragment : Fragment() {
             true,
             pref = prefDao,
             context = requireActivity()
+                { benId, hhId, isViewMode, isIFA ->
+                },
+                {
+
+                }
+                ), true,
+            pref = prefDao
         )
         binding.rvAny.adapter = benAdapter
         lifecycleScope.launch {

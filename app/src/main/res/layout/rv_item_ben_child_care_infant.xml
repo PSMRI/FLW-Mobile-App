@@ -41,18 +41,6 @@
                 android:paddingHorizontal="@dimen/padding_tiny"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <!--                <ImageView-->
-                <!--                    android:id="@+id/iv_hh_logo"-->
-                <!--                    android:layout_width="wrap_content"-->
-                <!--                    android:layout_height="0dp"-->
-                <!--                    android:paddingVertical="@dimen/padding_normal"-->
-                <!--                    android:src="@drawable/ic__hh"-->
-                <!--                    app:layout_constraintBottom_toBottomOf="parent"-->
-                <!--                    app:layout_constraintStart_toStartOf="parent"-->
-                <!--                    app:layout_constraintTop_toTopOf="parent"-->
-                <!--                    app:tint="?attr/colorPrimary" />-->
-
-
                 <TextView
                     android:id="@+id/tv_hh_id"
                     android:layout_width="0dp"
@@ -287,12 +275,33 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     app:layout_constraintTop_toBottomOf="@id/ll_ben_details_2">
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:padding="@dimen/padding_small">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/date_of_birth"
+                            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                            android:textColor="?attr/colorOnPrimary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@{ben.dobString}"
+                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                            android:textColor="?attr/colorOnPrimary"
+                            tools:text="0123456789" />
+                    </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        rchId="@{ben}"
                         android:orientation="vertical"
                         android:padding="@dimen/padding_small">
 

@@ -1,56 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="wrap_content"
     android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:maxHeight="500dp"
+    android:orientation="vertical"
     android:paddingBottom="@dimen/padding_wide">
 
     <com.google.android.material.textview.MaterialTextView
-        android:background="?attr/colorPrimary"
         android:id="@+id/textView4"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
         android:padding="@dimen/padding_normal"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
         android:textColor="?attr/colorOnPrimary"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        />
+    <!-- FIX: Consent container ko fixed height di -->
+    <LinearLayout
+        android:id="@+id/consentContainer"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/textView4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <CheckBox
-        android:id="@+id/checkBox"
+        <CheckBox
+            android:id="@+id/checkBox"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="top|start" />
+
+        <!-- FIX: Scroll area ko full height di -->
+        <ScrollView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:fillViewport="true">
+
+            <TextView
+                android:id="@+id/scrollableText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="vertical"
+                android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                android:text="@string/consent_text"
+                android:paddingStart="@dimen/margin_normal"
+                android:paddingEnd="@dimen/margin_normal" />
+        </ScrollView>
+
+    </LinearLayout>
+
+<!--    <com.google.android.material.button.MaterialButton-->
+<!--        android:id="@+id/btn_negative"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_margin="@dimen/margin_normal"-->
+<!--        android:text="@string/disagree"-->
+<!--        android:textColor="?attr/colorOnPrimary"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/consentContainer"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintEnd_toStartOf="@id/btn_positive" />-->
+
+<!--    <com.google.android.material.button.MaterialButton-->
+<!--        android:id="@+id/btn_positive"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_margin="@dimen/margin_normal"-->
+<!--        android:text="@string/agree"-->
+<!--        android:textColor="?attr/colorOnPrimary"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/consentContainer"-->
+<!--        app:layout_constraintStart_toEndOf="@id/btn_negative"-->
+<!--        app:layout_constraintEnd_toEndOf="parent" />-->
+
+
+    <LinearLayout
+        android:id="@+id/buttonContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_normal"
-        android:gravity="start|top"
-
-        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-        app:layout_constraintTop_toBottomOf="@+id/textView4"
-        tools:text="@string/consent_text" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_negative"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="@string/disagree"
-        android:layout_margin="@dimen/margin_normal"
-        android:textColor="?attr/colorOnPrimary"
-        app:layout_constraintEnd_toStartOf="@+id/btn_positive"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/checkBox" />
-
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_positive"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="@string/agree"
-        android:textColor="?attr/colorOnPrimary"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="@dimen/margin_normal"
-        app:layout_constraintStart_toEndOf="@+id/btn_negative"
-        app:layout_constraintTop_toBottomOf="@+id/checkBox" />
+        app:layout_constraintTop_toBottomOf="@+id/consentContainer"
+        android:layout_marginTop="15dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_negative"
+            android:layout_width="0dp"
+            android:layout_marginEnd="3dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/disagree" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_positive"
+            android:layout_width="0dp"
+            android:layout_marginStart="3dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/agree" />
+    </LinearLayout>
+</LinearLayout>

@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="pwrdst_rich_id">RCH ID</string>
-    <string name="pwrdst_mcp_card_no">MCP Card No</string>
-    <string name="pwrdst_name_prag_wo">Name of Pregnant Women</string>
-    <string name="pwrdst_name_hus">Name of Husband</string>
-    <string name="pwrdst_curr_age_wo">Current Age of Woman</string>
-    <string name="pwrdst_lmp_date">LMP Date</string>
-    <string name="pwrdst_wk_of_prag_reg">Weeks of Pregnancy at the time of Registration</string>
-    <string name="pwrdst_edd">EDD</string>
-    <string name="pwrdst_bld_grp">Blood Group</string>
-    <string name="pwrdst_wht_of_tm_reg">Weight of PW (Kg) at time Registration</string>
-    <string name="pwrdst_hht_of_pw">Height of PW (Cm)</string>
-    <string name="pwrdst_vdrl_rpr_tst_rlts">VDRL/RPR Test result</string>
-    <string name="pwrdst_vdrl_tst_done">Date of VDRL Test done</string>
-    <string name="pwrdst_hiv_tst_rlt">HIV Test result</string>
-    <string name="pwrdst_date_hiv_tst_done">Date of HIV Test done</string>
-    <string name="pwrdst_hbsag_tst_rlt">HBsAg Test result</string>
-    <string name="pwrdst_hbsag_tst_done">Date of HbsAg Test done</string>
-    <string name="pwrdst_pst_illness">Past Illness</string>
-    <string name="pwrdst_other">other</string>
-    <string name="pwrdst_is_prag">Is this your 1st pregnancy?</string>
-    <string name="pwrdst_no_of_prev_prag">Total no. of previous Pregnancy</string>
-    <string name="pwrdst_any_lst_pregnancy">Any complications in Last Pregnancy</string>
-    <string name="pwrdst_any_other_comp">Any other Complication</string>
-    <string name="pwrdst_is_id_as_hrp_cse">Is Identified as HRP cases?</string>
     <array name="pwrdst_yes_no">
-        <item>Yes</item>
-        <item>No</item>
+        <item>हाँ</item>
+        <item>नहीं</item>
     </array>
-    <string name="pwrdst_who_id_as_hrp">Who had identified as HRP?</string>
+    <string name="pwrdst_rich_id">आरसीएच आईडी</string>
+    <string name="pwrdst_mcp_card_no">एमसीपी कार्ड संख्या</string>
+    <string name="pwrdst_name_prag_wo">गर्भवती महिला का नाम</string>
+    <string name="pwrdst_name_hus">पति का नाम</string>
+    <string name="pwrdst_curr_age_wo">महिला की वर्तमान आयु</string>
+    <string name="pwrdst_lmp_date">अंतिम मासिक धर्म की तिथि (LMP)</string>
+    <string name="pwrdst_wk_of_prag_reg">पंजीकरण के समय गर्भावस्था के सप्ताह</string>
+    <string name="pwrdst_edd">अनुमानित प्रसव तिथि (EDD)</string>
+    <string name="pwrdst_bld_grp">रक्त समूह</string>
+    <string name="pwrdst_wht_of_tm_reg">पंजीकरण के समय गर्भवती महिला का वजन (किलो में)</string>
+    <string name="pwrdst_hht_of_pw">गर्भवती महिला की लंबाई (सेंटीमीटर में)</string>
+    <string name="pwrdst_vdrl_rpr_tst_rlts">वीडीआरएल/आरपीआर टेस्ट परिणाम</string>
+    <string name="pwrdst_vdrl_tst_done">वीडीआरएल टेस्ट की तिथि</string>
+    <string name="pwrdst_hiv_tst_rlt">एचआईवी टेस्ट परिणाम</string>
+    <string name="pwrdst_date_hiv_tst_done">एचआईवी टेस्ट की तिथि</string>
+    <string name="pwrdst_hbsag_tst_rlt">एचबीएसएजी टेस्ट परिणाम</string>
+    <string name="pwrdst_hbsag_tst_done">एचबीएसएजी टेस्ट की तिथि</string>
+    <string name="pwrdst_pst_illness">पूर्व में हुई बीमारियाँ</string>
+    <string name="pwrdst_other">अन्य</string>
+    <string name="pwrdst_is_prag">क्या यह आपकी पहली गर्भावस्था है?</string>
+    <string name="pwrdst_no_of_prev_prag">पिछली गर्भावस्थाओं की कुल संख्या</string>
+    <string name="pwrdst_any_lst_pregnancy">पिछली गर्भावस्था में कोई जटिलताएँ</string>
+    <string name="pwrdst_any_other_comp">कोई अन्य जटिलता</string>
+    <string name="pwrdst_is_id_as_hrp_cse">क्या उच्च जोखिम वाली गर्भावस्था (HRP) के रूप में पहचानी गई है?</string>
+    <string name="pwrdst_who_id_as_hrp">किसने HRP के रूप में पहचाना?</string>
 </resources>

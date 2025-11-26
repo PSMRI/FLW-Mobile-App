@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import com.google.gson.Gson
 import dagger.hilt.android.qualifiers.ApplicationContext
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.Languages
@@ -138,7 +139,7 @@ class PreferenceDao @Inject constructor(@ApplicationContext private val context:
         val key = context.getString(R.string.PREF_current_saved_language)
         return when (pref.getString(key, null)) {
             Languages.ASSAMESE.symbol -> Languages.ASSAMESE
-         /*   Languages.HINDI.symbol -> Languages.HINDI*/
+            Languages.HINDI.symbol -> Languages.HINDI
             Languages.ENGLISH.symbol -> Languages.ENGLISH
             else -> Languages.ENGLISH
         }

@@ -3,8 +3,10 @@ package org.piramalswasthya.sakhi.ui
 import android.content.Context
 import android.net.Uri
 import android.os.Build
+import android.provider.OpenableColumns
 import android.text.Html
 import android.text.InputType
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
@@ -17,6 +19,7 @@ import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.divider.MaterialDivider
 import com.google.android.material.textfield.TextInputEditText
@@ -85,6 +88,15 @@ fun Button.setVaccineState(syncState: VaccineState?) {
 fun setFormattedDate(view: TextView, timestamp: Long?) {
     timestamp?.let {
         val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        view.text = sdf.format(Date(it))
+    }
+}
+
+
+@BindingAdapter("formattedDatewitheMonth")
+fun setFormattedDateWithMonth(view: TextView, timestamp: Long?) {
+    timestamp?.let {
+        val sdf = SimpleDateFormat("dd-MM-yyyy , MMM", Locale.getDefault())
         view.text = sdf.format(Date(it))
     }
 }
@@ -435,6 +447,18 @@ fun getFileSize(uri: Uri,context: Context): Long {
     } ?: 0L
 }
 
+fun getByteArrayFromUri(uri: Uri,context: Context): ByteArray {
+    val inputStream = context.contentResolver.openInputStream(uri)
+    return inputStream?.readBytes() ?: byteArrayOf()
+}
+ fun getFileName(uri: Uri,context: Context): String {
+    val cursor = context.contentResolver.query(uri, null, null, null, null)
+    cursor?.use {
+        val index = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+        if (it.moveToFirst()) return it.getString(index)
+    }
+    return "file_${System.currentTimeMillis()}"
+}
 @RequiresApi(Build.VERSION_CODES.N)
 @BindingAdapter("asteriskRequired", "hintText")
 fun TextView.setAsteriskTextView(required: Boolean?, title: String?) {
@@ -479,3 +503,20 @@ fun setFormattedSessionDate(textView: TextView, timestamp: Long?) {
     }
 }
 
+@BindingAdapter(value = ["visibleIfAgeAbove30AndAliveAge", "isDeath"], requireAll = true)
+fun Button.visibleIfAgeAbove30AndAlive(age: Int?, isDeath: String?) {
+    val shouldShow = (age ?: 0) >= 30 && isDeath.equals("false", ignoreCase = true)
+    visibility = if (shouldShow) View.VISIBLE else View.GONE
+}
+
+@BindingAdapter(value = ["visibleIfEligibleFemale", "isDeath", "reproductiveStatusId", "gender"], requireAll = true)
+fun Button.visibleIfEligibleFemale(age: Int?, isDeath: String?, reproductiveStatusId: Int?, gender: String?) {
+
+    val shouldShow =
+        (gender.equals("female", ignoreCase = true)) &&
+                ((age ?: 0) in 20..49) &&
+                (reproductiveStatusId == 1 || reproductiveStatusId == 2) &&
+                isDeath.equals("false", ignoreCase = true)
+
+    visibility = if (shouldShow) View.VISIBLE else View.GONE
+}

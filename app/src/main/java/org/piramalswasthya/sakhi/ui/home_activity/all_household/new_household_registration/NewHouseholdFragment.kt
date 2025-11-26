@@ -47,8 +47,10 @@ class NewHouseholdFragment : Fragment() {
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { b ->
             if (b) {
                 requestLocationPermission()
-            } else
-                findNavController().navigateUp()
+            } else{
+                if (isAdded) findNavController().navigateUp()
+            }
+
         }
 
     private var micClickedElementId: Int = -1
@@ -102,7 +104,7 @@ class NewHouseholdFragment : Fragment() {
         alertBinding.btnPositive.setOnClickListener {
             if (alertBinding.checkBox.isChecked) {
                 viewModel.setConsentAgreed()
-             //   requestLocationPermission()
+                //   requestLocationPermission()
                 alertDialog.dismiss()
             } else
                 Toast.makeText(
@@ -119,15 +121,20 @@ class NewHouseholdFragment : Fragment() {
             .setCancelable(false)
 //            .setMessage(str)
             .setPositiveButton(resources.getString(R.string.yes)) { dialog, _ ->
-                findNavController().navigate(
-                    NewHouseholdFragmentDirections.actionNewHouseholdFragmentToNewBenRegFragment(
-                        viewModel.getHHId(),
-                        18
+
+                if (isAdded) {
+                    findNavController().navigate(
+                        NewHouseholdFragmentDirections.actionNewHouseholdFragmentToNewBenRegFragment(
+                            viewModel.getHHId(),
+                            18
+                        )
                     )
-                )
+
+                }
+
                 dialog.dismiss()
             }.setNegativeButton(resources.getString(R.string.no)) { dialog, _ ->
-                findNavController().navigateUp()
+                if (isAdded)  findNavController().navigateUp()
                 dialog.dismiss()
             }.create()
     }
@@ -178,7 +185,7 @@ class NewHouseholdFragment : Fragment() {
                     isEnabled = !recordExists
                 )
                 binding.form.rvInputForm.adapter = adapter
-                lifecycleScope.launch {
+                viewLifecycleOwner.lifecycleScope.launch {
                     viewModel.formList.collect {
                         if (it.isNotEmpty())
 
@@ -276,6 +283,8 @@ class NewHouseholdFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
+        if (consentAlert.isShowing) consentAlert.dismiss()
+        if (nextScreenAlert.isShowing) nextScreenAlert.dismiss()
         _binding = null
     }
 }

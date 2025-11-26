@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -11,7 +12,9 @@ import org.piramalswasthya.sakhi.model.BenWithKALAZARScreeningDomain
 import org.piramalswasthya.sakhi.model.BenWithLeprosyScreeningDomain
 
 class LeprosyMemberListAdapter(
-    private val clickListener: ClickListener? = null
+    private val clickListener: ClickListener? = null,
+    private val showExtraButton: Boolean? = null
+
 ) :
     ListAdapter<BenWithLeprosyScreeningDomain, LeprosyMemberListAdapter.BenViewHolder>
         (BenDiffUtilCallBack) {
@@ -41,12 +44,29 @@ class LeprosyMemberListAdapter(
         fun bind(
             item: BenWithLeprosyScreeningDomain,
             clickListener: ClickListener?,
+            showExtraButton: Boolean?
         ) {
             binding.benWithLeprosy = item
+
+            if(showExtraButton == true && item.leprosy != null && item.leprosy.currentVisitNumber >1)
+            {
+                binding.btnVisits.visibility = View.VISIBLE
+
+                val green = ContextCompat.getColor(
+                    binding.root.context,
+                    android.R.color.holo_green_dark
+                )
+                binding.btnVisits.setBackgroundColor(green)
+            }
+            else
+            {
+                binding.btnVisits.visibility = View.GONE
+            }
 
             /*if(item.tb?.historyOfTb == true){
                 binding.cvContent.visibility = View.GONE
             }*/
+
 
             binding.ivSyncState.visibility = if (item.leprosy == null) View.GONE else View.VISIBLE
 
@@ -86,8 +106,32 @@ class LeprosyMemberListAdapter(
             } else {
                 binding.btnFormTb.visibility = View.INVISIBLE
             }
-            binding.btnFormTb.text = if (item.leprosy == null) "Register" else "View"
-            binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.leprosy == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
+            val (text, colorRes) = when {
+
+                item.leprosy == null -> {
+                    "Screening" to android.R.color.holo_green_dark
+                }
+                item.leprosy.leprosySymptomsPosition == 1 -> {
+                    "Screening" to android.R.color.holo_green_dark
+                }
+                item.leprosy.leprosySymptomsPosition == 0 && item.leprosy.isConfirmed -> {
+                    "Follow Up" to android.R.color.holo_red_dark
+                }
+                item.leprosy.leprosySymptomsPosition == 0 -> {
+                    "Suspected" to android.R.color.holo_red_dark
+                }
+                else -> {
+                    "View" to android.R.color.holo_green_dark
+                }
+            }
+
+            binding.btnFormTb.text = text
+            binding.btnFormTb.setBackgroundColor(
+                binding.root.resources.getColor(colorRes, binding.root.context.theme)
+            )
+           /* binding.btnFormTb.text = if (item.leprosy == null) "Register" else "View"
+            item.leprosy.leprosySymptomsPosition
+            binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.leprosy == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))*/
             binding.clickListener = clickListener
 
             binding.executePendingBindings()
@@ -103,16 +147,21 @@ class LeprosyMemberListAdapter(
         BenViewHolder.from(parent)
 
     override fun onBindViewHolder(holder: BenViewHolder, position: Int) {
-        holder.bind(getItem(position), clickListener)
+        holder.bind(getItem(position), clickListener,showExtraButton)
     }
 
 
     class ClickListener(
-        private val clickedForm: ((hhId: Long, benId: Long) -> Unit)? = null
+        private val clickedForm: ((hhId: Long, benId: Long) -> Unit)? = null,
+        private val clickedVisits: ((benWithLeprosy: BenWithLeprosyScreeningDomain) -> Unit)? = null
+
 
     ) {
         fun onClickForm(item: BenWithLeprosyScreeningDomain) =
             clickedForm?.let { it(item.ben.hhId, item.ben.benId) }
+
+        fun onClickVisits(item: BenWithLeprosyScreeningDomain) =
+            clickedVisits?.let { it(item) }
     }
 
 }

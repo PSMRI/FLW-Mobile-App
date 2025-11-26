@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.FilariaScreeningCache
@@ -16,7 +17,7 @@ class LeprosyFormDataset(
 
     private val dateOfCase = FormElement(
         id = 1,
-        inputType = InputType.TEXT_VIEW,
+        inputType = InputType.DATE_PICKER,
         title = resources.getString(R.string.home_visit_date),
         arrayId = -1,
         required = true,
@@ -138,21 +139,68 @@ class LeprosyFormDataset(
 
         )
 
+    private val leprosySymptoms = FormElement(
+        id = 14,
+        inputType = InputType.RADIO,
+        arrayId = R.array.yes_no,
+        title = "Any Leprosy Symptoms Present?",
+        entries = resources.getStringArray(R.array.yes_no),
+        hasDependants = true,
+        required = true,
+        isEnabled = true
+    )
+
+    private val visitLabel = FormElement(
+        id = 15,
+        inputType = InputType.TEXT_VIEW,
+        title = "Visit",
+        required = true,
+        isEnabled = false
+    )
+
     suspend fun setUpPage(ben: BenRegCache?, saved: LeprosyScreeningCache?) {
         val list = mutableListOf(
             dateOfCase,
-            beneficiaryStatus,
+           // beneficiaryStatus,
+            leprosySymptoms,
+            visitLabel,
+            leprosyStatus,
+
 
         )
         if (saved == null) {
             dateOfCase.value = getDateFromLong(System.currentTimeMillis())
+            leprosyStatus.value = resources.getStringArray(R.array.leprosy_status)[0]
+            visitLabel.value = "Visit -1"
+            leprosySymptoms.value = resources.getStringArray(R.array.yes_no)[1]
         } else {
             dateOfCase.value = getDateFromLong(saved.homeVisitDate)
-            beneficiaryStatus.value =
-                getLocalValueInArray(beneficiaryStatus.arrayId, saved.beneficiaryStatus)
+            val symptomsPosition = saved.leprosySymptomsPosition ?: 1
+            leprosySymptoms.value = resources.getStringArray(R.array.yes_no).getOrNull(symptomsPosition)
+                ?: resources.getStringArray(R.array.yes_no)[1]
+            visitLabel.value = "Visit -${saved?.currentVisitNumber ?: 1}"
+            leprosyStatus.value =
+                getLocalValueInArray(leprosyStatus.arrayId, saved.leprosyStatus)
 
-
-            if (beneficiaryStatus.value == beneficiaryStatus.entries!![3]) {
+            if (leprosyStatus.value == leprosyStatus.entries!!.last()) {
+                leprosyStatus.value = saved.leprosyStatus
+                list.add(list.indexOf(leprosyStatus) + 1, other)
+            } else {
+                leprosyStatus.value =
+                    getLocalValueInArray(leprosyStatus.arrayId, saved.leprosyStatus)
+            }
+            list.add(list.indexOf(leprosyStatus) + 1, referredTo)
+            referredTo.value =
+                getLocalValueInArray(referredTo.arrayId, saved.referToName)
+            if (referredTo.value == referredTo.entries!!.last()) {
+                referredTo.value = saved.referToName
+                list.add(list.indexOf(referredTo) + 1, other)
+            } else {
+                referredTo.value =
+                    getLocalValueInArray(referredTo.arrayId, saved.referToName)
+            }
+            /*if
+            (beneficiaryStatus.value == beneficiaryStatus.entries!![3]) {
                 list.add(list.indexOf(beneficiaryStatus) + 1, dateOfDeath)
                 list.add(list.indexOf(beneficiaryStatus) + 2, placeOfDeath)
                 list.add(list.indexOf(beneficiaryStatus) + 3, reasonOfDeath)
@@ -185,18 +233,9 @@ class LeprosyFormDataset(
                 typeOfLeprosy.value = getLocalValueInArray(typeOfLeprosy.arrayId, saved.typeOfLeprosy)
 
             }
-            referredTo.value =
-                getLocalValueInArray(referredTo.arrayId, saved.referToName)
-            if (referredTo.value == referredTo.entries!!.last()) {
-                referredTo.value = saved.referToName
-                list.add(list.indexOf(referredTo) + 1, other)
-            } else {
-                referredTo.value =
-                    getLocalValueInArray(referredTo.arrayId, saved.referToName)
-            }
 
-            other.value = saved.otherReferredTo
-            followUpdate.value = getDateFromLong(saved.followUpDate)
+
+            other.value = saved.otherReferredTo*/
 
         }
 
@@ -207,7 +246,30 @@ class LeprosyFormDataset(
     }
 
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
+
         return when (formId) {
+            leprosySymptoms.id -> {
+                if (leprosySymptoms.value == resources.getStringArray(R.array.yes_no)[0]) {
+
+                    leprosyStatus.value = resources.getStringArray(R.array.leprosy_status)[3]
+                    visitLabel.value = "Visit -1"
+
+                    triggerDependants(
+                        source = leprosySymptoms,
+                        addItems = listOf(visitLabel,leprosyStatus,referredTo),
+                        removeItems = listOf()
+                    )
+
+                } else {
+                    leprosyStatus.value = resources.getStringArray(R.array.leprosy_status)[0]
+                    triggerDependants(
+                        source = leprosySymptoms,
+                        addItems = listOf(),
+                        removeItems = listOf(referredTo)
+                    )
+                }
+                0
+            }
             beneficiaryStatus.id -> {
                 if (beneficiaryStatus.value == beneficiaryStatus.entries!![3]!!) {
                     triggerDependants(
@@ -332,7 +394,14 @@ class LeprosyFormDataset(
             form.leprosyStatus = leprosyStatus.value
             form.typeOfLeprosy = typeOfLeprosy.value
             form.diseaseTypeID = 5
-            form.followUpDate = getLongFromDate(followUpdate.value)
+            form.leprosySymptoms = leprosySymptoms.value
+            form.visitLabel = visitLabel.value
+            form.syncState = SyncState.UNSYNCED
+            form.leprosySymptomsPosition = when (leprosySymptoms.value) {
+                resources.getStringArray(R.array.yes_no)[0] -> 0
+                resources.getStringArray(R.array.yes_no)[1] -> 1
+                else -> 1
+            }
 
         }
     }

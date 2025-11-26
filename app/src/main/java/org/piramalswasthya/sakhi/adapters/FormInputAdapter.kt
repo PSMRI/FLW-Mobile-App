@@ -6,6 +6,7 @@ import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.res.ColorStateList
 import android.content.res.Resources
 import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import android.text.Editable
 import android.text.InputFilter
@@ -21,6 +22,7 @@ import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.CheckBox
 import android.widget.LinearLayout
@@ -37,6 +39,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.databinding.LayoutMultiFileUploadBinding
 import org.piramalswasthya.sakhi.databinding.LayoutUploafFormBinding
 import org.piramalswasthya.sakhi.databinding.RvItemFormAgePickerViewV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormBtnBinding
@@ -46,6 +49,7 @@ import org.piramalswasthya.sakhi.databinding.RvItemFormDropdownV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormEditTextV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormHeadlineV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormImageViewV2Binding
+import org.piramalswasthya.sakhi.databinding.RvItemFormNumberPickerBinding
 import org.piramalswasthya.sakhi.databinding.RvItemFormRadioV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormTextViewV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormTimepickerV2Binding
@@ -84,6 +88,7 @@ class FormInputAdapter(
     private val isEnabled: Boolean = true,
     private val selectImageClickListener: SelectUploadImageClickListener? = null,
     private val viewDocumentListner: ViewDocumentOnClick? = null,
+    var  fileList: MutableList<Uri>? = null,
 ) : ListAdapter<FormElement, ViewHolder>(FormInputDiffCallBack) {
     var disableUpload = false
 
@@ -971,6 +976,156 @@ class FormInputAdapter(
         }
 
     }
+    class NumberPickerInputViewHolder private constructor(
+        private val binding: RvItemFormNumberPickerBinding
+    ) : ViewHolder(binding.root) {
+
+        private var textWatcher: TextWatcher? = null
+        private var internalUpdate = false
+
+        companion object {
+            fun from(parent: ViewGroup): ViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = RvItemFormNumberPickerBinding.inflate(layoutInflater, parent, false)
+                return NumberPickerInputViewHolder(binding)
+            }
+        }
+
+        fun bind(
+            item: FormElement,
+            isEnabled: Boolean,
+            formValueListener: FormValueListener?
+        ) {
+            binding.form = item
+
+            binding.etNumberInput.isEnabled = isEnabled
+            binding.btnDecrement.isEnabled = isEnabled
+            binding.btnIncrement.isEnabled = isEnabled
+            if (!isEnabled) {
+                hideError()
+                return
+            }
+
+            val minValue = item.min?.toInt() ?: 0
+            val maxValue = item.max?.toInt()
+            val allowNegative = item.minDecimal != null && item.minDecimal!! < 0
+
+            binding.etNumberInput.setText(minValue.toString())
+            binding.etNumberInput.setSelection(binding.etNumberInput.text!!.length)
+            var currentValue = item.value?.toIntOrNull() ?: minValue
+
+            textWatcher?.let { binding.etNumberInput.removeTextChangedListener(it) }
+
+            textWatcher = object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+                }
+
+
+
+
+                override fun afterTextChanged(editable: Editable?) {
+
+                    if (internalUpdate) return
+                    if (editable.isNullOrBlank()) {
+                        item.errorText = "Value cannot be empty"
+                        showError(item.errorText!!)
+                        return
+                    }
+
+                    val inputValue = editable.toString().toIntOrNull()
+                    if (inputValue == null) {
+                        item.errorText = "Enter a valid number"
+                        showError(item.errorText!!)
+                        return
+                    }
+
+                    val validated = validateValue(inputValue, minValue, maxValue, allowNegative)
+
+                    if (validated != inputValue) {
+                        val msg = if (maxValue != null)
+                            "Allowed range: $minValue to $maxValue"
+                        else
+                            "Minimum allowed value: $minValue"
+                        item.errorText = msg
+                        showError(msg)
+
+                        updateDisplay(validated)
+                        updateValue(validated, item, formValueListener)
+                        return
+                    }
+
+                    item.errorText = null
+                    hideError()
+
+                    currentValue = validated
+                    updateValue(currentValue, item, formValueListener)
+                }
+            }
+
+            updateDisplay(currentValue)
+
+            binding.etNumberInput.addTextChangedListener(textWatcher)
+
+
+
+            binding.btnDecrement.setOnClickListener {
+                currentValue = (item.value?.toIntOrNull() ?: minValue) - 1
+                currentValue = validateValue(currentValue, minValue, maxValue, allowNegative)
+                hideError()
+                updateValue(currentValue, item, formValueListener)
+                updateDisplay(currentValue)
+            }
+
+            binding.btnIncrement.setOnClickListener {
+                currentValue = (item.value?.toIntOrNull() ?: minValue) + 1
+                currentValue = validateValue(currentValue, minValue, maxValue, allowNegative)
+                hideError()
+                updateValue(currentValue, item, formValueListener)
+                updateDisplay(currentValue)
+            }
+        }
+
+
+        private fun validateValue(value: Int, min: Int, max: Int?, allowNegative: Boolean): Int {
+            var newValue = value
+
+            if (!allowNegative && newValue < min) newValue = min
+            if (max != null && newValue > max) newValue = max
+
+            return newValue
+        }
+
+        private fun updateDisplay(value: Int) {
+            internalUpdate = true
+            binding.etNumberInput.setText(value.toString())
+            binding.etNumberInput.setSelection(binding.etNumberInput.text!!.length)
+            internalUpdate = false
+        }
+
+        private fun updateValue(
+            newValue: Int,
+            item: FormElement,
+            formValueListener: FormValueListener?
+        ) {
+            item.value = newValue.toString()
+            formValueListener?.onValueChanged(item,newValue)
+        }
+
+        private fun showError(message: String) {
+            binding.tvError.apply {
+                text = message
+                visibility = View.VISIBLE
+            }
+        }
+
+        private fun hideError() {
+            binding.tvError.visibility = View.GONE
+        }
+    }
+
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -990,8 +1145,66 @@ class FormInputAdapter(
             AGE_PICKER -> AgePickerViewInputViewHolder.from(parent)
             InputType.BUTTON -> ButtonInputViewHolder.from(parent)
             InputType.FILE_UPLOAD -> FileUploadInputViewHolder.from(parent)
+            InputType.NUMBER_PICKER -> NumberPickerInputViewHolder.from(parent)
+            InputType.MULTIFILE_UPLOAD -> MultiFileUploadInputViewHolder.from(parent)
         }
     }
+
+    fun updateFileList(newList: List<Uri>) {
+        this.fileList?.addAll(newList)
+        notifyDataSetChanged()
+    }
+    class MultiFileUploadInputViewHolder private constructor(private val binding: LayoutMultiFileUploadBinding) :
+        ViewHolder(binding.root) {
+        companion object {
+            fun from(parent: ViewGroup): ViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = LayoutMultiFileUploadBinding.inflate(layoutInflater, parent, false)
+                return MultiFileUploadInputViewHolder(binding)
+            }
+        }
+
+        private lateinit var fileAdapter: FileListAdapter
+
+        fun bind(
+            item: FormElement,
+            clickListener: SelectUploadImageClickListener?,
+            documentOnClick: ViewDocumentOnClick?,
+            isEnabled: Boolean,
+            fileList : MutableList<Uri>?
+        ) {
+           /* binding.form = item
+            binding.tvTitle.text = item.title
+            binding.clickListener = clickListener
+            binding.documentclickListener = documentOnClick
+            binding.btnView.visibility = if (item.value != null) View.VISIBLE else View.GONE
+
+            if (isEnabled) {
+                binding.addFile.isEnabled = true
+                binding.addFile.alpha = 1f
+            } else {
+                binding.addFile.isEnabled = false
+                binding.addFile.alpha = 0.5f
+            }*/
+
+            val items = fileList ?: mutableListOf()
+            fileAdapter = FileListAdapter(items)
+            binding.rvFiles.adapter = fileAdapter
+            fileAdapter.updateFileList(items)
+            fileAdapter.notifyDataSetChanged()
+
+            binding.btnSelectFiles.isEnabled = isEnabled
+            binding.btnSelectFiles.alpha = if (isEnabled) 1f else 0.5f
+
+            binding.btnSelectFiles.setOnClickListener {
+                clickListener?.onSelectImageClick(item)
+            }
+        }
+
+    }
+
+
+
     class FileUploadInputViewHolder private constructor(private val binding: LayoutUploafFormBinding) :
         ViewHolder(binding.root) {
         companion object {
@@ -1029,8 +1242,10 @@ class FormInputAdapter(
     }
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
-        val isEnabled = if (isEnabled) item.isEnabled else false
+//        I was getting crash that's why i have moved this line inside try block
+//        val isEnabled = if (isEnabled) item.isEnabled else false
         try {
+            val isEnabled = if (isEnabled) item.isEnabled else false
             when (item.inputType) {
                 EDIT_TEXT -> (holder as EditTextInputViewHolder).bind(
                     item, isEnabled, formValueListener
@@ -1065,18 +1280,22 @@ class FormInputAdapter(
                     isEnabled,
                     formValueListener
                 )
-
                 InputType.BUTTON -> (holder as ButtonInputViewHolder).bind(
                     item,
                     isEnabled,
                     sendOtpClickListener
                 )
 
-                InputType.FILE_UPLOAD -> (holder as FileUploadInputViewHolder).bind(item,selectImageClickListener,viewDocumentListner,isEnabled = isEnabled)
+                InputType.FILE_UPLOAD -> (holder as FileUploadInputViewHolder).bind(item,selectImageClickListener,viewDocumentListner,isEnabled = !disableUpload)
+                org.piramalswasthya.sakhi.model.InputType.MULTIFILE_UPLOAD -> (holder as MultiFileUploadInputViewHolder).bind(item,selectImageClickListener,viewDocumentListner,isEnabled = !disableUpload,fileList)
 
+                InputType.NUMBER_PICKER -> (holder as NumberPickerInputViewHolder).bind(
+                    item, isEnabled, formValueListener
+                )
             }
         } catch (e: Exception) {
             e.printStackTrace()
+
         }
     }
 

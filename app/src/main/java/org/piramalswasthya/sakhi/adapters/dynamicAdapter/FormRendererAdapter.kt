@@ -2,21 +2,38 @@
 
     import android.app.AlertDialog
     import android.app.DatePickerDialog
+    import android.content.ActivityNotFoundException
+    import android.content.Intent
+    import android.graphics.BitmapFactory
     import android.graphics.Color
+    import android.graphics.Typeface
     import android.net.Uri
     import android.text.*
     import android.text.style.ForegroundColorSpan
-    import android.util.Log
     import android.view.*
+    import android.util.Base64
+    import android.util.Log
+    import android.view.inputmethod.EditorInfo
     import android.widget.*
     import androidx.appcompat.content.res.AppCompatResources
     import androidx.core.content.ContextCompat
+    import androidx.core.content.FileProvider
     import androidx.recyclerview.widget.RecyclerView
     import com.google.android.material.textfield.TextInputEditText
     import com.google.android.material.textfield.TextInputLayout
+    import kotlinx.coroutines.CoroutineScope
+    import kotlinx.coroutines.Dispatchers
+    import kotlinx.coroutines.Job
+    import kotlinx.coroutines.MainScope
+    import kotlinx.coroutines.cancelChildren
+    import kotlinx.coroutines.delay
+    import kotlinx.coroutines.launch
+    import org.json.JSONArray
     import org.piramalswasthya.sakhi.R
     import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
     import timber.log.Timber
+    import java.io.File
+    import java.io.FileOutputStream
     import java.text.SimpleDateFormat
     import java.util.*
 
@@ -26,7 +43,9 @@
         private val minVisitDate: Date? = null,
         private val maxVisitDate: Date? = null,
         private val isSNCU: Boolean = false,
-        private val onValueChanged: (FormField, Any?) -> Unit
+        private val onValueChanged: (FormField, Any?) -> Unit,
+        private val onShowAlert: ((String, String) -> Unit)? = null
+
 
     ) : RecyclerView.Adapter<FormRendererAdapter.FormViewHolder>() {
 
@@ -72,11 +91,23 @@
             }
         }
 
+        override fun onViewRecycled(holder: FormViewHolder) {
+            holder.clear()
+            super.onViewRecycled(holder)
+        }
+
         override fun getItemCount(): Int = fields.size
 
         inner class FormViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             private val label: TextView = view.findViewById(R.id.tvLabel)
             private val inputContainer: ViewGroup = view.findViewById(R.id.inputContainer)
+            private val viewHolderScope = MainScope()
+            private var muacDebounceJob: Job? = null
+
+
+            fun clear() {
+                viewHolderScope.coroutineContext.cancelChildren()
+            }
 
             fun bind(field: FormField) {
 
@@ -129,7 +160,34 @@
 
                 }
 
+
+
+
                 when (field.type) {
+                    "label" -> {
+                        val context = itemView.context
+                        val value = field.defaultValue.toString()
+
+                        if (!value.isNullOrEmpty()) {
+                            val textView = TextView(context).apply {
+                                layoutParams = LinearLayout.LayoutParams(
+                                    ViewGroup.LayoutParams.MATCH_PARENT,
+                                    ViewGroup.LayoutParams.WRAP_CONTENT
+                                ).apply {
+                                    setMargins(0, 16, 0, 8)
+                                }
+
+                                text = value
+                                setTypeface(typeface, Typeface.BOLD)
+                                setTextColor(ContextCompat.getColor(context, android.R.color.black))
+                                setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_TitleMedium)
+                            }
+
+                            addWithError(textView, field)
+                        }
+
+                    }
+
                     "text" -> {
                         val context = itemView.context
 
@@ -170,8 +228,10 @@
                         if (!isViewOnly) {
                             editText.addTextChangedListener(object : TextWatcher {
                                 override fun afterTextChanged(s: Editable?) {
-                                    field.value = s.toString()
+                                    val value = s.toString().toFloatOrNull()
+                                    field.value = value
                                     onValueChanged(field, s.toString())
+
                                 }
 
                                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -223,11 +283,20 @@
                         }
 
                         if (!isViewOnly) {
+
                             editText.addTextChangedListener(object : TextWatcher {
                                 override fun afterTextChanged(s: Editable?) {
                                     val value = s.toString().toFloatOrNull()
                                     field.value = value
-                                    onValueChanged(field, value)
+                                    if (field.fieldId.contains("muac", ignoreCase = true)) {
+                                                    muacDebounceJob?.cancel()
+                                                    muacDebounceJob = CoroutineScope(Dispatchers.Main).launch {
+                                                            delay(1500)
+                                                            onValueChanged(field, value)
+                                                        }
+                                                } else {
+                                                    onValueChanged(field, value)
+                                                }
                                 }
 
                                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -238,7 +307,6 @@
                         textInputLayout.addView(editText)
                         addWithError(textInputLayout, field)
                     }
-
 
                     "dropdown" -> {
                         val context = itemView.context
@@ -299,6 +367,7 @@
                                     editText.setText(selected)
                                     field.value = selected
                                     onValueChanged(field, selected)
+
                                 }
                                 builder.show()
                             }
@@ -308,7 +377,7 @@
                         addWithError(textInputLayout, field)
                     }
 
-                    "date" -> {
+                   /* "date" -> {
                         val context = itemView.context
                         val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
                         val today = Calendar.getInstance().time
@@ -318,6 +387,7 @@
                             field.value = todayStr
                         }
                         val isFieldAlwaysDisabled = field.fieldId == "due_date"
+                        val isFieldEditable = field.isEditable && !isViewOnly && !isFieldAlwaysDisabled
 
                         val textInputLayout = TextInputLayout(
                             context,
@@ -344,10 +414,53 @@
                             )
                             setPadding(32, 24, 32, 24)
                             background = null
-                            setText(field.value as? String ?: "")
+                            val dateValue = when (val v = field.value) {
+                                is String -> {
+                                    val cleanValue = v.trim().removePrefix("\"").removeSuffix("\"")
+                                    if (cleanValue.startsWith("[")) {
+                                        try {
+                                            val jsonArray = JSONArray(cleanValue)
+                                            val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                                            val dates = (0 until jsonArray.length()).mapNotNull {
+                                                runCatching { sdf.parse(jsonArray.getString(it)) }.getOrNull()
+                                            }
+                                            dates.maxOrNull()?.let { sdf.format(it) }
+                                        } catch (e: Exception) {
+                                            Log.e("FormRenderer", "Error parsing JSON array: ${e.message}")
+                                            null
+                                        }
+                                    } else {
+                                        cleanValue
+                                    }
+                                }
+                                is List<*> -> {
+                                    val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                                    v.mapNotNull { it as? String }
+                                        .mapNotNull { runCatching { sdf.parse(it) }.getOrNull() }
+                                        .maxOrNull()?.let { sdf.format(it) }
+                                }
+                                is JSONArray -> {
+                                    try {
+                                        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                                        val dates = (0 until v.length()).mapNotNull {
+                                            runCatching { sdf.parse(v.getString(it)) }.getOrNull()
+                                        }
+                                        dates.maxOrNull()?.let { sdf.format(it) }
+                                    } catch (e: Exception) {
+                                        Log.e("FormRenderer", "Error parsing JSONArray directly: ${e.message}")
+                                        null
+                                    }
+                                }
+
+                                else -> null
+                            }
+                            setText(dateValue ?: "")
+                            //setText(field.value as? String ?: "")
                             isFocusable = false
-                            isClickable = true
-                            isEnabled = !isFieldAlwaysDisabled && !isViewOnly
+                            isClickable = isFieldEditable
+                            isEnabled = isFieldEditable
+                           // isClickable = true
+                            //isEnabled = !isFieldAlwaysDisabled && !isViewOnly
                             setCompoundDrawablesWithIntrinsicBounds(
                                 null, null,
                                 ContextCompat.getDrawable(context, R.drawable.ic_calendar),
@@ -360,7 +473,8 @@
 
                         textInputLayout.addView(editText)
 
-                        if (!isViewOnly && !isFieldAlwaysDisabled) {
+                     //   if (!isViewOnly && !isFieldAlwaysDisabled) {
+                        if (isFieldEditable) {
                             editText.setOnClickListener {
                                 val calendar = Calendar.getInstance()
 
@@ -410,53 +524,157 @@
                         }
 
                         addWithError(textInputLayout, field)
+                    }*/
+                    "date" -> {
+                        val context = itemView.context
+                        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                        val today = Calendar.getInstance().time
+                        val todayStr = sdf.format(today)
+
+                        // Auto-set visit date if empty
+                        if (field.fieldId == "visit_date" &&
+                            (field.value == null || (field.value as? String)?.isBlank() == true)
+                        ) {
+                            field.value = todayStr
+                        }
+
+                        val isFieldDisabled = field.fieldId == "due_date"
+                        val isFieldEditable = field.isEditable && !isViewOnly && !isFieldDisabled
+
+                        val textInputLayout = TextInputLayout(
+                            context, null,
+                            com.google.android.material.R.style.Widget_Material3_TextInputLayout_OutlinedBox
+                        ).apply {
+                            layoutParams = LinearLayout.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.WRAP_CONTENT
+                            ).apply { setMargins(0, 16, 0, 8) }
+
+                            hint = field.placeholder ?: "Select ${field.label}"
+                            boxBackgroundMode = TextInputLayout.BOX_BACKGROUND_OUTLINE
+                            boxStrokeColor = ContextCompat.getColor(context, R.color.md_theme_light_primary)
+                            boxStrokeWidthFocused = 2
+                            setBoxCornerRadii(12f, 12f, 12f, 12f)
+                        }
+
+                        val editText = TextInputEditText(context).apply {
+                            layoutParams = LinearLayout.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.WRAP_CONTENT
+                            )
+                            setPadding(32, 24, 32, 24)
+                            background = null
+                            setText(field.value as? String ?: "")
+                            isFocusable = false
+                            isClickable = isFieldEditable
+                            isEnabled = isFieldEditable
+                            setCompoundDrawablesWithIntrinsicBounds(
+                                null, null,
+                                ContextCompat.getDrawable(context, R.drawable.ic_calendar),
+                                null
+                            )
+                            compoundDrawablePadding = 24
+                            setTextColor(ContextCompat.getColor(context, android.R.color.black))
+                            setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodyLarge)
+                        }
+
+                        textInputLayout.addView(editText)
+
+                        // ---- HELPER FUNCTIONS ----
+                        fun getDate(fieldId: String): Date? {
+                            val v = fields.find { it.fieldId == fieldId }?.value as? String
+                            return try { sdf.parse(v ?: "") } catch (e: Exception) { null }
+                        }
+
+                        fun setError(fieldId: String, msg: String) {
+                            val f = fields.find { it.fieldId == fieldId }
+                            f?.errorMessage = msg
+                            notifyItemChanged(fields.indexOf(f))
+                        }
+
+                        fun clearError(fieldId: String) {
+                            val f = fields.find { it.fieldId == fieldId }
+                            if (f?.errorMessage != null) {
+                                f.errorMessage = null
+                                notifyItemChanged(fields.indexOf(f))
+                            }
+                        }
+
+                        if (isFieldEditable) {
+                            editText.setOnClickListener {
+                                val calendar = Calendar.getInstance()
+
+                                val minDate = when (field.fieldId) {
+                                    "visit_date" -> null
+                                    "nrc_admission_date" -> getDate("visit_date")
+                                    "nrc_discharge_date" -> getDate("nrc_admission_date")
+                                    "follow_up_visit_date" -> getDate("nrc_discharge_date")
+                                    else -> null
+                                }
+
+                                val maxDate = today
+
+                                DatePickerDialog(
+                                    context,
+                                    { _, year, month, dayOfMonth ->
+                                        val dateStr = String.format("%02d-%02d-%04d", dayOfMonth, month + 1, year)
+                                        editText.setText(dateStr)
+                                        field.value = dateStr
+                                        onValueChanged(field, dateStr)
+
+
+                                        when (field.fieldId) {
+
+                                            "visit_date" -> {
+                                                val admission = fields.find { it.fieldId == "nrc_admission_date" }
+                                                admission?.validation?.minDate = dateStr
+                                                notifyItemChanged(fields.indexOf(admission))
+                                                clearError("nrc_admission_date")
+                                            }
+
+                                            "nrc_admission_date" -> {
+                                                val discharge = fields.find { it.fieldId == "nrc_discharge_date" }
+                                                discharge?.validation?.minDate = dateStr
+                                                notifyItemChanged(fields.indexOf(discharge))
+
+                                                val dischargeDate = getDate("nrc_discharge_date")
+                                                val admissionDate = sdf.parse(dateStr)
+
+                                                if (dischargeDate != null && dischargeDate.before(admissionDate)) {
+                                                    setError("nrc_discharge_date", "Discharge cannot be before admission")
+                                                } else {
+                                                    clearError("nrc_discharge_date")
+                                                }
+                                            }
+
+                                            "nrc_discharge_date" -> {
+                                                val followUp = fields.find { it.fieldId == "follow_up_visit_date" }
+                                                followUp?.validation?.minDate = dateStr
+                                                notifyItemChanged(fields.indexOf(followUp))
+
+                                                val followDate = getDate("follow_up_visit_date")
+                                                val dischargeDate = sdf.parse(dateStr)
+
+                                                if (followDate != null && followDate.before(dischargeDate)) {
+                                                    setError("follow_up_visit_date", "Follow-up cannot be before discharge")
+                                                } else {
+                                                    clearError("follow_up_visit_date")
+                                                }
+                                            }
+                                        }
+                                    },
+                                    calendar.get(Calendar.YEAR),
+                                    calendar.get(Calendar.MONTH),
+                                    calendar.get(Calendar.DAY_OF_MONTH)
+                                ).apply {
+                                    minDate?.let { datePicker.minDate = it.time }
+                                    maxDate?.let { datePicker.maxDate = it.time }
+                                }.show()
+                            }
+                        }
+
+                        addWithError(textInputLayout, field)
                     }
-
-
-
-//                    "radio" -> {
-//                        val context = itemView.context
-//
-//                        val radioGroup = RadioGroup(context).apply {
-//                            orientation = RadioGroup.HORIZONTAL
-//                            layoutParams = LinearLayout.LayoutParams(
-//                                ViewGroup.LayoutParams.MATCH_PARENT,
-//                                ViewGroup.LayoutParams.WRAP_CONTENT
-//                            ).apply {
-//                                setMargins(0, 8, 0, 8)
-//                            }
-//                        }
-//
-//                        field.options?.forEachIndexed { index, option ->
-//                            val radioButton = RadioButton(context).apply {
-//                                text = option
-//                                isChecked = field.value == option
-//                                isEnabled = !isViewOnly
-//
-//                                layoutParams = LinearLayout.LayoutParams(
-//                                    LinearLayout.LayoutParams.WRAP_CONTENT,
-//                                    LinearLayout.LayoutParams.WRAP_CONTENT
-//                                ).apply {
-//                                    setMargins(0, 0, if (index != field.options!!.lastIndex) 24 else 0, 0) // spacing between radios
-//                                }
-//                            }
-//
-//                            if (!isViewOnly) {
-//                                radioButton.setOnCheckedChangeListener { _, isChecked ->
-//                                    if (isChecked && field.value != option) {
-//                                        field.value = option
-//                                        onValueChanged(field, option)
-//                                    }
-//                                }
-//                            }
-//
-//                            radioGroup.addView(radioButton)
-//                        }
-//
-//                        addWithError(radioGroup, field)
-//                    }
-
-
 
                     "radio" -> {
                         val context = itemView.context
@@ -540,7 +758,6 @@
 
 
 
-
                     "image" -> {
                         val context = itemView.context
 
@@ -555,10 +772,77 @@
                             val filePath = field.value?.toString()
                             if (!filePath.isNullOrBlank()) {
                                 try {
-                                    val uri = Uri.parse(filePath)
-                                    setImageURI(uri)
+                                    when {
+                                        filePath.endsWith(".pdf", ignoreCase = true) ||
+                                                (filePath.startsWith("content://") &&
+                                                        context.contentResolver.getType(Uri.parse(filePath))?.contains("pdf") == true) -> {
+
+                                            setImageResource(R.drawable.ic_person)
+                                            setOnClickListener {
+                                                val uri = Uri.parse(filePath)
+                                                val intent = Intent(Intent.ACTION_VIEW).apply {
+                                                    setDataAndType(uri, "application/pdf")
+                                                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                                }
+                                                try {
+                                                    context.startActivity(intent)
+                                                } catch (e: ActivityNotFoundException) {
+                                                    Toast.makeText(context, "No app found to open PDF", Toast.LENGTH_SHORT).show()
+                                                }
+                                            }
+                                        }
+
+                                        filePath.startsWith("JVBERi0") || filePath.startsWith("%PDF") -> {
+                                            setImageResource(R.drawable.ic_person)
+                                            setOnClickListener {
+                                                try {
+                                                    val decodedBytes = Base64.decode(filePath, Base64.DEFAULT)
+                                                    val tempPdf = File.createTempFile("decoded_pdf_", ".pdf", context.cacheDir)
+                                                    FileOutputStream(tempPdf).use { it.write(decodedBytes) }
+
+                                                    val uri = FileProvider.getUriForFile(
+                                                        context,
+                                                        "${context.packageName}.provider",
+                                                        tempPdf
+                                                    )
+
+                                                    val intent = Intent(Intent.ACTION_VIEW).apply {
+                                                        setDataAndType(uri, "application/pdf")
+                                                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                                    }
+                                                    context.startActivity(intent)
+                                                } catch (e: Exception) {
+                                                    Toast.makeText(context, "Failed to open PDF", Toast.LENGTH_SHORT).show()
+                                                    Timber.e(e, "Failed to open Base64 PDF")
+                                                }
+                                            }
+                                        }
+
+                                        filePath.startsWith("data:image", ignoreCase = true) ||
+                                                filePath.startsWith("/9j/") ||
+                                                filePath.startsWith("iVBOR") ||
+                                                (filePath.length > 100 &&
+                                                        !filePath.startsWith("content://") &&
+                                                        !filePath.startsWith("file://")) -> {
+
+                                            try {
+                                                val base64String = filePath.substringAfter(",")
+                                                val decodedBytes = Base64.decode(base64String, Base64.DEFAULT)
+                                                val bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+                                                setImageBitmap(bitmap)
+                                            } catch (e: Exception) {
+                                                Timber.e(e, "Failed to decode base64 image")
+                                                setImageResource(R.drawable.ic_person)
+                                            }
+                                        }
+
+                                        else -> {
+                                            val uri = Uri.parse(filePath)
+                                            setImageURI(uri)
+                                        }
+                                    }
                                 } catch (e: Exception) {
-                                    Timber.tag("FormRendererAdapter").e(e, "Failed to load image: " + filePath)
+                                    Timber.tag("FormRendererAdapter").e(e, "Failed to load file: $filePath")
                                     setImageResource(R.drawable.ic_person)
                                 }
                             } else {
@@ -581,8 +865,6 @@
 
                         addWithError(container, field)
                     }
-
-
                     else -> {
                         inputContainer.addView(TextView(itemView.context).apply {
                             text = field.value?.toString() ?: ""

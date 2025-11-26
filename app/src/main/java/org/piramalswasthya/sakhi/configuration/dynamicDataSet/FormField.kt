@@ -4,6 +4,7 @@ data class FormField(
     val fieldId: String,
     val label: String,
     val type: String,
+    var defaultValue: String? = null,
     val isRequired: Boolean,
     val options: List<String>? = null,
     var value: Any? = null,
@@ -13,7 +14,7 @@ data class FormField(
     val placeholder: String? = null,
 
     val validation: FieldValidation? = null,
-    val isEditable: Boolean = true
+    var isEditable: Boolean = true
 )
 
 data class ConditionalLogic(
@@ -24,7 +25,7 @@ data class ConditionalLogic(
 data class FieldValidation(
     val min: Float? = null,
     val max: Float? = null,
-    val minDate: String? = null,
+    var minDate: String? = null,
     val maxDate: String? = null,
 
     val maxLength: Int? = null,

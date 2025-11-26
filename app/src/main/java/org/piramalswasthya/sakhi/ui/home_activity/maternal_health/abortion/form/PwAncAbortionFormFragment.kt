@@ -177,7 +177,14 @@ class PwAncAbortionFormFragment : Fragment() {
     private fun hardCodedListUpdate(formId: Int) {
         binding.form.rvInputForm.adapter?.apply {
             when (formId) {
-                // future hardcoded updates
+                9 -> {
+                    notifyItemChanged(10)
+
+                }
+//                23 -> {
+//                    notifyItemChanged(8)
+
+//                }
             }
         }
     }
@@ -324,4 +331,6 @@ class PwAncAbortionFormFragment : Fragment() {
         22 -> viewModel.getIndexOfAbortionDischarge2()
         else -> null
     }
+
+
 }

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="ectdset_fin_yrs">वित्तीय वर्ष</string>
+    <string name="ectdset_month">महीना</string>
+    <string name="ectdset_is_preg_tst_done">क्या गर्भावस्था की जांच हुई है?</string>
+    <string name="ectdset_preg_tst_rlt">गर्भावस्था जांच का परिणाम</string>
+    <string name="ectdset_name_wo_preg">क्या महिला गर्भवती है?</string>
+    <string name="ectdset_fly_plan_mthd">क्या आप परिवार नियोजन तरीका अपना रही हैं?</string>
+    <string name="ectdset_mthd_conpt">गर्भनिरोध का तरीका</string>
+    <string name="ectdset_other_mthd">कोई अन्य तरीका</string>
+
+    <string name="antra_injection">अंतरा इंजेक्शन</string>
+
+
+</resources>

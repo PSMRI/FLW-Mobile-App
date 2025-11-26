@@ -22,6 +22,7 @@ class CbacPushToAmritWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         cbacRepo.pushAndUpdateCbacRecord()
+
         return Result.success()
     }
 }
