@@ -7,6 +7,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -48,6 +49,7 @@ import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYIFAPushWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYORSPushWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYSAMPushWorker
 import timber.log.Timber
+import kotlin.math.log
 
 @AndroidEntryPoint
 class CUFYFormFragment : Fragment() {
@@ -99,8 +101,10 @@ class CUFYFormFragment : Fragment() {
                 currentImageField?.apply {
                     value = it.toString()
                     errorMessage = null
-                }
+                    viewModel.updateFieldValue(fieldId, value)
 
+                }
+                adapter.updateFields(viewModel.getVisibleFields())
                 adapter.notifyDataSetChanged()
             }
         }
@@ -123,7 +127,9 @@ class CUFYFormFragment : Fragment() {
                 currentImageField?.apply {
                     value = tempCameraUri.toString()
                     errorMessage = null
+                    viewModel.updateFieldValue(fieldId, value)
                 }
+                adapter.updateFields(viewModel.getVisibleFields())
                 adapter.notifyDataSetChanged()
             }
         }
