@@ -86,7 +86,7 @@ class LeprosyFormDataset(
     private val leprosyStatus = FormElement(
         id = 8,
         inputType = InputType.DROPDOWN,
-        title = resources.getString(R.string.leprosy_status),
+        title = resources.getString(R.string.str_leprosy_status),
         arrayId = R.array.leprosy_status,
         entries = resources.getStringArray(R.array.leprosy_status),
         required = false,
