@@ -306,7 +306,7 @@ data class BenBasicCache(
             isSpouseAdded = isSpouseAdded,
             isMarried = isMarried,
             noOfAliveChildren = noOfAliveChildren,
-            noOfChildren = noOfAliveChildren,
+            noOfChildren = noOfChildren,
             doYouHavechildren = doYouHavechildren
 
 
@@ -337,7 +337,7 @@ data class BenBasicCache(
             isSpouseAdded = isSpouseAdded,
             isMarried = isMarried,
             noOfAliveChildren = noOfAliveChildren,
-            noOfChildren = noOfAliveChildren,
+            noOfChildren = noOfChildren,
             doYouHavechildren = doYouHavechildren,
             reproductiveStatusId = reproductiveStatusId
         )
