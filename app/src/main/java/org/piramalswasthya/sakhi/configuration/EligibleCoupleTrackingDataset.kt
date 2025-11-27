@@ -170,6 +170,8 @@ class EligibleCoupleTrackingDataset(
         title = "Discharge Summary Applicable for Sterilisation Method 2",
         required = false
     )
+    var lastDose: String? = null
+    var lastDateofDose: String? = null
     fun getIndexOfIsPregnant() = getIndexById(isPregnant.id)
     suspend fun setUpPage(
         ben: BenRegCache?,
@@ -179,6 +181,9 @@ class EligibleCoupleTrackingDataset(
         noOfChildren: Int?
     ) {
         noOfChildrens=noOfChildren!!
+        lastDose=lastTrack?.antraDose
+        lastDateofDose=lastTrack?.dateOfAntraInjection
+
         methodOfContraception.entries = if (noOfChildren == 0)
             resources.getStringArray(R.array.method_of_contraception_for_zero_child)
         else
@@ -191,6 +196,7 @@ class EligibleCoupleTrackingDataset(
             month,
             isPregnancyTestDone,
         )
+
         if (saved == null) {
             dateOfVisit.value = getDateFromLong(System.currentTimeMillis())
             dateOfVisit.value?.let {
@@ -202,10 +208,7 @@ class EligibleCoupleTrackingDataset(
                 dateOfAntraInjection.min=ben.regDate
             }
 
-            val nextDose = getNextDose(lastTrack?.antraDose, lastTrack?.dateOfAntraInjection)
-            antraDoses.value = nextDose
-            antraDoseValue=nextDose
-            antraDoses.isEnabled = false
+
 
             dateOfVisit.min = lastTrack?.let {
                 Calendar.getInstance().apply {
@@ -221,7 +224,8 @@ class EligibleCoupleTrackingDataset(
                     setToStartOfTheDay()
                 }.timeInMillis
             } ?: dateOfReg
-        } else {
+        }
+        else {
             dateOfVisit.value = getDateFromLong(saved.visitDate)
             if (saved.lmpDate != null) {
                 lmpDate.value = getDateFromLong(saved.lmpDate!!)
@@ -229,6 +233,8 @@ class EligibleCoupleTrackingDataset(
                 lmpDate.value = getDateFromLong(System.currentTimeMillis())
             }
             financialYear.value = getFinancialYear(dateString = dateOfVisit.value)
+
+
             month.value =
                 resources.getStringArray(R.array.visit_months)[Companion.getMonth(dateOfVisit.value)!!]
             isPregnancyTestDone.value =
@@ -337,6 +343,10 @@ class EligibleCoupleTrackingDataset(
             }
 
         }
+        val nextDose = getNextDose(lastDose, lastDateofDose, dateOfVisit.value!!)
+        antraDoses.value = nextDose
+        antraDoseValue=nextDose
+        antraDoses.isEnabled = false
         setUpPage(list)
 
     }
@@ -346,6 +356,10 @@ class EligibleCoupleTrackingDataset(
             dateOfVisit.id -> {
                 financialYear.value = Companion.getFinancialYear(dateOfVisit.value)
                 month.value = resources.getStringArray(R.array.visit_months)[Companion.getMonth(dateOfVisit.value)!!]
+                val nextDose = getNextDose(lastDose, lastDateofDose, dateOfVisit.value!!)
+                antraDoses.value = nextDose
+                antraDoseValue=nextDose
+                antraDoses.isEnabled = false
                 -1
             }
             dateOfAntraInjection.id -> {
@@ -527,7 +541,7 @@ class EligibleCoupleTrackingDataset(
                                         dueDateOfAntraInjection,
                                         mpaFileUpload1,
 
-                                    ),
+                                        ),
                                     position = -1
                                 )
                             }
@@ -649,28 +663,26 @@ class EligibleCoupleTrackingDataset(
         }
     }
 
-    private fun getNextDose(lastDose: String?, lastDate: String?): String {
+
+    private fun getNextDose(lastDose: String?, lastDate: String?, visitDate: String): String {
+
         if (lastDose == null || lastDate == null) {
             return "Dose-1"
         }
 
         val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-        val today = Calendar.getInstance().time
+
         val last = sdf.parse(lastDate) ?: return "Dose-1"
+        val visit = sdf.parse(visitDate) ?: return "Dose-1"
 
-        val diffDays = ((today.time - last.time) / (1000 * 60 * 60 * 24))
-
+        val diffDays = ((visit.time - last.time) / (1000 * 60 * 60 * 24))
         if (diffDays > 120) {
             return "Dose-1"
         }
-
         val doseNum = lastDose.filter { it.isDigit() }.toIntOrNull() ?: 0
         val next = doseNum + 1
-
         return if (next in 1..10) "Dose-$next" else "No More Doses"
     }
-
-
 
 
 
