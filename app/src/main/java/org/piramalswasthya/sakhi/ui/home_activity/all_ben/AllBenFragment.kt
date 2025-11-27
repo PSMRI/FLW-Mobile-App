@@ -216,10 +216,10 @@ class AllBenFragment : Fragment() {
                             AllBenFragmentDirections.actionAllBenFragmentToNewChildAsBenRegistrationFragment(
                                 hhId = hhId,
                                 benId = 0,
-                                relToHeadId = HelperUtil.getMaleRelationId(relToHeadId),
+                                relToHeadId = relToHeadId,
                                 selectedBenId = benId,
-                                isAddSpouse = 1,
-                                gender = 1
+                                isAddSpouse = 0,
+                                gender = 0
 
                             )
                         )

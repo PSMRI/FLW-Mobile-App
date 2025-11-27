@@ -32,6 +32,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.BuildConfig
@@ -492,25 +493,19 @@ class NewBenRegFragment : Fragment() {
 
                             if (viewModel.isHoFMarried() && !viewModel.isBenMarried) {
                                 showAddSpouseAlert()
+                                return@repeatOnLifecycle
                             }
 
-                            viewModel.dataset.isAddingChildren.collect { value ->
-                                if (value) {
-                                    showAddSChildAlert()
-                                } else {
-                                    findNavController().navigateUp()
-                                }
-                            }
+                            val isAddingChildren = viewModel.dataset.isAddingChildren.first()
+                                  if (isAddingChildren) {
+                                          showAddSChildAlert()
+                                  } else {
+                                         findNavController().navigateUp()
+                                     }
                         }
                     }
 
 
-
-                    /*if (viewModel.isHoFMarried() && !viewModel.isBenMarried) {
-                        showAddSpouseAlert()
-                    } else {
-                        findNavController().navigateUp()
-                    }*/
                 }
 
                 State.SAVE_FAILED -> {

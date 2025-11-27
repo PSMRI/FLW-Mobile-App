@@ -1232,7 +1232,7 @@ class BenRepo @Inject constructor(
                                 isSpouseAdded = if (jsonObject.has("isSpouseAdded")) jsonObject.optBoolean("isSpouseAdded") else false,
                                 isChildrenAdded = if (jsonObject.has("isChildrenAdded")) jsonObject.optBoolean("isChildrenAdded") else false,
                                 isMarried = if (jsonObject.has("isMarried")) jsonObject.optBoolean("isMarried") else false,
-                                doYouHavechildren = if (jsonObject.has("isMarried")) jsonObject.optBoolean("isMarried") else false,
+                                doYouHavechildren = if (jsonObject.has("doYouHavechildren")) jsonObject.optBoolean("doYouHavechildren") else false,
                                 noOfAliveChildren = if (jsonObject.has("noofAlivechildren")) jsonObject.optInt("noofAlivechildren") else 0,
                                 noOfChildren = if (jsonObject.has("noOfchildren")) jsonObject.optInt("noOfchildren") else 0,
                             )
