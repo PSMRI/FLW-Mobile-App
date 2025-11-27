@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="u_win_session_date">U-WIN सत्र तिथि</string>
-    <string name="place">स्थान</string>
+    <string name="place_village">स्थान</string>
     <string name="no_of_participants_attended">उपस्थित प्रतिभागियों की संख्या</string>
 </resources>

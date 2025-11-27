@@ -11,8 +11,8 @@
     <string name="contact_number_1">যোগাযোগ নম্বৰ ১</string>
     <string name="contact_number_2">যোগাযোগ নম্বৰ ২</string>
     <string name="sc_hwc_tg_hosp">এসসি/এইচডব্লিউসি/টিজি হাসপাতাল</string>
-    <string name="block">ব্লক</string>
     <string name="bank_acc_no">বেংক একাউণ্ট নং</string>
+    <string name="bank_acc">বেঙ্ক একাউণ্ট</string>
     <string name="nearest_24x7_phc">নিকটতম ২৪x৭ পি এইচ চি</string>
     <string name="nearest_fru">নিকটতম FRU</string>
     <string name="nearest_usg_centre">নিকটতম USG কেন্দ্ৰ:</string>
@@ -81,9 +81,9 @@
     <string name="history">ইতিহাস</string>
     <string name="micro">মাইক্ৰ’ জন্ম পৰিকল্পনা</string>
     <string name="_1st_anc">1ম এএনসি</string>
-    <string name="_1st_pmsma">1ম পিএমএসএমএ</string>
-    <string name="_2nd_pmsma">2য় পিএমএসএমএ</string>
-    <string name="_3rd_pmsma">3য় পিএমএসএমএ</string>
+    <string name="_1st_pmsma">প্ৰথম PMSMA</string>
+    <string name="_2nd_pmsma">দ্বিতীয় PMSMA</string>
+    <string name="_3rd_pmsma">তৃতীয় PMSMA</string>
     <string name="beneficiary_registration">হিতাধিকাৰী পঞ্জীয়ন</string>
     <string name="show_details">বিৱৰণী দেখুওৱা</string>
     <string name="husband">স্বামী</string>
@@ -113,6 +113,14 @@
     <string name="c_no"><b>Contact no:\n1-</b></string>
     <string name="b_blood_donor"><b>Blood donor identified\n1:</b></string>
     <string name="pregnant_women_pw_section">গৰ্ভৱতী মহিলা (PW) অংশ</string>
+    <string name="round">ৰাউণ্ডছ</string>
+    <string name="irs_round">আইআৰএছ ৰাউণ্ডছ</string>
+    <string name="last_visit_date">শেষ পৰিদৰ্শনৰ তাৰিখ</string>
+    <string name="supervisor_visit_date">প্ৰৱন্ধকে পৰিদৰ্শন কৰা তাৰিখ</string>
+    <string name="test_up_date">পৰীক্ষাৰ তাৰিখ</string>
+    <string name="help_support">সাহায্য আৰু সহায়</string>
+    <string name="user_guide">ইউজাৰ গাইড</string>
+    <string name="video_tutorial">ভিডিঅ\' পাঠ্যক্ৰম</string>
 
     <string-array name="sugar_test_types">
         <item>RBS</item>

@@ -11,8 +11,8 @@
     <string name="contact_number_1">संपर्क संख्या 1</string>
     <string name="contact_number_2">संपर्क संख्या 2</string>
     <string name="sc_hwc_tg_hosp">सब-सेंटर/एचडब्ल्यूसी</string>
-    <string name="block">ब्लॉक</string>
     <string name="bank_acc_no">बैंक खाता संख्या</string>
+    <string name="bank_acc">बैंक खाता</string>
     <string name="nearest_24x7_phc">निकटतम 24x7 पीएचसी</string>
     <string name="nearest_fru">निकटतम एफआरयू</string>
     <string name="nearest_usg_centre">निकटतम अल्ट्रासाउंड केंद्र</string>
@@ -113,4 +113,13 @@
     <string name="b_age">उम्र</string>
     <string name="c_no">संपर्क संख्या</string>
     <string name="b_blood_donor">रक्तदान करने वाला व्यक्ति</string>
+    <string name="round">राउंड</string>
+    <string name="irs_round">आईआरएस राउंड</string>
+    <string name="last_visit_date">पिछली मुलाक़ात की तारीख</string>
+    <string name="supervisor_visit_date">मितानिन प्रशिक्षक द्वारा मुलाक़ात की तारीख</string>
+    <string name="test_up_date">परीक्षण की तारीख</string>
+    <string name="help_support">मदद एवंसहयोग</string>
+    <string name="user_guide">उपयोगकर्ता मार्गदर्शिका</string>
+    <string name="video_tutorial">वीडियो ट्यूटोरियल</string>
+
 </resources>

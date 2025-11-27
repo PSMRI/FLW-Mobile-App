@@ -6,13 +6,12 @@
     <string name="cbac_early_detection">Part B1: Early Detection</string>
     <string name="cbac_early_detection_2">Part B2: Women Only</string>
     <string name="cbac_early_detection_3">Part B3: Elderly Specific</string>
-    <string name="cbac_hint_age">What is your Age? (in Years)</string>
+    <string name="cbac_hint_age">What is your age?</string>
     <string name="cbac_hint_smoke">Do you smoke or consume smokeless products such as gutka or khaini?</string>
     <string name="cbac_hint_alcohol">Do you consume alcohol daily?</string>
     <string name="cbac_hint_waist">Measurement of waist (in cm)</string>
     <string name="cbac_hint_pa">Do you undertake any physical activities for minimum of 150 minutes in a week?</string>
     <string name="cbac_hint_fh">Do you have a family history (any one of your parents or siblings) of high blood pressure, diabetes and heart disease?</string>
-
     <string name="cbac_ask_pat_note">Note :</string>
     <string name="cbac_ast1">* If “Yes” is selected for any one of the questions below with “*” then show pop up message “Refer to MO and collect the Sputum sample”</string>
     <string name="cbac_ast2">** If “Yes” is selected for any one of the questions below with “**” then show pop up message “Refer to MO orinform ANM/MPW to tracing of all family members”</string>
@@ -23,8 +22,6 @@
     <string name="cbac_coughing">Coughing more than 2 weeks</string>
     <string name="cbac_blsputum">Blood in sputum</string>
     <string name="cbac_feverwks">Fever for > 2 weeks</string>
-    <string name="treatment_given">Treatment Given</string>
-    <string name="sympt">Symptoms</string>
     <string name="cbac_lsweight">Loss of weight</string>
     <string name="cbac_ntswets">Night Sweats</string>
     <string name="cbac_recurrent_ulceration">Recurrent ulceration on palm or sole</string>
@@ -51,7 +48,6 @@
     <string name="cbac_Inability_close_eyelid">Inability to close eyelid</string>
     <string name="cbac_diff_holding_objects">Difficulty in holding objects with fingers</string>
     <string name="cbac_Weekness_in_feet">Weakness in feet that causes difficulty in walking</string>
-
     <string name="cbac_lumpbrest">Lump in the breast</string>
     <string name="cbac_nipple">Blood stained discharge from the nipple</string>
     <string name="cbac_breast">Change in shape and size of breast</string>
@@ -60,20 +56,16 @@
     <string name="cbac_blintercorse">Bleeding after intercourse</string>
     <string name="cbac_fouldis">Foul smelling vaginal discharge</string>
     <string name="none_of">None of these</string>
-
     <string name="cbac_double_ast" translatable="false">**</string>
     <string name="cbac_single_ast" translatable="false">* </string>
     <string name="cbac_yes">Yes</string>
     <string name="cbac_no">No</string>
-
     <string name="cbac_risk_Factors_COPD">Part C: Risk factor for COPD</string>
     <string name="cbac_occupational_exposure">Occupational exposure</string>
     <string name="cbac_PHQ2">Part D: PHQ2</string>
     <string name="cbac_last_two_weeks">Over the last two weeks how often have you been bothered by the following problems ?</string>
     <string name="cbac_little_interest">Little interest or pleasure in doing things ?</string>
     <string name="cbac_feeling_down">Feeling down, depressed, &amp; hopeless ?</string>
-
-
     <string name="hrp_valid">HRP Case, Please visit the nearest HWC or call 104.</string>
     <string name="hrp_sug_valid"> Suspected HRP Case, Please visit the nearest HWC or call 104.</string>
     <string name="ncd_hyper">Related to NCD (Hypertension, DM), Please visit the nearest HWC or call 104.</string>
@@ -171,7 +163,6 @@
     <string name="alert">Alert !</string>
     <string name="missing_field">MISSING FIELD</string>
     <string name="suspected_hrp_and_ncd_case">SUSPECTED HRP AND NCD CASE!</string>
-    <string name="isrefer">REFER</string>
     <string name="ok">Ok</string>
     <string name="suspected_hrp_case">SUSPECTED HRP CASE!</string>
     <string name="suspected_ncd_case_please_visit_nearest_hwc_or_call">Suspected NCD case, please visit nearest HWC or call\n 104.</string>
@@ -186,14 +177,6 @@
     <string name="cbac">CBAC</string>
     <string name="tb_screening">TB Screening</string>
     <string name="tb_screening_submitted">TB Screening submitted</string>
-    <string name="cbac_screening_submitted">CBAC Screening submitted</string>
-    <string name="malaria_submitted">Malaria Form submitted</string>
-    <string name="kala_submitted">Kala Azar Form submitted</string>
-    <string name="ben_marked_death">Beneficiary marked as Deceased.</string>
-    <string name="irs_submitted">IRS Form submitted</string>
-    <string name="aes_submitted">AES/JS Form submitted</string>
-    <string name="filaria_submitted">Filaria Form submitted</string>
-    <string name="leprosy_submitted">Leprosy Form submitted</string>
     <string name="screen">Screen</string>
     <string name="tb_suspected_sputum_test">TB Suspected Sputum Test</string>
     <string name="tb_tracking_submitted">TB Tracking submitted</string>
@@ -201,7 +184,6 @@
     <string name="filled_on">"Filled on "</string>
     <string name="save">Save</string>
     <string name="tb_suspected_alert">Refer to MO and collect the Sputum sample</string>
-    <string name="ncd_refer_alert">Do you want to refer to HWC facility?</string>
     <string name="tb_suspected_alert_positive">Refer to MO</string>
     <string name="tb_suspected_family_alert">Refer to MO or inform ANM/MPW to tracing of all family members</string>
     <string name="is_sputum_sample_collected">Is Sputum sample collected?</string>
@@ -209,25 +191,7 @@
     <string name="nikshay_id">Nikshay ID</string>
     <string name="sputum_test_result">Sputum Test Result</string>
     <string name="referred_to_facility">Referred to Facility</string>
-    <string name="referred_to">Referred to</string>
     <string name="facility_referral_follow_ups">Facility Referral follow-ups</string>
-    <string name="flu_like_illness">Flu-like illness</string>
-    <string name="shakingchills">Shaking chills</string>
-    <string name="headache">Headache</string>
-    <string name="muscleaches">Muscle aches</string>
-    <string name="tiredness">Tiredness</string>
-    <string name="nausea">Nausea</string>
-    <string name="vomiting">Vomiting</string>
-    <string name="diarrhea">Diarrhea</string>
-    <string name="rapid_diagnostic">Rapid Diagnostic Test (RDT)</string>
-    <string name="rapid_diagnostic_kala">Kala Azar Rapid Diagnostic Test (RDT)</string>
-    <string name="slide_test_pf">Malaria Slide Test Pf</string>
-    <string name="slide_test">Malaria Slide Test</string>
-    <string name="slide_test_pv">Malaria Slide Test Pv</string>
-    <string name="malariacasecount">Malaria Case Count</string>
-    <string name="filariacasecount">Filaria Case Count</string>
-    <string name="suffering_from_filaries">Suffering from Filariasis</string>
-    <string name="leprosy_status">Leprosy Status</string>
 
     <string-array name="tb_submitted_yet">
         <item>DMC</item>

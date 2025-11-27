@@ -93,10 +93,7 @@
     <string name="not_processed">" Records Not Synced!"</string>
     <string name="all_records_synced">All records synced</string>
     <string name="are_you_sure_to_logout">" Are you sure you want to logout?"</string>
-
-
     <string name="icon_title_ahd_list">AHD Forms List</string>
-
     <string name="place">Place</string>
     <string name="participants">Participants</string>
     <string name="no_b_attended">No. of Beneficiaries Attended</string>
