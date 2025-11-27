@@ -9,7 +9,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.R
@@ -70,8 +70,18 @@ class MalariaFormViewModel @Inject constructor(
     val formList = dataset.listFlow
 
     var isSuspected = false
+    var isnotConfirmed = false
     var isDeath = false
-    var allVisitsList = malariaDao.getAllVisitsForBen(benId)
+
+
+    val allVisitsList = malariaDao.getAllVisitsForBen(benId)
+        .map { list ->
+            if (list.isNotEmpty()) {
+                list.filter { it.beneficiaryStatusId == 1 }
+            } else {
+                emptyList()
+            }
+        }
 
     private lateinit var malariaScreeningCache: MalariaScreeningCache
     var _isBeneficaryStatusDeath = MutableLiveData<Boolean>()
@@ -98,6 +108,7 @@ class MalariaFormViewModel @Inject constructor(
                 malariaScreeningCache = it
                 _visitNo.value = malariaScreeningCache.visitId.toString()
                 isSuspected = isSuspectedCase(malariaScreeningCache)
+                isnotConfirmed = isNotConfirmedCase(malariaScreeningCache)
                 _recordExists.value = true
                 _isBeneficaryStatusDeath.value = malariaScreeningCache.beneficiaryStatus.equals("Death", ignoreCase = true)
             } ?: run {
@@ -177,5 +188,8 @@ class MalariaFormViewModel @Inject constructor(
     }
     fun isSuspectedCase(malariaScreeningCache: MalariaScreeningCache): Boolean {
         return malariaScreeningCache.caseStatus == "Suspected"
+    }
+    fun isNotConfirmedCase(malariaScreeningCache: MalariaScreeningCache): Boolean {
+        return malariaScreeningCache.caseStatus == "Not Confirmed"
     }
 }
