@@ -129,8 +129,6 @@
     <string name="child_immunization">শিশু পৰিস্কৃতি</string>
     <string name="pregnancy_registration">গৰ্ভাবস্থা নিবন্ধন</string>
     <string name="mother_immunizationlist">মাতা পৰিস্কৃতি তালিকা</string>
-    <string name="age">বয়স</string>
-    <string name="gender">লিংগ</string>
     <string name="registration_date">নিবন্ধনৰ তাৰিখ</string>
     <string name="beneficiary_id">লাভকাৰী পৰিচয়পত্ৰ</string>
     <string name="rch_id">RCH পৰিচয়পত্ৰ</string>
@@ -264,8 +262,6 @@
     <string name="name_of_the_sub_center">Name of the sub center</string>
     <string name="mdsr_form_from_anm_1">MDSR form from ANM 1</string>
     <string name="mdsr_form_from_anm_2">MDSR form from ANM 2</string>
-    <string name="death_certificate">Death Certificate</string>
-    <string name="village_town_city">Village/Town/City</string>
     <string name="father_name">Father Name</string>
     <string name="age_of_woman">Age Of Woman</string>
     <string name="when_did_death_occur">When did death occur</string>
@@ -300,44 +296,17 @@
     <string name="optional_">Optional</string>
     <string name="mandatory">Mandatory <font color='#FF0000'>*</font></string>
     <string name="name_of_the_child">Name of the Child</string>
-    <string name="address">Address</string>
-    <string name="house_number">House number</string>
-    <string name="mohalla_colony">"Mohalla/Colony "</string>
-    <string name="landmarks_if_any">"Landmarks, if any "</string>
     <string name="pincode">Pincode</string>
-    <string name="landline">Landline</string>
-    <string name="time">Time</string>
-    <string name="name_of_first_informant">"Name of First Informant "</string>
     <string name="signature_name_of_asha">Signature/Name of ASHA</string>
-    <string name="date_of_notification">"Date of Notification "</string>
     <string name="cdr_form_from_anm_1">CDR form from ANM 1</string>
     <string name="cdr_form_from_anm_2">CDR form from ANM 2</string>
-    <string name="district_tehsil">District/Tehsil</string>
     <string name="leprosy_confirmed">Leprosy Confirmed</string>
     <string name="leprosy_suspected">Leprosy Suspected</string>
     <string name="after_the_abortion_the_woman_opted_for_permanent_sterilization_tubectomy">After the Abortion, the Woman opted for permanent sterilization (Tubectomy)</string>
     <string name="date_of_sterilisation">Date of Sterilisation</string>
     <string name="what_family_planning_method_has_been_chosen_after_the_abortion">What family planning method has been chosen after the abortion?</string>
-    <!-- <string name="child_rch_id">Child RCH ID</string>
-     <string name="vaccination_due_date">Vaccination Due Date</string>
-     <string name="reminder">Reminder!!</string>
-     <string name="do_you_want_to_upload_mcp_card_immunization_page_section_photo_copy_to_claim_your_incentive">Do you want to upload MCP Card - Immunization page/ section photo copy to claim your Incentive</string>
-     <string name="yes_dialog">Yes</string>
-     <string name="no_dialog">No</string>
-     <string name="dose_name_2">Dose Name : %1$s</string>
-     <string name="u_win_session">U-WIN Session</string>
-     <string name="u_win_sessions_list">U-win Session List</string>-->
     <string name="higher_healthcare_center">উচ্চতৰ স্বাস্থ্যসেৱা কেন্দ্ৰ</string>
     <string name="additional_services">অতিৰিক্ত সেৱা</string>
-   <!-- <string name="child_rch_id">Child RCH ID</string>
-    <string name="vaccination_due_date">Vaccination Due Date</string>
-    <string name="reminder">Reminder!!</string>
-    <string name="do_you_want_to_upload_mcp_card_immunization_page_section_photo_copy_to_claim_your_incentive">Do you want to upload MCP Card - Immunization page/ section photo copy to claim your Incentive</string>
-    <string name="yes_dialog">Yes</string>
-    <string name="no_dialog">No</string>
-    <string name="dose_name_2">Dose Name : %1$s</string>
-    <string name="u_win_session">U-WIN Session</string>
-    <string name="u_win_sessions_list">U-win Session List</string>-->
 
     <string name="hbnc_baby_dead_alert">শিশুৰ মৃত্যু পৰ্যালোচনাৰ বাবে মৃত্যুৰ কাৰণ ANM/MPW/PHC ক জনাব লাগিব।</string>
     <string name="hbnc_baby_gestational_age_alert">যদি শিশু ৩৫ সপ্তাহতকৈ কম বয়সত জন্ম হয়, তেন্তে মনোযোগ দিব।</string>
@@ -382,7 +351,6 @@
     <string name="sync_in_progress">Sync চলি আছে</string>
     <string name="full_name">সম্পূৰ্ণ নাম</string>
     <string name="other">অন্যান্য</string>
-    <string name="state">ৰাজ্য</string>
     <string name="district">জিলা</string>
     <string name="view_household_information">ঘৰ-সংক্ৰান্ত তথ্য চাওক</string>
     <string name="hello">নমস্কাৰ</string>
@@ -391,7 +359,6 @@
     <string name="mother">মাক</string>
     <string name="patient_information">ৰোগীৰ তথ্য</string>
     <string name="mother_name">মাকৰ নাম</string>
-    <string name="date_of_birth">জন্ম তাৰিখ</string>
     <string name="previous_vaccine_details">পূৰ্বৰ টিকা সম্পৰ্কিত তথ্য</string>
     <string name="due_serial">বাকী থকা ক্ৰমিক সংখ্যা</string>
     <string name="saving_form">ফৰ্ম সংৰক্ষণ কৰি আছে</string>
@@ -550,6 +517,7 @@
     <string name="str_asha_name">আশাৰ নাম</string>
     <string name="str_village_name">গাঁওৰ নাম</string>
     <string name="str_block_name">ব্লক নাম</string>
+    <string name="referred_to">প্ৰেৰণ কৰা হৈছে</string>
     <string name="str_still_birth">মৃতজন্ম</string>
     <string name="str_supervisors_remark">পৰ্যবেক্ষকৰ মন্তব্য</string>
     <string name="str_supervisor">পৰ্যবেক্ষক</string>
@@ -595,6 +563,31 @@
     <string name="str_date_of_mother_referral">মাতৃক প্ৰেৰণ কৰাৰ তাৰিখ</string>
     <string name="str_place_of_mother_referral">মাতৃক প্ৰেৰণ কৰাৰ স্থান</string>
     <string name="str_other_place_of_mother_referral">অন্য - মাতৃক প্ৰেৰণ কৰাৰ স্থান</string>
+    <string name="flu_like_illness">ফ্লুৰ দৰে ৰোগ</string>
+    <string name="shakingchills">কম্পনৰ সৈতে ঠাণ্ডা লাগা</string>
+    <string name="headache">মুৰৰ বিষ</string>
+    <string name="muscleaches">পেশী ব্যথা</string>
+    <string name="tiredness">ক্লান্তি</string>
+    <string name="nausea">ৱমি অনুভৱ</string>
+    <string name="vomiting">বমি কৰা</string>
+    <string name="diarrhea">ডায়েৰিয়া</string>
+    <string name="rapid_diagnostic">দ্ৰুত নিৰ্ণয় পৰীক্ষা</string>
+    <string name="rapid_diagnostic_kala">কলা আজাৰ দ্ৰুত নিৰ্ণয় পৰীক্ষা</string>
+    <string name="slide_test_pf">মেৰেলিয়া চ্লাইড পৰীক্ষা Pf</string>
+    <string name="slide_test">মেৰেলিয়া চ্লাইড পৰীক্ষা </string>
+    <string name="slide_test_pv">মেৰেলিয়া চ্লাইড পৰীক্ষা Pv</string>
+    <string name="sympt">লক্ষণসমূহ</string>
+    <string name="malaria_submitted">ম্যালেৰিয়া ফৰ্ম দাখিল কৰা হৈছে</string>
+
+    <string name="malariacasecount">মেলেৰিয়াৰ কেচৰ সংখ্যা</string>
+    <string name="filariacasecount">ফিলাৰিয়া কেচৰ সংখ্যা</string>
+    <string name="suffering_from_filaries">ফিলাৰিয়াছিছত ভুগি থকা</string>
+    <string name="str_leprosy_status"> কুষ্ঠ ৰোগ স্থিতি</string>
+    <string name="treatment_given">প্ৰদান কৰা চিকিৎসা</string>
+    <string name="aes_submitted">AES/JS ফৰ্ম জমা দিয়া হৈছে</string>
+    <string name="filaria_submitted">ফিলাৰিয়া ফৰ্ম জমা দিয়া হৈছে</string>
+    <string name="leprosy_submitted">কঁকালৰ ৰোগৰ ফৰ্ম জমা দিয়া হৈছে</string>
+    <string name="irs_submitted">IRS ফৰ্ম জমা দিয়া হৈছে</string>
 
 
 

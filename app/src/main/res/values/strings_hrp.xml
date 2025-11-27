@@ -11,7 +11,6 @@
     <string name="contact_number_1">Contact Number 1</string>
     <string name="contact_number_2">Contact Number 2</string>
     <string name="sc_hwc_tg_hosp">SC/HWC/TG Hosp</string>
-    <string name="block">Block</string>
     <string name="bank_acc_no">Bank Acc No</string>
     <string name="bank_acc">Bank Account</string>
     <string name="nearest_24x7_phc">Nearest 24x7 PHC</string>
@@ -120,6 +119,7 @@
     <string name="b_age"><b>Age :</b></string>
     <string name="c_no"><b>Contact no :\n1 -</b></string>
     <string name="b_blood_donor"><b>Blood donor identified\n1 -</b></string>
+
 
 
     <string name="help_support">Help &amp; Support</string>
