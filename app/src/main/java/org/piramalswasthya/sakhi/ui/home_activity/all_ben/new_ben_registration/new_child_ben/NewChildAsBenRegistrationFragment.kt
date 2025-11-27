@@ -253,7 +253,6 @@ class NewChildAsBenRegistrationFragment : Fragment() {
                 115 -> notifyDataSetChanged()
 
 
-                12 -> notifyDataSetChanged()
                 17 -> {
                     notifyDataSetChanged()
                     notifyItemChanged(viewModel.getIndexOfAge1())
@@ -309,6 +308,7 @@ class NewChildAsBenRegistrationFragment : Fragment() {
                 }
 
                 12 -> {
+                    notifyDataSetChanged()
                     notifyItemChanged(viewModel.getIndexOfLiveChildren())
                     notifyItemChanged(viewModel.getIndexOfMaleChildren())
                     notifyItemChanged(viewModel.getIndexOfFeMaleChildren())

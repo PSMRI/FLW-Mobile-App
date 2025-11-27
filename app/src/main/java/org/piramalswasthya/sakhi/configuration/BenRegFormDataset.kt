@@ -1946,12 +1946,11 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             }
 
             haveChildren.id -> {
-                if (haveChildren.value == "Yes") {
-                    setIsAddingChildren(true)
-
-                } else {
-                    setIsAddingChildren(false)
-                }
+                if (haveChildren.entries != null) {
+                    val yesIndex = 0
+                    val current = haveChildren.getPosition()
+                    setIsAddingChildren(current == yesIndex)
+                    }
                 0
             }
             otherRelationToHead.id -> {

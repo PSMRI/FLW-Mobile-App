@@ -162,8 +162,8 @@ class NewChildBenViewModel@Inject constructor(
             withContext(Dispatchers.IO) {
                 try {
                     _state.postValue(State.SAVING)
-                    if (this@NewChildBenViewModel::ben.isInitialized) {
-                        val benIdToSet = minOf(benRepo.getMinBenId() - 1L, -1L)
+
+                    val benIdToSet = minOf(benRepo.getMinBenId() - 1L, -1L)
                         ben = BenRegCache(
                             ashaId = user.userId,
                             beneficiaryId = benIdToSet,
@@ -186,7 +186,7 @@ class NewChildBenViewModel@Inject constructor(
                             locationRecord = locationRecord,
                             isConsent = isOtpVerified
                         )
-                    }
+
                     dataset.mapValues(ben, 2)
                     ben.apply {
                         if (beneficiaryId < 0L) {

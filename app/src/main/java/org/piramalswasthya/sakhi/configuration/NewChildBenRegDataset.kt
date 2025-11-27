@@ -1185,17 +1185,15 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
 
 
     private suspend fun updateTimeLessThan18() {
-        lastDeliveryDate = maxOf(
-            getLongFromDate(dob1.value),
-            getLongFromDate(dob2.value),
-            getLongFromDate(dob3.value),
-            getLongFromDate(dob4.value),
-            getLongFromDate(dob5.value),
-            getLongFromDate(dob6.value),
-            getLongFromDate(dob7.value),
-            getLongFromDate(dob8.value),
-            getLongFromDate(dob9.value)
-        )
+        val dobStrings = listOf(
+           dob1.value, dob2.value, dob3.value, dob4.value, dob5.value,
+            dob6.value, dob7.value, dob8.value, dob9.value
+        ).filter { !it.isNullOrBlank() }
+
+         if (dobStrings.isNotEmpty()) {
+            val dobLongs = dobStrings.map { getLongFromDate(it!!) }
+             lastDeliveryDate = dobLongs.maxOrNull()!!
+            }
 
     }
 

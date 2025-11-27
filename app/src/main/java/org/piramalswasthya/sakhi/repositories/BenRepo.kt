@@ -600,7 +600,7 @@ class BenRepo @Inject constructor(
                                             isConsent = false,
                                             isSpouseAdded = false,
                                             isChildrenAdded = false,
-                                            isMarried = false
+                                            isMarried = false,
                                             reproductiveStatusId =  benDataObj.getInt("reproductiveStatusId"),
                                         )
                                     )

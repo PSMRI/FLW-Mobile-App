@@ -41,10 +41,10 @@
         <variable
             name="role"
             type="Integer" />
-
         <variable
             name="isMatched"
             type="Boolean" />
+
 
     </data>
 
@@ -105,7 +105,6 @@
                             app:layout_constraintTop_toTopOf="parent"
                             app:tint="?attr/colorPrimary" />
 
-                        <!--                    android:src="@{ben.gender.equals(`MALE`) ? @drawable/ic_males : @drawable/ic_females}"-->
 
                         <TextView
                             android:id="@+id/tv_hh_id"
@@ -558,6 +557,51 @@
                         </LinearLayout>
                     </LinearLayout>
                     <LinearLayout
+                        android:id="@+id/ll_ben_details_4"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="3"
+                        app:layout_constraintTop_toBottomOf="@id/ll_ben_details_3">
+
+
+                        <Button
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:id="@+id/btn_ifa"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="@dimen/margin_small"
+                            android:backgroundTint="@android:color/holo_green_dark"
+                            android:onClick="@{()-> clickListener.clickedAddAllBenBtn(ben,isMatched,true)}"
+                            android:text="@string/ifa"
+                            app:visibleIfEligibleFemale="@{ben.ageInt}"
+                            app:isDeath="@{ben.isDeathValue}"
+                            app:reproductiveStatusId="@{ben.reproductiveStatusId}"
+                            app:gender="@{ben.gender}"
+                            android:textColor="?attr/colorOnPrimary"
+                            tools:ignore="NestedWeights" />
+
+                        <Space
+                            android:layout_width="@dimen/_5sdp"
+                            android:layout_height="match_parent"/>
+
+                        <Button
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:id="@+id/btn_above_30"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/margin_small"
+                            android:backgroundTint="@android:color/holo_green_dark"
+                            android:onClick="@{()-> clickListener.clickedAddAllBenBtn(ben,isMatched,false)}"
+                            android:text="@string/add_eye_surgery"
+                            app:visibleIfAgeAbove30AndAliveAge="@{ben.ageInt}"
+                            app:isDeath="@{ben.isDeathValue}"
+                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                            android:textColor="?attr/colorOnPrimary"
+                            tools:ignore="NestedWeights"/>
+
+                    </LinearLayout>
+                    <LinearLayout
                         android:id="@+id/ll_add_spouse_btn"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -565,14 +609,14 @@
                         android:layout_gravity="end"
                         android:padding="@dimen/padding_normal"
                         android:orientation="horizontal"
-                        android:visibility="@{ben.isDeath ? View.GONE : View.VISIBLE}">
+                       >
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_add_spouse"
                             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text='Add Wife'
+                            android:text='@string/add_wife'
                             android:layout_weight="1"
                             android:layout_marginEnd="5dp"
                             android:backgroundTint="@android:color/holo_blue_dark"
@@ -586,7 +630,7 @@
                             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text='Add Children'
+                            android:text='@string/add_children'
                             android:layout_marginStart="5dp"
                             android:layout_weight="1"
                             android:visibility="gone"
@@ -597,53 +641,6 @@
                             app:strokeWidth='1dp' />
                     </LinearLayout>
                 </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/ll_ben_details_4"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:weightSum="3"
-                    app:layout_constraintTop_toBottomOf="@id/ll_ben_details_3">
-
-
-                    <Button
-                        style="@style/Widget.Material3.Button.TonalButton"
-                        android:id="@+id/btn_ifa"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="@dimen/margin_small"
-                        android:backgroundTint="@android:color/holo_green_dark"
-                        android:onClick="@{()-> clickListener.clickedAddAllBenBtn(ben,isMatched,true)}"
-                        android:text="@string/ifa"
-                        app:visibleIfEligibleFemale="@{ben.ageInt}"
-                        app:isDeath="@{ben.isDeathValue}"
-                        app:reproductiveStatusId="@{ben.reproductiveStatusId}"
-                        app:gender="@{ben.gender}"
-                        android:textColor="?attr/colorOnPrimary"
-                        tools:ignore="NestedWeights" />
-
-                    <Space
-                        android:layout_width="@dimen/_5sdp"
-                        android:layout_height="match_parent"/>
-
-                    <Button
-                        style="@style/Widget.Material3.Button.TonalButton"
-                        android:id="@+id/btn_above_30"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/margin_small"
-                        android:backgroundTint="@android:color/holo_green_dark"
-                        android:onClick="@{()-> clickListener.clickedAddAllBenBtn(ben,isMatched,false)}"
-                        android:text="@string/add_eye_surgery"
-                        app:visibleIfAgeAbove30AndAliveAge="@{ben.ageInt}"
-                        app:isDeath="@{ben.isDeathValue}"
-                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                        android:textColor="?attr/colorOnPrimary"
-                        tools:ignore="NestedWeights"/>
-
-                </LinearLayout>
-            </LinearLayout>
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
