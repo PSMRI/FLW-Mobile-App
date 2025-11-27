@@ -184,6 +184,8 @@ class EligibleCoupleTrackingFormFragment : Fragment() {
                 1 -> {
                     notifyItemChanged(1)
                     notifyItemChanged(2)
+                    notifyItemChanged(9)
+
                 }
                 4, 5, 11 -> notifyDataSetChanged()
             }
