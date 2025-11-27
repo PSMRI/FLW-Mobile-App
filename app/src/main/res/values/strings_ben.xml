@@ -32,6 +32,7 @@
     <string name="vhnc_date">VHNC Date</string>
     <string name="phc_review_meeting_date">PHC Review Meeting Date</string>
     <string name="nbr_nb_first_name">First Name</string>
+    <string name="nbr_child_first_name">Child Name</string>
     <string name="nbr_nb_last_name">Last Name / Surname</string>
     <string name="beneficiary_details_ben">Beneficiary Details</string>
     <string name="id_details">ID Details</string>

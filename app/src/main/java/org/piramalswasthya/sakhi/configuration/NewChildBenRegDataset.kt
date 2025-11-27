@@ -175,6 +175,16 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
 
         )
 
+    private val firstChildName = FormElement(
+        id = 111,
+        inputType = EDIT_TEXT,
+        title = resources.getString(R.string.nbr_child_first_name),
+        arrayId = -1,
+        required = true,
+        allCaps = true,
+        hasSpeechToText = true,
+        etInputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
+    )
     private val dob1 = FormElement(
         id = 17,
         inputType = DATE_PICKER,
@@ -237,6 +247,16 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
         arrayId = -1,
         required = false
     )
+    private val secondChildName = FormElement(
+        id = 112,
+        inputType = EDIT_TEXT,
+        title = resources.getString(R.string.nbr_child_first_name),
+        arrayId = -1,
+        required = true,
+        allCaps = true,
+        hasSpeechToText = true,
+        etInputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
+    )
 
     private val dob2 = FormElement(
         id = 22,
@@ -290,6 +310,17 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
         title = resources.getString(R.string.ecrdset_dts_3_child),
         arrayId = -1,
         required = false
+    )
+
+    private val thirdChildName = FormElement(
+        id = 113,
+        inputType = EDIT_TEXT,
+        title = resources.getString(R.string.nbr_child_first_name),
+        arrayId = -1,
+        required = true,
+        allCaps = true,
+        hasSpeechToText = true,
+        etInputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
     )
 
     private val dob3 = FormElement(
@@ -346,6 +377,17 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
         required = false
     )
 
+    private val forthChildName = FormElement(
+        id = 114,
+        inputType = EDIT_TEXT,
+        title = resources.getString(R.string.nbr_child_first_name),
+        arrayId = -1,
+        required = true,
+        allCaps = true,
+        hasSpeechToText = true,
+        etInputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
+    )
+
     private val dob4 = FormElement(
         id = 32,
         inputType = DATE_PICKER,
@@ -398,6 +440,17 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
         title = resources.getString(R.string.ecrdset_dts_5_child),
         arrayId = -1,
         required = false
+    )
+
+    private val fifthChildName = FormElement(
+        id = 115,
+        inputType = EDIT_TEXT,
+        title = resources.getString(R.string.nbr_child_first_name),
+        arrayId = -1,
+        required = true,
+        allCaps = true,
+        hasSpeechToText = true,
+        etInputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
     )
 
     private val dob5 = FormElement(
@@ -454,6 +507,17 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
         required = false
     )
 
+    private val sixthChildName = FormElement(
+        id = 116,
+        inputType = EDIT_TEXT,
+        title = resources.getString(R.string.nbr_child_first_name),
+        arrayId = -1,
+        required = true,
+        allCaps = true,
+        hasSpeechToText = true,
+        etInputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
+    )
+
     private val dob6 = FormElement(
         id = 42,
         inputType = DATE_PICKER,
@@ -508,6 +572,16 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
         required = false
     )
 
+    private val seventhChildName = FormElement(
+        id = 117,
+        inputType = EDIT_TEXT,
+        title = resources.getString(R.string.nbr_child_first_name),
+        arrayId = -1,
+        required = true,
+        allCaps = true,
+        hasSpeechToText = true,
+        etInputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
+    )
     private val dob7 = FormElement(
         id = 47,
         inputType = DATE_PICKER,
@@ -560,6 +634,17 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
         title = resources.getString(R.string.ecrdset_dts_8_child),
         arrayId = -1,
         required = false
+    )
+
+    private val eightChildName = FormElement(
+        id = 118,
+        inputType = EDIT_TEXT,
+        title = resources.getString(R.string.nbr_child_first_name),
+        arrayId = -1,
+        required = true,
+        allCaps = true,
+        hasSpeechToText = true,
+        etInputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
     )
 
     private val dob8 = FormElement(
@@ -616,6 +701,16 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
         required = false
     )
 
+    private val ninthChildName = FormElement(
+        id = 119,
+        inputType = EDIT_TEXT,
+        title = resources.getString(R.string.nbr_child_first_name),
+        arrayId = -1,
+        required = true,
+        allCaps = true,
+        hasSpeechToText = true,
+        etInputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
+    )
     private val dob9 = FormElement(
         id = 57,
         inputType = DATE_PICKER,
@@ -890,201 +985,202 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
                         source = noOfLiveChildren,
                         addItems = listOf(
                             firstChildDetails,
+                            firstChildName,
                             dob1,
                             age1,
                             gender1,
                             marriageFirstChildGap
                         ),
                         removeItems = listOf(
-                            firstChildDetails, dob1, age1, gender1, marriageFirstChildGap,
-                            secondChildDetails, dob2, age2, gender2, firstAndSecondChildGap,
-                            thirdChildDetails, dob3, age3, gender3, secondAndThirdChildGap,
-                            fourthChildDetails, dob4, age4, gender4, thirdAndFourthChildGap,
-                            fifthChildDetails, dob5, age5, gender5, fourthAndFifthChildGap,
-                            sixthChildDetails, dob6, age6, gender6, fifthAndSixthChildGap,
-                            seventhChildDetails, dob7, age7, gender7, sixthAndSeventhChildGap,
-                            eighthChildDetails, dob8, age8, gender8, seventhAndEighthChildGap,
-                            ninthChildDetails, dob9, age9, gender9, eighthAndNinthChildGap
+                            firstChildDetails, firstChildName, dob1, age1, gender1, marriageFirstChildGap,
+                            secondChildDetails,secondChildName, dob2, age2, gender2, firstAndSecondChildGap,
+                            thirdChildDetails, thirdChildName, dob3, age3, gender3, secondAndThirdChildGap,
+                            fourthChildDetails, forthChildName, dob4, age4, gender4, thirdAndFourthChildGap,
+                            fifthChildDetails, fifthChildName, dob5, age5, gender5, fourthAndFifthChildGap,
+                            sixthChildDetails, sixthChildName, dob6, age6, gender6, fifthAndSixthChildGap,
+                            seventhChildDetails,seventhChildName, dob7, age7, gender7, sixthAndSeventhChildGap,
+                            eighthChildDetails,eightChildName, dob8, age8, gender8, seventhAndEighthChildGap,
+                            ninthChildDetails, ninthChildName, dob9, age9, gender9, eighthAndNinthChildGap
                         )
                     )
 
                     2 -> triggerDependants(
                         source = noOfLiveChildren,
                         addItems = listOf(
-                            firstChildDetails, dob1, age1, gender1, marriageFirstChildGap,
-                            secondChildDetails, dob2, age2, gender2, firstAndSecondChildGap
+                            firstChildDetails,firstChildName, dob1, age1, gender1, marriageFirstChildGap,
+                            secondChildDetails, secondChildName, dob2, age2, gender2, firstAndSecondChildGap
                         ),
                         removeItems = listOf(
-                            firstChildDetails, dob1, age1, gender1, marriageFirstChildGap,
-                            secondChildDetails, dob2, age2, gender2, firstAndSecondChildGap,
-                            thirdChildDetails, dob3, age3, gender3, secondAndThirdChildGap,
-                            fourthChildDetails, dob4, age4, gender4, thirdAndFourthChildGap,
-                            fifthChildDetails, dob5, age5, gender5, fourthAndFifthChildGap,
-                            sixthChildDetails, dob6, age6, gender6, fifthAndSixthChildGap,
-                            seventhChildDetails, dob7, age7, gender7, sixthAndSeventhChildGap,
-                            eighthChildDetails, dob8, age8, gender8, seventhAndEighthChildGap,
-                            ninthChildDetails, dob9, age9, gender9, eighthAndNinthChildGap
+                            firstChildDetails, firstChildName, dob1, age1, gender1, marriageFirstChildGap,
+                            secondChildDetails,secondChildName, dob2, age2, gender2, firstAndSecondChildGap,
+                            thirdChildDetails, thirdChildName, dob3, age3, gender3, secondAndThirdChildGap,
+                            fourthChildDetails, forthChildName, dob4, age4, gender4, thirdAndFourthChildGap,
+                            fifthChildDetails, fifthChildName, dob5, age5, gender5, fourthAndFifthChildGap,
+                            sixthChildDetails, sixthChildName, dob6, age6, gender6, fifthAndSixthChildGap,
+                            seventhChildDetails,seventhChildName, dob7, age7, gender7, sixthAndSeventhChildGap,
+                            eighthChildDetails,eightChildName, dob8, age8, gender8, seventhAndEighthChildGap,
+                            ninthChildDetails, ninthChildName, dob9, age9, gender9, eighthAndNinthChildGap
                         )
                     )
 
                     3 -> triggerDependants(
                         source = noOfLiveChildren,
                         addItems = listOf(
-                            firstChildDetails, dob1, age1, gender1, marriageFirstChildGap,
-                            secondChildDetails, dob2, age2, gender2, firstAndSecondChildGap,
-                            thirdChildDetails, dob3, age3, gender3, secondAndThirdChildGap
+                            firstChildDetails, firstChildName, dob1, age1, gender1, marriageFirstChildGap,
+                            secondChildDetails,secondChildName, dob2, age2, gender2, firstAndSecondChildGap,
+                            thirdChildDetails, thirdChildName, dob3, age3, gender3, secondAndThirdChildGap
                         ),
                         removeItems = listOf(
-                            firstChildDetails, dob1, age1, gender1, marriageFirstChildGap,
-                            secondChildDetails, dob2, age2, gender2, firstAndSecondChildGap,
-                            thirdChildDetails, dob3, age3, gender3, secondAndThirdChildGap,
-                            fourthChildDetails, dob4, age4, gender4, thirdAndFourthChildGap,
-                            fifthChildDetails, dob5, age5, gender5, fourthAndFifthChildGap,
-                            sixthChildDetails, dob6, age6, gender6, fifthAndSixthChildGap,
-                            seventhChildDetails, dob7, age7, gender7, sixthAndSeventhChildGap,
-                            eighthChildDetails, dob8, age8, gender8, seventhAndEighthChildGap,
-                            ninthChildDetails, dob9, age9, gender9, eighthAndNinthChildGap
+                            firstChildDetails, firstChildName, dob1, age1, gender1, marriageFirstChildGap,
+                            secondChildDetails,secondChildName, dob2, age2, gender2, firstAndSecondChildGap,
+                            thirdChildDetails, thirdChildName, dob3, age3, gender3, secondAndThirdChildGap,
+                            fourthChildDetails, forthChildName, dob4, age4, gender4, thirdAndFourthChildGap,
+                            fifthChildDetails, fifthChildName, dob5, age5, gender5, fourthAndFifthChildGap,
+                            sixthChildDetails, sixthChildName, dob6, age6, gender6, fifthAndSixthChildGap,
+                            seventhChildDetails,seventhChildName, dob7, age7, gender7, sixthAndSeventhChildGap,
+                            eighthChildDetails,eightChildName, dob8, age8, gender8, seventhAndEighthChildGap,
+                            ninthChildDetails, ninthChildName, dob9, age9, gender9, eighthAndNinthChildGap
                         )
                     )
 
                     4 -> triggerDependants(
                         source = noOfLiveChildren,
                         addItems = listOf(
-                            firstChildDetails, dob1, age1, gender1, marriageFirstChildGap,
-                            secondChildDetails, dob2, age2, gender2, firstAndSecondChildGap,
-                            thirdChildDetails, dob3, age3, gender3, secondAndThirdChildGap,
-                            fourthChildDetails, dob4, age4, gender4, thirdAndFourthChildGap
+                            firstChildDetails, firstChildName, dob1, age1, gender1, marriageFirstChildGap,
+                            secondChildDetails, secondChildName, dob2, age2, gender2, firstAndSecondChildGap,
+                            thirdChildDetails,thirdChildName, dob3, age3, gender3, secondAndThirdChildGap,
+                            fourthChildDetails,forthChildName, dob4, age4, gender4, thirdAndFourthChildGap
                         ),
                         removeItems = listOf(
-                            firstChildDetails, dob1, age1, gender1, marriageFirstChildGap,
-                            secondChildDetails, dob2, age2, gender2, firstAndSecondChildGap,
-                            thirdChildDetails, dob3, age3, gender3, secondAndThirdChildGap,
-                            fourthChildDetails, dob4, age4, gender4, thirdAndFourthChildGap,
-                            fifthChildDetails, dob5, age5, gender5, fourthAndFifthChildGap,
-                            sixthChildDetails, dob6, age6, gender6, fifthAndSixthChildGap,
-                            seventhChildDetails, dob7, age7, gender7, sixthAndSeventhChildGap,
-                            eighthChildDetails, dob8, age8, gender8, seventhAndEighthChildGap,
-                            ninthChildDetails, dob9, age9, gender9, eighthAndNinthChildGap
+                            firstChildDetails, firstChildName, dob1, age1, gender1, marriageFirstChildGap,
+                            secondChildDetails,secondChildName, dob2, age2, gender2, firstAndSecondChildGap,
+                            thirdChildDetails, thirdChildName, dob3, age3, gender3, secondAndThirdChildGap,
+                            fourthChildDetails, forthChildName, dob4, age4, gender4, thirdAndFourthChildGap,
+                            fifthChildDetails, fifthChildName, dob5, age5, gender5, fourthAndFifthChildGap,
+                            sixthChildDetails, sixthChildName, dob6, age6, gender6, fifthAndSixthChildGap,
+                            seventhChildDetails,seventhChildName, dob7, age7, gender7, sixthAndSeventhChildGap,
+                            eighthChildDetails,eightChildName, dob8, age8, gender8, seventhAndEighthChildGap,
+                            ninthChildDetails, ninthChildName, dob9, age9, gender9, eighthAndNinthChildGap
                         )
                     )
 
                     5 -> triggerDependants(
                         source = noOfLiveChildren,
                         addItems = listOf(
-                            firstChildDetails, dob1, age1, gender1, marriageFirstChildGap,
-                            secondChildDetails, dob2, age2, gender2, firstAndSecondChildGap,
-                            thirdChildDetails, dob3, age3, gender3, secondAndThirdChildGap,
-                            fourthChildDetails, dob4, age4, gender4, thirdAndFourthChildGap,
-                            fifthChildDetails, dob5, age5, gender5, fourthAndFifthChildGap
+                            firstChildDetails, firstChildName, dob1, age1, gender1, marriageFirstChildGap,
+                            secondChildDetails, secondChildName, dob2, age2, gender2, firstAndSecondChildGap,
+                            thirdChildDetails,thirdChildName, dob3, age3, gender3, secondAndThirdChildGap,
+                            fourthChildDetails,forthChildName, dob4, age4, gender4, thirdAndFourthChildGap,
+                            fifthChildDetails,fifthChildName, dob5, age5, gender5, fourthAndFifthChildGap
                         ),
                         removeItems = listOf(
-                            firstChildDetails, dob1, age1, gender1, marriageFirstChildGap,
-                            secondChildDetails, dob2, age2, gender2, firstAndSecondChildGap,
-                            thirdChildDetails, dob3, age3, gender3, secondAndThirdChildGap,
-                            fourthChildDetails, dob4, age4, gender4, thirdAndFourthChildGap,
-                            fifthChildDetails, dob5, age5, gender5, fourthAndFifthChildGap,
-                            sixthChildDetails, dob6, age6, gender6, fifthAndSixthChildGap,
-                            seventhChildDetails, dob7, age7, gender7, sixthAndSeventhChildGap,
-                            eighthChildDetails, dob8, age8, gender8, seventhAndEighthChildGap,
-                            ninthChildDetails, dob9, age9, gender9, eighthAndNinthChildGap
+                            firstChildDetails, firstChildName, dob1, age1, gender1, marriageFirstChildGap,
+                            secondChildDetails,secondChildName, dob2, age2, gender2, firstAndSecondChildGap,
+                            thirdChildDetails, thirdChildName, dob3, age3, gender3, secondAndThirdChildGap,
+                            fourthChildDetails, forthChildName, dob4, age4, gender4, thirdAndFourthChildGap,
+                            fifthChildDetails, fifthChildName, dob5, age5, gender5, fourthAndFifthChildGap,
+                            sixthChildDetails, sixthChildName, dob6, age6, gender6, fifthAndSixthChildGap,
+                            seventhChildDetails,seventhChildName, dob7, age7, gender7, sixthAndSeventhChildGap,
+                            eighthChildDetails,eightChildName, dob8, age8, gender8, seventhAndEighthChildGap,
+                            ninthChildDetails, ninthChildName, dob9, age9, gender9, eighthAndNinthChildGap
                         )
                     )
 
                     6 -> triggerDependants(
                         source = noOfLiveChildren,
                         addItems = listOf(
-                            firstChildDetails, dob1, age1, gender1, marriageFirstChildGap,
-                            secondChildDetails, dob2, age2, gender2, firstAndSecondChildGap,
-                            thirdChildDetails, dob3, age3, gender3, secondAndThirdChildGap,
-                            fourthChildDetails, dob4, age4, gender4, thirdAndFourthChildGap,
-                            fifthChildDetails, dob5, age5, gender5, fourthAndFifthChildGap,
-                            sixthChildDetails, dob6, age6, gender6, fifthAndSixthChildGap
+                            firstChildDetails, firstChildName, dob1, age1, gender1, marriageFirstChildGap,
+                            secondChildDetails, secondChildName, dob2, age2, gender2, firstAndSecondChildGap,
+                            thirdChildDetails,thirdChildName, dob3, age3, gender3, secondAndThirdChildGap,
+                            fourthChildDetails,forthChildName, dob4, age4, gender4, thirdAndFourthChildGap,
+                            fifthChildDetails,fifthChildName, dob5, age5, gender5, fourthAndFifthChildGap,
+                            sixthChildDetails, sixthChildName, dob6, age6, gender6, fifthAndSixthChildGap
                         ),
                         removeItems = listOf(
-                            firstChildDetails, dob1, age1, gender1, marriageFirstChildGap,
-                            secondChildDetails, dob2, age2, gender2, firstAndSecondChildGap,
-                            thirdChildDetails, dob3, age3, gender3, secondAndThirdChildGap,
-                            fourthChildDetails, dob4, age4, gender4, thirdAndFourthChildGap,
-                            fifthChildDetails, dob5, age5, gender5, fourthAndFifthChildGap,
-                            sixthChildDetails, dob6, age6, gender6, fifthAndSixthChildGap,
-                            seventhChildDetails, dob7, age7, gender7, sixthAndSeventhChildGap,
-                            eighthChildDetails, dob8, age8, gender8, seventhAndEighthChildGap,
-                            ninthChildDetails, dob9, age9, gender9, eighthAndNinthChildGap
+                            firstChildDetails, firstChildName, dob1, age1, gender1, marriageFirstChildGap,
+                            secondChildDetails,secondChildName, dob2, age2, gender2, firstAndSecondChildGap,
+                            thirdChildDetails, thirdChildName, dob3, age3, gender3, secondAndThirdChildGap,
+                            fourthChildDetails, forthChildName, dob4, age4, gender4, thirdAndFourthChildGap,
+                            fifthChildDetails, fifthChildName, dob5, age5, gender5, fourthAndFifthChildGap,
+                            sixthChildDetails, sixthChildName, dob6, age6, gender6, fifthAndSixthChildGap,
+                            seventhChildDetails,seventhChildName, dob7, age7, gender7, sixthAndSeventhChildGap,
+                            eighthChildDetails,eightChildName, dob8, age8, gender8, seventhAndEighthChildGap,
+                            ninthChildDetails, ninthChildName, dob9, age9, gender9, eighthAndNinthChildGap
                         )
                     )
 
                     7 -> triggerDependants(
                         source = noOfLiveChildren,
                         addItems = listOf(
-                            firstChildDetails, dob1, age1, gender1, marriageFirstChildGap,
-                            secondChildDetails, dob2, age2, gender2, firstAndSecondChildGap,
-                            thirdChildDetails, dob3, age3, gender3, secondAndThirdChildGap,
-                            fourthChildDetails, dob4, age4, gender4, thirdAndFourthChildGap,
-                            fifthChildDetails, dob5, age5, gender5, fourthAndFifthChildGap,
-                            sixthChildDetails, dob6, age6, gender6, fifthAndSixthChildGap,
-                            seventhChildDetails, dob7, age7, gender7, sixthAndSeventhChildGap
+                            firstChildDetails, firstChildName, dob1, age1, gender1, marriageFirstChildGap,
+                            secondChildDetails, secondChildName, dob2, age2, gender2, firstAndSecondChildGap,
+                            thirdChildDetails,thirdChildName, dob3, age3, gender3, secondAndThirdChildGap,
+                            fourthChildDetails,forthChildName, dob4, age4, gender4, thirdAndFourthChildGap,
+                            fifthChildDetails,fifthChildName, dob5, age5, gender5, fourthAndFifthChildGap,
+                            sixthChildDetails, sixthChildName, dob6, age6, gender6, fifthAndSixthChildGap,
+                            seventhChildDetails,  seventhChildName,dob7, age7, gender7, sixthAndSeventhChildGap
                         ),
                         removeItems = listOf(
-                            firstChildDetails, dob1, age1, gender1, marriageFirstChildGap,
-                            secondChildDetails, dob2, age2, gender2, firstAndSecondChildGap,
-                            thirdChildDetails, dob3, age3, gender3, secondAndThirdChildGap,
-                            fourthChildDetails, dob4, age4, gender4, thirdAndFourthChildGap,
-                            fifthChildDetails, dob5, age5, gender5, fourthAndFifthChildGap,
-                            sixthChildDetails, dob6, age6, gender6, fifthAndSixthChildGap,
-                            seventhChildDetails, dob7, age7, gender7, sixthAndSeventhChildGap,
-                            eighthChildDetails, dob8, age8, gender8, seventhAndEighthChildGap,
-                            ninthChildDetails, dob9, age9, gender9, eighthAndNinthChildGap
+                            firstChildDetails, firstChildName, dob1, age1, gender1, marriageFirstChildGap,
+                            secondChildDetails,secondChildName, dob2, age2, gender2, firstAndSecondChildGap,
+                            thirdChildDetails, thirdChildName, dob3, age3, gender3, secondAndThirdChildGap,
+                            fourthChildDetails, forthChildName, dob4, age4, gender4, thirdAndFourthChildGap,
+                            fifthChildDetails, fifthChildName, dob5, age5, gender5, fourthAndFifthChildGap,
+                            sixthChildDetails, sixthChildName, dob6, age6, gender6, fifthAndSixthChildGap,
+                            seventhChildDetails,seventhChildName, dob7, age7, gender7, sixthAndSeventhChildGap,
+                            eighthChildDetails,eightChildName, dob8, age8, gender8, seventhAndEighthChildGap,
+                            ninthChildDetails, ninthChildName, dob9, age9, gender9, eighthAndNinthChildGap
                         )
                     )
 
                     8 -> triggerDependants(
                         source = noOfLiveChildren,
                         addItems = listOf(
-                            firstChildDetails, dob1, age1, gender1, marriageFirstChildGap,
-                            secondChildDetails, dob2, age2, gender2, firstAndSecondChildGap,
-                            thirdChildDetails, dob3, age3, gender3, secondAndThirdChildGap,
-                            fourthChildDetails, dob4, age4, gender4, thirdAndFourthChildGap,
-                            fifthChildDetails, dob5, age5, gender5, fourthAndFifthChildGap,
-                            sixthChildDetails, dob6, age6, gender6, fifthAndSixthChildGap,
-                            seventhChildDetails, dob7, age7, gender7, sixthAndSeventhChildGap,
-                            eighthChildDetails, dob8, age8, gender8, seventhAndEighthChildGap
+                            firstChildDetails, firstChildName, dob1, age1, gender1, marriageFirstChildGap,
+                            secondChildDetails, secondChildName, dob2, age2, gender2, firstAndSecondChildGap,
+                            thirdChildDetails,thirdChildName, dob3, age3, gender3, secondAndThirdChildGap,
+                            fourthChildDetails,forthChildName, dob4, age4, gender4, thirdAndFourthChildGap,
+                            fifthChildDetails,fifthChildName, dob5, age5, gender5, fourthAndFifthChildGap,
+                            sixthChildDetails, sixthChildName, dob6, age6, gender6, fifthAndSixthChildGap,
+                            seventhChildDetails,  seventhChildName,dob7, age7, gender7, sixthAndSeventhChildGap,
+                            eighthChildDetails, eightChildName, dob8, age8, gender8, seventhAndEighthChildGap
                         ),
                         removeItems = listOf(
-                            firstChildDetails, dob1, age1, gender1, marriageFirstChildGap,
-                            secondChildDetails, dob2, age2, gender2, firstAndSecondChildGap,
-                            thirdChildDetails, dob3, age3, gender3, secondAndThirdChildGap,
-                            fourthChildDetails, dob4, age4, gender4, thirdAndFourthChildGap,
-                            fifthChildDetails, dob5, age5, gender5, fourthAndFifthChildGap,
-                            sixthChildDetails, dob6, age6, gender6, fifthAndSixthChildGap,
-                            seventhChildDetails, dob7, age7, gender7, sixthAndSeventhChildGap,
-                            eighthChildDetails, dob8, age8, gender8, seventhAndEighthChildGap,
-                            ninthChildDetails, dob9, age9, gender9, eighthAndNinthChildGap
+                            firstChildDetails, firstChildName, dob1, age1, gender1, marriageFirstChildGap,
+                            secondChildDetails,secondChildName, dob2, age2, gender2, firstAndSecondChildGap,
+                            thirdChildDetails, thirdChildName, dob3, age3, gender3, secondAndThirdChildGap,
+                            fourthChildDetails, forthChildName, dob4, age4, gender4, thirdAndFourthChildGap,
+                            fifthChildDetails, fifthChildName, dob5, age5, gender5, fourthAndFifthChildGap,
+                            sixthChildDetails, sixthChildName, dob6, age6, gender6, fifthAndSixthChildGap,
+                            seventhChildDetails,seventhChildName, dob7, age7, gender7, sixthAndSeventhChildGap,
+                            eighthChildDetails,eightChildName, dob8, age8, gender8, seventhAndEighthChildGap,
+                            ninthChildDetails, ninthChildName, dob9, age9, gender9, eighthAndNinthChildGap
                         )
                     )
 
                     9 -> triggerDependants(
                         source = noOfLiveChildren,
                         addItems = listOf(
-                            firstChildDetails, dob1, age1, gender1, marriageFirstChildGap,
-                            secondChildDetails, dob2, age2, gender2, firstAndSecondChildGap,
-                            thirdChildDetails, dob3, age3, gender3, secondAndThirdChildGap,
-                            fourthChildDetails, dob4, age4, gender4, thirdAndFourthChildGap,
-                            fifthChildDetails, dob5, age5, gender5, fourthAndFifthChildGap,
-                            sixthChildDetails, dob6, age6, gender6, fifthAndSixthChildGap,
-                            seventhChildDetails, dob7, age7, gender7, sixthAndSeventhChildGap,
-                            eighthChildDetails, dob8, age8, gender8, seventhAndEighthChildGap,
-                            ninthChildDetails, dob9, age9, gender9, eighthAndNinthChildGap
+                            firstChildDetails, firstChildName, dob1, age1, gender1, marriageFirstChildGap,
+                            secondChildDetails, secondChildName, dob2, age2, gender2, firstAndSecondChildGap,
+                            thirdChildDetails,thirdChildName, dob3, age3, gender3, secondAndThirdChildGap,
+                            fourthChildDetails,forthChildName, dob4, age4, gender4, thirdAndFourthChildGap,
+                            fifthChildDetails,fifthChildName, dob5, age5, gender5, fourthAndFifthChildGap,
+                            sixthChildDetails, sixthChildName, dob6, age6, gender6, fifthAndSixthChildGap,
+                            seventhChildDetails,  seventhChildName,dob7, age7, gender7, sixthAndSeventhChildGap,
+                            eighthChildDetails, eightChildName, dob8, age8, gender8, seventhAndEighthChildGap,
+                            ninthChildDetails,ninthChildName, dob9, age9, gender9, eighthAndNinthChildGap
                         ),
                         removeItems = listOf(
-                            firstChildDetails, dob1, age1, gender1, marriageFirstChildGap,
-                            secondChildDetails, dob2, age2, gender2, firstAndSecondChildGap,
-                            thirdChildDetails, dob3, age3, gender3, secondAndThirdChildGap,
-                            fourthChildDetails, dob4, age4, gender4, thirdAndFourthChildGap,
-                            fifthChildDetails, dob5, age5, gender5, fourthAndFifthChildGap,
-                            sixthChildDetails, dob6, age6, gender6, fifthAndSixthChildGap,
-                            seventhChildDetails, dob7, age7, gender7, sixthAndSeventhChildGap,
-                            eighthChildDetails, dob8, age8, gender8, seventhAndEighthChildGap,
-                            ninthChildDetails, dob9, age9, gender9, eighthAndNinthChildGap
+                            firstChildDetails, firstChildName, dob1, age1, gender1, marriageFirstChildGap,
+                            secondChildDetails,secondChildName, dob2, age2, gender2, firstAndSecondChildGap,
+                            thirdChildDetails, thirdChildName, dob3, age3, gender3, secondAndThirdChildGap,
+                            fourthChildDetails, forthChildName, dob4, age4, gender4, thirdAndFourthChildGap,
+                            fifthChildDetails, fifthChildName, dob5, age5, gender5, fourthAndFifthChildGap,
+                            sixthChildDetails, sixthChildName, dob6, age6, gender6, fifthAndSixthChildGap,
+                            seventhChildDetails,seventhChildName, dob7, age7, gender7, sixthAndSeventhChildGap,
+                            eighthChildDetails,eightChildName, dob8, age8, gender8, seventhAndEighthChildGap,
+                            ninthChildDetails, ninthChildName, dob9, age9, gender9, eighthAndNinthChildGap
                         )
                     )
 
@@ -1092,21 +1188,22 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
                         source = noOfLiveChildren,
                         addItems = listOf(
                             firstChildDetails,
+                            firstChildName,
                             dob1,
                             age1,
                             gender1,
                             marriageFirstChildGap
                         ),
                         removeItems = listOf(
-                            firstChildDetails, dob1, age1, gender1, marriageFirstChildGap,
-                            secondChildDetails, dob2, age2, gender2, firstAndSecondChildGap,
-                            thirdChildDetails, dob3, age3, gender3, secondAndThirdChildGap,
-                            fourthChildDetails, dob4, age4, gender4, thirdAndFourthChildGap,
-                            fifthChildDetails, dob5, age5, gender5, fourthAndFifthChildGap,
-                            sixthChildDetails, dob6, age6, gender6, fifthAndSixthChildGap,
-                            seventhChildDetails, dob7, age7, gender7, sixthAndSeventhChildGap,
-                            eighthChildDetails, dob8, age8, gender8, seventhAndEighthChildGap,
-                            ninthChildDetails, dob9, age9, gender9, eighthAndNinthChildGap
+                            firstChildDetails, firstChildName, dob1, age1, gender1, marriageFirstChildGap,
+                            secondChildDetails,secondChildName, dob2, age2, gender2, firstAndSecondChildGap,
+                            thirdChildDetails, thirdChildName, dob3, age3, gender3, secondAndThirdChildGap,
+                            fourthChildDetails, forthChildName, dob4, age4, gender4, thirdAndFourthChildGap,
+                            fifthChildDetails, fifthChildName, dob5, age5, gender5, fourthAndFifthChildGap,
+                            sixthChildDetails, sixthChildName, dob6, age6, gender6, fifthAndSixthChildGap,
+                            seventhChildDetails,seventhChildName, dob7, age7, gender7, sixthAndSeventhChildGap,
+                            eighthChildDetails,eightChildName, dob8, age8, gender8, seventhAndEighthChildGap,
+                            ninthChildDetails, ninthChildName, dob9, age9, gender9, eighthAndNinthChildGap
                         )
                     )
                 }
@@ -1211,9 +1308,10 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as BenRegCache).let { ben ->
 
+
             ben.householdId = selectedBen?.householdId!!
             ben.regDate = Dataset.Companion.getLongFromDate(dateOfReg.value!!)
-            ben.firstName = "Baby of ${selectedBen?.firstName}"
+            ben.firstName = firstChildName.value
             ben.lastName =  "${selectedBen?.lastName}"
             ben.dob = Dataset.Companion.getLongFromDate(dob1.value!!)
             ben.age = age1.value!!.toInt()
@@ -1235,7 +1333,6 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
             }
             ben.fatherName = "${selectedBen?.genDetails?.spouseName}"
             ben.motherName = "${selectedBen?.firstName}"
-            ben.familyHeadRelationPosition = 20
             ben.isDeath = false
             ben.isDeathValue = "false"
             ben.dateOfDeath = null
@@ -1244,12 +1341,12 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
             ben.doYouHavechildren = false
             ben.placeOfDeath = null
             ben.mobileNoOfRelationId = 5
-            ben.familyHeadRelation = "Other"
             ben.otherPlaceOfDeath = null
             ben.contactNumber = selectedBen!!.contactNumber
             ben.mobileNoOfRelationId = 5
             ben.isDraft = false
             ben.isConsent = isOtpVerified
+            ben.familyHeadRelation = selectedBen!!.familyHeadRelation
             ben.isSpouseAdded = false
             ben.isChildrenAdded = false
             ben.isMarried = false

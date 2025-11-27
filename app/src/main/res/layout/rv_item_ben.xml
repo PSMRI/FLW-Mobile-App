@@ -605,42 +605,41 @@
                         android:id="@+id/ll_add_spouse_btn"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="end"
-                        android:layout_gravity="end"
-                        android:padding="@dimen/padding_normal"
+                        android:gravity="center"
                         android:orientation="horizontal"
-                       >
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btn_add_spouse"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text='@string/add_wife'
-                            android:layout_weight="1"
-                            android:layout_marginEnd="5dp"
-                            android:backgroundTint="@android:color/holo_blue_dark"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                            android:textColor="?attr/colorOnPrimary"                        app:cornerRadius='@dimen/padding_small'
-                            app:strokeColor='?attr/colorPrimary'
-                            app:strokeWidth='1dp' />
+                        android:padding="@dimen/padding_normal">
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_add_children"
                             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:text='@string/add_children'
-                            android:layout_marginStart="5dp"
                             android:layout_weight="1"
-                            android:visibility="gone"
-                            android:backgroundTint="@android:color/holo_blue_dark"
+                            android:text="@string/add_children"
+                            android:visibility="invisible"
+                            android:layout_marginEnd="5dp"
+                            android:backgroundTint="@android:color/holo_green_dark"
                             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                            android:textColor="?attr/colorOnPrimary"                        app:cornerRadius='@dimen/padding_small'
-                            app:strokeColor='?attr/colorPrimary'
-                            app:strokeWidth='1dp' />
-                    </LinearLayout>
-                </LinearLayout>
+                            android:textColor="?attr/colorOnPrimary"
+                            app:cornerRadius="@dimen/padding_small"
+                            app:strokeColor="?attr/colorPrimary"
+                            app:strokeWidth="1dp"/>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_add_spouse"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="5dp"
+                            android:text="@string/add_wife"
+                            android:backgroundTint="@android:color/holo_green_dark"
+                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                            android:textColor="?attr/colorOnPrimary"
+                            app:cornerRadius="@dimen/padding_small"
+                            app:strokeColor="?attr/colorPrimary"
+                            app:strokeWidth="1dp"/>
+                    </LinearLayout>                </LinearLayout>
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
