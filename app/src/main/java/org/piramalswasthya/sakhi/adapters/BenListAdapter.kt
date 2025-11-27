@@ -58,7 +58,7 @@ class BenListAdapter(
             showBeneficiaries: Boolean, role: Int?,
             showCall: Boolean,
             pref: PreferenceDao?,
-            context : FragmentActivity
+            context : FragmentActivity,
             benIdList: List<Long>
         ) {
 
@@ -231,7 +231,7 @@ class BenListAdapter(
             role,
             showCall,
             pref,
-            context
+            context,
             benIds
         )
     }

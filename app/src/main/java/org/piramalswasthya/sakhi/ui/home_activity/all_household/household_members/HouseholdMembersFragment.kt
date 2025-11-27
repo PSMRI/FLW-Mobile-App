@@ -198,9 +198,9 @@ class HouseholdMembersFragment : Fragment() {
                                 HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToNewChildAsBenRegistrationFragment(
                                     hhId = hhId,
                                     benId = 0,
-                                    gender = 2,
+                                    gender = 0,
                                     selectedBenId = benId,
-                                    isAddSpouse = 1,
+                                    isAddSpouse = 0,
                                     relToHeadId = HelperUtil.getFemaleRelationId(relToHeadId)
                                 )
 

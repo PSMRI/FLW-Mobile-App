@@ -184,7 +184,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         FilariaMDAFormResponseJsonEntity::class
     ],
     views = [BenBasicCache::class],
-    version = 44, exportSchema = false
+    version = 45, exportSchema = false
 )
 
 @TypeConverters(
@@ -257,17 +257,8 @@ abstract class InAppDb : RoomDatabase() {
                 it.execSQL("alter table BENEFICIARY add column isConsent BOOL")
 
             })
-            val MIGRATION_35_36 = Migration(35, 36, migrate = {
-                it.execSQL("""
-            UPDATE BENEFICIARY 
-            SET isMarried = CASE 
-                WHEN gen_maritalStatusId = 2 THEN 1 
-                ELSE 0 
-            END
-        """.trimIndent())
 
-            })
-            val MIGRATION_34_35 = object : Migration(34, 35) { // replace oldVersion and newVersion
+            val MIGRATION_44_45 = object : Migration(44, 45) { // replace oldVersion and newVersion
                 override fun migrate(database: SupportSQLiteDatabase) {
                     database.execSQL("ALTER TABLE BENEFICIARY ADD COLUMN isSpouseAdded INTEGER NOT NULL DEFAULT 0")
                     database.execSQL("ALTER TABLE BENEFICIARY ADD COLUMN isChildrenAdded INTEGER NOT NULL DEFAULT 0")
@@ -332,9 +323,18 @@ abstract class InAppDb : RoomDatabase() {
                                 "LEFT OUTER JOIN CHILD_REG cr ON b.beneficiaryId = cr.motherBenId " +
                                 "WHERE b.isDraft = 0 GROUP BY b.beneficiaryId ORDER BY b.updatedDate DESC"
                     )
+
+                    database.execSQL("""
+            UPDATE BENEFICIARY 
+            SET isMarried = CASE 
+                WHEN gen_maritalStatusId = 2 THEN 1 
+                ELSE 0 
+            END
+        """.trimIndent())
                 }
+
+
             }
-            val MIGRATION_33_34 = object : Migration(33, 34) {
 
             val MIGRATION_43_44 = object : Migration(43, 44) {
                 override fun migrate(database: SupportSQLiteDatabase) {
@@ -1700,7 +1700,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_40_41,
                         MIGRATION_41_42,
                         MIGRATION_42_43,
-                        MIGRATION_43_44
+                        MIGRATION_43_44,
+                        MIGRATION_44_45
                     ).build()
 
                     INSTANCE = instance
