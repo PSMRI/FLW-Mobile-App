@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <string name="add_asha_head">ASHA গৃহস্থলী পঞ্জিকৰণ</string>
+    <string name="add_mda">এমডিএ যোগ কৰক</string>
     <string name="btn_text_frag_home_nhhr">নতুন গৃহস্থালী পঞ্জীয়ন</string>
     <string name="btn_new_maa_meeting">নতুন মা মিটিং পঞ্জীয়ন</string>
     <string name="no_records_found">কোনো ৰেকৰ্ড পোৱা নগল</string>
@@ -144,6 +145,4 @@
     <string name="add_head_of_family">এডিডি পৰিয়ালৰ মুৰব্বী</string>
     <string name="hh_no_members">ঘৰুৱা খালী!</string>
     <string name="add_head_of_family_message">Would you like to add <b>%1s</b> as a Head-of-Family Beneficiary?</string>
-
-
 </resources>
