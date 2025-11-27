@@ -346,7 +346,7 @@ class MalariaFormDataset(
             dateOfCase.value = getDateFromLong(System.currentTimeMillis())
             beneficiaryStatus.value = resources.getStringArray(R.array.benificary_case_status)[0]
             visitId = 0
-//            caseStatus.value = resources.getStringArray(R.array.dc_case_status)[0]
+            caseStatus.value = resources.getStringArray(R.array.dc_case_status)[0]
         } else {
             dateOfCase.value = getDateFromLong(saved.caseDate)
             followUpdate.value = getDateFromLong(saved.followUpDate)
@@ -434,6 +434,19 @@ class MalariaFormDataset(
                 list.add(list.indexOf(beneficiaryStatus) + 1, dateOfDeath)
                 list.add(list.indexOf(beneficiaryStatus) + 2, placeOfDeath)
                 list.add(list.indexOf(beneficiaryStatus) + 3, reasonOfDeath)
+                list.remove(isFever)
+                list.remove(isDiarrhea)
+                list.remove(isFluLikeIllness)
+                list.remove(isShakingchills)
+                list.remove(isHeadache)
+                list.remove(isMuscleaches)
+                list.remove(isTiredness)
+                list.remove(isNausea)
+                list.remove(isVomiting)
+                list.remove(headline)
+                list.remove(caseStatus)
+
+
                 dateOfDeath.value =
                     getDateFromLong(saved.dateOfDeath)
                 placeOfDeath.value =
@@ -730,9 +743,9 @@ class MalariaFormDataset(
                         )
                     }
 
-                    if (visitId != 0L){
+
                         caseStatus.value = resources.getStringArray(R.array.dc_case_status)[2]
-                    }
+
 
 //                    caseStatus.value = getLocalValueInArray(caseStatus.arrayId, resources.getStringArray(R.array.dc_case_status)[1])
                 } else {
@@ -754,10 +767,10 @@ class MalariaFormDataset(
                         addItems = listOf(dateOfTest),
                         removeItems = listOf()
                     )*/
-                    if (visitId != 0L){
+
                         caseStatus.value = resources.getStringArray(R.array.dc_case_status)[1]
 
-                    }
+
                 }
                 0
             }
@@ -789,10 +802,10 @@ class MalariaFormDataset(
                         addItems = listOf(dateOfSlidetest),
                         removeItems = listOf()
                     )
-                    if (visitId != 1L) {
+
                         caseStatus.value = resources.getStringArray(R.array.dc_case_status)[1]
 
-                    }
+
 
                 } else if (slideTestPv.value == resources.getStringArray(R.array.positive_negative)[1]) {
 
@@ -801,10 +814,10 @@ class MalariaFormDataset(
                         addItems = listOf(dateOfSlidetest),
                         removeItems = listOf()
                     )
-                    if (visitId != 0L) {
+
                         caseStatus.value = resources.getStringArray(R.array.dc_case_status)[2]
 
-                    }
+
 
                 } else {
                     triggerDependants(
@@ -812,10 +825,10 @@ class MalariaFormDataset(
                         addItems = listOf(),
                         removeItems = listOf(dateOfSlidetest)
                     )
-                    if (visitId != 0L) {
+
                         caseStatus.value = resources.getStringArray(R.array.dc_case_status)[2]
 
-                    }
+
 
                 }
                 0
@@ -829,10 +842,10 @@ class MalariaFormDataset(
                         addItems = listOf(dateOfSlidetest),
                         removeItems = listOf()
                     )
-                    if (visitId != 0L) {
+
                         caseStatus.value = resources.getStringArray(R.array.dc_case_status)[1]
 
-                    }
+
 
                 } else if (slideTestPf.value == resources.getStringArray(R.array.positive_negative)[1]) {
 
@@ -841,10 +854,10 @@ class MalariaFormDataset(
                         addItems = listOf(dateOfSlidetest),
                         removeItems = listOf()
                     )
-                    if (visitId != 0L) {
+
                         caseStatus.value = resources.getStringArray(R.array.dc_case_status)[2]
 
-                    }
+
 
                 } else {
                     triggerDependants(
@@ -852,10 +865,10 @@ class MalariaFormDataset(
                         addItems = listOf(),
                         removeItems = listOf(dateOfSlidetest)
                     )
-                    if (visitId != 0L) {
+
                         caseStatus.value = resources.getStringArray(R.array.dc_case_status)[2]
 
-                    }
+
 
                 }
                 0
