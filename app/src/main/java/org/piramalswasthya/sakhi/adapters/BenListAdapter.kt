@@ -147,7 +147,7 @@ class BenListAdapter(
 
             if (item.gender == "MALE" &&  !item.isSpouseAdded && item.isMarried) {
                 binding.btnAddSpouse.visibility = View.VISIBLE
-                binding.btnAddChildren.visibility = View.GONE
+                binding.btnAddChildren.visibility = View.INVISIBLE
                 binding.btnAddSpouse.text = context.getString(R.string.add_wife)
                 binding.btnAddSpouse.setOnClickListener {
                     clickListener?.onClickedWifeBen(item)
@@ -155,7 +155,7 @@ class BenListAdapter(
 
             } else if ((item.gender == "FEMALE" && !item.isSpouseAdded && item.isMarried) ) {
                 binding.btnAddSpouse.visibility = View.VISIBLE
-                binding.btnAddChildren.visibility = View.GONE
+                binding.btnAddChildren.visibility = View.INVISIBLE
 
                 binding.btnAddSpouse.text = context.getString(R.string.add_husband)
                 binding.btnAddSpouse.setOnClickListener {
@@ -174,7 +174,7 @@ class BenListAdapter(
 
             } else {
                 binding.btnAddSpouse.visibility = View.GONE
-                binding.btnAddChildren.visibility = View.GONE
+                binding.btnAddChildren.visibility = View.INVISIBLE
             }
 
             if (showBeneficiaries) {
