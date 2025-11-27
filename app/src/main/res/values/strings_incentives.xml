@@ -59,4 +59,13 @@
         <item>November</item>
         <item>December</item>
     </string-array>
+
+    <string name="incentive_amount_claimed">Amount claimed (Rs.)</string>
+    <string name="incentive_no_of_claims">No of Claims</string>
+    <string name="incentive_parameter_for_payment">Parameter for payment</string>
+    <string name="incentive_rate_rs">Rate Rs.</string>
+    <string name="incentive_document_submitted">Documents submitted</string>
+    <string name="incentive_sub_submission_of_asha_incentive_claim_for_the_period_from_to">Sub:   Submission of ASHA incentive claim for the period from ….. To …..</string>
+    <string name="incentive_with_reference_to_the_subject_cited_above">With reference to the subject cited above, I have the honour to submit the ASHA incentives claims for the period from ...... to  ……….. as per statement mentioned below.</string>
+    <string name="incentive_an_amount_of_rs">An amount of Rs……. (Rupees ………. only) approved for payment of ASHA incentive for the period from…… to ………… and the amount is debited to the account through DBT.</string>
 </resources>

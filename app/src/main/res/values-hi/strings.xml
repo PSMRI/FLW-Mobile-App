@@ -60,8 +60,6 @@
     <string name="name_of_the_sub_center">Name of the sub center</string>
     <string name="mdsr_form_from_anm_1">MDSR form from ANM 1</string>
     <string name="mdsr_form_from_anm_2">MDSR form from ANM 2</string>
-    <string name="death_certificate">Death Certificate</string>
-    <string name="village_town_city">Village/Town/City</string>
     <string name="father_name">Father Name</string>
     <string name="age_of_woman">Age Of Woman</string>
     <string name="when_did_death_occur">When did death occur</string>
@@ -101,19 +99,10 @@
     <string name="optional_">Optional</string>
      <string name="mandatory">Mandatory <font color='#FF0000'>*</font></string>
     <string name="name_of_the_child">बच्चे का नाम</string>
-    <string name="address">Address</string>
-    <string name="house_number">House number</string>
-    <string name="mohalla_colony">"Mohalla/Colony "</string>
-    <string name="landmarks_if_any">"Landmarks, if any "</string>
     <string name="pincode">Pincode</string>
-    <string name="landline">Landline</string>
-    <string name="time">Time</string>
-    <string name="name_of_first_informant">"Name of First Informant "</string>
     <string name="signature_name_of_asha">Signature/Name of ASHA</string>
-    <string name="date_of_notification">"Date of Notification "</string>
     <string name="cdr_form_from_anm_1">CDR form from ANM 1</string>
     <string name="cdr_form_from_anm_2">CDR form from ANM 2</string>
-    <string name="district_tehsil">District/Tehsil</string>
     <string name="leprosy_confirmed">Leprosy Confirmed</string>
     <string name="leprosy_suspected">Leprosy Suspected</string>
     <string name="after_the_abortion_the_woman_opted_for_permanent_sterilization_tubectomy">After the Abortion, the Woman opted for permanent sterilization (Tubectomy)</string>
@@ -215,7 +204,6 @@
     <string name="female">महिला</string>
     <string name="transgender">ट्रांसजेंडर</string>
     <string name="other">अन्य</string>
-    <string name="state">राज्य</string>
     <string name="district">जिला</string>
     <string name="view_household_information">परिवार की जानकारी देखें</string>
     <string name="hello">नमस्ते</string>
@@ -224,7 +212,6 @@
     <string name="mother">माँ</string>
     <string name="patient_information">रोगी की जानकारी</string>
     <string name="mother_name">माँ का नाम</string>
-    <string name="date_of_birth">जन्म तिथि</string>
     <string name="previous_vaccine_details">पिछला टीकाकरण विवरण</string>
     <string name="due_serial">देय क्रम</string>
     <string name="saving_form">फॉर्म सेव हो रहा है…</string>
@@ -239,8 +226,6 @@
     <string name="high_risk_non_pregnant_women">उच्च जोखिम वाली गैर-गर्भवती महिलाएं</string>
     <string name="high_risk_babies">उच्च जोखिम वाले शिशु</string>
     <string name="low_birth_weight_babies">कम वजन वाले शिशु</string>
-    <string name="age">आयु</string>
-    <string name="gender">लिंग</string>
     <string name="registration_date">पंजीकरण तिथि</string>
     <string name="beneficiary_id">लाभार्थी आईडी</string>
     <string name="rch_id">आरसीएच आईडी</string>
@@ -344,6 +329,32 @@
     <string name="add_family_member">परिवार के सदस्य जोड़ें</string>
     <string name="non_pregnant_women_eligible_couple_section">गैर-गर्भवती महिलाएं (पात्र दंपत्ति) अनुभाग</string>
     <string name="about_us">पिरामल स्वास्थ्य सभी के लिए सार्वभौमिक स्वास्थ्य देखभाल को पूरा करने के लिए भारत सरकार के दृष्टिकोण को पूरक और संपूरित करके सार्वजनिक स्वास्थ्य सेवा के अंतराल को पाटने पर ध्यान केंद्रित कर रहा है। पिरामल स्वास्थ्य भारत में प्राथमिक सार्वजनिक स्वास्थ्य देखभाल क्षेत्र में मातृ स्वास्थ्य, बाल और किशोर स्वास्थ्य, गैर-संचारी रोगों पर ध्यान केंद्रित करने वाले सबसे बड़े गैर-लाभकारी संगठनों में से एक है। पिरामल स्वास्थ्य के पास कई स्वास्थ्य सेवा नवाचारों को बड़े पैमाने पर संचालित करने का एक दशक से अधिक का अनुभव है, जो पूरे भारत में सबसे कम सेवा प्राप्त और हाशिए पर रहने वाली आबादी की प्राथमिक स्वास्थ्य देखभाल जरूरतों को पूरा कर रहा है। पिरामल स्वास्थ्य भारत के 20 राज्यों में 35 नवीन सार्वजनिक स्वास्थ्य देखभाल वितरण कार्यक्रमों के माध्यम से कार्यरत है और अब तक 10.7 करोड़ से अधिक लाभार्थियों को सेवा प्रदान कर चुका है| पिरामल स्वास्थ्य में 250 चिकित्सकों सहित 2260 कर्मचारी कार्यरत हैं जो परिणामोन्मुखी दृष्टिकोण के माध्यम से सेवा भाव (लाभार्थी-केंद्रित) के मूल मूल्य पर काम करते हैं। पिछले बारह वर्षों में, फोकस निम्नलिखित पर रहा है, बड़े पैमाने पर स्थायी प्रभाव के लिए प्लेटफॉर्म का निर्माण, एक यात्रा के रूप में पैमाने पर नवाचार, नीति आयोग के ज्ञान और कार्यान्वयन भागीदार के रूप में नीतियों, शासन और सार्वजनिक स्वास्थ्य देखभाल प्रणाली की जवाबदेही को प्रभावित करना। हस्तक्षेप डिजाइन, मॉडलिंग, पायलटिंग और उन पायलटों को बढ़ाने के रूप में नवाचार पिरामल स्वास्थ्य में एक दृष्टिकोण रहा है। पिरामल स्वास्थ्य प्राथमिक स्वास्थ्य सेवा को न केवल सस्ती, सुलभ और सभी के लिए उपलब्ध बनाने के लिए प्रतिबद्ध है, बल्कि यह भी सुनिश्चित करता है कि यह पूर्ण, निरंतर और व्यापक हो।</string>
+    <string name="flu_like_illness">फ्लू जैसी बीमारी</string>
+    <string name="shakingchills">कंपकंपी</string>
+    <string name="headache">सिरदर्द</string>
+    <string name="muscleaches">मांसपेशियों में दर्द</string>
+    <string name="tiredness">थकान</string>
+    <string name="referred_to">सुविधा के लिए रेफर किया गया</string>
+    <string name="nausea">मतली</string>
+    <string name="vomiting">उल्टी</string>
+    <string name="diarrhea">दस्त</string>
+    <string name="rapid_diagnostic">रैपिड डायग्नोस्टिक टेस्ट (आरडीटी)</string>
+    <string name="rapid_diagnostic_kala">कालाजार रैपिड डायग्नोस्टिक टेस्ट (आरडीटी)</string>
+    <string name="slide_test_pf">मलेरिया स्लाइड टेस्ट पीएफ</string>
+    <string name="slide_test">मलेरिया स्लाइड टेस्ट</string>
+    <string name="slide_test_pv">मलेरिया स्लाइड टेस्ट पीवी</string>
+    <string name="sympt">लक्षण।</string>
+    <string name="malaria_submitted">मलेरिया फॉर्म जमा किया गया</string>
+
+    <string name="malariacasecount">मलेरिया मामलों की संख्या</string>
+    <string name="filariacasecount">फाइलेरिया मामलों की संख्या</string>
+    <string name="suffering_from_filaries">फाइलेरिया से पीड़ित</string>
+    <string name="str_leprosy_status">कुष्ठ रोग की स्थिति</string>
+    <string name="treatment_given">उपचार दिया गया।</string>
+    <string name="aes_submitted">एईएस/जेएस फॉर्म जमा किया गया</string>
+    <string name="filaria_submitted">फाइलेरिया फॉर्म जमा किया गया</string>
+    <string name="leprosy_submitted">कुष्ठ रोग फॉर्म जमा किया गया</string>
+    <string name="irs_submitted">आईआरएस फॉर्म जमा किया गया</string>
 
 
 </resources>
