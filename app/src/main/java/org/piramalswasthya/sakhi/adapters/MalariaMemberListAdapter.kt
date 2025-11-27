@@ -1,6 +1,5 @@
 package org.piramalswasthya.sakhi.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -83,9 +82,10 @@ class MalariaMemberListAdapter(
                         }
 
                     } else {
+
                         binding.ivMalariaStatus.visibility =  View.INVISIBLE
-                        binding.btnFormTb.text =  "Screening"
-                        binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(android.R.color.holo_red_dark))
+                        binding.btnFormTb.text =  "View"
+                        binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(android.R.color.holo_green_dark))
 
                     }
                 }

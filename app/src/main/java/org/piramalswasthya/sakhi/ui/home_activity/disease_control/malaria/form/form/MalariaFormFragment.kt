@@ -46,6 +46,10 @@ class MalariaFormFragment : Fragment() {
                     binding.fabEdit.visibility = if(notIt && !it && viewModel.isSuspected) View.VISIBLE else View.GONE
                 }
 
+            } else if(viewModel.isnotConfirmed) {
+                viewModel.isBeneficaryStatusDeath.observe(viewLifecycleOwner){ it
+                    binding.fabEdit.visibility = if(notIt && !it && viewModel.isnotConfirmed) View.VISIBLE else View.GONE
+                }
             } else {
 
                 binding.fabEdit.visibility = View.GONE
