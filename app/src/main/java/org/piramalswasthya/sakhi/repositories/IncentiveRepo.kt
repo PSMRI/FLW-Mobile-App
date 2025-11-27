@@ -35,7 +35,9 @@ class IncentiveRepo @Inject constructor(
         return withContext(Dispatchers.IO) {
             try {
                 val currentLang = preferenceDao.getCurrentLanguage().symbol
-                val requestBody = IncentiveActivityListRequest(0, 0, currentLang)
+                val stateId = user.state.id
+                val districtId = user.district.id
+                val requestBody = IncentiveActivityListRequest(stateId, districtId, currentLang)
                 val response = amritApiService.getAllIncentiveActivities(requestBody = requestBody)
                 val statusCode = response.code()
                 if (statusCode == 200) {
@@ -112,6 +114,7 @@ class IncentiveRepo @Inject constructor(
                     getDateTimeStringFromLong(
                         Calendar.getInstance().setToEndOfTheDay().timeInMillis
                     )!!,
+                    villageID = user.state.id
                 )
                 val response = amritApiService.getAllIncentiveRecords(requestBody = requestBody)
                 val statusCode = response.code()
