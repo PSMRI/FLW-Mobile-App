@@ -45,6 +45,10 @@ interface AmritApiService {
     @POST("common-api/user/userAuthenticate")
     suspend fun getJwtToken(@Body json: TmcAuthUserRequest): Response<ResponseBody>
 
+
+    @POST("common-api/user/refreshToken")
+    suspend fun getRefreshToken(@Body json: TmcRefreshTokenRequest): Response<ResponseBody>
+
     @GET("flw-api/user/getUserDetail")
 //    @GET("user/getUserRole")
     suspend fun getUserDetailsById(

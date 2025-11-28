@@ -2,12 +2,7 @@ package org.piramalswasthya.sakhi.network.interceptors
 
 import okhttp3.Interceptor
 import okhttp3.Response
-import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
-import org.piramalswasthya.sakhi.network.AbhaApiService
-import org.piramalswasthya.sakhi.network.AmritApiService
-import org.piramalswasthya.sakhi.repositories.UserRepo
 import timber.log.Timber
-import javax.inject.Inject
 
 class TokenInsertTmcInterceptor : Interceptor {
     companion object {
@@ -36,7 +31,7 @@ class TokenInsertTmcInterceptor : Interceptor {
             request = request
                 .newBuilder()
                 .addHeader("Authorization", TOKEN)
-//                .addHeader("Jwttoken" , JWT)
+                .addHeader("Jwttoken" , JWT)
                 .build()
         }
         Timber.d("Request : $request")
