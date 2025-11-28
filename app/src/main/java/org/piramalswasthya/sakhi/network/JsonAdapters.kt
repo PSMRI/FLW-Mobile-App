@@ -71,6 +71,11 @@ data class TmcAuthUserRequest(
 )
 
 @JsonClass(generateAdapter = true)
+data class TmcRefreshTokenRequest(
+    val refreshToken: String
+)
+
+@JsonClass(generateAdapter = true)
 data class TmcUserDetailsRequest(
     val userID: Int
 )

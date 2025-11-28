@@ -15,6 +15,7 @@ import org.piramalswasthya.sakhi.model.SyncStatusCache
 import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.network.AmritApiService
 import org.piramalswasthya.sakhi.network.TmcAuthUserRequest
+import org.piramalswasthya.sakhi.network.TmcRefreshTokenRequest
 import org.piramalswasthya.sakhi.network.interceptors.TokenInsertTmcInterceptor
 import retrofit2.HttpException
 import timber.log.Timber
@@ -47,7 +48,11 @@ class UserRepo @Inject constructor(
             } catch (se: SocketTimeoutException) {
                 return@withContext NetworkResponse.Error(message = "Server timed out !")
             } catch (se: HttpException) {
-                return@withContext NetworkResponse.Error(message = "Unable to connect to server !")
+                return@withContext when (se.code()) {
+                    401 -> NetworkResponse.Error(message = "Unauthorized: Invalid credentials")
+                    else -> NetworkResponse.Error(message = "Unable to connect to server!")
+                }
+                // return@withContext NetworkResponse.Error(message = "Unable to connect to server !")
             } catch (ce: ConnectException) {
                 return@withContext NetworkResponse.Error(message = "Server refused connection !")
             } catch (ue: UnknownHostException) {
@@ -126,14 +131,11 @@ class UserRepo @Inject constructor(
     suspend fun refreshTokenTmc(userName: String, password: String): Boolean {
         return withContext(Dispatchers.IO) {
             try {
-                val response =
-                    amritApiService.getJwtToken(
-                        json = TmcAuthUserRequest(
-                            userName,
-                            encrypt(password)
-                        )
-                    )
-                Timber.d("JWT : $response")
+                val refreshToken = preferenceDao.getRefreshToken()
+                val response =     amritApiService.getRefreshToken(
+                    json = TmcRefreshTokenRequest(refreshToken!!)
+                )
+
                 if (!response.isSuccessful) {
                     return@withContext false
                 }
@@ -146,9 +148,14 @@ class UserRepo @Inject constructor(
                     val data = responseBody.getJSONObject("data")
                     TokenInsertTmcInterceptor.setJwt(data.getString("jwtToken"))
                     preferenceDao.registerJWTAmritToken(data.getString("jwtToken"))
+                    preferenceDao.registerRefreshToken(data.getString("refreshToken"))
+
                     val token = data.getString("key")
                     TokenInsertTmcInterceptor.setToken(token)
                     preferenceDao.registerAmritToken(token)
+//                    val refreshToken = data.getString("refreshToken")
+//                    preferenceDao.registerRefreshToken(refreshToken)
+
                     return@withContext true
                 } else {
                     val errorMessage = responseBody.getString("errorMessage")
@@ -163,10 +170,7 @@ class UserRepo @Inject constructor(
             } catch (e: Exception) {
                 return@withContext false
             }
-
-
         }
-
     }
 
     private suspend fun getTokenAmrit(userName: String, password: String): Int {
@@ -189,11 +193,13 @@ class UserRepo @Inject constructor(
             if (statusCode == 5002)
                 throw IllegalStateException("Invalid username / password")
             val data = responseBody.getJSONObject("data")
-            TokenInsertTmcInterceptor.setJwt(data.getString("jwtToken"))
-            preferenceDao.registerJWTAmritToken(data.getString("jwtToken"))
             val token = data.getString("key")
             val userId = data.getInt("userID")
+            val refreshToken = data.getString("refreshToken")
             db.clearAllTables()
+            TokenInsertTmcInterceptor.setJwt(data.getString("jwtToken"))
+            preferenceDao.registerJWTAmritToken(data.getString("jwtToken"))
+            preferenceDao.registerRefreshToken(refreshToken)
             TokenInsertTmcInterceptor.setToken(token)
             preferenceDao.registerAmritToken(token)
             preferenceDao.lastAmritTokenFetchTimestamp = System.currentTimeMillis()

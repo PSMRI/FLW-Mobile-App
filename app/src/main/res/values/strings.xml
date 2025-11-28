@@ -6,6 +6,7 @@
     <string name="PREF_D2D_API_KEY" translatable="false">JWT-Token_A</string>
     <string name="PREF_primary_API_KEY" translatable="false">JWT-Token_B</string>
     <string name="PREF_primary_JWT_API_KEY" translatable="false">JWT-Token_N</string>
+    <string name="PREF_primary_REFRESH_TOKEN" translatable="false">Refresh-Token_N</string>
     <string name="PREF_rem_me_uname" translatable="false">user-name-local-saved</string>
     <string name="PREF_rem_me_pwd" translatable="false">password-local-saved</string>
     <string name="PREF_rem_me_state" translatable="false">state_user-local-saved</string>
