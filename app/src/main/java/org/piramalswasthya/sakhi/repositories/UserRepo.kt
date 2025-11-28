@@ -132,8 +132,9 @@ class UserRepo @Inject constructor(
         return withContext(Dispatchers.IO) {
             try {
                 val refreshToken = preferenceDao.getRefreshToken()
+                    ?: return@withContext false
                 val response =     amritApiService.getRefreshToken(
-                    json = TmcRefreshTokenRequest(refreshToken!!)
+                    json = TmcRefreshTokenRequest(refreshToken)
                 )
 
                 if (!response.isSuccessful) {
@@ -153,9 +154,6 @@ class UserRepo @Inject constructor(
                     val token = data.getString("key")
                     TokenInsertTmcInterceptor.setToken(token)
                     preferenceDao.registerAmritToken(token)
-//                    val refreshToken = data.getString("refreshToken")
-//                    preferenceDao.registerRefreshToken(refreshToken)
-
                     return@withContext true
                 } else {
                     val errorMessage = responseBody.getString("errorMessage")
