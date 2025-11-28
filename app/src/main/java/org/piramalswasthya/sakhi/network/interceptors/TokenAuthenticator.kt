@@ -30,7 +30,7 @@ class TokenAuthenticator @Inject constructor(
         }
 
         val refreshToken = pref.getRefreshToken()
-        Timber.d("TokenAuthenticator: Retrieved refreshToken: $refreshToken")
+        Timber.d("TokenAuthenticator: Retrieved refreshToken: ${if (refreshToken.isNullOrEmpty()) "empty" else "[REDACTED]"}")
         if (refreshToken.isNullOrEmpty()) {
             Timber.e("TokenAuthenticator: Refresh token is null or empty, cannot refresh")
             return null
@@ -51,7 +51,7 @@ class TokenAuthenticator @Inject constructor(
 
                 val tokenAfter = pref.getAmritToken().orEmpty()
                 val jwtAfter = pref.getJWTAmritToken().orEmpty()
-                Timber.d("TokenAuthenticator: Post-wait tokens - Authorization: $tokenAfter, Jwttoken: $jwtAfter")
+                Timber.d("TokenAuthenticator: Post-wait tokens available: auth=${tokenAfter.isNotEmpty()}, jwt=${jwtAfter.isNotEmpty()}")
                 return if (tokenAfter.isNotEmpty()) {
                     buildRequest(response.request, tokenAfter, jwtAfter)
                 } else {
@@ -104,20 +104,18 @@ class TokenAuthenticator @Inject constructor(
             val json = JSONObject(body)
             // Directly access jwtToken and refreshToken from root JSON object
             val newJwt = json.optString("jwtToken", "")
-            //     val newKey = json.optString("key", "")
             val newRefresh = json.optString("refreshToken", refreshToken)
             Timber.d("TokenAuthenticator: Refresh API success: jwtToken=$newJwt, refreshToken=$newRefresh")
 
-
-
+            if (newJwt.isEmpty()) {
+                Timber.e("TokenAuthenticator: Refresh API returned empty jwtToken")
+                return false
+            }
             // Save in prefs
-            //   pref.registerAmritToken(newKey)
             pref.registerJWTAmritToken(newJwt)
             pref.registerRefreshToken(newRefresh)
             Timber.d("TokenAuthenticator: Saved new tokens -  Jwttoken: $newJwt, refreshToken: $newRefresh")
 
-            // Update static holders
-            //  TokenInsertTmcInterceptor.setToken(newKey)
             TokenInsertTmcInterceptor.setJwt(newJwt)
 
             true
