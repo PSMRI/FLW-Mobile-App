@@ -895,8 +895,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             contactNumber,
             community,
             religion,
-            rchId,
-            reproductiveStatus
+            rchId
         )
         this.familyHeadPhoneNo = household.family?.familyHeadPhoneNo?.toString()
         tempraryContactNoBelongsto.value =
@@ -1176,6 +1175,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         if (!isKid() and !hasThirdPage()) {
             list.remove(rchId)
         }
+        if (hasThirdPage()) list.add(reproductiveStatus)
         setUpPage(list)
     }
 
