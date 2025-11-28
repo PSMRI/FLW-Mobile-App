@@ -268,4 +268,24 @@ data class BenPost(
     @Json(name = "i_bendemographics")
     val benDemographics: BenDemographics,
 
+    @Json(name = "isSpouseAdded")
+    val isSpouseAdded: Boolean = false,
+
+    @Json(name = "isChildrenAdded")
+    val isChildrenAdded: Boolean = false,
+
+    @Json(name = "isMarried")
+    val isMarried: Boolean = false,
+
+    @Json(name = "doYouHavechildren")
+    val doYouHavechildren: Boolean = false,
+
+    @Json(name = "noOfchildren")
+    val noOfchildren: Int = 0,
+
+    @Json(name = "noofAlivechildren")
+    val noofAlivechildren: Int = 0,
+
+
+
     )

@@ -62,6 +62,26 @@ class BenRepo @Inject constructor(
         }
     }
 
+    suspend fun updateHousehold(householdId: Long) {
+        withContext(Dispatchers.IO) {
+            benDao.updateHofSpouseAdded(householdId = householdId)
+        }
+    }
+    suspend fun updateBeneficiarySpouseAdded(householdId: Long,benID: Long) {
+        withContext(Dispatchers.IO) {
+            benDao.updateBeneficiarySpouseAdded(householdId = householdId, benId = benID)
+        }
+    }
+
+    suspend fun updateBeneficiaryChildrenAdded(
+        householdId: Long,
+        benID: Long,
+
+    ) {
+        withContext(Dispatchers.IO) {
+            benDao.updateBeneficiaryChildrenAdded(householdId = householdId, benId = benID)
+        }
+    }
     // 1. Pregnancy death check
     suspend fun hasPregnancyDeath(benId: Long): Boolean {
         return benDao.checkPregnancyDeath(benId)
@@ -578,6 +598,9 @@ class BenRepo @Inject constructor(
                                             dob = 0L,
                                             relToHeadId = 0,
                                             isConsent = false,
+                                            isSpouseAdded = false,
+                                            isChildrenAdded = false,
+                                            isMarried = false,
                                             reproductiveStatusId =  benDataObj.getInt("reproductiveStatusId"),
                                         )
                                     )
@@ -1205,7 +1228,13 @@ class BenRepo @Inject constructor(
                                 } else null,
                                 syncState = SyncState.SYNCED,
                                 isDraft = false,
-                                isConsent = false
+                                isConsent = false,
+                                isSpouseAdded = if (jsonObject.has("isSpouseAdded")) jsonObject.optBoolean("isSpouseAdded") else false,
+                                isChildrenAdded = if (jsonObject.has("isChildrenAdded")) jsonObject.optBoolean("isChildrenAdded") else false,
+                                isMarried = if (jsonObject.has("isMarried")) jsonObject.optBoolean("isMarried") else false,
+                                doYouHavechildren = if (jsonObject.has("doYouHavechildren")) jsonObject.optBoolean("doYouHavechildren") else false,
+                                noOfAliveChildren = if (jsonObject.has("noofAlivechildren")) jsonObject.optInt("noofAlivechildren") else 0,
+                                noOfChildren = if (jsonObject.has("noOfchildren")) jsonObject.optInt("noOfchildren") else 0,
                             )
                         )
 

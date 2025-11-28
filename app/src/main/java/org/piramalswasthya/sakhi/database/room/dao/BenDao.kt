@@ -16,6 +16,21 @@ interface BenDao {
     @Update
     suspend fun updateBen(ben: BenRegCache)
 
+    @Query("UPDATE  BENEFICIARY SET isSpouseAdded = 1 WHERE householdId = :householdId AND familyHeadRelationPosition = 19")
+    suspend fun updateHofSpouseAdded(householdId: Long)
+
+    @Query(
+        "UPDATE BENEFICIARY " +
+                "SET isChildrenAdded = 1 " +
+                "WHERE householdId = :householdId AND beneficiaryId = :benId"
+    )
+    suspend fun updateBeneficiaryChildrenAdded(
+        householdId: Long,
+        benId: Long,
+    )
+    @Query("UPDATE  BENEFICIARY SET isSpouseAdded = 1 WHERE householdId = :householdId AND beneficiaryId = :benId")
+    suspend fun updateBeneficiarySpouseAdded(householdId: Long,benId: Long)
+
     @Query("SELECT * FROM BENEFICIARY WHERE isDraft = 1 and householdId =:hhId LIMIT 1")
     suspend fun getDraftBenKidForHousehold(hhId: Long): BenRegCache?
 

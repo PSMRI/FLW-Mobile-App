@@ -43,7 +43,7 @@ class GetBenFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val benAdapter = BenListAdapter(pref = prefDao)
+        val benAdapter = BenListAdapter(pref = prefDao, context = requireActivity())
         binding.rvBenServer.adapter = benAdapter
 
         viewModel.state.observe(viewLifecycleOwner) {
