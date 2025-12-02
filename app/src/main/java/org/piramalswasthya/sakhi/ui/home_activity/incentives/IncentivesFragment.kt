@@ -172,7 +172,7 @@ class IncentivesFragment : Fragment() {
                         }) {
                         val bundle = bundleOf(
                             "records" to ArrayList(records),
-                            "activityName" to activityName
+                            "activityName" to records.first().activity.description
                         )
                         setFragmentResult("records_key", bundle)
 

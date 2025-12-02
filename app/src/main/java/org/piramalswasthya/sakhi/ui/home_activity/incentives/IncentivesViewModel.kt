@@ -155,10 +155,18 @@ IncentivesViewModel @Inject constructor(
                     count = incentives.size,
                     groupName = incentives.first().activity.groupName,
                     description = incentives.first().activity.description,
-                    activity = incentives.first().activity
+                    activity = incentives.first().activity,
+                    hasZeroBen = incentives.any { it.record.benId == 0L },
+                    defaultIncentive = incentives.any { it.activity.fmrCodeOld =="PER_MONTH" }
                 )
             }
-            .sortedBy { it.activityName }
+            .sortedWith(
+                compareByDescending<IncentiveGrouped> { it.defaultIncentive }
+                    .thenByDescending { it.hasZeroBen }
+                    .thenBy { it.activityName }
+
+
+            )
     }
 
     fun getRecordsForActivity(activityId: Long): Flow<List<IncentiveDomain>> {
