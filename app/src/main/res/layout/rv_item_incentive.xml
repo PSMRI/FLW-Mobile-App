@@ -58,7 +58,7 @@
                 android:padding="@dimen/padding_small"
                 android:text="@{@string/incentive_activity_details(item.activity.description)}"
                 android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-
+                android:visibility="gone"
                 tools:text="HEllo" />
 
             <TextView
@@ -66,9 +66,17 @@
                 android:layout_height="match_parent"
                 android:padding="@dimen/padding_small"
                 android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                android:visibility="gone"
+                android:text="@{@string/incentive_rch_id_details(item.ben.rchId)}"
+                />
 
-                tools:text="HEllo" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="@dimen/padding_small"
+                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                android:text="@{@string/incentive_abha_id_details(item.ben.abhaId)}"
+
+                />
 
 
         </LinearLayout>
