@@ -704,6 +704,8 @@
     <string name="slide_test_pv">Malaria Slide Test Pv</string>
     <string name="sympt">Symptoms</string>
     <string name="malaria_submitted">Malaria Form submitted</string>
+    <string name="new">New</string>
+    <string name="old">Old</string>
 
     <string-array name="hbyc_month_array">
         <item name="hbyc_month_3">3 Month</item>
