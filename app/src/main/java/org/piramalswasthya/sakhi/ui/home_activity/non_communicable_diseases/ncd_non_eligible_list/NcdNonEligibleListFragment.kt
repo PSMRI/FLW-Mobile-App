@@ -44,7 +44,8 @@ class NcdNonEligibleListFragment : Fragment() {
         binding.btnNextPage.visibility = View.GONE
         val benAdapter = BenListAdapter(
             showBeneficiaries = true,
-            pref = prefDao
+            pref = prefDao,
+            context = requireActivity()
         )
         binding.rvAny.adapter = benAdapter
 

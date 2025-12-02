@@ -417,7 +417,7 @@
     <string name="mother_immunizationlist">Mother ImmunizationList</string>
     <string name="family_member_registration">Family Member Registration</string>
     <string name="relation_with_hof">Relation with HOF</string>
-    <string name="add_family_member">Add Family Member</string>
+    <string name="add_family_member">Add HoF Member</string>
     <string name="app_native_name">উৎপ্ৰেৰণা</string>
     <string name="non_pregnant_women_eligible_couple_section">Non-Pregnant Women (Eligible Couple) section</string>
     <string name="visit_day">Visit Day</string>
@@ -522,6 +522,9 @@
     <string name="signature_name_of_asha">Signature/Name of ASHA</string>
     <string name="cdr_form_from_anm_1">CDR form from ANM 1</string>
     <string name="cdr_form_from_anm_2">CDR form from ANM 2</string>
+    <string name="add_wife">Add Wife</string>
+    <string name="add_husband">Add Husband</string>
+    <string name="hof">HOF</string>
     <string name="leprosy_confirmed">Leprosy Confirmed</string>
     <string name="leprosy_suspected">Leprosy Suspected</string>
     <string name="leprosy_confirmed_form">Leprosy Confirmed Form</string>
@@ -688,6 +691,7 @@
     <string name="str_place_of_mother_referral">Place of mother referral</string>
     <string name="str_other_place_of_mother_referral">Other -Place of mother referral</string>
     <string name="preview_title">Preview</string>
+    <string name="add_children">Add Children</string>
 
     <string name="flu_like_illness">Flu-like illness</string>
     <string name="shakingchills">Shaking chills</string>

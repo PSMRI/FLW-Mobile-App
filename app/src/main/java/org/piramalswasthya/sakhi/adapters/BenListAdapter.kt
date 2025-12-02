@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -24,6 +25,7 @@ class BenListAdapter(
     private val showCall: Boolean = false,
     private val role: Int? = 0,
     private val pref: PreferenceDao? = null,
+    var context: FragmentActivity
 ) :
     ListAdapter<BenBasicDomain, BenListAdapter.BenViewHolder>(BenDiffUtilCallBack) {
     private object BenDiffUtilCallBack : DiffUtil.ItemCallback<BenBasicDomain>() {
@@ -56,6 +58,7 @@ class BenListAdapter(
             showBeneficiaries: Boolean, role: Int?,
             showCall: Boolean,
             pref: PreferenceDao?,
+            context : FragmentActivity,
             benIdList: List<Long>
         ) {
 
@@ -97,6 +100,12 @@ class BenListAdapter(
 
             gender = item.gender.toString()
 
+            if (item.relToHeadId == 19) {
+                binding.HOF.visibility = View.VISIBLE
+            } else {
+                binding.HOF.visibility = View.GONE
+            }
+
             if (item.dob != null) {
                 val type = getPatientTypeByAge(getDateFromLong(item.dob!!))
                 if (type == "new_born_baby") {
@@ -104,7 +113,6 @@ class BenListAdapter(
                 } else if (type == "infant") {
                     binding.ivHhLogo.setImageResource(R.drawable.ic_infant)
                 } else if (type == "child") {
-                    //male female check
                     if (gender == Gender.MALE.name) {
                         binding.ivHhLogo.setImageResource(R.drawable.ic_boy)
                     } else if (gender == Gender.FEMALE.name) {
@@ -131,6 +139,44 @@ class BenListAdapter(
                         binding.ivHhLogo.setImageResource(R.drawable.ic_unisex)
                     }
                 }
+            }
+
+
+
+            if (item.gender == "MALE" &&  !item.isSpouseAdded && item.isMarried) {
+                binding.btnAddSpouse.visibility = View.VISIBLE
+                binding.btnAddChildren.visibility = View.INVISIBLE
+                binding.llAddSpouseBtn.visibility = View.VISIBLE
+                binding.btnAddSpouse.text = context.getString(R.string.add_wife)
+                binding.btnAddSpouse.setOnClickListener {
+                    clickListener?.onClickedWifeBen(item)
+                }
+
+            } else if ((item.gender == "FEMALE" && !item.isSpouseAdded && item.isMarried) ) {
+                binding.btnAddSpouse.visibility = View.VISIBLE
+                binding.btnAddChildren.visibility = View.INVISIBLE
+                binding.llAddSpouseBtn.visibility = View.VISIBLE
+                binding.btnAddSpouse.text = context.getString(R.string.add_husband)
+                binding.btnAddSpouse.setOnClickListener {
+                    clickListener?.onClickedHusbandBen(item)
+                }
+
+
+
+
+            } else  if (item.gender == "FEMALE" && item.isMarried && item.doYouHavechildren && !item.isChildrenAdded) {
+                binding.btnAddChildren.visibility = View.VISIBLE
+                binding.btnAddSpouse.visibility = View.GONE
+                binding.llAddSpouseBtn.visibility = View.VISIBLE
+                binding.btnAddChildren.setOnClickListener {
+                    clickListener?.onClickChildBen(item)
+                }
+
+            } else {
+                binding.btnAddSpouse.visibility = View.GONE
+                binding.btnAddChildren.visibility = View.INVISIBLE
+                binding.llAddSpouseBtn.visibility = View.GONE
+
             }
 
             if (showBeneficiaries) {
@@ -187,6 +233,7 @@ class BenListAdapter(
             role,
             showCall,
             pref,
+            context,
             benIds
         )
     }
@@ -200,12 +247,40 @@ class BenListAdapter(
 
     class BenClickListener(
         private val clickedBen: (hhId: Long, benId: Long, relToHeadId: Int) -> Unit,
+        private val clickedWifeBen: (hhId: Long, benId: Long, relToHeadId: Int) -> Unit,
+        private val clickedHusbandBen: (hhId: Long, benId: Long, relToHeadId: Int) -> Unit,
+        private val clickedChildben: (hhId: Long, benId: Long, relToHeadId: Int) -> Unit,
         private val clickedHousehold: (hhId: Long) -> Unit,
         private val clickedABHA: (benId: Long, hhId: Long) -> Unit,
         private val clickedAddAllBenBtn: (benId: Long, hhId: Long, isViewMode: Boolean, isIFA: Boolean) -> Unit,
         private val callBen: (ben: BenBasicDomain) -> Unit
     ) {
-        fun onClickedBen(item: BenBasicDomain) = clickedBen(item.hhId, item.benId, item.relToHeadId - 1)
+        fun onClickedBen(item: BenBasicDomain) = clickedBen(
+            item.hhId,
+            item.benId,
+            item.relToHeadId - 1
+        )
+
+
+        fun onClickedWifeBen(item: BenBasicDomain) = clickedWifeBen(
+            item.hhId,
+            item.benId,
+            item.relToHeadId
+        )
+
+
+
+        fun onClickedHusbandBen(item: BenBasicDomain) = clickedHusbandBen(
+            item.hhId,
+            item.benId,
+            item.relToHeadId
+        )
+
+        fun onClickChildBen(item: BenBasicDomain) = clickedChildben(
+            item.hhId,
+            item.benId,
+            item.relToHeadId
+        )
         fun onClickedHouseHold(item: BenBasicDomain) = clickedHousehold(item.hhId)
         fun onClickABHA(item: BenBasicDomain) = clickedABHA(item.benId, item.hhId)
         fun clickedAddAllBenBtn(item: BenBasicDomain, isMatched: Boolean, isIFA: Boolean) = clickedAddAllBenBtn(item.benId, item.hhId, isMatched,isIFA)

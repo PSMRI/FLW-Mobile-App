@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.ncd
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -62,17 +64,45 @@ class NcdListFragment : Fragment() {
             BenListAdapter.BenClickListener(
                 { hhId, benId, isKid ->
                 },
+                clickedWifeBen = { hhId, benId, relToHeadId ->
+
+                },
+                clickedHusbandBen = { hhId, benId, isKrelToHeadIdid ->
+
+                },
+                clickedChildben = {
+                        hhId, benId, isKrelToHeadIdid ->
+                },
                 {
+
                 },
                 { benId, hhId ->
                 },
                 { benId, hhId, isViewMode, isIFA ->
                 },
                 {
-
+                    try {
+                        val callIntent = Intent(Intent.ACTION_CALL)
+                        callIntent.setData(Uri.parse("tel:${it.mobileNo}"))
+                        startActivity(callIntent)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        activity?.let {
+                            (it as HomeActivity).askForPermissions()
+                        }
+                        Toast.makeText(requireContext(), "Please allow permissions first", Toast.LENGTH_SHORT).show()
+                    }
                 }
-                ), true,
-            pref = prefDao
+
+            ),
+            showBeneficiaries = true,
+            showRegistrationDate = true,
+            showSyncIcon = true,
+            showAbha = true,
+            showCall = true,
+            pref = prefDao,
+            context = requireActivity()
+
         )
         binding.rvAny.adapter = benAdapter
         lifecycleScope.launch {
