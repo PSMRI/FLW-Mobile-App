@@ -89,7 +89,7 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
         showDrawable = true
     )
 
-    private val noOfChildren = FormElement(
+     val noOfChildren = FormElement(
         id = 12,
         inputType = EDIT_TEXT,
         title = resources.getString(R.string.ecrdset_ttl_child_born),
@@ -1305,54 +1305,249 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
         target.value = "${diff.toString()} years"
     }
 
+    fun mapChild(
+        cacheModel: BenRegCache,
+        childIndex: Int
+    ): BenRegCache {
+
+        val ben = cacheModel.copy()
+
+        when(childIndex) {
+
+            1 -> {
+                ben.firstName = firstChildName.value
+                ben.lastName = selectedBen?.lastName
+                ben.dob = Dataset.getLongFromDate(dob1.value!!)
+                ben.age = age1.value!!.toInt()
+                ben.ageUnitId = 3
+                ben.ageUnit = AgeUnit.YEARS
+                ben.isAdult = ben.ageUnit == AgeUnit.YEARS && ben.age >= 15
+                ben.isKid = !ben.isAdult
+                ben.genderId = when (gender1.value) {
+                    gender1.entries!![0] -> 1
+                    gender1.entries!![1] -> 2
+                    gender1.entries!![2] -> 3
+                    else -> 0
+                }
+                ben.gender = when (ben.genderId) {
+                    1 -> MALE
+                    2 -> FEMALE
+                    3 -> TRANSGENDER
+                    else -> null
+                }
+            }
+            2 -> {
+                ben.firstName = secondChildName.value
+                ben.lastName = selectedBen?.lastName
+                ben.dob = Dataset.getLongFromDate(dob2.value!!)
+                ben.age = age2.value!!.toInt()
+                ben.ageUnitId = 3
+                ben.ageUnit = AgeUnit.YEARS
+                ben.isAdult = ben.ageUnit == AgeUnit.YEARS && ben.age >= 15
+                ben.isKid = !ben.isAdult
+                ben.genderId = when (gender2.value) {
+                    gender2.entries!![0] -> 1
+                    gender2.entries!![1] -> 2
+                    gender2.entries!![2] -> 3
+                    else -> 0
+                }
+                ben.gender = when (ben.genderId) {
+                    1 -> MALE
+                    2 -> FEMALE
+                    3 -> TRANSGENDER
+                    else -> null
+                }
+            }
+
+            3 -> {
+                ben.firstName = thirdChildName.value
+                ben.lastName = selectedBen?.lastName
+                ben.dob = Dataset.getLongFromDate(dob3.value!!)
+                ben.age = age3.value!!.toInt()
+                ben.ageUnitId = 3
+                ben.ageUnit = AgeUnit.YEARS
+                ben.isAdult = ben.ageUnit == AgeUnit.YEARS && ben.age >= 15
+                ben.isKid = !ben.isAdult
+                ben.genderId = when (gender3.value) {
+                    gender2.entries!![0] -> 1
+                    gender2.entries!![1] -> 2
+                    gender2.entries!![2] -> 3
+                    else -> 0
+                }
+                ben.gender = when (ben.genderId) {
+                    1 -> MALE
+                    2 -> FEMALE
+                    3 -> TRANSGENDER
+                    else -> null
+                }
+            }
+
+            4 -> {
+                ben.firstName = forthChildName.value
+                ben.lastName = selectedBen?.lastName
+                ben.dob = Dataset.getLongFromDate(dob4.value!!)
+                ben.age = age4.value!!.toInt()
+                ben.ageUnitId = 3
+                ben.ageUnit = AgeUnit.YEARS
+                ben.isAdult = ben.ageUnit == AgeUnit.YEARS && ben.age >= 15
+                ben.isKid = !ben.isAdult
+                ben.genderId = when (gender4.value) {
+                    gender2.entries!![0] -> 1
+                    gender2.entries!![1] -> 2
+                    gender2.entries!![2] -> 3
+                    else -> 0
+                }
+                ben.gender = when (ben.genderId) {
+                    1 -> MALE
+                    2 -> FEMALE
+                    3 -> TRANSGENDER
+                    else -> null
+                }
+            }
+            5 -> {
+                ben.firstName = fifthChildName.value
+                ben.lastName = selectedBen?.lastName
+                ben.dob = Dataset.getLongFromDate(dob5.value!!)
+                ben.age = age5.value!!.toInt()
+                ben.ageUnitId = 3
+                ben.ageUnit = AgeUnit.YEARS
+                ben.isAdult = ben.ageUnit == AgeUnit.YEARS && ben.age >= 15
+                ben.isKid = !ben.isAdult
+                ben.genderId = when (gender5.value) {
+                    gender2.entries!![0] -> 1
+                    gender2.entries!![1] -> 2
+                    gender2.entries!![2] -> 3
+                    else -> 0
+                }
+                ben.gender = when (ben.genderId) {
+                    1 -> MALE
+                    2 -> FEMALE
+                    3 -> TRANSGENDER
+                    else -> null
+                }
+            }
+            6 -> {
+                ben.firstName = sixthChildName.value
+                ben.lastName = selectedBen?.lastName
+                ben.dob = Dataset.getLongFromDate(dob6.value!!)
+                ben.age = age6.value!!.toInt()
+                ben.ageUnitId = 3
+                ben.ageUnit = AgeUnit.YEARS
+                ben.isAdult = ben.ageUnit == AgeUnit.YEARS && ben.age >= 15
+                ben.isKid = !ben.isAdult
+                ben.genderId = when (gender6.value) {
+                    gender2.entries!![0] -> 1
+                    gender2.entries!![1] -> 2
+                    gender2.entries!![2] -> 3
+                    else -> 0
+                }
+                ben.gender = when (ben.genderId) {
+                    1 -> MALE
+                    2 -> FEMALE
+                    3 -> TRANSGENDER
+                    else -> null
+                }
+            }
+            7 -> {
+                ben.firstName = seventhChildName.value
+                ben.lastName = selectedBen?.lastName
+                ben.dob = Dataset.getLongFromDate(dob7.value!!)
+                ben.age = age7.value!!.toInt()
+                ben.ageUnitId = 3
+                ben.ageUnit = AgeUnit.YEARS
+                ben.isAdult = ben.ageUnit == AgeUnit.YEARS && ben.age >= 15
+                ben.isKid = !ben.isAdult
+                ben.genderId = when (gender7.value) {
+                    gender2.entries!![0] -> 1
+                    gender2.entries!![1] -> 2
+                    gender2.entries!![2] -> 3
+                    else -> 0
+                }
+                ben.gender = when (ben.genderId) {
+                    1 -> MALE
+                    2 -> FEMALE
+                    3 -> TRANSGENDER
+                    else -> null
+                }
+            }
+            8 -> {
+                ben.firstName = eightChildName.value
+                ben.lastName = selectedBen?.lastName
+                ben.dob = Dataset.getLongFromDate(dob8.value!!)
+                ben.age = age8.value!!.toInt()
+                ben.ageUnitId = 3
+                ben.ageUnit = AgeUnit.YEARS
+                ben.isAdult = ben.ageUnit == AgeUnit.YEARS && ben.age >= 15
+                ben.isKid = !ben.isAdult
+                ben.genderId = when (gender8.value) {
+                    gender2.entries!![0] -> 1
+                    gender2.entries!![1] -> 2
+                    gender2.entries!![2] -> 3
+                    else -> 0
+                }
+                ben.gender = when (ben.genderId) {
+                    1 -> MALE
+                    2 -> FEMALE
+                    3 -> TRANSGENDER
+                    else -> null
+                }
+            }
+            9 -> {
+                ben.firstName = ninthChildName.value
+                ben.lastName = selectedBen?.lastName
+                ben.dob = Dataset.getLongFromDate(dob9.value!!)
+                ben.age = age9.value!!.toInt()
+                ben.ageUnitId = 3
+                ben.ageUnit = AgeUnit.YEARS
+                ben.isAdult = ben.ageUnit == AgeUnit.YEARS && ben.age >= 15
+                ben.isKid = !ben.isAdult
+                ben.genderId = when (gender9.value) {
+                    gender2.entries!![0] -> 1
+                    gender2.entries!![1] -> 2
+                    gender2.entries!![2] -> 3
+                    else -> 0
+                }
+                ben.gender = when (ben.genderId) {
+                    1 -> MALE
+                    2 -> FEMALE
+                    3 -> TRANSGENDER
+                    else -> null
+                }
+            }
+        }
+
+        ben.householdId = selectedBen?.householdId!!
+        ben.regDate = Dataset.Companion.getLongFromDate(dateOfReg.value!!)
+        ben.fatherName = "${selectedBen?.genDetails?.spouseName}"
+        ben.motherName = "${selectedBen?.firstName}"
+        ben.isDeath = false
+        ben.isDeathValue = "false"
+        ben.dateOfDeath = null
+        ben.timeOfDeath = null
+        ben.reasonOfDeath = null
+        ben.doYouHavechildren = false
+        ben.placeOfDeath = null
+        ben.mobileNoOfRelationId = 5
+        ben.otherPlaceOfDeath = null
+        ben.contactNumber = selectedBen!!.contactNumber
+        ben.mobileNoOfRelationId = 5
+        ben.isDraft = false
+        ben.isConsent = isOtpVerified
+        ben.familyHeadRelation = selectedBen!!.familyHeadRelation
+        ben.isSpouseAdded = false
+        ben.isChildrenAdded = false
+        ben.isMarried = false
+        ben.doYouHavechildren = false
+        ben.community = selectedBen!!.community
+        ben.communityId = selectedBen!!.communityId
+
+        return ben
+    }
+
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as BenRegCache).let { ben ->
 
 
-            ben.householdId = selectedBen?.householdId!!
-            ben.regDate = Dataset.Companion.getLongFromDate(dateOfReg.value!!)
-            ben.firstName = firstChildName.value
-            ben.lastName =  "${selectedBen?.lastName}"
-            ben.dob = Dataset.Companion.getLongFromDate(dob1.value!!)
-            ben.age = age1.value!!.toInt()
-            ben.ageUnitId = 3
-            ben.ageUnit = AgeUnit.YEARS
-            ben.isAdult = ben.ageUnit == AgeUnit.YEARS && ben.age >= 15
-            ben.isKid = !ben.isAdult
-            ben.genderId = when (gender1.value) {
-                gender1.entries!![0] -> 1
-                gender1.entries!![1] -> 2
-                gender1.entries!![2] -> 3
-                else -> 0
-            }
-            ben.gender = when (ben.genderId) {
-                1 -> MALE
-                2 -> FEMALE
-                3 -> TRANSGENDER
-                else -> null
-            }
-            ben.fatherName = "${selectedBen?.genDetails?.spouseName}"
-            ben.motherName = "${selectedBen?.firstName}"
-            ben.isDeath = false
-            ben.isDeathValue = "false"
-            ben.dateOfDeath = null
-            ben.timeOfDeath = null
-            ben.reasonOfDeath = null
-            ben.doYouHavechildren = false
-            ben.placeOfDeath = null
-            ben.mobileNoOfRelationId = 5
-            ben.otherPlaceOfDeath = null
-            ben.contactNumber = selectedBen!!.contactNumber
-            ben.mobileNoOfRelationId = 5
-            ben.isDraft = false
-            ben.isConsent = isOtpVerified
-            ben.familyHeadRelation = selectedBen!!.familyHeadRelation
-            ben.isSpouseAdded = false
-            ben.isChildrenAdded = false
-            ben.isMarried = false
-            ben.doYouHavechildren = false
-            ben.community = selectedBen!!.community
-            ben.communityId = selectedBen!!.communityId
 
 
         }

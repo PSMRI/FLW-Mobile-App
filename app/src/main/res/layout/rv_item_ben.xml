@@ -143,6 +143,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/hof"
+                            android:visibility="gone"
                             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                             android:textColor="?attr/colorPrimaryVariant"
                             app:drawableTint="?attr/colorPrimary"
@@ -153,6 +154,7 @@
                             android:id="@+id/iv_isHead"
                             android:layout_width="24dp"
                             android:layout_height="24dp"
+                            android:visibility="gone"
                             app:tint="?attr/colorPrimary"
                             android:layout_gravity="center_vertical|end"
                             android:layout_marginHorizontal="@dimen/padding_small"
@@ -332,6 +334,30 @@
                                 android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                                 android:textColor="?attr/colorOnPrimary"
                                 tools:text="Female" />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:id="@+id/HOF"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:padding="@dimen/padding_small">
+
+                           <ImageView
+                               android:layout_width="wrap_content"
+                               android:layout_height="wrap_content"
+                               android:src="@drawable/ic__hh"
+
+                               />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/hof"
+                                android:textStyle="bold"
+                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                                android:textColor="?attr/colorOnPrimary"
+                                 />
                         </LinearLayout>
 
 
@@ -578,6 +604,7 @@
                             app:isDeath="@{ben.isDeathValue}"
                             app:reproductiveStatusId="@{ben.reproductiveStatusId}"
                             app:gender="@{ben.gender}"
+                            app:cornerRadius="@dimen/padding_normal"
                             android:textColor="?attr/colorOnPrimary"
                             tools:ignore="NestedWeights" />
 
@@ -594,6 +621,7 @@
                             android:backgroundTint="@android:color/holo_green_dark"
                             android:onClick="@{()-> clickListener.clickedAddAllBenBtn(ben,isMatched,false)}"
                             android:text="@string/add_eye_surgery"
+                            app:cornerRadius="@dimen/padding_normal"
                             app:visibleIfAgeAbove30AndAliveAge="@{ben.ageInt}"
                             app:isDeath="@{ben.isDeathValue}"
                             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
@@ -606,6 +634,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
+                        android:visibility="gone"
                         android:orientation="horizontal"
                         android:padding="@dimen/padding_normal">
 

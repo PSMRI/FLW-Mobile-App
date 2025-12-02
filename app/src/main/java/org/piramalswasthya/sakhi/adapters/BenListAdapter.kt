@@ -101,11 +101,9 @@ class BenListAdapter(
             gender = item.gender.toString()
 
             if (item.relToHeadId == 19) {
-                binding.head.visibility = View.VISIBLE
-                binding.ivIsHead.visibility = View.VISIBLE
+                binding.HOF.visibility = View.VISIBLE
             } else {
-                binding.head.visibility = View.GONE
-                binding.ivIsHead.visibility = View.GONE
+                binding.HOF.visibility = View.GONE
             }
 
             if (item.dob != null) {
@@ -148,6 +146,7 @@ class BenListAdapter(
             if (item.gender == "MALE" &&  !item.isSpouseAdded && item.isMarried) {
                 binding.btnAddSpouse.visibility = View.VISIBLE
                 binding.btnAddChildren.visibility = View.INVISIBLE
+                binding.llAddSpouseBtn.visibility = View.VISIBLE
                 binding.btnAddSpouse.text = context.getString(R.string.add_wife)
                 binding.btnAddSpouse.setOnClickListener {
                     clickListener?.onClickedWifeBen(item)
@@ -156,7 +155,7 @@ class BenListAdapter(
             } else if ((item.gender == "FEMALE" && !item.isSpouseAdded && item.isMarried) ) {
                 binding.btnAddSpouse.visibility = View.VISIBLE
                 binding.btnAddChildren.visibility = View.INVISIBLE
-
+                binding.llAddSpouseBtn.visibility = View.VISIBLE
                 binding.btnAddSpouse.text = context.getString(R.string.add_husband)
                 binding.btnAddSpouse.setOnClickListener {
                     clickListener?.onClickedHusbandBen(item)
@@ -168,6 +167,7 @@ class BenListAdapter(
             } else  if (item.gender == "FEMALE" && item.isMarried && item.doYouHavechildren && !item.isChildrenAdded) {
                 binding.btnAddChildren.visibility = View.VISIBLE
                 binding.btnAddSpouse.visibility = View.GONE
+                binding.llAddSpouseBtn.visibility = View.VISIBLE
                 binding.btnAddChildren.setOnClickListener {
                     clickListener?.onClickChildBen(item)
                 }
@@ -175,6 +175,8 @@ class BenListAdapter(
             } else {
                 binding.btnAddSpouse.visibility = View.GONE
                 binding.btnAddChildren.visibility = View.INVISIBLE
+                binding.llAddSpouseBtn.visibility = View.GONE
+
             }
 
             if (showBeneficiaries) {

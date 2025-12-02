@@ -157,14 +157,21 @@ class NewChildBenViewModel@Inject constructor(
 
     }
 
+
     fun saveForm() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
+
                 try {
                     _state.postValue(State.SAVING)
 
-                    val benIdToSet = minOf(benRepo.getMinBenId() - 1L, -1L)
-                        ben = BenRegCache(
+                    val childCount = dataset.noOfChildren.value?.toIntOrNull() ?: 0
+
+                    for (i in 1..childCount) {
+
+                        val benIdToSet = minOf(benRepo.getMinBenId() - 1L, -1L)
+
+                        val ben = BenRegCache(
                             ashaId = user.userId,
                             beneficiaryId = benIdToSet,
                             isDeath = false,
@@ -180,47 +187,48 @@ class NewChildBenViewModel@Inject constructor(
                             isAdult = false,
                             isKid = true,
                             isDraft = true,
-                            kidDetails = if(true) BenRegKid() else null,
+                            kidDetails = BenRegKid(),
                             genDetails = BenRegGen(),
                             syncState = SyncState.UNSYNCED,
                             locationRecord = locationRecord,
                             isConsent = isOtpVerified
                         )
 
-                    dataset.mapValues(ben, 2)
-                    ben.apply {
-                        if (beneficiaryId < 0L) {
-                            serverUpdatedStatus = 1
-                            processed = "N"
-                        } else {
-                            serverUpdatedStatus = 2
-                            processed = "U"
-                        }
-                        syncState = SyncState.UNSYNCED
+                        val mapped = dataset.mapChild(ben, i)
 
-                        if (createdDate == null) {
-                            createdDate = System.currentTimeMillis()
-                            createdBy = user.userName
-                        }
-                        updatedDate = System.currentTimeMillis()
-                        updatedBy = user.userName
+                        mapped.apply {
+                            if (beneficiaryId < 0L) {
+                                serverUpdatedStatus = 1
+                                processed = "N"
+                            } else {
+                                serverUpdatedStatus = 2
+                                processed = "U"
+                            }
+                            syncState = SyncState.UNSYNCED
+
+                            if (createdDate == null) {
+                                createdDate = System.currentTimeMillis()
+                                createdBy = user.userName
+                            }
+                            updatedDate = System.currentTimeMillis()
+                            updatedBy = user.userName
                     }
-                    Log.e("DATASET",hhId.toString())
-                    Log.e("DATASET",SelectedbenIdFromArgs.toString())
-                    Log.e("DATASET",ben.noOfChildren.toString())
-                    Log.e("DATASET",ben.noOfAliveChildren.toString())
-                    benRepo.updateBeneficiaryChildrenAdded(hhId,SelectedbenIdFromArgs)
-                    benRepo.persistRecord(ben)
+
+
+                        benRepo.persistRecord(mapped)
+                    }
+
+                    benRepo.updateBeneficiaryChildrenAdded(hhId, SelectedbenIdFromArgs)
 
                     _state.postValue(State.SAVE_SUCCESS)
-                } catch (e: IllegalAccessError) {
-                    Timber.d("saving Ben data failed!! $e")
+
+                } catch (e: Exception) {
+                    Timber.d("saving Ben data failed: $e")
                     _state.postValue(State.SAVE_FAILED)
                 }
             }
         }
     }
-
 
     fun updateListOnValueChanged(formId: Int, index: Int) {
         viewModelScope.launch {
