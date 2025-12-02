@@ -29,6 +29,8 @@ import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registration.EyeSurgeryFormViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.all_household.AllHouseholdFragmentDirections
+import org.piramalswasthya.sakhi.ui.home_activity.home.HomeViewModel
+import org.piramalswasthya.sakhi.utils.HelperUtil
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -163,6 +165,7 @@ class AllBenFragment : Fragment() {
                                 hhId = hhId,
                                 benId = benId,
                                 relToHeadId = relToHeadId,
+                                isAddSpouse = 0,
                                 gender = 0
 
                             )
@@ -170,6 +173,59 @@ class AllBenFragment : Fragment() {
                     }
 
                 },
+                clickedWifeBen = {
+                        hhId, benId, relToHeadId ->
+
+                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+                        findNavController().navigate(
+                            AllBenFragmentDirections.actionAllBenFragmentToNewBenRegFragment(
+                                hhId = hhId,
+                                benId = 0,
+                                relToHeadId = HelperUtil.getFemaleRelationId(relToHeadId),
+                                selectedBenId = benId,
+                                isAddSpouse = 1,
+
+                                gender = 2
+
+                            )
+                        )
+                    }
+                },
+                clickedHusbandBen = {
+                        hhId, benId, relToHeadId ->
+
+                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+                        findNavController().navigate(
+                            AllBenFragmentDirections.actionAllBenFragmentToNewBenRegFragment(
+                                hhId = hhId,
+                                benId = 0,
+                                relToHeadId = HelperUtil.getMaleRelationId(relToHeadId),
+                                selectedBenId = benId,
+                                isAddSpouse = 1,
+                                gender = 1
+
+                            )
+                        )
+                    }
+                },
+                clickedChildben = {
+                        hhId, benId, relToHeadId ->
+
+                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+                        findNavController().navigate(
+                            AllBenFragmentDirections.actionAllBenFragmentToNewChildAsBenRegistrationFragment(
+                                hhId = hhId,
+                                benId = 0,
+                                relToHeadId = relToHeadId,
+                                selectedBenId = benId,
+                                isAddSpouse = 0,
+                                gender = 0
+
+                            )
+                        )
+                    }
+                },
+
                 {
                 },
                 { benId, hhId ->
@@ -212,12 +268,13 @@ class AllBenFragment : Fragment() {
                 }
 
                 ),
-            showAbha = true,
-            showSyncIcon = true,
             showBeneficiaries = true,
             showRegistrationDate = true,
+            showSyncIcon = true,
+            showAbha = true,
             showCall = true,
-            pref = prefDao
+            pref = prefDao,
+            context = requireActivity()
         )
         binding.rvAny.adapter = benAdapter
         lifecycleScope.launch {

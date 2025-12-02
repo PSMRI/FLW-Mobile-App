@@ -45,6 +45,7 @@
     <string name="ecrdset_dts_6_bth">6th Child Date of Birth</string>
     <string name="ecrdset_6_child_age">6th Child Age ( in Years)</string>
     <string name="ecrdset_6_child_sex">6th Child Sex</string>
+    <string name="childrens">Do you have children?</string>
     <string name="ecrdset_gap_5_6_child">Gap between 5th child and 6th Child</string>
     <string name="ecrdset_7_dts_child">Details of 7th Child</string>
     <string name="ecrdset_7_child_bth">7th Child Date of Birth</string>

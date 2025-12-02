@@ -6,6 +6,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.model.BenHealthIdDetails
 import org.piramalswasthya.sakhi.repositories.BenRepo
@@ -27,7 +28,11 @@ class HouseholdMembersViewModel @Inject constructor(
 //    val diseaseType = HouseholdMembersFragmentArgs.fromSavedStateHandle(savedStateHandle).diseaseType
     val diseaseType = "No"
 
-    val benList = benRepo.getBenBasicListFromHousehold(hhId)
+    val benList = benRepo.getBenBasicListFromHousehold(hhId).map { list ->
+        list.sortedBy { ben ->
+            ben.relToHeadId != 19
+        }
+    }
 
     private val _abha = MutableLiveData<String?>()
     val abha: LiveData<String?>

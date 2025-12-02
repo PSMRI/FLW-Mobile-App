@@ -6,7 +6,8 @@ import android.text.InputType
 import android.util.Log
 import android.util.Range
 import android.widget.LinearLayout
-import android.widget.Toast
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.Languages
@@ -88,6 +89,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
     private var familyHeadPhoneNo: String? = null
     private var timeStampDateOfMarriageFromSpouse: Long? = null
     private var isHoF: Boolean = false
+    private var isAddSppouse: Int = 0
 
     private var hof: BenRegCache? = null
     private var benIfDataExist: BenRegCache? = null
@@ -202,7 +204,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         hasSpeechToText = true,
         etInputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
     )
-    private val ageAtMarriage = FormElement(
+     var ageAtMarriage = FormElement(
         id = 1012,
         inputType = EDIT_TEXT,
         title = resources.getString(R.string.age_at_marriage),
@@ -480,9 +482,24 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         required = false,
     )
 
+    private val haveChildren = FormElement(
+        id = 48,
+        inputType = RADIO,
+        title = resources.getString(R.string.childrens),
+        arrayId = -1,
+        entries = resources.getStringArray(R.array.yes_no),
+        required = true,
+        hasDependants = true,
+    )
     fun getIndexOfBirthCertificateFrontPath() = getIndexById(fileUploadFront.id)
     fun getIndexOfBirthCertificateBackPath() = getIndexById(fileUploadBack.id)
 
+    private val _isAddingChildren = MutableStateFlow(false)
+    val isAddingChildren = _isAddingChildren.asStateFlow()
+
+    fun setIsAddingChildren(value: Boolean) {
+        _isAddingChildren.value = value
+    }
 
     val firstPage by lazy {
         listOf(
@@ -875,7 +892,9 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         hoF: BenRegCache?,
         benGender: Gender,
         relationToHeadId: Int,
-        hoFSpouse: List<BenRegCache> = emptyList()
+        hoFSpouse: List<BenRegCache> = emptyList(),
+        selectedben: BenRegCache?,
+        isAddspouse: Int
     ) {
         val list = mutableListOf(
             pic,
@@ -898,6 +917,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             rchId
         )
         this.familyHeadPhoneNo = household.family?.familyHeadPhoneNo?.toString()
+        this.isAddSppouse = isAddspouse
         tempraryContactNoBelongsto.value =
             tempraryContactNoBelongsto.getStringFromPosition(1)
         this.hof = hoF
@@ -935,7 +955,13 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         agePopup.min = getMinDobMillis()
         agePopup.max = System.currentTimeMillis()
         if (relationToHeadId == 4 || relationToHeadId == 5) hoF?.let {
-            setUpForSpouse(it, hoFSpouse)
+            setUpForSpouse(it, hoFSpouse,list)
+        }
+        if (relationToHeadId == 9 ||  relationToHeadId == 19 || relationToHeadId == 13 ||
+            relationToHeadId == 11 || relationToHeadId == 17 || relationToHeadId == 2 ||
+            relationToHeadId == 18 || relationToHeadId == 14 ||
+            relationToHeadId == 10 || relationToHeadId == 12 || relationToHeadId == 16) hoF?.let {
+            setUpPageforOthers(it,hoFSpouse,selectedben,list)
         }
         if (relationToHeadId == 8 || relationToHeadId == 9) hoF?.let {
             setUpForChild(it, hoFSpouse.firstOrNull())
@@ -1252,11 +1278,17 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             }
         if (benGender == MALE) wifeName.value = hof?.motherName
         if (benGender == FEMALE) husbandName.value = hof?.fatherName
+        maritalStatus.value = maritalStatus.getStringFromPosition(2)
+        maritalStatus.inputType = TEXT_VIEW
         lastName.value = hoF.lastName?.also { firstName.inputType = TEXT_VIEW }
         ageAtMarriage.max = getAgeFromDob(hoF.dob).toLong()
     }
 
-    private fun setUpForSpouse(hoFSpouse: BenRegCache, hoFSpouse1: List<BenRegCache>) {
+    private fun setUpForSpouse(
+        hoFSpouse: BenRegCache,
+        hoFSpouse1: List<BenRegCache>,
+        list1: MutableList<FormElement>
+    ) {
         if (hoFSpouse.genDetails?.maritalStatusId == 2) {
             if (hoFSpouse1.isEmpty()) {
                 firstName.value = hoFSpouse.genDetails?.spouseName
@@ -1270,13 +1302,53 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             if (hoFSpouse.gender == FEMALE) {
                 wifeName.value = "${hoFSpouse.firstName} ${hoFSpouse.lastName ?: ""}"
                 wifeName.inputType = TEXT_VIEW
+
             } else {
                 husbandName.value = "${hoFSpouse.firstName} ${hoFSpouse.lastName ?: ""}"
                 husbandName.inputType = TEXT_VIEW
             }
+
             maritalStatus.value = maritalStatus.getStringFromPosition(2)
             maritalStatus.inputType = TEXT_VIEW
+            if (hoFSpouse.gender == MALE) {
+            list1.add(list1.indexOf(maritalStatus) + 1 ,haveChildren)
+                }
+
+
             timeStampDateOfMarriageFromSpouse = hoFSpouse.genDetails?.marriageDate
+            agePopup.min = getHoFMinDobMillis()
+            agePopup.max = getHofMaxDobMillis()
+        }
+    }
+    private fun setUpPageforOthers(
+        hoFSpouse: BenRegCache, hoFSpouse1: List<BenRegCache>,
+        selectedben: BenRegCache?,
+        list1: MutableList<FormElement>
+    ) {
+        if (selectedben?.genDetails?.maritalStatusId == 2) {
+
+                firstName.value = selectedben?.genDetails?.spouseName
+            if (firstName.value?.isNotEmpty()!!) {
+                firstName.inputType = TEXT_VIEW
+
+            }
+                lastName.value = selectedben?.lastName
+                lastName.inputType = EDIT_TEXT
+
+            if (selectedben?.gender == FEMALE) {
+                wifeName.value = "${selectedben?.firstName} ${selectedben?.lastName ?: ""}"
+                wifeName.inputType = TEXT_VIEW
+            } else {
+                husbandName.value = "${selectedben?.firstName} ${selectedben?.lastName ?: ""}"
+                husbandName.inputType = TEXT_VIEW
+            }
+            maritalStatus.value = maritalStatus.getStringFromPosition(2)
+            maritalStatus.inputType = TEXT_VIEW
+            if (selectedben?.gender  == MALE) {
+                list1.add(list1.indexOf(maritalStatus) + 1 ,haveChildren)
+
+            }
+            timeStampDateOfMarriageFromSpouse = selectedben?.genDetails?.marriageDate
             agePopup.min = getHoFMinDobMillis()
             agePopup.max = getHofMaxDobMillis()
         }
@@ -1690,24 +1762,46 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
             ageAtMarriage.id -> {
 
-                (getAgeFromDob(getLongFromDate(agePopup.value))).takeIf { it > 0 && !ageAtMarriage.value.isNullOrEmpty() }
-                    ?.toInt()?.let {
+                val dobMillis = getLongFromDate(agePopup.value)
+                val currentAge = getAgeFromDob(dobMillis)
+
+                currentAge.takeIf { it > 0 && !ageAtMarriage.value.isNullOrEmpty() }
+                    ?.let {
+
                         validateEmptyOnEditText(ageAtMarriage)
                         validateIntMinMax(ageAtMarriage)
-                        if (it == ageAtMarriage.value?.toInt()) {
-                            val cal = Calendar.getInstance()
-                            dateOfMarriage.max = cal.timeInMillis
-                            cal.add(Calendar.YEAR, -1)
-                            dateOfMarriage.min = cal.timeInMillis
 
+                        val enteredAgeAtMarriage = ageAtMarriage.value!!.toIntOrNull() ?: return@let
+
+                        val dobCal = Calendar.getInstance()
+                        dobCal.timeInMillis = dobMillis
+
+                        val birthYear = dobCal.get(Calendar.YEAR)
+
+                        val marriageYear = birthYear + enteredAgeAtMarriage
+
+
+                        val marriageCal = Calendar.getInstance().apply {
+                            timeInMillis = dobMillis
+                            set(Calendar.YEAR, marriageYear)
                         }
+
+
+                        dateOfMarriage.value = getDateFromLong(marriageCal.timeInMillis)
+
+                        dateOfMarriage.max = Calendar.getInstance().timeInMillis
+
+                        dateOfMarriage.min = marriageCal.timeInMillis
+
                         triggerDependants(
                             source = ageAtMarriage,
-                            passedIndex = ageAtMarriage.value!!.toInt(),
+                            passedIndex = it,
                             triggerIndex = it,
                             target = dateOfMarriage
                         )
                     } ?: -1
+
+                return 0
             }
 
             childRegisteredAtSchool.id -> {
@@ -1851,6 +1945,14 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 }
             }
 
+            haveChildren.id -> {
+                if (haveChildren.entries != null) {
+                    val yesIndex = 0
+                    val current = haveChildren.getPosition()
+                    setIsAddingChildren(current == yesIndex)
+                    }
+                0
+            }
             otherRelationToHead.id -> {
                 validateEmptyOnEditText(otherRelationToHead)
             }
@@ -2459,6 +2561,19 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             ben.kidDetails?.birthCertificateFileFrontView = fileUploadFront.value
             ben.isDraft = false
             ben.isConsent = isOtpVerified
+            ben.isSpouseAdded = if (isAddSppouse == 1) {
+                true
+            } else {
+                when (ben.familyHeadRelationPosition) {
+                    5 -> true
+                    6 -> true
+                    else -> false
+                }
+            }
+            ben.isChildrenAdded = false
+            ben.isMarried = (maritalStatus.getPosition() == 2)
+            ben.doYouHavechildren = (haveChildren.getPosition() == 1)
+
 
         }
     }
