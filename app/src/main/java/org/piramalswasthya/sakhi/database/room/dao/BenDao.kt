@@ -144,6 +144,12 @@ interface BenDao {
     @Query("SELECT COUNT(*) FROM BEN_BASIC_CACHE where villageId = :selectedVillage AND abhaId IS NOT NULL")
     fun getAllBenWithAbhaCount(selectedVillage: Int): Flow<Int>
 
+    @Query("SELECT COUNT(*) FROM BEN_BASIC_CACHE where villageId = :selectedVillage AND abhaId IS NOT NULL AND isNewAbha = 0")
+    fun getAllBenWithOldAbhaCount(selectedVillage: Int): Flow<Int>
+
+    @Query("SELECT COUNT(*) FROM BEN_BASIC_CACHE where villageId = :selectedVillage AND abhaId IS NOT NULL AND isNewAbha = 1")
+    fun getAllBenWithNewAbhaCount(selectedVillage: Int): Flow<Int>
+
     @Query("SELECT COUNT(*) FROM BEN_BASIC_CACHE where villageId = :selectedVillage AND rchId IS NOT NULL AND rchId != ''")
     fun getAllBenWithRchCount(selectedVillage: Int): Flow<Int>
 
