@@ -20,6 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
+        android:background="@{item.defaultIncentive ? @color/default_incentive_background : (item.hasZeroBen ? @color/default_incentive_no_ben_background : @color/md_theme_light_onPrimary)}"
         android:onClick="@{() -> clickListener.invoke(item.activity.id, item.activityName)}">
 
         <androidx.constraintlayout.widget.Guideline
