@@ -152,10 +152,6 @@ class NewChildAsBenRegistrationFragment : Fragment() {
 
         }
 
-        viewModel.isDeath.observe(viewLifecycleOwner) { isDeath ->
-            binding.fabEdit.visibility = if (isDeath) View.GONE else View.GONE
-        }
-
                 val adapter =
                     FormInputAdapter(
                         formValueListener = FormInputAdapter.FormValueListener { formId, index ->
