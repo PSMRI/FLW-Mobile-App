@@ -43,7 +43,6 @@ class UserRepo @Inject constructor(
             try {
                 val userId = getTokenAmrit(userName, password)
                 val user = setUserRole(userId, password)
-                getAllUser()
                 return@withContext NetworkResponse.Success(user)
             } catch (se: SocketTimeoutException) {
                 return@withContext NetworkResponse.Error(message = "Server timed out !")
@@ -98,9 +97,6 @@ class UserRepo @Inject constructor(
         return user
     }
 
-    private suspend fun getAllUser() {
-//        val response = amritApiService.getAllUser(villageId = preferenceDao.getLoggedInUser()!!.villages[0].id)
-    }
 
     private fun offlineLogin(userName: String, password: String): Boolean {
         val loggedInUser = preferenceDao.getLoggedInUser()
