@@ -45,7 +45,7 @@ interface AmritApiService {
     @POST("common-api/user/userAuthenticate")
     suspend fun getJwtToken(@Body json: TmcAuthUserRequest): Response<ResponseBody>
 
-
+    @Headers("No-Auth: true","User-Agent: okhttp")
     @POST("common-api/user/refreshToken")
     suspend fun getRefreshToken(@Body json: TmcRefreshTokenRequest): Response<ResponseBody>
 

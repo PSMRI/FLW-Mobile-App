@@ -149,12 +149,13 @@ object AppModule {
     @Singleton
     @Provides
     fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor {
-        val loggingInterceptor = HttpLoggingInterceptor(LoggingInterceptor())
-        loggingInterceptor.level =
-            if (BuildConfig.DEBUG)
-                HttpLoggingInterceptor.Level.BODY
-            else
-                HttpLoggingInterceptor.Level.NONE
+        val loggingInterceptor = HttpLoggingInterceptor(LoggingInterceptor()).apply {
+            level =
+                if (BuildConfig.DEBUG)
+                    HttpLoggingInterceptor.Level.BODY
+                else
+                    HttpLoggingInterceptor.Level.NONE
+        }
         return loggingInterceptor
     }
 
@@ -199,7 +200,6 @@ object AppModule {
 
     private val baseClient =
         OkHttpClient.Builder()
-           // .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
             .addInterceptor(ContentTypeInterceptor())
             .build()
 

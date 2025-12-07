@@ -178,7 +178,6 @@ class UserRepo @Inject constructor(
                 amritApiService.getJwtToken(
                     json = TmcAuthUserRequest(
                         userName,
-//                        password,
                         encryptedPassword
                     )
                 )
