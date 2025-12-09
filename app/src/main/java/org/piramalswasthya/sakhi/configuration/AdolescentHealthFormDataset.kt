@@ -290,7 +290,7 @@ class AdolescentHealthFormDataset(context: Context, language: Languages) : Datas
 
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as AdolescentHealthCache).let { ben ->
-            ben.benId = ben.benId
+            //ben.benId = ben.benId
             ben.visitDate = getLongFromDate(visitDate.value)
             ben.healthStatus = healthStatus.value
             ben.ifaTabletDistributed =  ifaTabletDistribution.value == resources.getStringArray(
