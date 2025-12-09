@@ -85,6 +85,7 @@ class SignInFragment : Fragment() {
                             viewModel.logout()
                         }
                         ImageUtils.removeAllBenImages(requireContext())
+                        prefDao.deleteJWTToken()
                         WorkerUtils.cancelAllWork(requireContext())
                     }
                 }
