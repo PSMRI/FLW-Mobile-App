@@ -147,8 +147,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         allCaps = true,
         hasSpeechToText = true,
         hasDependants = true,
-        etInputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
-    )
+        etInputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_NORMAL
+        )
     val gender = FormElement(
         id = 9,
         inputType = RADIO,
@@ -407,7 +407,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         entries = resources.getStringArray(R.array.nbr_reproductive_status_array),
         required = true,
         hasDependants = false,
-        isEnabled = false
+        isEnabled = true
     )
     private val birthCertificateNumber = FormElement(
         id = 1029,
@@ -1318,6 +1318,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             timeStampDateOfMarriageFromSpouse = hoFSpouse.genDetails?.marriageDate
             agePopup.min = getHoFMinDobMillis()
             agePopup.max = getHofMaxDobMillis()
+            reproductiveStatus.isEnabled = true
         }
     }
     private fun setUpPageforOthers(
@@ -1890,12 +1891,12 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     }
 
                     maritalStatus.entries!![1] -> {
-                        if (gender.value == gender.entries!![1]) {
-                            fatherName.required = false
-                            motherName.required = false
-                        } else {
+                        if (gender.value == gender.entries!![2]) {
                             fatherName.required = true
                             motherName.required = true
+                        } else {
+                            fatherName.required = false
+                            motherName.required = false
                         }
                         husbandName.required = true
                         wifeName.required = true
@@ -2843,8 +2844,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 removeItems = emptyList(),
                 position = -2
             ) else {
-                fatherName.required = true
-                motherName.required = true
+               // fatherName.required = true
+                // motherName.required = true
                 triggerDependants(
                     source = rchId,
                     removeItems = listOf(reproductiveStatus),
