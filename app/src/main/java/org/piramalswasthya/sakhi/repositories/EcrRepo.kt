@@ -574,8 +574,7 @@ class EcrRepo @Inject constructor(
                     syncState = SyncState.SYNCED,
                     isKitHandedOver = ecrJson.optBoolean("isKitHandedOver",false),
                     kitHandedOverDate = getLongFromDate(
-                        ecrJson.optString("updatedDate")
-                    ),
+                        if (ecrJson.has("updatedDate")) ecrJson.getString("updatedDate") else ecrJson.getString("createdDate")                    ),
                     kitPhoto1 = ecrJson.optString("kitPhoto1",""),
                     kitPhoto2 = ecrJson.optString("kitPhoto2",""),
                     lmp_date = getLongFromDate(
