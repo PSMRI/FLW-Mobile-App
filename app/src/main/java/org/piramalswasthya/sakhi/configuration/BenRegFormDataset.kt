@@ -1891,9 +1891,9 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     }
 
                     maritalStatus.entries!![1] -> {
-                        if (gender.value == gender.entries!![1]) {
-                            fatherName.required = false
-                            motherName.required = false
+                        if (gender.value == gender.entries!![2]) {
+                            fatherName.required = true
+                            motherName.required = true
                         } else {
                             fatherName.required = false
                             motherName.required = false
