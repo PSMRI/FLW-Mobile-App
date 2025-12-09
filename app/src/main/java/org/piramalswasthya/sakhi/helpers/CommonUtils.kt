@@ -247,7 +247,7 @@ fun filterPwAncList(
     val query = filterText.lowercase()
     return list
         .filter {
-            it.ben.benId.toString().contains(query) ||
+            it.ben.benId.toString().lowercase().contains(query) ||
                     it.ben.age.lowercase().contains(query) ||
                     it.ben.familyHeadName.lowercase().contains(query) ||
                     it.ben.benFullName.lowercase().contains(query) ||
