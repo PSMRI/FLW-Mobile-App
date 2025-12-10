@@ -321,6 +321,7 @@
     <string name="help">Help</string>
     <string name="logout">Logout</string>
     <string name="delete_my_account">Request to delete my account</string>
+    <string name="monthly_claim_summary">Monthly Claim Summary</string>
     <string name="str_add_member">Add Member</string>
     <string name="str_not_available">Not Available</string>
     <string name="support">Support</string>
@@ -384,10 +385,10 @@
     <string name="follow_up_form">Follow-up  Form</string>
     <string name="tb_suspected_form">Suspected TB case</string>
     <string name="mother_immunization">Mother Immunization</string>
-    <string name="delivery_outcome">Delivery Outcome</string>
-    <string name="delivery_outcome_list">Delivery Outcome List</string>
-    <string name="infant_reg_list">Infant Reg List</string>
-    <string name="infant_reg">Infant Reg</string>
+    <string name="delivery_outcome">No of babies</string>
+    <string name="delivery_outcome_list">No of babies List</string>
+    <string name="infant_reg_list">Newborn Reg List</string>
+    <string name="infant_reg">Newborn Reg</string>
     <string name="communicable_diseases">Communicable Diseases</string>
     <string name="dashboard">Dashboard</string>
     <string name="sign_in">Sign In</string>

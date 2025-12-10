@@ -196,10 +196,10 @@
     <string name="tb_screening_form">TB স্ক্ৰীনিং ফৰ্ম</string>
     <string name="tb_suspected_form">TB সন্দেহভাৱিত ফৰ্ম</string>
     <string name="mother_immunization">মাৰ পৰিস্কৃতি</string>
-    <string name="delivery_outcome">প্ৰসৱ সম্পূৰ্ণ হোৱাৰ ফল</string>
-    <string name="delivery_outcome_list">প্ৰসৱ সম্পূৰ্ণ হোৱাৰ ফল তালিকা</string>
-    <string name="infant_reg_list">শিশু পঞ্জীকৰণ তালিকা</string>
-    <string name="infant_reg">শিশু পঞ্জীকৰণ</string>
+    <string name="delivery_outcome">কেঁচুৱাৰ কোনো নাই</string>
+    <string name="delivery_outcome_list">কেঁচুৱাৰ সংখ্যা তালিকা</string>
+    <string name="infant_reg_list">নৱজাতকৰ ৰেগ তালিকা</string>
+    <string name="infant_reg">নৱজাতক ৰেজি</string>
     <string name="communicable_diseases">সংক্রামণ পৰামৰ্শযোগ্য পৰাৰ তালিকা</string>
     <string name="dashboard">ডেশবৰ্ড</string>
     <string name="sign_in">ছাইন ইন কৰক</string>
@@ -229,6 +229,7 @@
     </string-array>
 
     <string name="delete_my_account">মোৰ একাউণ্টটো ডিলিট কৰিবলৈ অনুৰোধ</string>
+    <string name="monthly_claim_summary">মাহেকীয়া দাবীৰ সাৰাংশ</string>
     <string name="support">সহায়</string>
     <string name="to_do_list">কৰণীয়ৰ তালিকা</string>
     <string name="beneficiaries_due_for_anc">গৰ্ভাৱস্থাৰ যত্ন (ANC) লৈ বঁটা পাবলগীয়া लाभান্বিত</string>
