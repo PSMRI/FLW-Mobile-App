@@ -3,7 +3,7 @@
     <string name="other_mobile_number_of_kid">Other - Mobile Number of</string>
     <!--    <string name="home_icon_title_child_care">Child Care</string>-->
     <string name="child_care_icon_title_child_list">Child List</string>
-    <string name="child_care_icon_title_infant_list">Infant List</string>
+    <string name="child_care_icon_title_infant_list">Newborn List</string>
     <string name="child_care_icon_title_adolescent_list">Adolescent List</string>
     <string name="nbr_child_awc">Is the Child registered at AWC</string>
     <string name="nbr_child_reg_school">Is the Child registered at School</string>
