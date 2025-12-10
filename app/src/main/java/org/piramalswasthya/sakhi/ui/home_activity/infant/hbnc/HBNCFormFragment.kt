@@ -128,11 +128,10 @@ class HBNCFormFragment : Fragment() {
         val isViewMode = args.isViewMode
         benId = args.benId
         hhId = args.hhId
-        val currentLang = pref.getCurrentLanguage()  // ye return karega Languages enum value
+        val currentLang = pref.getCurrentLanguage()
         langCode = currentLang.symbol
 
         viewModel.fetchSNCUStatus(benId)
-
         infantListViewModel.getBenById(benId) { ben ->
             infantBinding.btnHBNC.visibility=View.GONE
             infantBinding.dueIcon.visibility=View.GONE
@@ -147,10 +146,11 @@ class HBNCFormFragment : Fragment() {
             if (dobMillis != null) {
                 dob = dobMillis
 
-                viewModel.loadFormSchema(benId, HBNC_FORM_ID, visitDay!!, true, dob,langCode)
+                viewModel.loadFormSchema(benId, HBNC_FORM_ID, visitDay!!, isViewMode, dob,langCode)
             } else {
-                viewModel.loadFormSchema(benId, HBNC_FORM_ID, visitDay!!, true, dob,langCode)
+                viewModel.loadFormSchema(benId, HBNC_FORM_ID, visitDay!!, isViewMode, dob,langCode)
             }
+
         }
 
         viewModel.navigateToCdsr.observe(viewLifecycleOwner) { shouldNavigate ->
@@ -193,7 +193,7 @@ class HBNCFormFragment : Fragment() {
                 },)
 
                 recyclerView.adapter = adapter
-
+                adapter.notifyDataSetChanged()
                 val isSNCUCase = viewModel.isSNCU.value ?: false
                 if (isSNCUCase) {
                     val updatedFields = adapter.getUpdatedFields().map { field ->

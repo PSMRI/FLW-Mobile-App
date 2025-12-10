@@ -789,6 +789,36 @@ data class BenBasicCache(
     }
 
 }
+fun getAgeDisplayString(dob: Long): String {
+    val calDob = Calendar.getInstance().apply { timeInMillis = dob }
+    val calNow = Calendar.getInstance()
+    val diffDays = TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - dob).toInt()
+    return when {
+        diffDays < 31 -> {
+            "$diffDays Day${if (diffDays > 1) "s" else ""}"
+        }
+        else -> {
+            var years = calNow.get(Calendar.YEAR) - calDob.get(Calendar.YEAR)
+            var months = calNow.get(Calendar.MONTH) - calDob.get(Calendar.MONTH)
+            val days = calNow.get(Calendar.DAY_OF_MONTH) - calDob.get(Calendar.DAY_OF_MONTH)
+
+            if (days < 0) months -= 1
+            if (months < 0) {
+                years -= 1
+                months += 12
+            }
+
+            when {
+                years >= 1 -> {
+                    "$years Year${if (years > 1) "s" else ""} $months Month${if (months > 1) "s" else ""}"
+                }
+                else -> {
+                    "$months Month${if (months > 1) "s" else ""}"
+                }
+            }
+        }
+    }
+}
 
 @Parcelize
 data class BenBasicDomain(
@@ -814,7 +844,8 @@ data class BenBasicDomain(
     val dob: Long,
     val ageInt: Int = getAgeFromDob(dob),
     val ageUnit: AgeUnit = getAgeUnitFromDob(dob),
-    val age: String = "$ageInt ${ageUnit.name}",
+//    val age: String = "$ageInt ${ageUnit.name}",
+    val age: String = "${getAgeDisplayString(dob)}",
     val relToHeadId: Int,
     val mobileNo: String,
     val abhaId: String? = null,
