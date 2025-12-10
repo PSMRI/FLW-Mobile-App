@@ -1,11 +1,17 @@
 package org.piramalswasthya.sakhi.adapters.dynamicAdapter
 
+import android.graphics.Typeface
 import android.text.Html
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.R
@@ -80,7 +86,16 @@ class VisitCardAdapter(
                 }
                 "1st Day", "3rd Day", "7th Day", "42nd Day" -> {
                     visibility = View.VISIBLE
-                    text= context.getString(R.string.mandatory)
+                    val mandatoryText = context.getString(R.string.mandatory).replace("*", "")
+                    val spannable = SpannableString("$mandatoryText*")
+                    val redColor = ContextCompat.getColor(context, R.color.Quartenary)
+                    spannable.setSpan(
+                        ForegroundColorSpan(redColor),
+                        spannable.length - 1,
+                        spannable.length,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                    text = spannable
                 }
 
             }
