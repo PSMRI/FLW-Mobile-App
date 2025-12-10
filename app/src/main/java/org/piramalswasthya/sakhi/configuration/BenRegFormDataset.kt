@@ -17,6 +17,7 @@ import org.piramalswasthya.sakhi.model.BenBasicCache.Companion.getAgeFromDob
 import org.piramalswasthya.sakhi.model.BenBasicCache.Companion.getYearsFromDate
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.BenStatus
+import org.piramalswasthya.sakhi.model.EligibleCoupleRegCache
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.Gender.FEMALE
@@ -407,7 +408,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         entries = resources.getStringArray(R.array.nbr_reproductive_status_array),
         required = true,
         hasDependants = false,
-        isEnabled = false
+        isEnabled = true
     )
     private val birthCertificateNumber = FormElement(
         id = 1029,
@@ -894,7 +895,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         relationToHeadId: Int,
         hoFSpouse: List<BenRegCache> = emptyList(),
         selectedben: BenRegCache?,
-        isAddspouse: Int
+        isAddspouse: Int,
     ) {
         val list = mutableListOf(
             pic,
@@ -1205,12 +1206,16 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         setUpPage(list)
     }
 
-    private fun setUpForChild(hoF: BenRegCache, hoFSpouse: BenRegCache?) {
+    private fun setUpForChild(
+        hoF: BenRegCache,
+        hoFSpouse: BenRegCache?,
+    ) {
         if (hoF.gender == MALE) {
             fatherName.value = "${hoF.firstName} ${hoF.lastName ?: ""}"
             motherName.value = hoFSpouse?.let {
                 "${it.firstName} ${it.lastName ?: ""}"
             } ?: hoF.genDetails?.spouseName
+
 
             fatherName.value?.let {
                 if (it.isNotEmpty()) fatherName.inputType = TEXT_VIEW

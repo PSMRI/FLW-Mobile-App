@@ -26,15 +26,18 @@ import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.BenRegGen
 import org.piramalswasthya.sakhi.model.BenRegKid
+import org.piramalswasthya.sakhi.model.EligibleCoupleRegCache
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.HouseholdCache
 import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.model.PreviewItem
 import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.repositories.BenRepo
+import org.piramalswasthya.sakhi.repositories.EcrRepo
 import org.piramalswasthya.sakhi.repositories.HouseholdRepo
 import org.piramalswasthya.sakhi.repositories.UserRepo
 import timber.log.Timber
+import java.util.Calendar
 import javax.inject.Inject
 
 @HiltViewModel
@@ -44,12 +47,15 @@ class NewBenRegViewModel @Inject constructor(
     @ApplicationContext context: Context,
     private val benRepo: BenRepo,
     private val householdRepo: HouseholdRepo,
+    private val ecrRepo: EcrRepo,
     userRepo: UserRepo
 ) : ViewModel() {
     enum class State {
         IDLE, SAVING, SAVE_SUCCESS, SAVE_FAILED
     }
-     lateinit var countDownTimer : CountDownTimer
+
+    private var selectedBeneficiaryIdForEcr = 0L
+    lateinit var countDownTimer : CountDownTimer
 
 
     sealed class ListUpdateState {
@@ -131,6 +137,9 @@ class NewBenRegViewModel @Inject constructor(
     fun getDocumentFormId():Int {
         return lastDocumentFormId
     }
+    private lateinit var ecrForm: EligibleCoupleRegCache
+
+    var oldChildCount = 0
     init {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
@@ -138,6 +147,7 @@ class NewBenRegViewModel @Inject constructor(
             }
         }
     }
+
 
     suspend fun setUpPage() {
         viewModelScope.launch {
@@ -177,7 +187,7 @@ class NewBenRegViewModel @Inject constructor(
                             relationToHeadId = relToHeadId,
                             hoFSpouse = familyList.filter { it.familyHeadRelationPosition == 5 || it.familyHeadRelationPosition == 6 },
                             selectedben,
-                            isAddspouse
+                            isAddspouse,
                         )
                     }
                 } else {
@@ -190,6 +200,17 @@ class NewBenRegViewModel @Inject constructor(
                         val hoFBen = familyList.firstOrNull { it.beneficiaryId == household.benId }
                         val selectedben = familyList.firstOrNull { it.beneficiaryId == SelectedbenIdFromArgs }
 
+                         selectedBeneficiaryIdForEcr = if (hoFBen?.gender == Gender.FEMALE) {
+                            hoFBen.beneficiaryId
+
+                        } else {
+                            val femaleOfHouse = familyList.firstOrNull {
+                                it.familyHeadRelationPosition == 5 || it.familyHeadRelationPosition == 6
+                            }
+                            femaleOfHouse?.beneficiaryId ?: hoFBen!!.beneficiaryId
+                        }
+
+
                         dataset.setPageForFamilyMember(
                             ben = if (this@NewBenRegViewModel::ben.isInitialized) ben else null,
                             household = household,
@@ -197,9 +218,10 @@ class NewBenRegViewModel @Inject constructor(
                             relationToHeadId = relToHeadId,
                             hoFSpouse = familyList.filter { it.familyHeadRelationPosition == 5 || it.familyHeadRelationPosition == 6 },
                             selectedben,
-                            isAddspouse
+                            isAddspouse,
 
-                        )
+
+                            )
                     }
                 }
             }
@@ -240,9 +262,9 @@ class NewBenRegViewModel @Inject constructor(
                     }
                     dataset.mapValues(ben, 2)
                     if (ben.familyHeadRelationPosition == 5 || ben.familyHeadRelationPosition == 6 ) {
-                        benRepo.updateHousehold(ben.householdId)
+                        benRepo.updateHousehold(ben.householdId, SyncState.UNSYNCED)
                     } else if (isAddspouse == 1) {
-                        benRepo.updateBeneficiarySpouseAdded(ben.householdId,SelectedbenIdFromArgs)
+                        benRepo.updateBeneficiarySpouseAdded(ben.householdId,SelectedbenIdFromArgs,SyncState.UNSYNCED)
                     }
                     if (isHoF) {
                         dataset.updateHouseholdWithHoFDetails(household, ben)
@@ -269,6 +291,67 @@ class NewBenRegViewModel @Inject constructor(
                     if (isHoF) {
                         household.benId = ben.beneficiaryId
                         householdRepo.updateHousehold(household)
+                    }
+
+
+                    if (relToHeadId == 8 || relToHeadId == 9) {
+                        val benForEcr =
+                            benRepo.getBeneficiaryRecord(selectedBeneficiaryIdForEcr, hhId)
+                        benForEcr?.let { childBen ->
+                            val calDob = Calendar.getInstance()
+                            calDob.timeInMillis = childBen.dob
+
+                            var existingEcr = ecrRepo.getSavedRecord(selectedBeneficiaryIdForEcr)
+                            val isNew = existingEcr == null
+
+                            if (isNew) {
+                                existingEcr = EligibleCoupleRegCache(
+                                    benId = selectedBeneficiaryIdForEcr,
+                                    createdBy = user.userName,
+                                    updatedBy = user.userName,
+                                    syncState = SyncState.UNSYNCED,
+                                    lmp_date = calDob.timeInMillis,
+
+                                )
+                            }
+
+                            val nextSlot = when {
+                                existingEcr!!.dob1 == null -> 1
+                                existingEcr.dob2 == null -> 2
+                                existingEcr.dob3 == null -> 3
+                                existingEcr.dob4 == null -> 4
+                                existingEcr.dob5 == null -> 5
+                                existingEcr.dob6 == null -> 6
+                                existingEcr.dob7 == null -> 7
+                                existingEcr.dob8 == null -> 8
+                                existingEcr.dob9 == null -> 9
+                                else -> 9 // Maximum 9 children allowed
+                            }
+
+                            // 5️⃣ Insert child into next available slot
+                            when (nextSlot) {
+                                1 -> { existingEcr.dob1 = ben.dob; existingEcr.gender1 = ben.gender; existingEcr.age1 = ben.age }
+                                2 -> { existingEcr.dob2 = ben.dob; existingEcr.gender2 = ben.gender; existingEcr.age2 = ben.age }
+                                3 -> { existingEcr.dob3 = ben.dob; existingEcr.gender3 = ben.gender; existingEcr.age3 = ben.age }
+                                4 -> { existingEcr.dob4 = ben.dob; existingEcr.gender4 = ben.gender; existingEcr.age4 = ben.age }
+                                5 -> { existingEcr.dob5 = ben.dob; existingEcr.gender5 = ben.gender; existingEcr.age5 = ben.age }
+                                6 -> { existingEcr.dob6 = ben.dob; existingEcr.gender6 = ben.gender; existingEcr.age6 = ben.age }
+                                7 -> { existingEcr.dob7 = ben.dob; existingEcr.gender7 = ben.gender; existingEcr.age7 = ben.age }
+                                8 -> { existingEcr.dob8 = ben.dob; existingEcr.gender8 = ben.gender; existingEcr.age8 = ben.age }
+                                9 -> { existingEcr.dob9 = ben.dob; existingEcr.gender9 = ben.gender; existingEcr.age9 = ben.age }
+                            }
+
+                            existingEcr.noOfChildren = nextSlot
+                            existingEcr.noOfLiveChildren++
+                            if (ben.gender == Gender.MALE) existingEcr.noOfMaleChildren++
+                            if (ben.gender == Gender.FEMALE) existingEcr.noOfFemaleChildren++
+
+                            existingEcr.updatedBy = user.userName
+                            existingEcr.syncState = SyncState.UNSYNCED
+
+
+                            ecrRepo.persistRecord(existingEcr)
+                        }
                     }
 
                     _state.postValue(State.SAVE_SUCCESS)
@@ -301,8 +384,6 @@ class NewBenRegViewModel @Inject constructor(
     fun getBenName() = "${ben.firstName} ${ben.lastName ?: ""}"
     fun isHoFMarried() = isHoF && ben.genDetails?.maritalStatusId == 2
 
-
-    var wantToAddChild = dataset.isAddingChildren
 
     fun setCurrentImageFormId(id: Int) {
         lastImageFormId = id
