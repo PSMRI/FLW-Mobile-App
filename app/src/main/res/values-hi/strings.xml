@@ -254,6 +254,7 @@
     <string name="help">सहायता</string>
     <string name="logout">लॉगआउट करें</string>
     <string name="delete_my_account">मेरा खाता हटाने का अनुरोध</string>
+    <string name="monthly_claim_summary">मासिक दावा सारांश</string>
     <string name="str_add_member">सदस्य जोड़ें</string>
     <string name="str_not_available">उपलब्ध नहीं</string>
     <string name="support">सहायता</string>
@@ -299,10 +300,10 @@
     <string name="tb_screening_form">टीबी स्क्रीनिंग फॉर्म</string>
     <string name="tb_suspected_form">संदेहास्पद टीबी मामले</string>
     <string name="mother_immunization">माँ का टीकाकरण</string>
-    <string name="delivery_outcome">प्रसव परिणाम</string>
-    <string name="delivery_outcome_list">प्रसव परिणाम सूची</string>
-    <string name="infant_reg_list">शिशु पंजीकरण सूची</string>
-    <string name="infant_reg">शिशु पंजीकरण</string>
+    <string name="delivery_outcome">शिशुओं की संख्या</string>
+    <string name="delivery_outcome_list">शिशुओं की संख्या सूची</string>
+    <string name="infant_reg_list">नवजात शिशु पंजीकरण सूची</string>
+    <string name="infant_reg">नवजात पंजीकरण</string>
     <string name="communicable_diseases">संचारी रोग</string>
     <string name="dashboard">डैशबोर्ड</string>
     <string name="sign_in">साइन इन</string>
