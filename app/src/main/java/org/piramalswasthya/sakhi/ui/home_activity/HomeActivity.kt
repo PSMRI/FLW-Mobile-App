@@ -564,18 +564,15 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
 
 
-        // Change Incentives menu title based on flavor
-        val incentivesMenuItem = binding.navView.menu.findItem(R.id.incentivesFragment)
-
-        when {
-            BuildConfig.FLAVOR.contains("mitanin", true) -> {
-                incentivesMenuItem.title = getString(R.string.monthly_claim_summary)
-            }
-            else -> {
-                incentivesMenuItem.title = getString(R.string.incentive_fragment_title)
-            }
+        binding.navView.menu.findItem(R.id.incentivesFragment)?.let { incentivesMenuItem ->
+            val titleRes =
+                if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                    R.string.monthly_claim_summary
+                } else {
+                    R.string.incentive_fragment_title
+                }
+            incentivesMenuItem.title = getString(titleRes)
         }
-
 
         binding.navView.menu.findItem(R.id.homeFragment).setOnMenuItemClickListener {
             navController.popBackStack(R.id.homeFragment, false)
