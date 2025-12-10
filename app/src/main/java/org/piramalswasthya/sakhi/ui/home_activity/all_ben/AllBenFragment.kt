@@ -29,7 +29,6 @@ import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registration.EyeSurgeryFormViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.all_household.AllHouseholdFragmentDirections
-import org.piramalswasthya.sakhi.ui.home_activity.home.HomeViewModel
 import org.piramalswasthya.sakhi.utils.HelperUtil
 import timber.log.Timber
 import javax.inject.Inject

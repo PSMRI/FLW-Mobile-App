@@ -19,15 +19,19 @@ import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.BenRegGen
 import org.piramalswasthya.sakhi.model.BenRegKid
+import org.piramalswasthya.sakhi.model.EligibleCoupleRegCache
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.HouseholdCache
 import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.repositories.BenRepo
+import org.piramalswasthya.sakhi.repositories.EcrRepo
 import org.piramalswasthya.sakhi.repositories.HouseholdRepo
 import org.piramalswasthya.sakhi.repositories.UserRepo
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.NewBenRegFragmentArgs
+import org.piramalswasthya.sakhi.utils.HelperUtil.getDiffYears
 import timber.log.Timber
+import java.util.Calendar
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,6 +40,7 @@ class NewChildBenViewModel@Inject constructor(
     private val preferenceDao: PreferenceDao,
     @ApplicationContext context: Context,
     private val benRepo: BenRepo,
+    private val ecrRepo: EcrRepo,
     private val householdRepo: HouseholdRepo,
     userRepo: UserRepo
 ) : ViewModel() {
@@ -87,7 +92,7 @@ class NewChildBenViewModel@Inject constructor(
     val listUpdateState: LiveData<ListUpdateState>
         get() = _listUpdateState
 
-    private val _recordExists = MutableLiveData(benIdFromArgs != 0L)
+    private val _recordExists = MutableLiveData(SelectedbenIdFromArgs != 0L)
     val recordExists: LiveData<Boolean>
         get() = _recordExists
 
@@ -111,7 +116,9 @@ class NewChildBenViewModel@Inject constructor(
     private var lastImageFormId: Int = 0
     var otp = 1234
 
+    private lateinit var ecrForm: EligibleCoupleRegCache
 
+    var oldChildCount = 0
 
 
     init {
@@ -122,41 +129,62 @@ class NewChildBenViewModel@Inject constructor(
         }
     }
 
-     suspend fun setUpPage() {
+    fun setUpPage() {
         viewModelScope.launch {
+
             withContext(Dispatchers.IO) {
+
                 user = preferenceDao.getLoggedInUser()!!
                 household = benRepo.getHousehold(hhId)!!
                 locationRecord = preferenceDao.getLocationRecord()!!
 
-
-                    ben = benRepo.getBeneficiaryRecord(SelectedbenIdFromArgs, hhId)!!
-                   _isDeath.postValue(ben.isDeath ?: false)
-                    if (ben.genDetails?.maritalStatus == "Unmarried") {
-                        isBenMarried = false
-                    } else {
-                        isBenMarried = true
-                    }
-                    isOtpVerified = ben.isConsent
-                    val familyList = benRepo.getBenListFromHousehold(hhId)
-                    val hoFBen = familyList.firstOrNull { it.beneficiaryId == household.benId }
-                    val selectedben = familyList.firstOrNull { it.beneficiaryId == SelectedbenIdFromArgs }
-
-                    dataset.setUpPage(
-                        ben,
-                        household = household,
-                        hoF = hoFBen, benGender = ben.gender!!,
-                        relationToHeadId = relToHeadId,
-                        hoFSpouse = familyList.filter { it.familyHeadRelationPosition == 5 || it.familyHeadRelationPosition == 6 },
-                        selectedben,
-                        isAddspouse
+                val benEcr = ecrRepo.getBenFromId(SelectedbenIdFromArgs)?.also { ben ->
+                    val calDob = Calendar.getInstance()
+                    calDob.timeInMillis = ben.dob
+                    ecrForm = EligibleCoupleRegCache(
+                        benId = ben.beneficiaryId,
+                        syncState = SyncState.UNSYNCED,
+                        createdBy = user.userName,
+                        updatedBy = user.userName,
+                        lmp_date = calDob.timeInMillis,
+                        isKitHandedOver = false
                     )
                 }
 
+                ecrRepo.getSavedRecord(SelectedbenIdFromArgs)?.let {
+                    ecrForm = it
+                    oldChildCount = ecrForm.noOfLiveChildren
+                    _recordExists.postValue(true)
+                } ?: run {
+                    _recordExists.postValue(false)
+                    oldChildCount = 0
+                }
+
+                ben = benRepo.getBeneficiaryRecord(SelectedbenIdFromArgs, hhId)!!
+                _isDeath.postValue(ben.isDeath ?: false)
+
+                isBenMarried = ben.genDetails?.maritalStatus != "Unmarried"
+                isOtpVerified = ben.isConsent
+
+                val familyList = benRepo.getBenListFromHousehold(hhId)
+                val hoFBen = familyList.firstOrNull { it.beneficiaryId == household.benId }
+                val selectedben = familyList.firstOrNull { it.beneficiaryId == SelectedbenIdFromArgs }
+
+                dataset.setUpPage(
+                    if (recordExists.value == true) ecrForm else null,
+                    household = household,
+                    hoF = hoFBen,
+                    benGender = ben.gender!!,
+                    relationToHeadId = relToHeadId,
+                    hoFSpouse = familyList.filter {
+                        it.familyHeadRelationPosition == 5 || it.familyHeadRelationPosition == 6
+                    },
+                    selectedben,
+                    isAddspouse
+                )
+            }
         }
-
     }
-
 
     fun saveForm() {
         viewModelScope.launch {
@@ -165,9 +193,10 @@ class NewChildBenViewModel@Inject constructor(
                 try {
                     _state.postValue(State.SAVING)
 
-                    val childCount = dataset.noOfChildren.value?.toIntOrNull() ?: 0
+                    val childCount = dataset.noOfLiveChildren.value?.toIntOrNull() ?: 0
 
-                    for (i in 1..childCount) {
+
+                    for (i in (oldChildCount + 1)..childCount) {
 
                         val benIdToSet = minOf(benRepo.getMinBenId() - 1L, -1L)
 
@@ -218,8 +247,9 @@ class NewChildBenViewModel@Inject constructor(
                         benRepo.persistRecord(mapped)
                     }
 
-                    benRepo.updateBeneficiaryChildrenAdded(hhId, SelectedbenIdFromArgs)
-
+                    benRepo.updateBeneficiaryChildrenAdded(hhId, SelectedbenIdFromArgs,SyncState.UNSYNCED)
+                    dataset.mapValues(ecrForm, 1)
+                    ecrRepo.persistRecord(ecrForm)
                     _state.postValue(State.SAVE_SUCCESS)
 
                 } catch (e: Exception) {
