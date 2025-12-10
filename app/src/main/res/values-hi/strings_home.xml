@@ -28,7 +28,7 @@
     <string name="icon_title_dr"> मौत की रिपोर्ट </string>
     <string name="icon_title_vlf">ग्राम स्तरीय प्रपत्र</string>
 
-    <string name="icon_title_icc">शिशु सूची</string>
+    <string name="icon_title_icc">নৱজাতকৰ তালিকা</string>
     <string name="icon_title_ccc">बाल सूची</string>
     <string name="icon_title_acc">किशोरों की सूची</string>
     <string name="children_under_five_years">5 वर्ष से कम उम्र के बच्चे</string>
@@ -68,8 +68,8 @@
     <string name="icon_title_pmr">गर्भवती महिलाओं का पंजीकरण</string>
     <string name="icon_title_pmt">एएनसी दौरे</string>
     <string name="icon_title_pmp">पीएमएसएमए</string>
-    <string name="icon_title_pmdo">प्रसव परिणाम</string>
-    <string name="icon_title_pmir">शिशु पंजीकरण</string>
+    <string name="icon_title_pmdo">शिशुओं की संख्या</string>
+    <string name="icon_title_pmir">नवजात पंजीकरण</string>
     <string name="icon_title_pmcr">बाल पंजीकरण</string>
     <string name="icon_title_ecr">लक्ष दंपति पंजीकरण</string>
     <string name="icon_title_user_guid">उपयोगकर्ता मार्गदर्शिका</string>

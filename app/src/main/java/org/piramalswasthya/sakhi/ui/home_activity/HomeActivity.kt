@@ -6,8 +6,8 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.os.SystemClock
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -54,7 +54,6 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.ActivityHomeBinding
 import org.piramalswasthya.sakhi.helpers.AnalyticsHelper
-import org.piramalswasthya.sakhi.helpers.CrashEmailSender
 import org.piramalswasthya.sakhi.helpers.ImageUtils
 import org.piramalswasthya.sakhi.helpers.InAppUpdateHelper
 import org.piramalswasthya.sakhi.helpers.Languages
@@ -67,7 +66,6 @@ import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
 import org.piramalswasthya.sakhi.ui.service_location_activity.ServiceLocationActivity
 import org.piramalswasthya.sakhi.utils.KeyUtils
 import org.piramalswasthya.sakhi.work.WorkerUtils
-import java.io.File
 import java.net.URI
 import java.util.Locale
 import javax.inject.Inject
@@ -565,6 +563,20 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         NavigationUI.setupWithNavController(binding.toolbar, navController, appBarConfiguration)
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
 
+
+        // Change Incentives menu title based on flavor
+        val incentivesMenuItem = binding.navView.menu.findItem(R.id.incentivesFragment)
+
+        when {
+            BuildConfig.FLAVOR.contains("mitanin", true) -> {
+                incentivesMenuItem.title = getString(R.string.monthly_claim_summary)
+            }
+            else -> {
+                incentivesMenuItem.title = getString(R.string.incentive_fragment_title)
+            }
+        }
+
+
         binding.navView.menu.findItem(R.id.homeFragment).setOnMenuItemClickListener {
             navController.popBackStack(R.id.homeFragment, false)
             binding.drawerLayout.close()
@@ -589,7 +601,6 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         }
 
         binding.navView.menu.findItem(R.id.ChatFragment).setOnMenuItemClickListener {
-//            navController.popBackStack(R.id.lmsFragment, false)
             navController.navigate(R.id.lmsFragment)
 
             binding.drawerLayout.close()
