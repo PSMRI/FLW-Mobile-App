@@ -2,9 +2,7 @@ package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
 import android.text.InputType
-import android.util.Log
 import org.piramalswasthya.sakhi.R
-import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.setToStartOfTheDay
@@ -28,8 +26,7 @@ import org.piramalswasthya.sakhi.utils.HelperUtil.getDiffYears
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
-import java.util.concurrent.TimeUnit
-import kotlin.collections.get
+
 
 
 class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(context, language) {
@@ -1770,7 +1767,7 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
                 else -> null
             }
             ecr.marriageFirstChildGap =marriageFirstChildGap.value?.filter { it.isDigit() }?.toIntOrNull() ?: 0
-            if (noOfLiveChildren.value?.toInt()!! > 1) {
+            if ((noOfLiveChildren.value?.toIntOrNull() ?: 0) > 1){
                 ecr.dob2 = getLongFromDate(dob2.value)
                 ecr.age2 = age2.value?.toInt()
                 ecr.gender2 = when (gender2.value) {
@@ -1866,6 +1863,7 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
         ChildBundle(ninthChildDetails, ninthChildName, dob9, age9, gender9, eighthAndNinthChildGap)
     )
 
+
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
         if (formId == noOfChildren.id) {
             if (noOfChildren.value.isNullOrEmpty() ||
@@ -1934,7 +1932,6 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
             validateIntMinMax(noOfChildren)
 
             if (isExistingRecord) {
-                Log.e("isExisitngNew" ,"$isExistingRecord")
 
                 val newCount = noOfLiveChildren.value?.toIntOrNull() ?: 0
 
@@ -1969,7 +1966,6 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
                     )
                 }
             } else {
-                Log.e("isExisitng" ,"$isExistingRecord")
                 val count = noOfLiveChildren.value?.toIntOrNull() ?: 0
                 val addItems = children.take(count).flatMap { it.toFormList() }
                 val removeItems = children.drop(count).flatMap { it.toFormList() }

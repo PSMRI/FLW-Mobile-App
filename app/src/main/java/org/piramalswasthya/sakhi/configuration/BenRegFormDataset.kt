@@ -9,6 +9,7 @@ import android.widget.LinearLayout
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.setToStartOfTheDay
@@ -2920,6 +2921,27 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         reasonOfDeath.value = saved?.reasonOfDeath
         placeOfDeath.value = saved?.placeOfDeath
         otherPlaceOfDeath.value = saved?.otherPlaceOfDeath
+    }
+
+    fun mapValueToBen(ben: BenRegCache?): Boolean {
+        var isUpdated = false
+        val rchIdFromBen = ben?.rchId?.takeIf { it.isNotEmpty() }?.toLong()
+        val aadharNoFromBen = ben?.aadharNum?.takeIf { it.isNotEmpty() }
+        rchId.value?.takeIf {
+            it.isNotEmpty()
+        }?.toLong()?.let {
+            if (it != rchIdFromBen) {
+                ben?.rchId = it.toString()
+                isUpdated = true
+            }
+        }
+
+        if (isUpdated) {
+            if (ben?.processed != "N")
+                ben?.processed = "U"
+            ben?.syncState = SyncState.UNSYNCED
+        }
+        return isUpdated
     }
 
 }

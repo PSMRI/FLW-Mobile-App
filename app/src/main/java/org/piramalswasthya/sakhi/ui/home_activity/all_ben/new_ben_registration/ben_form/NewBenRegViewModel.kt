@@ -310,7 +310,7 @@ class NewBenRegViewModel @Inject constructor(
                                     createdBy = user.userName,
                                     updatedBy = user.userName,
                                     syncState = SyncState.UNSYNCED,
-                                    lmp_date = calDob.timeInMillis,
+                                    lmp_date = 0L,
 
                                 )
                             }
@@ -351,6 +351,13 @@ class NewBenRegViewModel @Inject constructor(
 
 
                             ecrRepo.persistRecord(existingEcr)
+                            ecrRepo.getBenFromId(selectedBeneficiaryIdForEcr)?.let {
+                                val hasBenUpdated = dataset.mapValueToBen(it)
+                                if (hasBenUpdated) {
+                                    benRepo.updateRecord(it)
+
+                                }
+                            }
                         }
                     }
 
