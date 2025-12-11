@@ -83,8 +83,6 @@ class HBNCFormViewModel @Inject constructor(
 //    fun triggerNavigate() {
 //        _navigateToCdsr.value = true
 //    }
-
-
     fun loadFormSchema(
         benId: Long,
         formId: String,
