@@ -30,8 +30,8 @@ class TokenInsertTmcInterceptor : Interceptor {
         if (request.header("No-Auth") == null) {
             request = request
                 .newBuilder()
-               // .addHeader("Authorization", JWT/*TOKEN*/)
-                .addHeader("Jwttoken" , JWT)
+               // .addHeader("Authorization", TOKEN)
+                .addHeader("JwtToken", JWT)
                 .build()
         }
         Timber.d("Request : $request")
