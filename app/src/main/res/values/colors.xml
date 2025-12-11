@@ -80,4 +80,6 @@
     <color name="line_default">#C5CAE9</color>
     <color name="color_consent_text">#0000EE</color>
     <color name="table_header_background">#E0E0E0</color>
+    <color name="default_incentive_background">#fcc930</color>
+    <color name="default_incentive_no_ben_background">#f7e64d</color>
 </resources>

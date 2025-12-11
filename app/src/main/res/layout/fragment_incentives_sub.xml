@@ -59,7 +59,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:gravity="start"
-                android:text="Activity"
+                android:text="@{@string/activity_name(activity_name)}"
                 android:textStyle="bold"
                 android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
                 android:padding="@dimen/_5sdp"
