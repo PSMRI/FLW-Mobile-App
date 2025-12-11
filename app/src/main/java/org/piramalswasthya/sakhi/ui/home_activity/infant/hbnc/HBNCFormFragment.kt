@@ -44,10 +44,7 @@ class HBNCFormFragment : Fragment() {
     private lateinit var saveButton: Button
 
     val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-
-    //    val dob = dateFormat.format(Date())
     private val args: HBNCFormFragmentArgs by navArgs()
-
     private val infantListViewModel: InfantListViewModel by viewModels()
     private val viewModel: HBNCFormViewModel by viewModels()
     var benId = -1L
@@ -337,13 +334,6 @@ class HBNCFormFragment : Fragment() {
         if (hasErrors) return
         lifecycleScope.launch {
             viewModel.saveFormResponses(benId, hhId)
-//            val isBabyAlive = updatedFields.find { it.fieldId == "is_baby_alive" }?.value?.toString() ?: "Yes"
-//            if (isBabyAlive.equals("No", ignoreCase = true)) {
-////                viewModel.triggerNavigate()
-//            } else {
-//                viewModel.triggerPopBack()
-//            }
-
         }
     }
     override fun onStart() {
