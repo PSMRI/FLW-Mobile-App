@@ -16,7 +16,6 @@ import org.piramalswasthya.sakhi.configuration.ChildRegistrationDataset
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.EligibleCoupleRegCache
-import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.InfantRegCache
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.ChildRegRepo
@@ -141,10 +140,9 @@ class ChildRegViewModel @Inject constructor(
                         existingEcr.dob7 == null -> 7
                         existingEcr.dob8 == null -> 8
                         existingEcr.dob9 == null -> 9
-                        else -> 9 // Maximum 9 children allowed
+                        else -> 9
                     }
 
-                    // 5️⃣ Insert child into next available slot
                     when (nextSlot) {
                         1 -> { existingEcr.dob1 = childBen.dob; existingEcr.gender1 = childBen.gender; existingEcr.age1 = childBen.age }
                         2 -> { existingEcr.dob2 = childBen.dob; existingEcr.gender2 = childBen.gender; existingEcr.age2 = childBen.age }
@@ -157,14 +155,9 @@ class ChildRegViewModel @Inject constructor(
                         9 -> { existingEcr.dob9 = childBen.dob; existingEcr.gender9 = childBen.gender; existingEcr.age9 = childBen.age }
                     }
 
-                   /* existingEcr.noOfChildren = nextSlot
-                    existingEcr.noOfLiveChildren++
-                    if (ben.gender == Gender.MALE) existingEcr.noOfMaleChildren++
-                    if (ben.gender == Gender.FEMALE) existingEcr.noOfFemaleChildren++*/
 
                     existingEcr.updatedBy = preferenceDao.getLoggedInUser()!!.userName
                     existingEcr.syncState = SyncState.UNSYNCED
-
 
                     ecrRepo.persistRecord(existingEcr)
 
