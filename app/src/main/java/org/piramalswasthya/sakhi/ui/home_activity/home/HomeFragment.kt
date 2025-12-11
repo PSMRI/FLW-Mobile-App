@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkQuery
@@ -105,8 +106,8 @@ class HomeFragment : Fragment() {
 
         setUpViewPager()
         setUpWorkerProgress()
-        CoroutineScope(Dispatchers.IO).launch {
-            val currentLang = pref.getCurrentLanguage()  // ye return karega Languages enum value
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+            val currentLang = pref.getCurrentLanguage()
           val langCode = currentLang.symbol
             formRepository.downloadAllFormsSchemas(langCode)
         }
