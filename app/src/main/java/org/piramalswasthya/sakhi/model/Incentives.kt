@@ -241,7 +241,9 @@ data class IncentiveGrouped(
     val count: Int,
     val groupName: String,
     val description: String,
-    val activity: IncentiveActivityCache
+    val activity: IncentiveActivityCache,
+    val hasZeroBen: Boolean = false,
+    val defaultIncentive : Boolean = false
 ) : Parcelable
 
 

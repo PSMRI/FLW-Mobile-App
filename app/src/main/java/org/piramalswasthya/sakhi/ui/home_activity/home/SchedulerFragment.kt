@@ -116,8 +116,13 @@ class SchedulerFragment : Fragment() {
             }
         }
         lifecycleScope.launch {
-            viewModel.abhaGeneratedCount.collect {
-                binding.tvAbha.text = it.toString()
+            viewModel.abhaOldGeneratedCount.collect {
+                binding.tvAbhaOldCount.text = it.toString()
+            }
+        }
+        lifecycleScope.launch {
+            viewModel.abhaNewGeneratedCount.collect {
+                binding.tvAbhaNewCount.text = it.toString()
             }
         }
         lifecycleScope.launch {

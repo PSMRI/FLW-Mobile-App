@@ -8,26 +8,36 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkQuery
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.HomePagerAdapter
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentHomeBinding
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.Languages.ASSAMESE
 import org.piramalswasthya.sakhi.helpers.Languages.ENGLISH
+import org.piramalswasthya.sakhi.repositories.dynamicRepo.FormRepository
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.work.PullFromAmritWorker
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
-
+    @Inject
+    lateinit var formRepository: FormRepository
+    @Inject
+    lateinit var pref: PreferenceDao
     companion object {
         var numViewCopies = 0
         var numCopies = 0
@@ -96,7 +106,11 @@ class HomeFragment : Fragment() {
 
         setUpViewPager()
         setUpWorkerProgress()
-
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+            val currentLang = pref.getCurrentLanguage()
+          val langCode = currentLang.symbol
+            formRepository.downloadAllFormsSchemas(langCode)
+        }
 
     }
 
