@@ -21,6 +21,7 @@ import org.piramalswasthya.sakhi.databinding.FragmentInfantFormBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.child_care.infant_list.InfantListViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.infant.hbnc.HBNCFormViewModel
+import org.piramalswasthya.sakhi.utils.Log
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.HBNC_FORM_ID
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.HBYC_FORM_ID
 import org.piramalswasthya.sakhi.work.dynamicWoker.FormSyncWorker
@@ -58,12 +59,14 @@ class InfantDayListFragment : Fragment() {
 
         binding.recyclerVisitCards.layoutManager = GridLayoutManager(requireContext(), 2)
         visitAdapter = VisitCardAdapter(emptyList(), isBenDead) { card ->
+
+            Log.d("HBNCFormVisitDate", "Loading visitDay: ${card.visitDay}")
             val action = InfantDayListFragmentDirections
                 .actionInfantFormFragmentToHbncFormFragment(
                     benId, hhId,
                     visitDay = card.visitDay,
                     isViewMode = !card.isEditable,
-                    formId = HBYC_FORM_ID
+                    formId = HBNC_FORM_ID
                 )
             findNavController().navigate(action)
         }
@@ -122,7 +125,7 @@ class InfantDayListFragment : Fragment() {
         activity?.let {
             (it as HomeActivity).updateActionBar(
                 R.drawable.ic__infant,
-                getString(R.string.hbnc_day_list)
+                getString(R.string.hbnc)
             )
         }
     }
