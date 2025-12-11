@@ -132,24 +132,16 @@ class AadhaarIdFragment : Fragment() {
                     binding.pbLoadingAadharId.visibility = View.VISIBLE
                     binding.clError.visibility = View.INVISIBLE
                 }
-
                 State.SUCCESS -> {
                     if (viewModel.userType.value == "ASHA") {
                         viewModel.resetState()
+
                         if (viewModel.verificationType.value == "OTP") {
-                            if (abhaMode == AadhaarIdViewModel.Abha.CREATE) {
-                                findNavController().navigate(
-                                    AadhaarIdFragmentDirections.actionAadhaarIdFragmentToAadhaarOtpFragment(
-                                        viewModel.txnId, viewModel.mobileNumber
-                                    )
+                            findNavController().navigate(
+                                AadhaarIdFragmentDirections.actionAadhaarIdFragmentToAadhaarOtpFragment(
+                                    viewModel.txnId, viewModel.mobileNumber
                                 )
-                            } else {
-                                findNavController().navigate(
-                                    AadhaarIdFragmentDirections.actionAadhaarIdFragmentToAadhaarOtpFragment(
-                                        viewModel.txnId, viewModel.mobileNumber
-                                    )
-                                )
-                            }
+                            )
                         } else if (viewModel.verificationType.value == "FP") {
                             findNavController().navigate(
                                 AadhaarIdFragmentDirections.actionAadhaarIdFragmentToGenerateMobileOtpFragment(
