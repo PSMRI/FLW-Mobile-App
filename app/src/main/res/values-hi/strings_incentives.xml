@@ -54,5 +54,6 @@
     <string name="incentive_sub_submission_of_asha_incentive_claim_for_the_period_from_to">विषय: ..से ..तक की अवधि के लिए आशा प्रोत्साहन दावे का प्रस्तुतीकरण</string>
     <string name="incentive_with_reference_to_the_subject_cited_above">उपर्युक्त विषय के संदर्भ में, मुझे नीचे उल्लिखित विवरण के अनुसार ...... से .......... तक की अवधि के लिए आशा प्रोत्साहन दावों को प्रस्तुत करने का सम्मान प्राप्त हुआ है।</string>
     <string name="incentive_an_amount_of_rs">…….. से …….. तक की अवधि के लिए आशा प्रोत्साहन के भुगतान के लिए रु. ……. (केवल ………. रुपये) की राशि स्वीकृत की गई है और यह राशि डीबीटी के माध्यम से खाते में डेबिट की जाती है।</string>
+    <string name="activity_name">Activity</string>
 
 </resources>

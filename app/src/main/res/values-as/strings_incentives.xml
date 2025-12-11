@@ -56,6 +56,7 @@
     <string name="incentive_ben_details">বেন আইডি: %1d\nনাম: %2s</string>
     <string name="to">লৈ</string>
     <string name="to_small">" লৈ "</string>
+    <string name="activity_name">Activity</string>
 
 
 </resources>
