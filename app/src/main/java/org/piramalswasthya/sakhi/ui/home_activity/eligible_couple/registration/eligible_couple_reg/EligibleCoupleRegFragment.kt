@@ -154,12 +154,12 @@ class EligibleCoupleRegFragment : Fragment() {
         viewModel.recordExists.observe(viewLifecycleOwner) { notIt ->
             notIt?.let { recordExists ->
 //                binding.fabEdit.visibility = if(recordExists) View.VISIBLE else View.GONE
-                binding.btnSubmit.visibility = if (recordExists) View.GONE else View.VISIBLE
+//                binding.btnSubmit.visibility = if (recordExists) View.GONE else View.VISIBLE
                 val adapter = FormInputAdapterWithBgIcon(
                     formValueListener = FormInputAdapterWithBgIcon.FormValueListener { formId, index ->
                         viewModel.updateListOnValueChanged(formId, index)
                         hardCodedListUpdate(formId)
-                    }, isEnabled = !recordExists ,
+                    }, isEnabled = recordExists ,
                             selectImageClickListener  = FormInputAdapterWithBgIcon.SelectUploadImageClickListener {
                         viewModel.setCurrentDocumentFormId(it)
                         chooseOptions()
