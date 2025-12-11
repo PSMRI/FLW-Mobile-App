@@ -350,6 +350,28 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
         }
     }
 
+    protected fun infantTriggerDependants(
+        source: FormElement,
+        removeItems: List<FormElement>,
+        addItems: List<FormElement>,
+        position: Int = -1,
+    ): Int {
+
+        removeItems.forEach { it.value = null }
+        list.removeAll(removeItems)
+
+        addItems.forEach {
+            if (list.contains(it)) list.remove(it)
+        }
+
+        // FORCE ADD AT BOTTOM → correct sequence always
+        val addPosition = list.lastIndex + 1
+
+        list.addAll(addPosition, addItems)
+
+        return addPosition
+    }
+
     protected fun triggerDependants(
         source: FormElement,
         removeItems: List<FormElement>,

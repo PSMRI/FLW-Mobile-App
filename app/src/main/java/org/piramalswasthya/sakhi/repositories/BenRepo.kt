@@ -62,24 +62,25 @@ class BenRepo @Inject constructor(
         }
     }
 
-    suspend fun updateHousehold(householdId: Long) {
+    suspend fun updateHousehold(householdId: Long, unsynced: SyncState) {
         withContext(Dispatchers.IO) {
-            benDao.updateHofSpouseAdded(householdId = householdId)
+            benDao.updateHofSpouseAdded(householdId = householdId,unsynced,"U",2)
         }
     }
-    suspend fun updateBeneficiarySpouseAdded(householdId: Long,benID: Long) {
+    suspend fun updateBeneficiarySpouseAdded(householdId: Long,benID: Long,unsynced: SyncState) {
         withContext(Dispatchers.IO) {
-            benDao.updateBeneficiarySpouseAdded(householdId = householdId, benId = benID)
+            benDao.updateBeneficiarySpouseAdded(householdId = householdId, benId = benID,unsynced,"U",2)
         }
     }
 
     suspend fun updateBeneficiaryChildrenAdded(
         householdId: Long,
         benID: Long,
+        unsynced: SyncState
 
     ) {
         withContext(Dispatchers.IO) {
-            benDao.updateBeneficiaryChildrenAdded(householdId = householdId, benId = benID)
+            benDao.updateBeneficiaryChildrenAdded(householdId = householdId, benId = benID,unsynced,"U",2)
         }
     }
     // 1. Pregnancy death check

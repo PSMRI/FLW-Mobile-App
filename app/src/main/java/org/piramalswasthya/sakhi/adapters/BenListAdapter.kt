@@ -172,7 +172,22 @@ class BenListAdapter(
                     clickListener?.onClickChildBen(item)
                 }
 
-            } else {
+            } else  if (item.gender == "FEMALE" && item.isMarried && !item.doYouHavechildren && !item.isChildrenAdded) {
+                binding.btnAddChildren.visibility = View.INVISIBLE
+                binding.btnAddSpouse.visibility = View.GONE
+                binding.llAddSpouseBtn.visibility = View.VISIBLE
+                
+
+            } else  if (item.gender == "FEMALE" && item.isMarried && item.doYouHavechildren && item.isChildrenAdded) {
+                binding.btnAddChildren.visibility = View.VISIBLE
+                binding.btnAddChildren.text = context.getString(R.string.view_children)
+                binding.btnAddSpouse.visibility = View.GONE
+                binding.llAddSpouseBtn.visibility = View.VISIBLE
+                binding.btnAddChildren.setOnClickListener {
+                    clickListener?.onClickChildBen(item)
+                }
+
+            }  else {
                 binding.btnAddSpouse.visibility = View.GONE
                 binding.btnAddChildren.visibility = View.INVISIBLE
                 binding.llAddSpouseBtn.visibility = View.GONE
