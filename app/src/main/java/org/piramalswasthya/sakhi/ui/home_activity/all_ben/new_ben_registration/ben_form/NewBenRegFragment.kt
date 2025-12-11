@@ -188,7 +188,7 @@ class NewBenRegFragment : Fragment() {
 
         // On pressing Settings button
         alertDialog.setPositiveButton(
-            "Ok"
+            "Yes"
         ) { dialog, _ ->
             val spouseGender = if (viewModel.getBenGender() == Gender.FEMALE) 1 else 2
             findNavController().navigate(
@@ -203,7 +203,7 @@ class NewBenRegFragment : Fragment() {
 
         // on pressing cancel button
         alertDialog.setNegativeButton(
-            resources.getString(R.string.cancel)
+            resources.getString(R.string.no)
         ) { dialog, _ ->
             try {
                 findNavController().navigateUp()
@@ -226,7 +226,7 @@ class NewBenRegFragment : Fragment() {
 
         // On pressing Settings button
         alertDialog.setPositiveButton(
-            "Ok"
+            "Yes"
         ) { dialog, _ ->
             val spouseGender = if (viewModel.getBenGender() == Gender.FEMALE) 1 else 2
             findNavController().navigate(
@@ -243,7 +243,7 @@ class NewBenRegFragment : Fragment() {
 
         // on pressing cancel button
         alertDialog.setNegativeButton(
-            resources.getString(R.string.cancel)
+            resources.getString(R.string.no)
         ) { dialog, _ ->
             try {
                 findNavController().navigateUp()
