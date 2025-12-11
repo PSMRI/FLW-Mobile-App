@@ -9,6 +9,7 @@ import android.widget.LinearLayout
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.setToStartOfTheDay
@@ -17,6 +18,7 @@ import org.piramalswasthya.sakhi.model.BenBasicCache.Companion.getAgeFromDob
 import org.piramalswasthya.sakhi.model.BenBasicCache.Companion.getYearsFromDate
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.BenStatus
+import org.piramalswasthya.sakhi.model.EligibleCoupleRegCache
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.Gender.FEMALE
@@ -894,7 +896,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         relationToHeadId: Int,
         hoFSpouse: List<BenRegCache> = emptyList(),
         selectedben: BenRegCache?,
-        isAddspouse: Int
+        isAddspouse: Int,
     ) {
         val list = mutableListOf(
             pic,
@@ -1205,12 +1207,16 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         setUpPage(list)
     }
 
-    private fun setUpForChild(hoF: BenRegCache, hoFSpouse: BenRegCache?) {
+    private fun setUpForChild(
+        hoF: BenRegCache,
+        hoFSpouse: BenRegCache?,
+    ) {
         if (hoF.gender == MALE) {
             fatherName.value = "${hoF.firstName} ${hoF.lastName ?: ""}"
             motherName.value = hoFSpouse?.let {
                 "${it.firstName} ${it.lastName ?: ""}"
             } ?: hoF.genDetails?.spouseName
+
 
             fatherName.value?.let {
                 if (it.isNotEmpty()) fatherName.inputType = TEXT_VIEW
@@ -2916,6 +2922,27 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         reasonOfDeath.value = saved?.reasonOfDeath
         placeOfDeath.value = saved?.placeOfDeath
         otherPlaceOfDeath.value = saved?.otherPlaceOfDeath
+    }
+
+    fun mapValueToBen(ben: BenRegCache?): Boolean {
+        var isUpdated = false
+        val rchIdFromBen = ben?.rchId?.takeIf { it.isNotEmpty() }?.toLong()
+        val aadharNoFromBen = ben?.aadharNum?.takeIf { it.isNotEmpty() }
+        rchId.value?.takeIf {
+            it.isNotEmpty()
+        }?.toLong()?.let {
+            if (it != rchIdFromBen) {
+                ben?.rchId = it.toString()
+                isUpdated = true
+            }
+        }
+
+        if (isUpdated) {
+            if (ben?.processed != "N")
+                ben?.processed = "U"
+            ben?.syncState = SyncState.UNSYNCED
+        }
+        return isUpdated
     }
 
 }

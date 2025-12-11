@@ -524,8 +524,8 @@
     <string name="signature_name_of_asha">Signature/Name of ASHA</string>
     <string name="cdr_form_from_anm_1">CDR form from ANM 1</string>
     <string name="cdr_form_from_anm_2">CDR form from ANM 2</string>
-    <string name="add_wife">Add Wife</string>
-    <string name="add_husband">Add Husband</string>
+    <string name="add_wife">Register Wife</string>
+    <string name="add_husband">Register Husband</string>
     <string name="hof">HOF</string>
     <string name="leprosy_confirmed">Leprosy Confirmed</string>
     <string name="leprosy_suspected">Leprosy Suspected</string>
@@ -693,7 +693,7 @@
     <string name="str_place_of_mother_referral">Place of mother referral</string>
     <string name="str_other_place_of_mother_referral">Other -Place of mother referral</string>
     <string name="preview_title">Preview</string>
-    <string name="add_children">Add Children</string>
+    <string name="add_children">Register Children</string>
 
     <string name="flu_like_illness">Flu-like illness</string>
     <string name="shakingchills">Shaking chills</string>
@@ -710,6 +710,7 @@
     <string name="slide_test_pv">Malaria Slide Test Pv</string>
     <string name="sympt">Symptoms</string>
     <string name="malaria_submitted">Malaria Form submitted</string>
+    <string name="view_children">View Children</string>
     <string name="newAbha">New</string>
     <string name="oldAbha">Old</string>
 

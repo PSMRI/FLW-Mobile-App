@@ -2,13 +2,14 @@ package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
 import android.text.InputType
-import android.util.Log
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.setToStartOfTheDay
 import org.piramalswasthya.sakhi.model.AgeUnit
+import org.piramalswasthya.sakhi.model.BenBasicCache
 import org.piramalswasthya.sakhi.model.BenRegCache
+import org.piramalswasthya.sakhi.model.EligibleCoupleRegCache
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.Gender.FEMALE
@@ -25,7 +26,7 @@ import org.piramalswasthya.sakhi.utils.HelperUtil.getDiffYears
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
-import java.util.concurrent.TimeUnit
+
 
 
 class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(context, language) {
@@ -73,6 +74,7 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
         }
     }
 
+    private var isExistingRecord = false
     private var selectedBen: BenRegCache? = null
     private val rchId = 0L
     private val dateOfReg = FormElement(
@@ -104,7 +106,7 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
         showDrawable = true
     )
 
-    private val noOfLiveChildren = FormElement(
+     val noOfLiveChildren = FormElement(
         id = 13,
         inputType = EDIT_TEXT,
         title = resources.getString(R.string.ecrdset_no_live_child),
@@ -766,7 +768,7 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
     )
 
     suspend fun setUpPage(
-        ben: BenRegCache?,
+        ben: EligibleCoupleRegCache?,
         household: HouseholdCache,
         hoF: BenRegCache?,
         benGender: Gender,
@@ -782,7 +784,8 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
 
 
         )
-        dateOfReg.value = getDateFromLong(System.currentTimeMillis())
+
+        isExistingRecord = ben != null
 
         selectedBen = selectedben
         selectedben?.let {
@@ -796,11 +799,213 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
                 timeAtMarriage = cal.timeInMillis
             }
         }
+
+
+        ben?.let { ecCache ->
+            if (ecCache.dateOfReg == 0L) {
+                ecCache.dateOfReg = System.currentTimeMillis()
+            }
+
+            dateOfReg.value = getDateFromLong(ecCache.dateOfReg)
+            noOfChildren.value = ecCache.noOfChildren.toString()
+            noOfLiveChildren.value = ecCache.noOfLiveChildren.toString()
+            numMale.value = ecCache.noOfMaleChildren.toString()
+            numFemale.value = ecCache.noOfFemaleChildren.toString()
+
+            if (ecCache.noOfLiveChildren > 0) {
+                ecCache.dob1?.let {
+                    dob1.value = getDateFromLong(it)
+                    age1.value = if (BenBasicCache.getAgeUnitFromDob(it)
+                        == AgeUnit.YEARS
+                    ) {
+                        BenBasicCache.getAgeFromDob(it).toString()
+                    } else "0"
+                    setSiblingAgeDiff(timeAtMarriage, it, marriageFirstChildGap)
+                }
+                ecCache.gender1?.let {
+                    gender1.value = getLocalValueInArray(R.array.ecr_gender_array, it.name.lowercase().replaceFirstChar { c -> c.uppercase() })
+                }
+
+
+                list.addAll(
+                    list.indexOf(noOfLiveChildren) + 1,
+                    listOf(firstChildDetails, dob1, age1, gender1, marriageFirstChildGap)
+                )
+            }
+            if (ecCache.noOfLiveChildren > 1) {
+                ecCache.dob2?.let {
+                    dob2.value = getDateFromLong(it)
+                    age2.value = if (BenBasicCache.getAgeUnitFromDob(it)
+                        == AgeUnit.YEARS
+                    ) {
+                        BenBasicCache.getAgeFromDob(it).toString()
+                    } else "0"
+                    ecCache.dob1?.let { it1 -> setSiblingAgeDiff(it1, it, firstAndSecondChildGap) }
+                }
+                ecCache.gender2?.let {
+                    gender2.value = getLocalValueInArray(R.array.ecr_gender_array, it.name.lowercase().replaceFirstChar { c -> c.uppercase() })
+                }
+
+                list.addAll(
+                    list.indexOf(marriageFirstChildGap) + 1,
+                    listOf(secondChildDetails, dob2, age2, gender2, firstAndSecondChildGap)
+                )
+            }
+            if (ecCache.noOfLiveChildren > 2) {
+                ecCache.dob3?.let {
+                    dob3.value = getDateFromLong(it)
+                    age3.value = if (BenBasicCache.getAgeUnitFromDob(it)
+                        == AgeUnit.YEARS
+                    ) {
+                        BenBasicCache.getAgeFromDob(it).toString()
+                    } else "0"
+                    ecCache.dob2?.let { it1 -> setSiblingAgeDiff(it1, it, secondAndThirdChildGap) }
+
+                }
+                ecCache.gender3?.let {
+                    gender3.value = getLocalValueInArray(R.array.ecr_gender_array, it.name.lowercase().replaceFirstChar { c -> c.uppercase() })
+                }
+
+                list.addAll(
+                    list.indexOf(firstAndSecondChildGap) + 1,
+                    listOf(thirdChildDetails, dob3, age3, gender3, secondAndThirdChildGap)
+                )
+            }
+            if (ecCache.noOfLiveChildren > 3) {
+                ecCache.dob4?.let {
+                    dob4.value = getDateFromLong(it)
+                    age4.value = if (BenBasicCache.getAgeUnitFromDob(it)
+                        == AgeUnit.YEARS
+                    ) {
+                        BenBasicCache.getAgeFromDob(it).toString()
+                    } else "0"
+                    ecCache.dob3?.let { it1 -> setSiblingAgeDiff(it1, it, thirdAndFourthChildGap) }
+
+                }
+                ecCache.gender4?.let {
+                    gender4.value = getLocalValueInArray(R.array.ecr_gender_array, it.name.lowercase().replaceFirstChar { c -> c.uppercase() })
+                }
+
+
+                list.addAll(
+                    list.indexOf(secondAndThirdChildGap) + 1,
+                    listOf(fourthChildDetails, dob4, age4, gender4, thirdAndFourthChildGap)
+                )
+            }
+            if (ecCache.noOfLiveChildren > 4) {
+                ecCache.dob5?.let {
+                    dob5.value = getDateFromLong(it)
+                    age5.value = if (BenBasicCache.getAgeUnitFromDob(it)
+                        == AgeUnit.YEARS
+                    ) {
+                        BenBasicCache.getAgeFromDob(it).toString()
+                    } else "0"
+                    ecCache.dob4?.let { it1 -> setSiblingAgeDiff(it1, it, fourthAndFifthChildGap) }
+                }
+                ecCache.gender5?.let {
+                    gender5.value = getLocalValueInArray(R.array.ecr_gender_array, it.name.lowercase().replaceFirstChar { c -> c.uppercase() })
+                }
+
+
+                list.addAll(
+                    list.indexOf(thirdAndFourthChildGap) + 1,
+                    listOf(fifthChildDetails, dob5, age5, gender5, fourthAndFifthChildGap)
+                )
+            }
+            if (ecCache.noOfLiveChildren > 5) {
+                ecCache.dob6?.let {
+                    dob6.value = getDateFromLong(it)
+                    age6.value = if (BenBasicCache.getAgeUnitFromDob(it)
+                        == AgeUnit.YEARS
+                    ) {
+                        BenBasicCache.getAgeFromDob(it).toString()
+                    } else "0"
+                    ecCache.dob5?.let { it1 -> setSiblingAgeDiff(it1, it, fifthAndSixthChildGap) }
+                }
+                ecCache.gender6?.let {
+                    gender6.value = getLocalValueInArray(R.array.ecr_gender_array, it.name.lowercase().replaceFirstChar { c -> c.uppercase() })
+                }
+
+
+                list.addAll(
+                    list.indexOf(fourthAndFifthChildGap) + 1,
+                    listOf(sixthChildDetails, dob6, age6, gender6, fifthAndSixthChildGap)
+                )
+            }
+            if (ecCache.noOfLiveChildren > 6) {
+                ecCache.dob7?.let {
+                    dob7.value = getDateFromLong(it)
+                    age7.value = if (BenBasicCache.getAgeUnitFromDob(it)
+                        == AgeUnit.YEARS
+                    ) {
+                        BenBasicCache.getAgeFromDob(it).toString()
+                    } else "0"
+                    ecCache.dob6?.let { it1 -> setSiblingAgeDiff(it1, it, sixthAndSeventhChildGap) }
+
+                }
+                ecCache.gender7?.let {
+                    gender7.value = getLocalValueInArray(R.array.ecr_gender_array, it.name.lowercase().replaceFirstChar { c -> c.uppercase() })
+                }
+
+
+                list.addAll(
+                    list.indexOf(fifthAndSixthChildGap) + 1,
+                    listOf(seventhChildDetails, dob7, age7, gender7, sixthAndSeventhChildGap)
+                )
+            }
+            if (ecCache.noOfLiveChildren > 7) {
+                ecCache.dob8?.let {
+                    dob8.value = getDateFromLong(it)
+                    age8.value = if (BenBasicCache.getAgeUnitFromDob(it)
+                        == AgeUnit.YEARS
+                    ) {
+                        BenBasicCache.getAgeFromDob(it).toString()
+                    } else "0"
+                    ecCache.dob7?.let { it1 ->
+                        setSiblingAgeDiff(
+                            it1,
+                            it,
+                            seventhAndEighthChildGap
+                        )
+                    }
+                }
+                ecCache.gender8?.let {
+                    gender8.value = getLocalValueInArray(R.array.ecr_gender_array, it.name.lowercase().replaceFirstChar { c -> c.uppercase() })
+                }
+
+
+                list.addAll(
+                    list.indexOf(sixthAndSeventhChildGap) + 1,
+                    listOf(eighthChildDetails, dob8, age8, gender8, seventhAndEighthChildGap)
+                )
+            }
+            if (ecCache.noOfLiveChildren > 8) {
+                ecCache.dob9?.let {
+                    dob9.value = getDateFromLong(it)
+                    age9.value = if (BenBasicCache.getAgeUnitFromDob(it)
+                        == AgeUnit.YEARS
+                    ) {
+                        BenBasicCache.getAgeFromDob(it).toString()
+                    } else "0"
+                    ecCache.dob8?.let { it1 -> setSiblingAgeDiff(it1, it, eighthAndNinthChildGap) }
+                }
+                ecCache.gender9?.let {
+                    gender9.value = getLocalValueInArray(R.array.ecr_gender_array, it.name.lowercase().replaceFirstChar { c -> c.uppercase() })
+                }
+
+                list.addAll(
+                    list.indexOf(seventhAndEighthChildGap) + 1,
+                    listOf(ninthChildDetails, dob9, age9, gender9, eighthAndNinthChildGap)
+                )
+            }
+        }
+
+
         setUpPage(list)
 
     }
 
-    override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
+   /* override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
         return when (formId) {
 
 //
@@ -1277,7 +1482,7 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
 
             else -> -1
         }
-    }
+    }*/
 
 
 
@@ -1544,15 +1749,266 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
         return ben
     }
 
+
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
-        (cacheModel as BenRegCache).let { ben ->
+        (cacheModel as EligibleCoupleRegCache).let { ecr ->
+            ecr.dateOfReg =
+                getLongFromDate(dateOfReg.value!!)
 
-
-
-
+            ecr.noOfChildren = noOfChildren.value?.takeIf { it.isNotBlank() }?.toInt() ?: 0
+            ecr.noOfLiveChildren = noOfLiveChildren.value?.takeIf { it.isNotBlank() }?.toInt() ?: 0
+            ecr.noOfMaleChildren = numMale.value?.takeIf { it.isNotBlank() }?.toInt() ?: 0
+            ecr.noOfFemaleChildren = numFemale.value?.takeIf { it.isNotBlank() }?.toInt() ?: 0
+            ecr.dob1 = getLongFromDate(dob1.value)
+            ecr.age1 = age1.value?.toInt()
+            ecr.gender1 = when (gender1.value) {
+                gender1.entries!![0] -> Gender.MALE
+                gender1.entries!![1] -> Gender.FEMALE
+                else -> null
+            }
+            ecr.marriageFirstChildGap =marriageFirstChildGap.value?.filter { it.isDigit() }?.toIntOrNull() ?: 0
+            if ((noOfLiveChildren.value?.toIntOrNull() ?: 0) > 1){
+                ecr.dob2 = getLongFromDate(dob2.value)
+                ecr.age2 = age2.value?.toInt()
+                ecr.gender2 = when (gender2.value) {
+                    gender2.entries!![0] -> Gender.MALE
+                    gender2.entries!![1] -> Gender.FEMALE
+                    else -> null
+                }
+                ecr.firstAndSecondChildGap =firstAndSecondChildGap.value?.filter { it.isDigit() }?.toIntOrNull() ?: 0
+            }
+            if (noOfLiveChildren.value?.toInt()!! > 2) {
+                ecr.dob3 = getLongFromDate(dob3.value)
+                ecr.age3 = age3.value?.toInt()
+                ecr.gender3 = when (gender3.value) {
+                    gender3.entries!![0] -> Gender.MALE
+                    gender3.entries!![1] -> Gender.FEMALE
+                    else -> null
+                }
+                ecr.secondAndThirdChildGap =secondAndThirdChildGap.value?.filter { it.isDigit() }?.toIntOrNull() ?: 0
+            }
+            if (noOfLiveChildren.value?.toInt()!! > 3) {
+                ecr.dob4 = getLongFromDate(dob4.value)
+                ecr.age4 = age4.value?.toInt()
+                ecr.gender4 = when (gender4.value) {
+                    gender4.entries!![0] -> Gender.MALE
+                    gender4.entries!![1] -> Gender.FEMALE
+                    else -> null
+                }
+                ecr.thirdAndFourthChildGap =thirdAndFourthChildGap.value?.filter { it.isDigit() }?.toIntOrNull() ?: 0
+            }
+            if (noOfLiveChildren.value?.toInt()!! > 4) {
+                ecr.dob5 = getLongFromDate(dob5.value)
+                ecr.age5 = age5.value?.toInt()
+                ecr.gender5 = when (gender5.value) {
+                    gender5.entries!![0] -> Gender.MALE
+                    gender5.entries!![1] -> Gender.FEMALE
+                    else -> null
+                }
+                ecr.fourthAndFifthChildGap =fourthAndFifthChildGap.value?.filter { it.isDigit() }?.toIntOrNull() ?: 0
+            }
+            if (noOfLiveChildren.value?.toInt()!! > 5) {
+                ecr.dob6 = getLongFromDate(dob6.value)
+                ecr.age6 = age6.value?.toInt()
+                ecr.gender6 = when (gender6.value) {
+                    gender6.entries!![0] -> Gender.MALE
+                    gender6.entries!![1] -> Gender.FEMALE
+                    else -> null
+                }
+                ecr.fifthANdSixthChildGap =fifthAndSixthChildGap.value?.filter { it.isDigit() }?.toIntOrNull() ?: 0
+            }
+            if (noOfLiveChildren.value?.toInt()!! > 6) {
+                ecr.dob7 = getLongFromDate(dob7.value)
+                ecr.age7 = age7.value?.toInt()
+                ecr.gender7 = when (gender7.value) {
+                    gender7.entries!![0] -> Gender.MALE
+                    gender7.entries!![1] -> Gender.FEMALE
+                    else -> null
+                }
+                ecr.sixthAndSeventhChildGap =sixthAndSeventhChildGap.value?.filter { it.isDigit() }?.toIntOrNull() ?: 0
+            }
+            if (noOfLiveChildren.value?.toInt()!! > 7) {
+                ecr.dob8 = getLongFromDate(dob8.value)
+                ecr.age8 = age8.value?.toInt()
+                ecr.gender8 = when (gender8.value) {
+                    gender8.entries!![0] -> Gender.MALE
+                    gender8.entries!![1] -> Gender.FEMALE
+                    else -> null
+                }
+                ecr.seventhAndEighthChildGap = seventhAndEighthChildGap.value?.filter { it.isDigit() }?.toIntOrNull() ?: 0
+            }
+            if (noOfLiveChildren.value?.toInt()!! > 8) {
+                ecr.dob9 = getLongFromDate(dob9.value)
+                ecr.age9 = age9.value?.toInt()
+                ecr.gender9 = when (gender9.value) {
+                    gender9.entries!![0] -> Gender.MALE
+                    gender9.entries!![1] -> Gender.FEMALE
+                    else -> null
+                }
+                ecr.eighthAndNinthChildGap = eighthAndNinthChildGap.value?.filter { it.isDigit() }?.toIntOrNull() ?: 0
+            }
         }
     }
 
+
+    private val children = listOf(
+        ChildBundle(firstChildDetails, firstChildName, dob1, age1, gender1, marriageFirstChildGap),
+        ChildBundle(secondChildDetails, secondChildName, dob2, age2, gender2, firstAndSecondChildGap),
+        ChildBundle(thirdChildDetails, thirdChildName, dob3, age3, gender3, secondAndThirdChildGap),
+        ChildBundle(fourthChildDetails, forthChildName, dob4, age4, gender4, thirdAndFourthChildGap),
+        ChildBundle(fifthChildDetails, fifthChildName, dob5, age5, gender5, fourthAndFifthChildGap),
+        ChildBundle(sixthChildDetails, sixthChildName, dob6, age6, gender6, fifthAndSixthChildGap),
+        ChildBundle(seventhChildDetails, seventhChildName, dob7, age7, gender7, sixthAndSeventhChildGap),
+        ChildBundle(eighthChildDetails, eightChildName, dob8, age8, gender8, seventhAndEighthChildGap),
+        ChildBundle(ninthChildDetails, ninthChildName, dob9, age9, gender9, eighthAndNinthChildGap)
+    )
+
+
+    override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
+        if (formId == noOfChildren.id) {
+            if (noOfChildren.value.isNullOrEmpty() ||
+                noOfChildren.value?.takeIf { it.isNotEmpty() }?.toInt() == 0
+            ) {
+                noOfLiveChildren.value = "0"
+                numMale.value = "0"
+                numFemale.value = "0"
+            } else {
+                noOfLiveChildren.max = noOfChildren.value?.takeIf { it.isNotEmpty() }?.toLong()
+                validateIntMinMax(noOfLiveChildren)
+                validateIntMinMax(noOfChildren)
+                if (noOfLiveChildren.value == "0") noOfLiveChildren.value = null
+                numMale.value = null
+                numFemale.value = null
+            }
+            return handleListOnValueChanged(noOfLiveChildren.id, 0)
+        }
+
+        children.forEachIndexed { idx, child ->
+            if (formId == child.dob.id) {
+                val prevDobValue = if (idx == 0) {
+                    null
+                } else children[idx - 1].dob.value
+
+                prevDobValue?.let { isValidChildGap(child.dob, it) }
+
+                val currentDobStr = child.dob.value
+                if ((idx == 0 && currentDobStr != null && timeAtMarriage != 0L) ||
+                    (idx != 0 && children[idx - 1].dob.value != null && currentDobStr != null)
+                ) {
+                    val currDobLong = getLongFromDate(currentDobStr)
+                    assignValuesToAgeFromDob(currDobLong, child.age)
+                    validateIntMinMax(child.age)
+
+                    val months = getMonthsFromDob(currDobLong)
+                    if (months <= 3) {
+                        child.name.required = false
+                        val motherName = selectedBen?.firstName ?: ""
+                        child.name.value = "Baby of $motherName"
+                    } else {
+                        child.name.value = ""
+                        child.name.required = true
+                    }
+
+
+                    val prevLong = when {
+                        idx == 0 -> timeAtMarriage
+                        else -> getLongFromDate(children[idx - 1].dob.value!!)
+                    }
+                    setSiblingAgeDiff(prevLong, currDobLong, child.gap)
+
+                    children.getOrNull(idx + 1)?.let { nextChild ->
+                        nextChild.dob.min = getLongFromDate(getMinimumSecondChildDob(currentDobStr))
+                    }
+
+                    updateTimeLessThan18()
+                }
+                return -1
+            }
+        }
+
+        if (formId == noOfLiveChildren.id) {
+            noOfChildren.min = noOfLiveChildren.value.takeIf { !it.isNullOrEmpty() }?.toLong()
+            validateIntMinMax(noOfLiveChildren)
+            validateIntMinMax(noOfChildren)
+
+            if (isExistingRecord) {
+
+                val newCount = noOfLiveChildren.value?.toIntOrNull() ?: 0
+
+                val oldCount = children.count { child ->
+                    child.dob.value != null ||
+                            child.gender.value != null ||
+                            child.age.value != null
+                }
+
+                if (newCount > oldCount) {
+                    for (i in oldCount until newCount) {
+                        if (i == 0) {
+                            if (timeAtMarriage != 0L) {
+                                children[i].dob.min = timeAtMarriage
+                            }
+                        } else {
+                            val prevDob = children[i - 1].dob.value
+                            if (!prevDob.isNullOrEmpty()) {
+                                children[i].dob.min =
+                                    getLongFromDate(getMinimumSecondChildDob(prevDob))
+                            }
+                        }
+                    }
+
+                    val addItems = children.subList(oldCount, newCount)
+                        .flatMap { it.toFormList() }
+
+                    infantTriggerDependants(
+                        source = noOfLiveChildren,
+                        addItems = addItems,
+                        removeItems = emptyList()
+                    )
+                }
+            } else {
+                val count = noOfLiveChildren.value?.toIntOrNull() ?: 0
+                val addItems = children.take(count).flatMap { it.toFormList() }
+                val removeItems = children.drop(count).flatMap { it.toFormList() }
+                triggerDependants( source = noOfLiveChildren, addItems = addItems, removeItems = removeItems )
+                children.drop(count).forEach { it.clearValues() }
+
+            }
+
+
+
+
+
+            return 1
+        }
+
+        val genderIds = children.map { it.gender.id }
+        if (genderIds.contains(formId)) {
+            var male = 0
+            var female = 0
+            val genderArray = resources.getStringArray(R.array.ecr_gender_array)
+
+           children.forEach { child ->
+                val g = child.gender.value
+                if (g == genderArray[0]) male += 1
+                else if (g == genderArray[1]) female += 1
+            }
+
+            numFemale.value = female.toString()
+            numMale.value = male.toString()
+            return -1
+        }
+
+        return -1
+    }
+
+    fun getMonthsFromDob(dob: Long): Int {
+        val now = Calendar.getInstance()
+        val birth = Calendar.getInstance().apply { timeInMillis = dob }
+
+        val years = now.get(Calendar.YEAR) - birth.get(Calendar.YEAR)
+        val months = now.get(Calendar.MONTH) - birth.get(Calendar.MONTH)
+        return years * 12 + months
+    }
     fun getIndexOfChildren() = getIndexById(noOfChildren.id)
 
     fun getIndexOfLiveChildren() = getIndexById(noOfLiveChildren.id)
@@ -1583,3 +2039,29 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
 
 
 }
+
+
+data class ChildBundle(
+    val details: FormElement,
+    val name: FormElement,
+    val dob: FormElement,
+    val age: FormElement,
+    val gender: FormElement,
+    val gap: FormElement
+) {
+    fun isEmpty(): Boolean {
+        return dob.value.isNullOrEmpty() &&
+                age.value.isNullOrEmpty() &&
+                gender.value.isNullOrEmpty() &&
+                name.value.isNullOrEmpty()
+    }
+    fun toFormList() = listOf(details, name, dob, age, gender, gap)
+    fun clearValues() {
+        name.value = null
+        dob.value = null
+        age.value = null
+        gender.value = null
+        gap.value = null
+    }
+}
+

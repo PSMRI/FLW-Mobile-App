@@ -151,7 +151,10 @@ class NewChildAsBenRegistrationFragment : Fragment() {
             }
 
         }
-
+        viewModel.recordExists.observe(viewLifecycleOwner) { notIt ->
+            notIt?.let { recordExists ->
+                binding.fabEdit.visibility = if(recordExists) View.VISIBLE else View.GONE
+                binding.btnSubmit.visibility = if (recordExists) View.GONE else View.VISIBLE
                 val adapter =
                     FormInputAdapter(
                         formValueListener = FormInputAdapter.FormValueListener { formId, index ->
@@ -168,7 +171,7 @@ class NewChildAsBenRegistrationFragment : Fragment() {
                             }
 
                         },
-                        isEnabled = true,
+                        isEnabled = !recordExists,
 
                         )
                 binding.form.rvInputForm.adapter = adapter
@@ -179,6 +182,8 @@ class NewChildAsBenRegistrationFragment : Fragment() {
                             adapter.submitList(it)
                     }
                 }
+            }
+        }
 
 
 
