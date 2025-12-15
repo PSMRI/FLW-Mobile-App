@@ -632,7 +632,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         }
 
         val maritalIndex = list.indexOf(maritalStatus)
-        if (!maritalStatus.value.isNullOrEmpty() && maritalStatus.entries != null && gender.value != null && maritalIndex >= 0) {
+        if (!maritalStatus.value.isNullOrEmpty() && maritalStatus.entries != null && gender.value != null && maritalIndex >= 0 && maritalStatus.value == maritalStatus.getStringFromPosition(2)) {
             val genderField = when (gender.value) {
                 gender.entries!![0] -> wifeName
                 gender.entries!![1] -> husbandName
@@ -643,6 +643,15 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 list.add(maritalIndex + 3, it)
                 list.add(maritalIndex + 4, ageAtMarriage)
             }
+        } else {
+            list.removeAll(
+                listOf(
+                husbandName,
+                wifeName,
+                spouseName,
+                ageAtMarriage
+                )
+            )
         }
 
         if (maritalStatus.entries != null && maritalStatus.value == maritalStatus.entries!![1] && gender.value == gender.entries!![1]) {
