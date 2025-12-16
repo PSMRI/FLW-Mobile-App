@@ -4,7 +4,6 @@ import android.content.Context
 import android.net.Uri
 import android.text.InputType
 import androidx.lifecycle.MutableLiveData
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Konstants
@@ -316,11 +315,12 @@ class EligibleCoupleRegistrationDataset(
         inputType = EDIT_TEXT,
         title = resources.getString(R.string.ecrdset_ttl_child_born),
         arrayId = -1,
-        required = true,
+        required = false,
         etInputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_NORMAL,
         etMaxLength = 1,
         max = 9,
         min = 0,
+        value = "0",
         isEnabled = false,
         backgroundDrawable=R.drawable.ic_bg_circular,
         iconDrawableRes=R.drawable.ic_total_no_child_born,
@@ -332,10 +332,11 @@ class EligibleCoupleRegistrationDataset(
         inputType = EDIT_TEXT,
         title = resources.getString(R.string.ecrdset_no_live_child),
         arrayId = -1,
-        required = true,
+        required = false,
         etInputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_NORMAL,
         etMaxLength = 1,
         max = 9,
+        value = "0",
         isEnabled = false,
         min = 0,
         backgroundDrawable=R.drawable.ic_bg_circular,
@@ -1119,9 +1120,9 @@ class EligibleCoupleRegistrationDataset(
             bankName.value = ecCache.bankName
             branchName.value = ecCache.branchName
             ifsc.value = ecCache.ifsc
-            lmpDate.value = getDateFromLong(ecCache.lmpDate)
             noOfChildren.value = ecCache.noOfChildren.toString()
             noOfLiveChildren.value = ecCache.noOfLiveChildren.toString()
+            lmpDate.value = getDateFromLong(ecCache.lmpDate)
             numMale.value = ecCache.noOfMaleChildren.toString()
             numFemale.value = ecCache.noOfFemaleChildren.toString()
             val isKitHandedOver = ecCache.isKitHandedOver == true

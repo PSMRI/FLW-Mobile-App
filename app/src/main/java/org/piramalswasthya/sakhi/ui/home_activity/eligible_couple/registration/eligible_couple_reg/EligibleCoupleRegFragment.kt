@@ -38,6 +38,7 @@ import java.io.File
 @AndroidEntryPoint
 class EligibleCoupleRegFragment : Fragment() {
 
+    private var isDataExist = false
     private var _binding: FragmentNewFormBinding? = null
     private val binding: FragmentNewFormBinding
         get() = _binding!!
@@ -151,79 +152,87 @@ class EligibleCoupleRegFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         viewModel.recordExists.observe(viewLifecycleOwner) { notIt ->
             notIt?.let { recordExists ->
-//                binding.fabEdit.visibility = if(recordExists) View.VISIBLE else View.GONE
-//                binding.btnSubmit.visibility = if (recordExists) View.GONE else View.VISIBLE
-                val adapter = FormInputAdapterWithBgIcon(
-                    formValueListener = FormInputAdapterWithBgIcon.FormValueListener { formId, index ->
-                        viewModel.updateListOnValueChanged(formId, index)
-                        hardCodedListUpdate(formId)
-                    }, isEnabled = recordExists ,
-                            selectImageClickListener  = FormInputAdapterWithBgIcon.SelectUploadImageClickListener {
-                        viewModel.setCurrentDocumentFormId(it)
-                        chooseOptions()
-                    },
-                    viewDocumentListner = FormInputAdapterWithBgIcon.ViewDocumentOnClick {
-                        if (!recordExists) {
-                            if (it == 75) {
-                                latestTmpUri?.let {
-                                    if (it.toString().contains("document")) {
-                                        displayPdf(it)
-                                    } else {
-                                        viewImage(it)
-                                    }
+                viewModel.isEcrCompleted.observe(viewLifecycleOwner) {
+                    binding.fabEdit.visibility = if(recordExists && it) View.VISIBLE else View.GONE
+                    binding.btnSubmit.visibility = if (recordExists && it) View.GONE else View.VISIBLE
 
+                    isDataExist = recordExists && it
+
+                    val adapter = FormInputAdapterWithBgIcon(
+                        formValueListener = FormInputAdapterWithBgIcon.FormValueListener { formId, index ->
+                            viewModel.updateListOnValueChanged(formId, index)
+                            hardCodedListUpdate(formId)
+                        }, isEnabled = !isDataExist ,
+                        selectImageClickListener  = FormInputAdapterWithBgIcon.SelectUploadImageClickListener {
+                            viewModel.setCurrentDocumentFormId(it)
+                            chooseOptions()
+                        },
+                        viewDocumentListner = FormInputAdapterWithBgIcon.ViewDocumentOnClick {
+                            if (!recordExists) {
+                                if (it == 75) {
+                                    latestTmpUri?.let {
+                                        if (it.toString().contains("document")) {
+                                            displayPdf(it)
+                                        } else {
+                                            viewImage(it)
+                                        }
+
+                                    }
+                                } else {
+                                    backViewFileUri?.let {
+                                        if (it.toString().contains("document")) {
+                                            displayPdf(it)
+                                        } else {
+                                            viewImage(it)
+                                        }
+
+                                    }
                                 }
+
                             } else {
-                                backViewFileUri?.let {
-                                    if (it.toString().contains("document")) {
-                                        displayPdf(it)
-                                    } else {
-                                        viewImage(it)
-                                    }
-
-                                }
-                            }
-
-                        } else {
-                            val formId = it
-                            lifecycleScope.launch {
-                                viewModel.formList.collect{
-                                    if (formId == 75) {
-                                        it.get(viewModel.getIndexofAshaKitPhotoFirst()).value.let {
-                                            if (it.toString().contains("document")) {
-                                                displayPdf(it!!.toUri())
-                                            } else {
-                                                viewImage(it!!.toUri())
+                                val formId = it
+                                lifecycleScope.launch {
+                                    viewModel.formList.collect{
+                                        if (formId == 75) {
+                                            it.get(viewModel.getIndexofAshaKitPhotoFirst()).value.let {
+                                                if (it.toString().contains("document")) {
+                                                    displayPdf(it!!.toUri())
+                                                } else {
+                                                    viewImage(it!!.toUri())
+                                                }
+                                            }
+                                        } else {
+                                            it.get(viewModel.getIndexofAshaKitPhotoSecond()).value.let {
+                                                if (it.toString().contains("document")) {
+                                                    displayPdf(it!!.toUri())
+                                                } else {
+                                                    viewImage(it!!.toUri())
+                                                }
                                             }
                                         }
-                                    } else {
-                                        it.get(viewModel.getIndexofAshaKitPhotoSecond()).value.let {
-                                            if (it.toString().contains("document")) {
-                                                displayPdf(it!!.toUri())
-                                            } else {
-                                                viewImage(it!!.toUri())
-                                            }
-                                        }
-                                    }
 
+                                    }
                                 }
+
                             }
 
                         }
+                    )
+                    binding.form.rvInputForm.adapter = adapter
+                    lifecycleScope.launch {
+                        viewModel.formList.collect {
+                            if (it.isNotEmpty())
 
-                    }
-                )
-                binding.form.rvInputForm.adapter = adapter
-                lifecycleScope.launch {
-                    viewModel.formList.collect {
-                        if (it.isNotEmpty())
+                                adapter.submitList(it)
 
-                            adapter.submitList(it)
-
+                        }
                     }
                 }
+
+
             }
         }
 
@@ -238,6 +247,9 @@ class EligibleCoupleRegFragment : Fragment() {
         }
         binding.btnSubmit.setOnClickListener {
             submitEligibleCoupleForm()
+        }
+        binding.fabEdit.setOnClickListener {
+            viewModel.setRecordExist(false)
         }
         viewModel.state.observe(viewLifecycleOwner) {
             when (it) {
