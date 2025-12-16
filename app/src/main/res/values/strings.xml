@@ -60,7 +60,7 @@
     <string name="refer_to">Referred To</string>
     <string name="day_wise_tracking_pf">Pf - Day-wise Tracking</string>
     <string name="day_wise_tracking_pv">PV - Day-wise Tracking</string>
-    <string name="type_of_leprocy">Type of Leprocy</string>
+    <string name="type_of_leprocy">Type of Leprosy</string>
     <string name="treatment_start_date">Treatment Start Date</string>
     <string name="dose_status">DEC and Albendazole Dose Status</string>
     <string name="is_medicine_distributed">Is medicine Distributed</string>

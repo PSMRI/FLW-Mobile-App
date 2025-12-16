@@ -69,9 +69,15 @@ class ECRegistrationAdapter(
             }
 
             binding.ivSyncState.visibility = if (item.ecr == null) View.INVISIBLE else View.VISIBLE
-            binding.btnFormEc1.text = if (item.ecr == null) "Register" else "View"
+//            binding.btnFormEc1.text = if (item.ecr == null) "Register" else "View"
+            binding.btnFormEc1.text =
+                if (item.ecr != null && item.ecr.lmpDate != 0L) {
+                    "View"
+                } else {
+                    "Register"
+                }
 
-            binding.btnFormEc1.setBackgroundColor(binding.root.resources.getColor(if (item.ecr == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
+            binding.btnFormEc1.setBackgroundColor(binding.root.resources.getColor(if (item.ecr != null && item.ecr.lmpDate != 0L) android.R.color.holo_green_dark else android.R.color.holo_red_dark))
             binding.clickListener = clickListener
 
             binding.executePendingBindings()
