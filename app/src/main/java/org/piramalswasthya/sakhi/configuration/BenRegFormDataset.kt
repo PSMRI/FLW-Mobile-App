@@ -34,6 +34,7 @@ import org.piramalswasthya.sakhi.model.InputType.IMAGE_VIEW
 import org.piramalswasthya.sakhi.model.InputType.RADIO
 import org.piramalswasthya.sakhi.model.InputType.TEXT_VIEW
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.NewBenRegViewModel.Companion.isOtpVerified
+import java.lang.IllegalStateException
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -1093,7 +1094,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     gender.entries!![0] -> wifeName
                     gender.entries!![1] -> husbandName
                     gender.entries!![2] -> spouseName
-                    else -> throw java.lang.IllegalStateException("Gender unspecified with non empty marital status value!")
+                    else -> throw IllegalStateException("Gender unspecified with non empty marital status value!")
                 }
             )
 
@@ -1704,6 +1705,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
     }
 
 
+
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
         return when (formId) {
 
@@ -1840,10 +1842,14 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     else -> maritalStatusMale
                 }
 
+
+
                 maritalStatus.arrayId = when (index) {
                     1 -> R.array.nbr_marital_status_female_array
                     else -> R.array.nbr_marital_status_male_array
+
                 }
+
 
                 relationToHead.entries = when (index) {
                     0 -> relationToHeadListMale
@@ -1852,6 +1858,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 }
                 val listChanged = if (hasThirdPage()) {
 
+                    Log.e("ThirdPage","isThird")
                     updateReproductiveOptionsBasedOnAgeGender(formId = gender.id)
                     triggerDependants(
                         source = rchId,
@@ -1920,13 +1927,14 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                         return triggerDependants(
                             source = maritalStatus, addItems = when (gender.value) {
                                 gender.entries!![0] -> listOf(wifeName, ageAtMarriage)
-                                gender.entries!![1] -> listOf(husbandName, ageAtMarriage)
+                                gender.entries!![1] -> listOf(husbandName, ageAtMarriage,haveChildren)
                                 else -> listOf(spouseName, ageAtMarriage)
                             }, removeItems = listOf(
                                 wifeName,
                                 husbandName,
                                 spouseName,
-                                ageAtMarriage
+                                ageAtMarriage,
+                                haveChildren
                             )
                         ).also {
                             if (relationToHead.value == relationToHead.entries!![0]) {
@@ -1948,13 +1956,14 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                         return triggerDependants(
                             source = maritalStatus, addItems = when (gender.value) {
                                 gender.entries!![0] -> listOf(wifeName, ageAtMarriage)
-                                gender.entries!![1] -> listOf(husbandName, ageAtMarriage)
+                                gender.entries!![1] -> listOf(husbandName, ageAtMarriage,haveChildren)
                                 else -> listOf(spouseName, ageAtMarriage)
                             }, removeItems = listOf(
                                 wifeName,
                                 husbandName,
                                 spouseName,
-                                ageAtMarriage
+                                ageAtMarriage,
+                                haveChildren
                             )
                         )
                     }
