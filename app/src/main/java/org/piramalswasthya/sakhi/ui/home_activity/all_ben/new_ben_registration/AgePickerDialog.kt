@@ -6,6 +6,8 @@ import android.content.res.Resources
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.text.InputType
+import android.text.method.DigitsKeyListener
 import android.widget.EditText
 import android.widget.NumberPicker
 import org.piramalswasthya.sakhi.databinding.AlertAgePickerBinding
@@ -117,6 +119,15 @@ class AgePickerDialog(context: Context) : AlertDialog(context) {
         val max = picker.maxValue
         picker.displayedValues = null
         picker.displayedValues = (min..max).map { it.toString() }.toTypedArray()
+        val editTextId = Resources.getSystem().getIdentifier("numberpicker_input", "id", "android")
+        val input = picker.findViewById<EditText>(editTextId)
+        input?.apply {
+            inputType = InputType.TYPE_CLASS_NUMBER
+            keyListener = DigitsKeyListener.getInstance("0123456789")
+            isFocusable = true
+            isFocusableInTouchMode = true
+            isCursorVisible = true
+        }
     }
 
 

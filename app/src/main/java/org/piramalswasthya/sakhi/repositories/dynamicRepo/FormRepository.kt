@@ -17,6 +17,7 @@ import org.piramalswasthya.sakhi.model.dynamicModel.HBNCVisitListResponse
 import org.piramalswasthya.sakhi.model.dynamicModel.HBNCVisitRequest
 import org.piramalswasthya.sakhi.model.dynamicModel.HBNCVisitResponse
 import org.piramalswasthya.sakhi.network.AmritApiService
+import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.HBNC_FORM_ID
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.HBYC_FORM_ID
 import retrofit2.Response
@@ -37,6 +38,49 @@ class FormRepository @Inject constructor(
     private val formSchemaDao = db.formSchemaDao()
     private val jsonResponseDao = db.formResponseJsonDao()
     private val jsonResponseDaoHBYC = db.formResponseJsonDaoHBYC()
+    val ALL_FORM_IDS = listOf(
+        FormConstants.HBNC_FORM_ID,
+        FormConstants.CHILDREN_UNDER_FIVE_ORS_FORM_ID,
+        FormConstants.CHILDREN_UNDER_FIVE_IFA_FORM_ID,
+        FormConstants.CHILDREN_UNDER_FIVE_SAM_FORM_ID,
+        FormConstants.IFA_DISTRIBUTION_FORM_ID,
+        FormConstants.EYE_SURGERY_FORM_ID,
+        FormConstants.HBYC_FORM_ID,
+        FormConstants.MOSQUITO_NET_FORM_ID,
+        FormConstants.MDA_DISTRIBUTION_FORM_ID
+    )
+
+
+    suspend fun downloadAllFormsSchemas(lang: String) = withContext(Dispatchers.IO) {
+        ALL_FORM_IDS.forEach { formId ->
+            try {
+                val response = amritApiService.fetchFormSchema(formId, lang)
+
+                if (response.isSuccessful) {
+                    val apiSchema = response.body()?.data ?: return@forEach
+
+                    val local = getSavedSchema(formId)
+
+                    if (local == null ||
+                        local.version < apiSchema.version ||
+                        local.language != lang
+                    ) {
+                        saveFormSchemaToDb(apiSchema, lang)
+                        Log.d("FORM_SYNC", "Updated schema → $formId")
+                    } else {
+                        Log.d("FORM_SYNC", "Already latest → $formId")
+                    }
+
+                } else {
+                    Log.e("FORM_SYNC", "Server error → $formId")
+                }
+
+            } catch (e: Exception) {
+                Log.e("FORM_SYNC", "Exception → $formId", e)
+            }
+        }
+    }
+
 
 
     suspend fun getFormSchema(formId: String, lang: String): FormSchemaDto? = withContext(Dispatchers.IO) {

@@ -6,8 +6,8 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.os.SystemClock
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -572,6 +572,17 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
         NavigationUI.setupWithNavController(binding.toolbar, navController, appBarConfiguration)
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
+
+
+        binding.navView.menu.findItem(R.id.incentivesFragment)?.let { incentivesMenuItem ->
+            val titleRes =
+                if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                    R.string.monthly_claim_summary
+                } else {
+                    R.string.incentive_fragment_title
+                }
+            incentivesMenuItem.title = getString(titleRes)
+        }
 
         binding.navView.menu.findItem(R.id.homeFragment).setOnMenuItemClickListener {
             navController.popBackStack(R.id.homeFragment, false)

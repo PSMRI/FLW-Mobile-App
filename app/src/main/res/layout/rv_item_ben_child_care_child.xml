@@ -62,10 +62,10 @@
                     android:drawablePadding="@dimen/padding_small"
                     android:gravity="center_vertical"
                     android:padding="@dimen/padding_small"
-                    android:text="@{ben.familyHeadName}"
+                    android:text="@{ben.benFullName}"
                     android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                     android:textColor="?attr/colorPrimaryVariant"
-                    app:drawableLeftCompat="@drawable/ic__hh"
+                    app:drawableLeftCompat="@drawable/ic__infant"
                     app:drawableTint="?attr/colorPrimary"
                     tools:text="Hello Meister" />
 
@@ -130,14 +130,14 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/name_ben"
+                            android:text="@string/mother_name"
                             android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                             android:textColor="?attr/colorOnPrimary" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@{ben.benFullName}"
+                            android:text="@{ben.motherName}"
                             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                             android:textColor="?attr/colorOnPrimary"
                             tools:text="Lala Land" />
@@ -295,7 +295,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text=""
+                            android:text="@{ben.dobString}"
                             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                             android:textColor="?attr/colorOnPrimary"
                             tools:text="0123456789" />

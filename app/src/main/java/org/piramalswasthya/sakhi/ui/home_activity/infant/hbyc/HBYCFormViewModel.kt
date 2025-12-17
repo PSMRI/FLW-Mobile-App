@@ -293,10 +293,7 @@ fun updateFieldValue(fieldId: String, value: Any?) {
     fun getVisitCardList(benId: Long, dobMillis: Long): List<VisitCard> {
         val relevantVisits = _syncedVisitList.value.filter { it.benId == benId }
         val completed = relevantVisits.map { it.visitDay }.toSet()
-
         val babyAgeMonths = getBabyAgeMonths(dobMillis)
-        Log.d("HBYC", "Baby age in months: $babyAgeMonths")
-
         val visitMonthMapping = mapOf(
             "3 Months" to 3,
             "6 Months" to 6,
@@ -305,18 +302,16 @@ fun updateFieldValue(fieldId: String, value: Any?) {
             "15 Months" to 15
         )
 
+        val allVisits = listOf("3 Months", "6 Months", "9 Months", "12 Months", "15 Months")
         val eligibleMonths = visitOrder.filter { month ->
             val monthValue = visitMonthMapping[month] ?: 0
             val isEligible = monthValue <= babyAgeMonths
-            Log.d("HBYC", "Month: $month, Value: $monthValue, Eligible: $isEligible")
             isEligible
         }
 
-        Log.d("HBYC", "Eligible months after filtering: $eligibleMonths")
-
         var nextEditableFound = false
 
-        return eligibleMonths.map { month ->
+        val finalList = eligibleMonths.map { month ->
             val isCompleted = completed.contains(month)
             val isEditable = if (!nextEditableFound && !isCompleted) {
                 nextEditableFound = true
@@ -331,10 +326,6 @@ fun updateFieldValue(fieldId: String, value: Any?) {
                 fieldsJson.optString("is_baby_alive", "Yes").equals("No", ignoreCase = true)
             } ?: false
 
-            Log.d(
-                "HBYC",
-                "VisitCard -> Month: $month, Completed: $isCompleted, Editable: $isEditable, VisitDate: $visitDate, BabyDeath: $isBabyDeath"
-            )
 
             VisitCard(
                 visitDay = month,
@@ -343,10 +334,25 @@ fun updateFieldValue(fieldId: String, value: Any?) {
                 isEditable = isEditable,
                 isBabyDeath = isBabyDeath
             )
+        }.toMutableList()
+
+        val futureMonths = allVisits.filterNot { eligibleMonths.contains(it) }
+
+        futureMonths.forEach { month ->
+            finalList.add(
+                VisitCard(
+                    visitDay = month,
+                    visitDate = "-",
+                    isCompleted = false,
+                    isEditable = false,
+                    isBabyDeath = false
+                )
+            )
+
         }
+
+        return finalList
     }
-
-
 
 
     fun getMaxVisitDate(): Date {

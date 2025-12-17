@@ -1,7 +1,6 @@
 package org.piramalswasthya.sakhi.di
 
 import android.content.Context
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -11,11 +10,12 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.database.room.InAppDb
 import org.piramalswasthya.sakhi.database.room.NcdReferalDao
+import org.piramalswasthya.sakhi.database.room.dao.ABHAGenratedDao
 import org.piramalswasthya.sakhi.database.room.dao.AdolescentHealthDao
 import org.piramalswasthya.sakhi.database.room.dao.AesDao
-import org.piramalswasthya.sakhi.database.room.dao.ABHAGenratedDao
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.BeneficiaryIdsAvailDao
 import org.piramalswasthya.sakhi.database.room.dao.CbacDao
@@ -32,9 +32,11 @@ import org.piramalswasthya.sakhi.database.room.dao.IncentiveDao
 import org.piramalswasthya.sakhi.database.room.dao.InfantRegDao
 import org.piramalswasthya.sakhi.database.room.dao.KalaAzarDao
 import org.piramalswasthya.sakhi.database.room.dao.LeprosyDao
+import org.piramalswasthya.sakhi.database.room.dao.MaaMeetingDao
 import org.piramalswasthya.sakhi.database.room.dao.MalariaDao
 import org.piramalswasthya.sakhi.database.room.dao.MaternalHealthDao
 import org.piramalswasthya.sakhi.database.room.dao.MdsrDao
+import org.piramalswasthya.sakhi.database.room.dao.MosquitoNetFormResponseDao
 import org.piramalswasthya.sakhi.database.room.dao.PmsmaDao
 import org.piramalswasthya.sakhi.database.room.dao.PncDao
 import org.piramalswasthya.sakhi.database.room.dao.ProfileDao
@@ -42,21 +44,21 @@ import org.piramalswasthya.sakhi.database.room.dao.SaasBahuSammelanDao
 import org.piramalswasthya.sakhi.database.room.dao.SyncDao
 import org.piramalswasthya.sakhi.database.room.dao.TBDao
 import org.piramalswasthya.sakhi.database.room.dao.UwinDao
-import org.piramalswasthya.sakhi.database.room.dao.MaaMeetingDao
-import org.piramalswasthya.sakhi.database.room.dao.MosquitoNetFormResponseDao
-import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseJsonDao
-import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseJsonDaoHBYC
 import org.piramalswasthya.sakhi.database.room.dao.VLFDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.BenIfaFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.CUFYFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.EyeSurgeryFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FilariaMDAFormResponseJsonDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseJsonDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseJsonDaoHBYC
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.AnalyticsHelper
 import org.piramalswasthya.sakhi.helpers.ApiAnalyticsInterceptor
 import org.piramalswasthya.sakhi.network.AbhaApiService
 import org.piramalswasthya.sakhi.network.AmritApiService
 import org.piramalswasthya.sakhi.network.interceptors.ContentTypeInterceptor
+import org.piramalswasthya.sakhi.network.interceptors.LoggingInterceptor
+import org.piramalswasthya.sakhi.network.interceptors.TokenAuthenticator
 import org.piramalswasthya.sakhi.network.interceptors.TokenInsertAbhaInterceptor
 import org.piramalswasthya.sakhi.network.interceptors.TokenInsertTmcInterceptor
 import org.piramalswasthya.sakhi.utils.KeyUtils
@@ -71,9 +73,133 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
+    // Named qualifiers
+    const val AUTH_CLIENT = "authClient"
+    const val AUTH_API = "authApi"
+    const val UAT_CLIENT = "uatClient"
+    const val ABHA_CLIENT = "abhaClient"
+
+    // AUTH client (NO interceptors, for refresh calls only)
+    @Singleton
+    @Provides
+    @Named(AUTH_CLIENT)
+    fun provideAuthClient(loggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
+        return OkHttpClient.Builder()
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
+            .addInterceptor(loggingInterceptor)
+            .build()
+    }
+
+    @Singleton
+    @Provides
+    @Named(AUTH_API)
+    fun provideAuthApiService(
+        moshi: Moshi,
+        @Named(AUTH_CLIENT) httpClient: OkHttpClient
+    ): AmritApiService {
+        return Retrofit.Builder()
+            .baseUrl(KeyUtils.baseTMCUrl())
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .client(httpClient)
+            .build()
+            .create(AmritApiService::class.java)
+    }
+
+    // Main UAT client (with interceptors + authenticator)
+    @Singleton
+    @Provides
+    @Named(UAT_CLIENT)
+    fun provideUatHttpClient(
+        apiAnalyticsInterceptor: ApiAnalyticsInterceptor,
+        tokenInsertTmcInterceptor: TokenInsertTmcInterceptor,
+        tokenAuthenticator: TokenAuthenticator,
+        loggingInterceptor: HttpLoggingInterceptor
+    ): OkHttpClient {
+        return baseClient
+            .newBuilder()
+            .addInterceptor(tokenInsertTmcInterceptor)
+            .addInterceptor(apiAnalyticsInterceptor)
+            .addInterceptor(loggingInterceptor)
+            .authenticator(tokenAuthenticator) // attach authenticator for 401 handling
+            .build()
+    }
+
+    @Singleton
+    @Provides
+    fun provideAmritApiService(
+        moshi: Moshi,
+        @Named(UAT_CLIENT) httpClient: OkHttpClient
+    ): AmritApiService {
+        return Retrofit.Builder()
+            .baseUrl(KeyUtils.baseTMCUrl())
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .client(httpClient)
+            .build()
+            .create(AmritApiService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideTokenInsertTmcInterceptor(): TokenInsertTmcInterceptor {
+        return TokenInsertTmcInterceptor()
+    }
+
+    @Singleton
+    @Provides
+    fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor {
+        val loggingInterceptor = HttpLoggingInterceptor(LoggingInterceptor()).apply {
+            level =
+                if (BuildConfig.DEBUG)
+                    HttpLoggingInterceptor.Level.BODY
+                else
+                    HttpLoggingInterceptor.Level.NONE
+        }
+        return loggingInterceptor
+    }
+
+    // TokenAuthenticator provider
+    @Singleton
+    @Provides
+    fun provideTokenAuthenticator(
+        pref: PreferenceDao,
+        @Named(AUTH_API) authApi: AmritApiService
+    ): TokenAuthenticator {
+        return TokenAuthenticator(pref, authApi)
+    }
+
+    @Singleton
+    @Provides
+    @Named(ABHA_CLIENT)
+    fun provideAbhaHttpClient(loggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
+        return baseClient
+            .newBuilder()
+            .connectTimeout(20, TimeUnit.SECONDS)
+            .readTimeout(20, TimeUnit.SECONDS)
+            .writeTimeout(20, TimeUnit.SECONDS)
+            .addInterceptor(TokenInsertAbhaInterceptor())
+            .addInterceptor(loggingInterceptor)
+            .build()
+    }
+
+    @Singleton
+    @Provides
+    fun provideAbhaApiService(
+        moshi: Moshi,
+        @Named(ABHA_CLIENT) httpClient: OkHttpClient
+    ): AbhaApiService {
+        return Retrofit.Builder()
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            //.addConverterFactory(GsonConverterFactory.create())
+            .baseUrl(KeyUtils.baseAbhaUrl())
+            .client(httpClient)
+            .build()
+            .create(AbhaApiService::class.java)
+    }
+
     private val baseClient =
         OkHttpClient.Builder()
-            .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
             .addInterceptor(ContentTypeInterceptor())
             .build()
 
@@ -98,65 +224,6 @@ object AppModule {
             .client(httpClient)
             .build()
             .create(AmritApiService::class.java)
-    }
-
-
-    @Singleton
-    @Provides
-    @Named("uatClient")
-    fun provideTmcHttpClient(apiAnalyticsInterceptor: ApiAnalyticsInterceptor): OkHttpClient {
-        return baseClient
-            .newBuilder()
-            .connectTimeout(60, TimeUnit.SECONDS)
-            .readTimeout(60, TimeUnit.SECONDS)
-            .writeTimeout(60, TimeUnit.SECONDS)
-            .addInterceptor(TokenInsertTmcInterceptor())
-            .addInterceptor(apiAnalyticsInterceptor)
-            .build()
-    }
-
-    @Singleton
-    @Provides
-    @Named("abhaClient")
-    fun provideAbhaHttpClient(): OkHttpClient {
-        return baseClient
-            .newBuilder()
-            .connectTimeout(20, TimeUnit.SECONDS)
-            .readTimeout(20, TimeUnit.SECONDS)
-            .writeTimeout(20, TimeUnit.SECONDS)
-            .addInterceptor(TokenInsertAbhaInterceptor())
-            .build()
-    }
-
-
-    @Singleton
-    @Provides
-    fun provideAmritApiService(
-        moshi: Moshi,
-        @Named("uatClient") httpClient: OkHttpClient
-    ): AmritApiService {
-        return Retrofit.Builder()
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
-            //.addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(KeyUtils.baseTMCUrl())
-            .client(httpClient)
-            .build()
-            .create(AmritApiService::class.java)
-    }
-
-    @Singleton
-    @Provides
-    fun provideAbhaApiService(
-        moshi: Moshi,
-        @Named("abhaClient") httpClient: OkHttpClient
-    ): AbhaApiService {
-        return Retrofit.Builder()
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
-            //.addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(KeyUtils.baseAbhaUrl())
-            .client(httpClient)
-            .build()
-            .create(AbhaApiService::class.java)
     }
 
     @Singleton

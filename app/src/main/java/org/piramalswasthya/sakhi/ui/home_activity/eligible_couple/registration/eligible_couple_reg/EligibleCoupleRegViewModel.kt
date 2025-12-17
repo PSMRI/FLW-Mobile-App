@@ -57,6 +57,10 @@ class EligibleCoupleRegViewModel @Inject constructor(
     val recordExists: LiveData<Boolean>
         get() = _recordExists
 
+    private val _isEcrCompleted = MutableLiveData<Boolean>()
+    val isEcrCompleted: LiveData<Boolean>
+        get() = _isEcrCompleted
+
     val showDialogEvent = MutableLiveData<String>()
     private val dataset =
         EligibleCoupleRegistrationDataset(context,context, preferenceDao.getCurrentLanguage(),showDialogEvent)
@@ -118,6 +122,8 @@ class EligibleCoupleRegViewModel @Inject constructor(
             ecrRepo.getSavedRecord(benId)?.let {
                 ecrForm = it
                 _recordExists.value = true
+                _isEcrCompleted.value = ecrForm.lmpDate != 0L
+
             } ?: run {
                 _recordExists.value = false
             }
@@ -256,6 +262,10 @@ class EligibleCoupleRegViewModel @Inject constructor(
 
     fun getIndexOfGap9(): Int {
         return dataset.getIndexOfGap9()
+    }
+
+    fun setRecordExist(b: Boolean) {
+        _recordExists.value = b
     }
 
     fun getIndexOfTimeLessThan18() = dataset.getIndexOfTimeLessThan18m()
