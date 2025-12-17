@@ -1863,8 +1863,25 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
         ChildBundle(ninthChildDetails, ninthChildName, dob9, age9, gender9, eighthAndNinthChildGap)
     )
 
+    private val childNameFields = listOf(
+        firstChildName,
+        secondChildName,
+        thirdChildName,
+        forthChildName,
+        fifthChildName,
+        sixthChildName,
+        seventhChildName,
+        eightChildName,
+        ninthChildName
+    )
+
 
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
+        childNameFields.firstOrNull { it.id == formId }?.let { childName ->
+            validateEmptyOnEditText(childName)
+            validateAllCapsOrSpaceOnEditTextWithHindiEnabled(childName)
+        }
+
         if (formId == noOfChildren.id) {
             if (noOfChildren.value.isNullOrEmpty() ||
                 noOfChildren.value?.takeIf { it.isNotEmpty() }?.toInt() == 0
@@ -1900,13 +1917,16 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
                     validateIntMinMax(child.age)
 
                     val months = getMonthsFromDob(currDobLong)
+                    val existingName = child.name.value
                     if (months <= 3) {
-                        child.name.required = false
                         val motherName = selectedBen?.firstName ?: ""
                         child.name.value = "Baby of $motherName"
+                        child.name.required = false
                     } else {
-                        child.name.value = ""
                         child.name.required = true
+                        if (existingName.isNullOrBlank()) {
+                            child.name.value = ""
+                        }
                     }
 
 
