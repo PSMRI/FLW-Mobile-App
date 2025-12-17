@@ -233,7 +233,11 @@ class SignInFragment : Fragment() {
                     if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
                         WorkerUtils.triggerGenBenIdWorker(requireContext())
                         if (BuildConfig.FLAVOR.equals("niramay", true))  {
-                            if (viewModel.getLoggedInUser()?.serviceMapId == 1718){
+                            if (viewModel.getLoggedInUser()?.serviceMapId == 1718 ||
+                                //Below ServiceMapId are form Indian Oil Project
+                                viewModel.getLoggedInUser()?.serviceMapId ==1722 ||
+                                viewModel.getLoggedInUser()?.serviceMapId ==1723 ||
+                                viewModel.getLoggedInUser()?.serviceMapId ==1724){
                                 findNavController().navigate(
                                     if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
                                     else SignInFragmentDirections.actionSignInFragmentToHomeActivity())

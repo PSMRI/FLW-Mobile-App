@@ -6,6 +6,7 @@
     <string name="PREF_D2D_API_KEY" translatable="false">JWT-Token_A</string>
     <string name="PREF_primary_API_KEY" translatable="false">JWT-Token_B</string>
     <string name="PREF_primary_JWT_API_KEY" translatable="false">JWT-Token_N</string>
+    <string name="PREF_primary_REFRESH_TOKEN" translatable="false">Refresh-Token_N</string>
     <string name="PREF_rem_me_uname" translatable="false">user-name-local-saved</string>
     <string name="PREF_rem_me_pwd" translatable="false">password-local-saved</string>
     <string name="PREF_rem_me_state" translatable="false">state_user-local-saved</string>
@@ -59,7 +60,7 @@
     <string name="refer_to">Referred To</string>
     <string name="day_wise_tracking_pf">Pf - Day-wise Tracking</string>
     <string name="day_wise_tracking_pv">PV - Day-wise Tracking</string>
-    <string name="type_of_leprocy">Type of Leprocy</string>
+    <string name="type_of_leprocy">Type of Leprosy</string>
     <string name="treatment_start_date">Treatment Start Date</string>
     <string name="dose_status">DEC and Albendazole Dose Status</string>
     <string name="is_medicine_distributed">Is medicine Distributed</string>
@@ -321,6 +322,7 @@
     <string name="help">Help</string>
     <string name="logout">Logout</string>
     <string name="delete_my_account">Request to delete my account</string>
+    <string name="monthly_claim_summary">Monthly Claim Summary</string>
     <string name="str_add_member">Add Member</string>
     <string name="str_not_available">Not Available</string>
     <string name="support">Support</string>
@@ -356,7 +358,7 @@
     <string name="household_members">Household Members</string>
     <string name="fp_ot_register">FP-OT Register</string>
     <string name="hbnc_day_list">HBNC Day List</string>
-    <string name="hbnc">Hbnc</string>
+    <string name="hbnc">HBNC</string>
     <string name="visit_card">Visit Card</string>
     <string name="hbnc_part_i">Hbnc Part I</string>
     <string name="hbnc_part_ii">Hbnc Part II</string>
@@ -384,10 +386,10 @@
     <string name="follow_up_form">Follow-up  Form</string>
     <string name="tb_suspected_form">Suspected TB case</string>
     <string name="mother_immunization">Mother Immunization</string>
-    <string name="delivery_outcome">Delivery Outcome</string>
-    <string name="delivery_outcome_list">Delivery Outcome List</string>
-    <string name="infant_reg_list">Infant Reg List</string>
-    <string name="infant_reg">Infant Reg</string>
+    <string name="delivery_outcome">No of babies</string>
+    <string name="delivery_outcome_list">No of babies List</string>
+    <string name="infant_reg_list">Newborn Reg List</string>
+    <string name="infant_reg">Newborn Reg</string>
     <string name="communicable_diseases">Communicable Diseases</string>
     <string name="dashboard">Dashboard</string>
     <string name="sign_in">Sign In</string>
@@ -522,8 +524,8 @@
     <string name="signature_name_of_asha">Signature/Name of ASHA</string>
     <string name="cdr_form_from_anm_1">CDR form from ANM 1</string>
     <string name="cdr_form_from_anm_2">CDR form from ANM 2</string>
-    <string name="add_wife">Add Wife</string>
-    <string name="add_husband">Add Husband</string>
+    <string name="add_wife">Register Wife</string>
+    <string name="add_husband">Register Husband</string>
     <string name="hof">HOF</string>
     <string name="leprosy_confirmed">Leprosy Confirmed</string>
     <string name="leprosy_suspected">Leprosy Suspected</string>
@@ -691,7 +693,7 @@
     <string name="str_place_of_mother_referral">Place of mother referral</string>
     <string name="str_other_place_of_mother_referral">Other -Place of mother referral</string>
     <string name="preview_title">Preview</string>
-    <string name="add_children">Add Children</string>
+    <string name="add_children">Register Children</string>
 
     <string name="flu_like_illness">Flu-like illness</string>
     <string name="shakingchills">Shaking chills</string>
@@ -708,6 +710,7 @@
     <string name="slide_test_pv">Malaria Slide Test Pv</string>
     <string name="sympt">Symptoms</string>
     <string name="malaria_submitted">Malaria Form submitted</string>
+    <string name="view_children">View Children</string>
     <string name="newAbha">New</string>
     <string name="oldAbha">Old</string>
 

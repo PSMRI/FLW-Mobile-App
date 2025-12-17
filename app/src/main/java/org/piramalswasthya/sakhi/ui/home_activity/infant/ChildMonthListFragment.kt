@@ -135,7 +135,7 @@ class ChildMonthListFragment : Fragment() {
         super.onStart()
         (activity as? HomeActivity)?.updateActionBar(
             R.drawable.ic__child,
-            getString(R.string.hbyc_month_list)
+            getString(R.string.hbyc)
         )
     }
 

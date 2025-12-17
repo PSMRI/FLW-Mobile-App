@@ -9,6 +9,7 @@ import android.widget.LinearLayout
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.setToStartOfTheDay
@@ -17,6 +18,7 @@ import org.piramalswasthya.sakhi.model.BenBasicCache.Companion.getAgeFromDob
 import org.piramalswasthya.sakhi.model.BenBasicCache.Companion.getYearsFromDate
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.BenStatus
+import org.piramalswasthya.sakhi.model.EligibleCoupleRegCache
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.Gender.FEMALE
@@ -32,6 +34,7 @@ import org.piramalswasthya.sakhi.model.InputType.IMAGE_VIEW
 import org.piramalswasthya.sakhi.model.InputType.RADIO
 import org.piramalswasthya.sakhi.model.InputType.TEXT_VIEW
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.NewBenRegViewModel.Companion.isOtpVerified
+import java.lang.IllegalStateException
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -147,8 +150,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         allCaps = true,
         hasSpeechToText = true,
         hasDependants = true,
-        etInputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
-    )
+        etInputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_NORMAL
+        )
     val gender = FormElement(
         id = 9,
         inputType = RADIO,
@@ -407,7 +410,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         entries = resources.getStringArray(R.array.nbr_reproductive_status_array),
         required = true,
         hasDependants = false,
-        isEnabled = false
+        isEnabled = true
     )
     private val birthCertificateNumber = FormElement(
         id = 1029,
@@ -630,7 +633,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         }
 
         val maritalIndex = list.indexOf(maritalStatus)
-        if (!maritalStatus.value.isNullOrEmpty() && maritalStatus.entries != null && gender.value != null && maritalIndex >= 0) {
+        if (!maritalStatus.value.isNullOrEmpty() && maritalStatus.entries != null && gender.value != null && maritalIndex >= 0 && maritalStatus.value == maritalStatus.getStringFromPosition(2)) {
             val genderField = when (gender.value) {
                 gender.entries!![0] -> wifeName
                 gender.entries!![1] -> husbandName
@@ -641,6 +644,15 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 list.add(maritalIndex + 3, it)
                 list.add(maritalIndex + 4, ageAtMarriage)
             }
+        } else {
+            list.removeAll(
+                listOf(
+                husbandName,
+                wifeName,
+                spouseName,
+                ageAtMarriage
+                )
+            )
         }
 
         if (maritalStatus.entries != null && maritalStatus.value == maritalStatus.entries!![1] && gender.value == gender.entries!![1]) {
@@ -894,7 +906,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         relationToHeadId: Int,
         hoFSpouse: List<BenRegCache> = emptyList(),
         selectedben: BenRegCache?,
-        isAddspouse: Int
+        isAddspouse: Int,
     ) {
         val list = mutableListOf(
             pic,
@@ -1082,7 +1094,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     gender.entries!![0] -> wifeName
                     gender.entries!![1] -> husbandName
                     gender.entries!![2] -> spouseName
-                    else -> throw java.lang.IllegalStateException("Gender unspecified with non empty marital status value!")
+                    else -> throw IllegalStateException("Gender unspecified with non empty marital status value!")
                 }
             )
 
@@ -1205,12 +1217,16 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         setUpPage(list)
     }
 
-    private fun setUpForChild(hoF: BenRegCache, hoFSpouse: BenRegCache?) {
+    private fun setUpForChild(
+        hoF: BenRegCache,
+        hoFSpouse: BenRegCache?,
+    ) {
         if (hoF.gender == MALE) {
             fatherName.value = "${hoF.firstName} ${hoF.lastName ?: ""}"
             motherName.value = hoFSpouse?.let {
                 "${it.firstName} ${it.lastName ?: ""}"
             } ?: hoF.genDetails?.spouseName
+
 
             fatherName.value?.let {
                 if (it.isNotEmpty()) fatherName.inputType = TEXT_VIEW
@@ -1318,6 +1334,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             timeStampDateOfMarriageFromSpouse = hoFSpouse.genDetails?.marriageDate
             agePopup.min = getHoFMinDobMillis()
             agePopup.max = getHofMaxDobMillis()
+            reproductiveStatus.isEnabled = true
         }
     }
     private fun setUpPageforOthers(
@@ -1688,6 +1705,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
     }
 
 
+
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
         return when (formId) {
 
@@ -1824,10 +1842,14 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     else -> maritalStatusMale
                 }
 
+
+
                 maritalStatus.arrayId = when (index) {
                     1 -> R.array.nbr_marital_status_female_array
                     else -> R.array.nbr_marital_status_male_array
+
                 }
+
 
                 relationToHead.entries = when (index) {
                     0 -> relationToHeadListMale
@@ -1836,6 +1858,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 }
                 val listChanged = if (hasThirdPage()) {
 
+                    Log.e("ThirdPage","isThird")
                     updateReproductiveOptionsBasedOnAgeGender(formId = gender.id)
                     triggerDependants(
                         source = rchId,
@@ -1890,12 +1913,12 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     }
 
                     maritalStatus.entries!![1] -> {
-                        if (gender.value == gender.entries!![1]) {
-                            fatherName.required = false
-                            motherName.required = false
-                        } else {
+                        if (gender.value == gender.entries!![2]) {
                             fatherName.required = true
                             motherName.required = true
+                        } else {
+                            fatherName.required = false
+                            motherName.required = false
                         }
                         husbandName.required = true
                         wifeName.required = true
@@ -1904,13 +1927,14 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                         return triggerDependants(
                             source = maritalStatus, addItems = when (gender.value) {
                                 gender.entries!![0] -> listOf(wifeName, ageAtMarriage)
-                                gender.entries!![1] -> listOf(husbandName, ageAtMarriage)
+                                gender.entries!![1] -> listOf(husbandName, ageAtMarriage,haveChildren)
                                 else -> listOf(spouseName, ageAtMarriage)
                             }, removeItems = listOf(
                                 wifeName,
                                 husbandName,
                                 spouseName,
-                                ageAtMarriage
+                                ageAtMarriage,
+                                haveChildren
                             )
                         ).also {
                             if (relationToHead.value == relationToHead.entries!![0]) {
@@ -1932,13 +1956,14 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                         return triggerDependants(
                             source = maritalStatus, addItems = when (gender.value) {
                                 gender.entries!![0] -> listOf(wifeName, ageAtMarriage)
-                                gender.entries!![1] -> listOf(husbandName, ageAtMarriage)
+                                gender.entries!![1] -> listOf(husbandName, ageAtMarriage,haveChildren)
                                 else -> listOf(spouseName, ageAtMarriage)
                             }, removeItems = listOf(
                                 wifeName,
                                 husbandName,
                                 spouseName,
-                                ageAtMarriage
+                                ageAtMarriage,
+                                haveChildren
                             )
                         )
                     }
@@ -2843,8 +2868,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 removeItems = emptyList(),
                 position = -2
             ) else {
-                fatherName.required = true
-                motherName.required = true
+               // fatherName.required = true
+                // motherName.required = true
                 triggerDependants(
                     source = rchId,
                     removeItems = listOf(reproductiveStatus),
@@ -2915,6 +2940,27 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         reasonOfDeath.value = saved?.reasonOfDeath
         placeOfDeath.value = saved?.placeOfDeath
         otherPlaceOfDeath.value = saved?.otherPlaceOfDeath
+    }
+
+    fun mapValueToBen(ben: BenRegCache?): Boolean {
+        var isUpdated = false
+        val rchIdFromBen = ben?.rchId?.takeIf { it.isNotEmpty() }?.toLong()
+        val aadharNoFromBen = ben?.aadharNum?.takeIf { it.isNotEmpty() }
+        rchId.value?.takeIf {
+            it.isNotEmpty()
+        }?.toLong()?.let {
+            if (it != rchIdFromBen) {
+                ben?.rchId = it.toString()
+                isUpdated = true
+            }
+        }
+
+        if (isUpdated) {
+            if (ben?.processed != "N")
+                ben?.processed = "U"
+            ben?.syncState = SyncState.UNSYNCED
+        }
+        return isUpdated
     }
 
 }

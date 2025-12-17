@@ -36,6 +36,9 @@ object WorkerUtils {
         val CUFYORSFormSyncWorker = OneTimeWorkRequestBuilder<CUFYORSFormSyncWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
+        val hbncAndHbyceWorker = OneTimeWorkRequestBuilder<FormSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
         val CUFYIFAFormSyncWorker = OneTimeWorkRequestBuilder<CUFYIFAFormSyncWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
@@ -168,6 +171,7 @@ object WorkerUtils {
                 pullWorkRequest
             )
             .then(CUFYORSFormSyncWorker)
+            .then(hbncAndHbyceWorker)
             .then(CUFYIFAFormSyncWorker)
             .then(CUFYSAMFormSyncWorker)
             .then(pullEyeSurgeryFormSyncWorker)
@@ -277,6 +281,10 @@ object WorkerUtils {
         val CUFYORSFormSyncWorkerRequest  = OneTimeWorkRequestBuilder<CUFYORSFormSyncWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
+        val hbncAndHbyceWorkerrRequest  = OneTimeWorkRequestBuilder<FormSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+
         val CUFYIFAFormSyncWorker = OneTimeWorkRequestBuilder<CUFYIFAFormSyncWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
@@ -370,6 +378,7 @@ object WorkerUtils {
 //            .then(pushChildHBYCToAmritWorker)
             .then(pushChildHBNCToAmritWorker)
             .then(CUFYORSFormSyncWorkerRequest)
+            .then(hbncAndHbyceWorkerrRequest)
             .then(CUFYIFAFormSyncWorker)
             .then(pushEyeSurgeryFormSyncWorker)
             .then(pushFilariaMDAFormSyncWorker)
@@ -389,6 +398,10 @@ object WorkerUtils {
 
     fun triggerAmritPullWorker(context: Context) {
         val CUFYORSFormSyncWorker = OneTimeWorkRequestBuilder<CUFYORSFormSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+
+        val hbncAndHbyceWorker = OneTimeWorkRequestBuilder<FormSyncWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
         val CUFYIFAFormSyncWorker = OneTimeWorkRequestBuilder<CUFYIFAFormSyncWorker>()
@@ -529,6 +542,7 @@ object WorkerUtils {
             .then(pullReferWorkRequest)
             .then(pullIncentiveActivityWorkRequest)
             .then(CUFYORSFormSyncWorker)
+            .then(hbncAndHbyceWorker)
             .then(CUFYIFAFormSyncWorker)
             .then(CUFYSAMFormSyncWorker)
             .then(pullUwinWorkerRequest)

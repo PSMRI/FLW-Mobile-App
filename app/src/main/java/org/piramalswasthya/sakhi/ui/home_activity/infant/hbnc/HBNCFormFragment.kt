@@ -44,10 +44,7 @@ class HBNCFormFragment : Fragment() {
     private lateinit var saveButton: Button
 
     val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-
-    //    val dob = dateFormat.format(Date())
     private val args: HBNCFormFragmentArgs by navArgs()
-
     private val infantListViewModel: InfantListViewModel by viewModels()
     private val viewModel: HBNCFormViewModel by viewModels()
     var benId = -1L
@@ -128,11 +125,10 @@ class HBNCFormFragment : Fragment() {
         val isViewMode = args.isViewMode
         benId = args.benId
         hhId = args.hhId
-        val currentLang = pref.getCurrentLanguage()  // ye return karega Languages enum value
+        val currentLang = pref.getCurrentLanguage()
         langCode = currentLang.symbol
 
         viewModel.fetchSNCUStatus(benId)
-
         infantListViewModel.getBenById(benId) { ben ->
             infantBinding.btnHBNC.visibility=View.GONE
             infantBinding.dueIcon.visibility=View.GONE
@@ -147,10 +143,11 @@ class HBNCFormFragment : Fragment() {
             if (dobMillis != null) {
                 dob = dobMillis
 
-                viewModel.loadFormSchema(benId, HBNC_FORM_ID, visitDay!!, true, dob,langCode)
+                viewModel.loadFormSchema(benId, HBNC_FORM_ID, visitDay!!, isViewMode, dob,langCode)
             } else {
-                viewModel.loadFormSchema(benId, HBNC_FORM_ID, visitDay!!, true, dob,langCode)
+                viewModel.loadFormSchema(benId, HBNC_FORM_ID, visitDay!!, isViewMode, dob,langCode)
             }
+
         }
 
         viewModel.navigateToCdsr.observe(viewLifecycleOwner) { shouldNavigate ->
@@ -193,7 +190,7 @@ class HBNCFormFragment : Fragment() {
                 },)
 
                 recyclerView.adapter = adapter
-
+                adapter.notifyDataSetChanged()
                 val isSNCUCase = viewModel.isSNCU.value ?: false
                 if (isSNCUCase) {
                     val updatedFields = adapter.getUpdatedFields().map { field ->
@@ -337,13 +334,6 @@ class HBNCFormFragment : Fragment() {
         if (hasErrors) return
         lifecycleScope.launch {
             viewModel.saveFormResponses(benId, hhId)
-//            val isBabyAlive = updatedFields.find { it.fieldId == "is_baby_alive" }?.value?.toString() ?: "Yes"
-//            if (isBabyAlive.equals("No", ignoreCase = true)) {
-////                viewModel.triggerNavigate()
-//            } else {
-//                viewModel.triggerPopBack()
-//            }
-
         }
     }
     override fun onStart() {

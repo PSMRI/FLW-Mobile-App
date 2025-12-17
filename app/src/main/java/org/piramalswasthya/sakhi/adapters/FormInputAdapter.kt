@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.adapters
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Context
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.res.ColorStateList
 import android.content.res.Resources
@@ -339,6 +340,11 @@ class FormInputAdapter(
         }
 
         fun bind(item: FormElement, isEnabled: Boolean, formValueListener: FormValueListener?) {
+            binding.tilRvDropdown.clearFocus()
+            binding.tilEditText.clearFocus()
+            binding.et.clearFocus()
+            binding.actvRvDropdown.clearFocus()
+            binding.actvRvDropdown.showSoftInputOnFocus = false
             binding.form = item
             if (item.errorText == null) {
                 binding.tilRvDropdown.error = null
@@ -353,7 +359,11 @@ class FormInputAdapter(
                 return
             }
 
+            hideKeyboardImmediately()
+
+
             binding.actvRvDropdown.setOnItemClickListener { _, _, index, _ ->
+                hideKeyboardWithRetry()
                 item.value = item.entries?.get(index)
                 Timber.d("Item DD : $item")
 //                if (item.hasDependants || item.hasAlertError) {
@@ -363,10 +373,34 @@ class FormInputAdapter(
                 binding.tilRvDropdown.error = item.errorText
             }
 
+            binding.actvRvDropdown.setOnClickListener {
+                hideKeyboardWithRetry()
+            }
+
             item.errorText?.let { binding.tilRvDropdown.error = it }
             binding.executePendingBindings()
 
         }
+
+        private fun hideKeyboardImmediately() {
+            val imm = binding.root.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
+        }
+
+        private fun hideKeyboardWithRetry() {
+            val imm = binding.root.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+
+            imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
+
+            binding.root.postDelayed({
+                imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
+            }, 50)
+
+            binding.root.postDelayed({
+                imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
+            }, 200)
+        }
+
     }
 
     class RadioInputViewHolder private constructor(private val binding: RvItemFormRadioV2Binding) :
@@ -444,6 +478,9 @@ class FormInputAdapter(
                         if (item.value == it) rdBtn.isChecked = true
                         rdBtn.setOnCheckedChangeListener { _, b ->
                             if (b) {
+                                binding.root.clearFocus()
+                                val imm = binding.root.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                                imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
                                 item.value = it
                                 if (item.hasDependants || item.hasAlertError) {
                                     Timber.d(
