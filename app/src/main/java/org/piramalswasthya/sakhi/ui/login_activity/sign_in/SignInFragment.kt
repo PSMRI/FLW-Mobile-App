@@ -30,8 +30,8 @@ import org.piramalswasthya.sakhi.helpers.NetworkResponse
 import org.piramalswasthya.sakhi.model.LocationEntity
 import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
-import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
+import org.piramalswasthya.sakhi.utils.NoCopyPasteHelper
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import javax.inject.Inject
 
@@ -56,12 +56,8 @@ class SignInFragment : Fragment() {
     }
 
     private val userChangeAlert by lazy {
-//        var str = "previously logged in with " + viewModel.getLoggedInUser()?.userName + " do you" +
-//                " want to override? "
-
         var username = "<b>${viewModel.getLoggedInUser()?.userName}</b>"
         var name = "<b>${viewModel.getLoggedInUser()?.name}</b>"
-        // var str = "You are previously logged in with Username: $username as $name, Do you want to Log in with another User?"
 
         var str =
             getString(R.string.login_diff_user).replace("@username", username).replace("asha", name)
@@ -100,6 +96,10 @@ class SignInFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSignInBinding.inflate(layoutInflater, container, false)
+
+        NoCopyPasteHelper.disableCopyPaste(binding.etPassword)
+        NoCopyPasteHelper.disableCopyPaste(binding.etUsername)
+
         return binding.root
     }
 
@@ -130,7 +130,6 @@ class SignInFragment : Fragment() {
             }
             prefDao.saveSetLanguage(currentLanguage)
             val refresh = Intent(requireContext(), LoginActivity::class.java)
-            //Timber.d("refresh Called!-${Locale.getDefault().language}-${savedLanguage.symbol}-")
             requireActivity().finish()
             startActivity(refresh)
             activity?.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
@@ -163,7 +162,6 @@ class SignInFragment : Fragment() {
                     binding.pbSignIn.visibility = View.INVISIBLE
                     var hasRememberMeUsername = false
                     var hasRememberMePassword = false
-                    var hasRememberMeState = false
                     viewModel.fetchRememberedUserName()?.let {
                         binding.etUsername.setText(it)
                         hasRememberMeUsername = true

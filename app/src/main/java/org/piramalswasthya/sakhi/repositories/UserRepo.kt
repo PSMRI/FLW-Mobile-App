@@ -133,7 +133,6 @@ class UserRepo @Inject constructor(
                             encrypt(password)
                         )
                     )
-                Timber.d("JWT : $response")
                 if (!response.isSuccessful) {
                     return@withContext false
                 }
@@ -180,7 +179,6 @@ class UserRepo @Inject constructor(
                         encryptedPassword
                     )
                 )
-            Timber.d("JWT : $response")
             val responseBody = JSONObject(
                 response.body()?.string()
                     ?: throw IllegalStateException("Response success but data missing @ $response")

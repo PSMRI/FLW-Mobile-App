@@ -5,7 +5,7 @@ import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import android.view.WindowManager
+import android.view.MotionEvent
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.crashlytics.internal.common.CommonUtils
@@ -18,8 +18,7 @@ import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.MyContextWrapper
-import org.piramalswasthya.sakhi.utils.RootedUtil
-import java.util.*
+import org.piramalswasthya.sakhi.helpers.TapjackingProtectionHelper
 
 
 @AndroidEntryPoint
@@ -46,16 +45,23 @@ class LoginActivity : AppCompatActivity() {
         )
     }
 
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        return if (TapjackingProtectionHelper.isTouchAllowed(this, ev)) {
+            super.dispatchTouchEvent(ev)
+        } else {
+            false
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         // This will block user to cast app screen
-        if (BuildConfig.FLAVOR.equals("niramay", true) ||BuildConfig.FLAVOR.equals("xushrukha", true) || BuildConfig.FLAVOR.equals("saksham", true)){
-            window.setFlags(
-                WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE
-            )
+        if (BuildConfig.FLAVOR.equals("niramay", true) ||BuildConfig.FLAVOR.equals("xushrukha", true) || BuildConfig.FLAVOR.equals("saksham", true)||BuildConfig.FLAVOR.equals("mitanin", true)){
+            TapjackingProtectionHelper.applyWindowSecurity(this)
         }
+        TapjackingProtectionHelper.applyWindowSecurity(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+        TapjackingProtectionHelper.enableTouchFiltering(this)
         createSyncServiceNotificationChannel()
         if (!BuildConfig.DEBUG && isDeviceRootedOrEmulator()) {
             AlertDialog.Builder(this)
@@ -65,6 +71,16 @@ class LoginActivity : AppCompatActivity() {
                 .setPositiveButton("Exit") { dialog, id -> finish() }
                 .show()
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        window.decorView.alpha = 0f
+    }
+
+    override fun onResume() {
+        super.onResume()
+        window.decorView.alpha = 1f
     }
 
     private fun createSyncServiceNotificationChannel() {
