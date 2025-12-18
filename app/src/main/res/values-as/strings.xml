@@ -196,7 +196,7 @@
     <string name="tb_screening_form">TB স্ক্ৰীনিং ফৰ্ম</string>
     <string name="tb_suspected_form">TB সন্দেহভাৱিত ফৰ্ম</string>
     <string name="mother_immunization">মাৰ পৰিস্কৃতি</string>
-    <string name="delivery_outcome">কেঁচুৱাৰ কোনো নাই</string>
+    <string name="delivery_outcome">জন্ম হোৱা মুঠ কেঁচুৱাৰ সংখ্যা</string>
     <string name="delivery_outcome_list">কেঁচুৱাৰ সংখ্যা তালিকা</string>
     <string name="infant_reg_list">নৱজাতকৰ ৰেগ তালিকা</string>
     <string name="infant_reg">নৱজাতক ৰেজি</string>
