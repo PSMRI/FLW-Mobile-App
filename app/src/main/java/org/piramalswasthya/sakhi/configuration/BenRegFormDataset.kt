@@ -2696,9 +2696,6 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             if (updatedReproductiveOptions.size == 1) {
                 reproductiveStatus.value = updatedReproductiveOptions[0]
             }
-            if (maritalStatus.value != null) {
-                reproductiveStatus.isEnabled = true
-            }
         } else {
 
             val updatedReproductiveOptions = when {
