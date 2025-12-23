@@ -410,7 +410,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         entries = resources.getStringArray(R.array.nbr_reproductive_status_array),
         required = true,
         hasDependants = false,
-        isEnabled = true
+        isEnabled = false
     )
     private val birthCertificateNumber = FormElement(
         id = 1029,
@@ -1334,7 +1334,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             timeStampDateOfMarriageFromSpouse = hoFSpouse.genDetails?.marriageDate
             agePopup.min = getHoFMinDobMillis()
             agePopup.max = getHofMaxDobMillis()
-            reproductiveStatus.isEnabled = true
+//            reproductiveStatus.isEnabled = true
         }
     }
     private fun setUpPageforOthers(
