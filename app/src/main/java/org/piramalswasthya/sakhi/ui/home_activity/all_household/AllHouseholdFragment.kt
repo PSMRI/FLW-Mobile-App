@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.EditText
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -63,6 +64,19 @@ class AllHouseholdFragment : Fragment() {
                 viewModel.navigateToNewHouseholdRegistration(true)
                 dialog.dismiss()
             }.create()
+    }
+
+    private val softDeleteAlert by lazy {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Deactivate Household")
+            .setMessage("Deactivating this household will disable further updates. The household details will remain visible for reference. Do you want to proceed?")
+            .setPositiveButton(resources.getString(R.string.yes)) { _, _ ->
+              Toast.makeText(requireActivity(),"clicked dialog",Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton(resources.getString(R.string.no)) { d, _ ->
+                d.dismiss()
+            }
+            .create()
     }
 
     private val addBenAlert by lazy {
@@ -207,7 +221,7 @@ class AllHouseholdFragment : Fragment() {
             binding.btnNextPage.visibility = View.GONE
         }
 //        binding.tvEmptyContent.text = resources.getString(R.string.no_records_found_hh)
-        val householdAdapter = HouseHoldListAdapter("",isDisease, prefDao, HouseHoldListAdapter.HouseholdClickListener({
+        val householdAdapter = HouseHoldListAdapter("",isDisease, prefDao,true, HouseHoldListAdapter.HouseholdClickListener({
             if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
                 findNavController().navigate(
                     AllHouseholdFragmentDirections.actionAllHouseholdFragmentToNewHouseholdFragment(
@@ -245,7 +259,10 @@ class AllHouseholdFragment : Fragment() {
         {
 
 
-        },
+        }, {
+            Toast.makeText(requireActivity(),"${it.isDeactivate}",Toast.LENGTH_SHORT).show()
+            softDeleteAlert.show()
+        }
             ))
         binding.rvAny.adapter = householdAdapter
 

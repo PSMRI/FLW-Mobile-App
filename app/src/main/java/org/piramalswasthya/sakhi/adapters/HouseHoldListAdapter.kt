@@ -11,7 +11,7 @@ import org.piramalswasthya.sakhi.databinding.RvItemHouseholdBinding
 import org.piramalswasthya.sakhi.model.HouseHoldBasicDomain
 
 
-class HouseHoldListAdapter(private val diseaseType: String, private var isDisease: Boolean, val pref: PreferenceDao, private val clickListener: HouseholdClickListener) :
+class HouseHoldListAdapter(private val diseaseType: String, private var isDisease: Boolean, val pref: PreferenceDao,private val isSoftDeleteEnabled:Boolean = false, private val clickListener: HouseholdClickListener) :
     ListAdapter<HouseHoldBasicDomain, HouseHoldListAdapter.HouseHoldViewHolder>(
         HouseHoldDiffUtilCallBack
     ) {
@@ -44,7 +44,8 @@ class HouseHoldListAdapter(private val diseaseType: String, private var isDiseas
             clickListener: HouseholdClickListener,
             isDisease: Boolean,
             pref: PreferenceDao,
-            diseaseType: String
+            diseaseType: String,
+            isSoftDeleteEnabled: Boolean
         ) {
             binding.household = item
             binding.clickListener = clickListener
@@ -58,6 +59,8 @@ class HouseHoldListAdapter(private val diseaseType: String, private var isDiseas
                 binding.button5.visibility = View.GONE
             }
             */
+
+            if (isSoftDeleteEnabled) binding.ivSoftDelete.visibility = View.VISIBLE
 
 
 
@@ -84,7 +87,7 @@ class HouseHoldListAdapter(private val diseaseType: String, private var isDiseas
     }
 
     override fun onBindViewHolder(holder: HouseHoldViewHolder, position: Int) {
-        holder.bind(getItem(position), clickListener,isDisease, pref, diseaseType)
+        holder.bind(getItem(position), clickListener,isDisease, pref, diseaseType,isSoftDeleteEnabled)
     }
 
 
@@ -92,11 +95,13 @@ class HouseHoldListAdapter(private val diseaseType: String, private var isDiseas
         val hhDetails: (hhId: Long) -> Unit,
         val showMember: (hhId: Long) -> Unit,
         val newBen: (hh: HouseHoldBasicDomain) -> Unit,
-        val addMDA: (hh: HouseHoldBasicDomain) -> Unit
+        val addMDA: (hh: HouseHoldBasicDomain) -> Unit,
+        val softDeleteHh: (hh: HouseHoldBasicDomain) -> Unit,
     ) {
         fun onClickedForHHDetails(item: HouseHoldBasicDomain) = hhDetails(item.hhId)
         fun onClickedForMembers(item: HouseHoldBasicDomain) = showMember(item.hhId)
         fun onClickedForNewBen(item: HouseHoldBasicDomain) = newBen(item)
         fun onClickedAddMDA(item: HouseHoldBasicDomain) = addMDA(item)
+        fun onClickSoftDeleteHh(item: HouseHoldBasicDomain) = softDeleteHh(item)
     }
 }

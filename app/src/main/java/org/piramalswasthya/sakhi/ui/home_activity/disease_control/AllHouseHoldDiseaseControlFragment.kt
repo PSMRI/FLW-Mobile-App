@@ -55,7 +55,7 @@ class AllHouseHoldDiseaseControlFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val householdAdapter = HouseHoldListAdapter(viewModel.diseaseType,isDisease, prefDao, HouseHoldListAdapter.HouseholdClickListener({
+        val householdAdapter = HouseHoldListAdapter(viewModel.diseaseType,isDisease, prefDao, false,HouseHoldListAdapter.HouseholdClickListener({
 
         }, {
             if(viewModel.diseaseType == IconDataset.Disease.MALARIA.toString()){
@@ -102,7 +102,9 @@ class AllHouseHoldDiseaseControlFragment : Fragment() {
                     it.hhId
                 )
             )
-        },
+        },{
+
+        }
             ))
         binding.rvAny.adapter = householdAdapter
 
