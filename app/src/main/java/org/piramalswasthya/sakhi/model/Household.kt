@@ -76,7 +76,8 @@ data class HouseholdCache(
     var updatedBy: String? = null,
     var updatedTimeStamp: Long? = null,
     var processed: String,
-    var isDraft: Boolean
+    var isDraft: Boolean,
+    val isDeactivate: Boolean =false
 ) : FormDataModel {
 
 
@@ -134,6 +135,7 @@ data class HouseholdCache(
             mohallaName = family?.mohallaName,
             rationCardDetails = family?.rationCardDetails,
             districtname = locationRecord.district.name,
+            isDeactivate = isDeactivate
         )
 
     }
@@ -252,6 +254,7 @@ data class HouseholdNetwork(
     @Json(name = "blockid") val blockid: Int = 0,
 
     @Json(name = "villageid") val villageid: Int = 0,
+    val isDeactivate: Boolean =false
 
     )
 
@@ -267,7 +270,8 @@ data class HouseholdBasicCache(
             contactNumber = household.family?.familyHeadPhoneNo?.toString() ?: "Not Available",
             headSurname = household.family?.familyName ?: "Not Available",
             headFullName = "${household.family?.familyHeadName} ${household.family?.familyName ?: ""}",
-            numMembers = numMembers
+            numMembers = numMembers,
+            isDeactivate = household.isDeactivate
 
         )
     }
@@ -280,4 +284,5 @@ data class HouseHoldBasicDomain(
     val contactNumber: String,
     val headFullName: String = "$headName $headSurname",
     val numMembers: Int,
+    val isDeactivate: Boolean =false
 )
