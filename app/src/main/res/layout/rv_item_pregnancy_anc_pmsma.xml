@@ -7,7 +7,7 @@
 
         <variable
             name="visit"
-            type="org.piramalswasthya.sakhi.model.PMSMAStatus" />
+            type="org.piramalswasthya.sakhi.model.AncStatus" />
 
         <variable
             name="clickListener"

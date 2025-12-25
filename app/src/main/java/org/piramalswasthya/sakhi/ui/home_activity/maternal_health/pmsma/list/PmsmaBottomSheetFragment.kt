@@ -17,14 +17,17 @@ import org.piramalswasthya.sakhi.databinding.BottomSheetAncBinding
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pmsma.pmsmaHighRiskList.PmsmaHighRiskListFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.list.PwAncVisitsListFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.list.PwAncVisitsListViewModel
+import org.piramalswasthya.sakhi.utils.Log
 
 @AndroidEntryPoint
 class PmsmaBottomSheetFragment : BottomSheetDialogFragment() {
 
     private var _binding: BottomSheetAncBinding? = null
-    private val binding get() = _binding!!
+    private val binding: BottomSheetAncBinding
+        get() = _binding!!
 
-    private val viewModel: PmsmaVisitsListViewModel by viewModels({ requireParentFragment() })
+//    private val viewModel: PmsmaVisitsListViewModel by viewModels({ requireParentFragment() })
+    private val viewModel: PwAncVisitsListViewModel by viewModels({ requireParentFragment() })
     private var hhId: Long = -1
 
     override fun onCreateView(
@@ -54,9 +57,13 @@ class PmsmaBottomSheetFragment : BottomSheetDialogFragment() {
 
     private fun observeList() {
         lifecycleScope.launch {
-            viewModel.bottomSheetList.collect { list ->
-                (binding.rvAnc.adapter as? PmsmaVisitAdapter)?.submitList(list)
-            }
+//            viewModel.bottomSheetList.collect { list ->
+//                (binding.rvAnc.adapter as? PmsmaVisitAdapter)?.submitList(list)
+//            }
+//            viewModel.pmsmaBottomSheetList.collect { list ->
+//                Log.v("nnfnsdnmn","${list}")
+//                (binding.rvAnc.adapter as? PmsmaVisitAdapter)?.submitList(list)
+//            }
         }
     }
 

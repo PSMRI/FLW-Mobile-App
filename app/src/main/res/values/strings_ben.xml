@@ -309,6 +309,17 @@
         <item>In Transit</item>
         <item>Other Place of Abortion</item>
     </string-array>
+
+
+    <string-array name="place_of_anc_array">
+        <item>Sub-Centre</item>
+        <item>VHND/VHSND</item>
+        <item>PHC</item>
+        <item>PMSMA Visit</item>
+        <item>CHC</item>
+        <item>District Hospital</item>
+        <item>Medical College Hospital</item>
+    </string-array>
     <string-array name="reason_of_death_array">
         <item>Natural Death</item>
         <item>Accident</item>

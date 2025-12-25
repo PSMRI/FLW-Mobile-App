@@ -317,23 +317,37 @@ interface BenDao {
     @Transaction
     @Query("SELECT ben.*  from BEN_BASIC_CACHE  ben inner join pregnancy_register pwr on pwr.benId = ben.benId where pwr.active = 1 and ben.reproductiveStatusId=2 and ben.villageId=:selectedVillage group by ben.benId")
     fun getAllRegisteredPregnancyWomenList(selectedVillage: Int): Flow<List<BenWithAncVisitCache>>
+//
+//    @Transaction
+//    @Query("""
+//    SELECT ben.*
+//    FROM BEN_BASIC_CACHE ben
+//    INNER JOIN pregnancy_register pwr ON pwr.benId = ben.benId
+//    WHERE pwr.active = 1
+//      AND ben.reproductiveStatusId = 2
+//      AND ben.villageId = :selectedVillage
+//        AND (ben.isDeath = 0 OR ben.isDeath IS NULL)
+//      AND (ben.benId IN (SELECT benId FROM PMSMA WHERE highriskSymbols = 1)
+//           OR ben.benId IN (SELECT benId FROM PREGNANCY_ANC WHERE anyHighRisk = 1  AND placeOfAncId = 3))
+//    GROUP BY ben.benId
+//""")
+//    fun getAllHighRiskPregnancyWomenList(selectedVillage: Int): Flow<List<BenWithAncVisitCache>>
+//
 
-    @Transaction
-    @Query("""
-    SELECT ben.*  
-    FROM BEN_BASIC_CACHE ben
-    INNER JOIN pregnancy_register pwr ON pwr.benId = ben.benId
-    WHERE pwr.active = 1 
-      AND ben.reproductiveStatusId = 2  
-      AND ben.villageId = :selectedVillage
-        AND (ben.isDeath = 0 OR ben.isDeath IS NULL)
-      AND (ben.benId IN (SELECT benId FROM PMSMA WHERE highriskSymbols = 1)
-           OR ben.benId IN (SELECT benId FROM PREGNANCY_ANC WHERE anyHighRisk = 1))
-    GROUP BY ben.benId
+@Transaction
+@Query("""
+    SELECT DISTINCT b.*
+    FROM BEN_BASIC_CACHE b
+    INNER JOIN pregnancy_register pwr ON pwr.benId = b.benId
+    INNER JOIN pregnancy_anc a ON a.benId = b.benId
+    WHERE b.villageId = :selectedVillage
+      AND pwr.active = 1
+      AND b.reproductiveStatusId = 2
+      AND (a.anyHighRisk = 1 OR a.placeOfAncId = 3)
 """)
-    fun getAllHighRiskPregnancyWomenList(selectedVillage: Int): Flow<List<BenWithAncVisitCache>>
-
-
+fun getAllHighRiskPregnancyWomenList(
+    selectedVillage: Int
+): Flow<List<BenWithAncVisitCache>>
 
     @Transaction
     @Query("""
@@ -395,19 +409,34 @@ interface BenDao {
 
     @Query("SELECT count(distinct(ben.benId)) FROM BEN_BASIC_CACHE  ben inner join pregnancy_anc pwr on pwr.benId = ben.benId where pwr.isAborted = 1 and ben.villageId=:selectedVillage")
     fun getAllAbortionWomenListCount(selectedVillage: Int): Flow<Int>
+//
+//    @Query("""
+//    SELECT COUNT(DISTINCT b.benId)
+//    FROM BEN_BASIC_CACHE b
+//    INNER JOIN pregnancy_register pwr ON pwr.benId = b.benId
+//    LEFT JOIN PMSMA p ON b.benId = p.benId AND p.highriskSymbols = 1
+//    LEFT JOIN PREGNANCY_ANC a ON b.benId = a.benId AND a.anyHighRisk = 1
+//    WHERE b.villageId = :selectedVillage
+//      AND pwr.active = 1
+//      AND b.reproductiveStatusId = 2
+//      AND (p.benId IS NOT NULL OR a.benId IS NOT NULL)
+//""")
+//    fun getHighRiskWomenCount(selectedVillage: Int): Flow<Int>
+
 
     @Query("""
     SELECT COUNT(DISTINCT b.benId)
     FROM BEN_BASIC_CACHE b
     INNER JOIN pregnancy_register pwr ON pwr.benId = b.benId
-    LEFT JOIN PMSMA p ON b.benId = p.benId AND p.highriskSymbols = 1
-    LEFT JOIN PREGNANCY_ANC a ON b.benId = a.benId AND a.anyHighRisk = 1
+    INNER JOIN PREGNANCY_ANC a ON b.benId = a.benId
     WHERE b.villageId = :selectedVillage
       AND pwr.active = 1
       AND b.reproductiveStatusId = 2
-      AND (p.benId IS NOT NULL OR a.benId IS NOT NULL)
+      AND (a.anyHighRisk = 1 OR a.placeOfAncId = 3)
 """)
     fun getHighRiskWomenCount(selectedVillage: Int): Flow<Int>
+
+
 
     @Query("SELECT count(distinct(ben.benId)) FROM BEN_BASIC_CACHE  ben inner join pregnancy_anc pwr on pwr.benId = ben.benId where pwr.isActive = 1 and (pwr.ancDate + :nonFollowUpDuration) <= :currentTime and pwr.ancDate > (:currentTime - :year) and ben.reproductiveStatusId = 2 and ben.villageId = :selectedVillage")
     fun getAllRegisteredPregnancyWomenNonFollowUpListCount(
