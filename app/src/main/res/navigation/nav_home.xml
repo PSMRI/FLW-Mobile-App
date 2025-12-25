@@ -901,11 +901,15 @@
         <argument
             android:name="visitNumber"
             app:argType="integer" />
-
+        <argument
+            android:name="fromPmsma"
+            app:argType="boolean"
+            android:defaultValue="false" />
         <argument
             android:name="lastItemClick"
             app:argType="boolean"
             android:defaultValue="false" />
+
         <action
             android:id="@+id/action_pwAncFormFragment_to_mdsrObjectFragment"
             app:destination="@id/mdsrObjectFragment"
@@ -1431,7 +1435,9 @@
             android:name="benId"
             app:argType="long" />
     </fragment>
-
+    <action
+        android:id="@+id/action_global_pwAncFormFragment"
+        app:destination="@id/pwAncFormFragment" />
     <fragment
         android:id="@+id/pmsmaHighRiskListFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pmsma.pmsmaHighRiskList.PmsmaHighRiskListFragment"

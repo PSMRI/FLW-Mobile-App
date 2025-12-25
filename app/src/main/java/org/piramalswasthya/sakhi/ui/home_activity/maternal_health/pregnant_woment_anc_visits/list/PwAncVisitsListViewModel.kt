@@ -5,66 +5,93 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.helpers.filterPwAncList
 import org.piramalswasthya.sakhi.model.AncStatus
 import org.piramalswasthya.sakhi.model.BenWithAncListDomain
-import org.piramalswasthya.sakhi.repositories.MaternalHealthRepo
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
-import org.piramalswasthya.sakhi.ui.home_activity.all_ben.AllBenFragmentArgs
 import javax.inject.Inject
+
 @HiltViewModel
 class PwAncVisitsListViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    recordsRepo: RecordsRepo,
-    private val maternalHealthRepo: MaternalHealthRepo
+    recordsRepo: RecordsRepo
 ) : ViewModel() {
 
-    private var sourceFromArgs = PwAncVisitsListFragmentArgs.fromSavedStateHandle(savedStateHandle).source
+    private val sourceFromArgs =
+        PwAncVisitsListFragmentArgs.fromSavedStateHandle(savedStateHandle).source
 
     private val allBenList = when (sourceFromArgs) {
         1 -> recordsRepo.getRegisteredPregnantWomanNonFollowUpList()
         else -> recordsRepo.getRegisteredPregnantWomanList()
     }
 
-    private val allBenListWithHighRisk = recordsRepo.getHighRiskPregnantWomanList()
+    private val highRiskBenList = recordsRepo.getHighRiskPregnantWomanList()
+
     private val filter = MutableStateFlow("")
     private val showHighRisk = MutableStateFlow(false)
-    val benList: Flow<List<BenWithAncListDomain>> =
-        combine(allBenList, allBenListWithHighRisk, showHighRisk, filter) { normalList, highRiskList, isHighRisk, filterText ->
-            val list = if (isHighRisk) highRiskList else normalList
-            filterPwAncList(list, filterText)
-        }
+
+    enum class BottomSheetMode { NORMAL, PMSMA }
+    private val bottomSheetMode = MutableStateFlow(BottomSheetMode.NORMAL)
 
     private val benIdSelected = MutableStateFlow(0L)
+    private val pmsmaBenIdSelected = MutableStateFlow(0L)
 
-    private val _bottomSheetList = benList.combine(benIdSelected) { list, benId ->
-        if (benId != 0L)
-            list.first { it.ben.benId == benId }.anc
-        else
-            emptyList()
+    val benList: Flow<List<BenWithAncListDomain>> = combine(
+        allBenList,
+        highRiskBenList,
+        showHighRisk,
+        filter
+    ) { normalList, highRiskList, isHighRisk, filterText ->
+        val listToShow = if (isHighRisk) highRiskList else normalList
+        filterPwAncList(listToShow, filterText)
     }
-    val bottomSheetList: Flow<List<AncStatus>> get() = _bottomSheetList
+
+    val bottomSheetList: Flow<List<AncStatus>> = combine(
+        benList,
+        highRiskBenList,
+        benIdSelected,
+        pmsmaBenIdSelected,
+        bottomSheetMode
+    ) { normalList, highRiskList, benId, pmsmaId, mode ->
+
+        when (mode) {
+
+            BottomSheetMode.NORMAL ->
+                normalList
+                    .firstOrNull { it.ben.benId == benId }
+                    ?.anc
+                    .orEmpty()
+
+            BottomSheetMode.PMSMA ->
+                highRiskList
+                    .firstOrNull { it.ben.benId == pmsmaId }
+                    ?.anc
+                    ?.filter { anc ->
+                        anc.anyHighRisk == true || anc.placeOfAncId == 3
+                    }
+                    .orEmpty()
+        }
+    }
+
 
     fun toggleHighRisk(show: Boolean) {
-        viewModelScope.launch {
-            showHighRisk.emit(show)
-        }
+        viewModelScope.launch { showHighRisk.emit(show) }
     }
 
     fun filterText(text: String) {
-        viewModelScope.launch {
-            filter.emit(text)
-        }
+        viewModelScope.launch { filter.emit(text) }
     }
 
-    fun updateBottomSheetData(benId: Long) {
+    fun showAncBottomSheet(benId: Long, mode: BottomSheetMode) {
         viewModelScope.launch {
-            benIdSelected.emit(benId)
+            bottomSheetMode.emit(mode)
+            if (mode == BottomSheetMode.NORMAL) {
+                benIdSelected.emit(benId)
+            } else {
+                pmsmaBenIdSelected.emit(benId)
+            }
         }
     }
 }
-

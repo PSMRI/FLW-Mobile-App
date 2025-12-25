@@ -184,7 +184,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         FilariaMDAFormResponseJsonEntity::class
     ],
     views = [BenBasicCache::class],
-    version = 45, exportSchema = false
+    version = 46, exportSchema = false
 )
 
 @TypeConverters(
@@ -257,6 +257,10 @@ abstract class InAppDb : RoomDatabase() {
                 it.execSQL("alter table BENEFICIARY add column isConsent BOOL")
 
             })
+            val MIGRATION_45_46 = Migration(45, 46) {
+                it.execSQL("ALTER TABLE PREGNANCY_ANC  ADD COLUMN placeOfAnc TEXT")
+                it.execSQL("ALTER TABLE PREGNANCY_ANC  ADD COLUMN placeOfAncId INTEGER")
+            }
 
             val MIGRATION_44_45 = object : Migration(44, 45) { // replace oldVersion and newVersion
                 override fun migrate(database: SupportSQLiteDatabase) {
@@ -1701,7 +1705,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_41_42,
                         MIGRATION_42_43,
                         MIGRATION_43_44,
-                        MIGRATION_44_45
+                        MIGRATION_44_45,
+                        MIGRATION_45_46
                     ).build()
 
                     INSTANCE = instance
