@@ -163,7 +163,7 @@
     <string name="do_death_cause">मौत के संभावित कारण</string>
     <string name="do_other_death_cause">अन्य मौत के कारण</string>
     <string name="do_other_delivery_complication">अन्य प्रसव समस्या</string>
-    <string name="do_delivery_outcome">प्रसव के परिणाम</string>
+    <string name="do_delivery_outcome">पजन्म लेने वाले शिशुओं की कुल संख्या</string>
     <string name="do_live_birth">जीवित जन्म</string>
     <string name="do_still_birth">स्थित जन्म</string>
     <string name="do_discharge_date">निष्कर्षण की तारीख</string>
