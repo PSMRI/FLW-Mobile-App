@@ -108,7 +108,8 @@ class PregnantWomanRegistrationDataset(
         required = true,
         max = System.currentTimeMillis(),
         min = getMinLmpMillis(),
-        hasDependants = true
+        hasDependants = true,
+        isEnabled = false,
     )
     private val weekOfPregnancy = FormElement(
         id = 8,
@@ -721,6 +722,7 @@ class PregnantWomanRegistrationDataset(
                     )
                     val dateOfRegLong = getLongFromDate(dateStr)
 
+                    lmp.isEnabled = true
                     lmp.max = dateOfRegLong
                     lmp.min = getMinFromMaxForLmp(lmp.max!!)
 
