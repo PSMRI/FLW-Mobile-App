@@ -35,9 +35,7 @@
                     asteriskRequired="@{form.required}"
                     hintText="@{form.subtitle}"
                     android:layout_marginBottom="@dimen/margin_big"
-
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent">
+                    >
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/et_date"
