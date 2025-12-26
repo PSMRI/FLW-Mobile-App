@@ -474,6 +474,7 @@ class PregnantWomanAncVisitDataset(
         if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
            list.remove(fileUploadFront)
            list.remove(fileUploadBack)
+           list.remove(headLine)
         }
         if (BuildConfig.FLAVOR.contains("xushrukha", ignoreCase = true)) {
             bp.required=true

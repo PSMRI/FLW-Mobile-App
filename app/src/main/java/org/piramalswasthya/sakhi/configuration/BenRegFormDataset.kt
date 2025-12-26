@@ -210,7 +210,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
      var ageAtMarriage = FormElement(
         id = 1012,
         inputType = EDIT_TEXT,
-        title = resources.getString(R.string.age_at_marriage),
+        title = resources.getString(R.string.age_at_marriagee),
         etMaxLength = 2,
         arrayId = -1,
         required = true,
@@ -852,6 +852,10 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             dateOfMarriage.value = getDateFromLong(
                 saved.genDetails?.marriageDate ?: 0
             )
+//            val maritalIndex = list.indexOf(maritalStatus)
+//            if (maritalStatus.value == maritalStatus.entries!![1]) {
+//                list.add(maritalIndex + 1, ageAtMarriage)
+//            }
             mobileNoOfRelation.value =
                 mobileNoOfRelation.getStringFromPosition(saved.mobileNoOfRelationId)
             tempraryContactNoBelongsto.value =
