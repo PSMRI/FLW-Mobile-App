@@ -7,7 +7,15 @@
         <item>স্বজনলৈ আপত্তি হৈছে</item>
         <item>Incomplete</item>
     </string-array>
-
+    <string-array name="place_of_anc_array">
+        <item>Sub-Centre</item>
+        <item>VHND/VHSND</item>
+        <item>PHC</item>
+        <item>PMSMA Visit</item>
+        <item>CHC</item>
+        <item>District Hospital</item>
+        <item>Medical College Hospital</item>
+    </string-array>
     <string-array name="abortion_place_array">
         <item>Home</item>
         <item>Subcenter</item>
