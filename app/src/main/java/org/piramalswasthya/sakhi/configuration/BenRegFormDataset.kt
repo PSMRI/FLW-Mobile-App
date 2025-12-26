@@ -1925,7 +1925,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                         wifeName.allCaps = true
                         updateReproductiveOptionsBasedOnAgeGender(formId = maritalStatus.id)
                         return triggerDependants(
-                            source = maritalStatus, addItems = when (gender.value) {
+                            source = motherName, addItems = when (gender.value) {
                                 gender.entries!![0] -> listOf(wifeName, ageAtMarriage)
                                 gender.entries!![1] -> listOf(husbandName, ageAtMarriage,haveChildren)
                                 else -> listOf(spouseName, ageAtMarriage)
@@ -1954,7 +1954,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                         motherName.required = true
                         updateReproductiveOptionsBasedOnAgeGender(formId = maritalStatus.id)
                         return triggerDependants(
-                            source = maritalStatus, addItems = when (gender.value) {
+                            source = motherName, addItems = when (gender.value) {
                                 gender.entries!![0] -> listOf(wifeName, ageAtMarriage)
                                 gender.entries!![1] -> listOf(husbandName, ageAtMarriage,haveChildren)
                                 else -> listOf(spouseName, ageAtMarriage)
