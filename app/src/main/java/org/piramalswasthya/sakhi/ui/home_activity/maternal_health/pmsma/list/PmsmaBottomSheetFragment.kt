@@ -26,10 +26,7 @@ class PmsmaBottomSheetFragment : BottomSheetDialogFragment() {
     private val binding: BottomSheetAncBinding
         get() = _binding!!
 
-//    private val viewModel: PmsmaVisitsListViewModel by viewModels({ requireParentFragment() })
-    private val viewModel: PwAncVisitsListViewModel by viewModels({ requireParentFragment() })
     private var hhId: Long = -1
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -44,7 +41,6 @@ class PmsmaBottomSheetFragment : BottomSheetDialogFragment() {
 
         hhId = arguments?.getLong("hhId") ?: 0L
         setupRecyclerView()
-        observeList()
     }
 
     private fun setupRecyclerView() {
@@ -55,17 +51,6 @@ class PmsmaBottomSheetFragment : BottomSheetDialogFragment() {
         binding.rvAnc.addItemDecoration(divider)
     }
 
-    private fun observeList() {
-        lifecycleScope.launch {
-//            viewModel.bottomSheetList.collect { list ->
-//                (binding.rvAnc.adapter as? PmsmaVisitAdapter)?.submitList(list)
-//            }
-//            viewModel.pmsmaBottomSheetList.collect { list ->
-//                Log.v("nnfnsdnmn","${list}")
-//                (binding.rvAnc.adapter as? PmsmaVisitAdapter)?.submitList(list)
-//            }
-        }
-    }
 
     private fun navigateToPmsma(benId: Long, visitNumber: Int, lastItemClick: Boolean) {
         val fromHighRisk = arguments?.getBoolean("fromHighRisk") ?: false

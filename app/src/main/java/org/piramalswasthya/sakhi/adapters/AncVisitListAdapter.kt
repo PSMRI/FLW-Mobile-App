@@ -63,10 +63,8 @@ class AncVisitListAdapter(
         ) {
 
             if (pref?.getLoggedInUser()?.role.equals("asha", true)) {
-//                binding.btnPmsma.visibility = View.VISIBLE
                 binding.btnAddAnc.visibility = View.VISIBLE
             } else {
-//                binding.btnPmsma.visibility = View.INVISIBLE
                 binding.btnAddAnc.visibility = View.INVISIBLE
             }
 
@@ -95,12 +93,6 @@ class AncVisitListAdapter(
             binding.llAnc.visibility = if (!isHighRiskMode) View.VISIBLE else View.GONE
             binding.btnAddAnc.setVisibleIf(item.showAddAnc)
             binding.btnPmsma.setVisibleIf(item.showAddAnc)
-            val lastPmsmaVisitNumber = item.pmsma.maxOfOrNull { it.visitNumber } ?: 0
-//            val filledWeek = item.pmsma.maxOfOrNull { it.filledWeek } ?: 0
-//            binding.btnPmsma.setVisibleIf(item.pmsmaFillable && lastPmsmaVisitNumber < 4 && filledWeek == 1)
-//            binding.btnPmsma.text = "Add PMSMA"
-//            binding.btnViewVisitsPmsma.setVisibleIf(item.hasPmsma && lastPmsmaVisitNumber > 0)
-//            binding.btnViewVisits.setVisibleIf(item.anc.isNotEmpty())
             binding.btnViewVisits.setVisibleIfViewVisit(item.anc.isNotEmpty())
             binding.btnViewVisitsPmsma.setVisibleIfViewVisit(item.anc.isNotEmpty())
             if (hidePmsma) {
