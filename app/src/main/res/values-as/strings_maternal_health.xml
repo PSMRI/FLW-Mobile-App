@@ -173,7 +173,7 @@
     <string name="do_death_cause">মৃত্যুৰ সম্ভাৱনা</string>
     <string name="do_other_death_cause">অন্য মৃত্যুৰ কাৰণ</string>
     <string name="do_other_delivery_complication">অন্য ডেলিভাৰীৰ সমস্যা</string>
-    <string name="do_delivery_outcome">ডেলিভাৰীৰ ফলাফল</string>
+    <string name="do_delivery_outcome">জন্ম হোৱা মুঠ কেঁচুৱাৰ সংখ্যা</string>
     <string name="do_live_birth">জীৱন সন্তান</string>
     <string name="do_still_birth">শাবলা সন্তান</string>
     <string name="do_discharge_date">মুকৰাপৰ তাৰিখ</string>
