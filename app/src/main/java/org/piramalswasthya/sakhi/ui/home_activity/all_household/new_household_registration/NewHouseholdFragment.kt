@@ -54,6 +54,7 @@ class NewHouseholdFragment : Fragment() {
         }
 
     private var micClickedElementId: Int = -1
+    private var editMode: Boolean = false
     private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
         val formattedValue = value/*.substring(0,50)*/.uppercase()
         val listIndex =
@@ -167,7 +168,7 @@ class NewHouseholdFragment : Fragment() {
         binding.cvPatientInformation.visibility = View.GONE
         viewModel.readRecord.observe(viewLifecycleOwner) { notIt ->
             notIt?.let { recordExists ->
-                binding.fabEdit.visibility = /*if (recordExists) View.VISIBLE else */View.GONE
+                binding.fabEdit.visibility = if (recordExists) View.VISIBLE else View.GONE
                 binding.btnSubmit.visibility = if (!recordExists) View.VISIBLE else View.GONE
                 val adapter = FormInputAdapter(
                     formValueListener = FormInputAdapter.FormValueListener { formId, index ->
@@ -195,6 +196,7 @@ class NewHouseholdFragment : Fragment() {
             }
         }
         binding.fabEdit.setOnClickListener {
+            editMode = true
             viewModel.setRecordExists(false)
         }
         binding.btnSubmit.setOnClickListener {
@@ -218,14 +220,17 @@ class NewHouseholdFragment : Fragment() {
                         resources.getString(R.string.save_successful),
                         Toast.LENGTH_LONG
                     ).show()
-                    nextScreenAlert.setMessage(
-                        resources.getString(
-                            R.string.add_head_of_family_message,
-                            viewModel.getHoFName()
+                    if (!editMode) {
+                        nextScreenAlert.setMessage(
+                            resources.getString(
+                                R.string.add_head_of_family_message,
+                                viewModel.getHoFName()
+                            )
                         )
-                    )
-                    nextScreenAlert.show()
-
+                        nextScreenAlert.show()
+                    } else {
+                        findNavController().navigateUp()
+                    }
 
                 }
 
