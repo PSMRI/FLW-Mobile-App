@@ -16,6 +16,14 @@ interface BenDao {
     @Update
     suspend fun updateBen(ben: BenRegCache)
 
+    @Query("UPDATE  BENEFICIARY SET syncState = :unsynced ,processed = :proccess , serverUpdatedStatus =:updateStatus WHERE householdId = :householdId")
+    suspend fun updateBenToSync(
+        householdId: Long,
+        unsynced: SyncState,
+        proccess: String,
+        updateStatus: Int
+    )
+
     @Query("UPDATE  BENEFICIARY SET isSpouseAdded = 1 , syncState = :unsynced ,processed = :proccess , serverUpdatedStatus =:updateStatus WHERE householdId = :householdId AND familyHeadRelationPosition = 19")
     suspend fun updateHofSpouseAdded(
         householdId: Long,
