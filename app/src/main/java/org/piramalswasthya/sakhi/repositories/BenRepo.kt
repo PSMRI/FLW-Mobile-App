@@ -62,6 +62,12 @@ class BenRepo @Inject constructor(
         }
     }
 
+    suspend fun updateBenToSync(householdId: Long, unsynced: SyncState) {
+        withContext(Dispatchers.IO) {
+            benDao.updateBenToSync(householdId = householdId,unsynced,"U",2)
+        }
+    }
+
     suspend fun updateHousehold(householdId: Long, unsynced: SyncState) {
         withContext(Dispatchers.IO) {
             benDao.updateHofSpouseAdded(householdId = householdId,unsynced,"U",2)
