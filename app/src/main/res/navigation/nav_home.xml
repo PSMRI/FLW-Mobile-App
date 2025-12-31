@@ -204,7 +204,19 @@
         <action
             android:id="@+id/action_motherCareFragment_to_pmsmaHighRiskListFragment"
             app:destination="@id/pmsmaHighRiskListFragment" />
+        <action
+            android:id="@+id/action_motherCareFragment_to_hwcReferredListFragment"
+            app:destination="@id/hwcReferredFragment" />
+
     </fragment>
+
+    <fragment
+        android:id="@+id/hwcReferredFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.maternal_health.hwc.list.HwcReferredFragment"
+        android:label="HWC Referred List"
+        tools:layout="@layout/fragment_hwc_refered"/>
+
+
     <fragment
         android:id="@+id/deathReportsFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.death_reports.DeathReportsFragment"
@@ -871,6 +883,9 @@
         <action
             android:id="@+id/action_pwAncVisitsFragment_to_pmsmaFragment"
             app:destination="@id/pmsmaFragment" />
+        <action
+            android:id="@+id/action_pwAncVisitsFragment_to_pwAncCounsellingFormFragment"
+            app:destination="@id/pwAncCounsellingFormFragment" />
         <argument
             android:name="source"
             android:defaultValue="0"
@@ -911,6 +926,41 @@
             app:destination="@id/mdsrObjectFragment"
             app:popUpToInclusive="true"
             app:popUpTo="@id/pwAncFormFragment"/>
+
+    </fragment>
+    <fragment
+        android:id="@+id/pwAncCounsellingFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.homeVisit.AntenatalCounsellingFragment"
+        android:label="@string/anc_visit"
+        tools:layout="@layout/fragment_antenatal_counselling">
+        <argument
+            android:name="benId"
+            app:argType="long" />
+
+        <argument
+            android:name="visitNumber"
+            app:argType="integer" />
+
+        <argument
+            android:name="viewMode"
+            app:argType="boolean"
+            android:defaultValue="false" />
+        <argument
+            android:name="visitDate"
+            app:argType="string"
+            android:defaultValue=""
+            app:nullable="true"/>
+        <argument
+            android:name="lastItemClick"
+            app:argType="boolean"
+            android:defaultValue="false" />
+
+        <action
+            android:id="@+id/action_pwAncCounsellingFormFragment_to_pwAncFormFragment"
+            app:destination="@id/pwAncFormFragment"
+            app:popUpToInclusive="true"/>
+
+
 
     </fragment>
 

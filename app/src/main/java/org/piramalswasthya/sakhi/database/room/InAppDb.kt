@@ -57,6 +57,7 @@ import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.CUFYFormResp
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.CUFYFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.EyeSurgeryFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FilariaMDAFormResponseJsonDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseANCJsonDao
 import org.piramalswasthya.sakhi.model.AHDCache
 import org.piramalswasthya.sakhi.model.AESScreeningCache
 import org.piramalswasthya.sakhi.model.AdolescentHealthCache
@@ -114,6 +115,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.hbyc.FormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.VHNDCache
 import org.piramalswasthya.sakhi.model.dynamicEntity.CUFYFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FilariaMDA.FilariaMDAFormResponseJsonEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.anc.ANCFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.ben_ifa.BenIfaFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.eye_surgery.EyeSurgeryFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoNetFormResponseJsonEntity
@@ -181,7 +183,8 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         EyeSurgeryFormResponseJsonEntity::class,
         BenIfaFormResponseJsonEntity::class,
         MosquitoNetFormResponseJsonEntity::class,
-        FilariaMDAFormResponseJsonEntity::class
+        FilariaMDAFormResponseJsonEntity::class,
+        ANCFormResponseJsonEntity::class,
     ],
     views = [BenBasicCache::class],
     version = 45, exportSchema = false
@@ -239,6 +242,8 @@ abstract class InAppDb : RoomDatabase() {
     abstract fun CUFYFormResponseJsonDao(): CUFYFormResponseJsonDao
     abstract fun formResponseJsonDao(): FormResponseJsonDao
     abstract fun formResponseJsonDaoHBYC(): FormResponseJsonDaoHBYC
+
+    abstract fun formResponseJsonDaoANC() : FormResponseANCJsonDao
     abstract fun formResponseJsonDaoEyeSurgery(): EyeSurgeryFormResponseJsonDao
     abstract fun formResponseJsonDaoBenIfa(): BenIfaFormResponseJsonDao
     abstract fun formResponseMosquitoNetJsonDao(): MosquitoNetFormResponseDao

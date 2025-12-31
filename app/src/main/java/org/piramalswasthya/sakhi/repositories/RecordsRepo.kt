@@ -10,11 +10,15 @@ import org.piramalswasthya.sakhi.database.room.dao.ChildRegistrationDao
 import org.piramalswasthya.sakhi.database.room.dao.HouseholdDao
 import org.piramalswasthya.sakhi.database.room.dao.ImmunizationDao
 import org.piramalswasthya.sakhi.database.room.dao.MaternalHealthDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseANCJsonDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.model.BenBasicDomainForForm
 import org.piramalswasthya.sakhi.model.BenWithAncListDomain
+import org.piramalswasthya.sakhi.model.HomeVisitUiState
+import org.piramalswasthya.sakhi.model.dynamicEntity.anc.ANCFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.filterMdsr
+import org.piramalswasthya.sakhi.utils.HelperUtil
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -23,6 +27,7 @@ import javax.inject.Inject
 class RecordsRepo @Inject constructor(
     private val householdDao: HouseholdDao,
     private val benDao: BenDao,
+    private val ancHomeVisitDao : FormResponseANCJsonDao,
     private val vaccineDao: ImmunizationDao,
     private val maternalHealthDao: MaternalHealthDao,
     private val childRegistrationDao: ChildRegistrationDao,
@@ -68,6 +73,9 @@ class RecordsRepo @Inject constructor(
 
     val getNcdEligibleList = benDao.getBenWithCbac(selectedVillage)
     val getNcdrefferedList = benDao.getBenWithReferredCbac(selectedVillage)
+
+
+
     val getNcdEligibleListCount = benDao.getBenWithCbacCount(selectedVillage)
     val getNcdrefferedListCount = benDao.getReferredBenCount(selectedVillage)
 
@@ -441,4 +449,38 @@ class RecordsRepo @Inject constructor(
     }
 
     fun getHRECCount() = maternalHealthDao.getAllECRecords()
+
+
+    suspend fun getHomeVisitUiState(benId: Long): HomeVisitUiState {
+
+        val visits = ancHomeVisitDao.getVisitsForBen(benId)
+        val visitCount = visits.size
+
+        val canView = visitCount > 0
+        val canAdd = canShowAddButton(visits)
+
+        return HomeVisitUiState(
+            canAddHomeVisit = canAdd,
+            canViewHomeVisit = canView
+        )
+    }
+
+    private fun canShowAddButton(visits: List<ANCFormResponseJsonEntity>): Boolean {
+        if (visits.size >= 9) return false
+
+        if (visits.isEmpty()) return true
+
+        val lastVisitDateStr = visits.first().visitDate ?: return true
+        val lastVisitMillis = HelperUtil.parseDateToMillis(lastVisitDateStr)
+
+        if (lastVisitMillis == 0L) return true
+
+        val diffDays = getDaysDiff(lastVisitMillis, System.currentTimeMillis())
+        return diffDays >= 30
+    }
+
+    private fun getDaysDiff(from: Long, to: Long): Long {
+        val diff = to - from
+        return TimeUnit.MILLISECONDS.toDays(diff)
+    }
 }

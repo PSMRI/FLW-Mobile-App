@@ -1,6 +1,8 @@
 package org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.list
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,6 +14,7 @@ import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.helpers.filterPwAncList
 import org.piramalswasthya.sakhi.model.AncStatus
 import org.piramalswasthya.sakhi.model.BenWithAncListDomain
+import org.piramalswasthya.sakhi.model.HomeVisitUiState
 import org.piramalswasthya.sakhi.repositories.MaternalHealthRepo
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.AllBenFragmentArgs
@@ -24,11 +27,13 @@ class PwAncVisitsListViewModel @Inject constructor(
 ) : ViewModel() {
 
     private var sourceFromArgs = PwAncVisitsListFragmentArgs.fromSavedStateHandle(savedStateHandle).source
-
+    private val _repo = recordsRepo
     private val allBenList = when (sourceFromArgs) {
         1 -> recordsRepo.getRegisteredPregnantWomanNonFollowUpList()
         else -> recordsRepo.getRegisteredPregnantWomanList()
     }
+    private val _homeVisitState = MutableLiveData<Map<Long, HomeVisitUiState>>()
+    val homeVisitState: LiveData<Map<Long, HomeVisitUiState>> = _homeVisitState
 
     private val allBenListWithHighRisk = recordsRepo.getHighRiskPregnantWomanList()
     private val filter = MutableStateFlow("")
@@ -48,6 +53,20 @@ class PwAncVisitsListViewModel @Inject constructor(
             emptyList()
     }
     val bottomSheetList: Flow<List<AncStatus>> get() = _bottomSheetList
+
+
+
+    fun loadHomeVisitState(benIds: List<Long>) {
+        viewModelScope.launch {
+            val map = mutableMapOf<Long, HomeVisitUiState>()
+
+            benIds.forEach { benId ->
+                map[benId] = _repo.getHomeVisitUiState(benId)
+            }
+
+            _homeVisitState.postValue(map)
+        }
+    }
 
     fun toggleHighRisk(show: Boolean) {
         viewModelScope.launch {
