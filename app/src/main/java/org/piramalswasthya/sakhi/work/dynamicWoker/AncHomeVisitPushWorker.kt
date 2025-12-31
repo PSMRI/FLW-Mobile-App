@@ -11,64 +11,52 @@ import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
-import org.piramalswasthya.sakhi.repositories.dynamicRepo.CUFYFormRepository
-import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
+import org.piramalswasthya.sakhi.repositories.dynamicRepo.FormRepository
 import timber.log.Timber
 
-
 @HiltWorker
-class CUFYORSPushWorker @AssistedInject constructor(
+class AncHomeVisitPushWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workerParams: WorkerParameters,
     private val preferenceDao: PreferenceDao,
-    private val repository: CUFYFormRepository
+    private val repository: FormRepository
 ) : CoroutineWorker(context, workerParams) {
 
+
     override suspend fun doWork(): Result {
+
+
         return try {
+
             val user = preferenceDao.getLoggedInUser()
                 ?: throw IllegalStateException("No user logged in")
 
-            val unsyncedForms = repository.getUnsyncedForms(FormConstants.CHILDREN_UNDER_FIVE_ORS_FORM_ID)
 
-            var successfulSyncs = 0
-            var failedSyncs = 0
-
-            for ((index, form) in unsyncedForms.withIndex()) {
-
-                if ((form.benId ?: -1) < 0) {
-                    failedSyncs++
-                    continue
-                }
-
+            val unsyncedFormsANC = repository.getUnsyncedFormsANC()
+            for (form in unsyncedFormsANC) {
+                if ((form.benId ?: -1) < 0) continue
                 try {
-                    val success = repository.syncFormToServer(user.userName,FormConstants.ORS_FORM_NAME, form)
-
-                    if (success) {
-                        repository.markFormAsSynced(form.id)
-                        successfulSyncs++
-                    } else {
-                        failedSyncs++
-                    }
+                    val success = repository.syncFormToServerANC(form)
+                    if (success) repository.markFormAsSyncedANC(form.id)
                 } catch (e: Exception) {
-                    failedSyncs++
+                    Timber.e(e, "Failed to sync ANC form ${form.id}")
                 }
             }
 
             Result.success()
-
         } catch (e: IllegalStateException) {
+            Timber.e(e, "FormSyncWorker failed: No user logged in")
             Result.failure()
         } catch (e: java.net.UnknownHostException) {
+            Timber.w(e, "FormSyncWorker: Network unavailable, will retry")
             Result.retry()
         } catch (e: Exception) {
-            if (runAttemptCount < 3) {
-                Result.retry()
-            } else {
-                Result.failure()
-            }
+            Timber.e(e, "FormSyncWorker failed with unexpected error")
+            if (runAttemptCount < 3) Result.retry() else Result.failure()
         }
+
     }
+
 
     companion object {
         fun enqueue(context: Context) {
@@ -76,7 +64,7 @@ class CUFYORSPushWorker @AssistedInject constructor(
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
 
-            val request = OneTimeWorkRequestBuilder<CUFYORSPushWorker>()
+            val request = OneTimeWorkRequestBuilder<AncHomeVisitPushWorker>()
                 .setConstraints(constraints)
                 .build()
 

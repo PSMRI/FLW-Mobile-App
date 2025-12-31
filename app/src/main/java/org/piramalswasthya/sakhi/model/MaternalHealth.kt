@@ -743,6 +743,8 @@ data class BenWithAncListDomain(
     var weekOfPregnancy: Int? = null,
     var abortionDate: Long? = null,
 
+    val showAddHomeVisit: Boolean = false,
+    val showViewHomeVisit: Boolean = false,
     val showAddAnc: Boolean,
     val pmsmaFillable: Boolean,
     val hasPmsma: Boolean,
