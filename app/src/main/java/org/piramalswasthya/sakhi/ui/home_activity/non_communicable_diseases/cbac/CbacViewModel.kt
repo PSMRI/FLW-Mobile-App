@@ -84,7 +84,7 @@ class CbacViewModel @Inject constructor(
     }
 
     private val _referralList = MutableLiveData<MutableList<ReferalCache>>(mutableListOf())
-    val referralList: MutableLiveData<MutableList<ReferalCache>> = _referralList
+    val referralList: LiveData<MutableList<ReferalCache>> = _referralList
 
     fun addReferral(referral: ReferalCache) {
         val list = _referralList.value ?: mutableListOf()
@@ -200,11 +200,11 @@ class CbacViewModel @Inject constructor(
     private var flagForPhq2 = false
     private var flagForNcd = false
 
-    private val _minDate = MutableLiveData<Long>()
-    var bloodstain = 0
-    var bleedingAfterIntercourse = 0
-    var lump = 0
-    var bleedingAfterMenopause = 0
+    private var _minDate = MutableLiveData<Long>()
+    private var bloodstain = 0
+    private var bleedingAfterIntercourse = 0
+    private var lump = 0
+    private var bleedingAfterMenopause = 0
 
     val user = preferenceDao.getLoggedInUser()
 
@@ -509,6 +509,7 @@ class CbacViewModel @Inject constructor(
     fun setBlI(i: Int) {
         cbac.cbac_bleedingafterintercourse_pos = i
         bleedingAfterIntercourse = i
+        checkForReferral()
 
     }
      fun checkForReferral() {
