@@ -766,19 +766,19 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         if (dateOfReg.value == null)
             dateOfReg.value = getCurrentDateString()
         contactNumber.value = familyHeadPhoneNo
-        household.family?.let {
-            firstName.value = it.familyHeadName?.also {
-                firstName.inputType = TEXT_VIEW
-            }
-
-            lastName.value = it.familyName?.also {
-                lastName.inputType = TEXT_VIEW
-            }
-
-            contactNumber.value = it.familyHeadPhoneNo?.toString()?.also {
-                contactNumber.inputType = TEXT_VIEW
-            }
-        }
+//        household.family?.let {
+//            firstName.value = it.familyHeadName?.also {
+//                firstName.inputType = TEXT_VIEW
+//            }
+//
+//            lastName.value = it.familyName?.also {
+//                lastName.inputType = TEXT_VIEW
+//            }
+//
+//            contactNumber.value = it.familyHeadPhoneNo?.toString()?.also {
+//                contactNumber.inputType = TEXT_VIEW
+//            }
+//        }
 
         agePopup.min = getHoFMinDobMillis()
         agePopup.max = getHofMaxDobMillis()

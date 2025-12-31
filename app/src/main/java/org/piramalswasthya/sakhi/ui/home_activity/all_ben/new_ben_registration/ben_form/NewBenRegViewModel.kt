@@ -267,8 +267,11 @@ class NewBenRegViewModel @Inject constructor(
                         benRepo.updateBeneficiarySpouseAdded(ben.householdId,SelectedbenIdFromArgs,SyncState.UNSYNCED)
                     }
                     if (isHoF) {
+                        household.family?.familyHeadName = ben.firstName
+                        household.family?.familyName = ben.lastName
                         dataset.updateHouseholdWithHoFDetails(household, ben)
                         householdRepo.updateHousehold(household)
+                        householdRepo.updateHouseholdToSync(household.householdId)
                     }
                     ben.apply {
                         if (beneficiaryId < 0L) {
