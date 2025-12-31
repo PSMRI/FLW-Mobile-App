@@ -1363,6 +1363,8 @@ data class NCDReferalDTO(
     val visitCode: Long?,
     val providerServiceMapID: Int?,
     val createdBy: String?,
+    var type: String?,
+
     val isSpecialist: Boolean? = false,
     var syncState: SyncState = SyncState.UNSYNCED,
 
@@ -1384,7 +1386,8 @@ data class NCDReferalDTO(
             beneficiaryRegID =  beneficiaryRegID,
             referralReason = referralReason,
             parkingPlaceID = parkingPlaceID,
-            syncState = SyncState.SYNCED
+            syncState = SyncState.SYNCED,
+            type = type
 
 
 
