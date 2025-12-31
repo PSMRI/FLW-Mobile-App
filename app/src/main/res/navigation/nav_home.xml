@@ -576,6 +576,7 @@
         <argument
             android:name="benId"
             app:argType="long" />
+
         <argument
             android:name="cbacId"
             android:defaultValue="0"
@@ -1997,6 +1998,14 @@
         <argument
             android:name="benId"
             app:argType="long" />
+        <argument
+            android:name="referral"
+            app:argType="string" />
+
+        <argument
+            android:name="referralType"
+            app:argType="string" />
+
         <argument
             android:name="cbacId"
             android:defaultValue="0"

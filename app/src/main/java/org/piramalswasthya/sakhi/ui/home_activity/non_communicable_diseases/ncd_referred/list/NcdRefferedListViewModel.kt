@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.ncd_referred.list
 
 import android.content.Context
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -34,9 +35,19 @@ class NcdRefferedListViewModel @Inject constructor(
         val filteredBenBasicDomainList = filterBenList(benBasicDomainList, filter)
         list.filter { it.ben.benId in filteredBenBasicDomainList.map { it.benId } }
 
+
+
     }
+    var selectedPosition = 0
+    val selectedFilter=MutableLiveData<String?>("ALL")
 
+    private val clickedBenId = MutableStateFlow(0L)
 
+    fun updateBottomSheetData(benId: Long) {
+        viewModelScope.launch {
+            clickedBenId.emit(benId)
+        }
+    }
 
 
     init {
@@ -64,5 +75,19 @@ class NcdRefferedListViewModel @Inject constructor(
 
     private val catList = ArrayList<String>()
 
+    fun categoryData() : ArrayList<String> {
+
+        catList.clear()
+        catList.add("ALL")
+        catList.add("NCD")
+        catList.add("TB")
+        catList.add("LEPROSY")
+        catList.add("GERIATRIC")
+        catList.add("HRP")
+
+
+        return catList
+
+    }
 
 }
