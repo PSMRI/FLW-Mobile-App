@@ -39,7 +39,7 @@ class NcdRefferedListViewModel @Inject constructor(
 
     }
     var selectedPosition = 0
-    val selectedFilter=MutableLiveData<String?>("All")
+    val selectedFilter=MutableLiveData<String?>("ALL")
 
     private val clickedBenId = MutableStateFlow(0L)
 

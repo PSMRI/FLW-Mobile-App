@@ -1012,7 +1012,6 @@ class CbacFragment : Fragment() {
                 R.id.rb_yes -> {
                     viewModel.setBlI(1)
 
-                    viewModel.checkForReferral()
                 }
                 R.id.rb_no -> viewModel.setBlI(2)
             }
