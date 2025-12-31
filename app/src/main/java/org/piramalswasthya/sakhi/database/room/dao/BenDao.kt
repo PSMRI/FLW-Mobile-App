@@ -578,15 +578,13 @@ fun getAllHighRiskPregnancyWomenList(
 
     @Transaction
     @Query("""
-   SELECT DISTINCT b.*
-    FROM BEN_BASIC_CACHE b
-    INNER JOIN CBAC c ON b.benId = c.benId
-    INNER JOIN NCD_REFER r ON b.benId = r.benId
-    WHERE c.isReffered = 1
-      AND CAST((strftime('%s','now') - b.dob/1000)/60/60/24/365 AS INTEGER) >= :min
-      AND b.reproductiveStatusId != 2
-      AND b.villageId = :selectedVillage
-    ORDER BY b.regDate DESC
+    SELECT  r.*, b.*
+   FROM BEN_BASIC_CACHE b
+   INNER JOIN NCD_REFER r ON b.benId = r.benId
+   WHERE CAST((strftime('%s','now') - b.dob/1000)/60/60/24/365 AS INTEGER) >= :min
+     AND b.reproductiveStatusId != 2
+     AND b.villageId = :selectedVillage
+   ORDER BY b.regDate DESC
 """)
     fun getBenWithReferredCbac(
         selectedVillage: Int,
@@ -595,10 +593,9 @@ fun getAllHighRiskPregnancyWomenList(
 
 
     @Query("""
-  SELECT COUNT(DISTINCT b.benId)
+  SELECT COUNT(b.benId)
     FROM BEN_BASIC_CACHE b
-    INNER JOIN CBAC c ON b.benId = c.benId
-    WHERE c.isReffered = 1
+    INNER JOIN NCD_REFER r ON b.benId = r.benId
       AND CAST((strftime('%s','now') - b.dob/1000)/60/60/24/365 AS INTEGER) >= :min
       AND b.reproductiveStatusId != 2
       AND b.villageId = :selectedVillage

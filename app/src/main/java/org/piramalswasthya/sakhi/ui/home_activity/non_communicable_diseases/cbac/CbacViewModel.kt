@@ -45,6 +45,16 @@ class CbacViewModel @Inject constructor(
     var referalRepo: NcdReferalRepo
 ) : ViewModel() {
 
+    enum class ReferralType {
+        NCD,
+        TB,
+        LEPROSY,
+        GERIATRIC,
+        COPD,
+        DEPRESSION,
+        HRP
+    }
+
     enum class State {
         LOADING,
         IDLE,
@@ -68,8 +78,38 @@ class CbacViewModel @Inject constructor(
     }
      var referralCache: ReferalCache? = null
 
+
     fun setReferral(referral: ReferalCache) {
         this.referralCache = referral
+    }
+
+    private val _referralList = MutableLiveData<MutableList<ReferalCache>>(mutableListOf())
+    val referralList: MutableLiveData<MutableList<ReferalCache>> = _referralList
+
+    fun addReferral(referral: ReferalCache) {
+        val list = _referralList.value ?: mutableListOf()
+
+        val alreadyExists = list.any {
+            it.referralReason == referral.referralReason
+        }
+
+        if (!alreadyExists) {
+            list.add(referral)
+            _referralList.value = list
+        }
+    }
+
+    private val _completedReferrals = MutableLiveData<MutableSet<ReferralType>>(mutableSetOf())
+    val completedReferrals: LiveData<MutableSet<ReferralType>> = _completedReferrals
+
+    fun markReferralCompleted(type: ReferralType) {
+        val set = _completedReferrals.value ?: mutableSetOf()
+        set.add(type)
+        _completedReferrals.value = set
+    }
+
+    fun isReferralAlreadyDone(type: ReferralType): Boolean {
+        return _completedReferrals.value?.contains(type) == true
     }
 
     private val _raAgeScore = MutableLiveData(0)
@@ -161,9 +201,15 @@ class CbacViewModel @Inject constructor(
     private var flagForNcd = false
 
     private val _minDate = MutableLiveData<Long>()
-
+    var bloodstain = 0
+    var bleedingAfterIntercourse = 0
+    var lump = 0
+    var bleedingAfterMenopause = 0
 
     val user = preferenceDao.getLoggedInUser()
+
+    private val _showReferralDialog = MutableLiveData(false)
+    val showReferralDialog: LiveData<Boolean> = _showReferralDialog
 
     val minDate: LiveData<Long>
         get() = _minDate
@@ -439,10 +485,12 @@ class CbacViewModel @Inject constructor(
 
     fun setLumpB(i: Int) {
         cbac.cbac_lumpinbreast_pos = i
+        lump = i
     }
 
     fun setNipple(i: Int) {
         cbac.cbac_blooddischage_pos = i
+        bloodstain = i
     }
 
     fun setBreast(i: Int) {
@@ -455,10 +503,20 @@ class CbacViewModel @Inject constructor(
 
     fun setBlM(i: Int) {
         cbac.cbac_bleedingaftermenopause_pos = i
+        bleedingAfterMenopause = i
     }
 
     fun setBlI(i: Int) {
         cbac.cbac_bleedingafterintercourse_pos = i
+        bleedingAfterIntercourse = i
+
+    }
+     fun checkForReferral() {
+        if (bloodstain == 1 || bleedingAfterMenopause == 1 || bleedingAfterIntercourse == 1 || lump == 1) {
+            _showReferralDialog.value = true
+        } else {
+            _showReferralDialog.value = false
+        }
     }
 
     fun setFoulD(i: Int) {
@@ -610,15 +668,16 @@ class CbacViewModel @Inject constructor(
         cbac.ProviderServiceMapID = user!!.serviceMapId
 
         viewModelScope.launch {
-            if (referralCache != null) {
+            if (!referralList.value.isNullOrEmpty()) {
                 cbac.isReffered = true
             }
             val result = cbacRepo.saveCbacData(cbac, ben)
-            if (referralCache != null){
 
-                referalRepo.saveReferedNCD(referralCache!!)
+            referralList.value?.forEach {
+                referalRepo.saveReferedNCD(it)
 
             }
+
 
             if (result)
                 _state.value = State.SAVE_SUCCESS
