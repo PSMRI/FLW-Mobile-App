@@ -9,7 +9,6 @@ import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.InputType.DATE_PICKER
 import org.piramalswasthya.sakhi.model.InputType.DROPDOWN
-import org.piramalswasthya.sakhi.model.InputType.EDIT_TEXT
 import org.piramalswasthya.sakhi.model.ReferalCache
 
 class ReferalFormDataset(context: Context, language: Languages,var preferenceDao: PreferenceDao) : Dataset(context, language) {
@@ -25,10 +24,10 @@ class ReferalFormDataset(context: Context, language: Languages,var preferenceDao
     )
     private val reasonForReferal = FormElement(
         id = 2,
-        inputType = EDIT_TEXT,
+        inputType = org.piramalswasthya.sakhi.model.InputType.TEXT_VIEW,
         title = context.getString(R.string.referral_reason),
         arrayId = -1,
-        required = true,
+        required = false,
 
     )
 
@@ -51,14 +50,17 @@ class ReferalFormDataset(context: Context, language: Languages,var preferenceDao
         min = System.currentTimeMillis() -  (90L * 24 * 60 * 60 * 1000),
         max = System.currentTimeMillis(),
     )
-    suspend fun setUpPage() {
+    var referralTypes = ""
+    suspend fun setUpPage(referral : String , referralType : String) {
         val list = mutableListOf(
             healthCenter,
             reasonForReferal,
             additionalService,
             referDate
             )
+        referralTypes = referralType
         referDate.value = getDateFromLong(System.currentTimeMillis())
+        reasonForReferal.value = referral
         setUpPage(list)
     }
 
@@ -97,6 +99,7 @@ class ReferalFormDataset(context: Context, language: Languages,var preferenceDao
             form.vanID =  preferenceDao.getLoggedInUser()?.vanId
             form.providerServiceMapID =  preferenceDao.getLoggedInUser()?.serviceMapId
             form.parkingPlaceID =  preferenceDao.getLoggedInUser()?.serviceMapId
+            form.type = referralTypes
 
 
 

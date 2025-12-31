@@ -8,19 +8,18 @@ import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.databinding.RvItemPregnancyAncBinding
 import org.piramalswasthya.sakhi.databinding.RvItemPregnancyAncPmsmaBinding
 import org.piramalswasthya.sakhi.model.AncStatus
-import org.piramalswasthya.sakhi.model.PMSMAStatus
 
 class PmsmaVisitAdapter(private val clickListener: PmsmaVisitClickListener) :
-    ListAdapter<PMSMAStatus, PmsmaVisitAdapter.AncViewHolder>(
+    ListAdapter<AncStatus, PmsmaVisitAdapter.AncViewHolder>(
         MyDiffUtilCallBack
     ) {
-    private object MyDiffUtilCallBack : DiffUtil.ItemCallback<PMSMAStatus>() {
+    private object MyDiffUtilCallBack : DiffUtil.ItemCallback<AncStatus>() {
         override fun areItemsTheSame(
-            oldItem: PMSMAStatus, newItem: PMSMAStatus
+            oldItem: AncStatus, newItem: AncStatus
         ) = oldItem.benId == newItem.benId
 
         override fun areContentsTheSame(
-            oldItem: PMSMAStatus, newItem: PMSMAStatus
+            oldItem: AncStatus, newItem: AncStatus
         ) = oldItem == newItem
 
     }
@@ -36,7 +35,7 @@ class PmsmaVisitAdapter(private val clickListener: PmsmaVisitClickListener) :
         }
 
         fun bind(
-            item: PMSMAStatus, clickListener: PmsmaVisitClickListener, isLastItem: Boolean
+            item: AncStatus, clickListener: PmsmaVisitClickListener, isLastItem: Boolean
         ) {
             binding.visit = item
             binding.clickListener = clickListener
@@ -62,7 +61,7 @@ class PmsmaVisitAdapter(private val clickListener: PmsmaVisitClickListener) :
     class PmsmaVisitClickListener(
         private val clickedForm: (benId: Long, visitNumber: Int, isLast: Boolean) -> Unit
     ) {
-        fun onClickedVisit(item: PMSMAStatus, isLast: Boolean) = clickedForm(
+        fun onClickedVisit(item: AncStatus, isLast: Boolean) = clickedForm(
             item.benId, item.visitNumber, isLast
         )
     }

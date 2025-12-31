@@ -68,7 +68,9 @@ data class AncStatus(
     val benId: Long,
     val visitNumber: Int,
     val filledWeek: Int,
-    val syncState: SyncState? = null
+    val syncState: SyncState? = null,
+    val anyHighRisk: Boolean?,
+    val placeOfAncId: Int?
 )
 
 
@@ -333,6 +335,7 @@ data class PregnantWomanAncCache(
     var isActive: Boolean = true,
     var ancDate: Long = 0L,
 
+
     var lmpDate: Long? = null,
     var visitDate: Long? = null,
     var weekOfPregnancy: Int? = null,
@@ -340,8 +343,13 @@ data class PregnantWomanAncCache(
     var serialNo: String? = null,
     var methodOfTermination: String? = null,
     var methodOfTerminationId: Int? = 0,
+
     var terminationDoneBy: String? = null,
     var terminationDoneById: Int? = 0,
+
+    var placeOfAnc: String? = null,
+    var placeOfAncId: Int? = 0,
+
     var isPaiucdId: Int? = 0,
     var isYesOrNo: Boolean? = false,
     var isPaiucd: String? = null,
@@ -408,6 +416,8 @@ data class PregnantWomanAncCache(
             methodOfTerminationId = methodOfTerminationId,
             terminationDoneBy = terminationDoneBy,
             terminationDoneById = terminationDoneById,
+            placeOfAnc=placeOfAnc,
+            placeOfAncId=placeOfAncId,
             isPaiucdId = isPaiucdId,
             isPaiucd = isPaiucd,
             isYesOrNo = isYesOrNo,
@@ -470,6 +480,8 @@ data class ANCPost(
     var methodOfTerminationId: Int? = 0,
     var terminationDoneBy: String? = null,
     var terminationDoneById: Int? = 0,
+    var placeOfAnc: String? = null,
+    var placeOfAncId: Int? = 0,
     var isPaiucdId: Int? = 0,
     var isYesOrNo: Boolean? = false,
     var isPaiucd: String? = null,
@@ -540,6 +552,8 @@ data class ANCPost(
             placeOfDeath = placeOfDeath,
             placeOfDeathId = placeOfDeathId,
             otherPlaceOfDeath = otherPlaceOfDeath,
+            placeOfAnc = placeOfAnc,
+            placeOfAncId = placeOfAncId,
 
 
 
@@ -652,7 +666,9 @@ data class BenWithAncVisitCache(
                     filledWeek = if (lmpDateToUse != 0L)
                         (TimeUnit.MILLISECONDS.toDays(it.ancDate - lmpDateToUse) / 7).toInt()
                     else 0,
-                    syncState = it.syncState
+                    syncState = it.syncState,
+                    anyHighRisk = it.anyHighRisk,
+                    placeOfAncId = it.placeOfAncId,
                 )
             }.sortedBy { it.visitNumber },
             ancDate = lastAncRecord?.ancDate ?: 0L,

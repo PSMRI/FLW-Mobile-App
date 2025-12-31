@@ -412,8 +412,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/margin_normal"
                     android:layout_weight="1"
-
-                    android:backgroundTint="@android:color/holo_green_dark"
+                    android:backgroundTint="@color/button_bg_selector"
                     android:onClick="@{() -> clickListener.addVisit(visit)}"
                     android:text="@string/add_anc_visits"
                     android:textColor="?attr/colorOnPrimary" />
@@ -449,8 +448,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/margin_normal"
                     android:layout_weight="1"
-                    android:backgroundTint="@android:color/holo_green_dark"
-                    android:onClick="@{() -> clickListener.pmsma(visit)}"
+                    android:backgroundTint="@color/button_selector_red"
+                    android:onClick="@{() -> clickListener.addVisit(visit)}"
                     android:text="@string/pmsma"
                     android:textColor="?attr/colorOnPrimary" />
                 <com.google.android.material.button.MaterialButton

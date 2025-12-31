@@ -13,6 +13,7 @@
     <string name="wife_s_name">Wife\'s Name</string>
     <string name="spouse_s_name">Spouse\'s Name</string>
     <string name="age_at_marriage">Age At Marriage</string>
+    <string name="age_at_marriagee">Your Age at the time of marriage</string>
     <string name="date_of_marriage">Date of Marriage</string>
     <string name="father_s_name">Father\'s Name</string>
     <string name="mother_s_name">Mother\'s Name</string>
@@ -308,6 +309,17 @@
         <item>Private Hospital</item>
         <item>In Transit</item>
         <item>Other Place of Abortion</item>
+    </string-array>
+
+
+    <string-array name="place_of_anc_array">
+        <item>Sub-Centre</item>
+        <item>VHND/VHSND</item>
+        <item>PHC</item>
+        <item>PMSMA Visit</item>
+        <item>CHC</item>
+        <item>District Hospital</item>
+        <item>Medical College Hospital</item>
     </string-array>
     <string-array name="reason_of_death_array">
         <item>Natural Death</item>
