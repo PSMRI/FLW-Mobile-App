@@ -26,13 +26,30 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
+import com.google.gson.Gson
+import org.piramalswasthya.sakhi.database.shared_preferences.ReferralStatusManager
+import org.piramalswasthya.sakhi.model.ReferalCache
+import org.piramalswasthya.sakhi.repositories.NcdReferalRepo
 
 @HiltViewModel
 class AntenatalCounsellingViewModel @Inject constructor(
     private val repository: FormRepository,
     private val benRepo: BenRepo,
     private val infantRegRepo: InfantRegRepo,
+    private var referalRepo: NcdReferalRepo,
+    private val referralStatusManager: ReferralStatusManager
 ) : ViewModel() {
+
+    enum class ReferralType {
+        MATERNAL,
+        NCD,
+        TB,
+        LEPROSY,
+        GERIATRIC,
+        COPD,
+        DEPRESSION,
+        HRP
+    }
 
     enum class State {
         IDLE, LOADING, SUCCESS, FAIL
@@ -49,6 +66,67 @@ class AntenatalCounsellingViewModel @Inject constructor(
 
     private val _lastVisitData = MutableStateFlow<ANCFormResponseJsonEntity?>(null)
     val lastVisitData: StateFlow<ANCFormResponseJsonEntity?> = _lastVisitData
+
+    private val _referralList = MutableLiveData<MutableList<ReferalCache>>(mutableListOf())
+    val referralList: LiveData<MutableList<ReferalCache>> = _referralList
+
+    private val _completedReferrals = MutableLiveData<MutableSet<ReferralType>>(mutableSetOf())
+    val completedReferrals: LiveData<MutableSet<ReferralType>> = _completedReferrals
+
+    private val _showReferralDialog = MutableLiveData(false)
+    val showReferralDialog: LiveData<Boolean> = _showReferralDialog
+
+    var referralCache: ReferalCache? = null
+
+    fun isReferralAlreadyDone(type: ReferralType): Boolean {
+        val inMemory = _completedReferrals.value?.contains(type) == true
+        val persistent = referralStatusManager.isReferred(benId, type.name)
+        return inMemory || persistent
+    }
+
+    fun markReferralCompleted(type: ReferralType) {
+        val set = _completedReferrals.value ?: mutableSetOf()
+        set.add(type)
+        _completedReferrals.value = set
+        referralStatusManager.markAsReferred(benId, type.name)
+    }
+
+    fun addReferral(referral: ReferalCache) {
+        val list = _referralList.value ?: mutableListOf()
+        val alreadyExists = list.any {
+            it.referralReason == referral.referralReason
+        }
+
+        if (!alreadyExists) {
+            list.add(referral)
+            _referralList.value = list
+            referralCache = referral
+            referralStatusManager.markAsReferred(benId, ReferralType.MATERNAL.name)
+        }
+    }
+
+    private fun loadExistingReferralStatus() {
+        viewModelScope.launch {
+            if (referralStatusManager.isReferred(benId, ReferralType.MATERNAL.name)) {
+                markReferralCompleted(ReferralType.MATERNAL)
+            }
+        }
+    }
+
+    fun checkForReferralTriggers(formData: Map<String, Any?>): Boolean {
+        val dangerSignQuestions = listOf(
+            "swelling", "high_bp", "convulsions", "anemia", "reduced_fetal_movement",
+            "age_risk", "child_gap", "short_height", "pre_preg_weight", "bleeding",
+            "miscarriage_history", "four_plus_delivery", "first_delivery", "twin_pregnancy",
+            "c_section_history", "pre_existing_disease", "fever_malaria", "jaundice",
+            "sickle_cell", "prolonged_labor", "malpresentation"
+        )
+
+        return dangerSignQuestions.any { questionId ->
+            formData[questionId]?.toString()?.equals("Yes", ignoreCase = true) == true
+        }
+    }
+
     private val oneTimeQuestions = listOf(
         "child_gap", "short_height", "pre_preg_weight", "miscarriage_history",
         "four_plus_delivery", "first_delivery", "c_section_history", "pre_existing_disease",
@@ -102,6 +180,11 @@ class AntenatalCounsellingViewModel @Inject constructor(
     var previousVisitDate: Date? = null
     var lastVisitDay: String? = null
 
+
+    init{
+        loadExistingReferralStatus()
+    }
+
     fun loadSyncedVisitList(benId: Long, onComplete: (() -> Unit)? = null) {
         viewModelScope.launch {
             _syncedVisitList.value = repository.getSyncedVisitsByRchIdANC(benId)
@@ -125,14 +208,14 @@ class AntenatalCounsellingViewModel @Inject constructor(
             val cachedSchema: FormSchemaDto? = cachedSchemaEntity?.let {
                 FormSchemaDto.fromJson(it.schemaJson)
             }
-            val localSchemaToRender = cachedSchema ?: repository.getFormSchema(formId,lang)?.also {
+            val localSchemaToRender = cachedSchema ?: repository.getFormSchema(formId, lang)?.also {
             }
 
             if (localSchemaToRender == null) {
                 return@launch
             }
 
-            val savedJson = repository.loadFormResponseJsonANC(benId,visitDay)
+            val savedJson = repository.loadFormResponseJsonANC(benId, visitDay)
             val savedFieldValues = if (!savedJson.isNullOrBlank()) {
                 try {
                     val root = JSONObject(savedJson)
@@ -145,7 +228,6 @@ class AntenatalCounsellingViewModel @Inject constructor(
                 emptyMap()
             }
 
-            // Load last visit data for one-time questions
             if (!viewMode) {
                 loadLastVisitData(benId)
             }
@@ -158,6 +240,12 @@ class AntenatalCounsellingViewModel @Inject constructor(
                         else -> savedFieldValues[field.fieldId] ?: field.default
                     }
 
+                    if (field.fieldId == "age_risk") {
+                        val isAgeRisk = motherAge < 18 || motherAge > 35
+                        field.value = if (isAgeRisk) "Yes" else "No"
+                        field.isEditable = false
+                    }
+
                     if (!viewMode && _lastVisitData.value != null) {
                         val lastVisit = _lastVisitData.value
                         try {
@@ -167,11 +255,6 @@ class AntenatalCounsellingViewModel @Inject constructor(
                                 val fieldsJson = jsonObject.optJSONObject("fields") ?: JSONObject()
 
                                 when (field.fieldId) {
-                                    "age_risk" -> {
-                                        val isAgeRisk = motherAge < 18 || motherAge > 35
-                                        field.value = if (isAgeRisk) "Yes" else "No"
-                                        field.isEditable = false
-                                    }
                                     in oneTimeQuestions -> {
                                         val lastValue = fieldsJson.optString(field.fieldId)
                                         if (lastValue.isNotEmpty()) {
@@ -185,23 +268,28 @@ class AntenatalCounsellingViewModel @Inject constructor(
                                         val lastValue = fieldsJson.optString(field.fieldId)
                                         if (lastValue.isNotEmpty()) {
                                             field.value = lastValue
-                                            field.isEditable = true // Keep editable
+                                            field.isEditable = true
                                         } else {
                                             field.isEditable = !viewMode
                                         }
                                     }
                                     else -> {
-                                        field.isEditable = !viewMode
+                                        if (field.fieldId != "age_risk") {
+                                            field.isEditable = !viewMode
+                                        }
                                     }
                                 }
                             }
                         } catch (e: Exception) {
                             Timber.e(e, "Error processing last visit data for field ${field.fieldId}")
-                            field.isEditable = !viewMode
+                            if (field.fieldId != "age_risk") {
+                                field.isEditable = !viewMode
+                            }
                         }
                     } else {
+                        // Set editability for other fields
                         field.isEditable = when (field.fieldId) {
-                            "visit_day", "due_date", "age_risk" -> false
+                            "visit_day", "due_date", "age_risk" -> false  // age_risk is always non-editable
                             else -> !viewMode
                         }
 
@@ -287,6 +375,13 @@ class AntenatalCounsellingViewModel @Inject constructor(
             _state.value = State.LOADING
 
             repository.insertFormResponseANC(entity)
+            referralList.value?.forEach {
+                referalRepo.saveReferedNCD(it)
+            }
+
+            if (referralCache != null) {
+                markReferralCompleted(ReferralType.MATERNAL)
+            }
 
             _state.value = State.SUCCESS
         } catch (e: Exception) {

@@ -599,7 +599,7 @@ class IconDataset @Inject constructor(
         Icon(
             R.drawable.ic_ncd_noneligible,
             resources.getString(R.string.hwc_referred_list),
-            recordsRepo.getPregnantWomenListCount(),
+            recordsRepo.getHwcReferedListCount,
             MotherCareFragmentDirections.actionMotherCareFragmentToHwcReferredListFragment()
         ),
     ).apply {

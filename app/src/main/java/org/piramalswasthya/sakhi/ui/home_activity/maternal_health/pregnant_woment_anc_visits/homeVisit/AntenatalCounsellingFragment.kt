@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -23,8 +24,10 @@ import org.piramalswasthya.sakhi.adapters.dynamicAdapter.FormRendererAdapter
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentAntenatalCounsellingBinding
 import org.piramalswasthya.sakhi.model.BenWithAncListDomain
+import org.piramalswasthya.sakhi.model.ReferalCache
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.list.PwAncVisitsListViewModel
+import org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.cbac.CbacFragmentDirections
 import org.piramalswasthya.sakhi.utils.dynamicFiledValidator.FieldValidator
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.ANC_FORM_ID
 import org.piramalswasthya.sakhi.work.WorkerUtils
@@ -54,7 +57,10 @@ class AntenatalCounsellingFragment : Fragment() {
     private var allBenList: List<BenWithAncListDomain> = emptyList()
     private lateinit var benList: BenWithAncListDomain
 
-    // List of 21 danger sign question IDs
+    private var isReturningFromReferral = false
+    private var shouldRestoreFormState = false
+
+
     private val dangerSignQuestions = listOf(
         "swelling", "high_bp", "convulsions", "anemia", "reduced_fetal_movement",
         "age_risk", "child_gap", "short_height", "pre_preg_weight", "bleeding",
@@ -69,6 +75,8 @@ class AntenatalCounsellingFragment : Fragment() {
     private var isReferralDialogShown = false
     private var hasAnyDangerSign = false
     private var isSelectAllChecked = false
+    private var referralForReason = "Suspected high-risk pregnancy"
+    private var referType = "Maternal"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -92,6 +100,45 @@ class AntenatalCounsellingFragment : Fragment() {
         val todayDate: String = LocalDate.now()
             .format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
 
+        isReturningFromReferral = savedInstanceState?.getBoolean("isReturningFromReferral", false) ?: false
+
+        findNavController()
+            .currentBackStackEntry
+            ?.savedStateHandle
+            ?.getLiveData<String>("REFERRAL_DONE")
+            ?.observe(viewLifecycleOwner) { typeName ->
+                try {
+                    val upperTypeName = typeName.uppercase(Locale.ROOT)
+                    val type = AntenatalCounsellingViewModel.ReferralType.valueOf(upperTypeName)
+                    viewModel.markReferralCompleted(type)
+
+                    isReturningFromReferral = true
+                    shouldRestoreFormState = true
+
+                    if (hasAnyDangerSign) {
+                        saveFormData()
+                    }
+                } catch (e: Exception) {
+                    Timber.e(e, "Failed to parse referral type: $typeName")
+                }
+            }
+
+        findNavController().currentBackStackEntry
+            ?.savedStateHandle
+            ?.getLiveData<String>("REFERRAL_RESULT")
+            ?.observe(viewLifecycleOwner) { json ->
+                try {
+                    val referral = Gson().fromJson(json, ReferalCache::class.java)
+                    viewModel.addReferral(referral)
+
+                    isReturningFromReferral = true
+                    shouldRestoreFormState = true
+                } catch (e: Exception) {
+                    Timber.e(e, "Failed to parse referral result")
+                }
+            }
+
+
 
         lifecycleScope.launch {
             viewModelAnc.benList.collect {list: List<BenWithAncListDomain> ->
@@ -109,7 +156,6 @@ class AntenatalCounsellingFragment : Fragment() {
                     binding.tvWeeksValue.text = benList.weekOfPregnancy.toString()
                     binding.tvEddValue.text = benList.eddString
 
-                    // Calculate mother's age and set it in ViewModel
                     calculateAndSetMotherAge()
                 } else {
                     Timber.e("Beneficiary not found for benId=$benId")
@@ -117,7 +163,7 @@ class AntenatalCounsellingFragment : Fragment() {
             }
         }
 
-        setupSelectAllCheckbox()
+       // setupSelectAllCheckbox()
 
         if (isViewMode) {
             binding.btnSave.isVisible = false
@@ -228,6 +274,17 @@ class AntenatalCounsellingFragment : Fragment() {
         }
 
         binding.btnSave.setOnClickListener { handleFormSubmission() }
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+
+        if (shouldRestoreFormState || isReturningFromReferral) {
+            restoreFormState()
+            shouldRestoreFormState = false
+            isReturningFromReferral = false
+        }
     }
 
     private fun calculateAndSetMotherAge() {
@@ -433,11 +490,19 @@ class AntenatalCounsellingFragment : Fragment() {
             return
         }
 
-        hasAnyDangerSign = checkForDangerSigns(currentSchema)
+        val isReferralAlreadyDone = viewModel.isReferralAlreadyDone(
+            AntenatalCounsellingViewModel.ReferralType.MATERNAL
+        )
 
-        Timber.d("Danger signs check: $hasAnyDangerSign, Dialog already shown: $isReferralDialogShown")
+        val allFields = currentSchema.sections.orEmpty()
+            .flatMap { it.fields.orEmpty() }
+        val formData = allFields.associate { it.fieldId to it.value }
 
-        if (hasAnyDangerSign && !isReferralDialogShown) {
+        hasAnyDangerSign = viewModel.checkForReferralTriggers(formData)
+
+        Timber.d("Danger signs check: $hasAnyDangerSign, Referral already done: $isReferralAlreadyDone")
+
+        if (hasAnyDangerSign && !isReferralAlreadyDone ) {
             showDangerSignDialog()
         } else {
             saveFormData()
@@ -485,11 +550,9 @@ class AntenatalCounsellingFragment : Fragment() {
 
     private fun navigateToHwcReferralScreen() {
         try {
-
-            saveFormData()
+            findNavController().navigate(AntenatalCounsellingFragmentDirections.actionPwAncCounsellingFormFragmentToNcdReferForm(benId, referral = "Suspected high-risk pregnancy", cbacId = 0, referralType = "MATERNAL"))
         } catch (e: Exception) {
             Timber.e(e, "Error navigating to HWC Referral screen")
-            saveFormData()
         }
     }
 
@@ -498,6 +561,64 @@ class AntenatalCounsellingFragment : Fragment() {
             Log.d("anc_home_visit", "Saving form data, hasAnyDangerSign: $hasAnyDangerSign")
             viewModel.saveFormResponses(benId)
         }
+    }
+
+    private fun restoreFormState() {
+        if (adapter == null) {
+            setupAdapter()
+        } else {
+            lifecycleScope.launch {
+                viewModel.schema.collectLatest { schema ->
+                    if (schema != null && adapter != null) {
+                        val visibleFields = viewModel.getVisibleFields().toMutableList()
+
+                        // IMPORTANT: Preserve current form values
+                        val currentFields = adapter?.getCurrentFields() ?: emptyList()
+                        currentFields.forEach { currentField ->
+                            val updatedField = visibleFields.find { it.fieldId == currentField.fieldId }
+                            updatedField?.value = currentField.value
+                        }
+
+                        adapter?.updateFields(visibleFields)
+                        updateSelectAllCheckbox()
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean("isReturningFromReferral", isReturningFromReferral)
+    }
+
+    private fun setupAdapter() {
+        val currentSchema = viewModel.schema.value
+        if (currentSchema == null) return
+
+        val visibleFields = viewModel.getVisibleFields().toMutableList()
+        val minVisitDate = viewModel.getMinVisitDate()
+        val maxVisitDate = viewModel.getMaxVisitDate()
+
+        adapter = FormRendererAdapter(
+            visibleFields,
+            isViewOnly = isViewMode,
+            minVisitDate = minVisitDate,
+            maxVisitDate = maxVisitDate,
+            isSNCU = viewModel.isSNCU.value ?: false,
+            onValueChanged = { field, value ->
+                if (value == "pick_image") {
+                } else {
+                    field.value = value
+                    viewModel.updateFieldValue(field.fieldId, value)
+                    adapter?.updateFields(viewModel.getVisibleFields())
+
+                    updateSelectAllCheckbox()
+                }
+            },
+            onShowAlert = null
+        )
+        binding.recyclerView.adapter = adapter
     }
 
     override fun onStart() {

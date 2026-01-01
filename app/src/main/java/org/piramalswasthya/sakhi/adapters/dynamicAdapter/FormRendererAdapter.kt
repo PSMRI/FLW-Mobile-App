@@ -51,6 +51,7 @@
 
         fun getUpdatedFields(): List<FormField> = fields
 
+        fun getCurrentFields(): List<FormField> = fields
         fun updateFields(newFields: List<FormField>) {
             if (fields.size != newFields.size) {
                 fields.clear()
