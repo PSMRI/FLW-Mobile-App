@@ -372,7 +372,7 @@ class AntenatalCounsellingViewModel @Inject constructor(
         )
 
         try {
-            _state.value = State.LOADING
+            _state.postValue ( State.LOADING)
 
             repository.insertFormResponseANC(entity)
             referralList.value?.forEach {
@@ -383,10 +383,10 @@ class AntenatalCounsellingViewModel @Inject constructor(
                 markReferralCompleted(ReferralType.MATERNAL)
             }
 
-            _state.value = State.SUCCESS
+            _state.postValue(State.SUCCESS)
         } catch (e: Exception) {
             e.printStackTrace()
-            _state.value = State.FAIL
+            _state.postValue( State.FAIL)
         }
         loadSyncedVisitList(benId)
     }

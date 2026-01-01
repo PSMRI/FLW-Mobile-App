@@ -124,7 +124,7 @@ class AncVisitListAdapter(
         private val addVisit: (benId: Long, hhId: Long, visitNumber: Int) -> Unit,
         private val pmsma: (benId: Long, hhId: Long, visitNumber: Int) -> Unit,
         private val callBen: (ben: BenWithAncListDomain) -> Unit,
-        private val addHomeVisit: ((benId: Long, visitNumber: Int) -> Unit)? = null,
+        private val addHomeVisit: ((benId: Long) -> Unit)? = null,
         private val showHomeVisit : ((benId: Long) -> Unit)? = null
     ) {
         fun showVisits(item: BenWithAncListDomain) = showVisits(item.ben.benId)
@@ -147,7 +147,7 @@ class AncVisitListAdapter(
         fun addHomeVisit(item: BenWithAncListDomain) {
             addHomeVisit?.invoke(
                 item.ben.benId,
-                if (item.anc.isEmpty()) 1 else item.anc.maxOf { it.visitNumber } + 1
+
             )
         }
         fun showHomeVisit(item: BenWithAncListDomain) = showHomeVisit?.invoke(item.ben.benId)

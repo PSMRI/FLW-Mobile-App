@@ -19,9 +19,9 @@ class HwcReferredViewModel @Inject constructor(
     recordsRepo: RecordsRepo,
     preferenceDao: PreferenceDao,
     @ApplicationContext context: Context,
-) : ViewModel(){
+) : ViewModel() {
 
-    private lateinit var asha: User
+    private var asha: User? = null
 
     private val allBenList = recordsRepo.getHwcRefferedList
     private val filter = MutableStateFlow("")
@@ -30,7 +30,7 @@ class HwcReferredViewModel @Inject constructor(
 
     val benList = allBenList.combine(filter) { cacheList, filter ->
         val maternalList = cacheList
-        .filter { it.referral.type == "MATERNAL" }
+            .filter { it.referral.type == "Maternal" }
             .map { it.asDomainModel() }
 
         val benBasicDomainList = maternalList.map { it.ben }
@@ -40,11 +40,9 @@ class HwcReferredViewModel @Inject constructor(
     }
 
 
-
-
     init {
         viewModelScope.launch {
-            asha = preferenceDao.getLoggedInUser()!!
+            asha = preferenceDao.getLoggedInUser()
         }
     }
 
@@ -55,16 +53,8 @@ class HwcReferredViewModel @Inject constructor(
 
     }
 
-    fun setSelectedBenId(benId: Long) {
-        viewModelScope.launch {
-            selectedBenId.emit(benId)
-        }
+
+    fun getAshaId(): Int? {
+        return asha?.userId
     }
-
-    fun getSelectedBenId(): Long = selectedBenId.value
-    fun getAshaId(): Int = asha.userId
-
-
-    private val catList = ArrayList<String>()
-
 }
