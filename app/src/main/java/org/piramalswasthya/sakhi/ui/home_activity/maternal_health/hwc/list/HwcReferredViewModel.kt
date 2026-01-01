@@ -23,17 +23,20 @@ class HwcReferredViewModel @Inject constructor(
 
     private lateinit var asha: User
 
-    private val allBenList = recordsRepo.getNcdrefferedList
+    private val allBenList = recordsRepo.getHwcRefferedList
     private val filter = MutableStateFlow("")
     private val selectedBenId = MutableStateFlow(0L)
     var userName = preferenceDao.getLoggedInUser()!!.name
 
     val benList = allBenList.combine(filter) { cacheList, filter ->
-        val list = cacheList.map { it.asDomainModel() }
-        val benBasicDomainList = list.map { it.ben }
-        val filteredBenBasicDomainList = filterBenList(benBasicDomainList, filter)
-        list.filter { it.ben.benId in filteredBenBasicDomainList.map { it.benId } }
+        val maternalList = cacheList
+        .filter { it.referral.type == "MATERNAL" }
+            .map { it.asDomainModel() }
 
+        val benBasicDomainList = maternalList.map { it.ben }
+        val filteredBenBasicDomainList = filterBenList(benBasicDomainList, filter)
+
+        maternalList.filter { it.ben.benId in filteredBenBasicDomainList.map { it.benId } }
     }
 
 

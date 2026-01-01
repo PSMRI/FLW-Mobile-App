@@ -147,7 +147,7 @@ class PwAncVisitsListFragment : Fragment() {
                         bottomSheetAncHomeVisit!!.show(childFragmentManager, "HomeVisit")
 
                     }}
-                ),true, prefDao
+                ),true, prefDao,false,true
 
 
         )
