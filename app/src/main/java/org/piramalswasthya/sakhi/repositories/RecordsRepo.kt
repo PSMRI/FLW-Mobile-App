@@ -19,6 +19,7 @@ import org.piramalswasthya.sakhi.model.HomeVisitUiState
 import org.piramalswasthya.sakhi.model.dynamicEntity.anc.ANCFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.filterMdsr
 import org.piramalswasthya.sakhi.utils.HelperUtil
+import org.piramalswasthya.sakhi.utils.HomeVisitHelper
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -454,8 +455,10 @@ class RecordsRepo @Inject constructor(
 
 
     suspend fun getHomeVisitUiState(benId: Long): HomeVisitUiState {
+        val formResponses = ancHomeVisitDao.getSyncedVisitsByRchId(benId)
 
-        val visits = ancHomeVisitDao.getVisitsForBen(benId)
+        val visits = HomeVisitHelper.getANCSortedHomeVisits(formResponses)
+       // val visits = ancHomeVisitDao.getVisitsForBen(benId)
         val visitCount = visits.size
 
         val canView = visitCount > 0

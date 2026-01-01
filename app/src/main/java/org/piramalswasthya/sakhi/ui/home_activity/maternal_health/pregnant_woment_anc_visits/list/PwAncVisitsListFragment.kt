@@ -129,10 +129,10 @@ class PwAncVisitsListFragment : Fragment() {
                             Toast.LENGTH_SHORT
                         ).show()
                     }
-                }, addHomeVisit = {benId, visitNumber ->
+              }, addHomeVisit = {benId ->
                     findNavController().navigate(
                         PwAncVisitsListFragmentDirections.actionPwAncVisitsFragmentToPwAncCounsellingFormFragment(
-                            benId,visitNumber
+                            benId,0
                         )
                     )
 
