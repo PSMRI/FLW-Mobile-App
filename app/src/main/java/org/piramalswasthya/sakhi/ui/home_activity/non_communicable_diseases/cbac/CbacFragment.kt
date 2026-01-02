@@ -15,7 +15,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
@@ -24,6 +23,7 @@ import org.piramalswasthya.sakhi.model.CbacCache
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.ReferalCache
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.home_activity.disease_control.leprosy.form.LeprosyFormViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_screening.form.TBScreeningFormViewModel
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
@@ -55,6 +55,7 @@ class CbacFragment : Fragment() {
     private var isSuspected: Boolean = false
 
     private val viewModelTbScreening: TBScreeningFormViewModel by viewModels()
+    private val viewModelLeprosyScreening: LeprosyFormViewModel by viewModels()
 
     private val alertDialog by lazy {
         AlertDialog.Builder(requireContext()).setTitle(getString(R.string.missing_field)).create()
@@ -112,6 +113,15 @@ class CbacFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel.isLeprosySuspected.observe(viewLifecycleOwner) { suspected ->
+            if (suspected  && isInFillMode && !viewModel.isReferralAlreadyDone(CbacViewModel.ReferralType.LEPROSY)) {
+                binding.cbacSuspectedLeprosy.cbacEdRg.check(R.id.rb_yes)
+                viewModelLeprosyScreening.saveLeprosySuspectedFormDirectlyfromCbac()
+                referralForReason = "Suspected Leprosy case"
+                referType = "LEPROSY"
+                asreferAlertDialog.show()
+            }
+        }
         findNavController()
             .currentBackStackEntry
             ?.savedStateHandle
@@ -263,8 +273,6 @@ class CbacFragment : Fragment() {
                 viewModel.setLsWt(2)
                 binding.cbacNtswets.rbNo.isChecked = true
                 viewModel.setNtSwets(2)
-
-
                 binding.cbacRecurrentUlceration.rbNo.isChecked = true
                 viewModel.setRecurrentUlceration(2)
                 binding.cbacRecurrentCloudy.rbNo.isChecked = true
@@ -817,6 +825,7 @@ class CbacFragment : Fragment() {
                 R.id.rb_yes -> viewModel.setRecurrentUlceration(1)
                 R.id.rb_no -> viewModel.setRecurrentUlceration(2)
             }
+            viewModel.checkLeprosySymptoms()
         }
         binding.cbacRecurrentCloudy.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
@@ -926,18 +935,21 @@ class CbacFragment : Fragment() {
                 R.id.rb_yes -> viewModel.setNumb(1)
                 R.id.rb_no -> viewModel.setNumb(2)
             }
+            viewModel.checkLeprosySymptoms()
         }
         binding.cbacClawingOfFingers.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setClaw(1)
                 R.id.rb_no -> viewModel.setClaw(2)
             }
+            viewModel.checkLeprosySymptoms()
         }
         binding.cbacTinglingOrNumbness.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setTingNumb(1)
                 R.id.rb_no -> viewModel.setTingNumb(2)
             }
+            viewModel.checkLeprosySymptoms()
         }
         binding.cbacInabilityCloseEyelid.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
@@ -950,12 +962,14 @@ class CbacFragment : Fragment() {
                 R.id.rb_yes -> viewModel.setHoldObj(1)
                 R.id.rb_no -> viewModel.setHoldObj(2)
             }
+            viewModel.checkLeprosySymptoms()
         }
         binding.cbacWeeknessInFeet.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setWeakFeet(1)
                 R.id.rb_no -> viewModel.setWeakFeet(2)
             }
+            viewModel.checkLeprosySymptoms()
         }
         binding.cbacLumpbrest.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {

@@ -53,7 +53,7 @@ class NCDReferTypeFilter : BottomSheetDialogFragment(), NCDReferTypeFilterAdapte
 
         } else {
             catTxt = catDataList
-            viewModel.filterText(catTxt)
+            viewModel.setSelectedFilter(catTxt)
 
         }
         dismiss()
