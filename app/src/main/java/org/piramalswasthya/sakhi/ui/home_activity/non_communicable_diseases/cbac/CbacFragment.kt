@@ -114,7 +114,7 @@ class CbacFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.isLeprosySuspected.observe(viewLifecycleOwner) { suspected ->
-            if (suspected) {
+            if (suspected  && isInFillMode && !viewModel.isReferralAlreadyDone(CbacViewModel.ReferralType.LEPROSY)) {
                 binding.cbacSuspectedLeprosy.cbacEdRg.check(R.id.rb_yes)
                 viewModelLeprosyScreening.saveLeprosySuspectedFormDirectlyfromCbac()
                 referralForReason = "Suspected Leprosy case"
