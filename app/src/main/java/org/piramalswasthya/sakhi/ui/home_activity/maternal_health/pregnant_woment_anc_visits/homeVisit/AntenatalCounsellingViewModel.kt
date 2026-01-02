@@ -55,6 +55,8 @@ class AntenatalCounsellingViewModel @Inject constructor(
         IDLE, LOADING, SUCCESS, FAIL
     }
 
+    private var _visitCount = MutableStateFlow(0)
+    val visitCount: StateFlow<Int> = _visitCount
     private val _state = MutableLiveData(State.IDLE)
     val state: LiveData<State>
         get() = _state
@@ -113,6 +115,12 @@ class AntenatalCounsellingViewModel @Inject constructor(
         }
     }
 
+    fun loadVisitCount(benId: Long) {
+        viewModelScope.launch {
+            val visits = repository.getSyncedVisitsByRchIdANC(benId)
+            _visitCount.value = visits.size
+        }
+    }
     fun checkForReferralTriggers(formData: Map<String, Any?>): Boolean {
         val dangerSignQuestions = listOf(
             "swelling", "high_bp", "convulsions", "anemia", "reduced_fetal_movement",
@@ -197,13 +205,16 @@ class AntenatalCounsellingViewModel @Inject constructor(
         formId: String,
         visitDay: String,
         viewMode: Boolean,
-        lang: String
+        lang: String,
+        visitNumber : Int
     ) {
         this.visitDay = visitDay
         this.isViewMode = viewMode
         this.benId = benId
 
         viewModelScope.launch {
+            val visits = repository.getSyncedVisitsByRchIdANC(benId)
+            _visitCount.value = visits.size
             val cachedSchemaEntity = repository.getSavedSchema(formId)
             val cachedSchema: FormSchemaDto? = cachedSchemaEntity?.let {
                 FormSchemaDto.fromJson(it.schemaJson)
@@ -238,6 +249,16 @@ class AntenatalCounsellingViewModel @Inject constructor(
                     field.value = when (field.fieldId) {
                         "visit_day" -> visitDay
                         else -> savedFieldValues[field.fieldId] ?: field.default
+                    }
+                    if (field.fieldId == "visit_number") {
+                        val nextVisitNumber = _visitCount.value + 1
+                        if(!viewMode)
+                        {field.value = "Visit-$nextVisitNumber"}
+                        else{
+                            field.value = "Visit-$visitNumber"
+                        }
+
+                        field.isEditable = false
                     }
 
                     if (field.fieldId == "age_risk") {

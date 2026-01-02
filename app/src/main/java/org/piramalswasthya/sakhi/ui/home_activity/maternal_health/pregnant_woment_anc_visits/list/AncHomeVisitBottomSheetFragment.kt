@@ -41,7 +41,7 @@ class AncHomeVisitBottomSheetFragment : BottomSheetDialogFragment () {
 
                 findNavController().navigate(
                     PwAncVisitsListFragmentDirections.actionPwAncVisitsFragmentToPwAncCounsellingFormFragment(
-                        homeVisit.benId,homeVisit.visitNumber+1,true,homeVisit.visitDateString
+                        homeVisit.benId,homeVisit.visitNumber,true,homeVisit.visitDateString
                     )
                 )
             }
