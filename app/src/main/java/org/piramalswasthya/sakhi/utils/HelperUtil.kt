@@ -238,6 +238,16 @@ object HelperUtil {
 
     }
 
+    fun parseDateToMillis(dateStr: String): Long {
+        return try {
+            val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+            sdf.isLenient = false
+            sdf.parse(dateStr)?.time ?: 0L
+        } catch (e: Exception) {
+            0L
+        }
+    }
+
     fun getLongFromDateStr(dateString: String?): Long {
         val f = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
         val date = dateString?.let { f.parse(it) }

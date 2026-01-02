@@ -589,49 +589,7 @@
     <string name="filaria_submitted">ফিলাৰিয়া ফৰ্ম জমা দিয়া হৈছে</string>
     <string name="leprosy_submitted">কঁকালৰ ৰোগৰ ফৰ্ম জমা দিয়া হৈছে</string>
     <string name="irs_submitted">IRS ফৰ্ম জমা দিয়া হৈছে</string>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    <string name="hwc_referred_list">HWC Referred List</string>
 
 
 </resources>
