@@ -18,6 +18,7 @@ import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.ncd_referred.filter.NCDReferTypeFilter
 import javax.inject.Inject
 import kotlin.getValue
 
@@ -29,6 +30,9 @@ class NcdRefferedList : Fragment() {
     private val binding: FragmentDisplaySearchRvButtonBinding by lazy {
         FragmentDisplaySearchRvButtonBinding.inflate(layoutInflater)
     }
+
+    private val filterBottomSheet: NCDReferTypeFilter by lazy { NCDReferTypeFilter() }
+
 
     private val viewModel: NcdRefferedListViewModel by viewModels()
     override fun onCreateView(
@@ -42,10 +46,29 @@ class NcdRefferedList : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnNextPage.visibility = View.GONE
+        binding.filterText.visibility = View.VISIBLE
 
         val benAdapter =
             NcdReferListAdapter(viewModel.userName)
         binding.rvAny.adapter = benAdapter
+
+
+
+        binding.ivFilter.setOnClickListener {
+            if (!filterBottomSheet.isVisible)
+                filterBottomSheet.show(childFragmentManager, "ImM")
+        }
+
+        binding.tvSelectedFilter.setOnClickListener {
+            if (!filterBottomSheet.isVisible)
+                filterBottomSheet.show(childFragmentManager, "ImM")
+        }
+
+        viewModel.selectedFilter.observe(viewLifecycleOwner){
+            if (it!=null){
+                binding.tvSelectedFilter.text = it
+            }
+        }
 
 
         lifecycleScope.launch {

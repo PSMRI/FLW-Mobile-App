@@ -439,7 +439,7 @@
                 android:layout_marginVertical="@dimen/margin_normal"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:id="@+id/llAnc2"
                 app:layout_constraintTop_toBottomOf="@+id/llAnc">
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_pmsma"
@@ -466,6 +466,38 @@
                     android:textColor="?attr/colorOnPrimary" />
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/margin_normal"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/llAnc2">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_add_home_visit"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/margin_normal"
+                    android:layout_weight="1"
+                    android:backgroundTint="@android:color/holo_green_dark"
+                    android:onClick="@{() -> clickListener.addHomeVisit(visit)}"
+                    android:text="ADD HOME VISIT"
+                    android:textColor="?attr/colorOnPrimary" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_view_home_visit"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/margin_normal"
+                    android:layout_weight="1"
+
+                    android:backgroundTint="@android:color/holo_green_dark"
+                    android:onClick="@{() -> clickListener.showHomeVisit(visit)}"
+                    android:text="VIEW HOME VISITS"
+                    android:textColor="?attr/colorOnPrimary" />
+            </LinearLayout>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

@@ -356,6 +356,7 @@
     <string name="filaria_submitted">फाइलेरिया फॉर्म जमा किया गया</string>
     <string name="leprosy_submitted">कुष्ठ रोग फॉर्म जमा किया गया</string>
     <string name="irs_submitted">आईआरएस फॉर्म जमा किया गया</string>
+    <string name="hwc_referred_list">HWC Referred List</string>
 
 
 </resources>

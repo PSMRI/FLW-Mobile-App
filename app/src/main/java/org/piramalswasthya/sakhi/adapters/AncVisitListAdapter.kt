@@ -64,6 +64,7 @@ class AncVisitListAdapter(
 
             if (pref?.getLoggedInUser()?.role.equals("asha", true)) {
                 binding.btnAddAnc.visibility = View.VISIBLE
+                binding.btnAddHomeVisit.visibility = View.VISIBLE
             } else {
                 binding.btnAddAnc.visibility = View.INVISIBLE
             }
@@ -82,6 +83,12 @@ class AncVisitListAdapter(
                 binding.llBenPwrTrackingDetails4.visibility = View.VISIBLE
                 binding.benVisitDate.text = HelperUtil.getDateStringFromLongStraight(item.ancDate)
             }
+
+            binding.btnAddHomeVisit.visibility =
+                if (item.showAddHomeVisit) View.VISIBLE else View.GONE
+
+            binding.btnViewHomeVisit.visibility =
+                if (item.showViewHomeVisit) View.VISIBLE else View.GONE
 
             if (showCall) {
                 binding.ivCall.visibility = View.VISIBLE
@@ -116,7 +123,9 @@ class AncVisitListAdapter(
         private val showPmsmaVisits: (benId: Long, hhId: Long) -> Unit,
         private val addVisit: (benId: Long, hhId: Long, visitNumber: Int) -> Unit,
         private val pmsma: (benId: Long, hhId: Long, visitNumber: Int) -> Unit,
-        private val callBen: (ben: BenWithAncListDomain) -> Unit
+        private val callBen: (ben: BenWithAncListDomain) -> Unit,
+        private val addHomeVisit: ((benId: Long) -> Unit)? = null,
+        private val showHomeVisit : ((benId: Long) -> Unit)? = null
     ) {
         fun showVisits(item: BenWithAncListDomain) = showVisits(item.ben.benId)
         fun showPmsmaVisits(item: BenWithAncListDomain) =
@@ -135,5 +144,13 @@ class AncVisitListAdapter(
         )
 
         fun onClickedForCall(item: BenWithAncListDomain) = callBen(item)
+        fun addHomeVisit(item: BenWithAncListDomain) {
+            addHomeVisit?.invoke(
+                item.ben.benId,
+
+            )
+        }
+        fun showHomeVisit(item: BenWithAncListDomain) = showHomeVisit?.invoke(item.ben.benId)
+
     }
 }

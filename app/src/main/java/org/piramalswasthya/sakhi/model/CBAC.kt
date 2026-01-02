@@ -654,7 +654,7 @@ data class BenWithCbacCache(
 
 
 data class BenWithCbacAndReferalCache(
-    @Embedded val ben: BenBasicCache,
+    @Embedded val referral: ReferalCache,
     @Relation(
         parentColumn = "benId",
         entityColumn = "benId"
@@ -664,11 +664,12 @@ data class BenWithCbacAndReferalCache(
         parentColumn = "benId",
         entityColumn = "benId"
     )
-    val referralList: ReferalCache
+    val ben: BenBasicCache
+
 ) {
     fun asDomainModel(): BenWithCbacReferDomain {
         return BenWithCbacReferDomain(
-            ben.asBasicDomainModel(), cbacList,referralList
+            ben.asBasicDomainModel(), cbacList,referral
         )
     }
 }
