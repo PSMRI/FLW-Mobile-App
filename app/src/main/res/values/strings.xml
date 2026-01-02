@@ -339,6 +339,8 @@
     <string name="ncd_eligible_list">NCD Eligible List</string>
     <string name="ncd_refer_form">NCD Refer Form</string>
     <string name="ncd_refer_list">NCD Referred List</string>
+    <string name="hwc_refer_form">HWC Refer Form</string>
+    <string name="hwc_refer_list">HWC Referred List</string>
 
     <string name="child_under_five_years_list">Child Under Five Years List</string>
     <string name="ncd_list">NCD List</string>
@@ -713,6 +715,9 @@
     <string name="view_children">View Children</string>
     <string name="newAbha">New</string>
     <string name="oldAbha">Old</string>
+    <string name="home_visit_number">Home Visit %d</string>
+    <string name="hwc_referred_list">HWC Referred List</string>
+
 
     <string-array name="hbyc_month_array">
         <item name="hbyc_month_3">3 Month</item>
