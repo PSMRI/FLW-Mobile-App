@@ -75,27 +75,29 @@ class BenListCHOFragment : Fragment() {
         )
         val benAdapter = BenListAdapter(
             BenListAdapter.BenClickListener(
-                { hhId, benId, isKid ->
-//                    Toast.makeText(requireContext(), "ben clicked", Toast.LENGTH_SHORT).show()
+                { item,hhId, benId, isKid ->
                 },
-                clickedWifeBen = { hhId, benId, relToHeadId ->
+                clickedWifeBen = {item, hhId, benId, relToHeadId ->
 
                 },
-                clickedHusbandBen = { hhId, benId, isKrelToHeadIdid ->
+                clickedHusbandBen = { item,hhId, benId, isKrelToHeadIdid ->
 
                 },
                 clickedChildben = {
-                    hhId,benId,relToHeadId ->
+                        item, hhId,benId,relToHeadId ->
                 },
-                {
+                {item,hhid->
 
                 },
-                { benId, hhId ->
+                { item,benId, hhId ->
                     checkAndGenerateABHA(benId)
                 },
-                { benId, hhId, isViewMode, isIFA ->
-                }, {}
+                {item, benId, hhId, isViewMode, isIFA ->
+                }, {
 
+                },{
+
+                }
                 ),
 //            showAbha = true,
             role = 1,
@@ -117,7 +119,6 @@ class BenListCHOFragment : Fragment() {
             it.text = resources.getString(R.string.add_beneficiary)
             it.setBackgroundColor(
                 resources.getColor(android.R.color.holo_orange_dark, context?.theme)
-//                Color.rgb(252, 69, 19)
             )
         }
         binding.btnNextPage.setOnClickListener {
@@ -125,10 +126,14 @@ class BenListCHOFragment : Fragment() {
         }
         val searchTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                // No action required for this implementation.
+                // This method is implemented to satisfy the interface contract.
 
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                // No action required for this implementation.
+                // This method is implemented to satisfy the interface contract.
 
             }
 

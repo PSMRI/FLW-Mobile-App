@@ -16,6 +16,7 @@
     </data>
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/parentCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_normal"
@@ -112,16 +113,6 @@
                         android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                         android:textColor="?attr/colorOnPrimary"
                         tools:text="65987506978" />
-
-<!--                    <ImageView-->
-<!--                        android:layout_width="30dp"-->
-<!--                        android:layout_height="30dp"-->
-<!--                        app:tint="@color/material_dynamic_neutral80"-->
-<!--                        android:src="@drawable/ic_pending_actions"-->
-<!--                        android:layout_toRightOf="@+id/contactNumber"-->
-<!--                        android:layout_marginStart="5dp"-->
-<!--                        />-->
-
                 </RelativeLayout>
 
                 <Button
@@ -159,6 +150,23 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_weight="1"
                 />
+
+            <TextView
+                android:id="@+id/tvTitleDuplicaterecord"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="3dp"
+                android:layout_marginEnd="3dp"
+                android:fontFamily="@font/roboto_bold"
+                android:textSize="@dimen/_12sdp"
+                android:visibility="gone"
+                android:textColor="@color/md_theme_dark_errorContainer"
+                android:text="Duplicate Record"
+                app:layout_constraintBottom_toBottomOf="@+id/button3"
+                app:layout_constraintTop_toBottomOf="@+id/ll_ben_details"
+                app:layout_constraintStart_toEndOf="@+id/button3"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_weight="1"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnMda"

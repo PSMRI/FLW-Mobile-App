@@ -121,20 +121,14 @@ class AshaProfileFragment : Fragment() {
             if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
                 findNavController().navigate(
                     AllHouseholdFragmentDirections.actionAllHouseholdFragmentToNewHouseholdFragment(
-                        it
+                        it.hhId
                     )
                 )
             }
         }, {
-           /* val bundle = Bundle()
-            bundle.putLong("hhId", it)
-            bundle.putString("diseaseType", "No")
-            bundle.putInt("fromDisease", 0)
-            findNavController().navigate(R.id.householdMembersFragments, bundle)*/
             findNavController().navigate(
-
                 AshaProfileFragmentDirections.actionAshaProfileFragmentToHouseholdMembersFragment(
-                    it,0,"No"
+                    it.hhId,0,"No"
                 )
             )
         }, {

@@ -17,20 +17,17 @@ import android.text.SpannableString
 import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
-import android.util.Log
 import android.view.Gravity
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.children
 import androidx.recyclerview.widget.DiffUtil
@@ -739,7 +736,6 @@ class FormInputAdapter(
                             item.value = getDateString(item.max)
                         else
                             item.value = getDateString(millis)
-//                            "${if (day > 9) day else "0$day"}-${if (month > 8) month + 1 else "0${month + 1}"}-$year"
                         binding.invalidateAll()
                         if (item.hasDependants) formValueListener?.onValueChanged(item, -1)
                     }, thisYear, thisMonth, thisDay
@@ -979,10 +975,7 @@ class FormInputAdapter(
     }
 
     class ImageClickListener(private val imageClick: (formId: Int) -> Unit) {
-
         fun onImageClick(form: FormElement) = imageClick(form.id)
-//        fun onImageClickForRef(form: FormElement) = imageClick(form.etInputType)
-
     }
 
     class SendOtpClickListener(private val btnClick: (formId: Int,generateOtp:MaterialButton,timerInsec: TextView,tilEditText:TextInputLayout, isEnabled: Boolean,adapterPosition:Int,otpField: TextInputEditText) -> Unit) {
@@ -1054,9 +1047,16 @@ class FormInputAdapter(
             textWatcher?.let { binding.etNumberInput.removeTextChangedListener(it) }
 
             textWatcher = object : TextWatcher {
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                    // No action required for this implementation.
+                    // This method is implemented to satisfy the interface contract.
+
+
+                }
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    // No action required for this implementation.
+                    // This method is implemented to satisfy the interface contract.
 
                 }
 
@@ -1210,20 +1210,6 @@ class FormInputAdapter(
             isEnabled: Boolean,
             fileList : MutableList<Uri>?
         ) {
-           /* binding.form = item
-            binding.tvTitle.text = item.title
-            binding.clickListener = clickListener
-            binding.documentclickListener = documentOnClick
-            binding.btnView.visibility = if (item.value != null) View.VISIBLE else View.GONE
-
-            if (isEnabled) {
-                binding.addFile.isEnabled = true
-                binding.addFile.alpha = 1f
-            } else {
-                binding.addFile.isEnabled = false
-                binding.addFile.alpha = 0.5f
-            }*/
-
             val items = fileList ?: mutableListOf()
             fileAdapter = FileListAdapter(items)
             binding.rvFiles.adapter = fileAdapter

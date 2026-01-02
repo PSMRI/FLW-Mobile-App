@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.EditText
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -23,6 +22,7 @@ import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.AlertNewBenBinding
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
 import org.piramalswasthya.sakhi.model.Gender
+import org.piramalswasthya.sakhi.model.HouseHoldBasicDomain
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import timber.log.Timber
@@ -66,17 +66,15 @@ class AllHouseholdFragment : Fragment() {
             }.create()
     }
 
-    private val softDeleteAlert by lazy {
+    fun showSoftDeleteDialog(houseHoldBasicDomain: HouseHoldBasicDomain) {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle("Deactivate Household")
-            .setMessage("Deactivating this household will disable further updates. The household details will remain visible for reference. Do you want to proceed?")
-            .setPositiveButton(resources.getString(R.string.yes)) { _, _ ->
-              Toast.makeText(requireActivity(),"clicked dialog",Toast.LENGTH_SHORT).show()
+            .setMessage("Are you sure you want to delete ${houseHoldBasicDomain.headFullName}")
+            .setPositiveButton(getString(R.string.yes)) { _, _ ->
+                viewModel.deActivateHouseHold(houseHoldBasicDomain)
             }
-            .setNegativeButton(resources.getString(R.string.no)) { d, _ ->
-                d.dismiss()
-            }
-            .create()
+            .setNegativeButton(getString(R.string.no)) { d, _ -> d.dismiss() }
+            .show()
     }
 
     private val addBenAlert by lazy {
@@ -220,38 +218,41 @@ class AllHouseholdFragment : Fragment() {
         } else {
             binding.btnNextPage.visibility = View.GONE
         }
-//        binding.tvEmptyContent.text = resources.getString(R.string.no_records_found_hh)
         val householdAdapter = HouseHoldListAdapter("",isDisease, prefDao,true, HouseHoldListAdapter.HouseholdClickListener({
             if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+                if (!it.isDeactivate){
+                    findNavController().navigate(
+                        AllHouseholdFragmentDirections.actionAllHouseholdFragmentToNewHouseholdFragment(
+                            it.hhId
+                        )
+                    )
+                }
+
+            }
+        }, {
+            if (!it.isDeactivate){
                 findNavController().navigate(
-                    AllHouseholdFragmentDirections.actionAllHouseholdFragmentToNewHouseholdFragment(
-                        it
+                    AllHouseholdFragmentDirections.actionAllHouseholdFragmentToHouseholdMembersFragment(
+                        it.hhId,0,"No"
                     )
                 )
             }
-        }, {
-//            val bundle = Bundle()
-//            bundle.putLong("hhId", it)
-//            bundle.putString("diseaseType", "No")
-//            bundle.putInt("fromDisease", 0)
-//            findNavController().navigate(R.id.householdMembersFragments, bundle)
-            findNavController().navigate(
-                AllHouseholdFragmentDirections.actionAllHouseholdFragmentToHouseholdMembersFragment(
-                    it,0,"No"
-                )
-            )
+
         }, {
             if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
-                if (it.numMembers == 0) {
-                    findNavController().navigate(
-                        AllHouseholdFragmentDirections.actionAllHouseholdFragmentToNewBenRegFragment(
-                            it.hhId,
-                            18
+                if (it.numMembers == 0 && !it.isDeactivate) {
+                        findNavController().navigate(
+                            AllHouseholdFragmentDirections.actionAllHouseholdFragmentToNewBenRegFragment(
+                                it.hhId,
+                                18
+                            )
                         )
-                    )
+
                 } else {
-                    viewModel.setSelectedHouseholdId(it.hhId)
-                    addBenAlert.show()
+                  if(!it.isDeactivate) {
+                      viewModel.setSelectedHouseholdId(it.hhId)
+                      addBenAlert.show()
+                  }
                 }
             }
 
@@ -260,8 +261,7 @@ class AllHouseholdFragment : Fragment() {
 
 
         }, {
-            Toast.makeText(requireActivity(),"${it.isDeactivate}",Toast.LENGTH_SHORT).show()
-            softDeleteAlert.show()
+            showSoftDeleteDialog(it)
         }
             ))
         binding.rvAny.adapter = householdAdapter

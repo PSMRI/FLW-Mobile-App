@@ -58,40 +58,54 @@ class AllHouseHoldDiseaseControlFragment : Fragment() {
         val householdAdapter = HouseHoldListAdapter(viewModel.diseaseType,isDisease, prefDao, false,HouseHoldListAdapter.HouseholdClickListener({
 
         }, {
-            if(viewModel.diseaseType == IconDataset.Disease.MALARIA.toString()){
-                findNavController().navigate(
-                    AllHouseHoldDiseaseControlFragmentDirections.actionAllHouseHoldDiseaseControlFragmentToMalariaSuspectedListFragment(
-                        it,1, viewModel.diseaseType
+            when (viewModel.diseaseType) {
+
+                IconDataset.Disease.MALARIA.toString() -> {
+                    findNavController().navigate(
+                        AllHouseHoldDiseaseControlFragmentDirections
+                            .actionAllHouseHoldDiseaseControlFragmentToMalariaSuspectedListFragment(
+                                it.hhId, 1, viewModel.diseaseType
+                            )
                     )
-                )
-            } else if (viewModel.diseaseType == IconDataset.Disease.AES_JE.toString()){
-                findNavController().navigate(
-                    AllHouseHoldDiseaseControlFragmentDirections.actionAllHouseHoldDiseaseControlFragmentToAESSuspectedListFragment(
-                        it,3, viewModel.diseaseType
+                }
+
+                IconDataset.Disease.AES_JE.toString() -> {
+                    findNavController().navigate(
+                        AllHouseHoldDiseaseControlFragmentDirections
+                            .actionAllHouseHoldDiseaseControlFragmentToAESSuspectedListFragment(
+                                it.hhId, 3, viewModel.diseaseType
+                            )
                     )
-                )
+                }
+
+                IconDataset.Disease.KALA_AZAR.toString() -> {
+                    findNavController().navigate(
+                        AllHouseHoldDiseaseControlFragmentDirections
+                            .actionAllHouseHoldDiseaseControlFragmentToKalaAzarSuspectedListFragment(
+                                it.hhId, 2, viewModel.diseaseType
+                            )
+                    )
+                }
+
+                IconDataset.Disease.FILARIA.toString() -> {
+                    findNavController().navigate(
+                        AllHouseHoldDiseaseControlFragmentDirections
+                            .actionAllHouseHoldDiseaseControlFragmentToFilariaSuspectedListFragment(
+                                it.hhId, 4, viewModel.diseaseType
+                            )
+                    )
+                }
+
+                IconDataset.Disease.LEPROSY.toString() -> {
+                    findNavController().navigate(
+                        AllHouseHoldDiseaseControlFragmentDirections
+                            .actionAllHouseHoldDiseaseControlFragmentToLeprosySuspectedListFragment(
+                                it.hhId, 5, viewModel.diseaseType
+                            )
+                    )
+                }
             }
-            else if (viewModel.diseaseType == IconDataset.Disease.KALA_AZAR.toString()){
-                findNavController().navigate(
-                    AllHouseHoldDiseaseControlFragmentDirections.actionAllHouseHoldDiseaseControlFragmentToKalaAzarSuspectedListFragment(
-                        it,2, viewModel.diseaseType
-                    )
-                )
-            }
-            else if (viewModel.diseaseType == IconDataset.Disease.FILARIA.toString()){
-                findNavController().navigate(
-                    AllHouseHoldDiseaseControlFragmentDirections.actionAllHouseHoldDiseaseControlFragmentToFilariaSuspectedListFragment(
-                        it,4, viewModel.diseaseType
-                    )
-                )
-            }
-            else if (viewModel.diseaseType == IconDataset.Disease.LEPROSY.toString()){
-                findNavController().navigate(
-                    AllHouseHoldDiseaseControlFragmentDirections.actionAllHouseHoldDiseaseControlFragmentToLeprosySuspectedListFragment(
-                        it,5, viewModel.diseaseType
-                    )
-                )
-            }
+
 
         }, {
 
@@ -121,11 +135,13 @@ class AllHouseHoldDiseaseControlFragment : Fragment() {
 
         val searchTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
+                // No action required for this implementation.
+                // This method is implemented to satisfy the interface contract.
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
+                // No action required for this implementation.
+                // This method is implemented to satisfy the interface contract.
             }
 
             override fun afterTextChanged(p0: Editable?) {
