@@ -94,7 +94,7 @@ class AntenatalCounsellingFragment : Fragment() {
         benId = args.benId
         isViewMode = args.viewMode
         visitDate = args.visitDate ?: " "
-        visitNumber = args.visitNumber
+       // visitNumber = args.visitNumber
 
 
 
@@ -169,6 +169,8 @@ class AntenatalCounsellingFragment : Fragment() {
        // setupSelectAllCheckbox()
 
         if (isViewMode) {
+            visitNumber = args.visitNumber
+
             binding.btnSave.isVisible = false
             binding.tvLastVisitValue.text = visitDate
             binding.cbSelectAll.isVisible = false
@@ -202,7 +204,7 @@ class AntenatalCounsellingFragment : Fragment() {
                 }
             }
         } else {
-            viewModel.loadFormSchema(benId, ANC_FORM_ID, todayDate, false, langCode,1)
+            viewModel.loadFormSchema(benId, ANC_FORM_ID, todayDate, false, langCode,visitNumber)
 
             lifecycleScope.launch {
                 binding.tvLastVisitValue.text = viewModel.getLastVisitDates(benId)
