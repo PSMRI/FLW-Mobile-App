@@ -10,6 +10,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -542,6 +543,11 @@ class AntenatalCounsellingFragment : Fragment() {
                     visitNumber = nextVisitNumber
                 )
             )
+            NavOptions.Builder()
+                .setPopUpTo(
+                    R.id.pwAncCounsellingFormFragment, true
+                )
+                .build()
         } catch (e: Exception) {
             Timber.e(e, "Error navigating to Add ANC Visit screen")
             findNavController().popBackStack()

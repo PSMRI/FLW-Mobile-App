@@ -46,6 +46,7 @@ class NcdRefferedList : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnNextPage.visibility = View.GONE
+        binding.filterText.visibility = View.VISIBLE
 
         val benAdapter =
             NcdReferListAdapter(viewModel.userName)
