@@ -29,8 +29,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            >
+            android:layout_height="wrap_content">
 
             <TextView
                 android:id="@+id/tv_hh_id"
@@ -55,6 +54,7 @@
                 android:src="@drawable/ic_delete_account"
                 android:onClick="@{()->clickListener.onClickSoftDeleteHh(household)}"
                 android:visibility="gone"
+                android:contentDescription="@string/str_duplicate_record"
                 android:layout_marginEnd="@dimen/_10sdp"
                 app:layout_constraintTop_toTopOf="@+id/tv_hh_id"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_hh_id"
@@ -161,7 +161,7 @@
                 android:textSize="@dimen/_12sdp"
                 android:visibility="gone"
                 android:textColor="@color/md_theme_dark_errorContainer"
-                android:text="Duplicate Record"
+                android:text="@string/str_duplicate_record"
                 app:layout_constraintBottom_toBottomOf="@+id/button3"
                 app:layout_constraintTop_toBottomOf="@+id/ll_ben_details"
                 app:layout_constraintStart_toEndOf="@+id/button3"

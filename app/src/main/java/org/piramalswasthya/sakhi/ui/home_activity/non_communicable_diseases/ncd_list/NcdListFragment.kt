@@ -67,11 +67,11 @@ class NcdListFragment : Fragment() {
                 clickedWifeBen = {item, hhId, benId, relToHeadId ->
 
                 },
-                clickedHusbandBen = { item,hhId, benId, isKrelToHeadIdid ->
+                clickedHusbandBen = { item,hhId, benId, relToHeadId  ->
 
                 },
                 clickedChildben = {
-                        item, hhId, benId, isKrelToHeadIdid ->
+                        item, hhId, benId, relToHeadId  ->
                 },
                 {item,hhid->
 

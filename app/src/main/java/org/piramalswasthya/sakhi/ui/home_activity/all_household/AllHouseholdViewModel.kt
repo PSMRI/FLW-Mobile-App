@@ -107,23 +107,28 @@ class AllHouseholdViewModel @Inject constructor(
         }
     }
 
-     fun deActivateHouseHold(houseHoldBasicDomain: HouseHoldBasicDomain) {
-        viewModelScope.launch {
-            val user = preferenceDao.getLoggedInUser() ?: throw IllegalStateException("No user logged in!!")
-            var houseHoldCache =   householdRepo.getRecord(houseHoldBasicDomain.hhId)
 
+    fun deActivateHouseHold(houseHoldBasicDomain: HouseHoldBasicDomain) {
+        viewModelScope.launch {
+            val user = preferenceDao.getLoggedInUser() ?: run {
+                return@launch
+            }
+            val houseHoldCache = householdRepo.getRecord(houseHoldBasicDomain.hhId) ?: run {
+                return@launch
+            }
             houseHoldBasicDomain.apply {
                 isDeactivate = !isDeactivate
             }.also {
-                houseHoldCache?.isDeactivate =  houseHoldBasicDomain.isDeactivate
-                houseHoldCache?.processed = "U"
-                houseHoldCache?.serverUpdatedStatus = 2
+                houseHoldCache.isDeactivate = houseHoldBasicDomain.isDeactivate
+                houseHoldCache.processed = "U"
+                houseHoldCache.serverUpdatedStatus = 2
             }
-
             householdRepo.persistRecord(houseHoldCache)
             val benList = benRepo.getBenListFromHousehold(houseHoldBasicDomain.hhId)
-            if (houseHoldCache != null) {
-                val result = benRepo.deactivateHouseHold(benList,houseHoldCache.asNetworkModel(user))
+            try {
+                benRepo.deactivateHouseHold(benList, houseHoldCache.asNetworkModel(user))
+            } catch (e: Exception) {
+
             }
         }
     }

@@ -175,10 +175,7 @@
                             android:layout_gravity="center"
                             android:onClick="@{()->clickListener.onClickedForCall(ben)}"
                             android:background="?selectableItemBackgroundBorderless"
-                            android:layout_marginEnd="4dp"
-                            app:layout_constraintEnd_toStartOf="@+id/ivSoftDelete"
-                            app:layout_constraintTop_toTopOf="@+id/tv_hh_id"
-                            app:layout_constraintBottom_toBottomOf="@+id/tv_hh_id"/>
+                            android:layout_marginEnd="4dp" />
 
                         <ImageView
                             android:id="@+id/ivSoftDelete"
@@ -186,12 +183,9 @@
                             android:layout_height="24dp"
                             android:src="@drawable/ic_delete_account"
                             android:layout_gravity="center_vertical|end"
+                            android:contentDescription="@string/str_duplicate_record"
                             android:layout_marginHorizontal="@dimen/padding_small"
-                            android:onClick="@{()->clickListener.onClickSoftDeleteBen(ben)}"
-                            android:visibility="visible"
-                            app:layout_constraintEnd_toStartOf="@+id/iv_sync_state"
-                            app:layout_constraintTop_toTopOf="@+id/tv_hh_id"
-                            app:layout_constraintBottom_toBottomOf="@+id/tv_hh_id"/>
+                            android:onClick="@{()->clickListener.onClickSoftDeleteBen(ben)}" />
 
                         <ImageView
                             android:id="@+id/iv_sync_state"
@@ -589,8 +583,7 @@
                             android:textSize="@dimen/_12sdp"
                             android:visibility="gone"
                             android:textColor="@color/md_theme_dark_errorContainer"
-                            android:text="Duplicate Record"
-                            app:layout_constraintHorizontal_weight="1"/>
+                            android:text="@string/str_duplicate_record" />
                     </LinearLayout>
                     <LinearLayout
                         android:id="@+id/ll_ben_details_4"
