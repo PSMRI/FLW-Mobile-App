@@ -9,7 +9,9 @@ import android.view.ViewGroup
 import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
@@ -63,9 +65,11 @@ class NcdRefferedList : Fragment() {
                 filterBottomSheet.show(childFragmentManager, "ImM")
         }
 
-        viewModel.selectedFilter.observe(viewLifecycleOwner){
-            if (it!=null){
-                binding.tvSelectedFilter.text = it
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.selectedFilter.collect { value ->
+                    binding.tvSelectedFilter.text = value
+                }
             }
         }
 
