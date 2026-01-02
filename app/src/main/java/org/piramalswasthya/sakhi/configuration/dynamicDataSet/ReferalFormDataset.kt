@@ -47,6 +47,7 @@ class ReferalFormDataset(context: Context, language: Languages,var preferenceDao
         title = "Refer Date",
         arrayId = -1,
         required = true,
+        isEnabled = false,
         min = System.currentTimeMillis() -  (90L * 24 * 60 * 60 * 1000),
         max = System.currentTimeMillis(),
     )
@@ -55,7 +56,6 @@ class ReferalFormDataset(context: Context, language: Languages,var preferenceDao
         val list = mutableListOf(
             healthCenter,
             reasonForReferal,
-            additionalService,
             referDate
             )
         referralTypes = referralType
@@ -92,7 +92,7 @@ class ReferalFormDataset(context: Context, language: Languages,var preferenceDao
         (cacheModel as ReferalCache).let { form ->
             form.revisitDate = getLongFromDate(referDate.value)
             form.referralReason = reasonForReferal.value
-            form.refrredToAdditionalServiceList = listOf(additionalService.value!!)
+            form.refrredToAdditionalServiceList = listOf("FLW")
             form.referredToInstituteID = healthCenter.getPosition()
             form.referredToInstituteName = healthCenter.value
             form.createdBy =  preferenceDao.getLoggedInUser()?.userName
