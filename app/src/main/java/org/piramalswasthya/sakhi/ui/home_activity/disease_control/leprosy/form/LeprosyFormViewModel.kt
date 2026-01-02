@@ -169,9 +169,11 @@ class LeprosyFormViewModel @Inject constructor(
     }
 
     private suspend fun saveValues() {
+        val ben = benRepo.getBenFromId(benId)
+                ?: throw IllegalStateException("Beneficiary not found for benId: $benId")
         leprosyScreenCache = LeprosyScreeningCache(
-            benId = benRepo.getBenFromId(benId)!!.beneficiaryId,
-            houseHoldDetailsId = benRepo.getBenFromId(benId)!!.householdId,
+            benId = ben.beneficiaryId,
+            houseHoldDetailsId = ben.householdId,
             createdBy = username,
             modifiedBy = username,
             leprosyStatus = "Suspected",
