@@ -1397,6 +1397,7 @@ data class NCDReferalDTO(
 }
 
 
+
 data class LeprosyScreeningDTO(
     val id: Int = 0,
     val benId: Long,

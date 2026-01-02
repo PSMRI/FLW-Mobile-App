@@ -1,10 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/read_only"
-    tools:context=".ui.home_activity.all_household.AllHouseholdFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.home_activity.maternal_health.hwc.list.HwcReferredFragment">
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/topLayout"
@@ -208,36 +209,6 @@
                 android:layout_height="wrap_content" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
-    <LinearLayout
-        android:id="@+id/filterText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="10dp"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@+id/topLayout"
-        android:gravity="end">
-
-        <TextView
-            android:id="@+id/tvSelectedFilter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:fontFamily="@font/roboto_medium"
-            android:text="NCD"
-            android:textColor="@color/md_theme_light_shadow" />
-
-        <ImageView
-            android:id="@+id/ivFilter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minWidth="@dimen/_25sdp"
-            android:minHeight="@dimen/_25sdp"
-            android:src="@drawable/ic_filter"
-            android:tint="?attr/colorPrimary"
-            android:layout_marginEnd="@dimen/_10sdp"/>
-
-    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_any"
@@ -245,7 +216,7 @@
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/margin_small"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintTop_toBottomOf="@id/filterText"
+        app:layout_constraintTop_toBottomOf="@id/topLayout"
         app:layout_constraintBottom_toTopOf="@id/btn_next_page"
         tools:itemCount="2"
         tools:listitem="@layout/rv_item_household" />
@@ -289,5 +260,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_add_circle"
         tools:visibility="gone" />
+
+
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,4 +1,4 @@
-package org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.ncd_referred.list
+package org.piramalswasthya.sakhi.ui.home_activity.maternal_health.hwc.list
 
 import android.os.Bundle
 import android.text.Editable
@@ -16,25 +16,23 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.NcdReferListAdapter
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
+import org.piramalswasthya.sakhi.databinding.FragmentHwcReferedBinding
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
-import org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.ncd_referred.filter.NCDReferTypeFilter
+import org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.ncd_referred.list.NcdRefferedListViewModel
 import javax.inject.Inject
 import kotlin.getValue
 
 @AndroidEntryPoint
-class NcdRefferedList : Fragment() {
+class HwcReferredFragment : Fragment() {
 
     @Inject
     lateinit var prefDao: PreferenceDao
-    private val binding: FragmentDisplaySearchRvButtonBinding by lazy {
-        FragmentDisplaySearchRvButtonBinding.inflate(layoutInflater)
+    private val binding: FragmentHwcReferedBinding by lazy {
+        FragmentHwcReferedBinding.inflate(layoutInflater)
     }
 
-    private val filterBottomSheet: NCDReferTypeFilter by lazy { NCDReferTypeFilter() }
-
-
-    private val viewModel: NcdRefferedListViewModel by viewModels()
+    private val viewModel: HwcReferredViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -46,29 +44,10 @@ class NcdRefferedList : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnNextPage.visibility = View.GONE
-        binding.filterText.visibility = View.VISIBLE
 
         val benAdapter =
             NcdReferListAdapter(viewModel.userName)
         binding.rvAny.adapter = benAdapter
-
-
-
-        binding.ivFilter.setOnClickListener {
-            if (!filterBottomSheet.isVisible)
-                filterBottomSheet.show(childFragmentManager, "ImM")
-        }
-
-        binding.tvSelectedFilter.setOnClickListener {
-            if (!filterBottomSheet.isVisible)
-                filterBottomSheet.show(childFragmentManager, "ImM")
-        }
-
-        viewModel.selectedFilter.observe(viewLifecycleOwner){
-            if (it!=null){
-                binding.tvSelectedFilter.text = it
-            }
-        }
 
 
         lifecycleScope.launch {
@@ -109,12 +88,12 @@ class NcdRefferedList : Fragment() {
             if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
                 (it as HomeActivity).updateActionBar(
                     R.drawable.ic__ncd_priority,
-                    getString(R.string.ncd_refer_list)
+                    getString(R.string.hwc_refer_list)
                 )
             } else {
                 (it as SupervisorActivity).updateActionBar(
                     R.drawable.ic__ncd_priority,
-                    getString(R.string.ncd_refer_list)
+                    getString(R.string.hwc_refer_list)
                 )
             }
         }

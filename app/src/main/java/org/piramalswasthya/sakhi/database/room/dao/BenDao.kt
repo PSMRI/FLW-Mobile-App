@@ -613,6 +613,30 @@ fun getAllHighRiskPregnancyWomenList(
         min: Int = Konstants.minAgeForNcd
     ): Flow<Int>
 
+    @Query("""
+  SELECT COUNT(b.benId)
+    FROM BEN_BASIC_CACHE b
+    INNER JOIN NCD_REFER r ON b.benId = r.benId
+      AND b.villageId = :selectedVillage
+      AND r.type = "MATERNAL"
+       AND b.villageId = :selectedVillage
+""")
+    fun getReferredHWCBenCount(
+        selectedVillage: Int,
+    ): Flow<Int>
+
+    @Query("""
+    SELECT  r.*, b.*
+    FROM BEN_BASIC_CACHE b
+    INNER JOIN NCD_REFER r ON b.benId = r.benId
+      AND b.villageId = :selectedVillage
+      AND r.type = "MATERNAL"
+""")
+    fun getReferredHWCBenList(
+        selectedVillage: Int,
+    ):  Flow<List<BenWithCbacAndReferalCache>>
+
+
     @Query("SELECT COUNT(*) FROM BEN_BASIC_CACHE b where CAST((strftime('%s','now') - b.dob/1000)/60/60/24/365 AS INTEGER)  >= :min and b.reproductiveStatusId!=2 and b.villageId=:selectedVillage")
     fun getBenWithCbacCount(
         selectedVillage: Int, min: Int = Konstants.minAgeForNcd
