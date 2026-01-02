@@ -28,18 +28,28 @@ class NcdRefferedListViewModel @Inject constructor(
     private val filter = MutableStateFlow("")
     private val selectedBenId = MutableStateFlow(0L)
     var userName = preferenceDao.getLoggedInUser()!!.name
+    val selectedFilter = MutableStateFlow<String?>("ALL")
 
-    val benList = allBenList.combine(filter) { cacheList, filter ->
-        val list = cacheList.map { it.asDomainModel() }
-        val benBasicDomainList = list.map { it.ben }
-        val filteredBenBasicDomainList = filterBenList(benBasicDomainList, filter)
-        list.filter { it.ben.benId in filteredBenBasicDomainList.map { it.benId } }
+    val benList = combine(
+        allBenList,
+        filter,
+        selectedFilter
+    ) { cacheList, searchText, selectedType ->
 
+        val typeFiltered = if (selectedType == "ALL") {
+            cacheList
+        } else {
+            cacheList.filter { it.referral.type == selectedType }
+        }
 
-
+        val domainList = typeFiltered.map { it.asDomainModel() }
+        val benList = domainList.map { it.ben }
+        val searchedBenList = filterBenList(benList, searchText)
+        domainList.filter { domain ->
+            searchedBenList.any { it.benId == domain.ben.benId }
+        }
     }
     var selectedPosition = 0
-    val selectedFilter=MutableLiveData<String?>("ALL")
 
     private val clickedBenId = MutableStateFlow(0L)
 
@@ -49,6 +59,11 @@ class NcdRefferedListViewModel @Inject constructor(
         }
     }
 
+    fun setSelectedFilter(type: String) {
+        viewModelScope.launch {
+            selectedFilter.emit(type)
+        }
+    }
 
     init {
         viewModelScope.launch {
@@ -84,6 +99,7 @@ class NcdRefferedListViewModel @Inject constructor(
         catList.add("LEPROSY")
         catList.add("GERIATRIC")
         catList.add("HRP")
+        catList.add("MATERNAL")
 
 
         return catList
