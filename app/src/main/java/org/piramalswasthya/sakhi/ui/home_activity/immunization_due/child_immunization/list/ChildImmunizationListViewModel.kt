@@ -7,9 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.database.room.dao.ImmunizationDao
 import org.piramalswasthya.sakhi.helpers.filterImmunList
 import org.piramalswasthya.sakhi.model.ImmunizationCategory
@@ -17,7 +15,6 @@ import org.piramalswasthya.sakhi.model.ImmunizationDetailsDomain
 import org.piramalswasthya.sakhi.model.Vaccine
 import org.piramalswasthya.sakhi.model.VaccineDomain
 import org.piramalswasthya.sakhi.model.VaccineState
-import timber.log.Timber
 import java.util.Calendar
 import javax.inject.Inject
 

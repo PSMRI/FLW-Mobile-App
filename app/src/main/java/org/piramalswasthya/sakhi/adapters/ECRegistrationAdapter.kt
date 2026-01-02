@@ -69,7 +69,6 @@ class ECRegistrationAdapter(
             }
 
             binding.ivSyncState.visibility = if (item.ecr == null) View.INVISIBLE else View.VISIBLE
-//            binding.btnFormEc1.text = if (item.ecr == null) "Register" else "View"
             binding.btnFormEc1.text =
                 if (item.ecr != null && item.ecr.lmpDate != 0L) {
                     "View"

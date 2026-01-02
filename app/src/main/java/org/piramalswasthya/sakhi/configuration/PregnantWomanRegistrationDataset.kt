@@ -14,6 +14,7 @@ import org.piramalswasthya.sakhi.model.HRPPregnantAssessCache
 import org.piramalswasthya.sakhi.model.InputType
 import org.piramalswasthya.sakhi.model.PregnantWomanRegistrationCache
 import org.piramalswasthya.sakhi.utils.HelperUtil.getDiffYears
+import org.piramalswasthya.sakhi.utils.Log
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
@@ -40,6 +41,9 @@ class PregnantWomanRegistrationDataset(
         title = resources.getString(R.string.nbr_dor),
         arrayId = -1,
         required = true,
+        min = Calendar.getInstance().apply {
+            add(Calendar.YEAR, -1)
+        }.timeInMillis,
         max = System.currentTimeMillis(),
         hasDependants = true
 
@@ -104,7 +108,8 @@ class PregnantWomanRegistrationDataset(
         required = true,
         max = System.currentTimeMillis(),
         min = getMinLmpMillis(),
-        hasDependants = true
+        hasDependants = true,
+        isEnabled = false,
     )
     private val weekOfPregnancy = FormElement(
         id = 8,
@@ -149,7 +154,8 @@ class PregnantWomanRegistrationDataset(
         min = 50,
         max = 200
     )
-    private val vdrlrprTestResult = FormElement(
+
+   /* private val vdrlrprTestResult = FormElement(
         id = 13,
         inputType = InputType.DROPDOWN,
         title = resources.getString(R.string.pwrdst_vdrl_rpr_tst_rlts),
@@ -204,7 +210,7 @@ class PregnantWomanRegistrationDataset(
         required = false,
         max = System.currentTimeMillis(),
     )
-
+*/
     private val pastIllness = FormElement(
         id = 19,
         inputType = InputType.CHECKBOXES,
@@ -419,11 +425,11 @@ class PregnantWomanRegistrationDataset(
             bloodGroup,
             weight,
             height,
-            vdrlrprTestResult,
+//            vdrlrprTestResult,
 //            dateOfVdrlTestDone,
-            hivTestResult,
+//            hivTestResult,
 //            dateOfhivTestDone,
-            hbsAgTestResult,
+//            hbsAgTestResult,
 //            dateOfhbsAgTestDone,
             pastIllness,
             isFirstPregnancy,
@@ -445,18 +451,18 @@ class PregnantWomanRegistrationDataset(
       //  dateOfReg.value = getDateFromLong(System.currentTimeMillis())
         dateOfReg.value?.let {
             val long = getLongFromDate(it)
-            dateOfhivTestDone.min = long - TimeUnit.DAYS.toMillis(365)
-            dateOfVdrlTestDone.min = long - TimeUnit.DAYS.toMillis(365)
-            dateOfhbsAgTestDone.min = long - TimeUnit.DAYS.toMillis(365)
+//            dateOfhivTestDone.min = long - TimeUnit.DAYS.toMillis(365)
+//            dateOfVdrlTestDone.min = long - TimeUnit.DAYS.toMillis(365)
+//            dateOfhbsAgTestDone.min = long - TimeUnit.DAYS.toMillis(365)
         }
 
 
         ben?.let {
-            dateOfReg.min = it.regDate.also {
-                dateOfVdrlTestDone.min = it - TimeUnit.DAYS.toMillis(365)
+          /*  dateOfReg.min = it.regDate.also {
+               dateOfVdrlTestDone.min = it - TimeUnit.DAYS.toMillis(365)
                 dateOfhivTestDone.min = it - TimeUnit.DAYS.toMillis(365)
                 hbsAgTestResult.min = it
-            }
+            }*/
             rchId.value = ben.rchId
             name.value = "${ben.firstName} ${if (ben.lastName == null) "" else ben.lastName}"
             husbandName.value = ben.genDetails?.spouseName
@@ -476,9 +482,9 @@ class PregnantWomanRegistrationDataset(
                 )[1]
 
         }
-        lastTrackTimestamp?.let {
+       /* lastTrackTimestamp?.let {
             dateOfReg.min = it
-        }
+        }*/
         // fetching high risk assess cache details and assigning them
         assess?.let {
             noOfDeliveries.value = getLocalValueInArray(R.array.yes_no, it.noOfDeliveries)
@@ -559,17 +565,17 @@ class PregnantWomanRegistrationDataset(
             it.dateOfRegistration.let {
                 lmp.max = it
                 lmp.min = it - TimeUnit.DAYS.toMillis(400)
-                dateOfVdrlTestDone.min = it - TimeUnit.DAYS.toMillis(365)
+              /*  dateOfVdrlTestDone.min = it - TimeUnit.DAYS.toMillis(365)
                 dateOfhivTestDone.min = it - TimeUnit.DAYS.toMillis(365)
                 dateOfhbsAgTestDone.min = it - TimeUnit.DAYS.toMillis(365)
-
+*/
 
             }
             val eddFromLmp = getEddFromLmp(it.lmpDate)
             minOf(System.currentTimeMillis(), eddFromLmp).let { maxDate ->
-                dateOfVdrlTestDone.max = maxDate
+              /*  dateOfVdrlTestDone.max = maxDate
                 dateOfhivTestDone.max = maxDate
-                dateOfhbsAgTestDone.max = maxDate
+                dateOfhbsAgTestDone.max = maxDate*/
             }
           //  mcpCardNumber.value = it.mcpCardNumber.toString()
             lmp.value = getDateFromLong(it.lmpDate)
@@ -585,7 +591,7 @@ class PregnantWomanRegistrationDataset(
             bloodGroup.value = getLocalValueInArray(bloodGroup.arrayId, saved.bloodGroup)
             weight.value = it.weight?.toString()
             height.value = it.height?.toString()
-            vdrlrprTestResult.value =
+           /* vdrlrprTestResult.value =
                 getLocalValueInArray(vdrlrprTestResult.arrayId, saved.vdrlRprTestResult)
             it.vdrlRprTestResult?.let { it1 ->
                 if (it1 == vdrlrprTestResult.entries?.get(0) || it1 == vdrlrprTestResult.entries?.get(
@@ -612,7 +618,7 @@ class PregnantWomanRegistrationDataset(
             }
             hivTestResult.value = getLocalValueInArray(hivTestResult.arrayId, saved.hivTestResult)
             hbsAgTestResult.value =
-                getLocalValueInArray(hbsAgTestResult.arrayId, saved.hbsAgTestResult)
+                getLocalValueInArray(hbsAgTestResult.arrayId, saved.hbsAgTestResult)*/
             pastIllness.value = getLocalValueInArray(pastIllness.arrayId, saved.pastIllness)
             otherPastIllness.value = it.otherPastIllness
             if (pastIllness.value == pastIllness.entries!!.last())
@@ -646,11 +652,11 @@ class PregnantWomanRegistrationDataset(
         } ?: run {
             assess?.let {
                 // if there is no lmp date from pwr saved form or hrp assessment form then disabling these fields
-                if (it.lmpDate <= 0L) {
+               /* if (it.lmpDate <= 0L) {
                     vdrlrprTestResult.inputType = InputType.TEXT_VIEW
                     hivTestResult.inputType = InputType.TEXT_VIEW
                     hbsAgTestResult.inputType = InputType.TEXT_VIEW
-                }
+                }*/
             }
         }
 
@@ -693,9 +699,10 @@ class PregnantWomanRegistrationDataset(
 
 
     fun getIndexOfEdd() = getIndexById(edd.id)
+    fun getIndexOfLmp() = getIndexById(lmp.id)
     fun getIndexOfWeeksPregnancy() = getIndexById(weekOfPregnancy.id)
     fun getIndexOfPastIllness() = getIndexById(pastIllness.id)
-    fun getIndexOfVdrlTestResult() = getIndexById(vdrlrprTestResult.id)
+//    fun getIndexOfVdrlTestResult() = getIndexById(vdrlrprTestResult.id)
 
 
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
@@ -703,16 +710,29 @@ class PregnantWomanRegistrationDataset(
             rchId.id -> validateRchIdOnEditText(rchId)
           //  mcpCardNumber.id -> validateMcpOnEditText(mcpCardNumber)
             dateOfReg.id -> {
-                dateOfReg.value?.let {
-                    val dateOfRegLong = getLongFromDate(it)
+                val dateStr = dateOfReg.value
+
+                if (dateOfReg.value != null) {
+                    Log.e("DATKHJH","Coming")
+                    triggerDependants(
+                        source = age,
+                        passedIndex = index,
+                        triggerIndex = index,
+                        target = listOf(lmp)
+                    )
+                    val dateOfRegLong = getLongFromDate(dateStr)
+
+                    lmp.isEnabled = true
                     lmp.max = dateOfRegLong
                     lmp.min = getMinFromMaxForLmp(lmp.max!!)
-                    dateOfVdrlTestDone.min = dateOfRegLong - TimeUnit.DAYS.toMillis(365)
-                    dateOfhivTestDone.min = dateOfRegLong - TimeUnit.DAYS.toMillis(365)
-                    dateOfhbsAgTestDone.min = dateOfRegLong - TimeUnit.DAYS.toMillis(365)
+
                     updateAgeCheck(dateOfBirth, dateOfRegLong)
+
+
+
                     return handleListOnValueChanged(isHrpCase.id, 0)
                 }
+
                 -1
             }
 
@@ -727,7 +747,7 @@ class PregnantWomanRegistrationDataset(
                         weekOfPregnancy.value = bracket.toString()
                     }
                 }
-                vdrlrprTestResult.let {
+              /*  vdrlrprTestResult.let {
                     if (it.inputType != InputType.DROPDOWN) it.inputType = InputType.DROPDOWN
                 }
                 hivTestResult.let {
@@ -735,18 +755,18 @@ class PregnantWomanRegistrationDataset(
                 }
                 hbsAgTestResult.let {
                     if (it.inputType != InputType.DROPDOWN) it.inputType = InputType.DROPDOWN
-                }
+                }*/
                 edd.value = eddLong?.let { getDateFromLong(it) }
                 regLong?.let {
-                    dateOfhivTestDone.min = it - TimeUnit.DAYS.toMillis(365)
+                   /* dateOfhivTestDone.min = it - TimeUnit.DAYS.toMillis(365)
                     dateOfVdrlTestDone.min = it - TimeUnit.DAYS.toMillis(365)
-                    dateOfhbsAgTestDone.min = it - TimeUnit.DAYS.toMillis(365)
+                    dateOfhbsAgTestDone.min = it - TimeUnit.DAYS.toMillis(365)*/
                 }
                 eddLong?.let {
                     val max = minOf(it, System.currentTimeMillis())
-                    dateOfVdrlTestDone.max = max
+                  /*  dateOfVdrlTestDone.max = max
                     dateOfhivTestDone.max = max
-                    dateOfhbsAgTestDone.max = max
+                    dateOfhbsAgTestDone.max = max*/
                 }
                 -1
             }
@@ -769,7 +789,7 @@ class PregnantWomanRegistrationDataset(
                 -1
             }
 
-            vdrlrprTestResult.id -> {
+           /* vdrlrprTestResult.id -> {
                 triggerDependantsReverse(
                     source = vdrlrprTestResult,
                     passedIndex = index,
@@ -794,7 +814,7 @@ class PregnantWomanRegistrationDataset(
                     triggerIndex = 2,
                     target = listOf(dateOfhbsAgTestDone)
                 )
-            }
+            }*/
 
             pastIllness.id -> {
                 val entries = pastIllness.entries!!
@@ -952,7 +972,7 @@ class PregnantWomanRegistrationDataset(
             form.bloodGroupId = bloodGroup.getPosition()
             form.weight = weight.value?.toInt()
             form.height = height.value?.toInt()
-            form.vdrlRprTestResult =
+           /* form.vdrlRprTestResult =
                 getEnglishValueInArray(R.array.maternal_health_test_result, vdrlrprTestResult.value)
             form.vdrlRprTestResultId = vdrlrprTestResult.getPosition()
             form.dateOfVdrlRprTest =
@@ -966,7 +986,7 @@ class PregnantWomanRegistrationDataset(
                 getEnglishValueInArray(R.array.maternal_health_test_result_2, hbsAgTestResult.value)
             form.hbsAgTestResultId = hbsAgTestResult.getPosition()
             form.dateOfHbsAgTest =
-                dateOfhbsAgTestDone.value?.let { getLongFromDate(dateOfhbsAgTestDone.value) }
+                dateOfhbsAgTestDone.value?.let { getLongFromDate(dateOfhbsAgTestDone.value) }*/
             form.pastIllness =
                 getEnglishValueInArray(R.array.maternal_health_past_illness, pastIllness.value)
             form.otherPastIllness = otherPastIllness.value

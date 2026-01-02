@@ -23,6 +23,7 @@ import org.piramalswasthya.sakhi.model.CbacCache
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.ReferalCache
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.home_activity.disease_control.leprosy.form.LeprosyFormViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_screening.form.TBScreeningFormViewModel
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
@@ -54,10 +55,14 @@ class CbacFragment : Fragment() {
     private var isSuspected: Boolean = false
 
     private val viewModelTbScreening: TBScreeningFormViewModel by viewModels()
+    private val viewModelLeprosyScreening: LeprosyFormViewModel by viewModels()
 
     private val alertDialog by lazy {
         AlertDialog.Builder(requireContext()).setTitle(getString(R.string.missing_field)).create()
     }
+    private var isReferralDialogShown = false
+    var referralForReason = "Suspected NCD Case"
+    var referType = "NCD"
 
     private val raAlertDialog by lazy {
         AlertDialog.Builder(requireContext()).setTitle(getString(R.string.alert))
@@ -78,7 +83,7 @@ class CbacFragment : Fragment() {
             .setTitle(getString(R.string.isrefer))
             .setMessage(resources.getString(R.string.ncd_refer_alert))
             .setPositiveButton(resources.getString(R.string.yes)) { dialog, _ -> dialog.dismiss()
-            findNavController().navigate(CbacFragmentDirections.actionCbacFragmentToNcdReferForm(viewModel.benId, cbacId = viewModel.cbacId))
+            findNavController().navigate(CbacFragmentDirections.actionCbacFragmentToNcdReferForm(viewModel.benId, referral = referralForReason, cbacId = viewModel.cbacId, referralType = referType))
             }
             .setNegativeButton(resources.getString(R.string.no)) { dialog, _ -> dialog.dismiss() }
             .create()
@@ -108,13 +113,40 @@ class CbacFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel.isLeprosySuspected.observe(viewLifecycleOwner) { suspected ->
+            if (suspected  && isInFillMode && !viewModel.isReferralAlreadyDone(CbacViewModel.ReferralType.LEPROSY)) {
+                binding.cbacSuspectedLeprosy.cbacEdRg.check(R.id.rb_yes)
+                viewModelLeprosyScreening.saveLeprosySuspectedFormDirectlyfromCbac()
+                referralForReason = "Suspected Leprosy case"
+                referType = "LEPROSY"
+                asreferAlertDialog.show()
+            }
+        }
+        findNavController()
+            .currentBackStackEntry
+            ?.savedStateHandle
+            ?.getLiveData<String>("REFERRAL_DONE")
+            ?.observe(viewLifecycleOwner) { typeName ->
+
+                val type = CbacViewModel.ReferralType.valueOf(typeName)
+                viewModel.markReferralCompleted(type)
+            }
+
         findNavController().currentBackStackEntry
             ?.savedStateHandle
             ?.getLiveData<String>("REFERRAL_RESULT")
             ?.observe(viewLifecycleOwner) { json ->
+
                 val referral = Gson().fromJson(json, ReferalCache::class.java)
-                viewModel.setReferral(referral)
+                viewModel.addReferral(referral)
+
             }
+
+        viewModel.showReferralDialog.observe(viewLifecycleOwner) { shouldShow ->
+            if (shouldShow) {
+                showDialog()
+            }
+        }
         viewModelTbScreening.state.observe(viewLifecycleOwner) {
             when (it) {
                 TBScreeningFormViewModel.State.SAVE_SUCCESS -> {
@@ -210,10 +242,18 @@ class CbacFragment : Fragment() {
         }
         viewModel.raFhScore.observe(viewLifecycleOwner) {
             binding.ddFhScore.text = it
+            val totalScore = viewModel.raTotalScore.value
+                ?.substringAfter(": ")
+                ?.toIntOrNull() ?: 0
+            referralForReason = "Suspected NCD Case"
+            referType = "NCD"
+
+            handleNcdSusBottomInfoDisplay(totalScore)
+
+
         }
         viewModel.raTotalScore.observe(viewLifecycleOwner) {
             val score = it.substring(it.lastIndexOf(' ') + 1).toInt()
-            handleNcdSusBottomInfoDisplay(score)
             handleRaScoreAlert(score)
             binding.cbacTvRaTotalScore.text = it
         }
@@ -233,8 +273,6 @@ class CbacFragment : Fragment() {
                 viewModel.setLsWt(2)
                 binding.cbacNtswets.rbNo.isChecked = true
                 viewModel.setNtSwets(2)
-
-
                 binding.cbacRecurrentUlceration.rbNo.isChecked = true
                 viewModel.setRecurrentUlceration(2)
                 binding.cbacRecurrentCloudy.rbNo.isChecked = true
@@ -495,6 +533,12 @@ class CbacFragment : Fragment() {
                     resources.getString(R.string.refer_to_mo_and_collect_the_sputum_sample)
                 )
                 ast1AlertDialog.show()
+                if (isInFillMode && !viewModel.isReferralAlreadyDone(CbacViewModel.ReferralType.TB) ) {
+                    referralForReason = "Suspected TB case"
+                    referType = "TB"
+                    asreferAlertDialog.show()
+                }
+
             } else {
                 isSuspected = false
             }
@@ -534,7 +578,7 @@ class CbacFragment : Fragment() {
             binding.ncdSusValidDisplay.visibility = View.VISIBLE
             viewModel.setFlagForNcd(true)
             if (score > 4) {
-                if (isInFillMode && viewModel.referralCache == null)
+                if (isInFillMode && !viewModel.isReferralAlreadyDone(CbacViewModel.ReferralType.NCD))
                 asreferAlertDialog.show()
             }
         } else {
@@ -781,6 +825,7 @@ class CbacFragment : Fragment() {
                 R.id.rb_yes -> viewModel.setRecurrentUlceration(1)
                 R.id.rb_no -> viewModel.setRecurrentUlceration(2)
             }
+            viewModel.checkLeprosySymptoms()
         }
         binding.cbacRecurrentCloudy.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
@@ -890,18 +935,21 @@ class CbacFragment : Fragment() {
                 R.id.rb_yes -> viewModel.setNumb(1)
                 R.id.rb_no -> viewModel.setNumb(2)
             }
+            viewModel.checkLeprosySymptoms()
         }
         binding.cbacClawingOfFingers.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setClaw(1)
                 R.id.rb_no -> viewModel.setClaw(2)
             }
+            viewModel.checkLeprosySymptoms()
         }
         binding.cbacTinglingOrNumbness.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setTingNumb(1)
                 R.id.rb_no -> viewModel.setTingNumb(2)
             }
+            viewModel.checkLeprosySymptoms()
         }
         binding.cbacInabilityCloseEyelid.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
@@ -914,17 +962,18 @@ class CbacFragment : Fragment() {
                 R.id.rb_yes -> viewModel.setHoldObj(1)
                 R.id.rb_no -> viewModel.setHoldObj(2)
             }
+            viewModel.checkLeprosySymptoms()
         }
         binding.cbacWeeknessInFeet.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setWeakFeet(1)
                 R.id.rb_no -> viewModel.setWeakFeet(2)
             }
+            viewModel.checkLeprosySymptoms()
         }
         binding.cbacLumpbrest.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> {
-                   showDialog()
                     viewModel.setLumpB(1)
 
                 }
@@ -935,7 +984,6 @@ class CbacFragment : Fragment() {
             when (id) {
                 R.id.rb_yes -> {
                     viewModel.setNipple(1)
-                    showDialog()
                 }
                 R.id.rb_no -> viewModel.setNipple(2)
             }
@@ -944,7 +992,6 @@ class CbacFragment : Fragment() {
             when (id) {
                 R.id.rb_yes -> {
                     viewModel.setBreast(1)
-                    showDialog()
 
                 }
                 R.id.rb_no -> viewModel.setBreast(2)
@@ -954,7 +1001,6 @@ class CbacFragment : Fragment() {
             when (id) {
                 R.id.rb_yes -> {
                     viewModel.setBlP(1)
-                    showDialog()
                 }
                 R.id.rb_no -> viewModel.setBlP(2)
             }
@@ -966,7 +1012,6 @@ class CbacFragment : Fragment() {
                     alertDialog.setTitle(resources.getString(R.string.alert))
                     alertDialog.setMessage(resources.getString(R.string.inform_asha_facilitator))
                     alertDialog.show()
-                    showDialog()
                     binding.tvBlMenopause.visibility = View.VISIBLE
                 }
 
@@ -980,7 +1025,7 @@ class CbacFragment : Fragment() {
             when (id) {
                 R.id.rb_yes -> {
                     viewModel.setBlI(1)
-                    showDialog()
+
                 }
                 R.id.rb_no -> viewModel.setBlI(2)
             }
@@ -989,7 +1034,6 @@ class CbacFragment : Fragment() {
             when (id) {
                 R.id.rb_yes ->  {
                     viewModel.setFoulD(1)
-                    showDialog()
                 }
                 R.id.rb_no -> viewModel.setFoulD(2)
             }
@@ -1121,9 +1165,19 @@ class CbacFragment : Fragment() {
 
                 )
         )
-        binding.actvFuelDropdown.setOnItemClickListener { _, _, i, _ -> viewModel.setFuelType(i) }
+        binding.actvFuelDropdown.setOnItemClickListener { _, _, i, _ ->
+            viewModel.setFuelType(i)
+
+        }
         binding.actvExposureDropdown.setOnItemClickListener { _, _, i, _ ->
             viewModel.setOccExposure(i)
+            referralForReason = "Suspected COPD case"
+            referType = "COPD"
+            if (!viewModel.isReferralAlreadyDone(CbacViewModel.ReferralType.COPD)) {
+                asreferAlertDialog.show()
+
+            }
+
         }
     }
 
@@ -1151,7 +1205,9 @@ class CbacFragment : Fragment() {
         viewModel.phq2TotalScore.observe(viewLifecycleOwner) {
             if (it.substring(it.lastIndexOf(' ') + 1).toInt() > 3) {
                 binding.tvTbMoicVisit.visibility = View.VISIBLE
-                if (viewModel.referralCache == null) {
+                if (!viewModel.isReferralAlreadyDone(CbacViewModel.ReferralType.GERIATRIC)) {
+                    referralForReason = "further assessment for depression"
+                    referType = "GERIATRIC"
                     asreferAlertDialog.show()
                 }
                 viewModel.setFlagForPhQ2(true)
@@ -1193,11 +1249,13 @@ class CbacFragment : Fragment() {
     }
 
     fun showDialog() {
-        viewModel.raTotalScore.observe(viewLifecycleOwner) {
-            if (isInFillMode && viewModel.referralCache == null)
+
+            if (isInFillMode && !viewModel.isReferralAlreadyDone(CbacViewModel.ReferralType.HRP))
+                referralForReason = "Part B2: Women Only – Symptom Present"
+                referType = "HRP"
                 asreferAlertDialog.show()
 
-        }
+
     }
     override fun onDestroy() {
         super.onDestroy()
