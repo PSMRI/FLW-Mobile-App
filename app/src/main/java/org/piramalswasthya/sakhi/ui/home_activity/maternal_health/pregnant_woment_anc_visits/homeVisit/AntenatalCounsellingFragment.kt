@@ -54,6 +54,7 @@ class AntenatalCounsellingFragment : Fragment() {
     var dob = -1L
     var isViewMode = false
     var visitDate = ""
+    var visitNumber = 1
     private lateinit var adapter: FormRendererAdapter
     private var allBenList: List<BenWithAncListDomain> = emptyList()
     private lateinit var benList: BenWithAncListDomain
@@ -93,6 +94,7 @@ class AntenatalCounsellingFragment : Fragment() {
         benId = args.benId
         isViewMode = args.viewMode
         visitDate = args.visitDate ?: " "
+        visitNumber = args.visitNumber
 
 
 
@@ -170,7 +172,7 @@ class AntenatalCounsellingFragment : Fragment() {
             binding.btnSave.isVisible = false
             binding.tvLastVisitValue.text = visitDate
             binding.cbSelectAll.isVisible = false
-            viewModel.loadFormSchema(benId, ANC_FORM_ID, visitDate, true, langCode)
+            viewModel.loadFormSchema(benId, ANC_FORM_ID, visitDate, true, langCode,visitNumber)
             lifecycleScope.launch {
                 viewModel.schema.collectLatest { schema ->
                     if (schema == null) return@collectLatest
@@ -200,7 +202,7 @@ class AntenatalCounsellingFragment : Fragment() {
                 }
             }
         } else {
-            viewModel.loadFormSchema(benId, ANC_FORM_ID, todayDate, false, langCode)
+            viewModel.loadFormSchema(benId, ANC_FORM_ID, todayDate, false, langCode,1)
 
             lifecycleScope.launch {
                 binding.tvLastVisitValue.text = viewModel.getLastVisitDates(benId)
