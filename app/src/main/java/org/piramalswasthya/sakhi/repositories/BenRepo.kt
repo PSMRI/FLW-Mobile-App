@@ -1538,7 +1538,9 @@ class BenRepo @Inject constructor(
 //                            updatedTimeStamp = houseDataObj.getString("other_houseType"),
                                 processed = "P",
                                 isDraft = false,
-                                isDeactivate =  houseDataObj.getBoolean("isDeactivate")
+                                isDeactivate =  if (houseDataObj.has("isDeactivate")) houseDataObj.getBoolean(
+                                    "isDeactivate"
+                                ) else false
                             )
                         )
                     } catch (e: JSONException) {
