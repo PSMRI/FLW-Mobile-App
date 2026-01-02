@@ -10,18 +10,21 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.HouseHoldBasicDomain
 import org.piramalswasthya.sakhi.model.HouseholdCache
+import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.HouseholdRepo
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
 import javax.inject.Inject
 
 @HiltViewModel
 class AllHouseholdViewModel @Inject constructor(
-    private val householdRepo: HouseholdRepo, recordsRepo: RecordsRepo
+    private val householdRepo: HouseholdRepo, recordsRepo: RecordsRepo, private val benRepo: BenRepo,
+    private val preferenceDao: PreferenceDao,
 
-) : ViewModel() {
+    ) : ViewModel() {
 
     private val _hasDraft = MutableLiveData(false)
     val hasDraft: LiveData<Boolean>
@@ -101,6 +104,27 @@ class AllHouseholdViewModel @Inject constructor(
             }
             _householdBenList.clear()
             _householdBenList.addAll(householdRepo.getAllBenOfHousehold(id))
+        }
+    }
+
+     fun deActivateHouseHold(houseHoldBasicDomain: HouseHoldBasicDomain) {
+        viewModelScope.launch {
+            val user = preferenceDao.getLoggedInUser() ?: throw IllegalStateException("No user logged in!!")
+            var houseHoldCache =   householdRepo.getRecord(houseHoldBasicDomain.hhId)
+
+            houseHoldBasicDomain.apply {
+                isDeactivate = !isDeactivate
+            }.also {
+                houseHoldCache?.isDeactivate =  houseHoldBasicDomain.isDeactivate
+                houseHoldCache?.processed = "U"
+                houseHoldCache?.serverUpdatedStatus = 2
+            }
+
+            householdRepo.persistRecord(houseHoldCache)
+            val benList = benRepo.getBenListFromHousehold(houseHoldBasicDomain.hhId)
+            if (houseHoldCache != null) {
+                val result = benRepo.deactivateHouseHold(benList,houseHoldCache.asNetworkModel(user))
+            }
         }
     }
 }

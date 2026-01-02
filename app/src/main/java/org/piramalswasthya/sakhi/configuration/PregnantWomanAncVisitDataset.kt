@@ -2,7 +2,6 @@ package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Konstants
@@ -13,7 +12,6 @@ import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.InputType
 import org.piramalswasthya.sakhi.model.InputType.DROPDOWN
 import org.piramalswasthya.sakhi.model.InputType.EDIT_TEXT
-import org.piramalswasthya.sakhi.model.InputType.IMAGE_VIEW
 import org.piramalswasthya.sakhi.model.PregnantWomanAncCache
 import org.piramalswasthya.sakhi.model.PregnantWomanRegistrationCache
 import java.util.concurrent.TimeUnit
@@ -457,6 +455,9 @@ class PregnantWomanAncVisitDataset(
             fileUploadBack,
 
         )
+       /*if(!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)){
+           list += listOf(headLine, fileUploadFront, fileUploadBack)
+        }*/
         abortionDate.min = regis.lmpDate + TimeUnit.DAYS.toMillis(5 * 7 + 1)
         dateOfTTOrTd1.min = abortionDate.min
         dateOfTTOrTdBooster.min = abortionDate.min
