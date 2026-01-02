@@ -80,7 +80,7 @@ class BenListCHOFragment : Fragment() {
                 clickedWifeBen = {item, hhId, benId, relToHeadId ->
 
                 },
-                clickedHusbandBen = { item,hhId, benId, isKrelToHeadIdid ->
+                clickedHusbandBen = { item,hhId, benId, isRelToHeadId->
 
                 },
                 clickedChildben = {

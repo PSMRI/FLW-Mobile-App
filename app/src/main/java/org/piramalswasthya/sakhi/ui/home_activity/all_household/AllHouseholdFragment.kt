@@ -68,7 +68,7 @@ class AllHouseholdFragment : Fragment() {
 
     fun showSoftDeleteDialog(houseHoldBasicDomain: HouseHoldBasicDomain) {
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Deactivate Household")
+            .setTitle("Delete Household")
             .setMessage("Are you sure you want to delete ${houseHoldBasicDomain.headFullName}")
             .setPositiveButton(getString(R.string.yes)) { _, _ ->
                 viewModel.deActivateHouseHold(houseHoldBasicDomain)

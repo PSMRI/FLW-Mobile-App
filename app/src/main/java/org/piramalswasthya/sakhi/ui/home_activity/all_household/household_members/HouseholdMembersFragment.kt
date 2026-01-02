@@ -51,7 +51,7 @@ class HouseholdMembersFragment : Fragment() {
 
     fun showSoftDeleteDialog(benBasicDomain: BenBasicDomain) {
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Deactivate Beneficiary")
+            .setTitle("Delete Beneficiary")
             .setMessage("Are you sure you want to delete ${benBasicDomain.benFullName}")
             .setPositiveButton(getString(R.string.yes)) { _, _ ->
                 viewModel.deActivateBeneficiary(benBasicDomain)
@@ -246,8 +246,7 @@ class HouseholdMembersFragment : Fragment() {
                 {item, hhid->
                 },
                 { item,benId, hhId ->
-                    if(!item.isDeactivate)
-                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+                    if (!item.isDeactivate && prefDao.getLoggedInUser()?.role.equals("asha", true)) {
                         checkAndGenerateABHA(benId)
                     }
                 },
