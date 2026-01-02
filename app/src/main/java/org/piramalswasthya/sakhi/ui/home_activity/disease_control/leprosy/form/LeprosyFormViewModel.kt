@@ -178,6 +178,7 @@ class LeprosyFormViewModel @Inject constructor(
             modifiedBy = username,
             leprosyStatus = "Suspected",
             leprosySymptoms = "Yes",
+            leprosySymptomsPosition = 0
 
 
         )
