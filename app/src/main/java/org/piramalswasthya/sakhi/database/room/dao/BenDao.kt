@@ -16,6 +16,14 @@ interface BenDao {
     @Update
     suspend fun updateBen(ben: BenRegCache)
 
+    @Query("UPDATE  BENEFICIARY SET syncState = :unsynced ,processed = :proccess , serverUpdatedStatus =:updateStatus WHERE householdId = :householdId")
+    suspend fun updateBenToSync(
+        householdId: Long,
+        unsynced: SyncState,
+        proccess: String,
+        updateStatus: Int
+    )
+
     @Query("UPDATE  BENEFICIARY SET isSpouseAdded = 1 , syncState = :unsynced ,processed = :proccess , serverUpdatedStatus =:updateStatus WHERE householdId = :householdId AND familyHeadRelationPosition = 19")
     suspend fun updateHofSpouseAdded(
         householdId: Long,
@@ -384,12 +392,11 @@ interface BenDao {
     SELECT COUNT(DISTINCT b.benId)
     FROM BEN_BASIC_CACHE b
     INNER JOIN pregnancy_register pwr ON pwr.benId = b.benId
-    LEFT JOIN PMSMA p ON b.benId = p.benId AND p.highriskSymbols = 1
-    LEFT JOIN PREGNANCY_ANC a ON b.benId = a.benId AND a.anyHighRisk = 1
+    INNER JOIN PREGNANCY_ANC a ON b.benId = a.benId
     WHERE b.villageId = :selectedVillage
       AND pwr.active = 1
       AND b.reproductiveStatusId = 2
-      AND (p.benId IS NOT NULL OR a.benId IS NOT NULL)
+      AND (a.anyHighRisk = 1 OR a.placeOfAncId = 3)
 """)
     fun getHighRiskWomenCount(selectedVillage: Int): Flow<Int>
 
@@ -533,16 +540,14 @@ interface BenDao {
 
     @Transaction
     @Query("""
-   SELECT DISTINCT b.*
-    FROM BEN_BASIC_CACHE b
-    INNER JOIN CBAC c ON b.benId = c.benId
-    INNER JOIN NCD_REFER r ON b.benId = r.benId
-    WHERE c.isReffered = 1
-      AND CAST((strftime('%s','now') - b.dob/1000)/60/60/24/365 AS INTEGER) >= :min
-      AND b.reproductiveStatusId != 2
-      AND b.villageId = :selectedVillage
-      AND b.isDeactivate = 0
-    ORDER BY b.regDate DESC
+    SELECT  r.*, b.*
+   FROM BEN_BASIC_CACHE b
+   INNER JOIN NCD_REFER r ON b.benId = r.benId
+   WHERE CAST((strftime('%s','now') - b.dob/1000)/60/60/24/365 AS INTEGER) >= :min
+     AND b.reproductiveStatusId != 2
+     AND b.villageId = :selectedVillage
+     AND b.isDeactivate = 0
+   ORDER BY b.regDate DESC
 """)
     fun getBenWithReferredCbac(
         selectedVillage: Int,
@@ -551,10 +556,9 @@ interface BenDao {
 
 
     @Query("""
-  SELECT COUNT(DISTINCT b.benId)
+  SELECT COUNT(b.benId)
     FROM BEN_BASIC_CACHE b
-    INNER JOIN CBAC c ON b.benId = c.benId
-    WHERE c.isReffered = 1
+    INNER JOIN NCD_REFER r ON b.benId = r.benId
       AND CAST((strftime('%s','now') - b.dob/1000)/60/60/24/365 AS INTEGER) >= :min
       AND b.reproductiveStatusId != 2
       AND b.villageId = :selectedVillage
@@ -563,6 +567,30 @@ interface BenDao {
         selectedVillage: Int,
         min: Int = Konstants.minAgeForNcd
     ): Flow<Int>
+
+    @Query("""
+  SELECT COUNT(b.benId)
+    FROM BEN_BASIC_CACHE b
+    INNER JOIN NCD_REFER r ON b.benId = r.benId
+      AND b.villageId = :selectedVillage
+      AND r.type = "MATERNAL"
+       AND b.villageId = :selectedVillage
+""")
+    fun getReferredHWCBenCount(
+        selectedVillage: Int,
+    ): Flow<Int>
+
+    @Query("""
+    SELECT  r.*, b.*
+    FROM BEN_BASIC_CACHE b
+    INNER JOIN NCD_REFER r ON b.benId = r.benId
+      AND b.villageId = :selectedVillage
+      AND r.type = "MATERNAL"
+""")
+    fun getReferredHWCBenList(
+        selectedVillage: Int,
+    ):  Flow<List<BenWithCbacAndReferalCache>>
+
 
     @Query("SELECT COUNT(*) FROM BEN_BASIC_CACHE b where CAST((strftime('%s','now') - b.dob/1000)/60/60/24/365 AS INTEGER)  >= :min and b.reproductiveStatusId!=2 and b.villageId=:selectedVillage")
     fun getBenWithCbacCount(

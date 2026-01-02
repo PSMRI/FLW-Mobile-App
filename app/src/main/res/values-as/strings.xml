@@ -196,8 +196,8 @@
     <string name="tb_screening_form">TB স্ক্ৰীনিং ফৰ্ম</string>
     <string name="tb_suspected_form">TB সন্দেহভাৱিত ফৰ্ম</string>
     <string name="mother_immunization">মাৰ পৰিস্কৃতি</string>
-    <string name="delivery_outcome">কেঁচুৱাৰ কোনো নাই</string>
-    <string name="delivery_outcome_list">কেঁচুৱাৰ সংখ্যা তালিকা</string>
+    <string name="delivery_outcome">বিতৰণৰ ফলাফল</string>
+    <string name="delivery_outcome_list">প্ৰসৱ সম্পূৰ্ণ হোৱাৰ ফল তালিকা</string>
     <string name="infant_reg_list">নৱজাতকৰ ৰেগ তালিকা</string>
     <string name="infant_reg">নৱজাতক ৰেজি</string>
     <string name="communicable_diseases">সংক্রামণ পৰামৰ্শযোগ্য পৰাৰ তালিকা</string>
@@ -589,49 +589,7 @@
     <string name="filaria_submitted">ফিলাৰিয়া ফৰ্ম জমা দিয়া হৈছে</string>
     <string name="leprosy_submitted">কঁকালৰ ৰোগৰ ফৰ্ম জমা দিয়া হৈছে</string>
     <string name="irs_submitted">IRS ফৰ্ম জমা দিয়া হৈছে</string>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    <string name="hwc_referred_list">HWC Referred List</string>
 
 
 </resources>

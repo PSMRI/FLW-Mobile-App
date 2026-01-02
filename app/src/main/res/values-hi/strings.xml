@@ -300,8 +300,8 @@
     <string name="tb_screening_form">टीबी स्क्रीनिंग फॉर्म</string>
     <string name="tb_suspected_form">संदेहास्पद टीबी मामले</string>
     <string name="mother_immunization">माँ का टीकाकरण</string>
-    <string name="delivery_outcome">शिशुओं की संख्या</string>
-    <string name="delivery_outcome_list">शिशुओं की संख्या सूची</string>
+    <string name="delivery_outcome">प्रसव परिणाम</string>
+    <string name="delivery_outcome_list">प्रसव परिणाम सूची</string>
     <string name="infant_reg_list">नवजात शिशु पंजीकरण सूची</string>
     <string name="infant_reg">नवजात पंजीकरण</string>
     <string name="communicable_diseases">संचारी रोग</string>
@@ -356,6 +356,7 @@
     <string name="filaria_submitted">फाइलेरिया फॉर्म जमा किया गया</string>
     <string name="leprosy_submitted">कुष्ठ रोग फॉर्म जमा किया गया</string>
     <string name="irs_submitted">आईआरएस फॉर्म जमा किया गया</string>
+    <string name="hwc_referred_list">HWC Referred List</string>
 
 
 </resources>

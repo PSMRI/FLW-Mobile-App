@@ -2,6 +2,8 @@ package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Konstants
@@ -35,6 +37,16 @@ class PregnantWomanAncVisitDataset(
         iconDrawableRes = R.drawable.ic_anc_date,
         showDrawable = true
     )
+    private val placeOfAnc = FormElement(
+        id = 45,
+        inputType = InputType.DROPDOWN,
+        title = "Place of ANC",
+        arrayId = R.array.place_of_anc_array,
+        entries = resources.getStringArray(R.array.place_of_anc_array),
+        required = true,
+        hasDependants = true,
+    )
+
     private val weekOfPregnancy = FormElement(
         id = 2,
         inputType = InputType.TEXT_VIEW,
@@ -426,22 +438,24 @@ class PregnantWomanAncVisitDataset(
         ben: BenRegCache?,
         regis: PregnantWomanRegistrationCache,
         lastAnc: PregnantWomanAncCache?,
-        saved: PregnantWomanAncCache?
+        isFromPmsma: Boolean,
+        saved: PregnantWomanAncCache?,
     ) {
         this.regis = regis
         val list = mutableListOf(
             ancDate,
+            placeOfAnc,
             weekOfPregnancy,
             ancVisit,
 //            isAborted,
             maternalDeath,
             weight,
             bp,
-            pulseRate,
+//            pulseRate,
             hb,
-            fundalHeight,
-            urineAlbumin,
-            randomBloodSugarTest,
+//            fundalHeight,
+//            urineAlbumin,
+//            randomBloodSugarTest,
             dateOfTTOrTd1,
             dateOfTTOrTd2,
             dateOfTTOrTdBooster,
@@ -455,9 +469,28 @@ class PregnantWomanAncVisitDataset(
             fileUploadBack,
 
         )
-       /*if(!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)){
-           list += listOf(headLine, fileUploadFront, fileUploadBack)
-        }*/
+
+        if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+           list.remove(fileUploadFront)
+           list.remove(fileUploadBack)
+           list.remove(headLine)
+        }
+        if (BuildConfig.FLAVOR.contains("xushrukha", ignoreCase = true)) {
+            bp.required=true
+            hb.required=true
+        }
+        else{
+            bp.required=false
+            hb.required=false
+        }
+
+        if (isFromPmsma) {
+            placeOfAnc.value = placeOfAnc.entries?.get(3)
+            placeOfAnc.inputType = InputType.TEXT_VIEW
+            placeOfAnc.required = true
+            placeOfAnc.isEnabled=false
+        }
+
         abortionDate.min = regis.lmpDate + TimeUnit.DAYS.toMillis(5 * 7 + 1)
         dateOfTTOrTd1.min = abortionDate.min
         dateOfTTOrTdBooster.min = abortionDate.min
@@ -466,17 +499,16 @@ class PregnantWomanAncVisitDataset(
         dateOfTTOrTd1.max = abortionDate.max
         dateOfTTOrTd2.max = abortionDate.max
         dateOfTTOrTdBooster.max = abortionDate.max
-
         if (lastAnc == null)
             list.remove(dateOfTTOrTd2)
         setUpTdX()
         ben?.let {
             ancDate.min =
                 regis.lmpDate + TimeUnit.DAYS.toMillis(7 * Konstants.minAnc1Week.toLong() + 1)
-            ancVisit.entries = arrayOf("1", "2", "3", "4", "5", "6", "7", "8")
+            ancVisit.entries = arrayOf("1", "2", "3", "4", "5", "6", "7", "8","9")
             lastAnc?.let { last ->
                 ancDate.min = last.ancDate + TimeUnit.DAYS.toMillis(4 * 7)
-                ancVisit.entries = arrayOf(2, 3, 4, 5, 6, 7, 8).filter {
+                ancVisit.entries = arrayOf(2, 3, 4, 5, 6, 7, 8,9).filter {
                     it > last.visitNumber
                 }.map { it.toString() }.toTypedArray()
 
@@ -522,7 +554,7 @@ class PregnantWomanAncVisitDataset(
         ancVisit.value = visitNumber.toString()
 
         saved?.let { savedAnc ->
-
+            placeOfAnc.value=savedAnc.placeOfAnc
             val woP = getWeeksOfPregnancy(savedAnc.ancDate, regis.lmpDate)
             if (woP <= 12) {
                 list.remove(fundalHeight)
@@ -754,11 +786,11 @@ class PregnantWomanAncVisitDataset(
                 val commonAddItems = listOf(
                     weight,
                     bp,
-                    pulseRate,
+//                    pulseRate,
                     hb,
-                    fundalHeight,
-                    urineAlbumin,
-                    randomBloodSugarTest,
+//                    fundalHeight,
+//                    urineAlbumin,
+//                    randomBloodSugarTest,
                     dateOfTTOrTd1,
                     dateOfTTOrTd2,
                     dateOfTTOrTdBooster,
@@ -891,11 +923,11 @@ class PregnantWomanAncVisitDataset(
                 val commonAddItems = listOf(
                     weight,
                     bp,
-                    pulseRate,
+//                    pulseRate,
                     hb,
-                    fundalHeight,
-                    urineAlbumin,
-                    randomBloodSugarTest,
+//                    fundalHeight,
+//                    urineAlbumin,
+//                    randomBloodSugarTest,
                     dateOfTTOrTd1,
                     dateOfTTOrTd2,
                     dateOfTTOrTdBooster,
@@ -970,11 +1002,12 @@ class PregnantWomanAncVisitDataset(
             cache.placeOfDeath = placeOfDeath.value
             cache.placeOfDeathId = placeOfDeath.entries?.indexOf(placeOfDeath.value ?: "")
                 ?.takeIf { it != -1 }
+
+            cache.placeOfAnc = placeOfAnc.value
+            cache.placeOfAncId = placeOfAnc.entries?.indexOf(placeOfAnc.value ?: "")
+                ?.takeIf { it != -1 }
             cache.otherPlaceOfDeath = otherPlaceOfDeath.value
-
             cache.lmpDate = regis.lmpDate
-
-
             cache.visitNumber = ancVisit.value!!.toInt()
             cache.ancDate = getLongFromDate(ancDate.value)
             cache.isAborted = isAborted.value == isAborted.entries!!.last()

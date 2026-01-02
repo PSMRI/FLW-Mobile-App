@@ -18,26 +18,25 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.AncVisitListAdapter
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pmsma.list.PmsmaBottomSheetFragment
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pmsma.list.PmsmaVisitsListViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.list.AncBottomSheetFragment
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.list.PwAncVisitsListViewModel
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class PmsmaHighRiskListFragment : Fragment() {
+    @Inject
+    lateinit var prefDao: PreferenceDao
 
     private var _binding: FragmentDisplaySearchRvButtonBinding? = null
     private val binding: FragmentDisplaySearchRvButtonBinding
         get() = _binding!!
 
     private val viewModel: PwAncVisitsListViewModel by viewModels()
-    private val viewModelListPmsma: PmsmaVisitsListViewModel by viewModels()
-
-    private val bottomSheet: AncBottomSheetFragment by lazy { AncBottomSheetFragment() }
-    private var bottomSheetPmsma: PmsmaBottomSheetFragment? = null
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -49,43 +48,71 @@ class PmsmaHighRiskListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.btnNextPage.visibility = View.GONE
-
-        // Toggle high-risk mode ON
         viewModel.toggleHighRisk(true)
 
         val benAdapter = AncVisitListAdapter(
             AncVisitListAdapter.PregnancyVisitClickListener(
                 showVisits = {
-                    viewModel.updateBottomSheetData(it)
-                    if (!bottomSheet.isVisible)
-                        bottomSheet.show(childFragmentManager, "ANC")
+
+                    viewModel.showAncBottomSheet(
+                        it,
+                        PwAncVisitsListViewModel.BottomSheetMode.NORMAL
+                    )
+
+                    val bottomSheet = AncBottomSheetFragment().apply {
+                        arguments = Bundle().apply {
+                            putString(
+                                AncBottomSheetFragment.ARG_SOURCE,
+                                AncBottomSheetFragment.SOURCE_PMSMA
+                            )
+                        }
+                    }
+
+                    bottomSheet.show(
+                        childFragmentManager,
+                        "ANC_BOTTOM_SHEET"
+                    )
+
                 },
                 addVisit = { benId,hhId, visitNumber ->
+                    findNavController().navigate(
+                        PmsmaHighRiskListFragmentDirections.actionPmsmaHighRiskListFragmentToPwAncFormFragment(
+                            benId,hhId.toString(), visitNumber,true
+                        )
+                    )
+                },
+                pmsma = { benId, hhId, visitNumber ->
+//                    findNavController().navigate(
+//                        PmsmaHighRiskListFragmentDirections.actionPmsmaHighRiskListFragmentToPmsmaFragment(
+////                        PwAncVisitsListFragmentDirections.actionPwAncVisitsFragmentToPmsmaFragment(
+//                            benId, hhId, visitNumber
+//                        )
+//                    )
+
                     findNavController().navigate(
                         PmsmaHighRiskListFragmentDirections.actionPmsmaHighRiskListFragmentToPwAncFormFragment(
                             benId,hhId.toString(), visitNumber
                         )
                     )
                 },
-                pmsma = { benId, hhId, visitNumber ->
-                    findNavController().navigate(
-                        PmsmaHighRiskListFragmentDirections.actionPmsmaHighRiskListFragmentToPmsmaFragment(
-//                        PwAncVisitsListFragmentDirections.actionPwAncVisitsFragmentToPmsmaFragment(
-                            benId, hhId, visitNumber
-                        )
-                    )
-                },
                 showPmsmaVisits = { benId, hhId ->
-                    viewModelListPmsma.updateBottomSheetData(benId)
-                    if (bottomSheetPmsma == null || !bottomSheetPmsma!!.isVisible) {
-                        bottomSheetPmsma = PmsmaBottomSheetFragment().apply {
-                            arguments = Bundle().apply {
-                                putLong("hhId", hhId)
-                                putBoolean("fromHighRisk", true)
-                            }
+                    viewModel.showAncBottomSheet(
+                        benId,
+                        PwAncVisitsListViewModel.BottomSheetMode.PMSMA
+                    )
+                    val bottomSheet = AncBottomSheetFragment().apply {
+                        arguments = Bundle().apply {
+                            putString(
+                                AncBottomSheetFragment.ARG_SOURCE,
+                                AncBottomSheetFragment.SOURCE_PMSMA
+                            )
                         }
-                        bottomSheetPmsma!!.show(childFragmentManager, "PMSMA")
                     }
+
+                    bottomSheet.show(
+                        childFragmentManager,
+                        "ANC_BOTTOM_SHEET"
+                    )
                 }, callBen = {
                     try {
                         val callIntent = Intent(Intent.ACTION_CALL)
@@ -100,7 +127,8 @@ class PmsmaHighRiskListFragment : Fragment() {
                     }
                 }
             ),
-            isHighRiskMode = true
+            true, prefDao ,true,
+            hidePmsma=false
 
         )
 
