@@ -55,6 +55,8 @@ class AntenatalCounsellingViewModel @Inject constructor(
         IDLE, LOADING, SUCCESS, FAIL
     }
 
+    private var _visitCount = MutableStateFlow(0)
+    val visitCount: StateFlow<Int> = _visitCount
     private val _state = MutableLiveData(State.IDLE)
     val state: LiveData<State>
         get() = _state
@@ -113,6 +115,12 @@ class AntenatalCounsellingViewModel @Inject constructor(
         }
     }
 
+    /*fun loadVisitCount(benId: Long) {
+        viewModelScope.launch {
+            val visits = repository.getSyncedVisitsByRchIdANC(benId)
+            _visitCount.value = visits.size
+        }
+    }*/
     fun checkForReferralTriggers(formData: Map<String, Any?>): Boolean {
         val dangerSignQuestions = listOf(
             "swelling", "high_bp", "convulsions", "anemia", "reduced_fetal_movement",
@@ -192,18 +200,21 @@ class AntenatalCounsellingViewModel @Inject constructor(
         }
     }
 
-    fun loadFormSchema(
+    /*fun loadFormSchema(
         benId: Long,
         formId: String,
         visitDay: String,
         viewMode: Boolean,
-        lang: String
+        lang: String,
+        visitNumber : Int
     ) {
         this.visitDay = visitDay
         this.isViewMode = viewMode
         this.benId = benId
 
         viewModelScope.launch {
+            val visits = repository.getSyncedVisitsByRchIdANC(benId)
+            _visitCount.value = visits.size
             val cachedSchemaEntity = repository.getSavedSchema(formId)
             val cachedSchema: FormSchemaDto? = cachedSchemaEntity?.let {
                 FormSchemaDto.fromJson(it.schemaJson)
@@ -238,6 +249,16 @@ class AntenatalCounsellingViewModel @Inject constructor(
                     field.value = when (field.fieldId) {
                         "visit_day" -> visitDay
                         else -> savedFieldValues[field.fieldId] ?: field.default
+                    }
+                    if (field.fieldId == "visit_number") {
+                        val nextVisitNumber = _visitCount.value + 1
+                        if(!viewMode)
+                        {field.value = "Visit-$nextVisitNumber"}
+                        else{
+                            field.value = "Visit-$visitNumber"
+                        }
+
+                        field.isEditable = false
                     }
 
                     if (field.fieldId == "age_risk") {
@@ -287,7 +308,6 @@ class AntenatalCounsellingViewModel @Inject constructor(
                             }
                         }
                     } else {
-                        // Set editability for other fields
                         field.isEditable = when (field.fieldId) {
                             "visit_day", "due_date", "age_risk" -> false  // age_risk is always non-editable
                             else -> !viewMode
@@ -307,6 +327,182 @@ class AntenatalCounsellingViewModel @Inject constructor(
                 }
             }
             _schema.value = localSchemaToRender
+        }
+    }*/
+    fun loadFormSchema(
+        benId: Long,
+        formId: String,
+        visitDay: String,
+        viewMode: Boolean,
+        lang: String,
+        visitNumber: Int
+    ) {
+        this.visitDay = visitDay
+        this.isViewMode = viewMode
+        this.benId = benId
+
+        viewModelScope.launch {
+            initializeVisitData(benId, formId, lang, visitDay, viewMode, visitNumber)
+        }
+    }
+
+    private suspend fun initializeVisitData(
+        benId: Long,
+        formId: String,
+        lang: String,
+        visitDay: String,
+        viewMode: Boolean,
+        visitNumber: Int
+    ) {
+        loadVisitCount(benId)
+        val schema = loadSchema(formId, lang) ?: return
+        val savedFieldValues = loadSavedFieldValues(benId, visitDay)
+
+        if (!viewMode) {
+            loadLastVisitData(benId)
+        }
+
+        processSchemaFields(schema, savedFieldValues, visitDay, viewMode, visitNumber)
+        _schema.value = schema
+    }
+
+    private suspend fun loadVisitCount(benId: Long) {
+        val visits = repository.getSyncedVisitsByRchIdANC(benId)
+        _visitCount.value = visits.size
+    }
+
+    private suspend fun loadSchema(formId: String, lang: String): FormSchemaDto? {
+        val cachedSchemaEntity = repository.getSavedSchema(formId)
+        return cachedSchemaEntity?.let { FormSchemaDto.fromJson(it.schemaJson) }
+            ?: repository.getFormSchema(formId, lang)
+    }
+
+    private suspend fun loadSavedFieldValues(benId: Long, visitDay: String): Map<String, Any?> {
+        val savedJson = repository.loadFormResponseJsonANC(benId, visitDay)
+        return if (!savedJson.isNullOrBlank()) {
+            try {
+                val root = JSONObject(savedJson)
+                val fieldsJson = root.optJSONObject("fields") ?: JSONObject()
+                fieldsJson.keys().asSequence().associateWith { fieldsJson.opt(it) }
+            } catch (e: Exception) {
+                emptyMap()
+            }
+        } else {
+            emptyMap()
+        }
+    }
+
+    private fun processSchemaFields(
+        schema: FormSchemaDto,
+        savedFieldValues: Map<String, Any?>,
+        visitDay: String,
+        viewMode: Boolean,
+        visitNumber: Int
+    ) {
+        val allFields = schema.sections.flatMap { it.fields }
+
+        schema.sections.forEach { section ->
+            section.fields.forEach { field ->
+                setFieldValue(field, savedFieldValues, visitDay, viewMode, visitNumber)
+                setFieldEditability(field, viewMode)
+                setLastVisitDataForField(field, viewMode)
+            }
+        }
+
+        updateFieldVisibility(schema, allFields)
+    }
+
+    private fun setFieldValue(
+        field: FormFieldDto,
+        savedFieldValues: Map<String, Any?>,
+        visitDay: String,
+        viewMode: Boolean,
+        visitNumber: Int
+    ) {
+        field.value = when (field.fieldId) {
+            "visit_day" -> visitDay
+            "visit_number" -> getVisitNumberValue(field, viewMode, visitNumber)
+            "age_risk" -> getAgeRiskValue()
+            else -> savedFieldValues[field.fieldId] ?: field.default
+        }
+    }
+
+    private fun getVisitNumberValue(field: FormFieldDto, viewMode: Boolean, visitNumber: Int): String {
+        return if (!viewMode) {
+            "Visit-${_visitCount.value + 1}"
+        } else {
+            "Visit-$visitNumber"
+        }
+    }
+
+    private fun getAgeRiskValue(): String {
+        return if (motherAge < 18 || motherAge > 35) "Yes" else "No"
+    }
+
+    private fun setFieldEditability(field: FormFieldDto, viewMode: Boolean) {
+        field.isEditable = when (field.fieldId) {
+            "visit_day", "due_date", "age_risk", "visit_number" -> false
+            else -> !viewMode
+        }
+    }
+
+    private fun setLastVisitDataForField(field: FormFieldDto, viewMode: Boolean) {
+        if (viewMode || _lastVisitData.value == null) return
+
+        val lastVisit = _lastVisitData.value ?: return
+        processLastVisitData(field, lastVisit, viewMode)
+    }
+
+    private fun processLastVisitData(field: FormFieldDto, lastVisit: ANCFormResponseJsonEntity, viewMode: Boolean) {
+        try {
+            val formDataJson = lastVisit.formDataJson ?: return
+            if (formDataJson.isBlank()) return
+
+            val jsonObject = JSONObject(formDataJson)
+            val fieldsJson = jsonObject.optJSONObject("fields") ?: JSONObject()
+
+            when (field.fieldId) {
+                in oneTimeQuestions -> handleOneTimeQuestion(field, fieldsJson, viewMode)
+                in editableOneTimeQuestions -> handleEditableOneTimeQuestion(field, fieldsJson, viewMode)
+                else -> {
+                    if (field.fieldId != "age_risk") {
+                        field.isEditable = !viewMode
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "Error processing last visit data for field ${field.fieldId}")
+            if (field.fieldId != "age_risk") {
+                field.isEditable = !viewMode
+            }
+        }
+    }
+
+    private fun handleOneTimeQuestion(field: FormFieldDto, fieldsJson: JSONObject, viewMode: Boolean) {
+        val lastValue = fieldsJson.optString(field.fieldId)
+        if (lastValue.isNotEmpty()) {
+            field.value = lastValue
+            field.isEditable = false
+        } else {
+            field.isEditable = !viewMode
+        }
+    }
+
+    private fun handleEditableOneTimeQuestion(field: FormFieldDto, fieldsJson: JSONObject, viewMode: Boolean) {
+        val lastValue = fieldsJson.optString(field.fieldId)
+        if (lastValue.isNotEmpty()) {
+            field.value = lastValue
+            field.isEditable = true
+        } else {
+            field.isEditable = !viewMode
+        }
+    }
+
+    private fun updateFieldVisibility(schema: FormSchemaDto, allFields: List<FormFieldDto>) {
+        schema.sections.forEach { section ->
+            section.fields.forEach { field ->
+                field.visible = evaluateFieldVisibility(field, allFields)
+            }
         }
     }
 

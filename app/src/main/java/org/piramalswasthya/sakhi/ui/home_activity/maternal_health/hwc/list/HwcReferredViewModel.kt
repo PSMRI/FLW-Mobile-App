@@ -30,7 +30,7 @@ class HwcReferredViewModel @Inject constructor(
 
     val benList = allBenList.combine(filter) { cacheList, filter ->
         val maternalList = cacheList
-            .filter { it.referral.type == "Maternal" }
+            .filter { it.referral.type == "MATERNAL" }
             .map { it.asDomainModel() }
 
         val benBasicDomainList = maternalList.map { it.ben }
