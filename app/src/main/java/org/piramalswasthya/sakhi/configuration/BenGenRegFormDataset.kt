@@ -191,7 +191,7 @@ class BenGenRegFormDataset(context: Context, language: Languages) : Dataset(cont
         inputType = EDIT_TEXT,
         title = resources.getString(R.string.father_s_name),
         arrayId = -1,
-        required = true,
+        required = false,
         allCaps = true,
         hasSpeechToText = true,
 
@@ -202,7 +202,7 @@ class BenGenRegFormDataset(context: Context, language: Languages) : Dataset(cont
         inputType = EDIT_TEXT,
         title = resources.getString(R.string.mother_s_name),
         arrayId = -1,
-        required = true,
+        required = false,
         allCaps = true,
         hasSpeechToText = true,
 
@@ -600,8 +600,8 @@ class BenGenRegFormDataset(context: Context, language: Languages) : Dataset(cont
                 } else {
                     when (maritalStatus.value) {
                         maritalStatus.entries!![0] -> {
-                            fatherName.required = true
-                            motherName.required = true
+                            fatherName.required = false
+                            motherName.required = false
                             return triggerDependants(
                                 source = maritalStatus,
                                 addItems = emptyList(),//listOf(fatherName, motherName),
@@ -615,13 +615,8 @@ class BenGenRegFormDataset(context: Context, language: Languages) : Dataset(cont
                         }
 
                         maritalStatus.entries!![1] -> {
-                            if (gender.value == gender.entries!![1]) {
-                                fatherName.required = false
-                                motherName.required = false
-                            } else {
-                                fatherName.required = true
-                                motherName.required = true
-                            }
+                            fatherName.required = false
+                            motherName.required = false
                             husbandName.required = true
                             wifeName.required = true
                             return triggerDependants(
@@ -641,8 +636,8 @@ class BenGenRegFormDataset(context: Context, language: Languages) : Dataset(cont
                         else -> {
                             husbandName.required = maritalStatus.value != maritalStatus.entries!![2]
                             wifeName.required = maritalStatus.value != maritalStatus.entries!![2]
-                            fatherName.required = true
-                            motherName.required = true
+                            fatherName.required = false
+                            motherName.required = false
 //                            ().let {
 ////                            wifeName.required = it
 ////                            husbandName.required = it
