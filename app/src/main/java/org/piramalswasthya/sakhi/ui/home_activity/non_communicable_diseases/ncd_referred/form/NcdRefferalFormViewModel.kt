@@ -73,7 +73,9 @@ class NcdRefferalFormViewModel @Inject constructor(
         get() = _age
 
     val benId = NCDReferalFormFragmentArgs.fromSavedStateHandle(savedStateHandle).benId
+    val referralReason = NCDReferalFormFragmentArgs.fromSavedStateHandle(savedStateHandle).referral
     val cbacId = NCDReferalFormFragmentArgs.fromSavedStateHandle(savedStateHandle).cbacId
+    val referraltype = NCDReferalFormFragmentArgs.fromSavedStateHandle(savedStateHandle).referralType
     init {
         viewModelScope.launch {
             ben = benDao.getBen(benId)!!
@@ -89,7 +91,7 @@ class NcdRefferalFormViewModel @Inject constructor(
                 createdBy = preferenceDao.getLoggedInUser()?.userName
             )
 
-            dataset.setUpPage()
+            dataset.setUpPage(referralReason,referraltype)
 /*
             cbac = if (cbacId > 0)
                 cbacRepo.getCbacCacheFromId(cbacId).also { _filledCbac.postValue(it) }
