@@ -81,6 +81,8 @@ class NewBenRegViewModel @Inject constructor(
 
     var isBenMarried = false
 
+    private var parentName = ""
+
     companion object {
         var isOtpVerified = false
     }
@@ -165,6 +167,7 @@ class NewBenRegViewModel @Inject constructor(
                         isBenMarried = true
                     }
                     isOtpVerified = ben.isConsent
+                    parentName = ben.firstName + " " + ben.lastName
                     dataset.setFirstPageToRead(
                         ben,
                         familyHeadPhoneNo = household.family?.familyHeadPhoneNo
@@ -267,6 +270,12 @@ class NewBenRegViewModel @Inject constructor(
                         benRepo.updateBeneficiarySpouseAdded(ben.householdId,SelectedbenIdFromArgs,SyncState.UNSYNCED)
                     }
                     if (isHoF) {
+                        if (ben.gender == Gender.MALE) {
+                            benRepo.updateFatherInChildren(ben.firstName + " " + ben.lastName, ben.householdId, parentName, SyncState.UNSYNCED)
+                        } else {
+                            benRepo.updateMotherInChildren(ben.firstName + " " + ben.lastName, ben.householdId, parentName, SyncState.UNSYNCED)
+                        }
+                        benRepo.updateSpouseOfHoF(ben.firstName + " " + ben.lastName, ben.householdId, parentName, SyncState.UNSYNCED)
                         household.family?.familyHeadName = ben.firstName
                         household.family?.familyName = ben.lastName
                         dataset.updateHouseholdWithHoFDetails(household, ben)
