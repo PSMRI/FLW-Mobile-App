@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.ncd_referred.list
 
 import android.content.Context
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,17 +28,42 @@ class NcdRefferedListViewModel @Inject constructor(
     private val filter = MutableStateFlow("")
     private val selectedBenId = MutableStateFlow(0L)
     var userName = preferenceDao.getLoggedInUser()!!.name
+    val selectedFilter = MutableStateFlow<String?>("ALL")
 
-    val benList = allBenList.combine(filter) { cacheList, filter ->
-        val list = cacheList.map { it.asDomainModel() }
-        val benBasicDomainList = list.map { it.ben }
-        val filteredBenBasicDomainList = filterBenList(benBasicDomainList, filter)
-        list.filter { it.ben.benId in filteredBenBasicDomainList.map { it.benId } }
+    val benList = combine(
+        allBenList,
+        filter,
+        selectedFilter
+    ) { cacheList, searchText, selectedType ->
 
+        val typeFiltered = if (selectedType == "ALL") {
+            cacheList
+        } else {
+            cacheList.filter { it.referral.type == selectedType }
+        }
+
+        val domainList = typeFiltered.map { it.asDomainModel() }
+        val benList = domainList.map { it.ben }
+        val searchedBenList = filterBenList(benList, searchText)
+        domainList.filter { domain ->
+            searchedBenList.any { it.benId == domain.ben.benId }
+        }
+    }
+    var selectedPosition = 0
+
+    private val clickedBenId = MutableStateFlow(0L)
+
+    fun updateBottomSheetData(benId: Long) {
+        viewModelScope.launch {
+            clickedBenId.emit(benId)
+        }
     }
 
-
-
+    fun setSelectedFilter(type: String) {
+        viewModelScope.launch {
+            selectedFilter.emit(type)
+        }
+    }
 
     init {
         viewModelScope.launch {
@@ -64,5 +90,20 @@ class NcdRefferedListViewModel @Inject constructor(
 
     private val catList = ArrayList<String>()
 
+    fun categoryData() : ArrayList<String> {
+
+        catList.clear()
+        catList.add("ALL")
+        catList.add("NCD")
+        catList.add("TB")
+        catList.add("LEPROSY")
+        catList.add("GERIATRIC")
+        catList.add("HRP")
+        catList.add("MATERNAL")
+
+
+        return catList
+
+    }
 
 }

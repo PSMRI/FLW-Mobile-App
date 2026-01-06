@@ -13,11 +13,13 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.FormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.hbyc.FormResponseJsonEntityHBYC
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.anc.ANCFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicModel.HBNCVisitListResponse
 import org.piramalswasthya.sakhi.model.dynamicModel.HBNCVisitRequest
 import org.piramalswasthya.sakhi.model.dynamicModel.HBNCVisitResponse
 import org.piramalswasthya.sakhi.network.AmritApiService
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
+import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.ANC_FORM_ID
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.HBNC_FORM_ID
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.HBYC_FORM_ID
 import retrofit2.Response
@@ -38,6 +40,9 @@ class FormRepository @Inject constructor(
     private val formSchemaDao = db.formSchemaDao()
     private val jsonResponseDao = db.formResponseJsonDao()
     private val jsonResponseDaoHBYC = db.formResponseJsonDaoHBYC()
+
+    private val jsonResponseDaoANC = db.formResponseJsonDaoANC()
+
     val ALL_FORM_IDS = listOf(
         FormConstants.HBNC_FORM_ID,
         FormConstants.CHILDREN_UNDER_FIVE_ORS_FORM_ID,
@@ -49,6 +54,7 @@ class FormRepository @Inject constructor(
         FormConstants.MOSQUITO_NET_FORM_ID,
         FormConstants.MDA_DISTRIBUTION_FORM_ID,
         FormConstants.CDTF_001,
+        FormConstants.ANC_FORM_ID
     )
 
 
@@ -161,6 +167,11 @@ class FormRepository @Inject constructor(
         return amritApiService.getAllHbycVisits(request)
     }
 
+    suspend fun getAllAncVisits(request: HBNCVisitRequest): Response<HBNCVisitListResponse> {
+        Log.d("anc_visit", "getAllAncVisits: called api")
+        return amritApiService.getAllAncVisits(request)}
+
+
     suspend fun saveDownloadedVisitList(list: List<HBNCVisitResponse>) {
         for (item in list) {
             try {
@@ -228,10 +239,15 @@ class FormRepository @Inject constructor(
         } catch (e: Exception) { false }
     }
 
+
+
+
+
     suspend fun markFormAsSyncedHBYC(id: Int) {
         val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
         jsonResponseDaoHBYC.markAsSynced(id, timestamp)
     }
+
 
     suspend fun saveDownloadedVisitListHBYC(list: List<HBNCVisitResponse>) {
         for (item in list) {
@@ -272,4 +288,128 @@ class FormRepository @Inject constructor(
             }
         }
     }
+
+    suspend fun saveDownloadedVisitListANC(list: List<HBNCVisitResponse>) {
+        list.forEachIndexed { index, item ->
+            try {
+                val fields = item.fields ?: return@forEachIndexed
+
+                val benId = item.beneficiaryId
+                val visitDate = item.visitDate
+
+                val fieldsJson = JSONObject()
+                fields.entrySet().forEach { (key, jsonElement) ->
+                    val value = if (jsonElement.isJsonNull) JSONObject.NULL else jsonElement.asString
+                    fieldsJson.put(key, value)
+                }
+
+                val visitDay = "Visit-${index + 1}"
+
+                val fullJson = JSONObject().apply {
+                    put("formId", ANC_FORM_ID)
+                    put("beneficiaryId", benId)
+                    put("visitDate", visitDate)
+                    put("fields", fieldsJson)
+                }
+
+                val entity = ANCFormResponseJsonEntity(
+                    benId = benId,
+                    visitDay = visitDay,
+                    visitDate = visitDate,
+                    formId = ANC_FORM_ID,
+                    version = 1,
+                    formDataJson = fullJson.toString(),
+                    isSynced = true
+                )
+
+                insertFormResponseANC(entity)
+
+            } catch (e: Exception) {
+                Timber.e(e, "Failed to save ANC visit ")
+            }
+        }
+    }
+
+
+    /*suspend fun saveDownloadedVisitListANC(list: List<HBNCVisitResponse>) {
+        for (item in list) {
+            try {
+                if (item.fields == null) continue
+                val visitDay = item.fields["visit_day"]?.asString ?: continue
+                val visitDate = item.visitDate ?: "-"
+                val benId = item.beneficiaryId
+
+                val fieldsJson = JSONObject()
+                item.fields.entrySet().forEach { (key, jsonElement) ->
+                    val value = if (jsonElement.isJsonNull) JSONObject.NULL else jsonElement.asString
+                    fieldsJson.put(key, value)
+                }
+
+                val fullJson = JSONObject().apply {
+                    put("formId", HBYC_FORM_ID)
+                    put("beneficiaryId", benId)
+                    put("visitDate", visitDate)
+                    put("fields", fieldsJson)
+                }
+
+                val entity = ANCFormResponseJsonEntity(
+                    benId = benId,
+                    visitDay = visitDay,
+                    visitDate = visitDate,
+                    formId = ANC_FORM_ID,
+                    version = 1,
+                    formDataJson = fullJson.toString(),
+                    isSynced = true
+                )
+                insertFormResponseANC(entity)
+            } catch (e: Exception) {
+                Timber.e(e, "Failed to save ANC visit")
+            }
+        }
+    }*/
+
+    suspend fun getInfantByRchIdANC(benId: Long) = jsonResponseDaoANC.getSyncedVisitsByRchId(benId)
+    suspend fun getSyncedVisitsByRchIdANC(benId: Long): List<ANCFormResponseJsonEntity> =
+        jsonResponseDaoANC.getSyncedVisitsByRchId(benId)
+
+    suspend fun insertOrUpdateFormResponseANC(entity: ANCFormResponseJsonEntity) {
+        val existing = jsonResponseDaoANC.getFormResponse(entity.benId, entity.visitDate)
+        val updated = existing?.let { entity.copy(id = it.id) } ?: entity
+        jsonResponseDaoANC.insertFormResponse(updated)
+    }
+
+    suspend fun insertFormResponseANC(entity: ANCFormResponseJsonEntity) =
+        jsonResponseDaoANC.insertFormResponse(entity)
+
+    suspend fun loadFormResponseJsonANC(benId: Long, visitDate: String): String? =
+        jsonResponseDaoANC.getFormResponse(benId, visitDate)?.formDataJson
+
+    suspend fun getUnsyncedFormsANC(): List<ANCFormResponseJsonEntity> =
+        jsonResponseDaoANC.getUnsyncedForms()
+
+    suspend fun syncFormToServerANC(form: ANCFormResponseJsonEntity): Boolean {
+        return try {
+            val request = FormSubmitRequestMapper.formEntity(form,preferenceDao.getLoggedInUser()!!.userName) ?: return false
+            val response = amritApiService.submitFromANC(listOf(request))
+            response.isSuccessful
+        } catch (e: Exception) { false }
+    }
+
+    suspend fun markFormAsSyncedANC(id: Int) {
+        val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
+        jsonResponseDaoANC.markAsSynced(id, timestamp)
+    }
+
+     suspend fun getLastVisitForBenANC(benId: Long): ANCFormResponseJsonEntity? {
+        return try {
+            val visits = jsonResponseDaoANC.getVisitsForBen(benId)
+            visits.maxByOrNull {
+                SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).parse(it.visitDate)?.time ?: 0L
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+
 }

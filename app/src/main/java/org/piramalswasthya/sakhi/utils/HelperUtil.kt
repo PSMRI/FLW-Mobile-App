@@ -51,6 +51,7 @@ object HelperUtil {
 
     private val dateFormat = SimpleDateFormat("EEE, MMM dd yyyy", Locale.ENGLISH)
 
+
     fun getLocalizedResources(context: Context, currentLanguage: Languages): Resources {
         val desiredLocale = Locale(currentLanguage.symbol)
         var conf = context.resources.configuration
@@ -134,8 +135,8 @@ object HelperUtil {
             str.append(if (ageUnitDTO.months == 1) " Month" else " Months")
         }
 
-        if (ageUnitDTO.days >= 1 && ageUnitDTO.years < 1) {
-            if (ageUnitDTO.months >= 1) str.append(", ")
+        if (ageUnitDTO.days >= 1 /*&& ageUnitDTO.years < 1*/) {
+            if (ageUnitDTO.years >= 1 || ageUnitDTO.months >= 1) str.append(", ")
             str.append(ageUnitDTO.days)
             str.append(if (ageUnitDTO.days == 1) " Day " else " Days ")
         }
@@ -235,6 +236,16 @@ object HelperUtil {
             return null
         }
 
+    }
+
+    fun parseDateToMillis(dateStr: String): Long {
+        return try {
+            val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+            sdf.isLenient = false
+            sdf.parse(dateStr)?.time ?: 0L
+        } catch (e: Exception) {
+            0L
+        }
     }
 
     fun getLongFromDateStr(dateString: String?): Long {

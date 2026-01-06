@@ -45,6 +45,16 @@ class CbacViewModel @Inject constructor(
     var referalRepo: NcdReferalRepo
 ) : ViewModel() {
 
+    enum class ReferralType {
+        NCD,
+        TB,
+        LEPROSY,
+        GERIATRIC,
+        COPD,
+        DEPRESSION,
+        HRP
+    }
+
     enum class State {
         LOADING,
         IDLE,
@@ -55,6 +65,8 @@ class CbacViewModel @Inject constructor(
     }
 
 
+    private val _isLeprosySuspected = MutableLiveData(false)
+    val isLeprosySuspected: LiveData<Boolean> = _isLeprosySuspected
     private val englishResources by lazy {
         val configuration = Configuration(context.resources.configuration)
         configuration.setLocale(Locale.ENGLISH)
@@ -68,8 +80,38 @@ class CbacViewModel @Inject constructor(
     }
      var referralCache: ReferalCache? = null
 
+
     fun setReferral(referral: ReferalCache) {
         this.referralCache = referral
+    }
+
+    private val _referralList = MutableLiveData<MutableList<ReferalCache>>(mutableListOf())
+    val referralList: LiveData<MutableList<ReferalCache>> = _referralList
+
+    fun addReferral(referral: ReferalCache) {
+        val list = _referralList.value ?: mutableListOf()
+
+        val alreadyExists = list.any {
+            it.referralReason == referral.referralReason
+        }
+
+        if (!alreadyExists) {
+            list.add(referral)
+            _referralList.value = list
+        }
+    }
+
+    private val _completedReferrals = MutableLiveData<MutableSet<ReferralType>>(mutableSetOf())
+    val completedReferrals: LiveData<MutableSet<ReferralType>> = _completedReferrals
+
+    fun markReferralCompleted(type: ReferralType) {
+        val set = _completedReferrals.value ?: mutableSetOf()
+        set.add(type)
+        _completedReferrals.value = set
+    }
+
+    fun isReferralAlreadyDone(type: ReferralType): Boolean {
+        return _completedReferrals.value?.contains(type) == true
     }
 
     private val _raAgeScore = MutableLiveData(0)
@@ -160,10 +202,16 @@ class CbacViewModel @Inject constructor(
     private var flagForPhq2 = false
     private var flagForNcd = false
 
-    private val _minDate = MutableLiveData<Long>()
-
+    private var _minDate = MutableLiveData<Long>()
+    private var bloodstain = 0
+    private var bleedingAfterIntercourse = 0
+    private var lump = 0
+    private var bleedingAfterMenopause = 0
 
     val user = preferenceDao.getLoggedInUser()
+
+    private val _showReferralDialog = MutableLiveData(false)
+    val showReferralDialog: LiveData<Boolean> = _showReferralDialog
 
     val minDate: LiveData<Long>
         get() = _minDate
@@ -439,10 +487,12 @@ class CbacViewModel @Inject constructor(
 
     fun setLumpB(i: Int) {
         cbac.cbac_lumpinbreast_pos = i
+        lump = i
     }
 
     fun setNipple(i: Int) {
         cbac.cbac_blooddischage_pos = i
+        bloodstain = i
     }
 
     fun setBreast(i: Int) {
@@ -455,10 +505,21 @@ class CbacViewModel @Inject constructor(
 
     fun setBlM(i: Int) {
         cbac.cbac_bleedingaftermenopause_pos = i
+        bleedingAfterMenopause = i
     }
 
     fun setBlI(i: Int) {
         cbac.cbac_bleedingafterintercourse_pos = i
+        bleedingAfterIntercourse = i
+        checkForReferral()
+
+    }
+     fun checkForReferral() {
+        if (bloodstain == 1 || bleedingAfterMenopause == 1 || bleedingAfterIntercourse == 1 || lump == 1) {
+            _showReferralDialog.value = true
+        } else {
+            _showReferralDialog.value = false
+        }
     }
 
     fun setFoulD(i: Int) {
@@ -610,15 +671,16 @@ class CbacViewModel @Inject constructor(
         cbac.ProviderServiceMapID = user!!.serviceMapId
 
         viewModelScope.launch {
-            if (referralCache != null) {
+            if (!referralList.value.isNullOrEmpty()) {
                 cbac.isReffered = true
             }
             val result = cbacRepo.saveCbacData(cbac, ben)
-            if (referralCache != null){
 
-                referalRepo.saveReferedNCD(referralCache!!)
+            referralList.value?.forEach {
+                referalRepo.saveReferedNCD(it)
 
             }
+
 
             if (result)
                 _state.value = State.SAVE_SUCCESS
@@ -886,6 +948,25 @@ class CbacViewModel @Inject constructor(
         conf.setLocale(desiredLocale)
         val localizedContext: Context = context.createConfigurationContext(conf)
         return localizedContext.resources
+    }
+
+    fun checkLeprosySymptoms() {
+        val suspected = listOf(
+            cbac.cbac_uicers_pos,          // Recurrent ulceration
+            cbac.cbac_tingling_palm_posi,        // Recurrent tingling palm/sole
+            cbac.cbac_hyper_pigmented_patch_posi,     // Hypopigmented / discoloration
+            cbac.cbac_any_thickend_skin_posi,          // Thickened skin
+            cbac.cbac_nodules_on_skin_posi,        // Skin nodules
+            cbac.cbac_numbness_on_palm_posi,        // Recurrent numbness
+            cbac.cbac_clawing_of_fingers_posi,             // Clawing of fingers/feet
+            cbac.cbac_tingling_or_numbness_posi,            // Tingling + numbness
+            cbac.cbac_inability_close_eyelid_posi,        // Inability to close eyelid
+            cbac.cbac_diff_holding_obj_posi,        // Difficulty holding objects
+            cbac.cbac_weekness_in_feet_posi,
+            cbac.cbac_white_or_red_patch_posi
+        ).any { it == 1 }
+
+        _isLeprosySuspected.value = suspected
     }
 
 }

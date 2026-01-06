@@ -414,9 +414,19 @@ interface AmritApiService {
         @Body request: List<FormSubmitRequest>
     ): Response<Unit>
 
+    @POST("flw-api/maternalCare/ancVisit/counselling/saveAll")
+    suspend fun  submitFromANC(
+        @Body request: List<FormSubmitRequest>
+    ): Response<Unit>
+
 
     @POST("flw-api/child-care/hbycVisit/getAll")
     suspend fun getAllHbycVisits(
+        @Body request: HBNCVisitRequest
+    ): Response<HBNCVisitListResponse>
+
+    @POST("flw-api/maternalCare/ancVisit/counselling/getAll")
+    suspend fun getAllAncVisits(
         @Body request: HBNCVisitRequest
     ): Response<HBNCVisitListResponse>
 
