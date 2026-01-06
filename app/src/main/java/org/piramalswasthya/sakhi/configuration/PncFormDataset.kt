@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
 import android.net.Uri
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
 import org.piramalswasthya.sakhi.helpers.Languages
@@ -270,6 +271,13 @@ class PncFormDataset(
 
 
         )
+
+        if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+            list.remove(deliveryDischargeSummary1)
+            list.remove(deliveryDischargeSummary2)
+            list.remove(deliveryDischargeSummary3)
+            list.remove(deliveryDischargeSummary4)
+        }
 
         dateOfDelivery = deliveryOutcomeCache?.dateOfDelivery?:0L
         if (dateOfDelivery!=0L){

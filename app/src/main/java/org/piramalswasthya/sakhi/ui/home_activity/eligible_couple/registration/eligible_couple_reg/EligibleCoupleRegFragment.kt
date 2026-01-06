@@ -167,8 +167,10 @@ class EligibleCoupleRegFragment : Fragment() {
                             hardCodedListUpdate(formId)
                         }, isEnabled = !isDataExist ,
                         selectImageClickListener  = FormInputAdapterWithBgIcon.SelectUploadImageClickListener {
-                            viewModel.setCurrentDocumentFormId(it)
-                            chooseOptions()
+                            if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                                viewModel.setCurrentDocumentFormId(it)
+                                chooseOptions()
+                            }
                         },
                         viewDocumentListner = FormInputAdapterWithBgIcon.ViewDocumentOnClick {
                             if (!recordExists) {
@@ -237,7 +239,9 @@ class EligibleCoupleRegFragment : Fragment() {
         }
 
         viewModel.showDialogEvent.observe(viewLifecycleOwner) { msg ->
-            showAlertDialog(requireContext(), "Alert!", msg)
+            if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                showAlertDialog(requireContext(), "Alert!", msg)
+            }
         }
         viewModel.benName.observe(viewLifecycleOwner) {
             binding.tvBenName.text = it

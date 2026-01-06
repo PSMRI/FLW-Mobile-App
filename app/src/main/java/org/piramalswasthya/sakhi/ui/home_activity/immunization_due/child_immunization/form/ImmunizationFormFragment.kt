@@ -174,11 +174,13 @@ class ImmunizationFormFragment : Fragment(), OnCheckedChangeListener {
                 //    binding.fabEdit.visibility = if (recordExists) View.VISIBLE else View.GONE
                 val adapter = FormInputAdapter(
                     selectImageClickListener = FormInputAdapter.SelectUploadImageClickListener { formId ->
-                        viewModel.setCurrentDocumentFormId(formId)
-                        requireContext().showMediaOptionsDialog(
-                            onCameraClick = { takeImage() },
-                            onGalleryClick = { selectImage() }
-                        )
+                        if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                            viewModel.setCurrentDocumentFormId(formId)
+                            requireContext().showMediaOptionsDialog(
+                                onCameraClick = { takeImage() },
+                                onGalleryClick = { selectImage() }
+                            )
+                        }
                     },
                     formValueListener = FormInputAdapter.FormValueListener { formId, index ->
                         viewModel.updateListOnValueChanged(formId, index)

@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
 import android.net.Uri
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.getWeeksOfPregnancy
@@ -305,11 +306,14 @@ class InfantRegistrationDataset(
                 deliveryDischargeSummary2.value = saved.deliveryDischargeSummary2
                 deliveryDischargeSummary3.value = saved.deliveryDischargeSummary3
                 deliveryDischargeSummary4.value = saved.deliveryDischargeSummary4
+                if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                    list.add(list.indexOf(isSncu) + 1, deliveryDischargeSummary1)
+                    list.add(list.indexOf(deliveryDischargeSummary1) + 1, deliveryDischargeSummary2)
+                    list.add(list.indexOf(deliveryDischargeSummary2) + 1, deliveryDischargeSummary3)
+                    list.add(list.indexOf(deliveryDischargeSummary3) + 1, deliveryDischargeSummary4)
+                }
 
-                list.add(list.indexOf(isSncu) + 1, deliveryDischargeSummary1)
-                list.add(list.indexOf(deliveryDischargeSummary1) + 1, deliveryDischargeSummary2)
-                list.add(list.indexOf(deliveryDischargeSummary2) + 1, deliveryDischargeSummary3)
-                list.add(list.indexOf(deliveryDischargeSummary3) + 1, deliveryDischargeSummary4)
+
             }
 
 //            opv0Dose.value = saved.opv0Dose?.let { getDateFromLong(it) }

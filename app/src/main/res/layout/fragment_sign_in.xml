@@ -6,7 +6,6 @@
     android:background="@drawable/bg_login"
     tools:context=".ui.login_activity.sign_in.SignInFragment">
 
-
     <LinearLayout
         android:id="@+id/ll_logo"
         android:layout_width="match_parent"
@@ -59,17 +58,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/padding_wide">
-
-                <!--                    <com.google.android.material.textview.MaterialTextView-->
-                <!--                        android:id="@+id/tv_title"-->
-                <!--                        android:layout_width="match_parent"-->
-                <!--                        android:layout_height="wrap_content"-->
-                <!--                        android:paddingTop="@dimen/padding_normal"-->
-                <!--                        android:paddingBottom="@dimen/padding_normal"-->
-                <!--                        android:text="@string/tv_text_welcome"-->
-                <!--                        android:textAppearance="@style/TextAppearance.Material3.TitleLarge"-->
-                <!--                        app:layout_constraintTop_toTopOf="parent" />-->
-
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/tv_sign_in"
