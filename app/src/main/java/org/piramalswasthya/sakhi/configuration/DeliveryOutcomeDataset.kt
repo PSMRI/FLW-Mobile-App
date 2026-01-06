@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.configuration
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.BenStatus
@@ -256,6 +257,11 @@ open class DeliveryOutcomeDataset(
             mcpFileUpload1,
             mcpFileUpload2
         )
+
+        if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+            list.remove(mcpFileUpload1)
+            list.remove(mcpFileUpload2)
+        }
         if (saved == null) {
             dateOfDelivery.value = getDateFromLong(System.currentTimeMillis())
             //dateOfDischarge.min = System.currentTimeMillis()
@@ -421,12 +427,15 @@ open class DeliveryOutcomeDataset(
 
             isJSYBenificiary.id -> {
                 val isYes = isJSYBenificiary.value.equals("Yes", ignoreCase = true)
-                triggerDependants(
-                    source = isJSYBenificiary,
-                    passedIndex = index,
-                    triggerIndex = if (isYes) index else -1,
-                    target = jsyFileUpload
-                )
+                if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                    triggerDependants(
+                        source = isJSYBenificiary,
+                        passedIndex = index,
+                        triggerIndex = if (isYes) index else -1,
+                        target = jsyFileUpload
+                    )
+                }
+              return -1
             }
 
 

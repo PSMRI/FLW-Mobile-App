@@ -72,7 +72,7 @@ class HouseHoldListAdapter(private val diseaseType: String, private var isDiseas
                 binding.ivSoftDelete.visibility = View.VISIBLE
 
                 if (item.isDeactivate){
-                    binding.ivSoftDelete.setImageResource(R.drawable.ic_group_on)
+                    //binding.ivSoftDelete.setImageResource(R.drawable.ic_group_on)
                     binding.parentCard.setBackgroundColor(ContextCompat.getColor(binding.parentCard.context, R.color.Quartenary))
 
                     binding.ivSoftDelete.visibility = View.GONE
@@ -81,7 +81,7 @@ class HouseHoldListAdapter(private val diseaseType: String, private var isDiseas
                     binding.button3.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(binding.root.context, R.color.md_theme_dark_outline))
 
                 } else{
-                    binding.ivSoftDelete.setImageResource(R.drawable.ic_group_off)
+                  //  binding.ivSoftDelete.setImageResource(R.drawable.ic_group_off)
                     binding.parentCard.setBackgroundColor(ContextCompat.getColor(binding.parentCard.context, R.color.md_theme_light_primary))
 
                     binding.ivSoftDelete.visibility = View.VISIBLE

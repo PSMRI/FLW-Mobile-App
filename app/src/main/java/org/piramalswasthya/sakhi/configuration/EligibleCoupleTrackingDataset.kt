@@ -2,7 +2,7 @@ package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.configuration.PregnantWomanRegistrationDataset.Companion.getMinLmpMillis
 import org.piramalswasthya.sakhi.database.room.SyncState
@@ -13,10 +13,8 @@ import org.piramalswasthya.sakhi.model.EligibleCoupleTrackingCache
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.InputType
 import java.text.SimpleDateFormat
-import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Locale
-import kotlin.contracts.contract
 
 class EligibleCoupleTrackingDataset(
     context: Context, currentLanguage: Languages
@@ -260,10 +258,12 @@ class EligibleCoupleTrackingDataset(
 
                         val selectedIndex = methods.indexOf(method)
                         if (selectedIndex in sterilizationIndices) {
-                            list.add(deliveryDischargeSummary1)
-                            list.add(deliveryDischargeSummary2)
-                            deliveryDischargeSummary1.value = saved.dischargeSummary1
-                            deliveryDischargeSummary2.value = saved.dischargeSummary2
+                            if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)){
+                                list.add(deliveryDischargeSummary1)
+                                list.add(deliveryDischargeSummary2)
+                                deliveryDischargeSummary1.value = saved.dischargeSummary1
+                                deliveryDischargeSummary2.value = saved.dischargeSummary2
+                            }
                         }
 
                     } else if (method.split("/")[0] == methods[1]) {
@@ -271,7 +271,8 @@ class EligibleCoupleTrackingDataset(
                         list.add(antraDoses)
                         list.add(dateOfAntraInjection)
                         list.add(dueDateOfAntraInjection)
-                        list.add(mpaFileUpload1)
+
+                        if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) list.add(mpaFileUpload1)
 
                         dateOfAntraInjection.value = saved.dateOfAntraInjection
                         dueDateOfAntraInjection.value = saved.dueDateOfAntraInjection
@@ -311,10 +312,12 @@ class EligibleCoupleTrackingDataset(
 
                             val selectedIndex = methods.indexOf(method)
                             if (selectedIndex in sterilizationIndices) {
-                                list.add(deliveryDischargeSummary1)
-                                list.add(deliveryDischargeSummary2)
-                                deliveryDischargeSummary1.value = saved.dischargeSummary1
-                                deliveryDischargeSummary2.value = saved.dischargeSummary2
+                                if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)){
+                                    list.add(deliveryDischargeSummary1)
+                                    list.add(deliveryDischargeSummary2)
+                                    deliveryDischargeSummary1.value = saved.dischargeSummary1
+                                    deliveryDischargeSummary2.value = saved.dischargeSummary2
+                                }
                             }
 
                         } else if (method.split("/")[0] == methods[1]) {
@@ -322,7 +325,7 @@ class EligibleCoupleTrackingDataset(
                             list.add(antraDoses)
                             list.add(dateOfAntraInjection)
                             list.add(dueDateOfAntraInjection)
-                            list.add(mpaFileUpload1)
+                            if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) list.add(mpaFileUpload1)
 
                             dateOfAntraInjection.value = saved.dateOfAntraInjection
                             dueDateOfAntraInjection.value = saved.dueDateOfAntraInjection
@@ -443,13 +446,20 @@ class EligibleCoupleTrackingDataset(
             }
 
             isPregnant.id -> {
+                var list1: List<Any> = emptyList()
+                if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                    list1=listOf(methodOfContraception, anyOtherMethod,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,mpaFileUpload1)
+                }else{
+                    list1= listOf(methodOfContraception, anyOtherMethod,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection)
+
+                }
                 if (isPregnant.value == resources.getStringArray(R.array.yes_no_donno)[0]) {
                     triggerDependants(
                         source = isPregnant,
                         passedIndex = index,
                         triggerIndex = 1,
                         target = usingFamilyPlanning,
-                        targetSideEffect = listOf(methodOfContraception, anyOtherMethod,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,mpaFileUpload1)
+                        targetSideEffect = list1
                     )
                 }
                 else if (isPregnant.value == resources.getStringArray(R.array.yes_no_donno)[1]) {
@@ -458,7 +468,7 @@ class EligibleCoupleTrackingDataset(
                         passedIndex = index,
                         triggerIndex = 1,
                         target = usingFamilyPlanning,
-                        targetSideEffect = listOf(methodOfContraception, anyOtherMethod,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,mpaFileUpload1)
+                        targetSideEffect = list1
                     )
                 }
                 else {
@@ -467,8 +477,7 @@ class EligibleCoupleTrackingDataset(
                         passedIndex = index,
                         triggerIndex = 2,
                         target = usingFamilyPlanning,
-                        targetSideEffect = listOf(methodOfContraception, anyOtherMethod,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,mpaFileUpload1)
-                    )
+                        targetSideEffect = list1 )
                 }
                 return 0
 
@@ -501,9 +510,18 @@ class EligibleCoupleTrackingDataset(
                 when (methodOfContraception.value) {
 
                     resources.getStringArray(R.array.method_of_contraception)[1] -> {
+                        var list1: List<Any> = emptyList()
+                        if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                            list1=listOf(antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,mpaFileUpload1)
+
+                        }else{
+                            list1= listOf(antraDoses,dateOfAntraInjection,dueDateOfAntraInjection)
+
+                        }
+
                         triggerDependants(
                             source = methodOfContraception,
-                            addItems = listOf(antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,mpaFileUpload1),
+                            addItems = list1,
                             removeItems = listOf(anyOtherMethod,deliveryDischargeSummary1,
                                 deliveryDischargeSummary2),
                             position = getIndexById(methodOfContraception.id) + 1

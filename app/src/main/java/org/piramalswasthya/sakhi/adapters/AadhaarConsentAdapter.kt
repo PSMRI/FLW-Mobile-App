@@ -42,7 +42,7 @@ class AadhaarConsentAdapter(private val clickListener: ConsentClickListener) :
 
             binding.checkBox.setOnCheckedChangeListener(null)
             binding.checkBox.isChecked=item.checked
-            binding.checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
+            binding.checkBox.setOnCheckedChangeListener { _, isChecked ->
                 item.checked=isChecked
                 if (isChecked){
                     clickListener.onClicked(item.apply {

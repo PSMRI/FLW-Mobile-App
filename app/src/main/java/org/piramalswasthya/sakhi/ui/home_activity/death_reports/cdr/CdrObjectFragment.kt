@@ -127,8 +127,11 @@ class CdrObjectFragment : Fragment() {
                     },
 
                     selectImageClickListener = FormInputAdapter.SelectUploadImageClickListener { formId ->
-                        viewModel.setCurrentDocumentFormId(formId)
-                        chooseOptions()
+                        if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                            viewModel.setCurrentDocumentFormId(formId)
+                            chooseOptions()
+                        }
+
 //                        Toast.makeText(requireContext(), formId.toString(), Toast.LENGTH_LONG).show()
                     },
 

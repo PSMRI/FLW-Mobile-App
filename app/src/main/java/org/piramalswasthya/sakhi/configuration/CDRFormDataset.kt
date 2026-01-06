@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import android.widget.LinearLayout
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.Languages
@@ -206,7 +207,7 @@ class CDRFormDataset(
         currentMohalla: String?,
         saved: CDRCache?
     ) {
-        val list = listOf(
+        val list = mutableListOf(
             childName,
             dateOfBirth,
             age,
@@ -234,6 +235,13 @@ class CDRFormDataset(
             dateOfNotification,
             cdrFileUpload1, cdrFileUpload2, cdrDeathFileUpload
         )
+
+        if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+            list.remove(cdrFileUpload1)
+            list.remove(cdrFileUpload2)
+            list.remove(cdrDeathFileUpload)
+        }
+
         val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
         val deathDateMillis = ben.dateOfDeath?.let {
             try {
