@@ -14,7 +14,6 @@ import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.InputType
 import org.piramalswasthya.sakhi.model.InputType.DROPDOWN
 import org.piramalswasthya.sakhi.model.InputType.EDIT_TEXT
-import org.piramalswasthya.sakhi.model.InputType.IMAGE_VIEW
 import org.piramalswasthya.sakhi.model.PregnantWomanAncCache
 import org.piramalswasthya.sakhi.model.PregnantWomanRegistrationCache
 import java.util.concurrent.TimeUnit
@@ -474,6 +473,7 @@ class PregnantWomanAncVisitDataset(
         if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
            list.remove(fileUploadFront)
            list.remove(fileUploadBack)
+           list.remove(headLine)
         }
         if (BuildConfig.FLAVOR.contains("xushrukha", ignoreCase = true)) {
             bp.required=true

@@ -127,6 +127,7 @@
     <string name="nhhr_avail_toilet_4">পানী যোগান নথকা কেছা শৌচাগাৰ</string>
     <string name="nhhr_avail_toilet_5">অন্য</string>
     <string name="nhhr_avail_toilet_6">একো নহয়</string>
+    <string name="str_duplicate_record">ডুপ্লিকেট ৰেকৰ্ড</string>
     <string-array name="nhhr_avail_toilet_array">
         <item>@string/nhhr_avail_toilet_1</item>
         <item>@string/nhhr_avail_toilet_2</item>

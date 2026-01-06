@@ -25,6 +25,7 @@ import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.model.*
 import org.piramalswasthya.sakhi.network.*
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.NewBenRegViewModel
+import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 import java.lang.Long.min
 import java.net.SocketTimeoutException
@@ -59,6 +60,12 @@ class BenRepo @Inject constructor(
             val f = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ENGLISH)
             val date = f.parse(dateString)
             return date?.time ?: throw IllegalStateException("Invalid date for dateReg")
+        }
+    }
+
+    suspend fun updateBenToSync(householdId: Long, unsynced: SyncState) {
+        withContext(Dispatchers.IO) {
+            benDao.updateBenToSync(householdId = householdId,unsynced,"U",2)
         }
     }
 
@@ -397,6 +404,121 @@ class BenRepo @Inject constructor(
         }
     }
 
+
+    suspend fun deactivateHouseHold(
+        benNetworkPostSet: List<BenRegCache>,
+        householdNetworkPostSet: HouseholdNetwork,
+    ): Boolean {
+        val user = preferenceDao.getLoggedInUser() ?: throw IllegalStateException("No user logged in!!")
+        val benNetworkPostList: List<BenPost> =
+            benNetworkPostSet.map {
+                it.asNetworkPostModel(context, user)
+            }
+
+
+        val rmnchData = SendingRMNCHData(
+            listOf(householdNetworkPostSet),
+            benNetworkPostList
+        )
+        try {
+            val response = tmcNetworkApiService.submitRmnchDataAmrit(rmnchData)
+            val statusCode = response.code()
+
+            if (statusCode == 200) {
+
+                val responseString: String? = response.body()?.string()
+                if (responseString != null) {
+                    val jsonObj = JSONObject(responseString)
+                    val responseStatusCode = jsonObj.getInt("statusCode")
+                    val errorMessage = jsonObj.getString("errorMessage")
+                    if (responseStatusCode == 200) {
+                        Timber.d("response : $jsonObj")
+                        WorkerUtils.triggerAmritPullWorker(context)
+                        return true
+                    } else if (responseStatusCode == 5002) {
+                        val user = preferenceDao.getLoggedInUser()
+                            ?: throw IllegalStateException("User not logged in according to db")
+                        if (userRepo.refreshTokenTmc(
+                                user.userName, user.password
+                            )
+                        ) throw SocketTimeoutException("Refreshed Token!")
+                        else throw IllegalStateException("User seems to be logged out and refresh token not working!!!!")
+                    }
+                }
+            }
+            Timber.w("Bad Response from server, need to check $householdNetworkPostSet")
+            return false
+        } catch (e: SocketTimeoutException) {
+            Timber.d("Caught exception $e here")
+            return deactivateHouseHold(
+                benNetworkPostSet, householdNetworkPostSet
+            )
+        } catch (e: JSONException) {
+            Timber.d("Caught exception $e here")
+            return false
+        } catch (e: java.lang.Exception) {
+            Timber.d("Caught exception $e here")
+            return false
+        }
+    }
+
+    suspend fun deactivateBeneficiary(
+        benNetworkPostSet: List<BenRegCache>,
+//        householdNetworkPostSet: HouseholdNetwork,
+    ): Boolean {
+        val user = preferenceDao.getLoggedInUser() ?: throw IllegalStateException("No user logged in!!")
+        val benNetworkPostList: List<BenPost> =
+            benNetworkPostSet.map {
+                it.asNetworkPostModel(context, user)
+            }
+
+
+        val rmnchData = SendingRMNCHData(
+         //   listOf(householdNetworkPostSet),
+            benficieryRegistrationData= benNetworkPostList
+        )
+        try {
+            val response = tmcNetworkApiService.submitRmnchDataAmrit(rmnchData)
+            val statusCode = response.code()
+
+            if (statusCode == 200) {
+
+                val responseString: String? = response.body()?.string()
+                if (responseString != null) {
+                    val jsonObj = JSONObject(responseString)
+                    val responseStatusCode = jsonObj.getInt("statusCode")
+                    val errorMessage = jsonObj.getString("errorMessage")
+                    if (responseStatusCode == 200) {
+                        Timber.d("response : $jsonObj")
+                        WorkerUtils.triggerAmritPullWorker(context)
+                        return true
+                    } else if (responseStatusCode == 5002) {
+                        val user = preferenceDao.getLoggedInUser()
+                            ?: throw IllegalStateException("User not logged in according to db")
+                        if (userRepo.refreshTokenTmc(
+                                user.userName, user.password
+                            )
+                        ) throw SocketTimeoutException("Refreshed Token!")
+                        else throw IllegalStateException("User seems to be logged out and refresh token not working!!!!")
+                    }
+                }
+            }
+            Timber.w("Bad Response from server, need to check $benNetworkPostList")
+            return false
+        } catch (e: SocketTimeoutException) {
+            Timber.d("Caught exception $e here")
+            return deactivateBeneficiary(
+               benNetworkPostSet/*, householdNetworkPostSet*/
+            )
+        } catch (e: JSONException) {
+            Timber.d("Caught exception $e here")
+            return false
+        } catch (e: java.lang.Exception) {
+            Timber.d("Caught exception $e here")
+            return false
+        }
+    }
+
     suspend fun getBeneficiariesFromServerForWorker(pageNumber: Int): Int {
         Timber.d("=====1234:getBeneficiariesFromServerForWorker : $pageNumber")
         return withContext(Dispatchers.IO) {
@@ -461,7 +583,7 @@ class BenRepo @Inject constructor(
                             }
 
                             5000 -> {
-                                //  HelperUtil.saveApiResponseToDownloads(context, "9864880049_getBeneficiaryData_response.txt", HelperUtil.allPagesContent.toString())
+                                 // HelperUtil.saveApiResponseToDownloads(context, "9864880049_getBeneficiaryData_response.txt", HelperUtil.allPagesContent.toString())
 
                                 if (errorMessage == "No record found") return@withContext 0
                             }
@@ -803,6 +925,7 @@ class BenRepo @Inject constructor(
                                     "isNewAbha"
                                 ) else false,
                                 age = benDataObj.getInt("age"),
+                                isDeactivate = if (benDataObj.has("isDeactivate")) benDataObj.getBoolean("isDeactivate") else false,
                                 ageUnit = if (benDataObj.has("gender")) {
                                     when (benDataObj.getString("age_unit")) {
                                         "Years" -> AgeUnit.YEARS
@@ -1415,6 +1538,9 @@ class BenRepo @Inject constructor(
 //                            updatedTimeStamp = houseDataObj.getString("other_houseType"),
                                 processed = "P",
                                 isDraft = false,
+                                isDeactivate =  if (houseDataObj.has("isDeactivate")) houseDataObj.getBoolean(
+                                    "isDeactivate"
+                                ) else false
                             )
                         )
                     } catch (e: JSONException) {

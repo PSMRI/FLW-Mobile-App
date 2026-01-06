@@ -100,18 +100,14 @@ class AllBenFragment : Fragment() {
             }.create()
 
         filterAlertBinding.btnOk.setOnClickListener {
-            if (selectedAbha == Abha.WITH) {
-                viewModel.filterType(1)
-            } else if (selectedAbha == Abha.WITHOUT) {
-                viewModel.filterType(2)
-            } else if (selectedAbha == Abha.AGE_ABOVE_30) {
-                viewModel.filterType(3)
-            } else if (selectedAbha == Abha.WARA) {
-                viewModel.filterType(4)
-            }  else {
-                viewModel.filterType(0)
+            val filter = when (selectedAbha) {
+                Abha.WITH -> 1
+                Abha.WITHOUT -> 2
+                Abha.AGE_ABOVE_30 -> 3
+                Abha.WARA -> 4
+                else -> 0
             }
-
+            viewModel.filterType(filter)
             alert.cancel()
         }
         filterAlertBinding.btnCancel.setOnClickListener {
@@ -156,7 +152,7 @@ class AllBenFragment : Fragment() {
 
         benAdapter = BenListAdapter(
             clickListener = BenListAdapter.BenClickListener(
-                { hhId, benId, relToHeadId ->
+                { item,hhId, benId, relToHeadId ->
 
                     if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
                         findNavController().navigate(
@@ -173,7 +169,7 @@ class AllBenFragment : Fragment() {
 
                 },
                 clickedWifeBen = {
-                        hhId, benId, relToHeadId ->
+                        item, hhId, benId, relToHeadId ->
 
                     if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
                         findNavController().navigate(
@@ -191,7 +187,7 @@ class AllBenFragment : Fragment() {
                     }
                 },
                 clickedHusbandBen = {
-                        hhId, benId, relToHeadId ->
+                        item, hhId, benId, relToHeadId ->
 
                     if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
                         findNavController().navigate(
@@ -208,7 +204,7 @@ class AllBenFragment : Fragment() {
                     }
                 },
                 clickedChildben = {
-                        hhId, benId, relToHeadId ->
+                        item, hhId, benId, relToHeadId ->
 
                     if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
                         findNavController().navigate(
@@ -225,12 +221,12 @@ class AllBenFragment : Fragment() {
                     }
                 },
 
-                {
+                {item,hhid->
                 },
-                { benId, hhId ->
+                { item,benId, hhId ->
                     checkAndGenerateABHA(benId)
                 },
-                { benId, hhId , isViewMode, isIFA->
+                {item, benId, hhId , isViewMode, isIFA->
                     if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
                         if (isIFA){
                             findNavController().navigate(
@@ -264,6 +260,8 @@ class AllBenFragment : Fragment() {
                         }
                         Toast.makeText(requireContext(), "Please allow permissions first", Toast.LENGTH_SHORT).show()
                     }
+                },{
+
                 }
 
                 ),

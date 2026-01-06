@@ -14,6 +14,8 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.Operation
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
+import org.piramalswasthya.sakhi.work.dynamicWoker.AncHomeVisitPushWorker
+import org.piramalswasthya.sakhi.work.dynamicWoker.AncHomeVisitSyncWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.BenIfaFormSyncWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYIFAFormSyncWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYORSFormSyncWorker
@@ -160,6 +162,9 @@ object WorkerUtils {
         val formSyncWorkerRequest = OneTimeWorkRequestBuilder<FormSyncWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
+        val ancFormSyncWorker = OneTimeWorkRequestBuilder<AncHomeVisitSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
 
         val maaMeetingFormSyncWorkerRequest = OneTimeWorkRequestBuilder<MaaMeetingDownsyncWorker>()
             .setConstraints(networkOnlyConstraint)
@@ -175,6 +180,7 @@ object WorkerUtils {
                 ExistingWorkPolicy.APPEND_OR_REPLACE,
                 pullWorkRequest
             )
+            .then(ancFormSyncWorker)
             .then(CUFYORSFormSyncWorker)
             .then(hbncAndHbyceWorker)
             .then(CUFYIFAFormSyncWorker)
@@ -220,6 +226,9 @@ object WorkerUtils {
 
     fun triggerAmritPushWorker(context: Context) {
         val formSyncWorkerRequest  = OneTimeWorkRequestBuilder<FormSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val ancPushWorkRequest = OneTimeWorkRequestBuilder<AncHomeVisitPushWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
         val pushWorkRequest = OneTimeWorkRequestBuilder<PushToAmritWorker>()
@@ -369,6 +378,7 @@ object WorkerUtils {
                 ExistingWorkPolicy.APPEND_OR_REPLACE,
                 pushWorkRequest
             )
+            .then(ancPushWorkRequest)
             .then(pushMaaMeetingsWorkRequest)
             .then(pushSaasBahuSamelanAmritWorker)
             .then(pushCbacWorkRequest)
@@ -415,7 +425,9 @@ object WorkerUtils {
         val CUFYORSFormSyncWorker = OneTimeWorkRequestBuilder<CUFYORSFormSyncWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
-
+        val ancPullWorkRequest = OneTimeWorkRequestBuilder<AncHomeVisitSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
         val hbncAndHbyceWorker = OneTimeWorkRequestBuilder<FormSyncWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
@@ -551,6 +563,7 @@ object WorkerUtils {
                 ExistingWorkPolicy.APPEND_OR_REPLACE,
                 pullWorkRequest
             )
+            .then(ancPullWorkRequest)
             .then(maaMeetingFormSyncWorkerRequest)
             .then(pullEyeSurgeryFormSyncWorker)
             .then(pullFilariaMDAFormSyncWorker)
