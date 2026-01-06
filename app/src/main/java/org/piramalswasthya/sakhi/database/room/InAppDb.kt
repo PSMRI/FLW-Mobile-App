@@ -57,6 +57,7 @@ import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.CUFYFormResp
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.CUFYFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.EyeSurgeryFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FilariaMDAFormResponseJsonDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.NCDReferalFormResponseJsonDao
 import org.piramalswasthya.sakhi.model.AHDCache
 import org.piramalswasthya.sakhi.model.AESScreeningCache
 import org.piramalswasthya.sakhi.model.AdolescentHealthCache
@@ -114,6 +115,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.hbyc.FormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.VHNDCache
 import org.piramalswasthya.sakhi.model.dynamicEntity.CUFYFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FilariaMDA.FilariaMDAFormResponseJsonEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.NCDReferalFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.ben_ifa.BenIfaFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.eye_surgery.EyeSurgeryFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoNetFormResponseJsonEntity
@@ -175,6 +177,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         FormResponseJsonEntity::class,
         FormResponseJsonEntityHBYC::class,
         CUFYFormResponseJsonEntity::class,
+        NCDReferalFormResponseJsonEntity::class,
         GeneralOPEDBeneficiary::class,
         ReferalCache::class,
         UwinCache::class,
@@ -184,7 +187,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         FilariaMDAFormResponseJsonEntity::class
     ],
     views = [BenBasicCache::class],
-    version = 46, exportSchema = false
+    version = 47, exportSchema = false
 )
 
 @TypeConverters(
@@ -237,6 +240,7 @@ abstract class InAppDb : RoomDatabase() {
     abstract fun formResponseDao(): FormResponseDao
     abstract fun CUFYFormResponseDao(): CUFYFormResponseDao
     abstract fun CUFYFormResponseJsonDao(): CUFYFormResponseJsonDao
+    abstract fun NCDReferalFormResponseJsonDao(): NCDReferalFormResponseJsonDao
     abstract fun formResponseJsonDao(): FormResponseJsonDao
     abstract fun formResponseJsonDaoHBYC(): FormResponseJsonDaoHBYC
     abstract fun formResponseJsonDaoEyeSurgery(): EyeSurgeryFormResponseJsonDao
@@ -257,6 +261,56 @@ abstract class InAppDb : RoomDatabase() {
                 it.execSQL("alter table BENEFICIARY add column isConsent BOOL")
 
             })
+
+            val MIGRATION_46_47 = object : Migration(46, 47) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL(
+                        "DROP TABLE IF EXISTS ncd_referal_all_visit"
+                    )
+                    database.execSQL(
+                        """
+            CREATE TABLE IF NOT EXISTS `ncd_referal_all_visit` (
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                `benId` INTEGER NOT NULL,
+                `hhId` INTEGER NOT NULL,
+
+                `visitNo` INTEGER NOT NULL,
+                `followUpNo` INTEGER NOT NULL,
+
+                `treatmentStartDate` TEXT NOT NULL,
+                `followUpDate` TEXT,
+                `diagnosisCodes` TEXT,
+                `formId` TEXT NOT NULL,
+                `version` INTEGER NOT NULL,
+                `formDataJson` TEXT NOT NULL,
+
+                `isSynced` INTEGER NOT NULL DEFAULT 0,
+                `createdAt` INTEGER NOT NULL,
+                `updatedAt` INTEGER NOT NULL,
+                `syncedAt` INTEGER
+            )
+            """.trimIndent()
+                    )
+
+                    // Create indices
+                    database.execSQL(
+                        """
+            CREATE INDEX IF NOT EXISTS `index_ncd_visit_ben_hh`
+            ON `ncd_referal_all_visit` (`benId`, `hhId`)
+            """.trimIndent()
+                    )
+
+                    database.execSQL(
+                        """
+            CREATE INDEX IF NOT EXISTS `index_ncd_visit_followup`
+            ON `ncd_referal_all_visit` (`benId`, `hhId`, `visitNo`, `followUpNo`)
+            """.trimIndent()
+                    )
+                }
+            }
+
+
+
             val MIGRATION_45_46 = Migration(45, 46) {
                 it.execSQL("ALTER TABLE PREGNANCY_ANC  ADD COLUMN placeOfAnc TEXT")
                 it.execSQL("ALTER TABLE PREGNANCY_ANC  ADD COLUMN placeOfAncId INTEGER")
@@ -1706,7 +1760,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_42_43,
                         MIGRATION_43_44,
                         MIGRATION_44_45,
-                        MIGRATION_45_46
+                        MIGRATION_45_46,
+                        MIGRATION_46_47
                     ).build()
 
                     INSTANCE = instance
