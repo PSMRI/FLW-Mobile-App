@@ -47,7 +47,8 @@ class FormRepository @Inject constructor(
         FormConstants.EYE_SURGERY_FORM_ID,
         FormConstants.HBYC_FORM_ID,
         FormConstants.MOSQUITO_NET_FORM_ID,
-        FormConstants.MDA_DISTRIBUTION_FORM_ID
+        FormConstants.MDA_DISTRIBUTION_FORM_ID,
+        FormConstants.CDTF_001,
     )
 
 
