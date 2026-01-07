@@ -23,6 +23,7 @@ import org.piramalswasthya.sakhi.work.dynamicWoker.EyeSurgeryFormSyncWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.FilariaMDAFormSyncWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.FormSyncWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.MosquitoNetFormSyncWorker
+import org.piramalswasthya.sakhi.work.dynamicWoker.NCDFollowUpSyncWorker
 import java.util.concurrent.TimeUnit
 
 object WorkerUtils {
@@ -56,6 +57,10 @@ object WorkerUtils {
             .setConstraints(networkOnlyConstraint)
             .build()
         val CUFYSAMFormSyncWorker = OneTimeWorkRequestBuilder<CUFYSAMFormSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+
+        val NCDFollowupFormSyncWorker = OneTimeWorkRequestBuilder<NCDFollowUpSyncWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
         val pullWorkRequest = OneTimeWorkRequestBuilder<PullFromAmritWorker>()
@@ -179,6 +184,8 @@ object WorkerUtils {
             .then(hbncAndHbyceWorker)
             .then(CUFYIFAFormSyncWorker)
             .then(CUFYSAMFormSyncWorker)
+            .then(NCDFollowupFormSyncWorker)
+
             .then(pullEyeSurgeryFormSyncWorker)
             .then(pullFilariaMDAFormSyncWorker)
             .then(pullMosquitoNetFormSyncWorker)
@@ -311,6 +318,13 @@ object WorkerUtils {
         val CUFYSAMFormSyncWorker = OneTimeWorkRequestBuilder<CUFYSAMFormSyncWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
+
+         val NCDFollowupFormSyncWorker = OneTimeWorkRequestBuilder<NCDFollowUpSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+
+
+
         //Always at last - INCENTIVES
         val pullIncentiveActivityWorkRequest =
             OneTimeWorkRequestBuilder<PullIncentiveWorker>()
@@ -394,6 +408,7 @@ object WorkerUtils {
             .then(pushMosquitoNetFormSyncWorker)
             .then(pushBenIfaFormSyncWorker)
             .then(CUFYSAMFormSyncWorker)
+            .then(NCDFollowupFormSyncWorker)
             .then(pullIncentiveActivityWorkRequest)
             .then(pushAbhaWorkRequest)
             .then(pushMalariaWorkRequest)
@@ -421,6 +436,10 @@ object WorkerUtils {
         val CUFYSAMFormSyncWorker = OneTimeWorkRequestBuilder<CUFYSAMFormSyncWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
+            val NCDFollowupFormSyncWorker = OneTimeWorkRequestBuilder<NCDFollowUpSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+
         val pullWorkRequest = OneTimeWorkRequestBuilder<PullFromAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
@@ -557,6 +576,7 @@ object WorkerUtils {
             .then(hbncAndHbyceWorker)
             .then(CUFYIFAFormSyncWorker)
             .then(CUFYSAMFormSyncWorker)
+            .then(NCDFollowupFormSyncWorker)
             .then(pullUwinWorkerRequest)
             .then(pullVaccineWorkRequest)
             .then(pullTBWorkRequest)

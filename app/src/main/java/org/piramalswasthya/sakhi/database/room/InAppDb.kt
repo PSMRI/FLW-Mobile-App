@@ -57,6 +57,7 @@ import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.CUFYFormResp
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.CUFYFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.EyeSurgeryFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FilariaMDAFormResponseJsonDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.NCDReferalFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseANCJsonDao
 import org.piramalswasthya.sakhi.model.AHDCache
 import org.piramalswasthya.sakhi.model.AESScreeningCache
@@ -115,6 +116,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.hbyc.FormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.VHNDCache
 import org.piramalswasthya.sakhi.model.dynamicEntity.CUFYFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FilariaMDA.FilariaMDAFormResponseJsonEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.NCDReferalFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.anc.ANCFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.ben_ifa.BenIfaFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.eye_surgery.EyeSurgeryFormResponseJsonEntity
@@ -177,6 +179,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         FormResponseJsonEntity::class,
         FormResponseJsonEntityHBYC::class,
         CUFYFormResponseJsonEntity::class,
+        NCDReferalFormResponseJsonEntity::class,
         GeneralOPEDBeneficiary::class,
         ReferalCache::class,
         UwinCache::class,
@@ -240,6 +243,7 @@ abstract class InAppDb : RoomDatabase() {
     abstract fun formResponseDao(): FormResponseDao
     abstract fun CUFYFormResponseDao(): CUFYFormResponseDao
     abstract fun CUFYFormResponseJsonDao(): CUFYFormResponseJsonDao
+    abstract fun NCDReferalFormResponseJsonDao(): NCDReferalFormResponseJsonDao
     abstract fun formResponseJsonDao(): FormResponseJsonDao
     abstract fun formResponseJsonDaoHBYC(): FormResponseJsonDaoHBYC
 
