@@ -326,7 +326,6 @@ class LeprosyFormDataset(
             val hypopigmentedPatchId  = saved.hypopigmentedPatchId  ?: 1
             val thickenedSkinId  = saved.thickenedSkinId  ?: 1
             val skinNodulesId  = saved.skinNodulesId  ?: 1
-            val skinPatchDiscolorationId  = saved.skinPatchDiscolorationId  ?: 1
             val recurrentNumbnessId  = saved.recurrentNumbnessId  ?: 1
             val clawingFingersId  = saved.clawingFingersId  ?: 1
             val tinglingNumbnessExtremitiesId  = saved.tinglingNumbnessExtremitiesId  ?: 1
@@ -600,11 +599,6 @@ class LeprosyFormDataset(
                 resources.getStringArray(R.array.yes_no)[1] -> 1
                 else -> 1
             }
-            form.skinPatchDiscolorationId = when (cbacAnyHyperPigmented.value) {
-                resources.getStringArray(R.array.yes_no)[0] -> 0
-                resources.getStringArray(R.array.yes_no)[1] -> 1
-                else -> 1
-            }
             form.recurrentNumbnessId = when (cbacRecurrentNumbness .value) {
                 resources.getStringArray(R.array.yes_no)[0] -> 0
                 resources.getStringArray(R.array.yes_no)[1] -> 1
@@ -640,7 +634,6 @@ class LeprosyFormDataset(
             form.hypopigmentedPatch  = cbacAnyHyperPigmented.value
             form.thickenedSkin  = cbacAnyThickendSkin.value
             form.skinNodules  = cbacAnyNodulesSkin.value
-            form.skinPatchDiscoloration  = cbacAnyHyperPigmented.value
             form.recurrentNumbness  = cbacRecurrentNumbness.value
             form.clawingFingers  = cbacClawingOfFingers.value
             form.tinglingNumbnessExtremities  = cbacTinglingOrNumbness.value
