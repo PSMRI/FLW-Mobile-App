@@ -43,6 +43,46 @@ interface BenDao {
         proccess: String,
         updateStatus: Int
     )
+
+    @Query(
+        "UPDATE BENEFICIARY " +
+                "SET fatherName = :benName , syncState = :unsynced , processed = :proccess , serverUpdatedStatus =:updateStatus WHERE householdId = :householdId AND fatherName = :parentName AND (familyHeadRelationPosition = 9 OR familyHeadRelationPosition = 10)"
+    )
+    suspend fun updateFatherInChildren(
+        benName: String,
+        householdId: Long,
+        parentName: String,
+        unsynced: SyncState,
+        proccess: String,
+        updateStatus: Int
+    )
+
+    @Query(
+        "UPDATE BENEFICIARY " +
+                "SET motherName = :benName , syncState = :unsynced , processed = :proccess , serverUpdatedStatus =:updateStatus WHERE householdId = :householdId AND motherName = :parentName AND (familyHeadRelationPosition = 9 OR familyHeadRelationPosition = 10)"
+    )
+    suspend fun updateMotherInChildren(
+        benName: String,
+        householdId: Long,
+        parentName: String,
+        unsynced: SyncState,
+        proccess: String,
+        updateStatus: Int
+    )
+
+    @Query(
+        "UPDATE BENEFICIARY " +
+                "SET gen_spouseName = :benName , syncState = :unsynced , processed = :proccess , serverUpdatedStatus =:updateStatus WHERE gen_maritalStatusId = 2 AND householdId = :householdId AND gen_spouseName = :spouseName AND (familyHeadRelationPosition = 5 OR familyHeadRelationPosition = 6)"
+    )
+    suspend fun updateSpouseOfHoF(
+        benName: String,
+        householdId: Long,
+        spouseName: String,
+        unsynced: SyncState,
+        proccess: String,
+        updateStatus: Int
+    )
+
     @Query("UPDATE  BENEFICIARY SET isSpouseAdded = 1 , syncState = :unsynced , processed = :proccess , serverUpdatedStatus =:updateStatus WHERE householdId = :householdId AND beneficiaryId = :benId")
     suspend fun updateBeneficiarySpouseAdded(householdId: Long,benId: Long, unsynced: SyncState,  proccess: String,
                                              updateStatus: Int)
