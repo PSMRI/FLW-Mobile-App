@@ -1,7 +1,5 @@
 package org.piramalswasthya.sakhi.ui.home_activity.immunization_due.child_immunization.form
 
-import android.app.Activity
-import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -21,8 +19,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.bumptech.glide.Glide
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.BuildConfig
@@ -30,8 +26,6 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.ChildImmunizationVaccineAdapter
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentImmunizationFormBinding
-import org.piramalswasthya.sakhi.databinding.LayoutMediaOptionsBinding
-import org.piramalswasthya.sakhi.databinding.LayoutViewMediaBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.model.ImmunizationDetailsDomain
 import org.piramalswasthya.sakhi.ui.checkFileSize
@@ -174,11 +168,13 @@ class ImmunizationFormFragment : Fragment(), OnCheckedChangeListener {
                 //    binding.fabEdit.visibility = if (recordExists) View.VISIBLE else View.GONE
                 val adapter = FormInputAdapter(
                     selectImageClickListener = FormInputAdapter.SelectUploadImageClickListener { formId ->
-                        viewModel.setCurrentDocumentFormId(formId)
-                        requireContext().showMediaOptionsDialog(
-                            onCameraClick = { takeImage() },
-                            onGalleryClick = { selectImage() }
-                        )
+                        if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                            viewModel.setCurrentDocumentFormId(formId)
+                            requireContext().showMediaOptionsDialog(
+                                onCameraClick = { takeImage() },
+                                onGalleryClick = { selectImage() }
+                            )
+                        }
                     },
                     formValueListener = FormInputAdapter.FormValueListener { formId, index ->
                         viewModel.updateListOnValueChanged(formId, index)

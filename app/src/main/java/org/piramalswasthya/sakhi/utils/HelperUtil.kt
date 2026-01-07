@@ -34,6 +34,7 @@ import androidx.core.graphics.withTranslation
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.json.JSONArray
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.LayoutMediaOptionsBinding
 import org.piramalswasthya.sakhi.databinding.LayoutViewMediaBinding
@@ -562,19 +563,23 @@ object HelperUtil {
         onCameraClick: () -> Unit,
         onGalleryClick: () -> Unit
     ) {
-        val binding = LayoutMediaOptionsBinding.inflate(LayoutInflater.from(this))
-        binding.btnPdf.visibility = View.GONE
+        if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+            val binding = LayoutMediaOptionsBinding.inflate(LayoutInflater.from(this))
+            binding.btnPdf.visibility = View.GONE
 
-        val dialog = MaterialAlertDialogBuilder(this)
-            .setView(binding.root)
-            .setCancelable(true)
-            .create()
+            val dialog = MaterialAlertDialogBuilder(this)
+                .setView(binding.root)
+                .setCancelable(true)
+                .create()
 
-        binding.btnCamera.setOnClickListener { dialog.dismiss(); onCameraClick() }
-        binding.btnGallery.setOnClickListener { dialog.dismiss(); onGalleryClick() }
-        binding.btnCancel.setOnClickListener { dialog.dismiss() }
+            binding.btnCamera.setOnClickListener { dialog.dismiss(); onCameraClick() }
+            binding.btnGallery.setOnClickListener { dialog.dismiss(); onGalleryClick() }
+            binding.btnCancel.setOnClickListener { dialog.dismiss() }
 
-        dialog.show()
+            dialog.show()
+
+        }
+
     }
 
     fun Context.showUploadReminderDialog(

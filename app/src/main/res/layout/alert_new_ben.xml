@@ -107,26 +107,6 @@
 
 
         </com.google.android.material.textfield.TextInputLayout>
-        <!--            <LinearLayout-->
-        <!--                android:layout_width="match_parent"-->
-        <!--                android:layout_height="wrap_content"-->
-        <!--                android:gravity="center"-->
-        <!--                android:orientation="horizontal"-->
-        <!--               >-->
-
-        <!--                <TextView-->
-        <!--                    android:layout_width="wrap_content"-->
-        <!--                    android:layout_height="wrap_content"-->
-        <!--                    android:padding="@dimen/padding_normal"-->
-        <!--                    android:textAppearance="@style/TextAppearance.Material3.BodyLarge"-->
-        <!--                    android:text="Adding Head Of Family's " />-->
-
-        <!--                <Spinner-->
-        <!--                    android:id="@+id/spinner_rel_to_head"-->
-        <!--                    android:layout_width="wrap_content"-->
-        <!--                    android:layout_height="match_parent" />-->
-        <!--            </LinearLayout>-->
-
     </LinearLayout>
 
 

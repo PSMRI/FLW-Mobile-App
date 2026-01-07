@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.HouseHoldBasicDomain
@@ -17,6 +18,7 @@ import org.piramalswasthya.sakhi.model.HouseholdCache
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.HouseholdRepo
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -125,10 +127,19 @@ class AllHouseholdViewModel @Inject constructor(
             }
             householdRepo.persistRecord(houseHoldCache)
             val benList = benRepo.getBenListFromHousehold(houseHoldBasicDomain.hhId)
+            benList.forEach {
+                it?.isDeactivate =  houseHoldBasicDomain.isDeactivate
+                if (it?.processed != "N"){
+                    it?.processed = "U"
+                    it?.syncState = SyncState.UNSYNCED
+                    it?.serverUpdatedStatus = 2
+                }
+                benRepo.updateRecord(it)
+            }
             try {
                 benRepo.deactivateHouseHold(benList, houseHoldCache.asNetworkModel(user))
             } catch (e: Exception) {
-
+                Timber.d("error : $e")
             }
         }
     }

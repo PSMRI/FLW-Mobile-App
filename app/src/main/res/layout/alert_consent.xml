@@ -19,7 +19,6 @@
         android:textColor="?attr/colorOnPrimary"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- FIX: Consent container ko fixed height di -->
     <LinearLayout
         android:id="@+id/consentContainer"
         android:layout_width="match_parent"
@@ -35,7 +34,6 @@
             android:layout_height="match_parent"
             android:gravity="top|start" />
 
-        <!-- FIX: Scroll area ko full height di -->
         <ScrollView
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -54,30 +52,6 @@
         </ScrollView>
 
     </LinearLayout>
-
-<!--    <com.google.android.material.button.MaterialButton-->
-<!--        android:id="@+id/btn_negative"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_margin="@dimen/margin_normal"-->
-<!--        android:text="@string/disagree"-->
-<!--        android:textColor="?attr/colorOnPrimary"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/consentContainer"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintEnd_toStartOf="@id/btn_positive" />-->
-
-<!--    <com.google.android.material.button.MaterialButton-->
-<!--        android:id="@+id/btn_positive"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_margin="@dimen/margin_normal"-->
-<!--        android:text="@string/agree"-->
-<!--        android:textColor="?attr/colorOnPrimary"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/consentContainer"-->
-<!--        app:layout_constraintStart_toEndOf="@id/btn_negative"-->
-<!--        app:layout_constraintEnd_toEndOf="parent" />-->
-
-
     <LinearLayout
         android:id="@+id/buttonContainer"
         android:layout_width="match_parent"
