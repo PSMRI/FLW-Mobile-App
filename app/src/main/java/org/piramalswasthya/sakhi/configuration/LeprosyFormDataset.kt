@@ -10,10 +10,22 @@ import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.InputType
 import org.piramalswasthya.sakhi.model.LeprosyScreeningCache
 import org.piramalswasthya.sakhi.model.TBScreeningCache
+import java.util.Calendar
 
 class LeprosyFormDataset(
     context: Context, currentLanguage: Languages
 ) : Dataset(context, currentLanguage) {
+
+    private fun getOneYearBeforeCurrentDate(): Long {
+        val calendar = Calendar.getInstance()
+        calendar.add(Calendar.YEAR, -1)
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        return calendar.timeInMillis
+    }
+
 
     private val dateOfCase = FormElement(
         id = 1,
@@ -22,6 +34,7 @@ class LeprosyFormDataset(
         arrayId = -1,
         required = true,
         max = System.currentTimeMillis(),
+        min = getOneYearBeforeCurrentDate(),
         hasDependants = true
 
     )
