@@ -42,31 +42,6 @@
 
 
         </com.google.android.material.textfield.TextInputLayout>
-
-       <!-- <ImageView
-            android:id="@+id/ivIconBg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:imageResource="@{form.backgroundDrawable}"
-            android:visibility="@{form.showDrawable ? View.VISIBLE : View.GONE}"
-            app:layout_constraintBottom_toBottomOf="@+id/til_rv_dropdown"
-            app:layout_constraintEnd_toStartOf="@+id/til_rv_dropdown"
-            app:layout_constraintStart_toStartOf="@+id/til_rv_dropdown"
-            app:layout_constraintTop_toTopOf="@+id/til_rv_dropdown" />
-
-        <ImageView
-            android:id="@+id/ivIconTemperature"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:imageResource="@{form.iconDrawableRes}"
-            android:visibility="@{form.showDrawable ? View.VISIBLE : View.GONE}"
-            app:layout_constraintBottom_toBottomOf="@+id/ivIconBg"
-            app:layout_constraintEnd_toEndOf="@+id/ivIconBg"
-            app:layout_constraintStart_toStartOf="@+id/ivIconBg"
-            app:layout_constraintTop_toTopOf="@+id/ivIconBg" />
--->
-
-
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_edit_text"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"

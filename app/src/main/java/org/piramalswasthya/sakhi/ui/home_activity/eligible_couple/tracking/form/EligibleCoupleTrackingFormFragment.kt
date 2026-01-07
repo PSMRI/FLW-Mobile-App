@@ -123,8 +123,10 @@ class EligibleCoupleTrackingFormFragment : Fragment() {
                 hardCodedListUpdate(formId)
             },
             selectImageClickListener = FormInputAdapter.SelectUploadImageClickListener { formId ->
-                viewModel.setCurrentDocumentFormId(formId)
-                chooseOptions()
+                if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                    viewModel.setCurrentDocumentFormId(formId)
+                    chooseOptions()
+                }
             },
             viewDocumentListner = FormInputAdapter.ViewDocumentOnClick { formId ->
                 viewDocuments(formId)

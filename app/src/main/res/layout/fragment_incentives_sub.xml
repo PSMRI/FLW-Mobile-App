@@ -16,20 +16,6 @@
         android:layout_height="match_parent"
         tools:context=".ui.home_activity.incentives.IncentivesSubFragment">
 
-
-        <!--<TextView
-            android:id="@+id/tv_ActivityName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/holo_orange_light"
-            android:padding="@dimen/padding_wide"
-            android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
-            android:gravity="center"
-            android:text="@{@string/incentive_activity_details(activity_name)}"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="ASHA - 1" />-->
-
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/header_Layout"
             app:layout_constraintTop_toTopOf="parent"

@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.FormElement
@@ -75,21 +76,25 @@ class SaasBahuSamelanDataset(context: Context, language: Languages) : Dataset(co
         val uploadList = listOf(upload1, upload2, upload3, upload4, upload5)
 
         if (recordExists) {
-            dateD.value = getDateStringFromLong(saasBahu?.date)
-            place.value = saasBahu?.place
-            noOfParticipante.value = saasBahu?.participants?.toString()
-            val imgs = saasBahu?.sammelanImages ?: emptyList()
-            upload1.value = imgs.getOrNull(0)
-            upload2.value = imgs.getOrNull(1)
-            upload3.value = imgs.getOrNull(2)
-            upload4.value = imgs.getOrNull(3)
-            upload5.value = imgs.getOrNull(4)
-            val filledUploads = uploadList.filter { !it.value.isNullOrEmpty() }
-            if (filledUploads.isEmpty()) {
-                list.addAll(uploadList)
-            } else {
-                list.addAll(filledUploads)
+            if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                dateD.value = getDateStringFromLong(saasBahu?.date)
+                place.value = saasBahu?.place
+                noOfParticipante.value = saasBahu?.participants?.toString()
+                val imgs = saasBahu?.sammelanImages ?: emptyList()
+                upload1.value = imgs.getOrNull(0)
+                upload2.value = imgs.getOrNull(1)
+                upload3.value = imgs.getOrNull(2)
+                upload4.value = imgs.getOrNull(3)
+                upload5.value = imgs.getOrNull(4)
+                val filledUploads = uploadList.filter { !it.value.isNullOrEmpty() }
+
+                if (filledUploads.isEmpty()) {
+                    list.addAll(uploadList)
+                } else {
+                    list.addAll(filledUploads)
+                }
             }
+
         } else {
             list.addAll(uploadList)
         }

@@ -943,19 +943,37 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
     }
 
     protected fun validateWeightOnEditText(formElement: FormElement): Int {
-        formElement.value?.takeIf { it.isNotEmpty() }?.let {
-            if (it.all { it == '0' }) {
-                formElement.errorText = "Weight Cannot be 0"
-            } else {
-                val weight = it.toIntOrNull()
-                if (weight != null && weight > 7000)
-                    formElement.errorText = "Weight Should not be greater than 7000 gram"
-                else
-                    formElement.errorText = null
-            }
-        } ?: run {
+        val value = formElement.value?.trim()
+
+        if (value.isNullOrEmpty()) {
             formElement.errorText = null
+            return -1
         }
+
+        val weight = value.toDoubleOrNull()
+        if (weight == null) {
+            formElement.errorText = "Please enter weight in grams"
+            return -1
+        }
+
+        when {
+            weight <= 0 -> {
+                formElement.errorText = "Weight cannot be 0"
+            }
+            weight in 1.0..10.0 -> {
+                formElement.errorText = "Please enter weight in grams (e.g. 2500)"
+            }
+            weight < 500 -> {
+                formElement.errorText = "Weight must be at least 500 grams"
+            }
+            weight > 7000 -> {
+                formElement.errorText = "Weight should not be greater than 7000 grams"
+            }
+            else -> {
+                formElement.errorText = null
+            }
+        }
+
         return -1
     }
 

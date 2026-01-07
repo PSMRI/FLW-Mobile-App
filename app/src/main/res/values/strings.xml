@@ -210,7 +210,6 @@
     </string>
 
     <string name="hbnc_day_text">Day %1d</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="hbnc_mother_temp_case_1">Treat mother to paracetamol.</string>
     <string name="hbnc_mother_temp_case_2">Refer mother to Hospital.</string>
