@@ -514,6 +514,8 @@
             app:argType="string"
             android:defaultValue="sam_visit_001" />
     </fragment>
+
+
     <fragment
         android:id="@+id/pncMotherListFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pnc.list.PncMotherListFragment"
@@ -2048,7 +2050,11 @@
     <fragment
         android:id="@+id/ncdRefferedList"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.ncd_referred.list.NcdRefferedList"
-        android:label="NcdRefferedList" />
+        android:label="NcdRefferedList" >
+        <action
+            android:id="@+id/action_ncdRefferedList_to_NCDReferalFormFragment"
+            app:destination="@id/NCDReferalFormFragment" />
+    </fragment>
     <fragment
         android:id="@+id/childMonthListFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.infant.ChildMonthListFragment"
@@ -2071,4 +2077,17 @@
 
     </fragment>
 
+    <fragment
+        android:id="@+id/NCDReferalFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.ncd_referred.followUp.NCDReferalFormFragment"
+        android:label="NCDReferalFormFragment">
+        <argument
+            android:name="benId"
+            app:argType="long" />
+
+        <argument
+            android:name="hhId"
+            app:argType="long" />
+
+    </fragment>
 </navigation>
