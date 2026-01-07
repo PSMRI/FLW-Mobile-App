@@ -325,7 +325,7 @@ class EligibleCoupleTrackingDataset(
                             list.add(antraDoses)
                             list.add(dateOfAntraInjection)
                             list.add(dueDateOfAntraInjection)
-                            if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) list.add(mpaFileUpload1)
+                            if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) list.add(mpaFileUpload1)
 
                             dateOfAntraInjection.value = saved.dateOfAntraInjection
                             dueDateOfAntraInjection.value = saved.dueDateOfAntraInjection

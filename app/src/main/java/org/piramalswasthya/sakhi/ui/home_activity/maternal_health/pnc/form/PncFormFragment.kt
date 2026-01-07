@@ -156,7 +156,9 @@ class PncFormFragment : Fragment() {
 
     private fun setupClickListeners() {
         binding.btnSubmit.setOnClickListener {
-            if (!isDeliveryDischargeUploaded()) showUploadReminderDialog()
+            if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                if (!isDeliveryDischargeUploaded()) showUploadReminderDialog() else submitAncForm()
+            }
             else submitAncForm()
         }
 

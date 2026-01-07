@@ -610,7 +610,9 @@ class PncFormDataset(
                         !selected.equals(contraceptionMethod.entries!!.last().trim(), ignoreCase = true)
 
                 if (requiresIncentiveAlert) {
-                    viewModel?.triggerIncentiveAlert()
+                    if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                        viewModel?.triggerIncentiveAlert()
+                    }
                 }
 
                 val anyOtherValue = contraceptionMethod.entries!!.last().trim()
