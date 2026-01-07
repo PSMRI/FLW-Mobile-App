@@ -151,6 +151,7 @@ class CbacFragment : Fragment() {
                 showDialog()
             }
         }
+
         viewModelTbScreening.state.observe(viewLifecycleOwner) {
             when (it) {
                 TBScreeningFormViewModel.State.SAVE_SUCCESS -> {
@@ -244,6 +245,7 @@ class CbacFragment : Fragment() {
         viewModel.raPaScore.observe(viewLifecycleOwner) {
             binding.ddPaScore.text = it
         }
+
         viewModel.raFhScore.observe(viewLifecycleOwner) {
             binding.ddFhScore.text = it
             val totalScore = viewModel.raTotalScore.value
@@ -254,8 +256,8 @@ class CbacFragment : Fragment() {
 
             handleNcdSusBottomInfoDisplay(totalScore)
 
-
         }
+
         viewModel.raTotalScore.observe(viewLifecycleOwner) {
             val score = it.substring(it.lastIndexOf(' ') + 1).toInt()
             handleRaScoreAlert(score)

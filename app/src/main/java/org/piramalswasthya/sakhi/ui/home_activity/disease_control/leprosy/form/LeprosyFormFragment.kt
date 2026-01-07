@@ -1,7 +1,6 @@
 package org.piramalswasthya.sakhi.ui.home_activity.disease_control.leprosy.form
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -48,7 +47,10 @@ class LeprosyFormFragment : Fragment() {
                 val adapter = FormInputAdapter(
                     formValueListener = FormInputAdapter.FormValueListener { formId, index ->
                         viewModel.updateListOnValueChanged(formId, index)
+
                         if (formId == 14) {
+                            (binding.form.rvInputForm.adapter as? FormInputAdapter)?.notifyDataSetChanged()
+                        } else {
                             (binding.form.rvInputForm.adapter as? FormInputAdapter)?.notifyDataSetChanged()
                         }
                     }, isEnabled = !recordExists
