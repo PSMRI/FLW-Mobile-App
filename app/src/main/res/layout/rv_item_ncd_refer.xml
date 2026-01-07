@@ -380,6 +380,7 @@
                 </LinearLayout>
 
                 <Button
+                    android:visibility="gone"
                     android:id="@+id/btnFollowUp"
                     style="@style/Widget.Material3.Button.TonalButton"
                     android:layout_width="wrap_content"

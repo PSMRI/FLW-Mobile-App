@@ -22,8 +22,10 @@
     import androidx.recyclerview.widget.LinearLayoutManager
     import androidx.recyclerview.widget.RecyclerView
     import dagger.hilt.android.AndroidEntryPoint
+    import kotlinx.coroutines.Dispatchers
     import kotlinx.coroutines.flow.collectLatest
     import kotlinx.coroutines.launch
+    import kotlinx.coroutines.withContext
     import org.json.JSONObject
     import org.piramalswasthya.sakhi.R
     import org.piramalswasthya.sakhi.adapters.dynamicAdapter.FormRendererAdapter
@@ -209,10 +211,16 @@ private fun handleFormSubmission() {
         return
     }
     lifecycleScope.launch {
-        viewModel.saveFormResponses(benId, hhId)
-        Toast.makeText(requireContext(), getString(R.string.save_successful), Toast.LENGTH_SHORT).show()
-        findNavController().popBackStack()
+        try {
+            withContext(Dispatchers.IO) {
+                viewModel.saveFormResponses(benId, hhId)
+            }
+            findNavController().popBackStack()
+
+        } catch (_: Exception) {
+        }
     }
+
 }
 
         private fun showImagePickerDialog() {

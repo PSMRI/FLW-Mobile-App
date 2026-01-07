@@ -23,13 +23,13 @@ class NDCFollowUpPushWorker @AssistedInject constructor(
 
 
     override suspend fun doWork(): Result {
-
         return try {
             val user = preferenceDao.getLoggedInUser()
                 ?: return Result.failure()
 
             val unsyncedForms = repository.getUnsyncedForms(FormConstants.CDTF_001)
 
+            var anyFailure = false
 
             unsyncedForms.forEach { form ->
                 try {
@@ -46,26 +46,37 @@ class NDCFollowUpPushWorker @AssistedInject constructor(
                         version = form.version,
                         formDataJson = form.formDataJson
                     )
+
                     val success = repository.syncFormToServer(
                         userName = user.userName,
                         formName = form.formId,
                         request = request
                     )
 
-                    if (success) {
-                        repository.markFormAsSynced(form.id)
-                    } else {
+                    try {
+                        if (success) {
+                            repository.markFormAsSynced(form.id)
+                        } else {
+                            anyFailure = true
+                            Timber.w("Form sync failed for id=${form.id}")
+                        }
+                    } catch (e: Exception) {
+                        anyFailure = true
+                        Timber.e(e, "Failed to mark form as synced: id=${form.id}")
                     }
 
                 } catch (e: Exception) {
+                    anyFailure = true
+                    Timber.e(e, "Failed to sync form to server: id=${form.id}")
                 }
             }
 
-            Result.success()
+            if (anyFailure) Result.retry() else Result.success()
         } catch (e: Exception) {
             Result.retry()
         }
     }
+
 
 
 

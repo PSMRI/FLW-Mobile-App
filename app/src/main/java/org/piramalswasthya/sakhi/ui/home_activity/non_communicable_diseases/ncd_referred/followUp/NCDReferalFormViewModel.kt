@@ -17,7 +17,6 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.NCDReferalFormResponseJsonE
 import org.piramalswasthya.sakhi.repositories.dynamicRepo.NCDFollowUpFormRepository
 import org.piramalswasthya.sakhi.utils.Log
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
-import org.piramalswasthya.sakhi.work.dynamicWoker.MosquitoNetFormSyncWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.NCDFollowUpSyncWorker
 import java.text.SimpleDateFormat
 import java.util.*
@@ -201,13 +200,19 @@ private fun getNextFollowUpMinDate(): String {
 
     fun updateFieldValue(fieldId: String, value: Any?) {
         val current = _schema.value ?: return
-        current.sections.forEach { section ->
-            section.fields.forEach { field ->
-                if (field.fieldId == fieldId) field.value = value
-            }
+
+        val updatedSections = current.sections.map { section ->
+            section.copy(
+                fields = section.fields.map { field ->
+                    if (field.fieldId == fieldId) field.copy(value = value)
+                    else field
+                }
+            )
         }
-        _schema.value = current
+
+        _schema.value = current.copy(sections = updatedSections)
     }
+
 
     suspend fun saveFormResponses(benId: Long, hhId: Long) {
         val schema = _schema.value ?: return
