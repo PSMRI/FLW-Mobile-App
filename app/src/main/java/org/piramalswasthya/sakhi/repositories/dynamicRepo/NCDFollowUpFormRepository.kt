@@ -32,20 +32,35 @@ class NCDFollowUpFormRepository @Inject constructor(
     /* ---------------- SCHEMA ---------------- */
     suspend fun getSavedSchema(formId: String): FormSchemaEntity? = formSchemaDao.getSchema(formId)
 
-    suspend fun getFormSchema(formId: String): FormSchemaDto? = withContext(Dispatchers.IO) {
-        getSavedSchema(formId)?.let { return@withContext FormSchemaDto.fromJson(it.schemaJson) }
-        try {
-            val response = amritApiService.fetchFormSchema(formId, pref.getCurrentLanguage().symbol)
-            if (response.isSuccessful && response.body()?.success == true) {
-                response.body()?.data?.let { apiSchema ->
-                    val local = formSchemaDao.getSchema(apiSchema.formId)
-                    if (local == null || local.version < apiSchema.version) saveFormSchemaToDb(apiSchema)
-                    return@withContext apiSchema
-                }
+    suspend fun getFormSchema(formId: String): FormSchemaDto? =
+        withContext(Dispatchers.IO) {
+
+            val localEntity = getSavedSchema(formId)
+            val localSchema = localEntity?.let {
+                FormSchemaDto.fromJson(it.schemaJson)
             }
-        } catch (_: Exception) {}
-        null
-    }
+
+            try {
+                val response = amritApiService.fetchFormSchema(
+                    formId,
+                    pref.getCurrentLanguage().symbol
+                )
+
+                if (response.isSuccessful && response.body()?.success == true) {
+                    response.body()?.data?.let { apiSchema ->
+                        val local = formSchemaDao.getSchema(apiSchema.formId)
+                        if (local == null || local.version < apiSchema.version) {
+                            saveFormSchemaToDb(apiSchema)
+                        }
+                        return@withContext apiSchema
+                    }
+                }
+            } catch (_: Exception) {
+            }
+
+            // fallback (same as pehle local return)
+            return@withContext localSchema
+        }
 
     private suspend fun saveFormSchemaToDb(schema: FormSchemaDto) {
         formSchemaDao.insertOrUpdate(
@@ -80,7 +95,6 @@ class NCDFollowUpFormRepository @Inject constructor(
             val response = amritApiService.getAllFormNCDFollowUp(hbncRequest)
 
             if (response.isSuccessful) {
-                // ✅ Server response wrapper
                 val responseBody = response.body()
                 val bodyList: List<FormNCDFollowUpSubmitRequest> = responseBody?.data ?: emptyList()
 
@@ -162,8 +176,17 @@ class NCDFollowUpFormRepository @Inject constructor(
             val newJson = JSONObject(newEntity.formDataJson)
 
             val mergedFields = JSONObject()
+
+            existingJson.optJSONObject("fields")?.let { existingFields ->
+                existingFields.keys().forEach { key ->
+                    mergedFields.put(key, existingFields.get(key))
+                }
+            }
+
             newJson.optJSONObject("fields")?.let { newFields ->
-                newFields.keys().forEach { key -> mergedFields.put(key, newFields.get(key)) }
+                newFields.keys().forEach { key ->
+                    mergedFields.put(key, newFields.get(key))
+                }
             }
 
             val mergedJson = JSONObject().apply {
@@ -175,12 +198,17 @@ class NCDFollowUpFormRepository @Inject constructor(
                 put("fields", mergedFields)
             }
 
-            newEntity.copy(formDataJson = mergedJson.toString(), updatedAt = System.currentTimeMillis())
+            newEntity.copy(
+                formDataJson = mergedJson.toString(),
+                updatedAt = System.currentTimeMillis()
+            )
+
         } catch (e: Exception) {
             Timber.e(e, "mergeFollowUp failed")
             newEntity.copy(updatedAt = System.currentTimeMillis())
         }
     }
+
 
     /* ---------------- HISTORY ---------------- */
     suspend fun getAllVisitsByBeneficiary(benId: Long, formId: String): List<NCDReferalFormResponseJsonEntity> =

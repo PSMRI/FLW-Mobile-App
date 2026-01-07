@@ -269,9 +269,11 @@ abstract class InAppDb : RoomDatabase() {
 
             val MIGRATION_47_48 = object : Migration(47, 48) {
                 override fun migrate(database: SupportSQLiteDatabase) {
+
                     database.execSQL(
-                        "DROP TABLE IF EXISTS ncd_referal_all_visit"
+                        "DROP TABLE IF EXISTS `ncd_referal_all_visit`"
                     )
+
                     database.execSQL(
                         """
             CREATE TABLE IF NOT EXISTS `ncd_referal_all_visit` (
@@ -297,18 +299,19 @@ abstract class InAppDb : RoomDatabase() {
             """.trimIndent()
                     )
 
-                    // Create indices
                     database.execSQL(
                         """
-            CREATE INDEX IF NOT EXISTS `index_ncd_visit_ben_hh`
+            CREATE INDEX IF NOT EXISTS
+            `index_ncd_referal_all_visit_benId_hhId`
             ON `ncd_referal_all_visit` (`benId`, `hhId`)
             """.trimIndent()
                     )
-
                     database.execSQL(
                         """
-            CREATE INDEX IF NOT EXISTS `index_ncd_visit_followup`
-            ON `ncd_referal_all_visit` (`benId`, `hhId`, `visitNo`, `followUpNo`)
+            CREATE UNIQUE INDEX IF NOT EXISTS
+            `index_ncd_referal_all_visit_benId_hhId_visitNo_followUpNo`
+            ON `ncd_referal_all_visit`
+            (`benId`, `hhId`, `visitNo`, `followUpNo`)
             """.trimIndent()
                     )
                 }

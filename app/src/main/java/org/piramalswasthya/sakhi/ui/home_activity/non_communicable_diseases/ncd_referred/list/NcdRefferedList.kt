@@ -56,7 +56,6 @@ class NcdRefferedList : Fragment() {
 
         val benAdapter =
             NcdReferListAdapter(viewModel.userName, NcdReferListAdapter.NcdReferallickListener { benId ,hhId->
-             Toast.makeText(requireContext(),"$benId $hhId", Toast.LENGTH_SHORT).show()
                 findNavController().navigate(
                     NcdRefferedListDirections
                         .actionNcdRefferedListToNCDReferalFormFragment(
@@ -64,7 +63,7 @@ class NcdRefferedList : Fragment() {
                             hhId = hhId
                         )
                 )
-            })
+            },true)
         binding.rvAny.adapter = benAdapter
 
 

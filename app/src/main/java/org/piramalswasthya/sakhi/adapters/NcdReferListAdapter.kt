@@ -1,6 +1,7 @@
     package org.piramalswasthya.sakhi.adapters
 
     import android.view.LayoutInflater
+    import android.view.View
     import android.view.ViewGroup
     import androidx.recyclerview.widget.DiffUtil
     import androidx.recyclerview.widget.ListAdapter
@@ -9,7 +10,7 @@
     import org.piramalswasthya.sakhi.model.BenBasicDomain
     import org.piramalswasthya.sakhi.model.BenWithCbacReferDomain
 
-    class NcdReferListAdapter(var userName: String, private val listener: NcdReferallickListener) : ListAdapter<BenWithCbacReferDomain, NcdReferListAdapter.BenCbacViewHolder>(
+    class NcdReferListAdapter(var userName: String, private val listener: NcdReferallickListener, private val visible: Boolean ) : ListAdapter<BenWithCbacReferDomain, NcdReferListAdapter.BenCbacViewHolder>(
         BenDiffUtilCallBack
     ) {
         private object BenDiffUtilCallBack : DiffUtil.ItemCallback<BenWithCbacReferDomain>() {
@@ -36,11 +37,13 @@
             fun bind(
                 item: BenWithCbacReferDomain,
                 userName: String,
-                listener: NcdReferallickListener
+                listener: NcdReferallickListener,
+                visible: Boolean
             ) {
                 binding.benWithCbac = item
                 binding.referredFrom.text = userName
 
+                binding.btnFollowUp.visibility = if (visible) View.VISIBLE else View.GONE
                 if (item.ben.spouseName == "Not Available" && item.ben.fatherName == "Not Available") {
                     binding.father = true
                     binding.husband = false
@@ -83,7 +86,7 @@
         ): BenCbacViewHolder = BenCbacViewHolder.from(parent)
 
             override fun onBindViewHolder(holder: BenCbacViewHolder, position: Int) {
-            holder.bind(getItem(position) , userName,listener)
+            holder.bind(getItem(position) , userName,listener,visible)
         }
 
 
