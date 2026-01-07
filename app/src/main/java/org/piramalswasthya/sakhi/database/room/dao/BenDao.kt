@@ -178,7 +178,7 @@ interface BenDao {
     @Query("SELECT * FROM BENEFICIARY WHERE householdId = :hhId")
     suspend fun getAllBenForHousehold(hhId: Long): List<BenRegCache>
 
-    @Query("SELECT * FROM BENEFICIARY WHERE householdId = :hhId AND beneficiaryId != :selectedbenIdFromArgs AND motherName LIKE :firstName || '%' order by age desc")
+    @Query("SELECT * FROM BENEFICIARY WHERE householdId = :hhId AND beneficiaryId != :selectedbenIdFromArgs AND (:firstName IS NULL OR :firstName = '' OR motherName LIKE :firstName || '%') order by age desc")
     suspend fun getChildBenForHousehold(hhId: Long, selectedbenIdFromArgs: Long, firstName: String?): List<BenRegCache>
 
     @Query("SELECT * FROM BENEFICIARY WHERE beneficiaryId =:benId AND householdId = :hhId LIMIT 1")

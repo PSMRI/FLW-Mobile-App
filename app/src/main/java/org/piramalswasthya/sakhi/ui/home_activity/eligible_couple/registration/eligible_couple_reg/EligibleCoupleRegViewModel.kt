@@ -133,7 +133,9 @@ class EligibleCoupleRegViewModel @Inject constructor(
                 _isEcrCompleted.value = false
             }
 
-            val childList = benRepo.getChildBenListFromHousehold(ben!!.householdId,benId,ben.firstName)
+            val childList = ben?.let {
+                benRepo.getChildBenListFromHousehold(it.householdId, benId, it.firstName)
+            } ?: emptyList()
             _childCount.value = childList.size.coerceAtMost(9)
 
             dataset.setUpPage(

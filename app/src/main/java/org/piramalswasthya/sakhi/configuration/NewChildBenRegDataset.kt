@@ -814,6 +814,7 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
             noOfLiveChildren.value = childList.size.toString()
            /* numMale.value = ecCache.noOfMaleChildren.toString()
             numFemale.value = ecCache.noOfFemaleChildren.toString()*/
+
         var insertIndex = list.indexOf(noOfLiveChildren) + 1
 
         childList.forEachIndexed { index, child ->
