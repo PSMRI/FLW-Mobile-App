@@ -123,7 +123,7 @@ class AESFormViewModel @Inject constructor(
                             it.isDeath = true
                             it.isDeathValue = "Death"
                             val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.US)
-                            val dateOfDeath = aesScreeningCache.dateOfDeath.let { d ->
+                            val dateOfDeath = aesScreeningCache.dateOfDeath?.let { d ->
                                 dateFormat.format(Date(d))
                             } ?: ""
                             it.dateOfDeath = dateOfDeath

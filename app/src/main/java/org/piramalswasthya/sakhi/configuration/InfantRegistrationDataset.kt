@@ -13,7 +13,6 @@ import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.InfantRegCache
 import org.piramalswasthya.sakhi.model.InputType
 import org.piramalswasthya.sakhi.model.PregnantWomanRegistrationCache
-import java.util.concurrent.TimeUnit
 
 class InfantRegistrationDataset(
     context: Context, currentLanguage: Languages
@@ -113,12 +112,12 @@ class InfantRegistrationDataset(
     private var weight = FormElement(
         id = 11,
         inputType = InputType.EDIT_TEXT,
-        title = "Weight at Birth(kg)",
+        title = "Weight at Birth (grams)",
         required = false,
         hasDependants = false,
-        etMaxLength = 5,
-        min = 1,
-        max = 7000,
+        etMaxLength = 4,
+        min = 500,
+        max = 6000,
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
     )
 

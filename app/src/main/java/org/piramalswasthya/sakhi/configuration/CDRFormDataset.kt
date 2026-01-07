@@ -2,8 +2,6 @@ package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
-import android.widget.LinearLayout
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
@@ -15,7 +13,6 @@ import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.InputType
 import timber.log.Timber
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Locale
 
 class CDRFormDataset(

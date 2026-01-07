@@ -92,10 +92,8 @@ class DeliveryOutcomeFragment : Fragment() {
                         hardCodedListUpdate(formId)
                     },
                     selectImageClickListener = FormInputAdapter.SelectUploadImageClickListener { formId ->
-                        if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
                             viewModel.setCurrentDocumentFormId(formId)
                             chooseOptions()
-                        }
                     },
                     viewDocumentListner = FormInputAdapter.ViewDocumentOnClick { formId ->
                         if (recordExists) viewDocuments(formId) else {

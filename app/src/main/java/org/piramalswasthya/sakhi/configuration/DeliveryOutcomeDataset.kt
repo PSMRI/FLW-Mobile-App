@@ -289,6 +289,10 @@ open class DeliveryOutcomeDataset(
                 mcpFileUpload1,
                 mcpFileUpload2
             )
+            if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                list.remove(mcpFileUpload1)
+                list.remove(mcpFileUpload2)
+            }
 //            hadComplications.value = if (saved.hadComplications == true) "Yes" else "No"
             if (saved.hadComplications == true) {
                 list.add(list.indexOf(hadComplications) + 1 ,complication)
