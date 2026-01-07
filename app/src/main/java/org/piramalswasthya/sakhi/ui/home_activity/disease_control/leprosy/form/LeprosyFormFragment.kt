@@ -47,12 +47,8 @@ class LeprosyFormFragment : Fragment() {
                 val adapter = FormInputAdapter(
                     formValueListener = FormInputAdapter.FormValueListener { formId, index ->
                         viewModel.updateListOnValueChanged(formId, index)
+                        (binding.form.rvInputForm.adapter as? FormInputAdapter)?.notifyDataSetChanged()
 
-                        if (formId == 14) {
-                            (binding.form.rvInputForm.adapter as? FormInputAdapter)?.notifyDataSetChanged()
-                        } else {
-                            (binding.form.rvInputForm.adapter as? FormInputAdapter)?.notifyDataSetChanged()
-                        }
                     }, isEnabled = !recordExists
                 )
                 binding.btnSubmit.isEnabled = !recordExists
