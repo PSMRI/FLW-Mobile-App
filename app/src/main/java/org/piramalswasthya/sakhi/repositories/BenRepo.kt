@@ -147,6 +147,15 @@ class BenRepo @Inject constructor(
 
     }
 
+    suspend fun getChildBenListFromHousehold(
+        hhId: Long,
+        selectedbenIdFromArgs: Long,
+        firstName: String?
+    ): List<BenRegCache> {
+        return benDao.getChildBenForHousehold(hhId,selectedbenIdFromArgs,firstName)
+
+    }
+
     suspend fun isBenDead(benId: Long): Boolean {
         return benDao.isBenDead(benId)
     }
