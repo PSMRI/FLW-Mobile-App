@@ -390,9 +390,9 @@
     <string name="do_death_cause">Probable Cause of Death</string>
     <string name="do_other_death_cause">Other Cause of Death</string>
     <string name="do_other_delivery_complication">Other Delivery Complication</string>
-    <string name="do_delivery_outcome">Total number of Babies born</string>
-    <string name="do_live_birth">Live Birth</string>
-    <string name="do_still_birth">Still Birth</string>
+    <string name="do_delivery_outcome">Total births (Total number of Babies born)</string>
+    <string name="do_live_birth">Number of Live Births</string>
+    <string name="do_still_birth">Number of Stillbirths</string>
     <string name="do_discharge_date">Date of Discharge</string>
     <string name="do_discharge_time">Time of Discharge</string>
     <string name="do_is_jsy_beneficiary">Is the Pregnant Woman a JSY Beneficiary?</string>
@@ -412,7 +412,6 @@
     <string-array name="do_type_of_delivery_array">
         <item>Normal</item>
         <item>Caesarean</item>
-<!--        <item>Assisted</item>-->
     </string-array>
     <string-array name="do_had_complications_array">
         <item>Yes</item>

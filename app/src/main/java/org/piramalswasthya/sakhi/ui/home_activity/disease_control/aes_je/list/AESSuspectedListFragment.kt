@@ -15,7 +15,6 @@ import org.piramalswasthya.sakhi.adapters.AESMemberListAdapter
 import org.piramalswasthya.sakhi.configuration.IconDataset
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
-import org.piramalswasthya.sakhi.ui.home_activity.disease_control.malaria.form.list.MalariaSuspectedListFragmentDirections
 
 @AndroidEntryPoint
 class AESSuspectedListFragment : Fragment() {
@@ -55,7 +54,7 @@ class AESSuspectedListFragment : Fragment() {
         }
 
         val benAdapter = AESMemberListAdapter(
-            clickListener = AESMemberListAdapter.ClickListener { hhId, benId ->
+            clickListener = AESMemberListAdapter.ClickListener { _, benId ->
                 findNavController().navigate(
                     AESSuspectedListFragmentDirections.actionAESSuspectedListFragmentToAEFFormFragment(
                         benId = benId

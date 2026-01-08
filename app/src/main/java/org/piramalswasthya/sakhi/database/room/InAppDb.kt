@@ -57,6 +57,7 @@ import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.CUFYFormResp
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.CUFYFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.EyeSurgeryFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FilariaMDAFormResponseJsonDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.NCDReferalFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseANCJsonDao
 import org.piramalswasthya.sakhi.model.AHDCache
 import org.piramalswasthya.sakhi.model.AESScreeningCache
@@ -115,6 +116,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.hbyc.FormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.VHNDCache
 import org.piramalswasthya.sakhi.model.dynamicEntity.CUFYFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FilariaMDA.FilariaMDAFormResponseJsonEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.NCDReferalFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.anc.ANCFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.ben_ifa.BenIfaFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.eye_surgery.EyeSurgeryFormResponseJsonEntity
@@ -177,6 +179,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         FormResponseJsonEntity::class,
         FormResponseJsonEntityHBYC::class,
         CUFYFormResponseJsonEntity::class,
+        NCDReferalFormResponseJsonEntity::class,
         GeneralOPEDBeneficiary::class,
         ReferalCache::class,
         UwinCache::class,
@@ -187,7 +190,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         ANCFormResponseJsonEntity::class,
     ],
     views = [BenBasicCache::class],
-    version = 47, exportSchema = false
+    version = 48, exportSchema = false
 )
 
 @TypeConverters(
@@ -240,6 +243,7 @@ abstract class InAppDb : RoomDatabase() {
     abstract fun formResponseDao(): FormResponseDao
     abstract fun CUFYFormResponseDao(): CUFYFormResponseDao
     abstract fun CUFYFormResponseJsonDao(): CUFYFormResponseJsonDao
+    abstract fun NCDReferalFormResponseJsonDao(): NCDReferalFormResponseJsonDao
     abstract fun formResponseJsonDao(): FormResponseJsonDao
     abstract fun formResponseJsonDaoHBYC(): FormResponseJsonDaoHBYC
 
@@ -262,6 +266,35 @@ abstract class InAppDb : RoomDatabase() {
                 it.execSQL("alter table BENEFICIARY add column isConsent BOOL")
 
             })
+            val MIGRATION_47_48 = Migration(47, 48) {
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN recurrentUlcerationId INTEGER DEFAULT 1")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN recurrentTinglingId INTEGER DEFAULT 1")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN hypopigmentedPatchId INTEGER DEFAULT 1")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN thickenedSkinId INTEGER DEFAULT 1")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN skinNodulesId INTEGER DEFAULT 1")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN skinPatchDiscolorationId INTEGER DEFAULT 1")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN recurrentNumbnessId INTEGER DEFAULT 1")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN clawingFingersId INTEGER DEFAULT 1")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN tinglingNumbnessExtremitiesId INTEGER DEFAULT 1")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN inabilityCloseEyelidId INTEGER DEFAULT 1")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN difficultyHoldingObjectsId INTEGER DEFAULT 1")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN weaknessFeetId INTEGER DEFAULT 1")
+
+                // ===== Symptom String fields =====
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN recurrentUlceration TEXT")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN recurrentTingling TEXT")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN hypopigmentedPatch TEXT")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN thickenedSkin TEXT")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN skinNodules TEXT")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN skinPatchDiscoloration TEXT")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN recurrentNumbness TEXT")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN clawingFingers TEXT")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN tinglingNumbnessExtremities TEXT")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN inabilityCloseEyelid TEXT")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN difficultyHoldingObjects TEXT")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN weaknessFeet TEXT")
+
+            }
             val MIGRATION_46_47 = Migration(46, 47) {
                 it.execSQL(
                     """ALTER TABLE NCD_REFER 
@@ -1721,7 +1754,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_43_44,
                         MIGRATION_44_45,
                         MIGRATION_45_46,
-                        MIGRATION_46_47
+                        MIGRATION_46_47,
+                        MIGRATION_47_48
                     ).build()
 
                     INSTANCE = instance

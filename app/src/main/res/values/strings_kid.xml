@@ -49,6 +49,7 @@
     <string name="part_i">Part I</string>
     <string name="part_ii">Part II</string>
     <string name="hbnc_form">HBNC Form</string>
+    <string name="ncd_folloup_form">NCD Referal FollowUp Form</string>
 
     <string-array name="nbr_age_unit_array">
         <item name="nbr_age_unit_1">Day</item>

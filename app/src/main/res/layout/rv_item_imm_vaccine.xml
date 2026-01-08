@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <import type="org.piramalswasthya.sakhi.model.VaccineState"/>
 
         <variable
@@ -71,14 +70,6 @@
                     app:layout_constraintStart_toEndOf="@+id/imageView"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="Ebababebabisa" />
-
-
-                <!--  <ImageView
-                      android:layout_width="60dp"
-                      android:layout_height="60dp"
-                      android:padding="@dimen/padding_normal"
-                      android:visibility="gone"
-                      vaccineState="@{vaccine.state}" />-->
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnVaccine"

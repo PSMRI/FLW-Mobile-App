@@ -7,7 +7,6 @@ import org.piramalswasthya.sakhi.model.AESScreeningCache
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.InputType
-import org.piramalswasthya.sakhi.model.TBScreeningCache
 
 class AESJEFormDataset(
     context: Context, currentLanguage: Languages

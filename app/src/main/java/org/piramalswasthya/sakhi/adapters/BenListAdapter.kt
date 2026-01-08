@@ -65,8 +65,6 @@ class BenListAdapter(
             benIdList: List<Long>
         ) {
 
-            var gender = ""
-
             if (pref?.getLoggedInUser()?.role.equals("asha", true)) {
                 binding.btnAbha.visibility = View.VISIBLE
             } else {
@@ -101,7 +99,7 @@ class BenListAdapter(
 
             binding.executePendingBindings()
 
-            gender = item.gender.toString()
+           var gender = item.gender.toString()
 
             if (item.relToHeadId == 19) {
                 binding.HOF.visibility = View.VISIBLE
@@ -260,7 +258,6 @@ class BenListAdapter(
                 binding.ivSoftDelete.visibility = View.VISIBLE
 
                 if (item.isDeactivate){
-                    binding.ivSoftDelete.setImageResource(R.drawable.ic_group_on)
                     binding.contentLayout.setBackgroundColor(ContextCompat.getColor(binding.contentLayout.context, R.color.Quartenary))
                     binding.ivSoftDelete.visibility = View.GONE
 
@@ -273,7 +270,6 @@ class BenListAdapter(
 
 
                 }else{
-                    binding.ivSoftDelete.setImageResource(R.drawable.ic_group_off)
                     binding.contentLayout.setBackgroundColor(ContextCompat.getColor(binding.contentLayout.context, R.color.md_theme_light_primary))
 
                     binding.btnAbha.visibility = View.VISIBLE
