@@ -99,19 +99,38 @@ class HouseholdMembersFragment : Fragment() {
 
                     when {
                         isAsha && viewModel.isFromDisease == 0 && canNavigate -> {
-                            // New beneficiary
+                            findNavController().navigate(
+                                HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToNewBenRegFragment(
+                                    hhId = hhId,
+                                    benId = benId,
+                                    gender = 0,
+                                    isAddSpouse = 0,
+                                    relToHeadId = relToHeadId
+                                )
+
+                            )
                         }
 
                         isAsha && viewModel.isFromDisease != 0 &&
                                 viewModel.diseaseType == IconDataset.Disease.MALARIA.toString() &&
                                 canNavigate -> {
-                            // Malaria
+                            findNavController().navigate(
+                                HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToMalariaFormFragment(
+                                    benId = benId,
+                                )
+
+                            )
                         }
 
                         isAsha && viewModel.isFromDisease != 0 &&
                                 viewModel.diseaseType == IconDataset.Disease.KALA_AZAR.toString() &&
                                 canNavigate -> {
-                            // Kala Azar
+                            findNavController().navigate(
+                                HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToKalaAzarFormFragment(
+                                    benId = benId,
+                                )
+
+                            )
                         }
                     }
 
