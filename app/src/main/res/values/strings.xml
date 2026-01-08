@@ -718,7 +718,7 @@
     <string name="home_visit_number">Home Visit %d</string>
     <string name="hwc_referred_list">HWC Referred List</string>
     <string name="has_leprosy_been_confirmed">Has leprosy been confirmed?</string>
-    <string name="mdt_blister_pack_recived">MDT/BLISTER PACK RECIVED</string>
+    <string name="mdt_blister_pack_received">MDT/BLISTER PACK RECEIVED</string>
     <string name="actual_treatment_completion_date">Actual Treatment Completion Date</string>
     <string name="expected_treatment_completion_date">Expected Treatment Completion Date</string>
     <string name="treatment_status">Treatment Status</string>
