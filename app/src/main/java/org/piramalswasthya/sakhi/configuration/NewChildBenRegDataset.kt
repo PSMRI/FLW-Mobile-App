@@ -91,7 +91,7 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
     )
 
     private val ageRestrictionLabel = FormElement(
-        id = 60,
+        id = 69,
         inputType = RADIO,
         title = resources.getString(R.string.ecrdset_reg_children_15_below),
         arrayId = -1,
@@ -1298,7 +1298,6 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
 
         if (formId == noOfChildren.id) {
             noOfChildren.min = noOfChildren.value.takeIf { !it.isNullOrEmpty() }?.toLong()
-            validateIntMinMax(noOfChildren)
             validateIntMinMax(noOfChildren)
 
             if (isExistingRecord) {
