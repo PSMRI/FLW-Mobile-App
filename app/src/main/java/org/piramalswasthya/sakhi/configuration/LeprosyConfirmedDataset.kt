@@ -125,7 +125,7 @@ class LeprosyConfirmedDataset(
     private val mdt_blister_pack_recived = FormElement(
         id = 18,
         inputType = InputType.RADIO,
-        title = context.getString(R.string.mdt_blister_pack_recived),
+        title = context.getString(R.string.mdt_blister_pack_received),
         arrayId = R.array.yes_no,
         entries = resources.getStringArray(R.array.yes_no),
         required = false,
