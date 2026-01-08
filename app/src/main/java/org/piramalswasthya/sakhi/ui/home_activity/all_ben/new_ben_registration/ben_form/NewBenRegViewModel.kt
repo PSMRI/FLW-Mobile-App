@@ -282,6 +282,12 @@ class NewBenRegViewModel @Inject constructor(
                         householdRepo.updateHousehold(household)
                         householdRepo.updateHouseholdToSync(household.householdId)
                     }
+                    if (ben.gender == Gender.MALE) {
+                        benRepo.updateFatherInChildren(ben.firstName + " " + ben.lastName, ben.householdId, parentName, SyncState.UNSYNCED)
+                    } else {
+                        benRepo.updateMotherInChildren(ben.firstName + " " + ben.lastName, ben.householdId, parentName, SyncState.UNSYNCED)
+                    }
+                    benRepo.updateSpouseOfHoF(ben.firstName + " " + ben.lastName, ben.householdId, parentName, SyncState.UNSYNCED)
                     ben.apply {
                         if (beneficiaryId < 0L) {
                             serverUpdatedStatus = 1
