@@ -185,7 +185,6 @@
     <string-array name="do_type_of_delivery_array">
         <item>सामान्य</item>
         <item>सिजेरियन</item>
-<!--        <item>सहायक</item>-->
     </string-array>
     <string-array name="do_had_complications_array">
         <item>हाँ</item>

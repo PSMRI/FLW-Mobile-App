@@ -334,9 +334,6 @@
         <action
             android:id="@+id/action_villageLevelFormsFragment_to_allMaaMeetingFragment"
             app:destination="@id/allMaaMeetingFragment" />
-       <!-- <action
-            android:id="@+id/action_villageLevelFormsFragment_to_saasBahuSammelanListFragment"
-            app:destination="@id/saasBahuSammelanListFragment" />-->
     </fragment>
 
     <fragment
@@ -441,9 +438,7 @@
         android:name="org.piramalswasthya.sakhi.ui.home_activity.child_care.infant_list.InfantListFragment"
         android:label="@string/child_care_icon_title_infant_list"
         tools:layout="@layout/fragment_infant_list">
-<!--        <action-->
-<!--            android:id="@+id/action_infantListFragment_to_hbncDayListFragment"-->
-<!--            app:destination="@id/hbncDayListFragment" />-->
+
         <action
             android:id="@+id/action_infantListFragment_to_infantFormFragment"
             app:destination="@id/infantFormFragment" />
@@ -463,10 +458,6 @@
         android:name="org.piramalswasthya.sakhi.ui.home_activity.child_care.child_list.ChildListFragment"
         android:label="@string/child_care_icon_title_child_list"
         tools:layout="@layout/fragment_child_list">
-<!--        <action-->
-<!--            android:id="@+id/action_childListFragment_to_hbycMonthListFragment"-->
-<!--            app:destination="@id/hbycMonthListFragment" />-->
-
         <action
             android:id="@+id/action_childListFragment_to_childMonthListFragment"
             app:destination="@id/childMonthListFragment" />
@@ -523,6 +514,8 @@
             app:argType="string"
             android:defaultValue="sam_visit_001" />
     </fragment>
+
+
     <fragment
         android:id="@+id/pncMotherListFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pnc.list.PncMotherListFragment"
@@ -2034,16 +2027,6 @@
             app:destination="@id/newBenRegFragment"
             app:launchSingleTop="true" />
       </fragment>
-  
-   <!-- <fragment>
-        android:id="@+id/saasBahuSammelanListFragment"
-        android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.saas_bahu_sammelan.SaasBahuSammelanListFragment"
-        android:label="SaasBahuSammelanListFragment" >
-        <action
-            android:id="@+id/action_saasBahuSammelanListFragment_to_saasBahuSammelanFormFrag"
-            app:destination="@id/saasBahuSamelanFragment" />
-    </fragment>-->
-
     <fragment
         android:id="@+id/NCDReferalForm"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.ncd_referred.form.NCDReferalFormFragment"
@@ -2067,7 +2050,11 @@
     <fragment
         android:id="@+id/ncdRefferedList"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.ncd_referred.list.NcdRefferedList"
-        android:label="NcdRefferedList" />
+        android:label="NcdRefferedList" >
+        <action
+            android:id="@+id/action_ncdRefferedList_to_NCDReferalFormFragment"
+            app:destination="@id/NCDReferalFormFragment" />
+    </fragment>
     <fragment
         android:id="@+id/childMonthListFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.infant.ChildMonthListFragment"
@@ -2090,4 +2077,17 @@
 
     </fragment>
 
+    <fragment
+        android:id="@+id/NCDReferalFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.ncd_referred.followUp.NCDReferalFormFragment"
+        android:label="NCDReferalFormFragment">
+        <argument
+            android:name="benId"
+            app:argType="long" />
+
+        <argument
+            android:name="hhId"
+            app:argType="long" />
+
+    </fragment>
 </navigation>

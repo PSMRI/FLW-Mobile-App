@@ -2,13 +2,14 @@ package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
 import android.net.Uri
-import android.widget.Toast
-import okhttp3.internal.notifyAll
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.AHDCache
 import org.piramalswasthya.sakhi.model.FormElement
-import org.piramalswasthya.sakhi.model.InputType.*
+import org.piramalswasthya.sakhi.model.InputType.DATE_PICKER
+import org.piramalswasthya.sakhi.model.InputType.DROPDOWN
+import org.piramalswasthya.sakhi.model.InputType.IMAGE_VIEW
+import org.piramalswasthya.sakhi.model.InputType.RADIO
 
 class AHDDataset(
    var context: Context,

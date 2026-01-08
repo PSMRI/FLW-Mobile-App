@@ -4,12 +4,12 @@ import android.content.Context
 import android.net.Uri
 import android.text.InputType
 import androidx.lifecycle.MutableLiveData
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.setToStartOfTheDay
-import org.piramalswasthya.sakhi.model.AgeUnit
 import org.piramalswasthya.sakhi.model.BenBasicCache
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.EligibleCoupleRegCache
@@ -1029,7 +1029,8 @@ class EligibleCoupleRegistrationDataset(
     suspend fun setUpPage(
         ben: BenRegCache?,
         assess: HRPNonPregnantAssessCache?,
-        saved: EligibleCoupleRegCache?
+        saved: EligibleCoupleRegCache?,
+        childList: List<BenRegCache>,
     ) {
         val list = mutableListOf(
             dateOfReg,
@@ -1042,7 +1043,7 @@ class EligibleCoupleRegistrationDataset(
             nayiPahelKitHandOver,
             womanDetails,
 //            aadharNo,
-            noOfChildren,
+//            noOfChildren,
             noOfLiveChildren,
             numMale,
             numFemale,
@@ -1113,25 +1114,76 @@ class EligibleCoupleRegistrationDataset(
                         || medicalIssues.value == resources.getStringArray(R.array.yes_no)[0] || pastCSection.value == resources.getStringArray(
                     R.array.yes_no
                 )[0])
+
         }
+        var insertIndex = list.indexOf(noOfLiveChildren) + 1
+
+        noOfLiveChildren.value = childList.size.coerceAtMost(9).toString()
+        val limitedChildList = childList.take(9)
+        numFemale.value = limitedChildList.count { it.gender == Gender.FEMALE }.toString()
+        numMale.value = limitedChildList.count { it.gender == Gender.MALE }.toString()
+        childList.take(9).forEachIndexed { index, child ->
+            val bundle = children[index]
+            bundle.dob.value = getDateFromLong(child.dob)
+            bundle.age.value = child.age?.toString()
+
+            bundle.gender.value = getLocalValueInArray(
+                R.array.ecr_gender_array,
+                child.gender?.name
+                    ?.lowercase()
+                    ?.replaceFirstChar { it.uppercase() }
+            )
+
+            if (index == 0) {
+                setSiblingAgeDiff(timeAtMarriage, child.dob, bundle.gap)
+            } else {
+                setSiblingAgeDiff(
+                    childList[index - 1].dob,
+                    child.dob,
+                    bundle.gap
+                )
+            }
+
+            val childViews = listOf(
+                bundle.dob,
+                bundle.age,
+                bundle.gender,
+                bundle.gap
+            )
+
+            list.addAll(insertIndex, childViews)
+
+            insertIndex += childViews.size
+        }
+
         saved?.let { ecCache ->
             dateOfReg.value = getDateFromLong(ecCache.dateOfReg)
             bankAccount.value = ecCache.bankAccount?.toString()
             bankName.value = ecCache.bankName
             branchName.value = ecCache.branchName
             ifsc.value = ecCache.ifsc
-            noOfChildren.value = ecCache.noOfChildren.toString()
-            noOfLiveChildren.value = ecCache.noOfLiveChildren.toString()
+//            noOfChildren.value = ecCache.noOfChildren.toString()
+//            noOfLiveChildren.value = ecCache.noOfLiveChildren.toString()
             lmpDate.value = getDateFromLong(ecCache.lmpDate)
-            numMale.value = ecCache.noOfMaleChildren.toString()
-            numFemale.value = ecCache.noOfFemaleChildren.toString()
+//            numMale.value = ecCache.noOfMaleChildren.toString()
+//            numFemale.value = ecCache.noOfFemaleChildren.toString()
             val isKitHandedOver = ecCache.isKitHandedOver == true
             nayiPahelKitHandOver.value = if (isKitHandedOver) "Yes" else "No"
             if (isKitHandedOver) {
                 list.addAll(
                     list.indexOf(nayiPahelKitHandOver) + 1,
-                    listOf(kithandOverDate, ashaPhotoTitle,kitPhotoUploadOne, kitPhotoUploadTwo)
+                    listOf(kithandOverDate)
                 )
+                if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                    list.addAll(
+                        list.indexOf(kithandOverDate) + 1,
+                        listOf(ashaPhotoTitle,kitPhotoUploadOne, kitPhotoUploadTwo)
+                    )
+                }
+
+
+
+
                 ecCache.kitHandedOverDate?.let { kithandOverDate.value = getDateFromLong(it) }
                 kitPhotoUploadOne.value = ecCache.kitPhoto1
                 kitPhotoUploadTwo.value = ecCache.kitPhoto2
@@ -1141,7 +1193,7 @@ class EligibleCoupleRegistrationDataset(
             }
 
 
-            if (ecCache.noOfLiveChildren > 0) {
+           /* if (ecCache.noOfLiveChildren > 0) {
                 ecCache.dob1?.let {
                     dob1.value = getDateFromLong(it)
                     age1.value = if (BenBasicCache.getAgeUnitFromDob(it)
@@ -1326,7 +1378,7 @@ class EligibleCoupleRegistrationDataset(
                     list.indexOf(seventhAndEighthChildGap) + 1,
                     listOf(ninthChildDetails, dob9, age9, gender9, eighthAndNinthChildGap)
                 )
-            }
+            }*/
         }
         setUpPage(list)
 
@@ -1348,13 +1400,22 @@ class EligibleCoupleRegistrationDataset(
                 {
 
                     showDialogEvent.value = "Please upload photo of \"couple with Nayi Pahal kit\", to claim your Incentive."
-
-
+                    var list1: List<Any> = emptyList()
+                    if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                        list1 = listOf(
+                            kithandOverDate,
+                            ashaPhotoTitle,
+                            kitPhotoUploadOne,
+                            kitPhotoUploadTwo
+                        )
+                    } else {
+                        list1 = listOf(kithandOverDate)
+                    }
                     triggerDependants(
                         source = nayiPahelKitHandOver,
                         passedIndex = index,
                         triggerIndex = 0,
-                        target = listOf(kithandOverDate, ashaPhotoTitle,kitPhotoUploadOne, kitPhotoUploadTwo),
+                        target =list1 //listOf(kithandOverDate, ashaPhotoTitle,kitPhotoUploadOne, kitPhotoUploadTwo),
                     )
                 } else if (nayiPahelKitHandOver.value == resources.getStringArray(R.array.yes_no)[1]) {
                     triggerforHide(
@@ -2091,21 +2152,7 @@ class EligibleCoupleRegistrationDataset(
                 isUpdated = true
             }
         }
-//        aadharNo.value?.takeIf {
-//            aadharNo.inputType == EDIT_TEXT &&
-//                    it.isNotEmpty()
-//        }?.let {
-//            val last4 = "*".repeat(8) + it.takeLast(4)
-//            if (
-//                last4
-//                != aadharNoFromBen
-//            ) {
-//                ben?.hasAadhar = true
-//                ben?.hasAadharId = 1
-//                ben?.aadharNum = last4
-//                isUpdated = true
-//            }
-//        }
+
         isHighRisk().let { highRisk ->
             if (highRisk) {
                 ben?.isHrpStatus = true
@@ -2219,4 +2266,37 @@ class EligibleCoupleRegistrationDataset(
 
     }
 
+    private val children = listOf(
+        ChildBundle(firstChildDetails,  dob1, age1, gender1, marriageFirstChildGap),
+        ChildBundle(secondChildDetails,  dob2, age2, gender2, firstAndSecondChildGap),
+        ChildBundle(thirdChildDetails,  dob3, age3, gender3, secondAndThirdChildGap),
+        ChildBundle(fourthChildDetails,  dob4, age4, gender4, thirdAndFourthChildGap),
+        ChildBundle(fifthChildDetails,  dob5, age5, gender5, fourthAndFifthChildGap),
+        ChildBundle(sixthChildDetails,  dob6, age6, gender6, fifthAndSixthChildGap),
+        ChildBundle(seventhChildDetails,  dob7, age7, gender7, sixthAndSeventhChildGap),
+        ChildBundle(eighthChildDetails,  dob8, age8, gender8, seventhAndEighthChildGap),
+        ChildBundle(ninthChildDetails,  dob9, age9, gender9, eighthAndNinthChildGap)
+    )
+
+    data class ChildBundle(
+        val details: FormElement,
+        val dob: FormElement,
+        val age: FormElement,
+        val gender: FormElement,
+        val gap: FormElement
+    ) {
+        fun isEmpty(): Boolean {
+            return dob.value.isNullOrEmpty() &&
+                    age.value.isNullOrEmpty() &&
+                    gender.value.isNullOrEmpty()
+        }
+        fun toFormList() = listOf(details, dob, age, gender, gap)
+        fun clearValues() {
+
+            dob.value = null
+            age.value = null
+            gender.value = null
+            gap.value = null
+        }
+    }
 }
