@@ -483,7 +483,7 @@
                     android:layout_weight="1"
                     android:backgroundTint="@android:color/holo_green_dark"
                     android:onClick="@{() -> clickListener.addHomeVisit(visit)}"
-                    android:text="ADD HOME VISIT"
+                    android:text="@string/add_home_visit"
                     android:textColor="?attr/colorOnPrimary" />
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_view_home_visit"
@@ -495,7 +495,7 @@
 
                     android:backgroundTint="@android:color/holo_green_dark"
                     android:onClick="@{() -> clickListener.showHomeVisit(visit)}"
-                    android:text="VIEW HOME VISITS"
+                    android:text="@string/view_home_visits"
                     android:textColor="?attr/colorOnPrimary" />
             </LinearLayout>
 
