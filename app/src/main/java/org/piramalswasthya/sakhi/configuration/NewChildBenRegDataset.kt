@@ -108,7 +108,7 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
         inputType = org.piramalswasthya.sakhi.model.InputType.NUMBER_PICKER,
         title = resources.getString(R.string.ecrdset_ttl_child_born),
         required = false,
-         hasDependants = false,
+         hasDependants = true,
         etInputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_NORMAL,
         etMaxLength = 1,
         max = 9,
