@@ -159,6 +159,7 @@ class NewChildAsBenRegistrationFragment : Fragment() {
                     FormInputAdapter(
                         formValueListener = FormInputAdapter.FormValueListener { formId, index ->
                             when (index) {
+
                                 Konstants.micClickIndex -> {
                                     micClickedElementId = formId
                                     sttContract.launch(Unit)
@@ -308,12 +309,11 @@ class NewChildAsBenRegistrationFragment : Fragment() {
                     notifyItemChanged(viewModel.getIndexOfGap9())
                 }
 
-                12 -> {
+             /*   12 -> {
                     notifyDataSetChanged()
-                    notifyItemChanged(viewModel.getIndexOfLiveChildren())
                     notifyItemChanged(viewModel.getIndexOfMaleChildren())
                     notifyItemChanged(viewModel.getIndexOfFeMaleChildren())
-                }
+                }*/
 
                 19, 24, 29, 34, 39, 44, 49, 54, 59 -> {
                     notifyItemChanged(viewModel.getIndexOfMaleChildren())

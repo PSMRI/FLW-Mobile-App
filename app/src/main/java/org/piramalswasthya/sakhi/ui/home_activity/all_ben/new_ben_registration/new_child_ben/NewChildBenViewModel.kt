@@ -196,7 +196,7 @@ class NewChildBenViewModel @Inject constructor(
                 try {
                     _state.postValue(State.SAVING)
 
-                    val childCount = dataset.noOfLiveChildren.value?.toIntOrNull() ?: 0
+                    val childCount = dataset.noOfChildren.value?.toIntOrNull() ?: 0
 
 
                     for (i in (oldChildCount + 1)..childCount) {
@@ -308,9 +308,9 @@ class NewChildBenViewModel @Inject constructor(
         return dataset.getIndexOfChildren()
     }
 
-    fun getIndexOfLiveChildren(): Int {
+   /* fun getIndexOfLiveChildren(): Int {
         return dataset.getIndexOfLiveChildren()
-    }
+    }*/
 
     fun getIndexOfMaleChildren(): Int {
         return dataset.getIndexOfMaleChildren()
