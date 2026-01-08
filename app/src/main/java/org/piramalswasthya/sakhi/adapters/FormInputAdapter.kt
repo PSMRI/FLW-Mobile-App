@@ -1115,7 +1115,6 @@ class FormInputAdapter(
                 hideError()
                 updateValue(currentValue, item, formValueListener)
                 updateDisplay(currentValue)
-                Log.e("Clicked",currentValue.toString())
             }
 
             binding.btnIncrement.setOnClickListener {
