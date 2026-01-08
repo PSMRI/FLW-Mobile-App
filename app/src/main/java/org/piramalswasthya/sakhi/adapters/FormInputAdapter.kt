@@ -74,6 +74,7 @@ import org.piramalswasthya.sakhi.utils.HelperUtil.getAgeStrFromAgeUnit
 import org.piramalswasthya.sakhi.utils.HelperUtil.getDobFromAge
 import org.piramalswasthya.sakhi.utils.HelperUtil.getLongFromDate
 import org.piramalswasthya.sakhi.utils.HelperUtil.updateAgeDTO
+import org.piramalswasthya.sakhi.utils.Log
 import timber.log.Timber
 import java.util.Calendar
 
@@ -1036,7 +1037,7 @@ class FormInputAdapter(
                 return
             }
 
-            val minValue = item.min?.toInt() ?: 0
+            val minValue = item.min?.toInt() ?: 5
             val maxValue = item.max?.toInt()
             val allowNegative = item.minDecimal != null && item.minDecimal!! < 0
 
@@ -1114,6 +1115,7 @@ class FormInputAdapter(
                 hideError()
                 updateValue(currentValue, item, formValueListener)
                 updateDisplay(currentValue)
+                Log.e("Clicked",currentValue.toString())
             }
 
             binding.btnIncrement.setOnClickListener {
@@ -1140,6 +1142,7 @@ class FormInputAdapter(
             binding.etNumberInput.setText(value.toString())
             binding.etNumberInput.setSelection(binding.etNumberInput.text!!.length)
             internalUpdate = false
+
         }
 
         private fun updateValue(

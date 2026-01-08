@@ -90,35 +90,32 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
         showDrawable = true
     )
 
-     val noOfChildren = FormElement(
-        id = 12,
-        inputType = EDIT_TEXT,
-        title = resources.getString(R.string.ecrdset_ttl_child_born),
+    private val ageRestrictionLabel = FormElement(
+        id = 60,
+        inputType = RADIO,
+        title = resources.getString(R.string.ecrdset_reg_children_15_below),
         arrayId = -1,
-        required = true,
+        required = false,
+        headingLine = true,
         etInputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_NORMAL,
         etMaxLength = 1,
         max = 9,
         min = 0,
-        backgroundDrawable=R.drawable.ic_bg_circular,
-        iconDrawableRes=R.drawable.ic_total_no_child_born,
-        showDrawable = true
     )
 
-     val noOfLiveChildren = FormElement(
-        id = 13,
-        inputType = EDIT_TEXT,
-        title = resources.getString(R.string.ecrdset_no_live_child),
-        arrayId = -1,
-        required = true,
+     val noOfChildren = FormElement(
+        id = 12,
+        inputType = org.piramalswasthya.sakhi.model.InputType.NUMBER_PICKER,
+        title = resources.getString(R.string.ecrdset_ttl_child_born),
+        required = false,
+         hasDependants = false,
         etInputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_NORMAL,
         etMaxLength = 1,
         max = 9,
         min = 0,
-        backgroundDrawable=R.drawable.ic_bg_circular,
-        iconDrawableRes=R.drawable.ic_no_of_live_child,
-        showDrawable = true
+
     )
+
 
     private val numMale = FormElement(
         id = 14,
@@ -780,8 +777,9 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
         ) {
         val list = mutableListOf(
             dateOfReg,
+            ageRestrictionLabel,
             noOfChildren,
-            noOfLiveChildren,
+
 
 
         )
@@ -796,7 +794,6 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
                 val cal = Calendar.getInstance()
                 cal.timeInMillis = selectedben.dob
                 cal.set(Calendar.YEAR, cal.get(Calendar.YEAR) + it1)
-                dob1.min = cal.timeInMillis
                 timeAtMarriage = cal.timeInMillis
             }
         }
@@ -808,14 +805,11 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
             }*/
 
             dateOfReg.value = getDateFromLong(System.currentTimeMillis())
-            /*noOfChildren.value = ecCache.noOfChildren.toString()
-            noOfLiveChildren.value = ecCache.noOfLiveChildren.toString()*/
-            noOfChildren.value = childList.size.toString()
-            noOfLiveChildren.value = childList.size.toString()
-           /* numMale.value = ecCache.noOfMaleChildren.toString()
-            numFemale.value = ecCache.noOfFemaleChildren.toString()*/
 
-        var insertIndex = list.indexOf(noOfLiveChildren) + 1
+            noOfChildren.value = childList.size.toString()
+
+
+        var insertIndex = list.indexOf(noOfChildren) + 1
 
         childList.forEachIndexed { index, child ->
 
@@ -1130,7 +1124,6 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
                 getLongFromDate(dateOfReg.value!!)
 
             ecr.noOfChildren = noOfChildren.value?.takeIf { it.isNotBlank() }?.toInt() ?: 0
-            ecr.noOfLiveChildren = noOfLiveChildren.value?.takeIf { it.isNotBlank() }?.toInt() ?: 0
             ecr.noOfMaleChildren = numMale.value?.takeIf { it.isNotBlank() }?.toInt() ?: 0
             ecr.noOfFemaleChildren = numFemale.value?.takeIf { it.isNotBlank() }?.toInt() ?: 0
             ecr.dob1 = getLongFromDate(dob1.value)
@@ -1141,7 +1134,7 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
                 else -> null
             }
             ecr.marriageFirstChildGap =marriageFirstChildGap.value?.filter { it.isDigit() }?.toIntOrNull() ?: 0
-            if ((noOfLiveChildren.value?.toIntOrNull() ?: 0) > 1){
+            if ((noOfChildren.value?.toIntOrNull() ?: 0) > 1){
                 ecr.dob2 = getLongFromDate(dob2.value)
                 ecr.age2 = age2.value?.toInt()
                 ecr.gender2 = when (gender2.value) {
@@ -1151,7 +1144,7 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
                 }
                 ecr.firstAndSecondChildGap =firstAndSecondChildGap.value?.filter { it.isDigit() }?.toIntOrNull() ?: 0
             }
-            if (noOfLiveChildren.value?.toInt()!! > 2) {
+            if (noOfChildren.value?.toInt()!! > 2) {
                 ecr.dob3 = getLongFromDate(dob3.value)
                 ecr.age3 = age3.value?.toInt()
                 ecr.gender3 = when (gender3.value) {
@@ -1161,7 +1154,7 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
                 }
                 ecr.secondAndThirdChildGap =secondAndThirdChildGap.value?.filter { it.isDigit() }?.toIntOrNull() ?: 0
             }
-            if (noOfLiveChildren.value?.toInt()!! > 3) {
+            if (noOfChildren.value?.toInt()!! > 3) {
                 ecr.dob4 = getLongFromDate(dob4.value)
                 ecr.age4 = age4.value?.toInt()
                 ecr.gender4 = when (gender4.value) {
@@ -1171,7 +1164,7 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
                 }
                 ecr.thirdAndFourthChildGap =thirdAndFourthChildGap.value?.filter { it.isDigit() }?.toIntOrNull() ?: 0
             }
-            if (noOfLiveChildren.value?.toInt()!! > 4) {
+            if (noOfChildren.value?.toInt()!! > 4) {
                 ecr.dob5 = getLongFromDate(dob5.value)
                 ecr.age5 = age5.value?.toInt()
                 ecr.gender5 = when (gender5.value) {
@@ -1181,7 +1174,7 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
                 }
                 ecr.fourthAndFifthChildGap =fourthAndFifthChildGap.value?.filter { it.isDigit() }?.toIntOrNull() ?: 0
             }
-            if (noOfLiveChildren.value?.toInt()!! > 5) {
+            if (noOfChildren.value?.toInt()!! > 5) {
                 ecr.dob6 = getLongFromDate(dob6.value)
                 ecr.age6 = age6.value?.toInt()
                 ecr.gender6 = when (gender6.value) {
@@ -1191,7 +1184,7 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
                 }
                 ecr.fifthANdSixthChildGap =fifthAndSixthChildGap.value?.filter { it.isDigit() }?.toIntOrNull() ?: 0
             }
-            if (noOfLiveChildren.value?.toInt()!! > 6) {
+            if (noOfChildren.value?.toInt()!! > 6) {
                 ecr.dob7 = getLongFromDate(dob7.value)
                 ecr.age7 = age7.value?.toInt()
                 ecr.gender7 = when (gender7.value) {
@@ -1201,7 +1194,7 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
                 }
                 ecr.sixthAndSeventhChildGap =sixthAndSeventhChildGap.value?.filter { it.isDigit() }?.toIntOrNull() ?: 0
             }
-            if (noOfLiveChildren.value?.toInt()!! > 7) {
+            if (noOfChildren.value?.toInt()!! > 7) {
                 ecr.dob8 = getLongFromDate(dob8.value)
                 ecr.age8 = age8.value?.toInt()
                 ecr.gender8 = when (gender8.value) {
@@ -1211,7 +1204,7 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
                 }
                 ecr.seventhAndEighthChildGap = seventhAndEighthChildGap.value?.filter { it.isDigit() }?.toIntOrNull() ?: 0
             }
-            if (noOfLiveChildren.value?.toInt()!! > 8) {
+            if (noOfChildren.value?.toInt()!! > 8) {
                 ecr.dob9 = getLongFromDate(dob9.value)
                 ecr.age9 = age9.value?.toInt()
                 ecr.gender9 = when (gender9.value) {
@@ -1256,23 +1249,6 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
             validateAllCapsOrSpaceOnEditTextWithHindiEnabled(childName)
         }
 
-        if (formId == noOfChildren.id) {
-            if (noOfChildren.value.isNullOrEmpty() ||
-                noOfChildren.value?.takeIf { it.isNotEmpty() }?.toInt() == 0
-            ) {
-                noOfLiveChildren.value = "0"
-                numMale.value = "0"
-                numFemale.value = "0"
-            } else {
-                noOfLiveChildren.max = noOfChildren.value?.takeIf { it.isNotEmpty() }?.toLong()
-                validateIntMinMax(noOfLiveChildren)
-                validateIntMinMax(noOfChildren)
-                if (noOfLiveChildren.value == "0") noOfLiveChildren.value = null
-                numMale.value = null
-                numFemale.value = null
-            }
-            return handleListOnValueChanged(noOfLiveChildren.id, 0)
-        }
 
         children.forEachIndexed { idx, child ->
             if (formId == child.dob.id) {
@@ -1320,14 +1296,14 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
             }
         }
 
-        if (formId == noOfLiveChildren.id) {
-            noOfChildren.min = noOfLiveChildren.value.takeIf { !it.isNullOrEmpty() }?.toLong()
-            validateIntMinMax(noOfLiveChildren)
+        if (formId == noOfChildren.id) {
+            noOfChildren.min = noOfChildren.value.takeIf { !it.isNullOrEmpty() }?.toLong()
+            validateIntMinMax(noOfChildren)
             validateIntMinMax(noOfChildren)
 
             if (isExistingRecord) {
 
-                val newCount = noOfLiveChildren.value?.toIntOrNull() ?: 0
+                val newCount = noOfChildren.value?.toIntOrNull() ?: 0
 
                 val oldCount = children.count { child ->
                     child.dob.value != null ||
@@ -1354,16 +1330,16 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
                         .flatMap { it.toFormList() }
 
                     infantTriggerDependants(
-                        source = noOfLiveChildren,
+                        source = noOfChildren,
                         addItems = addItems,
                         removeItems = emptyList()
                     )
                 }
             } else {
-                val count = noOfLiveChildren.value?.toIntOrNull() ?: 0
+                val count = noOfChildren.value?.toIntOrNull() ?: 0
                 val addItems = children.take(count).flatMap { it.toFormList() }
                 val removeItems = children.drop(count).flatMap { it.toFormList() }
-                triggerDependants( source = noOfLiveChildren, addItems = addItems, removeItems = removeItems )
+                triggerDependants( source = noOfChildren, addItems = addItems, removeItems = removeItems )
                 children.drop(count).forEach { it.clearValues() }
 
             }
@@ -1405,7 +1381,6 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
     }
     fun getIndexOfChildren() = getIndexById(noOfChildren.id)
 
-    fun getIndexOfLiveChildren() = getIndexById(noOfLiveChildren.id)
     fun getIndexOfMaleChildren() = getIndexById(numMale.id)
     fun getIndexOfFeMaleChildren() = getIndexById(numFemale.id)
     fun getIndexOfAge1() = getIndexById(age1.id)
