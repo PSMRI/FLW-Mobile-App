@@ -309,11 +309,6 @@ class NewChildAsBenRegistrationFragment : Fragment() {
                     notifyItemChanged(viewModel.getIndexOfGap9())
                 }
 
-             /*   12 -> {
-                    notifyDataSetChanged()
-                    notifyItemChanged(viewModel.getIndexOfMaleChildren())
-                    notifyItemChanged(viewModel.getIndexOfFeMaleChildren())
-                }*/
 
                 19, 24, 29, 34, 39, 44, 49, 54, 59 -> {
                     notifyItemChanged(viewModel.getIndexOfMaleChildren())

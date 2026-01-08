@@ -1037,7 +1037,7 @@ class FormInputAdapter(
                 return
             }
 
-            val minValue = item.min?.toInt() ?: 5
+            val minValue = item.min?.toInt() ?: 0
             val maxValue = item.max?.toInt()
             val allowNegative = item.minDecimal != null && item.minDecimal!! < 0
 

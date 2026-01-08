@@ -308,9 +308,6 @@ class NewChildBenViewModel @Inject constructor(
         return dataset.getIndexOfChildren()
     }
 
-   /* fun getIndexOfLiveChildren(): Int {
-        return dataset.getIndexOfLiveChildren()
-    }*/
 
     fun getIndexOfMaleChildren(): Int {
         return dataset.getIndexOfMaleChildren()
