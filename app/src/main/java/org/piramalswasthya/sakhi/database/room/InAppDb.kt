@@ -9,11 +9,11 @@ import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import org.piramalswasthya.sakhi.database.converters.LocationEntityListConverter
+import org.piramalswasthya.sakhi.database.converters.StringListConverter
 import org.piramalswasthya.sakhi.database.converters.SyncStateConverter
+import org.piramalswasthya.sakhi.database.room.dao.ABHAGenratedDao
 import org.piramalswasthya.sakhi.database.room.dao.AdolescentHealthDao
 import org.piramalswasthya.sakhi.database.room.dao.AesDao
-import org.piramalswasthya.sakhi.database.converters.StringListConverter
-import org.piramalswasthya.sakhi.database.room.dao.ABHAGenratedDao
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.BeneficiaryIdsAvailDao
 import org.piramalswasthya.sakhi.database.room.dao.CbacDao
@@ -33,34 +33,34 @@ import org.piramalswasthya.sakhi.database.room.dao.IncentiveDao
 import org.piramalswasthya.sakhi.database.room.dao.InfantRegDao
 import org.piramalswasthya.sakhi.database.room.dao.KalaAzarDao
 import org.piramalswasthya.sakhi.database.room.dao.LeprosyDao
+import org.piramalswasthya.sakhi.database.room.dao.MaaMeetingDao
 import org.piramalswasthya.sakhi.database.room.dao.MalariaDao
 import org.piramalswasthya.sakhi.database.room.dao.MaternalHealthDao
 import org.piramalswasthya.sakhi.database.room.dao.MdsrDao
-import org.piramalswasthya.sakhi.database.room.dao.PmjayDao
-import org.piramalswasthya.sakhi.database.room.dao.MaaMeetingDao
 import org.piramalswasthya.sakhi.database.room.dao.MosquitoNetFormResponseDao
+import org.piramalswasthya.sakhi.database.room.dao.PmjayDao
 import org.piramalswasthya.sakhi.database.room.dao.PmsmaDao
 import org.piramalswasthya.sakhi.database.room.dao.PncDao
-import org.piramalswasthya.sakhi.database.room.dao.SaasBahuSammelanDao
 import org.piramalswasthya.sakhi.database.room.dao.ProfileDao
+import org.piramalswasthya.sakhi.database.room.dao.SaasBahuSammelanDao
 import org.piramalswasthya.sakhi.database.room.dao.SyncDao
 import org.piramalswasthya.sakhi.database.room.dao.TBDao
 import org.piramalswasthya.sakhi.database.room.dao.UwinDao
-import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseDao
-import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseJsonDao
-import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseJsonDaoHBYC
-import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormSchemaDao
-import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.InfantDao
 import org.piramalswasthya.sakhi.database.room.dao.VLFDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.BenIfaFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.CUFYFormResponseDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.CUFYFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.EyeSurgeryFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FilariaMDAFormResponseJsonDao
-import org.piramalswasthya.sakhi.model.AHDCache
-import org.piramalswasthya.sakhi.model.AESScreeningCache
-import org.piramalswasthya.sakhi.model.AdolescentHealthCache
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseJsonDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseJsonDaoHBYC
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormSchemaDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.InfantDao
 import org.piramalswasthya.sakhi.model.ABHAModel
+import org.piramalswasthya.sakhi.model.AESScreeningCache
+import org.piramalswasthya.sakhi.model.AHDCache
+import org.piramalswasthya.sakhi.model.AdolescentHealthCache
 import org.piramalswasthya.sakhi.model.BenBasicCache
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.CDRCache
@@ -90,32 +90,32 @@ import org.piramalswasthya.sakhi.model.KalaAzarScreeningCache
 import org.piramalswasthya.sakhi.model.LeprosyFollowUpCache
 import org.piramalswasthya.sakhi.model.LeprosyScreeningCache
 import org.piramalswasthya.sakhi.model.MDSRCache
-import org.piramalswasthya.sakhi.model.PHCReviewMeetingCache
+import org.piramalswasthya.sakhi.model.MaaMeetingEntity
 import org.piramalswasthya.sakhi.model.MalariaConfirmedCasesCache
 import org.piramalswasthya.sakhi.model.MalariaScreeningCache
+import org.piramalswasthya.sakhi.model.PHCReviewMeetingCache
 import org.piramalswasthya.sakhi.model.PMJAYCache
 import org.piramalswasthya.sakhi.model.PMSMACache
 import org.piramalswasthya.sakhi.model.PNCVisitCache
 import org.piramalswasthya.sakhi.model.PregnantWomanAncCache
 import org.piramalswasthya.sakhi.model.PregnantWomanRegistrationCache
-import org.piramalswasthya.sakhi.model.SaasBahuSammelanCache
 import org.piramalswasthya.sakhi.model.ProfileActivityCache
+import org.piramalswasthya.sakhi.model.ReferalCache
+import org.piramalswasthya.sakhi.model.SaasBahuSammelanCache
 import org.piramalswasthya.sakhi.model.TBScreeningCache
 import org.piramalswasthya.sakhi.model.TBSuspectedCache
 import org.piramalswasthya.sakhi.model.UwinCache
-import org.piramalswasthya.sakhi.model.MaaMeetingEntity
-import org.piramalswasthya.sakhi.model.ReferalCache
 import org.piramalswasthya.sakhi.model.VHNCCache
+import org.piramalswasthya.sakhi.model.VHNDCache
 import org.piramalswasthya.sakhi.model.Vaccine
+import org.piramalswasthya.sakhi.model.dynamicEntity.CUFYFormResponseJsonEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.FilariaMDA.FilariaMDAFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.InfantEntity
-import org.piramalswasthya.sakhi.model.dynamicEntity.hbyc.FormResponseJsonEntityHBYC
-import org.piramalswasthya.sakhi.model.VHNDCache
-import org.piramalswasthya.sakhi.model.dynamicEntity.CUFYFormResponseJsonEntity
-import org.piramalswasthya.sakhi.model.dynamicEntity.FilariaMDA.FilariaMDAFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.ben_ifa.BenIfaFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.eye_surgery.EyeSurgeryFormResponseJsonEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.hbyc.FormResponseJsonEntityHBYC
 import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoNetFormResponseJsonEntity
 
 @Database(
@@ -409,16 +409,18 @@ abstract class InAppDb : RoomDatabase() {
                 }
             }
 
+
+            val MIGRATION_41_42 = object : Migration(41, 42) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("ALTER TABLE form_schema ADD COLUMN language TEXT NOT NULL DEFAULT 'en'")
+                }
+            }
+
             val MIGRATION_40_41 = object : Migration(40, 41) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     database.execSQL("ALTER TABLE PREGNANCY_ANC ADD COLUMN isYesOrNo INTEGER DEFAULT 0")
                     database.execSQL("ALTER TABLE PREGNANCY_ANC ADD COLUMN dateSterilisation INTEGER")
                     database.execSQL("UPDATE PREGNANCY_ANC SET isPaiucdId = CASE WHEN isPaiucdId = 1 THEN 1 ELSE 0 END")
-                }
-            }
-            val MIGRATION_41_42 = object : Migration(41, 42) {
-                override fun migrate(database: SupportSQLiteDatabase) {
-                    database.execSQL("ALTER TABLE form_schema ADD COLUMN language TEXT NOT NULL DEFAULT 'en'")
                 }
             }
 
@@ -586,7 +588,7 @@ abstract class InAppDb : RoomDatabase() {
             }
 
 
-            val MIGRATION_33_34 = object : Migration(31, 32) {
+            val MIGRATION_33_34 = object : Migration(33, 34) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     database.execSQL("""
             CREATE TABLE IF NOT EXISTS form_schema (
@@ -1393,7 +1395,7 @@ abstract class InAppDb : RoomDatabase() {
 
             val MIGRATION_14_15 = Migration(14, 15, migrate = {
                 it.execSQL("ALTER TABLE BENEFICIARY ADD COLUMN isNewAbha INTEGER NOT NULL DEFAULT 0")
-                it.execSQL("DROP VIEW IF EXISTS BEN_BASIC_CACHE");
+                it.execSQL("DROP VIEW IF EXISTS BEN_BASIC_CACHE")
                 //  it.execSQL("CREATE VIEW BEN_BASIC_CACHE AS " +
                 //         "SELECT  benId,hhId,regDate,benName,benSurname,gender,dob,relToHeadId,mobileNo,fatherName,familyHeadName,spouseName,rchId,hrpStatus,syncState,reproductiveStatusId, lastMenstrualPeriod,isKid,immunizationStatus,villageId,abhaId,isNewAbha,cbacFilled,cbacSyncState,cdrFilled,cdrSyncState,mdsrFilled,mdsrSyncState,pmsmaSyncState,pmsmaFilled,hbncFilled,hbycFilled,pwrFilled,pwrSyncState,doSyncState,irSyncState,crSyncState,ecrFilled,ectFilled,tbsnFilled,tbsnSyncState,tbspFilled,tbspSyncState,hrppaFilled,hrpnpaFilled,hrpmbpFilled,hrptFilled,hrptrackingDone,hrnptrackingDone,hrnptFilled,hrppaSyncState,hrpnpaSyncState,hrpmbpSyncState,hrptSyncState,hrnptSyncState,isDelivered,pwHrp,irFilled,isMdsr,crFilled,doFilled FROM BENEFICIARY");
                 it.execSQL(
