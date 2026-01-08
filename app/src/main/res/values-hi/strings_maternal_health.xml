@@ -127,7 +127,7 @@
     <string name="pmsma_iron_folic_acid">लोहा और फोलिक एसिड</string>
     <string name="pmsma_calcium_supplementation">कैल्शियम सप्लीमेंटेशन</string>
     <string name="pmsma_tetanus_toxoid">टीटेनस टॉक्सॉयड</string>
-    <string name="pmsma_lmp">अंतिम माहवारी की तिथि</string>
+    <string name="pmsma_lmp">अंतिम माहवारी (LMP) की तिथि</string>
     <string name="pmsma_last_mestrual_period">अंतिम माहवारी की तिथि</string>
     <string name="pmsma_expected_delivery_date">प्रसव की अपेक्षित तिथि</string>
     <string name="pmsma_high_risk_factors">उच्च जोखिम के कारकों की पहचान</string>
@@ -376,5 +376,5 @@
     <string name="date_no">दिनांक: %1$s</string>
     <string name="round_no">राउंड: %1d</string>
     <string name="pmsma_edd">संभावित प्रसव</string>
-    <string name="string_edd">संभावित प्रसव तिथि</string>
+    <string name="string_edd">प्रसव की अनुमानित तिथि (EDD)</string>
 </resources>

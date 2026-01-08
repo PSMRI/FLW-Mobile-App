@@ -722,6 +722,12 @@
     <string name="actual_treatment_completion_date">Actual Treatment Completion Date</string>
     <string name="expected_treatment_completion_date">Expected Treatment Completion Date</string>
     <string name="treatment_status">Treatment Status</string>
+    <string name="phone_no">Phone No</string>
+    <string name="name_of_pregnant_woman">Name of Pregnant Woman</string>
+    <string name="husband_name">Husband Name</string>
+    <string name="last_home_visit_date">Last Home Visit Date</string>
+    <string name="add_home_visit">ADD HOME VISIT</string>
+    <string name="view_home_visits">VIEW HOME VISITS</string>
 
 
     <string-array name="hbyc_month_array">
