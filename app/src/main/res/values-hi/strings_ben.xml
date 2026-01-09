@@ -239,12 +239,7 @@
     <string name="months">महीने</string>
     <string name="day">दिन</string>
     <string name="days">दिन</string>
-    <string-array name="place_of_vhsnc">
-        <item>Anganwadi Centre</item>
-        <item>HWC</item>
-        <item>School</item>
-        <item>Community center</item>
-    </string-array>
+
     <string-array name="diet_plane">
         <item>What to eat</item>
         <item>what to avoid</item>
