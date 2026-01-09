@@ -82,6 +82,7 @@ class NewBenRegViewModel @Inject constructor(
     var isBenMarried = false
 
     private var parentName = ""
+    private var parentFirstName = ""
 
     companion object {
         var isOtpVerified = false
@@ -168,6 +169,7 @@ class NewBenRegViewModel @Inject constructor(
                     }
                     isOtpVerified = ben.isConsent
                     parentName = ben.firstName + " " + ben.lastName
+                    parentFirstName = ben.firstName.toString()
                     dataset.setFirstPageToRead(
                         ben,
                         familyHeadPhoneNo = household.family?.familyHeadPhoneNo
@@ -273,9 +275,9 @@ class NewBenRegViewModel @Inject constructor(
                         if (ben.gender == Gender.MALE) {
                             benRepo.updateFatherInChildren(ben.firstName + " " + ben.lastName, ben.householdId, parentName, SyncState.UNSYNCED)
                         } else {
-                            benRepo.updateMotherInChildren(ben.firstName + " " + ben.lastName, ben.householdId, parentName, SyncState.UNSYNCED)
+                            benRepo.updateMotherInChildren(ben.firstName.toString(), ben.householdId, parentFirstName, SyncState.UNSYNCED)
                         }
-                        benRepo.updateSpouseOfHoF(ben.firstName + " " + ben.lastName, ben.householdId, parentName, SyncState.UNSYNCED)
+                        benRepo.updateSpouseOfHoF(ben.firstName.toString(), ben.householdId, parentFirstName, SyncState.UNSYNCED)
                         household.family?.familyHeadName = ben.firstName
                         household.family?.familyName = ben.lastName
                         dataset.updateHouseholdWithHoFDetails(household, ben)
@@ -283,11 +285,14 @@ class NewBenRegViewModel @Inject constructor(
                         householdRepo.updateHouseholdToSync(household.householdId)
                     }
                     if (ben.gender == Gender.MALE) {
-                        benRepo.updateFatherInChildren(ben.firstName + " " + ben.lastName, ben.householdId, parentName, SyncState.UNSYNCED)
+                        benRepo.updateFather(ben.firstName + " " + ben.lastName, ben.householdId, parentName, SyncState.UNSYNCED)
                     } else {
-                        benRepo.updateMotherInChildren(ben.firstName + " " + ben.lastName, ben.householdId, parentName, SyncState.UNSYNCED)
+                        benRepo.updateBabyName("Baby of " + ben.firstName, ben.householdId, parentFirstName, SyncState.UNSYNCED)
+                        benRepo.updateMother(ben.firstName.toString(), ben.householdId, parentFirstName, SyncState.UNSYNCED)
                     }
-                    benRepo.updateSpouseOfHoF(ben.firstName + " " + ben.lastName, ben.householdId, parentName, SyncState.UNSYNCED)
+                    benRepo.updateChildrenLastName(ben.lastName.toString(), ben.householdId, parentName, SyncState.UNSYNCED)
+                    benRepo.updateSpouse(ben.firstName.toString(), ben.householdId, parentFirstName, SyncState.UNSYNCED)
+                    benRepo.updateSpouseLastName(ben.lastName.toString(), ben.householdId, parentName, SyncState.UNSYNCED)
                     ben.apply {
                         if (beneficiaryId < 0L) {
                             serverUpdatedStatus = 1
