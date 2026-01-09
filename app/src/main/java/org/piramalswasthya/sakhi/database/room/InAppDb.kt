@@ -267,9 +267,56 @@ abstract class InAppDb : RoomDatabase() {
 
             })
 
+         
             val MIGRATION_49_50 = object : Migration(49, 50) {
                 override fun migrate(database: SupportSQLiteDatabase) {
 
+                   database.execSQL(
+                        "ALTER TABLE VHND ADD COLUMN vhndPlaceId INTEGER DEFAULT 0"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE VHND ADD COLUMN pregnantWomenAnc TEXT"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE VHND ADD COLUMN lactatingMothersPnc TEXT"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE VHND ADD COLUMN childrenImmunization TEXT"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE VHND ADD COLUMN knowledgeBalancedDiet TEXT"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE VHND ADD COLUMN careDuringPregnancy TEXT"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE VHND ADD COLUMN importanceBreastfeeding TEXT"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE VHND ADD COLUMN complementaryFeeding TEXT"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE VHND ADD COLUMN hygieneSanitation TEXT"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE VHND ADD COLUMN familyPlanningHealthcare TEXT"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE VHND ADD COLUMN selectAllEducation INTEGER DEFAULT 0"
+                    )
+                    
+                    // ncd_refer
+                  
                     database.execSQL("DROP TABLE IF EXISTS ncd_referal_all_visit")
 
                     database.execSQL(

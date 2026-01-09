@@ -934,6 +934,17 @@ data class VHNDDTO(
     var noOfBeneficiariesAttended: Int? = null,
     var Image1: String? = null,
     var Image2: String? = null,
+    var vhndPlaceId: Int? = 0,
+    var pregnantWomenAnc: String? = null,
+    var lactatingMothersPnc: String? = null,
+    var childrenImmunization: String? = null,
+    var knowledgeBalancedDiet: String? = null,
+    var careDuringPregnancy: String? = null,
+    var importanceBreastfeeding: String? = null,
+    var complementaryFeeding: String? = null,
+    var hygieneSanitation: String? = null,
+    var familyPlanningHealthcare: String? = null,
+    var selectAllEducation: Boolean? = false,
 ) {
     fun toCache(): VHNDCache {
         return VHNDCache(
@@ -943,6 +954,16 @@ data class VHNDDTO(
             noOfBeneficiariesAttended = noOfBeneficiariesAttended,
             image1 = Image1,
             image2 = Image2,
+            vhndPlaceId = vhndPlaceId,
+            pregnantWomenAnc = pregnantWomenAnc,
+            lactatingMothersPnc = lactatingMothersPnc,
+            childrenImmunization = childrenImmunization,
+            knowledgeBalancedDiet = knowledgeBalancedDiet,
+            careDuringPregnancy = careDuringPregnancy,
+            importanceBreastfeeding = importanceBreastfeeding,
+            complementaryFeeding = complementaryFeeding,
+            hygieneSanitation = hygieneSanitation,
+            familyPlanningHealthcare = familyPlanningHealthcare,
             syncState = SyncState.SYNCED
         )
     }
