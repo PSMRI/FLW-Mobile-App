@@ -145,7 +145,19 @@ class ChildRegistrationDataset(
         arrayId = -1,
         required = false,
     )
-    private val weightAtBirth = FormElement(
+
+    private var weightAtBirth = FormElement(
+        id = 11,
+        inputType = InputType.EDIT_TEXT,
+        title = resources.getString(R.string.str_weight_at_birth_gram),
+        required = false,
+        hasDependants = false,
+        etMaxLength = 4,
+        min = 500,
+        max = 6000,
+        etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
+    )
+   /* private val weightAtBirth = FormElement(
         id = 12,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.str_weight_at_birth),
@@ -155,7 +167,7 @@ class ChildRegistrationDataset(
         maxDecimal = 7.0,
         etMaxLength = 3,
         required = false,
-    )
+    )*/
 
     private val placeOfBirth = FormElement(
         id = 13,
@@ -246,7 +258,7 @@ class ChildRegistrationDataset(
         }
         infantRegCache?.let { infant ->
             childName.value = infant.babyName
-            weightAtBirth.value = infant.weight?.toString()
+            weightAtBirth.value =formatWeightInGrams(infant.weight)
             infant.gender?.let {
                 childGender.value = childGender.entries?.get(it.ordinal)
             }
@@ -258,6 +270,16 @@ class ChildRegistrationDataset(
 
     }
 
+    fun formatWeightInGrams(weight: Double?): String {
+        if (weight == null) return ""
+        val grams = if (weight < 50) weight * 1000 else weight
+        return if (grams % 1 == 0.0) {
+            "${grams.toInt()}"
+        } else {
+            "${grams}"
+        }
+    }
+
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
         return when (formId) {
             childName.id -> validateAllCapsOrSpaceOnEditText(childName)
@@ -265,7 +287,8 @@ class ChildRegistrationDataset(
             rchIdMother.id -> validateRchIdOnEditText(rchIdMother)
             mobileNumber.id -> validateMobileNumberOnEditText(mobileNumber)
             fatherName.id -> validateAllCapsOrSpaceOnEditText(fatherName)
-            weightAtBirth.id -> validateDoubleMinMax(weightAtBirth)
+            weightAtBirth.id -> validateWeightOnEditText(weightAtBirth)
+            //validateDoubleMinMax(weightAtBirth)
             birthCertificateNo.id -> validateNoAlphabetSpaceOnEditText(birthCertificateNo)
 
             else -> -1
