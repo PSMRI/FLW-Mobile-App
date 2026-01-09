@@ -71,7 +71,7 @@ class VHNCFormFragement:Fragment() {
                 },
                 isEnabled = !it
             )
-             binding.btnSubmit.isEnabled = !it
+            binding.btnSubmit.isEnabled = !it
 
             binding.form.rvInputForm.adapter = adapter
             lifecycleScope.launch {

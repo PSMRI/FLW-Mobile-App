@@ -44,10 +44,10 @@
     <string name="icon_title_cd">संचारी रोग</string>
     <string name="icon_title_vhnd">वीएचएनडी फॉर्म</string>
     <string name="icon_title_ahd">एएचडी फॉर्म</string>
-    <string name="icon_title_vhnc">वीएचएनसी फॉर्म</string>
+    <string name="icon_title_vhnc">VHSNC Meeting</string>
     <string name="icon_title_phc">पीएचसी समीक्षा बैठक फॉर्म</string>
     <string name="icon_title_vhnd_list">वीएचएनडी फॉर्म सूची</string>
-    <string name="icon_title_vhnc_list">वीएचएनसी फॉर्म सूची</string>
+    <string name="icon_title_vhnc_list">वीएचसएनसी फॉर्म सूची</string>
     <string name="icon_title_phc_list">पीएचसी समीक्षा बैठक फॉर्म सूची</string>
     <string name="icon_title_disease">रोग नियंत्रण</string>
     <string name="icon_title_maleria">मलेरिया</string>
@@ -100,7 +100,7 @@
     <string name="participants">प्रतिभागियों</string>
     <string name="no_b_attended">उपस्थित लाभार्थियों की संख्या</string>
     <string name="vhnd">वीएचएनडी/वीएचएसएनडी</string>
-    <string name="vnhc">वीएचएनसी</string>
+    <string name="vnhc">वीएचसएनसी</string>
     <string name="phc_review">पीएचसी समीक्षा बैठक</string>
     <string name="ahd">एएचडी</string>
     <string name="national_deworming_day">राष्ट्रीय कृमि मुक्ति दिवस</string>
