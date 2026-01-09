@@ -229,12 +229,6 @@
     <string name="day">দিন</string>
     <string name="days">দিন</string>
     <string name="mother_rch_id">মা RCH ID</string>
-    <string-array name="place_of_vhsnc">
-        <item>Anganwadi Centre</item>
-        <item>HWC</item>
-        <item>School</item>
-        <item>Community center</item>
-    </string-array>
     <string-array name="diet_plane">
         <item>What to eat</item>
         <item>what to avoid</item>
