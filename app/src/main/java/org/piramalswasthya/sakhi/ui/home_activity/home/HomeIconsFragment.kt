@@ -74,13 +74,6 @@ class HomeIconsFragment : Fragment() {
         binding.rvIconGrid.adapter = rvAdapter
         viewModel.devModeEnabled.observe(viewLifecycleOwner) {
             Timber.d("update called!~~ $it")
-
-            if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
-
-            }
-            else{
-
-            }
             rvAdapter.submitList(iconDataset.getHomeIconDataset(resources))
         }
 
