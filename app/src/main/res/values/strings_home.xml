@@ -33,11 +33,11 @@
     <string name="icon_title_vlf">Village Level Forms</string>
     <string name="icon_title_vhnd">VHND Forms</string>
     <string name="icon_title_ahd">AHD Forms</string>
-    <string name="icon_title_vhnc">VHNC Forms</string>
+    <string name="icon_title_vhnc">VHSNC Meeting</string>
     <string name="icon_title_phc">PHC Review Meeting Forms</string>
     <string name="icon_cluster_phc">Cluster Meeting Forms</string>
     <string name="icon_title_vhnd_list">VHND Forms List</string>
-    <string name="icon_title_vhnc_list">VHNC Forms List</string>
+    <string name="icon_title_vhnc_list">VHSNC Forms List</string>
     <string name="icon_title_phc_list">PHC Review Meeting Forms List</string>
     <string name="icon_cluster_phc_list">Cluster Meeting Forms List</string>
     <string name="icon_title_disease">Disease Control</string>
@@ -112,7 +112,7 @@
     <string name="com_feeding_title">Complementary feeding</string>
     <string name="imp_brestfeeding_title">Importance of breastfeeding</string>
     <string name="vhnd">VHND/VHSND</string>
-    <string name="vnhc">VHNC</string>
+    <string name="vnhc">VHSNC</string>
     <string name="phc_review">PHC Review Meeting</string>
     <string name="cluster_review">Cluster Meetings</string>
     <string name="ahd">AHD </string>

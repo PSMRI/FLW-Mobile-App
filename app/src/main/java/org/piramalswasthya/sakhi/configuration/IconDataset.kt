@@ -45,6 +45,12 @@ class IconDataset @Inject constructor(
 
     fun getHomeIconDataset(resources: Resources): List<Icon> {
         val showAll = preferenceDao.isDevModeEnabled
+        val vlfTitle = if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+            resources.getString(R.string.mitanin_village_meetings)
+        } else {
+            resources.getString(R.string.asha_village_meetings)
+        }
+
         Timber.d("currently : $showAll")
         lateinit var showModules:Modules
         if (BuildConfig.FLAVOR.equals("xushrukha", true)) {
@@ -125,7 +131,7 @@ class IconDataset @Inject constructor(
                 ),
                 Icon(
                     R.drawable.ic__village_level_form,
-                    resources.getString(R.string.icon_title_vlf),
+                    vlfTitle,
                     null,
                     HomeFragmentDirections.actionNavHomeToVillageLevelFormsFragment()
                 ),
