@@ -150,13 +150,13 @@ class EligibleCoupleRegViewModel @Inject constructor(
                 benRepo.getChildBelow15(it.householdId, benId, it.firstName)
 
             } ?: 0
-            _childBelow15Count.value = below15Childcount
+            _childBelow15Count.value = below15Childcount.coerceAtMost(9)
 
             val above15Childcount = ben?.let {
                 benRepo.getChildAbove15(it.householdId, benId, it.firstName)
 
             } ?: 0
-            _childAbove15Count.value = above15Childcount
+            _childAbove15Count.value = above15Childcount.coerceAtMost(9)
 
             dataset.setUpPage(
                 ben,

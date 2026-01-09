@@ -696,7 +696,6 @@ class LeprosyFormDataset(
             if (anyYes)
                 resources.getStringArray(R.array.yes_no)[0]
 
-
             else resources.getStringArray(R.array.yes_no)[1]
 
         if (anyYes){

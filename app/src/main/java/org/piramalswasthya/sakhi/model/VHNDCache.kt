@@ -39,7 +39,18 @@ data class VHNDCache(
             place = place,
             noOfBeneficiariesAttended = noOfBeneficiariesAttended,
             Image1 = image1,
-            Image2 = image2
+            Image2 = image2,
+            vhndPlaceId = vhndPlaceId,
+            pregnantWomenAnc = pregnantWomenAnc,
+            lactatingMothersPnc = lactatingMothersPnc,
+            childrenImmunization = childrenImmunization,
+            knowledgeBalancedDiet = knowledgeBalancedDiet,
+            careDuringPregnancy = careDuringPregnancy,
+            importanceBreastfeeding = importanceBreastfeeding,
+            complementaryFeeding = complementaryFeeding,
+            hygieneSanitation = hygieneSanitation,
+            familyPlanningHealthcare = familyPlanningHealthcare,
+
         )
     }
 
