@@ -318,17 +318,18 @@ abstract class InAppDb : RoomDatabase() {
                         "villageName TEXT",
                         "anm INTEGER DEFAULT 0",
                         "aww INTEGER DEFAULT 0",
-                        "noOfPragnentWoment INTEGER DEFAULT 0",
-                        "noOfLactingMother INTEGER DEFAULT 0",
+                        "noOfPregnantWomen INTEGER DEFAULT 0",
+                        "noOfLactatingMother INTEGER DEFAULT 0",
                         "noOfCommittee INTEGER DEFAULT 0",
-                        "followupPrevius INTEGER"
+                        "followupPrevious INTEGER"
                     )
 
-                    columns.forEach {
-                        db.execSQL("ALTER TABLE VHNC ADD COLUMN $it")
+                    columns.forEach { columnDef ->
+                        db.execSQL("ALTER TABLE VHNC ADD COLUMN $columnDef")
                     }
                 }
             }
+
 
 
             val MIGRATION_47_48 = Migration(47, 48) {
