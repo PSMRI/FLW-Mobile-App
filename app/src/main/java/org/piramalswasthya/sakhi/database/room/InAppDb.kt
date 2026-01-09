@@ -190,7 +190,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         ANCFormResponseJsonEntity::class,
     ],
     views = [BenBasicCache::class],
-    version = 49, exportSchema = false
+    version = 50, exportSchema = false
 )
 
 @TypeConverters(
@@ -267,10 +267,11 @@ abstract class InAppDb : RoomDatabase() {
 
             })
 
-            val MIGRATION_48_49 = object : Migration(48, 49) {
+         
+            val MIGRATION_49_50 = object : Migration(49, 50) {
                 override fun migrate(database: SupportSQLiteDatabase) {
 
-                    database.execSQL(
+                   database.execSQL(
                         "ALTER TABLE VHND ADD COLUMN vhndPlaceId INTEGER DEFAULT 0"
                     )
 
@@ -313,8 +314,71 @@ abstract class InAppDb : RoomDatabase() {
                     database.execSQL(
                         "ALTER TABLE VHND ADD COLUMN selectAllEducation INTEGER DEFAULT 0"
                     )
+                    
+                    // ncd_refer
+                  
+                    database.execSQL("DROP TABLE IF EXISTS ncd_referal_all_visit")
+
+                    database.execSQL(
+                        """
+            CREATE TABLE IF NOT EXISTS `ncd_referal_all_visit` (
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                `benId` INTEGER NOT NULL,
+                `hhId` INTEGER NOT NULL,
+                `visitNo` INTEGER NOT NULL,
+                `followUpNo` INTEGER NOT NULL,
+                `treatmentStartDate` TEXT NOT NULL,
+                `followUpDate` TEXT,
+                `diagnosisCodes` TEXT,
+                `formId` TEXT NOT NULL,
+                `version` INTEGER NOT NULL,
+                `formDataJson` TEXT NOT NULL,
+                `isSynced` INTEGER NOT NULL DEFAULT 0,
+                `createdAt` INTEGER NOT NULL,
+                `updatedAt` INTEGER NOT NULL,
+                `syncedAt` INTEGER
+            )
+            """.trimIndent()
+                    )
+
+                    database.execSQL(
+                        """
+            CREATE INDEX IF NOT EXISTS `index_ncd_visit_ben_hh`
+            ON `ncd_referal_all_visit` (`benId`, `hhId`)
+            """.trimIndent()
+                    )
+
+                    database.execSQL(
+                        """
+            CREATE INDEX IF NOT EXISTS `index_ncd_visit_followup`
+            ON `ncd_referal_all_visit` (`benId`, `hhId`, `visitNo`, `followUpNo`)
+            """.trimIndent()
+                    )
                 }
             }
+
+
+            val MIGRATION_48_49 = object : Migration(48, 49) {
+                override fun migrate(db: SupportSQLiteDatabase) {
+
+                    val columns = listOf(
+                        "villageName TEXT",
+                        "anm INTEGER DEFAULT 0",
+                        "aww INTEGER DEFAULT 0",
+                        "noOfPregnantWomen INTEGER DEFAULT 0",
+                        "noOfLactatingMother INTEGER DEFAULT 0",
+                        "noOfCommittee INTEGER DEFAULT 0",
+                        "followupPrevious INTEGER"
+                    )
+
+                    columns.forEach { columnDef ->
+                        db.execSQL("ALTER TABLE VHNC ADD COLUMN $columnDef")
+                    }
+                }
+            }
+
+
+
             val MIGRATION_47_48 = Migration(47, 48) {
                 it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN recurrentUlcerationId INTEGER DEFAULT 1")
                 it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN recurrentTinglingId INTEGER DEFAULT 1")
@@ -1805,7 +1869,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_45_46,
                         MIGRATION_46_47,
                         MIGRATION_47_48,
-                        MIGRATION_48_49
+                        MIGRATION_48_49,
+                        MIGRATION_49_50,
                     ).build()
 
                     INSTANCE = instance

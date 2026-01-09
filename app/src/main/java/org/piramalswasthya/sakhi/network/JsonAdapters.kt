@@ -976,6 +976,13 @@ data class VHNCDTO(
     var noOfBeneficiariesAttended: Int? = null,
     var Image1: String? = null,
     var Image2: String? = null,
+    var villageName: String? = null,
+    var anm: Int? = 0,
+    var aww: Int? = 0,
+    var noOfPragnentWoment: Int? = 0,
+    var noOfLactingMother: Int? = 0,
+    var noOfCommittee: Int? = 0,
+    var followupPrevius: Boolean? = null,
 ) {
     fun toCache(): VHNCCache {
         return VHNCCache(
@@ -985,6 +992,13 @@ data class VHNCDTO(
             noOfBeneficiariesAttended = noOfBeneficiariesAttended,
             image1 = Image1,
             image2 = Image2,
+            villageName = villageName,
+            anm = anm,
+            aww = aww,
+            noOfPragnentWoment = noOfPragnentWoment,
+            noOfLactingMother = noOfLactingMother,
+            noOfCommittee = noOfCommittee,
+            followupPrevius = followupPrevius,
             syncState = SyncState.SYNCED
         )
     }
