@@ -182,13 +182,6 @@ class CUFYFormRepository @Inject constructor(
         }
     }
 
-
-   /* suspend fun insertOrUpdateFormResponse(entity: CUFYFormResponseJsonEntity) {
-        val existing = jsonResponseDao.getFormResponse(entity.benId, entity.visitDate)
-        val updated = existing?.let { entity.copy(id = it.id) } ?: entity
-        jsonResponseDao.insertFormResponse(updated)
-    }*/
-
     suspend fun insertOrUpdateFormResponse(entity: CUFYFormResponseJsonEntity) {
 
         val existing = jsonResponseDao.getFormResponse(entity.benId, entity.visitDate)

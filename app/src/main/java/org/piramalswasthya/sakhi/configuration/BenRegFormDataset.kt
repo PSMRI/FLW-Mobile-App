@@ -557,7 +557,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             fileUploadFront.value = saved?.kidDetails?.birthCertificateFileFrontView
             fileUploadBack.value = saved?.kidDetails?.birthCertificateFileBackView
             gender.value = gender.getStringFromPosition(saved.genderId)
-            gender.inputType = TEXT_VIEW
+//            gender.inputType = TEXT_VIEW
 
             fatherName.value = saved.fatherName
             saved.fatherName?.takeIf { it.isNotEmpty() }?.let { fatherName.inputType = TEXT_VIEW }
@@ -766,18 +766,25 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         if (dateOfReg.value == null)
             dateOfReg.value = getCurrentDateString()
         contactNumber.value = familyHeadPhoneNo
+//        household.family?.let {
+//            firstName.value = it.familyHeadName?.also {
+//                firstName.inputType = TEXT_VIEW
+//            }
+//
+//            lastName.value = it.familyName?.also {
+//                lastName.inputType = TEXT_VIEW
+//            }
+//
+//            contactNumber.value = it.familyHeadPhoneNo?.toString()?.also {
+//                contactNumber.inputType = TEXT_VIEW
+//            }
+//        }
         household.family?.let {
-            firstName.value = it.familyHeadName?.also {
-                firstName.inputType = TEXT_VIEW
-            }
+            firstName.value = it.familyHeadName
 
-            lastName.value = it.familyName?.also {
-                lastName.inputType = TEXT_VIEW
-            }
+            lastName.value = it.familyName
 
-            contactNumber.value = it.familyHeadPhoneNo?.toString()?.also {
-                contactNumber.inputType = TEXT_VIEW
-            }
+            contactNumber.value = it.familyHeadPhoneNo?.toString()
         }
 
         agePopup.min = getHoFMinDobMillis()
@@ -818,7 +825,9 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             lastName.value = saved.lastName
             agePopup.value = getDateFromLong(saved.dob)
             gender.value = gender.getStringFromPosition(saved.genderId)
-            gender.inputType = TEXT_VIEW
+            if (ben.isSpouseAdded || ben.isChildrenAdded || ben.doYouHavechildren) {
+                gender.inputType = TEXT_VIEW
+            }
             fatherName.value = saved.fatherName
             fileUploadFront.value = saved.kidDetails?.birthCertificateFileFrontView
             fileUploadBack.value = saved.kidDetails?.birthCertificateFileBackView
@@ -1854,6 +1863,9 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
                 }
 
+                maritalStatus.inputType = DROPDOWN
+                reproductiveStatus.value = null
+                reproductiveStatus.inputType = DROPDOWN
 
                 relationToHead.entries = when (index) {
                     0 -> relationToHeadListMale
@@ -1922,6 +1934,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                         husbandName.required = true
                         wifeName.required = true
                         wifeName.allCaps = true
+                        husbandName.inputType = EDIT_TEXT
+                        wifeName.inputType = EDIT_TEXT
                         updateReproductiveOptionsBasedOnAgeGender(formId = maritalStatus.id)
                         return triggerDependants(
                             source = motherName, addItems = when (gender.value) {

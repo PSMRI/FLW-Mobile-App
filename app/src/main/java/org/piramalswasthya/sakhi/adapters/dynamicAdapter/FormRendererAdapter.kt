@@ -189,6 +189,67 @@
 
                     }
 
+
+                    "multicheckbox" -> {
+                        val context = itemView.context
+
+                        val container = LinearLayout(context).apply {
+                            orientation = LinearLayout.VERTICAL
+                            layoutParams = LinearLayout.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.WRAP_CONTENT
+                            ).apply { setMargins(0, 8, 0, 8) }
+                        }
+
+                        // Store selected options in a MutableSet
+//                        val selectedOptions = (field.value as? MutableSet<String>) ?: mutableSetOf()
+                        val selectedOptions: MutableSet<String> = when (val v = field.value) {
+                            is Set<*> -> v.filterIsInstance<String>().toMutableSet()
+                            is List<*> -> v.filterIsInstance<String>().toMutableSet()
+                            is String -> v.split(",").map { it.trim() }.toMutableSet()
+                            else -> mutableSetOf()
+                        }
+                        field.options?.forEach { option ->
+                            val checkBox = CheckBox(context).apply {
+                                text = option
+                                isChecked = selectedOptions.contains(option)
+                                isEnabled = !isViewOnly && field.isEditable
+                                layoutParams = LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT
+                                ).apply { setMargins(0, 4, 0, 4) }
+                            }
+
+                            if (!isViewOnly && field.isEditable) {
+                                checkBox.setOnCheckedChangeListener { _, isChecked ->
+                                    if (isChecked) {
+                                        selectedOptions.add(option)
+                                    } else {
+                                        selectedOptions.remove(option)
+                                    }
+                                    field.value = selectedOptions
+                                    onValueChanged(field, selectedOptions)
+                                }
+                            }
+
+                            container.addView(checkBox)
+                        }
+
+                        // Error TextView
+                        val errorTextView = TextView(context).apply {
+                            setTextColor(Color.RED)
+                            textSize = 12f
+                            text = field.errorMessage ?: ""
+                            visibility = if (field.errorMessage.isNullOrBlank()) View.GONE else View.VISIBLE
+                        }
+
+                        container.addView(errorTextView)
+
+                        inputContainer.removeAllViews()
+                        inputContainer.addView(container)
+                    }
+
+
                     "text" -> {
                         val context = itemView.context
 

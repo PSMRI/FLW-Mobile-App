@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.repositories
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.HouseholdDao
 import org.piramalswasthya.sakhi.model.BenRegCache
@@ -59,7 +60,10 @@ class HouseholdRepo @Inject constructor(
         }
     }
 
-
-
+    suspend fun updateHouseholdToSync(householdId: Long) {
+        withContext(Dispatchers.IO) {
+            dao.updateHouseholdToSync(householdId = householdId,"U",2)
+        }
+    }
 
 }
