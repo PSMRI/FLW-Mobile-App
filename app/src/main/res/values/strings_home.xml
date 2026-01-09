@@ -33,10 +33,10 @@
     <string name="icon_title_vlf">Village Level Forms</string>
     <string name="icon_title_vhnd">VHND Forms</string>
     <string name="icon_title_ahd">AHD Forms</string>
-    <string name="icon_title_vhnc">VHNC Forms</string>
+    <string name="icon_title_vhnc">VHSNC Meeting</string>
     <string name="icon_title_phc">PHC Review Meeting Forms</string>
     <string name="icon_title_vhnd_list">VHND Forms List</string>
-    <string name="icon_title_vhnc_list">VHNC Forms List</string>
+    <string name="icon_title_vhnc_list">VHSNC Forms List</string>
     <string name="icon_title_phc_list">PHC Review Meeting Forms List</string>
     <string name="icon_title_disease">Disease Control</string>
     <string name="icon_title_maleria">Malaria</string>
@@ -98,7 +98,7 @@
     <string name="participants">Participants</string>
     <string name="no_b_attended">No. of Beneficiaries Attended</string>
     <string name="vhnd">VHND/VHSND</string>
-    <string name="vnhc">VHNC</string>
+    <string name="vnhc">VHSNC</string>
     <string name="phc_review">PHC Review Meeting</string>
     <string name="ahd">AHD </string>
     <string name="national_deworming_day">National Deworming Day </string>
