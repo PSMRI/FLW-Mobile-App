@@ -33,7 +33,6 @@ class FollowUpDatesAdapter :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(followUp: LeprosyFollowUpCache) {
-            binding.tvVisitNumber.text = "Visit ${followUp.visitNumber}"
             binding.tvFollowUpDate.text = dateFormat.format(Date(followUp.followUpDate))
             binding.tvTreatmentStatus.text = followUp.treatmentStatus ?: "Pending"
         }

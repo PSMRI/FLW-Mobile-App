@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.model.HouseholdBasicCache
 import org.piramalswasthya.sakhi.model.HouseholdCache
 
@@ -17,6 +18,13 @@ interface HouseholdDao {
 
     @Update
     suspend fun update(household: HouseholdCache)
+
+    @Query("UPDATE HOUSEHOLD SET processed = :proccess , serverUpdatedStatus =:updateStatus WHERE householdId = :householdId")
+    suspend fun updateHouseholdToSync(
+        householdId: Long,
+        proccess: String,
+        updateStatus: Int
+    )
 
     @Query("SELECT * FROM HOUSEHOLD WHERE isDraft = 1 LIMIT 1")
     suspend fun getDraftHousehold(): HouseholdCache?
