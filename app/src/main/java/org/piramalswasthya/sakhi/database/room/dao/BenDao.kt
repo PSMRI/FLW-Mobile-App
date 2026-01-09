@@ -83,6 +83,84 @@ interface BenDao {
         updateStatus: Int
     )
 
+    @Query(
+        "UPDATE BENEFICIARY " +
+                "SET gen_spouseName = :benName , syncState = :unsynced , processed = :proccess , serverUpdatedStatus =:updateStatus WHERE gen_maritalStatusId = 2 AND householdId = :householdId AND gen_spouseName = :spouseName"
+    )
+    suspend fun updateSpouse(
+        benName: String,
+        householdId: Long,
+        spouseName: String,
+        unsynced: SyncState,
+        proccess: String,
+        updateStatus: Int
+    )
+
+    @Query(
+        "UPDATE BENEFICIARY " +
+                "SET fatherName = :benName , syncState = :unsynced , processed = :proccess , serverUpdatedStatus =:updateStatus WHERE householdId = :householdId AND fatherName = :parentName"
+    )
+    suspend fun updateFather(
+        benName: String,
+        householdId: Long,
+        parentName: String,
+        unsynced: SyncState,
+        proccess: String,
+        updateStatus: Int
+    )
+
+    @Query(
+        "UPDATE BENEFICIARY " +
+                "SET motherName = :benName , syncState = :unsynced , processed = :proccess , serverUpdatedStatus =:updateStatus WHERE householdId = :householdId AND motherName = :parentName"
+    )
+    suspend fun updateMother(
+        benName: String,
+        householdId: Long,
+        parentName: String,
+        unsynced: SyncState,
+        proccess: String,
+        updateStatus: Int
+    )
+
+    @Query(
+        "UPDATE BENEFICIARY " +
+                "SET firstName = :babyName , syncState = :unsynced , processed = :proccess , serverUpdatedStatus =:updateStatus WHERE householdId = :householdId AND motherName = :parentName AND age < 1"
+    )
+    suspend fun updateBabyName(
+        babyName: String,
+        householdId: Long,
+        parentName: String,
+        unsynced: SyncState,
+        proccess: String,
+        updateStatus: Int
+    )
+
+    @Query(
+        "UPDATE BENEFICIARY " +
+                "SET lastName = :lastName , syncState = :unsynced , processed = :proccess , serverUpdatedStatus =:updateStatus WHERE gen_maritalStatusId = 2 AND householdId = :householdId AND gen_spouseName = :spouseName"
+    )
+    suspend fun updateSpouseLastName(
+        lastName: String,
+        householdId: Long,
+        spouseName: String,
+        unsynced: SyncState,
+        proccess: String,
+        updateStatus: Int
+    )
+
+    @Query(
+        "UPDATE BENEFICIARY " +
+                "SET lastName = :lastName , syncState = :unsynced , processed = :proccess , serverUpdatedStatus =:updateStatus WHERE householdId = :householdId AND fatherName = :parentName"
+    )
+    suspend fun updateChildrenLastName(
+        lastName: String,
+        householdId: Long,
+        parentName: String,
+        unsynced: SyncState,
+        proccess: String,
+        updateStatus: Int
+    )
+
     @Query("UPDATE  BENEFICIARY SET isSpouseAdded = 1 , syncState = :unsynced , processed = :proccess , serverUpdatedStatus =:updateStatus WHERE householdId = :householdId AND beneficiaryId = :benId")
     suspend fun updateBeneficiarySpouseAdded(householdId: Long,benId: Long, unsynced: SyncState,  proccess: String,
                                              updateStatus: Int)
