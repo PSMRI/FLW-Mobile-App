@@ -674,7 +674,8 @@ class LeprosyFormDataset(
         return getIndexById(dateOfCase.id)
     }
 
-    private fun updateLeprosySymptomsFromChecklist() {
+    private fun updateLeprosySymptomsFromChecklist()
+    {
         val yesValue = resources.getStringArray(R.array.yes_no)[0]
 
         val anyYes = listOf(
@@ -692,7 +693,21 @@ class LeprosyFormDataset(
         ).any { it == yesValue }
 
         leprosySymptoms.value =
-            if (anyYes) resources.getStringArray(R.array.yes_no)[0]
+            if (anyYes)
+                resources.getStringArray(R.array.yes_no)[0]
+
+
             else resources.getStringArray(R.array.yes_no)[1]
+
+        if (anyYes){
+            leprosyStatus.value = resources.getStringArray(R.array.leprosy_status)[3]
+            visitLabel.value = "Visit -1"
+
+            triggerDependants(
+                source = leprosySymptoms,
+                addItems = listOf(visitLabel,leprosyStatus,referredTo),
+                removeItems = listOf()
+            )
+        }
     }
 }
