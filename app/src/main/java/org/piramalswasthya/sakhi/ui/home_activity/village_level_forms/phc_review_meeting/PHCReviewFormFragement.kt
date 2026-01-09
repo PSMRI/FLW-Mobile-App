@@ -119,10 +119,14 @@ class PHCReviewFormFragement:Fragment() {
     }
     override fun onStart() {
         super.onStart()
+      val title =  if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true))
+            resources.getString(R.string.icon_cluster_phc)
+        else
+            resources.getString(R.string.icon_title_phc)
         activity?.let {
             (it as HomeActivity).updateActionBar(
                 R.drawable.ic__village_level_form,
-                getString(R.string.icon_title_phc)
+                title
             )
         }
     }
