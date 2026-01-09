@@ -137,7 +137,7 @@ interface SyncDao {
                 "    FROM all_visit_history hbnc " +
                 "    INNER JOIN beneficiary b ON b.beneficiaryId = hbnc.benId " +
                 " UNION ALL"+
-                " SELECT 20 as id, 'NCD Follow Up' as name, CASE \n" +
+                " SELECT 26 as id, 'NCD Follow Up' as name, CASE \n" +
                 "   WHEN ncd.isSynced = 1 THEN 2 ELSE ncd.isSynced  END AS syncState " +
                 "    FROM ncd_referal_all_visit ncd " +
                 "    INNER JOIN beneficiary b ON b.beneficiaryId = ncd.benId " +
