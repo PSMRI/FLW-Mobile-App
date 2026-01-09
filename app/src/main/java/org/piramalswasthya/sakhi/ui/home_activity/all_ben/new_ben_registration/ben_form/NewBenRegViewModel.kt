@@ -280,6 +280,7 @@ class NewBenRegViewModel @Inject constructor(
                         benRepo.updateSpouseOfHoF(ben.firstName.toString(), ben.householdId, parentFirstName, SyncState.UNSYNCED)
                         household.family?.familyHeadName = ben.firstName
                         household.family?.familyName = ben.lastName
+                        household.family?.familyHeadPhoneNo = ben.contactNumber
                         dataset.updateHouseholdWithHoFDetails(household, ben)
                         householdRepo.updateHousehold(household)
                         householdRepo.updateHouseholdToSync(household.householdId)
