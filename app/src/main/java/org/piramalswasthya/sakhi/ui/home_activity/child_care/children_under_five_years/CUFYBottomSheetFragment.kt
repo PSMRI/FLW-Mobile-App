@@ -93,22 +93,23 @@ class CUFYBottomSheetFragment : BottomSheetDialogFragment() {
 
             val savedList = viewModel.getSavedVisits(formID, benId)
 
-            val viewOptions = savedList.mapIndexed { index, entity ->
-                ChildOption(
-                    formType = mapFormIdToType(entity.formId),
-                    title = getString(R.string.visit, index + 1),
-                    description = entity.visitDate,
-                    isViewMode = true,
-                    visitDay = entity.visitDate,
-                    formDataJson = entity.formDataJson,
-                    recordId = entity.id
-                )
-            }
-            val samStatus = viewModel.getSamStatusForBeneficiary(benId)
+            if (type == FormConstants.IFA_FORM_NAME) {
+                val latestVisit = savedList.lastOrNull()
 
-            val finalList = if (type == FormConstants.SAM_FORM_NAME && samStatus != getString(R.string.check_sam_)) {
-                viewOptions
-            } else {
+                val viewOptions = latestVisit?.let { entity ->
+                    listOf(
+                        ChildOption(
+                            formType = mapFormIdToType(entity.formId),
+                            title = getString(R.string.visit),
+                            description = entity.visitDate,
+                            isViewMode = true,
+                            visitDay = entity.visitDate,
+                            formDataJson = entity.formDataJson,
+                            recordId = entity.id
+                        )
+                    )
+                } ?: emptyList()
+
                 val addOption = ChildOption(
                     formType = type ?: "",
                     title = getString(R.string.add_new_visit),
@@ -116,10 +117,39 @@ class CUFYBottomSheetFragment : BottomSheetDialogFragment() {
                     isViewMode = false,
                     formDataJson = null
                 )
-                viewOptions + addOption
-            }
 
-            (_binding?.rvAnc?.adapter as ChildCareVisitListAdapter?)?.submitList(finalList)
+                val finalList = viewOptions + addOption
+                (_binding?.rvAnc?.adapter as ChildCareVisitListAdapter?)?.submitList(finalList)
+
+            } else {
+                val viewOptions = savedList.mapIndexed { index, entity ->
+                    ChildOption(
+                        formType = mapFormIdToType(entity.formId),
+                        title = getString(R.string.visit, index + 1),
+                        description = entity.visitDate,
+                        isViewMode = true,
+                        visitDay = entity.visitDate,
+                        formDataJson = entity.formDataJson,
+                        recordId = entity.id
+                    )
+                }
+                val samStatus = viewModel.getSamStatusForBeneficiary(benId)
+
+                val finalList = if (type == FormConstants.SAM_FORM_NAME && samStatus != getString(R.string.check_sam_)) {
+                    viewOptions
+                } else {
+                    val addOption = ChildOption(
+                        formType = type ?: "",
+                        title = getString(R.string.add_new_visit),
+                        description = "",
+                        isViewMode = false,
+                        formDataJson = null
+                    )
+                    viewOptions + addOption
+                }
+
+                (_binding?.rvAnc?.adapter as ChildCareVisitListAdapter?)?.submitList(finalList)
+            }
         }
     }
 
