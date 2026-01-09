@@ -98,7 +98,7 @@ class VHNDDataset(
         min = 0
     )
     private val heading = FormElement(
-        id = 8,
+        id = 14,
         inputType = InputType.HEADLINE,
         title = resources.getString(R.string.health_nutrition),
         arrayId = -1,
@@ -231,7 +231,6 @@ class VHNDDataset(
             place.value = it.place
             noOfBeneficiariesAttended.value = it.noOfBeneficiariesAttended.toString()
             if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
-                noOfPWAttended.value = it.pregnantWomenAnc
                 noOfPWAttended.value = it.pregnantWomenAnc
                 noOflactingMotherAttended.value = it.lactatingMothersPnc
                 noOfchildrenAttended.value = it.childrenImmunization
