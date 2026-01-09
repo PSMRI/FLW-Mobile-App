@@ -69,6 +69,13 @@
         <item>विधुर</item>
     </string-array>
 
+    <string-array name="place_of_vhsnc">
+        <item>Anganwadi Centre</item>
+        <item>HWC</item>
+        <item>School</item>
+        <item>Community center</item>
+    </string-array>
+
     <string-array name="nbr_marital_status_female_array">
         <item>अविवाहित</item>
         <item>विवाहित</item>

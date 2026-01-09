@@ -140,7 +140,6 @@ class BenGenRegFormDataset(context: Context, language: Languages) : Dataset(cont
         required = true,
         allCaps = true,
         hasSpeechToText = true,
-
         etInputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
     )
     private val wifeName = FormElement(

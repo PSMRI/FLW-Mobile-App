@@ -30,7 +30,7 @@
     <string name="nbr_image_sub">Tap to use camera</string>
     <string name="nbr_dor">Date of Registration</string>
     <string name="vhnd_date">VHND Date</string>
-    <string name="vhnc_date">VHNC Date</string>
+    <string name="vhnc_date">VHSNC meeting Date</string>
     <string name="phc_review_meeting_date">PHC Review Meeting Date</string>
     <string name="nbr_nb_first_name">First Name</string>
     <string name="nbr_child_first_name">Child Name</string>
@@ -103,6 +103,15 @@
         <item>Widower</item>
 
     </string-array>
+
+    <string-array name="place_of_vhsnc">
+        <item>Anganwadi Centre</item>
+        <item>HWC</item>
+        <item>School</item>
+        <item>Community center</item>
+    </string-array>
+
+
 
     <string-array name="nbr_marital_status_female_array">
         <item>Unmarried</item>
