@@ -1035,7 +1035,9 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             agePopup.value = getDateFromLong(saved.dob)
             ageAtMarriage.max = getAgeFromDob(saved.dob).toLong()
             gender.value = gender.getStringFromPosition(saved.genderId)
-            gender.inputType = TEXT_VIEW
+            if (ben.isSpouseAdded || ben.isChildrenAdded || ben.doYouHavechildren) {
+                gender.inputType = TEXT_VIEW
+            }
             fatherName.value = saved.fatherName
             fileUploadFront.value = saved.kidDetails?.birthCertificateFileFrontView
             fileUploadBack.value = saved.kidDetails?.birthCertificateFileBackView

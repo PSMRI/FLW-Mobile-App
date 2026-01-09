@@ -119,11 +119,22 @@ class LeprosySuspectedDataset (
         id = 17,
         inputType = InputType.DATE_PICKER,
         title = resources.getString(R.string.treatment_start_date),
-        required = true,
         isEnabled = true,
-        max = System.currentTimeMillis(),
+        required = false,
+        max = System.currentTimeMillis()
 
     )
+
+    private val leprosyConfirmed = FormElement(
+        id = 18,
+        inputType = InputType.RADIO,
+        title = context.getString(R.string.has_leprosy_been_confirmed),
+        required = true,
+        isEnabled = true,
+        arrayId = R.array.yes_no,
+        entries = resources.getStringArray(R.array.yes_no),
+        hasDependants = true)
+
 
     suspend fun setUpPage(ben: BenRegCache?, saved: LeprosyScreeningCache?) {
         val list = mutableListOf(
@@ -132,7 +143,8 @@ class LeprosySuspectedDataset (
             visitLabel,
             leprosyStatus,
             referredTo,
-            typeOfLeprosy,
+            leprosyConfirmed,
+            //typeOfLeprosy,
 
 
 
@@ -187,6 +199,17 @@ class LeprosySuspectedDataset (
     }
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
          when (formId) {
+
+             leprosyConfirmed.id ->{
+                 if (leprosyConfirmed.value == resources.getStringArray(R.array.yes_no)[0]) {
+                     triggerDependants(source = leprosyConfirmed, addItems =listOf(typeOfLeprosy),removeItems = listOf())
+                 }
+                 else{
+                     triggerDependants(source = leprosyConfirmed, addItems = listOf(),removeItems =listOf(typeOfLeprosy))
+
+                 }
+
+             }
 
             typeOfLeprosy.id -> {
                 leprosyStatus.value = resources.getStringArray(R.array.leprosy_status)[4]

@@ -60,7 +60,7 @@
     <string name="refer_to">Referred To</string>
     <string name="day_wise_tracking_pf">Pf - Day-wise Tracking</string>
     <string name="day_wise_tracking_pv">PV - Day-wise Tracking</string>
-    <string name="type_of_leprocy">Type of Leprosy</string>
+    <string name="type_of_leprocy">Type of leprosy confirmed</string>
     <string name="treatment_start_date">Treatment Start Date</string>
     <string name="dose_status">DEC and Albendazole Dose Status</string>
     <string name="is_medicine_distributed">Is medicine Distributed</string>
@@ -729,6 +729,17 @@
     <string name="number_of_mitanins_participated_in_vhsnc_meeting">Number of Mitanins participated in VHSNC meeting</string>
     <string name="mitanin_village_meetings">Mitanin/ Village Meetings</string>
     <string name="asha_village_meetings">ASHA/ Village Meetings</string>
+    <string name="has_leprosy_been_confirmed">Has leprosy been confirmed?</string>
+    <string name="mdt_blister_pack_received">MDT/BLISTER PACK RECEIVED</string>
+    <string name="actual_treatment_completion_date">Actual Treatment Completion Date</string>
+    <string name="expected_treatment_completion_date">Expected Treatment Completion Date</string>
+    <string name="treatment_status">Treatment Status</string>
+    <string name="phone_no">Phone No</string>
+    <string name="name_of_pregnant_woman">Name of Pregnant Woman</string>
+    <string name="husband_name">Husband Name</string>
+    <string name="last_home_visit_date">Last Home Visit Date</string>
+    <string name="add_home_visit">ADD HOME VISIT</string>
+    <string name="view_home_visits">VIEW HOME VISITS</string>
 
 
     <string-array name="hbyc_month_array">
@@ -960,6 +971,14 @@
         <item>Regularly taking medicine</item>
         <item>Not regularly taking medicine</item>
         <item>Treatment Completed</item>
+    </string-array>
+
+    <string-array name="leprosy_treatment_status_before_time">
+        <item>Recovering</item>
+        <item>Cured</item>
+        <item>Recurrence of Symptoms</item>
+        <item>Regularly taking medicine</item>
+        <item>Not regularly taking medicine</item>
     </string-array>
 
     <string-array name="dc_refer">

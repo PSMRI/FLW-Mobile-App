@@ -74,6 +74,7 @@ import org.piramalswasthya.sakhi.utils.HelperUtil.getAgeStrFromAgeUnit
 import org.piramalswasthya.sakhi.utils.HelperUtil.getDobFromAge
 import org.piramalswasthya.sakhi.utils.HelperUtil.getLongFromDate
 import org.piramalswasthya.sakhi.utils.HelperUtil.updateAgeDTO
+import org.piramalswasthya.sakhi.utils.Log
 import timber.log.Timber
 import java.util.Calendar
 
@@ -1140,6 +1141,7 @@ class FormInputAdapter(
             binding.etNumberInput.setText(value.toString())
             binding.etNumberInput.setSelection(binding.etNumberInput.text!!.length)
             internalUpdate = false
+
         }
 
         private fun updateValue(
