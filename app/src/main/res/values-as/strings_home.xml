@@ -93,5 +93,8 @@
     <string name="maa_meeting_list">মা সভাৰ প্ৰ-পত্ৰ তালিকা</string>
     <string name="saas_bahu_list">সাস বহু সন্মিলন</string>
     <string name="saas_bahu_reg">সাস বহু সন্মিলন পঞ্জীয়ন</string>
+    <string name="icon_cluster_phc_list">Cluster Meeting Forms List</string>
+    <string name="icon_cluster_phc">Cluster Meeting Forms</string>
+
 
 </resources>

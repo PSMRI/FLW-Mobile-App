@@ -190,7 +190,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         ANCFormResponseJsonEntity::class,
     ],
     views = [BenBasicCache::class],
-    version = 48, exportSchema = false
+    version = 49, exportSchema = false
 )
 
 @TypeConverters(
@@ -266,6 +266,55 @@ abstract class InAppDb : RoomDatabase() {
                 it.execSQL("alter table BENEFICIARY add column isConsent BOOL")
 
             })
+
+            val MIGRATION_48_49 = object : Migration(48, 49) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+
+                    database.execSQL(
+                        "ALTER TABLE VHND ADD COLUMN vhndPlaceId INTEGER DEFAULT 0"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE VHND ADD COLUMN pregnantWomenAnc TEXT"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE VHND ADD COLUMN lactatingMothersPnc TEXT"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE VHND ADD COLUMN childrenImmunization TEXT"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE VHND ADD COLUMN knowledgeBalancedDiet TEXT"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE VHND ADD COLUMN careDuringPregnancy TEXT"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE VHND ADD COLUMN importanceBreastfeeding TEXT"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE VHND ADD COLUMN complementaryFeeding TEXT"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE VHND ADD COLUMN hygieneSanitation TEXT"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE VHND ADD COLUMN familyPlanningHealthcare TEXT"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE VHND ADD COLUMN selectAllEducation INTEGER DEFAULT 0"
+                    )
+                }
+            }
             val MIGRATION_47_48 = Migration(47, 48) {
                 it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN recurrentUlcerationId INTEGER DEFAULT 1")
                 it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN recurrentTinglingId INTEGER DEFAULT 1")
@@ -1755,7 +1804,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_44_45,
                         MIGRATION_45_46,
                         MIGRATION_46_47,
-                        MIGRATION_47_48
+                        MIGRATION_47_48,
+                        MIGRATION_48_49
                     ).build()
 
                     INSTANCE = instance

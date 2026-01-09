@@ -15,6 +15,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.PHCAdapter
 import org.piramalswasthya.sakhi.adapters.VHNCAdapter
@@ -81,10 +82,14 @@ class PHCReviewListFragement : Fragment() {
 
     override fun onStart() {
         super.onStart()
+        val title =  if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true))
+            resources.getString(R.string.icon_cluster_phc_list)
+        else
+            resources.getString(R.string.icon_title_phc_list)
         activity?.let {
             (it as HomeActivity).updateActionBar(
                 R.drawable.ic__village_level_form,
-                getString(R.string.icon_title_phc_list)
+                title
             )
         }
     }

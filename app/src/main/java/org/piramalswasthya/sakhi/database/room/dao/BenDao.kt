@@ -222,6 +222,32 @@ interface BenDao {
     @Query("SELECT * FROM BENEFICIARY WHERE householdId = :hhId AND beneficiaryId != :selectedbenIdFromArgs AND (:firstName IS NULL OR :firstName = '' OR motherName LIKE :firstName || '%') order by age desc")
     suspend fun getChildBenForHousehold(hhId: Long, selectedbenIdFromArgs: Long, firstName: String?): List<BenRegCache>
 
+    @Query("""
+    SELECT COUNT(*) FROM BENEFICIARY
+    WHERE householdId = :hhId
+    AND beneficiaryId != :selectedbenIdFromArgs
+    AND age < 15
+    AND (:firstName IS NULL OR :firstName = '' OR motherName LIKE :firstName || '%')
+    """)
+    suspend fun getBelow15Count(
+        hhId: Long,
+        selectedbenIdFromArgs: Long,
+        firstName: String?
+    ): Int
+
+    @Query("""
+    SELECT COUNT(*) FROM BENEFICIARY
+    WHERE householdId = :hhId
+    AND beneficiaryId != :selectedbenIdFromArgs
+    AND age >= 15
+    AND (:firstName IS NULL OR :firstName = '' OR motherName LIKE :firstName || '%')
+    """)
+    suspend fun get15aboveCount(
+        hhId: Long,
+        selectedbenIdFromArgs: Long,
+        firstName: String?
+    ): Int
+
     @Query("SELECT * FROM BENEFICIARY WHERE beneficiaryId =:benId AND householdId = :hhId LIMIT 1")
     suspend fun getBen(hhId: Long, benId: Long): BenRegCache?
 

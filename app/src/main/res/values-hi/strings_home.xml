@@ -108,6 +108,9 @@
     <string name="saas_bahu_list">सास बहू सम्मेलन</string>
     <string name="maa_meeting_list">माँ मीटिंग फॉर्म सूची</string>
     <string name="maa_meeting">माँ मिलन</string>
+    <string name="icon_cluster_phc_list">Cluster Meeting Forms List</string>
+    <string name="icon_cluster_phc">Cluster Meeting Forms</string>
+
 
 
 </resources>

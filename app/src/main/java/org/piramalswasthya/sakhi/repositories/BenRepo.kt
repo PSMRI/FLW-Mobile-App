@@ -156,6 +156,24 @@ class BenRepo @Inject constructor(
 
     }
 
+    suspend fun getChildBelow15(
+        hhId: Long,
+        selectedbenIdFromArgs: Long,
+        firstName: String?
+    ): Int {
+        return benDao.getBelow15Count(hhId,selectedbenIdFromArgs,firstName)
+
+    }
+
+    suspend fun getChildAbove15(
+        hhId: Long,
+        selectedbenIdFromArgs: Long,
+        firstName: String?
+    ): Int {
+        return benDao.get15aboveCount(hhId,selectedbenIdFromArgs,firstName)
+
+    }
+
     suspend fun isBenDead(benId: Long): Boolean {
         return benDao.isBenDead(benId)
     }
