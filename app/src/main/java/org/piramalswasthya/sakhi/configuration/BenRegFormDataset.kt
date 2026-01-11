@@ -598,7 +598,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             maritalStatus.value =
                 saved.genDetails?.maritalStatusId?.let { maritalStatus.getStringFromPosition(it) }
 
-            ageAtMarriage.value = saved.genDetails?.ageAtMarriage.toString()
+//            ageAtMarriage.value = saved.genDetails?.ageAtMarriage.toString()
+            ageAtMarriage.value = calculateAgeAtMarriage(saved.dob, saved.genDetails?.marriageDate ?: 0L).toString()
             dateOfMarriage.value = getDateFromLong(saved.genDetails?.marriageDate ?: 0)
 
             mobileNoOfRelation.value =
@@ -738,6 +739,18 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         setUpPage(list)
     }
 
+    private fun calculateAgeAtMarriage(dob: Long, marriageDate: Long): Int {
+        val doB = Calendar.getInstance()
+        doB.timeInMillis = dob
+        val marriageDatE = Calendar.getInstance()
+        marriageDatE.timeInMillis = marriageDate
+        var ageAtMarriage = marriageDatE.get(Calendar.YEAR) - doB.get(Calendar.YEAR)
+        if (marriageDatE.get(Calendar.DAY_OF_YEAR) < doB.get(Calendar.DAY_OF_YEAR)) {
+            ageAtMarriage--
+        }
+        return  ageAtMarriage
+    }
+
 
     suspend fun setPageForHof(ben: BenRegCache?, household: HouseholdCache) {
         val list = mutableListOf(
@@ -857,14 +870,15 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             }
             maritalStatus.value =
                 maritalStatus.getStringFromPosition(saved.genDetails?.maritalStatusId ?: 0)
-            ageAtMarriage.value = saved.genDetails?.ageAtMarriage.toString()
+//            ageAtMarriage.value = saved.genDetails?.ageAtMarriage.toString()
+            ageAtMarriage.value = calculateAgeAtMarriage(saved.dob, saved.genDetails?.marriageDate ?: 0L).toString()
             dateOfMarriage.value = getDateFromLong(
                 saved.genDetails?.marriageDate ?: 0
             )
-//            val maritalIndex = list.indexOf(maritalStatus)
-//            if (maritalStatus.value == maritalStatus.entries!![1]) {
-//                list.add(maritalIndex + 1, ageAtMarriage)
-//            }
+            val maritalIndex = list.indexOf(maritalStatus)
+            if (maritalStatus.value == maritalStatus.entries!![1]) {
+                list.add(maritalIndex + 1, ageAtMarriage)
+            }
             mobileNoOfRelation.value =
                 mobileNoOfRelation.getStringFromPosition(saved.mobileNoOfRelationId)
             tempraryContactNoBelongsto.value =
@@ -1057,10 +1071,15 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             }
             maritalStatus.value =
                 maritalStatus.getStringFromPosition(saved.genDetails?.maritalStatusId ?: 0)
-            ageAtMarriage.value = saved.genDetails?.ageAtMarriage.toString()
+//            ageAtMarriage.value = saved.genDetails?.ageAtMarriage.toString()
+            ageAtMarriage.value = calculateAgeAtMarriage(saved.dob, saved.genDetails?.marriageDate ?: 0L).toString()
             dateOfMarriage.value = getDateFromLong(
                 saved.genDetails?.marriageDate ?: 0
             )
+            val maritalIndex = list.indexOf(maritalStatus)
+            if (maritalStatus.value == maritalStatus.entries!![1]) {
+                list.add(maritalIndex + 1, ageAtMarriage)
+            }
             mobileNoOfRelation.value =
                 mobileNoOfRelation.getStringFromPosition(saved.mobileNoOfRelationId)
             tempraryContactNoBelongsto.value =

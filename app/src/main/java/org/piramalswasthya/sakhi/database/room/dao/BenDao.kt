@@ -85,6 +85,34 @@ interface BenDao {
 
     @Query(
         "UPDATE BENEFICIARY " +
+                "SET gen_marriageDate = :marriageDate , gen_ageAtMarriage = :ageAtMarriage, syncState = :unsynced , processed = :proccess , serverUpdatedStatus =:updateStatus WHERE householdId = :householdId AND gen_spouseName = :spouseName"
+    )
+    suspend fun updateMarriageAgeOfWife(
+        marriageDate: Long,
+        ageAtMarriage: Int,
+        householdId: Long,
+        spouseName: String,
+        unsynced: SyncState,
+        proccess: String,
+        updateStatus: Int
+    )
+
+    @Query(
+        "UPDATE BENEFICIARY " +
+                "SET gen_marriageDate = :marriageDate , gen_ageAtMarriage = :ageAtMarriage, syncState = :unsynced , processed = :proccess , serverUpdatedStatus =:updateStatus WHERE householdId = :householdId AND gen_spouseName = :spouseName"
+    )
+    suspend fun updateMarriageAgeOfHusband(
+        marriageDate: Long,
+        ageAtMarriage: Int,
+        householdId: Long,
+        spouseName: String,
+        unsynced: SyncState,
+        proccess: String,
+        updateStatus: Int
+    )
+
+    @Query(
+        "UPDATE BENEFICIARY " +
                 "SET gen_spouseName = :benName , syncState = :unsynced , processed = :proccess , serverUpdatedStatus =:updateStatus WHERE gen_maritalStatusId = 2 AND householdId = :householdId AND gen_spouseName = :spouseName"
     )
     suspend fun updateSpouse(
