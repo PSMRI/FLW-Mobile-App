@@ -266,6 +266,14 @@ class NewBenRegViewModel @Inject constructor(
                         )
                     }
                     dataset.mapValues(ben, 2)
+                    val dob = Calendar.getInstance()
+                    dob.timeInMillis = ben.dob
+                    val marriageDate = Calendar.getInstance()
+                    marriageDate.timeInMillis = ben.genDetails?.marriageDate!!
+                    var ageAtMarriage = marriageDate.get(Calendar.YEAR) - dob.get(Calendar.YEAR)
+                    if (marriageDate.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)) {
+                        ageAtMarriage--
+                    }
                     if (ben.familyHeadRelationPosition == 5 || ben.familyHeadRelationPosition == 6 ) {
                         benRepo.updateHousehold(ben.householdId, SyncState.UNSYNCED)
                     } else if (isAddspouse == 1) {
@@ -287,9 +295,27 @@ class NewBenRegViewModel @Inject constructor(
                     }
                     if (ben.gender == Gender.MALE) {
                         benRepo.updateFather(ben.firstName + " " + ben.lastName, ben.householdId, parentName, SyncState.UNSYNCED)
+                        if (ben.genDetails?.maritalStatusId == 2) {
+                            benRepo.updateMarriageAgeOfWife(
+                                ben.genDetails?.marriageDate!!,
+                                ben.genDetails?.ageAtMarriage!!,
+                                ben.householdId,
+                                parentName,
+                                SyncState.UNSYNCED
+                            )
+                        }
                     } else {
                         benRepo.updateBabyName("Baby of " + ben.firstName, ben.householdId, parentFirstName, SyncState.UNSYNCED)
                         benRepo.updateMother(ben.firstName.toString(), ben.householdId, parentFirstName, SyncState.UNSYNCED)
+                        if (ben.genDetails?.maritalStatusId == 2) {
+                            benRepo.updateMarriageAgeOfHusband(
+                                ben.genDetails?.marriageDate!!,
+                                ben.genDetails?.ageAtMarriage!!,
+                                ben.householdId,
+                                parentFirstName,
+                                SyncState.UNSYNCED
+                            )
+                        }
                     }
                     benRepo.updateChildrenLastName(ben.lastName.toString(), ben.householdId, parentName, SyncState.UNSYNCED)
                     benRepo.updateSpouse(ben.firstName.toString(), ben.householdId, parentFirstName, SyncState.UNSYNCED)
