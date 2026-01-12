@@ -266,14 +266,6 @@ class NewBenRegViewModel @Inject constructor(
                         )
                     }
                     dataset.mapValues(ben, 2)
-                    val dob = Calendar.getInstance()
-                    dob.timeInMillis = ben.dob
-                    val marriageDate = Calendar.getInstance()
-                    marriageDate.timeInMillis = ben.genDetails?.marriageDate!!
-                    var ageAtMarriage = marriageDate.get(Calendar.YEAR) - dob.get(Calendar.YEAR)
-                    if (marriageDate.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)) {
-                        ageAtMarriage--
-                    }
                     if (ben.familyHeadRelationPosition == 5 || ben.familyHeadRelationPosition == 6 ) {
                         benRepo.updateHousehold(ben.householdId, SyncState.UNSYNCED)
                     } else if (isAddspouse == 1) {
