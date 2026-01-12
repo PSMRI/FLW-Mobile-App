@@ -599,7 +599,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 saved.genDetails?.maritalStatusId?.let { maritalStatus.getStringFromPosition(it) }
 
 //            ageAtMarriage.value = saved.genDetails?.ageAtMarriage.toString()
-            ageAtMarriage.value = calculateAgeAtMarriage(saved.dob, saved.genDetails?.marriageDate ?: 0L).toString()
+            ageAtMarriage.value = calculateAgeAtMarriage(saved.dob, saved.genDetails?.marriageDate)?.toString()
             dateOfMarriage.value = getDateFromLong(saved.genDetails?.marriageDate ?: 0)
 
             mobileNoOfRelation.value =
@@ -739,7 +739,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         setUpPage(list)
     }
 
-    private fun calculateAgeAtMarriage(dob: Long, marriageDate: Long): Int {
+    private fun calculateAgeAtMarriage(dob: Long, marriageDate: Long?): Int? {
+        if (marriageDate == null || marriageDate <= 0L) return null
         val doB = Calendar.getInstance()
         doB.timeInMillis = dob
         val marriageDatE = Calendar.getInstance()
@@ -748,7 +749,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         if (marriageDatE.get(Calendar.DAY_OF_YEAR) < doB.get(Calendar.DAY_OF_YEAR)) {
             ageAtMarriage--
         }
-        return  ageAtMarriage
+        return  ageAtMarriage.takeIf { it >= 0 }
     }
 
 
@@ -871,7 +872,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             maritalStatus.value =
                 maritalStatus.getStringFromPosition(saved.genDetails?.maritalStatusId ?: 0)
 //            ageAtMarriage.value = saved.genDetails?.ageAtMarriage.toString()
-            ageAtMarriage.value = calculateAgeAtMarriage(saved.dob, saved.genDetails?.marriageDate ?: 0L).toString()
+            ageAtMarriage.value = calculateAgeAtMarriage(saved.dob, saved.genDetails?.marriageDate)?.toString()
             dateOfMarriage.value = getDateFromLong(
                 saved.genDetails?.marriageDate ?: 0
             )
@@ -1072,7 +1073,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             maritalStatus.value =
                 maritalStatus.getStringFromPosition(saved.genDetails?.maritalStatusId ?: 0)
 //            ageAtMarriage.value = saved.genDetails?.ageAtMarriage.toString()
-            ageAtMarriage.value = calculateAgeAtMarriage(saved.dob, saved.genDetails?.marriageDate ?: 0L).toString()
+            ageAtMarriage.value = calculateAgeAtMarriage(saved.dob, saved.genDetails?.marriageDate)?.toString()
             dateOfMarriage.value = getDateFromLong(
                 saved.genDetails?.marriageDate ?: 0
             )
