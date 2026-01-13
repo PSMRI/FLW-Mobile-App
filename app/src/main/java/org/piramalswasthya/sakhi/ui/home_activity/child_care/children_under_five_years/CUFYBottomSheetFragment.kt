@@ -100,12 +100,13 @@ class CUFYBottomSheetFragment : BottomSheetDialogFragment() {
                     listOf(
                         ChildOption(
                             formType = mapFormIdToType(entity.formId),
-                            title = getString(R.string.visit),
+                            title = getString(R.string.visit_2),
                             description = entity.visitDate,
                             isViewMode = true,
                             visitDay = entity.visitDate,
                             formDataJson = entity.formDataJson,
-                            recordId = entity.id
+                            recordId = entity.id,
+                            isIFA = true
                         )
                     )
                 } ?: emptyList()
@@ -117,8 +118,13 @@ class CUFYBottomSheetFragment : BottomSheetDialogFragment() {
                     isViewMode = false,
                     formDataJson = null
                 )
-
-                val finalList = viewOptions + addOption
+                val finalList : List<ChildOption>
+                if(viewOptions.isNotEmpty()){
+                 finalList = viewOptions}
+                else
+                {
+                    finalList =  viewOptions+ addOption
+                }
                 (_binding?.rvAnc?.adapter as ChildCareVisitListAdapter?)?.submitList(finalList)
 
             } else {
