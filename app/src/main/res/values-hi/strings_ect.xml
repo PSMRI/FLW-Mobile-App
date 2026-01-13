@@ -9,8 +9,10 @@
     <string name="ectdset_fly_plan_mthd">क्या आप परिवार नियोजन तरीका अपना रही हैं?</string>
     <string name="ectdset_mthd_conpt">एफपी तरीके</string>
     <string name="ectdset_other_mthd">कोई अन्य तरीका</string>
-
     <string name="antra_injection">अंतरा इंजेक्शन</string>
+    <string name="ectdset_fly_plan_mthd_mitanin">क्या आप परिवार नियोजन की कोई विधि अपना रहे हैं?</string>
+    <string name="ectdset_want_to_use_fly_plan_mthd_mitanin">क्या आप किसी नियोजन पद्धति का उपयोग करना चाहते हैं?</string>
 
-
+    <string name="ectdset_discharge_summary_1">डिस्चार्ज सारांश (नसबंदी विधि 1 के लिए लागू)</string>
+    <string name="ectdset_discharge_summary_2">डिस्चार्ज सारांश (नसबंदी विधि 2 के लिए लागू)</string>
 </resources>
