@@ -2,10 +2,8 @@ package org.piramalswasthya.sakhi.ui.home_activity.eligible_couple.tracking.form
 
 import android.Manifest
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
