@@ -109,7 +109,7 @@ class EligibleCoupleTrackingDataset(
     private val wantToUseFamilyPlanning = FormElement(
         id = 9,
         inputType = InputType.RADIO,
-        title = "Do you want to use any Planning Method?",
+        title = resources.getString(R.string.ectdset_want_to_use_fly_plan_mthd_mitanin),
         entries = resources.getStringArray(R.array.ectdset_yes_no),
         required = false,
         hasDependants = true
@@ -175,14 +175,14 @@ class EligibleCoupleTrackingDataset(
     private val deliveryDischargeSummary1  = FormElement(
         id = 60,
         inputType = InputType.FILE_UPLOAD,
-        title = "Discharge Summary Applicable for Sterilisation Method 1",
+        title = resources.getString(R.string.ectdset_discharge_summary_1),
         required = false
 
     )
     private val deliveryDischargeSummary2 = FormElement(
         id =61,
         inputType = InputType.FILE_UPLOAD,
-        title = "Discharge Summary Applicable for Sterilisation Method 2",
+        title = resources.getString(R.string.ectdset_discharge_summary_2),
         required = false
     )
     var lastDose: String? = null
