@@ -189,7 +189,7 @@ class EligibleCoupleTrackingFormFragment : Fragment() {
                     notifyItemChanged(9)
 
                 }
-                4, 5, 11 -> notifyDataSetChanged()
+                4, 5, 6,7,8,9,11 -> notifyDataSetChanged()
             }
         }
     }
@@ -269,7 +269,6 @@ class EligibleCoupleTrackingFormFragment : Fragment() {
     }
 
     private fun requestLocationPermission() {
-        val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED
         ) {

@@ -92,7 +92,7 @@
     <string name="pmsma_visit_date">PMSMA Visit Date</string>
     <string name="pmsma_visits">PMSMA Visits</string>
     <string name="pmsma_visit">PMSMA Visit</string>
-    <string name="is_baby_discharge_from_sncu">Is Baby discharge from SNCU?</string>
+    <string name="is_baby_discharge_from_sncu">क्या शिशु को एसएनसीयू में भर्ती कराया गया है?</string>
     <string name="optional">(Optional)</string>
     <string name="optional_">Optional</string>
      <string name="mandatory">Mandatory <font color='#FF0000'>*</font></string>
