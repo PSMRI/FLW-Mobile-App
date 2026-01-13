@@ -563,17 +563,22 @@ class CUFYFormFragment : Fragment() {
                         val visitYear = calendar.get(Calendar.YEAR)
 
                         val hasVisitInSameMonth = existingVisits.any { existingVisit ->
-                            val existingProvisionDateStr = extractIFAProvisionDateFromFormData(existingVisit.formDataJson)
-                            if (existingProvisionDateStr != null) {
+                            val existingProvisionDateStr =
+                                extractIFAProvisionDateFromFormData(existingVisit.formDataJson)
+                                    ?.takeIf { it.isNotBlank() }
+                                    ?: return@any false
+
+                            runCatching {
                                 val existingDate = sdf.parse(existingProvisionDateStr)
-                                val existingCalendar = Calendar.getInstance()
-                                existingCalendar.time = existingDate
+                                val existingCalendar = Calendar.getInstance().apply {
+                                    time = existingDate
+                                }
+
                                 existingCalendar.get(Calendar.MONTH) == visitMonth &&
                                         existingCalendar.get(Calendar.YEAR) == visitYear
-                            } else {
-                                false
-                            }
+                            }.getOrDefault(false)
                         }
+
 
                         if (hasVisitInSameMonth) {
                             provisionDateField.errorMessage = getString(R.string.only_one_visit_per_month_allowed)

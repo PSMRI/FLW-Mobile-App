@@ -444,7 +444,7 @@ suspend fun saveFormResponses(benId: Long, hhId: Long, recordId: Int = 0) {
         }
     }
 
-    suspend fun getPreviousIFAVisitDate(benId: Long): Date? {
+   /* suspend fun getPreviousIFAVisitDate(benId: Long): Date? {
         val savedList = repository.getSavedDataByFormId(
             FormConstants.CHILDREN_UNDER_FIVE_IFA_FORM_ID,
             benId
@@ -493,7 +493,41 @@ suspend fun saveFormResponses(benId: Long, hhId: Long, recordId: Int = 0) {
                 null
             }
         }
+    }*/
+
+    suspend fun getPreviousIFAVisitDate(benId: Long): Date? {
+        val savedList = repository.getSavedDataByFormId(
+            FormConstants.CHILDREN_UNDER_FIVE_IFA_FORM_ID,
+            benId
+        )
+
+        return savedList
+            .mapNotNull { extractIfaProvisionDate(it.formDataJson) }
+            .maxOrNull()
     }
+
+    private fun extractIfaProvisionDate(formDataJson: String): Date? {
+        return try {
+            val jsonObject = JSONObject(formDataJson)
+            val fields = jsonObject.optJSONObject("fields")
+
+            val provisionDateStr = fields
+                ?.optString("ifa_provision_date")
+                ?.takeIf { it.isNotBlank() }
+                ?: return null
+
+            SimpleDateFormat(
+                "dd-MM-yyyy",
+                Locale.getDefault()
+            ).parse(provisionDateStr)
+
+        } catch (e: Exception) {
+            Timber.tag("CUFYFormVM")
+                .e(e, "Error parsing ifa_provision_date")
+            null
+        }
+    }
+
     suspend fun getFormsDataByFormID(formId: String, benId: Long): List<CUFYFormResponseJsonEntity> {
         return repository.getSavedDataByFormId(formId, benId)
     }
