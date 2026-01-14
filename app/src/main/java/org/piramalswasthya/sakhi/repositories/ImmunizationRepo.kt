@@ -11,6 +11,7 @@ import org.piramalswasthya.sakhi.database.room.dao.TBDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.model.ImmunizationCache
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.model.ImmunizationPost
 import org.piramalswasthya.sakhi.model.Vaccine
 import org.piramalswasthya.sakhi.network.AmritApiService
@@ -273,11 +274,24 @@ class ImmunizationRepo @Inject constructor(
 
     private suspend fun saveVaccinesFromResponse(dataObj: String) {
         val vaccineList = Gson().fromJson(dataObj, Array<Vaccine>::class.java).toList()
+        val mitaninOnlyVaccines = setOf(
+            "PCV-1",
+            "PCV-2",
+            "PCV-Booster"
+        )
         vaccineList.forEach { vaccine ->
-            val existingVaccine: Vaccine? = immunizationDao.getVaccineByName(vaccine.vaccineName)
+            if (
+                vaccine.vaccineName in mitaninOnlyVaccines &&
+                !BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
+            ) {
+                return@forEach
+            }
+            val existingVaccine = immunizationDao.getVaccineByName(vaccine.vaccineName)
+
             if (existingVaccine == null) {
                 immunizationDao.addVaccine(vaccine)
             }
         }
     }
+
 }
