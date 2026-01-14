@@ -96,9 +96,27 @@ class EligibleCoupleTrackingDataset(
         required = false,
         hasDependants = true
     )
+    // Q2 – Only for Mitanin
+    private val usingFamilyPlanningMitanin = FormElement(
+        id = 8,
+        inputType = InputType.RADIO,
+        title = resources.getString(R.string.ectdset_fly_plan_mthd_mitanin),
+        entries = resources.getStringArray(R.array.ectdset_yes_no),
+        required = false,
+        hasDependants = true
+    )
+
+    private val wantToUseFamilyPlanning = FormElement(
+        id = 9,
+        inputType = InputType.RADIO,
+        title = resources.getString(R.string.ectdset_want_to_use_fly_plan_mthd_mitanin),
+        entries = resources.getStringArray(R.array.ectdset_yes_no),
+        required = false,
+        hasDependants = true
+    )
 
     private val methodOfContraception = FormElement(
-        id = 8,
+        id = 10,
         inputType = InputType.DROPDOWN,
         title = resources.getString(R.string.ectdset_mthd_conpt),
         arrayId = R.array.method_of_contraception,
@@ -109,7 +127,7 @@ class EligibleCoupleTrackingDataset(
     )
 
     private val antraDoses = FormElement(
-        id = 9,
+        id = 11,
         inputType = InputType.DROPDOWN,
         title = "Antra injection",
         arrayId = R.array.antra_doses,
@@ -120,7 +138,7 @@ class EligibleCoupleTrackingDataset(
     )
 
     private val anyOtherMethod = FormElement(
-        id = 10,
+        id = 12,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.ectdset_other_mthd),
         required = true,
@@ -129,7 +147,7 @@ class EligibleCoupleTrackingDataset(
     )
 
     private var dateOfAntraInjection = FormElement(
-        id = 11,
+        id = 13,
         inputType = InputType.DATE_PICKER,
         title = context.getString(R.string.date_of_antra_injection),
         arrayId = -1,
@@ -139,7 +157,7 @@ class EligibleCoupleTrackingDataset(
 
     )
     private var dueDateOfAntraInjection = FormElement(
-        id = 12,
+        id = 14,
         inputType = InputType.TEXT_VIEW,
         title = context.getString(R.string.due_date_of_next_injection),
         required = false,
@@ -147,7 +165,7 @@ class EligibleCoupleTrackingDataset(
         )
 
     private val mpaFileUpload1 = FormElement(
-        id = 21,
+        id = 23,
         inputType = InputType.FILE_UPLOAD,
         title = context.getString(R.string.mpa_card),
         required = false,
@@ -155,22 +173,22 @@ class EligibleCoupleTrackingDataset(
 
 
     private val deliveryDischargeSummary1  = FormElement(
-        id = 58,
+        id = 60,
         inputType = InputType.FILE_UPLOAD,
-        title = "Discharge Summary Applicable for Sterilisation Method 1",
+        title = resources.getString(R.string.ectdset_discharge_summary_1),
         required = false
 
     )
-
     private val deliveryDischargeSummary2 = FormElement(
-        id =59,
+        id =61,
         inputType = InputType.FILE_UPLOAD,
-        title = "Discharge Summary Applicable for Sterilisation Method 2",
+        title = resources.getString(R.string.ectdset_discharge_summary_2),
         required = false
     )
     var lastDose: String? = null
     var lastDateofDose: String? = null
     fun getIndexOfIsPregnant() = getIndexById(isPregnant.id)
+
     suspend fun setUpPage(
         ben: BenRegCache?,
         dateOfReg: Long,
@@ -178,14 +196,15 @@ class EligibleCoupleTrackingDataset(
         saved: EligibleCoupleTrackingCache?,
         noOfChildren: Int?
     ) {
-        noOfChildrens=noOfChildren!!
-        lastDose=lastTrack?.antraDose
-        lastDateofDose=lastTrack?.dateOfAntraInjection
+        noOfChildrens = noOfChildren!!
+        lastDose = lastTrack?.antraDose
+        lastDateofDose = lastTrack?.dateOfAntraInjection
 
-        methodOfContraception.entries = if (noOfChildren == 0)
-            resources.getStringArray(R.array.method_of_contraception_for_zero_child)
-        else
-            resources.getStringArray(R.array.method_of_contraception)
+        methodOfContraception.entries =
+            if (noOfChildren == 0)
+                resources.getStringArray(R.array.method_of_contraception_for_zero_child)
+            else
+                resources.getStringArray(R.array.method_of_contraception)
 
         val list = mutableListOf(
             dateOfVisit,
@@ -195,18 +214,29 @@ class EligibleCoupleTrackingDataset(
             isPregnancyTestDone,
         )
 
+        // Add FP question (Q1)
+        if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+            list.add(usingFamilyPlanning)
+            list.remove(usingFamilyPlanningMitanin)
+        } else {
+            list.add(usingFamilyPlanningMitanin)
+            list.remove(usingFamilyPlanning)
+        }
+
         if (saved == null) {
+
+            // -------- NEW ENTRY --------
+
             dateOfVisit.value = getDateFromLong(System.currentTimeMillis())
             dateOfVisit.value?.let {
                 financialYear.value = getFinancialYear(it)
                 month.value =
                     resources.getStringArray(R.array.visit_months)[Companion.getMonth(it)!!]
             }
+
             if (ben != null) {
-                dateOfAntraInjection.min=ben.regDate
+                dateOfAntraInjection.min = ben.regDate
             }
-
-
 
             dateOfVisit.min = lastTrack?.let {
                 Calendar.getInstance().apply {
@@ -222,43 +252,79 @@ class EligibleCoupleTrackingDataset(
                     setToStartOfTheDay()
                 }.timeInMillis
             } ?: dateOfReg
-        }
-        else {
+
+        } else {
+
+            // -------- EDIT ENTRY --------
+
             dateOfVisit.value = getDateFromLong(saved.visitDate)
-            if (saved.lmpDate != null) {
-                lmpDate.value = getDateFromLong(saved.lmpDate!!)
-            } else {
-                lmpDate.value = getDateFromLong(System.currentTimeMillis())
-            }
+            lmpDate.value =
+                if (saved.lmpDate != null)
+                    getDateFromLong(saved.lmpDate)
+                else
+                    getDateFromLong(System.currentTimeMillis())
+
             financialYear.value = getFinancialYear(dateString = dateOfVisit.value)
-
-
             month.value =
                 resources.getStringArray(R.array.visit_months)[Companion.getMonth(dateOfVisit.value)!!]
+
             isPregnancyTestDone.value =
                 getLocalValueInArray(R.array.yes_no, saved.isPregnancyTestDone)
+
             if (isPregnancyTestDone.value == resources.getStringArray(R.array.yes_no)[0]) {
+
                 list.add(list.indexOf(isPregnancyTestDone) + 1, pregnancyTestResult)
                 pregnancyTestResult.value = saved.pregnancyTestResult
-            }
-            else {
-                list.add(usingFamilyPlanning)
-                saved.usingFamilyPlanning?.let {
+
+            } else {
+
+                // Restore FP answers
+                if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+
                     usingFamilyPlanning.value =
-                        if (it) resources.getStringArray(R.array.yes_no)[0]
-                        else resources.getStringArray(R.array.yes_no)[1]
+                        if (saved.usingFamilyPlanning == true)
+                            resources.getStringArray(R.array.yes_no)[0]
+                        else
+                            resources.getStringArray(R.array.yes_no)[1]
+
+                    if (saved.usingFamilyPlanning == true) {
+                        list.add(methodOfContraception)
+                    }
+
+                } else {
+
+                    usingFamilyPlanningMitanin.value =
+                        if (saved.usingFamilyPlanning == true)
+                            resources.getStringArray(R.array.ectdset_yes_no)[0]
+                        else
+                            resources.getStringArray(R.array.ectdset_yes_no)[1]
+
+                    if (saved.usingFamilyPlanning == true) {
+                        list.add(methodOfContraception)
+                    } else {
+                        list.add(wantToUseFamilyPlanning)
+
+                        if (saved.methodOfContraception != null) {
+                            wantToUseFamilyPlanning.value =
+                                resources.getStringArray(R.array.ectdset_yes_no)[0]
+                            list.add(methodOfContraception)
+                        }
+                    }
                 }
-                list.add(methodOfContraception)
-                val methods = resources.getStringArray(R.array.method_of_contraception)
-                val sterilizationIndices = listOf(7, 8, 9)
+
+                // Restore FP method details
                 saved.methodOfContraception?.let { method ->
+                    val methods = resources.getStringArray(R.array.method_of_contraception)
+                    val sterilizationIndices = listOf(7, 8, 9)
 
-                    if (method in methods) {
-                        methodOfContraception.value = method
+                    when {
+                        method in methods -> {
+                            methodOfContraception.value = method
+                            val selectedIndex = methods.indexOf(method)
 
-                        val selectedIndex = methods.indexOf(method)
-                        if (selectedIndex in sterilizationIndices) {
-                            if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)){
+                            if (selectedIndex in sterilizationIndices &&
+                                !BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
+                            ) {
                                 list.add(deliveryDischargeSummary1)
                                 list.add(deliveryDischargeSummary2)
                                 deliveryDischargeSummary1.value = saved.dischargeSummary1
@@ -266,77 +332,27 @@ class EligibleCoupleTrackingDataset(
                             }
                         }
 
-                    } else if (method.split("/")[0] == methods[1]) {
-                        methodOfContraception.value = methods[1]
-                        list.add(antraDoses)
-                        list.add(dateOfAntraInjection)
-                        list.add(dueDateOfAntraInjection)
-
-                        if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) list.add(mpaFileUpload1)
-
-                        dateOfAntraInjection.value = saved.dateOfAntraInjection
-                        dueDateOfAntraInjection.value = saved.dueDateOfAntraInjection
-                        mpaFileUpload1.value = saved.mpaFile
-
-                        if (saved.antraDose != null) {
-                            antraDoseValue = saved.antraDose!!
-                            antraDoses.value = saved.antraDose
-                        }
-
-                    } else {
-                        methodOfContraception.value = methods.last()
-                        list.add(anyOtherMethod)
-                        anyOtherMethod.value = method
-                    }
-                }
-            }
-
-            isPregnant.value = getLocalValueInArray(R.array.yes_no, saved.isPregnant)
-
-            if (isPregnant.value == resources.getStringArray(R.array.yes_no)[1]) {
-                list.add(usingFamilyPlanning)
-                saved.usingFamilyPlanning?.let {
-                    usingFamilyPlanning.value =
-                        if (it) resources.getStringArray(R.array.yes_no)[0]
-                        else resources.getStringArray(R.array.yes_no)[1]
-                }
-
-                if (saved.usingFamilyPlanning == true) {
-                    list.add(methodOfContraception)
-                    val methods = resources.getStringArray(R.array.method_of_contraception)
-                    val sterilizationIndices = listOf(7, 8, 9)
-                    saved.methodOfContraception?.let { method ->
-
-                        if (method in methods) {
-                            methodOfContraception.value = method
-
-                            val selectedIndex = methods.indexOf(method)
-                            if (selectedIndex in sterilizationIndices) {
-                                if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)){
-                                    list.add(deliveryDischargeSummary1)
-                                    list.add(deliveryDischargeSummary2)
-                                    deliveryDischargeSummary1.value = saved.dischargeSummary1
-                                    deliveryDischargeSummary2.value = saved.dischargeSummary2
-                                }
-                            }
-
-                        } else if (method.split("/")[0] == methods[1]) {
+                        method.split("/")[0] == methods[1] -> {
                             methodOfContraception.value = methods[1]
                             list.add(antraDoses)
                             list.add(dateOfAntraInjection)
                             list.add(dueDateOfAntraInjection)
-                            if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) list.add(mpaFileUpload1)
+
+                            if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                                list.add(mpaFileUpload1)
+                                mpaFileUpload1.value = saved.mpaFile
+                            }
 
                             dateOfAntraInjection.value = saved.dateOfAntraInjection
                             dueDateOfAntraInjection.value = saved.dueDateOfAntraInjection
-                            mpaFileUpload1.value = saved.mpaFile
 
                             if (saved.antraDose != null) {
                                 antraDoseValue = saved.antraDose!!
                                 antraDoses.value = saved.antraDose
                             }
+                        }
 
-                        } else {
+                        else -> {
                             methodOfContraception.value = methods.last()
                             list.add(anyOtherMethod)
                             anyOtherMethod.value = method
@@ -345,14 +361,17 @@ class EligibleCoupleTrackingDataset(
                 }
             }
 
+            isPregnant.value = getLocalValueInArray(R.array.yes_no, saved.isPregnant)
         }
+
         val nextDose = getNextDose(lastDose, lastDateofDose, dateOfVisit.value!!)
         antraDoses.value = nextDose
-        antraDoseValue=nextDose
+        antraDoseValue = nextDose
         antraDoses.isEnabled = false
-        setUpPage(list)
 
+        setUpPage(list)
     }
+
 
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
         return when (formId) {
@@ -389,11 +408,19 @@ class EligibleCoupleTrackingDataset(
                     )
                 }
                 else{
-                    triggerDependants(
-                        source = isPregnancyTestDone,
-                        removeItems = listOf(isPregnant,pregnancyTestResult),
-                        addItems = listOf(usingFamilyPlanning)
-                    )
+                    if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                        triggerDependants(
+                            source = isPregnancyTestDone,
+                            removeItems = listOf(isPregnant,pregnancyTestResult),
+                            addItems = listOf(usingFamilyPlanning)
+                        )
+                    }else{
+                        triggerDependants(
+                            source = isPregnancyTestDone,
+                            removeItems = listOf(isPregnant,pregnancyTestResult),
+                            addItems = listOf(usingFamilyPlanningMitanin)
+                        )
+                    }
                 }
 
                 return 0
@@ -403,38 +430,79 @@ class EligibleCoupleTrackingDataset(
                 if (pregnancyTestResult.value == resources.getStringArray(R.array.ectdset_po_neg)[0]) {
                     isPregnant.value = resources.getStringArray(R.array.yes_no)[0]
                     isPregnant.isEnabled = false
-                    triggerDependants(
-                        source = pregnancyTestResult,
-                        passedIndex = index,
-                        triggerIndex = 0,
-                        target = isPregnant,
-                        targetSideEffect = listOf(isPregnant,usingFamilyPlanning,methodOfContraception, anyOtherMethod)
-                    )
-                    triggerforHide(
-                        source = pregnancyTestResult,
-                        passedIndex = index,
-                        triggerIndex = 1,
-                        target = usingFamilyPlanning,
-                        targetSideEffect = listOf(usingFamilyPlanning,methodOfContraception,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,anyOtherMethod)
-                    )
+
+                    if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                        triggerDependants(
+                            source = pregnancyTestResult,
+                            passedIndex = index,
+                            triggerIndex = 0,
+                            target = isPregnant,
+                            targetSideEffect = listOf(isPregnant,usingFamilyPlanning,methodOfContraception, anyOtherMethod)
+                        )
+                        triggerforHide(
+                            source = pregnancyTestResult,
+                            passedIndex = index,
+                            triggerIndex = 1,
+                            target = usingFamilyPlanning,
+                            targetSideEffect = listOf(usingFamilyPlanning,methodOfContraception,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,anyOtherMethod)
+                        )
+                    }else{
+
+                        triggerDependants(
+                            source = pregnancyTestResult,
+                            passedIndex = index,
+                            triggerIndex = 0,
+                            target = isPregnant,
+                            targetSideEffect = listOf(isPregnant,usingFamilyPlanningMitanin,methodOfContraception, anyOtherMethod)
+                        )
+                        triggerforHide(
+                            source = pregnancyTestResult,
+                            passedIndex = index,
+                            triggerIndex = 1,
+                            target = usingFamilyPlanningMitanin,
+                            targetSideEffect = listOf(usingFamilyPlanningMitanin,methodOfContraception,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,anyOtherMethod)
+                        )
+                    }
                 }
                 else if (pregnancyTestResult.value == resources.getStringArray(R.array.ectdset_po_neg)[1]) {
                     isPregnant.isEnabled = true
                     isPregnant.value = resources.getStringArray(R.array.yes_no)[1]
-                    triggerDependants(
-                        source = pregnancyTestResult,
-                        passedIndex = index,
-                        triggerIndex = 1,
-                        target = isPregnant,
-                        targetSideEffect = listOf(isPregnant,usingFamilyPlanning,methodOfContraception, anyOtherMethod,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection)
-                    )
-                    triggerDependants(
-                        source = isPregnant,
-                        passedIndex = index,
-                        triggerIndex = 1,
-                        target = usingFamilyPlanning,
-                        targetSideEffect = listOf(methodOfContraception, anyOtherMethod,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection)
-                    )
+
+
+                    if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                        triggerDependants(
+                            source = pregnancyTestResult,
+                            passedIndex = index,
+                            triggerIndex = 1,
+                            target = isPregnant,
+                            targetSideEffect = listOf(isPregnant,usingFamilyPlanning,methodOfContraception, anyOtherMethod,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection)
+                        )
+                        triggerDependants(
+                            source = isPregnant,
+                            passedIndex = index,
+                            triggerIndex = 1,
+                            target = usingFamilyPlanning,
+                            targetSideEffect = listOf(methodOfContraception, anyOtherMethod,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection)
+                        )
+                    }else{
+
+                        triggerDependants(
+                            source = pregnancyTestResult,
+                            passedIndex = index,
+                            triggerIndex = 1,
+                            target = isPregnant,
+                            targetSideEffect = listOf(isPregnant,usingFamilyPlanningMitanin,methodOfContraception, anyOtherMethod,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection)
+                        )
+                        triggerDependants(
+                            source = isPregnant,
+                            passedIndex = index,
+                            triggerIndex = 1,
+                            target = usingFamilyPlanningMitanin,
+                            targetSideEffect = listOf(methodOfContraception, anyOtherMethod,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection)
+                        )
+
+                    }
+
 
                 }
                 else {
@@ -454,30 +522,59 @@ class EligibleCoupleTrackingDataset(
 
                 }
                 if (isPregnant.value == resources.getStringArray(R.array.yes_no_donno)[0]) {
-                    triggerDependants(
-                        source = isPregnant,
-                        passedIndex = index,
-                        triggerIndex = 1,
-                        target = usingFamilyPlanning,
-                        targetSideEffect = list1
-                    )
+                    if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                        triggerDependants(
+                            source = isPregnant,
+                            passedIndex = index,
+                            triggerIndex = 1,
+                            target = usingFamilyPlanning,
+                            targetSideEffect = list1
+                        )
+                    }else{
+                        triggerDependants(
+                            source = isPregnant,
+                            passedIndex = index,
+                            triggerIndex = 1,
+                            target = usingFamilyPlanningMitanin,
+                            targetSideEffect = list1
+                        )
+                    }
                 }
                 else if (isPregnant.value == resources.getStringArray(R.array.yes_no_donno)[1]) {
-                    triggerDependants(
-                        source = isPregnant,
-                        passedIndex = index,
-                        triggerIndex = 1,
-                        target = usingFamilyPlanning,
-                        targetSideEffect = list1
-                    )
+                    if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                        triggerDependants(
+                            source = isPregnant,
+                            passedIndex = index,
+                            triggerIndex = 1,
+                            target = usingFamilyPlanning,
+                            targetSideEffect = list1
+                        )
+                    }else{
+                        triggerDependants(
+                            source = isPregnant,
+                            passedIndex = index,
+                            triggerIndex = 1,
+                            target = usingFamilyPlanningMitanin,
+                            targetSideEffect = list1
+                        )
+                    }
                 }
                 else {
-                    triggerDependants(
-                        source = isPregnant,
-                        passedIndex = index,
-                        triggerIndex = 2,
-                        target = usingFamilyPlanning,
-                        targetSideEffect = list1 )
+                    if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                        triggerDependants(
+                            source = isPregnant,
+                            passedIndex = index,
+                            triggerIndex = 2,
+                            target = usingFamilyPlanning,
+                            targetSideEffect = list1 )
+                    }else{
+                        triggerDependants(
+                            source = isPregnant,
+                            passedIndex = index,
+                            triggerIndex = 2,
+                            target = usingFamilyPlanningMitanin,
+                            targetSideEffect = list1 )
+                    }
                 }
                 return 0
 
@@ -548,18 +645,18 @@ class EligibleCoupleTrackingDataset(
                             if (selectedIndex in sterilizationIndices) {
                                 triggerDependants(
                                     source = methodOfContraception,
-                                    addItems = listOf(
-                                        deliveryDischargeSummary1,
-                                        deliveryDischargeSummary2
-                                    ),
+                                    addItems =
+                                        if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true))
+                                            listOf(deliveryDischargeSummary1, deliveryDischargeSummary2)
+                                        else
+                                            emptyList(),
                                     removeItems = listOf(
                                         antraDoses,
                                         anyOtherMethod,
                                         dateOfAntraInjection,
                                         dueDateOfAntraInjection,
                                         mpaFileUpload1,
-
-                                        ),
+                                    ),
                                     position = -1
                                 )
                             }
@@ -592,6 +689,64 @@ class EligibleCoupleTrackingDataset(
                 validateAllAlphabetsSpaceOnEditText(anyOtherMethod)
             }
 
+            usingFamilyPlanningMitanin.id -> {
+
+                if (usingFamilyPlanningMitanin.value == resources.getStringArray(R.array.ectdset_yes_no)[0]) {
+                    // YES → show FP Methods, hide Q2
+                    triggerDependants(
+                        source = usingFamilyPlanningMitanin,
+                        removeItems = listOf(wantToUseFamilyPlanning),
+                        addItems = listOf(methodOfContraception)
+                    )
+                } else {
+                    // NO → show Q2, hide FP Methods
+                    triggerDependants(
+                        source = usingFamilyPlanningMitanin,
+                        removeItems = listOf(
+                            methodOfContraception,
+                            antraDoses,
+                            dateOfAntraInjection,
+                            dueDateOfAntraInjection,
+                            anyOtherMethod,
+                            mpaFileUpload1,
+                            deliveryDischargeSummary1,
+                            deliveryDischargeSummary2
+                        ),
+                        addItems = listOf(wantToUseFamilyPlanning)
+                    )
+                }
+                return 0
+            }
+            wantToUseFamilyPlanning.id -> {
+
+                if (wantToUseFamilyPlanning.value == resources.getStringArray(R.array.ectdset_yes_no)[0]) {
+                    // YES → show FP Methods
+                    triggerDependants(
+                        source = wantToUseFamilyPlanning,
+                        removeItems = emptyList(),
+                        addItems = listOf(methodOfContraception)
+                    )
+                } else {
+                    // NO → END FLOW
+                    triggerDependants(
+                        source = wantToUseFamilyPlanning,
+                        removeItems = listOf(
+                            methodOfContraception,
+                            antraDoses,
+                            dateOfAntraInjection,
+                            dueDateOfAntraInjection,
+                            anyOtherMethod,
+                            mpaFileUpload1,
+                            deliveryDischargeSummary1,
+                            deliveryDischargeSummary2
+                        ),
+                        addItems = emptyList()
+                    )
+                }
+                return 0
+            }
+
+
             else -> -1
         }
     }
@@ -610,7 +765,15 @@ class EligibleCoupleTrackingDataset(
             form.dischargeSummary1 = deliveryDischargeSummary1.value
             form.dischargeSummary2 = deliveryDischargeSummary2.value
 
-            form.usingFamilyPlanning = usingFamilyPlanning.value?.let { it == resources.getStringArray(R.array.yes_no)[0] }
+
+            form.usingFamilyPlanning =
+                if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                    usingFamilyPlanningMitanin.value == resources.getStringArray(R.array.ectdset_yes_no)[0] ||
+                            wantToUseFamilyPlanning.value == resources.getStringArray(R.array.ectdset_yes_no)[0]
+                } else {
+                    usingFamilyPlanning.value == resources.getStringArray(R.array.yes_no)[0]
+                }
+
             if (methodOfContraception.value == resources.getStringArray(R.array.method_of_contraception)
                     .last()
             ) {
