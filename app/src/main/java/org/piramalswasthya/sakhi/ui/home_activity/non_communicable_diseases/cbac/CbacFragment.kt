@@ -25,7 +25,6 @@ import org.piramalswasthya.sakhi.model.ReferalCache
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.disease_control.leprosy.form.LeprosyFormViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_screening.form.TBScreeningFormViewModel
-import org.piramalswasthya.sakhi.utils.Log
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 import java.text.SimpleDateFormat
@@ -117,7 +116,7 @@ class CbacFragment : Fragment() {
                 referralForReason = "Suspected Leprosy case"
                 referType = "LEPROSY"
                 asreferAlertDialog.show()
-                Log.e("DataFialog","showing")
+
 
             } else {
                 asreferAlertDialog.dismiss()

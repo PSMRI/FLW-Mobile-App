@@ -104,6 +104,7 @@
     <string name="place_of_vhnd">Place of VHND session</string>
     <string name="participants">Participants</string>
     <string name="participants_attended">Participants Attended</string>
+    <string name="leprosy_title">Check if the person has any of these symptoms</string>
     <string name="no_b_attended">No. of Beneficiaries Attended</string>
     <string name="total_no_b_attended">Total No. of Beneficiaries Attended</string>
     <string name="total_no_pw_attended">Number of Pregnant Woman attended for ANC check up</string>
