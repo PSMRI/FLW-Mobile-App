@@ -69,7 +69,6 @@ class PHCReviewDataset(
         arrayId = -1,
         required = false,
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
-        isMobileNumber = true,
         value = "0",
         etMaxLength = 3,
         max = 999,
@@ -154,14 +153,14 @@ class PHCReviewDataset(
             if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
                 val parsedMitaninHistoryList = parseSelections(it.mitaninHistory, mitanin.entries!!)
                 mitanin.value = if (parsedMitaninHistoryList.isNotEmpty()) {
-                    parsedMitaninHistoryList.joinToString(", ")
+                    parsedMitaninHistoryList.joinToString(",")
                 } else {
                     it.mitaninHistory ?: ""
                 }
 
                 val parsedMitaninCheckListList = parseSelections(it.mitaninActivityCheckList, mT.entries!!)
                 mT.value = if (parsedMitaninCheckListList.isNotEmpty()) {
-                    parsedMitaninCheckListList.joinToString(", ")
+                    parsedMitaninCheckListList.joinToString(",")
                 } else {
                     it.mitaninActivityCheckList ?: ""
                 }
@@ -229,7 +228,7 @@ class PHCReviewDataset(
             }
             villageName.id -> {
                 validateEmptyOnEditText(villageName)
-                validateAllAlphabetsSpecialAndNumericOnEditText(place)
+                validateAllAlphabetsSpecialAndNumericOnEditText(villageName)
                 -1
             }
 
@@ -253,7 +252,7 @@ class PHCReviewDataset(
             form.phcReviewDate = phcReviewDate.value!!
             form.place = place.value
             form.placeId = place.getPosition()
-            form.noOfBeneficiariesAttended = noOfParticipantsAttended.value!!.toInt()
+            form.noOfBeneficiariesAttended = noOfParticipantsAttended.value?.toIntOrNull() ?: 0
             form.image1 = pic1.value
             form.image2 = pic2.value
             form.villageName = villageName.value
