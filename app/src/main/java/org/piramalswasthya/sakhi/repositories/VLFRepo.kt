@@ -193,7 +193,7 @@ class VLFRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-                        val errorMessage = jsonObj.getString("errorMessage")
+//                        val errorMessage = jsonObj.getString("errorMessage")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit hrp assess data : $responseStatusCode")
                         when (responseStatusCode) {
@@ -218,7 +218,7 @@ class VLFRepo @Inject constructor(
                             }
 
                             5000 -> {
-                                if (errorMessage == "No record found") return@withContext 0
+//                                if (errorMessage == "No record found") return@withContext 0
                             }
 
                             else -> {
@@ -537,7 +537,7 @@ class VLFRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-                        val errorMessage = jsonObj.getString("errorMessage")
+//                        val errorMessage = jsonObj.getString("errorMessage")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit hrp assess data : $responseStatusCode")
                         when (responseStatusCode) {
@@ -562,7 +562,7 @@ class VLFRepo @Inject constructor(
                             }
 
                             5000 -> {
-                                if (errorMessage == "No record found") return@withContext 0
+//                                if (errorMessage == "No record found") return@withContext 0
                             }
 
                             else -> {

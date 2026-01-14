@@ -96,6 +96,12 @@
     <string name="saas_bahu_reg">সাস বহু সন্মিলন পঞ্জীয়ন</string>
     <string name="icon_cluster_phc_list">Cluster Meeting Forms List</string>
     <string name="icon_cluster_phc">Cluster Meeting Forms</string>
+    <string name="place_of_meeting">Place of meeting</string>
+    <string name="mitanin">Mitanins</string>
+    <string name="mt">Mitanin Activity check list</string>
+    <string name="anmrho">ANM/ RHO</string>
+    <string name="participants_attended">Participants Attended</string>
+    <string name="leprosy_title">Check if the person has any of these symptoms</string>
 
 
 </resources>

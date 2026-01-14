@@ -110,6 +110,18 @@ class BenRepo @Inject constructor(
         }
     }
 
+    suspend fun updateMarriageAgeOfWife(marriageDate: Long, ageAtMarriage: Int, householdId: Long, spouseName: String, unsynced: SyncState) {
+        withContext(Dispatchers.IO) {
+            benDao.updateMarriageAgeOfWife(marriageDate = marriageDate, ageAtMarriage = ageAtMarriage, householdId = householdId, spouseName = spouseName, unsynced, "U", 2)
+        }
+    }
+
+    suspend fun updateMarriageAgeOfHusband(marriageDate: Long, ageAtMarriage: Int, householdId: Long, spouseName: String, unsynced: SyncState) {
+        withContext(Dispatchers.IO) {
+            benDao.updateMarriageAgeOfHusband(marriageDate = marriageDate, ageAtMarriage = ageAtMarriage, householdId = householdId, spouseName = spouseName, unsynced, "U", 2)
+        }
+    }
+
     suspend fun updateBabyName(babyName: String, householdId: Long, parentName: String, unsynced: SyncState) {
         withContext(Dispatchers.IO) {
             benDao.updateBabyName(babyName = babyName, householdId = householdId, parentName = parentName, unsynced, "U", 2)

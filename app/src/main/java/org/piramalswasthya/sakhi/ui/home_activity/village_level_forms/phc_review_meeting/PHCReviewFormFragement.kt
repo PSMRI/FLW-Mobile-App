@@ -133,6 +133,7 @@ class PHCReviewFormFragement:Fragment() {
     private fun hardCodedListUpdate(formId: Int) {
         binding.form.rvInputForm.adapter?.apply {
             when (formId) {
+                9 -> notifyDataSetChanged()
             }
         }
     }
