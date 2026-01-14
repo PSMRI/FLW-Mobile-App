@@ -185,6 +185,7 @@ object WorkerUtils {
             .then(CUFYIFAFormSyncWorker)
             .then(CUFYSAMFormSyncWorker)
             .then(NCDFollowupFormSyncWorker)
+            .then(pullVLFWorkRequest)
 
             .then(pullEyeSurgeryFormSyncWorker)
             .then(pullFilariaMDAFormSyncWorker)
@@ -203,7 +204,6 @@ object WorkerUtils {
 //            .then(pullHBYCFromAmritWorker)
             .then(pullHBNCFromAmritWorker)
             .then(pullHRPWorkRequest)
-            .then(pullVLFWorkRequest)
             .then(pullAdolescentWorkRequest)
             .then(pullMalariaWorkRequest)
             .then(pullAESToAmritWorker)
@@ -563,6 +563,7 @@ object WorkerUtils {
                 pullWorkRequest
             )
             .then(ancPullWorkRequest)
+            .then(pullVLFWorkRequest)
             .then(maaMeetingFormSyncWorkerRequest)
             .then(pullEyeSurgeryFormSyncWorker)
             .then(pullFilariaMDAFormSyncWorker)
@@ -593,7 +594,6 @@ object WorkerUtils {
 //            .then(pullHBYCFromAmritWorker)
             .then(pullHBNCFromAmritWorker)
             .then(pullHRPWorkRequest)
-            .then(pullVLFWorkRequest)
             .then(pulladolescentWorkRequest)
             .then(pullMalariaWorkRequest)
             .then(pullAESToAmritWorker)

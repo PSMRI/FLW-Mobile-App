@@ -439,161 +439,13 @@
                         addWithError(textInputLayout, field)
                     }
 
-                   /* "date" -> {
-                        val context = itemView.context
-                        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-                        val today = Calendar.getInstance().time
-                        val todayStr = sdf.format(today)
 
-                        if (field.fieldId == "visit_date" && (field.value == null || (field.value as? String)?.isBlank() == true)) {
-                            field.value = todayStr
-                        }
-                        val isFieldAlwaysDisabled = field.fieldId == "due_date"
-                        val isFieldEditable = field.isEditable && !isViewOnly && !isFieldAlwaysDisabled
-
-                        val textInputLayout = TextInputLayout(
-                            context,
-                            null,
-                            com.google.android.material.R.style.Widget_Material3_TextInputLayout_OutlinedBox
-                        ).apply {
-                            layoutParams = LinearLayout.LayoutParams(
-                                ViewGroup.LayoutParams.MATCH_PARENT,
-                                ViewGroup.LayoutParams.WRAP_CONTENT
-                            ).apply {
-                                setMargins(0, 16, 0, 8)
-                            }
-                            hint = field.placeholder ?: "Select ${field.label}"
-                            boxBackgroundMode = TextInputLayout.BOX_BACKGROUND_OUTLINE
-                            boxStrokeColor = ContextCompat.getColor(context, R.color.md_theme_light_primary)
-                            boxStrokeWidthFocused = 2
-                            setBoxCornerRadii(12f, 12f, 12f, 12f)
-                        }
-
-                        val editText = TextInputEditText(context).apply {
-                            layoutParams = LinearLayout.LayoutParams(
-                                ViewGroup.LayoutParams.MATCH_PARENT,
-                                ViewGroup.LayoutParams.WRAP_CONTENT
-                            )
-                            setPadding(32, 24, 32, 24)
-                            background = null
-                            val dateValue = when (val v = field.value) {
-                                is String -> {
-                                    val cleanValue = v.trim().removePrefix("\"").removeSuffix("\"")
-                                    if (cleanValue.startsWith("[")) {
-                                        try {
-                                            val jsonArray = JSONArray(cleanValue)
-                                            val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-                                            val dates = (0 until jsonArray.length()).mapNotNull {
-                                                runCatching { sdf.parse(jsonArray.getString(it)) }.getOrNull()
-                                            }
-                                            dates.maxOrNull()?.let { sdf.format(it) }
-                                        } catch (e: Exception) {
-                                            Log.e("FormRenderer", "Error parsing JSON array: ${e.message}")
-                                            null
-                                        }
-                                    } else {
-                                        cleanValue
-                                    }
-                                }
-                                is List<*> -> {
-                                    val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-                                    v.mapNotNull { it as? String }
-                                        .mapNotNull { runCatching { sdf.parse(it) }.getOrNull() }
-                                        .maxOrNull()?.let { sdf.format(it) }
-                                }
-                                is JSONArray -> {
-                                    try {
-                                        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-                                        val dates = (0 until v.length()).mapNotNull {
-                                            runCatching { sdf.parse(v.getString(it)) }.getOrNull()
-                                        }
-                                        dates.maxOrNull()?.let { sdf.format(it) }
-                                    } catch (e: Exception) {
-                                        Log.e("FormRenderer", "Error parsing JSONArray directly: ${e.message}")
-                                        null
-                                    }
-                                }
-
-                                else -> null
-                            }
-                            setText(dateValue ?: "")
-                            //setText(field.value as? String ?: "")
-                            isFocusable = false
-                            isClickable = isFieldEditable
-                            isEnabled = isFieldEditable
-                           // isClickable = true
-                            //isEnabled = !isFieldAlwaysDisabled && !isViewOnly
-                            setCompoundDrawablesWithIntrinsicBounds(
-                                null, null,
-                                ContextCompat.getDrawable(context, R.drawable.ic_calendar),
-                                null
-                            )
-                            compoundDrawablePadding = 24
-                            setTextColor(ContextCompat.getColor(context, android.R.color.black))
-                            setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodyLarge)
-                        }
-
-                        textInputLayout.addView(editText)
-
-                     //   if (!isViewOnly && !isFieldAlwaysDisabled) {
-                        if (isFieldEditable) {
-                            editText.setOnClickListener {
-                                val calendar = Calendar.getInstance()
-
-                                val (minDate, maxDate) = if (field.fieldId == "visit_date") {
-                                    minVisitDate to maxVisitDate
-                                } else {
-                                    val minDateStr = field.validation?.minDate
-                                    val maxDateStr = field.validation?.maxDate
-
-                                    val min = when (minDateStr) {
-                                        "today" -> today
-                                        "dob", "due_date" -> {
-                                            val ref = fields.find { it.fieldId == minDateStr }
-                                            (ref?.value as? String)?.let { sdf.parse(it) }
-                                        }
-                                        else -> minDateStr?.let { sdf.parse(it) }
-                                    }
-
-                                    val max = when (maxDateStr) {
-                                        "today" -> today
-                                        "dob", "due_date" -> {
-                                            val ref = fields.find { it.fieldId == maxDateStr }
-                                            (ref?.value as? String)?.let { sdf.parse(it) } ?: today
-                                        }
-                                        else -> maxDateStr?.let { sdf.parse(it) } ?: today
-                                    }
-
-                                    min to max
-                                }
-
-                                DatePickerDialog(
-                                    context,
-                                    { _, year, month, dayOfMonth ->
-                                        val dateStr = String.format("%02d-%02d-%04d", dayOfMonth, month + 1, year)
-                                        editText.setText(dateStr)
-                                        field.value = dateStr
-                                        onValueChanged(field, dateStr)
-                                    },
-                                    calendar.get(Calendar.YEAR),
-                                    calendar.get(Calendar.MONTH),
-                                    calendar.get(Calendar.DAY_OF_MONTH)
-                                ).apply {
-                                    minDate?.let { datePicker.minDate = it.time }
-                                    maxDate?.let { datePicker.maxDate = it.time }
-                                }.show()
-                            }
-                        }
-
-                        addWithError(textInputLayout, field)
-                    }*/
                     "date" -> {
                         val context = itemView.context
                         val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
                         val today = Calendar.getInstance().time
                         val todayStr = sdf.format(today)
 
-                        // Auto-set visit date if empty
                         if (field.fieldId == "visit_date" &&
                             (field.value == null || (field.value as? String)?.isBlank() == true)
                         ) {
@@ -642,7 +494,6 @@
 
                         textInputLayout.addView(editText)
 
-                        // ---- HELPER FUNCTIONS ----
                         fun getDate(fieldId: String): Date? {
                             val v = fields.find { it.fieldId == fieldId }?.value as? String
                             return try { sdf.parse(v ?: "") } catch (e: Exception) { null }
@@ -666,15 +517,32 @@
                             editText.setOnClickListener {
                                 val calendar = Calendar.getInstance()
 
-                                val minDate = when (field.fieldId) {
-                                    "visit_date" -> null
-                                    "nrc_admission_date" -> getDate("visit_date")
-                                    "nrc_discharge_date" -> getDate("nrc_admission_date")
-                                    "follow_up_visit_date" -> getDate("nrc_discharge_date")
-                                    else -> null
-                                }
+                                var minDate: Date? = null
+                                var maxDate: Date? = null
 
-                                val maxDate = today
+                                if (field.fieldId == "ifa_provision_date") {
+                                    minDate = minVisitDate
+                                    maxDate = maxVisitDate
+
+                                    if (minDate == null) {
+                                        calendar.time = today
+                                        calendar.add(Calendar.MONTH, -2)
+                                        minDate = calendar.time
+                                    }
+                                    if (maxDate == null) {
+                                        maxDate = today
+                                    }
+                                }
+                                else {
+                                    minDate = when (field.fieldId) {
+                                        "visit_date" -> null
+                                        "nrc_admission_date" -> getDate("visit_date")
+                                        "nrc_discharge_date" -> getDate("nrc_admission_date")
+                                        "follow_up_visit_date" -> getDate("nrc_discharge_date")
+                                        else -> null
+                                    }
+                                    maxDate = today
+                                }
 
                                 DatePickerDialog(
                                     context,
@@ -683,10 +551,19 @@
                                         editText.setText(dateStr)
                                         field.value = dateStr
                                         onValueChanged(field, dateStr)
+                                        field.errorMessage = null
 
+                                        if (field.fieldId == "ifa_provision_date") {
+                                            val selectedDate = sdf.parse(dateStr)
+                                            if (minDate != null && selectedDate.before(minDate)) {
+                                                field.errorMessage = "Date cannot be before ${sdf.format(minDate)}"
+                                            } else if (maxDate != null && selectedDate.after(maxDate)) {
+                                                field.errorMessage = "Date cannot be after ${sdf.format(maxDate)}"
+                                            }
+                                            notifyItemChanged(adapterPosition)
+                                        }
 
                                         when (field.fieldId) {
-
                                             "visit_date" -> {
                                                 val admission = fields.find { it.fieldId == "nrc_admission_date" }
                                                 admission?.validation?.minDate = dateStr
@@ -731,6 +608,10 @@
                                 ).apply {
                                     minDate?.let { datePicker.minDate = it.time }
                                     maxDate?.let { datePicker.maxDate = it.time }
+
+                                    if (minDate != null && maxDate != null && minDate.after(maxDate)) {
+                                        datePicker.minDate = maxDate.time
+                                    }
                                 }.show()
                             }
                         }
