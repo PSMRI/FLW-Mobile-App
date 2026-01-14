@@ -189,7 +189,6 @@
         <item>Item 5</item>
         <item>Item 6</item>
     </string-array>
-    <!-- TODO: Remove or change this placeholder text -->
 
 
     <string name="about_us">Piramal Swasthya is focusing on bridging the gaps of Public Healthcare by supplementing and complementing Government of India’s vision to meet Universal Health Care for all. Piramal Swasthya is one of the largest not-for-profit organizations in India - in the primary public health care space with a focus on Maternal health, Child and Adolescent Health, Non-communicable diseases. Piramal Swasthya has over a decade-long experience in operating several healthcare innovations at scale, which are addressing the primary health care needs of most underserved and marginalized populations across India. Piramal Swasthya is operational in 20 states in India through 35 innovative public health care delivery programs and has served more than 10.7 Crore beneficiaries thus far, with its services designed to reach the last village and the last household. Piramal Swasthya employs 2260 employees including 250 medical doctors who work around the core value of Seva Bhav (beneficiary-centricity) through an outcome oriented approach. Over the last twelve years, the focus has been on, Building platforms for sustainable impact at scale, Innovations to scale as a journey, Influencing policies, governance, and accountability of the public health care system as a knowledge and implementation partner of the NITI Aayog. Innovation in the form of intervention design, modelling, piloting and scaling-up those pilots has been an approach at Piramal Swasthya. Piramal Swasthya is committed to make primary healthcare not only affordable, accessible and available to all, but also to ensure that it is complete, continuous and comprehensive.</string>
@@ -241,8 +240,6 @@
     <string name="try_again">Try Again!</string>
     <string name="version_2_0_0">APK Version 2.0.0</string>
     <string name="file_size">File size should be less than or equals to 5 MB.</string>
-    <!--    <string name="disagree">DISAGREE</string>-->
-    <!--    <string name="agree">AGREE</string>-->
     <string name="enter_pin">Enter PIN</string>
     <string name="sync_in_progress">Sync in progress ...</string>
     <string name="full_name">Full Name</string>
@@ -368,7 +365,6 @@
     <string name="hbyc">HBYC</string>
     <string name="hbyc_month_list">Hbyc Month List</string>
     <string name="immunization">Immunization</string>
-    <!--    <string name="child_immunization_list">Child Immunization List</string>-->
     <string name="pregnancy_registration_form">Pregnancy Registration Form</string>
     <string name="anc_visit">ANC Visit</string>
     <string name="cac_form">CAC Form</string>
@@ -518,7 +514,7 @@
     <string name="session_date_n_a">Session Date: N/A</string>
     <string name="session_date_format">Session Date: %s</string>
     <string name="uwin_session_format">UWIN Session %s</string>
-    <string name="is_baby_discharge_from_sncu">Is Baby discharge from SNCU?</string>
+    <string name="is_baby_discharge_from_sncu">Is the Baby admitted to the SNCU?</string>
     <string name="optional">(Optional)</string>
     <string name="optional_">Optional</string>
     <string name="mandatory">Mandatory <font color='#FF0000'>*</font></string>

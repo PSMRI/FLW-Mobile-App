@@ -18,7 +18,11 @@
     </array>
     <string name="ectdset_name_wo_preg">Is the woman pregnant?</string>
     <string name="ectdset_fly_plan_mthd">Are you using Family Planning Method? or Do you want to use any Planning Method</string>
-    <string name="ectdset_mthd_conpt">Method of Contraception</string>
+    <string name="ectdset_fly_plan_mthd_mitanin">Are you using any Family Planning Method?</string>
+    <string name="ectdset_want_to_use_fly_plan_mthd_mitanin">Do you want to use any Planning Method?</string>
+    <string name="ectdset_discharge_summary_1">Discharge Summary Applicable for Sterilisation Method 1</string>
+    <string name="ectdset_discharge_summary_2">Discharge Summary Applicable for Sterilisation Method 2</string>
+    <string name="ectdset_mthd_conpt">FP Methods</string>
     <string name="ectdset_other_mthd">Any Other Method</string>
     <string name="antra_injection">Antra injection</string>
 </resources>
