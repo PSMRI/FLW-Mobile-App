@@ -841,6 +841,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             gender.value = gender.getStringFromPosition(saved.genderId)
             if (ben.isSpouseAdded || ben.isChildrenAdded || ben.doYouHavechildren) {
                 gender.inputType = TEXT_VIEW
+                agePopup.inputType = TEXT_VIEW
             }
             fatherName.value = saved.fatherName
             fileUploadFront.value = saved.kidDetails?.birthCertificateFileFrontView
@@ -985,7 +986,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 FEMALE -> R.array.nbr_marital_status_female_array
                 TRANSGENDER -> R.array.nbr_marital_status_male_array
             }
-            gender.inputType = TEXT_VIEW
+//            gender.inputType = TEXT_VIEW
             relationToHead.value = relationToHead.getStringFromPosition(relationToHeadId + 1)
             if (relationToHeadId == relationToHead.entries!!.lastIndex) {
                 list.add(list.indexOf(relationToHead) + 1, otherRelationToHead)
@@ -1052,6 +1053,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             gender.value = gender.getStringFromPosition(saved.genderId)
             if (ben.isSpouseAdded || ben.isChildrenAdded || ben.doYouHavechildren) {
                 gender.inputType = TEXT_VIEW
+                agePopup.inputType = TEXT_VIEW
             }
             fatherName.value = saved.fatherName
             fileUploadFront.value = saved.kidDetails?.birthCertificateFileFrontView
@@ -1330,7 +1332,10 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         if (benGender == MALE) wifeName.value = hof?.motherName
         if (benGender == FEMALE) husbandName.value = hof?.fatherName
         maritalStatus.value = maritalStatus.getStringFromPosition(2)
-        maritalStatus.inputType = TEXT_VIEW
+        hoF.genDetails?.spouseName?.let {
+            maritalStatus.inputType = TEXT_VIEW
+            agePopup.inputType = TEXT_VIEW
+        }
         lastName.value = hoF.lastName?.also { firstName.inputType = TEXT_VIEW }
         ageAtMarriage.max = getAgeFromDob(hoF.dob).toLong()
     }
@@ -1360,7 +1365,10 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             }
 
             maritalStatus.value = maritalStatus.getStringFromPosition(2)
-            maritalStatus.inputType = TEXT_VIEW
+            hoFSpouse.genDetails?.spouseName?.let {
+                maritalStatus.inputType = TEXT_VIEW
+            }
+//            maritalStatus.inputType = TEXT_VIEW
             if (hoFSpouse.gender == MALE) {
             list1.add(list1.indexOf(maritalStatus) + 1 ,haveChildren)
                 }
@@ -1395,7 +1403,10 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 husbandName.inputType = TEXT_VIEW
             }
             maritalStatus.value = maritalStatus.getStringFromPosition(2)
-            maritalStatus.inputType = TEXT_VIEW
+            selectedben.genDetails?.spouseName?.let {
+                maritalStatus.inputType = TEXT_VIEW
+            }
+//            maritalStatus.inputType = TEXT_VIEW
             if (selectedben?.gender  == MALE) {
                 list1.add(list1.indexOf(maritalStatus) + 1 ,haveChildren)
 
@@ -1809,6 +1820,33 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     timeStampDateOfMarriageFromSpouse
                 )
 
+                gender.value = null
+                relationToHead.value = null
+                maritalStatus.value = null
+                reproductiveStatus.value = null
+                maritalStatus.entries = when (index) {
+                    1 -> maritalStatusFemale
+                    else -> maritalStatusMale
+                }
+
+
+
+                maritalStatus.arrayId = when (index) {
+                    1 -> R.array.nbr_marital_status_female_array
+                    else -> R.array.nbr_marital_status_male_array
+
+                }
+
+                maritalStatus.inputType = DROPDOWN
+                reproductiveStatus.inputType = DROPDOWN
+                relationToHead.inputType = DROPDOWN
+
+                relationToHead.entries = when (index) {
+                    0 -> relationToHeadListMale
+                    1 -> relationToHeadListFemale
+                    else -> relationToHeadListDefault
+                }
+
                 updateReproductiveOptionsBasedOnAgeGender(formId = agePopup.id)
 
             }
@@ -1872,6 +1910,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             gender.id -> {
                 relationToHead.value = null
                 maritalStatus.value = null
+                reproductiveStatus.value = null
                 maritalStatus.entries = when (index) {
                     1 -> maritalStatusFemale
                     else -> maritalStatusMale
@@ -1886,8 +1925,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 }
 
                 maritalStatus.inputType = DROPDOWN
-                reproductiveStatus.value = null
                 reproductiveStatus.inputType = DROPDOWN
+                relationToHead.inputType = DROPDOWN
 
                 relationToHead.entries = when (index) {
                     0 -> relationToHeadListMale
@@ -2245,27 +2284,27 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 }
 //                reproductiveStatus.isEnabled = false
 
-                when (reproductiveStatus.value) {
-                    "Adolescent Girl" -> {
-                        agePopup.max = yearsAgo(15)
-                        agePopup.min = yearsAgo(19)
-                    }
-
-                    "Eligible Couple" -> {
-                        agePopup.max = yearsAgo(15)
-                        agePopup.min = yearsAgo(49)
-                    }
-
-                    "Pregnant Woman", "Postnatal Mother", "Permanently Sterilised" -> {
-                        agePopup.max = yearsAgo(20)
-                        agePopup.min = yearsAgo(49)
-                    }
-
-                    "Elderly Woman" -> {
-                        agePopup.max = yearsAgo(50)
-                        agePopup.min = yearsAgo(100)
-                    }
-                }
+//                when (reproductiveStatus.value) {
+//                    "Adolescent Girl" -> {
+//                        agePopup.max = yearsAgo(15)
+//                        agePopup.min = yearsAgo(19)
+//                    }
+//
+//                    "Eligible Couple" -> {
+//                        agePopup.max = yearsAgo(15)
+//                        agePopup.min = yearsAgo(49)
+//                    }
+//
+//                    "Pregnant Woman", "Postnatal Mother", "Permanently Sterilised" -> {
+//                        agePopup.max = yearsAgo(20)
+//                        agePopup.min = yearsAgo(49)
+//                    }
+//
+//                    "Elderly Woman" -> {
+//                        agePopup.max = yearsAgo(50)
+//                        agePopup.min = yearsAgo(100)
+//                    }
+//                }
 
                 val updatedReproductiveOptions = when {
                     !genderIsFemale -> emptyList()
@@ -2731,6 +2770,9 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             if (updatedReproductiveOptions.size == 1) {
                 reproductiveStatus.value = updatedReproductiveOptions[0]
             }
+            if (maritalStatus.value != null) {
+                reproductiveStatus.isEnabled = true
+            }
         } else {
 
             val updatedReproductiveOptions = when {
@@ -2779,6 +2821,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 else -> emptyList()
             }
 
+            reproductiveStatus.value = null
             reproductiveStatus.entries = updatedReproductiveOptions.toTypedArray()
             if (updatedReproductiveOptions.size == 1) {
                 reproductiveStatus.value = updatedReproductiveOptions[0]
@@ -2786,22 +2829,22 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             validateReproductiveStatusField(genderIsFemale, age)
 
             // Set DOB constraints based on existing reproductive status
-            when (reproductiveStatus.value) {
-                "Adolescent Girl" -> {
-                    agePopup.max = yearsAgo(15)
-                    agePopup.min = yearsAgo(19)
-                }
-
-                "Eligible Couple", "Pregnant Woman", "Postnatal Mother", "Permanently Sterilised" -> {
-                    agePopup.max = yearsAgo(20)
-                    agePopup.min = yearsAgo(49)
-                }
-
-                "Elderly Woman" -> {
-                    agePopup.max = yearsAgo(50)
-                    agePopup.min = yearsAgo(100)
-                }
-            }
+//            when (reproductiveStatus.value) {
+//                "Adolescent Girl" -> {
+//                    agePopup.max = yearsAgo(15)
+//                    agePopup.min = yearsAgo(19)
+//                }
+//
+//                "Eligible Couple", "Pregnant Woman", "Postnatal Mother", "Permanently Sterilised" -> {
+//                    agePopup.max = yearsAgo(20)
+//                    agePopup.min = yearsAgo(49)
+//                }
+//
+//                "Elderly Woman" -> {
+//                    agePopup.max = yearsAgo(50)
+//                    agePopup.min = yearsAgo(100)
+//                }
+//            }
         }
 
         if (formId == agePopup.id) {
