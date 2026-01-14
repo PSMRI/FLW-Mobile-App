@@ -25,6 +25,8 @@
             android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
             android:paddingEnd="16dp"
             android:paddingBottom="8dp"
+            android:textStyle="bold"
+            android:layout_marginStart="2dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -33,13 +35,13 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/containerNumberPickerCard"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="45dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvLabel"
             android:elevation="@dimen/_10sdp"
             app:cardCornerRadius="@dimen/_20sdp"
-            app:cardBackgroundColor="#0099cc"
+            app:cardBackgroundColor="@color/md_theme_light_primary"
             >
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -66,25 +68,12 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilNumberInput"
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
-                app:boxBackgroundMode="outline"
-                app:boxCornerRadiusTopStart="12dp"
-                app:boxCornerRadiusTopEnd="12dp"
-                app:boxCornerRadiusBottomStart="12dp"
-                app:boxCornerRadiusBottomEnd="12dp"
-                android:layout_marginBottom="@dimen/_4sdp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/btnIncrement"
-                app:layout_constraintStart_toEndOf="@id/btnDecrement"
-                app:layout_constraintTop_toTopOf="parent">
 
-                <com.google.android.material.textfield.TextInputEditText
+
+                <EditText
                     android:id="@+id/etNumberInput"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_width="120dp"
+                    android:layout_height="40dp"
                     android:gravity="center"
                     android:inputType="number"
                     android:maxLines="1"
@@ -92,9 +81,18 @@
                     android:text="@{form.value}"
                     android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
                     android:textColor="@color/md_theme_light_onSurface"
-                    tools:text="0" />
+                    tools:text="0"
+                    app:boxBackgroundMode="outline"
+                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusBottomEnd="12dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/btnIncrement"
+                    app:layout_constraintStart_toEndOf="@id/btnDecrement"
+                    app:layout_constraintTop_toTopOf="parent"
+                    />
 
-            </com.google.android.material.textfield.TextInputLayout>
 
             <ImageButton
                 android:id="@+id/btnIncrement"

@@ -110,6 +110,9 @@
     <string name="maa_meeting">माँ मिलन</string>
     <string name="icon_cluster_phc_list">Cluster Meeting Forms List</string>
     <string name="icon_cluster_phc">Cluster Meeting Forms</string>
+    <string name="place_of_meeting">Place of meeting</string>
+    <string name="mitanin">Mitanins</string>
+    <string name="mt">Mitanin Activity check list</string>
 
 
 

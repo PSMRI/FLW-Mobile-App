@@ -36,7 +36,7 @@ class VHNDDataset(
         title = resources.getString(R.string.vhnd_date),
         arrayId = -1,
         required = true,
-        min = System.currentTimeMillis(),
+        min = System.currentTimeMillis() -  (60L * 24 * 60 * 60 * 1000),
         max = System.currentTimeMillis()
     )
     private val place = FormElement(

@@ -190,7 +190,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         ANCFormResponseJsonEntity::class,
     ],
     views = [BenBasicCache::class],
-    version = 50, exportSchema = false
+    version = 51, exportSchema = false
 )
 
 @TypeConverters(
@@ -264,6 +264,20 @@ abstract class InAppDb : RoomDatabase() {
             val MIGRATION_1_2 = Migration(18, 19, migrate = {
                 it.execSQL("alter table BEN_BASIC_CACHE add column isConsent BOOL")
                 it.execSQL("alter table BENEFICIARY add column isConsent BOOL")
+
+            })
+
+            val MIGRATION_50_51 = Migration(50, 51, migrate = {
+                it.execSQL("alter table PHCReviewMeeting add column villageName TEXT")
+                it.execSQL("alter table PHCReviewMeeting add column mitaninHistory TEXT")
+                it.execSQL("alter table PHCReviewMeeting add column mitaninActivityCheckList TEXT")
+                it.execSQL("alter table PHCReviewMeeting add column placeId INTEGER DEFAULT 0")
+                it.execSQL(
+                    """
+            CREATE UNIQUE INDEX IF NOT EXISTS index_PHCReviewMeeting_id
+            ON PHCReviewMeeting(id)
+            """.trimIndent()
+                )
 
             })
 
@@ -1871,6 +1885,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_47_48,
                         MIGRATION_48_49,
                         MIGRATION_49_50,
+                        MIGRATION_50_51
+
                     ).build()
 
                     INSTANCE = instance
