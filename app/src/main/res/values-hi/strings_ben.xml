@@ -241,23 +241,19 @@
     <string name="days">दिन</string>
 
     <string-array name="diet_plane">
-        <item>What to eat</item>
-        <item>what to avoid</item>
-        <item>importance of dietary diversity</item>
+        <item>What to eat, what to avoid, importance of dietary diversity.</item>
 
     </string-array>
     <string-array name="care_pregnancy">
-        <item>Prevention of Anemia</item>
-        <item>weakness</item>
-        <item>importance of rest and nutrition</item>
+        <item>Prevention of Anemia, weakness, importance of rest and nutrition.</item>
 
     </string-array>
+
 
     <string-array name="import_brestfeeding">
-        <item>Early initiation after birth</item>
-        <item> exclusive breastfeeding for 6 months</item>
-
+        <item>Early initiation after birth, exclusive breastfeeding for 6 months.</item>
     </string-array>
+
     <string-array name="complementary_feeding">
         <item>Starting home-based nutritious food after 6 months along with breastfeeding</item>
 

@@ -90,9 +90,20 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
         showDrawable = true
     )
 
+    private val elderChildrenCount = FormElement(
+        id = 1,
+        inputType = org.piramalswasthya.sakhi.model.InputType.TEXT_VIEW,
+        title = resources.getString(R.string.no_of_elderly_children),
+        arrayId = -1,
+        required = true,
+        hasDependants = true,
+
+    )
+
+
     private val ageRestrictionLabel = FormElement(
         id = 69,
-        inputType = RADIO,
+        inputType = org.piramalswasthya.sakhi.model.InputType.CHECKBOXES,
         title = resources.getString(R.string.ecrdset_reg_children_15_below),
         arrayId = -1,
         required = false,
@@ -106,7 +117,7 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
      val noOfChildren = FormElement(
         id = 12,
         inputType = org.piramalswasthya.sakhi.model.InputType.NUMBER_PICKER,
-        title = resources.getString(R.string.ecrdset_ttl_child_born),
+        title = resources.getString(R.string.ecrdset_no_live_child),
         required = false,
          hasDependants = true,
         etInputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_NORMAL,
@@ -773,10 +784,12 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
         selectedben: BenRegCache?,
         isAddspouse: Int,
         childList: List<BenRegCache>,
+        elderChildCount: Int
 
         ) {
         val list = mutableListOf(
             dateOfReg,
+            elderChildrenCount,
             ageRestrictionLabel,
             noOfChildren,
 
@@ -807,6 +820,8 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
             dateOfReg.value = getDateFromLong(System.currentTimeMillis())
 
             noOfChildren.value = childList.size.toString()
+
+            elderChildrenCount.value = elderChildCount.coerceAtMost(5).toString()
 
 
         var insertIndex = list.indexOf(noOfChildren) + 1
