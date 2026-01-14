@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.ImmunizationDao
@@ -35,7 +36,6 @@ class ImmunizationRepo @Inject constructor(
             val user =
                 preferenceDao.getLoggedInUser()
                     ?: throw IllegalStateException("No user logged in!!")
-            val lastTimeStamp = preferenceDao.getLastSyncedTimeStamp()
             try {
                 val response = tmcNetworkApiService.getChildImmunizationDetails(
                     GetDataPaginatedRequest(
@@ -201,13 +201,6 @@ class ImmunizationRepo @Inject constructor(
             val timeString = timeFormat.format(millis)
             return "${dateString}T${timeString}.000Z"
         }
-
-        private fun getLongFromDate(dateString: String): Long {
-            //Jul 22, 2023 8:17:23 AM"
-            val f = SimpleDateFormat("MMM d, yyyy h:mm:ss a", Locale.ENGLISH)
-            val date = f.parse(dateString)
-            return date?.time ?: throw IllegalStateException("Invalid date for dateReg")
-        }
     }
 
     suspend fun getVaccineDetailsFromServer(): Int {
@@ -215,7 +208,6 @@ class ImmunizationRepo @Inject constructor(
             val user =
                 preferenceDao.getLoggedInUser()
                     ?: throw IllegalStateException("No user logged in!!")
-            val lastTimeStamp = preferenceDao.getLastSyncedTimeStamp()
             try {
                 val response = tmcNetworkApiService.getAllChildVaccines(category = "CHILD")
                 val statusCode = response.code()
@@ -273,11 +265,24 @@ class ImmunizationRepo @Inject constructor(
 
     private suspend fun saveVaccinesFromResponse(dataObj: String) {
         val vaccineList = Gson().fromJson(dataObj, Array<Vaccine>::class.java).toList()
+        val mitaninOnlyVaccines = setOf(
+            "PCV-1",
+            "PCV-2",
+            "PCV-Booster"
+        )
         vaccineList.forEach { vaccine ->
-            val existingVaccine: Vaccine? = immunizationDao.getVaccineByName(vaccine.vaccineName)
+            if (
+                vaccine.vaccineName in mitaninOnlyVaccines &&
+                !BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
+            ) {
+                return@forEach
+            }
+            val existingVaccine = immunizationDao.getVaccineByName(vaccine.vaccineName)
+
             if (existingVaccine == null) {
                 immunizationDao.addVaccine(vaccine)
             }
         }
     }
+
 }
