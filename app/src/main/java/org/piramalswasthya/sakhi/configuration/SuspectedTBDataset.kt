@@ -22,9 +22,61 @@ class SuspectedTBDataset(
         hasDependants = true
 
     )
+    private val visitLabel = FormElement(
+        id = 2,
+        inputType = InputType.TEXT_VIEW,
+        title = resources.getString(R.string.visit),
+        arrayId = -1,
+        required = false,
+        hasDependants = false
+    )
+
+    private val typeOfTBCase = FormElement(
+        id = 3,
+        inputType = InputType.RADIO,
+        title = resources.getString(R.string.type_of_tb_case),
+        entries = resources.getStringArray(R.array.type_of_tb_case),
+        required = true,
+        hasDependants = true
+    )
+
+    private val reasonForSuspicion = FormElement(
+        id = 4,
+        inputType = InputType.DROPDOWN,
+        title = resources.getString(R.string.reason_for_suspicion),
+        entries = resources.getStringArray(R.array.reason_for_suspicion),
+        required = false,
+        hasDependants = true
+    )
+
+    private val hasSymptoms = FormElement(
+        id = 5,
+        inputType = InputType.RADIO,
+        title = resources.getString(R.string.has_symptoms),
+        entries = resources.getStringArray(R.array.yes_no),
+        required = true,
+        hasDependants = true
+    )
+    private val isChestXRayDone = FormElement(
+        id = 6,
+        inputType = InputType.RADIO,
+        title = resources.getString(R.string.is_chest_xray_done),
+        entries = resources.getStringArray(R.array.yes_no),
+        required = false,
+        hasDependants = true
+    )
+
+    private val chestXRayResult = FormElement(
+        id = 7,
+        inputType = InputType.RADIO,
+        title = resources.getString(R.string.chest_xray_result),
+        entries = resources.getStringArray(R.array.chest_xray_result),
+        required = false,
+        hasDependants = false
+    )
 
     private val isSputumCollected = FormElement(
-        id = 2,
+        id = 8,
         inputType = InputType.RADIO,
         title = resources.getString(R.string.is_sputum_sample_collected),
         entries = resources.getStringArray(R.array.yes_no),
@@ -32,25 +84,27 @@ class SuspectedTBDataset(
         hasDependants = true
     )
 
-    private var sputumSubmittedAt = FormElement(
-        id = 3,
-        inputType = InputType.RADIO,
+
+    private val sputumSubmittedAt = FormElement(
+        id = 9,
+        inputType = InputType.DROPDOWN,
         title = resources.getString(R.string.sputum_sample_submitted_at),
-        entries = resources.getStringArray(R.array.tb_submitted_yet),
+        entries = resources.getStringArray(R.array.tb_sputum_sample_submitted_at),
         required = false,
         hasDependants = false
     )
 
-    private var nikshayId = FormElement(
-        id = 4,
+
+    private val nikshayId = FormElement(
+        id = 10,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.nikshay_id),
         required = false,
         hasDependants = false
     )
 
-    private var sputumTestResult = FormElement(
-        id = 5,
+    private val sputumTestResult = FormElement(
+        id = 11,
         inputType = InputType.RADIO,
         title = resources.getString(R.string.sputum_test_result),
         entries = resources.getStringArray(R.array.tb_test_result),
@@ -58,17 +112,36 @@ class SuspectedTBDataset(
         hasDependants = false
     )
 
-    private var referred = FormElement(
-        id = 6,
-        inputType = InputType.RADIO,
-        title = resources.getString(R.string.referred_to_facility),
-        entries = resources.getStringArray(R.array.yes_no),
+
+
+    private val referralFacility = FormElement(
+        id = 12,
+        inputType = InputType.DROPDOWN,
+        title = resources.getString(R.string.referral_facility),
+        entries = resources.getStringArray(R.array.referral_facility),
         required = true,
         hasDependants = false
     )
 
+    private val isTBConfirmed = FormElement(
+        id = 13,
+        inputType = InputType.RADIO,
+        title = resources.getString(R.string.is_tb_confirmed),
+        entries = resources.getStringArray(R.array.yes_no),
+        required = false,
+        hasDependants = true
+    )
+    private val isDRTBConfirmed = FormElement(
+        id = 14,
+        inputType = InputType.RADIO,
+        title = resources.getString(R.string.is_drtb_confirmed),
+        entries = resources.getStringArray(R.array.yes_no),
+        required = false,
+        hasDependants = false
+    )
+
     private var followUps = FormElement(
-        id = 7,
+        id = 15,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.facility_referral_follow_ups),
         entries = resources.getStringArray(R.array.yes_no),
@@ -77,26 +150,144 @@ class SuspectedTBDataset(
     )
 
     suspend fun setUpPage(ben: BenRegCache?, saved: TBSuspectedCache?) {
-        var list = mutableListOf(
+        visitLabel.value = resources.getString(R.string.visit_format, 1)
+        var list =  mutableListOf<FormElement>()
+        /*var list = mutableListOf(
             dateOfVisit,
+            visitLabel,
+            typeOfTBCase,
+            reasonForSuspicion,
             isSputumCollected,
+            sputumSubmittedAt,
 //            sputumSubmittedAt,
 //            nikshayId,
 //            sputumTestResult,
-            referred,
+            nikshayId,
+            sputumTestResult,
+            referralFacility,
             followUps
-        )
+        )*/
         if (saved == null) {
             dateOfVisit.value = getDateFromLong(System.currentTimeMillis())
-        } else {
+            typeOfTBCase.value = null
+            hasSymptoms.value = resources.getStringArray(R.array.yes_no)[0]
+
+            list.addAll(listOf(
+                dateOfVisit,
+                visitLabel,
+                typeOfTBCase,
+
+            ))
+
+            if (hasSymptoms.value == resources.getStringArray(R.array.yes_no)[0]) {
+                isSputumCollected.value = resources.getStringArray(R.array.yes_no)[1]
+                list.add(isSputumCollected)
+            } else {
+                isChestXRayDone.value = resources.getStringArray(R.array.yes_no)[1]
+                list.add(isChestXRayDone)
+            }
+
+            list.addAll(listOf(
+                referralFacility,
+                followUps
+            ))
+        }
+        else {
+            dateOfVisit.value = getDateFromLong(saved.visitDate)
+            visitLabel.value =  resources.getString(R.string.visit_format, 1)
+            typeOfTBCase.value = saved.typeOfTBCase
+            hasSymptoms.value = saved.hasSymptoms?.let {
+                if (it) resources.getStringArray(R.array.yes_no)[0] else resources.getStringArray(R.array.yes_no)[1]
+            }
+
+            list.addAll(listOf(
+                dateOfVisit,
+                visitLabel,
+                typeOfTBCase
+            ))
+
+            if (typeOfTBCase.value in listOf(
+                    resources.getStringArray(R.array.type_of_tb_case)[1],
+                    resources.getStringArray(R.array.type_of_tb_case)[2]
+                )) {
+                reasonForSuspicion.value = saved.reasonForSuspicion
+                list.add(reasonForSuspicion)
+            }
+
+            list.add(hasSymptoms)
+
+            if (saved.hasSymptoms == true) {
+                isSputumCollected.value = saved.isSputumCollected?.let {
+                    if (it) resources.getStringArray(R.array.yes_no)[0] else resources.getStringArray(R.array.yes_no)[1]
+                }
+                list.add(isSputumCollected)
+
+                if (saved.isSputumCollected == true) {
+                    sputumSubmittedAt.value = saved.sputumSubmittedAt
+                    nikshayId.value = saved.nikshayId
+                    sputumTestResult.value = saved.sputumTestResult
+
+                    list.addAll(listOf(
+                        sputumSubmittedAt,
+                        nikshayId,
+                        sputumTestResult
+                    ))
+                }
+            } else {
+                isChestXRayDone.value = saved.isChestXRayDone?.let {
+                    if (it) resources.getStringArray(R.array.yes_no)[0] else resources.getStringArray(R.array.yes_no)[1]
+                }
+                list.add(isChestXRayDone)
+
+                if (saved.isChestXRayDone == true) {
+                    chestXRayResult.value = saved.chestXRayResult
+                    nikshayId.value = saved.nikshayId
+
+                    list.addAll(listOf(
+                        chestXRayResult,
+                        nikshayId
+                    ))
+                }
+            }
+
+            referralFacility.value = saved.referralFacility
+
+            if (saved.typeOfTBCase == resources.getStringArray(R.array.type_of_tb_case)[0]) {
+                isTBConfirmed.value = saved.isTBConfirmed?.let {
+                    if (it) resources.getStringArray(R.array.yes_no)[0] else resources.getStringArray(R.array.yes_no)[1]
+                }
+                list.add(isTBConfirmed)
+            } else if (saved.typeOfTBCase in listOf(
+                    resources.getStringArray(R.array.type_of_tb_case)[1],
+                    resources.getStringArray(R.array.type_of_tb_case)[2]
+                )) {
+                isDRTBConfirmed.value = saved.isDRTBConfirmed?.let {
+                    if (it) resources.getStringArray(R.array.yes_no)[0] else resources.getStringArray(R.array.yes_no)[1]
+                }
+                list.add(isDRTBConfirmed)
+            }
+
+            list.addAll(listOf(
+                referralFacility,
+                followUps
+            ))
+        }
+
+       
+       /* else {
             if (saved.isSputumCollected == true) {
                 list = mutableListOf(
                     dateOfVisit,
+                    visitLabel,
+                    typeOfTBCase,
+                    reasonForSuspicion,
                     isSputumCollected,
                     sputumSubmittedAt,
                     nikshayId,
                     sputumTestResult,
-                    referred,
+                    referralFacility,
+                    isTBConfirmed,
+                    isDRTBConfirmed,
                     followUps
                 )
                 dateOfVisit.value = getDateFromLong(saved.visitDate)
@@ -113,10 +304,10 @@ class SuspectedTBDataset(
                     if (saved.sputumTestResult == null) null else resources.getStringArray(R.array.tb_test_result)[englishResources.getStringArray(
                         R.array.tb_test_result
                     ).indexOf(saved.sputumTestResult)]
-                referred.value =
+               *//* referred.value =
                     if (saved.referred == true) resources.getStringArray(R.array.yes_no)[0] else resources.getStringArray(
                         R.array.yes_no
-                    )[1]
+                    )[1]*//*
                 followUps.value = saved.followUps
             } else {
                 dateOfVisit.value = getDateFromLong(saved.visitDate)
@@ -124,13 +315,13 @@ class SuspectedTBDataset(
                     if (saved.isSputumCollected == true) resources.getStringArray(R.array.yes_no)[0] else resources.getStringArray(
                         R.array.yes_no
                     )[1]
-                referred.value =
+                *//*referred.value =
                     if (saved.referred == true) resources.getStringArray(R.array.yes_no)[0] else resources.getStringArray(
                         R.array.yes_no
-                    )[1]
+                    )[1]*//*
                 followUps.value = saved.followUps
             }
-        }
+        }*/
 
 
         ben?.let {
@@ -142,6 +333,25 @@ class SuspectedTBDataset(
 
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
         return when (formId) {
+
+            typeOfTBCase.id ->{
+                if (typeOfTBCase.value != resources.getStringArray(R.array.type_of_tb_case)[0])
+                {
+                    triggerDependants(
+                        source = typeOfTBCase,
+                        addItems = listOf(reasonForSuspicion),
+                        removeItems = listOf(),
+                    )
+                }
+                else
+                {
+                    triggerDependants(
+                        source = typeOfTBCase,
+                        addItems = listOf(),
+                        removeItems = listOf(reasonForSuspicion),
+                    )
+                }
+            }
             isSputumCollected.id -> {
                 triggerDependants(
                     source = isSputumCollected,
@@ -163,6 +373,24 @@ class SuspectedTBDataset(
                 )
             }
 
+            referralFacility.id -> {
+                if(referralFacility.value == resources.getStringArray(R.array.referral_facility)[0])
+                {   triggerDependants(source = referralFacility,
+                    addItems = listOf(isTBConfirmed), removeItems = listOf())}
+                else{
+                    triggerDependants(source = referralFacility,
+                        addItems = listOf(), removeItems = listOf(isTBConfirmed))
+                }
+
+                if(referralFacility.value == resources.getStringArray(R.array.referral_facility)[1] || referralFacility.value == resources.getStringArray(R.array.referral_facility)[2] )
+                {
+                    triggerDependants(source = referralFacility,
+                        addItems = listOf(isDRTBConfirmed), removeItems = listOf())
+                }
+                else{ triggerDependants(source = referralFacility,
+                    addItems = listOf(), removeItems = listOf(isDRTBConfirmed))}
+            }
+
             else -> -1
         }
     }
@@ -181,7 +409,7 @@ class SuspectedTBDataset(
                 if (sputumTestResult.value == null) null else englishResources.getStringArray(R.array.tb_test_result)[sputumTestResult.entries!!.indexOf(
                     sputumTestResult.value
                 )]
-            form.referred = referred.value == resources.getStringArray(R.array.yes_no)[0]
+            //form.referred = referred.value == resources.getStringArray(R.array.yes_no)[0]
             form.followUps = followUps.value
         }
     }

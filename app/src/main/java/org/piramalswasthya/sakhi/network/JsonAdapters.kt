@@ -1186,7 +1186,16 @@ data class TBSuspectedDTO(
     val nikshayId: String?,
     val sputumTestResult: String?,
     val referred: Boolean?,
-    val followUps: String?
+    val followUps: String?,
+    var visitLabel: Int,
+    var typeOfTBCase: String? = null,
+    var reasonForSuspicion: String? = null,
+    var hasSymptoms: Boolean? = null,
+    var isChestXRayDone: Boolean? = null,
+    var chestXRayResult: String? = null,
+    var referralFacility: String? = null,
+    var isTBConfirmed: Boolean? = null,
+    var isDRTBConfirmed: Boolean? = null
 ) {
     fun toCache(): TBSuspectedCache {
         return TBSuspectedCache(
@@ -1198,6 +1207,15 @@ data class TBSuspectedDTO(
             sputumTestResult = sputumTestResult,
             referred = referred,
             followUps = followUps,
+            visitLabel= visitLabel,
+            typeOfTBCase = typeOfTBCase,
+            reasonForSuspicion = reasonForSuspicion,
+            hasSymptoms = hasSymptoms,
+            isChestXRayDone = isChestXRayDone,
+            chestXRayResult = chestXRayResult,
+            referralFacility = referralFacility,
+            isTBConfirmed = isTBConfirmed,
+            isDRTBConfirmed = isDRTBConfirmed,
             syncState = SyncState.SYNCED
         )
     }
