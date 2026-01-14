@@ -97,8 +97,13 @@
     <string name="are_you_sure_to_logout">" Are you sure you want to logout?"</string>
     <string name="icon_title_ahd_list">AHD Forms List</string>
     <string name="place">Place</string>
+    <string name="place_of_meeting">Place of meeting</string>
+    <string name="mitanin">Mitanins</string>
+    <string name="mt">Mitanin Activity check list</string>
+    <string name="anmrho">ANM/ RHO</string>
     <string name="place_of_vhnd">Place of VHND session</string>
     <string name="participants">Participants</string>
+    <string name="participants_attended">Participants Attended</string>
     <string name="no_b_attended">No. of Beneficiaries Attended</string>
     <string name="total_no_b_attended">Total No. of Beneficiaries Attended</string>
     <string name="total_no_pw_attended">Number of Pregnant Woman attended for ANC check up</string>
