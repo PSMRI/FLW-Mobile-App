@@ -100,6 +100,7 @@
     <string name="mt">Mitanin Activity check list</string>
     <string name="anmrho">ANM/ RHO</string>
     <string name="participants_attended">Participants Attended</string>
+    <string name="leprosy_title">Check if the person has any of these symptoms</string>
 
 
 </resources>
