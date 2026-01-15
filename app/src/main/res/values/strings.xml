@@ -738,6 +738,17 @@
     <string name="last_home_visit_date">Last Home Visit Date</string>
     <string name="add_home_visit">ADD HOME VISIT</string>
     <string name="view_home_visits">VIEW HOME VISITS</string>
+    <string name="number_of_pregnant_woman_attended">Number of Pregnant Woman Attended</string>
+    <string name="number_of_lactating_mothers_attended">Number of Lactating Mothers attended</string>
+    <string name="during_breastfeeding_counseling_check_list">During Breastfeeding Counseling check list</string>
+    <string name="the_baby_should_be_breastfed_immediately_within_the_first_hour_of_birth">The baby should be breastfed immediately within the first hour of birth</string>
+    <string name="the_baby_should_be_given_only_mother_s_milk_for_the_first_6_months">The baby should be given only mother’s milk for the first 6 months.</string>
+    <string name="after_6_months_along_with_mother_s_milk_nutritious_complementary_food_should_be_given">After 6 months, along with mother’s milk, nutritious complementary food should be given.</string>
+    <string name="breastfeeding_should_be_continued_for_2_years_or_more">Breastfeeding should be continued for 2 years or more.</string>
+    <string name="the_family_should_support_and_encourage_the_mother">The family should support and encourage the mother</string>
+    <string name="mother_s_milk_is_the_best_for_the_complete_development_of_the_baby">Mother’s milk is the best for the complete development of the baby.</string>
+    <string name="information_was_given_about_kmc_kangaroo_mother_care">Information was given about KMC (Kangaroo Mother Care).</string>
+    <string name="place_of_maa_meeting">Place of MAA Meeting</string>
 
 
     <string-array name="hbyc_month_array">

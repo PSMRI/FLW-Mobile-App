@@ -190,7 +190,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         ANCFormResponseJsonEntity::class,
     ],
     views = [BenBasicCache::class],
-    version = 51, exportSchema = false
+    version = 52, exportSchema = false
 )
 
 @TypeConverters(
@@ -266,6 +266,36 @@ abstract class InAppDb : RoomDatabase() {
                 it.execSQL("alter table BENEFICIARY add column isConsent BOOL")
 
             })
+
+            val MIGRATION_51_52 = object : Migration(51, 52) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+
+                    database.execSQL(
+                        """
+            CREATE TABLE IF NOT EXISTS MAA_MEETING (
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                meetingDate TEXT,
+                place TEXT,
+                villageName TEXT,
+                mitaninActivityCheckList TEXT,
+                noOfPragnentWomen TEXT,
+                noOfLactingMother TEXT,
+                participants INTEGER,
+                ashaId INTEGER,
+                meetingImages TEXT,
+                createdAt INTEGER NOT NULL DEFAULT 0,
+                updatedAt INTEGER NOT NULL DEFAULT 0,
+                syncState TEXT NOT NULL DEFAULT 'UNSYNCED'
+            )
+            """.trimIndent()
+                    )
+
+                    database.execSQL(
+                        "CREATE UNIQUE INDEX IF NOT EXISTS index_MAA_MEETING_id ON MAA_MEETING(id)"
+                    )
+                }
+            }
+
 
             val MIGRATION_50_51 = Migration(50, 51, migrate = {
                 it.execSQL("alter table PHCReviewMeeting add column villageName TEXT")
@@ -1885,7 +1915,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_47_48,
                         MIGRATION_48_49,
                         MIGRATION_49_50,
-                        MIGRATION_50_51
+                        MIGRATION_50_51,
+                        MIGRATION_51_52
 
                     ).build()
 

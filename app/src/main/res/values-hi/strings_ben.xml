@@ -248,7 +248,22 @@
         <item>Prevention of Anemia, weakness, importance of rest and nutrition.</item>
 
     </string-array>
+    <string-array name="select_all">
+        <item>Select All</item>
+    </string-array>
+    <string-array name="maa_breastfeeding">
+        <item>Select All</item>
+        <item>The baby should be breastfed immediately within the first hour of birth</item>
+        <item>The baby should be given only mother’s milk for the first 6 months.</item>
+        <item>After 6 months, along with mother’s milk, nutritious complementary food should be given.</item>
+        <item>Breastfeeding should be continued for 2 years or more.</item>
+        <item>The family should support and encourage the mother.</item>
+        <item>For the first 6 months, the baby should not be given honey, water, or ghutti (herbal concoctions).</item>
+        <item>Breastfeeding protects the baby from many diseases.</item>
+        <item>Mother’s milk is the best for the complete development of the baby.</item>
+        <item>Information was given about KMC (Kangaroo Mother Care).</item>
 
+    </string-array>
 
     <string-array name="import_brestfeeding">
         <item>Early initiation after birth, exclusive breastfeeding for 6 months.</item>

@@ -18,6 +18,10 @@ interface AmritApiService {
     @Multipart
     @POST("flw-api/maa-meetings/saveAll")
     suspend fun postMaaMeetingMultipart(
+        @Part("villageName") villageName: RequestBody,
+        @Part("noOfPragnentWoment") noOfPragnentWoment: RequestBody,
+        @Part("noOfLactingMother") noOfLactingMother: RequestBody,
+        @Part("mitaninActivityCheckList") mitaninActivityCheckList: RequestBody,
         @Part("meetingDate") meetingDate: RequestBody,
         @Part("place") place: RequestBody,
         @Part("participants") participants: RequestBody,
