@@ -84,6 +84,7 @@
     <string name="place">স্থান</string>
     <string name="participants">অংশগ্ৰহণকাৰীসকল</string>
     <string name="no_b_attended">উপকাৰভোগীসকলৰ উপস্থিতিৰ সংখ্যা</string>
+    <string name="total_no_b_attended">Total No. of Beneficiaries Attended</string>
     <string name="vhnd">ভি.এইচ.এন.ডি/ভি.এইচ.এস.এন.ডি</string>
     <string name="vnhc">VHSNC</string>
     <string name="phc_review">PHC পৰ্যালোচনা বৈঠক</string>
