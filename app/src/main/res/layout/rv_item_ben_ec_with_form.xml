@@ -22,9 +22,6 @@
         <variable
             name="spouse"
             type="Boolean"/>
-        <variable
-            name="isMatched"
-            type="Boolean" />
 
 
     </data>
