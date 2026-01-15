@@ -1422,17 +1422,18 @@ data class BenRegCache(
                 }
             } ?: 0,
 
-            reproductiveStatus = genDetails?.reproductiveStatusId?.let {
-                when (it) {
-                    0 -> ""
-                    1 -> "Eligible Couple"
-                    2 -> "Antenatal Mother"
-                    3 -> "Postnatal Mother-Lactating Mother"
-                    4 -> "Menopause Stage"
-                    5 -> "Permanently Sterilised"
-                    else -> "Teenager"
-                }
-            } ?: "",
+            reproductiveStatus = genDetails?.reproductiveStatus.toString(),
+//            reproductiveStatus = genDetails?.reproductiveStatusId?.let {
+//                when (it) {
+//                    0 -> ""
+//                    1 -> "Eligible Couple"
+//                    2 -> "Antenatal Mother"
+//                    3 -> "Postnatal Mother-Lactating Mother"
+//                    4 -> "Menopause Stage"
+//                    5 -> "Permanently Sterilised"
+//                    else -> "Teenager"
+//                }
+//            } ?: "",
 //            noOfDaysForDelivery = if (genDetails?.reproductiveStatusId ==2) getNumDaysForDeliveryFromLastMenstrualPeriod(
 //                genDetails?.lastMenstrualPeriod
 //            ) else null,
