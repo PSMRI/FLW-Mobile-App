@@ -153,14 +153,14 @@ class PHCReviewDataset(
             if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
                 val parsedMitaninHistoryList = parseSelections(it.mitaninHistory, mitanin.entries!!)
                 mitanin.value = if (parsedMitaninHistoryList.isNotEmpty()) {
-                    parsedMitaninHistoryList.joinToString(",")
+                    parsedMitaninHistoryList.joinToString("|")
                 } else {
                     it.mitaninHistory ?: ""
                 }
 
                 val parsedMitaninCheckListList = parseSelections(it.mitaninActivityCheckList, mT.entries!!)
                 mT.value = if (parsedMitaninCheckListList.isNotEmpty()) {
-                    parsedMitaninCheckListList.joinToString(",")
+                    parsedMitaninCheckListList.joinToString("|")
                 } else {
                     it.mitaninActivityCheckList ?: ""
                 }
@@ -178,46 +178,45 @@ class PHCReviewDataset(
             mT.id -> {
 
                 val allItems = resources.getStringArray(R.array.activity_checklist)
-                val selectAll = allItems[0]
                 val itemCount = allItems.size
 
-                val selected = mT.value
-                    ?.split(",")
-                    ?.map { it.trim() }
-                    ?.filter { it.isNotEmpty() }
-                    ?.distinct()
-                    ?.toMutableList()
-                    ?: mutableListOf()
+                val selectedIndexes = mT.value
+                    ?.split("|")
+                    ?.mapNotNull { it.toIntOrNull() }
+                    ?.toMutableSet()
+                    ?: mutableSetOf()
 
                 if (index == 0) {
 
-                    if (selected.contains(selectAll)) {
-                        mT.value = allItems.joinToString(",")
+                    if (selectedIndexes.contains(0)) {
+                        selectedIndexes.clear()
+                        selectedIndexes.addAll(0 until itemCount)
                     } else {
-                        mT.value = ""
+                        selectedIndexes.clear()
                     }
+
+                    mT.value =
+                        if (selectedIndexes.isEmpty()) null
+                        else selectedIndexes.sorted().joinToString("|")
+
                     return -1
                 }
+                val normalIndexes = (1 until itemCount)
 
-
-                val totalSelectedWithoutSelectAll =
-                    selected.filter { it != selectAll }.size
-
-                if (selected.contains(selectAll)
-                    && totalSelectedWithoutSelectAll < itemCount - 1
+                if (selectedIndexes.contains(0) &&
+                    normalIndexes.any { !selectedIndexes.contains(it) }
                 ) {
-                    selected.remove(selectAll)
-                    mT.value = selected.joinToString(",")
-                    return -1
+                    selectedIndexes.remove(0)
                 }
 
-                if (!selected.contains(selectAll)
-                    && totalSelectedWithoutSelectAll == itemCount - 1
-                ) {
-                    selected.add(0, selectAll)
-                    mT.value = selected.joinToString(",")
-                    return -1
+                if (normalIndexes.all { selectedIndexes.contains(it) }) {
+                    selectedIndexes.add(0)
                 }
+
+                mT.value =
+                    if (selectedIndexes.isEmpty()) null
+                    else selectedIndexes.sorted().joinToString("|")
+
 
                 -1
             }
@@ -244,7 +243,7 @@ class PHCReviewDataset(
     }
 
     private fun toCsv(rawValue: String?, entries: Array<String>): String {
-        return parseSelections(rawValue, entries).joinToString(", ")
+        return parseSelections(rawValue, entries).joinToString("|")
     }
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as PHCReviewMeetingCache).let { form ->
