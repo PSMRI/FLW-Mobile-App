@@ -94,7 +94,7 @@ interface VLFDao {
     @Query("SELECT COUNT(*) FROM AHDMeeting WHERE ahdDate BETWEEN :startDate AND :endDate")
     fun countAHDFormsInDateRange(startDate: String, endDate: String): Flow<Int>
 
-    @Query("SELECT COUNT(*) FROM DewormingMeeting WHERE regDate BETWEEN :startDate AND :endDate")
+    @Query("SELECT COUNT(*) FROM DewormingMeeting WHERE dewormingDate BETWEEN :startDate AND :endDate")
     fun countDewormingFormsInDateRange(startDate: String, endDate: String): Flow<Int>
 
 
