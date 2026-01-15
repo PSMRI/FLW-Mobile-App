@@ -17,7 +17,6 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.ECRegistrationAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
-import org.piramalswasthya.sakhi.ui.home_activity.all_ben.AllBenFragmentDirections
 
 @AndroidEntryPoint
 class EligibleCoupleListFragment : Fragment() {

@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.databinding.RvItemBenEcWithFormBinding
-import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.model.BenWithEcrDomain
 import org.piramalswasthya.sakhi.utils.HelperUtil
 import java.util.concurrent.TimeUnit
@@ -77,8 +76,6 @@ class ECRegistrationAdapter(
                     "Register"
                 }
 
-//            val isMatched = item.contains(item.ben.benId)
-//            binding.isMatched = isMatched
 
             binding.btnFormEc1.setBackgroundColor(binding.root.resources.getColor(if (item.ecr != null && item.ecr.lmpDate != 0L) android.R.color.holo_green_dark else android.R.color.holo_red_dark))
             binding.clickListener = clickListener
