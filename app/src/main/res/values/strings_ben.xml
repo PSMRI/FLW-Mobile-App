@@ -69,6 +69,8 @@
 
     <string-array name="deworming_location_options">
         <item>School</item>
+        <item>Anganwadi Centre</item>
+        <item>Community center</item>
         <item>Home Visit</item>
     </string-array>
 

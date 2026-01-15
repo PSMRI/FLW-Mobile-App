@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.model
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import org.piramalswasthya.sakhi.configuration.FormDataModel
 import org.piramalswasthya.sakhi.database.room.SyncState
@@ -15,7 +16,12 @@ import java.util.Locale
 
 
 
-@Entity(tableName = "DewormingMeeting")
+@Entity(
+    tableName = "DewormingMeeting",
+    indices = [
+        Index(value = ["id"], unique = true)
+    ]
+)
 data class DewormingCache(
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0,

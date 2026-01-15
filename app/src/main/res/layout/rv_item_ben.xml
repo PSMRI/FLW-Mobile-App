@@ -595,27 +595,6 @@
 
                         <Button
                             style="@style/Widget.Material3.Button.TonalButton"
-                            android:id="@+id/btn_ifa"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_marginStart="@dimen/margin_small"
-                            android:backgroundTint="@android:color/holo_green_dark"
-                            android:onClick="@{()-> clickListener.clickedAddAllBenBtn(ben,isMatched,true)}"
-                            android:text="@string/ifa"
-                            app:visibleIfEligibleFemale="@{ben.ageInt}"
-                            app:isDeath="@{ben.isDeathValue}"
-                            app:reproductiveStatusId="@{ben.reproductiveStatusId}"
-                            app:gender="@{ben.gender}"
-                            app:cornerRadius="@dimen/padding_normal"
-                            android:textColor="?attr/colorOnPrimary"
-                            tools:ignore="NestedWeights" />
-
-                        <Space
-                            android:layout_width="@dimen/_5sdp"
-                            android:layout_height="match_parent"/>
-
-                        <Button
-                            style="@style/Widget.Material3.Button.TonalButton"
                             android:id="@+id/btn_above_30"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
