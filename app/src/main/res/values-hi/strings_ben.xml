@@ -45,13 +45,32 @@
         <item name="nbr_gender_2">महिला</item>
         <item name="nbr_gender_3">ट्रांसजेंडर</item>
     </string-array>
-    <string-array name="nbr_reproductive_status_array">
+
+    <string-array name="nbr_reproductive_status_array1">
+        <item>किशोरी लड़की</item>
+    </string-array>
+
+    <string-array name="nbr_reproductive_status_array2">
+        <item>किशोरी लड़की</item>
         <item>लक्ष्य दम्पति</item>
         <item>गर्भवती महिला</item>
         <item>प्रसवोत्तर माता</item>
-        <item>वृद्धा महिला</item>
-        <item>किशोरी लड़की</item>
         <item>स्थायी नसबंदीकृत महिला</item>
+    </string-array>
+
+    <string-array name="nbr_reproductive_status_array3">
+        <item>Not Applicable</item>
+    </string-array>
+
+    <string-array name="nbr_reproductive_status_array4">
+        <item>लक्ष्य दम्पति</item>
+        <item>गर्भवती महिला</item>
+        <item>प्रसवोत्तर माता</item>
+        <item>स्थायी नसबंदीकृत महिला</item>
+    </string-array>
+
+    <string-array name="nbr_reproductive_status_array5">
+        <item>वृद्धा महिला</item>
     </string-array>
 
     <string name="dd_ec">लक्ष्य दम्पति</string>
