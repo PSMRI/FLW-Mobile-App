@@ -253,9 +253,6 @@
         <item>Information was given about KMC (Kangaroo Mother Care).</item>
 
     </string-array>
-    <string-array name="import_brestfeeding">
-        <item>Early initiation after birth</item>
-        <item> exclusive breastfeeding for 6 months</item>
 
     <string-array name="import_brestfeeding">
         <item>Early initiation after birth, exclusive breastfeeding for 6 months.</item>
