@@ -80,14 +80,31 @@
         <item name="nbr_gender_3">Transgender</item>
     </string-array>
 
-    <string-array name="nbr_reproductive_status_array">
+    <string-array name="nbr_reproductive_status_array1">
+        <item>Adolescent Girl</item>
+    </string-array>
+
+    <string-array name="nbr_reproductive_status_array2">
+        <item>Adolescent Girl</item>
         <item>Eligible Couple</item>
         <item>Pregnant Woman</item>
         <item>Postnatal Mother</item>
-        <item>Elderly Woman</item>
-        <item>Adolescent Girl</item>
         <item>Permanently Sterilised</item>
+    </string-array>
+
+    <string-array name="nbr_reproductive_status_array3">
         <item>Not Applicable</item>
+    </string-array>
+
+    <string-array name="nbr_reproductive_status_array4">
+        <item>Eligible Couple</item>
+        <item>Pregnant Woman</item>
+        <item>Postnatal Mother</item>
+        <item>Permanently Sterilised</item>
+    </string-array>
+
+    <string-array name="nbr_reproductive_status_array5">
+        <item>Elderly Woman</item>
     </string-array>
 
     <string name="dd_ec">Eligible Couple</string>
