@@ -190,7 +190,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         ANCFormResponseJsonEntity::class,
     ],
     views = [BenBasicCache::class],
-    version = 52, exportSchema = false
+    version = 53, exportSchema = false
 )
 
 @TypeConverters(
@@ -266,6 +266,19 @@ abstract class InAppDb : RoomDatabase() {
                 it.execSQL("alter table BENEFICIARY add column isConsent BOOL")
 
             })
+
+            val MIGRATION_52_53 = object : Migration(52, 53) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+
+                    database.execSQL(
+                        """
+            CREATE UNIQUE INDEX IF NOT EXISTS index_DewormingMeeting_id
+            ON DewormingMeeting(id)
+            """.trimIndent()
+                    )
+                }
+            }
+
 
             val MIGRATION_51_52 = object : Migration(51, 52) {
                 override fun migrate(database: SupportSQLiteDatabase) {
@@ -1916,7 +1929,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_48_49,
                         MIGRATION_49_50,
                         MIGRATION_50_51,
-                        MIGRATION_51_52
+                        MIGRATION_51_52,
+                        MIGRATION_52_53
 
                     ).build()
 

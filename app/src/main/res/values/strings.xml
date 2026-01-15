@@ -749,6 +749,10 @@
     <string name="mother_s_milk_is_the_best_for_the_complete_development_of_the_baby">Mother’s milk is the best for the complete development of the baby.</string>
     <string name="information_was_given_about_kmc_kangaroo_mother_care">Information was given about KMC (Kangaroo Mother Care).</string>
     <string name="place_of_maa_meeting">Place of MAA Meeting</string>
+    <string name="number_of_out_of_school_children_sent_to_anganwad">Number of Out-of-school Children sent to Anganwad</string>
+    <string name="place_of_ndd">Place of NDD</string>
+    <string name="date_of_ndd">Date of NDD</string>
+    <string name="was_the_deworming_round_conducted">Was the deworming round conducted?</string>
 
 
     <string-array name="hbyc_month_array">
