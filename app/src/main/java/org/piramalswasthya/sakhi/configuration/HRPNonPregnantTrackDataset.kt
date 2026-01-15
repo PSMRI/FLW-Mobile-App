@@ -502,7 +502,7 @@ class HRPNonPregnantTrackDataset(
     fun updateBen(benRegCache: BenRegCache) {
         benRegCache.genDetails?.let {
             it.reproductiveStatus =
-                englishResources.getStringArray(R.array.nbr_reproductive_status_array)[1]
+                englishResources.getStringArray(R.array.nbr_reproductive_status_array2)[1]
             it.reproductiveStatusId = 2
             it.lastMenstrualPeriod = getLongFromDate(lmp.value)
         }
