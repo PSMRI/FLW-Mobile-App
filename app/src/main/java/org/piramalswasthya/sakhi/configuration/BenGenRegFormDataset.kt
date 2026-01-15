@@ -361,8 +361,8 @@ class BenGenRegFormDataset(context: Context, language: Languages) : Dataset(cont
         id = 28,
         inputType = DROPDOWN,
         title = resources.getString(R.string.reproductive_status),
-        arrayId = R.array.nbr_reproductive_status_array,
-        entries = resources.getStringArray(R.array.nbr_reproductive_status_array),
+        arrayId = R.array.nbr_reproductive_status_array2,
+        entries = resources.getStringArray(R.array.nbr_reproductive_status_array2),
         required = true,
         hasDependants = true
     )
