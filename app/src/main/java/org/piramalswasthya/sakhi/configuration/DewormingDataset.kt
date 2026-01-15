@@ -10,6 +10,7 @@ import org.piramalswasthya.sakhi.model.DewormingCache
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.InputType.*
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -17,11 +18,26 @@ class DewormingDataset(
     context: Context,
     currentLanguage: Languages
 ) : Dataset(context, currentLanguage) {
+
+
+    companion object {
+
+        fun getMinDate(): Long {
+            return Calendar.getInstance().apply {
+                add(Calendar.MONTH, -2)
+            }.timeInMillis
+        }
+
+        fun getMaxDate(): Long {
+            return Calendar.getInstance().timeInMillis
+        }
+    }
+
     private val formElementList = mutableListOf<FormElement>()
     private val dewormingDone = FormElement(
         id = 6,
         inputType = RADIO,
-        title = resources.getString(R.string.deworming_done),
+        title = context.getString(R.string.was_the_deworming_round_conducted),
         entries = resources.getStringArray(R.array.yes_no_options),
         required = true,
         hasDependants = true
@@ -30,16 +46,16 @@ class DewormingDataset(
     private val dewormingDate = FormElement(
         id = 5,
         inputType = DATE_PICKER,
-        title = resources.getString(R.string.deworming_date),
+        title = context.getString(R.string.date_of_ndd),
         required = true,
-        min = System.currentTimeMillis(),
-        max = System.currentTimeMillis(),
+        min = getMinDate(),
+        max = getMaxDate(),
     )
 
     private val dewormingLocation = FormElement(
         id = 4,
-        inputType = RADIO,
-        title = resources.getString(R.string.deworming_location),
+        inputType = DROPDOWN,
+        title = context.getString(R.string.place_of_ndd),
         entries = resources.getStringArray(R.array.deworming_location_options),
         required = true,
     )
@@ -47,7 +63,7 @@ class DewormingDataset(
     private val ageGroup = FormElement(
         id = 3,
         inputType = EDIT_TEXT,
-        title = resources.getString(R.string.age_group),
+        title = context.getString(R.string.number_of_out_of_school_children_sent_to_anganwad),
         etMaxLength = 2,
         etInputType = InputType.TYPE_CLASS_NUMBER,
         required = true
