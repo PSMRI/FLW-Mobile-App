@@ -24,7 +24,7 @@ class DewormingDataset(
 
         fun getMinDate(): Long {
             return Calendar.getInstance().apply {
-                add(Calendar.MONTH, -2)
+                add(Calendar.MONTH, -1)
             }.timeInMillis
         }
 
