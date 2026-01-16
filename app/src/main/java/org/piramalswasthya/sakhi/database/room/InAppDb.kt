@@ -269,15 +269,15 @@ abstract class InAppDb : RoomDatabase() {
 
             val MIGRATION_52_53 = object : Migration(52, 53) {
                 override fun migrate(database: SupportSQLiteDatabase) {
-
                     database.execSQL(
                         """
-            CREATE UNIQUE INDEX IF NOT EXISTS index_DewormingMeeting_id
-            ON DewormingMeeting(id)
+            CREATE UNIQUE INDEX IF NOT EXISTS index_DewormingMeeting_dewormingDate
+            ON DewormingMeeting(dewormingDate)
             """.trimIndent()
                     )
                 }
             }
+
 
 
             val MIGRATION_51_52 = object : Migration(51, 52) {

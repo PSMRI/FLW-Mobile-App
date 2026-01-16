@@ -19,7 +19,10 @@ import java.util.Locale
 @Entity(
     tableName = "DewormingMeeting",
     indices = [
-        Index(value = ["id"], unique = true)
+        Index(
+            value = ["dewormingDate"],
+            unique = true
+        )
     ]
 )
 data class DewormingCache(
