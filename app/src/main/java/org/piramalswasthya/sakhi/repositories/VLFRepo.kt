@@ -880,7 +880,6 @@ class VLFRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-//                        val errorMessage = jsonObj.getString("errorMessage")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit hrp assess data : $responseStatusCode")
                         when (responseStatusCode) {
@@ -889,7 +888,6 @@ class VLFRepo @Inject constructor(
                                     val dataObj = jsonObj.getString("data")
                                     saveDeworming(dataObj)
                                 } catch (e: Exception) {
-//                                    Timber.d("HRP Assess entries not synced $e")
                                     return@withContext 0
                                 }
 
@@ -1025,7 +1023,7 @@ class VLFRepo @Inject constructor(
         val vhnc = vlfDao.countVHNCFormsInDateRange(startDate, endDate)
         val phc = vlfDao.countPHCFormsInDateRange(startDate, endDate)
         val ahd = vlfDao.countAHDFormsInDateRange(startDate, endDate)
-        val deworming = vlfDao.countDewormingFormsInDateRange(startDate, endDate)
+        val deworming = vlfDao.countDewormingInLastSixMonths()
         return combine(vhnd, vhnc, phc, ahd, deworming) { vhndCount, vhncCount, phcCount, ahdCount, dewormingCount ->
             mapOf(
                 "VHND" to (vhndCount > 0),
