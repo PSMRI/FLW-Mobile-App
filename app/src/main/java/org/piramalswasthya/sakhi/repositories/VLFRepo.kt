@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -18,16 +17,25 @@ import org.piramalswasthya.sakhi.database.room.InAppDb
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.room.dao.VLFDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
-import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.model.AHDCache
 import org.piramalswasthya.sakhi.model.PHCReviewMeetingCache
-import org.piramalswasthya.sakhi.model.PwrPost
 import org.piramalswasthya.sakhi.model.VHNCCache
 import org.piramalswasthya.sakhi.model.VHNDCache
+import org.piramalswasthya.sakhi.model.PulsePolioCampaignCache
+import org.piramalswasthya.sakhi.model.ORSCampaignCache
 import org.piramalswasthya.sakhi.network.AHDDTO
+import org.piramalswasthya.sakhi.utils.HelperUtil.compressImageToTemp
+import org.piramalswasthya.sakhi.utils.HelperUtil.getFileName
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import android.content.Context
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
+import java.io.File
 import org.piramalswasthya.sakhi.network.AmritApiService
 import org.piramalswasthya.sakhi.network.DewormingDTO
-import org.piramalswasthya.sakhi.network.GetDataPaginatedRequest
 import org.piramalswasthya.sakhi.network.GetVHNDRequest
 import org.piramalswasthya.sakhi.network.PHCReviewDTO
 import org.piramalswasthya.sakhi.network.UserDataDTO
@@ -35,11 +43,8 @@ import org.piramalswasthya.sakhi.network.VHNCDTO
 import org.piramalswasthya.sakhi.network.VHNDDTO
 import timber.log.Timber
 import java.net.SocketTimeoutException
-import java.time.LocalDate
 import java.time.YearMonth
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import javax.inject.Inject
 
 
 class VLFRepo @Inject constructor(
@@ -47,8 +52,8 @@ class VLFRepo @Inject constructor(
     private val userRepo: UserRepo,
     private val preferenceDao: PreferenceDao,
     private val tmcNetworkApiService: AmritApiService,
-    private val vlfDao: VLFDao
-
+    private val vlfDao: VLFDao,
+    @ApplicationContext private val appContext: Context
 ) {
 
     suspend fun getVHND(id: Int): VHNDCache? {
@@ -130,6 +135,378 @@ class VLFRepo @Inject constructor(
 //        .map { list -> list.map { it.toDTO() } }
         .map { list -> list.map { it.toDewormingCache() } }
 
+    suspend fun getPulsePolioCampaign(id: Int): PulsePolioCampaignCache? {
+        return withContext(Dispatchers.IO) {
+            database.vlfDao.getPulsePolioCampaign(id)
+        }
+    }
+
+    suspend fun savePulsePolioCampaign(pulsePolioCampaignCache: PulsePolioCampaignCache) {
+        withContext(Dispatchers.IO) {
+            database.vlfDao.saveRecord(pulsePolioCampaignCache)
+        }
+    }
+
+    var pulsePolioCampaignList = vlfDao.getAllPulsePolioCampaign()
+        .map { list -> list }
+
+    suspend fun getUnsyncedPulsePolioCampaign(): List<PulsePolioCampaignCache> {
+        return withContext(Dispatchers.IO) {
+            database.vlfDao.getPulsePolioCampaign(SyncState.UNSYNCED) ?: emptyList()
+        }
+    }
+
+    suspend fun getORSCampaign(id: Int): ORSCampaignCache? {
+        return withContext(Dispatchers.IO) {
+            database.vlfDao.getORSCampaign(id)
+        }
+    }
+
+    suspend fun saveORSCampaign(orsCampaignCache: ORSCampaignCache) {
+        withContext(Dispatchers.IO) {
+            database.vlfDao.saveRecord(orsCampaignCache)
+        }
+    }
+
+    var orsCampaignList = vlfDao.getAllORSCampaign()
+        .map { list -> list }
+
+    suspend fun getUnsyncedORSCampaign(): List<ORSCampaignCache> {
+        return withContext(Dispatchers.IO) {
+            database.vlfDao.getORSCampaign(SyncState.UNSYNCED) ?: emptyList()
+        }
+    }
+
+    suspend fun saveORSCampaignToServer(orsCampaignCache: ORSCampaignCache): Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+
+                val formDataJson = orsCampaignCache.formDataJson ?: ""
+                val formDataObj = try {
+                    JSONObject(formDataJson)
+                } catch (e: Exception) {
+                    JSONObject()
+                }
+                
+                val fieldsObj = formDataObj.optJSONObject("fields") ?: JSONObject()
+                val campaignPhotosValue = fieldsObj.opt("campaign_photos") ?: fieldsObj.opt("campaignPhotos")
+                
+                val photoUris = when {
+                    campaignPhotosValue is String -> {
+                        try {
+                            Gson().fromJson(campaignPhotosValue as String, Array<String>::class.java).toList()
+                        } catch (e: Exception) {
+                            listOf(campaignPhotosValue.toString()).filter { it.isNotEmpty() }
+                        }
+                    }
+                    campaignPhotosValue is org.json.JSONArray -> {
+                        (0 until (campaignPhotosValue as org.json.JSONArray).length())
+                            .mapNotNull { campaignPhotosValue.opt(it)?.toString() }
+                    }
+                    else -> emptyList()
+                }
+
+                val multipartParts = mutableListOf<MultipartBody.Part>()
+                
+                val formDataJsonBody = formDataJson.toRequestBody("application/json".toMediaTypeOrNull())
+                multipartParts.add(
+                    MultipartBody.Part.createFormData("formDataJson", null, formDataJsonBody)
+                )
+
+                val imageParts = photoUris.mapNotNull { photoData ->
+                    try {
+                        val file: File? = when {
+                            photoData.startsWith("data:image/") || photoData.contains(",") -> {
+                                val base64Data = photoData.substringAfter(",", photoData)
+                                val bytes = android.util.Base64.decode(base64Data, android.util.Base64.DEFAULT)
+                                val tempFile = File.createTempFile("campaign_photo_", ".jpg", appContext.cacheDir)
+                                tempFile.writeBytes(bytes)
+                                tempFile
+                            }
+                            photoData.startsWith("content://") || photoData.startsWith("file://") -> {
+                                val uri = android.net.Uri.parse(photoData)
+                                val name = getFileName(uri, appContext) ?: "campaign_photo"
+                                val mime = appContext.contentResolver.getType(uri) ?: "image/jpeg"
+                                if (mime.startsWith("image/")) {
+                                    compressImageToTemp(uri, name, appContext)
+                                } else {
+                                    null
+                                }
+                            }
+                            else -> {
+                                val filePath = File(photoData)
+                                if (filePath.exists()) filePath else null
+                            }
+                        }
+                        file?.let {
+                            val mime = "image/jpeg"
+                            val body = it.asRequestBody(mime.toMediaTypeOrNull())
+                            MultipartBody.Part.createFormData("campaignPhotos", it.name, body)
+                        }
+                    } catch (e: Exception) {
+                        Timber.e(e, "Error processing image: $photoData")
+                        null
+                    }
+                }
+                multipartParts.addAll(imageParts)
+
+                val response = tmcNetworkApiService.saveORSCampaignData(
+                    campaignData = multipartParts
+                )
+
+                if (response.isSuccessful) {
+                    orsCampaignCache.syncState = SyncState.SYNCED
+                    database.vlfDao.saveRecord(orsCampaignCache)
+                    true
+                } else {
+                    false
+                }
+            } catch (e: Exception) {
+                Timber.e(e, "Error saving ORS Campaign to server")
+                false
+            }
+        }
+    }
+
+    suspend fun getORSCampaignFromServer(): Int {
+        return withContext(Dispatchers.IO) {
+            val user = preferenceDao.getLoggedInUser()
+                ?: throw IllegalStateException("No user logged in!!")
+            try {
+                val response = tmcNetworkApiService.getORSCampaignData()
+                val statusCode = response.code()
+                if (statusCode == 200) {
+                    val responseString = response.body()?.string()
+                    if (responseString != null) {
+                        val jsonObj = JSONObject(responseString)
+                        val responseStatusCode = jsonObj.getInt("statusCode")
+                        Timber.d("Pull ORS Campaign data : $responseStatusCode")
+                        when (responseStatusCode) {
+                            200 -> {
+                                try {
+                                    val dataObj = jsonObj.getString("data")
+                                    saveORSCampaignFromServer(dataObj)
+                                    return@withContext 1
+                                } catch (e: Exception) {
+                                    Timber.d("ORS Campaign entries not synced $e")
+                                    return@withContext 0
+                                }
+                            }
+                            5002 -> {
+                                if (userRepo.refreshTokenTmc(user.userName, user.password)) {
+                                    throw SocketTimeoutException("Refreshed Token!")
+                                } else {
+                                    throw IllegalStateException("User Logged out!!")
+                                }
+                            }
+                            else -> {
+                                throw IllegalStateException("$responseStatusCode received")
+                            }
+                        }
+                    }
+                }
+            } catch (e: SocketTimeoutException) {
+                Timber.d("get ORS Campaign data error : $e")
+                return@withContext getORSCampaignFromServer()
+            } catch (e: IllegalStateException) {
+                Timber.d("get ORS Campaign data error : $e")
+                return@withContext -1
+            }
+            -1
+        }
+    }
+
+    private suspend fun saveORSCampaignFromServer(dataObj: String) {
+        val requestDTO = Gson().fromJson(dataObj, JsonObject::class.java)
+        val entries = requestDTO.getAsJsonArray("entries")
+        for (dto in entries) {
+            try {
+                val entry = dto.asJsonObject
+                val id = entry.get("id")?.asInt ?: 0
+                val formDataJson = entry.get("formDataJson")?.asString
+                
+                if (formDataJson != null) {
+                    val existing = database.vlfDao.getORSCampaign(id)
+                    if (existing == null) {
+                        val cache = ORSCampaignCache(
+                            id = id,
+                            formDataJson = formDataJson,
+                            syncState = SyncState.SYNCED
+                        )
+                        database.vlfDao.saveRecord(cache)
+                    }
+                }
+            } catch (e: Exception) {
+                Timber.d("cannot save ORS Campaign entry $dto due to : $e")
+            }
+        }
+    }
+
+    suspend fun savePulsePolioCampaignToServer(pulsePolioCampaignCache: PulsePolioCampaignCache): Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                val formDataJson = pulsePolioCampaignCache.formDataJson ?: ""
+                val formDataObj = try {
+                    JSONObject(formDataJson)
+                } catch (e: Exception) {
+                    JSONObject()
+                }
+                
+                val fieldsObj = formDataObj.optJSONObject("fields") ?: JSONObject()
+                val campaignPhotosValue = fieldsObj.opt("campaign_photos") ?: fieldsObj.opt("campaignPhotos")
+                
+                val photoUris = when {
+                    campaignPhotosValue is String -> {
+                        try {
+                            Gson().fromJson(campaignPhotosValue as String, Array<String>::class.java).toList()
+                        } catch (e: Exception) {
+                            listOf(campaignPhotosValue.toString()).filter { it.isNotEmpty() }
+                        }
+                    }
+                    campaignPhotosValue is org.json.JSONArray -> {
+                        (0 until (campaignPhotosValue as org.json.JSONArray).length())
+                            .mapNotNull { campaignPhotosValue.opt(it)?.toString() }
+                    }
+                    else -> emptyList()
+                }
+
+                val imageParts = photoUris.mapNotNull { photoData ->
+                    try {
+                        val file: File? = when {
+                            photoData.startsWith("data:image/") || photoData.contains(",") -> {
+                                val base64Data = photoData.substringAfter(",", photoData)
+                                val bytes = android.util.Base64.decode(base64Data, android.util.Base64.DEFAULT)
+                                val tempFile = File.createTempFile("campaign_photo_", ".jpg", appContext.cacheDir)
+                                tempFile.writeBytes(bytes)
+                                tempFile
+                            }
+                            photoData.startsWith("content://") || photoData.startsWith("file://") -> {
+                                val uri = android.net.Uri.parse(photoData)
+                                val name = getFileName(uri, appContext) ?: "campaign_photo"
+                                val mime = appContext.contentResolver.getType(uri) ?: "image/jpeg"
+                                if (mime.startsWith("image/")) {
+                                    compressImageToTemp(uri, name, appContext)
+                                } else {
+                                    null
+                                }
+                            }
+
+                            else -> {
+                                val filePath = File(photoData)
+                                if (filePath.exists()) filePath else null
+                            }
+                        }
+                        file?.let {
+                            val mime = "image/jpeg"
+                            val body = it.asRequestBody(mime.toMediaTypeOrNull())
+                            MultipartBody.Part.createFormData("campaignPhotos", it.name, body)
+                        }
+                    } catch (e: Exception) {
+                        Timber.e(e, "Error processing image: $photoData")
+                        null
+                    }
+                }
+
+                val multipartParts = mutableListOf<MultipartBody.Part>()
+                
+                val formDataJsonBody = formDataJson.toRequestBody("application/json".toMediaTypeOrNull())
+                multipartParts.add(
+                    MultipartBody.Part.createFormData("formDataJson", null, formDataJsonBody)
+                )
+                
+                multipartParts.addAll(imageParts)
+
+                val response = tmcNetworkApiService.savePulsePolioCampaignData(
+                    campaignData = multipartParts
+                )
+
+                if (response.isSuccessful) {
+                    pulsePolioCampaignCache.syncState = SyncState.SYNCED
+                    database.vlfDao.saveRecord(pulsePolioCampaignCache)
+                    true
+                } else {
+                    false
+                }
+            } catch (e: Exception) {
+                Timber.e(e, "Error saving Pulse Polio Campaign to server")
+                false
+            }
+        }
+    }
+
+    suspend fun getPulsePolioCampaignFromServer(): Int {
+        return withContext(Dispatchers.IO) {
+            val user = preferenceDao.getLoggedInUser()
+                ?: throw IllegalStateException("No user logged in!!")
+            try {
+                val response = tmcNetworkApiService.getPulsePolioCampaignData()
+                val statusCode = response.code()
+                if (statusCode == 200) {
+                    val responseString = response.body()?.string()
+                    if (responseString != null) {
+                        val jsonObj = JSONObject(responseString)
+                        val responseStatusCode = jsonObj.getInt("statusCode")
+                        Timber.d("Pull Pulse Polio Campaign data : $responseStatusCode")
+                        when (responseStatusCode) {
+                            200 -> {
+                                try {
+                                    val dataObj = jsonObj.getString("data")
+                                    savePulsePolioCampaignFromServer(dataObj)
+                                    return@withContext 1
+                                } catch (e: Exception) {
+                                    Timber.d("Pulse Polio Campaign entries not synced $e")
+                                    return@withContext 0
+                                }
+                            }
+                            5002 -> {
+                                if (userRepo.refreshTokenTmc(user.userName, user.password)) {
+                                    throw SocketTimeoutException("Refreshed Token!")
+                                } else {
+                                    throw IllegalStateException("User Logged out!!")
+                                }
+                            }
+                            else -> {
+                                throw IllegalStateException("$responseStatusCode received")
+                            }
+                        }
+                    }
+                }
+            } catch (e: SocketTimeoutException) {
+                Timber.d("get Pulse Polio Campaign data error : $e")
+                return@withContext getPulsePolioCampaignFromServer()
+            } catch (e: IllegalStateException) {
+                Timber.d("get Pulse Polio Campaign data error : $e")
+                return@withContext -1
+            }
+            -1
+        }
+    }
+
+    private suspend fun savePulsePolioCampaignFromServer(dataObj: String) {
+        val requestDTO = Gson().fromJson(dataObj, JsonObject::class.java)
+        val entries = requestDTO.getAsJsonArray("entries")
+        for (dto in entries) {
+            try {
+                val entry = dto.asJsonObject
+                val id = entry.get("id")?.asInt ?: 0
+                val formDataJson = entry.get("formDataJson")?.asString
+                
+                if (formDataJson != null) {
+                    val existing = database.vlfDao.getPulsePolioCampaign(id)
+                    if (existing == null) {
+                        val cache = PulsePolioCampaignCache(
+                            id = id,
+                            formDataJson = formDataJson,
+                            syncState = SyncState.SYNCED
+                        )
+                        database.vlfDao.saveRecord(cache)
+                    }
+                }
+            } catch (e: Exception) {
+                Timber.d("cannot save Pulse Polio Campaign entry $dto due to : $e")
+            }
+        }
+    }
 
     fun getLastSubmissionDate(formId: String): Flow<String?> {
         Log.d("OverdueCheck", "Is overdue: $formId")
@@ -140,6 +517,34 @@ class VLFRepo @Inject constructor(
             "phc_review" -> vlfDao.getLastPHCSubmissionDate()
             "ahd" -> vlfDao.getLastAHDSubmissionDate()
             "deworming" -> vlfDao.getLastDewormingSubmissionDate()
+            "pulse_polio_campaign_form" -> {
+                vlfDao.getAllPulsePolioCampaignForDate().map { list ->
+                    list.mapNotNull { cache ->
+                        try {
+                            val formDataJson = cache.formDataJson ?: return@mapNotNull null
+                            val jsonObj = JSONObject(formDataJson)
+                            val fieldsObj = jsonObj.optJSONObject("fields") ?: return@mapNotNull null
+                            fieldsObj.optString("campaign_date").takeIf { it.isNotEmpty() }
+                        } catch (e: Exception) {
+                            null
+                        }
+                    }.maxOrNull()
+                }
+            }
+            "ors_campaign_form" -> {
+                vlfDao.getAllORSCampaignForDate().map { list ->
+                    list.mapNotNull { cache ->
+                        try {
+                            val formDataJson = cache.formDataJson ?: return@mapNotNull null
+                            val jsonObj = JSONObject(formDataJson)
+                            val fieldsObj = jsonObj.optJSONObject("fields") ?: return@mapNotNull null
+                            fieldsObj.optString("campaign_date").takeIf { it.isNotEmpty() }
+                        } catch (e: Exception) {
+                            null
+                        }
+                    }.maxOrNull()
+                }
+            }
             else -> flowOf(null) // Return null for unknown formIds
         }
     }

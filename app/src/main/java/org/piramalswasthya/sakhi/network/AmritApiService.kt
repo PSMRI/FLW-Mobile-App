@@ -185,6 +185,24 @@ interface AmritApiService {
     @POST("flw-api/forms/villageLevel/deworming/saveAll")
     suspend fun saveDewormingData(@Body userDataDTO: UserDataDTO<Any?>): Response<ResponseBody>
 
+    @Multipart
+    @POST("flw-api/campaign/ors/distribution/saveAll")
+    suspend fun saveORSCampaignData(
+        @Part campaignData: List<MultipartBody.Part>
+    ): Response<ResponseBody>
+
+    @POST("flw-api/campaign/ors/distribution/getAll")
+    suspend fun getORSCampaignData(): Response<ResponseBody>
+
+    @Multipart
+    @POST("flw-api/campaign/polio/campaign/saveAll")
+    suspend fun savePulsePolioCampaignData(
+        @Part campaignData: List<MultipartBody.Part>
+    ): Response<ResponseBody>
+
+    @POST("flw-api/campaign/polio/campaign/getAll")
+    suspend fun getPulsePolioCampaignData(): Response<ResponseBody>
+
     @POST("flw-api/highRisk/pregnant/assess/saveAll")
 //    @POST("highRisk/pregnant/assess/saveAll")
     suspend fun saveHRPAssessData(@Body userDataDTO: UserDataDTO<Any?>): Response<ResponseBody>
