@@ -54,7 +54,9 @@ class FormRepository @Inject constructor(
         FormConstants.MOSQUITO_NET_FORM_ID,
         FormConstants.MDA_DISTRIBUTION_FORM_ID,
         FormConstants.CDTF_001,
-        FormConstants.ANC_FORM_ID
+        FormConstants.ANC_FORM_ID,
+        FormConstants.ORS_CAMPAIGN_FORM_ID,
+        FormConstants.PULSE_POLIO_CAMPAIGN_FORM_ID
     )
 
 

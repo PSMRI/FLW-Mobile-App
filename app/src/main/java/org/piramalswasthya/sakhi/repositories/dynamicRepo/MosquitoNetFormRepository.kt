@@ -37,7 +37,7 @@ class MosquitoNetFormRepository @Inject constructor(
     suspend fun getFormSchema(formId: String): FormSchemaDto? = withContext(Dispatchers.IO) {
         var result: FormSchemaDto? = null
         try {
-            val response = amritApiService.fetchFormSchema(formId, "en")
+            val response = amritApiService.fetchFormSchema(formId, pref.getCurrentLanguage().symbol)
             if (response.isSuccessful) {
                 val apiResponse = response.body()
                 if (apiResponse?.success == true) {

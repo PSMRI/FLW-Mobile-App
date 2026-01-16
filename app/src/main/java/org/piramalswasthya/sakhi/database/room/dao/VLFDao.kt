@@ -8,11 +8,11 @@ import kotlinx.coroutines.flow.Flow
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.model.DewormingCache
 import org.piramalswasthya.sakhi.model.AHDCache
-import org.piramalswasthya.sakhi.model.HRPPregnantAssessCache
 import org.piramalswasthya.sakhi.model.PHCReviewMeetingCache
 import org.piramalswasthya.sakhi.model.VHNCCache
 import org.piramalswasthya.sakhi.model.VHNDCache
-import java.time.LocalDate
+import org.piramalswasthya.sakhi.model.PulsePolioCampaignCache
+import org.piramalswasthya.sakhi.model.ORSCampaignCache
 
 @Dao
 interface VLFDao {
@@ -117,5 +117,37 @@ interface VLFDao {
     // For Deworming form
     @Query("SELECT MAX(regDate) FROM DewormingMeeting")
     fun getLastDewormingSubmissionDate(): Flow<String?>
+
+    // For Pulse Polio Campaign form
+    @Query("SELECT * FROM PulsePolioCampaign WHERE id = :id")
+    suspend fun getPulsePolioCampaign(id: Int): PulsePolioCampaignCache?
+
+    @Query("SELECT * FROM PulsePolioCampaign")
+    fun getAllPulsePolioCampaign(): Flow<List<PulsePolioCampaignCache>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun saveRecord(pulsePolioCampaignCache: PulsePolioCampaignCache)
+
+    @Query("SELECT * FROM PulsePolioCampaign WHERE syncState = :syncState")
+    fun getPulsePolioCampaign(syncState: SyncState): List<PulsePolioCampaignCache>?
+
+    @Query("SELECT * FROM PulsePolioCampaign")
+    fun getAllPulsePolioCampaignForDate(): Flow<List<PulsePolioCampaignCache>>
+
+    // For ORS Campaign form
+    @Query("SELECT * FROM ORSCampaign WHERE id = :id")
+    suspend fun getORSCampaign(id: Int): ORSCampaignCache?
+
+    @Query("SELECT * FROM ORSCampaign")
+    fun getAllORSCampaign(): Flow<List<ORSCampaignCache>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun saveRecord(orsCampaignCache: ORSCampaignCache)
+
+    @Query("SELECT * FROM ORSCampaign WHERE syncState = :syncState")
+    fun getORSCampaign(syncState: SyncState): List<ORSCampaignCache>?
+
+    @Query("SELECT * FROM ORSCampaign")
+    fun getAllORSCampaignForDate(): Flow<List<ORSCampaignCache>>
 
 }
