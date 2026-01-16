@@ -107,6 +107,7 @@ import org.piramalswasthya.sakhi.model.TBSuspectedCache
 import org.piramalswasthya.sakhi.model.UwinCache
 import org.piramalswasthya.sakhi.model.MaaMeetingEntity
 import org.piramalswasthya.sakhi.model.ReferalCache
+import org.piramalswasthya.sakhi.model.TBConfirmedTreatmentCache
 import org.piramalswasthya.sakhi.model.VHNCCache
 import org.piramalswasthya.sakhi.model.Vaccine
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormResponseJsonEntity
@@ -188,6 +189,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         MosquitoNetFormResponseJsonEntity::class,
         FilariaMDAFormResponseJsonEntity::class,
         ANCFormResponseJsonEntity::class,
+        TBConfirmedTreatmentCache::class
     ],
     views = [BenBasicCache::class],
     version = 50, exportSchema = false

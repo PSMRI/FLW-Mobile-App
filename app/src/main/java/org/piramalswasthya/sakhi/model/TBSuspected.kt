@@ -27,7 +27,7 @@ data class TBSuspectedCache(
     val id: Int = 0,
     val benId: Long,
     var visitDate: Long = System.currentTimeMillis(),
-    var visitLabel: Int = 1,
+    var visitLabel: String? = null,
     var typeOfTBCase: String? = null,
     var reasonForSuspicion: String? = null,
     var hasSymptoms: Boolean? = null,
@@ -72,21 +72,37 @@ data class TBSuspectedCache(
 data class BenWithTbSuspectedCache(
     @Embedded
     val ben: BenBasicCache,
-    @Relation(
-        parentColumn = "benId", entityColumn = "benId"
-    )
-    val tb: TBSuspectedCache?,
 
-    ) {
+    @Relation(
+        parentColumn = "benId",
+        entityColumn = "benId"
+    )
+    val tbSuspected: TBSuspectedCache?,
+
+    @Relation(
+        parentColumn = "benId",
+        entityColumn = "benId"
+    )
+    val tbConfirmedList: List<TBConfirmedTreatmentCache>
+)
+{
     fun asTbSuspectedDomainModel(): BenWithTbSuspectedDomain {
         return BenWithTbSuspectedDomain(
             ben = ben.asBasicDomainModel(),
-            tb = tb
+            tbSuspected = tbSuspected,
+            tbConfirmedList = tbConfirmedList
         )
     }
+
 }
 
 data class BenWithTbSuspectedDomain(
     val ben: BenBasicDomain,
-    val tb: TBSuspectedCache?
-)
+    val tbSuspected: TBSuspectedCache?,
+    val tbConfirmedList: List<TBConfirmedTreatmentCache>
+) {
+    val latestTbSyncState: SyncState?
+        get() = tbConfirmedList
+            .maxByOrNull { it.followUpDate ?: 0L }
+            ?.syncState
+}
