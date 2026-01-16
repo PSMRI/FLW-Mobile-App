@@ -113,6 +113,10 @@ interface AmritApiService {
 //    @POST("tb/suspected/getAll")
     suspend fun getTBSuspectedData(@Body userDetail: GetDataPaginatedRequest): Response<ResponseBody>
 
+    @GET("flw-api/tb/confirmed/getAll")
+    suspend fun getTBConfirmedData(): Response<ResponseBody>
+
+
     @POST("flw-api/tb/screening/saveAll")
 //    @POST("tb/screening/saveAll")
     suspend fun saveTBScreeningData(@Body tbScreeningRequestDTO: TBScreeningRequestDTO): Response<ResponseBody>
@@ -156,6 +160,9 @@ interface AmritApiService {
 
     @POST("flw-api/tb/suspected/saveAll")
     suspend fun saveTBSuspectedData(@Body tbSuspectedRequestDTO: TBSuspectedRequestDTO): Response<ResponseBody>
+
+    @POST("flw-api/follow-up/getAll")
+    suspend fun saveTBConfirmedData(@Body tbConfirmedRequestDTO: TBConfirmedRequestDTO): Response<ResponseBody>
 
     @POST("flw-api/follow-up/save")
     suspend fun saveMalariaConfirmedData(@Body malariaConfirmedRequestDTO: MalariaConfirmedRequestDTO): Response<ResponseBody>

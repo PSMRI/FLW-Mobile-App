@@ -218,8 +218,6 @@
     </string-array>
 
 
-
-
     <string-array name="yes_no_options">
         <item>Yes</item>
         <item>No</item>
@@ -432,6 +430,9 @@
     <string name="tb_screening_list">TB Screening List</string>
     <string name="tb_suspected_list">Suspected TB cases</string>
     <string name="tb_screening_form">TB Screening Form</string>
+    <string name="tb_confirmed_list">TB Confirmed List</string>
+    <string name="tb_confirmed_form">TB Confirmed Form</string>
+
     <string name="maleria_screening_form">Malaria Form</string>
     <string name="kala_screening_form">KALA Azar Form</string>
     <string name="aes_screening_form">AES Form</string>
@@ -793,6 +794,50 @@
     <string name="last_home_visit_date">Last Home Visit Date</string>
     <string name="add_home_visit">ADD HOME VISIT</string>
     <string name="view_home_visits">VIEW HOME VISITS</string>
+
+    <string name="regimen_type">Regimen Type</string>
+    <string name="monthly_follow_up_done">Monthly follow up done</string>
+    <string name="adherence_to_medicines">Adherence to Medicines</string>
+    <string name="any_discomfort">Any discomfort</string>
+    <string name="treatment_completed">Did the patient complete the full course of Treatment?</string>
+    <string name="treatment_outcome">TB Treatment outcomes</string>
+    <string name="reason_for_not_completing">Reason for not completing treatment</string>
+    <string name="tuberculosis">Tuberculosis</string>
+    <string name="only_one_follow_up_per_month">Only one follow-up visit per month is allowed</string>
+    <string name="follow_up_must_be_after_last">Follow-up date must be after the last follow-up date</string>
+    <string name="month_format">Month-%d</string>
+
+    <!-- Arrays for TB Confirmed Treatment -->
+    <string-array name="tb_regimen_types">
+        <item>DS-TB (6 Months)</item>
+        <item>Shorter Regimen (9–12 Months)</item>
+        <item>Longer Regimen (18–24 Months)</item>
+        <item>BPaL Regimen (6 Months)</item>
+        <item>INH Mono (6 Month)</item>
+    </string-array>
+
+    <string-array name="adherence_options">
+        <item>Regular</item>
+        <item>Irregular</item>
+    </string-array>
+
+    <string-array name="tb_treatment_outcomes">
+        <item>Cured</item>
+        <item>Failed</item>
+        <item>Lost to Follow-up (LFU)</item>
+        <item>Death</item>
+    </string-array>
+
+    <string-array name="place_of_death">
+        <item>Home</item>
+        <item>Subcenter</item>
+        <item>PHC</item>
+        <item>CHC</item>
+        <item>District Hospital</item>
+        <item>Medical College Hospital</item>
+        <item>Private Hospital</item>
+        <item>Other Place</item>
+    </string-array>
 
 
     <string-array name="hbyc_month_array">
