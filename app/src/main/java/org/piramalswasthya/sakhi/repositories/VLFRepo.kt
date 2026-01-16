@@ -4,6 +4,7 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import com.google.gson.Gson
+import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -280,15 +281,32 @@ class VLFRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
                         val responseStatusCode = jsonObj.getInt("statusCode")
-                        Timber.d("Pull ORS Campaign data : $responseStatusCode")
                         when (responseStatusCode) {
                             200 -> {
                                 try {
-                                    val dataObj = jsonObj.getString("data")
-                                    saveORSCampaignFromServer(dataObj)
-                                    return@withContext 1
+                                    when (val dataValue = jsonObj.opt("data")) {
+                                        is org.json.JSONArray -> {
+                                            saveORSCampaignFromServer(dataValue.toString())
+                                            return@withContext 1
+                                        }
+
+                                        is String -> {
+                                            saveORSCampaignFromServer(dataValue)
+                                            return@withContext 1
+                                        }
+
+                                        is JSONObject -> {
+                                            saveORSCampaignFromServer(dataValue.toString())
+                                            return@withContext 1
+                                        }
+
+                                        else -> {
+                                            Timber.e("Unexpected data format: ${dataValue?.javaClass}")
+                                            return@withContext 0
+                                        }
+                                    }
                                 } catch (e: Exception) {
-                                    Timber.d("ORS Campaign entries not synced $e")
+                                    Timber.e(e, "ORS Campaign entries not synced")
                                     return@withContext 0
                                 }
                             }
@@ -317,28 +335,53 @@ class VLFRepo @Inject constructor(
     }
 
     private suspend fun saveORSCampaignFromServer(dataObj: String) {
-        val requestDTO = Gson().fromJson(dataObj, JsonObject::class.java)
-        val entries = requestDTO.getAsJsonArray("entries")
-        for (dto in entries) {
-            try {
-                val entry = dto.asJsonObject
-                val id = entry.get("id")?.asInt ?: 0
-                val formDataJson = entry.get("formDataJson")?.asString
-                
-                if (formDataJson != null) {
-                    val existing = database.vlfDao.getORSCampaign(id)
-                    if (existing == null) {
-                        val cache = ORSCampaignCache(
-                            id = id,
-                            formDataJson = formDataJson,
-                            syncState = SyncState.SYNCED
-                        )
-                        database.vlfDao.saveRecord(cache)
+        try {
+            val jsonArray = org.json.JSONArray(dataObj)
+            
+            var savedCount = 0
+            for (i in 0 until jsonArray.length()) {
+                try {
+                    val entryObj = jsonArray.getJSONObject(i)
+                    val id = entryObj.optInt("id", 0)
+                    
+                    val fieldsObj = entryObj.optJSONObject("fields")
+                    val formDataJson = if (fieldsObj != null) {
+                        val formData = org.json.JSONObject()
+                        formData.put("fields", fieldsObj)
+                        formData.toString()
+                    } else {
+                        entryObj.optString("formDataJson", null)
                     }
+                    
+                    if (formDataJson != null && id > 0) {
+                        val existing = database.vlfDao.getORSCampaign(id)
+                        if (existing == null) {
+                            val cache = ORSCampaignCache(
+                                id = id,
+                                formDataJson = formDataJson,
+                                syncState = SyncState.SYNCED
+                            )
+                            database.vlfDao.saveRecord(cache)
+                            savedCount++
+                            Timber.d("Saved new ORS Campaign entry with id: $id")
+                        } else {
+                            // Update existing record if needed
+                            existing.formDataJson = formDataJson
+                            existing.syncState = SyncState.SYNCED
+                            database.vlfDao.saveRecord(existing)
+                            savedCount++
+                            Timber.d("Updated ORS Campaign entry with id: $id")
+                        }
+                    } else {
+                        Timber.w("Skipping entry with id: $id, formDataJson is null or id is 0")
+                    }
+                } catch (e: Exception) {
+                    Timber.e(e, "cannot save ORS Campaign entry at index $i due to : $e")
                 }
-            } catch (e: Exception) {
-                Timber.d("cannot save ORS Campaign entry $dto due to : $e")
             }
+            Timber.d("Saved $savedCount ORS Campaign entries to database")
+        } catch (e: Exception) {
+            Timber.e(e, "Error parsing ORS Campaign data: $e")
         }
     }
 
@@ -450,11 +493,29 @@ class VLFRepo @Inject constructor(
                         when (responseStatusCode) {
                             200 -> {
                                 try {
-                                    val dataObj = jsonObj.getString("data")
-                                    savePulsePolioCampaignFromServer(dataObj)
-                                    return@withContext 1
+                                    when (val dataValue = jsonObj.opt("data")) {
+                                        is org.json.JSONArray -> {
+                                            savePulsePolioCampaignFromServer(dataValue.toString())
+                                            return@withContext 1
+                                        }
+
+                                        is String -> {
+                                            savePulsePolioCampaignFromServer(dataValue)
+                                            return@withContext 1
+                                        }
+
+                                        is JSONObject -> {
+                                            savePulsePolioCampaignFromServer(dataValue.toString())
+                                            return@withContext 1
+                                        }
+
+                                        else -> {
+                                            Timber.e("Unexpected data format: ${dataValue?.javaClass}")
+                                            return@withContext 0
+                                        }
+                                    }
                                 } catch (e: Exception) {
-                                    Timber.d("Pulse Polio Campaign entries not synced $e")
+                                    Timber.e(e, "Pulse Polio Campaign entries not synced")
                                     return@withContext 0
                                 }
                             }
@@ -483,28 +544,52 @@ class VLFRepo @Inject constructor(
     }
 
     private suspend fun savePulsePolioCampaignFromServer(dataObj: String) {
-        val requestDTO = Gson().fromJson(dataObj, JsonObject::class.java)
-        val entries = requestDTO.getAsJsonArray("entries")
-        for (dto in entries) {
-            try {
-                val entry = dto.asJsonObject
-                val id = entry.get("id")?.asInt ?: 0
-                val formDataJson = entry.get("formDataJson")?.asString
-                
-                if (formDataJson != null) {
-                    val existing = database.vlfDao.getPulsePolioCampaign(id)
-                    if (existing == null) {
-                        val cache = PulsePolioCampaignCache(
-                            id = id,
-                            formDataJson = formDataJson,
-                            syncState = SyncState.SYNCED
-                        )
-                        database.vlfDao.saveRecord(cache)
+        try {
+            val jsonArray = org.json.JSONArray(dataObj)
+            
+            var savedCount = 0
+            for (i in 0 until jsonArray.length()) {
+                try {
+                    val entryObj = jsonArray.getJSONObject(i)
+                    val id = entryObj.optInt("id", 0)
+                    
+                    val fieldsObj = entryObj.optJSONObject("fields")
+                    val formDataJson = if (fieldsObj != null) {
+                        val formData = JSONObject()
+                        formData.put("fields", fieldsObj)
+                        formData.toString()
+                    } else {
+                        entryObj.optString("formDataJson", null)
                     }
+                    
+                    if (formDataJson != null && id > 0) {
+                        val existing = database.vlfDao.getPulsePolioCampaign(id)
+                        if (existing == null) {
+                            val cache = PulsePolioCampaignCache(
+                                id = id,
+                                formDataJson = formDataJson,
+                                syncState = SyncState.SYNCED
+                            )
+                            database.vlfDao.saveRecord(cache)
+                            savedCount++
+                            Timber.d("Saved new Pulse Polio Campaign entry with id: $id")
+                        } else {
+                            existing.formDataJson = formDataJson
+                            existing.syncState = SyncState.SYNCED
+                            database.vlfDao.saveRecord(existing)
+                            savedCount++
+                            Timber.d("Updated Pulse Polio Campaign entry with id: $id")
+                        }
+                    } else {
+                        Timber.w("Skipping entry with id: $id, formDataJson is null or id is 0")
+                    }
+                } catch (e: Exception) {
+                    Timber.e(e, "cannot save Pulse Polio Campaign entry at index $i due to : $e")
                 }
-            } catch (e: Exception) {
-                Timber.d("cannot save Pulse Polio Campaign entry $dto due to : $e")
             }
+            Timber.d("Saved $savedCount Pulse Polio Campaign entries to database")
+        } catch (e: Exception) {
+            Timber.e(e, "Error parsing Pulse Polio Campaign data: $e")
         }
     }
 
