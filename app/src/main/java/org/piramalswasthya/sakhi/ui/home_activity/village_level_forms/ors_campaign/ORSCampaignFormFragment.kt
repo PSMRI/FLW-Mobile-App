@@ -71,8 +71,13 @@ class ORSCampaignFormFragment : Fragment() {
         val base64String = compressedFile?.let { org.piramalswasthya.sakhi.utils.HelperUtil.fileToBase64(it) }
 
         if (currentImageField?.fieldId == "campaign_photos" || currentImageField?.fieldId == "campaignPhotos") {
-            if (base64String != null && campaignPhotosList.size < 2) {
+            if (base64String != null) {
+                // Add new image and keep only latest 2 (remove oldest if more than 2)
                 campaignPhotosList.add(base64String)
+                // Keep only the latest 2 images (remove oldest if more than 2)
+                if (campaignPhotosList.size > 2) {
+                    campaignPhotosList.removeAt(0)
+                }
                 currentImageField?.value = campaignPhotosList.toList()
                 currentImageField?.errorMessage = null
                 viewModel.updateFieldValue(currentImageField!!.fieldId, campaignPhotosList.toList())
@@ -105,8 +110,13 @@ class ORSCampaignFormFragment : Fragment() {
         val base64String = compressedFile?.let { org.piramalswasthya.sakhi.utils.HelperUtil.fileToBase64(it) }
 
         if (currentImageField?.fieldId == "campaign_photos" || currentImageField?.fieldId == "campaignPhotos") {
-            if (base64String != null && campaignPhotosList.size < 2) {
+            if (base64String != null) {
+                // Add new image and keep only latest 2 (remove oldest if more than 2)
                 campaignPhotosList.add(base64String)
+                // Keep only the latest 2 images (remove oldest if more than 2)
+                if (campaignPhotosList.size > 2) {
+                    campaignPhotosList.removeAt(0)
+                }
                 currentImageField?.value = campaignPhotosList.toList()
                 currentImageField?.errorMessage = null
                 viewModel.updateFieldValue(currentImageField!!.fieldId, campaignPhotosList.toList())
@@ -202,20 +212,17 @@ class ORSCampaignFormFragment : Fragment() {
                 if (value == "pick_image") {
                     currentImageField = field
                     if (field.fieldId == "campaign_photos" || field.fieldId == "campaignPhotos") {
-                        if (campaignPhotosList.size >= 2) {
-                            Toast.makeText(
-                                requireContext(),
-                                "Maximum 2 photos allowed",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        } else {
-                            showImagePickerDialog()
-                        }
+                        // Always allow image selection - will keep only latest 2
+                        showImagePickerDialog()
                     } else {
                         showImagePickerDialog()
                     }
                 } else {
                     field.value = value
+                    // Update campaignPhotosList if this is the campaign_photos field
+                    if ((field.fieldId == "campaign_photos" || field.fieldId == "campaignPhotos") && value is List<*>) {
+                        campaignPhotosList = value.filterIsInstance<String>().toMutableList()
+                    }
                     viewModel.updateFieldValue(field.fieldId, value)
                     val updatedVisibleFields = viewModel.getVisibleFields()
                     adapter.updateFields(updatedVisibleFields)

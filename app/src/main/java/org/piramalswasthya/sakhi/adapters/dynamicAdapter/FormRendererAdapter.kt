@@ -105,6 +105,85 @@
             private val viewHolderScope = MainScope()
             private var muacDebounceJob: Job? = null
 
+            private fun loadImageFromPath(context: android.content.Context, filePath: String, imageView: ImageView) {
+                if (filePath.isBlank()) {
+                    imageView.setImageResource(R.drawable.ic_person)
+                    return
+                }
+
+                try {
+                    when {
+                        filePath.endsWith(".pdf", ignoreCase = true) ||
+                                (filePath.startsWith("content://") &&
+                                        context.contentResolver.getType(Uri.parse(filePath))?.contains("pdf") == true) -> {
+                            imageView.setImageResource(R.drawable.ic_person)
+                            imageView.setOnClickListener {
+                                val uri = Uri.parse(filePath)
+                                val intent = Intent(Intent.ACTION_VIEW).apply {
+                                    setDataAndType(uri, "application/pdf")
+                                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                }
+                                try {
+                                    context.startActivity(intent)
+                                } catch (e: ActivityNotFoundException) {
+                                    Toast.makeText(context, "No app found to open PDF", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        }
+
+                        filePath.startsWith("JVBERi0") || filePath.startsWith("%PDF") -> {
+                            imageView.setImageResource(R.drawable.ic_person)
+                            imageView.setOnClickListener {
+                                try {
+                                    val decodedBytes = Base64.decode(filePath, Base64.DEFAULT)
+                                    val tempPdf = File.createTempFile("decoded_pdf_", ".pdf", context.cacheDir)
+                                    FileOutputStream(tempPdf).use { it.write(decodedBytes) }
+
+                                    val uri = FileProvider.getUriForFile(
+                                        context,
+                                        "${context.packageName}.provider",
+                                        tempPdf
+                                    )
+
+                                    val intent = Intent(Intent.ACTION_VIEW).apply {
+                                        setDataAndType(uri, "application/pdf")
+                                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                    }
+                                    context.startActivity(intent)
+                                } catch (e: Exception) {
+                                    Toast.makeText(context, "Failed to open PDF", Toast.LENGTH_SHORT).show()
+                                    Timber.e(e, "Failed to open Base64 PDF")
+                                }
+                            }
+                        }
+
+                        filePath.startsWith("data:image", ignoreCase = true) ||
+                                filePath.startsWith("/9j/") ||
+                                filePath.startsWith("iVBOR") ||
+                                (filePath.length > 100 &&
+                                        !filePath.startsWith("content://") &&
+                                        !filePath.startsWith("file://")) -> {
+                            try {
+                                val base64String = filePath.substringAfter(",", filePath)
+                                val decodedBytes = Base64.decode(base64String, Base64.DEFAULT)
+                                val bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+                                imageView.setImageBitmap(bitmap)
+                            } catch (e: Exception) {
+                                Timber.e(e, "Failed to decode base64 image")
+                                imageView.setImageResource(R.drawable.ic_person)
+                            }
+                        }
+
+                        else -> {
+                            val uri = Uri.parse(filePath)
+                            imageView.setImageURI(uri)
+                        }
+                    }
+                } catch (e: Exception) {
+                    Timber.tag("FormRendererAdapter").e(e, "Failed to load file: $filePath")
+                    imageView.setImageResource(R.drawable.ic_person)
+                }
+            }
 
             fun clear() {
                 viewHolderScope.coroutineContext.cancelChildren()
@@ -703,108 +782,92 @@
 
                     "image" -> {
                         val context = itemView.context
+                        val isCampaignPhotos = field.fieldId == "campaign_photos" || field.fieldId == "campaignPhotos"
 
                         val container = LinearLayout(context).apply {
                             orientation = LinearLayout.VERTICAL
                         }
 
-                        val imageView = ImageView(context).apply {
-                            layoutParams = LinearLayout.LayoutParams(300, 300)
-                            scaleType = ImageView.ScaleType.CENTER_CROP
-
-                            val filePath = field.value?.toString()
-                            if (!filePath.isNullOrBlank()) {
-                                try {
-                                    when {
-                                        filePath.endsWith(".pdf", ignoreCase = true) ||
-                                                (filePath.startsWith("content://") &&
-                                                        context.contentResolver.getType(Uri.parse(filePath))?.contains("pdf") == true) -> {
-
-                                            setImageResource(R.drawable.ic_person)
-                                            setOnClickListener {
-                                                val uri = Uri.parse(filePath)
-                                                val intent = Intent(Intent.ACTION_VIEW).apply {
-                                                    setDataAndType(uri, "application/pdf")
-                                                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                                                }
-                                                try {
-                                                    context.startActivity(intent)
-                                                } catch (e: ActivityNotFoundException) {
-                                                    Toast.makeText(context, "No app found to open PDF", Toast.LENGTH_SHORT).show()
-                                                }
-                                            }
-                                        }
-
-                                        filePath.startsWith("JVBERi0") || filePath.startsWith("%PDF") -> {
-                                            setImageResource(R.drawable.ic_person)
-                                            setOnClickListener {
-                                                try {
-                                                    val decodedBytes = Base64.decode(filePath, Base64.DEFAULT)
-                                                    val tempPdf = File.createTempFile("decoded_pdf_", ".pdf", context.cacheDir)
-                                                    FileOutputStream(tempPdf).use { it.write(decodedBytes) }
-
-                                                    val uri = FileProvider.getUriForFile(
-                                                        context,
-                                                        "${context.packageName}.provider",
-                                                        tempPdf
-                                                    )
-
-                                                    val intent = Intent(Intent.ACTION_VIEW).apply {
-                                                        setDataAndType(uri, "application/pdf")
-                                                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                                                    }
-                                                    context.startActivity(intent)
-                                                } catch (e: Exception) {
-                                                    Toast.makeText(context, "Failed to open PDF", Toast.LENGTH_SHORT).show()
-                                                    Timber.e(e, "Failed to open Base64 PDF")
-                                                }
-                                            }
-                                        }
-
-                                        filePath.startsWith("data:image", ignoreCase = true) ||
-                                                filePath.startsWith("/9j/") ||
-                                                filePath.startsWith("iVBOR") ||
-                                                (filePath.length > 100 &&
-                                                        !filePath.startsWith("content://") &&
-                                                        !filePath.startsWith("file://")) -> {
-
-                                            try {
-                                                val base64String = filePath.substringAfter(",")
-                                                val decodedBytes = Base64.decode(base64String, Base64.DEFAULT)
-                                                val bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
-                                                setImageBitmap(bitmap)
-                                            } catch (e: Exception) {
-                                                Timber.e(e, "Failed to decode base64 image")
-                                                setImageResource(R.drawable.ic_person)
-                                            }
-                                        }
-
-                                        else -> {
-                                            val uri = Uri.parse(filePath)
-                                            setImageURI(uri)
-                                        }
+                        // Handle multiple images for campaign_photos field
+                        if (isCampaignPhotos) {
+                            val imageList: List<String> = when (val value = field.value) {
+                                is List<*> -> value.filterIsInstance<String>()
+                                is Array<*> -> value.filterIsInstance<String>().toList()
+                                is String -> {
+                                    try {
+                                        val jsonArray = org.json.JSONArray(value)
+                                        (0 until jsonArray.length()).mapNotNull { jsonArray.optString(it).takeIf { it.isNotEmpty() } }
+                                    } catch (e: Exception) {
+                                        if (value.isNotEmpty()) listOf(value) else emptyList()
                                     }
-                                } catch (e: Exception) {
-                                    Timber.tag("FormRendererAdapter").e(e, "Failed to load file: $filePath")
+                                }
+                                else -> emptyList()
+                            }
+
+                            // Display images horizontally (up to 2 latest images)
+                            val imagesContainer = LinearLayout(context).apply {
+                                orientation = LinearLayout.HORIZONTAL
+                                layoutParams = LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.MATCH_PARENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT
+                                ).apply { setMargins(0, 8, 0, 8) }
+                            }
+
+                            // Display up to 2 images horizontally
+                            imageList.takeLast(2).forEach { imagePath ->
+                                val imageView = ImageView(context).apply {
+                                    layoutParams = LinearLayout.LayoutParams(300, 300).apply {
+                                        setMargins(0, 0, 8, 0)
+                                    }
+                                    scaleType = ImageView.ScaleType.CENTER_CROP
+                                    loadImageFromPath(context, imagePath, this)
+                                }
+                                imagesContainer.addView(imageView)
+                            }
+
+                            container.addView(imagesContainer)
+
+                            // Always show pick button if not in view mode (user can always select another image)
+                            if (!isViewOnly && field.isEditable) {
+                                val pickButton = Button(context).apply {
+                                    text = "Pick Image"
+                                    layoutParams = LinearLayout.LayoutParams(
+                                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                                        LinearLayout.LayoutParams.WRAP_CONTENT
+                                    ).apply { setMargins(0, 8, 0, 0) }
+                                    setOnClickListener {
+                                        onValueChanged(field, "pick_image")
+                                    }
+                                }
+                                container.addView(pickButton)
+                            }
+                        } else {
+                            // Handle single image for other image fields
+                            val imageView = ImageView(context).apply {
+                                layoutParams = LinearLayout.LayoutParams(300, 300)
+                                scaleType = ImageView.ScaleType.CENTER_CROP
+
+                                val filePath = field.value?.toString()
+                                if (!filePath.isNullOrBlank()) {
+                                    loadImageFromPath(context, filePath, this)
+                                } else {
                                     setImageResource(R.drawable.ic_person)
                                 }
-                            } else {
-                                setImageResource(R.drawable.ic_person)
                             }
-                        }
 
-                        val pickButton = Button(context).apply {
-                            text = "Pick Image"
-                            isEnabled = !isViewOnly
-                            setOnClickListener {
-                                if (!isViewOnly) {
-                                    onValueChanged(field, "pick_image")
+                            val pickButton = Button(context).apply {
+                                text = "Pick Image"
+                                isEnabled = !isViewOnly && field.isEditable
+                                setOnClickListener {
+                                    if (!isViewOnly && field.isEditable) {
+                                        onValueChanged(field, "pick_image")
+                                    }
                                 }
                             }
-                        }
 
-                        container.addView(imageView)
-                        if (!isViewOnly) container.addView(pickButton)
+                            container.addView(imageView)
+                            if (!isViewOnly && field.isEditable) container.addView(pickButton)
+                        }
 
                         addWithError(container, field)
                     }
