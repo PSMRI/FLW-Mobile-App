@@ -34,6 +34,7 @@ import androidx.core.graphics.withTranslation
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.json.JSONArray
+import org.json.JSONObject
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.LayoutMediaOptionsBinding
@@ -810,5 +811,18 @@ object HelperUtil {
         }
 
         return listOf(raw)
+    }
+
+    fun extractFieldValue(formDataJson: String?, key: String): String {
+        return try {
+            if (formDataJson.isNullOrBlank()) return ""
+
+            val root = JSONObject(formDataJson)
+            val fieldsObj = root.optJSONObject("fields") ?: return ""
+
+            fieldsObj.optString(key, "")
+        } catch (e: Exception) {
+            ""
+        }
     }
 }

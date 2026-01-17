@@ -34,13 +34,24 @@
                 android:drawablePadding="@dimen/padding_small"
                 android:gravity="center_vertical"
                 android:padding="@dimen/padding_normal"
-                android:text="@{pulsePolioCampaign.campaignDate}"
+                android:text=""
                 android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                 android:textColor="?attr/colorPrimaryVariant"
                 app:drawableLeftCompat="@drawable/ic_calendar"
                 app:drawableTint="?attr/colorPrimary"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="01-01-2024" />
+
+            <TextView
+                android:id="@+id/numberOfChildren"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="1"
+                android:textColor="?attr/colorOnPrimary"
+                android:paddingStart="@dimen/_5sdp"
+                app:layout_constraintTop_toBottomOf="@+id/tvDate"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnView"
