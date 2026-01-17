@@ -26,6 +26,7 @@ import org.piramalswasthya.sakhi.utils.HelperUtil.launchFilePicker
 import org.piramalswasthya.sakhi.utils.HelperUtil.showPickerDialog
 import org.piramalswasthya.sakhi.utils.dynamicFiledValidator.FieldValidator
 import com.google.gson.Gson
+import org.piramalswasthya.sakhi.utils.HelperUtil
 
 @AndroidEntryPoint
 class PulsePolioCampaignFormFragment : Fragment() {
@@ -68,8 +69,8 @@ class PulsePolioCampaignFormFragment : Fragment() {
             return
         }
 
-        val compressedFile = org.piramalswasthya.sakhi.utils.HelperUtil.compressImageToTemp(uri, "camera_image", context)
-        val base64String = compressedFile?.let { org.piramalswasthya.sakhi.utils.HelperUtil.fileToBase64(it) }
+        val compressedFile = HelperUtil.compressImageToTemp(uri, "camera_image", context)
+        val base64String = compressedFile?.let { HelperUtil.fileToBase64(it) }
 
         if (currentImageField?.fieldId == "campaign_photos" || currentImageField?.fieldId == "campaignPhotos") {
             if (base64String != null && campaignPhotosList.size < 2) {
@@ -102,8 +103,8 @@ class PulsePolioCampaignFormFragment : Fragment() {
             return
         }
 
-        val compressedFile = org.piramalswasthya.sakhi.utils.HelperUtil.compressImageToTemp(uri, "selected_image", context)
-        val base64String = compressedFile?.let { org.piramalswasthya.sakhi.utils.HelperUtil.fileToBase64(it) }
+        val compressedFile = HelperUtil.compressImageToTemp(uri, "selected_image", context)
+        val base64String = compressedFile?.let { HelperUtil.fileToBase64(it) }
 
         if (currentImageField?.fieldId == "campaign_photos" || currentImageField?.fieldId == "campaignPhotos") {
             if (base64String != null && campaignPhotosList.size < 2) {

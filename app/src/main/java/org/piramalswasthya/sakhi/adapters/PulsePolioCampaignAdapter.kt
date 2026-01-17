@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.databinding.LayoutPulsePolioCampaignItemBinding
 import org.piramalswasthya.sakhi.model.PulsePolioCampaignCache
+import org.piramalswasthya.sakhi.utils.HelperUtil
 
 class PulsePolioCampaignAdapter(
     private val clickListener: PulsePolioCampaignClickListener? = null,
@@ -38,6 +39,10 @@ class PulsePolioCampaignAdapter(
             binding.pulsePolioCampaign = item
             binding.clickListener = clickListener
             binding.executePendingBindings()
+            val startDate = HelperUtil.extractFieldValue(item.formDataJson,"start_date")
+            val numberOfChildren = HelperUtil.extractFieldValue(item.formDataJson,"number_of_children")
+            binding.tvDate.text = startDate
+            binding.numberOfChildren.text = "Number Of Children : $numberOfChildren"
         }
     }
 
