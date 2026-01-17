@@ -38,6 +38,9 @@ class ORSCampaignViewModel @Inject constructor(
     private val _schema = MutableStateFlow<FormSchemaDto?>(null)
     val schema: StateFlow<FormSchemaDto?> = _schema
 
+    private val _saveSuccess = MutableStateFlow<Boolean?>(null)
+    val saveSuccess: StateFlow<Boolean?> = _saveSuccess
+
     private val recordId = ORSCampaignFormFragmentArgs.fromSavedStateHandle(savedStateHandle).id
     private var isViewMode = false
     private var currentCache: ORSCampaignCache? = null
@@ -74,21 +77,20 @@ class ORSCampaignViewModel @Inject constructor(
                 val savedJson = JSONObject(currentCache!!.formDataJson)
                 val fieldsJson = savedJson.optJSONObject("fields") ?: JSONObject()
                 fieldsJson.keys().asSequence().associateWith { key ->
-                    val value = fieldsJson.opt(key)
-                    when {
-                        value is org.json.JSONArray -> {
-                            // Handle array values
+                    when (val value = fieldsJson.opt(key)) {
+                        is org.json.JSONArray -> {
                             val list = mutableListOf<Any?>()
                             for (i in 0 until value.length()) {
                                 list.add(value.opt(i))
                             }
                             list
                         }
-                        value is org.json.JSONObject -> {
-                            // Handle nested objects
+
+                        is JSONObject -> {
                             value.toString()
                         }
-                        value == org.json.JSONObject.NULL -> null
+
+                        JSONObject.NULL -> null
                         else -> value
                     }
                 }
@@ -209,9 +211,15 @@ class ORSCampaignViewModel @Inject constructor(
                 }
                 
                 ORSCampaignPushWorker.enqueue(context)
+                _saveSuccess.value = true
             } catch (e: Exception) {
                 Timber.e(e, "Error saving ORS Campaign form")
+                _saveSuccess.value = false
             }
         }
+    }
+
+    fun resetSaveState() {
+        _saveSuccess.value = null
     }
 }
