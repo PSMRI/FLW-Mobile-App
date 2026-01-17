@@ -11,6 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -74,9 +75,7 @@ class PulsePolioCampaignFormFragment : Fragment() {
 
         if (currentImageField?.fieldId == "campaign_photos" || currentImageField?.fieldId == "campaignPhotos") {
             if (base64String != null) {
-                // Add new image and keep only latest 2 (remove oldest if more than 2)
                 campaignPhotosList.add(base64String)
-                // Keep only the latest 2 images (remove oldest if more than 2)
                 if (campaignPhotosList.size > 2) {
                     campaignPhotosList.removeAt(0)
                 }
@@ -113,9 +112,7 @@ class PulsePolioCampaignFormFragment : Fragment() {
 
         if (currentImageField?.fieldId == "campaign_photos" || currentImageField?.fieldId == "campaignPhotos") {
             if (base64String != null) {
-                // Add new image and keep only latest 2 (remove oldest if more than 2)
                 campaignPhotosList.add(base64String)
-                // Keep only the latest 2 images (remove oldest if more than 2)
                 if (campaignPhotosList.size > 2) {
                     campaignPhotosList.removeAt(0)
                 }
@@ -165,8 +162,34 @@ class PulsePolioCampaignFormFragment : Fragment() {
                     return@collectLatest
                 }
                 refreshAdapter()
-                // Hide save button in view mode
                 binding.btnSave.visibility = if (viewModel.isViewOnly) View.GONE else View.VISIBLE
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.saveSuccess.collect { success ->
+                when (success) {
+                    true -> {
+                        Toast.makeText(
+                            requireContext(),
+                            "Submitted successfully",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        viewModel.resetSaveState()
+                        findNavController().navigateUp()
+                    }
+                    false -> {
+                        Toast.makeText(
+                            requireContext(),
+                            "Failed to submit form",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        viewModel.resetSaveState()
+                    }
+                    null -> {
+                        // Initial state, do nothing
+                    }
+                }
             }
         }
 
