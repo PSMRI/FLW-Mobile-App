@@ -43,6 +43,7 @@ class ORSCampaignViewModel @Inject constructor(
     private var currentCache: ORSCampaignCache? = null
 
     val formId = FormConstants.ORS_CAMPAIGN_FORM_ID
+    val isViewOnly: Boolean get() = isViewMode
 
     init {
         viewModelScope.launch {
@@ -51,6 +52,7 @@ class ORSCampaignViewModel @Inject constructor(
                 isViewMode = true
             } else {
                 isViewMode = false
+                currentCache = null
             }
             loadFormSchema()
         }
@@ -71,8 +73,24 @@ class ORSCampaignViewModel @Inject constructor(
             try {
                 val savedJson = JSONObject(currentCache!!.formDataJson)
                 val fieldsJson = savedJson.optJSONObject("fields") ?: JSONObject()
-                fieldsJson.keys().asSequence().associateWith { 
-                    fieldsJson.opt(it).toString() 
+                fieldsJson.keys().asSequence().associateWith { key ->
+                    val value = fieldsJson.opt(key)
+                    when {
+                        value is org.json.JSONArray -> {
+                            // Handle array values
+                            val list = mutableListOf<Any?>()
+                            for (i in 0 until value.length()) {
+                                list.add(value.opt(i))
+                            }
+                            list
+                        }
+                        value is org.json.JSONObject -> {
+                            // Handle nested objects
+                            value.toString()
+                        }
+                        value == org.json.JSONObject.NULL -> null
+                        else -> value
+                    }
                 }
             } catch (e: Exception) {
                 Timber.e(e, "Error loading saved form data")

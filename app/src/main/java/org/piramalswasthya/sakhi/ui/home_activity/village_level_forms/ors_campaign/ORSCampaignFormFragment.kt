@@ -153,6 +153,8 @@ class ORSCampaignFormFragment : Fragment() {
                     return@collectLatest
                 }
                 refreshAdapter()
+                // Hide save button in view mode
+                binding.btnSave.visibility = if (viewModel.isViewOnly) View.GONE else View.VISIBLE
             }
         }
 
@@ -193,7 +195,7 @@ class ORSCampaignFormFragment : Fragment() {
 
         adapter = FormRendererAdapter(
             visibleFields,
-            isViewOnly = false,
+            isViewOnly = viewModel.isViewOnly,
             minVisitDate = null,
             maxVisitDate = null,
             onValueChanged = { field, value ->
