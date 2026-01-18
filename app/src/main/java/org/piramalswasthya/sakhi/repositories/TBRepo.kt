@@ -278,7 +278,7 @@ class TBRepo @Inject constructor(
                             200 -> {
                                 try {
                                     val dataObj = jsonObj.getString("data")
-                                    saveTBSuspectedCacheFromResponse(dataObj)
+                                    saveTBConfirmedCacheFromResponse(dataObj)
                                 } catch (e: Exception) {
                                     Timber.d("TB Suspected entries not synced $e")
                                     return@withContext 0

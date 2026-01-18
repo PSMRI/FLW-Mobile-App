@@ -66,7 +66,7 @@ class TBConfirmedViewModel @Inject constructor(
         TBConfirmedDataset(context, preferenceDao.getCurrentLanguage())
     val formList = dataset.listFlow
 
-    private lateinit var tbSuspected: TBSuspectedCache
+    private  var tbSuspected: TBSuspectedCache? = null
     private var tbConfirmedTreatmentCache: TBConfirmedTreatmentCache? = null
 
     init {
