@@ -187,7 +187,7 @@ class MaternalHealthRepo @Inject constructor(
                                 return true
                             }
 
-                            5002 -> {
+                            401,5002 -> {
                                 if (userRepo.refreshTokenTmc(
                                         user.userName,
                                         user.password
@@ -279,7 +279,7 @@ class MaternalHealthRepo @Inject constructor(
                                 return true
                             }
 
-                            5002 -> {
+                            401,5002 -> {
                                 if (userRepo.refreshTokenTmc(
                                         user.userName,
                                         user.password
@@ -348,7 +348,7 @@ class MaternalHealthRepo @Inject constructor(
                                 return@withContext 1
                             }
 
-                            5002 -> {
+                            401,5002 -> {
                                 if (userRepo.refreshTokenTmc(
                                         user.userName, user.password
                                     )
@@ -473,7 +473,7 @@ class MaternalHealthRepo @Inject constructor(
                                 return@withContext 1
                             }
 
-                            5002 -> {
+                            401,5002 -> {
                                 if (userRepo.refreshTokenTmc(
                                         user.userName, user.password
                                     )

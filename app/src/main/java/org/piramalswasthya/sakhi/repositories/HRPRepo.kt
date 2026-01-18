@@ -192,7 +192,7 @@ class HRPRepo @Inject constructor(
                                 return@withContext 1
                             }
 
-                            5002 -> {
+                            401,5002 -> {
                                 if (userRepo.refreshTokenTmc(
                                         user.userName, user.password
                                     )
@@ -331,7 +331,7 @@ class HRPRepo @Inject constructor(
                                 return@withContext 1
                             }
 
-                            5002 -> {
+                            401,5002 -> {
                                 if (userRepo.refreshTokenTmc(
                                         user.userName, user.password
                                     )
@@ -417,7 +417,7 @@ class HRPRepo @Inject constructor(
                                 return@withContext 1
                             }
 
-                            5002 -> {
+                           401, 5002 -> {
                                 if (userRepo.refreshTokenTmc(
                                         user.userName, user.password
                                     )
@@ -511,7 +511,7 @@ class HRPRepo @Inject constructor(
                                 return@withContext 1
                             }
 
-                            5002 -> {
+                            401,5002 -> {
                                 if (userRepo.refreshTokenTmc(
                                         user.userName, user.password
                                     )
@@ -597,7 +597,7 @@ class HRPRepo @Inject constructor(
                                 return@withContext 1
                             }
 
-                            5002 -> {
+                            401,5002 -> {
                                 if (userRepo.refreshTokenTmc(
                                         user.userName, user.password
                                     )
@@ -718,7 +718,7 @@ class HRPRepo @Inject constructor(
 
                             }
 
-                            5002 -> {
+                            401,5002 -> {
                                 if (userRepo.refreshTokenTmc(
                                         user.userName, user.password
                                     )
@@ -794,7 +794,7 @@ class HRPRepo @Inject constructor(
 
                             }
 
-                            5002 -> {
+                            401,5002 -> {
                                 if (userRepo.refreshTokenTmc(
                                         user.userName, user.password
                                     )
@@ -883,7 +883,7 @@ class HRPRepo @Inject constructor(
 
                             }
 
-                            5002 -> {
+                            401,5002 -> {
                                 if (userRepo.refreshTokenTmc(
                                         user.userName, user.password
                                     )
@@ -960,7 +960,7 @@ class HRPRepo @Inject constructor(
 
                             }
 
-                            5002 -> {
+                            401,5002 -> {
                                 if (userRepo.refreshTokenTmc(
                                         user.userName, user.password
                                     )
