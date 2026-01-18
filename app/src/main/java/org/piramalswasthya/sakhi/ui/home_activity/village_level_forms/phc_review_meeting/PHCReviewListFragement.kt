@@ -18,7 +18,6 @@ import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.PHCAdapter
-import org.piramalswasthya.sakhi.adapters.VHNCAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentVhndListBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 

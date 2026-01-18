@@ -449,4 +449,11 @@ interface AmritApiService {
     suspend fun getAllUwinSessions(
         @Body request: UwinGetAllRequest
     ): Response<ResponseBody>
+
+    @POST("flw-api/campaign/filariasis/campaign/getAll")
+    suspend fun getFilariaMdaCampaign(): Response<ResponseBody>
+
+    @Multipart
+    @POST("flw-api/campaign/filariasis/campaign/saveAll")
+    suspend fun saveFilariaMdaCampaign( @Part campaignData: List<MultipartBody.Part>): Response<ResponseBody>
 }

@@ -57,6 +57,7 @@ import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.CUFYFormResp
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.CUFYFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.EyeSurgeryFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FilariaMDAFormResponseJsonDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FilariaMdaCampaignJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.NCDReferalFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseANCJsonDao
 import org.piramalswasthya.sakhi.model.AHDCache
@@ -120,6 +121,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.NCDReferalFormResponseJsonE
 import org.piramalswasthya.sakhi.model.dynamicEntity.anc.ANCFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.ben_ifa.BenIfaFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.eye_surgery.EyeSurgeryFormResponseJsonEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.filariaaMdaCampaign.FilariaMDACampaignFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoNetFormResponseJsonEntity
 
 @Database(
@@ -188,6 +190,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         MosquitoNetFormResponseJsonEntity::class,
         FilariaMDAFormResponseJsonEntity::class,
         ANCFormResponseJsonEntity::class,
+        FilariaMDACampaignFormResponseJsonEntity::class,
     ],
     views = [BenBasicCache::class],
     version = 53, exportSchema = false
@@ -252,6 +255,7 @@ abstract class InAppDb : RoomDatabase() {
     abstract fun formResponseJsonDaoBenIfa(): BenIfaFormResponseJsonDao
     abstract fun formResponseMosquitoNetJsonDao(): MosquitoNetFormResponseDao
     abstract fun formResponseFilariaMDAJsonDao(): FilariaMDAFormResponseJsonDao
+    abstract fun formResponseFilariaMDACampaignJsonDao(): FilariaMdaCampaignJsonDao
 
     abstract val syncDao: SyncDao
 
@@ -266,6 +270,44 @@ abstract class InAppDb : RoomDatabase() {
                 it.execSQL("alter table BENEFICIARY add column isConsent BOOL")
 
             })
+            val MIGRATION_52_53 = object : Migration(52, 53) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+
+                    database.execSQL(
+                        """
+            CREATE TABLE IF NOT EXISTS FILARIA_MDA_CAMPAIGN_HISTORY (
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                visitDate TEXT NOT NULL,
+                visitYear TEXT NOT NULL,
+                formId TEXT NOT NULL,
+                version INTEGER NOT NULL,
+                formDataJson TEXT NOT NULL,
+                isSynced INTEGER,
+                createdAt INTEGER NOT NULL,
+                syncedAt TEXT,
+                syncState TEXT NOT NULL DEFAULT 'UNSYNCED'
+            )
+            """.trimIndent()
+                    )
+
+                    database.execSQL(
+                        """
+            CREATE UNIQUE INDEX IF NOT EXISTS
+            index_FILARIA_MDA_CAMPAIGN_HISTORY_formId_visitYear
+            ON FILARIA_MDA_CAMPAIGN_HISTORY(formId, visitYear)
+            """.trimIndent()
+                    )
+
+                    database.execSQL(
+                        """
+            CREATE INDEX IF NOT EXISTS
+            index_FILARIA_MDA_CAMPAIGN_HISTORY_visitDate
+            ON FILARIA_MDA_CAMPAIGN_HISTORY(visitDate)
+            """.trimIndent()
+                    )
+                }
+            }
+
 
             val MIGRATION_52_53 = object : Migration(52, 53) {
                 override fun migrate(database: SupportSQLiteDatabase) {

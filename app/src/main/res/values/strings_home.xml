@@ -97,6 +97,8 @@
     <string name="are_you_sure_to_logout">" Are you sure you want to logout?"</string>
     <string name="icon_title_ahd_list">AHD Forms List</string>
     <string name="place">Place</string>
+    <string name="no_of_individuals">Number of Individuals</string>
+    <string name="no_of_familes">Number of Families</string>
     <string name="place_of_meeting">Place of meeting</string>
     <string name="mitanin">Mitanins</string>
     <string name="mt">Mitanin Activity check list</string>
