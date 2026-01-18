@@ -139,12 +139,10 @@ class FilariaMdaCampaignRepository @Inject constructor(
             } catch (_: Exception) {}
         }
         return try {
-            if (Regex("\\d{2}-\\d{2}-\\d{4}").matches(dateStr)) {
-                val yyyy = dateStr.substring(6, 10)
-                val mm = dateStr.substring(3, 5)
-                "$yyyy-$mm"
-            } else ""
-        } catch (_: Exception) { "" }
+              if (Regex("\\d{2}-\\d{2}-\\d{4}").matches(dateStr)) {
+                    dateStr.substring(6, 10)
+                    } else ""
+               } catch (_: Exception) { "" }
     }
 
     suspend fun saveDownloadedVisitList(list: List<HBNCVisitResponse>, formId: String) {
