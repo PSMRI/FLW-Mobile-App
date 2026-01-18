@@ -1,12 +1,11 @@
 package org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_confirmed.from
 
-import android.app.AlertDialog
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -15,16 +14,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
-import org.piramalswasthya.sakhi.adapters.FollowUpDatesAdapter
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.adapters.TBFollowUpDatesAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentLeprosyFromBinding
-import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
-import org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_suspected.form.TBSuspectedViewModel
 import org.piramalswasthya.sakhi.work.WorkerUtils
-import timber.log.Timber
-import kotlin.getValue
 
 @AndroidEntryPoint
 class TBConfirmedFormFragment : Fragment() {
@@ -110,28 +104,11 @@ class TBConfirmedFormFragment : Fragment() {
         }
     }
 
-    /*private fun validateCurrentPage(): Boolean {
-        viewModel.validateAllFields()
 
-        val result = binding.form.rvInputForm.adapter?.let {
-            (it as FormInputAdapter).validateInput(resources)
-        }
-        Timber.d("Validation : $result")
-        return if (result == -1) true
-        else {
-            if (result != null) {
-                binding.form.rvInputForm.scrollToPosition(result)
-            }
-            false
-        }
-    }*/
     private fun submitTBSuspectedForm() {
         viewModel.saveForm()
 
-       /* if (validateCurrentPage()) {
-            showAlerts()
-            viewModel.saveForm()
-        }*/
+
     }
 
     private fun setupFollowUpRecyclerView() {
@@ -163,9 +140,14 @@ class TBConfirmedFormFragment : Fragment() {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        _binding = null
     }
 
 }
