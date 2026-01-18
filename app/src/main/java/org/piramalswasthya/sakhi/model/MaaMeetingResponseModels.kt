@@ -15,6 +15,10 @@ data class MaaMeetingServerItem(
     @Json(name = "id") val id: Int?,
     @Json(name = "meetingDate") val meetingDate: String?,
     @Json(name = "place") val place: String?,
+    @Json(name = "mitaninActivityCheckList") val mitaninActivityCheckList: String?,
+    @Json(name = "noOfLactingMother") val noOfLactingMother: String?,
+    @Json(name = "noOfPragnentWomen") val noOfPragnentWoment: String?,
+    @Json(name = "villageName") val villageName: String?,
     @Json(name = "participants") val participants: Int?,
     @Json(name = "ashaId") val ashaId: Int?,
     @Json(name = "meetingImages") val meetingImages: List<String>?

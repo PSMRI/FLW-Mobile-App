@@ -193,7 +193,7 @@ class VLFRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-                        val errorMessage = jsonObj.getString("errorMessage")
+//                        val errorMessage = jsonObj.getString("errorMessage")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit hrp assess data : $responseStatusCode")
                         when (responseStatusCode) {
@@ -218,7 +218,7 @@ class VLFRepo @Inject constructor(
                             }
 
                             5000 -> {
-                                if (errorMessage == "No record found") return@withContext 0
+//                                if (errorMessage == "No record found") return@withContext 0
                             }
 
                             else -> {
@@ -365,7 +365,7 @@ class VLFRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-                        val errorMessage = jsonObj.getString("errorMessage")
+//                        val errorMessage = jsonObj.getString("errorMessage")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit hrp assess data : $responseStatusCode")
                         when (responseStatusCode) {
@@ -390,7 +390,7 @@ class VLFRepo @Inject constructor(
                             }
 
                             5000 -> {
-                                if (errorMessage == "No record found") return@withContext 0
+//                                if (errorMessage == "No record found") return@withContext 0
                             }
 
                             else -> {
@@ -537,7 +537,7 @@ class VLFRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-                        val errorMessage = jsonObj.getString("errorMessage")
+//                        val errorMessage = jsonObj.getString("errorMessage")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit hrp assess data : $responseStatusCode")
                         when (responseStatusCode) {
@@ -562,7 +562,7 @@ class VLFRepo @Inject constructor(
                             }
 
                             5000 -> {
-                                if (errorMessage == "No record found") return@withContext 0
+//                                if (errorMessage == "No record found") return@withContext 0
                             }
 
                             else -> {
@@ -880,7 +880,6 @@ class VLFRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-                        val errorMessage = jsonObj.getString("errorMessage")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit hrp assess data : $responseStatusCode")
                         when (responseStatusCode) {
@@ -889,7 +888,6 @@ class VLFRepo @Inject constructor(
                                     val dataObj = jsonObj.getString("data")
                                     saveDeworming(dataObj)
                                 } catch (e: Exception) {
-//                                    Timber.d("HRP Assess entries not synced $e")
                                     return@withContext 0
                                 }
 
@@ -905,7 +903,7 @@ class VLFRepo @Inject constructor(
                             }
 
                             5000 -> {
-                                if (errorMessage == "No record found") return@withContext 0
+//                                if (errorMessage == "No record found") return@withContext 0
                             }
 
                             else -> {
@@ -1015,23 +1013,17 @@ class VLFRepo @Inject constructor(
 
 
     @RequiresApi(Build.VERSION_CODES.O)
-//    fun isFormFilledForCurrentMonth(): Flow<Boolean> {
-//        val currentMonthStart = YearMonth.now().atDay(1).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
-//        val currentMonthEnd = YearMonth.now().atEndOfMonth().atTime(23, 59, 59).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-//        return vlfDao.countVHNDFormsInRange(currentMonthStart, currentMonthEnd).map { count -> count > 0 }
-//    }
-
     fun isFormFilledForCurrentMonth(): Flow<Map<String, Boolean>> {
         val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
         val currentYearMonth = YearMonth.now()
-        val startDate = currentYearMonth.atDay(1).format(formatter)   // 01-04-2025
-        val endDate = currentYearMonth.atEndOfMonth().format(formatter) // 30-04-2025
+        val startDate = currentYearMonth.atDay(1).format(formatter)
+        val endDate = currentYearMonth.atEndOfMonth().format(formatter)
 
         val vhnd = vlfDao.countVHNDFormsInDateRange(startDate, endDate)
         val vhnc = vlfDao.countVHNCFormsInDateRange(startDate, endDate)
         val phc = vlfDao.countPHCFormsInDateRange(startDate, endDate)
         val ahd = vlfDao.countAHDFormsInDateRange(startDate, endDate)
-        val deworming = vlfDao.countDewormingFormsInDateRange(startDate, endDate)
+        val deworming = vlfDao.countDewormingInLastSixMonths()
         return combine(vhnd, vhnc, phc, ahd, deworming) { vhndCount, vhncCount, phcCount, ahdCount, dewormingCount ->
             mapOf(
                 "VHND" to (vhndCount > 0),

@@ -170,6 +170,8 @@ class NewChildBenViewModel @Inject constructor(
         val childList = benRepo.getChildBenListFromHousehold(hhId,SelectedbenIdFromArgs,selectedben?.firstName)
        val  recordExistsLocal = childList.isNotEmpty()
         oldChildCount = childList.size
+        val above15Childcount = benRepo.getChildAbove15(hhId, SelectedbenIdFromArgs,selectedben?.firstName)
+
         _recordExists.postValue(recordExistsLocal)
 
         Log.e("DATANEW",childList.toString())
@@ -184,7 +186,8 @@ class NewChildBenViewModel @Inject constructor(
             },
             selectedben,
             isAddspouse,
-            childList
+            childList,
+            above15Childcount
         )
     }
 

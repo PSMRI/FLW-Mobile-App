@@ -346,6 +346,7 @@ abstract class InAppDb : RoomDatabase() {
             })
 
 
+         
             val MIGRATION_49_50 = object : Migration(49, 50) {
                 override fun migrate(database: SupportSQLiteDatabase) {
 
@@ -1953,6 +1954,7 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_51_52,
                         MIGRATION_52_53,
                         MIGRATION_53_54
+                        
 
                     ).build()
 

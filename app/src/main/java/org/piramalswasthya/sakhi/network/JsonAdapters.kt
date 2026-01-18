@@ -1008,11 +1008,15 @@ data class VHNCDTO(
 
 data class PHCReviewDTO(
     val id: Int = 0,
+    var placeId : Int? = 0 ,
     var phcReviewDate: String?,
     var place: String? = null,
     var noOfBeneficiariesAttended: Int? = null,
     var Image1: String? = null,
-    var Image2: String? = null
+    var Image2: String? = null,
+    var villageName: String? = null,
+    var mitaninHistory: String? = null,
+    var mitaninActivityCheckList: String? = null,
 ) {
     fun toCache(): PHCReviewMeetingCache {
         return PHCReviewMeetingCache(
@@ -1022,7 +1026,11 @@ data class PHCReviewDTO(
             noOfBeneficiariesAttended = noOfBeneficiariesAttended,
             image1 = Image1,
             image2 = Image2,
-            syncState = SyncState.SYNCED
+            syncState = SyncState.SYNCED,
+            villageName = villageName,
+            mitaninHistory = mitaninHistory,
+            mitaninActivityCheckList = mitaninActivityCheckList,
+            placeId = placeId
         )
     }
 }

@@ -138,8 +138,6 @@
     <string name="anc_visits">ANC দৰকাৰি</string>
     <string name="id">পৰিচয়পত্ৰ</string>
     <string name="no_of_children">শিশুৰ সংখ্যা</string>
-<!--    <string name="view_trackings">ট্ৰেকিং চাবলৈ</string>-->
-<!--    <string name="add_tracking">ট্ৰেকিং যোগ কৰক</string>-->
     <string name="household_id">পৰাৰ পৰিচয়পত্ৰ</string>
     <string name="contact_number">যোগাযোগ নম্বৰ</string>
     <string name="kcuf">KCUF</string>
@@ -240,7 +238,6 @@
     <string name="str_add_member">সদস্য যোগ কৰক</string>
     <string name="relation_with_hof">গৃহমুৰব্বীৰ সৈতে সম্পৰ্ক</string>
     <string name="str_not_available">উপলব্ধ নহয়</string>
-<!--    <string name="death_type_cdr">শিশুমৃত্যু পৰ্যালোচনা</string>-->
     <string name="add_family_member">পৰিয়ালৰ সদস্য যোগ কৰক</string>
 
     <string name="male">পুৰুষ</string>
@@ -291,7 +288,7 @@
     <string name="pmsma_visit_date">PMSMA Visit Date</string>
     <string name="pmsma_visits">PMSMA Visits</string>
     <string name="pmsma_visit">PMSMA Visit</string>
-    <string name="is_baby_discharge_from_sncu">Is Baby discharge from SNCU?</string>
+    <string name="is_baby_discharge_from_sncu">কেঁচুৱাটোক এছ এন চি ইউত ভৰ্তি কৰা হৈছে নেকি?</string>
     <string name="optional">(Optional)</string>
     <string name="optional_">Optional</string>
     <string name="mandatory">Mandatory <font color='#FF0000'>*</font></string>
@@ -336,7 +333,6 @@
     <string name="death_type_cdr">শিশু মৃত্যুৰ পৰ্যালোচনা</string>
     <string name="death_type_mdsr">মাতৃ মৃত্যুৰ নীড়ীক্ষণ আৰু প্ৰতিক্ৰিয়া</string>
     <string name="continue_button">আগবাঢ়ক</string>
-<!--    <string name="about_us_powered">দ্বাৰা চালিত</string>-->
     <string name="hbnc_day_text">দিন %1d</string>
     <string name="hello_blank_fragment">নমস্কাৰ খালী টুকুৰা</string>
     <string name="hbnc_mother_temp_case_1">মাক পৰাচেটাম\'ল দিব।</string>
@@ -373,7 +369,6 @@
     <string name="pregnancy_weeks">গৰ্ভাৱস্থাৰ সপ্তাহ</string>
     <string name="view_visit">পৰিদৰ্শন চাওক</string>
     <string name="add_visit">পৰিদৰ্শন যোগ কৰক</string>
-<!--    <string name="sync_status">সিঙ্ক অৱস্থা</string>-->
     <string name="survey_register">ছৰ্ভে ৰেজিষ্টাৰ</string>
     <string name="family_member_registration">পৰিয়ালৰ সদস্যৰ পঞ্জীয়ন</string>
     <string name="non_pregnant_women_eligible_couple_section">গৰ্ভৱতী নহয় থকাৰ মহিলাসকল (যোগ্য দম্পতি) বিভাগ</string>
@@ -432,6 +427,12 @@
         <item name="hbnc_chc">সামূহিক স্বাস্থ্য কেন্দ্ৰ</item>
         <item name="hbnc_other">অন্য</item>
     </string-array>
+    <string-array name="deworming_location_options">
+        <item>School</item>
+        <item>Anganwadi Centre</item>
+        <item>Community center</item>
+        <item>Home Visit</item>
+    </string-array>
 
     <string-array name="hbnc_gestational_age">
         <item name="hbnc_weak_1">২৪ – ৩৪ সপ্তাহ</item>
@@ -475,13 +476,11 @@
     <string name="str_yay_it_is_not_working">বাহ্‌, এইটো কাম নকৰে!</string>
     <string name="str_health_subcenter_name">স্বাস্থ্য উপকেন্দ্ৰৰ নাম</string>
     <string name="str_mother_name">মাতৃৰ নাম</string>
-   <!-- <string name="str_father_name">পিতৃৰ নাম</string>-->
     <string name="str_date_of_delivery">প্ৰসবৰ তাৰিখ</string>
     <string name="str_place_of_delivery">প্ৰসবৰ স্থান</string>
     <string name="str_baby_gender">শিশুৰ লিঙ্গ</string>
     <string name="str_type_of_delivery">প্ৰসৱৰ ধৰণ</string>
     <string name="str_started_breastfeeding">স্তন্যপান আৰম্ভ কৰিছে</string>
-   <!-- <string name="str_weight_at_birth">জন্মসময়ৰ ওজন (গ্ৰামত)</string>-->
     <string name="str_discharge_date_of_mother">মাতৃৰ প্ৰস্থান তাৰিখ</string>
     <string name="str_discharge_date_of_baby">শিশুৰ প্ৰস্থান তাৰিখ</string>
     <string name="str_registration_of_birth">জন্মৰ পঞ্জীয়ন</string>
@@ -527,7 +526,6 @@
     <string name="str_discharge_of_institutinal_delivery">প্ৰতিষ্ঠানিক প্ৰসৱৰ প্ৰস্থান</string>
     <string name="str_date_of_home_visit">গৃহ পৰিদৰ্শনৰ তাৰিখ</string>
     <string name="str_baby_alive">শিশু জীয়াই আছে নে?</string>
-<!--    <string name="str_date_of_death">শিশুৰ মৃত্যুৰ তাৰিখ</string>-->
     <string name="str_time_of_death">শিশুৰ মৃত্যুৰ সময়</string>
     <string name="str_place_of_baby_death">শিশুৰ মৃত্যুৰ স্থান</string>
     <string name="str_other_place_of_baby_death">শিশুৰ মৃত্যুৰ অন্য স্থান</string>
@@ -602,6 +600,21 @@
     <string name="number_of_mitanins_participated_in_vhsnc_meeting">Number of Mitanins participated in VHSNC meeting</string>
     <string name="mitanin_village_meetings">Mitanin/ Village Meetings</string>
     <string name="asha_village_meetings">ASHA/ Village Meetings</string>
+    <string name="number_of_pregnant_woman_attended">Number of Pregnant Woman Attended</string>
+    <string name="number_of_lactating_mothers_attended">Number of Lactating Mothers attended</string>
+    <string name="during_breastfeeding_counseling_check_list">During Breastfeeding Counseling check list</string>
+    <string name="the_baby_should_be_breastfed_immediately_within_the_first_hour_of_birth">The baby should be breastfed immediately within the first hour of birth</string>
+    <string name="the_baby_should_be_given_only_mother_s_milk_for_the_first_6_months">The baby should be given only mother’s milk for the first 6 months.</string>
+    <string name="after_6_months_along_with_mother_s_milk_nutritious_complementary_food_should_be_given">After 6 months, along with mother’s milk, nutritious complementary food should be given.</string>
+    <string name="breastfeeding_should_be_continued_for_2_years_or_more">Breastfeeding should be continued for 2 years or more.</string>
+    <string name="the_family_should_support_and_encourage_the_mother">The family should support and encourage the mother</string>
+    <string name="mother_s_milk_is_the_best_for_the_complete_development_of_the_baby">Mother’s milk is the best for the complete development of the baby.</string>
+    <string name="information_was_given_about_kmc_kangaroo_mother_care">Information was given about KMC (Kangaroo Mother Care).</string>
+    <string name="place_of_maa_meeting">Place of MAA Meeting</string>
+    <string name="number_of_out_of_school_children_sent_to_anganwad">Number of Out-of-school Children sent to Anganwad</string>
+    <string name="place_of_ndd">Place of NDD</string>
+    <string name="date_of_ndd">Date of NDD</string>
+    <string name="was_the_deworming_round_conducted">Was the deworming round conducted?</string>
 
 
 </resources>
