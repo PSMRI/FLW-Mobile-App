@@ -1070,7 +1070,7 @@ class VLFRepo @Inject constructor(
     }
 
 
-    suspend fun getFalariaMdaCampaignFromServer(): Int {
+    suspend fun getFilariaMdaCampaignFromServer(): Int {
         return withContext(Dispatchers.IO) {
             val user = preferenceDao.getLoggedInUser()
                 ?: throw IllegalStateException("No user logged in!!")
@@ -1126,10 +1126,10 @@ class VLFRepo @Inject constructor(
                     }
                 }
             } catch (e: SocketTimeoutException) {
-                Timber.d("get Pulse Polio Campaign data error : $e")
-                return@withContext getFalariaMdaCampaignFromServer()
+                Timber.d("get Filaria Mda Campaign data error : $e")
+                return@withContext getFilariaMdaCampaignFromServer()
             } catch (e: IllegalStateException) {
-                Timber.d("get Pulse Polio Campaign data error : $e")
+                Timber.d("get Filaria Mda Campaign data error : $e")
                 return@withContext -1
             }
             -1
