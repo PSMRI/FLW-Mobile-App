@@ -44,7 +44,7 @@ class ECRegistrationAdapter(
             clickListener: ClickListener?,
         ) {
             binding.benWithEcr = item
-            
+
             if (item.ecr == null) {
                 binding.llLmpDate.visibility = View.INVISIBLE
                 binding.llBenStatus.visibility = View.INVISIBLE
@@ -76,6 +76,7 @@ class ECRegistrationAdapter(
                     "Register"
                 }
 
+
             binding.btnFormEc1.setBackgroundColor(binding.root.resources.getColor(if (item.ecr != null && item.ecr.lmpDate != 0L) android.R.color.holo_green_dark else android.R.color.holo_red_dark))
             binding.clickListener = clickListener
 
@@ -97,9 +98,13 @@ class ECRegistrationAdapter(
 
 
     class ClickListener(
-        private val clickedForm: ((hhId: Long, benId: Long) -> Unit)? = null
+        private val clickedForm: ((hhId: Long, benId: Long) -> Unit)? = null,
+        private val clickedAddAllBenBtn: (item:BenWithEcrDomain,benId: Long, hhId: Long, isViewMode: Boolean, isIFA: Boolean) -> Unit,
 
-    ) {
+
+
+        ) {
+        fun clickedAddAllBenBtn(item: BenWithEcrDomain, isMatched: Boolean, isIFA: Boolean) = clickedAddAllBenBtn(item,item.ben.benId, item.ben.hhId, isMatched,isIFA)
         fun onClickForm(item: BenWithEcrDomain) =
             clickedForm?.let { it(item.ben.hhId, item.ben.benId) }
     }

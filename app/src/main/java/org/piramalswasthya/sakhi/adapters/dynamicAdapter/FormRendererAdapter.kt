@@ -31,6 +31,7 @@
     import org.json.JSONArray
     import org.piramalswasthya.sakhi.R
     import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
+    import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
     import timber.log.Timber
     import java.io.File
     import java.io.FileOutputStream
@@ -44,7 +45,9 @@
         private val maxVisitDate: Date? = null,
         private val isSNCU: Boolean = false,
         private val onValueChanged: (FormField, Any?) -> Unit,
-        private val onShowAlert: ((String, String) -> Unit)? = null
+        private val onShowAlert: ((String, String) -> Unit)? = null,
+        private val formId: String? =null ,
+
 
 
     ) : RecyclerView.Adapter<FormRendererAdapter.FormViewHolder>() {
@@ -605,14 +608,32 @@
                                     }
                                 }
                                 else {
-                                    minDate = when (field.fieldId) {
-                                        "visit_date" -> null
-                                        "nrc_admission_date" -> getDate("visit_date")
-                                        "nrc_discharge_date" -> getDate("nrc_admission_date")
-                                        "follow_up_visit_date" -> getDate("nrc_discharge_date")
-                                        else -> null
+
+
+                                    if (formId == FormConstants.IFA_DISTRIBUTION_FORM_ID) {
+                                        minDate = minVisitDate
+                                        maxDate = maxVisitDate
+
+                                        if (minDate == null) {
+                                            calendar.time = today
+                                            calendar.add(Calendar.MONTH, -2)
+                                            minDate = calendar.time
+                                        }
+                                        if (maxDate == null) {
+                                            maxDate = today
+                                        }
                                     }
-                                    maxDate = today
+                                    else{
+                                        minDate = when (field.fieldId) {
+                                            "visit_date" -> null
+                                            "nrc_admission_date" -> getDate("visit_date")
+                                            "nrc_discharge_date" -> getDate("nrc_admission_date")
+                                            "follow_up_visit_date" -> getDate("nrc_discharge_date")
+                                            else -> null
+                                        }
+                                        maxDate = today
+                                    }
+
                                 }
 
                                 DatePickerDialog(

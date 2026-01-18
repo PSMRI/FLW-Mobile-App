@@ -28,6 +28,9 @@ import org.piramalswasthya.sakhi.utils.HelperUtil.copyToTemp
 import org.piramalswasthya.sakhi.utils.HelperUtil.detectExtAndMime
 import org.piramalswasthya.sakhi.utils.HelperUtil.getFileName
 import org.piramalswasthya.sakhi.model.MaaMeetingGetAllResponse
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 class MaaMeetingRepo @Inject constructor(
     @ApplicationContext val appContext: Context,
@@ -41,6 +44,11 @@ class MaaMeetingRepo @Inject constructor(
         date: String?,
         place: String?,
         participants: Int?,
+        villageName: String? = null,
+        mitaninActivityCheckList : String? = null,
+//        selectAll : String? = null,
+        noOfPragnentWoment: String? = null,
+        noOfLactingMother: String? = null,
         u1: String?,
         u2: String?,
         u3: String?,
@@ -49,6 +57,11 @@ class MaaMeetingRepo @Inject constructor(
     ) = MaaMeetingEntity(
         meetingDate = date,
         place = place,
+        mitaninActivityCheckList = mitaninActivityCheckList,
+//        selectAll = selectAll,
+        villageName = villageName,
+        noOfPragnentWomen = noOfPragnentWoment,
+        noOfLactingMother = noOfLactingMother,
         participants = participants,
         ashaId = pref.getLoggedInUser()?.userId,
         meetingImages = listOfNotNull(u1, u2, u3, u4, u5),
@@ -66,9 +79,13 @@ class MaaMeetingRepo @Inject constructor(
         pending.forEach { row ->
             val imagesParts = (row.meetingImages ?: emptyList()).mapNotNull { uriStr ->
                 val uri = android.net.Uri.parse(uriStr)
-                val name = getFileName(uri,appContext) ?: "upload"
+                val name = getFileName(uri, appContext) ?: "upload"
                 val mime = appContext.contentResolver.getType(uri) ?: "application/octet-stream"
-                val fileForUpload = if (mime.startsWith("image/")) compressImageToTemp(uri, name,appContext) else copyToTemp(uri, name, appContext)
+                val fileForUpload = if (mime.startsWith("image/")) compressImageToTemp(
+                    uri,
+                    name,
+                    appContext
+                ) else copyToTemp(uri, name, appContext)
                 fileForUpload?.let { file ->
                     val body = file.asRequestBody(mime.toMediaTypeOrNull())
                     MultipartBody.Part.createFormData("meetingImages", file.name, body)
@@ -76,11 +93,19 @@ class MaaMeetingRepo @Inject constructor(
             }
 
             val response = api.postMaaMeetingMultipart(
+                villageName = (convertToServerDate(row.villageName) ?: "").toRequestBody("text/plain".toMediaTypeOrNull()),
+                noOfPragnentWoment = (convertToServerDate(row.noOfPragnentWomen) ?: "").toRequestBody("text/plain".toMediaTypeOrNull()),
+                noOfLactingMother = (convertToServerDate(row.noOfLactingMother) ?: "").toRequestBody("text/plain".toMediaTypeOrNull()),
+                mitaninActivityCheckList = (convertToServerDate(row.mitaninActivityCheckList) ?: "").toRequestBody("text/plain".toMediaTypeOrNull()),
+//                selectAll = (convertToServerDate(row.selectAll) ?: "").toRequestBody("text/plain".toMediaTypeOrNull()),
                 meetingDate = (convertToServerDate(row.meetingDate) ?: "").toRequestBody("text/plain".toMediaTypeOrNull()),
                 place = (row.place ?: "").toRequestBody("text/plain".toMediaTypeOrNull()),
-                participants = ((row.participants ?: 0).toString()).toRequestBody("text/plain".toMediaTypeOrNull()),
-                ashaId = ((row.ashaId ?: 0).toString()).toRequestBody("text/plain".toMediaTypeOrNull()),
-                createdBy = ((pref.getLoggedInUser()?.userName ?: 0).toString()).toRequestBody("text/plain".toMediaTypeOrNull()),
+                participants = ((row.participants
+                    ?: 0).toString()).toRequestBody("text/plain".toMediaTypeOrNull()),
+                ashaId = ((row.ashaId
+                    ?: 0).toString()).toRequestBody("text/plain".toMediaTypeOrNull()),
+                createdBy = ((pref.getLoggedInUser()?.userName
+                    ?: 0).toString()).toRequestBody("text/plain".toMediaTypeOrNull()),
                 meetingImages = imagesParts
             )
             if (response.isSuccessful) {
@@ -90,6 +115,7 @@ class MaaMeetingRepo @Inject constructor(
     }
 
     suspend fun downSyncAndPersist() = withContext(Dispatchers.IO) {
+
         val response = api.getMaaMeetings(
             GetDataRequest(
                 0,
@@ -101,26 +127,40 @@ class MaaMeetingRepo @Inject constructor(
                 pref.getLoggedInUser()?.userId?.toLong()!!
             )
         )
+
         if (!response.isSuccessful) return@withContext
+
         val body = response.body()?.string() ?: return@withContext
         val adapter = moshi.adapter(MaaMeetingGetAllResponse::class.java)
         val parsed = adapter.fromJson(body) ?: return@withContext
-        dao.clearAll()
-        parsed.data?.forEach { item ->
-            val imageBase64List = item.meetingImages ?: emptyList()
-            val imageUriList = imageBase64List.mapNotNull { base64 ->
+
+        val serverList = parsed.data ?: emptyList()
+
+        if (serverList.isEmpty()) {
+            return@withContext
+        }
+
+        serverList.forEach { item ->
+
+            val imageUriList = (item.meetingImages ?: emptyList()).mapNotNull { base64 ->
                 try {
                     val base64Data = base64.substringAfter(",", base64)
                     val bytes = Base64.decode(base64Data, Base64.DEFAULT)
                     val (ext, _) = detectExtAndMime(bytes)
-                    val file = File(appContext.cacheDir, "meeting_${System.currentTimeMillis()}.$ext")
+
+                    val file = File(
+                        appContext.cacheDir,
+                        "meeting_${System.currentTimeMillis()}.$ext"
+                    )
+
                     file.outputStream().use { it.write(bytes) }
-                    val uri = FileProvider.getUriForFile(
+
+                    FileProvider.getUriForFile(
                         appContext,
                         "${appContext.packageName}.provider",
                         file
-                    )
-                    uri.toString()
+                    ).toString()
+
                 } catch (e: Exception) {
                     null
                 }
@@ -130,6 +170,10 @@ class MaaMeetingRepo @Inject constructor(
                 id = item.id?.toLong()!!,
                 meetingDate = convertToLocalDate(item.meetingDate),
                 place = item.place,
+                villageName = item.villageName,
+                mitaninActivityCheckList = item.mitaninActivityCheckList,
+                noOfLactingMother = item.noOfLactingMother,
+                noOfPragnentWomen = item.noOfPragnentWoment,
                 participants = item.participants,
                 ashaId = item.ashaId,
                 meetingImages = imageUriList,
@@ -138,26 +182,24 @@ class MaaMeetingRepo @Inject constructor(
 
             dao.insert(entity)
         }
-    }
 
-    suspend fun hasMeetingInSameQuarter(meetingDate: String?): Boolean = withContext(Dispatchers.IO) {
-        if (meetingDate.isNullOrBlank()) return@withContext false
-        val parts = meetingDate.split("-")
-        if (parts.size != 3) return@withContext false
-        val day = parts[0].toIntOrNull() ?: return@withContext false
-        val month = parts[1].toIntOrNull() ?: return@withContext false
-        val year = parts[2].toIntOrNull() ?: return@withContext false
-        val q = ((month - 1) / 3) + 1
-        dao.getAll().any { row ->
-            val p = row.meetingDate?.split("-")
-            if (p == null || p.size != 3) return@any false
-            val m = p[1].toIntOrNull() ?: return@any false
-            val y = p[2].toIntOrNull() ?: return@any false
-            val rq = ((m - 1) / 3) + 1
-            y == year && rq == q
+    }
+    private val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+    suspend fun isThreeMonthsPassedSinceLastMeeting(meetingDate: String?): Boolean =
+        withContext(Dispatchers.IO) {
+            if (meetingDate.isNullOrBlank()) return@withContext true
+
+            val lastMeeting = try {
+                LocalDate.parse(meetingDate, formatter)
+            } catch (e: Exception) {
+                return@withContext true
+            }
+
+            val today = LocalDate.now()
+            val threeMonthsLater = lastMeeting.plusMonths(3)
+
+            today >= threeMonthsLater
         }
-    }
-
     fun getAllMaaMeetings(): Flow<List<MaaMeetingEntity>> = dao.getAllMaaData()
 
     suspend fun getMaaMeetingById(id: Long): MaaMeetingEntity? {
