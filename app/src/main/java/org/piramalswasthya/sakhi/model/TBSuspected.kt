@@ -30,7 +30,7 @@ data class TBSuspectedCache(
     var visitLabel: String? = null,
     var typeOfTBCase: String? = null,
     var reasonForSuspicion: String? = null,
-    var hasSymptoms: Boolean? = null,
+    var hasSymptoms: Boolean? = false,
     var isSputumCollected: Boolean? = null,
     var sputumSubmittedAt: String? = null,
     var nikshayId: String? = null,
