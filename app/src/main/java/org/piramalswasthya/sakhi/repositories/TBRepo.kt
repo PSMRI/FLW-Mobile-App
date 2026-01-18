@@ -256,6 +256,90 @@ class TBRepo @Inject constructor(
         return tbSuspectedList
     }
 
+
+    suspend fun getTbConfirmedDetailsFromServer(): Int {
+        return withContext(Dispatchers.IO) {
+
+            try {
+                val user =
+                    preferenceDao.getLoggedInUser()
+                        ?: throw IllegalStateException("No user logged in!!")
+                val response = tmcNetworkApiService.getTBConfirmedData()
+                val statusCode = response.code()
+                if (statusCode == 200) {
+                    val responseString = response.body()?.string()
+                    if (responseString != null) {
+                        val jsonObj = JSONObject(responseString)
+
+                        val errorMessage = jsonObj.getString("errorMessage")
+                        val responseStatusCode = jsonObj.getInt("statusCode")
+                        Timber.d("Pull from amrit tb suspected data : $responseStatusCode")
+                        when (responseStatusCode) {
+                            200 -> {
+                                try {
+                                    val dataObj = jsonObj.getString("data")
+                                    saveTBSuspectedCacheFromResponse(dataObj)
+                                } catch (e: Exception) {
+                                    Timber.d("TB Suspected entries not synced $e")
+                                    return@withContext 0
+                                }
+
+                                return@withContext 1
+                            }
+
+                            5002 -> {
+                                if (userRepo.refreshTokenTmc(
+                                        user.userName, user.password
+                                    )
+                                ) throw SocketTimeoutException("Refreshed Token!")
+                                else throw IllegalStateException("User Logged out!!")
+                            }
+
+                            5000 -> {
+                                if (errorMessage == "No record found") return@withContext 0
+                            }
+
+                            else -> {
+                                throw IllegalStateException("$responseStatusCode received, don't know what todo!?")
+                            }
+                        }
+                    }
+                }
+
+            } catch (e: SocketTimeoutException) {
+                Timber.d("get_tb error : $e")
+                return@withContext -2
+
+            } catch (e: java.lang.IllegalStateException) {
+                Timber.d("get_tb error : $e")
+                return@withContext -1
+            }
+            -1
+        }
+    }
+
+
+    private suspend fun saveTBConfirmedCacheFromResponse(dataObj: String): MutableList<TBConfirmedTreatmentCache> {
+        val tbConfirmedList = mutableListOf<TBConfirmedTreatmentCache>()
+        val requestDTO = Gson().fromJson(dataObj, TBConfirmedRequestDTO::class.java)
+        requestDTO?.tbConfirmedList?.forEach { tbConfirmedDTO ->
+
+                val tbSuspectedCache: TBConfirmedTreatmentCache? =
+                    tbDao.getALLTbConfirmed(
+                        tbConfirmedDTO.benId,
+
+                    )
+                if (tbSuspectedCache == null) {
+                    benDao.getBen(tbConfirmedDTO.benId)?.let {
+                        tbDao.saveTbConfirmed(tbConfirmedDTO.toCache())
+                    }
+                }
+
+        }
+        return tbConfirmedList
+    }
+
+
     suspend fun pushUnSyncedRecords(): Boolean {
         val screeningResult = pushUnSyncedRecordsTBScreening()
         val suspectedResult = pushUnSyncedRecordsTBSuspected()

@@ -34,6 +34,13 @@ interface TBDao {
     LIMIT 1
 """)    suspend fun getTbConfirmed(benId: Long): TBConfirmedTreatmentCache?
 
+    @Query("""
+    SELECT *
+    FROM TB_CONFIRMED_TREATMENT
+    WHERE benId = :benId
+      AND followUpDate IS NOT NULL
+    ORDER BY followUpDate DESC
+""")    suspend fun getALLTbConfirmed(benId: Long): TBConfirmedTreatmentCache?
 
     @Query("SELECT * FROM TB_SUSPECTED WHERE benId =:benId and (visitDate = :visitDate or visitDate = :visitDateGMT) limit 1")
     suspend fun getTbSuspected(benId: Long, visitDate: Long, visitDateGMT: Long): TBSuspectedCache?

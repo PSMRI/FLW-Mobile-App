@@ -192,7 +192,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         TBConfirmedTreatmentCache::class
     ],
     views = [BenBasicCache::class],
-    version = 50, exportSchema = false
+    version = 54, exportSchema = false
 )
 
 @TypeConverters(
@@ -269,7 +269,83 @@ abstract class InAppDb : RoomDatabase() {
 
             })
 
-         
+            val MIGRATION_53_54 = object : Migration(53, 54) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("ALTER TABLE TBSuspectedCache ADD COLUMN visitLabel TEXT")
+                    database.execSQL("ALTER TABLE TBSuspectedCache ADD COLUMN typeOfTBCase TEXT")
+                    database.execSQL("ALTER TABLE TBSuspectedCache ADD COLUMN reasonForSuspicion TEXT")
+
+                    database.execSQL("ALTER TABLE TBSuspectedCache ADD COLUMN hasSymptoms INTEGER NOT NULL DEFAULT 0")
+
+                    database.execSQL("ALTER TABLE TBSuspectedCache ADD COLUMN isChestXRayDone INTEGER")
+                    database.execSQL("ALTER TABLE TBSuspectedCache ADD COLUMN chestXRayResult TEXT")
+                    database.execSQL("ALTER TABLE TBSuspectedCache ADD COLUMN referralFacility TEXT")
+
+                    database.execSQL("ALTER TABLE TBSuspectedCache ADD COLUMN isTBConfirmed INTEGER")
+                    database.execSQL("ALTER TABLE TBSuspectedCache ADD COLUMN isDRTBConfirmed INTEGER")
+
+                    database.execSQL("ALTER TABLE TBSuspectedCache ADD COLUMN isConfirmed INTEGER NOT NULL DEFAULT 0")
+                }
+            }
+
+            val MIGRATION_52_53 = object : Migration(52, 53) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL(
+                        """
+            CREATE UNIQUE INDEX IF NOT EXISTS index_DewormingMeeting_dewormingDate
+            ON DewormingMeeting(dewormingDate)
+            """.trimIndent()
+                    )
+                }
+            }
+
+
+
+            val MIGRATION_51_52 = object : Migration(51, 52) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+
+                    database.execSQL(
+                        """
+            CREATE TABLE IF NOT EXISTS MAA_MEETING (
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                meetingDate TEXT,
+                place TEXT,
+                villageName TEXT,
+                mitaninActivityCheckList TEXT,
+                noOfPragnentWomen TEXT,
+                noOfLactingMother TEXT,
+                participants INTEGER,
+                ashaId INTEGER,
+                meetingImages TEXT,
+                createdAt INTEGER NOT NULL DEFAULT 0,
+                updatedAt INTEGER NOT NULL DEFAULT 0,
+                syncState TEXT NOT NULL DEFAULT 'UNSYNCED'
+            )
+            """.trimIndent()
+                    )
+
+                    database.execSQL(
+                        "CREATE UNIQUE INDEX IF NOT EXISTS index_MAA_MEETING_id ON MAA_MEETING(id)"
+                    )
+                }
+            }
+
+
+            val MIGRATION_50_51 = Migration(50, 51, migrate = {
+                it.execSQL("alter table PHCReviewMeeting add column villageName TEXT")
+                it.execSQL("alter table PHCReviewMeeting add column mitaninHistory TEXT")
+                it.execSQL("alter table PHCReviewMeeting add column mitaninActivityCheckList TEXT")
+                it.execSQL("alter table PHCReviewMeeting add column placeId INTEGER DEFAULT 0")
+                it.execSQL(
+                    """
+            CREATE UNIQUE INDEX IF NOT EXISTS index_PHCReviewMeeting_id
+            ON PHCReviewMeeting(id)
+            """.trimIndent()
+                )
+
+            })
+
+
             val MIGRATION_49_50 = object : Migration(49, 50) {
                 override fun migrate(database: SupportSQLiteDatabase) {
 
@@ -1873,6 +1949,11 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_47_48,
                         MIGRATION_48_49,
                         MIGRATION_49_50,
+                        MIGRATION_50_51,
+                        MIGRATION_51_52,
+                        MIGRATION_52_53,
+                        MIGRATION_53_54
+
                     ).build()
 
                     INSTANCE = instance

@@ -161,7 +161,7 @@ interface AmritApiService {
     @POST("flw-api/tb/suspected/saveAll")
     suspend fun saveTBSuspectedData(@Body tbSuspectedRequestDTO: TBSuspectedRequestDTO): Response<ResponseBody>
 
-    @POST("flw-api/follow-up/getAll")
+    @POST("flw-api/tb/confirmed/save")
     suspend fun saveTBConfirmedData(@Body tbConfirmedRequestDTO: TBConfirmedRequestDTO): Response<ResponseBody>
 
     @POST("flw-api/follow-up/save")
