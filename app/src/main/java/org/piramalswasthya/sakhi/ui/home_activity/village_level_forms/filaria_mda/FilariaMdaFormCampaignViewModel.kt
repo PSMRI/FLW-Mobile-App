@@ -1,5 +1,4 @@
-package org.piramalswasthya.sakhi.ui.home_activity.disease_control.filaria.form
-
+package org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.filaria_mda
 
 import android.content.Context
 import androidx.lifecycle.LiveData
@@ -16,62 +15,65 @@ import org.piramalswasthya.sakhi.configuration.dynamicDataSet.ConditionalLogic
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FieldValidation
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
 import org.piramalswasthya.sakhi.model.BottleItem
-import org.piramalswasthya.sakhi.model.dynamicEntity.FilariaMDA.FilariaMDAFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormFieldDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
-import org.piramalswasthya.sakhi.repositories.dynamicRepo.FilariaMDAFormRepository
+import org.piramalswasthya.sakhi.model.dynamicEntity.filariaaMdaCampaign.FilariaMDACampaignFormResponseJsonEntity
+import org.piramalswasthya.sakhi.model.dynamicModel.MDACampaignItem
+import org.piramalswasthya.sakhi.repositories.dynamicRepo.FilariaMdaCampaignRepository
 import org.piramalswasthya.sakhi.work.dynamicWoker.FilariaMDAFormSyncWorker
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
+import kotlin.collections.orEmpty
 
 @HiltViewModel
-class FilariaMDAFormViewModel @Inject constructor(
-    private val repository: FilariaMDAFormRepository,
+class FilariaMdaFormCampaignViewModel @Inject constructor(
+    private val repository: FilariaMdaCampaignRepository,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _schema = MutableStateFlow<FormSchemaDto?>(null)
     val schema: StateFlow<FormSchemaDto?> = _schema
-    private val _infant = MutableStateFlow<FilariaMDAFormResponseJsonEntity?>(null)
-    val infant: StateFlow<FilariaMDAFormResponseJsonEntity?> = _infant
+    private val _infant = MutableStateFlow<FilariaMDACampaignFormResponseJsonEntity?>(null)
+    val infant: StateFlow<FilariaMDACampaignFormResponseJsonEntity?> = _infant
     var previousVisitDate: Date? = null
-    private val _syncedVisitList = MutableStateFlow<List<FilariaMDAFormResponseJsonEntity>>(emptyList())
+    private val _syncedVisitList = MutableStateFlow<List<FilariaMDACampaignFormResponseJsonEntity>>(emptyList())
 
     var visitDay: String = ""
     private var isViewMode: Boolean = false
     private val _isBenDead = MutableStateFlow(false)
     val isBenDead: StateFlow<Boolean> = _isBenDead
 
-    private val _bottleList = MutableLiveData<List<BottleItem>>()
-    val bottleList: LiveData<List<BottleItem>> = _bottleList
+    private val _bottleList = MutableLiveData<List<MDACampaignItem>>()
+    val bottleList: LiveData<List<MDACampaignItem>> = _bottleList
     private val _showToastLiveData = MutableLiveData<String>()
     val showToastLiveData: LiveData<String> = _showToastLiveData
     var wasDuplicate = false
         private set
 
 
-    fun loadBottleData(hhId: Long) {
+    fun loadBottleData() {
         viewModelScope.launch {
-            val list = repository.getBottleList(hhId)
+            val list = repository.getBottleList()
             _bottleList.postValue(list)
         }
     }
 
-    fun loadSyncedVisitList(hhId: Long) {
+    fun loadSyncedVisitList() {
         viewModelScope.launch {
-            val list = repository.getSyncedVisitsByRchId(hhId)
+            val list = repository.getSyncedVisitsByRchId()
             _syncedVisitList.value = list
         }
     }
 
     fun loadFormSchema(
-        hhId: Long,
         formId: String,
         viewMode: Boolean,
     ) {
         this.isViewMode = viewMode
-        loadSyncedVisitList(hhId)
+        loadSyncedVisitList()
 
         viewModelScope.launch {
             val cachedSchemaEntity = repository.getSavedSchema(formId)
@@ -81,7 +83,7 @@ class FilariaMDAFormViewModel @Inject constructor(
 
             val localSchemaToRender = cachedSchema ?: repository.getFormSchema(formId) ?: return@launch
 
-            val savedJson = repository.loadFormResponseJson(hhId, formId)
+            val savedJson = repository.loadFormResponseJson(0, formId)
             val savedFieldValues = if (!savedJson.isNullOrBlank()) {
                 try {
                     val root = JSONObject(savedJson)
@@ -174,7 +176,7 @@ class FilariaMDAFormViewModel @Inject constructor(
                 .filter { it.visible && it.value != null }
                 .associate { it.fieldId to it.value }
 
-            val visitDate = fieldMap["mda_distribution_date"]?.toString() ?: "N/A"
+            val visitDate = fieldMap["start_date"]?.toString() ?: "N/A"
             val visitMonth = toMonthKey(visitDate)
 
             val wrappedJson = JSONObject().apply {
@@ -185,10 +187,9 @@ class FilariaMDAFormViewModel @Inject constructor(
                 put("fields", JSONObject(fieldMap))
             }
 
-            val entity = FilariaMDAFormResponseJsonEntity(
-                hhId = hhId,
+            val entity = FilariaMDACampaignFormResponseJsonEntity(
                 visitDate = visitDate,
-                visitMonth = visitMonth,
+                visitYear = visitMonth,
                 formId = formId,
                 version = version,
                 formDataJson = wrappedJson.toString(),
@@ -200,13 +201,13 @@ class FilariaMDAFormViewModel @Inject constructor(
 
             if (!inserted) {
                 wasDuplicate = true
-                _showToastLiveData.postValue("You have already submitted this form for this month")
+                _showToastLiveData.postValue("You have already submitted this form for this Year")
                 return false
             }
 
             wasDuplicate = false
 
-            loadSyncedVisitList(benId)
+            loadSyncedVisitList()
             FilariaMDAFormSyncWorker.enqueue(context)
 
             true
@@ -267,7 +268,7 @@ class FilariaMDAFormViewModel @Inject constructor(
         val todayMonthKey = SimpleDateFormat("yyyy-MM", Locale.getDefault()).format(today)
 
         val alreadyInThisMonth = _syncedVisitList.value.any {
-            it.visitMonth == todayMonthKey
+            it.visitYear == todayMonthKey
         }
         return if (alreadyInThisMonth) {
             todayCal.apply { add(Calendar.DATE, -1) }.time

@@ -22,6 +22,7 @@ import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.ANC_FORM_ID
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.HBNC_FORM_ID
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.HBYC_FORM_ID
+import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.LF_MDA_CAMPAIGN
 import retrofit2.Response
 import timber.log.Timber
 import java.text.SimpleDateFormat
@@ -54,7 +55,8 @@ class FormRepository @Inject constructor(
         FormConstants.MOSQUITO_NET_FORM_ID,
         FormConstants.MDA_DISTRIBUTION_FORM_ID,
         FormConstants.CDTF_001,
-        FormConstants.ANC_FORM_ID
+        FormConstants.ANC_FORM_ID,
+        LF_MDA_CAMPAIGN
     )
 
 
