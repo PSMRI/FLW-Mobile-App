@@ -16,7 +16,6 @@ import org.piramalswasthya.sakhi.model.DeliveryOutcomeCache
 import org.piramalswasthya.sakhi.model.DeliveryOutcomePost
 import org.piramalswasthya.sakhi.network.AmritApiService
 import org.piramalswasthya.sakhi.network.GetDataPaginatedRequest
-import org.piramalswasthya.sakhi.utils.HelperUtil
 import timber.log.Timber
 import java.io.IOException
 import java.net.SocketTimeoutException
@@ -125,7 +124,7 @@ class DeliveryOutcomeRepo @Inject constructor(
                                 return true
                             }
 
-                            5002 -> {
+                           401, 5002 -> {
 //                                HelperUtil.deliveryOutcomeRepo.append("Throwing 5002\n")
 //                                HelperUtil.deliveryOutcomeRepo.append("\n")
 //                                HelperUtil.deliveryOutcomeRepoMethod(context, "deliveryOutcomeRepoMethod.txt", HelperUtil.deliveryOutcomeRepo.toString())
@@ -229,7 +228,7 @@ class DeliveryOutcomeRepo @Inject constructor(
                                 return@withContext 1
                             }
 
-                            5002 -> {
+                            401,5002 -> {
                                 if (userRepo.refreshTokenTmc(
                                         user.userName, user.password
                                     )
