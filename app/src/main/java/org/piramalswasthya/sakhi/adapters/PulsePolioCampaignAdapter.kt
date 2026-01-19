@@ -40,7 +40,7 @@ class PulsePolioCampaignAdapter(
             binding.clickListener = clickListener
             binding.executePendingBindings()
             val startDate = HelperUtil.extractFieldValue(item.formDataJson,"start_date")
-            val numberOfChildren = HelperUtil.extractFieldValue(item.formDataJson,"number_of_children")
+            val numberOfChildren = HelperUtil.extractFieldValue(item.formDataJson,"children_vaccinated")
             binding.tvDate.text = startDate
             binding.numberOfChildren.text = "Number Of Children : $numberOfChildren"
         }

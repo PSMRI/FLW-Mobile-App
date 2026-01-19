@@ -237,14 +237,12 @@ class PulsePolioCampaignFormFragment : Fragment() {
                 if (value == "pick_image") {
                     currentImageField = field
                     if (field.fieldId == "campaign_photos" || field.fieldId == "campaignPhotos") {
-                        // Always allow image selection - will keep only latest 2
                         showImagePickerDialog()
                     } else {
                         showImagePickerDialog()
                     }
                 } else {
                     field.value = value
-                    // Update campaignPhotosList if this is the campaign_photos field
                     if ((field.fieldId == "campaign_photos" || field.fieldId == "campaignPhotos") && value is List<*>) {
                         campaignPhotosList = value.filterIsInstance<String>().toMutableList()
                     }
