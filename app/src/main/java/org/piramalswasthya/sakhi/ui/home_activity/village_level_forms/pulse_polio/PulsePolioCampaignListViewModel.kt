@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.repositories.VLFRepo
 import org.piramalswasthya.sakhi.utils.HelperUtil
@@ -14,7 +15,14 @@ class PulsePolioCampaignListViewModel @Inject constructor(
     private val vlfRepo: VLFRepo
 ) : ViewModel() {
 
-    val allPulsePolioCampaignList = vlfRepo.pulsePolioCampaignList
+    val allPulsePolioCampaignList = vlfRepo.pulsePolioCampaignList.map { list ->
+        // Filter to show only current year data (1 year)
+        val currentYear = HelperUtil.getCurrentYear().toInt()
+        list.filter {
+            val date = it.campaignDate ?: return@filter false
+            getYearFromDate(date) == currentYear
+        }
+    }
 
     private val _isCampaignAlreadyAdded = MutableLiveData(false)
     val isCampaignAlreadyAdded: LiveData<Boolean> = _isCampaignAlreadyAdded

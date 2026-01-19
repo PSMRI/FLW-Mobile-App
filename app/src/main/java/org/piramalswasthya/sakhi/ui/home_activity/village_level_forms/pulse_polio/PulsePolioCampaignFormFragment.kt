@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.pulse_pol
 import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -227,12 +228,14 @@ class PulsePolioCampaignFormFragment : Fragment() {
                 }
             }
         }
-
+        val minVisitDate = HelperUtil.getMinVisitDate()
+        val maxVisitDate = HelperUtil.getMaxVisitDate()
+        Log.i("PulsePolioDistribution", "refreshAdapter: $minVisitDate  ==== $maxVisitDate")
         adapter = FormRendererAdapter(
             visibleFields,
             isViewOnly = viewModel.isViewOnly,
-            minVisitDate = null,
-            maxVisitDate = null,
+            minVisitDate = minVisitDate,
+            maxVisitDate = maxVisitDate,
             onValueChanged = { field, value ->
                 if (value == "pick_image") {
                     currentImageField = field

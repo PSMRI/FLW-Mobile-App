@@ -830,4 +830,17 @@ object HelperUtil {
         return SimpleDateFormat("yyyy", Locale.getDefault())
             .format(Date())
     }
+
+    fun getMinVisitDate(): Date {
+        return Calendar.getInstance().apply {
+            add(Calendar.MONTH, -1)
+        }.time
+    }
+
+    fun getMaxVisitDate(): Date {
+        return Calendar.getInstance().apply {
+            add(Calendar.MONTH, 2)
+        }.time
+    }
+
 }
