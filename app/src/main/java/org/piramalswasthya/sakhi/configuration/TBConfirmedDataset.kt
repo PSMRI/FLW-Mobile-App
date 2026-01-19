@@ -49,7 +49,6 @@ class TBConfirmedDataset(
         arrayId = -1,
         required = true,
         max = System.currentTimeMillis(),
-        min= getOneYearBeforeCurrentDate(),
         hasDependants = true,
         isEnabled = true
 
@@ -222,6 +221,7 @@ class TBConfirmedDataset(
             ))
 
             treatmentStartDate.max = System.currentTimeMillis()
+            treatmentStartDate.min = suspectedTb?.visitDate
 
 
         } else
