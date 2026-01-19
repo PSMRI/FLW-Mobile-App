@@ -2101,9 +2101,9 @@
         android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.filaria_mda.FilariaMdaCampaignFormFragment"
         android:label="FilariaMdaCampaignFormFragment" >
         <argument
-            android:name="id"
-            android:defaultValue="0"
-            app:argType="integer" />
+            android:name="date"
+            android:defaultValue=""
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/filariaMdaCampaignHistory"
