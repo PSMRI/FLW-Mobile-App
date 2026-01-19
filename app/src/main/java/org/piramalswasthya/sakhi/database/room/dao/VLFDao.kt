@@ -13,6 +13,8 @@ import org.piramalswasthya.sakhi.model.VHNCCache
 import org.piramalswasthya.sakhi.model.VHNDCache
 import org.piramalswasthya.sakhi.model.PulsePolioCampaignCache
 import org.piramalswasthya.sakhi.model.ORSCampaignCache
+import org.piramalswasthya.sakhi.model.dynamicEntity.FilariaMDA.FilariaMDAFormResponseJsonEntity
+import java.time.LocalDate
 
 @Dao
 interface VLFDao {
@@ -93,10 +95,16 @@ interface VLFDao {
 
     @Query("SELECT COUNT(*) FROM AHDMeeting WHERE ahdDate BETWEEN :startDate AND :endDate")
     fun countAHDFormsInDateRange(startDate: String, endDate: String): Flow<Int>
-
-    @Query("SELECT COUNT(*) FROM DewormingMeeting WHERE regDate BETWEEN :startDate AND :endDate")
-    fun countDewormingFormsInDateRange(startDate: String, endDate: String): Flow<Int>
-
+    @Query("""
+    SELECT COUNT(*) 
+    FROM DewormingMeeting
+    WHERE date(
+        substr(dewormingDate, 7, 4) || '-' ||
+        substr(dewormingDate, 4, 2) || '-' ||
+        substr(dewormingDate, 1, 2)
+    ) >= date('now', '-6 months')
+""")
+    fun countDewormingInLastSixMonths(): Flow<Int>
 
     // For VHND form
     @Query("SELECT MAX(vhndDate) FROM VHND")
@@ -149,5 +157,19 @@ interface VLFDao {
 
     @Query("SELECT * FROM ORSCampaign")
     fun getAllORSCampaignForDate(): Flow<List<ORSCampaignCache>>
+    @Query("SELECT * FROM FILARIA_MDA_VISIT_HISTORY WHERE id = :id")
+    suspend fun getFilariaMdaCampaign(id: Int): FilariaMDAFormResponseJsonEntity?
+
+    @Query("SELECT * FROM FILARIA_MDA_VISIT_HISTORY")
+    fun getAllFilariaMdaCampaign(): Flow<List<FilariaMDAFormResponseJsonEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun saveRecord(pulsePolioCampaignCache: FilariaMDAFormResponseJsonEntity)
+
+    @Query("SELECT * FROM FILARIA_MDA_VISIT_HISTORY WHERE syncState = :syncState")
+    fun getFilariaMdaCampaign(syncState: SyncState): List<FilariaMDAFormResponseJsonEntity>?
+
+    @Query("SELECT * FROM FILARIA_MDA_VISIT_HISTORY")
+    fun getAllFilariaMdaCampaignForDate(): Flow<List<FilariaMDAFormResponseJsonEntity>>
 
 }

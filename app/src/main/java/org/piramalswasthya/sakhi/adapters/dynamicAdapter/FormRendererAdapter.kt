@@ -31,6 +31,7 @@
     import org.json.JSONArray
     import org.piramalswasthya.sakhi.R
     import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
+    import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
     import timber.log.Timber
     import java.io.File
     import java.io.FileOutputStream
@@ -44,7 +45,9 @@
         private val maxVisitDate: Date? = null,
         private val isSNCU: Boolean = false,
         private val onValueChanged: (FormField, Any?) -> Unit,
-        private val onShowAlert: ((String, String) -> Unit)? = null
+        private val onShowAlert: ((String, String) -> Unit)? = null,
+        private val formId: String? =null ,
+
 
 
     ) : RecyclerView.Adapter<FormRendererAdapter.FormViewHolder>() {
@@ -386,7 +389,7 @@
 
 
 
-                    "number" -> {
+                  /*  "number" -> {
                         val context = itemView.context
 
                         val textInputLayout = TextInputLayout(
@@ -438,6 +441,77 @@
                                                 } else {
                                                     onValueChanged(field, value)
                                                 }
+                                }
+
+                                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                            })
+                        }
+
+                        textInputLayout.addView(editText)
+                        addWithError(textInputLayout, field)
+                    }*/
+                    "number" -> {
+                        val context = itemView.context
+
+                        val textInputLayout = TextInputLayout(
+                            context,
+                            null,
+                            com.google.android.material.R.style.Widget_Material3_TextInputLayout_OutlinedBox
+                        ).apply {
+                            layoutParams = LinearLayout.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.WRAP_CONTENT
+                            ).apply {
+                                setMargins(0, 16, 0, 8)
+                            }
+
+                            hint = field.placeholder ?: "Enter ${field.label}"
+                            boxBackgroundMode = TextInputLayout.BOX_BACKGROUND_OUTLINE
+                            boxStrokeColor = ContextCompat.getColor(context, R.color.md_theme_light_primary)
+                            boxStrokeWidthFocused = 2
+                            setBoxCornerRadii(12f, 12f, 12f, 12f)
+                        }
+
+                        val editText = TextInputEditText(context).apply {
+                            layoutParams = LinearLayout.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.WRAP_CONTENT
+                            )
+                            setPadding(32, 24, 32, 24)
+
+                            background = null
+                            setText((field.value as? Number)?.toString() ?: "")
+                            inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
+
+                            val isIFABottleCount = field.fieldId == "ifa_bottle_count"
+                            val isEditable = !isViewOnly && !isIFABottleCount
+
+                            isEnabled = isEditable
+
+                            if (isIFABottleCount && !isEditable) {
+                                setTextColor(ContextCompat.getColor(context, R.color.md_theme_light_onSurfaceVariant))
+                            } else {
+                                setTextColor(ContextCompat.getColor(context, android.R.color.black))
+                            }
+
+                            setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodyLarge)
+                        }
+
+                        if (editText.isEnabled) {
+                            editText.addTextChangedListener(object : TextWatcher {
+                                override fun afterTextChanged(s: Editable?) {
+                                    val value = s.toString().toFloatOrNull()
+                                    field.value = value
+                                    if (field.fieldId.contains("muac", ignoreCase = true)) {
+                                        muacDebounceJob?.cancel()
+                                        muacDebounceJob = CoroutineScope(Dispatchers.Main).launch {
+                                            delay(1500)
+                                            onValueChanged(field, value)
+                                        }
+                                    } else {
+                                        onValueChanged(field, value)
+                                    }
                                 }
 
                                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -613,14 +687,45 @@
                                     }
                                 }
                                 else {
-                                    minDate = when (field.fieldId) {
-                                        "visit_date" -> null
-                                        "nrc_admission_date" -> getDate("visit_date")
-                                        "nrc_discharge_date" -> getDate("nrc_admission_date")
-                                        "follow_up_visit_date" -> getDate("nrc_discharge_date")
-                                        else -> null
+
+                                    if (formId == FormConstants.LF_MDA_CAMPAIGN) {
+                                        minDate = minVisitDate
+                                        maxDate = maxVisitDate
+
+                                        if (minDate == null) {
+                                            calendar.time = today
+                                            calendar.add(Calendar.MONTH, -2)
+                                            minDate = calendar.time
+                                        }
+                                        if (maxDate == null) {
+                                            maxDate = today
+                                        }
                                     }
-                                    maxDate = today
+
+                                    if (formId == FormConstants.IFA_DISTRIBUTION_FORM_ID) {
+                                        minDate = minVisitDate
+                                        maxDate = maxVisitDate
+
+                                        if (minDate == null) {
+                                            calendar.time = today
+                                            calendar.add(Calendar.MONTH, -2)
+                                            minDate = calendar.time
+                                        }
+                                        if (maxDate == null) {
+                                            maxDate = today
+                                        }
+                                    }
+                                    else{
+                                        minDate = when (field.fieldId) {
+                                            "visit_date" -> null
+                                            "nrc_admission_date" -> getDate("visit_date")
+                                            "nrc_discharge_date" -> getDate("nrc_admission_date")
+                                            "follow_up_visit_date" -> getDate("nrc_discharge_date")
+                                            else -> null
+                                        }
+                                        maxDate = today
+                                    }
+
                                 }
 
                                 DatePickerDialog(

@@ -18,6 +18,10 @@ interface AmritApiService {
     @Multipart
     @POST("flw-api/maa-meetings/saveAll")
     suspend fun postMaaMeetingMultipart(
+        @Part("villageName") villageName: RequestBody,
+        @Part("noOfPragnentWoment") noOfPragnentWoment: RequestBody,
+        @Part("noOfLactingMother") noOfLactingMother: RequestBody,
+        @Part("mitaninActivityCheckList") mitaninActivityCheckList: RequestBody,
         @Part("meetingDate") meetingDate: RequestBody,
         @Part("place") place: RequestBody,
         @Part("participants") participants: RequestBody,
@@ -113,6 +117,10 @@ interface AmritApiService {
 //    @POST("tb/suspected/getAll")
     suspend fun getTBSuspectedData(@Body userDetail: GetDataPaginatedRequest): Response<ResponseBody>
 
+    @GET("flw-api/tb/confirmed/getAll")
+    suspend fun getTBConfirmedData(): Response<ResponseBody>
+
+
     @POST("flw-api/tb/screening/saveAll")
 //    @POST("tb/screening/saveAll")
     suspend fun saveTBScreeningData(@Body tbScreeningRequestDTO: TBScreeningRequestDTO): Response<ResponseBody>
@@ -156,6 +164,9 @@ interface AmritApiService {
 
     @POST("flw-api/tb/suspected/saveAll")
     suspend fun saveTBSuspectedData(@Body tbSuspectedRequestDTO: TBSuspectedRequestDTO): Response<ResponseBody>
+
+    @POST("flw-api/tb/confirmed/save")
+    suspend fun saveTBConfirmedData(@Body tbConfirmedRequestDTO: TBConfirmedRequestDTO): Response<ResponseBody>
 
     @POST("flw-api/follow-up/save")
     suspend fun saveMalariaConfirmedData(@Body malariaConfirmedRequestDTO: MalariaConfirmedRequestDTO): Response<ResponseBody>
@@ -463,4 +474,11 @@ interface AmritApiService {
     suspend fun getAllUwinSessions(
         @Body request: UwinGetAllRequest
     ): Response<ResponseBody>
+
+    @POST("flw-api/campaign/filariasis/campaign/getAll")
+    suspend fun getFilariaMdaCampaign(): Response<ResponseBody>
+
+    @Multipart
+    @POST("flw-api/campaign/filariasis/campaign/saveAll")
+    suspend fun saveFilariaMdaCampaign( @Part campaignData: List<MultipartBody.Part>): Response<ResponseBody>
 }

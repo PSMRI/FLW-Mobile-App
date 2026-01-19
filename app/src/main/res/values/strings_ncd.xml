@@ -203,6 +203,14 @@
         <item>Positive</item>
         <item>Negative</item>
     </string-array>
+    <string-array name="tb_sputum_sample_submitted_at">
+        <item>HWC</item>
+        <item>PHC</item>
+        <item>CHC</item>
+        <item>District Hospital</item>
+        <item>Govt. Medical College</item>
+
+    </string-array>
     <string-array name="cbac_age">
         <item>0-29 years</item>
         <item>30-39 years</item>

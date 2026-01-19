@@ -1,17 +1,24 @@
 package org.piramalswasthya.sakhi.repositories
 
+import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import org.piramalswasthya.sakhi.model.DewormingCache
 import org.piramalswasthya.sakhi.database.room.InAppDb
@@ -24,6 +31,7 @@ import org.piramalswasthya.sakhi.model.VHNCCache
 import org.piramalswasthya.sakhi.model.VHNDCache
 import org.piramalswasthya.sakhi.model.PulsePolioCampaignCache
 import org.piramalswasthya.sakhi.model.ORSCampaignCache
+import org.piramalswasthya.sakhi.model.dynamicEntity.FilariaMDA.FilariaMDAFormResponseJsonEntity
 import org.piramalswasthya.sakhi.network.AHDDTO
 import org.piramalswasthya.sakhi.utils.HelperUtil.compressImageToTemp
 import org.piramalswasthya.sakhi.utils.HelperUtil.getFileName
@@ -42,10 +50,18 @@ import org.piramalswasthya.sakhi.network.PHCReviewDTO
 import org.piramalswasthya.sakhi.network.UserDataDTO
 import org.piramalswasthya.sakhi.network.VHNCDTO
 import org.piramalswasthya.sakhi.network.VHNDDTO
+import org.piramalswasthya.sakhi.ui.getFileName
+import org.piramalswasthya.sakhi.utils.HelperUtil
+import org.piramalswasthya.sakhi.utils.HelperUtil.compressImageToTemp
 import timber.log.Timber
+import java.io.File
 import java.net.SocketTimeoutException
+import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
+import java.util.Locale
+import javax.inject.Inject
 
 
 class VLFRepo @Inject constructor(
@@ -55,6 +71,7 @@ class VLFRepo @Inject constructor(
     private val tmcNetworkApiService: AmritApiService,
     private val vlfDao: VLFDao,
     @ApplicationContext private val appContext: Context
+
 ) {
 
     suspend fun getVHND(id: Int): VHNDCache? {
@@ -593,6 +610,26 @@ class VLFRepo @Inject constructor(
         }
     }
 
+
+    suspend fun getFilariaMdaCampaign(id: Int): FilariaMDAFormResponseJsonEntity? {
+        return withContext(Dispatchers.IO) {
+            database.vlfDao.getFilariaMdaCampaign(id)
+        }
+    }
+
+    suspend fun saveFilariaMdaCampaign(filariaMDaCampaignCache: FilariaMDAFormResponseJsonEntity) {
+        withContext(Dispatchers.IO) {
+            database.vlfDao.saveRecord(filariaMDaCampaignCache)
+        }
+    }
+
+    suspend fun getUnsyncedFilariaMdaCampaign(): List<FilariaMDAFormResponseJsonEntity> {
+        return withContext(Dispatchers.IO) {
+            database.vlfDao.getFilariaMdaCampaign(SyncState.UNSYNCED) ?: emptyList()
+        }
+    }
+
+
     fun getLastSubmissionDate(formId: String): Flow<String?> {
         Log.d("OverdueCheck", "Is overdue: $formId")
         return when (formId) {
@@ -683,7 +720,7 @@ class VLFRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-                        val errorMessage = jsonObj.getString("errorMessage")
+//                        val errorMessage = jsonObj.getString("errorMessage")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit hrp assess data : $responseStatusCode")
                         when (responseStatusCode) {
@@ -708,7 +745,7 @@ class VLFRepo @Inject constructor(
                             }
 
                             5000 -> {
-                                if (errorMessage == "No record found") return@withContext 0
+//                                if (errorMessage == "No record found") return@withContext 0
                             }
 
                             else -> {
@@ -855,7 +892,7 @@ class VLFRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-                        val errorMessage = jsonObj.getString("errorMessage")
+//                        val errorMessage = jsonObj.getString("errorMessage")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit hrp assess data : $responseStatusCode")
                         when (responseStatusCode) {
@@ -880,7 +917,7 @@ class VLFRepo @Inject constructor(
                             }
 
                             5000 -> {
-                                if (errorMessage == "No record found") return@withContext 0
+//                                if (errorMessage == "No record found") return@withContext 0
                             }
 
                             else -> {
@@ -1027,7 +1064,7 @@ class VLFRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-                        val errorMessage = jsonObj.getString("errorMessage")
+//                        val errorMessage = jsonObj.getString("errorMessage")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit hrp assess data : $responseStatusCode")
                         when (responseStatusCode) {
@@ -1052,7 +1089,7 @@ class VLFRepo @Inject constructor(
                             }
 
                             5000 -> {
-                                if (errorMessage == "No record found") return@withContext 0
+//                                if (errorMessage == "No record found") return@withContext 0
                             }
 
                             else -> {
@@ -1370,7 +1407,6 @@ class VLFRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-                        val errorMessage = jsonObj.getString("errorMessage")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit hrp assess data : $responseStatusCode")
                         when (responseStatusCode) {
@@ -1379,7 +1415,6 @@ class VLFRepo @Inject constructor(
                                     val dataObj = jsonObj.getString("data")
                                     saveDeworming(dataObj)
                                 } catch (e: Exception) {
-//                                    Timber.d("HRP Assess entries not synced $e")
                                     return@withContext 0
                                 }
 
@@ -1395,7 +1430,7 @@ class VLFRepo @Inject constructor(
                             }
 
                             5000 -> {
-                                if (errorMessage == "No record found") return@withContext 0
+//                                if (errorMessage == "No record found") return@withContext 0
                             }
 
                             else -> {
@@ -1505,23 +1540,17 @@ class VLFRepo @Inject constructor(
 
 
     @RequiresApi(Build.VERSION_CODES.O)
-//    fun isFormFilledForCurrentMonth(): Flow<Boolean> {
-//        val currentMonthStart = YearMonth.now().atDay(1).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
-//        val currentMonthEnd = YearMonth.now().atEndOfMonth().atTime(23, 59, 59).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-//        return vlfDao.countVHNDFormsInRange(currentMonthStart, currentMonthEnd).map { count -> count > 0 }
-//    }
-
     fun isFormFilledForCurrentMonth(): Flow<Map<String, Boolean>> {
         val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
         val currentYearMonth = YearMonth.now()
-        val startDate = currentYearMonth.atDay(1).format(formatter)   // 01-04-2025
-        val endDate = currentYearMonth.atEndOfMonth().format(formatter) // 30-04-2025
+        val startDate = currentYearMonth.atDay(1).format(formatter)
+        val endDate = currentYearMonth.atEndOfMonth().format(formatter)
 
         val vhnd = vlfDao.countVHNDFormsInDateRange(startDate, endDate)
         val vhnc = vlfDao.countVHNCFormsInDateRange(startDate, endDate)
         val phc = vlfDao.countPHCFormsInDateRange(startDate, endDate)
         val ahd = vlfDao.countAHDFormsInDateRange(startDate, endDate)
-        val deworming = vlfDao.countDewormingFormsInDateRange(startDate, endDate)
+        val deworming = vlfDao.countDewormingInLastSixMonths()
         return combine(vhnd, vhnc, phc, ahd, deworming) { vhndCount, vhncCount, phcCount, ahdCount, dewormingCount ->
             mapOf(
                 "VHND" to (vhndCount > 0),
@@ -1534,5 +1563,218 @@ class VLFRepo @Inject constructor(
     }
 
 
+    suspend fun getFilariaMdaCampaignFromServer(): Int {
+        return withContext(Dispatchers.IO) {
+            val user = preferenceDao.getLoggedInUser()
+                ?: throw IllegalStateException("No user logged in!!")
+            try {
+                val response = tmcNetworkApiService.getFilariaMdaCampaign()
+                val statusCode = response.code()
+                if (statusCode == 200) {
+                    val responseString = response.body()?.string()
+                    if (responseString != null) {
+                        val jsonObj = JSONObject(responseString)
+                        val responseStatusCode = jsonObj.getInt("statusCode")
+                        Timber.d("Pull Filaria Mda Campaign data : $responseStatusCode")
+                        when (responseStatusCode) {
+                            200 -> {
+                                try {
+                                    when (val dataValue = jsonObj.opt("data")) {
+                                        is org.json.JSONArray -> {
+                                            savefilariaMdaCampaignToServer(dataValue.toString())
+                                            return@withContext 1
+                                        }
+
+                                        is String -> {
+                                            savefilariaMdaCampaignToServer(dataValue)
+                                            return@withContext 1
+                                        }
+
+                                        is JSONObject -> {
+                                            savefilariaMdaCampaignToServer(dataValue.toString())
+                                            return@withContext 1
+                                        }
+
+                                        else -> {
+                                            Timber.e("Unexpected data format: ${dataValue?.javaClass}")
+                                            return@withContext 0
+                                        }
+                                    }
+                                } catch (e: Exception) {
+                                    Timber.e(e, "Pulse Polio Campaign entries not synced")
+                                    return@withContext 0
+                                }
+                            }
+                            5002 -> {
+                                if (userRepo.refreshTokenTmc(user.userName, user.password)) {
+                                    throw SocketTimeoutException("Refreshed Token!")
+                                } else {
+                                    throw IllegalStateException("User Logged out!!")
+                                }
+                            }
+                            else -> {
+                                throw IllegalStateException("$responseStatusCode received")
+                            }
+                        }
+                    }
+                }
+            } catch (e: SocketTimeoutException) {
+                Timber.d("get Filaria Mda Campaign data error : $e")
+                return@withContext getFilariaMdaCampaignFromServer()
+            } catch (e: IllegalStateException) {
+                Timber.d("get Filaria Mda Campaign data error : $e")
+                return@withContext -1
+            }
+            -1
+        }
+    }
+
+
+    suspend fun saveMdaFilariaCampaignToServer(filariaMdaCache: FilariaMDAFormResponseJsonEntity): Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                val formDataJson = filariaMdaCache.formDataJson ?: ""
+                val formDataObj = try {
+                    JSONObject(formDataJson)
+                } catch (e: Exception) {
+                    JSONObject()
+                }
+
+                val fieldsObj = formDataObj.optJSONObject("fields") ?: JSONObject()
+                val campaignPhotosValue = fieldsObj.opt("campaign_photos") ?: fieldsObj.opt("campaignPhotos")
+
+                val photoUris = when {
+                    campaignPhotosValue is String -> {
+                        try {
+                            Gson().fromJson(campaignPhotosValue as String, Array<String>::class.java).toList()
+                        } catch (e: Exception) {
+                            listOf(campaignPhotosValue.toString()).filter { it.isNotEmpty() }
+                        }
+                    }
+                    campaignPhotosValue is org.json.JSONArray -> {
+                        (0 until (campaignPhotosValue as org.json.JSONArray).length())
+                            .mapNotNull { campaignPhotosValue.opt(it)?.toString() }
+                    }
+                    else -> emptyList()
+                }
+
+                val imageParts = photoUris.mapNotNull { photoData ->
+                    try {
+                        val file: File? = when {
+                            photoData.startsWith("data:image/") || photoData.contains(",") -> {
+                                val base64Data = photoData.substringAfter(",", photoData)
+                                val bytes = android.util.Base64.decode(base64Data, android.util.Base64.DEFAULT)
+                                val tempFile = File.createTempFile("campaign_photo_", ".jpg", appContext.cacheDir)
+                                tempFile.writeBytes(bytes)
+                                tempFile
+                            }
+                            photoData.startsWith("content://") || photoData.startsWith("file://") -> {
+                                val uri = android.net.Uri.parse(photoData)
+                                val name = HelperUtil.getFileName(uri, appContext) ?: "campaign_photo"
+                                val mime = appContext.contentResolver.getType(uri) ?: "image/jpeg"
+                                if (mime.startsWith("image/")) {
+                                    compressImageToTemp(uri, name, appContext)
+                                } else {
+                                    null
+                                }
+                            }
+
+                            else -> {
+                                val filePath = File(photoData)
+                                if (filePath.exists()) filePath else null
+                            }
+                        }
+                        file?.let {
+                            val mime = "image/jpeg"
+                            val body = it.asRequestBody(mime.toMediaTypeOrNull())
+                            MultipartBody.Part.createFormData("campaignPhotos", it.name, body)
+                        }
+                    } catch (e: Exception) {
+                        Timber.e(e, "Error processing image: $photoData")
+                        null
+                    }
+                }
+
+                val multipartParts = mutableListOf<MultipartBody.Part>()
+
+                val formDataJsonBody = formDataJson.toRequestBody("application/json".toMediaTypeOrNull())
+                multipartParts.add(
+                    MultipartBody.Part.createFormData("formDataJson", null, formDataJsonBody)
+                )
+
+                multipartParts.addAll(imageParts)
+
+                val response = tmcNetworkApiService.saveFilariaMdaCampaign(
+                    campaignData = multipartParts
+                )
+
+                if (response.isSuccessful) {
+                    filariaMdaCache.syncState = SyncState.SYNCED
+                    database.vlfDao.saveRecord(filariaMdaCache)
+                    true
+                } else {
+                    false
+                }
+            } catch (e: Exception) {
+                Timber.e(e, "Error saving Pulse Polio Campaign to server")
+                false
+            }
+        }
+    }
+
+
+    suspend fun savefilariaMdaCampaignToServer(dataObj: String) {
+
+        val requestDTO = Gson().fromJson(dataObj, JsonObject::class.java)
+        val entries = requestDTO.getAsJsonArray("entries")
+        for (dto in entries) {
+            try {
+                val entry = dto.asJsonObject
+                val id = entry.get("id")?.asInt ?: 0
+                val formDataJson = entry.get("formDataJson")?.asString
+                val jsonObject = Gson().fromJson(formDataJson, JsonObject::class.java)
+                val fieldsObj = jsonObject.getAsJsonObject("fields")
+                val startDate = fieldsObj?.get("start_date")?.asString
+                if (formDataJson != null) {
+                    val existing = database.vlfDao.getFilariaMdaCampaign(id)
+                    if (existing == null) {
+                        val cache = FilariaMDAFormResponseJsonEntity(
+                            id = id,
+                            hhId = 0,
+                            formDataJson = formDataJson,
+                            visitDate = startDate.toString(),
+                            visitMonth = toMonthKey(startDate),
+                            formId = "LF_MDA_CAMPAIGN",
+                            version = 1,
+                            isSynced = true,
+                            syncState = SyncState.SYNCED
+                        )
+                        database.vlfDao.saveRecord(cache)
+                    }
+                }
+            } catch (e: Exception) {
+                Timber.d("cannot save Filaria MDA Campaign entry $dto due to : $e")
+            }
+        }
+    }
+
+    private fun toMonthKey(dateStr: String?): String {
+        if (dateStr.isNullOrBlank()) return ""
+        val inputs = listOf("dd-MM-yyyy", "yyyy-MM-dd")
+        val out = SimpleDateFormat("yyyy-MM", Locale.getDefault())
+        for (fmt in inputs) {
+            try {
+                val d = SimpleDateFormat(fmt, Locale.getDefault()).parse(dateStr)
+                if (d != null) return out.format(d)
+            } catch (_: Exception) {}
+        }
+        return try {
+            if (Regex("\\d{2}-\\d{2}-\\d{4}").matches(dateStr)) {
+                val yyyy = dateStr.substring(6, 10)
+                val mm = dateStr.substring(3, 5)
+                "$yyyy-$mm"
+            } else ""
+        } catch (_: Exception) { "" }
+    }
 
 }

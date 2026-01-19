@@ -773,7 +773,7 @@ object HelperUtil {
     }
 
 
-    fun parseSelections(rawValue: String?, entries: Array<String>): List<String> {
+    fun parseSelections(rawValue: String?, entries: Array<String>?): List<String> {
         val raw = rawValue?.trim() ?: return emptyList()
         if (raw.isEmpty()) return emptyList()
 
@@ -801,7 +801,7 @@ object HelperUtil {
         val found = mutableListOf<Pair<Int, String>>()
         val lowerRaw = raw.lowercase()
 
-        for (entry in entries) {
+        for (entry in entries!!) {
             val idx = lowerRaw.indexOf(entry.lowercase())
             if (idx >= 0) found.add(idx to entry)
         }

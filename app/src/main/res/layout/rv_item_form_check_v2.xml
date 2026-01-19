@@ -22,6 +22,8 @@
             asteriskRequired="@{form.required}"
             hintText="@{form.title}"
             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+            android:textStyle="bold"
+            android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Hello you@!!" />

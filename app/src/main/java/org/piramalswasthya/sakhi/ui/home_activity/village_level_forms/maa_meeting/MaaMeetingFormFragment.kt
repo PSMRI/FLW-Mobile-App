@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import org.piramalswasthya.sakhi.BuildConfig
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -62,6 +63,7 @@ class MaaMeetingFormFragment : Fragment() {
             val adapter = FormInputAdapter(
                 formValueListener = FormInputAdapter.FormValueListener { id, index ->
                     viewModel.updateListOnValueChanged(id, index)
+                    hardCodedListUpdate(id)
                 },
                 selectImageClickListener = FormInputAdapter.SelectUploadImageClickListener { formId ->
                     lastFileFormId = formId
@@ -114,6 +116,8 @@ class MaaMeetingFormFragment : Fragment() {
 
     private fun validateBeforeSubmit(list: List<FormElement>): Boolean {
         var valid = true
+
+        // Mandatory fields
         val date = list.firstOrNull { it.id == 1 }
         val place = list.firstOrNull { it.id == 2 }
         val participants = list.firstOrNull { it.id == 3 }
@@ -122,25 +126,32 @@ class MaaMeetingFormFragment : Fragment() {
         if (place?.value.isNullOrEmpty()) { place?.errorText = getString(R.string.form_input_empty_error); valid = false }
         if (participants?.value.isNullOrEmpty()) { participants?.errorText = getString(R.string.form_input_empty_error); valid = false }
 
+        // Image uploads (IDs 10..14)
         val uploads = list.filter { it.id in 10..14 }
-        val uploadCount = uploads.count { !it.value.isNullOrEmpty() }
-        if (uploadCount < 2) {
-            uploads.forEach { if (it.value.isNullOrEmpty()) it.errorText = getString(R.string.form_input_empty_error) }
-            valid = false
+
+        if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+            val uploadCount = uploads.count { !it.value.isNullOrEmpty() }
+            if (uploadCount < 2) {
+                uploads.forEach { if (it.value.isNullOrEmpty()) it.errorText = getString(R.string.form_input_empty_error) }
+                valid = false
+            } else {
+                uploads.forEach { it.errorText = null }
+            }
         } else {
             uploads.forEach { it.errorText = null }
         }
 
-        // Quarter rule checked on submit via Room
 
         if (!valid) {
             (binding.form.rvInputForm.adapter as? FormInputAdapter)?.notifyDataSetChanged()
+
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle(getString(R.string.alert))
                 .setMessage("Please fill all mandatory fields before submitting.")
                 .setPositiveButton(R.string.ok, null)
                 .show()
         }
+
         return valid
     }
 
@@ -197,4 +208,13 @@ class MaaMeetingFormFragment : Fragment() {
         super.onDestroy()
         _binding = null
     }
+    private fun hardCodedListUpdate(formId: Int) {
+        binding.form.rvInputForm.adapter?.apply {
+            when (formId) {
+//               16->notifyDataSetChanged()
+               15->notifyDataSetChanged()
+            }
+        }
+    }
+
 }

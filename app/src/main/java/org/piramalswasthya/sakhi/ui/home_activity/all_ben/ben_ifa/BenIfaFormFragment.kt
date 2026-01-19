@@ -213,6 +213,7 @@ class BenIfaFormFragment : Fragment() {
             isViewOnly = isViewMode,
             minVisitDate = minVisitDate,
             maxVisitDate = maxVisitDate,
+            formId= FormConstants.IFA_DISTRIBUTION_FORM_ID,
             onValueChanged =
                 { field, value ->
                     if (value == "pick_image") {

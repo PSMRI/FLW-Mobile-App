@@ -74,7 +74,7 @@ class AllBenFragment : Fragment() {
         WITH,
         WITHOUT,
         AGE_ABOVE_30,
-        WARA
+//        WARA
     }
 
     private val filterAlert by lazy {
@@ -86,7 +86,7 @@ class AllBenFragment : Fragment() {
                 filterAlertBinding.rbWith.id -> Abha.WITH
                 filterAlertBinding.rbWithout.id -> Abha.WITHOUT
                 filterAlertBinding.rbAgeAboveThirty.id -> Abha.AGE_ABOVE_30
-                filterAlertBinding.rbWara.id -> Abha.WARA
+//                filterAlertBinding.rbWara.id -> Abha.WARA
                 else -> Abha.ALL
             }
 
@@ -104,7 +104,7 @@ class AllBenFragment : Fragment() {
                 Abha.WITH -> 1
                 Abha.WITHOUT -> 2
                 Abha.AGE_ABOVE_30 -> 3
-                Abha.WARA -> 4
+//                Abha.WARA -> 4
                 else -> 0
             }
             viewModel.filterType(filter)

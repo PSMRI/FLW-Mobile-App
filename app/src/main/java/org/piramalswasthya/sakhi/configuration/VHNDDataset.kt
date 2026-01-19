@@ -36,7 +36,7 @@ class VHNDDataset(
         title = resources.getString(R.string.vhnd_date),
         arrayId = -1,
         required = true,
-        min = System.currentTimeMillis(),
+        min = System.currentTimeMillis() -  (60L * 24 * 60 * 60 * 1000),
         max = System.currentTimeMillis()
     )
     private val place = FormElement(
@@ -236,40 +236,40 @@ class VHNDDataset(
                 noOfchildrenAttended.value = it.childrenImmunization
                 val parsedKBDList = parseSelections(it.knowledgeBalancedDiet, knowOfBalanceDiet.entries!!)
                 knowOfBalanceDiet.value = if (parsedKBDList.isNotEmpty()) {
-                    parsedKBDList.joinToString(", ")
+                    parsedKBDList.joinToString("|")
                 } else {
                     it.knowledgeBalancedDiet ?: ""
                 }
                 val parsedCDPList = parseSelections(it.careDuringPregnancy, careDuringPregnancy.entries!!)
                 careDuringPregnancy.value = if (parsedCDPList.isNotEmpty()) {
-                    parsedCDPList.joinToString(", ")
+                    parsedCDPList.joinToString("|")
                 } else {
                     it.careDuringPregnancy ?: ""
                 }
                 val parsedBrestFeedingList = parseSelections(it.importanceBreastfeeding, importBreastFeeding.entries!!)
                 importBreastFeeding.value = if (parsedBrestFeedingList.isNotEmpty()) {
-                    parsedBrestFeedingList.joinToString(", ")
+                    parsedBrestFeedingList.joinToString("|")
                 } else {
                     it.importanceBreastfeeding ?: ""
                 }
 
                 val parsedComplementaryFeedingList = parseSelections(it.complementaryFeeding, complementFeeding.entries!!)
                 complementFeeding.value = if (parsedComplementaryFeedingList.isNotEmpty()) {
-                    parsedComplementaryFeedingList.joinToString(", ")
+                    parsedComplementaryFeedingList.joinToString("|")
                 } else {
                     it.complementaryFeeding ?: ""
                 }
 
                 val parsedHygieneSanitiList = parseSelections(it.hygieneSanitation, hygieneSenitation.entries!!)
                 hygieneSenitation.value = if (parsedHygieneSanitiList.isNotEmpty()) {
-                    parsedHygieneSanitiList.joinToString(", ")
+                    parsedHygieneSanitiList.joinToString("|")
                 } else {
                     it.hygieneSanitation ?: ""
                 }
 
                 val parsedFamilyPlanList = parseSelections(it.familyPlanningHealthcare, fPlanning.entries!!)
                 fPlanning.value = if (parsedFamilyPlanList.isNotEmpty()) {
-                    parsedFamilyPlanList.joinToString(", ")
+                    parsedFamilyPlanList.joinToString("|")
                 } else {
                     it.familyPlanningHealthcare ?: ""
                 }
@@ -356,6 +356,6 @@ class VHNDDataset(
 
     }
     private fun toCsv(rawValue: String?, entries: Array<String>): String {
-        return parseSelections(rawValue, entries).joinToString(", ")
+        return parseSelections(rawValue, entries).joinToString("|")
     }
 }

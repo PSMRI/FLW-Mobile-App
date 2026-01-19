@@ -81,6 +81,7 @@
     <string name="icon_title_ncd_priority_list">NCD Priority List</string>
     <string name="icon_title_ncd_tb_screening">TB Screening</string>
     <string name="icon_title_ncd_tb_suspected">Suspected TB cases</string>
+    <string name="icon_title_ncd_tb_confirmed">Confirmed TB cases</string>
     <string name="icon_title_hrp_pregnant">High Risk\n Pregnant Women</string>
     <string name="icon_title_hrp_non_pregnant">High Risk\n Non Pregnant Women</string>
     <string name="icon_title_hrp_pregnant_assess">Assess High Risk in PW</string>
@@ -97,8 +98,16 @@
     <string name="are_you_sure_to_logout">" Are you sure you want to logout?"</string>
     <string name="icon_title_ahd_list">AHD Forms List</string>
     <string name="place">Place</string>
+    <string name="no_of_individuals">Number of Individuals</string>
+    <string name="no_of_familes">Number of Families</string>
+    <string name="place_of_meeting">Place of meeting</string>
+    <string name="mitanin">Mitanins</string>
+    <string name="mt">Mitanin Activity check list</string>
+    <string name="anmrho">ANM/ RHO</string>
     <string name="place_of_vhnd">Place of VHND session</string>
     <string name="participants">Participants</string>
+    <string name="participants_attended">Participants Attended</string>
+    <string name="leprosy_title">Check if the person has any of these symptoms</string>
     <string name="no_b_attended">No. of Beneficiaries Attended</string>
     <string name="total_no_b_attended">Total No. of Beneficiaries Attended</string>
     <string name="total_no_pw_attended">Number of Pregnant Woman attended for ANC check up</string>
