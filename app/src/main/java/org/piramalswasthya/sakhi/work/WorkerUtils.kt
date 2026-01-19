@@ -54,6 +54,8 @@ object WorkerUtils {
             .setConstraints(networkOnlyConstraint)
             .build()
         val pulsePolioCampaignPushWorker = OneTimeWorkRequestBuilder<PulsePolioCampaignPushWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
         val pushFilariaMdaCampaignFormSyncWorker = OneTimeWorkRequestBuilder<FilariaMdaCampaignPushWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
