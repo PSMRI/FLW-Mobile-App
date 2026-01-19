@@ -551,6 +551,7 @@
     <string name="bottle_number">Bottle Number</string>
     <string name="s_no">S. No</string>
     <string name="follow_up_date">Follow Up Dates</string>
+    <string name="last_follow_up_date">Last Follow Up Date"</string>
     <string name="referred_to">Referred to</string>
     <string name="bottle_distribution">Bottle Distribution</string>
     <string name="child_rch_id">Child RCH ID</string>

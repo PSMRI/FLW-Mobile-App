@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.adapters
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -38,7 +39,8 @@ class TBFollowUpDatesAdapter :
         fun bind(followUp: TBConfirmedTreatmentCache) {
             if(followUp.followUpDate!=null)
             binding.tvFollowUpDate.text = dateFormat.format(Date(followUp.followUpDate!!))
-            binding.tvTreatmentStatus.text = followUp.treatmentOutcome ?: "Pending"
+            binding.tvTreatmentStatus.visibility = View.GONE
+            binding.tvLastFollowUpDate.visibility = View.VISIBLE
         }
     }
 
