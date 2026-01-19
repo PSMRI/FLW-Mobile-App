@@ -222,7 +222,8 @@ class TBConfirmedDataset(
 
             treatmentStartDate.max = System.currentTimeMillis()
             treatmentStartDate.min = suspectedTb?.visitDate
-
+                ?.takeIf { it > 0 }
+                ?: getOneYearBeforeCurrentDate()
 
         } else
         {
