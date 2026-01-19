@@ -19,7 +19,7 @@ data class PulsePolioCampaignCache(
                 val json = formDataJson ?: return null
                 val jsonObj = JSONObject(json)
                 val fieldsObj = jsonObj.optJSONObject("fields") ?: return null
-                fieldsObj.optString("campaign_date").takeIf { it.isNotEmpty() }
+                fieldsObj.optString("start_date").takeIf { it.isNotEmpty() }
             } catch (e: Exception) {
                 null
             }

@@ -47,6 +47,7 @@ import java.io.FileOutputStream
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
 object HelperUtil {
@@ -824,5 +825,9 @@ object HelperUtil {
         } catch (e: Exception) {
             ""
         }
+    }
+    fun getCurrentYear(): String {
+        return SimpleDateFormat("yyyy", Locale.getDefault())
+            .format(Date())
     }
 }
