@@ -7,15 +7,17 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.databinding.RvItemTbConfirmedListBinding
 import org.piramalswasthya.sakhi.databinding.RvItemTbSuspectedListBinding
 import org.piramalswasthya.sakhi.model.BenWithTbSuspectedDomain
 
-class TbSuspectedListAdapter(
-    private val clickListener: ClickListener? = null,
-    private val pref: PreferenceDao? = null
+class TbConfirmedListAdapter( private val clickListener: ClickListener? = null,
+private val pref: PreferenceDao? = null
 ) :
-    ListAdapter<BenWithTbSuspectedDomain, TbSuspectedListAdapter.BenViewHolder>
-        (BenDiffUtilCallBack) {
+ListAdapter<BenWithTbSuspectedDomain, TbConfirmedListAdapter.BenViewHolder>
+(BenDiffUtilCallBack) {
+
+
     private object BenDiffUtilCallBack : DiffUtil.ItemCallback<BenWithTbSuspectedDomain>() {
         override fun areItemsTheSame(
             oldItem: BenWithTbSuspectedDomain,
@@ -29,12 +31,12 @@ class TbSuspectedListAdapter(
 
     }
 
-    class BenViewHolder private constructor(private val binding: RvItemTbSuspectedListBinding) :
+    class BenViewHolder private constructor(private val binding: RvItemTbConfirmedListBinding) :
         RecyclerView.ViewHolder(binding.root) {
         companion object {
             fun from(parent: ViewGroup): BenViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = RvItemTbSuspectedListBinding.inflate(layoutInflater, parent, false)
+                val binding = RvItemTbConfirmedListBinding.inflate(layoutInflater, parent, false)
                 return BenViewHolder(binding)
             }
         }
@@ -53,7 +55,7 @@ class TbSuspectedListAdapter(
 
             binding.benWithTb = item
 
-            binding.ivSyncState.visibility = if (item.tbSuspected == null) View.INVISIBLE else View.VISIBLE
+            binding.ivSyncState.visibility = if (item.tbConfirmedList == null) View.INVISIBLE else View.VISIBLE
 
             if (item.ben.spouseName == "Not Available" && item.ben.fatherName == "Not Available") {
                 binding.father = true
@@ -83,8 +85,8 @@ class TbSuspectedListAdapter(
                 }
             }
 
-            binding.btnFormTb.text = if (item.tbSuspected == null) "Track" else "View"
-            binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.tbSuspected == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
+
+            binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.tbConfirmedList == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
             binding.clickListener = clickListener
 
             binding.executePendingBindings()
@@ -96,12 +98,23 @@ class TbSuspectedListAdapter(
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
+    )= BenViewHolder.from(parent)
+
+    override fun onBindViewHolder(
+        holder: BenViewHolder,
+        position: Int
+    ) {
+        holder.bind(getItem(position), clickListener, pref)    }
+
+    /*override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
     ) =
         BenViewHolder.from(parent)
 
     override fun onBindViewHolder(holder: BenViewHolder, position: Int) {
         holder.bind(getItem(position), clickListener, pref)
-    }
+    }*/
 
 
     class ClickListener(

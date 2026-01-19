@@ -108,6 +108,7 @@ import org.piramalswasthya.sakhi.model.TBSuspectedCache
 import org.piramalswasthya.sakhi.model.UwinCache
 import org.piramalswasthya.sakhi.model.MaaMeetingEntity
 import org.piramalswasthya.sakhi.model.ReferalCache
+import org.piramalswasthya.sakhi.model.TBConfirmedTreatmentCache
 import org.piramalswasthya.sakhi.model.VHNCCache
 import org.piramalswasthya.sakhi.model.Vaccine
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormResponseJsonEntity
@@ -191,9 +192,10 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         FilariaMDAFormResponseJsonEntity::class,
         ANCFormResponseJsonEntity::class,
         FilariaMDACampaignFormResponseJsonEntity::class,
+        TBConfirmedTreatmentCache::class
     ],
     views = [BenBasicCache::class],
-    version = 53, exportSchema = false
+    version = 54, exportSchema = false
 )
 
 @TypeConverters(
@@ -276,6 +278,25 @@ abstract class InAppDb : RoomDatabase() {
 
             }*/
 
+
+            val MIGRATION_53_54 = object : Migration(53, 54) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("ALTER TABLE TB_SUSPECTED ADD COLUMN visitLabel TEXT")
+                    database.execSQL("ALTER TABLE TB_SUSPECTED ADD COLUMN typeOfTBCase TEXT")
+                    database.execSQL("ALTER TABLE TB_SUSPECTED ADD COLUMN reasonForSuspicion TEXT")
+
+                    database.execSQL("ALTER TABLE TB_SUSPECTED ADD COLUMN hasSymptoms INTEGER NOT NULL DEFAULT 0")
+
+                    database.execSQL("ALTER TABLE TB_SUSPECTED ADD COLUMN isChestXRayDone INTEGER")
+                    database.execSQL("ALTER TABLE TB_SUSPECTED ADD COLUMN chestXRayResult TEXT")
+                    database.execSQL("ALTER TABLE TB_SUSPECTED ADD COLUMN referralFacility TEXT")
+
+                    database.execSQL("ALTER TABLE TB_SUSPECTED ADD COLUMN isTBConfirmed INTEGER")
+                    database.execSQL("ALTER TABLE TB_SUSPECTED ADD COLUMN isDRTBConfirmed INTEGER")
+
+                    database.execSQL("ALTER TABLE TB_SUSPECTED ADD COLUMN isConfirmed INTEGER NOT NULL DEFAULT 0")
+                }
+            }
 
             val MIGRATION_52_53 = object : Migration(52, 53) {
                 override fun migrate(database: SupportSQLiteDatabase) {
@@ -368,6 +389,7 @@ abstract class InAppDb : RoomDatabase() {
                 )
 
             })
+
 
          
             val MIGRATION_49_50 = object : Migration(49, 50) {
@@ -1975,7 +1997,9 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_49_50,
                         MIGRATION_50_51,
                         MIGRATION_51_52,
-                        MIGRATION_52_53
+                        MIGRATION_52_53,
+                        MIGRATION_53_54
+                        
 
                     ).build()
 

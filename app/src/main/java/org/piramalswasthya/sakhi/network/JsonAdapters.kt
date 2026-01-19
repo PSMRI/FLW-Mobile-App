@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.network
 
 import android.os.Parcelable
+import androidx.room.PrimaryKey
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import org.piramalswasthya.sakhi.database.room.SyncState
@@ -34,6 +35,7 @@ import org.piramalswasthya.sakhi.model.ABHAModel
 import org.piramalswasthya.sakhi.model.ReferalCache
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.LeprosyFollowUpCache
+import org.piramalswasthya.sakhi.model.TBConfirmedTreatmentCache
 import org.piramalswasthya.sakhi.utils.HelperUtil.getDateStringFromLong
 
 @JsonClass(generateAdapter = true)
@@ -1194,7 +1196,16 @@ data class TBSuspectedDTO(
     val nikshayId: String?,
     val sputumTestResult: String?,
     val referred: Boolean?,
-    val followUps: String?
+    val followUps: String?,
+    var visitLabel: String?,
+    var typeOfTBCase: String? = null,
+    var reasonForSuspicion: String? = null,
+    var hasSymptoms: Boolean? = null,
+    var isChestXRayDone: Boolean? = null,
+    var chestXRayResult: String? = null,
+    var referralFacility: String? = null,
+    var isTBConfirmed: Boolean? = null,
+    var isDRTBConfirmed: Boolean? = null
 ) {
     fun toCache(): TBSuspectedCache {
         return TBSuspectedCache(
@@ -1206,10 +1217,65 @@ data class TBSuspectedDTO(
             sputumTestResult = sputumTestResult,
             referred = referred,
             followUps = followUps,
+            visitLabel= visitLabel,
+            typeOfTBCase = typeOfTBCase,
+            reasonForSuspicion = reasonForSuspicion,
+            hasSymptoms = hasSymptoms,
+            isChestXRayDone = isChestXRayDone,
+            chestXRayResult = chestXRayResult,
+            referralFacility = referralFacility,
+            isTBConfirmed = isTBConfirmed,
+            isDRTBConfirmed = isDRTBConfirmed,
             syncState = SyncState.SYNCED
         )
     }
 }
+
+data class TBConfirmedTreatmentDTO(
+    val id: Long,
+    val benId: Long,
+    val regimenType: String?,
+    val treatmentStartDate: String?,
+    val expectedTreatmentCompletionDate: String?,
+    val followUpDate: String?,
+    val monthlyFollowUpDone: String?,
+    val adherenceToMedicines: String?,
+    val anyDiscomfort: Boolean?,
+    val treatmentCompleted: Boolean?,
+    val actualTreatmentCompletionDate: String?,
+    val treatmentOutcome: String?,
+    val dateOfDeath: String?,
+    val placeOfDeath: String?,
+    val reasonForDeath: String?,
+    val reasonForNotCompleting: String?
+) {
+
+    fun toCache(): TBConfirmedTreatmentCache {
+        return TBConfirmedTreatmentCache(
+            benId = benId,
+            regimenType = regimenType,
+            treatmentStartDate = getLongFromDate(treatmentStartDate),
+            expectedTreatmentCompletionDate = getLongFromDate(expectedTreatmentCompletionDate),
+            followUpDate = getLongFromDate(followUpDate),
+            monthlyFollowUpDone = monthlyFollowUpDone,
+            adherenceToMedicines = adherenceToMedicines,
+            anyDiscomfort = anyDiscomfort,
+            treatmentCompleted = treatmentCompleted,
+            actualTreatmentCompletionDate = getLongFromDate(actualTreatmentCompletionDate),
+            treatmentOutcome = treatmentOutcome,
+            dateOfDeath = getLongFromDate(dateOfDeath),
+            placeOfDeath = placeOfDeath,
+            reasonForDeath = reasonForDeath ?: "Tuberculosis",
+            reasonForNotCompleting = reasonForNotCompleting,
+            syncState = SyncState.SYNCED
+        )
+    }
+}
+
+data class TBConfirmedRequestDTO(
+    val userId: Int,
+    val tbConfirmedList: List<TBConfirmedTreatmentDTO>
+)
 
 data class TBSuspectedRequestDTO(
     val userId: Int,
