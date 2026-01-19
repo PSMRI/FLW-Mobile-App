@@ -59,25 +59,11 @@ class FilariaMdaCampaignRepository @Inject constructor(
                 }
             }
         } catch (e: Exception) {
-        }
 
-        if (result == null) {
-            val dbSchema = formSchemaDao.getSchema(formId)
-            result = dbSchema?.let { FormSchemaDto.fromJson(it.schemaJson) }
-                ?: loadSchemaFromAssets()
         }
         result
     }
 
-    private fun loadSchemaFromAssets(): FormSchemaDto? {
-        return try {
-            val json = context.assets.open("hbnc_form_1stday.json")
-                .bufferedReader().use { it.readText() }
-            FormSchemaDto.fromJson(json)
-        } catch (e: Exception) {
-            null
-        }
-    }
 
     suspend fun saveFormSchemaToDb(schema: FormSchemaDto) {
         val entity = FormSchemaEntity(
@@ -94,10 +80,6 @@ class FilariaMdaCampaignRepository @Inject constructor(
 
     suspend fun getSyncedVisitsByRchId(): List<FilariaMDACampaignFormResponseJsonEntity> =
         jsonResponseDao.getCampaignSyncedVisitsByRchId()
-
-    suspend fun getAllFormVisits(formName: String, request: HBNCVisitRequest): Response<HBNCVisitListResponse> {
-        return amritApiService.getAllEyeSurgeryFormVisits(formName, request)
-    }
 
     suspend fun getBottleList(): List<MDACampaignItem> {
         val jsonList = jsonResponseDao.getCampaignFormJsonList()
