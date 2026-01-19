@@ -169,6 +169,55 @@
     <string name="ahd_date">AHD Date</string>
     <string name="upload_image">Upload Image</string>
     <string name="upload_image_sub">Upload JPEG or PNG file (Max: 5MB)</string>
+    <string name="visit_date_2">Visit Date</string>
+    <string name="visit_tb">Visit</string>
+    <string name="visit_format">Visit-%d</string>
+    <string name="type_of_tb_case">Type of TB case?</string>
+    <string name="reason_for_suspicion">Reason for suspicion</string>
+    <string name="has_symptoms">Does the patient have symptoms?</string>
+    <string name="is_chest_xray_done">Is the TB Chest X-Ray Test done?</string>
+    <string name="chest_xray_result">Chest X-Ray Test Result</string>
+    <string name="referral_facility">Referral Facility</string>
+    <string name="is_tb_confirmed">Has the diagnosis of TB been confirmed?</string>
+    <string name="is_drtb_confirmed">Has the diagnosis of DR-TB been confirmed?</string>
+
+    <string-array name="type_of_tb_case">
+        <item>New case of TB</item>
+        <item>Previously treated TB case</item>
+        <item>DR-TB case</item>
+    </string-array>
+
+    <string-array name="reason_for_suspicion">
+        <item>Treatment failure</item>
+        <item>TB Relapse/Recurring symptoms</item>
+        <item>Contact with DR-TB case</item>
+        <item>Treatment after LFU (Lost to Follow-up)</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="chest_xray_result">
+        <item>Clinically Diagnosed TB</item>
+        <item>TB Not suspected</item>
+    </string-array>
+
+    <string-array name="referral_facility">
+        <item>District TB Centre (DTC)</item>
+        <item>HWC</item>
+        <item>PHC</item>
+        <item>CHC</item>
+        <item>District Hospital</item>
+        <item>Govt. Medical College</item>
+    </string-array>
+
+    <string-array name="tb_submitted_yet_suspected">
+        <item>HWC</item>
+        <item>PHC</item>
+        <item>CHC</item>
+        <item>District Hospital</item>
+        <item>Govt. Medical College</item>
+    </string-array>
+
+
     <string-array name="yes_no_options">
         <item>Yes</item>
         <item>No</item>
@@ -189,7 +238,6 @@
         <item>Item 5</item>
         <item>Item 6</item>
     </string-array>
-    <!-- TODO: Remove or change this placeholder text -->
 
 
     <string name="about_us">Piramal Swasthya is focusing on bridging the gaps of Public Healthcare by supplementing and complementing Government of India’s vision to meet Universal Health Care for all. Piramal Swasthya is one of the largest not-for-profit organizations in India - in the primary public health care space with a focus on Maternal health, Child and Adolescent Health, Non-communicable diseases. Piramal Swasthya has over a decade-long experience in operating several healthcare innovations at scale, which are addressing the primary health care needs of most underserved and marginalized populations across India. Piramal Swasthya is operational in 20 states in India through 35 innovative public health care delivery programs and has served more than 10.7 Crore beneficiaries thus far, with its services designed to reach the last village and the last household. Piramal Swasthya employs 2260 employees including 250 medical doctors who work around the core value of Seva Bhav (beneficiary-centricity) through an outcome oriented approach. Over the last twelve years, the focus has been on, Building platforms for sustainable impact at scale, Innovations to scale as a journey, Influencing policies, governance, and accountability of the public health care system as a knowledge and implementation partner of the NITI Aayog. Innovation in the form of intervention design, modelling, piloting and scaling-up those pilots has been an approach at Piramal Swasthya. Piramal Swasthya is committed to make primary healthcare not only affordable, accessible and available to all, but also to ensure that it is complete, continuous and comprehensive.</string>
@@ -241,8 +289,6 @@
     <string name="try_again">Try Again!</string>
     <string name="version_2_0_0">APK Version 2.0.0</string>
     <string name="file_size">File size should be less than or equals to 5 MB.</string>
-    <!--    <string name="disagree">DISAGREE</string>-->
-    <!--    <string name="agree">AGREE</string>-->
     <string name="enter_pin">Enter PIN</string>
     <string name="sync_in_progress">Sync in progress ...</string>
     <string name="full_name">Full Name</string>
@@ -291,7 +337,7 @@
     <string name="add_pnc_visits">Add PNC visit</string>
     <string name="id">ID</string>
     <string name="no_of_children">Total No.of Children</string>
-    <string name="no_of_elderly_children">No.of Elderly Children</string>
+    <string name="no_of_elderly_children">No.of Adult Children</string>
     <string name="no_of_younger_children">No.of Children</string>
     <string name="view_visit">View Visit</string>
     <string name="visit_no">Visit No.</string>
@@ -368,7 +414,6 @@
     <string name="hbyc">HBYC</string>
     <string name="hbyc_month_list">Hbyc Month List</string>
     <string name="immunization">Immunization</string>
-    <!--    <string name="child_immunization_list">Child Immunization List</string>-->
     <string name="pregnancy_registration_form">Pregnancy Registration Form</string>
     <string name="anc_visit">ANC Visit</string>
     <string name="cac_form">CAC Form</string>
@@ -381,6 +426,9 @@
     <string name="tb_screening_list">TB Screening List</string>
     <string name="tb_suspected_list">Suspected TB cases</string>
     <string name="tb_screening_form">TB Screening Form</string>
+    <string name="tb_confirmed_list">TB Confirmed List</string>
+    <string name="tb_confirmed_form">TB Confirmed Form</string>
+
     <string name="maleria_screening_form">Malaria Form</string>
     <string name="kala_screening_form">KALA Azar Form</string>
     <string name="aes_screening_form">AES Form</string>
@@ -515,12 +563,13 @@
     <string name="u_win_session">U-WIN Session</string>
     <string name="ors_distribution_campaign">ORS Distribution Campaign</string>
     <string name="pulse_polio_campaign">Pulse Polio Campaign</string>
+    <string name="mda_title">Filariasis MDA campaign</string>
     <string name="uwin">UWin</string>
     <string name="u_win_sessions_list">U-win Session List</string>
     <string name="session_date_n_a">Session Date: N/A</string>
     <string name="session_date_format">Session Date: %s</string>
     <string name="uwin_session_format">UWIN Session %s</string>
-    <string name="is_baby_discharge_from_sncu">Is Baby discharge from SNCU?</string>
+    <string name="is_baby_discharge_from_sncu">Is the Baby admitted to the SNCU?</string>
     <string name="optional">(Optional)</string>
     <string name="optional_">Optional</string>
     <string name="mandatory">Mandatory <font color='#FF0000'>*</font></string>
@@ -744,6 +793,65 @@
     <string name="last_home_visit_date">Last Home Visit Date</string>
     <string name="add_home_visit">ADD HOME VISIT</string>
     <string name="view_home_visits">VIEW HOME VISITS</string>
+    <string name="number_of_pregnant_woman_attended">Number of Pregnant Woman Attended</string>
+    <string name="number_of_lactating_mothers_attended">Number of Lactating Mothers attended</string>
+    <string name="during_breastfeeding_counseling_check_list">During Breastfeeding Counseling check list</string>
+    <string name="the_baby_should_be_breastfed_immediately_within_the_first_hour_of_birth">The baby should be breastfed immediately within the first hour of birth</string>
+    <string name="the_baby_should_be_given_only_mother_s_milk_for_the_first_6_months">The baby should be given only mother’s milk for the first 6 months.</string>
+    <string name="after_6_months_along_with_mother_s_milk_nutritious_complementary_food_should_be_given">After 6 months, along with mother’s milk, nutritious complementary food should be given.</string>
+    <string name="breastfeeding_should_be_continued_for_2_years_or_more">Breastfeeding should be continued for 2 years or more.</string>
+    <string name="the_family_should_support_and_encourage_the_mother">The family should support and encourage the mother</string>
+    <string name="mother_s_milk_is_the_best_for_the_complete_development_of_the_baby">Mother’s milk is the best for the complete development of the baby.</string>
+    <string name="information_was_given_about_kmc_kangaroo_mother_care">Information was given about KMC (Kangaroo Mother Care).</string>
+    <string name="place_of_maa_meeting">Place of MAA Meeting</string>
+    <string name="number_of_out_of_school_children_sent_to_anganwad">Number of Out-of-school Children sent to Anganwad</string>
+    <string name="place_of_ndd">Place of NDD</string>
+    <string name="date_of_ndd">Date of NDD</string>
+    <string name="was_the_deworming_round_conducted">Was the deworming round conducted?</string>
+
+    <string name="regimen_type">Regimen Type</string>
+    <string name="monthly_follow_up_done">Monthly follow up done</string>
+    <string name="adherence_to_medicines">Adherence to Medicines</string>
+    <string name="any_discomfort">Any discomfort</string>
+    <string name="treatment_completed">Did the patient complete the full course of Treatment?</string>
+    <string name="treatment_outcome">TB Treatment outcomes</string>
+    <string name="reason_for_not_completing">Reason for not completing treatment</string>
+    <string name="tuberculosis">Tuberculosis</string>
+    <string name="only_one_follow_up_per_month">Only one follow-up visit per month is allowed</string>
+    <string name="follow_up_must_be_after_last">Follow-up date must be after the last follow-up date</string>
+    <string name="month_format">Month-%d</string>
+
+    <!-- Arrays for TB Confirmed Treatment -->
+    <string-array name="tb_regimen_types">
+        <item>DS-TB (6 Months)</item>
+        <item>Shorter Regimen (9–12 Months)</item>
+        <item>Longer Regimen (18–24 Months)</item>
+        <item>BPaL Regimen (6 Months)</item>
+        <item>INH Mono (6 Month)</item>
+    </string-array>
+
+    <string-array name="adherence_options">
+        <item>Regular</item>
+        <item>Irregular</item>
+    </string-array>
+
+    <string-array name="tb_treatment_outcomes">
+        <item>Cured</item>
+        <item>Failed</item>
+        <item>Lost to Follow-up (LFU)</item>
+        <item>Death</item>
+    </string-array>
+
+    <string-array name="place_of_death">
+        <item>Home</item>
+        <item>Subcenter</item>
+        <item>PHC</item>
+        <item>CHC</item>
+        <item>District Hospital</item>
+        <item>Medical College Hospital</item>
+        <item>Private Hospital</item>
+        <item>Other Place</item>
+    </string-array>
 
 
     <string-array name="hbyc_month_array">
@@ -904,7 +1012,7 @@
     </string-array>
 
     <string-array name="leprosy_status">
-        <item>Screened</item>
+        <item>Screening</item>
         <item>Denied</item>
         <item>Not Screened</item>
         <item>Suspected</item>
@@ -1072,5 +1180,8 @@
         <item>O (Other)</item>
         <item>None</item>
     </string-array>
+
+    <string name="mda_form_campagain_title">Lymphatic Filariasis (LF) Mass Drug Administration (MDA) campaign</string>
+
 </resources>
 

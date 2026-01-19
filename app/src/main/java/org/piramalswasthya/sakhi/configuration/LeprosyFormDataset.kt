@@ -24,7 +24,14 @@ class LeprosyFormDataset(
         return calendar.timeInMillis
     }
 
-
+    private val title = FormElement(
+        id = 28,
+        inputType = InputType.CHECKBOXES,
+        title = resources.getString(R.string.leprosy_title),
+        arrayId = -1,
+        required = false,
+        etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
+    )
     private val dateOfCase = FormElement(
         id = 1,
         inputType = InputType.DATE_PICKER,
@@ -101,6 +108,7 @@ class LeprosyFormDataset(
         arrayId = R.array.leprosy_status,
         entries = resources.getStringArray(R.array.leprosy_status),
         required = false,
+        isEnabled = false,
         hasDependants = true
 
     )
@@ -286,6 +294,7 @@ class LeprosyFormDataset(
         val list = mutableListOf(
             dateOfCase,
            // beneficiaryStatus,
+            title,
             recurrentUlceration,
             cbacRecurrentTingling,
             cbacAnyHyperPigmented,
@@ -662,7 +671,7 @@ class LeprosyFormDataset(
     fun updateBen(benRegCache: BenRegCache) {
         benRegCache.genDetails?.let {
             it.reproductiveStatus =
-                englishResources.getStringArray(R.array.nbr_reproductive_status_array)[1]
+                englishResources.getStringArray(R.array.nbr_reproductive_status_array2)[1]
             it.reproductiveStatusId = 2
         }
         if (benRegCache.processed != "N") benRegCache.processed = "U"
