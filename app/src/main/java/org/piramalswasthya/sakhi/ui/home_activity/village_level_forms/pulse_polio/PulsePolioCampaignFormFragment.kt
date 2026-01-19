@@ -29,6 +29,7 @@ import org.piramalswasthya.sakhi.utils.HelperUtil.showPickerDialog
 import org.piramalswasthya.sakhi.utils.dynamicFiledValidator.FieldValidator
 import com.google.gson.Gson
 import org.piramalswasthya.sakhi.utils.HelperUtil
+import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
 
 @AndroidEntryPoint
 class PulsePolioCampaignFormFragment : Fragment() {
@@ -230,12 +231,13 @@ class PulsePolioCampaignFormFragment : Fragment() {
         }
         val minVisitDate = HelperUtil.getMinVisitDate()
         val maxVisitDate = HelperUtil.getMaxVisitDate()
-        Log.i("PulsePolioDistribution", "refreshAdapter: $minVisitDate  ==== $maxVisitDate")
+
         adapter = FormRendererAdapter(
             visibleFields,
             isViewOnly = viewModel.isViewOnly,
             minVisitDate = minVisitDate,
             maxVisitDate = maxVisitDate,
+            formId= FormConstants.PULSE_POLIO_CAMPAIGN_FORM_ID,
             onValueChanged = { field, value ->
                 if (value == "pick_image") {
                     currentImageField = field
