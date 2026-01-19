@@ -1,7 +1,6 @@
 package org.piramalswasthya.sakhi.di
 
 import android.content.Context
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -67,13 +66,13 @@ object AppModule {
     @Singleton
     @Provides
     @Named("uatClient")
-    fun provideTmcHttpClient(apiAnalyticsInterceptor: ApiAnalyticsInterceptor): OkHttpClient {
+    fun provideTmcHttpClient(apiAnalyticsInterceptor: ApiAnalyticsInterceptor,tokenInsertTmcInterceptor:TokenInsertTmcInterceptor): OkHttpClient {
         return baseClient
             .newBuilder()
             .connectTimeout(60, TimeUnit.SECONDS)
             .readTimeout(60, TimeUnit.SECONDS)
             .writeTimeout(60, TimeUnit.SECONDS)
-            .addInterceptor(TokenInsertTmcInterceptor())
+            .addInterceptor(tokenInsertTmcInterceptor)
             .addInterceptor(apiAnalyticsInterceptor)
             .build()
     }
@@ -140,6 +139,14 @@ object AppModule {
         @ApplicationContext context: Context
     ): ApiAnalyticsInterceptor {
         return ApiAnalyticsInterceptor(context)
+    }
+
+    @Singleton
+    @Provides
+    fun provideTokenInsertTmcInterceptor(
+        preferenceDao: PreferenceDao
+    ): TokenInsertTmcInterceptor {
+        return TokenInsertTmcInterceptor(preferenceDao)
     }
 
     @Singleton
