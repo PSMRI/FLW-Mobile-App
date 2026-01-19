@@ -703,8 +703,16 @@ interface BenDao {
     fun getScreeningList(villageId: Int): Flow<List<BenBasicCache>>
 
     @Transaction
-    @Query("select b.* from BEN_BASIC_CACHE b inner join tb_screening t on  b.benId = t.benId where villageId = :villageId and isDeactivate=0 and tbsnFilled = 1 and (t.bloodInSputum =1 or t.coughMoreThan2Weeks = 1 or feverMoreThan2Weeks = 1 or nightSweats = 1 or lossOfWeight = 1 or historyOfTb = 1)")
+    @Query("select b.* from BEN_BASIC_CACHE b inner join tb_screening t on  b.benId = t.benId LEFT JOIN TB_SUSPECTED ts ON b.benId = ts.benId  where villageId = :villageId and isDeactivate=0 and tbsnFilled = 1 and (t.bloodInSputum =1 or t.coughMoreThan2Weeks = 1 or feverMoreThan2Weeks = 1 or nightSweats = 1 or lossOfWeight = 1 or historyOfTb = 1)AND (\n" +
+            "            ts.benId IS NULL\n" +
+            "            OR ts.isConfirmed = 0\n" +
+            "        )")
     fun getTbScreeningList(villageId: Int): Flow<List<BenWithTbSuspectedCache>>
+
+    @Transaction
+    @Query("select b.* from BEN_BASIC_CACHE b inner join TB_SUSPECTED t on b.benID = t.benId and t.isConfirmed =1 where villageId = :villageId and isDeactivate=0")
+    fun getTbConfirmedList(villageId: Int): Flow<List<BenWithTbSuspectedCache>>
+
 
     @Transaction
     @Query("select b.*, t.slideTestName As slideTestName from BEN_BASIC_CACHE b inner join malaria_screening t on  b.benId = t.benId where villageId = :villageId and  isDeactivate=0 and t.caseStatus = 'Confirmed' ")
