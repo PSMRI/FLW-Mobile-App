@@ -33,8 +33,12 @@ class PulsePolioCampaignListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         binding.btnNextPage.visibility = View.VISIBLE
+
+        viewModel.isCampaignAlreadyAdded.observe(viewLifecycleOwner) { alreadyAdded ->
+            binding.btnNextPage.isEnabled = !alreadyAdded
+        }
+
         binding.btnNextPage.text = getString(R.string.pulse_polio_campaign)
 
         val adapter = PulsePolioCampaignAdapter(
@@ -70,6 +74,11 @@ class PulsePolioCampaignListFragment : Fragment() {
             R.drawable.ic__village_level_form,
             getString(R.string.pulse_polio_campaign)
         )
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.checkCampaignEligibility()
     }
 
     override fun onDestroyView() {
