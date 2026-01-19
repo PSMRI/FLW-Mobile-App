@@ -21,6 +21,8 @@ import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYORSFormSyncWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYSAMFormSyncWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.EyeSurgeryFormSyncWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.FilariaMDAFormSyncWorker
+import org.piramalswasthya.sakhi.work.dynamicWoker.FilariaMdaCampaignFormSyncWorker
+import org.piramalswasthya.sakhi.work.dynamicWoker.FilariaMdaCampaignPushWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.FormSyncWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.MosquitoNetFormSyncWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.NCDFollowUpSyncWorker
@@ -42,6 +44,9 @@ object WorkerUtils {
             .setConstraints(networkOnlyConstraint)
             .build()
         val CUFYIFAFormSyncWorker = OneTimeWorkRequestBuilder<CUFYIFAFormSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pushFilariaMdaCampaignFormSyncWorker = OneTimeWorkRequestBuilder<FilariaMdaCampaignPushWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
         val pullEyeSurgeryFormSyncWorker = OneTimeWorkRequestBuilder<EyeSurgeryFormSyncWorker>()
@@ -220,6 +225,7 @@ object WorkerUtils {
             .then(pushChildHBNCToAmritWorker)
             .then(pushAbhaWorkRequest)
             .then(pushVLFToAmritWorker)
+            .then(pushFilariaMdaCampaignFormSyncWorker)
             .enqueue()
     }
 
@@ -319,6 +325,9 @@ object WorkerUtils {
             .setConstraints(networkOnlyConstraint)
             .build()
 
+        val pushFilariaMdaCampaignFormSyncWorker = OneTimeWorkRequestBuilder<FilariaMdaCampaignPushWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
          val NCDFollowupFormSyncWorker = OneTimeWorkRequestBuilder<NCDFollowUpSyncWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
@@ -416,6 +425,7 @@ object WorkerUtils {
             .then(pushkalaAzarToAmritWorker)
             .then(pushFilariaToAmritWorker)
             .then(pushNcdreferWorkRequest)
+            .then(pushFilariaMdaCampaignFormSyncWorker)
 
             .enqueue()
     }
@@ -553,6 +563,11 @@ object WorkerUtils {
             .setConstraints(networkOnlyConstraint)
             .build()
 
+        val pullFilariaMDACampaignToAmritWorker = OneTimeWorkRequestBuilder<FilariaMdaCampaignFormSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+
+
         val pullSaasBahuSamelanAmritWorker = OneTimeWorkRequestBuilder<SaasBahuSammelanPullWorker>()
             .setConstraints(networkOnlyConstraint).build()
         val workManager = WorkManager.getInstance(context)
@@ -600,6 +615,7 @@ object WorkerUtils {
             .then(pullkalaAzarToAmritWorker)
             .then(pullFilariaToAmritWorker)
             .then(pullLeprosyToAmritWorker)
+            .then(pullFilariaMDACampaignToAmritWorker)
             .then(setSyncCompleteWorker)
             .enqueue()
     }

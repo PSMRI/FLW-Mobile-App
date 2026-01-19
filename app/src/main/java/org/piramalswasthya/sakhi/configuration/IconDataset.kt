@@ -362,6 +362,14 @@ class IconDataset @Inject constructor(
                 VillageLevelFormsFragmentDirections
                     .actionVillageLevelFormsFragmentToUwinListFragment()
             )
+            ,Icon(
+                R.drawable.filaria,
+                resources.getString(R.string.mda_title),
+                null,
+                VillageLevelFormsFragmentDirections
+                    .actionVillageLevelFormsFragmentToFilariaMdaCampaignHistoryFragment()
+            )
+
         )
     }
 

@@ -1,9 +1,9 @@
-package org.piramalswasthya.sakhi.ui.home_activity.disease_control.filaria.form
-
+package org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.filaria_mda
 
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,63 +15,89 @@ import org.json.JSONObject
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.ConditionalLogic
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FieldValidation
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FilariaMdaCampaignJsonDao
 import org.piramalswasthya.sakhi.model.BottleItem
-import org.piramalswasthya.sakhi.model.dynamicEntity.FilariaMDA.FilariaMDAFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormFieldDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
-import org.piramalswasthya.sakhi.repositories.dynamicRepo.FilariaMDAFormRepository
+import org.piramalswasthya.sakhi.model.dynamicEntity.filariaaMdaCampaign.FilariaMDACampaignFormResponseJsonEntity
+import org.piramalswasthya.sakhi.model.dynamicModel.MDACampaignItem
+import org.piramalswasthya.sakhi.repositories.dynamicRepo.FilariaMdaCampaignRepository
 import org.piramalswasthya.sakhi.work.dynamicWoker.FilariaMDAFormSyncWorker
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
+import kotlin.collections.orEmpty
 
 @HiltViewModel
-class FilariaMDAFormViewModel @Inject constructor(
-    private val repository: FilariaMDAFormRepository,
-    @ApplicationContext private val context: Context
-) : ViewModel() {
+class FilariaMdaFormCampaignViewModel @Inject constructor(
+    private val repository: FilariaMdaCampaignRepository,
+    @ApplicationContext private val context: Context,
+    savedStateHandle: SavedStateHandle,
+    var dao: FilariaMdaCampaignJsonDao
+
+    ) : ViewModel() {
 
     private val _schema = MutableStateFlow<FormSchemaDto?>(null)
     val schema: StateFlow<FormSchemaDto?> = _schema
-    private val _infant = MutableStateFlow<FilariaMDAFormResponseJsonEntity?>(null)
-    val infant: StateFlow<FilariaMDAFormResponseJsonEntity?> = _infant
+    private val _infant = MutableStateFlow<FilariaMDACampaignFormResponseJsonEntity?>(null)
+    val infant: StateFlow<FilariaMDACampaignFormResponseJsonEntity?> = _infant
     var previousVisitDate: Date? = null
-    private val _syncedVisitList = MutableStateFlow<List<FilariaMDAFormResponseJsonEntity>>(emptyList())
+    private val _syncedVisitList = MutableStateFlow<List<FilariaMDACampaignFormResponseJsonEntity>>(emptyList())
 
     var visitDay: String = ""
-    private var isViewMode: Boolean = false
+    var isViewMode: Boolean = false
     private val _isBenDead = MutableStateFlow(false)
     val isBenDead: StateFlow<Boolean> = _isBenDead
 
-    private val _bottleList = MutableLiveData<List<BottleItem>>()
-    val bottleList: LiveData<List<BottleItem>> = _bottleList
+    private val _bottleList = MutableLiveData<List<MDACampaignItem>>()
+    val bottleList: LiveData<List<MDACampaignItem>> = _bottleList
     private val _showToastLiveData = MutableLiveData<String>()
     val showToastLiveData: LiveData<String> = _showToastLiveData
+
+    var yearDate = FilariaMdaCampaignFormFragmentArgs.fromSavedStateHandle(savedStateHandle).date
     var wasDuplicate = false
         private set
 
 
-    fun loadBottleData(hhId: Long) {
+
+    fun getCurrentYear(): String {
+        return SimpleDateFormat("yyyy", Locale.getDefault())
+            .format(Date())
+    }
+    private val _isCampaignAlreadyAdded = MutableLiveData(false)
+    val isCampaignAlreadyAdded: LiveData<Boolean> = _isCampaignAlreadyAdded
+
+    fun checkCurrentYearCampaign(formId: String) {
         viewModelScope.launch {
-            val list = repository.getBottleList(hhId)
+            val currentYear = getCurrentYear()
+            val existing = dao.getCampaignByBenFormYear(formId, currentYear)
+            _isCampaignAlreadyAdded.postValue(existing != null)
+        }
+    }
+
+
+    fun loadBottleData() {
+        viewModelScope.launch {
+            val list = repository.getBottleList()
             _bottleList.postValue(list)
         }
     }
 
-    fun loadSyncedVisitList(hhId: Long) {
+    fun loadSyncedVisitList() {
         viewModelScope.launch {
-            val list = repository.getSyncedVisitsByRchId(hhId)
+            val list = repository.getSyncedVisitsByRchId()
             _syncedVisitList.value = list
         }
     }
 
     fun loadFormSchema(
-        hhId: Long,
         formId: String,
         viewMode: Boolean,
     ) {
         this.isViewMode = viewMode
-        loadSyncedVisitList(hhId)
+        loadSyncedVisitList()
 
         viewModelScope.launch {
             val cachedSchemaEntity = repository.getSavedSchema(formId)
@@ -81,14 +107,17 @@ class FilariaMDAFormViewModel @Inject constructor(
 
             val localSchemaToRender = cachedSchema ?: repository.getFormSchema(formId) ?: return@launch
 
-            val savedJson = repository.loadFormResponseJson(hhId, formId)
+            val savedJson = repository.loadFormResponseJson(yearDate)
             val savedFieldValues = if (!savedJson.isNullOrBlank()) {
                 try {
                     val root = JSONObject(savedJson)
                     val fieldsJson = root.optJSONObject("fields") ?: JSONObject()
                     fieldsJson.keys().asSequence().associateWith { fieldsJson.opt(it) }
+
                 } catch (e: Exception) {
+
                     emptyMap()
+
                 }
             } else {
                 emptyMap()
@@ -146,7 +175,7 @@ class FilariaMDAFormViewModel @Inject constructor(
     private fun toMonthKey(dateStr: String?): String {
         if (dateStr.isNullOrBlank()) return ""
         val inputs = listOf("dd-MM-yyyy", "yyyy-MM-dd")
-        val out = SimpleDateFormat("yyyy-MM", Locale.getDefault())
+        val out = SimpleDateFormat("yyyy", Locale.getDefault())
         for (fmt in inputs) {
             try {
                 val d = SimpleDateFormat(fmt, Locale.getDefault()).parse(dateStr)
@@ -155,9 +184,7 @@ class FilariaMDAFormViewModel @Inject constructor(
         }
         return try {
             if (Regex("\\d{2}-\\d{2}-\\d{4}").matches(dateStr)) {
-                val yyyy = dateStr.substring(6, 10)
-                val mm = dateStr.substring(3, 5)
-                "$yyyy-$mm"
+                dateStr.substring(6, 10)
             } else ""
         } catch (_: Exception) { "" }
     }
@@ -174,7 +201,7 @@ class FilariaMDAFormViewModel @Inject constructor(
                 .filter { it.visible && it.value != null }
                 .associate { it.fieldId to it.value }
 
-            val visitDate = fieldMap["mda_distribution_date"]?.toString() ?: "N/A"
+            val visitDate = fieldMap["start_date"]?.toString() ?: "N/A"
             val visitMonth = toMonthKey(visitDate)
 
             val wrappedJson = JSONObject().apply {
@@ -185,10 +212,9 @@ class FilariaMDAFormViewModel @Inject constructor(
                 put("fields", JSONObject(fieldMap))
             }
 
-            val entity = FilariaMDAFormResponseJsonEntity(
-                hhId = hhId,
+            val entity = FilariaMDACampaignFormResponseJsonEntity(
                 visitDate = visitDate,
-                visitMonth = visitMonth,
+                visitYear = visitMonth,
                 formId = formId,
                 version = version,
                 formDataJson = wrappedJson.toString(),
@@ -200,13 +226,13 @@ class FilariaMDAFormViewModel @Inject constructor(
 
             if (!inserted) {
                 wasDuplicate = true
-                _showToastLiveData.postValue("You have already submitted this form for this month")
+                _showToastLiveData.postValue("You have already submitted this form for this Year")
                 return false
             }
 
             wasDuplicate = false
 
-            loadSyncedVisitList(benId)
+            loadSyncedVisitList()
             FilariaMDAFormSyncWorker.enqueue(context)
 
             true
@@ -256,30 +282,25 @@ class FilariaMDAFormViewModel @Inject constructor(
         } ?: emptyList()
     }
 
-    fun getMaxVisitDate(): Date {
-        val todayCal = Calendar.getInstance().apply {
+    fun getStartDateMin(): Date {
+        return Calendar.getInstance().apply {
+            set(Calendar.DAY_OF_MONTH, 1)
+            add(Calendar.MONTH, -1)
             set(Calendar.HOUR_OF_DAY, 0)
             set(Calendar.MINUTE, 0)
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
-        }
-        val today = todayCal.time
-        val todayMonthKey = SimpleDateFormat("yyyy-MM", Locale.getDefault()).format(today)
-
-        val alreadyInThisMonth = _syncedVisitList.value.any {
-            it.visitMonth == todayMonthKey
-        }
-        return if (alreadyInThisMonth) {
-            todayCal.apply { add(Calendar.DATE, -1) }.time
-        } else today
+        }.time
     }
 
-    fun getMinVisitDate(): Date? {
-        return previousVisitDate?.let {
-            Calendar.getInstance().apply {
-                time = it
-                add(Calendar.DATE, 1)
-            }.time
-        }
+    fun getStartDateMax(): Date {
+        return Calendar.getInstance().apply {
+            add(Calendar.MONTH, 2)
+            set(Calendar.DAY_OF_MONTH, getActualMaximum(Calendar.DAY_OF_MONTH))
+            set(Calendar.HOUR_OF_DAY, 23)
+            set(Calendar.MINUTE, 59)
+            set(Calendar.SECOND, 59)
+            set(Calendar.MILLISECOND, 999)
+        }.time
     }
 }
