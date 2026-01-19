@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.ors_campa
 import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,6 +22,7 @@ import org.piramalswasthya.sakhi.adapters.dynamicAdapter.FormRendererAdapter
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
 import org.piramalswasthya.sakhi.databinding.FragmentOrsCampaignFormBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.utils.HelperUtil
 import org.piramalswasthya.sakhi.utils.HelperUtil.getFileSizeInMB
 import org.piramalswasthya.sakhi.utils.HelperUtil.launchCamera
 import org.piramalswasthya.sakhi.utils.HelperUtil.launchFilePicker
@@ -225,12 +227,14 @@ class ORSCampaignFormFragment : Fragment() {
                 }
             }
         }
-
+        val minVisitDate = HelperUtil.getMinVisitDate()
+        val maxVisitDate = HelperUtil.getMaxVisitDate()
+        Log.i("PulsePolioDistribution", "refreshAdapter1: $minVisitDate  ==== $maxVisitDate")
         adapter = FormRendererAdapter(
             visibleFields,
             isViewOnly = viewModel.isViewOnly,
-            minVisitDate = null,
-            maxVisitDate = null,
+            minVisitDate = minVisitDate,
+            maxVisitDate = maxVisitDate,
             onValueChanged = { field, value ->
                 if (value == "pick_image") {
                     currentImageField = field
