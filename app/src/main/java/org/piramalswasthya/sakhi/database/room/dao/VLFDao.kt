@@ -12,6 +12,7 @@ import org.piramalswasthya.sakhi.model.HRPPregnantAssessCache
 import org.piramalswasthya.sakhi.model.PHCReviewMeetingCache
 import org.piramalswasthya.sakhi.model.VHNCCache
 import org.piramalswasthya.sakhi.model.VHNDCache
+import org.piramalswasthya.sakhi.model.dynamicEntity.FilariaMDA.FilariaMDAFormResponseJsonEntity
 import java.time.LocalDate
 
 @Dao
@@ -123,5 +124,20 @@ interface VLFDao {
     // For Deworming form
     @Query("SELECT MAX(regDate) FROM DewormingMeeting")
     fun getLastDewormingSubmissionDate(): Flow<String?>
+
+    @Query("SELECT * FROM FILARIA_MDA_VISIT_HISTORY WHERE id = :id")
+    suspend fun getFilariaMdaCampaign(id: Int): FilariaMDAFormResponseJsonEntity?
+
+    @Query("SELECT * FROM FILARIA_MDA_VISIT_HISTORY")
+    fun getAllFilariaMdaCampaign(): Flow<List<FilariaMDAFormResponseJsonEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun saveRecord(pulsePolioCampaignCache: FilariaMDAFormResponseJsonEntity)
+
+    @Query("SELECT * FROM FILARIA_MDA_VISIT_HISTORY WHERE syncState = :syncState")
+    fun getFilariaMdaCampaign(syncState: SyncState): List<FilariaMDAFormResponseJsonEntity>?
+
+    @Query("SELECT * FROM FILARIA_MDA_VISIT_HISTORY")
+    fun getAllFilariaMdaCampaignForDate(): Flow<List<FilariaMDAFormResponseJsonEntity>>
 
 }

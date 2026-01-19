@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.model.dynamicEntity.FilariaMDA
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import org.piramalswasthya.sakhi.database.room.SyncState
 
 @Entity(
     tableName = "FILARIA_MDA_VISIT_HISTORY",
@@ -20,6 +21,7 @@ data class FilariaMDAFormResponseJsonEntity(
     val version: Int,
     val formDataJson: String,
     val isSynced: Boolean = false,
+    var syncState: SyncState = SyncState.UNSYNCED,
     val createdAt: Long = System.currentTimeMillis(),
     val syncedAt: String? = null
 )

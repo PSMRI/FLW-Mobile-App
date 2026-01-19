@@ -334,6 +334,9 @@
         <action
             android:id="@+id/action_villageLevelFormsFragment_to_allMaaMeetingFragment"
             app:destination="@id/allMaaMeetingFragment" />
+        <action
+            android:id="@+id/action_villageLevelFormsFragment_to_filariaMdaCampaignHistoryFragment"
+            app:destination="@id/filariaMdaCampaignHistory" />
     </fragment>
 
     <fragment
@@ -2113,4 +2116,24 @@
             app:argType="long" />
 
     </fragment>
+    <fragment
+        android:id="@+id/filariaMdaCampaignFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.filaria_mda.FilariaMdaCampaignFormFragment"
+        android:label="FilariaMdaCampaignFormFragment" >
+        <argument
+            android:name="date"
+            android:defaultValue=""
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/filariaMdaCampaignHistory"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.filaria_mda.list.FilariaMdaCampaignHistory"
+        android:label="FilariaMdaCampaignHistory" >
+        <action
+            android:id="@+id/action_mdaCampagaignHisoryFragment_to_mdaFormCampaign"
+            app:destination="@id/filariaMdaCampaignFormFragment" />
+    </fragment>
+
+
+
 </navigation>

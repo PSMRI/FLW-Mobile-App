@@ -102,6 +102,7 @@
     <string name="anmrho">ANM/ RHO</string>
     <string name="participants_attended">Participants Attended</string>
     <string name="leprosy_title">Check if the person has any of these symptoms</string>
-
+    <string name="no_of_individuals">Number of Individuals</string>
+    <string name="no_of_familes">Number of Families</string>
 
 </resources>
