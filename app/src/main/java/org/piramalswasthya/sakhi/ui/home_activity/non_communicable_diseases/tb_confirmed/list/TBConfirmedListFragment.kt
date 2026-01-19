@@ -66,7 +66,7 @@ class TBConfirmedListFragment : Fragment() {
         )
         binding.rvAny.adapter = benAdapter
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.benList.collect {
                 if (it.isEmpty())
                     binding.flEmpty.visibility = View.VISIBLE
