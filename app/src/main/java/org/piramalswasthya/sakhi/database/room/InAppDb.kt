@@ -111,6 +111,8 @@ import org.piramalswasthya.sakhi.model.ReferalCache
 import org.piramalswasthya.sakhi.model.TBConfirmedTreatmentCache
 import org.piramalswasthya.sakhi.model.VHNCCache
 import org.piramalswasthya.sakhi.model.Vaccine
+import org.piramalswasthya.sakhi.model.PulsePolioCampaignCache
+import org.piramalswasthya.sakhi.model.ORSCampaignCache
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.InfantEntity
@@ -163,6 +165,8 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         PHCReviewMeetingCache::class,
         AHDCache::class,
         DewormingCache::class,
+        PulsePolioCampaignCache::class,
+        ORSCampaignCache::class,
         MalariaScreeningCache::class,
         AESScreeningCache::class,
         KalaAzarScreeningCache::class,
