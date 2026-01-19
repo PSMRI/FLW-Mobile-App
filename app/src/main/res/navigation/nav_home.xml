@@ -1036,6 +1036,23 @@
             app:destination="@id/TBSuspectedFragment" />
     </fragment>
     <fragment
+        android:id="@+id/TBConfirmedListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_confirmed.list.TBConfirmedListFragment"
+        android:label="@string/tb_confirmed_list">
+        <action
+            android:id="@+id/action_TBConfirmedListFragment_to_TBConfirmedFormFragment"
+            app:destination="@id/TBConfirmedFormFragment"/>
+    </fragment>
+    <fragment
+        android:id="@+id/TBConfirmedFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_confirmed.from.TBConfirmedFormFragment"
+        android:label="@string/tb_confirmed_form">
+        <argument
+        android:name="benId"
+        app:argType="long" />
+    </fragment>
+
+    <fragment
         android:id="@+id/TBScreeningFormFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_screening.form.TBScreeningFormFragment"
         android:label="@string/tb_screening_form">
@@ -1137,6 +1154,9 @@
         <action
             android:id="@+id/action_cdFragment_to_TBSuspectedListFragment"
             app:destination="@id/TBSuspectedListFragment" />
+        <action
+            android:id="@+id/action_cdFragment_to_TBConfirmedListFragment"
+            app:destination="@id/TBConfirmedListFragment"/>
     </fragment>
     <fragment
         android:id="@+id/dashboardFragment"

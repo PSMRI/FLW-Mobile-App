@@ -81,6 +81,7 @@
     <string name="icon_title_ncd_priority_list">NCD Priority List</string>
     <string name="icon_title_ncd_tb_screening">TB Screening</string>
     <string name="icon_title_ncd_tb_suspected">Suspected TB cases</string>
+    <string name="icon_title_ncd_tb_confirmed">Confirmed TB cases</string>
     <string name="icon_title_hrp_pregnant">High Risk\n Pregnant Women</string>
     <string name="icon_title_hrp_non_pregnant">High Risk\n Non Pregnant Women</string>
     <string name="icon_title_hrp_pregnant_assess">Assess High Risk in PW</string>
