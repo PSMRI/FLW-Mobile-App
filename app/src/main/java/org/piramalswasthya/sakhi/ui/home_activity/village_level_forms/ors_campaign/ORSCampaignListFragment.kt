@@ -8,6 +8,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
@@ -37,6 +39,10 @@ class ORSCampaignListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.btnNextPage.visibility = View.VISIBLE
         binding.btnNextPage.text = getString(R.string.ors_distribution_campaign)
+
+        viewModel.isCampaignAlreadyAdded.observe(viewLifecycleOwner) { alreadyAdded ->
+            binding.btnNextPage.isEnabled = !alreadyAdded
+        }
         
         val adapter = ORSCampaignAdapter(
             clickListener = ORSCampaignAdapter.ORSCampaignClickListener { id ->
@@ -50,10 +56,12 @@ class ORSCampaignListFragment : Fragment() {
             findNavController().navigate(R.id.action_ORSCampaignListFragment_to_ORSCampaignFormFragment)
         }
 
-        lifecycleScope.launch {
-            viewModel.allORSCampaignList.collect {
-                binding.flEmpty.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
-                adapter.submitList(it)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.allORSCampaignList.collect {
+                    binding.flEmpty.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
+                    adapter.submitList(it)
+                }
             }
         }
     }
@@ -66,5 +74,10 @@ class ORSCampaignListFragment : Fragment() {
                 getString(R.string.ors_distribution_campaign)
             )
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.checkCampaignEligibility()
     }
 }

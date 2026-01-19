@@ -161,6 +161,9 @@ interface VLFDao {
 
     @Query("SELECT * FROM ORSCampaign")
     fun getAllORSCampaignForDate(): Flow<List<ORSCampaignCache>>
+
+    @Query("SELECT * FROM ORSCampaign")
+    suspend fun getAllORSCampaigns(): List<ORSCampaignCache>
     @Query("SELECT * FROM FILARIA_MDA_VISIT_HISTORY WHERE id = :id")
     suspend fun getFilariaMdaCampaign(id: Int): FilariaMDAFormResponseJsonEntity?
 

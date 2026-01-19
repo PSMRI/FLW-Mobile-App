@@ -485,6 +485,10 @@ class VLFRepo @Inject constructor(
         return database.vlfDao.getAllPulsePolioCampaigns()
     }
 
+    suspend fun getAllORSCampaigns(): List<ORSCampaignCache> {
+        return database.vlfDao.getAllORSCampaigns()
+    }
+
 
     suspend fun getPulsePolioCampaignFromServer(): Int {
         return withContext(Dispatchers.IO) {
