@@ -361,6 +361,20 @@ class IconDataset @Inject constructor(
                 null,
                 VillageLevelFormsFragmentDirections
                     .actionVillageLevelFormsFragmentToUwinListFragment()
+            ),
+            Icon(
+                R.drawable.dewarming,
+                resources.getString(R.string.pulse_polio_campaign),
+                null,
+                VillageLevelFormsFragmentDirections
+                    .actionVillageLevelFormsFragmentToPulsePolioCampaignListFragment()
+            ),
+            Icon(
+                R.drawable.dewarming,
+                resources.getString(R.string.ors_distribution_campaign),
+                null,
+                VillageLevelFormsFragmentDirections
+                    .actionVillageLevelFormsFragmentToORSCampaignListFragment()
             )
             ,Icon(
                 R.drawable.filaria,

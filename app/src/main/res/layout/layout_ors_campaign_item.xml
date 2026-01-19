@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="orsCampaign"
+            type="org.piramalswasthya.sakhi.model.ORSCampaignCache" />
+
+        <variable
+            name="clickListener"
+            type="org.piramalswasthya.sakhi.adapters.ORSCampaignAdapter.ORSCampaignClickListener" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/md_theme_dark_inversePrimary"
+        android:layout_margin="@dimen/margin_normal"
+        android:elevation="@dimen/padding_normal"
+        app:cardCornerRadius="@dimen/padding_normal"
+        app:cardElevation="@dimen/padding_normal">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tvDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/colorOnPrimary"
+                android:drawablePadding="@dimen/padding_small"
+                android:gravity="center_vertical"
+                android:padding="@dimen/padding_normal"
+                android:text="@{orsCampaign.campaignDate}"
+                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                android:textColor="?attr/colorPrimaryVariant"
+                app:drawableLeftCompat="@drawable/ic_calendar"
+                app:drawableTint="?attr/colorPrimary"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="01-01-2024" />
+
+            <TextView
+                android:id="@+id/numberOfChildren"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="1"
+                android:textColor="?attr/colorOnPrimary"
+                android:paddingStart="@dimen/_5sdp"
+                app:layout_constraintTop_toBottomOf="@+id/tvDate"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnView"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_big"
+                android:layout_marginBottom="@dimen/margin_normal"
+                android:onClick="@{() -> clickListener.onClick(orsCampaign.id)}"
+                android:drawableLeft="@drawable/ic_person"
+                android:text="@string/view"
+                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                android:backgroundTint="@android:color/holo_green_dark"
+                android:textColor="?attr/colorOnPrimary"
+                app:drawableTint="@color/md_theme_light_onPrimary"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvDate" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+</layout>

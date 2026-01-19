@@ -83,6 +83,8 @@
     <string name="yes_dialog">हां</string>
     <string name="no_dialog">नहीं</string>
     <string name="u_win_session">यू-विन सत्र</string>
+    <string name="ors_distribution_campaign">ओआरएस वितरण अभियान</string>
+    <string name="pulse_polio_campaign">पल्स पोलियो अभियान</string>
     <string name="u_win_sessions_list">यू-विन सत्र सूची</string>
     <string name="any_other_high_risk_conditions">Any other High Risk conditions</string>
     <string name="details_of_pregnant_women">Details of Pregnant women</string>

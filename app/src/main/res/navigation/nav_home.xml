@@ -335,6 +335,11 @@
             android:id="@+id/action_villageLevelFormsFragment_to_allMaaMeetingFragment"
             app:destination="@id/allMaaMeetingFragment" />
         <action
+            android:id="@+id/action_villageLevelFormsFragment_to_PulsePolioCampaignListFragment"
+            app:destination="@id/PulsePolioCampaignListFragment" />
+        <action
+            android:id="@+id/action_villageLevelFormsFragment_to_ORSCampaignListFragment"
+            app:destination="@id/ORSCampaignListFragment" />
             android:id="@+id/action_villageLevelFormsFragment_to_filariaMdaCampaignHistoryFragment"
             app:destination="@id/filariaMdaCampaignHistory" />
     </fragment>
@@ -356,6 +361,48 @@
         tools:layout="@layout/fragment_uwin">
         <argument
             android:name="uwinId"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/PulsePolioCampaignListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.pulse_polio.PulsePolioCampaignListFragment"
+        android:label="@string/pulse_polio_campaign"
+        tools:layout="@layout/fragment_vhnd_list">
+        <action
+            android:id="@+id/action_PulsePolioCampaignListFragment_to_PulsePolioCampaignFormFragment"
+            app:destination="@id/PulsePolioCampaignFormFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/PulsePolioCampaignFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.pulse_polio.PulsePolioCampaignFormFragment"
+        android:label="@string/pulse_polio_campaign"
+        tools:layout="@layout/fragment_pulse_polio_campaign_form">
+        <argument
+            android:name="id"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/ORSCampaignListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.ors_campaign.ORSCampaignListFragment"
+        android:label="@string/ors_distribution_campaign"
+        tools:layout="@layout/fragment_vhnd_list">
+        <action
+            android:id="@+id/action_ORSCampaignListFragment_to_ORSCampaignFormFragment"
+            app:destination="@id/ORSCampaignFormFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/ORSCampaignFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.ors_campaign.ORSCampaignFormFragment"
+        android:label="@string/ors_distribution_campaign"
+        tools:layout="@layout/fragment_ors_campaign_form">
+        <argument
+            android:name="id"
             app:argType="integer"
             android:defaultValue="0" />
     </fragment>

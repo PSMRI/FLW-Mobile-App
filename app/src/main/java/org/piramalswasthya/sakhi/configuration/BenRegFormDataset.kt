@@ -602,7 +602,6 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             maritalStatus.value =
                 saved.genDetails?.maritalStatusId?.let { maritalStatus.getStringFromPosition(it) }
 
-//            ageAtMarriage.value = saved.genDetails?.ageAtMarriage.toString()
             ageAtMarriage.value = calculateAgeAtMarriage(saved.dob, saved.genDetails?.marriageDate)?.toString()
             dateOfMarriage.value = getDateFromLong(saved.genDetails?.marriageDate ?: 0)
 
@@ -885,7 +884,6 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             }
             maritalStatus.value =
                 maritalStatus.getStringFromPosition(saved.genDetails?.maritalStatusId ?: 0)
-//            ageAtMarriage.value = saved.genDetails?.ageAtMarriage.toString()
             ageAtMarriage.value = calculateAgeAtMarriage(saved.dob, saved.genDetails?.marriageDate)?.toString()
             dateOfMarriage.value = getDateFromLong(
                 saved.genDetails?.marriageDate ?: 0
@@ -1091,7 +1089,6 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             }
             maritalStatus.value =
                 maritalStatus.getStringFromPosition(saved.genDetails?.maritalStatusId ?: 0)
-//            ageAtMarriage.value = saved.genDetails?.ageAtMarriage.toString()
             ageAtMarriage.value = calculateAgeAtMarriage(saved.dob, saved.genDetails?.marriageDate)?.toString()
             dateOfMarriage.value = getDateFromLong(
                 saved.genDetails?.marriageDate ?: 0

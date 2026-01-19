@@ -561,6 +561,8 @@
     <string name="no_dialog">No</string>
     <string name="dose_name_2">Dose Name : %1$s</string>
     <string name="u_win_session">U-WIN Session</string>
+    <string name="ors_distribution_campaign">ORS Distribution Campaign</string>
+    <string name="pulse_polio_campaign">Pulse Polio Campaign</string>
     <string name="mda_title">Filariasis MDA campaign</string>
     <string name="uwin">UWin</string>
     <string name="u_win_sessions_list">U-win Session List</string>
