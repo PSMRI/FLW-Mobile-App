@@ -13,6 +13,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -22,8 +23,7 @@ import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentFilariaMDAFormBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
-import org.piramalswasthya.sakhi.utils.HelperUtil.compressImageToTemp
-import org.piramalswasthya.sakhi.utils.HelperUtil.fileToBase64
+import org.piramalswasthya.sakhi.utils.HelperUtil
 import org.piramalswasthya.sakhi.utils.HelperUtil.getFileSizeInMB
 import org.piramalswasthya.sakhi.utils.HelperUtil.launchCamera
 import org.piramalswasthya.sakhi.utils.HelperUtil.launchFilePicker
@@ -56,7 +56,105 @@ class FilariaMdaCampaignFormFragment : Fragment() {
     private var hhId : Long = 0L
     private var benId : Long = 0L
 
+    private var campaignPhotosList = mutableListOf<String>()
+
     private val cameraLauncher =
+        registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+            if (success && tempCameraUri != null) {
+                handleImageCapture(tempCameraUri!!)
+            }
+        }
+
+    private val filePickerLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val uri = result.data?.data ?: return@registerForActivityResult
+                handleImageSelection(uri)
+            }
+        }
+
+    private fun handleImageCapture(uri: Uri) {
+        val context = requireContext()
+        val sizeInMB = context.getFileSizeInMB(uri)
+        val maxSize = (currentImageField?.validation?.maxSizeMB ?: 5).toDouble()
+
+        if (sizeInMB != null && sizeInMB > maxSize) {
+            currentImageField?.errorMessage =
+                currentImageField?.validation?.errorMessage
+                    ?: "Image must be less than ${maxSize.toInt()}MB"
+            adapter.notifyDataSetChanged()
+            return
+        }
+
+        val compressedFile = org.piramalswasthya.sakhi.utils.HelperUtil.compressImageToTemp(uri, "camera_image", context)
+        val base64String = compressedFile?.let { org.piramalswasthya.sakhi.utils.HelperUtil.fileToBase64(it) }
+
+        if (currentImageField?.fieldId == "campaign_photos" || currentImageField?.fieldId == "campaignPhotos") {
+            if (base64String != null && campaignPhotosList.size < 2) {
+                campaignPhotosList.add(base64String)
+                currentImageField?.value = campaignPhotosList.toList()
+                currentImageField?.errorMessage = null
+                viewModel.updateFieldValue(currentImageField!!.fieldId, campaignPhotosList.toList())
+            }
+        } else {
+            currentImageField?.apply {
+                value = base64String
+                errorMessage = null
+                viewModel.updateFieldValue(fieldId, value)
+            }
+        }
+        adapter.updateFields(viewModel.getVisibleFields())
+        adapter.notifyDataSetChanged()
+    }
+
+    private fun handleImageSelection(uri: Uri) {
+        val context = requireContext()
+        val sizeInMB = context.getFileSizeInMB(uri)
+        val maxSize = (currentImageField?.validation?.maxSizeMB ?: 5).toDouble()
+
+        if (sizeInMB != null && sizeInMB > maxSize) {
+            currentImageField?.errorMessage =
+                currentImageField?.validation?.errorMessage
+                    ?: "File must be less than ${maxSize.toInt()}MB"
+            adapter.notifyDataSetChanged()
+            return
+        }
+
+        val compressedFile = org.piramalswasthya.sakhi.utils.HelperUtil.compressImageToTemp(uri, "selected_image", context)
+        val base64String = compressedFile?.let { org.piramalswasthya.sakhi.utils.HelperUtil.fileToBase64(it) }
+
+        if (currentImageField?.fieldId == "campaign_photos" || currentImageField?.fieldId == "campaignPhotos") {
+            if (base64String != null && campaignPhotosList.size < 2) {
+                campaignPhotosList.add(base64String)
+                currentImageField?.value = campaignPhotosList.toList()
+                currentImageField?.errorMessage = null
+                viewModel.updateFieldValue(currentImageField!!.fieldId, campaignPhotosList.toList())
+            }
+        } else {
+            currentImageField?.apply {
+                value = base64String
+                errorMessage = null
+                viewModel.updateFieldValue(fieldId, value)
+            }
+        }
+        adapter.updateFields(viewModel.getVisibleFields())
+        adapter.notifyDataSetChanged()
+    }
+
+    private fun showImagePickerDialog() {
+        showPickerDialog(
+            requireContext(),
+            onCameraSelected = {
+                tempCameraUri = launchCamera(requireContext())
+                cameraLauncher.launch(tempCameraUri)
+            },
+            onFileSelected = {
+                launchFilePicker(filePickerLauncher)
+            }
+        )
+    }
+
+    /*private val cameraLauncher =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
             if (success && tempCameraUri != null) {
                 val context = requireContext()
@@ -128,7 +226,7 @@ class FilariaMdaCampaignFormFragment : Fragment() {
             }
         )
     }
-
+*/
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -173,8 +271,35 @@ class FilariaMdaCampaignFormFragment : Fragment() {
 
     private fun refreshAdapter(){
         val visibleFields = viewModel.getVisibleFields().toMutableList()
-        val minVisitDate = viewModel.getStartDateMin()
-        val maxVisitDate = viewModel.getStartDateMax()
+        val minVisitDate = HelperUtil.getMinVisitDate()
+        val maxVisitDate = HelperUtil.getMaxVisitDate()
+
+        val campaignPhotosField = visibleFields.find {
+            it.fieldId == "campaign_photos" || it.fieldId == "campaignPhotos"
+        }
+        if (campaignPhotosField != null) {
+            when {
+                campaignPhotosField.value is List<*> -> {
+                    campaignPhotosList = (campaignPhotosField.value as List<*>)
+                        .mapNotNull { it?.toString() }
+                        .toMutableList()
+                }
+                campaignPhotosField.value is String -> {
+                    try {
+                        val photos = Gson().fromJson(
+                            campaignPhotosField.value as String,
+                            Array<String>::class.java
+                        )
+                        campaignPhotosList = photos.toMutableList()
+                    } catch (e: Exception) {
+                        campaignPhotosList = mutableListOf()
+                    }
+                }
+                else -> {
+                    campaignPhotosList = mutableListOf()
+                }
+            }
+        }
 
         adapter = FormRendererAdapter(
             visibleFields,

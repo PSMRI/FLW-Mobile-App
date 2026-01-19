@@ -12,8 +12,6 @@
     import android.text.style.ForegroundColorSpan
     import android.view.*
     import android.util.Base64
-    import android.util.Log
-    import android.view.inputmethod.EditorInfo
     import android.widget.*
     import androidx.appcompat.content.res.AppCompatResources
     import androidx.core.content.ContextCompat
@@ -688,7 +686,8 @@
                                 }
                                 else {
 
-                                    if (formId == FormConstants.LF_MDA_CAMPAIGN) {
+
+                                    if (formId == FormConstants.IFA_DISTRIBUTION_FORM_ID) {
                                         minDate = minVisitDate
                                         maxDate = maxVisitDate
 
@@ -701,9 +700,21 @@
                                             maxDate = today
                                         }
                                     }
+                                    else if (formId == FormConstants.LF_MDA_CAMPAIGN ) {
+                                        if (field.fieldId == "end_date") {
+                                            val startDateValue = getDate("start_date")
+                                            if (startDateValue != null) {
+                                                val minDateCalendar = Calendar.getInstance()
+                                                minDateCalendar.time = startDateValue
+                                                minDateCalendar.add(Calendar.DAY_OF_MONTH, 1)
+                                                minDate = minDateCalendar.time
+                                            } else {
+                                                minDate = minVisitDate
+                                            }
+                                        } else {
+                                            minDate = minVisitDate
+                                        }
 
-                                    if (formId == FormConstants.IFA_DISTRIBUTION_FORM_ID) {
-                                        minDate = minVisitDate
                                         maxDate = maxVisitDate
 
                                         if (minDate == null) {

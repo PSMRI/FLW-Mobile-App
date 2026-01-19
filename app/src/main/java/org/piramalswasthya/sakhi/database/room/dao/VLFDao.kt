@@ -14,6 +14,7 @@ import org.piramalswasthya.sakhi.model.VHNDCache
 import org.piramalswasthya.sakhi.model.PulsePolioCampaignCache
 import org.piramalswasthya.sakhi.model.ORSCampaignCache
 import org.piramalswasthya.sakhi.model.dynamicEntity.FilariaMDA.FilariaMDAFormResponseJsonEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.filariaaMdaCampaign.FilariaMDACampaignFormResponseJsonEntity
 import java.time.LocalDate
 
 @Dao
@@ -164,19 +165,20 @@ interface VLFDao {
 
     @Query("SELECT * FROM ORSCampaign")
     suspend fun getAllORSCampaigns(): List<ORSCampaignCache>
-    @Query("SELECT * FROM FILARIA_MDA_VISIT_HISTORY WHERE id = :id")
-    suspend fun getFilariaMdaCampaign(id: Int): FilariaMDAFormResponseJsonEntity?
 
-    @Query("SELECT * FROM FILARIA_MDA_VISIT_HISTORY")
-    fun getAllFilariaMdaCampaign(): Flow<List<FilariaMDAFormResponseJsonEntity>>
+    @Query("SELECT * FROM FILARIA_MDA_CAMPAIGN_HISTORY WHERE id = :id")
+    suspend fun getFilariaMdaCampaign(id: Int): FilariaMDACampaignFormResponseJsonEntity?
+
+    @Query("SELECT * FROM FILARIA_MDA_CAMPAIGN_HISTORY")
+    fun getAllFilariaMdaCampaign(): Flow<List<FilariaMDACampaignFormResponseJsonEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun saveRecord(pulsePolioCampaignCache: FilariaMDAFormResponseJsonEntity)
+    suspend fun saveRecord(filariaMdaCampaignCache: FilariaMDACampaignFormResponseJsonEntity)
 
-    @Query("SELECT * FROM FILARIA_MDA_VISIT_HISTORY WHERE syncState = :syncState")
-    fun getFilariaMdaCampaign(syncState: SyncState): List<FilariaMDAFormResponseJsonEntity>?
+    @Query("SELECT * FROM FILARIA_MDA_CAMPAIGN_HISTORY WHERE syncState = :syncState")
+    fun getFilariaMdaCampaign(syncState: SyncState): List<FilariaMDACampaignFormResponseJsonEntity>?
 
-    @Query("SELECT * FROM FILARIA_MDA_VISIT_HISTORY")
-    fun getAllFilariaMdaCampaignForDate(): Flow<List<FilariaMDAFormResponseJsonEntity>>
+    @Query("SELECT * FROM FILARIA_MDA_CAMPAIGN_HISTORY")
+    fun getAllFilariaMdaCampaignForDate(): Flow<List<FilariaMDACampaignFormResponseJsonEntity>>
 
 }

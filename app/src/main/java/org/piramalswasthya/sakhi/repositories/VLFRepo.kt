@@ -5,7 +5,9 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import com.google.gson.Gson
+import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import com.google.gson.JsonParser
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -17,6 +19,7 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONArray
 import org.json.JSONObject
 import org.piramalswasthya.sakhi.database.room.InAppDb
 import org.piramalswasthya.sakhi.database.room.SyncState
@@ -30,6 +33,7 @@ import org.piramalswasthya.sakhi.model.PulsePolioCampaignCache
 import org.piramalswasthya.sakhi.model.VHNCCache
 import org.piramalswasthya.sakhi.model.VHNDCache
 import org.piramalswasthya.sakhi.model.dynamicEntity.FilariaMDA.FilariaMDAFormResponseJsonEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.filariaaMdaCampaign.FilariaMDACampaignFormResponseJsonEntity
 import org.piramalswasthya.sakhi.network.AHDDTO
 import org.piramalswasthya.sakhi.network.AmritApiService
 import org.piramalswasthya.sakhi.network.DewormingDTO
@@ -607,19 +611,19 @@ class VLFRepo @Inject constructor(
     }
 
 
-    suspend fun getFilariaMdaCampaign(id: Int): FilariaMDAFormResponseJsonEntity? {
+    suspend fun getFilariaMdaCampaign(id: Int): FilariaMDACampaignFormResponseJsonEntity? {
         return withContext(Dispatchers.IO) {
             database.vlfDao.getFilariaMdaCampaign(id)
         }
     }
 
-    suspend fun saveFilariaMdaCampaign(filariaMDaCampaignCache: FilariaMDAFormResponseJsonEntity) {
+    suspend fun saveFilariaMdaCampaign(filariaMDaCampaignCache: FilariaMDACampaignFormResponseJsonEntity) {
         withContext(Dispatchers.IO) {
             database.vlfDao.saveRecord(filariaMDaCampaignCache)
         }
     }
 
-    suspend fun getUnsyncedFilariaMdaCampaign(): List<FilariaMDAFormResponseJsonEntity> {
+    suspend fun getUnsyncedFilariaMdaCampaign(): List<FilariaMDACampaignFormResponseJsonEntity> {
         return withContext(Dispatchers.IO) {
             database.vlfDao.getFilariaMdaCampaign(SyncState.UNSYNCED) ?: emptyList()
         }
@@ -1576,18 +1580,29 @@ class VLFRepo @Inject constructor(
                             200 -> {
                                 try {
                                     when (val dataValue = jsonObj.opt("data")) {
-                                        is org.json.JSONArray -> {
+                                        is JSONArray -> {
                                             savefilariaMdaCampaignToServer(dataValue.toString())
-                                            return@withContext 1
+                                            return@withContext if (dataValue.length() > 0) 1 else 0
+
                                         }
 
                                         is String -> {
-                                            savefilariaMdaCampaignToServer(dataValue)
+                                            val element = JsonParser.parseString(dataValue)
+                                            val array = JsonArray()
+
+                                            if (element.isJsonArray) {
+                                                savefilariaMdaCampaignToServer(element.toString())
+                                            } else if (element.isJsonObject) {
+                                                array.add(element)
+                                                savefilariaMdaCampaignToServer(array.toString())
+                                            }
+
                                             return@withContext 1
                                         }
 
                                         is JSONObject -> {
-                                            savefilariaMdaCampaignToServer(dataValue.toString())
+                                            val array = JSONArray().apply { put(dataValue) }
+                                            savefilariaMdaCampaignToServer(array.toString())
                                             return@withContext 1
                                         }
 
@@ -1597,7 +1612,7 @@ class VLFRepo @Inject constructor(
                                         }
                                     }
                                 } catch (e: Exception) {
-                                    Timber.e(e, "Pulse Polio Campaign entries not synced")
+                                    Timber.e(e, "Filaria MDA Campaign entries not synced")
                                     return@withContext 0
                                 }
                             }
@@ -1626,7 +1641,7 @@ class VLFRepo @Inject constructor(
     }
 
 
-    suspend fun saveMdaFilariaCampaignToServer(filariaMdaCache: FilariaMDAFormResponseJsonEntity): Boolean {
+    suspend fun saveMdaFilariaCampaignToServer(filariaMdaCache: FilariaMDACampaignFormResponseJsonEntity): Boolean {
         return withContext(Dispatchers.IO) {
             try {
                 val formDataJson = filariaMdaCache.formDataJson ?: ""
@@ -1721,25 +1736,30 @@ class VLFRepo @Inject constructor(
 
     suspend fun savefilariaMdaCampaignToServer(dataObj: String) {
 
-        val requestDTO = Gson().fromJson(dataObj, JsonObject::class.java)
-        val entries = requestDTO.getAsJsonArray("entries")
-        for (dto in entries) {
+        val jsonArray = Gson().fromJson(dataObj, JsonArray::class.java)
+
+        for (dto in jsonArray) {
             try {
                 val entry = dto.asJsonObject
-                val id = entry.get("id")?.asInt ?: 0
-                val formDataJson = entry.get("formDataJson")?.asString
-                val jsonObject = Gson().fromJson(formDataJson, JsonObject::class.java)
-                val fieldsObj = jsonObject.getAsJsonObject("fields")
+
+                val id = entry.get("id")?.takeIf { !it.isJsonNull }?.asInt ?: 0
+
+                val fieldsObj = entry.getAsJsonObject("fields")
                 val startDate = fieldsObj?.get("start_date")?.asString
-                if (formDataJson != null) {
+
+                if (fieldsObj != null) {
+
+                    val formDataJson = JsonObject().apply {
+                        add("fields", fieldsObj)
+                    }.toString()
+
                     val existing = database.vlfDao.getFilariaMdaCampaign(id)
                     if (existing == null) {
-                        val cache = FilariaMDAFormResponseJsonEntity(
+                        val cache = FilariaMDACampaignFormResponseJsonEntity(
                             id = id,
-                            hhId = 0,
                             formDataJson = formDataJson,
-                            visitDate = startDate.toString(),
-                            visitMonth = toMonthKey(startDate),
+                            visitDate = startDate ?: "",
+                            visitYear = toMonthKey(startDate),
                             formId = "LF_MDA_CAMPAIGN",
                             version = 1,
                             isSynced = true,
@@ -1748,8 +1768,9 @@ class VLFRepo @Inject constructor(
                         database.vlfDao.saveRecord(cache)
                     }
                 }
+
             } catch (e: Exception) {
-                Timber.d("cannot save Filaria MDA Campaign entry $dto due to : $e")
+                Timber.e(e, "cannot save Filaria MDA Campaign entry $dto")
             }
         }
     }
@@ -1757,7 +1778,7 @@ class VLFRepo @Inject constructor(
     private fun toMonthKey(dateStr: String?): String {
         if (dateStr.isNullOrBlank()) return ""
         val inputs = listOf("dd-MM-yyyy", "yyyy-MM-dd")
-        val out = SimpleDateFormat("yyyy-MM", Locale.getDefault())
+        val out = SimpleDateFormat("yyyy", Locale.getDefault())
         for (fmt in inputs) {
             try {
                 val d = SimpleDateFormat(fmt, Locale.getDefault()).parse(dateStr)
