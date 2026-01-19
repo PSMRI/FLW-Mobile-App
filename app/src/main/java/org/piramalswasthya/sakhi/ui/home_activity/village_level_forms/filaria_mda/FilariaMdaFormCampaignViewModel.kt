@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.filaria_m
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,6 +15,7 @@ import org.json.JSONObject
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.ConditionalLogic
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FieldValidation
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FilariaMdaCampaignJsonDao
 import org.piramalswasthya.sakhi.model.BottleItem
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormFieldDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
@@ -31,8 +33,11 @@ import kotlin.collections.orEmpty
 @HiltViewModel
 class FilariaMdaFormCampaignViewModel @Inject constructor(
     private val repository: FilariaMdaCampaignRepository,
-    @ApplicationContext private val context: Context
-) : ViewModel() {
+    @ApplicationContext private val context: Context,
+    savedStateHandle: SavedStateHandle,
+    var dao: FilariaMdaCampaignJsonDao
+
+    ) : ViewModel() {
 
     private val _schema = MutableStateFlow<FormSchemaDto?>(null)
     val schema: StateFlow<FormSchemaDto?> = _schema
@@ -42,7 +47,7 @@ class FilariaMdaFormCampaignViewModel @Inject constructor(
     private val _syncedVisitList = MutableStateFlow<List<FilariaMDACampaignFormResponseJsonEntity>>(emptyList())
 
     var visitDay: String = ""
-    private var isViewMode: Boolean = false
+    var isViewMode: Boolean = false
     private val _isBenDead = MutableStateFlow(false)
     val isBenDead: StateFlow<Boolean> = _isBenDead
 
@@ -50,8 +55,27 @@ class FilariaMdaFormCampaignViewModel @Inject constructor(
     val bottleList: LiveData<List<MDACampaignItem>> = _bottleList
     private val _showToastLiveData = MutableLiveData<String>()
     val showToastLiveData: LiveData<String> = _showToastLiveData
+
+    var yearDate = FilariaMdaCampaignFormFragmentArgs.fromSavedStateHandle(savedStateHandle).date
     var wasDuplicate = false
         private set
+
+
+
+    fun getCurrentYear(): String {
+        return SimpleDateFormat("yyyy", Locale.getDefault())
+            .format(Date())
+    }
+    private val _isCampaignAlreadyAdded = MutableLiveData(false)
+    val isCampaignAlreadyAdded: LiveData<Boolean> = _isCampaignAlreadyAdded
+
+    fun checkCurrentYearCampaign(formId: String) {
+        viewModelScope.launch {
+            val currentYear = getCurrentYear()
+            val existing = dao.getCampaignByBenFormYear(formId, currentYear)
+            _isCampaignAlreadyAdded.postValue(existing != null)
+        }
+    }
 
 
     fun loadBottleData() {
@@ -83,14 +107,17 @@ class FilariaMdaFormCampaignViewModel @Inject constructor(
 
             val localSchemaToRender = cachedSchema ?: repository.getFormSchema(formId) ?: return@launch
 
-            val savedJson = repository.loadFormResponseJson(0, formId)
+            val savedJson = repository.loadFormResponseJson(yearDate)
             val savedFieldValues = if (!savedJson.isNullOrBlank()) {
                 try {
                     val root = JSONObject(savedJson)
                     val fieldsJson = root.optJSONObject("fields") ?: JSONObject()
                     fieldsJson.keys().asSequence().associateWith { fieldsJson.opt(it) }
+
                 } catch (e: Exception) {
+
                     emptyMap()
+
                 }
             } else {
                 emptyMap()
@@ -148,7 +175,7 @@ class FilariaMdaFormCampaignViewModel @Inject constructor(
     private fun toMonthKey(dateStr: String?): String {
         if (dateStr.isNullOrBlank()) return ""
         val inputs = listOf("dd-MM-yyyy", "yyyy-MM-dd")
-        val out = SimpleDateFormat("yyyy-MM", Locale.getDefault())
+        val out = SimpleDateFormat("yyyy", Locale.getDefault())
         for (fmt in inputs) {
             try {
                 val d = SimpleDateFormat(fmt, Locale.getDefault()).parse(dateStr)
@@ -157,9 +184,7 @@ class FilariaMdaFormCampaignViewModel @Inject constructor(
         }
         return try {
             if (Regex("\\d{2}-\\d{2}-\\d{4}").matches(dateStr)) {
-                val yyyy = dateStr.substring(6, 10)
-                val mm = dateStr.substring(3, 5)
-                "$yyyy-$mm"
+                dateStr.substring(6, 10)
             } else ""
         } catch (_: Exception) { "" }
     }
@@ -257,30 +282,25 @@ class FilariaMdaFormCampaignViewModel @Inject constructor(
         } ?: emptyList()
     }
 
-    fun getMaxVisitDate(): Date {
-        val todayCal = Calendar.getInstance().apply {
+    fun getStartDateMin(): Date {
+        return Calendar.getInstance().apply {
+            set(Calendar.DAY_OF_MONTH, 1)
+            add(Calendar.MONTH, -1)
             set(Calendar.HOUR_OF_DAY, 0)
             set(Calendar.MINUTE, 0)
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
-        }
-        val today = todayCal.time
-        val todayMonthKey = SimpleDateFormat("yyyy-MM", Locale.getDefault()).format(today)
-
-        val alreadyInThisMonth = _syncedVisitList.value.any {
-            it.visitYear == todayMonthKey
-        }
-        return if (alreadyInThisMonth) {
-            todayCal.apply { add(Calendar.DATE, -1) }.time
-        } else today
+        }.time
     }
 
-    fun getMinVisitDate(): Date? {
-        return previousVisitDate?.let {
-            Calendar.getInstance().apply {
-                time = it
-                add(Calendar.DATE, 1)
-            }.time
-        }
+    fun getStartDateMax(): Date {
+        return Calendar.getInstance().apply {
+            add(Calendar.MONTH, 2)
+            set(Calendar.DAY_OF_MONTH, getActualMaximum(Calendar.DAY_OF_MONTH))
+            set(Calendar.HOUR_OF_DAY, 23)
+            set(Calendar.MINUTE, 59)
+            set(Calendar.SECOND, 59)
+            set(Calendar.MILLISECOND, 999)
+        }.time
     }
 }

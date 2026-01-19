@@ -54,9 +54,9 @@ class FilariaMdaCampaignAdapter (
 
 
     class MdaClickListener(
-        private val clickedForm: ((id: Int) -> Unit)? = null
+        private val clickedForm: ((date: String) -> Unit)? = null
     ) {
-        fun onClickForm1(item: MDACampaignItem) = clickedForm?.let { it(item.srNo!!) }
+        fun onClickForm1(item: MDACampaignItem) = clickedForm?.let { it(item.startDate!!) }
     }
 
 }

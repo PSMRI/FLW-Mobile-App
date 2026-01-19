@@ -30,6 +30,7 @@ import org.piramalswasthya.sakhi.utils.HelperUtil.launchFilePicker
 import org.piramalswasthya.sakhi.utils.HelperUtil.showPickerDialog
 import org.piramalswasthya.sakhi.utils.dynamicFiledValidator.FieldValidator
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
+import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.LF_MDA_CAMPAIGN
 import org.piramalswasthya.sakhi.work.dynamicWoker.FilariaMDAFormSyncWorker
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -142,8 +143,15 @@ class FilariaMdaCampaignFormFragment : Fragment() {
 
         FilariaMDAFormSyncWorker.enqueue(requireContext())
 
-        viewModel.
-        loadFormSchema( FormConstants.LF_MDA_CAMPAIGN, false)
+        if (viewModel.yearDate.isEmpty()) {
+            binding.btnSave.visibility = View.VISIBLE
+            viewModel.loadFormSchema( FormConstants.LF_MDA_CAMPAIGN, false)
+
+        } else {
+            binding.btnSave.visibility = View.GONE
+            viewModel.loadFormSchema( FormConstants.LF_MDA_CAMPAIGN, true)
+
+        }
 
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         lifecycleScope.launch {
@@ -165,14 +173,15 @@ class FilariaMdaCampaignFormFragment : Fragment() {
 
     private fun refreshAdapter(){
         val visibleFields = viewModel.getVisibleFields().toMutableList()
-        val minVisitDate = viewModel.getMinVisitDate()
-        val maxVisitDate = viewModel.getMaxVisitDate()
+        val minVisitDate = viewModel.getStartDateMin()
+        val maxVisitDate = viewModel.getStartDateMax()
 
         adapter = FormRendererAdapter(
             visibleFields,
-            isViewOnly = false,
+            isViewOnly = viewModel.isViewMode,
             minVisitDate = minVisitDate,
             maxVisitDate = maxVisitDate,
+            formId = LF_MDA_CAMPAIGN,
             onValueChanged =
                 { field, value ->
                     if (value == "pick_image") {

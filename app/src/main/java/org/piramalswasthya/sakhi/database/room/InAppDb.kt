@@ -270,8 +270,21 @@ abstract class InAppDb : RoomDatabase() {
                 it.execSQL("alter table BENEFICIARY add column isConsent BOOL")
 
             })
+          /*  val MIGRATION_52_53 = object : Migration(52, 53) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+
+
+            }*/
+
+
             val MIGRATION_52_53 = object : Migration(52, 53) {
                 override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL(
+                        """
+            CREATE UNIQUE INDEX IF NOT EXISTS index_DewormingMeeting_dewormingDate
+            ON DewormingMeeting(dewormingDate)
+            """.trimIndent()
+                    )
 
                     database.execSQL(
                         """
@@ -306,18 +319,8 @@ abstract class InAppDb : RoomDatabase() {
             """.trimIndent()
                     )
                 }
-            }
 
 
-            val MIGRATION_52_53 = object : Migration(52, 53) {
-                override fun migrate(database: SupportSQLiteDatabase) {
-                    database.execSQL(
-                        """
-            CREATE UNIQUE INDEX IF NOT EXISTS index_DewormingMeeting_dewormingDate
-            ON DewormingMeeting(dewormingDate)
-            """.trimIndent()
-                    )
-                }
             }
 
 

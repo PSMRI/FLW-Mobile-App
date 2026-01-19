@@ -217,8 +217,8 @@ class FilariaMdaCampaignRepository @Inject constructor(
     }
 
 
-    suspend fun loadFormResponseJson(hhId: Long, formId: String): String? =
-        jsonResponseDao.getCampaignLatestForBenForm( formId)?.formDataJson
+    suspend fun loadFormResponseJson( date: String): String? =
+        jsonResponseDao.getCampaignLatestForBenForm( date)?.formDataJson
 
     suspend fun getUnsyncedForms(formName: String): List<FilariaMDACampaignFormResponseJsonEntity> =
         jsonResponseDao.getUnsyncedCampaignForms(formName)

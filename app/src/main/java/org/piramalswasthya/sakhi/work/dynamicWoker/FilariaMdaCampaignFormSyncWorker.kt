@@ -22,7 +22,7 @@ class FilariaMdaCampaignFormSyncWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         return try {
-            val result = repository.getFalariaMdaCampaignFromServer()
+            val result = repository.getFilariaMdaCampaignFromServer()
             when (result) {
                 1 -> {
                     Timber.d("FilariaMdaCampaignFormSyncWorker: Successfully synced data from server")

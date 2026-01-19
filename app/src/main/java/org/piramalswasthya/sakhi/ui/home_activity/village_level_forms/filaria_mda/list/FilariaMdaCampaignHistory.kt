@@ -24,6 +24,7 @@ import org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.filaria_md
 import org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.phc_review_meeting.PHCReviewListFragement
 import org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.phc_review_meeting.PHCReviewListFragementDirections
 import org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.phc_review_meeting.PHCReviewViewModel
+import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.LF_MDA_CAMPAIGN
 import kotlin.getValue
 
 @AndroidEntryPoint
@@ -49,13 +50,16 @@ class FilariaMdaCampaignHistory : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.btnNextPage.visibility = View.VISIBLE
         binding.mdaTitle.visibility = View.VISIBLE
+        viewModel.checkCurrentYearCampaign(LF_MDA_CAMPAIGN)
+        viewModel.isCampaignAlreadyAdded.observe(viewLifecycleOwner) { alreadyAdded ->
+            binding.btnNextPage.isEnabled = !alreadyAdded
+        }
         val pHCAdapter = FilariaMdaCampaignAdapter(
-            clickListener = FilariaMdaCampaignAdapter.MdaClickListener { id ->
+            clickListener = FilariaMdaCampaignAdapter.MdaClickListener { date ->
                 findNavController().navigate(
                     FilariaMdaCampaignHistoryDirections.actionMdaCampagaignHisoryFragmentToMdaFormCampaign(
-                        id
+                        date
                     )
                 )
             })

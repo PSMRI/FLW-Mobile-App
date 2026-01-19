@@ -39,8 +39,8 @@ interface FilariaMdaCampaignJsonDao {
     @Query("SELECT * FROM FILARIA_MDA_CAMPAIGN_HISTORY WHERE formId = :formId AND visitYear = :visitYear LIMIT 1")
     suspend fun getCampaignByBenFormYear(formId: String, visitYear: String): FilariaMDACampaignFormResponseJsonEntity?
 
-    @Query("SELECT * FROM FILARIA_MDA_CAMPAIGN_HISTORY WHERE  formId = :formId ORDER BY visitYear DESC LIMIT 1")
-    suspend fun getCampaignLatestForBenForm( formId: String): FilariaMDACampaignFormResponseJsonEntity?
+    @Query("SELECT * FROM FILARIA_MDA_CAMPAIGN_HISTORY WHERE  visitDate = :visitDate")
+    suspend fun getCampaignLatestForBenForm(visitDate: String): FilariaMDACampaignFormResponseJsonEntity?
 
     @Transaction
     suspend fun upsertByYear(entity: FilariaMDACampaignFormResponseJsonEntity) {

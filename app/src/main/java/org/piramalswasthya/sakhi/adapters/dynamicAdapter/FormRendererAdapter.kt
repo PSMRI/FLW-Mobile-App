@@ -538,6 +538,19 @@
                                 }
                                 else {
 
+                                    if (formId == FormConstants.LF_MDA_CAMPAIGN) {
+                                        minDate = minVisitDate
+                                        maxDate = maxVisitDate
+
+                                        if (minDate == null) {
+                                            calendar.time = today
+                                            calendar.add(Calendar.MONTH, -2)
+                                            minDate = calendar.time
+                                        }
+                                        if (maxDate == null) {
+                                            maxDate = today
+                                        }
+                                    }
 
                                     if (formId == FormConstants.IFA_DISTRIBUTION_FORM_ID) {
                                         minDate = minVisitDate
