@@ -47,6 +47,7 @@ import java.io.FileOutputStream
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
 object HelperUtil {
@@ -825,4 +826,21 @@ object HelperUtil {
             ""
         }
     }
+    fun getCurrentYear(): String {
+        return SimpleDateFormat("yyyy", Locale.getDefault())
+            .format(Date())
+    }
+
+    fun getMinVisitDate(): Date {
+        return Calendar.getInstance().apply {
+            add(Calendar.MONTH, -1)
+        }.time
+    }
+
+    fun getMaxVisitDate(): Date {
+        return Calendar.getInstance().apply {
+            add(Calendar.MONTH, 2)
+        }.time
+    }
+
 }

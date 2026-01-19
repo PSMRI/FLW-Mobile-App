@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.ors_campa
 import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,11 +22,13 @@ import org.piramalswasthya.sakhi.adapters.dynamicAdapter.FormRendererAdapter
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
 import org.piramalswasthya.sakhi.databinding.FragmentOrsCampaignFormBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.utils.HelperUtil
 import org.piramalswasthya.sakhi.utils.HelperUtil.getFileSizeInMB
 import org.piramalswasthya.sakhi.utils.HelperUtil.launchCamera
 import org.piramalswasthya.sakhi.utils.HelperUtil.launchFilePicker
 import org.piramalswasthya.sakhi.utils.HelperUtil.showPickerDialog
 import org.piramalswasthya.sakhi.utils.dynamicFiledValidator.FieldValidator
+import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
 
 @AndroidEntryPoint
 class ORSCampaignFormFragment : Fragment() {
@@ -38,8 +41,7 @@ class ORSCampaignFormFragment : Fragment() {
     private lateinit var adapter: FormRendererAdapter
     private var currentImageField: FormField? = null
     private var tempCameraUri: Uri? = null
-    private var campaignPhotosList = mutableListOf<String>() // Store up to 2 image URIs
-
+    private var campaignPhotosList = mutableListOf<String>()
     private val cameraLauncher =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
             if (success && tempCameraUri != null) {
@@ -68,8 +70,8 @@ class ORSCampaignFormFragment : Fragment() {
             return
         }
 
-        val compressedFile = org.piramalswasthya.sakhi.utils.HelperUtil.compressImageToTemp(uri, "camera_image", context)
-        val base64String = compressedFile?.let { org.piramalswasthya.sakhi.utils.HelperUtil.fileToBase64(it) }
+        val compressedFile = HelperUtil.compressImageToTemp(uri, "camera_image", context)
+        val base64String = compressedFile?.let { HelperUtil.fileToBase64(it) }
 
         if (currentImageField?.fieldId == "campaign_photos" || currentImageField?.fieldId == "campaignPhotos") {
             if (base64String != null) {
@@ -105,8 +107,8 @@ class ORSCampaignFormFragment : Fragment() {
             return
         }
 
-        val compressedFile = org.piramalswasthya.sakhi.utils.HelperUtil.compressImageToTemp(uri, "selected_image", context)
-        val base64String = compressedFile?.let { org.piramalswasthya.sakhi.utils.HelperUtil.fileToBase64(it) }
+        val compressedFile = HelperUtil.compressImageToTemp(uri, "selected_image", context)
+        val base64String = compressedFile?.let { HelperUtil.fileToBase64(it) }
 
         if (currentImageField?.fieldId == "campaign_photos" || currentImageField?.fieldId == "campaignPhotos") {
             if (base64String != null) {
@@ -225,24 +227,25 @@ class ORSCampaignFormFragment : Fragment() {
                 }
             }
         }
+        val minVisitDate = HelperUtil.getMinVisitDate()
+        val maxVisitDate = HelperUtil.getMaxVisitDate()
 
         adapter = FormRendererAdapter(
             visibleFields,
             isViewOnly = viewModel.isViewOnly,
-            minVisitDate = null,
-            maxVisitDate = null,
+            minVisitDate = minVisitDate,
+            maxVisitDate = maxVisitDate,
+            formId= FormConstants.ORS_CAMPAIGN_FORM_ID,
             onValueChanged = { field, value ->
                 if (value == "pick_image") {
                     currentImageField = field
                     if (field.fieldId == "campaign_photos" || field.fieldId == "campaignPhotos") {
-                        // Always allow image selection - will keep only latest 2
                         showImagePickerDialog()
                     } else {
                         showImagePickerDialog()
                     }
                 } else {
                     field.value = value
-                    // Update campaignPhotosList if this is the campaign_photos field
                     if ((field.fieldId == "campaign_photos" || field.fieldId == "campaignPhotos") && value is List<*>) {
                         campaignPhotosList = value.filterIsInstance<String>().toMutableList()
                     }

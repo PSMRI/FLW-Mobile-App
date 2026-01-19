@@ -142,6 +142,10 @@ interface VLFDao {
     @Query("SELECT * FROM PulsePolioCampaign")
     fun getAllPulsePolioCampaignForDate(): Flow<List<PulsePolioCampaignCache>>
 
+    @Query("SELECT * FROM PulsePolioCampaign")
+    suspend fun getAllPulsePolioCampaigns(): List<PulsePolioCampaignCache>
+
+
     // For ORS Campaign form
     @Query("SELECT * FROM ORSCampaign WHERE id = :id")
     suspend fun getORSCampaign(id: Int): ORSCampaignCache?
@@ -157,6 +161,9 @@ interface VLFDao {
 
     @Query("SELECT * FROM ORSCampaign")
     fun getAllORSCampaignForDate(): Flow<List<ORSCampaignCache>>
+
+    @Query("SELECT * FROM ORSCampaign")
+    suspend fun getAllORSCampaigns(): List<ORSCampaignCache>
     @Query("SELECT * FROM FILARIA_MDA_VISIT_HISTORY WHERE id = :id")
     suspend fun getFilariaMdaCampaign(id: Int): FilariaMDAFormResponseJsonEntity?
 

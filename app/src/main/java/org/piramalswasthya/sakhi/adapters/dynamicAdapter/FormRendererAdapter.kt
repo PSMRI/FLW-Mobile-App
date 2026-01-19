@@ -715,6 +715,33 @@
                                             maxDate = today
                                         }
                                     }
+                                    else if (formId == FormConstants.PULSE_POLIO_CAMPAIGN_FORM_ID || 
+                                             formId == FormConstants.ORS_CAMPAIGN_FORM_ID) {
+                                        if (field.fieldId == "end_date") {
+                                            val startDateValue = getDate("start_date")
+                                            if (startDateValue != null) {
+                                                val minDateCalendar = Calendar.getInstance()
+                                                minDateCalendar.time = startDateValue
+                                                minDateCalendar.add(Calendar.DAY_OF_MONTH, 1)
+                                                minDate = minDateCalendar.time
+                                            } else {
+                                                minDate = minVisitDate
+                                            }
+                                        } else {
+                                            minDate = minVisitDate
+                                        }
+                                        
+                                        maxDate = maxVisitDate
+
+                                        if (minDate == null) {
+                                            calendar.time = today
+                                            calendar.add(Calendar.MONTH, -2)
+                                            minDate = calendar.time
+                                        }
+                                        if (maxDate == null) {
+                                            maxDate = today
+                                        }
+                                    }
                                     else{
                                         minDate = when (field.fieldId) {
                                             "visit_date" -> null
@@ -747,7 +774,94 @@
                                             notifyItemChanged(adapterPosition)
                                         }
 
+                                        // Validate date range for Pulse Polio and ORS Campaign forms
+                                        if (formId == FormConstants.PULSE_POLIO_CAMPAIGN_FORM_ID || 
+                                            formId == FormConstants.ORS_CAMPAIGN_FORM_ID) {
+                                            val selectedDate = sdf.parse(dateStr)
+                                            if (minDate != null && selectedDate.before(minDate)) {
+                                                field.errorMessage = "Date cannot be before ${sdf.format(minDate)}"
+                                            } else if (maxDate != null && selectedDate.after(maxDate)) {
+                                                field.errorMessage = "Date cannot be after ${sdf.format(maxDate)}"
+                                            }
+                                            
+                                            // Validate end_date is at least 1 day after start_date
+                                            if (field.fieldId == "end_date") {
+                                                val startDateValue = getDate("start_date")
+                                                if (startDateValue != null) {
+                                                    val minEndDate = Calendar.getInstance()
+                                                    minEndDate.time = startDateValue
+                                                    minEndDate.add(Calendar.DAY_OF_MONTH, 1)
+                                                    minEndDate.set(Calendar.HOUR_OF_DAY, 0)
+                                                    minEndDate.set(Calendar.MINUTE, 0)
+                                                    minEndDate.set(Calendar.SECOND, 0)
+                                                    minEndDate.set(Calendar.MILLISECOND, 0)
+                                                    
+                                                    val selectedDateCal = Calendar.getInstance()
+                                                    selectedDateCal.time = selectedDate
+                                                    selectedDateCal.set(Calendar.HOUR_OF_DAY, 0)
+                                                    selectedDateCal.set(Calendar.MINUTE, 0)
+                                                    selectedDateCal.set(Calendar.SECOND, 0)
+                                                    selectedDateCal.set(Calendar.MILLISECOND, 0)
+                                                    
+                                                    val startDateCal = Calendar.getInstance()
+                                                    startDateCal.time = startDateValue
+                                                    startDateCal.set(Calendar.HOUR_OF_DAY, 0)
+                                                    startDateCal.set(Calendar.MINUTE, 0)
+                                                    startDateCal.set(Calendar.SECOND, 0)
+                                                    startDateCal.set(Calendar.MILLISECOND, 0)
+                                                    
+                                                    if (selectedDateCal.before(minEndDate) || selectedDateCal.time == startDateCal.time) {
+                                                        field.errorMessage = "End date must be at least 1 day after start date (${sdf.format(minEndDate.time)})"
+                                                    }
+                                                }
+                                            }
+                                            
+                                            if (field.errorMessage != null) {
+                                                notifyItemChanged(adapterPosition)
+                                            }
+                                        }
+
                                         when (field.fieldId) {
+                                            "start_date" -> {
+                                                if (formId == FormConstants.PULSE_POLIO_CAMPAIGN_FORM_ID ||
+                                                    formId == FormConstants.ORS_CAMPAIGN_FORM_ID) {
+                                                    val endDateField = fields.find { it.fieldId == "end_date" }
+                                                    if (endDateField != null) {
+                                                        val startDateParsed = sdf.parse(dateStr)
+                                                        if (startDateParsed != null) {
+                                                            val minEndDate = Calendar.getInstance()
+                                                            minEndDate.time = startDateParsed
+                                                            minEndDate.add(Calendar.DAY_OF_MONTH, 1)
+                                                            endDateField.validation?.minDate = sdf.format(minEndDate.time)
+                                                            notifyItemChanged(fields.indexOf(endDateField))
+                                                            
+                                                            val existingEndDate = getDate("end_date")
+                                                            if (existingEndDate != null) {
+                                                                val existingEndDateCal = Calendar.getInstance()
+                                                                existingEndDateCal.time = existingEndDate
+                                                                existingEndDateCal.set(Calendar.HOUR_OF_DAY, 0)
+                                                                existingEndDateCal.set(Calendar.MINUTE, 0)
+                                                                existingEndDateCal.set(Calendar.SECOND, 0)
+                                                                existingEndDateCal.set(Calendar.MILLISECOND, 0)
+                                                                
+                                                                val startDateCal = Calendar.getInstance()
+                                                                startDateCal.time = startDateParsed
+                                                                startDateCal.set(Calendar.HOUR_OF_DAY, 0)
+                                                                startDateCal.set(Calendar.MINUTE, 0)
+                                                                startDateCal.set(Calendar.SECOND, 0)
+                                                                startDateCal.set(Calendar.MILLISECOND, 0)
+                                                                
+                                                                if (existingEndDateCal.before(minEndDate) || existingEndDateCal.time == startDateCal.time) {
+                                                                    setError("end_date", "End date must be at least 1 day after start date")
+                                                                } else {
+                                                                    clearError("end_date")
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            
                                             "visit_date" -> {
                                                 val admission = fields.find { it.fieldId == "nrc_admission_date" }
                                                 admission?.validation?.minDate = dateStr

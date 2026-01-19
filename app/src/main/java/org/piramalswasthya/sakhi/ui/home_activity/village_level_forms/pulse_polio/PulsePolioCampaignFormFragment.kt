@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.pulse_pol
 import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,6 +29,7 @@ import org.piramalswasthya.sakhi.utils.HelperUtil.showPickerDialog
 import org.piramalswasthya.sakhi.utils.dynamicFiledValidator.FieldValidator
 import com.google.gson.Gson
 import org.piramalswasthya.sakhi.utils.HelperUtil
+import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
 
 @AndroidEntryPoint
 class PulsePolioCampaignFormFragment : Fragment() {
@@ -227,12 +229,15 @@ class PulsePolioCampaignFormFragment : Fragment() {
                 }
             }
         }
+        val minVisitDate = HelperUtil.getMinVisitDate()
+        val maxVisitDate = HelperUtil.getMaxVisitDate()
 
         adapter = FormRendererAdapter(
             visibleFields,
             isViewOnly = viewModel.isViewOnly,
-            minVisitDate = null,
-            maxVisitDate = null,
+            minVisitDate = minVisitDate,
+            maxVisitDate = maxVisitDate,
+            formId= FormConstants.PULSE_POLIO_CAMPAIGN_FORM_ID,
             onValueChanged = { field, value ->
                 if (value == "pick_image") {
                     currentImageField = field
