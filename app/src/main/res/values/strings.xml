@@ -169,6 +169,55 @@
     <string name="ahd_date">AHD Date</string>
     <string name="upload_image">Upload Image</string>
     <string name="upload_image_sub">Upload JPEG or PNG file (Max: 5MB)</string>
+    <string name="visit_date_2">Visit Date</string>
+    <string name="visit_tb">Visit</string>
+    <string name="visit_format">Visit-%d</string>
+    <string name="type_of_tb_case">Type of TB case?</string>
+    <string name="reason_for_suspicion">Reason for suspicion</string>
+    <string name="has_symptoms">Does the patient have symptoms?</string>
+    <string name="is_chest_xray_done">Is the TB Chest X-Ray Test done?</string>
+    <string name="chest_xray_result">Chest X-Ray Test Result</string>
+    <string name="referral_facility">Referral Facility</string>
+    <string name="is_tb_confirmed">Has the diagnosis of TB been confirmed?</string>
+    <string name="is_drtb_confirmed">Has the diagnosis of DR-TB been confirmed?</string>
+
+    <string-array name="type_of_tb_case">
+        <item>New case of TB</item>
+        <item>Previously treated TB case</item>
+        <item>DR-TB case</item>
+    </string-array>
+
+    <string-array name="reason_for_suspicion">
+        <item>Treatment failure</item>
+        <item>TB Relapse/Recurring symptoms</item>
+        <item>Contact with DR-TB case</item>
+        <item>Treatment after LFU (Lost to Follow-up)</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="chest_xray_result">
+        <item>Clinically Diagnosed TB</item>
+        <item>TB Not suspected</item>
+    </string-array>
+
+    <string-array name="referral_facility">
+        <item>District TB Centre (DTC)</item>
+        <item>HWC</item>
+        <item>PHC</item>
+        <item>CHC</item>
+        <item>District Hospital</item>
+        <item>Govt. Medical College</item>
+    </string-array>
+
+    <string-array name="tb_submitted_yet_suspected">
+        <item>HWC</item>
+        <item>PHC</item>
+        <item>CHC</item>
+        <item>District Hospital</item>
+        <item>Govt. Medical College</item>
+    </string-array>
+
+
     <string-array name="yes_no_options">
         <item>Yes</item>
         <item>No</item>
@@ -377,6 +426,9 @@
     <string name="tb_screening_list">TB Screening List</string>
     <string name="tb_suspected_list">Suspected TB cases</string>
     <string name="tb_screening_form">TB Screening Form</string>
+    <string name="tb_confirmed_list">TB Confirmed List</string>
+    <string name="tb_confirmed_form">TB Confirmed Form</string>
+
     <string name="maleria_screening_form">Malaria Form</string>
     <string name="kala_screening_form">KALA Azar Form</string>
     <string name="aes_screening_form">AES Form</string>
@@ -753,6 +805,50 @@
     <string name="place_of_ndd">Place of NDD</string>
     <string name="date_of_ndd">Date of NDD</string>
     <string name="was_the_deworming_round_conducted">Was the deworming round conducted?</string>
+
+    <string name="regimen_type">Regimen Type</string>
+    <string name="monthly_follow_up_done">Monthly follow up done</string>
+    <string name="adherence_to_medicines">Adherence to Medicines</string>
+    <string name="any_discomfort">Any discomfort</string>
+    <string name="treatment_completed">Did the patient complete the full course of Treatment?</string>
+    <string name="treatment_outcome">TB Treatment outcomes</string>
+    <string name="reason_for_not_completing">Reason for not completing treatment</string>
+    <string name="tuberculosis">Tuberculosis</string>
+    <string name="only_one_follow_up_per_month">Only one follow-up visit per month is allowed</string>
+    <string name="follow_up_must_be_after_last">Follow-up date must be after the last follow-up date</string>
+    <string name="month_format">Month-%d</string>
+
+    <!-- Arrays for TB Confirmed Treatment -->
+    <string-array name="tb_regimen_types">
+        <item>DS-TB (6 Months)</item>
+        <item>Shorter Regimen (9–12 Months)</item>
+        <item>Longer Regimen (18–24 Months)</item>
+        <item>BPaL Regimen (6 Months)</item>
+        <item>INH Mono (6 Month)</item>
+    </string-array>
+
+    <string-array name="adherence_options">
+        <item>Regular</item>
+        <item>Irregular</item>
+    </string-array>
+
+    <string-array name="tb_treatment_outcomes">
+        <item>Cured</item>
+        <item>Failed</item>
+        <item>Lost to Follow-up (LFU)</item>
+        <item>Death</item>
+    </string-array>
+
+    <string-array name="place_of_death">
+        <item>Home</item>
+        <item>Subcenter</item>
+        <item>PHC</item>
+        <item>CHC</item>
+        <item>District Hospital</item>
+        <item>Medical College Hospital</item>
+        <item>Private Hospital</item>
+        <item>Other Place</item>
+    </string-array>
 
 
     <string-array name="hbyc_month_array">

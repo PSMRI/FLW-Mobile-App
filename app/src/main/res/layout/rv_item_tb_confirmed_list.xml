@@ -9,7 +9,7 @@
             type="org.piramalswasthya.sakhi.model.BenWithTbSuspectedDomain" />
         <variable
             name="clickListener"
-            type="org.piramalswasthya.sakhi.adapters.TbSuspectedListAdapter.ClickListener" />
+            type="org.piramalswasthya.sakhi.adapters.TbConfirmedListAdapter.ClickListener" />
         <variable
             name="father"
             type="Boolean" />
@@ -72,7 +72,7 @@
                         android:layout_gravity="center_vertical|end"
                         android:layout_marginHorizontal="@dimen/padding_small"
                         android:contentDescription="@string/iv_sync_state_tv"
-                        app:syncState="@{benWithTb.tbSuspected.syncState}"
+                        app:syncState="@{benWithTb.latestTbSyncState}"
                         tools:src="@drawable/ic_synced" />
 
                 </LinearLayout>
@@ -311,6 +311,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/margin_normal"
                     android:layout_marginBottom="@dimen/margin_normal"
+                    android:text="@string/follow_up"
                     android:onClick="@{()-> clickListener.onClickForm(benWithTb)}"
                     android:textColor="?attr/colorOnPrimary"
                     app:layout_constraintBottom_toBottomOf="parent"
