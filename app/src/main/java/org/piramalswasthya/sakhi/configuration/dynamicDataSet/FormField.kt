@@ -12,7 +12,6 @@ data class FormField(
     val conditional: ConditionalLogic? = null,
     var errorMessage: String? = null,
     val placeholder: String? = null,
-
     val validation: FieldValidation? = null,
     var isEditable: Boolean = true
 )

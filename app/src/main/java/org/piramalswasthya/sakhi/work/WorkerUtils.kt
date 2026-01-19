@@ -195,6 +195,7 @@ object WorkerUtils {
                 pullWorkRequest
             )
             .then(ancFormSyncWorker)
+            .then(pushFilariaMdaCampaignFormSyncWorker)
             .then(CUFYORSFormSyncWorker)
             .then(hbncAndHbyceWorker)
             .then(CUFYIFAFormSyncWorker)
@@ -237,7 +238,6 @@ object WorkerUtils {
             .then(pushChildHBNCToAmritWorker)
             .then(pushAbhaWorkRequest)
             .then(pushVLFToAmritWorker)
-            .then(pushFilariaMdaCampaignFormSyncWorker)
             .enqueue()
     }
 
@@ -405,6 +405,7 @@ object WorkerUtils {
                 pushWorkRequest
             )
             .then(ancPushWorkRequest)
+            .then(pushFilariaMdaCampaignFormSyncWorker)
             .then(pushMaaMeetingsWorkRequest)
             .then(pushSaasBahuSamelanAmritWorker)
             .then(pushCbacWorkRequest)
@@ -445,7 +446,6 @@ object WorkerUtils {
             .then(pushkalaAzarToAmritWorker)
             .then(pushFilariaToAmritWorker)
             .then(pushNcdreferWorkRequest)
-            .then(pushFilariaMdaCampaignFormSyncWorker)
 
             .enqueue()
     }
@@ -605,6 +605,7 @@ object WorkerUtils {
             )
             .then(ancPullWorkRequest)
             .then(pullVLFWorkRequest)
+            .then(pullFilariaMDACampaignToAmritWorker)
             .then(maaMeetingFormSyncWorkerRequest)
             .then(pullEyeSurgeryFormSyncWorker)
             .then(pullFilariaMDAFormSyncWorker)
@@ -643,7 +644,6 @@ object WorkerUtils {
             .then(pullkalaAzarToAmritWorker)
             .then(pullFilariaToAmritWorker)
             .then(pullLeprosyToAmritWorker)
-            .then(pullFilariaMDACampaignToAmritWorker)
             .then(setSyncCompleteWorker)
             .enqueue()
     }

@@ -23,6 +23,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.filariaaMdaCampaign.Filaria
 import org.piramalswasthya.sakhi.model.dynamicModel.MDACampaignItem
 import org.piramalswasthya.sakhi.repositories.dynamicRepo.FilariaMdaCampaignRepository
 import org.piramalswasthya.sakhi.work.dynamicWoker.FilariaMDAFormSyncWorker
+import org.piramalswasthya.sakhi.work.dynamicWoker.FilariaMdaCampaignPushWorker
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -233,7 +234,7 @@ class FilariaMdaFormCampaignViewModel @Inject constructor(
             wasDuplicate = false
 
             loadSyncedVisitList()
-            FilariaMDAFormSyncWorker.enqueue(context)
+            FilariaMdaCampaignPushWorker.enqueue(context)
 
             true
 
@@ -283,24 +284,32 @@ class FilariaMdaFormCampaignViewModel @Inject constructor(
     }
 
     fun getStartDateMin(): Date {
-        return Calendar.getInstance().apply {
-            set(Calendar.DAY_OF_MONTH, 1)
-            add(Calendar.MONTH, -1)
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }.time
+        val cal = Calendar.getInstance()
+        cal.time = Date()
+
+        cal.add(Calendar.MONTH, -1)
+        cal.set(Calendar.DAY_OF_MONTH, 1)
+
+        cal.set(Calendar.HOUR_OF_DAY, 0)
+        cal.set(Calendar.MINUTE, 0)
+        cal.set(Calendar.SECOND, 0)
+        cal.set(Calendar.MILLISECOND, 0)
+
+        return cal.time
     }
 
     fun getStartDateMax(): Date {
-        return Calendar.getInstance().apply {
-            add(Calendar.MONTH, 2)
-            set(Calendar.DAY_OF_MONTH, getActualMaximum(Calendar.DAY_OF_MONTH))
-            set(Calendar.HOUR_OF_DAY, 23)
-            set(Calendar.MINUTE, 59)
-            set(Calendar.SECOND, 59)
-            set(Calendar.MILLISECOND, 999)
-        }.time
+        val cal = Calendar.getInstance()
+        cal.time = Date()
+
+        cal.add(Calendar.MONTH, 2)
+        cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH))
+
+        cal.set(Calendar.HOUR_OF_DAY, 23)
+        cal.set(Calendar.MINUTE, 59)
+        cal.set(Calendar.SECOND, 59)
+        cal.set(Calendar.MILLISECOND, 999)
+
+        return cal.time
     }
 }
