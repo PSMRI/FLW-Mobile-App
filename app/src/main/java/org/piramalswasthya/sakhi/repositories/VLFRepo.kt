@@ -481,6 +481,11 @@ class VLFRepo @Inject constructor(
         }
     }
 
+    suspend fun getAllPulsePolioCampaigns(): List<PulsePolioCampaignCache> {
+        return database.vlfDao.getAllPulsePolioCampaigns()
+    }
+
+
     suspend fun getPulsePolioCampaignFromServer(): Int {
         return withContext(Dispatchers.IO) {
             val user = preferenceDao.getLoggedInUser()
