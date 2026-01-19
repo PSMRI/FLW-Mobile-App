@@ -715,6 +715,20 @@
                                             maxDate = today
                                         }
                                     }
+                                    else if (formId == FormConstants.PULSE_POLIO_CAMPAIGN_FORM_ID || 
+                                             formId == FormConstants.ORS_CAMPAIGN_FORM_ID) {
+                                        minDate = minVisitDate
+                                        maxDate = maxVisitDate
+
+                                        if (minDate == null) {
+                                            calendar.time = today
+                                            calendar.add(Calendar.MONTH, -2)
+                                            minDate = calendar.time
+                                        }
+                                        if (maxDate == null) {
+                                            maxDate = today
+                                        }
+                                    }
                                     else{
                                         minDate = when (field.fieldId) {
                                             "visit_date" -> null
@@ -738,6 +752,18 @@
                                         field.errorMessage = null
 
                                         if (field.fieldId == "ifa_provision_date") {
+                                            val selectedDate = sdf.parse(dateStr)
+                                            if (minDate != null && selectedDate.before(minDate)) {
+                                                field.errorMessage = "Date cannot be before ${sdf.format(minDate)}"
+                                            } else if (maxDate != null && selectedDate.after(maxDate)) {
+                                                field.errorMessage = "Date cannot be after ${sdf.format(maxDate)}"
+                                            }
+                                            notifyItemChanged(adapterPosition)
+                                        }
+
+                                        // Validate date range for Pulse Polio and ORS Campaign forms
+                                        if (formId == FormConstants.PULSE_POLIO_CAMPAIGN_FORM_ID || 
+                                            formId == FormConstants.ORS_CAMPAIGN_FORM_ID) {
                                             val selectedDate = sdf.parse(dateStr)
                                             if (minDate != null && selectedDate.before(minDate)) {
                                                 field.errorMessage = "Date cannot be before ${sdf.format(minDate)}"
