@@ -240,17 +240,11 @@ class TBRepo @Inject constructor(
         val requestDTO = Gson().fromJson(dataObj, TBSuspectedRequestDTO::class.java)
         requestDTO?.tbSuspectedList?.forEach { tbSuspectedDTO ->
             tbSuspectedDTO.visitDate?.let {
-                val tbSuspectedCache: TBSuspectedCache? =
-                    tbDao.getTbSuspected(
-                        tbSuspectedDTO.benId,
-                        getLongFromDate(tbSuspectedDTO.visitDate),
-                        getLongFromDate(tbSuspectedDTO.visitDate) - 19_800_000
-                    )
-                if (tbSuspectedCache == null) {
+
                     benDao.getBen(tbSuspectedDTO.benId)?.let {
                         tbDao.saveTbSuspected(tbSuspectedDTO.toCache())
                     }
-                }
+                
             }
         }
         return tbSuspectedList
