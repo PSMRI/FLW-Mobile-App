@@ -14,9 +14,13 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.configuration.TBScreeningDataset
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.database.shared_preferences.ReferralStatusManager
+import org.piramalswasthya.sakhi.model.ReferalCache
 import org.piramalswasthya.sakhi.model.TBScreeningCache
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.TBRepo
+import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.homeVisit.AntenatalCounsellingViewModel
+import org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.cbac.CbacViewModel.ReferralType
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -26,10 +30,21 @@ class TBScreeningFormViewModel @Inject constructor(
     preferenceDao: PreferenceDao,
     @ApplicationContext context: Context,
     private val tbRepo: TBRepo,
-    private val benRepo: BenRepo
+    private val benRepo: BenRepo,
+    private val referralStatusManager: ReferralStatusManager
 ) : ViewModel() {
     val benId =
         TBScreeningFormFragmentArgs.fromSavedStateHandle(savedStateHandle).benId
+
+    enum class ReferralType {
+        NCD,
+        TB,
+        LEPROSY,
+        GERIATRIC,
+        COPD,
+        DEPRESSION,
+        HRP
+    }
 
     enum class State {
         IDLE, SAVING, SAVE_SUCCESS, SAVE_FAILED
@@ -56,6 +71,7 @@ class TBScreeningFormViewModel @Inject constructor(
     val formList = dataset.listFlow
 
     var suspectedTB: String? = null
+    var referToHwcFacility: String? = null
 
     var suspectedTBFamily: String? = null
 
@@ -88,6 +104,33 @@ class TBScreeningFormViewModel @Inject constructor(
 
         }
     }
+    private val _completedReferrals = MutableLiveData<MutableSet<ReferralType>>(mutableSetOf())
+    fun markReferralCompleted(type: ReferralType) {
+        val set = _completedReferrals.value ?: mutableSetOf()
+        set.add(type)
+        _completedReferrals.value = set
+        referralStatusManager.markAsReferred(benId, type.name)
+    }
+
+    fun isReferralAlreadyDone(type: ReferralType): Boolean {
+        return _completedReferrals.value?.contains(type) == true
+    }
+    private val _referralList = MutableLiveData<MutableList<ReferalCache>>(mutableListOf())
+    val referralList: LiveData<MutableList<ReferalCache>> = _referralList
+    var referralCache: ReferalCache? = null
+    fun addReferral(referral: ReferalCache) {
+        val list = _referralList.value ?: mutableListOf()
+        val alreadyExists = list.any {
+            it.referralReason == referral.referralReason
+        }
+
+        if (!alreadyExists) {
+            list.add(referral)
+            _referralList.value = list
+            referralCache = referral
+            referralStatusManager.markAsReferred(benId, AntenatalCounsellingViewModel.ReferralType.MATERNAL.name)
+        }
+    }
 
     fun updateListOnValueChanged(formId: Int, index: Int) {
         viewModelScope.launch {
@@ -98,8 +141,9 @@ class TBScreeningFormViewModel @Inject constructor(
 
 
     fun getAlerts() {
-        suspectedTB = dataset.isTbSuspected()
-        suspectedTBFamily = dataset.isTbSuspectedFamily()
+ //       suspectedTB = dataset.isTbSuspected()
+//        suspectedTBFamily = dataset.isTbSuspectedFamily()
+        referToHwcFacility = dataset.referHwcFacility()
     }
 
     fun saveForm() {

@@ -1,42 +1,37 @@
 package org.piramalswasthya.sakhi.network
 
 import android.os.Parcelable
-import androidx.room.PrimaryKey
-import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import kotlinx.parcelize.Parcelize
 import org.piramalswasthya.sakhi.database.room.SyncState
+import org.piramalswasthya.sakhi.model.ABHAModel
+import org.piramalswasthya.sakhi.model.AESScreeningCache
+import org.piramalswasthya.sakhi.model.AHDCache
+import org.piramalswasthya.sakhi.model.AdolescentHealthCache
+import org.piramalswasthya.sakhi.model.DewormingCache
+import org.piramalswasthya.sakhi.model.FilariaScreeningCache
 import org.piramalswasthya.sakhi.model.HRPMicroBirthPlanCache
 import org.piramalswasthya.sakhi.model.HRPNonPregnantAssessCache
 import org.piramalswasthya.sakhi.model.HRPNonPregnantTrackCache
 import org.piramalswasthya.sakhi.model.HRPPregnantAssessCache
 import org.piramalswasthya.sakhi.model.HRPPregnantTrackCache
-import org.piramalswasthya.sakhi.model.TBScreeningCache
-import org.piramalswasthya.sakhi.model.TBSuspectedCache
-import org.piramalswasthya.sakhi.utils.KeyUtils
-import java.text.SimpleDateFormat
-import java.util.Locale
-import kotlinx.parcelize.Parcelize
-import org.piramalswasthya.sakhi.model.DewormingCache
-import org.piramalswasthya.sakhi.model.AHDCache
-import org.piramalswasthya.sakhi.model.PHCReviewMeetingCache
-import org.piramalswasthya.sakhi.model.VHNCCache
-import org.piramalswasthya.sakhi.model.VHNDCache
-
-import org.piramalswasthya.sakhi.model.AESScreeningCache
-import org.piramalswasthya.sakhi.model.AdolescentHealthCache
-import org.piramalswasthya.sakhi.model.FilariaScreeningCache
 import org.piramalswasthya.sakhi.model.IRSRoundScreening
 import org.piramalswasthya.sakhi.model.KalaAzarScreeningCache
+import org.piramalswasthya.sakhi.model.LeprosyFollowUpCache
 import org.piramalswasthya.sakhi.model.LeprosyScreeningCache
 import org.piramalswasthya.sakhi.model.MalariaConfirmedCasesCache
 import org.piramalswasthya.sakhi.model.MalariaScreeningCache
-import org.piramalswasthya.sakhi.model.getDateTimeStringFromLong
-import org.piramalswasthya.sakhi.model.ABHAModel
+import org.piramalswasthya.sakhi.model.PHCReviewMeetingCache
 import org.piramalswasthya.sakhi.model.ReferalCache
-import org.piramalswasthya.sakhi.model.Gender
-import org.piramalswasthya.sakhi.model.LeprosyFollowUpCache
 import org.piramalswasthya.sakhi.model.TBConfirmedTreatmentCache
-import org.piramalswasthya.sakhi.utils.HelperUtil.getDateStringFromLong
+import org.piramalswasthya.sakhi.model.TBScreeningCache
+import org.piramalswasthya.sakhi.model.TBSuspectedCache
+import org.piramalswasthya.sakhi.model.VHNCCache
+import org.piramalswasthya.sakhi.model.VHNDCache
+import org.piramalswasthya.sakhi.model.getDateTimeStringFromLong
+import org.piramalswasthya.sakhi.utils.KeyUtils
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @JsonClass(generateAdapter = true)
 data class D2DAuthUserRequest(
@@ -1094,7 +1089,15 @@ data class TBScreeningDTO(
     var nightSweats: Boolean?,
     var historyOfTb: Boolean?,
     var takingAntiTBDrugs: Boolean?,
-    var familySufferingFromTB: Boolean?
+    var familySufferingFromTB: Boolean?,
+    var riseOfFever: Boolean? = null,
+    var lossOfAppetite: Boolean? = null,
+    var age: Boolean? = null,
+    var diabetic: Boolean? = null,
+    var tobaccoUser: Boolean? = null,
+    var bmi: Boolean? = null,
+    var contactWithTBPatient: Boolean? = null,
+    var historyOfTBInLastFiveYrs: Boolean? = null,
 ) {
     fun toCache(): TBScreeningCache {
         return TBScreeningCache(
@@ -1108,6 +1111,14 @@ data class TBScreeningDTO(
             historyOfTb = historyOfTb,
             takingAntiTBDrugs = takingAntiTBDrugs,
             familySufferingFromTB = familySufferingFromTB,
+            riseOfFever = riseOfFever,
+            lossOfAppetite = lossOfAppetite,
+            age = age,
+            diabetic = diabetic,
+            tobaccoUser = tobaccoUser,
+            bmi = bmi,
+            contactWithTBPatient = contactWithTBPatient,
+            historyOfTBInLastFiveYrs = historyOfTBInLastFiveYrs,
             syncState = SyncState.SYNCED
         )
     }

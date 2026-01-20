@@ -10,11 +10,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
+import org.piramalswasthya.sakhi.model.ReferalCache
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
@@ -28,11 +30,25 @@ class TBScreeningFormFragment : Fragment() {
 
     private val viewModel: TBScreeningFormViewModel by viewModels()
 
+    var referralForReason = "Suspected TB case"
+    var referType = "TB"
+
     private val tbSuspectedAlert by lazy {
         AlertDialog.Builder(requireContext())
             .setTitle(resources.getString(R.string.tb_screening))
             .setMessage("it")
             .setPositiveButton(resources.getString(R.string.ok)) { dialog, _ -> dialog.dismiss() }
+            .create()
+    }
+
+    private val referToHwcFacilityAlert by lazy {
+        AlertDialog.Builder(requireContext())
+            .setTitle(resources.getString(R.string.tb_screening))
+            .setMessage("it")
+            .setPositiveButton(resources.getString(R.string.yes)) {dialog, _ ->
+             findNavController().navigate(TBScreeningFormFragmentDirections.actionTBScreeningFormFragmentToNcdReferForm(viewModel.benId, referral = referralForReason, /*cbacId = viewModel.cbacId*/ referralType = referType))
+            }
+            .setNegativeButton(resources.getString(R.string.yes)) { dialog, _ -> dialog.dismiss() }
             .create()
     }
 
@@ -97,12 +113,39 @@ class TBScreeningFormFragment : Fragment() {
                 else -> {}
             }
         }
+
+        findNavController()
+            .currentBackStackEntry
+            ?.savedStateHandle
+            ?.getLiveData<String>("REFERRAL_DONE")
+            ?.observe(viewLifecycleOwner) { typeName ->
+
+                val type = TBScreeningFormViewModel.ReferralType.valueOf(typeName)
+                viewModel.markReferralCompleted(type)
+            }
+
+        findNavController().currentBackStackEntry
+            ?.savedStateHandle
+            ?.getLiveData<String>("REFERRAL_RESULT")
+            ?.observe(viewLifecycleOwner) { json ->
+                val referral = Gson().fromJson(json, ReferalCache::class.java)
+                viewModel.addReferral(referral)
+                viewModel.saveForm()
+
+
+
+            }
     }
 
     private fun submitTBScreeningForm() {
         if (validateCurrentPage()) {
-            showAlerts()
-            viewModel.saveForm()
+            viewModel.getAlerts()
+            if (viewModel.referToHwcFacility.isNullOrBlank()){
+                viewModel.saveForm()
+            }else{
+                showAlerts()
+            }
+           // viewModel.saveForm()
         }
     }
 
@@ -116,6 +159,10 @@ class TBScreeningFormFragment : Fragment() {
         viewModel.suspectedTBFamily?.let {
             tbSuspectedFamilyAlert.setMessage(it)
             tbSuspectedFamilyAlert.show()
+        }
+        viewModel.referToHwcFacility?.let {
+            referToHwcFacilityAlert.setMessage(it)
+            referToHwcFacilityAlert.show()
         }
 
     }
