@@ -1235,7 +1235,7 @@ data class TBSuspectedDTO(
 }
 
 data class TBConfirmedTreatmentDTO(
-
+    val id: Long,
     val benId: Long,
     val regimenType: String?,
     val treatmentStartDate: String?,
