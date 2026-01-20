@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.adapters
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,9 +37,10 @@ class TBFollowUpDatesAdapter :
     inner class FollowUpViewHolder(private val binding: ItemFollowUpDateBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
+        @SuppressLint("SuspiciousIndentation")
         fun bind(followUp: TBConfirmedTreatmentCache) {
             if(followUp.followUpDate!=null)
-            binding.tvFollowUpDate.text = dateFormat.format(Date(followUp.followUpDate!!))
+            { binding.tvFollowUpDate.text = dateFormat.format(Date(followUp.followUpDate!!))}
             binding.tvTreatmentStatus.visibility = View.GONE
             binding.tvLastFollowUpDate.visibility = View.VISIBLE
         }

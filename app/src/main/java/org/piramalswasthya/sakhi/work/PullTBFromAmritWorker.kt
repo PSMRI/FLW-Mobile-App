@@ -123,18 +123,17 @@ class PullTBFromAmritWorker @AssistedInject constructor(
     }
 
 
-    private suspend fun getTbConfirmedDetails() : Boolean{
-        return  withContext(Dispatchers.IO)
-        {
+    private suspend fun getTbConfirmedDetails(): Boolean {
+        return  withContext(Dispatchers.IO) {
             try {
-              val  res = tbRepo.getTbConfirmedDetailsFromServer()
-                return@withContext res == 1
-            }
-            catch (e : Exception)
-            {
+                val res = tbRepo.getTbConfirmedDetailsFromServer()
+                res == 1
+            } catch (e: Exception) {
                 Timber.d("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
+
             }
             true
         }
     }
+
 }
