@@ -155,79 +155,7 @@ class FilariaMdaCampaignFormFragment : Fragment() {
         )
     }
 
-    /*private val cameraLauncher =
-        registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
-            if (success && tempCameraUri != null) {
-                val context = requireContext()
-                val uri = tempCameraUri!!
 
-                val sizeInMB = context.getFileSizeInMB(uri)
-                val maxSize = (currentImageField?.validation?.maxSizeMB ?: 5).toDouble()
-
-                if (sizeInMB != null && sizeInMB > maxSize) {
-                    currentImageField?.errorMessage =
-                        currentImageField?.validation?.errorMessage
-                            ?: "Image must be less than ${maxSize.toInt()}MB"
-                    adapter.notifyDataSetChanged()
-                    return@registerForActivityResult
-                }
-
-                val compressedFile = compressImageToTemp(uri, "camera_image", context)
-                val base64String = compressedFile?.let { fileToBase64(it) }
-
-                currentImageField?.apply {
-                    value = base64String
-                    errorMessage = null
-                    viewModel.updateFieldValue(fieldId, value)
-                }
-                adapter.updateFields(viewModel.getVisibleFields())
-                adapter.notifyDataSetChanged()
-            }
-        }
-
-    private val filePickerLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val uri = result.data?.data ?: return@registerForActivityResult
-                val context = requireContext()
-
-                val sizeInMB = context.getFileSizeInMB(uri)
-                val maxSize = (currentImageField?.validation?.maxSizeMB ?: 5).toDouble()
-
-                if (sizeInMB != null && sizeInMB > maxSize) {
-                    currentImageField?.errorMessage =
-                        currentImageField?.validation?.errorMessage
-                            ?: "File must be less than ${maxSize.toInt()}MB"
-                    adapter.notifyDataSetChanged()
-                    return@registerForActivityResult
-                }
-
-                val compressedFile = compressImageToTemp(uri, "selected_image", context)
-                val base64String = compressedFile?.let { fileToBase64(it) }
-
-                currentImageField?.apply {
-                    value = base64String
-                    errorMessage = null
-                    viewModel.updateFieldValue(fieldId, value)
-                }
-                adapter.updateFields(viewModel.getVisibleFields())
-                adapter.notifyDataSetChanged()
-            }
-        }
-
-    private fun showImagePickerDialog() {
-        showPickerDialog(
-            requireContext(),
-            onCameraSelected = {
-                tempCameraUri = launchCamera(requireContext())
-                cameraLauncher.launch(tempCameraUri)
-            },
-            onFileSelected = {
-                launchFilePicker(filePickerLauncher)
-            }
-        )
-    }
-*/
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
