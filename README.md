@@ -1,6 +1,6 @@
 # FLW Mobile App
 
-[![DeepWiki](https://img.shields.io/badge/DeepWiki-PSMRI%2FFLW--Mobile--App-blue.svg?...)](https://deepwiki.com/PSMRI/FLW-Mobile-App)
+[![DeepWiki](https://img.shields.io/badge/DeepWiki-PSMRI%2FFLW--Mobile--App-blue)](https://deepwiki.com/PSMRI/FLW-Mobile-App)
 
 ## Overview
 
