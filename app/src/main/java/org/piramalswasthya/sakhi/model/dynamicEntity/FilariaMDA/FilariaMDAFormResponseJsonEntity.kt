@@ -21,7 +21,6 @@ data class FilariaMDAFormResponseJsonEntity(
     val version: Int,
     val formDataJson: String,
     val isSynced: Boolean = false,
-    var syncState: SyncState = SyncState.UNSYNCED,
     val createdAt: Long = System.currentTimeMillis(),
     val syncedAt: String? = null
 )

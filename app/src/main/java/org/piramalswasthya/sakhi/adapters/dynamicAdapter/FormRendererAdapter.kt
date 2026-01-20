@@ -12,8 +12,6 @@
     import android.text.style.ForegroundColorSpan
     import android.view.*
     import android.util.Base64
-    import android.util.Log
-    import android.view.inputmethod.EditorInfo
     import android.widget.*
     import androidx.appcompat.content.res.AppCompatResources
     import androidx.core.content.ContextCompat
@@ -283,8 +281,6 @@
                             ).apply { setMargins(0, 8, 0, 8) }
                         }
 
-                        // Store selected options in a MutableSet
-//                        val selectedOptions = (field.value as? MutableSet<String>) ?: mutableSetOf()
                         val selectedOptions: MutableSet<String> = when (val v = field.value) {
                             is Set<*> -> v.filterIsInstance<String>().toMutableSet()
                             is List<*> -> v.filterIsInstance<String>().toMutableSet()
@@ -688,19 +684,6 @@
                                 }
                                 else {
 
-                                    if (formId == FormConstants.LF_MDA_CAMPAIGN) {
-                                        minDate = minVisitDate
-                                        maxDate = maxVisitDate
-
-                                        if (minDate == null) {
-                                            calendar.time = today
-                                            calendar.add(Calendar.MONTH, -2)
-                                            minDate = calendar.time
-                                        }
-                                        if (maxDate == null) {
-                                            maxDate = today
-                                        }
-                                    }
 
                                     if (formId == FormConstants.IFA_DISTRIBUTION_FORM_ID) {
                                         minDate = minVisitDate
@@ -714,9 +697,8 @@
                                         if (maxDate == null) {
                                             maxDate = today
                                         }
-                                    }
-                                    else if (formId == FormConstants.PULSE_POLIO_CAMPAIGN_FORM_ID || 
-                                             formId == FormConstants.ORS_CAMPAIGN_FORM_ID) {
+                                    } else if (formId == FormConstants.PULSE_POLIO_CAMPAIGN_FORM_ID ||
+                                             formId == FormConstants.ORS_CAMPAIGN_FORM_ID || formId == FormConstants.LF_MDA_CAMPAIGN ) {
                                         if (field.fieldId == "end_date") {
                                             val startDateValue = getDate("start_date")
                                             if (startDateValue != null) {
@@ -730,7 +712,7 @@
                                         } else {
                                             minDate = minVisitDate
                                         }
-                                        
+
                                         maxDate = maxVisitDate
 
                                         if (minDate == null) {
@@ -774,17 +756,15 @@
                                             notifyItemChanged(adapterPosition)
                                         }
 
-                                        // Validate date range for Pulse Polio and ORS Campaign forms
-                                        if (formId == FormConstants.PULSE_POLIO_CAMPAIGN_FORM_ID || 
-                                            formId == FormConstants.ORS_CAMPAIGN_FORM_ID) {
+                                        if (formId == FormConstants.PULSE_POLIO_CAMPAIGN_FORM_ID ||
+                                            formId == FormConstants.ORS_CAMPAIGN_FORM_ID || formId == FormConstants.LF_MDA_CAMPAIGN) {
                                             val selectedDate = sdf.parse(dateStr)
                                             if (minDate != null && selectedDate.before(minDate)) {
                                                 field.errorMessage = "Date cannot be before ${sdf.format(minDate)}"
                                             } else if (maxDate != null && selectedDate.after(maxDate)) {
                                                 field.errorMessage = "Date cannot be after ${sdf.format(maxDate)}"
                                             }
-                                            
-                                            // Validate end_date is at least 1 day after start_date
+
                                             if (field.fieldId == "end_date") {
                                                 val startDateValue = getDate("start_date")
                                                 if (startDateValue != null) {
@@ -795,27 +775,27 @@
                                                     minEndDate.set(Calendar.MINUTE, 0)
                                                     minEndDate.set(Calendar.SECOND, 0)
                                                     minEndDate.set(Calendar.MILLISECOND, 0)
-                                                    
+
                                                     val selectedDateCal = Calendar.getInstance()
                                                     selectedDateCal.time = selectedDate
                                                     selectedDateCal.set(Calendar.HOUR_OF_DAY, 0)
                                                     selectedDateCal.set(Calendar.MINUTE, 0)
                                                     selectedDateCal.set(Calendar.SECOND, 0)
                                                     selectedDateCal.set(Calendar.MILLISECOND, 0)
-                                                    
+
                                                     val startDateCal = Calendar.getInstance()
                                                     startDateCal.time = startDateValue
                                                     startDateCal.set(Calendar.HOUR_OF_DAY, 0)
                                                     startDateCal.set(Calendar.MINUTE, 0)
                                                     startDateCal.set(Calendar.SECOND, 0)
                                                     startDateCal.set(Calendar.MILLISECOND, 0)
-                                                    
+
                                                     if (selectedDateCal.before(minEndDate) || selectedDateCal.time == startDateCal.time) {
                                                         field.errorMessage = "End date must be at least 1 day after start date (${sdf.format(minEndDate.time)})"
                                                     }
                                                 }
                                             }
-                                            
+
                                             if (field.errorMessage != null) {
                                                 notifyItemChanged(adapterPosition)
                                             }
@@ -834,7 +814,7 @@
                                                             minEndDate.add(Calendar.DAY_OF_MONTH, 1)
                                                             endDateField.validation?.minDate = sdf.format(minEndDate.time)
                                                             notifyItemChanged(fields.indexOf(endDateField))
-                                                            
+
                                                             val existingEndDate = getDate("end_date")
                                                             if (existingEndDate != null) {
                                                                 val existingEndDateCal = Calendar.getInstance()
@@ -843,14 +823,14 @@
                                                                 existingEndDateCal.set(Calendar.MINUTE, 0)
                                                                 existingEndDateCal.set(Calendar.SECOND, 0)
                                                                 existingEndDateCal.set(Calendar.MILLISECOND, 0)
-                                                                
+
                                                                 val startDateCal = Calendar.getInstance()
                                                                 startDateCal.time = startDateParsed
                                                                 startDateCal.set(Calendar.HOUR_OF_DAY, 0)
                                                                 startDateCal.set(Calendar.MINUTE, 0)
                                                                 startDateCal.set(Calendar.SECOND, 0)
                                                                 startDateCal.set(Calendar.MILLISECOND, 0)
-                                                                
+
                                                                 if (existingEndDateCal.before(minEndDate) || existingEndDateCal.time == startDateCal.time) {
                                                                     setError("end_date", "End date must be at least 1 day after start date")
                                                                 } else {
@@ -861,7 +841,7 @@
                                                     }
                                                 }
                                             }
-                                            
+
                                             "visit_date" -> {
                                                 val admission = fields.find { it.fieldId == "nrc_admission_date" }
                                                 admission?.validation?.minDate = dateStr
@@ -942,7 +922,6 @@
                         field.options?.forEachIndexed { index, option ->
                             val radioButton = RadioButton(context).apply {
                                 text = option
-                                // Always set isChecked based on field.value to handle recycling
                                 isChecked = field.value == option
                                 isEnabled = !isViewOnly && !isFieldDisabled
                                 layoutParams = LinearLayout.LayoutParams(
@@ -951,7 +930,6 @@
                                 ).apply { setMargins(0, 0, if (index != field.options!!.lastIndex) 24 else 0, 0) }
                             }
 
-                            // Remove previous listener to prevent double-calls due to recycling
                             radioButton.setOnCheckedChangeListener(null)
 
                             if (!isViewOnly && !isFieldDisabled) {
@@ -971,7 +949,6 @@
                             radioGroup.addView(radioButton)
                         }
 
-                        // Add wrapper for error text without removing all views
                         val wrapper = LinearLayout(itemView.context).apply {
                             orientation = LinearLayout.VERTICAL
                             layoutParams = LinearLayout.LayoutParams(
@@ -994,11 +971,6 @@
                     }
 
 
-
-
-
-
-
                     "image" -> {
                         val context = itemView.context
                         val isCampaignPhotos = field.fieldId == "campaign_photos" || field.fieldId == "campaignPhotos"
@@ -1007,7 +979,6 @@
                             orientation = LinearLayout.VERTICAL
                         }
 
-                        // Handle multiple images for campaign_photos field
                         if (isCampaignPhotos) {
                             val imageList: List<String> = when (val value = field.value) {
                                 is List<*> -> value.filterIsInstance<String>()
@@ -1022,8 +993,6 @@
                                 }
                                 else -> emptyList()
                             }
-
-                            // Display images horizontally (up to 2 latest images)
                             val imagesContainer = LinearLayout(context).apply {
                                 orientation = LinearLayout.HORIZONTAL
                                 layoutParams = LinearLayout.LayoutParams(
@@ -1032,7 +1001,6 @@
                                 ).apply { setMargins(0, 8, 0, 8) }
                             }
 
-                            // Display up to 2 images horizontally
                             imageList.takeLast(2).forEach { imagePath ->
                                 val imageView = ImageView(context).apply {
                                     layoutParams = LinearLayout.LayoutParams(300, 300).apply {
@@ -1046,7 +1014,6 @@
 
                             container.addView(imagesContainer)
 
-                            // Always show pick button if not in view mode (user can always select another image)
                             if (!isViewOnly && field.isEditable) {
                                 val pickButton = Button(context).apply {
                                     text = "Pick Image"
@@ -1061,7 +1028,6 @@
                                 container.addView(pickButton)
                             }
                         } else {
-                            // Handle single image for other image fields
                             val imageView = ImageView(context).apply {
                                 layoutParams = LinearLayout.LayoutParams(300, 300)
                                 scaleType = ImageView.ScaleType.CENTER_CROP
@@ -1107,5 +1073,6 @@
         override fun getItemId(position: Int): Long {
             return fields[position].fieldId.hashCode().toLong()
         }
+
 
     }
