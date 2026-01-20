@@ -146,7 +146,8 @@ class FilariaMdaCampaignFormFragment : Fragment() {
             requireContext(),
             onCameraSelected = {
                 tempCameraUri = launchCamera(requireContext())
-                cameraLauncher.launch(tempCameraUri)
+                tempCameraUri?.let { cameraLauncher.launch(it) }
+                ?: Toast.makeText(requireContext(), "Unable to open camera", Toast.LENGTH_SHORT).show()
             },
             onFileSelected = {
                 launchFilePicker(filePickerLauncher)
