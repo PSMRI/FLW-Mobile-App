@@ -1205,8 +1205,10 @@ data class TBSuspectedDTO(
     var chestXRayResult: String? = null,
     var referralFacility: String? = null,
     var isTBConfirmed: Boolean? = null,
-    var isDRTBConfirmed: Boolean? = null
-) {
+    var isDRTBConfirmed: Boolean? = null,
+    var isConfirmed: Boolean = false,
+
+    ) {
     fun toCache(): TBSuspectedCache {
         return TBSuspectedCache(
             benId = benId,
@@ -1226,13 +1228,14 @@ data class TBSuspectedDTO(
             referralFacility = referralFacility,
             isTBConfirmed = isTBConfirmed,
             isDRTBConfirmed = isDRTBConfirmed,
+            isConfirmed = isConfirmed,
             syncState = SyncState.SYNCED
         )
     }
 }
 
 data class TBConfirmedTreatmentDTO(
-    val id: Long,
+
     val benId: Long,
     val regimenType: String?,
     val treatmentStartDate: String?,
