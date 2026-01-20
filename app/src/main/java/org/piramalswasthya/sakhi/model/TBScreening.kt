@@ -35,6 +35,14 @@ data class TBScreeningCache(
     var historyOfTb: Boolean? = null,
     var takingAntiTBDrugs: Boolean? = null,
     var familySufferingFromTB: Boolean? = null,
+    var riseOfFever: Boolean? = null,
+    var lossOfAppetite: Boolean? = null,
+    var age: Boolean? = null,
+    var diabetic: Boolean? = null,
+    var tobaccoUser: Boolean? = null,
+    var bmi: Boolean? = null,
+    var contactWithTBPatient: Boolean? = null,
+    var historyOfTBInLastFiveYrs: Boolean? = null,
     var syncState: SyncState = SyncState.UNSYNCED,
 ) : FormDataModel {
     fun toDTO(): TBScreeningDTO {
@@ -49,7 +57,15 @@ data class TBScreeningCache(
             nightSweats = nightSweats,
             historyOfTb = historyOfTb,
             takingAntiTBDrugs = takingAntiTBDrugs,
-            familySufferingFromTB = familySufferingFromTB
+            familySufferingFromTB = familySufferingFromTB,
+            riseOfFever = riseOfFever,
+            lossOfAppetite = lossOfAppetite,
+            age = age,
+            diabetic = diabetic,
+            tobaccoUser = tobaccoUser,
+            bmi = bmi,
+            contactWithTBPatient = contactWithTBPatient,
+            historyOfTBInLastFiveYrs = historyOfTBInLastFiveYrs,
         )
     }
 }
