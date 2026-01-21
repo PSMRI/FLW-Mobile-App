@@ -100,6 +100,11 @@ class SignInFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+            binding.ivNhmLogo.setImageResource(R.drawable.logo_circle_green)
+        } else {
+            binding.ivNhmLogo.setImageResource(R.drawable.logo_circle)
+        }
         binding.btnLogin.setOnClickListener {
             view.findFocus()?.let { view ->
                 val imm =
