@@ -18,9 +18,8 @@ import org.piramalswasthya.sakhi.database.shared_preferences.ReferralStatusManag
 import org.piramalswasthya.sakhi.model.ReferalCache
 import org.piramalswasthya.sakhi.model.TBScreeningCache
 import org.piramalswasthya.sakhi.repositories.BenRepo
+import org.piramalswasthya.sakhi.repositories.NcdReferalRepo
 import org.piramalswasthya.sakhi.repositories.TBRepo
-import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.homeVisit.AntenatalCounsellingViewModel
-import org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.cbac.CbacViewModel.ReferralType
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -31,7 +30,8 @@ class TBScreeningFormViewModel @Inject constructor(
     @ApplicationContext context: Context,
     private val tbRepo: TBRepo,
     private val benRepo: BenRepo,
-    private val referralStatusManager: ReferralStatusManager
+    private val referralStatusManager: ReferralStatusManager,
+    var referalRepo: NcdReferalRepo
 ) : ViewModel() {
     val benId =
         TBScreeningFormFragmentArgs.fromSavedStateHandle(savedStateHandle).benId
@@ -128,7 +128,7 @@ class TBScreeningFormViewModel @Inject constructor(
             list.add(referral)
             _referralList.value = list
             referralCache = referral
-            referralStatusManager.markAsReferred(benId, AntenatalCounsellingViewModel.ReferralType.MATERNAL.name)
+            referralStatusManager.markAsReferred(benId, ReferralType.TB.name)
         }
     }
 
@@ -153,6 +153,10 @@ class TBScreeningFormViewModel @Inject constructor(
                     _state.postValue(State.SAVING)
                     dataset.mapValues(tbScreeningCache, 1)
                     tbRepo.saveTBScreening(tbScreeningCache)
+                    referralList.value?.forEach {
+                        referalRepo.saveReferedNCD(it)
+
+                    }
                     _state.postValue(State.SAVE_SUCCESS)
                 } catch (e: Exception) {
                     Timber.d("saving tb screening data failed!!")
