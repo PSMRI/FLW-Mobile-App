@@ -31,7 +31,7 @@ class TBScreeningFormViewModel @Inject constructor(
     private val tbRepo: TBRepo,
     private val benRepo: BenRepo,
     private val referralStatusManager: ReferralStatusManager,
-    var referalRepo: NcdReferalRepo
+    private val referalRepo: NcdReferalRepo
 ) : ViewModel() {
     val benId =
         TBScreeningFormFragmentArgs.fromSavedStateHandle(savedStateHandle).benId
