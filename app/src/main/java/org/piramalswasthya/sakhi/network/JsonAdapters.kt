@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.network
 
 import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.Parcelize
 import org.piramalswasthya.sakhi.database.room.SyncState
@@ -30,6 +31,7 @@ import org.piramalswasthya.sakhi.model.VHNCCache
 import org.piramalswasthya.sakhi.model.VHNDCache
 import org.piramalswasthya.sakhi.model.getDateTimeStringFromLong
 import org.piramalswasthya.sakhi.utils.KeyUtils
+import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -1222,8 +1224,10 @@ data class TBSuspectedDTO(
     var chestXRayResult: String? = null,
     var referralFacility: String? = null,
     var isTBConfirmed: Boolean? = null,
-    var isDRTBConfirmed: Boolean? = null
-) {
+    var isDRTBConfirmed: Boolean? = null,
+    var isConfirmed: Boolean = false,
+
+    ) {
     fun toCache(): TBSuspectedCache {
         return TBSuspectedCache(
             benId = benId,
@@ -1243,6 +1247,7 @@ data class TBSuspectedDTO(
             referralFacility = referralFacility,
             isTBConfirmed = isTBConfirmed,
             isDRTBConfirmed = isDRTBConfirmed,
+            isConfirmed = isConfirmed,
             syncState = SyncState.SYNCED
         )
     }
@@ -1271,16 +1276,16 @@ data class TBConfirmedTreatmentDTO(
         return TBConfirmedTreatmentCache(
             benId = benId,
             regimenType = regimenType,
-            treatmentStartDate = getLongFromDate(treatmentStartDate),
-            expectedTreatmentCompletionDate = getLongFromDate(expectedTreatmentCompletionDate),
-            followUpDate = getLongFromDate(followUpDate),
+            treatmentStartDate = getLongFromDateMultipleSupport(treatmentStartDate) ?: System.currentTimeMillis(),
+            expectedTreatmentCompletionDate = getLongFromDateMultipleSupport(expectedTreatmentCompletionDate),
+            followUpDate = getLongFromDateMultipleSupport(followUpDate),
             monthlyFollowUpDone = monthlyFollowUpDone,
             adherenceToMedicines = adherenceToMedicines,
             anyDiscomfort = anyDiscomfort,
             treatmentCompleted = treatmentCompleted,
-            actualTreatmentCompletionDate = getLongFromDate(actualTreatmentCompletionDate),
+            actualTreatmentCompletionDate = getLongFromDateMultipleSupport(actualTreatmentCompletionDate),
             treatmentOutcome = treatmentOutcome,
-            dateOfDeath = getLongFromDate(dateOfDeath),
+            dateOfDeath = getLongFromDateMultipleSupport(dateOfDeath),
             placeOfDeath = placeOfDeath,
             reasonForDeath = reasonForDeath ?: "Tuberculosis",
             reasonForNotCompleting = reasonForNotCompleting,
@@ -1290,7 +1295,9 @@ data class TBConfirmedTreatmentDTO(
 }
 
 data class TBConfirmedRequestDTO(
+    @SerializedName("userId")
     val userId: Int,
+    @SerializedName("tbConfirmedCases")
     val tbConfirmedList: List<TBConfirmedTreatmentDTO>
 )
 
@@ -1815,4 +1822,28 @@ fun getLongFromDate(dateString: String?): Long {
     val f = SimpleDateFormat("MMM d, yyyy h:mm:ss a", Locale.ENGLISH)
     val date = dateString?.let { f.parse(it) }
     return date?.time ?: 0L
+}
+
+fun getLongFromDateMultipleSupport(dateStr: String?): Long? {
+    if (dateStr.isNullOrBlank() || dateStr == "1970-01-01") return null
+
+    val formats = listOf(
+        "yyyy-MM-dd",
+        "yyyy-MM-dd HH:mm:ss",
+        "MMM dd, yyyy hh:mm:ss a",
+        "MMM dd, yyyy",
+        "dd/MM/yyyy"
+    )
+
+    for (format in formats) {
+        try {
+            val sdf = SimpleDateFormat(format, Locale.ENGLISH)
+            sdf.isLenient = false
+            return sdf.parse(dateStr)?.time
+        } catch (e: Exception) {
+        }
+    }
+
+    Timber.e("Date parsing failed for: $dateStr")
+    return null
 }

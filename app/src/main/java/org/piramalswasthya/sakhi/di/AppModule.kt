@@ -49,6 +49,7 @@ import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.BenIfaFormRe
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.CUFYFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.EyeSurgeryFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FilariaMDAFormResponseJsonDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FilariaMdaCampaignJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseANCJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseJsonDaoHBYC
@@ -407,6 +408,11 @@ object AppModule {
     @Singleton
     @Provides
     fun provideFilariaMDAFormResponseDao(database: InAppDb): FilariaMDAFormResponseJsonDao = database.formResponseFilariaMDAJsonDao()
+
+    @Singleton
+    @Provides
+    fun provideFilariaMDACampaignFormResponseDao(database: InAppDb): FilariaMdaCampaignJsonDao = database.formResponseFilariaMDACampaignJsonDao()
+
 
     @Singleton
     @Provides

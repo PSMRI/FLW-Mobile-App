@@ -34,6 +34,7 @@ import androidx.core.graphics.withTranslation
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.json.JSONArray
+import org.json.JSONObject
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.LayoutMediaOptionsBinding
@@ -46,6 +47,7 @@ import java.io.FileOutputStream
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
 object HelperUtil {
@@ -811,5 +813,36 @@ object HelperUtil {
 
         return listOf(raw)
     }
+
+    fun extractFieldValue(formDataJson: String?, key: String): String {
+        return try {
+            if (formDataJson.isNullOrBlank()) return ""
+
+            val root = JSONObject(formDataJson)
+            val fieldsObj = root.optJSONObject("fields") ?: return ""
+
+            fieldsObj.optString(key, "")
+        } catch (e: Exception) {
+            ""
+        }
+    }
+    fun getCurrentYear(): String {
+        return SimpleDateFormat("yyyy", Locale.getDefault())
+            .format(Date())
+    }
+
+    fun getMinVisitDate(): Date {
+        return Calendar.getInstance().apply {
+            add(Calendar.MONTH, -1)
+        }.time
+    }
+
+    fun getMaxVisitDate(): Date {
+        return Calendar.getInstance().apply {
+            add(Calendar.MONTH, 2)
+        }.time
+    }
+
+
 
 }

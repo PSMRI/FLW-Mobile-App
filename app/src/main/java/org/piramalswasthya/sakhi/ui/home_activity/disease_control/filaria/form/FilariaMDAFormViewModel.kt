@@ -20,7 +20,6 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.FilariaMDA.FilariaMDAFormRe
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormFieldDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
 import org.piramalswasthya.sakhi.repositories.dynamicRepo.FilariaMDAFormRepository
-import org.piramalswasthya.sakhi.work.dynamicWoker.EyeSurgeryFormSyncWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.FilariaMDAFormSyncWorker
 import java.text.SimpleDateFormat
 import java.util.*

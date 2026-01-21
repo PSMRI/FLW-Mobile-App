@@ -38,7 +38,7 @@ class BenIfaFormRepository @Inject constructor(
         var result: FormSchemaDto? = null
 
         try {
-            val response = amritApiService.fetchFormSchema(formId,"en")
+            val response = amritApiService.fetchFormSchema(formId,pref.getCurrentLanguage().symbol)
 
             if (response.isSuccessful) {
                 val apiResponse = response.body()
