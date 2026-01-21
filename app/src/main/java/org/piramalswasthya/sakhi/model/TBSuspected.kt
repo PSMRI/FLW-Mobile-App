@@ -9,6 +9,7 @@ import androidx.room.Relation
 import org.piramalswasthya.sakhi.configuration.FormDataModel
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.network.TBSuspectedDTO
+import kotlin.Boolean
 
 @Entity(
     tableName = "TB_SUSPECTED",
@@ -65,6 +66,8 @@ data class TBSuspectedCache(
             referralFacility = referralFacility,
             isTBConfirmed = isTBConfirmed,
             isDRTBConfirmed = isDRTBConfirmed,
+            isConfirmed = isConfirmed,
+
         )
     }
 }

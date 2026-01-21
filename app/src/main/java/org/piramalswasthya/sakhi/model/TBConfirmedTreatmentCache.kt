@@ -48,7 +48,7 @@ data class TBConfirmedTreatmentCache(
 
     fun toDTO(): TBConfirmedTreatmentDTO {
         return TBConfirmedTreatmentDTO(
-            id = id.toLong(),
+            id = 0,
             benId = benId,
             regimenType = regimenType,
             treatmentStartDate = getDateTimeStringFromLong(treatmentStartDate),

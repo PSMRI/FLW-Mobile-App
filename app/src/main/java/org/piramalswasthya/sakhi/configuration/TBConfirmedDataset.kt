@@ -49,7 +49,6 @@ class TBConfirmedDataset(
         arrayId = -1,
         required = true,
         max = System.currentTimeMillis(),
-        min= getOneYearBeforeCurrentDate(),
         hasDependants = true,
         isEnabled = true
 
@@ -75,7 +74,7 @@ class TBConfirmedDataset(
         max = System.currentTimeMillis(),
         min = System.currentTimeMillis() - (90L * 24 * 60 * 60 * 1000),
         hasDependants = true,
-        isEnabled = true
+        isEnabled = false
 
     )
 
@@ -222,12 +221,17 @@ class TBConfirmedDataset(
             ))
 
             treatmentStartDate.max = System.currentTimeMillis()
+          /*  treatmentStartDate.min = suspectedTb?.visitDate
+                ?.takeIf { it > 0 }
+                ?: getOneYearBeforeCurrentDate()*/
+            treatmentStartDate.min = getOneYearBeforeCurrentDate()
 
 
         } else
         {
             isNewRecord = false
             regimenType.value = saved.regimenType
+            followUpDate.isEnabled =true
             treatmentStartDateLong = saved?.treatmentStartDate ?: 0L
             lastFollowUpDateLong = saved?.followUpDate ?: 0L
 
