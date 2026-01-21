@@ -1098,9 +1098,9 @@ data class TBScreeningDTO(
     var bmi: Boolean? = null,
     var contactWithTBPatient: Boolean? = null,
     var historyOfTBInLastFiveYrs: Boolean? = null,
-    var symptomatic :String?=null,
+    var sympotomatic :String?=null,
     var asymptomatic  :String?=null,
-    var recommandedTest  :String?=null,
+    var recommandateTest  :String?=null,
 ) {
     fun toCache(): TBScreeningCache {
         return TBScreeningCache(
@@ -1122,9 +1122,9 @@ data class TBScreeningDTO(
             bmi = bmi,
             contactWithTBPatient = contactWithTBPatient,
             historyOfTBInLastFiveYrs = historyOfTBInLastFiveYrs,
-            symptomatic = symptomatic,
+            sympotomatic = sympotomatic,
             asymptomatic = asymptomatic,
-            recommandedTest = recommandedTest,
+            recommandateTest = recommandateTest,
             syncState = SyncState.SYNCED
         )
     }

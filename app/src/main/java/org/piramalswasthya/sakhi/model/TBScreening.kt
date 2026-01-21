@@ -43,9 +43,9 @@ data class TBScreeningCache(
     var bmi: Boolean? = null,
     var contactWithTBPatient: Boolean? = null,
     var historyOfTBInLastFiveYrs: Boolean? = null,
-    var symptomatic :String?=null,
+    var sympotomatic :String?=null,
     var asymptomatic  :String?=null,
-    var recommandedTest  :String?=null,
+    var recommandateTest  :String?=null,
     var syncState: SyncState = SyncState.UNSYNCED,
 ) : FormDataModel {
     fun toDTO(): TBScreeningDTO {
@@ -69,9 +69,9 @@ data class TBScreeningCache(
             bmi = bmi,
             contactWithTBPatient = contactWithTBPatient,
             historyOfTBInLastFiveYrs = historyOfTBInLastFiveYrs,
-            symptomatic = symptomatic,
+            sympotomatic = sympotomatic,
             asymptomatic = asymptomatic,
-            recommandedTest = recommandedTest,
+            recommandateTest = recommandateTest,
 
         )
     }
