@@ -46,9 +46,9 @@ class TBScreeningFormFragment : Fragment() {
             .setTitle(resources.getString(R.string.tb_screening))
             .setMessage("it")
             .setPositiveButton(resources.getString(R.string.yes)) {dialog, _ ->
-             findNavController().navigate(TBScreeningFormFragmentDirections.actionTBScreeningFormFragmentToNcdReferForm(viewModel.benId, referral = referralForReason, /*cbacId = viewModel.cbacId*/ referralType = referType))
+             findNavController().navigate(TBScreeningFormFragmentDirections.actionTBScreeningFormFragmentToNcdReferForm(viewModel.benId, referral = referralForReason, referralType = referType))
             }
-            .setNegativeButton(resources.getString(R.string.yes)) { dialog, _ -> dialog.dismiss() }
+            .setNegativeButton(resources.getString(R.string.no)) { dialog, _ -> dialog.dismiss() }
             .create()
     }
 
@@ -122,6 +122,7 @@ class TBScreeningFormFragment : Fragment() {
 
                 val type = TBScreeningFormViewModel.ReferralType.valueOf(typeName)
                 viewModel.markReferralCompleted(type)
+                viewModel.saveForm()
             }
 
         findNavController().currentBackStackEntry
@@ -130,9 +131,6 @@ class TBScreeningFormFragment : Fragment() {
             ?.observe(viewLifecycleOwner) { json ->
                 val referral = Gson().fromJson(json, ReferalCache::class.java)
                 viewModel.addReferral(referral)
-                viewModel.saveForm()
-
-
 
             }
     }
@@ -145,7 +143,6 @@ class TBScreeningFormFragment : Fragment() {
             }else{
                 showAlerts()
             }
-           // viewModel.saveForm()
         }
     }
 

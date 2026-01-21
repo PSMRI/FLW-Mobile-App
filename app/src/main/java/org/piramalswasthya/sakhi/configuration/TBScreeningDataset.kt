@@ -338,6 +338,18 @@ class TBScreeningDataset(
                 contactWithTBPatient.value == resources.getStringArray(R.array.yes_no)[0]
             form.historyOfTBInLastFiveYrs =
                 historyOfTBInLastFiveYrs.value == resources.getStringArray(R.array.yes_no)[0]
+            form.symptomatic = isSymptomatic()
+            form.asymptomatic = isAsymptomatic()
+
+            if (isSymptomatic()=="Yes" && isAsymptomatic() =="No"){
+                form.recommandedTest = "Sputum Test"
+            }else if(isSymptomatic() == "No"&& isAsymptomatic() =="Yes"){
+                form.recommandedTest = "Chest X-Ray"
+            }else if(isSymptomatic() == "Yes"&& isAsymptomatic() =="Yes"){
+                form.recommandedTest = "Both"
+            }else{
+                form.recommandedTest = "None"
+            }
         }
     }
 
@@ -370,6 +382,30 @@ class TBScreeningDataset(
         )
             resources.getString(R.string.refer_to_hwc_facility_alert) else null
 
+    }
+
+    fun isSymptomatic():String{
+        return if (isCoughing.value == resources.getStringArray(R.array.yes_no)[0] ||
+            bloodInSputum.value == resources.getStringArray(R.array.yes_no)[0] ||
+            isFever.value == resources.getStringArray(R.array.yes_no)[0] ||
+            nightSweats.value == resources.getStringArray(R.array.yes_no)[0] ||
+            lossOfWeight.value == resources.getStringArray(R.array.yes_no)[0] ||
+            historyOfTB.value == resources.getStringArray(R.array.yes_no)[0]||
+            riseOfFever.value == resources.getStringArray(R.array.yes_no)[0] ||
+            lossOfAppetite.value == resources.getStringArray(R.array.yes_no)[0]
+        )
+            "Yes" else "No"
+    }
+    fun isAsymptomatic():String{
+        return if (
+            age.value == resources.getStringArray(R.array.yes_no)[0] ||
+            diabetic.value == resources.getStringArray(R.array.yes_no)[0] ||
+            tobaccoUser.value == resources.getStringArray(R.array.yes_no)[0] ||
+            bmi.value == resources.getStringArray(R.array.yes_no)[0] ||
+            contactWithTBPatient.value == resources.getStringArray(R.array.yes_no)[0] ||
+            historyOfTBInLastFiveYrs.value == resources.getStringArray(R.array.yes_no)[0]
+        )
+            "Yes" else "No"
     }
 
     fun isTbSuspected(): String? {
