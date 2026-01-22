@@ -92,11 +92,12 @@ jobs:
         with:
           cmake-version: '3.31.1'
 
-      - name: Set up Ruby
+      - name: Set up ruby env
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7.2
+          ruby-version: 3.1.4
           bundler-cache: true
+
 
       - name: Verify Ruby installation
         run: ruby -v
@@ -134,19 +135,21 @@ jobs:
 
       - name: Build and Distribute app to Firebase
         run: |
-          export BASE_TMC_URL=${{ secrets.BASE_TMC_URL }}
-          export BASE_AMRIT_URL=${{ secrets.BASE_AMRIT_URL }}
-          export BASE_FLW_URL=${{ secrets.BASE_FLW_URL }}
-          export BASE_ABHA_URL=${{ secrets.BASE_ABHA_URL }}
-          export SANJEEVANI_API_URL=${{ secrets.SANJEEVANI_API_URL }}
-
-          export KEYSTORE_PATH=$PWD/keystore.jks
-          export KEYSTORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}
-          export KEY_ALIAS=${{ secrets.KEY_ALIAS }}
-          export KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}
-
-          export FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }}
-
+          export BASE_TMC_URL="${{ secrets.BASE_TMC_URL }}"
+          export BASE_AMRIT_URL="${{ secrets.BASE_AMRIT_URL }}"
+          export BASE_FLW_URL="${{ secrets.BASE_FLW_URL }}"
+          export BASE_ABHA_URL="${{ secrets.BASE_ABHA_URL }}"
+          export SANJEEVANI_API_URL="${{ secrets.SANJEEVANI_API_URL }}"
+          
+          export KEYSTORE_PATH="$PWD/keystore.jks"
+          export KEYSTORE_PASSWORD="${{ secrets.KEYSTORE_PASSWORD }}"
+          export KEY_ALIAS="${{ secrets.KEY_ALIAS }}"
+          export KEY_PASSWORD="${{ secrets.KEY_PASSWORD }}"
+          
+          export FIREBASE_APP_ID="${{ secrets.FIREBASE_APP_ID }}"
+          
+          
+          
           if [ "${{ inputs.build_type }}" = "debug" ]; then
             bundle exec fastlane build_and_distribute_debug variant:${{ inputs.variant }}
           else
