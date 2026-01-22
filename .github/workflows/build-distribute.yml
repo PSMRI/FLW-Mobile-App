@@ -3,9 +3,6 @@ name: Build and Distribute to Firebase
 on:
   workflow_call:
     inputs:
-      branch:
-        required: true
-        type: string
       environment:
         required: true
         type: string
@@ -53,13 +50,11 @@ jobs:
     environment: ${{ inputs.environment }}
 
     permissions:
-      contents: read
+      contents: write
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.branch }}
 
       - name: Cache NDK
         uses: actions/cache@v4
@@ -93,13 +88,13 @@ jobs:
         with:
           cmake-version: '3.31.1'
 
-      - name: Set up Ruby
+      - name: Set up ruby env
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.1.4
           bundler-cache: true
 
-      - name: Verify Ruby
+      - name: Verify Ruby installation
         run: ruby -v
 
       - name: Decode google-services.json
@@ -110,7 +105,7 @@ jobs:
         run: |
           echo "${{ secrets.FIREBASE_CREDENTIALS_JSON }}" | base64 --decode > firebase_credentials.json
 
-      - name: Decode Google Play key
+      - name: Decode Google Play JSON key
         run: |
           echo "${{ secrets.GOOGLE_PLAY_JSON_KEY }}" | base64 --decode > fastlane/google_play_service_account.json
 
@@ -121,7 +116,7 @@ jobs:
       - name: Create local.properties
         run: echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
 
-      - name: Set version
+      - name: Set version for FLW build
         run: echo "version=${{ inputs.version }}" >> $GITHUB_ENV
 
       - name: Verify version
@@ -132,7 +127,7 @@ jobs:
           fi
           echo "Version: $version"
 
-      - name: Build and Distribute to Firebase
+      - name: Build and Distribute app to Firebase
         run: |
           export BASE_TMC_URL="${{ secrets.BASE_TMC_URL }}"
           export BASE_AMRIT_URL="${{ secrets.BASE_AMRIT_URL }}"
