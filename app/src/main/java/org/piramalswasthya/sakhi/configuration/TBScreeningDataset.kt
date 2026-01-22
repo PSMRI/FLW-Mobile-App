@@ -338,17 +338,17 @@ class TBScreeningDataset(
                 contactWithTBPatient.value == resources.getStringArray(R.array.yes_no)[0]
             form.historyOfTBInLastFiveYrs =
                 historyOfTBInLastFiveYrs.value == resources.getStringArray(R.array.yes_no)[0]
-            form.symptomatic = isSymptomatic()
+            form.sympotomatic = isSymptomatic()
             form.asymptomatic = isAsymptomatic()
 
             if (isSymptomatic()=="Yes" && isAsymptomatic() =="No"){
-                form.recommandedTest = "Sputum Test"
+                form.recommandateTest = "Sputum Test"
             }else if(isSymptomatic() == "No"&& isAsymptomatic() =="Yes"){
-                form.recommandedTest = "Chest X-Ray"
+                form.recommandateTest = "Chest X-Ray"
             }else if(isSymptomatic() == "Yes"&& isAsymptomatic() =="Yes"){
-                form.recommandedTest = "Both"
+                form.recommandateTest = "Both"
             }else{
-                form.recommandedTest = "None"
+                form.recommandateTest = "None"
             }
         }
     }
