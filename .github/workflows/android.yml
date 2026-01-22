@@ -35,11 +35,9 @@ on:
 jobs:
   flw-build:
     uses: ./.github/workflows/build-distribute.yml
-
     with:
       environment: ${{ inputs.environment }}
       variant: ${{ inputs.variant }}
       build_type: ${{ inputs.build_type }}
       version: ${{ inputs.version }}
-
     secrets: inherit

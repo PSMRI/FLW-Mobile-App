@@ -16,8 +16,6 @@ on:
         required: true
         type: string
 
-
-
     secrets:
       GOOGLE_SERVICES_JSON_GENERIC:
         required: true
@@ -51,14 +49,12 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
 
-
     permissions:
       contents: write
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
 
       - name: Cache NDK
         uses: actions/cache@v4
@@ -98,7 +94,6 @@ jobs:
           ruby-version: 3.1.4
           bundler-cache: true
 
-
       - name: Verify Ruby installation
         run: ruby -v
 
@@ -124,7 +119,6 @@ jobs:
       - name: Set version for FLW build
         run: echo "version=${{ inputs.version }}" >> $GITHUB_ENV
 
-
       - name: Verify version
         run: |
           if [ -z "$version" ]; then
@@ -140,19 +134,16 @@ jobs:
           export BASE_FLW_URL="${{ secrets.BASE_FLW_URL }}"
           export BASE_ABHA_URL="${{ secrets.BASE_ABHA_URL }}"
           export SANJEEVANI_API_URL="${{ secrets.SANJEEVANI_API_URL }}"
-          
+
           export KEYSTORE_PATH="$PWD/keystore.jks"
           export KEYSTORE_PASSWORD="${{ secrets.KEYSTORE_PASSWORD }}"
           export KEY_ALIAS="${{ secrets.KEY_ALIAS }}"
           export KEY_PASSWORD="${{ secrets.KEY_PASSWORD }}"
-          
+
           export FIREBASE_APP_ID="${{ secrets.FIREBASE_APP_ID }}"
-          
-          
-          
+
           if [ "${{ inputs.build_type }}" = "debug" ]; then
             bundle exec fastlane build_and_distribute_debug variant:${{ inputs.variant }}
           else
             bundle exec fastlane build_and_distribute_release variant:${{ inputs.variant }}
           fi
-
