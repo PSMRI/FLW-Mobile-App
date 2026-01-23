@@ -75,71 +75,13 @@
                             android:gravity="center"
                             android:padding="@dimen/padding_normal"
                             android:layout_alignParentStart="true"
-                            android:text="@string/no_of_children"
+                            android:text="@string/ecrdset_no_live_child"
                             android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
                             android:textColor="@android:color/white"
                            />
 
                         <TextView
                             android:id="@+id/tv_no_child"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:layout_marginEnd="@dimen/_44sdp"
-                            android:layout_alignParentEnd="true"
-                            android:padding="@dimen/padding_normal"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                            android:textColor="@android:color/white"
-                            app:layout_constraintEnd_toEndOf="parent" />
-                    </RelativeLayout>
-                    <RelativeLayout
-                        android:id="@+id/child_count_above15_ll"
-                        android:layout_width="match_parent"
-                        android:visibility="gone"
-                        app:layout_constraintTop_toBottomOf="@+id/child_count_ll"
-                        android:layout_height="wrap_content">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:padding="@dimen/padding_normal"
-                            android:layout_alignParentStart="true"
-                            android:text="@string/no_of_elderly_children"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                            android:textColor="@android:color/white"
-                           />
-
-                        <TextView
-                            android:id="@+id/tv_no_elder_child"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:layout_marginEnd="@dimen/_44sdp"
-                            android:layout_alignParentEnd="true"
-                            android:padding="@dimen/padding_normal"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                            android:textColor="@android:color/white"
-                            app:layout_constraintEnd_toEndOf="parent" />
-                    </RelativeLayout>
-                    <RelativeLayout
-                        android:id="@+id/child_count_below15_ll"
-                        android:layout_width="match_parent"
-                        android:visibility="gone"
-                        app:layout_constraintTop_toBottomOf="@+id/child_count_above15_ll"
-                        android:layout_height="wrap_content">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:padding="@dimen/padding_normal"
-                            android:layout_alignParentStart="true"
-                            android:text="@string/no_of_younger_children"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                            android:textColor="@android:color/white"
-                           />
-
-                        <TextView
-                            android:id="@+id/tv_no_young_child"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
