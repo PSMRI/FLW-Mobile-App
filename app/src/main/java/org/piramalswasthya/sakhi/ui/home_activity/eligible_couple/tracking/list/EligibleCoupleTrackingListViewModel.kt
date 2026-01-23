@@ -8,13 +8,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.combineTransform
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.helpers.filterEcTrackingList
 import org.piramalswasthya.sakhi.model.BenWithEctListDomain
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
-import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pnc.list.PncMotherListFragmentArgs
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,7 +20,6 @@ class EligibleCoupleTrackingListViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     recordsRepo: RecordsRepo,
     benRepo: BenRepo
-//    private var ecrRepo: EcrRepo
 ) : ViewModel() {
 
     private var sourceFromArgs = EligibleCoupleTrackingListFragmentArgs.fromSavedStateHandle(savedStateHandle).source

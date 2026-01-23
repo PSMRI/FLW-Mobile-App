@@ -900,7 +900,7 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
             "Daughter"
     }
 
-    private fun getFamilyHeadRelationFromMother(childGender: Gender, motherRelationId: Int): Int {
+    private fun getFamilyHeadRelationFromMother(childGender: Gender): Int {
         return if (childGender == Gender.MALE)
             9
         else
@@ -914,7 +914,7 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
         val ben = cacheModel.copy()
         val childGender = getChildGender(childIndex)
         val familyHeadRelationId =
-            getFamilyHeadRelationFromMother(childGender!!, ben.familyHeadRelationPosition)
+            getFamilyHeadRelationFromMother(childGender!!)
         val familyHeadRelation = getRelationStringFromId(familyHeadRelationId)
         when(childIndex) {
 

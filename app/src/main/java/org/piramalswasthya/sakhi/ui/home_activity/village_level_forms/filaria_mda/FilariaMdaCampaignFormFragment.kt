@@ -89,7 +89,7 @@ class FilariaMdaCampaignFormFragment : Fragment() {
         val compressedFile = org.piramalswasthya.sakhi.utils.HelperUtil.compressImageToTemp(uri, "camera_image", context)
         val base64String = compressedFile?.let { org.piramalswasthya.sakhi.utils.HelperUtil.fileToBase64(it) }
 
-        if (currentImageField?.fieldId == "mda_photos" || currentImageField?.fieldId == "mda_photos") {
+        if (currentImageField?.fieldId == "mda_photos") {
             if (base64String != null && campaignPhotosList.size < 2) {
                 campaignPhotosList.add(base64String)
                 currentImageField?.value = campaignPhotosList.toList()
@@ -123,7 +123,7 @@ class FilariaMdaCampaignFormFragment : Fragment() {
         val compressedFile = org.piramalswasthya.sakhi.utils.HelperUtil.compressImageToTemp(uri, "selected_image", context)
         val base64String = compressedFile?.let { org.piramalswasthya.sakhi.utils.HelperUtil.fileToBase64(it) }
 
-        if (currentImageField?.fieldId == "mda_photos" || currentImageField?.fieldId == "mda_photos") {
+        if (currentImageField?.fieldId == "mda_photos") {
             if (base64String != null && campaignPhotosList.size < 2) {
                 campaignPhotosList.add(base64String)
                 currentImageField?.value = campaignPhotosList.toList()
@@ -240,11 +240,8 @@ class FilariaMdaCampaignFormFragment : Fragment() {
                 { field, value ->
                     if (value == "pick_image") {
                         currentImageField = field
-                        if (field.fieldId == "mda_photos") {
-                            showImagePickerDialog()
-                        } else {
-                            showImagePickerDialog()
-                        }
+                        showImagePickerDialog()
+
                     } else {
                         field.value = value
                         if ((field.fieldId == "mda_photos") && value is List<*>) {

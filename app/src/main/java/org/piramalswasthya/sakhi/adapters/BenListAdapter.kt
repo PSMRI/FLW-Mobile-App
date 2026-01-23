@@ -5,11 +5,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.RvItemBenBinding
@@ -17,7 +15,6 @@ import org.piramalswasthya.sakhi.helpers.getDateFromLong
 import org.piramalswasthya.sakhi.helpers.getPatientTypeByAge
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.model.Gender
-import org.piramalswasthya.sakhi.utils.Log
 
 
 class BenListAdapter(
