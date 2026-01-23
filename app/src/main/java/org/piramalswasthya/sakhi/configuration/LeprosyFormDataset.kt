@@ -35,7 +35,7 @@ class LeprosyFormDataset(
     private val dateOfCase = FormElement(
         id = 1,
         inputType = InputType.DATE_PICKER,
-        title = resources.getString(R.string.home_visit_date),
+        title = resources.getString(R.string.home_visit_date_screening),
         arrayId = -1,
         required = true,
         max = System.currentTimeMillis(),
