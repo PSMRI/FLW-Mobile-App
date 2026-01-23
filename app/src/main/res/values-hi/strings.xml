@@ -413,6 +413,15 @@
     <string name="type_of_leprocy">पुष्टि किया गया कुष्ठ रोग का प्रकार</string>
     <string name="has_leprosy_been_confirmed">क्या कुष्ठ रोग की पुष्टि हुई है?</string>
     <string name="treatment_start_date">उपचार शुरू होने की तिथि</string>
+    <string name="expected_treatment_completion_date">उपचार समाप्ति की अपेक्षित तिथि </string>
+    <string name="mdt_blister_pack_received">क्या एमडीटी ब्लिस्टर पैक प्राप्त हुआ है?</string>
+    <string name="actual_treatment_completion_date">वास्तविक उपचार समाप्ति तिथि</string>
+    <string name="treatment_status">उपचार की स्थिति</string>
+    <string name="follow_up_date">फॉलो-अप तिथि</string>
+    <string name="follow_up_history">फॉलो-अप रिकॉर्ड </string>
+
+
+
 
 
 
