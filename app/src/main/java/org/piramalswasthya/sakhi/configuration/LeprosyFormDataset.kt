@@ -585,7 +585,21 @@ class LeprosyFormDataset(
             form.placeOfDeath = placeOfDeath.value
             form.otherReferredTo = other.value
             form.remarks = remarks.value
-            form.leprosyStatus = leprosyStatus.value
+            form.leprosyStatus = when (leprosyStatus.value) {
+                "Screening" -> "Screening"
+                "Denied" -> "Denied"
+                "Not Screened" -> "Not Screened"
+                "Suspected" -> "Suspected"
+                "Confirmed" -> "Confirmed"
+                "Not Confirmed" -> "Not Confirmed"
+                resources.getStringArray(R.array.leprosy_status)[0] -> "Screening"
+                resources.getStringArray(R.array.leprosy_status)[1] -> "Denied"
+                resources.getStringArray(R.array.leprosy_status)[2] -> "Not Screened"
+                resources.getStringArray(R.array.leprosy_status)[3] -> "Suspected"
+                resources.getStringArray(R.array.leprosy_status)[4] -> "Confirmed"
+                resources.getStringArray(R.array.leprosy_status)[5] -> "Not Confirmed"
+                else -> leprosyStatus.value ?: "Screening"
+            }
             form.typeOfLeprosy = typeOfLeprosy.value
             form.diseaseTypeID = 5
             form.leprosySymptoms = leprosySymptoms.value
