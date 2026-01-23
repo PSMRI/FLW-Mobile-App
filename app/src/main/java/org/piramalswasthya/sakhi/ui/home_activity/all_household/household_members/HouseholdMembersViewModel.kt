@@ -6,7 +6,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.database.room.SyncState
@@ -26,30 +25,7 @@ class HouseholdMembersViewModel @Inject constructor(
 
     val isFromDisease = 0
     val diseaseType = "No"
-    private val childCountMap =
-        MutableStateFlow<Map<Long, Int>>(emptyMap())
 
-
-    init {
-        viewModelScope.launch {
-            benRepo.getBenBasicListFromHousehold(hhId).collect { list ->
-                val map = mutableMapOf<Long, Int>()
-
-                list.forEach { ben ->
-                    val count =
-                        benRepo.getChildBenListFromHousehold(
-                            ben.hhId,
-                            ben.benId,
-                            ben.benName
-                        ).size
-
-                    map[ben.benId] = count
-                }
-
-                childCountMap.emit(map)
-            }
-        }
-    }
     val benListWithChildren =
         benRepo.getBenBasicListFromHousehold(hhId)
             .map { list ->

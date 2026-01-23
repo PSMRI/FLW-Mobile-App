@@ -913,8 +913,11 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
 
         val ben = cacheModel.copy()
         val childGender = getChildGender(childIndex)
+        if (childGender == null) {
+            throw IllegalStateException("Gender must be selected for child $childIndex")
+        }
         val familyHeadRelationId =
-            getFamilyHeadRelationFromMother(childGender!!)
+            getFamilyHeadRelationFromMother(childGender)
         val familyHeadRelation = getRelationStringFromId(familyHeadRelationId)
         when(childIndex) {
 
@@ -1169,6 +1172,7 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
         return when (genderField.value) {
             genderField.entries?.getOrNull(0) -> MALE
             genderField.entries?.getOrNull(1) -> FEMALE
+            genderField.entries?.getOrNull(2) -> TRANSGENDER
             else -> null
         }
     }
