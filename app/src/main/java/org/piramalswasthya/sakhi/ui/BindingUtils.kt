@@ -15,6 +15,7 @@ import android.view.animation.RotateAnimation
 import android.widget.*
 import android.widget.RadioGroup.LayoutParams
 import androidx.annotation.RequiresApi
+import androidx.annotation.StringRes
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingAdapter
@@ -28,6 +29,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.configuration.IconDataset
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.model.AncFormState
@@ -43,6 +45,17 @@ import java.util.Date
 import java.util.Locale
 
 
+@StringRes
+fun IconDataset.Disease.getTitleRes(): Int {
+    return when (this) {
+        IconDataset.Disease.MALARIA   -> R.string.icon_title_maleria
+        IconDataset.Disease.KALA_AZAR -> R.string.icon_title_ka
+        IconDataset.Disease.AES_JE    -> R.string.icon_title_aes
+        IconDataset.Disease.FILARIA  -> R.string.icon_title_filaria
+        IconDataset.Disease.LEPROSY  -> R.string.icon_title_leprosy
+        IconDataset.Disease.DEWARMING -> R.string.deworming_title
+    }
+}
 @BindingAdapter("vaccineState")
 fun ImageView.setVaccineState(syncState: VaccineState?) {
     syncState?.let {
