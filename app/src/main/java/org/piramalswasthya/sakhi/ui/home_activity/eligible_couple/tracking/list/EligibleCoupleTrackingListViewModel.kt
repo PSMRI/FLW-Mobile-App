@@ -36,7 +36,8 @@ class EligibleCoupleTrackingListViewModel @Inject constructor(
     private val filter = MutableStateFlow("")
     private val selectedBenId = MutableStateFlow(0L)
 
-
+    private val childrenCountMap =
+        MutableStateFlow<Map<Long, String>>(emptyMap())
     init {
         viewModelScope.launch {
             allBenList.collect { list ->
@@ -59,8 +60,7 @@ class EligibleCoupleTrackingListViewModel @Inject constructor(
             }
         }
     }
-    private val childrenCountMap =
-        MutableStateFlow<Map<Long, String>>(emptyMap())
+
     val benList =
         allBenList
             .combine(filter) { list, filter ->

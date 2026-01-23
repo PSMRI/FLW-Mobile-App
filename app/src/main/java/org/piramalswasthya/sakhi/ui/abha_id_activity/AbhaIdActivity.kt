@@ -82,7 +82,7 @@ class AbhaIdActivity : AppCompatActivity() {
         }
 
         binding.btnTryAgain.setOnClickListener {
-            mainViewModel.generateAccessToken()
+            mainViewModel.generateAmritToken()
         }
 
         binding.toolbarMenuHome.setOnClickListener {
