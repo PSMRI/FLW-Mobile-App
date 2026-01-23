@@ -247,17 +247,10 @@ class EligibleCoupleRegFragment : Fragment() {
             binding.tvBenName.text = it
         }
         binding.childCountLl.visibility = View.VISIBLE
-        binding.childCountAbove15Ll.visibility = View.VISIBLE
-        binding.childCountBelow15Ll.visibility = View.VISIBLE
         viewModel.childCount.observe(viewLifecycleOwner) {
             binding.tvNoChild.text = it.toString()
         }
-        viewModel.childAbove15Count.observe(viewLifecycleOwner) {
-            binding.tvNoElderChild.text = it.toString()
-        }
-        viewModel.childBelow15Count.observe(viewLifecycleOwner) {
-            binding.tvNoYoungChild.text = it.toString()
-        }
+
 
         viewModel.benAgeGender.observe(viewLifecycleOwner) {
             binding.tvAgeGender.text = it

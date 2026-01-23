@@ -133,9 +133,6 @@ class UserRepo @Inject constructor(
                     json = TmcRefreshTokenRequest(refreshToken)
                 )
 
-                if (!response.isSuccessful) {
-                    return@withContext false
-                }
                 val responseBody = JSONObject(
                     response.body()?.string()
                         ?: throw IllegalStateException("Response success but data missing @ $response")
@@ -154,15 +151,16 @@ class UserRepo @Inject constructor(
                 } else {
                     val errorMessage = responseBody.getString("errorMessage")
                     Timber.d("Error Message $errorMessage")
+                    return@withContext false
                 }
-                return@withContext false
+
             } catch (se: SocketTimeoutException) {
                 return@withContext refreshTokenTmc(userName, password)
             } catch (e: HttpException) {
                 Timber.d("Auth Failed!")
                 return@withContext false
             } catch (e: Exception) {
-                return@withContext false
+                return@withContext true
             }
         }
     }
