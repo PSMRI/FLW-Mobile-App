@@ -28,6 +28,7 @@
     <string name="date_of_referal">Date of Referral</string>
     <string name="death_date">Date of death</string>
     <string name="home_visit_date">Home Visit Date</string>
+    <string name="home_visit_date_screening">Home Visit Date (Screening Date)</string>
     <string name="visit_date">Visit Date</string>
     <string name="home_visit_date_mda_program">Home Visit Date(MDA Program)</string>
     <string name="case_date_malaria">Malaria Case Status Date</string>
@@ -1183,6 +1184,8 @@
     </string-array>
 
     <string name="mda_form_campagain_title">Lymphatic Filariasis (LF) Mass Drug Administration (MDA) campaign</string>
+    <string name="screening">Screening</string>
+    <string name="suspected">Suspected</string>
 
 </resources>
 

@@ -108,7 +108,7 @@
 
             private fun loadImageFromPath(context: android.content.Context, filePath: String, imageView: ImageView) {
                 if (filePath.isBlank()) {
-                    imageView.setImageResource(R.drawable.ic_person)
+                    imageView.setImageResource(R.drawable.ic_doc_upload)
                     return
                 }
 
@@ -117,7 +117,7 @@
                         filePath.endsWith(".pdf", ignoreCase = true) ||
                                 (filePath.startsWith("content://") &&
                                         context.contentResolver.getType(Uri.parse(filePath))?.contains("pdf") == true) -> {
-                            imageView.setImageResource(R.drawable.ic_person)
+                            imageView.setImageResource(R.drawable.ic_doc_upload)
                             imageView.setOnClickListener {
                                 val uri = Uri.parse(filePath)
                                 val intent = Intent(Intent.ACTION_VIEW).apply {
@@ -133,7 +133,7 @@
                         }
 
                         filePath.startsWith("JVBERi0") || filePath.startsWith("%PDF") -> {
-                            imageView.setImageResource(R.drawable.ic_person)
+                            imageView.setImageResource(R.drawable.ic_doc_upload)
                             imageView.setOnClickListener {
                                 try {
                                     val decodedBytes = Base64.decode(filePath, Base64.DEFAULT)
@@ -182,7 +182,7 @@
                     }
                 } catch (e: Exception) {
                     Timber.tag("FormRendererAdapter").e(e, "Failed to load file: $filePath")
-                    imageView.setImageResource(R.drawable.ic_person)
+                    imageView.setImageResource(R.drawable.ic_doc_upload)
                 }
             }
 
@@ -1036,7 +1036,7 @@
                                 if (!filePath.isNullOrBlank()) {
                                     loadImageFromPath(context, filePath, this)
                                 } else {
-                                    setImageResource(R.drawable.ic_person)
+                                    setImageResource(R.drawable.ic_doc_upload)
                                 }
                             }
 
