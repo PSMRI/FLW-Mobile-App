@@ -337,7 +337,7 @@
     <string name="add_pnc_visits">Add PNC visit</string>
     <string name="id">ID</string>
     <string name="no_of_children">Total No.of Children</string>
-    <string name="no_of_elderly_children">No.of Adult Children</string>
+    <string name="no_of_elderly_children">Number of Adult Children(Age Above 15 Years)</string>
     <string name="no_of_younger_children">No.of Children</string>
     <string name="view_visit">View Visit</string>
     <string name="visit_no">Visit No.</string>
