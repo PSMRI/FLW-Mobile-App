@@ -5,9 +5,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.RvItemBenBinding
@@ -15,6 +17,7 @@ import org.piramalswasthya.sakhi.helpers.getDateFromLong
 import org.piramalswasthya.sakhi.helpers.getPatientTypeByAge
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.model.Gender
+import org.piramalswasthya.sakhi.utils.Log
 
 
 class BenListAdapter(
@@ -64,7 +67,6 @@ class BenListAdapter(
             context : FragmentActivity,
             benIdList: List<Long>
         ) {
-
             if (pref?.getLoggedInUser()?.role.equals("asha", true)) {
                 binding.btnAbha.visibility = View.VISIBLE
             } else {
@@ -173,8 +175,7 @@ class BenListAdapter(
 
                 item.gender == "FEMALE" &&
                         item.isMarried &&
-                        item.doYouHavechildren &&
-                        !item.isChildrenAdded -> {
+                        item.noOfChildren == 0  -> {
 
                     binding.btnAddChildren.visibility = View.VISIBLE
                     binding.btnAddSpouse.visibility = View.GONE
@@ -184,7 +185,7 @@ class BenListAdapter(
                     }
                 }
 
-                item.gender == "FEMALE" &&
+               /* item.gender == "FEMALE" &&
                         item.isMarried &&
                         !item.doYouHavechildren &&
                         !item.isChildrenAdded -> {
@@ -192,12 +193,11 @@ class BenListAdapter(
                     binding.btnAddChildren.visibility = View.INVISIBLE
                     binding.btnAddSpouse.visibility = View.GONE
                     binding.llAddSpouseBtn.visibility = View.VISIBLE
-                }
+                }*/
 
                 item.gender == "FEMALE" &&
                         item.isMarried &&
-                        item.doYouHavechildren &&
-                        item.isChildrenAdded -> {
+                        item.noOfChildren != 0  -> {
 
                     binding.btnAddChildren.visibility = View.VISIBLE
                     binding.btnAddChildren.text = context.getString(R.string.view_children)

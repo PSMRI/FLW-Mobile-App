@@ -973,7 +973,7 @@
 
                     "image" -> {
                         val context = itemView.context
-                        val isCampaignPhotos = field.fieldId == "campaign_photos" || field.fieldId == "campaignPhotos"
+                        val isCampaignPhotos = field.fieldId == "campaign_photos" || field.fieldId == "campaignPhotos" || field.fieldId == "mda_photos"
 
                         val container = LinearLayout(context).apply {
                             orientation = LinearLayout.VERTICAL
