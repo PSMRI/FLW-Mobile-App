@@ -10,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.repositories.VLFRepo
+import org.piramalswasthya.sakhi.utils.CampaignDateUtil
 import org.piramalswasthya.sakhi.utils.HelperUtil
 import javax.inject.Inject
 
@@ -28,7 +29,7 @@ class ORSCampaignListViewModel @Inject constructor(
             list.filter {
                 try {
                     val date = it.campaignDate ?: return@filter false
-                    val campaignDate = parseDateToLocalDate(date) ?: return@filter false
+                    val campaignDate = CampaignDateUtil.parseDateToLocalDate(date) ?: return@filter false
                     
                     campaignDate.year == currentYear &&
                     (campaignDate.isAfter(threeMonthsAgo) || campaignDate.isEqual(threeMonthsAgo))
@@ -63,7 +64,7 @@ class ORSCampaignListViewModel @Inject constructor(
 
                 val allCampaignDates = list.mapNotNull { it.campaignDate }
                 val mostRecentCampaignDate = allCampaignDates.maxByOrNull { dateStr ->
-                    parseDateToLocalDate(dateStr)?.toEpochDay() ?: Long.MIN_VALUE
+                    CampaignDateUtil.parseDateToLocalDate(dateStr)?.toEpochDay() ?: Long.MIN_VALUE
                 }
 
                 if (mostRecentCampaignDate == null) {
@@ -71,7 +72,7 @@ class ORSCampaignListViewModel @Inject constructor(
                     return@launch
                 }
 
-                val canAdd = isOneMonthCompleted(mostRecentCampaignDate)
+                val canAdd = CampaignDateUtil.isMonthsCompleted(mostRecentCampaignDate, 1)
                 _isCampaignAlreadyAdded.postValue(!canAdd)
             } catch (e: Exception) {
                 _isCampaignAlreadyAdded.postValue(false)
@@ -79,40 +80,4 @@ class ORSCampaignListViewModel @Inject constructor(
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun parseDateToLocalDate(dateStr: String): java.time.LocalDate? {
-        return try {
-            val dateFormats = listOf(
-                "yyyy-MM-dd",
-                "dd-MM-yyyy",
-                "dd/MM/yyyy",
-                "yyyy/MM/dd"
-            )
-            
-            for (format in dateFormats) {
-                try {
-                    val formatter = java.time.format.DateTimeFormatter.ofPattern(format)
-                    return java.time.LocalDate.parse(dateStr, formatter)
-                } catch (e: Exception) {
-                }
-            }
-            null
-        } catch (e: Exception) {
-            null
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun isOneMonthCompleted(lastDate: String): Boolean {
-        return try {
-            val last = parseDateToLocalDate(lastDate) ?: return false
-
-            val nextAllowed = last.plusMonths(1)
-            val today = java.time.LocalDate.now()
-
-            today.isAfter(nextAllowed) || today.isEqual(nextAllowed)
-        } catch (e: Exception) {
-            false
-        }
-    }
 }
