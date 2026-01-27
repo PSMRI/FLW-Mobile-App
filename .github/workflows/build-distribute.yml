@@ -156,18 +156,3 @@ jobs:
             bundle exec fastlane build_and_distribute_release variant:${{ inputs.variant }}
           fi
 
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: FLW-Mobile-App - APK(s) ${{ inputs.variant }} generated
-          path: |
-            app/build/outputs/apk/**/debug/*.apk
-            app/build/outputs/bundle/**/*.aab
-          if-no-files-found: warn
-
-      - name: Push to Releases
-        if: inputs.build_type == 'release'
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: app/build/outputs/bundle/**/*.aab
-          tag: v${{ env.version }}-${{ inputs.environment }}-${{ github.run_number }}
