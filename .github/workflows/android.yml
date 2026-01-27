@@ -3,6 +3,12 @@ name: FLW Android Build (Manual)
 on:
   workflow_dispatch:
     inputs:
+      branch:
+        description: "Git branch to build"
+        required: true
+        default: main
+        type: string
+
       environment:
         description: "Environment to run build"
         required: true
@@ -35,11 +41,10 @@ on:
 jobs:
   flw-build:
     uses: ./.github/workflows/build-distribute.yml
-
     with:
+      branch: ${{ inputs.branch }}
       environment: ${{ inputs.environment }}
       variant: ${{ inputs.variant }}
       build_type: ${{ inputs.build_type }}
       version: ${{ inputs.version }}
-
     secrets: inherit
