@@ -1,5 +1,7 @@
 package org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.pulse_polio
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,17 +12,25 @@ import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.repositories.VLFRepo
 import org.piramalswasthya.sakhi.utils.HelperUtil
 import javax.inject.Inject
+@RequiresApi(Build.VERSION_CODES.O)
 @HiltViewModel
 class PulsePolioCampaignListViewModel @Inject constructor(
     private val vlfRepo: VLFRepo
 ) : ViewModel() {
 
     val allPulsePolioCampaignList = vlfRepo.pulsePolioCampaignList.map { list ->
-        // Filter to show only current year data (1 year)
-        val currentYear = HelperUtil.getCurrentYear().toInt()
-        list.filter {
-            val date = it.campaignDate ?: return@filter false
-            getYearFromDate(date) == currentYear
+        try {
+            val currentYear = HelperUtil.getCurrentYear().toInt()
+            list.filter {
+                try {
+                    val date = it.campaignDate ?: return@filter false
+                    getYearFromDate(date) == currentYear
+                } catch (e: Exception) {
+                    false
+                }
+            }
+        } catch (e: Exception) {
+            emptyList()
         }
     }
 
@@ -29,11 +39,16 @@ class PulsePolioCampaignListViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            vlfRepo.getPulsePolioCampaignFromServer()
+            try {
+                vlfRepo.getPulsePolioCampaignFromServer()
+            } catch (e: Exception) {
+
+            }
             checkCampaignEligibility()
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun checkCampaignEligibility() {
         viewModelScope.launch {
             try {
@@ -67,6 +82,7 @@ class PulsePolioCampaignListViewModel @Inject constructor(
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun parseDateToLocalDate(dateStr: String): java.time.LocalDate? {
         return try {
             val dateFormats = listOf(
@@ -89,6 +105,7 @@ class PulsePolioCampaignListViewModel @Inject constructor(
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun getYearFromDate(dateStr: String): Int {
         return try {
             val date = parseDateToLocalDate(dateStr)
@@ -117,6 +134,7 @@ class PulsePolioCampaignListViewModel @Inject constructor(
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun isSixMonthsCompleted(lastDate: String): Boolean {
         return try {
             val last = parseDateToLocalDate(lastDate) ?: return false
