@@ -17,7 +17,7 @@ on:
         type: string
 
 
-    # ✅ Explicitly declare secrets for reusable workflow (CRITICAL FIX)
+
     secrets:
       GOOGLE_SERVICES_JSON_GENERIC:
         required: true
@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
 
-    # ✅ Required for GitHub Releases (MAJOR FIX)
+
     permissions:
       contents: write
 
@@ -59,7 +59,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # ✅ Upgrade cache to v4 (Node16 deprecation FIX)
+
       - name: Cache NDK
         uses: actions/cache@v4
         with:
