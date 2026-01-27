@@ -1,0 +1,45 @@
+name: FLW Android Build (Manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment to run build"
+        required: true
+        default: uat
+        type: choice
+        options:
+          - uat
+          - prod
+
+      variant:
+        description: "App variant"
+        required: true
+        default: sakshamDebug
+        type: string
+
+      build_type:
+        description: "Build type"
+        required: true
+        default: debug
+        type: choice
+        options:
+          - debug
+          - release
+
+      version:
+        description: "Build version (example: 2.4.1)"
+        required: true
+        type: string
+
+jobs:
+  flw-build:
+    uses: ./.github/workflows/build-distribute.yml
+
+    with:
+      environment: ${{ inputs.environment }}
+      variant: ${{ inputs.variant }}
+      build_type: ${{ inputs.build_type }}
+      version: ${{ inputs.version }}
+
+    secrets: inherit
