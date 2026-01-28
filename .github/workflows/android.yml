@@ -3,6 +3,7 @@ name: FLW Android Build (Manual)
 on:
   workflow_dispatch:
     inputs:
+      ref:
       branch:
         description: "Git branch to build"
         required: true
@@ -42,7 +43,7 @@ jobs:
   flw-build:
     uses: ./.github/workflows/build-distribute.yml
     with:
-      branch: ${{ inputs.branch }}
+      ref: ${{ inputs.branch }}
       environment: ${{ inputs.environment }}
       variant: ${{ inputs.variant }}
       build_type: ${{ inputs.build_type }}
