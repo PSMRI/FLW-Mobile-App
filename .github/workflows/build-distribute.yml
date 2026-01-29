@@ -46,7 +46,7 @@ jobs:
       - name: Set up Android NDK
         uses: nttld/setup-ndk@v1.5.0
         with:
-          ndk-version: r29  #this part changed
+          ndk-version: r29
           link-to-sdk: true
 
       - name: Install CMake
@@ -71,7 +71,7 @@ jobs:
         run: |
           echo "${{ secrets.FIREBASE_CREDENTIALS_JSON }}" | base64 --decode > firebase_credentials.json
 
-      # Removed credentials print step for security
+   
 
       - name: Decode Google Play JSON key
         run: |
@@ -85,12 +85,7 @@ jobs:
       - name: Create local.properties
         run: echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
 
-#      - name: Get version from build.gradle
-#        id: get-version
-#        run: |
-#          VERSION_NAME=$(grep 'versionName' app/build.gradle | sed -E "s/.*versionName ['\"]([0-9.]+)['\"].*/\1/")
-#          echo "version=$VERSION_NAME" >> $GITHUB_ENV # this part changed
-      - name: Set version for FLW build
+
         run: echo "version=flw-${{ github.run_number }}" >> $GITHUB_ENV
 
 
