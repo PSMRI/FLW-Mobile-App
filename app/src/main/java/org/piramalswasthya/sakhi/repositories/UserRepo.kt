@@ -189,7 +189,7 @@ class UserRepo @Inject constructor(
             val token = data.getString("key")
             val userId = data.getInt("userID")
             val refreshToken = data.getString("refreshToken")
-            db.clearAllTables()
+          //  db.clearAllTables()
             TokenInsertTmcInterceptor.setJwt(data.getString("jwtToken"))
             preferenceDao.registerJWTAmritToken(data.getString("jwtToken"))
             preferenceDao.registerRefreshToken(refreshToken)
