@@ -887,6 +887,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             maritalStatus.value =
                 maritalStatus.getStringFromPosition(saved.genDetails?.maritalStatusId ?: 0)
             ageAtMarriage.value = calculateAgeAtMarriage(saved.dob, saved.genDetails?.marriageDate)?.toString()
+            ageAtMarriage.max = getAgeFromDob(saved.dob).toLong()
             dateOfMarriage.value = getDateFromLong(
                 saved.genDetails?.marriageDate ?: 0
             )
