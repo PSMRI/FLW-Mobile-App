@@ -199,7 +199,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         TBConfirmedTreatmentCache::class
     ],
     views = [BenBasicCache::class],
-    version = 54, exportSchema = false
+    version = 55, exportSchema = false
 )
 
 @TypeConverters(
@@ -282,7 +282,16 @@ abstract class InAppDb : RoomDatabase() {
 
             }*/
 
-
+            val MIGRATION_54_55 = object : Migration(54, 55) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL(
+                        """
+            ALTER TABLE ELIGIBLE_COUPLE_TRACKING 
+            ADD COLUMN dateOfSterilisation INTEGER NOT NULL DEFAULT 0
+            """.trimIndent()
+                    )
+                }
+            }
             val MIGRATION_53_54 = object : Migration(53, 54) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     database.execSQL("ALTER TABLE TB_SUSPECTED ADD COLUMN visitLabel TEXT")
@@ -2002,7 +2011,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_50_51,
                         MIGRATION_51_52,
                         MIGRATION_52_53,
-                        MIGRATION_53_54
+                        MIGRATION_53_54,
+                        MIGRATION_54_55
                         
 
                     ).build()
