@@ -81,17 +81,27 @@ class AllHouseholdViewModel @Inject constructor(
     }
 
     private fun filterHH(
-        list: List<HouseHoldBasicDomain>, filter: String
+        list: List<HouseHoldBasicDomain>,
+        filter: String
     ): List<HouseHoldBasicDomain> {
-        return if (filter == "") list
-        else {
+
+        val filteredList = if (filter.isBlank()) {
+            list
+        } else {
             val filterText = filter.lowercase()
             list.filter {
-                it.hhId.toString().contains(filterText) || it.headFullName.lowercase()
-                    .contains(filterText) || it.contactNumber.lowercase().contains(filterText)
+                it.hhId.toString().contains(filterText) ||
+                        it.headFullName.lowercase().contains(filterText) ||
+                        it.contactNumber.contains(filterText)
             }
         }
+
+        return filteredList.sortedWith(
+            compareBy<HouseHoldBasicDomain> { it.isDeactivate }
+                .thenByDescending { it.createdTimeStamp }
+        )
     }
+
 
     fun resetSelectedHouseholdId() {
         _selectedHouseholdId = 0

@@ -112,7 +112,7 @@ class BenListAdapter(
                 when (type) {
 
                     "new_born_baby" -> {
-                        binding.ivHhLogo.setImageResource(R.drawable.ic_new_born_baby)
+                        binding.ivHhLogo.setImageResource(R.drawable.ic_icon_baby)
                     }
 
                     "infant" -> {
@@ -122,7 +122,7 @@ class BenListAdapter(
                     "child", "adolescence" -> {
                         when (gender) {
                             Gender.MALE.name -> {
-                                binding.ivHhLogo.setImageResource(R.drawable.ic_boy)
+                                binding.ivHhLogo.setImageResource(R.drawable.ic_icon_boy_ben)
                             }
                             Gender.FEMALE.name -> {
                                 binding.ivHhLogo.setImageResource(R.drawable.ic_girl)
@@ -139,7 +139,7 @@ class BenListAdapter(
                                 binding.ivHhLogo.setImageResource(R.drawable.ic_males)
                             }
                             Gender.FEMALE.name -> {
-                                binding.ivHhLogo.setImageResource(R.drawable.ic_female)
+                                binding.ivHhLogo.setImageResource(R.drawable.ic_icon_female)
                             }
                             else -> {
                                 binding.ivHhLogo.setImageResource(R.drawable.ic_unisex)
