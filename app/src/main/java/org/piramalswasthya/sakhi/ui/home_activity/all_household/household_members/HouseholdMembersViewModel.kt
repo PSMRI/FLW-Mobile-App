@@ -29,11 +29,31 @@ class HouseholdMembersViewModel @Inject constructor(
     val isFromDisease = 0
     val diseaseType = "No"
 
-    val benList = benRepo.getBenBasicListFromHousehold(hhId).map { list ->
+   /* val benList = benRepo.getBenBasicListFromHousehold(hhId).map { list ->
         list.sortedBy { ben ->
             ben.relToHeadId != 19
         }
+    }*/
+    val benList = benRepo.getBenBasicListFromHousehold(hhId).map { list ->
+        list.sortedWith(
+            compareBy<BenBasicDomain> {
+
+                when {
+                    it.relToHeadId == 19 -> 0
+
+                    !it.isDeath && !it.isDeactivate -> 1
+
+                    it.isDeath -> 2
+
+                    it.isDeactivate -> 3
+
+                    else -> 4
+                }
+            }
+                .thenByDescending { it.benId }
+        )
     }
+
 
     private val _abha = MutableLiveData<String?>()
     val abha: LiveData<String?>
