@@ -139,7 +139,7 @@ class BenListAdapter(
                                 binding.ivHhLogo.setImageResource(R.drawable.ic_males)
                             }
                             Gender.FEMALE.name -> {
-                                binding.ivHhLogo.setImageResource(R.drawable.ic_icon_female)
+                                binding.ivHhLogo.setImageResource(R.drawable.ic_icon_female_2)
                             }
                             else -> {
                                 binding.ivHhLogo.setImageResource(R.drawable.ic_unisex)
