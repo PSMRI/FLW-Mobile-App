@@ -96,6 +96,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
     private var isHoF: Boolean = false
     private var isAddSppouse: Int = 0
 
+    private var isAddSpouse: Boolean = false
+
     private var hof: BenRegCache? = null
     private var benIfDataExist: BenRegCache? = null
 
@@ -1007,6 +1009,9 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         agePopup.min = getMinDobMillis()
         agePopup.max = System.currentTimeMillis()
         if (relationToHeadId == 4 || relationToHeadId == 5) hoF?.let {
+            isAddSpouse = true
+            gender.inputType = TEXT_VIEW
+            maritalStatus.inputType = TEXT_VIEW
             setUpForSpouse(it, hoFSpouse,list)
         }
         if (relationToHeadId == 9 ||  relationToHeadId == 19 || relationToHeadId == 13 ||
@@ -1835,13 +1840,13 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             }
 
             agePopup.id -> {
-                assignValuesToAgeAndAgeUnitFromDob(
-                    getLongFromDate(agePopup.value),
-                    ageAtMarriage,
-                    timeStampDateOfMarriageFromSpouse
-                )
+//                assignValuesToAgeAndAgeUnitFromDob(
+//                    getLongFromDate(agePopup.value),
+//                    ageAtMarriage,
+//                    timeStampDateOfMarriageFromSpouse
+//                )
 
-                if (benIfDataExist != null) {
+                if (benIfDataExist != null || !isAddSpouse) {
                     gender.value = null
                     relationToHead.value = null
                     maritalStatus.value = null
@@ -1873,6 +1878,20 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                         1 -> R.array.nbr_relationship_to_head_female
                         else -> R.array.nbr_relationship_to_head
                     }
+                }
+
+                if (isAddSpouse) {
+                    ageAtMarriage.value = calculateAgeAtMarriage(getLongFromDate(agePopup.value), timeStampDateOfMarriageFromSpouse)?.toString()
+                    dateOfMarriage.value = getDateFromLong(
+                        timeStampDateOfMarriageFromSpouse ?: 0
+                    )
+                    triggerDependants(
+                        source = agePopup,
+                        addItems = listOf(ageAtMarriage),
+                        removeItems = emptyList(),
+                        position = 13
+                    )
+
                 }
 
                 try {

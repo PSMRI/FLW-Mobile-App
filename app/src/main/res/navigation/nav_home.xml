@@ -1107,6 +1107,11 @@
         <argument
             android:name="benId"
             app:argType="long" />
+        <action
+            android:id="@+id/action_TBScreeningFormFragment_to_ncdReferForm"
+            app:destination="@id/NCDReferalForm" />
+
+
     </fragment>
     <fragment
         android:id="@+id/TBSuspectedFragment"
