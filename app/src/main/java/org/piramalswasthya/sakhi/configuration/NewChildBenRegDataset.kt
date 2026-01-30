@@ -893,13 +893,32 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
         target.value = "${diff.toString()} years"
     }
 
+    private fun getRelationStringFromId(familyHeadRelationId: Int): String {
+        return if (familyHeadRelationId == 9)
+            "Son"
+        else
+            "Daughter"
+    }
+
+    private fun getFamilyHeadRelationFromMother(childGender: Gender): Int {
+        return if (childGender == Gender.MALE)
+            9
+        else
+            10
+    }
     fun mapChild(
         cacheModel: BenRegCache,
         childIndex: Int
     ): BenRegCache {
 
         val ben = cacheModel.copy()
-
+        val childGender = getChildGender(childIndex)
+        if (childGender == null) {
+            throw IllegalStateException("Gender must be selected for child $childIndex")
+        }
+        val familyHeadRelationId =
+            getFamilyHeadRelationFromMother(childGender)
+        val familyHeadRelation = getRelationStringFromId(familyHeadRelationId)
         when(childIndex) {
 
             1 -> {
@@ -923,6 +942,8 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
                     3 -> TRANSGENDER
                     else -> null
                 }
+                ben.familyHeadRelation = familyHeadRelation
+                ben.familyHeadRelationPosition = familyHeadRelationId
             }
             2 -> {
                 ben.firstName = secondChildName.value
@@ -945,6 +966,8 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
                     3 -> TRANSGENDER
                     else -> null
                 }
+                ben.familyHeadRelation = familyHeadRelation
+                ben.familyHeadRelationPosition = familyHeadRelationId
             }
 
             3 -> {
@@ -968,6 +991,8 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
                     3 -> TRANSGENDER
                     else -> null
                 }
+                ben.familyHeadRelation = familyHeadRelation
+                ben.familyHeadRelationPosition = familyHeadRelationId
             }
 
             4 -> {
@@ -991,6 +1016,8 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
                     3 -> TRANSGENDER
                     else -> null
                 }
+                ben.familyHeadRelation = familyHeadRelation
+                ben.familyHeadRelationPosition = familyHeadRelationId
             }
             5 -> {
                 ben.firstName = fifthChildName.value
@@ -1013,6 +1040,8 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
                     3 -> TRANSGENDER
                     else -> null
                 }
+                ben.familyHeadRelation = familyHeadRelation
+                ben.familyHeadRelationPosition = familyHeadRelationId
             }
             6 -> {
                 ben.firstName = sixthChildName.value
@@ -1035,6 +1064,8 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
                     3 -> TRANSGENDER
                     else -> null
                 }
+                ben.familyHeadRelation = familyHeadRelation
+                ben.familyHeadRelationPosition = familyHeadRelationId
             }
             7 -> {
                 ben.firstName = seventhChildName.value
@@ -1057,6 +1088,8 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
                     3 -> TRANSGENDER
                     else -> null
                 }
+                ben.familyHeadRelation = familyHeadRelation
+                ben.familyHeadRelationPosition = familyHeadRelationId
             }
             8 -> {
                 ben.firstName = eightChildName.value
@@ -1079,6 +1112,8 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
                     3 -> TRANSGENDER
                     else -> null
                 }
+                ben.familyHeadRelation = familyHeadRelation
+                ben.familyHeadRelationPosition = familyHeadRelationId
             }
             9 -> {
                 ben.firstName = ninthChildName.value
@@ -1101,6 +1136,8 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
                     3 -> TRANSGENDER
                     else -> null
                 }
+                ben.familyHeadRelation = familyHeadRelation
+                ben.familyHeadRelationPosition = familyHeadRelationId
             }
         }
 
@@ -1121,7 +1158,6 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
         ben.mobileNoOfRelationId = 5
         ben.isDraft = false
         ben.isConsent = isOtpVerified
-        ben.familyHeadRelation = selectedBen!!.familyHeadRelation
         ben.isSpouseAdded = false
         ben.isChildrenAdded = false
         ben.isMarried = false
@@ -1132,7 +1168,29 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
         return ben
     }
 
+    private fun mapGender(genderField: FormElement): Gender? {
+        return when (genderField.value) {
+            genderField.entries?.getOrNull(0) -> MALE
+            genderField.entries?.getOrNull(1) -> FEMALE
+            genderField.entries?.getOrNull(2) -> TRANSGENDER
+            else -> null
+        }
+    }
 
+    private fun getChildGender(childIndex: Int): Gender? {
+        return when (childIndex) {
+            1 -> mapGender(gender1)
+            2 -> mapGender(gender2)
+            3 -> mapGender(gender3)
+            4 -> mapGender(gender4)
+            5 -> mapGender(gender5)
+            6 -> mapGender(gender6)
+            7 -> mapGender(gender7)
+            8 -> mapGender(gender8)
+            9 -> mapGender(gender9)
+            else -> null
+        }
+    }
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as EligibleCoupleRegCache).let { ecr ->
             ecr.dateOfReg =

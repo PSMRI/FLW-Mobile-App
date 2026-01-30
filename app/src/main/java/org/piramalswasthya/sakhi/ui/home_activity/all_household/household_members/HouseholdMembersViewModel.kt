@@ -9,7 +9,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.database.room.SyncState
-import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.model.BenHealthIdDetails
 import org.piramalswasthya.sakhi.repositories.BenRepo
@@ -20,8 +19,6 @@ import javax.inject.Inject
 class HouseholdMembersViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val benRepo: BenRepo,
-    private val preferenceDao: PreferenceDao,
-
     ) : ViewModel() {
 
     val hhId = HouseholdMembersFragmentArgs.fromSavedStateHandle(savedStateHandle).hhId
@@ -55,6 +52,25 @@ class HouseholdMembersViewModel @Inject constructor(
     }
 
 
+    val benListWithChildren =
+        benRepo.getBenBasicListFromHousehold(hhId)
+            .map { list ->
+                list.sortedBy { ben ->
+                    ben.relToHeadId != 19
+                }
+            }
+            .map { list ->
+                list.map { ben ->
+                    val count =
+                        benRepo.getChildBenListFromHousehold(
+                            ben.hhId,
+                            ben.benId,
+                            ben.benName
+                        ).size
+
+                    ben.copy(noOfChildren = count)
+                }
+            }
     private val _abha = MutableLiveData<String?>()
     val abha: LiveData<String?>
         get() = _abha
