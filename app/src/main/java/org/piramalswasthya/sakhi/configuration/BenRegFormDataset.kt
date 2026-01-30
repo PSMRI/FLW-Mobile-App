@@ -853,9 +853,10 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             lastName.value = saved.lastName
             agePopup.value = getDateFromLong(saved.dob)
             gender.value = gender.getStringFromPosition(saved.genderId)
-            if (ben.isSpouseAdded || ben.isChildrenAdded || ben.doYouHavechildren) {
+            if (ben.isSpouseAdded || ben.isChildrenAdded || ben.doYouHavechildren || !ben.genDetails?.spouseName.isNullOrEmpty()) {
                 gender.inputType = TEXT_VIEW
                 agePopup.inputType = TEXT_VIEW
+                maritalStatus.inputType = TEXT_VIEW
             }
             fatherName.value = saved.fatherName
             fileUploadFront.value = saved.kidDetails?.birthCertificateFileFrontView
@@ -1011,6 +1012,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         agePopup.max = System.currentTimeMillis()
         if (relationToHeadId == 4 || relationToHeadId == 5) hoF?.let {
             isAddSpouse = true
+            agePopup.inputType = TEXT_VIEW
             gender.inputType = TEXT_VIEW
             maritalStatus.inputType = TEXT_VIEW
             setUpForSpouse(it, hoFSpouse,list)
@@ -1072,9 +1074,10 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             agePopup.value = getDateFromLong(saved.dob)
             ageAtMarriage.max = getAgeFromDob(saved.dob).toLong()
             gender.value = gender.getStringFromPosition(saved.genderId)
-            if (ben.isSpouseAdded || ben.isChildrenAdded || ben.doYouHavechildren) {
+            if (ben.isSpouseAdded || ben.isChildrenAdded || ben.doYouHavechildren || !ben.genDetails?.spouseName.isNullOrEmpty()) {
                 gender.inputType = TEXT_VIEW
                 agePopup.inputType = TEXT_VIEW
+                maritalStatus.inputType = TEXT_VIEW
             }
             fatherName.value = saved.fatherName
             fileUploadFront.value = saved.kidDetails?.birthCertificateFileFrontView
