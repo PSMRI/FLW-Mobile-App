@@ -1651,7 +1651,7 @@ class VLFRepo @Inject constructor(
                 }
 
                 val fieldsObj = formDataObj.optJSONObject("fields") ?: JSONObject()
-                val campaignPhotosValue = fieldsObj.opt("campaign_photos") ?: fieldsObj.opt("campaignPhotos")
+                val campaignPhotosValue = fieldsObj.opt("mda_photos") ?: fieldsObj.opt("mda_photos")
 
                 val photoUris = when {
                     campaignPhotosValue is String -> {
@@ -1674,13 +1674,13 @@ class VLFRepo @Inject constructor(
                             photoData.startsWith("data:image/") || photoData.contains(",") -> {
                                 val base64Data = photoData.substringAfter(",", photoData)
                                 val bytes = android.util.Base64.decode(base64Data, android.util.Base64.DEFAULT)
-                                val tempFile = File.createTempFile("campaign_photo_", ".jpg", appContext.cacheDir)
+                                val tempFile = File.createTempFile("mda_photo_", ".jpg", appContext.cacheDir)
                                 tempFile.writeBytes(bytes)
                                 tempFile
                             }
                             photoData.startsWith("content://") || photoData.startsWith("file://") -> {
                                 val uri = android.net.Uri.parse(photoData)
-                                val name = HelperUtil.getFileName(uri, appContext) ?: "campaign_photo"
+                                val name = HelperUtil.getFileName(uri, appContext) ?: "mda_photos"
                                 val mime = appContext.contentResolver.getType(uri) ?: "image/jpeg"
                                 if (mime.startsWith("image/")) {
                                     compressImageToTemp(uri, name, appContext)
@@ -1697,7 +1697,7 @@ class VLFRepo @Inject constructor(
                         file?.let {
                             val mime = "image/jpeg"
                             val body = it.asRequestBody(mime.toMediaTypeOrNull())
-                            MultipartBody.Part.createFormData("campaignPhotos", it.name, body)
+                            MultipartBody.Part.createFormData("mda_photos", it.name, body)
                         }
                     } catch (e: Exception) {
                         Timber.e(e, "Error processing image: $photoData")
@@ -1726,7 +1726,7 @@ class VLFRepo @Inject constructor(
                     false
                 }
             } catch (e: Exception) {
-                Timber.e(e, "Error saving Pulse Polio Campaign to server")
+                Timber.e(e, "Error saving Filaria MDA Campaign to server")
                 false
             }
         }

@@ -287,6 +287,11 @@ class NewBenRegViewModel @Inject constructor(
                     }
                     if (ben.gender == Gender.MALE) {
                         benRepo.updateFather(ben.firstName + " " + ben.lastName, ben.householdId, parentName, SyncState.UNSYNCED)
+                    } else {
+                        benRepo.updateBabyName("Baby of " + ben.firstName, ben.householdId, parentFirstName, SyncState.UNSYNCED)
+                        benRepo.updateMother(ben.firstName.toString(), ben.householdId, parentFirstName, SyncState.UNSYNCED)
+                    }
+                    if (isHoF) {
                         if (ben.genDetails?.maritalStatusId == 2) {
                             benRepo.updateMarriageAgeOfWife(
                                 ben.genDetails?.marriageDate!!,
@@ -297,8 +302,6 @@ class NewBenRegViewModel @Inject constructor(
                             )
                         }
                     } else {
-                        benRepo.updateBabyName("Baby of " + ben.firstName, ben.householdId, parentFirstName, SyncState.UNSYNCED)
-                        benRepo.updateMother(ben.firstName.toString(), ben.householdId, parentFirstName, SyncState.UNSYNCED)
                         if (ben.genDetails?.maritalStatusId == 2) {
                             benRepo.updateMarriageAgeOfHusband(
                                 ben.genDetails?.marriageDate!!,

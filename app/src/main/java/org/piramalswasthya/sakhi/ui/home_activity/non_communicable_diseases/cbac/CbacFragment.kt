@@ -110,8 +110,7 @@ class CbacFragment : Fragment() {
                 !viewModel.isReferralAlreadyDone(CbacViewModel.ReferralType.LEPROSY) &&
                 !dialogAlreadyShown
             ) {
-                dialogAlreadyShown = true  // ensure it won't show again
-                binding.cbacSuspectedLeprosy.cbacEdRg.check(R.id.rb_yes)
+                dialogAlreadyShown = true
                 viewModelLeprosyScreening.saveLeprosySuspectedFormDirectlyfromCbac()
                 referralForReason = "Suspected Leprosy case"
                 referType = "LEPROSY"
