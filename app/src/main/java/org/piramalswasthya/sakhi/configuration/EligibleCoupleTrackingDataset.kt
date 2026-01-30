@@ -34,6 +34,24 @@ class EligibleCoupleTrackingDataset(
 
     )
 
+    private var dateOfSterilisation  = FormElement(
+        id = 1,
+        inputType = InputType.DATE_PICKER,
+        title = resources.getString(R.string.date_of_sterilisation),
+        arrayId = -1,
+        required = true,
+        min = Calendar.getInstance().apply {
+            set(Calendar.DAY_OF_MONTH, 1)
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.timeInMillis,
+        max = System.currentTimeMillis(),
+        hasDependants = true
+
+    )
+
     private var lmpDate = FormElement(
         id = 11,
         inputType = InputType.DATE_PICKER,
@@ -258,6 +276,7 @@ class EligibleCoupleTrackingDataset(
             // -------- EDIT ENTRY --------
 
             dateOfVisit.value = getDateFromLong(saved.visitDate)
+            dateOfSterilisation.value = getDateFromLong(saved.dateOfSterilisation)
             lmpDate.value =
                 if (saved.lmpDate != null)
                     getDateFromLong(saved.lmpDate)
@@ -399,6 +418,7 @@ class EligibleCoupleTrackingDataset(
             }
 
             isPregnancyTestDone.id -> {
+                antraDoses.value = antraDoseValue
                 isPregnant.isEnabled = true
                 if (isPregnancyTestDone.value == resources.getStringArray(R.array.yes_no_donno)[0]) {
                     triggerDependants(
@@ -427,6 +447,7 @@ class EligibleCoupleTrackingDataset(
             }
 
             pregnancyTestResult.id -> {
+                antraDoses.value = antraDoseValue
                 if (pregnancyTestResult.value == resources.getStringArray(R.array.ectdset_po_neg)[0]) {
                     isPregnant.value = resources.getStringArray(R.array.yes_no)[0]
                     isPregnant.isEnabled = false
@@ -514,6 +535,7 @@ class EligibleCoupleTrackingDataset(
             }
 
             isPregnant.id -> {
+                antraDoses.value = antraDoseValue
                 var list1: List<Any> = emptyList()
                 if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
                     list1=listOf(methodOfContraception, anyOtherMethod,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,mpaFileUpload1)
@@ -522,6 +544,7 @@ class EligibleCoupleTrackingDataset(
 
                 }
                 if (isPregnant.value == resources.getStringArray(R.array.yes_no_donno)[0]) {
+
                     if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
                         triggerDependants(
                             source = isPregnant,
@@ -583,18 +606,24 @@ class EligibleCoupleTrackingDataset(
 
             usingFamilyPlanning.id -> {
                 antraDoses.value = antraDoseValue
-
+                methodOfContraception.inputType= InputType.DROPDOWN
+                methodOfContraception.entries =
+                    if (noOfChildrens == 0)
+                        resources.getStringArray(R.array.method_of_contraception_for_zero_child)
+                    else
+                        resources.getStringArray(R.array.method_of_contraception)
                 if (usingFamilyPlanning.value == resources.getStringArray(R.array.yes_no_donno)[0]) {
                     triggerDependants(
                         source = usingFamilyPlanning,
                         removeItems = emptyList(),
                         addItems = listOf(methodOfContraception)
                     )
+
                 }
                 else{
                     triggerDependants(
                         source = usingFamilyPlanning,
-                        removeItems = listOf(methodOfContraception,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,anyOtherMethod,mpaFileUpload1),
+                        removeItems = listOf(methodOfContraception,dateOfSterilisation,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,anyOtherMethod,mpaFileUpload1),
                         addItems = emptyList()
                     )
                 }
@@ -603,7 +632,7 @@ class EligibleCoupleTrackingDataset(
             }
 
             methodOfContraception.id -> {
-
+                antraDoses.value = antraDoseValue
                 when (methodOfContraception.value) {
 
                     resources.getStringArray(R.array.method_of_contraception)[1] -> {
@@ -619,7 +648,7 @@ class EligibleCoupleTrackingDataset(
                         triggerDependants(
                             source = methodOfContraception,
                             addItems = list1,
-                            removeItems = listOf(anyOtherMethod,deliveryDischargeSummary1,
+                            removeItems = listOf(anyOtherMethod,dateOfSterilisation,deliveryDischargeSummary1,
                                 deliveryDischargeSummary2),
                             position = getIndexById(methodOfContraception.id) + 1
                         )
@@ -630,7 +659,7 @@ class EligibleCoupleTrackingDataset(
                             source = methodOfContraception,
                             addItems = listOf(anyOtherMethod),
                             removeItems = listOf(antraDoses,deliveryDischargeSummary1,
-                                deliveryDischargeSummary2,mpaFileUpload1),
+                                deliveryDischargeSummary2,mpaFileUpload1,dateOfSterilisation),
                             position = getIndexById(methodOfContraception.id) + 1
                         )
                     }
@@ -647,9 +676,9 @@ class EligibleCoupleTrackingDataset(
                                     source = methodOfContraception,
                                     addItems =
                                         if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true))
-                                            listOf(deliveryDischargeSummary1, deliveryDischargeSummary2)
+                                            listOf(dateOfSterilisation,deliveryDischargeSummary1, deliveryDischargeSummary2)
                                         else
-                                            emptyList(),
+                                            listOf(dateOfSterilisation),
                                     removeItems = listOf(
                                         antraDoses,
                                         anyOtherMethod,
@@ -664,7 +693,7 @@ class EligibleCoupleTrackingDataset(
                                 triggerDependants(
                                     source = methodOfContraception,
                                     addItems = emptyList(),
-                                    removeItems = listOf(antraDoses, anyOtherMethod,dateOfAntraInjection,dueDateOfAntraInjection,mpaFileUpload1, deliveryDischargeSummary1,
+                                    removeItems = listOf(antraDoses,dateOfSterilisation, anyOtherMethod,dateOfAntraInjection,dueDateOfAntraInjection,mpaFileUpload1, deliveryDischargeSummary1,
                                         deliveryDischargeSummary2),
                                     position = -1
                                 )
@@ -673,7 +702,7 @@ class EligibleCoupleTrackingDataset(
                             triggerDependants(
                                 source = methodOfContraception,
                                 addItems = emptyList(),
-                                removeItems = listOf(antraDoses, anyOtherMethod,dateOfAntraInjection,dueDateOfAntraInjection,mpaFileUpload1, deliveryDischargeSummary1,
+                                removeItems = listOf(antraDoses,dateOfSterilisation, anyOtherMethod,dateOfAntraInjection,dueDateOfAntraInjection,mpaFileUpload1, deliveryDischargeSummary1,
                                     deliveryDischargeSummary2),
                                 position = -1
                             )
@@ -688,23 +717,34 @@ class EligibleCoupleTrackingDataset(
             anyOtherMethod.id -> {
                 validateAllAlphabetsSpaceOnEditText(anyOtherMethod)
             }
-
             usingFamilyPlanningMitanin.id -> {
+                antraDoses.value = antraDoseValue
+                methodOfContraception.inputType = InputType.DROPDOWN
+                methodOfContraception.entries =
+                    if (noOfChildrens == 0)
+                        resources.getStringArray(R.array.method_of_contraception_for_zero_child)
+                    else
+                        resources.getStringArray(R.array.method_of_contraception)
 
-                if (usingFamilyPlanningMitanin.value == resources.getStringArray(R.array.ectdset_yes_no)[0]) {
-                    // YES → show FP Methods, hide Q2
+                if (usingFamilyPlanningMitanin.value ==
+                    resources.getStringArray(R.array.ectdset_yes_no)[0]
+                ) {
+
                     triggerDependants(
                         source = usingFamilyPlanningMitanin,
                         removeItems = listOf(wantToUseFamilyPlanning),
                         addItems = listOf(methodOfContraception)
                     )
+
+                    methodOfContraception.value = methodOfContraception.value
+
                 } else {
-                    // NO → show Q2, hide FP Methods
                     triggerDependants(
                         source = usingFamilyPlanningMitanin,
                         removeItems = listOf(
                             methodOfContraception,
                             antraDoses,
+                            dateOfSterilisation,
                             dateOfAntraInjection,
                             dueDateOfAntraInjection,
                             anyOtherMethod,
@@ -717,8 +757,9 @@ class EligibleCoupleTrackingDataset(
                 }
                 return 0
             }
-            wantToUseFamilyPlanning.id -> {
 
+            wantToUseFamilyPlanning.id -> {
+                antraDoses.value = antraDoseValue
                 if (wantToUseFamilyPlanning.value == resources.getStringArray(R.array.ectdset_yes_no)[0]) {
                     // YES → show FP Methods
                     triggerDependants(
@@ -753,6 +794,7 @@ class EligibleCoupleTrackingDataset(
 
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as EligibleCoupleTrackingCache).let { form ->
+            form.dateOfSterilisation = getLongFromDate(dateOfSterilisation.value)
             form.visitDate = getLongFromDate(dateOfVisit.value)
             form.lmpDate = getLongFromDate(lmpDate.value)
             form.dateOfAntraInjection=dateOfAntraInjection.value
