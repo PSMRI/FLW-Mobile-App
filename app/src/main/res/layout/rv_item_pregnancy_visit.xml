@@ -52,7 +52,7 @@
                     android:text="@{visit.ben.benFullName}"
                     android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                     android:textColor="?attr/colorPrimaryVariant"
-                    app:drawableLeftCompat="@drawable/ic__hh"
+                    app:drawableLeftCompat="@drawable/ic_icon_anc_preg_women"
                     app:drawableTint="?attr/colorPrimary"
                     tools:text="Hello Meister" />
 
@@ -485,6 +485,7 @@
                     android:onClick="@{() -> clickListener.addHomeVisit(visit)}"
                     android:text="@string/add_home_visit"
                     android:textColor="?attr/colorOnPrimary" />
+
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_view_home_visit"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
