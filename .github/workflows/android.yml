@@ -8,11 +8,12 @@ on:
         required: true
         type: choice
         options:
+          - uat
+          - prod
           - SAKSHAM_UAT
           - SAKSHAM_STAG
           - NIRAMAY_PRODUCTION
           - XUSHRUKHA_PRODUCTION
-
 
       variant:
         description: "App variant"
