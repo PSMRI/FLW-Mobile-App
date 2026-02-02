@@ -29,13 +29,12 @@ class TokenInsertTmcInterceptor(private val preferenceDao: PreferenceDao) : Inte
     override fun intercept(chain: Interceptor.Chain): Response {
         var request = chain.request()
         if (request.header("No-Auth") == null) {
-            val userId = preferenceDao.getLoggedInUser()?.userId.toString()
-            request = request
-                .newBuilder()
-               // .addHeader("Authorization", JWT/*TOKEN*/)
-                .addHeader("userId", userId)
-                .addHeader("Jwttoken" , JWT)
-                .build()
+            val requestBuilder = request.newBuilder()
+            preferenceDao.getLoggedInUser()?.userId?.let {
+                requestBuilder.addHeader("userId", it.toString())
+            }
+            requestBuilder.addHeader("Jwttoken", JWT)
+            request = requestBuilder.build()
         }
         Timber.d("Request : $request")
         return chain.proceed(request)

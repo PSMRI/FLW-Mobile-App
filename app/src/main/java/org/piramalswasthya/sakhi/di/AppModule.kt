@@ -10,6 +10,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.database.room.InAppDb
 import org.piramalswasthya.sakhi.database.room.NcdReferalDao
 import org.piramalswasthya.sakhi.database.room.dao.ABHAGenratedDao
@@ -150,10 +151,10 @@ object AppModule {
     fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor {
         val loggingInterceptor = HttpLoggingInterceptor(LoggingInterceptor()).apply {
             level =
-             //   if (BuildConfig.DEBUG)
+                if (BuildConfig.DEBUG)
                     HttpLoggingInterceptor.Level.BODY
-//                else
-//                    HttpLoggingInterceptor.Level.NONE
+                else
+                    HttpLoggingInterceptor.Level.NONE
         }
         return loggingInterceptor
     }
