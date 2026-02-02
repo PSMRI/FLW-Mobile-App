@@ -142,8 +142,8 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideTokenInsertTmcInterceptor(): TokenInsertTmcInterceptor {
-        return TokenInsertTmcInterceptor()
+    fun provideTokenInsertTmcInterceptor(pref: PreferenceDao): TokenInsertTmcInterceptor {
+        return TokenInsertTmcInterceptor(pref)
     }
 
     @Singleton

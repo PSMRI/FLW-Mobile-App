@@ -270,7 +270,11 @@ class SignInFragment : Fragment() {
             if (loggedInUser.userName.equals(username.trim(), true)) {
                 if (loggedInUser.password == password) {
                   if(isInternetAvailable(requireActivity())){
-                      viewModel.authUser(username, password)
+                      if (loggedInUser == null){
+                          viewModel.authUser(username, password)
+                      }else{
+                          viewModel.updateState(NetworkResponse.Success(loggedInUser))
+                      }
                   }else{
                       viewModel.updateState(NetworkResponse.Success(loggedInUser))
                   }

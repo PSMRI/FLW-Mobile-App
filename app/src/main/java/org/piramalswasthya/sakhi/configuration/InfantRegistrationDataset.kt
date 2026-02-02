@@ -12,7 +12,6 @@ import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.InfantRegCache
 import org.piramalswasthya.sakhi.model.InputType
 import org.piramalswasthya.sakhi.model.PregnantWomanRegistrationCache
-import java.util.concurrent.TimeUnit
 
 class InfantRegistrationDataset(
     context: Context, currentLanguage: Languages
@@ -395,7 +394,7 @@ class InfantRegistrationDataset(
             form.resuscitation = resuscitation.value == "Yes"
             form.referred = referred.value
 
-            form.isSNCU = isSncu.value
+            form.isSNCU = isSncu.value?:"No"
             form.deliveryDischargeSummary1 = deliveryDischargeSummary1.value?.takeIf { it.isNotEmpty() }
             form.deliveryDischargeSummary2 = deliveryDischargeSummary2.value?.takeIf { it.isNotEmpty() }
             form.deliveryDischargeSummary3 = deliveryDischargeSummary3.value?.takeIf { it.isNotEmpty() }
