@@ -142,8 +142,8 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideTokenInsertTmcInterceptor(): TokenInsertTmcInterceptor {
-        return TokenInsertTmcInterceptor()
+    fun provideTokenInsertTmcInterceptor(pref: PreferenceDao): TokenInsertTmcInterceptor {
+        return TokenInsertTmcInterceptor(pref)
     }
 
     @Singleton
@@ -151,10 +151,10 @@ object AppModule {
     fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor {
         val loggingInterceptor = HttpLoggingInterceptor(LoggingInterceptor()).apply {
             level =
-                if (BuildConfig.DEBUG)
+             //   if (BuildConfig.DEBUG)
                     HttpLoggingInterceptor.Level.BODY
-                else
-                    HttpLoggingInterceptor.Level.NONE
+//                else
+//                    HttpLoggingInterceptor.Level.NONE
         }
         return loggingInterceptor
     }
