@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.RvItemPregnancyVisitBinding
@@ -89,6 +90,14 @@ class AncVisitListAdapter(
 
             binding.btnViewHomeVisit.visibility =
                 if (item.showViewHomeVisit) View.VISIBLE else View.GONE
+
+            if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true))
+            {
+                binding.btnAddHomeVisit.visibility = View.GONE
+                binding.btnViewHomeVisit.visibility = View.GONE
+
+
+            }
 
             if (showCall) {
                 binding.ivCall.visibility = View.VISIBLE

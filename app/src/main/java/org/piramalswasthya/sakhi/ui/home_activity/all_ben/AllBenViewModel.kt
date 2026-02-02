@@ -69,6 +69,16 @@ class AllBenViewModel @Inject constructor(
         filterBenList(list, kind)
     }.combine(filterOrg) { list, filter ->
         filterBenList(list, filter)
+            .sortedWith(
+                compareBy<BenBasicDomain> {
+                    when {
+                        !it.isDeath && !it.isDeactivate -> 0
+                        it.isDeath && !it.isDeactivate -> 1
+                        it.isDeactivate -> 2
+                        else -> 4
+                    }
+                }
+            )
     }
 
     private val _abha = MutableLiveData<String?>()
