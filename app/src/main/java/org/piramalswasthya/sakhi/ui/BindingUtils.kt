@@ -297,15 +297,40 @@ fun ImageView.setSyncState(syncState: SyncState?) {
             SyncState.UNSYNCED -> R.drawable.ic_unsynced
             SyncState.SYNCING -> R.drawable.ic_syncing
             SyncState.SYNCED -> R.drawable.ic_synced
+            SyncState.DRAFT -> R.drawable.ic_unsynced
+            else -> R.drawable.ic_unsynced
         }
         setImageResource(drawable)
-        isClickable = it == SyncState.UNSYNCED
+        isClickable = it == SyncState.UNSYNCED || it == SyncState.DRAFT
         if (it == SyncState.SYNCING) startAnimation(rotate)
     } ?: run {
         visibility = View.INVISIBLE
     }
 }
 
+<<<<<<< Updated upstream
+=======
+@BindingAdapter("syncStateForBen")
+fun ImageView.setSyncStateForBen(syncState: SyncState?) {
+    syncState?.let {
+
+        val drawable = when (it) {
+            SyncState.UNSYNCED -> R.drawable.ic_unsynced
+            SyncState.SYNCING -> R.drawable.ic_syncing
+            SyncState.SYNCED -> R.drawable.ic_synced
+            SyncState.DRAFT -> R.drawable.ic_unsynced
+            else -> R.drawable.ic_unsynced
+        }
+        setImageResource(drawable)
+        isClickable = it == SyncState.UNSYNCED || it == SyncState.DRAFT
+        if (it == SyncState.SYNCING) startAnimation(rotate)
+    } ?: run {
+        visibility = View.INVISIBLE
+    }
+}
+
+
+>>>>>>> Stashed changes
 
 @BindingAdapter("benImage")
 fun ImageView.setBenImage(uriString: String?) {
@@ -408,3 +433,59 @@ fun TextView.setAsteriskTextView(required: Boolean?, title: String?) {
 }
 
 
+<<<<<<< Updated upstream
+=======
+@BindingAdapter(value = ["formattedSessionDate"], requireAll = false)
+fun setFormattedSessionDate(textView: TextView, timestamp: Long?) {
+    if (timestamp == null) {
+        textView.text =textView.context.getString(R.string.session_date_n_a)
+        return
+    }
+
+    val date = Date(timestamp)
+    val formatType = textView.tag as? String ?: "default"
+
+    val format = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+    val formattedDate = format.format(date)
+
+    textView.text = when (formatType) {
+        "default" -> textView.context.getString(R.string.session_date_format, formattedDate)
+        "monthYear" -> {
+            val monthFormat = SimpleDateFormat("MMMM - yyyy", Locale.getDefault())
+            val monthYear = monthFormat.format(date)
+            textView.context.getString(R.string.uwin_session_format, monthYear)
+        }
+        else -> textView.context.getString(R.string.session_date_format, formattedDate)
+    }
+}
+
+@BindingAdapter(value = ["formattedSessionDateDirect"], requireAll = false)
+fun setFormattedSessionDateDirect(textView: TextView, timestamp: Long?) {
+    if (timestamp == null) {
+        textView.text =textView.context.getString(R.string.session_date_n_a)
+        return
+    }
+
+    val date = Date(timestamp)
+    val format = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+    textView.text = format.format(date)
+}
+
+@BindingAdapter(value = ["visibleIfAgeAbove30AndAliveAge", "isDeath"], requireAll = true)
+fun Button.visibleIfAgeAbove30AndAlive(age: Int?, isDeath: String?) {
+    val shouldShow = (age ?: 0) >= 30 && isDeath.equals("false", ignoreCase = true)
+    visibility = if (shouldShow) View.VISIBLE else View.GONE
+}
+
+@BindingAdapter(value = ["visibleIfEligibleFemale", "isDeath", "reproductiveStatusId", "gender"], requireAll = true)
+fun Button.visibleIfEligibleFemale(age: Int?, isDeath: String?, reproductiveStatusId: Int?, gender: String?) {
+
+    val shouldShow =
+        (gender.equals("female", ignoreCase = true)) &&
+                ((age ?: 0) in 20..49) &&
+                (reproductiveStatusId == 1 || reproductiveStatusId == 2) &&
+                isDeath.equals("false", ignoreCase = true)
+
+    visibility = if (shouldShow) View.VISIBLE else View.GONE
+}
+>>>>>>> Stashed changes

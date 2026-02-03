@@ -17,7 +17,6 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -31,12 +30,13 @@ import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.databinding.FragmentInputFormPageHhBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_age_more_15.NewBenRegG15ViewModel.State
+import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.BaseFormFragment
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 import java.io.File
 
 @AndroidEntryPoint
-class NewBenRegG15Fragment : Fragment() {
+class NewBenRegG15Fragment : BaseFormFragment() {
 
     private var _binding: FragmentInputFormPageHhBinding? = null
 
@@ -52,6 +52,7 @@ class NewBenRegG15Fragment : Fragment() {
         listIndex.takeIf { it >= 0 }?.let {
             binding.inputForm.rvInputForm.adapter?.notifyItemChanged(it)
         }
+        setFormAsDirty()
     }
 
     private val requestLocationPermission =
@@ -74,6 +75,7 @@ class NewBenRegG15Fragment : Fragment() {
                         adapter.notifyItemChanged(0)
                     }
                     Timber.d("Image saved at @ $uri")
+                    setFormAsDirty()
                 }
             }
         }
@@ -179,6 +181,7 @@ class NewBenRegG15Fragment : Fragment() {
                             else -> {
                                 viewModel.updateListOnValueChanged(formId, index)
                                 hardCodedListUpdate(formId)
+                                setFormAsDirty()
                             }
                         }
 
@@ -206,6 +209,7 @@ class NewBenRegG15Fragment : Fragment() {
                 }
 
                 State.SAVE_SUCCESS -> {
+                    setFormAsClean()
                     binding.clContent.visibility = View.VISIBLE
                     binding.rlSaving.visibility = View.GONE
                     Toast.makeText(
@@ -226,6 +230,17 @@ class NewBenRegG15Fragment : Fragment() {
                     ).show()
                     binding.clContent.visibility = View.VISIBLE
                     binding.rlSaving.visibility = View.GONE
+                }
+                State.DRAFT_SAVED -> {
+                    setFormAsClean()
+                    binding.clContent.visibility = View.VISIBLE
+                    binding.rlSaving.visibility = View.GONE
+                    Toast.makeText(
+                        context,
+                        "Draft saved successfully",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    findNavController().navigateUp()
                 }
             }
         }
@@ -299,7 +314,9 @@ class NewBenRegG15Fragment : Fragment() {
     }
 
     private fun goToPrevPage() {
-        viewModel.goToPreviousPage()
+        lifecycleScope.launch {
+            viewModel.goToPreviousPage()
+        }
     }
 
     private fun goToNextPage() {
@@ -340,6 +357,10 @@ class NewBenRegG15Fragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    override fun saveDraft() {
+        viewModel.saveDraft()
     }
 
 }

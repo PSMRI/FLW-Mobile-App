@@ -40,7 +40,8 @@ class HbycViewModel @Inject constructor(
         IDLE,
         LOADING,
         SUCCESS,
-        FAIL
+        FAIL,
+        DRAFT_SAVED
     }
 
     private val benId = HbycFragmentArgs.fromSavedStateHandle(state).benId
@@ -73,7 +74,7 @@ class HbycViewModel @Inject constructor(
     fun submitForm() {
         _state.value = State.LOADING
         val hbycCache =
-            HBYCCache(benId = benId, hhId = hhId, processed = "N", syncState = SyncState.UNSYNCED)
+            HBYCCache(benId = benId, hhId = hhId, month = month.toString(), processed = "N", syncState = SyncState.UNSYNCED)
         dataset.mapValues(hbycCache)
         Timber.d("saving hbyc: $hbycCache")
         viewModelScope.launch {
@@ -83,6 +84,21 @@ class HbycViewModel @Inject constructor(
                 _state.value = State.SUCCESS
             } else {
                 Timber.d("saving hbyc to local db failed!!")
+                _state.value = State.FAIL
+            }
+        }
+    }
+
+    fun saveDraft() {
+        _state.value = State.LOADING
+        val hbycCache =
+            HBYCCache(benId = benId, hhId = hhId, month = month.toString(), processed = "N", syncState = SyncState.DRAFT)
+        dataset.mapValues(hbycCache)
+        viewModelScope.launch {
+            val saved = hbycRepo.saveHbycData(hbycCache)
+            if (saved) {
+                _state.value = State.DRAFT_SAVED
+            } else {
                 _state.value = State.FAIL
             }
         }
@@ -114,9 +130,9 @@ class HbycViewModel @Inject constructor(
         val wardNo = household.family?.wardNo
         val name = household.family?.wardName
         val mohalla = household.family?.mohallaName
-        val district = household.locationRecord.district
-        val city = household.locationRecord.village
-        val state = household.locationRecord.state
+        val city = household.locationRecord.village.name
+        val district = household.locationRecord.district.name
+        val state = household.locationRecord.state.name
 
         var address = "$houseNo, $wardNo, $name, $mohalla, $city, $district, $state"
         address = address.replace(", ,", ",")

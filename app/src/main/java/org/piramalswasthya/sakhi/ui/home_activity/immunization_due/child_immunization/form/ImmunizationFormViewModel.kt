@@ -44,7 +44,7 @@ class ImmunizationFormViewModel @Inject constructor(
 ) : ViewModel() {
 
     enum class State {
-        IDLE, SAVING, SAVE_SUCCESS, SAVE_FAILED
+        IDLE, SAVING, SAVE_SUCCESS, SAVE_FAILED, DRAFT_SAVED
     }
 
     var vaccinationDoneList = arrayListOf<VaccineDomain>()
@@ -120,6 +120,7 @@ class ImmunizationFormViewModel @Inject constructor(
                 try {
                     _state.postValue(State.SAVING)
                     dataset.mapValues(immCache, 1)
+                    immCache.syncState = SyncState.UNSYNCED
                     vaccineDao.addImmunizationRecord(immCache)
                     _state.postValue(State.SAVE_SUCCESS)
                 } catch (e: Exception) {
@@ -135,25 +136,59 @@ class ImmunizationFormViewModel @Inject constructor(
             withContext(Dispatchers.IO) {
                 try {
                     _state.postValue(State.SAVING)
+                    immCacheArray.clear()
                     vaccinationDoneList.forEach { item->
                         val savedRecord = vaccineDao.getImmunizationRecord(benId, item.vaccineId)
-                        immCache = savedRecord?.also { _recordExists.postValue(true) } ?: run {
-                            ImmunizationCache(
-                                beneficiaryId = benId,
-                                vaccineId = item.vaccineId,
-                                createdBy = asha.userName,
-                                updatedBy = asha.userName,
-                                syncState = SyncState.UNSYNCED
-                            )
-                        }.also { _recordExists.postValue(false) }
+                        val cache = savedRecord?.apply {
+                            updatedBy = asha.userName
+                            syncState = SyncState.UNSYNCED
+                        } ?: ImmunizationCache(
+                            beneficiaryId = benId,
+                            vaccineId = item.vaccineId,
+                            createdBy = asha.userName,
+                            updatedBy = asha.userName,
+                            syncState = SyncState.UNSYNCED
+                        )
 
-                        dataset.mapValues(immCache, 1)
-                        immCacheArray.add(immCache)
+                        dataset.mapValues(cache, 1)
+                        immCacheArray.add(cache)
                     }
                      vaccineDao.insertImmunizationRecord(immCacheArray)
                     _state.postValue(State.SAVE_SUCCESS)
                 } catch (e: Exception) {
                     Timber.d("saving PW-ANC data failed!!")
+                    _state.postValue(State.SAVE_FAILED)
+                }
+            }
+        }
+    }
+
+    fun saveDraft() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                try {
+                    _state.postValue(State.SAVING)
+                    immCacheArray.clear()
+                    vaccinationDoneList.forEach { item->
+                        val savedRecord = vaccineDao.getImmunizationRecord(benId, item.vaccineId)
+                        val cache = savedRecord?.apply {
+                            updatedBy = asha.userName
+                            syncState = SyncState.DRAFT
+                        } ?: ImmunizationCache(
+                            beneficiaryId = benId,
+                            vaccineId = item.vaccineId,
+                            createdBy = asha.userName,
+                            updatedBy = asha.userName,
+                            syncState = SyncState.DRAFT
+                        )
+
+                        dataset.mapValues(cache, 1)
+                        immCacheArray.add(cache)
+                    }
+                    vaccineDao.insertImmunizationRecord(immCacheArray)
+                    _state.postValue(State.DRAFT_SAVED)
+                } catch (e: Exception) {
+                    Timber.d("saving Immunization draft data failed!!")
                     _state.postValue(State.SAVE_FAILED)
                 }
             }

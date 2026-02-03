@@ -15,7 +15,11 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
+<<<<<<< Updated upstream
 import androidx.fragment.app.Fragment
+=======
+import androidx.core.net.toUri
+>>>>>>> Stashed changes
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -39,7 +43,7 @@ import timber.log.Timber
 import java.io.File
 
 @AndroidEntryPoint
-class NewBenRegFragment : Fragment() {
+class NewBenRegFragment : BaseFormFragment() {
 
     private var _binding: FragmentNewFormBinding? = null
 
@@ -56,6 +60,7 @@ class NewBenRegFragment : Fragment() {
         listIndex.takeIf { it >= 0 }?.let {
             binding.form.rvInputForm.adapter?.notifyItemChanged(it)
         }
+        setFormAsDirty()
     }
 
     private val requestLocationPermission =
@@ -81,10 +86,61 @@ class NewBenRegFragment : Fragment() {
                     }
                     Timber.d("Image saved at @ $uri")
                 }
+<<<<<<< Updated upstream
+=======
+                setFormAsDirty()
+>>>>>>> Stashed changes
             }
         }
 
 
+<<<<<<< Updated upstream
+=======
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == PICK_PDF_FILE && resultCode == Activity.RESULT_OK) {
+            if(viewModel.getDocumentFormId() == 46) {
+                data?.data?.let { pdfUri ->
+                    if (checkFileSize(pdfUri,requireContext())) {
+                        Toast.makeText(context, resources.getString(R.string.file_size), Toast.LENGTH_LONG).show()
+
+                    } else {
+                        frontViewFileUri = pdfUri
+                        frontViewFileUri?.let { uri ->
+                            viewModel.setImageUriToFormElement(uri)
+                            binding.form.rvInputForm.apply {
+                                val adapter = this.adapter as FormInputAdapter
+                                adapter.notifyDataSetChanged()
+                            }
+                        }
+                        setFormAsDirty()
+//                    updateImageRecord()
+                    }
+                }
+            } else {
+                data?.data?.let { pdfUri ->
+                    if (checkFileSize(pdfUri,requireContext())) {
+                        Toast.makeText(context, resources.getString(R.string.file_size), Toast.LENGTH_LONG).show()
+
+                    } else {
+                        backViewFileUri = pdfUri
+                        backViewFileUri?.let { uri ->
+                            viewModel.setImageUriToFormElement(uri)
+                            binding.form.rvInputForm.apply {
+                                val adapter = this.adapter as FormInputAdapter
+                                adapter.notifyDataSetChanged()
+                            }
+                        }
+                        setFormAsDirty()
+//                    updateImageRecord()
+                    }
+                }
+            }
+
+        }
+    }
+>>>>>>> Stashed changes
     private fun showAddSpouseAlert() {
         val alertDialog = MaterialAlertDialogBuilder(requireContext()).setCancelable(false)
 
@@ -225,6 +281,7 @@ class NewBenRegFragment : Fragment() {
                             else -> {
                                 viewModel.updateListOnValueChanged(formId, index)
                                 hardCodedListUpdate(formId)
+                                setFormAsDirty()
                             }
                         }
 
@@ -258,6 +315,7 @@ class NewBenRegFragment : Fragment() {
                 }
 
                 State.SAVE_SUCCESS -> {
+                    setFormAsClean()
                     binding.llContent.visibility = View.VISIBLE
                     binding.pbForm.visibility = View.GONE
                     Toast.makeText(
@@ -281,6 +339,17 @@ class NewBenRegFragment : Fragment() {
                     ).show()
                     binding.llContent.visibility = View.VISIBLE
                     binding.pbForm.visibility = View.GONE
+                }
+                State.DRAFT_SAVED -> {
+                    setFormAsClean()
+                    binding.llContent.visibility = View.VISIBLE
+                    binding.pbForm.visibility = View.GONE
+                    Toast.makeText(
+                        context,
+                        "Draft saved successfully",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    findNavController().navigateUp()
                 }
             }
         }
@@ -437,4 +506,80 @@ class NewBenRegFragment : Fragment() {
     }
 
 
+<<<<<<< Updated upstream
+=======
+    private fun formatTimeInSeconds(millis: Long) : String {
+        val seconds = millis / 1000
+        return "${seconds} sec"
+    }
+    private fun startTimer(timerInSec: TextView, generateOtp: MaterialButton,position:Int) {
+        viewModel.countDownTimer =  object : CountDownTimer(60000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                timerInSec.visibility = View.VISIBLE
+                timerInSec.text = formatTimeInSeconds(millisUntilFinished)
+                if (isOtpVerified) {
+                    timerInSec.visibility = View.INVISIBLE
+                    countdownTimers.clear()
+                }
+            }
+            override fun onFinish() {
+                timerInSec.visibility = View.INVISIBLE
+                timerInSec.text = ""
+                generateOtp.isEnabled = true
+                if (!isOtpVerified) {
+                    generateOtp.text = timerInSec.resources.getString(R.string.resend_otp)
+
+                }
+
+
+            }
+        }.start()
+
+        countdownTimers[position] = viewModel.countDownTimer
+
+    }
+
+    private fun chooseOptions() {
+        val alertBinding = LayoutMediaOptionsBinding.inflate(layoutInflater, binding.root, false)
+        val alertDialog = MaterialAlertDialogBuilder(requireContext())
+            .setView(alertBinding.root)
+            .setCancelable(true)
+            .create()
+        alertBinding.btnPdf.setOnClickListener {
+            alertDialog.dismiss()
+            selectPdf()
+        }
+        alertBinding.btnCamera.setOnClickListener {
+            alertDialog.dismiss()
+            takeImage()
+        }
+        alertBinding.btnGallery.setOnClickListener {
+            alertDialog.dismiss()
+            selectImage()
+        }
+        alertBinding.btnCancel.setOnClickListener {
+            alertDialog.dismiss()
+        }
+        alertDialog.show()
+    }
+
+    private fun selectPdf() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "application/pdf"
+        }
+        startActivityForResult(intent, PICK_PDF_FILE)
+    }
+
+    private fun selectImage() {
+        val intent = Intent(Intent.ACTION_PICK).apply {
+            type = "image/*"
+        }
+        startActivityForResult(intent, PICK_PDF_FILE)
+    }
+
+    override fun saveDraft() {
+        viewModel.saveDraft()
+    }
+>>>>>>> Stashed changes
 }

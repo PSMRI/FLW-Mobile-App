@@ -36,7 +36,7 @@ class NewBenRegG15ViewModel @Inject constructor(
     userRepo: UserRepo
 ) : ViewModel() {
     enum class State {
-        IDLE, SAVING, SAVE_SUCCESS, SAVE_FAILED
+        IDLE, SAVING, SAVE_SUCCESS, SAVE_FAILED, DRAFT_SAVED
     }
 
     private val hhId = NewBenRegG15FragmentArgs.fromSavedStateHandle(savedStateHandle).hhId
@@ -58,6 +58,10 @@ class NewBenRegG15ViewModel @Inject constructor(
     private val _state = MutableLiveData(State.IDLE)
     val state: LiveData<State>
         get() = _state
+
+    private val _hasUnsavedChanges = MutableLiveData(false)
+    val hasUnsavedChanges: LiveData<Boolean>
+        get() = _hasUnsavedChanges
 
 
     private val _errorMessage = MutableLiveData<String?>(null)
@@ -151,9 +155,36 @@ class NewBenRegG15ViewModel @Inject constructor(
                         updatedBy = user.userName
                     }
                     benRepo.persistRecord(ben)
+                    _hasUnsavedChanges.postValue(false)
                     _state.postValue(State.SAVE_SUCCESS)
                 } catch (e: IllegalAccessError) {
                     Timber.d("saving Ben data failed!! $e")
+                    _state.postValue(State.SAVE_FAILED)
+                }
+            }
+        }
+    }
+
+    fun saveDraft() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                try {
+                    _state.postValue(State.SAVING)
+                    dataset.mapValues(ben, 2)
+                    ben.apply {
+                        // we keep isDraft = true
+                        if (createdDate == null) {
+                            createdDate = System.currentTimeMillis()
+                            createdBy = user.userName
+                        }
+                        updatedDate = System.currentTimeMillis()
+                        updatedBy = user.userName
+                    }
+                    benRepo.persistRecord(ben) // ben still has isDraft = true
+                    _hasUnsavedChanges.postValue(false)
+                    _state.postValue(State.DRAFT_SAVED)
+                } catch (e: Exception) {
+                    Timber.e(e, "Error saving draft!")
                     _state.postValue(State.SAVE_FAILED)
                 }
             }
@@ -174,6 +205,7 @@ class NewBenRegG15ViewModel @Inject constructor(
 
     fun updateListOnValueChanged(formId: Int, index: Int) {
         viewModelScope.launch {
+            _hasUnsavedChanges.postValue(true)
             dataset.updateList(formId, index)
         }
 

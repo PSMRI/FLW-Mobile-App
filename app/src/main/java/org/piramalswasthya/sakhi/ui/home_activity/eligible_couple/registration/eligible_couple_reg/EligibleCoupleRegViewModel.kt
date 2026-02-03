@@ -35,7 +35,7 @@ class EligibleCoupleRegViewModel @Inject constructor(
 ) : ViewModel() {
 
     enum class State {
-        IDLE, SAVING, SAVE_SUCCESS, SAVE_FAILED
+        IDLE, SAVING, SAVE_SUCCESS, SAVE_FAILED, DRAFT_SAVED
     }
 
     private val benId =
@@ -121,6 +121,7 @@ class EligibleCoupleRegViewModel @Inject constructor(
                     _state.postValue(State.SAVING)
 
                     dataset.mapValues(ecrForm, 1)
+                    ecrForm.syncState = SyncState.UNSYNCED
                     ecrRepo.persistRecord(ecrForm)
                     ecrRepo.getBenFromId(benId)?.let {
                         val hasBenUpdated = dataset.mapValueToBen(it)
@@ -133,7 +134,7 @@ class EligibleCoupleRegViewModel @Inject constructor(
                         assess =
                             HRPNonPregnantAssessCache(benId = benId, syncState = SyncState.UNSYNCED)
                     }
-                    dataset.mapValuesToAssess(assess, 1)
+                    dataset.mapValuesToAssess(assess!!, 1)
                     assess?.let {
                         hrpRepo.saveRecord(it)
                     }
@@ -141,6 +142,22 @@ class EligibleCoupleRegViewModel @Inject constructor(
                     _state.postValue(State.SAVE_SUCCESS)
                 } catch (e: Exception) {
                     Timber.d("saving ecr data failed!! $e")
+                    _state.postValue(State.SAVE_FAILED)
+                }
+            }
+        }
+    }
+
+    fun saveDraft() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                try {
+                    _state.postValue(State.SAVING)
+                    dataset.mapValues(ecrForm, 1)
+                    ecrForm.syncState = SyncState.DRAFT
+                    ecrRepo.persistRecord(ecrForm)
+                    _state.postValue(State.DRAFT_SAVED)
+                } catch (e: Exception) {
                     _state.postValue(State.SAVE_FAILED)
                 }
             }

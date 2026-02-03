@@ -4,7 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+<<<<<<< Updated upstream
 import androidx.fragment.app.Fragment
+=======
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.FileProvider
+import androidx.core.net.toUri
+>>>>>>> Stashed changes
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -14,11 +21,17 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapterWithBgIcon
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+<<<<<<< Updated upstream
+=======
+import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.BaseFormFragment
+import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.form.PwAncFormFragment.Companion.backViewFileUri
+import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.form.PwAncFormFragment.Companion.latestTmpUri
+>>>>>>> Stashed changes
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 
 @AndroidEntryPoint
-class EligibleCoupleRegFragment : Fragment() {
+class EligibleCoupleRegFragment : BaseFormFragment() {
 
     private var _binding: FragmentNewFormBinding? = null
     private val binding: FragmentNewFormBinding
@@ -35,6 +48,107 @@ class EligibleCoupleRegFragment : Fragment() {
         return binding.root
     }
 
+<<<<<<< Updated upstream
+=======
+    private val takePicture =
+        registerForActivityResult(ActivityResultContracts.TakePicture()) { success: Boolean ->
+            if (success) {
+                if(viewModel.getDocumentFormId() == 75) {
+                    latestTmpUri?.let { uri ->
+                        if (checkFileSize(uri,requireContext())) {
+                            Toast.makeText(context, resources.getString(R.string.file_size), Toast.LENGTH_LONG).show()
+
+                        } else {
+                            viewModel.setImageUriToFormElement(uri)
+                            binding.form.rvInputForm.apply {
+                                val adapter = this.adapter as FormInputAdapterWithBgIcon
+                                adapter.notifyDataSetChanged()
+                            }
+                            setFormAsDirty()
+                        }
+
+                    }
+                } else {
+                    backViewFileUri?.let { uri ->
+                        if (checkFileSize(uri,requireContext())) {
+                            Toast.makeText(context, resources.getString(R.string.file_size), Toast.LENGTH_LONG).show()
+
+                        } else {
+                            viewModel.setImageUriToFormElement(uri)
+                            binding.form.rvInputForm.apply {
+                                val adapter = this.adapter as FormInputAdapterWithBgIcon
+                                adapter.notifyDataSetChanged()
+                            }
+                            setFormAsDirty()
+                        }
+
+                    }
+                }
+
+            }
+        }
+
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == PICK_PDF_FILE && resultCode == Activity.RESULT_OK) {
+            if(viewModel.getDocumentFormId() == 31) {
+                data?.data?.let { pdfUri ->
+                    if (checkFileSize(pdfUri,requireContext())) {
+                        Toast.makeText(context, resources.getString(R.string.file_size), Toast.LENGTH_LONG).show()
+
+                    } else {
+                        latestTmpUri = pdfUri
+                        latestTmpUri?.let { uri ->
+                            viewModel.setImageUriToFormElement(uri)
+                            binding.form.rvInputForm.apply {
+                                val adapter = this.adapter as FormInputAdapterWithBgIcon
+                                adapter.notifyDataSetChanged()
+                            }
+                            setFormAsDirty()
+                        }
+
+//                    updateImageRecord()
+                    }
+                }
+            } else {
+                data?.data?.let { pdfUri ->
+                    if (checkFileSize(pdfUri,requireContext())) {
+                        Toast.makeText(context, resources.getString(R.string.file_size), Toast.LENGTH_LONG).show()
+
+                    } else {
+                        backViewFileUri = pdfUri
+                        backViewFileUri?.let { uri ->
+                            viewModel.setImageUriToFormElement(uri)
+                            binding.form.rvInputForm.apply {
+                                val adapter = this.adapter as FormInputAdapterWithBgIcon
+                                adapter.notifyDataSetChanged()
+                            }
+                            setFormAsDirty()
+                        }
+
+//                    updateImageRecord()
+                    }
+                }
+            }
+
+        }
+    }
+
+    private fun displayPdf(pdfUri: Uri) {
+        activity?.contentResolver?.takePersistableUriPermission(
+            pdfUri,
+            Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+        )
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(pdfUri, "application/pdf")
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        startActivity(Intent.createChooser(intent, "Open PDF with"))
+
+    }
+
+>>>>>>> Stashed changes
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -55,6 +169,80 @@ class EligibleCoupleRegFragment : Fragment() {
 
                             adapter.submitList(it)
 
+<<<<<<< Updated upstream
+=======
+                    val adapter = FormInputAdapterWithBgIcon(
+                        formValueListener = FormInputAdapterWithBgIcon.FormValueListener { formId, index ->
+                            viewModel.updateListOnValueChanged(formId, index)
+                            hardCodedListUpdate(formId)
+                            setFormAsDirty()
+                        }, isEnabled = !isDataExist ,
+                        selectImageClickListener  = FormInputAdapterWithBgIcon.SelectUploadImageClickListener {
+                            if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                                viewModel.setCurrentDocumentFormId(it)
+                                chooseOptions()
+                            }
+                        },
+                        viewDocumentListner = FormInputAdapterWithBgIcon.ViewDocumentOnClick {
+                            if (!recordExists) {
+                                if (it == 75) {
+                                    latestTmpUri?.let {
+                                        if (it.toString().contains("document")) {
+                                            displayPdf(it)
+                                        } else {
+                                            viewImage(it)
+                                        }
+
+                                    }
+                                } else {
+                                    backViewFileUri?.let {
+                                        if (it.toString().contains("document")) {
+                                            displayPdf(it)
+                                        } else {
+                                            viewImage(it)
+                                        }
+
+                                    }
+                                }
+
+                            } else {
+                                val formId = it
+                                lifecycleScope.launch {
+                                    viewModel.formList.collect{
+                                        if (formId == 75) {
+                                            it.get(viewModel.getIndexofAshaKitPhotoFirst()).value.let {
+                                                if (it.toString().contains("document")) {
+                                                    displayPdf(it!!.toUri())
+                                                } else {
+                                                    viewImage(it!!.toUri())
+                                                }
+                                            }
+                                        } else {
+                                            it.get(viewModel.getIndexofAshaKitPhotoSecond()).value.let {
+                                                if (it.toString().contains("document")) {
+                                                    displayPdf(it!!.toUri())
+                                                } else {
+                                                    viewImage(it!!.toUri())
+                                                }
+                                            }
+                                        }
+
+                                    }
+                                }
+
+                            }
+
+                        }
+                    )
+                    binding.form.rvInputForm.adapter = adapter
+                    lifecycleScope.launch {
+                        viewModel.formList.collect {
+                            if (it.isNotEmpty())
+
+                                adapter.submitList(it)
+
+                        }
+>>>>>>> Stashed changes
                     }
                 }
             }
@@ -71,8 +259,18 @@ class EligibleCoupleRegFragment : Fragment() {
         viewModel.state.observe(viewLifecycleOwner) {
             when (it) {
                 EligibleCoupleRegViewModel.State.SAVE_SUCCESS -> {
+                    setFormAsClean()
                     findNavController().navigateUp()
                     WorkerUtils.triggerAmritPushWorker(requireContext())
+                }
+                EligibleCoupleRegViewModel.State.DRAFT_SAVED -> {
+                    setFormAsClean()
+                    Toast.makeText(
+                        context,
+                        "Draft saved successfully",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    findNavController().navigateUp()
                 }
 
                 else -> {}
@@ -221,4 +419,113 @@ class EligibleCoupleRegFragment : Fragment() {
         _binding = null
     }
 
+<<<<<<< Updated upstream
+=======
+    fun showAlertDialog(context: Context, title: String, message: String) {
+        MaterialAlertDialogBuilder(context)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setCancelable(false)
+            .show()
+    }
+
+    private fun chooseOptions() {
+        val alertBinding = LayoutMediaOptionsBinding.inflate(layoutInflater, binding.root, false)
+        val alertDialog = MaterialAlertDialogBuilder(requireContext())
+            .setView(alertBinding.root)
+            .setCancelable(true)
+            .create()
+        alertBinding.btnPdf.setOnClickListener {
+            alertDialog.dismiss()
+            selectPdf()
+        }
+        alertBinding.btnCamera.setOnClickListener {
+            alertDialog.dismiss()
+            takeImage()
+        }
+        alertBinding.btnGallery.setOnClickListener {
+            alertDialog.dismiss()
+            selectImage()
+        }
+        alertBinding.btnCancel.setOnClickListener {
+            alertDialog.dismiss()
+        }
+        alertDialog.show()
+    }
+
+    private fun takeImage() {
+        lifecycleScope.launchWhenStarted {
+            getTmpFileUri().let { uri ->
+                if(viewModel.getDocumentFormId() == 75) {
+                    latestTmpUri = uri
+                    if (checkFileSize(uri,requireContext())) {
+                        Toast.makeText(context, resources.getString(R.string.file_size), Toast.LENGTH_LONG).show()
+                    } else {
+                        takePicture.launch(latestTmpUri)
+                    }
+                } else {
+                    backViewFileUri = uri
+                    if (checkFileSize(uri,requireContext())) {
+                        Toast.makeText(context, resources.getString(R.string.file_size), Toast.LENGTH_LONG).show()
+                    } else {
+                        takePicture.launch(backViewFileUri)
+                    }
+                }
+
+
+            }
+        }
+    }
+
+
+    private fun getTmpFileUri(): Uri {
+        val tmpFile =
+            File.createTempFile(Konstants.tempBenImagePrefix, null, requireActivity().cacheDir)
+                .apply {
+                    createNewFile()
+//                deleteOnExit()
+                }
+        return FileProvider.getUriForFile(
+            requireContext(),
+            "${BuildConfig.APPLICATION_ID}.provider",
+            tmpFile
+        )
+    }
+
+    private fun selectPdf() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "application/pdf"
+        }
+        startActivityForResult(intent, PICK_PDF_FILE)
+    }
+
+    private fun selectImage() {
+        val intent = Intent(Intent.ACTION_PICK).apply {
+            type = "image/*"
+        }
+        startActivityForResult(intent, PICK_PDF_FILE)
+    }
+
+    private fun viewImage(imageUri: Uri) {
+        val viewImageBinding = LayoutViewMediaBinding.inflate(layoutInflater, binding.root, false)
+        val alertDialog = MaterialAlertDialogBuilder(requireContext())
+            .setView(viewImageBinding.root)
+            .setCancelable(true)
+            .create()
+        Glide.with(this).load(Uri.parse(imageUri.toString())).placeholder(R.drawable.ic_person)
+            .into(viewImageBinding.viewImage)
+        viewImageBinding.btnClose.setOnClickListener {
+            alertDialog.dismiss()
+        }
+        alertDialog.show()
+    }
+
+    override fun saveDraft() {
+        viewModel.saveDraft()
+    }
+>>>>>>> Stashed changes
 }

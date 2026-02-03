@@ -1,12 +1,18 @@
 package org.piramalswasthya.sakhi.ui.home_activity.death_reports.cdr
 
+<<<<<<< Updated upstream
 import android.app.Application
+=======
+import android.content.Context
+import android.net.Uri
+>>>>>>> Stashed changes
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -20,12 +26,13 @@ import org.piramalswasthya.sakhi.model.HouseholdCache
 import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.CdrRepo
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class CdrObjectViewModel @Inject constructor(
     state: SavedStateHandle,
-    context: Application,
+    @ApplicationContext context: Context,
     private val database: InAppDb,
     private val cdrRepo: CdrRepo,
     private val benRepo: BenRepo,
@@ -36,7 +43,8 @@ class CdrObjectViewModel @Inject constructor(
         IDLE,
         LOADING,
         SUCCESS,
-        FAIL
+        FAIL,
+        DRAFT_SAVED
     }
 
     private val benId = CdrObjectFragmentArgs.fromSavedStateHandle(state).benId
@@ -52,7 +60,6 @@ class CdrObjectViewModel @Inject constructor(
     private val _benAgeGender = MutableLiveData<String>()
     val benAgeGender: LiveData<String>
         get() = _benAgeGender
-
     private val _state = MutableLiveData(State.IDLE)
     val state: LiveData<State>
         get() = _state
@@ -60,10 +67,65 @@ class CdrObjectViewModel @Inject constructor(
     val exists: LiveData<Boolean>
         get() = _exists
 
+<<<<<<< Updated upstream
     private val dataset =
         CDRFormDataset(context, preferenceDao.getCurrentLanguage())
     val formList = dataset.listFlow
 
+=======
+    private val _hasUnsavedChanges = MutableLiveData(false)
+    val hasUnsavedChanges: LiveData<Boolean>
+        get() = _hasUnsavedChanges
+
+    private val dataset =
+        CDRFormDataset(context, preferenceDao.getCurrentLanguage(), preferenceDao)
+    val formList = dataset.listFlow
+
+    private var lastDocumentFormId: Int = 0
+    fun setCurrentDocumentFormId(id: Int) {
+        lastDocumentFormId = id
+    }
+    fun getDocumentFormId():Int {
+        return lastDocumentFormId
+    }
+    fun setImageUriToFormElement(dpUri: Uri) {
+        _hasUnsavedChanges.value = true
+        dataset.setImageUriToFormElement(lastDocumentFormId, dpUri)
+
+    }
+>>>>>>> Stashed changes
+
+    fun submitForm() {
+        _state.value = State.LOADING
+        val cdrCache =
+            CDRCache(benId = benId, processed = "N", syncState = SyncState.UNSYNCED)
+        dataset.mapValues(cdrCache)
+        viewModelScope.launch {
+            val saved = cdrRepo.saveCdrData(cdrCache)
+            if (saved) {
+                _hasUnsavedChanges.postValue(false)
+                _state.value = State.SUCCESS
+            } else {
+                _state.value = State.FAIL
+            }
+        }
+    }
+
+    fun saveDraft() {
+        _state.value = State.LOADING
+        val cdrCache =
+            CDRCache(benId = benId, processed = "N", syncState = SyncState.DRAFT)
+        dataset.mapValues(cdrCache)
+        viewModelScope.launch {
+            val saved = cdrRepo.saveCdrData(cdrCache)
+            if (saved) {
+                _hasUnsavedChanges.postValue(false)
+                _state.value = State.DRAFT_SAVED
+            } else {
+                _state.value = State.FAIL
+            }
+        }
+    }
 
     init {
         viewModelScope.launch {
@@ -75,62 +137,26 @@ class CdrObjectViewModel @Inject constructor(
             }
             _benName.value = "${ben.firstName} ${if (ben.lastName == null) "" else ben.lastName}"
             _benAgeGender.value = "${ben.age} ${ben.ageUnit?.name} | ${ben.gender?.name}"
-            val address = getAddress(household)
-            dataset.setUpPage(
-                ben,
-                address,
-                household.family?.houseNo,
-                household.family?.mohallaName,
-                cdr
-            )
             _exists.value = cdr != null
+            dataset.setUpPage(
+                ben = ben,
+                currentAddress = null,
+                currentHouseNumber = null,
+                currentMohalla = null,
+                saved = if (_exists.value == true) cdr else null
+            )
         }
-    }
-
-    fun submitForm() {
-        _state.value = State.LOADING
-        val cdrCache = CDRCache(
-            benId = benId,
-            createdBy = user.userName,
-            createdDate = System.currentTimeMillis(),
-            updatedBy = user.userName,
-            updatedDate = System.currentTimeMillis(),
-            processed = "N",
-            syncState = SyncState.UNSYNCED
-        )
-        dataset.mapValues(cdrCache)
-        viewModelScope.launch {
-            val saved = cdrRepo.saveCdrData(cdrCache)
-            if (saved)
-                _state.value = State.SUCCESS
-            else
-                _state.value = State.FAIL
-        }
-    }
-
-
-    private fun getAddress(household: HouseholdCache): String {
-        val houseNo = household.family?.houseNo
-        val wardNo = household.family?.wardNo
-        val name = household.family?.wardName
-        val mohalla = household.family?.mohallaName
-        val district = household.locationRecord.district.name
-        val city = household.locationRecord.village.name
-        val state = household.locationRecord.state.name
-
-        var address = "$houseNo, $wardNo, $name, $mohalla, $city, $district, $state"
-        address = address.replace(", ,", ",")
-        address = address.replace(",,", ",")
-        address = address.replace(" ,", "")
-        address = address.replace("null, ", "")
-        address = address.replace(", null", "")
-        if (address.length > 50) address = address.substring(0, 50)
-        return address
     }
 
     fun updateListOnValueChanged(formId: Int, index: Int) {
         viewModelScope.launch {
+            _hasUnsavedChanges.postValue(true)
             dataset.updateList(formId, index)
         }
     }
+
+    fun getIndexOfCDR1() = dataset.getIndexOfCDR1()
+    fun getIndexOfCDR2() = dataset.getIndexOfCDR2()
+    fun getIndexOfIsDeathCertificate() = dataset.getIndexOfIsDeathCertificate()
+
 }

@@ -50,6 +50,26 @@
     <string name="consent_text">Consent:\nI have been explained by the ASHA, the purpose for which the information and measurement findings is being collected from me, in a language I understand and I give my consent to collect the information and measurement findings on my personal health profile.</string>
     <string name="disagree">DISAGREE</string>
     <string name="agree">AGREE</string>
+<<<<<<< Updated upstream
+=======
+    <string name="do_you_want_to_save_draft">Do you want to save draft?</string>
+
+    <string name="deworming_done">Deworming Round Done?</string>
+    <string name="deworming_date">Date of Deworming</string>
+    <string name="deworming_location">Location of Deworming</string>
+    <string name="age_group">Age Group</string>
+    <string name="deworming_title">National Deworming Day Form</string>
+    <string name="deworming_list_title">National Deworming Day Forms List</string>
+    <string name="ndd_list_title">NDD Form</string>
+
+    <string-array name="deworming_location_options">
+        <item>School</item>
+        <item>Anganwadi Centre</item>
+        <item>Community center</item>
+        <item>Home Visit</item>
+    </string-array>
+
+>>>>>>> Stashed changes
     <string-array name="nbr_gender_array">
         <item name="nbr_gender_1">Male</item>
         <item name="nbr_gender_2">Female</item>

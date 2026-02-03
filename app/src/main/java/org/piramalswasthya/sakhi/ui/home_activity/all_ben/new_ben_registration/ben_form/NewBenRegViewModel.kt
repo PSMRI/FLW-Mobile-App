@@ -40,7 +40,7 @@ class NewBenRegViewModel @Inject constructor(
     userRepo: UserRepo
 ) : ViewModel() {
     enum class State {
-        IDLE, SAVING, SAVE_SUCCESS, SAVE_FAILED
+        IDLE, SAVING, SAVE_SUCCESS, SAVE_FAILED, DRAFT_SAVED
     }
 
     sealed class ListUpdateState {
@@ -172,7 +172,7 @@ class NewBenRegViewModel @Inject constructor(
                             householdId = hhId,
                             isAdult = false,
                             isKid = dataset.isKid(),
-                            isDraft = true,
+                            isDraft = false,
                             kidDetails = if(dataset.isKid()) BenRegKid() else null,
                             genDetails = BenRegGen(),
                             syncState = SyncState.UNSYNCED,
@@ -209,6 +209,57 @@ class NewBenRegViewModel @Inject constructor(
                     _state.postValue(State.SAVE_SUCCESS)
                 } catch (e: IllegalAccessError) {
                     Timber.d("saving Ben data failed!! $e")
+                    _state.postValue(State.SAVE_FAILED)
+                }
+            }
+        }
+    }
+
+    fun saveDraft() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                try {
+                    _state.postValue(State.SAVING)
+                    if (!this@NewBenRegViewModel::ben.isInitialized) {
+                        val benIdToSet = minOf(benRepo.getMinBenId() - 1L, -1L)
+                        ben = BenRegCache(
+                            ashaId = user.userId,
+                            beneficiaryId = benIdToSet,
+                            isDeath = false,
+                            isDeathValue = "",
+                            dateOfDeath = "",
+                            timeOfDeath = "",
+                            reasonOfDeath = "",
+                            reasonOfDeathId = -1,
+                            placeOfDeath = "",
+                            placeOfDeathId = -1,
+                            otherPlaceOfDeath = "",
+                            householdId = hhId,
+                            isAdult = false,
+                            isKid = dataset.isKid(),
+                            isDraft = true,
+                            kidDetails = if(dataset.isKid()) BenRegKid() else null,
+                            genDetails = BenRegGen(),
+                            syncState = SyncState.DRAFT,
+                            locationRecord = locationRecord,
+                            isConsent = isOtpVerified,
+                        )
+                    }
+                    dataset.mapValues(ben, 2)
+                    ben.apply {
+                        if (createdDate == null) {
+                            createdDate = System.currentTimeMillis()
+                            createdBy = user.userName
+                        }
+                        updatedDate = System.currentTimeMillis()
+                        updatedBy = user.userName
+                        isDraft = true
+                        syncState = SyncState.DRAFT
+                    }
+                    benRepo.persistRecord(ben)
+                    _state.postValue(State.DRAFT_SAVED)
+                } catch (e: Exception) {
+                    Timber.e(e, "Error saving ben draft!")
                     _state.postValue(State.SAVE_FAILED)
                 }
             }

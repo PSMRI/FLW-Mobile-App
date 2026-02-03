@@ -30,7 +30,7 @@ class NewHouseholdViewModel @Inject constructor(
 ) : ViewModel() {
 
     enum class State {
-        IDLE, SAVING, SAVE_SUCCESS, SAVE_FAILED
+        IDLE, SAVING, SAVE_SUCCESS, SAVE_FAILED, DRAFT_SAVED
     }
 
     private var isConsentAgreed = false
@@ -50,6 +50,10 @@ class NewHouseholdViewModel @Inject constructor(
     private val _readRecord = MutableLiveData(hhIdFromArgs > 0)
     val readRecord: LiveData<Boolean>
         get() = _readRecord
+
+    private val _hasUnsavedChanges = MutableLiveData(false)
+    val hasUnsavedChanges: LiveData<Boolean>
+        get() = _hasUnsavedChanges
 
     private lateinit var user: User
     private val dataset = HouseholdFormDataset(context, preferenceDao.getCurrentLanguage())
@@ -101,11 +105,49 @@ class NewHouseholdViewModel @Inject constructor(
                         }
                         updatedTimeStamp = System.currentTimeMillis()
                         updatedBy = user.userName
+                        isDraft = false
                     }
                     householdRepo.persistRecord(household)
+<<<<<<< Updated upstream
+=======
+                    benRepo.updateBenToSync(household.householdId, SyncState.UNSYNCED)
+                    _hasUnsavedChanges.postValue(false)
+>>>>>>> Stashed changes
                     _state.postValue(State.SAVE_SUCCESS)
                 } catch (e: Exception) {
                     Timber.d("saving HH data failed!!")
+                    _state.postValue(State.SAVE_FAILED)
+                }
+            }
+        }
+    }
+
+    fun saveDraft() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                try {
+                    _state.postValue(State.SAVING)
+                    dataset.mapValues(household, 1)
+                    dataset.mapValues(household, 2)
+                    dataset.mapValues(household, 3)
+                    household.apply {
+                        if (householdId == 0L) {
+                            dataset.freezeHouseholdId(household, user.userId)
+                            householdRepo.substituteHouseholdIdForDraft(household)
+                        }
+                        if (createdTimeStamp == null) {
+                            createdTimeStamp = System.currentTimeMillis()
+                            createdBy = user.userName
+                        }
+                        updatedTimeStamp = System.currentTimeMillis()
+                        updatedBy = user.userName
+                        isDraft = true
+                    }
+                    householdRepo.persistRecord(household)
+                    _hasUnsavedChanges.postValue(false)
+                    _state.postValue(State.DRAFT_SAVED)
+                } catch (e: Exception) {
+                    Timber.e(e, "Error saving HH draft!")
                     _state.postValue(State.SAVE_FAILED)
                 }
             }
@@ -121,6 +163,7 @@ class NewHouseholdViewModel @Inject constructor(
 
     fun updateListOnValueChanged(formId: Int, index: Int) {
         viewModelScope.launch {
+            _hasUnsavedChanges.postValue(true)
             dataset.updateList(formId, index)
         }
 
@@ -133,6 +176,7 @@ class NewHouseholdViewModel @Inject constructor(
     }
 
     fun updateValueByIdAndReturnListIndex(id: Int, value: String): Int {
+        _hasUnsavedChanges.postValue(true)
         dataset.setValueById(id, value)
         return dataset.getIndexById(id)
     }

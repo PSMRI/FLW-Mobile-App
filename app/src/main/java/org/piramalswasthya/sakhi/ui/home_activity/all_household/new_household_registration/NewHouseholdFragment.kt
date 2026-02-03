@@ -14,7 +14,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -28,12 +27,13 @@ import org.piramalswasthya.sakhi.databinding.AlertConsentBinding
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.BaseFormFragment
 import org.piramalswasthya.sakhi.ui.home_activity.all_household.new_household_registration.NewHouseholdViewModel.State
 import timber.log.Timber
 
 
 @AndroidEntryPoint
-class NewHouseholdFragment : Fragment() {
+class NewHouseholdFragment : BaseFormFragment() {
 
     private var _binding: FragmentNewFormBinding? = null
 
@@ -61,6 +61,7 @@ class NewHouseholdFragment : Fragment() {
         listIndex.takeIf { it >= 0 }?.let {
             binding.form.rvInputForm.adapter?.notifyItemChanged(it)
         }
+        setFormAsDirty()
     }
 
 
@@ -179,6 +180,7 @@ class NewHouseholdFragment : Fragment() {
 
                             else -> {
                                 viewModel.updateListOnValueChanged(formId, index)
+                                setFormAsDirty()
                             }
                         }
                     },
@@ -211,6 +213,7 @@ class NewHouseholdFragment : Fragment() {
                 }
 
                 State.SAVE_SUCCESS -> {
+                    setFormAsClean()
                     binding.llContent.visibility = View.VISIBLE
                     binding.pbForm.visibility = View.GONE
                     Toast.makeText(
@@ -237,6 +240,17 @@ class NewHouseholdFragment : Fragment() {
                     ).show()
                     binding.llContent.visibility = View.VISIBLE
                     binding.pbForm.visibility = View.GONE
+                }
+                State.DRAFT_SAVED -> {
+                    setFormAsClean()
+                    binding.llContent.visibility = View.VISIBLE
+                    binding.pbForm.visibility = View.GONE
+                    Toast.makeText(
+                        context,
+                        "Draft saved successfully",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    findNavController().navigateUp()
                 }
             }
         }
@@ -286,5 +300,9 @@ class NewHouseholdFragment : Fragment() {
         if (consentAlert.isShowing) consentAlert.dismiss()
         if (nextScreenAlert.isShowing) nextScreenAlert.dismiss()
         _binding = null
+    }
+
+    override fun saveDraft() {
+        viewModel.saveDraft()
     }
 }

@@ -1,4 +1,4 @@
-package org.piramalswasthya.sakhi.ui.home_activity.maternal_health.infant_reg.form
+package org.piramalswasthya.sakhi.ui.home_activity.child_care.adolescent_list.form
 
 import android.content.Context
 import androidx.lifecycle.LiveData
@@ -11,34 +11,26 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.piramalswasthya.sakhi.configuration.InfantRegistrationDataset
+import org.piramalswasthya.sakhi.configuration.AdolescentHealthFormDataset
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
-import org.piramalswasthya.sakhi.model.DeliveryOutcomeCache
-import org.piramalswasthya.sakhi.model.InfantRegCache
-import org.piramalswasthya.sakhi.model.PregnantWomanRegistrationCache
+import org.piramalswasthya.sakhi.model.AdolescentHealthCache
+import org.piramalswasthya.sakhi.repositories.AdolescentHealthRepo
 import org.piramalswasthya.sakhi.repositories.BenRepo
-import org.piramalswasthya.sakhi.repositories.DeliveryOutcomeRepo
-import org.piramalswasthya.sakhi.repositories.InfantRegRepo
-import org.piramalswasthya.sakhi.repositories.MaternalHealthRepo
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class InfantRegViewModel @Inject constructor(
+class AdolescentHealthFormViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    preferenceDao: PreferenceDao,
+   val  preferenceDao: PreferenceDao,
     @ApplicationContext context: Context,
-    private val infantRegRepo: InfantRegRepo,
-    private val deliveryOutcomeRepo: DeliveryOutcomeRepo,
-    private val maternalHealthRepo: MaternalHealthRepo,
-    private val benRepo: BenRepo
+    private val benRepo: BenRepo,
+    private val adolescentHealthRepo: AdolescentHealthRepo
 ) : ViewModel() {
-    val benId =
-        InfantRegFragmentArgs.fromSavedStateHandle(savedStateHandle).benId
-    val babyIndex: Int =
-        InfantRegFragmentArgs.fromSavedStateHandle(savedStateHandle).babyIndex
 
+    val benId =
+        AdolescentHealthFormFragmentArgs.fromSavedStateHandle(savedStateHandle).benId
     enum class State {
         IDLE, SAVING, SAVE_SUCCESS, SAVE_FAILED, DRAFT_SAVED
     }
@@ -50,6 +42,7 @@ class InfantRegViewModel @Inject constructor(
     private val _benName = MutableLiveData<String>()
     val benName: LiveData<String>
         get() = _benName
+
     private val _benAgeGender = MutableLiveData<String>()
     val benAgeGender: LiveData<String>
         get() = _benAgeGender
@@ -58,49 +51,32 @@ class InfantRegViewModel @Inject constructor(
     val recordExists: LiveData<Boolean>
         get() = _recordExists
 
-    private val dataset =
-        InfantRegistrationDataset(context, preferenceDao.getCurrentLanguage())
+    private val dataset = AdolescentHealthFormDataset(context, preferenceDao.getCurrentLanguage())
     val formList = dataset.listFlow
 
-    private lateinit var infantReg: InfantRegCache
-    private var deliveryOutcome: DeliveryOutcomeCache? = null
-    private var pwrCache: PregnantWomanRegistrationCache? = null
+    private var adolescentHealthCache: AdolescentHealthCache? = null
 
     init {
         viewModelScope.launch {
-            val asha = preferenceDao.getLoggedInUser()!!
             val ben = benRepo.getBenFromId(benId)?.also { ben ->
                 _benName.value =
                     "${ben.firstName} ${if (ben.lastName == null) "" else ben.lastName}"
                 _benAgeGender.value = "${ben.age} ${ben.ageUnit?.name} | ${ben.gender?.name}"
-                infantReg = InfantRegCache(
-                    motherBenId = ben.beneficiaryId,
-                    syncState = SyncState.UNSYNCED,
-                    createdBy = asha.userName,
-                    updatedBy = asha.userName,
-                    babyIndex = babyIndex,
-                    isActive = true
+                adolescentHealthCache = AdolescentHealthCache(
+                    benId = ben.beneficiaryId,
                 )
             }
 
-            infantRegRepo.getInfantReg(benId, babyIndex)?.let {
-                infantReg = it
+            adolescentHealthRepo.getAdolescentHealth(benId)?.let {
+                adolescentHealthCache = it
                 _recordExists.value = true
             } ?: run {
                 _recordExists.value = false
             }
 
-            deliveryOutcome = deliveryOutcomeRepo.getDeliveryOutcome(benId)!!
-            maternalHealthRepo.getSavedRegistrationRecord(benId)?.let {
-                pwrCache = it
-            }
-
-            dataset.setUpPage(
+            dataset.setFirstPage(
                 ben,
-                deliveryOutcome!!,
-                babyIndex,
-                pwrCache,
-                if (recordExists.value == true) infantReg else null
+                if (recordExists.value == true) adolescentHealthCache else null
             )
         }
     }
@@ -109,7 +85,6 @@ class InfantRegViewModel @Inject constructor(
         viewModelScope.launch {
             dataset.updateList(formId, index)
         }
-
     }
 
     fun saveForm() {
@@ -117,12 +92,14 @@ class InfantRegViewModel @Inject constructor(
             withContext(Dispatchers.IO) {
                 try {
                     _state.postValue(State.SAVING)
-                    dataset.mapValues(infantReg, 1)
-                    infantReg.syncState = SyncState.UNSYNCED
-                    infantRegRepo.saveInfantReg(infantReg)
+                    adolescentHealthCache?.let { 
+                        dataset.mapValues(it, 1)
+                        it.syncState = SyncState.UNSYNCED
+                        adolescentHealthRepo.saveAdolescentHealth(it)
+                    }
                     _state.postValue(State.SAVE_SUCCESS)
                 } catch (e: Exception) {
-                    Timber.d("saving infant registration data failed!!")
+                    Timber.d("saving adolescent  data failed!!")
                     _state.postValue(State.SAVE_FAILED)
                 }
             }
@@ -134,20 +111,22 @@ class InfantRegViewModel @Inject constructor(
             withContext(Dispatchers.IO) {
                 try {
                     _state.postValue(State.SAVING)
-                    dataset.mapValues(infantReg, 1)
-                    infantReg.syncState = SyncState.DRAFT
-                    infantRegRepo.saveInfantReg(infantReg)
+                    adolescentHealthCache?.let { 
+                        dataset.mapValues(it, 1)
+                        it.syncState = SyncState.DRAFT
+                        adolescentHealthRepo.saveAdolescentHealth(it)
+                    }
                     _state.postValue(State.DRAFT_SAVED)
                 } catch (e: Exception) {
-                    Timber.d("saving infant registration draft data failed!!")
+                    Timber.d("saving adolescent draft data failed!!")
                     _state.postValue(State.SAVE_FAILED)
                 }
             }
         }
     }
 
-    fun resetState() {
-        _state.value = State.IDLE
-    }
 
+    fun setRecordExist(b: Boolean) {
+        _recordExists.value = b
+    }
 }

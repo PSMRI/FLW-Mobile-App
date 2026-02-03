@@ -35,7 +35,7 @@ class ChildRegViewModel @Inject constructor(
         ChildRegFragmentArgs.fromSavedStateHandle(savedStateHandle).babyIndex
 
     enum class State {
-        IDLE, SAVING, SAVE_SUCCESS, SAVE_FAILED
+        IDLE, SAVING, SAVE_SUCCESS, SAVE_FAILED, DRAFT_SAVED
     }
 
     private val _state = MutableLiveData(State.IDLE)
@@ -88,6 +88,7 @@ class ChildRegViewModel @Inject constructor(
                         preferenceDao.getLoggedInUser()!!,
                         preferenceDao.getLocationRecord()!!
                     )
+                    childBen.isDraft = false
                     benRepo.substituteBenIdForDraft(childBen)
                     benRepo.persistRecord(childBen)
                     infantReg.childBenId = childBen.beneficiaryId
@@ -95,6 +96,30 @@ class ChildRegViewModel @Inject constructor(
                     _state.postValue(State.SAVE_SUCCESS)
                 } catch (e: Exception) {
                     Timber.d("saving child registration data failed!!")
+                    _state.postValue(State.SAVE_FAILED)
+                }
+            }
+        }
+    }
+
+    fun saveDraft() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                try {
+                    _state.postValue(State.SAVING)
+                    val motherBen = benRepo.getBenFromId(motherBenId)!!
+                    val childBen = dataset.mapAsBeneficiary(
+                        motherBen,
+                        preferenceDao.getLoggedInUser()!!,
+                        preferenceDao.getLocationRecord()!!
+                    )
+                    childBen.isDraft = true
+                    benRepo.substituteBenIdForDraft(childBen)
+                    benRepo.persistRecord(childBen)
+                    // we don't update infantReg.childBenId yet since it's just a draft
+                    _state.postValue(State.DRAFT_SAVED)
+                } catch (e: Exception) {
+                    Timber.d("saving child registration draft failed!!")
                     _state.postValue(State.SAVE_FAILED)
                 }
             }
