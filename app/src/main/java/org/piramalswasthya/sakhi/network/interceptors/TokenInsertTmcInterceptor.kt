@@ -3,7 +3,6 @@ package org.piramalswasthya.sakhi.network.interceptors
 import okhttp3.Interceptor
 import okhttp3.Response
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
-import timber.log.Timber
 
 class TokenInsertTmcInterceptor(
     private val preferenceDao: PreferenceDao
@@ -49,7 +48,7 @@ class TokenInsertTmcInterceptor(
 
         val finalRequest = requestBuilder.build()
 
-        Timber.d("Request URL=${finalRequest.url}, headers=${finalRequest.headers}")
+       // Timber.d("Request URL=${finalRequest.url}, headers=${finalRequest.headers}")
 
         return chain.proceed(finalRequest)
     }

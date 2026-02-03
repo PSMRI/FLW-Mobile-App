@@ -128,15 +128,34 @@ class BenRepo @Inject constructor(
 
     suspend fun persistRecord(ben: BenRegCache) {
         withContext(Dispatchers.IO) {
-            ben.userImage = ben.userImage?.let { imagePath ->
-                val file = File(Uri.parse(imagePath).path ?: return@let imagePath)
+
+            val originalImagePath = ben.userImage
+            val finalImagePath = originalImagePath?.let { imagePath ->
+                val uri = Uri.parse(imagePath)
+                val filePath = uri.path
+                    ?: throw IllegalStateException("Invalid image URI: $imagePath")
+
+                val file = File(filePath)
+
                 when {
                     file.absolutePath.startsWith(context.cacheDir.absolutePath) -> {
-                        ImageUtils.saveBenImageFromCameraToStorage(
-                            context,
-                            imagePath,
-                            ben.beneficiaryId
+                        val savedPath = ImageUtils.saveBenImageFromCameraToStorage(
+                            context = context,
+                            uriString = imagePath,
+                            benId = ben.beneficiaryId
                         )
+
+                        if (savedPath.isNullOrBlank()) {
+                            Timber.e("Image compression/save failed for beneficiaryId=${ben.beneficiaryId}")
+
+                            // Cleanup orphaned cache file
+                            runCatching { file.delete() }
+                                .onFailure { Timber.w(it, "Failed to delete orphaned cache image") }
+
+                            throw IllegalStateException("Failed to save beneficiary image")
+                        }
+
+                        savedPath
                     }
 
                     file.absolutePath.startsWith(context.filesDir.absolutePath) -> {
@@ -149,10 +168,11 @@ class BenRepo @Inject constructor(
                     }
                 }
             }
-
+            ben.userImage = finalImagePath
             benDao.upsert(ben)
         }
     }
+
 
     suspend fun updateRecord(ben: BenRegCache) {
         withContext(Dispatchers.IO) {
