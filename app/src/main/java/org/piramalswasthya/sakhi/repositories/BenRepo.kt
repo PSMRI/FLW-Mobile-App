@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.repositories
 
 import android.app.Application
+import android.net.Uri
 import android.widget.Toast
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -26,6 +27,7 @@ import org.piramalswasthya.sakhi.model.*
 import org.piramalswasthya.sakhi.network.*
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.NewBenRegViewModel
 import timber.log.Timber
+import java.io.File
 import java.lang.Long.min
 import java.net.SocketTimeoutException
 import java.text.SimpleDateFormat
@@ -126,9 +128,28 @@ class BenRepo @Inject constructor(
 
     suspend fun persistRecord(ben: BenRegCache) {
         withContext(Dispatchers.IO) {
-            ben.userImage = ben.userImage?.let {
-                ImageUtils.saveBenImageFromCameraToStorage(context, it, ben.beneficiaryId)
+            ben.userImage = ben.userImage?.let { imagePath ->
+                val file = File(Uri.parse(imagePath).path ?: return@let imagePath)
+                when {
+                    file.absolutePath.startsWith(context.cacheDir.absolutePath) -> {
+                        ImageUtils.saveBenImageFromCameraToStorage(
+                            context,
+                            imagePath,
+                            ben.beneficiaryId
+                        )
+                    }
+
+                    file.absolutePath.startsWith(context.filesDir.absolutePath) -> {
+                        imagePath
+                    }
+
+                    else -> {
+                        Timber.w("Unknown image path source: $imagePath")
+                        imagePath
+                    }
+                }
             }
+
             benDao.upsert(ben)
         }
     }
@@ -1445,7 +1466,7 @@ class BenRepo @Inject constructor(
 
     suspend fun sendOtp(mobileNo: String): SendOtpResponse? {
         try {
-            var sendOtp = sendOtpRequest(mobileNo);
+            var sendOtp = sendOtpRequest(mobileNo)
             val response = tmcNetworkApiService.sendOtp(sendOtp)
             if (response.isSuccessful) {
                 val responseBody = response.body()?.string()
@@ -1484,7 +1505,7 @@ class BenRepo @Inject constructor(
     }
     suspend fun resendOtp(mobileNo: String): SendOtpResponse? {
         try {
-            var sendOtp = sendOtpRequest(mobileNo);
+            var sendOtp = sendOtpRequest(mobileNo)
             val response = tmcNetworkApiService.resendOtp(sendOtp)
             if (response.isSuccessful) {
                 val responseBody = response.body()?.string()
@@ -1524,8 +1545,8 @@ class BenRepo @Inject constructor(
 
     suspend fun verifyOtp(mobileNo: String,otp:Int): ValidateOtpResponse? {
 
-            var validateOtp = ValidateOtpRequest(otp,mobileNo);
-            val response = tmcNetworkApiService.validateOtp(validateOtp)
+            var validateOtp = ValidateOtpRequest(otp,mobileNo)
+        val response = tmcNetworkApiService.validateOtp(validateOtp)
             if (response.isSuccessful) {
                 val responseBody = response.body()?.string()
                 when (responseBody?.let { JSONObject(it).getInt("statusCode") }) {
