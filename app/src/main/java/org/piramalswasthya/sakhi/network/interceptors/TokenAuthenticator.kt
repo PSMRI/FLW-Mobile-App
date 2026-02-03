@@ -13,42 +13,59 @@ import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
 
-
 class TokenAuthenticator @Inject constructor(
     private val pref: PreferenceDao,
     @Named("authApi") private val authApi: AmritApiService
 ) : Authenticator {
 
+    private val refreshLock = Any()
+
     override fun authenticate(route: Route?, response: Response): Request? {
 
         if (responseCount(response) >= 2) return null
-
         if (response.request.header("No-Auth") == "true") return null
 
+        val oldJwt = response.request.header("Jwttoken")
         val refreshToken = pref.getRefreshToken() ?: return null
 
-        val newJwt = runBlocking {
-            try {
-                val resp = authApi.getRefreshToken(
-                    TmcRefreshTokenRequest(refreshToken)
-                )
-                if (!resp.isSuccessful) return@runBlocking null
+        val newJwt = synchronized(refreshLock) {
+            val currentJwt = pref.getJWTAmritToken()
+            if (!currentJwt.isNullOrBlank() && currentJwt != oldJwt) {
+                return@synchronized currentJwt
+            }
+            runBlocking {
+                try {
+                    val resp = authApi.getRefreshToken(
+                        TmcRefreshTokenRequest(refreshToken)
+                    )
 
-                val body = resp.body()?.string().orEmpty()
-                if (body.isEmpty()) return@runBlocking null
+                    if (!resp.isSuccessful) {
+                        resp.errorBody()?.close()
+                        Timber.w(
+                            "Token refresh failed: HTTP ${resp.code()}"
+                        )
+                        return@runBlocking null
+                    }
 
-                val json = JSONObject(body)
-                val jwt = json.optString("jwtToken", "")
-                val newRefresh = json.optString("refreshToken", refreshToken)
+                    val body = resp.body()?.string().orEmpty()
+                    if (body.isEmpty()) return@runBlocking null
 
-                if (jwt.isEmpty()) null else {
-                    pref.registerJWTAmritToken(jwt)
-                    pref.registerRefreshToken(newRefresh)
-                    jwt
+                    val json = JSONObject(body)
+                    val jwt = json.optString("jwtToken", "")
+                    val newRefresh = json.optString("refreshToken", refreshToken)
+
+                    if (jwt.isBlank()) {
+                        null
+                    } else {
+                        pref.registerJWTAmritToken(jwt)
+                        pref.registerRefreshToken(newRefresh)
+                        jwt
+                    }
+
+                } catch (e: Exception) {
+                    Timber.e(e, "Token refresh failed")
+                    null
                 }
-            } catch (e: Exception) {
-                Timber.e(e, "Token refresh failed")
-                null
             }
         } ?: return null
 
