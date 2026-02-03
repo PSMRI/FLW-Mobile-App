@@ -16,20 +16,17 @@ import android.text.SpannableString
 import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
-import android.util.Log
 import android.view.Gravity
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.children
 import androidx.recyclerview.widget.DiffUtil
@@ -857,6 +854,8 @@ class FormInputAdapter(
                         getDobFromAge(ageUnitDTO)
                     binding.etDate.setText(getDateString(calDob.timeInMillis))
                     item.value = getDateString(calDob.timeInMillis)
+                    item.errorText = null
+                    binding.tilEditTextDate.error = null
                     if (item.hasDependants) formValueListener?.onValueChanged(item, -1)
                 }
             }
@@ -1287,7 +1286,7 @@ class FormInputAdapter(
                 )
 
                 InputType.FILE_UPLOAD -> (holder as FileUploadInputViewHolder).bind(item,selectImageClickListener,viewDocumentListner,isEnabled = !disableUpload)
-                org.piramalswasthya.sakhi.model.InputType.MULTIFILE_UPLOAD -> (holder as MultiFileUploadInputViewHolder).bind(item,selectImageClickListener,viewDocumentListner,isEnabled = !disableUpload,fileList)
+                InputType.MULTIFILE_UPLOAD -> (holder as MultiFileUploadInputViewHolder).bind(item,selectImageClickListener,viewDocumentListner,isEnabled = !disableUpload,fileList)
 
                 InputType.NUMBER_PICKER -> (holder as NumberPickerInputViewHolder).bind(
                     item, isEnabled, formValueListener

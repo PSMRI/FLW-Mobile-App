@@ -3,10 +3,11 @@ package org.piramalswasthya.sakhi.network.interceptors
 import okhttp3.Interceptor
 import okhttp3.Response
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
-import timber.log.Timber
 
-class TokenInsertTmcInterceptor(private val preferenceDao: PreferenceDao) : Interceptor {
-    companion object {
+class TokenInsertTmcInterceptor(
+    private val preferenceDao: PreferenceDao
+) : Interceptor {
+        companion object {
         private var TOKEN: String = ""
         fun setToken(iToken: String) {
             TOKEN = iToken
@@ -25,18 +26,30 @@ class TokenInsertTmcInterceptor(private val preferenceDao: PreferenceDao) : Inte
             return JWT
         }
     }
-
     override fun intercept(chain: Interceptor.Chain): Response {
-        var request = chain.request()
-        if (request.header("No-Auth") == null) {
-            val requestBuilder = request.newBuilder()
-            preferenceDao.getLoggedInUser()?.userId?.let {
-                requestBuilder.addHeader("userId", it.toString())
-            }
-            requestBuilder.addHeader("Jwttoken", JWT)
-            request = requestBuilder.build()
+        val originalRequest = chain.request()
+
+        if (originalRequest.header("No-Auth") == "true") {
+            return chain.proceed(originalRequest)
         }
-        Timber.d("Request : $request")
-        return chain.proceed(request)
+
+        val jwt = preferenceDao.getJWTAmritToken()
+        val user = preferenceDao.getLoggedInUser()
+
+        val requestBuilder = originalRequest.newBuilder()
+
+        if (!jwt.isNullOrBlank()) {
+            requestBuilder.header("Jwttoken", jwt)
+        }
+
+        user?.userId?.let {
+            requestBuilder.header("userId", it.toString())
+        }
+
+        val finalRequest = requestBuilder.build()
+
+       // Timber.d("Request URL=${finalRequest.url}, headers=${finalRequest.headers}")
+
+        return chain.proceed(finalRequest)
     }
 }
