@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -14,11 +13,12 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.BaseFormFragment
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 
 @AndroidEntryPoint
-class ChildRegFragment : Fragment() {
+class ChildRegFragment : BaseFormFragment() {
 
     private var _binding: FragmentNewFormBinding? = null
     private val binding: FragmentNewFormBinding
@@ -29,7 +29,7 @@ class ChildRegFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentNewFormBinding.inflate(inflater, container, false)
+        _binding = FragmentNewFormBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
@@ -41,6 +41,7 @@ class ChildRegFragment : Fragment() {
                 val adapter = FormInputAdapter(
                     formValueListener = FormInputAdapter.FormValueListener { formId, index ->
                         viewModel.updateListOnValueChanged(formId, index)
+                        setFormAsDirty()
                     }, isEnabled = !recordExists
                 )
                 binding.btnSubmit.isEnabled = !recordExists
@@ -61,6 +62,7 @@ class ChildRegFragment : Fragment() {
         viewModel.state.observe(viewLifecycleOwner) {
             when (it) {
                 ChildRegViewModel.State.SAVE_SUCCESS -> {
+                    setFormAsClean()
                     WorkerUtils.triggerAmritPushWorker(requireContext())
                     findNavController().navigateUp()
                 }
@@ -103,6 +105,10 @@ class ChildRegFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    override fun saveDraft() {
+        viewModel.saveForm()
     }
 
 }

@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -16,12 +15,13 @@ import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
+import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.BaseFormFragment
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 
 
 @AndroidEntryPoint
-class BenRegisterCHOFragment : Fragment() {
+class BenRegisterCHOFragment : BaseFormFragment() {
 
     private var _binding: FragmentNewFormBinding? = null
 
@@ -39,12 +39,13 @@ class BenRegisterCHOFragment : Fragment() {
         listIndex.takeIf { it >= 0 }?.let {
             binding.form.rvInputForm.adapter?.notifyItemChanged(it)
         }
+        setFormAsDirty()
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentNewFormBinding.inflate(inflater, container, false)
+        _binding = FragmentNewFormBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
@@ -62,6 +63,7 @@ class BenRegisterCHOFragment : Fragment() {
                     else -> {
                         viewModel.updateListOnValueChanged(formId, index)
                         hardCodedListUpdate(formId)
+                        setFormAsDirty()
                     }
                 }
             }, isEnabled = true
@@ -90,6 +92,7 @@ class BenRegisterCHOFragment : Fragment() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state!!) {
                 BenRegisterCHOViewModel.State.SAVE_SUCCESS -> {
+                    setFormAsClean()
                     Toast.makeText(
                         context,
                         resources.getString(R.string.save_successful),
@@ -142,5 +145,9 @@ class BenRegisterCHOFragment : Fragment() {
                 8 -> notifyItemChanged(viewModel.getIndexOfDob())
             }
         }
+    }
+
+    override fun saveDraft() {
+        viewModel.saveForm()
     }
 }

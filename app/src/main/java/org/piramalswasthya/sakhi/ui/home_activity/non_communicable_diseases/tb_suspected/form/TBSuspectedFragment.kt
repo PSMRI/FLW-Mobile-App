@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -16,11 +15,12 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.BaseFormFragment
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 
 @AndroidEntryPoint
-class TBSuspectedFragment : Fragment() {
+class TBSuspectedFragment : BaseFormFragment() {
 
     private var _binding: FragmentNewFormBinding? = null
     private val binding: FragmentNewFormBinding
@@ -39,7 +39,7 @@ class TBSuspectedFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentNewFormBinding.inflate(inflater, container, false)
+        _binding = FragmentNewFormBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
@@ -50,6 +50,7 @@ class TBSuspectedFragment : Fragment() {
                 val adapter = FormInputAdapter(
                     formValueListener = FormInputAdapter.FormValueListener { formId, index ->
                         viewModel.updateListOnValueChanged(formId, index)
+                        setFormAsDirty()
                     }, isEnabled = !recordExists
                 )
                 binding.btnSubmit.isEnabled = !recordExists
@@ -77,6 +78,7 @@ class TBSuspectedFragment : Fragment() {
         viewModel.state.observe(viewLifecycleOwner) {
             when (it) {
                 TBSuspectedViewModel.State.SAVE_SUCCESS -> {
+                    setFormAsClean()
                     Toast.makeText(
                         requireContext(),
                         resources.getString(R.string.tb_tracking_submitted), Toast.LENGTH_SHORT
@@ -134,4 +136,7 @@ class TBSuspectedFragment : Fragment() {
         _binding = null
     }
 
+    override fun saveDraft() {
+        viewModel.saveForm()
+    }
 }

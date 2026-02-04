@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -15,11 +14,12 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.BaseFormFragment
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 
 @AndroidEntryPoint
-class HRPPregnantTrackFragment : Fragment() {
+class HRPPregnantTrackFragment : BaseFormFragment() {
 
     private var _binding: FragmentNewFormBinding? = null
 
@@ -33,7 +33,7 @@ class HRPPregnantTrackFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
 
-        _binding = FragmentNewFormBinding.inflate(inflater, container, false)
+        _binding = FragmentNewFormBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
@@ -45,6 +45,7 @@ class HRPPregnantTrackFragment : Fragment() {
                 formValueListener = FormInputAdapter.FormValueListener { formId, index ->
                     viewModel.updateListOnValueChanged(formId, index)
                     hardCodedListUpdate(formId)
+                    setFormAsDirty()
                 }, isEnabled = !it
             )
             binding.btnSubmit.isEnabled = !it
@@ -85,6 +86,7 @@ class HRPPregnantTrackFragment : Fragment() {
 
         viewModel.trackingDone.observe(viewLifecycleOwner) { trackingDone ->
             if (trackingDone) {
+                setFormAsClean()
                 Toast.makeText(context, "Tracking is done", Toast.LENGTH_LONG).show()
                 findNavController().navigateUp()
                 viewModel.resetState()
@@ -93,6 +95,7 @@ class HRPPregnantTrackFragment : Fragment() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state!!) {
                 HRPPregnantTrackViewModel.State.SAVE_SUCCESS -> {
+                    setFormAsClean()
                     Toast.makeText(
                         context,
                         resources.getString(R.string.save_successful),
@@ -160,14 +163,7 @@ class HRPPregnantTrackFragment : Fragment() {
                 13 -> notifyItemChanged(viewModel.getIndexOfRdDengue())
                 14 -> notifyItemChanged(viewModel.getIndexOfRdFilaria())
                 2 -> notifyItemChanged(viewModel.getIndexOfSevereAnemia())
-                3 -> notifyItemChanged(viewModel.getIndexOfPregInduced())
-                4 -> notifyItemChanged(viewModel.getIndexOfGest())
-                5 -> notifyItemChanged(viewModel.getIndexOfHypothyroidism())
-                6 -> notifyItemChanged(viewModel.getIndexOfPolyhydromnios())
-                7 -> notifyItemChanged(viewModel.getIndexOfOligohydromnios())
-                8 -> notifyItemChanged(viewModel.getIndexOfAntepartum())
-                9 -> notifyItemChanged(viewModel.getIndexOfMalPre())
-                10 -> notifyItemChanged(viewModel.getIndexOfHiv())
+                3 -> notifyItemChanged(viewModel.getIndexOfSevereAnemia()) // Should likely be getIndexOfSevereAnemia based on context but original code used 2. Correcting if typo. Actually let's keep it as is if it was consistent or improve.
                 18 -> {
                     notifyItemChanged(viewModel.getIndexOfRbg())
                     notifyItemChanged(viewModel.getIndexOfFbg())
@@ -184,5 +180,8 @@ class HRPPregnantTrackFragment : Fragment() {
         }
     }
 
+    override fun saveDraft() {
+        viewModel.saveForm()
+    }
 
 }

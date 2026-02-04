@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -13,14 +12,14 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
-import org.piramalswasthya.sakhi.adapters.FormInputAdapterOld
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.BaseFormFragment
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 
 @AndroidEntryPoint
-class MdsrObjectFragment : Fragment() {
+class MdsrObjectFragment : BaseFormFragment() {
 
 
     private var _binding: FragmentNewFormBinding? = null
@@ -55,6 +54,7 @@ class MdsrObjectFragment : Fragment() {
                 val adapter = FormInputAdapter(
                     formValueListener = FormInputAdapter.FormValueListener { formId, index ->
                         viewModel.updateListOnValueChanged(formId, index)
+                        setFormAsDirty()
                     }, isEnabled = !recordExists
                 )
                 binding.btnSubmit.isEnabled = !recordExists
@@ -78,6 +78,7 @@ class MdsrObjectFragment : Fragment() {
                 }
 
                 MdsrObjectViewModel.State.SUCCESS -> {
+                    setFormAsClean()
                     findNavController().navigateUp()
                     WorkerUtils.triggerAmritPushWorker(requireContext())
                 }
@@ -92,6 +93,19 @@ class MdsrObjectFragment : Fragment() {
                         resources.getString(R.string.saving_mdsr_to_database_failed),
                         Toast.LENGTH_LONG
                     ).show()
+                }
+                MdsrObjectViewModel.State.DRAFT_SAVED -> {
+                    setFormAsClean()
+                    binding.cvPatientInformation.visibility = View.VISIBLE
+                    binding.form.rvInputForm.visibility = View.VISIBLE
+                    binding.btnSubmit.visibility = View.VISIBLE
+                    binding.pbForm.visibility = View.GONE
+                    Toast.makeText(
+                        context,
+                        "Draft saved successfully",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    findNavController().navigateUp()
                 }
 
                 else -> {
@@ -132,4 +146,7 @@ class MdsrObjectFragment : Fragment() {
         _binding = null
     }
 
+    override fun saveDraft() {
+        viewModel.saveDraft()
+    }
 }

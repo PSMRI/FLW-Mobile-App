@@ -11,7 +11,6 @@ import android.widget.ArrayAdapter
 import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.core.view.children
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
@@ -20,6 +19,7 @@ import org.piramalswasthya.sakhi.databinding.FragmentCbacBinding
 import org.piramalswasthya.sakhi.model.CbacCache
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.BaseFormFragment
 import org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_screening.form.TBScreeningFormViewModel
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
@@ -29,7 +29,7 @@ import java.util.Locale
 
 
 @AndroidEntryPoint
-class CbacFragment : Fragment() {
+class CbacFragment : BaseFormFragment() {
 
 
     private val binding by lazy { FragmentCbacBinding.inflate(layoutInflater) }
@@ -137,6 +137,7 @@ class CbacFragment : Fragment() {
                 }
 
                 CbacViewModel.State.SAVE_SUCCESS -> {
+                    setFormAsClean()
                     Timber.d("CBAC form saved successfully!")
                     viewModel.resetState()
                     WorkerUtils.triggerAmritPushWorker(requireContext())
@@ -380,6 +381,7 @@ class CbacFragment : Fragment() {
                 viewModel.setTakingTbDrug(0)
 
             }
+            setFormAsDirty()
         }
 
 
@@ -563,6 +565,7 @@ class CbacFragment : Fragment() {
                     binding.etDate.setText(
                         "${if (day > 9) day else "0$day"}-${if (month > 8) month + 1 else "0${month + 1}"}-$year"
                     )
+                    setFormAsDirty()
                 }, thisYear, thisMonth, thisDay
             )
 
@@ -616,18 +619,23 @@ class CbacFragment : Fragment() {
         )
         binding.actvSmokeDropdown.setOnItemClickListener { _, _, i, _ ->
             viewModel.setSmoke(i)
+            setFormAsDirty()
         }
         binding.actvAlcoholDropdown.setOnItemClickListener { _, _, i, _ ->
             viewModel.setAlcohol(i)
+            setFormAsDirty()
         }
         binding.actvWaistDropdown.setOnItemClickListener { _, _, i, _ ->
             viewModel.setWaist(i)
+            setFormAsDirty()
         }
         binding.actvPaDropdown.setOnItemClickListener { _, _, i, _ ->
             viewModel.setPa(i)
+            setFormAsDirty()
         }
         binding.actvFhDropdown.setOnItemClickListener { _, _, i, _ ->
             viewModel.setFh(i)
+            setFormAsDirty()
         }
     }
 
@@ -693,6 +701,7 @@ class CbacFragment : Fragment() {
                 R.id.rb_no -> viewModel.setFhTb(2)
             }
             handleAst2Alert()
+            setFormAsDirty()
         }
         binding.cbacTakingTbDrug.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
@@ -700,6 +709,7 @@ class CbacFragment : Fragment() {
                 R.id.rb_no -> viewModel.setTakingTbDrug(2)
             }
             handleAst2Alert()
+            setFormAsDirty()
         }
         binding.cbacHistb.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
@@ -707,6 +717,7 @@ class CbacFragment : Fragment() {
                 R.id.rb_no -> viewModel.setHisTb(2)
             }
             handleAst1Alert()
+            setFormAsDirty()
         }
         binding.cbacCoughing.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
@@ -714,6 +725,7 @@ class CbacFragment : Fragment() {
                 R.id.rb_no -> viewModel.setCoughing(2)
             }
             handleAst1Alert()
+            setFormAsDirty()
         }
         binding.cbacBlsputum.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
@@ -721,6 +733,7 @@ class CbacFragment : Fragment() {
                 R.id.rb_no -> viewModel.setBloodSputum(2)
             }
             handleAst1Alert()
+            setFormAsDirty()
         }
         binding.cbacFeverwks.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
@@ -728,6 +741,7 @@ class CbacFragment : Fragment() {
                 R.id.rb_no -> viewModel.setFeverWks(2)
             }
             handleAst1Alert()
+            setFormAsDirty()
         }
         binding.cbacLsweight.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
@@ -735,6 +749,7 @@ class CbacFragment : Fragment() {
                 R.id.rb_no -> viewModel.setLsWt(2)
             }
             handleAst1Alert()
+            setFormAsDirty()
         }
         binding.cbacNtswets.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
@@ -742,6 +757,7 @@ class CbacFragment : Fragment() {
                 R.id.rb_no -> viewModel.setNtSwets(2)
             }
             handleAst1Alert()
+            setFormAsDirty()
 
         }
         binding.cbacRecurrentUlceration.cbacEdRg.setOnCheckedChangeListener { _, id ->
@@ -749,18 +765,21 @@ class CbacFragment : Fragment() {
                 R.id.rb_yes -> viewModel.setRecurrentUlceration(1)
                 R.id.rb_no -> viewModel.setRecurrentUlceration(2)
             }
+            setFormAsDirty()
         }
         binding.cbacRecurrentCloudy.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setRecurrentCloudy(1)
                 R.id.rb_no -> viewModel.setRecurrentCloudy(2)
             }
+            setFormAsDirty()
         }
         binding.cbacRecurrentDiffcultyReading.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setDiffReading(1)
                 R.id.rb_no -> viewModel.setDiffReading(2)
             }
+            setFormAsDirty()
         }
 
         binding.cbacRecurrentPainEyes.cbacEdRg.setOnCheckedChangeListener { _, id ->
@@ -768,150 +787,175 @@ class CbacFragment : Fragment() {
                 R.id.rb_yes -> viewModel.setPainEyes(1)
                 R.id.rb_no -> viewModel.setPainEyes(2)
             }
+            setFormAsDirty()
         }
         binding.cbacRecurrentRednessEyes.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setRedEyes(1)
                 R.id.rb_no -> viewModel.setRedEyes(2)
             }
+            setFormAsDirty()
         }
         binding.cbacRecurrentDiffHearing.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setDiffHearing(1)
                 R.id.rb_no -> viewModel.setDiffHearing(2)
             }
+            setFormAsDirty()
         }
         binding.cbacBreath.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setBreathe(1)
                 R.id.rb_no -> viewModel.setBreathe(2)
             }
+            setFormAsDirty()
         }
         binding.cbacRecurrentTingling.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setTing(1)
                 R.id.rb_no -> viewModel.setTing(2)
             }
+            setFormAsDirty()
         }
         binding.cbacHifits.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setHisFits(1)
                 R.id.rb_no -> viewModel.setHisFits(2)
             }
+            setFormAsDirty()
         }
         binding.cbacDifmouth.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setDiffMouth(1)
                 R.id.rb_no -> viewModel.setDiffMouth(2)
             }
+            setFormAsDirty()
         }
         binding.cbacHeald.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setHealed(1)
                 R.id.rb_no -> viewModel.setHealed(2)
             }
+            setFormAsDirty()
         }
         binding.cbacVoice.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setVoice(1)
                 R.id.rb_no -> viewModel.setVoice(2)
             }
+            setFormAsDirty()
         }
         binding.cbacAnyGrowth.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setAnyGrowth(1)
                 R.id.rb_no -> viewModel.setAnyGrowth(2)
             }
+            setFormAsDirty()
         }
         binding.cbacAnyWhite.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setAnyWhite(1)
                 R.id.rb_no -> viewModel.setAnyWhite(2)
             }
+            setFormAsDirty()
         }
         binding.cbacPainWhileChewing.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setPainChew(1)
                 R.id.rb_no -> viewModel.setPainChew(2)
             }
+            setFormAsDirty()
         }
         binding.cbacAnyHyperPigmented.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setHyperPig(1)
                 R.id.rb_no -> viewModel.setHyperPig(2)
             }
+            setFormAsDirty()
         }
         binding.cbacAnyThickendSkin.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setThickSkin(1)
                 R.id.rb_no -> viewModel.setThickSkin(2)
             }
+            setFormAsDirty()
         }
         binding.cbacAnyNodulesSkin.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setNoduleSkin(1)
                 R.id.rb_no -> viewModel.setNoduleSkin(2)
             }
+            setFormAsDirty()
         }
         binding.cbacRecurrentNumbness.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setNumb(1)
                 R.id.rb_no -> viewModel.setNumb(2)
             }
+            setFormAsDirty()
         }
         binding.cbacClawingOfFingers.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setClaw(1)
                 R.id.rb_no -> viewModel.setClaw(2)
             }
+            setFormAsDirty()
         }
         binding.cbacTinglingOrNumbness.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setTingNumb(1)
                 R.id.rb_no -> viewModel.setTingNumb(2)
             }
+            setFormAsDirty()
         }
         binding.cbacInabilityCloseEyelid.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setCloseEyelid(1)
                 R.id.rb_no -> viewModel.setCloseEyelid(2)
             }
+            setFormAsDirty()
         }
         binding.cbacDiffHoldingObjects.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setHoldObj(1)
                 R.id.rb_no -> viewModel.setHoldObj(2)
             }
+            setFormAsDirty()
         }
         binding.cbacWeeknessInFeet.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setWeakFeet(1)
                 R.id.rb_no -> viewModel.setWeakFeet(2)
             }
+            setFormAsDirty()
         }
         binding.cbacLumpbrest.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setLumpB(1)
                 R.id.rb_no -> viewModel.setLumpB(2)
             }
+            setFormAsDirty()
         }
         binding.cbacNipple.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setNipple(1)
                 R.id.rb_no -> viewModel.setNipple(2)
             }
+            setFormAsDirty()
         }
         binding.cbacBreast.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setBreast(1)
                 R.id.rb_no -> viewModel.setBreast(2)
             }
+            setFormAsDirty()
         }
         binding.cbacBlperiods.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setBlP(1)
                 R.id.rb_no -> viewModel.setBlP(2)
             }
+            setFormAsDirty()
         }
         binding.cbacBlmenopause.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
@@ -928,18 +972,21 @@ class CbacFragment : Fragment() {
                     binding.tvBlMenopause.visibility = View.GONE
                 }
             }
+            setFormAsDirty()
         }
         binding.cbacBlintercorse.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setBlI(1)
                 R.id.rb_no -> viewModel.setBlI(2)
             }
+            setFormAsDirty()
         }
         binding.cbacFouldis.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setFoulD(1)
                 R.id.rb_no -> viewModel.setFoulD(2)
             }
+            setFormAsDirty()
         }
         viewModel.age.observe(viewLifecycleOwner) {
             if (it >= 60) binding.cbacLlEdElderly.visibility = View.VISIBLE
@@ -952,6 +999,7 @@ class CbacFragment : Fragment() {
                 R.id.rb_no -> viewModel.setUnsteady(2)
             }
             handleOldPeopleItemsAlert()
+            setFormAsDirty()
         }
         binding.cbacPdRm.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
@@ -959,6 +1007,7 @@ class CbacFragment : Fragment() {
                 R.id.rb_no -> viewModel.setPdRm(2)
             }
             handleOldPeopleItemsAlert()
+            setFormAsDirty()
         }
         binding.cbacNhop.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
@@ -966,6 +1015,7 @@ class CbacFragment : Fragment() {
                 R.id.rb_no -> viewModel.setNhop(2)
             }
             handleOldPeopleItemsAlert()
+            setFormAsDirty()
         }
         binding.cbacForgetNames.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
@@ -973,6 +1023,7 @@ class CbacFragment : Fragment() {
                 R.id.rb_no -> viewModel.setForgetNames(2)
             }
             handleOldPeopleItemsAlert()
+            setFormAsDirty()
         }
         //ED END
     }
@@ -1068,9 +1119,13 @@ class CbacFragment : Fragment() {
 
                 )
         )
-        binding.actvFuelDropdown.setOnItemClickListener { _, _, i, _ -> viewModel.setFuelType(i) }
+        binding.actvFuelDropdown.setOnItemClickListener { _, _, i, _ ->
+            viewModel.setFuelType(i)
+            setFormAsDirty()
+        }
         binding.actvExposureDropdown.setOnItemClickListener { _, _, i, _ ->
             viewModel.setOccExposure(i)
+            setFormAsDirty()
         }
     }
 
@@ -1087,8 +1142,14 @@ class CbacFragment : Fragment() {
 
     private fun setupPhq2Fill() {
         //PHQ2 START
-        binding.actvLiDropdown.setOnItemClickListener { _, _, i, _ -> viewModel.setLi(i) }
-        binding.actvFdDropdown.setOnItemClickListener { _, _, i, _ -> viewModel.setFd(i) }
+        binding.actvLiDropdown.setOnItemClickListener { _, _, i, _ ->
+            viewModel.setLi(i)
+            setFormAsDirty()
+        }
+        binding.actvFdDropdown.setOnItemClickListener { _, _, i, _ ->
+            viewModel.setFd(i)
+            setFormAsDirty()
+        }
         viewModel.phq2LittleInterestScore.observe(viewLifecycleOwner) {
             binding.ddLiScore.text = it
         }
@@ -1134,6 +1195,10 @@ class CbacFragment : Fragment() {
                 getString(R.string.cbac)
             )
         }
+    }
+
+    override fun saveDraft() {
+        viewModel.submitForm()
     }
 
 }

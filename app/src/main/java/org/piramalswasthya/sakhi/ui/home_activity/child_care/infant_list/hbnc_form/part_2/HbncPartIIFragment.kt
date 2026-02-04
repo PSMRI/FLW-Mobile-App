@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -17,12 +16,13 @@ import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
+import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.BaseFormFragment
 import org.piramalswasthya.sakhi.ui.home_activity.child_care.infant_list.hbnc_form.part_2.HbncPartIIViewModel.State
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 
 @AndroidEntryPoint
-class HbncPartIIFragment : Fragment() {
+class HbncPartIIFragment : BaseFormFragment() {
 
     private var _binding: FragmentNewFormBinding? = null
     private val binding: FragmentNewFormBinding
@@ -52,6 +52,7 @@ class HbncPartIIFragment : Fragment() {
                 imageClickListener = null,
                 formValueListener = FormInputAdapter.FormValueListener { formId, index ->
                     viewModel.updateListOnValueChanged(formId, index)
+                    setFormAsDirty()
                 },
                 isEnabled = !exists
             )
@@ -82,6 +83,7 @@ class HbncPartIIFragment : Fragment() {
                 }
 
                 State.SUCCESS -> {
+                    setFormAsClean()
                     findNavController().navigateUp()
                     WorkerUtils.triggerAmritPushWorker(requireContext())
                 }
@@ -96,6 +98,19 @@ class HbncPartIIFragment : Fragment() {
                         resources.getString(R.string.saving_hbnc_part_ii_to_database_failed),
                         Toast.LENGTH_LONG
                     ).show()
+                }
+                State.DRAFT_SAVED -> {
+                    setFormAsClean()
+                    binding.form.rvInputForm.visibility = View.VISIBLE
+                    binding.btnSubmit.visibility = View.VISIBLE
+                    binding.cvPatientInformation.visibility = View.VISIBLE
+                    binding.pbForm.visibility = View.GONE
+                    Toast.makeText(
+                        context,
+                        "Draft saved successfully",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    findNavController().navigateUp()
                 }
 
                 else -> {
@@ -126,5 +141,9 @@ class HbncPartIIFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    override fun saveDraft() {
+        viewModel.submitForm()
     }
 }

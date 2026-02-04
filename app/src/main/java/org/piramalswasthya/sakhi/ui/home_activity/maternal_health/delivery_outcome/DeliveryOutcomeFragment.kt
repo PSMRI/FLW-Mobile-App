@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -15,11 +14,12 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.BaseFormFragment
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 
 @AndroidEntryPoint
-class DeliveryOutcomeFragment : Fragment() {
+class DeliveryOutcomeFragment : BaseFormFragment() {
 
     private var _binding: FragmentNewFormBinding? = null
     private val binding: FragmentNewFormBinding
@@ -30,7 +30,7 @@ class DeliveryOutcomeFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentNewFormBinding.inflate(inflater, container, false)
+        _binding = FragmentNewFormBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
@@ -42,6 +42,7 @@ class DeliveryOutcomeFragment : Fragment() {
                     formValueListener = FormInputAdapter.FormValueListener { formId, index ->
                         viewModel.updateListOnValueChanged(formId, index)
                         hardCodedListUpdate(formId)
+                        setFormAsDirty()
                     }, isEnabled = !recordExists
                 )
                 binding.btnSubmit.isEnabled = !recordExists
@@ -66,15 +67,13 @@ class DeliveryOutcomeFragment : Fragment() {
 
         viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state!!) {
-                DeliveryOutcomeViewModel.State.IDLE -> {
-                }
-
-                DeliveryOutcomeViewModel.State.SAVING -> {
+                is DeliveryOutcomeViewModel.State.SAVING -> {
                     binding.llContent.visibility = View.GONE
                     binding.pbForm.visibility = View.VISIBLE
                 }
 
-                DeliveryOutcomeViewModel.State.SAVE_SUCCESS -> {
+                is DeliveryOutcomeViewModel.State.SAVE_SUCCESS -> {
+                    setFormAsClean()
                     binding.llContent.visibility = View.VISIBLE
                     binding.pbForm.visibility = View.GONE
                     Toast.makeText(context, "Save Successful!!!", Toast.LENGTH_LONG).show()
@@ -82,12 +81,24 @@ class DeliveryOutcomeFragment : Fragment() {
                     findNavController().navigateUp()
                 }
 
-                DeliveryOutcomeViewModel.State.SAVE_FAILED -> {
+                is DeliveryOutcomeViewModel.State.SAVE_FAILED -> {
                     Toast.makeText(
                         context, "Something wend wong! Contact testing!", Toast.LENGTH_LONG
                     ).show()
                     binding.llContent.visibility = View.VISIBLE
                     binding.pbForm.visibility = View.GONE
+                }
+
+                is DeliveryOutcomeViewModel.State.DRAFT_SAVED -> {
+                    setFormAsClean()
+                    binding.llContent.visibility = View.VISIBLE
+                    binding.pbForm.visibility = View.GONE
+                    Toast.makeText(
+                        context,
+                        "Draft saved successfully",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    findNavController().navigateUp()
                 }
 
                 else -> {}
@@ -155,6 +166,10 @@ class DeliveryOutcomeFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    override fun saveDraft() {
+        viewModel.saveDraft()
     }
 
 }

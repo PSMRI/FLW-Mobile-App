@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -17,12 +16,13 @@ import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.AlertConsentBinding
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.BaseFormFragment
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pmsma.PmsmaViewModel.State
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 
 @AndroidEntryPoint
-class PmsmaFragment : Fragment() {
+class PmsmaFragment : BaseFormFragment() {
 
     private var _binding: FragmentNewFormBinding? = null
     private val binding: FragmentNewFormBinding
@@ -91,6 +91,7 @@ class PmsmaFragment : Fragment() {
                 FormInputAdapter(formValueListener = FormInputAdapter.FormValueListener { formId, index ->
                     viewModel.updateListOnValueChanged(formId, index)
                     hardCodedListUpdate(formId)
+                    setFormAsDirty()
                 }, isEnabled = !exists)
             binding.form.rvInputForm.adapter = adapter
             lifecycleScope.launch {
@@ -113,6 +114,7 @@ class PmsmaFragment : Fragment() {
                 }
 
                 State.SUCCESS -> {
+                    setFormAsClean()
                     findNavController().navigateUp()
                     WorkerUtils.triggerAmritPushWorker(requireContext())
                 }
@@ -127,6 +129,19 @@ class PmsmaFragment : Fragment() {
                         resources.getString(R.string.saving_pmsma_to_database_failed),
                         Toast.LENGTH_LONG
                     ).show()
+                }
+                State.DRAFT_SAVED -> {
+                    setFormAsClean()
+                    binding.form.rvInputForm.visibility = View.VISIBLE
+                    binding.btnSubmit.visibility = View.VISIBLE
+                    binding.cvPatientInformation.visibility = View.VISIBLE
+                    binding.pbForm.visibility = View.GONE
+                    Toast.makeText(
+                        context,
+                        "Draft saved successfully",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    findNavController().navigateUp()
                 }
 
                 else -> {
@@ -177,4 +192,7 @@ class PmsmaFragment : Fragment() {
         _binding = null
     }
 
+    override fun saveDraft() {
+        viewModel.saveDraft()
+    }
 }

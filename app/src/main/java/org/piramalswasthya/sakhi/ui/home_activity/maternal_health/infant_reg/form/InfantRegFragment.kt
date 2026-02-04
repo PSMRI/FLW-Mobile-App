@@ -1,30 +1,39 @@
 package org.piramalswasthya.sakhi.ui.home_activity.maternal_health.infant_reg.form
 
+import android.Manifest
+import android.content.Context
+import android.content.Intent
+import android.location.LocationManager
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-<<<<<<< Updated upstream
-import androidx.fragment.app.Fragment
-=======
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
->>>>>>> Stashed changes
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
+import org.piramalswasthya.sakhi.databinding.LayoutMediaOptionsBinding
+import org.piramalswasthya.sakhi.databinding.LayoutViewMediaBinding
+import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.BaseFormFragment
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
+import java.io.File
 
 @AndroidEntryPoint
 class InfantRegFragment : BaseFormFragment() {
@@ -35,8 +44,6 @@ class InfantRegFragment : BaseFormFragment() {
 
     private val viewModel: InfantRegViewModel by viewModels()
 
-<<<<<<< Updated upstream
-=======
 
     private val requestLocationPermission =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
@@ -70,7 +77,6 @@ class InfantRegFragment : BaseFormFragment() {
     }
 
 
->>>>>>> Stashed changes
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -85,9 +91,6 @@ class InfantRegFragment : BaseFormFragment() {
                 val adapter = FormInputAdapter(
                     formValueListener = FormInputAdapter.FormValueListener { formId, index ->
                         viewModel.updateListOnValueChanged(formId, index)
-<<<<<<< Updated upstream
-                    }, isEnabled = !recordExists
-=======
                         hardCodedListUpdate(formId)
                         if (formId == 57) {
                             (binding.form.rvInputForm.adapter as? FormInputAdapter)?.notifyDataSetChanged()
@@ -103,7 +106,6 @@ class InfantRegFragment : BaseFormFragment() {
                         }
                     },
                     isEnabled = !recordExists
->>>>>>> Stashed changes
                 )
                 binding.btnSubmit.isEnabled = !recordExists
                 binding.form.rvInputForm.adapter = adapter
@@ -190,8 +192,6 @@ class InfantRegFragment : BaseFormFragment() {
         }
     }
 
-<<<<<<< Updated upstream
-=======
 
     private fun showMediaOptions() {
         val alertBinding = LayoutMediaOptionsBinding.inflate(layoutInflater, binding.root, false)
@@ -270,8 +270,18 @@ class InfantRegFragment : BaseFormFragment() {
             }
         }
     }
-    private fun isDeliveryDischargeUploaded(): Boolean =
-        deliveryDischargeUris.values.any { it != null }
+
+    private fun checkFileSize(uri: Uri, context: Context): Boolean {
+        return try {
+            val inputStream = context.contentResolver.openInputStream(uri)
+            val fileSize = inputStream?.available() ?: 0
+            inputStream?.close()
+            fileSize > 2 * 1024 * 1024 // 2MB
+        } catch (e: Exception) {
+            false
+        }
+    }
+
     private fun updateAdapterForFormId(formId: Int, uri: Uri) {
         setUriForFormId(formId, uri)
         viewModel.setImageUriToFormElement(uri)
@@ -300,7 +310,7 @@ class InfantRegFragment : BaseFormFragment() {
             ) != PackageManager.PERMISSION_GRANTED
         ) requestLocationPermission.launch(Manifest.permission.ACCESS_FINE_LOCATION)
     }
->>>>>>> Stashed changes
+
     override fun onStart() {
         super.onStart()
         activity?.let {

@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -15,12 +14,13 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.BaseFormFragment
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_women_registration.form.PregnancyRegistrationFormViewModel.State
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 
 @AndroidEntryPoint
-class PregnancyRegistrationFormFragment : Fragment() {
+class PregnancyRegistrationFormFragment : BaseFormFragment() {
 
     private var _binding: FragmentNewFormBinding? = null
     private val binding: FragmentNewFormBinding
@@ -31,7 +31,7 @@ class PregnancyRegistrationFormFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentNewFormBinding.inflate(inflater, container, false)
+        _binding = FragmentNewFormBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
@@ -46,6 +46,7 @@ class PregnancyRegistrationFormFragment : Fragment() {
                     formValueListener = FormInputAdapter.FormValueListener { formId, index ->
                         viewModel.updateListOnValueChanged(formId, index)
                         hardCodedListUpdate(formId)
+                        setFormAsDirty()
                     }, isEnabled = !recordExists
                 )
                 binding.form.rvInputForm.adapter = adapter
@@ -83,6 +84,7 @@ class PregnancyRegistrationFormFragment : Fragment() {
                 }
 
                 State.SAVE_SUCCESS -> {
+                    setFormAsClean()
                     binding.llContent.visibility = View.VISIBLE
                     binding.pbForm.visibility = View.GONE
                     Toast.makeText(context, "Save Successful", Toast.LENGTH_LONG).show()
@@ -97,6 +99,17 @@ class PregnancyRegistrationFormFragment : Fragment() {
                     ).show()
                     binding.llContent.visibility = View.VISIBLE
                     binding.pbForm.visibility = View.GONE
+                }
+                State.DRAFT_SAVED -> {
+                    setFormAsClean()
+                    binding.llContent.visibility = View.VISIBLE
+                    binding.pbForm.visibility = View.GONE
+                    Toast.makeText(
+                        context,
+                        "Draft saved successfully",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    findNavController().navigateUp()
                 }
             }
         }
@@ -172,6 +185,10 @@ class PregnancyRegistrationFormFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    override fun saveDraft() {
+        viewModel.saveDraft()
     }
 
 

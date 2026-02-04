@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -18,12 +17,13 @@ import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
+import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.BaseFormFragment
 import org.piramalswasthya.sakhi.ui.home_activity.child_care.infant_list.hbnc_form.part_1.HbncPartIViewModel.State
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 
 @AndroidEntryPoint
-class HbncPartIFragment : Fragment() {
+class HbncPartIFragment : BaseFormFragment() {
 
     private var _binding: FragmentNewFormBinding? = null
     private val binding: FragmentNewFormBinding
@@ -73,6 +73,7 @@ class HbncPartIFragment : Fragment() {
                 imageClickListener = null,
                 formValueListener = FormInputAdapter.FormValueListener { formId, index ->
                     viewModel.updateListOnValueChanged(formId, index)
+                    setFormAsDirty()
                 },
                 isEnabled = !exists
             )
@@ -114,6 +115,7 @@ class HbncPartIFragment : Fragment() {
                 }
 
                 State.SUCCESS -> {
+                    setFormAsClean()
                     findNavController().navigateUp()
                     WorkerUtils.triggerAmritPushWorker(requireContext())
                 }
@@ -158,5 +160,9 @@ class HbncPartIFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    override fun saveDraft() {
+        viewModel.submitForm()
     }
 }

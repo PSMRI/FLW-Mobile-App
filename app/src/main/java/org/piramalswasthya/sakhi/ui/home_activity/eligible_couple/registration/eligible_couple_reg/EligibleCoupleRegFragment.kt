@@ -1,34 +1,44 @@
 package org.piramalswasthya.sakhi.ui.home_activity.eligible_couple.registration.eligible_couple_reg
 
+import android.Manifest
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.LocationManager
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-<<<<<<< Updated upstream
-import androidx.fragment.app.Fragment
-=======
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
->>>>>>> Stashed changes
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapterWithBgIcon
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
+import org.piramalswasthya.sakhi.databinding.LayoutMediaOptionsBinding
+import org.piramalswasthya.sakhi.databinding.LayoutViewMediaBinding
+import org.piramalswasthya.sakhi.helpers.Konstants
+import org.piramalswasthya.sakhi.ui.checkFileSize
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
-<<<<<<< Updated upstream
-=======
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.BaseFormFragment
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.form.PwAncFormFragment.Companion.backViewFileUri
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.form.PwAncFormFragment.Companion.latestTmpUri
->>>>>>> Stashed changes
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
+import java.io.File
 
 @AndroidEntryPoint
 class EligibleCoupleRegFragment : BaseFormFragment() {
@@ -40,6 +50,8 @@ class EligibleCoupleRegFragment : BaseFormFragment() {
 
     private val viewModel: EligibleCoupleRegViewModel by viewModels()
 
+    private val PICK_PDF_FILE = 1
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -48,8 +60,6 @@ class EligibleCoupleRegFragment : BaseFormFragment() {
         return binding.root
     }
 
-<<<<<<< Updated upstream
-=======
     private val takePicture =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { success: Boolean ->
             if (success) {
@@ -148,7 +158,6 @@ class EligibleCoupleRegFragment : BaseFormFragment() {
 
     }
 
->>>>>>> Stashed changes
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -160,7 +169,65 @@ class EligibleCoupleRegFragment : BaseFormFragment() {
                     formValueListener = FormInputAdapterWithBgIcon.FormValueListener { formId, index ->
                         viewModel.updateListOnValueChanged(formId, index)
                         hardCodedListUpdate(formId)
-                    }, isEnabled = !recordExists
+                        setFormAsDirty()
+                    },
+                    isEnabled = !recordExists,
+                    selectImageClickListener  = FormInputAdapterWithBgIcon.SelectUploadImageClickListener {
+                        if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                            viewModel.setCurrentDocumentFormId(it)
+                            chooseOptions()
+                        }
+                    },
+                    viewDocumentListner = FormInputAdapterWithBgIcon.ViewDocumentOnClick {
+                        if (!recordExists) {
+                            if (it == 75) {
+                                latestTmpUri?.let { uri ->
+                                    if (uri.toString().contains("document")) {
+                                        displayPdf(uri)
+                                    } else {
+                                        viewImage(uri)
+                                    }
+
+                                }
+                            } else {
+                                backViewFileUri?.let { uri ->
+                                    if (uri.toString().contains("document")) {
+                                        displayPdf(uri)
+                                    } else {
+                                        viewImage(uri)
+                                    }
+
+                                }
+                            }
+
+                        } else {
+                            val formId = it
+                            lifecycleScope.launch {
+                                viewModel.formList.collect { list ->
+                                    if (formId == 75) {
+                                        list.get(viewModel.getIndexofAshaKitPhotoFirst()).value.let { value ->
+                                            if (value.toString().contains("document")) {
+                                                displayPdf(value!!.toUri())
+                                            } else {
+                                                viewImage(value!!.toUri())
+                                            }
+                                        }
+                                    } else {
+                                        list.get(viewModel.getIndexofAshaKitPhotoSecond()).value.let { value ->
+                                            if (value.toString().contains("document")) {
+                                                displayPdf(value!!.toUri())
+                                            } else {
+                                                viewImage(value!!.toUri())
+                                            }
+                                        }
+                                    }
+
+                                }
+                            }
+
+                        }
+
+                    }
                 )
                 binding.form.rvInputForm.adapter = adapter
                 lifecycleScope.launch {
@@ -169,80 +236,6 @@ class EligibleCoupleRegFragment : BaseFormFragment() {
 
                             adapter.submitList(it)
 
-<<<<<<< Updated upstream
-=======
-                    val adapter = FormInputAdapterWithBgIcon(
-                        formValueListener = FormInputAdapterWithBgIcon.FormValueListener { formId, index ->
-                            viewModel.updateListOnValueChanged(formId, index)
-                            hardCodedListUpdate(formId)
-                            setFormAsDirty()
-                        }, isEnabled = !isDataExist ,
-                        selectImageClickListener  = FormInputAdapterWithBgIcon.SelectUploadImageClickListener {
-                            if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
-                                viewModel.setCurrentDocumentFormId(it)
-                                chooseOptions()
-                            }
-                        },
-                        viewDocumentListner = FormInputAdapterWithBgIcon.ViewDocumentOnClick {
-                            if (!recordExists) {
-                                if (it == 75) {
-                                    latestTmpUri?.let {
-                                        if (it.toString().contains("document")) {
-                                            displayPdf(it)
-                                        } else {
-                                            viewImage(it)
-                                        }
-
-                                    }
-                                } else {
-                                    backViewFileUri?.let {
-                                        if (it.toString().contains("document")) {
-                                            displayPdf(it)
-                                        } else {
-                                            viewImage(it)
-                                        }
-
-                                    }
-                                }
-
-                            } else {
-                                val formId = it
-                                lifecycleScope.launch {
-                                    viewModel.formList.collect{
-                                        if (formId == 75) {
-                                            it.get(viewModel.getIndexofAshaKitPhotoFirst()).value.let {
-                                                if (it.toString().contains("document")) {
-                                                    displayPdf(it!!.toUri())
-                                                } else {
-                                                    viewImage(it!!.toUri())
-                                                }
-                                            }
-                                        } else {
-                                            it.get(viewModel.getIndexofAshaKitPhotoSecond()).value.let {
-                                                if (it.toString().contains("document")) {
-                                                    displayPdf(it!!.toUri())
-                                                } else {
-                                                    viewImage(it!!.toUri())
-                                                }
-                                            }
-                                        }
-
-                                    }
-                                }
-
-                            }
-
-                        }
-                    )
-                    binding.form.rvInputForm.adapter = adapter
-                    lifecycleScope.launch {
-                        viewModel.formList.collect {
-                            if (it.isNotEmpty())
-
-                                adapter.submitList(it)
-
-                        }
->>>>>>> Stashed changes
                     }
                 }
             }
@@ -419,8 +412,6 @@ class EligibleCoupleRegFragment : BaseFormFragment() {
         _binding = null
     }
 
-<<<<<<< Updated upstream
-=======
     fun showAlertDialog(context: Context, title: String, message: String) {
         MaterialAlertDialogBuilder(context)
             .setTitle(title)
@@ -527,5 +518,4 @@ class EligibleCoupleRegFragment : BaseFormFragment() {
     override fun saveDraft() {
         viewModel.saveDraft()
     }
->>>>>>> Stashed changes
 }

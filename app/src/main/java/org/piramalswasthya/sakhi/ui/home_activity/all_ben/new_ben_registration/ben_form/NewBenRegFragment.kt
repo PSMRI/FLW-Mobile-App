@@ -1,28 +1,28 @@
 package org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
-<<<<<<< Updated upstream
-import androidx.fragment.app.Fragment
-=======
 import androidx.core.net.toUri
->>>>>>> Stashed changes
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -34,8 +34,10 @@ import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.databinding.AlertConsentBinding
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
+import org.piramalswasthya.sakhi.databinding.LayoutMediaOptionsBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.model.Gender
+import org.piramalswasthya.sakhi.ui.checkFileSize
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.NewBenRegViewModel.State
 import org.piramalswasthya.sakhi.work.WorkerUtils
@@ -72,6 +74,11 @@ class NewBenRegFragment : BaseFormFragment() {
 
 
     private var latestTmpUri: Uri? = null
+    private var frontViewFileUri: Uri? = null
+    private var backViewFileUri: Uri? = null
+    private val PICK_PDF_FILE = 1
+    private val countdownTimers = mutableMapOf<Int, CountDownTimer>()
+    private var isOtpVerified = false
 
 
     private val takePicture =
@@ -86,16 +93,11 @@ class NewBenRegFragment : BaseFormFragment() {
                     }
                     Timber.d("Image saved at @ $uri")
                 }
-<<<<<<< Updated upstream
-=======
                 setFormAsDirty()
->>>>>>> Stashed changes
             }
         }
 
 
-<<<<<<< Updated upstream
-=======
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -140,7 +142,7 @@ class NewBenRegFragment : BaseFormFragment() {
 
         }
     }
->>>>>>> Stashed changes
+
     private fun showAddSpouseAlert() {
         val alertDialog = MaterialAlertDialogBuilder(requireContext()).setCancelable(false)
 
@@ -506,8 +508,6 @@ class NewBenRegFragment : BaseFormFragment() {
     }
 
 
-<<<<<<< Updated upstream
-=======
     private fun formatTimeInSeconds(millis: Long) : String {
         val seconds = millis / 1000
         return "${seconds} sec"
@@ -581,5 +581,4 @@ class NewBenRegFragment : BaseFormFragment() {
     override fun saveDraft() {
         viewModel.saveDraft()
     }
->>>>>>> Stashed changes
 }

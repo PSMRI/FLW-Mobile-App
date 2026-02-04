@@ -7,15 +7,10 @@ import android.view.ViewGroup
 import android.widget.CompoundButton
 import android.widget.CompoundButton.OnCheckedChangeListener
 import android.widget.Toast
-<<<<<<< Updated upstream
-import androidx.fragment.app.Fragment
-=======
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
->>>>>>> Stashed changes
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -36,15 +31,7 @@ import java.util.Calendar
 import java.util.Locale
 
 @AndroidEntryPoint
-<<<<<<< Updated upstream
-class ImmunizationFormFragment : Fragment(), OnCheckedChangeListener {
-    //  private var _binding: FragmentNewFormBinding? = null
-=======
 class ImmunizationFormFragment : BaseFormFragment(), OnCheckedChangeListener {
->>>>>>> Stashed changes
-
-//    private val binding: FragmentNewFormBinding
-//        get() = _binding!!
 
     private var _binding: FragmentImmunizationFormBinding? = null
     private val binding: FragmentImmunizationFormBinding
@@ -58,7 +45,6 @@ class ImmunizationFormFragment : BaseFormFragment(), OnCheckedChangeListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // _binding = FragmentNewFormBinding.inflate(inflater, container, false)
         _binding = FragmentImmunizationFormBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -75,7 +61,6 @@ class ImmunizationFormFragment : BaseFormFragment(), OnCheckedChangeListener {
         }
 
         binding.llPatientInformation2.visibility = View.VISIBLE
-        //     binding.llBenPwrTrackingDetails2.visibility = View.GONE
         binding.llBenPwrTrackingDetails3.visibility = View.GONE
         viewModel.benRegCache.observe(viewLifecycleOwner) {
             binding.tvTitleHusband.text = resources.getString(R.string.mother_s_name)
@@ -138,15 +123,9 @@ class ImmunizationFormFragment : BaseFormFragment(), OnCheckedChangeListener {
             }
         }
 
-//        binding.fabEdit.setOnClickListener {
-//            viewModel.updateRecordExists(false)
-//        }
-
-
         viewModel.recordExists.observe(viewLifecycleOwner) { notIt ->
             notIt?.let { recordExists ->
                 binding.btnSubmit.visibility = if (recordExists) View.GONE else View.VISIBLE
-                //    binding.fabEdit.visibility = if (recordExists) View.VISIBLE else View.GONE
                 val adapter = FormInputAdapter(
                     formValueListener = FormInputAdapter.FormValueListener { formId, index ->
                         viewModel.updateListOnValueChanged(formId, index)
@@ -192,11 +171,7 @@ class ImmunizationFormFragment : BaseFormFragment(), OnCheckedChangeListener {
                     binding.checkBox.isChecked = false
                     binding.checkBox.setOnCheckedChangeListener(this)
                 }
-<<<<<<< Updated upstream
-=======
                 setFormAsDirty()
-                updateSubmitButtonVisibility()
->>>>>>> Stashed changes
                 (binding.rvImmCat.adapter as ChildImmunizationVaccineAdapter).notifyItemChanged(
                     position
                 )
@@ -220,95 +195,8 @@ class ImmunizationFormFragment : BaseFormFragment(), OnCheckedChangeListener {
     }
 
 
-<<<<<<< Updated upstream
-=======
-
-    private fun takeImage() {
-        lifecycleScope.launchWhenStarted {
-            val uri = requireContext().createTempImageUri()
-            mcpCardUris[viewModel.getDocumentFormId()] = uri
-                takePictureLauncher.launch(uri)
-            }
-        }
-
-
-
-
-    private fun getUriByFormId(formId: Int): Uri? = mcpCardUris[formId]
-
-    private fun setUriForFormId(formId: Int, uri: Uri) {
-        mcpCardUris[formId] = uri
-    }
-    private fun handleCameraResult() {
-        val formId = viewModel.getDocumentFormId()
-        mcpCardUris[formId]?.let { uri ->
-                   if (checkFileSize(uri, requireContext())) {
-                            Toast.makeText(context, resources.getString(R.string.file_size), Toast.LENGTH_LONG).show()
-                            mcpCardUris[formId] = null
-                        } else {
-                            updateAdapterForFormId(formId, uri)
-                            setFormAsDirty()
-                        }
-                }
-    }
-
-    private fun updateAdapterForFormId(formId: Int, uri: Uri) {
-        setUriForFormId(formId, uri)
-        viewModel.setImageUriToFormElement(uri)
-        (binding.form.rvInputForm.adapter as? FormInputAdapter)?.notifyDataSetChanged()
-    }
-
-    private fun getTmpFileUri(): Uri {
-        val imagesDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        val tmpFile = File.createTempFile(Konstants.tempBenImagePrefix, ".jpg", imagesDir)
-        return FileProvider.getUriForFile(
-            requireContext(), "${BuildConfig.APPLICATION_ID}.provider", tmpFile
-        )
-    }
-
-    private fun selectImage() {
-        pickImageLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-    }
-
-    private fun viewDocuments(formId: Int) {
-        mcpCardsIndex[formId]?.invoke()?.let { index -> observeAndViewDocument(index) }
-
-    }
-
-    private fun observeAndViewDocument(index: Int) {
-        lifecycleScope.launch {
-            viewModel.formList.collect { list ->
-                list.getOrNull(index)?.value?.let {  requireContext().showImageDialog(it.toUri()) }
-            }
-        }
-    }
-
-
-
-
-  /*  @Deprecated("Deprecated in Java")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == PICK_IMAGE && resultCode == Activity.RESULT_OK) {
-            handleImageResult(viewModel.getDocumentFormId(), data?.data)
-        }
-    }
-*/
-    private fun handleImageResult(formId: Int, uri: Uri?) {
-        uri?.let {
-            if (checkFileSize(it, requireContext())) {
-                Toast.makeText(context, resources.getString(R.string.file_size), Toast.LENGTH_LONG).show()
-            } else {
-                updateAdapterForFormId(formId, it)
-                setFormAsDirty()
-            }
-        }
-    }
-
->>>>>>> Stashed changes
     private fun submitImmForm() {
         if (validateCurrentPage()) {
-            //viewModel.saveForm()
             viewModel.saveImmunization()
 
         }
@@ -372,11 +260,7 @@ class ImmunizationFormFragment : BaseFormFragment(), OnCheckedChangeListener {
             }
 
         }
-<<<<<<< Updated upstream
-=======
         setFormAsDirty()
-        updateSubmitButtonVisibility()
->>>>>>> Stashed changes
         (binding.rvImmCat.adapter as ChildImmunizationVaccineAdapter).notifyDataSetChanged()
     }
 

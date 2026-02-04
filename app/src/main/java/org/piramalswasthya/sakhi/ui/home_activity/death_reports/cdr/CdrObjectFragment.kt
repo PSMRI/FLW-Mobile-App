@@ -1,31 +1,39 @@
 package org.piramalswasthya.sakhi.ui.home_activity.death_reports.cdr
 
+import android.Manifest
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-<<<<<<< Updated upstream
-import androidx.fragment.app.Fragment
-=======
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
->>>>>>> Stashed changes
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
-import org.piramalswasthya.sakhi.adapters.FormInputAdapterOld
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
+import org.piramalswasthya.sakhi.databinding.LayoutMediaOptionsBinding
+import org.piramalswasthya.sakhi.databinding.LayoutViewMediaBinding
+import org.piramalswasthya.sakhi.helpers.Konstants
+import org.piramalswasthya.sakhi.ui.checkFileSize
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.BaseFormFragment
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
+import java.io.File
 
 @AndroidEntryPoint
 class CdrObjectFragment : BaseFormFragment() {
@@ -34,8 +42,6 @@ class CdrObjectFragment : BaseFormFragment() {
     private val binding: FragmentNewFormBinding
         get() = _binding!!
 
-<<<<<<< Updated upstream
-=======
     private val requestLocationPermission =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { b ->
             if (b) {
@@ -78,7 +84,6 @@ class CdrObjectFragment : BaseFormFragment() {
         }
 
 
->>>>>>> Stashed changes
     private val viewModel: CdrObjectViewModel by viewModels()
 
     override fun onCreateView(
@@ -106,9 +111,6 @@ class CdrObjectFragment : BaseFormFragment() {
                 val adapter = FormInputAdapter(
                     formValueListener = FormInputAdapter.FormValueListener { formId, index ->
                         viewModel.updateListOnValueChanged(formId, index)
-<<<<<<< Updated upstream
-                    }, isEnabled = !recordExists
-=======
                         setFormAsDirty()
                     },
 
@@ -142,7 +144,6 @@ class CdrObjectFragment : BaseFormFragment() {
                     },
 
                     isEnabled = !recordExists
->>>>>>> Stashed changes
                 )
                 binding.btnSubmit.isEnabled = !recordExists
                 binding.form.rvInputForm.adapter = adapter
@@ -234,8 +235,19 @@ class CdrObjectFragment : BaseFormFragment() {
     }
 
 
-<<<<<<< Updated upstream
-=======
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == PICK_PDF_FILE && resultCode == Activity.RESULT_OK) {
+            if(viewModel.getDocumentFormId() == 21) {
+                data?.data?.let { pdfUri ->
+                    if (checkFileSize(pdfUri, requireContext())) {
+                        Toast.makeText(
+                            context,
+                            resources.getString(R.string.file_size),
+                            Toast.LENGTH_LONG
+                        ).show()
+
                     } else {
                         cdr1Uri = pdfUri
                         cdr1Uri?.let { uri ->
@@ -434,5 +446,4 @@ private fun getTmpFileUri(): Uri {
     override fun saveDraft() {
         viewModel.saveDraft()
     }
->>>>>>> Stashed changes
 }
