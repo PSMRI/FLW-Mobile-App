@@ -61,3 +61,7 @@ jobs:
       BASE_AMRIT_URL: ${{ secrets.BASE_AMRIT_URL }}
       BASE_FLW_URL: ${{ secrets.BASE_FLW_URL }}
       BASE_ABHA_URL: ${{ secrets.BASE_ABHA_URL }}
+      GOOGLE_SERVICES_JSON_GENERIC: ${{ secrets.GOOGLE_SERVICES_JSON_GENERIC }}
+      SANJEEVANI_API_URL: ${{ secrets.SANJEEVANI_API_URL }}
+      FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
+
