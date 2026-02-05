@@ -19,7 +19,6 @@ import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.ReferalCache
 import org.piramalswasthya.sakhi.repositories.CbacRepo
 import org.piramalswasthya.sakhi.repositories.NcdReferalRepo
-import org.piramalswasthya.sakhi.utils.Log
 import javax.inject.Inject
 
 @HiltViewModel
@@ -93,14 +92,17 @@ class NCDReferDialogViewModel @Inject constructor(
             preferenceDao
         )
 
-        Log.e("DataView",this.referralType)
-        Log.e("DataView",this.referralReason)
         loadInitialData()
     }
 
     private fun loadInitialData() {
         viewModelScope.launch {
-            ben = benDao.getBen(benId)!!
+            val fetchedBen = benDao.getBen(benId)
+               if (fetchedBen == null) {
+                   _state.postValue(State.SAVE_FAILED)
+                   return@launch
+               }
+            ben = fetchedBen
             _gender.value = ben.gender!!
             _age.value = ben.age
             _benName.value = "${ben.firstName} ${ben.lastName.orEmpty()}"
@@ -112,8 +114,6 @@ class NCDReferDialogViewModel @Inject constructor(
                 syncState = SyncState.UNSYNCED,
                 createdBy = preferenceDao.getLoggedInUser()?.userName
             )
-
-            Log.e("DataShiw","HUA")
             dataset.setUpPage(referralReason, referralType)
 
         }
@@ -136,7 +136,6 @@ class NCDReferDialogViewModel @Inject constructor(
                     _state.postValue(State.SAVING)
 
                     dataset.mapValues(referalCache)
-//                    referalRepo.saveReferedNCD(referalCache)
                     _state.postValue(State.SAVE_SUCCESS)
                 } catch (e: Exception) {
                     _state.postValue(State.SAVE_FAILED)
@@ -144,10 +143,6 @@ class NCDReferDialogViewModel @Inject constructor(
             }
 
         }
-    }
-
-    fun clearFormState() {
-        _state.value = State.IDLE
     }
 
 
