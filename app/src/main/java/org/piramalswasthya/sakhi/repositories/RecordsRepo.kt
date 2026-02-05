@@ -40,6 +40,9 @@ class RecordsRepo @Inject constructor(
         .map { list -> list.map { it.asBasicDomainModel() } }
     val hhListCount = householdDao.getAllHouseholdsCount(selectedVillage)
 
+    val hhListforAsha = householdDao.getAllHouseholdForAshaFamilyMembers(selectedVillage)
+        .map { list -> list.map { it.asBasicDomainModel() } }
+
     val allBenList =
         benDao.getAllBen(selectedVillage).map { list -> list.map { it.asBasicDomainModel() } }
 
