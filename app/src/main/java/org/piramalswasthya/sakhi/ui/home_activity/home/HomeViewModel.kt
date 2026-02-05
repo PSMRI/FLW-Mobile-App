@@ -16,6 +16,7 @@ import kotlinx.coroutines.tasks.await
 import org.piramalswasthya.sakhi.database.room.InAppDb
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.isInternetAvailable
 import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.repositories.UserRepo
@@ -76,7 +77,9 @@ class HomeViewModel @Inject constructor(
 
     fun logout() {
         viewModelScope.launch {
-            pref.deleteLoginCred()
+            pref.deleteForLogout()
+            pref.setLastSyncedTimeStamp(Konstants.defaultTimeStamp)
+//            pref.deleteLoginCred()
             _navigateToLoginPage.value = true
         }
     }
