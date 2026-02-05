@@ -79,7 +79,6 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             pref.deleteForLogout()
             pref.setLastSyncedTimeStamp(Konstants.defaultTimeStamp)
-//            pref.deleteLoginCred()
             _navigateToLoginPage.value = true
         }
     }
