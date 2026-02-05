@@ -63,13 +63,7 @@
         <item name="nbr_gender_2">মহিলা</item>
         <item name="nbr_gender_3">ট্ৰান্সজেন্ডাৰ</item>
     </string-array>
-    <string-array name="nbr_reproductive_status_array">
-        <item>যোগ্য জন্য জুতি দিব যোৱা জন</item>
-        <item>গৰ্ভবতী মহিলা</item>
-        <item>পষ্টুতা কৰা মহিলা</item>
-        <item>বৃদ্ধা মহিলা</item>
-        <item>কিশোৰী</item>
-    </string-array>
+
 
     <string-array name="nbr_reproductive_status_array1">
         <item>Adolescent Girl</item>

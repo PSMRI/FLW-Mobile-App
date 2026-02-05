@@ -864,6 +864,8 @@ class FormInputAdapter(
                         getDobFromAge(ageUnitDTO)
                     binding.etDate.setText(getDateString(calDob.timeInMillis))
                     item.value = getDateString(calDob.timeInMillis)
+                    item.errorText = null
+                    binding.tilEditTextDate.error = null
                     if (item.hasDependants) formValueListener?.onValueChanged(item, -1)
                 }
             }

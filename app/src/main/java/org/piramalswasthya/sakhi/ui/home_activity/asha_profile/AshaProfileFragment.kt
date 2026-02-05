@@ -112,7 +112,7 @@ class AshaProfileFragment : Fragment() {
         binding.addHousehold.setOnClickListener {
             findNavController().navigate(
                 AshaProfileFragmentDirections.actionAshaProfileFragmentToNewHouseholdFragment(
-
+                        isAshaFamily = "Yes"
                 )
             )
         }
