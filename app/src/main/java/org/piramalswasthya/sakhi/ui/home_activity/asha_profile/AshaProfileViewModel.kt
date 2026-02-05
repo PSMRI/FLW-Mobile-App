@@ -40,7 +40,7 @@ class AshaProfileViewModel @Inject constructor(
 
     private val filter = MutableStateFlow("")
 
-    val householdList = recordsRepo.hhList.combine(filter) { list, _ ->
+    val householdList = recordsRepo.hhListforAsha.combine(filter) { list, _ ->
         list.take(1)
     }
 
