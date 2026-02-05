@@ -123,8 +123,10 @@ jobs:
 
       - name: Set version
         run: |
-          echo "version=${{ inputs.version }}" >> $GITHUB_ENV
-          echo "version=flw-${{ github.run_number }}" >> $GITHUB_ENV
+          CLEAN_VERSION=$(echo "${{ inputs.version }}" | tr -d '\n\r')
+          echo "version=$CLEAN_VERSION" >> $GITHUB_ENV
+      
+      
 
       - name: Verify version
         run: |
