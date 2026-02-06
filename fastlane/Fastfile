@@ -1,8 +1,8 @@
 def get_package_name(flavor)
-  UI.user_error!("Missing required parameter: variant") if flavor.nil?
+  UI.user_error!("Missing required parameter: flavor") if flavor.nil?
 
   valid_flavors = ["SakshamStag", "SakshamUat", "Saksham", "Xushrukha", "Niramay"]
-  UI.user_error!("Invalid variant: #{flavor}") unless valid_flavors.include?(flavor)
+ UI.user_error!("Invalid flavor: #{flavor}") unless valid_flavors.include?(flavor)
 
   base_package = "org.piramalswasthya.sakhi"
 
