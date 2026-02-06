@@ -48,10 +48,7 @@ platform :android do
   desc "Build and Distribute Debug APK to Firebase"
   lane :build_and_distribute_debug do |options|
 
-   latest_release = firebase_app_distribution_get_latest_release(
-      app: ENV['FIREBASE_APP_ID'],
-      service_credentials_file: "firebase_credentials.json"
-   )
+
    new_version_code = latest_release[:buildVersion].to_i + 1
    current_version_name = android_get_version_name
    new_version_name = "#{new_version_code}.0.0"
