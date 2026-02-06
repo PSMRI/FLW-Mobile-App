@@ -2,7 +2,8 @@ def get_package_name(flavor)
   UI.user_error!("Missing required parameter: flavor") if flavor.nil?
 
   valid_flavors = ["SakshamStag", "SakshamUat", "Saksham", "Xushrukha", "Niramay"]
- UI.user_error!("Invalid flavor: #{flavor}") unless valid_flavors.include?(flavor)
+   UI.user_error!("Invalid flavor: #{flavor}") unless valid_flavors.include?(flavor)
+
 
   base_package = "org.piramalswasthya.sakhi"
 
@@ -32,12 +33,24 @@ def latest_googleplay_version_code(package_name)
           package_name: package_name
         )
       )
-    rescue
-      UI.message "No version found for #{track} track"
+    rescue Google::Apis::ClientError => e
+      # This means: no versions in this track (OK case)
+      UI.message "No versions found for #{track} track"
+    rescue => e
+      # Real problem: auth / network / permission issue
+      UI.user_error!(
+        "Failed to fetch Play Store versions for #{track} track: #{e.class} - #{e.message}"
+      )
     end
   end
 
-  version_codes.max || 0
+  max_version = version_codes.max
+  if max_version.nil?
+    UI.important "No versions found in any Play Store track, defaulting to 0"
+    return 0
+  end
+
+  max_version
 end
 
 
