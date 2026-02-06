@@ -152,7 +152,11 @@ jobs:
           export FIREBASE_APP_ID="${{ secrets.FIREBASE_APP_ID }}"
 
           if [ "${{ inputs.build_type }}" = "debug" ]; then
-            bundle exec fastlane build_and_distribute_debug variant:${{ inputs.variant }}
+            bundle exec fastlane build_and_distribute_debug \
+              variant:${{ inputs.variant }} \
+              version_code:${{ inputs.version }}
           else
-            bundle exec fastlane build_and_distribute_release variant:${{ inputs.variant }}
+            bundle exec fastlane build_and_distribute_release \
+              variant:${{ inputs.variant }}
           fi
+
