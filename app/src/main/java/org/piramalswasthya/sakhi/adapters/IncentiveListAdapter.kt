@@ -9,7 +9,7 @@ import org.piramalswasthya.sakhi.databinding.RvItemIncentiveBinding
 import org.piramalswasthya.sakhi.model.IncentiveDomain
 
 
-class IncentiveListAdapter :
+class IncentiveListAdapter( private val fileClickListener: FileClickListener) :
     ListAdapter<IncentiveDomain, IncentiveListAdapter.IncentiveViewHolder>(IncentiveDiffUtilCallBack) {
     private object IncentiveDiffUtilCallBack : DiffUtil.ItemCallback<IncentiveDomain>() {
         override fun areItemsTheSame(
@@ -33,10 +33,11 @@ class IncentiveListAdapter :
         }
 
         fun bind(
-            item: IncentiveDomain,serialNo : Int
+            item: IncentiveDomain,serialNo : Int, clickListener: FileClickListener
         ) {
             binding.item = item
             binding.serialNo = serialNo
+            binding.clickListener = clickListener
             binding.executePendingBindings()
 
         }
@@ -48,9 +49,19 @@ class IncentiveListAdapter :
 
     override fun onBindViewHolder(holder: IncentiveViewHolder, position: Int) {
         holder.bind(
-            getItem(position),position+1
+            getItem(position),position+1,fileClickListener
 
         )
+    }
+
+    class FileClickListener(
+        private val onUpload: (item: IncentiveDomain) -> Unit,
+        private val onView: (item: IncentiveDomain) -> Unit,
+        private val onSubmit: (item: IncentiveDomain) -> Unit
+    ) {
+        fun onUploadClick(item: IncentiveDomain) = onUpload(item)
+        fun onViewClick(item: IncentiveDomain) = onView(item)
+        fun onSubmitClick(item: IncentiveDomain) = onSubmit(item)
     }
 
 //

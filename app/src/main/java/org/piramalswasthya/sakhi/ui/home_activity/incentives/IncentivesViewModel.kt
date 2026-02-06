@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.ui.home_activity.incentives
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -21,6 +22,8 @@ import org.piramalswasthya.sakhi.repositories.IncentiveRepo
 import java.util.Calendar
 import javax.inject.Inject
 import org.piramalswasthya.sakhi.model.IncentiveActivityDomain
+import org.piramalswasthya.sakhi.model.UploadResponse
+import timber.log.Timber
 
 
 @HiltViewModel
@@ -29,6 +32,22 @@ IncentivesViewModel @Inject constructor(
     pref: PreferenceDao,
     incentiveRepo: IncentiveRepo
 ) : ViewModel() {
+
+
+    sealed class UploadState {
+        object Idle : UploadState()
+        object Loading : UploadState()
+        data class Success(val response: UploadResponse) : UploadState()
+        data class Error(val message: String) : UploadState()
+    }
+
+
+    sealed class FileUpdateState {
+        object Idle : FileUpdateState()
+        object Loading : FileUpdateState()
+        object Success : FileUpdateState()
+        data class Error(val message: String) : FileUpdateState()
+    }
 
     private val _lastUpdated: Long = pref.lastIncentivePullTimestamp
 
@@ -64,6 +83,16 @@ IncentivesViewModel @Inject constructor(
         _isStateChhattisgarh.value = user?.state?.id == 8
         pullIncentives()
     }
+
+    private val _uploadState = MutableLiveData<UploadState>()
+    val uploadState: LiveData<UploadState> = _uploadState
+
+    private val _fileUpdateState = MutableLiveData<FileUpdateState>()
+    val fileUpdateState: LiveData<FileUpdateState> = _fileUpdateState
+
+    private val _incentivesList = MutableLiveData<List<IncentiveDomain>>()
+    val incentivesList: LiveData<List<IncentiveDomain>> = _incentivesList
+
 
 
     private val _from = MutableStateFlow(initStart)
@@ -178,5 +207,43 @@ IncentivesViewModel @Inject constructor(
                 .sortedBy { it.record.createdDate }
         }
     }
+
+    fun uploadIncentiveDocuments(item: IncentiveDomain) {
+        viewModelScope.launch {
+            _uploadState.value = UploadState.Loading
+
+            val result = _incentiveRepo.uploadIncentiveFiles(
+                id = item.record.activityId,
+                userId = _pref.getLoggedInUser()?.userId?.toLong() ?: 0L,
+                moduleName = "MAA_MEETING",
+                fileUris = item.uploadedFiles
+            )
+
+            result.fold(
+                onSuccess = { response ->
+
+                    item.serverFileUrls = response.fileUrls
+                    item.isSubmitted = true
+                    item.submittedAt = System.currentTimeMillis()
+
+                    // saveToDatabase(item)
+
+                    _uploadState.value = UploadState.Success(response)
+                },
+                onFailure = { error ->
+                    _uploadState.value = UploadState.Error(error.message ?: "Upload failed")
+                }
+            )
+        }
+    }
+
+
+
+
+
+
+
+
+
 
 }

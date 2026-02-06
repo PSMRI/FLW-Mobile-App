@@ -11,12 +11,18 @@
         <variable
             name="item"
             type="org.piramalswasthya.sakhi.model.IncentiveDomain" />
+        <variable
+            name="clickListener"
+            type="org.piramalswasthya.sakhi.adapters.IncentiveListAdapter.FileClickListener" />
+        <import type="android.view.View"/>
 
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:dynamicBackground="@{item.record.isEligible}">
+
 
         <TextView
             android:id="@+id/tvSerialNo"
@@ -37,12 +43,12 @@
             android:id="@+id/ll_details"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintWidth_percent="0.6"
             android:layout_marginStart="@dimen/_10sdp"
+            android:orientation="vertical"
             app:layout_constraintEnd_toStartOf="@+id/tv_amount"
             app:layout_constraintStart_toEndOf="@id/tvSerialNo"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.6">
 
             <TextView
                 android:layout_width="match_parent"
@@ -65,16 +71,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:padding="@dimen/padding_small"
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                 android:text="@{@string/incentive_rch_id_details(item.ben.rchId)}"
-                />
+                android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:padding="@dimen/padding_small"
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                 android:text="@{@string/incentive_abha_id_details(item.ben.abhaId)}"
+                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
 
                 />
 
@@ -91,9 +96,78 @@
             app:layout_constraintBottom_toBottomOf="@id/ll_details"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/ll_details"
-            app:layout_constraintWidth_percent="0.28
-"
+            app:layout_constraintWidth_percent="0.28"
             tools:text="odfnk" />
+
+        <LinearLayout
+            android:id="@+id/ll_file_actions"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ll_details"
+            >
+
+            <ImageButton
+                android:id="@+id/btn_upload_files"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_marginEnd="18dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:onClick="@{() -> clickListener.onUploadClick(item)}"
+                android:padding="8dp"
+                android:src="@drawable/ic_doc_upload"
+                android:visibility="@{item.record.eligible? View.GONE : View.VISIBLE}"
+                app:tint="?attr/colorPrimary" />
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageButton
+                    android:id="@+id/btn_view_files"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:onClick="@{() -> clickListener.onViewClick(item)}"
+                    android:src="@drawable/ic_icon_view"
+                    android:visibility="@{item.record.eligible? View.GONE : View.VISIBLE}"
+                    app:tint="?attr/colorPrimary" />
+
+                <TextView
+                    android:id="@+id/tv_file_count"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_gravity="top|end"
+                    android:gravity="center"
+                    android:text="@{item.fileCount > 0 ? String.valueOf(item.fileCount) : ``}"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/_10sdp"
+                    android:visibility="@{item.fileCount > 0 ? android.view.View.VISIBLE : android.view.View.GONE}"
+                    tools:text="3"
+                    tools:visibility="visible" />
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_submit"
+            android:layout_width="0dp"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:layout_height="wrap_content"
+            android:enabled="@{!item.isSubmitted &amp;&amp; item.fileCount > 0}"
+            android:onClick="@{() -> clickListener.onSubmitClick(item)}"
+            android:text="@{item.isSubmitted ? @string/submitted : @string/submit}"
+            app:iconSize="18dp"
+            android:textColor="@color/design_default_color_on_primary"
+            android:visibility="@{item.record.eligible? View.GONE : View.VISIBLE}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ll_file_actions"
+            app:layout_constraintWidth_percent="0.30" />
+
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
