@@ -481,4 +481,15 @@ interface AmritApiService {
     @Multipart
     @POST("flw-api/campaign/filariasis/campaign/saveAll")
     suspend fun saveFilariaMdaCampaign( @Part campaignData: List<MultipartBody.Part>): Response<ResponseBody>
+
+    @Multipart
+    @POST("flw-api/incentive/update")
+    suspend fun uploadIncentiveDocuments(
+        @Part("id") id: RequestBody,
+        @Part("userId") userId: RequestBody,
+        @Part("moduleName") moduleName: RequestBody,
+        @Part images: List<MultipartBody.Part>
+    ): Response<UploadResponse>
+
+
 }

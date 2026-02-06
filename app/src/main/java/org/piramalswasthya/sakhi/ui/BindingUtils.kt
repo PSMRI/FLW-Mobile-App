@@ -533,3 +533,12 @@ fun Button.visibleIfEligibleFemale(age: Int?, isDeath: String?, reproductiveStat
 
     visibility = if (shouldShow) View.VISIBLE else View.GONE
 }
+
+@BindingAdapter("dynamicBackground")
+fun setDynamicBackground(view: View, isEligible: Boolean) {
+    if (isEligible) {
+        view.setBackgroundResource(R.color.md_theme_light_error)
+    } else {
+        view.background = null
+    }
+}
