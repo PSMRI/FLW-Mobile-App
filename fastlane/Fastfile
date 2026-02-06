@@ -1,8 +1,8 @@
 def get_package_name(flavor)
-  UI.user_error!("Missing required parameter: flavor") if flavor.nil?
+  UI.user_error!("Missing required parameter: variant") if flavor.nil?
 
   valid_flavors = ["SakshamStag", "SakshamUat", "Saksham", "Xushrukha", "Niramay"]
-  UI.user_error!("Invalid flavor: #{flavor}") unless valid_flavors.include?(flavor)
+  UI.user_error!("Invalid variant: #{flavor}") unless valid_flavors.include?(flavor)
 
   base_package = "org.piramalswasthya.sakhi"
 
@@ -14,37 +14,30 @@ def get_package_name(flavor)
     "Niramay"     => ".niramay"
   }
 
-  suffix = suffixes[flavor] || ""
-  UI.message "Using package name: #{base_package}#{suffix}"
-  "#{base_package}#{suffix}"
+  package_name = "#{base_package}#{suffixes[flavor]}"
+  UI.message "Using package name: #{package_name}"
+  package_name
 end
 
 
 def latest_googleplay_version_code(package_name)
-  UI.user_error!("Missing required parameter: package_name") if package_name.nil?
-
   tracks = ['production', 'beta', 'alpha', 'internal']
   version_codes = []
 
   tracks.each do |track|
     begin
-      codes = google_play_track_version_codes(
-        track: track,
-        package_name: package_name
+      version_codes.concat(
+        google_play_track_version_codes(
+          track: track,
+          package_name: package_name
+        )
       )
-      version_codes.concat(codes)
-    rescue => e
-      UI.message "No version codes found for #{track} track"
+    rescue
+      UI.message "No version found for #{track} track"
     end
   end
 
-  max_version = version_codes.max
-  if max_version.nil?
-    UI.important "No version codes found in Play Store, defaulting to 0"
-    return 0
-  end
-
-  max_version
+  version_codes.max || 0
 end
 
 
@@ -55,32 +48,18 @@ platform :android do
   desc "Build and Distribute Debug APK to Firebase"
   lane :build_and_distribute_debug do |options|
 
-    # ---------- SAFETY CHECKS ----------
-    UI.user_error!("Missing required parameter: variant") if options[:variant].nil?
+    UI.user_error!("variant is required") if options[:variant].nil?
     UI.user_error!("FIREBASE_APP_ID is missing") if ENV['FIREBASE_APP_ID'].to_s.empty?
 
-    latest_release = nil
-
-    begin
-      latest_release = firebase_app_distribution_get_latest_release(
-        app: ENV['FIREBASE_APP_ID'],
-        service_credentials_file: "firebase_credentials.json"
-      )
-    rescue
-      UI.message "No previous Firebase release found. Starting from version 1"
-    end
-
-    new_version_code =
-      if latest_release && latest_release[:buildVersion]
-        latest_release[:buildVersion].to_i + 1
-      else
-        1
-      end
-
+    # 👉 Version should come from workflow input
+    new_version_code = options[:version_code]&.to_i || 1
     new_version_name = "#{new_version_code}.0.0"
 
+    UI.message "Building Debug with versionCode=#{new_version_code}, versionName=#{new_version_name}"
+
     File.open("../version/version.properties", "w") do |file|
-      file.write("VERSION=#{new_version_name}")
+      file.puts("VERSION=#{new_version_name}")
+      file.puts("VERSIONCODE=#{new_version_code}")
     end
 
     gradle(
@@ -97,10 +76,10 @@ platform :android do
   end
 
 
-  desc "Build, Sign, and Distribute Release APK to Play Store"
+  desc "Build, Sign, and Distribute Release AAB to Play Store"
   lane :build_and_distribute_release do |options|
 
-    UI.user_error!("Missing required parameter: variant") if options[:variant].nil?
+    UI.user_error!("variant is required") if options[:variant].nil?
 
     keystore_path = File.expand_path('../keystore.jks')
     package_name = get_package_name(options[:variant])
@@ -108,11 +87,11 @@ platform :android do
     new_version_code = latest_googleplay_version_code(package_name) + 1
     new_version_name = "#{new_version_code}.0.0"
 
-    UI.message "New version code: #{new_version_code}"
-    UI.message "New version name: #{new_version_name}"
+    UI.message "Release versionCode=#{new_version_code}, versionName=#{new_version_name}"
 
     File.open("../version/version.properties", "w") do |file|
-      file.write("VERSION=#{new_version_name}")
+      file.puts("VERSION=#{new_version_name}")
+      file.puts("VERSIONCODE=#{new_version_code}")
     end
 
     gradle(
@@ -133,32 +112,6 @@ platform :android do
       version_code: new_version_code,
       package_name: package_name
     )
-  end
-
-
-  desc "Increment Build Version for Firebase App Distribution"
-  lane :increment_version_debug do
-
-    UI.user_error!("FIREBASE_APP_ID is missing") if ENV['FIREBASE_APP_ID'].to_s.empty?
-
-    latest_release = nil
-
-    begin
-      latest_release = firebase_app_distribution_get_latest_release(
-        app: ENV['FIREBASE_APP_ID']
-      )
-    rescue
-      UI.message "No previous Firebase release found. Starting from version 1"
-    end
-
-    new_code =
-      if latest_release && latest_release[:buildVersion]
-        latest_release[:buildVersion].to_i + 1
-      else
-        1
-      end
-
-    increment_version_code(version_code: new_code)
   end
 
 end
