@@ -18,6 +18,7 @@ import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.AHDCache
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.repositories.VLFRepo
+import org.piramalswasthya.sakhi.ui.common.DraftViewModel
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -27,13 +28,12 @@ class AHDViewModel @Inject constructor(
     preferenceDao: PreferenceDao,
     @ApplicationContext context: Context,
     private val vlfRepo: VLFRepo,
-) : ViewModel() {
+) : ViewModel(), DraftViewModel<AHDCache> {
 
     enum class State {
         IDLE, SAVING, SAVE_SUCCESS, SAVE_FAILED
     }
 
-    // AHDViewModel.kt (already present, just ensure it's correct)
     fun getCurrentFormList(): List<FormElement> {
         return dataset.getFormElementList()
     }
@@ -61,6 +61,10 @@ class AHDViewModel @Inject constructor(
     val recordExists: LiveData<Boolean>
         get() = _recordExists
 
+    private val _draftExists = MutableLiveData<AHDCache?>(null)
+    val draftExists: LiveData<AHDCache?>
+        get() = _draftExists
+
     private val dataset = AHDDataset(context, preferenceDao.getCurrentLanguage())
     val formList = dataset.listFlow
     lateinit var _ahdCache: AHDCache
@@ -68,16 +72,50 @@ class AHDViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             _ahdCache = AHDCache(id = 0, mobilizedForAHD = "")
-            val ahdRecord = vlfRepo.getAHD(ahdId)
             vlfRepo.getAHD(ahdId)?.let {
                 _ahdCache = it
                 _recordExists.value = true
+                dataset.setUpPage(it)
             } ?: run {
                 _recordExists.value = false
+                dataset.setUpPage(null)
+                checkDraft()
             }
-            dataset.setUpPage(
-                if (recordExists.value == true) ahdRecord else null
-            )
+        }
+    }
+
+    private suspend fun checkDraft() {
+        vlfRepo.getDraftAHD()?.let {
+            _draftExists.value = it
+        }
+    }
+
+    override fun restoreDraft(draft: AHDCache) {
+        viewModelScope.launch {
+            _ahdCache = draft
+            dataset.setUpPage(draft)
+            _draftExists.value = null
+        }
+    }
+
+    override fun ignoreDraft() {
+        viewModelScope.launch {
+            _draftExists.value?.let {
+                vlfRepo.deleteAHDById(it.id)
+            }
+            _draftExists.value = null
+        }
+    }
+
+    fun saveDraft() {
+        viewModelScope.launch {
+            try {
+                dataset.mapValues(_ahdCache, 1)
+                _ahdCache.isDraft = true
+                vlfRepo.saveAHDRecord(_ahdCache)
+            } catch (e: Exception) {
+                Timber.e("saving AHD draft failed!! $e")
+            }
         }
     }
 
@@ -92,6 +130,7 @@ class AHDViewModel @Inject constructor(
             try {
                 _state.postValue(State.SAVING)
                 dataset.mapValues(_ahdCache, 1)
+                _ahdCache.isDraft = false
                 vlfRepo.saveAHDRecord(_ahdCache)
                 _state.postValue(State.SAVE_SUCCESS)
             } catch (e: Exception) {

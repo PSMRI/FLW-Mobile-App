@@ -11,10 +11,10 @@
 
         <variable
             name="clickListener"
-            type="org.piramalswasthya.sakhi.adapters.FormInputAdapterWithBgIcon.SelectUploadImageClickListener" />
+            type="org.piramalswasthya.sakhi.adapters.FormInputAdapter.SelectUploadImageClickListener" />
         <variable
             name="documentclickListener"
-            type="org.piramalswasthya.sakhi.adapters.FormInputAdapterWithBgIcon.ViewDocumentOnClick" />
+            type="org.piramalswasthya.sakhi.adapters.FormInputAdapter.ViewDocumentOnClick" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -68,7 +68,7 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:visibility="gone"
-            android:background="@drawable/bg_circular"
+            android.background="@drawable/bg_circular"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/tv_title"
             app:layout_constraintTop_toTopOf="parent" />

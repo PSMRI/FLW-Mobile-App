@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.ui.service_location_activity
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,6 +20,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ServiceTypeViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle,
     private val pref: PreferenceDao,
 ) : ViewModel() {
 
@@ -27,6 +29,20 @@ class ServiceTypeViewModel @Inject constructor(
         LOADING,
         SUCCESS
     }
+
+    // Unsaved-changes tracking
+    private val _hasUnsavedChanges = MutableLiveData(false)
+    val hasUnsavedChanges: LiveData<Boolean>
+        get() = _hasUnsavedChanges
+
+    private val _draftSaved = MutableLiveData<Boolean>()
+    val draftSaved: LiveData<Boolean>
+        get() = _draftSaved
+
+    private val KEY_DRAFT_VILLAGE_ID = "service_location_draft_village_id"
+    private val KEY_DRAFT_BLOCK = "service_location_draft_block"
+    private val KEY_DRAFT_DISTRICT = "service_location_draft_district"
+    private val KEY_DRAFT_STATE = "service_location_draft_state"
 
     private lateinit var stateDropdownEntry: String
     val stateList: Array<String>
@@ -106,6 +122,9 @@ class ServiceTypeViewModel @Inject constructor(
                    }
                 }
 
+                // attempt to restore any saved draft after loading user data
+                restoreDraftFromSavedState()
+
             }
             _state.value = State.SUCCESS
         }
@@ -121,6 +140,55 @@ class ServiceTypeViewModel @Inject constructor(
     fun setVillage(i: Int) {
         _selectedVillage = user.villages[i]
 
+    }
+
+    // Mark that the user changed something on the form
+    fun markLocationChanged() {
+        _hasUnsavedChanges.value = true
+    }
+
+    fun clearUnsavedChanges() {
+        _hasUnsavedChanges.value = false
+    }
+
+    fun saveDraftToSavedState() {
+        // store minimal state needed to restore selection
+        try {
+            savedStateHandle.set(KEY_DRAFT_STATE, stateDropdownEntry)
+            savedStateHandle.set(KEY_DRAFT_DISTRICT, districtDropdownEntry)
+            savedStateHandle.set(KEY_DRAFT_BLOCK, blockDropdownEntry)
+            savedStateHandle.set(KEY_DRAFT_VILLAGE_ID, selectedVillage?.id ?: -1)
+            _draftSaved.value = true
+        } catch (t: Throwable) {
+            // swallow - best-effort
+        }
+    }
+
+    fun restoreDraftFromSavedState() {
+        try {
+            val vid = savedStateHandle.get<Int>(KEY_DRAFT_VILLAGE_ID) ?: -1
+            if (vid != -1) {
+                // find the village by id from user's villages and set selection
+                val found = user.villages.find { it.id == vid }
+                if (found != null) {
+                    _selectedVillage = found
+                    _hasUnsavedChanges.value = true
+                }
+            }
+        } catch (t: Throwable) {
+            // ignore
+        }
+    }
+
+    fun clearDraftFromSavedState() {
+        try {
+            savedStateHandle.set<Int?>(KEY_DRAFT_VILLAGE_ID, null)
+            savedStateHandle.set<String?>(KEY_DRAFT_BLOCK, null)
+            savedStateHandle.set<String?>(KEY_DRAFT_DISTRICT, null)
+            savedStateHandle.set<String?>(KEY_DRAFT_STATE, null)
+        } catch (t: Throwable) {
+            // ignore
+        }
     }
 
     fun saveCurrentLocation() {

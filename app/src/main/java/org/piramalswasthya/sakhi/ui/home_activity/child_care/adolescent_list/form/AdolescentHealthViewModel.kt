@@ -16,6 +16,7 @@ import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.AdolescentHealthCache
 import org.piramalswasthya.sakhi.repositories.AdolescentHealthRepo
 import org.piramalswasthya.sakhi.repositories.BenRepo
+import org.piramalswasthya.sakhi.ui.common.DraftViewModel
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -26,7 +27,7 @@ class AdolescentHealthFormViewModel @Inject constructor(
     @ApplicationContext context: Context,
     private val benRepo: BenRepo,
     private val adolescentHealthRepo: AdolescentHealthRepo
-) : ViewModel() {
+) : ViewModel(), DraftViewModel<AdolescentHealthCache> {
 
     val benId =
         AdolescentHealthFormFragmentArgs.fromSavedStateHandle(savedStateHandle).benId
@@ -50,6 +51,10 @@ class AdolescentHealthFormViewModel @Inject constructor(
     val recordExists: LiveData<Boolean>
         get() = _recordExists
 
+    private val _draftExists = MutableLiveData<AdolescentHealthCache?>(null)
+    val draftExists: LiveData<AdolescentHealthCache?>
+        get() = _draftExists
+
     private val dataset = AdolescentHealthFormDataset(context, preferenceDao.getCurrentLanguage())
     val formList = dataset.listFlow
 
@@ -71,12 +76,50 @@ class AdolescentHealthFormViewModel @Inject constructor(
                 _recordExists.value = true
             } ?: run {
                 _recordExists.value = false
+                checkDraft()
             }
 
             dataset.setFirstPage(
                 ben,
                 if (recordExists.value == true) adolescentHealthCache else null
             )
+        }
+    }
+
+    private suspend fun checkDraft() {
+        adolescentHealthRepo.getDraftAdolescentHealth(benId)?.let {
+            _draftExists.value = it
+        }
+    }
+
+    override fun restoreDraft(draft: AdolescentHealthCache) {
+        viewModelScope.launch {
+            adolescentHealthCache = draft
+            dataset.setFirstPage(benRepo.getBenFromId(benId), draft)
+            _draftExists.value = null
+        }
+    }
+
+    override fun ignoreDraft() {
+        viewModelScope.launch {
+            _draftExists.value?.let {
+                it.id?.let { id -> adolescentHealthRepo.deleteAdolescentHealthById(id) }
+            }
+            _draftExists.value = null
+        }
+    }
+
+    fun saveDraft() {
+        viewModelScope.launch {
+            try {
+                adolescentHealthCache?.let {
+                    dataset.mapValues(it, 1)
+                    it.isDraft = true
+                    adolescentHealthRepo.saveAdolescentHealth(it)
+                }
+            } catch (e: Exception) {
+                Timber.e("saving adolescent draft failed!! $e")
+            }
         }
     }
 
@@ -91,8 +134,11 @@ class AdolescentHealthFormViewModel @Inject constructor(
             withContext(Dispatchers.IO) {
                 try {
                     _state.postValue(State.SAVING)
-                    adolescentHealthCache?.let { dataset.mapValues(it, 1) }
-                    adolescentHealthCache?.let { adolescentHealthRepo.saveAdolescentHealth(it) }
+                    adolescentHealthCache?.let {
+                        dataset.mapValues(it, 1)
+                        it.isDraft = false
+                        adolescentHealthRepo.saveAdolescentHealth(it)
+                    }
                     _state.postValue(State.SAVE_SUCCESS)
                 } catch (e: Exception) {
                     Timber.d("saving adolescent  data failed!!")
@@ -105,5 +151,9 @@ class AdolescentHealthFormViewModel @Inject constructor(
 
     fun setRecordExist(b: Boolean) {
         _recordExists.value = b
+    }
+
+    fun resetState() {
+        _state.value = State.IDLE
     }
 }

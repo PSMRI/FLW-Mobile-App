@@ -18,20 +18,15 @@ import org.piramalswasthya.sakhi.database.room.dao.SaasBahuSammelanDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.SaasBahuSammelanCache
 import org.piramalswasthya.sakhi.repositories.SaasBahuSammelanRepo
-import org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.register.BenRegisterCHOViewModel
-import org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.maa_meeting.MaaMeetingFormFragmentArgs
 import timber.log.Timber
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
 class SaasBahuSamelanViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    preferenceDao: PreferenceDao,
-    var saasBahuDao: SaasBahuSammelanDao,
-    var saasBahuSammelanRepo: SaasBahuSammelanRepo,
+    private val preferenceDao: PreferenceDao,
+    private val saasBahuDao: SaasBahuSammelanDao,
+    private val saasBahuSammelanRepo: SaasBahuSammelanRepo,
     @ApplicationContext context: Context,
 ) : ViewModel() {
 
@@ -50,16 +45,13 @@ class SaasBahuSamelanViewModel @Inject constructor(
     val state: LiveData<State>
         get() = _state
 
-    private val _benName = MutableLiveData<String>()
-    val benName: LiveData<String>
-        get() = _benName
-    private val _benAgeGender = MutableLiveData<String>()
-    val benAgeGender: LiveData<String>
-        get() = _benAgeGender
-
     private val _recordExists = MutableLiveData<Boolean>()
     val recordExists: LiveData<Boolean>
         get() = _recordExists
+
+    private val _draftExists = MutableLiveData<SaasBahuSammelanCache?>(null)
+    val draftExists: LiveData<SaasBahuSammelanCache?>
+        get() = _draftExists
 
     private val dataset =
         SaasBahuSamelanDataset(context, preferenceDao.getCurrentLanguage())
@@ -76,22 +68,52 @@ class SaasBahuSamelanViewModel @Inject constructor(
            saasBahuDao.getById(id)?.let {
                 saasBahuCache = it
                 _recordExists.value = true
-               dataset.setUpPage((if (recordExists.value == true) saasBahuCache else null),true)
+               dataset.setUpPage(saasBahuCache, true)
 
            } ?: run {
                 _recordExists.value = false
-               dataset.setUpPage((if (recordExists.value == true) saasBahuCache else null),false)
-
+               dataset.setUpPage(null, false)
+               checkDraft(ashaId)
            }
-
-//            dataset.setUpPage((if (recordExists.value == true) saasBahuCache else null),false)
-
         }
-
-
     }
 
+    private suspend fun checkDraft(ashaId: Int) {
+        saasBahuDao.getDraftSammelan(ashaId)?.let {
+            _draftExists.value = it
+        }
+    }
 
+    fun restoreDraft(draft: SaasBahuSammelanCache) {
+        viewModelScope.launch {
+            saasBahuCache = draft
+            dataset.setUpPage(draft, true)
+            _draftExists.value = null
+        }
+    }
+
+    fun ignoreDraft() {
+        viewModelScope.launch {
+            _draftExists.value?.let {
+                saasBahuDao.deleteSammelan(it)
+            }
+            _draftExists.value = null
+        }
+    }
+
+    fun saveDraft() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                try {
+                    dataset.mapSaasBahuValues(saasBahuCache)
+                    saasBahuCache.isDraft = true
+                    saasBahuDao.insertSammelan(saasBahuCache)
+                } catch (e: Exception) {
+                    Timber.e("saving draft failed!! $e")
+                }
+            }
+        }
+    }
 
 
     fun updateListOnValueChanged(formId: Int, index: Int) {
@@ -108,6 +130,7 @@ class SaasBahuSamelanViewModel @Inject constructor(
                     _state.postValue(State.SAVING)
 
                     dataset.mapSaasBahuValues(saasBahuCache)
+                    saasBahuCache.isDraft = false
                     saasBahuSammelanRepo.saveSammelanForm(saasBahuCache)
                     _state.postValue(State.SAVE_SUCCESS)
                 } catch (e: Exception) {

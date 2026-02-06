@@ -36,7 +36,8 @@ data class DewormingCache(
     var image2: String? = null,
     var regDate: String? = null,
 
-    var syncState: SyncState = SyncState.UNSYNCED
+    var syncState: SyncState = SyncState.UNSYNCED,
+    var isDraft: Boolean = false
 ) : FormDataModel {
     
     fun toDTO(): DewormingDTO {

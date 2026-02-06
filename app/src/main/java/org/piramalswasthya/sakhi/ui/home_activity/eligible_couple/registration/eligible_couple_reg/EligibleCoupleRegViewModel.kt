@@ -28,7 +28,7 @@ import javax.inject.Inject
 @HiltViewModel
 class EligibleCoupleRegViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    preferenceDao: PreferenceDao,
+    private val preferenceDao: PreferenceDao,
     @ApplicationContext context: Context,
     private val ecrRepo: EcrRepo,
     private val hrpRepo: HRPRepo,
@@ -68,6 +68,10 @@ class EligibleCoupleRegViewModel @Inject constructor(
     private val _recordExists = MutableLiveData<Boolean>()
     val recordExists: LiveData<Boolean>
         get() = _recordExists
+
+    private val _draftExists = MutableLiveData<EligibleCoupleRegCache?>(null)
+    val draftExists: LiveData<EligibleCoupleRegCache?>
+        get() = _draftExists
 
     private val _isEcrCompleted = MutableLiveData<Boolean>()
     val isEcrCompleted: LiveData<Boolean>
@@ -131,39 +135,74 @@ class EligibleCoupleRegViewModel @Inject constructor(
             assess?.let {
                 ecrForm.createdDate = it.visitDate
             }
-            ecrRepo.getSavedRecord(benId)?.let {
-                ecrForm = it
-                _recordExists.value = true
-                _isEcrCompleted.value = ecrForm.lmpDate != 0L
-
-            } ?: run {
-                _recordExists.value = false
-                _isEcrCompleted.value = false
-            }
-
+            
             val childList = ben?.let {
                 benRepo.getChildBenListFromHousehold(it.householdId, benId, it.firstName)
-
             } ?: emptyList()
             _childCount.value = childList.size.coerceAtMost(9)
+            
             val below15Childcount = ben?.let {
                 benRepo.getChildBelow15(it.householdId, benId, it.firstName)
-
             } ?: 0
             _childBelow15Count.value = below15Childcount.coerceAtMost(9)
 
             val above15Childcount = ben?.let {
                 benRepo.getChildAbove15(it.householdId, benId, it.firstName)
-
             } ?: 0
             _childAbove15Count.value = above15Childcount.coerceAtMost(9)
 
-            dataset.setUpPage(
-                ben,
-                assess,
-                if (recordExists.value == true) ecrForm else null,
-                childList
-            )
+            ecrRepo.getSavedRecord(benId)?.let {
+                ecrForm = it
+                _recordExists.value = true
+                _isEcrCompleted.value = ecrForm.lmpDate != 0L
+                dataset.setUpPage(ben, assess, ecrForm, childList)
+            } ?: run {
+                _recordExists.value = false
+                _isEcrCompleted.value = false
+                dataset.setUpPage(ben, assess, null, childList)
+                checkDraft()
+            }
+        }
+    }
+
+    private suspend fun checkDraft() {
+        ecrRepo.getDraftRecord(benId)?.let {
+            _draftExists.postValue(it)
+        }
+    }
+
+    fun restoreDraft(draft: EligibleCoupleRegCache) {
+        viewModelScope.launch {
+            ecrForm = draft
+            val ben = ecrRepo.getBenFromId(benId)
+            val childList = ben?.let {
+                benRepo.getChildBenListFromHousehold(it.householdId, benId, it.firstName)
+            } ?: emptyList()
+            dataset.setUpPage(ben, assess, draft, childList)
+            _draftExists.value = null
+        }
+    }
+
+    fun ignoreDraft() {
+        viewModelScope.launch {
+            _draftExists.value?.let {
+                ecrRepo.deleteById(it.id)
+            }
+            _draftExists.value = null
+        }
+    }
+
+    fun saveDraft() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                try {
+                    dataset.mapValues(ecrForm, 1)
+                    ecrForm.isDraft = true
+                    ecrRepo.persistRecord(ecrForm)
+                } catch (e: Exception) {
+                    Timber.e("saving draft failed!! $e")
+                }
+            }
         }
     }
 
@@ -181,6 +220,7 @@ class EligibleCoupleRegViewModel @Inject constructor(
                     _state.postValue(State.SAVING)
 
                     dataset.mapValues(ecrForm, 1)
+                    ecrForm.isDraft = false
                     ecrRepo.persistRecord(ecrForm)
                     ecrRepo.getBenFromId(benId)?.let {
                         val hasBenUpdated = dataset.mapValueToBen(it)

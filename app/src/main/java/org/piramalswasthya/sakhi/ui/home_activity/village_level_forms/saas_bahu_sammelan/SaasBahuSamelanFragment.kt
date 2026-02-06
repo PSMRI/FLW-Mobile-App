@@ -17,6 +17,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
+import org.piramalswasthya.sakhi.ui.common.attachAdapterUnsavedGuard
 import org.piramalswasthya.sakhi.databinding.FragmentSaasBahuSamelanBinding
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.ui.checkFileSize
@@ -125,6 +126,10 @@ class SaasBahuSamelanFragment : Fragment() {
                     fileList = selectedFiles
                 )
                 binding.form.rvInputForm.adapter = formAdapter
+                attachAdapterUnsavedGuard(
+                    dirtyState = formAdapter,
+                    onSaveDraft = { viewModel.saveDraft() }
+                )
                 lifecycleScope.launch {
                     viewModel.formList.collect {
                         if (it.isNotEmpty())
@@ -133,6 +138,22 @@ class SaasBahuSamelanFragment : Fragment() {
 
                     }
                 }
+            }
+        }
+
+        viewModel.draftExists.observe(viewLifecycleOwner) { draft ->
+            draft?.let {
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("Draft Found")
+                    .setMessage("You have a saved draft for this form. Do you want to restore it?")
+                    .setPositiveButton("Restore") { _, _ ->
+                        viewModel.restoreDraft(it)
+                    }
+                    .setNegativeButton("Ignore") { _, _ ->
+                        viewModel.ignoreDraft()
+                    }
+                    .setCancelable(false)
+                    .show()
             }
         }
 

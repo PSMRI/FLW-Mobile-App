@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.phc_review_meeting
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
@@ -28,6 +29,7 @@ import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.common.attachAdapterUnsavedGuard
 import timber.log.Timber
 import java.io.File
 
@@ -60,24 +62,16 @@ class PHCReviewFormFragement:Fragment() {
             val adapter = FormInputAdapter(
                 formValueListener = FormInputAdapter.FormValueListener { formId, index ->
                     viewModel.updateListOnValueChanged(formId, index)
-                    hardCodedListUpdate(formId)
-                },
-                imageClickListener = FormInputAdapter.ImageClickListener{
-
-                    imgValue=it
-                    showImagePickerDialog()
-
                 },
                 isEnabled = !it
             )
-             binding.btnSubmit.isEnabled = !it
-
+            binding.btnSubmit.isEnabled = !it
             binding.form.rvInputForm.adapter = adapter
-            lifecycleScope.launch {
-                viewModel.formList.collect { list ->
-                    if (list.isNotEmpty())
-                        adapter.submitList(list)
+            attachAdapterUnsavedGuard(adapter)
 
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewModel.formList.collect { list ->
+                    if (list.isNotEmpty()) adapter.submitList(list)
                 }
             }
         }
@@ -117,6 +111,7 @@ class PHCReviewFormFragement:Fragment() {
         }
 
     }
+    @SuppressLint("SuspiciousIndentation")
     override fun onStart() {
         super.onStart()
       val title =  if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true))

@@ -25,7 +25,7 @@ interface SaasBahuSammelanDao {
     @Query("select * from SAAS_BAHU_ACTIVITY where syncState = :state")
     fun getBySyncState(state: SyncState): List<SaasBahuSammelanCache>
 
-    @Query("SELECT * FROM SAAS_BAHU_ACTIVITY ORDER BY date DESC")
+    @Query("SELECT * FROM SAAS_BAHU_ACTIVITY WHERE isDraft = 0 ORDER BY date DESC")
     fun getAllSammelan(): Flow<List<SaasBahuSammelanCache>>
 
     @Query("SELECT * FROM SAAS_BAHU_ACTIVITY WHERE id = :id LIMIT 1")
@@ -33,10 +33,19 @@ interface SaasBahuSammelanDao {
 
     @Query("""
     SELECT * FROM SAAS_BAHU_ACTIVITY
+    WHERE ashaId = :ashaId AND isDraft = 1
+    LIMIT 1 """)
+    suspend fun getDraftSammelan(ashaId: Int): SaasBahuSammelanCache?
+
+    @Query("""
+    SELECT * FROM SAAS_BAHU_ACTIVITY
     WHERE ashaId = :ashaId
     ORDER BY date DESC
     LIMIT 1 """)
     suspend fun getLastUpdatedSammelan(ashaId: Int): SaasBahuSammelanCache?
+
+    @Query("DELETE FROM SAAS_BAHU_ACTIVITY WHERE id = :id")
+    suspend fun deleteById(id: Long)
 
     @Query("DELETE FROM SAAS_BAHU_ACTIVITY")
     suspend fun clearAll()

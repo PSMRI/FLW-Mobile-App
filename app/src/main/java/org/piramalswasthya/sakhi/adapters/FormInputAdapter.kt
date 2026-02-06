@@ -77,19 +77,35 @@ import org.piramalswasthya.sakhi.utils.HelperUtil.updateAgeDTO
 import org.piramalswasthya.sakhi.utils.Log
 import timber.log.Timber
 import java.util.Calendar
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import org.piramalswasthya.sakhi.ui.common.DirtyState
 
 
-class FormInputAdapter(
-    private val imageClickListener: ImageClickListener? = null,
-    private val ageClickListener: AgeClickListener? = null,
-    private val sendOtpClickListener: SendOtpClickListener? = null,
-    private val formValueListener: FormValueListener? = null,
-    private val isEnabled: Boolean = true,
-    private val selectImageClickListener: SelectUploadImageClickListener? = null,
-    private val viewDocumentListner: ViewDocumentOnClick? = null,
+open class FormInputAdapter(
+    open val imageClickListener: ImageClickListener? = null,
+    open val ageClickListener: AgeClickListener? = null,
+    open val sendOtpClickListener: SendOtpClickListener? = null,
+    open val formValueListener: FormValueListener? = null,
+    open val isEnabled: Boolean = true,
+    open val selectImageClickListener: SelectUploadImageClickListener? = null,
+    open val viewDocumentListner: ViewDocumentOnClick? = null,
     var  fileList: MutableList<Uri>? = null,
-) : ListAdapter<FormElement, ViewHolder>(FormInputDiffCallBack) {
+) : ListAdapter<FormElement, ViewHolder>(FormInputDiffCallBack), DirtyState {
     var disableUpload = false
+
+    // Track whether any field has been changed since adapter was created/cleared
+    private val _isDirty = MutableLiveData(false)
+    override val isDirty: LiveData<Boolean>
+        get() = _isDirty
+
+    override fun clearDirty() {
+        _isDirty.value = false
+    }
+
+    override fun markDirty() {
+        _isDirty.value = true
+    }
 
     object FormInputDiffCallBack : DiffUtil.ItemCallback<FormElement>() {
         override fun areItemsTheSame(oldItem: FormElement, newItem: FormElement) =
@@ -158,6 +174,10 @@ class FormInputAdapter(
                     AppCompatResources.getDrawable(binding.root.context, R.drawable.ic_mic)
                 binding.tilEditText.setEndIconOnClickListener {
                     formValueListener?.onValueChanged(item, Konstants.micClickIndex)
+                    // mark adapter as dirty when mic clicked
+                    (binding.root.parent as? androidx.recyclerview.widget.RecyclerView)?.adapter?.let { ad ->
+                        if (ad is FormInputAdapter) ad.markDirty()
+                    }
                 }
             } else {
                 binding.tilEditText.endIconDrawable = null
@@ -176,106 +196,17 @@ class FormInputAdapter(
                 }
 
                 override fun afterTextChanged(editable: Editable?) {
-//                    editable?.length?.let {
-//                        if (it > item.etMaxLength) {
-////                            editable.delete(item.etMaxLength + 1, it)
-//                            "This field cannot have more than ${item.etMaxLength} characters".let {
-//                                item.errorText = it
-//                                binding.tilEditText.error = it
-//                            }
-//                            return
-//                        } else
-//                            item.errorText = null
-//                    }
                     item.value = editable?.toString()
                     Timber.d("editable : $editable Current value : ${item.value}  isNull: ${item.value == null} isEmpty: ${item.value == ""}")
                     formValueListener?.onValueChanged(item, -1)
+                    // mark adapter as dirty when a text field changes
+                    (binding.root.parent as? androidx.recyclerview.widget.RecyclerView)?.adapter?.let { ad ->
+                        if (ad is FormInputAdapter) ad.markDirty()
+                    }
                     if (item.errorText != binding.tilEditText.error) {
                         binding.tilEditText.isErrorEnabled = item.errorText != null
                         binding.tilEditText.error = item.errorText
                     }
-//                    binding.tilEditText.error = null
-//                    else if(item.errorText!= null && binding.tilEditText.error==null)
-//                        binding.tilEditText.error = item.errorText
-
-
-//                    if(item.etInputType == InputType.TYPE_CLASS_NUMBER && (item.hasDependants|| item.hasAlertError)){
-//                        formValueListener?.onValueChanged(item,-1)
-//                    }
-
-//                    editable.let { item.value = it.toString() }
-//                    item.value = editable.toString()
-//                    Timber.d("Item ET : $item")
-//                    if (item.isMobileNumber) {
-//                        if (item.etMaxLength == 10) {
-//                            if (editable.first().toString()
-//                                    .toInt() < 6 || editable.length != item.etMaxLength
-//                            ) {
-//                                item.errorText = "Invalid Mobile Number !"
-//                                binding.tilEditText.error = item.errorText
-//                            } else {
-//                                item.errorText = null
-//                                binding.tilEditText.error = item.errorText
-//                            }
-//                        } else if (item.etMaxLength == 12) {
-//                            if (editable.first().toString()
-//                                    .toInt() == 0 || editable.length != item.etMaxLength
-//                            ) {
-//                                item.errorText = "Invalid ${item.title} !"
-//                                binding.tilEditText.error = item.errorText
-//                            } else {
-//                                item.errorText = null
-//                                binding.tilEditText.error = item.errorText
-//                            }
-//                        }
-//                    }
-//                else if (item.etInputType == InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL) {
-//                        val entered = editable.toString().toDouble()
-//                        item.minDecimal?.let {
-//                            if (entered < it) {
-//                                binding.tilEditText.error = "Field value has to be at least $it"
-//                                item.errorText = binding.tilEditText.error.toString()
-//                            }
-//                        }
-//                        item.maxDecimal?.let {
-//                            if (entered > it) {
-//                                binding.tilEditText.error =
-//                                    "Field value has to be less than $it"
-//                                item.errorText = binding.tilEditText.error.toString()
-//                            }
-//                        }
-//                        if (item.minDecimal != null && item.maxDecimal != null && entered >= item.minDecimal!! && entered <= item.maxDecimal!!) {
-//                            binding.tilEditText.error = null
-//                            item.errorText = null
-//                        }
-
-//                    } else if (item.etInputType == (InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_NORMAL)) {
-//                        val age = editable.toString().toLong()
-//                        item.min?.let {
-//                            if (age < it) {
-//                                binding.tilEditText.error = "Field value has to be at least $it"
-//                                item.errorText = binding.tilEditText.error.toString()
-//                            }
-//                        }
-//                        item.max?.let {
-//                            if (age > it) {
-//                                binding.tilEditText.error =
-//                                    "Field value has to be less than $it"
-//                                item.errorText = binding.tilEditText.error.toString()
-//                            }
-//                        }
-//                        if (item.min != null && item.max != null && age >= item.min!! && age <= item.max!!) {
-//                            binding.tilEditText.error = null
-//                            item.errorText = null
-//                        }
-//                    } else {
-//                        if (item.errorText != null && editable.isNotBlank()) {
-//                            item.errorText = null
-//                            binding.tilEditText.error = null
-//                        }
-
-//                    }
-
                 }
             }
             binding.et.setOnFocusChangeListener { _, hasFocus ->
@@ -290,7 +221,7 @@ class FormInputAdapter(
                     binding.et.clearFocus()
                     val imm =
                         binding.root.context.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager?
-                    imm!!.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
+                    imm!!.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0)
                 }
             }
             binding.et.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
@@ -337,48 +268,50 @@ class FormInputAdapter(
             }
         }
 
-        fun bind(item: FormElement, isEnabled: Boolean, formValueListener: FormValueListener?) {
-            binding.tilRvDropdown.clearFocus()
-            binding.tilEditText.clearFocus()
-            binding.et.clearFocus()
-            binding.actvRvDropdown.clearFocus()
-            binding.actvRvDropdown.showSoftInputOnFocus = false
-            binding.form = item
-            if (item.errorText == null) {
-                binding.tilRvDropdown.error = null
-                binding.tilRvDropdown.isErrorEnabled = false
-            }
-            if (!isEnabled) {
-                binding.tilRvDropdown.visibility = View.GONE
-                binding.tilEditText.visibility = View.VISIBLE
-                binding.et.isFocusable = false
-                binding.et.isClickable = false
-                binding.executePendingBindings()
-                return
-            }
+fun bind(item: FormElement, isEnabled: Boolean, formValueListener: FormValueListener?) {
+    binding.tilRvDropdown.clearFocus()
+    binding.tilEditText.clearFocus()
+    binding.et.clearFocus()
+    binding.actvRvDropdown.clearFocus()
+    binding.actvRvDropdown.showSoftInputOnFocus = false
+    binding.form = item
+    if (item.errorText == null) {
+        binding.tilRvDropdown.error = null
+        binding.tilRvDropdown.isErrorEnabled = false
+    }
+    if (!isEnabled) {
+        binding.tilRvDropdown.visibility = View.GONE
+        binding.tilEditText.visibility = View.VISIBLE
+        binding.et.isFocusable = false
+        binding.et.isClickable = false
+        binding.executePendingBindings()
+        return
+    }
 
-            hideKeyboardImmediately()
+    hideKeyboardImmediately()
 
 
-            binding.actvRvDropdown.setOnItemClickListener { _, _, index, _ ->
-                hideKeyboardWithRetry()
-                item.value = item.entries?.get(index)
-                Timber.d("Item DD : $item")
-//                if (item.hasDependants || item.hasAlertError) {
-                formValueListener?.onValueChanged(item, index)
-//                }
-                binding.tilRvDropdown.isErrorEnabled = item.errorText != null
-                binding.tilRvDropdown.error = item.errorText
-            }
-
-            binding.actvRvDropdown.setOnClickListener {
-                hideKeyboardWithRetry()
-            }
-
-            item.errorText?.let { binding.tilRvDropdown.error = it }
-            binding.executePendingBindings()
-
+    binding.actvRvDropdown.setOnItemClickListener { _, _, index, _ ->
+        hideKeyboardWithRetry()
+        item.value = item.entries?.get(index)
+        Timber.d("Item DD : $item")
+        formValueListener?.onValueChanged(item, index)
+        // mark adapter dirty
+        (binding.root.parent as? androidx.recyclerview.widget.RecyclerView)?.adapter?.let { ad ->
+            if (ad is FormInputAdapter) ad.markDirty()
         }
+        binding.tilRvDropdown.isErrorEnabled = item.errorText != null
+        binding.tilRvDropdown.error = item.errorText
+    }
+
+    binding.actvRvDropdown.setOnClickListener {
+        hideKeyboardWithRetry()
+    }
+
+    item.errorText?.let { binding.tilRvDropdown.error = it }
+    binding.executePendingBindings()
+
+}
 
         private fun hideKeyboardImmediately() {
             val imm = binding.root.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -491,6 +424,10 @@ class FormInputAdapter(
                                     formValueListener?.onValueChanged(
                                         item, item.entries!!.indexOf(it)
                                     )
+                                }
+                                // mark adapter dirty
+                                (binding.root.parent as? androidx.recyclerview.widget.RecyclerView)?.adapter?.let { ad ->
+                                    if (ad is FormInputAdapter) ad.markDirty()
                                 }
                             }
                             item.errorText = null
@@ -1311,7 +1248,7 @@ class FormInputAdapter(
      * Validation Result : -1 -> all good
      * else index of element creating trouble
      */
-    fun validateInput(resources: Resources): Int {
+    open fun validateInput(resources: Resources): Int {
         var retVal = -1
         if (!isEnabled) return retVal
         currentList.forEachIndexed { index, it ->

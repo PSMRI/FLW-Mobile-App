@@ -87,7 +87,8 @@ data class EligibleCoupleRegCache(
     var kitHandedOverDate: Long? = null,
     var kitPhoto1: String? = null,
     var kitPhoto2: String? = null,
-    var syncState: SyncState
+    var syncState: SyncState,
+    var isDraft: Boolean = false
 ) : FormDataModel {
 
     fun asPostModel(context : Context): EcrPost {
@@ -171,7 +172,7 @@ data class BenWithECRCache(
     fun asDomainModel(): BenWithEcrDomain {
         return BenWithEcrDomain(
             ben = ben.asBasicDomainModel(),
-            ecr = ecr
+            assess = ecr
         )
     }
 }
@@ -179,7 +180,7 @@ data class BenWithECRCache(
 data class BenWithEcrDomain(
 //    val benId: Long,
     val ben: BenBasicDomain,
-    val ecr: EligibleCoupleRegCache?
+    val assess: EligibleCoupleRegCache?
 )
 
 data class EcrPost(

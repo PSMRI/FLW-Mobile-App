@@ -10,19 +10,18 @@ import org.piramalswasthya.sakhi.database.room.SyncState
 @Entity(tableName = "MAA_MEETING",  indices = [Index(value = ["id"], unique = true)])
 data class MaaMeetingEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val meetingDate: String?,
-    val place: String?,
-    val participants: Int?,
+    var meetingDate: String?,
+    var place: String?,
+    var participants: Int?,
     var mitaninActivityCheckList : String? = null,
     var villageName: String? = null,
     var noOfPragnentWomen: String? = null,
     var noOfLactingMother: String? = null,
     val ashaId: Int?,
     @TypeConverters(StringListConverter::class)
-    val meetingImages: List<String>? = null,
+    var meetingImages: List<String>? = null,
     val createdAt: Long = System.currentTimeMillis(),
-    val updatedAt: Long = System.currentTimeMillis(),
-    val syncState: SyncState = SyncState.UNSYNCED
+    var updatedAt: Long = System.currentTimeMillis(),
+    var syncState: SyncState = SyncState.UNSYNCED,
+    var isDraft: Boolean = false
 )
-
-

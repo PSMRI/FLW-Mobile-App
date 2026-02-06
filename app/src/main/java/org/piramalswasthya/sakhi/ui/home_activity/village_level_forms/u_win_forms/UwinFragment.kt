@@ -11,6 +11,7 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,6 +30,7 @@ import org.piramalswasthya.sakhi.utils.HelperUtil.showUploadReminderDialog
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import kotlin.collections.set
 import kotlin.getValue
+import org.piramalswasthya.sakhi.ui.common.attachAdapterUnsavedGuard
 
 @AndroidEntryPoint
 class UwinFragment : Fragment() {
@@ -101,7 +103,11 @@ class UwinFragment : Fragment() {
                 handleViewDocument(formId)
             },
             isEnabled = true
-        )
+        ).also { adapter ->
+            binding.form.rvInputForm.adapter = adapter
+            // attach unsaved-changes guard so back press warns user
+            attachAdapterUnsavedGuard(adapter)
+        }
     }
 
     private fun observeFormList() {

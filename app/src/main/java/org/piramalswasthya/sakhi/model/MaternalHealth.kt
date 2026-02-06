@@ -145,7 +145,8 @@ data class PregnantWomanRegistrationCache(
     var createdDate: Long = System.currentTimeMillis(),
     var updatedBy: String,
     var updatedDate: Long = System.currentTimeMillis(),
-    var syncState: SyncState
+    var syncState: SyncState,
+    var isDraft: Boolean = false
 ) : FormDataModel {
     fun asPwrPost(): PwrPost {
         return PwrPost(
@@ -401,7 +402,8 @@ data class PregnantWomanAncCache(
     var updatedDate: Long = System.currentTimeMillis(),
     var syncState: SyncState,
     var frontFilePath : String?,
-    var backFilePath : String?
+    var backFilePath : String?,
+    var isDraft: Boolean = false
 ) : FormDataModel {
     fun asPostModel(): ANCPost {
         return ANCPost(

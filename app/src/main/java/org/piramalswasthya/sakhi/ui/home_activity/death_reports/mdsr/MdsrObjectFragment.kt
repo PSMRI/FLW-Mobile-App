@@ -25,6 +25,8 @@ import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
+import org.piramalswasthya.sakhi.adapters.FormInputAdapterWithBgIcon
+import org.piramalswasthya.sakhi.ui.common.attachAdapterUnsavedGuard
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.databinding.LayoutMediaOptionsBinding
 import org.piramalswasthya.sakhi.databinding.LayoutViewMediaBinding
@@ -117,6 +119,7 @@ class MdsrObjectFragment : Fragment() {
                 adapter.disableUpload = it
                 binding.btnSubmit.isEnabled = !it
                 binding.form.rvInputForm.adapter = adapter
+                attachAdapterUnsavedGuard(adapter as FormInputAdapterWithBgIcon)
                 lifecycleScope.launch {
                     viewModel.formList.collect { list ->
                         if (list.isNotEmpty()) adapter.submitList(list)

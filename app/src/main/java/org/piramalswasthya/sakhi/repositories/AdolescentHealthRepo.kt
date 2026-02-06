@@ -41,6 +41,18 @@ class AdolescentHealthRepo @Inject constructor(
         }
     }
 
+    suspend fun getDraftAdolescentHealth(benId: Long): AdolescentHealthCache? {
+        return withContext(Dispatchers.IO) {
+            adolescentHealthDao.getDraftAdolescentHealth(benId)
+        }
+    }
+
+    suspend fun deleteAdolescentHealthById(id: Int) {
+        withContext(Dispatchers.IO) {
+            adolescentHealthDao.deleteAdolescentHealthById(id)
+        }
+    }
+
 
     suspend fun getadolescentHealthCacheFromServer(): Int {
         return withContext(Dispatchers.IO) {

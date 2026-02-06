@@ -17,6 +17,7 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.adapters.TBFollowUpDatesAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentLeprosyFromBinding
+import org.piramalswasthya.sakhi.ui.common.attachAdapterUnsavedGuard
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.work.WorkerUtils
 
@@ -68,12 +69,10 @@ class TBConfirmedFormFragment : Fragment() {
                 )
                 binding.btnSubmit.isEnabled = true
                 binding.form.rvInputForm.adapter = adapter
+                attachAdapterUnsavedGuard(adapter)
                 lifecycleScope.launch {
-                    viewModel.formList.collect {
-                        if (it.isNotEmpty())
-
-                            adapter.submitList(it)
-
+                    viewModel.formList.collect { list ->
+                        if (list.isNotEmpty()) adapter.submitList(list)
                     }
                 }
             }

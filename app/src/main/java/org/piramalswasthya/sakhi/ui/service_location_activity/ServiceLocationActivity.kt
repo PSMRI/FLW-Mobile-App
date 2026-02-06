@@ -35,6 +35,31 @@ class ServiceLocationActivity : AppCompatActivity() {
     private val onBackPressedCallback by lazy {
         object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
+                // If there are unsaved changes, confirm with the user
+                if (viewModel.hasUnsavedChanges.value == true) {
+                    showUnsavedChangesDialog(
+                        onDiscard = {
+                            viewModel.clearUnsavedChanges()
+                            viewModel.clearDraftFromSavedState()
+                            finish()
+                            val goToHome = Intent(this@ServiceLocationActivity, HomeActivity::class.java)
+                            startActivity(goToHome)
+                        },
+                        onStay = {
+                            // do nothing - keep user on screen
+                        },
+                        onSaveDraft = {
+                            viewModel.saveDraftToSavedState()
+                            // after saving draft, navigate home (keeps parity with normal flow)
+                            finish()
+                            val goToHome = Intent(this@ServiceLocationActivity, HomeActivity::class.java)
+                            startActivity(goToHome)
+                        }
+                    )
+                    return
+                }
+
+                // fallback to existing behavior
                 if (viewModel.isLocationSet()) {
                     finish()
                     val goToHome = Intent(this@ServiceLocationActivity, HomeActivity::class.java)
@@ -130,6 +155,8 @@ class ServiceLocationActivity : AppCompatActivity() {
                             }
                             setOnItemClickListener { _, _, i, _ ->
                                 viewModel.setVillage(i)
+                                // mark unsaved change when user picks a village
+                                viewModel.markLocationChanged()
                             }
                         }
                     }
@@ -151,5 +178,29 @@ class ServiceLocationActivity : AppCompatActivity() {
         _binding = null
     }
 
+    private fun showUnsavedChangesDialog(
+        title: String = "Unsaved changes",
+        message: String = "You have unsaved changes on this screen. Discard changes, stay on this screen, or save a draft to continue later?",
+        onDiscard: () -> Unit,
+        onStay: () -> Unit,
+        onSaveDraft: () -> Unit,
+    ) {
+        MaterialAlertDialogBuilder(this)
+            .setTitle(title)
+            .setMessage(message)
+            .setNegativeButton("Discard") { d, _ ->
+                onDiscard()
+                d.dismiss()
+            }
+            .setNeutralButton("Stay") { d, _ ->
+                onStay()
+                d.dismiss()
+            }
+            .setPositiveButton("Save Draft") { d, _ ->
+                onSaveDraft()
+                d.dismiss()
+            }
+            .show()
+    }
 
 }

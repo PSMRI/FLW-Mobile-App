@@ -60,6 +60,10 @@ class DewormingViewModel @Inject constructor(
     val recordExists: LiveData<Boolean>
         get() = _recordExists
 
+    private val _draftExists = MutableLiveData<DewormingCache?>(null)
+    val draftExists: LiveData<DewormingCache?>
+        get() = _draftExists
+
     private val dataset = DewormingDataset(context, preferenceDao.getCurrentLanguage())
     val formList = dataset.listFlow
     lateinit var _dewormingCache: DewormingCache
@@ -67,16 +71,50 @@ class DewormingViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             _dewormingCache = DewormingCache(id = 0)
-            val dewormingRecord = vlfRepo.getDeworming(dewormingId)
-            dewormingRecord?.let {
+            vlfRepo.getDeworming(dewormingId)?.let {
                 _dewormingCache = it
                 _recordExists.value = true
+                dataset.setUpPage(it)
             } ?: run {
                 _recordExists.value = false
+                dataset.setUpPage(null)
+                checkDraft()
             }
-            dataset.setUpPage(
-                if (recordExists.value == true) dewormingRecord else null
-            )
+        }
+    }
+
+    private suspend fun checkDraft() {
+        vlfRepo.getDraftDeworming()?.let {
+            _draftExists.value = it
+        }
+    }
+
+    fun restoreDraft(draft: DewormingCache) {
+        viewModelScope.launch {
+            _dewormingCache = draft
+            dataset.setUpPage(draft)
+            _draftExists.value = null
+        }
+    }
+
+    fun ignoreDraft() {
+        viewModelScope.launch {
+            _draftExists.value?.let {
+                vlfRepo.deleteDewormingById(it.id)
+            }
+            _draftExists.value = null
+        }
+    }
+
+    fun saveDraft() {
+        viewModelScope.launch {
+            try {
+                dataset.mapValues(_dewormingCache, 1)
+                _dewormingCache.isDraft = true
+                vlfRepo.saveDeworming(_dewormingCache)
+            } catch (e: Exception) {
+                Timber.e("saving Deworming draft failed!! $e")
+            }
         }
     }
 
@@ -91,6 +129,7 @@ class DewormingViewModel @Inject constructor(
             try {
                 _state.postValue(State.SAVING)
                 dataset.mapValues(_dewormingCache, 1)
+                _dewormingCache.isDraft = false
                 vlfRepo.saveDeworming(_dewormingCache)
                 _state.postValue(State.SAVE_SUCCESS)
             } catch (e: Exception) {

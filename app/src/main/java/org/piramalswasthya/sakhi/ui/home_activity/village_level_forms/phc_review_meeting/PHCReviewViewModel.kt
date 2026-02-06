@@ -1,12 +1,9 @@
 package org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.phc_review_meeting
 
-import android.app.AlertDialog
 import android.content.Context
 import android.net.Uri
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -37,7 +34,6 @@ constructor(
     val allPHCCList = vlfReo.phcList
     private val phcReviewId = PHCReviewFormFragementArgs.fromSavedStateHandle(savedStateHandle).id
 
-    //
     private var lastImageFormId: Int = 0
     fun setCurrentImageFormId(id: Int) {
         lastImageFormId = id
@@ -45,20 +41,7 @@ constructor(
 
     fun setImageUriToFormElement(dpUri: Uri) {
         dataset.setImageUriToFormElement(lastImageFormId, dpUri)
-//        Log.v("jnjdnjsadd>>","$dpUri")
     }
-//    private val _dateVHND = MutableLiveData<String>()
-//    val dateVHND: LiveData<String>
-//        get() = _dateVHND
-//
-//    private val _noOfBenAttVHND = MutableLiveData<String>()
-//    val noOfBenAttVHND: LiveData<String>
-//        get() = _noOfBenAttVHND
-//
-//    private val _placeVHND = MutableLiveData<String>()
-//    val placeVHND: LiveData<String>
-//        get() = _placeVHND
-
 
     @RequiresApi(Build.VERSION_CODES.O)
     val isCurrentMonthFormFilled : Flow<Map<String, Boolean>> = vlfReo.isFormFilledForCurrentMonth()
@@ -70,6 +53,11 @@ constructor(
     private val _recordExists = MutableLiveData<Boolean>()
     val recordExists: LiveData<Boolean>
         get() = _recordExists
+
+    private val _draftExists = MutableLiveData<PHCReviewMeetingCache?>(null)
+    val draftExists: LiveData<PHCReviewMeetingCache?>
+        get() = _draftExists
+
     private val dataset =
         PHCReviewDataset(context, preferenceDao.getCurrentLanguage())
     val formList = dataset.listFlow
@@ -77,20 +65,51 @@ constructor(
 
     init {
         viewModelScope.launch {
-
             _phcCache = PHCReviewMeetingCache(id = 0, phcReviewDate = "");
-            val phcReviewIds = vlfReo.getPHC(phcReviewId)
             vlfReo.getPHC(phcReviewId)?.let {
                 _phcCache = it
                 _recordExists.value = true
+                dataset.setUpPage(it)
             } ?: run {
                 _recordExists.value = false
+                dataset.setUpPage(null)
+                checkDraft()
             }
-            dataset.setUpPage(
-                if (recordExists.value == true) phcReviewIds else null
-            )
+        }
+    }
 
+    private suspend fun checkDraft() {
+        vlfReo.getDraftPHC()?.let {
+            _draftExists.value = it
+        }
+    }
 
+    fun restoreDraft(draft: PHCReviewMeetingCache) {
+        viewModelScope.launch {
+            _phcCache = draft
+            dataset.setUpPage(draft)
+            _draftExists.value = null
+        }
+    }
+
+    fun ignoreDraft() {
+        viewModelScope.launch {
+            _draftExists.value?.let {
+                vlfReo.deletePHCById(it.id)
+            }
+            _draftExists.value = null
+        }
+    }
+
+    fun saveDraft() {
+        viewModelScope.launch {
+            try {
+                dataset.mapValues(_phcCache, 1)
+                _phcCache.isDraft = true
+                vlfReo.saveRecord(_phcCache)
+            } catch (e: Exception) {
+                Timber.e("saving PHC draft failed!! $e")
+            }
         }
     }
 
@@ -105,10 +124,11 @@ constructor(
             try {
                 _state.postValue(State.SAVING)
                 dataset.mapValues(_phcCache, 1)
+                _phcCache.isDraft = false
                 vlfReo.saveRecord(_phcCache)
                 _state.postValue(State.SAVE_SUCCESS)
             } catch (e: Exception) {
-                Timber.d("saving VHND data failed!!")
+                Timber.d("saving PHC data failed!!")
                 _state.postValue(State.SAVE_FAILED)
             }
         }

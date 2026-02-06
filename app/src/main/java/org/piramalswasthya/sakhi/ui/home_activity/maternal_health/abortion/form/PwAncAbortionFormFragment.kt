@@ -27,15 +27,17 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.adapters.FormInputAdapterWithBgIcon
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.databinding.LayoutMediaOptionsBinding
 import org.piramalswasthya.sakhi.databinding.LayoutViewMediaBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.ui.checkFileSize
+import org.piramalswasthya.sakhi.ui.common.attachAdapterUnsavedGuard
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
-import org.piramalswasthya.sakhi.work.WorkerUtils
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.abortion.form.PwAncAbortionFormViewModel.State
+import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 import java.io.File
 
@@ -89,17 +91,17 @@ class PwAncAbortionFormFragment : Fragment() {
             notIt?.let { recordExists ->
                 binding.btnSubmit.visibility = if (recordExists) View.GONE else View.VISIBLE
                 val adapter = FormInputAdapterWithBgIcon(
-                    formValueListener = FormInputAdapterWithBgIcon.FormValueListener { formId, index ->
+                    formValueListener = FormInputAdapter.FormValueListener { formId, index ->
                         viewModel.updateListOnValueChanged(formId, index)
                         hardCodedListUpdate(formId)
                     },
-                    selectImageClickListener = FormInputAdapterWithBgIcon.SelectUploadImageClickListener { formId ->
+                    selectImageClickListener = FormInputAdapter.SelectUploadImageClickListener { formId ->
                         if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
                             viewModel.setCurrentDocumentFormId(formId)
                             chooseOptions()
                         }
                     },
-                    viewDocumentListner = FormInputAdapterWithBgIcon.ViewDocumentOnClick { formId ->
+                    viewDocumentListner = FormInputAdapter.ViewDocumentOnClick { formId ->
                         if (recordExists) {
                             viewDocuments(formId)
                         } else {
@@ -110,6 +112,7 @@ class PwAncAbortionFormFragment : Fragment() {
                 )
                 binding.form.rvInputForm.adapter = adapter
                 binding.form.rvInputForm.itemAnimator = null
+                attachAdapterUnsavedGuard(adapter)
                 lifecycleScope.launch {
                     viewModel.formList.collect {
                         if (it.isNotEmpty()) adapter.submitList(it)

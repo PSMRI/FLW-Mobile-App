@@ -45,7 +45,7 @@ class ECRegistrationAdapter(
         ) {
             binding.benWithEcr = item
 
-            if (item.ecr == null) {
+            if (item.assess == null) {
                 binding.llLmpDate.visibility = View.INVISIBLE
                 binding.llBenStatus.visibility = View.INVISIBLE
             } else {
@@ -53,9 +53,9 @@ class ECRegistrationAdapter(
                 binding.llBenStatus.visibility = View.VISIBLE
             }
 
-            if (item.ecr?.lmpDate != null && item.ecr.lmpDate != 0L) {
-                binding.benLmpDate.text = HelperUtil.getDateStringFromLongStraight(item.ecr.lmpDate)
-                if (System.currentTimeMillis() - item.ecr.lmpDate > TimeUnit.DAYS.toMillis(35)) {
+            if (item.assess?.lmpDate != null && item.assess.lmpDate != 0L) {
+                binding.benLmpDate.text = HelperUtil.getDateStringFromLongStraight(item.assess.lmpDate)
+                if (System.currentTimeMillis() - item.assess.lmpDate > TimeUnit.DAYS.toMillis(35)) {
                     binding.ivMissState.visibility = View.VISIBLE
                     binding.benStatus.text = "Missed Period"
                 } else {
@@ -68,16 +68,16 @@ class ECRegistrationAdapter(
                 binding.llBenStatus.visibility = View.INVISIBLE
             }
 
-            binding.ivSyncState.visibility = if (item.ecr == null) View.INVISIBLE else View.VISIBLE
+            binding.ivSyncState.visibility = if (item.assess == null) View.INVISIBLE else View.VISIBLE
             binding.btnFormEc1.text =
-                if (item.ecr != null && item.ecr.lmpDate != 0L) {
+                if (item.assess != null && item.assess.lmpDate != 0L) {
                     "View"
                 } else {
                     "Register"
                 }
 
 
-            binding.btnFormEc1.setBackgroundColor(binding.root.resources.getColor(if (item.ecr != null && item.ecr.lmpDate != 0L) android.R.color.holo_green_dark else android.R.color.holo_red_dark))
+            binding.btnFormEc1.setBackgroundColor(binding.root.resources.getColor(if (item.assess != null && item.assess.lmpDate != 0L) android.R.color.holo_green_dark else android.R.color.holo_red_dark))
             binding.clickListener = clickListener
 
             binding.executePendingBindings()

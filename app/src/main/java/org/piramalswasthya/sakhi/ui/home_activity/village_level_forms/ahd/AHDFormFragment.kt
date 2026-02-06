@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.BuildConfig
@@ -24,6 +25,7 @@ import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.common.attachAdapterUnsavedGuard
 import timber.log.Timber
 import java.io.File
 
@@ -72,6 +74,10 @@ class AHDFormFragment : Fragment() {
             )
             binding.btnSubmit.isEnabled = !exists
             binding.form.rvInputForm.adapter = adapter
+            attachAdapterUnsavedGuard(
+                dirtyState = adapter,
+                onSaveDraft = { viewModel.saveDraft() }
+            )
 
             lifecycleScope.launch {
                 viewModel.formList.collect { list ->
@@ -82,6 +88,22 @@ class AHDFormFragment : Fragment() {
     }
 
     private fun setupObservers() {
+        viewModel.draftExists.observe(viewLifecycleOwner) { draft ->
+            draft?.let {
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("Draft Found")
+                    .setMessage("You have a saved draft for this form. Do you want to restore it?")
+                    .setPositiveButton("Restore") { _, _ ->
+                        viewModel.restoreDraft(it)
+                    }
+                    .setNegativeButton("Ignore") { _, _ ->
+                        viewModel.ignoreDraft()
+                    }
+                    .setCancelable(false)
+                    .show()
+            }
+        }
+
         viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state) {
                 AHDViewModel.State.SAVE_SUCCESS -> {
@@ -102,11 +124,7 @@ class AHDFormFragment : Fragment() {
                     ).show()
                 }
 
-                else -> {
-                    /*
-                    * Currently implementation is not required
-                    * */
-                }
+                else -> {}
             }
         }
     }

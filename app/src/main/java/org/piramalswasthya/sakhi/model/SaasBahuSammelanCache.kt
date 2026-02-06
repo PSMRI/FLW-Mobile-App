@@ -18,6 +18,7 @@ data class SaasBahuSammelanCache(
     var date: Long? = 0L,
     @TypeConverters(StringListConverter::class)
     var sammelanImages: List<String>? = null,
-    var syncState: SyncState = SyncState.UNSYNCED
+    var syncState: SyncState = SyncState.UNSYNCED,
+    var isDraft: Boolean = false
 
 )

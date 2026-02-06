@@ -85,7 +85,7 @@
                     android:layout_gravity="center_vertical|end"
                     android:layout_marginHorizontal="@dimen/padding_small"
                     android:contentDescription="@string/iv_sync_state_tv"
-                    app:syncState="@{benWithEcr.ecr.syncState}"
+                    app:syncState="@{benWithEcr.assess.syncState}"
                     tools:src="@drawable/ic_synced" />
 
             </LinearLayout>
