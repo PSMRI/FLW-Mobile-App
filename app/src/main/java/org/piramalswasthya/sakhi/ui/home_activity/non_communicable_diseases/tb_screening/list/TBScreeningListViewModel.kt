@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_screening.list
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,6 +23,7 @@ class TBScreeningListViewModel @Inject constructor(
     }
 
     fun filterText(text: String) {
+        Log.i( "filter34324",text)
         viewModelScope.launch {
             filter.emit(text)
         }
