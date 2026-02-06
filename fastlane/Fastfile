@@ -51,7 +51,7 @@ platform :android do
     UI.user_error!("variant is required") if options[:variant].nil?
     UI.user_error!("FIREBASE_APP_ID is missing") if ENV['FIREBASE_APP_ID'].to_s.empty?
 
-    # 👉 Version should come from workflow input
+
     new_version_code = options[:version_code]&.to_i || 1
     new_version_name = "#{new_version_code}.0.0"
 
