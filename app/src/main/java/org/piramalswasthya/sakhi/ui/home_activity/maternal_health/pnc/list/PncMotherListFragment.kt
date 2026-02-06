@@ -15,6 +15,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.PncVisitListAdapter
+import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 
@@ -32,6 +33,13 @@ class PncMotherListFragment : Fragment() {
     private val viewModel: PncMotherListViewModel by viewModels()
 
     private val bottomSheet: PncBottomSheetFragment by lazy { PncBottomSheetFragment() }
+
+    private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
+        val lowerValue = value.lowercase()
+        binding.searchView.setText(lowerValue)
+        binding.searchView.setSelection(lowerValue.length)
+        viewModel.filterText(lowerValue)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -72,6 +80,8 @@ class PncMotherListFragment : Fragment() {
                 benAdapter.submitList(it)
             }
         }
+
+        binding.ibSearch.setOnClickListener { sttContract.launch(Unit) }
         val searchTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 

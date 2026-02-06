@@ -56,9 +56,10 @@ class AllBenFragment : Fragment() {
     private val viewModelEyeSurgery: EyeSurgeryFormViewModel by viewModels()
 
     private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
-        binding.searchView.setText(value)
-        binding.searchView.setSelection(value.length)
-        viewModel.filterText(value)
+        val lowerValue = value.lowercase()
+        binding.searchView.setText(lowerValue)
+        binding.searchView.setSelection(lowerValue.length)
+        viewModel.filterText(lowerValue)
     }
 
     private val abhaDisclaimer by lazy {
