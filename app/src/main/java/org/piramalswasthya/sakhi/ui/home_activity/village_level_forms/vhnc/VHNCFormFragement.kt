@@ -16,7 +16,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.BuildConfig
@@ -71,8 +70,7 @@ class VHNCFormFragement: Fragment() {
 
             // Attach Unsaved Changes Guard
             attachAdapterUnsavedGuard(
-                dirtyState = adapter,
-                onSaveDraft = { viewModel.saveDraft() }
+                dirtyState = adapter
             )
 
             lifecycleScope.launch {
@@ -82,21 +80,6 @@ class VHNCFormFragement: Fragment() {
             }
         }
 
-        viewModel.draftExists.observe(viewLifecycleOwner) { draft ->
-            draft?.let {
-                MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("Draft Found")
-                    .setMessage("You have a saved draft for this form. Do you want to restore it?")
-                    .setPositiveButton("Restore") { _, _ ->
-                        viewModel.restoreDraft(it)
-                    }
-                    .setNegativeButton("Ignore") { _, _ ->
-                        viewModel.ignoreDraft()
-                    }
-                    .setCancelable(false)
-                    .show()
-            }
-        }
 
         binding.btnSubmit.setOnClickListener {
             if (validateCurrentPage()) {

@@ -15,24 +15,29 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.configuration.PHCReviewDataset
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.PHCReviewMeetingCache
 import org.piramalswasthya.sakhi.repositories.VLFRepo
-import timber.log.Timber
+import javax.inject.Inject
 
 @HiltViewModel
-class PHCReviewViewModel @javax.inject.Inject
-constructor(
+class PHCReviewViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     preferenceDao: PreferenceDao,
     @ApplicationContext context: Context,
-    private val vlfReo: VLFRepo,
+    private val vlfRepo: VLFRepo,
 ) : ViewModel() {
+
     enum class State {
         IDLE, SAVING, SAVE_SUCCESS, SAVE_FAILED
     }
 
-    val allPHCCList = vlfReo.phcList
-    private val phcReviewId = PHCReviewFormFragementArgs.fromSavedStateHandle(savedStateHandle).id
+    val allPHCList = vlfRepo.phcList
+    private val phcId = PHCReviewFormFragementArgs.fromSavedStateHandle(savedStateHandle).id
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    val isCurrentMonthFormFilled : Flow<Map<String, Boolean>> = vlfRepo.isFormFilledForCurrentMonth()
+
 
     private var lastImageFormId: Int = 0
     fun setCurrentImageFormId(id: Int) {
@@ -43,72 +48,28 @@ constructor(
         dataset.setImageUriToFormElement(lastImageFormId, dpUri)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    val isCurrentMonthFormFilled : Flow<Map<String, Boolean>> = vlfReo.isFormFilledForCurrentMonth()
-
-
     private val _state = MutableLiveData(State.IDLE)
     val state: LiveData<State>
         get() = _state
+
     private val _recordExists = MutableLiveData<Boolean>()
     val recordExists: LiveData<Boolean>
         get() = _recordExists
 
-    private val _draftExists = MutableLiveData<PHCReviewMeetingCache?>(null)
-    val draftExists: LiveData<PHCReviewMeetingCache?>
-        get() = _draftExists
-
-    private val dataset =
-        PHCReviewDataset(context, preferenceDao.getCurrentLanguage())
+    private val dataset = PHCReviewDataset(context, preferenceDao.getCurrentLanguage())
     val formList = dataset.listFlow
     lateinit var _phcCache: PHCReviewMeetingCache
 
     init {
         viewModelScope.launch {
-            _phcCache = PHCReviewMeetingCache(id = 0, phcReviewDate = "");
-            vlfReo.getPHC(phcReviewId)?.let {
+            _phcCache = PHCReviewMeetingCache(id = 0, phcReviewDate = "")
+            vlfRepo.getPHC(phcId)?.let {
                 _phcCache = it
                 _recordExists.value = true
                 dataset.setUpPage(it)
             } ?: run {
                 _recordExists.value = false
                 dataset.setUpPage(null)
-                checkDraft()
-            }
-        }
-    }
-
-    private suspend fun checkDraft() {
-        vlfReo.getDraftPHC()?.let {
-            _draftExists.value = it
-        }
-    }
-
-    fun restoreDraft(draft: PHCReviewMeetingCache) {
-        viewModelScope.launch {
-            _phcCache = draft
-            dataset.setUpPage(draft)
-            _draftExists.value = null
-        }
-    }
-
-    fun ignoreDraft() {
-        viewModelScope.launch {
-            _draftExists.value?.let {
-                vlfReo.deletePHCById(it.id)
-            }
-            _draftExists.value = null
-        }
-    }
-
-    fun saveDraft() {
-        viewModelScope.launch {
-            try {
-                dataset.mapValues(_phcCache, 1)
-                _phcCache.isDraft = true
-                vlfReo.saveRecord(_phcCache)
-            } catch (e: Exception) {
-                Timber.e("saving PHC draft failed!! $e")
             }
         }
     }
@@ -124,11 +85,9 @@ constructor(
             try {
                 _state.postValue(State.SAVING)
                 dataset.mapValues(_phcCache, 1)
-                _phcCache.isDraft = false
-                vlfReo.saveRecord(_phcCache)
+                vlfRepo.saveRecord(_phcCache)
                 _state.postValue(State.SAVE_SUCCESS)
             } catch (e: Exception) {
-                Timber.d("saving PHC data failed!!")
                 _state.postValue(State.SAVE_FAILED)
             }
         }
@@ -137,6 +96,4 @@ constructor(
     fun resetState() {
         _state.value = State.IDLE
     }
-
-
 }

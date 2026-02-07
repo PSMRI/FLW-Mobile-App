@@ -75,8 +75,7 @@ class VHNDFormFragement : Fragment() {
 
             // Attach Unsaved Changes Guard
             attachAdapterUnsavedGuard(
-                dirtyState = adapter,
-                onSaveDraft = { viewModel.saveDraft() }
+                dirtyState = adapter
             )
 
 
@@ -89,9 +88,7 @@ class VHNDFormFragement : Fragment() {
             }
         }
 
-        viewModel.draftExists.observe(viewLifecycleOwner) { draft ->
-            showDraftRestoreDialog(draft, viewModel)
-        }
+
 
         binding.btnSubmit.setOnClickListener {
             if (validateCurrentPage()) {

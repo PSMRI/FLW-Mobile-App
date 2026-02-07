@@ -1,6 +1,5 @@
 package org.piramalswasthya.sakhi.ui.common
 
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
@@ -11,7 +10,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
  * Any object passed must implement DirtyState.
  */
 fun Fragment.attachAdapterUnsavedGuard(
-    dirtyState: DirtyState, // ✅ Use DirtyState instead of VHNCFormFragement
+    dirtyState: DirtyState,
     lifecycleOwner: LifecycleOwner = viewLifecycleOwner,
     onSaveDraft: (() -> Unit)? = null,
     onDiscard: (() -> Unit)? = null
@@ -32,7 +31,7 @@ fun Fragment.attachAdapterUnsavedGuard(
                 .setTitle("Unsaved changes")
                 .setMessage(
                     "You have unsaved changes on this screen. " +
-                            "Discard changes, stay on this screen, or save a draft?"
+                            "Discard changes or stay on this screen?"
                 )
                 .setNegativeButton("Discard") { dialog, _ ->
                     dirtyState.clearDirty()
@@ -40,19 +39,8 @@ fun Fragment.attachAdapterUnsavedGuard(
                     dialog.dismiss()
                     requireActivity().onBackPressedDispatcher.onBackPressed()
                 }
-                .setNeutralButton("Stay") { dialog, _ ->
+                .setPositiveButton("Stay") { dialog, _ ->
                     dialog.dismiss()
-                }
-                .setPositiveButton("Save Draft") { dialog, _ ->
-                    dirtyState.clearDirty()
-                    onSaveDraft?.invoke()
-                        ?: Toast.makeText(
-                            requireContext(),
-                            "Draft saved",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    dialog.dismiss()
-                    requireActivity().onBackPressedDispatcher.onBackPressed()
                 }
                 .show()
         }

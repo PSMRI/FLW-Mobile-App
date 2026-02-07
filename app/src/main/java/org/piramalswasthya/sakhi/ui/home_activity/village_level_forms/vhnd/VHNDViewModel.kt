@@ -17,7 +17,6 @@ import org.piramalswasthya.sakhi.configuration.VHNDDataset
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.VHNDCache
 import org.piramalswasthya.sakhi.repositories.VLFRepo
-import org.piramalswasthya.sakhi.ui.common.DraftViewModel
 import timber.log.Timber
 
 @HiltViewModel
@@ -27,7 +26,7 @@ constructor(
     preferenceDao: PreferenceDao,
     @ApplicationContext context: Context,
     private val vlfReo: VLFRepo,
-) : ViewModel(), DraftViewModel<VHNDCache> {
+) : ViewModel() {
     enum class State {
         IDLE, SAVING, SAVE_SUCCESS, SAVE_FAILED
     }
@@ -54,10 +53,6 @@ constructor(
     val recordExists: LiveData<Boolean>
         get() = _recordExists
 
-    private val _draftExists = MutableLiveData<VHNDCache?>(null)
-    val draftExists: LiveData<VHNDCache?>
-        get() = _draftExists
-
     private val dataset =
         VHNDDataset(context, preferenceDao.getCurrentLanguage())
     val formList = dataset.listFlow
@@ -73,42 +68,6 @@ constructor(
             } ?: run {
                 _recordExists.value = false
                 dataset.setUpPage(null)
-                checkDraft()
-            }
-        }
-    }
-
-    private suspend fun checkDraft() {
-        vlfReo.getDraftVHND()?.let {
-            _draftExists.value = it
-        }
-    }
-
-    override fun restoreDraft(draft: VHNDCache) {
-        viewModelScope.launch {
-            _vhndCache = draft
-            dataset.setUpPage(draft)
-            _draftExists.value = null
-        }
-    }
-
-    override fun ignoreDraft() {
-        viewModelScope.launch {
-            _draftExists.value?.let {
-                vlfReo.deleteVHNDById(it.id)
-            }
-            _draftExists.value = null
-        }
-    }
-
-    fun saveDraft() {
-        viewModelScope.launch {
-            try {
-                dataset.mapValues(_vhndCache, 1)
-                _vhndCache.isDraft = true
-                vlfReo.saveRecord(_vhndCache)
-            } catch (e: Exception) {
-                Timber.e("saving VHND draft failed!! $e")
             }
         }
     }
@@ -124,7 +83,6 @@ constructor(
             try {
                 _state.postValue(State.SAVING)
                 dataset.mapValues(_vhndCache, 1)
-                _vhndCache.isDraft = false
                 vlfReo.saveRecord(_vhndCache)
                 _state.postValue(State.SAVE_SUCCESS)
             } catch (e: Exception) {

@@ -24,11 +24,8 @@ interface VLFDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveRecord(vhndCache: VHNDCache)
 
-    @Query("SELECT * FROM VHND WHERE isDraft = 0")
+    @Query("SELECT * FROM VHND")
     fun getAllVHND(): Flow<List<VHNDCache>>
-
-    @Query("SELECT * FROM VHND WHERE isDraft = 1 LIMIT 1")
-    suspend fun getDraftVHND(): VHNDCache?
 
     @Query("DELETE FROM VHND WHERE id = :id")
     suspend fun deleteVHNDById(id: Int)
@@ -39,11 +36,8 @@ interface VLFDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveRecord(vhncCache: VHNCCache)
 
-    @Query("SELECT * FROM VHNC WHERE isDraft = 0")
+    @Query("SELECT * FROM VHNC")
     fun getAllVHNC(): Flow<List<VHNCCache>>
-
-    @Query("SELECT * FROM VHNC WHERE isDraft = 1 LIMIT 1")
-    suspend fun getDraftVHNC(): VHNCCache?
 
     @Query("DELETE FROM VHNC WHERE id = :id")
     suspend fun deleteVHNCById(id: Int)
@@ -54,11 +48,8 @@ interface VLFDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveRecord(phcCache: PHCReviewMeetingCache)
 
-    @Query("SELECT * FROM PHCReviewMeeting WHERE isDraft = 0")
+    @Query("SELECT * FROM PHCReviewMeeting")
     fun getAllPHC(): Flow<List<PHCReviewMeetingCache>>
-
-    @Query("SELECT * FROM PHCReviewMeeting WHERE isDraft = 1 LIMIT 1")
-    suspend fun getDraftPHC(): PHCReviewMeetingCache?
 
     @Query("DELETE FROM PHCReviewMeeting WHERE id = :id")
     suspend fun deletePHCById(id: Int)
@@ -66,11 +57,8 @@ interface VLFDao {
     @Query("SELECT * FROM AHDMeeting WHERE id = :id")
     suspend fun getAHD(id: Int): AHDCache?
 
-    @Query("SELECT * FROM AHDMeeting WHERE isDraft = 0")
+    @Query("SELECT * FROM AHDMeeting")
     fun getAllAHD(): Flow<List<AHDCache>>
-
-    @Query("SELECT * FROM AHDMeeting WHERE isDraft = 1 LIMIT 1")
-    suspend fun getDraftAHD(): AHDCache?
 
     @Query("DELETE FROM AHDMeeting WHERE id = :id")
     suspend fun deleteAHDById(id: Int)
@@ -82,11 +70,8 @@ interface VLFDao {
     @Query("SELECT * FROM DewormingMeeting WHERE id = :id")
     suspend fun getDeworming(id: Int): DewormingCache?
 
-    @Query("SELECT * FROM DewormingMeeting WHERE isDraft = 0")
+    @Query("SELECT * FROM DewormingMeeting")
     fun getAllDeworming(): Flow<List<DewormingCache>>
-
-    @Query("SELECT * FROM DewormingMeeting WHERE isDraft = 1 LIMIT 1")
-    suspend fun getDraftDeworming(): DewormingCache?
 
     @Query("DELETE FROM DewormingMeeting WHERE id = :id")
     suspend fun deleteDewormingById(id: Int)
@@ -113,21 +98,21 @@ interface VLFDao {
     fun getDeworming(syncState: SyncState): List<DewormingCache>?
 
 
-    @Query("SELECT COUNT(*) FROM VHND WHERE vhndDate BETWEEN :startDate AND :endDate AND isDraft = 0")
+    @Query("SELECT COUNT(*) FROM VHND WHERE vhndDate BETWEEN :startDate AND :endDate")
     fun countVHNDFormsInDateRange(startDate: String, endDate: String): Flow<Int>
 
-    @Query("SELECT COUNT(*) FROM VHNC WHERE vhncDate BETWEEN :startDate AND :endDate AND isDraft = 0")
+    @Query("SELECT COUNT(*) FROM VHNC WHERE vhncDate BETWEEN :startDate AND :endDate")
     fun countVHNCFormsInDateRange(startDate: String, endDate: String): Flow<Int>
 
-    @Query("SELECT COUNT(*) FROM PHCReviewMeeting WHERE phcReviewDate BETWEEN :startDate AND :endDate AND isDraft = 0")
+    @Query("SELECT COUNT(*) FROM PHCReviewMeeting WHERE phcReviewDate BETWEEN :startDate AND :endDate")
     fun countPHCFormsInDateRange(startDate: String, endDate: String): Flow<Int>
 
-    @Query("SELECT COUNT(*) FROM AHDMeeting WHERE ahdDate BETWEEN :startDate AND :endDate AND isDraft = 0")
+    @Query("SELECT COUNT(*) FROM AHDMeeting WHERE ahdDate BETWEEN :startDate AND :endDate")
     fun countAHDFormsInDateRange(startDate: String, endDate: String): Flow<Int>
     @Query("""
     SELECT COUNT(*) 
     FROM DewormingMeeting
-    WHERE isDraft = 0 AND date(
+    WHERE date(
         substr(dewormingDate, 7, 4) || '-' ||
         substr(dewormingDate, 4, 2) || '-' ||
         substr(dewormingDate, 1, 2)
@@ -136,23 +121,23 @@ interface VLFDao {
     fun countDewormingInLastSixMonths(): Flow<Int>
 
     // For VHND form
-    @Query("SELECT MAX(vhndDate) FROM VHND WHERE isDraft = 0")
+    @Query("SELECT MAX(vhndDate) FROM VHND")
     fun getLastVHNDSubmissionDate(): Flow<String?>
 
     // For VHNC form
-    @Query("SELECT MAX(vhncDate) FROM VHNC WHERE isDraft = 0")
+    @Query("SELECT MAX(vhncDate) FROM VHNC")
     fun getLastVHNCSubmissionDate(): Flow<String?>
 
     // For PHC form
-    @Query("SELECT MAX(phcReviewDate) FROM PHCReviewMeeting WHERE isDraft = 0")
+    @Query("SELECT MAX(phcReviewDate) FROM PHCReviewMeeting")
     fun getLastPHCSubmissionDate(): Flow<String?>
 
     // For AHD form
-    @Query("SELECT MAX(ahdDate) FROM AHDMeeting WHERE isDraft = 0")
+    @Query("SELECT MAX(ahdDate) FROM AHDMeeting")
     fun getLastAHDSubmissionDate(): Flow<String?>
 
     // For Deworming form
-    @Query("SELECT MAX(regDate) FROM DewormingMeeting WHERE isDraft = 0")
+    @Query("SELECT MAX(regDate) FROM DewormingMeeting")
     fun getLastDewormingSubmissionDate(): Flow<String?>
 
     // For Pulse Polio Campaign form
