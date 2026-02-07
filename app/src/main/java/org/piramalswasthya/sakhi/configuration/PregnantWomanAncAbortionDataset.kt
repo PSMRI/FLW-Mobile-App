@@ -186,14 +186,24 @@ class PregnantWomanAncAbortionDataset(
         )
 
 
-        abortionDate.min = regis.lmpDate!! + TimeUnit.DAYS.toMillis(5 * 7 + 1)
-        abortionDate.max =
-            minOf(System.currentTimeMillis(), regis.lmpDate!! + TimeUnit.DAYS.toMillis(21 * 7))
+        val now = System.currentTimeMillis()
+        val oneYearMillis = TimeUnit.DAYS.toMillis(365)
+
+        abortionDate.min = regis.lmpDate?.plus(
+            TimeUnit.DAYS.toMillis(5 * 7 + 1)
+        ) ?: (now - oneYearMillis)
+
+        abortionDate.max = regis.lmpDate?.let { lmp ->
+            minOf(
+                now,
+                lmp + TimeUnit.DAYS.toMillis(21 * 7)
+            )
+        } ?: now
 
         if (saved == null) {
             visitDate.min = regis.abortionDate
             dateOfSterilization.min = regis.abortionDate
-            val woP = getWeeksOfPregnancy(regis.ancDate, regis.lmpDate!!)
+            val woP = getWeeksOfPregnancy(regis.ancDate, regis.lmpDate)
             weekOfPregnancy.value = woP.toString()
             abortionType.value = regis.abortionType
             abortionFacility.value = regis.abortionFacility
@@ -220,7 +230,7 @@ class PregnantWomanAncAbortionDataset(
             visitDate.min = saved.abortionDate
             visitDate.value = saved.visitDate?.let { getDateFromLong(it) }
 
-            val woP = getWeeksOfPregnancy(saved.ancDate, regis.lmpDate!!)
+            val woP = getWeeksOfPregnancy(saved.ancDate, regis.lmpDate)
             weekOfPregnancy.value = woP.toString()
             abortionType.value = saved.abortionType
             abortionFacility.value = saved.abortionFacility

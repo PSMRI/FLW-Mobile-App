@@ -284,7 +284,7 @@ class EcrRepo @Inject constructor(
 
                                     ecrList.forEach { ecr ->
                                         database.benDao.getBen(ecr.benId)?.let {
-                                            if (database.ecrDao.getSavedECR(ecr.benId) == null) {
+                                           if (database.ecrDao.getSavedECR(ecr.benId) == null) {
                                                 database.ecrDao.upsert(ecr)
                                             }
                                         }
