@@ -186,13 +186,19 @@ class PregnantWomanAncAbortionDataset(
         )
 
 
-        abortionDate.min = regis.lmpDate?.plus(TimeUnit.DAYS.toMillis(5 * 7 + 1))
+        val now = System.currentTimeMillis()
+        val oneYearMillis = TimeUnit.DAYS.toMillis(365)
+
+        abortionDate.min = regis.lmpDate?.plus(
+            TimeUnit.DAYS.toMillis(5 * 7 + 1)
+        ) ?: (now - oneYearMillis)
+
         abortionDate.max = regis.lmpDate?.let { lmp ->
             minOf(
-                System.currentTimeMillis(),
+                now,
                 lmp + TimeUnit.DAYS.toMillis(21 * 7)
             )
-        } ?: System.currentTimeMillis()
+        } ?: now
 
         if (saved == null) {
             visitDate.min = regis.abortionDate
