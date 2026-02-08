@@ -354,7 +354,9 @@ class PncFormDataset(
                 list.add(list.indexOf(anyContraceptionMethod) + 1, contraceptionMethod)
             }
             contraceptionMethod.value = it.contraceptionMethod
-            dateOfSterilisation.value = getDateFromLong(it.sterilisationDate!!)
+            it.sterilisationDate.let { it2 ->
+                dateOfSterilisation.value = getDateFromLong(it2 ?: 0L)
+            }
             if (it.contraceptionMethod == contraceptionMethod.entries!!.last()) {
                 list.add(list.indexOf(contraceptionMethod) + 1, otherPpcMethod)
 
