@@ -60,7 +60,6 @@ class TBScreeningListFragment : Fragment() {
 
         lifecycleScope.launch {
             viewModel.benList.collect {
-                Log.i( "filter343245",it.toString())
                 if (it.isEmpty())
                     binding.flEmpty.visibility = View.VISIBLE
                 else

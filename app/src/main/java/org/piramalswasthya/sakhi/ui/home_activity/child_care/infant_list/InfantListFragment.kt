@@ -108,6 +108,7 @@ class InfantListFragment : Fragment() {
             }
         }
 
+        binding.ibSearch.visibility = View.VISIBLE
         binding.ibSearch.setOnClickListener { sttContract.launch(Unit) }
 
         val searchTextWatcher = object : TextWatcher {

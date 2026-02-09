@@ -23,7 +23,7 @@ class GeneralOpCareViewModel @Inject constructor(
    var allBenList = generalOpdDao.getAll()
 
     private val filter = MutableStateFlow("")
-    private val kind = MutableStateFlow("")
+    //private val kind = MutableStateFlow("")
 
     /*val benList = allBenList.combine(kind) { list, kind ->
         filterOPDBenList(list, kind)
@@ -52,12 +52,12 @@ class GeneralOpCareViewModel @Inject constructor(
 
     }
 
-    fun filterType(type: String) {
+   /* fun filterType(type: String) {
         viewModelScope.launch {
             kind.emit(type)
         }
 
-    }
+    }*/
 
     suspend fun getBenFromId(benId: Long):Long{
         var benRegId = 0L

@@ -23,7 +23,6 @@ class TBScreeningListViewModel @Inject constructor(
     }
 
     fun filterText(text: String) {
-        Log.i( "filter34324",text)
         viewModelScope.launch {
             filter.emit(text)
         }
