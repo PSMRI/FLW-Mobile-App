@@ -28,6 +28,7 @@ class NmdsrListFragment : BaseListFragment<FragmentNmdsrListBinding>() {
     override val recyclerView get() = binding.rvAny
     override val emptyStateView get() = binding.flEmpty
     override val searchEditText get() = binding.searchView
+    override val btnSearchCardView get() = binding.ibSearch
 
     override fun getNavDirection(hhId: Long, benId: Long): NavDirections {
         return MdsrListFragmentDirections.actionMdsrListFragmentToMdsrObjectFragment(hhId, benId)
