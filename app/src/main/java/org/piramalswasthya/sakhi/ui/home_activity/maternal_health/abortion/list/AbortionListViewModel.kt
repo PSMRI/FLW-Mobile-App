@@ -6,7 +6,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.helpers.filterAbortionList
-import org.piramalswasthya.sakhi.helpers.filterPncDomainList
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
 import java.util.Calendar
 import javax.inject.Inject
