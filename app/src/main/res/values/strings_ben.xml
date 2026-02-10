@@ -77,7 +77,7 @@
     </string-array>
 
     <string-array name="nbr_reproductive_status_array">
-        <item>Eligible Couple</item>
+        <item name="ec">Eligible Couple</item>
         <item>Pregnant Woman</item>
         <item>Postnatal Mother</item>
         <item>Elderly Woman</item>

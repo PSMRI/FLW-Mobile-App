@@ -183,7 +183,7 @@ class UserRepo @Inject constructor(
                     ?: throw IllegalStateException("Response success but data missing @ $response")
             )
             val statusCode = responseBody.getInt("statusCode")
-            if (statusCode == 5002)
+            if (statusCode == 5002||statusCode == 401)
                 throw IllegalStateException("Invalid username / password")
             val data = responseBody.getJSONObject("data")
             val token = data.getString("key")
