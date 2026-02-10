@@ -4,6 +4,7 @@
     import android.app.DatePickerDialog
     import android.content.ActivityNotFoundException
     import android.content.Intent
+    import android.content.res.Configuration
     import android.graphics.BitmapFactory
     import android.graphics.Color
     import android.graphics.Typeface
@@ -26,9 +27,9 @@
     import kotlinx.coroutines.cancelChildren
     import kotlinx.coroutines.delay
     import kotlinx.coroutines.launch
-    import org.json.JSONArray
     import org.piramalswasthya.sakhi.R
     import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
+    import org.piramalswasthya.sakhi.utils.HelperUtil.findFragmentActivity
     import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
     import timber.log.Timber
     import java.io.File
@@ -591,7 +592,7 @@
 
                     "date" -> {
                         val context = itemView.context
-                        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
                         val today = Calendar.getInstance().time
                         val todayStr = sdf.format(today)
 
@@ -664,6 +665,18 @@
 
                         if (isFieldEditable) {
                             editText.setOnClickListener {
+                                val activity = editText.context.findFragmentActivity()
+                                    ?: return@setOnClickListener
+                                val originalLocale = Locale.getDefault()
+                                Locale.setDefault(Locale.ENGLISH)
+                                val config = Configuration(activity.resources.configuration)
+                                config.setLocale(Locale.ENGLISH)
+                                activity.resources.updateConfiguration(
+                                    config,
+                                    activity.resources.displayMetrics
+                                )
+
+
                                 val calendar = Calendar.getInstance()
 
                                 var minDate: Date? = null
@@ -740,7 +753,15 @@
                                 DatePickerDialog(
                                     context,
                                     { _, year, month, dayOfMonth ->
-                                        val dateStr = String.format("%02d-%02d-%04d", dayOfMonth, month + 1, year)
+
+                                        val dateStr = String.format(
+                                            Locale.ENGLISH,
+                                            "%02d-%02d-%04d",
+                                            dayOfMonth,
+                                            month + 1,
+                                            year
+                                        )
+
                                         editText.setText(dateStr)
                                         field.value = dateStr
                                         onValueChanged(field, dateStr)
@@ -890,6 +911,17 @@
                                     if (minDate != null && maxDate != null && minDate.after(maxDate)) {
                                         datePicker.minDate = maxDate.time
                                     }
+
+                                    setOnDismissListener {
+                                        Locale.setDefault(originalLocale)
+                                        val restoreConfig = Configuration(activity.resources.configuration)
+                                        restoreConfig.setLocale(originalLocale)
+                                        activity.resources.updateConfiguration(
+                                            restoreConfig,
+                                            activity.resources.displayMetrics
+                                        )
+                                    }
+
                                 }.show()
                             }
                         }

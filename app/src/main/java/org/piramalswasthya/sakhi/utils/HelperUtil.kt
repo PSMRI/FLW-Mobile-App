@@ -3,6 +3,7 @@ import android.app.AlertDialog
 import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
@@ -31,6 +32,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.collection.lruCache
 import androidx.core.content.FileProvider
 import androidx.core.graphics.withTranslation
+import androidx.fragment.app.FragmentActivity
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.json.JSONArray
@@ -51,6 +53,16 @@ import java.util.Date
 import java.util.Locale
 
 object HelperUtil {
+
+    fun Context.findFragmentActivity(): FragmentActivity? {
+        var ctx = this
+        while (ctx is ContextWrapper) {
+            if (ctx is FragmentActivity) return ctx
+            ctx = ctx.baseContext
+        }
+        return null
+    }
+
 
     private val dateFormat = SimpleDateFormat("EEE, MMM dd yyyy", Locale.ENGLISH)
 
@@ -243,7 +255,7 @@ object HelperUtil {
 
     fun parseDateToMillis(dateStr: String): Long {
         return try {
-            val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+            val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
             sdf.isLenient = false
             sdf.parse(dateStr)?.time ?: 0L
         } catch (e: Exception) {

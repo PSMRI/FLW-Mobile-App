@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Color
 import android.net.Uri
@@ -67,12 +68,14 @@ import org.piramalswasthya.sakhi.model.InputType.TEXT_VIEW
 import org.piramalswasthya.sakhi.model.InputType.TIME_PICKER
 import org.piramalswasthya.sakhi.model.InputType.values
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.AgePickerDialog
+import org.piramalswasthya.sakhi.utils.HelperUtil.findFragmentActivity
 import org.piramalswasthya.sakhi.utils.HelperUtil.getAgeStrFromAgeUnit
 import org.piramalswasthya.sakhi.utils.HelperUtil.getDobFromAge
 import org.piramalswasthya.sakhi.utils.HelperUtil.getLongFromDate
 import org.piramalswasthya.sakhi.utils.HelperUtil.updateAgeDTO
 import timber.log.Timber
 import java.util.Calendar
+import java.util.Locale
 
 class FormInputAdapterWithBgIcon (
     private val imageClickListener: ImageClickListener? = null,
@@ -506,6 +509,17 @@ class FormInputAdapterWithBgIcon (
             item.errorText?.also { binding.tilEditText.error = it }
                 ?: run { binding.tilEditText.error = null }
             binding.et.setOnClickListener {
+                val activity = binding.et.context.findFragmentActivity()
+                    ?: return@setOnClickListener
+                val originalLocale = Locale.getDefault()
+                Locale.setDefault(Locale.ENGLISH)
+                val config = Configuration(activity.resources.configuration)
+                config.setLocale(Locale.ENGLISH)
+                activity.resources.updateConfiguration(
+                    config,
+                    activity.resources.displayMetrics
+                )
+
                 item.value?.let { value ->
                     thisYear = value.substring(6).toInt()
                     thisMonth = value.substring(3, 5).trim().toInt() - 1
@@ -539,8 +553,23 @@ class FormInputAdapterWithBgIcon (
                     datePickerDialog.show()
                 }else{
                     Toast.makeText(binding.root.context,"Something went wrong",Toast.LENGTH_SHORT).show()
+                    Locale.setDefault(originalLocale)
+                    val restoreConfig = Configuration(activity.resources.configuration)
+                    restoreConfig.setLocale(originalLocale)
+                    activity.resources.updateConfiguration(
+                        restoreConfig,
+                        activity.resources.displayMetrics
+                    )
                 }
-
+                datePickerDialog.setOnDismissListener {
+                    Locale.setDefault(originalLocale)
+                    val restoreConfig = Configuration(activity.resources.configuration)
+                    restoreConfig.setLocale(originalLocale)
+                    activity.resources.updateConfiguration(
+                        restoreConfig,
+                        activity.resources.displayMetrics
+                    )
+                }
             }
             binding.executePendingBindings()
 
@@ -1028,6 +1057,17 @@ class FormInputAdapterWithBgIcon (
             item.errorText?.also { binding.tilEditTextDate.error = it }
                 ?: run { binding.tilEditTextDate.error = null }
             binding.etDate.setOnClickListener {
+                val activity = binding.etDate.context.findFragmentActivity()
+                    ?: return@setOnClickListener
+                val originalLocale = Locale.getDefault()
+                Locale.setDefault(Locale.ENGLISH)
+                val config = Configuration(activity.resources.configuration)
+                config.setLocale(Locale.ENGLISH)
+                activity.resources.updateConfiguration(
+                    config,
+                    activity.resources.displayMetrics
+                )
+
                 item.value?.let { value ->
                     thisYear = value.substring(6).toInt()
                     thisMonth = value.substring(3, 5).trim().toInt() - 1
@@ -1061,6 +1101,15 @@ class FormInputAdapterWithBgIcon (
                 if (item.showYearFirstInDatePicker)
                     datePickerDialog.datePicker.touchables[0].performClick()
                 datePickerDialog.show()
+                datePickerDialog.setOnDismissListener {
+                    Locale.setDefault(originalLocale)
+                    val restoreConfig = Configuration(activity.resources.configuration)
+                    restoreConfig.setLocale(originalLocale)
+                    activity.resources.updateConfiguration(
+                        restoreConfig,
+                        activity.resources.displayMetrics
+                    )
+                }
             }
             binding.executePendingBindings()
 
