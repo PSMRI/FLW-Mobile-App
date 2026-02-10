@@ -285,7 +285,7 @@ class BenRepo @Inject constructor(
 
                     return true
                 }
-                if (responseStatusCode == 5002) {
+                if (responseStatusCode == 5002 || responseStatusCode ==401) {
                     if (userRepo.refreshTokenTmc(
                             user.userName, user.password
                         )
@@ -390,7 +390,7 @@ class BenRepo @Inject constructor(
                         benToUpdateList?.let { benDao.benSyncedWithServer(*it) }
                         hhToUpdateList?.let { householdDao.householdSyncedWithServer(*it) }
                         return true
-                    } else if (responseStatusCode == 5002) {
+                    } else if (responseStatusCode == 5002 || responseStatusCode ==401)  {
                         val user = preferenceDao.getLoggedInUser()
                             ?: throw IllegalStateException("User not logged in according to db")
                         if (userRepo.refreshTokenTmc(
@@ -472,7 +472,7 @@ class BenRepo @Inject constructor(
                                 return@withContext pageSize
                             }
 
-                            5002 -> {
+                            401,5002 -> {
                                 if (pageNumber == 0 && userRepo.refreshTokenTmc(
                                         user.userName, user.password
                                     )
@@ -1458,7 +1458,7 @@ class BenRepo @Inject constructor(
                         }
                     }
 
-                    5000, 5002 -> {
+                    401,5000, 5002 -> {
                         if (JSONObject(responseBody).getString("errorMessage")
                                 .contentEquals("Invalid login key or session is expired")
                         ) {
