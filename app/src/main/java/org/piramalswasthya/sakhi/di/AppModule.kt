@@ -248,6 +248,14 @@ object AppModule {
 
     @Singleton
     @Provides
+    fun provideTokenInsertTmcInterceptor(
+        preferenceDao: PreferenceDao
+    ): TokenInsertTmcInterceptor {
+        return TokenInsertTmcInterceptor(preferenceDao)
+    }
+
+    @Singleton
+    @Provides
     fun provideHouseholdDao(database: InAppDb): HouseholdDao = database.householdDao
 
     @Singleton
