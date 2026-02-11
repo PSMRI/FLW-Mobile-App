@@ -189,7 +189,24 @@ class SignInFragment : Fragment() {
                     binding.clContent.visibility = View.INVISIBLE
                     binding.pbSignIn.visibility = View.VISIBLE
                     binding.tvError.visibility = View.GONE
-                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+
+                    val loggedInUser = prefDao.getLoggedInUser()
+                    if (loggedInUser?.role.equals("ASHA Supervisor", true)) {
+                        val user = loggedInUser!!
+                        val village = user.villages.firstOrNull()
+                        val locationRecord = LocationRecord(
+                            LocationEntity(1, "India"),
+                            LocationEntity(user.state.id, user.state.name),
+                            LocationEntity(0, ""),
+                            LocationEntity(user.block.id, user.block.name),
+                            LocationEntity(village?.id ?: 0, village?.name ?: ""),
+                        )
+                        prefDao.saveLocationRecord(locationRecord)
+
+                        activity?.finish()
+                        val goToHome = Intent(requireContext(), SupervisorActivity::class.java)
+                        startActivity(goToHome)
+                    } else {
                         WorkerUtils.triggerGenBenIdWorker(requireContext())
                         if (BuildConfig.FLAVOR.equals("niramay", true))  {
                             if (viewModel.getLoggedInUser()?.serviceMapId == 1718 ||
@@ -201,46 +218,34 @@ class SignInFragment : Fragment() {
                                     if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
                                     else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
                                 activity?.finish()
-                            }else{
+                            } else {
                                 binding.clContent.visibility = View.VISIBLE
                                 binding.pbSignIn.visibility = View.GONE
                                 binding.tvError.visibility = View.GONE
                                 Toast.makeText(requireContext(),"This user is not from Niramay Project",Toast.LENGTH_SHORT).show()
                             }
 
-                        }else if(BuildConfig.FLAVOR.equals("xushrukha", true)){
+                        } else if(BuildConfig.FLAVOR.equals("xushrukha", true)){
                             if (viewModel.getLoggedInUser()?.serviceMapId == 1716){
                                 findNavController().navigate(
                                     if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
                                     else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
                                 activity?.finish()
-                            }else{
+                            } else {
                                 binding.clContent.visibility = View.VISIBLE
                                 binding.pbSignIn.visibility = View.GONE
                                 binding.tvError.visibility = View.GONE
                                 Toast.makeText(requireContext(),"This user is not from Xushrukha Project",Toast.LENGTH_SHORT).show()
                             }
 
-                        }else{
+                        } else {
                             findNavController().navigate(
                                 if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
                                 else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
                             activity?.finish()
                         }
-                    } else {
-                        val locationRecord = LocationRecord(
-                            LocationEntity(1, "India"),
-                            LocationEntity(prefDao.getLoggedInUser()!!.state.id, prefDao.getLoggedInUser()!!.state.name),
-                            LocationEntity(0, ""),
-                            LocationEntity(prefDao.getLoggedInUser()!!.block.id, prefDao.getLoggedInUser()!!.block.name),
-                            LocationEntity(prefDao.getLoggedInUser()!!.villages[0].id, prefDao.getLoggedInUser()!!.villages[0].name),
-                        )
-                        prefDao.saveLocationRecord(locationRecord)
-
-                        activity?.finish()
-                        val goToHome = Intent(requireContext(), SupervisorActivity::class.java)
-                        startActivity(goToHome)
                     }
+
                 }
             }
         }
