@@ -190,13 +190,16 @@ class SignInFragment : Fragment() {
                     binding.pbSignIn.visibility = View.VISIBLE
                     binding.tvError.visibility = View.GONE
 
-                    if (prefDao.getLoggedInUser()?.role.equals("ASHA Supervisor", true)) {
+                    val loggedInUser = prefDao.getLoggedInUser()
+                    if (loggedInUser?.role.equals("ASHA Supervisor", true)) {
+                        val user = loggedInUser!!
+                        val village = user.villages.firstOrNull()
                         val locationRecord = LocationRecord(
                             LocationEntity(1, "India"),
-                            LocationEntity(prefDao.getLoggedInUser()!!.state.id, prefDao.getLoggedInUser()!!.state.name),
+                            LocationEntity(user.state.id, user.state.name),
                             LocationEntity(0, ""),
-                            LocationEntity(prefDao.getLoggedInUser()!!.block.id, prefDao.getLoggedInUser()!!.block.name),
-                            LocationEntity(prefDao.getLoggedInUser()!!.villages[0].id, prefDao.getLoggedInUser()!!.villages[0].name),
+                            LocationEntity(user.block.id, user.block.name),
+                            LocationEntity(village?.id ?: 0, village?.name ?: ""),
                         )
                         prefDao.saveLocationRecord(locationRecord)
 
