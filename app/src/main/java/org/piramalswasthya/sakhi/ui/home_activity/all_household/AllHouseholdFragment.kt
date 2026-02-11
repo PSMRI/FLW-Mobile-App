@@ -184,13 +184,13 @@ class AllHouseholdFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
-                (it as HomeActivity).updateActionBar(
+            if (prefDao.getLoggedInUser()?.role.equals("ASHA Supervisor", true)) {
+                (it as SupervisorActivity).updateActionBar(
                     R.drawable.ic__hh,
                     getString(R.string.icon_title_household)
                 )
             } else {
-                (it as SupervisorActivity).updateActionBar(
+                (it as HomeActivity).updateActionBar(
                     R.drawable.ic__hh,
                     getString(R.string.icon_title_household)
                 )
@@ -201,20 +201,20 @@ class AllHouseholdFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.btnNextPage.text = resources.getString(R.string.btn_text_frag_home_nhhr)
-        if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
-            binding.btnNextPage.visibility = View.VISIBLE
-        } else {
+        if (prefDao.getLoggedInUser()?.role.equals("ASHA Supervisor", true)) {
             binding.btnNextPage.visibility = View.GONE
+        } else {
+            binding.btnNextPage.visibility = View.VISIBLE
         }
 //        binding.tvEmptyContent.text = resources.getString(R.string.no_records_found_hh)
         val householdAdapter = HouseHoldListAdapter("",isDisease, prefDao, HouseHoldListAdapter.HouseholdClickListener({
-            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+//            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
                 findNavController().navigate(
                     AllHouseholdFragmentDirections.actionAllHouseholdFragmentToNewHouseholdFragment(
                         it
                     )
                 )
-            }
+//            }
         }, {
 //            val bundle = Bundle()
 //            bundle.putLong("hhId", it)
@@ -227,7 +227,7 @@ class AllHouseholdFragment : Fragment() {
                 )
             )
         }, {
-            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+//            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
                 if (it.numMembers == 0) {
                     findNavController().navigate(
                         AllHouseholdFragmentDirections.actionAllHouseholdFragmentToNewBenRegFragment(
@@ -239,7 +239,7 @@ class AllHouseholdFragment : Fragment() {
                     viewModel.setSelectedHouseholdId(it.hhId)
                     addBenAlert.show()
                 }
-            }
+//            }
 
         },
         {

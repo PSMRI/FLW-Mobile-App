@@ -61,10 +61,10 @@ class BenListAdapter(
 
             var gender = ""
 
-            if (pref?.getLoggedInUser()?.role.equals("asha", true)) {
-                binding.btnAbha.visibility = View.VISIBLE
-            } else {
+            if (pref?.getLoggedInUser()?.role.equals("ASHA Supervisor", true)) {
                 binding.btnAbha.visibility = View.GONE
+            } else {
+                binding.btnAbha.visibility = View.VISIBLE
             }
             if (!showSyncIcon) item.syncState = null
             binding.ben = item

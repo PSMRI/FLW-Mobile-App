@@ -83,13 +83,13 @@ class NcdRefferedList : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
-                (it as HomeActivity).updateActionBar(
+            if (prefDao.getLoggedInUser()?.role.equals("ASHA Supervisor", true)) {
+                (it as SupervisorActivity).updateActionBar(
                     R.drawable.ic__ncd_priority,
                     getString(R.string.ncd_refer_list)
                 )
             } else {
-                (it as SupervisorActivity).updateActionBar(
+                (it as HomeActivity).updateActionBar(
                     R.drawable.ic__ncd_priority,
                     getString(R.string.ncd_refer_list)
                 )

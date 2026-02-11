@@ -63,7 +63,7 @@ class EligibleCoupleTrackingListFragment : Fragment() {
         val benAdapter = ECTrackingListAdapter(
             ECTrackingListAdapter.ECTrackListClickListener(
                 addNewTrack = { benId, canAdd ->
-                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+//                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
                         if (canAdd)
                             findNavController().navigate(
                                 EligibleCoupleTrackingListFragmentDirections.actionEligibleCoupleTrackingListFragmentToEligibleCoupleTrackingFormFragment(
@@ -75,12 +75,12 @@ class EligibleCoupleTrackingListFragment : Fragment() {
                                 "Already filled for this Month!",
                                 Toast.LENGTH_LONG
                             ).show()
-                    }
+//                    }
             }, showAllTracks = {
-                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+//                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
                         viewModel.setClickedBenId(it)
                         bottomSheet.show(childFragmentManager, "ECT")
-                    }
+//                    }
             })
         )
         binding.rvAny.adapter = benAdapter
@@ -120,13 +120,13 @@ class EligibleCoupleTrackingListFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
-                (it as HomeActivity).updateActionBar(
+            if (prefDao.getLoggedInUser()?.role.equals("ASHA Supervisor", true)) {
+                (it as SupervisorActivity).updateActionBar(
                     R.drawable.ic__eligible_couple,
                     getString(R.string.eligible_couple_tracking_list)
                 )
             } else {
-                (it as SupervisorActivity).updateActionBar(
+                (it as HomeActivity).updateActionBar(
                     R.drawable.ic__eligible_couple,
                     getString(R.string.eligible_couple_tracking_list)
                 )

@@ -39,10 +39,10 @@ class AncVisitAdapter(private val clickListener: AncVisitClickListener, private 
             item: AncStatus, clickListener: AncVisitClickListener, pref: PreferenceDao?, isLastItem: Boolean
         ) {
 
-            if (pref?.getLoggedInUser()?.role.equals("asha", true)) {
-                binding.btnView.visibility = View.VISIBLE
-            } else {
+            if (pref?.getLoggedInUser()?.role.equals("ASHA Supervisor", true)) {
                 binding.btnView.visibility = View.GONE
+            } else {
+                binding.btnView.visibility = View.VISIBLE
             }
 
             binding.visit = item

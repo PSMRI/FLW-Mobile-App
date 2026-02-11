@@ -222,12 +222,12 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         super.onCreate(savedInstanceState)
         _binding = ActivityHomeBinding.inflate(layoutInflater)
 
-        if (pref?.getLoggedInUser()?.role.equals("asha", true)) {
-            binding.navView.menu.findItem(R.id.supervisorFragment).setVisible(false)
-            binding.navView.menu.findItem(R.id.homeFragment).setVisible(true)
-        } else {
+        if (pref?.getLoggedInUser()?.role.equals("ASHA Supervisor", true)) {
             binding.navView.menu.findItem(R.id.homeFragment).setVisible(false)
             binding.navView.menu.findItem(R.id.supervisorFragment).setVisible(true)
+        } else {
+            binding.navView.menu.findItem(R.id.supervisorFragment).setVisible(false)
+            binding.navView.menu.findItem(R.id.homeFragment).setVisible(true)
         }
 
         setContentView(binding.root)

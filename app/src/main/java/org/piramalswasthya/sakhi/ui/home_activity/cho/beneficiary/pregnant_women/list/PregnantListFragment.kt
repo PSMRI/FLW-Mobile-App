@@ -121,13 +121,13 @@ class PregnantListFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
-                (it as HomeActivity).updateActionBar(
+            if (prefDao.getLoggedInUser()?.role.equals("ASHA Supervisor", true)) {
+                (it as SupervisorActivity).updateActionBar(
                     R.drawable.ic__high_risk_preg,
                     getString(R.string.pregnant_women)
                 )
             } else {
-                (it as SupervisorActivity).updateActionBar(
+                (it as HomeActivity).updateActionBar(
                     R.drawable.ic__high_risk_preg,
                     getString(R.string.pregnant_women)
                 )
