@@ -2,7 +2,6 @@ package org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.cba
 
 import android.app.AlertDialog
 import android.app.DatePickerDialog
-import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -26,6 +25,7 @@ import org.piramalswasthya.sakhi.model.ReferalCache
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.disease_control.leprosy.form.LeprosyFormViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_screening.form.TBScreeningFormViewModel
+import org.piramalswasthya.sakhi.utils.HelperUtil
 import org.piramalswasthya.sakhi.utils.HelperUtil.findFragmentActivity
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
@@ -642,13 +642,7 @@ class CbacFragment : Fragment() {
             val activity = binding.etDate.context.findFragmentActivity()
                 ?: return@setOnClickListener
             val originalLocale = Locale.getDefault()
-            Locale.setDefault(Locale.ENGLISH)
-            val config = Configuration(activity.resources.configuration)
-            config.setLocale(Locale.ENGLISH)
-            activity.resources.updateConfiguration(
-                config,
-                activity.resources.displayMetrics
-            )
+            HelperUtil.setEnLocaleForDatePicker(activity)
 
             val datePickerDialog = DatePickerDialog(
                 it.context, { _, year, month, day ->
@@ -665,13 +659,7 @@ class CbacFragment : Fragment() {
             }
             datePickerDialog.show()
             datePickerDialog.setOnDismissListener {
-                Locale.setDefault(originalLocale)
-                val restoreConfig = Configuration(activity.resources.configuration)
-                restoreConfig.setLocale(originalLocale)
-                activity.resources.updateConfiguration(
-                    restoreConfig,
-                    activity.resources.displayMetrics
-                )
+                HelperUtil.setOriginalLocaleForDatePicker(activity,originalLocale)
             }
         }
         setupRaFill()

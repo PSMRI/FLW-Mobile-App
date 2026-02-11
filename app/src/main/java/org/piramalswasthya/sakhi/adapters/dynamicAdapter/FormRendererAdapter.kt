@@ -4,7 +4,6 @@
     import android.app.DatePickerDialog
     import android.content.ActivityNotFoundException
     import android.content.Intent
-    import android.content.res.Configuration
     import android.graphics.BitmapFactory
     import android.graphics.Color
     import android.graphics.Typeface
@@ -29,6 +28,7 @@
     import kotlinx.coroutines.launch
     import org.piramalswasthya.sakhi.R
     import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
+    import org.piramalswasthya.sakhi.utils.HelperUtil
     import org.piramalswasthya.sakhi.utils.HelperUtil.findFragmentActivity
     import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
     import timber.log.Timber
@@ -668,14 +668,7 @@
                                 val activity = editText.context.findFragmentActivity()
                                     ?: return@setOnClickListener
                                 val originalLocale = Locale.getDefault()
-                                Locale.setDefault(Locale.ENGLISH)
-                                val config = Configuration(activity.resources.configuration)
-                                config.setLocale(Locale.ENGLISH)
-                                activity.resources.updateConfiguration(
-                                    config,
-                                    activity.resources.displayMetrics
-                                )
-
+                                HelperUtil.setEnLocaleForDatePicker(activity)
 
                                 val calendar = Calendar.getInstance()
 
@@ -913,13 +906,7 @@
                                     }
 
                                     setOnDismissListener {
-                                        Locale.setDefault(originalLocale)
-                                        val restoreConfig = Configuration(activity.resources.configuration)
-                                        restoreConfig.setLocale(originalLocale)
-                                        activity.resources.updateConfiguration(
-                                            restoreConfig,
-                                            activity.resources.displayMetrics
-                                        )
+                                        HelperUtil.setOriginalLocaleForDatePicker(activity,originalLocale)
                                     }
 
                                 }.show()

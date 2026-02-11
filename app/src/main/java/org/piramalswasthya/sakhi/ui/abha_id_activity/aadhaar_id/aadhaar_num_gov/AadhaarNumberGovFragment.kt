@@ -1,7 +1,6 @@
 package org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.aadhaar_num_gov
 
 import android.app.DatePickerDialog
-import android.content.res.Configuration
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -15,6 +14,7 @@ import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import org.piramalswasthya.sakhi.databinding.FragmentAadhaarNumberGovBinding
 import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.AadhaarIdViewModel
+import org.piramalswasthya.sakhi.utils.HelperUtil
 import org.piramalswasthya.sakhi.utils.HelperUtil.findFragmentActivity
 import java.util.Calendar
 import java.util.Locale
@@ -101,13 +101,7 @@ class AadhaarNumberGovFragment : Fragment() {
             val activity = binding.dateEt.context.findFragmentActivity()
                 ?: return@setOnClickListener
             val originalLocale = Locale.getDefault()
-            Locale.setDefault(Locale.ENGLISH)
-            val config = Configuration(activity.resources.configuration)
-            config.setLocale(Locale.ENGLISH)
-            activity.resources.updateConfiguration(
-                config,
-                activity.resources.displayMetrics
-            )
+            HelperUtil.setEnLocaleForDatePicker(activity)
 
             val datePickerDialog = DatePickerDialog(
                 it.context,
@@ -123,13 +117,7 @@ class AadhaarNumberGovFragment : Fragment() {
             binding.tilEditText.error = null
             datePickerDialog.show()
             datePickerDialog.setOnDismissListener {
-                Locale.setDefault(originalLocale)
-                val restoreConfig = Configuration(activity.resources.configuration)
-                restoreConfig.setLocale(originalLocale)
-                activity.resources.updateConfiguration(
-                    restoreConfig,
-                    activity.resources.displayMetrics
-                )
+                HelperUtil.setOriginalLocaleForDatePicker(activity,originalLocale)
             }
             checkValidity()
         }

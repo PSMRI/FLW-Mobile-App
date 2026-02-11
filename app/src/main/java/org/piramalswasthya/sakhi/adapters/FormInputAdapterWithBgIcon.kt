@@ -4,7 +4,6 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.res.ColorStateList
-import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Color
 import android.net.Uri
@@ -52,7 +51,6 @@ import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.getDateString
 import org.piramalswasthya.sakhi.model.AgeUnitDTO
 import org.piramalswasthya.sakhi.model.FormElement
-import org.piramalswasthya.sakhi.model.FormInputOld
 import org.piramalswasthya.sakhi.model.InputType
 import org.piramalswasthya.sakhi.model.InputType.AGE_PICKER
 import org.piramalswasthya.sakhi.model.InputType.BUTTON
@@ -68,6 +66,7 @@ import org.piramalswasthya.sakhi.model.InputType.TEXT_VIEW
 import org.piramalswasthya.sakhi.model.InputType.TIME_PICKER
 import org.piramalswasthya.sakhi.model.InputType.values
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.AgePickerDialog
+import org.piramalswasthya.sakhi.utils.HelperUtil
 import org.piramalswasthya.sakhi.utils.HelperUtil.findFragmentActivity
 import org.piramalswasthya.sakhi.utils.HelperUtil.getAgeStrFromAgeUnit
 import org.piramalswasthya.sakhi.utils.HelperUtil.getDobFromAge
@@ -86,7 +85,6 @@ class FormInputAdapterWithBgIcon (
     private val isEnabled: Boolean = true
 ) : ListAdapter<FormElement, ViewHolder>(FormInputDiffCallBack) {
 
-
     object FormInputDiffCallBack : DiffUtil.ItemCallback<FormElement>() {
         override fun areItemsTheSame(oldItem: FormElement, newItem: FormElement) =
             oldItem.id == newItem.id
@@ -96,8 +94,6 @@ class FormInputAdapterWithBgIcon (
             return oldItem.errorText == newItem.errorText
         }
     }
-
-
 
     class EditTextInputViewHolder private constructor(private val binding: RvItemFormEditTextWithBgIconBinding) :
         ViewHolder(binding.root) {
@@ -512,13 +508,7 @@ class FormInputAdapterWithBgIcon (
                 val activity = binding.et.context.findFragmentActivity()
                     ?: return@setOnClickListener
                 val originalLocale = Locale.getDefault()
-                Locale.setDefault(Locale.ENGLISH)
-                val config = Configuration(activity.resources.configuration)
-                config.setLocale(Locale.ENGLISH)
-                activity.resources.updateConfiguration(
-                    config,
-                    activity.resources.displayMetrics
-                )
+                HelperUtil.setEnLocaleForDatePicker(activity)
 
                 item.value?.let { value ->
                     thisYear = value.substring(6).toInt()
@@ -553,22 +543,10 @@ class FormInputAdapterWithBgIcon (
                     datePickerDialog.show()
                 }else{
                     Toast.makeText(binding.root.context,"Something went wrong",Toast.LENGTH_SHORT).show()
-                    Locale.setDefault(originalLocale)
-                    val restoreConfig = Configuration(activity.resources.configuration)
-                    restoreConfig.setLocale(originalLocale)
-                    activity.resources.updateConfiguration(
-                        restoreConfig,
-                        activity.resources.displayMetrics
-                    )
+                    HelperUtil.setOriginalLocaleForDatePicker(activity,originalLocale)
                 }
                 datePickerDialog.setOnDismissListener {
-                    Locale.setDefault(originalLocale)
-                    val restoreConfig = Configuration(activity.resources.configuration)
-                    restoreConfig.setLocale(originalLocale)
-                    activity.resources.updateConfiguration(
-                        restoreConfig,
-                        activity.resources.displayMetrics
-                    )
+                    HelperUtil.setOriginalLocaleForDatePicker(activity,originalLocale)
                 }
             }
             binding.executePendingBindings()
@@ -1060,13 +1038,7 @@ class FormInputAdapterWithBgIcon (
                 val activity = binding.etDate.context.findFragmentActivity()
                     ?: return@setOnClickListener
                 val originalLocale = Locale.getDefault()
-                Locale.setDefault(Locale.ENGLISH)
-                val config = Configuration(activity.resources.configuration)
-                config.setLocale(Locale.ENGLISH)
-                activity.resources.updateConfiguration(
-                    config,
-                    activity.resources.displayMetrics
-                )
+                HelperUtil.setEnLocaleForDatePicker(activity)
 
                 item.value?.let { value ->
                     thisYear = value.substring(6).toInt()
@@ -1102,13 +1074,7 @@ class FormInputAdapterWithBgIcon (
                     datePickerDialog.datePicker.touchables[0].performClick()
                 datePickerDialog.show()
                 datePickerDialog.setOnDismissListener {
-                    Locale.setDefault(originalLocale)
-                    val restoreConfig = Configuration(activity.resources.configuration)
-                    restoreConfig.setLocale(originalLocale)
-                    activity.resources.updateConfiguration(
-                        restoreConfig,
-                        activity.resources.displayMetrics
-                    )
+                    HelperUtil.setOriginalLocaleForDatePicker(activity,originalLocale)
                 }
             }
             binding.executePendingBindings()

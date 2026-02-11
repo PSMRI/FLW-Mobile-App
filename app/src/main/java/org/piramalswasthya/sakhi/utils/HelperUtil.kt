@@ -63,6 +63,26 @@ object HelperUtil {
         return null
     }
 
+    fun setEnLocaleForDatePicker(activity: FragmentActivity){
+        Locale.setDefault(Locale.ENGLISH)
+        val config = Configuration(activity.resources.configuration)
+        config.setLocale(Locale.ENGLISH)
+        activity.resources.updateConfiguration(
+            config,
+            activity.resources.displayMetrics
+        )
+    }
+
+    fun setOriginalLocaleForDatePicker(activity: FragmentActivity, originalLocale: Locale){
+        Locale.setDefault(originalLocale)
+        val restoreConfig = Configuration(activity.resources.configuration)
+        restoreConfig.setLocale(originalLocale)
+        activity.resources.updateConfiguration(
+            restoreConfig,
+            activity.resources.displayMetrics
+        )
+    }
+
 
     private val dateFormat = SimpleDateFormat("EEE, MMM dd yyyy", Locale.ENGLISH)
 
