@@ -134,10 +134,10 @@ class NcdListFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
-                (it as HomeActivity).updateActionBar(R.drawable.ic__ben, getString(R.string.ncd_list))
-            } else {
+            if (prefDao.getLoggedInUser()?.role.equals("ASHA Supervisor", true)) {
                 (it as SupervisorActivity).updateActionBar(R.drawable.ic__ben, getString(R.string.ncd_list))
+            } else {
+                (it as HomeActivity).updateActionBar(R.drawable.ic__ben, getString(R.string.ncd_list))
             }
         }
     }

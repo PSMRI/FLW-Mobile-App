@@ -118,13 +118,13 @@ class AshaProfileFragment : Fragment() {
         }
 
         val householdAdapter = HouseHoldListAdapter("",false, prefDao, HouseHoldListAdapter.HouseholdClickListener({
-            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+//            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
                 findNavController().navigate(
                     AllHouseholdFragmentDirections.actionAllHouseholdFragmentToNewHouseholdFragment(
                         it
                     )
                 )
-            }
+//            }
         }, {
            /* val bundle = Bundle()
             bundle.putLong("hhId", it)
@@ -138,7 +138,7 @@ class AshaProfileFragment : Fragment() {
                 )
             )
         }, {
-            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+//            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
                 if (it.numMembers == 0) {
                     findNavController().navigate(
                         AshaProfileFragmentDirections.actionAshaProfileFragmentToNewBenRegFragment(
@@ -151,7 +151,7 @@ class AshaProfileFragment : Fragment() {
                     viewModel.setSelectedHouseholdId(it.hhId)
                     addBenAlert.show()
                 }
-            }
+//            }
 
         },
         {

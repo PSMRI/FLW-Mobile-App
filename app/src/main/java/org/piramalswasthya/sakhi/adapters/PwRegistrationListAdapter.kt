@@ -49,10 +49,10 @@ class PwRegistrationListAdapter(
             pref: PreferenceDao?
         ) {
 
-            if (pref?.getLoggedInUser()?.role.equals("asha", true)) {
-                binding.btnFormEc1.visibility = View.VISIBLE
-            } else {
+            if (pref?.getLoggedInUser()?.role.equals("ASHA Supervisor", true)) {
                 binding.btnFormEc1.visibility = View.GONE
+            } else {
+                binding.btnFormEc1.visibility = View.VISIBLE
             }
 
             binding.benWithPwr = item

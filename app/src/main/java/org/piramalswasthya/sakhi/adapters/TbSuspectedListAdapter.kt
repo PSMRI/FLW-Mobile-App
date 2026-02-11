@@ -45,10 +45,10 @@ class TbSuspectedListAdapter(
             pref: PreferenceDao?
         ) {
 
-            if (pref?.getLoggedInUser()?.role.equals("asha", true)) {
-                binding.btnFormTb.visibility = View.VISIBLE
-            } else {
+            if (pref?.getLoggedInUser()?.role.equals("ASHA Supervisor", true)) {
                 binding.btnFormTb.visibility = View.INVISIBLE
+            } else {
+                binding.btnFormTb.visibility = View.VISIBLE
             }
 
             binding.benWithTb = item

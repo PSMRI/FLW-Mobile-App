@@ -52,14 +52,14 @@ class HRPAdapter(
             pref: PreferenceDao?
         ) {
 
-            if (pref?.getLoggedInUser()?.role.equals("asha", true)) {
-                binding.btnForm3.visibility = View.VISIBLE
-                binding.btnForm2.visibility = View.VISIBLE
-                binding.btnForm1.visibility = View.VISIBLE
-            } else {
+            if (pref?.getLoggedInUser()?.role.equals("ASHA Supervisor", true)) {
                 binding.btnForm3.visibility = View.INVISIBLE
                 binding.btnForm2.visibility = View.INVISIBLE
                 binding.btnForm1.visibility = View.INVISIBLE
+            } else {
+                binding.btnForm3.visibility = View.VISIBLE
+                binding.btnForm2.visibility = View.VISIBLE
+                binding.btnForm1.visibility = View.VISIBLE
             }
 
             binding.benWithhrpa = item

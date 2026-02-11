@@ -52,12 +52,12 @@ class AncVisitListAdapter(
             isHighRiskMode: Boolean
         ) {
 
-            if (pref?.getLoggedInUser()?.role.equals("asha", true)) {
-                binding.btnPmsma.visibility = View.VISIBLE
-                binding.btnAddAnc.visibility = View.VISIBLE
-            } else {
+            if (pref?.getLoggedInUser()?.role.equals("ASHA Supervisor", true)) {
                 binding.btnPmsma.visibility = View.INVISIBLE
                 binding.btnAddAnc.visibility = View.INVISIBLE
+            } else {
+                binding.btnPmsma.visibility = View.VISIBLE
+                binding.btnAddAnc.visibility = View.VISIBLE
             }
 
             if (item.ancDate == 0L) {
