@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.RvItemBenWithFormBinding
 import org.piramalswasthya.sakhi.model.BenBasicDomainForForm
+import org.piramalswasthya.sakhi.utils.RoleConstants
 
 class BenListAdapterForForm(
     private val clickListener: ClickListener? = null,
@@ -54,7 +55,7 @@ class BenListAdapterForForm(
 
             binding.isGeneralForm = isGeneralForm == true
 
-            if (pref?.getLoggedInUser()?.role.equals("ASHA Supervisor", true)) {
+            if (pref?.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
                 binding.btnForm1.visibility = View.INVISIBLE
                 binding.btnForm2.visibility = View.INVISIBLE
                 binding.btnForm3.visibility = View.INVISIBLE

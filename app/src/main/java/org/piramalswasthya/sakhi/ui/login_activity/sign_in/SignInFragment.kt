@@ -32,6 +32,7 @@ import org.piramalswasthya.sakhi.model.LocationEntity
 import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
+import org.piramalswasthya.sakhi.utils.RoleConstants
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import javax.inject.Inject
 
@@ -191,7 +192,7 @@ class SignInFragment : Fragment() {
                     binding.tvError.visibility = View.GONE
 
                     val loggedInUser = prefDao.getLoggedInUser()
-                    if (loggedInUser?.role.equals("ASHA Supervisor", true)) {
+                    if (loggedInUser?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
                         val user = loggedInUser!!
                         val village = user.villages.firstOrNull()
                         val locationRecord = LocationRecord(
@@ -208,12 +209,12 @@ class SignInFragment : Fragment() {
                         startActivity(goToHome)
                     } else {
                         WorkerUtils.triggerGenBenIdWorker(requireContext())
-                        if (BuildConfig.FLAVOR.equals("niramay", true))  {
+                        if (BuildConfig.FLAVOR.equals("niramay", true)) {
                             if (viewModel.getLoggedInUser()?.serviceMapId == 1718 ||
                                 //Below ServiceMapId are form Indian Oil Project
                                 viewModel.getLoggedInUser()?.serviceMapId ==1722 ||
                                 viewModel.getLoggedInUser()?.serviceMapId ==1723 ||
-                                viewModel.getLoggedInUser()?.serviceMapId ==1724){
+                                viewModel.getLoggedInUser()?.serviceMapId ==1724) {
                                 findNavController().navigate(
                                     if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
                                     else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
@@ -225,8 +226,8 @@ class SignInFragment : Fragment() {
                                 Toast.makeText(requireContext(),"This user is not from Niramay Project",Toast.LENGTH_SHORT).show()
                             }
 
-                        } else if(BuildConfig.FLAVOR.equals("xushrukha", true)){
-                            if (viewModel.getLoggedInUser()?.serviceMapId == 1716){
+                        } else if (BuildConfig.FLAVOR.equals("xushrukha", true)) {
+                            if (viewModel.getLoggedInUser()?.serviceMapId == 1716) {
                                 findNavController().navigate(
                                     if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
                                     else SignInFragmentDirections.actionSignInFragmentToHomeActivity())

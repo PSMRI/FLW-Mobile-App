@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.RvItemBenPwRegistrationListWithFormBinding
 import org.piramalswasthya.sakhi.model.BenWithPwrDomain
+import org.piramalswasthya.sakhi.utils.RoleConstants
 
 class PwRegistrationListAdapter(
     private val clickListener: ClickListener? = null,
@@ -49,7 +50,7 @@ class PwRegistrationListAdapter(
             pref: PreferenceDao?
         ) {
 
-            if (pref?.getLoggedInUser()?.role.equals("ASHA Supervisor", true)) {
+            if (pref?.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
                 binding.btnFormEc1.visibility = View.GONE
             } else {
                 binding.btnFormEc1.visibility = View.VISIBLE

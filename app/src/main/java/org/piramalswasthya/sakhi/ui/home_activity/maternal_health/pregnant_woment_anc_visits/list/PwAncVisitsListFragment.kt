@@ -27,6 +27,7 @@ import javax.inject.Inject
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pmsma.PmsmaViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pmsma.list.PmsmaBottomSheetFragment
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pmsma.list.PmsmaVisitsListViewModel
+import org.piramalswasthya.sakhi.utils.RoleConstants
 
 @AndroidEntryPoint
 class PwAncVisitsListFragment : Fragment() {
@@ -145,7 +146,7 @@ class PwAncVisitsListFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            if (prefDao.getLoggedInUser()?.role.equals("ASHA Supervisor", true)) {
+            if (prefDao.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
                 (it as SupervisorActivity).updateActionBar(
                     R.drawable.ic__anc_visit,
                     getString(R.string.icon_title_pmt)

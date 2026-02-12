@@ -12,6 +12,7 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.RvItemBenWithHrpaFormBinding
 import org.piramalswasthya.sakhi.model.BenWithHRPADomain
+import org.piramalswasthya.sakhi.utils.RoleConstants
 
 class HRPAdapter(
     private val clickListener: HRPAClickListener? = null,
@@ -52,7 +53,7 @@ class HRPAdapter(
             pref: PreferenceDao?
         ) {
 
-            if (pref?.getLoggedInUser()?.role.equals("ASHA Supervisor", true)) {
+            if (pref?.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
                 binding.btnForm3.visibility = View.INVISIBLE
                 binding.btnForm2.visibility = View.INVISIBLE
                 binding.btnForm1.visibility = View.INVISIBLE
