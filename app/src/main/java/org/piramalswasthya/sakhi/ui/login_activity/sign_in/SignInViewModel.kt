@@ -129,4 +129,15 @@ class SignInViewModel @Inject constructor(
         _state.value = state
     }
 
+    /**
+     * Used ONLY for legacy JWT migration.
+     * No LiveData, no UI side effects.
+     */
+    suspend fun authenticateForMigration(
+        username: String,
+        password: String
+    ): NetworkResponse<User?> {
+        return userRepo.authenticateUser(username, password)
+    }
+
 }
