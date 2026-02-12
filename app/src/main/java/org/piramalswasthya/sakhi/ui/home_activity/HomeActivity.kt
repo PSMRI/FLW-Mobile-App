@@ -66,6 +66,7 @@ import org.piramalswasthya.sakhi.ui.home_activity.sync.SyncBottomSheetFragment
 import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
 import org.piramalswasthya.sakhi.ui.service_location_activity.ServiceLocationActivity
 import org.piramalswasthya.sakhi.utils.KeyUtils
+import org.piramalswasthya.sakhi.utils.RoleConstants
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import java.io.File
 import java.net.URI
@@ -222,12 +223,12 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         super.onCreate(savedInstanceState)
         _binding = ActivityHomeBinding.inflate(layoutInflater)
 
-        if (pref?.getLoggedInUser()?.role.equals("asha", true)) {
-            binding.navView.menu.findItem(R.id.supervisorFragment).setVisible(false)
-            binding.navView.menu.findItem(R.id.homeFragment).setVisible(true)
-        } else {
+        if (pref?.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
             binding.navView.menu.findItem(R.id.homeFragment).setVisible(false)
             binding.navView.menu.findItem(R.id.supervisorFragment).setVisible(true)
+        } else {
+            binding.navView.menu.findItem(R.id.supervisorFragment).setVisible(false)
+            binding.navView.menu.findItem(R.id.homeFragment).setVisible(true)
         }
 
         setContentView(binding.root)

@@ -23,6 +23,7 @@ import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBindin
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.utils.RoleConstants
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -81,7 +82,6 @@ class HouseholdMembersFragment : Fragment() {
         val benAdapter = BenListAdapter(
             clickListener = BenListAdapter.BenClickListener(
                 { hhId, benId, relToHeadId ->
-                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
                         if (viewModel.isFromDisease == 0) {
                             findNavController().navigate(
                                 HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToNewBenRegFragment(
@@ -110,14 +110,11 @@ class HouseholdMembersFragment : Fragment() {
                                 )
                             }
                         }
-                    }
                 },
                 {
                 },
                 { benId, hhId ->
-                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
                         checkAndGenerateABHA(benId)
-                    }
                 },
                 { benId, hhId, isViewMode, isIFA ->
                 },
@@ -176,13 +173,13 @@ class HouseholdMembersFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
-                (it as HomeActivity).updateActionBar(
+            if (prefDao.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
+                (it as SupervisorActivity).updateActionBar(
                     R.drawable.ic__hh,
                     getString(R.string.household_members)
                 )
             } else {
-                (it as SupervisorActivity).updateActionBar(
+                (it as HomeActivity).updateActionBar(
                     R.drawable.ic__hh,
                     getString(R.string.household_members)
                 )
