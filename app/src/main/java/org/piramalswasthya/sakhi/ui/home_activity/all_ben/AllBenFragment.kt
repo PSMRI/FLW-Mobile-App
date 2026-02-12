@@ -29,6 +29,7 @@ import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registration.EyeSurgeryFormViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.all_household.AllHouseholdFragmentDirections
+import org.piramalswasthya.sakhi.utils.RoleConstants
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -157,7 +158,6 @@ class AllBenFragment : Fragment() {
             clickListener = BenListAdapter.BenClickListener(
                 { hhId, benId, relToHeadId ->
 
-                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
                         findNavController().navigate(
                             AllBenFragmentDirections.actionAllBenFragmentToNewBenRegFragment(
                                 hhId = hhId,
@@ -167,7 +167,6 @@ class AllBenFragment : Fragment() {
 
                             )
                         )
-                    }
 
                 },
                 {
@@ -176,7 +175,6 @@ class AllBenFragment : Fragment() {
                     checkAndGenerateABHA(benId)
                 },
                 { benId, hhId , isViewMode, isIFA->
-                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
                         if (isIFA){
                             findNavController().navigate(
                                 AllBenFragmentDirections.actionAllBenFragmentToBenIfaFormFragment(
@@ -195,7 +193,6 @@ class AllBenFragment : Fragment() {
                             )
                         }
 
-                    }
                 },
                 {
                     try {
@@ -303,8 +300,8 @@ class AllBenFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
-                (it as HomeActivity).updateActionBar(
+            if (prefDao.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
+                (it as SupervisorActivity).updateActionBar(
                     R.drawable.ic__ben,
                     title = if (args.source == 1) {
                         getString(R.string.icon_title_abhas)
@@ -315,7 +312,7 @@ class AllBenFragment : Fragment() {
                     }
                 )
             } else {
-                (it as SupervisorActivity).updateActionBar(
+                (it as HomeActivity).updateActionBar(
                     R.drawable.ic__ben,
                     title = if (args.source == 1) {
                         getString(R.string.icon_title_abhas)
