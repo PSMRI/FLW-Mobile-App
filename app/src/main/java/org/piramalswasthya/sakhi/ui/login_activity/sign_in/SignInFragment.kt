@@ -302,6 +302,7 @@ class SignInFragment : Fragment() {
         _binding = null
     }
 
+
     private suspend fun migrateLegacySessionIfNeeded() {
         if (!prefDao.getJWTAmritToken().isNullOrBlank()) return
 
@@ -309,10 +310,23 @@ class SignInFragment : Fragment() {
         if (legacyToken.isNullOrBlank()) return
 
         val user = prefDao.getLoggedInUser() ?: return
-        viewModel.authUser(
-            user.userName,
-            user.password
-        )
+
+        when (
+            val result = viewModel.authenticateForMigration(
+                user.userName,
+                user.password
+            )
+        ) {
+            is NetworkResponse.Success -> {
+                //Currenltly Implementation not required
+            }
+
+            is NetworkResponse.Error -> {
+               //Currenltly Implementation not required
+            }
+
+            else -> Unit
+        }
     }
 
 }
