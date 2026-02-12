@@ -143,8 +143,10 @@ interface AmritApiService {
     @POST("flw-api/disease/getAllDisease")
     suspend fun getMalariaScreeningData(@Body userDetail: GetDataPaginatedRequestForDisease): Response<ResponseBody>
 
-    @GET("flw-api/irsRound/list")
-    suspend fun getScreeningData(@Query("householdId") householdId:Int): Response<ResponseBody>
+    @GET("flw-api/irsRound/list/{householdId}")
+    suspend fun getScreeningData(
+        @Path("householdId") householdId: Long
+    ): Response<ResponseBody>
 
     @POST("flw-api/adolescentHealth/getAll")
     suspend fun getAdolescentHealthData(@Body userDetail: GetDataPaginatedRequest): Response<ResponseBody>
