@@ -1,12 +1,9 @@
 package org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.vhnd
 
-import android.app.AlertDialog
 import android.content.Context
 import android.net.Uri
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -18,8 +15,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.configuration.VHNDDataset
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
-import org.piramalswasthya.sakhi.model.BenRegCache
-import org.piramalswasthya.sakhi.model.HRPMicroBirthPlanCache
 import org.piramalswasthya.sakhi.model.VHNDCache
 import org.piramalswasthya.sakhi.repositories.VLFRepo
 import timber.log.Timber
@@ -42,7 +37,6 @@ constructor(
     @RequiresApi(Build.VERSION_CODES.O)
     val isCurrentMonthFormFilled : Flow<Map<String, Boolean>> = vlfReo.isFormFilledForCurrentMonth()
 
-    //
     private var lastImageFormId: Int = 0
     fun setCurrentImageFormId(id: Int) {
         lastImageFormId = id
@@ -50,20 +44,7 @@ constructor(
 
     fun setImageUriToFormElement(dpUri: Uri) {
         dataset.setImageUriToFormElement(lastImageFormId, dpUri)
-//        Log.v("jnjdnjsadd>>","$dpUri")
     }
-//    private val _dateVHND = MutableLiveData<String>()
-//    val dateVHND: LiveData<String>
-//        get() = _dateVHND
-//
-//    private val _noOfBenAttVHND = MutableLiveData<String>()
-//    val noOfBenAttVHND: LiveData<String>
-//        get() = _noOfBenAttVHND
-//
-//    private val _placeVHND = MutableLiveData<String>()
-//    val placeVHND: LiveData<String>
-//        get() = _placeVHND
-
 
     private val _state = MutableLiveData(State.IDLE)
     val state: LiveData<State>
@@ -71,6 +52,7 @@ constructor(
     private val _recordExists = MutableLiveData<Boolean>()
     val recordExists: LiveData<Boolean>
         get() = _recordExists
+
     private val dataset =
         VHNDDataset(context, preferenceDao.getCurrentLanguage())
     val formList = dataset.listFlow
@@ -78,20 +60,15 @@ constructor(
 
     init {
         viewModelScope.launch {
-
             _vhndCache = VHNDCache(id = 0, vhndDate = "");
-            val vhndIds = vlfReo.getVHND(vhndId)
             vlfReo.getVHND(vhndId)?.let {
                 _vhndCache = it
                 _recordExists.value = true
+                dataset.setUpPage(it)
             } ?: run {
                 _recordExists.value = false
+                dataset.setUpPage(null)
             }
-            dataset.setUpPage(
-                if (recordExists.value == true) vhndIds else null
-            )
-
-
         }
     }
 

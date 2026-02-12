@@ -14,6 +14,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
+import org.piramalswasthya.sakhi.ui.common.attachAdapterUnsavedGuard
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.work.WorkerUtils
@@ -54,12 +55,10 @@ class TBSuspectedFragment : Fragment() {
                 )
                 binding.btnSubmit.isEnabled = !recordExists
                 binding.form.rvInputForm.adapter = adapter
+                attachAdapterUnsavedGuard(adapter)
                 lifecycleScope.launch {
-                    viewModel.formList.collect {
-                        if (it.isNotEmpty())
-
-                            adapter.submitList(it)
-
+                    viewModel.formList.collect { list ->
+                        if (list.isNotEmpty()) adapter.submitList(list)
                     }
                 }
             }

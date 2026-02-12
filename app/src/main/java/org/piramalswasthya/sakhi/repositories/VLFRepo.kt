@@ -70,6 +70,12 @@ class VLFRepo @Inject constructor(
         }
     }
 
+    suspend fun deleteVHNDById(id: Int) {
+        withContext(Dispatchers.IO) {
+            database.vlfDao.deleteVHNDById(id)
+        }
+    }
+
     suspend fun saveRecord(vhndCache: VHNDCache) {
         withContext(Dispatchers.IO) {
             database.vlfDao.saveRecord(vhndCache)
@@ -82,6 +88,12 @@ class VLFRepo @Inject constructor(
     suspend fun getVHNC(id: Int): VHNCCache? {
         return withContext(Dispatchers.IO) {
             database.vlfDao.getVHNC(id)
+        }
+    }
+
+    suspend fun deleteVHNCById(id: Int) {
+        withContext(Dispatchers.IO) {
+            database.vlfDao.deleteVHNCById(id)
         }
     }
 
@@ -101,6 +113,12 @@ class VLFRepo @Inject constructor(
         }
     }
 
+    suspend fun deletePHCById(id: Int) {
+        withContext(Dispatchers.IO) {
+            database.vlfDao.deletePHCById(id)
+        }
+    }
+
     suspend fun saveRecord(phcCache: PHCReviewMeetingCache) {
         withContext(Dispatchers.IO) {
             database.vlfDao.saveRecord(phcCache)
@@ -117,6 +135,12 @@ class VLFRepo @Inject constructor(
         }
     }
 
+    suspend fun deleteAHDById(id: Int) {
+        withContext(Dispatchers.IO) {
+            database.vlfDao.deleteAHDById(id)
+        }
+    }
+
     suspend fun saveAHDRecord(ahdCache: AHDCache) {
         withContext(Dispatchers.IO) {
             database.vlfDao.saveRecord(ahdCache)
@@ -130,6 +154,12 @@ class VLFRepo @Inject constructor(
     suspend fun getDeworming(id: Int): DewormingCache? {
         return withContext(Dispatchers.IO) {
             database.vlfDao.getDeworming(id)
+        }
+    }
+
+    suspend fun deleteDewormingById(id: Int) {
+        withContext(Dispatchers.IO) {
+            database.vlfDao.deleteDewormingById(id)
         }
     }
 

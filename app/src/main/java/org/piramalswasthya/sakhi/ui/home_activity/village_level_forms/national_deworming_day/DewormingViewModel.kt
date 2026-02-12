@@ -67,16 +67,14 @@ class DewormingViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             _dewormingCache = DewormingCache(id = 0)
-            val dewormingRecord = vlfRepo.getDeworming(dewormingId)
-            dewormingRecord?.let {
+            vlfRepo.getDeworming(dewormingId)?.let {
                 _dewormingCache = it
                 _recordExists.value = true
+                dataset.setUpPage(it)
             } ?: run {
                 _recordExists.value = false
+                dataset.setUpPage(null)
             }
-            dataset.setUpPage(
-                if (recordExists.value == true) dewormingRecord else null
-            )
         }
     }
 

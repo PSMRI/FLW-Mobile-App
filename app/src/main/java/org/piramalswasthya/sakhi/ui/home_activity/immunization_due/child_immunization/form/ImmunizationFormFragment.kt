@@ -25,6 +25,8 @@ import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.ChildImmunizationVaccineAdapter
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
+import org.piramalswasthya.sakhi.adapters.FormInputAdapterWithBgIcon
+import org.piramalswasthya.sakhi.ui.common.attachAdapterUnsavedGuard
 import org.piramalswasthya.sakhi.databinding.FragmentImmunizationFormBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.model.ImmunizationDetailsDomain
@@ -186,6 +188,7 @@ class ImmunizationFormFragment : Fragment(), OnCheckedChangeListener {
                     isEnabled = !recordExists
                 )
                 binding.form.rvInputForm.adapter = adapter
+                attachAdapterUnsavedGuard(adapter as FormInputAdapterWithBgIcon)
                 lifecycleScope.launch {
                     viewModel.formList.collect {
                         if (it.isNotEmpty())

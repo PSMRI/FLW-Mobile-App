@@ -16,6 +16,9 @@ interface MaaMeetingDao {
     @Query("SELECT * FROM MAA_MEETING WHERE id = :id LIMIT 1")
     suspend fun getMaaMeetingById(id: Long): MaaMeetingEntity?
 
+    @Query("SELECT * FROM MAA_MEETING WHERE ashaId = :ashaId AND isDraft = 1 LIMIT 1")
+    suspend fun getDraftMaaMeeting(ashaId: Int): MaaMeetingEntity?
+
     @Query("select * from MAA_MEETING where syncState = :state")
     fun getBySyncState(state: SyncState): List<MaaMeetingEntity>
 
@@ -25,11 +28,12 @@ interface MaaMeetingDao {
     @Query("select * from MAA_MEETING")
     fun getAll(): List<MaaMeetingEntity>
 
-    @Query("SELECT * FROM MAA_MEETING")
+    @Query("SELECT * FROM MAA_MEETING WHERE isDraft = 0")
     fun getAllMaaData(): Flow<List<MaaMeetingEntity>>
+
+    @Query("DELETE FROM MAA_MEETING WHERE id = :id")
+    suspend fun deleteById(id: Long)
 
     @Query("delete from MAA_MEETING")
     fun clearAll()
 }
-
-

@@ -18,7 +18,6 @@ import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.AHDCache
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.repositories.VLFRepo
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -33,7 +32,6 @@ class AHDViewModel @Inject constructor(
         IDLE, SAVING, SAVE_SUCCESS, SAVE_FAILED
     }
 
-    // AHDViewModel.kt (already present, just ensure it's correct)
     fun getCurrentFormList(): List<FormElement> {
         return dataset.getFormElementList()
     }
@@ -68,16 +66,14 @@ class AHDViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             _ahdCache = AHDCache(id = 0, mobilizedForAHD = "")
-            val ahdRecord = vlfRepo.getAHD(ahdId)
             vlfRepo.getAHD(ahdId)?.let {
                 _ahdCache = it
                 _recordExists.value = true
+                dataset.setUpPage(it)
             } ?: run {
                 _recordExists.value = false
+                dataset.setUpPage(null)
             }
-            dataset.setUpPage(
-                if (recordExists.value == true) ahdRecord else null
-            )
         }
     }
 
@@ -95,7 +91,6 @@ class AHDViewModel @Inject constructor(
                 vlfRepo.saveAHDRecord(_ahdCache)
                 _state.postValue(State.SAVE_SUCCESS)
             } catch (e: Exception) {
-                Timber.d("saving AHD data failed!!")
                 _state.postValue(State.SAVE_FAILED)
             }
         }

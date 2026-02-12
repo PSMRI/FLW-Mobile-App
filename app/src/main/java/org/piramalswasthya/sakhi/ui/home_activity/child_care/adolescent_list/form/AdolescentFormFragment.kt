@@ -14,6 +14,8 @@ import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentAdolescentHealthBinding
+import org.piramalswasthya.sakhi.ui.common.attachAdapterUnsavedGuard
+import org.piramalswasthya.sakhi.ui.common.showDraftRestoreDialog
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
@@ -47,6 +49,13 @@ class AdolescentHealthFormFragment : Fragment() {
                     }, isEnabled = !recordExists
                 )
                 binding.form.rvInputForm.adapter = adapter
+
+                // Attach Unsaved Changes Guard
+                attachAdapterUnsavedGuard(
+                    dirtyState = adapter,
+                    onSaveDraft = { viewModel.saveDraft() }
+                )
+
                 lifecycleScope.launch {
                     viewModel.formList.collect {
                         if (it.isNotEmpty()) {
@@ -55,6 +64,10 @@ class AdolescentHealthFormFragment : Fragment() {
                     }
                 }
             }
+        }
+
+        viewModel.draftExists.observe(viewLifecycleOwner) { draft ->
+            showDraftRestoreDialog(draft, viewModel)
         }
 
         viewModel.benName.observe(viewLifecycleOwner) {

@@ -28,13 +28,14 @@ import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
+import org.piramalswasthya.sakhi.adapters.FormInputAdapterWithBgIcon
+import org.piramalswasthya.sakhi.ui.common.attachAdapterUnsavedGuard
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.databinding.LayoutMediaOptionsBinding
 import org.piramalswasthya.sakhi.databinding.LayoutViewMediaBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.ui.checkFileSize
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
-import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.form.PwAncFormFragmentDirections
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import java.io.File
 
@@ -106,6 +107,7 @@ class DeliveryOutcomeFragment : Fragment() {
                 )
                 binding.btnSubmit.isEnabled = !recordExists
                 binding.form.rvInputForm.adapter = adapter
+                attachAdapterUnsavedGuard(adapter as FormInputAdapterWithBgIcon)
                 lifecycleScope.launch { viewModel.formList.collect { if (it.isNotEmpty()) adapter.submitList(it) } }
             }
         }

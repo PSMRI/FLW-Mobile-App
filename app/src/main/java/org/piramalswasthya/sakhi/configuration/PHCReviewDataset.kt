@@ -2,19 +2,15 @@ package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
-import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.Languages
-import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.InputType
 import org.piramalswasthya.sakhi.model.InputType.DATE_PICKER
 import org.piramalswasthya.sakhi.model.InputType.EDIT_TEXT
 import org.piramalswasthya.sakhi.model.InputType.IMAGE_VIEW
 import org.piramalswasthya.sakhi.model.PHCReviewMeetingCache
-import org.piramalswasthya.sakhi.model.VHNCCache
 import org.piramalswasthya.sakhi.utils.HelperUtil.parseSelections
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -33,6 +29,7 @@ class PHCReviewDataset(
 
     }
 
+    private val formElementList = mutableListOf<FormElement>()
 
     private val phcReviewDate = FormElement(
         id = 3,
@@ -130,8 +127,6 @@ class PHCReviewDataset(
                 listOf(
                    mitanin,
                     mT,
-
-
                 )
             )
         }
@@ -167,9 +162,12 @@ class PHCReviewDataset(
             }
 
         }
+        formElementList.clear()
+        formElementList.addAll(list)
         setUpPage(list)
     }
 
+    fun getFormElementList(): List<FormElement> = formElementList
 
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
 

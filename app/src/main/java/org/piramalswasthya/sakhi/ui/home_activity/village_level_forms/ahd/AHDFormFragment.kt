@@ -24,6 +24,7 @@ import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.common.attachAdapterUnsavedGuard
 import timber.log.Timber
 import java.io.File
 
@@ -72,6 +73,9 @@ class AHDFormFragment : Fragment() {
             )
             binding.btnSubmit.isEnabled = !exists
             binding.form.rvInputForm.adapter = adapter
+            attachAdapterUnsavedGuard(
+                dirtyState = adapter
+            )
 
             lifecycleScope.launch {
                 viewModel.formList.collect { list ->
@@ -102,11 +106,7 @@ class AHDFormFragment : Fragment() {
                     ).show()
                 }
 
-                else -> {
-                    /*
-                    * Currently implementation is not required
-                    * */
-                }
+                else -> {}
             }
         }
     }
@@ -167,7 +167,7 @@ class AHDFormFragment : Fragment() {
     }
 
     private fun takeImage() {
-        lifecycleScope.launchWhenStarted {
+        lifecycleScope.launch {
             getTmpFileUri().let { uri ->
                 latestTmpUri = uri
                 takePicture.launch(uri)

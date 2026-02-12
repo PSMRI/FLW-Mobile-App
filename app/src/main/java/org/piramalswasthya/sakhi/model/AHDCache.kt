@@ -15,7 +15,8 @@ data class AHDCache(
     var ahdDate: String? = null,
     var image1: String? = null,
     var image2: String? = null,
-    var syncState: SyncState = SyncState.UNSYNCED
+    var syncState: SyncState = SyncState.UNSYNCED,
+    var isDraft: Boolean = false
 ) : FormDataModel {
     
     fun toDTO(): AHDDTO {

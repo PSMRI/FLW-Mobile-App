@@ -10,19 +10,22 @@ interface EcrDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(vararg ecrCache: EligibleCoupleRegCache)
 
-    @Query("SELECT * FROM ELIGIBLE_COUPLE_REG WHERE processed in ('N', 'U')")
+    @Query("SELECT * FROM ELIGIBLE_COUPLE_REG WHERE processed in ('N', 'U') AND isDraft = 0")
     suspend fun getAllUnprocessedECR(): List<EligibleCoupleRegCache>
 
     @Query("SELECT * FROM ELIGIBLE_COUPLE_TRACKING WHERE processed in ('N','U')")
     suspend fun getAllUnprocessedECT(): List<EligibleCoupleTrackingCache>
 
-    @Query("select count(*) from ELIGIBLE_COUPLE_REG")
+    @Query("select count(*) from ELIGIBLE_COUPLE_REG WHERE isDraft = 0")
     suspend fun ecrCount(): Int
 
-    @Query("SELECT * FROM ELIGIBLE_COUPLE_REG WHERE benId =:benId limit 1")
+    @Query("SELECT * FROM ELIGIBLE_COUPLE_REG WHERE benId =:benId AND isDraft = 0 limit 1")
     suspend fun getSavedECR(benId: Long): EligibleCoupleRegCache?
 
-    @Query("SELECT noOfChildren FROM ELIGIBLE_COUPLE_REG WHERE benId = :benId LIMIT 1")
+    @Query("SELECT * FROM ELIGIBLE_COUPLE_REG WHERE benId =:benId AND isDraft = 1 limit 1")
+    suspend fun getDraftECR(benId: Long): EligibleCoupleRegCache?
+
+    @Query("SELECT noOfChildren FROM ELIGIBLE_COUPLE_REG WHERE benId = :benId AND isDraft = 0 LIMIT 1")
     suspend fun getNoOfChildren(benId: Long): Int?
 
     @Update
@@ -47,6 +50,7 @@ interface EcrDao {
     @Query("SELECT * FROM eligible_couple_tracking WHERE benId = :benId ORDER BY visitDate DESC")
     suspend fun getAllAntraDoses(benId: Long): List<EligibleCoupleTrackingCache>
 
-
+    @Query("DELETE FROM ELIGIBLE_COUPLE_REG WHERE id = :id")
+    suspend fun deleteById(id: Int)
 
 }

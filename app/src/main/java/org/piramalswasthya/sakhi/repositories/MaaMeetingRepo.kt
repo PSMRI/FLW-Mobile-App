@@ -73,6 +73,18 @@ class MaaMeetingRepo @Inject constructor(
         id
     }
 
+    suspend fun getDraftMaaMeeting(ashaId: Int): MaaMeetingEntity? {
+        return withContext(Dispatchers.IO) {
+            dao.getDraftMaaMeeting(ashaId)
+        }
+    }
+
+    suspend fun deleteById(id: Long) {
+        withContext(Dispatchers.IO) {
+            dao.deleteById(id)
+        }
+    }
+
     suspend fun tryUpsync() = withContext(Dispatchers.IO) {
         val pending = dao.getBySyncState(SyncState.UNSYNCED)
         if (pending.isEmpty()) return@withContext
@@ -206,5 +218,3 @@ class MaaMeetingRepo @Inject constructor(
         return dao.getMaaMeetingById(id)
     }
 }
-
-

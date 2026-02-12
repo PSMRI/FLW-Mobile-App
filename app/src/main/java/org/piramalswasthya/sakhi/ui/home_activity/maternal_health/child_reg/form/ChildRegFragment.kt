@@ -24,6 +24,7 @@ import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.adapters.FormInputAdapterWithBgIcon
+import org.piramalswasthya.sakhi.ui.common.attachAdapterUnsavedGuard
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.databinding.LayoutMediaOptionsBinding
 import org.piramalswasthya.sakhi.databinding.LayoutViewMediaBinding
@@ -213,6 +214,7 @@ class ChildRegFragment : Fragment() {
                 )
                 binding.btnSubmit.isEnabled = !recordExists
                 binding.form.rvInputForm.adapter = adapter
+                attachAdapterUnsavedGuard(adapter as FormInputAdapterWithBgIcon)
                 lifecycleScope.launch {
                     viewModel.formList.collect {
                         if (it.isNotEmpty())
@@ -300,7 +302,7 @@ class ChildRegFragment : Fragment() {
                 .apply {
                     createNewFile()
 //                deleteOnExit()
-                }
+            }
         return FileProvider.getUriForFile(
             requireContext(),
             "${BuildConfig.APPLICATION_ID}.provider",

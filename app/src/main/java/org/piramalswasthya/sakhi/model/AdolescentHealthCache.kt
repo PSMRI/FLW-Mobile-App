@@ -41,6 +41,7 @@ data class AdolescentHealthCache(
     var followUpDate: Long = System.currentTimeMillis(),
     var referralStatus: String? = null,
     var syncState: SyncState = SyncState.UNSYNCED,
+    var isDraft: Boolean = false
 ) : FormDataModel{
     fun toDTO(): AdolscentHealthDTO {
         return AdolscentHealthDTO(

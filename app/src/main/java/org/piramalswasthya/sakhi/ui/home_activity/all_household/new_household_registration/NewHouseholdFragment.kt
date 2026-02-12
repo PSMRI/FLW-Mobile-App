@@ -27,6 +27,7 @@ import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.databinding.AlertConsentBinding
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
+import org.piramalswasthya.sakhi.ui.common.attachAdapterUnsavedGuard
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.all_household.new_household_registration.NewHouseholdViewModel.State
 import timber.log.Timber
@@ -186,6 +187,10 @@ class NewHouseholdFragment : Fragment() {
                     isEnabled = !recordExists
                 )
                 binding.form.rvInputForm.adapter = adapter
+
+                // attach unsaved-changes guard to this adapter
+                attachAdapterUnsavedGuard(adapter)
+
                 viewLifecycleOwner.lifecycleScope.launch {
                     viewModel.formList.collect {
                         if (it.isNotEmpty())

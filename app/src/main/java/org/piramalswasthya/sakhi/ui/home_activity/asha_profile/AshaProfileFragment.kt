@@ -19,6 +19,8 @@ import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
+import org.piramalswasthya.sakhi.adapters.FormInputAdapterWithBgIcon
+import org.piramalswasthya.sakhi.ui.common.attachAdapterUnsavedGuard
 import org.piramalswasthya.sakhi.adapters.HouseHoldListAdapter
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.AlertNewBenBinding
@@ -96,6 +98,7 @@ class AshaProfileFragment : Fragment() {
 
                 )
                 binding.form.rvInputForm.adapter = adapter
+                attachAdapterUnsavedGuard(adapter as FormInputAdapterWithBgIcon)
                 lifecycleScope.launch {
                     viewModel.formList.collect {
                         if (it.isNotEmpty())

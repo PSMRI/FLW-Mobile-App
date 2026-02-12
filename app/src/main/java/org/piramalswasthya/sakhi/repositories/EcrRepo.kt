@@ -52,6 +52,19 @@ class EcrRepo @Inject constructor(
             database.ecrDao.getSavedECR(benId)
         }
     }
+
+    suspend fun getDraftRecord(benId: Long): EligibleCoupleRegCache? {
+        return withContext(Dispatchers.IO) {
+            database.ecrDao.getDraftECR(benId)
+        }
+    }
+
+    suspend fun deleteById(id: Int) {
+        withContext(Dispatchers.IO) {
+            database.ecrDao.deleteById(id)
+        }
+    }
+
     suspend fun getNoOfChildren(benId: Long): Int? {
         return withContext(Dispatchers.IO) {
             database.ecrDao.getNoOfChildren(benId)

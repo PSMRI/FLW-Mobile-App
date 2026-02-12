@@ -22,6 +22,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
+import org.piramalswasthya.sakhi.ui.common.attachAdapterUnsavedGuard
 import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.databinding.AlertConsentBinding
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
@@ -176,6 +177,7 @@ class NewChildAsBenRegistrationFragment : Fragment() {
 
                         )
                 binding.form.rvInputForm.adapter = adapter
+                attachAdapterUnsavedGuard(adapter)
                 lifecycleScope.launch {
                     viewModel.formList.collect {
                         Timber.Forest.d("Collecting $it")

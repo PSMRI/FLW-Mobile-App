@@ -27,14 +27,20 @@ interface VLFDao {
     @Query("SELECT * FROM VHND")
     fun getAllVHND(): Flow<List<VHNDCache>>
 
+    @Query("DELETE FROM VHND WHERE id = :id")
+    suspend fun deleteVHNDById(id: Int)
+
     @Query("select * from VHNC where id = :id limit 1")
     fun getVHNC(id: Int): VHNCCache?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveRecord(vhndCache: VHNCCache)
+    fun saveRecord(vhncCache: VHNCCache)
 
     @Query("SELECT * FROM VHNC")
     fun getAllVHNC(): Flow<List<VHNCCache>>
+
+    @Query("DELETE FROM VHNC WHERE id = :id")
+    suspend fun deleteVHNCById(id: Int)
 
     @Query("select * from PHCReviewMeeting where id = :id limit 1")
     fun getPHC(id: Int): PHCReviewMeetingCache?
@@ -45,11 +51,17 @@ interface VLFDao {
     @Query("SELECT * FROM PHCReviewMeeting")
     fun getAllPHC(): Flow<List<PHCReviewMeetingCache>>
 
+    @Query("DELETE FROM PHCReviewMeeting WHERE id = :id")
+    suspend fun deletePHCById(id: Int)
+
     @Query("SELECT * FROM AHDMeeting WHERE id = :id")
     suspend fun getAHD(id: Int): AHDCache?
 
     @Query("SELECT * FROM AHDMeeting")
     fun getAllAHD(): Flow<List<AHDCache>>
+
+    @Query("DELETE FROM AHDMeeting WHERE id = :id")
+    suspend fun deleteAHDById(id: Int)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveRecord(ahdCache: AHDCache)
@@ -58,8 +70,11 @@ interface VLFDao {
     @Query("SELECT * FROM DewormingMeeting WHERE id = :id")
     suspend fun getDeworming(id: Int): DewormingCache?
 
-    @Query("SELECT * FROM DewormingMeeting ")
+    @Query("SELECT * FROM DewormingMeeting")
     fun getAllDeworming(): Flow<List<DewormingCache>>
+
+    @Query("DELETE FROM DewormingMeeting WHERE id = :id")
+    suspend fun deleteDewormingById(id: Int)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveRecord(dewormingCache: DewormingCache)

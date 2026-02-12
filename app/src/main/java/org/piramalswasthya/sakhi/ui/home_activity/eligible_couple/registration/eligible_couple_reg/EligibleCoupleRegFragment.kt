@@ -22,12 +22,14 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.adapters.FormInputAdapterWithBgIcon
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.databinding.LayoutMediaOptionsBinding
 import org.piramalswasthya.sakhi.databinding.LayoutViewMediaBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.ui.checkFileSize
+import org.piramalswasthya.sakhi.ui.common.attachAdapterUnsavedGuard
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.form.PwAncFormFragment.Companion.backViewFileUri
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.form.PwAncFormFragment.Companion.latestTmpUri
@@ -162,17 +164,17 @@ class EligibleCoupleRegFragment : Fragment() {
                     isDataExist = recordExists && it
 
                     val adapter = FormInputAdapterWithBgIcon(
-                        formValueListener = FormInputAdapterWithBgIcon.FormValueListener { formId, index ->
+                        formValueListener = FormInputAdapter.FormValueListener { formId, index ->
                             viewModel.updateListOnValueChanged(formId, index)
                             hardCodedListUpdate(formId)
                         }, isEnabled = !isDataExist ,
-                        selectImageClickListener  = FormInputAdapterWithBgIcon.SelectUploadImageClickListener {
+                        selectImageClickListener  = FormInputAdapter.SelectUploadImageClickListener {
                             if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
                                 viewModel.setCurrentDocumentFormId(it)
                                 chooseOptions()
                             }
                         },
-                        viewDocumentListner = FormInputAdapterWithBgIcon.ViewDocumentOnClick {
+                        viewDocumentListner = FormInputAdapter.ViewDocumentOnClick {
                             if (!recordExists) {
                                 if (it == 75) {
                                     latestTmpUri?.let {
@@ -224,6 +226,7 @@ class EligibleCoupleRegFragment : Fragment() {
                         }
                     )
                     binding.form.rvInputForm.adapter = adapter
+                    attachAdapterUnsavedGuard(adapter)
                     lifecycleScope.launch {
                         viewModel.formList.collect {
                             if (it.isNotEmpty())

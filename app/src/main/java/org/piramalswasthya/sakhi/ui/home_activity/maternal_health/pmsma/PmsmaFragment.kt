@@ -1,7 +1,6 @@
     package org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pmsma
 
     import android.os.Bundle
-    import android.util.Log
     import android.view.LayoutInflater
     import android.view.View
     import android.view.ViewGroup
@@ -19,6 +18,7 @@
     import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
     import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
     import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pmsma.PmsmaViewModel.State
+    import org.piramalswasthya.sakhi.ui.common.attachAdapterUnsavedGuard
     import org.piramalswasthya.sakhi.work.WorkerUtils
     import timber.log.Timber
 
@@ -107,6 +107,7 @@
                         hardCodedListUpdate(formId)
                     }, isEnabled = !exists)
                 binding.form.rvInputForm.adapter = adapter
+                attachAdapterUnsavedGuard(adapter)
                 lifecycleScope.launch {
                     viewModel.formList.collect {
                         if (it.isNotEmpty())

@@ -1,23 +1,14 @@
 package org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.form
 
 import android.app.Activity
-import android.Manifest
-import android.content.ContentValues
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
-import android.provider.MediaStore
-import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
@@ -30,14 +21,15 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.adapters.FormInputAdapterWithBgIcon
+import org.piramalswasthya.sakhi.ui.common.attachAdapterUnsavedGuard
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.databinding.LayoutMediaOptionsBinding
 import org.piramalswasthya.sakhi.databinding.LayoutViewMediaBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.ui.checkFileSize
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
-import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pnc.form.PncFormFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.form.PwAncFormViewModel.State
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
@@ -176,19 +168,19 @@ class PwAncFormFragment : Fragment() {
             notIt?.let { recordExists ->
                 binding.btnSubmit.visibility = if (recordExists) View.GONE else View.VISIBLE
                 val adapter = FormInputAdapterWithBgIcon(
-                    formValueListener = FormInputAdapterWithBgIcon.FormValueListener { formId, index ->
+                    formValueListener = FormInputAdapter.FormValueListener { formId, index ->
                         viewModel.updateListOnValueChanged(formId, index)
                         hardCodedListUpdate(formId)
                     }, isEnabled = !recordExists,
-                    selectImageClickListener  = FormInputAdapterWithBgIcon.SelectUploadImageClickListener {
+                    selectImageClickListener  = FormInputAdapter.SelectUploadImageClickListener {file->
                         if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
-                            viewModel.setCurrentDocumentFormId(it)
+                            viewModel.setCurrentDocumentFormId(file)
                             chooseOptions()
                         }
                     },
-                    viewDocumentListner = FormInputAdapterWithBgIcon.ViewDocumentOnClick {
+                    viewDocumentListner = FormInputAdapter.ViewDocumentOnClick { formId ->
                         if (!recordExists) {
-                            if (it == 31) {
+                            if (formId == 31) {
                                 latestTmpUri?.let {
                                     if (it.toString().contains("document")) {
                                         displayPdf(it)
@@ -209,7 +201,7 @@ class PwAncFormFragment : Fragment() {
                             }
 
                         } else {
-                            val formId = it
+                            val formId = formId
                             lifecycleScope.launch {
                                 viewModel.formList.collect{
                                     if (formId == 31) {
@@ -238,6 +230,7 @@ class PwAncFormFragment : Fragment() {
                     }
                 )
                 binding.form.rvInputForm.adapter = adapter
+                attachAdapterUnsavedGuard(adapter)
                 binding.form.rvInputForm.itemAnimator = null
                 lifecycleScope.launch {
                     viewModel.formList.collect {
