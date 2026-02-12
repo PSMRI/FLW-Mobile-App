@@ -274,15 +274,18 @@ class SignInFragment : Fragment() {
         } else {
             if (loggedInUser.userName.equals(username.trim(), true)) {
                 if (loggedInUser.password == password) {
-                  if(isInternetAvailable(requireActivity())){
-                      if (loggedInUser == null){
-                          viewModel.authUser(username, password)
-                      }else{
-                          viewModel.updateState(NetworkResponse.Success(loggedInUser))
-                      }
-                  }else{
-                      viewModel.updateState(NetworkResponse.Success(loggedInUser))
-                  }
+                    if(isInternetAvailable(requireActivity())){
+                        if (loggedInUser == null){
+                            viewModel.authUser(username, password)
+                        }else{
+                            lifecycleScope.launch {
+                                migrateLegacySessionIfNeeded()
+                                viewModel.updateState(NetworkResponse.Success(loggedInUser))
+                            }
+                        }
+                    }else{
+                        viewModel.updateState(NetworkResponse.Success(loggedInUser))
+                    }
                 } else {
                     viewModel.updateState(NetworkResponse.Error("Invalid Password"))
                 }
@@ -298,4 +301,18 @@ class SignInFragment : Fragment() {
         super.onDestroy()
         _binding = null
     }
+
+    private suspend fun migrateLegacySessionIfNeeded() {
+        if (!prefDao.getJWTAmritToken().isNullOrBlank()) return
+
+        val legacyToken = prefDao.getAmritToken()
+        if (legacyToken.isNullOrBlank()) return
+
+        val user = prefDao.getLoggedInUser() ?: return
+        viewModel.authUser(
+            user.userName,
+            user.password
+        )
+    }
+
 }

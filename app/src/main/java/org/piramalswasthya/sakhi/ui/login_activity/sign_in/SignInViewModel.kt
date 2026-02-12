@@ -94,7 +94,7 @@ class SignInViewModel @Inject constructor(
                 _state.value =
                     NetworkResponse.Error("Network Call failed.\nUnknown error : ${e.message} stack-trace : ${e.stackTrace}")
                 pref.deleteLoginCred()
-                pref.deleteAmritToken()
+
             }
         }
     }
