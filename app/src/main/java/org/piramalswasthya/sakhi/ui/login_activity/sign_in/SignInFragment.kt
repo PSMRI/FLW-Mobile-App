@@ -306,9 +306,6 @@ class SignInFragment : Fragment() {
     private suspend fun migrateLegacySessionIfNeeded() {
         if (!prefDao.getJWTAmritToken().isNullOrBlank()) return
 
-        val legacyToken = prefDao.getAmritToken()
-        if (legacyToken.isNullOrBlank()) return
-
         val user = prefDao.getLoggedInUser() ?: return
 
         when (
