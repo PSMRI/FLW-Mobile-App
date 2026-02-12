@@ -11,6 +11,7 @@ import org.piramalswasthya.sakhi.databinding.RvItemPregnancyVisitBinding
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.model.BenWithAncListDomain
 import org.piramalswasthya.sakhi.utils.HelperUtil
+import org.piramalswasthya.sakhi.utils.RoleConstants
 import java.util.concurrent.TimeUnit
 
 private fun View.setVisibleIf(condition: Boolean) {
@@ -52,7 +53,7 @@ class AncVisitListAdapter(
             isHighRiskMode: Boolean
         ) {
 
-            if (pref?.getLoggedInUser()?.role.equals("ASHA Supervisor", true)) {
+            if (pref?.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
                 binding.btnPmsma.visibility = View.INVISIBLE
                 binding.btnAddAnc.visibility = View.INVISIBLE
             } else {

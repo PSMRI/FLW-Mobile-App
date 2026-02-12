@@ -51,17 +51,8 @@ class HouseHoldListAdapter(private val diseaseType: String, private var isDiseas
             binding.household = item
             binding.clickListener = clickListener
             binding.executePendingBindings()
-           /* if (!isDisease) {
-                binding.button4.visibility = View.VISIBLE
-                binding.button5.visibility = View.GONE
-            } else {
-                binding.button4.visibility = View.GONE
-                binding.button5.visibility = View.GONE
-            }
-            */
 
 
-//            if (pref.getLoggedInUser()?.role.equals("asha", true) && isDisease) {
             if (isDisease) {
                 binding.button4.visibility = View.GONE
                 if (diseaseType == "FILARIA") {
@@ -70,7 +61,6 @@ class HouseHoldListAdapter(private val diseaseType: String, private var isDiseas
                     binding.btnMda.visibility = View.GONE
                 }
             } else if (!isDisease) {
-//            } else if (pref.getLoggedInUser()?.role.equals("asha", true) && !isDisease) {
                 binding.button4.visibility = View.VISIBLE
                 binding.btnMda.visibility = View.GONE
             } else {

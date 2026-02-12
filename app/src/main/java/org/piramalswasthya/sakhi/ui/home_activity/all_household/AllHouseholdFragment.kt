@@ -24,6 +24,7 @@ import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBindin
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.utils.RoleConstants
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -184,7 +185,7 @@ class AllHouseholdFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            if (prefDao.getLoggedInUser()?.role.equals("ASHA Supervisor", true)) {
+            if (prefDao.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
                 (it as SupervisorActivity).updateActionBar(
                     R.drawable.ic__hh,
                     getString(R.string.icon_title_household)
@@ -201,20 +202,18 @@ class AllHouseholdFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.btnNextPage.text = resources.getString(R.string.btn_text_frag_home_nhhr)
-        if (prefDao.getLoggedInUser()?.role.equals("ASHA Supervisor", true)) {
+        if (prefDao.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
             binding.btnNextPage.visibility = View.GONE
         } else {
             binding.btnNextPage.visibility = View.VISIBLE
         }
 //        binding.tvEmptyContent.text = resources.getString(R.string.no_records_found_hh)
         val householdAdapter = HouseHoldListAdapter("",isDisease, prefDao, HouseHoldListAdapter.HouseholdClickListener({
-//            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
                 findNavController().navigate(
                     AllHouseholdFragmentDirections.actionAllHouseholdFragmentToNewHouseholdFragment(
                         it
                     )
                 )
-//            }
         }, {
 //            val bundle = Bundle()
 //            bundle.putLong("hhId", it)
@@ -227,7 +226,6 @@ class AllHouseholdFragment : Fragment() {
                 )
             )
         }, {
-//            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
                 if (it.numMembers == 0) {
                     findNavController().navigate(
                         AllHouseholdFragmentDirections.actionAllHouseholdFragmentToNewBenRegFragment(
@@ -239,7 +237,6 @@ class AllHouseholdFragment : Fragment() {
                     viewModel.setSelectedHouseholdId(it.hhId)
                     addBenAlert.show()
                 }
-//            }
 
         },
         {

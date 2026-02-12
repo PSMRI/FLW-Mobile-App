@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.RvItemTbSuspectedListBinding
 import org.piramalswasthya.sakhi.model.BenWithTbSuspectedDomain
+import org.piramalswasthya.sakhi.utils.RoleConstants
 
 class TbSuspectedListAdapter(
     private val clickListener: ClickListener? = null,
@@ -45,7 +46,7 @@ class TbSuspectedListAdapter(
             pref: PreferenceDao?
         ) {
 
-            if (pref?.getLoggedInUser()?.role.equals("ASHA Supervisor", true)) {
+            if (pref?.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
                 binding.btnFormTb.visibility = View.INVISIBLE
             } else {
                 binding.btnFormTb.visibility = View.VISIBLE
