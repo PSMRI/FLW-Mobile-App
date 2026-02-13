@@ -16,6 +16,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.AncVisitListAdapter
@@ -46,7 +47,7 @@ class PwAncVisitsListFragment : Fragment() {
     private val viewModelListPmsma: PmsmaVisitsListViewModel by viewModels()
 
     private val bottomSheet: AncBottomSheetFragment by lazy { AncBottomSheetFragment() }
-    private var bottomSheetPmsma: PmsmaBottomSheetFragment ?=null
+    private var bottomSheetPmsma: PmsmaBottomSheetFragment? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -64,36 +65,48 @@ class PwAncVisitsListFragment : Fragment() {
         val benAdapter = AncVisitListAdapter(
             AncVisitListAdapter.PregnancyVisitClickListener(
                 showVisits = {
-                viewModel.updateBottomSheetData(it)
-                if (!bottomSheet.isVisible)
-                    bottomSheet.show(childFragmentManager, "ANC")
-            },
-                addVisit = { benId,hhId, visitNumber ->
+                    viewModel.showAncBottomSheet(
+                        it,
+                        PwAncVisitsListViewModel.BottomSheetMode.NORMAL
+                    )
+
+                    val bottomSheet = AncBottomSheetFragment().apply {
+                        arguments = Bundle().apply {
+                            putString(
+                                AncBottomSheetFragment.ARG_SOURCE,
+                                AncBottomSheetFragment.SOURCE_ANC
+                            )
+                        }
+                    }
+
+                    bottomSheet.show(
+                        childFragmentManager,
+                        "ANC_BOTTOM_SHEET"
+                    )
+                },
+                addVisit = { benId, hhId, visitNumber ->
                     findNavController().navigate(
                         PwAncVisitsListFragmentDirections.actionPwAncVisitsFragmentToPwAncFormFragment(
-                            benId, hhId.toString(),visitNumber
+                            benId, hhId.toString(), visitNumber,false
                         )
                     )
                 },
-                pmsma = { benId, hhId ,visitNumber->
+                pmsma = { benId, hhId, visitNumber ->
                     findNavController().navigate(
                         PwAncVisitsListFragmentDirections.actionPwAncVisitsFragmentToPmsmaFragment(
-                            benId, hhId,visitNumber
+                            benId, hhId, visitNumber
                         )
                     )
                 }, showPmsmaVisits = { benId, hhId ->
-                    viewModelListPmsma.updateBottomSheetData(benId)
+                    viewModel.showAncBottomSheet(
+                        benId,
+                        PwAncVisitsListViewModel.BottomSheetMode.PMSMA
+                    )
+                    if (!bottomSheet.isVisible) bottomSheet.show(
+                        childFragmentManager,
+                        "ANC_BOTTOM_SHEET"
+                    )
 
-                    if (bottomSheetPmsma == null || !bottomSheetPmsma!!.isVisible) {
-                        bottomSheetPmsma = PmsmaBottomSheetFragment().apply {
-                            arguments = Bundle().apply {
-                                putLong("hhId", hhId)
-                                putBoolean("fromHighRisk", false)
-                            }
-                        }
-                        bottomSheetPmsma!!.show(childFragmentManager, "PMSMA")
-
-                    }
                 }, callBen = {
                     try {
                         val callIntent = Intent(Intent.ACTION_CALL)
@@ -104,9 +117,14 @@ class PwAncVisitsListFragment : Fragment() {
                         activity?.let {
                             (it as HomeActivity).askForPermissions()
                         }
-                        Toast.makeText(requireContext(), "Please allow permissions first", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            requireContext(),
+                            "Please allow permissions first",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
-                }),true, prefDao
+                }),
+            true, prefDao,false,true
         )
         binding.rvAny.adapter = benAdapter
         lifecycleScope.launch {

@@ -36,7 +36,6 @@ class NCDReferalFormFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.benId.text = viewModel.benId.toString()
-
         viewModel.benName.observe(viewLifecycleOwner) {
             binding.tvBenName.text = it
         }
@@ -79,11 +78,14 @@ class NCDReferalFormFragment : Fragment() {
 
                     val referral = viewModel.referalCache
                     val json = Gson().toJson(referral)
-
                     findNavController()
                         .previousBackStackEntry
                         ?.savedStateHandle
                         ?.set("REFERRAL_RESULT", json)
+                    findNavController()
+                        .previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.set("REFERRAL_DONE", viewModel.referraltype)
                     findNavController().navigateUp()
                 }
 
