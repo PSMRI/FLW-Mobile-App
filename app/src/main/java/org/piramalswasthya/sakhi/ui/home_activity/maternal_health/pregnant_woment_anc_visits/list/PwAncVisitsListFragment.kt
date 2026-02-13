@@ -22,12 +22,14 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.AncVisitListAdapter
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
+import org.piramalswasthya.sakhi.model.BenWithAncListDomain
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import javax.inject.Inject
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pmsma.PmsmaViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pmsma.list.PmsmaBottomSheetFragment
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pmsma.list.PmsmaVisitsListViewModel
+import java.util.Collections.list
 
 @AndroidEntryPoint
 class PwAncVisitsListFragment : Fragment() {
@@ -48,6 +50,10 @@ class PwAncVisitsListFragment : Fragment() {
 
     private val bottomSheet: AncBottomSheetFragment by lazy { AncBottomSheetFragment() }
     private var bottomSheetPmsma: PmsmaBottomSheetFragment? = null
+
+    private var  bottomSheetAncHomeVisit : AncHomeVisitBottomSheetFragment ? = null
+
+    private var latestBenList: List<BenWithAncListDomain> = emptyList()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -123,18 +129,54 @@ class PwAncVisitsListFragment : Fragment() {
                             Toast.LENGTH_SHORT
                         ).show()
                     }
-                }),
-            true, prefDao,false,true
+              }, addHomeVisit = {benId ->
+                    findNavController().navigate(
+                        PwAncVisitsListFragmentDirections.actionPwAncVisitsFragmentToPwAncCounsellingFormFragment(
+                            benId,0
+                        )
+                    )
+
+                 },
+                showHomeVisit = { benId ->
+                    if (bottomSheetAncHomeVisit == null || !bottomSheetAncHomeVisit!!.isVisible) {
+                        bottomSheetAncHomeVisit = AncHomeVisitBottomSheetFragment().apply {
+                            arguments = Bundle().apply {
+                                putLong("benId", benId)
+                            }
+                        }
+                        bottomSheetAncHomeVisit!!.show(childFragmentManager, "HomeVisit")
+
+                    }}
+                ),true, prefDao,false,true
+
+
         )
         binding.rvAny.adapter = benAdapter
         lifecycleScope.launch {
-            viewModel.benList.collect {
-                if (it.isEmpty())
-                    binding.flEmpty.visibility = View.VISIBLE
-                else
-                    binding.flEmpty.visibility = View.GONE
-                benAdapter.submitList(it)
+            viewModel.benList.collect {list: List<BenWithAncListDomain> ->
+                latestBenList = list
+
+                binding.flEmpty.visibility =
+                    if (list.isEmpty()) View.VISIBLE else View.GONE
+
+                val benIds = list.map { it.ben.benId}
+                viewModel.loadHomeVisitState(benIds)
+               // benAdapter.submitList(list)
             }
+        }
+
+        viewModel.homeVisitState.observe(viewLifecycleOwner) { stateMap ->
+
+            val updatedList = latestBenList.map { item ->
+                val state = stateMap[item.ben.benId]
+
+                item.copy(
+                    showAddHomeVisit = state?.canAddHomeVisit ?: false,
+                    showViewHomeVisit = state?.canViewHomeVisit ?: false
+                )
+            }
+
+            benAdapter.submitList(updatedList)
         }
         val searchTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {

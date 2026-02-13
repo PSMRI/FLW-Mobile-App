@@ -11,6 +11,7 @@
     <string name="rv_item_hh_ph_3">उपनाम : </string>
     <string name="hh_members_text">सदस्यों</string>
     <string name="btn_rv_item_hh_add_ben">लाभार्थी जोड़ें</string>
+    <string name="str_duplicate_record">डुप्लिकेट रिकॉर्ड</string>
 
     <string name="frag_nhhr_title">नया घरेलू पंजीकरण</string>
 

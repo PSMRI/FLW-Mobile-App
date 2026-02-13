@@ -234,7 +234,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         inputType = EDIT_TEXT,
         title = resources.getString(R.string.nbr_father_name),
         arrayId = -1,
-        required = true,
+        required = false,
         allCaps = true,
         hasSpeechToText = true,
         etInputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
@@ -244,7 +244,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         inputType = EDIT_TEXT,
         title = resources.getString(R.string.nbr_mother_name),
         arrayId = -1,
-        required = true,
+        required = false,
         allCaps = true,
         hasSpeechToText = true,
         etInputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
@@ -1871,8 +1871,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                         position = -2
                     )
                 } else {
-                    fatherName.required = true
-                    motherName.required = true
+                    fatherName.required = false
+                    motherName.required = false
 
                     triggerDependants(
                         source = rchId,
@@ -1901,8 +1901,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 when (maritalStatus.value) {
 
                     maritalStatus.entries!![0] -> {
-                        fatherName.required = true
-                        motherName.required = true
+                        fatherName.required = false
+                        motherName.required = false
                         updateReproductiveOptionsBasedOnAgeGender(formId = maritalStatus.id)
                         return triggerDependants(
                             source = maritalStatus,
@@ -1917,13 +1917,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     }
 
                     maritalStatus.entries!![1] -> {
-                        if (gender.value == gender.entries!![2]) {
-                            fatherName.required = true
-                            motherName.required = true
-                        } else {
-                            fatherName.required = false
-                            motherName.required = false
-                        }
+                        fatherName.required = false
+                        motherName.required = false
                         husbandName.required = true
                         wifeName.required = true
                         wifeName.allCaps = true
@@ -1954,8 +1949,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                         husbandName.required = maritalStatus.value != maritalStatus.entries!![2]
                         wifeName.required = maritalStatus.value != maritalStatus.entries!![2]
                         wifeName.allCaps = true
-                        fatherName.required = true
-                        motherName.required = true
+                        fatherName.required = false
+                        motherName.required = false
                         updateReproductiveOptionsBasedOnAgeGender(formId = maritalStatus.id)
                         return triggerDependants(
                             source = motherName, addItems = when (gender.value) {
@@ -2293,8 +2288,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             removeItems = emptyList(),
             position = -2
         ) else {
-            fatherName.required = true
-            motherName.required = true
+            fatherName.required = false
+            motherName.required = false
             triggerDependants(
                 source = rchId,
                 removeItems = listOf(reproductiveStatus),
@@ -2314,8 +2309,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             if (maritalStatus.inputType == TEXT_VIEW) -1 else {
 
                 if (getYearsFromDate(agePopup.value.toString()) <= Konstants.maxAgeForAdolescent) {
-                    fatherName.required = true
-                    motherName.required = true
+                    fatherName.required = false
+                    motherName.required = false
 
                     triggerDependants(
                         source = rchId,
@@ -2781,8 +2776,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 removeItems = emptyList(),
                 position = -2
             ) else {
-                fatherName.required = true
-                motherName.required = true
+                fatherName.required = false
+                motherName.required = false
                 triggerDependants(
                     source = rchId,
                     removeItems = listOf(reproductiveStatus),
@@ -2802,8 +2797,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 if (maritalStatus.inputType == TEXT_VIEW) -1 else {
 
                     if (getYearsFromDate(agePopup.value.toString()) <= Konstants.maxAgeForAdolescent) {
-                        fatherName.required = true
-                        motherName.required = true
+                        fatherName.required = false
+                        motherName.required = false
 
                         triggerDependants(
                             source = rchId,
