@@ -97,27 +97,29 @@ jobs:
         run: echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
 
       - name: Build and Distribute
-        run: |
+        env:
+          # Inputs as env vars to avoid shell injection (inputs.version is free-text)
+          INPUT_FLAVOR: ${{ inputs.flavor }}
+          INPUT_VERSION: ${{ inputs.version }}
+          INPUT_BUILD_TYPE: ${{ inputs.build_type }}
           # Native build env vars (must match CMakeLists.txt)
-          export ENCRYPTED_PASS_KEY="${{ secrets.ENCRYPTED_PASS_KEY }}"
-          export ABHA_CLIENT_SECRET="${{ secrets.ABHA_CLIENT_SECRET }}"
-          export ABHA_CLIENT_ID="${{ secrets.ABHA_CLIENT_ID }}"
-          export BASE_TMC_URL="${{ secrets.BASE_TMC_URL }}"
-          export BASE_ABHA_URL="${{ secrets.BASE_ABHA_URL }}"
-          export ABHA_TOKEN_URL="${{ secrets.ABHA_TOKEN_URL }}"
-          export ABHA_AUTH_URL="${{ secrets.ABHA_AUTH_URL }}"
-          export CHAT_URL="${{ secrets.CHAT_URL }}"
-
+          ENCRYPTED_PASS_KEY: ${{ secrets.ENCRYPTED_PASS_KEY }}
+          ABHA_CLIENT_SECRET: ${{ secrets.ABHA_CLIENT_SECRET }}
+          ABHA_CLIENT_ID: ${{ secrets.ABHA_CLIENT_ID }}
+          BASE_TMC_URL: ${{ secrets.BASE_TMC_URL }}
+          BASE_ABHA_URL: ${{ secrets.BASE_ABHA_URL }}
+          ABHA_TOKEN_URL: ${{ secrets.ABHA_TOKEN_URL }}
+          ABHA_AUTH_URL: ${{ secrets.ABHA_AUTH_URL }}
+          CHAT_URL: ${{ secrets.CHAT_URL }}
           # Signing env vars (used by Fastlane for release builds)
-          export KEYSTORE_PASSWORD="${{ secrets.KEYSTORE_PASSWORD }}"
-          export KEY_ALIAS="${{ secrets.KEY_ALIAS }}"
-          export KEY_PASSWORD="${{ secrets.KEY_PASSWORD }}"
-
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           # Firebase env vars
-          export FIREBASE_APP_ID="${{ secrets.FIREBASE_APP_ID }}"
-
-          if [ "${{ inputs.build_type }}" = "debug" ]; then
-            bundle exec fastlane build_and_distribute_debug flavor:${{ inputs.flavor }} version_name:${{ inputs.version }}
+          FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
+        run: |
+          if [ "$INPUT_BUILD_TYPE" = "debug" ]; then
+            bundle exec fastlane build_and_distribute_debug flavor:"$INPUT_FLAVOR" version_name:"$INPUT_VERSION"
           else
-            bundle exec fastlane build_and_distribute_release flavor:${{ inputs.flavor }} version_name:${{ inputs.version }}
+            bundle exec fastlane build_and_distribute_release flavor:"$INPUT_FLAVOR" version_name:"$INPUT_VERSION"
           fi

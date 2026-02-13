@@ -52,6 +52,7 @@ platform :android do
   desc "Build and Distribute Debug APK to Firebase"
   lane :build_and_distribute_debug do |options|
     flavor = options[:flavor]
+    UI.user_error!("Missing required parameter: flavor") if flavor.nil? || flavor.empty?
     version_name = options[:version_name]
 
     # Get latest version code from Firebase, handle no prior releases

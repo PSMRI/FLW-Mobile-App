@@ -31,6 +31,7 @@ on:
 jobs:
   resolve-config:
     runs-on: ubuntu-latest
+    permissions: {}
     outputs:
       flavor: ${{ steps.resolve.outputs.flavor }}
       environment: ${{ steps.resolve.outputs.environment }}
@@ -97,6 +98,8 @@ jobs:
 
   flw-build:
     needs: resolve-config
+    permissions:
+      contents: read
     uses: ./.github/workflows/build-distribute.yml
     with:
       branch: ${{ inputs.branch }}

@@ -41,7 +41,7 @@ The pipeline automatically resolves the Gradle flavor, GitHub environment, and b
 
 ## Architecture
 
-```
+```text
 flw-android-build.yml (caller)
   |
   +-- resolve-config job
@@ -177,7 +177,7 @@ To create or manage environments: **Settings > Environments** in the GitHub repo
 | `CHAT_URL`                   | Chat service URL for native build        |
 | `GOOGLE_SERVICES_JSON_GENERIC` | Base64-encoded google-services.json    |
 
-**Debug environment secrets** (STAG/UAT):
+**Shared environment secrets** (needed by both debug and production):
 
 | Secret                     | Description                                |
 |----------------------------|--------------------------------------------|
@@ -187,10 +187,15 @@ To create or manage environments: **Settings > Environments** in the GitHub repo
 | `BASE_ABHA_URL`            | ABHA base URL                              |
 | `ABHA_TOKEN_URL`           | ABHA token endpoint URL                    |
 | `ABHA_AUTH_URL`            | ABHA auth endpoint URL                     |
+
+**Debug-only environment secrets** (STAG/UAT - used for Firebase App Distribution):
+
+| Secret                     | Description                                |
+|----------------------------|--------------------------------------------|
 | `FIREBASE_APP_ID`          | Firebase App ID for distribution           |
 | `FIREBASE_CREDENTIALS_JSON`| Base64-encoded Firebase service account key|
 
-**Production environment secrets** (all debug secrets above, plus):
+**Production-only environment secrets** (used for Play Store signing and upload):
 
 | Secret                     | Description                                |
 |----------------------------|--------------------------------------------|
