@@ -12,27 +12,51 @@ import timber.log.Timber
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
-import java.io.OutputStream
 
 
 object ImageUtils {
     suspend fun saveBenImageFromCameraToStorage(
-        context: Context, uriString: String, benId: Long
-    ): String {
+        context: Context,
+        uriString: String,
+        benId: Long
+    ): String? {
         return withContext(Dispatchers.IO) {
-            val targetFile = File(context.filesDir, "${benId}.jpeg").also { it.createNewFile() }
-            val os: OutputStream = FileOutputStream(targetFile)
-            context.contentResolver.openInputStream(Uri.parse(uriString))?.use {
-                os.write(it.readBytes())
-                os.flush()
+            try {
+                val uri = Uri.parse(uriString)
+                val inputStream = context.contentResolver.openInputStream(uri)
+                if (inputStream == null) {
+                    Timber.e("ImageUtils: InputStream is null for uri=$uriString")
+                    return@withContext null
+                }
+                val targetFile = File(context.filesDir, "${benId}.jpeg")
+                inputStream.use { input ->
+                    FileOutputStream(targetFile).use { output ->
+                        input.copyTo(output)
+                        output.flush()
+                    }
+                }
+                if (!targetFile.exists() || targetFile.length() == 0L) {
+                    Timber.e("ImageUtils: Invalid image file. exists=${targetFile.exists()}, size=${targetFile.length()}")
+                    return@withContext null
+                }
+                Timber.d("Uncompressed image: ${targetFile.absolutePath}, size=${targetFile.length()}")
+                val compressedFile = Compressor.compress(context, targetFile) {
+                    quality(80)
+                }
+
+                if (compressedFile.exists() && compressedFile.length() > 0) {
+                    compressedFile.copyTo(targetFile, overwrite = true)
+                } else {
+                    Timber.e("ImageUtils: Compression produced invalid file")
+                    return@withContext null
+                }
+                removeAllTemporaryBenImages(context)
+                Uri.fromFile(targetFile).toString()
+
+            } catch (e: Exception) {
+                Timber.e(e, "ImageUtils: Failed to save/compress image")
+                null
             }
-            Timber.d("Uncompressed target file :->$targetFile ${targetFile.length()}")
-            val compressedFile = Compressor.compress(context, targetFile) {
-                quality(80)
-            }
-            removeAllTemporaryBenImages(context)
-            compressedFile.renameTo(targetFile)
-            Uri.fromFile(targetFile).toString()
         }
     }
 

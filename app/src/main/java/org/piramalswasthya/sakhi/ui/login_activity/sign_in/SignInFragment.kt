@@ -29,11 +29,13 @@ import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.Languages.ASSAMESE
 import org.piramalswasthya.sakhi.helpers.Languages.ENGLISH
 import org.piramalswasthya.sakhi.helpers.NetworkResponse
+import org.piramalswasthya.sakhi.helpers.isInternetAvailable
 import org.piramalswasthya.sakhi.model.LocationEntity
 import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
 import org.piramalswasthya.sakhi.utils.NoCopyPasteHelper
+import org.piramalswasthya.sakhi.utils.RoleConstants
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import javax.inject.Inject
 
@@ -68,7 +70,6 @@ class SignInFragment : Fragment() {
             if (it > 0) {
                 var count = viewModel.unprocessedRecordsCount.value
                 str += getString(R.string.unsync_record_count).replace(oldValue = "@count", newValue = count.toString())
-                //"there are" + viewModel.unprocessedRecordsCount.value + " unprocessed records, wait till records are synced"
             }
         }
 
@@ -199,92 +200,62 @@ class SignInFragment : Fragment() {
                     binding.pbSignIn.visibility = View.VISIBLE
                     binding.tvError.visibility = View.GONE
 
-//                    WorkerUtils.triggerGenBenIdWorker(requireContext())
-//                    if (BuildConfig.FLAVOR.equals("niramay", true))  {
-//                        if (viewModel.getLoggedInUser()?.serviceMapId == 1718){
-//                            findNavController().navigate(
-//                                if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
-//                                else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
-//                            activity?.finish()
-//                        }else{
-//                            binding.clContent.visibility = View.VISIBLE
-//                            binding.pbSignIn.visibility = View.GONE
-//                            binding.tvError.visibility = View.GONE
-//                            Toast.makeText(requireContext(),"This user is not from Niramay Project",Toast.LENGTH_SHORT).show()
-//                        }
-//
-//                    } else if(BuildConfig.FLAVOR.equals("xushrukha", true)){
-//                        if (viewModel.getLoggedInUser()?.serviceMapId == 1716){
-//                            findNavController().navigate(
-//                                if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
-//                                else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
-//                            activity?.finish()
-//                        } else {
-//                            binding.clContent.visibility = View.VISIBLE
-//                            binding.pbSignIn.visibility = View.GONE
-//                            binding.tvError.visibility = View.GONE
-//                            Toast.makeText(requireContext(),"This user is not from Xushrukha Project",Toast.LENGTH_SHORT).show()
-//                        }
-
-//                    } else {
-//                        findNavController().navigate(
-//                            if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
-//                            else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
-//                        activity?.finish()
-//                    }
-
-                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
-                        WorkerUtils.triggerGenBenIdWorker(requireContext())
-                        if (BuildConfig.FLAVOR.equals("niramay", true))  {
-                            if (viewModel.getLoggedInUser()?.serviceMapId == 1718 ||
-                                //Below ServiceMapId are form Indian Oil Project
-                                viewModel.getLoggedInUser()?.serviceMapId ==1722 ||
-                                viewModel.getLoggedInUser()?.serviceMapId ==1723 ||
-                                viewModel.getLoggedInUser()?.serviceMapId ==1724){
-                                findNavController().navigate(
-                                    if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
-                                    else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
-                                activity?.finish()
-                            }else{
-                                binding.clContent.visibility = View.VISIBLE
-                                binding.pbSignIn.visibility = View.GONE
-                                binding.tvError.visibility = View.GONE
-                                Toast.makeText(requireContext(),"This user is not from Niramay Project",Toast.LENGTH_SHORT).show()
-                            }
-
-                        }else if(BuildConfig.FLAVOR.equals("xushrukha", true)){
-                            if (viewModel.getLoggedInUser()?.serviceMapId == 1716){
-                                findNavController().navigate(
-                                    if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
-                                    else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
-                                activity?.finish()
-                            }else{
-                                binding.clContent.visibility = View.VISIBLE
-                                binding.pbSignIn.visibility = View.GONE
-                                binding.tvError.visibility = View.GONE
-                                Toast.makeText(requireContext(),"This user is not from Xushrukha Project",Toast.LENGTH_SHORT).show()
-                            }
-
-                        }else{
-                            findNavController().navigate(
-                                if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
-                                else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
-                            activity?.finish()
-                        }
-                    } else {
+                    val loggedInUser = prefDao.getLoggedInUser()
+                    if (loggedInUser?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
+                        val user = loggedInUser!!
+                        val village = user.villages.firstOrNull()
                         val locationRecord = LocationRecord(
                             LocationEntity(1, "India"),
-                            LocationEntity(prefDao.getLoggedInUser()!!.state.id, prefDao.getLoggedInUser()!!.state.name),
+                            LocationEntity(user.state.id, user.state.name),
                             LocationEntity(0, ""),
-                            LocationEntity(prefDao.getLoggedInUser()!!.block.id, prefDao.getLoggedInUser()!!.block.name),
-                            LocationEntity(prefDao.getLoggedInUser()!!.villages[0].id, prefDao.getLoggedInUser()!!.villages[0].name),
+                            LocationEntity(user.block.id, user.block.name),
+                            LocationEntity(village?.id ?: 0, village?.name ?: ""),
                         )
                         prefDao.saveLocationRecord(locationRecord)
 
                         activity?.finish()
                         val goToHome = Intent(requireContext(), SupervisorActivity::class.java)
                         startActivity(goToHome)
+                    } else {
+                        WorkerUtils.triggerGenBenIdWorker(requireContext())
+                        if (BuildConfig.FLAVOR.equals("niramay", true)) {
+                            if (viewModel.getLoggedInUser()?.serviceMapId == 1718 ||
+                                //Below ServiceMapId are form Indian Oil Project
+                                viewModel.getLoggedInUser()?.serviceMapId ==1722 ||
+                                viewModel.getLoggedInUser()?.serviceMapId ==1723 ||
+                                viewModel.getLoggedInUser()?.serviceMapId ==1724) {
+                                findNavController().navigate(
+                                    if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
+                                    else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
+                                activity?.finish()
+                            } else {
+                                binding.clContent.visibility = View.VISIBLE
+                                binding.pbSignIn.visibility = View.GONE
+                                binding.tvError.visibility = View.GONE
+                                Toast.makeText(requireContext(),"This user is not from Niramay Project",Toast.LENGTH_SHORT).show()
+                            }
+
+                        } else if (BuildConfig.FLAVOR.equals("xushrukha", true)) {
+                            if (viewModel.getLoggedInUser()?.serviceMapId == 1716) {
+                                findNavController().navigate(
+                                    if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
+                                    else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
+                                activity?.finish()
+                            } else {
+                                binding.clContent.visibility = View.VISIBLE
+                                binding.pbSignIn.visibility = View.GONE
+                                binding.tvError.visibility = View.GONE
+                                Toast.makeText(requireContext(),"This user is not from Xushrukha Project",Toast.LENGTH_SHORT).show()
+                            }
+
+                        } else {
+                            findNavController().navigate(
+                                if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
+                                else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
+                            activity?.finish()
+                        }
                     }
+
                 }
             }
         }
@@ -313,7 +284,18 @@ class SignInFragment : Fragment() {
         } else {
             if (loggedInUser.userName.equals(username.trim(), true)) {
                 if (loggedInUser.password == password) {
-                    viewModel.updateState(NetworkResponse.Success(loggedInUser))
+                    if(isInternetAvailable(requireActivity())){
+                        if (loggedInUser == null){
+                            viewModel.authUser(username, password)
+                        }else{
+                            lifecycleScope.launch {
+                                migrateLegacySessionIfNeeded()
+                                viewModel.updateState(NetworkResponse.Success(loggedInUser))
+                            }
+                        }
+                    }else{
+                        viewModel.updateState(NetworkResponse.Success(loggedInUser))
+                    }
                 } else {
                     viewModel.updateState(NetworkResponse.Error("Invalid Password"))
                 }
@@ -329,4 +311,29 @@ class SignInFragment : Fragment() {
         super.onDestroy()
         _binding = null
     }
+
+
+    private suspend fun migrateLegacySessionIfNeeded() {
+        if (!prefDao.getJWTAmritToken().isNullOrBlank()) return
+
+        val user = prefDao.getLoggedInUser() ?: return
+
+        when (
+            val result = viewModel.authenticateForMigration(
+                user.userName,
+                user.password
+            )
+        ) {
+            is NetworkResponse.Success -> {
+                //Currenltly Implementation not required
+            }
+
+            is NetworkResponse.Error -> {
+               //Currenltly Implementation not required
+            }
+
+            else -> Unit
+        }
+    }
+
 }

@@ -24,6 +24,7 @@ import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.utils.RoleConstants
 import org.piramalswasthya.sakhi.utils.HelperUtil
 import javax.inject.Inject
 
@@ -93,10 +94,9 @@ class HouseholdMembersFragment : Fragment() {
 
         val benAdapter = BenListAdapter(
             clickListener = BenListAdapter.BenClickListener(
-                { item,hhId, benId, relToHeadId ->
+                { item, hhId, benId, relToHeadId ->
                     val isAsha = prefDao.getLoggedInUser()?.role.equals("asha", true)
                     val canNavigate = !item.isDeactivate
-
                     when {
                         isAsha && viewModel.isFromDisease == 0 && canNavigate -> {
                             findNavController().navigate(
@@ -224,6 +224,9 @@ class HouseholdMembersFragment : Fragment() {
                     }
 
                 },
+                {
+                },
+                { benId, hhId ->
                 clickedChildben = { item, hhId, benId, relToHeadId ->
 
                     if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
@@ -266,7 +269,6 @@ class HouseholdMembersFragment : Fragment() {
                 { item,benId, hhId ->
                     if (!item.isDeactivate && prefDao.getLoggedInUser()?.role.equals("asha", true)) {
                         checkAndGenerateABHA(benId)
-                    }
                 },
                 { item,benId, hhId, isViewMode, isIFA ->
                 },
@@ -348,13 +350,13 @@ class HouseholdMembersFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
-                (it as HomeActivity).updateActionBar(
+            if (prefDao.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
+                (it as SupervisorActivity).updateActionBar(
                     R.drawable.ic__hh,
                     getString(R.string.household_members)
                 )
             } else {
-                (it as SupervisorActivity).updateActionBar(
+                (it as HomeActivity).updateActionBar(
                     R.drawable.ic__hh,
                     getString(R.string.household_members)
                 )

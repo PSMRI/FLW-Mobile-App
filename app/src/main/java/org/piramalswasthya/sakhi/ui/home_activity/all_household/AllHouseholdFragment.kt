@@ -25,6 +25,7 @@ import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.HouseHoldBasicDomain
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.utils.RoleConstants
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -197,13 +198,13 @@ class AllHouseholdFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
-                (it as HomeActivity).updateActionBar(
+            if (prefDao.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
+                (it as SupervisorActivity).updateActionBar(
                     R.drawable.ic__hh,
                     getString(R.string.icon_title_household)
                 )
             } else {
-                (it as SupervisorActivity).updateActionBar(
+                (it as HomeActivity).updateActionBar(
                     R.drawable.ic__hh,
                     getString(R.string.icon_title_household)
                 )
@@ -214,11 +215,12 @@ class AllHouseholdFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.btnNextPage.text = resources.getString(R.string.btn_text_frag_home_nhhr)
-        if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
-            binding.btnNextPage.visibility = View.VISIBLE
-        } else {
+        if (prefDao.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
             binding.btnNextPage.visibility = View.GONE
+        } else {
+            binding.btnNextPage.visibility = View.VISIBLE
         }
+//        binding.tvEmptyContent.text = resources.getString(R.string.no_records_found_hh)
         val householdAdapter = HouseHoldListAdapter("",isDisease, prefDao,true, HouseHoldListAdapter.HouseholdClickListener({
             if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
                 if (!it.isDeactivate){
@@ -247,7 +249,6 @@ class AllHouseholdFragment : Fragment() {
                                 18
                             )
                         )
-
                 } else {
                   if(!it.isDeactivate) {
                       viewModel.setSelectedHouseholdId(it.hhId)
