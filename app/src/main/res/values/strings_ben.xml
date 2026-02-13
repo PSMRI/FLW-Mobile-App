@@ -13,6 +13,7 @@
     <string name="wife_s_name">Wife\'s Name</string>
     <string name="spouse_s_name">Spouse\'s Name</string>
     <string name="age_at_marriage">Age At Marriage</string>
+    <string name="age_at_marriagee">Your Age at the time of marriage</string>
     <string name="date_of_marriage">Date of Marriage</string>
     <string name="father_s_name">Father\'s Name</string>
     <string name="mother_s_name">Mother\'s Name</string>
@@ -29,8 +30,8 @@
     <string name="nbr_image_sub">Tap to use camera</string>
     <string name="nbr_dor">Date of Registration</string>
     <string name="vhnd_date">VHND Date</string>
-    <string name="vhnc_date">VHNC Date</string>
-    <string name="phc_review_meeting_date">PHC Review Meeting Date</string>
+    <string name="vhnc_date">VHSNC meeting Date</string>
+    <string name="phc_review_meeting_date">Meeting Date</string>
     <string name="nbr_nb_first_name">First Name</string>
     <string name="nbr_child_first_name">Child Name</string>
     <string name="nbr_nb_last_name">Last Name / Surname</string>
@@ -68,6 +69,8 @@
 
     <string-array name="deworming_location_options">
         <item>School</item>
+        <item>Anganwadi Centre</item>
+        <item>Community center</item>
         <item>Home Visit</item>
     </string-array>
 
@@ -77,14 +80,31 @@
         <item name="nbr_gender_3">Transgender</item>
     </string-array>
 
-    <string-array name="nbr_reproductive_status_array">
+    <string-array name="nbr_reproductive_status_array1">
+        <item>Adolescent Girl</item>
+    </string-array>
+
+    <string-array name="nbr_reproductive_status_array2">
+        <item>Adolescent Girl</item>
         <item>Eligible Couple</item>
         <item>Pregnant Woman</item>
         <item>Postnatal Mother</item>
-        <item>Elderly Woman</item>
-        <item>Adolescent Girl</item>
         <item>Permanently Sterilised</item>
+    </string-array>
+
+    <string-array name="nbr_reproductive_status_array3">
         <item>Not Applicable</item>
+    </string-array>
+
+    <string-array name="nbr_reproductive_status_array4">
+        <item>Eligible Couple</item>
+        <item>Pregnant Woman</item>
+        <item>Postnatal Mother</item>
+        <item>Permanently Sterilised</item>
+    </string-array>
+
+    <string-array name="nbr_reproductive_status_array5">
+        <item>Elderly Woman</item>
     </string-array>
 
     <string name="dd_ec">Eligible Couple</string>
@@ -102,6 +122,15 @@
         <item>Widower</item>
 
     </string-array>
+
+    <string-array name="place_of_vhsnc">
+        <item>Anganwadi Centre</item>
+        <item>HWC</item>
+        <item>School</item>
+        <item>Community center</item>
+    </string-array>
+
+
 
     <string-array name="nbr_marital_status_female_array">
         <item>Unmarried</item>
@@ -309,6 +338,17 @@
         <item>In Transit</item>
         <item>Other Place of Abortion</item>
     </string-array>
+
+
+    <string-array name="place_of_anc_array">
+        <item>Sub-Centre</item>
+        <item>VHND/VHSND</item>
+        <item>PHC</item>
+        <item>PMSMA Visit</item>
+        <item>CHC</item>
+        <item>District Hospital</item>
+        <item>Medical College Hospital</item>
+    </string-array>
     <string-array name="reason_of_death_array">
         <item>Natural Death</item>
         <item>Accident</item>
@@ -333,5 +373,69 @@
         <item>Death</item>
     </string-array>
 
+    <string-array name="diet_plane">
+        <item>What to eat, what to avoid, importance of dietary diversity.</item>
+
+    </string-array>
+    <string-array name="mitanin_array">
+        <item>Mitanins</item>
+        <item>MT</item>
+        <item>ANM/ RHO</item>
+
+    </string-array>
+    <string-array name="activity_checklist">
+        <item>Select All</item>
+        <item>Information was shared about new schemes or guidelines issued by the Health Department.</item>
+        <item>Data registers and records were checked.</item>
+        <item>Training and capacity building were discussed.</item>
+        <item>Review of Dava Peti (Medicine Kit).</item>
+        <item>Supply distribution and related activities were carried out.</item>
+        <item>Progress of pregnant and breastfeeding Mothers was discussed.</item>
+        <item>Referral of special cases (serious patients) was discussed.</item>
+        <item>Updates were given on Child Immunization.</item>
+
+    </string-array>
+
+    <string-array name="care_pregnancy">
+        <item>Prevention of Anemia, weakness, importance of rest and nutrition.</item>
+
+
+    </string-array>
+    <string-array name="select_all">
+        <item>Select All</item>
+    </string-array>
+
+    <string-array name="maa_breastfeeding">
+        <item>Select All</item>
+        <item>The baby should be breastfed immediately within the first hour of birth</item>
+        <item>The baby should be given only mother’s milk for the first 6 months.</item>
+        <item>After 6 months, along with mother’s milk, nutritious complementary food should be given.</item>
+        <item>Breastfeeding should be continued for 2 years or more.</item>
+        <item>The family should support and encourage the mother.</item>
+        <item>For the first 6 months, the baby should not be given honey, water, or ghutti (herbal concoctions).</item>
+        <item>Breastfeeding protects the baby from many diseases.</item>
+        <item>Mother’s milk is the best for the complete development of the baby.</item>
+        <item>Information was given about KMC (Kangaroo Mother Care).</item>
+
+    </string-array>
+
+
+
+    <string-array name="import_brestfeeding">
+        <item>Early initiation after birth, exclusive breastfeeding for 6 months.</item>
+
+    </string-array>
+    <string-array name="complementary_feeding">
+        <item>Starting home-based nutritious food after 6 months along with breastfeeding</item>
+
+    </string-array>
+    <string-array name="hygiene_senetigation">
+        <item>Maintaining cleanliness while preparing and feeding food</item>
+
+    </string-array>
+    <string-array name="family_planning_health">
+        <item>Importance of small family and regular health check-ups</item>
+
+    </string-array>
 
 </resources>

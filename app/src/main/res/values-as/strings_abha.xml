@@ -96,6 +96,9 @@
     <string name="str_abha_otp_number">OTP ABHA-ত পঞ্জীয়ন কৰা ম\'বাইল নম্বৰলৈ পঠিওৱা হৈছে যিটো @mobileNumber লৈ শেষ হয়</string>
     <string name="enter_ben_name">উপভোক্তাৰ নাম দিয়ক</string>
     <string name="str_invalid_ben_name">অনুগ্ৰহ কৰি বৈধ লাভকাৰীৰ নাম প্ৰৱিষ্ট কৰক</string>
+    <string name="add_mda_filaria_form_title">Add Filaria MDA Campaign</string>
+    <string name="history_of_mda_form_campaign">Filaria MDA Campaign History</string>
+    <string name="history_of_mda_form_campaign_title">Annual Mass Drug Administration (MDA) campaign for cases of Lymphatic Filariasis (LF)</string>
 
 
 </resources>

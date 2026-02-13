@@ -7,7 +7,7 @@
 
         <variable
             name="visit"
-            type="org.piramalswasthya.sakhi.model.PMSMAStatus" />
+            type="org.piramalswasthya.sakhi.model.AncStatus" />
 
         <variable
             name="clickListener"
@@ -34,14 +34,6 @@
             android:text="@{@string/anc_visit_number(visit.visitNumber)}"
             android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
             tools:text="ANc VISIT 4" />
-        <!--                <TextView-->
-        <!--            android:id="@+id/tv_filled_on"-->
-        <!--            android:layout_width="wrap_content"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:padding="@dimen/padding_normal"-->
-        <!--            android:text="@string/filled_on"-->
-        <!--            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"-->
-        <!--            tools:text="ANc VISIT 4" />-->
 
         <androidx.legacy.widget.Space
             android:layout_width="30dp"

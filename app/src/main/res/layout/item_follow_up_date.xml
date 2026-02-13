@@ -13,13 +13,24 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
+
         <TextView
-            android:id="@+id/tv_visit_number"
+            android:id="@+id/tv_treatment_status"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-            android:text="Visit 1" />
+            android:text="@string/treatment_status"
+           />
+        <TextView
+            android:id="@+id/tv_last_follow_up_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:visibility="gone"
+            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+            android:text="@string/last_follow_up_date"
+            />
 
         <TextView
             android:id="@+id/tv_follow_up_date"
@@ -29,12 +40,6 @@
             android:text="2023-11-15" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/tv_treatment_status"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-        android:text="Treatment Status"
-        android:layout_marginTop="4dp" />
+
 
 </LinearLayout>

@@ -88,7 +88,11 @@ class AEFFormFragment : Fragment() {
                     findNavController().navigateUp()
                 }
 
-                else -> {}
+                else -> {
+                    /*
+                    * Currently Implementation is not required
+                    * */
+                }
             }
         }
     }

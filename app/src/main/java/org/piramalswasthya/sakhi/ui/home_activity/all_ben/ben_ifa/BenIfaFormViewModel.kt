@@ -262,12 +262,9 @@ class BenIfaFormViewModel @Inject constructor(
         }
     }
 
-    fun getMinVisitDate(): Date? {
-        return previousVisitDate?.let {
-            Calendar.getInstance().apply {
-                time = it
-                add(Calendar.DATE, 1)
-            }.time
-        }
+    fun getMinVisitDate(): Date {
+        return Calendar.getInstance().apply {
+            add(Calendar.MONTH, -1)
+        }.time
     }
 }

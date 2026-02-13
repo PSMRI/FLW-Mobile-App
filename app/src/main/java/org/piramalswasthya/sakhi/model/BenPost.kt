@@ -285,7 +285,7 @@ data class BenPost(
 
     @Json(name = "noofAlivechildren")
     val noofAlivechildren: Int = 0,
-
-
+    @Json(name = "isDeactivate")
+    val isDeactivate: Boolean = false,
 
     )

@@ -12,9 +12,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.configuration.HouseholdFormDataset
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.HouseholdCache
 import org.piramalswasthya.sakhi.model.User
+import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.HouseholdRepo
 import org.piramalswasthya.sakhi.repositories.UserRepo
 import timber.log.Timber
@@ -25,6 +27,7 @@ class NewHouseholdViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     preferenceDao: PreferenceDao,
     @ApplicationContext context: Context,
+    private val benRepo: BenRepo,
     private val householdRepo: HouseholdRepo,
     userRepo: UserRepo
 ) : ViewModel() {
@@ -103,6 +106,7 @@ class NewHouseholdViewModel @Inject constructor(
                         updatedBy = user.userName
                     }
                     householdRepo.persistRecord(household)
+                    benRepo.updateBenToSync(household.householdId, SyncState.UNSYNCED)
                     _state.postValue(State.SAVE_SUCCESS)
                 } catch (e: Exception) {
                     Timber.d("saving HH data failed!!")

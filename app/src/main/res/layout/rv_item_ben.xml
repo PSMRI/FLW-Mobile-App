@@ -51,8 +51,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_normal"
-        >
+        android:layout_margin="@dimen/margin_normal">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cv_content"
@@ -61,15 +60,14 @@
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:backgroundTint="@{ben.isDeath ? @color/md_theme_dark_outline: @color/md_theme_light_primary}"
             android:elevation="@dimen/padding_normal"
             app:cardCornerRadius="@dimen/padding_normal"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:cardElevation="@dimen/padding_normal"
-            >
-
+            app:cardElevation="@dimen/padding_normal">
+<!--       android:backgroundTint="@{ben.isDeath ? @color/md_theme_dark_outline: @color/md_theme_light_primary}"-->
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/contentLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingTop="@dimen/padding_tiny"
@@ -91,8 +89,6 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
 
-
-
                         <ImageView
                             android:id="@+id/iv_hh_logo"
                             android:layout_width="wrap_content"
@@ -104,7 +100,6 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
                             app:tint="?attr/colorPrimary" />
-
 
                         <TextView
                             android:id="@+id/tv_hh_id"
@@ -158,8 +153,8 @@
                             app:tint="?attr/colorPrimary"
                             android:layout_gravity="center_vertical|end"
                             android:layout_marginHorizontal="@dimen/padding_small"
-                            android:src="@drawable/ic__hh"
-                            />
+                            android:src="@drawable/ic__hh" />
+
                         <ImageView
                             android:id="@+id/iv_isDeath"
                             android:layout_width="24dp"
@@ -168,8 +163,7 @@
                             android:layout_marginHorizontal="@dimen/padding_small"
                             android:visibility="@{ben.isDeath == true ? View.VISIBLE : View.GONE}"
                             android:contentDescription="@string/iv_death_indicator"
-                            android:src="@drawable/ic_death"
-                            />
+                            android:src="@drawable/ic_death" />
 
                         <ImageView
                             android:id="@+id/iv_call"
@@ -181,10 +175,17 @@
                             android:layout_gravity="center"
                             android:onClick="@{()->clickListener.onClickedForCall(ben)}"
                             android:background="?selectableItemBackgroundBorderless"
-                            android:layout_marginEnd="4dp"
-                            app:layout_constraintEnd_toEndOf="@+id/tv_hh_id"
-                            app:layout_constraintTop_toTopOf="@+id/tv_hh_id"
-                            app:layout_constraintBottom_toBottomOf="@+id/tv_hh_id"/>
+                            android:layout_marginEnd="4dp" />
+
+                        <ImageView
+                            android:id="@+id/ivSoftDelete"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_delete"
+                            android:layout_gravity="center_vertical|end"
+                            android:contentDescription="@string/str_duplicate_record"
+                            android:layout_marginHorizontal="@dimen/padding_small"
+                            android:onClick="@{()->clickListener.onClickSoftDeleteBen(ben)}" />
 
                         <ImageView
                             android:id="@+id/iv_sync_state"
@@ -198,7 +199,6 @@
 
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
-
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -346,9 +346,7 @@
                            <ImageView
                                android:layout_width="wrap_content"
                                android:layout_height="wrap_content"
-                               android:src="@drawable/ic__hh"
-
-                               />
+                               android:src="@drawable/ic__hh" />
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -356,10 +354,8 @@
                                 android:text="@string/hof"
                                 android:textStyle="bold"
                                 android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                android:textColor="?attr/colorOnPrimary"
-                                 />
+                                android:textColor="?attr/colorOnPrimary" />
                         </LinearLayout>
-
 
                     </LinearLayout>
 
@@ -444,12 +440,9 @@
                             <ImageView
                                 android:layout_width="30dp"
                                 android:layout_height="30dp"
-
                                 android:src="@{ben.isConsent ? @drawable/verified : @drawable/not_verified}"
-
                                 android:layout_toRightOf="@+id/mob"
-                                android:layout_marginStart="5dp"
-                                />
+                                android:layout_marginStart="5dp" />
                         </RelativeLayout>
 
                     </LinearLayout>
@@ -578,9 +571,19 @@
                                 android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                                 android:textColor="?attr/colorOnPrimary"
                                 tools:text="0123456789"/>
-
-
                         </LinearLayout>
+                        <TextView
+                            android:id="@+id/tvTitleDuplicaterecord"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="3dp"
+                            android:layout_marginEnd="3dp"
+                            android:layout_gravity="center_vertical"
+                            android:textColor="@color/md_theme_light_onTertiary"
+                            android:fontFamily="@font/roboto_bold"
+                            android:textSize="@dimen/_12sdp"
+                            android:visibility="gone"
+                            android:text="@string/str_duplicate_record" />
                     </LinearLayout>
                     <LinearLayout
                         android:id="@+id/ll_ben_details_4"
@@ -589,28 +592,6 @@
                         android:orientation="horizontal"
                         android:weightSum="3"
                         app:layout_constraintTop_toBottomOf="@id/ll_ben_details_3">
-
-
-                        <Button
-                            style="@style/Widget.Material3.Button.TonalButton"
-                            android:id="@+id/btn_ifa"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_marginStart="@dimen/margin_small"
-                            android:backgroundTint="@android:color/holo_green_dark"
-                            android:onClick="@{()-> clickListener.clickedAddAllBenBtn(ben,isMatched,true)}"
-                            android:text="@string/ifa"
-                            app:visibleIfEligibleFemale="@{ben.ageInt}"
-                            app:isDeath="@{ben.isDeathValue}"
-                            app:reproductiveStatusId="@{ben.reproductiveStatusId}"
-                            app:gender="@{ben.gender}"
-                            app:cornerRadius="@dimen/padding_normal"
-                            android:textColor="?attr/colorOnPrimary"
-                            tools:ignore="NestedWeights" />
-
-                        <Space
-                            android:layout_width="@dimen/_5sdp"
-                            android:layout_height="match_parent"/>
 
                         <Button
                             style="@style/Widget.Material3.Button.TonalButton"
@@ -670,10 +651,7 @@
                             app:strokeWidth="1dp"/>
                     </LinearLayout>                </LinearLayout>
 
-
             </androidx.constraintlayout.widget.ConstraintLayout>
-
         </androidx.cardview.widget.CardView>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

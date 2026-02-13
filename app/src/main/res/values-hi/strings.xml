@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--Home-->
-<!--    <string name="app_native_name">मितानिन</string>-->
     <string name="title_activity_home" translatable="false">HomeActivity</string>
     <string name="nav_header_desc" translatable="false">Navigation header</string>
     <string name="cd_icon_grid_icon">icon</string>
@@ -30,7 +28,7 @@
     <string name="tv_father_name_ph">Father\'s Name</string>
     <string name="tv_family_head_name_ph">Family Head Name</string>
     <string name="tv_ben_id_ph">Ben ID</string>
-    <string name="tv_mob_no_ph">Mobile Number</string>
+    <string name="tv_mob_no_ph">फोन नंबर</string>
     <string name="tv_age_ph">Age</string>
     <string name="tv_suspected_hrp_ph">Suspected HRP</string>
     <string name="tv_imu_status_ph">Immunization Status</string>
@@ -85,6 +83,8 @@
     <string name="yes_dialog">हां</string>
     <string name="no_dialog">नहीं</string>
     <string name="u_win_session">यू-विन सत्र</string>
+    <string name="ors_distribution_campaign">ओआरएस वितरण अभियान</string>
+    <string name="pulse_polio_campaign">पल्स पोलियो अभियान</string>
     <string name="u_win_sessions_list">यू-विन सत्र सूची</string>
     <string name="any_other_high_risk_conditions">Any other High Risk conditions</string>
     <string name="details_of_pregnant_women">Details of Pregnant women</string>
@@ -94,7 +94,7 @@
     <string name="pmsma_visit_date">PMSMA Visit Date</string>
     <string name="pmsma_visits">PMSMA Visits</string>
     <string name="pmsma_visit">PMSMA Visit</string>
-    <string name="is_baby_discharge_from_sncu">Is Baby discharge from SNCU?</string>
+    <string name="is_baby_discharge_from_sncu">क्या शिशु को एसएनसीयू में भर्ती कराया गया है?</string>
     <string name="optional">(Optional)</string>
     <string name="optional_">Optional</string>
      <string name="mandatory">Mandatory <font color='#FF0000'>*</font></string>
@@ -110,7 +110,14 @@
     <string name="what_family_planning_method_has_been_chosen_after_the_abortion">What family planning method has been chosen after the abortion?</string>
     <string name="higher_healthcare_center">उच्च स्वास्थ्य सेवा केंद्र</string>
     <string name="additional_services">अतिरिक्त सेवाएं</string>
+    <string name="home_visit_number">गृह भ्रमण %d</string>
 
+    <string-array name="deworming_location_options">
+        <item>School</item>
+        <item>Anganwadi Centre</item>
+        <item>Community center</item>
+        <item>Home Visit</item>
+    </string-array>
 
     <string-array name="temp_array">
         <item>Item 1</item>
@@ -234,14 +241,14 @@
     <string name="husband_s_name">पति का नाम</string>
     <string name="weeks_of_pregnancy">गर्भावस्था के सप्ताह</string>
     <string name="pregnancy_weeks">गर्भावस्था के सप्ताह</string>
-    <string name="anc_visits">एएनसी विज़िट</string>
-    <string name="pnc_visits">पीएनसी विज़िट</string>
-    <string name="add_anc_visits">एएनसी विज़िट जोड़ें</string>
-    <string name="add_pnc_visits">पीएनसी विज़िट जोड़ें</string>
+    <string name="anc_visits">एएनसी भ्रमण</string>
+    <string name="pnc_visits">पीएनसी भ्रमण</string>
+    <string name="add_anc_visits">एएनसी भ्रमण जोड़ें</string>
+    <string name="add_pnc_visits">पीएनसी भ्रमण जोड़ें</string>
     <string name="id">आईडी</string>
     <string name="no_of_children">बच्चों की संख्या</string>
-    <string name="view_visit">विज़िट देखें</string>
-    <string name="add_visit">विज़िट जोड़ें</string>
+    <string name="view_visit">भ्रमण देखें</string>
+    <string name="add_visit">भ्रमण जोड़ें</string>
     <string name="household_id">परिवार आईडी</string>
     <string name="contact_number">संपर्क संख्या</string>
     <string name="show_vaccines">टीके दिखाएँ</string>
@@ -300,8 +307,8 @@
     <string name="tb_screening_form">टीबी स्क्रीनिंग फॉर्म</string>
     <string name="tb_suspected_form">संदेहास्पद टीबी मामले</string>
     <string name="mother_immunization">माँ का टीकाकरण</string>
-    <string name="delivery_outcome">शिशुओं की संख्या</string>
-    <string name="delivery_outcome_list">शिशुओं की संख्या सूची</string>
+    <string name="delivery_outcome">प्रसव परिणाम</string>
+    <string name="delivery_outcome_list">प्रसव परिणाम सूची</string>
     <string name="infant_reg_list">नवजात शिशु पंजीकरण सूची</string>
     <string name="infant_reg">नवजात पंजीकरण</string>
     <string name="communicable_diseases">संचारी रोग</string>
@@ -356,6 +363,43 @@
     <string name="filaria_submitted">फाइलेरिया फॉर्म जमा किया गया</string>
     <string name="leprosy_submitted">कुष्ठ रोग फॉर्म जमा किया गया</string>
     <string name="irs_submitted">आईआरएस फॉर्म जमा किया गया</string>
+    <string name="hwc_referred_list">HWC Referred List</string>
+    <string name="vhsnc_meeting_date">VHSNC meeting Date</string>
+    <string name="place_of_vhsnc_meeting">Place of VHSNC meeting</string>
+    <string name="village_name">Village Name</string>
+    <string name="number_of_anm_mpw_attended">Number of ANM/ MPW attended</string>
+    <string name="number_of_aww_attended">Number of AWW attended</string>
+    <string name="number_of_pregnant_woman">Number of Pregnant Woman</string>
+    <string name="number_of_lactating_mothers">Number of Lactating Mothers</string>
+    <string name="number_of_committee_members_present">Number of Committee members present</string>
+    <string name="follow_up_the_previous_meeting_minutes">Follow-up the previous meeting minutes</string>
+    <string name="number_of_asha_participated_in_vhsnc_meeting">Number of ASHAs participated in VHSNC meeting</string>
+    <string name="number_of_mitanins_participated_in_vhsnc_meeting">Number of Mitanins participated in VHSNC meeting</string>
+    <string name="mitanin_village_meetings">Mitanin/ Village Meetings</string>
+    <string name="asha_village_meetings">ASHA/ Village Meetings</string>
+    <string name="phone_no">फोन नंबर</string>
+    <string name="name_of_pregnant_woman">गर्भवती महिला का नाम</string>
+    <string name="husband_name">पति का नाम</string>
+    <string name="last_home_visit_date">अंतिम गृह भ्रमण की तिथि</string>
+    <string name="add_home_visit"> गृह भ्रमण जोड़ें</string>
+    <string name="view_home_visits">गृह भ्रमण</string>
+    <string name="number_of_pregnant_woman_attended">Number of Pregnant Woman Attended</string>
+    <string name="number_of_lactating_mothers_attended">Number of Lactating Mothers attended</string>
+    <string name="during_breastfeeding_counseling_check_list">During Breastfeeding Counseling check list</string>
+    <string name="the_baby_should_be_breastfed_immediately_within_the_first_hour_of_birth">The baby should be breastfed immediately within the first hour of birth</string>
+    <string name="the_baby_should_be_given_only_mother_s_milk_for_the_first_6_months">The baby should be given only mother’s milk for the first 6 months.</string>
+    <string name="after_6_months_along_with_mother_s_milk_nutritious_complementary_food_should_be_given">After 6 months, along with mother’s milk, nutritious complementary food should be given.</string>
+    <string name="breastfeeding_should_be_continued_for_2_years_or_more">Breastfeeding should be continued for 2 years or more.</string>
+    <string name="the_family_should_support_and_encourage_the_mother">The family should support and encourage the mother</string>
+    <string name="mother_s_milk_is_the_best_for_the_complete_development_of_the_baby">Mother’s milk is the best for the complete development of the baby.</string>
+    <string name="information_was_given_about_kmc_kangaroo_mother_care">Information was given about KMC (Kangaroo Mother Care).</string>
+    <string name="place_of_maa_meeting">Place of MAA Meeting</string>
+    <string name="number_of_out_of_school_children_sent_to_anganwad">Number of Out-of-school Children sent to Anganwad</string>
+    <string name="place_of_ndd">Place of NDD</string>
+    <string name="date_of_ndd">Date of NDD</string>
+    <string name="was_the_deworming_round_conducted">Was the deworming round conducted?</string>
+    <string name="mda_title">Filariasis MDA campaign</string>
+    <string name="mda_form_campagain_title">Lymphatic Filariasis (LF) Mass Drug Administration (MDA) campaign</string>
 
 
 </resources>

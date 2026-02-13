@@ -8,6 +8,9 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.database.room.SyncState
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.model.BenHealthIdDetails
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import javax.inject.Inject
@@ -17,15 +20,13 @@ import javax.inject.Inject
 class HouseholdMembersViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val benRepo: BenRepo,
+    private val preferenceDao: PreferenceDao,
 
     ) : ViewModel() {
 
     val hhId = HouseholdMembersFragmentArgs.fromSavedStateHandle(savedStateHandle).hhId
 
-//    val isFromDisease = HouseholdMembersFragmentArgs.fromSavedStateHandle(savedStateHandle).fromDisease
     val isFromDisease = 0
-
-//    val diseaseType = HouseholdMembersFragmentArgs.fromSavedStateHandle(savedStateHandle).diseaseType
     val diseaseType = "No"
 
     val benList = benRepo.getBenBasicListFromHousehold(hhId).map { list ->
@@ -67,6 +68,55 @@ class HouseholdMembersViewModel @Inject constructor(
 
     fun resetBenRegId() {
         _benRegId.value = null
+    }
+
+
+
+    fun deActivateBeneficiary(benBasicDomain: BenBasicDomain) {
+        viewModelScope.launch {
+           var benRegCache =   benRepo.getBenFromId(benBasicDomain.benId)
+
+            benBasicDomain.apply {
+                isDeactivate = !isDeactivate
+            }.also {
+                benRegCache?.isDeactivate =  benBasicDomain.isDeactivate
+                if (benRegCache?.processed != "N"){
+                    benRegCache?.processed = "U"
+                    benRegCache?.syncState = SyncState.UNSYNCED
+                    benRegCache?.serverUpdatedStatus = 2
+                }
+
+            }
+
+            if (benRegCache != null) {
+                benRepo.updateRecord(benRegCache)
+            }
+
+               if (benRegCache != null) {
+                   val result = benRepo.deactivateBeneficiary( listOf(benRegCache)/*,houseHoldCache.asNetworkModel(user)*/)
+               }
+        }
+    }
+    suspend fun isHOF(ben: BenBasicDomain): Boolean {
+        val familyMemberList =
+            benRepo.getBenListFromHousehold(ben.hhId)
+
+        val hof = familyMemberList.firstOrNull {
+            it.familyHeadRelationPosition == 19
+        }
+
+        return hof?.beneficiaryId == ben.benId
+    }
+
+
+    suspend fun canDeleteHoF(
+        hhId:Long,
+    ): Boolean {
+        val householdMembers = benRepo.getBenListFromHousehold(hhId)
+             val hof = householdMembers.firstOrNull { it.familyHeadRelationPosition == 19 }
+        return householdMembers
+                 .filter { it.beneficiaryId != hof?.beneficiaryId }
+                 .isEmpty()
     }
 
 

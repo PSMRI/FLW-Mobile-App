@@ -22,6 +22,8 @@
         <variable
             name="spouse"
             type="Boolean"/>
+
+
     </data>
 
     <androidx.cardview.widget.CardView
@@ -102,29 +104,6 @@
                     android:layout_height="wrap_content"
                     android:baselineAligned="false"
                     android:orientation="horizontal">
-
-<!--                    <LinearLayout-->
-<!--                        android:layout_width="0dp"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_weight="1"-->
-<!--                        android:orientation="vertical"-->
-<!--                        android:padding="@dimen/padding_small">-->
-
-<!--                        <TextView-->
-<!--                            android:layout_width="wrap_content"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:text="@string/name_ben"-->
-<!--                            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"-->
-<!--                            android:textColor="?attr/colorOnPrimary" />-->
-
-<!--                        <TextView-->
-<!--                            android:layout_width="wrap_content"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:text="@{benWithEcr.ben.benName + ' ' + benWithEcr.ben.benSurname}"-->
-<!--                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"-->
-<!--                            android:textColor="?attr/colorOnPrimary"-->
-<!--                            tools:text="Lala Land" />-->
-<!--                    </LinearLayout>-->
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -346,6 +325,22 @@
                         tools:backgroundTint="@android:color/holo_red_dark" />
 
                 </LinearLayout>
+                <Button
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:id="@+id/btn_ifa"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/margin_small"
+                    android:backgroundTint="@android:color/holo_green_dark"
+                    android:onClick="@{()-> clickListener.clickedAddAllBenBtn(benWithEcr,false,true)}"
+                    android:text="@string/ifa"
+                    app:visibleIfEligibleFemale="@{benWithEcr.ben.ageInt}"
+                    app:isDeath="@{benWithEcr.ben.isDeathValue}"
+                    app:reproductiveStatusId="@{benWithEcr.ben.reproductiveStatusId}"
+                    app:gender="@{benWithEcr.ben.gender}"
+                    app:cornerRadius="@dimen/padding_normal"
+                    android:textColor="?attr/colorOnPrimary"
+                    tools:ignore="NestedWeights" />
 
             </LinearLayout>
 

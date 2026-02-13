@@ -1,0 +1,9 @@
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tv_followup"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="• Follow-up 1 | 01-Aug-2025"
+    android:paddingStart="16dp"
+    android:paddingTop="2dp"
+    android:paddingBottom="2dp"
+    android:textSize="14sp"/>

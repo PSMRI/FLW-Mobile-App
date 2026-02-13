@@ -40,24 +40,11 @@ class AESRepo @Inject constructor(
         }
     }
 
-    /* suspend fun getTBSuspected(benId: Long): TBSuspectedCache? {
-         return withContext(Dispatchers.IO) {
-             malariaDao.getTbSuspected(benId)
-         }
-     }
-
-     suspend fun saveTBSuspected(tbSuspectedCache: TBSuspectedCache) {
-         withContext(Dispatchers.IO) {
-             malariaDao.saveTbSuspected(tbSuspectedCache)
-         }
-     }*/
-
     suspend fun getAESScreeningDetailsFromServer(): Int {
         return withContext(Dispatchers.IO) {
             val user =
                 preferenceDao.getLoggedInUser()
                     ?: throw IllegalStateException("No user logged in!!")
-            val lastTimeStamp = preferenceDao.getLastSyncedTimeStamp()
             try {
                 val response = tmcNetworkApiService.getMalariaScreeningData(
                     GetDataPaginatedRequestForDisease(
@@ -125,7 +112,7 @@ class AESRepo @Inject constructor(
         val aesScreeningList = mutableListOf<AESScreeningCache>()
         var requestDTO = Gson().fromJson(dataObj, AESScreeningRequestDTO::class.java)
         requestDTO?.aesJeLists?.forEach { aesScreeningDTO ->
-            aesScreeningDTO.visitDate?.let {
+            aesScreeningDTO.visitDate.let {
                 var aesScreeningCache: AESScreeningCache? =
                     aesDao.getAESScreening(
                         aesScreeningDTO.benId,

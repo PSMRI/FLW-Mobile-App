@@ -40,14 +40,25 @@ class EligibleCoupleListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.btnNextPage.visibility = View.GONE
         val benAdapter = ECRegistrationAdapter(
-            ECRegistrationAdapter.ClickListener { hhId, benId ->
-                findNavController().navigate(
-                    EligibleCoupleListFragmentDirections.actionEligibleCoupleListFragmentToEligibleCoupleRegFragment(
-                        benId
+            ECRegistrationAdapter.ClickListener(
+                clickedForm = { hhId, benId ->
+                    findNavController().navigate(
+                        EligibleCoupleListFragmentDirections
+                            .actionEligibleCoupleListFragmentToEligibleCoupleRegFragment(benId)
                     )
-                )
-            }
+                },
+                clickedAddAllBenBtn = { item, benId, hhId, isViewMode, isIFA ->
+                    findNavController().navigate(
+                        EligibleCoupleListFragmentDirections.actionEligibleCoupleListFragmentToBenIfaFormFragment(
+                            hhId = hhId,
+                            benId = benId,
+                            isViewMode = isViewMode,
+                        )
+                    )
+                }
+            )
         )
+
         binding.rvAny.adapter = benAdapter
 
         lifecycleScope.launch {

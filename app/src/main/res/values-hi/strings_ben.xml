@@ -45,13 +45,32 @@
         <item name="nbr_gender_2">महिला</item>
         <item name="nbr_gender_3">ट्रांसजेंडर</item>
     </string-array>
-    <string-array name="nbr_reproductive_status_array">
+
+    <string-array name="nbr_reproductive_status_array1">
+        <item>किशोरी लड़की</item>
+    </string-array>
+
+    <string-array name="nbr_reproductive_status_array2">
+        <item>किशोरी लड़की</item>
         <item>लक्ष्य दम्पति</item>
         <item>गर्भवती महिला</item>
         <item>प्रसवोत्तर माता</item>
-        <item>वृद्धा महिला</item>
-        <item>किशोरी लड़की</item>
         <item>स्थायी नसबंदीकृत महिला</item>
+    </string-array>
+
+    <string-array name="nbr_reproductive_status_array3">
+        <item>Not Applicable</item>
+    </string-array>
+
+    <string-array name="nbr_reproductive_status_array4">
+        <item>लक्ष्य दम्पति</item>
+        <item>गर्भवती महिला</item>
+        <item>प्रसवोत्तर माता</item>
+        <item>स्थायी नसबंदीकृत महिला</item>
+    </string-array>
+
+    <string-array name="nbr_reproductive_status_array5">
+        <item>वृद्धा महिला</item>
     </string-array>
 
     <string name="dd_ec">लक्ष्य दम्पति</string>
@@ -67,6 +86,13 @@
         <item>तलाकशुदा</item>
         <item>अलग</item>
         <item>विधुर</item>
+    </string-array>
+
+    <string-array name="place_of_vhsnc">
+        <item>Anganwadi Centre</item>
+        <item>HWC</item>
+        <item>School</item>
+        <item>Community center</item>
     </string-array>
 
     <string-array name="nbr_marital_status_female_array">
@@ -232,4 +258,46 @@
     <string name="months">महीने</string>
     <string name="day">दिन</string>
     <string name="days">दिन</string>
+
+    <string-array name="diet_plane">
+        <item>What to eat, what to avoid, importance of dietary diversity.</item>
+
+    </string-array>
+    <string-array name="care_pregnancy">
+        <item>Prevention of Anemia, weakness, importance of rest and nutrition.</item>
+
+    </string-array>
+    <string-array name="select_all">
+        <item>Select All</item>
+    </string-array>
+    <string-array name="maa_breastfeeding">
+        <item>Select All</item>
+        <item>The baby should be breastfed immediately within the first hour of birth</item>
+        <item>The baby should be given only mother’s milk for the first 6 months.</item>
+        <item>After 6 months, along with mother’s milk, nutritious complementary food should be given.</item>
+        <item>Breastfeeding should be continued for 2 years or more.</item>
+        <item>The family should support and encourage the mother.</item>
+        <item>For the first 6 months, the baby should not be given honey, water, or ghutti (herbal concoctions).</item>
+        <item>Breastfeeding protects the baby from many diseases.</item>
+        <item>Mother’s milk is the best for the complete development of the baby.</item>
+        <item>Information was given about KMC (Kangaroo Mother Care).</item>
+
+    </string-array>
+
+    <string-array name="import_brestfeeding">
+        <item>Early initiation after birth, exclusive breastfeeding for 6 months.</item>
+    </string-array>
+
+    <string-array name="complementary_feeding">
+        <item>Starting home-based nutritious food after 6 months along with breastfeeding</item>
+
+    </string-array>
+    <string-array name="hygiene_senetigation">
+        <item>Maintaining cleanliness while preparing and feeding food</item>
+
+    </string-array>
+    <string-array name="family_planning_health">
+        <item>Importance of small family and regular health check-ups</item>
+
+    </string-array>
 </resources>

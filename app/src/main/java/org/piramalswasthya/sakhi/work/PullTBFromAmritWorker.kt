@@ -55,7 +55,8 @@ class PullTBFromAmritWorker @AssistedInject constructor(
                     val result1 =
                         awaitAll(
                             async { getTbScreeningDetails() },
-                            async { getTbSuspectedDetails() }
+                            async { getTbSuspectedDetails() },
+                            async { getTbConfirmedDetails() }
                         )
 
                     val endTime = System.currentTimeMillis()
@@ -120,4 +121,19 @@ class PullTBFromAmritWorker @AssistedInject constructor(
             true
         }
     }
+
+
+    private suspend fun getTbConfirmedDetails(): Boolean {
+        return  withContext(Dispatchers.IO) {
+            try {
+                val res = tbRepo.getTbConfirmedDetailsFromServer()
+                res == 1
+            } catch (e: Exception) {
+                Timber.d("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
+
+            }
+            true
+        }
+    }
+
 }

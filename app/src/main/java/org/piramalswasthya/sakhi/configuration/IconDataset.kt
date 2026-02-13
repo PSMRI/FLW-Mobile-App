@@ -45,6 +45,12 @@ class IconDataset @Inject constructor(
 
     fun getHomeIconDataset(resources: Resources): List<Icon> {
         val showAll = preferenceDao.isDevModeEnabled
+        val vlfTitle = if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+            resources.getString(R.string.mitanin_village_meetings)
+        } else {
+            resources.getString(R.string.asha_village_meetings)
+        }
+
         Timber.d("currently : $showAll")
         lateinit var showModules:Modules
         if (BuildConfig.FLAVOR.equals("xushrukha", true)) {
@@ -125,7 +131,7 @@ class IconDataset @Inject constructor(
                 ),
                 Icon(
                     R.drawable.ic__village_level_form,
-                    resources.getString(R.string.icon_title_vlf),
+                    vlfTitle,
                     null,
                     HomeFragmentDirections.actionNavHomeToVillageLevelFormsFragment()
                 ),
@@ -299,59 +305,87 @@ class IconDataset @Inject constructor(
         )
     )
 
-    fun getVLFDataset(resources: Resources) = listOf(
-        Icon(
-            R.drawable.ic__assess_high_risk,
-            resources.getString(R.string.vhnd),
-            null,
-            VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToVHNDListFragement()
-        ),
-        Icon(
-            R.drawable.vhnc,
-            resources.getString(R.string.vnhc),
-            null,
-            VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToVHNCListFragement()
-        ) ,
-        Icon(
-                R.drawable.phc_review,
-        resources.getString(R.string.phc_review),
-            null,
-            VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToPHCReviewListFragement()
-        )
-        ,
-        Icon(
-            R.drawable.ahd,
-            resources.getString(R.string.ahd),
-            null,
-            VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToAHDListFragment()
-        )
-        ,
-        Icon(
-            R.drawable.dewarming,
-            resources.getString(R.string.national_deworming_day),
-            null,
-            VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToDewormingListFragment()
-        ),
+    fun getVLFDataset(resources: Resources): List<Icon> {
 
-        Icon(
-            R.drawable.dewarming,
-        resources.getString(R.string.maa_meeting),
-        null,
-        VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToAllMaaMeetingFragment()
-        ),
-//        Icon(
-//            R.drawable.dewarming,
-//            resources.getString(R.string.saas_samelan),
-//            null,
-//            VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToSaasBahuSammelanListFragment()
-//        )
-//      ,
-        Icon(
-            R.drawable.dewarming,
-            resources.getString(R.string.u_win_session),
+        val phcReviewIcon = Icon(
+            R.drawable.phc_review,
+            if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true))
+                resources.getString(R.string.cluster_review)
+            else
+                resources.getString(R.string.phc_review),
             null,
-            VillageLevelFormsFragmentDirections.actionVillageLevelFormsFragmentToUwinListFragment()
-    ),)
+            VillageLevelFormsFragmentDirections
+                .actionVillageLevelFormsFragmentToPHCReviewListFragement()
+        )
+
+        return listOf(
+            Icon(
+                R.drawable.ic__assess_high_risk,
+                resources.getString(R.string.vhnd),
+                null,
+                VillageLevelFormsFragmentDirections
+                    .actionVillageLevelFormsFragmentToVHNDListFragement()
+            ),
+            Icon(
+                R.drawable.vhnc,
+                resources.getString(R.string.vnhc),
+                null,
+                VillageLevelFormsFragmentDirections
+                    .actionVillageLevelFormsFragmentToVHNCListFragement()
+            ),
+            phcReviewIcon,
+            Icon(
+                R.drawable.ahd,
+                resources.getString(R.string.ahd),
+                null,
+                VillageLevelFormsFragmentDirections
+                    .actionVillageLevelFormsFragmentToAHDListFragment()
+            ),
+            Icon(
+                R.drawable.dewarming,
+                resources.getString(R.string.national_deworming_day),
+                null,
+                VillageLevelFormsFragmentDirections
+                    .actionVillageLevelFormsFragmentToDewormingListFragment()
+            ),
+            Icon(
+                R.drawable.dewarming,
+                resources.getString(R.string.maa_meeting),
+                null,
+                VillageLevelFormsFragmentDirections
+                    .actionVillageLevelFormsFragmentToAllMaaMeetingFragment()
+            ),
+            Icon(
+                R.drawable.dewarming,
+                resources.getString(R.string.u_win_session),
+                null,
+                VillageLevelFormsFragmentDirections
+                    .actionVillageLevelFormsFragmentToUwinListFragment()
+            ),
+            Icon(
+                R.drawable.dewarming,
+                resources.getString(R.string.pulse_polio_campaign),
+                null,
+                VillageLevelFormsFragmentDirections
+                    .actionVillageLevelFormsFragmentToPulsePolioCampaignListFragment()
+            ),
+            Icon(
+                R.drawable.dewarming,
+                resources.getString(R.string.ors_distribution_campaign),
+                null,
+                VillageLevelFormsFragmentDirections
+                    .actionVillageLevelFormsFragmentToORSCampaignListFragment()
+            )
+            ,Icon(
+                R.drawable.filaria,
+                resources.getString(R.string.mda_title),
+                null,
+                VillageLevelFormsFragmentDirections
+                    .actionVillageLevelFormsFragmentToFilariaMdaCampaignHistoryFragment()
+            )
+
+        )
+    }
 
 
     fun getHRPNonPregnantWomenDataset(resources: Resources) = listOf(
@@ -595,7 +629,13 @@ class IconDataset @Inject constructor(
             resources.getString(R.string.icon_title_pmsma),
             recordsRepo.getHighRiskWomenCount(),
             MotherCareFragmentDirections.actionMotherCareFragmentToPmsmaHighRiskListFragment()
-        )
+        ),
+        Icon(
+            R.drawable.ic_ncd_noneligible,
+            resources.getString(R.string.hwc_referred_list),
+            recordsRepo.getHwcReferedListCount,
+            MotherCareFragmentDirections.actionMotherCareFragmentToHwcReferredListFragment()
+        ),
     ).apply {
         forEachIndexed { index, icon ->
             icon.colorPrimary = index % 2 == 0
@@ -678,6 +718,11 @@ class IconDataset @Inject constructor(
             recordsRepo.tbSuspectedListCount,
             CdFragmentDirections.actionCdFragmentToTBSuspectedListFragment()
 
+        ), Icon(
+            icon = R.drawable.ic__death,
+            title = resources.getString(R.string.icon_title_ncd_tb_confirmed),
+            recordsRepo.tbConfirmedListCount,
+            CdFragmentDirections.actionCdFragmentToTBConfirmedListFragment()
         )
     ).apply {
         forEachIndexed { index, icon ->
