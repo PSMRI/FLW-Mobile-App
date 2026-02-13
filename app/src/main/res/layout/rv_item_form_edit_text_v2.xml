@@ -56,41 +56,5 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-<!--        <ImageView
-            android:id="@+id/ivIconBg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:imageResource="@{form.backgroundDrawable}"
-            android:visibility="@{form.showDrawable ? View.VISIBLE : View.GONE}"
-            app:layout_constraintBottom_toBottomOf="@+id/til_edit_text"
-            app:layout_constraintEnd_toStartOf="@+id/til_edit_text"
-            app:layout_constraintStart_toStartOf="@+id/til_edit_text"
-            app:layout_constraintTop_toTopOf="@+id/til_edit_text"
-            app:tint="@color/md_theme_light_primary" />
-&lt;!&ndash;        android:src="@drawable/ic_bg_circular"&ndash;&gt;
-
-        <ImageView
-            android:id="@+id/ivIconTemperature"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:imageResource="@{form.iconDrawableRes}"
-            android:visibility="@{form.showDrawable ? View.VISIBLE : View.GONE}"
-            app:layout_constraintBottom_toBottomOf="@+id/ivIconBg"
-            app:layout_constraintEnd_toEndOf="@+id/ivIconBg"
-            app:layout_constraintStart_toStartOf="@+id/ivIconBg"
-            app:layout_constraintTop_toTopOf="@+id/ivIconBg" />-->
-
-<!--        <TextView-->
-<!--            android:id="@+id/tv_nullable"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_toEndOf="@id/til_edit_text"-->
-<!--            android:text="@string/tv_required_text_asterisk"-->
-<!--            android:textAppearance="@style/TextAppearance.AppCompat.Large"-->
-<!--            android:textColor="@color/design_default_color_error"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="@id/til_edit_text"-->
-<!--            app:required="@{form.required}" />-->
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

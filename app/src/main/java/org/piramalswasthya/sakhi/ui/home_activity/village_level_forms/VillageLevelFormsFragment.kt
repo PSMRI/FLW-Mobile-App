@@ -2,7 +2,6 @@
 
     import android.os.Build
     import android.os.Bundle
-    import android.util.Log
     import android.view.LayoutInflater
     import android.view.View
     import android.view.ViewGroup
@@ -75,16 +74,12 @@
                 viewModel.iconsWithRedFlags.collect { iconsWithOverdueStatus ->
                     // Update icons based on overdue status
                     val updatedIcons = iconsWithOverdueStatus.map { (icon, isOverdue) ->
-//                        Log.d("OverdueCheck", "Is overdue: $isOverdue")
 
                         icon.copy(
-//                            colorPrimary = !isOverdue, // Update colorPrimary based on overdue status
-                            allowRedBorder = isOverdue // Allow red border if overdue
+                            allowRedBorder = isOverdue
                         )
 
                     }
-
-                    // Update RecyclerView with the updated icons list
                     (binding.rvIconGrid.adapter as? IconGridAdapter)?.submitList(updatedIcons)
 
                 }

@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.configuration
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.getWeeksOfPregnancy
@@ -184,6 +185,11 @@ class PregnantWomanAncAbortionDataset(
             abortionDischargeSummaryImg1,
             abortionDischargeSummaryImg2,
         )
+
+        if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+            list.remove(abortionDischargeSummaryImg1)
+            list.remove(abortionDischargeSummaryImg2)
+        }
 
 
         abortionDate.min = regis.lmpDate!! + TimeUnit.DAYS.toMillis(5 * 7 + 1)

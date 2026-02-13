@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--Home-->
-<!--    <string name="app_native_name">मितानिन</string>-->
     <string name="title_activity_home" translatable="false">HomeActivity</string>
     <string name="nav_header_desc" translatable="false">Navigation header</string>
     <string name="cd_icon_grid_icon">icon</string>
@@ -30,7 +28,7 @@
     <string name="tv_father_name_ph">Father\'s Name</string>
     <string name="tv_family_head_name_ph">Family Head Name</string>
     <string name="tv_ben_id_ph">Ben ID</string>
-    <string name="tv_mob_no_ph">Mobile Number</string>
+    <string name="tv_mob_no_ph">फोन नंबर</string>
     <string name="tv_age_ph">Age</string>
     <string name="tv_suspected_hrp_ph">Suspected HRP</string>
     <string name="tv_imu_status_ph">Immunization Status</string>
@@ -110,6 +108,8 @@
     <string name="what_family_planning_method_has_been_chosen_after_the_abortion">What family planning method has been chosen after the abortion?</string>
     <string name="higher_healthcare_center">उच्च स्वास्थ्य सेवा केंद्र</string>
     <string name="additional_services">अतिरिक्त सेवाएं</string>
+    <string name="home_visit_number">गृह भ्रमण %d</string>
+
 
 
     <string-array name="temp_array">
@@ -357,6 +357,25 @@
     <string name="leprosy_submitted">कुष्ठ रोग फॉर्म जमा किया गया</string>
     <string name="irs_submitted">आईआरएस फॉर्म जमा किया गया</string>
     <string name="hwc_referred_list">HWC Referred List</string>
+    <string name="vhsnc_meeting_date">VHSNC meeting Date</string>
+    <string name="place_of_vhsnc_meeting">Place of VHSNC meeting</string>
+    <string name="village_name">Village Name</string>
+    <string name="number_of_anm_mpw_attended">Number of ANM/ MPW attended</string>
+    <string name="number_of_aww_attended">Number of AWW attended</string>
+    <string name="number_of_pregnant_woman">Number of Pregnant Woman</string>
+    <string name="number_of_lactating_mothers">Number of Lactating Mothers</string>
+    <string name="number_of_committee_members_present">Number of Committee members present</string>
+    <string name="follow_up_the_previous_meeting_minutes">Follow-up the previous meeting minutes</string>
+    <string name="number_of_asha_participated_in_vhsnc_meeting">Number of ASHAs participated in VHSNC meeting</string>
+    <string name="number_of_mitanins_participated_in_vhsnc_meeting">Number of Mitanins participated in VHSNC meeting</string>
+    <string name="mitanin_village_meetings">Mitanin/ Village Meetings</string>
+    <string name="asha_village_meetings">ASHA/ Village Meetings</string>
+    <string name="phone_no">फोन नंबर</string>
+    <string name="name_of_pregnant_woman">गर्भवती महिला का नाम</string>
+    <string name="husband_name">पति का नाम</string>
+    <string name="last_home_visit_date">अंतिम गृह भ्रमण की तिथि</string>
+    <string name="add_home_visit"> गृह भ्रमण जोड़ें</string>
+    <string name="view_home_visits">गृह भ्रमण</string>
 
 
 </resources>

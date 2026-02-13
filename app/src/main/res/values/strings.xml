@@ -60,7 +60,7 @@
     <string name="refer_to">Referred To</string>
     <string name="day_wise_tracking_pf">Pf - Day-wise Tracking</string>
     <string name="day_wise_tracking_pv">PV - Day-wise Tracking</string>
-    <string name="type_of_leprocy">Type of Leprosy</string>
+    <string name="type_of_leprocy">Type of leprosy confirmed</string>
     <string name="treatment_start_date">Treatment Start Date</string>
     <string name="dose_status">DEC and Albendazole Dose Status</string>
     <string name="is_medicine_distributed">Is medicine Distributed</string>
@@ -210,7 +210,6 @@
     </string>
 
     <string name="hbnc_day_text">Day %1d</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="hbnc_mother_temp_case_1">Treat mother to paracetamol.</string>
     <string name="hbnc_mother_temp_case_2">Refer mother to Hospital.</string>
@@ -291,7 +290,9 @@
     <string name="add_anc_visits">Add ANC visit</string>
     <string name="add_pnc_visits">Add PNC visit</string>
     <string name="id">ID</string>
-    <string name="no_of_children">No.of Children</string>
+    <string name="no_of_children">Total No.of Children</string>
+    <string name="no_of_elderly_children">No.of Elderly Children</string>
+    <string name="no_of_younger_children">No.of Children</string>
     <string name="view_visit">View Visit</string>
     <string name="visit_no">Visit No.</string>
     <string name="add_visit">Add Visit</string>
@@ -717,6 +718,30 @@
     <string name="oldAbha">Old</string>
     <string name="home_visit_number">Home Visit %d</string>
     <string name="hwc_referred_list">HWC Referred List</string>
+    <string name="vhsnc_meeting_date">VHSNC meeting Date</string>
+    <string name="place_of_vhsnc_meeting">Place of VHSNC meeting</string>
+    <string name="village_name">Village Name</string>
+    <string name="number_of_anm_mpw_attended">Number of ANM/ MPW attended</string>
+    <string name="number_of_aww_attended">Number of AWW attended</string>
+    <string name="number_of_pregnant_woman">Number of Pregnant Woman</string>
+    <string name="number_of_lactating_mothers">Number of Lactating Mothers</string>
+    <string name="number_of_committee_members_present">Number of Committee members present</string>
+    <string name="follow_up_the_previous_meeting_minutes">Follow-up the previous meeting minutes</string>
+    <string name="number_of_asha_participated_in_vhsnc_meeting">Number of ASHAs participated in VHSNC meeting</string>
+    <string name="number_of_mitanins_participated_in_vhsnc_meeting">Number of Mitanins participated in VHSNC meeting</string>
+    <string name="mitanin_village_meetings">Mitanin/ Village Meetings</string>
+    <string name="asha_village_meetings">ASHA/ Village Meetings</string>
+    <string name="has_leprosy_been_confirmed">Has leprosy been confirmed?</string>
+    <string name="mdt_blister_pack_received">MDT/BLISTER PACK RECEIVED</string>
+    <string name="actual_treatment_completion_date">Actual Treatment Completion Date</string>
+    <string name="expected_treatment_completion_date">Expected Treatment Completion Date</string>
+    <string name="treatment_status">Treatment Status</string>
+    <string name="phone_no">Phone No</string>
+    <string name="name_of_pregnant_woman">Name of Pregnant Woman</string>
+    <string name="husband_name">Husband Name</string>
+    <string name="last_home_visit_date">Last Home Visit Date</string>
+    <string name="add_home_visit">ADD HOME VISIT</string>
+    <string name="view_home_visits">VIEW HOME VISITS</string>
 
 
     <string-array name="hbyc_month_array">
@@ -948,6 +973,14 @@
         <item>Regularly taking medicine</item>
         <item>Not regularly taking medicine</item>
         <item>Treatment Completed</item>
+    </string-array>
+
+    <string-array name="leprosy_treatment_status_before_time">
+        <item>Recovering</item>
+        <item>Cured</item>
+        <item>Recurrence of Symptoms</item>
+        <item>Regularly taking medicine</item>
+        <item>Not regularly taking medicine</item>
     </string-array>
 
     <string-array name="dc_refer">

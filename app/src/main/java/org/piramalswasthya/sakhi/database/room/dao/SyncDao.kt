@@ -86,7 +86,7 @@ interface SyncDao {
                 "    FROM VHND vhnd " +
 
                 "    UNION ALL " +
-                "    SELECT 22 as id, 'VHNC' as name, vhnc.syncState as syncState " +
+                "    SELECT 22 as id, 'VHSNC' as name, vhnc.syncState as syncState " +
                 "    FROM VHNC vhnc " +
 
                 "    UNION ALL " +
@@ -136,6 +136,11 @@ interface SyncDao {
                 "   WHEN hbnc.isSynced = 1 THEN 2 ELSE hbnc.isSynced  END AS syncState " +
                 "    FROM all_visit_history hbnc " +
                 "    INNER JOIN beneficiary b ON b.beneficiaryId = hbnc.benId " +
+                " UNION ALL"+
+                " SELECT 26 as id, 'NCD Follow Up' as name, CASE \n" +
+                "   WHEN ncd.isSynced = 1 THEN 2 ELSE ncd.isSynced  END AS syncState " +
+                "    FROM ncd_referal_all_visit ncd " +
+                "    INNER JOIN beneficiary b ON b.beneficiaryId = ncd.benId " +
                 ") AS combined_data " +
                 "GROUP BY id, name, syncState " +
                 "ORDER BY id; "
