@@ -62,6 +62,8 @@
     <string name="tv_ncd_status_ph">এনচিডি স্থিতি</string>
     <string name="tv_tb_status_ph">টিবি স্থিতি</string>
     <string name="iv_sync_state_tv">সময়সৰণি স্থিতি</string>
+    <string name="iv_death_indicator">মৃত্যু</string>
+    <string name="add_file">ফাইল যোগ কৰক</string>
     <string name="version">2.0.0</string>
     <string name="tv_text_select_village">দয়া করে নীচের গ্রাম নির্বাচন করুন।</string>
     <string name="form_input_empty_error">"প্ৰয়োজনীয় ক্ষেত্ৰখন খালী হ’ব নোৱাৰে !</string>
@@ -78,6 +80,12 @@
     <string name="form_input_error_invalid_mcp">অবৈধ MCP নম্বর !</string>
     <string name="form_input_error_invalid_aadhar">অবৈধ আধার নম্বর</string>
     <string name="no_records_found_hh">কোনও পরিবারের রেকর্ড পাওয়া যায়নি। দয়া করে নীচের বোতামে ক্লিক করে পরিবার নিবন্ধন শুরু করুন।</string>
+    <string name="icon_title_abortion">গৰ্ভপাত তালিকা</string>
+    <string name="icon_title_pmsma">e-PMSMA List</string>
+    <string-array name="anc_paiucd_done_by">
+        <item>ডাক্টৰ</item>
+        <item>নাৰ্চ</item>
+    </string-array>
 
 
     <string name="tracking_date">দৰমাহাৰ তাৰিখ</string>
@@ -121,8 +129,6 @@
     <string name="child_immunization">শিশু পৰিস্কৃতি</string>
     <string name="pregnancy_registration">গৰ্ভাবস্থা নিবন্ধন</string>
     <string name="mother_immunizationlist">মাতা পৰিস্কৃতি তালিকা</string>
-    <string name="age">বয়স</string>
-    <string name="gender">লিংগ</string>
     <string name="registration_date">নিবন্ধনৰ তাৰিখ</string>
     <string name="beneficiary_id">লাভকাৰী পৰিচয়পত্ৰ</string>
     <string name="rch_id">RCH পৰিচয়পত্ৰ</string>
@@ -180,6 +186,7 @@
     <string name="immunization">পৰিস্কৃতি</string>
     <string name="pregnancy_registration_form">গৰ্ভাবস্থাৰ পঞ্জীকৰণ ফৰ্ম</string>
     <string name="anc_visit">ANC দৰকাৰি</string>
+    <string name="cac_form">CAC Form</string>
     <string name="eligible_couple_list">যোগ্য জনপৰা পৰাৰ তালিকা</string>
     <string name="eligible_couple_registration">যোগ্য জনপৰা পৰাৰ পঞ্জীকৰণ</string>
     <string name="eligible_couple_tracking_list">যোগ্য জনপৰা পৰাৰ ট্ৰেকিং তালিকা</string>
@@ -240,7 +247,66 @@
     <string name="female">মহিলা</string>
     <string name="transgender">ৰূপান্তৰিত লিংগ</string>
     <string name="tv_husband_name_ph">স্বামীৰ নাম</string>
-
+    <string name="jsy_payment_voucher">JSY payment voucher</string>
+    <string name="mcp_card_1">MCP Card 1</string>
+    <string name="mcp_card_2">MCP Card 2</string>
+    <string name="during_pregnancy">During pregnancy</string>
+    <string name="a_during_pregnancy">a. During pregnancy</string>
+    <string name="b_during_delivery">b. During delivery</string>
+    <string name="c_within_42_days_after_delivery">c. Within 42 days after delivery</string>
+    <string name="d_during_abortion_or_within_6_weeks_after_abortion">d. During abortion or within 6 weeks after abortion</string>
+    <string name="name_of_reporting_person">"Name of reporting Person "</string>
+    <string name="designation">Designation</string>
+    <string name="verification_by_anm_of_the_respective_sub_center_that_death_of_women_occurred_during_pregnancy_or_within_42_days_of_delivery_abortion">Verification by ANM of the respective Sub-center that death of women occurred during pregnancy or within 42 days of delivery/abortion:</string>
+    <string name="name_of_anm">Name of ANM</string>
+    <string name="name_of_the_sub_center">Name of the sub center</string>
+    <string name="mdsr_form_from_anm_1">MDSR form from ANM 1</string>
+    <string name="mdsr_form_from_anm_2">MDSR form from ANM 2</string>
+    <string name="father_name">Father Name</string>
+    <string name="age_of_woman">Age Of Woman</string>
+    <string name="when_did_death_occur">When did death occur</string>
+    <string name="name_of_the_deceased_woman">Name of the deceased woman</string>
+    <string name="date_of_antra_injection">Date of ANTRA Injection</string>
+    <string name="due_date_of_next_injection">Due date of next Injection</string>
+    <string name="mpa_card">MPA Card</string>
+    <string name="invalid_injection_date">Invalid injection date</string>
+    <string name="antra_injection_details">ANTRA Injection Details</string>
+    <string name="dose">Dose</string>
+    <string name="next_due_date">Next Due Date</string>
+    <string name="abortion_discharge_summary_1">Abortion Discharge\n Summary 1</string>
+    <string name="abortion_discharge_summary_2">Abortion Discharge\n Summary 2</string>
+    <string name="remarks">Remarks</string>
+    <string name="post_abortion_contraception_is_paiucd_inserted_after_an_abortion">Post Abortion Contraception\nIs PAIUCD inserted after an abortion</string>
+    <string name="termination_done_by">Termination done by</string>
+    <string name="method_of_termination">Method of Termination</string>
+    <string name="serial_no_as_per_admission_evacuation_register">Serial no as per Admission/ Evacuation register</string>
+    <string name="facility_place_of_abortion">Facility (Place of Abortion)</string>
+    <string name="abortion_type">Abortion Type</string>
+    <string name="abortion_date">Abortion Date</string>
+    <string name="any_other_high_risk_conditions">Any other High Risk conditions</string>
+    <string name="details_of_pregnant_women">Details of Pregnant women</string>
+    <string name="anc_period">ANC Period</string>
+    <string name="anc_date">ANC Date</string>
+    <string name="if_yes_select_high_risk_condition">if yes, select high-risk condition</string>
+    <string name="pmsma_visit_date">PMSMA Visit Date</string>
+    <string name="pmsma_visits">PMSMA Visits</string>
+    <string name="pmsma_visit">PMSMA Visit</string>
+    <string name="is_baby_discharge_from_sncu">Is Baby discharge from SNCU?</string>
+    <string name="optional">(Optional)</string>
+    <string name="optional_">Optional</string>
+    <string name="mandatory">Mandatory <font color='#FF0000'>*</font></string>
+    <string name="name_of_the_child">Name of the Child</string>
+    <string name="pincode">Pincode</string>
+    <string name="signature_name_of_asha">Signature/Name of ASHA</string>
+    <string name="cdr_form_from_anm_1">CDR form from ANM 1</string>
+    <string name="cdr_form_from_anm_2">CDR form from ANM 2</string>
+    <string name="leprosy_confirmed">Leprosy Confirmed</string>
+    <string name="leprosy_suspected">Leprosy Suspected</string>
+    <string name="after_the_abortion_the_woman_opted_for_permanent_sterilization_tubectomy">After the Abortion, the Woman opted for permanent sterilization (Tubectomy)</string>
+    <string name="date_of_sterilisation">Date of Sterilisation</string>
+    <string name="what_family_planning_method_has_been_chosen_after_the_abortion">What family planning method has been chosen after the abortion?</string>
+    <string name="higher_healthcare_center">উচ্চতৰ স্বাস্থ্যসেৱা কেন্দ্ৰ</string>
+    <string name="additional_services">অতিৰিক্ত সেৱা</string>
 
     <string name="hbnc_baby_dead_alert">শিশুৰ মৃত্যু পৰ্যালোচনাৰ বাবে মৃত্যুৰ কাৰণ ANM/MPW/PHC ক জনাব লাগিব।</string>
     <string name="hbnc_baby_gestational_age_alert">যদি শিশু ৩৫ সপ্তাহতকৈ কম বয়সত জন্ম হয়, তেন্তে মনোযোগ দিব।</string>
@@ -285,7 +351,6 @@
     <string name="sync_in_progress">Sync চলি আছে</string>
     <string name="full_name">সম্পূৰ্ণ নাম</string>
     <string name="other">অন্যান্য</string>
-    <string name="state">ৰাজ্য</string>
     <string name="district">জিলা</string>
     <string name="view_household_information">ঘৰ-সংক্ৰান্ত তথ্য চাওক</string>
     <string name="hello">নমস্কাৰ</string>
@@ -294,7 +359,6 @@
     <string name="mother">মাক</string>
     <string name="patient_information">ৰোগীৰ তথ্য</string>
     <string name="mother_name">মাকৰ নাম</string>
-    <string name="date_of_birth">জন্ম তাৰিখ</string>
     <string name="previous_vaccine_details">পূৰ্বৰ টিকা সম্পৰ্কিত তথ্য</string>
     <string name="due_serial">বাকী থকা ক্ৰমিক সংখ্যা</string>
     <string name="saving_form">ফৰ্ম সংৰক্ষণ কৰি আছে</string>
@@ -453,6 +517,7 @@
     <string name="str_asha_name">আশাৰ নাম</string>
     <string name="str_village_name">গাঁওৰ নাম</string>
     <string name="str_block_name">ব্লক নাম</string>
+    <string name="referred_to">প্ৰেৰণ কৰা হৈছে</string>
     <string name="str_still_birth">মৃতজন্ম</string>
     <string name="str_supervisors_remark">পৰ্যবেক্ষকৰ মন্তব্য</string>
     <string name="str_supervisor">পৰ্যবেক্ষক</string>
@@ -498,6 +563,31 @@
     <string name="str_date_of_mother_referral">মাতৃক প্ৰেৰণ কৰাৰ তাৰিখ</string>
     <string name="str_place_of_mother_referral">মাতৃক প্ৰেৰণ কৰাৰ স্থান</string>
     <string name="str_other_place_of_mother_referral">অন্য - মাতৃক প্ৰেৰণ কৰাৰ স্থান</string>
+    <string name="flu_like_illness">ফ্লুৰ দৰে ৰোগ</string>
+    <string name="shakingchills">কম্পনৰ সৈতে ঠাণ্ডা লাগা</string>
+    <string name="headache">মুৰৰ বিষ</string>
+    <string name="muscleaches">পেশী ব্যথা</string>
+    <string name="tiredness">ক্লান্তি</string>
+    <string name="nausea">ৱমি অনুভৱ</string>
+    <string name="vomiting">বমি কৰা</string>
+    <string name="diarrhea">ডায়েৰিয়া</string>
+    <string name="rapid_diagnostic">দ্ৰুত নিৰ্ণয় পৰীক্ষা</string>
+    <string name="rapid_diagnostic_kala">কলা আজাৰ দ্ৰুত নিৰ্ণয় পৰীক্ষা</string>
+    <string name="slide_test_pf">মেৰেলিয়া চ্লাইড পৰীক্ষা Pf</string>
+    <string name="slide_test">মেৰেলিয়া চ্লাইড পৰীক্ষা </string>
+    <string name="slide_test_pv">মেৰেলিয়া চ্লাইড পৰীক্ষা Pv</string>
+    <string name="sympt">লক্ষণসমূহ</string>
+    <string name="malaria_submitted">ম্যালেৰিয়া ফৰ্ম দাখিল কৰা হৈছে</string>
+
+    <string name="malariacasecount">মেলেৰিয়াৰ কেচৰ সংখ্যা</string>
+    <string name="filariacasecount">ফিলাৰিয়া কেচৰ সংখ্যা</string>
+    <string name="suffering_from_filaries">ফিলাৰিয়াছিছত ভুগি থকা</string>
+    <string name="str_leprosy_status"> কুষ্ঠ ৰোগ স্থিতি</string>
+    <string name="treatment_given">প্ৰদান কৰা চিকিৎসা</string>
+    <string name="aes_submitted">AES/JS ফৰ্ম জমা দিয়া হৈছে</string>
+    <string name="filaria_submitted">ফিলাৰিয়া ফৰ্ম জমা দিয়া হৈছে</string>
+    <string name="leprosy_submitted">কঁকালৰ ৰোগৰ ফৰ্ম জমা দিয়া হৈছে</string>
+    <string name="irs_submitted">IRS ফৰ্ম জমা দিয়া হৈছে</string>
 
 
 

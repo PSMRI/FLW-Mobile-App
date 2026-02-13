@@ -6,7 +6,7 @@ import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.res.ColorStateList
 import android.content.res.Resources
 import android.graphics.Color
-import android.graphics.Typeface
+import android.net.Uri
 import android.os.Build
 import android.text.Editable
 import android.text.InputFilter
@@ -16,7 +16,6 @@ import android.text.SpannableString
 import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
-import android.util.Log
 import android.view.Gravity
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -28,27 +27,35 @@ import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.children
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.databinding.LayoutMultiFileUploadBinding
+import org.piramalswasthya.sakhi.databinding.LayoutUploafFormBinding
 import org.piramalswasthya.sakhi.databinding.RvItemFormAgePickerViewV2Binding
+import org.piramalswasthya.sakhi.databinding.RvItemFormBtnBinding
 import org.piramalswasthya.sakhi.databinding.RvItemFormCheckV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormDatepickerV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormDropdownV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormEditTextV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormHeadlineV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormImageViewV2Binding
+import org.piramalswasthya.sakhi.databinding.RvItemFormNumberPickerBinding
 import org.piramalswasthya.sakhi.databinding.RvItemFormRadioV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormTextViewV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormTimepickerV2Binding
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.getDateString
+import org.piramalswasthya.sakhi.helpers.isInternetAvailable
 import org.piramalswasthya.sakhi.model.AgeUnitDTO
 import org.piramalswasthya.sakhi.model.FormElement
+import org.piramalswasthya.sakhi.model.InputType
 import org.piramalswasthya.sakhi.model.InputType.AGE_PICKER
 import org.piramalswasthya.sakhi.model.InputType.CHECKBOXES
 import org.piramalswasthya.sakhi.model.InputType.DATE_PICKER
@@ -61,22 +68,26 @@ import org.piramalswasthya.sakhi.model.InputType.TEXT_VIEW
 import org.piramalswasthya.sakhi.model.InputType.TIME_PICKER
 import org.piramalswasthya.sakhi.model.InputType.values
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.AgePickerDialog
+import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.NewBenRegViewModel.Companion.isOtpVerified
 import org.piramalswasthya.sakhi.utils.HelperUtil.getAgeStrFromAgeUnit
 import org.piramalswasthya.sakhi.utils.HelperUtil.getDobFromAge
 import org.piramalswasthya.sakhi.utils.HelperUtil.getLongFromDate
 import org.piramalswasthya.sakhi.utils.HelperUtil.updateAgeDTO
 import timber.log.Timber
 import java.util.Calendar
-import java.util.Locale
 
 
 class FormInputAdapter(
     private val imageClickListener: ImageClickListener? = null,
     private val ageClickListener: AgeClickListener? = null,
+    private val sendOtpClickListener: SendOtpClickListener? = null,
     private val formValueListener: FormValueListener? = null,
-    private val isEnabled: Boolean = true
+    private val isEnabled: Boolean = true,
+    private val selectImageClickListener: SelectUploadImageClickListener? = null,
+    private val viewDocumentListner: ViewDocumentOnClick? = null,
+    var  fileList: MutableList<Uri>? = null,
 ) : ListAdapter<FormElement, ViewHolder>(FormInputDiffCallBack) {
-
+    var disableUpload = false
 
     object FormInputDiffCallBack : DiffUtil.ItemCallback<FormElement>() {
         override fun areItemsTheSame(oldItem: FormElement, newItem: FormElement) =
@@ -114,11 +125,16 @@ class FormInputAdapter(
                 binding.et.isFocusable = true
                 binding.et.isFocusableInTouchMode = true
             }
+            if (isOtpVerified && item.id == 44 && item.title.equals("Contact Number")) {
+                binding.et.isClickable = false
+                binding.et.isFocusable = false
+            }
+
             if (item.title.contains("first name", true) ||
                 item.title.contains("last name", true) ||
                 item.title.contains("father's name", true) ||
                 item.title.contains("mother's name", true)
-                ) {
+            ) {
 //                edittext.setFilters(arrayOf<InputFilter>(AllCaps()))
                 val editFilters = binding.et.filters
                 var newFilters = arrayOfNulls<InputFilter>(editFilters.size + 1)
@@ -579,7 +595,64 @@ class FormInputAdapter(
         }
     }
 
- /*   class DatePickerInputViewHolder private constructor(private val binding: RvItemFormDatepickerV2Binding) :
+    class ButtonInputViewHolder private constructor(private val binding: RvItemFormBtnBinding) :
+        ViewHolder(binding.root) {
+        companion object {
+            fun from(parent: ViewGroup): ViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = RvItemFormBtnBinding.inflate(layoutInflater, parent, false)
+                return ButtonInputViewHolder(binding)
+            }
+        }
+
+        fun bind(item: FormElement, isEnabled: Boolean, formValueListener: SendOtpClickListener?) {
+            binding.form = item
+            isOtpVerified(isEnabled, isInternetAvailable(binding.root.context))
+
+            binding.generateOtp.setOnClickListener {
+                formValueListener!!.onButtonClick(item,binding.generateOtp,binding.timerInSec,binding.tilEditText,isEnabled,adapterPosition,binding.et)
+            }
+
+
+
+        }
+
+        private fun isOtpVerified(isEnabled: Boolean, internetAvailable: Boolean) {
+            if(isOtpVerified) {
+                binding.generateOtp.text = binding.generateOtp.resources.getString(R.string.verified)
+                binding.generateOtp.isEnabled = isEnabled
+
+            } else {
+                binding.generateOtp.text = binding.generateOtp.resources.getString(R.string.send_otp)
+                if (internetAvailable){
+                    binding.generateOtp.isEnabled = isEnabled
+
+                } else {
+                    binding.generateOtp.isEnabled = !isEnabled
+
+                }
+
+            }
+        }
+
+
+    }
+
+
+
+    class SelectUploadImageClickListener(private val selectImageClick: (formId: Int) -> Unit) {
+
+        fun onSelectImageClick(form: FormElement) = selectImageClick(form.id)
+
+    }
+
+    class ViewDocumentOnClick(private val viewDocument: (formId: Int) -> Unit) {
+
+        fun onViewDocumentClick(form: FormElement) = viewDocument(form.id)
+
+    }
+
+    class DatePickerInputViewHolder private constructor(private val binding: RvItemFormDatepickerV2Binding) :
         ViewHolder(binding.root) {
         companion object {
             fun from(parent: ViewGroup): ViewHolder {
@@ -608,11 +681,6 @@ class FormInputAdapter(
             item.errorText?.also { binding.tilEditText.error = it }
                 ?: run { binding.tilEditText.error = null }
             binding.et.setOnClickListener {
-
-                getDateString(item.max)?.let { Log.d("=======1712:max:", it) }
-                getDateString(item.min)?.let { Log.d("=======1712:min:", it) }
-                Log.d("=======1712:value:", "${item.value}")
-             //   getDateString(millis)?.let { Log.d("=======1712:current:", it) }
                 item.value?.let { value ->
                     thisYear = value.substring(6).toInt()
                     thisMonth = value.substring(3, 5).trim().toInt() - 1
@@ -640,124 +708,12 @@ class FormInputAdapter(
                 binding.tilEditText.error = null
                 datePickerDialog.datePicker.maxDate = item.max ?: 0
                 datePickerDialog.datePicker.minDate = item.min ?: 0
-
                 if (item.showYearFirstInDatePicker)
                     datePickerDialog.datePicker.touchables[0].performClick()
-                if (item.max!!> item.min!!){
-                    datePickerDialog.show()
-                }else{
-                    Toast.makeText(binding.root.context,"Invalid date range", Toast.LENGTH_SHORT).show()
-                }
-            }
-            binding.executePendingBindings()
-
-        }
-    }*/
-
-
-    class DatePickerInputViewHolder private constructor(private val binding: RvItemFormDatepickerV2Binding) :
-        ViewHolder(binding.root) {
-        companion object {
-            fun from(parent: ViewGroup): ViewHolder {
-                val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = RvItemFormDatepickerV2Binding.inflate(layoutInflater, parent, false)
-                return DatePickerInputViewHolder(binding)
-            }
-        }
-
-        fun bind(item: FormElement, isEnabled: Boolean, formValueListener: FormValueListener?) {
-            binding.form = item
-            binding.invalidateAll()
-
-            if (!isEnabled) {
-                binding.et.isFocusable = false
-                binding.et.isClickable = false
-                binding.executePendingBindings()
-                return
-            }
-
-            val today = Calendar.getInstance()
-            var thisYear = today.get(Calendar.YEAR)
-            var thisMonth = today.get(Calendar.MONTH)
-            var thisDay = today.get(Calendar.DAY_OF_MONTH)
-
-            item.errorText?.also { binding.tilEditText.error = it }
-                ?: run { binding.tilEditText.error = null }
-
-            binding.et.setOnClickListener { view ->
-                item.value?.let { value ->
-                    try {
-                        val parts = value.split("-")
-                        if (parts.size == 3) {
-                            thisDay = parts[0].trim().toIntOrNull() ?: thisDay
-                            thisMonth = (parts[1].trim().toIntOrNull() ?: (thisMonth + 1)) - 1
-                            thisYear = parts[2].trim().toIntOrNull() ?: thisYear
-                        }
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
-                }
-
-                val datePickerDialog = DatePickerDialog(
-                    view.context,
-                    { _, year, month, day ->
-                        val millis = Calendar.getInstance().apply {
-                            set(Calendar.YEAR, year)
-                            set(Calendar.MONTH, month)
-                            set(Calendar.DAY_OF_MONTH, day)
-                            set(Calendar.HOUR_OF_DAY, 0)
-                            set(Calendar.MINUTE, 0)
-                            set(Calendar.SECOND, 0)
-                            set(Calendar.MILLISECOND, 0)
-                        }.timeInMillis
-
-                        item.value = when {
-                            item.min != null && millis < item.min!! -> getDateString(item.min)
-                            item.max != null && millis > item.max!! -> getDateString(item.max)
-                            else -> getDateString(millis)
-                        }
-
-                        binding.invalidateAll()
-                        if (item.hasDependants) formValueListener?.onValueChanged(item, -1)
-                    },
-                    thisYear, thisMonth, thisDay
-                )
-
-                item.errorText = null
-                binding.tilEditText.error = null
-
-                if (item.min != null && item.max != null && item.min!! > item.max!!) {
-                    Toast.makeText(
-                        binding.root.context,
-                        "Invalid date range",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    return@setOnClickListener
-                }
-
-                item.max?.let { datePickerDialog.datePicker.maxDate = it }
-                item.min?.let { datePickerDialog.datePicker.minDate = it }
-
-                if (item.showYearFirstInDatePicker)
-                    datePickerDialog.datePicker.touchables.firstOrNull()?.performClick()
-
                 datePickerDialog.show()
-                forceLatinDigits(datePickerDialog.datePicker)
             }
-
             binding.executePendingBindings()
-        }
-        private fun forceLatinDigits(view: View) {
-            when (view) {
-                is ViewGroup -> repeat(view.childCount) { forceLatinDigits(view.getChildAt(it)) }
-                is TextView -> {
-                    val latin = Locale.forLanguageTag("en-US-u-nu-latn")
-                    view.textLocale = latin
-                    view.setTextLocale(latin)
-                    view.typeface = Typeface.SANS_SERIF
-                    view.isAllCaps = false
-                }
-            }
+
         }
     }
 
@@ -898,6 +854,8 @@ class FormInputAdapter(
                         getDobFromAge(ageUnitDTO)
                     binding.etDate.setText(getDateString(calDob.timeInMillis))
                     item.value = getDateString(calDob.timeInMillis)
+                    item.errorText = null
+                    binding.tilEditTextDate.error = null
                     if (item.hasDependants) formValueListener?.onValueChanged(item, -1)
                 }
             }
@@ -985,6 +943,21 @@ class FormInputAdapter(
     class ImageClickListener(private val imageClick: (formId: Int) -> Unit) {
 
         fun onImageClick(form: FormElement) = imageClick(form.id)
+//        fun onImageClickForRef(form: FormElement) = imageClick(form.etInputType)
+
+    }
+
+    class SendOtpClickListener(private val btnClick: (formId: Int,generateOtp:MaterialButton,timerInsec: TextView,tilEditText:TextInputLayout, isEnabled: Boolean,adapterPosition:Int,otpField: TextInputEditText) -> Unit) {
+
+        fun onButtonClick(
+            form: FormElement,
+            generateOtp: MaterialButton,
+            timerInSec: TextView,
+            tilEditText: TextInputLayout,
+            isEnabled: Boolean,
+            adapterPosition: Int,
+            otpField: TextInputEditText
+        ) = btnClick(form.id,generateOtp,timerInSec,tilEditText,isEnabled,adapterPosition,otpField)
 
     }
 
@@ -1002,6 +975,156 @@ class FormInputAdapter(
         }
 
     }
+    class NumberPickerInputViewHolder private constructor(
+        private val binding: RvItemFormNumberPickerBinding
+    ) : ViewHolder(binding.root) {
+
+        private var textWatcher: TextWatcher? = null
+        private var internalUpdate = false
+
+        companion object {
+            fun from(parent: ViewGroup): ViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = RvItemFormNumberPickerBinding.inflate(layoutInflater, parent, false)
+                return NumberPickerInputViewHolder(binding)
+            }
+        }
+
+        fun bind(
+            item: FormElement,
+            isEnabled: Boolean,
+            formValueListener: FormValueListener?
+        ) {
+            binding.form = item
+
+            binding.etNumberInput.isEnabled = isEnabled
+            binding.btnDecrement.isEnabled = isEnabled
+            binding.btnIncrement.isEnabled = isEnabled
+            if (!isEnabled) {
+                hideError()
+                return
+            }
+
+            val minValue = item.min?.toInt() ?: 0
+            val maxValue = item.max?.toInt()
+            val allowNegative = item.minDecimal != null && item.minDecimal!! < 0
+
+            binding.etNumberInput.setText(minValue.toString())
+            binding.etNumberInput.setSelection(binding.etNumberInput.text!!.length)
+            var currentValue = item.value?.toIntOrNull() ?: minValue
+
+            textWatcher?.let { binding.etNumberInput.removeTextChangedListener(it) }
+
+            textWatcher = object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+                }
+
+
+
+
+                override fun afterTextChanged(editable: Editable?) {
+
+                    if (internalUpdate) return
+                    if (editable.isNullOrBlank()) {
+                        item.errorText = "Value cannot be empty"
+                        showError(item.errorText!!)
+                        return
+                    }
+
+                    val inputValue = editable.toString().toIntOrNull()
+                    if (inputValue == null) {
+                        item.errorText = "Enter a valid number"
+                        showError(item.errorText!!)
+                        return
+                    }
+
+                    val validated = validateValue(inputValue, minValue, maxValue, allowNegative)
+
+                    if (validated != inputValue) {
+                        val msg = if (maxValue != null)
+                            "Allowed range: $minValue to $maxValue"
+                        else
+                            "Minimum allowed value: $minValue"
+                        item.errorText = msg
+                        showError(msg)
+
+                        updateDisplay(validated)
+                        updateValue(validated, item, formValueListener)
+                        return
+                    }
+
+                    item.errorText = null
+                    hideError()
+
+                    currentValue = validated
+                    updateValue(currentValue, item, formValueListener)
+                }
+            }
+
+            updateDisplay(currentValue)
+
+            binding.etNumberInput.addTextChangedListener(textWatcher)
+
+
+
+            binding.btnDecrement.setOnClickListener {
+                currentValue = (item.value?.toIntOrNull() ?: minValue) - 1
+                currentValue = validateValue(currentValue, minValue, maxValue, allowNegative)
+                hideError()
+                updateValue(currentValue, item, formValueListener)
+                updateDisplay(currentValue)
+            }
+
+            binding.btnIncrement.setOnClickListener {
+                currentValue = (item.value?.toIntOrNull() ?: minValue) + 1
+                currentValue = validateValue(currentValue, minValue, maxValue, allowNegative)
+                hideError()
+                updateValue(currentValue, item, formValueListener)
+                updateDisplay(currentValue)
+            }
+        }
+
+
+        private fun validateValue(value: Int, min: Int, max: Int?, allowNegative: Boolean): Int {
+            var newValue = value
+
+            if (!allowNegative && newValue < min) newValue = min
+            if (max != null && newValue > max) newValue = max
+
+            return newValue
+        }
+
+        private fun updateDisplay(value: Int) {
+            internalUpdate = true
+            binding.etNumberInput.setText(value.toString())
+            binding.etNumberInput.setSelection(binding.etNumberInput.text!!.length)
+            internalUpdate = false
+        }
+
+        private fun updateValue(
+            newValue: Int,
+            item: FormElement,
+            formValueListener: FormValueListener?
+        ) {
+            item.value = newValue.toString()
+            formValueListener?.onValueChanged(item,newValue)
+        }
+
+        private fun showError(message: String) {
+            binding.tvError.apply {
+                text = message
+                visibility = View.VISIBLE
+            }
+        }
+
+        private fun hideError() {
+            binding.tvError.visibility = View.GONE
+        }
+    }
+
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -1019,41 +1142,159 @@ class FormInputAdapter(
             TIME_PICKER -> TimePickerInputViewHolder.from(parent)
             HEADLINE -> HeadlineViewHolder.from(parent)
             AGE_PICKER -> AgePickerViewInputViewHolder.from(parent)
+            InputType.BUTTON -> ButtonInputViewHolder.from(parent)
+            InputType.FILE_UPLOAD -> FileUploadInputViewHolder.from(parent)
+            InputType.NUMBER_PICKER -> NumberPickerInputViewHolder.from(parent)
+            InputType.MULTIFILE_UPLOAD -> MultiFileUploadInputViewHolder.from(parent)
         }
     }
 
+    fun updateFileList(newList: List<Uri>) {
+        this.fileList?.addAll(newList)
+        notifyDataSetChanged()
+    }
+    class MultiFileUploadInputViewHolder private constructor(private val binding: LayoutMultiFileUploadBinding) :
+        ViewHolder(binding.root) {
+        companion object {
+            fun from(parent: ViewGroup): ViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = LayoutMultiFileUploadBinding.inflate(layoutInflater, parent, false)
+                return MultiFileUploadInputViewHolder(binding)
+            }
+        }
+
+        private lateinit var fileAdapter: FileListAdapter
+
+        fun bind(
+            item: FormElement,
+            clickListener: SelectUploadImageClickListener?,
+            documentOnClick: ViewDocumentOnClick?,
+            isEnabled: Boolean,
+            fileList : MutableList<Uri>?
+        ) {
+           /* binding.form = item
+            binding.tvTitle.text = item.title
+            binding.clickListener = clickListener
+            binding.documentclickListener = documentOnClick
+            binding.btnView.visibility = if (item.value != null) View.VISIBLE else View.GONE
+
+            if (isEnabled) {
+                binding.addFile.isEnabled = true
+                binding.addFile.alpha = 1f
+            } else {
+                binding.addFile.isEnabled = false
+                binding.addFile.alpha = 0.5f
+            }*/
+
+            val items = fileList ?: mutableListOf()
+            fileAdapter = FileListAdapter(items)
+            binding.rvFiles.adapter = fileAdapter
+            fileAdapter.updateFileList(items)
+            fileAdapter.notifyDataSetChanged()
+
+            binding.btnSelectFiles.isEnabled = isEnabled
+            binding.btnSelectFiles.alpha = if (isEnabled) 1f else 0.5f
+
+            binding.btnSelectFiles.setOnClickListener {
+                clickListener?.onSelectImageClick(item)
+            }
+        }
+
+    }
+
+
+
+    class FileUploadInputViewHolder private constructor(private val binding: LayoutUploafFormBinding) :
+        ViewHolder(binding.root) {
+        companion object {
+            fun from(parent: ViewGroup): ViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = LayoutUploafFormBinding.inflate(layoutInflater, parent, false)
+                return FileUploadInputViewHolder(binding)
+            }
+        }
+
+
+        fun bind(
+            item: FormElement,
+            clickListener: SelectUploadImageClickListener?,
+            documentOnClick: ViewDocumentOnClick?,
+            isEnabled: Boolean
+        ) {
+            binding.form = item
+            binding.tvTitle.text = item.title
+            binding.clickListener = clickListener
+            binding.documentclickListener = documentOnClick
+            binding.btnView.visibility = if (item.value != null) View.VISIBLE else View.GONE
+
+            if (isEnabled) {
+                binding.addFile.visibility = View.VISIBLE
+//                binding.addFile.isEnabled = true
+//                binding.addFile.alpha = 1f
+            } else {
+                binding.addFile.visibility = View.GONE
+//                binding.addFile.isEnabled = false
+//                binding.addFile.alpha = 0.5f
+            }
+        }
+
+    }
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
-        val isEnabled = if (isEnabled) item.isEnabled else false
-        when (item.inputType) {
-            EDIT_TEXT -> (holder as EditTextInputViewHolder).bind(
-                item, isEnabled, formValueListener
-            )
+//        I was getting crash that's why i have moved this line inside try block
+//        val isEnabled = if (isEnabled) item.isEnabled else false
+        try {
+            val isEnabled = if (isEnabled) item.isEnabled else false
+            when (item.inputType) {
+                EDIT_TEXT -> (holder as EditTextInputViewHolder).bind(
+                    item, isEnabled, formValueListener
+                )
 
-            DROPDOWN -> (holder as DropDownInputViewHolder).bind(item, isEnabled, formValueListener)
-            RADIO -> (holder as RadioInputViewHolder).bind(item, isEnabled, formValueListener)
-            DATE_PICKER -> (holder as DatePickerInputViewHolder).bind(
-                item, isEnabled, formValueListener
-            )
+                DROPDOWN -> (holder as DropDownInputViewHolder).bind(
+                    item,
+                    isEnabled,
+                    formValueListener
+                )
 
-            TEXT_VIEW -> (holder as TextViewInputViewHolder).bind(item)
-            IMAGE_VIEW -> (holder as ImageViewInputViewHolder).bind(
-                item, imageClickListener, isEnabled
-            )
+                RADIO -> (holder as RadioInputViewHolder).bind(item, isEnabled, formValueListener)
+                DATE_PICKER -> (holder as DatePickerInputViewHolder).bind(
+                    item, isEnabled, formValueListener
+                )
 
-            CHECKBOXES -> (holder as CheckBoxesInputViewHolder).bind(
-                item,
-                isEnabled,
-                formValueListener
-            )
+                TEXT_VIEW -> (holder as TextViewInputViewHolder).bind(item)
+                IMAGE_VIEW -> (holder as ImageViewInputViewHolder).bind(
+                    item, imageClickListener, isEnabled
+                )
 
-            TIME_PICKER -> (holder as TimePickerInputViewHolder).bind(item, isEnabled)
-            HEADLINE -> (holder as HeadlineViewHolder).bind(item, formValueListener)
-            AGE_PICKER -> (holder as AgePickerViewInputViewHolder).bind(
-                item,
-                isEnabled,
-                formValueListener
-            )
+                CHECKBOXES -> (holder as CheckBoxesInputViewHolder).bind(
+                    item,
+                    isEnabled,
+                    formValueListener
+                )
+
+                TIME_PICKER -> (holder as TimePickerInputViewHolder).bind(item, isEnabled)
+                HEADLINE -> (holder as HeadlineViewHolder).bind(item, formValueListener)
+                AGE_PICKER -> (holder as AgePickerViewInputViewHolder).bind(
+                    item,
+                    isEnabled,
+                    formValueListener
+                )
+                InputType.BUTTON -> (holder as ButtonInputViewHolder).bind(
+                    item,
+                    isEnabled,
+                    sendOtpClickListener
+                )
+
+                InputType.FILE_UPLOAD -> (holder as FileUploadInputViewHolder).bind(item,selectImageClickListener,viewDocumentListner,isEnabled = !disableUpload)
+                InputType.MULTIFILE_UPLOAD -> (holder as MultiFileUploadInputViewHolder).bind(item,selectImageClickListener,viewDocumentListner,isEnabled = !disableUpload,fileList)
+
+                InputType.NUMBER_PICKER -> (holder as NumberPickerInputViewHolder).bind(
+                    item, isEnabled, formValueListener
+                )
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+
         }
     }
 
@@ -1099,4 +1340,7 @@ class FormInputAdapter(
         }
         return retVal
     }
+
+
+
 }

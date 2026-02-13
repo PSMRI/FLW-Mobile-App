@@ -11,42 +11,81 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.InfantListAdapter
-import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
+import org.piramalswasthya.sakhi.databinding.AlertFilterBinding
+import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchAndToggleRvButtonBinding
+import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 
 @AndroidEntryPoint
 class InfantListFragment : Fragment() {
 
-    private var _binding: FragmentDisplaySearchRvButtonBinding? = null
-    private val binding: FragmentDisplaySearchRvButtonBinding
+    private var _binding: FragmentDisplaySearchAndToggleRvButtonBinding? = null
+    private val binding: FragmentDisplaySearchAndToggleRvButtonBinding
         get() = _binding!!
 
     private val viewModel: InfantListViewModel by viewModels()
 
+    private var showRchRecords = false
+    private lateinit var benAdapter: InfantListAdapter
+
+    private val filterAlert by lazy {
+        val filterAlertBinding = AlertFilterBinding.inflate(layoutInflater, binding.root, false)
+        filterAlertBinding.rgAbha.setOnCheckedChangeListener { radioGroup, i ->
+
+        }
+
+        filterAlertBinding.cbRch.setOnCheckedChangeListener { compoundButton, b ->
+            showRchRecords = b
+        }
+
+        filterAlertBinding.tvAbha.visibility = View.GONE
+        filterAlertBinding.rgAbha.visibility = View.GONE
+
+        val alert = MaterialAlertDialogBuilder(requireContext()).setView(filterAlertBinding.root)
+            .setOnCancelListener {
+            }.create()
+
+        filterAlertBinding.btnOk.setOnClickListener {
+            viewModel.filterType(showRchRecords.toString())
+            alert.cancel()
+        }
+        filterAlertBinding.btnCancel.setOnClickListener {
+            alert.cancel()
+        }
+
+        alert
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentDisplaySearchRvButtonBinding.inflate(layoutInflater, container, false)
+        _binding = FragmentDisplaySearchAndToggleRvButtonBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.btnNextPage.visibility = View.GONE
-        val benAdapter = InfantListAdapter(
+
+        binding.ibFilter.setOnClickListener {
+            filterAlert.show()
+        }
+
+        benAdapter = InfantListAdapter(
             InfantListAdapter.InfantListClickListener { benId, hhId ->
                 findNavController().navigate(
-                    InfantListFragmentDirections.actionInfantListFragmentToHbncDayListFragment(
+                    InfantListFragmentDirections.actionInfantListFragmentToInfantFormFragment(
                         benId = benId,
-                        hhId = hhId
+                        hhId = hhId,
                     )
                 )
+
             }
         )
         binding.rvAny.adapter = benAdapter
@@ -66,9 +105,7 @@ class InfantListFragment : Fragment() {
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
             }
-
             override fun afterTextChanged(p0: Editable?) {
                 viewModel.filterText(p0?.toString() ?: "")
             }

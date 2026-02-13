@@ -1,14 +1,17 @@
 package org.piramalswasthya.sakhi.adapters
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.RvItemPregnancyAncBinding
 import org.piramalswasthya.sakhi.model.AncStatus
+import org.piramalswasthya.sakhi.utils.RoleConstants
 
-class AncVisitAdapter(private val clickListener: AncVisitClickListener) :
+class AncVisitAdapter(private val clickListener: AncVisitClickListener, private val pref: PreferenceDao? = null) :
     ListAdapter<AncStatus, AncVisitAdapter.AncViewHolder>(
         MyDiffUtilCallBack
     ) {
@@ -34,8 +37,15 @@ class AncVisitAdapter(private val clickListener: AncVisitClickListener) :
         }
 
         fun bind(
-            item: AncStatus, clickListener: AncVisitClickListener, isLastItem: Boolean
+            item: AncStatus, clickListener: AncVisitClickListener, pref: PreferenceDao?, isLastItem: Boolean
         ) {
+
+            if (pref?.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
+                binding.btnView.visibility = View.GONE
+            } else {
+                binding.btnView.visibility = View.VISIBLE
+            }
+
             binding.visit = item
             binding.clickListener = clickListener
             binding.executePendingBindings()
@@ -53,13 +63,13 @@ class AncVisitAdapter(private val clickListener: AncVisitClickListener) :
 
     override fun onBindViewHolder(holder: AncViewHolder, position: Int) {
         val isLastItem = position == itemCount - 1
-        holder.bind(getItem(position), clickListener, isLastItem)
+        holder.bind(getItem(position), clickListener, pref, isLastItem)
     }
 
 
     class AncVisitClickListener(
         private val clickedForm: (benId: Long, visitNumber: Int, isLast: Boolean) -> Unit
-    ) {
+        ) {
         fun onClickedVisit(item: AncStatus, isLast: Boolean) = clickedForm(
             item.benId, item.visitNumber, isLast
         )

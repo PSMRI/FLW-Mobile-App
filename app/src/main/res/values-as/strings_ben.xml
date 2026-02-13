@@ -178,6 +178,18 @@
         <item>দিয়া হোৱা নাই</item>
     </string-array>
 
+    <string-array name="death_place_array">
+        <item>গৃহ</item>
+        <item>উপকেন্দ্ৰ</item>
+        <item>পি এইচ চি</item>
+        <item>চি এইচ চি</item>
+        <item>জিলা চিকিৎসালয়</item>
+        <item>মেডিকেল কলেজ হাস্পতাল</item>
+        <item>ব্যক্তিগত চিকিৎসালয়</item>
+        <item>ট্ৰেনজিটত</item>
+        <item>মৃত্যুৰ অন্যান্য স্থান</item>
+    </string-array>
+
     <string-array name="religion_array">
         <item>হিন্দু</item>
         <item>মুছলিম</item>
@@ -209,4 +221,5 @@
     <string name="months">মাহ</string>
     <string name="day">দিন</string>
     <string name="days">দিন</string>
+    <string name="mother_rch_id">মা RCH ID</string>
 </resources>

@@ -1,9 +1,12 @@
 package org.piramalswasthya.sakhi.ui
 
+import android.content.Context
 import android.net.Uri
 import android.os.Build
+import android.provider.OpenableColumns
 import android.text.Html
 import android.text.InputType
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
@@ -16,6 +19,7 @@ import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.divider.MaterialDivider
 import com.google.android.material.textfield.TextInputEditText
@@ -34,6 +38,9 @@ import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.VaccineState
 import org.piramalswasthya.sakhi.model.VaccineState.*
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 
 @BindingAdapter("vaccineState")
@@ -74,6 +81,23 @@ fun Button.setVaccineState(syncState: VaccineState?) {
                 visibility = View.GONE
             }
         }
+    }
+}
+
+@BindingAdapter("formattedDate")
+fun setFormattedDate(view: TextView, timestamp: Long?) {
+    timestamp?.let {
+        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        view.text = sdf.format(Date(it))
+    }
+}
+
+
+@BindingAdapter("formattedDatewitheMonth")
+fun setFormattedDateWithMonth(view: TextView, timestamp: Long?) {
+    timestamp?.let {
+        val sdf = SimpleDateFormat("dd-MM-yyyy , MMM", Locale.getDefault())
+        view.text = sdf.format(Date(it))
     }
 }
 
@@ -306,6 +330,24 @@ fun ImageView.setSyncState(syncState: SyncState?) {
     }
 }
 
+@BindingAdapter("syncStateForBen")
+fun ImageView.setSyncStateForBen(syncState: SyncState?) {
+    syncState?.let {
+
+        val drawable = when (it) {
+            SyncState.UNSYNCED -> R.drawable.ic_unsynced
+            SyncState.SYNCING -> R.drawable.ic_syncing
+            SyncState.SYNCED -> R.drawable.ic_synced
+        }
+        setImageResource(drawable)
+        isClickable = it == SyncState.UNSYNCED
+        if (it == SyncState.SYNCING) startAnimation(rotate)
+    } ?: run {
+        visibility = View.INVISIBLE
+    }
+}
+
+
 
 @BindingAdapter("benImage")
 fun ImageView.setBenImage(uriString: String?) {
@@ -388,7 +430,35 @@ fun TextInputLayout.setAsteriskFormText(required: Boolean?, title: String?) {
         }
     }
 }
+fun checkFileSize(uri: Uri,context: Context) : Boolean {
+    val size = getFileSize(uri, context)
+    return size > 5 * 1024 * 1024
 
+}
+fun getFileSize(uri: Uri,context: Context): Long {
+    val cursor = context.contentResolver.query(uri, null, null, null, null)
+    return cursor?.use {
+        val sizeIndex = it.getColumnIndex(android.provider.OpenableColumns.SIZE)
+        if (sizeIndex != -1 && it.moveToFirst()) {
+            it.getLong(sizeIndex)
+        } else {
+            0L
+        }
+    } ?: 0L
+}
+
+fun getByteArrayFromUri(uri: Uri,context: Context): ByteArray {
+    val inputStream = context.contentResolver.openInputStream(uri)
+    return inputStream?.readBytes() ?: byteArrayOf()
+}
+ fun getFileName(uri: Uri,context: Context): String {
+    val cursor = context.contentResolver.query(uri, null, null, null, null)
+    cursor?.use {
+        val index = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+        if (it.moveToFirst()) return it.getString(index)
+    }
+    return "file_${System.currentTimeMillis()}"
+}
 @RequiresApi(Build.VERSION_CODES.N)
 @BindingAdapter("asteriskRequired", "hintText")
 fun TextView.setAsteriskTextView(required: Boolean?, title: String?) {
@@ -405,6 +475,48 @@ fun TextView.setAsteriskTextView(required: Boolean?, title: String?) {
             }
         }
     }
+
 }
 
 
+@BindingAdapter(value = ["formattedSessionDate"], requireAll = false)
+fun setFormattedSessionDate(textView: TextView, timestamp: Long?) {
+    if (timestamp == null) {
+        textView.text =textView.context.getString(R.string.session_date_n_a)
+        return
+    }
+
+    val date = Date(timestamp)
+    val formatType = textView.tag as? String ?: "default"
+
+    val format = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+    val formattedDate = format.format(date)
+
+    textView.text = when (formatType) {
+        "default" -> textView.context.getString(R.string.session_date_format, formattedDate)
+        "monthYear" -> {
+            val monthFormat = SimpleDateFormat("MMMM - yyyy", Locale.getDefault())
+            val monthYear = monthFormat.format(date)
+            textView.context.getString(R.string.uwin_session_format, monthYear)
+        }
+        else -> textView.context.getString(R.string.session_date_format, formattedDate)
+    }
+}
+
+@BindingAdapter(value = ["visibleIfAgeAbove30AndAliveAge", "isDeath"], requireAll = true)
+fun Button.visibleIfAgeAbove30AndAlive(age: Int?, isDeath: String?) {
+    val shouldShow = (age ?: 0) >= 30 && isDeath.equals("false", ignoreCase = true)
+    visibility = if (shouldShow) View.VISIBLE else View.GONE
+}
+
+@BindingAdapter(value = ["visibleIfEligibleFemale", "isDeath", "reproductiveStatusId", "gender"], requireAll = true)
+fun Button.visibleIfEligibleFemale(age: Int?, isDeath: String?, reproductiveStatusId: Int?, gender: String?) {
+
+    val shouldShow =
+        (gender.equals("female", ignoreCase = true)) &&
+                ((age ?: 0) in 20..49) &&
+                (reproductiveStatusId == 1 || reproductiveStatusId == 2) &&
+                isDeath.equals("false", ignoreCase = true)
+
+    visibility = if (shouldShow) View.VISIBLE else View.GONE
+}

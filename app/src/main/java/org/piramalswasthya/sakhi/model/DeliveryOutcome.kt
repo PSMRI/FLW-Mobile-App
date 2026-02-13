@@ -41,7 +41,20 @@ data class DeliveryOutcomeCache(
     var stillBirth: Int? = 0,
     var dateOfDischarge: Long? = null,
     var timeOfDischarge: String? = null,
-    var isJSYBenificiary: Boolean? = null,
+    var isJSYBenificiary: Boolean? = false,
+
+    var isDeath: Boolean? = null,
+    var isDeathValue: String? = null,
+    var dateOfDeath: String? = null,
+    var placeOfDeath: String? = null,
+    var placeOfDeathId:Int ? = 0,
+    var otherPlaceOfDeath: String? = null,
+    var mcp1File: String? = null,
+    var mcp2File: String? = null,
+    var jsyFile: String? = null,
+
+
+
 //    var isActive: Boolean? = true,
     var processed: String? = "N",
     var createdBy: String,
@@ -84,7 +97,17 @@ data class DeliveryOutcomeCache(
             createdDate = getDateStringFromLong(createdDate),
             createdBy = createdBy,
             updatedDate = getDateStringFromLong(updatedDate),
-            updatedBy = updatedBy
+            updatedBy = updatedBy,
+            isDeath = isDeath,
+            isDeathValue = isDeathValue,
+            dateOfDeath = dateOfDeath,
+            placeOfDeath = placeOfDeath,
+            placeOfDeathId = placeOfDeathId,
+            otherPlaceOfDeath = otherPlaceOfDeath,
+            mcp1File = mcp1File,
+            mcp2File = mcp2File,
+            jsyFile = jsyFile
+
         )
     }
 }
@@ -111,8 +134,19 @@ data class DeliveryOutcomePost(
     val createdDate: String? = null,
     val createdBy: String,
     val updatedDate: String? = null,
-    val updatedBy: String
-) {
+    val updatedBy: String,
+
+    var isDeath: Boolean? = null,
+    var isDeathValue: String? = null,
+    var dateOfDeath: String? = null,
+    var placeOfDeath: String? = null,
+    var placeOfDeathId: Int?=0,
+    var otherPlaceOfDeath: String? = null,
+    var mcp1File: String? = null,
+    var mcp2File: String? = null,
+    var jsyFile: String? = null,
+
+    ) {
     fun toDeliveryCache(): DeliveryOutcomeCache {
         return DeliveryOutcomeCache(
             id = id,
@@ -138,7 +172,16 @@ data class DeliveryOutcomePost(
             createdDate = getLongFromDate(createdDate),
             updatedBy = updatedBy,
             updatedDate = getLongFromDate(updatedDate),
-            syncState = SyncState.SYNCED
+            syncState = SyncState.SYNCED,
+            isDeath = isDeath,
+            isDeathValue = isDeathValue,
+            dateOfDeath = dateOfDeath,
+            placeOfDeath = placeOfDeath,
+            placeOfDeathId = placeOfDeathId,
+            otherPlaceOfDeath = otherPlaceOfDeath,
+            mcp1File = mcp1File,
+            mcp2File = mcp2File,
+            jsyFile = jsyFile
         )
     }
 }

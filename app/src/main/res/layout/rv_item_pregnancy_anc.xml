@@ -48,13 +48,12 @@
             android:layout_height="match_parent"/>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnView"
+            android:id="@+id/btn_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="?attr/colorPrimary"
             android:text="@string/view"
             android:textColor="?attr/colorOnPrimary" />
-
 
         <androidx.legacy.widget.Space
             android:layout_width="30dp"

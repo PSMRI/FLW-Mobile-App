@@ -9,7 +9,7 @@ data class FormElement(
     var required: Boolean,
     var title: String,
     val subtitle: String? = null,
-      @ArrayRes var arrayId: Int = -1,
+    @ArrayRes var arrayId: Int = -1,
     var entries: Array<String>? = null,
     var doubleStar: Boolean = false,
     val hasDependants: Boolean = false,
@@ -35,5 +35,10 @@ data class FormElement(
     val showYearFirstInDatePicker: Boolean = false,
     @DrawableRes val backgroundDrawable: Int? = null,
     @DrawableRes val iconDrawableRes: Int? = null,
-    val showDrawable: Boolean? = false
+    var minFiles: Int? = null,
+    var maxFiles: Int? = null,
+    var allowedFormats: List<String>? = null,
+    var maxFileSizeMB: Int? = null,
+    var selectedFiles: MutableList<String>? = null,
+    val showDrawable: Boolean? = false,
 )

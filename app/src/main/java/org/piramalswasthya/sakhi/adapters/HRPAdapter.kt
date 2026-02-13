@@ -9,13 +9,16 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.RvItemBenWithHrpaFormBinding
 import org.piramalswasthya.sakhi.model.BenWithHRPADomain
+import org.piramalswasthya.sakhi.utils.RoleConstants
 
 class HRPAdapter(
     private val clickListener: HRPAClickListener? = null,
     private vararg val formButtonText: String,
-    private val role: Int? = 0
+    private val role: Int? = 0,
+    private val pref: PreferenceDao? = null
 ) :
     ListAdapter<BenWithHRPADomain, HRPAdapter.HRPAViewHolder>
         (BenDiffUtilCallBack) {
@@ -46,8 +49,20 @@ class HRPAdapter(
             item: BenWithHRPADomain,
             clickListener: HRPAClickListener?,
             vararg btnText: String,
-            role: Int?
+            role: Int?,
+            pref: PreferenceDao?
         ) {
+
+            if (pref?.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
+                binding.btnForm3.visibility = View.INVISIBLE
+                binding.btnForm2.visibility = View.INVISIBLE
+                binding.btnForm1.visibility = View.INVISIBLE
+            } else {
+                binding.btnForm3.visibility = View.VISIBLE
+                binding.btnForm2.visibility = View.VISIBLE
+                binding.btnForm1.visibility = View.VISIBLE
+            }
+
             binding.benWithhrpa = item
             binding.hasLmp = false
             item.assess?.let {
@@ -166,7 +181,7 @@ class HRPAdapter(
                 } else {
                     formButton.setBackgroundColor(
                         binding.root.resources.getColor(
-                            android.R.color.holo_red_light,
+                            android.R.color.holo_red_dark,
                             binding.root.context.theme
                         )
                     )
@@ -178,7 +193,7 @@ class HRPAdapter(
                 else
                     formButton.setBackgroundColor(
                         binding.root.resources.getColor(
-                            android.R.color.holo_red_light,
+                            android.R.color.holo_red_dark,
                         )
                     )
 
@@ -205,7 +220,7 @@ class HRPAdapter(
         HRPAViewHolder.from(parent)
 
     override fun onBindViewHolder(holder: HRPAViewHolder, position: Int) {
-        holder.bind(getItem(position), clickListener, btnText = formButtonText, role = role)
+        holder.bind(getItem(position), clickListener, btnText = formButtonText, role = role, pref = pref)
     }
 
 

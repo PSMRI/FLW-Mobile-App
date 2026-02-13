@@ -6,11 +6,14 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.RvItemBenPwRegistrationListWithFormBinding
 import org.piramalswasthya.sakhi.model.BenWithPwrDomain
+import org.piramalswasthya.sakhi.utils.RoleConstants
 
 class PwRegistrationListAdapter(
-    private val clickListener: ClickListener? = null
+    private val clickListener: ClickListener? = null,
+    private val pref: PreferenceDao? = null
 ) :
     ListAdapter<BenWithPwrDomain, PwRegistrationListAdapter.BenViewHolder>
         (BenDiffUtilCallBack) {
@@ -44,7 +47,15 @@ class PwRegistrationListAdapter(
         fun bind(
             item: BenWithPwrDomain,
             clickListener: ClickListener?,
+            pref: PreferenceDao?
         ) {
+
+            if (pref?.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
+                binding.btnFormEc1.visibility = View.GONE
+            } else {
+                binding.btnFormEc1.visibility = View.VISIBLE
+            }
+
             binding.benWithPwr = item
             binding.ivSyncState.visibility = if (item.pwr == null) View.INVISIBLE else View.VISIBLE
             binding.btnFormEc1.text = if (item.pwr == null) "Register" else "View"
@@ -65,7 +76,7 @@ class PwRegistrationListAdapter(
         BenViewHolder.from(parent)
 
     override fun onBindViewHolder(holder: BenViewHolder, position: Int) {
-        holder.bind(getItem(position), clickListener)
+        holder.bind(getItem(position), clickListener, pref)
     }
 
 

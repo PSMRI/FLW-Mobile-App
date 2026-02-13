@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.ui.home_activity.all_ben
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,38 +10,56 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.BenListAdapter
 import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
-import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.databinding.AlertFilterBinding
+import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchAndToggleRvButtonBinding
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
+import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registration.EyeSurgeryFormViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.all_household.AllHouseholdFragmentDirections
-import org.piramalswasthya.sakhi.ui.home_activity.home.HomeViewModel
+import org.piramalswasthya.sakhi.utils.RoleConstants
+import timber.log.Timber
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class AllBenFragment : Fragment() {
 
-    private var _binding: FragmentDisplaySearchRvButtonBinding? = null
+    @Inject
+    lateinit var prefDao: PreferenceDao
 
-    private val binding: FragmentDisplaySearchRvButtonBinding
+    private var _binding: FragmentDisplaySearchAndToggleRvButtonBinding? = null
+
+    private val binding: FragmentDisplaySearchAndToggleRvButtonBinding
         get() = _binding!!
 
+    val args: AllBenFragmentArgs by lazy {
+        AllBenFragmentArgs.fromBundle(requireArguments())
+    }
+
+    private lateinit var benAdapter: BenListAdapter
+
+    private var selectedAbha = Abha.ALL
 
     private val viewModel: AllBenViewModel by viewModels()
+    private val viewModelEyeSurgery: EyeSurgeryFormViewModel by viewModels()
+
     private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
         binding.searchView.setText(value)
         binding.searchView.setSelection(value.length)
         viewModel.filterText(value)
     }
-
-    private val homeViewModel: HomeViewModel by viewModels({ requireActivity() })
 
     private val abhaDisclaimer by lazy {
         AlertDialog.Builder(requireContext())
@@ -50,42 +69,152 @@ class AllBenFragment : Fragment() {
             .create()
     }
 
+    enum class Abha {
+        ALL,
+        WITH,
+        WITHOUT,
+        AGE_ABOVE_30,
+        WARA
+    }
+
+    private val filterAlert by lazy {
+        val filterAlertBinding = AlertFilterBinding.inflate(layoutInflater, binding.root, false)
+        filterAlertBinding.rgAbha.setOnCheckedChangeListener { radioGroup, i ->
+            Timber.d("RG Gender selected id : $i")
+            selectedAbha = when (i) {
+                filterAlertBinding.rbAll.id -> Abha.ALL
+                filterAlertBinding.rbWith.id -> Abha.WITH
+                filterAlertBinding.rbWithout.id -> Abha.WITHOUT
+                filterAlertBinding.rbAgeAboveThirty.id -> Abha.AGE_ABOVE_30
+                filterAlertBinding.rbWara.id -> Abha.WARA
+                else -> Abha.ALL
+            }
+
+        }
+
+        filterAlertBinding.tvRch.visibility = View.GONE
+        filterAlertBinding.cbRch.visibility = View.GONE
+
+        val alert = MaterialAlertDialogBuilder(requireContext()).setView(filterAlertBinding.root)
+            .setOnCancelListener {
+            }.create()
+
+        filterAlertBinding.btnOk.setOnClickListener {
+            if (selectedAbha == Abha.WITH) {
+                viewModel.filterType(1)
+            } else if (selectedAbha == Abha.WITHOUT) {
+                viewModel.filterType(2)
+            } else if (selectedAbha == Abha.AGE_ABOVE_30) {
+                viewModel.filterType(3)
+            } else if (selectedAbha == Abha.WARA) {
+                viewModel.filterType(4)
+            }  else {
+                viewModel.filterType(0)
+            }
+
+            alert.cancel()
+        }
+        filterAlertBinding.btnCancel.setOnClickListener {
+            alert.cancel()
+        }
+
+        alert
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentDisplaySearchRvButtonBinding.inflate(layoutInflater)
+        _binding = FragmentDisplaySearchAndToggleRvButtonBinding.inflate(layoutInflater)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.btnNextPage.visibility = View.GONE
-        val benAdapter = BenListAdapter(
+
+        viewModelEyeSurgery.loadAllBenIds()
+
+        binding.ibFilter.setOnClickListener {
+            filterAlert.show()
+        }
+
+        binding.ibDownload.setOnClickListener {
+            lifecycleScope.launch {
+                viewModel.benList.collect { users ->
+                    if (users.isNotEmpty()) {
+                        viewModel.createCsvFile(requireContext(), users)
+                    }
+                }
+            }
+        }
+
+        if (args.source == 1 || args.source == 2 || args.source == 3 || args.source == 4) {
+            binding.ibFilter.visibility = View.GONE
+            binding.ibDownload.visibility = View.VISIBLE
+        }
+
+        benAdapter = BenListAdapter(
             clickListener = BenListAdapter.BenClickListener(
                 { hhId, benId, relToHeadId ->
 
-                    findNavController().navigate(
-                        AllBenFragmentDirections.actionAllBenFragmentToNewBenRegFragment(
-                            hhId = hhId,
-                            benId = benId,
-                            relToHeadId = relToHeadId,
-                            gender = 0
+                        findNavController().navigate(
+                            AllBenFragmentDirections.actionAllBenFragmentToNewBenRegFragment(
+                                hhId = hhId,
+                                benId = benId,
+                                relToHeadId = relToHeadId,
+                                gender = 0
 
+                            )
                         )
-                    )
+
                 },
                 {
                 },
                 { benId, hhId ->
                     checkAndGenerateABHA(benId)
                 },
+                { benId, hhId , isViewMode, isIFA->
+                        if (isIFA){
+                            findNavController().navigate(
+                                AllBenFragmentDirections.actionAllBenFragmentToBenIfaFormFragment(
+                                    hhId = hhId,
+                                    benId = benId,
+                                    isViewMode = isViewMode,
+                                )
+                            )
+                        }else{
+                            findNavController().navigate(
+                                AllBenFragmentDirections.actionAllBenFragmentToEyeSurgeryFormFragment(
+                                    hhId = hhId,
+                                    benId = benId,
+                                    isViewMode = isViewMode,
+                                )
+                            )
+                        }
+
+                },
+                {
+                    try {
+                        val callIntent = Intent(Intent.ACTION_CALL)
+                        callIntent.setData(Uri.parse("tel:${it.mobileNo}"))
+                        startActivity(callIntent)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        activity?.let {
+                            (it as HomeActivity).askForPermissions()
+                        }
+                        Toast.makeText(requireContext(), "Please allow permissions first", Toast.LENGTH_SHORT).show()
+                    }
+                }
 
                 ),
             showAbha = true,
             showSyncIcon = true,
             showBeneficiaries = true,
-            showRegistrationDate = true
+            showRegistrationDate = true,
+            showCall = true,
+            pref = prefDao
         )
         binding.rvAny.adapter = benAdapter
         lifecycleScope.launch {
@@ -145,6 +274,12 @@ class AllBenFragment : Fragment() {
             }
 
         }
+
+        viewModelEyeSurgery.benIdList.observe(viewLifecycleOwner) { benIds ->
+            if (benIds.isNotEmpty()) {
+                benAdapter.submitBenIds(benIds)
+            }
+        }
     }
 
     private fun checkAndGenerateABHA(benId: Long) {
@@ -165,10 +300,29 @@ class AllBenFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            (it as HomeActivity).updateActionBar(
-                R.drawable.ic__ben,
-                getString(R.string.icon_title_ben)
-            )
+            if (prefDao.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
+                (it as SupervisorActivity).updateActionBar(
+                    R.drawable.ic__ben,
+                    title = if (args.source == 1) {
+                        getString(R.string.icon_title_abhas)
+                    } else if (args.source == 2) {
+                        getString(R.string.icon_title_rchs)
+                    } else {
+                        getString(R.string.icon_title_ben)
+                    }
+                )
+            } else {
+                (it as HomeActivity).updateActionBar(
+                    R.drawable.ic__ben,
+                    title = if (args.source == 1) {
+                        getString(R.string.icon_title_abhas)
+                    } else if (args.source == 2) {
+                        getString(R.string.icon_title_rchs)
+                    } else {
+                        getString(R.string.icon_title_ben)
+                    }
+                )
+            }
         }
     }
 

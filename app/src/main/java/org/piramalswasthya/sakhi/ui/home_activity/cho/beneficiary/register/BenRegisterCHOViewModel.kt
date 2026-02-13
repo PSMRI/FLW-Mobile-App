@@ -73,6 +73,15 @@ class BenRegisterCHOViewModel @Inject constructor(
             benRegCache = BenRegCache(
                 ashaId = user.userId,
                 beneficiaryId = -2,
+                isDeath = false,
+                isDeathValue = "",
+                dateOfDeath = "",
+                timeOfDeath = "",
+                reasonOfDeath = "",
+                reasonOfDeathId = -1,
+                placeOfDeath = "",
+                placeOfDeathId = -1,
+                otherPlaceOfDeath = "",
                 householdId = 0,
                 isAdult = true,
                 isKid = false,
@@ -81,7 +90,8 @@ class BenRegisterCHOViewModel @Inject constructor(
                 genderId = 2,
                 genDetails = BenRegGen(reproductiveStatus = "OTHER", reproductiveStatusId = 5),
                 syncState = SyncState.UNSYNCED,
-                locationRecord = preferenceDao.getLocationRecord()!!
+                locationRecord = preferenceDao.getLocationRecord()!!,
+                isConsent = false
             )
 //            dataset.mapValues(benRegCache, 0)
         }

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
+        <import type="android.view.View" />
         <variable
             name="ben"
             type="org.piramalswasthya.sakhi.model.BenBasicDomainForForm" />
@@ -20,6 +20,10 @@
         <variable
             name="hasLmp"
             type="Boolean" />
+        <variable
+            name="isGeneralForm"
+            type="Boolean" />
+
     </data>
 
     <androidx.cardview.widget.CardView
@@ -48,7 +52,7 @@
                 <ImageView
                     android:id="@+id/iv_hh_logo"
                     android:layout_width="wrap_content"
-                    android:layout_height="0dp"
+                    android:layout_height="wrap_content"
                     android:paddingVertical="@dimen/padding_normal"
                     android:src="@drawable/ic__hh"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -63,7 +67,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
                     android:paddingHorizontal="@dimen/padding_small"
-                    android:text="@{ben.familyHeadName}"
+                    android:text='@{ben.benName + " " + ben.benSurname}'
                     android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                     android:textColor="?attr/colorPrimaryVariant"
 
@@ -83,12 +87,12 @@
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@id/tv_hh_id"
                     android:contentDescription="@string/iv_sync_state_tv"
-
+                    android:visibility="@{isGeneralForm ? View.GONE : View.VISIBLE}"
                     app:layout_constraintBottom_toBottomOf="@+id/tv_hh_id"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintTop_toTopOf="@+id/tv_hh_id"
-                    app:syncState="@{ben.syncState}"
+                    app:syncStateForBen="@{ben.syncState}"
                     tools:src="@drawable/ic_synced" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -191,6 +195,14 @@
                         layout="@layout/rv_item_ben_element"
                         app:field="@{ben.age}"
                         app:fieldTitle="@{@string/tv_age_ph}" />
+
+                    <include
+                        android:id="@+id/rl_death"
+                        style="@style/rv_item_ben_fields"
+                        layout="@layout/rv_item_ben_element"
+                        app:field="@{ben.dateOfDeath}"
+                        app:fieldTitle="@{@string/date_of_death}"
+                        />
                 </LinearLayout>
 
                 <LinearLayout

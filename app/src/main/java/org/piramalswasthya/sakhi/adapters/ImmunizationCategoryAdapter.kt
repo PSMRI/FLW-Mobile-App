@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -48,8 +49,12 @@ class ImmunizationCategoryAdapter(private val clickListener: ImmunizationIconCli
             binding.clickListener = clickListener
                 // val layoutManager = FlexboxLayoutManager(binding.root.context)
             val layoutManager = LinearLayoutManager(binding.root.context)
+
+            Log.d("ImmnunigationVaccineAdapter", "isDeath: ${item.isBenDeath}")
+
+
             binding.rvVaccine.layoutManager = layoutManager
-            val adapter = ImmunizationVaccineAdapter(
+            val adapter = ImmunizationVaccineAdapter(item.isBenDeath,
                 clickListener
             )
             binding.rvVaccine.adapter = adapter
@@ -68,6 +73,8 @@ class ImmunizationCategoryAdapter(private val clickListener: ImmunizationIconCli
 
     override fun onBindViewHolder(holder: VaccineCategoryViewHolder, position: Int) {
         holder.bind(getItem(position), clickListener)
+        Log.d("ImmnunigationVaccineAdapter", "onBindViewHolder called at position $position")
+
     }
 
     class ImmunizationIconClickListener(val selectedListener: (vaccineId: VaccineDomain) -> Unit) {

@@ -1,21 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="incentive_fragment_title">प्रोत्साहन राशि</string>
-    <string name="incentive_processed">संसाधित – कुल: ₹ %1d</string>
-    <string name="incentive_pending">लंबित – कुल: ₹ %1d</string>
+    <string name="providing_hbnc_up_to_days_after_birth_discharge_from_sncu">জন্মৰ পিছত ৪২ দিনলৈ/SNCU ৰ পৰা ছুটী দিয়াৰ পিছত HBNC প্ৰদান কৰাৰ বাবদ</string>
+    <string name="incentive_to_asha_for_quarterly_visits_of_hbyc">HBYC ৰ ত্রিমাসিক পৰিদৰ্শনৰ বাবদ আশাক দিয়া মাননী</string>
+    <string name="incentive_to_asha_for_follow_up_of_sncu_discharge_babies_and_for_follow_up_of_lbw_babies">Incentive to ASHA for follow up of SNCU discharge babies and for follow up of LBW babies</string>
+    <string name="asha_incentive_for_referral_of_sam_cases_to_nrc_and_for_follow_up_of_discharged_sam_children_from_nrc">ASHA incentive for referral of SAM cases to NRC and for follow up of discharged SAM children from NRC</string>
+    <string name="child_death_reporting">Child Death Reporting</string>
+    <string name="incentive_for_e_hbnc_only_for_cachar">Incentive for E-HBNC (only for Cachar)</string>
+    <string name="activity_wise_claim_forms_along_with_supporting_documents_are_also_enclosed_as_per_guideline">Activity wise claim forms along with supporting documents are also enclosed as per guideline.</string>
+    <string name="cetify_that_all_claims_are_genuine_and_services_are_rendered_by_me_regarding_the_activities_against_which_the_claim_submitted_kindly_make_the_payment"> </string>
+    <string name="yours_faithfully">Yours faithfully,</string>
+    <string name="account_no">Account No:</string>
+    <string name="bank_name_branch_name"><![CDATA[Bank Name & Branch Name:]]></string>
+    <string name="contact_no">Contact No:</string>
+    <string name="village">Village: %1$s</string>
+    <string name="name_of_the_asha">Name of the ASHA : %1$s</string>
+    <string name="sc_name">SC Name:</string>
+    <string name="certify_that_the_claims_mentioned_above_are_correct">Certify that the claims mentioned above are correct.</string>
+    <string name="signature_of_asha_supervisor">Signature of ASHA SUPERVISOR</string>
+    <string name="signature_of_anm">Signature of ANM</string>
+    <string name="signature_of_cho">Signature of CHO</string>
+    <string name="for_office_use_only">For office use only</string>
+    <string name="signature_of_abpm">Signature of ABPM</string>
+    <string name="signature_of_bam">Signature of BAM</string>
+    <string name="signature_of_bcm">Signature of BCM</string>
+    <string name="signature_of_bpm">Signature of BPM</string>
+    <string name="signature_of_sdm_ho">Signature of SDM &amp; HO</string>
+    <string name="an_amount_of_rs_rupees_only_approved_for_payment_of_asha_incentive_for_the_period_from_to_and_the_amount_is_debited_to_the_account_through_dbt">An amount of Rs________________(Rupees_________only) approved for payment of ASHA incentive for the period from____________to_____________and the amount is debited to the account through DBT.</string>
+
+    <string name="incentive_fragment_title">प्रोत्साहन</string>
+    <string name="incentive_processed">संसाधित\nकुल : ₹ %1d</string>
+    <string name="incentive_pending">लंबित \nकुल: ₹ %1d</string>
     <string name="incentive_amount">₹ %1d</string>
-    <string name="incentive_ben_details">लाभार्थी आईडी: %1d – नाम: %2s</string>
+    <string name="incentive_ben_details">बेन आईडी: %1d\nनाम: %2s</string>
     <string name="incentive_activity_details">गतिविधि: %1s</string>
-    <string name="incentive_last_updated">अंतिम अपडेट: %1s</string>
-    <string name="asha_incentive_master_claim_form">मितानिन प्रोत्साहन मास्टर दावा फॉर्म</string>
-    <string name="to">प्राप्तकर्ता</string>
-    <string name="sdm_ho_or_i_c_block_phc">प्रभारी ब्लॉक पीएचसी</string>
-    <string name="sub_submission_of_asha_incentive_claim_for_the_period_from">विषय: मितानिन प्रोत्साहन दावे का प्रस्तुतिकरण, अवधि –</string>
-    <string name="for_the_period_from">अवधि –</string>
-    <string name="as_per_statement_mentioned_below">नीचे दिए गए विवरण के अनुसार</string>
-    <string name="with_reference_to_">ऊपर दिए गए विषय के संदर्भ में, मैं अवधि … से मितानिन प्रोत्साहन दावा प्रस्तुत कर रही/रहा हूँ</string>
-    <string name="as_per_statement">जैसा कि नीचे दिए विवरण में है</string>
-    <string name="to_small">से – तक</string>
-    <string name="sir_madam">महोदय/महोदया,</string>
+
+    <string name="incentive_last_updated">अंतिम बार अद्यतन किया गया %1s</string>
+    <string name="asha_incentive_master_claim_form">मितानिन प्रोत्साहन मुख्य दावा प्रपत्र</string>
+    <string name="to">को</string>
+    <string name="sdm_ho_or_i_c_block_phc"><![CDATA[SDM&HO or i/c Block PHC]]></string>
+    <string name="sub_submission_of_asha_incentive_claim_for_the_period_from">"विषय: ..से ..तक की अवधि के लिए मितानिन प्रोत्साहन दावे का प्रस्तुतीकरण"</string>
+    <string name="for_the_period_from">"से अवधि के लिए "</string>
+    <string name="as_per_statement_mentioned_below">" नीचे उल्लिखित कथन के अनुसार।"</string>
+    <string name="with_reference_to_">"With reference to the subject cited above, I have to the honour to submit the ASHA incentive claims for the period from "</string>
+    <string name="as_per_statement">" नीचे उल्लिखित कथन के अनुसार"</string>
+    <string name="to_small">" को "</string>
+    <string name="sir_madam">सर/मैडम,</string>
+
+    <string name="incentive_amount_claimed">दावा की गई राशि (रु.)</string>
+    <string name="incentive_no_of_claims">दावों की संख्या</string>
+    <string name="incentive_parameter_for_payment">भुगतान का मानदंड</string>
+    <string name="incentive_rate_rs">दर रु.</string>
+    <string name="incentive_document_submitted">प्रस्तुत किए गए दस्तावेज़</string>
+    <string name="incentive_sub_submission_of_asha_incentive_claim_for_the_period_from_to">विषय: ..से ..तक की अवधि के लिए आशा प्रोत्साहन दावे का प्रस्तुतीकरण</string>
+    <string name="incentive_with_reference_to_the_subject_cited_above">उपर्युक्त विषय के संदर्भ में, मुझे नीचे उल्लिखित विवरण के अनुसार ...... से .......... तक की अवधि के लिए आशा प्रोत्साहन दावों को प्रस्तुत करने का सम्मान प्राप्त हुआ है।</string>
+    <string name="incentive_an_amount_of_rs">…….. से …….. तक की अवधि के लिए आशा प्रोत्साहन के भुगतान के लिए रु. ……. (केवल ………. रुपये) की राशि स्वीकृत की गई है और यह राशि डीबीटी के माध्यम से खाते में डेबिट की जाती है।</string>
 
 </resources>

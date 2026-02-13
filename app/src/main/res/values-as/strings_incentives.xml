@@ -1,9 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="providing_hbnc_up_to_days_after_birth_discharge_from_sncu">জন্মৰ পিছত ৪২ দিনলৈ/SNCU ৰ পৰা ছুটী দিয়াৰ পিছত HBNC প্ৰদান কৰাৰ বাবদ</string>
+    <string name="incentive_to_asha_for_quarterly_visits_of_hbyc">HBYC ৰ ত্রিমাসিক পৰিদৰ্শনৰ বাবদ আশাক দিয়া মাননী</string>
+    <string name="incentive_to_asha_for_follow_up_of_sncu_discharge_babies_and_for_follow_up_of_lbw_babies">SNCUৰ পৰা ছুটী দিয়া কেঁচুৱা আৰু জন্মত কম ওজনৰ (LBW) কেঁচুৱাক পুনঃনিৰীক্ষণৰ বাবদ আশাক দিয়া মাননী</string>
+    <string name="asha_incentive_for_referral_of_sam_cases_to_nrc_and_for_follow_up_of_discharged_sam_children_from_nrc">গুৰুতৰ পুষ্টিহীনতাত ভোগা (SAM) শিশুক NRC লৈ উন্নত চিকিৎসাৰ বাবে প্ৰেৰণ কৰা আৰু NRC পৰা ছুটী দিয়া শিশুক পুনঃনিৰীক্ষণৰ বাবদ আশাক দিয়া মাননী</string>
+    <string name="child_death_reporting">শিশুৰ মৃত্যু হোৱা খবৰ দিয়াৰ বাবদ মাননী</string>
+    <string name="incentive_for_e_hbnc_only_for_cachar">MAA ৰ অধীনত ত্রিমাসিক মাতৃ সভা অনুষ্ঠিত কৰাৰ বাবে মাননী</string>
+    <string name="activity_wise_claim_forms_along_with_supporting_documents_are_also_enclosed_as_per_guideline">নির্দেশনা অনুসৰি নিয়মীয়া কাৰ্যকলাপৰ দাবী প্ৰ-পত্ৰৰ লগতে যাবতীয় নথিপুত্রসমূহ গাঁঠি দিয়া হৈছে। উক্ত দাবীসমূহ সত্য আৰু উল্লেখ কৰা সেবাসমূহ মোৰ দ্বাৰা সুচাৰুৰূপে সম্পন্ন কৰা হয়। অনুগ্রহ কৰি মোৰ মাননী পৰিশোধ কৰক।	</string>
+    <string name="cetify_that_all_claims_are_genuine_and_services_are_rendered_by_me_regarding_the_activities_against_which_the_claim_submitted_kindly_make_the_payment"> </string>
+    <string name="yours_faithfully">আপোনাৰ বিশ্বাসী</string>
+    <string name="account_no">আশাৰ বেংক একাউণ্ট নম্বৰ :</string>
+    <string name="bank_name_branch_name">বেংকৰ নাম আৰু শাখাব নাম :></string>
+    <string name="contact_no">যোগাযোগ নম্বৰব :</string>
+    <string name="village">গাঁও : %1$s</string>
+    <string name="name_of_the_asha">নাম : %1$s</string>
+    <string name="sc_name">উপস্বাস্থ্য কেন্দ্ৰৰ নাম :</string>
+    <string name="certify_that_the_claims_mentioned_above_are_correct">ওপৰত উল্লেখিত দাবীসমূহ সত্য বুলি প্রমাণিত কৰক। </string>
+    <string name="signature_of_asha_supervisor">আশা চুপাৰভাইজাৰৰ স্বাক্ষৰ </string>
+    <string name="signature_of_anm">এ.এন.এমৰ স্বাক্ষৰ	</string>
+    <string name="signature_of_cho">সামুহিক স্বাস্থ্য বিষয়াৰ স্বাক্ষৰ </string>
+    <string name="for_office_use_only">কাৰ্যালয় ব্যৱহাৰৰ বাবে	 </string>
+    <string name="signature_of_abpm">ABPM ৰ স্বাক্ষৰ  </string>
+    <string name="signature_of_bam">BAM ৰ স্বাক্ষৰ</string>
+    <string name="signature_of_bcm">BCM ৰ স্বাক্ষৰ </string>
+    <string name="signature_of_bpm">BPM ৰ স্বাক্ষৰ</string>
+    <string name="signature_of_sdm_ho">SDM &amp; HO  ৰ স্বাক্ষৰ </string>
+    <string name="an_amount_of_rs_rupees_only_approved_for_payment_of_asha_incentive_for_the_period_from_to_and_the_amount_is_debited_to_the_account_through_dbt">একটা পৰিমাণ ৰুপি ________________(অক্ষৰত ___________ মাত্ৰ) ASHA প্ৰেৰিত ভাতাৰ মাচুল অনুমোদিত হৈছে ____________ৰ পৰা ____________ লৈকালৰ বাবে, আৰু সেই পৰিমাণ DBT যোগে একাউণ্টত জমা কৰা হ’ল।
+</string>
+
     <string name="incentive_fragment_title">প্ৰৰোচনা</string>
-    <string name="incentive_activity_details">কাৰ্য্যকলাপ: %1s</string>
     <string name="incentive_last_updated">শেষবাৰৰ বাবে %1s ত আপডেইট কৰা হৈছে</string>
-    <string name="asha_incentive_master_claim_form">আশা প্ৰৰোচনামূলক মাষ্টাৰ দাবী প্ৰ-পত্ৰ</string>
     <string name="sdm_ho_or_i_c_block_phc">SDM&amp;HO বা i/c ব্লক PHC</string>
     <string name="sub_submission_of_asha_incentive_claim_for_the_period_from">Sub: ৰ পৰা সময়ছোৱাৰ বাবে আশা প্ৰৰোচনামূলক দাবী দাখিল কৰা</string>
     <string name="for_the_period_from">ৰ পৰা সময়ছোৱাৰ বাবে</string>
@@ -11,11 +37,25 @@
     <string name="with_reference_to_">ওপৰত উল্লেখ কৰা বিষয়টোৰ সন্দৰ্ভত মই আশাৰ প্ৰৰোচনামূলক দাবী দাখিল কৰাৰ গৌৰৱ লাভ কৰিছো</string>
     <string name="as_per_statement">তলত উল্লেখ কৰা বিবৃতি অনুসৰি।</string>
     <string name="sir_madam">ছাৰ/মেডাম,</string>
+    <string name="asha_incentive_master_claim_form">আশা প্ৰৰোচনামূলক মাষ্টাৰ ক্লেইম ফৰ্ম</string>
+    <string name="incentive_activity_details">কাৰ্যকলাপ: %1s</string>
 
-    <string name="incentive_processed">প্ৰক্ৰিয়া কৰামুঠ : ₹ %1d</string>
-    <string name="incentive_pending">অপেক্ষমাণ মুঠ : ₹ %1d</string>
+    <string name="incentive_amount_claimed">দাবী কৰা ধনৰাশি (Rs.)</string>
+    <string name="incentive_no_of_claims">দাবীৰ সংখ্যা</string>
+    <string name="incentive_parameter_for_payment">পেমেণ্টৰ বাবে পেৰামিটাৰ</string>
+    <string name="incentive_rate_rs">মূল্য Rs.</string>
+    <string name="incentive_document_submitted">প্ৰদান কৰা নথি</string>
+    <string name="incentive_sub_submission_of_asha_incentive_claim_for_the_period_from_to">বিষয়: ….. পৰা ….. পৰ্য্যন্তৰ সময়ছোৱাৰ বাবে আশা প্ৰেৰণা দাবী দাখিলৰ বিষয়ে</string>
+    <string name="incentive_with_reference_to_the_subject_cited_above">উল্লেখিত বিষয়ৰ প্ৰসংগত, মই মৰমৰ সৈতে তলত উল্লেখ কৰা বিবৰণ অনুসৰি ...... ৰ পৰা ……….. পৰ্যন্ত সময়কালৰ ASHA প্ৰেৰণা দাবীসমূহ জমা দিবলৈ ৰাজি আছো।</string>
+    <string name="incentive_an_amount_of_rs">এটা পৰিমাণ Rs……. (মাত্ৰ …… ৰুপী) ASHA প্ৰেৰণা প্ৰদানৰ বাবে অনুমোদিত হৈছে ……ৰ পৰা ……লৈ, আৰু এই পৰিমাণটো DBTৰ জৰিয়তে একাউণ্টত ডেবিট কৰা হৈছে।</string>
+
+
+    <string name="incentive_processed">প্ৰক্ৰিয়াকৃত মুঠ: ₹ %1d</string>
+    <string name="incentive_pending">বাকী থকা মুঠ : ₹ %1d</string>
     <string name="incentive_amount">₹ %1d</string>
-    <string name="incentive_ben_details">বেন আইডি: %1d | নাম: %2s</string>
+    <string name="incentive_ben_details">বেন আইডি: %1d\nনাম: %2s</string>
     <string name="to">লৈ</string>
-    <string name="to_small">" ৰ পৰা "</string>
+    <string name="to_small">" লৈ "</string>
+
+
 </resources>

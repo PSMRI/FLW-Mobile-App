@@ -16,11 +16,18 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.BenListAdapterForForm
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
+import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.utils.RoleConstants
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class DeliveryOutcomeListFragment : Fragment() {
+
+    @Inject
+    lateinit var prefDao: PreferenceDao
 
     private var _binding: FragmentDisplaySearchRvButtonBinding? = null
     private val binding: FragmentDisplaySearchRvButtonBinding
@@ -48,10 +55,10 @@ class DeliveryOutcomeListFragment : Fragment() {
                 { hhId, benId ->
                     findNavController().navigate(
                         DeliveryOutcomeListFragmentDirections.actionDeliveryOutcomeListFragmentToDeliveryOutcomeFragment(
-                            benId
+                            benId, hhId
                         )
                     )
-                }), resources.getString(R.string.register)
+                }), resources.getString(R.string.register), pref = prefDao
         )
         binding.rvAny.adapter = benAdapter
 
@@ -90,10 +97,17 @@ class DeliveryOutcomeListFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            (it as HomeActivity).updateActionBar(
-                R.drawable.ic__delivery_outcome,
-                getString(R.string.delivery_outcome_list)
-            )
+            if (prefDao.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
+                (it as SupervisorActivity).updateActionBar(
+                    R.drawable.ic__delivery_outcome,
+                    getString(R.string.delivery_outcome_list)
+                )
+            } else {
+                (it as HomeActivity).updateActionBar(
+                    R.drawable.ic__delivery_outcome,
+                    getString(R.string.delivery_outcome_list)
+                )
+            }
         }
     }
 

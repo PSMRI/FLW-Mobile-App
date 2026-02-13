@@ -66,7 +66,7 @@ class ImmunizationDueTypeFragment : Fragment() {
         super.onStart()
         activity?.let {
             (it as HomeActivity).updateActionBar(
-                R.drawable.ic__immunization,
+                R.drawable.ic_vaccines,
                 getString(R.string.icon_title_imm)
             )
         }

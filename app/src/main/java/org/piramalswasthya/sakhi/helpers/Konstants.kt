@@ -10,6 +10,8 @@ object Konstants {
     //Dev
     const val devCode = 112
 
+    val nonFollowUpDuration: Long = TimeUnit.DAYS.toMillis(90)
+
 
     const val tempBenImagePrefix: String = "tmp_image_file"
     const val tempBenImageSuffix: String = ".jpeg"
@@ -83,6 +85,8 @@ object Konstants {
     const val umbrellaProgrames = "Umbrella Programmes"
 
     const val ncd = "NCD"
+
+    const val other_Incentive = "OTHER INCENTIVES"
 
     const val additionalIncentivetoAshaSGovt = "ADDITIONAL INCENTIVE TO ASHA UNDER STATE GOVT. BUDGET"
 

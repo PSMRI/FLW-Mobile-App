@@ -3,6 +3,9 @@
 
 
     <string name="anc_visit_number">ANC Visit %1d</string>
+    <string name="sr_no">Sr. no : %1d</string>
+    <string name="date_no">Date : %1$s</string>
+    <string name="round_no">Round : %1d</string>
     <string name="pnc_visit_number">PNC Visit on Day %1d</string>
     <string name="register">Register</string>
     <string name="tracking_form_filled_successfully">Tracking form filled successfully</string>
@@ -91,7 +94,7 @@
         <item>Dec</item>
     </string-array>
 
-    <string-array name="method_of_contraception">
+    <string-array name="method_of_contraception_for_zero_child">
         <item>Self</item>
         <item>ANTRA Injection</item>
         <item>Copper T (IUCD)</item>
@@ -101,19 +104,59 @@
         <item>ECP</item>
         <item>Any Other Method</item>
     </string-array>
+    <string-array name="method_of_contraception">
+        <item>Self</item>
+        <item>ANTRA Injection</item>
+        <item>Copper T (IUCD)</item>
+        <item>Condom</item>
+        <item>Mala N</item>
+        <item>Chaya</item>
+        <item>ECP</item>
+        <item>MALE STERILIZATION</item>
+        <item>FEMALE STERILIZATION</item>
+        <item>MiniLap</item>
+        <item>Any Other Method</item>
+    </string-array>
+
+
 
     <string-array name="antra_doses">
         <item>Dose-1</item>
         <item>Dose-2</item>
         <item>Dose-3</item>
         <item>Dose-4</item>
+        <item>Dose-5</item>
+        <item>Dose-6</item>
+        <item>Dose-7</item>
+        <item>Dose-8</item>
+        <item>Dose-9</item>
+        <item>Dose-10</item>
     </string-array>
 
     <!--  PregnantWoman ANC  -->
     <string-array name="anc_abortion_type_array">
         <item>Induced</item>
         <item>Spontaneous</item>
+        <item>Incomplete</item>
     </string-array>
+
+    <string-array name="anc_termination_done_by">
+        <item>Doctor</item>
+        <item>Nurse</item>
+    </string-array>
+    <string-array name="anc_paiucd_done_by">
+        <item>Doctor</item>
+        <item>Nurse</item>
+    </string-array>
+
+    <string-array name="anc_method_of_termination">
+        <item>MVA</item>
+        <item>EVA</item>
+        <item>MMA</item>
+        <item>Others</item>
+
+    </string-array>
+
     <string-array name="anc_abortion_facility_array">
         <item>Govt. Hospital</item>
         <item>Pvt. Hospital</item>
@@ -154,15 +197,34 @@
         <item>HAEMORRHAGE</item>
         <item>HIGH FEVER</item>
         <item>ABORTION</item>
+        <item>Accident</item>
         <item>OTHER</item>
     </string-array>
     <string-array name="anc_confirmation_array">
         <item>Yes</item>
         <item>No</item>
     </string-array>
+      <string-array name="abortion_isplaning_array">
+        <item>Has a PAIUCD been inserted?(Copper-T)\n or</item>
+        <item>Has the woman opted for permanent sterilization (Tubectomy)?</item>
+    </string-array>
+
+
     <string-array name="anc_confirmation_array1">
         <item>No</item>
         <item>Yes</item>
+    </string-array>
+
+
+    <string-array name="select_high_risk_condition">
+        <item>HIGH BP (SYSTOLIC >=140 AND OR DIASTOLIC >=90 mmHg)</item>
+        <item>CONVULSIONS</item>
+        <item>VAGINAL BLEEDING</item>
+        <item>FOUL SMELLING DISCHARGE</item>
+        <item>SEVERE ANAEMIA (HB &lt;7 gm/dl)</item>
+        <item>DIABETES</item>
+        <item>TWINS</item>
+        <item>OTHER</item>
     </string-array>
 
 
@@ -212,13 +274,19 @@
     <string name="pmsma_birth_complications_and_planning">Preparation for birth and complications, nutrition and family planning</string>
     <string name="pmsma_medical_officer_sign">Signature of medical officer in charge</string>
     <string-array name="pmsma_tetanus_toxoid_array">
-        <item>First</item>
-        <item>Second</item>
-        <item>Booster</item>
+        <item>1st Dose</item>
+        <item>2nd Dose</item>
+        <item>Booster Dose</item>
     </string-array>
     <string-array name="pmsma_confirmation_array">
         <item>Yes</item>
         <item>No</item>
+    </string-array>
+
+    <string-array name="pmsma_malaria_array">
+        <item>Negative</item>
+        <item>Positive</item>
+        <item>Test Not Done</item>
     </string-array>
 
 
@@ -227,7 +295,8 @@
     <string name="pnc_visit_date">PNC Visit Date</string>
     <string name="pnc_ifa_tabs_given">No. of IFA Tablets given</string>
     <string name="pnc_contraception_method">Method of Contraception</string>
-    <string name="pnc_any_contraception_method">Any Method of Contraception</string>
+    <string name="pnc_any_contraception_method">Has the couple started any family planning method after delivery?\nAny Postpartum Contraception (PPC)</string>
+
     <string name="pnc_other_ppc_method">Other PPC Method</string>
     <string name="pnc_mother_danger_sign">Mother Danger Sign</string>
     <string name="pnc_other_danger_sign">Other Danger Sign</string>
@@ -252,36 +321,58 @@
         <item>No</item>
     </string-array>
     <string-array name="pnc_contraception_method_array">
-        <item>POST PARTUM IUCD (PPIUCD) WITHIN 48 HRS OF DELIVERY</item>
+        <item>POST PARTUM IUCD (PPIUCD) </item>
         <item>CONDOM</item>
         <item>MALE STERILIZATION</item>
         <item>FEMALE STERILIZATION</item>
-        <item>POST PARTUM STERILIZATION (PPS WITHIN 7 DAYS OF DELIVERY)</item>
+        <item>POST PARTUM STERILIZATION (PPS)</item>
+        <item>MiniLap</item>
         <item>ANY OTHER (SPECIFY)</item>
     </string-array>
+
+    <string-array name="sterilization_methods_array">
+        <item>MALE STERILIZATION</item>
+        <item>FEMALE STERILIZATION</item>
+        <item>POST PARTUM STERILIZATION (PPS)</item>
+        <item>MiniLap</item>
+    </string-array>
+
+    <string-array name="female_sterilization_methods_array">
+        <item>FEMALE STERILIZATION</item>
+        <item>POST PARTUM STERILIZATION (PPS)</item>
+        <item>MiniLap</item>
+    </string-array>
     <string-array name="pnc_mother_danger_sign_array">
-        <item>PPH</item>
+        <item>PPH - Excessive bleeding</item>
         <item>FEVER</item>
         <item>SEPSIS</item>
         <item>SEVERE ABDOMINAL PAIN</item>
         <item>SEVERE HEADACHE OR BLURRED VISION</item>
         <item>DIFFICULT BREATHING</item>
+        <item>Yellowness of Urine, Skin or Eyes</item>
+        <item>Pale Skin or Eyes</item>
+        <item>Swelling on face, hands and legs</item>
+        <item>Abnormal behaviour</item>
         <item>Any Other</item>
+
     </string-array>
     <string-array name="pnc_referral_facility_array">
         <item>Primary Health Centre</item>
         <item>Community Health Centre</item>
         <item>District Hospital</item>
         <item>Other Private Hospital</item>
-        <item>Any Other (Specify)</item>
     </string-array>
+
     <string-array name="pnc_death_cause_array">
         <item>ECLAMPSIA</item>
         <item>HAEMORRHAGE (PPH)</item>
         <item>ANAEMIA</item>
         <item>HIGH FEVER</item>
+        <item>Sepsis</item>
+        <item>Accident</item>
         <item>Any Other</item>
     </string-array>
+
     <string-array name="pnc_death_place_array">
         <item>Home</item>
         <item>Hospital</item>
@@ -397,7 +488,7 @@
         <item>Other</item>
     </string-array>
 
-    <string name="anc_date">ANC Date</string>
+
     <string name="str_anc_period">ANC Period</string>
     <string name="str_abortion_if_any">Abortion If Any</string>
     <string name="str_abortion_type">Abortion Type</string>

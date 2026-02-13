@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.ui.home_activity.eligible_couple.registration.eligible_couple_reg
 
 import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -56,14 +57,34 @@ class EligibleCoupleRegViewModel @Inject constructor(
     val recordExists: LiveData<Boolean>
         get() = _recordExists
 
-    //    private lateinit var user: UserDomain
+    val showDialogEvent = MutableLiveData<String>()
     private val dataset =
-        EligibleCoupleRegistrationDataset(context, preferenceDao.getCurrentLanguage())
+        EligibleCoupleRegistrationDataset(context,context, preferenceDao.getCurrentLanguage(),showDialogEvent)
     val formList = dataset.listFlow
 
     private lateinit var ecrForm: EligibleCoupleRegCache
 
+    private var lastDocumentFormId: Int = 0
+
     private var assess: HRPNonPregnantAssessCache? = null
+
+    fun getIndexofAshaKitPhotoFirst() = dataset.getIndexofAshaKitPhotoOne()
+    fun getIndexofAshaKitPhotoSecond() = dataset.getIndexofAshaKitPhoto()
+
+
+
+    fun setCurrentDocumentFormId(id: Int) {
+        lastDocumentFormId = id
+    }
+    fun getDocumentFormId():Int {
+        return lastDocumentFormId
+    }
+
+    fun setImageUriToFormElement(dpUri: Uri) {
+        dataset.setImageUriToFormElement(lastDocumentFormId, dpUri)
+
+
+    }
 
     init {
         viewModelScope.launch {
@@ -83,7 +104,9 @@ class EligibleCoupleRegViewModel @Inject constructor(
                     benId = ben.beneficiaryId,
                     syncState = SyncState.UNSYNCED,
                     createdBy = asha.userName,
-                    updatedBy = asha.userName
+                    updatedBy = asha.userName,
+                    lmp_date = calDob.timeInMillis,
+                    isKitHandedOver = false,
                 )
             }
 

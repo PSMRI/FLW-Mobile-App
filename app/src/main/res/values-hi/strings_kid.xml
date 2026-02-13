@@ -150,7 +150,7 @@
         <item>मेडिकल कॉलेज अस्पताल</item>
         <item>निजी अस्पताल</item>
         <item>मान्यता प्राप्त निजी अस्पताल</item>
-        <item>VHND</item>
+        <item>VHND VHSND U-WIN Session</item>
         <item>अन्य</item>
     </string-array>
     <string-array name="imm_vaccinated_by_array">

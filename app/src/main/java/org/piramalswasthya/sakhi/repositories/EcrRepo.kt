@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.repositories
 
+import android.app.Application
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
@@ -29,8 +30,10 @@ class EcrRepo @Inject constructor(
     private val userRepo: UserRepo,
     private val database: InAppDb,
     private val preferenceDao: PreferenceDao,
-    private val tmcNetworkApiService: AmritApiService
-) {
+    private val tmcNetworkApiService: AmritApiService,
+    private val context: Application,
+
+    ) {
 
     suspend fun persistRecord(ecrForm: EligibleCoupleRegCache) {
         withContext(Dispatchers.IO) {
@@ -47,6 +50,11 @@ class EcrRepo @Inject constructor(
     suspend fun getSavedRecord(benId: Long): EligibleCoupleRegCache? {
         return withContext(Dispatchers.IO) {
             database.ecrDao.getSavedECR(benId)
+        }
+    }
+    suspend fun getNoOfChildren(benId: Long): Int? {
+        return withContext(Dispatchers.IO) {
+            database.ecrDao.getNoOfChildren(benId)
         }
     }
 
@@ -72,7 +80,7 @@ class EcrRepo @Inject constructor(
                 val ben = database.benDao.getBen(it.benId)
                     ?: throw IllegalStateException("No beneficiary exists for benId: ${it.benId}!!")
 
-                val ecrPost = it.asPostModel()
+                val ecrPost = it.asPostModel(context)
                 val cache = database.hrpDao.getNonPregnantAssess(ben.beneficiaryId)
                 cache?.let {
                     ecrPost.misCarriage = cache.misCarriage
@@ -128,7 +136,7 @@ class EcrRepo @Inject constructor(
                                 return true
                             }
 
-                            5002 -> {
+                           401, 5002 -> {
                                 if (userRepo.refreshTokenTmc(
                                         user.userName, user.password
                                     )
@@ -216,7 +224,7 @@ class EcrRepo @Inject constructor(
                                 return true
                             }
 
-                            5002 -> {
+                           401, 5002 -> {
                                 if (userRepo.refreshTokenTmc(
                                         user.userName, user.password
                                     )
@@ -276,7 +284,7 @@ class EcrRepo @Inject constructor(
 
                                     ecrList.forEach { ecr ->
                                         database.benDao.getBen(ecr.benId)?.let {
-                                            if (database.ecrDao.getSavedECR(ecr.benId) == null) {
+                                           if (database.ecrDao.getSavedECR(ecr.benId) == null) {
                                                 database.ecrDao.upsert(ecr)
                                             }
                                         }
@@ -312,7 +320,7 @@ class EcrRepo @Inject constructor(
                                 return@withContext 1
                             }
 
-                            5002 -> {
+                            401,5002 -> {
                                 if (userRepo.refreshTokenTmc(
                                         user.userName, user.password
                                     )
@@ -384,7 +392,7 @@ class EcrRepo @Inject constructor(
                                 return@withContext 1
                             }
 
-                            5002 -> {
+                           401, 5002 -> {
                                 if (userRepo.refreshTokenTmc(
                                         user.userName, user.password
                                     )
@@ -433,6 +441,12 @@ class EcrRepo @Inject constructor(
                         ) else getLongFromDate(
                         ecrJson.getString("createdDate")
                     ),
+                    lmpDate =
+                    if (ecrJson.has("lmpDate")) {
+                        getLongFromLmpDate(ecrJson.getString("lmpDate"))
+                    } else {
+                        0L
+                    },
                     bankAccount = if (ecrJson.has("bankAccountNumber")) ecrJson.getLong("bankAccountNumber") else null,
                     bankName = if (ecrJson.has("bankName")) ecrJson.getString("bankName") else null,
                     branchName = if (ecrJson.has("branchName")) ecrJson.getString("branchName") else null,
@@ -557,7 +571,22 @@ class EcrRepo @Inject constructor(
                             "updatedDate"
                         ) else ecrJson.getString("createdDate")
                     ),
-                    syncState = SyncState.SYNCED
+                    syncState = SyncState.SYNCED,
+                    isKitHandedOver = ecrJson.optBoolean("isKitHandedOver",false),
+                    kitHandedOverDate = getLongFromDate(
+                        if (ecrJson.has("updatedDate")) ecrJson.optString(
+                            "updatedDate"
+                        ) else ecrJson.optString("updatedDate")
+                    ),
+                    kitPhoto1 = ecrJson.optString("kitPhoto1",""),
+                    kitPhoto2 = ecrJson.optString("kitPhoto2",""),
+                    lmp_date = getLongFromDate(
+                        if (ecrJson.has("updatedDate")) ecrJson.getString(
+                            "updatedDate"
+                        ) else ecrJson.getString("createdDate"),
+
+
+                    )
                 )
                 if (ecr.isRegistered) list.add(ecr)
             } catch (e: Exception) {
@@ -574,9 +603,27 @@ class EcrRepo @Inject constructor(
         val list = mutableListOf<EligibleCoupleTrackingCache>()
         for (i in 0 until dataObj.length()) {
             val ecrJson = dataObj.getJSONObject(i)
+            val methodOfContraceptionRaw = ecrJson.optString("methodOfContraception", null)
+
             val ecr = EligibleCoupleTrackingCache(
                 benId = ecrJson.getLong("benId"),
+                lmpDate =
+                if (ecrJson.has("lmpDate")) {
+                    getLongFromLmpDate(ecrJson.getString("lmpDate"))
+                } else {
+                    0L
+                },
                 visitDate = getLongFromDate(ecrJson.getString("visitDate")),
+                dateOfAntraInjection = getStringToDate(ecrJson.optString("dateOfAntraInjection",null)),
+//                antraDose = ecrJson.optString("antraDose",null),
+                antraDose = methodOfContraceptionRaw?.substringAfter("/", "")
+                    ?.takeIf { it.isNotEmpty() }
+                    ?: ecrJson.optString("antraDose", null),
+                dueDateOfAntraInjection = ecrJson.optString("dueDateOfAntraInjection",null),
+                mpaFile = ecrJson.optString("mpaFile",null),
+                dischargeSummary1 = ecrJson.optString("dischargeSummary1",null),
+                dischargeSummary2 = ecrJson.optString("dischargeSummary2",null),
+
                 isPregnancyTestDone = if (ecrJson.has("isPregnancyTestDone")) ecrJson.getString("isPregnancyTestDone") else null,
                 isActive = if (ecrJson.has("isActive")) ecrJson.getBoolean("isActive") else false,
                 pregnancyTestResult = if (ecrJson.has("pregnancyTestResult")) ecrJson.getString("pregnancyTestResult") else null,
@@ -598,7 +645,8 @@ class EcrRepo @Inject constructor(
                     ) else ecrJson.getString("createdDate")
                 ),
                 processed = "P",
-                syncState = SyncState.SYNCED
+                syncState = SyncState.SYNCED,
+                lmp_date = ecrJson.getLong("benId")
             )
             list.add(ecr)
 
@@ -611,6 +659,13 @@ class EcrRepo @Inject constructor(
             database.ecrDao.getLatestEct(benId)
         }
     }
+   suspend fun getAllAntraDoses(benId: Long): List<EligibleCoupleTrackingCache>? {
+        return withContext(Dispatchers.IO) {
+            database.ecrDao.getAllAntraDoses(benId)
+        }
+    }
+
+
 
     private fun getHighRiskAssess(dataObj: JSONArray): List<HRPNonPregnantAssessCache> {
 //        TODO()
@@ -657,5 +712,28 @@ class EcrRepo @Inject constructor(
             val date = f.parse(dateString)
             return date?.time ?: throw IllegalStateException("Invalid date for dateReg")
         }
+
+        private fun getLongFromLmpDate(dateString: String): Long {
+            //Jul 22, 2023 8:17:23 AM"
+            val f = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+            val date = f.parse(dateString)
+            return date?.time ?: throw IllegalStateException("Invalid date for dateReg")
+        }
+
+        private fun getStringToDate(dateString: String?): String? {
+            if (dateString.isNullOrBlank()) return null
+
+            return try {
+                val inputFormat = SimpleDateFormat("MMM d, yyyy h:mm:ss a", Locale.ENGLISH)
+                val outputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
+
+                val date = inputFormat.parse(dateString)
+                date?.let { outputFormat.format(it) }
+            } catch (e: Exception) {
+                null
+            }
+        }
+
+
     }
 }

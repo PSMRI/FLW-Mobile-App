@@ -16,6 +16,7 @@
     <string name="notification_sync_channel_id">sakhi-sync0</string>
     <string name="consent_text">सहमति:\nमुझे मितानिन द्वारा उस उद्देश्य के बारे में बताया गया है जिसके लिए मेरी जानकारी और माप से संबंधित निष्कर्ष एकत्र किए जा रहे हैं। यह जानकारी मुझे ऐसी भाषा में समझाई गई है जिसे मैं समझता/समझती हूँ, और मैं अपनी व्यक्तिगत स्वास्थ्य प्रोफ़ाइल से संबंधित जानकारी और माप के निष्कर्ष एकत्र करने के लिए अपनी सहमति देता/देती हूँ।</string>
 
+
     <string name="long_to_string">%d</string>
     <string name="preview_title">पूर्वावलोकन</string>
 
@@ -44,6 +45,72 @@
     <string name="form_input_empty_error">आवश्यक फ़ील्ड खाली नहीं हो सकता !</string>
     <string name="form_input_upper_case_error">Only Alphabets in upper case allowed!</string>
     <string name="form_input_min_limit_error">%1s should be greater than or equal to %2d</string>
+    <string name="jsy_payment_voucher">JSY payment voucher</string>
+    <string name="mcp_card_1">MCP Card 1</string>
+    <string name="mcp_card_2">MCP Card 2</string>
+    <string name="during_pregnancy">During pregnancy</string>
+    <string name="a_during_pregnancy">a. During pregnancy</string>
+    <string name="b_during_delivery">b. During delivery</string>
+    <string name="c_within_42_days_after_delivery">c. Within 42 days after delivery</string>
+    <string name="d_during_abortion_or_within_6_weeks_after_abortion">d. During abortion or within 6 weeks after abortion</string>
+    <string name="name_of_reporting_person">"Name of reporting Person "</string>
+    <string name="designation">Designation</string>
+    <string name="verification_by_anm_of_the_respective_sub_center_that_death_of_women_occurred_during_pregnancy_or_within_42_days_of_delivery_abortion">Verification by ANM of the respective Sub-center that death of women occurred during pregnancy or within 42 days of delivery/abortion:</string>
+    <string name="name_of_anm">Name of ANM</string>
+    <string name="name_of_the_sub_center">Name of the sub center</string>
+    <string name="mdsr_form_from_anm_1">MDSR form from ANM 1</string>
+    <string name="mdsr_form_from_anm_2">MDSR form from ANM 2</string>
+    <string name="father_name">Father Name</string>
+    <string name="age_of_woman">Age Of Woman</string>
+    <string name="when_did_death_occur">When did death occur</string>
+    <string name="name_of_the_deceased_woman">Name of the deceased woman</string>
+    <string name="date_of_antra_injection">Date of ANTRA Injection</string>
+    <string name="due_date_of_next_injection">Due date of next Injection</string>
+    <string name="mpa_card">MPA Card</string>
+    <string name="invalid_injection_date">Invalid injection date</string>
+    <string name="antra_injection_details">ANTRA Injection Details</string>
+    <string name="dose">Dose</string>
+    <string name="next_due_date">Next Due Date</string>
+    <string name="abortion_discharge_summary_1">Abortion Discharge\n Summary 1</string>
+    <string name="abortion_discharge_summary_2">Abortion Discharge\n Summary 2</string>
+    <string name="remarks">Remarks</string>
+    <string name="post_abortion_contraception_is_paiucd_inserted_after_an_abortion">Post Abortion Contraception\nIs PAIUCD inserted after an abortion</string>
+    <string name="termination_done_by">Termination done by</string>
+    <string name="method_of_termination">Method of Termination</string>
+    <string name="serial_no_as_per_admission_evacuation_register">Serial no as per Admission/ Evacuation register</string>
+    <string name="facility_place_of_abortion">Facility (Place of Abortion)</string>
+    <string name="abortion_type">Abortion Type</string>
+    <string name="abortion_date">Abortion Date</string>
+    <string name="do_you_want_to_upload_mcp_card_immunization_page_section_photo_copy_to_claim_your_incentive">क्या आप अपना प्रोत्साहन का दावा करने के लिए एमसीपी कार्ड - टीकाकरण पृष्ठ/अनुभाग फोटो कॉपी अपलोड करना चाहते हैं</string>
+    <string name="yes_dialog">हां</string>
+    <string name="no_dialog">नहीं</string>
+    <string name="u_win_session">यू-विन सत्र</string>
+    <string name="u_win_sessions_list">यू-विन सत्र सूची</string>
+    <string name="any_other_high_risk_conditions">Any other High Risk conditions</string>
+    <string name="details_of_pregnant_women">Details of Pregnant women</string>
+    <string name="anc_period">ANC Period</string>
+    <string name="anc_date">ANC Date</string>
+    <string name="if_yes_select_high_risk_condition">if yes, select high-risk condition</string>
+    <string name="pmsma_visit_date">PMSMA Visit Date</string>
+    <string name="pmsma_visits">PMSMA Visits</string>
+    <string name="pmsma_visit">PMSMA Visit</string>
+    <string name="is_baby_discharge_from_sncu">Is Baby discharge from SNCU?</string>
+    <string name="optional">(Optional)</string>
+    <string name="optional_">Optional</string>
+     <string name="mandatory">Mandatory <font color='#FF0000'>*</font></string>
+    <string name="name_of_the_child">बच्चे का नाम</string>
+    <string name="pincode">Pincode</string>
+    <string name="signature_name_of_asha">Signature/Name of ASHA</string>
+    <string name="cdr_form_from_anm_1">CDR form from ANM 1</string>
+    <string name="cdr_form_from_anm_2">CDR form from ANM 2</string>
+    <string name="leprosy_confirmed">Leprosy Confirmed</string>
+    <string name="leprosy_suspected">Leprosy Suspected</string>
+    <string name="after_the_abortion_the_woman_opted_for_permanent_sterilization_tubectomy">After the Abortion, the Woman opted for permanent sterilization (Tubectomy)</string>
+    <string name="date_of_sterilisation">Date of Sterilisation</string>
+    <string name="what_family_planning_method_has_been_chosen_after_the_abortion">What family planning method has been chosen after the abortion?</string>
+    <string name="higher_healthcare_center">उच्च स्वास्थ्य सेवा केंद्र</string>
+    <string name="additional_services">अतिरिक्त सेवाएं</string>
+
 
     <string-array name="temp_array">
         <item>Item 1</item>
@@ -137,7 +204,6 @@
     <string name="female">महिला</string>
     <string name="transgender">ट्रांसजेंडर</string>
     <string name="other">अन्य</string>
-    <string name="state">राज्य</string>
     <string name="district">जिला</string>
     <string name="view_household_information">परिवार की जानकारी देखें</string>
     <string name="hello">नमस्ते</string>
@@ -146,7 +212,6 @@
     <string name="mother">माँ</string>
     <string name="patient_information">रोगी की जानकारी</string>
     <string name="mother_name">माँ का नाम</string>
-    <string name="date_of_birth">जन्म तिथि</string>
     <string name="previous_vaccine_details">पिछला टीकाकरण विवरण</string>
     <string name="due_serial">देय क्रम</string>
     <string name="saving_form">फॉर्म सेव हो रहा है…</string>
@@ -161,8 +226,6 @@
     <string name="high_risk_non_pregnant_women">उच्च जोखिम वाली गैर-गर्भवती महिलाएं</string>
     <string name="high_risk_babies">उच्च जोखिम वाले शिशु</string>
     <string name="low_birth_weight_babies">कम वजन वाले शिशु</string>
-    <string name="age">आयु</string>
-    <string name="gender">लिंग</string>
     <string name="registration_date">पंजीकरण तिथि</string>
     <string name="beneficiary_id">लाभार्थी आईडी</string>
     <string name="rch_id">आरसीएच आईडी</string>
@@ -266,6 +329,32 @@
     <string name="add_family_member">परिवार के सदस्य जोड़ें</string>
     <string name="non_pregnant_women_eligible_couple_section">गैर-गर्भवती महिलाएं (पात्र दंपत्ति) अनुभाग</string>
     <string name="about_us">पिरामल स्वास्थ्य सभी के लिए सार्वभौमिक स्वास्थ्य देखभाल को पूरा करने के लिए भारत सरकार के दृष्टिकोण को पूरक और संपूरित करके सार्वजनिक स्वास्थ्य सेवा के अंतराल को पाटने पर ध्यान केंद्रित कर रहा है। पिरामल स्वास्थ्य भारत में प्राथमिक सार्वजनिक स्वास्थ्य देखभाल क्षेत्र में मातृ स्वास्थ्य, बाल और किशोर स्वास्थ्य, गैर-संचारी रोगों पर ध्यान केंद्रित करने वाले सबसे बड़े गैर-लाभकारी संगठनों में से एक है। पिरामल स्वास्थ्य के पास कई स्वास्थ्य सेवा नवाचारों को बड़े पैमाने पर संचालित करने का एक दशक से अधिक का अनुभव है, जो पूरे भारत में सबसे कम सेवा प्राप्त और हाशिए पर रहने वाली आबादी की प्राथमिक स्वास्थ्य देखभाल जरूरतों को पूरा कर रहा है। पिरामल स्वास्थ्य भारत के 20 राज्यों में 35 नवीन सार्वजनिक स्वास्थ्य देखभाल वितरण कार्यक्रमों के माध्यम से कार्यरत है और अब तक 10.7 करोड़ से अधिक लाभार्थियों को सेवा प्रदान कर चुका है| पिरामल स्वास्थ्य में 250 चिकित्सकों सहित 2260 कर्मचारी कार्यरत हैं जो परिणामोन्मुखी दृष्टिकोण के माध्यम से सेवा भाव (लाभार्थी-केंद्रित) के मूल मूल्य पर काम करते हैं। पिछले बारह वर्षों में, फोकस निम्नलिखित पर रहा है, बड़े पैमाने पर स्थायी प्रभाव के लिए प्लेटफॉर्म का निर्माण, एक यात्रा के रूप में पैमाने पर नवाचार, नीति आयोग के ज्ञान और कार्यान्वयन भागीदार के रूप में नीतियों, शासन और सार्वजनिक स्वास्थ्य देखभाल प्रणाली की जवाबदेही को प्रभावित करना। हस्तक्षेप डिजाइन, मॉडलिंग, पायलटिंग और उन पायलटों को बढ़ाने के रूप में नवाचार पिरामल स्वास्थ्य में एक दृष्टिकोण रहा है। पिरामल स्वास्थ्य प्राथमिक स्वास्थ्य सेवा को न केवल सस्ती, सुलभ और सभी के लिए उपलब्ध बनाने के लिए प्रतिबद्ध है, बल्कि यह भी सुनिश्चित करता है कि यह पूर्ण, निरंतर और व्यापक हो।</string>
+    <string name="flu_like_illness">फ्लू जैसी बीमारी</string>
+    <string name="shakingchills">कंपकंपी</string>
+    <string name="headache">सिरदर्द</string>
+    <string name="muscleaches">मांसपेशियों में दर्द</string>
+    <string name="tiredness">थकान</string>
+    <string name="referred_to">सुविधा के लिए रेफर किया गया</string>
+    <string name="nausea">मतली</string>
+    <string name="vomiting">उल्टी</string>
+    <string name="diarrhea">दस्त</string>
+    <string name="rapid_diagnostic">रैपिड डायग्नोस्टिक टेस्ट (आरडीटी)</string>
+    <string name="rapid_diagnostic_kala">कालाजार रैपिड डायग्नोस्टिक टेस्ट (आरडीटी)</string>
+    <string name="slide_test_pf">मलेरिया स्लाइड टेस्ट पीएफ</string>
+    <string name="slide_test">मलेरिया स्लाइड टेस्ट</string>
+    <string name="slide_test_pv">मलेरिया स्लाइड टेस्ट पीवी</string>
+    <string name="sympt">लक्षण।</string>
+    <string name="malaria_submitted">मलेरिया फॉर्म जमा किया गया</string>
+
+    <string name="malariacasecount">मलेरिया मामलों की संख्या</string>
+    <string name="filariacasecount">फाइलेरिया मामलों की संख्या</string>
+    <string name="suffering_from_filaries">फाइलेरिया से पीड़ित</string>
+    <string name="str_leprosy_status">कुष्ठ रोग की स्थिति</string>
+    <string name="treatment_given">उपचार दिया गया।</string>
+    <string name="aes_submitted">एईएस/जेएस फॉर्म जमा किया गया</string>
+    <string name="filaria_submitted">फाइलेरिया फॉर्म जमा किया गया</string>
+    <string name="leprosy_submitted">कुष्ठ रोग फॉर्म जमा किया गया</string>
+    <string name="irs_submitted">आईआरएस फॉर्म जमा किया गया</string>
 
 
 </resources>

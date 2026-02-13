@@ -7,7 +7,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.database.room.dao.ImmunizationDao
 import org.piramalswasthya.sakhi.helpers.filterImmunList
 import org.piramalswasthya.sakhi.model.ImmunizationCategory
@@ -46,11 +48,10 @@ class ChildImmunizationListViewModel @Inject constructor(
             val ageMillis = System.currentTimeMillis() - cache.ben.dob
             ImmunizationDetailsDomain(
                 ben = cache.ben.asBasicDomainModel(),
-//                vaccineStateList = vaccines.filter { it.minAllowedAgeInMillis < ageMillis }.map { vaccine ->
-                vaccineStateList = vaccines.map { vaccine ->
+                vaccineStateList = vaccines.filter { it.minAllowedAgeInMillis < ageMillis }.map { vaccine ->
                     val state = when {
                         cache.givenVaccines.any { it.vaccineId == vaccine.vaccineId } -> VaccineState.DONE
-                        ageMillis < vaccine.minAllowedAgeInMillis -> VaccineState.PENDING
+                        ageMillis <= vaccine.minAllowedAgeInMillis -> VaccineState.PENDING
                         ageMillis <= vaccine.maxAllowedAgeInMillis -> VaccineState.OVERDUE
                         else -> VaccineState.MISSED
                     }
@@ -68,27 +69,27 @@ class ChildImmunizationListViewModel @Inject constructor(
         }
     }
 
-/*    val benWithVaccineDetails = pastRecords.map { vaccineIdList ->
-        vaccineIdList.map { cache ->
-            val ageMillis = System.currentTimeMillis() - cache.ben.dob
-            ImmunizationDetailsDomain(ben = cache.ben.asBasicDomainModel(),
-                vaccineStateList = vaccinesList.filter {
-                    it.minAllowedAgeInMillis < ageMillis
-                }.map { vaccine ->
-                    VaccineDomain(
-                        vaccine.vaccineId,
-                        vaccine.vaccineName,
-                        vaccine.immunizationService,
-                        if (cache.givenVaccines.any { it.vaccineId == vaccine.vaccineId }) VaccineState.DONE
-                        else if (ageMillis <= (vaccine.minAllowedAgeInMillis)) {
-                            VaccineState.PENDING
-                        } else if (ageMillis <= (vaccine.maxAllowedAgeInMillis)) {
-                            VaccineState.OVERDUE
-                        } else VaccineState.MISSED
-                    )
-                })
-        }
-    }*/
+    /*    val benWithVaccineDetails = pastRecords.map { vaccineIdList ->
+            vaccineIdList.map { cache ->
+                val ageMillis = System.currentTimeMillis() - cache.ben.dob
+                ImmunizationDetailsDomain(ben = cache.ben.asBasicDomainModel(),
+                    vaccineStateList = vaccinesList.filter {
+                        it.minAllowedAgeInMillis < ageMillis
+                    }.map { vaccine ->
+                        VaccineDomain(
+                            vaccine.vaccineId,
+                            vaccine.vaccineName,
+                            vaccine.immunizationService,
+                            if (cache.givenVaccines.any { it.vaccineId == vaccine.vaccineId }) VaccineState.DONE
+                            else if (ageMillis <= (vaccine.minAllowedAgeInMillis)) {
+                                VaccineState.PENDING
+                            } else if (ageMillis <= (vaccine.maxAllowedAgeInMillis)) {
+                                VaccineState.OVERDUE
+                            } else VaccineState.MISSED
+                        )
+                    })
+            }
+        }*/
 
     val immunizationBenList = benWithVaccineDetails.combine(filter) { list, filter ->
         filterImmunList(list, filter)
@@ -108,13 +109,13 @@ class ChildImmunizationListViewModel @Inject constructor(
 
     }
 
-   /* init {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                vaccinesList = vaccineDao.getVaccinesForCategory(ImmunizationCategory.CHILD)
-            }
-        }
-    }*/
+    /* init {
+         viewModelScope.launch {
+             withContext(Dispatchers.IO) {
+                 vaccinesList = vaccineDao.getVaccinesForCategory(ImmunizationCategory.CHILD)
+             }
+         }
+     }*/
 
     fun updateBottomSheetData(benId: Long) {
         viewModelScope.launch {
@@ -129,6 +130,7 @@ class ChildImmunizationListViewModel @Inject constructor(
 
         catList.clear()
         catList.add("ALL")
+        catList.add("Birth Dose")
         catList.add("6 WEEKS")
         catList.add("10 WEEKS")
         catList.add("14 WEEKS")
@@ -146,5 +148,7 @@ class ChildImmunizationListViewModel @Inject constructor(
         return clickedBenId.value
     }
 
-
+    val isSelectedBenDeathFlow = clickedBenId.combine(benWithVaccineDetails) { benId, list ->
+        list.firstOrNull { it.ben.benId == benId }?.ben?.isDeath ?: false
+    }
 }

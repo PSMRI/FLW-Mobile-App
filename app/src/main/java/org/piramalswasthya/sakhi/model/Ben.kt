@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.model
 
 import android.content.Context
+import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.DatabaseView
 import androidx.room.Embedded
@@ -9,6 +10,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import kotlinx.parcelize.Parcelize
 import org.piramalswasthya.sakhi.configuration.FormDataModel
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.ImageUtils
@@ -48,10 +50,15 @@ enum class Gender {
     TRANSGENDER
 }
 
+enum class BenStatus {
+    Alive,
+    Death,
+}
+
 // In your BenBasicCache.kt file, REPLACE the old @DatabaseView with this one.
 @DatabaseView(
     viewName = "BEN_BASIC_CACHE",
-    value = "SELECT b.beneficiaryId as benId, b.householdId as hhId, b.regDate, b.firstName as benName, b.lastName as benSurname, b.gender, b.dob as dob, b.familyHeadRelationPosition as relToHeadId" +
+    value = "SELECT b.beneficiaryId as benId, b.isConsent as isConsent, b.motherName as motherName, b.householdId as hhId, b.regDate, b.firstName as benName, b.lastName as benSurname, b.gender, b.dob as dob, b.isDeath,b.isDeathValue,b.dateOfDeath,b.timeOfDeath,b.reasonOfDeath,b.reasonOfDeathId,b.placeOfDeath,b.placeOfDeathId,b.otherPlaceOfDeath, b.familyHeadRelationPosition as relToHeadId" +
             ", b.contactNumber as mobileNo, b.fatherName, h.fam_familyHeadName as familyHeadName, b.gen_spouseName as spouseName, b.rchId, b.gen_lastMenstrualPeriod as lastMenstrualPeriod" +
             ", b.isHrpStatus as hrpStatus, b.syncState, b.gen_reproductiveStatusId as reproductiveStatusId, b.isKid, b.immunizationStatus" +
             ", b.loc_village_id as villageId, b.abha_healthIdNumber as abhaId" +
@@ -92,6 +99,8 @@ enum class Gender {
             "LEFT OUTER JOIN ELIGIBLE_COUPLE_TRACKING ect ON (b.beneficiaryId = ect.benId AND CAST((strftime('%s','now') - ect.visitDate/1000)/60/60/24 AS INTEGER) < 30) " +
             "LEFT OUTER JOIN TB_SCREENING tbsn ON b.beneficiaryId = tbsn.benId " +
             "LEFT OUTER JOIN TB_SUSPECTED tbsp ON b.beneficiaryId = tbsp.benId " +
+            "LEFT OUTER JOIN MALARIA_SCREENING masp on b.beneficiaryId = masp.benId " +
+            "LEFT OUTER JOIN MALARIA_CONFIRMED macp on b.beneficiaryId = macp.benId " +
             "LEFT OUTER JOIN HRP_PREGNANT_ASSESS hrppa ON b.beneficiaryId = hrppa.benId " +
             "LEFT OUTER JOIN HRP_NON_PREGNANT_ASSESS hrpnpa ON b.beneficiaryId = hrpnpa.benId " +
             "LEFT OUTER JOIN HRP_MICRO_BIRTH_PLAN hrpmbp ON b.beneficiaryId = hrpmbp.benId " +
@@ -102,10 +111,21 @@ enum class Gender {
             "LEFT OUTER JOIN CHILD_REG cr ON b.beneficiaryId = cr.motherBenId " +
             "WHERE b.isDraft = 0 GROUP BY b.beneficiaryId ORDER BY b.updatedDate DESC"
 )
+@Parcelize
 data class BenBasicCache(
+    @ColumnInfo
     val benId: Long,
     val hhId: Long,
     val regDate: Long,
+    var isDeath: Boolean = false,
+    var isDeathValue: String? = null,
+    var dateOfDeath: String? = null,
+    var timeOfDeath: String? = null,
+    var reasonOfDeath: String? = null,
+    var reasonOfDeathId: Int? = null,
+    var placeOfDeath: String? = null,
+    var placeOfDeathId: Int? = null,
+    var otherPlaceOfDeath: String? = null,
     val benName: String?,
     val benSurname: String? = null,
     val gender: Gender,
@@ -113,6 +133,7 @@ data class BenBasicCache(
     val relToHeadId: Int,
     val mobileNo: Long,
     val fatherName: String? = null,
+    val motherName: String?= null,
     val familyHeadName: String? = null,
 //    val typeOfList: TypeOfList,
     val spouseName: String? = null,
@@ -165,7 +186,8 @@ data class BenBasicCache(
     val isMdsr: Boolean,
     val crFilled: Boolean,
     val doFilled: Boolean,
-) {
+    val isConsent: Boolean
+) : Parcelable {
     companion object {
         val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
         fun getAgeFromDob(dob: Long): Int {
@@ -222,7 +244,6 @@ data class BenBasicCache(
         }
 
 
-
         private fun getDiffYears(a: Calendar, b: Calendar): Int {
             var diff = b.get(Calendar.YEAR) - a.get(Calendar.YEAR)
             if (a.get(Calendar.MONTH) > b.get(Calendar.MONTH) || a.get(Calendar.MONTH) == b.get(
@@ -246,6 +267,18 @@ data class BenBasicCache(
         return BenBasicDomain(
             benId = benId,
             hhId = hhId,
+            isDeath = isDeath,
+            isDeathValue = isDeathValue,
+            dateOfDeath = dateOfDeath,
+            reproductiveStatusId = reproductiveStatusId,
+            timeOfDeath = timeOfDeath,
+            reasonOfDeath = reasonOfDeath,
+            reasonOfDeathId = reasonOfDeathId,
+            placeOfDeath = placeOfDeath,
+            placeOfDeathId = placeOfDeathId,
+            otherPlaceOfDeath = otherPlaceOfDeath,
+
+
             regDate = dateFormat.format(Date(regDate)),
             benName = benName.orEmpty(),
             benSurname = benSurname ?: "",
@@ -255,6 +288,7 @@ data class BenBasicCache(
             isNewAbha = isNewAbha,
             relToHeadId = relToHeadId,
             mobileNo = mobileNo.toString(),
+            motherName =  motherName?.takeIf { it.isNotEmpty() } ?: "Not Available",
             fatherName = fatherName?.takeIf { it.isNotEmpty() } ?: "Not Available",
          /*   motherName = motherName,*/
             familyHeadName = familyHeadName ?: "Not Available",
@@ -262,7 +296,9 @@ data class BenBasicCache(
             spouseName = spouseName?.takeIf { it.isNotEmpty() } ?: "Not Available",
             rchId = rchId?.takeIf { it.isNotEmpty() },
             hrpStatus = hrpStatus,
-            syncState = syncState
+            syncState = syncState,
+            isConsent = isConsent
+
         )
     }
 
@@ -283,7 +319,9 @@ data class BenBasicCache(
             rchId = rchId,
             hrpStatus = hrpStatus,
             relToHeadId = 0,
-            syncState = syncState
+            syncState = syncState,
+            isConsent = isConsent,
+            reproductiveStatusId = reproductiveStatusId
         )
     }
 
@@ -305,7 +343,8 @@ data class BenBasicCache(
             hrpStatus = hrpStatus,
             form1Filled = tbsnFilled,
             syncState = tbsnSyncState
-                ?: throw IllegalStateException("Sync state for tbsn is null!!")
+                ?: throw IllegalStateException("Sync state for tbsn is null!!"),
+            isConsent = isConsent
         )
     }
 
@@ -326,7 +365,8 @@ data class BenBasicCache(
             hrpStatus = hrpStatus,
             form1Filled = tbspFilled,
             syncState = tbspSyncState
-                ?: throw IllegalStateException("Sync state for tbsp is null!!")
+                ?: throw IllegalStateException("Sync state for tbsp is null!!"),
+            isConsent = isConsent
         )
     }
 
@@ -334,6 +374,15 @@ data class BenBasicCache(
         return BenBasicDomainForForm(
             benId = benId,
             hhId = hhId,
+            isDeath = isDeath,
+            isDeathValue = isDeathValue,
+            dateOfDeath = dateOfDeath,
+            timeOfDeath = timeOfDeath,
+            reasonOfDeath = reasonOfDeath,
+            reasonOfDeathId = reasonOfDeathId,
+            placeOfDeath = placeOfDeath,
+            placeOfDeathId = placeOfDeathId,
+            otherPlaceOfDeath = otherPlaceOfDeath,
             regDate = dateFormat.format(Date(regDate)),
             benName = benName.orEmpty(),
             benSurname = benSurname ?: "Not Available",
@@ -347,7 +396,8 @@ data class BenBasicCache(
             hrpStatus = hrpStatus,
             form1Filled = cdrFilled,
             syncState = cdrSyncState
-                ?: throw IllegalStateException("Sync state for cbac is null!!")
+                ?: throw IllegalStateException("Sync state for cbac is null!!"),
+            isConsent = isConsent
         )
     }
 
@@ -355,6 +405,15 @@ data class BenBasicCache(
         return BenBasicDomainForForm(
             benId = benId,
             hhId = hhId,
+            isDeath = isDeath,
+            isDeathValue = isDeathValue,
+            dateOfDeath = dateOfDeath,
+            timeOfDeath = timeOfDeath,
+            reasonOfDeath = reasonOfDeath,
+            reasonOfDeathId = reasonOfDeathId,
+            placeOfDeath = placeOfDeath,
+            placeOfDeathId = placeOfDeathId,
+            otherPlaceOfDeath = otherPlaceOfDeath,
             regDate = dateFormat.format(Date(regDate)),
             benName = benName.orEmpty(),
             benSurname = benSurname ?: "Not Available",
@@ -368,7 +427,8 @@ data class BenBasicCache(
             hrpStatus = hrpStatus,
             form1Filled = mdsrFilled,
             syncState = mdsrSyncState
-                ?: throw IllegalStateException("Sync state for mdsr is null!!")
+                ?: throw IllegalStateException("Sync state for mdsr is null!!"),
+            isConsent = isConsent
         )
     }
 
@@ -388,7 +448,8 @@ data class BenBasicCache(
             rchId = rchId,
             hrpStatus = hrpStatus,
             form1Filled = pmsmaFilled,
-            syncState = syncState
+            syncState = syncState,
+            isConsent = isConsent
         )
     }
 
@@ -408,7 +469,8 @@ data class BenBasicCache(
             rchId = rchId,
             hrpStatus = hrpStatus,
             form1Filled = ectFilled,
-            syncState = syncState
+            syncState = syncState,
+            isConsent = isConsent
         )
     }
 
@@ -428,7 +490,8 @@ data class BenBasicCache(
             rchId = rchId,
             hrpStatus = hrpStatus,
             form1Filled = false,
-            syncState = syncState
+            syncState = syncState,
+            isConsent = isConsent
         )
     }
 
@@ -451,7 +514,8 @@ data class BenBasicCache(
             form1Enabled = hbncFilled || dob > (System.currentTimeMillis() - TimeUnit.DAYS.toMillis(
                 42
             )),
-            syncState = syncState
+            syncState = syncState,
+            isConsent = false
         )
     }
 
@@ -475,6 +539,7 @@ data class BenBasicCache(
             form1Enabled = hbycFilled || dob > (System.currentTimeMillis() - TimeUnit.DAYS.toMillis(
                 490
             )),
+            isConsent = false
         )
     }
 
@@ -491,10 +556,11 @@ data class BenBasicCache(
             fatherName = fatherName,
             familyHeadName = familyHeadName ?: "Not Available",
 //            typeOfList = typeOfList.name,
-            rchId = rchId ,
+            rchId = rchId,
             hrpStatus = hrpStatus,
             form1Filled = pwrFilled,
-            syncState = pwrSyncState
+            syncState = pwrSyncState,
+            isConsent = false
         )
     }
 
@@ -515,12 +581,13 @@ data class BenBasicCache(
             lastMenstrualPeriod = getDateStringFromLong(lastMenstrualPeriod),
             edd = getEddFromLmp(lastMenstrualPeriod),
 //            typeOfList = typeOfList.name,
-            rchId = rchId ,
+            rchId = rchId,
             hrpStatus = hrpStatus,
             form1Filled = hrppaFilled,
             syncState = hrppaSyncState,
             form2Enabled = true,
-            form2Filled = hrpmbpFilled
+            form2Filled = hrpmbpFilled,
+            isConsent = false
         )
     }
 
@@ -538,10 +605,11 @@ data class BenBasicCache(
             fatherName = fatherName,
             familyHeadName = familyHeadName ?: "Not Available",
 //            typeOfList = typeOfList.name,
-            rchId = rchId ,
+            rchId = rchId,
             hrpStatus = hrpStatus,
             form1Filled = hrpnpaFilled,
-            syncState = hrpnpaSyncState
+            syncState = hrpnpaSyncState,
+            isConsent = false
         )
     }
 
@@ -565,7 +633,8 @@ data class BenBasicCache(
             form1Enabled = !hrnptrackingDone,
             form2Filled = hrnptFilled,
             form2Enabled = hrnptFilled,
-            syncState = hrnptSyncState
+            syncState = hrnptSyncState,
+            isConsent = false
         )
     }
 
@@ -585,13 +654,14 @@ data class BenBasicCache(
             fatherName = fatherName,
             familyHeadName = familyHeadName ?: "Not Available",
 //            typeOfList = typeOfList.name,
-            rchId = rchId ,
+            rchId = rchId,
             hrpStatus = hrpStatus,
             form1Filled = hrptrackingDone,
             form1Enabled = !hrptrackingDone,
             form2Filled = hrptFilled,
             form2Enabled = hrptFilled,
-            syncState = hrptSyncState
+            syncState = hrptSyncState,
+            isConsent = false
         )
     }
 
@@ -608,10 +678,11 @@ data class BenBasicCache(
             fatherName = fatherName,
             familyHeadName = familyHeadName ?: "Not Available",
 //            typeOfList = typeOfList.name,
-            rchId = rchId ,
+            rchId = rchId,
             hrpStatus = hrpStatus,
             form1Filled = irFilled,
-            syncState = irSyncState
+            syncState = irSyncState,
+            isConsent = false
         )
     }
 
@@ -631,7 +702,8 @@ data class BenBasicCache(
             rchId = rchId,
             hrpStatus = hrpStatus,
             form1Filled = irFilled,
-            syncState = crSyncState
+            syncState = crSyncState,
+            isConsent = false
         )
     }
 
@@ -651,7 +723,8 @@ data class BenBasicCache(
             rchId = rchId,
             hrpStatus = hrpStatus,
             form1Filled = doFilled,
-            syncState = doSyncState
+            syncState = doSyncState,
+            isConsent = isConsent
         )
     }
 
@@ -668,10 +741,11 @@ data class BenBasicCache(
             fatherName = fatherName,
             familyHeadName = familyHeadName ?: "Not Available",
 //            typeOfList = typeOfList.name,
-            rchId = rchId ,
+            rchId = rchId,
             hrpStatus = hrpStatus,
             form1Filled = ecrFilled,
-            syncState = syncState
+            syncState = syncState,
+            isConsent = false
         )
     }
 
@@ -691,16 +765,29 @@ data class BenBasicCache(
             rchId = rchId,
             hrpStatus = hrpStatus,
             form1Filled = false,
-            syncState = syncState
+            syncState = syncState,
+            isConsent = isConsent
         )
     }
 
 }
 
-
+@Parcelize
 data class BenBasicDomain(
     val benId: Long,
     val hhId: Long,
+
+    var isDeath: Boolean = false,
+    var isDeathValue: String? = null,
+    var dateOfDeath: String? = null,
+    var timeOfDeath: String? = null,
+    var reasonOfDeath: String? = null,
+    var reasonOfDeathId: Int? = null,
+    var placeOfDeath: String? = null,
+    var placeOfDeathId: Int? = null,
+    var otherPlaceOfDeath: String? = null,
+    var reproductiveStatusId: Int,
+
     val regDate: String,
     val benName: String,
     val benSurname: String? = null,
@@ -719,15 +806,29 @@ data class BenBasicDomain(
     val familyHeadName: String,
     val spouseName: String? = null,
 //    val typeOfList: String,
-    val rchId: String?=null,
+    val rchId: String? = null,
     val hrpStatus: Boolean = false,
-    var syncState: SyncState?
-)
+    var syncState: SyncState?,
+    val isConsent: Boolean
+) : Parcelable{
+    val dobString: String
+        get() = java.text.SimpleDateFormat("dd-MM-yyyy", java.util.Locale.getDefault())
+            .format(java.util.Date(dob))
+}
 
 
 data class BenBasicDomainForForm(
     val benId: Long,
     val hhId: Long,
+    var isDeath: Boolean = false,
+    var isDeathValue: String? = null,
+    var dateOfDeath: String? = null,
+    var timeOfDeath: String? = null,
+    var reasonOfDeath: String? = null,
+    var reasonOfDeathId: Int? = null,
+    var placeOfDeath: String? = null,
+    var placeOfDeathId: Int? = null,
+    var otherPlaceOfDeath: String? = null,
     val regDate: String,
     val benName: String,
     val benSurname: String? = null,
@@ -743,7 +844,7 @@ data class BenBasicDomainForForm(
     val lastMenstrualPeriod: String? = null,
     val edd: String? = null,
 //    val typeOfList: String,
-    val rchId: String?=null,
+    val rchId: String? = null,
     val hrpStatus: Boolean = false,
     val form1Filled: Boolean = false,
     val form2Filled: Boolean = false,
@@ -752,7 +853,9 @@ data class BenBasicDomainForForm(
     val form2Enabled: Boolean = true,
     val form3Enabled: Boolean = true,
     val formsFilled: Int = 0,
-    var syncState: SyncState?
+    var syncState: SyncState?,
+    val isConsent: Boolean,
+
 ) {
     companion object
 }
@@ -816,6 +919,10 @@ data class BenRegKid(
     var birthBCG: Boolean = false,
     var birthHepB: Boolean = false,
     var birthOPV: Boolean = false,
+    val isConsent: Boolean = false,
+    var birthCertificateFileFrontView: String? = null,
+    var birthCertificateFileBackView: String? = null
+
 )
 
 @JsonClass(generateAdapter = true)
@@ -894,13 +1001,14 @@ data class BenRegKidNetwork(
     val birthBCG: Boolean? = null,
     val birthHepB: Boolean? = null,
     val birthOPV: Boolean? = null,
+    val isConsent: Boolean
 
-    )
+)
 
 data class BenHealthIdDetails(
     var healthId: String = "",
     var healthIdNumber: String = "",
-    var isNewAbha: Boolean= false
+    var isNewAbha: Boolean = false
 )
 
 data class BenRegGen(
@@ -966,6 +1074,17 @@ data class BenRegCache(
 
     var beneficiaryId: Long,
 
+    var isDeath: Boolean,
+    var isDeathValue: String? = null,
+    var dateOfDeath: String? = null,
+    var timeOfDeath: String? = null,
+    var reasonOfDeath: String? = null,
+    var reasonOfDeathId: Int,
+    var placeOfDeath: String? = null,
+    var placeOfDeathId: Int,
+    var otherPlaceOfDeath: String? = null,
+
+
     var benRegId: Long = 0,
 
     @ColumnInfo(index = true)
@@ -1012,6 +1131,8 @@ data class BenRegCache(
     var mobileNoOfRelation: String? = null,
 
     var mobileNoOfRelationId: Int = 0,
+
+    var tempMobileNoOfRelationId: Int = 0,
 
     var mobileOthers: String? = null,
 
@@ -1131,9 +1252,12 @@ data class BenRegCache(
 
     var isDraft: Boolean,
 
-    var isNewAbha: Boolean=false,
+    @ColumnInfo(name = "isConsent", defaultValue = "0")
+    var isConsent: Boolean = false ,
 
-    ) : FormDataModel {
+    var isNewAbha: Boolean = false,
+
+    )  : FormDataModel {
 
     fun asNetworkPostModel(context: Context, user: User): BenPost {
         return BenPost(
@@ -1202,8 +1326,9 @@ data class BenRegCache(
                     0 -> 0
                     1 -> 1
                     2 -> 2
-                    3 -> 4
-                    4 -> 5
+                    3 -> 3
+                    4 -> 4
+                    5->  5
                     else -> 6
                 }
             } ?: 0,
@@ -1215,6 +1340,7 @@ data class BenRegCache(
                     2 -> "Antenatal Mother"
                     3 -> "Postnatal Mother-Lactating Mother"
                     4 -> "Menopause Stage"
+                    5 -> "Permanently Sterilised"
                     else -> "Teenager"
                 }
             } ?: "",
@@ -1309,6 +1435,16 @@ data class BenRegCache(
             genderId = genderId,
             maritalStatusID = if (isKid) null else genDetails?.maritalStatusId?.toString() ?: null,
             maritalStatusName = if (isKid) null else genDetails?.maritalStatus ?: null,
+            isDeath = isDeath,
+            isDeathValue = isDeathValue ?: "",
+            dateOfDeath = dateOfDeath ?:"",
+            placeOfDeath = placeOfDeath ?: "",
+            timeOfDeath = timeOfDeath ?: "",
+            reasonOfDeath = reasonOfDeath ?: "",
+            reasonOfDeathId = reasonOfDeathId ?: -1,
+            placeOfDeathId = placeOfDeathId ?: -1,
+            otherPlaceOfDeath = otherPlaceOfDeath?: "",
+
         )
     }
 
@@ -1377,8 +1513,9 @@ data class BenRegCache(
             stateid = locationRecord.state.id,
             districtid = locationRecord.district.id,
             villageid = locationRecord.village.id,
+            isConsent = isConsent,
 
-            )
+        )
     }
 }
 

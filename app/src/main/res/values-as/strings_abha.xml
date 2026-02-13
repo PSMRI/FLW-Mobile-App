@@ -31,7 +31,6 @@
     <string name="enter_mobile_number">"ম'বাইল নম্বৰ ভৰ্তি কৰক</string>
     <string name="enter_number_for_abha">আধাৰ নম্বৰ দিয়ক</string>
     <string name="aadhaar_linked_mobile">"আধাৰ সংযোজিত ম'বাইল নম্বৰ অথবা অন্য ম'বাইল নম্বৰ</string>
-    <string name="mobile_number">"ম'বাইল নম্বৰ</string>
     <string name="check_and_generate_otp">OTP পৰীক্ষা কৰি উৎপন্ন কৰক</string>
     <string name="textview">টেক্সট ভিউ</string>
     <string name="download_abha_channel_id">ABHA কাৰ্ড ডাউনলোড কৰা হৈছে</string>

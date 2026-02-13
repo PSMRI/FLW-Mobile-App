@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+      <variable
+          name="activity_name"
+          type="String" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.home_activity.incentives.IncentivesSubFragment">
+
+
+        <!--<TextView
+            android:id="@+id/tv_ActivityName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/holo_orange_light"
+            android:padding="@dimen/padding_wide"
+            android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
+            android:gravity="center"
+            android:text="@{@string/incentive_activity_details(activity_name)}"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="ASHA - 1" />-->
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/header_Layout"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/holo_orange_light">
+
+            <TextView
+                android:id="@+id/tvHeaderSerialNo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="S.No"
+                android:textStyle="bold"
+                android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/tvHeaderActivity"
+                app:layout_constraintTop_toTopOf="parent"
+                android:padding="@dimen/_5sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintWidth_percent="0.15"/>
+
+            <TextView
+                android:id="@+id/tvHeaderActivity"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:text="Activity"
+                android:textStyle="bold"
+                android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                android:padding="@dimen/_5sdp"
+                app:layout_constraintStart_toEndOf="@id/tvHeaderSerialNo"
+                app:layout_constraintEnd_toStartOf="@id/tvAmountActivity"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintWidth_percent="0.6"/>
+
+            <TextView
+                android:id="@+id/tvAmountActivity"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Amount claimed (Rs.)"
+                android:textStyle="bold"
+
+                android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                android:padding="@dimen/_10sdp"
+                app:layout_constraintStart_toEndOf="@id/tvHeaderActivity"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintWidth_percent="0.25"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/header_Layout"
+            android:id="@+id/rv_sub_incentive"
+            tools:itemCount="23"
+
+            tools:listitem="@layout/rv_item_incentive"
+            />
+
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

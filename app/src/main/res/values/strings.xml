@@ -1,11 +1,12 @@
 <resources>
-    <string name="app_name" translatable="false">Mitanin</string>
+    <string name="app_name" translatable="false">Sakhi</string>
 
     <!--    Pref-->
     <string name="PREF_NAME" translatable="false">Sakhi-pref-1</string>
     <string name="PREF_D2D_API_KEY" translatable="false">JWT-Token_A</string>
     <string name="PREF_primary_API_KEY" translatable="false">JWT-Token_B</string>
     <string name="PREF_primary_JWT_API_KEY" translatable="false">JWT-Token_N</string>
+    <string name="PREF_primary_REFRESH_TOKEN" translatable="false">Refresh-Token_N</string>
     <string name="PREF_rem_me_uname" translatable="false">user-name-local-saved</string>
     <string name="PREF_rem_me_pwd" translatable="false">password-local-saved</string>
     <string name="PREF_rem_me_state" translatable="false">state_user-local-saved</string>
@@ -19,6 +20,24 @@
     <string name="radio_title" translatable="false">%s<span> *</span></string>
     <string name="radio_title_ds">%s<span> **</span></string>
     <string name="tracking_date">Date of Visit</string>
+    <string name="case_date">Maleria Screening Date</string>
+    <string name="start_t_date">Date of Starting Treatment</string>
+    <string name="treatment_given">Treatment Given</string>
+    <string name="aes_submitted">AES/JS Form submitted</string>
+    <string name="date_of_completion">Date of Completion of Treatment</string>
+    <string name="date_of_referal">Date of Referral</string>
+    <string name="death_date">Date of death</string>
+    <string name="home_visit_date">Home Visit Date</string>
+    <string name="visit_date">Visit Date</string>
+    <string name="home_visit_date_mda_program">Home Visit Date(MDA Program)</string>
+    <string name="case_date_malaria">Malaria Case Status Date</string>
+    <string name="aes_case_status_date">AES / JE Case Status Date</string>
+    <string name="case_status">Case Status</string>
+    <string name="m_test_type">Malaria Test Type</string>
+    <string name="place_of_Death">Place of Death</string>
+    <string name="reason_of_Death">Reason for Death</string>
+    <string name="beneficiary_status">Beneficiary Status</string>
+    <string name="aes_case_status">AES / JE  Case Status</string>
     <string name="mdsr_form">MDSR</string>
     <string name="mdsr_district">District</string>
     <string name="mdsr_state">State</string>
@@ -38,6 +57,30 @@
     <string name="mdsr_ic_date">Date</string>
     <string name="mdsr_reason_death">specify reasons</string>
     <string name="mdsr_action">Action taken</string>
+    <string name="refer_to">Referred To</string>
+    <string name="day_wise_tracking_pf">Pf - Day-wise Tracking</string>
+    <string name="day_wise_tracking_pv">PV - Day-wise Tracking</string>
+    <string name="type_of_leprocy">Type of Leprocy</string>
+    <string name="treatment_start_date">Treatment Start Date</string>
+    <string name="dose_status">DEC and Albendazole Dose Status</string>
+    <string name="is_medicine_distributed">Is medicine Distributed</string>
+    <string name="body_part">Which part of Body	</string>
+    <string name="medicine_side_effect">Medicine  Side Effect</string>
+
+    <string name="filaria_submitted">Filaria Form submitted</string>
+    <string name="leprosy_submitted">Leprosy Form submitted</string>
+    <string name="malariacasecount">Malaria Case Count</string>
+    <string name="filariacasecount">Filaria Case Count</string>
+    <string name="suffering_from_filaries">Suffering from Filariasis</string>
+    <string name="str_leprosy_status">Leprosy Status</string>
+    <string name="irs_submitted">IRS Form submitted</string>
+
+
+    <string name="ben_marked_death">Beneficiary marked as Deceased.</string>
+    <string name="kala_submitted">Kala Azar Form submitted</string>
+    <string name="isrefer">REFER</string>
+    <string name="ncd_refer_alert">Do you want to refer to HWC facility?</string>
+    <string name="cbac_screening_submitted">CBAC Screening submitted</string>
 
 
     <!--    HBNC-->
@@ -61,6 +104,7 @@
 
 
     <string name="title_activity_home" translatable="false">HomeActivity</string>
+    <string name="title_activity_supervisor" translatable="false">SupervisorActivity</string>
     <string name="nav_header_desc" translatable="false">Navigation header</string>
 
     <string name="cd_icon_grid_icon">icon</string>
@@ -74,6 +118,9 @@
     <string name="notification_sync_channel_description">Upload beneficiaries to Server</string>
     <string name="notification_sync_channel_id">sakhi-sync0</string>
     <string name="btn_submit">Submit</string>
+    <string name="mosquito_net_on">Mosquito Net ON</string>
+    <string name="mosquito_net_off">Mosquito Net OFF</string>
+    <string name="btn_apply">Apply</string>
     <string name="long_to_string">%d</string>
     <string name="ben_pending_sync">Pending Sync</string>
     <string name="tv_reg_date_ph">Registration Date</string>
@@ -86,6 +133,7 @@
     <string name="tv_husband_name_ph">Husband Name</string>
     <string name="tv_spouse_name_ph">Spouse Name</string>
     <string name="tv_family_head_name_ph">Family Head Name</string>
+    <string name="tv_date_of_death">Date Of Death</string>
     <string name="tv_spouse">Spouse</string>
     <string name="tv_ben_id_ph">Ben ID</string>
     <string name="tv_mob_no_ph">Mobile Number</string>
@@ -95,6 +143,8 @@
     <string name="tv_ncd_status_ph">NCD Status</string>
     <string name="tv_tb_status_ph">TB Status</string>
     <string name="iv_sync_state_tv">SYNC STATE</string>
+    <string name="iv_death_indicator">Death</string>
+    <string name="iv_case_status_tv">CASE STATUS</string>
     <string name="chat_error">There is some error in loading your chat bot</string>
     <string name="help_and_support">Help &amp; Support</string>
 
@@ -106,8 +156,30 @@
     <string name="immunization_dosage_count">%d/%d</string>
     <string name="select_death_type">Select Beneficiary Death Type</string>
     <string name="death_type_cdr">CDR (Child Death Review)</string>
+    <string name="maternal_deaths">Maternal Deaths (MDSR)</string>
     <string name="death_type_mdsr">MDSR (Maternal Death Surveillance and Response)</string>
     <string name="continue_button">CONTINUE</string>
+
+    <string name="please_select_value">Please select a value</string>
+
+    <string name="mobilized_for_ahd">Mobilized for AHD</string>
+    <string name="ahd_place">AHD Place</string>
+    <string name="asha_Id">Asha ID</string>
+    <string name="meeting_date">Meeting Date</string>
+    <string name="ahd_date">AHD Date</string>
+    <string name="upload_image">Upload Image</string>
+    <string name="upload_image_sub">Upload JPEG or PNG file (Max: 5MB)</string>
+    <string-array name="yes_no_options">
+        <item>Yes</item>
+        <item>No</item>
+    </string-array>
+
+    <string-array name="ahd_place_options">
+        <item>School</item>
+        <item>Anganwadi Centre</item>
+        <item>Community center</item>
+    </string-array>
+
 
     <string-array name="temp_array">
         <item>Item 1</item>
@@ -151,8 +223,11 @@
     <string name="form_input_missing_entry_error">Field must contain %1d digits.</string>
     <string name="form_input_alphabet_space_only_error">Only Alphabets and whitespace allowed!</string>
     <string name="form_input_alphabet_special_only_error">Only Alphabets and special characters allowed!</string>
+    <string name="form_input_alphabet_special__digit_only_error">Only Alphabets and special characters, digits allowed!</string>
     <string name="form_input_min_limit_error">%1s should be greater than or equal to %2d</string>
     <string name="form_input_alph_numeric_space_only_error">Only Alphabets and Numerics allowed!</string>
+    <string name="abha_number_digit">ABHA number should be 14-digit long</string>
+    <string name="ifsc">4 letters followed by 7 digits (e.g., ABCD1234567)!</string>
     <string name="form_input__no_alpha_space_error">No Alphabets or spaces allowed!</string>
     <string name="form_input_digit_only_error">Only Digits allowed!</string>
     <string name="form_input_min_limit_error_decimal">%1s should be greater than or equal to %2.1f</string>
@@ -166,6 +241,7 @@
     <string name="something_went_wrong_nunable_to_connect_to_server_ntry_again_later">Something went wrong !\nUnable to connect to server !\nTry again later!</string>
     <string name="try_again">Try Again!</string>
     <string name="version_2_0_0">APK Version 2.0.0</string>
+    <string name="file_size">File size should be less than or equals to 5 MB.</string>
     <!--    <string name="disagree">DISAGREE</string>-->
     <!--    <string name="agree">AGREE</string>-->
     <string name="enter_pin">Enter PIN</string>
@@ -175,7 +251,8 @@
     <string name="female">Female</string>
     <string name="transgender">Transgender</string>
     <string name="other">Other</string>
-    <string name="state">State</string>
+    <string name="other_place">Other Place of Death</string>
+    <string name="other_reason">Other Reason of Death</string>
     <string name="district">District</string>
 
     <string name="view_household_information">View Household Information</string>
@@ -185,7 +262,6 @@
     <string name="mother">Mother</string>
     <string name="patient_information">Patient Information</string>
     <string name="mother_name">Mother Name</string>
-    <string name="date_of_birth">Date of Birth</string>
     <string name="previous_vaccine_details">Previous Vaccine Details</string>
     <string name="due_serial">Due Serial</string>
     <string name="saving_form">Saving Form ...</string>
@@ -201,8 +277,6 @@
     <string name="high_risk_non_pregnant_women">High Risk Non Preg Women</string>
     <string name="high_risk_babies">High Risk Babies</string>
     <string name="low_birth_weight_babies">Low Birth Weight Babies</string>
-    <string name="age">Age</string>
-    <string name="gender">Gender</string>
     <string name="registration_date">Registration Date</string>
     <string name="beneficiary_id">Beneficiary ID</string>
     <string name="rch_id">RCH ID</string>
@@ -213,20 +287,35 @@
     <string name="pregnancy_weeks">Weeks Of Pregnancy</string>
     <string name="anc_visits">ANC VISITS</string>
     <string name="pnc_visits">PNC VISITS</string>
+    <string name="pnc">PNC</string>
     <string name="add_anc_visits">Add ANC visit</string>
     <string name="add_pnc_visits">Add PNC visit</string>
     <string name="id">ID</string>
     <string name="no_of_children">No.of Children</string>
     <string name="view_visit">View Visit</string>
+    <string name="visit_no">Visit No.</string>
     <string name="add_visit">Add Visit</string>
     <string name="household_id">Household ID</string>
+    <string name="sup_households">Households</string>
+    <string name="sup_beneficiaries">Beneficiaries</string>
+    <string name="sup_eligible_couples">Eligible Couples</string>
+    <string name="sup_pregnant_women">Pregnant Women</string>
+    <string name="sup_anc_visits">ANC Visits</string>
+    <string name="sup_hrp_woman">HRP Woman</string>
+    <string name="sup_deliveries">Deliveries</string>
+    <string name="sup_routine_immunization">Routine Immunization</string>
+    <string name="sup_ncd_screened">NCD Screened</string>
+    <string name="sup_ncd_priority">NCD Priority</string>
+    <string name="sup_tb_cases">TB Cases</string>
     <string name="contact_number">Contact Number</string>
     <string name="kcuf">KCUF</string>
     <string name="show_vaccines">Show Vaccines</string>
     <string name="add_cbac">Add CBAC</string>
     <string name="view_cbac">View CBAC</string>
     <string name="view">VIEW</string>
+    <string name="add">ADD</string>
     <string name="home">Home</string>
+    <string name="asha_profile">Profile</string>
     <string name="sync_records">Sync Records</string>
     <string name="about">About Us</string>
 
@@ -236,6 +325,7 @@
     <string name="str_add_member">Add Member</string>
     <string name="str_not_available">Not Available</string>
     <string name="support">Support</string>
+    <string name="status">Status</string>
     <string name="sync_status">Sync Status</string>
     <string name="go_to_home">Go to Home</string>
     <string name="change_language">Change Language</string>
@@ -246,6 +336,10 @@
     <string name="pnc_mother_list">PNC Mother List</string>
     <string name="reproductive_age_list">Reproductive Age List</string>
     <string name="ncd_eligible_list">NCD Eligible List</string>
+    <string name="ncd_refer_form">NCD Refer Form</string>
+    <string name="ncd_refer_list">NCD Referred List</string>
+
+    <string name="child_under_five_years_list">Child Under Five Years List</string>
     <string name="ncd_list">NCD List</string>
     <string name="ncd_non_eligible_list">NCD Non-Priority List</string>
     <string name="ncd_priority_list">NCD Priority List</string>
@@ -254,13 +348,15 @@
     <string name="beneficiaries_data">Beneficiaries Data</string>
     <string name="cdr_list">CDR List</string>
     <string name="mdsr_list">MDSR List</string>
+    <string name="nmdsr_list">NMDSR List</string>
+    <string name="gdr_list">GDR List</string>
     <string name="mdsr">MDSR</string>
     <string name="cdr">CDR</string>
     <string name="pmsma">PMSMA</string>
     <string name="pmjay_form">PMJAY Form</string>
     <string name="household_members">Household Members</string>
     <string name="fp_ot_register">FP-OT Register</string>
-    <string name="hbnc_day_list">Hbnc Day List</string>
+    <string name="hbnc_day_list">HBNC Day List</string>
     <string name="hbnc">Hbnc</string>
     <string name="visit_card">Visit Card</string>
     <string name="hbnc_part_i">Hbnc Part I</string>
@@ -271,37 +367,37 @@
     <!--    <string name="child_immunization_list">Child Immunization List</string>-->
     <string name="pregnancy_registration_form">Pregnancy Registration Form</string>
     <string name="anc_visit">ANC Visit</string>
+    <string name="cac_form">CAC Form</string>
+    <string name="anc">ANC</string>
     <string name="eligible_couple_list">Eligible Couple List</string>
+    <string name="ec">EC</string>
     <string name="eligible_couple_registration">Eligible Couple Registration</string>
     <string name="eligible_couple_tracking_list">Eligible Couple Tracking List</string>
     <string name="eligible_couple_tracking_form">Eligible Couple Tracking Form</string>
     <string name="tb_screening_list">TB Screening List</string>
     <string name="tb_suspected_list">Suspected TB cases</string>
     <string name="tb_screening_form">TB Screening Form</string>
+    <string name="maleria_screening_form">Malaria Form</string>
+    <string name="kala_screening_form">KALA Azar Form</string>
+    <string name="aes_screening_form">AES Form</string>
+    <string name="filaria_screening_form">Filaria Form</string>
+    <string name="leprosy_screening_form">Leprosy Form</string>
+    <string name="follow_up_form">Follow-up  Form</string>
     <string name="tb_suspected_form">Suspected TB case</string>
     <string name="mother_immunization">Mother Immunization</string>
     <string name="delivery_outcome">Delivery Outcome</string>
     <string name="delivery_outcome_list">Delivery Outcome List</string>
     <string name="infant_reg_list">Infant Reg List</string>
     <string name="infant_reg">Infant Reg</string>
-    <!--    <string name="child_reg_list">Child Reg List</string>-->
-    <!--    <string name="child_reg">Child Reg.</string>-->
     <string name="communicable_diseases">Communicable Diseases</string>
     <string name="dashboard">Dashboard</string>
     <string name="sign_in">Sign In</string>
     <string name="service_location">Service Location</string>
 
-    <!--    <string name="wife_s_name">Wife\'s Name</string>-->
-    <!--    <string name="spouse_s_name">Spouse\'s Name</string>-->
-    <!--    <string name="age_at_marriage">Age At Marriage</string>-->
-    <!--    <string name="date_of_marriage">Date of Marriage</string>-->
-    <!--    <string name="father_s_name">Father\'s Name</string>-->
-    <!--    <string name="mother_s_name">Mother\'s Name</string>-->
-    <!--    <string name="mobile_number_of">Mobile Number Of</string>-->
-    <!--    <string name="other_mobile_number_of">Other - Mobile Number of</string>-->
-    <!--    <string name="form_name">Form Name</string>-->
+    //................VHND........................
 
     <string name="save_successful">Save Successful</string>
+    <string name="otp_resent">OTP Resent</string>
     <string name="something_wend_wong_contact_testing">Something wend wong! Contact testing!</string>
     <string name="error_input">Error Input</string>
     <string name="exit_application">Exit Application</string>
@@ -317,13 +413,132 @@
     <string name="hbnc_daylist">Hbnc DayList</string>
     <string name="hbyc_list">Hbyc List</string>
     <string name="child_immunization">Child Immunization</string>
+    <string name="non_follow_up_cases">Non Follow Up Cases</string>
     <string name="pregnancy_registration">Pregnancy Registration</string>
     <string name="mother_immunizationlist">Mother ImmunizationList</string>
     <string name="family_member_registration">Family Member Registration</string>
     <string name="relation_with_hof">Relation with HOF</string>
     <string name="add_family_member">Add Family Member</string>
-    <string name="app_native_name">Mitanin</string>
+    <string name="app_native_name">উৎপ্ৰেৰণা</string>
     <string name="non_pregnant_women_eligible_couple_section">Non-Pregnant Women (Eligible Couple) section</string>
+    <string name="visit_day">Visit Day</string>
+    <string name="date_of_diagnosis">Date of Diagnosis</string>
+    <string name="time_of_death">Time of Death</string>
+    <string name="reason_for_death">Reason for Death</string>
+    <string name="add_file">add file</string>
+    <string name="jsy_payment_voucher">JSY payment voucher</string>
+    <string name="mcp_card_1">MCP Card 1</string>
+    <string name="mcp_card_2">MCP Card 2</string>
+    <string name="during_pregnancy">During pregnancy</string>
+    <string name="a_during_pregnancy">a. During pregnancy</string>
+    <string name="b_during_delivery">b. During delivery</string>
+    <string name="c_within_42_days_after_delivery">c. Within 42 days after delivery</string>
+    <string name="d_during_abortion_or_within_6_weeks_after_abortion">d. During abortion or within 6 weeks after abortion</string>
+    <string name="name_of_reporting_person">"Name of reporting Person "</string>
+    <string name="designation">Designation</string>
+    <string name="verification_by_anm_of_the_respective_sub_center_that_death_of_women_occurred_during_pregnancy_or_within_42_days_of_delivery_abortion">Verification by ANM of the respective Sub-center that death of women occurred during pregnancy or within 42 days of delivery/abortion:</string>
+    <string name="name_of_anm">Name of ANM</string>
+    <string name="name_of_the_sub_center">Name of the sub center</string>
+    <string name="mdsr_form_from_anm_1">MDSR form from ANM 1</string>
+    <string name="mdsr_form_from_anm_2">MDSR form from ANM 2</string>
+    <string name="father_name">Father Name</string>
+    <string name="age_of_woman">Age Of Woman</string>
+    <string name="when_did_death_occur">When did death occur</string>
+    <string name="name_of_the_deceased_woman">Name of the deceased woman</string>
+    <string name="date_of_antra_injection">Date of ANTRA Injection</string>
+    <string name="due_date_of_next_injection">Due date of next Injection</string>
+    <string name="mpa_card">MPA Card</string>
+    <string name="invalid_injection_date">Invalid injection date</string>
+    <string name="antra_injection_details">ANTRA Injection Details</string>
+    <string name="dose">Dose</string>
+    <string name="next_due_date">Next Due Date</string>
+    <string name="abortion_discharge_summary_1">Abortion Discharge\n Summary 1</string>
+    <string name="abortion_discharge_summary_2">Abortion Discharge\n Summary 2</string>
+    <string name="remarks">Remarks</string>
+    <string name="post_abortion_contraception_is_paiucd_inserted_after_an_abortion">Post Abortion Contraception\nIs PAIUCD inserted after an abortion</string>
+    <string name="termination_done_by">Termination done by</string>
+    <string name="method_of_termination">Method of Termination</string>
+    <string name="serial_no_as_per_admission_evacuation_register">Serial no as per Admission/ Evacuation register</string>
+    <string name="facility_place_of_abortion">Facility (Place of Abortion)</string>
+    <string name="abortion_type">Abortion Type</string>
+    <string name="abortion_date">Abortion Date</string>
+    <string name="any_other_high_risk_conditions">Any other High Risk conditions</string>
+    <string name="details_of_pregnant_women">Details of Pregnant women</string>
+    <string name="anc_period">ANC Period</string>
+    <string name="anc_date">ANC Date</string>
+    <string name="if_yes_select_high_risk_condition">if yes, select high-risk condition</string>
+    <string name="pmsma_visit_date">PMSMA Visit Date</string>
+    <string name="pmsma_visits">PMSMA Visits</string>
+    <string name="pmsma_visit">PMSMA Visit</string>
+    <string name="text_kpis">Key Performance Indicator(KPIs)</string>
+    <string name="all">All</string>
+    <string name="with_abha">With ABHA</string>
+    <string name="without_abha">Without ABHA</string>
+    <string name="age_above_30_years">Age above 30 years</string>
+    <string name="wara">WARA</string>
+    <string name="no_visit_made">No Visit Made</string>
+    <string name="filter_list">Filter</string>
+    <string name="ben_with_rch_id">Ben With RCH ID</string>
+    <string name="call">Call</string>
+    <string name="heading">History</string>
+    <string name="new_abha">NEW ABHA</string>
+    <string name="existing_abha">EXISTING ABHA</string>
+    <string name="referred_date">Referred Date</string>
+    <string name="referred_from">Referred From</string>
+    <string name="referral_reason">Referral reason</string>
+    <string name="saas_date">Saas Bahu Sammelan Date</string>
+    <string name="saas_samelan">Saas Bahu Sammelan</string>
+    <string name="no_participent">No. of Participants Attended</string>
+    <string name="place_new">Place</string>
+    <string name="higher_healthcare_center">Higher Healthcare Center</string>
+    <string name="additional_services">Additional Services</string>
+    <string name="check_sam">Check SAM</string>
+    <string name="ors">ORS</string>
+    <string name="ifa">IFA</string>
+    <string name="date_of_provision">Date of Provision</string>
+    <string name="bottle_number">Bottle Number</string>
+    <string name="s_no">S. No</string>
+    <string name="follow_up_date">Follow Up Dates</string>
+    <string name="referred_to">Referred to</string>
+    <string name="bottle_distribution">Bottle Distribution</string>
+    <string name="child_rch_id">Child RCH ID</string>
+    <string name="vaccination_due_date">Vaccination Due Date</string>
+    <string name="reminder">Reminder!!</string>
+    <string name="do_you_want_to_upload_mcp_card_immunization_page_section_photo_copy_to_claim_your_incentive">Do you want to upload MCP Card - Immunization page/ section photo copy to claim your Incentive</string>
+    <string name="yes_dialog">Yes</string>
+    <string name="no_dialog">No</string>
+    <string name="dose_name_2">Dose Name : %1$s</string>
+    <string name="u_win_session">U-WIN Session</string>
+    <string name="uwin">UWin</string>
+    <string name="u_win_sessions_list">U-win Session List</string>
+    <string name="session_date_n_a">Session Date: N/A</string>
+    <string name="session_date_format">Session Date: %s</string>
+    <string name="uwin_session_format">UWIN Session %s</string>
+    <string name="is_baby_discharge_from_sncu">Is Baby discharge from SNCU?</string>
+    <string name="optional">(Optional)</string>
+    <string name="optional_">Optional</string>
+    <string name="mandatory">Mandatory <font color='#FF0000'>*</font></string>
+    <string name="name_of_the_child">Name of the Child</string>
+    <string name="pincode">Pincode</string>
+    <string name="signature_name_of_asha">Signature/Name of ASHA</string>
+    <string name="cdr_form_from_anm_1">CDR form from ANM 1</string>
+    <string name="cdr_form_from_anm_2">CDR form from ANM 2</string>
+    <string name="leprosy_confirmed">Leprosy Confirmed</string>
+    <string name="leprosy_suspected">Leprosy Suspected</string>
+    <string name="leprosy_confirmed_form">Leprosy Confirmed Form</string>
+    <string name="leprosy_suspected_form">Leprosy Suspected Form</string>
+    <string name="follow_up_history">Follow-up History</string>
+    <string name="download_not_available_for_this_variant">Download not available for this variant</string>
+    <string name="leprosy_visit">Leprosy Visit</string>
+    <string name="leprosy_screening">Leprosy Screening</string>
+    <string name="any_leprosy_symptoms_present">Any Leprosy Symptoms Present?</string>
+    <string name="visits">Visit</string>
+    <string name="select_visit">Select Visit</string>
+    <string name="no_previous_visits_available">No previous visits available</string>
+    <string name="after_the_abortion_the_woman_opted_for_permanent_sterilization_tubectomy">After the Abortion, the Woman opted for permanent sterilization (Tubectomy)</string>
+    <string name="date_of_sterilisation">Date of Sterilisation</string>
+    <string name="what_family_planning_method_has_been_chosen_after_the_abortion">What family planning method has been chosen after the abortion?</string>
+
     <string-array name="sync_records">
         <item>Beneficiary</item>
         <item>CBAC</item>
@@ -337,6 +552,14 @@
         <item>HRP Track</item>
         <item>HR NonPreg. Assess</item>
         <item>HR NonPreg Track</item>
+    </string-array>
+
+
+    <string-array name="place_array">
+        <item>HWC</item>
+        <item>Anganwadi Centre</item>
+        <item>Community center</item>
+
     </string-array>
     <!-- Eligible couple registration -->
     <string-array name="ecr_gender_array">
@@ -466,6 +689,22 @@
     <string name="str_place_of_mother_referral">Place of mother referral</string>
     <string name="str_other_place_of_mother_referral">Other -Place of mother referral</string>
     <string name="preview_title">Preview</string>
+
+    <string name="flu_like_illness">Flu-like illness</string>
+    <string name="shakingchills">Shaking chills</string>
+    <string name="headache">Headache</string>
+    <string name="muscleaches">Muscle aches</string>
+    <string name="tiredness">Tiredness</string>
+    <string name="nausea">Nausea</string>
+    <string name="vomiting">Vomiting</string>
+    <string name="diarrhea">Diarrhea</string>
+    <string name="rapid_diagnostic">Rapid Diagnostic Test (RDT)</string>
+    <string name="rapid_diagnostic_kala">Kala Azar Rapid Diagnostic Test (RDT)</string>
+    <string name="slide_test_pf">Malaria Slide Test Pf</string>
+    <string name="slide_test">Malaria Slide Test</string>
+    <string name="slide_test_pv">Malaria Slide Test Pv</string>
+    <string name="sympt">Symptoms</string>
+    <string name="malaria_submitted">Malaria Form submitted</string>
 
     <string-array name="hbyc_month_array">
         <item name="hbyc_month_3">3 Month</item>
@@ -611,4 +850,179 @@
         <item name="hbnc_place_of_mother_referral_10">Other</item>
     </string-array>
 
+    <string-array name="dc_case_status">
+        <item name="dc_suspected">Suspected</item>
+        <item name="dc_confirmed">Confirmed</item>
+        <item name="dc_not_confirmed">Not Confirmed</item>
+        <item name="dc_treatment">Treatment Started</item>
+    </string-array>
+
+    <string-array name="test_type">
+        <item name="rdt">RDT</item>
+        <item name="slide">Slide Test</item>
+        <item name="both">Both</item>
+    </string-array>
+
+    <string-array name="leprosy_status">
+        <item>Screened</item>
+        <item>Denied</item>
+        <item>Not Screened</item>
+        <item>Suspected</item>
+        <item>Confirmed</item>
+        <item>Not Confirmed</item>
+    </string-array>
+
+    <string-array name="death_place">
+        <item name="home">Home</item>
+        <item name="facility">Facility</item>
+        <item name="other">Other</item>
+    </string-array>
+
+    <string-array name="reason_death">
+        <item name="fever">Fever</item>
+        <item name="other_disease">other Disease</item>
+        <item name="other">Other</item>
+    </string-array>
+
+    <string-array name="benificary_case_status">
+        <item name="dc_not">Screening</item>
+        <item name="dc_death">Death</item>
+    </string-array>
+
+    <string-array name="benificary_case_status_kalaazar">
+        <item name="dc_not_app">Not Applicable</item>
+        <item name="dc_recovering">Recovering</item>
+        <item name="dc_cured">Cured</item>
+        <item name="dc_death">Death</item>
+        <item name="dc_symp">Recurrence of Symptoms</item>
+    </string-array>
+
+    <string-array name="irs_rounds">
+        <item name="one">1st Round</item>
+        <item name="two">2nd Round</item>
+        <item name="three">3rd Round</item>
+        <item name="four">4th Round</item>
+    </string-array>
+
+    <string-array name="benificary_case_status_leprosy">
+        <item name="dc_not_app">Not Applicable</item>
+        <item name="dc_recovering">Recovering</item>
+        <item name="dc_cured">Cured</item>
+        <item name="dc_death">Death</item>
+        <item name="dc_symp">Recurrence of Symptoms</item>
+        <item name="dc_reg">Regularly taking medicine</item>
+        <item name="dc_n_Reg">Not regularly taking medicine</item>
+        <item name="dc_treatment">Treatment completed</item>
+        <item name="dc_other">Other</item>
+    </string-array>
+
+    <string-array name="kala_case_status">
+        <item name="dc_recovering">Recovering</item>
+        <item name="dc_cured">Cured</item>
+        <item name="dc_dead">Dead</item>
+        <item name="dc_r_symptoms">Recurrence of Symptoms</item>
+    </string-array>
+
+    <string-array name="type_of_leprocy">
+        <item name="mb">MB (Multibacillary)</item>
+        <item name="pb">PB (Paucibacillary)</item>
+    </string-array>
+
+    <string-array name="leprosy_treatment_status">
+        <item>Recovering</item>
+        <item>Cured</item>
+        <item>Recurrence of Symptoms</item>
+        <item>Regularly taking medicine</item>
+        <item>Not regularly taking medicine</item>
+        <item>Treatment Completed</item>
+    </string-array>
+
+    <string-array name="dc_refer">
+        <item>Primary Health Centre</item>
+        <item>Community Health Centre</item>
+        <item>District Hospital</item>
+        <item>Medical College and Hospital</item>
+        <item>Referral Hospital</item>
+        <item>Other Private Hospital</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="dc_refer_malaria">
+        <item>Primary Health Centre</item>
+        <item>Community Health Centre</item>
+        <item>District Hospital</item>
+        <item>Medical College and Hospital</item>
+        <item>Referral Hospital</item>
+        <item>Other Private Hospital</item>
+        <item>Other</item>
+        <item>None</item>
+    </string-array>
+
+    <string-array name="daysPv">
+        <item>Day 1</item>
+        <item>Day 2</item>
+        <item>Day 3</item>
+        <item>Day 4</item>
+
+    </string-array>
+
+    <string-array name="daysPf">
+        <item>Day 1</item>
+        <item>Day 2</item>
+        <item>Day 3</item>
+
+    </string-array>
+
+    <string-array name="dec_albendazole_array">
+        <item>T</item>
+        <item>P</item>
+        <item>Y</item>
+        <item>S</item>
+        <item>H</item>
+        <item>A</item>
+        <item>R</item>
+        <item>L</item>
+        <item>O</item>
+    </string-array>
+
+    <string-array name="body_part_male">
+        <item>Right Hand</item>
+        <item>Left Hand</item>
+        <item>Right Leg</item>
+        <item>Left Leg</item>
+        <item>Hydrocele</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="body_part_female">
+        <item>Right Hand</item>
+        <item>Left Hand</item>
+        <item>Right Leg</item>
+        <item>Left Leg</item>
+        <item>Right Side Breast</item>
+        <item>Left Side Breast</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="follow_up_array">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+
+
+    </string-array>
+
+    <string-array name="side_effect_of_medicine">
+        <item>F (Fever)</item>
+        <item>H (Headache)</item>
+        <item>B (Body Pain)</item>
+        <item>V (Vomiting)</item>
+        <item>N (Najala)</item>
+        <item>O (Other)</item>
+        <item>None</item>
+    </string-array>
 </resources>
+

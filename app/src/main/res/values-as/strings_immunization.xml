@@ -12,4 +12,5 @@
     <string name="vaccinated_place">টিকাকৃত স্থান</string>
     <string name="vaccinated_by">টিকাকৰণ কৰা হৈছে</string>
     <string name="date_of_vaccination">টিকাকৰণৰ তাৰিখ</string>
+    <string name="dose_name">মাত্ৰাৰ নাম</string>
 </resources>

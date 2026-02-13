@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -16,11 +17,18 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.HRPAdapter
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
+import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.utils.RoleConstants
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class PregnantListFragment : Fragment() {
+
+    @Inject
+    lateinit var prefDao: PreferenceDao
 
     private var _binding: FragmentDisplaySearchRvButtonBinding? = null
     private val binding: FragmentDisplaySearchRvButtonBinding
@@ -53,6 +61,7 @@ class PregnantListFragment : Fragment() {
                     )
                 },
                 { _, benId ->
+
                     findNavController().navigate(
                         PregnantListFragmentDirections.actionPregnantListFragmentToHRPMicroBirthPlanFragment(
                             benId
@@ -73,7 +82,8 @@ class PregnantListFragment : Fragment() {
                 resources.getString(R.string.share),
 
             ),
-            role = 1
+            role = 1,
+            pref = prefDao
         )
         binding.rvAny.adapter = benAdapter
 
@@ -112,10 +122,17 @@ class PregnantListFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            (it as HomeActivity).updateActionBar(
-                R.drawable.ic__high_risk_preg,
-                getString(R.string.pregnant_women)
-            )
+            if (prefDao.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
+                (it as SupervisorActivity).updateActionBar(
+                    R.drawable.ic__high_risk_preg,
+                    getString(R.string.pregnant_women)
+                )
+            } else {
+                (it as HomeActivity).updateActionBar(
+                    R.drawable.ic__high_risk_preg,
+                    getString(R.string.pregnant_women)
+                )
+            }
         }
     }
 

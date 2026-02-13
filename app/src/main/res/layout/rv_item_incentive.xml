@@ -6,6 +6,9 @@
     <data>
 
         <variable
+            name="serialNo"
+            type="Integer" />
+        <variable
             name="item"
             type="org.piramalswasthya.sakhi.model.IncentiveDomain" />
 
@@ -15,13 +18,30 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <TextView
+            android:id="@+id/tvSerialNo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@{String.valueOf(serialNo)}"
+            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/ll_details"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintWidth_percent="0.12"
+            tools:text="1"/>
+
+
         <LinearLayout
             android:id="@+id/ll_details"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            app:layout_constraintWidth_percent="0.6"
+            android:layout_marginStart="@dimen/_10sdp"
             app:layout_constraintEnd_toStartOf="@+id/tv_amount"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tvSerialNo"
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
@@ -36,7 +56,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:padding="@dimen/padding_small"
-                android:text="@{@string/incentive_activity_details(item.activity.name)}"
+                android:text="@{@string/incentive_activity_details(item.activity.description)}"
                 android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
 
                 tools:text="HEllo" />
@@ -63,6 +83,8 @@
             app:layout_constraintBottom_toBottomOf="@id/ll_details"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/ll_details"
+            app:layout_constraintWidth_percent="0.28
+"
             tools:text="odfnk" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

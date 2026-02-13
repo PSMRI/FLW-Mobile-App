@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
+import android.net.Uri
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.getWeeksOfPregnancy
@@ -19,7 +20,7 @@ class InfantRegistrationDataset(
     private var babyName = FormElement(
         id = 1,
         inputType = InputType.TEXT_VIEW,
-        title = resources.getString(R.string.ir_baby_name),
+        title = "Name of Baby",
         required = false,
         hasDependants = false
     )
@@ -27,7 +28,7 @@ class InfantRegistrationDataset(
     private var infantTerm = FormElement(
         id = 2,
         inputType = InputType.TEXT_VIEW,
-        title = resources.getString(R.string.ir_infant_term),
+        title = "Infant Term",
         entries = arrayOf("Full Term", "Pre Term"),
         required = false,
         hasDependants = false
@@ -36,7 +37,7 @@ class InfantRegistrationDataset(
     private var corticosteroidGiven = FormElement(
         id = 3,
         inputType = InputType.RADIO,
-        title = resources.getString(R.string.ir_corticosteroid_given),
+        title = "Was Corticosteroid Inj. given?",
         entries = arrayOf("Yes", "No", "Don't Know"),
         required = false,
         hasDependants = false
@@ -45,7 +46,7 @@ class InfantRegistrationDataset(
     private var gender = FormElement(
         id = 4,
         inputType = InputType.RADIO,
-        title =  resources.getString(R.string.ir_gender),
+        title = "Sex of Infant",
         entries = resources.getStringArray(R.array.ecr_gender_array),
         required = true,
         hasDependants = true,
@@ -54,7 +55,7 @@ class InfantRegistrationDataset(
     private var babyCriedAtBirth = FormElement(
         id = 5,
         inputType = InputType.RADIO,
-        title = resources.getString(R.string.ir_baby_cried_at_birth),
+        title = "Baby Cried Immediately after Birth",
         entries = arrayOf("Yes", "No"),
         required = false,
         hasDependants = true
@@ -63,7 +64,7 @@ class InfantRegistrationDataset(
     private var resuscitation = FormElement(
         id = 6,
         inputType = InputType.RADIO,
-        title = resources.getString(R.string.ir_resuscitation),
+        title = "If No, Resuscitation Done",
         entries = arrayOf("Yes", "No"),
         required = true,
         hasDependants = false
@@ -72,7 +73,7 @@ class InfantRegistrationDataset(
     private var referred = FormElement(
         id = 7,
         inputType = InputType.RADIO,
-        title = resources.getString(R.string.ir_referred),
+        title = "Referred to higher facility for further management",
         entries = arrayOf("Yes", "No", "NA"),
         required = false,
         hasDependants = false
@@ -81,14 +82,14 @@ class InfantRegistrationDataset(
     private var hadBirthDefect = FormElement(
         id = 8,
         inputType = InputType.RADIO,
-        title = resources.getString(R.string.ir_had_birth_defect),
+        title = "Any birth defect seen in at birth?",
         entries = arrayOf("Yes", "No", "NA"),
         required = false,
         hasDependants = true
     )
 
     private var birthDefect = FormElement(
-        id = 9, inputType = InputType.DROPDOWN, title = resources.getString(R.string.ir_birth_defect), entries = arrayOf(
+        id = 9, inputType = InputType.DROPDOWN, title = "Defect seen at birth", entries = arrayOf(
             "Cleft Lip / Cleft Palate",
             "Club Foot",
             "Down's Syndrome",
@@ -102,7 +103,7 @@ class InfantRegistrationDataset(
     private var otherDefect = FormElement(
         id = 10,
         inputType = InputType.EDIT_TEXT,
-        title = resources.getString(R.string.ir_other_defect),
+        title = "Other defect seen at Birth",
         required = false,
         hasDependants = false,
     )
@@ -110,23 +111,60 @@ class InfantRegistrationDataset(
     private var weight = FormElement(
         id = 11,
         inputType = InputType.EDIT_TEXT,
-        //title =  resources.getString(R.string.ir_weight),
-        title =  resources.getString(R.string.str_weight_at_birth_gram),
+        title = "Weight at Birth(kg)",
         required = false,
         hasDependants = false,
         etMaxLength = 5,
         min = 1,
         max = 7000,
-        etInputType = android.text.InputType.TYPE_CLASS_NUMBER,
+        etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
     )
 
     private var breastFeedingStarted = FormElement(
         id = 12,
         inputType = InputType.RADIO,
-        title = resources.getString(R.string.ir_breast_feeding_started),
+        title = "Breast feeding started within 1 hour of birth",
         entries = arrayOf("Yes", "No"),
-        required = false,
+        required = true,
         hasDependants = false,
+    )
+    private var isSncu = FormElement(
+        id = 13,
+        inputType = InputType.RADIO,
+        title = context.getString(R.string.is_baby_discharge_from_sncu),
+        entries = resources.getStringArray(R.array.do_is_jsy_beneficiary_array),
+        required = false,
+        hasDependants = true
+    )
+
+
+    private val deliveryDischargeSummary1  = FormElement(
+        id = 58,
+        inputType = InputType.FILE_UPLOAD,
+        title = "Delivery Discharge Summary 1",
+        required = false
+
+    )
+
+    private val deliveryDischargeSummary2 = FormElement(
+        id =59,
+        inputType = InputType.FILE_UPLOAD,
+        title = "Delivery Discharge Summary 2",
+        required = false
+    )
+
+    private val deliveryDischargeSummary3 = FormElement(
+        id =60,
+        inputType = InputType.FILE_UPLOAD,
+        title = "Delivery Discharge Summary 3",
+        required = false
+    )
+
+    private val deliveryDischargeSummary4 = FormElement(
+        id =61,
+        inputType = InputType.FILE_UPLOAD,
+        title = "Delivery Discharge Summary 4",
+        required = false
     )
 
 //    private val opv0Dose = FormElement(
@@ -184,9 +222,30 @@ class InfantRegistrationDataset(
             hadBirthDefect,
 //            birthDefect,
 //            otherDefect,
-            weight, breastFeedingStarted, //opv0Dose, bcgDose, hepBDose, vitkDose
+            weight, breastFeedingStarted,isSncu //opv0Dose, bcgDose, hepBDose, vitkDose
         )
+        if (deliveryOutcomeCache != null) {
+     /*       opv0Dose.min = deliveryOutcomeCache.dateOfDelivery
+            bcgDose.min = deliveryOutcomeCache.dateOfDelivery
+            hepBDose.min = deliveryOutcomeCache.dateOfDelivery
+            vitkDose.min = deliveryOutcomeCache.dateOfDelivery
+            deliveryOutcomeCache.dateOfDelivery.let {
+                if (it != null) {
+                    if (it + TimeUnit.DAYS.toMillis(15) < System.currentTimeMillis()) opv0Dose.max =
+                        it + TimeUnit.DAYS.toMillis(15)
+                    if (it + TimeUnit.DAYS.toMillis(365) < System.currentTimeMillis()) bcgDose.max =
+                        it + TimeUnit.DAYS.toMillis(365)
+                    if (it + 24 * 60 * 60 * 1000 < System.currentTimeMillis()) {
+                        hepBDose.max = it + TimeUnit.DAYS.toMillis(
 
+
+                            1
+                        )
+                        vitkDose.max = it + TimeUnit.DAYS.toMillis(1)
+                    }
+                }
+            }*/
+        }
         if (pwrCache != null && deliveryOutcomeCache != null) {
             val weeksOfPregnancy = deliveryOutcomeCache.dateOfDelivery?.let {
                 getWeeksOfPregnancy(
@@ -205,6 +264,7 @@ class InfantRegistrationDataset(
                     if (deliveryOutcomeCache.liveBirth == null || deliveryOutcomeCache.liveBirth == 1) "baby of ${ben.firstName}"
                     else "baby $babyIndex of ${ben.firstName}"
             }
+//            opv0Dose.value = getDateFromLong(System.currentTimeMillis())
         } else {
             list = mutableListOf(
                 babyName,
@@ -219,6 +279,7 @@ class InfantRegistrationDataset(
                 otherDefect,
                 weight,
                 breastFeedingStarted,
+                isSncu
          /*       opv0Dose,
                 bcgDose,
                 hepBDose,
@@ -236,6 +297,20 @@ class InfantRegistrationDataset(
             otherDefect.value = saved.otherDefect
             weight.value = saved.weight.toString()
             breastFeedingStarted.value = if (saved.breastFeedingStarted == true) "Yes" else "No"
+            isSncu.value=saved.isSNCU
+            if (saved.isSNCU=="Yes")
+            {
+                deliveryDischargeSummary1.value = saved.deliveryDischargeSummary1
+                deliveryDischargeSummary2.value = saved.deliveryDischargeSummary2
+                deliveryDischargeSummary3.value = saved.deliveryDischargeSummary3
+                deliveryDischargeSummary4.value = saved.deliveryDischargeSummary4
+
+                list.add(list.indexOf(isSncu) + 1, deliveryDischargeSummary1)
+                list.add(list.indexOf(deliveryDischargeSummary1) + 1, deliveryDischargeSummary2)
+                list.add(list.indexOf(deliveryDischargeSummary2) + 1, deliveryDischargeSummary3)
+                list.add(list.indexOf(deliveryDischargeSummary3) + 1, deliveryDischargeSummary4)
+            }
+
 //            opv0Dose.value = saved.opv0Dose?.let { getDateFromLong(it) }
 //            bcgDose.value = saved.bcgDose?.let { getDateFromLong(it) }
 //            hepBDose.value = saved.hepBDose?.let { getDateFromLong(it) }
@@ -264,6 +339,25 @@ class InfantRegistrationDataset(
                     target = birthDefect,
                     targetSideEffect = listOf(otherDefect, birthDefect)
                 )
+            }
+
+            isSncu.id -> {
+                val isYes = isSncu.value.equals("Yes", ignoreCase = true)
+                if(isYes){
+                    triggerDependants(
+                        source = isSncu,
+                        addItems = listOf(deliveryDischargeSummary1,deliveryDischargeSummary2,deliveryDischargeSummary3,deliveryDischargeSummary4),
+                        removeItems = emptyList()
+                    )
+                }
+                else{
+                    triggerDependants(
+                        source = isSncu,
+                        addItems = emptyList(),
+                        removeItems =listOf(deliveryDischargeSummary1,deliveryDischargeSummary2,deliveryDischargeSummary3,deliveryDischargeSummary4),
+                    )
+                }
+
             }
 
             birthDefect.id -> {
@@ -299,6 +393,14 @@ class InfantRegistrationDataset(
             form.babyCriedAtBirth = babyCriedAtBirth.value == "Yes"
             form.resuscitation = resuscitation.value == "Yes"
             form.referred = referred.value
+
+            form.isSNCU = isSncu.value?:"No"
+            form.deliveryDischargeSummary1 = deliveryDischargeSummary1.value?.takeIf { it.isNotEmpty() }
+            form.deliveryDischargeSummary2 = deliveryDischargeSummary2.value?.takeIf { it.isNotEmpty() }
+            form.deliveryDischargeSummary3 = deliveryDischargeSummary3.value?.takeIf { it.isNotEmpty() }
+            form.deliveryDischargeSummary4 = deliveryDischargeSummary4.value?.takeIf { it.isNotEmpty() }
+
+
             form.hadBirthDefect = hadBirthDefect.value
             form.birthDefect = birthDefect.value
             form.otherDefect = otherDefect.value
@@ -308,6 +410,35 @@ class InfantRegistrationDataset(
             form.bcgDose = getLongFromDate(bcgDose.value)
             form.hepBDose = getLongFromDate(hepBDose.value)
             form.vitkDose = getLongFromDate(vitkDose.value)*/
+        }
+    }
+
+
+    fun getIndexDeliveryDischargeSummary1 () = getIndexById(deliveryDischargeSummary1.id)
+    fun getIndexDeliveryDischargeSummary2 () = getIndexById(deliveryDischargeSummary2.id)
+    fun getIndexDeliveryDischargeSummary3 () = getIndexById(deliveryDischargeSummary3.id)
+    fun getIndexDeliveryDischargeSummary4 () = getIndexById(deliveryDischargeSummary4.id)
+
+
+    fun setImageUriToFormElement(lastImageFormId: Int, dpUri: Uri) {
+        when (lastImageFormId) {
+            58 -> {
+                deliveryDischargeSummary1.value = dpUri.toString()
+                deliveryDischargeSummary1.errorText = null
+            }
+            59 -> {
+                deliveryDischargeSummary2.value = dpUri.toString()
+                deliveryDischargeSummary2.errorText = null
+            }
+            60 -> {
+                deliveryDischargeSummary3.value = dpUri.toString()
+                deliveryDischargeSummary3.errorText = null
+            }
+            61 -> {
+                deliveryDischargeSummary4.value = dpUri.toString()
+                deliveryDischargeSummary4.errorText = null
+            }
+
         }
     }
 }

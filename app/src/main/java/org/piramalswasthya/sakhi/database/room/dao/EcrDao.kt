@@ -22,6 +22,9 @@ interface EcrDao {
     @Query("SELECT * FROM ELIGIBLE_COUPLE_REG WHERE benId =:benId limit 1")
     suspend fun getSavedECR(benId: Long): EligibleCoupleRegCache?
 
+    @Query("SELECT noOfChildren FROM ELIGIBLE_COUPLE_REG WHERE benId = :benId LIMIT 1")
+    suspend fun getNoOfChildren(benId: Long): Int?
+
     @Update
     suspend fun update(it: EligibleCoupleRegCache)
 
@@ -40,6 +43,10 @@ interface EcrDao {
 
     @Query("select count(*)>0 from eligible_couple_tracking where createdDate=:createdDate")
     suspend fun ectWithsameCreateDateExists(createdDate: Long): Boolean
+
+    @Query("SELECT * FROM eligible_couple_tracking WHERE benId = :benId ORDER BY visitDate DESC")
+    suspend fun getAllAntraDoses(benId: Long): List<EligibleCoupleTrackingCache>
+
 
 
 }

@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.os.SystemClock
 import android.view.Menu
 import android.view.MenuInflater
@@ -38,9 +39,11 @@ import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.internal.common.CommonUtils.isEmulator
 import com.google.firebase.crashlytics.internal.common.CommonUtils.isRooted
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
@@ -63,6 +66,7 @@ import org.piramalswasthya.sakhi.ui.home_activity.sync.SyncBottomSheetFragment
 import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
 import org.piramalswasthya.sakhi.ui.service_location_activity.ServiceLocationActivity
 import org.piramalswasthya.sakhi.utils.KeyUtils
+import org.piramalswasthya.sakhi.utils.RoleConstants
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import java.io.File
 import java.net.URI
@@ -71,7 +75,7 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class HomeActivity : AppCompatActivity() {
+class HomeActivity : AppCompatActivity(), MessageUpdate {
 
     var isChatSupportEnabled : Boolean = false
     private lateinit var updateHelper: InAppUpdateHelper
@@ -113,25 +117,17 @@ class HomeActivity : AppCompatActivity() {
     private val langChooseAlert by lazy {
         val currentLanguageIndex = when (pref.getCurrentLanguage()) {
             Languages.ENGLISH -> 0
-            Languages.HINDI -> 1
             Languages.ASSAMESE -> 2
+            Languages.HINDI -> 1
+
         }
-        val options =
-            if (BuildConfig.FLAVOR.contains("mitanin", true)) {
-                arrayOf(
-                    resources.getString(R.string.english),
-                    resources.getString(R.string.hindi)
-                )
-            } else {
+        MaterialAlertDialogBuilder(this).setTitle(resources.getString(R.string.choose_application_language))
+            .setSingleChoiceItems(
                 arrayOf(
                     resources.getString(R.string.english),
                     resources.getString(R.string.hindi),
                     resources.getString(R.string.assamese)
-                )
-            }
-        MaterialAlertDialogBuilder(this).setTitle(resources.getString(R.string.choose_application_language))
-            .setSingleChoiceItems(
-                options, currentLanguageIndex
+                ), currentLanguageIndex
             ) { di, checkedItemIndex ->
                 val checkedLanguage = when (checkedItemIndex) {
                     0 -> Languages.ENGLISH
@@ -219,26 +215,29 @@ class HomeActivity : AppCompatActivity() {
                 WindowManager.LayoutParams.FLAG_SECURE
             )
         }
+        FirebaseApp.initializeApp(this)
+        FBMessaging.messageUpdate = this
+        FirebaseMessaging.getInstance().subscribeToTopic("All")
+//        FirebaseMessaging.getInstance().subscribeToTopic("ANC${pref.getLoggedInUser()?.userId}")
+//        FirebaseMessaging.getInstance().subscribeToTopic("Immunization${pref.getLoggedInUser()?.userId}")
         super.onCreate(savedInstanceState)
         _binding = ActivityHomeBinding.inflate(layoutInflater)
+
+        if (pref?.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
+            binding.navView.menu.findItem(R.id.homeFragment).setVisible(false)
+            binding.navView.menu.findItem(R.id.supervisorFragment).setVisible(true)
+        } else {
+            binding.navView.menu.findItem(R.id.supervisorFragment).setVisible(false)
+            binding.navView.menu.findItem(R.id.homeFragment).setVisible(true)
+        }
+
         setContentView(binding.root)
         setUpActionBar()
         setUpNavHeader()
         setUpFirstTimePullWorker()
         setUpMenu()
-        val permissions = arrayOf<String>(
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.INTERNET,
-            Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.CAMERA
-        )
 
-        ActivityCompat.requestPermissions(
-            this,
-            permissions,
-            1010
-        )
+        askForPermissions()
 
         if (isChatSupportEnabled)
         {
@@ -297,6 +296,25 @@ class HomeActivity : AppCompatActivity() {
             analyticsHelper.logEvent(FirebaseAnalytics.Event.APP_OPEN, params)
 
         }
+
+    }
+
+    fun askForPermissions() {
+
+        val permissions = arrayOf<String>(
+            Manifest.permission.CALL_PHONE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.INTERNET,
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.CAMERA
+        )
+
+        ActivityCompat.requestPermissions(
+            this,
+            permissions,
+            1010
+        )
 
     }
 
@@ -495,6 +513,8 @@ class HomeActivity : AppCompatActivity() {
 
     private fun setUpFirstTimePullWorker() {
         WorkerUtils.triggerPeriodicPncEcUpdateWorker(this)
+//        WorkerUtils.triggerMaaMeetingWorker(this)
+//        WorkerUtils.triggerSaasBahuSammelanWorker(this)
         if (!pref.isFullPullComplete)
             WorkerUtils.triggerAmritPullWorker(this)
 //        WorkerUtils.triggerD2dSyncWorker(this)
@@ -568,6 +588,15 @@ class HomeActivity : AppCompatActivity() {
             true
 
         }
+
+        binding.navView.menu.findItem(R.id.ChatFragment).setOnMenuItemClickListener {
+//            navController.popBackStack(R.id.lmsFragment, false)
+            navController.navigate(R.id.lmsFragment)
+
+            binding.drawerLayout.close()
+            true
+
+        }
         binding.navView.menu.findItem(R.id.menu_logout).setOnMenuItemClickListener {
             logoutAlert.show()
             true
@@ -583,10 +612,8 @@ class HomeActivity : AppCompatActivity() {
         }
         binding.navView.menu.findItem(R.id.menu_delete_account).setOnMenuItemClickListener {
             var url = ""
-            if (BuildConfig.FLAVOR.contains("saksham", true) ||BuildConfig.FLAVOR.contains("niramay", true) || BuildConfig.FLAVOR.contains("xushrukha", true))  {
+            if (BuildConfig.FLAVOR.equals("saksham", true) ||BuildConfig.FLAVOR.equals("niramay", true) || BuildConfig.FLAVOR.equals("xushrukha", true))  {
                 url = "https://forms.office.com/r/HkE3c0tGr6"
-            } else if (BuildConfig.FLAVOR.contains("mitanin", true)) {
-                url = "https://forms.office.com/r/KY9ZKFT3LK"
             } else {
                 url =
                     "https://forms.office.com/Pages/ResponsePage.aspx?id=jQ49md0HKEGgbxRJvtPnRISY9UjAA01KtsFKYKhp1nNURUpKQzNJUkE1OUc0SllXQ0IzRFVJNlM2SC4u"
@@ -602,27 +629,8 @@ class HomeActivity : AppCompatActivity() {
 
         }
 
-        binding.navView.menu.findItem(R.id.menu_report_crash).setOnMenuItemClickListener {
-            val crashDir = File(filesDir, "crashes")
-            val latestFile = crashDir.listFiles()?.maxByOrNull { it.lastModified() }
-
-            if (latestFile != null) {
-                CrashEmailSender.sendCrashReport(this, latestFile)
-            } else {
-                 Toast.makeText(this, "No crash report found", Toast.LENGTH_SHORT).show()
-            }
-
-            binding.drawerLayout.close()
-            true
-
-        }
-
         binding.navView.menu.findItem(R.id.menu_support).setOnMenuItemClickListener {
-            val url: String = if (BuildConfig.FLAVOR.contains("mitanin", true)) {
-                "https://forms.office.com/r/DW5EVdRMVs"
-            } else {
-                "https://forms.office.com/r/AqY1KqAz3v"
-            }
+            var url = "https://forms.office.com/r/AqY1KqAz3v"
             if (url.isNotEmpty()){
                 val i = Intent(Intent.ACTION_VIEW)
                 i.setData(Uri.parse(url))
@@ -672,6 +680,16 @@ class HomeActivity : AppCompatActivity() {
     private fun isDeviceRootedOrEmulator(): Boolean {
 //      return isRooted() || isEmulator() || RootedUtil().isDeviceRooted(applicationContext)
         return isRooted() || isEmulator()
+    }
+
+    override fun ApiUpdate() {
+        try {
+            Log.e("AAAAAMessage","ApiUpdate")
+//            mChatMessageUpdate.apiUpdate()
+        } catch (e: Exception) {
+            Log.e("AAAAAMessage","ApiUpdate $e")
+        }
+
     }
 
     @Deprecated("will fix this implementation")

@@ -14,13 +14,20 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.BenListAdapter
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
+import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.home.HomeViewModel
+import org.piramalswasthya.sakhi.utils.RoleConstants
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class NcdPriorityListFragment : Fragment() {
+
+    @Inject
+    lateinit var prefDao: PreferenceDao
 
 
     private val binding: FragmentDisplaySearchRvButtonBinding by lazy {
@@ -43,7 +50,8 @@ class NcdPriorityListFragment : Fragment() {
         binding.btnNextPage.visibility = View.GONE
 
         val benAdapter = BenListAdapter(
-            showBeneficiaries = true
+            showBeneficiaries = true,
+            pref = prefDao
         )
         binding.rvAny.adapter = benAdapter
 
@@ -82,10 +90,17 @@ class NcdPriorityListFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            (it as HomeActivity).updateActionBar(
-                R.drawable.ic__ncd_priority,
-                getString(R.string.ncd_priority_list)
-            )
+            if (prefDao.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
+                (it as SupervisorActivity).updateActionBar(
+                    R.drawable.ic__ncd_priority,
+                    getString(R.string.ncd_priority_list)
+                )
+            } else {
+                (it as HomeActivity).updateActionBar(
+                    R.drawable.ic__ncd_priority,
+                    getString(R.string.ncd_priority_list)
+                )
+            }
         }
     }
 
