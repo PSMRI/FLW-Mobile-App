@@ -1,6 +1,7 @@
 def get_package_name(flavor)
     UI.user_error!("Missing required parameter: flavor") if flavor.nil?
-    valid_flavors = ["SakshamStag", "SakshamUat", "Saksham", "Xushrukha", "Niramay"]
+    valid_flavors = ["SakshamStag", "SakshamUat", "Saksham", "Xushrukha", "Niramay",
+                     "MitaninStag", "MitaninUat", "Mitanin"]
     UI.user_error!("Invalid flavor: #{flavor}") unless valid_flavors.include?(flavor)
     base_package = "org.piramalswasthya.sakhi"
     suffixes = {
@@ -8,7 +9,10 @@ def get_package_name(flavor)
         "SakshamUat" => ".saksham.uat",
         "Saksham" => ".saksham",
         "Xushrukha" => ".xushrukha",
-        "Niramay" => ".niramay"
+        "Niramay" => ".niramay",
+        "MitaninStag" => ".mitanin.stag",
+        "MitaninUat" => ".mitanin.uat",
+        "Mitanin" => ".mitanin"
     }
     suffix = suffixes[flavor] || ""
     UI.message "Using package name: #{base_package}#{suffix}"
@@ -47,25 +51,37 @@ platform :android do
 
   desc "Build and Distribute Debug APK to Firebase"
   lane :build_and_distribute_debug do |options|
+    flavor = options[:flavor]
+    UI.user_error!("Missing required parameter: flavor") if flavor.nil? || flavor.empty?
+    version_name = options[:version_name]
 
-   latest_release = firebase_app_distribution_get_latest_release(
-      app: ENV['FIREBASE_APP_ID'],
-      service_credentials_file: "firebase_credentials.json"
-   )
-   new_version_code = latest_release[:buildVersion].to_i + 1
-   current_version_name = android_get_version_name
-   new_version_name = "#{new_version_code}.0.0"
+    # Get latest version code from Firebase, handle no prior releases
+    new_version_code = 1
+    begin
+      latest_release = firebase_app_distribution_get_latest_release(
+        app: ENV['FIREBASE_APP_ID'],
+        service_credentials_file: "firebase_credentials.json"
+      )
+      new_version_code = latest_release[:buildVersion].to_i + 1
+    rescue => e
+      UI.important "No prior Firebase release found, starting at version code 1: #{e.message}"
+    end
+
+    # Use provided version name, or fall back to auto-generated
+    version_name = version_name || "#{new_version_code}.0.0"
+
+    UI.message "Building with version name: #{version_name}, version code: #{new_version_code}"
 
     File.open("../version/version.properties", "w") do |file|
-        file.write("VERSION=#{new_version_name}")
+      file.write("VERSION=#{version_name}\nVERSIONCODE=#{new_version_code}")
     end
 
     # Build the debug variant
     gradle(
-      task: "clean assemble#{options[:variant]}Debug"
+      task: "clean assemble#{flavor}Debug"
     )
 
-    # Distribute to Firebase App Distribution for Stag and UAT
+    # Distribute to Firebase App Distribution
     firebase_app_distribution(
       app: ENV['FIREBASE_APP_ID'],
       service_credentials_file: "firebase_credentials.json",
@@ -75,25 +91,25 @@ platform :android do
     )
   end
 
-  desc "Build, Sign, and Distribute Release APK to Play Store"
+  desc "Build, Sign, and Distribute Release AAB to Play Store"
   lane :build_and_distribute_release do |options|
+    flavor = options[:flavor]
+    version_name = options[:version_name]
     keystore_path = File.expand_path('../keystore.jks')
-    package_name = get_package_name(options[:variant])
+    package_name = get_package_name(flavor)
     new_version_code = latest_googleplay_version_code(package_name) + 1
-    current_version_name = android_get_version_name
-    new_version_name = "#{new_version_code}.0.0"
 
+    # Use provided version name, or fall back to auto-generated
+    version_name = version_name || "#{new_version_code}.0.0"
 
-    # Log the new version code and version name
-    puts "New version code: #{new_version_code}"
-    puts "New version name: #{new_version_name}"
-    # update version
+    UI.message "Building with version name: #{version_name}, version code: #{new_version_code}"
+
     File.open("../version/version.properties", "w") do |file|
-        file.write("VERSION=#{new_version_name}")
+      file.write("VERSION=#{version_name}\nVERSIONCODE=#{new_version_code}")
     end
 
     gradle(
-          task: "clean bundle#{options[:variant]}Release",
+          task: "clean bundle#{flavor}Release",
           properties: {
             "android.injected.signing.store.file" => keystore_path,
             "android.injected.signing.store.password" => "#{ENV['KEYSTORE_PASSWORD']}",
@@ -111,20 +127,5 @@ platform :android do
           package_name: package_name
     )
   end
-
-
-
-
-  desc "Increment Build Version for firebase app distribution"
-  lane :increment_version_debug do
-    latest_release = firebase_app_distribution_get_latest_release(
-      app: ENV['FIREBASE_APP_ID']
-    )
-    increment_version_code({ version_code: latest_release[:buildVersion].to_i + 1 })
-  end
-
-
-
-
 
 end
