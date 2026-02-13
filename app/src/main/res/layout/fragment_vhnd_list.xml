@@ -11,13 +11,25 @@
         android:layout_height="match_parent"
         android:background="@color/read_only"
         >
-
+        <TextView
+            android:id="@+id/mdaTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:textSize="16sp"
+            android:visibility="gone"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toTopOf="parent"
+            android:textStyle="bold"
+            android:text="@string/history_of_mda_form_campaign_title"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_any"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/mdaTitle"
             android:layout_marginTop="@dimen/margin_small"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toTopOf="@id/btn_next_page"

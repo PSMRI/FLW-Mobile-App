@@ -42,11 +42,6 @@ class AESMemberListAdapter(
             clickListener: ClickListener?,
         ) {
             binding.benWithAes = item
-
-            /*if(item.tb?.historyOfTb == true){
-                binding.cvContent.visibility = View.GONE
-            }*/
-
             binding.ivSyncState.visibility = if (item.aes == null) View.GONE else View.VISIBLE
 
             if (item.ben.spouseName == "Not Available" && item.ben.fatherName == "Not Available") {
@@ -77,15 +72,7 @@ class AESMemberListAdapter(
                 }
             }
 
-            if ( item.aes != null && item.ben.isDeath) {
-                binding.btnFormTb.visibility = View.VISIBLE
-            } else if (item.aes == null && !item.ben.isDeath){
-                binding.btnFormTb.visibility = View.VISIBLE
-            } else if (item.aes != null && !item.ben.isDeath){
-                binding.btnFormTb.visibility = View.VISIBLE
-            } else {
-                binding.btnFormTb.visibility = View.INVISIBLE
-            }
+            binding.btnFormTb.visibility = if (item.aes == null && item.ben.isDeath) View.INVISIBLE else View.VISIBLE
             binding.btnFormTb.text = if (item.aes == null) "Register" else "View"
             binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.aes == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
             binding.clickListener = clickListener

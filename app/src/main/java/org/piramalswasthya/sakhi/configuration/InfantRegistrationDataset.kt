@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
 import android.net.Uri
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.getWeeksOfPregnancy
@@ -12,7 +13,6 @@ import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.InfantRegCache
 import org.piramalswasthya.sakhi.model.InputType
 import org.piramalswasthya.sakhi.model.PregnantWomanRegistrationCache
-import java.util.concurrent.TimeUnit
 
 class InfantRegistrationDataset(
     context: Context, currentLanguage: Languages
@@ -112,12 +112,12 @@ class InfantRegistrationDataset(
     private var weight = FormElement(
         id = 11,
         inputType = InputType.EDIT_TEXT,
-        title = "Weight at Birth(kg)",
+        title = resources.getString(R.string.str_weight_at_birth_gram),
         required = false,
         hasDependants = false,
-        etMaxLength = 5,
-        min = 1,
-        max = 7000,
+        etMaxLength = 4,
+        min = 500,
+        max = 6000,
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
     )
 
@@ -305,11 +305,14 @@ class InfantRegistrationDataset(
                 deliveryDischargeSummary2.value = saved.deliveryDischargeSummary2
                 deliveryDischargeSummary3.value = saved.deliveryDischargeSummary3
                 deliveryDischargeSummary4.value = saved.deliveryDischargeSummary4
+                if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                    list.add(list.indexOf(isSncu) + 1, deliveryDischargeSummary1)
+                    list.add(list.indexOf(deliveryDischargeSummary1) + 1, deliveryDischargeSummary2)
+                    list.add(list.indexOf(deliveryDischargeSummary2) + 1, deliveryDischargeSummary3)
+                    list.add(list.indexOf(deliveryDischargeSummary3) + 1, deliveryDischargeSummary4)
+                }
 
-                list.add(list.indexOf(isSncu) + 1, deliveryDischargeSummary1)
-                list.add(list.indexOf(deliveryDischargeSummary1) + 1, deliveryDischargeSummary2)
-                list.add(list.indexOf(deliveryDischargeSummary2) + 1, deliveryDischargeSummary3)
-                list.add(list.indexOf(deliveryDischargeSummary3) + 1, deliveryDischargeSummary4)
+
             }
 
 //            opv0Dose.value = saved.opv0Dose?.let { getDateFromLong(it) }

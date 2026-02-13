@@ -71,6 +71,10 @@
     <string name="enter_ben_name">लाभार्थी का नाम दर्ज करें</string>
     <string name="str_didnt_receive_otp">OTP नहीं मिला? कृपया प्रतीक्षा करें</string>
     <string name="str_declaration">मैं यह घोषणा करता/करती हूँ कि:</string>
+    <string name="add_mda_filaria_form_title">Add Filaria MDA Campaign</string>
+    <string name="history_of_mda_form_campaign">Filaria MDA Campaign History</string>
+    <string name="history_of_mda_form_campaign_title">Annual Mass Drug Administration (MDA) campaign for cases of Lymphatic Filariasis (LF)</string>
+
     <string name="str_aadhaar_consent_1">मैं स्वेच्छा से भारतीय विशिष्ट पहचान प्राधिकरण ("यूआईडीएआई") द्वारा जारी अपना आधार संख्या/वर्चुअल आईडी, और अपनी जनसांख्यिकीय जानकारी,
 आयुष्मान भारत स्वास्थ्य खाता संख्या ("आभा संख्या") और आयुष्मान भारत स्वास्थ्य खाता पता ("आभा पता") बनाने के उद्देश्य से साझा कर रहा/रही हूँ। मैं एनएचए को उपरोक्त उद्देश्य के लिए आधार (वित्तीय और अन्य सब्सिडी,
 लाभ और सेवाओं का लक्षित वितरण) अधिनियम, 2016 के प्रावधानों के अनुसार यूआईडीएआई के साथ आधार आधारित प्रमाणीकरण करने हेतु मेरे आधार संख्या/वर्चुअल आईडी का उपयोग करने के लिए अधिकृत करता/करती हूँ। मैं समझता/समझती हूँ कि यूआईडीएआई सफल प्रमाणीकरण के बाद मेरे ई-केवाईसी विवरण, या "हाँ" का उत्तर एनएचए के साथ साझा करेगा।</string>

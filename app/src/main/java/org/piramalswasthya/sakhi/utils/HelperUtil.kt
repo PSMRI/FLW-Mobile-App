@@ -34,6 +34,8 @@ import androidx.core.graphics.withTranslation
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.json.JSONArray
+import org.json.JSONObject
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.LayoutMediaOptionsBinding
 import org.piramalswasthya.sakhi.databinding.LayoutViewMediaBinding
@@ -45,11 +47,13 @@ import java.io.FileOutputStream
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
 object HelperUtil {
 
     private val dateFormat = SimpleDateFormat("EEE, MMM dd yyyy", Locale.ENGLISH)
+
 
     fun getLocalizedResources(context: Context, currentLanguage: Languages): Resources {
         val desiredLocale = Locale(currentLanguage.symbol)
@@ -134,8 +138,8 @@ object HelperUtil {
             str.append(if (ageUnitDTO.months == 1) " Month" else " Months")
         }
 
-        if (ageUnitDTO.days >= 1 && ageUnitDTO.years < 1) {
-            if (ageUnitDTO.months >= 1) str.append(", ")
+        if (ageUnitDTO.days >= 1 /*&& ageUnitDTO.years < 1*/) {
+            if (ageUnitDTO.years >= 1 || ageUnitDTO.months >= 1) str.append(", ")
             str.append(ageUnitDTO.days)
             str.append(if (ageUnitDTO.days == 1) " Day " else " Days ")
         }
@@ -235,6 +239,16 @@ object HelperUtil {
             return null
         }
 
+    }
+
+    fun parseDateToMillis(dateStr: String): Long {
+        return try {
+            val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+            sdf.isLenient = false
+            sdf.parse(dateStr)?.time ?: 0L
+        } catch (e: Exception) {
+            0L
+        }
     }
 
     fun getLongFromDateStr(dateString: String?): Long {
@@ -551,19 +565,23 @@ object HelperUtil {
         onCameraClick: () -> Unit,
         onGalleryClick: () -> Unit
     ) {
-        val binding = LayoutMediaOptionsBinding.inflate(LayoutInflater.from(this))
-        binding.btnPdf.visibility = View.GONE
+        if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+            val binding = LayoutMediaOptionsBinding.inflate(LayoutInflater.from(this))
+            binding.btnPdf.visibility = View.GONE
 
-        val dialog = MaterialAlertDialogBuilder(this)
-            .setView(binding.root)
-            .setCancelable(true)
-            .create()
+            val dialog = MaterialAlertDialogBuilder(this)
+                .setView(binding.root)
+                .setCancelable(true)
+                .create()
 
-        binding.btnCamera.setOnClickListener { dialog.dismiss(); onCameraClick() }
-        binding.btnGallery.setOnClickListener { dialog.dismiss(); onGalleryClick() }
-        binding.btnCancel.setOnClickListener { dialog.dismiss() }
+            binding.btnCamera.setOnClickListener { dialog.dismiss(); onCameraClick() }
+            binding.btnGallery.setOnClickListener { dialog.dismiss(); onGalleryClick() }
+            binding.btnCancel.setOnClickListener { dialog.dismiss() }
 
-        dialog.show()
+            dialog.show()
+
+        }
+
     }
 
     fun Context.showUploadReminderDialog(
@@ -756,7 +774,7 @@ object HelperUtil {
     }
 
 
-    fun parseSelections(rawValue: String?, entries: Array<String>): List<String> {
+    fun parseSelections(rawValue: String?, entries: Array<String>?): List<String> {
         val raw = rawValue?.trim() ?: return emptyList()
         if (raw.isEmpty()) return emptyList()
 
@@ -784,7 +802,7 @@ object HelperUtil {
         val found = mutableListOf<Pair<Int, String>>()
         val lowerRaw = raw.lowercase()
 
-        for (entry in entries) {
+        for (entry in entries!!) {
             val idx = lowerRaw.indexOf(entry.lowercase())
             if (idx >= 0) found.add(idx to entry)
         }
@@ -795,4 +813,36 @@ object HelperUtil {
 
         return listOf(raw)
     }
+
+    fun extractFieldValue(formDataJson: String?, key: String): String {
+        return try {
+            if (formDataJson.isNullOrBlank()) return ""
+
+            val root = JSONObject(formDataJson)
+            val fieldsObj = root.optJSONObject("fields") ?: return ""
+
+            fieldsObj.optString(key, "")
+        } catch (e: Exception) {
+            ""
+        }
+    }
+    fun getCurrentYear(): String {
+        return SimpleDateFormat("yyyy", Locale.getDefault())
+            .format(Date())
+    }
+
+    fun getMinVisitDate(): Date {
+        return Calendar.getInstance().apply {
+            add(Calendar.MONTH, -1)
+        }.time
+    }
+
+    fun getMaxVisitDate(): Date {
+        return Calendar.getInstance().apply {
+            add(Calendar.MONTH, 2)
+        }.time
+    }
+
+
+
 }

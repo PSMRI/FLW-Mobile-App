@@ -296,13 +296,6 @@ class NewBenRegFragment : Fragment() {
             .setCancelable(false)
             .create()
         alertBinding.scrollableText.movementMethod = android.text.method.ScrollingMovementMethod()
-
-
-//        alertDialog.setOnShowListener {
-//            val width = (resources.displayMetrics.widthPixels * 0.9).toInt()  // 90% width
-//            val height = (resources.displayMetrics.heightPixels * 0.5).toInt() // 50% height
-//            alertDialog.window?.setLayout(width, height)
-//        }
         alertBinding.btnNegative.setOnClickListener {
             alertDialog.dismiss()
             try {
@@ -371,7 +364,7 @@ class NewBenRegFragment : Fragment() {
                         }
 
                     },
-                        sendOtpClickListener = FormInputAdapter.SendOtpClickListener{formId, button, timerInsec, tilEditText, isEnabled, position, otpField ->
+                        sendOtpClickListener = FormInputAdapter.SendOtpClickListener{_, button, timerInsec, tilEditText, isEnabled, position, otpField ->
                        var tempContactNo = ""
                         lifecycleScope.launch {
                             viewModel.formList.collect {
@@ -389,9 +382,18 @@ class NewBenRegFragment : Fragment() {
                         tilEditText.visibility = View.VISIBLE
                         otpField.addTextChangedListener(object : TextWatcher {
                             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                                /*
+                              * Currently not in use
+                              *
+                              * */
                             }
 
                             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                                /*
+                                * Currently not in use
+                                *
+                                * */
+
                             }
 
                             override fun afterTextChanged(s: Editable?) {
@@ -414,9 +416,12 @@ class NewBenRegFragment : Fragment() {
                     },
                         selectImageClickListener  = FormInputAdapter.SelectUploadImageClickListener {
                             isFavClick = false
-                            viewModel.setCurrentDocumentFormId(it)
-                            chooseOptions()
-                            Toast.makeText(requireContext(),it.toString(),Toast.LENGTH_LONG).show()
+                            if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                                viewModel.setCurrentDocumentFormId(it)
+                                chooseOptions()
+                                Toast.makeText(requireContext(),it.toString(),Toast.LENGTH_LONG).show()
+                            }
+
                         },
                         viewDocumentListner = FormInputAdapter.ViewDocumentOnClick {
                             if (recordExists) {
@@ -471,6 +476,10 @@ class NewBenRegFragment : Fragment() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state!!) {
                 State.IDLE -> {
+                    /*
+                              * Currently not in use
+                              *
+                              * */
                 }
 
                 State.SAVING -> {
@@ -593,7 +602,6 @@ class NewBenRegFragment : Fragment() {
 
 
                 12 -> notifyDataSetChanged()
-//notifyItemChanged(viewModel.getIndexOfContactNumber())
             }
         }
     }
@@ -654,12 +662,6 @@ class NewBenRegFragment : Fragment() {
         )
     }
 
-    private fun submitBenForm() {
-        if (validateCurrentPage()) {
-            viewModel.saveForm()
-        }
-    }
-
     private fun showPreview() {
         // run in lifecycleScope since viewModel.getFormPreviewData() is suspend
         lifecycleScope.launch {
@@ -718,7 +720,6 @@ class NewBenRegFragment : Fragment() {
         viewModel.recordExists.observe(viewLifecycleOwner) {
             if (!it && !viewModel.getIsConsentAgreed()) consentAlert.show()
         }
-//        binding.vp2Nhhr.registerOnPageChangeCallback(pageChangeCallback)
 
     }
 

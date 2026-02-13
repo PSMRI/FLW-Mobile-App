@@ -58,8 +58,8 @@ enum class BenStatus {
 // In your BenBasicCache.kt file, REPLACE the old @DatabaseView with this one.
 @DatabaseView(
     viewName = "BEN_BASIC_CACHE",
-    value = "SELECT b.beneficiaryId as benId,b.isMarried,b.noOfAliveChildren, b.noOfChildren, b.doYouHavechildren ,b.isConsent as isConsent, b.motherName as motherName, b.householdId as hhId, b.regDate, b.firstName as benName, b.lastName as benSurname, b.gender, b.dob as dob, b.isDeath,b.isDeathValue,b.dateOfDeath,b.timeOfDeath,b.reasonOfDeath,b.reasonOfDeathId,b.placeOfDeath,b.placeOfDeathId,b.otherPlaceOfDeath,b.isSpouseAdded,b.isChildrenAdded, b.familyHeadRelationPosition as relToHeadId" +
-            ", b.contactNumber as mobileNo, b.fatherName, h.fam_familyHeadName as familyHeadName, b.gen_spouseName as spouseName, b.rchId, b.gen_lastMenstrualPeriod as lastMenstrualPeriod" +
+    value = "SELECT b.beneficiaryId as benId,b.isMarried,b.noOfAliveChildren, b.noOfChildren, b.doYouHavechildren ,b.isConsent as isConsent, b.motherName as motherName, b.householdId as hhId, b.regDate, b.firstName as benName, b.lastName as benSurname, b.gender, b.dob as dob,b.isDeactivate, b.isDeath,b.isDeathValue,b.dateOfDeath,b.timeOfDeath,b.reasonOfDeath,b.reasonOfDeathId,b.placeOfDeath,b.placeOfDeathId,b.otherPlaceOfDeath,b.isSpouseAdded,b.isChildrenAdded, b.familyHeadRelationPosition as relToHeadId" +
+            ", b.contactNumber as mobileNo, b.fatherName,h.fam_familyHeadName as familyHeadName, b.gen_spouseName as spouseName, b.rchId, b.gen_lastMenstrualPeriod as lastMenstrualPeriod" +
             ", b.isHrpStatus as hrpStatus, b.syncState, b.gen_reproductiveStatusId as reproductiveStatusId, b.isKid, b.immunizationStatus" +
             ", b.loc_village_id as villageId, b.abha_healthIdNumber as abhaId" +
             ", b.isNewAbha" + // FIX: Using only one, correct source for isNewAbha.
@@ -193,6 +193,7 @@ data class BenBasicCache(
     var doYouHavechildren: Boolean = false,
     var noOfChildren: Int = 0,
     var noOfAliveChildren: Int = 0,
+    var isDeactivate: Boolean =false
 ) : Parcelable {
     companion object {
         val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
@@ -307,7 +308,8 @@ data class BenBasicCache(
             isMarried = isMarried,
             noOfAliveChildren = noOfAliveChildren,
             noOfChildren = noOfChildren,
-            doYouHavechildren = doYouHavechildren
+            doYouHavechildren = doYouHavechildren,
+            isDeactivate = isDeactivate
 
 
 
@@ -789,36 +791,60 @@ data class BenBasicCache(
     }
 
 }
+
 fun getAgeDisplayString(dob: Long): String {
     val calDob = Calendar.getInstance().apply { timeInMillis = dob }
     val calNow = Calendar.getInstance()
-    val diffDays = TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - dob).toInt()
+
+    val diffDays =
+        TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - dob).toInt()
+
+    if (diffDays < 31) {
+        return "$diffDays Day${if (diffDays != 1) "s" else ""}"
+    }
+
+    var years = calNow.get(Calendar.YEAR) - calDob.get(Calendar.YEAR)
+    var months = calNow.get(Calendar.MONTH) - calDob.get(Calendar.MONTH)
+    var days = calNow.get(Calendar.DAY_OF_MONTH) - calDob.get(Calendar.DAY_OF_MONTH)
+
+    if (days < 0) {
+        months -= 1
+        val tempCal = calNow.clone() as Calendar
+        tempCal.add(Calendar.MONTH, -1)
+        days += tempCal.getActualMaximum(Calendar.DAY_OF_MONTH)
+    }
+
+    if (months < 0) {
+        years -= 1
+        months += 12
+    }
+
     return when {
-        diffDays < 31 -> {
-            "$diffDays Day${if (diffDays > 1) "s" else ""}"
+        years >= 1 -> {
+            buildString {
+                append("$years Year${if (years != 1) "s" else ""}")
+                if (months >= 1) {
+                    append(" $months Month${if (months != 1) "s" else ""}")
+                }
+                if (days >= 1) {
+                    append(" $days Day${if (days != 1) "s" else ""}")
+                }
+            }
         }
         else -> {
-            var years = calNow.get(Calendar.YEAR) - calDob.get(Calendar.YEAR)
-            var months = calNow.get(Calendar.MONTH) - calDob.get(Calendar.MONTH)
-            val days = calNow.get(Calendar.DAY_OF_MONTH) - calDob.get(Calendar.DAY_OF_MONTH)
-
-            if (days < 0) months -= 1
-            if (months < 0) {
-                years -= 1
-                months += 12
-            }
-
-            when {
-                years >= 1 -> {
-                    "$years Year${if (years > 1) "s" else ""} $months Month${if (months > 1) "s" else ""}"
+            buildString {
+                if (months >= 1) {
+                    append("$months Month${if (months != 1) "s" else ""}")
                 }
-                else -> {
-                    "$months Month${if (months > 1) "s" else ""}"
+                if (days >= 1) {
+                    append(" $days Day${if (days != 1) "s" else ""}")
                 }
             }
         }
     }
 }
+
+
 
 @Parcelize
 data class BenBasicDomain(
@@ -865,6 +891,7 @@ data class BenBasicDomain(
     var doYouHavechildren: Boolean = false,
     var noOfChildren: Int = 0,
     var noOfAliveChildren: Int = 0,
+    var isDeactivate: Boolean =false
 
 ) : Parcelable{
     val dobString: String
@@ -1317,6 +1344,7 @@ data class BenRegCache(
     var doYouHavechildren: Boolean = false,
     var noOfChildren: Int = 0,
     var noOfAliveChildren: Int = 0,
+    var isDeactivate: Boolean =false
 
     )  : FormDataModel {
 
@@ -1394,17 +1422,18 @@ data class BenRegCache(
                 }
             } ?: 0,
 
-            reproductiveStatus = genDetails?.reproductiveStatusId?.let {
-                when (it) {
-                    0 -> ""
-                    1 -> "Eligible Couple"
-                    2 -> "Antenatal Mother"
-                    3 -> "Postnatal Mother-Lactating Mother"
-                    4 -> "Menopause Stage"
-                    5 -> "Permanently Sterilised"
-                    else -> "Teenager"
-                }
-            } ?: "",
+            reproductiveStatus = genDetails?.reproductiveStatus.toString(),
+//            reproductiveStatus = genDetails?.reproductiveStatusId?.let {
+//                when (it) {
+//                    0 -> ""
+//                    1 -> "Eligible Couple"
+//                    2 -> "Antenatal Mother"
+//                    3 -> "Postnatal Mother-Lactating Mother"
+//                    4 -> "Menopause Stage"
+//                    5 -> "Permanently Sterilised"
+//                    else -> "Teenager"
+//                }
+//            } ?: "",
 //            noOfDaysForDelivery = if (genDetails?.reproductiveStatusId ==2) getNumDaysForDeliveryFromLastMenstrualPeriod(
 //                genDetails?.lastMenstrualPeriod
 //            ) else null,
@@ -1511,6 +1540,7 @@ data class BenRegCache(
             isChildrenAdded = isChildrenAdded,
             doYouHavechildren = doYouHavechildren,
             isSpouseAdded = isSpouseAdded,
+            isDeactivate = isDeactivate
 
 
         )

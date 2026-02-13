@@ -55,6 +55,10 @@ class MaaMeetingFormViewModel @Inject constructor(
             if (recordExists) {
                 dataset.meetingDate.value = meeting!!.meetingDate
                 dataset.meetingPlace.value = meeting.place
+                dataset.villageName.value = meeting.villageName
+                dataset.noOfPW.value = meeting.noOfPragnentWomen
+                dataset.noOfLM.value = meeting.noOfLactingMother
+                dataset.duringBreastfeeding.value = valueToIndexCsv(meeting.mitaninActivityCheckList,dataset.duringBreastfeeding.entries!!)
                 dataset.participants.value = meeting.participants?.toString()
                 val imgs = meeting.meetingImages ?: emptyList()
                 dataset.upload1.value = imgs.getOrNull(0)
@@ -94,6 +98,10 @@ class MaaMeetingFormViewModel @Inject constructor(
             val entity = repo.buildEntity(
                 date = dataset.meetingDate.value,
                 place = dataset.meetingPlace.value,
+                villageName = dataset.villageName.value,
+                noOfPragnentWoment = dataset.noOfPW.value?.takeIf { it.isNotEmpty() } ?: "0",
+                noOfLactingMother = dataset.noOfLM.value?.takeIf { it.isNotEmpty() } ?: "0",
+                mitaninActivityCheckList = toCsv(dataset.duringBreastfeeding.value, dataset.duringBreastfeeding.entries!!),
                 participants = dataset.participants.value?.toIntOrNull(),
                 u1 = dataset.upload1.value,
                 u2 = dataset.upload2.value,
@@ -101,13 +109,37 @@ class MaaMeetingFormViewModel @Inject constructor(
                 u4 = dataset.upload4.value,
                 u5 = dataset.upload5.value
             )
+
+
             repo.save(entity)
             repo.tryUpsync()
             repo.downSyncAndPersist()
         }
     }
 
+
     suspend fun hasMeetingInSameQuarter(date: String?): Boolean {
-        return repo.hasMeetingInSameQuarter(date)
+        return repo.isThreeMonthsPassedSinceLastMeeting(date)
     }
+    fun toCsv(selected: String?, entries: Array<String>): String {
+        if (selected.isNullOrEmpty()) return ""
+        return selected.split("|")
+            .mapNotNull { it.toIntOrNull() }
+            .filter { it in entries.indices }
+            .map { entries[it] }
+            .joinToString("|")
+    }
+    fun valueToIndexCsv(
+        valueCsv: String?,
+        entries: Array<String>
+    ): String {
+        if (valueCsv.isNullOrEmpty()) return ""
+        val values = valueCsv.split("|").map { it.trim() }
+        return values.mapNotNull { value ->
+            val index = entries.indexOfFirst { it.trim() == value }
+            if (index >= 0) index else null
+        }.joinToString("|")
+    }
+
+
 }

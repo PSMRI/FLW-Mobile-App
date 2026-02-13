@@ -48,6 +48,7 @@
     <string name="cbac_Inability_close_eyelid">Inability to close eyelid</string>
     <string name="cbac_diff_holding_objects">Difficulty in holding objects with fingers</string>
     <string name="cbac_Weekness_in_feet">Weakness in feet that causes difficulty in walking</string>
+    <string name="cbac_is_leprosy_suspected">Any Leprosy symptoms present?</string>
     <string name="cbac_lumpbrest">Lump in the breast</string>
     <string name="cbac_nipple">Blood stained discharge from the nipple</string>
     <string name="cbac_breast">Change in shape and size of breast</string>
@@ -201,6 +202,14 @@
     <string-array name="tb_test_result">
         <item>Positive</item>
         <item>Negative</item>
+    </string-array>
+    <string-array name="tb_sputum_sample_submitted_at">
+        <item>HWC</item>
+        <item>PHC</item>
+        <item>CHC</item>
+        <item>District Hospital</item>
+        <item>Govt. Medical College</item>
+
     </string-array>
     <string-array name="cbac_age">
         <item>0-29 years</item>

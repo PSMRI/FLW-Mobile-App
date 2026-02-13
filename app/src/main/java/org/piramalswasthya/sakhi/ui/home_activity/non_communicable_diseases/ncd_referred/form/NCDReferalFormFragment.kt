@@ -35,8 +35,9 @@ class NCDReferalFormFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.benId.text = viewModel.benId.toString()
 
+
+        binding.benId.text = viewModel.benId.toString()
         viewModel.benName.observe(viewLifecycleOwner) {
             binding.tvBenName.text = it
         }
@@ -79,11 +80,14 @@ class NCDReferalFormFragment : Fragment() {
 
                     val referral = viewModel.referalCache
                     val json = Gson().toJson(referral)
-
                     findNavController()
                         .previousBackStackEntry
                         ?.savedStateHandle
                         ?.set("REFERRAL_RESULT", json)
+                    findNavController()
+                        .previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.set("REFERRAL_DONE", viewModel.referraltype)
                     findNavController().navigateUp()
                 }
 
@@ -118,8 +122,14 @@ class NCDReferalFormFragment : Fragment() {
         activity?.let {
             (it as HomeActivity).updateActionBar(
                 R.drawable.ic__ncd_list,
-                getString(R.string.ncd_refer_form)
-            )
+                getActionBarTitle()            )
+        }
+    }
+
+    private fun getActionBarTitle(): String {
+        return when (viewModel.referraltype.uppercase()) {
+            "MATERNAL" -> getString(R.string.hwc_refer_form)
+            else -> getString(R.string.ncd_refer_form)
         }
     }
 

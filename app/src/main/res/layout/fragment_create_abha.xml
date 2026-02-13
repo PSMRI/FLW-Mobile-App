@@ -123,11 +123,6 @@
                 android:padding="@dimen/padding_normal"
                 android:gravity="center_horizontal"
                 android:visibility="gone">
-                <!--                <TextView-->
-                <!--                    android:layout_width="30dp"-->
-                <!--                    android:layout_height="wrap_content"-->
-                <!--                    android:background="@drawable/ic_check_circle">-->
-                <!--                </TextView>-->
                 <TextView
                     android:id="@+id/abh_ben_mapped_txt"
                     android:layout_width="match_parent"

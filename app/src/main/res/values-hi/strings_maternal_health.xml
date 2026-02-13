@@ -7,6 +7,15 @@
         <item>स्वतः</item>
         <item>Incomplete</item>
     </string-array>
+    <string-array name="place_of_anc_array">
+        <item>Sub-Centre</item>
+        <item>VHND/VHSND</item>
+        <item>PHC</item>
+        <item>PMSMA Visit</item>
+        <item>CHC</item>
+        <item>District Hospital</item>
+        <item>Medical College Hospital</item>
+    </string-array>
     <string-array name="abortion_place_array">
         <item>Home</item>
         <item>Subcenter</item>
@@ -118,7 +127,7 @@
     <string name="pmsma_iron_folic_acid">लोहा और फोलिक एसिड</string>
     <string name="pmsma_calcium_supplementation">कैल्शियम सप्लीमेंटेशन</string>
     <string name="pmsma_tetanus_toxoid">टीटेनस टॉक्सॉयड</string>
-    <string name="pmsma_lmp">अंतिम माहवारी की तिथि</string>
+    <string name="pmsma_lmp">अंतिम माहवारी (LMP) की तिथि</string>
     <string name="pmsma_last_mestrual_period">अंतिम माहवारी की तिथि</string>
     <string name="pmsma_expected_delivery_date">प्रसव की अपेक्षित तिथि</string>
     <string name="pmsma_high_risk_factors">उच्च जोखिम के कारकों की पहचान</string>
@@ -154,7 +163,7 @@
     <string name="do_death_cause">मौत के संभावित कारण</string>
     <string name="do_other_death_cause">अन्य मौत के कारण</string>
     <string name="do_other_delivery_complication">अन्य प्रसव समस्या</string>
-    <string name="do_delivery_outcome">प्रसव के परिणाम</string>
+    <string name="do_delivery_outcome">पजन्म लेने वाले शिशुओं की कुल संख्या</string>
     <string name="do_live_birth">जीवित जन्म</string>
     <string name="do_still_birth">स्थित जन्म</string>
     <string name="do_discharge_date">निष्कर्षण की तारीख</string>
@@ -176,7 +185,6 @@
     <string-array name="do_type_of_delivery_array">
         <item>सामान्य</item>
         <item>सिजेरियन</item>
-        <item>सहायक</item>
     </string-array>
     <string-array name="do_had_complications_array">
         <item>हाँ</item>
@@ -367,5 +375,5 @@
     <string name="date_no">दिनांक: %1$s</string>
     <string name="round_no">राउंड: %1d</string>
     <string name="pmsma_edd">संभावित प्रसव</string>
-    <string name="string_edd">संभावित प्रसव तिथि</string>
+    <string name="string_edd">प्रसव की अनुमानित तिथि (EDD)</string>
 </resources>

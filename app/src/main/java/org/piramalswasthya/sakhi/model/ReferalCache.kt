@@ -20,7 +20,7 @@ import org.piramalswasthya.sakhi.network.NCDReferalDTO
         onUpdate = ForeignKey.CASCADE,
         onDelete = ForeignKey.CASCADE
     )],
-    indices = [Index(name = "ind_refcache", value = ["benId"/* "hhId"*/], unique = true)]
+    indices = [Index(name = "ind_refcache", value = ["benId"/* "hhId"*/, "referralReason",], unique = true)]
 )
 data class ReferalCache(
     @PrimaryKey(autoGenerate = true)
@@ -38,6 +38,7 @@ data class ReferalCache(
     var visitCode: Long? = 0L,
     var providerServiceMapID: Int? = 0,
     var createdBy: String? = "",
+    var type: String? = null,
     var isSpecialist: Boolean? = false,
     var syncState: SyncState
 ) : FormDataModel {
@@ -59,6 +60,7 @@ data class ReferalCache(
             benVisitID = benVisitID,
             visitCode = visitCode,
             beneficiaryRegID = benId,
+            type = type
 
 
         )

@@ -28,6 +28,7 @@ import org.piramalswasthya.sakhi.repositories.EcrRepo
 import org.piramalswasthya.sakhi.repositories.HouseholdRepo
 import org.piramalswasthya.sakhi.repositories.UserRepo
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.NewBenRegFragmentArgs
+import org.piramalswasthya.sakhi.utils.Log
 import timber.log.Timber
 import java.util.Calendar
 import javax.inject.Inject
@@ -136,10 +137,10 @@ class NewChildBenViewModel @Inject constructor(
 
         val benForEcr = ecrRepo.getBenFromId(SelectedbenIdFromArgs)
         val savedEcr = ecrRepo.getSavedRecord(SelectedbenIdFromArgs)
-        val recordExistsLocal = savedEcr != null
+//        val recordExistsLocal = savedEcr != null
         if (savedEcr != null) {
             ecrForm = savedEcr
-            oldChildCount = ecrForm!!.noOfLiveChildren
+
         } else if (benForEcr != null) {
             val calDob = Calendar.getInstance().apply {
                 timeInMillis = benForEcr.dob
@@ -156,7 +157,6 @@ class NewChildBenViewModel @Inject constructor(
         } else {
             oldChildCount = 0
         }
-        _recordExists.postValue(recordExistsLocal)
 
         ben = benRepo.getBeneficiaryRecord(SelectedbenIdFromArgs, hhId)!!
         _isDeath.postValue(ben.isDeath ?: false)
@@ -167,7 +167,14 @@ class NewChildBenViewModel @Inject constructor(
         val familyList = benRepo.getBenListFromHousehold(hhId)
         val hoFBen = familyList.firstOrNull { it.beneficiaryId == household.benId }
         val selectedben = familyList.firstOrNull { it.beneficiaryId == SelectedbenIdFromArgs }
+        val childList = benRepo.getChildBenListFromHousehold(hhId,SelectedbenIdFromArgs,selectedben?.firstName)
+       val  recordExistsLocal = childList.isNotEmpty()
+        oldChildCount = childList.size
+        val above15Childcount = benRepo.getChildAbove15(hhId, SelectedbenIdFromArgs,selectedben?.firstName)
 
+        _recordExists.postValue(recordExistsLocal)
+
+        Log.e("DATANEW",childList.toString())
         dataset.setUpPage(
             if (recordExistsLocal) ecrForm else null,
             household = household,
@@ -178,7 +185,9 @@ class NewChildBenViewModel @Inject constructor(
                 it.familyHeadRelationPosition == 5 || it.familyHeadRelationPosition == 6
             },
             selectedben,
-            isAddspouse
+            isAddspouse,
+            childList,
+            above15Childcount
         )
     }
 
@@ -190,7 +199,7 @@ class NewChildBenViewModel @Inject constructor(
                 try {
                     _state.postValue(State.SAVING)
 
-                    val childCount = dataset.noOfLiveChildren.value?.toIntOrNull() ?: 0
+                    val childCount = dataset.noOfChildren.value?.toIntOrNull() ?: 0
 
 
                     for (i in (oldChildCount + 1)..childCount) {
@@ -302,9 +311,6 @@ class NewChildBenViewModel @Inject constructor(
         return dataset.getIndexOfChildren()
     }
 
-    fun getIndexOfLiveChildren(): Int {
-        return dataset.getIndexOfLiveChildren()
-    }
 
     fun getIndexOfMaleChildren(): Int {
         return dataset.getIndexOfMaleChildren()

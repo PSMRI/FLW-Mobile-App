@@ -61,6 +61,9 @@ import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.EyeSurgeryFo
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FilariaMDAFormResponseJsonDao
 import org.piramalswasthya.sakhi.helpers.DatabaseKeyManager
 import org.piramalswasthya.sakhi.helpers.RoomDbEncryptionHelper
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FilariaMdaCampaignJsonDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.NCDReferalFormResponseJsonDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseANCJsonDao
 import org.piramalswasthya.sakhi.model.AHDCache
 import org.piramalswasthya.sakhi.model.AESScreeningCache
 import org.piramalswasthya.sakhi.model.AdolescentHealthCache
@@ -109,8 +112,11 @@ import org.piramalswasthya.sakhi.model.TBSuspectedCache
 import org.piramalswasthya.sakhi.model.UwinCache
 import org.piramalswasthya.sakhi.model.MaaMeetingEntity
 import org.piramalswasthya.sakhi.model.ReferalCache
+import org.piramalswasthya.sakhi.model.TBConfirmedTreatmentCache
 import org.piramalswasthya.sakhi.model.VHNCCache
 import org.piramalswasthya.sakhi.model.Vaccine
+import org.piramalswasthya.sakhi.model.PulsePolioCampaignCache
+import org.piramalswasthya.sakhi.model.ORSCampaignCache
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.InfantEntity
@@ -118,8 +124,11 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.hbyc.FormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.VHNDCache
 import org.piramalswasthya.sakhi.model.dynamicEntity.CUFYFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FilariaMDA.FilariaMDAFormResponseJsonEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.NCDReferalFormResponseJsonEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.anc.ANCFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.ben_ifa.BenIfaFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.eye_surgery.EyeSurgeryFormResponseJsonEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.filariaaMdaCampaign.FilariaMDACampaignFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoNetFormResponseJsonEntity
 
 @Database(
@@ -160,6 +169,8 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         PHCReviewMeetingCache::class,
         AHDCache::class,
         DewormingCache::class,
+        PulsePolioCampaignCache::class,
+        ORSCampaignCache::class,
         MalariaScreeningCache::class,
         AESScreeningCache::class,
         KalaAzarScreeningCache::class,
@@ -179,16 +190,20 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         FormResponseJsonEntity::class,
         FormResponseJsonEntityHBYC::class,
         CUFYFormResponseJsonEntity::class,
+        NCDReferalFormResponseJsonEntity::class,
         GeneralOPEDBeneficiary::class,
         ReferalCache::class,
         UwinCache::class,
         EyeSurgeryFormResponseJsonEntity::class,
         BenIfaFormResponseJsonEntity::class,
         MosquitoNetFormResponseJsonEntity::class,
-        FilariaMDAFormResponseJsonEntity::class
+        FilariaMDAFormResponseJsonEntity::class,
+        ANCFormResponseJsonEntity::class,
+        FilariaMDACampaignFormResponseJsonEntity::class,
+        TBConfirmedTreatmentCache::class
     ],
     views = [BenBasicCache::class],
-    version = 45, exportSchema = false
+    version = 54, exportSchema = false
 )
 
 @TypeConverters(
@@ -241,12 +256,16 @@ abstract class InAppDb : RoomDatabase() {
     abstract fun formResponseDao(): FormResponseDao
     abstract fun CUFYFormResponseDao(): CUFYFormResponseDao
     abstract fun CUFYFormResponseJsonDao(): CUFYFormResponseJsonDao
+    abstract fun NCDReferalFormResponseJsonDao(): NCDReferalFormResponseJsonDao
     abstract fun formResponseJsonDao(): FormResponseJsonDao
     abstract fun formResponseJsonDaoHBYC(): FormResponseJsonDaoHBYC
+
+    abstract fun formResponseJsonDaoANC() : FormResponseANCJsonDao
     abstract fun formResponseJsonDaoEyeSurgery(): EyeSurgeryFormResponseJsonDao
     abstract fun formResponseJsonDaoBenIfa(): BenIfaFormResponseJsonDao
     abstract fun formResponseMosquitoNetJsonDao(): MosquitoNetFormResponseDao
     abstract fun formResponseFilariaMDAJsonDao(): FilariaMDAFormResponseJsonDao
+    abstract fun formResponseFilariaMDACampaignJsonDao(): FilariaMdaCampaignJsonDao
 
     abstract val syncDao: SyncDao
 
@@ -261,6 +280,279 @@ abstract class InAppDb : RoomDatabase() {
                 it.execSQL("alter table BENEFICIARY add column isConsent BOOL")
 
             })
+          /*  val MIGRATION_52_53 = object : Migration(52, 53) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+
+
+            }*/
+
+
+            val MIGRATION_53_54 = object : Migration(53, 54) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("ALTER TABLE TB_SUSPECTED ADD COLUMN visitLabel TEXT")
+                    database.execSQL("ALTER TABLE TB_SUSPECTED ADD COLUMN typeOfTBCase TEXT")
+                    database.execSQL("ALTER TABLE TB_SUSPECTED ADD COLUMN reasonForSuspicion TEXT")
+
+                    database.execSQL("ALTER TABLE TB_SUSPECTED ADD COLUMN hasSymptoms INTEGER NOT NULL DEFAULT 0")
+
+                    database.execSQL("ALTER TABLE TB_SUSPECTED ADD COLUMN isChestXRayDone INTEGER")
+                    database.execSQL("ALTER TABLE TB_SUSPECTED ADD COLUMN chestXRayResult TEXT")
+                    database.execSQL("ALTER TABLE TB_SUSPECTED ADD COLUMN referralFacility TEXT")
+
+                    database.execSQL("ALTER TABLE TB_SUSPECTED ADD COLUMN isTBConfirmed INTEGER")
+                    database.execSQL("ALTER TABLE TB_SUSPECTED ADD COLUMN isDRTBConfirmed INTEGER")
+
+                    database.execSQL("ALTER TABLE TB_SUSPECTED ADD COLUMN isConfirmed INTEGER NOT NULL DEFAULT 0")
+                }
+            }
+
+            val MIGRATION_52_53 = object : Migration(52, 53) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL(
+                        """
+            CREATE UNIQUE INDEX IF NOT EXISTS index_DewormingMeeting_dewormingDate
+            ON DewormingMeeting(dewormingDate)
+            """.trimIndent()
+                    )
+
+                    database.execSQL(
+                        """
+            CREATE TABLE IF NOT EXISTS FILARIA_MDA_CAMPAIGN_HISTORY (
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                visitDate TEXT NOT NULL,
+                visitYear TEXT NOT NULL,
+                formId TEXT NOT NULL,
+                version INTEGER NOT NULL,
+                formDataJson TEXT NOT NULL,
+                isSynced INTEGER,
+                createdAt INTEGER NOT NULL,
+                syncedAt TEXT,
+                syncState TEXT NOT NULL DEFAULT 'UNSYNCED'
+            )
+            """.trimIndent()
+                    )
+
+                    database.execSQL(
+                        """
+            CREATE UNIQUE INDEX IF NOT EXISTS
+            index_FILARIA_MDA_CAMPAIGN_HISTORY_formId_visitYear
+            ON FILARIA_MDA_CAMPAIGN_HISTORY(formId, visitYear)
+            """.trimIndent()
+                    )
+
+                    database.execSQL(
+                        """
+            CREATE INDEX IF NOT EXISTS
+            index_FILARIA_MDA_CAMPAIGN_HISTORY_visitDate
+            ON FILARIA_MDA_CAMPAIGN_HISTORY(visitDate)
+            """.trimIndent()
+                    )
+                }
+
+
+            }
+
+
+
+            val MIGRATION_51_52 = object : Migration(51, 52) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+
+                    database.execSQL(
+                        """
+            CREATE TABLE IF NOT EXISTS MAA_MEETING (
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                meetingDate TEXT,
+                place TEXT,
+                villageName TEXT,
+                mitaninActivityCheckList TEXT,
+                noOfPragnentWomen TEXT,
+                noOfLactingMother TEXT,
+                participants INTEGER,
+                ashaId INTEGER,
+                meetingImages TEXT,
+                createdAt INTEGER NOT NULL DEFAULT 0,
+                updatedAt INTEGER NOT NULL DEFAULT 0,
+                syncState TEXT NOT NULL DEFAULT 'UNSYNCED'
+            )
+            """.trimIndent()
+                    )
+
+                    database.execSQL(
+                        "CREATE UNIQUE INDEX IF NOT EXISTS index_MAA_MEETING_id ON MAA_MEETING(id)"
+                    )
+                }
+            }
+
+
+            val MIGRATION_50_51 = Migration(50, 51, migrate = {
+                it.execSQL("alter table PHCReviewMeeting add column villageName TEXT")
+                it.execSQL("alter table PHCReviewMeeting add column mitaninHistory TEXT")
+                it.execSQL("alter table PHCReviewMeeting add column mitaninActivityCheckList TEXT")
+                it.execSQL("alter table PHCReviewMeeting add column placeId INTEGER DEFAULT 0")
+                it.execSQL(
+                    """
+            CREATE UNIQUE INDEX IF NOT EXISTS index_PHCReviewMeeting_id
+            ON PHCReviewMeeting(id)
+            """.trimIndent()
+                )
+
+            })
+
+
+         
+            val MIGRATION_49_50 = object : Migration(49, 50) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+
+                   database.execSQL(
+                        "ALTER TABLE VHND ADD COLUMN vhndPlaceId INTEGER DEFAULT 0"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE VHND ADD COLUMN pregnantWomenAnc TEXT"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE VHND ADD COLUMN lactatingMothersPnc TEXT"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE VHND ADD COLUMN childrenImmunization TEXT"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE VHND ADD COLUMN knowledgeBalancedDiet TEXT"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE VHND ADD COLUMN careDuringPregnancy TEXT"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE VHND ADD COLUMN importanceBreastfeeding TEXT"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE VHND ADD COLUMN complementaryFeeding TEXT"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE VHND ADD COLUMN hygieneSanitation TEXT"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE VHND ADD COLUMN familyPlanningHealthcare TEXT"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE VHND ADD COLUMN selectAllEducation INTEGER DEFAULT 0"
+                    )
+                    
+                    // ncd_refer
+                  
+                    database.execSQL("DROP TABLE IF EXISTS ncd_referal_all_visit")
+
+                    database.execSQL(
+                        """
+            CREATE TABLE IF NOT EXISTS `ncd_referal_all_visit` (
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                `benId` INTEGER NOT NULL,
+                `hhId` INTEGER NOT NULL,
+                `visitNo` INTEGER NOT NULL,
+                `followUpNo` INTEGER NOT NULL,
+                `treatmentStartDate` TEXT NOT NULL,
+                `followUpDate` TEXT,
+                `diagnosisCodes` TEXT,
+                `formId` TEXT NOT NULL,
+                `version` INTEGER NOT NULL,
+                `formDataJson` TEXT NOT NULL,
+                `isSynced` INTEGER NOT NULL DEFAULT 0,
+                `createdAt` INTEGER NOT NULL,
+                `updatedAt` INTEGER NOT NULL,
+                `syncedAt` INTEGER
+            )
+            """.trimIndent()
+                    )
+
+                    database.execSQL(
+                        """
+            CREATE INDEX IF NOT EXISTS `index_ncd_visit_ben_hh`
+            ON `ncd_referal_all_visit` (`benId`, `hhId`)
+            """.trimIndent()
+                    )
+
+                    database.execSQL(
+                        """
+            CREATE INDEX IF NOT EXISTS `index_ncd_visit_followup`
+            ON `ncd_referal_all_visit` (`benId`, `hhId`, `visitNo`, `followUpNo`)
+            """.trimIndent()
+                    )
+                }
+            }
+
+
+            val MIGRATION_48_49 = object : Migration(48, 49) {
+                override fun migrate(db: SupportSQLiteDatabase) {
+
+                    val columns = listOf(
+                        "villageName TEXT",
+                        "anm INTEGER DEFAULT 0",
+                        "aww INTEGER DEFAULT 0",
+                        "noOfPregnantWomen INTEGER DEFAULT 0",
+                        "noOfLactatingMother INTEGER DEFAULT 0",
+                        "noOfCommittee INTEGER DEFAULT 0",
+                        "followupPrevious INTEGER"
+                    )
+
+                    columns.forEach { columnDef ->
+                        db.execSQL("ALTER TABLE VHNC ADD COLUMN $columnDef")
+                    }
+                }
+            }
+
+
+
+            val MIGRATION_47_48 = Migration(47, 48) {
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN recurrentUlcerationId INTEGER DEFAULT 1")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN recurrentTinglingId INTEGER DEFAULT 1")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN hypopigmentedPatchId INTEGER DEFAULT 1")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN thickenedSkinId INTEGER DEFAULT 1")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN skinNodulesId INTEGER DEFAULT 1")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN skinPatchDiscolorationId INTEGER DEFAULT 1")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN recurrentNumbnessId INTEGER DEFAULT 1")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN clawingFingersId INTEGER DEFAULT 1")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN tinglingNumbnessExtremitiesId INTEGER DEFAULT 1")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN inabilityCloseEyelidId INTEGER DEFAULT 1")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN difficultyHoldingObjectsId INTEGER DEFAULT 1")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN weaknessFeetId INTEGER DEFAULT 1")
+
+                // ===== Symptom String fields =====
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN recurrentUlceration TEXT")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN recurrentTingling TEXT")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN hypopigmentedPatch TEXT")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN thickenedSkin TEXT")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN skinNodules TEXT")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN skinPatchDiscoloration TEXT")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN recurrentNumbness TEXT")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN clawingFingers TEXT")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN tinglingNumbnessExtremities TEXT")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN inabilityCloseEyelid TEXT")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN difficultyHoldingObjects TEXT")
+                it.execSQL("ALTER TABLE LEPROSY_SCREENING ADD COLUMN weaknessFeet TEXT")
+
+            }
+            val MIGRATION_46_47 = Migration(46, 47) {
+                it.execSQL(
+                    """ALTER TABLE NCD_REFER 
+                    ADD COLUMN type TEXT
+                    """.trimIndent()
+                )
+
+            }
+
+            val MIGRATION_45_46 = Migration(45, 46) {
+                it.execSQL("ALTER TABLE PREGNANCY_ANC  ADD COLUMN placeOfAnc TEXT")
+                it.execSQL("ALTER TABLE PREGNANCY_ANC  ADD COLUMN placeOfAncId INTEGER")
+            }
 
             val MIGRATION_44_45 = object : Migration(44, 45) { // replace oldVersion and newVersion
                 override fun migrate(database: SupportSQLiteDatabase) {
@@ -1717,7 +2009,18 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_41_42,
                         MIGRATION_42_43,
                         MIGRATION_43_44,
-                        MIGRATION_44_45
+                        MIGRATION_44_45,
+                        MIGRATION_45_46,
+                        MIGRATION_46_47,
+                        MIGRATION_47_48,
+                        MIGRATION_48_49,
+                        MIGRATION_49_50,
+                        MIGRATION_50_51,
+                        MIGRATION_51_52,
+                        MIGRATION_52_53,
+                        MIGRATION_53_54
+                        
+
                     ).build()
 
                     INSTANCE = instance

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
 
@@ -9,11 +8,5 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-<!--        <com.rajat.pdfviewer.PdfRendererView-->
-<!--            android:id="@+id/pdfView"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            app:pdfView_divider="@drawable/pdf_viewer_divider"-->
-<!--            app:pdfView_showDivider="false" />-->
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

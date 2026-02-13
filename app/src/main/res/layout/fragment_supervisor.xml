@@ -15,25 +15,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-<!--        <com.google.android.material.textfield.TextInputLayout-->
-<!--            android:id="@+id/til_select_village"-->
-<!--            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:hint="@string/til_hint_selected_village"-->
-<!--            android:padding="@dimen/padding_normal"-->
-<!--            app:layout_constraintTop_toTopOf="parent">-->
-
-<!--            <com.google.android.material.textfield.TextInputEditText-->
-<!--                android:id="@+id/et_select_village"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:drawableEnd="@drawable/ic_edit"-->
-<!--                android:focusable="false"-->
-<!--                android:inputType="textNoSuggestions"-->
-<!--                tools:text="NONE" />-->
-<!--        </com.google.android.material.textfield.TextInputLayout>-->
-
         <LinearLayout
             android:id="@+id/ll_date_range"
             android:layout_width="match_parent"

@@ -62,23 +62,23 @@ class NcdListFragment : Fragment() {
         binding.btnNextPage.visibility = View.GONE
         val benAdapter = BenListAdapter(
             BenListAdapter.BenClickListener(
-                { hhId, benId, isKid ->
+                { item,hhId, benId, isKid ->
                 },
-                clickedWifeBen = { hhId, benId, relToHeadId ->
+                clickedWifeBen = {item, hhId, benId, relToHeadId ->
 
                 },
-                clickedHusbandBen = { hhId, benId, isKrelToHeadIdid ->
+                clickedHusbandBen = { item,hhId, benId, relToHeadId  ->
 
                 },
                 clickedChildben = {
-                        hhId, benId, isKrelToHeadIdid ->
+                        item, hhId, benId, relToHeadId  ->
                 },
-                {
+                {item,hhid->
 
                 },
-                { benId, hhId ->
+                { item,benId, hhId ->
                 },
-                { benId, hhId, isViewMode, isIFA ->
+                { item,benId, hhId, isViewMode, isIFA ->
                 },
                 {
                     try {
@@ -92,6 +92,8 @@ class NcdListFragment : Fragment() {
                         }
                         Toast.makeText(requireContext(), "Please allow permissions first", Toast.LENGTH_SHORT).show()
                     }
+                },{
+
                 }
 
             ),
