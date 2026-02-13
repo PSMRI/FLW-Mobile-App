@@ -46,6 +46,7 @@ class PwAncFormViewModel @Inject constructor(
 
     val benId = PwAncFormFragmentArgs.fromSavedStateHandle(savedStateHandle).benId
     val hhID = PwAncFormFragmentArgs.fromSavedStateHandle(savedStateHandle).hhId.toString()
+    val fromPmsma = PwAncFormFragmentArgs.fromSavedStateHandle(savedStateHandle).fromPmsma
     private val visitNumber =
         PwAncFormFragmentArgs.fromSavedStateHandle(savedStateHandle).visitNumber
     val lastItemClick =
@@ -108,6 +109,7 @@ class PwAncFormViewModel @Inject constructor(
                 ben,
                 registerRecord,
                 lastAnc,
+                fromPmsma,
                 if (recordExists.value == true) ancCache else null
             )
 

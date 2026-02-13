@@ -126,6 +126,7 @@ class EligibleCoupleRegViewModel @Inject constructor(
 
             } ?: run {
                 _recordExists.value = false
+                _isEcrCompleted.value = false
             }
 
             dataset.setUpPage(
