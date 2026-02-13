@@ -1,67 +1,107 @@
-name: FLW Android Build (Manual)
+name: FLW Android Build
 
 on:
   workflow_dispatch:
     inputs:
+      project:
+        description: "Project to build"
+        required: true
+        type: choice
+        options:
+          - sakshamStag
+          - sakshamUat
+          - saksham
+          - xushrukha
+          - niramay
+          - mitaninStag
+          - mitaninUat
+          - mitanin
+
       branch:
         description: "Git branch to build"
         required: true
         default: main
         type: string
 
-      environment:
-        description: "Environment to run build"
-        required: true
-        default: uat
-        type: choice
-        options:
-          - uat
-          - SAKSHAM_UAT
-          - SAKSHAM_STAG
-          - NIRAMAY_PRODUCTION
-          - XUSHRUKHA_PRODUCTION
-
-      variant:
-        description: "App variant"
-        required: true
-        default: sakshamDebug
-        type: string
-
-      build_type:
-        description: "Build type"
-        required: true
-        default: debug
-        type: choice
-        options:
-          - debug
-          - release
-
       version:
-        description: "Build version (example: 2.4.1)"
+        description: "Version name (example: 2.5.0)"
         required: true
         type: string
 
 jobs:
+  resolve-config:
+    runs-on: ubuntu-latest
+    outputs:
+      flavor: ${{ steps.resolve.outputs.flavor }}
+      environment: ${{ steps.resolve.outputs.environment }}
+      build_type: ${{ steps.resolve.outputs.build_type }}
+    steps:
+      - name: Resolve project configuration
+        id: resolve
+        run: |
+          case "${{ inputs.project }}" in
+            sakshamStag)
+              echo "flavor=SakshamStag" >> $GITHUB_OUTPUT
+              echo "environment=SAKSHAM_STAG" >> $GITHUB_OUTPUT
+              echo "build_type=debug" >> $GITHUB_OUTPUT
+              ;;
+            sakshamUat)
+              echo "flavor=SakshamUat" >> $GITHUB_OUTPUT
+              echo "environment=SAKSHAM_UAT" >> $GITHUB_OUTPUT
+              echo "build_type=debug" >> $GITHUB_OUTPUT
+              ;;
+            saksham)
+              echo "flavor=Saksham" >> $GITHUB_OUTPUT
+              echo "environment=SAKSHAM_PRODUCTION" >> $GITHUB_OUTPUT
+              echo "build_type=release" >> $GITHUB_OUTPUT
+              ;;
+            xushrukha)
+              echo "flavor=Xushrukha" >> $GITHUB_OUTPUT
+              echo "environment=XUSHRUKHA_PRODUCTION" >> $GITHUB_OUTPUT
+              echo "build_type=release" >> $GITHUB_OUTPUT
+              ;;
+            niramay)
+              echo "flavor=Niramay" >> $GITHUB_OUTPUT
+              echo "environment=NIRAMAY_PRODUCTION" >> $GITHUB_OUTPUT
+              echo "build_type=release" >> $GITHUB_OUTPUT
+              ;;
+            mitaninStag)
+              echo "flavor=MitaninStag" >> $GITHUB_OUTPUT
+              echo "environment=MITANIN_STAG" >> $GITHUB_OUTPUT
+              echo "build_type=debug" >> $GITHUB_OUTPUT
+              ;;
+            mitaninUat)
+              echo "flavor=MitaninUat" >> $GITHUB_OUTPUT
+              echo "environment=MITANIN_UAT" >> $GITHUB_OUTPUT
+              echo "build_type=debug" >> $GITHUB_OUTPUT
+              ;;
+            mitanin)
+              echo "flavor=Mitanin" >> $GITHUB_OUTPUT
+              echo "environment=MITANIN_PRODUCTION" >> $GITHUB_OUTPUT
+              echo "build_type=release" >> $GITHUB_OUTPUT
+              ;;
+            *)
+              echo "::error::Unknown project: ${{ inputs.project }}"
+              exit 1
+              ;;
+          esac
+
+      - name: Display resolved configuration
+        run: |
+          echo "Project: ${{ inputs.project }}"
+          echo "Flavor: ${{ steps.resolve.outputs.flavor }}"
+          echo "Environment: ${{ steps.resolve.outputs.environment }}"
+          echo "Build Type: ${{ steps.resolve.outputs.build_type }}"
+          echo "Branch: ${{ inputs.branch }}"
+          echo "Version: ${{ inputs.version }}"
+
   flw-build:
+    needs: resolve-config
     uses: ./.github/workflows/build-distribute.yml
     with:
       branch: ${{ inputs.branch }}
-      environment: ${{ inputs.environment }}
-      variant: ${{ inputs.variant }}
-      build_type: ${{ inputs.build_type }}
+      environment: ${{ needs.resolve-config.outputs.environment }}
+      flavor: ${{ needs.resolve-config.outputs.flavor }}
+      build_type: ${{ needs.resolve-config.outputs.build_type }}
       version: ${{ inputs.version }}
-    secrets:
-      FIREBASE_CREDENTIALS_JSON: ${{ secrets.FIREBASE_CREDENTIALS_JSON }}
-      GOOGLE_PLAY_JSON_KEY: ${{ secrets.GOOGLE_PLAY_JSON_KEY }}
-      KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
-      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-      KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-      KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-      BASE_TMC_URL: ${{ secrets.BASE_TMC_URL }}
-      BASE_AMRIT_URL: ${{ secrets.BASE_AMRIT_URL }}
-      BASE_FLW_URL: ${{ secrets.BASE_FLW_URL }}
-      BASE_ABHA_URL: ${{ secrets.BASE_ABHA_URL }}
-      GOOGLE_SERVICES_JSON_GENERIC: ${{ secrets.GOOGLE_SERVICES_JSON_GENERIC }}
-      SANJEEVANI_API_URL: ${{ secrets.SANJEEVANI_API_URL }}
-      FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
-
+    secrets: inherit
