@@ -14,6 +14,7 @@ import org.piramalswasthya.sakhi.databinding.FragmentAllMaaMeetingBinding
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.MaaMeetingAdapter
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.utils.Log
 import kotlin.getValue
 
 @AndroidEntryPoint
@@ -40,8 +41,8 @@ class MaaMeetingListFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.maaMeetings.collect { meetings ->
                 val lastMeetingDate = meetings.firstOrNull()?.meetingDate
-                val hasMeeting = viewModel.hasMeetingInSameQuarter(lastMeetingDate)
-                binding.btnNextPage.isEnabled = !hasMeeting
+                val enableButton = viewModel.hasMeetingInSameQuarter(lastMeetingDate)
+                binding.btnNextPage.isEnabled = enableButton
             }
         }
 

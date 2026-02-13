@@ -8,11 +8,12 @@ import kotlinx.coroutines.flow.Flow
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.model.DewormingCache
 import org.piramalswasthya.sakhi.model.AHDCache
-import org.piramalswasthya.sakhi.model.HRPPregnantAssessCache
 import org.piramalswasthya.sakhi.model.PHCReviewMeetingCache
 import org.piramalswasthya.sakhi.model.VHNCCache
 import org.piramalswasthya.sakhi.model.VHNDCache
-import java.time.LocalDate
+import org.piramalswasthya.sakhi.model.PulsePolioCampaignCache
+import org.piramalswasthya.sakhi.model.ORSCampaignCache
+import org.piramalswasthya.sakhi.model.dynamicEntity.filariaaMdaCampaign.FilariaMDACampaignFormResponseJsonEntity
 
 @Dao
 interface VLFDao {
@@ -93,10 +94,16 @@ interface VLFDao {
 
     @Query("SELECT COUNT(*) FROM AHDMeeting WHERE ahdDate BETWEEN :startDate AND :endDate")
     fun countAHDFormsInDateRange(startDate: String, endDate: String): Flow<Int>
-
-    @Query("SELECT COUNT(*) FROM DewormingMeeting WHERE regDate BETWEEN :startDate AND :endDate")
-    fun countDewormingFormsInDateRange(startDate: String, endDate: String): Flow<Int>
-
+    @Query("""
+    SELECT COUNT(*) 
+    FROM DewormingMeeting
+    WHERE date(
+        substr(dewormingDate, 7, 4) || '-' ||
+        substr(dewormingDate, 4, 2) || '-' ||
+        substr(dewormingDate, 1, 2)
+    ) >= date('now', '-6 months')
+""")
+    fun countDewormingInLastSixMonths(): Flow<Int>
 
     // For VHND form
     @Query("SELECT MAX(vhndDate) FROM VHND")
@@ -117,5 +124,59 @@ interface VLFDao {
     // For Deworming form
     @Query("SELECT MAX(regDate) FROM DewormingMeeting")
     fun getLastDewormingSubmissionDate(): Flow<String?>
+
+    // For Pulse Polio Campaign form
+    @Query("SELECT * FROM PulsePolioCampaign WHERE id = :id")
+    suspend fun getPulsePolioCampaign(id: Int): PulsePolioCampaignCache?
+
+    @Query("SELECT * FROM PulsePolioCampaign")
+    fun getAllPulsePolioCampaign(): Flow<List<PulsePolioCampaignCache>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun saveRecord(pulsePolioCampaignCache: PulsePolioCampaignCache)
+
+    @Query("SELECT * FROM PulsePolioCampaign WHERE syncState = :syncState")
+    fun getPulsePolioCampaign(syncState: SyncState): List<PulsePolioCampaignCache>?
+
+    @Query("SELECT * FROM PulsePolioCampaign")
+    fun getAllPulsePolioCampaignForDate(): Flow<List<PulsePolioCampaignCache>>
+
+    @Query("SELECT * FROM PulsePolioCampaign")
+    suspend fun getAllPulsePolioCampaigns(): List<PulsePolioCampaignCache>
+
+
+    // For ORS Campaign form
+    @Query("SELECT * FROM ORSCampaign WHERE id = :id")
+    suspend fun getORSCampaign(id: Int): ORSCampaignCache?
+
+    @Query("SELECT * FROM ORSCampaign")
+    fun getAllORSCampaign(): Flow<List<ORSCampaignCache>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun saveRecord(orsCampaignCache: ORSCampaignCache)
+
+    @Query("SELECT * FROM ORSCampaign WHERE syncState = :syncState")
+    fun getORSCampaign(syncState: SyncState): List<ORSCampaignCache>?
+
+    @Query("SELECT * FROM ORSCampaign")
+    fun getAllORSCampaignForDate(): Flow<List<ORSCampaignCache>>
+
+    @Query("SELECT * FROM ORSCampaign")
+    suspend fun getAllORSCampaigns(): List<ORSCampaignCache>
+
+    @Query("SELECT * FROM FILARIA_MDA_CAMPAIGN_HISTORY WHERE id = :id")
+    suspend fun getFilariaMdaCampaign(id: Int): FilariaMDACampaignFormResponseJsonEntity?
+
+    @Query("SELECT * FROM FILARIA_MDA_CAMPAIGN_HISTORY")
+    fun getAllFilariaMdaCampaign(): Flow<List<FilariaMDACampaignFormResponseJsonEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun saveRecord(filariaMdaCampaignCache: FilariaMDACampaignFormResponseJsonEntity)
+
+    @Query("SELECT * FROM FILARIA_MDA_CAMPAIGN_HISTORY WHERE syncState = :syncState")
+    fun getFilariaMdaCampaign(syncState: SyncState): List<FilariaMDACampaignFormResponseJsonEntity>?
+
+    @Query("SELECT * FROM FILARIA_MDA_CAMPAIGN_HISTORY")
+    fun getAllFilariaMdaCampaignForDate(): Flow<List<FilariaMDACampaignFormResponseJsonEntity>>
 
 }

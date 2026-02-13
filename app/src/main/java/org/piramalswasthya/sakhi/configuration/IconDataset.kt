@@ -361,7 +361,29 @@ class IconDataset @Inject constructor(
                 null,
                 VillageLevelFormsFragmentDirections
                     .actionVillageLevelFormsFragmentToUwinListFragment()
+            ),
+            Icon(
+                R.drawable.dewarming,
+                resources.getString(R.string.pulse_polio_campaign),
+                null,
+                VillageLevelFormsFragmentDirections
+                    .actionVillageLevelFormsFragmentToPulsePolioCampaignListFragment()
+            ),
+            Icon(
+                R.drawable.dewarming,
+                resources.getString(R.string.ors_distribution_campaign),
+                null,
+                VillageLevelFormsFragmentDirections
+                    .actionVillageLevelFormsFragmentToORSCampaignListFragment()
             )
+            ,Icon(
+                R.drawable.filaria,
+                resources.getString(R.string.mda_title),
+                null,
+                VillageLevelFormsFragmentDirections
+                    .actionVillageLevelFormsFragmentToFilariaMdaCampaignHistoryFragment()
+            )
+
         )
     }
 
@@ -696,6 +718,11 @@ class IconDataset @Inject constructor(
             recordsRepo.tbSuspectedListCount,
             CdFragmentDirections.actionCdFragmentToTBSuspectedListFragment()
 
+        ), Icon(
+            icon = R.drawable.ic__death,
+            title = resources.getString(R.string.icon_title_ncd_tb_confirmed),
+            recordsRepo.tbConfirmedListCount,
+            CdFragmentDirections.actionCdFragmentToTBConfirmedListFragment()
         )
     ).apply {
         forEachIndexed { index, icon ->

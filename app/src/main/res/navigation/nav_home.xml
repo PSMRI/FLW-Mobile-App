@@ -334,6 +334,15 @@
         <action
             android:id="@+id/action_villageLevelFormsFragment_to_allMaaMeetingFragment"
             app:destination="@id/allMaaMeetingFragment" />
+        <action
+            android:id="@+id/action_villageLevelFormsFragment_to_PulsePolioCampaignListFragment"
+            app:destination="@id/PulsePolioCampaignListFragment" />
+        <action
+            android:id="@+id/action_villageLevelFormsFragment_to_ORSCampaignListFragment"
+            app:destination="@id/ORSCampaignListFragment" />
+        <action
+            android:id="@+id/action_villageLevelFormsFragment_to_filariaMdaCampaignHistoryFragment"
+            app:destination="@id/filariaMdaCampaignHistory" />
     </fragment>
 
     <fragment
@@ -353,6 +362,48 @@
         tools:layout="@layout/fragment_uwin">
         <argument
             android:name="uwinId"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/PulsePolioCampaignListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.pulse_polio.PulsePolioCampaignListFragment"
+        android:label="@string/pulse_polio_campaign"
+        tools:layout="@layout/fragment_vhnd_list">
+        <action
+            android:id="@+id/action_PulsePolioCampaignListFragment_to_PulsePolioCampaignFormFragment"
+            app:destination="@id/PulsePolioCampaignFormFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/PulsePolioCampaignFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.pulse_polio.PulsePolioCampaignFormFragment"
+        android:label="@string/pulse_polio_campaign"
+        tools:layout="@layout/fragment_pulse_polio_campaign_form">
+        <argument
+            android:name="id"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/ORSCampaignListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.ors_campaign.ORSCampaignListFragment"
+        android:label="@string/ors_distribution_campaign"
+        tools:layout="@layout/fragment_vhnd_list">
+        <action
+            android:id="@+id/action_ORSCampaignListFragment_to_ORSCampaignFormFragment"
+            app:destination="@id/ORSCampaignFormFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/ORSCampaignFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.ors_campaign.ORSCampaignFormFragment"
+        android:label="@string/ors_distribution_campaign"
+        tools:layout="@layout/fragment_ors_campaign_form">
+        <argument
+            android:name="id"
             app:argType="integer"
             android:defaultValue="0" />
     </fragment>
@@ -972,6 +1023,9 @@
         <action
             android:id="@+id/action_eligibleCoupleListFragment_to_eligibleCoupleRegFragment"
             app:destination="@id/eligibleCoupleRegFragment" />
+        <action
+            android:id="@+id/action_eligibleCoupleListFragment_to_benIfaFormFragment"
+            app:destination="@id/benIfaFormFragment" />
         <argument
             android:name="source"
             android:defaultValue="0"
@@ -1029,6 +1083,23 @@
             android:id="@+id/action_TBSuspectedListFragment_to_TBSuspectedFragment"
             app:destination="@id/TBSuspectedFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/TBConfirmedListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_confirmed.list.TBConfirmedListFragment"
+        android:label="@string/tb_confirmed_list">
+        <action
+            android:id="@+id/action_TBConfirmedListFragment_to_TBConfirmedFormFragment"
+            app:destination="@id/TBConfirmedFormFragment"/>
+    </fragment>
+    <fragment
+        android:id="@+id/TBConfirmedFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_confirmed.from.TBConfirmedFormFragment"
+        android:label="@string/tb_confirmed_form">
+        <argument
+        android:name="benId"
+        app:argType="long" />
+    </fragment>
+
     <fragment
         android:id="@+id/TBScreeningFormFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_screening.form.TBScreeningFormFragment"
@@ -1131,6 +1202,9 @@
         <action
             android:id="@+id/action_cdFragment_to_TBSuspectedListFragment"
             app:destination="@id/TBSuspectedListFragment" />
+        <action
+            android:id="@+id/action_cdFragment_to_TBConfirmedListFragment"
+            app:destination="@id/TBConfirmedListFragment"/>
     </fragment>
     <fragment
         android:id="@+id/dashboardFragment"
@@ -2090,4 +2164,24 @@
             app:argType="long" />
 
     </fragment>
+    <fragment
+        android:id="@+id/filariaMdaCampaignFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.filaria_mda.FilariaMdaCampaignFormFragment"
+        android:label="FilariaMdaCampaignFormFragment" >
+        <argument
+            android:name="date"
+            android:defaultValue=""
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/filariaMdaCampaignHistory"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.filaria_mda.list.FilariaMdaCampaignHistory"
+        android:label="FilariaMdaCampaignHistory" >
+        <action
+            android:id="@+id/action_mdaCampagaignHisoryFragment_to_mdaFormCampaign"
+            app:destination="@id/filariaMdaCampaignFormFragment" />
+    </fragment>
+
+
+
 </navigation>

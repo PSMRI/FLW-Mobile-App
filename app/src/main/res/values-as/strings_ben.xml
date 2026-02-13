@@ -71,6 +71,33 @@
         <item>কিশোৰী</item>
     </string-array>
 
+    <string-array name="nbr_reproductive_status_array1">
+        <item>Adolescent Girl</item>
+    </string-array>
+
+    <string-array name="nbr_reproductive_status_array2">
+        <item>Adolescent Girl</item>
+        <item>Eligible Couple</item>
+        <item>Pregnant Woman</item>
+        <item>Postnatal Mother</item>
+        <item>Permanently Sterilised</item>
+    </string-array>
+
+    <string-array name="nbr_reproductive_status_array3">
+        <item>Not Applicable</item>
+    </string-array>
+
+    <string-array name="nbr_reproductive_status_array4">
+        <item>Eligible Couple</item>
+        <item>Pregnant Woman</item>
+        <item>Postnatal Mother</item>
+        <item>Permanently Sterilised</item>
+    </string-array>
+
+    <string-array name="nbr_reproductive_status_array5">
+        <item>Elderly Woman</item>
+    </string-array>
+
     <string-array name="nbr_marital_status_male_array">
         <item>অবিবাহিত</item>
         <item>বিবাহিত</item>
@@ -230,23 +257,34 @@
     <string name="days">দিন</string>
     <string name="mother_rch_id">মা RCH ID</string>
     <string-array name="diet_plane">
-        <item>What to eat</item>
-        <item>what to avoid</item>
-        <item>importance of dietary diversity</item>
+    <item>What to eat, what to avoid, importance of dietary diversity.</item>
 
     </string-array>
     <string-array name="care_pregnancy">
-        <item>Prevention of Anemia</item>
-        <item>weakness</item>
-        <item>importance of rest and nutrition</item>
+        <item>Prevention of Anemia, weakness, importance of rest and nutrition.</item>
+
+    </string-array>
+    <string-array name="select_all">
+        <item>Select All</item>
+    </string-array>
+    <string-array name="maa_breastfeeding">
+        <item>Select All</item>
+        <item>The baby should be breastfed immediately within the first hour of birth</item>
+        <item>The baby should be given only mother’s milk for the first 6 months.</item>
+        <item>After 6 months, along with mother’s milk, nutritious complementary food should be given.</item>
+        <item>Breastfeeding should be continued for 2 years or more.</item>
+        <item>The family should support and encourage the mother.</item>
+        <item>For the first 6 months, the baby should not be given honey, water, or ghutti (herbal concoctions).</item>
+        <item>Breastfeeding protects the baby from many diseases.</item>
+        <item>Mother’s milk is the best for the complete development of the baby.</item>
+        <item>Information was given about KMC (Kangaroo Mother Care).</item>
 
     </string-array>
 
     <string-array name="import_brestfeeding">
-        <item>Early initiation after birth</item>
-        <item> exclusive breastfeeding for 6 months</item>
-
+        <item>Early initiation after birth, exclusive breastfeeding for 6 months.</item>
     </string-array>
+
     <string-array name="complementary_feeding">
         <item>Starting home-based nutritious food after 6 months along with breastfeeding</item>
 

@@ -19,8 +19,14 @@ import org.piramalswasthya.sakhi.work.dynamicWoker.BenIfaFormSyncWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYIFAFormSyncWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYORSFormSyncWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYSAMFormSyncWorker
+import org.piramalswasthya.sakhi.work.dynamicWoker.ORSCampaignFormSyncWorker
+import org.piramalswasthya.sakhi.work.dynamicWoker.ORSCampaignPushWorker
+import org.piramalswasthya.sakhi.work.dynamicWoker.PulsePolioCampaignFormSyncWorker
+import org.piramalswasthya.sakhi.work.dynamicWoker.PulsePolioCampaignPushWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.EyeSurgeryFormSyncWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.FilariaMDAFormSyncWorker
+import org.piramalswasthya.sakhi.work.dynamicWoker.FilariaMdaCampaignFormSyncWorker
+import org.piramalswasthya.sakhi.work.dynamicWoker.FilariaMdaCampaignPushWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.FormSyncWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.MosquitoNetFormSyncWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.NCDFollowUpSyncWorker
@@ -42,6 +48,15 @@ object WorkerUtils {
             .setConstraints(networkOnlyConstraint)
             .build()
         val CUFYIFAFormSyncWorker = OneTimeWorkRequestBuilder<CUFYIFAFormSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val orsCampaignPushWorker = OneTimeWorkRequestBuilder<ORSCampaignPushWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pulsePolioCampaignPushWorker = OneTimeWorkRequestBuilder<PulsePolioCampaignPushWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pushFilariaMdaCampaignFormSyncWorker = OneTimeWorkRequestBuilder<FilariaMdaCampaignPushWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
         val pullEyeSurgeryFormSyncWorker = OneTimeWorkRequestBuilder<EyeSurgeryFormSyncWorker>()
@@ -180,11 +195,15 @@ object WorkerUtils {
                 pullWorkRequest
             )
             .then(ancFormSyncWorker)
+            .then(pushFilariaMdaCampaignFormSyncWorker)
             .then(CUFYORSFormSyncWorker)
             .then(hbncAndHbyceWorker)
             .then(CUFYIFAFormSyncWorker)
+            .then(orsCampaignPushWorker)
+            .then(pulsePolioCampaignPushWorker)
             .then(CUFYSAMFormSyncWorker)
             .then(NCDFollowupFormSyncWorker)
+            .then(pullVLFWorkRequest)
 
             .then(pullEyeSurgeryFormSyncWorker)
             .then(pullFilariaMDAFormSyncWorker)
@@ -203,7 +222,6 @@ object WorkerUtils {
 //            .then(pullHBYCFromAmritWorker)
             .then(pullHBNCFromAmritWorker)
             .then(pullHRPWorkRequest)
-            .then(pullVLFWorkRequest)
             .then(pullAdolescentWorkRequest)
             .then(pullMalariaWorkRequest)
             .then(pullAESToAmritWorker)
@@ -303,6 +321,12 @@ object WorkerUtils {
         val CUFYIFAFormSyncWorker = OneTimeWorkRequestBuilder<CUFYIFAFormSyncWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
+        val orsCampaignPushWorker = OneTimeWorkRequestBuilder<ORSCampaignPushWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pulsePolioCampaignPushWorker = OneTimeWorkRequestBuilder<PulsePolioCampaignPushWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
         val pushEyeSurgeryFormSyncWorker = OneTimeWorkRequestBuilder<EyeSurgeryFormSyncWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
@@ -319,6 +343,9 @@ object WorkerUtils {
             .setConstraints(networkOnlyConstraint)
             .build()
 
+        val pushFilariaMdaCampaignFormSyncWorker = OneTimeWorkRequestBuilder<FilariaMdaCampaignPushWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
          val NCDFollowupFormSyncWorker = OneTimeWorkRequestBuilder<NCDFollowUpSyncWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
@@ -378,6 +405,7 @@ object WorkerUtils {
                 pushWorkRequest
             )
             .then(ancPushWorkRequest)
+            .then(pushFilariaMdaCampaignFormSyncWorker)
             .then(pushMaaMeetingsWorkRequest)
             .then(pushSaasBahuSamelanAmritWorker)
             .then(pushCbacWorkRequest)
@@ -403,6 +431,8 @@ object WorkerUtils {
             .then(CUFYORSFormSyncWorkerRequest)
             .then(hbncAndHbyceWorkerrRequest)
             .then(CUFYIFAFormSyncWorker)
+            .then(orsCampaignPushWorker)
+            .then(pulsePolioCampaignPushWorker)
             .then(pushEyeSurgeryFormSyncWorker)
             .then(pushFilariaMDAFormSyncWorker)
             .then(pushMosquitoNetFormSyncWorker)
@@ -431,6 +461,12 @@ object WorkerUtils {
             .setConstraints(networkOnlyConstraint)
             .build()
         val CUFYIFAFormSyncWorker = OneTimeWorkRequestBuilder<CUFYIFAFormSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val orsCampaignFormSyncWorker = OneTimeWorkRequestBuilder<ORSCampaignFormSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+        val pulsePolioCampaignFormSyncWorker = OneTimeWorkRequestBuilder<PulsePolioCampaignFormSyncWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
         val CUFYSAMFormSyncWorker = OneTimeWorkRequestBuilder<CUFYSAMFormSyncWorker>()
@@ -553,6 +589,11 @@ object WorkerUtils {
             .setConstraints(networkOnlyConstraint)
             .build()
 
+        val pullFilariaMDACampaignToAmritWorker = OneTimeWorkRequestBuilder<FilariaMdaCampaignFormSyncWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .build()
+
+
         val pullSaasBahuSamelanAmritWorker = OneTimeWorkRequestBuilder<SaasBahuSammelanPullWorker>()
             .setConstraints(networkOnlyConstraint).build()
         val workManager = WorkManager.getInstance(context)
@@ -563,6 +604,8 @@ object WorkerUtils {
                 pullWorkRequest
             )
             .then(ancPullWorkRequest)
+            .then(pullVLFWorkRequest)
+            .then(pullFilariaMDACampaignToAmritWorker)
             .then(maaMeetingFormSyncWorkerRequest)
             .then(pullEyeSurgeryFormSyncWorker)
             .then(pullFilariaMDAFormSyncWorker)
@@ -575,6 +618,8 @@ object WorkerUtils {
             .then(CUFYORSFormSyncWorker)
             .then(hbncAndHbyceWorker)
             .then(CUFYIFAFormSyncWorker)
+            .then(orsCampaignFormSyncWorker)
+            .then(pulsePolioCampaignFormSyncWorker)
             .then(CUFYSAMFormSyncWorker)
             .then(NCDFollowupFormSyncWorker)
             .then(pullUwinWorkerRequest)
@@ -593,7 +638,6 @@ object WorkerUtils {
 //            .then(pullHBYCFromAmritWorker)
             .then(pullHBNCFromAmritWorker)
             .then(pullHRPWorkRequest)
-            .then(pullVLFWorkRequest)
             .then(pulladolescentWorkRequest)
             .then(pullMalariaWorkRequest)
             .then(pullAESToAmritWorker)
