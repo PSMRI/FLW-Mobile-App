@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.text.Html
 import android.view.LayoutInflater
@@ -11,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -31,6 +33,7 @@ import org.piramalswasthya.sakhi.model.LocationEntity
 import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
+import org.piramalswasthya.sakhi.utils.NoCopyPasteHelper
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import javax.inject.Inject
 
@@ -80,6 +83,7 @@ class SignInFragment : Fragment() {
                             viewModel.logout()
                         }
                         ImageUtils.removeAllBenImages(requireContext())
+                        prefDao.deleteJWTToken()
                         WorkerUtils.cancelAllWork(requireContext())
                     }
                 }
@@ -90,10 +94,15 @@ class SignInFragment : Fragment() {
             }.create()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSignInBinding.inflate(layoutInflater, container, false)
+
+        NoCopyPasteHelper.disableCopyPaste(binding.etPassword)
+        NoCopyPasteHelper.disableCopyPaste(binding.etUsername)
+
         return binding.root
     }
 
