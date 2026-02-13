@@ -316,7 +316,7 @@ class HouseholdMembersFragment : Fragment() {
         binding.rvAny.adapter = benAdapter
 
         lifecycleScope.launch {
-            viewModel.benList.collect {
+            viewModel.benListWithChildren.collect {
                 if (it.isEmpty())
                     binding.flEmpty.visibility = View.VISIBLE
                 else

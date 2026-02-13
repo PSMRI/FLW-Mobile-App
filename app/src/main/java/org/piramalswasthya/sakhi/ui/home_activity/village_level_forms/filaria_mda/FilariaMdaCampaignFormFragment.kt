@@ -89,7 +89,7 @@ class FilariaMdaCampaignFormFragment : Fragment() {
         val compressedFile = org.piramalswasthya.sakhi.utils.HelperUtil.compressImageToTemp(uri, "camera_image", context)
         val base64String = compressedFile?.let { org.piramalswasthya.sakhi.utils.HelperUtil.fileToBase64(it) }
 
-        if (currentImageField?.fieldId == "campaign_photos" || currentImageField?.fieldId == "campaignPhotos") {
+        if (currentImageField?.fieldId == "mda_photos") {
             if (base64String != null && campaignPhotosList.size < 2) {
                 campaignPhotosList.add(base64String)
                 currentImageField?.value = campaignPhotosList.toList()
@@ -123,7 +123,7 @@ class FilariaMdaCampaignFormFragment : Fragment() {
         val compressedFile = org.piramalswasthya.sakhi.utils.HelperUtil.compressImageToTemp(uri, "selected_image", context)
         val base64String = compressedFile?.let { org.piramalswasthya.sakhi.utils.HelperUtil.fileToBase64(it) }
 
-        if (currentImageField?.fieldId == "campaign_photos" || currentImageField?.fieldId == "campaignPhotos") {
+        if (currentImageField?.fieldId == "mda_photos") {
             if (base64String != null && campaignPhotosList.size < 2) {
                 campaignPhotosList.add(base64String)
                 currentImageField?.value = campaignPhotosList.toList()
@@ -204,7 +204,7 @@ class FilariaMdaCampaignFormFragment : Fragment() {
         val maxVisitDate = HelperUtil.getMaxVisitDate()
 
         val campaignPhotosField = visibleFields.find {
-            it.fieldId == "campaign_photos" || it.fieldId == "campaignPhotos"
+            it.fieldId == "mda_photos"
         }
         if (campaignPhotosField != null) {
             when {
@@ -241,10 +241,15 @@ class FilariaMdaCampaignFormFragment : Fragment() {
                     if (value == "pick_image") {
                         currentImageField = field
                         showImagePickerDialog()
+
                     } else {
                         field.value = value
+                        if ((field.fieldId == "mda_photos") && value is List<*>) {
+                            campaignPhotosList = value.filterIsInstance<String>().toMutableList()
+                        }
                         viewModel.updateFieldValue(field.fieldId, value)
-                        adapter.updateFields(viewModel.getVisibleFields())
+                        val updatedVisibleFields = viewModel.getVisibleFields()
+                        adapter.updateFields(updatedVisibleFields)
                     }
                 },)
 

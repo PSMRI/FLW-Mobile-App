@@ -26,9 +26,10 @@
     import kotlinx.coroutines.cancelChildren
     import kotlinx.coroutines.delay
     import kotlinx.coroutines.launch
-    import org.json.JSONArray
     import org.piramalswasthya.sakhi.R
     import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
+    import org.piramalswasthya.sakhi.utils.HelperUtil
+    import org.piramalswasthya.sakhi.utils.HelperUtil.findFragmentActivity
     import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
     import timber.log.Timber
     import java.io.File
@@ -108,7 +109,7 @@
 
             private fun loadImageFromPath(context: android.content.Context, filePath: String, imageView: ImageView) {
                 if (filePath.isBlank()) {
-                    imageView.setImageResource(R.drawable.ic_person)
+                    imageView.setImageResource(R.drawable.ic_doc_upload)
                     return
                 }
 
@@ -117,7 +118,7 @@
                         filePath.endsWith(".pdf", ignoreCase = true) ||
                                 (filePath.startsWith("content://") &&
                                         context.contentResolver.getType(Uri.parse(filePath))?.contains("pdf") == true) -> {
-                            imageView.setImageResource(R.drawable.ic_person)
+                            imageView.setImageResource(R.drawable.ic_doc_upload)
                             imageView.setOnClickListener {
                                 val uri = Uri.parse(filePath)
                                 val intent = Intent(Intent.ACTION_VIEW).apply {
@@ -133,7 +134,7 @@
                         }
 
                         filePath.startsWith("JVBERi0") || filePath.startsWith("%PDF") -> {
-                            imageView.setImageResource(R.drawable.ic_person)
+                            imageView.setImageResource(R.drawable.ic_doc_upload)
                             imageView.setOnClickListener {
                                 try {
                                     val decodedBytes = Base64.decode(filePath, Base64.DEFAULT)
@@ -182,7 +183,7 @@
                     }
                 } catch (e: Exception) {
                     Timber.tag("FormRendererAdapter").e(e, "Failed to load file: $filePath")
-                    imageView.setImageResource(R.drawable.ic_person)
+                    imageView.setImageResource(R.drawable.ic_doc_upload)
                 }
             }
 
@@ -591,7 +592,7 @@
 
                     "date" -> {
                         val context = itemView.context
-                        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
                         val today = Calendar.getInstance().time
                         val todayStr = sdf.format(today)
 
@@ -664,6 +665,11 @@
 
                         if (isFieldEditable) {
                             editText.setOnClickListener {
+                                val activity = editText.context.findFragmentActivity()
+                                    ?: return@setOnClickListener
+                                val originalLocale = Locale.getDefault()
+                                HelperUtil.setEnLocaleForDatePicker(activity)
+
                                 val calendar = Calendar.getInstance()
 
                                 var minDate: Date? = null
@@ -740,7 +746,15 @@
                                 DatePickerDialog(
                                     context,
                                     { _, year, month, dayOfMonth ->
-                                        val dateStr = String.format("%02d-%02d-%04d", dayOfMonth, month + 1, year)
+
+                                        val dateStr = String.format(
+                                            Locale.ENGLISH,
+                                            "%02d-%02d-%04d",
+                                            dayOfMonth,
+                                            month + 1,
+                                            year
+                                        )
+
                                         editText.setText(dateStr)
                                         field.value = dateStr
                                         onValueChanged(field, dateStr)
@@ -890,6 +904,11 @@
                                     if (minDate != null && maxDate != null && minDate.after(maxDate)) {
                                         datePicker.minDate = maxDate.time
                                     }
+
+                                    setOnDismissListener {
+                                        HelperUtil.setOriginalLocaleForDatePicker(activity,originalLocale)
+                                    }
+
                                 }.show()
                             }
                         }
@@ -973,7 +992,7 @@
 
                     "image" -> {
                         val context = itemView.context
-                        val isCampaignPhotos = field.fieldId == "campaign_photos" || field.fieldId == "campaignPhotos"
+                        val isCampaignPhotos = field.fieldId == "campaign_photos" || field.fieldId == "campaignPhotos" || field.fieldId == "mda_photos"
 
                         val container = LinearLayout(context).apply {
                             orientation = LinearLayout.VERTICAL
@@ -1036,7 +1055,7 @@
                                 if (!filePath.isNullOrBlank()) {
                                     loadImageFromPath(context, filePath, this)
                                 } else {
-                                    setImageResource(R.drawable.ic_person)
+                                    setImageResource(R.drawable.ic_doc_upload)
                                 }
                             }
 

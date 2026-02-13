@@ -64,7 +64,6 @@ class BenListAdapter(
             context : FragmentActivity,
             benIdList: List<Long>
         ) {
-
             if (pref?.getLoggedInUser()?.role.equals("asha", true)) {
                 binding.btnAbha.visibility = View.VISIBLE
             } else {
@@ -173,8 +172,7 @@ class BenListAdapter(
 
                 item.gender == "FEMALE" &&
                         item.isMarried &&
-                        item.doYouHavechildren &&
-                        !item.isChildrenAdded -> {
+                        item.noOfChildren == 0  -> {
 
                     binding.btnAddChildren.visibility = View.VISIBLE
                     binding.btnAddSpouse.visibility = View.GONE
@@ -184,7 +182,7 @@ class BenListAdapter(
                     }
                 }
 
-                item.gender == "FEMALE" &&
+               /* item.gender == "FEMALE" &&
                         item.isMarried &&
                         !item.doYouHavechildren &&
                         !item.isChildrenAdded -> {
@@ -192,12 +190,11 @@ class BenListAdapter(
                     binding.btnAddChildren.visibility = View.INVISIBLE
                     binding.btnAddSpouse.visibility = View.GONE
                     binding.llAddSpouseBtn.visibility = View.VISIBLE
-                }
+                }*/
 
                 item.gender == "FEMALE" &&
                         item.isMarried &&
-                        item.doYouHavechildren &&
-                        item.isChildrenAdded -> {
+                        item.noOfChildren != 0  -> {
 
                     binding.btnAddChildren.visibility = View.VISIBLE
                     binding.btnAddChildren.text = context.getString(R.string.view_children)

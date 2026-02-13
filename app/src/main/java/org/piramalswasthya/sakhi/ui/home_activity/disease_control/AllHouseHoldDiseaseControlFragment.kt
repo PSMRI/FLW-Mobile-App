@@ -60,7 +60,7 @@ class AllHouseHoldDiseaseControlFragment : Fragment() {
         }, {
             when (viewModel.diseaseType) {
 
-                IconDataset.Disease.MALARIA.toString() -> {
+                requireContext().getString(R.string.icon_title_maleria) -> {
                     findNavController().navigate(
                         AllHouseHoldDiseaseControlFragmentDirections
                             .actionAllHouseHoldDiseaseControlFragmentToMalariaSuspectedListFragment(
@@ -69,7 +69,7 @@ class AllHouseHoldDiseaseControlFragment : Fragment() {
                     )
                 }
 
-                IconDataset.Disease.AES_JE.toString() -> {
+                requireContext().getString(R.string.icon_title_aes)-> {
                     findNavController().navigate(
                         AllHouseHoldDiseaseControlFragmentDirections
                             .actionAllHouseHoldDiseaseControlFragmentToAESSuspectedListFragment(
@@ -78,7 +78,7 @@ class AllHouseHoldDiseaseControlFragment : Fragment() {
                     )
                 }
 
-                IconDataset.Disease.KALA_AZAR.toString() -> {
+                requireContext().getString(R.string.icon_title_ka) -> {
                     findNavController().navigate(
                         AllHouseHoldDiseaseControlFragmentDirections
                             .actionAllHouseHoldDiseaseControlFragmentToKalaAzarSuspectedListFragment(
@@ -87,7 +87,7 @@ class AllHouseHoldDiseaseControlFragment : Fragment() {
                     )
                 }
 
-                IconDataset.Disease.FILARIA.toString() -> {
+                requireContext().getString(R.string.icon_title_filaria) -> {
                     findNavController().navigate(
                         AllHouseHoldDiseaseControlFragmentDirections
                             .actionAllHouseHoldDiseaseControlFragmentToFilariaSuspectedListFragment(
@@ -96,7 +96,7 @@ class AllHouseHoldDiseaseControlFragment : Fragment() {
                     )
                 }
 
-                IconDataset.Disease.LEPROSY.toString() -> {
+                requireContext().getString(R.string.icon_title_leprosy)  -> {
                     findNavController().navigate(
                         AllHouseHoldDiseaseControlFragmentDirections
                             .actionAllHouseHoldDiseaseControlFragmentToLeprosySuspectedListFragment(

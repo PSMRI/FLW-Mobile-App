@@ -116,9 +116,12 @@
     <string name="mt">Mitanin Activity check list</string>
     <string name="anmrho">ANM/ RHO</string>
     <string name="participants_attended">Participants Attended</string>
-    <string name="leprosy_title">Check if the person has any of these symptoms</string>
+    <string name="leprosy_title">जांचें कि व्यक्ति में इनमें से कोई लक्षण है या नहीं</string>
     <string name="no_of_individuals">Number of Individuals</string>
     <string name="no_of_familes">Number of Families</string>
+
+
+
 
 
 </resources>

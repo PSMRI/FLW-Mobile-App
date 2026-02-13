@@ -25,6 +25,8 @@ import org.piramalswasthya.sakhi.model.ReferalCache
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.disease_control.leprosy.form.LeprosyFormViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_screening.form.TBScreeningFormViewModel
+import org.piramalswasthya.sakhi.utils.HelperUtil
+import org.piramalswasthya.sakhi.utils.HelperUtil.findFragmentActivity
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 import java.text.SimpleDateFormat
@@ -110,8 +112,7 @@ class CbacFragment : Fragment() {
                 !viewModel.isReferralAlreadyDone(CbacViewModel.ReferralType.LEPROSY) &&
                 !dialogAlreadyShown
             ) {
-                dialogAlreadyShown = true  // ensure it won't show again
-                binding.cbacSuspectedLeprosy.cbacEdRg.check(R.id.rb_yes)
+                dialogAlreadyShown = true
                 viewModelLeprosyScreening.saveLeprosySuspectedFormDirectlyfromCbac()
                 referralForReason = "Suspected Leprosy case"
                 referType = "LEPROSY"
@@ -638,6 +639,10 @@ class CbacFragment : Fragment() {
         val thisMonth = today.get(Calendar.MONTH)
         val thisDay = today.get(Calendar.DAY_OF_MONTH)
         binding.etDate.setOnClickListener {
+            val activity = binding.etDate.context.findFragmentActivity()
+                ?: return@setOnClickListener
+            val originalLocale = Locale.getDefault()
+            HelperUtil.setEnLocaleForDatePicker(activity)
 
             val datePickerDialog = DatePickerDialog(
                 it.context, { _, year, month, day ->
@@ -653,6 +658,9 @@ class CbacFragment : Fragment() {
 
             }
             datePickerDialog.show()
+            datePickerDialog.setOnDismissListener {
+                HelperUtil.setOriginalLocaleForDatePicker(activity,originalLocale)
+            }
         }
         setupRaFill()
         setupEdFill()

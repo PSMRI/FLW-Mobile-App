@@ -431,7 +431,7 @@ open class DeliveryOutcomeDataset(
 
             isJSYBenificiary.id -> {
                 val isYes = isJSYBenificiary.value.equals("Yes", ignoreCase = true)
-                if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
                     triggerDependants(
                         source = isJSYBenificiary,
                         passedIndex = index,

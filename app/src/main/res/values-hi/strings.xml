@@ -103,14 +103,16 @@
     <string name="signature_name_of_asha">Signature/Name of ASHA</string>
     <string name="cdr_form_from_anm_1">CDR form from ANM 1</string>
     <string name="cdr_form_from_anm_2">CDR form from ANM 2</string>
-    <string name="leprosy_confirmed">Leprosy Confirmed</string>
-    <string name="leprosy_suspected">Leprosy Suspected</string>
+    <string name="leprosy_suspected">कुष्ठ रोग संदिग्ध</string>
+    <string name="leprosy_confirmed">पुष्टि किए गए कुष्ठ रोग </string>
     <string name="after_the_abortion_the_woman_opted_for_permanent_sterilization_tubectomy">After the Abortion, the Woman opted for permanent sterilization (Tubectomy)</string>
     <string name="date_of_sterilisation">Date of Sterilisation</string>
     <string name="what_family_planning_method_has_been_chosen_after_the_abortion">What family planning method has been chosen after the abortion?</string>
     <string name="higher_healthcare_center">उच्च स्वास्थ्य सेवा केंद्र</string>
     <string name="additional_services">अतिरिक्त सेवाएं</string>
     <string name="home_visit_number">गृह भ्रमण %d</string>
+    <string name="home_visit_date">गृह भ्रमण तिथि </string>
+
 
     <string-array name="deworming_location_options">
         <item>School</item>
@@ -400,6 +402,41 @@
     <string name="was_the_deworming_round_conducted">Was the deworming round conducted?</string>
     <string name="mda_title">Filariasis MDA campaign</string>
     <string name="mda_form_campagain_title">Lymphatic Filariasis (LF) Mass Drug Administration (MDA) campaign</string>
+    <string name="leprosy_screening">कुष्ठ रोग जांच </string>
+    <string name="home_visit_date_screening">गृह भ्रमण तिथि (जांच तिथि)</string>
+    <string name="screening">जांच</string>
+    <string name="suspected">संदिग्ध</string>
+    <string name="leprosy_confirmed_form">कुष्ठ रोग पुष्टि फॉर्म</string>
+    <string name="leprosy_suspected_form">कुष्ठ रोग संदिग्ध फॉर्म </string>
+    <string name="any_leprosy_symptoms_present">क्या कुष्ठ रोग के कोई लक्षण मौजूद हैं?</string>
+    <string name="visits">भ्रमण</string>
+    <string name="type_of_leprocy">पुष्टि किया गया कुष्ठ रोग का प्रकार</string>
+    <string name="has_leprosy_been_confirmed">क्या कुष्ठ रोग की पुष्टि हुई है?</string>
+    <string name="treatment_start_date">उपचार शुरू होने की तिथि</string>
+    <string name="expected_treatment_completion_date">उपचार समाप्ति की अपेक्षित तिथि </string>
+    <string name="mdt_blister_pack_received">क्या एमडीटी ब्लिस्टर पैक प्राप्त हुआ है?</string>
+    <string name="actual_treatment_completion_date">वास्तविक उपचार समाप्ति तिथि</string>
+    <string name="treatment_status">उपचार की स्थिति</string>
+    <string name="follow_up_date">फॉलो-अप तिथि</string>
+    <string name="follow_up_history">फॉलो-अप रिकॉर्ड </string>
+
+
+
+
+
+
+
+
+
+    <string-array name="leprosy_status">
+        <item>जांच</item>
+        <item>अस्वीकृत</item>
+        <item>स्क्रीनिंग नहीं हुई</item>
+        <item>संदिग्ध</item>
+        <item>पुष्ट</item>
+        <item>पुष्ट नहीं</item>
+    </string-array>
+
 
 
 </resources>

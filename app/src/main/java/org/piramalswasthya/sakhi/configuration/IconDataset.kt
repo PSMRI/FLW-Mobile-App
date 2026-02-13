@@ -9,6 +9,7 @@ import org.piramalswasthya.sakhi.model.Icon
 import org.piramalswasthya.sakhi.repositories.AdolescentHealthRepo
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.SupervisorFragmentDirections
+import org.piramalswasthya.sakhi.ui.getTitleRes
 import org.piramalswasthya.sakhi.ui.home_activity.child_care.ChildCareFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.communicable_diseases.CdFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.death_reports.DeathReportsFragmentDirections
@@ -475,7 +476,7 @@ class IconDataset @Inject constructor(
             resources.getString(R.string.leprosy_screening),
             recordsRepo.tbScreeningListCount,
             LeprosyFragmentDirections.actionLeprosyFragmentToAllHouseHoldDiseaseControlFragment(
-                Disease.LEPROSY.toString()
+                resources.getString(Disease.LEPROSY.getTitleRes())
             )
         ),
         Icon(

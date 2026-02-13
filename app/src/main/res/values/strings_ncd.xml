@@ -185,6 +185,7 @@
     <string name="filled_on">"Filled on "</string>
     <string name="save">Save</string>
     <string name="tb_suspected_alert">Refer to MO and collect the Sputum sample</string>
+    <string name="refer_to_hwc_facility_alert">Do you want to refer to HWC facility?</string>
     <string name="tb_suspected_alert_positive">Refer to MO</string>
     <string name="tb_suspected_family_alert">Refer to MO or inform ANM/MPW to tracing of all family members</string>
     <string name="is_sputum_sample_collected">Is Sputum sample collected?</string>

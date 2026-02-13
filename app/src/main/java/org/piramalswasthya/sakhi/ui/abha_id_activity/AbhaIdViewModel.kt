@@ -12,6 +12,7 @@ import org.piramalswasthya.sakhi.network.NetworkResult
 import org.piramalswasthya.sakhi.network.interceptors.TokenInsertAbhaInterceptor
 import org.piramalswasthya.sakhi.repositories.AbhaIdRepo
 import org.piramalswasthya.sakhi.repositories.UserRepo
+import org.piramalswasthya.sakhi.utils.Log
 import javax.inject.Inject
 
 @HiltViewModel
@@ -51,7 +52,7 @@ class AbhaIdViewModel @Inject constructor(
         get() = _authCert!!
 
 
-    private fun generateAmritToken() {
+     fun generateAmritToken() {
         _state.value = State.LOADING_TOKEN
         val user = prefDao.getLoggedInUser()
         viewModelScope.launch {
@@ -60,6 +61,7 @@ class AbhaIdViewModel @Inject constructor(
                     generateAccessToken()
                 } else {
                     _state.value = State.ERROR_SERVER
+                    Log.e("Error","Server error ${userRepo.refreshTokenTmc(user.userName, user.password)}")
                 }
             }
         }
