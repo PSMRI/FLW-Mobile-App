@@ -12,6 +12,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.helpers.filterBenList
 import org.piramalswasthya.sakhi.model.BenBasicDomain
@@ -46,7 +47,18 @@ class AllBenViewModel @Inject constructor(
             recordsRepo.allBenWARAList
         }
         else -> {
-            recordsRepo.allBenList
+            recordsRepo.allBenList.map { list ->
+                list.map { ben ->
+                    val count =
+                        benRepo.getChildBenListFromHousehold(
+                            ben.hhId,
+                            ben.benId,
+                            ben.benName
+                        ).size
+
+                    ben.copy(noOfChildren = count)
+                }
+            }
         }
     }
 
@@ -57,6 +69,16 @@ class AllBenViewModel @Inject constructor(
         filterBenList(list, kind)
     }.combine(filterOrg) { list, filter ->
         filterBenList(list, filter)
+            .sortedWith(
+                compareBy<BenBasicDomain> {
+                    when {
+                        !it.isDeath && !it.isDeactivate -> 0
+                        it.isDeath && !it.isDeactivate -> 1
+                        it.isDeactivate -> 2
+                        else -> 4
+                    }
+                }
+            )
     }
 
     private val _abha = MutableLiveData<String?>()

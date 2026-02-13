@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.helpers.filterAbortionList
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
 import java.util.Calendar
 import javax.inject.Inject
@@ -18,6 +19,10 @@ class AbortionListViewModel @Inject constructor(
     private val searchQuery = MutableStateFlow("")
     val allAbortionList = recordsRepo.getAbortionPregnantWomanList()
     private val benIdSelected = MutableStateFlow(0L)
+
+    val abortionList = allAbortionList.combine(searchQuery) { list, filter ->
+        filterAbortionList(list, filter)
+    }
 
     fun setYearMonth(year: Int, month: Int) {
         viewModelScope.launch {

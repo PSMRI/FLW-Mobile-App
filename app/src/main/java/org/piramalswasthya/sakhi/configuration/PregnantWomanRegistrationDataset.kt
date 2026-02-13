@@ -508,7 +508,7 @@ class PregnantWomanRegistrationDataset(
 
             multiplePregnancy.value = getLocalValueInArray(R.array.yes_no, it.multiplePregnancy)
             // if there is valid lmp date auto populating edd and weeks of pregnancy
-            lmp.value = getDateFromLong(it.lmpDate)
+//            lmp.value = getDateFromLong(it.lmpDate)
 
             if (it.lmpDate > 0) {
                 val weekOfPreg =
@@ -516,20 +516,20 @@ class PregnantWomanRegistrationDataset(
                         saved?.dateOfRegistration ?: Calendar.getInstance().timeInMillis,
                         it.lmpDate
                     )
-                weekOfPregnancy.value =
-                    weekOfPreg.toString()
+               /* weekOfPregnancy.value =
+                    weekOfPreg.toString()*/
 //                if (weekOfPreg > 26)
-                lmp.inputType = InputType.TEXT_VIEW
-                edd.value = getDateFromLong(getEddFromLmp(it.lmpDate))
-                ben?.regDate?.let { it1 ->
-                    if (lastTrackTimestamp != null) {
-                        dateOfReg.min = maxOf(it.lmpDate, it1, lastTrackTimestamp)
-                    } else {
-                        dateOfReg.min = maxOf(it.lmpDate, it1)
-                    }
-                }
-                dateOfReg.max = minOf(it.edd, System.currentTimeMillis())
-
+//                lmp.inputType = InputType.TEXT_VIEW
+//                edd.value = getDateFromLong(getEddFromLmp(it.lmpDate))
+                     /*   ben?.regDate?.let { it1 ->
+                            if (lastTrackTimestamp != null) {
+                                dateOfReg.min = maxOf(it.lmpDate, it1, lastTrackTimestamp)
+                            } else {
+                                dateOfReg.min = maxOf(it.lmpDate, it1)
+                            }
+                        }
+                        dateOfReg.max = minOf(it.edd, System.currentTimeMillis())
+        */
             }
 
             childInfoLabel.showHighRisk = (
