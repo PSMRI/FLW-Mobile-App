@@ -40,7 +40,6 @@ class NcdFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // TODO: Use the ViewModel
         setUpNcdCasesRvAdapter()
     }
 

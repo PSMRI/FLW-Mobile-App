@@ -33,9 +33,10 @@ class IncentiveListAdapter :
         }
 
         fun bind(
-            item: IncentiveDomain,
+            item: IncentiveDomain,serialNo : Int
         ) {
             binding.item = item
+            binding.serialNo = serialNo
             binding.executePendingBindings()
 
         }
@@ -47,7 +48,8 @@ class IncentiveListAdapter :
 
     override fun onBindViewHolder(holder: IncentiveViewHolder, position: Int) {
         holder.bind(
-            getItem(position)
+            getItem(position),position+1
+
         )
     }
 

@@ -31,6 +31,14 @@
     <string name="nbr_nb_last_name">अंतिम नाम / उपनाम</string>
     <string name="title_new_ben_reg_hof">HoF Registration</string>
     <string name="title_new_ben_reg_non_hof">Family Member Registration</string>
+    <string name="icon_title_abortion">गर्भपात सूची</string>
+    <string name="icon_title_pmsma">e-PMSMA List</string>
+    <string name="mother_rch_id">मां की RCH आईडी</string>
+    <string-array name="anc_paiucd_done_by">
+        <item>डॉक्टर</item>
+        <item>नर्स</item>
+    </string-array>
+
 
     <string-array name="nbr_gender_array">
         <item name="nbr_gender_1">पुरुष</item>
@@ -159,6 +167,7 @@
         <item>नहीं दिया गया</item>
     </string-array>
 
+
     <string-array name="religion_array">
         <item>हिन्दू</item>
         <item>मुस्लिम</item>
@@ -170,6 +179,19 @@
         <item>अन्य</item>
         <item>अप्रकटित</item>
     </string-array>
+
+    <string-array name="death_place_array">
+        <item>घर</item>
+        <item>उप-केंद्र</item>
+        <item>पीएचसी</item>
+        <item>सीएचसी</item>
+        <item>जिला अस्पताल</item>
+        <item>चिकित्सा महाविद्यालय अस्पताल</item>
+        <item>निजी अस्पताल</item>
+        <item>यात्रा के दौरान</item>
+        <item>अन्य मृत्यु स्थान</item>
+    </string-array>
+
 
     <string-array name="yes_no_donno">
         <item>हाँ</item>

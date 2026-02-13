@@ -18,15 +18,22 @@ import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.HouseHoldListAdapter
 import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.AlertNewBenBinding
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
 import org.piramalswasthya.sakhi.model.Gender
+import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.utils.RoleConstants
 import timber.log.Timber
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class AllHouseholdFragment : Fragment() {
+
+    @Inject
+    lateinit var prefDao: PreferenceDao
 
     private var _binding: FragmentDisplaySearchRvButtonBinding? = null
 
@@ -34,6 +41,7 @@ class AllHouseholdFragment : Fragment() {
         get() = _binding!!
 
     private val viewModel: AllHouseholdViewModel by viewModels()
+
 
     private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
         binding.searchView.setText(value)
@@ -44,6 +52,7 @@ class AllHouseholdFragment : Fragment() {
 
     private var hasDraft = false
 
+    private var isDisease = false
 
     private val draftLoadAlert by lazy {
         MaterialAlertDialogBuilder(requireContext()).setTitle(resources.getString(R.string.incomplete_form_found))
@@ -176,43 +185,65 @@ class AllHouseholdFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            (it as HomeActivity).updateActionBar(
-                R.drawable.ic__hh,
-                getString(R.string.icon_title_household)
-            )
+            if (prefDao.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
+                (it as SupervisorActivity).updateActionBar(
+                    R.drawable.ic__hh,
+                    getString(R.string.icon_title_household)
+                )
+            } else {
+                (it as HomeActivity).updateActionBar(
+                    R.drawable.ic__hh,
+                    getString(R.string.icon_title_household)
+                )
+            }
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.btnNextPage.text = resources.getString(R.string.btn_text_frag_home_nhhr)
+        if (prefDao.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
+            binding.btnNextPage.visibility = View.GONE
+        } else {
+            binding.btnNextPage.visibility = View.VISIBLE
+        }
 //        binding.tvEmptyContent.text = resources.getString(R.string.no_records_found_hh)
-        val householdAdapter = HouseHoldListAdapter(HouseHoldListAdapter.HouseholdClickListener({
-            findNavController().navigate(
-                AllHouseholdFragmentDirections.actionAllHouseholdFragmentToNewHouseholdFragment(
-                    it
-                )
-            )
-        }, {
-            findNavController().navigate(
-                AllHouseholdFragmentDirections.actionAllHouseholdFragmentToHouseholdMembersFragment(
-                    it
-                )
-            )
-        }, {
-            if (it.numMembers == 0) {
+        val householdAdapter = HouseHoldListAdapter("",isDisease, prefDao, HouseHoldListAdapter.HouseholdClickListener({
                 findNavController().navigate(
-                    AllHouseholdFragmentDirections.actionAllHouseholdFragmentToNewBenRegFragment(
-                        it.hhId,
-                        18
+                    AllHouseholdFragmentDirections.actionAllHouseholdFragmentToNewHouseholdFragment(
+                        it
                     )
                 )
-            } else {
-                viewModel.setSelectedHouseholdId(it.hhId)
-                addBenAlert.show()
-            }
+        }, {
+//            val bundle = Bundle()
+//            bundle.putLong("hhId", it)
+//            bundle.putString("diseaseType", "No")
+//            bundle.putInt("fromDisease", 0)
+//            findNavController().navigate(R.id.householdMembersFragments, bundle)
+            findNavController().navigate(
+                AllHouseholdFragmentDirections.actionAllHouseholdFragmentToHouseholdMembersFragment(
+                    it,0,"No"
+                )
+            )
+        }, {
+                if (it.numMembers == 0) {
+                    findNavController().navigate(
+                        AllHouseholdFragmentDirections.actionAllHouseholdFragmentToNewBenRegFragment(
+                            it.hhId,
+                            18
+                        )
+                    )
+                } else {
+                    viewModel.setSelectedHouseholdId(it.hhId)
+                    addBenAlert.show()
+                }
 
-        }))
+        },
+        {
+
+
+        },
+            ))
         binding.rvAny.adapter = householdAdapter
 
         lifecycleScope.launch {

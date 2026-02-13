@@ -44,12 +44,13 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
      * Helper function to get resource instance chosen language.
      */
 
-    protected companion object {
+     companion object {
         fun getLongFromDate(dateString: String?): Long {
             val f = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
             val date = dateString?.let { f.parse(it) }
             return date?.time ?: 0L
         }
+
 
         fun getFinancialYear(dateString: String?): String? {
             val f = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
@@ -83,6 +84,30 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
 
         }
 
+        fun dateFormate(dateStr: String): String? {
+            val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val outputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+
+            val dateResponse = inputFormat.parse(dateStr)
+            return outputFormat.format(dateResponse!!)
+
+
+        }
+
+        fun dateReverseFormat(dateStr: String): String? {
+            if (dateStr.isEmpty()) return null
+
+            return try {
+                val inputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                
+                val dateResponse = inputFormat.parse(dateStr) ?: return null
+                outputFormat.format(dateResponse)
+            } catch (e: Exception) {
+                null
+            }
+        }
+
         fun getMinDateOfReg(): Long {
             return Calendar.getInstance().apply {
                 set(Calendar.YEAR, 2020)
@@ -112,6 +137,10 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
 
     protected fun FormElement.getStringFromPosition(position: Int): String? {
         return if (position <= 0) null else entries?.get(position - 1)
+    }
+
+    protected fun FormElement.getStringSpauseFromPosition(position: Int): String? {
+        return if (position <= 0) entries?.get(1) else entries?.get(position - 1)
     }
 
     protected fun FormElement.getEnglishStringFromPosition(position: Int): String? {
@@ -147,9 +176,14 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
     }
 
     protected suspend fun setUpPage(mList: List<FormElement>) {
-        list.clear()
-        list.addAll(mList)
-        _listFlow.emit(list.toMutableList())
+
+        try {
+            list.clear()
+            list.addAll(mList)
+            _listFlow.emit(list.toMutableList())
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
 
@@ -619,6 +653,21 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
         return -1
     }
 
+    protected fun validateAllAlphabetsSpecialAndNumericOnEditText(formElement: FormElement): Int {
+        formElement.value?.takeIf { it.isNotEmpty() }?.let { input ->
+            val regex = "^[a-zA-Z0-9\\s\\p{Punct}]+$".toRegex() // allows alphabets, numbers, spaces, and special characters
+
+            val isValid = regex.matches(input)
+            if (!isValid) {
+                formElement.errorText = resources.getString(R.string.form_input_alphabet_special__digit_only_error)
+            } else {
+                formElement.errorText = null
+            }
+        }
+        return -1
+    }
+
+
     protected fun validateAllAlphaNumericSpaceOnEditText(formElement: FormElement): Int {
         formElement.value?.takeIf { it.isNotEmpty() }?.let {
             val isValid = it.isAllAlphaNumericAndSpace()
@@ -627,6 +676,23 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
             if (isValid) formElement.errorText = null
             else formElement.errorText =
                 resources.getString(R.string.form_input_alph_numeric_space_only_error)
+        } ?: kotlin.run {
+            formElement.errorText = null
+        }
+        return -1
+    }
+    fun String.isValid(): Boolean {
+        return this.matches(Regex("^\\d{14}$"))
+    }
+
+    protected fun validateABHANumberEditText(formElement: FormElement): Int {
+        formElement.value?.takeIf { it.isNotEmpty() }?.let {
+            val isValid = it.isValid()
+            if (formElement.errorText != null && formElement.errorText != resources.getString(R.string.abha_number_digit))
+                return@let
+            if (isValid) formElement.errorText = null
+            else formElement.errorText =
+                resources.getString(R.string.abha_number_digit)
         } ?: kotlin.run {
             formElement.errorText = null
         }
@@ -641,6 +707,23 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
             if (isValid) formElement.errorText = null
             else formElement.errorText =
                 resources.getString(R.string.form_input_alph_numeric_space_only_error)
+        } ?: kotlin.run {
+            formElement.errorText = null
+        }
+        return -1
+    }
+    private fun String.isValidFormat() = takeIf {
+        matches(Regex("^[A-Z]{4}[0-9]{7}$"))
+    } != null
+
+    protected fun validateIFSCEditText(formElement: FormElement): Int {
+        formElement.value?.takeIf { it.isNotEmpty() }?.let {
+            val isValid = it.isValidFormat()
+            if (formElement.errorText != null && formElement.errorText != resources.getString(R.string.ifsc))
+                return@let
+            if (isValid) formElement.errorText = null
+            else formElement.errorText =
+                resources.getString(R.string.ifsc)
         } ?: kotlin.run {
             formElement.errorText = null
         }
@@ -671,6 +754,28 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
         }
         return -1
     }
+
+    protected fun validateUploads(
+        uploads: List<FormElement>,
+        minRequired: Int = 2
+    ): Int {
+        val uploadCount = uploads.count { !it.value.isNullOrEmpty() }
+
+        return if (uploadCount < minRequired) {
+            uploads.forEach {
+                if (it.value.isNullOrEmpty()) {
+                    it.errorText = resources.getString(R.string.form_input_empty_error)
+                }
+            }
+            0
+        } else {
+            uploads.forEach { it.errorText = null }
+            -1
+        }
+    }
+
+
+
 
    /* protected fun validateIntMinMax(formElement: FormElement): Int {
         formElement.errorText = formElement.value?.takeIf { it.isNotEmpty() }?.toLong()?.let {
@@ -778,6 +883,18 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
         return -1
     }
 
+//    protected fun validateNumberOnEditText(formElement: FormElement): Int {
+//        val input = formElement.value?.trim() ?: ""
+//
+//        formElement.errorText = when {
+////            input.isEmpty() -> resources.getString(R.string.form_input_error_mandatory)
+////            input.any { !it.isDigit() } -> resources.getString(R.string.form_input_error_numeric_only)
+//            input.length > 4 -> resources.getString(R.string.form_input_error_max_digits)
+//            else -> null
+//        }
+//
+//        return -1
+//    }
 
     protected fun validateRchIdOnEditText(formElement: FormElement): Int {
         formElement.errorText = formElement.value?.takeIf { it.isNotEmpty() }?.let { text ->

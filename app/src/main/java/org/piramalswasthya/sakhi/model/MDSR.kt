@@ -29,6 +29,9 @@ data class MDSRCache(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val benId: Long,
+    var mdsr1File: String? = null,
+    var mdsr2File: String? = null,
+    var mdsrDeathCertFile: String? = null,
     var dateOfDeath: Long? = System.currentTimeMillis(),
     var address: String? = null,
     var husbandName: String? = null,
@@ -49,6 +52,9 @@ data class MDSRCache(
         return MdsrPost(
             id = id,
             benId = benId,
+            mdsr1File=mdsr1File,
+            mdsr2File=mdsr2File,
+            mdsrDeathCertFile=mdsrDeathCertFile,
             dateOfDeath = getDateTimeStringFromLong(dateOfDeath),
             address = address,
             husbandName = husbandName,
@@ -73,6 +79,9 @@ data class MdsrPost(
 
     val id: Int = 0,
     val benId: Long,
+    var mdsr1File: String? = null,
+    var mdsr2File: String? = null,
+    var mdsrDeathCertFile: String? = null,
     val dateOfDeath: String? = null,
     val address: String? = null,
     val husbandName: String? = null,
@@ -91,6 +100,9 @@ data class MdsrPost(
         return MDSRCache(
             id = id,
             benId = benId,
+            mdsr1File=mdsr1File,
+            mdsr2File=mdsr2File,
+            mdsrDeathCertFile=mdsrDeathCertFile,
             dateOfDeath = getLongFromDate(dateOfDeath),
             address = address,
             husbandName = husbandName,

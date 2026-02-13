@@ -1,7 +1,7 @@
 package org.piramalswasthya.sakhi.ui.home_activity.immunization_due.child_immunization.form
 
 import android.content.Context
-import android.util.Log
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -29,8 +29,6 @@ import org.piramalswasthya.sakhi.model.Vaccine
 import org.piramalswasthya.sakhi.model.VaccineDomain
 import org.piramalswasthya.sakhi.model.VaccineState
 import timber.log.Timber
-import java.util.ArrayList
-import java.util.Arrays
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -81,6 +79,23 @@ class ImmunizationFormViewModel @Inject constructor(
     private lateinit var immCache: ImmunizationCache
     private  var immCacheArray = mutableListOf<ImmunizationCache>()
     private lateinit var asha: User
+
+    fun getIndexMCPCard1() = dataset.getIndexMCPCard1()
+    fun getIndexMCPCard2() = dataset.getIndexMCPCard2()
+
+    private var lastDocumentFormId: Int = 0
+    fun setCurrentDocumentFormId(id: Int) {
+        lastDocumentFormId = id
+    }
+
+    fun getDocumentFormId(): Int {
+        return lastDocumentFormId
+    }
+
+    fun setImageUriToFormElement(dpUri: Uri) {
+        dataset.setImageUriToFormElement(lastDocumentFormId, dpUri)
+
+    }
 
     init {
         viewModelScope.launch {

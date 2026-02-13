@@ -168,8 +168,6 @@ class HRPMicroBirthPlanTable : Fragment() {
 
                     binding.nrPhc.text =
                         "${resources.getString(R.string.nearest_24x7_phc)} :\n${viewModel._microBirthPlanCache.nearestPhc ?: ""}"
-                    binding.bankAccNo.text =
-                        "${resources.getString(R.string.bank_acc_no)} :\n${viewModel._microBirthPlanCache.bankac ?: ""}"
                     binding.nrFru.text =
                         "${resources.getString(R.string.nearest_fru)} :\n${viewModel._microBirthPlanCache.nearestFru ?: ""}"
                     binding.nrUsg.text =

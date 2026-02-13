@@ -87,13 +87,23 @@ class NewBenRegG15ViewModel @Inject constructor(
                 ben = benRepo.getBeneficiaryRecord(benIdFromArgs, hhId) ?: BenRegCache(
                     ashaId = user.userId,
                     beneficiaryId = -1,
+                    isDeath = false,
+                    isDeathValue = "",
+                    dateOfDeath = "",
+                    timeOfDeath = "",
+                    reasonOfDeath = "",
+                    reasonOfDeathId = -1,
+                    placeOfDeath = "",
+                    placeOfDeathId = -1,
+                    otherPlaceOfDeath = "",
                     householdId = hhId,
                     isAdult = true,
                     isKid = false,
                     isDraft = true,
                     genDetails = BenRegGen(),
                     syncState = SyncState.UNSYNCED,
-                    locationRecord = preferenceDao.getLocationRecord()!!
+                    locationRecord = preferenceDao.getLocationRecord()!!,
+                    isConsent = false
                 )
                 currentPage.collect {
                     when (it) {

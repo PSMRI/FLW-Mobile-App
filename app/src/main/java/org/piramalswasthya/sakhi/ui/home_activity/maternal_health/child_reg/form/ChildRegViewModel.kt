@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.ui.home_activity.maternal_health.child_reg.form
 
 import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -33,6 +34,7 @@ class ChildRegViewModel @Inject constructor(
         ChildRegFragmentArgs.fromSavedStateHandle(savedStateHandle).motherBenId
     val babyIndex =
         ChildRegFragmentArgs.fromSavedStateHandle(savedStateHandle).babyIndex
+    private var lastDocumentFormId: Int = 0
 
     enum class State {
         IDLE, SAVING, SAVE_SUCCESS, SAVE_FAILED
@@ -47,6 +49,9 @@ class ChildRegViewModel @Inject constructor(
         get() = _recordExists
 
     private lateinit var infantReg: InfantRegCache
+
+    fun getIndexOfBirthCertificateFront() = dataset.getIndexOfBirthCertificateFrontPath()
+    fun getIndexOfBirthCertificateBack() = dataset.getIndexOfBirthCertificateBackPath()
 
     private val dataset =
         ChildRegistrationDataset(context, preferenceDao.getCurrentLanguage())
@@ -68,6 +73,19 @@ class ChildRegViewModel @Inject constructor(
             )
 
         }
+    }
+
+    fun setCurrentDocumentFormId(id: Int) {
+        lastDocumentFormId = id
+    }
+
+    fun getDocumentFormId():Int {
+        return lastDocumentFormId
+    }
+
+    fun setImageUriToFormElement(dpUri: Uri) {
+        dataset.setImageUriToFormElement(lastDocumentFormId, dpUri)
+
     }
 
     fun updateListOnValueChanged(formId: Int, index: Int) {

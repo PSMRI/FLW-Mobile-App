@@ -50,6 +50,18 @@ class PreferenceDao @Inject constructor(@ApplicationContext private val context:
         editor.apply()
     }
 
+    fun registerRefreshToken(token: String) {
+        val editor = pref.edit()
+        val prefKey = context.getString(R.string.PREF_primary_REFRESH_TOKEN)
+        editor.putString(prefKey, token)
+        editor.apply()
+    }
+
+    fun getRefreshToken(): String? {
+        val prefKey = context.getString(R.string.PREF_primary_REFRESH_TOKEN)
+        return pref.getString(prefKey, null)
+    }
+
     fun registerLoginCred(userName: String, password: String) {
         val editor = pref.edit()
         val prefUserKey = context.getString(R.string.PREF_rem_me_uname)
@@ -141,11 +153,7 @@ class PreferenceDao @Inject constructor(@ApplicationContext private val context:
             Languages.ASSAMESE.symbol -> Languages.ASSAMESE
             Languages.HINDI.symbol -> Languages.HINDI
             Languages.ENGLISH.symbol -> Languages.ENGLISH
-            else -> if (BuildConfig.FLAVOR.contains("mitanin", true)) {
-                Languages.HINDI
-            } else {
-                Languages.ASSAMESE
-            }
+            else -> Languages.ENGLISH
         }
     }
 
@@ -217,4 +225,11 @@ class PreferenceDao @Inject constructor(@ApplicationContext private val context:
         set(value) {
             pref.edit().putLong("last incentive update timestamp ", value).apply()
         }
+
+    var lastAshaPullTimestamp: Long
+        get() = pref.getLong("last asha update timestamp ", Konstants.defaultTimeStamp)
+        set(value) {
+            pref.edit().putLong("last asha update timestamp ", value).apply()
+        }
+
 }

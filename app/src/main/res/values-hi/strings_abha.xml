@@ -31,7 +31,6 @@
     <string name="enter_mobile_number">मोबाइल संख्या दर्ज करें</string>
     <string name="enter_number_for_abha">आभा पंजीकरण के लिए आधार संख्या</string>
     <string name="aadhaar_linked_mobile">आधार से जुड़ा मोबाइल संख्या या अन्य मोबाइल संख्या</string>
-    <string name="mobile_number">मोबाइल संख्या</string>
     <string name="check_and_generate_otp">जांचें और ओटीपी बनाएं</string>
     <string name="textview">टेक्स्ट व्यू</string>
     <string name="download_abha_channel_id">आभा कार्ड डाउनलोड हो रहा है</string>

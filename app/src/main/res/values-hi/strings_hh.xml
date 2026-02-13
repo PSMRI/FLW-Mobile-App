@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <string name="add_asha_head">मितानिन परिवार पंजीकरण</string>
     <string name="btn_text_frag_home_nhhr">नया घरेलू पंजीकरण</string>
+    <string name="btn_new_maa_meeting">नई माँ बैठक पंजीकरण</string>
     <string name="no_records_found">कोई लाभार्थी प्रदर्शित करने के लिए नहीं। कृपया लाभार्थियों का पंजीकरण शुरू करें</string>
     <string name="household_search">घरेलू सर्च</string>
 
@@ -144,5 +145,6 @@
     <string name="add_head_of_family">ADD Head Of Family</string>
     <string name="add_head_of_family_message">क्या आप <b>%1s</b> को मुखिया को लाभार्थी के रूप में जोड़ें?</string>
     <string name="hh_no_members">परिवार की जानकारी खाली है</string>
+    <string name="add_mda">एमडीए जोड़ें</string>
 
 </resources>

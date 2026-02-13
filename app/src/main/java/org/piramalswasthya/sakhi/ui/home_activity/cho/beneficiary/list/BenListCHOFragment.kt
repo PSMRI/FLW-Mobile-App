@@ -18,14 +18,19 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.BenListAdapter
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import timber.log.Timber
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class BenListCHOFragment : Fragment() {
+
+    @Inject
+    lateinit var prefDao: PreferenceDao
 
     private var _binding: FragmentDisplaySearchRvButtonBinding? = null
 
@@ -79,10 +84,13 @@ class BenListCHOFragment : Fragment() {
                 { benId, hhId ->
                     checkAndGenerateABHA(benId)
                 },
+                { benId, hhId, isViewMode, isIFA ->
+                }, {}
 
                 ),
 //            showAbha = true,
-            role = 1
+            role = 1,
+            pref = prefDao
         )
         binding.rvAny.adapter = benAdapter
         lifecycleScope.launch {

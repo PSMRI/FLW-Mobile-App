@@ -24,8 +24,13 @@
     <string name="nbr_dob">Date of Birth</string>
     <string name="nbr_gender">Gender</string>
     <string name="nbr_image">Photo</string>
+    <string name="nbr_abortion_image">Abortion Discharge </string>
+    <string name="nbr_image_cam_gal">Tap to use camera/Gallery</string>
     <string name="nbr_image_sub">Tap to use camera</string>
     <string name="nbr_dor">Date of Registration</string>
+    <string name="vhnd_date">VHND Date</string>
+    <string name="vhnc_date">VHNC Date</string>
+    <string name="phc_review_meeting_date">PHC Review Meeting Date</string>
     <string name="nbr_nb_first_name">First Name</string>
     <string name="nbr_nb_last_name">Last Name / Surname</string>
     <string name="beneficiary_details_ben">Beneficiary Details</string>
@@ -49,12 +54,28 @@
     <string name="frag_new_ben_reg_type_title">Beneficiary Type for Registration</string>
     <string name="consent_text">Consent:\nI have been explained by the ASHA, the purpose for which the information and measurement findings is being collected from me, in a language I understand and I give my consent to collect the information and measurement findings on my personal health profile.</string>
     <string name="disagree">DISAGREE</string>
+    <string name="other_place_of_death">Other Place of Death</string>
     <string name="agree">AGREE</string>
+
+    <string name="deworming_done">Deworming Round Done?</string>
+    <string name="deworming_date">Date of Deworming</string>
+    <string name="deworming_location">Location of Deworming</string>
+    <string name="age_group">Age Group</string>
+    <string name="deworming_title">National Deworming Day Form</string>
+    <string name="deworming_list_title">National Deworming Day Forms List</string>
+    <string name="ndd_list_title">NDD Form</string>
+
+    <string-array name="deworming_location_options">
+        <item>School</item>
+        <item>Home Visit</item>
+    </string-array>
+
     <string-array name="nbr_gender_array">
         <item name="nbr_gender_1">Male</item>
         <item name="nbr_gender_2">Female</item>
         <item name="nbr_gender_3">Transgender</item>
     </string-array>
+
     <string-array name="nbr_reproductive_status_array">
         <item name="ec">Eligible Couple</item>
         <item>Pregnant Woman</item>
@@ -62,6 +83,7 @@
         <item>Elderly Woman</item>
         <item>Adolescent Girl</item>
         <item>Permanently Sterilised</item>
+        <item>Not Applicable</item>
     </string-array>
 
     <string name="dd_ec">Eligible Couple</string>
@@ -96,6 +118,16 @@
         <item>Father</item>
         <item>Family Head</item>
         <item>Other</item>
+    </string-array>
+
+    <string-array name="temp_mobile_no_relation_array">
+        <item>Family Head</item>
+        <item>Self</item>
+        <item>Spouse</item>
+        <item>Mother</item>
+        <item>Father</item>
+        <item>Neighbor</item>
+        <item>Friend/Relative</item>
     </string-array>
 
     <string-array name="nbr_relationship_to_head_src">
@@ -178,6 +210,7 @@
     <string name="months">Months</string>
     <string name="day">Day</string>
     <string name="days">Days</string>
+    <string name="mother_rch_id">Mother RCH ID</string>
 
     <string-array name="nbr_relationship_to_head_female">
         <item>Mother</item>
@@ -224,8 +257,80 @@
         <item>Yes</item>
         <item>No</item>
     </string-array>
+    <string-array name="fathers_spouse">
+        <item>Father</item>
+        <item>Spouse</item>
+    </string-array>
+
+    <string-array name="pf_pv">
+        <item>Pf</item>
+        <item>Pv</item>
+    </string-array>
+
+    <string-array name="positive_negative">
+        <item>Positive</item>
+        <item>Negative</item>
+        <item>Not Performed</item>
+    </string-array>
 
     <string-array name="yes">
         <item>Yes</item>
     </string-array>
+
+    <string-array name="death_reason_array">
+        <item>Maternal Death</item>
+        <item>Natural Death</item>
+        <item>Accident</item>
+        <item>Infectious Disease</item>
+        <item>Animal Bite Death</item>
+        <item>Suicide</item>
+        <item>Undetermined</item>
+    </string-array>
+    <string-array name="death_place_array">
+        <item>Home</item>
+        <item>Subcenter</item>
+        <item>PHC</item>
+        <item>CHC</item>
+        <item>District Hospital</item>
+        <item>Medical College Hospital</item>
+        <item>Private Hospital</item>
+        <item>In Transit</item>
+        <item>Other Place of Death</item>
+    </string-array>
+    <string-array name="abortion_place_array">
+        <item>Home</item>
+        <item>Subcenter</item>
+        <item>PHC</item>
+        <item>CHC</item>
+        <item>District Hospital</item>
+        <item>Medical College Hospital</item>
+        <item>Private Hospital</item>
+        <item>In Transit</item>
+        <item>Other Place of Abortion</item>
+    </string-array>
+    <string-array name="reason_of_death_array">
+        <item>Natural Death</item>
+        <item>Accident</item>
+        <item>Infectious Disease</item>
+        <item>Animal Bite Death</item>
+        <item>Suicide</item>
+        <item>Undetermined</item>
+    </string-array>
+    <string-array name="reason_of_death_array_with_maternal">
+        <item>Natural Death</item>
+        <item>Accident</item>
+        <item>Infectious Disease</item>
+        <item>Animal Bite Death</item>
+        <item>Suicide</item>
+        <item>Undetermined</item>
+        <item>Maternal Death</item>
+
+    </string-array>
+
+    <string-array name="beneficiary_status">
+        <item>Alive</item>
+        <item>Death</item>
+    </string-array>
+
+
 </resources>

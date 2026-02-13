@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
+        <import type="android.view.View" />
         <variable
             name="ben"
             type="org.piramalswasthya.sakhi.model.BenBasicDomain" />
@@ -41,18 +41,6 @@
                 android:paddingHorizontal="@dimen/padding_tiny"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <!--                <ImageView-->
-                <!--                    android:id="@+id/iv_hh_logo"-->
-                <!--                    android:layout_width="wrap_content"-->
-                <!--                    android:layout_height="0dp"-->
-                <!--                    android:paddingVertical="@dimen/padding_normal"-->
-                <!--                    android:src="@drawable/ic__hh"-->
-                <!--                    app:layout_constraintBottom_toBottomOf="parent"-->
-                <!--                    app:layout_constraintStart_toStartOf="parent"-->
-                <!--                    app:layout_constraintTop_toTopOf="parent"-->
-                <!--                    app:tint="?attr/colorPrimary" />-->
-
-
                 <TextView
                     android:id="@+id/tv_hh_id"
                     android:layout_width="0dp"
@@ -62,10 +50,10 @@
                     android:drawablePadding="@dimen/padding_small"
                     android:gravity="center_vertical"
                     android:padding="@dimen/padding_small"
-                    android:text="@{ben.familyHeadName}"
+                    android:text="@{ben.benFullName}"
                     android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                     android:textColor="?attr/colorPrimaryVariant"
-                    app:drawableLeftCompat="@drawable/ic__hh"
+                    app:drawableLeftCompat="@drawable/ic__infant"
                     app:drawableTint="?attr/colorPrimary"
                     tools:text="Hello Meister" />
 
@@ -92,7 +80,16 @@
                     android:layout_marginHorizontal="@dimen/padding_small"
                     android:elevation="2dp"
                     android:src="@drawable/ic_overdue" />
-
+                <ImageView
+                    android:id="@+id/iv_isDeath"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center_vertical|end"
+                    android:layout_marginHorizontal="@dimen/padding_small"
+                    android:visibility="@{ben.isDeath == true ? View.VISIBLE : View.GONE}"
+                    android:contentDescription="@string/iv_death_indicator"
+                    android:src="@drawable/ic_death"
+                    />
                 <ImageView
                     android:id="@+id/iv_sync_state"
                     android:layout_width="24dp"
@@ -102,6 +99,7 @@
                     android:contentDescription="@string/iv_sync_state_tv"
                     app:syncState="@{ben.syncState}"
                     tools:src="@drawable/ic_synced" />
+
 
             </LinearLayout>
 
@@ -130,14 +128,14 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/name_ben"
+                            android:text="@string/mother_name"
                             android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                             android:textColor="?attr/colorOnPrimary" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@{ben.benFullName}"
+                            android:text="@{ben.motherName}"
                             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                             android:textColor="?attr/colorOnPrimary"
                             tools:text="Lala Land" />
@@ -277,12 +275,33 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     app:layout_constraintTop_toBottomOf="@id/ll_ben_details_2">
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:padding="@dimen/padding_small">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/date_of_birth"
+                            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                            android:textColor="?attr/colorOnPrimary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@{ben.dobString}"
+                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                            android:textColor="?attr/colorOnPrimary"
+                            tools:text="0123456789" />
+                    </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        rchId="@{ben}"
                         android:orientation="vertical"
                         android:padding="@dimen/padding_small">
 
@@ -303,6 +322,7 @@
                     </LinearLayout>
 
                     <Button
+                        android:id="@+id/btnHBNC"
                         style="@style/Widget.Material3.Button.TonalButton"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"

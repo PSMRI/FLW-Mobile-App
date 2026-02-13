@@ -47,5 +47,9 @@ class PushDeliveryOutcomeToAmritWorker @AssistedInject constructor(
             preferenceDao.getAmritToken()?.let {
                 TokenInsertTmcInterceptor.setToken(it)
             }
+        if (TokenInsertTmcInterceptor.getJwt() == "")
+            preferenceDao.getJWTAmritToken()?.let {
+                TokenInsertTmcInterceptor.setJwt(it)
+            }
     }
 }

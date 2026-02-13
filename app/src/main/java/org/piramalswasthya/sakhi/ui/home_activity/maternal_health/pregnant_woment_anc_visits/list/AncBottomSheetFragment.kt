@@ -13,10 +13,15 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.adapters.AncVisitAdapter
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.BottomSheetAncBinding
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class AncBottomSheetFragment : BottomSheetDialogFragment() {
+
+    @Inject
+    lateinit var prefDao: PreferenceDao
 
     private var _binding: BottomSheetAncBinding? = null
     private val binding: BottomSheetAncBinding
@@ -40,11 +45,11 @@ class AncBottomSheetFragment : BottomSheetDialogFragment() {
             AncVisitAdapter(AncVisitAdapter.AncVisitClickListener { benId, visitNumber,isLast ->
                 findNavController().navigate(
                     PwAncVisitsListFragmentDirections.actionPwAncVisitsFragmentToPwAncFormFragment(
-                        benId, visitNumber,isLast
+                        benId, null,visitNumber,isLast
                     )
                 )
                 this.dismiss()
-            })
+            }, prefDao)
 
         val divider = DividerItemDecoration(context, LinearLayout.VERTICAL)
         binding.rvAnc.addItemDecoration(divider)

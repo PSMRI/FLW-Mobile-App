@@ -65,6 +65,7 @@
     <color name="Quartenary">#FD5901</color>
     <color name="Tertiary">#008083</color>
     <color name="holo_green_dark">#669900</color>
+    <color name="holo_red_light">#F44336</color>
     <color name="read_only">#D8D8D8</color>
     <color name="light_blue">#0027FF</color>
     <color name="wood_light">#E6BF83</color>
@@ -78,4 +79,5 @@
     <color name="line_focused">#3F51B5</color>
     <color name="line_default">#C5CAE9</color>
     <color name="color_consent_text">#0000EE</color>
+    <color name="table_header_background">#E0E0E0</color>
 </resources>

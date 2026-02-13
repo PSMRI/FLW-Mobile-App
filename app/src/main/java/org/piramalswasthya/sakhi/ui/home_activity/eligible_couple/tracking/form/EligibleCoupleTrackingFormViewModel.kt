@@ -1,6 +1,8 @@
 package org.piramalswasthya.sakhi.ui.home_activity.eligible_couple.tracking.form
 
 import android.content.Context
+import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -41,6 +43,9 @@ class EligibleCoupleTrackingFormViewModel @Inject constructor(
         IDLE, SAVING, SAVE_SUCCESS, SAVE_FAILED
     }
 
+    private val _showAntraSection = MutableLiveData<Boolean>()
+    val showAntraSection: LiveData<Boolean> = _showAntraSection
+
     private val _state = MutableLiveData(State.IDLE)
     val state: LiveData<State>
         get() = _state
@@ -63,43 +68,73 @@ class EligibleCoupleTrackingFormViewModel @Inject constructor(
 
     var isPregnant: Boolean = false
 
+    private val _allDoseList = MutableLiveData<List<EligibleCoupleTrackingCache>?>()
+    val allDoseList: LiveData<List<EligibleCoupleTrackingCache>?> = _allDoseList
+
+
     private lateinit var eligibleCoupleTracking: EligibleCoupleTrackingCache
 
+    fun getIndexOfMPA() = dataset.getIndexOfMPA()
+    fun getIndexDeliveryDischargeSummary1() = dataset.getIndexDeliveryDischargeSummary1()
+    fun getIndexDeliveryDischargeSummary2() = dataset.getIndexDeliveryDischargeSummary2()
+
+    private var lastDocumentFormId: Int = 0
+    fun setCurrentDocumentFormId(id: Int) {
+        lastDocumentFormId = id
+    }
+
+    fun getDocumentFormId(): Int {
+        return lastDocumentFormId
+    }
+
+    fun setImageUriToFormElement(dpUri: Uri) {
+        dataset.setImageUriToFormElement(lastDocumentFormId, dpUri)
+
+    }
     init {
         viewModelScope.launch {
             val asha = preferenceDao.getLoggedInUser()!!
             val ben = ecrRepo.getBenFromId(benId)?.also { ben ->
                 _benName.value =
-                    "${ben.firstName} ${if (ben.lastName == null) "" else ben.lastName}"
+                    "${ben.firstName} ${ben.lastName ?: ""}"
                 _benAgeGender.value = "${ben.age} ${ben.ageUnit?.name} | ${ben.gender?.name}"
-                eligibleCoupleTracking = EligibleCoupleTrackingCache(
-                    benId = ben.beneficiaryId,
-                    syncState = SyncState.UNSYNCED,
-                    createdBy = asha.userName,
-                    updatedBy = asha.userName,
-                )
             }
 
             val pastTrack = ecrRepo.getLatestEctByBenId(benId)
+             loadAllDoses(benId)
 
-            ecrRepo.getEct(benId, createdDate)?.let {
-                eligibleCoupleTracking = it
+
+            val existingRecord = ecrRepo.getEct(benId, createdDate)
+            if (existingRecord != null) {
+                eligibleCoupleTracking = existingRecord
                 _recordExists.value = true
-            } ?: run {
+                _showAntraSection.value = existingRecord.methodOfContraception
+                    ?.contains("ANTRA", ignoreCase = true) == true
+            } else {
+                eligibleCoupleTracking = EligibleCoupleTrackingCache(
+                    benId = benId,
+                    syncState = SyncState.UNSYNCED,
+                    createdBy = asha.userName,
+                    updatedBy = asha.userName,
+                    lmp_date = ecrRepo.getBenFromId(benId)!!.benRegId
+                )
                 _recordExists.value = false
+                _showAntraSection.value = false
             }
+
 
             ecrRepo.getSavedRecord(benId)?.let {
                 dataset.setUpPage(
                     ben,
                     it.dateOfReg,
                     pastTrack,
-                    if (recordExists.value == true) eligibleCoupleTracking else null
+                    if (_recordExists.value == true) eligibleCoupleTracking else null,
+                    ecrRepo.getNoOfChildren(benId)
                 )
             }
-
         }
     }
+
 
     fun updateListOnValueChanged(formId: Int, index: Int) {
         viewModelScope.launch {
@@ -113,7 +148,6 @@ class EligibleCoupleTrackingFormViewModel @Inject constructor(
             withContext(Dispatchers.IO) {
                 try {
                     _state.postValue(State.SAVING)
-
                     dataset.mapValues(eligibleCoupleTracking, 1)
                     ecrRepo.saveEct(eligibleCoupleTracking)
                     isPregnant = (eligibleCoupleTracking.isPregnant == "Yes") ||
@@ -164,6 +198,12 @@ class EligibleCoupleTrackingFormViewModel @Inject constructor(
 
     fun resetState() {
         _state.value = State.IDLE
+    }
+    fun loadAllDoses(benId: Long) {
+        viewModelScope.launch {
+            val list = ecrRepo.getAllAntraDoses(benId)  // suspend call (safe here)
+            _allDoseList.postValue(list)
+        }
     }
 
     fun getIndexOfIsPregnant() = dataset.getIndexOfIsPregnant()

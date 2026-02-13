@@ -1,5 +1,7 @@
 package org.piramalswasthya.sakhi.model
 
+import android.util.Log
+import android.content.Context
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
@@ -15,6 +17,7 @@ import org.piramalswasthya.sakhi.helpers.getWeeksOfPregnancy
 import org.piramalswasthya.sakhi.network.getLongFromDate
 import org.piramalswasthya.sakhi.utils.HelperUtil.getDateStringFromLong
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
@@ -62,6 +65,14 @@ data class PregnantWomenVisitDomain(
 )
 
 data class AncStatus(
+    val benId: Long,
+    val visitNumber: Int,
+    val filledWeek: Int,
+    val syncState: SyncState? = null
+)
+
+
+data class PMSMAStatus(
     val benId: Long,
     val visitNumber: Int,
     val filledWeek: Int,
@@ -208,7 +219,8 @@ data class BenWithPwrCache(
             form1Filled = ben.hrppaFilled,
             syncState = ben.hrppaSyncState,
             form2Enabled = true,
-            form2Filled = ben.hrpmbpFilled
+            form2Filled = ben.hrpmbpFilled,
+            isConsent = false
         )
     }
 
@@ -319,7 +331,28 @@ data class PregnantWomanAncCache(
     val benId: Long,
     var visitNumber: Int,
     var isActive: Boolean = true,
-    var ancDate: Long = System.currentTimeMillis(),
+    var ancDate: Long = 0L,
+
+    var lmpDate: Long? = null,
+    var visitDate: Long? = null,
+    var weekOfPregnancy: Int? = null,
+
+    var serialNo: String? = null,
+    var methodOfTermination: String? = null,
+    var methodOfTerminationId: Int? = 0,
+    var terminationDoneBy: String? = null,
+    var terminationDoneById: Int? = 0,
+    var isPaiucdId: Int? = 0,
+    var isYesOrNo: Boolean? = false,
+    var isPaiucd: String? = null,
+    var dateSterilisation: Long? = null,
+    var remarks: String? = null,
+    var abortionImg1: String? = null,
+    var abortionImg2: String? = null,
+    var placeOfDeath: String? = null,
+    var placeOfDeathId: Int? = 0,
+    var otherPlaceOfDeath: String? = null,
+
     var isAborted: Boolean = false,
     var abortionType: String? = null,
     var abortionTypeId: Int = 0,
@@ -358,13 +391,34 @@ data class PregnantWomanAncCache(
     val createdDate: Long = System.currentTimeMillis(),
     var updatedBy: String,
     var updatedDate: Long = System.currentTimeMillis(),
-    var syncState: SyncState
+    var syncState: SyncState,
+    var frontFilePath : String?,
+    var backFilePath : String?
 ) : FormDataModel {
     fun asPostModel(): ANCPost {
         return ANCPost(
             benId = benId,
             ancDate = getDateStringFromLong(ancDate),
             isActive = true,
+            lmpDate = lmpDate?.let { getDateStringFromLong(it) },
+            visitDate = visitDate?.let { getDateStringFromLong(it) },
+            weekOfPregnancy = weekOfPregnancy,
+            serialNo = serialNo,
+            methodOfTermination = methodOfTermination,
+            methodOfTerminationId = methodOfTerminationId,
+            terminationDoneBy = terminationDoneBy,
+            terminationDoneById = terminationDoneById,
+            isPaiucdId = isPaiucdId,
+            isPaiucd = isPaiucd,
+            isYesOrNo = isYesOrNo,
+            dateSterilisation = getDateStringFromLong(dateSterilisation),
+            remarks = remarks,
+            abortionImg1 = abortionImg1,
+            abortionImg2 = abortionImg2,
+            placeOfDeath = placeOfDeath,
+            placeOfDeathId = placeOfDeathId,
+            otherPlaceOfDeath = otherPlaceOfDeath,
+
             ancVisit = visitNumber,
             isAborted = isAborted,
             abortionType = abortionType,
@@ -394,7 +448,10 @@ data class PregnantWomanAncCache(
             createdDate = getDateStringFromLong(createdDate),
             createdBy = createdBy,
             updatedDate = getDateStringFromLong(updatedDate),
-            updatedBy = updatedBy
+            updatedBy = updatedBy,
+            frontFilePath = frontFilePath,
+            backFilePath = backFilePath
+
         )
     }
 }
@@ -404,6 +461,27 @@ data class ANCPost(
     val benId: Long = 0,
     val ancDate: String? = null,
     val isActive: Boolean,
+
+    var lmpDate: String? = null,
+    var visitDate: String? = null,
+    var weekOfPregnancy: Int? = null,
+    var serialNo: String? = null,
+    var methodOfTermination: String? = null,
+    var methodOfTerminationId: Int? = 0,
+    var terminationDoneBy: String? = null,
+    var terminationDoneById: Int? = 0,
+    var isPaiucdId: Int? = 0,
+    var isYesOrNo: Boolean? = false,
+    var isPaiucd: String? = null,
+    var dateSterilisation: String? = null,
+    var remarks: String? = null,
+    var abortionImg1: String? = null,
+    var abortionImg2: String? = null,
+    var placeOfDeath: String? = null,
+    var placeOfDeathId: Int? = 0,
+    var otherPlaceOfDeath: String? = null,
+
+
     val ancVisit: Int,
     val isAborted: Boolean = false,
     val abortionType: String? = null,
@@ -435,12 +513,36 @@ data class ANCPost(
     val createdBy: String,
     val updatedDate: String? = null,
     val updatedBy: String,
-    var providerServiceMapID :String?=null
+    var providerServiceMapID: String? = null,
+    var frontFilePath : String?,
+    var backFilePath : String?
 ) {
-    fun toAncCache(): PregnantWomanAncCache {
+    fun toAncCache(context : Context): PregnantWomanAncCache {
         return PregnantWomanAncCache(
             id = id,
             benId = benId,
+
+            lmpDate = getLongFromDate(lmpDate),
+            visitDate = getLongFromDate(visitDate),
+            weekOfPregnancy = weekOfPregnancy,
+            serialNo = serialNo,
+            methodOfTermination = methodOfTermination,
+            methodOfTerminationId = methodOfTerminationId,
+            terminationDoneBy = terminationDoneBy,
+            terminationDoneById = terminationDoneById,
+            isPaiucdId = isPaiucdId,
+            isPaiucd = isPaiucd,
+            isYesOrNo = isYesOrNo,
+            dateSterilisation = getLongFromDate(dateSterilisation),
+            remarks = remarks,
+            abortionImg1 = abortionImg1,
+            abortionImg2 = abortionImg2,
+            placeOfDeath = placeOfDeath,
+            placeOfDeathId = placeOfDeathId,
+            otherPlaceOfDeath = otherPlaceOfDeath,
+
+
+
             visitNumber = ancVisit,
             ancDate = getLongFromDate(ancDate),
             isAborted = isAborted,
@@ -481,7 +583,9 @@ data class ANCPost(
             createdDate = getLongFromDate(createdDate),
             updatedBy = updatedBy,
             updatedDate = getLongFromDate(updatedDate),
-            syncState = SyncState.SYNCED
+            syncState = SyncState.SYNCED,
+            frontFilePath = frontFilePath,
+            backFilePath = backFilePath
         )
     }
 }
@@ -504,11 +608,16 @@ data class BenWithAncVisitCache(
     val pmsma: List<PMSMACache>,
 
     @Relation(
+        parentColumn = "benId",
+        entityColumn = "benId",
+    )
+    val savedPmsmaRecords: List<PMSMACache>,
+
+    @Relation(
         parentColumn = "benId", entityColumn = "benId", entity = PregnantWomanAncCache::class
     )
     val savedAncRecords: List<PregnantWomanAncCache>
 ) {
-
     companion object {
         private val dateFormat = SimpleDateFormat("EEE, MMM dd yyyy", Locale.ENGLISH)
 
@@ -520,58 +629,146 @@ data class BenWithAncVisitCache(
     fun asDomainModel(): BenWithAncListDomain {
         val lastAncRecord = savedAncRecords.maxByOrNull { it.ancDate }
         val activePmsma = pmsma.firstOrNull { it.isActive }
-        val activePwrRecrod = pwr.first { it.active }
+        val activePwrRecord = pwr.firstOrNull { it.active }
+        val abortionRecord = savedAncRecords.firstOrNull { it.isAborted }
+        val lmpDateToUse = activePwrRecord?.lmpDate
+            ?: abortionRecord?.lmpDate
+            ?: 0L
+
+        val eddDateToUse = if (lmpDateToUse != 0L) {
+            lmpDateToUse + TimeUnit.DAYS.toMillis(280)
+        } else 0L
+
+        val weekOfPregnancyToUse = if (lmpDateToUse != 0L) {
+            (TimeUnit.MILLISECONDS.toDays(getTodayMillis() - lmpDateToUse) / 7).toInt()
+        } else 0
         return BenWithAncListDomain(
-//            ecBenId,
-            ben.asBasicDomainModel(),
-            activePwrRecrod,
-            savedAncRecords.filter { it.isActive }.map {
+            ben = ben.asBasicDomainModel(),
+            pwr = activePwrRecord,
+            anc = savedAncRecords.filter { it.isActive }.map {
                 AncStatus(
                     benId = it.benId,
                     visitNumber = it.visitNumber,
-                    filledWeek = (TimeUnit.MILLISECONDS.toDays(it.ancDate - activePwrRecrod.lmpDate) / 7).toInt(),
+                    filledWeek = if (lmpDateToUse != 0L)
+                        (TimeUnit.MILLISECONDS.toDays(it.ancDate - lmpDateToUse) / 7).toInt()
+                    else 0,
                     syncState = it.syncState
                 )
             }.sortedBy { it.visitNumber },
-            pmsmaFillable = if (activePmsma == null) savedAncRecords.any { it.visitNumber == 1 } else true,
+            ancDate = lastAncRecord?.ancDate ?: 0L,
+            pmsma = if (savedPmsmaRecords.filter { it.isActive }.isEmpty()) {
+                listOf(
+                    PMSMAStatus(
+                        benId = ben.benId,
+                        visitNumber = 0,
+                        filledWeek = if (activePmsma == null && savedAncRecords.any { it.visitNumber == 1 }) {
+                            1
+                        } else {
+                            0
+                        },
+                        syncState = SyncState.UNSYNCED
+                    )
+                )
+            } else {
+                savedPmsmaRecords.filter { it.isActive }.map {
+                    val lastVisitRecord = savedPmsmaRecords.filter { it.isActive }
+                        .maxByOrNull { it.visitNumber }
+
+                    var eligibilityFilledWeek = 1
+
+                    if (lastVisitRecord != null) {
+                        val today = Calendar.getInstance().timeInMillis
+                        val gapDays = lastVisitRecord.visitDate?.let { visitDate ->
+                            TimeUnit.MILLISECONDS.toDays(today - visitDate)
+                        } ?: 0
+                        eligibilityFilledWeek = if (gapDays >= 7) 1 else 0
+                    }
+
+                    PMSMAStatus(
+                        benId = it.benId,
+                        visitNumber = it.visitNumber,
+                        filledWeek = eligibilityFilledWeek,
+                        syncState = it.syncState
+                    )
+                }.sortedBy { it.visitNumber }
+            }
+            ,
+            savedAncRecords = savedAncRecords,
+            pmsmaFillable = if (activePmsma == null) {
+                savedAncRecords.any { it.visitNumber >0 }
+            } else true,
+
             hasPmsma = activePmsma != null,
-            showAddAnc = if (savedAncRecords.isEmpty())
-                TimeUnit.MILLISECONDS.toDays(
-                    getTodayMillis() - activePwrRecrod.lmpDate
-                ) >= Konstants.minAnc1Week * 7
-//            else
-//                lastAncRecord != null &&
-//                        (activePwrRecrod.lmpDate + TimeUnit.DAYS.toMillis(280)) > (lastAncRecord.ancDate + TimeUnit.DAYS.toMillis(
-//                    28
-//                )) &&
-//                        lastAncRecord.visitNumber < 4 && TimeUnit.MILLISECONDS.toDays(
-//                    getTodayMillis() - lastAncRecord.ancDate
-//                ) > 28,
-            else
+            showAddAnc = if (activePwrRecord == null) {
+                false
+            } else if (savedAncRecords.isEmpty()) {
+                TimeUnit.MILLISECONDS.toDays(getTodayMillis() - lmpDateToUse) >= Konstants.minAnc1Week * 7
+            } else {
                 lastAncRecord != null &&
-                        (activePwrRecrod.lmpDate + TimeUnit.DAYS.toMillis(840)) > (lastAncRecord.ancDate + TimeUnit.DAYS.toMillis(
-                    28
-                )) &&
+                        (lmpDateToUse + TimeUnit.DAYS.toMillis(840)) >
+                        (lastAncRecord.ancDate + TimeUnit.DAYS.toMillis(28)) &&
                         lastAncRecord.visitNumber < 8 &&
-                        lastAncRecord.ancDate + TimeUnit.DAYS.toMillis(28) < getTodayMillis(),
-            syncState = if (activePmsma == null && savedAncRecords.isEmpty()) null else if (activePmsma?.syncState == SyncState.UNSYNCED || savedAncRecords.any { it.syncState != SyncState.SYNCED }) SyncState.UNSYNCED else SyncState.SYNCED
-        )
-
-
+                        lastAncRecord.ancDate + TimeUnit.DAYS.toMillis(28) < getTodayMillis()
+            },
+            syncState = if (activePmsma == null && savedAncRecords.isEmpty()) {
+                null
+            } else if (activePmsma?.syncState == SyncState.UNSYNCED ||
+                savedAncRecords.any { it.syncState != SyncState.SYNCED }
+            ) {
+                SyncState.UNSYNCED
+            } else {
+                SyncState.SYNCED
+            }
+        ).apply {
+            if (activePwrRecord == null && abortionRecord != null) {
+                lmpDate = lmpDateToUse
+                eddDate = eddDateToUse
+                weekOfPregnancy = weekOfPregnancyToUse
+                abortionDate = abortionRecord.ancDate
+            }
+        }
     }
+
 }
 
 data class BenWithAncListDomain(
     val ben: BenBasicDomain,
-    val pwr: PregnantWomanRegistrationCache,
+    val pwr: PregnantWomanRegistrationCache?,
     val anc: List<AncStatus>,
-    val lmpString: String? = getDateString(pwr.lmpDate),
-    val eddString: String? = getDateString(pwr.lmpDate + TimeUnit.DAYS.toMillis(280)),
-    val weeksOfPregnancy: String? = (TimeUnit.MILLISECONDS.toDays(getTodayMillis() - pwr.lmpDate) / 7).takeIf { it <= 40 }
-        ?.toString() ?: "NA",
+    val ancDate: Long = 0L,
+    val pmsma: List<PMSMAStatus>,
+    val savedAncRecords: List<PregnantWomanAncCache>,
+
+
+    var lmpDate: Long? = null,
+    var eddDate: Long? = null,
+    var weekOfPregnancy: Int? = null,
+    var abortionDate: Long? = null,
+
     val showAddAnc: Boolean,
     val pmsmaFillable: Boolean,
     val hasPmsma: Boolean,
     val showViewAnc: Boolean = anc.isEmpty(),
     val syncState: SyncState?
-)
+) {
+    val finalLmpDate: Long? get() = pwr?.lmpDate ?: lmpDate
+    val finalEddDate: Long? get() =
+        pwr?.let { it.lmpDate + TimeUnit.DAYS.toMillis(280) } ?: eddDate
+
+    val finalWeeksOfPregnancy: Int?
+        get() = finalLmpDate?.let {
+            val weeks = (TimeUnit.MILLISECONDS.toDays(getTodayMillis() - it) / 7).toInt()
+            if (weeks > 40) null else weeks
+        } ?: weekOfPregnancy?.takeIf { it <= 40 }
+    val lmpString: String? get() = finalLmpDate?.let { getDateString(it) }
+    val eddString: String? get() = finalEddDate?.let { getDateString(it) }
+    val weeksOfPregnancy: String
+        get() = finalWeeksOfPregnancy?.toString() ?: "N/A"
+    val abortionDateString: String? get() = abortionDate?.let { getDateString(it) }
+
+    val isAbortionFormFilled: Boolean
+        get() = savedAncRecords.firstOrNull { it.isAborted }?.terminationDoneBy != null
+}
+
+
+

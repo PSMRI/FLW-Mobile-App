@@ -4,7 +4,6 @@ import android.util.Base64
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
 import org.json.JSONArray
@@ -174,7 +173,7 @@ class AbhaIdRepo @Inject constructor(
                     NetworkResult.Success(result)
                 } else {
 
-                    val errorString = response?.errorBody()?.string()
+                    val errorString = response.errorBody()?.string()
                     val (code, message) = parseAbhaErrorString(errorString) ?: Pair("", "")
 
                     if (message.contains("UIDAI Error code : 953")){
@@ -211,7 +210,7 @@ class AbhaIdRepo @Inject constructor(
                     NetworkResult.Success(result)
                 } else {
 
-                    val errorString = response?.errorBody()?.string()
+                    val errorString = response.errorBody()?.string()
                     val (code, message) = parseAbhaErrorString(errorString) ?: Pair("", "")
 
                     if (message.contains("User not found.") || code.contains("ABDM-1114")){
@@ -251,11 +250,13 @@ class AbhaIdRepo @Inject constructor(
                     sendErrorResponse(response)
                 }
             } catch (e: IOException) {
-                NetworkResult.Error(-1, "Unable to connect to Internet!")
+//                NetworkResult.Error(-1, "Unable to connect to Internet!")
+                NetworkResult.NetworkError
             } catch (e: JSONException) {
                 NetworkResult.Error(-2, "Invalid response! Please try again!")
             } catch (e: SocketTimeoutException) {
-                NetworkResult.Error(-3, "Request Timed out! Please try again!")
+//                NetworkResult.Error(-3, "Request Timed out! Please try again!")
+                NetworkResult.NetworkError
             } catch (e: java.lang.Exception) {
                 e.printStackTrace()
                 NetworkResult.Error(-4, e.message ?: "Unknown Error")
@@ -590,7 +591,7 @@ class AbhaIdRepo @Inject constructor(
                         NetworkResult.Success(result)
                     }
 
-                    5000, 5002 -> {
+                    401, 5000, 5002 -> {
                         if (JSONObject(responseBody).getString("errorMessage")
                                 .contentEquals("Invalid login key or session is expired")
                         ) {
@@ -654,7 +655,7 @@ class AbhaIdRepo @Inject constructor(
                         }
                     }
 
-                    5000, 5002 -> {
+                    401, 5000, 5002 -> {
                         saveAbhaModelFromRequest(mapHIDtoBeneficiary,ben)
                         if (JSONObject(responseBody).getString("errorMessage")
                                 .contentEquals("Invalid login key or session is expired")
@@ -698,7 +699,7 @@ class AbhaIdRepo @Inject constructor(
                 val responseBody = response.body()?.string()
                 when (responseBody?.let { JSONObject(it).getInt("statusCode") }) {
                     200 -> NetworkResult.Success(responseBody)
-                    5000, 5002 -> {
+                    401, 5000, 5002 -> {
                         if (JSONObject(responseBody).getString("errorMessage")
                                 .contentEquals("Invalid login key or session is expired")
                         ) {
@@ -736,7 +737,7 @@ class AbhaIdRepo @Inject constructor(
                         JSONObject(responseBody).getJSONObject("data").getString("txnId")
                     )
 
-                    5000, 5002 -> {
+                    401, 5000, 5002 -> {
                         val error = JSONObject(responseBody).getString("errorMessage")
                         if (error.contentEquals("Invalid login key or session is expired")) {
                             val user = prefDao.getLoggedInUser()!!
@@ -771,7 +772,7 @@ class AbhaIdRepo @Inject constructor(
                         JSONObject(responseBody).getJSONObject("data").getString("data")
                     )
 
-                    5000, 5002 -> {
+                    401, 5000, 5002 -> {
                         if (JSONObject(responseBody).getString("errorMessage")
                                 .contentEquals("Invalid login key or session is expired")
                         ) {

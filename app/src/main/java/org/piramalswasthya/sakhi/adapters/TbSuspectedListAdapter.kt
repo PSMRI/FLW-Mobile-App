@@ -6,11 +6,14 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.RvItemTbSuspectedListBinding
 import org.piramalswasthya.sakhi.model.BenWithTbSuspectedDomain
+import org.piramalswasthya.sakhi.utils.RoleConstants
 
 class TbSuspectedListAdapter(
-    private val clickListener: ClickListener? = null
+    private val clickListener: ClickListener? = null,
+    private val pref: PreferenceDao? = null
 ) :
     ListAdapter<BenWithTbSuspectedDomain, TbSuspectedListAdapter.BenViewHolder>
         (BenDiffUtilCallBack) {
@@ -40,7 +43,15 @@ class TbSuspectedListAdapter(
         fun bind(
             item: BenWithTbSuspectedDomain,
             clickListener: ClickListener?,
+            pref: PreferenceDao?
         ) {
+
+            if (pref?.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
+                binding.btnFormTb.visibility = View.INVISIBLE
+            } else {
+                binding.btnFormTb.visibility = View.VISIBLE
+            }
+
             binding.benWithTb = item
 
             binding.ivSyncState.visibility = if (item.tb == null) View.INVISIBLE else View.VISIBLE
@@ -90,7 +101,7 @@ class TbSuspectedListAdapter(
         BenViewHolder.from(parent)
 
     override fun onBindViewHolder(holder: BenViewHolder, position: Int) {
-        holder.bind(getItem(position), clickListener)
+        holder.bind(getItem(position), clickListener, pref)
     }
 
 

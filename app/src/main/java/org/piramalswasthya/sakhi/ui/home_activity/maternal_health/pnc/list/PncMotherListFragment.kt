@@ -21,6 +21,10 @@ import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 @AndroidEntryPoint
 class PncMotherListFragment : Fragment() {
 
+    val args: PncMotherListFragmentArgs by lazy {
+        PncMotherListFragmentArgs.fromBundle(requireArguments())
+    }
+
     private val binding: FragmentDisplaySearchRvButtonBinding by lazy {
         FragmentDisplaySearchRvButtonBinding.inflate(layoutInflater)
     }
@@ -47,10 +51,11 @@ class PncMotherListFragment : Fragment() {
                     if (!bottomSheet.isVisible)
                         bottomSheet.show(childFragmentManager, "PNC")
                 },
-                addVisit = { benId, visitNumber ->
+                addVisit = { benId, hhId, visitNumber ->
                     findNavController().navigate(
                         PncMotherListFragmentDirections.actionPncMotherListFragmentToPncFormFragment(
                             benId,
+                            hhId.toString(),
                             visitNumber
                         )
                     )
@@ -94,7 +99,7 @@ class PncMotherListFragment : Fragment() {
         super.onStart()
         activity?.let {
             (it as HomeActivity).updateActionBar(
-                R.drawable.ic__pnc,
+                R.drawable.ic_pnc__mother,
                 getString(R.string.icon_title_pncmc)
             )
         }

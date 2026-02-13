@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="cdr_form">बच्चे की मौत की रिपोर्ट (सीडीआर) फॉर्म</string>
-    <string name="maternal">मातृत्व</string>
-    <string name="non_maternal">गैर-मातृत्व</string>
+    <string name="accident">दुर्घटना</string>
+ <!--   <string name="cdr_form">बच्चे की मौत की रिपोर्ट (सीडीआर) फॉर्म</string>-->
 
     <string name="str_age">आयु</string>
     <string name="str_visit">भेंट की तिथि</string>
@@ -23,4 +22,46 @@
     <string name="str_date_of_notification">सूचना की तिथि</string>
     <string name="str_hospital">अस्पताल</string>
     <string name="str_transit">यात्रा के दौरान</string>
+
+
+
+
+
+    <string name="general_deaths">सामान्य मृत्यु</string>
+    <string name="maternal">मातृ</string>
+    <string name="non_maternal">गैर मातृ</string>
+    <string name="maternal_death">मातृ मृत्यु</string>
+    <string name="non_maternal_deaths">गैर मातृ मृत्यु</string>
+    <string name="child_deaths">बाल मृत्यु</string>
+    <string name="name_of_child">बच्चे का नाम</string>
+    <string name="date_of_birth">जन्म तिथि</string>
+    <string name="age">आयु</string>
+    <string name="gender">लिंग</string>
+    <string name="mothers_name">माता का नाम</string>
+    <string name="fathers_name">पिता का नाम</string>
+    <string name="complete_address">पूरा पता</string>
+    <string name="address">पता</string>
+    <string name="house_number">मकान नंबर</string>
+    <string name="mohalla_colony">मोहल्ला / कॉलोनी</string>
+    <string name="village_town_city">गांव / कस्बा / शहर</string>
+    <string name="block">ब्लॉक</string>
+    <string name="district_tehsil">जिला / तहसील</string>
+    <string name="state">राज्य</string>
+    <string name="pin_code">पिन कोड</string>
+    <string name="landmarks_if_any">कोई पहचान चिन्ह (यदि हो)</string>
+    <string name="phone_number_parents_family">माता-पिता / परिवार के सदस्य का फोन नंबर (जो उसी घर में रहते हैं)</string>
+    <string name="landline">लैंडलाइन</string>
+    <string name="mobile_number">मोबाइल नंबर</string>
+    <string name="date_of_death">मृत्यु की तिथि</string>
+    <string name="place_of_death">मृत्यु का स्थान</string>
+    <string name="name_of_first_informant">पहले सूचित करने वाले का नाम</string>
+    <string name="time">समय</string>
+    <string name="timing_of_informing">सूचना देने का समय</string>
+    <string name="date_of_notification">सूचना की तिथि</string>
+    <string name="cdr_form_from_anm">एएनएम से सीडीआर फॉर्म</string>
+    <string name="cdr_form">सीडीआर फॉर्म</string>
+    <string name="death_certificate">मृत्यु प्रमाणपत्र</string>
+    <string name="death_certificate_duplicate">मृत्यु प्रमाणपत्र</string>
+
+
 </resources>

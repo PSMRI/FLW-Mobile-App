@@ -48,12 +48,12 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:visibility="gone"
+
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             asteriskRequired="@{form.required}"
             hintText="@{form.title}">
-<!--            android:layout_marginStart="@dimen/_15sdp"-->
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et"

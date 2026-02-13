@@ -5,7 +5,21 @@
     <string-array name="anc_abortion_type_array">
         <item>আদিত কৰা হৈছে</item>
         <item>স্বজনলৈ আপত্তি হৈছে</item>
+        <item>Incomplete</item>
     </string-array>
+
+    <string-array name="abortion_place_array">
+        <item>Home</item>
+        <item>Subcenter</item>
+        <item>PHC</item>
+        <item>CHC</item>
+        <item>District Hospital</item>
+        <item>Medical College Hospital</item>
+        <item>Private Hospital</item>
+        <item>In Transit</item>
+        <item>Other Place of Abortion</item>
+    </string-array>
+
     <string-array name="anc_abortion_facility_array">
         <item>সৰ্কাৰী চিকিৎসা চেণ্টাৰ</item>
         <item>ব্যক্তিগত চিকিৎসা চেণ্টাৰ</item>
@@ -46,15 +60,32 @@
         <item>বিলিটৰ সড়ক</item>
         <item>উচ্চ জ্বৰ</item>
         <item>গৰ্ভপাত</item>
+        <item>দুৰ্ঘটনা</item>
         <item>অন্য</item>
     </string-array>
     <string-array name="anc_confirmation_array">
         <item>হয়</item>
         <item>নহয়</item>
     </string-array>
+
+    <string-array name="abortion_isplaning_array">
+        <item>Has a PAIUCD been inserted?(Copper-T)\n or</item>
+        <item>Has the woman opted for permanent sterilization (Tubectomy)?</item>
+    </string-array>
     <string-array name="anc_confirmation_array1">
         <item>নহয়</item>
         <item>হয়</item>
+    </string-array>
+
+    <string-array name="select_high_risk_condition">
+        <item>HIGH BP (SYSTOLIC >=140 AND OR DIASTOLIC >=90 mmHg)</item>
+        <item>CONVULSIONS</item>
+        <item>VAGINAL BLEEDING</item>
+        <item>FOUL SMELLING DISCHARGE</item>
+        <item>SEVERE ANAEMIA (HB &lt;7 gm/dl)</item>
+        <item>DIABETES</item>
+        <item>TWINS</item>
+        <item>OTHER</item>
     </string-array>
 
 
@@ -116,6 +147,12 @@
     <string-array name="pmsma_confirmation_array">
         <item>হোৱ</item>
         <item>নহয়</item>
+    </string-array>
+
+    <string-array name="pmsma_malaria_array">
+        <item>Negative</item>
+        <item>Positive</item>
+        <item>Test Not Done</item>
     </string-array>
 
     <!--  Delivery Outcome  -->
@@ -216,8 +253,21 @@
         <item>পুৰুষৰ নিৰ্বাচন</item>
         <item>নাৰীৰ নিৰ্বাচন</item>
         <item>পোষ্ট পাৰ্টাম নিৰ্বাচন (PSS 7 দিনৰ মধ্যে)</item>
+        <item>MiniLap</item>
         <item>অন্যান্য (উল্লিখন কৰক)</item>
     </string-array>
+    <string-array name="sterilization_methods_array">
+    <item>পুৰুষৰ নিৰ্বাচন</item>
+    <item>নাৰীৰ নিৰ্বাচন</item>
+    <item>পোষ্ট পাৰ্টাম নিৰ্বাচন (PSS 7 দিনৰ মধ্যে)</item>
+    <item>MiniLap</item>
+    </string-array>
+    <string-array name="female_sterilization_methods_array">
+        <item>নাৰীৰ নিৰ্বাচন</item>
+        <item>পোষ্ট পাৰ্টাম নিৰ্বাচন (PSS 7 দিনৰ মধ্যে)</item>
+        <item>MiniLap</item>
+    </string-array>
+
     <string-array name="pnc_mother_danger_sign_array">
         <item>PPH</item>
         <item>জ্বৰ</item>
@@ -225,6 +275,10 @@
         <item>বৃদ্ধ পেটৰ ব্যাথা</item>
         <item>বৃদ্ধ মাথৰ ব্যাথা অথবা মিশৰা চাবলৈ</item>
         <item>শ্বাৱাস নেহৰি পাব</item>
+        <item>প্ৰস্ৰাৱ, ছাল বা চকু হালধীয়া হোৱা</item>
+        <item>ছাল বা চকু শেঁতা পৰা </item>
+        <item>মুখ, হাত আৰু ভৰিত ফুলা</item>
+        <item>অস্বাভাৱিক আচৰণ </item>
         <item>অন্যান্য</item>
     </string-array>
     <string-array name="pnc_referral_facility_array">
@@ -232,13 +286,14 @@
         <item>কমিউনিটি হেলথ চেণ্টাৰ</item>
         <item>জিলা চিকিৎসা চেণ্টাৰ</item>
         <item>অন্য ব্যক্তিগত চিকিৎসা চেণ্টাৰ</item>
-        <item>অন্য কোনো (উল্লিখন কৰক)</item>
     </string-array>
     <string-array name="pnc_death_cause_array">
         <item>ইক্লেম্পচিয়া</item>
         <item>জ্বৰৰ পৰা মৰণ (PPH)</item>
         <item>এনিমিয়া</item>
         <item>উচ্চ জ্বৰ</item>
+        <item>চেপ্চিছ</item>
+        <item>দুৰ্ঘটনা</item>
         <item>অন্যান্য</item>
     </string-array>
     <string-array name="pnc_death_place_array">
@@ -325,6 +380,8 @@
     <string name="str_other_cause_of_death">মৃত্যুৰ অন্য কাৰণ</string>
     <string name="str_death_date">মৃত্যুৰ তাৰিখ</string>
     <string name="str_has_pregnant_women_delivered">গৰ্ভৱতী মহিলাই প্ৰসৱ কৰিছে নে?</string>
-    <string name="anc_date">গৰ্ভাৱস্থাৰ তাৰিখ</string>
+    <string name="sr_no">শ্ৰি. নং :</string>
+    <string name="date_no">তাৰিখ : </string>
+    <string name="round_no">ৰাউণ্ড :</string>
 
 </resources>

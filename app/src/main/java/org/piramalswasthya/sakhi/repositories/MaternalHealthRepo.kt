@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.repositories
 
+import android.app.Application
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -27,13 +28,14 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class MaternalHealthRepo @Inject constructor(
+    private val context: Application,
     private val amritApiService: AmritApiService,
     private val maternalHealthDao: MaternalHealthDao,
     private val database: InAppDb,
     private val userRepo: UserRepo,
     private val benDao: BenDao,
     private val preferenceDao: PreferenceDao,
-) {
+    ) {
 
     suspend fun getSavedRegistrationRecord(benId: Long): PregnantWomanRegistrationCache? {
         return withContext(Dispatchers.IO) {
@@ -52,6 +54,11 @@ class MaternalHealthRepo @Inject constructor(
             maternalHealthDao.getSavedRecord(benId, visitNumber)
         }
     }
+ suspend fun getSavedRecordANC(benId: Long): PregnantWomanAncCache? {
+        return withContext(Dispatchers.IO) {
+            maternalHealthDao.getSavedRecordANC(benId)
+        }
+    }
 
     suspend fun getLatestAncRecord(benId: Long): PregnantWomanAncCache? {
         return withContext(Dispatchers.IO) {
@@ -64,6 +71,13 @@ class MaternalHealthRepo @Inject constructor(
             maternalHealthDao.getAllActiveAncRecords(benId)
         }
     }
+     suspend fun getAllInActiveAncRecords(benId: Long): List<PregnantWomanAncCache> {
+        return withContext(Dispatchers.IO) {
+            maternalHealthDao.getAllInActiveAncRecords(benId)
+        }
+    }
+
+
 
     suspend fun getBenFromId(benId: Long): BenRegCache? {
         return withContext(Dispatchers.IO) {
@@ -187,7 +201,7 @@ class MaternalHealthRepo @Inject constructor(
                                 return true
                             }
 
-                            5002 -> {
+                            401,5002 -> {
                                 if (userRepo.refreshTokenTmc(
                                         user.userName,
                                         user.password
@@ -279,7 +293,7 @@ class MaternalHealthRepo @Inject constructor(
                                 return true
                             }
 
-                            5002 -> {
+                            401,5002 -> {
                                 if (userRepo.refreshTokenTmc(
                                         user.userName,
                                         user.password
@@ -348,7 +362,7 @@ class MaternalHealthRepo @Inject constructor(
                                 return@withContext 1
                             }
 
-                            5002 -> {
+                            401,5002 -> {
                                 if (userRepo.refreshTokenTmc(
                                         user.userName, user.password
                                     )
@@ -473,7 +487,7 @@ class MaternalHealthRepo @Inject constructor(
                                 return@withContext 1
                             }
 
-                            5002 -> {
+                            401,5002 -> {
                                 if (userRepo.refreshTokenTmc(
                                         user.userName, user.password
                                     )
@@ -513,12 +527,13 @@ class MaternalHealthRepo @Inject constructor(
                 val ancCache: PregnantWomanAncCache? =
                     maternalHealthDao.getSavedRecord(ancDTO.benId, ancDTO.ancVisit)
                 if (hasBen && ancCache == null) {
-                    maternalHealthDao.saveRecord(ancDTO.toAncCache())
+                    maternalHealthDao.saveRecord(ancDTO.toAncCache(context))
                 }
             }
         }
         return ancList
     }
+
 
     suspend fun setToInactive(eligBenIds: Set<Long>) {
         withContext(Dispatchers.IO) {

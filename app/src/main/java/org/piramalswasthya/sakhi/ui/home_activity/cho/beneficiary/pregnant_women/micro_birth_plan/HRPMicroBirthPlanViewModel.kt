@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.pregnant_women.micro_birth_plan
 
 import android.content.Context
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -10,6 +11,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.configuration.HRPMicroBirthPlanDataset
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.BenRegGen
 import org.piramalswasthya.sakhi.model.HRPMicroBirthPlanCache
@@ -68,12 +70,19 @@ constructor(
     lateinit var _microBirthPlanCache: HRPMicroBirthPlanCache
     var _hRPPregnantAssessCache: HRPPregnantAssessCache?=null
 
+//    private val _readRecord = MutableLiveData(benId > 0)
+//    val readRecord: LiveData<Boolean>
+//        get() = _readRecord
+    fun setRecordExists(b: Boolean) {
+        _recordExists.value = b
+
+
+    }
 
     init {
         viewModelScope.launch {
             val ben = benRepo.getBenFromId(benId)?.also { ben ->
-                _benName.value =
-                    "${ben.firstName} ${if (ben.lastName == null) "" else ben.lastName}"
+                _benName.value = "${ben.firstName} ${if (ben.lastName == null) "" else ben.lastName}"
                 _benAgeGender.value = "${ben.age} ${ben.ageUnit?.name} | ${ben.gender?.name}"
                 _benDetails= ben.genDetails!!
                 _microBirthPlanCache = HRPMicroBirthPlanCache(
@@ -112,6 +121,8 @@ constructor(
                 _state.postValue(State.SAVING)
 
                 dataset.mapValues(_microBirthPlanCache, 1)
+                _microBirthPlanCache.processed = "U"
+                _microBirthPlanCache.syncState = SyncState.UNSYNCED
                 hrpReo.saveRecord(_microBirthPlanCache)
                 isHighRisk = true
                 if (isHighRisk) {

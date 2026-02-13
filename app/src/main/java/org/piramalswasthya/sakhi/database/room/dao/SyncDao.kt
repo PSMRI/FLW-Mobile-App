@@ -73,7 +73,39 @@ interface SyncDao {
                 "    SELECT 13 as id, 'HRP Assess' as name, hrpa.syncState as syncState " +
                 "    FROM HRP_PREGNANT_ASSESS hrpa " +
                 "    INNER JOIN beneficiary b ON b.beneficiaryId = hrpa.benId " +
+
+                "    UNION ALL " +
+                "    SELECT 20 as id, 'Micro Birth Plan' as name, hrpa.syncState as syncState " +
+                "    FROM HRP_MICRO_BIRTH_PLAN hrpa " +
+                "    INNER JOIN beneficiary b ON b.beneficiaryId = hrpa.benId " +
+
+
 //                "    WHERE b.loc_village_id = :villageId " +
+                 "    UNION ALL " +
+                "    SELECT 21 as id, 'VHND' as name, vhnd.syncState as syncState " +
+                "    FROM VHND vhnd " +
+
+                "    UNION ALL " +
+                "    SELECT 22 as id, 'VHNC' as name, vhnc.syncState as syncState " +
+                "    FROM VHNC vhnc " +
+
+                "    UNION ALL " +
+                "    SELECT 23 as id, 'PHC' as name, phc.syncState as syncState " +
+                "    FROM PHCReviewMeeting phc " +
+
+                "    UNION ALL " +
+                "    SELECT 24 as id, 'AHD' as name, ahd.syncState as syncState " +
+                "    FROM AHDMeeting ahd " +
+
+                "    UNION ALL " +
+                "    SELECT 25 as id, 'Deworming' as name, deworming.syncState as syncState " +
+                "    FROM DewormingMeeting deworming " +
+
+//                "    INNER JOIN beneficiary b ON b.beneficiaryId = hrpa.benId " +
+//                "    WHERE b.loc_village_id = :villageId " +
+
+
+
                 "    UNION ALL " +
                 "    SELECT 14 as id, 'HRP Track' as name, hrpt.syncState as syncState " +
                 "    FROM HRP_PREGNANT_TRACK hrpt " +
@@ -95,12 +127,14 @@ interface SyncDao {
                 "    INNER JOIN beneficiary b ON b.beneficiaryId = imm.beneficiaryId " +
 //                "    WHERE b.loc_village_id = :villageId " +
                 "    UNION ALL " +
-                "    SELECT 18 as id, 'HBYC' as name, hbyc.syncState as syncState " +
-                "    FROM HBYC hbyc " +
+                "    SELECT 18 as id, 'HBYC' as name,  CASE \n" +
+                "   WHEN hbyc.isSynced = 1 THEN 2 ELSE hbyc.isSynced  END AS syncState " +
+                "    FROM all_visit_history_hbyc hbyc " +
                 "    INNER JOIN beneficiary b ON b.beneficiaryId = hbyc.benId " +
                 "    UNION ALL " +
-                "    SELECT 19 as id, 'HBNC' as name, hbnc.syncState as syncState " +
-                "    FROM HBNC hbnc " +
+                "    SELECT 19 as id, 'HBNC' as name, CASE \n" +
+                "   WHEN hbnc.isSynced = 1 THEN 2 ELSE hbnc.isSynced  END AS syncState " +
+                "    FROM all_visit_history hbnc " +
                 "    INNER JOIN beneficiary b ON b.beneficiaryId = hbnc.benId " +
                 ") AS combined_data " +
                 "GROUP BY id, name, syncState " +

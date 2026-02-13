@@ -103,7 +103,7 @@ class PmsmaRepo @Inject constructor(
                                 return true
                             }
 
-                            5002 -> {
+                            401,5002 -> {
                                 val user = preferenceDao.getLoggedInUser()
                                     ?: throw IllegalStateException("User seems to be logged out!!")
                                 if (userRepo.refreshTokenTmc(user.userName, user.password))
@@ -171,7 +171,7 @@ class PmsmaRepo @Inject constructor(
                                 return@withContext 1
                             }
 
-                            5002 -> {
+                            401,5002 -> {
                                 if (userRepo.refreshTokenTmc(
                                         user.userName, user.password
                                     )
@@ -220,6 +220,26 @@ class PmsmaRepo @Inject constructor(
     suspend fun getPmsmaByBenId(benId: Long): PMSMACache? {
         return withContext(Dispatchers.IO) {
             pmsmaDao.getPmsma(benId)
+        }
+
+    }
+    suspend fun getSavedRecord(benId: Long, visitNumber: Int): PMSMACache? {
+        return withContext(Dispatchers.IO) {
+            pmsmaDao.getSavedRecord(benId,visitNumber)
+        }
+
+    }
+    suspend fun getActiveAncCountForBenIds(benId: Long): Int {
+        return withContext(Dispatchers.IO) {
+            pmsmaDao.getActiveAncCountForBenIds(benId)
+        }
+
+    }
+
+
+    suspend fun getLastPmsmaVisit(benId: Long): PMSMACache? {
+        return withContext(Dispatchers.IO) {
+            pmsmaDao.getLastPmsmaVisit(benId)
         }
 
     }
