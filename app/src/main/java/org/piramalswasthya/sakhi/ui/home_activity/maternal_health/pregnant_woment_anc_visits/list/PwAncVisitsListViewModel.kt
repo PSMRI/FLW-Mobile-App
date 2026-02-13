@@ -1,31 +1,39 @@
 package org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.list
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.helpers.filterPwAncList
 import org.piramalswasthya.sakhi.model.AncStatus
 import org.piramalswasthya.sakhi.model.BenWithAncListDomain
+import org.piramalswasthya.sakhi.model.HomeVisitUiState
+import org.piramalswasthya.sakhi.repositories.MaternalHealthRepo
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
+import org.piramalswasthya.sakhi.ui.home_activity.all_ben.AllBenFragmentArgs
 import javax.inject.Inject
-
 @HiltViewModel
 class PwAncVisitsListViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    recordsRepo: RecordsRepo
+    recordsRepo: RecordsRepo,
+    private val maternalHealthRepo: MaternalHealthRepo
 ) : ViewModel() {
 
-    private val sourceFromArgs =
-        PwAncVisitsListFragmentArgs.fromSavedStateHandle(savedStateHandle).source
-
+    private var sourceFromArgs = PwAncVisitsListFragmentArgs.fromSavedStateHandle(savedStateHandle).source
+    private val _repo = recordsRepo
     private val allBenList = when (sourceFromArgs) {
         1 -> recordsRepo.getRegisteredPregnantWomanNonFollowUpList()
         else -> recordsRepo.getRegisteredPregnantWomanList()
     }
+    private val _homeVisitState = MutableLiveData<Map<Long, HomeVisitUiState>>()
+    val homeVisitState: LiveData<Map<Long, HomeVisitUiState>> = _homeVisitState
 
     private val highRiskBenList = recordsRepo.getHighRiskPregnantWomanList()
 
@@ -75,6 +83,20 @@ class PwAncVisitsListViewModel @Inject constructor(
         }
     }
 
+
+
+
+    fun loadHomeVisitState(benIds: List<Long>) {
+        viewModelScope.launch {
+            val map = mutableMapOf<Long, HomeVisitUiState>()
+
+            benIds.forEach { benId ->
+                map[benId] = _repo.getHomeVisitUiState(benId)
+            }
+
+            _homeVisitState.postValue(map)
+        }
+    }
 
     fun toggleHighRisk(show: Boolean) {
         viewModelScope.launch { showHighRisk.emit(show) }

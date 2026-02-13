@@ -6,7 +6,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -81,7 +80,7 @@ class AbhaBenFragment : Fragment() {
 
     private val filterAlert by lazy {
         val filterAlertBinding = AlertFilterBinding.inflate(layoutInflater, binding.root, false)
-        filterAlertBinding.rgAbha.setOnCheckedChangeListener { radioGroup, i ->
+        filterAlertBinding.rgAbha.setOnCheckedChangeListener { _, i ->
             Timber.d("RG Gender selected id : $i")
             selectedAbha = when (i) {
                 filterAlertBinding.rbAll.id -> Abha.ALL
@@ -101,16 +100,12 @@ class AbhaBenFragment : Fragment() {
             }.create()
 
         filterAlertBinding.btnOk.setOnClickListener {
-            if (selectedAbha == Abha.WITH) {
-                viewModel.filterType(1)
-            } else if (selectedAbha == Abha.WITHOUT) {
-                viewModel.filterType(2)
-            } else if (selectedAbha == Abha.AGE_ABOVE_30) {
-                viewModel.filterType(3)
-            }  else {
-                viewModel.filterType(0)
+            when (selectedAbha) {
+                Abha.WITH -> viewModel.filterType(1)
+                Abha.WITHOUT -> viewModel.filterType(2)
+                Abha.AGE_ABOVE_30 -> viewModel.filterType(3)
+                else -> viewModel.filterType(0)
             }
-
             alert.cancel()
         }
         filterAlertBinding.btnCancel.setOnClickListener {
@@ -152,7 +147,7 @@ class AbhaBenFragment : Fragment() {
 
         benNewAdapter = BenListAdapter(
             clickListener = BenListAdapter.BenClickListener(
-                { hhId, benId, relToHeadId ->
+                { _,_, _, _ ->
 
                     if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
 //                        findNavController().navigate(
@@ -168,29 +163,33 @@ class AbhaBenFragment : Fragment() {
 
                 },
                 clickedWifeBen = {
-                        hhId, benId, relToHeadId ->
+                        _, _, _, _ ->
 
                     if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
-
+                        /*
+                        * Currently No Implementation Required
+                        * */
                     }
                 },
                 clickedHusbandBen = {
-                        hhId, benId, relToHeadId ->
+                        item, hhId, benId, relToHeadId ->
 
                     if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
-
+                        /*
+                        *      * Currently No Implementation Required
+                        * */
                     }
                 },
-                clickedChildben = { hhId, benId, relToHeadId ->
+                clickedChildben = {_, _, _, _ ->
 
                 },
-                {
+                {_, _->
 
                 },
-                { benId, hhId ->
+                { item,benId, hhId ->
                     checkAndGenerateABHA(benId)
                 },
-                { benId, hhId, isViewMode, isIFA ->
+                {item, benId, hhId, isViewMode, isIFA ->
                 },
                 {
                     try {
@@ -204,6 +203,8 @@ class AbhaBenFragment : Fragment() {
                         }
                         Toast.makeText(requireContext(), "Please allow permissions first", Toast.LENGTH_SHORT).show()
                     }
+                },{
+
                 }
 
                 ),
@@ -220,7 +221,7 @@ class AbhaBenFragment : Fragment() {
 
         benOldAdapter = BenListAdapter(
             clickListener = BenListAdapter.BenClickListener(
-                { hhId, benId, relToHeadId ->
+                { item,hhId, benId, relToHeadId ->
 
                     if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
                         findNavController().navigate(
@@ -236,21 +237,21 @@ class AbhaBenFragment : Fragment() {
                     }
 
                 },
-                clickedWifeBen = { hhId, benId, relToHeadId ->
+                clickedWifeBen = {item, hhId, benId, relToHeadId ->
                 },
                 clickedHusbandBen = {
-                        hhId, benId, relToHeadId ->
+                        item,  hhId, benId, relToHeadId ->
 
                 },
                 clickedChildben = {
-                        hhId, benId, relToHeadId ->
+                        item, hhId, benId, relToHeadId ->
                 },
-                {
+                {item,hhid->
                 },
-                { benId, hhId ->
+                { item,benId, hhId ->
                     checkAndGenerateABHA(benId)
                 },
-                { benId, hhId, isViewMode, isIFA ->
+                { item,benId, hhId, isViewMode, isIFA ->
                 },
                 {
                     try {
@@ -264,6 +265,8 @@ class AbhaBenFragment : Fragment() {
                         }
                         Toast.makeText(requireContext(), "Please allow permissions first", Toast.LENGTH_SHORT).show()
                     }
+                },{
+
                 }
 
             ),
@@ -281,11 +284,16 @@ class AbhaBenFragment : Fragment() {
         binding.ibSearch.setOnClickListener { sttContract.launch(Unit) }
         val searchTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
+                /*
+                 * Currently No Implementation Required
+                 * */
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 
+                /*
+                  * Currently No Implementation Required
+                  * */
             }
 
             override fun afterTextChanged(p0: Editable?) {
@@ -320,37 +328,6 @@ class AbhaBenFragment : Fragment() {
                 viewModel.resetBenRegId()
             }
 
-        }
-    }
-
-    private fun toggleNoRecord() {
-
-//        if (isNewListEmpty) {
-//            binding.tvEmptyNew.visibility = View.VISIBLE
-//        } else {
-//            binding.tvEmptyNew.visibility = View.GONE
-//        }
-
-        if (isOldListEmpty) {
-            binding.tvEmptyOld.visibility = View.VISIBLE
-        } else {
-            binding.tvEmptyOld.visibility = View.GONE
-        }
-
-        if (isNewListEmpty && isOldListEmpty) {
-            binding.flEmpty.visibility = View.VISIBLE
-//            binding.tvEmptyNew.visibility = View.GONE
-//            binding.tvEmptyOld.visibility = View.GONE
-            binding.cardNewAbha.visibility = View.GONE
-            binding.cardExistingAbha.visibility = View.GONE
-            binding.rvNewAbha.visibility = View.GONE
-            binding.rvExistingAbha.visibility = View.GONE
-        } else {
-            binding.flEmpty.visibility = View.GONE
-            binding.cardNewAbha.visibility = View.VISIBLE
-            binding.cardExistingAbha.visibility = View.VISIBLE
-            binding.rvNewAbha.visibility = View.VISIBLE
-            binding.rvExistingAbha.visibility = View.VISIBLE
         }
     }
 

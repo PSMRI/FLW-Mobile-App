@@ -65,6 +65,8 @@ class CbacViewModel @Inject constructor(
     }
 
 
+    private val _isLeprosySuspected = MutableLiveData(false)
+    val isLeprosySuspected: LiveData<Boolean> = _isLeprosySuspected
     private val englishResources by lazy {
         val configuration = Configuration(context.resources.configuration)
         configuration.setLocale(Locale.ENGLISH)
@@ -946,6 +948,25 @@ class CbacViewModel @Inject constructor(
         conf.setLocale(desiredLocale)
         val localizedContext: Context = context.createConfigurationContext(conf)
         return localizedContext.resources
+    }
+
+    fun checkLeprosySymptoms() {
+        val suspected = listOf(
+            cbac.cbac_uicers_pos,          // Recurrent ulceration
+            cbac.cbac_tingling_palm_posi,        // Recurrent tingling palm/sole
+            cbac.cbac_hyper_pigmented_patch_posi,     // Hypopigmented / discoloration
+            cbac.cbac_any_thickend_skin_posi,          // Thickened skin
+            cbac.cbac_nodules_on_skin_posi,        // Skin nodules
+            cbac.cbac_numbness_on_palm_posi,        // Recurrent numbness
+            cbac.cbac_clawing_of_fingers_posi,             // Clawing of fingers/feet
+            cbac.cbac_tingling_or_numbness_posi,            // Tingling + numbness
+            cbac.cbac_inability_close_eyelid_posi,        // Inability to close eyelid
+            cbac.cbac_diff_holding_obj_posi,        // Difficulty holding objects
+            cbac.cbac_weekness_in_feet_posi,
+            cbac.cbac_white_or_red_patch_posi
+        ).any { it == 1 }
+
+        _isLeprosySuspected.value = suspected
     }
 
 }
