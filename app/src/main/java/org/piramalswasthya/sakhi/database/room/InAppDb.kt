@@ -8,6 +8,8 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import net.sqlcipher.database.SQLiteDatabase
+import net.sqlcipher.database.SupportFactory
 import org.piramalswasthya.sakhi.database.converters.LocationEntityListConverter
 import org.piramalswasthya.sakhi.database.converters.SyncStateConverter
 import org.piramalswasthya.sakhi.database.room.dao.AdolescentHealthDao
@@ -57,6 +59,8 @@ import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.CUFYFormResp
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.CUFYFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.EyeSurgeryFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FilariaMDAFormResponseJsonDao
+import org.piramalswasthya.sakhi.helpers.DatabaseKeyManager
+import org.piramalswasthya.sakhi.helpers.RoomDbEncryptionHelper
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FilariaMdaCampaignJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.NCDReferalFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseANCJsonDao
@@ -1952,11 +1956,23 @@ abstract class InAppDb : RoomDatabase() {
             synchronized(this) {
                 var instance = INSTANCE
                 if (instance == null) {
+                    val passphrase = DatabaseKeyManager.getDatabasePassphrase(appContext)
+                    SQLiteDatabase.loadLibs(appContext)
+
+                    RoomDbEncryptionHelper.encryptIfNeeded(
+                        context = appContext,
+                        dbName = "Sakhi-2.0-In-app-database",
+                        passphrase = passphrase
+                    )
+
+                    val factory = SupportFactory(SQLiteDatabase.getBytes(passphrase))
+
                     instance = Room.databaseBuilder(
                         appContext,
                         InAppDb::class.java,
                         "Sakhi-2.0-In-app-database"
-                    ).addMigrations(
+                    )
+                        .openHelperFactory(factory).addMigrations(
                         MIGRATION_13_14,
                         MIGRATION_14_15,
                         MIGRATION_15_16,
