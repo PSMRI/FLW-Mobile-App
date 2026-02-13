@@ -5,15 +5,25 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.BenRegCache
-import org.piramalswasthya.sakhi.model.FilariaScreeningCache
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.InputType
 import org.piramalswasthya.sakhi.model.LeprosyScreeningCache
-import org.piramalswasthya.sakhi.model.TBScreeningCache
+import java.util.Calendar
 
 class LeprosyFormDataset(
     context: Context, currentLanguage: Languages
 ) : Dataset(context, currentLanguage) {
+
+    private fun getOneYearBeforeCurrentDate(): Long {
+        val calendar = Calendar.getInstance()
+        calendar.add(Calendar.YEAR, -1)
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        return calendar.timeInMillis
+    }
+
 
     private val dateOfCase = FormElement(
         id = 1,
@@ -22,6 +32,7 @@ class LeprosyFormDataset(
         arrayId = -1,
         required = true,
         max = System.currentTimeMillis(),
+        min = getOneYearBeforeCurrentDate(),
         hasDependants = true
 
     )
@@ -139,6 +150,119 @@ class LeprosyFormDataset(
 
         )
 
+    private val recurrentUlceration = FormElement(
+        id = 16,
+        inputType = InputType.RADIO,
+        arrayId = R.array.yes_no,
+        title = resources.getString(R.string.cbac_recurrent_ulceration),
+        entries = resources.getStringArray(R.array.yes_no),
+        hasDependants = true,
+        required = true,
+        isEnabled = true
+    )
+
+    private val cbacRecurrentTingling = FormElement(
+        id = 17,
+        inputType = InputType.RADIO,
+        arrayId = R.array.yes_no,
+        title = resources.getString(R.string.cbac_recurrent_tingling),
+        entries = resources.getStringArray(R.array.yes_no),
+        hasDependants = true,
+        required = true,
+        isEnabled = true
+    )
+    private val cbacAnyHyperPigmented = FormElement(
+        id = 18,
+        inputType = InputType.RADIO,
+        arrayId = R.array.yes_no,
+        title = resources.getString(R.string.cbac_Any_hyper_pigmented),
+        entries = resources.getStringArray(R.array.yes_no),
+        hasDependants = true,
+        required = true,
+        isEnabled = true
+    )
+
+    private val cbacAnyThickendSkin = FormElement(
+        id = 19,
+        inputType = InputType.RADIO,
+        arrayId = R.array.yes_no,
+        title = resources.getString(R.string.cbac_any_thickend_skin),
+        entries = resources.getStringArray(R.array.yes_no),
+        hasDependants = true,
+        required = true,
+        isEnabled = true
+    )
+    private val cbacAnyNodulesSkin = FormElement(
+        id = 20,
+        inputType = InputType.RADIO,
+        arrayId = R.array.yes_no,
+        title = resources.getString(R.string.cbac_any_nodules_skin),
+        entries = resources.getStringArray(R.array.yes_no),
+        hasDependants = true,
+        required = true,
+        isEnabled = true
+    )
+    private val cbacRecurrentNumbness = FormElement(
+        id = 21,
+        inputType = InputType.RADIO,
+        arrayId = R.array.yes_no,
+        title = resources.getString(R.string.cbac_Recurrent_numbness),
+        entries = resources.getStringArray(R.array.yes_no),
+        hasDependants = true,
+        required = true,
+        isEnabled = true
+    )
+    private val cbacClawingOfFingers = FormElement(
+        id = 22,
+        inputType = InputType.RADIO,
+        arrayId = R.array.yes_no,
+        title = resources.getString(R.string.cbac_Clawing_of_fingers),
+        entries = resources.getStringArray(R.array.yes_no),
+        hasDependants = true,
+        required = true,
+        isEnabled = true
+    )
+    private val cbacTinglingOrNumbness = FormElement(
+        id = 23,
+        inputType = InputType.RADIO,
+        arrayId = R.array.yes_no,
+        title = resources.getString(R.string.cbac_Tingling_or_Numbness),
+        entries = resources.getStringArray(R.array.yes_no),
+        hasDependants = true,
+        required = true,
+        isEnabled = true
+    )
+    private val cbacInabilityCloseEyelid = FormElement(
+        id = 24,
+        inputType = InputType.RADIO,
+        arrayId = R.array.yes_no,
+        title = resources.getString(R.string.cbac_Inability_close_eyelid),
+        entries = resources.getStringArray(R.array.yes_no),
+        hasDependants = true,
+        required = true,
+        isEnabled = true
+    )
+    private val cbacDiffHoldingObjects = FormElement(
+        id = 25,
+        inputType = InputType.RADIO,
+        arrayId = R.array.yes_no,
+        title = resources.getString(R.string.cbac_diff_holding_objects),
+        entries = resources.getStringArray(R.array.yes_no),
+        hasDependants = true,
+        required = true,
+        isEnabled = true
+    )
+    private val cbacWeeknessInFeet = FormElement(
+        id = 26,
+        inputType = InputType.RADIO,
+        arrayId = R.array.yes_no,
+        title = resources.getString(R.string.cbac_Weekness_in_feet),
+        entries = resources.getStringArray(R.array.yes_no),
+        hasDependants = true,
+        required = true,
+        isEnabled = true
+    )
+
     private val leprosySymptoms = FormElement(
         id = 14,
         inputType = InputType.RADIO,
@@ -162,6 +286,17 @@ class LeprosyFormDataset(
         val list = mutableListOf(
             dateOfCase,
            // beneficiaryStatus,
+            recurrentUlceration,
+            cbacRecurrentTingling,
+            cbacAnyHyperPigmented,
+            cbacAnyThickendSkin,
+            cbacAnyNodulesSkin,
+            cbacRecurrentNumbness,
+            cbacClawingOfFingers,
+            cbacTinglingOrNumbness,
+            cbacInabilityCloseEyelid,
+            cbacDiffHoldingObjects,
+            cbacWeeknessInFeet,
             leprosySymptoms,
             visitLabel,
             leprosyStatus,
@@ -199,6 +334,39 @@ class LeprosyFormDataset(
                 referredTo.value =
                     getLocalValueInArray(referredTo.arrayId, saved.referToName)
             }
+            val recurrentUlcerationId = saved.recurrentUlcerationId ?: 1
+            val recurrentTinglingId  = saved.recurrentTinglingId  ?: 1
+            val hypopigmentedPatchId  = saved.hypopigmentedPatchId  ?: 1
+            val thickenedSkinId  = saved.thickenedSkinId  ?: 1
+            val skinNodulesId  = saved.skinNodulesId  ?: 1
+            val recurrentNumbnessId  = saved.recurrentNumbnessId  ?: 1
+            val clawingFingersId  = saved.clawingFingersId  ?: 1
+            val tinglingNumbnessExtremitiesId  = saved.tinglingNumbnessExtremitiesId  ?: 1
+            val inabilityCloseEyelidId  = saved.inabilityCloseEyelidId  ?: 1
+            val difficultyHoldingObjectsId  = saved.difficultyHoldingObjectsId  ?: 1
+            val weaknessFeetId   = saved.weaknessFeetId   ?: 1
+            recurrentUlceration.value = resources.getStringArray(R.array.yes_no).getOrNull(recurrentUlcerationId)
+                ?: resources.getStringArray(R.array.yes_no)[1]
+            cbacRecurrentTingling.value = resources.getStringArray(R.array.yes_no).getOrNull(recurrentTinglingId)
+                ?: resources.getStringArray(R.array.yes_no)[1]
+            cbacAnyHyperPigmented.value = resources.getStringArray(R.array.yes_no).getOrNull(hypopigmentedPatchId)
+                ?: resources.getStringArray(R.array.yes_no)[1]
+            cbacAnyThickendSkin.value = resources.getStringArray(R.array.yes_no).getOrNull(thickenedSkinId)
+                ?: resources.getStringArray(R.array.yes_no)[1]
+            cbacAnyNodulesSkin.value = resources.getStringArray(R.array.yes_no).getOrNull(skinNodulesId)
+                ?: resources.getStringArray(R.array.yes_no)[1]
+            cbacRecurrentNumbness.value = resources.getStringArray(R.array.yes_no).getOrNull(recurrentNumbnessId)
+                ?: resources.getStringArray(R.array.yes_no)[1]
+            cbacClawingOfFingers.value = resources.getStringArray(R.array.yes_no).getOrNull(clawingFingersId)
+                ?: resources.getStringArray(R.array.yes_no)[1]
+            cbacTinglingOrNumbness.value = resources.getStringArray(R.array.yes_no).getOrNull(tinglingNumbnessExtremitiesId)
+                ?: resources.getStringArray(R.array.yes_no)[1]
+            cbacInabilityCloseEyelid.value = resources.getStringArray(R.array.yes_no).getOrNull(inabilityCloseEyelidId)
+                ?: resources.getStringArray(R.array.yes_no)[1]
+            cbacDiffHoldingObjects.value = resources.getStringArray(R.array.yes_no).getOrNull(difficultyHoldingObjectsId)
+                ?: resources.getStringArray(R.array.yes_no)[1]
+            cbacWeeknessInFeet.value = resources.getStringArray(R.array.yes_no).getOrNull(weaknessFeetId)
+                ?: resources.getStringArray(R.array.yes_no)[1]
             /*if
             (beneficiaryStatus.value == beneficiaryStatus.entries!![3]) {
                 list.add(list.indexOf(beneficiaryStatus) + 1, dateOfDeath)
@@ -248,6 +416,23 @@ class LeprosyFormDataset(
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
 
         return when (formId) {
+
+            recurrentUlceration.id,
+            cbacRecurrentTingling.id,
+            cbacAnyHyperPigmented.id,
+            cbacAnyThickendSkin.id,
+            cbacAnyNodulesSkin.id,
+            cbacRecurrentNumbness.id,
+            cbacClawingOfFingers.id,
+            cbacTinglingOrNumbness.id,
+            cbacInabilityCloseEyelid.id,
+            cbacDiffHoldingObjects.id,
+            cbacWeeknessInFeet.id -> {
+
+                updateLeprosySymptomsFromChecklist()
+                0
+            }
+
             leprosySymptoms.id -> {
                 if (leprosySymptoms.value == resources.getStringArray(R.array.yes_no)[0]) {
 
@@ -402,6 +587,73 @@ class LeprosyFormDataset(
                 resources.getStringArray(R.array.yes_no)[1] -> 1
                 else -> 1
             }
+            form.recurrentUlcerationId = when (recurrentUlceration.value) {
+                resources.getStringArray(R.array.yes_no)[0] -> 0
+                resources.getStringArray(R.array.yes_no)[1] -> 1
+                else -> 1
+            }
+            form.recurrentTinglingId = when (cbacRecurrentTingling.value) {
+                resources.getStringArray(R.array.yes_no)[0] -> 0
+                resources.getStringArray(R.array.yes_no)[1] -> 1
+                else -> 1
+            }
+            form.hypopigmentedPatchId = when (cbacAnyHyperPigmented.value) {
+                resources.getStringArray(R.array.yes_no)[0] -> 0
+                resources.getStringArray(R.array.yes_no)[1] -> 1
+                else -> 1
+            }
+            form.thickenedSkinId = when (cbacAnyThickendSkin.value) {
+                resources.getStringArray(R.array.yes_no)[0] -> 0
+                resources.getStringArray(R.array.yes_no)[1] -> 1
+                else -> 1
+            }
+            form.skinNodulesId = when (cbacAnyNodulesSkin.value) {
+                resources.getStringArray(R.array.yes_no)[0] -> 0
+                resources.getStringArray(R.array.yes_no)[1] -> 1
+                else -> 1
+            }
+            form.recurrentNumbnessId = when (cbacRecurrentNumbness .value) {
+                resources.getStringArray(R.array.yes_no)[0] -> 0
+                resources.getStringArray(R.array.yes_no)[1] -> 1
+                else -> 1
+            }
+            form.clawingFingersId = when (cbacClawingOfFingers.value) {
+                resources.getStringArray(R.array.yes_no)[0] -> 0
+                resources.getStringArray(R.array.yes_no)[1] -> 1
+                else -> 1
+            }
+            form.tinglingNumbnessExtremitiesId = when (cbacTinglingOrNumbness .value) {
+                resources.getStringArray(R.array.yes_no)[0] -> 0
+                resources.getStringArray(R.array.yes_no)[1] -> 1
+                else -> 1
+            }
+            form.inabilityCloseEyelidId = when (cbacInabilityCloseEyelid.value) {
+                resources.getStringArray(R.array.yes_no)[0] -> 0
+                resources.getStringArray(R.array.yes_no)[1] -> 1
+                else -> 1
+            }
+            form.difficultyHoldingObjectsId = when (cbacDiffHoldingObjects.value) {
+                resources.getStringArray(R.array.yes_no)[0] -> 0
+                resources.getStringArray(R.array.yes_no)[1] -> 1
+                else -> 1
+            }
+            form.weaknessFeetId = when (cbacWeeknessInFeet.value) {
+                resources.getStringArray(R.array.yes_no)[0] -> 0
+                resources.getStringArray(R.array.yes_no)[1] -> 1
+                else -> 1
+            }
+            form.recurrentUlceration = recurrentUlceration.value
+            form.recurrentTingling = cbacRecurrentTingling.value
+            form.hypopigmentedPatch  = cbacAnyHyperPigmented.value
+            form.thickenedSkin  = cbacAnyThickendSkin.value
+            form.skinNodules  = cbacAnyNodulesSkin.value
+            form.recurrentNumbness  = cbacRecurrentNumbness.value
+            form.clawingFingers  = cbacClawingOfFingers.value
+            form.tinglingNumbnessExtremities  = cbacTinglingOrNumbness.value
+            form.inabilityCloseEyelid  = cbacInabilityCloseEyelid.value
+            form.difficultyHoldingObjects   = cbacDiffHoldingObjects.value
+            form.weaknessFeet   = cbacWeeknessInFeet.value
+
 
         }
     }
@@ -420,5 +672,41 @@ class LeprosyFormDataset(
 
     fun getIndexOfDate(): Int {
         return getIndexById(dateOfCase.id)
+    }
+
+    private fun updateLeprosySymptomsFromChecklist()
+    {
+        val yesValue = resources.getStringArray(R.array.yes_no)[0]
+
+        val anyYes = listOf(
+            recurrentUlceration.value,
+            cbacRecurrentTingling.value,
+            cbacAnyHyperPigmented.value,
+            cbacAnyThickendSkin.value,
+            cbacAnyNodulesSkin.value,
+            cbacRecurrentNumbness.value,
+            cbacClawingOfFingers.value,
+            cbacTinglingOrNumbness.value,
+            cbacInabilityCloseEyelid.value,
+            cbacDiffHoldingObjects.value,
+            cbacWeeknessInFeet.value
+        ).any { it == yesValue }
+
+        leprosySymptoms.value =
+            if (anyYes)
+                resources.getStringArray(R.array.yes_no)[0]
+
+            else resources.getStringArray(R.array.yes_no)[1]
+
+        if (anyYes){
+            leprosyStatus.value = resources.getStringArray(R.array.leprosy_status)[3]
+            visitLabel.value = "Visit -1"
+
+            triggerDependants(
+                source = leprosySymptoms,
+                addItems = listOf(visitLabel,leprosyStatus,referredTo),
+                removeItems = listOf()
+            )
+        }
     }
 }

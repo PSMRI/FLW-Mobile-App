@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<!--    <string name="app_native_name">मितानिन</string>-->
     <string name="navigation_drawer_open">নেভিগেচন ড্ৰয়াৰ খোলক</string>
     <string name="navigation_drawer_close">নেভিগেচন ড্ৰয়াৰ বন্ধ কৰক</string>
     <!--   To Be Deleeted-->
@@ -590,6 +589,19 @@
     <string name="leprosy_submitted">কঁকালৰ ৰোগৰ ফৰ্ম জমা দিয়া হৈছে</string>
     <string name="irs_submitted">IRS ফৰ্ম জমা দিয়া হৈছে</string>
     <string name="hwc_referred_list">HWC Referred List</string>
+    <string name="vhsnc_meeting_date">VHSNC meeting Date</string>
+    <string name="place_of_vhsnc_meeting">Place of VHSNC meeting</string>
+    <string name="village_name">Village Name</string>
+    <string name="number_of_anm_mpw_attended">Number of ANM/ MPW attended</string>
+    <string name="number_of_aww_attended">Number of AWW attended</string>
+    <string name="number_of_pregnant_woman">Number of Pregnant Woman</string>
+    <string name="number_of_lactating_mothers">Number of Lactating Mothers</string>
+    <string name="number_of_committee_members_present">Number of Committee members present</string>
+    <string name="follow_up_the_previous_meeting_minutes">Follow-up the previous meeting minutes</string>
+    <string name="number_of_asha_participated_in_vhsnc_meeting">Number of ASHAs participated in VHSNC meeting</string>
+    <string name="number_of_mitanins_participated_in_vhsnc_meeting">Number of Mitanins participated in VHSNC meeting</string>
+    <string name="mitanin_village_meetings">Mitanin/ Village Meetings</string>
+    <string name="asha_village_meetings">ASHA/ Village Meetings</string>
 
 
 </resources>

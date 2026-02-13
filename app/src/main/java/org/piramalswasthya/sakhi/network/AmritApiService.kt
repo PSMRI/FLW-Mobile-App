@@ -4,8 +4,10 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import org.piramalswasthya.sakhi.model.*
+import org.piramalswasthya.sakhi.model.dynamicEntity.FormNCDFollowUpSubmitRequest
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSubmitRequest
+import org.piramalswasthya.sakhi.model.dynamicEntity.NCDFollowUpResponse
 import org.piramalswasthya.sakhi.model.dynamicModel.ApiResponse
 import org.piramalswasthya.sakhi.model.dynamicModel.HBNCVisitListResponse
 import org.piramalswasthya.sakhi.model.dynamicModel.HBNCVisitRequest
@@ -360,6 +362,16 @@ interface AmritApiService {
         @Path("formName") formName: String,
         @Body request: List<FormSubmitRequest>
     ): Response<Unit>
+
+      @POST("flw-api/disease/cdtfVisit/saveAll")
+    suspend fun submitNCDFollowUp(
+        @Body request: List<FormNCDFollowUpSubmitRequest>
+    ): Response<Unit>
+
+    @POST("flw-api/disease/cdtfVisit/getAll")
+    suspend fun getAllFormNCDFollowUp(
+        @Body request: HBNCVisitRequest
+    ): Response <NCDFollowUpResponse>
 
     @POST("flw-api/beneficiary/{formName}/saveAll")
     suspend fun submitEyeSurgeryForm(

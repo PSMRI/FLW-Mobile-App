@@ -80,6 +80,60 @@ class BenRepo @Inject constructor(
         }
     }
 
+    suspend fun updateFatherInChildren(benName: String, householdId: Long, parentName: String, unsynced: SyncState) {
+        withContext(Dispatchers.IO) {
+            benDao.updateFatherInChildren(benName = benName, householdId = householdId, parentName = parentName, unsynced, "U", 2)
+        }
+    }
+
+    suspend fun updateMotherInChildren(benName: String, householdId: Long, parentName: String, unsynced: SyncState) {
+        withContext(Dispatchers.IO) {
+            benDao.updateMotherInChildren(benName = benName, householdId = householdId, parentName = parentName, unsynced, "U", 2)
+        }
+    }
+
+    suspend fun updateSpouseOfHoF(benName: String, householdId: Long, spouseName: String, unsynced: SyncState) {
+        withContext(Dispatchers.IO) {
+            benDao.updateSpouseOfHoF(benName = benName, householdId = householdId, spouseName = spouseName, unsynced, "U", 2)
+        }
+    }
+
+    suspend fun updateFather(benName: String, householdId: Long, parentName: String, unsynced: SyncState) {
+        withContext(Dispatchers.IO) {
+            benDao.updateFather(benName = benName, householdId = householdId, parentName = parentName, unsynced, "U", 2)
+        }
+    }
+
+    suspend fun updateMother(benName: String, householdId: Long, parentName: String, unsynced: SyncState) {
+        withContext(Dispatchers.IO) {
+            benDao.updateMother(benName = benName, householdId = householdId, parentName = parentName, unsynced, "U", 2)
+        }
+    }
+
+    suspend fun updateBabyName(babyName: String, householdId: Long, parentName: String, unsynced: SyncState) {
+        withContext(Dispatchers.IO) {
+            benDao.updateBabyName(babyName = babyName, householdId = householdId, parentName = parentName, unsynced, "U", 2)
+        }
+    }
+
+    suspend fun updateSpouse(benName: String, householdId: Long, spouseName: String, unsynced: SyncState) {
+        withContext(Dispatchers.IO) {
+            benDao.updateSpouse(benName = benName, householdId = householdId, spouseName = spouseName, unsynced, "U", 2)
+        }
+    }
+
+    suspend fun updateChildrenLastName(lastName: String, householdId: Long, parentName: String, unsynced: SyncState) {
+        withContext(Dispatchers.IO) {
+            benDao.updateChildrenLastName(lastName = lastName, householdId = householdId, parentName = parentName, unsynced, "U", 2)
+        }
+    }
+
+    suspend fun updateSpouseLastName(lastName: String, householdId: Long, spouseName: String, unsynced: SyncState) {
+        withContext(Dispatchers.IO) {
+            benDao.updateSpouseLastName(lastName = lastName, householdId = householdId, spouseName = spouseName, unsynced, "U", 2)
+        }
+    }
+
     suspend fun updateBeneficiaryChildrenAdded(
         householdId: Long,
         benID: Long,
@@ -126,6 +180,33 @@ class BenRepo @Inject constructor(
 
     suspend fun getBenListFromHousehold(hhId: Long): List<BenRegCache> {
         return benDao.getAllBenForHousehold(hhId)
+
+    }
+
+    suspend fun getChildBenListFromHousehold(
+        hhId: Long,
+        selectedbenIdFromArgs: Long,
+        firstName: String?
+    ): List<BenRegCache> {
+        return benDao.getChildBenForHousehold(hhId,selectedbenIdFromArgs,firstName)
+
+    }
+
+    suspend fun getChildBelow15(
+        hhId: Long,
+        selectedbenIdFromArgs: Long,
+        firstName: String?
+    ): Int {
+        return benDao.getBelow15Count(hhId,selectedbenIdFromArgs,firstName)
+
+    }
+
+    suspend fun getChildAbove15(
+        hhId: Long,
+        selectedbenIdFromArgs: Long,
+        firstName: String?
+    ): Int {
+        return benDao.get15aboveCount(hhId,selectedbenIdFromArgs,firstName)
 
     }
 

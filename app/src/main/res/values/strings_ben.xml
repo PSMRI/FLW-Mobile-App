@@ -30,7 +30,7 @@
     <string name="nbr_image_sub">Tap to use camera</string>
     <string name="nbr_dor">Date of Registration</string>
     <string name="vhnd_date">VHND Date</string>
-    <string name="vhnc_date">VHNC Date</string>
+    <string name="vhnc_date">VHSNC meeting Date</string>
     <string name="phc_review_meeting_date">PHC Review Meeting Date</string>
     <string name="nbr_nb_first_name">First Name</string>
     <string name="nbr_child_first_name">Child Name</string>
@@ -103,6 +103,15 @@
         <item>Widower</item>
 
     </string-array>
+
+    <string-array name="place_of_vhsnc">
+        <item>Anganwadi Centre</item>
+        <item>HWC</item>
+        <item>School</item>
+        <item>Community center</item>
+    </string-array>
+
+
 
     <string-array name="nbr_marital_status_female_array">
         <item>Unmarried</item>
@@ -345,5 +354,36 @@
         <item>Death</item>
     </string-array>
 
+    <string-array name="diet_plane">
+        <item>What to eat</item>
+        <item>what to avoid</item>
+        <item>importance of dietary diversity</item>
+
+    </string-array>
+
+    <string-array name="care_pregnancy">
+        <item>Prevention of Anemia</item>
+        <item>weakness</item>
+        <item>importance of rest and nutrition</item>
+
+    </string-array>
+
+    <string-array name="import_brestfeeding">
+        <item>Early initiation after birth</item>
+        <item> exclusive breastfeeding for 6 months</item>
+
+    </string-array>
+    <string-array name="complementary_feeding">
+        <item>Starting home-based nutritious food after 6 months along with breastfeeding</item>
+
+    </string-array>
+    <string-array name="hygiene_senetigation">
+        <item>Maintaining cleanliness while preparing and feeding food</item>
+
+    </string-array>
+    <string-array name="family_planning_health">
+        <item>Importance of small family and regular health check-ups</item>
+
+    </string-array>
 
 </resources>

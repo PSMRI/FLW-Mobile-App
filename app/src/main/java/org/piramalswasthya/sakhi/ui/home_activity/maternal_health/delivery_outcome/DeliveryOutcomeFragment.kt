@@ -92,8 +92,8 @@ class DeliveryOutcomeFragment : Fragment() {
                         hardCodedListUpdate(formId)
                     },
                     selectImageClickListener = FormInputAdapter.SelectUploadImageClickListener { formId ->
-                        viewModel.setCurrentDocumentFormId(formId)
-                        chooseOptions()
+                            viewModel.setCurrentDocumentFormId(formId)
+                            chooseOptions()
                     },
                     viewDocumentListner = FormInputAdapter.ViewDocumentOnClick { formId ->
                         if (recordExists) viewDocuments(formId) else {

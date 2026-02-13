@@ -934,6 +934,17 @@ data class VHNDDTO(
     var noOfBeneficiariesAttended: Int? = null,
     var Image1: String? = null,
     var Image2: String? = null,
+    var vhndPlaceId: Int? = 0,
+    var pregnantWomenAnc: String? = null,
+    var lactatingMothersPnc: String? = null,
+    var childrenImmunization: String? = null,
+    var knowledgeBalancedDiet: String? = null,
+    var careDuringPregnancy: String? = null,
+    var importanceBreastfeeding: String? = null,
+    var complementaryFeeding: String? = null,
+    var hygieneSanitation: String? = null,
+    var familyPlanningHealthcare: String? = null,
+    var selectAllEducation: Boolean? = false,
 ) {
     fun toCache(): VHNDCache {
         return VHNDCache(
@@ -943,6 +954,16 @@ data class VHNDDTO(
             noOfBeneficiariesAttended = noOfBeneficiariesAttended,
             image1 = Image1,
             image2 = Image2,
+            vhndPlaceId = vhndPlaceId,
+            pregnantWomenAnc = pregnantWomenAnc,
+            lactatingMothersPnc = lactatingMothersPnc,
+            childrenImmunization = childrenImmunization,
+            knowledgeBalancedDiet = knowledgeBalancedDiet,
+            careDuringPregnancy = careDuringPregnancy,
+            importanceBreastfeeding = importanceBreastfeeding,
+            complementaryFeeding = complementaryFeeding,
+            hygieneSanitation = hygieneSanitation,
+            familyPlanningHealthcare = familyPlanningHealthcare,
             syncState = SyncState.SYNCED
         )
     }
@@ -955,6 +976,13 @@ data class VHNCDTO(
     var noOfBeneficiariesAttended: Int? = null,
     var Image1: String? = null,
     var Image2: String? = null,
+    var villageName: String? = null,
+    var anm: Int? = 0,
+    var aww: Int? = 0,
+    var noOfPragnentWoment: Int? = 0,
+    var noOfLactingMother: Int? = 0,
+    var noOfCommittee: Int? = 0,
+    var followupPrevius: Boolean? = null,
 ) {
     fun toCache(): VHNCCache {
         return VHNCCache(
@@ -964,6 +992,13 @@ data class VHNCDTO(
             noOfBeneficiariesAttended = noOfBeneficiariesAttended,
             image1 = Image1,
             image2 = Image2,
+            villageName = villageName,
+            anm = anm,
+            aww = aww,
+            noOfPragnentWoment = noOfPragnentWoment,
+            noOfLactingMother = noOfLactingMother,
+            noOfCommittee = noOfCommittee,
+            followupPrevius = followupPrevius,
             syncState = SyncState.SYNCED
         )
     }
@@ -1435,6 +1470,30 @@ data class LeprosyScreeningDTO(
     val createdDate:String,
     val modifiedBy: String,
     val lastModDate: String,
+    var recurrentUlceration: String? = null,
+    var recurrentUlcerationId: Int? = 1,
+    var recurrentTingling: String? = null,
+    var recurrentTinglingId: Int? = 1,
+    var hypopigmentedPatch: String? = null,
+    var hypopigmentedPatchId: Int? = 1,
+    var thickenedSkin: String? = null,
+    var thickenedSkinId: Int? = 1,
+    var skinNodules: String? = null,
+    var skinNodulesId: Int? = 1,
+    var skinPatchDiscoloration: String? = null,
+    var skinPatchDiscolorationId: Int? = 1,
+    var recurrentNumbness: String? = null,
+    var recurrentNumbnessId: Int? = 1,
+    var clawingFingers: String? = null,
+    var clawingFingersId: Int? = 1,
+    var tinglingNumbnessExtremities: String? = null,
+    var tinglingNumbnessExtremitiesId: Int? = 1,
+    var inabilityCloseEyelid: String? = null,
+    var inabilityCloseEyelidId: Int? = 1,
+    var difficultyHoldingObjects: String? = null,
+    var difficultyHoldingObjectsId: Int? = 1,
+    var weaknessFeet: String? = null,
+    var weaknessFeetId: Int? = 1,
 ) {
     fun toCache(): LeprosyScreeningCache {
         return LeprosyScreeningCache(
@@ -1473,7 +1532,31 @@ data class LeprosyScreeningDTO(
             createdDate = getLongFromDate(createdDate),
             modifiedBy = modifiedBy,
             lastModDate =getLongFromDate(lastModDate),
-            syncState = SyncState.SYNCED
+            syncState = SyncState.SYNCED,
+            recurrentUlceration = recurrentUlceration,
+            recurrentUlcerationId = recurrentUlcerationId,
+            recurrentTingling = recurrentTingling,
+            recurrentTinglingId = recurrentTinglingId,
+            hypopigmentedPatchId = hypopigmentedPatchId,
+            hypopigmentedPatch = hypopigmentedPatch,
+            thickenedSkin = thickenedSkin,
+            thickenedSkinId = thickenedSkinId,
+            skinNodules = skinNodules,
+            skinNodulesId = skinNodulesId,
+            skinPatchDiscoloration = skinPatchDiscoloration,
+            skinPatchDiscolorationId = skinPatchDiscolorationId,
+            recurrentNumbness = recurrentNumbness,
+            recurrentNumbnessId = recurrentNumbnessId,
+            clawingFingers = clawingFingers,
+            clawingFingersId = clawingFingersId,
+            tinglingNumbnessExtremities = tinglingNumbnessExtremities,
+            tinglingNumbnessExtremitiesId = tinglingNumbnessExtremitiesId,
+            inabilityCloseEyelid = inabilityCloseEyelid,
+            inabilityCloseEyelidId = inabilityCloseEyelidId,
+            difficultyHoldingObjects = difficultyHoldingObjects,
+            difficultyHoldingObjectsId = difficultyHoldingObjectsId,
+            weaknessFeet = weaknessFeet,
+            weaknessFeetId = weaknessFeetId,
         )
     }
 }
