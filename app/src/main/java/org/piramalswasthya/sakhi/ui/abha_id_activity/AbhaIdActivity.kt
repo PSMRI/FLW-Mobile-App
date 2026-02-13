@@ -60,32 +60,37 @@ class AbhaIdActivity : AppCompatActivity() {
                     // Hide other views (if any)
                     binding.navHostFragmentAbhaId.visibility = View.GONE
                     binding.clError.visibility = View.GONE
+
                 }
 
                 State.SUCCESS -> {
                     binding.progressBarAbhaActivity.visibility = View.GONE
                     binding.clError.visibility = View.GONE
                     binding.navHostFragmentAbhaId.visibility = View.VISIBLE
+
                 }
 
                 State.ERROR_NETWORK -> {
                     binding.clError.visibility = View.VISIBLE
                     binding.progressBarAbhaActivity.visibility = View.GONE
                     binding.navHostFragmentAbhaId.visibility = View.GONE
+
                 }
 
                 State.ERROR_SERVER -> {
                     binding.clError.visibility = View.VISIBLE
                     binding.progressBarAbhaActivity.visibility = View.GONE
                     binding.navHostFragmentAbhaId.visibility = View.GONE
+
                 }
             }
         }
         mainViewModel.errorMessage.observe(this) {
             binding.textView5.text = it
         }
+
         binding.btnTryAgain.setOnClickListener {
-            mainViewModel.generateAccessToken()
+            mainViewModel.generateAmritToken()
         }
 
         binding.toolbarMenuHome.setOnClickListener {

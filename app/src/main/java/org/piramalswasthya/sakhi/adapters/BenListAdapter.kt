@@ -64,7 +64,6 @@ class BenListAdapter(
             context : FragmentActivity,
             benIdList: List<Long>
         ) {
-
             if (pref?.getLoggedInUser()?.role.equals("asha", true)) {
                 binding.btnAbha.visibility = View.VISIBLE
             } else {
@@ -112,7 +111,7 @@ class BenListAdapter(
                 when (type) {
 
                     "new_born_baby" -> {
-                        binding.ivHhLogo.setImageResource(R.drawable.ic_new_born_baby)
+                        binding.ivHhLogo.setImageResource(R.drawable.ic_icon_baby)
                     }
 
                     "infant" -> {
@@ -122,7 +121,7 @@ class BenListAdapter(
                     "child", "adolescence" -> {
                         when (gender) {
                             Gender.MALE.name -> {
-                                binding.ivHhLogo.setImageResource(R.drawable.ic_boy)
+                                binding.ivHhLogo.setImageResource(R.drawable.ic_icon_boy_ben)
                             }
                             Gender.FEMALE.name -> {
                                 binding.ivHhLogo.setImageResource(R.drawable.ic_girl)
@@ -139,7 +138,7 @@ class BenListAdapter(
                                 binding.ivHhLogo.setImageResource(R.drawable.ic_males)
                             }
                             Gender.FEMALE.name -> {
-                                binding.ivHhLogo.setImageResource(R.drawable.ic_female)
+                                binding.ivHhLogo.setImageResource(R.drawable.ic_icon_female_2)
                             }
                             else -> {
                                 binding.ivHhLogo.setImageResource(R.drawable.ic_unisex)
@@ -173,8 +172,7 @@ class BenListAdapter(
 
                 item.gender == "FEMALE" &&
                         item.isMarried &&
-                        item.doYouHavechildren &&
-                        !item.isChildrenAdded -> {
+                        item.noOfChildren == 0  -> {
 
                     binding.btnAddChildren.visibility = View.VISIBLE
                     binding.btnAddSpouse.visibility = View.GONE
@@ -184,7 +182,7 @@ class BenListAdapter(
                     }
                 }
 
-                item.gender == "FEMALE" &&
+               /* item.gender == "FEMALE" &&
                         item.isMarried &&
                         !item.doYouHavechildren &&
                         !item.isChildrenAdded -> {
@@ -192,12 +190,11 @@ class BenListAdapter(
                     binding.btnAddChildren.visibility = View.INVISIBLE
                     binding.btnAddSpouse.visibility = View.GONE
                     binding.llAddSpouseBtn.visibility = View.VISIBLE
-                }
+                }*/
 
                 item.gender == "FEMALE" &&
                         item.isMarried &&
-                        item.doYouHavechildren &&
-                        item.isChildrenAdded -> {
+                        item.noOfChildren != 0  -> {
 
                     binding.btnAddChildren.visibility = View.VISIBLE
                     binding.btnAddChildren.text = context.getString(R.string.view_children)

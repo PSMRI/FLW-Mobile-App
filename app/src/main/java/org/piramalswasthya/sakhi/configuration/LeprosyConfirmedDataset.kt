@@ -96,7 +96,7 @@ class LeprosyConfirmedDataset(
     private val visitLabel = FormElement(
         id = 15,
         inputType = InputType.TEXT_VIEW,
-        title = "Visit",
+        title = resources.getString(R.string.visits),
         required = false,
         isEnabled = false
     )
@@ -125,7 +125,7 @@ class LeprosyConfirmedDataset(
     private val mdt_blister_pack_recived = FormElement(
         id = 18,
         inputType = InputType.RADIO,
-        title = context.getString(R.string.mdt_blister_pack_received),
+        title = resources.getString(R.string.mdt_blister_pack_received),
         arrayId = R.array.yes_no,
         entries = resources.getStringArray(R.array.yes_no),
         required = false,
@@ -135,7 +135,7 @@ class LeprosyConfirmedDataset(
     private val treatmentStatus = FormElement(
         id = 19,
         inputType = InputType.DROPDOWN,
-        title = context.getString(R.string.treatment_status),
+        title = resources.getString(R.string.treatment_status),
         arrayId = R.array.leprosy_treatment_status_before_time,
         entries = resources.getStringArray(R.array.leprosy_treatment_status_before_time),
         required = true,
@@ -145,7 +145,7 @@ class LeprosyConfirmedDataset(
     private val treatmentEndDate = FormElement(
         id = 20,
         inputType = InputType.DATE_PICKER,
-        title = context.getString(R.string.actual_treatment_completion_date),
+        title = resources.getString(R.string.actual_treatment_completion_date),
         required = true,
         isEnabled = true,
         max = System.currentTimeMillis(),
@@ -154,7 +154,7 @@ class LeprosyConfirmedDataset(
     private val treatmentEndDateEstimation = FormElement(
         id = 21,
         inputType = InputType.DATE_PICKER,
-        title = context.getString(R.string.expected_treatment_completion_date),
+        title = resources.getString(R.string.expected_treatment_completion_date),
         required = false,
         isEnabled = false,
         hasDependants = true,

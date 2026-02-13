@@ -80,6 +80,7 @@
         <item name="nbr_gender_3">Transgender</item>
     </string-array>
 
+
     <string-array name="nbr_reproductive_status_array1">
         <item>Adolescent Girl</item>
     </string-array>
@@ -252,6 +253,7 @@
         <item>Mother in Law</item>
         <item>Grand Daughter</item>
         <item>Daughter in Law</item>
+        <item>Sister in Law</item>
         <item>Other</item>
     </string-array>
 

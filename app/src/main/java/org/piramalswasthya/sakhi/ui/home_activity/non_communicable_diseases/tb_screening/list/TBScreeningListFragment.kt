@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.TbScreeningListAdapter
+import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 
@@ -26,6 +28,12 @@ class TBScreeningListFragment : Fragment() {
 
     private val viewModel: TBScreeningListViewModel by viewModels()
 
+    private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
+        val lowerValue = value.lowercase()
+        binding.searchView.setText(lowerValue)
+        binding.searchView.setSelection(lowerValue.length)
+        viewModel.filterText(lowerValue)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,6 +67,8 @@ class TBScreeningListFragment : Fragment() {
                 benAdapter.submitList(it)
             }
         }
+
+        binding.ibSearch.setOnClickListener { sttContract.launch(Unit) }
         val searchTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 

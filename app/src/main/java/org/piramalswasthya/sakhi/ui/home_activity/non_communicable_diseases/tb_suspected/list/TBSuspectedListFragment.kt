@@ -15,6 +15,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.TbSuspectedListAdapter
+import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
@@ -33,6 +34,12 @@ class TBSuspectedListFragment : Fragment() {
 
     private val viewModel: TBSuspectedListViewModel by viewModels()
 
+    private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
+        val lowerValue = value.lowercase()
+        binding.searchView.setText(lowerValue)
+        binding.searchView.setSelection(lowerValue.length)
+        viewModel.filterText(lowerValue)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -66,6 +73,8 @@ class TBSuspectedListFragment : Fragment() {
                 benAdapter.submitList(it)
             }
         }
+
+        binding.ibSearch.setOnClickListener { sttContract.launch(Unit) }
         val searchTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 

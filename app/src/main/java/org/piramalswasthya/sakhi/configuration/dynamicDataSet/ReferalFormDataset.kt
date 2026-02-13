@@ -51,6 +51,7 @@ class ReferalFormDataset(context: Context, language: Languages,var preferenceDao
         min = System.currentTimeMillis() -  (90L * 24 * 60 * 60 * 1000),
         max = System.currentTimeMillis(),
     )
+
     var referralTypes = ""
     suspend fun setUpPage(referral : String , referralType : String) {
         val list = mutableListOf(
