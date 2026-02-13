@@ -53,7 +53,7 @@ class UpdatePNCToECWorker @AssistedInject constructor(
                     it.updatedDate = now
                     it.genDetails?.reproductiveStatusId = 1
                     it.genDetails?.reproductiveStatus =
-                        applicationContext.resources.getStringArray(R.array.nbr_reproductive_status_array)[0]
+                        applicationContext.resources.getStringArray(R.array.nbr_reproductive_status_array2)[0]
                     if (it.processed != "N") it.processed = "U"
                     it.syncState = SyncState.UNSYNCED
                 }

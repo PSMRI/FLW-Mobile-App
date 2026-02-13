@@ -13,11 +13,13 @@
     import androidx.lifecycle.repeatOnLifecycle
     import androidx.navigation.fragment.findNavController
     import dagger.hilt.android.AndroidEntryPoint
+    import kotlinx.coroutines.flow.Flow
     import kotlinx.coroutines.launch
     import org.piramalswasthya.sakhi.R
     import org.piramalswasthya.sakhi.adapters.DewormingAdapter
     import org.piramalswasthya.sakhi.databinding.FragmentVhndListBinding
     import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+    import org.piramalswasthya.sakhi.utils.Log
 
     @AndroidEntryPoint
     class DewormingListFragment : Fragment() {
@@ -51,6 +53,7 @@
                 }
             )
 
+
             viewLifecycleOwner.lifecycleScope.launch {
                 repeatOnLifecycle(Lifecycle.State.STARTED) {
                     viewModel.isCurrentMonthFormFilled.collect { statusMap ->
@@ -59,6 +62,8 @@
                     }
                 }
             }
+
+
             binding.rvAny.adapter = dewormingAdapter
             binding.btnNextPage.text = getString(R.string.ndd_list_title)
             binding.btnNextPage.setOnClickListener {

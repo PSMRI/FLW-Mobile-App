@@ -53,7 +53,7 @@ class TbSuspectedListAdapter(
 
             binding.benWithTb = item
 
-            binding.ivSyncState.visibility = if (item.tb == null) View.INVISIBLE else View.VISIBLE
+            binding.ivSyncState.visibility = if (item.tbSuspected == null) View.INVISIBLE else View.VISIBLE
 
             if (item.ben.spouseName == "Not Available" && item.ben.fatherName == "Not Available") {
                 binding.father = true
@@ -83,8 +83,8 @@ class TbSuspectedListAdapter(
                 }
             }
 
-            binding.btnFormTb.text = if (item.tb == null) "Track" else "View"
-            binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.tb == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
+            binding.btnFormTb.text = if (item.tbSuspected == null) "Track" else "View"
+            binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.tbSuspected == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
             binding.clickListener = clickListener
 
             binding.executePendingBindings()

@@ -1,6 +1,8 @@
 package org.piramalswasthya.sakhi.network
 
 import android.os.Parcelable
+import androidx.room.PrimaryKey
+import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import org.piramalswasthya.sakhi.database.room.SyncState
@@ -34,7 +36,9 @@ import org.piramalswasthya.sakhi.model.ABHAModel
 import org.piramalswasthya.sakhi.model.ReferalCache
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.LeprosyFollowUpCache
+import org.piramalswasthya.sakhi.model.TBConfirmedTreatmentCache
 import org.piramalswasthya.sakhi.utils.HelperUtil.getDateStringFromLong
+import timber.log.Timber
 
 @JsonClass(generateAdapter = true)
 data class D2DAuthUserRequest(
@@ -1006,11 +1010,15 @@ data class VHNCDTO(
 
 data class PHCReviewDTO(
     val id: Int = 0,
+    var placeId : Int? = 0 ,
     var phcReviewDate: String?,
     var place: String? = null,
     var noOfBeneficiariesAttended: Int? = null,
     var Image1: String? = null,
-    var Image2: String? = null
+    var Image2: String? = null,
+    var villageName: String? = null,
+    var mitaninHistory: String? = null,
+    var mitaninActivityCheckList: String? = null,
 ) {
     fun toCache(): PHCReviewMeetingCache {
         return PHCReviewMeetingCache(
@@ -1020,7 +1028,11 @@ data class PHCReviewDTO(
             noOfBeneficiariesAttended = noOfBeneficiariesAttended,
             image1 = Image1,
             image2 = Image2,
-            syncState = SyncState.SYNCED
+            syncState = SyncState.SYNCED,
+            villageName = villageName,
+            mitaninHistory = mitaninHistory,
+            mitaninActivityCheckList = mitaninActivityCheckList,
+            placeId = placeId
         )
     }
 }
@@ -1186,8 +1198,19 @@ data class TBSuspectedDTO(
     val nikshayId: String?,
     val sputumTestResult: String?,
     val referred: Boolean?,
-    val followUps: String?
-) {
+    val followUps: String?,
+    var visitLabel: String?,
+    var typeOfTBCase: String? = null,
+    var reasonForSuspicion: String? = null,
+    var hasSymptoms: Boolean? = null,
+    var isChestXRayDone: Boolean? = null,
+    var chestXRayResult: String? = null,
+    var referralFacility: String? = null,
+    var isTBConfirmed: Boolean? = null,
+    var isDRTBConfirmed: Boolean? = null,
+    var isConfirmed: Boolean = false,
+
+    ) {
     fun toCache(): TBSuspectedCache {
         return TBSuspectedCache(
             benId = benId,
@@ -1198,10 +1221,68 @@ data class TBSuspectedDTO(
             sputumTestResult = sputumTestResult,
             referred = referred,
             followUps = followUps,
+            visitLabel= visitLabel,
+            typeOfTBCase = typeOfTBCase,
+            reasonForSuspicion = reasonForSuspicion,
+            hasSymptoms = hasSymptoms,
+            isChestXRayDone = isChestXRayDone,
+            chestXRayResult = chestXRayResult,
+            referralFacility = referralFacility,
+            isTBConfirmed = isTBConfirmed,
+            isDRTBConfirmed = isDRTBConfirmed,
+            isConfirmed = isConfirmed,
             syncState = SyncState.SYNCED
         )
     }
 }
+
+data class TBConfirmedTreatmentDTO(
+    val id: Long,
+    val benId: Long,
+    val regimenType: String?,
+    val treatmentStartDate: String?,
+    val expectedTreatmentCompletionDate: String?,
+    val followUpDate: String?,
+    val monthlyFollowUpDone: String?,
+    val adherenceToMedicines: String?,
+    val anyDiscomfort: Boolean?,
+    val treatmentCompleted: Boolean?,
+    val actualTreatmentCompletionDate: String?,
+    val treatmentOutcome: String?,
+    val dateOfDeath: String?,
+    val placeOfDeath: String?,
+    val reasonForDeath: String?,
+    val reasonForNotCompleting: String?
+) {
+
+    fun toCache(): TBConfirmedTreatmentCache {
+        return TBConfirmedTreatmentCache(
+            benId = benId,
+            regimenType = regimenType,
+            treatmentStartDate = getLongFromDateMultipleSupport(treatmentStartDate) ?: System.currentTimeMillis(),
+            expectedTreatmentCompletionDate = getLongFromDateMultipleSupport(expectedTreatmentCompletionDate),
+            followUpDate = getLongFromDateMultipleSupport(followUpDate),
+            monthlyFollowUpDone = monthlyFollowUpDone,
+            adherenceToMedicines = adherenceToMedicines,
+            anyDiscomfort = anyDiscomfort,
+            treatmentCompleted = treatmentCompleted,
+            actualTreatmentCompletionDate = getLongFromDateMultipleSupport(actualTreatmentCompletionDate),
+            treatmentOutcome = treatmentOutcome,
+            dateOfDeath = getLongFromDateMultipleSupport(dateOfDeath),
+            placeOfDeath = placeOfDeath,
+            reasonForDeath = reasonForDeath ?: "Tuberculosis",
+            reasonForNotCompleting = reasonForNotCompleting,
+            syncState = SyncState.SYNCED
+        )
+    }
+}
+
+data class TBConfirmedRequestDTO(
+    @SerializedName("userId")
+    val userId: Int,
+    @SerializedName("tbConfirmedCases")
+    val tbConfirmedList: List<TBConfirmedTreatmentDTO>
+)
 
 data class TBSuspectedRequestDTO(
     val userId: Int,
@@ -1724,4 +1805,28 @@ fun getLongFromDate(dateString: String?): Long {
     val f = SimpleDateFormat("MMM d, yyyy h:mm:ss a", Locale.ENGLISH)
     val date = dateString?.let { f.parse(it) }
     return date?.time ?: 0L
+}
+
+fun getLongFromDateMultipleSupport(dateStr: String?): Long? {
+    if (dateStr.isNullOrBlank() || dateStr == "1970-01-01") return null
+
+    val formats = listOf(
+        "yyyy-MM-dd",
+        "yyyy-MM-dd HH:mm:ss",
+        "MMM dd, yyyy hh:mm:ss a",
+        "MMM dd, yyyy",
+        "dd/MM/yyyy"
+    )
+
+    for (format in formats) {
+        try {
+            val sdf = SimpleDateFormat(format, Locale.ENGLISH)
+            sdf.isLenient = false
+            return sdf.parse(dateStr)?.time
+        } catch (e: Exception) {
+        }
+    }
+
+    Timber.e("Date parsing failed for: $dateStr")
+    return null
 }

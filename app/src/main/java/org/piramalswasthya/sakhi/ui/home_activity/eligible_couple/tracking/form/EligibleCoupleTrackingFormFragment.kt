@@ -2,10 +2,8 @@ package org.piramalswasthya.sakhi.ui.home_activity.eligible_couple.tracking.form
 
 import android.Manifest
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -189,7 +187,7 @@ class EligibleCoupleTrackingFormFragment : Fragment() {
                     notifyItemChanged(9)
 
                 }
-                4, 5, 11 -> notifyDataSetChanged()
+                4, 5, 6,7,8,9,11 -> notifyDataSetChanged()
             }
         }
     }
@@ -269,7 +267,6 @@ class EligibleCoupleTrackingFormFragment : Fragment() {
     }
 
     private fun requestLocationPermission() {
-        val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED
         ) {

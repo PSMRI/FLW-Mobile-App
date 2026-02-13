@@ -561,76 +561,49 @@ class FormInputAdapter(
         }
 
         fun bind(
-            item: FormElement, isEnabled: Boolean, formValueListener: FormValueListener?
+            item: FormElement,
+            isEnabled: Boolean,
+            formValueListener: FormValueListener?
         ) {
             binding.form = item
-
-            if (item.errorText != null) binding.clRi.setBackgroundResource(R.drawable.state_errored)
-            else binding.clRi.setBackgroundResource(0)
             binding.llChecks.removeAllViews()
-            binding.llChecks.apply {
-                item.entries?.let { items ->
-                    orientation = item.orientation ?: LinearLayout.VERTICAL
-                    weightSum = items.size.toFloat()
-                    items.forEachIndexed { index, it ->
-                        val cbx = CheckBox(this.context)
-                        cbx.layoutParams = RadioGroup.LayoutParams(
-                            RadioGroup.LayoutParams.MATCH_PARENT,
-                            RadioGroup.LayoutParams.WRAP_CONTENT,
-                            1.0F
-                        )
-                        if (!isEnabled) {
-                            cbx.isClickable = false
-                            cbx.isFocusable = false
-                        }
-                        cbx.id = View.generateViewId()
-                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) cbx.setTextAppearance(
-                            context, android.R.style.TextAppearance_Material_Medium
-                        )
-                        else cbx.setTextAppearance(android.R.style.TextAppearance_Material_Subhead)
-                        cbx.text = it
-                        addView(cbx)
-                        if (item.value?.contains(it) == true) cbx.isChecked = true
-                        cbx.setOnCheckedChangeListener { _, b ->
-                            if (b) {
-                                if (item.value != null) item.value = item.value + it
-                                else item.value = it
-                                if (item.hasDependants || item.hasAlertError) {
-                                    Timber.d(
-                                        "listener trigger : ${item.id} ${
-                                            item.entries!!.indexOf(
-                                                it
-                                            )
-                                        } $it"
-                                    )
-//                                    formValueListener?.onValueChanged(
-//                                        item, item.entries!!.indexOf(it)
-//                                    )
-                                }
-                            } else {
-                                if (item.value?.contains(it) == true) {
-                                    item.value = item.value?.replace(it, "")
-                                }
-                            }
-                            formValueListener?.onValueChanged(
-                                item, index * (if (b) 1 else -1)
-                            )
-                            if (item.value.isNullOrBlank()) {
-                                item.value = null
-                            } else {
-                                Timber.d("Called here!")
-                                item.errorText = null
-                                binding.clRi.setBackgroundResource(0)
-                            }
-                            Timber.d("Checkbox value : ${item.value}")
 
-                        }
+            val selectedIndexes = item.value
+                ?.split("|")
+                ?.mapNotNull { it.toIntOrNull() }
+                ?.toMutableSet()
+                ?: mutableSetOf()
+
+            item.entries?.forEachIndexed { index, text ->
+
+                val cbx = CheckBox(binding.root.context)
+                cbx.text = text
+                cbx.isEnabled = isEnabled
+                cbx.isChecked = selectedIndexes.contains(index)
+                cbx.setOnCheckedChangeListener { _, isChecked ->
+
+                    if (isChecked) {
+                        selectedIndexes.add(index)
+                    } else {
+                        selectedIndexes.remove(index)
                     }
-                }
-            }
-            binding.executePendingBindings()
 
+                    item.value =
+                        if (selectedIndexes.isEmpty()) null
+                        else selectedIndexes.sorted().joinToString("|")
+
+                    item.errorText = null
+                    binding.clRi.setBackgroundResource(0)
+
+                    formValueListener?.onValueChanged(item, index)
+                }
+
+                binding.llChecks.addView(cbx)
+            }
+
+            binding.executePendingBindings()
         }
+
     }
 
     class ButtonInputViewHolder private constructor(private val binding: RvItemFormBtnBinding) :

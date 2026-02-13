@@ -67,12 +67,12 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_edit"
-        android:layout_width="wrap_content"
+        android:layout_width="41dp"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="@dimen/margin_huge"
         android:layout_marginBottom="80dp"
         android:src="@drawable/ic_edit"
         android:visibility="gone"
-        tools:visibility="visible"/>
+        tools:visibility="visible" />
 </FrameLayout>

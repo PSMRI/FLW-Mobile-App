@@ -37,6 +37,7 @@ import androidx.core.view.isVisible
 import androidx.core.view.isGone
 import org.piramalswasthya.sakhi.adapters.dynamicAdapter.BottleAdapter
 import org.json.JSONObject
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.adapters.dynamicAdapter.FollowUpVisitAdapter
 import org.piramalswasthya.sakhi.utils.HelperUtil.checkAndShowMUACAlert
 import org.piramalswasthya.sakhi.utils.HelperUtil.checkAndShowSAMAlert
@@ -48,6 +49,7 @@ import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYIFAPushWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYORSPushWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYSAMPushWorker
 import timber.log.Timber
+import java.util.Calendar
 
 @AndroidEntryPoint
 class CUFYFormFragment : Fragment() {
@@ -71,6 +73,9 @@ class CUFYFormFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var followUpAdapter: FollowUpVisitAdapter
     private val followUpVisits = mutableListOf<String>()
+    private val isMitaninVariant: Boolean by lazy {
+        BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
+    }
 
     private val galleryLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
@@ -156,8 +161,20 @@ class CUFYFormFragment : Fragment() {
         recordId = args.recordId
         viewModel.setRecordId(recordId)
         val formDataJson = args.formDataJson
+        if (visitType.equals(ORS_FORM_NAME)){
+            formId = FormConstants.CHILDREN_UNDER_FIVE_ORS_FORM_ID;
+        }else if (visitType.equals(IFA_FORM_NAME)){
+            formId = FormConstants.CHILDREN_UNDER_FIVE_IFA_FORM_ID;
+        }else if (visitType.equals(SAM_FORM_NAME)){
+            formId = FormConstants.CHILDREN_UNDER_FIVE_SAM_FORM_ID;
+        }
+        if(isMitaninVariant && formId == FormConstants.CHILDREN_UNDER_FIVE_IFA_FORM_ID){
+        binding.fabEdit.visibility = View.GONE
+        }
+        else{
+            binding.fabEdit.isVisible = isViewMode
+        }
 
-        binding.fabEdit.isVisible = isViewMode
         setupFollowUpRecyclerView()
 
         binding.fabEdit.setOnClickListener {
@@ -167,13 +184,7 @@ class CUFYFormFragment : Fragment() {
             refreshAdapter()
         }
 
-        if (visitType.equals(ORS_FORM_NAME)){
-            formId = FormConstants.CHILDREN_UNDER_FIVE_ORS_FORM_ID;
-        }else if (visitType.equals(IFA_FORM_NAME)){
-            formId = FormConstants.CHILDREN_UNDER_FIVE_IFA_FORM_ID;
-        }else if (visitType.equals(SAM_FORM_NAME)){
-            formId = FormConstants.CHILDREN_UNDER_FIVE_SAM_FORM_ID;
-        }
+
 
 
         infantListViewModel.getBenById(benId) { ben ->
@@ -264,7 +275,39 @@ class CUFYFormFragment : Fragment() {
         val visibleFields = viewModel.getVisibleFields().toMutableList()
         val minVisitDate = viewModel.getMinVisitDate()
         val maxVisitDate = viewModel.getMaxVisitDate()
+        var ifaMinDate: Date? = null
+        var ifaMaxDate: Date? = null
 
+        if (formId == FormConstants.CHILDREN_UNDER_FIVE_IFA_FORM_ID && recordId == 0) {
+            lifecycleScope.launch {
+                val calendar = Calendar.getInstance()
+                val today = calendar.time
+
+                calendar.add(Calendar.MONTH, -2)
+                val twoMonthsAgo = calendar.time
+
+                val previousVisitDate = viewModel.getPreviousIFAVisitDate(benId)
+
+                ifaMinDate = if (previousVisitDate != null) {
+                    val calendarPrev = Calendar.getInstance()
+                    calendarPrev.time = previousVisitDate
+                    calendarPrev.add(Calendar.DATE, 1)
+
+                    if (calendarPrev.time.after(twoMonthsAgo)) {
+                        calendarPrev.time
+                    } else {
+                        twoMonthsAgo
+                    }
+                } else {
+                    twoMonthsAgo
+                }
+
+                ifaMaxDate = today
+
+                createAdapterWithIFADates(visibleFields, ifaMinDate, ifaMaxDate)
+            }
+            return
+        }
         if (formId == FormConstants.CHILDREN_UNDER_FIVE_SAM_FORM_ID && recordId > 0) {
             visibleFields.find { it.fieldId == "visit_date" }?.let { visitDateField ->
                 visitDateField.isEditable = false
@@ -311,9 +354,42 @@ class CUFYFormFragment : Fragment() {
 
         binding.recyclerView.adapter = adapter
         binding.btnSave.isVisible = !isViewMode
-        binding.fabEdit.isVisible = isViewMode
+        if(isMitaninVariant && formId == FormConstants.CHILDREN_UNDER_FIVE_IFA_FORM_ID){
+        binding.fabEdit.isVisible = false}
+        else
+        {
+            binding.fabEdit.isVisible = isViewMode
+        }
     }
 
+    private fun createAdapterWithIFADates(
+        visibleFields: MutableList<FormField>,
+        ifaMinDate: Date?,
+        ifaMaxDate: Date?
+    ) {
+        adapter = FormRendererAdapter(
+            visibleFields,
+            isViewOnly = isViewMode,
+            minVisitDate = ifaMinDate,
+            maxVisitDate = ifaMaxDate,
+            onValueChanged = { field, value ->
+                if (value == "pick_image") {
+                    currentImageField = field
+                    showImagePickerDialog()
+                } else {
+                    field.value = value
+                    viewModel.updateFieldValue(field.fieldId, value)
+                    val updatedVisibleFields = viewModel.getVisibleFields()
+                    adapter.updateFields(updatedVisibleFields)
+                }
+            },
+            onShowAlert = { _, _ -> }
+        )
+
+        binding.recyclerView.adapter = adapter
+        binding.btnSave.isVisible = !isViewMode
+        binding.fabEdit.isVisible = false
+    }
     private fun setupFollowUpRecyclerView() {
         followUpAdapter = FollowUpVisitAdapter()
         binding.rvFollowUpVisits.apply {
@@ -350,8 +426,6 @@ class CUFYFormFragment : Fragment() {
         cameraLauncher.launch(tempCameraUri)
     }
 
-
-
     private fun handleFormSubmission() {
         val currentSchema = viewModel.schema.value ?: return
         val currentVisitDay = viewModel.visitDay
@@ -374,7 +448,46 @@ class CUFYFormFragment : Fragment() {
                     updated.errorMessage = if (!result.isValid) result.errorMessage else null
                     schemaField.errorMessage = updated.errorMessage
 
-                    if (schemaField.fieldId == "visit_date" && schemaField.value is String) {
+                    if (formId == FormConstants.CHILDREN_UNDER_FIVE_IFA_FORM_ID &&
+                        schemaField.fieldId == "ifa_provision_date" && schemaField.value is String) {
+
+                        val provisionDateStr = schemaField.value as String
+                        val provisionDate = try {
+                            sdf.parse(provisionDateStr)
+                        } catch (e: Exception) {
+                            null
+                        }
+
+                        val errorMessage = when {
+                            provisionDate == null -> getString(R.string.invalid_visit_date)
+                            today != null && provisionDate.after(today) -> getString(R.string.visit_date_cannot_be_after_today_s_date)
+                            deliveryDate == null -> getString(R.string.delivery_date_is_missing)
+                            provisionDate.before(Date(deliveryDate)) -> getString(R.string.visit_date_cannot_be_before_delivery_date)
+                            previousVisitDate != null && !provisionDate.after(previousVisitDate) ->
+                                getString(
+                                    R.string.visit_date_must_be_after_previous_visit,
+                                    sdf.format(previousVisitDate)
+                                )
+
+                            else -> {
+                                val calendar = Calendar.getInstance()
+                                calendar.time = today
+                                calendar.add(Calendar.MONTH, -2)
+                                val twoMonthsAgo = calendar.time
+
+                                if (provisionDate.before(twoMonthsAgo)) {
+                                    getString(R.string.visit_date_cannot_be_more_than_2_months_old)
+                                } else {
+                                    null
+                                }
+                            }
+                        }
+                        schemaField.errorMessage = errorMessage
+                        updated.errorMessage = errorMessage
+                    }
+                    else if (formId != FormConstants.CHILDREN_UNDER_FIVE_IFA_FORM_ID &&
+                        schemaField.fieldId == "visit_date" && schemaField.value is String) {
+
                         val visitDateStr = schemaField.value as String
                         val visitDate = try {
                             sdf.parse(visitDateStr)
@@ -432,7 +545,72 @@ class CUFYFormFragment : Fragment() {
         }
         if (hasErrors) return
 
-        if (formId == FormConstants.CHILDREN_UNDER_FIVE_SAM_FORM_ID) {
+        if (formId == FormConstants.CHILDREN_UNDER_FIVE_IFA_FORM_ID) {
+            val provisionDateField = currentSchema.sections.orEmpty()
+                .flatMap { it.fields.orEmpty() }
+                .find { it.fieldId == "ifa_provision_date" }
+
+            val provisionDate = provisionDateField?.value as? String
+            if (!provisionDate.isNullOrEmpty()) {
+                lifecycleScope.launch {
+                    val existingVisits = viewModel.getFormsDataByFormID(formId, benId)
+
+                    if (recordId == 0) {
+                        val provisionDateObj = sdf.parse(provisionDate)
+                        val calendar = Calendar.getInstance()
+                        calendar.time = provisionDateObj
+                        val visitMonth = calendar.get(Calendar.MONTH)
+                        val visitYear = calendar.get(Calendar.YEAR)
+
+                        val hasVisitInSameMonth = existingVisits.any { existingVisit ->
+                            val existingProvisionDateStr =
+                                extractIFAProvisionDateFromFormData(existingVisit.formDataJson)
+                                    ?.takeIf { it.isNotBlank() }
+                                    ?: return@any false
+
+                            runCatching {
+                                val existingDate = sdf.parse(existingProvisionDateStr)
+                                val existingCalendar = Calendar.getInstance().apply {
+                                    time = existingDate
+                                }
+
+                                existingCalendar.get(Calendar.MONTH) == visitMonth &&
+                                        existingCalendar.get(Calendar.YEAR) == visitYear
+                            }.getOrDefault(false)
+                        }
+
+
+                        if (hasVisitInSameMonth) {
+                            provisionDateField.errorMessage = getString(R.string.only_one_visit_per_month_allowed)
+                            updatedFields.find { it.fieldId == "ifa_provision_date" }?.errorMessage = provisionDateField.errorMessage
+
+                            val updatedCopiedFields = updatedFields.map { field ->
+                                if (field.fieldId == "ifa_provision_date") {
+                                    field.copy(errorMessage = provisionDateField.errorMessage)
+                                } else {
+                                    field
+                                }
+                            }
+                            adapter.updateFields(updatedCopiedFields)
+                            adapter.notifyDataSetChanged()
+
+                            val provisionDateIndex = updatedCopiedFields.indexOfFirst { it.fieldId == "ifa_provision_date" }
+                            if (provisionDateIndex >= 0) binding.recyclerView.scrollToPosition(provisionDateIndex)
+
+                            Toast.makeText(requireContext(), R.string.only_one_visit_per_month_allowed, Toast.LENGTH_LONG).show()
+                        } else {
+                            viewModel.saveFormResponses(benId, hhId, recordId)
+                        }
+                    } else {
+                        viewModel.saveFormResponses(benId, hhId, recordId)
+                    }
+                }
+            } else {
+                lifecycleScope.launch {
+                    viewModel.saveFormResponses(benId, hhId, recordId)
+                }
+            }
+        } else if (formId == FormConstants.CHILDREN_UNDER_FIVE_SAM_FORM_ID) {
             val visitDateField = currentSchema.sections.orEmpty()
                 .flatMap { it.fields.orEmpty() }
                 .find { it.fieldId == "visit_date" }
@@ -444,15 +622,15 @@ class CUFYFormFragment : Fragment() {
 
                     if (recordId == 0) {
                         val isDuplicate = existingVisits.any { existingVisit ->
-                            val existingVisitDate = extractVisitDateFromFormData(existingVisit.formDataJson)
-                            existingVisitDate == visitDate
+                            val existingVisitDateStr = extractVisitDateFromFormData(existingVisit.formDataJson)
+                            existingVisitDateStr == visitDate
                         }
 
                         val isDateGreaterThanAll = existingVisits.all { existingVisit ->
-                            val existingVisitDate = extractVisitDateFromFormData(existingVisit.formDataJson)
-                            if (existingVisitDate != null) {
+                            val existingVisitDateStr = extractVisitDateFromFormData(existingVisit.formDataJson)
+                            if (existingVisitDateStr != null) {
                                 val currentDate = sdf.parse(visitDate)
-                                val existingDate = sdf.parse(existingVisitDate)
+                                val existingDate = sdf.parse(existingVisitDateStr)
                                 currentDate.after(existingDate)
                             } else {
                                 true
@@ -559,6 +737,19 @@ class CUFYFormFragment : Fragment() {
             binding.rvFollowUpVisits.visibility = View.GONE
         }
     }
+
+    private fun extractIFAProvisionDateFromFormData(formDataJson: String): String? {
+        return try {
+            val jsonObject = JSONObject(formDataJson)
+            val fields = jsonObject.optJSONObject("fields")
+            fields?.optString("ifa_provision_date")
+        } catch (e: Exception) {
+            Timber.tag("CUFYFormFragment").e(e, "Error extracting IFA provision date from form data")
+            null
+        }
+    }
+
+
 
 
     private fun parseFollowUpDatesFromJson(formDataJson: String): List<String> {

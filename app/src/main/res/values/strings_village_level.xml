@@ -10,6 +10,7 @@
     <string name="place_label">Place: %1$s</string>
     <string name="participant_label">Participants: %1$s</string>
     <string name="no_of_participants_attended">No. of Participants Attended</string>
+    <string name="total_no_of_participants_attended">Total No. of Participants</string>
 
     <string-array name="place_of_delivery_options">
         <item>@string/place_hwc</item>

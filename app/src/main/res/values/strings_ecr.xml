@@ -12,7 +12,7 @@
     <string name="ecrdset_bank_name">Bank Name</string>
     <string name="ecrdset_branch_name">Branch Name</string>
     <string name="ecrdset_ifsc_code">IFSC Code</string>
-    <string name="ecrdset_ttl_child_born">Total No. of Children Born</string>
+    <string name="ecrdset_ttl_child_born">Total No. Live Children Born</string>
     <string name="ecrdset_no_live_child">No. of Live Children</string>
     <string name="ecrdset_reg_children_15_below">Register Children less than 15 Years Age</string>
     <string name="ecrdset_male">Male</string>
