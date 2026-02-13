@@ -106,7 +106,7 @@ class CbacRepo @Inject constructor(
             cbacRequest
         )
         val body = response.body()?.string()?.let { JSONObject(it) }
-        body?.getInt("statusCode")?.takeIf { it == 5002 }?.let {
+        body?.getInt("statusCode")?.takeIf { it == 5002 ||it ==401 }?.let {
             val user = prefDao.getLoggedInUser()!!
             userRepo.refreshTokenTmc(user.userName, user.password)
             pullAndPersistCbacRecord(page)

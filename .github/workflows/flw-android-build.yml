@@ -1,0 +1,67 @@
+name: FLW Android Build (Manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Git branch to build"
+        required: true
+        default: main
+        type: string
+
+      environment:
+        description: "Environment to run build"
+        required: true
+        default: uat
+        type: choice
+        options:
+          - uat
+          - SAKSHAM_UAT
+          - SAKSHAM_STAG
+          - NIRAMAY_PRODUCTION
+          - XUSHRUKHA_PRODUCTION
+
+      variant:
+        description: "App variant"
+        required: true
+        default: sakshamDebug
+        type: string
+
+      build_type:
+        description: "Build type"
+        required: true
+        default: debug
+        type: choice
+        options:
+          - debug
+          - release
+
+      version:
+        description: "Build version (example: 2.4.1)"
+        required: true
+        type: string
+
+jobs:
+  flw-build:
+    uses: ./.github/workflows/build-distribute.yml
+    with:
+      branch: ${{ inputs.branch }}
+      environment: ${{ inputs.environment }}
+      variant: ${{ inputs.variant }}
+      build_type: ${{ inputs.build_type }}
+      version: ${{ inputs.version }}
+    secrets:
+      FIREBASE_CREDENTIALS_JSON: ${{ secrets.FIREBASE_CREDENTIALS_JSON }}
+      GOOGLE_PLAY_JSON_KEY: ${{ secrets.GOOGLE_PLAY_JSON_KEY }}
+      KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+      KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+      BASE_TMC_URL: ${{ secrets.BASE_TMC_URL }}
+      BASE_AMRIT_URL: ${{ secrets.BASE_AMRIT_URL }}
+      BASE_FLW_URL: ${{ secrets.BASE_FLW_URL }}
+      BASE_ABHA_URL: ${{ secrets.BASE_ABHA_URL }}
+      GOOGLE_SERVICES_JSON_GENERIC: ${{ secrets.GOOGLE_SERVICES_JSON_GENERIC }}
+      SANJEEVANI_API_URL: ${{ secrets.SANJEEVANI_API_URL }}
+      FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
+

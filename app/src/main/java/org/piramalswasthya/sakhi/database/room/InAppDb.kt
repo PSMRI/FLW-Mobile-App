@@ -11,11 +11,11 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import net.sqlcipher.database.SQLiteDatabase
 import net.sqlcipher.database.SupportFactory
 import org.piramalswasthya.sakhi.database.converters.LocationEntityListConverter
+import org.piramalswasthya.sakhi.database.converters.StringListConverter
 import org.piramalswasthya.sakhi.database.converters.SyncStateConverter
+import org.piramalswasthya.sakhi.database.room.dao.ABHAGenratedDao
 import org.piramalswasthya.sakhi.database.room.dao.AdolescentHealthDao
 import org.piramalswasthya.sakhi.database.room.dao.AesDao
-import org.piramalswasthya.sakhi.database.converters.StringListConverter
-import org.piramalswasthya.sakhi.database.room.dao.ABHAGenratedDao
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.BeneficiaryIdsAvailDao
 import org.piramalswasthya.sakhi.database.room.dao.CbacDao
@@ -35,30 +35,31 @@ import org.piramalswasthya.sakhi.database.room.dao.IncentiveDao
 import org.piramalswasthya.sakhi.database.room.dao.InfantRegDao
 import org.piramalswasthya.sakhi.database.room.dao.KalaAzarDao
 import org.piramalswasthya.sakhi.database.room.dao.LeprosyDao
+import org.piramalswasthya.sakhi.database.room.dao.MaaMeetingDao
 import org.piramalswasthya.sakhi.database.room.dao.MalariaDao
 import org.piramalswasthya.sakhi.database.room.dao.MaternalHealthDao
 import org.piramalswasthya.sakhi.database.room.dao.MdsrDao
-import org.piramalswasthya.sakhi.database.room.dao.PmjayDao
-import org.piramalswasthya.sakhi.database.room.dao.MaaMeetingDao
 import org.piramalswasthya.sakhi.database.room.dao.MosquitoNetFormResponseDao
+import org.piramalswasthya.sakhi.database.room.dao.PmjayDao
 import org.piramalswasthya.sakhi.database.room.dao.PmsmaDao
 import org.piramalswasthya.sakhi.database.room.dao.PncDao
-import org.piramalswasthya.sakhi.database.room.dao.SaasBahuSammelanDao
 import org.piramalswasthya.sakhi.database.room.dao.ProfileDao
+import org.piramalswasthya.sakhi.database.room.dao.SaasBahuSammelanDao
 import org.piramalswasthya.sakhi.database.room.dao.SyncDao
 import org.piramalswasthya.sakhi.database.room.dao.TBDao
 import org.piramalswasthya.sakhi.database.room.dao.UwinDao
-import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseDao
-import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseJsonDao
-import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseJsonDaoHBYC
-import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormSchemaDao
-import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.InfantDao
 import org.piramalswasthya.sakhi.database.room.dao.VLFDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.BenIfaFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.CUFYFormResponseDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.CUFYFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.EyeSurgeryFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FilariaMDAFormResponseJsonDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseJsonDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseJsonDaoHBYC
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormSchemaDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.InfantDao
+import org.piramalswasthya.sakhi.model.ABHAModel
 import org.piramalswasthya.sakhi.helpers.DatabaseKeyManager
 import org.piramalswasthya.sakhi.helpers.RoomDbEncryptionHelper
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FilariaMdaCampaignJsonDao
@@ -67,7 +68,6 @@ import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponse
 import org.piramalswasthya.sakhi.model.AHDCache
 import org.piramalswasthya.sakhi.model.AESScreeningCache
 import org.piramalswasthya.sakhi.model.AdolescentHealthCache
-import org.piramalswasthya.sakhi.model.ABHAModel
 import org.piramalswasthya.sakhi.model.BenBasicCache
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.CDRCache
@@ -97,33 +97,32 @@ import org.piramalswasthya.sakhi.model.KalaAzarScreeningCache
 import org.piramalswasthya.sakhi.model.LeprosyFollowUpCache
 import org.piramalswasthya.sakhi.model.LeprosyScreeningCache
 import org.piramalswasthya.sakhi.model.MDSRCache
-import org.piramalswasthya.sakhi.model.PHCReviewMeetingCache
 import org.piramalswasthya.sakhi.model.MalariaConfirmedCasesCache
 import org.piramalswasthya.sakhi.model.MalariaScreeningCache
+import org.piramalswasthya.sakhi.model.PHCReviewMeetingCache
 import org.piramalswasthya.sakhi.model.PMJAYCache
 import org.piramalswasthya.sakhi.model.PMSMACache
 import org.piramalswasthya.sakhi.model.PNCVisitCache
 import org.piramalswasthya.sakhi.model.PregnantWomanAncCache
 import org.piramalswasthya.sakhi.model.PregnantWomanRegistrationCache
-import org.piramalswasthya.sakhi.model.SaasBahuSammelanCache
 import org.piramalswasthya.sakhi.model.ProfileActivityCache
+import org.piramalswasthya.sakhi.model.ReferalCache
+import org.piramalswasthya.sakhi.model.SaasBahuSammelanCache
 import org.piramalswasthya.sakhi.model.TBScreeningCache
 import org.piramalswasthya.sakhi.model.TBSuspectedCache
 import org.piramalswasthya.sakhi.model.UwinCache
 import org.piramalswasthya.sakhi.model.MaaMeetingEntity
-import org.piramalswasthya.sakhi.model.ReferalCache
 import org.piramalswasthya.sakhi.model.TBConfirmedTreatmentCache
-import org.piramalswasthya.sakhi.model.VHNCCache
 import org.piramalswasthya.sakhi.model.Vaccine
 import org.piramalswasthya.sakhi.model.PulsePolioCampaignCache
 import org.piramalswasthya.sakhi.model.ORSCampaignCache
+import org.piramalswasthya.sakhi.model.dynamicEntity.CUFYFormResponseJsonEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.FilariaMDA.FilariaMDAFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.InfantEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.hbyc.FormResponseJsonEntityHBYC
 import org.piramalswasthya.sakhi.model.VHNDCache
-import org.piramalswasthya.sakhi.model.dynamicEntity.CUFYFormResponseJsonEntity
-import org.piramalswasthya.sakhi.model.dynamicEntity.FilariaMDA.FilariaMDAFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.NCDReferalFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.anc.ANCFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.ben_ifa.BenIfaFormResponseJsonEntity
@@ -273,11 +272,41 @@ abstract class InAppDb : RoomDatabase() {
         @Volatile
         private var INSTANCE: InAppDb? = null
 
+        fun tableExists(db: SupportSQLiteDatabase, tableName: String): Boolean {
+            val cursor = db.query(
+                "SELECT name FROM sqlite_master WHERE type='table' AND name=?",
+                arrayOf(tableName)
+            )
+            val exists = cursor.count > 0
+            cursor.close()
+            return exists
+        }
+
+        fun columnExists(
+            db: SupportSQLiteDatabase,
+            tableName: String,
+            columnName: String
+        ): Boolean {
+            val cursor = db.query("PRAGMA table_info($tableName)")
+            while (cursor.moveToNext()) {
+                if (cursor.getString(cursor.getColumnIndexOrThrow("name")) == columnName) {
+                    cursor.close()
+                    return true
+                }
+            }
+            cursor.close()
+            return false
+        }
+
+
         fun getInstance(appContext: Context): InAppDb {
 
             val MIGRATION_1_2 = Migration(18, 19, migrate = {
                 it.execSQL("alter table BEN_BASIC_CACHE add column isConsent BOOL")
-                it.execSQL("alter table BENEFICIARY add column isConsent BOOL")
+                it.execSQL("ALTER TABLE BENEFICIARY ADD COLUMN newColumn TEXT DEFAULT 'undefined'")
+                it.execSQL(
+                    "ALTER TABLE BENEFICIARY ADD COLUMN kid_isConsent INTEGER DEFAULT 0"
+                )
 
             })
           /*  val MIGRATION_52_53 = object : Migration(52, 53) {
@@ -408,7 +437,7 @@ abstract class InAppDb : RoomDatabase() {
             })
 
 
-         
+
             val MIGRATION_49_50 = object : Migration(49, 50) {
                 override fun migrate(database: SupportSQLiteDatabase) {
 
@@ -455,9 +484,9 @@ abstract class InAppDb : RoomDatabase() {
                     database.execSQL(
                         "ALTER TABLE VHND ADD COLUMN selectAllEducation INTEGER DEFAULT 0"
                     )
-                    
+
                     // ncd_refer
-                  
+
                     database.execSQL("DROP TABLE IF EXISTS ncd_referal_all_visit")
 
                     database.execSQL(
@@ -641,34 +670,620 @@ abstract class InAppDb : RoomDatabase() {
 
             }
 
-            val MIGRATION_43_44 = object : Migration(43, 44) {
+            val MIGRATION_45_46 = object : Migration(45, 46) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("DROP VIEW IF EXISTS `BEN_BASIC_CACHE`")
+                    database.execSQL(
+                        """
+            CREATE VIEW `BEN_BASIC_CACHE` AS SELECT b.beneficiaryId as benId, b.isConsent as isConsent, b.motherName as motherName, b.householdId as hhId, b.regDate, b.firstName as benName, b.lastName as benSurname, b.gender, b.dob as dob, b.isDeath,b.isDeathValue,b.dateOfDeath,b.timeOfDeath,b.reasonOfDeath,b.reasonOfDeathId,b.placeOfDeath,b.placeOfDeathId,b.otherPlaceOfDeath, b.familyHeadRelationPosition as relToHeadId, b.contactNumber as mobileNo, b.fatherName, h.fam_familyHeadName as familyHeadName, b.gen_spouseName as spouseName, b.rchId, b.gen_lastMenstrualPeriod as lastMenstrualPeriod, b.isHrpStatus as hrpStatus, b.syncState, b.gen_reproductiveStatusId as reproductiveStatusId, b.isKid, b.immunizationStatus, b.loc_village_id as villageId, b.abha_healthIdNumber as abhaId, b.isNewAbha, IFNULL(cbac.benId IS NOT NULL, 0) as cbacFilled, cbac.syncState as cbacSyncState, IFNULL(cdr.benId IS NOT NULL, 0) as cdrFilled, cdr.syncState as cdrSyncState, IFNULL(mdsr.benId IS NOT NULL, 0) as mdsrFilled, mdsr.syncState as mdsrSyncState, IFNULL(pmsma.benId IS NOT NULL, 0) as pmsmaFilled, pmsma.syncState as pmsmaSyncState, IFNULL(hbnc.benId IS NOT NULL, 0) as hbncFilled, IFNULL(hbyc.benId IS NOT NULL, 0) as hbycFilled, IFNULL(pwr.benId IS NOT NULL, 0) as pwrFilled, pwr.syncState as pwrSyncState, IFNULL(pwa.pregnantWomanDelivered, 0) as isDelivered, IFNULL(pwa.hrpConfirmed, 0) as pwHrp, IFNULL(ecr.benId IS NOT NULL, 0) as ecrFilled, IFNULL(ect.benId IS NOT NULL, 0) as ectFilled, IFNULL((pwa.maternalDeath OR do.complication = 'DEATH' OR pnc.motherDeath), 0) as isMdsr, IFNULL(tbsn.benId IS NOT NULL, 0) as tbsnFilled, tbsn.syncState as tbsnSyncState, IFNULL(tbsp.benId IS NOT NULL, 0) as tbspFilled, tbsp.syncState as tbspSyncState, IFNULL(ir.motherBenId IS NOT NULL, 0) as irFilled, ir.syncState as irSyncState, IFNULL(cr.motherBenId IS NOT NULL, 0) as crFilled, cr.syncState as crSyncState, IFNULL(do.benId IS NOT NULL, 0) as doFilled, do.syncState as doSyncState, IFNULL((hrppa.benId IS NOT NULL AND hrppa.noOfDeliveries IS NOT NULL AND hrppa.timeLessThan18m IS NOT NULL AND hrppa.heightShort IS NOT NULL AND hrppa.age IS NOT NULL AND hrppa.rhNegative IS NOT NULL AND hrppa.homeDelivery IS NOT NULL AND hrppa.badObstetric IS NOT NULL AND hrppa.multiplePregnancy IS NOT NULL), 0) as hrppaFilled, hrppa.syncState as hrppaSyncState, IFNULL((hrpnpa.benId IS NOT NULL AND hrpnpa.noOfDeliveries IS NOT NULL AND hrpnpa.timeLessThan18m IS NOT NULL AND hrpnpa.heightShort IS NOT NULL AND hrpnpa.age IS NOT NULL AND hrpnpa.misCarriage IS NOT NULL AND hrpnpa.homeDelivery IS NOT NULL AND hrpnpa.medicalIssues IS NOT NULL AND hrpnpa.pastCSection IS NOT NULL), 0) as hrpnpaFilled, hrpnpa.syncState as hrpnpaSyncState, IFNULL(hrpmbp.benId IS NOT NULL, 0) as hrpmbpFilled, hrpmbp.syncState as hrpmbpSyncState, IFNULL(hrpt.benId IS NOT NULL, 0) as hrptFilled, IFNULL(((count(distinct hrpt.id) > 3) OR (((JulianDay('now')) - JulianDay(date(max(hrpt.visitDate)/1000,'unixepoch','localtime'))) < 1)), 0) as hrptrackingDone, hrpt.syncState as hrptSyncState, IFNULL(hrnpt.benId IS NOT NULL, 0) as hrnptFilled, IFNULL(((JulianDay('now') - JulianDay(date(max(hrnpt.visitDate)/1000,'unixepoch','localtime'))) < 1), 0) as hrnptrackingDone, hrnpt.syncState as hrnptSyncState FROM BENEFICIARY b JOIN HOUSEHOLD h ON b.householdId = h.householdId LEFT OUTER JOIN CBAC cbac ON b.beneficiaryId = cbac.benId LEFT OUTER JOIN CDR cdr ON b.beneficiaryId = cdr.benId LEFT OUTER JOIN MDSR mdsr ON b.beneficiaryId = mdsr.benId LEFT OUTER JOIN PMSMA pmsma ON b.beneficiaryId = pmsma.benId LEFT OUTER JOIN HBNC hbnc ON b.beneficiaryId = hbnc.benId LEFT OUTER JOIN HBYC hbyc ON b.beneficiaryId = hbyc.benId LEFT OUTER JOIN PREGNANCY_REGISTER pwr ON b.beneficiaryId = pwr.benId LEFT OUTER JOIN PREGNANCY_ANC pwa ON b.beneficiaryId = pwa.benId LEFT OUTER JOIN pnc_visit pnc ON b.beneficiaryId = pnc.benId LEFT OUTER JOIN ELIGIBLE_COUPLE_REG ecr ON b.beneficiaryId = ecr.benId LEFT OUTER JOIN ELIGIBLE_COUPLE_TRACKING ect ON (b.beneficiaryId = ect.benId AND CAST((strftime('%s','now') - ect.visitDate/1000)/60/60/24 AS INTEGER) < 30) LEFT OUTER JOIN TB_SCREENING tbsn ON b.beneficiaryId = tbsn.benId LEFT OUTER JOIN TB_SUSPECTED tbsp ON b.beneficiaryId = tbsp.benId LEFT OUTER JOIN MALARIA_SCREENING masp on b.beneficiaryId = masp.benId LEFT OUTER JOIN MALARIA_CONFIRMED macp on b.beneficiaryId = macp.benId LEFT OUTER JOIN HRP_PREGNANT_ASSESS hrppa ON b.beneficiaryId = hrppa.benId LEFT OUTER JOIN HRP_NON_PREGNANT_ASSESS hrpnpa ON b.beneficiaryId = hrpnpa.benId LEFT OUTER JOIN HRP_MICRO_BIRTH_PLAN hrpmbp ON b.beneficiaryId = hrpmbp.benId LEFT OUTER JOIN HRP_NON_PREGNANT_TRACK hrnpt ON b.beneficiaryId = hrnpt.benId LEFT OUTER JOIN HRP_PREGNANT_TRACK hrpt ON b.beneficiaryId = hrpt.benId LEFT OUTER JOIN DELIVERY_OUTCOME do ON b.beneficiaryId = do.benId LEFT OUTER JOIN INFANT_REG ir ON b.beneficiaryId = ir.motherBenId LEFT OUTER JOIN CHILD_REG cr ON b.beneficiaryId = cr.motherBenId WHERE b.isDraft = 0 GROUP BY b.beneficiaryId ORDER BY b.updatedDate DESC
+        """.trimIndent()
+                    )
+                }
+
+            }
+
+            val MIGRATION_44_45 = object : Migration(44, 45) {
                 override fun migrate(database: SupportSQLiteDatabase) {
 
-                    fun addColumnIfNotExists(
-                        db: SupportSQLiteDatabase,
-                        table: String,
-                        column: String,
-                        type: String
+                    fun migrateTable(
+                        tableName: String,
+                        criticalColumns: List<String>,
+                        createTableColumns: String
                     ) {
-                        val cursor = db.query("PRAGMA table_info($table)")
-                        var exists = false
-
-                        while (cursor.moveToNext()) {
-                            val name = cursor.getString(cursor.getColumnIndexOrThrow("name"))
-                            if (name.equals(column, ignoreCase = true)) {
-                                exists = true
-                                break
-                            }
-                        }
+                        val cursor = database.query(
+                            "SELECT name FROM sqlite_master WHERE type='table' AND name='$tableName'"
+                        )
+                        val tableExists = cursor.moveToFirst()
                         cursor.close()
 
-                        if (!exists) {
-                            db.execSQL("ALTER TABLE $table ADD COLUMN $column $type")
+                        if (tableExists) {
+                            val columnsCursor = database.query("PRAGMA table_info($tableName)")
+                            val existingColumns = mutableSetOf<String>()
+                            while (columnsCursor.moveToNext()) {
+                                existingColumns.add(
+                                    columnsCursor.getString(
+                                        columnsCursor.getColumnIndexOrThrow(
+                                            "name"
+                                        )
+                                    )
+                                )
+                            }
+                            columnsCursor.close()
+
+                            if (!existingColumns.contains("image2")) {
+                                database.execSQL("ALTER TABLE $tableName ADD COLUMN image2 TEXT")
+                            }
+                            if (!existingColumns.contains("syncState")) {
+                                database.execSQL("ALTER TABLE $tableName ADD COLUMN syncState INTEGER NOT NULL DEFAULT 0")
+                            }
+
+                            val missingCritical =
+                                criticalColumns.filter { !existingColumns.contains(it) }
+
+                            if (missingCritical.isNotEmpty()) {
+                                database.execSQL("CREATE TABLE IF NOT EXISTS ${tableName}_temp ($createTableColumns)")
+
+                                val copyColumns = existingColumns.intersect(criticalColumns.toSet())
+                                if (copyColumns.isNotEmpty()) {
+                                    database.execSQL(
+                                        """
+                            INSERT INTO ${tableName}_temp (${copyColumns.joinToString(",")})
+                            SELECT ${copyColumns.joinToString(",")} FROM $tableName
+                        """.trimIndent()
+                                    )
+                                }
+
+                                database.execSQL("DROP TABLE $tableName")
+                                database.execSQL("ALTER TABLE ${tableName}_temp RENAME TO $tableName")
+                            }
+
+                        } else {
+                            database.execSQL("CREATE TABLE IF NOT EXISTS $tableName ($createTableColumns)")
                         }
                     }
 
 
-                    database.execSQL("""
+                    migrateTable(
+                        tableName = "PHCReviewMeeting",
+                        criticalColumns = listOf(
+                            "id",
+                            "phcReviewDate",
+                            "place",
+                            "noOfBeneficiariesAttended",
+                            "image1"
+                        ),
+                        createTableColumns = """
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                phcReviewDate TEXT NOT NULL,
+                place TEXT,
+                noOfBeneficiariesAttended INTEGER,
+                image1 TEXT,
+                image2 TEXT,
+                syncState INTEGER NOT NULL DEFAULT 0
+            """.trimIndent()
+                    )
+
+                    migrateTable(
+                        tableName = "VHND",
+                        criticalColumns = listOf(
+                            "id",
+                            "vhndDate",
+                            "place",
+                            "noOfBeneficiariesAttended",
+                            "image1"
+                        ),
+                        createTableColumns = """
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                vhndDate TEXT NOT NULL,
+                place TEXT,
+                noOfBeneficiariesAttended INTEGER,
+                image1 TEXT,
+                image2 TEXT,
+                syncState INTEGER NOT NULL DEFAULT 0
+            """.trimIndent()
+                    )
+
+                    migrateTable(
+                        tableName = "VHNC",
+                        criticalColumns = listOf(
+                            "id",
+                            "vhncDate",
+                            "place",
+                            "noOfBeneficiariesAttended",
+                            "image1"
+                        ),
+                        createTableColumns = """
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                vhncDate TEXT NOT NULL,
+                place TEXT,
+                noOfBeneficiariesAttended INTEGER,
+                image1 TEXT,
+                image2 TEXT,
+                syncState INTEGER NOT NULL DEFAULT 0
+            """.trimIndent()
+                    )
+
+                    migrateTable(
+                        tableName = "AHDMeeting",
+                        criticalColumns = listOf(
+                            "id",
+                            "mobilizedForAHD",
+                            "ahdPlace",
+                            "ahdDate",
+                            "image1"
+                        ),
+                        createTableColumns = """
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                mobilizedForAHD TEXT,
+                ahdPlace TEXT,
+                ahdDate TEXT,
+                image1 TEXT,
+                image2 TEXT,
+                syncState INTEGER NOT NULL DEFAULT 0
+            """.trimIndent()
+                    )
+
+                    migrateTable(
+                        tableName = "DewormingMeeting",
+                        criticalColumns = listOf(
+                            "id",
+                            "dewormingDone",
+                            "dewormingDate",
+                            "dewormingLocation",
+                            "ageGroup",
+                            "image1"
+                        ),
+                        createTableColumns = """
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                dewormingDone TEXT,
+                dewormingDate TEXT,
+                dewormingLocation TEXT,
+                ageGroup INTEGER,
+                image1 TEXT,
+                image2 TEXT,
+                regDate TEXT,
+                syncState INTEGER NOT NULL DEFAULT 0
+            """.trimIndent()
+                    )
+
+                    migrateTable(
+                        tableName = "NCD_REFER",
+                        criticalColumns = listOf(
+                            "id",
+                            "benId",
+                            "referredToInstituteID",
+                            "refrredToAdditionalServiceList",
+                            "referredToInstituteName",
+                            "referralReason",
+                            "revisitDate",
+                            "vanID",
+                            "parkingPlaceID",
+                            "beneficiaryRegID",
+                            "benVisitID",
+                            "visitCode",
+                            "providerServiceMapID",
+                            "createdBy",
+                            "isSpecialist",
+                            "syncState"
+                        ),
+                        createTableColumns = """
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                benId INTEGER NOT NULL,
+                referredToInstituteID INTEGER DEFAULT 0,
+                refrredToAdditionalServiceList TEXT DEFAULT 'undefined',
+                referredToInstituteName TEXT DEFAULT 'undefined',
+                referralReason TEXT DEFAULT 'undefined',
+                revisitDate INTEGER NOT NULL DEFAULT ${System.currentTimeMillis()},
+                vanID INTEGER DEFAULT 0,
+                parkingPlaceID INTEGER DEFAULT 0,
+                beneficiaryRegID INTEGER DEFAULT 0,
+                benVisitID INTEGER DEFAULT 0,
+                visitCode INTEGER DEFAULT 0,
+                providerServiceMapID INTEGER DEFAULT 0,
+                createdBy TEXT DEFAULT '',
+                isSpecialist INTEGER DEFAULT 0,
+                syncState INTEGER NOT NULL DEFAULT 0,
+                FOREIGN KEY(benId)
+                    REFERENCES BENEFICIARY(beneficiaryId)
+                    ON UPDATE CASCADE
+                    ON DELETE CASCADE
+            """.trimIndent()
+                    )
+
+                    database.execSQL(
+                        """
+            CREATE UNIQUE INDEX IF NOT EXISTS ind_refcache
+            ON NCD_REFER (benId)
+        """
+                    )
+
+
+                    database.execSQL(
+                        """
+    CREATE TABLE IF NOT EXISTS MALARIA_SCREENING (
+        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+
+        benId INTEGER NOT NULL,
+        visitId INTEGER NOT NULL,
+        houseHoldDetailsId INTEGER NOT NULL,
+
+        caseDate INTEGER NOT NULL,
+        screeningDate INTEGER NOT NULL,
+        dateOfDeath INTEGER NOT NULL,
+        dateOfRdt INTEGER NOT NULL,
+        dateOfSlideTest INTEGER NOT NULL,
+        dateOfVisitBySupervisor INTEGER NOT NULL,
+        followUpDate INTEGER NOT NULL,
+
+        beneficiaryStatus TEXT,
+        beneficiaryStatusId INTEGER NOT NULL,
+
+        placeOfDeath TEXT,
+        otherPlaceOfDeath TEXT,
+        reasonForDeath TEXT,
+        otherReasonForDeath TEXT,
+
+        rapidDiagnosticTest TEXT,
+        slideTestPf TEXT,
+        slideTestPv TEXT,
+        slideTestName TEXT,
+
+        caseStatus TEXT,
+        referredTo INTEGER,
+        referToName TEXT,
+        otherReferredFacility TEXT,
+        remarks TEXT,
+
+        diseaseTypeID INTEGER,
+        malariaTestType INTEGER,
+        malariaSlideTestType INTEGER,
+
+        feverMoreThanTwoWeeks INTEGER,
+        fluLikeIllness INTEGER,
+        shakingChills INTEGER,
+        headache INTEGER,
+        muscleAches INTEGER,
+        tiredness INTEGER,
+        nausea INTEGER,
+        vomiting INTEGER,
+        diarrhea INTEGER,
+
+        createdBy TEXT,
+        syncState INTEGER NOT NULL DEFAULT 0,
+
+        FOREIGN KEY(benId)
+            REFERENCES BENEFICIARY(beneficiaryId)
+            ON UPDATE CASCADE
+            ON DELETE CASCADE
+    )
+"""
+                    )
+
+                    database.execSQL(
+                        """
+    CREATE UNIQUE INDEX IF NOT EXISTS ind_malariasn
+    ON MALARIA_SCREENING (benId, visitId)
+"""
+                    )
+
+                    database.execSQL(
+                        """
+    CREATE TABLE IF NOT EXISTS AES_SCREENING (
+        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+
+        benId INTEGER NOT NULL,
+        houseHoldDetailsId INTEGER NOT NULL,
+
+        visitDate INTEGER NOT NULL,
+        createdDate INTEGER NOT NULL,
+        dateOfDeath INTEGER NOT NULL,
+
+        beneficiaryStatus TEXT,
+        beneficiaryStatusId INTEGER NOT NULL,
+
+        placeOfDeath TEXT,
+        otherPlaceOfDeath TEXT,
+        reasonForDeath TEXT,
+        otherReasonForDeath TEXT,
+
+        aesJeCaseStatus TEXT,
+
+        referredTo INTEGER,
+        referToName TEXT,
+        otherReferredFacility TEXT,
+
+        diseaseTypeID INTEGER,
+        followUpPoint INTEGER,
+
+        createdBy TEXT,
+        syncState INTEGER NOT NULL DEFAULT 0,
+
+        FOREIGN KEY(benId)
+            REFERENCES BENEFICIARY(beneficiaryId)
+            ON UPDATE CASCADE
+            ON DELETE CASCADE
+    )
+"""
+                    )
+
+                    database.execSQL(
+                        """
+    CREATE INDEX IF NOT EXISTS ind_aessn
+    ON AES_SCREENING (benId)
+"""
+                    )
+
+
+                    database.execSQL(
+                        """
+    CREATE TABLE IF NOT EXISTS KALAZAR_SCREENING (
+        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+
+        benId INTEGER NOT NULL,
+        houseHoldDetailsId INTEGER NOT NULL,
+
+        visitDate INTEGER NOT NULL,
+        createdDate INTEGER NOT NULL,
+        dateOfDeath INTEGER NOT NULL,
+        dateOfRdt INTEGER NOT NULL,
+
+        beneficiaryStatus TEXT,
+        beneficiaryStatusId INTEGER NOT NULL,
+
+        placeOfDeath TEXT,
+        otherPlaceOfDeath TEXT,
+        reasonForDeath TEXT,
+        otherReasonForDeath TEXT,
+
+        rapidDiagnosticTest TEXT,
+        kalaAzarCaseStatus TEXT,
+
+        referredTo INTEGER,
+        referToName TEXT,
+        otherReferredFacility TEXT,
+
+        diseaseTypeID INTEGER,
+        followUpPoint INTEGER,
+
+        createdBy TEXT,
+        syncState INTEGER NOT NULL DEFAULT 0,
+
+        FOREIGN KEY(benId)
+            REFERENCES BENEFICIARY(beneficiaryId)
+            ON UPDATE CASCADE
+            ON DELETE CASCADE
+    )
+"""
+                    )
+
+                    database.execSQL(
+                        """
+    CREATE INDEX IF NOT EXISTS ind_kalazarsn
+    ON KALAZAR_SCREENING (benId)
+"""
+                    )
+
+                    database.execSQL(
+                        """
+    CREATE TABLE IF NOT EXISTS FILARIA_SCREENING (
+        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+
+        benId INTEGER NOT NULL,
+        houseHoldDetailsId INTEGER NOT NULL,
+
+        mdaHomeVisitDate INTEGER NOT NULL,
+        createdDate INTEGER NOT NULL,
+
+        sufferingFromFilariasis INTEGER,
+        doseStatus TEXT,
+        affectedBodyPart TEXT,
+        otherDoseStatusDetails TEXT,
+        filariasisCaseCount TEXT,
+
+        medicineSideEffect TEXT,
+        otherSideEffectDetails TEXT,
+
+        diseaseTypeID INTEGER,
+        createdBy TEXT,
+
+        syncState INTEGER NOT NULL DEFAULT 0,
+
+        FOREIGN KEY(benId)
+            REFERENCES BENEFICIARY(beneficiaryId)
+            ON UPDATE CASCADE
+            ON DELETE CASCADE
+    )
+"""
+                    )
+
+                    database.execSQL(
+                        """
+    CREATE INDEX IF NOT EXISTS ind_filariasn
+    ON FILARIA_SCREENING (benId)
+"""
+                    )
+
+                    database.execSQL(
+                        """
+    CREATE TABLE IF NOT EXISTS MALARIA_CONFIRMED (
+        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+
+        diseaseId INTEGER NOT NULL,
+        benId INTEGER NOT NULL,
+        houseHoldDetailsId INTEGER NOT NULL,
+
+        dateOfDiagnosis INTEGER NOT NULL,
+        treatmentStartDate INTEGER NOT NULL,
+        treatmentCompletionDate INTEGER NOT NULL,
+
+        treatmentGiven TEXT,
+        referralDate INTEGER NOT NULL,
+        day TEXT,
+
+        syncState INTEGER NOT NULL DEFAULT 0,
+
+        FOREIGN KEY(benId)
+            REFERENCES BENEFICIARY(beneficiaryId)
+            ON UPDATE CASCADE
+            ON DELETE CASCADE
+    )
+"""
+                    )
+
+                    database.execSQL(
+                        """
+    CREATE INDEX IF NOT EXISTS ind_malariacs
+    ON MALARIA_CONFIRMED (benId)
+"""
+                    )
+
+                    database.execSQL(
+                        """
+    CREATE TABLE IF NOT EXISTS IRS_ROUND (
+        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        date INTEGER NOT NULL,
+        rounds INTEGER NOT NULL,
+        householdId INTEGER NOT NULL
+    )
+"""
+                    )
+
+                    database.execSQL(
+                        """
+    CREATE INDEX IF NOT EXISTS ind_irs_round
+    ON IRS_ROUND (householdId)
+"""
+                    )
+
+                    database.execSQL(
+                        """
+    CREATE TABLE IF NOT EXISTS Adolescent_Health_Form_Data (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        userID INTEGER,
+        benId INTEGER,
+
+        visitDate INTEGER NOT NULL,
+        healthStatus TEXT,
+        ifaTabletDistributed INTEGER,
+        quantityOfIfaTablets INTEGER,
+        menstrualHygieneAwarenessGiven INTEGER,
+        sanitaryNapkinDistributed INTEGER,
+        noOfPacketsDistributed INTEGER,
+        place TEXT,
+        distributionDate INTEGER NOT NULL,
+        referredToHealthFacility TEXT,
+        counselingProvided INTEGER,
+        counselingType TEXT,
+        followUpDate INTEGER NOT NULL,
+
+        referralStatus TEXT,
+        syncState INTEGER NOT NULL DEFAULT 0,
+
+        FOREIGN KEY(benId)
+            REFERENCES BENEFICIARY(beneficiaryId)
+            ON UPDATE CASCADE
+            ON DELETE CASCADE
+    )
+"""
+                    )
+
+                    database.execSQL(
+                        """
+    CREATE INDEX IF NOT EXISTS ind_adolescentsn
+    ON Adolescent_Health_Form_Data (benId)
+"""
+                    )
+
+                    database.execSQL(
+                        """
+    CREATE TABLE IF NOT EXISTS infant (
+        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+
+        rchId TEXT NOT NULL,
+        name TEXT NOT NULL,
+        motherName TEXT NOT NULL,
+        fatherName TEXT,
+        dob TEXT NOT NULL,
+        gender TEXT NOT NULL,
+        phoneNumber TEXT NOT NULL,
+        sncuDischarged INTEGER NOT NULL DEFAULT 0
+    )
+"""
+                    )
+
+                    database.execSQL(
+                        """
+    CREATE TABLE IF NOT EXISTS SAAS_BAHU_ACTIVITY (
+        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+
+        ashaId INTEGER NOT NULL,
+        place TEXT,
+        participants INTEGER,
+        date INTEGER,
+
+        sammelanImages TEXT,
+        syncState INTEGER NOT NULL DEFAULT 0
+    )
+"""
+                    )
+                }
+            }
+
+
+            val MIGRATION_43_44 = object : Migration(43, 44) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+
+                    database.execSQL(
+                        """
+            CREATE TABLE IF NOT EXISTS LEPROSY_SCREENING (
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                benId INTEGER NOT NULL,
+                houseHoldDetailsId INTEGER NOT NULL,
+                visitNumber INTEGER,
+                isConfirmed INTEGER NOT NULL,
+                homeVisitDate INTEGER NOT NULL,
+                leprosyState TEXT,
+                leprosyStatusDate INTEGER NOT NULL,
+                lerosyStatusPosition INTEGER,
+                beneficiaryStatus TEXT,
+                beneficiaryStatusId INTEGER,
+                dateOfDeath INTEGER NOT NULL,
+                placeOfDeath TEXT,
+                otherPlaceOfDeath TEXT,
+                reasonForDeath TEXT,
+                otherReasonForDeath TEXT,
+                treatmentStatus TEXT,
+                mdtBlisterPackRecived TEXT,
+                leprosySymptoms TEXT,
+                typeOfLeprosy TEXT,
+                leprosySymptomsPosition INTEGER,
+                visitLabel TEXT,
+                leprosyStatus TEXT,
+                referredTo INTEGER,
+                referToName TEXT,
+                otherReferredTo TEXT,
+                treatmentEndDate INTEGER NOT NULL,
+                treatmentStartDate INTEGER NOT NULL,
+                currentVisitNumber INTEGER NOT NULL,
+                totalFollowUpMonthsRequired INTEGER NOT NULL,
+                diseaseTypeID INTEGER,
+                remarks TEXT,
+                syncState INTEGER NOT NULL,
+                createdBy TEXT NOT NULL,
+                createdDate INTEGER NOT NULL,
+                modifiedBy TEXT NOT NULL,
+                lastModDate INTEGER NOT NULL,
+                FOREIGN KEY(benId) REFERENCES BENEFICIARY(beneficiaryId) ON UPDATE CASCADE ON DELETE CASCADE
+            )
+        """
+                    )
+                    database.execSQL(
+                        """
+            CREATE UNIQUE INDEX IF NOT EXISTS ind_leprosysn ON LEPROSY_SCREENING (benId)
+        """
+                    )
+                    database.execSQL(
+                        """
             CREATE TABLE IF NOT EXISTS LEPROSY_FOLLOW_UP (
                 id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 benId INTEGER NOT NULL,
@@ -676,137 +1291,136 @@ abstract class InAppDb : RoomDatabase() {
                 followUpDate INTEGER NOT NULL,
                 treatmentStatus TEXT,
                 mdtBlisterPackReceived TEXT,
-                treatmentCompleteDate INTEGER NOT NULL DEFAULT 0,
+                treatmentCompleteDate INTEGER NOT NULL,
                 remarks TEXT,
-                homeVisitDate INTEGER NOT NULL DEFAULT ${System.currentTimeMillis()},
+                homeVisitDate INTEGER NOT NULL,
                 leprosySymptoms TEXT,
                 typeOfLeprosy TEXT,
-                leprosySymptomsPosition INTEGER DEFAULT 1,
-                visitLabel TEXT DEFAULT 'Visit -1',
-                leprosyStatus TEXT DEFAULT '',
-                referredTo INTEGER DEFAULT 0,
+                leprosySymptomsPosition INTEGER,
+                visitLabel TEXT,
+                leprosyStatus TEXT,
+                referredTo INTEGER,
                 referToName TEXT,
-                treatmentEndDate INTEGER NOT NULL DEFAULT ${System.currentTimeMillis()},
+                treatmentEndDate INTEGER NOT NULL,
                 mdtBlisterPackRecived TEXT,
-                treatmentStartDate INTEGER NOT NULL DEFAULT ${System.currentTimeMillis()},
-                syncState INTEGER NOT NULL DEFAULT 0,
-                createdBy TEXT DEFAULT '',
-                createdDate INTEGER NOT NULL DEFAULT ${System.currentTimeMillis()},
-                modifiedBy TEXT DEFAULT '',
-                lastModDate INTEGER NOT NULL DEFAULT ${System.currentTimeMillis()}
+                treatmentStartDate INTEGER NOT NULL,
+                syncState INTEGER NOT NULL,
+                createdBy TEXT NOT NULL,
+                createdDate INTEGER NOT NULL,
+                modifiedBy TEXT NOT NULL,
+                lastModDate INTEGER NOT NULL
             )
-        """)
+        """
+                    )
 
                     database.execSQL("CREATE INDEX IF NOT EXISTS ind_leprosy_followup_ben ON LEPROSY_FOLLOW_UP (benId)")
                     database.execSQL("CREATE INDEX IF NOT EXISTS ind_leprosy_followup_visit ON LEPROSY_FOLLOW_UP (benId, visitNumber)")
 
 
-                    addColumnIfNotExists(database, "LEPROSY_SCREENING", "currentVisitNumber", "INTEGER NOT NULL DEFAULT 1")
-                    addColumnIfNotExists(database, "LEPROSY_SCREENING", "totalFollowUpMonthsRequired", "INTEGER NOT NULL DEFAULT 0")
-                    addColumnIfNotExists(database, "LEPROSY_SCREENING", "createdBy", "TEXT DEFAULT ''")
-                    addColumnIfNotExists(database, "LEPROSY_SCREENING", "createdDate", "INTEGER NOT NULL DEFAULT ${System.currentTimeMillis()}")
-                    addColumnIfNotExists(database, "LEPROSY_SCREENING", "modifiedBy", "TEXT DEFAULT ''")
-                    addColumnIfNotExists(database, "LEPROSY_SCREENING", "lastModDate", "INTEGER NOT NULL DEFAULT ${System.currentTimeMillis()}")
-
-
-
-                    database.execSQL("""
-            INSERT INTO LEPROSY_FOLLOW_UP (
-                benId, visitNumber, followUpDate, treatmentStatus, mdtBlisterPackReceived,
-                treatmentCompleteDate, remarks, syncState,
-                homeVisitDate, leprosySymptoms, typeOfLeprosy, leprosySymptomsPosition,
-                visitLabel, leprosyStatus, referredTo, referToName, treatmentEndDate,
-                mdtBlisterPackRecived, treatmentStartDate, createdBy, createdDate, modifiedBy, lastModDate
-            )
-            SELECT 
-                benId,
-                1,
-                homeVisitDate AS followUpDate,
-                treatmentStatus,
-                mdtBlisterPackRecived,
-                treatmentEndDate,
-                '',
-                0,
-                homeVisitDate,
-                leprosySymptoms,
-                typeOfLeprosy,
-                leprosySymptomsPosition,
-                visitLabel,
-                leprosyStatus,
-                referredTo,
-                referToName,
-                treatmentEndDate,
-                mdtBlisterPackRecived,
-                treatmentStartDate,
-                '',
-                ${System.currentTimeMillis()},
-                '',
-                ${System.currentTimeMillis()}
-            FROM LEPROSY_SCREENING
-            WHERE treatmentStatus IS NOT NULL
-               OR mdtBlisterPackRecived IS NOT NULL
-               OR leprosySymptoms IS NOT NULL
-        """)
                 }
             }
 
 
-
-
             val MIGRATION_42_43 = object : Migration(42, 43) {
-                override fun migrate(database: SupportSQLiteDatabase) {
+                override fun migrate(db: SupportSQLiteDatabase) {
 
-                    fun addColumnIfNotExists(
-                        db: SupportSQLiteDatabase,
-                        table: String,
-                        column: String,
-                        type: String
-                    ) {
-                        val cursor = db.query("PRAGMA table_info($table)")
-                        var exists = false
-
-                        while (cursor.moveToNext()) {
-                            val name = cursor.getString(cursor.getColumnIndexOrThrow("name"))
-                            if (name.equals(column, ignoreCase = true)) {
-                                exists = true
-                                break
-                            }
-                        }
-                        cursor.close()
-
-                        if (!exists) {
-                            db.execSQL("ALTER TABLE $table ADD COLUMN $column $type")
-                        }
+                    if (!tableExists(db, "LEPROSY_SCREENING")) {
+                        return
                     }
 
-                    addColumnIfNotExists(database, "LEPROSY_SCREENING", "leprosySymptoms", "TEXT")
-                    addColumnIfNotExists(database, "LEPROSY_SCREENING", "visitLabel", "TEXT")
-                    addColumnIfNotExists(database, "LEPROSY_SCREENING", "visitNumber", "INTEGER")
-                    addColumnIfNotExists(database, "LEPROSY_SCREENING", "leprosySymptomsPosition", "INTEGER DEFAULT 1")
-                    addColumnIfNotExists(database, "LEPROSY_SCREENING", "isConfirmed", "INTEGER NOT NULL DEFAULT 0")
-                    addColumnIfNotExists(database, "LEPROSY_SCREENING", "treatmentStartDate", "INTEGER NOT NULL DEFAULT ${System.currentTimeMillis()}")
-                    addColumnIfNotExists(database, "LEPROSY_SCREENING", "treatmentEndDate", "INTEGER NOT NULL DEFAULT ${System.currentTimeMillis()}")
-                    addColumnIfNotExists(database, "LEPROSY_SCREENING", "mdtBlisterPackRecived", "TEXT")
-                    addColumnIfNotExists(database, "LEPROSY_SCREENING", "treatmentStatus", "TEXT")
-                    addColumnIfNotExists(database, "LEPROSY_SCREENING", "leprosyState", "TEXT")
+                    val columns = listOf(
+                        "leprosySymptoms" to "TEXT",
+                        "visitLabel" to "TEXT",
+                        "visitNumber" to "INTEGER",
+                        "leprosySymptomsPosition" to "INTEGER DEFAULT 1",
+                        "isConfirmed" to "INTEGER NOT NULL DEFAULT 0",
+                        "treatmentStartDate" to "INTEGER NOT NULL DEFAULT 0",
+                        "treatmentEndDate" to "INTEGER NOT NULL DEFAULT 0",
+                        "mdtBlisterPackRecived" to "TEXT",
+                        "treatmentStatus" to "TEXT",
+                        "leprosyState" to "TEXT"
+                    )
+
+                    for ((column, type) in columns) {
+                        if (!columnExists(db, "LEPROSY_SCREENING", column)) {
+                            db.execSQL(
+                                "ALTER TABLE LEPROSY_SCREENING ADD COLUMN $column $type"
+                            )
+                        }
+                    }
+                }
+            }
+
+
+            val MIGRATION_41_42 = object : Migration(41, 42) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("ALTER TABLE form_schema ADD COLUMN language TEXT NOT NULL DEFAULT 'en'")
+                    if (tableExists(database, "HRP_MICRO_BIRTH_PLAN")) {
+
+                        if (!columnExists(database, "HRP_MICRO_BIRTH_PLAN", "processed")) {
+                            database.execSQL(
+                                "ALTER TABLE HRP_MICRO_BIRTH_PLAN ADD COLUMN processed TEXT"
+                            )
+                        }
+                    }
                 }
             }
 
             val MIGRATION_40_41 = object : Migration(40, 41) {
-                override fun migrate(database: SupportSQLiteDatabase) {
-                    database.execSQL("ALTER TABLE PREGNANCY_ANC ADD COLUMN isYesOrNo INTEGER DEFAULT 0")
-                    database.execSQL("ALTER TABLE PREGNANCY_ANC ADD COLUMN dateSterilisation INTEGER")
-                    database.execSQL("UPDATE PREGNANCY_ANC SET isPaiucdId = CASE WHEN isPaiucdId = 1 THEN 1 ELSE 0 END")
-                }
-            }
-            val MIGRATION_41_42 = object : Migration(41, 42) {
-                override fun migrate(database: SupportSQLiteDatabase) {
-                    database.execSQL("ALTER TABLE form_schema ADD COLUMN language TEXT NOT NULL DEFAULT 'en'")
+                override fun migrate(db: SupportSQLiteDatabase) {
+
+                    if (tableExists(db, "PREGNANCY_ANC")) {
+
+                        if (!columnExists(db, "PREGNANCY_ANC", "isYesOrNo")) {
+                            db.execSQL(
+                                "ALTER TABLE PREGNANCY_ANC ADD COLUMN isYesOrNo INTEGER "
+                            )
+                        }
+
+                        if (!columnExists(db, "PREGNANCY_ANC", "dateSterilisation")) {
+                            db.execSQL(
+                                "ALTER TABLE PREGNANCY_ANC ADD COLUMN dateSterilisation INTEGER"
+                            )
+                        }
+
+                        if (columnExists(db, "PREGNANCY_ANC", "isPaiucdId")) {
+                            db.execSQL(
+                                """
+                    UPDATE PREGNANCY_ANC
+                    SET isPaiucdId = CASE
+                        WHEN isPaiucdId = 1 THEN 1
+                        ELSE 0
+                    END
+                    """.trimIndent()
+                            )
+                        }
+
+                        db.execSQL(
+                            "ALTER TABLE PREGNANCY_ANC ADD COLUMN isPaiucd TEXT"
+                        )
+
+                        db.execSQL(
+                            "ALTER TABLE PREGNANCY_ANC ADD COLUMN remarks TEXT"
+                        )
+                        db.execSQL(
+                            "ALTER TABLE PREGNANCY_ANC ADD COLUMN isPaiucdId INTEGER"
+                        )
+                        db.execSQL(
+                            "ALTER TABLE PREGNANCY_ANC ADD COLUMN serialNo TEXT "
+                        )
+                        db.execSQL("ALTER TABLE PREGNANCY_ANC ADD COLUMN abortionImg1 TEXT")
+                        db.execSQL("ALTER TABLE PREGNANCY_ANC ADD COLUMN abortionImg2 TEXT")
+
+
+                    }
+
                 }
             }
 
+
             val MIGRATION_39_40 = object : Migration(39, 40) {
                 override fun migrate(database: SupportSQLiteDatabase) {
+
                     database.execSQL(
                         """
             CREATE TABLE IF NOT EXISTS `ALL_BEN_IFA_VISIT_HISTORY` (
@@ -817,20 +1431,23 @@ abstract class InAppDb : RoomDatabase() {
                 `formId` TEXT NOT NULL,
                 `version` INTEGER NOT NULL,
                 `formDataJson` TEXT NOT NULL,
-                `isSynced` INTEGER NOT NULL DEFAULT 0,
+                `isSynced` INTEGER NOT NULL,
                 `createdAt` INTEGER NOT NULL,
                 `syncedAt` INTEGER
             )
-            """.trimIndent()
+        """.trimIndent()
                     )
+
                     database.execSQL(
                         """
-            CREATE UNIQUE INDEX IF NOT EXISTS `index_ALL_BEN_IFA_VISIT_HISTORY_benId_hhId_visitDate_formId`
+            CREATE UNIQUE INDEX IF NOT EXISTS
+            `index_ALL_BEN_IFA_VISIT_HISTORY_benId_hhId_visitDate_formId`
             ON `ALL_BEN_IFA_VISIT_HISTORY` (`benId`, `hhId`, `visitDate`, `formId`)
-            """.trimIndent()
+        """.trimIndent()
                     )
                 }
             }
+
 
             val MIGRATION_38_39 = object : Migration(38, 39) {
                 override fun migrate(database: SupportSQLiteDatabase) {
@@ -890,8 +1507,7 @@ abstract class InAppDb : RoomDatabase() {
                 version INTEGER NOT NULL,
                 formDataJson TEXT NOT NULL,
                 isSynced INTEGER NOT NULL DEFAULT 0,
-                syncedAt TEXT,
-                createdAt INTEGER NOT NULL DEFAULT (strftime('%s','now'))
+                syncedAt TEXT
             )
             """.trimIndent()
                     )
@@ -907,80 +1523,147 @@ abstract class InAppDb : RoomDatabase() {
 
             val MIGRATION_35_36 = object : Migration(35, 36) {
                 override fun migrate(db: SupportSQLiteDatabase) {
-                    db.execSQL("""
-            ALTER TABLE ALL_EYE_SURGERY_VISIT_HISTORY
-            ADD COLUMN visitMonth TEXT NOT NULL DEFAULT ''
-        """.trimIndent())
 
-                    db.execSQL("""
-            UPDATE ALL_EYE_SURGERY_VISIT_HISTORY
-            SET visitMonth = 
-                CASE
-                    WHEN visitDate GLOB '__-__-____'
-                    THEN substr(visitDate, 7, 4) || '-' || substr(visitDate, 4, 2)
-                    ELSE ''
-                END
-        """.trimIndent())
 
-                    db.execSQL("""
-            CREATE UNIQUE INDEX IF NOT EXISTS idx_eye_unique_month
-            ON ALL_EYE_SURGERY_VISIT_HISTORY(benId, formId, visitMonth)
-        """.trimIndent())
-//                    database.execSQL("ALTER TABLE MALARIA_SCREENING ADD COLUMN visitId INTEGER NOT NULL DEFAULT 1")
-                    db.execSQL("DROP INDEX IF EXISTS ind_malariasn")
-                    db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS ind_malariasn ON MALARIA_SCREENING(benId, visitId)")
+                    if (tableExists(db, "ALL_EYE_SURGERY_VISIT_HISTORY")) {
+
+                        db.execSQL("ALTER TABLE ALL_EYE_SURGERY_VISIT_HISTORY RENAME TO temp_eye_history")
+
+                        db.execSQL(
+                            """
+                CREATE TABLE ALL_EYE_SURGERY_VISIT_HISTORY (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    benId INTEGER NOT NULL,
+                    hhId INTEGER NOT NULL,
+                    visitDate TEXT NOT NULL,
+                    formId TEXT NOT NULL,
+                    version INTEGER NOT NULL,
+                    formDataJson TEXT NOT NULL,
+                    isSynced INTEGER NOT NULL DEFAULT 0,
+                    createdAt INTEGER NOT NULL,
+                    syncedAt TEXT,
+                    visitMonth TEXT NOT NULL DEFAULT ''
+                )
+            """.trimIndent()
+                        )
+
+                        db.execSQL(
+                            """
+                INSERT INTO ALL_EYE_SURGERY_VISIT_HISTORY (
+                    id, benId, hhId, visitDate, formId, version, formDataJson, isSynced, createdAt, syncedAt, visitMonth
+                )
+                SELECT id, benId, hhId, visitDate, formId, version, formDataJson, isSynced, createdAt, syncedAt, visitMonth
+                FROM temp_eye_history
+            """.trimIndent()
+                        )
+
+                        db.execSQL("DROP TABLE temp_eye_history")
+
+                        db.execSQL(
+                            """
+                CREATE UNIQUE INDEX IF NOT EXISTS index_ALL_EYE_SURGERY_VISIT_HISTORY_benId_formId_visitMonth
+                ON ALL_EYE_SURGERY_VISIT_HISTORY(benId, formId, visitMonth)
+            """.trimIndent()
+                        )
+
+                        db.execSQL(
+                            """
+                CREATE INDEX IF NOT EXISTS index_ALL_EYE_SURGERY_VISIT_HISTORY_benId_visitDate
+                ON ALL_EYE_SURGERY_VISIT_HISTORY(benId, visitDate)
+            """.trimIndent()
+                        )
+                    }
+
+                    if (tableExists(db, "MALARIA_SCREENING")) {
+
+                        db.execSQL("DROP INDEX IF EXISTS ind_malariasn")
+
+                        if (!columnExists(db, "MALARIA_SCREENING", "visitId")) {
+                            db.execSQL(
+                                "ALTER TABLE MALARIA_SCREENING ADD COLUMN visitId INTEGER NOT NULL DEFAULT 1"
+                            )
+                        }
+
+                        db.execSQL(
+                            "CREATE UNIQUE INDEX IF NOT EXISTS ind_malariasn ON MALARIA_SCREENING(benId, visitId)"
+                        )
+                    }
                 }
             }
-
-
-
 
 
             val MIGRATION_34_35 = object : Migration(34, 35) {
                 override fun migrate(database: SupportSQLiteDatabase) {
-                    database.execSQL(
-                        """
-            CREATE TABLE IF NOT EXISTS `ALL_EYE_SURGERY_VISIT_HISTORY` (
-                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                `benId` INTEGER NOT NULL,
-                `hhId` INTEGER NOT NULL,
-                `visitDate` TEXT NOT NULL,
-                `formId` TEXT NOT NULL,
-                `version` INTEGER NOT NULL,
-                `formDataJson` TEXT NOT NULL,
-                `isSynced` INTEGER NOT NULL DEFAULT 0,
-                `createdAt` INTEGER NOT NULL,
-                `syncedAt` INTEGER
-            )
-            """.trimIndent()
-                    )
-                    database.execSQL(
-                        """
-            CREATE UNIQUE INDEX IF NOT EXISTS `index_ALL_EYE_SURGERY_VISIT_HISTORY_benId_hhId_visitDate_formId`
-            ON `ALL_EYE_SURGERY_VISIT_HISTORY` (`benId`, `hhId`, `visitDate`, `formId`)
-            """.trimIndent()
-                    )
-                    database.execSQL("ALTER TABLE MALARIA_SCREENING ADD COLUMN visitId INTEGER NOT NULL DEFAULT 1")
-                    database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS ind_malariasn ON MALARIA_SCREENING(benId, visitId)")
 
-                    database.execSQL("ALTER TABLE MALARIA_SCREENING ADD COLUMN malariaTestType INTEGER DEFAULT 0")
-                    database.execSQL("ALTER TABLE MALARIA_SCREENING ADD COLUMN malariaSlideTestType INTEGER DEFAULT 0")
+                    database.execSQL(
+                        """
+           CREATE TABLE ALL_EYE_SURGERY_VISIT_HISTORY (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    benId INTEGER NOT NULL,
+                    hhId INTEGER NOT NULL,
+                    visitDate TEXT NOT NULL,
+                    formId TEXT NOT NULL,
+                    version INTEGER NOT NULL,
+                    formDataJson TEXT NOT NULL,
+                    isSynced INTEGER NOT NULL DEFAULT 0,
+                    createdAt INTEGER NOT NULL,
+                    syncedAt TEXT,
+                    visitMonth TEXT NOT NULL DEFAULT ''
+                )
+            """.trimIndent()
+                    )
+
+                    database.execSQL(
+                        """
+            CREATE UNIQUE INDEX IF NOT EXISTS 
+            index_ALL_EYE_SURGERY_VISIT_HISTORY_benId_hhId_visitDate_formId
+            ON ALL_EYE_SURGERY_VISIT_HISTORY (benId, hhId, visitDate, formId)
+            """.trimIndent()
+                    )
+
+                    if (tableExists(database, "MALARIA_SCREENING")) {
+
+                        if (!columnExists(database, "MALARIA_SCREENING", "visitId")) {
+                            database.execSQL(
+                                "ALTER TABLE MALARIA_SCREENING ADD COLUMN visitId INTEGER NOT NULL DEFAULT 1"
+                            )
+                        }
+
+                        if (!columnExists(database, "MALARIA_SCREENING", "malariaTestType")) {
+                            database.execSQL(
+                                "ALTER TABLE MALARIA_SCREENING ADD COLUMN malariaTestType INTEGER DEFAULT 0"
+                            )
+                        }
+
+                        if (!columnExists(database, "MALARIA_SCREENING", "malariaSlideTestType")) {
+                            database.execSQL(
+                                "ALTER TABLE MALARIA_SCREENING ADD COLUMN malariaSlideTestType INTEGER DEFAULT 0"
+                            )
+                        }
+
+                        database.execSQL(
+                            "CREATE UNIQUE INDEX IF NOT EXISTS ind_malariasn ON MALARIA_SCREENING(benId, visitId)"
+                        )
+                    }
                 }
             }
 
 
-            val MIGRATION_33_34 = object : Migration(31, 32) {
+            val MIGRATION_33_34 = object : Migration(33, 34) {
                 override fun migrate(database: SupportSQLiteDatabase) {
-                    database.execSQL("""
+                    database.execSQL(
+                        """
             CREATE TABLE IF NOT EXISTS form_schema (
                 formId TEXT NOT NULL PRIMARY KEY,
                 formName TEXT NOT NULL,
                 version INTEGER NOT NULL DEFAULT 1,
                 schemaJson TEXT NOT NULL
             )
-        """.trimIndent())
+        """.trimIndent()
+                    )
 
-                    database.execSQL("""
+                    database.execSQL(
+                        """
             CREATE TABLE IF NOT EXISTS all_visit_history (
                 id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 benId INTEGER NOT NULL,
@@ -994,19 +1677,23 @@ abstract class InAppDb : RoomDatabase() {
                 createdAt INTEGER NOT NULL,
                 syncedAt INTEGER
             )
-        """.trimIndent())
+        """.trimIndent()
+                    )
 
-                    database.execSQL("""
+                    database.execSQL(
+                        """
             CREATE UNIQUE INDEX IF NOT EXISTS index_all_visit_history_unique 
             ON all_visit_history (benId, hhId, visitDay, visitDate, formId)
-        """.trimIndent())
+        """.trimIndent()
+                    )
                 }
             }
 
 
             val MIGRATION_32_33 = object : Migration(32, 33) {
                 override fun migrate(database: SupportSQLiteDatabase) {
-                    database.execSQL("""
+                    database.execSQL(
+                        """
             CREATE TABLE IF NOT EXISTS ALL_VISIT_HISTORY_HBYC (
                 id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 benId INTEGER NOT NULL,
@@ -1020,11 +1707,14 @@ abstract class InAppDb : RoomDatabase() {
                 createdAt INTEGER NOT NULL,
                 syncedAt INTEGER
             )
-        """.trimIndent())
-                    database.execSQL("""
+        """.trimIndent()
+                    )
+                    database.execSQL(
+                        """
             CREATE UNIQUE INDEX IF NOT EXISTS index_all_visit_history_hbyc_unique 
             ON ALL_VISIT_HISTORY_HBYC (benId, hhId, visitDay, visitDate, formId)
-        """.trimIndent())
+        """.trimIndent()
+                    )
                 }
             }
 
@@ -1061,20 +1751,21 @@ abstract class InAppDb : RoomDatabase() {
             val MIGRATION_30_31 = object : Migration(30, 31) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     database.execSQL("ALTER TABLE CBAC ADD COLUMN isReffered INTEGER DEFAULT 0")
-
-                    // Create the new table
-                    database.execSQL("""
+                    database.execSQL(
+                        """
             CREATE TABLE IF NOT EXISTS form_schema (
                 formId TEXT NOT NULL PRIMARY KEY,
                 formName TEXT NOT NULL,
                 version INTEGER NOT NULL DEFAULT 1,
                 schemaJson TEXT NOT NULL
             )
-        """.trimIndent())
+        """.trimIndent()
+                    )
                     database.execSQL("ALTER TABLE IMMUNIZATION ADD COLUMN mcpCardSummary1 TEXT")
                     database.execSQL("ALTER TABLE IMMUNIZATION ADD COLUMN mcpCardSummary2 TEXT")
                     database.execSQL("DROP TABLE IF EXISTS `UWIN_SESSION`")
-                    database.execSQL("""CREATE TABLE IF NOT EXISTS `UWIN_SESSION` (
+                    database.execSQL(
+                        """CREATE TABLE IF NOT EXISTS `UWIN_SESSION` (
                             `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                     `sessionDate` INTEGER NOT NULL,
                     `place` TEXT,
@@ -1088,7 +1779,8 @@ abstract class InAppDb : RoomDatabase() {
                     `updatedDate` INTEGER NOT NULL,
                     `syncState` INTEGER NOT NULL
                     )
-                    """.trimIndent())
+                    """.trimIndent()
+                    )
                 }
             }
 
@@ -1104,14 +1796,15 @@ abstract class InAppDb : RoomDatabase() {
                                 "`meetingImages` TEXT, " +
                                 "`createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `syncState` INTEGER NOT NULL)"
                     )
-                    database.execSQL("ALTER TABLE ELIGIBLE_COUPLE_REG ADD COLUMN isKitHandedOver INTEGER NOT NULL DEFAULT 0")
+                    database.execSQL("ALTER TABLE ELIGIBLE_COUPLE_REG ADD COLUMN isKitHandedOver INTEGER ")
                     database.execSQL("ALTER TABLE ELIGIBLE_COUPLE_REG ADD COLUMN kitHandedOverDate INTEGER")
                     database.execSQL("ALTER TABLE ELIGIBLE_COUPLE_REG ADD COLUMN kitPhoto1 TEXT")
                     database.execSQL("ALTER TABLE ELIGIBLE_COUPLE_REG ADD COLUMN kitPhoto2 TEXT")
+                    database.execSQL("ALTER TABLE ELIGIBLE_COUPLE_REG ADD COLUMN lmpDate INTEGER NOT NULL DEFAULT 0 ")
+                    database.execSQL("ALTER TABLE ELIGIBLE_COUPLE_REG ADD COLUMN lmp_date INTEGER NOT NULL DEFAULT 0")
+
                 }
             }
-
-
 
 
 //            val MIGRATION_22_23 = object : Migration(22, 23) {
@@ -1153,13 +1846,16 @@ abstract class InAppDb : RoomDatabase() {
                     if (!existingColumns.contains("sterilisationDate")) {
                         database.execSQL("ALTER TABLE PNC_VISIT ADD COLUMN sterilisationDate INTEGER ")
                     }
+                    if (!existingColumns.contains("anyDangerSign")) {
+                        database.execSQL("ALTER TABLE PNC_VISIT ADD COLUMN anyDangerSign TEXT ")
+                    }
                 }
 
             }
 
             val MIGRATION_26_27 = object : Migration(26, 27) {
                 override fun migrate(database: SupportSQLiteDatabase) {
-                    database.execSQL("ALTER TABLE INCENTIVE_ACTIVITY ADD COLUMN groupName TEXT")
+                    database.execSQL("ALTER TABLE INCENTIVE_ACTIVITY ADD COLUMN groupName TEXT NOT NULL DEFAULT 'undefined'")
 
                 }
             }
@@ -1170,6 +1866,16 @@ abstract class InAppDb : RoomDatabase() {
                     database.execSQL("ALTER TABLE PREGNANCY_ANC ADD COLUMN lmpDate INTEGER")
                     database.execSQL("ALTER TABLE PREGNANCY_ANC ADD COLUMN visitDate INTEGER")
                     database.execSQL("ALTER TABLE PREGNANCY_ANC ADD COLUMN weekOfPregnancy INTEGER")
+                    database.execSQL("ALTER TABLE PREGNANCY_ANC ADD COLUMN placeOfDeath TEXT")
+                    database.execSQL("ALTER TABLE PREGNANCY_ANC ADD COLUMN placeOfDeathId INTEGER")
+                    database.execSQL("ALTER TABLE PREGNANCY_ANC ADD COLUMN otherPlaceOfDeath TEXT")
+
+                    database.execSQL("ALTER TABLE PREGNANCY_ANC ADD COLUMN methodOfTermination TEXT")
+                    database.execSQL("ALTER TABLE PREGNANCY_ANC ADD COLUMN methodOfTerminationId INTEGER")
+
+                    database.execSQL("ALTER TABLE PREGNANCY_ANC ADD COLUMN terminationDoneBy TEXT")
+                    database.execSQL("ALTER TABLE PREGNANCY_ANC ADD COLUMN terminationDoneById INTEGER")
+
                 }
             }
 
@@ -1239,6 +1945,10 @@ abstract class InAppDb : RoomDatabase() {
                     database.execSQL("ALTER TABLE ELIGIBLE_COUPLE_TRACKING ADD COLUMN dueDateOfAntraInjection TEXT")
                     database.execSQL("ALTER TABLE ELIGIBLE_COUPLE_TRACKING ADD COLUMN mpaFile TEXT")
                     database.execSQL("ALTER TABLE ELIGIBLE_COUPLE_TRACKING ADD COLUMN antraDose TEXT")
+                    database.execSQL("ALTER TABLE ELIGIBLE_COUPLE_TRACKING ADD COLUMN lmp_date INTEGER NOT NULL DEFAULT 0")
+                    database.execSQL("ALTER TABLE ELIGIBLE_COUPLE_TRACKING ADD COLUMN lmpDate INTEGER NOT NULL DEFAULT 0")
+
+
                 }
             }
 
@@ -1388,7 +2098,14 @@ abstract class InAppDb : RoomDatabase() {
                                 "LEFT OUTER JOIN CHILD_REG cr ON b.beneficiaryId = cr.motherBenId " +
                                 "WHERE b.isDraft = 0 GROUP BY b.beneficiaryId ORDER BY b.updatedDate DESC"
                     )
-                    db.execSQL("ALTER TABLE MALARIA_SCREENING ADD COLUMN slideTestName TEXT")
+
+                    if (tableExists(db, "MALARIA_SCREENING")
+                        && !columnExists(db, "MALARIA_SCREENING", "slideTestName")
+                    ) {
+                        db.execSQL(
+                            "ALTER TABLE MALARIA_SCREENING ADD COLUMN slideTestName TEXT"
+                        )
+                    }
                 }
             }
 //            val MIGRATION_18_19 = object : Migration(18, 19) {
@@ -1437,7 +2154,6 @@ abstract class InAppDb : RoomDatabase() {
 
             val MIGRATION_17_18 = object : Migration(17, 18) {
                 override fun migrate(database: SupportSQLiteDatabase) {
-                    // 1. Create new table with updated schema
                     database.execSQL(
                         """
             CREATE TABLE IF NOT EXISTS `ABHA_GENERATED_NEW` (
@@ -1459,7 +2175,6 @@ abstract class InAppDb : RoomDatabase() {
             )
         """.trimIndent()
                     )
-                    // 2. Copy existing data into new table (with default/placeholder values for new fields)
                     try {
                         database.execSQL(
                             """
@@ -1498,7 +2213,6 @@ abstract class InAppDb : RoomDatabase() {
             """.trimIndent()
                         )
                     } catch (e: Exception) {
-                        // Table might not exist on some devices — log and continue
                         Log.w(
                             "RoomMigration",
                             "Skipping data copy: ABHA_GENERATED table not found",
@@ -1506,23 +2220,17 @@ abstract class InAppDb : RoomDatabase() {
                         )
                     }
 
-                    // 3. Drop old table
                     try {
                         database.execSQL("DROP TABLE IF EXISTS ABHA_GENERATED")
                     } catch (_: Exception) {
                     }
-
-                    // 4. Rename new table
                     database.execSQL("ALTER TABLE ABHA_GENERATED_NEW RENAME TO ABHA_GENERATED")
-
-                    // 5. Recreate index
                     database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_ABHA_GENERATED_beneficiaryID` ON `ABHA_GENERATED` (`beneficiaryID`)")
                 }
             }
 
             val MIGRATION_16_18 = object : Migration(16, 18) {
                 override fun migrate(database: SupportSQLiteDatabase) {
-                    // 1. Create new table with updated schema
                     database.execSQL(
                         """
             CREATE TABLE IF NOT EXISTS `ABHA_GENERATED_NEW` (
@@ -1544,7 +2252,6 @@ abstract class InAppDb : RoomDatabase() {
             )
         """.trimIndent()
                     )
-                    // 2. Copy existing data into new table (with default/placeholder values for new fields)
                     try {
                         database.execSQL(
                             """
@@ -1583,7 +2290,6 @@ abstract class InAppDb : RoomDatabase() {
             """.trimIndent()
                         )
                     } catch (e: Exception) {
-                        // Table might not exist on some devices — log and continue
                         Log.w(
                             "RoomMigration",
                             "Skipping data copy: ABHA_GENERATED table not found",
@@ -1591,25 +2297,23 @@ abstract class InAppDb : RoomDatabase() {
                         )
                     }
 
-                    // 3. Drop old table
                     try {
                         database.execSQL("DROP TABLE IF EXISTS ABHA_GENERATED")
                     } catch (_: Exception) {
                     }
 
-                    // 4. Rename new table
                     database.execSQL("ALTER TABLE ABHA_GENERATED_NEW RENAME TO ABHA_GENERATED")
 
-                    // 5. Recreate index
                     database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_ABHA_GENERATED_beneficiaryID` ON `ABHA_GENERATED` (`beneficiaryID`)")
                 }
             }
 
             val MIGRATION_21_22 = object : Migration(21, 22) {
                 override fun migrate(database: SupportSQLiteDatabase) {
+
                     database.execSQL(
                         """
-            CREATE TABLE PREGNANCY_ANC_NEW (
+            CREATE TABLE IF NOT EXISTS PREGNANCY_ANC_NEW (
                 id INTEGER NOT NULL PRIMARY KEY,
                 benId INTEGER NOT NULL,
                 visitNumber INTEGER NOT NULL,
@@ -1654,10 +2358,10 @@ abstract class InAppDb : RoomDatabase() {
                 updatedBy TEXT NOT NULL,
                 updatedDate INTEGER NOT NULL,
                 syncState INTEGER NOT NULL,
-                frontFilePath TEXT,   -- nullable now
-                backFilePath TEXT,    -- nullable now
-                FOREIGN KEY(benId) REFERENCES BENEFICIARY(beneficiaryId) 
-                  ON UPDATE CASCADE ON DELETE CASCADE
+                frontFilePath TEXT,
+                backFilePath TEXT,
+                FOREIGN KEY(benId) REFERENCES BENEFICIARY(beneficiaryId)
+                    ON UPDATE CASCADE ON DELETE CASCADE
             )
         """.trimIndent()
                     )
@@ -1677,7 +2381,7 @@ abstract class InAppDb : RoomDatabase() {
                 processed, createdBy, createdDate, updatedBy, updatedDate, syncState,
                 frontFilePath, backFilePath
             )
-            SELECT 
+            SELECT
                 id, benId, visitNumber, isActive, ancDate, isAborted,
                 abortionType, abortionTypeId, abortionFacility, abortionFacilityId, abortionDate,
                 weight, bpSystolic, bpDiastolic, pulseRate, hb, fundalHeight,
@@ -1688,18 +2392,18 @@ abstract class InAppDb : RoomDatabase() {
                 maternalDeath, maternalDeathProbableCause, maternalDeathProbableCauseId,
                 otherMaternalDeathProbableCause, deathDate, pregnantWomanDelivered,
                 processed, createdBy, createdDate, updatedBy, updatedDate, syncState,
-                frontFilePath, backFilePath
+                NULL AS frontFilePath,
+                NULL AS backFilePath
             FROM PREGNANCY_ANC
         """.trimIndent()
                     )
 
                     database.execSQL("DROP TABLE PREGNANCY_ANC")
-
                     database.execSQL("ALTER TABLE PREGNANCY_ANC_NEW RENAME TO PREGNANCY_ANC")
 
-                    database.execSQL("CREATE INDEX ind_mha ON PREGNANCY_ANC(benId)")
+                    database.execSQL("CREATE INDEX IF NOT EXISTS ind_mha ON PREGNANCY_ANC(benId)")
 
-                    database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN isDeath INTEGER")
+                    database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN isDeath INTEGER DEFAULT 0")
                     database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN isDeathValue TEXT")
                     database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN dateOfDeath TEXT")
                     database.execSQL("ALTER TABLE DELIVERY_OUTCOME ADD COLUMN placeOfDeath TEXT")
@@ -1714,10 +2418,8 @@ abstract class InAppDb : RoomDatabase() {
 
             val MIGRATION_15_16 = object : Migration(15, 16) {
                 override fun migrate(db: SupportSQLiteDatabase) {
-                    // Step 2: Drop the old view to ensure a clean slate.
                     db.execSQL("DROP VIEW IF EXISTS BEN_BASIC_CACHE")
 
-                    // Step 3: Create the new view with a clean, correct, and complete SQL query.
                     db.execSQL(
                         "CREATE VIEW `BEN_BASIC_CACHE` AS " +
                                 "SELECT b.beneficiaryId as benId, b.householdId as hhId, b.regDate, b.firstName as benName, b.lastName as benSurname, b.gender, b.dob as dob, b.familyHeadRelationPosition as relToHeadId" +
@@ -1776,7 +2478,7 @@ abstract class InAppDb : RoomDatabase() {
 
             val MIGRATION_14_15 = Migration(14, 15, migrate = {
                 it.execSQL("ALTER TABLE BENEFICIARY ADD COLUMN isNewAbha INTEGER NOT NULL DEFAULT 0")
-                it.execSQL("DROP VIEW IF EXISTS BEN_BASIC_CACHE");
+                it.execSQL("DROP VIEW IF EXISTS BEN_BASIC_CACHE")
                 //  it.execSQL("CREATE VIEW BEN_BASIC_CACHE AS " +
                 //         "SELECT  benId,hhId,regDate,benName,benSurname,gender,dob,relToHeadId,mobileNo,fatherName,familyHeadName,spouseName,rchId,hrpStatus,syncState,reproductiveStatusId, lastMenstrualPeriod,isKid,immunizationStatus,villageId,abhaId,isNewAbha,cbacFilled,cbacSyncState,cdrFilled,cdrSyncState,mdsrFilled,mdsrSyncState,pmsmaSyncState,pmsmaFilled,hbncFilled,hbycFilled,pwrFilled,pwrSyncState,doSyncState,irSyncState,crSyncState,ecrFilled,ectFilled,tbsnFilled,tbsnSyncState,tbspFilled,tbspSyncState,hrppaFilled,hrpnpaFilled,hrpmbpFilled,hrptFilled,hrptrackingDone,hrnptrackingDone,hrnptFilled,hrppaSyncState,hrpnpaSyncState,hrpmbpSyncState,hrptSyncState,hrnptSyncState,isDelivered,pwHrp,irFilled,isMdsr,crFilled,doFilled FROM BENEFICIARY");
                 it.execSQL(
@@ -1825,15 +2527,12 @@ abstract class InAppDb : RoomDatabase() {
 
             val MIGRATION_18_19 = object : Migration(18, 19) {
                 override fun migrate(database: SupportSQLiteDatabase) {
-                    try {
 
-                        // 1. Create new table with correct schema
-
-                        database.execSQL(
-                            """
-            CREATE TABLE PROFILE_ACTIVITY_new (
+                    database.execSQL(
+                        """
+            CREATE TABLE IF NOT EXISTS PROFILE_ACTIVITY_new (
                 id INTEGER PRIMARY KEY NOT NULL,
-                name TEXT,  -- nullable (because String?)
+                name TEXT,
                 profileImage TEXT NOT NULL,
                 village TEXT NOT NULL,
                 employeeId INTEGER NOT NULL,
@@ -1863,103 +2562,162 @@ abstract class InAppDb : RoomDatabase() {
                 supervisorMobile TEXT NOT NULL
             )
         """
-                        )
+                    )
 
+                    if (tableExists(database, "PROFILE_ACTIVITY")) {
                         database.execSQL(
                             """
-            INSERT INTO PROFILE_ACTIVITY_new (
-                id, name, profileImage, village, employeeId, dob, age, mobileNumber,
-                alternateMobileNumber, fatherOrSpouseName, dateOfJoining, bankAccount,
-                ifsc, populationCovered, choName, choMobile, awwName, awwMobile,
-                anm1Name, anm1Mobile, anm2Name, anm2Mobile, abhaNumber,
-                ashaHouseholdRegistration, ashaFamilyMember, providerServiceMapID,
-                isFatherOrSpouse, supervisorName, supervisorMobile
-            )
-            SELECT 
-                id,
-                name,
-                profileImage,
-                village,
-                employeeId,
-                dob,
-                age,
-                mobileNumber,
-                alternateMobileNumber,
-                fatherOrSpouseName,
-                dateOfJoining,
-                bankAccount,
-                ifsc,
-                populationCovered,
-                choName,
-                choMobile,
-                awwName,
-                awwMobile,
-                anm1Name,
-                anm1Mobile,
-                anm2Name,
-                anm2Mobile,
-                abhaNumber,
-                ashaHouseholdRegistration,
-                ashaFamilyMember,
-                providerServiceMapID,
-                isFatherOrSpouse,
-                supervisorName,
-                supervisorMobile
-            FROM PROFILE_ACTIVITY
-        """
+                INSERT INTO PROFILE_ACTIVITY_new (
+                    id, name, profileImage, village, employeeId, dob, age,
+                    mobileNumber, alternateMobileNumber, fatherOrSpouseName,
+                    dateOfJoining, bankAccount, ifsc, populationCovered,
+                    choName, choMobile, awwName, awwMobile,
+                    anm1Name, anm1Mobile, anm2Name, anm2Mobile,
+                    abhaNumber, ashaHouseholdRegistration,
+                    ashaFamilyMember, providerServiceMapID,
+                    isFatherOrSpouse, supervisorName, supervisorMobile
+                )
+                SELECT
+                    id, name, profileImage, village, employeeId, dob, age,
+                    mobileNumber, alternateMobileNumber, fatherOrSpouseName,
+                    dateOfJoining, bankAccount, ifsc, populationCovered,
+                    choName, choMobile, awwName, awwMobile,
+                    anm1Name, anm1Mobile, anm2Name, anm2Mobile,
+                    abhaNumber, ashaHouseholdRegistration,
+                    ashaFamilyMember, providerServiceMapID,
+                    isFatherOrSpouse, supervisorName, supervisorMobile
+                FROM PROFILE_ACTIVITY
+            """
                         )
+                    }
 
-                        database.execSQL("DROP TABLE PROFILE_ACTIVITY")
-                        database.execSQL("ALTER TABLE PROFILE_ACTIVITY_new RENAME TO PROFILE_ACTIVITY")
+                    database.execSQL("DROP TABLE IF EXISTS PROFILE_ACTIVITY")
+                    database.execSQL("ALTER TABLE PROFILE_ACTIVITY_new RENAME TO PROFILE_ACTIVITY")
 
-                        val columns = listOf(
-                            "isDeath INTEGER",
+
+                    if (tableExists(database, "BENEFICIARY")) {
+                        val beneficiaryColumns = listOf(
+                            "isDeath INTEGER NOT NULL DEFAULT 'undefined'",
                             "isDeathValue TEXT",
                             "dateOfDeath TEXT",
                             "timeOfDeath TEXT",
                             "reasonOfDeath TEXT",
-                            "reasonOfDeathId INTEGER",
+                            "reasonOfDeathId INTEGER NOT NULL DEFAULT 0",
                             "placeOfDeath TEXT",
-                            "placeOfDeathId INTEGER",
-                            "otherPlaceOfDeath TEXT"
+                            "placeOfDeathId INTEGER NOT NULL DEFAULT 'undefined'",
+                            "otherPlaceOfDeath TEXT",
+                            "isConsent INTEGER NOT NULL DEFAULT 0",
+                            "kid_isConsent INTEGER ",
+                            "suspectedTb TEXT DEFAULT 'undefined'",
+                            "kid_childName TEXT DEFAULT 'undefined'",
+                            "loc_country_nameHindi TEXT DEFAULT 'undefined'",
+                            "kid_birthOPV INTEGER DEFAULT 'undefined'",
+                            "kid_opvDate TEXT DEFAULT 'undefined'",
+                            "kid_conductedDelivery TEXT DEFAULT 'undefined'",
+                            "kid_conductedDeliveryOther TEXT DEFAULT 'undefined'",
+                            "kid_conductedDeliveryId INTEGER DEFAULT 'undefined'",
+                            "suspectedHrp TEXT DEFAULT 'undefined'",
+                            "familyHeadRelation TEXT DEFAULT 'undefined'",
+                            "kid_opvGivenDueDate TEXT DEFAULT 'undefined'",
+                            "kid_childMotherName TEXT DEFAULT 'undefined'",
+                            "community TEXT DEFAULT 'undefined'",
+                            "kid_birthPlace TEXT DEFAULT 'undefined'",
+                            "loc_village_nameHindi TEXT DEFAULT 'undefined'",
+                            "religionOthers TEXT DEFAULT 'undefined'",
+                            "kid_typeOfSchool TEXT DEFAULT 'undefined'",
+                            "hrpLastVisitDate TEXT DEFAULT 'undefined'",
+                            "kid_typeOfSchoolId INTEGER DEFAULT 'undefined'",
+                            "kid_complicationsId INTEGER DEFAULT 'undefined'",
+                            "kid_motherPosition INTEGER DEFAULT 'undefined'",
+                            "kid_feedingStarted TEXT DEFAULT 'undefined'",
+                            "hrpIdentificationDate TEXT DEFAULT 'undefined'",
+                            "kid_gestationalAge TEXT DEFAULT 'undefined'",
+                            "loc_state_nameHindi TEXT DEFAULT 'undefined'",
+                            "suspectedNcdDiseases TEXT DEFAULT 'undefined'",
+                            "kid_bcdBatchNo TEXT DEFAULT 'undefined'",
+                            "abha_isNewAbha INTEGER DEFAULT 'undefined'",
+                            "kid_bcgDate TEXT DEFAULT 'undefined'",
+                            "kid_bcgGivenDueDate TEXT DEFAULT 'undefined'",
+                            "kid_hptBatchNo TEXT DEFAULT 'undefined'",
+                            "loc_state_nameAssamese TEXT DEFAULT 'undefined'",
+                            "gen_maritalStatus TEXT DEFAULT 'undefined'",
+                            "loc_block_id INTEGER DEFAULT 'undefined'",
+                            "syncState INTEGER DEFAULT 'undefined'",
+                            "kid_birthPlaceId INTEGER DEFAULT 'undefined'",
+                            "kid_birthDosageId INTEGER DEFAULT 'undefined'",
+                            "abha_healthIdNumber TEXT DEFAULT 'undefined'",
+                            "loc_country_name TEXT DEFAULT 'undefined'",
+                            "kid_birthDefectsId INTEGER DEFAULT 'undefined'",
+                            "kid_vitaminKGivenDueDate TEXT DEFAULT 'undefined'",
+                            "createdDate INTEGER DEFAULT 'undefined'",
+                            "kid_birthCertificateFileBackView TEXT DEFAULT 'undefined'",
+                            "kid_birthCertificateFileFrontView TEXT DEFAULT 'undefined'",
+                            "kid_hptGivenDueDate TEXT DEFAULT 'undefined'",
+                            "kid_motherBenId INTEGER DEFAULT 'undefined'",
+                            "kid_childRegisteredSchoolId INTEGER DEFAULT 'undefined'",
+                            "kid_birthHepB INTEGER DEFAULT 'undefined'",
+                            "kid_birthBCG INTEGER DEFAULT 'undefined'",
+                            "kid_birthCertificateNumber TEXT DEFAULT 'undefined'",
+                            "kid_birthDosage TEXT DEFAULT 'undefined'",
+                            "kid_gestationalAgeId INTEGER DEFAULT 'undefined'",
+                            "kid_facilityId INTEGER DEFAULT 'undefined'",
+                            "kid_opvBatchNo TEXT DEFAULT 'undefined'",
+                            "confirmedHrp TEXT DEFAULT 'undefined'",
+                            "confirmedTb TEXT DEFAULT 'undefined'",
+                            "kid_corticosteroidGivenMother TEXT DEFAULT 'undefined'",
+                            "kid_birthDefects TEXT DEFAULT 'undefined'",
+                            "kid_deliveryTypeOther TEXT DEFAULT 'undefined'",
+                            "kid_deliveryTypeId INTEGER DEFAULT 'undefined'",
+                            "kid_term TEXT DEFAULT 'undefined'",
+                            "kid_facilityName TEXT DEFAULT 'undefined'",
+                            "kid_hptDate TEXT DEFAULT 'undefined'",
+                            "kid_vitaminKBatchNo TEXT DEFAULT 'undefined'",
+                            "confirmedNcdDiseases TEXT DEFAULT 'undefined'",
+                            "processed TEXT DEFAULT 'undefined'",
+                            "kid_childRegisteredAWC TEXT DEFAULT 'undefined'",
+                            "kid_facilityOther TEXT DEFAULT 'undefined'",
+                            "kid_deliveryType TEXT DEFAULT 'undefined'",
+                            "kid_heightAtBirth REAL DEFAULT 'undefined'",
+                            "kid_weightAtBirth REAL DEFAULT 'undefined'",
+                            "kid_placeName TEXT DEFAULT 'undefined'",
+                            "tempMobileNoOfRelationId INTEGER NOT NULL DEFAULT 'undefined'"
                         )
 
-                        for (column in columns) {
-                            database.execSQL("ALTER TABLE BENEFICIARY ADD COLUMN $column")
+                        for (column in beneficiaryColumns) {
+                            val columnName = column.split(" ")[0]
+                            if (!columnExists(database, "BENEFICIARY", columnName)) {
+                                database.execSQL("ALTER TABLE BENEFICIARY ADD COLUMN $column")
+                            }
                         }
+                    }
 
-
-                        // 🔹 Columns for PREGNANCY_ANC table
+                    if (tableExists(database, "PREGNANCY_ANC")) {
                         val pregnancyAncColumns = listOf(
                             "serialNo TEXT",
                             "methodOfTermination TEXT",
-                            "methodOfTerminationId INTEGER DEFAULT 0 NOT NULL",
+                            "methodOfTerminationId INTEGER NOT NULL DEFAULT 0",
                             "terminationDoneBy TEXT",
-                            "terminationDoneById INTEGER DEFAULT 0 NOT NULL",
-                            "isPaiucdId INTEGER DEFAULT 0 NOT NULL",
+                            "terminationDoneById INTEGER NOT NULL DEFAULT 0",
+                            "isPaiucdId INTEGER NOT NULL DEFAULT 0",
                             "isPaiucd TEXT",
                             "remarks TEXT",
                             "abortionImg1 TEXT",
                             "abortionImg2 TEXT",
                             "placeOfDeath TEXT",
-                            "placeOfDeathId INTEGER DEFAULT 0 NOT NULL",
+                            "placeOfDeathId INTEGER NOT NULL DEFAULT 0",
                             "otherPlaceOfDeath TEXT"
                         )
 
                         for (column in pregnancyAncColumns) {
-                            database.execSQL("ALTER TABLE PREGNANCY_ANC ADD COLUMN $column")
+                            val columnName = column.split(" ")[0]
+                            if (!columnExists(database, "PREGNANCY_ANC", columnName)) {
+                                database.execSQL("ALTER TABLE PREGNANCY_ANC ADD COLUMN $column")
+                            }
                         }
-
-                    } catch (e: Exception) {
-
-                        Log.e("DB_MIGRATION", "Migration 1->2 failed: ${e.message}", e)
-
-                        throw e
-
                     }
-
                 }
             }
+
 
 //        _db.execSQL("CREATE TABLE IF NOT EXISTS `HRP_PREGNANT_TRACK` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `benId` INTEGER NOT NULL, `visitDate` INTEGER, `rdPmsa` TEXT, `rdDengue` TEXT, `rdFilaria` TEXT, `severeAnemia` TEXT, `hemoglobinTest` TEXT, `ifaGiven` TEXT, `ifaQuantity` INTEGER, `pregInducedHypertension` TEXT, `systolic` INTEGER, `diastolic` INTEGER, `gestDiabetesMellitus` TEXT, `bloodGlucoseTest` TEXT, `fbg` INTEGER, `rbg` INTEGER, `ppbg` INTEGER, `fastingOgtt` INTEGER, `after2hrsOgtt` INTEGER, `hypothyrodism` TEXT, `polyhydromnios` TEXT, `oligohydromnios` TEXT, `antepartumHem` TEXT, `malPresentation` TEXT, `hivsyph` TEXT, `visit` TEXT, `syncState` INTEGER NOT NULL, FOREIGN KEY(`benId`) REFERENCES `BENEFICIARY`(`beneficiaryId`) ON UPDATE CASCADE ON DELETE CASCADE )");
             synchronized(this) {
@@ -2020,6 +2778,9 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_43_44,
                         MIGRATION_44_45,
                         MIGRATION_45_46,
+                        MIGRATION_43_44,
+                        MIGRATION_44_45,
+                        MIGRATION_45_46,
                         MIGRATION_46_47,
                         MIGRATION_47_48,
                         MIGRATION_48_49,
@@ -2029,7 +2790,7 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_52_53,
                         MIGRATION_53_54,
                         MIGRATION_54_55
-                        
+
 
                     ).build()
 

@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.model
 
+import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
@@ -30,6 +31,7 @@ data class EligibleCoupleTrackingCache(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val benId: Long,
+    @ColumnInfo(defaultValue = "0")
     var lmpDate: Long = 0L,
     var visitDate: Long = 0L,
     var dateOfSterilisation: Long = 0L,
@@ -52,7 +54,8 @@ data class EligibleCoupleTrackingCache(
     var processed: String? = "N",
     var isActive: Boolean = true,
     var syncState: SyncState,
-    var lmp_date: Long
+    @ColumnInfo(defaultValue = "0")
+    var lmp_date: Long = 0L
 ) : FormDataModel {
 
     fun asNetworkModel(): ECTNetwork {
