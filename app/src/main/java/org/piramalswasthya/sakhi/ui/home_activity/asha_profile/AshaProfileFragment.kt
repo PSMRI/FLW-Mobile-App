@@ -117,7 +117,7 @@ class AshaProfileFragment : Fragment() {
             )
         }
 
-        val householdAdapter = HouseHoldListAdapter("",false, prefDao, HouseHoldListAdapter.HouseholdClickListener({
+        val householdAdapter = HouseHoldListAdapter("",false, prefDao, false, HouseHoldListAdapter.HouseholdClickListener({
                 findNavController().navigate(
                     AllHouseholdFragmentDirections.actionAllHouseholdFragmentToNewHouseholdFragment(
                         it.hhId
