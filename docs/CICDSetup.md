@@ -1,293 +1,282 @@
-# CI-CD Setup 🚀
+# CI/CD Setup
 
-Our Continuous Integration and Continuous Deployment (CI-CD) pipeline is designed to streamline the development process for the FLW Mobile App. Leveraging **GitHub Actions**, the pipeline automates the entire lifecycle of the Android application—from building and testing to signing and distributing the app. This ensures that every change is validated and delivered quickly and reliably, supporting our mission to provide ASHAs with a modern, digital tool to enhance healthcare services for pregnant women, mothers, and newborns in India.
+CI/CD pipeline for the FLW Mobile App using GitHub Actions and Fastlane. Builds are triggered manually via `workflow_dispatch` and distributed to Firebase App Distribution (debug) or Google Play Store internal track (release).
 
 ---
 
 ## Table of Contents
 
-- [Overview](#overview)
-- [CI/CD Pipeline for Android Build and Distribute](#cicd-pipeline-for-android-build-and-distribute)
-  - [Workflows Overview](#workflows-overview)
-  - [Workflow: `android.yml`](#workflow-androidyml)
-  - [Workflow: `build-distribute.yml`](#workflow-build-distributeyml)
-  - [Guidelines for Environments & GitHub Secrets](#guidelines-for-environments--github-secrets)
-  - [Example Usage](#example-usage)
-- [Android `build.gradle` File Documentation](#android-buildgradle-file-documentation)
-  - [Splits Configuration](#splits)
-  - [External Native Build Configuration](#external-native-build-configuration)
-  - [Version Management](#version-management)
-- [Firebase App Distribution Configurations](#firebase-app-distribution-configurations)
+- [Quick Start](#quick-start)
+- [Architecture](#architecture)
+- [Project Configuration Map](#project-configuration-map)
+- [Workflow Files](#workflow-files)
+  - [flw-android-build.yml](#flw-android-buildyml)
+  - [build-distribute.yml](#build-distributeyml)
+- [Fastlane](#fastlane)
+- [GitHub Environments and Secrets](#github-environments-and-secrets)
+  - [Environment Setup](#environment-setup)
+  - [Required Secrets by Build Type](#required-secrets-by-build-type)
+  - [Managing Secrets](#managing-secrets)
+- [Version Management](#version-management)
+- [Native Build (C++ / JNI)](#native-build-c--jni)
+- [Build Configuration (build.gradle)](#build-configuration-buildgradle)
+- [Firebase App Distribution Config](#firebase-app-distribution-config)
 
 ---
 
-<a id="overview"></a>
-## Overview
+## Quick Start
 
-The FLW Mobile App is designed for healthcare programs and consultation services rendered by ASHAs’ to serve pregnant women, mothers, and newborns in India. This eliminates pen and paperwork by ASHAs and allows them to enter beneficiaries data in a digital process with increased ease and accuracy of data. We named it as SAKHI for Bihar State and Utprerona for Assam State.
+1. Go to **Actions** tab in the GitHub repository.
+2. Select **FLW Android Build** workflow.
+3. Click **Run workflow**.
+4. Fill in:
+   - **Project**: Select from the dropdown (e.g., `sakshamUat`).
+   - **Branch**: The git branch to build (default: `main`).
+   - **Version**: Version name for the build (e.g., `2.5.0`).
+5. Click **Run workflow** to start.
 
----
-
-<a id="ci-cd-pipeline-for-android-build-and-distribute"></a>
-## CI/CD Pipeline for Android Build and Distribute ⚙️
-
-Our CI/CD pipeline uses **GitHub Actions** to automate the build and distribution process of the Android application. The key workflow configuration files are:
-
-- **[android.yml](./.github/workflows/android.yml)**
-- **[build-distribute.yml](./.github/workflows/build-distribute.yml)**
-
-### Workflows Overview
-
-The pipeline consists of two primary workflow files:
-
-1. **`android.yml`**: Handles triggering events, setting up a build matrix for various environments, and invoking the distribution workflow.
-2. **`build-distribute.yml`**: Contains the detailed steps to build, sign, and distribute the app through Firebase and GitHub Releases.
+The pipeline automatically resolves the Gradle flavor, GitHub environment, and build type based on the selected project. Debug builds go to Firebase App Distribution; release builds go to Google Play Store internal track.
 
 ---
 
-### Workflow: `android.yml`
+## Architecture
 
-Triggered by:
-
-- **Manual Runs** via `workflow_dispatch` 🔄
-- **Push Events** on the `develop` branch
-- **Pull Request Events** targeting `develop`
-
-#### Matrix Configuration
-
-This file uses a matrix strategy to build different configurations. The environments and build types include:
-
-- **SAKSHAM_STAG**
-  - *Variant*: `sakshamStag`
-  - *Build Type*: `debug`
-- **SAKSHAM_UAT**
-  - *Variant*: `sakshamUat`
-  - *Build Type*: `debug`
-- **NIRAMAY_PRODUCTION**
-  - *Variant*: `niramay`
-  - *Build Type*: `release`
-- **XUSHRUKHA_PRODUCTION**
-  - *Variant*: `xushrukha`
-  - *Build Type*: `release`
-
-#### Job Details
-
-- **Job Name**: `build_and_distribute`
-- **Strategy Matrix**: Provides environment-specific configurations.
-- **Uses**: Invokes the workflow defined in `./.github/workflows/build-distribute.yml`
-- **Inputs Passed**:
-  - `environment`
-  - `variant`
-  - `build_type`
-- **Secrets**: Inherits all repository secrets.
-
----
-
-### Workflow: `build-distribute.yml`
-
-Triggered by a **workflow_call**, this file accepts inputs and runs the build process on `ubuntu-latest`.
-
-#### Steps Overview
-
-1. **Set Environment**  
-   Sets the job's environment using the provided input.
-
-2. **Checkout Code**  
-   Uses `actions/checkout@v4` to retrieve the code.
-
-3. **Set Up JDK**  
-   Configures JDK 17 (Zulu distribution) via `actions/setup-java@v4`.
-
-4. **Set Up Android SDK & NDK**
-    - **Android SDK**: `android-actions/setup-android@v2`
-    - **Android NDK**: `nttld/setup-ndk@v1.5.0` (version `r27c`)
-
-5. **Install CMake**  
-   Utilizes `jwlawson/actions-setup-cmake@v1` (version `3.31.1`).
-
-6. **Set Up Ruby Environment**  
-   Uses `ruby/setup-ruby@v1` (Ruby version `2.7.2`) with Bundler caching enabled.
-
-7. **Generate AES Key and IV** 🔑  
-   Creates a 32-byte AES key and a 16-byte IV, encodes them to Base64, and masks them in logs.
-
-8. **Decode Configuration Files**
-    - **google-services.json**: Decodes based on environment (`NIRAMAY_PRODUCTION`, `XUSHRUKHA_PRODUCTION`, or generic).
-    - **Firebase Credentials**: Decodes based on the capitalized variant.
-    - **Google Play JSON Key**: Decodes for release builds.
-    - **Keystore**: Decodes and sets the file path.
-
-9. **Configure Local Properties**  
-   Generates a `local.properties` file with the Android SDK directory.
-
-10. **Retrieve & Verify Version**  
-    Extracts the version from `version/version.properties` and verifies it.
-
-11. **Build and Distribute**  
-    Sets environment variables for app URLs, signing credentials, and Firebase tokens.  
-    Runs `fastlane` for:
-    - `build_and_distribute_debug` (debug builds)
-    - `build_and_distribute_release` (release builds)
-
-12. **Verify & Upload Artifacts**  
-    Checks the output folder and uploads the generated APKs or AABs using `actions/upload-artifact@v4`.
-
-13. **Push Release Artifacts**  
-    Uses `ncipollo/release-action@v1` to push artifacts to GitHub Releases.
-
----
-
-### Guidelines for Environments & GitHub Secrets 📝
-
-#### **Updating/Adding/Deleting Environments**
-
-1. **Update an Environment**:
-    - Open `.github/workflows/android.yml`
-    - Locate `jobs.build_and_distribute.strategy.matrix.config`
-    - Update the necessary details (e.g., `environment`, `variant`, `build_type`).
-
-2. **Add a New Environment**:
-    - Open `.github/workflows/android.yml`
-    - Add a new entry under `jobs.build_and_distribute.strategy.matrix.config` with the desired parameters.
-
-3. **Delete an Environment**:
-    - Open `.github/workflows/android.yml`
-    - Remove the entry for the environment you want to delete.
-
-#### **Updating/Adding/Deleting GitHub Secrets**
-
-1. **Update a Secret**:
-    - Navigate to **Settings > Secrets and variables > Actions** in your repository.
-    - Click the secret you want to update and modify its value.
-
-2. **Add a New Secret**:
-    - Go to **Settings > Secrets and variables > Actions**.
-    - Click on **New repository secret**.
-    - Enter the secret name and value, then click **Add secret**.
-
-3. **Delete a Secret**:
-    - Navigate to **Settings > Secrets and variables > Actions**.
-    - Locate the secret and click **Delete**.
-
----
-
-### Example Usage
-
-To **manually trigger** the workflow:
-
-1. Open the **Actions** tab in the repository.
-2. Select the **Android Build and Distribute** workflow.
-3. Click the **Run workflow** button.
-
-For more details on GitHub Actions, check out the [GitHub Actions Documentation](https://docs.github.com/en/actions).
-
----
-
-<a id="android-buildgradle-file-documentation"></a>
-## Android `build.gradle` File Documentation 📜
-
-### Overview
-
-The `build.gradle` file is used to configure the Android application module. It includes settings for the Android build system, dependencies, and additional build configurations.
-
-### Key Sections
-
-#### `splits`
-
-The `splits` block is used to configure APK generation for different ABIs (Application Binary Interfaces). This allows the creation of separate APKs for different device architectures, which can help reduce the size of the APK.
-
-```gradle
-splits {
-    abi {
-        enable true          // Enables ABI splits, allowing the build system to create separate APKs for each architecture.
-        reset()              // Clears any previous ABI configurations, ensuring a clean configuration.
-        include 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'  // Specifies the ABIs for which APKs should be generated:
-        // armeabi-v7a: ARM 32-bit architecture
-        // arm64-v8a: ARM 64-bit architecture
-        // x86: Intel 32-bit architecture
-        // x86_64: Intel 64-bit architecture
-        universalApk true    // Generates a universal APK that includes all the specified ABIs.
-    }
-}
-```
-- **`enable true`**: Enables ABI splits, allowing the build system to create separate APKs for each architecture.
-- **`reset()`**: Resets any previous ABI configurations, ensuring a clean configuration.
-- **`include 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'`**: Specifies the ABIs for which APKs should be generated. This includes:
-  - `armeabi-v7a`: ARM 32-bit architecture
-  - `arm64-v8a`: ARM 64-bit architecture
-  - `x86`: Intel 32-bit architecture
-  - `x86_64`: Intel 64-bit architecture
-- **`universalApk true`**: Generates a universal APK that includes all the specified ABIs. This APK can run on any device but will be larger in size compared to the individual ABI-specific APKs.
-
-#### `externalNativeBuild`
-
-The `externalNativeBuild` block is used to configure the build system for native code. It specifies the use of CMake and the path to the CMakeLists.txt file, which contains the build instructions for the native code.
-
-```gradle
-externalNativeBuild {
-    cmake {
-        path file("src/main/cpp/CMakeLists.txt")
-    }
-}
-ndkVersion "27.2.12479018"
+```text
+flw-android-build.yml (caller)
+  |
+  +-- resolve-config job
+  |     Maps project input -> flavor, environment, build_type
+  |
+  +-- flw-build job (calls build-distribute.yml)
+        Uses: secrets: inherit + environment scoping
+        |
+        +-- Setup (JDK, SDK, NDK, CMake, Ruby)
+        +-- Decode secrets (conditional on build type)
+        +-- Fastlane build and distribute
 ```
 
-- **`cmake`**: Specifies that CMake is used for the native build.
-  - **`path file("src/main/cpp/CMakeLists.txt")`**: Sets the path to the CMakeLists.txt file, which contains the configuration and build instructions for the native code.
-- **`ndkVersion "27.2.12479018"`**: Specifies the version of the Android NDK (Native Development Kit) to be used. This ensures compatibility between the NDK version and the build configurations.
+---
 
-### Additional Information
+## Project Configuration Map
 
-- **`namespace`**: Defines the package namespace for the application.
-- **`compileSdk 34`**: Specifies the SDK version used to compile the application.
-- **`defaultConfig`**: Contains default settings for the application, including application ID, minimum and target SDK versions, version code, and version name.
-- **`buildTypes`**: Defines different build types, such as `release` with settings for minification and resource shrinking.
-- **`flavorDimensions` and `productFlavors`**: Used to define product flavors for different environments like `sakshamStag`, `sakshamUat`, `saksham`, `xushrukha`, and `niramay`.
-- **`compileOptions` and `kotlinOptions`**: Configure Java and Kotlin compilation settings.
-- **`dataBinding` and `viewBinding`**: Enable data binding and view binding features.
+| Project Input  | Gradle Flavor  | GitHub Environment     | Build Type | Distribution          |
+|----------------|----------------|------------------------|------------|-----------------------|
+| `sakshamStag`  | `SakshamStag`  | `SAKSHAM_STAG`         | debug      | Firebase App Dist     |
+| `sakshamUat`   | `SakshamUat`   | `SAKSHAM_UAT`          | debug      | Firebase App Dist     |
+| `saksham`      | `Saksham`      | `SAKSHAM_PRODUCTION`   | release    | Play Store (internal) |
+| `xushrukha`    | `Xushrukha`    | `XUSHRUKHA_PRODUCTION` | release    | Play Store (internal) |
+| `niramay`      | `Niramay`      | `NIRAMAY_PRODUCTION`   | release    | Play Store (internal) |
+| `mitaninStag`  | `MitaninStag`  | `MITANIN_STAG`         | debug      | Firebase App Dist     |
+| `mitaninUat`   | `MitaninUat`   | `MITANIN_UAT`          | debug      | Firebase App Dist     |
+| `mitanin`      | `Mitanin`      | `MITANIN_PRODUCTION`   | release    | Play Store (internal) |
 
-### Guidelines for Changing the Version
+---
 
-The version management is handled by the `versioning.gradle` file, which reads the version from the `version/version.properties` file. To change the version:
+## Workflow Files
 
-versioning.gradle
-The versioning.gradle file includes logic to manage and retrieve the version information for the application. Here is the content of the file:
+### `flw-android-build.yml`
 
-```gradle
-ext {
-    buildVersionCode = {
-        def versionName = buildVersionName()
-        def (major, minor, patch) = versionName.toLowerCase().tokenize('.')
-        major.toInteger()
-    }
-    buildVersionName = {
-        def props = new Properties()
-        rootProject.file("version/version.properties").withInputStream { props.load(it) }
-        return props.getProperty("VERSION")
-    }
-}
+**Path**: `.github/workflows/flw-android-build.yml`
+
+The caller workflow, triggered manually via `workflow_dispatch`. Accepts 3 inputs:
+
+| Input     | Type   | Required | Description                              |
+|-----------|--------|----------|------------------------------------------|
+| `project` | choice | yes      | Dropdown with all 8 project options      |
+| `branch`  | string | yes      | Git branch to build (default: `main`)    |
+| `version` | string | yes      | Version name (e.g., `2.5.0`)            |
+
+**Jobs**:
+
+1. **`resolve-config`**: Maps the `project` input to `flavor`, `environment`, and `build_type` using a shell `case` statement. Outputs these values for the next job.
+2. **`flw-build`**: Calls `build-distribute.yml` with the resolved configuration. Uses `secrets: inherit` so both repo-level and environment-scoped secrets are available.
+
+### `build-distribute.yml`
+
+**Path**: `.github/workflows/build-distribute.yml`
+
+A reusable workflow (`workflow_call`) that performs the actual build. Accepts 5 inputs: `branch`, `environment`, `flavor`, `build_type`, `version`.
+
+**Key steps**:
+
+1. **Checkout code** from the specified branch.
+2. **Setup toolchain**: JDK 17 (Zulu), Android SDK, NDK r29, CMake 3.31.1, Ruby 3.1.4.
+3. **Decode secrets** (conditional):
+   - `google-services.json` - always (from `GOOGLE_SERVICES_JSON_GENERIC`).
+   - `firebase_credentials.json` - debug builds only (from `FIREBASE_CREDENTIALS_JSON`).
+   - `google_play_service_account.json` - release builds only (from `GOOGLE_PLAY_JSON_KEY`).
+   - `keystore.jks` - release builds only (from `KEYSTORE_FILE`).
+4. **Export env vars** for native C++ build (8 variables matching `CMakeLists.txt`).
+5. **Run Fastlane**:
+   - Debug: `bundle exec fastlane build_and_distribute_debug flavor:<Flavor> version_name:<version>`
+   - Release: `bundle exec fastlane build_and_distribute_release flavor:<Flavor> version_name:<version>`
+
+**Note**: Secrets are not explicitly declared in the `workflow_call` block. They are inherited from the caller (`secrets: inherit`) and scoped by the `environment:` field on the build job.
+
+---
+
+## Fastlane
+
+**Path**: `fastlane/Fastfile`
+
+### Lanes
+
+**`build_and_distribute_debug`**:
+1. Queries Firebase App Distribution for the latest version code (defaults to 1 if no prior release exists).
+2. Writes `version/version.properties` with the provided version name and incremented version code.
+3. Runs `gradle clean assemble<Flavor>Debug`.
+4. Distributes APK to Firebase App Distribution using groups and release notes from `FirebaseAppDistributionConfig/`.
+
+**`build_and_distribute_release`**:
+1. Queries Google Play Store across all tracks for the highest version code, increments by 1.
+2. Writes `version/version.properties` with the provided version name and new version code.
+3. Runs `gradle clean bundle<Flavor>Release` with keystore signing properties.
+4. Uploads AAB to Google Play Store internal track as a draft.
+
+### Helper Functions
+
+- **`get_package_name(flavor)`**: Maps a Gradle flavor name to its full package name (`org.piramalswasthya.sakhi.<suffix>`). Supports all 8 flavors.
+- **`latest_googleplay_version_code(package_name)`**: Scans production, beta, alpha, and internal tracks for the highest version code. Returns 0 if none found.
+
+### Options
+
+Both lanes accept:
+- `flavor:` - The Gradle flavor name (e.g., `SakshamUat`).
+- `version_name:` - The version name string (e.g., `2.5.0`). Falls back to auto-generated `<version_code>.0.0` if not provided.
+
+---
+
+## GitHub Environments and Secrets
+
+### Environment Setup
+
+The pipeline requires one GitHub environment per project configuration. Each environment scopes its secrets so they are only available to builds targeting that environment.
+
+**Required environments**:
+
+| Environment            | Used By         | Type       |
+|------------------------|-----------------|------------|
+| `SAKSHAM_STAG`         | `sakshamStag`   | Debug      |
+| `SAKSHAM_UAT`          | `sakshamUat`    | Debug      |
+| `SAKSHAM_PRODUCTION`   | `saksham`       | Production |
+| `XUSHRUKHA_PRODUCTION` | `xushrukha`     | Production |
+| `NIRAMAY_PRODUCTION`   | `niramay`       | Production |
+| `MITANIN_STAG`         | `mitaninStag`   | Debug      |
+| `MITANIN_UAT`          | `mitaninUat`    | Debug      |
+| `MITANIN_PRODUCTION`   | `mitanin`       | Production |
+
+To create or manage environments: **Settings > Environments** in the GitHub repository.
+
+### Required Secrets by Build Type
+
+**Repo-level secrets** (shared across all builds):
+
+| Secret                       | Description                              |
+|------------------------------|------------------------------------------|
+| `ENCRYPTED_PASS_KEY`         | Encryption key for native C++ build      |
+| `CHAT_URL`                   | Chat service URL for native build        |
+| `GOOGLE_SERVICES_JSON_GENERIC` | Base64-encoded google-services.json    |
+
+**Shared environment secrets** (needed by both debug and production):
+
+| Secret                     | Description                                |
+|----------------------------|--------------------------------------------|
+| `ABHA_CLIENT_SECRET`       | ABHA API client secret                     |
+| `ABHA_CLIENT_ID`           | ABHA API client ID                         |
+| `BASE_TMC_URL`             | TMC base URL                               |
+| `BASE_ABHA_URL`            | ABHA base URL                              |
+| `ABHA_TOKEN_URL`           | ABHA token endpoint URL                    |
+| `ABHA_AUTH_URL`            | ABHA auth endpoint URL                     |
+
+**Debug-only environment secrets** (STAG/UAT - used for Firebase App Distribution):
+
+| Secret                     | Description                                |
+|----------------------------|--------------------------------------------|
+| `FIREBASE_APP_ID`          | Firebase App ID for distribution           |
+| `FIREBASE_CREDENTIALS_JSON`| Base64-encoded Firebase service account key|
+
+**Production-only environment secrets** (used for Play Store signing and upload):
+
+| Secret                     | Description                                |
+|----------------------------|--------------------------------------------|
+| `GOOGLE_PLAY_JSON_KEY`     | Base64-encoded Google Play service account |
+| `KEYSTORE_FILE`            | Base64-encoded release keystore (.jks)     |
+| `KEYSTORE_PASSWORD`        | Keystore password                          |
+| `KEY_ALIAS`                | Signing key alias                          |
+| `KEY_PASSWORD`             | Signing key password                       |
+
+### Managing Secrets
+
+**Add/Update a secret**:
+1. Go to **Settings > Environments > [environment name]**.
+2. Under **Environment secrets**, click **Add secret** or update an existing one.
+3. Enter the name and Base64-encoded value (where applicable).
+
+**Add a new environment**:
+1. Go to **Settings > Environments > New environment**.
+2. Name it matching the convention (e.g., `NEWPROJECT_PRODUCTION`).
+3. Add all required secrets for its build type (debug or production).
+4. Add the project to the `case` statement in `flw-android-build.yml`.
+5. Add the flavor to `get_package_name()` in `fastlane/Fastfile`.
+
+---
+
+## Version Management
+
+Version is managed through `version/version.properties`:
+
+```properties
+VERSION=2.5.0
+VERSIONCODE=27
 ```
 
-1. **Open the `version/version.properties` File**:
-   - Navigate to `version/version.properties`.
+- **VERSION**: The human-readable version name (e.g., `2.5.0`).
+- **VERSIONCODE**: The integer version code used by Android and app stores.
 
-2. **Update the Version**:
-   - Modify the `VERSION` property to the new version. For example, to increment from `5.0.0` to `6.0.0`:
-     ```ini
-     VERSION=6.0.0
-     ```
+During CI builds, Fastlane overwrites this file with the version name from the workflow input and an auto-incremented version code (from Firebase or Play Store). The `versioning.gradle` file reads these values and applies them to the build.
 
-3. **Save the File**:
-   - Save the `version.properties` file with the updated version.
+For local development, edit `version/version.properties` directly.
 
+---
 
-## Firebase App Distribution Configurations
+## Native Build (C++ / JNI)
 
-groups.txt
--	Purpose: Defines the groups of testers for Firebase App Distribution. Groups should be comma-separated (e.g., `group-1, group-2`).
--	Content: `trusted-testers`: A group named "trusted-testers" that is used to manage testers who are trusted to receive app distributions.
+The app uses a native C++ library built via CMake (`app/src/main/cpp/CMakeLists.txt`). The following 8 environment variables must be set at build time:
 
-release_notes.txt
--	Purpose: Contains the release notes for the app distribution.
--	Content:  For example, `In this version, we improved the user experience and fixed some bugs.`: A brief note describing improvements and bug fixes in the current version.
+| Variable              | Source                |
+|-----------------------|-----------------------|
+| `ENCRYPTED_PASS_KEY`  | Repo-level secret     |
+| `ABHA_CLIENT_SECRET`  | Environment secret    |
+| `ABHA_CLIENT_ID`      | Environment secret    |
+| `BASE_TMC_URL`        | Environment secret    |
+| `BASE_ABHA_URL`       | Environment secret    |
+| `ABHA_TOKEN_URL`      | Environment secret    |
+| `ABHA_AUTH_URL`       | Environment secret    |
+| `CHAT_URL`            | Repo-level secret     |
 
+These are exported as shell environment variables in the `build-distribute.yml` workflow before invoking Fastlane/Gradle. CMake reads them via `$ENV{VAR_NAME}` and compiles them into the native library.
+
+---
+
+## Build Configuration (build.gradle)
+
+Key settings in `app/build.gradle`:
+
+- **compileSdk**: 35
+- **minSdk**: 25
+- **targetSdk**: 35
+- **NDK**: r29
+- **8 product flavors** in a single `project` dimension
+- **ABI splits**: armeabi-v7a, arm64-v8a, x86, x86_64 + universal APK
+- **Data binding and view binding**: Enabled
+
+---
+
+## Firebase App Distribution Config
+
+**Path**: `FirebaseAppDistributionConfig/`
+
+- **`groups.txt`**: Comma-separated list of tester groups (e.g., `trusted-testers`).
+- **`release_notes.txt`**: Release notes included with each Firebase distribution.
+
+Update these files before triggering a debug build to customize distribution targets and release notes.
