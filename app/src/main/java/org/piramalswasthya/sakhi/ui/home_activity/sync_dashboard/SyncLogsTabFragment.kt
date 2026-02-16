@@ -21,6 +21,8 @@ class SyncLogsTabFragment : Fragment() {
 
     private val viewModel: SyncDashboardViewModel by viewModels({ requireParentFragment() })
 
+    private var isPaused = false
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -39,8 +41,18 @@ class SyncLogsTabFragment : Fragment() {
             viewModel.clearLogs()
         }
 
+        binding.fabPause.setOnClickListener {
+            isPaused = !isPaused
+            binding.fabPause.setImageResource(
+                if (isPaused) android.R.drawable.ic_media_play
+                else android.R.drawable.ic_media_pause
+            )
+        }
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.syncLogs.collect { logs ->
+                if (isPaused) return@collect
+
                 val wasAtBottom = !binding.rvSyncLogs.canScrollVertically(1)
 
                 binding.tvEmpty.visibility = if (logs.isEmpty()) View.VISIBLE else View.GONE
