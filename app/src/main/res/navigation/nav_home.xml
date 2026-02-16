@@ -2194,6 +2194,10 @@
             app:destination="@id/filariaMdaCampaignFormFragment" />
     </fragment>
 
-
+    <fragment
+        android:id="@+id/syncDashboardFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.sync_dashboard.SyncDashboardFragment"
+        android:label="@string/sync_dashboard"
+        tools:layout="@layout/fragment_sync_dashboard" />
 
 </navigation>
