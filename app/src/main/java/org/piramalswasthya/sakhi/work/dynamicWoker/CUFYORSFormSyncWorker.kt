@@ -18,71 +18,55 @@ import java.io.IOException
 class CUFYORSFormSyncWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workerParams: WorkerParameters,
-    private val preferenceDao: PreferenceDao,
+    override val preferenceDao: PreferenceDao,
     private val repository: CUFYFormRepository
-) : CoroutineWorker(context, workerParams) {
+) : BaseDynamicWorker(context, workerParams) {
 
-    override suspend fun doWork(): Result {
-        return try {
-            val user = preferenceDao.getLoggedInUser()
-                ?: throw IllegalStateException("No user logged in")
+    override val workerName = "CUFYORSFormSyncWorker"
 
+    override suspend fun doSyncWork(): Result {
+        val user = preferenceDao.getLoggedInUser()
+            ?: throw IllegalStateException("No user logged in")
 
+        val request = HBNCVisitRequest(
+            fromDate = HelperUtil.getCurrentDate(Konstants.defaultTimeStamp),
+            toDate = HelperUtil.getCurrentDate(),
+            pageNo = 0,
+            ashaId = user.userId,
+            userName = user.userName
+        )
 
-            val request = HBNCVisitRequest(
-                fromDate = HelperUtil.getCurrentDate(Konstants.defaultTimeStamp),
-                toDate = HelperUtil.getCurrentDate(),
-                pageNo = 0,
-                ashaId = user.userId,
-                userName = user.userName
-            )
+        val response = repository.getAllFormVisits(FormConstants.ORS_FORM_NAME, request)
 
+        if (response.isSuccessful) {
+            val visitList = response.body()?.data.orEmpty()
 
-
-            val response = repository.getAllFormVisits(FormConstants.ORS_FORM_NAME, request)
-
-            if (response.isSuccessful) {
-                val visitList = response.body()?.data.orEmpty()
-
-                if (visitList.isNotEmpty()) {
-                    repository.saveDownloadedVisitList(visitList, FormConstants.CHILDREN_UNDER_FIVE_ORS_FORM_ID)
-                } else {
-                    Timber.tag("CUFYORSFormSyncWorker").d("doWork: No visits found to download from server")
-                }
+            if (visitList.isNotEmpty()) {
+                repository.saveDownloadedVisitList(visitList, FormConstants.CHILDREN_UNDER_FIVE_ORS_FORM_ID)
             } else {
-                if (response.code() >= 500) {
-                    throw IOException("Server error: ${response.code()}")
-                }
+                Timber.tag("CUFYORSFormSyncWorker").d("doWork: No visits found to download from server")
             }
-
-            val unsyncedForms = repository.getUnsyncedForms(FormConstants.CHILDREN_UNDER_FIVE_ORS_FORM_ID)
-            for (form in unsyncedForms) {
-                if ((form.benId ?: -1) < 0) continue
-
-                try{
-                    val success = repository.syncFormToServer(user.userName,FormConstants.ORS_FORM_NAME,form)
-                    if (success) {
-                        repository.markFormAsSynced(form.id)
-                    }
-                }catch (e: Exception){
-                    Timber.e(e, "Failed to sync form ${form.id}")
-                }
-
-            }
-
-            Result.success()
-
-        } catch (e: IllegalStateException) {
-            Result.failure()
-        } catch (e: java.net.UnknownHostException) {
-            Result.retry()
-        } catch (e: Exception) {
-            if (runAttemptCount < 3) {
-                Result.retry()
-            } else {
-                Result.failure()
+        } else {
+            if (response.code() >= 500) {
+                throw IOException("Server error: ${response.code()}")
             }
         }
+
+        val unsyncedForms = repository.getUnsyncedForms(FormConstants.CHILDREN_UNDER_FIVE_ORS_FORM_ID)
+        for (form in unsyncedForms) {
+            if ((form.benId ?: -1) < 0) continue
+
+            try {
+                val success = repository.syncFormToServer(user.userName, FormConstants.ORS_FORM_NAME, form)
+                if (success) {
+                    repository.markFormAsSynced(form.id)
+                }
+            } catch (e: Exception) {
+                Timber.e(e, "Failed to sync form ${form.id}")
+            }
+        }
+
+        return Result.success()
     }
 
     companion object {
