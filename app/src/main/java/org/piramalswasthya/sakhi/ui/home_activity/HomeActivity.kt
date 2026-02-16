@@ -608,6 +608,12 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
         }
 
+        binding.navView.menu.findItem(R.id.syncDashboardFragment).setOnMenuItemClickListener {
+            navController.navigate(R.id.syncDashboardFragment)
+            binding.drawerLayout.close()
+            true
+        }
+
         binding.navView.menu.findItem(R.id.ChatFragment).setOnMenuItemClickListener {
             navController.navigate(R.id.lmsFragment)
 

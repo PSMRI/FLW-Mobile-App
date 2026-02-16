@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingHorizontal="@dimen/padding_normal"
+    android:paddingVertical="@dimen/padding_small">
+
+    <TextView
+        android:id="@+id/tv_level"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginEnd="@dimen/padding_normal"
+        android:gravity="center"
+        android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        tools:background="@android:color/holo_red_dark"
+        tools:text="E" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_timestamp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+            android:textColor="?android:attr/textColorSecondary"
+            tools:text="14:32:05.123" />
+
+        <TextView
+            android:id="@+id/tv_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+            tools:text="[PushBenWorker] Socket timeout, will retry" />
+
+    </LinearLayout>
+
+</LinearLayout>
