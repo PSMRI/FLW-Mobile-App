@@ -39,7 +39,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/padding_normal"
-                    android:max="100" />
+                    android:max="100"
+                    android:progressTint="@android:color/holo_green_dark"
+                    android:progressBackgroundTint="#E0E0E0" />
 
                 <TextView
                     android:id="@+id/tv_progress_text"
