@@ -166,7 +166,6 @@ class AllBenFragment : Fragment() {
 
                             )
                         )
-                    }
 
                 },
                 clickedWifeBen = {
@@ -219,6 +218,7 @@ class AllBenFragment : Fragment() {
 
                             )
                         )
+                    }
 
                 },
 

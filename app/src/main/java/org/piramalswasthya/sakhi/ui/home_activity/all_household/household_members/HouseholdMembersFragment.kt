@@ -224,9 +224,6 @@ class HouseholdMembersFragment : Fragment() {
                     }
 
                 },
-                {
-                },
-                { benId, hhId ->
                 clickedChildben = { item, hhId, benId, relToHeadId ->
 
                     if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
@@ -264,11 +261,17 @@ class HouseholdMembersFragment : Fragment() {
                         }
                     }
                 },
-                {item, hhid->
+                { item, hhid->
+
                 },
-                { item,benId, hhId ->
-                    if (!item.isDeactivate && prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+                { item, benId, hhId ->
+                    if (!item.isDeactivate && prefDao.getLoggedInUser()?.role.equals(
+                            "asha",
+                            true
+                        )
+                    ) {
                         checkAndGenerateABHA(benId)
+                    }
                 },
                 { item,benId, hhId, isViewMode, isIFA ->
                 },
@@ -287,7 +290,8 @@ class HouseholdMembersFragment : Fragment() {
                         }
                     }
 
-                },{
+                },
+                { it ->
 
                     viewLifecycleOwner.lifecycleScope.launch {
                         val isHof = viewModel.isHOF(it)
