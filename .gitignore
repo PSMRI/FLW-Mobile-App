@@ -3,6 +3,7 @@
 /.gradle/
 *.bin
 *.lock
+!Gemfile.lock
 /app/build/*
 /app/release/*
 /local.properties
