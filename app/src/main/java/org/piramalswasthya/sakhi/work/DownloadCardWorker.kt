@@ -38,6 +38,8 @@ class DownloadCardWorker @AssistedInject constructor(
         appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     private val channelId = "download abha card"
 
+    override suspend fun getForegroundInfo(): ForegroundInfo = createForegroundInfo("Syncing data...")
+
     override suspend fun doWork(): Result {
         val fileName = inputData.getString(file_name)
         return try {
@@ -95,7 +97,7 @@ class DownloadCardWorker @AssistedInject constructor(
             .setProgress(100, 0, true)
             .build()
 
-        return ForegroundInfo(0, notification)
+        return ForegroundInfo(1003, notification)
     }
 
     private fun showDownload(fileName: String, uri: Uri) {

@@ -32,6 +32,8 @@ class PullUwinFromAmritWorker @AssistedInject constructor(
             .build()
     }
 
+    override suspend fun getForegroundInfo(): ForegroundInfo = createForegroundInfo("Syncing data...")
+
     override suspend fun doWork(): Result {
 
 
@@ -76,7 +78,7 @@ class PullUwinFromAmritWorker @AssistedInject constructor(
             .setOngoing(true)
             .build()
 
-        return ForegroundInfo(0, notification)
+        return ForegroundInfo(1003, notification)
     }
 
     private suspend fun fetchUwinSessions(): Boolean = withContext(Dispatchers.IO) {

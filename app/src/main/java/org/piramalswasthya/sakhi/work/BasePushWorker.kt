@@ -27,24 +27,28 @@ abstract class BasePushWorker(
 
     companion object {
         private const val MAX_RETRY_COUNT = 5
+        private const val NOTIFICATION_ID = 1001
     }
 
     // Subclass provides via Hilt DI constructor with `override val preferenceDao`
     protected abstract val preferenceDao: PreferenceDao
     abstract val workerName: String
 
+    override suspend fun getForegroundInfo(): ForegroundInfo =
+        createForegroundInfo("Syncing data...")
+
     override suspend fun doWork(): Result {
         if (runAttemptCount >= MAX_RETRY_COUNT) {
             Timber.e("[$workerName] Max retries ($MAX_RETRY_COUNT) exceeded, giving up")
             return Result.failure()
         }
-        initTokens()
         try {
             setForeground(createForegroundInfo("Syncing $workerName..."))
         } catch (e: Throwable) {
             // Foreground may fail if app is in background on some OEMs — continue anyway
             Timber.w(e, "[$workerName] Could not set foreground notification")
         }
+        initTokens()
         return try {
             doSyncWork()
         } catch (e: SocketTimeoutException) {
@@ -80,12 +84,12 @@ abstract class BasePushWorker(
         // Android 14+ (SDK 34) requires foreground service type declaration
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             ForegroundInfo(
-                0,
+                NOTIFICATION_ID,
                 notification,
                 ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
             )
         } else {
-            ForegroundInfo(0, notification)
+            ForegroundInfo(NOTIFICATION_ID, notification)
         }
     }
 }

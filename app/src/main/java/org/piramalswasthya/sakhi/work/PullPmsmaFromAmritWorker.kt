@@ -31,6 +31,8 @@ class PullPmsmaFromAmritWorker @AssistedInject constructor(
     }
 
 
+    override suspend fun getForegroundInfo(): ForegroundInfo = createForegroundInfo("Syncing data...")
+
     override suspend fun doWork(): Result {
         return try {
             try {
@@ -85,7 +87,7 @@ class PullPmsmaFromAmritWorker @AssistedInject constructor(
             .setOngoing(true)
             .build()
 
-        return ForegroundInfo(0, notification)
+        return ForegroundInfo(1003, notification)
     }
 
 
