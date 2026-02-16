@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.SystemClock
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -53,6 +54,11 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class SupervisorActivity : AppCompatActivity() {
+
+    private var lastAutoTriggerPushTime: Long = 0L
+    private companion object {
+        const val AUTO_PUSH_DEBOUNCE_MS = 120_000L  // 2 minutes
+    }
 
     @EntryPoint
     @InstallIn(SingletonComponent::class)
@@ -218,8 +224,12 @@ class SupervisorActivity : AppCompatActivity() {
         }
         viewModel.unprocessedRecordsCount.observe(this) {
             if (it > 0) {
-                if (isInternetAvailable(this)) {
-                    WorkerUtils.triggerAmritPushWorker(this)
+                val now = SystemClock.elapsedRealtime()
+                if (now - lastAutoTriggerPushTime >= AUTO_PUSH_DEBOUNCE_MS) {
+                    if (isInternetAvailable(this)) {
+                        lastAutoTriggerPushTime = now
+                        WorkerUtils.triggerAmritPushWorker(this)
+                    }
                 }
             }
         }

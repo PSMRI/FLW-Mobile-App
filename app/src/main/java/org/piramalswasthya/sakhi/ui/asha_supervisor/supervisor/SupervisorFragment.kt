@@ -219,7 +219,7 @@ class SupervisorFragment : Fragment() {
 
     private fun setUpWorkerProgress() {
         WorkManager.getInstance(requireContext())
-            .getWorkInfosLiveData(WorkQuery.fromUniqueWorkNames(WorkerUtils.syncWorkerUniqueName))
+            .getWorkInfosLiveData(WorkQuery.fromUniqueWorkNames(WorkerUtils.pushWorkerUniqueName, WorkerUtils.pullWorkerUniqueName, WorkerUtils.syncWorkerUniqueName))
             .observe(viewLifecycleOwner) { workInfoMutableList ->
                 workInfoMutableList?.let { list ->
                     list.takeIf { it.isNotEmpty() }?.let { workInfoMutableList1 ->

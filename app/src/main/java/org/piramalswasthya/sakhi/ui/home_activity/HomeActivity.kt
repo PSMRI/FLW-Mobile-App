@@ -84,6 +84,10 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
     private lateinit var inAppUpdateHelper: InAppUpdateHelper
 
     var lastClickTime: Long = 0L
+    private var lastAutoTriggerPushTime: Long = 0L
+    private companion object {
+        const val AUTO_PUSH_DEBOUNCE_MS = 120_000L  // 2 minutes
+    }
 
     @EntryPoint
     @InstallIn(SingletonComponent::class)
@@ -282,9 +286,13 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
             }
         }
         viewModel.unprocessedRecordsCount.observe(this) {
-            if (it>0) {
-                if (isInternetAvailable(this)){
-                    WorkerUtils.triggerAmritPushWorker(this)
+            if (it > 0) {
+                val now = SystemClock.elapsedRealtime()
+                if (now - lastAutoTriggerPushTime >= AUTO_PUSH_DEBOUNCE_MS) {
+                    if (isInternetAvailable(this)) {
+                        lastAutoTriggerPushTime = now
+                        WorkerUtils.triggerAmritPushWorker(this)
+                    }
                 }
             }
         }
