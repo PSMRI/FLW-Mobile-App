@@ -60,21 +60,35 @@ class PmsmaRepo @Inject constructor(
 
             val pmsmaPostList = mutableSetOf<PmsmaPost>()
 
+            // RECORD-LEVEL ISOLATION: Each PMSMA record is processed
+            // independently. If one record fails, remaining records continue.
+            // Failed records stay UNSYNCED and retry on next sync cycle.
+            var successCount = 0
+            var failCount = 0
+
             pmsmaList.forEach {
-                pmsmaPostList.clear()
-                pmsmaPostList.add(it.asPostModel())
-                val uploadDone = postDataToAmritServer(pmsmaPostList)
-                if (uploadDone) {
-                    it.processed = "P"
-                    it.syncState = SyncState.SYNCED
-                } else {
+                try {
+                    pmsmaPostList.clear()
+                    pmsmaPostList.add(it.asPostModel())
+                    val uploadDone = postDataToAmritServer(pmsmaPostList)
+                    if (uploadDone) {
+                        it.processed = "P"
+                        it.syncState = SyncState.SYNCED
+                        successCount++
+                    } else {
+                        it.syncState = SyncState.UNSYNCED
+                        failCount++
+                    }
+                    pmsmaDao.updatePmsmaRecord(it)
+                } catch (e: Exception) {
+                    Timber.e(e, "PMSMA push failed for record")
                     it.syncState = SyncState.UNSYNCED
+                    pmsmaDao.updatePmsmaRecord(it)
+                    failCount++
                 }
-                pmsmaDao.updatePmsmaRecord(it)
-                if (!uploadDone)
-                    return@withContext false
             }
 
+            Timber.d("PMSMA push complete: $successCount succeeded, $failCount failed out of ${pmsmaList.size}")
             return@withContext true
         }
     }

@@ -43,20 +43,39 @@ class CdrRepo @Inject constructor(
 
             val cdrPostList = mutableSetOf<CDRPost>()
 
+            // RECORD-LEVEL ISOLATION: Each CDR record is processed
+            // independently with try/catch. Previously this method silently
+            // returned true even when records failed to upload (Pattern C).
+            // Now failures are logged and tracked while still allowing the
+            // worker to succeed (failed records retry on next sync cycle).
+            var successCount = 0
+            var failCount = 0
+
             cdrList.forEach {
-                cdrPostList.clear()
-                cdrPostList.add(it.asPostModel())
-                it.syncState = SyncState.SYNCING
-                cdrDao.update(it)
-                val uploadDone = postCdrForm(cdrPostList.toList())
-                if (uploadDone) {
-                    it.processed = "P"
-                    it.syncState = SyncState.SYNCED
-                } else {
+                try {
+                    cdrPostList.clear()
+                    cdrPostList.add(it.asPostModel())
+                    it.syncState = SyncState.SYNCING
+                    cdrDao.update(it)
+                    val uploadDone = postCdrForm(cdrPostList.toList())
+                    if (uploadDone) {
+                        it.processed = "P"
+                        it.syncState = SyncState.SYNCED
+                        successCount++
+                    } else {
+                        it.syncState = SyncState.UNSYNCED
+                        failCount++
+                    }
+                    cdrDao.update(it)
+                } catch (e: Exception) {
+                    Timber.e(e, "CDR push failed for record")
                     it.syncState = SyncState.UNSYNCED
+                    cdrDao.update(it)
+                    failCount++
                 }
-                cdrDao.update(it)
             }
+
+            Timber.d("CDR push complete: $successCount succeeded, $failCount failed out of ${cdrList.size}")
             return@withContext true
         }
     }

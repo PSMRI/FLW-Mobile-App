@@ -670,14 +670,18 @@ class VLFRepo @Inject constructor(
         }
     }
 
+    // RECORD-LEVEL ISOLATION: Coordinator always returns true so the
+    // WorkManager worker succeeds. Each sub-method handles its own failures
+    // independently — failed records stay UNSYNCED and retry on next sync cycle.
     suspend fun pushUnSyncedRecords(): Boolean {
         val vlfVHNDResult = pushUnSyncedRecordsVHND()
         val vlfVHNCResult = pushUnSyncedRecordsVHNC()
         val vlfPHCResult = pushUnSyncedRecordsPHC()
         val vlfAHDResult = pushUnSyncedRecordsAHD()
         val vlfDewormingResult = pushUnSyncedRecordsDeworming()
-//        return (vlfVHNDResult == 1) && (hrptResult == 1) && (hrnpaResult == 1) && (hrnptResult == 1)
-        return (vlfVHNDResult == 1 && (vlfVHNCResult == 1) && (vlfPHCResult == 1) && (vlfAHDResult == 1) && (vlfDewormingResult == 1))
+        Timber.d("VLF push results: VHND=$vlfVHNDResult, VHNC=$vlfVHNCResult, PHC=$vlfPHCResult, AHD=$vlfAHDResult, Deworming=$vlfDewormingResult")
+        // Worker succeeds — failed records stay UNSYNCED for next cycle
+        return true
     }
 
     //...................for VHND.........................................
@@ -774,80 +778,66 @@ class VLFRepo @Inject constructor(
         }
     }
 
+    // RECORD-LEVEL ISOLATION: Records now sent in chunks of 20.
+    // Previously all-or-nothing batch. One bad chunk doesn't affect others.
+    // Also removed dangerous recursive retry on SocketTimeoutException.
     private suspend fun pushUnSyncedRecordsVHND(): Int {
-
         return withContext(Dispatchers.IO) {
-            val user =
-                preferenceDao.getLoggedInUser()
-                    ?: throw IllegalStateException("No user logged in!!")
+            val user = preferenceDao.getLoggedInUser()
+                ?: throw IllegalStateException("No user logged in!!")
 
             val entities = database.vlfDao.getVHND(SyncState.UNSYNCED)
+            if (entities.isNullOrEmpty()) return@withContext 1
 
-            val assessDtos = mutableListOf<Any>()
-            entities?.let {
-                it.forEach { cache ->
-                    assessDtos.add(cache.toVhndDTODTO())
-//                    pwrDtos.add(mapPWR(cache))
-                    cache.syncState = SyncState.SYNCED
-                }
-            }
+            val CHUNK_SIZE = 20
+            val chunks = entities.chunked(CHUNK_SIZE)
+            var successCount = 0
+            var failCount = 0
 
-            if (assessDtos.isEmpty()) return@withContext 1
-            try {
-                val response = tmcNetworkApiService.saveVHNDData(
-                    UserDataDTO(
-                        userId = user.userId,
-                        entries = assessDtos
+            for (chunk in chunks) {
+                try {
+                    val chunkDtos = chunk.map { cache -> cache.toVhndDTODTO() }
+
+                    val response = tmcNetworkApiService.saveVHNDData(
+                        UserDataDTO(userId = user.userId, entries = chunkDtos)
                     )
-                )
-                val statusCode = response.code()
-                if (statusCode == 200) {
-                    val responseString = response.body()?.string()
-                    if (responseString != null) {
-                        val jsonObj = JSONObject(responseString)
-
-                        val responseStatusCode = jsonObj.getInt("statusCode")
-                        Timber.d("Push to amrit vlf data : $responseStatusCode")
-                        when (responseStatusCode) {
-                            200 -> {
-                                try {
-                                    updateSyncStatusVHND(entities)
-                                    return@withContext 1
-                                } catch (e: Exception) {
-                                    Timber.d("VHND entries not synced $e")
+                    val statusCode = response.code()
+                    if (statusCode == 200) {
+                        val responseString = response.body()?.string()
+                        if (responseString != null) {
+                            val jsonObj = JSONObject(responseString)
+                            val responseStatusCode = jsonObj.getInt("statusCode")
+                            Timber.d("Push to Amrit VLF VHND chunk: $responseStatusCode")
+                            when (responseStatusCode) {
+                                200 -> {
+                                    chunk.forEach { it.syncState = SyncState.SYNCED }
+                                    updateSyncStatusVHND(chunk)
+                                    successCount += chunk.size
                                 }
-
-                            }
-
-                            5002 -> {
-                                if (userRepo.refreshTokenTmc(
-                                        user.userName, user.password
-                                    )
-                                ) throw SocketTimeoutException("Refreshed Token!")
-                                else throw IllegalStateException("User Logged out!!")
-                            }
-
-                            5000 -> {
-                                val errorMessage = jsonObj.getString("errorMessage")
-                                if (errorMessage == "No record found") return@withContext 0
-                            }
-
-                            else -> {
-                                throw IllegalStateException("$responseStatusCode received, dont know what todo!?")
+                                401, 5002 -> {
+                                    if (userRepo.refreshTokenTmc(user.userName, user.password)) {
+                                        Timber.d("Token refreshed, VLF VHND chunk will retry next cycle")
+                                    }
+                                    failCount += chunk.size
+                                }
+                                else -> {
+                                    Timber.e("VLF VHND chunk failed with statusCode: $responseStatusCode")
+                                    failCount += chunk.size
+                                }
                             }
                         }
+                    } else {
+                        Timber.e("VLF VHND chunk HTTP error: $statusCode")
+                        failCount += chunk.size
                     }
+                } catch (e: Exception) {
+                    Timber.e(e, "VLF VHND chunk push failed: ${chunk.size} records")
+                    failCount += chunk.size
                 }
-
-            } catch (e: SocketTimeoutException) {
-                Timber.d("get_tb error : $e")
-                return@withContext pushUnSyncedRecordsVHND()
-
-            } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_tb error : $e")
-                return@withContext -1
             }
-            -1
+
+            Timber.d("VLF VHND push complete: $successCount succeeded, $failCount failed out of ${entities.size}")
+            return@withContext 1
         }
     }
 
@@ -946,80 +936,66 @@ class VLFRepo @Inject constructor(
         }
     }
 
+    // RECORD-LEVEL ISOLATION: Records now sent in chunks of 20.
+    // Previously all-or-nothing batch. One bad chunk doesn't affect others.
+    // Also removed dangerous recursive retry on SocketTimeoutException.
     private suspend fun pushUnSyncedRecordsVHNC(): Int {
-
         return withContext(Dispatchers.IO) {
-            val user =
-                preferenceDao.getLoggedInUser()
-                    ?: throw IllegalStateException("No user logged in!!")
+            val user = preferenceDao.getLoggedInUser()
+                ?: throw IllegalStateException("No user logged in!!")
 
             val entities = database.vlfDao.getVHNC(SyncState.UNSYNCED)
+            if (entities.isNullOrEmpty()) return@withContext 1
 
-            val assessDtos = mutableListOf<Any>()
-            entities?.let {
-                it.forEach { cache ->
-                    assessDtos.add(cache.toVhncDTODTO())
-//                    pwrDtos.add(mapPWR(cache))
-                    cache.syncState = SyncState.SYNCED
-                }
-            }
+            val CHUNK_SIZE = 20
+            val chunks = entities.chunked(CHUNK_SIZE)
+            var successCount = 0
+            var failCount = 0
 
-            if (assessDtos.isEmpty()) return@withContext 1
-            try {
-                val response = tmcNetworkApiService.saveVHNCData(
-                    UserDataDTO(
-                        userId = user.userId,
-                        entries = assessDtos
+            for (chunk in chunks) {
+                try {
+                    val chunkDtos = chunk.map { cache -> cache.toVhncDTODTO() }
+
+                    val response = tmcNetworkApiService.saveVHNCData(
+                        UserDataDTO(userId = user.userId, entries = chunkDtos)
                     )
-                )
-                val statusCode = response.code()
-                if (statusCode == 200) {
-                    val responseString = response.body()?.string()
-                    if (responseString != null) {
-                        val jsonObj = JSONObject(responseString)
-
-                        val responseStatusCode = jsonObj.getInt("statusCode")
-                        Timber.d("Push to amrit vlf data : $responseStatusCode")
-                        when (responseStatusCode) {
-                            200 -> {
-                                try {
-                                    updateSyncStatusVHNC(entities)
-                                    return@withContext 1
-                                } catch (e: Exception) {
-                                    Timber.d("VHND entries not synced $e")
+                    val statusCode = response.code()
+                    if (statusCode == 200) {
+                        val responseString = response.body()?.string()
+                        if (responseString != null) {
+                            val jsonObj = JSONObject(responseString)
+                            val responseStatusCode = jsonObj.getInt("statusCode")
+                            Timber.d("Push to Amrit VLF VHNC chunk: $responseStatusCode")
+                            when (responseStatusCode) {
+                                200 -> {
+                                    chunk.forEach { it.syncState = SyncState.SYNCED }
+                                    updateSyncStatusVHNC(chunk)
+                                    successCount += chunk.size
                                 }
-
-                            }
-
-                            5002 -> {
-                                if (userRepo.refreshTokenTmc(
-                                        user.userName, user.password
-                                    )
-                                ) throw SocketTimeoutException("Refreshed Token!")
-                                else throw IllegalStateException("User Logged out!!")
-                            }
-
-                            5000 -> {
-                                val errorMessage = jsonObj.getString("errorMessage")
-                                if (errorMessage == "No record found") return@withContext 0
-                            }
-
-                            else -> {
-                                throw IllegalStateException("$responseStatusCode received, dont know what todo!?")
+                                401, 5002 -> {
+                                    if (userRepo.refreshTokenTmc(user.userName, user.password)) {
+                                        Timber.d("Token refreshed, VLF VHNC chunk will retry next cycle")
+                                    }
+                                    failCount += chunk.size
+                                }
+                                else -> {
+                                    Timber.e("VLF VHNC chunk failed with statusCode: $responseStatusCode")
+                                    failCount += chunk.size
+                                }
                             }
                         }
+                    } else {
+                        Timber.e("VLF VHNC chunk HTTP error: $statusCode")
+                        failCount += chunk.size
                     }
+                } catch (e: Exception) {
+                    Timber.e(e, "VLF VHNC chunk push failed: ${chunk.size} records")
+                    failCount += chunk.size
                 }
-
-            } catch (e: SocketTimeoutException) {
-                Timber.d("get_tb error : $e")
-                return@withContext pushUnSyncedRecordsVHNC()
-
-            } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_tb error : $e")
-                return@withContext -1
             }
-            -1
+
+            Timber.d("VLF VHNC push complete: $successCount succeeded, $failCount failed out of ${entities.size}")
+            return@withContext 1
         }
     }
 
@@ -1118,80 +1094,66 @@ class VLFRepo @Inject constructor(
         }
     }
 
+    // RECORD-LEVEL ISOLATION: Records now sent in chunks of 20.
+    // Previously all-or-nothing batch. One bad chunk doesn't affect others.
+    // Also removed dangerous recursive retry on SocketTimeoutException.
     private suspend fun pushUnSyncedRecordsPHC(): Int {
-
         return withContext(Dispatchers.IO) {
-            val user =
-                preferenceDao.getLoggedInUser()
-                    ?: throw IllegalStateException("No user logged in!!")
+            val user = preferenceDao.getLoggedInUser()
+                ?: throw IllegalStateException("No user logged in!!")
 
             val entities = database.vlfDao.getPHC(SyncState.UNSYNCED)
+            if (entities.isNullOrEmpty()) return@withContext 1
 
-            val assessDtos = mutableListOf<Any>()
-            entities?.let {
-                it.forEach { cache ->
-                    assessDtos.add(cache.toPHCDTODTO())
-//                    pwrDtos.add(mapPWR(cache))
-                    cache.syncState = SyncState.SYNCED
-                }
-            }
+            val CHUNK_SIZE = 20
+            val chunks = entities.chunked(CHUNK_SIZE)
+            var successCount = 0
+            var failCount = 0
 
-            if (assessDtos.isEmpty()) return@withContext 1
-            try {
-                val response = tmcNetworkApiService.savePHCData(
-                    UserDataDTO(
-                        userId = user.userId,
-                        entries = assessDtos
+            for (chunk in chunks) {
+                try {
+                    val chunkDtos = chunk.map { cache -> cache.toPHCDTODTO() }
+
+                    val response = tmcNetworkApiService.savePHCData(
+                        UserDataDTO(userId = user.userId, entries = chunkDtos)
                     )
-                )
-                val statusCode = response.code()
-                if (statusCode == 200) {
-                    val responseString = response.body()?.string()
-                    if (responseString != null) {
-                        val jsonObj = JSONObject(responseString)
-
-                        val responseStatusCode = jsonObj.getInt("statusCode")
-                        Timber.d("Push to amrit vlf data : $responseStatusCode")
-                        when (responseStatusCode) {
-                            200 -> {
-                                try {
-                                    updateSyncStatusPHC(entities)
-                                    return@withContext 1
-                                } catch (e: Exception) {
-//                                    Timber.d("VHND entries not synced $e")
+                    val statusCode = response.code()
+                    if (statusCode == 200) {
+                        val responseString = response.body()?.string()
+                        if (responseString != null) {
+                            val jsonObj = JSONObject(responseString)
+                            val responseStatusCode = jsonObj.getInt("statusCode")
+                            Timber.d("Push to Amrit VLF PHC chunk: $responseStatusCode")
+                            when (responseStatusCode) {
+                                200 -> {
+                                    chunk.forEach { it.syncState = SyncState.SYNCED }
+                                    updateSyncStatusPHC(chunk)
+                                    successCount += chunk.size
                                 }
-
-                            }
-
-                            5002 -> {
-                                if (userRepo.refreshTokenTmc(
-                                        user.userName, user.password
-                                    )
-                                ) throw SocketTimeoutException("Refreshed Token!")
-                                else throw IllegalStateException("User Logged out!!")
-                            }
-
-                            5000 -> {
-                                val errorMessage = jsonObj.getString("errorMessage")
-                                if (errorMessage == "No record found") return@withContext 0
-                            }
-
-                            else -> {
-                                throw IllegalStateException("$responseStatusCode received, dont know what todo!?")
+                                401, 5002 -> {
+                                    if (userRepo.refreshTokenTmc(user.userName, user.password)) {
+                                        Timber.d("Token refreshed, VLF PHC chunk will retry next cycle")
+                                    }
+                                    failCount += chunk.size
+                                }
+                                else -> {
+                                    Timber.e("VLF PHC chunk failed with statusCode: $responseStatusCode")
+                                    failCount += chunk.size
+                                }
                             }
                         }
+                    } else {
+                        Timber.e("VLF PHC chunk HTTP error: $statusCode")
+                        failCount += chunk.size
                     }
+                } catch (e: Exception) {
+                    Timber.e(e, "VLF PHC chunk push failed: ${chunk.size} records")
+                    failCount += chunk.size
                 }
-
-            } catch (e: SocketTimeoutException) {
-                Timber.d("get_tb error : $e")
-                return@withContext pushUnSyncedRecordsPHC()
-
-            } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_tb error : $e")
-                return@withContext -1
             }
-            -1
+
+            Timber.d("VLF PHC push complete: $successCount succeeded, $failCount failed out of ${entities.size}")
+            return@withContext 1
         }
     }
 
@@ -1291,79 +1253,66 @@ class VLFRepo @Inject constructor(
         }
     }
 
+    // RECORD-LEVEL ISOLATION: Records now sent in chunks of 20.
+    // Previously all-or-nothing batch. One bad chunk doesn't affect others.
+    // Also removed dangerous recursive retry on SocketTimeoutException.
     private suspend fun pushUnSyncedRecordsAHD(): Int {
-
         return withContext(Dispatchers.IO) {
-            val user =
-                preferenceDao.getLoggedInUser()
-                    ?: throw IllegalStateException("No user logged in!!")
+            val user = preferenceDao.getLoggedInUser()
+                ?: throw IllegalStateException("No user logged in!!")
 
             val entities = database.vlfDao.getAHD(SyncState.UNSYNCED)
+            if (entities.isNullOrEmpty()) return@withContext 1
 
-            val assessDtos = mutableListOf<Any>()
-            entities?.let {
-                it.forEach { cache ->
-                    assessDtos.add(cache.toDTO())
-                    cache.syncState = SyncState.SYNCED
-                }
-            }
+            val CHUNK_SIZE = 20
+            val chunks = entities.chunked(CHUNK_SIZE)
+            var successCount = 0
+            var failCount = 0
 
-            if (assessDtos.isEmpty()) return@withContext 1
-            try {
-                val response = tmcNetworkApiService.saveAHDData(
-                    UserDataDTO(
-                        userId = user.userId,
-                        entries = assessDtos
+            for (chunk in chunks) {
+                try {
+                    val chunkDtos = chunk.map { cache -> cache.toDTO() }
+
+                    val response = tmcNetworkApiService.saveAHDData(
+                        UserDataDTO(userId = user.userId, entries = chunkDtos)
                     )
-                )
-                val statusCode = response.code()
-                if (statusCode == 200) {
-                    val responseString = response.body()?.string()
-                    if (responseString != null) {
-                        val jsonObj = JSONObject(responseString)
-
-                        val responseStatusCode = jsonObj.getInt("statusCode")
-                        Timber.d("Push to amrit vlf data : $responseStatusCode")
-                        when (responseStatusCode) {
-                            200 -> {
-                                try {
-                                    updateSyncStatusAHD(entities)
-                                    return@withContext 1
-                                } catch (e: Exception) {
-//                                    Timber.d("VHND entries not synced $e")
+                    val statusCode = response.code()
+                    if (statusCode == 200) {
+                        val responseString = response.body()?.string()
+                        if (responseString != null) {
+                            val jsonObj = JSONObject(responseString)
+                            val responseStatusCode = jsonObj.getInt("statusCode")
+                            Timber.d("Push to Amrit VLF AHD chunk: $responseStatusCode")
+                            when (responseStatusCode) {
+                                200 -> {
+                                    chunk.forEach { it.syncState = SyncState.SYNCED }
+                                    updateSyncStatusAHD(chunk)
+                                    successCount += chunk.size
                                 }
-
-                            }
-
-                            5002 -> {
-                                if (userRepo.refreshTokenTmc(
-                                        user.userName, user.password
-                                    )
-                                ) throw SocketTimeoutException("Refreshed Token!")
-                                else throw IllegalStateException("User Logged out!!")
-                            }
-
-                            5000 -> {
-                                val errorMessage = jsonObj.getString("errorMessage")
-                                if (errorMessage == "No record found") return@withContext 0
-                            }
-
-                            else -> {
-                                throw IllegalStateException("$responseStatusCode received, dont know what todo!?")
+                                401, 5002 -> {
+                                    if (userRepo.refreshTokenTmc(user.userName, user.password)) {
+                                        Timber.d("Token refreshed, VLF AHD chunk will retry next cycle")
+                                    }
+                                    failCount += chunk.size
+                                }
+                                else -> {
+                                    Timber.e("VLF AHD chunk failed with statusCode: $responseStatusCode")
+                                    failCount += chunk.size
+                                }
                             }
                         }
+                    } else {
+                        Timber.e("VLF AHD chunk HTTP error: $statusCode")
+                        failCount += chunk.size
                     }
+                } catch (e: Exception) {
+                    Timber.e(e, "VLF AHD chunk push failed: ${chunk.size} records")
+                    failCount += chunk.size
                 }
-
-            } catch (e: SocketTimeoutException) {
-                Timber.d("get_tb error : $e")
-                return@withContext pushUnSyncedRecordsAHD()
-
-            } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_tb error : $e")
-                return@withContext -1
             }
-            -1
+
+            Timber.d("VLF AHD push complete: $successCount succeeded, $failCount failed out of ${entities.size}")
+            return@withContext 1
         }
     }
 
@@ -1459,79 +1408,66 @@ class VLFRepo @Inject constructor(
         }
     }
 
+    // RECORD-LEVEL ISOLATION: Records now sent in chunks of 20.
+    // Previously all-or-nothing batch. One bad chunk doesn't affect others.
+    // Also removed dangerous recursive retry on SocketTimeoutException.
     private suspend fun pushUnSyncedRecordsDeworming(): Int {
-
         return withContext(Dispatchers.IO) {
-            val user =
-                preferenceDao.getLoggedInUser()
-                    ?: throw IllegalStateException("No user logged in!!")
+            val user = preferenceDao.getLoggedInUser()
+                ?: throw IllegalStateException("No user logged in!!")
 
             val entities = database.vlfDao.getDeworming(SyncState.UNSYNCED)
+            if (entities.isNullOrEmpty()) return@withContext 1
 
-            val assessDtos = mutableListOf<Any>()
-            entities?.let {
-                it.forEach { cache ->
-                    assessDtos.add(cache.toDTO())
-                    cache.syncState = SyncState.SYNCED
-                }
-            }
+            val CHUNK_SIZE = 20
+            val chunks = entities.chunked(CHUNK_SIZE)
+            var successCount = 0
+            var failCount = 0
 
-            if (assessDtos.isEmpty()) return@withContext 1
-            try {
-                val response = tmcNetworkApiService.saveDewormingData(
-                    UserDataDTO(
-                        userId = user.userId,
-                        entries = assessDtos
+            for (chunk in chunks) {
+                try {
+                    val chunkDtos = chunk.map { cache -> cache.toDTO() }
+
+                    val response = tmcNetworkApiService.saveDewormingData(
+                        UserDataDTO(userId = user.userId, entries = chunkDtos)
                     )
-                )
-                val statusCode = response.code()
-                if (statusCode == 200) {
-                    val responseString = response.body()?.string()
-                    if (responseString != null) {
-                        val jsonObj = JSONObject(responseString)
-
-                        val responseStatusCode = jsonObj.getInt("statusCode")
-                        Timber.d("Push to amrit vlf data : $responseStatusCode")
-                        when (responseStatusCode) {
-                            200 -> {
-                                try {
-                                    updateSyncStatusDeworming(entities)
-                                    return@withContext 1
-                                } catch (e: Exception) {
-//                                    Timber.d("VHND entries not synced $e")
+                    val statusCode = response.code()
+                    if (statusCode == 200) {
+                        val responseString = response.body()?.string()
+                        if (responseString != null) {
+                            val jsonObj = JSONObject(responseString)
+                            val responseStatusCode = jsonObj.getInt("statusCode")
+                            Timber.d("Push to Amrit VLF Deworming chunk: $responseStatusCode")
+                            when (responseStatusCode) {
+                                200 -> {
+                                    chunk.forEach { it.syncState = SyncState.SYNCED }
+                                    updateSyncStatusDeworming(chunk)
+                                    successCount += chunk.size
                                 }
-
-                            }
-
-                            5002 -> {
-                                if (userRepo.refreshTokenTmc(
-                                        user.userName, user.password
-                                    )
-                                ) throw SocketTimeoutException("Refreshed Token!")
-                                else throw IllegalStateException("User Logged out!!")
-                            }
-
-                            5000 -> {
-                                val errorMessage = jsonObj.getString("errorMessage")
-                                if (errorMessage == "No record found") return@withContext 0
-                            }
-
-                            else -> {
-                                throw IllegalStateException("$responseStatusCode received, dont know what todo!?")
+                                401, 5002 -> {
+                                    if (userRepo.refreshTokenTmc(user.userName, user.password)) {
+                                        Timber.d("Token refreshed, VLF Deworming chunk will retry next cycle")
+                                    }
+                                    failCount += chunk.size
+                                }
+                                else -> {
+                                    Timber.e("VLF Deworming chunk failed with statusCode: $responseStatusCode")
+                                    failCount += chunk.size
+                                }
                             }
                         }
+                    } else {
+                        Timber.e("VLF Deworming chunk HTTP error: $statusCode")
+                        failCount += chunk.size
                     }
+                } catch (e: Exception) {
+                    Timber.e(e, "VLF Deworming chunk push failed: ${chunk.size} records")
+                    failCount += chunk.size
                 }
-
-            } catch (e: SocketTimeoutException) {
-                Timber.d("get_tb error : $e")
-                return@withContext pushUnSyncedRecordsDeworming()
-
-            } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_tb error : $e")
-                return@withContext -1
             }
-            -1
+
+            Timber.d("VLF Deworming push complete: $successCount succeeded, $failCount failed out of ${entities.size}")
+            return@withContext 1
         }
     }
 

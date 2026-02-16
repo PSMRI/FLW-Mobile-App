@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi
 import android.app.Application
 import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.google.firebase.FirebaseApp
@@ -26,6 +27,7 @@ class SakhiApplication : Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         val builder = VmPolicy.Builder()
         StrictMode.setVmPolicy(builder.build())
         if (BuildConfig.DEBUG) {

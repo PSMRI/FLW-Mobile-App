@@ -147,25 +147,39 @@ class MaternalHealthRepo @Inject constructor(
 
             val ancPostList = mutableSetOf<ANCPost>()
 
+            // RECORD-LEVEL ISOLATION: Each ANC visit record is processed
+            // independently. If one record fails, remaining records continue.
+            // Failed records stay UNSYNCED and retry on next sync cycle.
+            var successCount = 0
+            var failCount = 0
+
             ancList.forEach {
-                ancPostList.clear()
-                val ben = benDao.getBen(it.benId)
-                    ?: throw IllegalStateException("No beneficiary exists for benId: ${it.benId}!!")
-                ancPostList.add(it.asPostModel())
-                it.syncState = SyncState.SYNCING
-                maternalHealthDao.updateANC(it)
-                val uploadDone = postDataToAmritServer(ancPostList)
-                if (uploadDone) {
-                    it.processed = "P"
-                    it.syncState = SyncState.SYNCED
-                } else {
+                try {
+                    ancPostList.clear()
+                    val ben = benDao.getBen(it.benId)
+                        ?: throw IllegalStateException("No beneficiary exists for benId: ${it.benId}!!")
+                    ancPostList.add(it.asPostModel())
+                    it.syncState = SyncState.SYNCING
+                    maternalHealthDao.updateANC(it)
+                    val uploadDone = postDataToAmritServer(ancPostList)
+                    if (uploadDone) {
+                        it.processed = "P"
+                        it.syncState = SyncState.SYNCED
+                        successCount++
+                    } else {
+                        it.syncState = SyncState.UNSYNCED
+                        failCount++
+                    }
+                    maternalHealthDao.updateANC(it)
+                } catch (e: Exception) {
+                    Timber.e(e, "ANC visit push failed for benId: ${it.benId}")
                     it.syncState = SyncState.UNSYNCED
+                    maternalHealthDao.updateANC(it)
+                    failCount++
                 }
-                maternalHealthDao.updateANC(it)
-                if (!uploadDone)
-                    return@withContext false
             }
 
+            Timber.d("ANC visit push complete: $successCount succeeded, $failCount failed out of ${ancList.size}")
             return@withContext true
         }
     }
@@ -244,25 +258,39 @@ class MaternalHealthRepo @Inject constructor(
 
             val pwrPostList = mutableSetOf<PwrPost>()
 
+            // RECORD-LEVEL ISOLATION: Each PWR record is processed
+            // independently. If one record fails, remaining records continue.
+            // Failed records stay UNSYNCED and retry on next sync cycle.
+            var successCount = 0
+            var failCount = 0
+
             pwrList.forEach {
-                pwrPostList.clear()
-                val ben = benDao.getBen(it.benId)
-                    ?: throw IllegalStateException("No beneficiary exists for benId: ${it.benId}!!")
-                pwrPostList.add(it.asPwrPost())
-                it.syncState = SyncState.SYNCING
-                maternalHealthDao.updatePwr(it)
-                val uploadDone = postPwrToAmritServer(pwrPostList)
-                if (uploadDone) {
-                    it.processed = "P"
-                    it.syncState = SyncState.SYNCED
-                } else {
+                try {
+                    pwrPostList.clear()
+                    val ben = benDao.getBen(it.benId)
+                        ?: throw IllegalStateException("No beneficiary exists for benId: ${it.benId}!!")
+                    pwrPostList.add(it.asPwrPost())
+                    it.syncState = SyncState.SYNCING
+                    maternalHealthDao.updatePwr(it)
+                    val uploadDone = postPwrToAmritServer(pwrPostList)
+                    if (uploadDone) {
+                        it.processed = "P"
+                        it.syncState = SyncState.SYNCED
+                        successCount++
+                    } else {
+                        it.syncState = SyncState.UNSYNCED
+                        failCount++
+                    }
+                    maternalHealthDao.updatePwr(it)
+                } catch (e: Exception) {
+                    Timber.e(e, "PWR push failed for benId: ${it.benId}")
                     it.syncState = SyncState.UNSYNCED
+                    maternalHealthDao.updatePwr(it)
+                    failCount++
                 }
-                maternalHealthDao.updatePwr(it)
-                if (!uploadDone)
-                    return@withContext false
             }
 
+            Timber.d("PWR push complete: $successCount succeeded, $failCount failed out of ${pwrList.size}")
             return@withContext true
         }
     }

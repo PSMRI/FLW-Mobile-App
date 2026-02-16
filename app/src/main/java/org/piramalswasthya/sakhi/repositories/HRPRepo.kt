@@ -765,38 +765,37 @@ class HRPRepo @Inject constructor(
         }
     }
 
+    // RECORD-LEVEL ISOLATION: Coordinator always returns true so the
+    // WorkManager worker succeeds. Each sub-method handles its own failures
+    // independently — failed records stay UNSYNCED and retry on next sync cycle.
     suspend fun pushUnSyncedRecords(): Boolean {
-
-
         val hrpaMBPResult = pushUnSyncedRecordsHRPMicroBirthPlan()
         val hrpaResult = pushUnSyncedRecordsHRPAssess()
         val hrptResult = pushUnSyncedRecordsHRPTrack()
         val hrnpaResult = pushUnSyncedRecordsHRNonPAssess()
         val hrnptResult = pushUnSyncedRecordsHRNonPTrack()
-        return (hrpaMBPResult == 1) && (hrpaResult == 1) && (hrptResult == 1) && (hrnpaResult == 1) && (hrnptResult == 1)
+        Timber.d("HRP push results: MBP=$hrpaMBPResult, assess=$hrpaResult, track=$hrptResult, nonPAssess=$hrnpaResult, nonPTrack=$hrnptResult")
+        // Worker succeeds — failed records stay UNSYNCED for next cycle
+        return true
     }
 
+    // RECORD-LEVEL ISOLATION: Records now sent in chunks of 20.
+    // Previously all-or-nothing batch. One bad chunk doesn't affect others.
+    // Also removed dangerous recursive retry on SocketTimeoutException.
     private suspend fun pushUnSyncedRecordsHRPAssess(): Int {
-
         return withContext(Dispatchers.IO) {
             val user =
                 preferenceDao.getLoggedInUser()
                     ?: throw IllegalStateException("No user logged in!!")
 
             val entities = database.hrpDao.getHRPAssess(SyncState.UNSYNCED)
+            if (entities.isNullOrEmpty()) return@withContext 1
 
-            val assessDtos = mutableListOf<Any>()
-
+            // PWR side-effect: push PWR data before chunking HRP Assess
             val pwrDtos = mutableSetOf<PwrPost>()
-
-            entities?.let {
-                it.forEach { cache ->
-                    assessDtos.add(cache.toHighRiskAssessDTO())
-                    pwrDtos.add(mapPWR(cache))
-                    cache.syncState = SyncState.SYNCED
-                }
+            entities.forEach { cache ->
+                pwrDtos.add(mapPWR(cache))
             }
-
             if (maternalHealthRepo.postPwrToAmritServer(pwrDtos)) {
                 pwrDtos.forEach { pwr ->
                     maternalHealthRepo.getSavedRegistrationRecord(pwr.benId)?.let { pwrCache ->
@@ -807,246 +806,214 @@ class HRPRepo @Inject constructor(
                 }
             }
 
-            if (assessDtos.isEmpty()) return@withContext 1
-            try {
-                val response = tmcNetworkApiService.saveHighRiskAssessData(
-                    UserDataDTO(
-                        userId = user.userId,
-                        entries = assessDtos
+            val CHUNK_SIZE = 20
+            val chunks = entities.chunked(CHUNK_SIZE)
+            var successCount = 0
+            var failCount = 0
+
+            for (chunk in chunks) {
+                try {
+                    val chunkDtos = chunk.map { cache ->
+                        cache.toHighRiskAssessDTO()
+                    }
+
+                    val response = tmcNetworkApiService.saveHighRiskAssessData(
+                        UserDataDTO(userId = user.userId, entries = chunkDtos)
                     )
-                )
-                val statusCode = response.code()
-                if (statusCode == 200) {
-                    val responseString = response.body()?.string()
-                    if (responseString != null) {
-                        val jsonObj = JSONObject(responseString)
-
-                        val responseStatusCode = jsonObj.getInt("statusCode")
-                        Timber.d("Push to amrit hrp assess data : $responseStatusCode")
-                        when (responseStatusCode) {
-                            200 -> {
-                                try {
-                                    updateSyncStatusHrpa(entities)
-                                    return@withContext 1
-                                } catch (e: Exception) {
-                                    Timber.d("HRP Assess entries not synced $e")
+                    val statusCode = response.code()
+                    if (statusCode == 200) {
+                        val responseString = response.body()?.string()
+                        if (responseString != null) {
+                            val jsonObj = JSONObject(responseString)
+                            val responseStatusCode = jsonObj.getInt("statusCode")
+                            Timber.d("Push to Amrit HRP Assess chunk: $responseStatusCode")
+                            when (responseStatusCode) {
+                                200 -> {
+                                    chunk.forEach { it.syncState = SyncState.SYNCED }
+                                    updateSyncStatusHrpa(chunk)
+                                    successCount += chunk.size
                                 }
-
-                            }
-
-                            401,5002 -> {
-                                if (userRepo.refreshTokenTmc(
-                                        user.userName, user.password
-                                    )
-                                ) throw SocketTimeoutException("Refreshed Token!")
-                                else throw IllegalStateException("User Logged out!!")
-                            }
-
-                            5000 -> {
-                                val errorMessage = jsonObj.getString("errorMessage")
-                                if (errorMessage == "No record found") return@withContext 0
-                            }
-
-                            else -> {
-                                throw IllegalStateException("$responseStatusCode received, dont know what todo!?")
+                                401, 5002 -> {
+                                    if (userRepo.refreshTokenTmc(user.userName, user.password)) {
+                                        Timber.d("Token refreshed, HRP Assess chunk will retry next cycle")
+                                    }
+                                    failCount += chunk.size
+                                }
+                                else -> {
+                                    Timber.e("HRP Assess chunk failed with statusCode: $responseStatusCode")
+                                    failCount += chunk.size
+                                }
                             }
                         }
+                    } else {
+                        Timber.e("HRP Assess chunk HTTP error: $statusCode")
+                        failCount += chunk.size
                     }
+                } catch (e: Exception) {
+                    Timber.e(e, "HRP Assess chunk push failed: ${chunk.size} records")
+                    failCount += chunk.size
                 }
-
-            } catch (e: SocketTimeoutException) {
-                Timber.d("get_tb error : $e")
-                return@withContext pushUnSyncedRecordsHRPAssess()
-
-            } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_tb error : $e")
-                return@withContext -1
             }
-            -1
+
+            Timber.d("HRP Assess push complete: $successCount succeeded, $failCount failed out of ${entities.size}")
+            return@withContext 1
         }
     }
+    // RECORD-LEVEL ISOLATION: Records now sent in chunks of 20.
+    // Previously all-or-nothing batch. One bad chunk doesn't affect others.
+    // Also removed dangerous recursive retry on SocketTimeoutException.
     private suspend fun pushUnSyncedRecordsHRPMicroBirthPlan(): Int {
-
         return withContext(Dispatchers.IO) {
             val user =
                 preferenceDao.getLoggedInUser()
                     ?: throw IllegalStateException("No user logged in!!")
 
             val entities = database.hrpDao.getMicroBirthPlan(SyncState.UNSYNCED)
+            if (entities.isNullOrEmpty()) return@withContext 1
 
-            val dtos = mutableListOf<HRPMicroBirthPlanDTO>()
-            entities?.let {
-                it.forEach { cache ->
-                    dtos.add(cache.toDTO())
-                    cache.syncState = SyncState.SYNCED
-                }
-            }
+            val CHUNK_SIZE = 20
+            val chunks = entities.chunked(CHUNK_SIZE)
+            var successCount = 0
+            var failCount = 0
 
-            if (dtos.isEmpty()) return@withContext 1
-            try {
-                val response = tmcNetworkApiService.saveMicroBirthPlanAssessData(
-                    UserDataDTO(
-                        userId = user.userId,
-                        entries = dtos
+            for (chunk in chunks) {
+                try {
+                    val chunkDtos = chunk.map { cache ->
+                        cache.toDTO()
+                    }
+
+                    val response = tmcNetworkApiService.saveMicroBirthPlanAssessData(
+                        UserDataDTO(userId = user.userId, entries = chunkDtos)
                     )
-                )
-                val statusCode = response.code()
-                if (statusCode == 200) {
-                    val responseString = response.body()?.string()
-                    if (responseString != null) {
-                        val jsonObj = JSONObject(responseString)
-
-                        val responseStatusCode = jsonObj.getInt("statusCode")
-                        Timber.d("Push to amrit hrp track data : $responseStatusCode")
-                        when (responseStatusCode) {
-                            200 -> {
-                                try {
-
-                                    dtos.forEach { it2 ->
-                                        database.hrpDao.getSavedRecord(it2.benId)?.let { pwrCache ->
-                                            pwrCache.processed = "P"
-                                            pwrCache.syncState = SyncState.SYNCED
-                                            updateSyncStatusHrpMBP(pwrCache)
+                    val statusCode = response.code()
+                    if (statusCode == 200) {
+                        val responseString = response.body()?.string()
+                        if (responseString != null) {
+                            val jsonObj = JSONObject(responseString)
+                            val responseStatusCode = jsonObj.getInt("statusCode")
+                            Timber.d("Push to Amrit HRP MicroBirthPlan chunk: $responseStatusCode")
+                            when (responseStatusCode) {
+                                200 -> {
+                                    chunkDtos.forEach { dto ->
+                                        database.hrpDao.getSavedRecord(dto.benId)?.let { record ->
+                                            record.processed = "P"
+                                            record.syncState = SyncState.SYNCED
+                                            updateSyncStatusHrpMBP(record)
                                         }
-
                                     }
-
-//
-                                    return@withContext 1
-                                } catch (e: Exception) {
-                                    Timber.d("HRP Track entries not synced $e")
+                                    successCount += chunk.size
                                 }
-
-                            }
-
-                            5002 -> {
-                                if (userRepo.refreshTokenTmc(
-                                        user.userName, user.password
-                                    )
-                                ) throw SocketTimeoutException("Refreshed Token!")
-                                else throw IllegalStateException("User Logged out!!")
-                            }
-
-                            5000 -> {
-                                val errorMessage = jsonObj.getString("errorMessage")
-                                if (errorMessage == "No record found") return@withContext 0
-                            }
-
-                            else -> {
-                                throw IllegalStateException("$responseStatusCode received, !?")
+                                401, 5002 -> {
+                                    if (userRepo.refreshTokenTmc(user.userName, user.password)) {
+                                        Timber.d("Token refreshed, HRP MicroBirthPlan chunk will retry next cycle")
+                                    }
+                                    failCount += chunk.size
+                                }
+                                else -> {
+                                    Timber.e("HRP MicroBirthPlan chunk failed with statusCode: $responseStatusCode")
+                                    failCount += chunk.size
+                                }
                             }
                         }
+                    } else {
+                        Timber.e("HRP MicroBirthPlan chunk HTTP error: $statusCode")
+                        failCount += chunk.size
                     }
+                } catch (e: Exception) {
+                    Timber.e(e, "HRP MicroBirthPlan chunk push failed: ${chunk.size} records")
+                    failCount += chunk.size
                 }
-
-            } catch (e: SocketTimeoutException) {
-                Timber.d("get_tb error : $e")
-                return@withContext pushUnSyncedRecordsHRPMicroBirthPlan()
-
-            } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_tb error : $e")
-                return@withContext -1
             }
-            -1
+
+            Timber.d("HRP MicroBirthPlan push complete: $successCount succeeded, $failCount failed out of ${entities.size}")
+            return@withContext 1
         }
     }
 
+    // RECORD-LEVEL ISOLATION: Records now sent in chunks of 20.
+    // Previously all-or-nothing batch. One bad chunk doesn't affect others.
+    // Also removed dangerous recursive retry on SocketTimeoutException.
     private suspend fun pushUnSyncedRecordsHRPTrack(): Int {
-
         return withContext(Dispatchers.IO) {
             val user =
                 preferenceDao.getLoggedInUser()
                     ?: throw IllegalStateException("No user logged in!!")
 
             val entities = database.hrpDao.getHRPTrack(SyncState.UNSYNCED)
+            if (entities.isNullOrEmpty()) return@withContext 1
 
-            val dtos = mutableListOf<Any>()
-            entities?.let {
-                it.forEach { cache ->
-                    dtos.add(cache.toDTO())
-                    cache.syncState = SyncState.SYNCED
-                }
-            }
+            val CHUNK_SIZE = 20
+            val chunks = entities.chunked(CHUNK_SIZE)
+            var successCount = 0
+            var failCount = 0
 
-            if (dtos.isEmpty()) return@withContext 1
-            try {
-                val response = tmcNetworkApiService.saveHRPTrackData(
-                    UserDataDTO(
-                        userId = user.userId,
-                        entries = dtos
+            for (chunk in chunks) {
+                try {
+                    val chunkDtos = chunk.map { cache ->
+                        cache.toDTO()
+                    }
+
+                    val response = tmcNetworkApiService.saveHRPTrackData(
+                        UserDataDTO(userId = user.userId, entries = chunkDtos)
                     )
-                )
-                val statusCode = response.code()
-                if (statusCode == 200) {
-                    val responseString = response.body()?.string()
-                    if (responseString != null) {
-                        val jsonObj = JSONObject(responseString)
-
-                        val responseStatusCode = jsonObj.getInt("statusCode")
-                        Timber.d("Push to amrit hrp track data : $responseStatusCode")
-                        when (responseStatusCode) {
-                            200 -> {
-                                try {
-                                    updateSyncStatusHrpt(entities)
-                                    return@withContext 1
-                                } catch (e: Exception) {
-                                    Timber.d("HRP Track entries not synced $e")
+                    val statusCode = response.code()
+                    if (statusCode == 200) {
+                        val responseString = response.body()?.string()
+                        if (responseString != null) {
+                            val jsonObj = JSONObject(responseString)
+                            val responseStatusCode = jsonObj.getInt("statusCode")
+                            Timber.d("Push to Amrit HRP Track chunk: $responseStatusCode")
+                            when (responseStatusCode) {
+                                200 -> {
+                                    chunk.forEach { it.syncState = SyncState.SYNCED }
+                                    updateSyncStatusHrpt(chunk)
+                                    successCount += chunk.size
                                 }
-
-                            }
-
-                            401,5002 -> {
-                                if (userRepo.refreshTokenTmc(
-                                        user.userName, user.password
-                                    )
-                                ) throw SocketTimeoutException("Refreshed Token!")
-                                else throw IllegalStateException("User Logged out!!")
-                            }
-
-                            5000 -> {
-                                val errorMessage = jsonObj.getString("errorMessage")
-                                if (errorMessage == "No record found") return@withContext 0
-                            }
-
-                            else -> {
-                                throw IllegalStateException("$responseStatusCode received, !?")
+                                401, 5002 -> {
+                                    if (userRepo.refreshTokenTmc(user.userName, user.password)) {
+                                        Timber.d("Token refreshed, HRP Track chunk will retry next cycle")
+                                    }
+                                    failCount += chunk.size
+                                }
+                                else -> {
+                                    Timber.e("HRP Track chunk failed with statusCode: $responseStatusCode")
+                                    failCount += chunk.size
+                                }
                             }
                         }
+                    } else {
+                        Timber.e("HRP Track chunk HTTP error: $statusCode")
+                        failCount += chunk.size
                     }
+                } catch (e: Exception) {
+                    Timber.e(e, "HRP Track chunk push failed: ${chunk.size} records")
+                    failCount += chunk.size
                 }
-
-            } catch (e: SocketTimeoutException) {
-                Timber.d("get_tb error : $e")
-                return@withContext pushUnSyncedRecordsHRPTrack()
-
-            } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_tb error : $e")
-                return@withContext -1
             }
-            -1
+
+            Timber.d("HRP Track push complete: $successCount succeeded, $failCount failed out of ${entities.size}")
+            return@withContext 1
         }
     }
 
 
+    // RECORD-LEVEL ISOLATION: Records now sent in chunks of 20.
+    // Previously all-or-nothing batch. One bad chunk doesn't affect others.
+    // Also removed dangerous recursive retry on SocketTimeoutException.
     private suspend fun pushUnSyncedRecordsHRNonPAssess(): Int {
-
         return withContext(Dispatchers.IO) {
             val user =
                 preferenceDao.getLoggedInUser()
                     ?: throw IllegalStateException("No user logged in!!")
 
             val entities = database.hrpDao.getNonPregnantAssess(SyncState.UNSYNCED)
+            if (entities.isNullOrEmpty()) return@withContext 1
 
-            val dtos = mutableListOf<Any>()
+            // ECR side-effect: push ECR data before chunking HRNonP Assess
             val ecrDTOs = mutableSetOf<EcrPost>()
-            entities?.let {
-                it.forEach { cache ->
-                    dtos.add(cache.toHighRiskAssessDTO())
-                    ecrDTOs.add(mapECR(cache))
-                    cache.syncState = SyncState.SYNCED
-                }
+            entities.forEach { cache ->
+                ecrDTOs.add(mapECR(cache))
             }
-
             val uploadDone = ecrRepo.postECRDataToAmritServer(ecrDTOs)
             if (uploadDone) {
                 ecrDTOs.forEach {
@@ -1058,139 +1025,125 @@ class HRPRepo @Inject constructor(
                     }
                 }
             }
-            if (dtos.isEmpty()) return@withContext 1
-            try {
-                val response = tmcNetworkApiService.saveHighRiskAssessData(
-                    UserDataDTO(
-                        userId = user.userId,
-                        entries = dtos
+
+            val CHUNK_SIZE = 20
+            val chunks = entities.chunked(CHUNK_SIZE)
+            var successCount = 0
+            var failCount = 0
+
+            for (chunk in chunks) {
+                try {
+                    val chunkDtos = chunk.map { cache ->
+                        cache.toHighRiskAssessDTO()
+                    }
+
+                    val response = tmcNetworkApiService.saveHighRiskAssessData(
+                        UserDataDTO(userId = user.userId, entries = chunkDtos)
                     )
-                )
-                val statusCode = response.code()
-                if (statusCode == 200) {
-                    val responseString = response.body()?.string()
-                    if (responseString != null) {
-                        val jsonObj = JSONObject(responseString)
-
-                        val responseStatusCode = jsonObj.getInt("statusCode")
-                        Timber.d("Push to amrit non hrp assess data : $responseStatusCode")
-                        when (responseStatusCode) {
-                            200 -> {
-                                try {
-                                    updateSyncStatusHrpNonAssess(entities)
-                                    return@withContext 1
-                                } catch (e: Exception) {
-                                    Timber.d("HRP non Assess entries not synced $e")
+                    val statusCode = response.code()
+                    if (statusCode == 200) {
+                        val responseString = response.body()?.string()
+                        if (responseString != null) {
+                            val jsonObj = JSONObject(responseString)
+                            val responseStatusCode = jsonObj.getInt("statusCode")
+                            Timber.d("Push to Amrit HRNonP Assess chunk: $responseStatusCode")
+                            when (responseStatusCode) {
+                                200 -> {
+                                    chunk.forEach { it.syncState = SyncState.SYNCED }
+                                    updateSyncStatusHrpNonAssess(chunk)
+                                    successCount += chunk.size
                                 }
-
-                            }
-
-                            401,5002 -> {
-                                if (userRepo.refreshTokenTmc(
-                                        user.userName, user.password
-                                    )
-                                ) throw SocketTimeoutException("Refreshed Token!")
-                                else throw IllegalStateException("User Logged out!!")
-                            }
-
-                            5000 -> {
-                                val errorMessage = jsonObj.getString("errorMessage")
-                                if (errorMessage == "No record found") return@withContext 0
-                            }
-
-                            else -> {
-                                throw IllegalStateException("$responseStatusCode received, !?")
+                                401, 5002 -> {
+                                    if (userRepo.refreshTokenTmc(user.userName, user.password)) {
+                                        Timber.d("Token refreshed, HRNonP Assess chunk will retry next cycle")
+                                    }
+                                    failCount += chunk.size
+                                }
+                                else -> {
+                                    Timber.e("HRNonP Assess chunk failed with statusCode: $responseStatusCode")
+                                    failCount += chunk.size
+                                }
                             }
                         }
+                    } else {
+                        Timber.e("HRNonP Assess chunk HTTP error: $statusCode")
+                        failCount += chunk.size
                     }
+                } catch (e: Exception) {
+                    Timber.e(e, "HRNonP Assess chunk push failed: ${chunk.size} records")
+                    failCount += chunk.size
                 }
-
-            } catch (e: SocketTimeoutException) {
-                Timber.d("get_ hrp error : $e")
-                return@withContext pushUnSyncedRecordsHRNonPAssess()
-
-            } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_ hrp error : $e")
-                return@withContext -1
             }
-            -1
+
+            Timber.d("HRNonP Assess push complete: $successCount succeeded, $failCount failed out of ${entities.size}")
+            return@withContext 1
         }
     }
 
 
+    // RECORD-LEVEL ISOLATION: Records now sent in chunks of 20.
+    // Previously all-or-nothing batch. One bad chunk doesn't affect others.
+    // Also removed dangerous recursive retry on SocketTimeoutException.
     private suspend fun pushUnSyncedRecordsHRNonPTrack(): Int {
-
         return withContext(Dispatchers.IO) {
             val user =
                 preferenceDao.getLoggedInUser()
                     ?: throw IllegalStateException("No user logged in!!")
 
             val entities = database.hrpDao.getHRNonPTrack(SyncState.UNSYNCED)
+            if (entities.isNullOrEmpty()) return@withContext 1
 
-            val dtos = mutableListOf<Any>()
-            entities?.let {
-                it.forEach { cache ->
-                    dtos.add(cache.toDTO())
-                    cache.syncState = SyncState.SYNCED
-                }
-            }
+            val CHUNK_SIZE = 20
+            val chunks = entities.chunked(CHUNK_SIZE)
+            var successCount = 0
+            var failCount = 0
 
-            if (dtos.isEmpty()) return@withContext 1
-            try {
-                val response = tmcNetworkApiService.saveHRNonPTrackData(
-                    UserDataDTO(
-                        userId = user.userId,
-                        entries = dtos
+            for (chunk in chunks) {
+                try {
+                    val chunkDtos = chunk.map { cache ->
+                        cache.toDTO()
+                    }
+
+                    val response = tmcNetworkApiService.saveHRNonPTrackData(
+                        UserDataDTO(userId = user.userId, entries = chunkDtos)
                     )
-                )
-                val statusCode = response.code()
-                if (statusCode == 200) {
-                    val responseString = response.body()?.string()
-                    if (responseString != null) {
-                        val jsonObj = JSONObject(responseString)
-
-                        val responseStatusCode = jsonObj.getInt("statusCode")
-                        Timber.d("Push to amrit non hrp track data : $responseStatusCode")
-                        when (responseStatusCode) {
-                            200 -> {
-                                try {
-                                    updateSyncStatusHrNonTrack(entities)
-                                    return@withContext 1
-                                } catch (e: Exception) {
-                                    Timber.d("HRP non track entries not synced $e")
+                    val statusCode = response.code()
+                    if (statusCode == 200) {
+                        val responseString = response.body()?.string()
+                        if (responseString != null) {
+                            val jsonObj = JSONObject(responseString)
+                            val responseStatusCode = jsonObj.getInt("statusCode")
+                            Timber.d("Push to Amrit HRNonP Track chunk: $responseStatusCode")
+                            when (responseStatusCode) {
+                                200 -> {
+                                    chunk.forEach { it.syncState = SyncState.SYNCED }
+                                    updateSyncStatusHrNonTrack(chunk)
+                                    successCount += chunk.size
                                 }
-
-                            }
-
-                            401,5002 -> {
-                                if (userRepo.refreshTokenTmc(
-                                        user.userName, user.password
-                                    )
-                                ) throw SocketTimeoutException("Refreshed Token!")
-                                else throw IllegalStateException("User Logged out!!")
-                            }
-
-                            5000 -> {
-                                val errorMessage = jsonObj.getString("errorMessage")
-                                if (errorMessage == "No record found") return@withContext 0
-                            }
-
-                            else -> {
-                                throw IllegalStateException("$responseStatusCode received, !?")
+                                401, 5002 -> {
+                                    if (userRepo.refreshTokenTmc(user.userName, user.password)) {
+                                        Timber.d("Token refreshed, HRNonP Track chunk will retry next cycle")
+                                    }
+                                    failCount += chunk.size
+                                }
+                                else -> {
+                                    Timber.e("HRNonP Track chunk failed with statusCode: $responseStatusCode")
+                                    failCount += chunk.size
+                                }
                             }
                         }
+                    } else {
+                        Timber.e("HRNonP Track chunk HTTP error: $statusCode")
+                        failCount += chunk.size
                     }
+                } catch (e: Exception) {
+                    Timber.e(e, "HRNonP Track chunk push failed: ${chunk.size} records")
+                    failCount += chunk.size
                 }
-
-            } catch (e: SocketTimeoutException) {
-                Timber.d("get_ hrp error : $e")
-                return@withContext pushUnSyncedRecordsHRNonPTrack()
-
-            } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_ hrp error : $e")
-                return@withContext -1
             }
-            -1
+
+            Timber.d("HRNonP Track push complete: $successCount succeeded, $failCount failed out of ${entities.size}")
+            return@withContext 1
         }
     }
 
