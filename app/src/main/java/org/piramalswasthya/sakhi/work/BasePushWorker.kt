@@ -1,6 +1,6 @@
 package org.piramalswasthya.sakhi.work
 
-import android.app.ServiceInfo
+import android.content.pm.ServiceInfo
 import android.content.Context
 import android.os.Build
 import androidx.core.app.NotificationCompat
