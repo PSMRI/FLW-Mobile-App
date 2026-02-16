@@ -56,25 +56,39 @@ class InfantRegRepo @Inject constructor(
 
             val infantRegPostList = mutableSetOf<InfantRegPost>()
 
+            // RECORD-LEVEL ISOLATION: Each infant registration record is
+            // processed independently. If one record fails, remaining records continue.
+            // Failed records stay UNSYNCED and retry on next sync cycle.
+            var successCount = 0
+            var failCount = 0
+
             infantRegList.forEach {
-                infantRegPostList.clear()
-                val ben = benDao.getBen(it.motherBenId)
-                    ?: throw IllegalStateException("No beneficiary exists for benId: ${it.motherBenId}!!")
-                infantRegPostList.add(it.asPostModel())
-                it.syncState = SyncState.SYNCING
-                infantRegDao.updateInfantReg(it)
-                val uploadDone = postDataToAmritServer(infantRegPostList)
-                if (uploadDone) {
-                    it.processed = "P"
-                    it.syncState = SyncState.SYNCED
-                } else {
+                try {
+                    infantRegPostList.clear()
+                    val ben = benDao.getBen(it.motherBenId)
+                        ?: throw IllegalStateException("No beneficiary exists for benId: ${it.motherBenId}!!")
+                    infantRegPostList.add(it.asPostModel())
+                    it.syncState = SyncState.SYNCING
+                    infantRegDao.updateInfantReg(it)
+                    val uploadDone = postDataToAmritServer(infantRegPostList)
+                    if (uploadDone) {
+                        it.processed = "P"
+                        it.syncState = SyncState.SYNCED
+                        successCount++
+                    } else {
+                        it.syncState = SyncState.UNSYNCED
+                        failCount++
+                    }
+                    infantRegDao.updateInfantReg(it)
+                } catch (e: Exception) {
+                    Timber.e(e, "Infant registration push failed for motherBenId: ${it.motherBenId}")
                     it.syncState = SyncState.UNSYNCED
+                    infantRegDao.updateInfantReg(it)
+                    failCount++
                 }
-                infantRegDao.updateInfantReg(it)
-                if (!uploadDone)
-                    return@withContext false
             }
 
+            Timber.d("Infant registration push complete: $successCount succeeded, $failCount failed out of ${infantRegList.size}")
             return@withContext true
         }
     }

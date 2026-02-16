@@ -59,23 +59,37 @@ class PncRepo @Inject constructor(
 
             val pncPostList = mutableSetOf<PNCNetwork>()
 
+            // RECORD-LEVEL ISOLATION: Each PNC visit record is processed
+            // independently. If one record fails, remaining records continue.
+            // Failed records stay UNSYNCED and retry on next sync cycle.
+            var successCount = 0
+            var failCount = 0
+
             pncList.forEach {
-                pncPostList.clear()
-                pncPostList.add(it.asNetworkModel())
-                it.syncState = SyncState.SYNCING
-                pncDao.update(it)
-                val uploadDone = postDataToAmritServer(pncPostList)
-                if (uploadDone) {
-                    it.processed = "P"
-                    it.syncState = SyncState.SYNCED
-                } else {
+                try {
+                    pncPostList.clear()
+                    pncPostList.add(it.asNetworkModel())
+                    it.syncState = SyncState.SYNCING
+                    pncDao.update(it)
+                    val uploadDone = postDataToAmritServer(pncPostList)
+                    if (uploadDone) {
+                        it.processed = "P"
+                        it.syncState = SyncState.SYNCED
+                        successCount++
+                    } else {
+                        it.syncState = SyncState.UNSYNCED
+                        failCount++
+                    }
+                    pncDao.update(it)
+                } catch (e: Exception) {
+                    Timber.e(e, "PNC visit push failed for record")
                     it.syncState = SyncState.UNSYNCED
+                    pncDao.update(it)
+                    failCount++
                 }
-                pncDao.update(it)
-                if (!uploadDone)
-                    return@withContext false
             }
 
+            Timber.d("PNC visit push complete: $successCount succeeded, $failCount failed out of ${pncList.size}")
             return@withContext true
         }
     }

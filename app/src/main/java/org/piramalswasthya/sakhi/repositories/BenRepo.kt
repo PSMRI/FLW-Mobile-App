@@ -463,6 +463,11 @@ class BenRepo @Inject constructor(
                 }
             }
 
+            // RECORD-LEVEL ISOLATION: BenRepo previously returned true
+            // regardless of upload success (Pattern C — silent success).
+            // Now failures are explicitly logged so they're visible in Timber
+            // logs. The worker still returns true (failed records are already
+            // marked via benSyncWithServerFailed and retry on next cycle).
             val uploadDone = postDataToAmritServer(
                 benNetworkPostList, householdNetworkPostList, kidNetworkPostList,
             )
@@ -470,6 +475,9 @@ class BenRepo @Inject constructor(
                 benNetworkPostList.takeIf { it.isNotEmpty() }?.map { it.benId }?.let {
                     benDao.benSyncWithServerFailed(*it.toLongArray())
                 }
+                Timber.e("Beneficiary batch push FAILED: ${benNetworkPostList.size} ben records, ${householdNetworkPostList.size} household records")
+            } else {
+                Timber.d("Beneficiary batch push succeeded: ${benNetworkPostList.size} ben records, ${householdNetworkPostList.size} household records")
             }
             return@withContext true
         }

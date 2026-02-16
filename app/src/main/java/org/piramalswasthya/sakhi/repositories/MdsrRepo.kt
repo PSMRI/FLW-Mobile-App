@@ -43,21 +43,39 @@ class MdsrRepo @Inject constructor(
 
             val mdsrPostList = mutableSetOf<MdsrPost>()
 
+            // RECORD-LEVEL ISOLATION: Each MDSR record is processed
+            // independently with try/catch. Previously this method silently
+            // returned true even when records failed to upload (Pattern C).
+            // Now failures are logged and tracked while still allowing the
+            // worker to succeed (failed records retry on next sync cycle).
+            var successCount = 0
+            var failCount = 0
+
             mdsrList.forEach {
-                mdsrPostList.clear()
-                mdsrPostList.add(it.asPostModel())
-                it.syncState = SyncState.SYNCING
-                mdsrDao.updateMdsrRecord(it)
-                val uploadDone = postMdsrForm(mdsrPostList.toList())
-                if (uploadDone) {
-                    it.processed = "P"
-                    it.syncState = SyncState.SYNCED
-                } else {
+                try {
+                    mdsrPostList.clear()
+                    mdsrPostList.add(it.asPostModel())
+                    it.syncState = SyncState.SYNCING
+                    mdsrDao.updateMdsrRecord(it)
+                    val uploadDone = postMdsrForm(mdsrPostList.toList())
+                    if (uploadDone) {
+                        it.processed = "P"
+                        it.syncState = SyncState.SYNCED
+                        successCount++
+                    } else {
+                        it.syncState = SyncState.UNSYNCED
+                        failCount++
+                    }
+                    mdsrDao.updateMdsrRecord(it)
+                } catch (e: Exception) {
+                    Timber.e(e, "MDSR push failed for record")
                     it.syncState = SyncState.UNSYNCED
+                    mdsrDao.updateMdsrRecord(it)
+                    failCount++
                 }
-                mdsrDao.updateMdsrRecord(it)
             }
 
+            Timber.d("MDSR push complete: $successCount succeeded, $failCount failed out of ${mdsrList.size}")
             return@withContext true
         }
     }

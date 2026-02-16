@@ -75,36 +75,50 @@ class EcrRepo @Inject constructor(
             val ecrList = database.ecrDao.getAllUnprocessedECR()
             val ecrPostList = mutableSetOf<EcrPost>()
 
+            // RECORD-LEVEL ISOLATION: Each ECR record is processed
+            // independently. If one record fails, remaining records continue.
+            // Failed records stay UNSYNCED and retry on next sync cycle.
+            var successCount = 0
+            var failCount = 0
+
             ecrList.forEach {
-                ecrPostList.clear()
-                val ben = database.benDao.getBen(it.benId)
-                    ?: throw IllegalStateException("No beneficiary exists for benId: ${it.benId}!!")
+                try {
+                    ecrPostList.clear()
+                    val ben = database.benDao.getBen(it.benId)
+                        ?: throw IllegalStateException("No beneficiary exists for benId: ${it.benId}!!")
 
-                val ecrPost = it.asPostModel(context)
-                val cache = database.hrpDao.getNonPregnantAssess(ben.beneficiaryId)
-                cache?.let {
-                    ecrPost.misCarriage = cache.misCarriage
-                    ecrPost.homeDelivery = cache.homeDelivery
-                    ecrPost.medicalIssues = cache.medicalIssues
-                    ecrPost.pastCSection = cache.pastCSection
-                    ecrPost.isHighRisk = cache.isHighRisk
-                }
+                    val ecrPost = it.asPostModel(context)
+                    val cache = database.hrpDao.getNonPregnantAssess(ben.beneficiaryId)
+                    cache?.let {
+                        ecrPost.misCarriage = cache.misCarriage
+                        ecrPost.homeDelivery = cache.homeDelivery
+                        ecrPost.medicalIssues = cache.medicalIssues
+                        ecrPost.pastCSection = cache.pastCSection
+                        ecrPost.isHighRisk = cache.isHighRisk
+                    }
 
-                ecrPostList.add(ecrPost)
-                it.syncState = SyncState.SYNCING
-                database.ecrDao.update(it)
-                val uploadDone = postECRDataToAmritServer(ecrPostList)
-                if (uploadDone) {
-                    it.processed = "P"
-                    it.syncState = SyncState.SYNCED
-                } else {
+                    ecrPostList.add(ecrPost)
+                    it.syncState = SyncState.SYNCING
+                    database.ecrDao.update(it)
+                    val uploadDone = postECRDataToAmritServer(ecrPostList)
+                    if (uploadDone) {
+                        it.processed = "P"
+                        it.syncState = SyncState.SYNCED
+                        successCount++
+                    } else {
+                        it.syncState = SyncState.UNSYNCED
+                        failCount++
+                    }
+                    database.ecrDao.update(it)
+                } catch (e: Exception) {
+                    Timber.e(e, "ECR push failed for benId: ${it.benId}")
                     it.syncState = SyncState.UNSYNCED
+                    database.ecrDao.update(it)
+                    failCount++
                 }
-                database.ecrDao.update(it)
-                if (!uploadDone)
-                    return@withContext false
             }
 
+            Timber.d("ECR push complete: $successCount succeeded, $failCount failed out of ${ecrList.size}")
             return@withContext true
         }
     }
@@ -176,23 +190,37 @@ class EcrRepo @Inject constructor(
 
             val ectPostList = mutableSetOf<EligibleCoupleTrackingCache>()
 
+            // RECORD-LEVEL ISOLATION: Each ECT record is processed
+            // independently. If one record fails, remaining records continue.
+            // Failed records stay UNSYNCED and retry on next sync cycle.
+            var successCount = 0
+            var failCount = 0
+
             ectList.forEach {
-                ectPostList.clear()
-                ectPostList.add(it)
-                it.syncState = SyncState.SYNCING
-                database.ecrDao.updateEligibleCoupleTracking(it)
-                val uploadDone = postECTDataToAmritServer(ectPostList)
-                if (uploadDone) {
-                    it.processed = "P"
-                    it.syncState = SyncState.SYNCED
-                } else {
+                try {
+                    ectPostList.clear()
+                    ectPostList.add(it)
+                    it.syncState = SyncState.SYNCING
+                    database.ecrDao.updateEligibleCoupleTracking(it)
+                    val uploadDone = postECTDataToAmritServer(ectPostList)
+                    if (uploadDone) {
+                        it.processed = "P"
+                        it.syncState = SyncState.SYNCED
+                        successCount++
+                    } else {
+                        it.syncState = SyncState.UNSYNCED
+                        failCount++
+                    }
+                    database.ecrDao.updateEligibleCoupleTracking(it)
+                } catch (e: Exception) {
+                    Timber.e(e, "ECT push failed for record")
                     it.syncState = SyncState.UNSYNCED
+                    database.ecrDao.updateEligibleCoupleTracking(it)
+                    failCount++
                 }
-                database.ecrDao.updateEligibleCoupleTracking(it)
-                if (!uploadDone)
-                    return@withContext false
             }
 
+            Timber.d("ECT push complete: $successCount succeeded, $failCount failed out of ${ectList.size}")
             return@withContext true
         }
     }

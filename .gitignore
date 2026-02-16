@@ -8,3 +8,4 @@
 /local.properties
 /secrets.properties
 **/google-services.json
+app/src/main/res/raw/wildcard.crt
