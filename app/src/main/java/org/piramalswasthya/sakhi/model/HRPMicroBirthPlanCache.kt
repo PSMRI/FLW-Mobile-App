@@ -42,7 +42,8 @@ data class HRPMicroBirthPlanCache(
     var communityMemberContact: String? = null,
     var modeOfTransportation: String? = null,
     var processed: String? = "N",
-    var syncState: SyncState? = SyncState.UNSYNCED
+    var syncState: SyncState? = SyncState.UNSYNCED,
+    val bankac: String? = null
 ) : FormDataModel{
 fun toDTO(): HRPMicroBirthPlanDTO {
     return HRPMicroBirthPlanDTO(

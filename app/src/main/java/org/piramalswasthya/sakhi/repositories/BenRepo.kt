@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.repositories
 
 import android.app.Application
+import android.net.Uri
 import android.widget.Toast
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -27,6 +28,7 @@ import org.piramalswasthya.sakhi.network.*
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.NewBenRegViewModel
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
+import java.io.File
 import java.lang.Long.min
 import java.net.SocketTimeoutException
 import java.text.SimpleDateFormat
@@ -247,12 +249,51 @@ class BenRepo @Inject constructor(
 
     suspend fun persistRecord(ben: BenRegCache) {
         withContext(Dispatchers.IO) {
-            ben.userImage = ben.userImage?.let {
-                ImageUtils.saveBenImageFromCameraToStorage(context, it, ben.beneficiaryId)
+
+            val originalImagePath = ben.userImage
+            val finalImagePath = originalImagePath?.let { imagePath ->
+                val uri = Uri.parse(imagePath)
+                val filePath = uri.path
+                    ?: throw IllegalStateException("Invalid image URI: $imagePath")
+
+                val file = File(filePath)
+
+                when {
+                    file.absolutePath.startsWith(context.cacheDir.absolutePath) -> {
+                        val savedPath = ImageUtils.saveBenImageFromCameraToStorage(
+                            context = context,
+                            uriString = imagePath,
+                            benId = ben.beneficiaryId
+                        )
+
+                        if (savedPath.isNullOrBlank()) {
+                            Timber.e("Image compression/save failed for beneficiaryId=${ben.beneficiaryId}")
+
+                            // Cleanup orphaned cache file
+                            runCatching { file.delete() }
+                                .onFailure { Timber.w(it, "Failed to delete orphaned cache image") }
+
+                            throw IllegalStateException("Failed to save beneficiary image")
+                        }
+
+                        savedPath
+                    }
+
+                    file.absolutePath.startsWith(context.filesDir.absolutePath) -> {
+                        imagePath
+                    }
+
+                    else -> {
+                        Timber.w("Unknown image path source: $imagePath")
+                        imagePath
+                    }
+                }
             }
+            ben.userImage = finalImagePath
             benDao.upsert(ben)
         }
     }
+
 
     suspend fun updateRecord(ben: BenRegCache) {
         withContext(Dispatchers.IO) {
@@ -365,7 +406,7 @@ class BenRepo @Inject constructor(
 
                     return true
                 }
-                if (responseStatusCode == 5002) {
+                if (responseStatusCode == 5002 || responseStatusCode ==401) {
                     if (userRepo.refreshTokenTmc(
                             user.userName, user.password
                         )
@@ -470,7 +511,7 @@ class BenRepo @Inject constructor(
                         benToUpdateList?.let { benDao.benSyncedWithServer(*it) }
                         hhToUpdateList?.let { householdDao.householdSyncedWithServer(*it) }
                         return true
-                    } else if (responseStatusCode == 5002) {
+                    } else if (responseStatusCode == 5002 || responseStatusCode ==401)  {
                         val user = preferenceDao.getLoggedInUser()
                             ?: throw IllegalStateException("User not logged in according to db")
                         if (userRepo.refreshTokenTmc(
@@ -667,7 +708,7 @@ class BenRepo @Inject constructor(
                                 return@withContext pageSize
                             }
 
-                            5002 -> {
+                            401,5002 -> {
                                 if (pageNumber == 0 && userRepo.refreshTokenTmc(
                                         user.userName, user.password
                                     )
@@ -1666,7 +1707,7 @@ class BenRepo @Inject constructor(
                         }
                     }
 
-                    5000, 5002 -> {
+                    401,5000, 5002 -> {
                         if (JSONObject(responseBody).getString("errorMessage")
                                 .contentEquals("Invalid login key or session is expired")
                         ) {
@@ -1694,7 +1735,7 @@ class BenRepo @Inject constructor(
 
     suspend fun sendOtp(mobileNo: String): SendOtpResponse? {
         try {
-            var sendOtp = sendOtpRequest(mobileNo);
+            var sendOtp = sendOtpRequest(mobileNo)
             val response = tmcNetworkApiService.sendOtp(sendOtp)
             if (response.isSuccessful) {
                 val responseBody = response.body()?.string()
@@ -1733,7 +1774,7 @@ class BenRepo @Inject constructor(
     }
     suspend fun resendOtp(mobileNo: String): SendOtpResponse? {
         try {
-            var sendOtp = sendOtpRequest(mobileNo);
+            var sendOtp = sendOtpRequest(mobileNo)
             val response = tmcNetworkApiService.resendOtp(sendOtp)
             if (response.isSuccessful) {
                 val responseBody = response.body()?.string()
@@ -1773,8 +1814,8 @@ class BenRepo @Inject constructor(
 
     suspend fun verifyOtp(mobileNo: String,otp:Int): ValidateOtpResponse? {
 
-            var validateOtp = ValidateOtpRequest(otp,mobileNo);
-            val response = tmcNetworkApiService.validateOtp(validateOtp)
+            var validateOtp = ValidateOtpRequest(otp,mobileNo)
+        val response = tmcNetworkApiService.validateOtp(validateOtp)
             if (response.isSuccessful) {
                 val responseBody = response.body()?.string()
                 when (responseBody?.let { JSONObject(it).getInt("statusCode") }) {

@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.RvItemPregnancyAncBinding
 import org.piramalswasthya.sakhi.model.AncStatus
+import org.piramalswasthya.sakhi.utils.RoleConstants
 
 class AncVisitAdapter(private val clickListener: AncVisitClickListener, private val pref: PreferenceDao? = null) :
     ListAdapter<AncStatus, AncVisitAdapter.AncViewHolder>(
@@ -39,10 +40,10 @@ class AncVisitAdapter(private val clickListener: AncVisitClickListener, private 
             item: AncStatus, clickListener: AncVisitClickListener, pref: PreferenceDao?, isLastItem: Boolean
         ) {
 
-            if (pref?.getLoggedInUser()?.role.equals("asha", true)) {
-                binding.btnView.visibility = View.VISIBLE
-            } else {
+            if (pref?.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
                 binding.btnView.visibility = View.GONE
+            } else {
+                binding.btnView.visibility = View.VISIBLE
             }
 
             binding.visit = item

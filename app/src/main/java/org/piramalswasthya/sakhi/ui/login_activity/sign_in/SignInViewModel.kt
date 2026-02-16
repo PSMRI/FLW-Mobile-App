@@ -94,7 +94,7 @@ class SignInViewModel @Inject constructor(
                 _state.value =
                     NetworkResponse.Error("Network Call failed.\nUnknown error : ${e.message} stack-trace : ${e.stackTrace}")
                 pref.deleteLoginCred()
-                pref.deleteAmritToken()
+
             }
         }
     }
@@ -127,6 +127,17 @@ class SignInViewModel @Inject constructor(
 
     fun updateState(state: NetworkResponse<User?>) {
         _state.value = state
+    }
+
+    /**
+     * Used ONLY for legacy JWT migration.
+     * No LiveData, no UI side effects.
+     */
+    suspend fun authenticateForMigration(
+        username: String,
+        password: String
+    ): NetworkResponse<User?> {
+        return userRepo.authenticateUser(username, password)
     }
 
 }
