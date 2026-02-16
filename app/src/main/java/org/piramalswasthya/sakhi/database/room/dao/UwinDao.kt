@@ -43,4 +43,7 @@ interface UwinDao {
         clearAll()
         newList.forEach { insert(it) }
     }
+
+    @Query("UPDATE UWIN_SESSION SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetSyncingToUnsynced()
 }

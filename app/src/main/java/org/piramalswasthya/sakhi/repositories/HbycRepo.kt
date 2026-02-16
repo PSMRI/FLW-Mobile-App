@@ -62,15 +62,19 @@ class HbycRepo @Inject constructor(
             val hbycPostList = mutableSetOf<HbycPost>()
 
             hbycList.forEach {
-                hbycPostList.clear()
-                val household = database.householdDao.getHousehold(it.hhId)
-                    ?: throw IllegalStateException("No household exists for hhId: ${it.hhId}!!")
-                val ben = database.benDao.getBen(it.hhId, it.benId)
-                    ?: throw IllegalStateException("No beneficiary exists for benId: ${it.benId}!!")
-                val hbycCount = database.hbycDao.hbycCount()
-                hbycPostList.add(it.asPostModel(user, household, ben, hbycCount))
-                it.syncState = SyncState.SYNCING
-                database.hbycDao.setSynced(it)
+                try {
+                    hbycPostList.clear()
+                    val household = database.householdDao.getHousehold(it.hhId)
+                        ?: throw IllegalStateException("No household exists for hhId: ${it.hhId}!!")
+                    val ben = database.benDao.getBen(it.hhId, it.benId)
+                        ?: throw IllegalStateException("No beneficiary exists for benId: ${it.benId}!!")
+                    val hbycCount = database.hbycDao.hbycCount()
+                    hbycPostList.add(it.asPostModel(user, household, ben, hbycCount))
+                    it.syncState = SyncState.SYNCING
+                    database.hbycDao.setSynced(it)
+                } catch (e: Exception) {
+                    Timber.e(e, "HbycRepo: Error processing HBYC record benId=${it.benId}")
+                }
             }
 
             return@withContext true

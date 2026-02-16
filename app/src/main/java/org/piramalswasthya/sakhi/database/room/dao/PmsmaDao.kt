@@ -36,4 +36,6 @@ interface PmsmaDao {
     @Update
     fun updatePmsmaRecord(it: PMSMACache)
 
+    @Query("UPDATE PMSMA SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetSyncingToUnsynced()
 }
