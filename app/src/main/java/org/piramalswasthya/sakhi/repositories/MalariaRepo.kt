@@ -108,7 +108,7 @@ class MalariaRepo @Inject constructor(
             val lastTimeStamp = preferenceDao.getLastSyncedTimeStamp()
             try {
                 val response = tmcNetworkApiService.getScreeningData(
-                   1
+                   1L
                 )
                 val statusCode = response.code()
                 if (statusCode == 200) {

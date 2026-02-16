@@ -103,7 +103,7 @@ class PmsmaRepo @Inject constructor(
                                 return true
                             }
 
-                            5002 -> {
+                            401,5002 -> {
                                 val user = preferenceDao.getLoggedInUser()
                                     ?: throw IllegalStateException("User seems to be logged out!!")
                                 if (userRepo.refreshTokenTmc(user.userName, user.password))
@@ -171,7 +171,7 @@ class PmsmaRepo @Inject constructor(
                                 return@withContext 1
                             }
 
-                            5002 -> {
+                            401,5002 -> {
                                 if (userRepo.refreshTokenTmc(
                                         user.userName, user.password
                                     )

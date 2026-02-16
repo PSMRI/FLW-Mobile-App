@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "children_under_five_all_visit",
-    indices = [Index(value = ["benId","hhId","visitDate","formId"])]
+    indices = [Index(value = ["benId","hhId","visitDate","formId"],  unique = true)]
 )
 data class CUFYFormResponseJsonEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,

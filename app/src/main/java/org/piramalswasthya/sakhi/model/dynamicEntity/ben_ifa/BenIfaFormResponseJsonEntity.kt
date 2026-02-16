@@ -1,9 +1,16 @@
 package org.piramalswasthya.sakhi.model.dynamicEntity.ben_ifa
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "ALL_BEN_IFA_VISIT_HISTORY")
+@Entity(tableName = "ALL_BEN_IFA_VISIT_HISTORY",
+        indices = [
+            Index(
+                value = ["benId", "hhId", "visitDate", "formId"],
+                unique = true
+            )
+])
 
 data class BenIfaFormResponseJsonEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,

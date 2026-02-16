@@ -1335,7 +1335,8 @@ data class BenRegCache(
 
     var isDraft: Boolean,
 
-    var isConsent: Boolean = false,
+    @ColumnInfo(name = "isConsent", defaultValue = "0")
+    var isConsent: Boolean = false ,
 
     var isNewAbha: Boolean = false,
     var isSpouseAdded:  Boolean = false,

@@ -51,15 +51,18 @@ class HouseHoldListAdapter(private val diseaseType: String, private var isDiseas
             isSoftDeleteEnabled: Boolean
         ) {
             binding.household = item
+            binding.clickListener = clickListener
+            binding.executePendingBindings()
 
-            if (pref.getLoggedInUser()?.role.equals("asha", true) && isDisease) {
+
+            if (isDisease) {
                 binding.button4.visibility = View.GONE
                 if (diseaseType == "FILARIA") {
                     binding.btnMda.visibility = View.VISIBLE
                 } else {
                     binding.btnMda.visibility = View.GONE
                 }
-            } else if (pref.getLoggedInUser()?.role.equals("asha", true) && !isDisease) {
+            } else if (!isDisease) {
                 binding.button4.visibility = View.VISIBLE
                 binding.btnMda.visibility = View.GONE
             } else {

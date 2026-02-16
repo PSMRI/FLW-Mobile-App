@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.model
 
 import android.content.Context
+import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
@@ -35,6 +36,7 @@ data class EligibleCoupleRegCache(
     var bankName: String? = null,
     var branchName: String? = null,
     var ifsc: String? = null,
+    @ColumnInfo(defaultValue = "0")
     var lmpDate: Long = 0L,
     var noOfChildren: Int = 0,
     var noOfLiveChildren: Int = 0,
@@ -82,7 +84,8 @@ data class EligibleCoupleRegCache(
     var createdDate: Long = System.currentTimeMillis(),
     var updatedBy: String,
     val updatedDate: Long = System.currentTimeMillis(),
-    var lmp_date:Long,
+    @ColumnInfo(defaultValue = "0")
+    var lmp_date:Long =0L,
     var isKitHandedOver: Boolean ? = false,
     var kitHandedOverDate: Long? = null,
     var kitPhoto1: String? = null,

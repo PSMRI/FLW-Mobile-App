@@ -6,7 +6,8 @@ import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "mosquito_net_visit",
-    indices = [Index(value = ["hhId", "visitDate"], unique = true)]
+    indices = [Index(value = ["hhId", "visitDate","formId"], unique = true)]
+
 )
 
 data class MosquitoNetFormResponseJsonEntity(
