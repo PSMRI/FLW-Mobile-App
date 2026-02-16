@@ -33,22 +33,26 @@ abstract class BaseDynamicWorker(
 
     companion object {
         private const val MAX_RETRY_COUNT = 5
+        private const val NOTIFICATION_ID = 1002
     }
 
     protected abstract val preferenceDao: PreferenceDao
     abstract val workerName: String
+
+    override suspend fun getForegroundInfo(): ForegroundInfo =
+        createForegroundInfo("Syncing data...")
 
     override suspend fun doWork(): Result {
         if (runAttemptCount >= MAX_RETRY_COUNT) {
             Timber.e("[$workerName] Max retries ($MAX_RETRY_COUNT) exceeded, giving up")
             return Result.failure()
         }
-        initTokens()
         try {
             setForeground(createForegroundInfo("Syncing $workerName..."))
         } catch (e: Throwable) {
             Timber.w(e, "[$workerName] Could not set foreground notification")
         }
+        initTokens()
         return try {
             doSyncWork()
         } catch (e: IllegalStateException) {
@@ -89,12 +93,12 @@ abstract class BaseDynamicWorker(
 
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             ForegroundInfo(
-                0,
+                NOTIFICATION_ID,
                 notification,
                 ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
             )
         } else {
-            ForegroundInfo(0, notification)
+            ForegroundInfo(NOTIFICATION_ID, notification)
         }
     }
 }

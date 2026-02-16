@@ -42,6 +42,8 @@ class PullFromAmritWorker @AssistedInject constructor(
     private var page4: Int = 0
 
 
+    override suspend fun getForegroundInfo(): ForegroundInfo = createForegroundInfo("Syncing data...")
+
     override suspend fun doWork(): Result {
         return try {
             try {
@@ -107,7 +109,7 @@ class PullFromAmritWorker @AssistedInject constructor(
             .setOngoing(true)
             .build()
 
-        return ForegroundInfo(0, notification)
+        return ForegroundInfo(1003, notification)
     }
 
 
