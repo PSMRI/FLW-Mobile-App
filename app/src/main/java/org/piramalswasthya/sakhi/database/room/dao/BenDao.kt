@@ -853,5 +853,6 @@ interface BenDao {
 """)
     suspend fun isDeathByCauseAnc(benId: Long,cause: String): Boolean
 
-
+    @Query("UPDATE BENEFICIARY SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetSyncingToUnsynced()
 }

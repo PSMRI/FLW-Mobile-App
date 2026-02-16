@@ -47,6 +47,9 @@ interface EcrDao {
     @Query("SELECT * FROM eligible_couple_tracking WHERE benId = :benId ORDER BY visitDate DESC")
     suspend fun getAllAntraDoses(benId: Long): List<EligibleCoupleTrackingCache>
 
+    @Query("UPDATE ELIGIBLE_COUPLE_REG SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetRegSyncingToUnsynced()
 
-
+    @Query("UPDATE ELIGIBLE_COUPLE_TRACKING SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetTrackingSyncingToUnsynced()
 }

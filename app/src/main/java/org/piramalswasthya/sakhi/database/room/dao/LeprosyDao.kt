@@ -66,7 +66,9 @@ interface LeprosyDao {
     @Query("SELECT * FROM LEPROSY_FOLLOW_UP")
     suspend fun getAllFollowUpsByBenId(): List<LeprosyFollowUpCache>
 
+    @Query("UPDATE LEPROSY_SCREENING SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetScreeningSyncingToUnsynced()
 
+    @Query("UPDATE LEPROSY_FOLLOW_UP SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetFollowUpSyncingToUnsynced()
 }
-
-

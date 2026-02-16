@@ -25,11 +25,19 @@ abstract class BasePushWorker(
     params: WorkerParameters
 ) : CoroutineWorker(appContext, params) {
 
+    companion object {
+        private const val MAX_RETRY_COUNT = 5
+    }
+
     // Subclass provides via Hilt DI constructor with `override val preferenceDao`
     protected abstract val preferenceDao: PreferenceDao
     abstract val workerName: String
 
     override suspend fun doWork(): Result {
+        if (runAttemptCount >= MAX_RETRY_COUNT) {
+            Timber.e("[$workerName] Max retries ($MAX_RETRY_COUNT) exceeded, giving up")
+            return Result.failure()
+        }
         initTokens()
         try {
             setForeground(createForegroundInfo("Syncing $workerName..."))

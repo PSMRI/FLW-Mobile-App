@@ -21,8 +21,6 @@ interface AdolescentHealthDao {
     @Query("SELECT * FROM Adolescent_Health_Form_Data WHERE  syncState = :syncState")
     suspend fun getAdolescentHealth(syncState: SyncState): List<AdolescentHealthCache>
 
-
-
-
-
+    @Query("UPDATE Adolescent_Health_Form_Data SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetSyncingToUnsynced()
 }
