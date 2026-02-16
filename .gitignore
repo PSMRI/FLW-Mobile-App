@@ -11,3 +11,4 @@
 app/src/main/res/raw/wildcard.crt
 keystore.properties
 app/keystore/*
+keystore.properties

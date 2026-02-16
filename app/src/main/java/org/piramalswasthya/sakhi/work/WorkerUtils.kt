@@ -35,7 +35,9 @@ import java.util.concurrent.TimeUnit
 
 object WorkerUtils {
 
-    const val syncWorkerUniqueName = "SYNC-WITH-AMRIT"
+    const val syncWorkerUniqueName = "SYNC-WITH-AMRIT"  // Legacy (triggerAmritSyncWorker)
+    const val pushWorkerUniqueName = "PUSH-TO-AMRIT"
+    const val pullWorkerUniqueName = "PULL-FROM-AMRIT"
 
     private val networkOnlyConstraint = Constraints.Builder()
         .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -295,10 +297,13 @@ object WorkerUtils {
 
         // Start unique work chain with registration as the anchor.
         // All subsequent chains fan out from this single entry point.
+        // KEEP: If a push cycle is already running/enqueued, skip this request.
+        // The running cycle will pick up any new data. This prevents the
+        // feedback loop where each DB change re-triggers the entire chain.
         val afterRegistration = workManager
             .beginUniqueWork(
-                syncWorkerUniqueName,
-                ExistingWorkPolicy.APPEND_OR_REPLACE,
+                pushWorkerUniqueName,
+                ExistingWorkPolicy.KEEP,
                 registration
             )
 
@@ -703,10 +708,12 @@ object WorkerUtils {
         val pullSaasBahuSamelanAmritWorker = OneTimeWorkRequestBuilder<SaasBahuSammelanPullWorker>()
             .setConstraints(networkOnlyConstraint).build()
         val workManager = WorkManager.getInstance(context)
+        // KEEP: If a pull cycle is already running/enqueued, skip this request.
+        // Separate name from push so push/pull don't cancel each other.
         workManager
             .beginUniqueWork(
-                syncWorkerUniqueName,
-                ExistingWorkPolicy.APPEND_OR_REPLACE,
+                pullWorkerUniqueName,
+                ExistingWorkPolicy.KEEP,
                 pullWorkRequest
             )
             .then(ancPullWorkRequest)

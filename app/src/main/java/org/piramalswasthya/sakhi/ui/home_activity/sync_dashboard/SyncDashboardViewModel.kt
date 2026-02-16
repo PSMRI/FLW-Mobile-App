@@ -41,7 +41,7 @@ class SyncDashboardViewModel @Inject constructor(
     }
 
     val workerStates: LiveData<List<WorkInfo>> = WorkManager.getInstance(application)
-        .getWorkInfosLiveData(WorkQuery.fromUniqueWorkNames(WorkerUtils.syncWorkerUniqueName))
+        .getWorkInfosLiveData(WorkQuery.fromUniqueWorkNames(WorkerUtils.pushWorkerUniqueName, WorkerUtils.pullWorkerUniqueName, WorkerUtils.syncWorkerUniqueName))
 
     // Tab 2: Logs
     val syncLogs: StateFlow<List<SyncLogEntry>> = syncLogManager.logs
