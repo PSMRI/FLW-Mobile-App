@@ -13,6 +13,7 @@ import androidx.work.WorkInfo
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.adapters.FailedWorkerAdapter
 import org.piramalswasthya.sakhi.adapters.SyncDashboardStatusAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentSyncStatusTabBinding
 import org.piramalswasthya.sakhi.model.asDomainModel
@@ -32,6 +33,9 @@ class SyncStatusTabFragment : Fragment() {
         return binding.root
     }
 
+    private var failedExpanded = false
+    private lateinit var failedWorkerAdapter: FailedWorkerAdapter
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -40,6 +44,9 @@ class SyncStatusTabFragment : Fragment() {
         binding.rvSyncStatus.addItemDecoration(
             DividerItemDecoration(context, LinearLayout.VERTICAL)
         )
+
+        failedWorkerAdapter = FailedWorkerAdapter()
+        binding.rvFailedWorkers.adapter = failedWorkerAdapter
 
         val localNames = viewModel.getLocalNames(requireContext())
         val englishNames = viewModel.getEnglishNames(requireContext())
@@ -66,12 +73,24 @@ class SyncStatusTabFragment : Fragment() {
         viewModel.workerStates.observe(viewLifecycleOwner) { workInfoList ->
             updateWorkerStatus(workInfoList)
         }
+
+        // Observe failed worker details
+        viewModel.failedWorkerDetails.observe(viewLifecycleOwner) { failedList ->
+            failedWorkerAdapter.submitList(failedList)
+        }
+
+        // Toggle expand/collapse on tap
+        binding.tvWorkerDetails.setOnClickListener {
+            failedExpanded = !failedExpanded
+            binding.rvFailedWorkers.visibility = if (failedExpanded) View.VISIBLE else View.GONE
+        }
     }
 
     private fun updateWorkerStatus(workInfoList: List<WorkInfo>?) {
         if (workInfoList.isNullOrEmpty()) {
             binding.tvWorkerStatus.text = getString(R.string.sync_dashboard_worker_idle)
             binding.tvWorkerDetails.visibility = View.GONE
+            binding.rvFailedWorkers.visibility = View.GONE
             return
         }
 
@@ -86,19 +105,28 @@ class SyncStatusTabFragment : Fragment() {
                     R.string.sync_dashboard_worker_running, running, total
                 )
                 binding.tvWorkerDetails.visibility = View.GONE
+                binding.rvFailedWorkers.visibility = View.GONE
             }
             failed.isNotEmpty() -> {
                 binding.tvWorkerStatus.text = getString(R.string.sync_dashboard_worker_idle)
-                binding.tvWorkerDetails.text = "Failed: ${failed.size} worker(s)"
+                binding.tvWorkerDetails.text = getString(
+                    R.string.sync_dashboard_worker_failed, failed.size
+                )
                 binding.tvWorkerDetails.visibility = View.VISIBLE
+                // Keep expanded state across updates
+                binding.rvFailedWorkers.visibility =
+                    if (failedExpanded) View.VISIBLE else View.GONE
             }
             succeeded == total -> {
                 binding.tvWorkerStatus.text = getString(R.string.sync_dashboard_worker_complete)
                 binding.tvWorkerDetails.visibility = View.GONE
+                binding.rvFailedWorkers.visibility = View.GONE
+                failedExpanded = false
             }
             else -> {
                 binding.tvWorkerStatus.text = getString(R.string.sync_dashboard_worker_idle)
                 binding.tvWorkerDetails.visibility = View.GONE
+                binding.rvFailedWorkers.visibility = View.GONE
             }
         }
     }

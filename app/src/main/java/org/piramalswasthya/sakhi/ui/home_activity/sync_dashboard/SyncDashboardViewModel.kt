@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.map
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkQuery
@@ -16,9 +17,11 @@ import org.piramalswasthya.sakhi.database.room.dao.SyncDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.SyncLogManager
+import org.piramalswasthya.sakhi.model.FailedWorkerInfo
 import org.piramalswasthya.sakhi.model.SyncLogEntry
 import org.piramalswasthya.sakhi.model.SyncStatusCache
 import org.piramalswasthya.sakhi.utils.HelperUtil.getLocalizedResources
+import org.piramalswasthya.sakhi.work.BasePushWorker
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import javax.inject.Inject
 
@@ -42,6 +45,24 @@ class SyncDashboardViewModel @Inject constructor(
 
     val workerStates: LiveData<List<WorkInfo>> = WorkManager.getInstance(application)
         .getWorkInfosLiveData(WorkQuery.fromUniqueWorkNames(WorkerUtils.pushWorkerUniqueName, WorkerUtils.pullWorkerUniqueName, WorkerUtils.syncWorkerUniqueName))
+
+    val failedWorkerDetails: LiveData<List<FailedWorkerInfo>> = workerStates.map { workInfoList ->
+        workInfoList
+            .filter { it.state == WorkInfo.State.FAILED }
+            .map { workInfo ->
+                val outputName = workInfo.outputData.getString(BasePushWorker.KEY_WORKER_NAME)
+                val error = workInfo.outputData.getString(BasePushWorker.KEY_ERROR)
+                // Fallback: extract class name from tags if outputData wasn't set
+                val name = outputName ?: workInfo.tags
+                    .firstOrNull { it.startsWith("org.piramalswasthya.sakhi.work.") }
+                    ?.substringAfterLast(".")
+                    ?: "Unknown Worker"
+                FailedWorkerInfo(
+                    workerName = name,
+                    error = error ?: "No error details available"
+                )
+            }
+    }
 
     // Tab 2: Logs
     val syncLogs: StateFlow<List<SyncLogEntry>> = syncLogManager.logs

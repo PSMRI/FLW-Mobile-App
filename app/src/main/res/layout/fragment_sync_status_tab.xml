@@ -90,7 +90,18 @@
                     android:layout_marginTop="@dimen/padding_small"
                     android:textAppearance="@style/TextAppearance.Material3.BodySmall"
                     android:visibility="gone"
-                    tools:text="Failed: PushBenWorker" />
+                    tools:text="Failed: 3 worker(s) - tap to expand" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_failed_workers"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_small"
+                    android:nestedScrollingEnabled="false"
+                    android:visibility="gone"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:itemCount="3"
+                    tools:listitem="@layout/rv_item_failed_worker" />
 
             </LinearLayout>
 
