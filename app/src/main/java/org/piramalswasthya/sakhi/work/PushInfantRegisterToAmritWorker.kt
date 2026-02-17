@@ -30,7 +30,7 @@ class PushInfantRegisterToAmritWorker @AssistedInject constructor(
             Timber.d("Infant Reg Push Worker completed")
             Result.success()
         } else {
-            Timber.d("Infant Reg Worker Failed!")
+            Timber.e("Infant Reg Worker Failed!")
             Result.failure(workDataOf(KEY_WORKER_NAME to workerName, KEY_ERROR to "Sync operation returned false"))
         }
     }

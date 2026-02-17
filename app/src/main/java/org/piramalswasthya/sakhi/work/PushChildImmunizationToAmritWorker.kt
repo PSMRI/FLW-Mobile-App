@@ -29,7 +29,7 @@ class PushChildImmunizationToAmritWorker @AssistedInject constructor(
             Timber.d("Worker completed")
             Result.success()
         } else {
-            Timber.d("Worker Failed for push Child Immunization!")
+            Timber.e("Worker Failed for push Child Immunization!")
             Result.failure(workDataOf(KEY_WORKER_NAME to workerName, KEY_ERROR to "Sync operation returned false"))
         }
     }

@@ -24,6 +24,19 @@ class SyncLogTree(
             "sync", "push", "pull", "worker", "batch",
             "beneficiary", "amrit", "upload", "download"
         )
+
+        // Safety net: promote log level when message content indicates an error
+        // but the caller used the wrong Timber method (e.g. Timber.d for errors).
+        private val ERROR_CONTENT_PATTERNS = listOf(
+            "exception", "error occurred", "something bad happened",
+            "socket timeout", "constraint"
+        )
+        private val FAILURE_CONTENT_PATTERNS = listOf(
+            "failed", "worker failed"
+        )
+        private val FAILURE_EXCLUSIONS = listOf(
+            "failed out of", "succeeded", "synced"
+        )
     }
 
     override fun isLoggable(tag: String?, priority: Int): Boolean {
@@ -47,7 +60,20 @@ class SyncLogTree(
         }
 
         val fullMessage = if (t != null) "$message: ${t.message}" else message
-        syncLogManager.addLog(level, tag ?: "Sync", fullMessage)
+        val effectiveLevel = promoteIfError(level, fullMessage, t)
+        syncLogManager.addLog(effectiveLevel, tag ?: "Sync", fullMessage)
+    }
+
+    private fun promoteIfError(level: LogLevel, message: String, t: Throwable?): LogLevel {
+        if (t != null && level.ordinal < LogLevel.ERROR.ordinal) return LogLevel.ERROR
+        if (level.ordinal >= LogLevel.WARN.ordinal) return level
+
+        val lower = message.lowercase()
+        if (ERROR_CONTENT_PATTERNS.any { lower.contains(it) }) return LogLevel.ERROR
+        if (FAILURE_CONTENT_PATTERNS.any { lower.contains(it) }) {
+            if (FAILURE_EXCLUSIONS.none { lower.contains(it) }) return LogLevel.WARN
+        }
+        return level
     }
 
     private fun isSyncRelated(tag: String?, message: String): Boolean {

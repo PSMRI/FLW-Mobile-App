@@ -51,7 +51,7 @@ class DownloadCardWorker @AssistedInject constructor(
                 setForeground(createForegroundInfo("Downloading"))
             } catch (throwable: Throwable) {
                 // Handle this exception gracefully
-                Timber.d(throwable.message, "Something bad happened", throwable)
+                Timber.e(throwable.message, "Something bad happened", throwable)
             }
             withContext(Dispatchers.IO) {
                 val response = abhaIdRepo.downloadPdfCard()

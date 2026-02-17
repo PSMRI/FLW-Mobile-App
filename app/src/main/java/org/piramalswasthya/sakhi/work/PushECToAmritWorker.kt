@@ -32,7 +32,7 @@ class PushECToAmritWorker @AssistedInject constructor(
             Timber.d("Worker completed")
             Result.success()
         } else {
-            Timber.d("Worker Failed as usual!")
+            Timber.e("Worker Failed as usual!")
             Result.failure(workDataOf(KEY_WORKER_NAME to workerName, KEY_ERROR to "Sync operation returned false"))
         }
     }

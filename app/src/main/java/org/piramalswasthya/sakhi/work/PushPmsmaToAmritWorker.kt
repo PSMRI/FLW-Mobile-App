@@ -32,7 +32,7 @@ class PushPmsmaToAmritWorker @AssistedInject constructor(
             Timber.d("PMSMA Push Worker completed")
             Result.success()
         } else {
-            Timber.d("PMSMA Worker Failed!")
+            Timber.e("PMSMA Worker Failed!")
             Result.failure(workDataOf(KEY_WORKER_NAME to workerName, KEY_ERROR to "Sync operation returned false"))
         }
     }

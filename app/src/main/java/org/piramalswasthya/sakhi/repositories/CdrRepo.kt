@@ -31,7 +31,7 @@ class CdrRepo @Inject constructor(
                 cdrDao.upsert(cdrCache)
                 true
             } catch (e: Exception) {
-                Timber.d("Error : $e raised at saveCdrData")
+                Timber.e("Error : $e raised at saveCdrData")
                 false
             }
         }
@@ -130,12 +130,12 @@ class CdrRepo @Inject constructor(
             Timber.w("Bad Response from server, need to check $cdrPostList $response ")
             return false
         } catch (e: SocketTimeoutException) {
-            Timber.d("Caught exception $e here")
+            Timber.e("Caught exception $e here")
             if (retryCount > 0) return postCdrForm(cdrPostList, retryCount - 1)
             Timber.e("postCdrForm: max retries exhausted")
             return false
         } catch (e: JSONException) {
-            Timber.d("Caught exception $e here")
+            Timber.e("Caught exception $e here")
             return false
         }
 
@@ -198,11 +198,11 @@ class CdrRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_pnc error : $e")
+                Timber.e("get_pnc error : $e")
                 return@withContext -2
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_pnc error : $e")
+                Timber.e("get_pnc error : $e")
                 return@withContext -1
             }
             -1

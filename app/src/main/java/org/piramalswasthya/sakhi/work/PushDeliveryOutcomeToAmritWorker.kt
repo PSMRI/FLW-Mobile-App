@@ -31,7 +31,7 @@ class PushDeliveryOutcomeToAmritWorker @AssistedInject constructor(
             Timber.d("Delivery Outcome Push Worker completed")
             Result.success()
         } else {
-            Timber.d("Delivery Outcome Worker Failed!")
+            Timber.e("Delivery Outcome Worker Failed!")
             Result.failure(workDataOf(KEY_WORKER_NAME to workerName, KEY_ERROR to "Sync operation returned false"))
         }
     }

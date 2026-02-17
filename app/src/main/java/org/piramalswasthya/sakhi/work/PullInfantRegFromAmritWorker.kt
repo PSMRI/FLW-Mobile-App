@@ -43,7 +43,7 @@ class PullInfantRegFromAmritWorker @AssistedInject constructor(
                 setForeground(createForegroundInfo("Downloading Infant register Data"))
             } catch (throwable: Throwable) {
                 // Handle this exception gracefully
-                Timber.d("FgLW", "Something bad happened", throwable)
+                Timber.e("FgLW", "Something bad happened", throwable)
             }
             withContext(Dispatchers.IO) {
                 val startTime = System.currentTimeMillis()
@@ -64,14 +64,14 @@ class PullInfantRegFromAmritWorker @AssistedInject constructor(
                     }
                     return@withContext Result.failure(workDataOf("worker_name" to "PullInfantRegFromAmritWorker", "error" to "Pull operation returned incomplete results"))
                 } catch (e: SQLiteConstraintException) {
-                    Timber.d("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
+                    Timber.e("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
                     return@withContext Result.failure(workDataOf("worker_name" to "PullInfantRegFromAmritWorker", "error" to "SQLite constraint: ${e.message}"))
                 }
 
             }
 
         } catch (e: java.lang.Exception) {
-            Timber.d("Error occurred in PullInfantRegFromAmritWorker $e ${e.stackTrace}")
+            Timber.e("Error occurred in PullInfantRegFromAmritWorker $e ${e.stackTrace}")
 
             Result.failure(workDataOf("worker_name" to "PullInfantRegFromAmritWorker", "error" to (e.message ?: "Unknown error")))
         }
@@ -104,7 +104,7 @@ class PullInfantRegFromAmritWorker @AssistedInject constructor(
                 val res = infantRegRepo.getInfantRegFromServer()
                 return@withContext res == 1
             } catch (e: Exception) {
-                Timber.d("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
+                Timber.e("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
             }
             true
         }

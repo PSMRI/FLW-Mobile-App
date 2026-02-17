@@ -331,10 +331,10 @@ class VLFRepo @Inject constructor(
                     }
                 }
             } catch (e: SocketTimeoutException) {
-                Timber.d("get ORS Campaign data error : $e")
+                Timber.e("get ORS Campaign data error : $e")
                 return@withContext getORSCampaignFromServer()
             } catch (e: IllegalStateException) {
-                Timber.d("get ORS Campaign data error : $e")
+                Timber.e("get ORS Campaign data error : $e")
                 return@withContext -1
             }
             -1
@@ -549,10 +549,10 @@ class VLFRepo @Inject constructor(
                     }
                 }
             } catch (e: SocketTimeoutException) {
-                Timber.d("get Pulse Polio Campaign data error : $e")
+                Timber.e("get Pulse Polio Campaign data error : $e")
                 return@withContext getPulsePolioCampaignFromServer()
             } catch (e: IllegalStateException) {
-                Timber.d("get Pulse Polio Campaign data error : $e")
+                Timber.e("get Pulse Polio Campaign data error : $e")
                 return@withContext -1
             }
             -1
@@ -759,11 +759,11 @@ class VLFRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get data error : $e")
+                Timber.e("get data error : $e")
                 return@withContext getVHNDFromServer()
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get data error : $e")
+                Timber.e("get data error : $e")
                 return@withContext -1
             }
             -1
@@ -917,11 +917,11 @@ class VLFRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get data error : $e")
+                Timber.e("get data error : $e")
                 return@withContext getVHNCFromServer()
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get data error : $e")
+                Timber.e("get data error : $e")
                 return@withContext -1
             }
             -1
@@ -1075,11 +1075,11 @@ class VLFRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get data error : $e")
+                Timber.e("get data error : $e")
                 return@withContext getPHCFromServer()
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get data error : $e")
+                Timber.e("get data error : $e")
                 return@withContext -1
             }
             -1
@@ -1234,11 +1234,11 @@ class VLFRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get data error : $e")
+                Timber.e("get data error : $e")
                 return@withContext getAHDFromServer()
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get data error : $e")
+                Timber.e("get data error : $e")
                 return@withContext -1
             }
             -1
@@ -1389,11 +1389,11 @@ class VLFRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get data error : $e")
+                Timber.e("get data error : $e")
                 return@withContext getDewormingFromServer()
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get data error : $e")
+                Timber.e("get data error : $e")
                 return@withContext -1
             }
             -1
@@ -1565,10 +1565,10 @@ class VLFRepo @Inject constructor(
                     }
                 }
             } catch (e: SocketTimeoutException) {
-                Timber.d("get Filaria Mda Campaign data error : $e")
+                Timber.e("get Filaria Mda Campaign data error : $e")
                 return@withContext getFilariaMdaCampaignFromServer()
             } catch (e: IllegalStateException) {
-                Timber.d("get Filaria Mda Campaign data error : $e")
+                Timber.e("get Filaria Mda Campaign data error : $e")
                 return@withContext -1
             }
             -1

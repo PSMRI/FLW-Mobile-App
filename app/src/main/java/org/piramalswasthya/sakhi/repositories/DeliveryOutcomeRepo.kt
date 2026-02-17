@@ -147,7 +147,7 @@ class DeliveryOutcomeRepo @Inject constructor(
                         }
                     }
                 } catch (e: SocketTimeoutException) {
-                    Timber.d("Caught exception $e here")
+                    Timber.e("Caught exception $e here")
 //                    HelperUtil.deliveryOutcomeRepo.append("Caught exception:SocketTimeoutException $e \n")
 //                    HelperUtil.deliveryOutcomeRepo.append("\n")
 //                    HelperUtil.deliveryOutcomeRepoMethod(context, "deliveryOutcomeRepoMethod.txt", HelperUtil.deliveryOutcomeRepo.toString())
@@ -176,14 +176,14 @@ class DeliveryOutcomeRepo @Inject constructor(
             Timber.w("Bad Response from server, need to check $deliveryOutcomePostList $response ")
             return false
         } catch (e: SocketTimeoutException) {
-            Timber.d("Caught exception $e here")
+            Timber.e("Caught exception $e here")
 //            HelperUtil.deliveryOutcomeRepo.append("Caught exception SocketTimeOut $e \n")
 //            HelperUtil.deliveryOutcomeRepo.append("\n")
 //            HelperUtil.deliveryOutcomeRepoMethod(context, "deliveryOutcomeRepoMethod.txt", HelperUtil.deliveryOutcomeRepo.toString())
 
             return postDataToAmritServer(deliveryOutcomePostList)
         } catch (e: JSONException) {
-            Timber.d("Caught exception $e here")
+            Timber.e("Caught exception $e here")
 //            HelperUtil.deliveryOutcomeRepo.append("Caught exception JSONException $e \n")
 //            HelperUtil.deliveryOutcomeRepo.append("\n")
 //            HelperUtil.deliveryOutcomeRepoMethod(context, "deliveryOutcomeRepoMethod.txt", HelperUtil.deliveryOutcomeRepo.toString())
@@ -249,11 +249,11 @@ class DeliveryOutcomeRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_delivery_outcome error : $e")
+                Timber.e("get_delivery_outcome error : $e")
                 return@withContext -2
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_delivery_outcome error : $e")
+                Timber.e("get_delivery_outcome error : $e")
                 return@withContext -1
             }
             -1

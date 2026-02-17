@@ -152,11 +152,11 @@ class MalariaRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_tb error : $e")
+                Timber.e("get_tb error : $e")
                 return@withContext -2
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_tb error : $e")
+                Timber.e("get_tb error : $e")
                 return@withContext -1
             }
             -1
@@ -223,11 +223,11 @@ class MalariaRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_tb error : $e")
+                Timber.e("get_tb error : $e")
                 return@withContext -2
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_tb error : $e")
+                Timber.e("get_tb error : $e")
                 return@withContext -1
             }
             -1
@@ -332,11 +332,11 @@ class MalariaRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_tb error : $e")
+                Timber.e("get_tb error : $e")
                 return@withContext -2
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_tb error : $e")
+                Timber.e("get_tb error : $e")
                 return@withContext -1
             }
             -1

@@ -44,7 +44,7 @@ class PmsmaRepo @Inject constructor(
 
                 true
             } catch (e: Exception) {
-                Timber.d("Error : $e raised at savePmsmaData")
+                Timber.e("Error : $e raised at savePmsmaData")
                 false
             }
         }
@@ -140,12 +140,12 @@ class PmsmaRepo @Inject constructor(
             Timber.w("Bad Response from server, need to check $pmsmaPostList $response ")
             return false
         } catch (e: SocketTimeoutException) {
-            Timber.d("Caught exception $e here")
+            Timber.e("Caught exception $e here")
             if (retryCount > 0) return postDataToAmritServer(pmsmaPostList, retryCount - 1)
             Timber.e("postDataToAmritServer: max retries exhausted")
             return false
         } catch (e: Exception) {
-            Timber.d("Caught exception $e here")
+            Timber.e("Caught exception $e here")
             return false
         }
     }
@@ -207,11 +207,11 @@ class PmsmaRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_pmsma error : $e")
+                Timber.e("get_pmsma error : $e")
                 return@withContext -2
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_pmsma error : $e")
+                Timber.e("get_pmsma error : $e")
                 return@withContext -1
             }
             -1

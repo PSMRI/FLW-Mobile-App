@@ -81,7 +81,7 @@ class IncentiveRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("incentives error : $e")
+                Timber.e("incentives error : $e")
                 pullAndSaveAllIncentiveActivities(user)
                 return@withContext true
             } catch (e: Exception) {
@@ -158,7 +158,7 @@ class IncentiveRepo @Inject constructor(
                     }
                 }
             } catch (e: SocketTimeoutException) {
-                Timber.d("incentives error : $e")
+                Timber.e("incentives error : $e")
                 pullAndSaveAllIncentiveRecords(user)
                 return@withContext true
             } catch (e: Exception) {

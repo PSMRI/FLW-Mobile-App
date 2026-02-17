@@ -47,7 +47,7 @@ class SyncLogAdapter :
             }
             binding.tvLevel.background = bg
 
-            binding.tvTimestamp.text = timeFormat.format(Date(item.timestamp))
+            binding.tvTimestamp.text = "${timeFormat.format(Date(item.timestamp))}  ${item.tag}"
             binding.tvMessage.text = item.message
             binding.tvMessage.setTextColor(textColor)
         }

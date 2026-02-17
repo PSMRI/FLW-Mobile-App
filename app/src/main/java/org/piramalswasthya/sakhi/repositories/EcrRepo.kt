@@ -173,12 +173,12 @@ class EcrRepo @Inject constructor(
             Timber.w("Bad Response from server, need to check $ecrPostList $response ")
             return false
         } catch (e: SocketTimeoutException) {
-            Timber.d("Caught exception $e here")
+            Timber.e("Caught exception $e here")
             if (retryCount > 0) return postECRDataToAmritServer(ecrPostList, retryCount - 1)
             Timber.e("postECRDataToAmritServer: max retries exhausted")
             return false
         } catch (e: JSONException) {
-            Timber.d("Caught exception $e here")
+            Timber.e("Caught exception $e here")
             return false
         }
     }
@@ -277,12 +277,12 @@ class EcrRepo @Inject constructor(
             Timber.w("Bad Response from server, need to check $ectPostList $response ")
             return false
         } catch (e: SocketTimeoutException) {
-            Timber.d("Caught exception $e here")
+            Timber.e("Caught exception $e here")
             if (retryCount > 0) return postECTDataToAmritServer(ectPostList, retryCount - 1)
             Timber.e("postECTDataToAmritServer: max retries exhausted")
             return false
         } catch (e: JSONException) {
-            Timber.d("Caught exception $e here")
+            Timber.e("Caught exception $e here")
             return false
         }
     }
@@ -372,12 +372,12 @@ class EcrRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_ect error : $e")
+                Timber.e("get_ect error : $e")
                 if (retryCount > 0) return@withContext pullAndPersistEcrRecord(retryCount - 1)
                 Timber.e("pullAndPersistEcrRecord: max retries exhausted")
                 return@withContext -1
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_ect error : $e")
+                Timber.e("get_ect error : $e")
                 return@withContext -1
             }
             -1
@@ -445,12 +445,12 @@ class EcrRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_ect error : $e")
+                Timber.e("get_ect error : $e")
                 if (retryCount > 0) return@withContext pullAndPersistEctRecord(retryCount - 1)
                 Timber.e("pullAndPersistEctRecord: max retries exhausted")
                 return@withContext -1
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_ect error : $e")
+                Timber.e("get_ect error : $e")
                 return@withContext -1
             }
             -1

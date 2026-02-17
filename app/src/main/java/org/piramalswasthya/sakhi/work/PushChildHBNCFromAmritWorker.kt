@@ -47,7 +47,7 @@ class PushChildHBNCFromAmritWorker @AssistedInject constructor(
                 }
                 return@withContext Result.failure(workDataOf(KEY_WORKER_NAME to workerName, KEY_ERROR to "Sync operation returned false"))
             } catch (e: SQLiteConstraintException) {
-                Timber.d("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
+                Timber.e("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
                 return@withContext Result.failure(workDataOf(KEY_WORKER_NAME to workerName, KEY_ERROR to "SQLite constraint: ${e.message}"))
             }
 
@@ -61,7 +61,7 @@ class PushChildHBNCFromAmritWorker @AssistedInject constructor(
                 val res = hbncRepo.pushHBNCDetails()
                 return@withContext res == 1
             } catch (e: Exception) {
-                Timber.d("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
+                Timber.e("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
             }
             true
         }
