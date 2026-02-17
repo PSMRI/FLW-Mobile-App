@@ -30,9 +30,8 @@ object RoomDbEncryptionHelper {
         val dbFile = context.getDatabasePath(dbName)
         if (!dbFile.exists()) return
 
-        // Already encrypted → just normalize
+        // Already encrypted → nothing to do
         if (canOpenWithKey(dbFile, passphrase)) {
-            dropRoomOwnedViews(dbFile, passphrase)
             return
         }
 
