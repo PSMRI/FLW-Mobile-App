@@ -9,6 +9,7 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
@@ -60,10 +61,10 @@ class PullDeliveryOutcomeFromAmritWorker @AssistedInject constructor(
                     if (result1.all { it }) {
                         return@withContext Result.success()
                     }
-                    return@withContext Result.failure()
+                    return@withContext Result.failure(workDataOf("worker_name" to "PullDeliveryOutcomeFromAmritWorker", "error" to "Pull operation returned incomplete results"))
                 } catch (e: SQLiteConstraintException) {
                     Timber.d("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
-                    return@withContext Result.failure()
+                    return@withContext Result.failure(workDataOf("worker_name" to "PullDeliveryOutcomeFromAmritWorker", "error" to "SQLite constraint: ${e.message}"))
                 }
 
             }
@@ -71,7 +72,7 @@ class PullDeliveryOutcomeFromAmritWorker @AssistedInject constructor(
         } catch (e: java.lang.Exception) {
             Timber.d("Error occurred in PullDeliveryOutcomeFromAmritWorker $e ${e.stackTrace}")
 
-            Result.failure()
+            Result.failure(workDataOf("worker_name" to "PullDeliveryOutcomeFromAmritWorker", "error" to (e.message ?: "Unknown error")))
         }
     }
 

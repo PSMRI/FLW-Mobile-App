@@ -9,6 +9,7 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
@@ -63,10 +64,10 @@ class PullHBYCFromAmritWorker @AssistedInject constructor(
                         preferenceDao.setLastSyncedTimeStamp(System.currentTimeMillis())
                         return@withContext Result.success()
                     }
-                    return@withContext Result.failure()
+                    return@withContext Result.failure(workDataOf("worker_name" to "PullHBYCFromAmritWorker", "error" to "Pull operation returned incomplete results"))
                 } catch (e: SQLiteConstraintException) {
                     Timber.d("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
-                    return@withContext Result.failure()
+                    return@withContext Result.failure(workDataOf("worker_name" to "PullHBYCFromAmritWorker", "error" to "SQLite constraint: ${e.message}"))
                 }
 
             }
@@ -74,7 +75,7 @@ class PullHBYCFromAmritWorker @AssistedInject constructor(
         } catch (e: java.lang.Exception) {
             Timber.d("Error occurred in PullChildHBYCFromAmritWorker $e ${e.stackTrace}")
 
-            Result.failure()
+            Result.failure(workDataOf("worker_name" to "PullHBYCFromAmritWorker", "error" to (e.message ?: "Unknown error")))
         }
     }
 
