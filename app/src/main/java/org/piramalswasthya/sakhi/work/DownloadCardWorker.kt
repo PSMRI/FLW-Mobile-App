@@ -2,6 +2,8 @@ package org.piramalswasthya.sakhi.work
 
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.content.pm.ServiceInfo
+import android.os.Build
 import android.content.Context
 import android.content.Intent
 import android.media.MediaScannerConnection
@@ -97,7 +99,11 @@ class DownloadCardWorker @AssistedInject constructor(
             .setProgress(100, 0, true)
             .build()
 
-        return ForegroundInfo(1003, notification)
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            ForegroundInfo(1003, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
+        } else {
+            ForegroundInfo(1003, notification)
+        }
     }
 
     private fun showDownload(fileName: String, uri: Uri) {

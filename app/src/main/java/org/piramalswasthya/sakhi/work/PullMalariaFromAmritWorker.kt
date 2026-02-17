@@ -1,5 +1,7 @@
 package org.piramalswasthya.sakhi.work
 
+import android.content.pm.ServiceInfo
+import android.os.Build
 import android.content.Context
 import android.database.sqlite.SQLiteConstraintException
 import androidx.core.app.NotificationCompat
@@ -95,7 +97,11 @@ class PullMalariaFromAmritWorker @AssistedInject constructor(
             .setOngoing(true)
             .build()
 
-        return ForegroundInfo(1003, notification)
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            ForegroundInfo(1003, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
+        } else {
+            ForegroundInfo(1003, notification)
+        }
     }
 
 
