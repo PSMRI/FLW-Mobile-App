@@ -31,6 +31,9 @@ import org.piramalswasthya.sakhi.work.dynamicWoker.FilariaMdaCampaignPushWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.FormSyncWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.MosquitoNetFormSyncWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.NCDFollowUpSyncWorker
+import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYIFAPushWorker
+import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYORSPushWorker
+import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYSAMPushWorker
 import java.util.concurrent.TimeUnit
 
 object WorkerUtils {
@@ -469,13 +472,13 @@ object WorkerUtils {
         // Passed as a list → all run in PARALLEL within group.
         // ─────────────────────────────────────────────────────────────
         val group8Cufy = listOf(
-            OneTimeWorkRequestBuilder<CUFYORSFormSyncWorker>()
+            OneTimeWorkRequestBuilder<CUFYORSPushWorker>()
                 .setConstraints(networkOnlyConstraint)
                 .addTag("push_group8_cufy").build(),
-            OneTimeWorkRequestBuilder<CUFYIFAFormSyncWorker>()
+            OneTimeWorkRequestBuilder<CUFYIFAPushWorker>()
                 .setConstraints(networkOnlyConstraint)
                 .addTag("push_group8_cufy").build(),
-            OneTimeWorkRequestBuilder<CUFYSAMFormSyncWorker>()
+            OneTimeWorkRequestBuilder<CUFYSAMPushWorker>()
                 .setConstraints(networkOnlyConstraint)
                 .addTag("push_group8_cufy").build(),
         )
@@ -543,16 +546,24 @@ object WorkerUtils {
         val chainF = afterRegistration.then(group9Abha)
 
         // ─────────────────────────────────────────────────────────────
+        // FINAL: Pull Incentive (runs AFTER all push groups complete)
+        // Fetches incentive/activity data once all entities have been
+        // pushed. Placed here because the server calculates incentives
+        // based on pushed data — must run after all pushes finish.
+        // ─────────────────────────────────────────────────────────────
+        val pullIncentive = OneTimeWorkRequestBuilder<PullIncentiveWorker>()
+            .setConstraints(networkOnlyConstraint)
+            .addTag("push_final_incentive").build()
+
+        // ─────────────────────────────────────────────────────────────
         // COMBINE & ENQUEUE: All chains fan out in parallel after
         // registration. If Chain C (Communicable Diseases) fails,
-        // Chains A/B/D/E/F continue unaffected.
+        // Chains A/B/D/E/F continue unaffected. PullIncentiveWorker
+        // runs after ALL chains complete.
         // ─────────────────────────────────────────────────────────────
         WorkContinuation.combine(listOf(chainA, chainB, chainC, chainD, chainE, chainF))
+            .then(pullIncentive)
             .enqueue()
-
-        // NOTE: PullIncentiveWorker was previously mixed into this push
-        // chain (old code). It has been REMOVED — pull operations belong
-        // in triggerAmritPullWorker() or should be triggered independently.
         //
         // NOTE: Duplicate FormSyncWorker has been CONSOLIDATED into a
         // single invocation in Group 4 (Child Health).
@@ -602,10 +613,6 @@ object WorkerUtils {
         val pullBenIfaFormSyncWorker = OneTimeWorkRequestBuilder<BenIfaFormSyncWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
-        val pulladolescentWorkRequest = OneTimeWorkRequestBuilder<PushAdolescentAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
-            .build()
-
         val generalOpdPullFromAmritWorker = OneTimeWorkRequestBuilder<GeneralOpdPullFromAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
@@ -678,10 +685,6 @@ object WorkerUtils {
         val pullUwinWorkerRequest = OneTimeWorkRequestBuilder<PullUwinFromAmritWorker>()
             .setConstraints(networkOnlyConstraint)
             .build()
-        val pullAshaWorkRequest =
-            OneTimeWorkRequestBuilder<PullIncentiveWorker>()
-                .setConstraints(networkOnlyConstraint)
-                .build()
         val setSyncCompleteWorker = OneTimeWorkRequestBuilder<UpdatePrefForPullCompleteWorker>()
             .build()
         val pullMalariaWorkRequest = OneTimeWorkRequestBuilder<PullMalariaFromAmritWorker>()
@@ -751,7 +754,6 @@ object WorkerUtils {
 //            .then(pullHBYCFromAmritWorker)
             .then(pullHBNCFromAmritWorker)
             .then(pullHRPWorkRequest)
-            .then(pulladolescentWorkRequest)
             .then(pullMalariaWorkRequest)
             .then(pullAESToAmritWorker)
             .then(pullkalaAzarToAmritWorker)
