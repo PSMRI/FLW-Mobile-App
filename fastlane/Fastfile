@@ -22,11 +22,17 @@ end
  def latest_googleplay_version_code(package_name)
   UI.user_error!("Missing required parameter: package_name") if package_name.nil?
 
+  json_key_path = File.expand_path('google_play_service_account.json', __dir__)
+
   begin
     tracks = ['production', 'beta', 'alpha', 'internal']
     version_codes = tracks.map do |track|
       begin
-        google_play_track_version_codes(track: track, package_name: package_name)
+        google_play_track_version_codes(
+          track: track,
+          package_name: package_name,
+          json_key: json_key_path
+        )
       rescue => e
         UI.message "No version codes found for #{track} track: #{e.message}"
         []
@@ -129,7 +135,8 @@ platform :android do
           skip_upload_screenshots: true,
           release_status: "draft",
           version_code: new_version_code,
-          package_name: package_name
+          package_name: package_name,
+          json_key: File.expand_path('google_play_service_account.json', __dir__)
     )
   end
 
