@@ -64,7 +64,7 @@ platform :android do
     begin
       latest_release = firebase_app_distribution_get_latest_release(
         app: ENV['FIREBASE_APP_ID'],
-        service_credentials_file: "../firebase_credentials.json"
+        service_credentials_file: "firebase_credentials.json"
       )
       new_version_code = latest_release[:buildVersion].to_i + 1
     rescue => e
@@ -88,8 +88,8 @@ platform :android do
     # Distribute to Firebase App Distribution (universal APK for all device architectures)
     firebase_app_distribution(
       app: ENV['FIREBASE_APP_ID'],
-      service_credentials_file: "../firebase_credentials.json",
-      android_artifact_path: "../app/build/outputs/apk/#{gradle_flavor}/debug/app-#{gradle_flavor}-universal-debug.apk",
+      service_credentials_file: "firebase_credentials.json",
+      android_artifact_path: "app/build/outputs/apk/#{gradle_flavor}/debug/app-#{gradle_flavor}-universal-debug.apk",
       release_notes_file: "FirebaseAppDistributionConfig/release_notes.txt",
       groups_file: "FirebaseAppDistributionConfig/groups.txt",
       debug: true
