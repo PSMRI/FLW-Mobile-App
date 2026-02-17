@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.work
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.Data
 import androidx.work.ExistingPeriodicWorkPolicy
@@ -46,152 +47,114 @@ object WorkerUtils {
         .setRequiredNetworkType(NetworkType.CONNECTED)
         .build()
 
+    /** Standard builder: network constraint + exponential backoff (30s → 60s → 120s …). */
+    private inline fun <reified W : androidx.work.ListenableWorker> syncRequestBuilder(
+    ) = OneTimeWorkRequestBuilder<W>()
+        .setConstraints(networkOnlyConstraint)
+        .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 30, TimeUnit.SECONDS)
+
     fun triggerAmritSyncWorker(context: Context) {
-        val CUFYORSFormSyncWorker = OneTimeWorkRequestBuilder<CUFYORSFormSyncWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val CUFYORSFormSyncWorker = syncRequestBuilder<CUFYORSFormSyncWorker>()
             .build()
-        val hbncAndHbyceWorker = OneTimeWorkRequestBuilder<FormSyncWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val hbncAndHbyceWorker = syncRequestBuilder<FormSyncWorker>()
             .build()
-        val CUFYIFAFormSyncWorker = OneTimeWorkRequestBuilder<CUFYIFAFormSyncWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val CUFYIFAFormSyncWorker = syncRequestBuilder<CUFYIFAFormSyncWorker>()
             .build()
-        val orsCampaignPushWorker = OneTimeWorkRequestBuilder<ORSCampaignPushWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val orsCampaignPushWorker = syncRequestBuilder<ORSCampaignPushWorker>()
             .build()
-        val pulsePolioCampaignPushWorker = OneTimeWorkRequestBuilder<PulsePolioCampaignPushWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pulsePolioCampaignPushWorker = syncRequestBuilder<PulsePolioCampaignPushWorker>()
             .build()
-        val pushFilariaMdaCampaignFormSyncWorker = OneTimeWorkRequestBuilder<FilariaMdaCampaignPushWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pushFilariaMdaCampaignFormSyncWorker = syncRequestBuilder<FilariaMdaCampaignPushWorker>()
             .build()
-        val pullEyeSurgeryFormSyncWorker = OneTimeWorkRequestBuilder<EyeSurgeryFormSyncWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullEyeSurgeryFormSyncWorker = syncRequestBuilder<EyeSurgeryFormSyncWorker>()
             .build()
-        val pullFilariaMDAFormSyncWorker = OneTimeWorkRequestBuilder<FilariaMDAFormSyncWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullFilariaMDAFormSyncWorker = syncRequestBuilder<FilariaMDAFormSyncWorker>()
             .build()
-        val pullMosquitoNetFormSyncWorker = OneTimeWorkRequestBuilder<MosquitoNetFormSyncWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullMosquitoNetFormSyncWorker = syncRequestBuilder<MosquitoNetFormSyncWorker>()
             .build()
-        val pullBenIfaFormSyncWorker = OneTimeWorkRequestBuilder<BenIfaFormSyncWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullBenIfaFormSyncWorker = syncRequestBuilder<BenIfaFormSyncWorker>()
             .build()
-        val CUFYSAMFormSyncWorker = OneTimeWorkRequestBuilder<CUFYSAMFormSyncWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val CUFYSAMFormSyncWorker = syncRequestBuilder<CUFYSAMFormSyncWorker>()
             .build()
 
-        val NCDFollowupFormSyncWorker = OneTimeWorkRequestBuilder<NCDFollowUpSyncWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val NCDFollowupFormSyncWorker = syncRequestBuilder<NCDFollowUpSyncWorker>()
             .build()
-        val pullWorkRequest = OneTimeWorkRequestBuilder<PullFromAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullWorkRequest = syncRequestBuilder<PullFromAmritWorker>()
             .build()
-        val generalOpdPullFromAmritWorker = OneTimeWorkRequestBuilder<GeneralOpdPullFromAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val generalOpdPullFromAmritWorker = syncRequestBuilder<GeneralOpdPullFromAmritWorker>()
             .build()
-        val pullAdolescentWorkRequest = OneTimeWorkRequestBuilder<PullAdolescentFromWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullAdolescentWorkRequest = syncRequestBuilder<PullAdolescentFromWorker>()
             .build()
         val pullIncentiveActivityWorkRequest =
-            OneTimeWorkRequestBuilder<PullIncentiveWorker>()
-                .setConstraints(networkOnlyConstraint)
+            syncRequestBuilder<PullIncentiveWorker>()
                 .build()
-        val pullCbacWorkRequest = OneTimeWorkRequestBuilder<CbacPullFromAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullCbacWorkRequest = syncRequestBuilder<CbacPullFromAmritWorker>()
             .build()
 
-        val pullReferWorkRequest = OneTimeWorkRequestBuilder<ReferPullFromAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullReferWorkRequest = syncRequestBuilder<ReferPullFromAmritWorker>()
             .build()
-        val pullHRPWorkRequest = OneTimeWorkRequestBuilder<PullHRPFromAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullHRPWorkRequest = syncRequestBuilder<PullHRPFromAmritWorker>()
             .build()
 
-        val pullVLFWorkRequest = OneTimeWorkRequestBuilder<PullVLFFromAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullVLFWorkRequest = syncRequestBuilder<PullVLFFromAmritWorker>()
             .build()
 
-        val pullTBWorkRequest = OneTimeWorkRequestBuilder<PullTBFromAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullTBWorkRequest = syncRequestBuilder<PullTBFromAmritWorker>()
             .build()
-        val pullMalariaWorkRequest = OneTimeWorkRequestBuilder<PullMalariaFromAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullMalariaWorkRequest = syncRequestBuilder<PullMalariaFromAmritWorker>()
             .build()
-        val pullECWorkRequest = OneTimeWorkRequestBuilder<PullECFromAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullECWorkRequest = syncRequestBuilder<PullECFromAmritWorker>()
             .build()
         val pullImmunizationWorkRequest =
-            OneTimeWorkRequestBuilder<PullChildImmunizatonFromAmritWorker>()
-                .setConstraints(networkOnlyConstraint)
+            syncRequestBuilder<PullChildImmunizatonFromAmritWorker>()
                 .build()
         val pullHBYCFromAmritWorker =
-            OneTimeWorkRequestBuilder<PullHBYCFromAmritWorker>()
-                .setConstraints(networkOnlyConstraint)
+            syncRequestBuilder<PullHBYCFromAmritWorker>()
                 .build()
         val pullHBNCFromAmritWorker =
-            OneTimeWorkRequestBuilder<PullChildHBNCFromAmritWorker>()
-                .setConstraints(networkOnlyConstraint)
+            syncRequestBuilder<PullChildHBNCFromAmritWorker>()
                 .build()
-        val pushWorkRequest = OneTimeWorkRequestBuilder<PushToAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pushWorkRequest = syncRequestBuilder<PushToAmritWorker>()
             .build()
-        val pushCbacWorkRequest = OneTimeWorkRequestBuilder<CbacPushToAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pushCbacWorkRequest = syncRequestBuilder<CbacPushToAmritWorker>()
             .build()
         val pushImmunizationWorkRequest =
-            OneTimeWorkRequestBuilder<PushChildImmunizationToAmritWorker>()
-                .setConstraints(networkOnlyConstraint)
+            syncRequestBuilder<PushChildImmunizationToAmritWorker>()
                 .build()
-        val pushHRPToAmritWorker = OneTimeWorkRequestBuilder<PushHRPToAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pushHRPToAmritWorker = syncRequestBuilder<PushHRPToAmritWorker>()
             .build()
-        val pushVLFToAmritWorker = OneTimeWorkRequestBuilder<PushVLFToAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pushVLFToAmritWorker = syncRequestBuilder<PushVLFToAmritWorker>()
             .build()
 
 
-        val pushTBWorkRequest = OneTimeWorkRequestBuilder<PushTBToAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pushTBWorkRequest = syncRequestBuilder<PushTBToAmritWorker>()
             .build()
-        val pushECWorkRequest = OneTimeWorkRequestBuilder<PushECToAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pushECWorkRequest = syncRequestBuilder<PushECToAmritWorker>()
             .build()
-        val pushChildHBYCToAmritWorker = OneTimeWorkRequestBuilder<PushChildHBYCToAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pushChildHBYCToAmritWorker = syncRequestBuilder<PushChildHBYCToAmritWorker>()
             .build()
-        val pushChildHBNCToAmritWorker = OneTimeWorkRequestBuilder<PushChildHBNCFromAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pushChildHBNCToAmritWorker = syncRequestBuilder<PushChildHBNCFromAmritWorker>()
             .build()
-        val pullAESToAmritWorker = OneTimeWorkRequestBuilder<pullAesFormAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullAESToAmritWorker = syncRequestBuilder<pullAesFormAmritWorker>()
             .build()
-        val pullkalaAzarToAmritWorker = OneTimeWorkRequestBuilder<PullKalaAzarFormAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullkalaAzarToAmritWorker = syncRequestBuilder<PullKalaAzarFormAmritWorker>()
             .build()
-        val pullLeprosyToAmritWorker = OneTimeWorkRequestBuilder<PullLeprosyFormAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullLeprosyToAmritWorker = syncRequestBuilder<PullLeprosyFormAmritWorker>()
             .build()
-        val pullFilariaToAmritWorker = OneTimeWorkRequestBuilder<PullFilariaFromAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullFilariaToAmritWorker = syncRequestBuilder<PullFilariaFromAmritWorker>()
             .build()
-        val pushAbhaWorkRequest = OneTimeWorkRequestBuilder<PushMapAbhatoBenficiaryWorker>()
-            .setConstraints(networkOnlyConstraint) // if you have constraints
+        val pushAbhaWorkRequest = syncRequestBuilder<PushMapAbhatoBenficiaryWorker>()
             .build()
 
-        val formSyncWorkerRequest = OneTimeWorkRequestBuilder<FormSyncWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val formSyncWorkerRequest = syncRequestBuilder<FormSyncWorker>()
             .build()
-        val ancFormSyncWorker = OneTimeWorkRequestBuilder<AncHomeVisitSyncWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val ancFormSyncWorker = syncRequestBuilder<AncHomeVisitSyncWorker>()
             .build()
 
-        val maaMeetingFormSyncWorkerRequest = OneTimeWorkRequestBuilder<MaaMeetingDownsyncWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val maaMeetingFormSyncWorkerRequest = syncRequestBuilder<MaaMeetingDownsyncWorker>()
             .build()
 
-        val pullSaasBahuSamelanAmritWorker = OneTimeWorkRequestBuilder<SaasBahuSammelanPullWorker>()
-            .setConstraints(networkOnlyConstraint).build()
+        val pullSaasBahuSamelanAmritWorker = syncRequestBuilder<SaasBahuSammelanPullWorker>().build()
 
         val workManager = WorkManager.getInstance(context)
         workManager
@@ -293,8 +256,7 @@ object WorkerUtils {
         // entities reference. This MUST complete before any other group
         // can start pushing data.
         // ─────────────────────────────────────────────────────────────
-        val registration = OneTimeWorkRequestBuilder<PushToAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val registration = syncRequestBuilder<PushToAmritWorker>()
             .addTag("push_group1_registration")
             .build()
 
@@ -317,23 +279,17 @@ object WorkerUtils {
         // in PARALLEL within this group.
         // ─────────────────────────────────────────────────────────────
         val group2Screening = listOf(
-            OneTimeWorkRequestBuilder<CbacPushToAmritWorker>()
-                .setConstraints(networkOnlyConstraint)
+            syncRequestBuilder<CbacPushToAmritWorker>()
                 .addTag("push_group2_screening").build(),
-            OneTimeWorkRequestBuilder<PushHRPToAmritWorker>()
-                .setConstraints(networkOnlyConstraint)
+            syncRequestBuilder<PushHRPToAmritWorker>()
                 .addTag("push_group2_screening").build(),
-            OneTimeWorkRequestBuilder<PushVLFToAmritWorker>()
-                .setConstraints(networkOnlyConstraint)
+            syncRequestBuilder<PushVLFToAmritWorker>()
                 .addTag("push_group2_screening").build(),
-            OneTimeWorkRequestBuilder<PushAdolescentAmritWorker>()
-                .setConstraints(networkOnlyConstraint)
+            syncRequestBuilder<PushAdolescentAmritWorker>()
                 .addTag("push_group2_screening").build(),
-            OneTimeWorkRequestBuilder<NCDReferPushtoAmritWorker>()
-                .setConstraints(networkOnlyConstraint)
+            syncRequestBuilder<NCDReferPushtoAmritWorker>()
                 .addTag("push_group2_screening").build(),
-            OneTimeWorkRequestBuilder<NCDFollowUpSyncWorker>()
-                .setConstraints(networkOnlyConstraint)
+            syncRequestBuilder<NCDFollowUpSyncWorker>()
                 .addTag("push_group2_screening").build(),
         )
 
@@ -345,26 +301,19 @@ object WorkerUtils {
         // Each step depends on the previous step's data existing on
         // the server. These MUST run in order.
         // ─────────────────────────────────────────────────────────────
-        val group3Ec = OneTimeWorkRequestBuilder<PushECToAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val group3Ec = syncRequestBuilder<PushECToAmritWorker>()
             .addTag("push_group3_maternal").build()
-        val group3Pwr = OneTimeWorkRequestBuilder<PushPWRToAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val group3Pwr = syncRequestBuilder<PushPWRToAmritWorker>()
             .addTag("push_group3_maternal").build()
-        val group3AncVisit = OneTimeWorkRequestBuilder<AncHomeVisitPushWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val group3AncVisit = syncRequestBuilder<AncHomeVisitPushWorker>()
             .addTag("push_group3_maternal").build()
-        val group3Pmsma = OneTimeWorkRequestBuilder<PushPmsmaToAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val group3Pmsma = syncRequestBuilder<PushPmsmaToAmritWorker>()
             .addTag("push_group3_maternal").build()
-        val group3Delivery = OneTimeWorkRequestBuilder<PushDeliveryOutcomeToAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val group3Delivery = syncRequestBuilder<PushDeliveryOutcomeToAmritWorker>()
             .addTag("push_group3_maternal").build()
-        val group3Pnc = OneTimeWorkRequestBuilder<PushPNCToAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val group3Pnc = syncRequestBuilder<PushPNCToAmritWorker>()
             .addTag("push_group3_maternal").build()
-        val group3Mdsr = OneTimeWorkRequestBuilder<PushMdsrToAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val group3Mdsr = syncRequestBuilder<PushMdsrToAmritWorker>()
             .addTag("push_group3_maternal").build()
 
         // ─────────────────────────────────────────────────────────────
@@ -373,25 +322,19 @@ object WorkerUtils {
         // Internal ordering: InfantReg must come first, then others
         // chain sequentially as they depend on child records.
         // ─────────────────────────────────────────────────────────────
-        val group4InfantReg = OneTimeWorkRequestBuilder<PushInfantRegisterToAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val group4InfantReg = syncRequestBuilder<PushInfantRegisterToAmritWorker>()
             .addTag("push_group4_child").build()
-        val group4Immunization = OneTimeWorkRequestBuilder<PushChildImmunizationToAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val group4Immunization = syncRequestBuilder<PushChildImmunizationToAmritWorker>()
             .addTag("push_group4_child").build()
-        val group4Uwin = OneTimeWorkRequestBuilder<PushUwinToAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val group4Uwin = syncRequestBuilder<PushUwinToAmritWorker>()
             .addTag("push_group4_child").build()
-        val group4Hbnc = OneTimeWorkRequestBuilder<PushChildHBNCFromAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val group4Hbnc = syncRequestBuilder<PushChildHBNCFromAmritWorker>()
             .addTag("push_group4_child").build()
         // Single FormSyncWorker instance (was duplicated in old code as
         // formSyncWorkerRequest + hbncAndHbyceWorkerrRequest)
-        val group4Forms = OneTimeWorkRequestBuilder<FormSyncWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val group4Forms = syncRequestBuilder<FormSyncWorker>()
             .addTag("push_group4_child").build()
-        val group4Cdr = OneTimeWorkRequestBuilder<PushCdrToAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val group4Cdr = syncRequestBuilder<PushCdrToAmritWorker>()
             .addTag("push_group4_child").build()
 
         // ─────────────────────────────────────────────────────────────
@@ -400,26 +343,19 @@ object WorkerUtils {
         // Passed as a list → all run in PARALLEL within group.
         // ─────────────────────────────────────────────────────────────
         val group5CommDisease = listOf(
-            OneTimeWorkRequestBuilder<PushTBToAmritWorker>()
-                .setConstraints(networkOnlyConstraint)
+            syncRequestBuilder<PushTBToAmritWorker>()
                 .addTag("push_group5_comm_disease").build(),
-            OneTimeWorkRequestBuilder<PushMalariaAmritWorker>()
-                .setConstraints(networkOnlyConstraint)
+            syncRequestBuilder<PushMalariaAmritWorker>()
                 .addTag("push_group5_comm_disease").build(),
-            OneTimeWorkRequestBuilder<pushAesAmritWorker>()
-                .setConstraints(networkOnlyConstraint)
+            syncRequestBuilder<pushAesAmritWorker>()
                 .addTag("push_group5_comm_disease").build(),
-            OneTimeWorkRequestBuilder<pushKalaAzarAmritWorker>()
-                .setConstraints(networkOnlyConstraint)
+            syncRequestBuilder<pushKalaAzarAmritWorker>()
                 .addTag("push_group5_comm_disease").build(),
-            OneTimeWorkRequestBuilder<pushLeprosyAmritWorker>()
-                .setConstraints(networkOnlyConstraint)
+            syncRequestBuilder<pushLeprosyAmritWorker>()
                 .addTag("push_group5_comm_disease").build(),
-            OneTimeWorkRequestBuilder<PushLeprosyFollowUpAmritWorker>()
-                .setConstraints(networkOnlyConstraint)
+            syncRequestBuilder<PushLeprosyFollowUpAmritWorker>()
                 .addTag("push_group5_comm_disease").build(),
-            OneTimeWorkRequestBuilder<PushFilariaAmritWorker>()
-                .setConstraints(networkOnlyConstraint)
+            syncRequestBuilder<PushFilariaAmritWorker>()
                 .addTag("push_group5_comm_disease").build(),
         )
 
@@ -429,11 +365,9 @@ object WorkerUtils {
         // Passed as a list → all run in PARALLEL within group.
         // ─────────────────────────────────────────────────────────────
         val group6Community = listOf(
-            OneTimeWorkRequestBuilder<MaaMeetingsPushWorker>()
-                .setConstraints(networkOnlyConstraint)
+            syncRequestBuilder<MaaMeetingsPushWorker>()
                 .addTag("push_group6_community").build(),
-            OneTimeWorkRequestBuilder<PushSaasBahuSamelanAmritWorker>()
-                .setConstraints(networkOnlyConstraint)
+            syncRequestBuilder<PushSaasBahuSamelanAmritWorker>()
                 .addTag("push_group6_community").build(),
         )
 
@@ -443,26 +377,19 @@ object WorkerUtils {
         // Passed as a list → all run in PARALLEL within group.
         // ─────────────────────────────────────────────────────────────
         val group7Campaigns = listOf(
-            OneTimeWorkRequestBuilder<FilariaMdaCampaignPushWorker>()
-                .setConstraints(networkOnlyConstraint)
+            syncRequestBuilder<FilariaMdaCampaignPushWorker>()
                 .addTag("push_group7_campaigns").build(),
-            OneTimeWorkRequestBuilder<ORSCampaignPushWorker>()
-                .setConstraints(networkOnlyConstraint)
+            syncRequestBuilder<ORSCampaignPushWorker>()
                 .addTag("push_group7_campaigns").build(),
-            OneTimeWorkRequestBuilder<PulsePolioCampaignPushWorker>()
-                .setConstraints(networkOnlyConstraint)
+            syncRequestBuilder<PulsePolioCampaignPushWorker>()
                 .addTag("push_group7_campaigns").build(),
-            OneTimeWorkRequestBuilder<EyeSurgeryFormSyncWorker>()
-                .setConstraints(networkOnlyConstraint)
+            syncRequestBuilder<EyeSurgeryFormSyncWorker>()
                 .addTag("push_group7_campaigns").build(),
-            OneTimeWorkRequestBuilder<FilariaMDAFormSyncWorker>()
-                .setConstraints(networkOnlyConstraint)
+            syncRequestBuilder<FilariaMDAFormSyncWorker>()
                 .addTag("push_group7_campaigns").build(),
-            OneTimeWorkRequestBuilder<MosquitoNetFormSyncWorker>()
-                .setConstraints(networkOnlyConstraint)
+            syncRequestBuilder<MosquitoNetFormSyncWorker>()
                 .addTag("push_group7_campaigns").build(),
-            OneTimeWorkRequestBuilder<BenIfaFormSyncWorker>()
-                .setConstraints(networkOnlyConstraint)
+            syncRequestBuilder<BenIfaFormSyncWorker>()
                 .addTag("push_group7_campaigns").build(),
         )
 
@@ -472,14 +399,11 @@ object WorkerUtils {
         // Passed as a list → all run in PARALLEL within group.
         // ─────────────────────────────────────────────────────────────
         val group8Cufy = listOf(
-            OneTimeWorkRequestBuilder<CUFYORSPushWorker>()
-                .setConstraints(networkOnlyConstraint)
+            syncRequestBuilder<CUFYORSPushWorker>()
                 .addTag("push_group8_cufy").build(),
-            OneTimeWorkRequestBuilder<CUFYIFAPushWorker>()
-                .setConstraints(networkOnlyConstraint)
+            syncRequestBuilder<CUFYIFAPushWorker>()
                 .addTag("push_group8_cufy").build(),
-            OneTimeWorkRequestBuilder<CUFYSAMPushWorker>()
-                .setConstraints(networkOnlyConstraint)
+            syncRequestBuilder<CUFYSAMPushWorker>()
                 .addTag("push_group8_cufy").build(),
         )
 
@@ -487,8 +411,7 @@ object WorkerUtils {
         // GROUP 9: Digital Health & Misc
         // ABHA ID mapping — independent of other entity types.
         // ─────────────────────────────────────────────────────────────
-        val group9Abha = OneTimeWorkRequestBuilder<PushMapAbhatoBenficiaryWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val group9Abha = syncRequestBuilder<PushMapAbhatoBenficiaryWorker>()
             .addTag("push_group9_digital_health").build()
 
         // ═══════════════════════════════════════════════════════════════
@@ -551,8 +474,7 @@ object WorkerUtils {
         // pushed. Placed here because the server calculates incentives
         // based on pushed data — must run after all pushes finish.
         // ─────────────────────────────────────────────────────────────
-        val pullIncentive = OneTimeWorkRequestBuilder<PullIncentiveWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullIncentive = syncRequestBuilder<PullIncentiveWorker>()
             .addTag("push_final_incentive").build()
 
         // ─────────────────────────────────────────────────────────────
@@ -573,143 +495,102 @@ object WorkerUtils {
     }
 
     fun triggerAmritPullWorker(context: Context) {
-        val CUFYORSFormSyncWorker = OneTimeWorkRequestBuilder<CUFYORSFormSyncWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val CUFYORSFormSyncWorker = syncRequestBuilder<CUFYORSFormSyncWorker>()
             .build()
-        val ancPullWorkRequest = OneTimeWorkRequestBuilder<AncHomeVisitSyncWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val ancPullWorkRequest = syncRequestBuilder<AncHomeVisitSyncWorker>()
             .build()
-        val hbncAndHbyceWorker = OneTimeWorkRequestBuilder<FormSyncWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val hbncAndHbyceWorker = syncRequestBuilder<FormSyncWorker>()
             .build()
-        val CUFYIFAFormSyncWorker = OneTimeWorkRequestBuilder<CUFYIFAFormSyncWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val CUFYIFAFormSyncWorker = syncRequestBuilder<CUFYIFAFormSyncWorker>()
             .build()
-        val orsCampaignFormSyncWorker = OneTimeWorkRequestBuilder<ORSCampaignFormSyncWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val orsCampaignFormSyncWorker = syncRequestBuilder<ORSCampaignFormSyncWorker>()
             .build()
-        val pulsePolioCampaignFormSyncWorker = OneTimeWorkRequestBuilder<PulsePolioCampaignFormSyncWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pulsePolioCampaignFormSyncWorker = syncRequestBuilder<PulsePolioCampaignFormSyncWorker>()
             .build()
-        val CUFYSAMFormSyncWorker = OneTimeWorkRequestBuilder<CUFYSAMFormSyncWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val CUFYSAMFormSyncWorker = syncRequestBuilder<CUFYSAMFormSyncWorker>()
             .build()
-            val NCDFollowupFormSyncWorker = OneTimeWorkRequestBuilder<NCDFollowUpSyncWorker>()
-            .setConstraints(networkOnlyConstraint)
+            val NCDFollowupFormSyncWorker = syncRequestBuilder<NCDFollowUpSyncWorker>()
             .build()
 
-        val pullWorkRequest = OneTimeWorkRequestBuilder<PullFromAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullWorkRequest = syncRequestBuilder<PullFromAmritWorker>()
             .build()
-        val pullEyeSurgeryFormSyncWorker = OneTimeWorkRequestBuilder<EyeSurgeryFormSyncWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullEyeSurgeryFormSyncWorker = syncRequestBuilder<EyeSurgeryFormSyncWorker>()
             .build()
-        val pullFilariaMDAFormSyncWorker = OneTimeWorkRequestBuilder<FilariaMDAFormSyncWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullFilariaMDAFormSyncWorker = syncRequestBuilder<FilariaMDAFormSyncWorker>()
             .build()
-        val pullMosquitoNetFormSyncWorker = OneTimeWorkRequestBuilder<MosquitoNetFormSyncWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullMosquitoNetFormSyncWorker = syncRequestBuilder<MosquitoNetFormSyncWorker>()
             .build()
-        val pullBenIfaFormSyncWorker = OneTimeWorkRequestBuilder<BenIfaFormSyncWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullBenIfaFormSyncWorker = syncRequestBuilder<BenIfaFormSyncWorker>()
             .build()
-        val generalOpdPullFromAmritWorker = OneTimeWorkRequestBuilder<GeneralOpdPullFromAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val generalOpdPullFromAmritWorker = syncRequestBuilder<GeneralOpdPullFromAmritWorker>()
             .build()
         val pullIncentiveActivityWorkRequest =
-            OneTimeWorkRequestBuilder<PullIncentiveWorker>()
-                .setConstraints(networkOnlyConstraint)
+            syncRequestBuilder<PullIncentiveWorker>()
                 .build()
-        val pullCbacWorkRequest = OneTimeWorkRequestBuilder<CbacPullFromAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullCbacWorkRequest = syncRequestBuilder<CbacPullFromAmritWorker>()
             .build()
 
-        val pullReferWorkRequest = OneTimeWorkRequestBuilder<ReferPullFromAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullReferWorkRequest = syncRequestBuilder<ReferPullFromAmritWorker>()
             .build()
 
-        val pullVaccineWorkRequest = OneTimeWorkRequestBuilder<PullVaccinesWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullVaccineWorkRequest = syncRequestBuilder<PullVaccinesWorker>()
             .build()
-        val pullHRPWorkRequest = OneTimeWorkRequestBuilder<PullHRPFromAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullHRPWorkRequest = syncRequestBuilder<PullHRPFromAmritWorker>()
             .build()
-        val pullVLFWorkRequest = OneTimeWorkRequestBuilder<PullVLFFromAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullVLFWorkRequest = syncRequestBuilder<PullVLFFromAmritWorker>()
             .build()
-        val maaMeetingFormSyncWorkerRequest = OneTimeWorkRequestBuilder<MaaMeetingDownsyncWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val maaMeetingFormSyncWorkerRequest = syncRequestBuilder<MaaMeetingDownsyncWorker>()
             .build()
-        val pullTBWorkRequest = OneTimeWorkRequestBuilder<PullTBFromAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullTBWorkRequest = syncRequestBuilder<PullTBFromAmritWorker>()
             .build()
-        val pullECWorkRequest = OneTimeWorkRequestBuilder<PullECFromAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullECWorkRequest = syncRequestBuilder<PullECFromAmritWorker>()
             .build()
-        val pullPWWorkRequest = OneTimeWorkRequestBuilder<PullPWRFromAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullPWWorkRequest = syncRequestBuilder<PullPWRFromAmritWorker>()
             .build()
-        val pullPMSMAWorkRequest = OneTimeWorkRequestBuilder<PullPmsmaFromAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullPMSMAWorkRequest = syncRequestBuilder<PullPmsmaFromAmritWorker>()
             .build()
-        val pullPNCWorkRequest = OneTimeWorkRequestBuilder<PullPNCFromAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullPNCWorkRequest = syncRequestBuilder<PullPNCFromAmritWorker>()
             .build()
         val pullDeliveryOutcomeWorkRequest =
-            OneTimeWorkRequestBuilder<PullDeliveryOutcomeFromAmritWorker>()
-                .setConstraints(networkOnlyConstraint)
+            syncRequestBuilder<PullDeliveryOutcomeFromAmritWorker>()
                 .build()
-        val pullInfantRegWorkRequest = OneTimeWorkRequestBuilder<PullInfantRegFromAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullInfantRegWorkRequest = syncRequestBuilder<PullInfantRegFromAmritWorker>()
             .build()
         val pullImmunizationWorkRequest =
-            OneTimeWorkRequestBuilder<PullChildImmunizatonFromAmritWorker>()
-                .setConstraints(networkOnlyConstraint)
+            syncRequestBuilder<PullChildImmunizatonFromAmritWorker>()
                 .build()
         val pullMdsrWorkRequest =
-            OneTimeWorkRequestBuilder<PullMdsrFromAmritWorker>()
-                .setConstraints(networkOnlyConstraint)
+            syncRequestBuilder<PullMdsrFromAmritWorker>()
                 .build()
         val pullCdrWorkRequest =
-            OneTimeWorkRequestBuilder<PullCdrFromAmritWorker>()
-                .setConstraints(networkOnlyConstraint)
+            syncRequestBuilder<PullCdrFromAmritWorker>()
                 .build()
         val pullHBYCFromAmritWorker =
-            OneTimeWorkRequestBuilder<PullHBYCFromAmritWorker>()
-                .setConstraints(networkOnlyConstraint)
+            syncRequestBuilder<PullHBYCFromAmritWorker>()
                 .build()
         val pullHBNCFromAmritWorker =
-            OneTimeWorkRequestBuilder<PullChildHBNCFromAmritWorker>()
-                .setConstraints(networkOnlyConstraint)
+            syncRequestBuilder<PullChildHBNCFromAmritWorker>()
                 .build()
-        val pullUwinWorkerRequest = OneTimeWorkRequestBuilder<PullUwinFromAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullUwinWorkerRequest = syncRequestBuilder<PullUwinFromAmritWorker>()
             .build()
         val setSyncCompleteWorker = OneTimeWorkRequestBuilder<UpdatePrefForPullCompleteWorker>()
             .build()
-        val pullMalariaWorkRequest = OneTimeWorkRequestBuilder<PullMalariaFromAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullMalariaWorkRequest = syncRequestBuilder<PullMalariaFromAmritWorker>()
             .build()
-        val pullAESToAmritWorker = OneTimeWorkRequestBuilder<pullAesFormAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullAESToAmritWorker = syncRequestBuilder<pullAesFormAmritWorker>()
             .build()
-        val pullkalaAzarToAmritWorker = OneTimeWorkRequestBuilder<PullKalaAzarFormAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullkalaAzarToAmritWorker = syncRequestBuilder<PullKalaAzarFormAmritWorker>()
             .build()
-        val pullLeprosyToAmritWorker = OneTimeWorkRequestBuilder<PullLeprosyFormAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullLeprosyToAmritWorker = syncRequestBuilder<PullLeprosyFormAmritWorker>()
             .build()
-        val pullFilariaToAmritWorker = OneTimeWorkRequestBuilder<PullFilariaFromAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullFilariaToAmritWorker = syncRequestBuilder<PullFilariaFromAmritWorker>()
             .build()
 
-        val pullFilariaMDACampaignToAmritWorker = OneTimeWorkRequestBuilder<FilariaMdaCampaignFormSyncWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val pullFilariaMDACampaignToAmritWorker = syncRequestBuilder<FilariaMdaCampaignFormSyncWorker>()
             .build()
 
 
-        val pullSaasBahuSamelanAmritWorker = OneTimeWorkRequestBuilder<SaasBahuSammelanPullWorker>()
-            .setConstraints(networkOnlyConstraint).build()
+        val pullSaasBahuSamelanAmritWorker = syncRequestBuilder<SaasBahuSammelanPullWorker>().build()
         val workManager = WorkManager.getInstance(context)
         // KEEP: If a pull cycle is already running/enqueued, skip this request.
         // Separate name from push so push/pull don't cancel each other.
@@ -767,8 +648,7 @@ object WorkerUtils {
     }
 
     fun triggerCbacPullWorker(context: Context) {
-        val workRequest = OneTimeWorkRequestBuilder<CbacPullFromAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val workRequest = syncRequestBuilder<CbacPullFromAmritWorker>()
             .build()
         WorkManager.getInstance(context)
             .enqueueUniqueWork(
@@ -779,8 +659,7 @@ object WorkerUtils {
     }
 
     fun triggerCbacPushWorker(context: Context) {
-        val workRequest = OneTimeWorkRequestBuilder<CbacPushToAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val workRequest = syncRequestBuilder<CbacPushToAmritWorker>()
             .build()
         WorkManager.getInstance(context)
             .enqueueUniqueWork(
@@ -791,8 +670,7 @@ object WorkerUtils {
     }
 
     fun triggerECPushWorker(context: Context) {
-        val workRequest = OneTimeWorkRequestBuilder<PushECToAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val workRequest = syncRequestBuilder<PushECToAmritWorker>()
             .build()
         WorkManager.getInstance(context)
             .enqueueUniqueWork(
@@ -803,8 +681,7 @@ object WorkerUtils {
     }
 
     fun triggerPMSMAPushWorker(context: Context) {
-        val workRequest = OneTimeWorkRequestBuilder<PushPmsmaToAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val workRequest = syncRequestBuilder<PushPmsmaToAmritWorker>()
             .build()
         WorkManager.getInstance(context)
             .enqueueUniqueWork(
@@ -815,8 +692,7 @@ object WorkerUtils {
     }
 
     fun triggerDeliveryOutcomePushWorker(context: Context) {
-        val workRequest = OneTimeWorkRequestBuilder<PushDeliveryOutcomeToAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val workRequest = syncRequestBuilder<PushDeliveryOutcomeToAmritWorker>()
             .build()
         WorkManager.getInstance(context)
             .enqueueUniqueWork(
@@ -827,8 +703,7 @@ object WorkerUtils {
     }
 
     fun triggerInfantRegPushWorker(context: Context) {
-        val workRequest = OneTimeWorkRequestBuilder<PushInfantRegisterToAmritWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val workRequest = syncRequestBuilder<PushInfantRegisterToAmritWorker>()
             .build()
         WorkManager.getInstance(context)
             .enqueueUniqueWork(
@@ -884,8 +759,7 @@ object WorkerUtils {
         otpTxnID: MutableLiveData<String?>
     ): LiveData<Operation.State> {
 
-        val workRequest = OneTimeWorkRequestBuilder<DownloadCardWorker>()
-            .setConstraints(networkOnlyConstraint)
+        val workRequest = syncRequestBuilder<DownloadCardWorker>()
             .setInputData(Data.Builder().apply { putString(DownloadCardWorker.file_name, fileName) }
                 .build())
             .build()

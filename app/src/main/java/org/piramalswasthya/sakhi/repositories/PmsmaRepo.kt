@@ -93,7 +93,7 @@ class PmsmaRepo @Inject constructor(
         }
     }
 
-    private suspend fun postDataToAmritServer(pmsmaPostList: MutableSet<PmsmaPost>): Boolean {
+    private suspend fun postDataToAmritServer(pmsmaPostList: MutableSet<PmsmaPost>, retryCount: Int = 3): Boolean {
         if (pmsmaPostList.isEmpty())
             return false
 
@@ -141,7 +141,9 @@ class PmsmaRepo @Inject constructor(
             return false
         } catch (e: SocketTimeoutException) {
             Timber.d("Caught exception $e here")
-            return postDataToAmritServer(pmsmaPostList)
+            if (retryCount > 0) return postDataToAmritServer(pmsmaPostList, retryCount - 1)
+            Timber.e("postDataToAmritServer: max retries exhausted")
+            return false
         } catch (e: Exception) {
             Timber.d("Caught exception $e here")
             return false

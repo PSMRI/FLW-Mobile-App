@@ -162,7 +162,7 @@ class HRPRepo @Inject constructor(
     }
 
 
-    suspend fun getHighRiskAssessDetailsFromServer(): Int {
+    suspend fun getHighRiskAssessDetailsFromServer(retryCount: Int = 3): Int {
         return withContext(Dispatchers.IO) {
             val user =
                 preferenceDao.getLoggedInUser()
@@ -219,7 +219,9 @@ class HRPRepo @Inject constructor(
 
             } catch (e: SocketTimeoutException) {
                 Timber.d("get data error : $e")
-                return@withContext getHighRiskAssessDetailsFromServer()
+                if (retryCount > 0) return@withContext getHighRiskAssessDetailsFromServer(retryCount - 1)
+                Timber.e("getHighRiskAssessDetailsFromServer: max retries exhausted")
+                return@withContext -1
 
             } catch (e: java.lang.IllegalStateException) {
                 Timber.d("get data error : $e")
@@ -230,7 +232,7 @@ class HRPRepo @Inject constructor(
     }
 
 
-    suspend fun getHighRiskAssessMicroBirthPlanDetailsFromServer(): Int {
+    suspend fun getHighRiskAssessMicroBirthPlanDetailsFromServer(retryCount: Int = 3): Int {
         return withContext(Dispatchers.IO) {
             val user =
                 preferenceDao.getLoggedInUser()
@@ -284,7 +286,9 @@ class HRPRepo @Inject constructor(
 
             } catch (e: SocketTimeoutException) {
                 Timber.d("get data error : $e")
-                return@withContext getHighRiskAssessMicroBirthPlanDetailsFromServer()
+                if (retryCount > 0) return@withContext getHighRiskAssessMicroBirthPlanDetailsFromServer(retryCount - 1)
+                Timber.e("getHighRiskAssessMicroBirthPlanDetailsFromServer: max retries exhausted")
+                return@withContext -1
 
             } catch (e: java.lang.IllegalStateException) {
                 Timber.d("get data error : $e")
@@ -407,7 +411,7 @@ class HRPRepo @Inject constructor(
                     assess.multiplePregnancy == "Yes"
     }
 
-    suspend fun getHRPAssessDetailsFromServer(): Int {
+    suspend fun getHRPAssessDetailsFromServer(retryCount: Int = 3): Int {
         return withContext(Dispatchers.IO) {
             val user =
                 preferenceDao.getLoggedInUser()
@@ -464,7 +468,9 @@ class HRPRepo @Inject constructor(
 
             } catch (e: SocketTimeoutException) {
                 Timber.d("get data error : $e")
-                return@withContext getHRPAssessDetailsFromServer()
+                if (retryCount > 0) return@withContext getHRPAssessDetailsFromServer(retryCount - 1)
+                Timber.e("getHRPAssessDetailsFromServer: max retries exhausted")
+                return@withContext -1
 
             } catch (e: java.lang.IllegalStateException) {
                 Timber.d("get data error : $e")
@@ -494,7 +500,7 @@ class HRPRepo @Inject constructor(
     }
 
 
-    suspend fun getHRPTrackDetailsFromServer(): Int {
+    suspend fun getHRPTrackDetailsFromServer(retryCount: Int = 3): Int {
         return withContext(Dispatchers.IO) {
             val user =
                 preferenceDao.getLoggedInUser()
@@ -551,7 +557,9 @@ class HRPRepo @Inject constructor(
 
             } catch (e: SocketTimeoutException) {
                 Timber.d("get data error : $e")
-                return@withContext getHRPTrackDetailsFromServer()
+                if (retryCount > 0) return@withContext getHRPTrackDetailsFromServer(retryCount - 1)
+                Timber.e("getHRPTrackDetailsFromServer: max retries exhausted")
+                return@withContext -1
 
             } catch (e: java.lang.IllegalStateException) {
                 Timber.d("get data error : $e")
@@ -588,7 +596,7 @@ class HRPRepo @Inject constructor(
         }
     }
 
-    suspend fun getHRNonPAssessDetailsFromServer(): Int {
+    suspend fun getHRNonPAssessDetailsFromServer(retryCount: Int = 3): Int {
         return withContext(Dispatchers.IO) {
             val user =
                 preferenceDao.getLoggedInUser()
@@ -645,7 +653,9 @@ class HRPRepo @Inject constructor(
 
             } catch (e: SocketTimeoutException) {
                 Timber.d("get data error : $e")
-                return@withContext getHRNonPAssessDetailsFromServer()
+                if (retryCount > 0) return@withContext getHRNonPAssessDetailsFromServer(retryCount - 1)
+                Timber.e("getHRNonPAssessDetailsFromServer: max retries exhausted")
+                return@withContext -1
 
             } catch (e: java.lang.IllegalStateException) {
                 Timber.d("get data error : $e")
@@ -674,7 +684,7 @@ class HRPRepo @Inject constructor(
         }
     }
 
-    suspend fun getHRNonPTrackDetailsFromServer(): Int {
+    suspend fun getHRNonPTrackDetailsFromServer(retryCount: Int = 3): Int {
         return withContext(Dispatchers.IO) {
             val user =
                 preferenceDao.getLoggedInUser()
@@ -731,7 +741,9 @@ class HRPRepo @Inject constructor(
 
             } catch (e: SocketTimeoutException) {
                 Timber.d("get data error : $e")
-                return@withContext getHRNonPTrackDetailsFromServer()
+                if (retryCount > 0) return@withContext getHRNonPTrackDetailsFromServer(retryCount - 1)
+                Timber.e("getHRNonPTrackDetailsFromServer: max retries exhausted")
+                return@withContext -1
 
             } catch (e: java.lang.IllegalStateException) {
                 Timber.d("get data error : $e")

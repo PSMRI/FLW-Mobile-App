@@ -488,7 +488,7 @@ class BenRepo @Inject constructor(
         benNetworkPostSet: MutableSet<BenPost>,
         householdNetworkPostSet: MutableSet<HouseholdNetwork>,
         kidNetworkPostSet: MutableSet<BenRegKidNetwork>,
-//        cbacPostList: MutableSet<CbacPost>
+        retryCount: Int = 3,
     ): Boolean {
         if (benNetworkPostSet.isEmpty() && householdNetworkPostSet.isEmpty() && kidNetworkPostSet.isEmpty()) return true
         val rmnchData = SendingRMNCHData(
@@ -534,9 +534,11 @@ class BenRepo @Inject constructor(
             return false
         } catch (e: SocketTimeoutException) {
             Timber.d("Caught exception $e here")
-            return postDataToAmritServer(
-                benNetworkPostSet, householdNetworkPostSet, kidNetworkPostSet
+            if (retryCount > 0) return postDataToAmritServer(
+                benNetworkPostSet, householdNetworkPostSet, kidNetworkPostSet, retryCount - 1
             )
+            Timber.e("postDataToAmritServer: max retries exhausted")
+            return false
         } catch (e: JSONException) {
             Timber.d("Caught exception $e here")
             return false
@@ -550,6 +552,7 @@ class BenRepo @Inject constructor(
     suspend fun deactivateHouseHold(
         benNetworkPostSet: List<BenRegCache>,
         householdNetworkPostSet: HouseholdNetwork,
+        retryCount: Int = 3,
     ): Boolean {
         val user = preferenceDao.getLoggedInUser() ?: throw IllegalStateException("No user logged in!!")
         val benNetworkPostList: List<BenPost> =
@@ -592,9 +595,11 @@ class BenRepo @Inject constructor(
             return false
         } catch (e: SocketTimeoutException) {
             Timber.d("Caught exception $e here")
-            return deactivateHouseHold(
-                benNetworkPostSet, householdNetworkPostSet
+            if (retryCount > 0) return deactivateHouseHold(
+                benNetworkPostSet, householdNetworkPostSet, retryCount - 1
             )
+            Timber.e("deactivateHouseHold: max retries exhausted")
+            return false
         } catch (e: JSONException) {
             Timber.d("Caught exception $e here")
             return false
@@ -606,7 +611,7 @@ class BenRepo @Inject constructor(
 
     suspend fun deactivateBeneficiary(
         benNetworkPostSet: List<BenRegCache>,
-//        householdNetworkPostSet: HouseholdNetwork,
+        retryCount: Int = 3,
     ): Boolean {
         val user = preferenceDao.getLoggedInUser() ?: throw IllegalStateException("No user logged in!!")
         val benNetworkPostList: List<BenPost> =
@@ -649,9 +654,11 @@ class BenRepo @Inject constructor(
             return false
         } catch (e: SocketTimeoutException) {
             Timber.d("Caught exception $e here")
-            return deactivateBeneficiary(
-               benNetworkPostSet/*, householdNetworkPostSet*/
+            if (retryCount > 0) return deactivateBeneficiary(
+               benNetworkPostSet, retryCount - 1
             )
+            Timber.e("deactivateBeneficiary: max retries exhausted")
+            return false
         } catch (e: JSONException) {
             Timber.d("Caught exception $e here")
             return false
