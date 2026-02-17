@@ -45,21 +45,6 @@ class CUFYIFAFormSyncWorker @AssistedInject constructor(
             }
         }
 
-        /*  val unsyncedForms = repository.getUnsyncedForms(FormConstants.CHILDREN_UNDER_FIVE_IFA_FORM_ID)
-            for (form in unsyncedForms) {
-                if ((form.benId ?: -1) < 0) continue
-
-                try{
-                    val success = repository.syncFormToServer(user.userName,FormConstants.IFA_FORM_NAME,form)
-                    if (success) {
-                        repository.markFormAsSynced(form.id)
-                    }
-                }catch (e: Exception){
-                    Timber.e(e, "Failed to sync form ${form.id}")
-                }
-
-            }*/
-
         return Result.success()
     }
 
