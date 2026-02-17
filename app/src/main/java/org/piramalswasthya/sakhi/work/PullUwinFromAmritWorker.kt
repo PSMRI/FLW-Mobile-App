@@ -10,6 +10,7 @@ import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
@@ -57,13 +58,13 @@ class PullUwinFromAmritWorker @AssistedInject constructor(
                 val timeTaken = TimeUnit.MILLISECONDS.toSeconds(endTime - startTime)
                 Timber.d("✅ UWIN session download completed in $timeTaken seconds, results=$results")
 
-                if (results.all { it }) Result.success() else Result.failure()
+                if (results.all { it }) Result.success() else Result.failure(workDataOf("worker_name" to "PullUwinFromAmritWorker", "error" to "Pull operation returned incomplete results"))
             } catch (e: SQLiteConstraintException) {
                 Timber.e(e, "❌ Database constraint issue during UWIN sync")
-                Result.failure()
+                Result.failure(workDataOf("worker_name" to "PullUwinFromAmritWorker", "error" to "SQLite constraint: ${e.message}"))
             } catch (e: Exception) {
                 Timber.e(e, "❌ Unexpected error during UWIN sync")
-                Result.failure()
+                Result.failure(workDataOf("worker_name" to "PullUwinFromAmritWorker", "error" to (e.message ?: "Unknown error")))
             }
         }
     }

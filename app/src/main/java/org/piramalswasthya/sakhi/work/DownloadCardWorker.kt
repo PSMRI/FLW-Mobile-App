@@ -14,6 +14,7 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
@@ -86,7 +87,7 @@ class DownloadCardWorker @AssistedInject constructor(
                 return@withContext Result.success()
             }
         } catch (e: java.lang.Exception) {
-            return Result.failure()
+            return Result.failure(workDataOf("worker_name" to "DownloadCardWorker", "error" to (e.message ?: "Unknown error")))
         }
     }
 

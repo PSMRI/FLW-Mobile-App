@@ -8,6 +8,7 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
@@ -41,7 +42,7 @@ class ReferPullFromAmritWorker @AssistedInject constructor(
                 Result.success()
             } catch (e: Exception) {
                 Timber.d("refer pull failed : $e")
-                Result.failure()
+                Result.failure(workDataOf("worker_name" to "ReferPullFromAmritWorker", "error" to (e.message ?: "Unknown error")))
             }
         }
     }

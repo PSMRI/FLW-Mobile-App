@@ -45,7 +45,7 @@ class PushChildHBYCToAmritWorker @AssistedInject constructor(
                     preferenceDao.setLastSyncedTimeStamp(System.currentTimeMillis())
                     return@withContext Result.success()
                 }
-                return@withContext Result.failure()
+                return@withContext Result.failure(workDataOf(KEY_WORKER_NAME to workerName, KEY_ERROR to "Sync operation returned false"))
             } catch (e: SQLiteConstraintException) {
                 Timber.d("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
                 return@withContext Result.failure(workDataOf(KEY_WORKER_NAME to workerName, KEY_ERROR to "SQLite constraint: ${e.message}"))

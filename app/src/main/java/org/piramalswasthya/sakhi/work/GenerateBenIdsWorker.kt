@@ -9,6 +9,7 @@ import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import org.piramalswasthya.sakhi.R
@@ -42,7 +43,7 @@ class GenerateBenIdsWorker @AssistedInject constructor(
             Result.success()
         } catch (e: Exception) {
             Timber.e("Caught Exception for Gen Ben iD worker $e")
-            Result.failure()
+            Result.failure(workDataOf("worker_name" to "GenerateBenIdsWorker", "error" to (e.message ?: "Unknown error")))
         }
     }
 
