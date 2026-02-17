@@ -57,7 +57,9 @@ class IncentivesSubFragment : Fragment() {
 
     companion object {
         private const val MAX_FILE_SIZE_MB = 5
-        private const val MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024L // 5 MB in bytes
+        private const val MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024L
+        private const val TARGET_SIZE_BYTES = 200 * 1024L
+        private const val MAX_DIMENSION = 1280
     }
 
     private val cameraLauncher = registerForActivityResult(
@@ -127,7 +129,7 @@ class IncentivesSubFragment : Fragment() {
                             Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
                             viewModel.resetUploadState()
                         }
-                        is IncentivesViewModel.UploadState.Idle -> { /* no-op */ }
+                        is IncentivesViewModel.UploadState.Idle -> {  }
                     }
                 }
             }
@@ -248,9 +250,7 @@ class IncentivesSubFragment : Fragment() {
         }
     }
 
-    /**
-     * Get file size from URI
-     */
+
     private fun getFileSize(uri: Uri): Long {
         return try {
             requireContext().contentResolver.openFileDescriptor(uri, "r")?.use { descriptor ->
@@ -262,9 +262,7 @@ class IncentivesSubFragment : Fragment() {
         }
     }
 
-    /**
-     * Format file size for display
-     */
+
     private fun formatFileSize(bytes: Long): String {
         return when {
             bytes < 1024 -> "$bytes B"
@@ -273,21 +271,47 @@ class IncentivesSubFragment : Fragment() {
         }
     }
 
-    /**
-     * Compress image to ensure it's under 5MB
-     */
+
     private suspend fun compressImage(uri: Uri): Uri? = withContext(Dispatchers.IO) {
         try {
             val originalFile = uriToFile(uri) ?: return@withContext null
 
-            // Decode original image
-            val options = BitmapFactory.Options().apply {
-                inJustDecodeBounds = false
+            val boundsOptions = BitmapFactory.Options().apply {
+                inJustDecodeBounds = true
             }
-            val bitmap = BitmapFactory.decodeFile(originalFile.absolutePath, options)
+            BitmapFactory.decodeFile(originalFile.absolutePath, boundsOptions)
+
+            val origWidth = boundsOptions.outWidth
+            val origHeight = boundsOptions.outHeight
+
+            var inSampleSize = 1
+            if (origWidth > MAX_DIMENSION || origHeight > MAX_DIMENSION) {
+                val halfWidth = origWidth / 2
+                val halfHeight = origHeight / 2
+                while ((halfWidth / inSampleSize) >= MAX_DIMENSION &&
+                    (halfHeight / inSampleSize) >= MAX_DIMENSION
+                ) {
+                    inSampleSize *= 2
+                }
+            }
+
+            val decodeOptions = BitmapFactory.Options().apply {
+                this.inSampleSize = inSampleSize
+            }
+            var bitmap = BitmapFactory.decodeFile(originalFile.absolutePath, decodeOptions)
                 ?: return@withContext null
 
-            // Create compressed file
+            val currentWidth = bitmap.width
+            val currentHeight = bitmap.height
+            if (currentWidth > MAX_DIMENSION || currentHeight > MAX_DIMENSION) {
+                val scale = MAX_DIMENSION.toFloat() / maxOf(currentWidth, currentHeight)
+                val newWidth = (currentWidth * scale).toInt()
+                val newHeight = (currentHeight * scale).toInt()
+                val scaled = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true)
+                if (scaled != bitmap) bitmap.recycle()
+                bitmap = scaled
+            }
+
             val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
             val storageDir = requireContext().getExternalFilesDir(null)
             val compressedFile = File.createTempFile(
@@ -296,8 +320,7 @@ class IncentivesSubFragment : Fragment() {
                 storageDir
             )
 
-            // Start with high quality and reduce if needed
-            var quality = 90
+            var quality = 80
             var compressedSize: Long
 
             do {
@@ -305,33 +328,21 @@ class IncentivesSubFragment : Fragment() {
                     bitmap.compress(Bitmap.CompressFormat.JPEG, quality, out)
                 }
                 compressedSize = compressedFile.length()
-                quality -= 10
-            } while (compressedSize > MAX_FILE_SIZE_BYTES && quality > 10)
+                quality -= 5
+            } while (compressedSize > TARGET_SIZE_BYTES && quality > 10)
 
             bitmap.recycle()
 
-            if (compressedSize > MAX_FILE_SIZE_BYTES) {
-                Timber.w("Unable to compress image below ${MAX_FILE_SIZE_MB}MB")
-                compressedFile.delete()
-                return@withContext null
-            }
+            Timber.d("Image compressed: ${formatFileSize(originalFile.length())} -> ${formatFileSize(compressedSize)} (quality=$quality)")
 
-            Timber.d("Image compressed from ${formatFileSize(originalFile.length())} to ${formatFileSize(compressedSize)}")
-
-            FileProvider.getUriForFile(
-                requireContext(),
-                "${requireContext().packageName}.fileprovider",
-                compressedFile
-            )
+            Uri.fromFile(compressedFile)
         } catch (e: Exception) {
             Timber.e(e, "Error compressing image")
             null
         }
     }
 
-    /**
-     * Convert URI to File
-     */
+
     private fun uriToFile(uri: Uri): File? {
         return try {
             val inputStream = requireContext().contentResolver.openInputStream(uri)
@@ -348,9 +359,7 @@ class IncentivesSubFragment : Fragment() {
         }
     }
 
-    /**
-     * Handle camera image with compression
-     */
+
     private suspend fun handleCameraImage(uri: Uri) {
         try {
             withContext(Dispatchers.Main) {
@@ -360,58 +369,34 @@ class IncentivesSubFragment : Fragment() {
             val fileSize = getFileSize(uri)
             Timber.d("Camera image size: ${formatFileSize(fileSize)}")
 
-            val finalUri = if (fileSize > MAX_FILE_SIZE_BYTES) {
-                // Compress the image
-                val compressedUri = compressImage(uri)
-                if (compressedUri == null) {
-                    withContext(Dispatchers.Main) {
-                        binding.progressBar?.visibility = View.GONE
-                        Toast.makeText(
-                            requireContext(),
-                            "Unable to compress image. Please try a different image.",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-                    return
+            val finalUri = compressImage(uri) ?: run {
+                withContext(Dispatchers.Main) {
+                    binding.progressBar?.visibility = View.GONE
+                    Toast.makeText(
+                        requireContext(),
+                        "Unable to compress image. Please try again.",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
-                compressedUri
-            } else {
-                uri
+                return
             }
 
             withContext(Dispatchers.Main) {
-                try {
-                    requireContext().contentResolver.takePersistableUriPermission(
-                        finalUri,
-                        Intent.FLAG_GRANT_READ_URI_PERMISSION
-                    )
-                } catch (e: Exception) {
-                    Timber.w(e, "Could not take persistable permission (file provider URI)")
-                }
-
                 currentSelectedItem?.let { item ->
-                    val files = mutableListOf(finalUri)
-                    addFilesToIncentive(item, files)
+                    addFilesToIncentive(item, mutableListOf(finalUri))
                 }
-
                 binding.progressBar?.visibility = View.GONE
             }
         } catch (e: Exception) {
             Timber.e(e, "Error handling camera image")
             withContext(Dispatchers.Main) {
                 binding.progressBar?.visibility = View.GONE
-                Toast.makeText(
-                    requireContext(),
-                    "Error processing image",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(requireContext(), "Error processing image", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    /**
-     * Handle gallery selection with file size validation
-     */
+
     private suspend fun handleGallerySelection(data: Intent) {
         val selectedFiles = mutableListOf<Uri>()
 
@@ -444,21 +429,11 @@ class IncentivesSubFragment : Fragment() {
         val oversizedFiles = mutableListOf<String>()
 
         for (uri in selectedFiles) {
-            val fileSize = getFileSize(uri)
-            if (fileSize > MAX_FILE_SIZE_BYTES) {
-                oversizedFiles.add("${uri.lastPathSegment} (${formatFileSize(fileSize)})")
+            val compressedUri = compressImage(uri)
+            if (compressedUri != null) {
+                validFiles.add(compressedUri)
             } else {
-                validFiles.add(uri)
-                try {
-                    withContext(Dispatchers.Main) {
-                        requireContext().contentResolver.takePersistableUriPermission(
-                            uri,
-                            Intent.FLAG_GRANT_READ_URI_PERMISSION
-                        )
-                    }
-                } catch (e: Exception) {
-                    Timber.e(e, "Error taking persistable permission for URI: $uri")
-                }
+                oversizedFiles.add("${uri.lastPathSegment ?: "Unknown"} (failed to compress)")
             }
         }
 
@@ -484,9 +459,7 @@ class IncentivesSubFragment : Fragment() {
         }
     }
 
-    /**
-     * Handle document selection with file size validation
-     */
+
     private suspend fun handleDocumentSelection(data: Intent) {
         val selectedFiles = mutableListOf<Uri>()
 

@@ -227,9 +227,9 @@ class FileViewerDialog : DialogFragment() {
             private fun getFileIcon(extension: String): Int {
                 return when (extension.lowercase()) {
                     "pdf" -> R.drawable.ic_doc_upload
-                    "jpg", "jpeg", "png", "gif", "webp" -> R.drawable.ic_doc_upload
-                    "doc", "docx" -> R.drawable.ic_doc_upload
-                    "xls", "xlsx" -> R.drawable.ic_doc_upload
+                    "jpg", "jpeg", "png", "gif", "webp" -> R.drawable.ic_image
+                    "doc", "docx" -> R.drawable.ic_word
+                    "xls", "xlsx" -> R.drawable.ic_excel
                     else -> R.drawable.ic_doc_upload
                 }
             }
