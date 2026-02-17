@@ -9,7 +9,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class SyncLogManager @Inject constructor() {
+class SyncLogManager @Inject constructor(
+    private val fileWriter: SyncLogFileWriter
+) {
 
     companion object {
         private const val MAX_BUFFER_SIZE = 500
@@ -36,6 +38,7 @@ class SyncLogManager @Inject constructor() {
             )
             _logs.value = buffer.toList()
         }
+        fileWriter.writeLog(level, tag, message)
     }
 
     fun clearLogs() {
