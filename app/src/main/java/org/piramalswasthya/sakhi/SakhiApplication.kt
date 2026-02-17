@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.database.room.InAppDb
 import org.piramalswasthya.sakhi.helpers.CrashHandler
+import org.piramalswasthya.sakhi.helpers.SyncLogFileWriter
 import org.piramalswasthya.sakhi.helpers.SyncLogManager
 import org.piramalswasthya.sakhi.helpers.SyncLogTree
 import org.piramalswasthya.sakhi.utils.KeyUtils
@@ -32,6 +33,9 @@ class SakhiApplication : Application(), Configuration.Provider {
     @Inject
     lateinit var syncLogManager: SyncLogManager
 
+    @Inject
+    lateinit var syncLogFileWriter: SyncLogFileWriter
+
     override val workManagerConfiguration: Configuration
         get() = Configuration.Builder()
             .setWorkerFactory(workerFactory)
@@ -46,6 +50,7 @@ class SakhiApplication : Application(), Configuration.Provider {
             Timber.plant(Timber.DebugTree())
         }
         Timber.plant(SyncLogTree(syncLogManager))
+        syncLogFileWriter.runRotation()
         KeyUtils.encryptedPassKey()
         KeyUtils.baseAbhaUrl()
         KeyUtils.baseTMCUrl()
