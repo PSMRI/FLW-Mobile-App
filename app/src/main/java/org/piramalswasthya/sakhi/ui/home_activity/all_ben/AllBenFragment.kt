@@ -15,11 +15,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.BenListAdapter
+import org.piramalswasthya.sakhi.adapters.BenPagingAdapter
 import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.AlertFilterBinding
@@ -49,7 +52,7 @@ class AllBenFragment : Fragment() {
         AllBenFragmentArgs.fromBundle(requireArguments())
     }
 
-    private lateinit var benAdapter: BenListAdapter
+    private lateinit var benAdapter: BenPagingAdapter
 
     private var selectedAbha = Abha.ALL
 
@@ -138,13 +141,7 @@ class AllBenFragment : Fragment() {
         }
 
         binding.ibDownload.setOnClickListener {
-            lifecycleScope.launch {
-                viewModel.benList.collect { users ->
-                    if (users.isNotEmpty()) {
-                        viewModel.createCsvFile(requireContext(), users)
-                    }
-                }
-            }
+            viewModel.downloadCsv(requireContext())
         }
 
         if (args.source == 1 || args.source == 2 || args.source == 3 || args.source == 4) {
@@ -152,7 +149,7 @@ class AllBenFragment : Fragment() {
             binding.ibDownload.visibility = View.VISIBLE
         }
 
-        benAdapter = BenListAdapter(
+        benAdapter = BenPagingAdapter(
             clickListener = BenListAdapter.BenClickListener(
                 { item,hhId, benId, relToHeadId ->
 
@@ -273,13 +270,28 @@ class AllBenFragment : Fragment() {
             context = requireActivity()
         )
         binding.rvAny.adapter = benAdapter
+        binding.rvAny.setHasFixedSize(true)
+        binding.rvAny.setItemViewCacheSize(20)
+        (binding.rvAny.layoutManager as? androidx.recyclerview.widget.LinearLayoutManager)?.apply {
+            initialPrefetchItemCount = 10
+        }
+
         lifecycleScope.launch {
-            viewModel.benList.collect {
-                if (it.isEmpty())
-                    binding.flEmpty.visibility = View.VISIBLE
-                else
-                    binding.flEmpty.visibility = View.GONE
-                benAdapter.submitList(it)
+            viewModel.benList.collectLatest {
+                benAdapter.submitData(it)
+            }
+        }
+
+        lifecycleScope.launch {
+            benAdapter.loadStateFlow.collectLatest { loadStates ->
+                val isEmpty = loadStates.refresh is LoadState.NotLoading && benAdapter.itemCount == 0
+                binding.flEmpty.visibility = if (isEmpty) View.VISIBLE else View.GONE
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.childCounts.collectLatest { countMap ->
+                benAdapter.submitChildCounts(countMap)
             }
         }
 
