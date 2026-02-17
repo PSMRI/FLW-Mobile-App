@@ -55,12 +55,16 @@ platform :android do
     UI.user_error!("Missing required parameter: flavor") if flavor.nil? || flavor.empty?
     version_name = options[:version_name]
 
+    # Convert PascalCase flavor (e.g. "SakshamStag") to camelCase (e.g. "sakshamStag")
+    # to match Gradle's productFlavors directory naming
+    gradle_flavor = flavor[0].downcase + flavor[1..]
+
     # Get latest version code from Firebase, handle no prior releases
     new_version_code = 1
     begin
       latest_release = firebase_app_distribution_get_latest_release(
         app: ENV['FIREBASE_APP_ID'],
-        service_credentials_file: "firebase_credentials.json"
+        service_credentials_file: "../firebase_credentials.json"
       )
       new_version_code = latest_release[:buildVersion].to_i + 1
     rescue => e
@@ -81,10 +85,11 @@ platform :android do
       task: "clean assemble#{flavor}Debug"
     )
 
-    # Distribute to Firebase App Distribution
+    # Distribute to Firebase App Distribution (universal APK for all device architectures)
     firebase_app_distribution(
       app: ENV['FIREBASE_APP_ID'],
-      service_credentials_file: "firebase_credentials.json",
+      service_credentials_file: "../firebase_credentials.json",
+      android_artifact_path: "../app/build/outputs/apk/#{gradle_flavor}/debug/app-#{gradle_flavor}-universal-debug.apk",
       release_notes_file: "FirebaseAppDistributionConfig/release_notes.txt",
       groups_file: "FirebaseAppDistributionConfig/groups.txt",
       debug: true
