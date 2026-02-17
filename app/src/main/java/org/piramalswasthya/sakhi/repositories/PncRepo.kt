@@ -94,7 +94,7 @@ class PncRepo @Inject constructor(
         }
     }
 
-    private suspend fun postDataToAmritServer(ancPostList: MutableSet<PNCNetwork>): Boolean {
+    private suspend fun postDataToAmritServer(ancPostList: MutableSet<PNCNetwork>, retryCount: Int = 3): Boolean {
         if (ancPostList.isEmpty()) return false
         val user =
             preferenceDao.getLoggedInUser()
@@ -146,7 +146,9 @@ class PncRepo @Inject constructor(
             return false
         } catch (e: SocketTimeoutException) {
             Timber.d("Caught exception $e here")
-            return postDataToAmritServer(ancPostList)
+            if (retryCount > 0) return postDataToAmritServer(ancPostList, retryCount - 1)
+            Timber.e("postDataToAmritServer: max retries exhausted")
+            return false
         } catch (e: JSONException) {
             Timber.d("Caught exception $e here")
             return false

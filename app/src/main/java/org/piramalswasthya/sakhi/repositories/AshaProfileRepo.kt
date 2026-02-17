@@ -24,6 +24,7 @@ class AshaProfileRepo @Inject constructor(
 
     suspend fun postDataToAmritServer(
         benNetworkPostSet: ProfileActivityCache,
+        retryCount: Int = 3
     ): Boolean {
         try {
             val response = amritApiService.submitAshaProfileData(benNetworkPostSet)
@@ -60,9 +61,11 @@ class AshaProfileRepo @Inject constructor(
             return false
         } catch (e: SocketTimeoutException) {
             Timber.d("Caught exception $e here")
-            return postDataToAmritServer(
-                benNetworkPostSet
+            if (retryCount > 0) return postDataToAmritServer(
+                benNetworkPostSet, retryCount - 1
             )
+            Timber.e("postDataToAmritServer: max retries exhausted")
+            return false
         } catch (e: JSONException) {
             Timber.d("Caught exception $e here")
             return false
@@ -73,7 +76,7 @@ class AshaProfileRepo @Inject constructor(
     }
 
 
-    suspend fun pullAndSaveAshaProfile(user: User): Boolean {
+    suspend fun pullAndSaveAshaProfile(user: User, retryCount: Int = 3): Boolean {
         return withContext(Dispatchers.IO) {
             try {
                 val response = amritApiService.getAshaProfileData(user.userId)
@@ -117,8 +120,9 @@ class AshaProfileRepo @Inject constructor(
 
             } catch (e: SocketTimeoutException) {
                 Timber.d("profile error : $e")
-                pullAndSaveAshaProfile(user)
-                return@withContext true
+                if (retryCount > 0) return@withContext pullAndSaveAshaProfile(user, retryCount - 1)
+                Timber.e("pullAndSaveAshaProfile: max retries exhausted")
+                return@withContext false
             } catch (e: Exception) {
                 Timber.d("Caught $e at incentives!")
                 return@withContext false

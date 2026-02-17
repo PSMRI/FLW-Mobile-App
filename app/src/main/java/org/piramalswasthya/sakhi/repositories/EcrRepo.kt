@@ -123,7 +123,7 @@ class EcrRepo @Inject constructor(
         }
     }
 
-    suspend fun postECRDataToAmritServer(ecrPostList: MutableSet<EcrPost>): Boolean {
+    suspend fun postECRDataToAmritServer(ecrPostList: MutableSet<EcrPost>, retryCount: Int = 3): Boolean {
         if (ecrPostList.isEmpty()) return false
 
         val user =
@@ -174,7 +174,9 @@ class EcrRepo @Inject constructor(
             return false
         } catch (e: SocketTimeoutException) {
             Timber.d("Caught exception $e here")
-            return postECRDataToAmritServer(ecrPostList)
+            if (retryCount > 0) return postECRDataToAmritServer(ecrPostList, retryCount - 1)
+            Timber.e("postECRDataToAmritServer: max retries exhausted")
+            return false
         } catch (e: JSONException) {
             Timber.d("Caught exception $e here")
             return false
@@ -225,7 +227,7 @@ class EcrRepo @Inject constructor(
         }
     }
 
-    private suspend fun postECTDataToAmritServer(ectPostList: MutableSet<EligibleCoupleTrackingCache>): Boolean {
+    private suspend fun postECTDataToAmritServer(ectPostList: MutableSet<EligibleCoupleTrackingCache>, retryCount: Int = 3): Boolean {
         if (ectPostList.isEmpty()) return false
 
         val user =
@@ -276,14 +278,16 @@ class EcrRepo @Inject constructor(
             return false
         } catch (e: SocketTimeoutException) {
             Timber.d("Caught exception $e here")
-            return postECTDataToAmritServer(ectPostList)
+            if (retryCount > 0) return postECTDataToAmritServer(ectPostList, retryCount - 1)
+            Timber.e("postECTDataToAmritServer: max retries exhausted")
+            return false
         } catch (e: JSONException) {
             Timber.d("Caught exception $e here")
             return false
         }
     }
 
-    suspend fun pullAndPersistEcrRecord(): Int {
+    suspend fun pullAndPersistEcrRecord(retryCount: Int = 3): Int {
         return withContext(Dispatchers.IO) {
             val user = preferenceDao.getLoggedInUser()
                 ?: throw IllegalStateException("No user logged in!!")
@@ -369,8 +373,9 @@ class EcrRepo @Inject constructor(
 
             } catch (e: SocketTimeoutException) {
                 Timber.d("get_ect error : $e")
-                pullAndPersistEcrRecord()
-
+                if (retryCount > 0) return@withContext pullAndPersistEcrRecord(retryCount - 1)
+                Timber.e("pullAndPersistEcrRecord: max retries exhausted")
+                return@withContext -1
             } catch (e: java.lang.IllegalStateException) {
                 Timber.d("get_ect error : $e")
                 return@withContext -1
@@ -380,7 +385,7 @@ class EcrRepo @Inject constructor(
     }
 
 
-    suspend fun pullAndPersistEctRecord(): Int {
+    suspend fun pullAndPersistEctRecord(retryCount: Int = 3): Int {
         return withContext(Dispatchers.IO) {
             val user = preferenceDao.getLoggedInUser()
                 ?: throw IllegalStateException("No user logged in!!")
@@ -441,8 +446,9 @@ class EcrRepo @Inject constructor(
 
             } catch (e: SocketTimeoutException) {
                 Timber.d("get_ect error : $e")
-                pullAndPersistEctRecord()
-
+                if (retryCount > 0) return@withContext pullAndPersistEctRecord(retryCount - 1)
+                Timber.e("pullAndPersistEctRecord: max retries exhausted")
+                return@withContext -1
             } catch (e: java.lang.IllegalStateException) {
                 Timber.d("get_ect error : $e")
                 return@withContext -1

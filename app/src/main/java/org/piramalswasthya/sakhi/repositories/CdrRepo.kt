@@ -80,7 +80,7 @@ class CdrRepo @Inject constructor(
         }
     }
 
-    private suspend fun postCdrForm(cdrPostList: List<CDRPost>): Boolean {
+    private suspend fun postCdrForm(cdrPostList: List<CDRPost>, retryCount: Int = 3): Boolean {
         if (cdrPostList.isEmpty()) return false
         val user =
             preferenceDao.getLoggedInUser()
@@ -131,7 +131,9 @@ class CdrRepo @Inject constructor(
             return false
         } catch (e: SocketTimeoutException) {
             Timber.d("Caught exception $e here")
-            return postCdrForm(cdrPostList)
+            if (retryCount > 0) return postCdrForm(cdrPostList, retryCount - 1)
+            Timber.e("postCdrForm: max retries exhausted")
+            return false
         } catch (e: JSONException) {
             Timber.d("Caught exception $e here")
             return false

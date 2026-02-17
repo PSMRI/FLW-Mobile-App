@@ -1,13 +1,17 @@
 package org.piramalswasthya.sakhi.ui.login_activity
 
+import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.view.MotionEvent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.google.firebase.crashlytics.internal.common.CommonUtils
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
@@ -24,6 +28,8 @@ import org.piramalswasthya.sakhi.helpers.TapjackingProtectionHelper
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
 
+    private val notificationPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { /* no-op */ }
 
     @EntryPoint
     @InstallIn(SingletonComponent::class)
@@ -63,6 +69,7 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
         TapjackingProtectionHelper.enableTouchFiltering(this)
         createSyncServiceNotificationChannel()
+        requestNotificationPermission()
         if (!BuildConfig.DEBUG && isDeviceRootedOrEmulator()) {
             AlertDialog.Builder(this)
                 .setTitle("Unsupported Device")
@@ -102,6 +109,17 @@ class LoginActivity : AppCompatActivity() {
             val notificationManager: NotificationManager =
                 getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    private fun requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(
+                    this, Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
         }
     }
 

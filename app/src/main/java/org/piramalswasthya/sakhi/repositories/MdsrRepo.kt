@@ -80,7 +80,7 @@ class MdsrRepo @Inject constructor(
         }
     }
 
-    private suspend fun postMdsrForm(mdsrPostList: List<MdsrPost>): Boolean {
+    private suspend fun postMdsrForm(mdsrPostList: List<MdsrPost>, retryCount: Int = 3): Boolean {
         if (mdsrPostList.isEmpty()) return false
         val user =
             preferenceDao.getLoggedInUser()
@@ -130,7 +130,9 @@ class MdsrRepo @Inject constructor(
             return false
         } catch (e: SocketTimeoutException) {
             Timber.d("Caught exception $e here")
-            return postMdsrForm(mdsrPostList)
+            if (retryCount > 0) return postMdsrForm(mdsrPostList, retryCount - 1)
+            Timber.e("postMdsrForm: max retries exhausted")
+            return false
         } catch (e: JSONException) {
             Timber.d("Caught exception $e here")
             return false

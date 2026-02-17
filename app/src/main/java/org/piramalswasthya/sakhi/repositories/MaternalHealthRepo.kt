@@ -113,7 +113,6 @@ class MaternalHealthRepo @Inject constructor(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val ancDueCount = maternalHealthDao.getAllPregnancyRecords().transformLatest {
-        Timber.d("From DB : ${it.count()}")
         var count = 0
         val notDeliveredList = it.filter { !it.value.any { it.pregnantWomanDelivered == true } }
         notDeliveredList.keys.forEach { activePwrRecrod ->
@@ -184,7 +183,7 @@ class MaternalHealthRepo @Inject constructor(
         }
     }
 
-    private suspend fun postDataToAmritServer(ancPostList: MutableSet<ANCPost>): Boolean {
+    private suspend fun postDataToAmritServer(ancPostList: MutableSet<ANCPost>, retryCount: Int = 3): Boolean {
         if (ancPostList.isEmpty()) return false
         val user =
             preferenceDao.getLoggedInUser()
@@ -231,7 +230,9 @@ class MaternalHealthRepo @Inject constructor(
                 } catch (e: IOException) {
                     e.printStackTrace()
                 } catch (e: SocketTimeoutException) {
-                    postDataToAmritServer(ancPostList)
+                    if (retryCount > 0) return postDataToAmritServer(ancPostList, retryCount - 1)
+                    Timber.e("postDataToAmritServer: max retries exhausted")
+                    return false
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -242,7 +243,9 @@ class MaternalHealthRepo @Inject constructor(
             return false
         } catch (e: SocketTimeoutException) {
             Timber.d("Caught exception $e here")
-            return postDataToAmritServer(ancPostList)
+            if (retryCount > 0) return postDataToAmritServer(ancPostList, retryCount - 1)
+            Timber.e("postDataToAmritServer: max retries exhausted")
+            return false
         } catch (e: JSONException) {
             Timber.d("Caught exception $e here")
             return false
@@ -295,7 +298,7 @@ class MaternalHealthRepo @Inject constructor(
         }
     }
 
-    suspend fun postPwrToAmritServer(pwrPostList: MutableSet<PwrPost>): Boolean {
+    suspend fun postPwrToAmritServer(pwrPostList: MutableSet<PwrPost>, retryCount: Int = 3): Boolean {
         if (pwrPostList.isEmpty()) return false
         val user =
             preferenceDao.getLoggedInUser()
@@ -346,7 +349,9 @@ class MaternalHealthRepo @Inject constructor(
             return false
         } catch (e: SocketTimeoutException) {
             Timber.d("Caught exception $e here")
-            return postPwrToAmritServer(pwrPostList)
+            if (retryCount > 0) return postPwrToAmritServer(pwrPostList, retryCount - 1)
+            Timber.e("postPwrToAmritServer: max retries exhausted")
+            return false
         } catch (e: JSONException) {
             Timber.d("Caught exception $e here")
             return false

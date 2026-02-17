@@ -93,7 +93,7 @@ class InfantRegRepo @Inject constructor(
         }
     }
 
-    private suspend fun postDataToAmritServer(infantRegPostList: MutableSet<InfantRegPost>): Boolean {
+    private suspend fun postDataToAmritServer(infantRegPostList: MutableSet<InfantRegPost>, retryCount: Int = 3): Boolean {
         if (infantRegPostList.isEmpty()) return false
         val user =
             preferenceDao.getLoggedInUser()
@@ -145,7 +145,9 @@ class InfantRegRepo @Inject constructor(
             return false
         } catch (e: SocketTimeoutException) {
             Timber.d("Caught exception $e here")
-            return postDataToAmritServer(infantRegPostList)
+            if (retryCount > 0) return postDataToAmritServer(infantRegPostList, retryCount - 1)
+            Timber.e("postDataToAmritServer: max retries exhausted")
+            return false
         } catch (e: JSONException) {
             Timber.d("Caught exception $e here")
             return false
