@@ -41,7 +41,7 @@ class CbacPullFromAmritWorker @AssistedInject constructor(
                 }
                 Result.success()
             } catch (e: Exception) {
-                Timber.d("cbac pull failed : $e")
+                Timber.e("cbac pull failed : $e")
                 Result.failure(workDataOf("worker_name" to "CbacPullFromAmritWorker", "error" to (e.message ?: "Unknown error")))
             }
         }

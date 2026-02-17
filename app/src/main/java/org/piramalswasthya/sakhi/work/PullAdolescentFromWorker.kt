@@ -46,7 +46,7 @@ class PullAdolescentFromWorker @AssistedInject constructor(
                 setForeground(createForegroundInfo("Downloading Adolescent Data"))
             } catch (throwable: Throwable) {
                 // Handle this exception gracefully
-                Timber.d("FgLW", "Something bad happened", throwable)
+                Timber.e("FgLW", "Something bad happened", throwable)
             }
             withContext(Dispatchers.IO) {
                 val startTime = System.currentTimeMillis()
@@ -71,14 +71,14 @@ class PullAdolescentFromWorker @AssistedInject constructor(
                     }
                     return@withContext Result.failure(workDataOf("worker_name" to "PullAdolescentFromWorker", "error" to "Pull operation returned incomplete results"))
                 } catch (e: SQLiteConstraintException) {
-                    Timber.d("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
+                    Timber.e("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
                     return@withContext Result.failure(workDataOf("worker_name" to "PullAdolescentFromWorker", "error" to "SQLite constraint: ${e.message}"))
                 }
 
             }
 
         } catch (e: java.lang.Exception) {
-            Timber.d("Error occurred in PullTBFromAmritWorker $e ${e.stackTrace}")
+            Timber.e("Error occurred in PullTBFromAmritWorker $e ${e.stackTrace}")
 
             Result.failure(workDataOf("worker_name" to "PullAdolescentFromWorker", "error" to (e.message ?: "Unknown error")))
         }
@@ -111,7 +111,7 @@ class PullAdolescentFromWorker @AssistedInject constructor(
                 val res = adolescentHealthRepo.getadolescentHealthCacheFromServer()
                 return@withContext res == 1
             } catch (e: Exception) {
-                Timber.d("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
+                Timber.e("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
             }
             true
         }

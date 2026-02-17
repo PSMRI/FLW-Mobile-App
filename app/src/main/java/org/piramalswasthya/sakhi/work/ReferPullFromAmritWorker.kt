@@ -41,7 +41,7 @@ class ReferPullFromAmritWorker @AssistedInject constructor(
                 }
                 Result.success()
             } catch (e: Exception) {
-                Timber.d("refer pull failed : $e")
+                Timber.e("refer pull failed : $e")
                 Result.failure(workDataOf("worker_name" to "ReferPullFromAmritWorker", "error" to (e.message ?: "Unknown error")))
             }
         }

@@ -45,7 +45,7 @@ class PullHRPFromAmritWorker @AssistedInject constructor(
                 setForeground(createForegroundInfo("Downloading HRP Data"))
             } catch (throwable: Throwable) {
                 // Handle this exception gracefully
-                Timber.d("error", "Something bad happened", throwable)
+                Timber.e("error", "Something bad happened", throwable)
             }
             withContext(Dispatchers.IO) {
                 val startTime = System.currentTimeMillis()
@@ -71,14 +71,14 @@ class PullHRPFromAmritWorker @AssistedInject constructor(
                     }
                     return@withContext Result.failure(workDataOf("worker_name" to "PullHRPFromAmritWorker", "error" to "Pull operation returned incomplete results"))
                 } catch (e: SQLiteConstraintException) {
-                    Timber.d("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
+                    Timber.e("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
                     return@withContext Result.failure(workDataOf("worker_name" to "PullHRPFromAmritWorker", "error" to "SQLite constraint: ${e.message}"))
                 }
 
             }
 
         } catch (e: java.lang.Exception) {
-            Timber.d("Error occurred in PullTBFromAmritWorker $e ${e.stackTrace}")
+            Timber.e("Error occurred in PullTBFromAmritWorker $e ${e.stackTrace}")
 
             Result.failure(workDataOf("worker_name" to "PullHRPFromAmritWorker", "error" to (e.message ?: "Unknown error")))
         }
@@ -110,7 +110,7 @@ class PullHRPFromAmritWorker @AssistedInject constructor(
                 val res = hrpRepo.getHRPAssessDetailsFromServer()
                 return@withContext res == 1
             } catch (e: Exception) {
-                Timber.d("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
+                Timber.e("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
             }
             true
         }
@@ -122,7 +122,7 @@ class PullHRPFromAmritWorker @AssistedInject constructor(
                 val res = hrpRepo.getHighRiskAssessDetailsFromServer()
                 return@withContext res == 1
             } catch (e: Exception) {
-                Timber.d("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
+                Timber.e("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
             }
             true
         }
@@ -134,7 +134,7 @@ class PullHRPFromAmritWorker @AssistedInject constructor(
                 val res = hrpRepo.getHighRiskAssessMicroBirthPlanDetailsFromServer()
                 return@withContext res == 1
             } catch (e: Exception) {
-                Timber.d("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
+                Timber.e("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
             }
             true
         }
@@ -146,7 +146,7 @@ class PullHRPFromAmritWorker @AssistedInject constructor(
                 val res = hrpRepo.getHRPTrackDetailsFromServer()
                 return@withContext res == 1
             } catch (e: Exception) {
-                Timber.d("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
+                Timber.e("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
             }
             true
         }
@@ -158,7 +158,7 @@ class PullHRPFromAmritWorker @AssistedInject constructor(
                 val res = hrpRepo.getHRNonPAssessDetailsFromServer()
                 return@withContext res == 1
             } catch (e: Exception) {
-                Timber.d("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
+                Timber.e("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
             }
             true
         }
@@ -170,7 +170,7 @@ class PullHRPFromAmritWorker @AssistedInject constructor(
                 val res = hrpRepo.getHRNonPTrackDetailsFromServer()
                 return@withContext res == 1
             } catch (e: Exception) {
-                Timber.d("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
+                Timber.e("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
             }
             true
         }

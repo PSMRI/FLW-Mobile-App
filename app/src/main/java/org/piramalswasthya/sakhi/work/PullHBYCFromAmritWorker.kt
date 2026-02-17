@@ -45,7 +45,7 @@ class PullHBYCFromAmritWorker @AssistedInject constructor(
                 setForeground(createForegroundInfo("Downloading Child HBYC Data"))
             } catch (throwable: Throwable) {
                 // Handle this exception gracefully
-                Timber.d("error", "Something bad happened", throwable)
+                Timber.e("error", "Something bad happened", throwable)
             }
             withContext(Dispatchers.IO) {
                 val startTime = System.currentTimeMillis()
@@ -66,14 +66,14 @@ class PullHBYCFromAmritWorker @AssistedInject constructor(
                     }
                     return@withContext Result.failure(workDataOf("worker_name" to "PullHBYCFromAmritWorker", "error" to "Pull operation returned incomplete results"))
                 } catch (e: SQLiteConstraintException) {
-                    Timber.d("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
+                    Timber.e("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
                     return@withContext Result.failure(workDataOf("worker_name" to "PullHBYCFromAmritWorker", "error" to "SQLite constraint: ${e.message}"))
                 }
 
             }
 
         } catch (e: java.lang.Exception) {
-            Timber.d("Error occurred in PullChildHBYCFromAmritWorker $e ${e.stackTrace}")
+            Timber.e("Error occurred in PullChildHBYCFromAmritWorker $e ${e.stackTrace}")
 
             Result.failure(workDataOf("worker_name" to "PullHBYCFromAmritWorker", "error" to (e.message ?: "Unknown error")))
         }
@@ -106,7 +106,7 @@ class PullHBYCFromAmritWorker @AssistedInject constructor(
                 val res = hbycRepo.getHBYCDetailsFromServer()
                 return@withContext res == 1
             } catch (e: Exception) {
-                Timber.d("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
+                Timber.e("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
             }
             true
         }

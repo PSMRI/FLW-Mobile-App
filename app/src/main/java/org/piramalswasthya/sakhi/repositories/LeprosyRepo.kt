@@ -127,11 +127,11 @@ class LeprosyRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_tb error : $e")
+                Timber.e("get_tb error : $e")
                 return@withContext -2
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_tb error : $e")
+                Timber.e("get_tb error : $e")
                 return@withContext -1
             }
             -1
@@ -364,19 +364,19 @@ class LeprosyRepo @Inject constructor(
                         }
                     }
                 } else {
-                    Timber.d("HTTP error for leprosy data: $statusCode")
+                    Timber.e("HTTP error for leprosy data: $statusCode")
                 }
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_all_leprosy error : $e")
+                Timber.e("get_all_leprosy error : $e")
                 return@withContext -2
             } catch (e: JSONException) {
-                Timber.d("JSON parsing error for leprosy data: $e")
+                Timber.e("JSON parsing error for leprosy data: $e")
                 return@withContext -1
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_all_leprosy error : $e")
+                Timber.e("get_all_leprosy error : $e")
                 return@withContext -1
             } catch (e: Exception) {
-                Timber.d("get_all_leprosy unexpected error : $e")
+                Timber.e("get_all_leprosy unexpected error : $e")
                 return@withContext -1
             }
             -1
@@ -436,19 +436,19 @@ class LeprosyRepo @Inject constructor(
                         }
                     }
                 } else {
-                    Timber.d("HTTP error for leprosy followup data: $statusCode")
+                    Timber.e("HTTP error for leprosy followup data: $statusCode")
                 }
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_all_leprosy_followup error : $e")
+                Timber.e("get_all_leprosy_followup error : $e")
                 return@withContext -2
             } catch (e: JSONException) {
-                Timber.d("JSON parsing error for leprosy followup data: $e")
+                Timber.e("JSON parsing error for leprosy followup data: $e")
                 return@withContext -1
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_all_leprosy_followup error : $e")
+                Timber.e("get_all_leprosy_followup error : $e")
                 return@withContext -1
             } catch (e: Exception) {
-                Timber.d("get_all_leprosy_followup unexpected error : $e")
+                Timber.e("get_all_leprosy_followup unexpected error : $e")
                 return@withContext -1
             }
             -1
@@ -602,7 +602,7 @@ class LeprosyRepo @Inject constructor(
             }
             Timber.d("Successfully upserted ${followUpList?.size ?: 0} leprosy followup records")
         } catch (e: Exception) {
-            Timber.d("Error saving leprosy followup data: $e")
+            Timber.e("Error saving leprosy followup data: $e")
             throw e
         }
     }

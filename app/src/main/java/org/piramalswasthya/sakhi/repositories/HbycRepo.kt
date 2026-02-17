@@ -46,7 +46,7 @@ class HbycRepo @Inject constructor(
 
                 true
             } catch (e: Exception) {
-                Timber.d("Error : $e raised at saveHbycData")
+                Timber.e("Error : $e raised at saveHbycData")
                 false
             }
         }
@@ -150,11 +150,11 @@ class HbycRepo @Inject constructor(
                 }
             } catch (e: SocketTimeoutException) {
                 getHBYCDetailsFromServer()
-                Timber.d("get hbyc data error : $e")
+                Timber.e("get hbyc data error : $e")
                 return@withContext -2
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get hbyc error : $e")
+                Timber.e("get hbyc error : $e")
                 return@withContext -1
             }
             -1
@@ -234,11 +234,11 @@ class HbycRepo @Inject constructor(
 
             } catch (e: SocketTimeoutException) {
                 getHBYCDetailsFromServer()
-                Timber.d("get hbyc data error : $e")
+                Timber.e("get hbyc data error : $e")
                 return@withContext -2
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get hbyc error : $e")
+                Timber.e("get hbyc error : $e")
                 return@withContext -1
             }
             -1

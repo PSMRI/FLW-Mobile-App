@@ -68,7 +68,7 @@ class HbncRepo @Inject constructor(
 
                 true
             } catch (e: Exception) {
-                Timber.d("Error : $e raised at saveHbncData")
+                Timber.e("Error : $e raised at saveHbncData")
                 false
             }
         }
@@ -166,11 +166,11 @@ class HbncRepo @Inject constructor(
                 }
             } catch (e: SocketTimeoutException) {
                 getHBNCDetailsFromServer()
-                Timber.d("get hbnc data error : $e")
+                Timber.e("get hbnc data error : $e")
                 return@withContext -2
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get hbnc error : $e")
+                Timber.e("get hbnc error : $e")
                 return@withContext -1
             }
             -1
@@ -250,11 +250,11 @@ class HbncRepo @Inject constructor(
 
             } catch (e: SocketTimeoutException) {
                 getHBNCDetailsFromServer()
-                Timber.d("get hbnc data error : $e")
+                Timber.e("get hbnc data error : $e")
                 return@withContext -2
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get hbnc error : $e")
+                Timber.e("get hbnc error : $e")
                 return@withContext -1
             }
             -1

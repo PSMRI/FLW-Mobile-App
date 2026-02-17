@@ -76,7 +76,7 @@ class AshaRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("incentives error : $e")
+                Timber.e("incentives error : $e")
                 pullAndSaveAllAshaActivities(user)
                 return@withContext true
             } catch (e: Exception) {

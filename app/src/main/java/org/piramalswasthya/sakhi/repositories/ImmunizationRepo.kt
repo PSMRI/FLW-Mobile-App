@@ -87,11 +87,11 @@ class ImmunizationRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_child_immunization error : $e")
+                Timber.e("get_child_immunization error : $e")
                 return@withContext -2
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_child_immunization error : $e")
+                Timber.e("get_child_immunization error : $e")
                 return@withContext -1
             }
             -1
@@ -259,11 +259,11 @@ class ImmunizationRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_child_vaccines error : $e")
+                Timber.e("get_child_vaccines error : $e")
                 getVaccineDetailsFromServer()
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_child_vaccines error : $e")
+                Timber.e("get_child_vaccines error : $e")
                 return@withContext -1
             }
             -1

@@ -242,12 +242,12 @@ class MaternalHealthRepo @Inject constructor(
             Timber.w("Bad Response from server, need to check $ancPostList $response ")
             return false
         } catch (e: SocketTimeoutException) {
-            Timber.d("Caught exception $e here")
+            Timber.e("Caught exception $e here")
             if (retryCount > 0) return postDataToAmritServer(ancPostList, retryCount - 1)
             Timber.e("postDataToAmritServer: max retries exhausted")
             return false
         } catch (e: JSONException) {
-            Timber.d("Caught exception $e here")
+            Timber.e("Caught exception $e here")
             return false
         }
     }
@@ -348,12 +348,12 @@ class MaternalHealthRepo @Inject constructor(
             Timber.w("Bad Response from server, need to check $pwrPostList $response ")
             return false
         } catch (e: SocketTimeoutException) {
-            Timber.d("Caught exception $e here")
+            Timber.e("Caught exception $e here")
             if (retryCount > 0) return postPwrToAmritServer(pwrPostList, retryCount - 1)
             Timber.e("postPwrToAmritServer: max retries exhausted")
             return false
         } catch (e: JSONException) {
-            Timber.d("Caught exception $e here")
+            Timber.e("Caught exception $e here")
             return false
         }
     }
@@ -415,11 +415,11 @@ class MaternalHealthRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_tb error : $e")
+                Timber.e("get_tb error : $e")
                 return@withContext -2
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_tb error : $e")
+                Timber.e("get_tb error : $e")
                 return@withContext -1
             }
             -1
@@ -540,11 +540,11 @@ class MaternalHealthRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_tb error : $e")
+                Timber.e("get_tb error : $e")
                 return@withContext -2
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_tb error : $e")
+                Timber.e("get_tb error : $e")
                 return@withContext -1
             }
             -1

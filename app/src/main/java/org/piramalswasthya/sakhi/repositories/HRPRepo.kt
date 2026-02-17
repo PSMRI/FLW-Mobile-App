@@ -218,13 +218,13 @@ class HRPRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get data error : $e")
+                Timber.e("get data error : $e")
                 if (retryCount > 0) return@withContext getHighRiskAssessDetailsFromServer(retryCount - 1)
                 Timber.e("getHighRiskAssessDetailsFromServer: max retries exhausted")
                 return@withContext -1
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get data error : $e")
+                Timber.e("get data error : $e")
                 return@withContext -1
             }
             -1
@@ -285,13 +285,13 @@ class HRPRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get data error : $e")
+                Timber.e("get data error : $e")
                 if (retryCount > 0) return@withContext getHighRiskAssessMicroBirthPlanDetailsFromServer(retryCount - 1)
                 Timber.e("getHighRiskAssessMicroBirthPlanDetailsFromServer: max retries exhausted")
                 return@withContext -1
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get data error : $e")
+                Timber.e("get data error : $e")
                 return@withContext -1
             }
             -1
@@ -467,13 +467,13 @@ class HRPRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get data error : $e")
+                Timber.e("get data error : $e")
                 if (retryCount > 0) return@withContext getHRPAssessDetailsFromServer(retryCount - 1)
                 Timber.e("getHRPAssessDetailsFromServer: max retries exhausted")
                 return@withContext -1
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get data error : $e")
+                Timber.e("get data error : $e")
                 return@withContext -1
             }
             -1
@@ -556,13 +556,13 @@ class HRPRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get data error : $e")
+                Timber.e("get data error : $e")
                 if (retryCount > 0) return@withContext getHRPTrackDetailsFromServer(retryCount - 1)
                 Timber.e("getHRPTrackDetailsFromServer: max retries exhausted")
                 return@withContext -1
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get data error : $e")
+                Timber.e("get data error : $e")
                 return@withContext -1
             }
             -1
@@ -652,13 +652,13 @@ class HRPRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get data error : $e")
+                Timber.e("get data error : $e")
                 if (retryCount > 0) return@withContext getHRNonPAssessDetailsFromServer(retryCount - 1)
                 Timber.e("getHRNonPAssessDetailsFromServer: max retries exhausted")
                 return@withContext -1
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get data error : $e")
+                Timber.e("get data error : $e")
                 return@withContext -1
             }
             -1
@@ -740,13 +740,13 @@ class HRPRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get data error : $e")
+                Timber.e("get data error : $e")
                 if (retryCount > 0) return@withContext getHRNonPTrackDetailsFromServer(retryCount - 1)
                 Timber.e("getHRNonPTrackDetailsFromServer: max retries exhausted")
                 return@withContext -1
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get data error : $e")
+                Timber.e("get data error : $e")
                 return@withContext -1
             }
             -1

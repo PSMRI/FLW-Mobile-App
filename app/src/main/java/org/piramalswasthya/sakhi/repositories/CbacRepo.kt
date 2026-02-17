@@ -81,7 +81,7 @@ class CbacRepo @Inject constructor(
                 database.benDao.updateBen(ben)
                 true
             } catch (e: java.lang.Exception) {
-                Timber.d("Error : $e raised at saveCbacData")
+                Timber.e("Error : $e raised at saveCbacData")
                 false
             }
         }
