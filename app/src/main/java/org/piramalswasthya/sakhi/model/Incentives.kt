@@ -252,7 +252,8 @@ data class IncentiveGrouped(
     val description: String,
     val activity: IncentiveActivityCache,
     val hasZeroBen: Boolean = false,
-    val defaultIncentive : Boolean = false
+    val defaultIncentive : Boolean = false,
+    val isEligible: Boolean = false
 ) : Parcelable
 
 

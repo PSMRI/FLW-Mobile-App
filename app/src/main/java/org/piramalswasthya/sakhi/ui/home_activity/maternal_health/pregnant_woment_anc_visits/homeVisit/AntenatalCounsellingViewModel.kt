@@ -163,6 +163,8 @@ class AntenatalCounsellingViewModel @Inject constructor(
         motherAge = age
     }
 
+
+
     suspend fun loadLastVisitData(benId: Long) {
         try {
             val visits = repository.getSyncedVisitsByRchIdANC(benId)
@@ -200,135 +202,7 @@ class AntenatalCounsellingViewModel @Inject constructor(
         }
     }
 
-    /*fun loadFormSchema(
-        benId: Long,
-        formId: String,
-        visitDay: String,
-        viewMode: Boolean,
-        lang: String,
-        visitNumber : Int
-    ) {
-        this.visitDay = visitDay
-        this.isViewMode = viewMode
-        this.benId = benId
 
-        viewModelScope.launch {
-            val visits = repository.getSyncedVisitsByRchIdANC(benId)
-            _visitCount.value = visits.size
-            val cachedSchemaEntity = repository.getSavedSchema(formId)
-            val cachedSchema: FormSchemaDto? = cachedSchemaEntity?.let {
-                FormSchemaDto.fromJson(it.schemaJson)
-            }
-            val localSchemaToRender = cachedSchema ?: repository.getFormSchema(formId, lang)?.also {
-            }
-
-            if (localSchemaToRender == null) {
-                return@launch
-            }
-
-            val savedJson = repository.loadFormResponseJsonANC(benId, visitDay)
-            val savedFieldValues = if (!savedJson.isNullOrBlank()) {
-                try {
-                    val root = JSONObject(savedJson)
-                    val fieldsJson = root.optJSONObject("fields") ?: JSONObject()
-                    fieldsJson.keys().asSequence().associateWith { fieldsJson.opt(it) }
-                } catch (e: Exception) {
-                    emptyMap()
-                }
-            } else {
-                emptyMap()
-            }
-
-            if (!viewMode) {
-                loadLastVisitData(benId)
-            }
-
-            val allFields = localSchemaToRender.sections.flatMap { it.fields }
-            localSchemaToRender.sections.forEach { section ->
-                section.fields.forEach { field ->
-                    field.value = when (field.fieldId) {
-                        "visit_day" -> visitDay
-                        else -> savedFieldValues[field.fieldId] ?: field.default
-                    }
-                    if (field.fieldId == "visit_number") {
-                        val nextVisitNumber = _visitCount.value + 1
-                        if(!viewMode)
-                        {field.value = "Visit-$nextVisitNumber"}
-                        else{
-                            field.value = "Visit-$visitNumber"
-                        }
-
-                        field.isEditable = false
-                    }
-
-                    if (field.fieldId == "age_risk") {
-                        val isAgeRisk = motherAge < 18 || motherAge > 35
-                        field.value = if (isAgeRisk) "Yes" else "No"
-                        field.isEditable = false
-                    }
-
-                    if (!viewMode && _lastVisitData.value != null) {
-                        val lastVisit = _lastVisitData.value
-                        try {
-                            val formDataJson = lastVisit?.formDataJson
-                            if (!formDataJson.isNullOrBlank()) {
-                                val jsonObject = JSONObject(formDataJson)
-                                val fieldsJson = jsonObject.optJSONObject("fields") ?: JSONObject()
-
-                                when (field.fieldId) {
-                                    in oneTimeQuestions -> {
-                                        val lastValue = fieldsJson.optString(field.fieldId)
-                                        if (lastValue.isNotEmpty()) {
-                                            field.value = lastValue
-                                            field.isEditable = false
-                                        } else {
-                                            field.isEditable = !viewMode
-                                        }
-                                    }
-                                    in editableOneTimeQuestions -> {
-                                        val lastValue = fieldsJson.optString(field.fieldId)
-                                        if (lastValue.isNotEmpty()) {
-                                            field.value = lastValue
-                                            field.isEditable = true
-                                        } else {
-                                            field.isEditable = !viewMode
-                                        }
-                                    }
-                                    else -> {
-                                        if (field.fieldId != "age_risk") {
-                                            field.isEditable = !viewMode
-                                        }
-                                    }
-                                }
-                            }
-                        } catch (e: Exception) {
-                            Timber.e(e, "Error processing last visit data for field ${field.fieldId}")
-                            if (field.fieldId != "age_risk") {
-                                field.isEditable = !viewMode
-                            }
-                        }
-                    } else {
-                        field.isEditable = when (field.fieldId) {
-                            "visit_day", "due_date", "age_risk" -> false  // age_risk is always non-editable
-                            else -> !viewMode
-                        }
-
-                        if (field.fieldId == "age_risk" && viewMode) {
-                            val isAgeRisk = motherAge < 18 || motherAge > 35
-                            field.value = if (isAgeRisk) "Yes" else "No"
-                        }
-                    }
-                }
-            }
-
-            localSchemaToRender.sections.forEach { section ->
-                section.fields.forEach { field ->
-                    field.visible = evaluateFieldVisibility(field, allFields)
-                }
-            }
-            _schema.value = localSchemaToRender
-        }
-    }*/
     fun loadFormSchema(
         benId: Long,
         formId: String,
@@ -739,6 +613,7 @@ class AntenatalCounsellingViewModel @Inject constructor(
             }
         }
     }
+
 
     private suspend fun getLastVisit(benId: Long): FormResponseJsonEntityHBYC? {
         val visits = repository.getSyncedVisitsByRchIdHBYC(benId)

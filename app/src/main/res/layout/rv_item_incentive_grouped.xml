@@ -3,7 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+
+
     <data>
+
+        <import type="android.view.View"/>
+
         <variable
             name="serialNo"
             type="Integer" />
@@ -11,9 +16,13 @@
         <variable
             name="item"
             type="org.piramalswasthya.sakhi.model.IncentiveGrouped" />
+
         <variable
             name="clickListener"
             type="kotlin.jvm.functions.Function2&lt;java.lang.Long, java.lang.String, kotlin.Unit&gt;" />
+
+
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -35,14 +44,34 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.5" />
+            app:layout_constraintGuide_percent="0.45" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline75"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.75" />
+            app:layout_constraintGuide_percent="0.6" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline90"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.9" />
+
+
+        <ImageView
+            android:id="@+id/ivStatusIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@{item.eligible ? @drawable/ic_check_circle : @drawable/ic_cancel}"
+            android:tint="@{item.eligible ? @color/holo_green_dark : @color/md_theme_dark_onError}"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:visibility="@{item.defaultIncentive ? View.INVISIBLE : View.VISIBLE}"
+            tools:tint="@color/holo_green_dark" />
 
         <TextView
             android:id="@+id/tvSerialNo"
@@ -106,13 +135,15 @@
             android:id="@+id/tvTotalAmount"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
             android:text="@{String.valueOf(item.totalAmount)}"
             android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
             android:textStyle="bold"
             android:gravity="end"
             android:paddingEnd="@dimen/_5sdp"
+            android:paddingStart="@dimen/_5sdp"
             app:layout_constraintStart_toStartOf="@id/guideline75"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/ivStatusIcon"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             tools:text="₹240" />

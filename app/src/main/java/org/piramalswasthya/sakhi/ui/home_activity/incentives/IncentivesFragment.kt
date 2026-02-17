@@ -167,23 +167,29 @@ class IncentivesFragment : Fragment() {
         groupedAdapter = IncentiveGroupedAdapter { activityId, activityName ->
             viewLifecycleOwner.lifecycleScope.launch {
                 viewModel.getRecordsForActivity(activityId).collect { records ->
-                    if (records.any {
-                            it.record.benId != 0L
-                        }) {
+
+                    val hasValidBen = records.any { it.record.benId != 0L }
+                    val allNotEligible = records.all { it.record.isEligible == false }
+
+                    if (hasValidBen || allNotEligible) {
+
                         val bundle = bundleOf(
                             "records" to ArrayList(records),
-                            "activityName" to records.first().activity.description
+                            "activityName" to records.firstOrNull()?.activity?.description
                         )
+
                         setFragmentResult("records_key", bundle)
 
                         findNavController().navigate(
-                            R.id.action_incentivesFragment_to_incentiveDetailFragment,
+                            R.id.action_incentivesFragment_to_incentiveDetailFragment
                         )
                     }
+
                     cancel()
                 }
             }
         }
+
 
         val divider = DividerItemDecoration(context, LinearLayout.VERTICAL)
         binding.rvIncentive.addItemDecoration(divider)
