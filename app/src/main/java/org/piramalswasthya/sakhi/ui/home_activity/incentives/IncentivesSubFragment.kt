@@ -1,6 +1,8 @@
 package org.piramalswasthya.sakhi.ui.home_activity.incentives
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -14,11 +16,16 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.IncentiveListAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentIncentivesSubBinding
@@ -26,17 +33,19 @@ import org.piramalswasthya.sakhi.model.IncentiveDomain
 import org.piramalswasthya.sakhi.ui.dialogs.UploadSourceDialog
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.utils.FileViewerDialog
+import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 import java.io.File
+import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.roundToInt
 
 @AndroidEntryPoint
 class IncentivesSubFragment : Fragment() {
 
     private var _binding: FragmentIncentivesSubBinding? = null
     private val binding: FragmentIncentivesSubBinding get() = _binding!!
-
 
     private val viewModel: IncentivesViewModel by viewModels()
 
@@ -46,12 +55,19 @@ class IncentivesSubFragment : Fragment() {
 
     private var currentPhotoUri: Uri? = null
 
+    companion object {
+        private const val MAX_FILE_SIZE_MB = 5
+        private const val MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024L // 5 MB in bytes
+    }
+
     private val cameraLauncher = registerForActivityResult(
         ActivityResultContracts.TakePicture()
     ) { success ->
         if (success) {
             currentPhotoUri?.let { uri ->
-                handleCameraImage(uri)
+                lifecycleScope.launch {
+                    handleCameraImage(uri)
+                }
             }
         } else {
             Toast.makeText(requireContext(), "Camera capture cancelled", Toast.LENGTH_SHORT).show()
@@ -63,7 +79,9 @@ class IncentivesSubFragment : Fragment() {
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             result.data?.let { intent ->
-                handleGallerySelection(intent)
+                lifecycleScope.launch {
+                    handleGallerySelection(intent)
+                }
             }
         }
     }
@@ -73,7 +91,9 @@ class IncentivesSubFragment : Fragment() {
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             result.data?.let { intent ->
-                handleDocumentSelection(intent)
+                lifecycleScope.launch {
+                    handleDocumentSelection(intent)
+                }
             }
         }
     }
@@ -90,6 +110,28 @@ class IncentivesSubFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
         setupFragmentResultListener()
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uploadState.collect { state ->
+                    when (state) {
+                        is IncentivesViewModel.UploadState.Loading -> {
+                        }
+                        is IncentivesViewModel.UploadState.Success -> {
+                            Toast.makeText(requireContext(), "Submitted", Toast.LENGTH_SHORT).show()
+                            WorkerUtils.triggerAmritPullWorker(requireContext())
+                            viewModel.resetUploadState()
+                            findNavController().navigateUp()
+                        }
+                        is IncentivesViewModel.UploadState.Error -> {
+                            Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+                            viewModel.resetUploadState()
+                        }
+                        is IncentivesViewModel.UploadState.Idle -> { /* no-op */ }
+                    }
+                }
+            }
+        }
     }
 
     private fun setupRecyclerView() {
@@ -132,13 +174,12 @@ class IncentivesSubFragment : Fragment() {
         ).show(childFragmentManager, "UploadSourceDialog")
     }
 
-
     private fun openCamera() {
         try {
             val photoFile = createImageFile()
             currentPhotoUri = FileProvider.getUriForFile(
                 requireContext(),
-                "${requireContext().packageName}.fileprovider",
+                "${requireContext().packageName}.provider",
                 photoFile
             )
             cameraLauncher.launch(currentPhotoUri)
@@ -152,7 +193,6 @@ class IncentivesSubFragment : Fragment() {
         }
     }
 
-
     private fun createImageFile(): File {
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val storageDir = requireContext().getExternalFilesDir(null)
@@ -162,7 +202,6 @@ class IncentivesSubFragment : Fragment() {
             storageDir
         )
     }
-
 
     private fun openGallery() {
         val intent = Intent(Intent.ACTION_PICK).apply {
@@ -181,7 +220,6 @@ class IncentivesSubFragment : Fragment() {
             ).show()
         }
     }
-
 
     private fun openDocumentPicker() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
@@ -210,25 +248,171 @@ class IncentivesSubFragment : Fragment() {
         }
     }
 
+    /**
+     * Get file size from URI
+     */
+    private fun getFileSize(uri: Uri): Long {
+        return try {
+            requireContext().contentResolver.openFileDescriptor(uri, "r")?.use { descriptor ->
+                descriptor.statSize
+            } ?: 0L
+        } catch (e: Exception) {
+            Timber.e(e, "Error getting file size")
+            0L
+        }
+    }
 
-    private fun handleCameraImage(uri: Uri) {
+    /**
+     * Format file size for display
+     */
+    private fun formatFileSize(bytes: Long): String {
+        return when {
+            bytes < 1024 -> "$bytes B"
+            bytes < 1024 * 1024 -> "${(bytes / 1024.0).roundToInt()} KB"
+            else -> String.format("%.2f MB", bytes / (1024.0 * 1024.0))
+        }
+    }
+
+    /**
+     * Compress image to ensure it's under 5MB
+     */
+    private suspend fun compressImage(uri: Uri): Uri? = withContext(Dispatchers.IO) {
         try {
-            requireContext().contentResolver.takePersistableUriPermission(
-                uri,
-                Intent.FLAG_GRANT_READ_URI_PERMISSION
+            val originalFile = uriToFile(uri) ?: return@withContext null
+
+            // Decode original image
+            val options = BitmapFactory.Options().apply {
+                inJustDecodeBounds = false
+            }
+            val bitmap = BitmapFactory.decodeFile(originalFile.absolutePath, options)
+                ?: return@withContext null
+
+            // Create compressed file
+            val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+            val storageDir = requireContext().getExternalFilesDir(null)
+            val compressedFile = File.createTempFile(
+                "COMPRESSED_${timeStamp}_",
+                ".jpg",
+                storageDir
+            )
+
+            // Start with high quality and reduce if needed
+            var quality = 90
+            var compressedSize: Long
+
+            do {
+                FileOutputStream(compressedFile).use { out ->
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, quality, out)
+                }
+                compressedSize = compressedFile.length()
+                quality -= 10
+            } while (compressedSize > MAX_FILE_SIZE_BYTES && quality > 10)
+
+            bitmap.recycle()
+
+            if (compressedSize > MAX_FILE_SIZE_BYTES) {
+                Timber.w("Unable to compress image below ${MAX_FILE_SIZE_MB}MB")
+                compressedFile.delete()
+                return@withContext null
+            }
+
+            Timber.d("Image compressed from ${formatFileSize(originalFile.length())} to ${formatFileSize(compressedSize)}")
+
+            FileProvider.getUriForFile(
+                requireContext(),
+                "${requireContext().packageName}.fileprovider",
+                compressedFile
             )
         } catch (e: Exception) {
-            Timber.w(e, "Could not take persistable permission (file provider URI)")
-        }
-
-        currentSelectedItem?.let { item ->
-            val files = mutableListOf(uri)
-            addFilesToIncentive(item, files)
+            Timber.e(e, "Error compressing image")
+            null
         }
     }
 
+    /**
+     * Convert URI to File
+     */
+    private fun uriToFile(uri: Uri): File? {
+        return try {
+            val inputStream = requireContext().contentResolver.openInputStream(uri)
+            val tempFile = File.createTempFile("temp_", ".jpg", requireContext().cacheDir)
+            inputStream?.use { input ->
+                FileOutputStream(tempFile).use { output ->
+                    input.copyTo(output)
+                }
+            }
+            tempFile
+        } catch (e: Exception) {
+            Timber.e(e, "Error converting URI to File")
+            null
+        }
+    }
 
-    private fun handleGallerySelection(data: Intent) {
+    /**
+     * Handle camera image with compression
+     */
+    private suspend fun handleCameraImage(uri: Uri) {
+        try {
+            withContext(Dispatchers.Main) {
+                binding.progressBar?.visibility = View.VISIBLE
+            }
+
+            val fileSize = getFileSize(uri)
+            Timber.d("Camera image size: ${formatFileSize(fileSize)}")
+
+            val finalUri = if (fileSize > MAX_FILE_SIZE_BYTES) {
+                // Compress the image
+                val compressedUri = compressImage(uri)
+                if (compressedUri == null) {
+                    withContext(Dispatchers.Main) {
+                        binding.progressBar?.visibility = View.GONE
+                        Toast.makeText(
+                            requireContext(),
+                            "Unable to compress image. Please try a different image.",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                    return
+                }
+                compressedUri
+            } else {
+                uri
+            }
+
+            withContext(Dispatchers.Main) {
+                try {
+                    requireContext().contentResolver.takePersistableUriPermission(
+                        finalUri,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    )
+                } catch (e: Exception) {
+                    Timber.w(e, "Could not take persistable permission (file provider URI)")
+                }
+
+                currentSelectedItem?.let { item ->
+                    val files = mutableListOf(finalUri)
+                    addFilesToIncentive(item, files)
+                }
+
+                binding.progressBar?.visibility = View.GONE
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "Error handling camera image")
+            withContext(Dispatchers.Main) {
+                binding.progressBar?.visibility = View.GONE
+                Toast.makeText(
+                    requireContext(),
+                    "Error processing image",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
+    /**
+     * Handle gallery selection with file size validation
+     */
+    private suspend fun handleGallerySelection(data: Intent) {
         val selectedFiles = mutableListOf<Uri>()
 
         data.clipData?.let { clipData ->
@@ -242,32 +426,68 @@ class IncentivesSubFragment : Fragment() {
         }
 
         if (selectedFiles.isEmpty()) {
-            Toast.makeText(
-                requireContext(),
-                "No images selected",
-                Toast.LENGTH_SHORT
-            ).show()
+            withContext(Dispatchers.Main) {
+                Toast.makeText(
+                    requireContext(),
+                    "No images selected",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
             return
         }
 
-        selectedFiles.forEach { uri ->
-            try {
-                requireContext().contentResolver.takePersistableUriPermission(
-                    uri,
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION
-                )
-            } catch (e: Exception) {
-                Timber.e(e, "Error taking persistable permission for URI: $uri")
+        withContext(Dispatchers.Main) {
+            binding.progressBar?.visibility = View.VISIBLE
+        }
+
+        val validFiles = mutableListOf<Uri>()
+        val oversizedFiles = mutableListOf<String>()
+
+        for (uri in selectedFiles) {
+            val fileSize = getFileSize(uri)
+            if (fileSize > MAX_FILE_SIZE_BYTES) {
+                oversizedFiles.add("${uri.lastPathSegment} (${formatFileSize(fileSize)})")
+            } else {
+                validFiles.add(uri)
+                try {
+                    withContext(Dispatchers.Main) {
+                        requireContext().contentResolver.takePersistableUriPermission(
+                            uri,
+                            Intent.FLAG_GRANT_READ_URI_PERMISSION
+                        )
+                    }
+                } catch (e: Exception) {
+                    Timber.e(e, "Error taking persistable permission for URI: $uri")
+                }
             }
         }
 
-        currentSelectedItem?.let { item ->
-            addFilesToIncentive(item, selectedFiles)
+        withContext(Dispatchers.Main) {
+            binding.progressBar?.visibility = View.GONE
+
+            if (oversizedFiles.isNotEmpty()) {
+                val message = buildString {
+                    append("The following files exceed ${MAX_FILE_SIZE_MB}MB and were not added:\n\n")
+                    oversizedFiles.forEach { append("• $it\n") }
+                    if (validFiles.isNotEmpty()) {
+                        append("\n${validFiles.size} valid file(s) were added.")
+                    }
+                }
+                Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
+            }
+
+            if (validFiles.isNotEmpty()) {
+                currentSelectedItem?.let { item ->
+                    addFilesToIncentive(item, validFiles)
+                }
+            }
         }
     }
 
-
-    private fun handleDocumentSelection(data: Intent) {
+    /**
+     * Handle document selection with file size validation
+     */
+    private suspend fun handleDocumentSelection(data: Intent) {
         val selectedFiles = mutableListOf<Uri>()
 
         data.clipData?.let { clipData ->
@@ -281,33 +501,67 @@ class IncentivesSubFragment : Fragment() {
         }
 
         if (selectedFiles.isEmpty()) {
-            Toast.makeText(
-                requireContext(),
-                "No documents selected",
-                Toast.LENGTH_SHORT
-            ).show()
+            withContext(Dispatchers.Main) {
+                Toast.makeText(
+                    requireContext(),
+                    "No documents selected",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
             return
         }
 
-        selectedFiles.forEach { uri ->
-            try {
-                requireContext().contentResolver.takePersistableUriPermission(
-                    uri,
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION
-                )
-            } catch (e: Exception) {
-                Timber.e(e, "Error taking persistable permission for URI: $uri")
+        withContext(Dispatchers.Main) {
+            binding.progressBar?.visibility = View.VISIBLE
+        }
+
+        val validFiles = mutableListOf<Uri>()
+        val oversizedFiles = mutableListOf<String>()
+
+        for (uri in selectedFiles) {
+            val fileSize = getFileSize(uri)
+            val fileName = uri.lastPathSegment ?: "Unknown file"
+
+            if (fileSize > MAX_FILE_SIZE_BYTES) {
+                oversizedFiles.add("$fileName (${formatFileSize(fileSize)})")
+            } else {
+                validFiles.add(uri)
+                try {
+                    withContext(Dispatchers.Main) {
+                        requireContext().contentResolver.takePersistableUriPermission(
+                            uri,
+                            Intent.FLAG_GRANT_READ_URI_PERMISSION
+                        )
+                    }
+                } catch (e: Exception) {
+                    Timber.e(e, "Error taking persistable permission for URI: $uri")
+                }
             }
         }
 
-        currentSelectedItem?.let { item ->
-            addFilesToIncentive(item, selectedFiles)
+        withContext(Dispatchers.Main) {
+            binding.progressBar?.visibility = View.GONE
+
+            if (oversizedFiles.isNotEmpty()) {
+                val message = buildString {
+                    append("The following files exceed ${MAX_FILE_SIZE_MB}MB and were not added:\n\n")
+                    oversizedFiles.forEach { append("• $it\n") }
+                    if (validFiles.isNotEmpty()) {
+                        append("\n${validFiles.size} valid file(s) were added.")
+                    }
+                }
+                Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
+            }
+
+            if (validFiles.isNotEmpty()) {
+                currentSelectedItem?.let { item ->
+                    addFilesToIncentive(item, validFiles)
+                }
+            }
         }
     }
-
 
     private fun addFilesToIncentive(item: IncentiveDomain, files: List<Uri>) {
-
         val fileUris = files.map { it.toString() }
         val updatedFiles = item.uploadedFiles.toMutableList()
         updatedFiles.addAll(fileUris)
@@ -328,11 +582,7 @@ class IncentivesSubFragment : Fragment() {
         ).show()
 
         Timber.d("Files added for item ${item.record.id}: ${fileUris.joinToString()}")
-
-
-
     }
-
 
     private fun showUploadedFiles(item: IncentiveDomain) {
         if (item.fileCount == 0) {
@@ -352,7 +602,6 @@ class IncentivesSubFragment : Fragment() {
         ).show(childFragmentManager, "FileViewerDialog")
     }
 
-
     private fun handleFileDeleted(item: IncentiveDomain, fileUri: String) {
         val updatedFiles = item.uploadedFiles.toMutableList()
         updatedFiles.remove(fileUri)
@@ -366,7 +615,6 @@ class IncentivesSubFragment : Fragment() {
             adapter.notifyItemChanged(position)
         }
 
-
         // viewModel.updateIncentiveFiles(item)
 
         Toast.makeText(
@@ -375,7 +623,6 @@ class IncentivesSubFragment : Fragment() {
             Toast.LENGTH_SHORT
         ).show()
     }
-
 
     private fun showSubmitConfirmationDialog(item: IncentiveDomain) {
         if (item.fileCount == 0) {
@@ -409,13 +656,12 @@ class IncentivesSubFragment : Fragment() {
             .show()
     }
 
-
     private fun submitDocumentsToServer(item: IncentiveDomain) {
         binding.progressBar?.visibility = View.VISIBLE
 
         lifecycleScope.launch {
             try {
-                 val result = viewModel.uploadIncentiveDocuments(item)
+                val result = viewModel.uploadIncentiveDocuments(item)
 
                 kotlinx.coroutines.delay(2000)
 

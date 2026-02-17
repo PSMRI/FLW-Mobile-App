@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -84,8 +85,9 @@ IncentivesViewModel @Inject constructor(
         pullIncentives()
     }
 
-    private val _uploadState = MutableLiveData<UploadState>()
-    val uploadState: LiveData<UploadState> = _uploadState
+    private val _uploadState = MutableStateFlow<UploadState>(UploadState.Idle)
+    val uploadState: StateFlow<UploadState> = _uploadState
+
 
     private val _fileUpdateState = MutableLiveData<FileUpdateState>()
     val fileUpdateState: LiveData<FileUpdateState> = _fileUpdateState
@@ -186,7 +188,8 @@ IncentivesViewModel @Inject constructor(
                     description = incentives.first().activity.description,
                     activity = incentives.first().activity,
                     hasZeroBen = incentives.any { it.record.benId == 0L },
-                    defaultIncentive = incentives.any { it.activity.fmrCodeOld =="PER_MONTH" }
+                    defaultIncentive = incentives.any { it.activity.fmrCodeOld =="PER_MONTH" },
+                    isEligible = incentives.all {it.record.isEligible}
                 )
             }
             .sortedWith(
@@ -212,10 +215,12 @@ IncentivesViewModel @Inject constructor(
         viewModelScope.launch {
             _uploadState.value = UploadState.Loading
 
+            _uploadState.value = UploadState.Loading
+
             val result = _incentiveRepo.uploadIncentiveFiles(
-                id = item.record.activityId,
+                id = item.record.id,
                 userId = _pref.getLoggedInUser()?.userId?.toLong() ?: 0L,
-                moduleName = "MAA_MEETING",
+                moduleName = item.activity.group,
                 fileUris = item.uploadedFiles
             )
 
@@ -229,12 +234,20 @@ IncentivesViewModel @Inject constructor(
                     // saveToDatabase(item)
 
                     _uploadState.value = UploadState.Success(response)
+
+                    pullIncentives()
+
                 },
                 onFailure = { error ->
                     _uploadState.value = UploadState.Error(error.message ?: "Upload failed")
                 }
             )
         }
+    }
+
+
+    fun resetUploadState() {
+        _uploadState.value = UploadState.Idle
     }
 
 
