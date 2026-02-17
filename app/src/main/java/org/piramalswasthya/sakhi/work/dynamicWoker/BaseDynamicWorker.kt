@@ -7,6 +7,7 @@ import androidx.core.app.NotificationCompat
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.network.interceptors.TokenInsertTmcInterceptor
@@ -34,6 +35,8 @@ abstract class BaseDynamicWorker(
     companion object {
         private const val MAX_RETRY_COUNT = 5
         private const val NOTIFICATION_ID = 1002
+        const val KEY_ERROR = "error"
+        const val KEY_WORKER_NAME = "worker_name"
     }
 
     protected abstract val preferenceDao: PreferenceDao
@@ -45,7 +48,10 @@ abstract class BaseDynamicWorker(
     override suspend fun doWork(): Result {
         if (runAttemptCount >= MAX_RETRY_COUNT) {
             Timber.e("[$workerName] Max retries ($MAX_RETRY_COUNT) exceeded, giving up")
-            return Result.failure()
+            return Result.failure(workDataOf(
+                KEY_WORKER_NAME to workerName,
+                KEY_ERROR to "Max retries ($MAX_RETRY_COUNT) exceeded"
+            ))
         }
         try {
             setForeground(createForegroundInfo("Syncing $workerName..."))
@@ -57,7 +63,10 @@ abstract class BaseDynamicWorker(
             doSyncWork()
         } catch (e: IllegalStateException) {
             Timber.e(e, "[$workerName] failed: ${e.message}")
-            Result.failure()
+            Result.failure(workDataOf(
+                KEY_WORKER_NAME to workerName,
+                KEY_ERROR to (e.message ?: "IllegalStateException")
+            ))
         } catch (e: UnknownHostException) {
             Timber.w(e, "[$workerName] Network unavailable, will retry")
             Result.retry()

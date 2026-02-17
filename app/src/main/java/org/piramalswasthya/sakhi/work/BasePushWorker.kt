@@ -7,6 +7,7 @@ import androidx.core.app.NotificationCompat
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.network.interceptors.TokenInsertTmcInterceptor
@@ -28,6 +29,8 @@ abstract class BasePushWorker(
     companion object {
         private const val MAX_RETRY_COUNT = 5
         private const val NOTIFICATION_ID = 1001
+        const val KEY_ERROR = "error"
+        const val KEY_WORKER_NAME = "worker_name"
     }
 
     // Subclass provides via Hilt DI constructor with `override val preferenceDao`
@@ -40,7 +43,10 @@ abstract class BasePushWorker(
     override suspend fun doWork(): Result {
         if (runAttemptCount >= MAX_RETRY_COUNT) {
             Timber.e("[$workerName] Max retries ($MAX_RETRY_COUNT) exceeded, giving up")
-            return Result.failure()
+            return Result.failure(workDataOf(
+                KEY_WORKER_NAME to workerName,
+                KEY_ERROR to "Max retries ($MAX_RETRY_COUNT) exceeded"
+            ))
         }
         try {
             setForeground(createForegroundInfo("Syncing $workerName..."))
@@ -56,7 +62,10 @@ abstract class BasePushWorker(
             Result.retry()
         } catch (e: Exception) {
             Timber.e(e, "[$workerName] Sync failed")
-            Result.failure()
+            Result.failure(workDataOf(
+                KEY_WORKER_NAME to workerName,
+                KEY_ERROR to (e.message ?: "Unknown error")
+            ))
         }
     }
 
