@@ -900,6 +900,11 @@ data class BenBasicDomain(
 }
 
 
+data class BenChildCount(
+    val benId: Long,
+    val childCount: Int
+)
+
 data class BenBasicDomainForForm(
     val benId: Long,
     val hhId: Long,
