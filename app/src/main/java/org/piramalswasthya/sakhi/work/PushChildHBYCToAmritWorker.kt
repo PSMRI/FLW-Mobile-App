@@ -4,6 +4,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteConstraintException
 import androidx.hilt.work.HiltWorker
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
@@ -47,7 +48,7 @@ class PushChildHBYCToAmritWorker @AssistedInject constructor(
                 return@withContext Result.failure()
             } catch (e: SQLiteConstraintException) {
                 Timber.d("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
-                return@withContext Result.failure()
+                return@withContext Result.failure(workDataOf(KEY_WORKER_NAME to workerName, KEY_ERROR to "SQLite constraint: ${e.message}"))
             }
 
         }

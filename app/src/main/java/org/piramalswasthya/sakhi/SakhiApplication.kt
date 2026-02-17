@@ -1,6 +1,9 @@
 package org.piramalswasthya.sakhi
 
 import android.app.Application
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.os.Build
 import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
 import androidx.appcompat.app.AppCompatDelegate
@@ -59,6 +62,7 @@ class SakhiApplication : Application(), Configuration.Provider {
         KeyUtils.abhaClientSecret()
         KeyUtils.abhaTokenUrl()
         FirebaseApp.initializeApp(this)
+        createNotificationChannels()
 
         Thread.setDefaultUncaughtExceptionHandler(CrashHandler(applicationContext))
 
@@ -69,6 +73,39 @@ class SakhiApplication : Application(), Configuration.Provider {
             } catch (e: Exception) {
                 Timber.e(e, "Failed to recover orphaned SYNCING states")
             }
+        }
+    }
+
+    /**
+     * Create notification channels early so that WorkManager workers always have
+     * a valid channel available — even after a device reboot when workers restart
+     * before LoginActivity.onCreate() runs.
+     */
+    private fun createNotificationChannels() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val nm = getSystemService(NotificationManager::class.java)
+
+            // Sync channel used by all push/pull/dynamic workers
+            nm.createNotificationChannel(
+                NotificationChannel(
+                    getString(R.string.notification_sync_channel_id),
+                    getString(R.string.notification_sync_channel_name),
+                    NotificationManager.IMPORTANCE_DEFAULT
+                ).apply {
+                    description = getString(R.string.notification_sync_channel_description)
+                }
+            )
+
+            // Download channel used by DownloadCardWorker
+            nm.createNotificationChannel(
+                NotificationChannel(
+                    "download abha card",
+                    "Download ABHA Card",
+                    NotificationManager.IMPORTANCE_DEFAULT
+                ).apply {
+                    description = "Notifications for ABHA card downloads"
+                }
+            )
         }
     }
 
