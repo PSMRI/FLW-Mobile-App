@@ -59,15 +59,24 @@ class SyncDashboardViewModel @Inject constructor(
             .filter { it.state == WorkInfo.State.FAILED }
             .map { workInfo ->
                 val outputName = workInfo.outputData.getString(BasePushWorker.KEY_WORKER_NAME)
-                val error = workInfo.outputData.getString(BasePushWorker.KEY_ERROR)
+                val outputError = workInfo.outputData.getString(BasePushWorker.KEY_ERROR)
                 // Fallback: extract class name from tags if outputData wasn't set
                 val name = outputName ?: workInfo.tags
                     .firstOrNull { it.startsWith("org.piramalswasthya.sakhi.work.") }
                     ?.substringAfterLast(".")
                     ?: "Unknown Worker"
+                // Cascade detection: when WorkManager auto-fails a downstream worker
+                // due to an upstream failure, the worker never runs — so outputData
+                // is completely empty (no keys at all).
+                val isCascadeFailure = workInfo.outputData.keyValueMap.isEmpty()
+                val error = when {
+                    outputError != null -> outputError
+                    isCascadeFailure -> "Blocked by earlier failure in sync chain"
+                    else -> "No error details available"
+                }
                 FailedWorkerInfo(
                     workerName = name,
-                    error = error ?: "No error details available"
+                    error = error
                 )
             }
     }
