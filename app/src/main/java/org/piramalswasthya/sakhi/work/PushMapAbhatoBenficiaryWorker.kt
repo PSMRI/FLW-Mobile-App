@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.work
 import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import com.google.gson.Gson
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -73,7 +74,7 @@ class PushMapAbhatoBenficiaryWorker @AssistedInject constructor(
                 }
             } catch (e: Exception) {
                 Timber.e("Exception syncing ABHA for benId=${model.beneficiaryID}: $e")
-                return if (e is SocketTimeoutException) Result.retry() else Result.failure()
+                return if (e is SocketTimeoutException) Result.retry() else Result.failure(workDataOf(KEY_WORKER_NAME to workerName, KEY_ERROR to "ABHA sync failed: ${e.message}"))
             }
         }
 
