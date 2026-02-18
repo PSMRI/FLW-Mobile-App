@@ -75,41 +75,55 @@ class EcrRepo @Inject constructor(
             val ecrList = database.ecrDao.getAllUnprocessedECR()
             val ecrPostList = mutableSetOf<EcrPost>()
 
+            // RECORD-LEVEL ISOLATION: Each ECR record is processed
+            // independently. If one record fails, remaining records continue.
+            // Failed records stay UNSYNCED and retry on next sync cycle.
+            var successCount = 0
+            var failCount = 0
+
             ecrList.forEach {
-                ecrPostList.clear()
-                val ben = database.benDao.getBen(it.benId)
-                    ?: throw IllegalStateException("No beneficiary exists for benId: ${it.benId}!!")
+                try {
+                    ecrPostList.clear()
+                    val ben = database.benDao.getBen(it.benId)
+                        ?: throw IllegalStateException("No beneficiary exists for benId: ${it.benId}!!")
 
-                val ecrPost = it.asPostModel(context)
-                val cache = database.hrpDao.getNonPregnantAssess(ben.beneficiaryId)
-                cache?.let {
-                    ecrPost.misCarriage = cache.misCarriage
-                    ecrPost.homeDelivery = cache.homeDelivery
-                    ecrPost.medicalIssues = cache.medicalIssues
-                    ecrPost.pastCSection = cache.pastCSection
-                    ecrPost.isHighRisk = cache.isHighRisk
-                }
+                    val ecrPost = it.asPostModel(context)
+                    val cache = database.hrpDao.getNonPregnantAssess(ben.beneficiaryId)
+                    cache?.let {
+                        ecrPost.misCarriage = cache.misCarriage
+                        ecrPost.homeDelivery = cache.homeDelivery
+                        ecrPost.medicalIssues = cache.medicalIssues
+                        ecrPost.pastCSection = cache.pastCSection
+                        ecrPost.isHighRisk = cache.isHighRisk
+                    }
 
-                ecrPostList.add(ecrPost)
-                it.syncState = SyncState.SYNCING
-                database.ecrDao.update(it)
-                val uploadDone = postECRDataToAmritServer(ecrPostList)
-                if (uploadDone) {
-                    it.processed = "P"
-                    it.syncState = SyncState.SYNCED
-                } else {
+                    ecrPostList.add(ecrPost)
+                    it.syncState = SyncState.SYNCING
+                    database.ecrDao.update(it)
+                    val uploadDone = postECRDataToAmritServer(ecrPostList)
+                    if (uploadDone) {
+                        it.processed = "P"
+                        it.syncState = SyncState.SYNCED
+                        successCount++
+                    } else {
+                        it.syncState = SyncState.UNSYNCED
+                        failCount++
+                    }
+                    database.ecrDao.update(it)
+                } catch (e: Exception) {
+                    Timber.e(e, "ECR push failed for benId: ${it.benId}")
                     it.syncState = SyncState.UNSYNCED
+                    database.ecrDao.update(it)
+                    failCount++
                 }
-                database.ecrDao.update(it)
-                if (!uploadDone)
-                    return@withContext false
             }
 
+            Timber.d("ECR push complete: $successCount succeeded, $failCount failed out of ${ecrList.size}")
             return@withContext true
         }
     }
 
-    suspend fun postECRDataToAmritServer(ecrPostList: MutableSet<EcrPost>): Boolean {
+    suspend fun postECRDataToAmritServer(ecrPostList: MutableSet<EcrPost>, retryCount: Int = 3): Boolean {
         if (ecrPostList.isEmpty()) return false
 
         val user =
@@ -159,10 +173,12 @@ class EcrRepo @Inject constructor(
             Timber.w("Bad Response from server, need to check $ecrPostList $response ")
             return false
         } catch (e: SocketTimeoutException) {
-            Timber.d("Caught exception $e here")
-            return postECRDataToAmritServer(ecrPostList)
+            Timber.e("Caught exception $e here")
+            if (retryCount > 0) return postECRDataToAmritServer(ecrPostList, retryCount - 1)
+            Timber.e("postECRDataToAmritServer: max retries exhausted")
+            return false
         } catch (e: JSONException) {
-            Timber.d("Caught exception $e here")
+            Timber.e("Caught exception $e here")
             return false
         }
     }
@@ -176,28 +192,42 @@ class EcrRepo @Inject constructor(
 
             val ectPostList = mutableSetOf<EligibleCoupleTrackingCache>()
 
+            // RECORD-LEVEL ISOLATION: Each ECT record is processed
+            // independently. If one record fails, remaining records continue.
+            // Failed records stay UNSYNCED and retry on next sync cycle.
+            var successCount = 0
+            var failCount = 0
+
             ectList.forEach {
-                ectPostList.clear()
-                ectPostList.add(it)
-                it.syncState = SyncState.SYNCING
-                database.ecrDao.updateEligibleCoupleTracking(it)
-                val uploadDone = postECTDataToAmritServer(ectPostList)
-                if (uploadDone) {
-                    it.processed = "P"
-                    it.syncState = SyncState.SYNCED
-                } else {
+                try {
+                    ectPostList.clear()
+                    ectPostList.add(it)
+                    it.syncState = SyncState.SYNCING
+                    database.ecrDao.updateEligibleCoupleTracking(it)
+                    val uploadDone = postECTDataToAmritServer(ectPostList)
+                    if (uploadDone) {
+                        it.processed = "P"
+                        it.syncState = SyncState.SYNCED
+                        successCount++
+                    } else {
+                        it.syncState = SyncState.UNSYNCED
+                        failCount++
+                    }
+                    database.ecrDao.updateEligibleCoupleTracking(it)
+                } catch (e: Exception) {
+                    Timber.e(e, "ECT push failed for record")
                     it.syncState = SyncState.UNSYNCED
+                    database.ecrDao.updateEligibleCoupleTracking(it)
+                    failCount++
                 }
-                database.ecrDao.updateEligibleCoupleTracking(it)
-                if (!uploadDone)
-                    return@withContext false
             }
 
+            Timber.d("ECT push complete: $successCount succeeded, $failCount failed out of ${ectList.size}")
             return@withContext true
         }
     }
 
-    private suspend fun postECTDataToAmritServer(ectPostList: MutableSet<EligibleCoupleTrackingCache>): Boolean {
+    private suspend fun postECTDataToAmritServer(ectPostList: MutableSet<EligibleCoupleTrackingCache>, retryCount: Int = 3): Boolean {
         if (ectPostList.isEmpty()) return false
 
         val user =
@@ -247,15 +277,17 @@ class EcrRepo @Inject constructor(
             Timber.w("Bad Response from server, need to check $ectPostList $response ")
             return false
         } catch (e: SocketTimeoutException) {
-            Timber.d("Caught exception $e here")
-            return postECTDataToAmritServer(ectPostList)
+            Timber.e("Caught exception $e here")
+            if (retryCount > 0) return postECTDataToAmritServer(ectPostList, retryCount - 1)
+            Timber.e("postECTDataToAmritServer: max retries exhausted")
+            return false
         } catch (e: JSONException) {
-            Timber.d("Caught exception $e here")
+            Timber.e("Caught exception $e here")
             return false
         }
     }
 
-    suspend fun pullAndPersistEcrRecord(): Int {
+    suspend fun pullAndPersistEcrRecord(retryCount: Int = 3): Int {
         return withContext(Dispatchers.IO) {
             val user = preferenceDao.getLoggedInUser()
                 ?: throw IllegalStateException("No user logged in!!")
@@ -340,11 +372,12 @@ class EcrRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_ect error : $e")
-                pullAndPersistEcrRecord()
-
+                Timber.e("get_ect error : $e")
+                if (retryCount > 0) return@withContext pullAndPersistEcrRecord(retryCount - 1)
+                Timber.e("pullAndPersistEcrRecord: max retries exhausted")
+                return@withContext -1
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_ect error : $e")
+                Timber.e("get_ect error : $e")
                 return@withContext -1
             }
             -1
@@ -352,7 +385,7 @@ class EcrRepo @Inject constructor(
     }
 
 
-    suspend fun pullAndPersistEctRecord(): Int {
+    suspend fun pullAndPersistEctRecord(retryCount: Int = 3): Int {
         return withContext(Dispatchers.IO) {
             val user = preferenceDao.getLoggedInUser()
                 ?: throw IllegalStateException("No user logged in!!")
@@ -412,11 +445,12 @@ class EcrRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_ect error : $e")
-                pullAndPersistEctRecord()
-
+                Timber.e("get_ect error : $e")
+                if (retryCount > 0) return@withContext pullAndPersistEctRecord(retryCount - 1)
+                Timber.e("pullAndPersistEctRecord: max retries exhausted")
+                return@withContext -1
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_ect error : $e")
+                Timber.e("get_ect error : $e")
                 return@withContext -1
             }
             -1

@@ -59,28 +59,42 @@ class PncRepo @Inject constructor(
 
             val pncPostList = mutableSetOf<PNCNetwork>()
 
+            // RECORD-LEVEL ISOLATION: Each PNC visit record is processed
+            // independently. If one record fails, remaining records continue.
+            // Failed records stay UNSYNCED and retry on next sync cycle.
+            var successCount = 0
+            var failCount = 0
+
             pncList.forEach {
-                pncPostList.clear()
-                pncPostList.add(it.asNetworkModel())
-                it.syncState = SyncState.SYNCING
-                pncDao.update(it)
-                val uploadDone = postDataToAmritServer(pncPostList)
-                if (uploadDone) {
-                    it.processed = "P"
-                    it.syncState = SyncState.SYNCED
-                } else {
+                try {
+                    pncPostList.clear()
+                    pncPostList.add(it.asNetworkModel())
+                    it.syncState = SyncState.SYNCING
+                    pncDao.update(it)
+                    val uploadDone = postDataToAmritServer(pncPostList)
+                    if (uploadDone) {
+                        it.processed = "P"
+                        it.syncState = SyncState.SYNCED
+                        successCount++
+                    } else {
+                        it.syncState = SyncState.UNSYNCED
+                        failCount++
+                    }
+                    pncDao.update(it)
+                } catch (e: Exception) {
+                    Timber.e(e, "PNC visit push failed for record")
                     it.syncState = SyncState.UNSYNCED
+                    pncDao.update(it)
+                    failCount++
                 }
-                pncDao.update(it)
-                if (!uploadDone)
-                    return@withContext false
             }
 
+            Timber.d("PNC visit push complete: $successCount succeeded, $failCount failed out of ${pncList.size}")
             return@withContext true
         }
     }
 
-    private suspend fun postDataToAmritServer(ancPostList: MutableSet<PNCNetwork>): Boolean {
+    private suspend fun postDataToAmritServer(ancPostList: MutableSet<PNCNetwork>, retryCount: Int = 3): Boolean {
         if (ancPostList.isEmpty()) return false
         val user =
             preferenceDao.getLoggedInUser()
@@ -131,10 +145,12 @@ class PncRepo @Inject constructor(
             Timber.w("Bad Response from server, need to check $ancPostList $response ")
             return false
         } catch (e: SocketTimeoutException) {
-            Timber.d("Caught exception $e here")
-            return postDataToAmritServer(ancPostList)
+            Timber.e("Caught exception $e here")
+            if (retryCount > 0) return postDataToAmritServer(ancPostList, retryCount - 1)
+            Timber.e("postDataToAmritServer: max retries exhausted")
+            return false
         } catch (e: JSONException) {
-            Timber.d("Caught exception $e here")
+            Timber.e("Caught exception $e here")
             return false
         }
     }
@@ -198,11 +214,11 @@ class PncRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_pnc error : $e")
+                Timber.e("get_pnc error : $e")
                 return@withContext -2
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_pnc error : $e")
+                Timber.e("get_pnc error : $e")
                 return@withContext -1
             }
             -1

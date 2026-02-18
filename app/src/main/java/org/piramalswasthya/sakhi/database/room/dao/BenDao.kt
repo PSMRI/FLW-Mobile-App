@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.database.room.dao
 
 import androidx.lifecycle.LiveData
+import androidx.paging.PagingSource
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 import org.piramalswasthya.sakhi.database.room.SyncState
@@ -199,6 +200,121 @@ interface BenDao {
     @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage AND isDeactivate = 0")
     fun getAllBen(selectedVillage: Int): Flow<List<BenBasicCache>>
 
+    @Query("""
+        SELECT * FROM BEN_BASIC_CACHE
+        WHERE villageId = :selectedVillage
+        AND isDeactivate = 0
+        AND (:source = 0
+            OR (:source = 1 AND abhaId IS NOT NULL)
+            OR (:source = 2 AND rchId IS NOT NULL AND rchId != '')
+            OR (:source = 3 AND CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) >= 30 AND isDeath = 0)
+            OR (:source = 4 AND gender = 'Female' AND isDeath = 0
+                AND CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) BETWEEN 20 AND 49
+                AND (reproductiveStatusId = 1 OR reproductiveStatusId = 2))
+        )
+        AND (:filterType = 0
+            OR (:filterType = 1 AND abhaId IS NOT NULL)
+            OR (:filterType = 2 AND abhaId IS NULL)
+            OR (:filterType = 3 AND CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) >= 30 AND isDeath = 0)
+            OR (:filterType = 4 AND gender = 'Female' AND isDeath = 0
+                AND CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) BETWEEN 20 AND 49
+                AND (reproductiveStatusId = 1 OR reproductiveStatusId = 2))
+        )
+        AND (:query = '' OR
+            benName LIKE '%' || :query || '%'
+            OR benSurname LIKE '%' || :query || '%'
+            OR CAST(mobileNo AS TEXT) LIKE '%' || REPLACE(:query, ' ', '') || '%'
+            OR REPLACE(IFNULL(abhaId, ''), '-', '') LIKE '%' || REPLACE(:query, ' ', '') || '%'
+            OR IFNULL(familyHeadName, '') LIKE '%' || :query || '%'
+            OR IFNULL(spouseName, '') LIKE '%' || :query || '%'
+            OR IFNULL(fatherName, '') LIKE '%' || :query || '%'
+            OR CAST(benId AS TEXT) LIKE '%' || REPLACE(:query, ' ', '') || '%'
+            OR CAST(hhId AS TEXT) LIKE '%' || :query || '%'
+            OR IFNULL(rchId, '') LIKE '%' || REPLACE(:query, ' ', '') || '%'
+        )
+    """)
+    fun searchBen(selectedVillage: Int, source: Int, filterType: Int, query: String): Flow<List<BenBasicCache>>
+
+    @Query("""
+        SELECT * FROM BEN_BASIC_CACHE
+        WHERE villageId = :selectedVillage
+        AND isDeactivate = 0
+        AND (:source = 0
+            OR (:source = 1 AND abhaId IS NOT NULL)
+            OR (:source = 2 AND rchId IS NOT NULL AND rchId != '')
+            OR (:source = 3 AND CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) >= 30 AND isDeath = 0)
+            OR (:source = 4 AND gender = 'Female' AND isDeath = 0
+                AND CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) BETWEEN 20 AND 49
+                AND (reproductiveStatusId = 1 OR reproductiveStatusId = 2))
+        )
+        AND (:filterType = 0
+            OR (:filterType = 1 AND abhaId IS NOT NULL)
+            OR (:filterType = 2 AND abhaId IS NULL)
+            OR (:filterType = 3 AND CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) >= 30 AND isDeath = 0)
+            OR (:filterType = 4 AND gender = 'Female' AND isDeath = 0
+                AND CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) BETWEEN 20 AND 49
+                AND (reproductiveStatusId = 1 OR reproductiveStatusId = 2))
+        )
+        AND (:query = '' OR
+            benName LIKE '%' || :query || '%'
+            OR benSurname LIKE '%' || :query || '%'
+            OR CAST(mobileNo AS TEXT) LIKE '%' || REPLACE(:query, ' ', '') || '%'
+            OR REPLACE(IFNULL(abhaId, ''), '-', '') LIKE '%' || REPLACE(:query, ' ', '') || '%'
+            OR IFNULL(familyHeadName, '') LIKE '%' || :query || '%'
+            OR IFNULL(spouseName, '') LIKE '%' || :query || '%'
+            OR IFNULL(fatherName, '') LIKE '%' || :query || '%'
+            OR CAST(benId AS TEXT) LIKE '%' || REPLACE(:query, ' ', '') || '%'
+            OR CAST(hhId AS TEXT) LIKE '%' || :query || '%'
+            OR IFNULL(rchId, '') LIKE '%' || REPLACE(:query, ' ', '') || '%'
+        )
+        ORDER BY CASE
+            WHEN isDeath = 0 THEN 0
+            WHEN isDeath = 1 THEN 1
+            ELSE 2
+        END
+    """)
+    fun searchBenPaged(selectedVillage: Int, source: Int, filterType: Int, query: String): PagingSource<Int, BenBasicCache>
+
+    @Query("""
+        SELECT * FROM BEN_BASIC_CACHE
+        WHERE villageId = :selectedVillage
+        AND isDeactivate = 0
+        AND (:source = 0
+            OR (:source = 1 AND abhaId IS NOT NULL)
+            OR (:source = 2 AND rchId IS NOT NULL AND rchId != '')
+            OR (:source = 3 AND CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) >= 30 AND isDeath = 0)
+            OR (:source = 4 AND gender = 'Female' AND isDeath = 0
+                AND CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) BETWEEN 20 AND 49
+                AND (reproductiveStatusId = 1 OR reproductiveStatusId = 2))
+        )
+        AND (:filterType = 0
+            OR (:filterType = 1 AND abhaId IS NOT NULL)
+            OR (:filterType = 2 AND abhaId IS NULL)
+            OR (:filterType = 3 AND CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) >= 30 AND isDeath = 0)
+            OR (:filterType = 4 AND gender = 'Female' AND isDeath = 0
+                AND CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) BETWEEN 20 AND 49
+                AND (reproductiveStatusId = 1 OR reproductiveStatusId = 2))
+        )
+        AND (:query = '' OR
+            benName LIKE '%' || :query || '%'
+            OR benSurname LIKE '%' || :query || '%'
+            OR CAST(mobileNo AS TEXT) LIKE '%' || REPLACE(:query, ' ', '') || '%'
+            OR REPLACE(IFNULL(abhaId, ''), '-', '') LIKE '%' || REPLACE(:query, ' ', '') || '%'
+            OR IFNULL(familyHeadName, '') LIKE '%' || :query || '%'
+            OR IFNULL(spouseName, '') LIKE '%' || :query || '%'
+            OR IFNULL(fatherName, '') LIKE '%' || :query || '%'
+            OR CAST(benId AS TEXT) LIKE '%' || REPLACE(:query, ' ', '') || '%'
+            OR CAST(hhId AS TEXT) LIKE '%' || :query || '%'
+            OR IFNULL(rchId, '') LIKE '%' || REPLACE(:query, ' ', '') || '%'
+        )
+        ORDER BY CASE
+            WHEN isDeath = 0 THEN 0
+            WHEN isDeath = 1 THEN 1
+            ELSE 2
+        END
+    """)
+    suspend fun searchBenOnce(selectedVillage: Int, source: Int, filterType: Int, query: String): List<BenBasicCache>
+
     @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage AND abhaId IS NOT NULL AND isDeactivate = 0")
     fun getAllBenWithAbha(selectedVillage: Int): Flow<List<BenBasicCache>>
 
@@ -318,6 +434,20 @@ interface BenDao {
 
     @Query("SELECT COUNT(*) FROM BEN_BASIC_CACHE where villageId = :selectedVillage AND isDeactivate=0 AND rchId IS NOT NULL AND rchId != ''")
     fun getAllBenWithRchCount(selectedVillage: Int): Flow<Int>
+
+    @Query("""
+        SELECT parent.beneficiaryId as benId, COUNT(child.beneficiaryId) as childCount
+        FROM BENEFICIARY parent
+        LEFT JOIN BENEFICIARY child
+            ON child.householdId = parent.householdId
+            AND child.beneficiaryId != parent.beneficiaryId
+            AND (parent.firstName IS NULL OR parent.firstName = '' OR child.motherName LIKE parent.firstName || '%')
+        WHERE parent.isDraft = 0
+            AND parent.loc_village_id = :selectedVillage
+            AND parent.isDeactivate = 0
+        GROUP BY parent.beneficiaryId
+    """)
+    fun getChildCountsForAllBen(selectedVillage: Int): Flow<List<BenChildCount>>
 
     @Query("SELECT * FROM BEN_BASIC_CACHE WHERE hhId = :hhId")
     fun getAllBasicBenForHousehold(hhId: Long): Flow<List<BenBasicCache>>
@@ -853,5 +983,6 @@ interface BenDao {
 """)
     suspend fun isDeathByCauseAnc(benId: Long,cause: String): Boolean
 
-
+    @Query("UPDATE BENEFICIARY SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetSyncingToUnsynced()
 }

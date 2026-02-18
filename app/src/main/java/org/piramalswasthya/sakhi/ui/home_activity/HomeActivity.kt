@@ -84,6 +84,10 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
     private lateinit var inAppUpdateHelper: InAppUpdateHelper
 
     var lastClickTime: Long = 0L
+    private var lastAutoTriggerPushTime: Long = 0L
+    private companion object {
+        const val AUTO_PUSH_DEBOUNCE_MS = 120_000L  // 2 minutes
+    }
 
     @EntryPoint
     @InstallIn(SingletonComponent::class)
@@ -215,10 +219,6 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         }
     }
     override fun onCreate(savedInstanceState: Bundle?) {
-        // This will block user to cast app screen
-        if (BuildConfig.FLAVOR.equals("niramay", true) ||BuildConfig.FLAVOR.equals("xushrukha", true) || BuildConfig.FLAVOR.equals("saksham", true) ||BuildConfig.FLAVOR.equals("mitanin", true)){
-            TapjackingProtectionHelper.applyWindowSecurity(this)
-        }
         TapjackingProtectionHelper.applyWindowSecurity(this)
         FirebaseApp.initializeApp(this)
         FBMessaging.messageUpdate = this
@@ -282,9 +282,13 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
             }
         }
         viewModel.unprocessedRecordsCount.observe(this) {
-            if (it>0) {
-                if (isInternetAvailable(this)){
-                    WorkerUtils.triggerAmritPushWorker(this)
+            if (it > 0) {
+                val now = SystemClock.elapsedRealtime()
+                if (now - lastAutoTriggerPushTime >= AUTO_PUSH_DEBOUNCE_MS) {
+                    if (isInternetAvailable(this)) {
+                        lastAutoTriggerPushTime = now
+                        WorkerUtils.triggerAmritPushWorker(this)
+                    }
                 }
             }
         }
@@ -438,10 +442,6 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
     }
 
     override fun onResume() {
-        // This will block user to cast app screen
-        if (BuildConfig.FLAVOR.equals("niramay", true) ||BuildConfig.FLAVOR.equals("xushrukha", true) || BuildConfig.FLAVOR.equals("saksham", true)||BuildConfig.FLAVOR.equals("mitanin", true)){
-            TapjackingProtectionHelper.applyWindowSecurity(this)
-        }
         super.onResume()
         window.decorView.alpha = 1f
         if (isDeviceRootedOrEmulator()) {
@@ -606,6 +606,12 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
             binding.drawerLayout.close()
             true
 
+        }
+
+        binding.navView.menu.findItem(R.id.syncDashboardFragment).setOnMenuItemClickListener {
+            navController.navigate(R.id.syncDashboardFragment)
+            binding.drawerLayout.close()
+            true
         }
 
         binding.navView.menu.findItem(R.id.ChatFragment).setOnMenuItemClickListener {

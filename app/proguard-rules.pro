@@ -121,10 +121,15 @@
     public static *** e(...);
 }
 
--assumenosideeffects class timber.log.Timber {
-    public static *** d(...);
-    public static *** v(...);
-    public static *** i(...);
-    public static *** w(...);
-}
+# Timber calls are NOT stripped — SyncLogTree (planted in all builds)
+# intercepts sync-related logs for the Sync Dashboard logs tab.
+# DebugTree is only planted in debug builds, so release logs only
+# go to SyncLogManager (in-memory), never to logcat.
+#
+# -assumenosideeffects class timber.log.Timber {
+#     public static *** d(...);
+#     public static *** v(...);
+#     public static *** i(...);
+#     public static *** w(...);
+# }
 

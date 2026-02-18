@@ -150,14 +150,14 @@ class UserRepo @Inject constructor(
                     return@withContext true
                 } else {
                     val errorMessage = responseBody.getString("errorMessage")
-                    Timber.d("Error Message $errorMessage")
+                    Timber.e("Error Message $errorMessage")
                     return@withContext false
                 }
 
             } catch (se: SocketTimeoutException) {
                 return@withContext refreshTokenTmc(userName, password)
             } catch (e: HttpException) {
-                Timber.d("Auth Failed!")
+                Timber.e("Auth Failed!")
                 return@withContext false
             } catch (e: Exception) {
                 return@withContext true

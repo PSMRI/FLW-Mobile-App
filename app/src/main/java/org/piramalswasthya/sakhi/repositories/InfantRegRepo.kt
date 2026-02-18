@@ -56,30 +56,44 @@ class InfantRegRepo @Inject constructor(
 
             val infantRegPostList = mutableSetOf<InfantRegPost>()
 
+            // RECORD-LEVEL ISOLATION: Each infant registration record is
+            // processed independently. If one record fails, remaining records continue.
+            // Failed records stay UNSYNCED and retry on next sync cycle.
+            var successCount = 0
+            var failCount = 0
+
             infantRegList.forEach {
-                infantRegPostList.clear()
-                val ben = benDao.getBen(it.motherBenId)
-                    ?: throw IllegalStateException("No beneficiary exists for benId: ${it.motherBenId}!!")
-                infantRegPostList.add(it.asPostModel())
-                it.syncState = SyncState.SYNCING
-                infantRegDao.updateInfantReg(it)
-                val uploadDone = postDataToAmritServer(infantRegPostList)
-                if (uploadDone) {
-                    it.processed = "P"
-                    it.syncState = SyncState.SYNCED
-                } else {
+                try {
+                    infantRegPostList.clear()
+                    val ben = benDao.getBen(it.motherBenId)
+                        ?: throw IllegalStateException("No beneficiary exists for benId: ${it.motherBenId}!!")
+                    infantRegPostList.add(it.asPostModel())
+                    it.syncState = SyncState.SYNCING
+                    infantRegDao.updateInfantReg(it)
+                    val uploadDone = postDataToAmritServer(infantRegPostList)
+                    if (uploadDone) {
+                        it.processed = "P"
+                        it.syncState = SyncState.SYNCED
+                        successCount++
+                    } else {
+                        it.syncState = SyncState.UNSYNCED
+                        failCount++
+                    }
+                    infantRegDao.updateInfantReg(it)
+                } catch (e: Exception) {
+                    Timber.e(e, "Infant registration push failed for motherBenId: ${it.motherBenId}")
                     it.syncState = SyncState.UNSYNCED
+                    infantRegDao.updateInfantReg(it)
+                    failCount++
                 }
-                infantRegDao.updateInfantReg(it)
-                if (!uploadDone)
-                    return@withContext false
             }
 
+            Timber.d("Infant registration push complete: $successCount succeeded, $failCount failed out of ${infantRegList.size}")
             return@withContext true
         }
     }
 
-    private suspend fun postDataToAmritServer(infantRegPostList: MutableSet<InfantRegPost>): Boolean {
+    private suspend fun postDataToAmritServer(infantRegPostList: MutableSet<InfantRegPost>, retryCount: Int = 3): Boolean {
         if (infantRegPostList.isEmpty()) return false
         val user =
             preferenceDao.getLoggedInUser()
@@ -130,10 +144,12 @@ class InfantRegRepo @Inject constructor(
             Timber.w("Bad Response from server, need to check $infantRegPostList $response ")
             return false
         } catch (e: SocketTimeoutException) {
-            Timber.d("Caught exception $e here")
-            return postDataToAmritServer(infantRegPostList)
+            Timber.e("Caught exception $e here")
+            if (retryCount > 0) return postDataToAmritServer(infantRegPostList, retryCount - 1)
+            Timber.e("postDataToAmritServer: max retries exhausted")
+            return false
         } catch (e: JSONException) {
-            Timber.d("Caught exception $e here")
+            Timber.e("Caught exception $e here")
             return false
         }
     }
@@ -195,11 +211,11 @@ class InfantRegRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_infant_reg error : $e")
+                Timber.e("get_infant_reg error : $e")
                 return@withContext -2
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_infant_reg error : $e")
+                Timber.e("get_infant_reg error : $e")
                 return@withContext -1
             }
             -1
