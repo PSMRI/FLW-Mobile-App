@@ -95,7 +95,7 @@ class BenRegisterCHOFragment : Fragment() {
                         resources.getString(R.string.save_successful),
                         Toast.LENGTH_LONG
                     ).show()
-                    WorkerUtils.triggerAmritSyncWorker(requireContext())
+                    WorkerUtils.triggerAmritPushWorker(requireContext())
                     findNavController().navigateUp()
                     viewModel.resetState()
                 }
