@@ -52,7 +52,7 @@ class SyncDashboardViewModel @Inject constructor(
     }
 
     val workerStates: LiveData<List<WorkInfo>> = WorkManager.getInstance(application)
-        .getWorkInfosLiveData(WorkQuery.fromUniqueWorkNames(WorkerUtils.pushWorkerUniqueName, WorkerUtils.pullWorkerUniqueName, WorkerUtils.syncWorkerUniqueName))
+        .getWorkInfosLiveData(WorkQuery.fromUniqueWorkNames(WorkerUtils.pushWorkerUniqueName, WorkerUtils.pullWorkerUniqueName))
 
     val failedWorkerDetails: LiveData<List<FailedWorkerInfo>> = workerStates.map { workInfoList ->
         workInfoList
