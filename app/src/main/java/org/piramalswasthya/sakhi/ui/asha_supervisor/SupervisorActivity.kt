@@ -176,11 +176,7 @@ class SupervisorActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // This will block user to cast app screen
-        if (BuildConfig.FLAVOR.equals("niramay", true) ||BuildConfig.FLAVOR.equals("xushrukha", true) || BuildConfig.FLAVOR.equals("saksham", true)||BuildConfig.FLAVOR.equals("mitanin", true)){
-            TapjackingProtectionHelper.applyWindowSecurity(this)
-        }
-
+        TapjackingProtectionHelper.applyWindowSecurity(this)
         super.onCreate(savedInstanceState)
         _binding = ActivitySupervisorBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -340,20 +336,6 @@ class SupervisorActivity : AppCompatActivity() {
 
 
     override fun onResume() {
-        // This will block user to cast app screen
-        if (BuildConfig.FLAVOR.equals(
-                "sakshamProd",
-                true
-            ) || BuildConfig.FLAVOR.equals(
-                "niramayProd",
-                true
-            ) || BuildConfig.FLAVOR.equals("xushrukhaProd", true)
-        ) {
-            window.setFlags(
-                WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE
-            )
-        }
         super.onResume()
         window.decorView.alpha = 1f
         if (isDeviceRootedOrEmulator()) {
