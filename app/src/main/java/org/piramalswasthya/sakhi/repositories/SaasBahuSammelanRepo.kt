@@ -126,11 +126,11 @@ class SaasBahuSammelanRepo @Inject constructor(
                     }
                 }
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_tb error : $e")
+                Timber.e("get_tb error : $e")
                 return@withContext false
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_tb error : $e")
+                Timber.e("get_tb error : $e")
                 return@withContext false
             }
             true

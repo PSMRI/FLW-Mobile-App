@@ -55,38 +55,39 @@ class DeliveryOutcomeRepo @Inject constructor(
 
             val deliveryOutcomePostList = mutableSetOf<DeliveryOutcomePost>()
 
-            try {
-                deliveryOutcomeList.forEach {
-                deliveryOutcomePostList.clear()
-                val ben = benDao.getBen(it.benId)
-                    ?: throw IllegalStateException("No beneficiary exists for benId: ${it.benId}!!")
-                deliveryOutcomePostList.add(it.asPostModel())
-                it.syncState = SyncState.SYNCING
-                deliveryOutcomeDao.updateDeliveryOutcome(it)
-//                    HelperUtil.deliveryOutcomeRepo.append("postDataToAmritServer\n")
-//                    HelperUtil.deliveryOutcomeRepo.append("\n")
-                val uploadDone = postDataToAmritServer(deliveryOutcomePostList)
-                if (uploadDone) {
-                    it.processed = "P"
-                    it.syncState = SyncState.SYNCED
-                } else {
+            // RECORD-LEVEL ISOLATION: Each delivery outcome record is
+            // processed independently. If one record fails, remaining records continue.
+            // Failed records stay UNSYNCED and retry on next sync cycle.
+            var successCount = 0
+            var failCount = 0
+
+            deliveryOutcomeList.forEach {
+                try {
+                    deliveryOutcomePostList.clear()
+                    val ben = benDao.getBen(it.benId)
+                        ?: throw IllegalStateException("No beneficiary exists for benId: ${it.benId}!!")
+                    deliveryOutcomePostList.add(it.asPostModel())
+                    it.syncState = SyncState.SYNCING
+                    deliveryOutcomeDao.updateDeliveryOutcome(it)
+                    val uploadDone = postDataToAmritServer(deliveryOutcomePostList)
+                    if (uploadDone) {
+                        it.processed = "P"
+                        it.syncState = SyncState.SYNCED
+                        successCount++
+                    } else {
+                        it.syncState = SyncState.UNSYNCED
+                        failCount++
+                    }
+                    deliveryOutcomeDao.updateDeliveryOutcome(it)
+                } catch (e: Exception) {
+                    Timber.e(e, "Delivery outcome push failed for benId: ${it.benId}")
                     it.syncState = SyncState.UNSYNCED
+                    deliveryOutcomeDao.updateDeliveryOutcome(it)
+                    failCount++
                 }
-                deliveryOutcomeDao.updateDeliveryOutcome(it)
-
-
-                if (!uploadDone)
-                    return@withContext false
             }
 
-            }catch (e:Exception){
-//                HelperUtil.deliveryOutcomeRepo.append("Error $e\n")
-//                HelperUtil.deliveryOutcomeRepo.append("\n")
-//                HelperUtil.deliveryOutcomeRepoMethod(context, "deliveryOutcomeRepoMethod.txt", HelperUtil.deliveryOutcomeRepo.toString())
-
-            }
-
-
+            Timber.d("Delivery outcome push complete: $successCount succeeded, $failCount failed out of ${deliveryOutcomeList.size}")
             return@withContext true
         }
     }
@@ -146,7 +147,7 @@ class DeliveryOutcomeRepo @Inject constructor(
                         }
                     }
                 } catch (e: SocketTimeoutException) {
-                    Timber.d("Caught exception $e here")
+                    Timber.e("Caught exception $e here")
 //                    HelperUtil.deliveryOutcomeRepo.append("Caught exception:SocketTimeoutException $e \n")
 //                    HelperUtil.deliveryOutcomeRepo.append("\n")
 //                    HelperUtil.deliveryOutcomeRepoMethod(context, "deliveryOutcomeRepoMethod.txt", HelperUtil.deliveryOutcomeRepo.toString())
@@ -175,14 +176,14 @@ class DeliveryOutcomeRepo @Inject constructor(
             Timber.w("Bad Response from server, need to check $deliveryOutcomePostList $response ")
             return false
         } catch (e: SocketTimeoutException) {
-            Timber.d("Caught exception $e here")
+            Timber.e("Caught exception $e here")
 //            HelperUtil.deliveryOutcomeRepo.append("Caught exception SocketTimeOut $e \n")
 //            HelperUtil.deliveryOutcomeRepo.append("\n")
 //            HelperUtil.deliveryOutcomeRepoMethod(context, "deliveryOutcomeRepoMethod.txt", HelperUtil.deliveryOutcomeRepo.toString())
 
             return postDataToAmritServer(deliveryOutcomePostList)
         } catch (e: JSONException) {
-            Timber.d("Caught exception $e here")
+            Timber.e("Caught exception $e here")
 //            HelperUtil.deliveryOutcomeRepo.append("Caught exception JSONException $e \n")
 //            HelperUtil.deliveryOutcomeRepo.append("\n")
 //            HelperUtil.deliveryOutcomeRepoMethod(context, "deliveryOutcomeRepoMethod.txt", HelperUtil.deliveryOutcomeRepo.toString())
@@ -248,11 +249,11 @@ class DeliveryOutcomeRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_delivery_outcome error : $e")
+                Timber.e("get_delivery_outcome error : $e")
                 return@withContext -2
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_delivery_outcome error : $e")
+                Timber.e("get_delivery_outcome error : $e")
                 return@withContext -1
             }
             -1

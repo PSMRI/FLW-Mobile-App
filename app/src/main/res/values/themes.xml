@@ -43,7 +43,7 @@
         <item name="android:textColor">@color/background_selector</item>
     </style>
 
-    <style name="FullScreenDialog" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="FullScreenDialog" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowIsTranslucent">false</item>
         <item name="android:windowBackground">@android:color/white</item>

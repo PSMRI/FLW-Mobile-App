@@ -79,4 +79,10 @@ interface MalariaDao {
         yearStart: Long,
         yearEnd: Long
     ): Int
+
+    @Query("UPDATE MALARIA_SCREENING SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetScreeningSyncingToUnsynced()
+
+    @Query("UPDATE MALARIA_CONFIRMED SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetConfirmedSyncingToUnsynced()
 }

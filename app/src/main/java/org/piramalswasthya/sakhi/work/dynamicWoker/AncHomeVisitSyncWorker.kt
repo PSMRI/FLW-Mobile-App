@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.Constraints
-import androidx.work.CoroutineWorker
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
@@ -23,52 +22,36 @@ import java.io.IOException
 class AncHomeVisitSyncWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workerParams: WorkerParameters,
-    private val preferenceDao: PreferenceDao,
+    override val preferenceDao: PreferenceDao,
     private val repository: FormRepository
-) : CoroutineWorker(context, workerParams) {
+) : BaseDynamicWorker(context, workerParams) {
 
+    override val workerName = "AncHomeVisitSyncWorker"
 
-    override suspend fun doWork(): Result {
+    override suspend fun doSyncWork(): Result {
+        val user = preferenceDao.getLoggedInUser()
+            ?: throw IllegalStateException("No user logged in")
 
+        val ancRequest = HBNCVisitRequest(
+            fromDate = HelperUtil.getCurrentDate(Konstants.defaultTimeStamp),
+            toDate = HelperUtil.getCurrentDate(),
+            pageNo = 0,
+            ashaId = user.userId,
+            userName = user.userName
+        )
 
-        return try {
-
-            val user = preferenceDao.getLoggedInUser()
-                ?: throw IllegalStateException("No user logged in")
-
-            val ancRequest = HBNCVisitRequest(
-                fromDate = HelperUtil.getCurrentDate(Konstants.defaultTimeStamp),
-                toDate = HelperUtil.getCurrentDate(),
-                pageNo = 0,
-                ashaId = user.userId,
-                userName = user.userName
-            )
-
-            val ancResponse = repository.getAllAncVisits(ancRequest)
-            if (ancResponse.isSuccessful) {
-                val visitList = ancResponse.body()?.data.orEmpty()
-                Log.d("anc_visit", "getAllAncVisits: called api")
-                repository.saveDownloadedVisitListANC(visitList)
-            } else {
-                Timber.e("Failed to fetch ANC visits: ${ancResponse.code()} - ${ancResponse.message()}")
-                if (ancResponse.code() >= 500) throw IOException("Server error: ${ancResponse.code()}")
-            }
-
-            Result.success()
-        }
-        catch (e: IllegalStateException) {
-            Timber.e(e, "FormSyncWorker failed: No user logged in")
-            Result.failure()
-        } catch (e: java.net.UnknownHostException) {
-            Timber.w(e, "FormSyncWorker: Network unavailable, will retry")
-            Result.retry()
-        } catch (e: Exception) {
-            Timber.e(e, "FormSyncWorker failed with unexpected error")
-            if (runAttemptCount < 3) Result.retry() else Result.failure()
+        val ancResponse = repository.getAllAncVisits(ancRequest)
+        if (ancResponse.isSuccessful) {
+            val visitList = ancResponse.body()?.data.orEmpty()
+            Log.d("anc_visit", "getAllAncVisits: called api")
+            repository.saveDownloadedVisitListANC(visitList)
+        } else {
+            Timber.e("Failed to fetch ANC visits: ${ancResponse.code()} - ${ancResponse.message()}")
+            if (ancResponse.code() >= 500) throw IOException("Server error: ${ancResponse.code()}")
         }
 
+        return Result.success()
     }
-
 
     companion object {
         fun enqueue(context: Context) {

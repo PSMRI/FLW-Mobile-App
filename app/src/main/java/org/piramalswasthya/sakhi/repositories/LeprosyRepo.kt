@@ -127,11 +127,11 @@ class LeprosyRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_tb error : $e")
+                Timber.e("get_tb error : $e")
                 return@withContext -2
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_tb error : $e")
+                Timber.e("get_tb error : $e")
                 return@withContext -1
             }
             -1
@@ -160,11 +160,20 @@ class LeprosyRepo @Inject constructor(
     }
 
 
+    // RECORD-LEVEL ISOLATION: Coordinator always returns true so the
+    // WorkManager worker succeeds. Failed records stay UNSYNCED for next cycle.
     suspend fun pushUnSyncedRecords(): Boolean {
         val screeningResult = pushUnSyncedRecordsLeprosyScreening()
-        return (screeningResult == 1)
+        Timber.d("Leprosy Screening push result: screening=$screeningResult")
+        // Worker succeeds — failed records stay UNSYNCED for next cycle
+        return true
     }
 
+    // RECORD-LEVEL ISOLATION: Leprosy Screening records are now sent in
+    // chunks of 20 instead of one giant batch. Previously, if ANY record in
+    // the batch was malformed, the ENTIRE batch failed and ALL records stayed
+    // UNSYNCED. Now each chunk is independent — one bad chunk doesn't affect
+    // the others. Failed chunks' records stay UNSYNCED for the next sync cycle.
     private suspend fun pushUnSyncedRecordsLeprosyScreening(): Int {
 
         return withContext(Dispatchers.IO) {
@@ -172,71 +181,63 @@ class LeprosyRepo @Inject constructor(
                 preferenceDao.getLoggedInUser()
                     ?: throw IllegalStateException("No user logged in!!")
 
-            val leprosyasnList: List<LeprosyScreeningCache> = leprosyDao.getLeprosyScreening(
-                SyncState.UNSYNCED)
+            val leprosyasnList: List<LeprosyScreeningCache> = leprosyDao.getLeprosyScreening(SyncState.UNSYNCED)
 
-            val leprosysnDtos = mutableListOf<LeprosyScreeningDTO>()
-            leprosyasnList.forEach { cache ->
-                leprosysnDtos.add(cache.toDTO())
-            }
-            if (leprosysnDtos.isEmpty())
-                return@withContext 1
+            if (leprosyasnList.isEmpty()) return@withContext 1
 
-            try {
-                val response = tmcNetworkApiService.saveLeprosyScreeningData(
-                    LeprosyScreeningRequestDTO(
-                        userId = user.userId,
-                        leprosyLists = leprosysnDtos
+            val CHUNK_SIZE = 20
+            val chunks = leprosyasnList.chunked(CHUNK_SIZE)
+            var successCount = 0
+            var failCount = 0
+
+            for (chunk in chunks) {
+                try {
+                    val chunkDtos = chunk.map { it.toDTO() }
+
+                    val response = tmcNetworkApiService.saveLeprosyScreeningData(
+                        LeprosyScreeningRequestDTO(
+                            userId = user.userId,
+                            leprosyLists = chunkDtos
+                        )
                     )
-                )
-                val statusCode = response.code()
-                if (statusCode == 200) {
-                    val responseString = response.body()?.string()
-                    if (responseString != null) {
-                        val jsonObj = JSONObject(responseString)
-
-                        val responseStatusCode = jsonObj.getInt("statusCode")
-                        Timber.d("Push to amrit tb screening data : $responseStatusCode")
-                        when (responseStatusCode) {
-                            200 -> {
-                                try {
-                                    updateSyncStatusScreening(leprosyasnList)
-                                    return@withContext 1
-                                } catch (e: Exception) {
-                                    Timber.d("Malaria Screening entries not synced $e")
+                    val statusCode = response.code()
+                    if (statusCode == 200) {
+                        val responseString = response.body()?.string()
+                        if (responseString != null) {
+                            val jsonObj = JSONObject(responseString)
+                            val responseStatusCode = jsonObj.getInt("statusCode")
+                            Timber.d("Push to Amrit Leprosy Screening chunk: $responseStatusCode")
+                            when (responseStatusCode) {
+                                200 -> {
+                                    updateSyncStatusScreening(chunk)
+                                    successCount += chunk.size
                                 }
 
-                            }
+                                401, 5002 -> {
+                                    if (userRepo.refreshTokenTmc(user.userName, user.password)) {
+                                        Timber.d("Token refreshed, Leprosy Screening chunk will retry next cycle")
+                                    }
+                                    failCount += chunk.size
+                                }
 
-                            5002 -> {
-                                if (userRepo.refreshTokenTmc(
-                                        user.userName, user.password
-                                    )
-                                ) throw SocketTimeoutException("Refreshed Token!")
-                                else throw IllegalStateException("User Logged out!!")
-                            }
-
-                            5000 -> {
-                                val errorMessage = jsonObj.getString("errorMessage")
-                                if (errorMessage == "No record found") return@withContext 0
-                            }
-
-                            else -> {
-                                throw IllegalStateException("$responseStatusCode received, dont know what todo!?")
+                                else -> {
+                                    Timber.e("Leprosy Screening chunk failed with statusCode: $responseStatusCode")
+                                    failCount += chunk.size
+                                }
                             }
                         }
+                    } else {
+                        Timber.e("Leprosy Screening chunk HTTP error: $statusCode")
+                        failCount += chunk.size
                     }
+                } catch (e: Exception) {
+                    Timber.e(e, "Leprosy Screening chunk push failed: ${chunk.size} records")
+                    failCount += chunk.size
                 }
-
-            } catch (e: SocketTimeoutException) {
-                Timber.d("get_tb error : $e")
-                return@withContext -2
-
-            } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_tb error : $e")
-                return@withContext -1
             }
-            -1
+
+            Timber.d("Leprosy Screening push complete: $successCount succeeded, $failCount failed out of ${leprosyasnList.size}")
+            return@withContext 1
         }
     }
 
@@ -363,19 +364,19 @@ class LeprosyRepo @Inject constructor(
                         }
                     }
                 } else {
-                    Timber.d("HTTP error for leprosy data: $statusCode")
+                    Timber.e("HTTP error for leprosy data: $statusCode")
                 }
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_all_leprosy error : $e")
+                Timber.e("get_all_leprosy error : $e")
                 return@withContext -2
             } catch (e: JSONException) {
-                Timber.d("JSON parsing error for leprosy data: $e")
+                Timber.e("JSON parsing error for leprosy data: $e")
                 return@withContext -1
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_all_leprosy error : $e")
+                Timber.e("get_all_leprosy error : $e")
                 return@withContext -1
             } catch (e: Exception) {
-                Timber.d("get_all_leprosy unexpected error : $e")
+                Timber.e("get_all_leprosy unexpected error : $e")
                 return@withContext -1
             }
             -1
@@ -435,26 +436,30 @@ class LeprosyRepo @Inject constructor(
                         }
                     }
                 } else {
-                    Timber.d("HTTP error for leprosy followup data: $statusCode")
+                    Timber.e("HTTP error for leprosy followup data: $statusCode")
                 }
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_all_leprosy_followup error : $e")
+                Timber.e("get_all_leprosy_followup error : $e")
                 return@withContext -2
             } catch (e: JSONException) {
-                Timber.d("JSON parsing error for leprosy followup data: $e")
+                Timber.e("JSON parsing error for leprosy followup data: $e")
                 return@withContext -1
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_all_leprosy_followup error : $e")
+                Timber.e("get_all_leprosy_followup error : $e")
                 return@withContext -1
             } catch (e: Exception) {
-                Timber.d("get_all_leprosy_followup unexpected error : $e")
+                Timber.e("get_all_leprosy_followup unexpected error : $e")
                 return@withContext -1
             }
             -1
         }
     }
 
-    // Upsync - Push Unsynced Leprosy FollowUp Data to Server
+    // RECORD-LEVEL ISOLATION: Leprosy FollowUp records are now sent in
+    // chunks of 20 instead of one giant batch. Previously, if ANY record in
+    // the batch was malformed, the ENTIRE batch failed and ALL records stayed
+    // UNSYNCED. Now each chunk is independent — one bad chunk doesn't affect
+    // the others. Failed chunks' records stay UNSYNCED for the next sync cycle.
     suspend fun pushUnSyncedLeprosyFollowUpData(): Int {
         return withContext(Dispatchers.IO) {
             val user = preferenceDao.getLoggedInUser()
@@ -464,53 +469,56 @@ class LeprosyRepo @Inject constructor(
                 it.syncState == SyncState.UNSYNCED
             }
 
-            val followUpDtos = unsyncedFollowUps.map { it.toDTO() }
+            if (unsyncedFollowUps.isEmpty()) return@withContext 1
 
-            if (followUpDtos.isEmpty()) return@withContext 1
+            val CHUNK_SIZE = 20
+            val chunks = unsyncedFollowUps.chunked(CHUNK_SIZE)
+            var successCount = 0
+            var failCount = 0
 
-            try {
-                val response = tmcNetworkApiService.saveLeprosyFollowUpData(
-                    followUpDtos
-                    )
+            for (chunk in chunks) {
+                try {
+                    val chunkDtos = chunk.map { it.toDTO() }
 
-                val statusCode = response.code()
-                if (statusCode == 200) {
-                    val responseString = response.body()?.string()
-                    if (responseString != null) {
-                        val jsonObj = JSONObject(responseString)
-                        val responseStatusCode = jsonObj.getInt("statusCode")
-                        Timber.d("Push leprosy followup data : $responseStatusCode")
-                        when (responseStatusCode) {
-                            200 -> {
-                                updateSyncStatusFollowUps(unsyncedFollowUps)
-                                return@withContext 1
-                            }
+                    val response = tmcNetworkApiService.saveLeprosyFollowUpData(chunkDtos)
+                    val statusCode = response.code()
+                    if (statusCode == 200) {
+                        val responseString = response.body()?.string()
+                        if (responseString != null) {
+                            val jsonObj = JSONObject(responseString)
+                            val responseStatusCode = jsonObj.getInt("statusCode")
+                            Timber.d("Push Leprosy FollowUp chunk: $responseStatusCode")
+                            when (responseStatusCode) {
+                                200 -> {
+                                    updateSyncStatusFollowUps(chunk)
+                                    successCount += chunk.size
+                                }
 
-                            5002 -> {
-                                if (userRepo.refreshTokenTmc(user.userName, user.password))
-                                    throw SocketTimeoutException("Refreshed Token!")
-                                else throw IllegalStateException("User Logged out!!")
-                            }
+                                401, 5002 -> {
+                                    if (userRepo.refreshTokenTmc(user.userName, user.password)) {
+                                        Timber.d("Token refreshed, Leprosy FollowUp chunk will retry next cycle")
+                                    }
+                                    failCount += chunk.size
+                                }
 
-                            5000 -> {
-                                val errorMessage = jsonObj.getString("errorMessage")
-                                if (errorMessage == "No record found") return@withContext 0
-                            }
-
-                            else -> {
-                                throw IllegalStateException("$responseStatusCode received, dont know what todo!?")
+                                else -> {
+                                    Timber.e("Leprosy FollowUp chunk failed with statusCode: $responseStatusCode")
+                                    failCount += chunk.size
+                                }
                             }
                         }
+                    } else {
+                        Timber.e("Leprosy FollowUp chunk HTTP error: $statusCode")
+                        failCount += chunk.size
                     }
+                } catch (e: Exception) {
+                    Timber.e(e, "Leprosy FollowUp chunk push failed: ${chunk.size} records")
+                    failCount += chunk.size
                 }
-            } catch (e: SocketTimeoutException) {
-                Timber.d("push_leprosy_followup error : $e")
-                return@withContext -2
-            } catch (e: java.lang.IllegalStateException) {
-                Timber.d("push_leprosy_followup error : $e")
-                return@withContext -1
             }
-            -1
+
+            Timber.d("Leprosy FollowUp push complete: $successCount succeeded, $failCount failed out of ${unsyncedFollowUps.size}")
+            return@withContext 1
         }
     }
 
@@ -594,7 +602,7 @@ class LeprosyRepo @Inject constructor(
             }
             Timber.d("Successfully upserted ${followUpList?.size ?: 0} leprosy followup records")
         } catch (e: Exception) {
-            Timber.d("Error saving leprosy followup data: $e")
+            Timber.e("Error saving leprosy followup data: $e")
             throw e
         }
     }
@@ -606,9 +614,13 @@ class LeprosyRepo @Inject constructor(
         }
     }
 
+    // RECORD-LEVEL ISOLATION: Coordinator always returns true so the
+    // WorkManager worker succeeds. Failed records stay UNSYNCED for next cycle.
     suspend fun pushAllUnSyncedRecords(): Boolean {
         val followUpResult = pushUnSyncedLeprosyFollowUpData()
-        return ( followUpResult == 1)
+        Timber.d("Leprosy FollowUp push result: followUp=$followUpResult")
+        // Worker succeeds — failed records stay UNSYNCED for next cycle
+        return true
     }
 
     companion object {

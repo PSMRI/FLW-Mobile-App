@@ -113,7 +113,6 @@ class MaternalHealthRepo @Inject constructor(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val ancDueCount = maternalHealthDao.getAllPregnancyRecords().transformLatest {
-        Timber.d("From DB : ${it.count()}")
         var count = 0
         val notDeliveredList = it.filter { !it.value.any { it.pregnantWomanDelivered == true } }
         notDeliveredList.keys.forEach { activePwrRecrod ->
@@ -147,30 +146,44 @@ class MaternalHealthRepo @Inject constructor(
 
             val ancPostList = mutableSetOf<ANCPost>()
 
+            // RECORD-LEVEL ISOLATION: Each ANC visit record is processed
+            // independently. If one record fails, remaining records continue.
+            // Failed records stay UNSYNCED and retry on next sync cycle.
+            var successCount = 0
+            var failCount = 0
+
             ancList.forEach {
-                ancPostList.clear()
-                val ben = benDao.getBen(it.benId)
-                    ?: throw IllegalStateException("No beneficiary exists for benId: ${it.benId}!!")
-                ancPostList.add(it.asPostModel())
-                it.syncState = SyncState.SYNCING
-                maternalHealthDao.updateANC(it)
-                val uploadDone = postDataToAmritServer(ancPostList)
-                if (uploadDone) {
-                    it.processed = "P"
-                    it.syncState = SyncState.SYNCED
-                } else {
+                try {
+                    ancPostList.clear()
+                    val ben = benDao.getBen(it.benId)
+                        ?: throw IllegalStateException("No beneficiary exists for benId: ${it.benId}!!")
+                    ancPostList.add(it.asPostModel())
+                    it.syncState = SyncState.SYNCING
+                    maternalHealthDao.updateANC(it)
+                    val uploadDone = postDataToAmritServer(ancPostList)
+                    if (uploadDone) {
+                        it.processed = "P"
+                        it.syncState = SyncState.SYNCED
+                        successCount++
+                    } else {
+                        it.syncState = SyncState.UNSYNCED
+                        failCount++
+                    }
+                    maternalHealthDao.updateANC(it)
+                } catch (e: Exception) {
+                    Timber.e(e, "ANC visit push failed for benId: ${it.benId}")
                     it.syncState = SyncState.UNSYNCED
+                    maternalHealthDao.updateANC(it)
+                    failCount++
                 }
-                maternalHealthDao.updateANC(it)
-                if (!uploadDone)
-                    return@withContext false
             }
 
+            Timber.d("ANC visit push complete: $successCount succeeded, $failCount failed out of ${ancList.size}")
             return@withContext true
         }
     }
 
-    private suspend fun postDataToAmritServer(ancPostList: MutableSet<ANCPost>): Boolean {
+    private suspend fun postDataToAmritServer(ancPostList: MutableSet<ANCPost>, retryCount: Int = 3): Boolean {
         if (ancPostList.isEmpty()) return false
         val user =
             preferenceDao.getLoggedInUser()
@@ -217,7 +230,9 @@ class MaternalHealthRepo @Inject constructor(
                 } catch (e: IOException) {
                     e.printStackTrace()
                 } catch (e: SocketTimeoutException) {
-                    postDataToAmritServer(ancPostList)
+                    if (retryCount > 0) return postDataToAmritServer(ancPostList, retryCount - 1)
+                    Timber.e("postDataToAmritServer: max retries exhausted")
+                    return false
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -227,10 +242,12 @@ class MaternalHealthRepo @Inject constructor(
             Timber.w("Bad Response from server, need to check $ancPostList $response ")
             return false
         } catch (e: SocketTimeoutException) {
-            Timber.d("Caught exception $e here")
-            return postDataToAmritServer(ancPostList)
+            Timber.e("Caught exception $e here")
+            if (retryCount > 0) return postDataToAmritServer(ancPostList, retryCount - 1)
+            Timber.e("postDataToAmritServer: max retries exhausted")
+            return false
         } catch (e: JSONException) {
-            Timber.d("Caught exception $e here")
+            Timber.e("Caught exception $e here")
             return false
         }
     }
@@ -244,30 +261,44 @@ class MaternalHealthRepo @Inject constructor(
 
             val pwrPostList = mutableSetOf<PwrPost>()
 
+            // RECORD-LEVEL ISOLATION: Each PWR record is processed
+            // independently. If one record fails, remaining records continue.
+            // Failed records stay UNSYNCED and retry on next sync cycle.
+            var successCount = 0
+            var failCount = 0
+
             pwrList.forEach {
-                pwrPostList.clear()
-                val ben = benDao.getBen(it.benId)
-                    ?: throw IllegalStateException("No beneficiary exists for benId: ${it.benId}!!")
-                pwrPostList.add(it.asPwrPost())
-                it.syncState = SyncState.SYNCING
-                maternalHealthDao.updatePwr(it)
-                val uploadDone = postPwrToAmritServer(pwrPostList)
-                if (uploadDone) {
-                    it.processed = "P"
-                    it.syncState = SyncState.SYNCED
-                } else {
+                try {
+                    pwrPostList.clear()
+                    val ben = benDao.getBen(it.benId)
+                        ?: throw IllegalStateException("No beneficiary exists for benId: ${it.benId}!!")
+                    pwrPostList.add(it.asPwrPost())
+                    it.syncState = SyncState.SYNCING
+                    maternalHealthDao.updatePwr(it)
+                    val uploadDone = postPwrToAmritServer(pwrPostList)
+                    if (uploadDone) {
+                        it.processed = "P"
+                        it.syncState = SyncState.SYNCED
+                        successCount++
+                    } else {
+                        it.syncState = SyncState.UNSYNCED
+                        failCount++
+                    }
+                    maternalHealthDao.updatePwr(it)
+                } catch (e: Exception) {
+                    Timber.e(e, "PWR push failed for benId: ${it.benId}")
                     it.syncState = SyncState.UNSYNCED
+                    maternalHealthDao.updatePwr(it)
+                    failCount++
                 }
-                maternalHealthDao.updatePwr(it)
-                if (!uploadDone)
-                    return@withContext false
             }
 
+            Timber.d("PWR push complete: $successCount succeeded, $failCount failed out of ${pwrList.size}")
             return@withContext true
         }
     }
 
-    suspend fun postPwrToAmritServer(pwrPostList: MutableSet<PwrPost>): Boolean {
+    suspend fun postPwrToAmritServer(pwrPostList: MutableSet<PwrPost>, retryCount: Int = 3): Boolean {
         if (pwrPostList.isEmpty()) return false
         val user =
             preferenceDao.getLoggedInUser()
@@ -317,10 +348,12 @@ class MaternalHealthRepo @Inject constructor(
             Timber.w("Bad Response from server, need to check $pwrPostList $response ")
             return false
         } catch (e: SocketTimeoutException) {
-            Timber.d("Caught exception $e here")
-            return postPwrToAmritServer(pwrPostList)
+            Timber.e("Caught exception $e here")
+            if (retryCount > 0) return postPwrToAmritServer(pwrPostList, retryCount - 1)
+            Timber.e("postPwrToAmritServer: max retries exhausted")
+            return false
         } catch (e: JSONException) {
-            Timber.d("Caught exception $e here")
+            Timber.e("Caught exception $e here")
             return false
         }
     }
@@ -382,11 +415,11 @@ class MaternalHealthRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_tb error : $e")
+                Timber.e("get_tb error : $e")
                 return@withContext -2
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_tb error : $e")
+                Timber.e("get_tb error : $e")
                 return@withContext -1
             }
             -1
@@ -507,11 +540,11 @@ class MaternalHealthRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_tb error : $e")
+                Timber.e("get_tb error : $e")
                 return@withContext -2
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_tb error : $e")
+                Timber.e("get_tb error : $e")
                 return@withContext -1
             }
             -1

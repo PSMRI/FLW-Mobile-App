@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.SystemClock
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -53,6 +54,11 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class SupervisorActivity : AppCompatActivity() {
+
+    private var lastAutoTriggerPushTime: Long = 0L
+    private companion object {
+        const val AUTO_PUSH_DEBOUNCE_MS = 120_000L  // 2 minutes
+    }
 
     @EntryPoint
     @InstallIn(SingletonComponent::class)
@@ -170,11 +176,7 @@ class SupervisorActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // This will block user to cast app screen
-        if (BuildConfig.FLAVOR.equals("niramay", true) ||BuildConfig.FLAVOR.equals("xushrukha", true) || BuildConfig.FLAVOR.equals("saksham", true)||BuildConfig.FLAVOR.equals("mitanin", true)){
-            TapjackingProtectionHelper.applyWindowSecurity(this)
-        }
-
+        TapjackingProtectionHelper.applyWindowSecurity(this)
         super.onCreate(savedInstanceState)
         _binding = ActivitySupervisorBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -218,8 +220,12 @@ class SupervisorActivity : AppCompatActivity() {
         }
         viewModel.unprocessedRecordsCount.observe(this) {
             if (it > 0) {
-                if (isInternetAvailable(this)) {
-                    WorkerUtils.triggerAmritPushWorker(this)
+                val now = SystemClock.elapsedRealtime()
+                if (now - lastAutoTriggerPushTime >= AUTO_PUSH_DEBOUNCE_MS) {
+                    if (isInternetAvailable(this)) {
+                        lastAutoTriggerPushTime = now
+                        WorkerUtils.triggerAmritPushWorker(this)
+                    }
                 }
             }
         }
@@ -330,20 +336,6 @@ class SupervisorActivity : AppCompatActivity() {
 
 
     override fun onResume() {
-        // This will block user to cast app screen
-        if (BuildConfig.FLAVOR.equals(
-                "sakshamProd",
-                true
-            ) || BuildConfig.FLAVOR.equals(
-                "niramayProd",
-                true
-            ) || BuildConfig.FLAVOR.equals("xushrukhaProd", true)
-        ) {
-            window.setFlags(
-                WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE
-            )
-        }
         super.onResume()
         window.decorView.alpha = 1f
         if (isDeviceRootedOrEmulator()) {

@@ -152,11 +152,11 @@ class MalariaRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_tb error : $e")
+                Timber.e("get_tb error : $e")
                 return@withContext -2
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_tb error : $e")
+                Timber.e("get_tb error : $e")
                 return@withContext -1
             }
             -1
@@ -223,11 +223,11 @@ class MalariaRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_tb error : $e")
+                Timber.e("get_tb error : $e")
                 return@withContext -2
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_tb error : $e")
+                Timber.e("get_tb error : $e")
                 return@withContext -1
             }
             -1
@@ -332,11 +332,11 @@ class MalariaRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_tb error : $e")
+                Timber.e("get_tb error : $e")
                 return@withContext -2
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_tb error : $e")
+                Timber.e("get_tb error : $e")
                 return@withContext -1
             }
             -1
@@ -364,12 +364,22 @@ class MalariaRepo @Inject constructor(
         return malariaConfirmedList
     }
 
+    // RECORD-LEVEL ISOLATION: Coordinator always returns true so the
+    // WorkManager worker succeeds. Each sub-method handles its own failures
+    // independently — failed records stay UNSYNCED and retry on next sync cycle.
     suspend fun pushUnSyncedRecords(): Boolean {
         val screeningResult = pushUnSyncedRecordsMalariaScreening()
-        val suspectedResult = pushUnSyncedRecordsTBSuspected()
-        return (screeningResult == 1) && (suspectedResult == 1)
+        val confirmedResult = pushUnSyncedRecordsTBSuspected()
+        Timber.d("Malaria push results: screening=$screeningResult, confirmed=$confirmedResult")
+        // Worker succeeds — failed records stay UNSYNCED for next cycle
+        return true
     }
 
+    // RECORD-LEVEL ISOLATION: Malaria Screening records are now sent in
+    // chunks of 20 instead of one giant batch. Previously, if ANY record in
+    // the batch was malformed, the ENTIRE batch failed and ALL records stayed
+    // UNSYNCED. Now each chunk is independent — one bad chunk doesn't affect
+    // the others. Failed chunks' records stay UNSYNCED for the next sync cycle.
     private suspend fun pushUnSyncedRecordsMalariaScreening(): Int {
 
         return withContext(Dispatchers.IO) {
@@ -379,69 +389,69 @@ class MalariaRepo @Inject constructor(
 
             val malariasnList: List<MalariaScreeningCache> = malariaDao.getMalariaScreening(SyncState.UNSYNCED)
 
-            val malariasnDtos = mutableListOf<MalariaScreeningDTO>()
-            malariasnList.forEach { cache ->
-                malariasnDtos.add(cache.toDTO())
-            }
-            if (malariasnDtos.isEmpty()) return@withContext 1
-            try {
-                val response = tmcNetworkApiService.saveMalariaScreeningData(
-                    MalariaScreeningRequestDTO(
-                        userId = user.userId,
-                        malariaLists = malariasnDtos
-                    )
-                )
-                val statusCode = response.code()
-                if (statusCode == 200) {
-                    val responseString = response.body()?.string()
-                    if (responseString != null) {
-                        val jsonObj = JSONObject(responseString)
+            if (malariasnList.isEmpty()) return@withContext 1
 
-                        val responseStatusCode = jsonObj.getInt("statusCode")
-                        Timber.d("Push to amrit tb screening data : $responseStatusCode")
-                        when (responseStatusCode) {
-                            200 -> {
-                                try {
-                                    updateSyncStatusScreening(malariasnList)
-                                    return@withContext 1
-                                } catch (e: Exception) {
-                                    Timber.d("Malaria Screening entries not synced $e")
+            val CHUNK_SIZE = 20
+            val chunks = malariasnList.chunked(CHUNK_SIZE)
+            var successCount = 0
+            var failCount = 0
+
+            for (chunk in chunks) {
+                try {
+                    val chunkDtos = chunk.map { it.toDTO() }
+
+                    val response = tmcNetworkApiService.saveMalariaScreeningData(
+                        MalariaScreeningRequestDTO(
+                            userId = user.userId,
+                            malariaLists = chunkDtos
+                        )
+                    )
+                    val statusCode = response.code()
+                    if (statusCode == 200) {
+                        val responseString = response.body()?.string()
+                        if (responseString != null) {
+                            val jsonObj = JSONObject(responseString)
+                            val responseStatusCode = jsonObj.getInt("statusCode")
+                            Timber.d("Push to Amrit Malaria Screening chunk: $responseStatusCode")
+                            when (responseStatusCode) {
+                                200 -> {
+                                    chunk.forEach {
+                                        it.syncState = SyncState.SYNCED
+                                        malariaDao.saveMalariaScreening(it)
+                                    }
+                                    successCount += chunk.size
                                 }
 
-                            }
+                                401, 5002 -> {
+                                    if (userRepo.refreshTokenTmc(user.userName, user.password)) {
+                                        Timber.d("Token refreshed, Malaria Screening chunk will retry next cycle")
+                                    }
+                                    failCount += chunk.size
+                                }
 
-                            5002 -> {
-                                if (userRepo.refreshTokenTmc(
-                                        user.userName, user.password
-                                    )
-                                ) throw SocketTimeoutException("Refreshed Token!")
-                                else throw IllegalStateException("User Logged out!!")
-                            }
-
-                            5000 -> {
-                                val errorMessage = jsonObj.getString("errorMessage")
-                                if (errorMessage == "No record found") return@withContext 0
-                            }
-
-                            else -> {
-                                throw IllegalStateException("$responseStatusCode received, dont know what todo!?")
+                                else -> {
+                                    Timber.e("Malaria Screening chunk failed with statusCode: $responseStatusCode")
+                                    failCount += chunk.size
+                                }
                             }
                         }
+                    } else {
+                        Timber.e("Malaria Screening chunk HTTP error: $statusCode")
+                        failCount += chunk.size
                     }
+                } catch (e: Exception) {
+                    Timber.e(e, "Malaria Screening chunk push failed: ${chunk.size} records")
+                    failCount += chunk.size
                 }
-
-            } catch (e: SocketTimeoutException) {
-                Timber.d("get_tb error : $e")
-                return@withContext -2
-
-            } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_tb error : $e")
-                return@withContext -1
             }
-            -1
+
+            Timber.d("Malaria Screening push complete: $successCount succeeded, $failCount failed out of ${malariasnList.size}")
+            return@withContext 1
         }
     }
 
+    // RECORD-LEVEL ISOLATION: Same chunking pattern as Malaria Screening.
+    // Records sent in chunks of 20 with per-chunk error isolation.
     private suspend fun pushUnSyncedRecordsTBSuspected(): Int {
         return withContext(Dispatchers.IO) {
             val user =
@@ -450,69 +460,64 @@ class MalariaRepo @Inject constructor(
 
             val tbspList: List<MalariaConfirmedCasesCache> = malariaDao.getMalariaConfirmed(SyncState.UNSYNCED)
 
-            val tbspDtos = mutableListOf<MalariaConfirmedDTO>()
-            tbspList.forEach { cache ->
-                tbspDtos.add(cache.toDTO())
-            }
-            if (tbspDtos.isEmpty()) return@withContext 1
-            try {
-                val response = tmcNetworkApiService.saveMalariaConfirmedData(
-                    MalariaConfirmedRequestDTO(
-                        userId = user.userId,
-                        malariaFollowListUp = tbspDtos
-                    )
-                )
-                val statusCode = response.code()
-                if (statusCode == 200) {
-                    val responseString = response.body()?.string()
-                    if (responseString != null) {
-                        val jsonObj = JSONObject(responseString)
-                        var errorMessage = ""
+            if (tbspList.isEmpty()) return@withContext 1
 
-                        if (jsonObj.has("errorMessage")) {
-                            errorMessage = jsonObj.getString("errorMessage")
-                        }
-                        val responseStatusCode = jsonObj.getInt("statusCode")
-                        Timber.d("Push to amrit tb screening data : $responseStatusCode")
-                        when (responseStatusCode) {
-                            200 -> {
-                                try {
-                                    updateSyncStatusSuspected(tbspList)
-                                    return@withContext 1
-                                } catch (e: Exception) {
-                                    Timber.d("TB Screening entries not synced $e")
+            val CHUNK_SIZE = 20
+            val chunks = tbspList.chunked(CHUNK_SIZE)
+            var successCount = 0
+            var failCount = 0
+
+            for (chunk in chunks) {
+                try {
+                    val chunkDtos = chunk.map { it.toDTO() }
+
+                    val response = tmcNetworkApiService.saveMalariaConfirmedData(
+                        MalariaConfirmedRequestDTO(
+                            userId = user.userId,
+                            malariaFollowListUp = chunkDtos
+                        )
+                    )
+                    val statusCode = response.code()
+                    if (statusCode == 200) {
+                        val responseString = response.body()?.string()
+                        if (responseString != null) {
+                            val jsonObj = JSONObject(responseString)
+                            val responseStatusCode = jsonObj.getInt("statusCode")
+                            Timber.d("Push to Amrit Malaria Confirmed chunk: $responseStatusCode")
+                            when (responseStatusCode) {
+                                200 -> {
+                                    chunk.forEach {
+                                        it.syncState = SyncState.SYNCED
+                                        malariaDao.saveMalariaConfirmed(it)
+                                    }
+                                    successCount += chunk.size
                                 }
 
-                            }
+                                401, 5002 -> {
+                                    if (userRepo.refreshTokenTmc(user.userName, user.password)) {
+                                        Timber.d("Token refreshed, Malaria Confirmed chunk will retry next cycle")
+                                    }
+                                    failCount += chunk.size
+                                }
 
-                            5002 -> {
-                                if (userRepo.refreshTokenTmc(
-                                        user.userName, user.password
-                                    )
-                                ) throw SocketTimeoutException("Refreshed Token!")
-                                else throw IllegalStateException("User Logged out!!")
-                            }
-
-                            5000 -> {
-                                if (errorMessage == "No record found") return@withContext 0
-                            }
-
-                            else -> {
-                                throw IllegalStateException("$responseStatusCode received, dont know what todo!?")
+                                else -> {
+                                    Timber.e("Malaria Confirmed chunk failed with statusCode: $responseStatusCode")
+                                    failCount += chunk.size
+                                }
                             }
                         }
+                    } else {
+                        Timber.e("Malaria Confirmed chunk HTTP error: $statusCode")
+                        failCount += chunk.size
                     }
+                } catch (e: Exception) {
+                    Timber.e(e, "Malaria Confirmed chunk push failed: ${chunk.size} records")
+                    failCount += chunk.size
                 }
-
-            } catch (e: SocketTimeoutException) {
-                Timber.d("get_tb error : $e")
-                return@withContext -2
-
-            } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_tb error : $e")
-                return@withContext -1
             }
-            -1
+
+            Timber.d("Malaria Confirmed push complete: $successCount succeeded, $failCount failed out of ${tbspList.size}")
+            return@withContext 1
         }
     }
 

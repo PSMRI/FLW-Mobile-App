@@ -132,13 +132,7 @@ class AbhaBenFragment : Fragment() {
         }
 
         binding.ibDownload.setOnClickListener {
-            lifecycleScope.launch {
-                viewModel.benList.collect { users ->
-                    if (users.isNotEmpty()) {
-                        viewModel.createCsvFile(requireContext(), users)
-                    }
-                }
-            }
+            viewModel.downloadCsv(requireContext())
         }
 
         if (args.source == 1 || args.source == 2 || args.source == 3) {
