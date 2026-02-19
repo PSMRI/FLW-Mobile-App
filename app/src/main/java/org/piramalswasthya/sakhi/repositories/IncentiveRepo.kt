@@ -307,8 +307,12 @@ class IncentiveRepo @Inject constructor(
         finally {
             tempFiles.forEach { file ->
                 if (file.exists()) {
-                    file.delete()
-                    Timber.d("Temp file deleted: ${file.name}")
+                    val deleted = file.delete()
+                    if (deleted) {
+                        Timber.d("Temp file deleted: ${file.name}")
+                    } else {
+                        Timber.w("Failed to delete temp file: ${file.name}")
+                    }
                 }
             }
         }
