@@ -1,9 +1,11 @@
-package org.piramalswasthya.sakhi.ui.dialogs
+package org.piramalswasthya.sakhi.utils
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import org.piramalswasthya.sakhi.databinding.DialogUploadSourceBinding
 
@@ -11,22 +13,17 @@ class UploadSourceDialog : BottomSheetDialogFragment() {
 
     private var _binding: DialogUploadSourceBinding? = null
     private val binding get() = _binding!!
-    
-    private var onCameraSelected: (() -> Unit)? = null
-    private var onGallerySelected: (() -> Unit)? = null
-    private var onDocumentSelected: (() -> Unit)? = null
 
     companion object {
-        fun newInstance(
-            onCameraSelected: () -> Unit,
-            onGallerySelected: () -> Unit,
-            onDocumentSelected: () -> Unit
-        ): UploadSourceDialog {
-            return UploadSourceDialog().apply {
-                this.onCameraSelected = onCameraSelected
-                this.onGallerySelected = onGallerySelected
-                this.onDocumentSelected = onDocumentSelected
-            }
+        const val REQUEST_KEY = "upload_source_request"
+        const val RESULT_SOURCE = "source"
+
+        const val SOURCE_CAMERA = "camera"
+        const val SOURCE_GALLERY = "gallery"
+        const val SOURCE_DOCUMENT = "document"
+
+        fun newInstance(): UploadSourceDialog {
+            return UploadSourceDialog()
         }
     }
 
@@ -41,22 +38,22 @@ class UploadSourceDialog : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
+
         binding.layoutCamera.setOnClickListener {
-            onCameraSelected?.invoke()
+            setFragmentResult(REQUEST_KEY, bundleOf(RESULT_SOURCE to SOURCE_CAMERA))
             dismiss()
         }
-        
+
         binding.layoutGallery.setOnClickListener {
-            onGallerySelected?.invoke()
+            setFragmentResult(REQUEST_KEY, bundleOf(RESULT_SOURCE to SOURCE_GALLERY))
             dismiss()
         }
-        
+
         binding.layoutDocuments.setOnClickListener {
-            onDocumentSelected?.invoke()
+            setFragmentResult(REQUEST_KEY, bundleOf(RESULT_SOURCE to SOURCE_DOCUMENT))
             dismiss()
         }
-        
+
         binding.btnCancel.setOnClickListener {
             dismiss()
         }

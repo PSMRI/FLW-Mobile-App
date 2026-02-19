@@ -30,9 +30,9 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.IncentiveListAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentIncentivesSubBinding
 import org.piramalswasthya.sakhi.model.IncentiveDomain
-import org.piramalswasthya.sakhi.ui.dialogs.UploadSourceDialog
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.utils.FileViewerDialog
+import org.piramalswasthya.sakhi.utils.UploadSourceDialog
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 import java.io.File
@@ -112,24 +112,31 @@ class IncentivesSubFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
         setupFragmentResultListener()
+        setupUploadSourceListener()
+        setupFileDeleteListener()
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uploadState.collect { state ->
                     when (state) {
                         is IncentivesViewModel.UploadState.Loading -> {
+                            binding.progressBar?.visibility = View.VISIBLE
                         }
                         is IncentivesViewModel.UploadState.Success -> {
+                            binding.progressBar?.visibility = View.GONE
                             Toast.makeText(requireContext(), "Submitted", Toast.LENGTH_SHORT).show()
                             WorkerUtils.triggerAmritPullWorker(requireContext())
                             viewModel.resetUploadState()
                             findNavController().navigateUp()
                         }
                         is IncentivesViewModel.UploadState.Error -> {
+                            binding.progressBar?.visibility = View.GONE
                             Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
                             viewModel.resetUploadState()
                         }
-                        is IncentivesViewModel.UploadState.Idle -> {  }
+                        is IncentivesViewModel.UploadState.Idle -> {
+                            binding.progressBar?.visibility = View.GONE
+                        }
                     }
                 }
             }
@@ -168,12 +175,22 @@ class IncentivesSubFragment : Fragment() {
         }
     }
 
+    private fun setupUploadSourceListener() {
+        childFragmentManager.setFragmentResultListener(
+            UploadSourceDialog.REQUEST_KEY,
+            viewLifecycleOwner
+        ) { _, bundle ->
+            when (bundle.getString(UploadSourceDialog.RESULT_SOURCE)) {
+                UploadSourceDialog.SOURCE_CAMERA -> openCamera()
+                UploadSourceDialog.SOURCE_GALLERY -> openGallery()
+                UploadSourceDialog.SOURCE_DOCUMENT -> openDocumentPicker()
+            }
+        }
+    }
+
     private fun showUploadSourceDialog() {
-        UploadSourceDialog.newInstance(
-            onCameraSelected = { openCamera() },
-            onGallerySelected = { openGallery() },
-            onDocumentSelected = { openDocumentPicker() }
-        ).show(childFragmentManager, "UploadSourceDialog")
+        UploadSourceDialog.newInstance()
+            .show(childFragmentManager, "UploadSourceDialog")
     }
 
     private fun openCamera() {
@@ -559,20 +576,13 @@ class IncentivesSubFragment : Fragment() {
 
     private fun showUploadedFiles(item: IncentiveDomain) {
         if (item.fileCount == 0) {
-            Toast.makeText(
-                requireContext(),
-                "No files uploaded for this item",
-                Toast.LENGTH_SHORT
-            ).show()
+            Toast.makeText(requireContext(), "No files uploaded for this item", Toast.LENGTH_SHORT).show()
             return
         }
 
-        FileViewerDialog.newInstance(
-            item = item,
-            onFileDeleted = { deletedFileUri ->
-                handleFileDeleted(item, deletedFileUri)
-            }
-        ).show(childFragmentManager, "FileViewerDialog")
+        currentSelectedItem = item
+        FileViewerDialog.newInstance(item = item)
+            .show(childFragmentManager, "FileViewerDialog")
     }
 
     private fun handleFileDeleted(item: IncentiveDomain, fileUri: String) {
@@ -630,7 +640,6 @@ class IncentivesSubFragment : Fragment() {
     }
 
     private fun submitDocumentsToServer(item: IncentiveDomain) {
-        binding.progressBar?.visibility = View.VISIBLE
 
         lifecycleScope.launch {
             try {
@@ -648,7 +657,6 @@ class IncentivesSubFragment : Fragment() {
 
                 // viewModel.updateIncentiveStatus(item)
 
-                binding.progressBar?.visibility = View.GONE
 
                 Toast.makeText(
                     requireContext(),
@@ -667,6 +675,18 @@ class IncentivesSubFragment : Fragment() {
                     "Failed to submit documents. Please try again.",
                     Toast.LENGTH_LONG
                 ).show()
+            }
+        }
+    }
+
+    private fun setupFileDeleteListener() {
+        childFragmentManager.setFragmentResultListener(
+            FileViewerDialog.REQUEST_KEY,
+            viewLifecycleOwner
+        ) { _, bundle ->
+            val deletedUri = bundle.getString(FileViewerDialog.RESULT_DELETED_URI) ?: return@setFragmentResultListener
+            currentSelectedItem?.let { item ->
+                handleFileDeleted(item, deletedUri)
             }
         }
     }

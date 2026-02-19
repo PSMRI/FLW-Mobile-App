@@ -21,6 +21,9 @@
             name="clickListener"
             type="kotlin.jvm.functions.Function2&lt;java.lang.Long, java.lang.String, kotlin.Unit&gt;" />
 
+        <variable
+            name="isMitanin"
+            type="Boolean" />
 
 
     </data>
@@ -70,7 +73,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:visibility="@{item.defaultIncentive ? View.INVISIBLE : View.VISIBLE}"
+            android:visibility="@{isMitanin ? View.GONE : (item.defaultIncentive ? View.INVISIBLE : View.VISIBLE)}"
             tools:tint="@color/holo_green_dark" />
 
         <TextView
@@ -146,7 +149,9 @@
             app:layout_constraintEnd_toStartOf="@id/ivStatusIcon"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            tools:text="₹240" />
+            tools:text="₹240"
+            android:visibility="@{isMitanin ? View.GONE : View.VISIBLE}" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -213,14 +213,19 @@ IncentivesViewModel @Inject constructor(
 
     fun uploadIncentiveDocuments(item: IncentiveDomain) {
         viewModelScope.launch {
-            _uploadState.value = UploadState.Loading
 
             _uploadState.value = UploadState.Loading
+            val user = _pref.getLoggedInUser()
 
+            if (user == null) {
+                _uploadState.value = UploadState.Error("User not logged in")
+                return@launch
+            }
             val result = _incentiveRepo.uploadIncentiveFiles(
                 id = item.record.id,
-                userId = _pref.getLoggedInUser()?.userId?.toLong() ?: 0L,
+                userId = user.userId.toLong(),
                 moduleName = item.activity.group,
+                activityName = item.activity.name,
                 fileUris = item.uploadedFiles
             )
 
