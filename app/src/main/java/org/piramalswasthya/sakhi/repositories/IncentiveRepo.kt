@@ -250,8 +250,10 @@ class IncentiveRepo @Inject constructor(
         id: Long,
         userId: Long,
         moduleName: String,
+        activityName : String,
         fileUris: List<String>
     ): Result<UploadResponse> {
+        val tempFiles = mutableListOf<File>()
 
         return try {
             val fileParts = mutableListOf<MultipartBody.Part>()
@@ -261,6 +263,7 @@ class IncentiveRepo @Inject constructor(
                 val file = createTempFileFromUri(uri)
 
                 if (file != null) {
+                    tempFiles.add(file)
                     val mimeType = getMimeType(uri) ?: "image/*"
 
                     val requestFile = file.asRequestBody(
@@ -285,6 +288,7 @@ class IncentiveRepo @Inject constructor(
                 id = id.toRequestBody(),
                 userId = userId.toRequestBody(),
                 moduleName = moduleName.toRequestBody(),
+                activityName = activityName.toRequestBody(),
                 images = fileParts
             )
 
@@ -300,20 +304,38 @@ class IncentiveRepo @Inject constructor(
             Timber.e(e, "Error uploading files")
             Result.failure(e)
         }
+        finally {
+            tempFiles.forEach { file ->
+                if (file.exists()) {
+                    file.delete()
+                    Timber.d("Temp file deleted: ${file.name}")
+                }
+            }
+        }
     }
 
 
     private fun createTempFileFromUri(uri: Uri): File? {
         return try {
             val inputStream = context.contentResolver.openInputStream(uri)
-            val fileName = getFilesName(uri,context) ?: "temp_file_${System.currentTimeMillis()}"
+                ?: run {
+                    Timber.w("InputStream is null for URI: $uri")
+                    return null
+                }
 
+            val fileName = getFilesName(uri, context) ?: "temp_file_${System.currentTimeMillis()}"
             val tempFile = File(context.cacheDir, fileName)
 
-            inputStream?.use { input ->
+            inputStream.use { input ->
                 FileOutputStream(tempFile).use { output ->
                     input.copyTo(output)
                 }
+            }
+
+            if (tempFile.length() == 0L) {
+                Timber.w("Temp file is empty, deleting: ${tempFile.name}")
+                tempFile.delete()
+                return null
             }
 
             tempFile

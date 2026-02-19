@@ -169,7 +169,7 @@ class IncentivesFragment : Fragment() {
                 viewModel.getRecordsForActivity(activityId).collect { records ->
 
                     val hasValidBen = records.any { it.record.benId != 0L }
-                    val allNotEligible = records.all { it.record.isEligible == false }
+                    val allNotEligible = records.all { it.record.isEligible == false } && !isMitaninVariant
 
                     if (hasValidBen || allNotEligible) {
 
@@ -294,6 +294,12 @@ class IncentivesFragment : Fragment() {
                 }
             }
             pd.show(requireFragmentManager(), "MonthYearPickerDialog1")
+        }
+
+        if (isMitaninVariant) {
+            binding.tvHeaderAmount.visibility = View.GONE
+            binding.tvHeaderDoc.visibility = View.GONE
+            binding.guideline75.setGuidelinePercent(0.9f)
         }
     }
 

@@ -14,6 +14,9 @@
         <variable
             name="clickListener"
             type="org.piramalswasthya.sakhi.adapters.IncentiveListAdapter.FileClickListener" />
+        <variable
+            name="isMitanin"
+            type="Boolean" />
         <import type="android.view.View"/>
 
     </data>
@@ -107,8 +110,8 @@
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/ll_details"
+            android:visibility="@{isMitanin ? View.GONE : View.VISIBLE}"
             >
-
             <ImageButton
                 android:id="@+id/btn_upload_files"
                 android:layout_width="70dp"
@@ -161,8 +164,8 @@
             android:onClick="@{() -> clickListener.onSubmitClick(item)}"
             android:text="@{item.isSubmitted ? @string/submitted : @string/submit}"
             app:iconSize="18dp"
-            android:textColor="@color/design_default_color_on_primary"
-            android:visibility="@{item.record.eligible? View.GONE : View.VISIBLE}"
+            android:textColor="@color/light_blue"
+            android:visibility="@{isMitanin ? View.GONE : (item.record.eligible ? View.GONE : View.VISIBLE)}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/ll_file_actions"
             app:layout_constraintWidth_percent="0.30" />

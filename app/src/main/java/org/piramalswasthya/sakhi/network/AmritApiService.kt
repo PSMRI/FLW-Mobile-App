@@ -488,6 +488,7 @@ interface AmritApiService {
         @Part("id") id: RequestBody,
         @Part("userId") userId: RequestBody,
         @Part("moduleName") moduleName: RequestBody,
+        @Part("activityName") activityName : RequestBody,
         @Part images: List<MultipartBody.Part>
 
 

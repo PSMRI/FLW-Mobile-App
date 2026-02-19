@@ -5,12 +5,15 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.databinding.RvItemIncentiveBinding
 import org.piramalswasthya.sakhi.model.IncentiveDomain
 
 
 class IncentiveListAdapter( private val fileClickListener: FileClickListener) :
     ListAdapter<IncentiveDomain, IncentiveListAdapter.IncentiveViewHolder>(IncentiveDiffUtilCallBack) {
+    private val isMitanin = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
+
     private object IncentiveDiffUtilCallBack : DiffUtil.ItemCallback<IncentiveDomain>() {
         override fun areItemsTheSame(
             oldItem: IncentiveDomain, newItem: IncentiveDomain
@@ -33,11 +36,13 @@ class IncentiveListAdapter( private val fileClickListener: FileClickListener) :
         }
 
         fun bind(
-            item: IncentiveDomain,serialNo : Int, clickListener: FileClickListener
+            item: IncentiveDomain,serialNo : Int, clickListener: FileClickListener,isMitanin: Boolean
         ) {
             binding.item = item
             binding.serialNo = serialNo
             binding.clickListener = clickListener
+            binding.isMitanin = isMitanin
+
             binding.executePendingBindings()
 
         }
@@ -49,7 +54,7 @@ class IncentiveListAdapter( private val fileClickListener: FileClickListener) :
 
     override fun onBindViewHolder(holder: IncentiveViewHolder, position: Int) {
         holder.bind(
-            getItem(position),position+1,fileClickListener
+            getItem(position),position+1,fileClickListener,isMitanin
 
         )
     }
