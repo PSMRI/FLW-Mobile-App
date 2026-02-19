@@ -726,7 +726,20 @@
                                     }
                                     else{
                                         minDate = when (field.fieldId) {
-                                            "visit_date" -> null
+                                            "visit_date" -> {
+                                                if (formId == FormConstants.HBNC_FORM_ID) {
+                                                    val dueDate = getDate("due_date")
+                                                    when {
+                                                        dueDate != null && minVisitDate != null ->
+                                                            if (dueDate.after(minVisitDate)) dueDate else minVisitDate
+                                                        dueDate != null -> dueDate
+                                                        minVisitDate != null -> minVisitDate
+                                                        else -> null
+                                                    }
+                                                } else {
+                                                    null
+                                                }
+                                            }
                                             "nrc_admission_date" -> getDate("visit_date")
                                             "nrc_discharge_date" -> getDate("nrc_admission_date")
                                             "follow_up_visit_date" -> getDate("nrc_discharge_date")
