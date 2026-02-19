@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.repositories
 
 import android.app.Application
+import android.net.Uri
 import android.widget.Toast
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -27,6 +28,7 @@ import org.piramalswasthya.sakhi.network.*
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.NewBenRegViewModel
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
+import java.io.File
 import java.lang.Long.min
 import java.net.SocketTimeoutException
 import java.text.SimpleDateFormat
@@ -247,12 +249,51 @@ class BenRepo @Inject constructor(
 
     suspend fun persistRecord(ben: BenRegCache) {
         withContext(Dispatchers.IO) {
-            ben.userImage = ben.userImage?.let {
-                ImageUtils.saveBenImageFromCameraToStorage(context, it, ben.beneficiaryId)
+
+            val originalImagePath = ben.userImage
+            val finalImagePath = originalImagePath?.let { imagePath ->
+                val uri = Uri.parse(imagePath)
+                val filePath = uri.path
+                    ?: throw IllegalStateException("Invalid image URI: $imagePath")
+
+                val file = File(filePath)
+
+                when {
+                    file.absolutePath.startsWith(context.cacheDir.absolutePath) -> {
+                        val savedPath = ImageUtils.saveBenImageFromCameraToStorage(
+                            context = context,
+                            uriString = imagePath,
+                            benId = ben.beneficiaryId
+                        )
+
+                        if (savedPath.isNullOrBlank()) {
+                            Timber.e("Image compression/save failed for beneficiaryId=${ben.beneficiaryId}")
+
+                            // Cleanup orphaned cache file
+                            runCatching { file.delete() }
+                                .onFailure { Timber.w(it, "Failed to delete orphaned cache image") }
+
+                            throw IllegalStateException("Failed to save beneficiary image")
+                        }
+
+                        savedPath
+                    }
+
+                    file.absolutePath.startsWith(context.filesDir.absolutePath) -> {
+                        imagePath
+                    }
+
+                    else -> {
+                        Timber.w("Unknown image path source: $imagePath")
+                        imagePath
+                    }
+                }
             }
+            ben.userImage = finalImagePath
             benDao.upsert(ben)
         }
     }
+
 
     suspend fun updateRecord(ben: BenRegCache) {
         withContext(Dispatchers.IO) {
@@ -365,7 +406,7 @@ class BenRepo @Inject constructor(
 
                     return true
                 }
-                if (responseStatusCode == 5002) {
+                if (responseStatusCode == 5002 || responseStatusCode ==401) {
                     if (userRepo.refreshTokenTmc(
                             user.userName, user.password
                         )
@@ -380,7 +421,7 @@ class BenRepo @Inject constructor(
             return false
         } catch (e: java.lang.Exception) {
             benDao.setSyncState(ben.householdId, ben.beneficiaryId, SyncState.UNSYNCED)
-            Timber.d("Caugnt error $e")
+            Timber.e("Caugnt error $e")
             return false
         }
     }
@@ -418,10 +459,15 @@ class BenRepo @Inject constructor(
                         )
                     )
                 } catch (e: java.lang.Exception) {
-                    Timber.d("caught error in adding kidDetails : $e")
+                    Timber.e("caught error in adding kidDetails : $e")
                 }
             }
 
+            // RECORD-LEVEL ISOLATION: BenRepo previously returned true
+            // regardless of upload success (Pattern C — silent success).
+            // Now failures are explicitly logged so they're visible in Timber
+            // logs. The worker still returns true (failed records are already
+            // marked via benSyncWithServerFailed and retry on next cycle).
             val uploadDone = postDataToAmritServer(
                 benNetworkPostList, householdNetworkPostList, kidNetworkPostList,
             )
@@ -429,6 +475,9 @@ class BenRepo @Inject constructor(
                 benNetworkPostList.takeIf { it.isNotEmpty() }?.map { it.benId }?.let {
                     benDao.benSyncWithServerFailed(*it.toLongArray())
                 }
+                Timber.e("Beneficiary batch push FAILED: ${benNetworkPostList.size} ben records, ${householdNetworkPostList.size} household records")
+            } else {
+                Timber.d("Beneficiary batch push succeeded: ${benNetworkPostList.size} ben records, ${householdNetworkPostList.size} household records")
             }
             return@withContext true
         }
@@ -439,7 +488,7 @@ class BenRepo @Inject constructor(
         benNetworkPostSet: MutableSet<BenPost>,
         householdNetworkPostSet: MutableSet<HouseholdNetwork>,
         kidNetworkPostSet: MutableSet<BenRegKidNetwork>,
-//        cbacPostList: MutableSet<CbacPost>
+        retryCount: Int = 3,
     ): Boolean {
         if (benNetworkPostSet.isEmpty() && householdNetworkPostSet.isEmpty() && kidNetworkPostSet.isEmpty()) return true
         val rmnchData = SendingRMNCHData(
@@ -470,7 +519,7 @@ class BenRepo @Inject constructor(
                         benToUpdateList?.let { benDao.benSyncedWithServer(*it) }
                         hhToUpdateList?.let { householdDao.householdSyncedWithServer(*it) }
                         return true
-                    } else if (responseStatusCode == 5002) {
+                    } else if (responseStatusCode == 5002 || responseStatusCode ==401)  {
                         val user = preferenceDao.getLoggedInUser()
                             ?: throw IllegalStateException("User not logged in according to db")
                         if (userRepo.refreshTokenTmc(
@@ -484,15 +533,17 @@ class BenRepo @Inject constructor(
             Timber.w("Bad Response from server, need to check $householdNetworkPostSet\n$benNetworkPostSet\n$kidNetworkPostSet $response ")
             return false
         } catch (e: SocketTimeoutException) {
-            Timber.d("Caught exception $e here")
-            return postDataToAmritServer(
-                benNetworkPostSet, householdNetworkPostSet, kidNetworkPostSet
+            Timber.e("Caught exception $e here")
+            if (retryCount > 0) return postDataToAmritServer(
+                benNetworkPostSet, householdNetworkPostSet, kidNetworkPostSet, retryCount - 1
             )
+            Timber.e("postDataToAmritServer: max retries exhausted")
+            return false
         } catch (e: JSONException) {
-            Timber.d("Caught exception $e here")
+            Timber.e("Caught exception $e here")
             return false
         } catch (e: java.lang.Exception) {
-            Timber.d("Caught exception $e here")
+            Timber.e("Caught exception $e here")
             return false
         }
     }
@@ -501,6 +552,7 @@ class BenRepo @Inject constructor(
     suspend fun deactivateHouseHold(
         benNetworkPostSet: List<BenRegCache>,
         householdNetworkPostSet: HouseholdNetwork,
+        retryCount: Int = 3,
     ): Boolean {
         val user = preferenceDao.getLoggedInUser() ?: throw IllegalStateException("No user logged in!!")
         val benNetworkPostList: List<BenPost> =
@@ -542,22 +594,24 @@ class BenRepo @Inject constructor(
             Timber.w("Bad Response from server, need to check $householdNetworkPostSet")
             return false
         } catch (e: SocketTimeoutException) {
-            Timber.d("Caught exception $e here")
-            return deactivateHouseHold(
-                benNetworkPostSet, householdNetworkPostSet
+            Timber.e("Caught exception $e here")
+            if (retryCount > 0) return deactivateHouseHold(
+                benNetworkPostSet, householdNetworkPostSet, retryCount - 1
             )
+            Timber.e("deactivateHouseHold: max retries exhausted")
+            return false
         } catch (e: JSONException) {
-            Timber.d("Caught exception $e here")
+            Timber.e("Caught exception $e here")
             return false
         } catch (e: java.lang.Exception) {
-            Timber.d("Caught exception $e here")
+            Timber.e("Caught exception $e here")
             return false
         }
     }
 
     suspend fun deactivateBeneficiary(
         benNetworkPostSet: List<BenRegCache>,
-//        householdNetworkPostSet: HouseholdNetwork,
+        retryCount: Int = 3,
     ): Boolean {
         val user = preferenceDao.getLoggedInUser() ?: throw IllegalStateException("No user logged in!!")
         val benNetworkPostList: List<BenPost> =
@@ -599,15 +653,17 @@ class BenRepo @Inject constructor(
             Timber.w("Bad Response from server, need to check $benNetworkPostList")
             return false
         } catch (e: SocketTimeoutException) {
-            Timber.d("Caught exception $e here")
-            return deactivateBeneficiary(
-               benNetworkPostSet/*, householdNetworkPostSet*/
+            Timber.e("Caught exception $e here")
+            if (retryCount > 0) return deactivateBeneficiary(
+               benNetworkPostSet, retryCount - 1
             )
+            Timber.e("deactivateBeneficiary: max retries exhausted")
+            return false
         } catch (e: JSONException) {
-            Timber.d("Caught exception $e here")
+            Timber.e("Caught exception $e here")
             return false
         } catch (e: java.lang.Exception) {
-            Timber.d("Caught exception $e here")
+            Timber.e("Caught exception $e here")
             return false
         }
     }
@@ -667,7 +723,7 @@ class BenRepo @Inject constructor(
                                 return@withContext pageSize
                             }
 
-                            5002 -> {
+                            401,5002 -> {
                                 if (pageNumber == 0 && userRepo.refreshTokenTmc(
                                         user.userName, user.password
                                     )
@@ -689,11 +745,11 @@ class BenRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_ben error : $e")
+                Timber.e("get_ben error : $e")
                 return@withContext -2
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_ben error : $e")
+                Timber.e("get_ben error : $e")
                 return@withContext -1
             }
             -1
@@ -839,14 +895,14 @@ class BenRepo @Inject constructor(
                             }
                             throw IllegalStateException("Response code !-100")
                         } else {
-                            Timber.d("getBenData() returned error message : $errorMessage")
+                            Timber.e("getBenData() returned error message : $errorMessage")
                             throw IllegalStateException("Response code !-100")
                         }
                     }
                 }
 
             } catch (e: Exception) {
-                Timber.d("get_ben error : $e")
+                Timber.e("get_ben error : $e")
             }
             Timber.d("get_ben data : $benDataList")
             Pair(0, benDataList)
@@ -922,11 +978,11 @@ class BenRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_ben error : $e")
+                Timber.e("get_ben error : $e")
                 return@withContext -2
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_ben error : $e")
+                Timber.e("get_ben error : $e")
                 return@withContext -1
             }
             -1
@@ -1666,7 +1722,7 @@ class BenRepo @Inject constructor(
                         }
                     }
 
-                    5000, 5002 -> {
+                    401,5000, 5002 -> {
                         if (JSONObject(responseBody).getString("errorMessage")
                                 .contentEquals("Invalid login key or session is expired")
                         ) {
@@ -1694,7 +1750,7 @@ class BenRepo @Inject constructor(
 
     suspend fun sendOtp(mobileNo: String): SendOtpResponse? {
         try {
-            var sendOtp = sendOtpRequest(mobileNo);
+            var sendOtp = sendOtpRequest(mobileNo)
             val response = tmcNetworkApiService.sendOtp(sendOtp)
             if (response.isSuccessful) {
                 val responseBody = response.body()?.string()
@@ -1733,7 +1789,7 @@ class BenRepo @Inject constructor(
     }
     suspend fun resendOtp(mobileNo: String): SendOtpResponse? {
         try {
-            var sendOtp = sendOtpRequest(mobileNo);
+            var sendOtp = sendOtpRequest(mobileNo)
             val response = tmcNetworkApiService.resendOtp(sendOtp)
             if (response.isSuccessful) {
                 val responseBody = response.body()?.string()
@@ -1773,8 +1829,8 @@ class BenRepo @Inject constructor(
 
     suspend fun verifyOtp(mobileNo: String,otp:Int): ValidateOtpResponse? {
 
-            var validateOtp = ValidateOtpRequest(otp,mobileNo);
-            val response = tmcNetworkApiService.validateOtp(validateOtp)
+            var validateOtp = ValidateOtpRequest(otp,mobileNo)
+        val response = tmcNetworkApiService.validateOtp(validateOtp)
             if (response.isSuccessful) {
                 val responseBody = response.body()?.string()
                 when (responseBody?.let { JSONObject(it).getInt("statusCode") }) {

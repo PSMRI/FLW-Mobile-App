@@ -2,8 +2,8 @@ package org.piramalswasthya.sakhi.work
 
 import android.content.Context
 import androidx.hilt.work.HiltWorker
-import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import com.google.gson.Gson
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -11,31 +11,30 @@ import org.json.JSONObject
 import org.piramalswasthya.sakhi.database.room.dao.ABHAGenratedDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.network.ABHAProfile
-import org.piramalswasthya.sakhi.network.AmritApiService
 import org.piramalswasthya.sakhi.network.MapHIDtoBeneficiary
 import org.piramalswasthya.sakhi.network.NetworkResult
-import org.piramalswasthya.sakhi.network.interceptors.TokenInsertTmcInterceptor
 import org.piramalswasthya.sakhi.repositories.AbhaIdRepo
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import timber.log.Timber
 import java.net.SocketTimeoutException
+
 @HiltWorker
 class PushMapAbhatoBenficiaryWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted params: WorkerParameters,
     private val benRepo: BenRepo,
     private val abhaGenratedDao: ABHAGenratedDao,
-    private val preferenceDao: PreferenceDao,
+    override val preferenceDao: PreferenceDao,
     private val abhaIdRepo: AbhaIdRepo,
 
-    ) : CoroutineWorker(appContext, params) {
+    ) : BasePushWorker(appContext, params) {
     companion object {
         const val name = "PushMapAbhatoBenficiaryWorker"
     }
 
-    override suspend fun doWork(): Result {
+    override val workerName = "PushMapAbhatoBenficiaryWorker"
 
-        init()
+    override suspend fun doSyncWork(): Result {
         val unsyncedList = abhaGenratedDao.getAllAbha()
         var allSuccessful = true
         for (model in unsyncedList) {
@@ -75,18 +74,10 @@ class PushMapAbhatoBenficiaryWorker @AssistedInject constructor(
                 }
             } catch (e: Exception) {
                 Timber.e("Exception syncing ABHA for benId=${model.beneficiaryID}: $e")
-                return if (e is SocketTimeoutException) Result.retry() else Result.failure()
+                return if (e is SocketTimeoutException) Result.retry() else Result.failure(workDataOf(KEY_WORKER_NAME to workerName, KEY_ERROR to "ABHA sync failed: ${e.message}"))
             }
         }
 
         return if (allSuccessful) Result.success() else Result.retry()
-    }
-
-    private fun init() {
-        if (TokenInsertTmcInterceptor.getToken().isEmpty()) {
-            preferenceDao.getAmritToken()?.let {
-                TokenInsertTmcInterceptor.setToken(it)
-            }
-        }
     }
 }

@@ -19,12 +19,14 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.BenListAdapter
+import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.all_household.AllHouseholdFragmentDirections
+import org.piramalswasthya.sakhi.utils.RoleConstants
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -47,6 +49,13 @@ class NcdListFragment : Fragment() {
             .setMessage("it")
             .setPositiveButton(resources.getString(R.string.ok)) { dialog, _ -> dialog.dismiss() }
             .create()
+    }
+
+    private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
+        val lowerValue = value.lowercase()
+        binding.searchView.setText(lowerValue)
+        binding.searchView.setSelection(lowerValue.length)
+        viewModel.filterText(lowerValue)
     }
 
     override fun onCreateView(
@@ -120,6 +129,9 @@ class NcdListFragment : Fragment() {
         binding.btnNextPage.setOnClickListener {
             findNavController().navigate(AllHouseholdFragmentDirections.actionAllHouseholdFragmentToNewHouseholdFragment())
         }
+
+        binding.ibSearch.setOnClickListener { sttContract.launch(Unit) }
+
         val searchTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 
@@ -166,10 +178,10 @@ class NcdListFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
-                (it as HomeActivity).updateActionBar(R.drawable.ic__ben, getString(R.string.ncd_list))
-            } else {
+            if (prefDao.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
                 (it as SupervisorActivity).updateActionBar(R.drawable.ic__ben, getString(R.string.ncd_list))
+            } else {
+                (it as HomeActivity).updateActionBar(R.drawable.ic__ben, getString(R.string.ncd_list))
             }
         }
     }

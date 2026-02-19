@@ -70,4 +70,7 @@ interface ImmunizationDao {
 
     @Query("SELECT * FROM VACCINE WHERE vaccineName = :name limit 1")
     suspend fun getVaccineByName(name: String): Vaccine?
+
+    @Query("UPDATE IMMUNIZATION SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetSyncingToUnsynced()
 }

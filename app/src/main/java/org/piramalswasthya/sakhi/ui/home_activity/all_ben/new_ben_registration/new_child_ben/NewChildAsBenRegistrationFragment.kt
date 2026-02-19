@@ -354,8 +354,8 @@ class NewChildAsBenRegistrationFragment : Fragment() {
         super.onStart()
         activity?.let {
             (it as HomeActivity).updateActionBar(
-                R.drawable.ic__ben,
-                getString( R.string.title_new_ben_reg_non_hof)
+                R.drawable.ic__child,
+                getString( R.string.child_reg)
             )
         }
 

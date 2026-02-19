@@ -15,11 +15,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.BenListAdapter
+import org.piramalswasthya.sakhi.adapters.BenPagingAdapter
 import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.AlertFilterBinding
@@ -30,6 +33,7 @@ import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registration.EyeSurgeryFormViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.all_household.AllHouseholdFragmentDirections
 import org.piramalswasthya.sakhi.utils.HelperUtil
+import org.piramalswasthya.sakhi.utils.RoleConstants
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -48,7 +52,7 @@ class AllBenFragment : Fragment() {
         AllBenFragmentArgs.fromBundle(requireArguments())
     }
 
-    private lateinit var benAdapter: BenListAdapter
+    private lateinit var benAdapter: BenPagingAdapter
 
     private var selectedAbha = Abha.ALL
 
@@ -56,9 +60,10 @@ class AllBenFragment : Fragment() {
     private val viewModelEyeSurgery: EyeSurgeryFormViewModel by viewModels()
 
     private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
-        binding.searchView.setText(value)
-        binding.searchView.setSelection(value.length)
-        viewModel.filterText(value)
+        val lowerValue = value.lowercase()
+        binding.searchView.setText(lowerValue)
+        binding.searchView.setSelection(lowerValue.length)
+        viewModel.filterText(lowerValue)
     }
 
     private val abhaDisclaimer by lazy {
@@ -136,13 +141,7 @@ class AllBenFragment : Fragment() {
         }
 
         binding.ibDownload.setOnClickListener {
-            lifecycleScope.launch {
-                viewModel.benList.collect { users ->
-                    if (users.isNotEmpty()) {
-                        viewModel.createCsvFile(requireContext(), users)
-                    }
-                }
-            }
+            viewModel.downloadCsv(requireContext())
         }
 
         if (args.source == 1 || args.source == 2 || args.source == 3 || args.source == 4) {
@@ -150,11 +149,10 @@ class AllBenFragment : Fragment() {
             binding.ibDownload.visibility = View.VISIBLE
         }
 
-        benAdapter = BenListAdapter(
+        benAdapter = BenPagingAdapter(
             clickListener = BenListAdapter.BenClickListener(
                 { item,hhId, benId, relToHeadId ->
 
-                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
                         findNavController().navigate(
                             AllBenFragmentDirections.actionAllBenFragmentToNewBenRegFragment(
                                 hhId = hhId,
@@ -165,7 +163,6 @@ class AllBenFragment : Fragment() {
 
                             )
                         )
-                    }
 
                 },
                 clickedWifeBen = {
@@ -219,6 +216,7 @@ class AllBenFragment : Fragment() {
                             )
                         )
                     }
+
                 },
 
                 {item,hhid->
@@ -227,7 +225,6 @@ class AllBenFragment : Fragment() {
                     checkAndGenerateABHA(benId)
                 },
                 {item, benId, hhId , isViewMode, isIFA->
-                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
                         if (isIFA){
                             findNavController().navigate(
                                 AllBenFragmentDirections.actionAllBenFragmentToBenIfaFormFragment(
@@ -246,7 +243,6 @@ class AllBenFragment : Fragment() {
                             )
                         }
 
-                    }
                 },
                 {
                     try {
@@ -274,13 +270,28 @@ class AllBenFragment : Fragment() {
             context = requireActivity()
         )
         binding.rvAny.adapter = benAdapter
+        binding.rvAny.setHasFixedSize(true)
+        binding.rvAny.setItemViewCacheSize(20)
+        (binding.rvAny.layoutManager as? androidx.recyclerview.widget.LinearLayoutManager)?.apply {
+            initialPrefetchItemCount = 10
+        }
+
         lifecycleScope.launch {
-            viewModel.benList.collect {
-                if (it.isEmpty())
-                    binding.flEmpty.visibility = View.VISIBLE
-                else
-                    binding.flEmpty.visibility = View.GONE
-                benAdapter.submitList(it)
+            viewModel.benList.collectLatest {
+                benAdapter.submitData(it)
+            }
+        }
+
+        lifecycleScope.launch {
+            benAdapter.loadStateFlow.collectLatest { loadStates ->
+                val isEmpty = loadStates.refresh is LoadState.NotLoading && benAdapter.itemCount == 0
+                binding.flEmpty.visibility = if (isEmpty) View.VISIBLE else View.GONE
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.childCounts.collectLatest { countMap ->
+                benAdapter.submitChildCounts(countMap)
             }
         }
 
@@ -357,8 +368,8 @@ class AllBenFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
-                (it as HomeActivity).updateActionBar(
+            if (prefDao.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
+                (it as SupervisorActivity).updateActionBar(
                     R.drawable.ic__ben,
                     title = if (args.source == 1) {
                         getString(R.string.icon_title_abhas)
@@ -369,7 +380,7 @@ class AllBenFragment : Fragment() {
                     }
                 )
             } else {
-                (it as SupervisorActivity).updateActionBar(
+                (it as HomeActivity).updateActionBar(
                     R.drawable.ic__ben,
                     title = if (args.source == 1) {
                         getString(R.string.icon_title_abhas)

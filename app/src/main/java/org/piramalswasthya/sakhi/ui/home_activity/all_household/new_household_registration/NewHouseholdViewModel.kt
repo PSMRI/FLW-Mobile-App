@@ -45,6 +45,7 @@ class NewHouseholdViewModel @Inject constructor(
     fun getIsConsentAgreed() = isConsentAgreed
 
     private val hhIdFromArgs = NewHouseholdFragmentArgs.fromSavedStateHandle(savedStateHandle).hhId
+    private val isAshaFamily = NewHouseholdFragmentArgs.fromSavedStateHandle(savedStateHandle).isAshaFamily
 
     private val _state = MutableLiveData(State.IDLE)
     val state: LiveData<State>
@@ -71,6 +72,7 @@ class NewHouseholdViewModel @Inject constructor(
                     ashaId = user.userId,
                     isDraft = true,
                     processed = "N",
+                    registrationType = isAshaFamily,
                     locationRecord = locationRecord
                 )
                 dataset.setupPage(household)

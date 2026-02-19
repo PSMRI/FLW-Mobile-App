@@ -694,7 +694,9 @@ data class BenWithAncVisitCache(
 
                     if (lastVisitRecord != null) {
                         val today = Calendar.getInstance().timeInMillis
-                        val gapDays = TimeUnit.MILLISECONDS.toDays(today - lastVisitRecord.visitDate!!)
+                        val gapDays = lastVisitRecord.visitDate?.let { visitDate ->
+                            TimeUnit.MILLISECONDS.toDays(today - visitDate)
+                        } ?: 0
                         eligibilityFilledWeek = if (gapDays >= 7) 1 else 0
                     }
 

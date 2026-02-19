@@ -99,11 +99,11 @@ class AdolescentHealthRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_tb error : $e")
+                Timber.e("get_tb error : $e")
                 return@withContext -2
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_tb error : $e")
+                Timber.e("get_tb error : $e")
                 return@withContext -1
             }
             -1
@@ -131,11 +131,20 @@ class AdolescentHealthRepo @Inject constructor(
         return tbScreeningList
     }
 
+    // RECORD-LEVEL ISOLATION: Coordinator always returns true so the
+    // WorkManager worker succeeds. Failed records stay UNSYNCED for next cycle.
     suspend fun pushUnSyncedRecords(): Boolean {
         val screeningResult = pushUnSyncedRecordsAdolescentScreening()
-        return (screeningResult == 1)
+        Timber.d("Adolescent Health push result: screening=$screeningResult")
+        // Worker succeeds — failed records stay UNSYNCED for next cycle
+        return true
     }
 
+    // RECORD-LEVEL ISOLATION: Adolescent Health records are now sent in
+    // chunks of 20 instead of one giant batch. Previously, if ANY record in
+    // the batch was malformed, the ENTIRE batch failed and ALL records stayed
+    // UNSYNCED. Now each chunk is independent — one bad chunk doesn't affect
+    // the others. Failed chunks' records stay UNSYNCED for the next sync cycle.
     private suspend fun pushUnSyncedRecordsAdolescentScreening(): Int {
 
         return withContext(Dispatchers.IO) {
@@ -145,66 +154,61 @@ class AdolescentHealthRepo @Inject constructor(
 
             val tbsnList: List<AdolescentHealthCache> = adolescentHealthDao.getAdolescentHealth(SyncState.UNSYNCED)
 
-            val tbsnDtos = mutableListOf<AdolscentHealthDTO>()
-            tbsnList.forEach { cache ->
-                tbsnDtos.add(cache.toDTO())
-            }
-            if (tbsnDtos.isEmpty()) return@withContext 1
-            try {
-                val response = tmcNetworkApiService.saveAdolescentHealthData(
-                    AdolescentHealthRequestDTO(
-                        userId = user.userId,
-                        adolescentHealths = tbsnDtos
-                    )
-                )
-                val statusCode = response.code()
-                if (statusCode == 200) {
-                    val responseString = response.body()?.string()
-                    if (responseString != null) {
-                        val jsonObj = JSONObject(responseString)
+            if (tbsnList.isEmpty()) return@withContext 1
 
-                        val responseStatusCode = jsonObj.getInt("statusCode")
-                        Timber.d("Push to amrit adolescent health data : $responseStatusCode")
-                        when (responseStatusCode) {
-                            200 -> {
-                                try {
-                                    updateSyncStatusScreening(tbsnList)
-                                    return@withContext 1
-                                } catch (e: Exception) {
-                                    Timber.d("adolescent health entries not synced $e")
+            val CHUNK_SIZE = 20
+            val chunks = tbsnList.chunked(CHUNK_SIZE)
+            var successCount = 0
+            var failCount = 0
+
+            for (chunk in chunks) {
+                try {
+                    val chunkDtos = chunk.map { it.toDTO() }
+
+                    val response = tmcNetworkApiService.saveAdolescentHealthData(
+                        AdolescentHealthRequestDTO(
+                            userId = user.userId,
+                            adolescentHealths = chunkDtos
+                        )
+                    )
+                    val statusCode = response.code()
+                    if (statusCode == 200) {
+                        val responseString = response.body()?.string()
+                        if (responseString != null) {
+                            val jsonObj = JSONObject(responseString)
+                            val responseStatusCode = jsonObj.getInt("statusCode")
+                            Timber.d("Push to Amrit Adolescent Health chunk: $responseStatusCode")
+                            when (responseStatusCode) {
+                                200 -> {
+                                    updateSyncStatusScreening(chunk)
+                                    successCount += chunk.size
                                 }
 
-                            }
+                                401, 5002 -> {
+                                    if (userRepo.refreshTokenTmc(user.userName, user.password)) {
+                                        Timber.d("Token refreshed, Adolescent Health chunk will retry next cycle")
+                                    }
+                                    failCount += chunk.size
+                                }
 
-                            5002 -> {
-                                if (userRepo.refreshTokenTmc(
-                                        user.userName, user.password
-                                    )
-                                ) throw SocketTimeoutException("Refreshed Token!")
-                                else throw IllegalStateException("User Logged out!!")
-                            }
-
-                            5000 -> {
-                                val errorMessage = jsonObj.getString("errorMessage")
-                                if (errorMessage == "No record found") return@withContext 0
-                            }
-
-                            else -> {
-                                throw IllegalStateException("$responseStatusCode received, dont know what todo!?")
+                                else -> {
+                                    Timber.e("Adolescent Health chunk failed with statusCode: $responseStatusCode")
+                                    failCount += chunk.size
+                                }
                             }
                         }
+                    } else {
+                        Timber.e("Adolescent Health chunk HTTP error: $statusCode")
+                        failCount += chunk.size
                     }
+                } catch (e: Exception) {
+                    Timber.e(e, "Adolescent Health chunk push failed: ${chunk.size} records")
+                    failCount += chunk.size
                 }
-
-            } catch (e: SocketTimeoutException) {
-                Timber.d("get_tb error : $e")
-                return@withContext -2
-
-            } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_tb error : $e")
-                return@withContext -1
             }
-            -1
+
+            Timber.d("Adolescent Health push complete: $successCount succeeded, $failCount failed out of ${tbsnList.size}")
+            return@withContext 1
         }
     }
 

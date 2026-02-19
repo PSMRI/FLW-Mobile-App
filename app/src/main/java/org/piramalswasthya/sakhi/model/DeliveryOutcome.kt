@@ -41,7 +41,7 @@ data class DeliveryOutcomeCache(
     var stillBirth: Int? = 0,
     var dateOfDischarge: Long? = null,
     var timeOfDischarge: String? = null,
-    var isJSYBenificiary: Boolean? = null,
+    var isJSYBenificiary: Boolean? = false,
 
     var isDeath: Boolean? = null,
     var isDeathValue: String? = null,
