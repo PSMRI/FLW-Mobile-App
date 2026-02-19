@@ -149,7 +149,8 @@ class HBYCFormFragment : Fragment() {
                         viewModel.updateFieldValue(field.fieldId, value)
                         adapter.updateFields(viewModel.getVisibleFields())
                     }
-                },)
+                }, formId = HBYC_FORM_ID
+                    )
 
                 recyclerView.adapter = adapter
                 saveButton.visibility = if (isViewMode) View.GONE else View.VISIBLE
