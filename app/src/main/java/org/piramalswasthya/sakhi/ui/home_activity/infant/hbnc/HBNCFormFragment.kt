@@ -187,7 +187,8 @@ class HBNCFormFragment : Fragment() {
                         val updatedVisibleFields = viewModel.getVisibleFields()
                         adapter.updateFields(updatedVisibleFields)
                     }
-                },)
+                },
+                    formId = HBNC_FORM_ID)
 
                 recyclerView.adapter = adapter
                 adapter.notifyDataSetChanged()
