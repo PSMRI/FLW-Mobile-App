@@ -33,6 +33,9 @@ import androidx.core.content.FileProvider
 import androidx.core.graphics.withTranslation
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONArray
 import org.json.JSONObject
 import org.piramalswasthya.sakhi.BuildConfig
@@ -842,6 +845,37 @@ object HelperUtil {
             add(Calendar.MONTH, 2)
         }.time
     }
+
+     fun getFilesName(uri: Uri,context: Context): String? {
+        var result: String? = null
+
+        if (uri.scheme == "content") {
+            context.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+                if (cursor.moveToFirst()) {
+                    val columnIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                    if (columnIndex >= 0) {
+                        result = cursor.getString(columnIndex)
+                    }
+                }
+            }
+        }
+
+        if (result == null) {
+            result = uri.path
+            val cut = result?.lastIndexOf('/')
+            if (cut != null && cut != -1) {
+                result = result?.substring(cut + 1)
+            }
+        }
+
+        return result
+    }
+
+    fun Long.toRequestBody(): RequestBody =
+        this.toString().toRequestBody("text/plain".toMediaType())
+
+    fun String.toRequestBody(): RequestBody =
+        this.toRequestBody("text/plain".toMediaType())
 
 
 
