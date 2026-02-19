@@ -1,11 +1,13 @@
 package org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.homeVisit
 
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -24,12 +26,16 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.dynamicAdapter.FormRendererAdapter
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentAntenatalCounsellingBinding
+import org.piramalswasthya.sakhi.helpers.getDateFromLong
 import org.piramalswasthya.sakhi.model.BenWithAncListDomain
 import org.piramalswasthya.sakhi.model.ReferalCache
+import org.piramalswasthya.sakhi.model.getDateStrFromLong
+import org.piramalswasthya.sakhi.network.getLongFromDate
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.list.PwAncVisitsListViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.cbac.CbacFragmentDirections
 import org.piramalswasthya.sakhi.utils.dynamicFiledValidator.FieldValidator
+import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.ANC_FORM_ID
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
@@ -77,6 +83,7 @@ class AntenatalCounsellingFragment : Fragment() {
     private var isReferralDialogShown = false
     private var hasAnyDangerSign = false
     private var isSelectAllChecked = false
+    private var lmpDate :Long? =null
     private var referralForReason = "Suspected high-risk pregnancy"
     private var referType = "Maternal"
 
@@ -88,6 +95,7 @@ class AntenatalCounsellingFragment : Fragment() {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -100,8 +108,11 @@ class AntenatalCounsellingFragment : Fragment() {
 
         val currentLang = pref.getCurrentLanguage()
         langCode = currentLang.symbol
-        val todayDate: String = LocalDate.now()
-            .format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+        val todayDate: String = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+        } else {
+            SimpleDateFormat("dd-MM-yyyy").format(Date())
+        }
 
         isReturningFromReferral = savedInstanceState?.getBoolean("isReturningFromReferral", false) ?: false
 
@@ -158,6 +169,16 @@ class AntenatalCounsellingFragment : Fragment() {
                     binding.tvLmpValue.text = benList.lmpString
                     binding.tvWeeksValue.text = benList.weekOfPregnancy.toString()
                     binding.tvEddValue.text = benList.eddString
+                    lmpDate = try {
+                        if (!benList.lmpString.isNullOrBlank()) {
+                            convertDateToLong(benList.lmpString)
+                        } else {
+                            null
+                        }
+                    } catch (e: Exception) {
+                        Timber.e(e, "Error parsing LMP date: ${benList.lmpString}")
+                        null
+                    }
 
                     calculateAndSetMotherAge()
                 } else {
@@ -179,7 +200,7 @@ class AntenatalCounsellingFragment : Fragment() {
                 viewModel.schema.collectLatest { schema ->
                     if (schema == null) return@collectLatest
                     val visibleFields = viewModel.getVisibleFields().toMutableList()
-                    val minVisitDate = viewModel.getMinVisitDate()
+                    val minVisitDate = lmpDate?.let { getDateFromLong(it) } ?: viewModel.getMinVisitDate()
                     val maxVisitDate = viewModel.getMaxVisitDate()
 
                     adapter = FormRendererAdapter(
@@ -197,7 +218,9 @@ class AntenatalCounsellingFragment : Fragment() {
                                 adapter.updateFields(viewModel.getVisibleFields())
                             }
                         },
-                        onShowAlert = null
+                        onShowAlert = null,
+                        formId = FormConstants.ANC_FORM_ID
+
                     )
 
                     binding.recyclerView.adapter = adapter
@@ -212,7 +235,7 @@ class AntenatalCounsellingFragment : Fragment() {
                     if (schema == null) return@collectLatest
 
                     val visibleFields = viewModel.getVisibleFields().toMutableList()
-                    val minVisitDate = viewModel.getMinVisitDate()
+                    val minVisitDate = lmpDate?.let { getDateFromLong(it) } ?: viewModel.getMinVisitDate()
                     val maxVisitDate = viewModel.getMaxVisitDate()
 
                     adapter = FormRendererAdapter(
@@ -231,7 +254,8 @@ class AntenatalCounsellingFragment : Fragment() {
                                 updateSelectAllCheckbox()
                             }
                         },
-                        onShowAlert = null
+                        onShowAlert = null,
+                        formId = FormConstants.ANC_FORM_ID
                     )
 
                     binding.recyclerView.adapter = adapter
@@ -284,7 +308,6 @@ class AntenatalCounsellingFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-
         if (shouldRestoreFormState || isReturningFromReferral) {
             restoreFormState()
             shouldRestoreFormState = false
@@ -629,6 +652,17 @@ class AntenatalCounsellingFragment : Fragment() {
             onShowAlert = null
         )
         binding.recyclerView.adapter = adapter
+    }
+
+    fun convertDateToLong(dateString: String?): Long? {
+        return try {
+            if (dateString.isNullOrBlank()) return null
+            val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+            dateFormat.isLenient = false
+            dateFormat.parse(dateString)?.time
+        } catch (e: Exception) {
+            null
+        }
     }
 
     override fun onStart() {

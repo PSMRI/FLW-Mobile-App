@@ -95,7 +95,7 @@ class AncVisitListAdapter(
             binding.btnViewHomeVisit.visibility =
                 if (item.showViewHomeVisit) View.VISIBLE else View.GONE
 
-            if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true))
+            if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true))
             {
                 binding.btnAddHomeVisit.visibility = View.GONE
                 binding.btnViewHomeVisit.visibility = View.GONE

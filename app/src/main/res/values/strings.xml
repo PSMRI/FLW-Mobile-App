@@ -1186,6 +1186,12 @@
     <string name="mda_form_campagain_title">Lymphatic Filariasis (LF) Mass Drug Administration (MDA) campaign</string>
     <string name="screening">Screening</string>
     <string name="suspected">Suspected</string>
+    <string name="gallery">Gallery</string>
+    <string name="documents">Documents</string>
+    <string name="choose_pdf_or_doc">Choose Pdf or Doc</string>
+    <string name="camera">Camera</string>
+    <string name="upload_files">Upload Files</string>
+    <string name="choose_upload_source">Choose Upload Source</string>
 
     <!-- Sync Dashboard -->
     <string name="sync_dashboard">Sync Dashboard</string>

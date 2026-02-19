@@ -120,6 +120,8 @@ data class IncentiveRecordCache(
     val createdBy: String,
     val updatedDate: Long,
     val updatedBy: String,
+    @ColumnInfo(defaultValue = "0")
+    val isEligible : Boolean
 ) : Parcelable
 
 @Parcelize
@@ -136,6 +138,7 @@ data class IncentiveRecordNetwork(
     val createdBy: String,
     val updatedDate: String,
     val updatedBy: String,
+    val isEligible : Boolean
 ) : Parcelable {
     fun asCacheModel(): IncentiveRecordCache {
         return IncentiveRecordCache(
@@ -151,6 +154,7 @@ data class IncentiveRecordNetwork(
             createdBy = createdBy,
             updatedDate = getLongFromDate(updatedDate),
             updatedBy = updatedBy,
+            isEligible = isEligible
         )
     }
 }
@@ -211,7 +215,12 @@ data class IncentiveActivityWithRecords(
 data class IncentiveDomain(
     val record: IncentiveRecordCache,
     val activity: IncentiveActivityCache,
-    val ben: BenBasicDomain?
+    val ben: BenBasicDomain?,
+    var uploadedFiles: List<String> = emptyList(),
+    var fileCount: Int = 0,
+    var isSubmitted: Boolean = false,
+    var submittedAt: Long = 0L,
+    var serverFileUrls: List<String> = emptyList()
 ) : Parcelable
 
 @Parcelize
@@ -243,7 +252,8 @@ data class IncentiveGrouped(
     val description: String,
     val activity: IncentiveActivityCache,
     val hasZeroBen: Boolean = false,
-    val defaultIncentive : Boolean = false
+    val defaultIncentive : Boolean = false,
+    val isEligible: Boolean = false
 ) : Parcelable
 
 

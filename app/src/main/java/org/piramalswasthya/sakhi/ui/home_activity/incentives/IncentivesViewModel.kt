@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.ui.home_activity.incentives
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -7,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -21,6 +23,8 @@ import org.piramalswasthya.sakhi.repositories.IncentiveRepo
 import java.util.Calendar
 import javax.inject.Inject
 import org.piramalswasthya.sakhi.model.IncentiveActivityDomain
+import org.piramalswasthya.sakhi.model.UploadResponse
+import timber.log.Timber
 
 
 @HiltViewModel
@@ -29,6 +33,22 @@ IncentivesViewModel @Inject constructor(
     pref: PreferenceDao,
     incentiveRepo: IncentiveRepo
 ) : ViewModel() {
+
+
+    sealed class UploadState {
+        object Idle : UploadState()
+        object Loading : UploadState()
+        data class Success(val response: UploadResponse) : UploadState()
+        data class Error(val message: String) : UploadState()
+    }
+
+
+    sealed class FileUpdateState {
+        object Idle : FileUpdateState()
+        object Loading : FileUpdateState()
+        object Success : FileUpdateState()
+        data class Error(val message: String) : FileUpdateState()
+    }
 
     private val _lastUpdated: Long = pref.lastIncentivePullTimestamp
 
@@ -64,6 +84,17 @@ IncentivesViewModel @Inject constructor(
         _isStateChhattisgarh.value = user?.state?.id == 8
         pullIncentives()
     }
+
+    private val _uploadState = MutableStateFlow<UploadState>(UploadState.Idle)
+    val uploadState: StateFlow<UploadState> = _uploadState
+
+
+    private val _fileUpdateState = MutableLiveData<FileUpdateState>()
+    val fileUpdateState: LiveData<FileUpdateState> = _fileUpdateState
+
+    private val _incentivesList = MutableLiveData<List<IncentiveDomain>>()
+    val incentivesList: LiveData<List<IncentiveDomain>> = _incentivesList
+
 
 
     private val _from = MutableStateFlow(initStart)
@@ -157,7 +188,8 @@ IncentivesViewModel @Inject constructor(
                     description = incentives.first().activity.description,
                     activity = incentives.first().activity,
                     hasZeroBen = incentives.any { it.record.benId == 0L },
-                    defaultIncentive = incentives.any { it.activity.fmrCodeOld =="PER_MONTH" }
+                    defaultIncentive = incentives.any { it.activity.fmrCodeOld =="PER_MONTH" },
+                    isEligible = incentives.all {it.record.isEligible}
                 )
             }
             .sortedWith(
@@ -178,5 +210,58 @@ IncentivesViewModel @Inject constructor(
                 .sortedBy { it.record.createdDate }
         }
     }
+
+    fun uploadIncentiveDocuments(item: IncentiveDomain) {
+        viewModelScope.launch {
+
+            _uploadState.value = UploadState.Loading
+            val user = _pref.getLoggedInUser()
+
+            if (user == null) {
+                _uploadState.value = UploadState.Error("User not logged in")
+                return@launch
+            }
+            val result = _incentiveRepo.uploadIncentiveFiles(
+                id = item.record.id,
+                userId = user.userId.toLong(),
+                moduleName = item.activity.group,
+                activityName = item.activity.name,
+                fileUris = item.uploadedFiles
+            )
+
+            result.fold(
+                onSuccess = { response ->
+
+                    item.serverFileUrls = response.fileUrls
+                    item.isSubmitted = true
+                    item.submittedAt = System.currentTimeMillis()
+
+                    // saveToDatabase(item)
+
+                    _uploadState.value = UploadState.Success(response)
+
+                    pullIncentives()
+
+                },
+                onFailure = { error ->
+                    _uploadState.value = UploadState.Error(error.message ?: "Upload failed")
+                }
+            )
+        }
+    }
+
+
+    fun resetUploadState() {
+        _uploadState.value = UploadState.Idle
+    }
+
+
+
+
+
+
+
+
+
 
 }

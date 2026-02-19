@@ -685,7 +685,7 @@
                                 else {
 
 
-                                    if (formId == FormConstants.IFA_DISTRIBUTION_FORM_ID) {
+                                    if (formId == FormConstants.IFA_DISTRIBUTION_FORM_ID|| formId == FormConstants.ANC_FORM_ID) {
                                         minDate = minVisitDate
                                         maxDate = maxVisitDate
 
@@ -908,7 +908,6 @@
                             ).apply { setMargins(0, 8, 0, 8) }
                         }
 
-                        // Special logic for SNCU auto-selection
                         val isFieldDisabled = field.fieldId == "discharged_from_sncu" &&
                                 fields.find { it.fieldId == "is_baby_alive" }?.value == "Yes" &&
                                 isSNCU
@@ -937,7 +936,6 @@
                                     if (isChecked && field.value != option) {
                                         field.value = option
                                         onValueChanged(field, option)
-                                        // Update UI for other radios in group
                                         for (i in 0 until radioGroup.childCount) {
                                             val child = radioGroup.getChildAt(i) as RadioButton
                                             if (child.text != option) child.isChecked = false
