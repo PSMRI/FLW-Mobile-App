@@ -2,7 +2,6 @@ package org.piramalswasthya.sakhi.work
 
 import android.content.Context
 import androidx.hilt.work.HiltWorker
-import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -14,13 +13,15 @@ class CbacPushToAmritWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted params: WorkerParameters,
     private val cbacRepo: CbacRepo,
-    private val preferenceDao: PreferenceDao,
-) : CoroutineWorker(appContext, params) {
+    override val preferenceDao: PreferenceDao,
+) : BasePushWorker(appContext, params) {
     companion object {
         const val name = "PushToAmritWorker"
     }
 
-    override suspend fun doWork(): Result {
+    override val workerName = "CbacPushToAmritWorker"
+
+    override suspend fun doSyncWork(): Result {
         cbacRepo.pushAndUpdateCbacRecord()
 
         return Result.success()

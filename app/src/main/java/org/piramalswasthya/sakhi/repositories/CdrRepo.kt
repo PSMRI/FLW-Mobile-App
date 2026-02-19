@@ -31,7 +31,7 @@ class CdrRepo @Inject constructor(
                 cdrDao.upsert(cdrCache)
                 true
             } catch (e: Exception) {
-                Timber.d("Error : $e raised at saveCdrData")
+                Timber.e("Error : $e raised at saveCdrData")
                 false
             }
         }
@@ -43,25 +43,44 @@ class CdrRepo @Inject constructor(
 
             val cdrPostList = mutableSetOf<CDRPost>()
 
+            // RECORD-LEVEL ISOLATION: Each CDR record is processed
+            // independently with try/catch. Previously this method silently
+            // returned true even when records failed to upload (Pattern C).
+            // Now failures are logged and tracked while still allowing the
+            // worker to succeed (failed records retry on next sync cycle).
+            var successCount = 0
+            var failCount = 0
+
             cdrList.forEach {
-                cdrPostList.clear()
-                cdrPostList.add(it.asPostModel())
-                it.syncState = SyncState.SYNCING
-                cdrDao.update(it)
-                val uploadDone = postCdrForm(cdrPostList.toList())
-                if (uploadDone) {
-                    it.processed = "P"
-                    it.syncState = SyncState.SYNCED
-                } else {
+                try {
+                    cdrPostList.clear()
+                    cdrPostList.add(it.asPostModel())
+                    it.syncState = SyncState.SYNCING
+                    cdrDao.update(it)
+                    val uploadDone = postCdrForm(cdrPostList.toList())
+                    if (uploadDone) {
+                        it.processed = "P"
+                        it.syncState = SyncState.SYNCED
+                        successCount++
+                    } else {
+                        it.syncState = SyncState.UNSYNCED
+                        failCount++
+                    }
+                    cdrDao.update(it)
+                } catch (e: Exception) {
+                    Timber.e(e, "CDR push failed for record")
                     it.syncState = SyncState.UNSYNCED
+                    cdrDao.update(it)
+                    failCount++
                 }
-                cdrDao.update(it)
             }
+
+            Timber.d("CDR push complete: $successCount succeeded, $failCount failed out of ${cdrList.size}")
             return@withContext true
         }
     }
 
-    private suspend fun postCdrForm(cdrPostList: List<CDRPost>): Boolean {
+    private suspend fun postCdrForm(cdrPostList: List<CDRPost>, retryCount: Int = 3): Boolean {
         if (cdrPostList.isEmpty()) return false
         val user =
             preferenceDao.getLoggedInUser()
@@ -86,7 +105,7 @@ class CdrRepo @Inject constructor(
                                 return true
                             }
 
-                            5002 -> {
+                         401,5002 -> {
                                 if (userRepo.refreshTokenTmc(
                                         user.userName,
                                         user.password
@@ -111,10 +130,12 @@ class CdrRepo @Inject constructor(
             Timber.w("Bad Response from server, need to check $cdrPostList $response ")
             return false
         } catch (e: SocketTimeoutException) {
-            Timber.d("Caught exception $e here")
-            return postCdrForm(cdrPostList)
+            Timber.e("Caught exception $e here")
+            if (retryCount > 0) return postCdrForm(cdrPostList, retryCount - 1)
+            Timber.e("postCdrForm: max retries exhausted")
+            return false
         } catch (e: JSONException) {
-            Timber.d("Caught exception $e here")
+            Timber.e("Caught exception $e here")
             return false
         }
 
@@ -157,7 +178,7 @@ class CdrRepo @Inject constructor(
                                 return@withContext 1
                             }
 
-                            5002 -> {
+                           401, 5002 -> {
                                 if (userRepo.refreshTokenTmc(
                                         user.userName, user.password
                                     )
@@ -177,11 +198,11 @@ class CdrRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_pnc error : $e")
+                Timber.e("get_pnc error : $e")
                 return@withContext -2
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_pnc error : $e")
+                Timber.e("get_pnc error : $e")
                 return@withContext -1
             }
             -1

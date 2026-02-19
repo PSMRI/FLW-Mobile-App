@@ -1,10 +1,12 @@
 package org.piramalswasthya.sakhi.repositories
 
+import androidx.paging.PagingSource
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.transformLatest
+import org.piramalswasthya.sakhi.model.BenBasicCache
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.ChildRegistrationDao
 import org.piramalswasthya.sakhi.database.room.dao.HouseholdDao
@@ -40,8 +42,26 @@ class RecordsRepo @Inject constructor(
         .map { list -> list.map { it.asBasicDomainModel() } }
     val hhListCount = householdDao.getAllHouseholdsCount(selectedVillage)
 
+    val hhListforAsha = householdDao.getAllHouseholdForAshaFamilyMembers(selectedVillage)
+        .map { list -> list.map { it.asBasicDomainModel() } }
+
     val allBenList =
         benDao.getAllBen(selectedVillage).map { list -> list.map { it.asBasicDomainModel() } }
+
+    val childCountsByBen: Flow<Map<Long, Int>> =
+        benDao.getChildCountsForAllBen(selectedVillage)
+            .map { list -> list.associate { it.benId to it.childCount } }
+
+    fun searchBen(query: String, filterType: Int, source: Int): Flow<List<BenBasicDomain>> =
+        benDao.searchBen(selectedVillage, source, filterType, query)
+            .map { list -> list.map { it.asBasicDomainModel() } }
+
+    fun searchBenPagedSource(query: String, filterType: Int, source: Int): PagingSource<Int, BenBasicCache> =
+        benDao.searchBenPaged(selectedVillage, source, filterType, query)
+
+    suspend fun searchBenOnce(query: String, filterType: Int, source: Int): List<BenBasicDomain> =
+        benDao.searchBenOnce(selectedVillage, source, filterType, query)
+            .map { it.asBasicDomainModel() }
 
     val allBenListCount = benDao.getAllBenCount(selectedVillage)
     val allBenWithoutAbhaList =

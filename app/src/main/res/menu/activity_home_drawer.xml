@@ -31,6 +31,14 @@
             android:title="@string/sync_records" />
     </group>
 
+    <group>
+        <item
+            android:id="@+id/syncDashboardFragment"
+            android:checkable="false"
+            android:icon="@drawable/ic_syncing"
+            android:title="@string/sync_dashboard" />
+    </group>
+
     <!--        <item-->
     <!--            android:id="@+id/dashboardFragment"-->
     <!--            android:icon="@drawable/ic_dashboard"-->

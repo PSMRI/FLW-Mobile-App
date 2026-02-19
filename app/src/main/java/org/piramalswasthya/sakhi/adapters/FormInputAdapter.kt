@@ -864,6 +864,8 @@ class FormInputAdapter(
                         getDobFromAge(ageUnitDTO)
                     binding.etDate.setText(getDateString(calDob.timeInMillis))
                     item.value = getDateString(calDob.timeInMillis)
+                    item.errorText = null
+                    binding.tilEditTextDate.error = null
                     if (item.hasDependants) formValueListener?.onValueChanged(item, -1)
                 }
             }
@@ -1285,7 +1287,7 @@ class FormInputAdapter(
                 )
 
                 InputType.FILE_UPLOAD -> (holder as FileUploadInputViewHolder).bind(item,selectImageClickListener,viewDocumentListner,isEnabled = !disableUpload)
-                org.piramalswasthya.sakhi.model.InputType.MULTIFILE_UPLOAD -> (holder as MultiFileUploadInputViewHolder).bind(item,selectImageClickListener,viewDocumentListner,isEnabled = !disableUpload,fileList)
+                InputType.MULTIFILE_UPLOAD -> (holder as MultiFileUploadInputViewHolder).bind(item,selectImageClickListener,viewDocumentListner,isEnabled = !disableUpload,fileList)
 
                 InputType.NUMBER_PICKER -> (holder as NumberPickerInputViewHolder).bind(
                     item, isEnabled, formValueListener
