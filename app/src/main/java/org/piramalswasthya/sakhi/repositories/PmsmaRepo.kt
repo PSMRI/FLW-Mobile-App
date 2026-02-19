@@ -44,7 +44,7 @@ class PmsmaRepo @Inject constructor(
 
                 true
             } catch (e: Exception) {
-                Timber.d("Error : $e raised at savePmsmaData")
+                Timber.e("Error : $e raised at savePmsmaData")
                 false
             }
         }
@@ -60,26 +60,40 @@ class PmsmaRepo @Inject constructor(
 
             val pmsmaPostList = mutableSetOf<PmsmaPost>()
 
+            // RECORD-LEVEL ISOLATION: Each PMSMA record is processed
+            // independently. If one record fails, remaining records continue.
+            // Failed records stay UNSYNCED and retry on next sync cycle.
+            var successCount = 0
+            var failCount = 0
+
             pmsmaList.forEach {
-                pmsmaPostList.clear()
-                pmsmaPostList.add(it.asPostModel())
-                val uploadDone = postDataToAmritServer(pmsmaPostList)
-                if (uploadDone) {
-                    it.processed = "P"
-                    it.syncState = SyncState.SYNCED
-                } else {
+                try {
+                    pmsmaPostList.clear()
+                    pmsmaPostList.add(it.asPostModel())
+                    val uploadDone = postDataToAmritServer(pmsmaPostList)
+                    if (uploadDone) {
+                        it.processed = "P"
+                        it.syncState = SyncState.SYNCED
+                        successCount++
+                    } else {
+                        it.syncState = SyncState.UNSYNCED
+                        failCount++
+                    }
+                    pmsmaDao.updatePmsmaRecord(it)
+                } catch (e: Exception) {
+                    Timber.e(e, "PMSMA push failed for record")
                     it.syncState = SyncState.UNSYNCED
+                    pmsmaDao.updatePmsmaRecord(it)
+                    failCount++
                 }
-                pmsmaDao.updatePmsmaRecord(it)
-                if (!uploadDone)
-                    return@withContext false
             }
 
+            Timber.d("PMSMA push complete: $successCount succeeded, $failCount failed out of ${pmsmaList.size}")
             return@withContext true
         }
     }
 
-    private suspend fun postDataToAmritServer(pmsmaPostList: MutableSet<PmsmaPost>): Boolean {
+    private suspend fun postDataToAmritServer(pmsmaPostList: MutableSet<PmsmaPost>, retryCount: Int = 3): Boolean {
         if (pmsmaPostList.isEmpty())
             return false
 
@@ -103,7 +117,7 @@ class PmsmaRepo @Inject constructor(
                                 return true
                             }
 
-                            5002 -> {
+                            401,5002 -> {
                                 val user = preferenceDao.getLoggedInUser()
                                     ?: throw IllegalStateException("User seems to be logged out!!")
                                 if (userRepo.refreshTokenTmc(user.userName, user.password))
@@ -126,10 +140,12 @@ class PmsmaRepo @Inject constructor(
             Timber.w("Bad Response from server, need to check $pmsmaPostList $response ")
             return false
         } catch (e: SocketTimeoutException) {
-            Timber.d("Caught exception $e here")
-            return postDataToAmritServer(pmsmaPostList)
+            Timber.e("Caught exception $e here")
+            if (retryCount > 0) return postDataToAmritServer(pmsmaPostList, retryCount - 1)
+            Timber.e("postDataToAmritServer: max retries exhausted")
+            return false
         } catch (e: Exception) {
-            Timber.d("Caught exception $e here")
+            Timber.e("Caught exception $e here")
             return false
         }
     }
@@ -171,7 +187,7 @@ class PmsmaRepo @Inject constructor(
                                 return@withContext 1
                             }
 
-                            5002 -> {
+                            401,5002 -> {
                                 if (userRepo.refreshTokenTmc(
                                         user.userName, user.password
                                     )
@@ -191,11 +207,11 @@ class PmsmaRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_pmsma error : $e")
+                Timber.e("get_pmsma error : $e")
                 return@withContext -2
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_pmsma error : $e")
+                Timber.e("get_pmsma error : $e")
                 return@withContext -1
             }
             -1

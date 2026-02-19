@@ -68,7 +68,7 @@ class HbncRepo @Inject constructor(
 
                 true
             } catch (e: Exception) {
-                Timber.d("Error : $e raised at saveHbncData")
+                Timber.e("Error : $e raised at saveHbncData")
                 false
             }
         }
@@ -84,15 +84,19 @@ class HbncRepo @Inject constructor(
             val hbncPostSet = mutableSetOf<HBNCPost>()
 
             hbncList.forEach {
-                hbncPostSet.clear()
-                val household = database.householdDao.getHousehold(it.hhId)
-                    ?: throw IllegalStateException("No household exists for hhId: ${it.hhId}!!")
-                val ben = database.benDao.getBen(it.hhId, it.benId)
-                    ?: throw IllegalStateException("No beneficiary exists for benId: ${it.benId}!!")
-                val hbncCount = database.hbncDao.hbncCount()
-//                hbncPostSet.add(it.asPostModel(user, household, hbncCount))
-                it.syncState = SyncState.SYNCING
-                database.hbncDao.update(it)
+                try {
+                    hbncPostSet.clear()
+                    val household = database.householdDao.getHousehold(it.hhId)
+                        ?: throw IllegalStateException("No household exists for hhId: ${it.hhId}!!")
+                    val ben = database.benDao.getBen(it.hhId, it.benId)
+                        ?: throw IllegalStateException("No beneficiary exists for benId: ${it.benId}!!")
+                    val hbncCount = database.hbncDao.hbncCount()
+//                    hbncPostSet.add(it.asPostModel(user, household, hbncCount))
+                    it.syncState = SyncState.SYNCING
+                    database.hbncDao.update(it)
+                } catch (e: Exception) {
+                    Timber.e(e, "HbncRepo: Error processing HBNC record benId=${it.benId}")
+                }
             }
             return@withContext true
         }
@@ -142,7 +146,7 @@ class HbncRepo @Inject constructor(
                                 return@withContext 1
                             }
 
-                            5002 -> {
+                            401,5002 -> {
                                 if (userRepo.refreshTokenTmc(
                                         user.userName, user.password
                                     )
@@ -162,11 +166,11 @@ class HbncRepo @Inject constructor(
                 }
             } catch (e: SocketTimeoutException) {
                 getHBNCDetailsFromServer()
-                Timber.d("get hbnc data error : $e")
+                Timber.e("get hbnc data error : $e")
                 return@withContext -2
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get hbnc error : $e")
+                Timber.e("get hbnc error : $e")
                 return@withContext -1
             }
             -1
@@ -225,7 +229,7 @@ class HbncRepo @Inject constructor(
                                 return@withContext 1
                             }
 
-                            5002 -> {
+                            401,5002 -> {
                                 if (userRepo.refreshTokenTmc(
                                         user.userName, user.password
                                     )
@@ -246,11 +250,11 @@ class HbncRepo @Inject constructor(
 
             } catch (e: SocketTimeoutException) {
                 getHBNCDetailsFromServer()
-                Timber.d("get hbnc data error : $e")
+                Timber.e("get hbnc data error : $e")
                 return@withContext -2
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get hbnc error : $e")
+                Timber.e("get hbnc error : $e")
                 return@withContext -1
             }
             -1

@@ -13,39 +13,26 @@ import timber.log.Timber
 class ORSCampaignFormSyncWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workerParams: WorkerParameters,
-    private val preferenceDao: PreferenceDao,
+    override val preferenceDao: PreferenceDao,
     private val repository: VLFRepo
-) : CoroutineWorker(context, workerParams) {
+) : BaseDynamicWorker(context, workerParams) {
 
-    override suspend fun doWork(): Result {
-        return try {
-            val result = repository.getORSCampaignFromServer()
-            when (result) {
-                1 -> {
-                    Timber.d("ORSCampaignFormSyncWorker: Successfully synced data from server")
-                    Result.success()
-                }
-                0 -> {
-                    Timber.d("ORSCampaignFormSyncWorker: No data to sync")
-                    Result.success()
-                }
-                else -> {
-                    Timber.e("ORSCampaignFormSyncWorker: Failed to sync data")
-                    Result.retry()
-                }
+    override val workerName = "ORSCampaignFormSyncWorker"
+
+    override suspend fun doSyncWork(): Result {
+        val result = repository.getORSCampaignFromServer()
+        return when (result) {
+            1 -> {
+                Timber.d("ORSCampaignFormSyncWorker: Successfully synced data from server")
+                Result.success()
             }
-        } catch (e: IllegalStateException) {
-            Timber.e(e, "ORSCampaignFormSyncWorker failed: No user logged in")
-            Result.failure()
-        } catch (e: java.net.UnknownHostException) {
-            Timber.w(e, "ORSCampaignFormSyncWorker: Network unavailable, will retry")
-            Result.retry()
-        } catch (e: Exception) {
-            Timber.e(e, "ORSCampaignFormSyncWorker failed with unexpected error")
-            if (runAttemptCount < 3) {
+            0 -> {
+                Timber.d("ORSCampaignFormSyncWorker: No data to sync")
+                Result.success()
+            }
+            else -> {
+                Timber.e("ORSCampaignFormSyncWorker: Failed to sync data")
                 Result.retry()
-            } else {
-                Result.failure()
             }
         }
     }

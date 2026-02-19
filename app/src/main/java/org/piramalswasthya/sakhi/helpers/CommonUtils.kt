@@ -579,8 +579,12 @@ fun filterBenHRNPTFormList(
     }
 }
 
-fun getWeeksOfPregnancy(regLong: Long, lmpLong: Long) =
-    (TimeUnit.MILLISECONDS.toDays(regLong - lmpLong) / 7).toInt()
+fun getWeeksOfPregnancy(regLong: Long, lmpLong: Long?): Int {
+    return lmpLong?.let {
+        (TimeUnit.MILLISECONDS.toDays(regLong - it) / 7).toInt()
+    } ?: 0
+}
+
 
 fun getTodayMillis() = Calendar.getInstance().setToStartOfTheDay().timeInMillis
 

@@ -12,6 +12,13 @@ plugins {
 
 apply from: rootProject.file('versioning.gradle')
 
+
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 android {
     namespace 'org.piramalswasthya.sakhi'
     compileSdk 35
@@ -42,16 +49,29 @@ android {
         }
     }
 
-    buildTypes {
+    signingConfigs {
         release {
-            minifyEnabled true
-            shrinkResources false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.debug
-
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
         }
     }
 
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            debuggable false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
+                    'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+
+        debug {
+            // uses default debug keystore; no changes needed
+        }
+    }
     flavorDimensions "default"
 
     productFlavors {
@@ -164,6 +184,9 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
     implementation 'androidx.recyclerview:recyclerview:1.4.0'
 
+    //Paging
+    implementation "androidx.paging:paging-runtime-ktx:3.2.1"
+
     //Navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
@@ -176,6 +199,7 @@ dependencies {
     implementation "androidx.room:room-ktx:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
     implementation "androidx.room:room-testing:$room_version"
+    implementation "androidx.room:room-paging:$room_version"
 
    // implementation "org.jetbrains.kotlin:kotlin-metadata-jvm:2.2.0"
 
@@ -250,5 +274,8 @@ dependencies {
     //In App Update
     //implementation 'com.google.android.play:core:1.10.3'
     implementation 'com.google.android.play:app-update:2.1.0'
+
+    implementation "net.zetetic:android-database-sqlcipher:4.5.4"
+    implementation "androidx.sqlite:sqlite:2.4.0"
 }
 

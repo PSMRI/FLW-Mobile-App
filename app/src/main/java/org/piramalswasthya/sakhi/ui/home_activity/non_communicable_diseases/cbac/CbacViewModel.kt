@@ -352,9 +352,9 @@ class CbacViewModel @Inject constructor(
     }
 
     fun setHisTb(i: Int) {
+        if (!this::cbac.isInitialized) return
+
         cbac.cbac_tbhistory_pos = i
-        if (i == 1) _ast1.value = _ast1.value?.plus(1)
-        else if (i == 2 && ast1.value!! > 0) _ast1.value = _ast1.value?.minus(1)
     }
 
     fun setCoughing(i: Int) {

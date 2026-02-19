@@ -73,7 +73,7 @@ class IncentiveRepo @Inject constructor(
                                 return@withContext true
                             }
 
-                            5002 -> {
+                            401,  5002 -> {
                                 if (userRepo.refreshTokenTmc(
                                         user.userName, user.password
                                     )
@@ -93,7 +93,7 @@ class IncentiveRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("incentives error : $e")
+                Timber.e("incentives error : $e")
                 pullAndSaveAllIncentiveActivities(user)
                 return@withContext true
             } catch (e: Exception) {
@@ -151,7 +151,7 @@ class IncentiveRepo @Inject constructor(
                                 return@withContext true
                             }
 
-                            5002 -> {
+                            401,  5002 -> {
                                 if (userRepo.refreshTokenTmc(
                                         user.userName, user.password
                                     )
@@ -170,7 +170,7 @@ class IncentiveRepo @Inject constructor(
                     }
                 }
             } catch (e: SocketTimeoutException) {
-                Timber.d("incentives error : $e")
+                Timber.e("incentives error : $e")
                 pullAndSaveAllIncentiveRecords(user)
                 return@withContext true
             } catch (e: Exception) {

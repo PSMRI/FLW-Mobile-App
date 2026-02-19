@@ -150,14 +150,14 @@ class UserRepo @Inject constructor(
                     return@withContext true
                 } else {
                     val errorMessage = responseBody.getString("errorMessage")
-                    Timber.d("Error Message $errorMessage")
+                    Timber.e("Error Message $errorMessage")
                     return@withContext false
                 }
 
             } catch (se: SocketTimeoutException) {
                 return@withContext refreshTokenTmc(userName, password)
             } catch (e: HttpException) {
-                Timber.d("Auth Failed!")
+                Timber.e("Auth Failed!")
                 return@withContext false
             } catch (e: Exception) {
                 return@withContext true
@@ -181,13 +181,13 @@ class UserRepo @Inject constructor(
                     ?: throw IllegalStateException("Response success but data missing @ $response")
             )
             val statusCode = responseBody.getInt("statusCode")
-            if (statusCode == 5002)
+            if (statusCode == 5002||statusCode == 401)
                 throw IllegalStateException("Invalid username / password")
             val data = responseBody.getJSONObject("data")
             val token = data.getString("key")
             val userId = data.getInt("userID")
             val refreshToken = data.getString("refreshToken")
-            db.clearAllTables()
+          //  db.clearAllTables()
             TokenInsertTmcInterceptor.setJwt(data.getString("jwtToken"))
             preferenceDao.registerJWTAmritToken(data.getString("jwtToken"))
             preferenceDao.registerRefreshToken(refreshToken)

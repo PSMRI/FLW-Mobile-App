@@ -179,4 +179,27 @@ interface VLFDao {
     @Query("SELECT * FROM FILARIA_MDA_CAMPAIGN_HISTORY")
     fun getAllFilariaMdaCampaignForDate(): Flow<List<FilariaMDACampaignFormResponseJsonEntity>>
 
+    @Query("UPDATE VHND SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetVhndSyncingToUnsynced()
+
+    @Query("UPDATE VHNC SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetVhncSyncingToUnsynced()
+
+    @Query("UPDATE PHCReviewMeeting SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetPhcSyncingToUnsynced()
+
+    @Query("UPDATE AHDMeeting SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetAhdSyncingToUnsynced()
+
+    @Query("UPDATE DewormingMeeting SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetDewormingSyncingToUnsynced()
+
+    @Query("UPDATE PulsePolioCampaign SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetPulsePolioSyncingToUnsynced()
+
+    @Query("UPDATE ORSCampaign SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetOrsSyncingToUnsynced()
+
+    @Query("UPDATE FILARIA_MDA_CAMPAIGN_HISTORY SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetFilariaMdaSyncingToUnsynced()
 }

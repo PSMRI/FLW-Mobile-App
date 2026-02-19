@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
+import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
@@ -18,6 +19,7 @@ import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import androidx.navigation.fragment.findNavController
 import org.piramalswasthya.sakhi.adapters.BenListAdapterForForm
+import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import javax.inject.Inject
@@ -34,6 +36,9 @@ abstract class BaseListFragment<T : ViewBinding> : Fragment() {
     protected abstract val recyclerView: RecyclerView
     protected abstract val emptyStateView: View
     protected abstract val searchEditText: EditText
+
+    protected abstract val btnSearchCardView: CardView
+
     protected abstract val iconResId: Int
     protected abstract val titleResId: Int
     protected open val isGeneralForm: Boolean = false
@@ -41,6 +46,13 @@ abstract class BaseListFragment<T : ViewBinding> : Fragment() {
 
     private var _binding: T? = null
     protected val binding get() = _binding!!
+
+    private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
+        val lowerValue = value.lowercase()
+        searchEditText.setText(lowerValue)
+        searchEditText.setSelection(lowerValue.length)
+        viewModel.filterText(lowerValue)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -71,6 +83,8 @@ abstract class BaseListFragment<T : ViewBinding> : Fragment() {
                 benAdapter.submitList(list)
             }
         }
+
+        btnSearchCardView.setOnClickListener { sttContract.launch(Unit) }
 
         val searchTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
