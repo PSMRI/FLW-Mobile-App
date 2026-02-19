@@ -15,6 +15,7 @@ import org.piramalswasthya.sakhi.helpers.getDateFromLong
 import org.piramalswasthya.sakhi.helpers.getPatientTypeByAge
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.model.Gender
+import org.piramalswasthya.sakhi.utils.RoleConstants
 
 
 class BenListAdapter(
@@ -30,7 +31,8 @@ class BenListAdapter(
     private val isSoftDeleteEnabled:Boolean = false,
 ) :
     ListAdapter<BenBasicDomain, BenListAdapter.BenViewHolder>(BenDiffUtilCallBack) {
-    private object BenDiffUtilCallBack : DiffUtil.ItemCallback<BenBasicDomain>() {
+
+    object BenDiffUtilCallBack : DiffUtil.ItemCallback<BenBasicDomain>() {
         override fun areItemsTheSame(
             oldItem: BenBasicDomain, newItem: BenBasicDomain
         ) = oldItem.benId == newItem.benId
@@ -62,12 +64,14 @@ class BenListAdapter(
             isSoftDeleteEnabled:Boolean,
             pref: PreferenceDao?,
             context : FragmentActivity,
-            benIdList: List<Long>
+            benIdList: List<Long>,
+            childCountMap: Map<Long, Int> = emptyMap()
         ) {
-            if (pref?.getLoggedInUser()?.role.equals("asha", true)) {
-                binding.btnAbha.visibility = View.VISIBLE
-            } else {
+
+            if (pref?.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
                 binding.btnAbha.visibility = View.GONE
+            } else {
+                binding.btnAbha.visibility = View.VISIBLE
             }
             if (!showSyncIcon) item.syncState = null
             binding.ben = item
@@ -149,6 +153,8 @@ class BenListAdapter(
 
             }
 
+            val effectiveChildCount = childCountMap[item.benId] ?: item.noOfChildren
+
             when {
                 item.gender == "MALE" && !item.isSpouseAdded && item.isMarried -> {
                     binding.btnAddSpouse.visibility = View.VISIBLE
@@ -172,7 +178,7 @@ class BenListAdapter(
 
                 item.gender == "FEMALE" &&
                         item.isMarried &&
-                        item.noOfChildren == 0  -> {
+                        effectiveChildCount == 0  -> {
 
                     binding.btnAddChildren.visibility = View.VISIBLE
                     binding.btnAddSpouse.visibility = View.GONE
@@ -194,7 +200,7 @@ class BenListAdapter(
 
                 item.gender == "FEMALE" &&
                         item.isMarried &&
-                        item.noOfChildren != 0  -> {
+                        effectiveChildCount != 0  -> {
 
                     binding.btnAddChildren.visibility = View.VISIBLE
                     binding.btnAddChildren.text = context.getString(R.string.view_children)
@@ -309,9 +315,18 @@ class BenListAdapter(
         )
     }
     fun submitBenIds(list: List<Long>) {
+        val oldIds = benIds.toSet()
         benIds.clear()
         benIds.addAll(list)
-        notifyDataSetChanged()
+        val newIds = benIds.toSet()
+        val changed = (oldIds - newIds) + (newIds - oldIds)
+        if (changed.isNotEmpty()) {
+            currentList.forEachIndexed { index, item ->
+                if (item.benId in changed) {
+                    notifyItemChanged(index)
+                }
+            }
+        }
     }
 
 

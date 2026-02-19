@@ -398,7 +398,7 @@ class InfantRegistrationDataset(
             form.resuscitation = resuscitation.value == "Yes"
             form.referred = referred.value
 
-            form.isSNCU = isSncu.value
+            form.isSNCU = isSncu.value?:"No"
             form.deliveryDischargeSummary1 = deliveryDischargeSummary1.value?.takeIf { it.isNotEmpty() }
             form.deliveryDischargeSummary2 = deliveryDischargeSummary2.value?.takeIf { it.isNotEmpty() }
             form.deliveryDischargeSummary3 = deliveryDischargeSummary3.value?.takeIf { it.isNotEmpty() }

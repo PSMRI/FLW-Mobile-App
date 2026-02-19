@@ -1,7 +1,6 @@
 package org.piramalswasthya.sakhi.work.dynamicWoker
 
 import android.content.Context
-import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.*
 import dagger.assisted.Assisted
@@ -19,62 +18,49 @@ import java.io.IOException
 class EyeSurgeryFormSyncWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workerParams: WorkerParameters,
-    private val preferenceDao: PreferenceDao,
+    override val preferenceDao: PreferenceDao,
     private val repository: EyeSurgeryFormRepository
-) : CoroutineWorker(context, workerParams) {
+) : BaseDynamicWorker(context, workerParams) {
 
-    override suspend fun doWork(): Result {
-        return try {
-            val user = preferenceDao.getLoggedInUser()
-                ?: throw IllegalStateException("No user logged in")
+    override val workerName = "EyeSurgeryFormSyncWorker"
 
-            val request = HBNCVisitRequest(
-                fromDate = HelperUtil.getCurrentDate(Konstants.defaultTimeStamp),
-                toDate = HelperUtil.getCurrentDate(),
-                pageNo = 0,
-                ashaId = user.userId,
-                userName = user.userName
-            )
+    override suspend fun doSyncWork(): Result {
+        val user = preferenceDao.getLoggedInUser()
+            ?: throw IllegalStateException("No user logged in")
 
-           val unsyncedForms = repository.getUnsyncedForms(FormConstants.EYE_SURGERY_FORM_ID)
-             for (form in unsyncedForms) {
-                 if ((form.benId ?: -1) < 0) continue
+        val request = HBNCVisitRequest(
+            fromDate = HelperUtil.getCurrentDate(Konstants.defaultTimeStamp),
+            toDate = HelperUtil.getCurrentDate(),
+            pageNo = 0,
+            ashaId = user.userId,
+            userName = user.userName
+        )
 
-                 try{
-                     val success = repository.syncFormToServer(user.userName,FormConstants.EYE_SURGERY_FORM_NAME,form)
-                     if (success) {
-                         repository.markFormAsSynced(form.id)
-                     }
-                 }catch (e: Exception){
-                     Timber.e(e, "Failed to sync form ${form.id}")
-                 }
+        val unsyncedForms = repository.getUnsyncedForms(FormConstants.EYE_SURGERY_FORM_ID)
+        for (form in unsyncedForms) {
+            if ((form.benId ?: -1) < 0) continue
 
-             }
-            val response = repository.getAllFormVisits(FormConstants.EYE_SURGERY_FORM_NAME,request)
-            if (response.isSuccessful) {
-                val visitList = response.body()?.data.orEmpty()
-                repository.saveDownloadedVisitList(visitList, FormConstants.EYE_SURGERY_FORM_ID)
-            } else {
-                if (response.code() >= 500) {
-                    throw IOException("Server error: ${response.code()}")
+            try {
+                val success = repository.syncFormToServer(user.userName, FormConstants.EYE_SURGERY_FORM_NAME, form)
+                if (success) {
+                    repository.markFormAsSynced(form.id)
                 }
-            }
-
-            Result.success()
-        } catch (e: IllegalStateException) {
-            Timber.e(e, "FormSyncWorker failed: No user logged in")
-            Result.failure()
-        } catch (e: java.net.UnknownHostException) {
-            Timber.w(e, "FormSyncWorker: Network unavailable, will retry")
-            Result.retry()
-        } catch (e: Exception) {
-            Timber.e(e, "FormSyncWorker failed with unexpected error")
-            if (runAttemptCount < 3) {
-                Result.retry()
-            } else {
-                Result.failure()
+            } catch (e: Exception) {
+                Timber.e(e, "Failed to sync form ${form.id}")
             }
         }
+
+        val response = repository.getAllFormVisits(FormConstants.EYE_SURGERY_FORM_NAME, request)
+        if (response.isSuccessful) {
+            val visitList = response.body()?.data.orEmpty()
+            repository.saveDownloadedVisitList(visitList, FormConstants.EYE_SURGERY_FORM_ID)
+        } else {
+            if (response.code() >= 500) {
+                throw IOException("Server error: ${response.code()}")
+            }
+        }
+
+        return Result.success()
     }
 
     companion object {

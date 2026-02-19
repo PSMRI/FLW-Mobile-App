@@ -87,9 +87,9 @@ object AppModule {
     @Named(AUTH_CLIENT)
     fun provideAuthClient(loggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
         return OkHttpClient.Builder()
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
             .addInterceptor(loggingInterceptor)
             .build()
     }
@@ -144,12 +144,6 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideTokenInsertTmcInterceptor(): TokenInsertTmcInterceptor {
-        return TokenInsertTmcInterceptor()
-    }
-
-    @Singleton
-    @Provides
     fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor {
         val loggingInterceptor = HttpLoggingInterceptor(LoggingInterceptor()).apply {
             level =
@@ -177,9 +171,6 @@ object AppModule {
     fun provideAbhaHttpClient(loggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
         return baseClient
             .newBuilder()
-            .connectTimeout(20, TimeUnit.SECONDS)
-            .readTimeout(20, TimeUnit.SECONDS)
-            .writeTimeout(20, TimeUnit.SECONDS)
             .addInterceptor(TokenInsertAbhaInterceptor())
             .addInterceptor(loggingInterceptor)
             .build()
@@ -202,6 +193,9 @@ object AppModule {
 
     private val baseClient =
         OkHttpClient.Builder()
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
             .addInterceptor(ContentTypeInterceptor())
             .build()
 
@@ -246,6 +240,14 @@ object AppModule {
         @ApplicationContext context: Context
     ): ApiAnalyticsInterceptor {
         return ApiAnalyticsInterceptor(context)
+    }
+
+    @Singleton
+    @Provides
+    fun provideTokenInsertTmcInterceptor(
+        preferenceDao: PreferenceDao
+    ): TokenInsertTmcInterceptor {
+        return TokenInsertTmcInterceptor(preferenceDao)
     }
 
     @Singleton

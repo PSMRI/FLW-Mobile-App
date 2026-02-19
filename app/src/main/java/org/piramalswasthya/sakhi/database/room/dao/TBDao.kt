@@ -66,4 +66,12 @@ interface TBDao {
     @Query("SELECT * FROM TB_CONFIRMED_TREATMENT WHERE benId = :benId ORDER BY followUpDate DESC")
     suspend fun getAllFollowUpsForBeneficiary(benId: Long): List<TBConfirmedTreatmentCache>
 
+    @Query("UPDATE TB_SCREENING SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetScreeningSyncingToUnsynced()
+
+    @Query("UPDATE TB_SUSPECTED SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetSuspectedSyncingToUnsynced()
+
+    @Query("UPDATE TB_CONFIRMED_TREATMENT SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetConfirmedSyncingToUnsynced()
 }

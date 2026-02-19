@@ -46,7 +46,7 @@ class HbycRepo @Inject constructor(
 
                 true
             } catch (e: Exception) {
-                Timber.d("Error : $e raised at saveHbycData")
+                Timber.e("Error : $e raised at saveHbycData")
                 false
             }
         }
@@ -62,15 +62,19 @@ class HbycRepo @Inject constructor(
             val hbycPostList = mutableSetOf<HbycPost>()
 
             hbycList.forEach {
-                hbycPostList.clear()
-                val household = database.householdDao.getHousehold(it.hhId)
-                    ?: throw IllegalStateException("No household exists for hhId: ${it.hhId}!!")
-                val ben = database.benDao.getBen(it.hhId, it.benId)
-                    ?: throw IllegalStateException("No beneficiary exists for benId: ${it.benId}!!")
-                val hbycCount = database.hbycDao.hbycCount()
-                hbycPostList.add(it.asPostModel(user, household, ben, hbycCount))
-                it.syncState = SyncState.SYNCING
-                database.hbycDao.setSynced(it)
+                try {
+                    hbycPostList.clear()
+                    val household = database.householdDao.getHousehold(it.hhId)
+                        ?: throw IllegalStateException("No household exists for hhId: ${it.hhId}!!")
+                    val ben = database.benDao.getBen(it.hhId, it.benId)
+                        ?: throw IllegalStateException("No beneficiary exists for benId: ${it.benId}!!")
+                    val hbycCount = database.hbycDao.hbycCount()
+                    hbycPostList.add(it.asPostModel(user, household, ben, hbycCount))
+                    it.syncState = SyncState.SYNCING
+                    database.hbycDao.setSynced(it)
+                } catch (e: Exception) {
+                    Timber.e(e, "HbycRepo: Error processing HBYC record benId=${it.benId}")
+                }
             }
 
             return@withContext true
@@ -126,7 +130,7 @@ class HbycRepo @Inject constructor(
                                 return@withContext 1
                             }
 
-                            5002 -> {
+                           401, 5002 -> {
                                 if (userRepo.refreshTokenTmc(
                                         user.userName, user.password
                                     )
@@ -146,11 +150,11 @@ class HbycRepo @Inject constructor(
                 }
             } catch (e: SocketTimeoutException) {
                 getHBYCDetailsFromServer()
-                Timber.d("get hbyc data error : $e")
+                Timber.e("get hbyc data error : $e")
                 return@withContext -2
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get hbyc error : $e")
+                Timber.e("get hbyc error : $e")
                 return@withContext -1
             }
             -1
@@ -209,7 +213,7 @@ class HbycRepo @Inject constructor(
                                 return@withContext 1
                             }
 
-                            5002 -> {
+                            401,5002 -> {
                                 if (userRepo.refreshTokenTmc(
                                         user.userName, user.password
                                     )
@@ -230,11 +234,11 @@ class HbycRepo @Inject constructor(
 
             } catch (e: SocketTimeoutException) {
                 getHBYCDetailsFromServer()
-                Timber.d("get hbyc data error : $e")
+                Timber.e("get hbyc data error : $e")
                 return@withContext -2
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get hbyc error : $e")
+                Timber.e("get hbyc error : $e")
                 return@withContext -1
             }
             -1

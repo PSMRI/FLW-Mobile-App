@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.ui.service_location_activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.MotionEvent
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -15,6 +16,7 @@ import dagger.hilt.components.SingletonComponent
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.ActivityServiceTypeBinding
 import org.piramalswasthya.sakhi.helpers.MyContextWrapper
+import org.piramalswasthya.sakhi.helpers.TapjackingProtectionHelper
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import timber.log.Timber
 
@@ -81,12 +83,22 @@ class ServiceLocationActivity : AppCompatActivity() {
         )
     }
 
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        return if (TapjackingProtectionHelper.isTouchAllowed(this, ev)) {
+            super.dispatchTouchEvent(ev)
+        } else {
+            false
+        }
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        TapjackingProtectionHelper.applyWindowSecurity(this)
         super.onCreate(savedInstanceState)
         _binding = ActivityServiceTypeBinding.inflate(layoutInflater)
         setContentView(binding.root)
         Timber.d("onViewCreated() called!")
+        TapjackingProtectionHelper.enableTouchFiltering(this)
         binding.lifecycleOwner = this
 
 

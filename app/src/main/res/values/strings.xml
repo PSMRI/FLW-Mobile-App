@@ -1193,5 +1193,20 @@
     <string name="upload_files">Upload Files</string>
     <string name="choose_upload_source">Choose Upload Source</string>
 
+    <!-- Sync Dashboard -->
+    <string name="sync_dashboard">Sync Dashboard</string>
+    <string name="sync_dashboard_tab_status">Status</string>
+    <string name="sync_dashboard_tab_logs">Logs</string>
+    <string name="sync_dashboard_records_synced">%1$d / %2$d records synced</string>
+    <string name="sync_dashboard_worker_running">Sync Running (%1$d / %2$d workers)</string>
+    <string name="sync_dashboard_worker_idle">Idle</string>
+    <string name="sync_dashboard_worker_complete">Complete</string>
+    <string name="sync_dashboard_worker_failed">Failed: %1$d worker(s) - tap to see details</string>
+    <string name="sync_dashboard_no_logs">No sync logs yet. Trigger a sync to see activity.</string>
+    <string name="sync_dashboard_clear_logs">Clear Logs</string>
+    <string name="sync_dashboard_export_logs">Export Logs</string>
+    <string name="sync_dashboard_no_log_files">No log files to export</string>
+    <string name="form_name">Form Name</string>
+
 </resources>
 

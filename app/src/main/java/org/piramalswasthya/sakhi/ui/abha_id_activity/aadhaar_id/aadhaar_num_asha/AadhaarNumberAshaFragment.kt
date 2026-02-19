@@ -63,12 +63,11 @@ class AadhaarNumberAshaFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        binding.tietAadhaarNumber.disableCopyPaste()
         parentViewModel.verificationType.observe(viewLifecycleOwner) {
             when (it) {
                 "OTP" -> binding.btnVerifyAadhaar.text = resources.getString(R.string.generate_otp)
                 "FP" -> {
-                    checkApp()
                     binding.btnVerifyAadhaar.text = resources.getString(R.string.validate_fp)
                 }
             }
@@ -77,7 +76,6 @@ class AadhaarNumberAshaFragment : Fragment() {
         val intent = requireActivity().intent
 
         val benId = intent.getLongExtra("benId", 0)
-        val benRegId = intent.getLongExtra("benRegId", 0)
 
         if (benId > 0) {
             viewModel.getBen(benId)
@@ -137,6 +135,9 @@ class AadhaarNumberAshaFragment : Fragment() {
 
         binding.tietAadhaarNumber.setTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+/*
+                Empty by design; required override with no behavior needed in this implementation.
+*/
             }
 
             override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -164,6 +165,9 @@ class AadhaarNumberAshaFragment : Fragment() {
             }
 
             override fun afterTextChanged(s: Editable?) {
+/*
+                Empty by design; required override with no behavior needed in this implementation.
+*/
             }
 
         })
@@ -171,9 +175,13 @@ class AadhaarNumberAshaFragment : Fragment() {
 
         binding.tietMobileNumber.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                //Currently Implementation is not required
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                /*
+                  Empty by design; required override with no behavior needed in this implementation.
+  */
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -199,10 +207,15 @@ class AadhaarNumberAshaFragment : Fragment() {
 
         binding.tietBenName.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                /*
+                  Empty by design; required override with no behavior needed in this implementation.
+  */
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
+                /*
+                                Empty by design; required override with no behavior needed in this implementation.
+                */            }
 
             override fun afterTextChanged(s: Editable?) {
                 if((s != null) && HelperUtil.isValidName(s.toString())){
@@ -278,7 +291,4 @@ class AadhaarNumberAshaFragment : Fragment() {
         return m.matches()
     }
 
-    private fun checkApp() {
-
-    }
 }

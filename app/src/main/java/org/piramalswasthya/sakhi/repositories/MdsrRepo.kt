@@ -31,7 +31,7 @@ class MdsrRepo @Inject constructor(
                 mdsrDao.upsert(mdsrCache)
                 true
             } catch (e: Exception) {
-                Timber.d("Error : $e raised at saveMdsrData")
+                Timber.e("Error : $e raised at saveMdsrData")
                 false
             }
         }
@@ -43,26 +43,44 @@ class MdsrRepo @Inject constructor(
 
             val mdsrPostList = mutableSetOf<MdsrPost>()
 
+            // RECORD-LEVEL ISOLATION: Each MDSR record is processed
+            // independently with try/catch. Previously this method silently
+            // returned true even when records failed to upload (Pattern C).
+            // Now failures are logged and tracked while still allowing the
+            // worker to succeed (failed records retry on next sync cycle).
+            var successCount = 0
+            var failCount = 0
+
             mdsrList.forEach {
-                mdsrPostList.clear()
-                mdsrPostList.add(it.asPostModel())
-                it.syncState = SyncState.SYNCING
-                mdsrDao.updateMdsrRecord(it)
-                val uploadDone = postMdsrForm(mdsrPostList.toList())
-                if (uploadDone) {
-                    it.processed = "P"
-                    it.syncState = SyncState.SYNCED
-                } else {
+                try {
+                    mdsrPostList.clear()
+                    mdsrPostList.add(it.asPostModel())
+                    it.syncState = SyncState.SYNCING
+                    mdsrDao.updateMdsrRecord(it)
+                    val uploadDone = postMdsrForm(mdsrPostList.toList())
+                    if (uploadDone) {
+                        it.processed = "P"
+                        it.syncState = SyncState.SYNCED
+                        successCount++
+                    } else {
+                        it.syncState = SyncState.UNSYNCED
+                        failCount++
+                    }
+                    mdsrDao.updateMdsrRecord(it)
+                } catch (e: Exception) {
+                    Timber.e(e, "MDSR push failed for record")
                     it.syncState = SyncState.UNSYNCED
+                    mdsrDao.updateMdsrRecord(it)
+                    failCount++
                 }
-                mdsrDao.updateMdsrRecord(it)
             }
 
+            Timber.d("MDSR push complete: $successCount succeeded, $failCount failed out of ${mdsrList.size}")
             return@withContext true
         }
     }
 
-    private suspend fun postMdsrForm(mdsrPostList: List<MdsrPost>): Boolean {
+    private suspend fun postMdsrForm(mdsrPostList: List<MdsrPost>, retryCount: Int = 3): Boolean {
         if (mdsrPostList.isEmpty()) return false
         val user =
             preferenceDao.getLoggedInUser()
@@ -87,7 +105,7 @@ class MdsrRepo @Inject constructor(
                                 return true
                             }
 
-                            5002 -> {
+                            401,5002 -> {
                                 if (userRepo.refreshTokenTmc(
                                         user.userName,
                                         user.password
@@ -111,10 +129,12 @@ class MdsrRepo @Inject constructor(
             Timber.w("Bad Response from server, need to check $mdsrPostList $response ")
             return false
         } catch (e: SocketTimeoutException) {
-            Timber.d("Caught exception $e here")
-            return postMdsrForm(mdsrPostList)
+            Timber.e("Caught exception $e here")
+            if (retryCount > 0) return postMdsrForm(mdsrPostList, retryCount - 1)
+            Timber.e("postMdsrForm: max retries exhausted")
+            return false
         } catch (e: JSONException) {
-            Timber.d("Caught exception $e here")
+            Timber.e("Caught exception $e here")
             return false
         }
 
@@ -157,7 +177,7 @@ class MdsrRepo @Inject constructor(
                                 return@withContext 1
                             }
 
-                            5002 -> {
+                            401,5002 -> {
                                 if (userRepo.refreshTokenTmc(
                                         user.userName, user.password
                                     )
@@ -177,11 +197,11 @@ class MdsrRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_pnc error : $e")
+                Timber.e("get_pnc error : $e")
                 return@withContext -2
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_pnc error : $e")
+                Timber.e("get_pnc error : $e")
                 return@withContext -1
             }
             -1
