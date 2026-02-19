@@ -106,11 +106,11 @@ jobs:
           ENCRYPTED_PASS_KEY: ${{ secrets.ENCRYPTED_PASS_KEY }}
           ABHA_CLIENT_SECRET: ${{ secrets.ABHA_CLIENT_SECRET }}
           ABHA_CLIENT_ID: ${{ secrets.ABHA_CLIENT_ID }}
-          BASE_TMC_URL: ${{ secrets.BASE_TMC_URL }}
-          BASE_ABHA_URL: ${{ secrets.BASE_ABHA_URL }}
-          ABHA_TOKEN_URL: ${{ secrets.ABHA_TOKEN_URL }}
-          ABHA_AUTH_URL: ${{ secrets.ABHA_AUTH_URL }}
-          CHAT_URL: ${{ secrets.CHAT_URL }}
+          BASE_TMC_URL: ${{ vars.BASE_TMC_URL }}
+          BASE_ABHA_URL: ${{ vars.BASE_ABHA_URL }}
+          ABHA_TOKEN_URL: ${{ vars.ABHA_TOKEN_URL }}
+          ABHA_AUTH_URL: ${{ vars.ABHA_AUTH_URL }}
+          CHAT_URL: ${{ vars.CHAT_URL }}
           # Signing env vars (used by Fastlane for release builds)
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
