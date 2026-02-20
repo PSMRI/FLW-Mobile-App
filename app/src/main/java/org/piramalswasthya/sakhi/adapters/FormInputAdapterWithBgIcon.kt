@@ -51,7 +51,6 @@ import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.getDateString
 import org.piramalswasthya.sakhi.model.AgeUnitDTO
 import org.piramalswasthya.sakhi.model.FormElement
-import org.piramalswasthya.sakhi.model.FormInputOld
 import org.piramalswasthya.sakhi.model.InputType
 import org.piramalswasthya.sakhi.model.InputType.AGE_PICKER
 import org.piramalswasthya.sakhi.model.InputType.BUTTON
@@ -67,12 +66,15 @@ import org.piramalswasthya.sakhi.model.InputType.TEXT_VIEW
 import org.piramalswasthya.sakhi.model.InputType.TIME_PICKER
 import org.piramalswasthya.sakhi.model.InputType.values
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.AgePickerDialog
+import org.piramalswasthya.sakhi.utils.HelperUtil
+import org.piramalswasthya.sakhi.utils.HelperUtil.findFragmentActivity
 import org.piramalswasthya.sakhi.utils.HelperUtil.getAgeStrFromAgeUnit
 import org.piramalswasthya.sakhi.utils.HelperUtil.getDobFromAge
 import org.piramalswasthya.sakhi.utils.HelperUtil.getLongFromDate
 import org.piramalswasthya.sakhi.utils.HelperUtil.updateAgeDTO
 import timber.log.Timber
 import java.util.Calendar
+import java.util.Locale
 
 class FormInputAdapterWithBgIcon (
     private val imageClickListener: ImageClickListener? = null,
@@ -83,7 +85,6 @@ class FormInputAdapterWithBgIcon (
     private val isEnabled: Boolean = true
 ) : ListAdapter<FormElement, ViewHolder>(FormInputDiffCallBack) {
 
-
     object FormInputDiffCallBack : DiffUtil.ItemCallback<FormElement>() {
         override fun areItemsTheSame(oldItem: FormElement, newItem: FormElement) =
             oldItem.id == newItem.id
@@ -93,8 +94,6 @@ class FormInputAdapterWithBgIcon (
             return oldItem.errorText == newItem.errorText
         }
     }
-
-
 
     class EditTextInputViewHolder private constructor(private val binding: RvItemFormEditTextWithBgIconBinding) :
         ViewHolder(binding.root) {
@@ -506,6 +505,11 @@ class FormInputAdapterWithBgIcon (
             item.errorText?.also { binding.tilEditText.error = it }
                 ?: run { binding.tilEditText.error = null }
             binding.et.setOnClickListener {
+                val activity = binding.et.context.findFragmentActivity()
+                    ?: return@setOnClickListener
+                val originalLocale = Locale.getDefault()
+                HelperUtil.setEnLocaleForDatePicker(activity)
+
                 item.value?.let { value ->
                     thisYear = value.substring(6).toInt()
                     thisMonth = value.substring(3, 5).trim().toInt() - 1
@@ -539,8 +543,11 @@ class FormInputAdapterWithBgIcon (
                     datePickerDialog.show()
                 }else{
                     Toast.makeText(binding.root.context,"Something went wrong",Toast.LENGTH_SHORT).show()
+                    HelperUtil.setOriginalLocaleForDatePicker(activity,originalLocale)
                 }
-
+                datePickerDialog.setOnDismissListener {
+                    HelperUtil.setOriginalLocaleForDatePicker(activity,originalLocale)
+                }
             }
             binding.executePendingBindings()
 
@@ -1028,6 +1035,11 @@ class FormInputAdapterWithBgIcon (
             item.errorText?.also { binding.tilEditTextDate.error = it }
                 ?: run { binding.tilEditTextDate.error = null }
             binding.etDate.setOnClickListener {
+                val activity = binding.etDate.context.findFragmentActivity()
+                    ?: return@setOnClickListener
+                val originalLocale = Locale.getDefault()
+                HelperUtil.setEnLocaleForDatePicker(activity)
+
                 item.value?.let { value ->
                     thisYear = value.substring(6).toInt()
                     thisMonth = value.substring(3, 5).trim().toInt() - 1
@@ -1061,6 +1073,9 @@ class FormInputAdapterWithBgIcon (
                 if (item.showYearFirstInDatePicker)
                     datePickerDialog.datePicker.touchables[0].performClick()
                 datePickerDialog.show()
+                datePickerDialog.setOnDismissListener {
+                    HelperUtil.setOriginalLocaleForDatePicker(activity,originalLocale)
+                }
             }
             binding.executePendingBindings()
 
