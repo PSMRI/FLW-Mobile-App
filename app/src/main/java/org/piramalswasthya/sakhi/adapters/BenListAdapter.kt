@@ -253,6 +253,7 @@ class BenListAdapter(
             }
             if (item.isDeath){
                 binding.contentLayout.setBackgroundColor(ContextCompat.getColor(binding.contentLayout.context, R.color.md_theme_dark_outline))
+                binding.ivCall.visibility = View.GONE
             }else{
                 binding.contentLayout.setBackgroundColor(ContextCompat.getColor(binding.contentLayout.context, R.color.md_theme_light_primary))
             }
