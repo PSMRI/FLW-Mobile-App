@@ -55,10 +55,12 @@ import org.piramalswasthya.sakhi.model.InputType.RADIO
 import org.piramalswasthya.sakhi.model.InputType.TEXT_VIEW
 import org.piramalswasthya.sakhi.model.InputType.TIME_PICKER
 import org.piramalswasthya.sakhi.model.InputType.NUMBER_PICKER
-
 import org.piramalswasthya.sakhi.model.InputType.values
+import org.piramalswasthya.sakhi.utils.HelperUtil
+import org.piramalswasthya.sakhi.utils.HelperUtil.findFragmentActivity
 import timber.log.Timber
 import java.util.Calendar
+import java.util.Locale
 
 class FormInputAdapterOld(
     private val imageClickListener: ImageClickListener? = null,
@@ -508,6 +510,11 @@ class FormInputAdapterOld(
             item.errorText?.also { binding.tilEditText.error = it }
                 ?: run { binding.tilEditText.error = null }
             binding.et.setOnClickListener {
+                val activity = binding.et.context.findFragmentActivity()
+                    ?: return@setOnClickListener
+                val originalLocale = Locale.getDefault()
+                HelperUtil.setEnLocaleForDatePicker(activity)
+
                 item.value.value?.let { value ->
                     thisYear = value.substring(6).toInt()
                     thisMonth = value.substring(3, 5).trim().toInt() - 1
@@ -527,6 +534,9 @@ class FormInputAdapterOld(
                 datePickerDialog.datePicker.minDate = item.min ?: 0
                 datePickerDialog.datePicker.touchables[0].performClick()
                 datePickerDialog.show()
+                datePickerDialog.setOnDismissListener {
+                    HelperUtil.setOriginalLocaleForDatePicker(activity,originalLocale)
+                }
             }
             binding.executePendingBindings()
 
