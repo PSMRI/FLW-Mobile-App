@@ -19,7 +19,7 @@ def get_package_name(flavor)
     "#{base_package}#{suffix}"
 end
 
- def latest_googleplay_version_code(package_name)
+def latest_googleplay_version_code(package_name)
   UI.user_error!("Missing required parameter: package_name") if package_name.nil?
 
   json_key_path = File.expand_path('google_play_service_account.json', __dir__)
@@ -49,8 +49,7 @@ end
     UI.error "Failed to retrieve version codes: #{e.message}"
     raise
   end
- end
-
+end
 
 default_platform(:android)
 platform :android do
@@ -60,25 +59,13 @@ platform :android do
     flavor = options[:flavor]
     UI.user_error!("Missing required parameter: flavor") if flavor.nil? || flavor.empty?
     version_name = options[:version_name]
+    UI.user_error!("Missing required parameter: version_name") if version_name.nil? || version_name.empty?
+    new_version_code = options[:version_code].to_i
+    UI.user_error!("Missing or invalid version_code") if new_version_code <= 0
 
     # Convert PascalCase flavor (e.g. "SakshamStag") to camelCase (e.g. "sakshamStag")
     # to match Gradle's productFlavors directory naming
     gradle_flavor = flavor[0].downcase + flavor[1..]
-
-    # Get latest version code from Firebase, handle no prior releases
-    new_version_code = 1
-    begin
-      latest_release = firebase_app_distribution_get_latest_release(
-        app: ENV['FIREBASE_APP_ID'],
-        service_credentials_file: "firebase_credentials.json"
-      )
-      new_version_code = latest_release[:buildVersion].to_i + 1
-    rescue => e
-      UI.important "No prior Firebase release found, starting at version code 1: #{e.message}"
-    end
-
-    # Use provided version name, or fall back to auto-generated
-    version_name = version_name || "#{new_version_code}.0.0"
 
     UI.message "Building with version name: #{version_name}, version code: #{new_version_code}"
 
@@ -105,13 +92,17 @@ platform :android do
   desc "Build, Sign, and Distribute Release AAB to Play Store"
   lane :build_and_distribute_release do |options|
     flavor = options[:flavor]
+    UI.user_error!("Missing required parameter: flavor") if flavor.nil? || flavor.empty?
     version_name = options[:version_name]
+    UI.user_error!("Missing required parameter: version_name") if version_name.nil? || version_name.empty?
+    new_version_code = options[:version_code].to_i
+    UI.user_error!("Missing or invalid version_code") if new_version_code <= 0
     keystore_path = File.expand_path('../keystore.jks')
     package_name = get_package_name(flavor)
-    new_version_code = latest_googleplay_version_code(package_name) + 1
 
-    # Use provided version name, or fall back to auto-generated
-    version_name = version_name || "#{new_version_code}.0.0"
+    # Validate version code is greater than the current highest on Play Store
+    current_max = latest_googleplay_version_code(package_name)
+    UI.user_error!("version_code #{new_version_code} must be greater than the current highest on Play Store (#{current_max})") if new_version_code <= current_max
 
     UI.message "Building with version name: #{version_name}, version code: #{new_version_code}"
 
