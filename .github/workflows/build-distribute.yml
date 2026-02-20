@@ -18,6 +18,9 @@ on:
       version:
         required: true
         type: string
+      version_code:
+        required: true
+        type: string
 
 jobs:
   build:
@@ -101,6 +104,7 @@ jobs:
           # Inputs as env vars to avoid shell injection (inputs.version is free-text)
           INPUT_FLAVOR: ${{ inputs.flavor }}
           INPUT_VERSION: ${{ inputs.version }}
+          INPUT_VERSION_CODE: ${{ inputs.version_code }}
           INPUT_BUILD_TYPE: ${{ inputs.build_type }}
           # Native build env vars (must match CMakeLists.txt)
           ENCRYPTED_PASS_KEY: ${{ secrets.ENCRYPTED_PASS_KEY }}
@@ -119,7 +123,7 @@ jobs:
           FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
         run: |
           if [ "$INPUT_BUILD_TYPE" = "debug" ]; then
-            bundle exec fastlane build_and_distribute_debug flavor:"$INPUT_FLAVOR" version_name:"$INPUT_VERSION"
+            bundle exec fastlane build_and_distribute_debug flavor:"$INPUT_FLAVOR" version_name:"$INPUT_VERSION" version_code:"$INPUT_VERSION_CODE"
           else
-            bundle exec fastlane build_and_distribute_release flavor:"$INPUT_FLAVOR" version_name:"$INPUT_VERSION"
+            bundle exec fastlane build_and_distribute_release flavor:"$INPUT_FLAVOR" version_name:"$INPUT_VERSION" version_code:"$INPUT_VERSION_CODE"
           fi
