@@ -1010,6 +1010,12 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         }
         agePopup.min = getMinDobMillis()
         agePopup.max = System.currentTimeMillis()
+        if (isAddspouse == 1) {
+            isAddSpouse = true
+            gender.inputType = TEXT_VIEW
+            maritalStatus.inputType = TEXT_VIEW
+            reproductiveStatus.inputType = DROPDOWN
+        }
         if (relationToHeadId == 4 || relationToHeadId == 5) hoF?.let {
             isAddSpouse = true
 //            agePopup.inputType = TEXT_VIEW
@@ -1017,12 +1023,6 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             maritalStatus.inputType = TEXT_VIEW
             reproductiveStatus.inputType = DROPDOWN
             setUpForSpouse(it, hoFSpouse,list)
-        }
-        if (relationToHeadId != 4 && relationToHeadId != 5 && isAddspouse == 1) {
-            isAddSpouse = true
-            gender.inputType = TEXT_VIEW
-            maritalStatus.inputType = TEXT_VIEW
-            reproductiveStatus.inputType = DROPDOWN
         }
         if (relationToHeadId == 9 ||  relationToHeadId == 19 || relationToHeadId == 13 ||
             relationToHeadId == 11 || relationToHeadId == 17 || relationToHeadId == 2 ||
