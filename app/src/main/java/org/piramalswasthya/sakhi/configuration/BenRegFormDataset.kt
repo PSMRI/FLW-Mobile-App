@@ -155,7 +155,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         hasSpeechToText = true,
         hasDependants = true,
         etInputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_NORMAL
-        )
+    )
     val gender = FormElement(
         id = 9,
         inputType = RADIO,
@@ -211,7 +211,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         hasSpeechToText = true,
         etInputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
     )
-     var ageAtMarriage = FormElement(
+    var ageAtMarriage = FormElement(
         id = 1012,
         inputType = EDIT_TEXT,
         title = resources.getString(R.string.age_at_marriagee),
@@ -654,10 +654,10 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         } else {
             list.removeAll(
                 listOf(
-                husbandName,
-                wifeName,
-                spouseName,
-                ageAtMarriage
+                    husbandName,
+                    wifeName,
+                    spouseName,
+                    ageAtMarriage
                 )
             )
         }
@@ -1010,11 +1010,18 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         }
         agePopup.min = getMinDobMillis()
         agePopup.max = System.currentTimeMillis()
-        if (relationToHeadId == 4 || relationToHeadId == 5) hoF?.let {
+        if (isAddspouse == 1) {
             isAddSpouse = true
-            agePopup.inputType = TEXT_VIEW
             gender.inputType = TEXT_VIEW
             maritalStatus.inputType = TEXT_VIEW
+            reproductiveStatus.inputType = DROPDOWN
+        }
+        if (relationToHeadId == 4 || relationToHeadId == 5) hoF?.let {
+            isAddSpouse = true
+//            agePopup.inputType = TEXT_VIEW
+            gender.inputType = TEXT_VIEW
+            maritalStatus.inputType = TEXT_VIEW
+            reproductiveStatus.inputType = DROPDOWN
             setUpForSpouse(it, hoFSpouse,list)
         }
         if (relationToHeadId == 9 ||  relationToHeadId == 19 || relationToHeadId == 13 ||
@@ -1400,8 +1407,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             }
 //            maritalStatus.inputType = TEXT_VIEW
             if (hoFSpouse.gender == MALE) {
-            list1.add(list1.indexOf(maritalStatus) + 1 ,haveChildren)
-                }
+                list1.add(list1.indexOf(maritalStatus) + 1 ,haveChildren)
+            }
 
 
             timeStampDateOfMarriageFromSpouse = hoFSpouse.genDetails?.marriageDate
@@ -1417,13 +1424,13 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
     ) {
         if (selectedben?.genDetails?.maritalStatusId == 2) {
 
-                firstName.value = selectedben?.genDetails?.spouseName
+            firstName.value = selectedben?.genDetails?.spouseName
             if (firstName.value?.isNotEmpty()!!) {
                 firstName.inputType = TEXT_VIEW
 
             }
-                lastName.value = selectedben?.lastName
-                lastName.inputType = EDIT_TEXT
+            lastName.value = selectedben?.lastName
+            lastName.inputType = EDIT_TEXT
 
             if (selectedben?.gender == FEMALE) {
                 wifeName.value = "${selectedben?.firstName} ${selectedben?.lastName ?: ""}"
@@ -2110,7 +2117,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     val yesIndex = 0
                     val current = haveChildren.getPosition()
                     setIsAddingChildren(current == yesIndex)
-                    }
+                }
                 0
             }
             otherRelationToHead.id -> {
@@ -2641,8 +2648,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             ben.tempMobileNoOfRelationId = if (isHoF) 1 else tempraryContactNoBelongsto.getPosition()
             ben.mobileNoOfRelation =
                 mobileNoOfRelation.getEnglishStringFromPosition(ben.mobileNoOfRelationId)
-           /* ben.mobileNoOfRelation =
-                tempraryContactNoBelongsto.getEnglishStringFromPosition(ben.mobileNoOfRelationId)*/
+            /* ben.mobileNoOfRelation =
+                 tempraryContactNoBelongsto.getEnglishStringFromPosition(ben.mobileNoOfRelationId)*/
             ben.mobileOthers = otherMobileNoOfRelation.value
             ben.contactNumber =
                 if (ben.mobileNoOfRelationId == 5) familyHeadPhoneNo!!.toLong() else contactNumber.value!!.toLong()
@@ -2807,21 +2814,21 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
     fun setImageUriToFormElement(lastImageFormId: Int, dpUri: Uri) {
 
-            if (lastImageFormId == 46) {
-                fileUploadFront.value = dpUri.toString()
-                fileUploadFront.errorText = null
+        if (lastImageFormId == 46) {
+            fileUploadFront.value = dpUri.toString()
+            fileUploadFront.errorText = null
 
-            } else if (lastImageFormId == 47){
-                fileUploadBack.value = dpUri.toString()
-                fileUploadBack.errorText = null
+        } else if (lastImageFormId == 47){
+            fileUploadBack.value = dpUri.toString()
+            fileUploadBack.errorText = null
 
-            } else {
+        } else {
 
-                pic.value = dpUri.toString()
-                pic.errorText = null
+            pic.value = dpUri.toString()
+            pic.errorText = null
 
 
-            }
+        }
 
 
     }
@@ -3164,7 +3171,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 removeItems = emptyList(),
                 position = -2
             ) else {
-               // fatherName.required = true
+                // fatherName.required = true
                 // motherName.required = true
                 triggerDependants(
                     source = rchId,
