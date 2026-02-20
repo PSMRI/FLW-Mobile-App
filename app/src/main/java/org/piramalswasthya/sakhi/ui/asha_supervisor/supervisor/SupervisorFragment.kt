@@ -1,13 +1,9 @@
 package org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor
 
-import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.Spinner
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -16,27 +12,20 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkQuery
-import com.google.android.material.datepicker.CalendarConstraints
-import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.IconGridAdapter
 import org.piramalswasthya.sakhi.configuration.IconDataset
 import org.piramalswasthya.sakhi.databinding.FragmentSupervisorBinding
-import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.Languages.ASSAMESE
 import org.piramalswasthya.sakhi.helpers.Languages.ENGLISH
-import org.piramalswasthya.sakhi.helpers.getDateString
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
-import org.piramalswasthya.sakhi.ui.home_activity.home.EnableDevModeBottomSheetFragment
 import org.piramalswasthya.sakhi.ui.service_location_activity.ServiceTypeViewModel
-import org.piramalswasthya.sakhi.utils.MonthYearPickerDialog
 import org.piramalswasthya.sakhi.work.PullFromAmritWorker
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
-import java.util.Calendar
 import javax.inject.Inject
 
 @AndroidEntryPoint
