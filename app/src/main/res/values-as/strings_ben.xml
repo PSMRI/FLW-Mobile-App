@@ -70,7 +70,6 @@
     </string-array>
 
     <string-array name="nbr_reproductive_status_array2">
-        <item>Adolescent Girl</item>
         <item>Eligible Couple</item>
         <item>Pregnant Woman</item>
         <item>Postnatal Mother</item>
