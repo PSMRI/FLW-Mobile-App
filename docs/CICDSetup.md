@@ -33,6 +33,7 @@ CI/CD pipeline for the FLW Mobile App using GitHub Actions and Fastlane. Builds 
    - **Project**: Select from the dropdown (e.g., `sakshamUat`).
    - **Branch**: The git branch to build (default: `main`).
    - **Version**: Version name for the build (e.g., `2.5.0`).
+   - **Version Code**: Integer version code for the build (e.g., `16`).
 5. Click **Run workflow** to start.
 
 The pipeline automatically resolves the Gradle flavor, GitHub environment, and build type based on the selected project. Debug builds go to Firebase App Distribution; release builds go to Google Play Store internal track.
@@ -80,11 +81,12 @@ flw-android-build.yml (caller)
 
 The caller workflow, triggered manually via `workflow_dispatch`. Accepts 3 inputs:
 
-| Input     | Type   | Required | Description                              |
-|-----------|--------|----------|------------------------------------------|
-| `project` | choice | yes      | Dropdown with all 8 project options      |
-| `branch`  | string | yes      | Git branch to build (default: `main`)    |
-| `version` | string | yes      | Version name (e.g., `2.5.0`)            |
+| Input         | Type   | Required | Description                              |
+|---------------|--------|----------|------------------------------------------|
+| `project`     | choice | yes      | Dropdown with all 8 project options      |
+| `branch`      | string | yes      | Git branch to build (default: `main`)    |
+| `version`     | string | yes      | Version name (e.g., `2.5.0`)            |
+| `versionCode` | string | yes      | Version code integer (e.g., `16`)        |
 
 **Jobs**:
 
@@ -95,7 +97,7 @@ The caller workflow, triggered manually via `workflow_dispatch`. Accepts 3 input
 
 **Path**: `.github/workflows/build-distribute.yml`
 
-A reusable workflow (`workflow_call`) that performs the actual build. Accepts 5 inputs: `branch`, `environment`, `flavor`, `build_type`, `version`.
+A reusable workflow (`workflow_call`) that performs the actual build. Accepts 6 inputs: `branch`, `environment`, `flavor`, `build_type`, `version`, `version_code`.
 
 **Key steps**:
 
@@ -122,27 +124,29 @@ A reusable workflow (`workflow_call`) that performs the actual build. Accepts 5 
 ### Lanes
 
 **`build_and_distribute_debug`**:
-1. Queries Firebase App Distribution for the latest version code (defaults to 1 if no prior release exists).
-2. Writes `version/version.properties` with the provided version name and incremented version code.
+1. Uses the manually provided version code from workflow input.
+2. Writes `version/version.properties` with the provided version name and version code.
 3. Runs `gradle clean assemble<Flavor>Debug`.
 4. Distributes APK to Firebase App Distribution using groups and release notes from `FirebaseAppDistributionConfig/`.
 
 **`build_and_distribute_release`**:
-1. Queries Google Play Store across all tracks for the highest version code, increments by 1.
-2. Writes `version/version.properties` with the provided version name and new version code.
-3. Runs `gradle clean bundle<Flavor>Release` with keystore signing properties.
-4. Uploads AAB to Google Play Store internal track as a draft.
+1. Uses the manually provided version code from workflow input.
+2. Validates that the version code is greater than the current highest on Play Store (fails early if not).
+3. Writes `version/version.properties` with the provided version name and version code.
+4. Runs `gradle clean bundle<Flavor>Release` with keystore signing properties.
+5. Uploads AAB to Google Play Store internal track as a draft.
 
 ### Helper Functions
 
 - **`get_package_name(flavor)`**: Maps a Gradle flavor name to its full package name (`org.piramalswasthya.sakhi.<suffix>`). Supports all 8 flavors.
-- **`latest_googleplay_version_code(package_name)`**: Scans production, beta, alpha, and internal tracks for the highest version code. Returns 0 if none found.
+- **`latest_googleplay_version_code(package_name)`**: Scans production, beta, alpha, and internal tracks for the highest version code. Used in the release lane to validate that the provided version code is greater than the current highest. Returns 0 if none found.
 
 ### Options
 
 Both lanes accept:
 - `flavor:` - The Gradle flavor name (e.g., `SakshamUat`).
-- `version_name:` - The version name string (e.g., `2.5.0`). Falls back to auto-generated `<version_code>.0.0` if not provided.
+- `version_name:` - The version name string (e.g., `2.5.0`).
+- `version_code:` - The integer version code (e.g., `16`).
 
 ---
 

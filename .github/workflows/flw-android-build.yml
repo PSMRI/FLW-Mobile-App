@@ -28,6 +28,11 @@ on:
         required: true
         type: string
 
+      versionCode:
+        description: "Version code (example: 16)"
+        required: true
+        type: string
+
 jobs:
   resolve-config:
     runs-on: ubuntu-latest
@@ -95,6 +100,7 @@ jobs:
           echo "Build Type: ${{ steps.resolve.outputs.build_type }}"
           echo "Branch: ${{ inputs.branch }}"
           echo "Version: ${{ inputs.version }}"
+          echo "Version Code: ${{ inputs.versionCode }}"
 
   flw-build:
     needs: resolve-config
@@ -107,4 +113,5 @@ jobs:
       flavor: ${{ needs.resolve-config.outputs.flavor }}
       build_type: ${{ needs.resolve-config.outputs.build_type }}
       version: ${{ inputs.version }}
+      version_code: ${{ inputs.versionCode }}
     secrets: inherit
