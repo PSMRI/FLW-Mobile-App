@@ -321,14 +321,14 @@ class IconDataset @Inject constructor(
 
         return listOf(
             Icon(
-                R.drawable.ic__assess_high_risk,
+                R.drawable.icon_vhnd,
                 resources.getString(R.string.vhnd),
                 null,
                 VillageLevelFormsFragmentDirections
                     .actionVillageLevelFormsFragmentToVHNDListFragement()
             ),
             Icon(
-                R.drawable.vhnc,
+                R.drawable.icon_vhnc,
                 resources.getString(R.string.vnhc),
                 null,
                 VillageLevelFormsFragmentDirections
@@ -336,7 +336,7 @@ class IconDataset @Inject constructor(
             ),
             phcReviewIcon,
             Icon(
-                R.drawable.ahd,
+                R.drawable.icon_ahd,
                 resources.getString(R.string.ahd),
                 null,
                 VillageLevelFormsFragmentDirections
@@ -350,7 +350,7 @@ class IconDataset @Inject constructor(
                     .actionVillageLevelFormsFragmentToDewormingListFragment()
             ),
             Icon(
-                R.drawable.dewarming,
+                R.drawable.icon_maa_meeting,
                 resources.getString(R.string.maa_meeting),
                 null,
                 VillageLevelFormsFragmentDirections

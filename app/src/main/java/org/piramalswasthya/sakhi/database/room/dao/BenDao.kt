@@ -307,11 +307,12 @@ interface BenDao {
             OR CAST(hhId AS TEXT) LIKE '%' || :query || '%'
             OR IFNULL(rchId, '') LIKE '%' || REPLACE(:query, ' ', '') || '%'
         )
-        ORDER BY CASE
-            WHEN isDeath = 0 THEN 0
-            WHEN isDeath = 1 THEN 1
-            ELSE 2
-        END
+       ORDER BY CASE
+    WHEN isDeath = 0 AND isDeactivate = 0 THEN 0
+    WHEN isDeath = 1 AND isDeactivate = 0 THEN 1
+    WHEN isDeactivate = 1 THEN 2
+    ELSE 4
+    END ASC
     """)
     suspend fun searchBenOnce(selectedVillage: Int, source: Int, filterType: Int, query: String): List<BenBasicCache>
 
