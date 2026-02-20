@@ -126,6 +126,7 @@ platform :android do
           skip_upload_screenshots: true,
           release_status: "draft",
           version_code: new_version_code,
+          version_name: version_name,
           package_name: package_name,
           json_key: File.expand_path('google_play_service_account.json', __dir__)
     )
