@@ -1211,7 +1211,7 @@
     <string name="sync_dashboard_clear_logs">Clear Logs</string>
     <string name="sync_dashboard_export_logs">Export Logs</string>
     <string name="sync_dashboard_no_log_files">No log files to export</string>
-    <string name="sub_center_under_you_4">Sub-Center Under You (4)</string>
+    <string name="sub_center_under_you_4">Sub-Center Under You</string>
 
 </resources>
 

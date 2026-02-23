@@ -24,9 +24,13 @@ class SupervisorProfileFragment : Fragment()  {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentSupervisorProfileBinding.inflate(layoutInflater, container, false)
+        _binding = FragmentSupervisorProfileBinding.inflate(inflater, container, false)
 
         return binding.root
     }
+    override fun onDestroyView() {
+        super.onDestroyView()
+         _binding = null
+          }
 
 }

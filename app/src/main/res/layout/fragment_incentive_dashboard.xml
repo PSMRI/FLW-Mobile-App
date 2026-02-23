@@ -131,7 +131,7 @@
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_check_circle"/>
                     <TextView
-                        android:layout_toRightOf="@+id/verifiedIcon"
+                        android:layout_toEndOf="@+id/verifiedIcon"
                         android:layout_height="wrap_content"
                         android:layout_width="wrap_content"
                         android:text="Verified"
@@ -180,7 +180,7 @@
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     android:text="Pending"
-                    android:layout_toRightOf="@+id/pendingIcon"
+                    android:layout_toEndOf="@+id/pendingIcon"
                     android:layout_marginStart="5dp"
                     android:textSize="18dp"
                     android:textStyle="bold"/>
@@ -227,7 +227,7 @@
                         android:layout_height="wrap_content"
                         android:layout_width="wrap_content"
                         android:text="OverDue"
-                        android:layout_toRightOf="@+id/overDewIcon"
+                        android:layout_toEndOf="@+id/overDewIcon"
                         android:layout_marginStart="5dp"
                         android:textSize="18dp"
                         android:textStyle="bold"/>
@@ -272,7 +272,7 @@
                         android:layout_height="wrap_content"
                         android:layout_width="wrap_content"
                         android:text="Rejected"
-                        android:layout_toRightOf="@+id/rejectedIcon"
+                        android:layout_toEndOf="@+id/rejectedIcon"
                         android:layout_marginStart="5dp"
                         android:textSize="18dp"
                         android:textStyle="bold"/>
