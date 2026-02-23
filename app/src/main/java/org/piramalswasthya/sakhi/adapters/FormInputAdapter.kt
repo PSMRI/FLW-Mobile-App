@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.adapters
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Context
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.res.ColorStateList
 import android.content.res.Resources
@@ -73,6 +74,7 @@ import org.piramalswasthya.sakhi.utils.HelperUtil.getAgeStrFromAgeUnit
 import org.piramalswasthya.sakhi.utils.HelperUtil.getDobFromAge
 import org.piramalswasthya.sakhi.utils.HelperUtil.getLongFromDate
 import org.piramalswasthya.sakhi.utils.HelperUtil.updateAgeDTO
+import org.piramalswasthya.sakhi.utils.Log
 import timber.log.Timber
 import java.util.Calendar
 
@@ -336,6 +338,11 @@ class FormInputAdapter(
         }
 
         fun bind(item: FormElement, isEnabled: Boolean, formValueListener: FormValueListener?) {
+            binding.tilRvDropdown.clearFocus()
+            binding.tilEditText.clearFocus()
+            binding.et.clearFocus()
+            binding.actvRvDropdown.clearFocus()
+            binding.actvRvDropdown.showSoftInputOnFocus = false
             binding.form = item
             if (item.errorText == null) {
                 binding.tilRvDropdown.error = null
@@ -350,7 +357,11 @@ class FormInputAdapter(
                 return
             }
 
+            hideKeyboardImmediately()
+
+
             binding.actvRvDropdown.setOnItemClickListener { _, _, index, _ ->
+                hideKeyboardWithRetry()
                 item.value = item.entries?.get(index)
                 Timber.d("Item DD : $item")
 //                if (item.hasDependants || item.hasAlertError) {
@@ -360,10 +371,34 @@ class FormInputAdapter(
                 binding.tilRvDropdown.error = item.errorText
             }
 
+            binding.actvRvDropdown.setOnClickListener {
+                hideKeyboardWithRetry()
+            }
+
             item.errorText?.let { binding.tilRvDropdown.error = it }
             binding.executePendingBindings()
 
         }
+
+        private fun hideKeyboardImmediately() {
+            val imm = binding.root.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
+        }
+
+        private fun hideKeyboardWithRetry() {
+            val imm = binding.root.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+
+            imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
+
+            binding.root.postDelayed({
+                imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
+            }, 50)
+
+            binding.root.postDelayed({
+                imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
+            }, 200)
+        }
+
     }
 
     class RadioInputViewHolder private constructor(private val binding: RvItemFormRadioV2Binding) :
@@ -441,6 +476,9 @@ class FormInputAdapter(
                         if (item.value == it) rdBtn.isChecked = true
                         rdBtn.setOnCheckedChangeListener { _, b ->
                             if (b) {
+                                binding.root.clearFocus()
+                                val imm = binding.root.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                                imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
                                 item.value = it
                                 if (item.hasDependants || item.hasAlertError) {
                                     Timber.d(
@@ -523,76 +561,49 @@ class FormInputAdapter(
         }
 
         fun bind(
-            item: FormElement, isEnabled: Boolean, formValueListener: FormValueListener?
+            item: FormElement,
+            isEnabled: Boolean,
+            formValueListener: FormValueListener?
         ) {
             binding.form = item
-
-            if (item.errorText != null) binding.clRi.setBackgroundResource(R.drawable.state_errored)
-            else binding.clRi.setBackgroundResource(0)
             binding.llChecks.removeAllViews()
-            binding.llChecks.apply {
-                item.entries?.let { items ->
-                    orientation = item.orientation ?: LinearLayout.VERTICAL
-                    weightSum = items.size.toFloat()
-                    items.forEachIndexed { index, it ->
-                        val cbx = CheckBox(this.context)
-                        cbx.layoutParams = RadioGroup.LayoutParams(
-                            RadioGroup.LayoutParams.MATCH_PARENT,
-                            RadioGroup.LayoutParams.WRAP_CONTENT,
-                            1.0F
-                        )
-                        if (!isEnabled) {
-                            cbx.isClickable = false
-                            cbx.isFocusable = false
-                        }
-                        cbx.id = View.generateViewId()
-                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) cbx.setTextAppearance(
-                            context, android.R.style.TextAppearance_Material_Medium
-                        )
-                        else cbx.setTextAppearance(android.R.style.TextAppearance_Material_Subhead)
-                        cbx.text = it
-                        addView(cbx)
-                        if (item.value?.contains(it) == true) cbx.isChecked = true
-                        cbx.setOnCheckedChangeListener { _, b ->
-                            if (b) {
-                                if (item.value != null) item.value = item.value + it
-                                else item.value = it
-                                if (item.hasDependants || item.hasAlertError) {
-                                    Timber.d(
-                                        "listener trigger : ${item.id} ${
-                                            item.entries!!.indexOf(
-                                                it
-                                            )
-                                        } $it"
-                                    )
-//                                    formValueListener?.onValueChanged(
-//                                        item, item.entries!!.indexOf(it)
-//                                    )
-                                }
-                            } else {
-                                if (item.value?.contains(it) == true) {
-                                    item.value = item.value?.replace(it, "")
-                                }
-                            }
-                            formValueListener?.onValueChanged(
-                                item, index * (if (b) 1 else -1)
-                            )
-                            if (item.value.isNullOrBlank()) {
-                                item.value = null
-                            } else {
-                                Timber.d("Called here!")
-                                item.errorText = null
-                                binding.clRi.setBackgroundResource(0)
-                            }
-                            Timber.d("Checkbox value : ${item.value}")
 
-                        }
+            val selectedIndexes = item.value
+                ?.split("|")
+                ?.mapNotNull { it.toIntOrNull() }
+                ?.toMutableSet()
+                ?: mutableSetOf()
+
+            item.entries?.forEachIndexed { index, text ->
+
+                val cbx = CheckBox(binding.root.context)
+                cbx.text = text
+                cbx.isEnabled = isEnabled
+                cbx.isChecked = selectedIndexes.contains(index)
+                cbx.setOnCheckedChangeListener { _, isChecked ->
+
+                    if (isChecked) {
+                        selectedIndexes.add(index)
+                    } else {
+                        selectedIndexes.remove(index)
                     }
-                }
-            }
-            binding.executePendingBindings()
 
+                    item.value =
+                        if (selectedIndexes.isEmpty()) null
+                        else selectedIndexes.sorted().joinToString("|")
+
+                    item.errorText = null
+                    binding.clRi.setBackgroundResource(0)
+
+                    formValueListener?.onValueChanged(item, index)
+                }
+
+                binding.llChecks.addView(cbx)
+            }
+
+            binding.executePendingBindings()
         }
+
     }
 
     class ButtonInputViewHolder private constructor(private val binding: RvItemFormBtnBinding) :
@@ -699,7 +710,6 @@ class FormInputAdapter(
                             item.value = getDateString(item.max)
                         else
                             item.value = getDateString(millis)
-//                            "${if (day > 9) day else "0$day"}-${if (month > 8) month + 1 else "0${month + 1}"}-$year"
                         binding.invalidateAll()
                         if (item.hasDependants) formValueListener?.onValueChanged(item, -1)
                     }, thisYear, thisMonth, thisDay
@@ -941,10 +951,7 @@ class FormInputAdapter(
     }
 
     class ImageClickListener(private val imageClick: (formId: Int) -> Unit) {
-
         fun onImageClick(form: FormElement) = imageClick(form.id)
-//        fun onImageClickForRef(form: FormElement) = imageClick(form.etInputType)
-
     }
 
     class SendOtpClickListener(private val btnClick: (formId: Int,generateOtp:MaterialButton,timerInsec: TextView,tilEditText:TextInputLayout, isEnabled: Boolean,adapterPosition:Int,otpField: TextInputEditText) -> Unit) {
@@ -1016,9 +1023,16 @@ class FormInputAdapter(
             textWatcher?.let { binding.etNumberInput.removeTextChangedListener(it) }
 
             textWatcher = object : TextWatcher {
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                    // No action required for this implementation.
+                    // This method is implemented to satisfy the interface contract.
+
+
+                }
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    // No action required for this implementation.
+                    // This method is implemented to satisfy the interface contract.
 
                 }
 
@@ -1102,6 +1116,7 @@ class FormInputAdapter(
             binding.etNumberInput.setText(value.toString())
             binding.etNumberInput.setSelection(binding.etNumberInput.text!!.length)
             internalUpdate = false
+
         }
 
         private fun updateValue(
@@ -1172,20 +1187,6 @@ class FormInputAdapter(
             isEnabled: Boolean,
             fileList : MutableList<Uri>?
         ) {
-           /* binding.form = item
-            binding.tvTitle.text = item.title
-            binding.clickListener = clickListener
-            binding.documentclickListener = documentOnClick
-            binding.btnView.visibility = if (item.value != null) View.VISIBLE else View.GONE
-
-            if (isEnabled) {
-                binding.addFile.isEnabled = true
-                binding.addFile.alpha = 1f
-            } else {
-                binding.addFile.isEnabled = false
-                binding.addFile.alpha = 0.5f
-            }*/
-
             val items = fileList ?: mutableListOf()
             fileAdapter = FileListAdapter(items)
             binding.rvFiles.adapter = fileAdapter

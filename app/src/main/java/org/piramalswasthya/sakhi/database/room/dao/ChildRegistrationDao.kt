@@ -14,7 +14,7 @@ interface ChildRegistrationDao {
 
     //    @Query("SELECT b.*, c.* FROM BEN_BASIC_CACHE b join infant_reg i on b.benId = i.motherBenId left outer join CHILD_REG c on i.motherBenId= c.benId WHERE villageId=:selectedVillage")
     @Transaction
-    @Query("SELECT i.* FROM infant_reg i  join beneficiary b on b.beneficiaryId = i.motherBenId where i.isActive = 1 and b.loc_village_id = :selectedVillage")
+    @Query("SELECT i.* FROM infant_reg i  join beneficiary b on b.beneficiaryId = i.motherBenId where i.isActive = 1 and b.loc_village_id = :selectedVillage and b.isDeactivate=0")
     fun getAllRegisteredInfants(selectedVillage: Int): Flow<List<InfantRegWithBen>>
 
     @Query("SELECT count(*) FROM infant_reg i  join beneficiary b on b.beneficiaryId = i.motherBenId where i.isActive = 1 and b.loc_village_id = :selectedVillage")

@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.databinding.RvItemIncentiveGroupedBinding
 import org.piramalswasthya.sakhi.model.IncentiveGrouped
 
@@ -25,11 +26,18 @@ class IncentiveGroupedAdapter(
 
     class IncentiveGroupedViewHolder( private val binding: RvItemIncentiveGroupedBinding, private val onItemClick: (Long, String) -> Unit) :
         RecyclerView.ViewHolder(binding.root) {
+        private val isMitanin = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
+
 
         fun bind(item: IncentiveGrouped, clickListener: (Long, String) -> Unit,serialNo : Int) {
             binding.item = item
             binding.serialNo = serialNo
             binding.clickListener = clickListener
+            binding.isMitanin = isMitanin
+
+            if (isMitanin) {
+                binding.guideline75.setGuidelinePercent(0.9f)
+            }
             binding.executePendingBindings()
 
         }

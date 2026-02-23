@@ -26,6 +26,15 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp" />
 
+                <TextView
+                    android:id="@+id/mdaTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:textSize="16sp"
+                    android:visibility="gone"
+                    android:textStyle="bold"
+                    android:text="@string/mda_form_campagain_title"/>
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerView"
                     android:layout_width="match_parent"

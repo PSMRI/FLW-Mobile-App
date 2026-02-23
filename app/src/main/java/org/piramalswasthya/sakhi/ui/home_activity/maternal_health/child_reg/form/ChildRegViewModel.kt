@@ -13,12 +13,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.configuration.ChildRegistrationDataset
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.model.EligibleCoupleRegCache
 import org.piramalswasthya.sakhi.model.InfantRegCache
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.ChildRegRepo
+import org.piramalswasthya.sakhi.repositories.EcrRepo
 import org.piramalswasthya.sakhi.repositories.InfantRegRepo
 import timber.log.Timber
+import java.util.Calendar
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,7 +32,8 @@ class ChildRegViewModel @Inject constructor(
     @ApplicationContext context: Context,
     private val childRegRepo: ChildRegRepo,
     private val infantRegRepo: InfantRegRepo,
-    private val benRepo: BenRepo
+    private val benRepo: BenRepo,
+    private val ecrRepo: EcrRepo
 ) : ViewModel() {
     val motherBenId =
         ChildRegFragmentArgs.fromSavedStateHandle(savedStateHandle).motherBenId
@@ -110,6 +115,52 @@ class ChildRegViewModel @Inject constructor(
                     benRepo.persistRecord(childBen)
                     infantReg.childBenId = childBen.beneficiaryId
                     infantRegRepo.update(infantReg)
+
+                    var existingEcr = ecrRepo.getSavedRecord(motherBenId)
+                    val isNew = existingEcr == null
+
+                    if (isNew) {
+                        existingEcr = EligibleCoupleRegCache(
+                            benId = motherBenId,
+                            createdBy = preferenceDao.getLoggedInUser()!!.userName,
+                            updatedBy = preferenceDao.getLoggedInUser()!!.userName,
+                            syncState = SyncState.UNSYNCED,
+                            lmp_date = Calendar.getInstance().timeInMillis,
+
+                            )
+                    }
+
+                    val nextSlot = when {
+                        existingEcr!!.dob1 == null -> 1
+                        existingEcr.dob2 == null -> 2
+                        existingEcr.dob3 == null -> 3
+                        existingEcr.dob4 == null -> 4
+                        existingEcr.dob5 == null -> 5
+                        existingEcr.dob6 == null -> 6
+                        existingEcr.dob7 == null -> 7
+                        existingEcr.dob8 == null -> 8
+                        existingEcr.dob9 == null -> 9
+                        else -> 9
+                    }
+
+                    when (nextSlot) {
+                        1 -> { existingEcr.dob1 = childBen.dob; existingEcr.gender1 = childBen.gender; existingEcr.age1 = childBen.age }
+                        2 -> { existingEcr.dob2 = childBen.dob; existingEcr.gender2 = childBen.gender; existingEcr.age2 = childBen.age }
+                        3 -> { existingEcr.dob3 = childBen.dob; existingEcr.gender3 = childBen.gender; existingEcr.age3 = childBen.age }
+                        4 -> { existingEcr.dob4 = childBen.dob; existingEcr.gender4 = childBen.gender; existingEcr.age4 = childBen.age }
+                        5 -> { existingEcr.dob5 = childBen.dob; existingEcr.gender5 = childBen.gender; existingEcr.age5 = childBen.age }
+                        6 -> { existingEcr.dob6 = childBen.dob; existingEcr.gender6 = childBen.gender; existingEcr.age6 = childBen.age }
+                        7 -> { existingEcr.dob7 = childBen.dob; existingEcr.gender7 = childBen.gender; existingEcr.age7 = childBen.age }
+                        8 -> { existingEcr.dob8 = childBen.dob; existingEcr.gender8 = childBen.gender; existingEcr.age8 = childBen.age }
+                        9 -> { existingEcr.dob9 = childBen.dob; existingEcr.gender9 = childBen.gender; existingEcr.age9 = childBen.age }
+                    }
+
+
+                    existingEcr.updatedBy = preferenceDao.getLoggedInUser()!!.userName
+                    existingEcr.syncState = SyncState.UNSYNCED
+
+                    ecrRepo.persistRecord(existingEcr)
+
                     _state.postValue(State.SAVE_SUCCESS)
                 } catch (e: Exception) {
                     Timber.d("saving child registration data failed!!")

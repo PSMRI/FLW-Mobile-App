@@ -15,11 +15,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.BenListAdapter
+import org.piramalswasthya.sakhi.adapters.BenPagingAdapter
 import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.AlertFilterBinding
@@ -29,6 +32,7 @@ import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registration.EyeSurgeryFormViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.all_household.AllHouseholdFragmentDirections
+import org.piramalswasthya.sakhi.utils.HelperUtil
 import org.piramalswasthya.sakhi.utils.RoleConstants
 import timber.log.Timber
 import javax.inject.Inject
@@ -48,7 +52,7 @@ class AllBenFragment : Fragment() {
         AllBenFragmentArgs.fromBundle(requireArguments())
     }
 
-    private lateinit var benAdapter: BenListAdapter
+    private lateinit var benAdapter: BenPagingAdapter
 
     private var selectedAbha = Abha.ALL
 
@@ -56,9 +60,10 @@ class AllBenFragment : Fragment() {
     private val viewModelEyeSurgery: EyeSurgeryFormViewModel by viewModels()
 
     private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
-        binding.searchView.setText(value)
-        binding.searchView.setSelection(value.length)
-        viewModel.filterText(value)
+        val lowerValue = value.lowercase()
+        binding.searchView.setText(lowerValue)
+        binding.searchView.setSelection(lowerValue.length)
+        viewModel.filterText(lowerValue)
     }
 
     private val abhaDisclaimer by lazy {
@@ -74,7 +79,7 @@ class AllBenFragment : Fragment() {
         WITH,
         WITHOUT,
         AGE_ABOVE_30,
-        WARA
+//        WARA
     }
 
     private val filterAlert by lazy {
@@ -86,7 +91,7 @@ class AllBenFragment : Fragment() {
                 filterAlertBinding.rbWith.id -> Abha.WITH
                 filterAlertBinding.rbWithout.id -> Abha.WITHOUT
                 filterAlertBinding.rbAgeAboveThirty.id -> Abha.AGE_ABOVE_30
-                filterAlertBinding.rbWara.id -> Abha.WARA
+//                filterAlertBinding.rbWara.id -> Abha.WARA
                 else -> Abha.ALL
             }
 
@@ -100,18 +105,14 @@ class AllBenFragment : Fragment() {
             }.create()
 
         filterAlertBinding.btnOk.setOnClickListener {
-            if (selectedAbha == Abha.WITH) {
-                viewModel.filterType(1)
-            } else if (selectedAbha == Abha.WITHOUT) {
-                viewModel.filterType(2)
-            } else if (selectedAbha == Abha.AGE_ABOVE_30) {
-                viewModel.filterType(3)
-            } else if (selectedAbha == Abha.WARA) {
-                viewModel.filterType(4)
-            }  else {
-                viewModel.filterType(0)
+            val filter = when (selectedAbha) {
+                Abha.WITH -> 1
+                Abha.WITHOUT -> 2
+                Abha.AGE_ABOVE_30 -> 3
+//                Abha.WARA -> 4
+                else -> 0
             }
-
+            viewModel.filterType(filter)
             alert.cancel()
         }
         filterAlertBinding.btnCancel.setOnClickListener {
@@ -140,13 +141,7 @@ class AllBenFragment : Fragment() {
         }
 
         binding.ibDownload.setOnClickListener {
-            lifecycleScope.launch {
-                viewModel.benList.collect { users ->
-                    if (users.isNotEmpty()) {
-                        viewModel.createCsvFile(requireContext(), users)
-                    }
-                }
-            }
+            viewModel.downloadCsv(requireContext())
         }
 
         if (args.source == 1 || args.source == 2 || args.source == 3 || args.source == 4) {
@@ -154,27 +149,82 @@ class AllBenFragment : Fragment() {
             binding.ibDownload.visibility = View.VISIBLE
         }
 
-        benAdapter = BenListAdapter(
+        benAdapter = BenPagingAdapter(
             clickListener = BenListAdapter.BenClickListener(
-                { hhId, benId, relToHeadId ->
+                { item,hhId, benId, relToHeadId ->
 
                         findNavController().navigate(
                             AllBenFragmentDirections.actionAllBenFragmentToNewBenRegFragment(
                                 hhId = hhId,
                                 benId = benId,
                                 relToHeadId = relToHeadId,
+                                isAddSpouse = 0,
                                 gender = 0
 
                             )
                         )
 
                 },
-                {
+                clickedWifeBen = {
+                        item, hhId, benId, relToHeadId ->
+
+                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+                        findNavController().navigate(
+                            AllBenFragmentDirections.actionAllBenFragmentToNewBenRegFragment(
+                                hhId = hhId,
+                                benId = 0,
+                                relToHeadId = HelperUtil.getFemaleRelationId(relToHeadId),
+                                selectedBenId = benId,
+                                isAddSpouse = 1,
+
+                                gender = 2
+
+                            )
+                        )
+                    }
                 },
-                { benId, hhId ->
+                clickedHusbandBen = {
+                        item, hhId, benId, relToHeadId ->
+
+                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+                        findNavController().navigate(
+                            AllBenFragmentDirections.actionAllBenFragmentToNewBenRegFragment(
+                                hhId = hhId,
+                                benId = 0,
+                                relToHeadId = HelperUtil.getMaleRelationId(relToHeadId),
+                                selectedBenId = benId,
+                                isAddSpouse = 1,
+                                gender = 1
+
+                            )
+                        )
+                    }
+                },
+                clickedChildben = {
+                        item, hhId, benId, relToHeadId ->
+
+                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+                        findNavController().navigate(
+                            AllBenFragmentDirections.actionAllBenFragmentToNewChildAsBenRegistrationFragment(
+                                hhId = hhId,
+                                benId = 0,
+                                relToHeadId = relToHeadId,
+                                selectedBenId = benId,
+                                isAddSpouse = 0,
+                                gender = 0
+
+                            )
+                        )
+                    }
+
+                },
+
+                {item,hhid->
+                },
+                { item,benId, hhId ->
                     checkAndGenerateABHA(benId)
                 },
-                { benId, hhId , isViewMode, isIFA->
+                {item, benId, hhId , isViewMode, isIFA->
                         if (isIFA){
                             findNavController().navigate(
                                 AllBenFragmentDirections.actionAllBenFragmentToBenIfaFormFragment(
@@ -206,24 +256,42 @@ class AllBenFragment : Fragment() {
                         }
                         Toast.makeText(requireContext(), "Please allow permissions first", Toast.LENGTH_SHORT).show()
                     }
+                },{
+
                 }
 
                 ),
-            showAbha = true,
-            showSyncIcon = true,
             showBeneficiaries = true,
             showRegistrationDate = true,
+            showSyncIcon = true,
+            showAbha = true,
             showCall = true,
-            pref = prefDao
+            pref = prefDao,
+            context = requireActivity()
         )
         binding.rvAny.adapter = benAdapter
+        binding.rvAny.setHasFixedSize(true)
+        binding.rvAny.setItemViewCacheSize(20)
+        (binding.rvAny.layoutManager as? androidx.recyclerview.widget.LinearLayoutManager)?.apply {
+            initialPrefetchItemCount = 10
+        }
+
         lifecycleScope.launch {
-            viewModel.benList.collect {
-                if (it.isEmpty())
-                    binding.flEmpty.visibility = View.VISIBLE
-                else
-                    binding.flEmpty.visibility = View.GONE
-                benAdapter.submitList(it)
+            viewModel.benList.collectLatest {
+                benAdapter.submitData(it)
+            }
+        }
+
+        lifecycleScope.launch {
+            benAdapter.loadStateFlow.collectLatest { loadStates ->
+                val isEmpty = loadStates.refresh is LoadState.NotLoading && benAdapter.itemCount == 0
+                binding.flEmpty.visibility = if (isEmpty) View.VISIBLE else View.GONE
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.childCounts.collectLatest { countMap ->
+                benAdapter.submitChildCounts(countMap)
             }
         }
 

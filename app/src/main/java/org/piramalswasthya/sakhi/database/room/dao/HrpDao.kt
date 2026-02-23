@@ -108,4 +108,19 @@ interface HrpDao {
 
     @Query("select * from HRP_NON_PREGNANT_TRACK where benId = :benId and (visitDate = :visitDate or visitDate = :visitDateGMT)")
     fun getHRPNonTrack(benId: Long, visitDate: Long, visitDateGMT: Long): HRPNonPregnantTrackCache?
+
+    @Query("UPDATE HRP_PREGNANT_ASSESS SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetPregnantAssessSyncingToUnsynced()
+
+    @Query("UPDATE HRP_PREGNANT_TRACK SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetPregnantTrackSyncingToUnsynced()
+
+    @Query("UPDATE HRP_NON_PREGNANT_ASSESS SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetNonPregnantAssessSyncingToUnsynced()
+
+    @Query("UPDATE HRP_NON_PREGNANT_TRACK SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetNonPregnantTrackSyncingToUnsynced()
+
+    @Query("UPDATE HRP_MICRO_BIRTH_PLAN SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetMicroBirthPlanSyncingToUnsynced()
 }

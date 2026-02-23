@@ -37,6 +37,7 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="submit">SUBMIT</string>
+    <string name="submitted">SUBMITTED</string>
     <string name="enter_mobile_number">Enter Mobile Number</string>
     <string name="enter_number_for_abha">Aadhaar Number for ABHA Registration</string>
     <string name="aadhaar_linked_mobile">Aadhaar linked mobile number or other mobile number</string>
@@ -50,6 +51,9 @@
     <string name="abha">ABHA</string>
     <string name="add_eye_surgery">Add Eye Surgery</string>
     <string name="mda_form_title">MDA Form</string>
+    <string name="history_of_mda_form_campaign">Filaria MDA Campaign History</string>
+    <string name="history_of_mda_form_campaign_title">Annual Mass Drug Administration (MDA) campaign for cases of Lymphatic Filariasis (LF)</string>
+    <string name="add_mda_filaria_form_title">Add Filaria MDA Campaign</string>
     <string name="view_edit_eye_surgery">View/Edit Eye Surgery</string>
     <string name="eye_surgery_details_saved_successfully">Eye Surgery details saved successfully.</string>
     <string name="failed_to_submit_form">Failed to submit form. Please try again.</string>

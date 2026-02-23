@@ -23,19 +23,21 @@ import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
-import org.piramalswasthya.sakhi.adapters.FormInputAdapterWithBgIcon
 import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.databinding.AlertConsentBinding
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
@@ -48,7 +50,6 @@ import org.piramalswasthya.sakhi.ui.checkFileSize
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.NewBenRegViewModel.Companion.isOtpVerified
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.NewBenRegViewModel.State
-import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.form.PwAncFormFragment
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 import java.io.File
@@ -187,7 +188,7 @@ class NewBenRegFragment : Fragment() {
 
         // On pressing Settings button
         alertDialog.setPositiveButton(
-            "Ok"
+            "Yes"
         ) { dialog, _ ->
             val spouseGender = if (viewModel.getBenGender() == Gender.FEMALE) 1 else 2
             findNavController().navigate(
@@ -202,7 +203,47 @@ class NewBenRegFragment : Fragment() {
 
         // on pressing cancel button
         alertDialog.setNegativeButton(
-            resources.getString(R.string.cancel)
+            resources.getString(R.string.no)
+        ) { dialog, _ ->
+            try {
+                findNavController().navigateUp()
+            } catch (e:Exception){
+                dialog.cancel()
+            }
+            dialog.cancel()
+        }
+        alertDialog.show()
+    }
+
+    private fun showAddSChildAlert() {
+        val alertDialog = MaterialAlertDialogBuilder(requireContext()).setCancelable(false)
+
+        // Setting Dialog Title
+        alertDialog.setTitle("Add Children")
+
+        // Setting Dialog Message
+        alertDialog.setMessage("Would you like to add children's")
+
+        // On pressing Settings button
+        alertDialog.setPositiveButton(
+            "Yes"
+        ) { dialog, _ ->
+            val spouseGender = if (viewModel.getBenGender() == Gender.FEMALE) 1 else 2
+            findNavController().navigate(
+                NewBenRegFragmentDirections.actionNewChildAsBenRegFragment(
+                    hhId = viewModel.hhId,
+                    benId = viewModel.benIdFromArgs,
+                    gender = spouseGender,
+                    selectedBenId = viewModel.SelectedbenIdFromArgs,
+                    relToHeadId = viewModel.relToHeadId
+                )
+            )
+            dialog.dismiss()
+        }
+
+        // on pressing cancel button
+        alertDialog.setNegativeButton(
+            resources.getString(R.string.no)
         ) { dialog, _ ->
             try {
                 findNavController().navigateUp()
@@ -255,13 +296,6 @@ class NewBenRegFragment : Fragment() {
             .setCancelable(false)
             .create()
         alertBinding.scrollableText.movementMethod = android.text.method.ScrollingMovementMethod()
-
-
-//        alertDialog.setOnShowListener {
-//            val width = (resources.displayMetrics.widthPixels * 0.9).toInt()  // 90% width
-//            val height = (resources.displayMetrics.heightPixels * 0.5).toInt() // 50% height
-//            alertDialog.window?.setLayout(width, height)
-//        }
         alertBinding.btnNegative.setOnClickListener {
             alertDialog.dismiss()
             try {
@@ -330,7 +364,7 @@ class NewBenRegFragment : Fragment() {
                         }
 
                     },
-                        sendOtpClickListener = FormInputAdapter.SendOtpClickListener{formId, button, timerInsec, tilEditText, isEnabled, position, otpField ->
+                        sendOtpClickListener = FormInputAdapter.SendOtpClickListener{_, button, timerInsec, tilEditText, isEnabled, position, otpField ->
                        var tempContactNo = ""
                         lifecycleScope.launch {
                             viewModel.formList.collect {
@@ -348,9 +382,18 @@ class NewBenRegFragment : Fragment() {
                         tilEditText.visibility = View.VISIBLE
                         otpField.addTextChangedListener(object : TextWatcher {
                             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                                /*
+                              * Currently not in use
+                              *
+                              * */
                             }
 
                             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                                /*
+                                * Currently not in use
+                                *
+                                * */
+
                             }
 
                             override fun afterTextChanged(s: Editable?) {
@@ -373,9 +416,12 @@ class NewBenRegFragment : Fragment() {
                     },
                         selectImageClickListener  = FormInputAdapter.SelectUploadImageClickListener {
                             isFavClick = false
-                            viewModel.setCurrentDocumentFormId(it)
-                            chooseOptions()
-                            Toast.makeText(requireContext(),it.toString(),Toast.LENGTH_LONG).show()
+                            if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                                viewModel.setCurrentDocumentFormId(it)
+                                chooseOptions()
+                                Toast.makeText(requireContext(),it.toString(),Toast.LENGTH_LONG).show()
+                            }
+
                         },
                         viewDocumentListner = FormInputAdapter.ViewDocumentOnClick {
                             if (recordExists) {
@@ -430,6 +476,10 @@ class NewBenRegFragment : Fragment() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state!!) {
                 State.IDLE -> {
+                    /*
+                              * Currently not in use
+                              *
+                              * */
                 }
 
                 State.SAVING -> {
@@ -446,11 +496,25 @@ class NewBenRegFragment : Fragment() {
                         Toast.LENGTH_LONG
                     ).show()
                     WorkerUtils.triggerAmritPushWorker(requireContext())
-                    if (viewModel.isHoFMarried() && !viewModel.isBenMarried) {
-                        showAddSpouseAlert()
-                    } else {
-                        findNavController().navigateUp()
+
+                    lifecycleScope.launch {
+                        viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+
+                            if (viewModel.isHoFMarried() && !viewModel.isBenMarried) {
+                                showAddSpouseAlert()
+                                return@repeatOnLifecycle
+                            }
+
+                            val isAddingChildren = viewModel.dataset.isAddingChildren.first()
+                                  if (isAddingChildren) {
+                                          showAddSChildAlert()
+                                  } else {
+                                         findNavController().navigateUp()
+                                     }
+                        }
                     }
+
+
                 }
 
                 State.SAVE_FAILED -> {
@@ -507,6 +571,12 @@ class NewBenRegFragment : Fragment() {
                     notifyDataSetChanged()
 
                 }
+                1012 -> {
+                    val value = viewModel.dataset.ageAtMarriage.value ?: ""
+                    if (value.length >= 2) {
+                        notifyDataSetChanged()
+                    }
+                }
 
                 8 -> {
                     notifyItemChanged(viewModel.getIndexOfAgeAtMarriage())
@@ -532,7 +602,6 @@ class NewBenRegFragment : Fragment() {
 
 
                 12 -> notifyDataSetChanged()
-//notifyItemChanged(viewModel.getIndexOfContactNumber())
             }
         }
     }
@@ -593,12 +662,6 @@ class NewBenRegFragment : Fragment() {
         )
     }
 
-    private fun submitBenForm() {
-        if (validateCurrentPage()) {
-            viewModel.saveForm()
-        }
-    }
-
     private fun showPreview() {
         // run in lifecycleScope since viewModel.getFormPreviewData() is suspend
         lifecycleScope.launch {
@@ -657,7 +720,6 @@ class NewBenRegFragment : Fragment() {
         viewModel.recordExists.observe(viewLifecycleOwner) {
             if (!it && !viewModel.getIsConsentAgreed()) consentAlert.show()
         }
-//        binding.vp2Nhhr.registerOnPageChangeCallback(pageChangeCallback)
 
     }
 

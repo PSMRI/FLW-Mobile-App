@@ -146,29 +146,24 @@ class UwinRepo @Inject constructor(
                 val json = try {
                     JSONObject(bodyString ?: "")
                 } catch (e: Exception) {
-                    Timber.e(e, "❌ Failed to parse JSON response")
                     return@withContext false
                 }
                 val hasStatusCode = json.has("statusCode")
                 val statusCode = json.optInt("statusCode", -1)
                 val errorMessage = json.optString("errorMessage", "")
-                Timber.d("🧩 Parsed Response → statusCode=$statusCode, errorMessage=$errorMessage")
 
                 if (!hasStatusCode && json.has("id")) {
-                    // API returned data directly — treat as success
-                    Timber.d("✅ UWIN session saved successfully: id=${json.optInt("id")}")
+
                     uwinDao.updateSyncState(network.id, SyncState.SYNCED)
                     return@withContext true
                 }
                 when (statusCode) {
                     200 -> {
-                        Timber.d("✅ UWIN saved successfully to server.")
                         uwinDao.updateSyncState(network.id, SyncState.SYNCED)
                         true
                     }
 
                     5002 -> {
-                        Timber.w("🔁 Token expired. Refreshing token and retrying...")
                         if (userRepo.refreshTokenTmc(user.userName, user.password)) {
                             return@withContext postUwinSession(network, retryCount + 1)
                         }
@@ -176,20 +171,16 @@ class UwinRepo @Inject constructor(
                     }
 
                     else -> {
-                        Timber.e("❌ Server returned error: $errorMessage (statusCode=$statusCode)")
                         false
                     }
                 }
             } else {
                 val errorBody = response.errorBody()?.string()
-                Timber.e("❌ Bad HTTP Response: code=${response.code()}, errorBody=$errorBody")
                 false
             }
         } catch (e: SocketTimeoutException) {
-            Timber.w("⏳ Timeout — Retrying postUwinSession...")
             postUwinSession(network, retryCount + 1)
         } catch (e: Exception) {
-            Timber.e(e, "❌ Exception posting UWIN session")
             false
         }
     }
@@ -210,7 +201,6 @@ class UwinRepo @Inject constructor(
         )
 
         if (!response.isSuccessful) {
-            Timber.e("❌ DownSync failed: ${response.errorBody()?.string()}")
             return@withContext
         }
 

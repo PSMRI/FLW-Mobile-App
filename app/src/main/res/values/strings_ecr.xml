@@ -12,8 +12,9 @@
     <string name="ecrdset_bank_name">Bank Name</string>
     <string name="ecrdset_branch_name">Branch Name</string>
     <string name="ecrdset_ifsc_code">IFSC Code</string>
-    <string name="ecrdset_ttl_child_born">Total No. of Children Born</string>
+    <string name="ecrdset_ttl_child_born">Total No. Live Children Born</string>
     <string name="ecrdset_no_live_child">No. of Live Children</string>
+    <string name="ecrdset_reg_children_15_below">Registration for Children Under 15 Years of Age</string>
     <string name="ecrdset_male">Male</string>
     <string name="ecrdset_female">Female</string>
     <string name="ecrdset_dls_1_child">Details of 1st Child</string>
@@ -45,6 +46,7 @@
     <string name="ecrdset_dts_6_bth">6th Child Date of Birth</string>
     <string name="ecrdset_6_child_age">6th Child Age ( in Years)</string>
     <string name="ecrdset_6_child_sex">6th Child Sex</string>
+    <string name="childrens">Do you have children?</string>
     <string name="ecrdset_gap_5_6_child">Gap between 5th child and 6th Child</string>
     <string name="ecrdset_7_dts_child">Details of 7th Child</string>
     <string name="ecrdset_7_child_bth">7th Child Date of Birth</string>

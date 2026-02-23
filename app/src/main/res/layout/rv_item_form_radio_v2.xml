@@ -62,17 +62,6 @@
                         android:text="@{(form.doubleStar? @string/radio_title_ds(form.title) : @string/radio_title(form.title))}"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         app:required="@{form.required}" />
-
-<!--                    <TextView-->
-<!--                        android:id="@+id/tv_ds_hr"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:text="@string/tv_required_text_asterisk"-->
-<!--                        app:layout_constraintStart_toEndOf="@id/tv_nullable_hr"-->
-<!--                        app:layout_constraintTop_toTopOf="@id/cl_text_hr"-->
-<!--                        android:textAppearance="@style/TextAppearance.AppCompat.Large"-->
-<!--                        android:textColor="@color/design_default_color_error"-->
-<!--                        app:required="@{form.doubleStar}" />-->
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <TextView
@@ -131,17 +120,6 @@
                     android:text="@{(form.doubleStar? @string/radio_title_ds(form.title) : @string/radio_title(form.title))}"
                     android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
                     app:required2="@{form.required}" />
-
-<!--                <TextView-->
-<!--                    android:id="@+id/tv_ds"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:text="@string/tv_required_text_asterisk"-->
-<!--                    app:layout_constraintStart_toEndOf="@id/tv_nullable_hr"-->
-<!--                    app:layout_constraintTop_toTopOf="@id/cl_text_hr"-->
-<!--                    android:textAppearance="@style/TextAppearance.AppCompat.Large"-->
-<!--                    android:textColor="@color/design_default_color_error"-->
-<!--                    app:required="@{form.doubleStar}" />-->
             </LinearLayout>
 
 

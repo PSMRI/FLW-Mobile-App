@@ -1,20 +1,27 @@
 package org.piramalswasthya.sakhi.repositories
 
+import androidx.paging.PagingSource
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.transformLatest
+import org.piramalswasthya.sakhi.model.BenBasicCache
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.ChildRegistrationDao
 import org.piramalswasthya.sakhi.database.room.dao.HouseholdDao
 import org.piramalswasthya.sakhi.database.room.dao.ImmunizationDao
 import org.piramalswasthya.sakhi.database.room.dao.MaternalHealthDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseANCJsonDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.model.BenBasicDomainForForm
 import org.piramalswasthya.sakhi.model.BenWithAncListDomain
+import org.piramalswasthya.sakhi.model.HomeVisitUiState
+import org.piramalswasthya.sakhi.model.dynamicEntity.anc.ANCFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.filterMdsr
+import org.piramalswasthya.sakhi.utils.HelperUtil
+import org.piramalswasthya.sakhi.utils.HomeVisitHelper
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -23,6 +30,7 @@ import javax.inject.Inject
 class RecordsRepo @Inject constructor(
     private val householdDao: HouseholdDao,
     private val benDao: BenDao,
+    private val ancHomeVisitDao : FormResponseANCJsonDao,
     private val vaccineDao: ImmunizationDao,
     private val maternalHealthDao: MaternalHealthDao,
     private val childRegistrationDao: ChildRegistrationDao,
@@ -34,8 +42,26 @@ class RecordsRepo @Inject constructor(
         .map { list -> list.map { it.asBasicDomainModel() } }
     val hhListCount = householdDao.getAllHouseholdsCount(selectedVillage)
 
+    val hhListforAsha = householdDao.getAllHouseholdForAshaFamilyMembers(selectedVillage)
+        .map { list -> list.map { it.asBasicDomainModel() } }
+
     val allBenList =
         benDao.getAllBen(selectedVillage).map { list -> list.map { it.asBasicDomainModel() } }
+
+    val childCountsByBen: Flow<Map<Long, Int>> =
+        benDao.getChildCountsForAllBen(selectedVillage)
+            .map { list -> list.associate { it.benId to it.childCount } }
+
+    fun searchBen(query: String, filterType: Int, source: Int): Flow<List<BenBasicDomain>> =
+        benDao.searchBen(selectedVillage, source, filterType, query)
+            .map { list -> list.map { it.asBasicDomainModel() } }
+
+    fun searchBenPagedSource(query: String, filterType: Int, source: Int): PagingSource<Int, BenBasicCache> =
+        benDao.searchBenPaged(selectedVillage, source, filterType, query)
+
+    suspend fun searchBenOnce(query: String, filterType: Int, source: Int): List<BenBasicDomain> =
+        benDao.searchBenOnce(selectedVillage, source, filterType, query)
+            .map { it.asBasicDomainModel() }
 
     val allBenListCount = benDao.getAllBenCount(selectedVillage)
     val allBenWithoutAbhaList =
@@ -44,6 +70,9 @@ class RecordsRepo @Inject constructor(
         benDao.getAllBenWithAbha(selectedVillage).map { list -> list.map { it.asBasicDomainModel() } }
 
     val benWithAbhaListCount = benDao.getAllBenWithAbhaCount(selectedVillage)
+    val benWithOldAbhaListCount = benDao.getAllBenWithOldAbhaCount(selectedVillage)
+    val benWithNewAbhaListCount = benDao.getAllBenWithNewAbhaCount(selectedVillage)
+
     val allBenWithRchList =
         benDao.getAllBenWithRch(selectedVillage).map { list -> list.map { it.asBasicDomainModel() } }
 
@@ -65,8 +94,13 @@ class RecordsRepo @Inject constructor(
 
     val getNcdEligibleList = benDao.getBenWithCbac(selectedVillage)
     val getNcdrefferedList = benDao.getBenWithReferredCbac(selectedVillage)
+    val getHwcRefferedList = benDao.getReferredHWCBenList(selectedVillage)
+
+
+
     val getNcdEligibleListCount = benDao.getBenWithCbacCount(selectedVillage)
     val getNcdrefferedListCount = benDao.getReferredBenCount(selectedVillage)
+    val getHwcReferedListCount = benDao.getReferredHWCBenCount(selectedVillage)
 
     val getNcdPriorityList = getNcdEligibleList.map {
         it.filter { it.savedCbacRecords.isNotEmpty() && it.savedCbacRecords.maxBy { it.createdDate }.total_score > 4 }
@@ -114,6 +148,13 @@ class RecordsRepo @Inject constructor(
     val tbSuspectedList = benDao.getTbScreeningList(selectedVillage)
         .map { list -> list.map { it.asTbSuspectedDomainModel() } }
     val tbSuspectedListCount = tbSuspectedList.map { it.size }
+
+    val tbConfirmedList = benDao.getTbConfirmedList(selectedVillage)
+        .map { list -> list.map { it.asTbSuspectedDomainModel() } }
+    val tbConfirmedListCount = tbConfirmedList.map { it.size }
+
+
+
 
     val malariaConfirmedCasesList = benDao.getMalariaConfirmedCasesList(selectedVillage)
         .map { list -> list.map { it.asMalariaConfirmedDomainModel() } }
@@ -438,4 +479,40 @@ class RecordsRepo @Inject constructor(
     }
 
     fun getHRECCount() = maternalHealthDao.getAllECRecords()
+
+
+    suspend fun getHomeVisitUiState(benId: Long): HomeVisitUiState {
+        val formResponses = ancHomeVisitDao.getSyncedVisitsByRchId(benId)
+
+        val visits = HomeVisitHelper.getANCSortedHomeVisits(formResponses)
+       // val visits = ancHomeVisitDao.getVisitsForBen(benId)
+        val visitCount = visits.size
+
+        val canView = visitCount > 0
+        val canAdd = canShowAddButton(visits)
+
+        return HomeVisitUiState(
+            canAddHomeVisit = canAdd,
+            canViewHomeVisit = canView
+        )
+    }
+
+    private fun canShowAddButton(visits: List<ANCFormResponseJsonEntity>): Boolean {
+        if (visits.size >= 9) return false
+
+        if (visits.isEmpty()) return true
+
+        val lastVisitDateStr = visits.first().visitDate ?: return true
+        val lastVisitMillis = HelperUtil.parseDateToMillis(lastVisitDateStr)
+
+        if (lastVisitMillis == 0L) return true
+
+        val diffDays = getDaysDiff(lastVisitMillis, System.currentTimeMillis())
+        return diffDays >= 30
+    }
+
+    private fun getDaysDiff(from: Long, to: Long): Long {
+        val diff = to - from
+        return TimeUnit.MILLISECONDS.toDays(diff)
+    }
 }

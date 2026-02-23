@@ -15,9 +15,9 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.PHCAdapter
-import org.piramalswasthya.sakhi.adapters.VHNCAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentVhndListBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 
@@ -54,7 +54,11 @@ class PHCReviewListFragement : Fragment() {
             )
         })
         binding.rvAny.adapter = pHCAdapter
-        binding.btnNextPage.text=getString(R.string.icon_title_phc)
+        val title =  if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true))
+            resources.getString(R.string.icon_cluster_phc)
+        else
+            resources.getString(R.string.icon_title_phc)
+        binding.btnNextPage.text = title
         binding.btnNextPage.setOnClickListener {
             findNavController().navigate(R.id.action_PHCReviewListFragement_to_PHCReviewFormFragement)
         }
@@ -81,10 +85,14 @@ class PHCReviewListFragement : Fragment() {
 
     override fun onStart() {
         super.onStart()
+        val title =  if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true))
+            resources.getString(R.string.icon_cluster_phc_list)
+        else
+            resources.getString(R.string.icon_title_phc_list)
         activity?.let {
             (it as HomeActivity).updateActionBar(
                 R.drawable.ic__village_level_form,
-                getString(R.string.icon_title_phc_list)
+                title
             )
         }
     }

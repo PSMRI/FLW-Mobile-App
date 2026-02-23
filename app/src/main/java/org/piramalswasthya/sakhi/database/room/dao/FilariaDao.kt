@@ -19,4 +19,7 @@ interface FilariaDao {
     suspend fun getFilariaScreening(syncState: SyncState): List<FilariaScreeningCache>
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveFilariaScreening(malariaScreeningCache: FilariaScreeningCache)
+
+    @Query("UPDATE FILARIA_SCREENING SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetSyncingToUnsynced()
 }

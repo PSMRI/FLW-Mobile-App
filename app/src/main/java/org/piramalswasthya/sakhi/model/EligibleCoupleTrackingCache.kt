@@ -34,6 +34,7 @@ data class EligibleCoupleTrackingCache(
     @ColumnInfo(defaultValue = "0")
     var lmpDate: Long = 0L,
     var visitDate: Long = 0L,
+    var dateOfSterilisation: Long = 0L,
     var dateOfAntraInjection: String? = null,
     var dueDateOfAntraInjection: String? = null,
     var mpaFile: String? = null,
@@ -61,6 +62,7 @@ data class EligibleCoupleTrackingCache(
         return ECTNetwork(
             benId = benId,
             lmpDate = getDateStringFromLong(lmpDate)!!,
+            dateOfSterilisation = getDateStringFromLong(dateOfSterilisation)!!,
             visitDate = getDateTimeStringFromLong(visitDate)!!,
             dateOfAntraInjection = dateOfAntraInjection?.let { SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).parse(it)?.time }?.let { getDateTimeStringFromLong(it) },
             dueDateOfAntraInjection = dueDateOfAntraInjection,
@@ -88,6 +90,7 @@ data class EligibleCoupleTrackingCache(
 data class ECTNetwork(
     val benId: Long,
     val lmpDate: String? = null,
+    val dateOfSterilisation: String? = null,
     val visitDate: String,
     var dateOfAntraInjection: String? = null,
     var dueDateOfAntraInjection: String? = null,

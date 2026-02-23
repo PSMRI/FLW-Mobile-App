@@ -350,6 +350,28 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
         }
     }
 
+    protected fun infantTriggerDependants(
+        source: FormElement,
+        removeItems: List<FormElement>,
+        addItems: List<FormElement>,
+        position: Int = -1,
+    ): Int {
+
+        removeItems.forEach { it.value = null }
+        list.removeAll(removeItems)
+
+        addItems.forEach {
+            if (list.contains(it)) list.remove(it)
+        }
+
+        // FORCE ADD AT BOTTOM → correct sequence always
+        val addPosition = list.lastIndex + 1
+
+        list.addAll(addPosition, addItems)
+
+        return addPosition
+    }
+
     protected fun triggerDependants(
         source: FormElement,
         removeItems: List<FormElement>,
@@ -921,19 +943,37 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
     }
 
     protected fun validateWeightOnEditText(formElement: FormElement): Int {
-        formElement.value?.takeIf { it.isNotEmpty() }?.let {
-            if (it.all { it == '0' }) {
-                formElement.errorText = "Weight Cannot be 0"
-            } else {
-                val weight = it.toIntOrNull()
-                if (weight != null && weight > 7000)
-                    formElement.errorText = "Weight Should not be greater than 7000 gram"
-                else
-                    formElement.errorText = null
-            }
-        } ?: run {
+        val value = formElement.value?.trim()
+
+        if (value.isNullOrEmpty()) {
             formElement.errorText = null
+            return -1
         }
+
+        val weight = value.toDoubleOrNull()
+        if (weight == null) {
+            formElement.errorText = "Please enter weight in grams"
+            return -1
+        }
+
+        when {
+            weight <= 0 -> {
+                formElement.errorText = "Weight cannot be 0"
+            }
+            weight in 1.0..10.0 -> {
+                formElement.errorText = "Please enter weight in grams (e.g. 2500)"
+            }
+            weight < 500 -> {
+                formElement.errorText = "Weight must be at least 500 grams"
+            }
+            weight > 7000 -> {
+                formElement.errorText = "Weight should not be greater than 7000 grams"
+            }
+            else -> {
+                formElement.errorText = null
+            }
+        }
+
         return -1
     }
 

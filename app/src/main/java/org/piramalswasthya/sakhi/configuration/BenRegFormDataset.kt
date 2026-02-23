@@ -6,8 +6,10 @@ import android.text.InputType
 import android.util.Log
 import android.util.Range
 import android.widget.LinearLayout
-import android.widget.Toast
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.setToStartOfTheDay
@@ -16,6 +18,7 @@ import org.piramalswasthya.sakhi.model.BenBasicCache.Companion.getAgeFromDob
 import org.piramalswasthya.sakhi.model.BenBasicCache.Companion.getYearsFromDate
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.BenStatus
+import org.piramalswasthya.sakhi.model.EligibleCoupleRegCache
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.Gender.FEMALE
@@ -31,7 +34,10 @@ import org.piramalswasthya.sakhi.model.InputType.IMAGE_VIEW
 import org.piramalswasthya.sakhi.model.InputType.RADIO
 import org.piramalswasthya.sakhi.model.InputType.TEXT_VIEW
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.NewBenRegViewModel.Companion.isOtpVerified
+import java.lang.IllegalStateException
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.ZoneId
 import java.util.Calendar
 import java.util.Locale
 import java.util.concurrent.TimeUnit
@@ -88,6 +94,9 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
     private var familyHeadPhoneNo: String? = null
     private var timeStampDateOfMarriageFromSpouse: Long? = null
     private var isHoF: Boolean = false
+    private var isAddSppouse: Int = 0
+
+    private var isAddSpouse: Boolean = false
 
     private var hof: BenRegCache? = null
     private var benIfDataExist: BenRegCache? = null
@@ -145,7 +154,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         allCaps = true,
         hasSpeechToText = true,
         hasDependants = true,
-        etInputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
+        etInputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_NORMAL
     )
     val gender = FormElement(
         id = 9,
@@ -202,10 +211,10 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         hasSpeechToText = true,
         etInputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
     )
-    private val ageAtMarriage = FormElement(
+    var ageAtMarriage = FormElement(
         id = 1012,
         inputType = EDIT_TEXT,
-        title = resources.getString(R.string.age_at_marriage),
+        title = resources.getString(R.string.age_at_marriagee),
         etMaxLength = 2,
         arrayId = -1,
         required = true,
@@ -229,7 +238,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         inputType = EDIT_TEXT,
         title = resources.getString(R.string.nbr_father_name),
         arrayId = -1,
-        required = true,
+        required = false,
         allCaps = true,
         hasSpeechToText = true,
         etInputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
@@ -239,7 +248,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         inputType = EDIT_TEXT,
         title = resources.getString(R.string.nbr_mother_name),
         arrayId = -1,
-        required = true,
+        required = false,
         allCaps = true,
         hasSpeechToText = true,
         etInputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
@@ -399,13 +408,13 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
     private val reproductiveStatus = FormElement(
         id = 1028,
-        inputType = DROPDOWN,
+        inputType = TEXT_VIEW,
         title = resources.getString(R.string.reproductive_status),
-        arrayId = R.array.nbr_reproductive_status_array,
-        entries = resources.getStringArray(R.array.nbr_reproductive_status_array),
+        arrayId = R.array.nbr_reproductive_status_array2,
+        entries = resources.getStringArray(R.array.nbr_reproductive_status_array2),
         required = true,
         hasDependants = false,
-        isEnabled = false
+//        isEnabled = false
     )
     private val birthCertificateNumber = FormElement(
         id = 1029,
@@ -480,9 +489,24 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         required = false,
     )
 
+    private val haveChildren = FormElement(
+        id = 48,
+        inputType = RADIO,
+        title = resources.getString(R.string.childrens),
+        arrayId = -1,
+        entries = resources.getStringArray(R.array.yes_no),
+        required = true,
+        hasDependants = true,
+    )
     fun getIndexOfBirthCertificateFrontPath() = getIndexById(fileUploadFront.id)
     fun getIndexOfBirthCertificateBackPath() = getIndexById(fileUploadBack.id)
 
+    private val _isAddingChildren = MutableStateFlow(false)
+    val isAddingChildren = _isAddingChildren.asStateFlow()
+
+    fun setIsAddingChildren(value: Boolean) {
+        _isAddingChildren.value = value
+    }
 
     val firstPage by lazy {
         listOf(
@@ -537,7 +561,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             fileUploadFront.value = saved?.kidDetails?.birthCertificateFileFrontView
             fileUploadBack.value = saved?.kidDetails?.birthCertificateFileBackView
             gender.value = gender.getStringFromPosition(saved.genderId)
-            gender.inputType = TEXT_VIEW
+//            gender.inputType = TEXT_VIEW
 
             fatherName.value = saved.fatherName
             saved.fatherName?.takeIf { it.isNotEmpty() }?.let { fatherName.inputType = TEXT_VIEW }
@@ -545,8 +569,10 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             motherName.value = saved.motherName
             saved.motherName?.takeIf { it.isNotEmpty() }?.let { motherName.inputType = TEXT_VIEW }
 
-            saved.genDetails?.spouseName?.let {
+            if (saved.isSpouseAdded || saved.isChildrenAdded || saved.doYouHavechildren) {
                 maritalStatus.inputType = TEXT_VIEW
+            }
+            saved.genDetails?.spouseName?.let {
                 when (saved.genderId) {
                     1 -> {
                         wifeName.value = it
@@ -578,7 +604,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             maritalStatus.value =
                 saved.genDetails?.maritalStatusId?.let { maritalStatus.getStringFromPosition(it) }
 
-            ageAtMarriage.value = saved.genDetails?.ageAtMarriage.toString()
+            ageAtMarriage.value = calculateAgeAtMarriage(saved.dob, saved.genDetails?.marriageDate)?.toString()
             dateOfMarriage.value = getDateFromLong(saved.genDetails?.marriageDate ?: 0)
 
             mobileNoOfRelation.value =
@@ -607,13 +633,14 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 typeOfSchool.getStringFromPosition(saved.kidDetails?.typeOfSchoolId ?: 0)
             rchId.value = saved.rchId
 
-            reproductiveStatus.value = saved.genDetails?.reproductiveStatusId?.let {
-                reproductiveStatus.getStringFromPosition(it)
-            }
+            reproductiveStatus.value = saved.genDetails?.reproductiveStatus
+//            reproductiveStatus.value = saved.genDetails?.reproductiveStatusId?.let {
+//                reproductiveStatus.getStringFromPosition(it)
+//            }
         }
 
         val maritalIndex = list.indexOf(maritalStatus)
-        if (!maritalStatus.value.isNullOrEmpty() && maritalStatus.entries != null && gender.value != null && maritalIndex >= 0) {
+        if (!maritalStatus.value.isNullOrEmpty() && maritalStatus.entries != null && gender.value != null && maritalIndex >= 0 && maritalStatus.value == maritalStatus.getStringFromPosition(2)) {
             val genderField = when (gender.value) {
                 gender.entries!![0] -> wifeName
                 gender.entries!![1] -> husbandName
@@ -624,6 +651,15 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 list.add(maritalIndex + 3, it)
                 list.add(maritalIndex + 4, ageAtMarriage)
             }
+        } else {
+            list.removeAll(
+                listOf(
+                    husbandName,
+                    wifeName,
+                    spouseName,
+                    ageAtMarriage
+                )
+            )
         }
 
         if (maritalStatus.entries != null && maritalStatus.value == maritalStatus.entries!![1] && gender.value == gender.entries!![1]) {
@@ -709,6 +745,27 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         setUpPage(list)
     }
 
+    private fun calculateMarriageDate(marriageAge: Int, dob: Long): Long {
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = dob
+        calendar.add(Calendar.YEAR, marriageAge)
+        return calendar.timeInMillis
+    }
+
+    private fun calculateAgeAtMarriage(dob: Long, marriageDate: Long?): Int? {
+        if (marriageDate == null || marriageDate <= 0L) return null
+        val doB = Calendar.getInstance()
+        doB.timeInMillis = dob
+        val marriageDatE = Calendar.getInstance()
+        marriageDatE.timeInMillis = marriageDate
+        var ageAtMarriage = marriageDatE.get(Calendar.YEAR) - doB.get(Calendar.YEAR)
+        if (marriageDatE.get(Calendar.DAY_OF_YEAR) < doB.get(Calendar.DAY_OF_YEAR)) {
+            ageAtMarriage--
+        }
+        Log.d("marriage age", ageAtMarriage.toString())
+        return  ageAtMarriage.takeIf { it >= 0 }
+    }
+
 
     suspend fun setPageForHof(ben: BenRegCache?, household: HouseholdCache) {
         val list = mutableListOf(
@@ -737,18 +794,25 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         if (dateOfReg.value == null)
             dateOfReg.value = getCurrentDateString()
         contactNumber.value = familyHeadPhoneNo
+//        household.family?.let {
+//            firstName.value = it.familyHeadName?.also {
+//                firstName.inputType = TEXT_VIEW
+//            }
+//
+//            lastName.value = it.familyName?.also {
+//                lastName.inputType = TEXT_VIEW
+//            }
+//
+//            contactNumber.value = it.familyHeadPhoneNo?.toString()?.also {
+//                contactNumber.inputType = TEXT_VIEW
+//            }
+//        }
         household.family?.let {
-            firstName.value = it.familyHeadName?.also {
-                firstName.inputType = TEXT_VIEW
-            }
+            firstName.value = it.familyHeadName
 
-            lastName.value = it.familyName?.also {
-                lastName.inputType = TEXT_VIEW
-            }
+            lastName.value = it.familyName
 
-            contactNumber.value = it.familyHeadPhoneNo?.toString()?.also {
-                contactNumber.inputType = TEXT_VIEW
-            }
+            contactNumber.value = it.familyHeadPhoneNo?.toString()
         }
 
         agePopup.min = getHoFMinDobMillis()
@@ -789,7 +853,11 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             lastName.value = saved.lastName
             agePopup.value = getDateFromLong(saved.dob)
             gender.value = gender.getStringFromPosition(saved.genderId)
-            gender.inputType = TEXT_VIEW
+            if (ben.isSpouseAdded || ben.isChildrenAdded || ben.doYouHavechildren || !ben.genDetails?.spouseName.isNullOrEmpty()) {
+                gender.inputType = TEXT_VIEW
+                agePopup.inputType = TEXT_VIEW
+                maritalStatus.inputType = TEXT_VIEW
+            }
             fatherName.value = saved.fatherName
             fileUploadFront.value = saved.kidDetails?.birthCertificateFileFrontView
             fileUploadBack.value = saved.kidDetails?.birthCertificateFileBackView
@@ -819,10 +887,15 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             }
             maritalStatus.value =
                 maritalStatus.getStringFromPosition(saved.genDetails?.maritalStatusId ?: 0)
-            ageAtMarriage.value = saved.genDetails?.ageAtMarriage.toString()
+            ageAtMarriage.value = calculateAgeAtMarriage(saved.dob, saved.genDetails?.marriageDate)?.toString()
+            ageAtMarriage.max = getAgeFromDob(saved.dob).toLong()
             dateOfMarriage.value = getDateFromLong(
                 saved.genDetails?.marriageDate ?: 0
             )
+            val maritalIndex = list.indexOf(maritalStatus)
+            if (maritalStatus.value == maritalStatus.entries!![1]) {
+                list.add(maritalIndex + 1, ageAtMarriage)
+            }
             mobileNoOfRelation.value =
                 mobileNoOfRelation.getStringFromPosition(saved.mobileNoOfRelationId)
             tempraryContactNoBelongsto.value =
@@ -875,7 +948,9 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         hoF: BenRegCache?,
         benGender: Gender,
         relationToHeadId: Int,
-        hoFSpouse: List<BenRegCache> = emptyList()
+        hoFSpouse: List<BenRegCache> = emptyList(),
+        selectedben: BenRegCache?,
+        isAddspouse: Int,
     ) {
         val list = mutableListOf(
             pic,
@@ -898,6 +973,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             rchId
         )
         this.familyHeadPhoneNo = household.family?.familyHeadPhoneNo?.toString()
+        this.isAddSppouse = isAddspouse
         tempraryContactNoBelongsto.value =
             tempraryContactNoBelongsto.getStringFromPosition(1)
         this.hof = hoF
@@ -925,7 +1001,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 FEMALE -> R.array.nbr_marital_status_female_array
                 TRANSGENDER -> R.array.nbr_marital_status_male_array
             }
-            gender.inputType = TEXT_VIEW
+//            gender.inputType = TEXT_VIEW
             relationToHead.value = relationToHead.getStringFromPosition(relationToHeadId + 1)
             if (relationToHeadId == relationToHead.entries!!.lastIndex) {
                 list.add(list.indexOf(relationToHead) + 1, otherRelationToHead)
@@ -934,8 +1010,25 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         }
         agePopup.min = getMinDobMillis()
         agePopup.max = System.currentTimeMillis()
+        if (isAddspouse == 1) {
+            isAddSpouse = true
+            gender.inputType = TEXT_VIEW
+            maritalStatus.inputType = TEXT_VIEW
+            reproductiveStatus.inputType = DROPDOWN
+        }
         if (relationToHeadId == 4 || relationToHeadId == 5) hoF?.let {
-            setUpForSpouse(it, hoFSpouse)
+            isAddSpouse = true
+//            agePopup.inputType = TEXT_VIEW
+            gender.inputType = TEXT_VIEW
+            maritalStatus.inputType = TEXT_VIEW
+            reproductiveStatus.inputType = DROPDOWN
+            setUpForSpouse(it, hoFSpouse,list)
+        }
+        if (relationToHeadId == 9 ||  relationToHeadId == 19 || relationToHeadId == 13 ||
+            relationToHeadId == 11 || relationToHeadId == 17 || relationToHeadId == 2 ||
+            relationToHeadId == 18 || relationToHeadId == 14 ||
+            relationToHeadId == 10 || relationToHeadId == 12 || relationToHeadId == 16) hoF?.let {
+            setUpPageforOthers(it,hoFSpouse,selectedben,list)
         }
         if (relationToHeadId == 8 || relationToHeadId == 9) hoF?.let {
             setUpForChild(it, hoFSpouse.firstOrNull())
@@ -976,7 +1069,11 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             placeOfDeath.value = saved.placeOfDeath
             otherPlaceOfDeath.value = saved.otherPlaceOfDeath
 
-            handleForAgeDob(formId = agePopup.id)
+            try {
+                handleForAgeDob(formId = agePopup.id)
+            } catch(e: Exception) {
+                e.printStackTrace()
+            }
             pic.value = saved.userImage
             dateOfReg.value = getDateFromLong(saved.regDate)
             firstName.value = saved.firstName
@@ -984,7 +1081,11 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             agePopup.value = getDateFromLong(saved.dob)
             ageAtMarriage.max = getAgeFromDob(saved.dob).toLong()
             gender.value = gender.getStringFromPosition(saved.genderId)
-            gender.inputType = TEXT_VIEW
+            if (ben.isSpouseAdded || ben.isChildrenAdded || ben.doYouHavechildren || !ben.genDetails?.spouseName.isNullOrEmpty()) {
+                gender.inputType = TEXT_VIEW
+                agePopup.inputType = TEXT_VIEW
+                maritalStatus.inputType = TEXT_VIEW
+            }
             fatherName.value = saved.fatherName
             fileUploadFront.value = saved.kidDetails?.birthCertificateFileFrontView
             fileUploadBack.value = saved.kidDetails?.birthCertificateFileBackView
@@ -1004,10 +1105,14 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             }
             maritalStatus.value =
                 maritalStatus.getStringFromPosition(saved.genDetails?.maritalStatusId ?: 0)
-            ageAtMarriage.value = saved.genDetails?.ageAtMarriage.toString()
+            ageAtMarriage.value = calculateAgeAtMarriage(saved.dob, saved.genDetails?.marriageDate)?.toString()
             dateOfMarriage.value = getDateFromLong(
                 saved.genDetails?.marriageDate ?: 0
             )
+            val maritalIndex = list.indexOf(maritalStatus)
+            if (maritalStatus.value == maritalStatus.entries!![1]) {
+                list.add(maritalIndex + 1, ageAtMarriage)
+            }
             mobileNoOfRelation.value =
                 mobileNoOfRelation.getStringFromPosition(saved.mobileNoOfRelationId)
             tempraryContactNoBelongsto.value =
@@ -1056,7 +1161,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     gender.entries!![0] -> wifeName
                     gender.entries!![1] -> husbandName
                     gender.entries!![2] -> spouseName
-                    else -> throw java.lang.IllegalStateException("Gender unspecified with non empty marital status value!")
+                    else -> throw IllegalStateException("Gender unspecified with non empty marital status value!")
                 }
             )
 
@@ -1103,7 +1208,12 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         if (relationToHeadId == 4 || relationToHeadId == 5) hoF?.let {
             if (it.genDetails?.maritalStatusId == 2) {
                 if (benIfDataExist != null) {
-                    handleForAgeDob(formId = agePopup.id)
+                    try {
+                        handleForAgeDob(formId = reproductiveStatus.id)
+                    } catch(e: Exception) {
+                        e.printStackTrace()
+                    }
+//                    handleForAgeDob(formId = reproductiveStatus.id)
                 } else {
                     agePopup.min = getHoFMinDobMillis()
                     agePopup.max = getHofMaxDobMillis()
@@ -1179,12 +1289,16 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         setUpPage(list)
     }
 
-    private fun setUpForChild(hoF: BenRegCache, hoFSpouse: BenRegCache?) {
+    private fun setUpForChild(
+        hoF: BenRegCache,
+        hoFSpouse: BenRegCache?,
+    ) {
         if (hoF.gender == MALE) {
             fatherName.value = "${hoF.firstName} ${hoF.lastName ?: ""}"
             motherName.value = hoFSpouse?.let {
                 "${it.firstName} ${it.lastName ?: ""}"
             } ?: hoF.genDetails?.spouseName
+
 
             fatherName.value?.let {
                 if (it.isNotEmpty()) fatherName.inputType = TEXT_VIEW
@@ -1252,11 +1366,22 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             }
         if (benGender == MALE) wifeName.value = hof?.motherName
         if (benGender == FEMALE) husbandName.value = hof?.fatherName
+        maritalStatus.value = maritalStatus.getStringFromPosition(2)
+
+        if (hoF.isSpouseAdded || hoF.isChildrenAdded || hoF.doYouHavechildren) {
+            maritalStatus.inputType = TEXT_VIEW
+            agePopup.inputType = TEXT_VIEW
+        }
+
         lastName.value = hoF.lastName?.also { firstName.inputType = TEXT_VIEW }
         ageAtMarriage.max = getAgeFromDob(hoF.dob).toLong()
     }
 
-    private fun setUpForSpouse(hoFSpouse: BenRegCache, hoFSpouse1: List<BenRegCache>) {
+    private fun setUpForSpouse(
+        hoFSpouse: BenRegCache,
+        hoFSpouse1: List<BenRegCache>,
+        list1: MutableList<FormElement>
+    ) {
         if (hoFSpouse.genDetails?.maritalStatusId == 2) {
             if (hoFSpouse1.isEmpty()) {
                 firstName.value = hoFSpouse.genDetails?.spouseName
@@ -1270,13 +1395,60 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             if (hoFSpouse.gender == FEMALE) {
                 wifeName.value = "${hoFSpouse.firstName} ${hoFSpouse.lastName ?: ""}"
                 wifeName.inputType = TEXT_VIEW
+
             } else {
                 husbandName.value = "${hoFSpouse.firstName} ${hoFSpouse.lastName ?: ""}"
                 husbandName.inputType = TEXT_VIEW
             }
+
             maritalStatus.value = maritalStatus.getStringFromPosition(2)
-            maritalStatus.inputType = TEXT_VIEW
+            if (hoFSpouse.isSpouseAdded || hoFSpouse.isChildrenAdded || hoFSpouse.doYouHavechildren) {
+                maritalStatus.inputType = TEXT_VIEW
+            }
+//            maritalStatus.inputType = TEXT_VIEW
+            if (hoFSpouse.gender == MALE) {
+                list1.add(list1.indexOf(maritalStatus) + 1 ,haveChildren)
+            }
+
+
             timeStampDateOfMarriageFromSpouse = hoFSpouse.genDetails?.marriageDate
+            agePopup.min = getHoFMinDobMillis()
+            agePopup.max = getHofMaxDobMillis()
+//            reproductiveStatus.isEnabled = true
+        }
+    }
+    private fun setUpPageforOthers(
+        hoFSpouse: BenRegCache, hoFSpouse1: List<BenRegCache>,
+        selectedben: BenRegCache?,
+        list1: MutableList<FormElement>
+    ) {
+        if (selectedben?.genDetails?.maritalStatusId == 2) {
+
+            firstName.value = selectedben?.genDetails?.spouseName
+            if (firstName.value?.isNotEmpty()!!) {
+                firstName.inputType = TEXT_VIEW
+
+            }
+            lastName.value = selectedben?.lastName
+            lastName.inputType = EDIT_TEXT
+
+            if (selectedben?.gender == FEMALE) {
+                wifeName.value = "${selectedben?.firstName} ${selectedben?.lastName ?: ""}"
+                wifeName.inputType = TEXT_VIEW
+            } else {
+                husbandName.value = "${selectedben?.firstName} ${selectedben?.lastName ?: ""}"
+                husbandName.inputType = TEXT_VIEW
+            }
+            maritalStatus.value = maritalStatus.getStringFromPosition(2)
+            if (selectedben.isSpouseAdded || selectedben.isChildrenAdded || selectedben.doYouHavechildren) {
+                maritalStatus.inputType = TEXT_VIEW
+            }
+//            maritalStatus.inputType = TEXT_VIEW
+            if (selectedben?.gender  == MALE) {
+                list1.add(list1.indexOf(maritalStatus) + 1 ,haveChildren)
+
+            }
+            timeStampDateOfMarriageFromSpouse = selectedben?.genDetails?.marriageDate
             agePopup.min = getHoFMinDobMillis()
             agePopup.max = getHofMaxDobMillis()
         }
@@ -1616,6 +1788,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
     }
 
 
+
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
         return when (formId) {
 
@@ -1678,36 +1851,111 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             }
 
             agePopup.id -> {
-                assignValuesToAgeAndAgeUnitFromDob(
-                    getLongFromDate(agePopup.value),
-                    ageAtMarriage,
-                    timeStampDateOfMarriageFromSpouse
-                )
+//                assignValuesToAgeAndAgeUnitFromDob(
+//                    getLongFromDate(agePopup.value),
+//                    ageAtMarriage,
+//                    timeStampDateOfMarriageFromSpouse
+//                )
 
-                updateReproductiveOptionsBasedOnAgeGender(formId = agePopup.id)
+                if (benIfDataExist != null || !isAddSpouse) {
+                    gender.value = null
+                    relationToHead.value = null
+                    maritalStatus.value = null
+                    reproductiveStatus.value = null
+
+                    maritalStatus.inputType = DROPDOWN
+                    reproductiveStatus.inputType = DROPDOWN
+                    relationToHead.inputType = DROPDOWN
+
+                    maritalStatus.entries = when (index) {
+                        1 -> maritalStatusFemale
+                        else -> maritalStatusMale
+                    }
+
+                    maritalStatus.arrayId = when (index) {
+                        1 -> R.array.nbr_marital_status_female_array
+                        else -> R.array.nbr_marital_status_male_array
+
+                    }
+
+                    relationToHead.entries = when (index) {
+                        0 -> relationToHeadListMale
+                        1 -> relationToHeadListFemale
+                        else -> relationToHeadListDefault
+                    }
+
+                    relationToHead.arrayId = when (index) {
+                        0 -> R.array.nbr_relationship_to_head_male
+                        1 -> R.array.nbr_relationship_to_head_female
+                        else -> R.array.nbr_relationship_to_head
+                    }
+                }
+
+                if (isAddSpouse) {
+                    ageAtMarriage.value = calculateAgeAtMarriage(getLongFromDate(agePopup.value), timeStampDateOfMarriageFromSpouse)?.toString()
+                    dateOfMarriage.value = getDateFromLong(
+                        timeStampDateOfMarriageFromSpouse ?: 0
+                    )
+                    triggerDependants(
+                        source = agePopup,
+                        addItems = listOf(ageAtMarriage),
+                        removeItems = emptyList(),
+                        position = 13
+                    )
+
+                }
+
+                try {
+                    return updateReproductiveOptionsBasedOnAgeGender(formId = agePopup.id)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    return 1
+                }
 
             }
 
             ageAtMarriage.id -> {
 
-                (getAgeFromDob(getLongFromDate(agePopup.value))).takeIf { it > 0 && !ageAtMarriage.value.isNullOrEmpty() }
-                    ?.toInt()?.let {
+                val dobMillis = getLongFromDate(agePopup.value)
+                val currentAge = getAgeFromDob(dobMillis)
+
+                currentAge.takeIf { it > 0 && !ageAtMarriage.value.isNullOrEmpty() }
+                    ?.let {
+
                         validateEmptyOnEditText(ageAtMarriage)
                         validateIntMinMax(ageAtMarriage)
-                        if (it == ageAtMarriage.value?.toInt()) {
-                            val cal = Calendar.getInstance()
-                            dateOfMarriage.max = cal.timeInMillis
-                            cal.add(Calendar.YEAR, -1)
-                            dateOfMarriage.min = cal.timeInMillis
 
+                        val enteredAgeAtMarriage = ageAtMarriage.value!!.toIntOrNull() ?: return@let
+
+                        val dobCal = Calendar.getInstance()
+                        dobCal.timeInMillis = dobMillis
+
+                        val birthYear = dobCal.get(Calendar.YEAR)
+
+                        val marriageYear = birthYear + enteredAgeAtMarriage
+
+
+                        val marriageCal = Calendar.getInstance().apply {
+                            timeInMillis = dobMillis
+                            set(Calendar.YEAR, marriageYear)
                         }
+
+
+                        dateOfMarriage.value = getDateFromLong(marriageCal.timeInMillis)
+
+                        dateOfMarriage.max = Calendar.getInstance().timeInMillis
+
+                        dateOfMarriage.min = marriageCal.timeInMillis
+
                         triggerDependants(
                             source = ageAtMarriage,
-                            passedIndex = ageAtMarriage.value!!.toInt(),
+                            passedIndex = it,
                             triggerIndex = it,
                             target = dateOfMarriage
                         )
                     } ?: -1
+
+                return 0
             }
 
             childRegisteredAtSchool.id -> {
@@ -1725,6 +1973,12 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             gender.id -> {
                 relationToHead.value = null
                 maritalStatus.value = null
+                reproductiveStatus.value = null
+
+                maritalStatus.inputType = DROPDOWN
+                reproductiveStatus.inputType = DROPDOWN
+                relationToHead.inputType = DROPDOWN
+
                 maritalStatus.entries = when (index) {
                     1 -> maritalStatusFemale
                     else -> maritalStatusMale
@@ -1733,6 +1987,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 maritalStatus.arrayId = when (index) {
                     1 -> R.array.nbr_marital_status_female_array
                     else -> R.array.nbr_marital_status_male_array
+
                 }
 
                 relationToHead.entries = when (index) {
@@ -1740,8 +1995,15 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     1 -> relationToHeadListFemale
                     else -> relationToHeadListDefault
                 }
+
+                relationToHead.arrayId = when (index) {
+                    0 -> R.array.nbr_relationship_to_head_male
+                    1 -> R.array.nbr_relationship_to_head_female
+                    else -> R.array.nbr_relationship_to_head
+                }
                 val listChanged = if (hasThirdPage()) {
 
+                    Log.e("ThirdPage","isThird")
                     updateReproductiveOptionsBasedOnAgeGender(formId = gender.id)
                     triggerDependants(
                         source = rchId,
@@ -1750,8 +2012,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                         position = -2
                     )
                 } else {
-                    fatherName.required = true
-                    motherName.required = true
+                    fatherName.required = false
+                    motherName.required = false
 
                     triggerDependants(
                         source = rchId,
@@ -1780,8 +2042,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 when (maritalStatus.value) {
 
                     maritalStatus.entries!![0] -> {
-                        fatherName.required = true
-                        motherName.required = true
+                        fatherName.required = false
+                        motherName.required = false
                         updateReproductiveOptionsBasedOnAgeGender(formId = maritalStatus.id)
                         return triggerDependants(
                             source = maritalStatus,
@@ -1796,27 +2058,25 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     }
 
                     maritalStatus.entries!![1] -> {
-                        if (gender.value == gender.entries!![1]) {
-                            fatherName.required = false
-                            motherName.required = false
-                        } else {
-                            fatherName.required = true
-                            motherName.required = true
-                        }
+                        fatherName.required = false
+                        motherName.required = false
                         husbandName.required = true
                         wifeName.required = true
                         wifeName.allCaps = true
+                        husbandName.inputType = EDIT_TEXT
+                        wifeName.inputType = EDIT_TEXT
                         updateReproductiveOptionsBasedOnAgeGender(formId = maritalStatus.id)
                         return triggerDependants(
-                            source = maritalStatus, addItems = when (gender.value) {
+                            source = motherName, addItems = when (gender.value) {
                                 gender.entries!![0] -> listOf(wifeName, ageAtMarriage)
-                                gender.entries!![1] -> listOf(husbandName, ageAtMarriage)
+                                gender.entries!![1] -> listOf(husbandName, ageAtMarriage, haveChildren)
                                 else -> listOf(spouseName, ageAtMarriage)
                             }, removeItems = listOf(
                                 wifeName,
                                 husbandName,
                                 spouseName,
-                                ageAtMarriage
+                                ageAtMarriage,
+                                haveChildren
                             )
                         ).also {
                             if (relationToHead.value == relationToHead.entries!![0]) {
@@ -1832,25 +2092,34 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                         husbandName.required = maritalStatus.value != maritalStatus.entries!![2]
                         wifeName.required = maritalStatus.value != maritalStatus.entries!![2]
                         wifeName.allCaps = true
-                        fatherName.required = true
-                        motherName.required = true
+                        fatherName.required = false
+                        motherName.required = false
                         updateReproductiveOptionsBasedOnAgeGender(formId = maritalStatus.id)
                         return triggerDependants(
-                            source = maritalStatus, addItems = when (gender.value) {
+                            source = motherName, addItems = when (gender.value) {
                                 gender.entries!![0] -> listOf(wifeName, ageAtMarriage)
-                                gender.entries!![1] -> listOf(husbandName, ageAtMarriage)
+                                gender.entries!![1] -> listOf(husbandName, ageAtMarriage, haveChildren)
                                 else -> listOf(spouseName, ageAtMarriage)
                             }, removeItems = listOf(
                                 wifeName,
                                 husbandName,
                                 spouseName,
-                                ageAtMarriage
+                                ageAtMarriage,
+                                haveChildren
                             )
                         )
                     }
                 }
             }
 
+            haveChildren.id -> {
+                if (haveChildren.entries != null) {
+                    val yesIndex = 0
+                    val current = haveChildren.getPosition()
+                    setIsAddingChildren(current == yesIndex)
+                }
+                0
+            }
             otherRelationToHead.id -> {
                 validateEmptyOnEditText(otherRelationToHead)
             }
@@ -2020,138 +2289,188 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
             val age = getAgeFromDob(getLongFromDate(agePopup.value))
             val genderIsFemale = gender.value == gender.entries?.get(1)
+
             if (benIfDataExist == null) {
-                reproductiveStatus.isEnabled = true
-                val updatedReproductiveOptions = when {
-                    !genderIsFemale -> emptyList()
+
+                reproductiveStatus.inputType = DROPDOWN
+
+                when {
+
+                    !genderIsFemale -> {
+                        reproductiveStatus.entries = emptyList<String>().toTypedArray()
+                    }
+
                     age in 15..19 -> when (maritalStatus.value) {
                         maritalStatus.entries!![0] -> {
-                            listOf(
-                                "Adolescent Girl"
-                            )
+                            reproductiveStatus.entries = resources.getStringArray(R.array.nbr_reproductive_status_array1)
+                            reproductiveStatus.arrayId = R.array.nbr_reproductive_status_array1
                         }
                         maritalStatus.entries!![1] -> {
-                            listOf(
-                                "Adolescent Girl", "Eligible Couple", "Pregnant Woman",
-                                "Postnatal Mother", "Permanently Sterilised"
-                            )
+                            reproductiveStatus.entries = resources.getStringArray(R.array.nbr_reproductive_status_array2)
+                            reproductiveStatus.arrayId = R.array.nbr_reproductive_status_array2
                         }
                         else -> {
-                            listOf(
-                                "Adolescent Girl", "Eligible Couple", "Pregnant Woman",
-                                "Postnatal Mother", "Permanently Sterilised"
-                            )
+                            reproductiveStatus.entries = resources.getStringArray(R.array.nbr_reproductive_status_array2)
+                            reproductiveStatus.arrayId = R.array.nbr_reproductive_status_array2
                         }
                     }
 
                     age in 20..49 -> when (maritalStatus.value) {
                         maritalStatus.entries!![0] -> {
-                            listOf(
-                                "Not Applicable"
-                            )
+                            reproductiveStatus.entries = resources.getStringArray(R.array.nbr_reproductive_status_array3)
+                            reproductiveStatus.arrayId = R.array.nbr_reproductive_status_array3
                         }
                         maritalStatus.entries!![1] -> {
-                            listOf(
-                                "Eligible Couple", "Pregnant Woman",
-                                "Postnatal Mother", "Permanently Sterilised"
-                            )
+                            reproductiveStatus.entries = resources.getStringArray(R.array.nbr_reproductive_status_array4)
+                            reproductiveStatus.arrayId = R.array.nbr_reproductive_status_array4
                         }
                         else -> {
-                            listOf(
-                                "Eligible Couple", "Pregnant Woman",
-                                "Postnatal Mother", "Permanently Sterilised"
-                            )
+                            reproductiveStatus.entries = resources.getStringArray(R.array.nbr_reproductive_status_array4)
+                            reproductiveStatus.arrayId = R.array.nbr_reproductive_status_array4
                         }
                     }
 
-                    age >= 50 -> listOf("Elderly Woman")
-                    else -> emptyList()
+                    age >= 50 -> {
+                        reproductiveStatus.entries = resources.getStringArray(R.array.nbr_reproductive_status_array5)
+                        reproductiveStatus.arrayId = R.array.nbr_reproductive_status_array5
+                    }
+
+                    else -> reproductiveStatus.entries = emptyList<String>().toTypedArray()
+
                 }
 
-                reproductiveStatus.entries = updatedReproductiveOptions.toTypedArray()
+//                val updatedReproductiveOptions = when {
+//                    !genderIsFemale -> emptyList()
+//                    age in 15..19 -> when (maritalStatus.value) {
+//                        maritalStatus.entries!![0] -> {
+//                            listOf(
+//                                "Adolescent Girl"
+//                            )
+//                        }
+//                        maritalStatus.entries!![1] -> {
+//                            listOf(
+//                                "Adolescent Girl", "Eligible Couple", "Pregnant Woman",
+//                                "Postnatal Mother", "Permanently Sterilised"
+//                            )
+//                        }
+//                        else -> {
+//                            listOf(
+//                                "Adolescent Girl", "Eligible Couple", "Pregnant Woman",
+//                                "Postnatal Mother", "Permanently Sterilised"
+//                            )
+//                        }
+//                    }
+//
+//                    age in 20..49 -> when (maritalStatus.value) {
+//                        maritalStatus.entries!![0] -> {
+//                            listOf(
+//                                "Not Applicable"
+//                            )
+//                        }
+//                        maritalStatus.entries!![1] -> {
+//                            listOf(
+//                                "Eligible Couple", "Pregnant Woman",
+//                                "Postnatal Mother", "Permanently Sterilised"
+//                            )
+//                        }
+//                        else -> {
+//                            listOf(
+//                                "Eligible Couple", "Pregnant Woman",
+//                                "Postnatal Mother", "Permanently Sterilised"
+//                            )
+//                        }
+//                    }
+//
+//                    age >= 50 -> listOf("Elderly Woman")
+//                    else -> emptyList()
+//                }
+//
+//                reproductiveStatus.entries = updatedReproductiveOptions.toTypedArray()
+
                 reproductiveStatus.value = null
-                if (updatedReproductiveOptions.size == 1) {
-                    reproductiveStatus.value = updatedReproductiveOptions[0]
+                if (reproductiveStatus.entries?.size == 1) {
+                    reproductiveStatus.value = reproductiveStatus.entries?.get(0)
                 }
+
             } else {
 
                 val saved = benIfDataExist
                 if (saved != null) {
-                    reproductiveStatus.value = saved.genDetails?.reproductiveStatusId?.let {
-                        reproductiveStatus.getStringFromPosition(it)
-                    }
+                    reproductiveStatus.value = saved.genDetails?.reproductiveStatus
+//                    reproductiveStatus.value = saved.genDetails?.reproductiveStatusId?.let {
+//                        reproductiveStatus.getStringFromPosition(it)
+//                    }
                 }
-//                reproductiveStatus.isEnabled = false
+                reproductiveStatus.inputType = DROPDOWN
 
-                when (reproductiveStatus.value) {
-                    "Adolescent Girl" -> {
-                        agePopup.max = yearsAgo(15)
-                        agePopup.min = yearsAgo(19)
+//                when (reproductiveStatus.value) {
+//                    "Adolescent Girl" -> {
+//                        agePopup.max = yearsAgo(15)
+//                        agePopup.min = yearsAgo(19)
+//                    }
+//
+//                    "Eligible Couple" -> {
+//                        agePopup.max = yearsAgo(15)
+//                        agePopup.min = yearsAgo(49)
+//                    }
+//
+//                    "Pregnant Woman", "Postnatal Mother", "Permanently Sterilised" -> {
+//                        agePopup.max = yearsAgo(20)
+//                        agePopup.min = yearsAgo(49)
+//                    }
+//
+//                    "Elderly Woman" -> {
+//                        agePopup.max = yearsAgo(50)
+//                        agePopup.min = yearsAgo(100)
+//                    }
+//                }
+
+                when {
+
+                    !genderIsFemale -> {
+                        reproductiveStatus.entries = emptyList<String>().toTypedArray()
                     }
 
-                    "Eligible Couple" -> {
-                        agePopup.max = yearsAgo(15)
-                        agePopup.min = yearsAgo(49)
-                    }
-
-                    "Pregnant Woman", "Postnatal Mother", "Permanently Sterilised" -> {
-                        agePopup.max = yearsAgo(20)
-                        agePopup.min = yearsAgo(49)
-                    }
-
-                    "Elderly Woman" -> {
-                        agePopup.max = yearsAgo(50)
-                        agePopup.min = yearsAgo(100)
-                    }
-                }
-
-                val updatedReproductiveOptions = when {
-                    !genderIsFemale -> emptyList()
                     age in 15..19 -> when (maritalStatus.value) {
                         maritalStatus.entries!![0] -> {
-                            listOf(
-                                "Adolescent Girl"
-                            )
+                            reproductiveStatus.entries = resources.getStringArray(R.array.nbr_reproductive_status_array1)
+                            reproductiveStatus.arrayId = R.array.nbr_reproductive_status_array1
                         }
                         maritalStatus.entries!![1] -> {
-                            listOf(
-                                "Adolescent Girl", "Eligible Couple", "Pregnant Woman",
-                                "Postnatal Mother", "Permanently Sterilised"
-                            )
+                            reproductiveStatus.entries = resources.getStringArray(R.array.nbr_reproductive_status_array2)
+                            reproductiveStatus.arrayId = R.array.nbr_reproductive_status_array2
                         }
                         else -> {
-                            listOf(
-                                "Adolescent Girl", "Eligible Couple", "Pregnant Woman",
-                                "Postnatal Mother", "Permanently Sterilised"
-                            )
+                            reproductiveStatus.entries = resources.getStringArray(R.array.nbr_reproductive_status_array2)
+                            reproductiveStatus.arrayId = R.array.nbr_reproductive_status_array2
                         }
                     }
 
                     age in 20..49 -> when (maritalStatus.value) {
                         maritalStatus.entries!![0] -> {
-                            listOf(
-                                "Not Applicable"
-                            )
+                            reproductiveStatus.entries = resources.getStringArray(R.array.nbr_reproductive_status_array3)
+                            reproductiveStatus.arrayId = R.array.nbr_reproductive_status_array3
                         }
                         maritalStatus.entries!![1] -> {
-                            listOf(
-                                "Eligible Couple", "Pregnant Woman",
-                                "Postnatal Mother", "Permanently Sterilised"
-                            )
+                            reproductiveStatus.entries = resources.getStringArray(R.array.nbr_reproductive_status_array4)
+                            reproductiveStatus.arrayId = R.array.nbr_reproductive_status_array4
                         }
                         else -> {
-                            listOf(
-                                "Eligible Couple", "Pregnant Woman",
-                                "Postnatal Mother", "Permanently Sterilised"
-                            )
+                            reproductiveStatus.entries = resources.getStringArray(R.array.nbr_reproductive_status_array4)
+                            reproductiveStatus.arrayId = R.array.nbr_reproductive_status_array4
                         }
                     }
 
-                    age >= 50 -> listOf("Elderly Woman")
-                    else -> emptyList()
+                    age >= 50 -> {
+                        reproductiveStatus.entries = resources.getStringArray(R.array.nbr_reproductive_status_array5)
+                        reproductiveStatus.arrayId = R.array.nbr_reproductive_status_array5
+                    }
+
+                    else -> reproductiveStatus.entries = emptyList<String>().toTypedArray()
+
                 }
 
-                reproductiveStatus.entries = updatedReproductiveOptions.toTypedArray()
+//                reproductiveStatus.entries = updatedReproductiveOptions.toTypedArray()
 
             }
         }
@@ -2162,8 +2481,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             removeItems = emptyList(),
             position = -2
         ) else {
-            fatherName.required = true
-            motherName.required = true
+            fatherName.required = false
+            motherName.required = false
             triggerDependants(
                 source = rchId,
                 removeItems = listOf(reproductiveStatus),
@@ -2183,8 +2502,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             if (maritalStatus.inputType == TEXT_VIEW) -1 else {
 
                 if (getYearsFromDate(agePopup.value.toString()) <= Konstants.maxAgeForAdolescent) {
-                    fatherName.required = true
-                    motherName.required = true
+                    fatherName.required = false
+                    motherName.required = false
 
                     triggerDependants(
                         source = rchId,
@@ -2247,14 +2566,25 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
     }
 
     private fun validateReproductiveStatusField(genderIsFemale: Boolean, age: Int): Int {
-        reproductiveStatus.isEnabled = (genderIsFemale &&
-                age in 15..19 &&
-                maritalStatus.value == maritalStatus.entries!![1] &&
-                reproductiveStatus.value == "Adolescent Girl") ||
-                (genderIsFemale &&
-                        age in 20..49 &&
-                        maritalStatus.value == maritalStatus.entries!![1] &&
-                        reproductiveStatus.value == "Not Applicable")
+        if ((genderIsFemale &&
+                    age in 15..19 &&
+                    maritalStatus.value == maritalStatus.entries!![1] &&
+                    reproductiveStatus.value == "Adolescent Girl") ||
+            (genderIsFemale &&
+                    age in 20..49 &&
+                    maritalStatus.value == maritalStatus.entries!![1] &&
+                    reproductiveStatus.value == "Not Applicable")) {
+            reproductiveStatus.inputType = DROPDOWN
+
+        }
+//        reproductiveStatus.isEnabled = (genderIsFemale &&
+//                age in 15..19 &&
+//                maritalStatus.value == maritalStatus.entries!![1] &&
+//                reproductiveStatus.value == "Adolescent Girl") ||
+//                (genderIsFemale &&
+//                        age in 20..49 &&
+//                        maritalStatus.value == maritalStatus.entries!![1] &&
+//                        reproductiveStatus.value == "Not Applicable")
 
         return 1
     }
@@ -2318,8 +2648,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             ben.tempMobileNoOfRelationId = if (isHoF) 1 else tempraryContactNoBelongsto.getPosition()
             ben.mobileNoOfRelation =
                 mobileNoOfRelation.getEnglishStringFromPosition(ben.mobileNoOfRelationId)
-           /* ben.mobileNoOfRelation =
-                tempraryContactNoBelongsto.getEnglishStringFromPosition(ben.mobileNoOfRelationId)*/
+            /* ben.mobileNoOfRelation =
+                 tempraryContactNoBelongsto.getEnglishStringFromPosition(ben.mobileNoOfRelationId)*/
             ben.mobileOthers = otherMobileNoOfRelation.value
             ben.contactNumber =
                 if (ben.mobileNoOfRelationId == 5) familyHeadPhoneNo!!.toLong() else contactNumber.value!!.toLong()
@@ -2345,21 +2675,22 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                         ?: spouseName.value.takeIf { !it.isNullOrEmpty() }
             ben.genDetails?.ageAtMarriage =
                 ageAtMarriage.value?.toInt() ?: 0
-            ben.genDetails?.marriageDate =
-                timeStampDateOfMarriageFromSpouse.takeIf { it != null }?.also {
-                    ben.genDetails?.ageAtMarriage =
-                        (TimeUnit.MILLISECONDS.toDays(it - ben.dob) / 365).toInt()
-                } ?: run {
-                    dateOfMarriage.value?.let { getLongFromDate(it) }
-                        ?: run {
-                            ben.genDetails?.ageAtMarriage?.takeIf { it > 0 }?.let {
-                                getDoMFromDoR(
-                                    if (ben.genDetails?.ageAtMarriage == null) 0 else (ben.age - ben.genDetails!!.ageAtMarriage),
-                                    ben.regDate
-                                )
-                            }
-                        }
-                }
+            ben.genDetails?.marriageDate = calculateMarriageDate(ben.genDetails?.ageAtMarriage!!, ben.dob)
+//            ben.genDetails?.marriageDate =
+//                timeStampDateOfMarriageFromSpouse.takeIf { it != null }?.also {
+//                    ben.genDetails?.ageAtMarriage =
+//                        (TimeUnit.MILLISECONDS.toDays(it - ben.dob) / 365).toInt()
+//                } ?: run {
+//                    dateOfMarriage.value?.let { getLongFromDate(it) }
+//                        ?: run {
+//                            ben.genDetails?.ageAtMarriage?.takeIf { it > 0 }?.let {
+//                                getDoMFromDoR(
+//                                    if (ben.genDetails?.ageAtMarriage == null) 0 else (ben.age - ben.genDetails!!.ageAtMarriage),
+//                                    ben.regDate
+//                                )
+//                            }
+//                        }
+//                }
 
             ben.genDetails?.let { gen ->
                 val selectedValue = reproductiveStatus.value?.trim() ?: ""
@@ -2459,6 +2790,19 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             ben.kidDetails?.birthCertificateFileFrontView = fileUploadFront.value
             ben.isDraft = false
             ben.isConsent = isOtpVerified
+            ben.isSpouseAdded = if (isAddSppouse == 1) {
+                true
+            } else {
+                when (ben.familyHeadRelationPosition) {
+                    5 -> true
+                    6 -> true
+                    else -> false
+                }
+            }
+            ben.isChildrenAdded = false
+            ben.isMarried = (maritalStatus.getPosition() == 2)
+            ben.doYouHavechildren = (haveChildren.getPosition() == 1)
+
 
         }
     }
@@ -2470,21 +2814,21 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
     fun setImageUriToFormElement(lastImageFormId: Int, dpUri: Uri) {
 
-            if (lastImageFormId == 46) {
-                fileUploadFront.value = dpUri.toString()
-                fileUploadFront.errorText = null
+        if (lastImageFormId == 46) {
+            fileUploadFront.value = dpUri.toString()
+            fileUploadFront.errorText = null
 
-            } else if (lastImageFormId == 47){
-                fileUploadBack.value = dpUri.toString()
-                fileUploadBack.errorText = null
+        } else if (lastImageFormId == 47){
+            fileUploadBack.value = dpUri.toString()
+            fileUploadBack.errorText = null
 
-            } else {
+        } else {
 
-                pic.value = dpUri.toString()
-                pic.errorText = null
+            pic.value = dpUri.toString()
+            pic.errorText = null
 
 
-            }
+        }
 
 
     }
@@ -2503,130 +2847,229 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         val genderIsFemale = gender.value == gender.entries?.get(1)
 
         if (benIfDataExist == null) {
-            reproductiveStatus.isEnabled = genderIsFemale
+            if (genderIsFemale) {
+                reproductiveStatus.inputType = DROPDOWN
+            }
+//            reproductiveStatus.isEnabled = genderIsFemale
 
-            val updatedReproductiveOptions = when {
-                !genderIsFemale -> emptyList()
+            when {
+
+                !genderIsFemale -> {
+                    reproductiveStatus.entries = emptyList<String>().toTypedArray()
+                }
+
                 age in 15..19 -> when (maritalStatus.value) {
                     maritalStatus.entries!![0] -> {
-                        listOf(
-                            "Adolescent Girl"
-                        )
+                        reproductiveStatus.entries = resources.getStringArray(R.array.nbr_reproductive_status_array1)
+                        reproductiveStatus.arrayId = R.array.nbr_reproductive_status_array1
                     }
                     maritalStatus.entries!![1] -> {
-                        listOf(
-                            "Adolescent Girl", "Eligible Couple", "Pregnant Woman",
-                            "Postnatal Mother", "Permanently Sterilised"
-                        )
+                        reproductiveStatus.entries = resources.getStringArray(R.array.nbr_reproductive_status_array2)
+                        reproductiveStatus.arrayId = R.array.nbr_reproductive_status_array2
                     }
                     else -> {
-                        listOf(
-                            "Adolescent Girl", "Eligible Couple", "Pregnant Woman",
-                            "Postnatal Mother", "Permanently Sterilised"
-                        )
+                        reproductiveStatus.entries = resources.getStringArray(R.array.nbr_reproductive_status_array2)
+                        reproductiveStatus.arrayId = R.array.nbr_reproductive_status_array2
                     }
                 }
 
                 age in 20..49 -> when (maritalStatus.value) {
                     maritalStatus.entries!![0] -> {
-                        listOf(
-                            "Not Applicable"
-                        )
+                        reproductiveStatus.entries = resources.getStringArray(R.array.nbr_reproductive_status_array3)
+                        reproductiveStatus.arrayId = R.array.nbr_reproductive_status_array3
                     }
                     maritalStatus.entries!![1] -> {
-                        listOf(
-                            "Eligible Couple", "Pregnant Woman",
-                            "Postnatal Mother", "Permanently Sterilised"
-                        )
+                        reproductiveStatus.entries = resources.getStringArray(R.array.nbr_reproductive_status_array4)
+                        reproductiveStatus.arrayId = R.array.nbr_reproductive_status_array4
                     }
                     else -> {
-                        listOf(
-                            "Eligible Couple", "Pregnant Woman",
-                            "Postnatal Mother", "Permanently Sterilised"
-                        )
+                        reproductiveStatus.entries = resources.getStringArray(R.array.nbr_reproductive_status_array4)
+                        reproductiveStatus.arrayId = R.array.nbr_reproductive_status_array4
                     }
                 }
 
-                age >= 50 -> listOf("Elderly Woman")
-                else -> emptyList()
+                age >= 50 -> {
+                    reproductiveStatus.entries = resources.getStringArray(R.array.nbr_reproductive_status_array5)
+                    reproductiveStatus.arrayId = R.array.nbr_reproductive_status_array5
+                }
+
+                else -> reproductiveStatus.entries = emptyList<String>().toTypedArray()
+
             }
 
-            reproductiveStatus.entries = updatedReproductiveOptions.toTypedArray()
+//            val updatedReproductiveOptions = when {
+//                !genderIsFemale -> emptyList()
+//                age in 15..19 -> when (maritalStatus.value) {
+//                    maritalStatus.entries!![0] -> {
+//                        listOf(
+//                            "Adolescent Girl"
+//                        )
+//                    }
+//                    maritalStatus.entries!![1] -> {
+//                        listOf(
+//                            "Adolescent Girl", "Eligible Couple", "Pregnant Woman",
+//                            "Postnatal Mother", "Permanently Sterilised"
+//                        )
+//                    }
+//                    else -> {
+//                        listOf(
+//                            "Adolescent Girl", "Eligible Couple", "Pregnant Woman",
+//                            "Postnatal Mother", "Permanently Sterilised"
+//                        )
+//                    }
+//                }
+//
+//                age in 20..49 -> when (maritalStatus.value) {
+//                    maritalStatus.entries!![0] -> {
+//                        listOf(
+//                            "Not Applicable"
+//                        )
+//                    }
+//                    maritalStatus.entries!![1] -> {
+//                        listOf(
+//                            "Eligible Couple", "Pregnant Woman",
+//                            "Postnatal Mother", "Permanently Sterilised"
+//                        )
+//                    }
+//                    else -> {
+//                        listOf(
+//                            "Eligible Couple", "Pregnant Woman",
+//                            "Postnatal Mother", "Permanently Sterilised"
+//                        )
+//                    }
+//                }
+//
+//                age >= 50 -> listOf("Elderly Woman")
+//                else -> emptyList()
+//            }
+//
+//            reproductiveStatus.entries = updatedReproductiveOptions.toTypedArray()
+
             reproductiveStatus.value = null
-            if (updatedReproductiveOptions.size == 1) {
-                reproductiveStatus.value = updatedReproductiveOptions[0]
+            if (reproductiveStatus.entries?.size == 1) {
+                reproductiveStatus.value = reproductiveStatus.entries?.get(0)
+            }
+            if (maritalStatus.value != null) {
+                reproductiveStatus.inputType = DROPDOWN
+//                reproductiveStatus.isEnabled = true
             }
         } else {
 
-            val updatedReproductiveOptions = when {
-                !genderIsFemale -> emptyList()
+//            val updatedReproductiveOptions = when {
+//                !genderIsFemale -> emptyList()
+//                age in 15..19 -> when (maritalStatus.value) {
+//                    maritalStatus.entries!![0] -> {
+//                        listOf(
+//                            "Adolescent Girl"
+//                        )
+//                    }
+//                    maritalStatus.entries!![1] -> {
+//                        listOf(
+//                            "Adolescent Girl", "Eligible Couple", "Pregnant Woman",
+//                            "Postnatal Mother", "Permanently Sterilised"
+//                        )
+//                    }
+//                    else -> {
+//                        listOf(
+//                            "Adolescent Girl", "Eligible Couple", "Pregnant Woman",
+//                            "Postnatal Mother", "Permanently Sterilised"
+//                        )
+//                    }
+//                }
+//
+//                age in 20..49 -> when (maritalStatus.value) {
+//                    maritalStatus.entries!![0] -> {
+//                        listOf(
+//                            "Not Applicable"
+//                        )
+//                    }
+//                    maritalStatus.entries!![1] -> {
+//                        listOf(
+//                            "Eligible Couple", "Pregnant Woman",
+//                            "Postnatal Mother", "Permanently Sterilised"
+//                        )
+//                    }
+//                    else -> {
+//                        listOf(
+//                            "Eligible Couple", "Pregnant Woman",
+//                            "Postnatal Mother", "Permanently Sterilised"
+//                        )
+//                    }
+//                }
+//
+//                age >= 50 -> listOf("Elderly Woman")
+//                else -> emptyList()
+//            }
+
+            when {
+
+                !genderIsFemale -> {
+                    reproductiveStatus.entries = emptyList<String>().toTypedArray()
+                }
+
                 age in 15..19 -> when (maritalStatus.value) {
                     maritalStatus.entries!![0] -> {
-                        listOf(
-                            "Adolescent Girl"
-                        )
+                        reproductiveStatus.entries = resources.getStringArray(R.array.nbr_reproductive_status_array1)
+                        reproductiveStatus.arrayId = R.array.nbr_reproductive_status_array1
                     }
                     maritalStatus.entries!![1] -> {
-                        listOf(
-                            "Adolescent Girl", "Eligible Couple", "Pregnant Woman",
-                            "Postnatal Mother", "Permanently Sterilised"
-                        )
+                        reproductiveStatus.entries = resources.getStringArray(R.array.nbr_reproductive_status_array2)
+                        reproductiveStatus.arrayId = R.array.nbr_reproductive_status_array2
                     }
                     else -> {
-                        listOf(
-                            "Adolescent Girl", "Eligible Couple", "Pregnant Woman",
-                            "Postnatal Mother", "Permanently Sterilised"
-                        )
+                        reproductiveStatus.entries = resources.getStringArray(R.array.nbr_reproductive_status_array2)
+                        reproductiveStatus.arrayId = R.array.nbr_reproductive_status_array2
                     }
                 }
 
                 age in 20..49 -> when (maritalStatus.value) {
                     maritalStatus.entries!![0] -> {
-                        listOf(
-                            "Not Applicable"
-                        )
+                        reproductiveStatus.entries = resources.getStringArray(R.array.nbr_reproductive_status_array3)
+                        reproductiveStatus.arrayId = R.array.nbr_reproductive_status_array3
                     }
                     maritalStatus.entries!![1] -> {
-                        listOf(
-                            "Eligible Couple", "Pregnant Woman",
-                            "Postnatal Mother", "Permanently Sterilised"
-                        )
+                        reproductiveStatus.entries = resources.getStringArray(R.array.nbr_reproductive_status_array4)
+                        reproductiveStatus.arrayId = R.array.nbr_reproductive_status_array4
                     }
                     else -> {
-                        listOf(
-                            "Eligible Couple", "Pregnant Woman",
-                            "Postnatal Mother", "Permanently Sterilised"
-                        )
+                        reproductiveStatus.entries = resources.getStringArray(R.array.nbr_reproductive_status_array4)
+                        reproductiveStatus.arrayId = R.array.nbr_reproductive_status_array4
                     }
                 }
 
-                age >= 50 -> listOf("Elderly Woman")
-                else -> emptyList()
+                age >= 50 -> {
+                    reproductiveStatus.entries = resources.getStringArray(R.array.nbr_reproductive_status_array5)
+                    reproductiveStatus.arrayId = R.array.nbr_reproductive_status_array5
+                }
+
+                else -> reproductiveStatus.entries = emptyList<String>().toTypedArray()
+
             }
 
-            reproductiveStatus.entries = updatedReproductiveOptions.toTypedArray()
-            if (updatedReproductiveOptions.size == 1) {
-                reproductiveStatus.value = updatedReproductiveOptions[0]
+            reproductiveStatus.value = null
+//            reproductiveStatus.entries = updatedReproductiveOptions.toTypedArray()
+            if (reproductiveStatus.entries?.size == 1) {
+                reproductiveStatus.value = reproductiveStatus.entries?.get(0)
             }
             validateReproductiveStatusField(genderIsFemale, age)
 
             // Set DOB constraints based on existing reproductive status
-            when (reproductiveStatus.value) {
-                "Adolescent Girl" -> {
-                    agePopup.max = yearsAgo(15)
-                    agePopup.min = yearsAgo(19)
-                }
-
-                "Eligible Couple", "Pregnant Woman", "Postnatal Mother", "Permanently Sterilised" -> {
-                    agePopup.max = yearsAgo(20)
-                    agePopup.min = yearsAgo(49)
-                }
-
-                "Elderly Woman" -> {
-                    agePopup.max = yearsAgo(50)
-                    agePopup.min = yearsAgo(100)
-                }
-            }
+//            when (reproductiveStatus.value) {
+//                "Adolescent Girl" -> {
+//                    agePopup.max = yearsAgo(15)
+//                    agePopup.min = yearsAgo(19)
+//                }
+//
+//                "Eligible Couple", "Pregnant Woman", "Postnatal Mother", "Permanently Sterilised" -> {
+//                    agePopup.max = yearsAgo(20)
+//                    agePopup.min = yearsAgo(49)
+//                }
+//
+//                "Elderly Woman" -> {
+//                    agePopup.max = yearsAgo(50)
+//                    agePopup.min = yearsAgo(100)
+//                }
+//            }
         }
 
         if (formId == agePopup.id) {
@@ -2637,8 +3080,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 removeItems = emptyList(),
                 position = -2
             ) else {
-                fatherName.required = true
-                motherName.required = true
+                fatherName.required = false
+                motherName.required = false
                 triggerDependants(
                     source = rchId,
                     removeItems = listOf(reproductiveStatus),
@@ -2658,8 +3101,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 if (maritalStatus.inputType == TEXT_VIEW) -1 else {
 
                     if (getYearsFromDate(agePopup.value.toString()) <= Konstants.maxAgeForAdolescent) {
-                        fatherName.required = true
-                        motherName.required = true
+                        fatherName.required = false
+                        motherName.required = false
 
                         triggerDependants(
                             source = rchId,
@@ -2728,8 +3171,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 removeItems = emptyList(),
                 position = -2
             ) else {
-                fatherName.required = true
-                motherName.required = true
+                // fatherName.required = true
+                // motherName.required = true
                 triggerDependants(
                     source = rchId,
                     removeItems = listOf(reproductiveStatus),
@@ -2800,6 +3243,27 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         reasonOfDeath.value = saved?.reasonOfDeath
         placeOfDeath.value = saved?.placeOfDeath
         otherPlaceOfDeath.value = saved?.otherPlaceOfDeath
+    }
+
+    fun mapValueToBen(ben: BenRegCache?): Boolean {
+        var isUpdated = false
+        val rchIdFromBen = ben?.rchId?.takeIf { it.isNotEmpty() }?.toLong()
+        val aadharNoFromBen = ben?.aadharNum?.takeIf { it.isNotEmpty() }
+        rchId.value?.takeIf {
+            it.isNotEmpty()
+        }?.toLong()?.let {
+            if (it != rchIdFromBen) {
+                ben?.rchId = it.toString()
+                isUpdated = true
+            }
+        }
+
+        if (isUpdated) {
+            if (ben?.processed != "N")
+                ben?.processed = "U"
+            ben?.syncState = SyncState.UNSYNCED
+        }
+        return isUpdated
     }
 
 }
