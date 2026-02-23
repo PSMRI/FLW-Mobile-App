@@ -53,10 +53,10 @@ class IconDataset @Inject constructor(
         }
 
         Timber.d("currently : $showAll")
-        lateinit var showModules:Modules
+        lateinit var showModules: Modules
         if (BuildConfig.FLAVOR.equals("xushrukha", true)) {
             showModules = Modules.HRP
-        }else{
+        } else {
             showModules = Modules.ALL
         }
         return when (showModules) {
@@ -137,7 +137,7 @@ class IconDataset @Inject constructor(
                     HomeFragmentDirections.actionNavHomeToVillageLevelFormsFragment()
                 ),
 
-            )
+                )
 
             Modules.HRP -> listOf(
                 Icon(
@@ -284,6 +284,12 @@ class IconDataset @Inject constructor(
             resources.getString(R.string.sup_tb_cases),
             recordsRepo.tbSuspectedListCount,
             SupervisorFragmentDirections.actionNavSupervisorToTBSuspectedListFragments()
+        ),
+        Icon(
+            R.drawable.ic__incentive,
+            resources.getString(R.string.incentive_verification),
+            null,
+            SupervisorFragmentDirections.actionNavSupervisorToIncentiveVerificationFragment()
         )
     ).apply {
         forEachIndexed { index, icon ->
@@ -376,8 +382,7 @@ class IconDataset @Inject constructor(
                 null,
                 VillageLevelFormsFragmentDirections
                     .actionVillageLevelFormsFragmentToORSCampaignListFragment()
-            )
-            ,Icon(
+            ), Icon(
                 R.drawable.filaria,
                 resources.getString(R.string.mda_title),
                 null,
@@ -482,7 +487,7 @@ class IconDataset @Inject constructor(
         Icon(
             R.drawable.leprocy,
             resources.getString(R.string.leprosy_suspected),
-             recordsRepo.leprosySuspectedListCount,
+            recordsRepo.leprosySuspectedListCount,
             LeprosyFragmentDirections.actionLeprosyFragmenToLeprosySuspectedListFragment()
         ),
         Icon(
@@ -492,7 +497,7 @@ class IconDataset @Inject constructor(
             LeprosyFragmentDirections.actionLeprosyDragmentToLeprosyConfirmedListFragment()
         ),
 
-    )
+        )
 
 
     fun getDiseaseControlDataset(resources: Resources) = listOf(
@@ -502,7 +507,7 @@ class IconDataset @Inject constructor(
             null,
             DiseaseControlFragmentDirections.actionDiseaseControlFragmentToNcdFragment(),
 
-        ),
+            ),
         Icon(
             R.drawable.maleria,
             resources.getString(R.string.icon_title_maleria),
@@ -510,7 +515,8 @@ class IconDataset @Inject constructor(
             DiseaseControlFragmentDirections.actionDiseaseControlFragmentToMalariaIconsFragment(
 
             )
-        ), Icon(
+        ),
+        Icon(
             R.drawable.kala,
             resources.getString(R.string.icon_title_ka),
             recordsRepo.tbScreeningListCount,
@@ -736,7 +742,9 @@ class IconDataset @Inject constructor(
             R.drawable.malaria_list,
             resources.getString(R.string.icon_title_maleria),
             recordsRepo.tbScreeningListCount,
-            MalariaIconsFragmentDirections.actionMalariaIconsFragmentToAllHouseHoldDiseaseControlFragment(Disease.MALARIA.toString())
+            MalariaIconsFragmentDirections.actionMalariaIconsFragmentToAllHouseHoldDiseaseControlFragment(
+                Disease.MALARIA.toString()
+            )
         ), Icon(
             R.drawable.confirmed,
             resources.getString(R.string.icon_title_malaria_confirmed),
