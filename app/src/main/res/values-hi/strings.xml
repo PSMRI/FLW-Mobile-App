@@ -419,13 +419,7 @@
     <string name="treatment_status">उपचार की स्थिति</string>
     <string name="follow_up_date">फॉलो-अप तिथि</string>
     <string name="follow_up_history">फॉलो-अप रिकॉर्ड </string>
-
-
-
-
-
-
-
+    <string name="incentive_verification">Incentive Verification</string>
 
 
     <string-array name="leprosy_status">
