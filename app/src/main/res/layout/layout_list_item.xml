@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginTop="4dp">
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:tint="@color/md_theme_dark_inversePrimary"
+        android:src="@drawable/baseline_location_on_24"
+        android:layout_centerVertical="true"/>
+    <TextView
+        android:id="@+id/subCenterName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:layout_marginStart="3dp"
+        app:layout_constraintLeft_toRightOf="@+id/icon"
+        android:text="Village Name" />
+</androidx.constraintlayout.widget.ConstraintLayout>
