@@ -12,7 +12,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.crashlytics.internal.common.CommonUtils
 import dagger.hilt.EntryPoint
@@ -86,18 +88,23 @@ class LoginActivity : AppCompatActivity() {
         observeAccountDeactivation()
     }
 
+    private var deactivationDialog: AlertDialog? = null
+
     private fun observeAccountDeactivation() {
         lifecycleScope.launch {
-            accountDeactivationManager.deactivationEvent.collect { errorMessage ->
-                MaterialAlertDialogBuilder(this@LoginActivity)
-                    .setTitle(getString(R.string.account_deactivated_title))
-                    .setMessage(errorMessage)
-                    .setCancelable(false)
-                    .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
-                        dialog.dismiss()
-                    }
-                    .create()
-                    .show()
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                accountDeactivationManager.deactivationEvent.collect { errorMessage ->
+                    if (deactivationDialog?.isShowing == true) return@collect
+                    deactivationDialog = MaterialAlertDialogBuilder(this@LoginActivity)
+                        .setTitle(getString(R.string.account_deactivated_title))
+                        .setMessage(errorMessage)
+                        .setCancelable(false)
+                        .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
+                            dialog.dismiss()
+                        }
+                        .create()
+                    deactivationDialog?.show()
+                }
             }
         }
     }

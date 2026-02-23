@@ -45,7 +45,9 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.internal.common.CommonUtils.isEmulator
 import com.google.firebase.crashlytics.internal.common.CommonUtils.isRooted
 import com.google.firebase.messaging.FirebaseMessaging
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
@@ -318,18 +320,23 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
     }
 
+    private var deactivationDialog: AlertDialog? = null
+
     private fun observeAccountDeactivation() {
         lifecycleScope.launch {
-            accountDeactivationManager.deactivationEvent.collect { errorMessage ->
-                MaterialAlertDialogBuilder(this@HomeActivity)
-                    .setTitle(getString(R.string.account_deactivated_title))
-                    .setMessage(errorMessage)
-                    .setCancelable(false)
-                    .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
-                        dialog.dismiss()
-                    }
-                    .create()
-                    .show()
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                accountDeactivationManager.deactivationEvent.collect { errorMessage ->
+                    if (deactivationDialog?.isShowing == true) return@collect
+                    deactivationDialog = MaterialAlertDialogBuilder(this@HomeActivity)
+                        .setTitle(getString(R.string.account_deactivated_title))
+                        .setMessage(errorMessage)
+                        .setCancelable(false)
+                        .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
+                            dialog.dismiss()
+                        }
+                        .create()
+                    deactivationDialog?.show()
+                }
             }
         }
     }
