@@ -97,6 +97,10 @@ class AadhaarOtpViewModel @Inject constructor(
         _state.value = State.IDLE
     }
 
+    fun setMobileNumber(number: String) {
+        _mobileNumber = number
+    }
+
     fun resetErrorMessage() {
         _errorMessage.value = null
     }
@@ -124,7 +128,12 @@ class AadhaarOtpViewModel @Inject constructor(
                 is NetworkResult.Success -> {
                     TokenInsertAbhaInterceptor.setXToken(result.data.tokens.token)
                     _txnId = result.data.txnId
-                    _mobileNumber = result.data.ABHAProfile.mobile
+                    result.data.ABHAProfile.mobile?.let { mobile ->
+                        if (mobile.isNotEmpty()) {
+                            setMobileNumber(mobile)
+                        }
+                    }
+
                     if (result.data.ABHAProfile.middleName.isNotEmpty()) {
                         _name =
                             result.data.ABHAProfile.firstName + " " + result.data.ABHAProfile.middleName + " " + result.data.ABHAProfile.lastName
@@ -185,7 +194,7 @@ class AadhaarOtpViewModel @Inject constructor(
                         _abhaNumber = result.data.accounts[0].ABHANumber
                         _state.value = State.OTP_VERIFY_SUCCESS
                         _phrAddress = result.data.accounts[0].preferredAbhaAddress
-                        _mobileNumber = ""
+                        setMobileNumber("")
                     }else{
                         _errorMessage.value = result.data.message
                         _state.value = State.ERROR_SERVER
