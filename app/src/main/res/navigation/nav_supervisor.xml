@@ -44,6 +44,10 @@
         <action
             android:id="@+id/action_nav_supervisor_to_TBSuspectedListFragments"
             app:destination="@id/TBSuspectedListFragments" />
+
+        <action
+            android:id="@+id/action_nav_supervisor_to_incentiveVerificationFragment"
+            app:destination="@id/incentiveVerificationFragment" />
     </fragment>
 
     <fragment
@@ -146,5 +150,13 @@
         android:id="@+id/incentiveDashboardFragment"
         android:name="org.piramalswasthya.sakhi.ui.asha_supervisor.incentiveDashboard.IncentiveDashboardFragment"
         android:label="IncentiveDashboardFragment" />
+   <fragment
+        android:id="@+id/incentiveVerificationFragment"
+        android:name="org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.IncentiveVerificationFragment"
+        android:label="IncentiveVerificationFragment" />
+    <fragment
+        android:id="@+id/workerDetailFragment"
+        android:name="org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.WorkerDetailFragment"
+        android:label="WorkerDetailFragment" />
 
 </navigation>
