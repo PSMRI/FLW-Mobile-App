@@ -61,7 +61,9 @@
             android:id="@+id/contentLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:minHeight="0dp"
             android:paddingTop="@dimen/padding_tiny"
+            android:paddingBottom="0dp"
             android:onClick="@{() -> clickListener.onClickedBen(ben)}">
 
                 <androidx.cardview.widget.CardView
@@ -198,7 +200,7 @@
                     android:baselineAligned="false"
                     android:orientation="horizontal"
                     android:layout_marginHorizontal="@dimen/padding_normal"
-                    android:layout_marginTop="@dimen/padding_normal"
+                    android:layout_marginTop="@dimen/margin_normal"
                     app:layout_constraintTop_toBottomOf="@+id/ll_title_bar">
 
                         <LinearLayout
@@ -509,9 +511,8 @@
                                 android:id="@+id/btn_abha"
                                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                                 android:layout_width="wrap_content"
-                                android:layout_height="0dp"
+                                android:layout_height="wrap_content"
                                 android:layout_marginStart="@dimen/margin_small"
-                                android:layout_weight="1"
                                 android:backgroundTint="@android:color/holo_green_dark"
                                 android:onClick="@{()-> clickListener.onClickABHA(ben)}"
                                 android:text="@string/abha"
@@ -519,9 +520,7 @@
                                 android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                                 android:textColor="?attr/colorOnPrimary"
                                 app:cornerRadius="@dimen/padding_normal"
-                                app:layout_constraintBottom_toBottomOf="@+id/tv_hh_id"
-                                app:strokeColor="?attr/colorPrimary"
-                                tools:ignore="NestedWeights" />
+                                app:strokeColor="?attr/colorPrimary" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -573,14 +572,15 @@
                             android:visibility="gone"
                             android:text="@string/str_duplicate_record" />
                     </LinearLayout>
-                <LinearLayout
-                    android:id="@+id/ll_ben_details_4"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:weightSum="3"
-                    android:layout_marginHorizontal="@dimen/padding_normal"
-                    app:layout_constraintTop_toBottomOf="@id/ll_ben_details_3">
+            <LinearLayout
+                android:id="@+id/ll_ben_details_4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="3"
+                android:layout_marginHorizontal="@dimen/padding_normal"
+                app:layout_constraintTop_toBottomOf="@id/ll_ben_details_3"
+                android:layout_marginBottom="0dp">
 
                         <Button
                             style="@style/Widget.Material3.Button.TonalButton"
@@ -599,19 +599,17 @@
                             tools:ignore="NestedWeights"/>
 
                     </LinearLayout>
-                <LinearLayout
-                    android:id="@+id/ll_add_spouse_btn"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:visibility="gone"
-                    android:orientation="horizontal"
-                    android:padding="@dimen/padding_normal"
-                    android:layout_marginHorizontal="@dimen/padding_normal"
-                    android:layout_marginBottom="@dimen/padding_normal"
-                    app:layout_constraintTop_toBottomOf="@id/ll_ben_details_4"
-                    app:layout_constraintBottom_toBottomOf="parent">
-
+            <LinearLayout
+                android:id="@+id/ll_add_spouse_btn"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:gravity="center"
+                android:visibility="gone"
+                android:orientation="horizontal"
+                android:layout_marginHorizontal="@dimen/padding_normal"
+                app:layout_constraintTop_toBottomOf="@id/ll_ben_details_4"
+                app:layout_constraintBottom_toBottomOf="parent">
+                
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_add_children"
                             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
@@ -619,7 +617,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/add_children"
-                            android:visibility="invisible"
+                            android:visibility="gone"
                             android:layout_marginEnd="5dp"
                             android:backgroundTint="@android:color/holo_green_dark"
                             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
@@ -635,6 +633,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginStart="5dp"
+                            android:visibility="gone"
                             android:text="@string/add_wife"
                             android:backgroundTint="@android:color/holo_green_dark"
                             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
