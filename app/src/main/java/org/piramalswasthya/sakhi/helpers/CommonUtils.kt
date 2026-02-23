@@ -5,9 +5,7 @@ import android.content.Context.CONNECTIVITY_SERVICE
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
-import android.util.Log
 import androidx.core.text.isDigitsOnly
-import org.piramalswasthya.sakhi.model.AncStatus
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.model.BenBasicDomainForForm
 import org.piramalswasthya.sakhi.model.BenPncDomain
@@ -242,21 +240,24 @@ fun filterPwrRegistrationList(
 fun filterPwAncList(
     list: List<BenWithAncListDomain>,
     filterText: String
-) =
-    list.filter {
-        it.ben.benId.toString().lowercase().contains(filterText) ||
-                it.ben.age.lowercase().contains(filterText) ||
-                it.ben.familyHeadName.lowercase().contains(filterText) ||
-                it.ben.benFullName.lowercase().contains(filterText) ||
-                it.ben.spouseName?.lowercase()?.contains(filterText) ?: false ||
-                it.ben.benId.toString().lowercase().contains(filterText) ||
-                it.ben.mobileNo.lowercase().contains(filterText) ||
-                it.lmpString?.contains(filterText) ?: false ||
-                it.eddString?.contains(filterText) ?: false ||
-                it.weeksOfPregnancy?.contains(filterText) ?: false ||
-                it.ben.rchId.takeIf { it1 -> it1?.isDigitsOnly() == true }?.contains(filterText) ?: false
+): List<BenWithAncListDomain> {
 
-    }
+    val query = filterText.lowercase()
+    return list
+        .filter {
+            it.ben.benId.toString().lowercase().contains(query) ||
+                    it.ben.age.lowercase().contains(query) ||
+                    it.ben.familyHeadName.lowercase().contains(query) ||
+                    it.ben.benFullName.lowercase().contains(query) ||
+                    it.ben.spouseName?.lowercase()?.contains(query) ?: false ||
+                    it.ben.mobileNo.lowercase().contains(query) ||
+                    it.lmpString?.lowercase()?.contains(query) ?: false ||
+                    it.eddString?.lowercase()?.contains(query) ?: false ||
+                    it.weeksOfPregnancy?.lowercase()?.contains(query) ?: false ||
+                    it.ben.rchId.takeIf { id -> id?.isDigitsOnly() == true }?.contains(query) ?: false
+        }
+        .sortedByDescending { it.ancDate }
+}
 
 fun filterAbortionList(
     list: List<BenWithAncListDomain>,
@@ -288,7 +289,7 @@ fun filterPncDomainList(
                 it.ben.mobileNo.lowercase().contains(filterText) ||
                 it.deliveryDate.contains(filterText) ||
                 it.ben.rchId.takeIf { it1 -> it1?.isDigitsOnly() == true }?.contains(filterText) ?: false
-    }
+    } .sortedByDescending { it.pncDate }
 
 fun filterInfantDomainList(
     list: List<InfantRegDomain>,

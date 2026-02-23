@@ -35,9 +35,10 @@ class GeneralOpCareFragment : Fragment() {
     val viewModel: GeneralOpCareViewModel by viewModels()
     private lateinit var benAdapter: GeneralOPDAdapter
     private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
-        binding.searchView.setText(value)
-        binding.searchView.setSelection(value.length)
-        viewModel.filterText(value)
+        val lowerValue = value.lowercase()
+        binding.searchView.setText(lowerValue)
+        binding.searchView.setSelection(lowerValue.length)
+        viewModel.filterText(lowerValue)
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

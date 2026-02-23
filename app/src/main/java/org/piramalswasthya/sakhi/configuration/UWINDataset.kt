@@ -37,7 +37,7 @@ class UWINDataset(context: Context, language: Languages) : Dataset(context, lang
         title = context.getString(R.string.place),
         arrayId = R.array.place_of_delivery_options,
         entries = resources.getStringArray(R.array.place_of_delivery_options),
-        required = false
+        required = true,
     )
 
     private val participant = FormElement(
@@ -112,6 +112,12 @@ class UWINDataset(context: Context, language: Languages) : Dataset(context, lang
 
             participant.id -> {
                 participant.errorText = (if (participant.value.isNullOrEmpty())
+                    emitAlertErrorMessage(R.string.form_input_empty_error)
+                else null) as String?
+            }
+
+            place.id ->{
+                place.errorText = (if (participant.value.isNullOrEmpty())
                     emitAlertErrorMessage(R.string.form_input_empty_error)
                 else null) as String?
             }

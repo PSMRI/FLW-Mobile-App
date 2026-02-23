@@ -2,18 +2,28 @@ package  org.piramalswasthya.sakhi.helpers.addharEditText
 
 import android.content.Context
 import android.content.res.ColorStateList
-import android.graphics.PorterDuff
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.os.Build
-import android.text.*
+import android.text.Editable
+import android.text.InputFilter
+import android.text.InputType
+import android.text.Spanned
+import android.text.TextUtils
+import android.text.TextWatcher
 import android.util.AttributeSet
 import android.util.Log
 import android.util.SparseArray
 import android.util.SparseIntArray
-import android.view.*
+import android.view.ActionMode
+import android.view.Gravity
+import android.view.KeyEvent
+import android.view.Menu
+import android.view.MenuItem
+import android.view.MotionEvent
 import android.view.View.OnFocusChangeListener
 import android.view.View.OnKeyListener
+import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.LinearLayout
@@ -483,12 +493,6 @@ class BlockEditText : FrameLayout {
             setHintTextSize(hintTextAppearance.toFloat())
             linearLayout!!.addView(hintTextView, 0)
             hintColorDefault = hintTextView!!.hintTextColors
-//            hintColorFocus = ContextCompat.getColorStateList(
-//                    context,
-//                    R.color.colorAccent
-//            )
-
-
         }
         hintTextView!!.visibility = if (hint == null) GONE else VISIBLE
         hintTextView!!.hint = hint
@@ -522,10 +526,6 @@ class BlockEditText : FrameLayout {
             updateHintTextColor(focus)
         }
     }
-
-//    fun setFocusHintTextColor(color: Int) {
-//        hintColorFocus = ColorStateList.valueOf(color)
-//    }
 
     fun setSeparatorTextAppearance(textAppearance: Int) {
         separatorTextAppearance = textAppearance
@@ -683,7 +683,6 @@ class BlockEditText : FrameLayout {
             if (source.isEmpty()) return null
             return if (keep <= 0) {
                 if (nextView != null && text!!.length < maxLength) {
-                    val s = source.toString()
                     var temp = editText.text.toString()
                     val selection = editText.selectionStart
                     temp = temp.substring(0, selection) + source + temp.substring(selection)
@@ -704,7 +703,6 @@ class BlockEditText : FrameLayout {
                 null // keep original
             } else {
                 if (source.length > keep) if (nextView != null && text!!.length < maxLength) {
-                    val s = source.toString()
                     var temp = editText.text.toString()
                     val selection = editText.selectionStart
                     temp = temp.substring(0, selection) + source + temp.substring(selection)
@@ -732,4 +730,33 @@ class BlockEditText : FrameLayout {
             }
         }
     }
+
+
+    fun disableCopyPaste() {
+        for (i in 0 until editTexts.size()) {
+            val et = editTexts[i] ?: continue
+
+            et.isLongClickable = false
+            et.setLongClickable(false)
+            et.setTextIsSelectable(false)
+
+            // Block ActionMode (copy, cut, paste)
+            et.customSelectionActionModeCallback = object : ActionMode.Callback {
+                override fun onCreateActionMode(mode: ActionMode?, menu: Menu?) = false
+                override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?) = false
+                override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?) = false
+                override fun onDestroyActionMode(mode: ActionMode?) {}
+            }
+
+            // Block long-press entirely
+            et.setOnLongClickListener { true }
+
+            // Block paste from keyboard
+            et.setOnTouchListener { v, event ->
+                if (event.action == MotionEvent.ACTION_DOWN) v.cancelLongPress()
+                false
+            }
+        }
+    }
+
 }

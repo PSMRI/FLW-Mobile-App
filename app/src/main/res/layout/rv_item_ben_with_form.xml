@@ -175,13 +175,6 @@
                     android:orientation="horizontal"
                     android:weightSum="3">
 
-<!--                    <include-->
-<!--                        android:id="@+id/rl_type_of_list"-->
-<!--                        style="@style/rv_item_ben_fields"-->
-<!--                        layout="@layout/rv_item_ben_element"-->
-<!--                        app:field="@{ben.typeOfList}"-->
-<!--                        app:fieldTitle="@{@string/tv_type_of_list}" />-->
-
                     <include
                         android:id="@+id/rl_father_name"
                         style="@style/rv_item_ben_fields"
@@ -229,13 +222,6 @@
                         app:field="@{ben.familyHeadName}"
                         app:fieldTitle="@{@string/tv_family_head_name_ph}"
                         tools:ignore="IncludeLayoutParam" />
-
-                    <!--<include
-                        android:id="@+id/rl_hrp_status"
-                        style="@style/rv_item_ben_fields"
-                        layout="@layout/rv_item_ben_element"
-                        app:field="@{ben.hrpStatus}"
-                        app:fieldTitle="@{@string/tv_suspected_hrp_ph}" />-->
 
                 </LinearLayout>
 

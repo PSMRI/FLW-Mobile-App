@@ -89,7 +89,7 @@ class LeprosySuspectedDataset (
         id = 14,
         inputType = InputType.RADIO,
         arrayId = R.array.yes_no,
-        title = context.getString(R.string.any_leprosy_symptoms_present),
+        title = resources.getString(R.string.any_leprosy_symptoms_present),
         entries = resources.getStringArray(R.array.yes_no),
         hasDependants = true,
         required = true,
@@ -99,7 +99,7 @@ class LeprosySuspectedDataset (
     private val visitLabel = FormElement(
         id = 15,
         inputType = InputType.TEXT_VIEW,
-        title = context.getString(R.string.visits),
+        title = resources.getString(R.string.visits),
         required = true,
         isEnabled = false
     )
@@ -119,11 +119,22 @@ class LeprosySuspectedDataset (
         id = 17,
         inputType = InputType.DATE_PICKER,
         title = resources.getString(R.string.treatment_start_date),
-        required = true,
         isEnabled = true,
-        max = System.currentTimeMillis(),
+        required = false,
+        max = System.currentTimeMillis()
 
     )
+
+    private val leprosyConfirmed = FormElement(
+        id = 18,
+        inputType = InputType.RADIO,
+        title = resources.getString(R.string.has_leprosy_been_confirmed),
+        required = true,
+        isEnabled = true,
+        arrayId = R.array.yes_no,
+        entries = resources.getStringArray(R.array.yes_no),
+        hasDependants = true)
+
 
     suspend fun setUpPage(ben: BenRegCache?, saved: LeprosyScreeningCache?) {
         val list = mutableListOf(
@@ -132,7 +143,8 @@ class LeprosySuspectedDataset (
             visitLabel,
             leprosyStatus,
             referredTo,
-            typeOfLeprosy,
+            leprosyConfirmed,
+            //typeOfLeprosy,
 
 
 
@@ -152,6 +164,7 @@ class LeprosySuspectedDataset (
             leprosySymptoms.value = resources.getStringArray(R.array.yes_no).getOrNull(symptomsPosition)
                 ?: resources.getStringArray(R.array.yes_no)[1]
             visitLabel.value = "Visit -${saved?.currentVisitNumber ?: 1}"
+
             leprosyStatus.value =
                 getLocalValueInArray(leprosyStatus.arrayId, saved.leprosyStatus)
 
@@ -188,6 +201,17 @@ class LeprosySuspectedDataset (
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
          when (formId) {
 
+             leprosyConfirmed.id ->{
+                 if (leprosyConfirmed.value == resources.getStringArray(R.array.yes_no)[0]) {
+                     triggerDependants(source = leprosyConfirmed, addItems =listOf(typeOfLeprosy),removeItems = listOf())
+                 }
+                 else{
+                     triggerDependants(source = leprosyConfirmed, addItems = listOf(),removeItems =listOf(typeOfLeprosy))
+
+                 }
+
+             }
+
             typeOfLeprosy.id -> {
                 leprosyStatus.value = resources.getStringArray(R.array.leprosy_status)[4]
 
@@ -217,7 +241,21 @@ class LeprosySuspectedDataset (
             form.leprosyStatus = leprosyStatus.value
             form.typeOfLeprosy = typeOfLeprosy.value
             form.diseaseTypeID = 5
-            form.leprosySymptoms = leprosySymptoms.value
+            form.leprosyStatus = when (leprosyStatus.value) {
+                "Screening" -> "Screening"
+                "Denied" -> "Denied"
+                "Not Screened" -> "Not Screened"
+                "Suspected" -> "Suspected"
+                "Confirmed" -> "Confirmed"
+                "Not Confirmed" -> "Not Confirmed"
+                resources.getStringArray(R.array.leprosy_status)[0] -> "Screening"
+                resources.getStringArray(R.array.leprosy_status)[1] -> "Denied"
+                resources.getStringArray(R.array.leprosy_status)[2] -> "Not Screened"
+                resources.getStringArray(R.array.leprosy_status)[3] -> "Suspected"
+                resources.getStringArray(R.array.leprosy_status)[4] -> "Confirmed"
+                resources.getStringArray(R.array.leprosy_status)[5] -> "Not Confirmed"
+                else -> leprosyStatus.value ?: "Screening"
+            }
             form.visitLabel = visitLabel.value
             form.leprosySymptomsPosition = when (leprosySymptoms.value) {
                 resources.getStringArray(R.array.yes_no)[0] -> 0
@@ -235,7 +273,7 @@ class LeprosySuspectedDataset (
     fun updateBen(benRegCache: BenRegCache) {
         benRegCache.genDetails?.let {
             it.reproductiveStatus =
-                englishResources.getStringArray(R.array.nbr_reproductive_status_array)[1]
+                englishResources.getStringArray(R.array.nbr_reproductive_status_array2)[1]
             it.reproductiveStatusId = 2
         }
         if (benRegCache.processed != "N") benRegCache.processed = "U"

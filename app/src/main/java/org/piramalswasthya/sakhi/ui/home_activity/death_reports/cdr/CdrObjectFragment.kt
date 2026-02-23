@@ -1,19 +1,12 @@
 package org.piramalswasthya.sakhi.ui.home_activity.death_reports.cdr
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.ContentValues
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.LocationManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,7 +26,6 @@ import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
-import org.piramalswasthya.sakhi.adapters.FormInputAdapterOld
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.databinding.LayoutMediaOptionsBinding
 import org.piramalswasthya.sakhi.databinding.LayoutViewMediaBinding
@@ -84,10 +76,10 @@ class CdrObjectFragment : Fragment() {
                         23 -> viewModel.getIndexOfIsDeathCertificate()
                         else -> null
                     }
-
-                    index?.let { i ->
-                        binding.form.rvInputForm.adapter?.notifyItemChanged(i)
+                    index?.takeIf { it >= 0 }?.let { safeIndex ->
+                        binding.form.rvInputForm.adapter?.notifyItemChanged(safeIndex)
                     }
+
                 }
             }
         }
@@ -127,9 +119,11 @@ class CdrObjectFragment : Fragment() {
                     },
 
                     selectImageClickListener = FormInputAdapter.SelectUploadImageClickListener { formId ->
-                        viewModel.setCurrentDocumentFormId(formId)
-                        chooseOptions()
-//                        Toast.makeText(requireContext(), formId.toString(), Toast.LENGTH_LONG).show()
+                        if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                            viewModel.setCurrentDocumentFormId(formId)
+                            chooseOptions()
+                        }
+
                     },
 
                     viewDocumentListner = FormInputAdapter.ViewDocumentOnClick { formId ->
@@ -346,35 +340,30 @@ class CdrObjectFragment : Fragment() {
     private fun takeImage() {
         lifecycleScope.launchWhenStarted {
             getTmpFileUri().let { uri ->
-                if (viewModel.getDocumentFormId() == 21) {
-                    cdr1Uri = uri
-                    takePicture.launch(cdr1Uri)
-                } else if (viewModel.getDocumentFormId() == 22) {
-                    cdr2Uri = uri
-                    takePicture.launch(cdr2Uri)
+                when (viewModel.getDocumentFormId()) {
+                    21 -> {
+                        cdr1Uri = uri
+                        takePicture.launch(cdr1Uri)
+                    }
+                    22 -> {
+                        cdr2Uri = uri
+                        takePicture.launch(cdr2Uri)
+                    }
+                    23 -> {
+                        isDeathUri = uri
+                        takePicture.launch(isDeathUri)
+                    }
                 }
-                else if (viewModel.getDocumentFormId() == 23) {
-                    isDeathUri = uri
-                    takePicture.launch(isDeathUri)
-                }
-//                else {
-//                    latestTmpUri = uri
-//                    takePicture.launch(latestTmpUri)
-//                }
 
             }
         }
     }
 
     private fun requestLocationPermission() {
-        val locationManager =
-            requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        val isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
         if (ActivityCompat.checkSelfPermission(
                 requireContext(), Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) requestLocationPermission.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-//        else if (!isGPSEnabled) showSettingsAlert()
     }
 
 private fun getTmpFileUri(): Uri {
@@ -418,54 +407,29 @@ private fun getTmpFileUri(): Uri {
         alertDialog.show()
     }
 
-    private fun viewDocuments(it: Int) {
-        if (it == 21) {
-            lifecycleScope.launch {
-                viewModel.formList.collect {
-                    it.get(viewModel.getIndexOfCDR1()).value.let {
-                        if (it.toString().contains("document")) {
-                            displayPdf(it!!.toUri())
-                        } else {
-                            viewImage(it!!.toUri())
-                        }
-                    }
-                }
-            }
-        } else if (it == 22) {
-            lifecycleScope.launch {
-                viewModel.formList.collect {
-                    it.get(viewModel.getIndexOfCDR2()).value.let {
-                        if (it.toString().contains("document")) {
-                            displayPdf(it!!.toUri())
-                        } else {
-                            viewImage(it!!.toUri())
-                        }
-                    }
-                }
-            }
-        } else if (it == 23) {
-            lifecycleScope.launch {
-                viewModel.formList.collect {
-                    it.get(viewModel.getIndexOfIsDeathCertificate()).value.let {
-                        if (it.toString().contains("document")) {
-                            displayPdf(it!!.toUri())
-                        } else {
-                            viewImage(it!!.toUri())
-                        }
-                    }
+    private fun viewDocuments(formId: Int) {
+        val index = when (formId) {
+            21 -> viewModel.getIndexOfCDR1()
+            22 -> viewModel.getIndexOfCDR2()
+            23 -> viewModel.getIndexOfIsDeathCertificate()
+            else -> -1
+        }
+        if (index < 0) {
+            Timber.d("viewDocuments: formId=$formId not present in current form list")
+            return
+        }
+
+        lifecycleScope.launch {
+            viewModel.formList.collect { list ->
+
+                val value = list.getOrNull(index)?.value ?: return@collect
+
+                if (value.toString().contains("document")) {
+                    displayPdf(value.toUri())
+                } else {
+                    viewImage(value.toUri())
                 }
             }
         }
-
     }
-    private fun markImageAsNotPending(uri: Uri) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val values = ContentValues().apply {
-                put(MediaStore.Images.Media.IS_PENDING, 0)
-            }
-            requireContext().contentResolver.update(uri, values, null, null)
-        }
-    }
-
-
 }

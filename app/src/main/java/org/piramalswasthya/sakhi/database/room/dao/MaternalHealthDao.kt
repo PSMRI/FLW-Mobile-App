@@ -74,4 +74,10 @@ interface MaternalHealthDao {
 
     @Query("select * from HRP_PREGNANT_ASSESS assess where ((select count(*) from BEN_BASIC_CACHE b where benId = assess.benId and b.reproductiveStatusId = 2) = 1)")
     fun getAllPregnancyAssessRecords(): Flow<List<HRPPregnantAssessCache>>
+
+    @Query("UPDATE pregnancy_register SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetPwrSyncingToUnsynced()
+
+    @Query("UPDATE pregnancy_anc SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetAncSyncingToUnsynced()
 }

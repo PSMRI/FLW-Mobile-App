@@ -112,27 +112,21 @@ class AshaProfileFragment : Fragment() {
         binding.addHousehold.setOnClickListener {
             findNavController().navigate(
                 AshaProfileFragmentDirections.actionAshaProfileFragmentToNewHouseholdFragment(
-
+                        isAshaFamily = "Yes"
                 )
             )
         }
 
-        val householdAdapter = HouseHoldListAdapter("",false, prefDao, HouseHoldListAdapter.HouseholdClickListener({
+        val householdAdapter = HouseHoldListAdapter("",false, prefDao, false, HouseHoldListAdapter.HouseholdClickListener({
                 findNavController().navigate(
                     AllHouseholdFragmentDirections.actionAllHouseholdFragmentToNewHouseholdFragment(
-                        it
+                        it.hhId
                     )
                 )
         }, {
-           /* val bundle = Bundle()
-            bundle.putLong("hhId", it)
-            bundle.putString("diseaseType", "No")
-            bundle.putInt("fromDisease", 0)
-            findNavController().navigate(R.id.householdMembersFragments, bundle)*/
             findNavController().navigate(
-
                 AshaProfileFragmentDirections.actionAshaProfileFragmentToHouseholdMembersFragment(
-                    it,0,"No"
+                    it.hhId,0,"No"
                 )
             )
         }, {
@@ -153,7 +147,9 @@ class AshaProfileFragment : Fragment() {
         {
 
 
-        },))
+        },{
+
+            }))
         binding.rvAny.adapter = householdAdapter
 
 

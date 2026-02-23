@@ -22,6 +22,8 @@
             asteriskRequired="@{form.required}"
             hintText="@{form.title}"
             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+            android:textStyle="bold"
+            android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Hello you@!!" />
@@ -33,22 +35,5 @@
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/tv_title"
             android:orientation="vertical"/>
-
-
-
-
-
-<!--        <TextView-->
-<!--            android:id="@+id/tv_nullable"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_toEndOf="@id/tv_title"-->
-<!--            android:text="@string/tv_required_text_asterisk"-->
-<!--            android:textAppearance="@style/TextAppearance.AppCompat.Large"-->
-<!--            android:textColor="@color/design_default_color_error"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="@id/tv_title"-->
-<!--            app:required="@{form.required}" />-->
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

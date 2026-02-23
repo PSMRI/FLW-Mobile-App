@@ -100,8 +100,10 @@ class MdsrObjectFragment : Fragment() {
                         viewModel.updateListOnValueChanged(formId, index)
                     },
                     selectImageClickListener = FormInputAdapter.SelectUploadImageClickListener { formId ->
-                        viewModel.setCurrentDocumentFormId(formId)
-                        chooseOptions()
+                        if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                            viewModel.setCurrentDocumentFormId(formId)
+                            chooseOptions()
+                        }
                     },
                     viewDocumentListner = FormInputAdapter.ViewDocumentOnClick { formId ->
                         if (it) viewDocuments(formId)

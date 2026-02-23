@@ -6,11 +6,12 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.os.SystemClock
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import android.webkit.PermissionRequest
@@ -54,11 +55,11 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.ActivityHomeBinding
 import org.piramalswasthya.sakhi.helpers.AnalyticsHelper
-import org.piramalswasthya.sakhi.helpers.CrashEmailSender
 import org.piramalswasthya.sakhi.helpers.ImageUtils
 import org.piramalswasthya.sakhi.helpers.InAppUpdateHelper
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.MyContextWrapper
+import org.piramalswasthya.sakhi.helpers.TapjackingProtectionHelper
 import org.piramalswasthya.sakhi.helpers.isInternetAvailable
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.home_activity.home.HomeViewModel
@@ -68,7 +69,6 @@ import org.piramalswasthya.sakhi.ui.service_location_activity.ServiceLocationAct
 import org.piramalswasthya.sakhi.utils.KeyUtils
 import org.piramalswasthya.sakhi.utils.RoleConstants
 import org.piramalswasthya.sakhi.work.WorkerUtils
-import java.io.File
 import java.net.URI
 import java.util.Locale
 import javax.inject.Inject
@@ -84,6 +84,10 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
     private lateinit var inAppUpdateHelper: InAppUpdateHelper
 
     var lastClickTime: Long = 0L
+    private var lastAutoTriggerPushTime: Long = 0L
+    private companion object {
+        const val AUTO_PUSH_DEBOUNCE_MS = 120_000L  // 2 minutes
+    }
 
     @EntryPoint
     @InstallIn(SingletonComponent::class)
@@ -207,14 +211,15 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         )
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        // This will block user to cast app screen
-        if (BuildConfig.FLAVOR.equals("niramay", true) ||BuildConfig.FLAVOR.equals("xushrukha", true) || BuildConfig.FLAVOR.equals("saksham", true))  {
-            window.setFlags(
-                WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE
-            )
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        return if (TapjackingProtectionHelper.isTouchAllowed(this, ev)) {
+            super.dispatchTouchEvent(ev)
+        } else {
+            false
         }
+    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        TapjackingProtectionHelper.applyWindowSecurity(this)
         FirebaseApp.initializeApp(this)
         FBMessaging.messageUpdate = this
         FirebaseMessaging.getInstance().subscribeToTopic("All")
@@ -222,6 +227,8 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 //        FirebaseMessaging.getInstance().subscribeToTopic("Immunization${pref.getLoggedInUser()?.userId}")
         super.onCreate(savedInstanceState)
         _binding = ActivityHomeBinding.inflate(layoutInflater)
+
+        TapjackingProtectionHelper.enableTouchFiltering(this)
 
         if (pref?.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
             binding.navView.menu.findItem(R.id.homeFragment).setVisible(false)
@@ -275,9 +282,13 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
             }
         }
         viewModel.unprocessedRecordsCount.observe(this) {
-            if (it>0) {
-                if (isInternetAvailable(this)){
-                    WorkerUtils.triggerAmritPushWorker(this)
+            if (it > 0) {
+                val now = SystemClock.elapsedRealtime()
+                if (now - lastAutoTriggerPushTime >= AUTO_PUSH_DEBOUNCE_MS) {
+                    if (isInternetAvailable(this)) {
+                        lastAutoTriggerPushTime = now
+                        WorkerUtils.triggerAmritPushWorker(this)
+                    }
                 }
             }
         }
@@ -425,17 +436,14 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         }
 
 
-
+    override fun onPause() {
+        super.onPause()
+        window.decorView.alpha = 0f
+    }
 
     override fun onResume() {
-        // This will block user to cast app screen
-        if (BuildConfig.FLAVOR.equals("niramay", true) ||BuildConfig.FLAVOR.equals("xushrukha", true) || BuildConfig.FLAVOR.equals("saksham", true))  {
-            window.setFlags(
-                WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE
-            )
-        }
         super.onResume()
+        window.decorView.alpha = 1f
         if (isDeviceRootedOrEmulator()) {
             AlertDialog.Builder(this)
                 .setTitle("Unsupported Device")
@@ -566,6 +574,17 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         NavigationUI.setupWithNavController(binding.toolbar, navController, appBarConfiguration)
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
 
+
+        binding.navView.menu.findItem(R.id.incentivesFragment)?.let { incentivesMenuItem ->
+            val titleRes =
+                if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                    R.string.monthly_claim_summary
+                } else {
+                    R.string.incentive_fragment_title
+                }
+            incentivesMenuItem.title = getString(titleRes)
+        }
+
         binding.navView.menu.findItem(R.id.homeFragment).setOnMenuItemClickListener {
             navController.popBackStack(R.id.homeFragment, false)
             binding.drawerLayout.close()
@@ -589,8 +608,13 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
         }
 
+        binding.navView.menu.findItem(R.id.syncDashboardFragment).setOnMenuItemClickListener {
+            navController.navigate(R.id.syncDashboardFragment)
+            binding.drawerLayout.close()
+            true
+        }
+
         binding.navView.menu.findItem(R.id.ChatFragment).setOnMenuItemClickListener {
-//            navController.popBackStack(R.id.lmsFragment, false)
             navController.navigate(R.id.lmsFragment)
 
             binding.drawerLayout.close()

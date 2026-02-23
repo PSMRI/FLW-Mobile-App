@@ -10,7 +10,7 @@
  const char* M_ENCRYPTED_PASS_KEY = "Piramal12Piramal";
  const char* M_ABHA_CLIENT_SECRET = "c3631213-60ea-4a10-8e30-43523d3e0253";
  const char* M_ABHA_CLIENT_ID = "PIRSWASTH_953256";
- const char* M_BASE_TMC_URL = "https://amritdemo.piramalswasthya.org/";
+ const char* M_BASE_TMC_URL = "https://uatamrit.piramalswasthya.org/";
          //"https://amritdemo.piramalswasthya.org/";
          //"https://amritflw.piramalswasthya.org/";
          //"http://devbox.bizbrolly.com:4040/";

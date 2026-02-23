@@ -173,7 +173,7 @@ class BenRegCHODataset(
             if (isPregnant.value == resources.getStringArray(R.array.yes_no)[0]) {
                 form.genDetails?.let {
                     it.reproductiveStatus =
-                        englishResources.getStringArray(R.array.nbr_reproductive_status_array)[1]
+                        englishResources.getStringArray(R.array.nbr_reproductive_status_array2)[1]
                     it.reproductiveStatusId = 2
                 }
                 form.processed = "N"

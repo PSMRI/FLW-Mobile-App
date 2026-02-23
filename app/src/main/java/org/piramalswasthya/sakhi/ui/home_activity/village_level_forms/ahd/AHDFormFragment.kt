@@ -102,7 +102,11 @@ class AHDFormFragment : Fragment() {
                     ).show()
                 }
 
-                else -> {}
+                else -> {
+                    /*
+                    * Currently implementation is not required
+                    * */
+                }
             }
         }
     }

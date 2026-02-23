@@ -26,6 +26,7 @@ import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.model.*
 import org.piramalswasthya.sakhi.network.*
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.NewBenRegViewModel
+import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 import java.io.File
 import java.lang.Long.min
@@ -64,6 +65,99 @@ class BenRepo @Inject constructor(
         }
     }
 
+    suspend fun updateBenToSync(householdId: Long, unsynced: SyncState) {
+        withContext(Dispatchers.IO) {
+            benDao.updateBenToSync(householdId = householdId,unsynced,"U",2)
+        }
+    }
+
+    suspend fun updateHousehold(householdId: Long, unsynced: SyncState) {
+        withContext(Dispatchers.IO) {
+            benDao.updateHofSpouseAdded(householdId = householdId,unsynced,"U",2)
+        }
+    }
+    suspend fun updateBeneficiarySpouseAdded(householdId: Long,benID: Long,unsynced: SyncState) {
+        withContext(Dispatchers.IO) {
+            benDao.updateBeneficiarySpouseAdded(householdId = householdId, benId = benID,unsynced,"U",2)
+        }
+    }
+
+    suspend fun updateFatherInChildren(benName: String, householdId: Long, parentName: String, unsynced: SyncState) {
+        withContext(Dispatchers.IO) {
+            benDao.updateFatherInChildren(benName = benName, householdId = householdId, parentName = parentName, unsynced, "U", 2)
+        }
+    }
+
+    suspend fun updateMotherInChildren(benName: String, householdId: Long, parentName: String, unsynced: SyncState) {
+        withContext(Dispatchers.IO) {
+            benDao.updateMotherInChildren(benName = benName, householdId = householdId, parentName = parentName, unsynced, "U", 2)
+        }
+    }
+
+    suspend fun updateSpouseOfHoF(benName: String, householdId: Long, spouseName: String, unsynced: SyncState) {
+        withContext(Dispatchers.IO) {
+            benDao.updateSpouseOfHoF(benName = benName, householdId = householdId, spouseName = spouseName, unsynced, "U", 2)
+        }
+    }
+
+    suspend fun updateFather(benName: String, householdId: Long, parentName: String, unsynced: SyncState) {
+        withContext(Dispatchers.IO) {
+            benDao.updateFather(benName = benName, householdId = householdId, parentName = parentName, unsynced, "U", 2)
+        }
+    }
+
+    suspend fun updateMother(benName: String, householdId: Long, parentName: String, unsynced: SyncState) {
+        withContext(Dispatchers.IO) {
+            benDao.updateMother(benName = benName, householdId = householdId, parentName = parentName, unsynced, "U", 2)
+        }
+    }
+
+    suspend fun updateMarriageAgeOfWife(marriageDate: Long, ageAtMarriage: Int, householdId: Long, spouseName: String, unsynced: SyncState) {
+        withContext(Dispatchers.IO) {
+            benDao.updateMarriageAgeOfWife(marriageDate = marriageDate, ageAtMarriage = ageAtMarriage, householdId = householdId, spouseName = spouseName, unsynced, "U", 2)
+        }
+    }
+
+    suspend fun updateMarriageAgeOfHusband(marriageDate: Long, ageAtMarriage: Int, householdId: Long, spouseName: String, unsynced: SyncState) {
+        withContext(Dispatchers.IO) {
+            benDao.updateMarriageAgeOfHusband(marriageDate = marriageDate, ageAtMarriage = ageAtMarriage, householdId = householdId, spouseName = spouseName, unsynced, "U", 2)
+        }
+    }
+
+    suspend fun updateBabyName(babyName: String, householdId: Long, parentName: String, unsynced: SyncState) {
+        withContext(Dispatchers.IO) {
+            benDao.updateBabyName(babyName = babyName, householdId = householdId, parentName = parentName, unsynced, "U", 2)
+        }
+    }
+
+    suspend fun updateSpouse(benName: String, householdId: Long, spouseName: String, unsynced: SyncState) {
+        withContext(Dispatchers.IO) {
+            benDao.updateSpouse(benName = benName, householdId = householdId, spouseName = spouseName, unsynced, "U", 2)
+        }
+    }
+
+    suspend fun updateChildrenLastName(lastName: String, householdId: Long, parentName: String, unsynced: SyncState) {
+        withContext(Dispatchers.IO) {
+            benDao.updateChildrenLastName(lastName = lastName, householdId = householdId, parentName = parentName, unsynced, "U", 2)
+        }
+    }
+
+    suspend fun updateSpouseLastName(lastName: String, householdId: Long, spouseName: String, unsynced: SyncState) {
+        withContext(Dispatchers.IO) {
+            benDao.updateSpouseLastName(lastName = lastName, householdId = householdId, spouseName = spouseName, unsynced, "U", 2)
+        }
+    }
+
+    suspend fun updateBeneficiaryChildrenAdded(
+        householdId: Long,
+        benID: Long,
+        unsynced: SyncState
+
+    ) {
+        withContext(Dispatchers.IO) {
+            benDao.updateBeneficiaryChildrenAdded(householdId = householdId, benId = benID,unsynced,"U",2)
+        }
+    }
     // 1. Pregnancy death check
     suspend fun hasPregnancyDeath(benId: Long): Boolean {
         return benDao.checkPregnancyDeath(benId)
@@ -100,6 +194,33 @@ class BenRepo @Inject constructor(
 
     suspend fun getBenListFromHousehold(hhId: Long): List<BenRegCache> {
         return benDao.getAllBenForHousehold(hhId)
+
+    }
+
+    suspend fun getChildBenListFromHousehold(
+        hhId: Long,
+        selectedbenIdFromArgs: Long,
+        firstName: String?
+    ): List<BenRegCache> {
+        return benDao.getChildBenForHousehold(hhId,selectedbenIdFromArgs,firstName)
+
+    }
+
+    suspend fun getChildBelow15(
+        hhId: Long,
+        selectedbenIdFromArgs: Long,
+        firstName: String?
+    ): Int {
+        return benDao.getBelow15Count(hhId,selectedbenIdFromArgs,firstName)
+
+    }
+
+    suspend fun getChildAbove15(
+        hhId: Long,
+        selectedbenIdFromArgs: Long,
+        firstName: String?
+    ): Int {
+        return benDao.get15aboveCount(hhId,selectedbenIdFromArgs,firstName)
 
     }
 
@@ -300,7 +421,7 @@ class BenRepo @Inject constructor(
             return false
         } catch (e: java.lang.Exception) {
             benDao.setSyncState(ben.householdId, ben.beneficiaryId, SyncState.UNSYNCED)
-            Timber.d("Caugnt error $e")
+            Timber.e("Caugnt error $e")
             return false
         }
     }
@@ -338,10 +459,15 @@ class BenRepo @Inject constructor(
                         )
                     )
                 } catch (e: java.lang.Exception) {
-                    Timber.d("caught error in adding kidDetails : $e")
+                    Timber.e("caught error in adding kidDetails : $e")
                 }
             }
 
+            // RECORD-LEVEL ISOLATION: BenRepo previously returned true
+            // regardless of upload success (Pattern C — silent success).
+            // Now failures are explicitly logged so they're visible in Timber
+            // logs. The worker still returns true (failed records are already
+            // marked via benSyncWithServerFailed and retry on next cycle).
             val uploadDone = postDataToAmritServer(
                 benNetworkPostList, householdNetworkPostList, kidNetworkPostList,
             )
@@ -349,6 +475,9 @@ class BenRepo @Inject constructor(
                 benNetworkPostList.takeIf { it.isNotEmpty() }?.map { it.benId }?.let {
                     benDao.benSyncWithServerFailed(*it.toLongArray())
                 }
+                Timber.e("Beneficiary batch push FAILED: ${benNetworkPostList.size} ben records, ${householdNetworkPostList.size} household records")
+            } else {
+                Timber.d("Beneficiary batch push succeeded: ${benNetworkPostList.size} ben records, ${householdNetworkPostList.size} household records")
             }
             return@withContext true
         }
@@ -359,7 +488,7 @@ class BenRepo @Inject constructor(
         benNetworkPostSet: MutableSet<BenPost>,
         householdNetworkPostSet: MutableSet<HouseholdNetwork>,
         kidNetworkPostSet: MutableSet<BenRegKidNetwork>,
-//        cbacPostList: MutableSet<CbacPost>
+        retryCount: Int = 3,
     ): Boolean {
         if (benNetworkPostSet.isEmpty() && householdNetworkPostSet.isEmpty() && kidNetworkPostSet.isEmpty()) return true
         val rmnchData = SendingRMNCHData(
@@ -404,15 +533,137 @@ class BenRepo @Inject constructor(
             Timber.w("Bad Response from server, need to check $householdNetworkPostSet\n$benNetworkPostSet\n$kidNetworkPostSet $response ")
             return false
         } catch (e: SocketTimeoutException) {
-            Timber.d("Caught exception $e here")
-            return postDataToAmritServer(
-                benNetworkPostSet, householdNetworkPostSet, kidNetworkPostSet
+            Timber.e("Caught exception $e here")
+            if (retryCount > 0) return postDataToAmritServer(
+                benNetworkPostSet, householdNetworkPostSet, kidNetworkPostSet, retryCount - 1
             )
+            Timber.e("postDataToAmritServer: max retries exhausted")
+            return false
         } catch (e: JSONException) {
-            Timber.d("Caught exception $e here")
+            Timber.e("Caught exception $e here")
             return false
         } catch (e: java.lang.Exception) {
-            Timber.d("Caught exception $e here")
+            Timber.e("Caught exception $e here")
+            return false
+        }
+    }
+
+
+    suspend fun deactivateHouseHold(
+        benNetworkPostSet: List<BenRegCache>,
+        householdNetworkPostSet: HouseholdNetwork,
+        retryCount: Int = 3,
+    ): Boolean {
+        val user = preferenceDao.getLoggedInUser() ?: throw IllegalStateException("No user logged in!!")
+        val benNetworkPostList: List<BenPost> =
+            benNetworkPostSet.map {
+                it.asNetworkPostModel(context, user)
+            }
+
+
+        val rmnchData = SendingRMNCHData(
+            listOf(householdNetworkPostSet),
+            benNetworkPostList
+        )
+        try {
+            val response = tmcNetworkApiService.submitRmnchDataAmrit(rmnchData)
+            val statusCode = response.code()
+
+            if (statusCode == 200) {
+
+                val responseString: String? = response.body()?.string()
+                if (responseString != null) {
+                    val jsonObj = JSONObject(responseString)
+                    val responseStatusCode = jsonObj.getInt("statusCode")
+                    val errorMessage = jsonObj.getString("errorMessage")
+                    if (responseStatusCode == 200) {
+                        Timber.d("response : $jsonObj")
+                        WorkerUtils.triggerAmritPullWorker(context)
+                        return true
+                    } else if (responseStatusCode == 5002) {
+                        val user = preferenceDao.getLoggedInUser()
+                            ?: throw IllegalStateException("User not logged in according to db")
+                        if (userRepo.refreshTokenTmc(
+                                user.userName, user.password
+                            )
+                        ) throw SocketTimeoutException("Refreshed Token!")
+                        else throw IllegalStateException("User seems to be logged out and refresh token not working!!!!")
+                    }
+                }
+            }
+            Timber.w("Bad Response from server, need to check $householdNetworkPostSet")
+            return false
+        } catch (e: SocketTimeoutException) {
+            Timber.e("Caught exception $e here")
+            if (retryCount > 0) return deactivateHouseHold(
+                benNetworkPostSet, householdNetworkPostSet, retryCount - 1
+            )
+            Timber.e("deactivateHouseHold: max retries exhausted")
+            return false
+        } catch (e: JSONException) {
+            Timber.e("Caught exception $e here")
+            return false
+        } catch (e: java.lang.Exception) {
+            Timber.e("Caught exception $e here")
+            return false
+        }
+    }
+
+    suspend fun deactivateBeneficiary(
+        benNetworkPostSet: List<BenRegCache>,
+        retryCount: Int = 3,
+    ): Boolean {
+        val user = preferenceDao.getLoggedInUser() ?: throw IllegalStateException("No user logged in!!")
+        val benNetworkPostList: List<BenPost> =
+            benNetworkPostSet.map {
+                it.asNetworkPostModel(context, user)
+            }
+
+
+        val rmnchData = SendingRMNCHData(
+         //   listOf(householdNetworkPostSet),
+            benficieryRegistrationData= benNetworkPostList
+        )
+        try {
+            val response = tmcNetworkApiService.submitRmnchDataAmrit(rmnchData)
+            val statusCode = response.code()
+
+            if (statusCode == 200) {
+
+                val responseString: String? = response.body()?.string()
+                if (responseString != null) {
+                    val jsonObj = JSONObject(responseString)
+                    val responseStatusCode = jsonObj.getInt("statusCode")
+                    val errorMessage = jsonObj.getString("errorMessage")
+                    if (responseStatusCode == 200) {
+                        Timber.d("response : $jsonObj")
+                        WorkerUtils.triggerAmritPullWorker(context)
+                        return true
+                    } else if (responseStatusCode == 5002) {
+                        val user = preferenceDao.getLoggedInUser()
+                            ?: throw IllegalStateException("User not logged in according to db")
+                        if (userRepo.refreshTokenTmc(
+                                user.userName, user.password
+                            )
+                        ) throw SocketTimeoutException("Refreshed Token!")
+                        else throw IllegalStateException("User seems to be logged out and refresh token not working!!!!")
+                    }
+                }
+            }
+            Timber.w("Bad Response from server, need to check $benNetworkPostList")
+            return false
+        } catch (e: SocketTimeoutException) {
+            Timber.e("Caught exception $e here")
+            if (retryCount > 0) return deactivateBeneficiary(
+               benNetworkPostSet, retryCount - 1
+            )
+            Timber.e("deactivateBeneficiary: max retries exhausted")
+            return false
+        } catch (e: JSONException) {
+            Timber.e("Caught exception $e here")
+            return false
+        } catch (e: java.lang.Exception) {
+            Timber.e("Caught exception $e here")
             return false
         }
     }
@@ -481,7 +732,7 @@ class BenRepo @Inject constructor(
                             }
 
                             5000 -> {
-                                //  HelperUtil.saveApiResponseToDownloads(context, "9864880049_getBeneficiaryData_response.txt", HelperUtil.allPagesContent.toString())
+                                 // HelperUtil.saveApiResponseToDownloads(context, "9864880049_getBeneficiaryData_response.txt", HelperUtil.allPagesContent.toString())
 
                                 if (errorMessage == "No record found") return@withContext 0
                             }
@@ -494,11 +745,11 @@ class BenRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_ben error : $e")
+                Timber.e("get_ben error : $e")
                 return@withContext -2
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_ben error : $e")
+                Timber.e("get_ben error : $e")
                 return@withContext -1
             }
             -1
@@ -619,6 +870,9 @@ class BenRepo @Inject constructor(
                                             dob = 0L,
                                             relToHeadId = 0,
                                             isConsent = false,
+                                            isSpouseAdded = false,
+                                            isChildrenAdded = false,
+                                            isMarried = false,
                                             reproductiveStatusId =  benDataObj.getInt("reproductiveStatusId"),
                                         )
                                     )
@@ -641,14 +895,14 @@ class BenRepo @Inject constructor(
                             }
                             throw IllegalStateException("Response code !-100")
                         } else {
-                            Timber.d("getBenData() returned error message : $errorMessage")
+                            Timber.e("getBenData() returned error message : $errorMessage")
                             throw IllegalStateException("Response code !-100")
                         }
                     }
                 }
 
             } catch (e: Exception) {
-                Timber.d("get_ben error : $e")
+                Timber.e("get_ben error : $e")
             }
             Timber.d("get_ben data : $benDataList")
             Pair(0, benDataList)
@@ -724,11 +978,11 @@ class BenRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_ben error : $e")
+                Timber.e("get_ben error : $e")
                 return@withContext -2
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_ben error : $e")
+                Timber.e("get_ben error : $e")
                 return@withContext -1
             }
             -1
@@ -820,6 +1074,7 @@ class BenRepo @Inject constructor(
                                     "isNewAbha"
                                 ) else false,
                                 age = benDataObj.getInt("age"),
+                                isDeactivate = if (benDataObj.has("isDeactivate")) benDataObj.getBoolean("isDeactivate") else false,
                                 ageUnit = if (benDataObj.has("gender")) {
                                     when (benDataObj.getString("age_unit")) {
                                         "Years" -> AgeUnit.YEARS
@@ -1246,7 +1501,13 @@ class BenRepo @Inject constructor(
                                 } else null,
                                 syncState = SyncState.SYNCED,
                                 isDraft = false,
-                                isConsent = false
+                                isConsent = false,
+                                isSpouseAdded = if (jsonObject.has("isSpouseAdded")) jsonObject.optBoolean("isSpouseAdded") else false,
+                                isChildrenAdded = if (jsonObject.has("isChildrenAdded")) jsonObject.optBoolean("isChildrenAdded") else false,
+                                isMarried = if (jsonObject.has("isMarried")) jsonObject.optBoolean("isMarried") else false,
+                                doYouHavechildren = if (jsonObject.has("doYouHavechildren")) jsonObject.optBoolean("doYouHavechildren") else false,
+                                noOfAliveChildren = if (jsonObject.has("noofAlivechildren")) jsonObject.optInt("noofAlivechildren") else 0,
+                                noOfChildren = if (jsonObject.has("noOfchildren")) jsonObject.optInt("noOfchildren") else 0,
                             )
                         )
 
@@ -1426,6 +1687,9 @@ class BenRepo @Inject constructor(
 //                            updatedTimeStamp = houseDataObj.getString("other_houseType"),
                                 processed = "P",
                                 isDraft = false,
+                                isDeactivate =  if (houseDataObj.has("isDeactivate")) houseDataObj.getBoolean(
+                                    "isDeactivate"
+                                ) else false
                             )
                         )
                     } catch (e: JSONException) {

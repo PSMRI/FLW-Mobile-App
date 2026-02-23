@@ -7,6 +7,8 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.CUFYFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FilariaMDA.FilariaMDAFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSubmitRequest
+import org.piramalswasthya.sakhi.model.dynamicEntity.NCDReferalFormResponseJsonEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.anc.ANCFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.ben_ifa.BenIfaFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.eye_surgery.EyeSurgeryFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.hbyc.FormResponseJsonEntityHBYC
@@ -35,8 +37,16 @@ object FormSubmitRequestMapper {
     fun fromEntity(entity: CUFYFormResponseJsonEntity, userName: String): FormSubmitRequest? {
             return mapCommon(entity.formDataJson, userName)
     }
+      fun fromEntity(entity: NCDReferalFormResponseJsonEntity, userName: String): FormSubmitRequest? {
+            return mapCommon(entity.formDataJson, userName)
+    }
+
+
     fun fromEntity(entity: FilariaMDAFormResponseJsonEntity, userName: String): FormSubmitRequest? {
             return mapCommon(entity.formDataJson, userName)
+    }
+    fun formEntity(entity: ANCFormResponseJsonEntity, userName: String): FormSubmitRequest? {
+        return  mapCommon(entity.formDataJson,userName)
     }
 
     private fun mapCommon(formDataJson: String, userName: String): FormSubmitRequest? {

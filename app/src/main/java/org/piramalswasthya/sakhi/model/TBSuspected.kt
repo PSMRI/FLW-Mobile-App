@@ -9,6 +9,7 @@ import androidx.room.Relation
 import org.piramalswasthya.sakhi.configuration.FormDataModel
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.network.TBSuspectedDTO
+import kotlin.Boolean
 
 @Entity(
     tableName = "TB_SUSPECTED",
@@ -27,10 +28,20 @@ data class TBSuspectedCache(
     val id: Int = 0,
     val benId: Long,
     var visitDate: Long = System.currentTimeMillis(),
+    var visitLabel: String? = null,
+    var typeOfTBCase: String? = null,
+    var reasonForSuspicion: String? = null,
+    var hasSymptoms: Boolean? = false,
     var isSputumCollected: Boolean? = null,
     var sputumSubmittedAt: String? = null,
     var nikshayId: String? = null,
     var sputumTestResult: String? = null,
+    var isChestXRayDone: Boolean? = null,
+    var chestXRayResult: String? = null,
+    var referralFacility: String? = null,
+    var isTBConfirmed: Boolean? = null,
+    var isDRTBConfirmed: Boolean? = null,
+    var isConfirmed: Boolean = false,
     var referred: Boolean? = null,
     var followUps: String? = null,
     var syncState: SyncState = SyncState.UNSYNCED,
@@ -45,7 +56,18 @@ data class TBSuspectedCache(
             nikshayId = nikshayId,
             sputumTestResult = sputumTestResult,
             referred = referred,
-            followUps = followUps
+            followUps = followUps,
+            visitLabel= visitLabel,
+            typeOfTBCase = typeOfTBCase,
+            reasonForSuspicion = reasonForSuspicion,
+            hasSymptoms = hasSymptoms,
+            isChestXRayDone = isChestXRayDone,
+            chestXRayResult = chestXRayResult,
+            referralFacility = referralFacility,
+            isTBConfirmed = isTBConfirmed,
+            isDRTBConfirmed = isDRTBConfirmed,
+            isConfirmed = isConfirmed,
+
         )
     }
 }
@@ -53,21 +75,37 @@ data class TBSuspectedCache(
 data class BenWithTbSuspectedCache(
     @Embedded
     val ben: BenBasicCache,
-    @Relation(
-        parentColumn = "benId", entityColumn = "benId"
-    )
-    val tb: TBSuspectedCache?,
 
-    ) {
+    @Relation(
+        parentColumn = "benId",
+        entityColumn = "benId"
+    )
+    val tbSuspected: TBSuspectedCache?,
+
+    @Relation(
+        parentColumn = "benId",
+        entityColumn = "benId"
+    )
+    val tbConfirmedList: List<TBConfirmedTreatmentCache>
+)
+{
     fun asTbSuspectedDomainModel(): BenWithTbSuspectedDomain {
         return BenWithTbSuspectedDomain(
             ben = ben.asBasicDomainModel(),
-            tb = tb
+            tbSuspected = tbSuspected,
+            tbConfirmedList = tbConfirmedList
         )
     }
+
 }
 
 data class BenWithTbSuspectedDomain(
     val ben: BenBasicDomain,
-    val tb: TBSuspectedCache?
-)
+    val tbSuspected: TBSuspectedCache?,
+    val tbConfirmedList: List<TBConfirmedTreatmentCache>
+) {
+    val latestTbSyncState: SyncState?
+        get() = tbConfirmedList
+            .maxByOrNull { it.followUpDate ?: 0L }
+            ?.syncState
+}

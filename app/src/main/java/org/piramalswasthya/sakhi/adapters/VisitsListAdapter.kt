@@ -1,18 +1,14 @@
 package org.piramalswasthya.sakhi.adapters
 
-import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.databinding.RvItemVisitsBinding
-import org.piramalswasthya.sakhi.helpers.getDateFromLong
 import org.piramalswasthya.sakhi.model.MalariaScreeningCache
 import org.piramalswasthya.sakhi.model.getDateStrFromLong
-import org.piramalswasthya.sakhi.model.getDateTimeStringFromLong
 import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
 
 

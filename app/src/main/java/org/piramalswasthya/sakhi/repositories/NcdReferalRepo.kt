@@ -48,7 +48,6 @@ class NcdReferalRepo@Inject constructor(
 
             response?.body()?.string()?.let { body ->
                 val jsonBody = JSONObject(body)
-                val array = jsonBody.getJSONObject("data")
                 val isSuccess = jsonBody.getString("status") == "Success"
 
                 if (isSuccess) {

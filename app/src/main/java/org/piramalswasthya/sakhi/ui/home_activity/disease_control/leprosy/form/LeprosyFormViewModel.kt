@@ -11,8 +11,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.CoroutineDispatcher
 import org.piramalswasthya.sakhi.R
-import org.piramalswasthya.sakhi.configuration.FilariaFormDataset
 import org.piramalswasthya.sakhi.configuration.LeprosyFormDataset
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
@@ -20,7 +20,6 @@ import org.piramalswasthya.sakhi.model.LeprosyScreeningCache
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.LeprosyRepo
 import org.piramalswasthya.sakhi.repositories.MaternalHealthRepo
-import org.piramalswasthya.sakhi.ui.home_activity.disease_control.malaria.form.form.MalariaFormFragmentArgs
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -44,6 +43,8 @@ class LeprosyFormViewModel @Inject constructor(
     enum class State {
         IDLE, SAVING, SAVE_SUCCESS, SAVE_FAILED
     }
+
+    private val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO
 
     private val _state = MutableLiveData(State.IDLE)
     val state: LiveData<State>
@@ -151,7 +152,41 @@ class LeprosyFormViewModel @Inject constructor(
         }
     }
 
+    fun saveLeprosySuspectedFormDirectlyfromCbac() {
+        viewModelScope.launch {
+            withContext(defaultDispatcher) {
+                try {
+                    saveValues()
+                    _state.postValue(State.SAVING)
+                    leprosyRepo.saveLeprosyScreening(leprosyScreenCache)
+                    _state.postValue(State.SAVE_SUCCESS)
+                } catch (e: Exception) {
+                    Timber.d("saving leprosy screening data failed!!")
+                    _state.postValue(State.SAVE_FAILED)
+                }
+            }
+        }
+    }
 
+    private suspend fun saveValues() {
+        val ben = benRepo.getBenFromId(benId)
+                ?: throw IllegalStateException("Beneficiary not found for benId: $benId")
+        leprosyScreenCache = LeprosyScreeningCache(
+            benId = ben.beneficiaryId,
+            houseHoldDetailsId = ben.householdId,
+            createdBy = username,
+            modifiedBy = username,
+            leprosyStatus = "Suspected",
+            leprosySymptoms = "Yes",
+            leprosySymptomsPosition = 0,
+            recurrentUlceration = "Yes",
+            recurrentUlcerationId = 0,
+            thickenedSkin = "Yes",
+            thickenedSkinId = 0
+
+
+        )
+    }
 
     fun resetState() {
         _state.value = State.IDLE

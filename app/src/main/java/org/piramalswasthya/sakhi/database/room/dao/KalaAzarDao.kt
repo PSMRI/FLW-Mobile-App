@@ -31,4 +31,7 @@ interface KalaAzarDao {
 
     @Query("SELECT * FROM KALAZAR_SCREENING WHERE  syncState = :syncState")
     suspend fun getKalaAzarSuspected(syncState: SyncState): List<KalaAzarScreeningCache>
+
+    @Query("UPDATE KALAZAR_SCREENING SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetSyncingToUnsynced()
 }

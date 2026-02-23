@@ -27,6 +27,7 @@ class TokenInsertTmcInterceptor(
             return JWT
         }
     }
+
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
 

@@ -8,14 +8,18 @@ import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.network.PHCReviewDTO
 import java.util.Date
 
-@Entity(tableName = "PHCReviewMeeting",
+@Entity(tableName = "PHCReviewMeeting", indices = [Index(value = ["id"], unique = true)]
 )
 
 data class PHCReviewMeetingCache(
     @PrimaryKey(autoGenerate = true)
     var id: Int ,
+    var placeId : Int? = 0 ,
     var phcReviewDate: String,
     var place: String? = null,
+    var villageName: String? = null,
+    var mitaninHistory: String? = null,
+    var mitaninActivityCheckList: String? = null,
     var noOfBeneficiariesAttended: Int? = null,
     var image1: String? = null,
     var image2: String? = null,
@@ -28,7 +32,11 @@ data class PHCReviewMeetingCache(
             place = place,
             noOfBeneficiariesAttended = noOfBeneficiariesAttended,
             Image1 = image1,
-            Image2 = image2
+            Image2 = image2,
+            villageName = villageName,
+            mitaninHistory = mitaninHistory,
+            mitaninActivityCheckList = mitaninActivityCheckList,
+            placeId = placeId
         )
     }
 
@@ -39,7 +47,11 @@ data class PHCReviewMeetingCache(
             noOfBeneficiariesAttended = noOfBeneficiariesAttended,
             image2 = image1,
             image1 = image2,
-            phcReviewDate = (phcReviewDate)
+            phcReviewDate = (phcReviewDate),
+            villageName = villageName,
+            mitaninHistory = mitaninHistory,
+            mitaninActivityCheckList = mitaninActivityCheckList,
+            placeId = placeId
         )
     }
 }

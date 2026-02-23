@@ -181,8 +181,10 @@ class PwAncFormFragment : Fragment() {
                         hardCodedListUpdate(formId)
                     }, isEnabled = !recordExists,
                     selectImageClickListener  = FormInputAdapterWithBgIcon.SelectUploadImageClickListener {
-                        viewModel.setCurrentDocumentFormId(it)
-                        chooseOptions()
+                        if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                            viewModel.setCurrentDocumentFormId(it)
+                            chooseOptions()
+                        }
                     },
                     viewDocumentListner = FormInputAdapterWithBgIcon.ViewDocumentOnClick {
                         if (!recordExists) {

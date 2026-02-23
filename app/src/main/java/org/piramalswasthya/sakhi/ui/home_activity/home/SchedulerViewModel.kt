@@ -49,6 +49,10 @@ class SchedulerViewModel @Inject constructor(
 
     val abhaGeneratedCount: Flow<Int> = recordsRepo.benWithAbhaListCount
 
+    val abhaOldGeneratedCount: Flow<Int> = recordsRepo.benWithOldAbhaListCount
+
+    val abhaNewGeneratedCount: Flow<Int> = recordsRepo.benWithNewAbhaListCount
+
     val rchIdCount: Flow<Int> = recordsRepo.benWithRchListCount
 
     private val _date = MutableLiveData(

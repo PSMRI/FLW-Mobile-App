@@ -49,6 +49,8 @@ import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.BenIfaFormRe
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.CUFYFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.EyeSurgeryFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FilariaMDAFormResponseJsonDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FilariaMdaCampaignJsonDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseANCJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseJsonDaoHBYC
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
@@ -85,9 +87,9 @@ object AppModule {
     @Named(AUTH_CLIENT)
     fun provideAuthClient(loggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
         return OkHttpClient.Builder()
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
             .addInterceptor(loggingInterceptor)
             .build()
     }
@@ -169,9 +171,6 @@ object AppModule {
     fun provideAbhaHttpClient(loggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
         return baseClient
             .newBuilder()
-            .connectTimeout(20, TimeUnit.SECONDS)
-            .readTimeout(20, TimeUnit.SECONDS)
-            .writeTimeout(20, TimeUnit.SECONDS)
             .addInterceptor(TokenInsertAbhaInterceptor())
             .addInterceptor(loggingInterceptor)
             .build()
@@ -194,6 +193,9 @@ object AppModule {
 
     private val baseClient =
         OkHttpClient.Builder()
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
             .addInterceptor(ContentTypeInterceptor())
             .build()
 
@@ -376,6 +378,10 @@ object AppModule {
 
     @Singleton
     @Provides
+    fun formResponseJsonDaoANC(database: InAppDb): FormResponseANCJsonDao = database.formResponseJsonDaoANC()
+
+    @Singleton
+    @Provides
     fun provideUwinDao(database: InAppDb) : UwinDao = database.uwinDao
 
     @Singleton
@@ -404,6 +410,11 @@ object AppModule {
     @Singleton
     @Provides
     fun provideFilariaMDAFormResponseDao(database: InAppDb): FilariaMDAFormResponseJsonDao = database.formResponseFilariaMDAJsonDao()
+
+    @Singleton
+    @Provides
+    fun provideFilariaMDACampaignFormResponseDao(database: InAppDb): FilariaMdaCampaignJsonDao = database.formResponseFilariaMDACampaignJsonDao()
+
 
     @Singleton
     @Provides

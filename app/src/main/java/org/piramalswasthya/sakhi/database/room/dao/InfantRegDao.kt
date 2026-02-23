@@ -30,4 +30,7 @@ interface InfantRegDao {
 
     @Query("SELECT * FROM INFANT_REG WHERE motherBenId in (:eligBenIds) and isActive = 1")
     suspend fun getAllInfantRegs(eligBenIds: Set<Long>): List<InfantRegCache>
+
+    @Query("UPDATE INFANT_REG SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetSyncingToUnsynced()
 }

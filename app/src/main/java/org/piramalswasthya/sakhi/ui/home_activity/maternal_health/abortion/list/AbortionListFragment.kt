@@ -16,6 +16,7 @@
     import kotlinx.coroutines.launch
     import org.piramalswasthya.sakhi.R
     import org.piramalswasthya.sakhi.adapters.AncAbortionListAdapter
+    import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
     import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
     import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 
@@ -28,6 +29,12 @@
 
         private val viewModel: AbortionListViewModel by viewModels()
 
+        private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
+            val lowerValue = value.lowercase()
+            binding.searchView.setText(lowerValue)
+            binding.searchView.setSelection(lowerValue.length)
+            viewModel.setSearchQuery(lowerValue)
+        }
 
         override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -60,7 +67,7 @@
             )
             binding.rvAny.adapter = benAdapter
             lifecycleScope.launch {
-                viewModel.allAbortionList.collect {
+                viewModel.abortionList.collect {
 
                     if (it.isEmpty())
                         binding.flEmpty.visibility = View.VISIBLE
@@ -69,6 +76,8 @@
                     benAdapter.submitList(it)
                 }
             }
+
+            binding.ibSearch.setOnClickListener { sttContract.launch(Unit) }
             val searchTextWatcher = object : TextWatcher {
                 override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 

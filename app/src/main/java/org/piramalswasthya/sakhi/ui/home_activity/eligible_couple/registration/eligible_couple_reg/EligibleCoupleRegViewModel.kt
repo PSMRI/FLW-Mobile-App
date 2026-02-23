@@ -49,6 +49,18 @@ class EligibleCoupleRegViewModel @Inject constructor(
     private val _benName = MutableLiveData<String>()
     val benName: LiveData<String>
         get() = _benName
+
+    private val _childCount = MutableLiveData<Int>()
+    val childCount: LiveData<Int>
+        get() = _childCount
+
+    private val _childBelow15Count = MutableLiveData<Int>()
+    val childBelow15Count: LiveData<Int>
+        get() = _childBelow15Count
+
+    private val _childAbove15Count = MutableLiveData<Int>()
+    val childAbove15Count: LiveData<Int>
+        get() = _childAbove15Count
     private val _benAgeGender = MutableLiveData<String>()
     val benAgeGender: LiveData<String>
         get() = _benAgeGender
@@ -56,6 +68,10 @@ class EligibleCoupleRegViewModel @Inject constructor(
     private val _recordExists = MutableLiveData<Boolean>()
     val recordExists: LiveData<Boolean>
         get() = _recordExists
+
+    private val _isEcrCompleted = MutableLiveData<Boolean>()
+    val isEcrCompleted: LiveData<Boolean>
+        get() = _isEcrCompleted
 
     val showDialogEvent = MutableLiveData<String>()
     private val dataset =
@@ -118,14 +134,35 @@ class EligibleCoupleRegViewModel @Inject constructor(
             ecrRepo.getSavedRecord(benId)?.let {
                 ecrForm = it
                 _recordExists.value = true
+                _isEcrCompleted.value = ecrForm.lmpDate != 0L
+
             } ?: run {
                 _recordExists.value = false
+                _isEcrCompleted.value = false
             }
+
+            val childList = ben?.let {
+                benRepo.getChildBenListFromHousehold(it.householdId, benId, it.firstName)
+
+            } ?: emptyList()
+            _childCount.value = childList.size.coerceAtMost(9)
+            val below15Childcount = ben?.let {
+                benRepo.getChildBelow15(it.householdId, benId, it.firstName)
+
+            } ?: 0
+            _childBelow15Count.value = below15Childcount.coerceAtMost(9)
+
+            val above15Childcount = ben?.let {
+                benRepo.getChildAbove15(it.householdId, benId, it.firstName)
+
+            } ?: 0
+            _childAbove15Count.value = above15Childcount.coerceAtMost(9)
 
             dataset.setUpPage(
                 ben,
                 assess,
-                if (recordExists.value == true) ecrForm else null
+                if (recordExists.value == true) ecrForm else null,
+                childList
             )
         }
     }
@@ -256,6 +293,10 @@ class EligibleCoupleRegViewModel @Inject constructor(
 
     fun getIndexOfGap9(): Int {
         return dataset.getIndexOfGap9()
+    }
+
+    fun setRecordExist(b: Boolean) {
+        _recordExists.value = b
     }
 
     fun getIndexOfTimeLessThan18() = dataset.getIndexOfTimeLessThan18m()
