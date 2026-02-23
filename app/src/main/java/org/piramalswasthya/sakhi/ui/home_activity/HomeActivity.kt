@@ -45,14 +45,19 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.internal.common.CommonUtils.isEmulator
 import com.google.firebase.crashlytics.internal.common.CommonUtils.isRooted
 import com.google.firebase.messaging.FirebaseMessaging
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.AccountDeactivationManager
 import org.piramalswasthya.sakhi.databinding.ActivityHomeBinding
 import org.piramalswasthya.sakhi.helpers.AnalyticsHelper
 import org.piramalswasthya.sakhi.helpers.ImageUtils
@@ -103,6 +108,9 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
     @Inject
     lateinit var pref: PreferenceDao
+
+    @Inject
+    lateinit var accountDeactivationManager: AccountDeactivationManager
 
     private var _binding: ActivityHomeBinding? = null
 
@@ -308,6 +316,29 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
         }
 
+        observeAccountDeactivation()
+
+    }
+
+    private var deactivationDialog: AlertDialog? = null
+
+    private fun observeAccountDeactivation() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                accountDeactivationManager.deactivationEvent.collect { errorMessage ->
+                    if (deactivationDialog?.isShowing == true) return@collect
+                    deactivationDialog = MaterialAlertDialogBuilder(this@HomeActivity)
+                        .setTitle(getString(R.string.account_deactivated_title))
+                        .setMessage(errorMessage)
+                        .setCancelable(false)
+                        .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
+                            dialog.dismiss()
+                        }
+                        .create()
+                    deactivationDialog?.show()
+                }
+            }
+        }
     }
 
     fun askForPermissions() {
