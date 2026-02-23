@@ -60,7 +60,7 @@ class UserRepo @Inject constructor(
                 if (ie.message == "Invalid username / password")
                     return@withContext NetworkResponse.Error(message = "Invalid Username/password")
                 else
-                    return@withContext NetworkResponse.Error(message = "Something went wrong... Try again later")
+                    return@withContext NetworkResponse.Error(message = ie.message ?: "Something went wrong... Try again later")
 
             }
         }
@@ -84,7 +84,7 @@ class UserRepo @Inject constructor(
                 if (ie.message == "Invalid username / password")
                     return@withContext NetworkResponse.Error(message = "Invalid Username/password")
                 else
-                    return@withContext NetworkResponse.Error(message = "Something went wrong... Try again later")
+                    return@withContext NetworkResponse.Error(message = ie.message ?: "Something went wrong... Try again later")
 
             }
         }
@@ -181,7 +181,14 @@ class UserRepo @Inject constructor(
                     ?: throw IllegalStateException("Response success but data missing @ $response")
             )
             val statusCode = responseBody.getInt("statusCode")
-            if (statusCode == 5002||statusCode == 401)
+            if (statusCode == 5002) {
+                val errorMessage = responseBody.optString(
+                    "errorMessage",
+                    "Your account has been deactivated. Please contact your supervisor or administrator."
+                )
+                throw IllegalStateException(errorMessage)
+            }
+            if (statusCode == 401)
                 throw IllegalStateException("Invalid username / password")
             val data = responseBody.getJSONObject("data")
             val token = data.getString("key")

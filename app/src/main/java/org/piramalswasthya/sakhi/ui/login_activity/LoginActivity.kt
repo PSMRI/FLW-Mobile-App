@@ -12,21 +12,29 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.crashlytics.internal.common.CommonUtils
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.AccountDeactivationManager
 import org.piramalswasthya.sakhi.helpers.MyContextWrapper
 import org.piramalswasthya.sakhi.helpers.TapjackingProtectionHelper
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
+
+    @Inject
+    lateinit var accountDeactivationManager: AccountDeactivationManager
 
     private val notificationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { /* no-op */ }
@@ -73,6 +81,24 @@ class LoginActivity : AppCompatActivity() {
                 .setCancelable(false)
                 .setPositiveButton("Exit") { dialog, id -> finish() }
                 .show()
+        }
+
+        observeAccountDeactivation()
+    }
+
+    private fun observeAccountDeactivation() {
+        lifecycleScope.launch {
+            accountDeactivationManager.deactivationEvent.collect { errorMessage ->
+                MaterialAlertDialogBuilder(this@LoginActivity)
+                    .setTitle(getString(R.string.account_deactivated_title))
+                    .setMessage(errorMessage)
+                    .setCancelable(false)
+                    .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .create()
+                    .show()
+            }
         }
     }
 
