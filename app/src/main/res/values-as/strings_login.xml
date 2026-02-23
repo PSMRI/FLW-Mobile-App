@@ -15,6 +15,7 @@
     <string name="btn_login_text">লগইন কৰক</string>
     <string name="login_diff_user">আপুনি আগতে ব্যৱহাৰকাৰীৰ নাম: @username ৰ সৈতে @asha হিচাপে লগ ইন কৰিছে, আপুনি আন এজন ব্যৱহাৰকাৰীৰ সৈতে লগ ইন কৰিব বিচাৰেনে?</string>
     <string name="unsync_record_count">Hello! there are @count un-sync records, please wait till all records are synced.</string>
+    <string name="account_deactivated_title">একাউণ্ট নিষ্ক্ৰিয়</string>
 
 
 </resources>
