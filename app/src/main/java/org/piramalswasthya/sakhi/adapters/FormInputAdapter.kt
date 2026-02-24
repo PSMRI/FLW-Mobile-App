@@ -17,6 +17,7 @@ import android.text.SpannableString
 import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
+import android.util.Log
 import android.view.Gravity
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -365,6 +366,7 @@ class FormInputAdapter(
             binding.actvRvDropdown.setOnItemClickListener { _, _, index, _ ->
                 hideKeyboardWithRetry()
                 item.value = item.entries?.get(index)
+                Log.i( "bind12345", item.entries?.get(index).toString())
                 Timber.d("Item DD : $item")
 //                if (item.hasDependants || item.hasAlertError) {
                 formValueListener?.onValueChanged(item, index)
@@ -482,6 +484,7 @@ class FormInputAdapter(
                                 val imm = binding.root.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                                 imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
                                 item.value = it
+                                Log.i( "bind1234", it)
                                 if (item.hasDependants || item.hasAlertError) {
                                     Timber.d(
                                         "listener trigger : ${item.id} ${
@@ -723,8 +726,8 @@ class FormInputAdapter(
                 )
                 item.errorText = null
                 binding.tilEditText.error = null
-                datePickerDialog.datePicker.maxDate = item.max ?: 0
-                datePickerDialog.datePicker.minDate = item.min ?: 0
+                item.min?.let { datePickerDialog.datePicker.minDate = it }
+                item.max?.let { datePickerDialog.datePicker.maxDate = it }
                 if (item.showYearFirstInDatePicker)
                     datePickerDialog.datePicker.touchables[0].performClick()
                 datePickerDialog.show()
@@ -930,8 +933,8 @@ class FormInputAdapter(
                 )
                 item.errorText = null
                 binding.tilEditTextDate.error = null
-                datePickerDialog.datePicker.maxDate = item.max ?: 0
-                datePickerDialog.datePicker.minDate = item.min ?: 0
+                item.min?.let { datePickerDialog.datePicker.minDate = it }
+                item.max?.let { datePickerDialog.datePicker.maxDate = it }
                 if (item.showYearFirstInDatePicker)
                     datePickerDialog.datePicker.touchables[0].performClick()
                 datePickerDialog.show()
