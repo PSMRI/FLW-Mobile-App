@@ -14,7 +14,10 @@ import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import org.piramalswasthya.sakhi.databinding.FragmentAadhaarNumberGovBinding
 import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.AadhaarIdViewModel
+import org.piramalswasthya.sakhi.utils.HelperUtil
+import org.piramalswasthya.sakhi.utils.HelperUtil.findFragmentActivity
 import java.util.Calendar
+import java.util.Locale
 
 @AndroidEntryPoint
 class AadhaarNumberGovFragment : Fragment() {
@@ -95,6 +98,11 @@ class AadhaarNumberGovFragment : Fragment() {
         val today = Calendar.getInstance()
 
         binding.dateEt.setOnClickListener {
+            val activity = binding.dateEt.context.findFragmentActivity()
+                ?: return@setOnClickListener
+            val originalLocale = Locale.getDefault()
+            HelperUtil.setEnLocaleForDatePicker(activity)
+
             val datePickerDialog = DatePickerDialog(
                 it.context,
                 { _, year, month, day ->
@@ -108,6 +116,9 @@ class AadhaarNumberGovFragment : Fragment() {
             )
             binding.tilEditText.error = null
             datePickerDialog.show()
+            datePickerDialog.setOnDismissListener {
+                HelperUtil.setOriginalLocaleForDatePicker(activity,originalLocale)
+            }
             checkValidity()
         }
 
