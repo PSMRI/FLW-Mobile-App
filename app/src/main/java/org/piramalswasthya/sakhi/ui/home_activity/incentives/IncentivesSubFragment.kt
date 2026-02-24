@@ -60,6 +60,7 @@ class IncentivesSubFragment : Fragment() {
         private const val MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024L
         private const val TARGET_SIZE_BYTES = 200 * 1024L
         private const val MAX_DIMENSION = 1280
+        private const val MAX_FILE_COUNT = 4
     }
 
     private val cameraLauncher = registerForActivityResult(
@@ -148,7 +149,15 @@ class IncentivesSubFragment : Fragment() {
             IncentiveListAdapter.FileClickListener(
                 onUpload = { item ->
                     currentSelectedItem = item
-                    showUploadSourceDialog()
+                    if (item.fileCount >= MAX_FILE_COUNT) {
+                        Toast.makeText(
+                            requireContext(),
+                            "Maximum $MAX_FILE_COUNT files allowed",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        showUploadSourceDialog()
+                    }
                 },
                 onView = { item ->
                     showUploadedFiles(item)
@@ -551,7 +560,7 @@ class IncentivesSubFragment : Fragment() {
         }
     }
 
-    private fun addFilesToIncentive(item: IncentiveDomain, files: List<Uri>) {
+    /*private fun addFilesToIncentive(item: IncentiveDomain, files: List<Uri>) {
         val fileUris = files.map { it.toString() }
         val updatedFiles = item.uploadedFiles.toMutableList()
         updatedFiles.addAll(fileUris)
@@ -572,7 +581,7 @@ class IncentivesSubFragment : Fragment() {
         ).show()
 
         Timber.d("Files added for item ${item.record.id}: ${fileUris.joinToString()}")
-    }
+    }*/
 
     private fun showUploadedFiles(item: IncentiveDomain) {
         if (item.fileCount == 0) {
@@ -685,6 +694,48 @@ class IncentivesSubFragment : Fragment() {
                 handleFileDeleted(item, deletedUri)
             }
         }
+    }
+
+    private fun addFilesToIncentive(item: IncentiveDomain, files: List<Uri>) {
+        val remaining = MAX_FILE_COUNT - item.uploadedFiles.size
+        if (remaining <= 0) {
+            Toast.makeText(
+                requireContext(),
+                "Maximum $MAX_FILE_COUNT files allowed",
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+
+        val filesToAdd = if (files.size > remaining) {
+            Toast.makeText(
+                requireContext(),
+                "Only $remaining more file(s) allowed. Extra files were skipped.",
+                Toast.LENGTH_SHORT
+            ).show()
+            files.take(remaining)
+        } else {
+            files
+        }
+
+        val fileUris = filesToAdd.map { it.toString() }
+        val updatedFiles = item.uploadedFiles.toMutableList()
+        updatedFiles.addAll(fileUris)
+
+        item.uploadedFiles = updatedFiles
+        item.fileCount = updatedFiles.size
+        item.isSubmitted = false
+
+        val position = adapter.currentList.indexOf(item)
+        if (position >= 0) {
+            adapter.notifyItemChanged(position)
+        }
+
+        Toast.makeText(
+            requireContext(),
+            "${filesToAdd.size} file(s) added. Total: ${item.fileCount}/$MAX_FILE_COUNT",
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
     override fun onDestroyView() {
