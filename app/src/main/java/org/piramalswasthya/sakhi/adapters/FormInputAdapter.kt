@@ -366,7 +366,6 @@ class FormInputAdapter(
             binding.actvRvDropdown.setOnItemClickListener { _, _, index, _ ->
                 hideKeyboardWithRetry()
                 item.value = item.entries?.get(index)
-                Log.i( "bind12345", item.entries?.get(index).toString())
                 Timber.d("Item DD : $item")
 //                if (item.hasDependants || item.hasAlertError) {
                 formValueListener?.onValueChanged(item, index)
@@ -484,7 +483,6 @@ class FormInputAdapter(
                                 val imm = binding.root.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                                 imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
                                 item.value = it
-                                Log.i( "bind1234", it)
                                 if (item.hasDependants || item.hasAlertError) {
                                     Timber.d(
                                         "listener trigger : ${item.id} ${

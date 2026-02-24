@@ -175,7 +175,6 @@ fun saveForm() {
                 }
 
                 _state.postValue(State.SAVE_SUCCESS(shouldNavigateToMdsr))
-                Log.i( "saveFormDeliveryOutcome",deliveryOutcome.toString())
 
             } catch (e: Exception) {
                 _state.postValue(State.SAVE_FAILED)
