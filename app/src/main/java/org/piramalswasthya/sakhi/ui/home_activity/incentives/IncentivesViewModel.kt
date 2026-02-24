@@ -232,15 +232,16 @@ IncentivesViewModel @Inject constructor(
             result.fold(
                 onSuccess = { response ->
 
-                    item.serverFileUrls = response.fileUrls
+                   // item.serverFileUrls = response.fileUrls
                     item.isSubmitted = true
                     item.submittedAt = System.currentTimeMillis()
 
                     // saveToDatabase(item)
+                    pullIncentivesAndWait()
 
                     _uploadState.value = UploadState.Success(response)
 
-                    pullIncentives()
+
 
                 },
                 onFailure = { error ->
@@ -251,6 +252,16 @@ IncentivesViewModel @Inject constructor(
     }
 
 
+    private suspend fun pullIncentivesAndWait() {
+        try {
+            val user = _pref.getLoggedInUser()
+            if (user != null) {
+                _incentiveRepo.pullAndSaveAllIncentiveRecords(user)
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "Error pulling incentives")
+        }
+    }
     fun resetUploadState() {
         _uploadState.value = UploadState.Idle
     }
