@@ -55,9 +55,25 @@ class HouseholdMembersViewModel @Inject constructor(
     val benListWithChildren =
         benRepo.getBenBasicListFromHousehold(hhId)
             .map { list ->
-                list.sortedBy { ben ->
-                    ben.relToHeadId != 19
-                }
+                list.sortedWith(
+                    compareBy<BenBasicDomain> {
+
+                        when {
+                            it.relToHeadId == 19 -> 0
+
+                            !it.isDeath && !it.isDeactivate -> 1
+
+                            it.isDeath && it.isDeactivate -> 3
+
+                            it.isDeath -> 2
+
+                            it.isDeactivate -> 3
+
+                            else -> 4
+                        }
+                    }
+                        .thenByDescending { it.benId }
+                )
             }
             .map { list ->
                 list.map { ben ->
