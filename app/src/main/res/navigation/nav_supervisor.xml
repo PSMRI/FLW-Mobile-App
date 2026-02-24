@@ -143,6 +143,14 @@
         android:label="@string/tb_suspected_list">
     </fragment>
     <fragment
+        android:id="@+id/supervisorProfileFragment"
+        android:name="org.piramalswasthya.sakhi.ui.asha_supervisor.profile.SupervisorProfileFragment"
+        android:label="SupervisorProfileFragment" />
+    <fragment
+        android:id="@+id/incentiveDashboardFragment"
+        android:name="org.piramalswasthya.sakhi.ui.asha_supervisor.incentiveDashboard.IncentiveDashboardFragment"
+        android:label="IncentiveDashboardFragment" />
+   <fragment
         android:id="@+id/incentiveVerificationFragment"
         android:name="org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.IncentiveVerificationFragment"
         android:label="IncentiveVerificationFragment" />

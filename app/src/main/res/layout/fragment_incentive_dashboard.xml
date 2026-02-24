@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+       >
+
+        <TextView
+            android:id="@+id/tvSupervisorName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Supervisor: Ramesh Kumar"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginStart="20dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <TextView
+            android:id="@+id/tvSupervisorId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Supervisor ID: SUP-0142"
+            android:textSize="14sp"
+            android:layout_marginStart="20dp"
+            app:layout_constraintTop_toBottomOf="@id/tvSupervisorName"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardTotalAshas"
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            app:cardCornerRadius="10dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            app:layout_constraintTop_toBottomOf="@id/tvSupervisorId"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="16dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="16dp">
+
+                <ImageView
+                    android:id="@+id/imgAsah"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:src="@drawable/logo_circle"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+                <TextView
+                    android:id="@+id/tvTotalAshasLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Total ASHAs"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@id/imgAsah"
+                    app:layout_constraintTop_toTopOf="@id/imgAsah"
+                    android:layout_marginStart="16dp"/>
+
+                <TextView
+                    android:id="@+id/tvTotalAshasCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="48"
+                    android:textSize="28sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="@id/tvTotalAshasLabel"
+                    app:layout_constraintTop_toBottomOf="@id/tvTotalAshasLabel"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Incentive Header -->
+        <TextView
+            android:id="@+id/tvIncentiveTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Incentive Verification:"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginStart="20dp"
+            app:layout_constraintTop_toBottomOf="@id/cardTotalAshas"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="20dp"/>
+
+        <Spinner
+            android:id="@+id/spinnerMonth"
+            android:layout_width="120dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="20dp"
+            app:layout_constraintTop_toTopOf="@id/tvIncentiveTitle"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardVerified"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            app:cardCornerRadius="16dp"
+            app:layout_constraintTop_toBottomOf="@id/tvIncentiveTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/cardPending"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:id="@+id/verifiedIcon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_check_circle"/>
+                    <TextView
+                        android:layout_toEndOf="@+id/verifiedIcon"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="Verified"
+                        android:layout_marginStart="5dp"
+                        android:textSize="18sp"
+                        android:textStyle="bold"/>
+                </RelativeLayout>
+
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="32"
+                    android:textSize="26sp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardPending"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            app:cardCornerRadius="16dp"
+            android:layout_marginEnd="20dp"
+            app:layout_constraintTop_toTopOf="@id/cardVerified"
+            app:layout_constraintStart_toEndOf="@id/cardVerified"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/pendingIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:tint="@color/default_incentive_background"
+                    android:src="@drawable/ic_check_circle"/>
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="Pending"
+                    android:layout_toEndOf="@+id/pendingIcon"
+                    android:layout_marginStart="5dp"
+                    android:textSize="18dp"
+                    android:textStyle="bold"/>
+                </RelativeLayout>
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="16"
+                    android:textSize="26sp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Status Cards Row 2 -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardOverdue"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            app:cardCornerRadius="16dp"
+            android:layout_marginStart="20dp"
+            app:layout_constraintTop_toBottomOf="@id/cardVerified"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/cardRejected"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:id="@+id/overDewIcon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:tint="@color/holo_red_light"
+                        android:src="@drawable/ic_overdue"/>
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="OverDue"
+                        android:layout_toEndOf="@+id/overDewIcon"
+                        android:layout_marginStart="5dp"
+                        android:textSize="18dp"
+                        android:textStyle="bold"/>
+                </RelativeLayout>
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="5"
+                    android:textSize="26sp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardRejected"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            app:cardCornerRadius="16dp"
+            android:layout_marginEnd="20dp"
+            app:layout_constraintTop_toTopOf="@id/cardOverdue"
+            app:layout_constraintStart_toEndOf="@id/cardOverdue"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:id="@+id/rejectedIcon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/crossnew"/>
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="Rejected"
+                        android:layout_toEndOf="@+id/rejectedIcon"
+                        android:layout_marginStart="5dp"
+                        android:textSize="18dp"
+                        android:textStyle="bold"/>
+                </RelativeLayout>
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="0"
+                    android:textSize="26sp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardSubcentres"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            app:layout_constraintTop_toBottomOf="@id/cardOverdue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="20dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:text="@string/sub_center_under_you_4"
+                    />
+                <View
+                    android:id="@+id/underLine"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@color/read_only"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/subCenterRV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:listitem="@layout/layout_list_item"
+                    android:layout_marginTop="5dp"
+                    tools:itemCount="4"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    android:orientation="vertical" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>
