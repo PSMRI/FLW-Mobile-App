@@ -640,12 +640,9 @@ class IncentivesSubFragment : Fragment() {
     }
 
     private fun submitDocumentsToServer(item: IncentiveDomain) {
-
         lifecycleScope.launch {
             try {
                 val result = viewModel.uploadIncentiveDocuments(item)
-
-                kotlinx.coroutines.delay(2000)
 
                 item.isSubmitted = true
                 item.submittedAt = System.currentTimeMillis()
@@ -655,8 +652,7 @@ class IncentivesSubFragment : Fragment() {
                     adapter.notifyItemChanged(position)
                 }
 
-                // viewModel.updateIncentiveStatus(item)
-
+                Timber.d("Documents submitted for item ${item.record.id}")
 
                 Toast.makeText(
                     requireContext(),
@@ -664,17 +660,17 @@ class IncentivesSubFragment : Fragment() {
                     Toast.LENGTH_LONG
                 ).show()
 
-                Timber.d("Documents submitted for item ${item.record.id}")
-
             } catch (e: Exception) {
                 Timber.e(e, "Error submitting documents")
-                binding.progressBar?.visibility = View.GONE
+                _binding?.progressBar?.visibility = View.GONE
 
-                Toast.makeText(
-                    requireContext(),
-                    "Failed to submit documents. Please try again.",
-                    Toast.LENGTH_LONG
-                ).show()
+                if (isAdded) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Failed to submit documents. Please try again.",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
         }
     }
