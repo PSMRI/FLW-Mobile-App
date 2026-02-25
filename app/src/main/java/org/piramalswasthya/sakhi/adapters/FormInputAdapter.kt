@@ -723,8 +723,8 @@ class FormInputAdapter(
                 )
                 item.errorText = null
                 binding.tilEditText.error = null
-                datePickerDialog.datePicker.maxDate = item.max ?: 0
-                datePickerDialog.datePicker.minDate = item.min ?: 0
+                item.min?.let { datePickerDialog.datePicker.minDate = it }
+                item.max?.let { datePickerDialog.datePicker.maxDate = it }
                 if (item.showYearFirstInDatePicker)
                     datePickerDialog.datePicker.touchables[0].performClick()
                 datePickerDialog.show()
@@ -930,8 +930,8 @@ class FormInputAdapter(
                 )
                 item.errorText = null
                 binding.tilEditTextDate.error = null
-                datePickerDialog.datePicker.maxDate = item.max ?: 0
-                datePickerDialog.datePicker.minDate = item.min ?: 0
+                item.min?.let { datePickerDialog.datePicker.minDate = it }
+                item.max?.let { datePickerDialog.datePicker.maxDate = it }
                 if (item.showYearFirstInDatePicker)
                     datePickerDialog.datePicker.touchables[0].performClick()
                 datePickerDialog.show()

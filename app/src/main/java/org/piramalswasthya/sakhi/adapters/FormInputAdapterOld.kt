@@ -530,8 +530,8 @@ class FormInputAdapterOld(
                 )
                 item.errorText = null
                 binding.tilEditText.error = null
-                datePickerDialog.datePicker.maxDate = item.max ?: 0
-                datePickerDialog.datePicker.minDate = item.min ?: 0
+                item.min?.let { datePickerDialog.datePicker.minDate = it }
+                item.max?.let { datePickerDialog.datePicker.maxDate = it }
                 datePickerDialog.datePicker.touchables[0].performClick()
                 datePickerDialog.show()
                 datePickerDialog.setOnDismissListener {
