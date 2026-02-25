@@ -58,6 +58,7 @@ import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.AccountDeactivationManager
+import org.piramalswasthya.sakhi.helpers.TokenExpiryManager
 import org.piramalswasthya.sakhi.databinding.ActivityHomeBinding
 import org.piramalswasthya.sakhi.helpers.AnalyticsHelper
 import org.piramalswasthya.sakhi.helpers.ImageUtils
@@ -111,6 +112,9 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
     @Inject
     lateinit var accountDeactivationManager: AccountDeactivationManager
+
+    @Inject
+    lateinit var tokenExpiryManager: TokenExpiryManager
 
     private var _binding: ActivityHomeBinding? = null
 
@@ -317,6 +321,7 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         }
 
         observeAccountDeactivation()
+        observeTokenExpiry()
 
     }
 
@@ -336,6 +341,31 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
                         }
                         .create()
                     deactivationDialog?.show()
+                }
+            }
+        }
+    }
+
+    private var sessionExpiredDialog: AlertDialog? = null
+
+    private fun observeTokenExpiry() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                tokenExpiryManager.forceLogoutEvent.collect {
+                    if (sessionExpiredDialog?.isShowing == true) return@collect
+                    sessionExpiredDialog = MaterialAlertDialogBuilder(this@HomeActivity)
+                        .setTitle(getString(R.string.session_expired_title))
+                        .setMessage(getString(R.string.session_expired_message))
+                        .setCancelable(false)
+                        .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
+                            dialog.dismiss()
+                            pref.deleteForLogout()
+                            WorkerUtils.cancelAllWork(this@HomeActivity)
+                            startActivity(Intent(this@HomeActivity, LoginActivity::class.java))
+                            finish()
+                        }
+                        .create()
+                    sessionExpiredDialog?.show()
                 }
             }
         }
