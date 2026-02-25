@@ -8,8 +8,8 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import net.sqlcipher.database.SQLiteDatabase
-import net.sqlcipher.database.SupportFactory
+import net.zetetic.database.sqlcipher.SQLiteDatabase
+import net.zetetic.database.sqlcipher.SupportOpenHelperFactory
 import org.piramalswasthya.sakhi.database.converters.LocationEntityListConverter
 import org.piramalswasthya.sakhi.database.converters.StringListConverter
 import org.piramalswasthya.sakhi.database.converters.SyncStateConverter
@@ -2726,7 +2726,7 @@ abstract class InAppDb : RoomDatabase() {
                 var instance = INSTANCE
                 if (instance == null) {
                     val passphrase = DatabaseKeyManager.getDatabasePassphrase(appContext)
-                    SQLiteDatabase.loadLibs(appContext)
+                    System.loadLibrary("sqlcipher")
 
                     RoomDbEncryptionHelper.encryptIfNeeded(
                         context = appContext,
@@ -2734,7 +2734,7 @@ abstract class InAppDb : RoomDatabase() {
                         passphrase = passphrase
                     )
 
-                    val factory = SupportFactory(SQLiteDatabase.getBytes(passphrase))
+                    val factory = SupportOpenHelperFactory(String(passphrase).toByteArray(Charsets.UTF_8))
 
                     instance = Room.databaseBuilder(
                         appContext,
