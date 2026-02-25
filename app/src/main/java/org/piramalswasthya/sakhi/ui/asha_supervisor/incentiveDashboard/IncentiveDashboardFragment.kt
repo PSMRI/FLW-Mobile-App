@@ -5,8 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.FragmentIncentiveDashboardBinding
+import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
+import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorHomeFragmentDirections
 
 @AndroidEntryPoint
 class IncentiveDashboardFragment : Fragment() {
@@ -31,7 +35,36 @@ class IncentiveDashboardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.subCenterRV.adapter = SubCenterAdapter()
+        binding.cardVerified.setOnClickListener {
+
+            val action = SupervisorHomeFragmentDirections.actionSupervisorHomeFragmentToIncentiveVerificationFragment("verified")
+            findNavController().navigate(action)
+
+
+        }
+        binding.cardPending.setOnClickListener {
+
+            val action = SupervisorHomeFragmentDirections.actionSupervisorHomeFragmentToIncentiveVerificationFragment("pending")
+            findNavController().navigate(action)
+        }
+        binding.cardOverdue.setOnClickListener {
+
+            val action = SupervisorHomeFragmentDirections.actionSupervisorHomeFragmentToIncentiveVerificationFragment("overdue")
+            findNavController().navigate(action)
+        }
+        binding.cardRejected.setOnClickListener {
+
+            val action = SupervisorHomeFragmentDirections.actionSupervisorHomeFragmentToIncentiveVerificationFragment("rejected")
+            findNavController().navigate(action)
+        }
+
+
+
+
+
 
     }
+
+
 
 }

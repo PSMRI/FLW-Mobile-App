@@ -436,6 +436,8 @@ class SupervisorActivity : AppCompatActivity() {
             }
     }
 
+
+
     private fun setUpActionBar() {
         setSupportActionBar(binding.toolbar)
 
@@ -443,7 +445,8 @@ class SupervisorActivity : AppCompatActivity() {
 
         val appBarConfiguration = AppBarConfiguration.Builder(
             setOf(
-                R.id.supervisorFragment
+                R.id.supervisorHomeFragment,
+
             )
         ).setOpenableLayout(binding.drawerLayout).build()
 

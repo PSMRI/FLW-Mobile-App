@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/supervisor_navigation"
-    app:startDestination="@+id/supervisorFragment">
+    app:startDestination="@+id/supervisorHomeFragment">
 
 
     <fragment
@@ -149,14 +149,32 @@
     <fragment
         android:id="@+id/incentiveDashboardFragment"
         android:name="org.piramalswasthya.sakhi.ui.asha_supervisor.incentiveDashboard.IncentiveDashboardFragment"
-        android:label="IncentiveDashboardFragment" />
+        android:label="IncentiveDashboardFragment" >
+
+        <action
+            android:id="@+id/action_incentiveDashboardFragment_to_incentiveVerificationFragment"
+            app:destination="@id/incentiveVerificationFragment" />
+    </fragment>
    <fragment
         android:id="@+id/incentiveVerificationFragment"
         android:name="org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.IncentiveVerificationFragment"
-        android:label="IncentiveVerificationFragment" />
+        android:label="IncentiveVerificationFragment" >
+       <argument
+           android:name="status"
+           android:defaultValue=""
+           app:argType="string" />
+   </fragment>
     <fragment
         android:id="@+id/workerDetailFragment"
         android:name="org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.WorkerDetailFragment"
         android:label="WorkerDetailFragment" />
+    <fragment
+        android:id="@+id/supervisorHomeFragment"
+        android:name="org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorHomeFragment"
+        android:label="SupervisorHomeFragment" >
+        <action
+            android:id="@+id/action_supervisorHomeFragment_to_incentiveVerificationFragment"
+            app:destination="@id/incentiveVerificationFragment" />
+    </fragment>
 
 </navigation>
