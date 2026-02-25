@@ -38,6 +38,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
+            android:ellipsize="end"
+            android:maxLines="5"
             android:textAppearance="@style/TextAppearance.Material3.BodySmall"
             tools:text="[PushBenWorker] Socket timeout, will retry" />
 
