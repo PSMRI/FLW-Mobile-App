@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.adapter.AshaWorkerAdapter
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.AshaWorker
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.MonthlyDetail
@@ -171,5 +172,14 @@ class IncentiveVerificationFragment : Fragment() {
             putString("worker_name", worker.name)
         }
         findNavController().navigate(R.id.workerDetailFragment,bundle)
+    }
+    override fun onStart() {
+        super.onStart()
+        activity?.let {
+            (it as SupervisorActivity).updateActionBar(
+                R.drawable.ic__incentive,
+                getString(R.string.incentive_verification)
+            )
+        }
     }
 }

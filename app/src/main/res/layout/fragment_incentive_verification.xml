@@ -13,6 +13,7 @@
         android:layout_height="?attr/actionBarSize"
         android:background="#4A6FA5"
         android:elevation="4dp"
+        android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"
         app:navigationIcon="@drawable/ic_back_arrow"
         app:title="Incentive Verification"
