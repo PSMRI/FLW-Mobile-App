@@ -56,6 +56,7 @@ import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponse
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.AnalyticsHelper
 import org.piramalswasthya.sakhi.helpers.ApiAnalyticsInterceptor
+import org.piramalswasthya.sakhi.helpers.TokenExpiryManager
 import org.piramalswasthya.sakhi.network.AbhaApiService
 import org.piramalswasthya.sakhi.network.AmritApiService
 import org.piramalswasthya.sakhi.network.interceptors.AccountDeactivationInterceptor
@@ -167,9 +168,10 @@ object AppModule {
     @Provides
     fun provideTokenAuthenticator(
         pref: PreferenceDao,
-        @Named(AUTH_API) authApi: AmritApiService
+        @Named(AUTH_API) authApi: AmritApiService,
+        tokenExpiryManager: TokenExpiryManager
     ): TokenAuthenticator {
-        return TokenAuthenticator(pref, authApi)
+        return TokenAuthenticator(pref, authApi, tokenExpiryManager)
     }
 
     @Singleton

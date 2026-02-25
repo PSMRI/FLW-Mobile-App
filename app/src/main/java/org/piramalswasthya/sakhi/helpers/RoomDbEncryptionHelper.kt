@@ -1,7 +1,7 @@
 package org.piramalswasthya.sakhi.helpers
 
 import android.content.Context
-import net.sqlcipher.database.SQLiteDatabase
+import net.zetetic.database.sqlcipher.SQLiteDatabase
 import java.io.File
 
 object RoomDbEncryptionHelper {
@@ -9,11 +9,11 @@ object RoomDbEncryptionHelper {
     @Volatile
     private var libsLoaded = false
 
-    private fun ensureSqlCipherLoaded(context: Context) {
+    private fun ensureSqlCipherLoaded() {
         if (!libsLoaded) {
             synchronized(this) {
                 if (!libsLoaded) {
-                    SQLiteDatabase.loadLibs(context)
+                    System.loadLibrary("sqlcipher")
                     libsLoaded = true
                 }
             }
@@ -25,7 +25,7 @@ object RoomDbEncryptionHelper {
         dbName: String,
         passphrase: CharArray
     ) {
-        ensureSqlCipherLoaded(context)
+        ensureSqlCipherLoaded()
 
         val dbFile = context.getDatabasePath(dbName)
         if (!dbFile.exists()) return
@@ -41,21 +41,25 @@ object RoomDbEncryptionHelper {
             dbFile.absolutePath,
             "",
             null,
-            SQLiteDatabase.OPEN_READWRITE
+            SQLiteDatabase.OPEN_READWRITE,
+            null,
+            null
         )
 
         val encryptedDb = SQLiteDatabase.openDatabase(
             tempEncrypted.absolutePath,
-            passphrase,
+            String(passphrase),
             null,
-            SQLiteDatabase.OPEN_READWRITE or SQLiteDatabase.CREATE_IF_NECESSARY
+            SQLiteDatabase.OPEN_READWRITE or SQLiteDatabase.CREATE_IF_NECESSARY,
+            null,
+            null
         )
 
-        plainDb.rawExecSQL(
+        plainDb.execSQL(
             "ATTACH DATABASE '${tempEncrypted.absolutePath}' AS encrypted KEY '${String(passphrase)}'"
         )
-        plainDb.rawExecSQL("SELECT sqlcipher_export('encrypted')")
-        plainDb.rawExecSQL("DETACH DATABASE encrypted")
+        plainDb.execSQL("SELECT sqlcipher_export('encrypted')")
+        plainDb.execSQL("DETACH DATABASE encrypted")
 
         plainDb.close()
         encryptedDb.close()
@@ -70,9 +74,11 @@ object RoomDbEncryptionHelper {
         return try {
             SQLiteDatabase.openDatabase(
                 dbFile.absolutePath,
-                passphrase,
+                String(passphrase),
                 null,
-                SQLiteDatabase.OPEN_READONLY
+                SQLiteDatabase.OPEN_READONLY,
+                null,
+                null
             ).close()
             true
         } catch (e: Exception) {
@@ -87,9 +93,11 @@ object RoomDbEncryptionHelper {
     private fun dropRoomOwnedViews(dbFile: File, passphrase: CharArray) {
         val db = SQLiteDatabase.openDatabase(
             dbFile.absolutePath,
-            passphrase,
+            String(passphrase),
             null,
-            SQLiteDatabase.OPEN_READWRITE
+            SQLiteDatabase.OPEN_READWRITE,
+            null,
+            null
         )
 
         db.execSQL("DROP VIEW IF EXISTS BEN_BASIC_CACHE")
