@@ -11,7 +11,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -336,19 +338,23 @@ class HouseholdMembersFragment : Fragment() {
         )
         binding.rvAny.adapter = benAdapter
 
-        lifecycleScope.launch {
-            viewModel.benList.collect {
-                householdMembers = it
-            }
-        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.benList.collect {
+                        householdMembers = it
+                    }
+                }
 
-        lifecycleScope.launch {
-            viewModel.benListWithChildren.collect {
-                if (it.isEmpty())
-                    binding.flEmpty.visibility = View.VISIBLE
-                else
-                    binding.flEmpty.visibility = View.GONE
-                benAdapter.submitList(it)
+                launch {
+                    viewModel.benListWithChildren.collect {
+                        if (it.isEmpty())
+                            binding.flEmpty.visibility = View.VISIBLE
+                        else
+                            binding.flEmpty.visibility = View.GONE
+                        benAdapter.submitList(it)
+                    }
+                }
             }
         }
         viewModel.abha.observe(viewLifecycleOwner) {
