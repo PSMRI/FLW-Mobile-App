@@ -1241,7 +1241,7 @@ data class TBSuspectedDTO(
             visitLabel= visitLabel,
             typeOfTBCase = typeOfTBCase,
             reasonForSuspicion = reasonForSuspicion,
-            hasSymptoms = hasSymptoms,
+            hasSymptoms = hasSymptoms ?: false,
             isChestXRayDone = isChestXRayDone,
             chestXRayResult = chestXRayResult,
             referralFacility = referralFacility,
