@@ -54,7 +54,7 @@ import java.util.Calendar
 @AndroidEntryPoint
 class CUFYFormFragment : Fragment() {
 
-    val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+    val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
 
     private val args: CUFYFormFragmentArgs by navArgs()
 
@@ -431,12 +431,12 @@ class CUFYFormFragment : Fragment() {
         val currentVisitDay = viewModel.visitDay
         val previousVisitDate = viewModel.previousVisitDate
         val deliveryDate = dob ?: return
-        val dobString = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(Date(deliveryDate))
+        val dobString = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).format(Date(deliveryDate))
 
         if (currentVisitDay.isBlank()) return
 
         val updatedFields = adapter.getUpdatedFields()
-        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
         val today = Date()
 
         currentSchema.sections.orEmpty().forEach { section ->
@@ -766,7 +766,7 @@ class CUFYFormFragment : Fragment() {
                 }
             }
             dates.sortedWith(compareBy {
-                SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).parse(it)
+                SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).parse(it)
             })
         } catch (e: Exception) {
             Timber.tag("CUFYFormFragment").e(e, " Error parsing follow-up dates from JSON")

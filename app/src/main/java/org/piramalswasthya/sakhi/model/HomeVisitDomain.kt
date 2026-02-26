@@ -17,7 +17,7 @@ data class HomeVisitDomain(
 ) {
     companion object {
         fun fromEntity(entity: ANCFormResponseJsonEntity, visitNumber: Int): HomeVisitDomain {
-            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
             val visitDate = try {
                 dateFormat.parse(entity.visitDate)?.time ?: entity.createdAt
             } catch (e: Exception) {

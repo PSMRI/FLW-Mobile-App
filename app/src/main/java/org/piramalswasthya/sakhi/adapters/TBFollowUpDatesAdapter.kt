@@ -18,7 +18,7 @@ import java.util.Locale
 class TBFollowUpDatesAdapter :
     ListAdapter<TBConfirmedTreatmentCache, TBFollowUpDatesAdapter.FollowUpViewHolder>(DiffCallback) {
 
-    private val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+    private val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FollowUpViewHolder {
         val binding = ItemFollowUpDateBinding.inflate(

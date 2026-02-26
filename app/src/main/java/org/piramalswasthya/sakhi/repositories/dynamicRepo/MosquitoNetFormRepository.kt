@@ -202,7 +202,7 @@ class MosquitoNetFormRepository @Inject constructor(
     }
 
     suspend fun markFormAsSynced(id: Int) {
-        val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
+        val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH).format(Date())
         jsonResponseDao.markAsSynced(id, timestamp)
     }
 }
