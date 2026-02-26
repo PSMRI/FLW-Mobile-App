@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -13,17 +14,9 @@
         android:gravity="center"
         android:padding="@dimen/padding_normal"
         android:text="@string/filter_list"
-        android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
         android:textColor="?attr/colorOnPrimary"
         app:layout_constraintTop_toTopOf="parent" />
-
-<!--    <androidx.constraintlayout.widget.Guideline-->
-<!--        android:id="@+id/guideline"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:orientation="vertical"-->
-<!--        app:layout_constraintGuide_percent="0.5" />-->
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_rch"
@@ -42,6 +35,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
+        android:contentDescription="@string/rch_id"
         android:text="@string/rch_id"
         android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
         app:layout_constraintStart_toStartOf="parent"
@@ -105,9 +99,6 @@
         android:text="@string/btn_apply"
         android:textColor="?attr/colorOnPrimary"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        android:layout_marginStart="18dp"
-        app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toEndOf="@+id/btn_cancel"
         app:layout_constraintTop_toBottomOf="@+id/rgAbha" />
 
@@ -118,11 +109,8 @@
         android:layout_height="wrap_content"
         android:text="@string/cancel"
         android:layout_marginTop="12dp"
-        android:layout_marginEnd="18dp"
         android:textColor="?attr/colorOnPrimary"
         app:layout_constraintEnd_toStartOf="@+id/btn_ok"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/rgAbha" />
 

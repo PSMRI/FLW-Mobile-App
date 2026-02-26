@@ -1,6 +1,5 @@
 package org.piramalswasthya.sakhi.ui.home_activity.all_household.household_members
 
-import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -8,8 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -47,109 +46,11 @@ class HouseholdMembersFragment : Fragment() {
 
     private var householdMembers: List<BenBasicDomain> = emptyList()
 
+    private var addBenAlert: AlertDialog? = null
+    private var addBenAlertBinding: AlertNewBenBinding? = null
+    private var abhaDisclaimer: AlertDialog? = null
+
     var showAbha = false
-    private val abhaDisclaimer by lazy {
-        AlertDialog.Builder(requireContext())
-            .setTitle(resources.getString(R.string.beneficiary_abha_number))
-            .setMessage("")
-            .setPositiveButton(resources.getString(R.string.ok)) { dialog, _ -> dialog.dismiss() }
-            .create()
-    }
-
-    private val addBenAlert by lazy {
-        val addBenAlertBinding = AlertNewBenBinding.inflate(layoutInflater, binding.root, false)
-        addBenAlertBinding.rgGender.setOnCheckedChangeListener { radioGroup, i ->
-            addBenAlertBinding.btnOk.isEnabled = false
-            Timber.d("RG Gender selected id : $i")
-            val selectedGender = when (i) {
-                addBenAlertBinding.rbMale.id -> Gender.MALE
-                addBenAlertBinding.rbFemale.id -> Gender.FEMALE
-                addBenAlertBinding.rbTrans.id -> Gender.TRANSGENDER
-                else -> null
-            }
-            addBenAlertBinding.linearLayout4.visibility =
-                selectedGender?.let { View.VISIBLE } ?: View.GONE
-            addBenAlertBinding.actvRth.text = null
-
-            val hof =
-                householdMembers.firstOrNull { it.relToHeadId == 19 }
-            val hofFatherRegistered =
-                householdMembers.any { it.relToHeadId == 2 }
-            val hofMotherRegistered =
-                householdMembers.any { it.relToHeadId == 1 }
-            val isHoFUnmarried =
-                hof?.let {
-                    !it.isMarried
-                } ?: false
-            
-            val dropdownList = when (selectedGender) {
-                Gender.MALE -> resources.getStringArray(R.array.nbr_relationship_to_head_male)
-                Gender.FEMALE -> resources.getStringArray(R.array.nbr_relationship_to_head_female)
-                Gender.TRANSGENDER -> resources.getStringArray(R.array.nbr_relationship_to_head_male)
-                else -> null
-            }
-            val filteredDropdownList =
-                dropdownList?.takeIf { hof != null }?.toMutableList()?.apply {
-                    if (hofFatherRegistered)
-                        remove(resources.getStringArray(R.array.nbr_relationship_to_head)[1])
-                    if (hofMotherRegistered)
-                        remove(resources.getStringArray(R.array.nbr_relationship_to_head)[0])
-                    
-                    if (isHoFUnmarried)
-                        removeAll(
-                            resources.getStringArray(R.array.nbr_relationship_to_head_unmarried_filter)
-                                .toSet()
-                        )
-
-                    if (hof?.gender == Gender.MALE.name && selectedGender == Gender.MALE)
-                        remove(resources.getStringArray(R.array.nbr_relationship_to_head)[5])
-                    else if (hof?.gender == Gender.FEMALE.name && selectedGender == Gender.FEMALE)
-                        remove(resources.getStringArray(R.array.nbr_relationship_to_head)[4])
-                } ?: dropdownList?.toList()
-            filteredDropdownList?.let {
-                addBenAlertBinding.actvRth.setAdapter(
-                    ArrayAdapter(
-                        requireContext(), android.R.layout.simple_spinner_dropdown_item,
-                        it,
-                    )
-                )
-            }
-        }
-        addBenAlertBinding.actvRth.setOnItemClickListener { adapterView, view, i, l ->
-            Timber.d("item clicked index : $i")
-            addBenAlertBinding.btnOk.isEnabled = true
-        }
-
-
-        val alert = MaterialAlertDialogBuilder(requireContext()).setView(addBenAlertBinding.root)
-            .setOnCancelListener {
-                addBenAlertBinding.rgGender.clearCheck()
-                addBenAlertBinding.linearLayout4.visibility = View.GONE
-                addBenAlertBinding.actvRth.text = null
-            }.create()
-
-        addBenAlertBinding.btnOk.setOnClickListener {
-            findNavController().navigate(
-                HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToNewBenRegFragment(
-                    hhId = hhId,
-                    relToHeadId = resources.getStringArray(R.array.nbr_relationship_to_head_src)
-                        .indexOf(addBenAlertBinding.actvRth.text.toString()),
-                    gender = when (addBenAlertBinding.rgGender.checkedRadioButtonId) {
-                        addBenAlertBinding.rbMale.id -> 1
-                        addBenAlertBinding.rbFemale.id -> 2
-                        addBenAlertBinding.rbTrans.id -> 3
-                        else -> 0
-                    }
-                )
-            )
-            alert.cancel()
-        }
-        addBenAlertBinding.btnCancel.setOnClickListener {
-            alert.cancel()
-        }
-
-        alert
-    }
 
     fun showSoftDeleteDialog(benBasicDomain: BenBasicDomain) {
         MaterialAlertDialogBuilder(requireContext())
@@ -177,6 +78,8 @@ class HouseholdMembersFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        buildAddBenDialog()
+        buildAbhaDisclaimerDialog()
         binding.btnNextPage.visibility = View.GONE
         binding.llSearch.visibility = View.GONE
         if (viewModel.isFromDisease == 1 && viewModel.diseaseType == IconDataset.Disease.MALARIA.toString()) {
@@ -201,7 +104,7 @@ class HouseholdMembersFragment : Fragment() {
         }
 
         binding.fabAddMember.setOnClickListener {
-            addBenAlert.show()
+            addBenAlert?.show()
         }
 
         val benAdapter = BenListAdapter(
@@ -451,8 +354,8 @@ class HouseholdMembersFragment : Fragment() {
         viewModel.abha.observe(viewLifecycleOwner) {
             it.let {
                 if (it != null) {
-                    abhaDisclaimer.setMessage(it)
-                    abhaDisclaimer.show()
+                    abhaDisclaimer?.setMessage(it)
+                    abhaDisclaimer?.show()
                 }
             }
         }
@@ -490,8 +393,116 @@ class HouseholdMembersFragment : Fragment() {
         viewModel.fetchAbha(benId)
     }
 
+    private fun buildAddBenDialog() {
+        val alertBinding = AlertNewBenBinding.inflate(layoutInflater, binding.root, false)
+        addBenAlertBinding = alertBinding
+        alertBinding.rgGender.setOnCheckedChangeListener { _, i ->
+            alertBinding.btnOk.isEnabled = false
+            Timber.d("RG Gender selected id : $i")
+            val selectedGender = when (i) {
+                alertBinding.rbMale.id -> Gender.MALE
+                alertBinding.rbFemale.id -> Gender.FEMALE
+                alertBinding.rbTrans.id -> Gender.TRANSGENDER
+                else -> null
+            }
+            alertBinding.linearLayout4.visibility =
+                selectedGender?.let { View.VISIBLE } ?: View.GONE
+            alertBinding.actvRth.text = null
+
+            val hof =
+                householdMembers.firstOrNull { it.relToHeadId == 19 }
+            val hofFatherRegistered =
+                householdMembers.any { it.relToHeadId == 2 }
+            val hofMotherRegistered =
+                householdMembers.any { it.relToHeadId == 1 }
+            val isHoFUnmarried =
+                hof?.let {
+                    !it.isMarried
+                } ?: false
+
+            val dropdownList = when (selectedGender) {
+                Gender.MALE -> resources.getStringArray(R.array.nbr_relationship_to_head_male)
+                Gender.FEMALE -> resources.getStringArray(R.array.nbr_relationship_to_head_female)
+                Gender.TRANSGENDER -> resources.getStringArray(R.array.nbr_relationship_to_head_male)
+                else -> null
+            }
+            val filteredDropdownList =
+                dropdownList?.takeIf { hof != null }?.toMutableList()?.apply {
+                    if (hofFatherRegistered)
+                        remove(resources.getStringArray(R.array.nbr_relationship_to_head)[1])
+                    if (hofMotherRegistered)
+                        remove(resources.getStringArray(R.array.nbr_relationship_to_head)[0])
+
+                    if (isHoFUnmarried)
+                        removeAll(
+                            resources.getStringArray(R.array.nbr_relationship_to_head_unmarried_filter)
+                                .toSet()
+                        )
+
+                    if (hof?.gender == Gender.MALE.name && selectedGender == Gender.MALE)
+                        remove(resources.getStringArray(R.array.nbr_relationship_to_head)[5])
+                    else if (hof?.gender == Gender.FEMALE.name && selectedGender == Gender.FEMALE)
+                        remove(resources.getStringArray(R.array.nbr_relationship_to_head)[4])
+                } ?: dropdownList?.toList()
+            filteredDropdownList?.let {
+                alertBinding.actvRth.setAdapter(
+                    ArrayAdapter(
+                        requireContext(), android.R.layout.simple_spinner_dropdown_item,
+                        it,
+                    )
+                )
+            }
+        }
+        alertBinding.actvRth.setOnItemClickListener { _, _, i, _ ->
+            Timber.d("item clicked index : $i")
+            alertBinding.btnOk.isEnabled = true
+        }
+
+
+        val alert = MaterialAlertDialogBuilder(requireContext()).setView(alertBinding.root)
+            .setOnCancelListener {
+                alertBinding.rgGender.clearCheck()
+                alertBinding.linearLayout4.visibility = View.GONE
+                alertBinding.actvRth.text = null
+            }.create()
+        addBenAlert = alert
+
+        alertBinding.btnOk.setOnClickListener {
+            findNavController().navigate(
+                HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToNewBenRegFragment(
+                    hhId = hhId,
+                    relToHeadId = resources.getStringArray(R.array.nbr_relationship_to_head_src)
+                        .indexOf(alertBinding.actvRth.text.toString()),
+                    gender = when (alertBinding.rgGender.checkedRadioButtonId) {
+                        alertBinding.rbMale.id -> 1
+                        alertBinding.rbFemale.id -> 2
+                        alertBinding.rbTrans.id -> 3
+                        else -> 0
+                    }
+                )
+            )
+            alert.cancel()
+        }
+        alertBinding.btnCancel.setOnClickListener {
+            alert.cancel()
+        }
+    }
+
+    private fun buildAbhaDisclaimerDialog() {
+        abhaDisclaimer = AlertDialog.Builder(requireContext())
+            .setTitle(resources.getString(R.string.beneficiary_abha_number))
+            .setMessage("")
+            .setPositiveButton(resources.getString(R.string.ok)) { dialog, _ -> dialog.dismiss() }
+            .create()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
+        addBenAlert?.dismiss()
+        addBenAlert = null
+        addBenAlertBinding = null
+        abhaDisclaimer?.dismiss()
+        abhaDisclaimer = null
         _binding = null
     }
 
