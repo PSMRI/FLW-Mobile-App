@@ -45,6 +45,9 @@ import java.util.Date
 import java.util.Locale
 
 
+fun IconDataset.Disease.getTitle(context: Context): String {
+    return context.getString(getTitleRes())
+}
 @StringRes
 fun IconDataset.Disease.getTitleRes(): Int {
     return when (this) {
