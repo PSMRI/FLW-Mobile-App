@@ -102,9 +102,15 @@ class SupervisorHomeFragment : Fragment() {
 
         setUpViewPager()
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
-            val currentLang = pref.getCurrentLanguage()
-            val langCode = currentLang.symbol
-            formRepository.downloadAllFormsSchemas(langCode)
+            try {
+                val currentLang = pref.getCurrentLanguage()
+                val langCode = currentLang.symbol
+                formRepository.downloadAllFormsSchemas(langCode)
+            }
+            catch (e: Exception) {
+                Timber.e(e, "Failed to download form schemas")
+            }
+
         }
 
     }
@@ -138,7 +144,7 @@ class SupervisorHomeFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         (activity as SupervisorActivity?)?.let { homeActivity ->
-//            homeActivity.addClickListenerToHomepageActionBarTitle()
+            homeActivity.setHomeMenuItemVisibility(false)
             viewModel.locationRecord?.village?.let {
                 homeActivity.updateActionBar(
                     R.drawable.ic_home, when (viewModel.currentLanguage) {
@@ -147,7 +153,7 @@ class SupervisorHomeFragment : Fragment() {
                         ASSAMESE -> it.nameAssamese ?: it.name
                     }
                 )
-                homeActivity.setHomeMenuItemVisibility(false)
+
             }
             binding.vp2Home.setCurrentItem(0, false)
         }
@@ -166,11 +172,11 @@ class SupervisorHomeFragment : Fragment() {
         super.onDestroyView()
         numViewCopies--
         Timber.d("onDestroyView() called! $numViewCopies")
+        _binding = null
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        _binding = null
         numCopies--
         Timber.d("onDestroy() called! $numCopies")
 
