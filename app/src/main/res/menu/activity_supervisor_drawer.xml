@@ -11,10 +11,7 @@
             android:id="@+id/supervisorFragment"
             android:icon="@drawable/ic_home"
             android:title="@string/menu_supervisor" />
-        <item
-            android:id="@+id/incentiveDashboardFragment"
-            android:icon="@drawable/ic__incentive"
-            android:title="@string/incentive_dashboard" />
+
         <item
             android:id="@+id/supervisorProfileFragment"
             android:icon="@drawable/ic_person"

@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.adapter.ActivityAdapter
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.adapter.RejectionReasonAdapter
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.ActivityDetail
@@ -264,5 +265,15 @@ class WorkerDetailFragment : Fragment() {
 
         hideRejectionBottomSheet()
         requireActivity().onBackPressed()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        activity?.let {
+            (it as SupervisorActivity).updateActionBar(
+                R.drawable.ic__incentive,
+                getString(R.string.incentive_verification)
+            )
+        }
     }
 }
