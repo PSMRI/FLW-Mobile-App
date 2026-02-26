@@ -43,7 +43,7 @@ class HBNCFormFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var saveButton: Button
 
-    val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+    val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
     private val args: HBNCFormFragmentArgs by navArgs()
     private val infantListViewModel: InfantListViewModel by viewModels()
     private val viewModel: HBNCFormViewModel by viewModels()
@@ -246,12 +246,12 @@ class HBNCFormFragment : Fragment() {
         val previousVisitDate = viewModel.previousVisitDate
         val deliveryDate = dob ?: return
         val dobString =
-            SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(Date(deliveryDate))
+            SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).format(Date(deliveryDate))
 
         if (currentVisitDay.isBlank()) return
 
         val updatedFields = adapter.getUpdatedFields()
-        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
         val today = Date()
 
         currentSchema.sections.orEmpty().forEach { section ->

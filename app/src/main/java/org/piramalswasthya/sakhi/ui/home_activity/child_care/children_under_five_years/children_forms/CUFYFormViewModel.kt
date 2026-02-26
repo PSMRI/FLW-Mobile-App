@@ -296,8 +296,8 @@ suspend fun saveFormResponses(benId: Long, hhId: Long, recordId: Int = 0) {
         val rawVisitDate = fieldMap["visit_date"]?.toString() ?: "N/A"
         val visitDate = try {
 
-            val inputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-            val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val inputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
+            val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
             val parsedDate = inputFormat.parse(rawVisitDate)
             if (parsedDate != null) outputFormat.format(parsedDate) else rawVisitDate
         } catch (e: Exception) {
@@ -422,7 +422,7 @@ suspend fun saveFormResponses(benId: Long, hhId: Long, recordId: Int = 0) {
                 val fields = json.optJSONObject("fields")
                 val dateStr = fields?.optString("visit_date")
                 if (!dateStr.isNullOrBlank()) {
-                    SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).parse(dateStr)
+                    SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).parse(dateStr)
                 } else null
             } catch (e: Exception) {
                 null
@@ -458,11 +458,11 @@ suspend fun saveFormResponses(benId: Long, hhId: Long, recordId: Int = 0) {
                 val provisionDateStr = fields?.optString("ifa_provision_date", "")
 
                 if (provisionDateStr?.isNotEmpty()  == true) {
-                    SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).parse(provisionDateStr)
+                    SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).parse(provisionDateStr)
                 } else {
                     val visitDateStr = it.visitDate
                     if (visitDateStr.isNotEmpty()) {
-                        SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(visitDateStr)
+                        SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(visitDateStr)
                     } else {
                         null
                     }
@@ -479,11 +479,11 @@ suspend fun saveFormResponses(benId: Long, hhId: Long, recordId: Int = 0) {
                 val provisionDateStr = fields?.optString("ifa_provision_date", "")
 
                 if (provisionDateStr?.isNotEmpty() == true) {
-                    SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).parse(provisionDateStr)
+                    SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).parse(provisionDateStr)
                 } else {
                     val visitDateStr = latest.visitDate
                     if (visitDateStr.isNotEmpty()) {
-                        SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(visitDateStr)
+                        SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(visitDateStr)
                     } else {
                         null
                     }
@@ -518,7 +518,7 @@ suspend fun saveFormResponses(benId: Long, hhId: Long, recordId: Int = 0) {
 
             SimpleDateFormat(
                 "dd-MM-yyyy",
-                Locale.getDefault()
+                Locale.ENGLISH
             ).parse(provisionDateStr)
 
         } catch (e: Exception) {

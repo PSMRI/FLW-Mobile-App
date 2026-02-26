@@ -99,7 +99,7 @@ class HBNCFormDataset(
         if (currentDay == null) {
             dateOfHomeVisit.value = getDateFromLong(System.currentTimeMillis())
             firstDay?.let {
-                childImmunizationStatus.value = it.babyImmunizationStatus
+                childImmunizationStatus.value = getCheckboxIndexesFromValues(R.array.hbnc_child_immunization_status, it.babyImmunizationStatus)
             }
         } else {
             setExistingValuesForVisitPage(currentDay, list)
@@ -411,7 +411,7 @@ class HBNCFormDataset(
             timeOfMotherDeath = timeOfMotherDeath.value,
             placeOfMotherDeath = placeOfMotherDeath.getPosition(),
             otherPlaceOfMotherDeath = otherPlaceOfMotherDeath.value,
-            motherAnyProblem = motherProblems.value,
+            motherAnyProblem = getEnglishCheckboxValues(R.array.hbnc_mother_problems, motherProblems.value),
             babyFirstFed = babyFedAfterBirth.getPosition(),
             otherBabyFirstFed = otherBabyFedAfterBirth.value,
             timeBabyFirstFed = whenBabyFirstFed.value,
@@ -462,7 +462,7 @@ class HBNCFormDataset(
             babyWeight = babyWeight.value,
             babyTemperature = babyTemperature.value,
             babyYellow = yellowJaundice.getPosition(),
-            babyImmunizationStatus = childImmunizationStatus.value,
+            babyImmunizationStatus = getEnglishCheckboxValues(R.array.hbnc_child_immunization_status, childImmunizationStatus.value),
             babyReferred = babyReferred.getPosition(),
             dateOfBabyReferral = getLongFromDate(dateOfBabyReferral.value),
             placeOfBabyReferral = placeOfBabyReferral.getPosition(),
@@ -1415,7 +1415,7 @@ class HBNCFormDataset(
             dateOfBabyFirstExamination.value = getDateFromLong(it.dateOfFirstExamination)
             timeOfBabyFirstExamination.value = it.timeOfFirstExamination
             motherAlive.value = motherAlive.getStringFromPosition(it.motherAlive)
-            motherProblems.value = it.motherAnyProblem
+            motherProblems.value = getCheckboxIndexesFromValues(R.array.hbnc_mother_problems, it.motherAnyProblem)
             babyFedAfterBirth.value = babyFedAfterBirth.getStringFromPosition(it.babyFirstFed)
             otherBabyFedAfterBirth.value = it.otherBabyFirstFed
             whenBabyFirstFed.value = it.timeBabyFirstFed
@@ -1608,7 +1608,7 @@ class HBNCFormDataset(
             babyWeight.value = it.babyWeight
             babyTemperature.value = it.babyTemperature
             yellowJaundice.value = yellowJaundice.getStringFromPosition(it.babyYellow)
-            childImmunizationStatus.value = it.babyImmunizationStatus
+            childImmunizationStatus.value = getCheckboxIndexesFromValues(R.array.hbnc_child_immunization_status, it.babyImmunizationStatus)
             babyReferred.value = babyReferred.getStringFromPosition(it.babyReferred)
             motherReferred.value = motherReferred.getStringFromPosition(it.motherReferred)
             allLimbsLimp.value = allLimbsLimp.getStringFromPosition(it.allLimbsLimp)

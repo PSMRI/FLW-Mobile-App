@@ -239,7 +239,7 @@ class CDRFormDataset(
             list.remove(cdrDeathFileUpload)
         }
 
-        val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
         val deathDateMillis = ben.dateOfDeath?.let {
             try {
                 dateFormat.parse(it)?.time

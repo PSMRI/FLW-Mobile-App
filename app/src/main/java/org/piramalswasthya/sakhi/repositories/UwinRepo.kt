@@ -122,7 +122,7 @@ class UwinRepo @Inject constructor(
         val user = preferenceDao.getLoggedInUser() ?: return@withContext false
 
         val images = buildMultipartFromUris(network)
-        val meetingDateFormatted = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val meetingDateFormatted = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
             .format(Date(network.sessionDate))
 
         val meetingDate = meetingDateFormatted.toRequestBody("text/plain".toMediaTypeOrNull())
@@ -208,7 +208,7 @@ class UwinRepo @Inject constructor(
         val adapter = moshi.adapter(UwinGetAllResponse::class.java)
         val parsed = adapter.fromJson(body) ?: return@withContext
 
-        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
 
         val entries = parsed.data?.entries ?: emptyList()
 

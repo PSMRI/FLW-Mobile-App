@@ -440,7 +440,7 @@ class AntenatalCounsellingFragment : Fragment() {
         val currentSchema = viewModel.schema.value ?: return
 
         val updatedFields = adapter.getUpdatedFields()
-        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
         val today = Date()
 
         currentSchema.sections.orEmpty().forEach { section ->
@@ -657,7 +657,7 @@ class AntenatalCounsellingFragment : Fragment() {
     fun convertDateToLong(dateString: String?): Long? {
         return try {
             if (dateString.isNullOrBlank()) return null
-            val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+            val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
             dateFormat.isLenient = false
             dateFormat.parse(dateString)?.time
         } catch (e: Exception) {
