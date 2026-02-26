@@ -3191,7 +3191,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
         if (gender != "Female") return false
         val age = dob?.let { dobString ->
-            val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+            val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
             try {
                 val date = sdf.parse(dobString)
                 val dobInMillis = date?.time ?: return false

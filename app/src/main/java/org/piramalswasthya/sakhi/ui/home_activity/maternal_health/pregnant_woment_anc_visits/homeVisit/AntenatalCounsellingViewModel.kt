@@ -169,7 +169,7 @@ class AntenatalCounsellingViewModel @Inject constructor(
         try {
             val visits = repository.getSyncedVisitsByRchIdANC(benId)
             _lastVisitData.value = visits.maxByOrNull {
-                SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).parse(it.visitDate)?.time ?: 0L
+                SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).parse(it.visitDate)?.time ?: 0L
             }
         } catch (e: Exception) {
             Timber.e(e, "Error loading last visit data")
@@ -476,7 +476,7 @@ class AntenatalCounsellingViewModel @Inject constructor(
     }
 
     fun formatDate(epochMillis: Long): String {
-        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
         return sdf.format(Date(epochMillis))
     }
 
@@ -589,7 +589,7 @@ class AntenatalCounsellingViewModel @Inject constructor(
                 val json = JSONObject(it.formDataJson)
                 val fields = json.optJSONObject("fields")
                 val dateStr = fields?.optString("visit_date")
-                if (!dateStr.isNullOrBlank()) SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).parse(dateStr) else null
+                if (!dateStr.isNullOrBlank()) SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).parse(dateStr) else null
             } catch (e: Exception) { null }
         }
         return if (alreadyFilledDates.contains(today)) Calendar.getInstance().apply { add(Calendar.DATE, -1) }.time else today
@@ -630,7 +630,7 @@ class AntenatalCounsellingViewModel @Inject constructor(
                 val json = JSONObject(it)
                 val fields = json.optJSONObject("fields")
                 val dateStr = fields?.optString("visit_date")
-                if (!dateStr.isNullOrBlank()) SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).parse(dateStr) else null
+                if (!dateStr.isNullOrBlank()) SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).parse(dateStr) else null
             } catch (e: Exception) { null }
         }
     }

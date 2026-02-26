@@ -40,7 +40,7 @@ data class DewormingCache(
 ) : FormDataModel {
     
     fun toDTO(): DewormingDTO {
-        val formatter = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val formatter = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
         val currentDate = formatter.format(Date())
         return DewormingDTO(
             id = id,
@@ -55,7 +55,7 @@ data class DewormingCache(
     }
 
     fun toDewormingCache(): DewormingCache {
-        val formatter = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val formatter = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
         val currentDate = formatter.format(Date())
         return DewormingCache(
             id = id,

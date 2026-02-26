@@ -73,8 +73,8 @@ object FormSubmitRequestMapper {
 
     private fun convertDateToIso(input: String): String {
         return try {
-            val inputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-            val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val inputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
+            val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
             val date = inputFormat.parse(input)
             outputFormat.format(date!!)
         } catch (e: Exception) {

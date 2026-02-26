@@ -862,7 +862,7 @@ object HelperUtil {
         }
     }
     fun getCurrentYear(): String {
-        return SimpleDateFormat("yyyy", Locale.getDefault())
+        return SimpleDateFormat("yyyy", Locale.ENGLISH)
             .format(Date())
     }
 

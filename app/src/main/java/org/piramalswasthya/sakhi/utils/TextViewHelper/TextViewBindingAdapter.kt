@@ -14,10 +14,10 @@ object TextViewBindingAdapters {
     fun setFormattedMeetingDate(view: TextView, dateString: String?) {
         if (!dateString.isNullOrBlank()) {
             try {
-                val inputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                val inputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
                 val date = inputFormat.parse(dateString)
 
-                val monthFormat = SimpleDateFormat("MMMM-yyyy", Locale.getDefault())
+                val monthFormat = SimpleDateFormat("MMMM-yyyy", Locale.ENGLISH)
                 val formatted = monthFormat.format(date!!)
 
                 view.text = "Maa Meeting - ($formatted)"
@@ -52,7 +52,7 @@ object TextViewBindingAdapters {
     fun setDobToDateText(view: TextView, dob: Long?) {
         if (dob != null && dob > 0L) {
             try {
-                val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
                 val formatted = sdf.format(Date(dob))
                 view.text = formatted
             } catch (e: Exception) {

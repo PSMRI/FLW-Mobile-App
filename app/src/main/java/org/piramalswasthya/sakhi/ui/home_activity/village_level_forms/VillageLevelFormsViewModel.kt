@@ -44,7 +44,7 @@ class VillageLevelFormsViewModel @Inject constructor(
         viewModelScope.launch {
             val icons = iconDataset.getVLFDataset(resources)
             val currentDate = LocalDate.now()
-            val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.getDefault())
+            val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.ENGLISH)
 
             val result = icons.map { icon ->
                 val formId = formIdMap[icon.title]

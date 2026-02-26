@@ -329,7 +329,7 @@ class MalariaSuspectedListFragment : Fragment() {
         val previousVisitDate = viewModelMosquitoNet.previousVisitDate
 
         val updatedFields = adapter.getUpdatedFields()
-        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
         val today = Date()
 
         currentSchema.sections.forEach { section ->

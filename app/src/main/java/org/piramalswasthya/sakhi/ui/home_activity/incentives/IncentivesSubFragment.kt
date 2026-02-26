@@ -222,7 +222,7 @@ class IncentivesSubFragment : Fragment() {
     }
 
     private fun createImageFile(): File {
-        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(Date())
         val storageDir = requireContext().getExternalFilesDir(null)
         return File.createTempFile(
             "INCENTIVE_${timeStamp}_",
@@ -338,7 +338,7 @@ class IncentivesSubFragment : Fragment() {
                 bitmap = scaled
             }
 
-            val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+            val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(Date())
             val storageDir = requireContext().getExternalFilesDir(null)
             val compressedFile = File.createTempFile(
                 "COMPRESSED_${timeStamp}_",

@@ -9,7 +9,7 @@ import java.util.*
 object HomeVisitHelper  {
     private const val HOME_VISIT_FORM_ID = "anc_form_001"
     private val gson = Gson()
-    private val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+    private val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
 
     fun isHomeVisit(entity: ANCFormResponseJsonEntity): Boolean {
         return entity.formId == HOME_VISIT_FORM_ID

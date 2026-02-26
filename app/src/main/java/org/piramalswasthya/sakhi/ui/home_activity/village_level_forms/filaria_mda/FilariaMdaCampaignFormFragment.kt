@@ -261,7 +261,7 @@ class FilariaMdaCampaignFormFragment : Fragment() {
         val previousVisitDate = viewModel.previousVisitDate
 
         val updatedFields = adapter.getUpdatedFields()
-        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
         val today = Date()
 
         currentSchema.sections.forEach { section ->
