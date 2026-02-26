@@ -57,7 +57,7 @@ class HouseHoldListAdapter(private val diseaseType: String, private var isDiseas
 
             if (isDisease) {
                 binding.button4.visibility = View.GONE
-                if (diseaseType == "FILARIA") {
+                if (diseaseType == "Filaria") {
                     binding.btnMda.visibility = View.VISIBLE
                 } else {
                     binding.btnMda.visibility = View.GONE

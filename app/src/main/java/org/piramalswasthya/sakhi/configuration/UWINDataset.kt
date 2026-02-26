@@ -116,11 +116,7 @@ class UWINDataset(context: Context, language: Languages) : Dataset(context, lang
                 else null) as String?
             }
 
-            place.id ->{
-                place.errorText = (if (participant.value.isNullOrEmpty())
-                    emitAlertErrorMessage(R.string.form_input_empty_error)
-                else null) as String?
-            }
+
         }
 
 
