@@ -8,9 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -56,6 +59,9 @@ class AllHouseholdFragment : Fragment() {
 
     private var isDisease = false
 
+    private var addBenAlert: AlertDialog? = null
+    private var addBenAlertBinding: AlertNewBenBinding? = null
+
     private val draftLoadAlert by lazy {
         MaterialAlertDialogBuilder(requireContext()).setTitle(resources.getString(R.string.incomplete_form_found))
             .setMessage(resources.getString(R.string.do_you_want_to_continue_with_previous_form_or_create_a_new_form_and_discard_the_previous_form))
@@ -79,20 +85,21 @@ class AllHouseholdFragment : Fragment() {
             .show()
     }
 
-    private val addBenAlert by lazy {
-        val addBenAlertBinding = AlertNewBenBinding.inflate(layoutInflater, binding.root, false)
-        addBenAlertBinding.rgGender.setOnCheckedChangeListener { radioGroup, i ->
-            addBenAlertBinding.btnOk.isEnabled = false
+    private fun buildAddBenDialog() {
+        val alertBinding = AlertNewBenBinding.inflate(layoutInflater, binding.root, false)
+        addBenAlertBinding = alertBinding
+        alertBinding.rgGender.setOnCheckedChangeListener { _, i ->
+            alertBinding.btnOk.isEnabled = false
             Timber.d("RG Gender selected id : $i")
             val selectedGender = when (i) {
-                addBenAlertBinding.rbMale.id -> Gender.MALE
-                addBenAlertBinding.rbFemale.id -> Gender.FEMALE
-                addBenAlertBinding.rbTrans.id -> Gender.TRANSGENDER
+                alertBinding.rbMale.id -> Gender.MALE
+                alertBinding.rbFemale.id -> Gender.FEMALE
+                alertBinding.rbTrans.id -> Gender.TRANSGENDER
                 else -> null
             }
-            addBenAlertBinding.linearLayout4.visibility =
+            alertBinding.linearLayout4.visibility =
                 selectedGender?.let { View.VISIBLE } ?: View.GONE
-            addBenAlertBinding.actvRth.text = null
+            alertBinding.actvRth.text = null
 
             val hof =
                 viewModel.householdBenList.firstOrNull { it.familyHeadRelationPosition == 19 }
@@ -139,7 +146,7 @@ class AllHouseholdFragment : Fragment() {
                         remove(resources.getStringArray(R.array.nbr_relationship_to_head)[4])
                 } ?: dropdownList?.toList()
             filteredDropdownList?.let {
-                addBenAlertBinding.actvRth.setAdapter(
+                alertBinding.actvRth.setAdapter(
                     ArrayAdapter(
                         requireContext(), android.R.layout.simple_spinner_dropdown_item,
                         it,
@@ -147,43 +154,48 @@ class AllHouseholdFragment : Fragment() {
                 )
             }
         }
-        addBenAlertBinding.actvRth.setOnItemClickListener { adapterView, view, i, l ->
+        alertBinding.actvRth.setOnItemClickListener { _, _, i, _ ->
             Timber.d("item clicked index : $i")
-            addBenAlertBinding.btnOk.isEnabled = true
+            alertBinding.btnOk.isEnabled = true
         }
 
 
-        val alert = MaterialAlertDialogBuilder(requireContext()).setView(addBenAlertBinding.root)
+        val alert = MaterialAlertDialogBuilder(requireContext()).setView(alertBinding.root)
             .setOnCancelListener {
                 viewModel.resetSelectedHouseholdId()
-                addBenAlertBinding.rgGender.clearCheck()
-                addBenAlertBinding.linearLayout4.visibility = View.GONE
-                addBenAlertBinding.actvRth.text = null
+                alertBinding.rgGender.clearCheck()
+                alertBinding.linearLayout4.visibility = View.GONE
+                alertBinding.actvRth.text = null
             }.create()
+        addBenAlert = alert
 
-        addBenAlertBinding.btnOk.setOnClickListener {
+        alertBinding.btnOk.setOnClickListener {
+            val relIndex = resources.getStringArray(R.array.nbr_relationship_to_head_src)
+                .indexOf(alertBinding.actvRth.text.toString())
+            val gender = when (alertBinding.rgGender.checkedRadioButtonId) {
+                alertBinding.rbMale.id -> 1
+                alertBinding.rbFemale.id -> 2
+                alertBinding.rbTrans.id -> 3
+                else -> 0
+            }
+            if (relIndex < 0 || gender == 0) {
+                if (relIndex < 0) alertBinding.actvRth.error = resources.getString(R.string.relation_with_hof)
+                return@setOnClickListener
+            }
             findNavController().navigate(
                 AllHouseholdFragmentDirections.actionAllHouseholdFragmentToNewBenRegFragment(
                     hhId = viewModel.selectedHouseholdId,
-                    relToHeadId = resources.getStringArray(R.array.nbr_relationship_to_head_src)
-                        .indexOf(addBenAlertBinding.actvRth.text.toString()),
-                    gender = when (addBenAlertBinding.rgGender.checkedRadioButtonId) {
-                        addBenAlertBinding.rbMale.id -> 1
-                        addBenAlertBinding.rbFemale.id -> 2
-                        addBenAlertBinding.rbTrans.id -> 3
-                        else -> 0
-                    }
+                    relToHeadId = relIndex,
+                    gender = gender
                 )
             )
             viewModel.resetSelectedHouseholdId()
             alert.cancel()
         }
-        addBenAlertBinding.btnCancel.setOnClickListener {
+        alertBinding.btnCancel.setOnClickListener {
             alert.cancel()
             viewModel.resetSelectedHouseholdId()
         }
-
-        alert
     }
 
 
@@ -214,6 +226,7 @@ class AllHouseholdFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        buildAddBenDialog()
         binding.btnNextPage.text = resources.getString(R.string.btn_text_frag_home_nhhr)
         if (prefDao.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
             binding.btnNextPage.visibility = View.GONE
@@ -252,7 +265,7 @@ class AllHouseholdFragment : Fragment() {
                 } else {
                   if(!it.isDeactivate) {
                       viewModel.setSelectedHouseholdId(it.hhId)
-                      addBenAlert.show()
+                      addBenAlert?.show()
                   }
                 }
             }
@@ -267,11 +280,13 @@ class AllHouseholdFragment : Fragment() {
             ))
         binding.rvAny.adapter = householdAdapter
 
-        lifecycleScope.launch {
-            viewModel.householdList.collect {
-                if (it.isEmpty()) binding.flEmpty.visibility = View.VISIBLE
-                else binding.flEmpty.visibility = View.GONE
-                householdAdapter.submitList(it)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.householdList.collect {
+                    if (it.isEmpty()) binding.flEmpty.visibility = View.VISIBLE
+                    else binding.flEmpty.visibility = View.GONE
+                    householdAdapter.submitList(it)
+                }
             }
         }
 
@@ -314,8 +329,11 @@ class AllHouseholdFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
+        addBenAlert?.dismiss()
+        addBenAlert = null
+        addBenAlertBinding = null
         _binding = null
     }
 

@@ -474,17 +474,23 @@ class HouseholdMembersFragment : Fragment() {
         addBenAlert = alert
 
         alertBinding.btnOk.setOnClickListener {
+            val relIndex = resources.getStringArray(R.array.nbr_relationship_to_head_src)
+                .indexOf(alertBinding.actvRth.text.toString())
+            val gender = when (alertBinding.rgGender.checkedRadioButtonId) {
+                alertBinding.rbMale.id -> 1
+                alertBinding.rbFemale.id -> 2
+                alertBinding.rbTrans.id -> 3
+                else -> 0
+            }
+            if (relIndex < 0 || gender == 0) {
+                if (relIndex < 0) alertBinding.actvRth.error = resources.getString(R.string.relation_with_hof)
+                return@setOnClickListener
+            }
             findNavController().navigate(
                 HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToNewBenRegFragment(
                     hhId = hhId,
-                    relToHeadId = resources.getStringArray(R.array.nbr_relationship_to_head_src)
-                        .indexOf(alertBinding.actvRth.text.toString()),
-                    gender = when (alertBinding.rgGender.checkedRadioButtonId) {
-                        alertBinding.rbMale.id -> 1
-                        alertBinding.rbFemale.id -> 2
-                        alertBinding.rbTrans.id -> 3
-                        else -> 0
-                    }
+                    relToHeadId = relIndex,
+                    gender = gender
                 )
             )
             alert.cancel()
