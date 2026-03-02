@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingVertical="3dp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="60dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_gravity="bottom"
+            android:layout_marginEnd="6dp"
+            android:src="@drawable/baseline_smart_toy_24"
+            app:tint="@color/colorPrimary" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/colorSurfaceVariant"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="1dp"
+            app:strokeWidth="0dp">
+
+            <TextView
+                android:id="@+id/tv_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="10dp"
+                android:textColor="?android:textColorPrimary"
+                android:textSize="15sp" />
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
+
+    <!-- Low confidence disclaimer -->
+    <TextView
+        android:id="@+id/tv_low_confidence"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="34dp"
+        android:layout_marginTop="2dp"
+        android:text="@string/low_confidence_disclaimer"
+        android:textColor="@color/colorWarning"
+        android:textSize="11sp"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+    <!-- Emergency referral card -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_emergency"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="34dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="60dp"
+        android:visibility="gone"
+        app:cardBackgroundColor="@color/colorErrorBg"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="0dp"
+        app:strokeColor="@color/colorError"
+        app:strokeWidth="1dp"
+        tools:visibility="visible">
+
+        <TextView
+            android:id="@+id/tv_emergency"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawablePadding="8dp"
+            android:padding="10dp"
+            android:text="@string/emergency_referral_label"
+            android:textColor="@color/colorError"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            app:drawableStartCompat="@drawable/baseline_warning_24" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Escalation card -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_escalation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="34dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="60dp"
+        android:visibility="gone"
+        app:cardBackgroundColor="@color/colorWarningBg"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="0dp"
+        app:strokeColor="@color/colorWarning"
+        app:strokeWidth="1dp">
+
+        <TextView
+            android:id="@+id/tv_escalation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawablePadding="8dp"
+            android:padding="10dp"
+            android:text="@string/escalation_label"
+            android:textColor="@color/colorWarning"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            app:drawableStartCompat="@drawable/baseline_supervisor_account_24" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Related FAQs / Suggestion chips -->
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chip_group_faqs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="34dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="16dp"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+</LinearLayout>

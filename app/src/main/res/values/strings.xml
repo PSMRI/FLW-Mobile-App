@@ -1196,5 +1196,22 @@
     <string name="something_went_wrong_nunable_to_connect_to_server_ntry_again_later">Something went wrong !\nUnable to connect to server !\nTry again later!</string>
     <string name="try_again">Try Again!</string>
 
+    <!-- Chat Support -->
+    <string name="chat_support">Chat Support</string>
+    <string name="new_chat">New Chat</string>
+    <string name="chat_history">Chat History</string>
+    <string name="type_message">Type a message…</string>
+    <string name="send_message">Send</string>
+    <string name="recording">Recording…</string>
+    <string name="chat_empty_state">Ask me anything</string>
+    <string name="chat_empty_subtitle">I can help with health programs, immunization schedules, JSY benefits and more.</string>
+    <string name="record_audio">Record audio</string>
+    <string name="no_chat_sessions">No conversations yet</string>
+    <string name="low_confidence_disclaimer">This response may not be fully accurate. Please verify with your supervisor.</string>
+    <string name="emergency_referral_label">Emergency Referral Required</string>
+    <string name="escalation_label">Supervisor Escalation</string>
+    <string name="audio_permission_denied">Microphone permission is required to record audio</string>
+    <string name="recording_failed">Recording failed. Please try again.</string>
+
 </resources>
 
